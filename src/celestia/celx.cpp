@@ -3422,6 +3422,18 @@ static int celestia_print(lua_State* l)
     return 0;
 }
 
+static int celestia_gettextwidth(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to function celestia:gettextwidth");
+
+    CelestiaCore* appCore = this_celestia(l);
+    const char* s = safeGetString(l, 2, AllErrors, "First argument to celestia:gettextwidth must be a string");
+
+    lua_pushnumber(l, appCore->getTextWidth(s));
+
+    return 1;
+}
+
 static int celestia_show(lua_State* l)
 {
     checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:show");
@@ -4495,6 +4507,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "__tostring", celestia_tostring);
     RegisterMethod(l, "flash", celestia_flash);
     RegisterMethod(l, "print", celestia_print);
+    RegisterMethod(l, "gettextwidth", celestia_gettextwidth);
     RegisterMethod(l, "show", celestia_show);
     RegisterMethod(l, "hide", celestia_hide);
     RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
