@@ -37,6 +37,7 @@ J  : Reverse time
 Labels:
 N  : Toggle planet and moon labels
 B  : Toggle star labels
+E  : Toggle galaxy labels
 =  : Toggle constellation labels
 V  : Toggle info text
 
