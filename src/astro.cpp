@@ -28,7 +28,7 @@ const double astro::J2000 = 2451545.0;
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
 
-static Mat3f equatorialToCelestial = Mat3f::xrotation(degToRad(-23.4392911));
+static Mat3f equatorialToCelestial = Mat3f::xrotation(degToRad(23.4392911));
 
 
 float astro::lumToAbsMag(float lum)
