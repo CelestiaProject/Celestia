@@ -425,11 +425,15 @@ Code:
 * Unix: Much improved recognition of missing packages in configure. (dramsey)
 * Added rendering of eclipse shadows
 * Implemented longitude of axis for planet rotation elements
-* Corrected inclination of Saturn (now rings appear at proper tilt when viewed
-  from Earth)
+* Corrected inclinations of Saturn (now rings appear at proper tilt when viewed
+  from Earth), Uranus, and Neptune.
 * Added accurate orbital calculations for the eight largest moons of Saturn
 * Textures for Ariel, Umbriel, Titania, and Umbriel from Bruckner.
 * Improved planet labeling: less clutter, plus labels are displayed for distant
   objects at high zoom levels.
-
-
+* Fixed rendering of ring systems so that planets with both rings and
+  a cloud layer are rendered correctly.
+* Added accurate orbital calculations for the five largest moons of Uranus
+* Added option to render stars as points (for a less fuzzy appearance)
+* Corrected sizing of planets' shadows on their ring systems
+* Corrected orientation of 
