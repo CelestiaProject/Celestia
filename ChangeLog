@@ -392,3 +392,6 @@ Code:
 * Windows: replaced proliferating render and label options in menu with
   a single modeless dialog.
 * Fixed period and rotation of Phoebe
+
+1.2.1
+* Unix: configure.in changes to better find OpenGL libraries by Bruckner
