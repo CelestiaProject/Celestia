@@ -1315,11 +1315,15 @@ void ShowWWWInfo(const Selection& sel)
     string url;
     if (sel.body != NULL)
     {
-        string name = sel.body->getName();
-        for (int i = 0; i < name.size(); i++)
-            name[i] = tolower(name[i]);
+        url = sel.body->getInfoURL();
+        if (url.empty())
+        {
+            string name = sel.body->getName();
+            for (int i = 0; i < name.size(); i++)
+                name[i] = tolower(name[i]);
 
-        url = string("http://www.nineplanets.org/") + name + ".html";
+            url = string("http://www.nineplanets.org/") + name + ".html";
+        }
     }
     else if (sel.star != NULL)
     {
