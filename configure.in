@@ -217,7 +217,7 @@ AC_OUTPUT( Makefile               \
 	   src/celengine/Makefile \
 	   src/celestia/Makefile  \
 	   data/Makefile          \
-	   extras/Makefile          \
+	   extras/Makefile        \
 	   textures/Makefile      \
 	   models/Makefile        \
 	   shaders/Makefile       \

@@ -406,3 +406,7 @@ Code:
 
 	
 1.2.2
+* Improved find algorithm for starnames, and combined names from hdnames.dat
+  into starnames.dat. Also added several additional names and variant spellings
+  from my Star Atlas into starnames.dat (whoose format has been completely
+  revamped). (dramsey)

@@ -125,68 +125,7 @@ Star* StarDatabase::find(const string& name) const
 
         if (names != NULL)
         {
-            string priName = name;
-            string altName;
-
-            // See if the name is a Bayer or Flamsteed designation
-            {
-                string::size_type pos = name.find(' ');
-                if (pos != 0 && pos != string::npos && pos < name.length() - 1)
-                {
-                    string prefix(name, 0, pos);
-                    string conName(name, pos + 1, string::npos);
-                    Constellation* con = Constellation::getConstellation(conName);
-                    if (con != NULL)
-                    {
-                        char digit = ' ';
-                        int len = prefix.length();
-
-                        // If the first character of the prefix is a letter
-                        // and the last character is a digit, we may have
-                        // something like 'Alpha2 Cen' . . . Extract the digit
-                        // before trying to match a Greek letter.
-                        if (len > 2 &&
-                            isalpha(prefix[0]) && isdigit(prefix[len - 1]))
-                        {
-                            len--;
-                            digit = prefix[len];
-                        }
-
-                        // We have a valid constellation as the last part
-                        // of the name.  Next, we see if the first part of
-                        // the name is a greek letter.
-                        const string& letter = Greek::canonicalAbbreviation(string(prefix, 0, len));
-                        if (letter != "")
-                        {
-                            // Matched . . . this is a Bayer designation
-                            if (digit == ' ')
-                            {
-                                priName = letter + ' ' + con->getAbbreviation();
-                                // If 'let con' doesn't match, try using
-                                // 'let1 con' instead.
-                                altName = letter + '1' + ' ' + con->getAbbreviation();
-                            }
-                            else
-                            {
-                                priName = letter + digit + ' ' + con->getAbbreviation();
-                            }
-                        }
-                        else
-                        {
-                            // Something other than a Bayer designation
-                            priName = prefix + ' ' + con->getAbbreviation();
-                        }
-                    }
-                }
-            }
-
-            uint32 catalogNumber = names->findCatalogNumber(priName);
-
-            // If the first search failed, try using the alternate name
-            if (catalogNumber == Star::InvalidCatalogNumber &&
-                altName.length() != 0)
-                catalogNumber = names->findCatalogNumber(altName);
-
+            uint32 catalogNumber=names->findName(name);
             if (catalogNumber != Star::InvalidCatalogNumber)
                 return find(catalogNumber, Star::HIPCatalog);
         }
