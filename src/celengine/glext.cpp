@@ -231,7 +231,7 @@ typedef void (*FUNCS) (void);
 
 // Works around an apparent problem in ATI's libGL.so where glXGetProcAddress
 // returns NULL.
-GetGLProcAddress(const GLubyte* procName)
+FUNCS GetGLProcAddress(const GLubyte* procName)
 {
     FUNCS func = glXGetProcAddressARB(procName);
     if (!func)
