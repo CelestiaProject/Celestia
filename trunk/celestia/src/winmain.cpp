@@ -47,6 +47,7 @@ static bool fullscreen = false;
 static bool bReady = false;
 
 HINSTANCE appInstance;
+HWND ssBrowserWindow = 0;
 
 static HMENU menuBar = 0;
 static HACCEL acceleratorTable = 0;
@@ -386,6 +387,164 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
 }
 
 
+HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data)
+{ 
+    TVITEM tvi; 
+    TVINSERTSTRUCT tvins; 
+    static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST; 
+    static HTREEITEM hPrevRootItem = NULL; 
+    static HTREEITEM hPrevLev2Item = NULL; 
+    // HTREEITEM hti; 
+
+#if 0 
+    tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM; 
+#endif
+    tvi.mask = TVIF_TEXT | TVIF_PARAM;
+ 
+    // Set the text of the item. 
+    tvi.pszText = lpszItem; 
+    tvi.cchTextMax = lstrlen(lpszItem); 
+ 
+    // Assume the item is not a parent item, so give it a 
+    // document image. 
+    // tvi.iImage = g_nDocument; 
+    // tvi.iSelectedImage = g_nDocument; 
+ 
+    // Save the heading level in the item's application-defined 
+    // data area. 
+    tvi.lParam = (LPARAM) data; 
+ 
+    tvins.item = tvi; 
+    tvins.hInsertAfter = hPrev; 
+ 
+    // Set the parent item based on the specified level. 
+    if (nLevel == 1) 
+        tvins.hParent = TVI_ROOT; 
+    else if (nLevel == 2) 
+        tvins.hParent = hPrevRootItem; 
+    else 
+        tvins.hParent = hPrevLev2Item; 
+ 
+    // Add the item to the tree view control. 
+    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEM, 0, 
+                                    (LPARAM) (LPTVINSERTSTRUCT) &tvins); 
+ 
+    // Save the handle to the item. 
+    if (nLevel == 1) 
+        hPrevRootItem = hPrev; 
+    else if (nLevel == 2) 
+        hPrevLev2Item = hPrev; 
+
+#if 0 
+    // The new item is a child item. Give the parent item a 
+    // closed folder bitmap to indicate it now has child items. 
+    if (nLevel > 1)
+    { 
+        hti = TreeView_GetParent(hwndTV, hPrev); 
+        tvi.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE; 
+        tvi.hItem = hti; 
+        // tvi.iImage = g_nClosed; 
+        // tvi.iSelectedImage = g_nClosed; 
+        TreeView_SetItem(hwndTV, &tvi); 
+    }
+#endif 
+ 
+    return hPrev; 
+}
+
+
+void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level)
+{
+    for (int i = 0; i < sys->getSystemSize(); i++)
+    {
+        Body* world = sys->getBody(i);
+        (void) AddItemToTree(treeView, 
+                             const_cast<char*>(world->getName().c_str()),
+                             level,
+                             static_cast<void*>(world));
+
+        const PlanetarySystem* satellites = world->getSatellites();
+        if (satellites != NULL)
+            AddPlanetarySystemToTree(satellites, treeView, level + 1);
+    }
+}
+
+
+BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
+                                     UINT message,
+                                     UINT wParam,
+                                     LONG lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        {
+            HWND hwnd = GetDlgItem(hDlg, IDC_SSBROWSER_TREE);
+            const SolarSystem* solarSys = appCore->getSimulation()->getNearestSolarSystem();
+            if (solarSys != NULL)
+            {
+                HTREEITEM rootItem = AddItemToTree(hwnd, "Sun", 1, NULL);
+                const PlanetarySystem* planets = solarSys->getPlanets();
+                if (planets != NULL)
+                    AddPlanetarySystemToTree(planets, hwnd, 2);
+
+                SendMessage(hwnd, TVM_EXPAND, TVE_EXPAND, (LPARAM) rootItem); 
+            }
+        }
+        return(TRUE);
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            ssBrowserWindow = 0;
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDC_BUTTON_CENTER)
+        {
+            appCore->charEntered('C');
+        }
+        else if (LOWORD(wParam) == IDC_BUTTON_GOTO)
+        {
+            appCore->charEntered('G');
+        }
+        break;
+
+    case WM_NOTIFY:
+        {
+            LPNMHDR hdr = (LPNMHDR) lParam;
+            
+            if (hdr->code == TVN_SELCHANGED)
+            {
+                LPNMTREEVIEW nm = (LPNMTREEVIEW) lParam;
+                Body* body = reinterpret_cast<Body*>(nm->itemNew.lParam);
+                if (body != NULL)
+                {
+                    appCore->getSimulation()->setSelection(Selection(body));
+                }
+            }
+#if 0
+            if (hdr->code == DTN_DATETIMECHANGE)
+            {
+                LPNMDATETIMECHANGE change = (LPNMDATETIMECHANGE) lParam;
+                if (change->dwFlags == GDT_VALID)
+                {
+                    astro::Date date(change->st.wYear, change->st.wMonth, change->st.wDay);
+                    newTime.year = change->st.wYear;
+                    newTime.month = change->st.wMonth;
+                    newTime.day = change->st.wDay;
+                    newTime.hour = change->st.wHour;
+                    newTime.minute = change->st.wMinute;
+                    newTime.seconds = change->st.wSecond + (double) change->st.wMilliseconds / 1000.0;
+                }
+            }
+#endif
+        }
+    }
+
+    return FALSE;
+}
+
 
 HMENU CreateMenuBar()
 {
@@ -495,6 +654,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
         AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, "S&ync Orbit");
         AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
 
         const PlanetarySystem* satellites = sel.body->getSatellites();
@@ -928,6 +1088,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 buttons |= CelestiaCore::RightButton;
             if ((wParam & MK_MBUTTON) != 0)
                 buttons |= CelestiaCore::MiddleButton;
+            if ((wParam & MK_SHIFT) != 0)
+                buttons |= CelestiaCore::ShiftKey;
+            if ((wParam & MK_CONTROL) != 0)
+                buttons |= CelestiaCore::ControlKey;
             appCore->mouseMove(x - lastX, y - lastY, buttons);
         }
         break;
@@ -1029,11 +1193,18 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_NAVIGATION_FOLLOW:
             appCore->charEntered('F');
             break;
+        case ID_NAVIGATION_SYNCORBIT:
+            appCore->charEntered('Y');
+            break;
         case ID_NAVIGATION_HOME:
             appCore->charEntered('H');
             break;
         case ID_NAVIGATION_SELECT:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
+            break;
+        case ID_NAVIGATION_SSBROWSER:
+            if (ssBrowserWindow == 0)
+                ssBrowserWindow = CreateDialog(appInstance, MAKEINTRESOURCE(IDD_SSBROWSER), hWnd, SolarSystemBrowserProc);
             break;
 
         case ID_RENDER_SHOWHUDTEXT:

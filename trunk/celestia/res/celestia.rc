@@ -53,6 +53,9 @@ BEGIN
         MENUITEM "&Center Selection",           ID_NAVIGATION_CENTER
         MENUITEM "&Go to Selection",            ID_NAVIGATION_GOTO
         MENUITEM "&Follow Selection",           ID_NAVIGATION_FOLLOW
+	MENUITEM "S&ync Orbit Selection",       ID_NAVIGATION_SYNCORBIT
+	MENUITEM SEPARATOR
+	MENUITEM "Solar System &Browser...",    ID_NAVIGATION_SSBROWSER
     END
     POPUP "&Time"
     BEGIN
@@ -208,6 +211,21 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,160,5,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,160,23,50,14
 END
+
+
+IDD_SSBROWSER DIALOG DISCARDABLE  0, 0, 226, 194
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+CAPTION "Solar System Browser"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,169,154,50,14
+    CONTROL         "Solar System",IDC_SSBROWSER_TREE,"SysTreeView32",WS_BORDER | WS_TABSTOP | TVS_HASLINES | TVS_HASBUTTONS,
+                    7,26,153,161
+    PUSHBUTTON      "Center",IDC_BUTTON_CENTER,169,26,50,14
+    PUSHBUTTON      "Go To",IDC_BUTTON_GOTO,169,44,50,14
+    LTEXT           "Solar System Objects",IDC_STATIC,7,13,74,8
+END
+
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,7 @@
 #define IDD_SETTIME                     109
 #define IDD_GLINFO                      110
 #define IDD_ADDLOCATION                 111
+#define IDD_SSBROWSER                   112
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
 #define IDC_GLINFO_TEXT                 1005
@@ -19,6 +20,9 @@
 #define IDC_TIMEPICKER                  1007
 #define IDC_DATEPICKER                  1008
 #define IDC_LOCATION_EDIT               1009
+#define IDC_SSBROWSER_TREE              1010
+#define IDC_BUTTON_CENTER               1011
+#define IDC_BUTTON_GOTO                 1012
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -61,6 +65,8 @@
 #define ID_RENDER_MORESTARS             40042
 #define ID_RENDER_FEWERSTARS            40043
 #define ID_RENDER_SHOWCELESTIALSPHERE   40044
+#define ID_NAVIGATION_SYNCORBIT         40045
+#define ID_NAVIGATION_SSBROWSER         40046
 
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
@@ -68,9 +74,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        112
-#define _APS_NEXT_COMMAND_VALUE         40045
-#define _APS_NEXT_CONTROL_VALUE         1010
+#define _APS_NEXT_RESOURCE_VALUE        113
+#define _APS_NEXT_COMMAND_VALUE         40047
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
