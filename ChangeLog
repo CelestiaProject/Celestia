@@ -225,3 +225,21 @@ Code:
 Code:
 * Moved selection info code from Simulation to CelestiaCore
 * Fixed bug in Texture destructor
+
+
+1.1.2
+* Replaced single catalog number with separate entries for HD and HIP numbers
+* Expanded star name database and rewrote star name code to be less strict
+  when matching names.
+* Added track mode
+* Changed displayed units of distance and velocity
+* Fixed picking of stars so it works properly at close distances
+* Fixed bug that caused solar systems not to be displayed when another star
+  was nearby (this made it impossible to visit the planets of Gliese 876)
+* Windows version: save and restore window size settings in registry
+* Windows version: added toggle between GMT and local time
+* Windows version: added keyboard command mnemonics to menus
+* Windows version: InstallShield setup
+	
+Code:
+* Moved star browser and solar system browser code into separate modules
