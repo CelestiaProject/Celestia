@@ -976,18 +976,18 @@ AltSurface "limit of knowledge" "HD 160691/d"
 {
 	Texture "jupiterlike.*"
 
-	Mass       540     # M.sin(i) = 1.7 jupiters
+	Mass       530     # M.sin(i) = 1.67 jupiters
 	Radius     70000
-	Oblateness 0.03
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/HD160691.html"
 
 	EllipticalOrbit {
-		Period          1.7448
-		SemiMajorAxis   1.48
+		Period          1.7919
+		SemiMajorAxis   1.5
 		Eccentricity    0.31
-		ArgOfPericenter 317
-		MeanAnomaly     331
+		ArgOfPericenter 291
+		MeanAnomaly     135
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -1003,18 +1003,18 @@ AltSurface "limit of knowledge" "HD 160691/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       320     # M.sin(i) = 1 jupiters
+	Mass       990     # M.sin(i) = 3.1 jupiters
 	Radius     70000
-	Oblateness 0.06
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD160691.html"
 
 	EllipticalOrbit {
-		Period          3.5592
-		SemiMajorAxis   2.3
-		Eccentricity    0.8
-		ArgOfPericenter 96
-		MeanAnomaly     341
+		Period          8.1752
+		SemiMajorAxis   4.17
+		Eccentricity    0.57
+		ArgOfPericenter 158
+		MeanAnomaly     121
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -1185,6 +1185,30 @@ AltSurface "limit of knowledge" "HD 195019/b"
 }
 
 
+"b" "HD 102117"
+{
+	Texture "gasgiant.*"
+
+	Mass       60     # M.sin(i) = 0.18 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD102117.html"
+
+	EllipticalOrbit {
+		Period          0.0569
+		SemiMajorAxis   0.13
+		Eccentricity    0.08
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 102117/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 6434"
 {
 	Texture "gasgiant.*"
@@ -1231,6 +1255,30 @@ AltSurface "limit of knowledge" "HD 6434/b"
 }
 
 AltSurface "limit of knowledge" "HD 192263/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 117618"
+{
+	Texture "gasgiant.*"
+
+	Mass       50     # M.sin(i) = 0.16 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD117618.html"
+
+	EllipticalOrbit {
+		Period          0.0706
+		SemiMajorAxis   0.15
+		Eccentricity    0.31
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 117618/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1688,6 +1736,31 @@ AltSurface "limit of knowledge" "HD 216770/b"
 }
 
 AltSurface "limit of knowledge" "HD 52265/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 208487"
+{
+	Texture "jupiterlike.*"
+
+	Mass       130     # M.sin(i) = 0.41 jupiters
+	Radius     56000
+	Oblateness 0.07
+
+	InfoURL "http://www.obspm.fr/encycl/HD208487.html"
+
+	EllipticalOrbit {
+		Period          0.3532
+		SemiMajorAxis   0.5
+		Eccentricity    0.47
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 208487/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2325,6 +2398,33 @@ AltSurface "limit of knowledge" "HD 142415/b"
 }
 
 AltSurface "limit of knowledge" "HD 177830/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 154857"
+{
+	Texture "jupiterlike.*"
+
+	Mass       570     # M.sin(i) = 1.8 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://www.obspm.fr/encycl/HD154857.html"
+
+	EllipticalOrbit {
+		Period          1.091
+		SemiMajorAxis   1.11
+		Eccentricity    0.51
+		ArgOfPericenter 350
+		MeanAnomaly     342
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 154857/b"
 {
 	Texture "extrasolar-lok.*"
 }
