@@ -4419,7 +4419,7 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
     //   buffers is enabled.
     float minVisibleFraction = 1.0f / 10000.0f;
     float minDisplayableValue = 1.0f / 255.0f;
-    double gamma = log(minDisplayableValue) / log(minVisibleFraction);
+    float gamma = (float) (log(minDisplayableValue) / log(minVisibleFraction));
     float minVisibleIrradiance = minVisibleFraction * totalIrradiance;
 
     Mat3f m = (~objOrientation).toMatrix3();
