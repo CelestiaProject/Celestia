@@ -573,7 +573,8 @@ Selection Simulation::pickObject(Vec3f pickRay)
 }
 
 
-void Simulation::computeGotoParameters(Selection& destination, JourneyParams& jparams)
+void Simulation::computeGotoParameters(Selection& destination, JourneyParams& jparams,
+                                       double gotoTime)
 {
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
     Vec3d v = targetPosition - observer.getPosition();
@@ -583,9 +584,7 @@ void Simulation::computeGotoParameters(Selection& destination, JourneyParams& jp
 
     v.normalize();
 
-    // TODO: This should be an option someplace
-    jparams.duration = 5.0f;
-
+    jparams.duration = gotoTime;
     jparams.startTime = realTime;
 
     // Right where we are now . . .
@@ -601,12 +600,12 @@ void Simulation::computeGotoParameters(Selection& destination, JourneyParams& jp
 }
 
 
-void Simulation::computeCenterParameters(Selection& destination, JourneyParams& jparams)
+void Simulation::computeCenterParameters(Selection& destination, JourneyParams& jparams,
+                                         double centerTime)
 {
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
 
-    // TODO: This should be an option someplace
-    jparams.duration = 0.5f;
+    jparams.duration = centerTime;
     jparams.startTime = realTime;
 
     // Don't move through space, just rotate the camera
@@ -732,11 +731,11 @@ float Simulation::getTargetSpeed()
     return targetSpeed;
 }
 
-void Simulation::gotoSelection()
+void Simulation::gotoSelection(double gotoTime)
 {
     if (selection.body != NULL || selection.star != NULL)
     {
-        computeGotoParameters(selection, journey);
+        computeGotoParameters(selection, journey, gotoTime);
         observerMode = Travelling;
     }
 }
@@ -746,11 +745,11 @@ void Simulation::cancelMotion()
     observerMode = Free;
 }
 
-void Simulation::centerSelection()
+void Simulation::centerSelection(double centerTime)
 {
     if (selection.body != NULL || selection.star != NULL)
     {
-        computeCenterParameters(selection, journey);
+        computeCenterParameters(selection, journey, centerTime);
         observerMode = Travelling;
     }
 }
