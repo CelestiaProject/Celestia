@@ -327,7 +327,7 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
 
 
 // Set up the combiners to a texture with gloss map in the alpha channel.
-void SetupCombinersGlossMap()
+void SetupCombinersGlossMap(int glossMap)
 {
     glEnable(GL_REGISTER_COMBINERS_NV);
 
@@ -343,9 +343,18 @@ void SetupCombinersGlossMap()
     // C = secondary color
     EXTglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, GL_VARIABLE_C_NV,
                          GL_SECONDARY_COLOR_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
-    // D = texture alpha (gloss mask)
-    EXTglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, GL_VARIABLE_D_NV,
-                         GL_TEXTURE0_ARB, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
+    if (glossMap != 0)
+    {
+        // D = texture1 rgb (gloss mask)
+        EXTglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, GL_VARIABLE_D_NV,
+                             glossMap, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
+    }
+    else
+    {
+        // D = texture alpha (gloss mask)
+        EXTglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, GL_VARIABLE_D_NV,
+                             GL_TEXTURE0_ARB, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
+    }
 
     // SPARE0_rgb = primary * texture.rgb + secondary * texture.alpha
     EXTglCombinerOutputNV(GL_COMBINER0_NV, GL_RGB,
@@ -371,7 +380,7 @@ void SetupCombinersGlossMap()
 
 
 // Set up the combiners to a texture with gloss in the alpha channel.
-void SetupCombinersGlossMapWithFog()
+void SetupCombinersGlossMapWithFog(int glossMap)
 {
     glEnable(GL_REGISTER_COMBINERS_NV);
 
@@ -387,9 +396,18 @@ void SetupCombinersGlossMapWithFog()
     // C = secondary color
     EXTglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, GL_VARIABLE_C_NV,
                          GL_SECONDARY_COLOR_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
-    // D = texture alpha (gloss mask)
-    EXTglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, GL_VARIABLE_D_NV,
-                         GL_TEXTURE0_ARB, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
+    if (glossMap != 0)
+    {
+        // D = texture1 rgb (gloss mask)
+        EXTglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, GL_VARIABLE_D_NV,
+                             glossMap, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
+    }
+    else
+    {
+        // D = texture alpha (gloss mask)
+        EXTglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, GL_VARIABLE_D_NV,
+                             GL_TEXTURE0_ARB, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
+    }
 
     // SPARE0_rgb = primary * texture.rgb + secondary * texture.alpha
     EXTglCombinerOutputNV(GL_COMBINER0_NV, GL_RGB,
