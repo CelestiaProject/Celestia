@@ -43,6 +43,7 @@ class Renderer
                 const StarDatabase&,
                 const VisibleStarSet&,
                 SolarSystem*,
+                GalaxyList*,
                 const Selection& sel,
                 double now);
     
