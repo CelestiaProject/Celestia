@@ -22,6 +22,7 @@ class Atmosphere
     float height;
     Color lowerColor;
     Color upperColor;
+    Color skyColor;
 };
 
 #endif // _ATMOSPHERE_H_
