@@ -559,6 +559,8 @@ void Renderer::render(const Observer& observer,
                       const Selection& sel,
                       double now)
 {
+    cout << "Render frame\n";
+
     // Compute the size of a pixel
     pixelSize = calcPixelSize(fov, windowHeight);
 
@@ -799,7 +801,7 @@ void Renderer::render(const Observer& observer,
         }
 
         renderList.resize(notCulled - renderList.begin());
-        
+
         // The calls to renderSolarSystem/renderStars filled renderList
         // with visible planetary bodies.  Sort it by distance, then
         // render each entry.
@@ -1323,7 +1325,6 @@ struct RenderInfo
     Color color;
     Texture* baseTex;
     Texture* bumpTex;
-    Texture* cloudTex;
     Texture* nightTex;
     Color hazeColor;
     Color specularColor;
@@ -1342,7 +1343,6 @@ struct RenderInfo
                    color(1.0f, 1.0f, 1.0f),
                    baseTex(NULL),
                    bumpTex(NULL),
-                   cloudTex(NULL),
                    nightTex(NULL),
                    hazeColor(0.0f, 0.0f, 0.0f),
                    specularColor(0.0f, 0.0f, 0.0f),
@@ -1453,41 +1453,9 @@ void renderAtmosphere(const Atmosphere& atmosphere,
 }
 
 
-static void renderMeshDefault(const RenderInfo& ri, float scale,
-                              bool rescaleNormalSupported)
+static void renderMeshDefault(const RenderInfo& ri)
 {
-    // Set up the light source for the sun
     glEnable(GL_LIGHTING);
-    glLightDirection(GL_LIGHT0, ri.sunDir_obj);
-
-    // RANT ALERT!
-    // This sucks, but it's necessary.  glScale is used to scale a unit sphere
-    // up to planet size.  Since normals are transformed by the inverse
-    // transpose of the model matrix, this means they end up getting scaled
-    // by a factor of 1.0 / planet radius (in km).  This has terrible effects
-    // on lighting: the planet appears almost completely dark.  To get around
-    // this, the GL_rescale_normal extension was introduced and eventually
-    // incorporated into into the OpenGL 1.2 standard.  Of course, not everyone
-    // implemented this incredibly simple and useful little extension.
-    // Microsoft is notorious for half-assed support of OpenGL, but 3dfx
-    // should have known better: no Voodoo 1/2/3 drivers seem to support this
-    // extension.  The following is an attempt to get around the problem by
-    // scaling the light brightness by the planet radius.  According to the
-    // OpenGL spec, this should work fine, as clamping of colors to [0, 1]
-    // occurs *after* lighting.  It works fine on my GeForce3 when I disable
-    // EXT_rescale_normal, but I'm not certain whether other drivers
-    // are as well behaved as nVidia's.
-    if (rescaleNormalSupported)
-    {
-        glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
-    }
-    else
-    {
-        glLightColor(GL_LIGHT0, GL_DIFFUSE,
-                     Vec3f(ri.sunColor.red(), ri.sunColor.green(), ri.sunColor.blue()) * scale);
-    }
-
-    glEnable(GL_LIGHT0);
 
     if (ri.baseTex == NULL)
     {
@@ -1516,22 +1484,11 @@ static void renderMeshDefault(const RenderInfo& ri, float scale,
         ri.mesh->render(ri.lod);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
-
-    if (ri.cloudTex != NULL)
-    {
-        ri.cloudTex->bind();
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        ri.mesh->render(ri.lod);
-    }
 }
 
 
 static void renderMeshFragmentShader(const RenderInfo& ri)
 {
-    glLightDirection(GL_LIGHT0, ri.sunDir_obj);
-    glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
-    glEnable(GL_LIGHT0);
     glDisable(GL_LIGHTING);
 
     if (ri.baseTex == NULL)
@@ -1583,14 +1540,6 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
         ri.mesh->render(ri.lod);
     }
 
-    if (ri.cloudTex != NULL)
-    {
-        ri.cloudTex->bind();
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LIGHTING);
-        ri.mesh->render(ri.lod);
-    }
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
 
@@ -1698,15 +1647,6 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
-    if (ri.cloudTex != NULL)
-    {
-        ri.cloudTex->bind();
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        vp::use(vp::diffuse);
-        ri.mesh->render(ri.lod);
-    }
-
     vp::disable();
 }
 
@@ -1755,9 +1695,6 @@ void Renderer::renderPlanet(const Body& body,
             (fragmentShaderEnabled && useRegisterCombiners && useCubeMaps) &&
             surface.bumpTexture != InvalidResource)
             ri.bumpTex = textureManager->find(surface.bumpTexture);
-        if ((surface.appearanceFlags & Surface::ApplyCloudMap) != 0 &&
-            (renderFlags & ShowCloudMaps) != 0)
-            ri.cloudTex = textureManager->find(surface.cloudTexture);
         if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0 &&
             (renderFlags & ShowNightMaps) != 0)
             ri.nightTex = textureManager->find(surface.nightTexture);
@@ -1870,6 +1807,42 @@ void Renderer::renderPlanet(const Body& body,
         ri.specularPower = surface.specularPower;
         ri.useTexEnvCombine = useTexEnvCombine;
 
+        // Set up the light source for the sun
+        glLightDirection(GL_LIGHT0, ri.sunDir_obj);
+
+        // RANT ALERT!
+        // This sucks, but it's necessary.  glScale is used to scale a unit
+        // sphere up to planet size.  Since normals are transformed by the
+        // inverse transpose of the model matrix, this means they end up
+        // getting scaled by a factor of 1.0 / planet radius (in km).  This
+        // has terrible effects on lighting: the planet appears almost
+        // completely dark.  To get aroundthis, the GL_rescale_normal
+        // extension was introduced and eventually incorporated into into the
+        // OpenGL 1.2 standard.  Of course, not everyone implemented this
+        // incredibly simple and essential little extension.  Microsoft is
+        // notorious for half-assed support of OpenGL, but 3dfx should have
+        // known better: no Voodoo 1/2/3 drivers seem to support this
+        // extension.  The following is an attempt to get around the problem by
+        // scaling the light brightness by the planet radius.  According to the
+        // OpenGL spec, this should work fine, as clamping of colors to [0, 1]
+        // occurs *after* lighting.  It works fine on my GeForce3 when I
+        // disable EXT_rescale_normal, but I'm not certain whether other
+        // drivers are as well behaved as nVidia's.
+        //
+        // Addendum: Unsurprisingly, using color values outside [0, 1] produces
+        // problems on Savage4 cards.
+        //
+        if (useRescaleNormal)
+        {
+            glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
+        }
+        else
+        {
+            glLightColor(GL_LIGHT0, GL_DIFFUSE,
+                         Vec3f(ri.sunColor.red(), ri.sunColor.green(), ri.sunColor.blue()) * radius);
+        }
+        glEnable(GL_LIGHT0);
+
         // Currently, there are three different rendering paths:
         //   1. Generic OpenGL 1.1
         //   2. OpenGL 1.2 + nVidia register combiners
@@ -1883,20 +1856,21 @@ void Renderer::renderPlanet(const Body& body,
             else if (fragmentShaderEnabled && !vertexShaderEnabled)
                 renderMeshFragmentShader(ri);
             else
-                renderMeshDefault(ri, radius, useRescaleNormal);
+                renderMeshDefault(ri);
         }
 
         if (body.getAtmosphere() != NULL)
         {
-            float fade;
+            const Atmosphere* atmosphere = body.getAtmosphere();
 
             // Compute the apparent thickness in pixels of the atmosphere.
             // If it's only one pixel thick, it can look quite unsightly
             // due to aliasing.  To avoid popping, we gradually fade in the
             // atmosphere as it grows from two to three pixels thick.
+            float fade;
             if (distance - radius > 0.0f)
             {
-                float thicknessInPixels = body.getAtmosphere()->height /
+                float thicknessInPixels = atmosphere->height /
                     ((distance - radius) * pixelSize);
                 fade = clamp(thicknessInPixels - 2);
             }
@@ -1913,13 +1887,41 @@ void Renderer::renderPlanet(const Body& body,
                 glDisable(GL_TEXTURE_2D);
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                renderAtmosphere(*body.getAtmosphere(),
+                renderAtmosphere(*atmosphere,
                                  pos * conjugate(orientation).toMatrix3(),
                                  radius,
                                  ri.sunDir_eye * (~orientation).toMatrix3(),
                                  ri.ambientColor,
                                  fade);
                 glEnable(GL_TEXTURE_2D);
+                glPopMatrix();
+            }
+
+            Texture* cloudTex = NULL;
+            if ((renderFlags & ShowCloudMaps) != 0 &&
+                atmosphere->cloudTex != InvalidResource)
+                cloudTex = textureManager->find(atmosphere->cloudTex);
+
+            if (cloudTex != NULL)
+            {
+                glPushMatrix();
+                float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
+                glScalef(cloudScale, cloudScale, cloudScale);
+
+                // If we're beneath the cloud level, render the interior of
+                // the cloud sphere.
+                if (distance - radius < atmosphere->cloudHeight)
+                    glFrontFace(GL_CW);
+
+                glEnable(GL_LIGHTING);
+                glDepthMask(GL_FALSE);
+                cloudTex->bind();
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glColor4f(1, 1, 1, 1);
+                ri.mesh->render(ri.lod);
+                glDepthMask(GL_TRUE);
+                glFrontFace(GL_CCW);
                 glPopMatrix();
             }
         }
