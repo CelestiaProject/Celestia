@@ -95,7 +95,6 @@
 #define IDC_ORGANIZE_BOOKMARKS_RENAME   1060
 #define IDC_ORGANIZE_BOOKMARKS_DELETE   1061
 #define IDC_NEWBOOKMARK                 1062
-#define IDC_SHOWSTARSASPOINTS           1063
 #define IDC_LABELASTEROIDS              1064
 #define IDC_LABELSPACECRAFT             1065
 #define IDC_SHOWMARKERS                 1066
@@ -191,13 +190,17 @@
 #define ID_VIEW_SINGLE                  40070
 #define ID_VIEW_SHOW_FRAMES             40071
 #define ID_VIEW_SYNC_TIME               40072
+#define ID_RENDER_STARSTYLE             40079
+#define ID_RENDER_STARSTYLE_FUZZY       40080
+#define ID_RENDER_STARSTYLE_POINTS      40081
+#define ID_RENDER_STARSTYLE_DISCS       40082
 #define ID_BOOKMARKS_FIRSTBOOKMARK      41000
 
 // Next default values for new objects
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        134
-#define _APS_NEXT_COMMAND_VALUE         40065
+#define _APS_NEXT_COMMAND_VALUE         40083
 #define _APS_NEXT_CONTROL_VALUE         1152
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
