@@ -117,7 +117,6 @@
 	Mesh "gaspra.3ds"
 	Texture "gaspramosaic.*" # Phil Stooke
 	Color   [ 0.52 0.47 0.42 ]
-	BlendTexture true
 	Radius    9.1 # maximum semi-axis
 	MeshCenter [ 1.540 -0.064 -0.118 ]
 
@@ -304,9 +303,6 @@
 	Class "asteroid"
 	Mesh   "kleopatra.3ds"
 	Texture "asteroid.jpg"
-	# We'll just use the same color as Eros
-	Color   [ 0.52 0.47 0.42 ]
-	BlendTexture true
 	Radius  110 # maximum semi-axis
 	MeshCenter [ -3.049 2.379 1.429 ]
 
@@ -338,9 +334,6 @@
 	Class "asteroid"
 	Mesh   "ky26.3ds"
 	Texture "asteroid.jpg"
-	# We'll just use the same color as Eros
-	Color   [ 0.52 0.47 0.42 ]
-	BlendTexture true
 	Radius  0.015 # maximum semi-axis
 	MeshCenter [ -0.000718 -0.000099 0.000556 ]
 
@@ -401,9 +394,6 @@
 	Class "asteroid"
 	Mesh   "golevka.3ds"
 	Texture "asteroid.jpg"
-	# We'll just use the same color as Eros
-	Color   [ 0.52 0.47 0.42 ]
-	BlendTexture true
 	Radius  0.34 # maximum semi-axis
 	MeshCenter [ -0.0289 -0.0111 -0.0331 ]
 
