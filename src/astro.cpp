@@ -165,14 +165,14 @@ UniversalCoord astro::universalPosition(Point3d heliocentric,
 }
 
 
-// Convert equatorial coordinates to Cartesian celestia (or ecliptical)
+// Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
 Point3f astro::equatorialToCelestialCart(float ra, float dec, float distance)
 {
-    double theta = ra / 24.0 * PI * 2;
+    double theta = ra / 24.0 * PI * 2 + PI;
     double phi = (dec / 90.0 - 1.0) * PI / 2;
-    double x = -cos(theta) * sin(phi) * distance;
-    double y = -cos(phi) * distance;
+    double x = cos(theta) * sin(phi) * distance;
+    double y = cos(phi) * distance;
     double z = -sin(theta) * sin(phi) * distance;
 
     return (Point3f((float) x, (float) y, (float) z) * equatorialToCelestial);
