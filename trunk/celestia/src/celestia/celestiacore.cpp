@@ -1322,6 +1322,20 @@ void CelestiaCore::charEntered(char c)
 	}
         break;
 
+    case '+':
+        addToHistory();
+        if (observer->getDisplayedSurface() != "")
+        {
+            observer->setDisplayedSurface("");
+            flash("Using normal surface textures.");
+        }
+        else
+        {
+            observer->setDisplayedSurface("limit of knowledge");
+            flash("Using limit of knowledge surface textures.");
+        }
+        break;
+
     case '/':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowDiagrams);
         notifyWatchers(RenderFlagsChanged);
