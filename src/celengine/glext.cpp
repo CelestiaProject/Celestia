@@ -150,17 +150,45 @@ extern void (*glXGetProcAddressARB(const GLubyte *procName))();
 #endif /* !MACOSX */
 #ifdef MACOSX
 #include <mach-o/dyld.h>
+#include <stdio.h>
 typedef void (*FUNCS) (void);
+const struct mach_header *openGLImagePtr = NULL;
 FUNCS osxGetProcAddress(const GLubyte *procName) {
     char myProcName[128];
-    strcpy(myProcName,"_C");
+    NSSymbol mySymbol = NULL;
+    FUNCS myPtr = NULL;
+    if (openGLImagePtr == NULL) {
+        openGLImagePtr = NSAddImage("/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL",NSADDIMAGE_OPTION_RETURN_ON_ERROR);
+#if 0
+        unsigned long i;
+        unsigned long imageCount = _dyld_image_count();
+        for (i=0;i<imageCount;++i) {
+            printf("Image[%d] = %s\n",(int)i,_dyld_get_image_name(i));
+            if (!strcmp(_dyld_get_image_name(i),"/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL")) {
+                printf("Found OpenGL image.\n");
+                openGLImagePtr = _dyld_get_image_header(i);
+                break;
+            }
+        }
+#endif
+    }
+    if (openGLImagePtr == NULL) {
+        printf("Can't find OpenGL??\n");
+        return NULL;
+    }
+    strcpy(myProcName,"_");
+    
     /* sanity check */
     if (strlen((char *)procName)>125) return NULL;
     strcat(myProcName,(char *)procName);
-    if (NSIsSymbolNameDefined((char *)procName)) {
-        return (FUNCS)NSAddressOfSymbol(NSLookupAndBindSymbol((char *)procName));
-    }
-    return NULL;
+    //printf("%s\n",myProcName);
+    //if (NSIsSymbolNameDefinedInImage(openGLImagePtr,myProcName) != FALSE) {
+    mySymbol = NSLookupSymbolInImage(openGLImagePtr, myProcName, NSLOOKUPSYMBOLINIMAGE_OPTION_BIND_NOW | NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR);
+    if (mySymbol != NULL)
+        myPtr = (FUNCS)NSAddressOfSymbol(mySymbol);
+    //printf("  (symbol, address) -> (%08x -> %08x)\n",(unsigned int)mySymbol,(unsigned int)myPtr);
+    return myPtr;
+    //}
 }
 #define GET_GL_PROC_ADDRESS(name) osxGetProcAddress((GLubyte *)name)
 #endif /* MACOSX */
