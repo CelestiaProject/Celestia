@@ -1,2 +1,5 @@
-nmake /f celestia.mak CFG="celestia - Win32 Debug" %1
-copy debug\celestia.exe .
+cd src
+nmake /f winbuild.mak CFG=Debug %1
+cd ..
+copy src\celestia\Release\celestia.exe .
+
