@@ -653,7 +653,7 @@
 
 "Miranda" "Sol/Uranus"
 {
-	Texture "asteroid.jpg"
+	Texture "miranda.jpg"
 	Radius   235
 
 	EllipticalOrbit
