@@ -92,8 +92,8 @@ Renderer::Renderer() :
     ambientLightLevel(0.1f),
     fragmentShaderEnabled(false),
     vertexShaderEnabled(false),
+    saturationMag(1.0f),
     brightnessBias(0.0f),
-    brightnessScale(1.0f / 6.0f),
     starVertexBuffer(NULL),
     asterisms(NULL),
     nSimultaneousTextures(1),
@@ -603,6 +603,8 @@ void Renderer::render(const Observer& observer,
         starTex->bind();
     }
 
+    faintestMag = faintestVisible;
+
     Color skyColor(0.0f, 0.0f, 0.0f);
 
     // Scan through the render list to see if we're inside a planetary
@@ -638,22 +640,36 @@ void Renderer::render(const Observer& observer,
                                      atmosphere->skyColor.green() * lightness,
                                      atmosphere->skyColor.blue() * lightness);
 
-                    faintestVisible = faintestVisible - 10.0f * lightness;
-                    // brightnessScale = 1.0f / (magnitude + 1.0f)
+                    faintestMag = faintestVisible - 10.0f * lightness;
                 }
             }
         }
     }
 
+    // Now we need to determine how to scale the brightness of stars.  The
+    // brightness will be proportional to the apparent magnitude, i.e.
+    // a logarithmic function of the stars apparent brightness.  This mimics
+    // the response of the human eye.  We sort of fudge things here and
+    // maintain a minimum range of four magnitudes between faintest visible
+    // and saturation; this keeps stars from popping in or out as the sun
+    // sets or rises.
+    if (faintestMag - saturationMag >= 4.0f)
+        brightnessScale = 1.0f / (faintestMag -  saturationMag);
+    else
+        brightnessScale = 0.25f;
+
 #if 0
     // Adjust the ambient color based on the sky color.  This simulates an
     // effect you see when looking at the moon in daylight: the shadowed areas
     // of the moon are not black, but are instead the same color as the sky.
+    // TODO: This doesn't actually work; the color must be clamped to a min
+    // of skyColor on a per pixel basis . . .
     ambientColor = Color(max(ambientLightLevel, skyColor.red()),
                          max(ambientLightLevel, skyColor.green()),
                          max(ambientLightLevel, skyColor.blue()));
-#endif
+#else
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
+#endif
     // Create the ambient light source.  For realistic scenes in space, this
     // should be black.
     glAmbientLightColor(ambientColor);
@@ -1037,7 +1053,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
         }
         else
         {
-            a = clamp(1.0f - appMag * brightnessScale + brightnessBias);
+            a = clamp((faintestMag - appMag) * brightnessScale + brightnessBias);
         }
 
         // We scale up the particle by a factor of 1.5 so that it's more
@@ -1080,10 +1096,10 @@ void Renderer::renderBodyAsParticle(Point3f position,
         //
         // TODO: Currently, this is extremely broken.  Stars look fine,
         // but planets look ridiculous with bright haloes.
-        if (useHaloes && appMag < 1.0f)
+        if (useHaloes && appMag < saturationMag)
         {
-            a = 0.4f * clamp((appMag - 1) * -0.8f);
-            float s = renderZ * 0.001f * (3 - (appMag - 1)) * 2;
+            a = 0.4f * clamp((appMag - saturationMag) * -0.8f);
+            float s = renderZ * 0.001f * (3 - (appMag - saturationMag)) * 2;
             if (s > size * 3)
                 size = s;
             else
@@ -1330,7 +1346,8 @@ void renderAtmosphere(const Atmosphere& atmosphere,
                       Point3f center,
                       float radius,
                       const Vec3f& sunDirection,
-                      Color ambientColor)
+                      Color ambientColor,
+                      float fade)
 {
     if (atmosphere.height == 0.0f)
         return;
@@ -1407,7 +1424,7 @@ void renderAtmosphere(const Atmosphere& atmosphere,
         }
 
         glColor4f(botColor[0], botColor[1], botColor[2],
-                  0.85f * brightness + ambientColor.red());
+                  0.85f * fade * brightness + ambientColor.red());
         glVertex(base - toCenter * height * 0.05f);
         glColor4f(topColor[0], topColor[1], topColor[2], 0.0f);
         glVertex(base + toCenter * height);
@@ -1773,7 +1790,7 @@ void Renderer::renderPlanet(const Body& body,
             ri.lod = 0.0f;
         else if (discSizeInPixels < 400)
             ri.lod = 1.0f;
-        else if (discSizeInPixels < 800)
+        else if (discSizeInPixels < 1200)
             ri.lod = 2.0f;
         else
             ri.lod = 3.0f;
@@ -1790,15 +1807,22 @@ void Renderer::renderPlanet(const Body& body,
             // If the star is sufficiently cool, change the light color
             // from white.  Though our sun appears yellow, we still make
             // it and all hotter stars emit white light, as this is the
-            // 'natural' light to which our eyes are accustomed.  It may
-            // make sense to give a slight bluish tint to light from
-            // O and B type stars though.
+            // 'natural' light to which our eyes are accustomed.  We also
+            // assign a slight bluish tint to light from O and B type stars,
+            // though these will almost never have planets for their light
+            // to shine upon.
             PlanetarySystem* system = body.getSystem();
             if (system != NULL)
             {
                 const Star* sun = system->getStar();
                 switch (sun->getStellarClass().getSpectralClass())
                 {
+                case StellarClass::Spectral_O:
+                    ri.sunColor = Color(0.8f, 0.8f, 1.0f);
+                    break;
+                case StellarClass::Spectral_B:
+                    ri.sunColor = Color(0.9f, 0.9f, 1.0f);
+                    break;
                 case StellarClass::Spectral_K:
                     ri.sunColor = Color(1.0f, 0.9f, 0.8f);
                     break;
@@ -1836,19 +1860,30 @@ void Renderer::renderPlanet(const Body& body,
 
         if (body.getAtmosphere() != NULL)
         {
-            glPushMatrix();
-            glLoadIdentity();
-            glDisable(GL_LIGHTING);
-            glDisable(GL_TEXTURE_2D);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            renderAtmosphere(*body.getAtmosphere(),
-                             pos * conjugate(orientation).toMatrix3(),
-                             radius,
-                             ri.sunDir_eye * (~orientation).toMatrix3(),
-                             ri.ambientColor);
-            glEnable(GL_TEXTURE_2D);
-            glPopMatrix();
+            // Compute the apparent thickness in pixels of the atmosphere.
+            // If it's only one pixel thick, it can look quite unsightly
+            // due to aliasing.  To avoid popping, we gradually fade in the
+            // atmosphere as it grows from two to three pixels thick.
+            float fade = clamp(body.getAtmosphere()->height / radius *
+                               discSizeInPixels - 2);
+
+            if (fade > 0)
+            {
+                glPushMatrix();
+                glLoadIdentity();
+                glDisable(GL_LIGHTING);
+                glDisable(GL_TEXTURE_2D);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                renderAtmosphere(*body.getAtmosphere(),
+                                 pos * conjugate(orientation).toMatrix3(),
+                                 radius,
+                                 ri.sunDir_eye * (~orientation).toMatrix3(),
+                                 ri.ambientColor,
+                                 fade);
+                glEnable(GL_TEXTURE_2D);
+                glPopMatrix();
+            }
         }
 
         // If the planet has a ring system, render it.
@@ -2141,7 +2176,8 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         // Compute the size of the planet/moon disc in pixels
         float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
 
-        if (discSize > 1 || appMag < 1.0f / brightnessScale)
+        // if (discSize > 1 || appMag < 1.0f / brightnessScale)
+        if (discSize > 1 || appMag < faintestMag)
         {
             RenderListEntry rle;
             rle.body = body;
@@ -2207,6 +2243,8 @@ public:
     float faintestVisible;
     float size;
     float pixelSize;
+    float faintestMag;
+    float saturationMag;
     float brightnessScale;
     float brightnessBias;
 
@@ -2274,25 +2312,25 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
         if (discSizeInPixels <= 1)
         {
-            float alpha = clamp(1.0f - appMag * brightnessScale + brightnessBias);
+            float alpha = clamp((faintestMag - appMag) * brightnessScale + brightnessBias);
 
             nRendered++;
             starVertexBuffer->addStar(starPos,
                                       Color(starColor, alpha),
                                       renderDistance * size);
 
-            // If the star is brighter than magnitude 1, add a halo around it
-            // to make it appear more brilliant.  This is a hack to compensate
-            // for the limited dynamic range of monitors.
-            if (appMag < 1.0f)
+            // If the star is brighter than the saturation magnitude, add a
+            // halo around it to make it appear more brilliant.  This is a
+            // hack to compensate for the limited dynamic range of monitors.
+            if (appMag < saturationMag)
             {
                 Renderer::Particle p;
                 p.center = starPos;
                 p.size = renderDistance * size;
                 p.color = Color(starColor, alpha);
 
-                alpha = 0.4f * clamp((appMag - 1) * -0.8f);
-                s = renderDistance * 0.001f * (3 - (appMag - 1)) * 2;
+                alpha = 0.4f * clamp((appMag - saturationMag) * -0.8f);
+                s = renderDistance * 0.001f * (3 - (appMag - saturationMag)) * 2;
 
                 if (s > p.size * 3)
                     p.size = s;
@@ -2339,6 +2377,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.pixelSize = pixelSize;
     starRenderer.brightnessScale = brightnessScale;
     starRenderer.brightnessBias = brightnessBias;
+    starRenderer.faintestMag = faintestMag;
+    starRenderer.saturationMag = saturationMag;
 
     glareParticles.clear();
 
@@ -2620,14 +2660,14 @@ void Renderer::renderLabels()
 }
 
 
-float Renderer::getBrightnessScale() const
+float Renderer::getSaturationMagnitude() const
 {
-    return brightnessScale;
+    return saturationMag;
 }
 
-void Renderer::setBrightnessScale(float scale)
+void Renderer::setSaturationMagnitude(float mag)
 {
-    brightnessScale = scale;
+    saturationMag = mag;
 }
 
 float Renderer::getBrightnessBias() const
