@@ -231,6 +231,17 @@ void SelectionPopup::process(int id)
         }
         return;
     }
+    if (actionId == 20) {
+        sim->getActiveObserver()->setDisplayedSurface("");
+        return;
+    }
+    if (actionId > 20) {
+        std::vector<std::string>* altSurfaces = sel.body->getAlternateSurfaceNames();
+        if (altSurfaces != NULL && altSurfaces->size() > actionId - 21)
+        {
+            sim->getActiveObserver()->setDisplayedSurface((*altSurfaces)[actionId - 21]);
+        }
+    }
 }
 
 const char* SelectionPopup::getSelectionName(const Selection& sel) const
@@ -318,6 +329,24 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
 
     if (showSubObjects && sel.body != NULL)
     {
+        std::vector<std::string>* altSurfaces = sel.body->getAlternateSurfaceNames();
+        if (altSurfaces != NULL)
+        {
+            if (altSurfaces->size() != NULL)
+            {
+                KPopupMenu *surfaces = new KPopupMenu(this);
+                surfaces->insertItem(i18n("Normal (default surface)", "Normal"), baseId + 20);
+                int j=0;
+                for (std::vector<std::string>::const_iterator i = altSurfaces->begin();
+                     i < altSurfaces->end() && j < MENUMAXSIZE - 1; i++, j++)
+                {
+                    surfaces->insertItem(QString((*i).c_str()), baseId + 21 + j);
+                }
+                popup->insertItem(i18n("&Alternate Surfaces"), surfaces);
+            }
+            delete altSurfaces;
+        }
+
         const PlanetarySystem* satellites = sel.body->getSatellites();
         if (satellites != NULL && satellites->getSystemSize() != 0)
         {
