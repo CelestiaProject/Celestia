@@ -9,6 +9,7 @@
 
 #include <cctype>
 #include <cmath>
+#include <iomanip>
 #include "tokenizer.h"
 
 
@@ -59,6 +60,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
 
     double integerValue = 0;
     double fractionValue = 0;
+    double sign = 1;
     double fracExp = 1;
     double exponentValue = 0;
     double exponentSign = 1;
@@ -77,6 +79,12 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 state = NumberState;
                 integerValue = (int) nextChar - (int) '0';
+            }
+            else if (nextChar == '-')
+            {
+                state = NumberState;
+                sign = -1;
+                integerValue = 0;
             }
             else if (isalpha(nextChar))
             {
@@ -273,6 +281,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
         numberValue = integerValue + fractionValue / fracExp;
         if (exponentValue != 0)
             numberValue *= pow(10, exponentValue * exponentSign);
+        numberValue *= sign;
     }
 
     return tokenType;
