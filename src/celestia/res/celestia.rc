@@ -1,0 +1,444 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAIN_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Screen &Capture...\tF10",     ID_FILE_SCREENCAPTURE
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_FILE_EXIT
+    END
+    POPUP "&Navigation"
+    BEGIN
+        MENUITEM "Select &Sol\tH",              ID_NAVIGATION_HOME
+        MENUITEM "Tour G&uide...",              ID_NAVIGATION_TOURGUIDE
+        MENUITEM "Select &Object...",           ID_NAVIGATION_SELECT
+        MENUITEM "Goto Object...",              ID_NAVIGATION_GOTO_OBJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Center Selection\tC",        ID_NAVIGATION_CENTER
+        MENUITEM "&Go to Selection\tG",         ID_NAVIGATION_GOTO
+        MENUITEM "&Follow Selection\tF",        ID_NAVIGATION_FOLLOW
+        MENUITEM "S&ync Orbit Selection\tY",    ID_NAVIGATION_SYNCORBIT
+        MENUITEM "&Track Selection\tT",         ID_NAVIGATION_TRACK
+        MENUITEM SEPARATOR
+        MENUITEM "Solar System &Browser...",    ID_NAVIGATION_SSBROWSER
+        MENUITEM "Star B&rowser...",            ID_NAVIGATION_STARBROWSER
+    END
+    POPUP "&Time"
+    BEGIN
+        MENUITEM "10x &Faster\tL",              ID_TIME_FASTER
+        MENUITEM "10x &Slower\tK",              ID_TIME_SLOWER
+        MENUITEM "Free&ze\tSpace",              ID_TIME_FREEZE
+        MENUITEM "&Real Time\t\\",              ID_TIME_REALTIME
+        MENUITEM "Re&verse Time\tJ",            ID_TIME_REVERSE
+        MENUITEM "Set &Time...",                ID_TIME_SETTIME
+        MENUITEM SEPARATOR
+        MENUITEM "Show Local Time",             ID_TIME_SHOWLOCAL
+    END
+    POPUP "&Render"
+    BEGIN
+        MENUITEM "Show &Galaxies\tU",           ID_RENDER_SHOWGALAXIES
+        MENUITEM "Show A&tmospheres\tCtrl+A",   ID_RENDER_SHOWATMOSPHERES
+        MENUITEM "Show C&louds\tI",             ID_RENDER_SHOWCLOUDS
+        MENUITEM "Show &Orbits\tO",             ID_RENDER_SHOWORBITS
+        MENUITEM "Show &Constellations\t/",     ID_RENDER_SHOWCONSTELLATIONS
+        MENUITEM "Show Celestial &Grid\t;",     ID_RENDER_SHOWCELESTIALSPHERE
+
+        MENUITEM "Show Night Side &Lights",     ID_RENDER_SHOWNIGHTLIGHTS
+        MENUITEM SEPARATOR
+        MENUITEM "More Stars Visible\t]",       ID_RENDER_MORESTARS
+        MENUITEM "Fewer Stars Visible\t[",      ID_RENDER_FEWERSTARS
+        MENUITEM SEPARATOR
+        MENUITEM "Label Major &Planets\tN",     ID_RENDER_SHOWPLANETLABELS
+        MENUITEM "Label &Minor Planets\tM",     ID_RENDER_SHOWMINORPLANETLABELS
+
+        MENUITEM "Label &Stars\tB",             ID_RENDER_SHOWSTARLABELS
+        MENUITEM "Label Co&nstellations\t=",    ID_RENDER_SHOWCONSTLABELS
+        MENUITEM "Show &Info Text",             ID_RENDER_SHOWHUDTEXT
+        , CHECKED
+        MENUITEM SEPARATOR
+        POPUP "&Ambient Light"
+        BEGIN
+            MENUITEM "&None",                       ID_RENDER_AMBIENTLIGHT_NONE
+
+            MENUITEM "&Low",                        ID_RENDER_AMBIENTLIGHT_LOW
+            , CHECKED
+            MENUITEM "&Medium",                     ID_RENDER_AMBIENTLIGHT_MEDIUM
+
+        END
+        MENUITEM "Use Pixel Shaders\tCtrl+P",   ID_RENDER_PIXEL_SHADERS
+        MENUITEM "Use Vertex Shaders\tCtrl+V",  ID_RENDER_VERTEX_SHADERS
+    END
+    POPUP "&Locations"
+    BEGIN
+        MENUITEM "&Add Location...",            ID_LOCATIONS_ADDLOCATION
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Run &Demo",                   ID_HELP_RUNDEMO
+        MENUITEM SEPARATOR
+        MENUITEM "&Controls",                   ID_HELP_CONTROLS
+        MENUITEM "&OpenGL Info",                ID_HELP_GLINFO
+        MENUITEM "&License",                    ID_HELP_LICENSE
+        MENUITEM SEPARATOR
+        MENUITEM "&About Celestia",             ID_HELP_ABOUT
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOG DISCARDABLE  100, 50, 310, 97
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Celestia"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
+    CTEXT           "Celestia 1.1.4",IDC_STATIC,6,7,297,9
+    CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
+    CTEXT           "Visit http://www.shatters.net/celestia for more info.",
+                    IDC_STATIC,6,53,297,9
+    CTEXT           "Celestia is free software and comes with absolutely no warranty.",
+                    IDC_STATIC,6,36,297,9
+END
+
+IDD_FINDOBJECT DIALOG DISCARDABLE  100, 50, 186, 79
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Find Object"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_FINDOBJECT_EDIT,92,18,78,14,ES_AUTOHSCROLL
+    LTEXT           "Object Name",IDC_STATIC,21,20,62,8
+    DEFPUSHBUTTON   "OK",IDOK,38,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,95,44,50,14
+END
+
+IDD_LICENSE DIALOG DISCARDABLE  100, 50, 286, 249
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "License"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
+    EDITTEXT        IDC_LICENSE_TEXT,7,7,272,213,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+IDD_CONTROLSHELP DIALOG DISCARDABLE  100, 50, 286, 249
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Celestia Controls"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
+    EDITTEXT        IDC_TEXT_CONTROLSHELP,7,7,272,213,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+IDD_GLINFO DIALOG DISCARDABLE  100, 50, 286, 249
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "OpenGL Driver Info"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
+    EDITTEXT        IDC_GLINFO_TEXT,7,7,272,213,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+IDD_SETTIME DIALOG DISCARDABLE  200, 100, 135, 90
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Set Simulation Time"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "DateTimePicker3",IDC_DATEPICKER,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | WS_TABSTOP,7,7,121,15
+    CONTROL         "DateTimePicker2",IDC_TIMEPICKER,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | DTS_UPDOWN | DTS_APPCANPARSE | 
+                    WS_TABSTOP | 0x8,7,24,121,15
+    PUSHBUTTON      "Set To Current Time",IDC_SETCURRENTTIME,15,47,104,14
+    DEFPUSHBUTTON   "OK",IDOK,15,67,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,70,67,50,14
+END
+
+IDD_ADDLOCATION DIALOG DISCARDABLE  100, 50, 220, 45
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Location"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_LOCATION_EDIT,45,5,100,14,ES_AUTOHSCROLL
+    LTEXT           "Name",IDC_STATIC,10,8,30,8
+    DEFPUSHBUTTON   "OK",IDOK,160,5,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,160,23,50,14
+END
+
+IDD_SSBROWSER DIALOG DISCARDABLE  0, 0, 226, 194
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Solar System Browser"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,169,154,50,14
+    CONTROL         "Solar System",IDC_SSBROWSER_TREE,"SysTreeView32",
+                    TVS_HASBUTTONS | TVS_HASLINES | WS_BORDER | WS_TABSTOP,7,
+                    26,153,161
+    PUSHBUTTON      "&Center",IDC_BUTTON_CENTER,169,26,50,14
+    PUSHBUTTON      "&Go To",IDC_BUTTON_GOTO,169,44,50,14
+    LTEXT           "Solar System Objects",IDC_STATIC,7,13,74,8
+END
+
+IDD_STARBROWSER DIALOG DISCARDABLE  0, 0, 328, 177
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Star Browser"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,271,141,50,14
+    PUSHBUTTON      "&Center",IDC_BUTTON_CENTER,271,7,50,14
+    PUSHBUTTON      "&Go To",IDC_BUTTON_GOTO,271,26,50,14
+    PUSHBUTTON      "&Refresh",IDC_BUTTON_REFRESH,271,55,50,14
+    CONTROL         "List3",IDC_STARBROWSER_LIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,7,7,253,148
+    CONTROL         "Nearest",IDC_RADIO_NEAREST,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,7,160,41,10
+    CONTROL         "Brightest",IDC_RADIO_BRIGHTEST,"Button",
+                    BS_AUTORADIOBUTTON,84,160,43,10
+    CONTROL         "With planets",IDC_RADIO_WITHPLANETS,"Button",
+                    BS_AUTORADIOBUTTON,161,160,63,10
+END
+
+IDD_TOURGUIDE DIALOG DISCARDABLE  0, 0, 240, 145
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Tour Guide"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,183,124,50,14
+    PUSHBUTTON      "Go To",IDC_BUTTON_GOTO,183,23,50,14
+    COMBOBOX        IDC_COMBO_TOURGUIDE,7,24,131,90,CBS_DROPDOWN | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Select your destination:",IDC_STATIC,7,9,77,8
+    LTEXT           "",IDC_TEXT_DESCRIPTION,7,47,167,91
+END
+
+IDD_GOTO_OBJECT DIALOG DISCARDABLE  100, 100, 203, 92
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Go to Object"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_OBJECTNAME,45,11,147,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_LONGITUDE,45,29,56,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_LATITUDE,132,29,60,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_DISTANCE,45,47,56,12,ES_AUTOHSCROLL
+    CONTROL         "km",IDC_RADIO_KM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,
+                    110,50,25,10
+    CONTROL         "radii",IDC_RADIO_RADII,"Button",BS_AUTORADIOBUTTON,137,
+                    50,29,10
+    CONTROL         "au",IDC_RADIO_AU,"Button",BS_AUTORADIOBUTTON,169,50,24,
+                    10
+    DEFPUSHBUTTON   "Go To",IDC_BUTTON_GOTO,48,69,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,104,69,50,14
+    RTEXT           "Object",IDC_STATIC,0,13,37,9
+    RTEXT           "Long.",IDC_STATIC,0,31,37,9
+    RTEXT           "Lat.",IDC_STATIC,107,31,18,9
+    RTEXT           "Distance",IDC_STATIC,0,49,37,9
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 90
+    END
+
+    IDD_FINDOBJECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 72
+    END
+
+    IDD_LICENSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 279
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 242
+    END
+
+    IDD_SETTIME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 66
+    END
+
+    IDD_GOTO_OBJECT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 89
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_CELESTIA_ICON       ICON    DISCARDABLE     "icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATORS ACCELERATORS DISCARDABLE 
+BEGIN
+    "F",            ID_NAVIGATION_FOLLOW,   VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_NAVIGATION_GOTO,     VIRTKEY, CONTROL, NOINVERT
+    "H",            ID_NAVIGATION_HOME,     VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_NAVIGATION_SELECT,   VIRTKEY, CONTROL, NOINVERT
+    VK_F4,          ID_FILE_EXIT,           VIRTKEY, ALT, NOINVERT
+    VK_F10,         ID_FILE_SCREENCAPTURE,  VIRTKEY, NOINVERT
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", " \0"
+            VALUE "FileDescription", "celestia\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "celestia\0"
+            VALUE "LegalCopyright", "Copyright © 2001, Chris Laurel\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "celestia.exe\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "  celestia\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NAVIGATION_FOLLOW    "Ctrl+F"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_EXIT            "Alt+F4"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
