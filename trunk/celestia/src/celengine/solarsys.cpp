@@ -502,7 +502,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     
     double mass = 0.0;
     if (planetData->getNumber("Mass", mass))
-        body->setOblateness((float) mass);
+        body->setMass((float) mass);
 
     Quatf orientation;
     if (planetData->getRotation("Orientation", orientation))
