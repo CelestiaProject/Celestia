@@ -349,7 +349,7 @@ void CelestiaCore::charEntered(char c)
         {
             if (typedText != "")
             {
-                Selection sel = sim->findObject(typedText);
+                Selection sel = sim->findObjectFromPath(typedText);
                 if (!sel.empty())
                     sim->setSelection(sel);
                 typedText = "";
