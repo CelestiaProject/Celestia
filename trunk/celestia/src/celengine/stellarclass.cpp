@@ -7,6 +7,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cstring>
+#include <cstdio>
+#include <cassert>
 #include "celestia.h"
 #include "stellarclass.h"
 
@@ -43,53 +46,98 @@ Color StellarClass::getApparentColor() const
 }
 
 
-ostream& operator<<(ostream& s, const StellarClass& sc)
+// The << method of converting the stellar class to a string is
+// preferred, but it's not always practical, especially when you've
+// got a completely broken implemtation of stringstreams to
+// deal with (*cough* gcc *cough*).
+//
+// Return the buffer if successful or NULL if not (the buffer wasn't
+// large enough.)
+char* StellarClass::str(char* buf, unsigned int buflen) const
 {
-    StellarClass::StarType st = sc.getStarType();
+    StellarClass::StarType st = getStarType();
+    char s0[3];
+    char s1[2];
+    char* s2 = "";
+    s0[0] = '\0';
+    s1[0] = '\0';
 
     if (st == StellarClass::WhiteDwarf)
     {
-	s << "WD";
+        strcpy(s0, "WD");
     }
     else if (st == StellarClass::NeutronStar)
     {
-	s << 'Q';
+        strcpy(s0, "Q");
     }
     else if (st == StellarClass::NormalStar)
     {
-	s << "OBAFGKMRSNWW?"[(unsigned int) sc.getSpectralClass()];
-	s << "0123456789"[sc.getSpectralSubclass()];
-        s << ' ';
-	switch (sc.getLuminosityClass())
+	s0[0] = "OBAFGKMRSNWW?"[(unsigned int) getSpectralClass()];
+        s0[1] = '\0';
+	s1[0] = "0123456789"[getSpectralSubclass()];
+        s1[1] = '\0';
+	switch (getLuminosityClass())
         {
 	case StellarClass::Lum_Ia0:
-	    s << "I-a0";
+	    s2 = " I-a0";
 	    break;
 	case StellarClass::Lum_Ia:
-	    s << "I-a";
+	    s2 = " I-a";
 	    break;
 	case StellarClass::Lum_Ib:
-	    s << "I-b";
+	    s2 = " I-b";
 	    break;
 	case StellarClass::Lum_II:
-	    s << "II";
+	    s2 = " II";
 	    break;
 	case StellarClass::Lum_III:
-	    s << "III";
+	    s2 = " III";
 	    break;
 	case StellarClass::Lum_IV:
-	    s << "IV";
+	    s2 = " IV";
 	    break;
 	case StellarClass::Lum_V:
-	    s << "V";
+	    s2 = " V";
 	    break;
 	case StellarClass::Lum_VI:
-	    s << "VI";
+	    s2 = " VI";
 	    break;
 	}
     }
+    else
+    {
+        strcpy(s0, "?");
+    }
 
-    return s;
+    if (strlen(s0) + strlen(s1) + strlen(s2) >= buflen)
+    {
+        return NULL;
+    }
+    else
+    {
+        sprintf(buf, "%s%s%s", s0, s1, s2);
+        return buf;
+    }
+}
+
+
+string StellarClass::str() const
+{
+    char buf[20];
+    str(buf, sizeof buf);
+    return string(buf);
+}
+
+
+ostream& operator<<(ostream& os, const StellarClass& sc)
+{
+    char buf[20];
+    char *scString = sc.str(buf, sizeof buf);
+    assert(scString != NULL);
+
+    os << scString;
+
+    return os;
 }
 
 
