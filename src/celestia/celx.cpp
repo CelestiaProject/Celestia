@@ -324,6 +324,27 @@ static int parseRenderFlag(const string& name)
 }
 
 
+static int parseLabelFlag(const string& name)
+{
+    if (compareIgnoringCase(name, "planets") == 0)
+        return Renderer::PlanetLabels;
+    else if (compareIgnoringCase(name, "moons") == 0)
+        return Renderer::MoonLabels;
+    else if (compareIgnoringCase(name, "spacecraft") == 0)
+        return Renderer::SpacecraftLabels;
+    else if (compareIgnoringCase(name, "asteroids") == 0)
+        return Renderer::AsteroidLabels;
+    else if (compareIgnoringCase(name, "constellations") == 0)
+        return Renderer::ConstellationLabels;
+    else if (compareIgnoringCase(name, "stars") == 0)
+        return Renderer::StarLabels;
+    else if (compareIgnoringCase(name, "galaxies") == 0)
+        return Renderer::GalaxyLabels;
+    else
+        return 0;
+}
+
+
 // object - star, planet, or deep-sky object
 static int object_new(lua_State* l, const Selection& sel)
 {
@@ -767,7 +788,7 @@ static int celestia_show(lua_State* l)
     int argc = lua_gettop(l);
     if (argc < 1)
     {
-        lua_pushstring(l, "One argument expected to function celestia:show");
+        lua_pushstring(l, "Bad method call: celestia:show");
         lua_error(l);
     }
 
@@ -796,7 +817,7 @@ static int celestia_hide(lua_State* l)
     int argc = lua_gettop(l);
     if (argc < 1)
     {
-        lua_pushstring(l, "One argument expected to function celestia:hide");
+        lua_pushstring(l, "Bad method call: celestia:hide");
         lua_error(l);
     }
 
@@ -814,6 +835,64 @@ static int celestia_hide(lua_State* l)
     {
         Renderer* r = appCore->getRenderer();
         r->setRenderFlags(r->getRenderFlags() & ~flags);
+    }
+
+    return 0;
+}
+
+
+static int celestia_showlabel(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc < 1)
+    {
+        lua_pushstring(l, "Bad method call: celestia:showlabel");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+
+    int flags = 0;
+    for (int i = 2; i <= argc; i++)
+    {
+        const char* s = lua_tostring(l, i);
+        if (s != NULL)
+            flags |= parseLabelFlag(s);
+    }
+
+    if (appCore != NULL)
+    {
+        Renderer* r = appCore->getRenderer();
+        r->setLabelMode(r->getLabelMode() | flags);
+    }
+
+    return 0;
+}
+
+
+static int celestia_hidelabel(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc < 1)
+    {
+        lua_pushstring(l, "Bad method call: celestia:hidelabel");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+
+    int flags = 0;
+    for (int i = 2; i <= argc; i++)
+    {
+        const char* s = lua_tostring(l, i);
+        if (s != NULL)
+            flags |= parseLabelFlag(s);
+    }
+
+    if (appCore != NULL)
+    {
+        Renderer* r = appCore->getRenderer();
+        r->setLabelMode(r->getLabelMode() & ~flags);
     }
 
     return 0;
@@ -1201,6 +1280,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "flash", celestia_flash);
     RegisterMethod(l, "show", celestia_show);
     RegisterMethod(l, "hide", celestia_hide);
+    RegisterMethod(l, "showlabel", celestia_showlabel);
+    RegisterMethod(l, "hidelabel", celestia_hidelabel);
     RegisterMethod(l, "getobserver", celestia_getobserver);
     RegisterMethod(l, "find", celestia_find);
     RegisterMethod(l, "select", celestia_select);
