@@ -374,6 +374,8 @@ BEGIN
                     WS_TABSTOP,175,44,32,10
     CONTROL         "Stars as Points",IDC_SHOWSTARSASPOINTS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,175,57,63,10
+    CONTROL         "Markers",IDC_SHOWMARKERS,"Button",
+		    BS_AUTOCHECKBOX | WS_TABSTOP,175,70,63,10
     CONTROL         "Asteroids",IDC_LABELASTEROIDS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,15,103,45,10
     CONTROL         "Constellations",IDC_LABELCONSTELLATIONS,"Button",
