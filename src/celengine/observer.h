@@ -82,6 +82,12 @@ public:
                        double endInter,
                        Vec3f up,
                        astro::CoordinateSystem upFrame);
+    void gotoSelectionGC(const Selection&,
+                         double gotoTime,
+                         double startInter,
+                         double endInter,
+                         Vec3f up,
+                         astro::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
                        double gotoTime,
                        double distance,
@@ -98,6 +104,11 @@ public:
                              double& distance,
                              double& longitude,
                              double& latitude);
+    void gotoSelectionGC(const Selection& selection,
+                         double gotoTime,
+                         double distance,
+                         Vec3f up,
+                         astro::CoordinateSystem upFrame);
     void gotoSurface(const Selection&, double duration);
     void centerSelection(const Selection&, double centerTime = 0.5);
     void follow(const Selection&);
@@ -124,6 +135,11 @@ public:
     ObserverMode getMode() const;
     void setMode(ObserverMode);
 
+    enum TrajectoryType {
+        Linear      = 0,
+        GreatCircle = 1,
+    };
+
     struct JourneyParams
     {
         double duration;
@@ -136,6 +152,10 @@ public:
         double endInterpolation;   // end of orientation interpolation phase [0-1]
         double expFactor;
         double accelTime;
+
+        Selection centerObject;
+        
+        TrajectoryType traj;
     };
 
     // void setSimulation(Simulation* _sim) { sim = _sim; };
@@ -146,9 +166,20 @@ public:
                                double gotoTime,
                                double startInter,
                                double endInter,
-                               Vec3d offset, astro::CoordinateSystem offsetFrame,
+                               Vec3d offset,
+                               astro::CoordinateSystem offsetFrame,
                                Vec3f up,
                                astro::CoordinateSystem upFrame);
+    void computeGotoParametersGC(const Selection& sel,
+                                 JourneyParams& jparams,
+                                 double gotoTime,
+                                 double startInter,
+                                 double endInter,
+                                 Vec3d offset,
+                                 astro::CoordinateSystem offsetFrame,
+                                 Vec3f up,
+                                 astro::CoordinateSystem upFrame,
+                                 const Selection& centerObj);
     void computeCenterParameters(const Selection& sel,
                                  JourneyParams& jparams,
                                  double centerTime);
