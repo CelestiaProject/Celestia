@@ -951,19 +951,40 @@ void Renderer::render(const Observer& observer,
     // atmosphere.  If so, we need to adjust the sky color as well as the
     // limiting magnitude of stars (so stars aren't visible in the daytime
     // on planets with thick atmospheres.)
+    if ((renderFlags & ShowAtmospheres) != 0)
     {
         for (vector<RenderListEntry>::iterator iter = renderList.begin();
              iter != renderList.end(); iter++)
         {
             if (iter->body != NULL && iter->body->getAtmosphere() != NULL)
             {
+                // Compute the density of the atmosphere, and from that
+                // the amount light scattering.  It's complicated by the
+                // possibility that the planet is oblate and a simple distance
+                // to sphere calculation will not suffice.
                 const Atmosphere* atmosphere = iter->body->getAtmosphere();
                 float radius = iter->body->getRadius();
-                if (iter->distance < radius + atmosphere->height &&
+                float oblateness = iter->body->getOblateness();
+                Vec3f recipSemiAxes(1.0f, 1.0f / (1.0f - oblateness), 1.0f);
+                Mat3f A = Mat3f::scaling(recipSemiAxes);
+                Vec3f eyeVec = iter->position - Point3f(0.0f, 0.0f, 0.0f);
+                eyeVec *= (1.0f / radius);
+
+                // Compute the orientation of the planet before axial rotation
+                Quatd qd = iter->body->getEclipticalToEquatorial(now);
+                Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
+                eyeVec = eyeVec * conjugate(q).toMatrix3();
+
+                // ellipDist is not the true distance from the surface unless
+                // the planet is spherical.  The quantity that we do compute
+                // is the distance to the surface along a line from the eye
+                // position to the center of the ellipsoid.
+                float ellipDist = (float) sqrt((eyeVec * A) * (eyeVec * A)) - 1.0f;
+                if (ellipDist < atmosphere->height / radius &&
                     atmosphere->height > 0.0f)
                 {
-                    float density = 1.0f - (iter->distance - radius) /
-                        atmosphere->height;
+                    float density = 1.0f - ellipDist /
+                        (atmosphere->height / radius);
                     if (density > 1.0f)
                         density = 1.0f;
 
@@ -974,13 +995,8 @@ void Renderer::render(const Observer& observer,
                     float illumination = Math<float>::clamp((sunDir * normal) + 0.2f);
 
                     float lightness = illumination * density;
-#if 0
-                    skyColor = Color(atmosphere->skyColor.red() * lightness,
-                                     atmosphere->skyColor.green() * lightness,
-                                     atmosphere->skyColor.blue() * lightness);
-#endif
-                    faintestMag = faintestMag  - 10.0f * lightness;
-                    saturationMag = saturationMag - 10.0f * lightness;
+                    faintestMag = faintestMag  - 15.0f * lightness;
+                    saturationMag = saturationMag - 15.0f * lightness;
                 }
             }
         }
@@ -1289,7 +1305,7 @@ void Renderer::render(const Observer& observer,
                     radius = renderList[i].star->getRadius();
 
                 nearPlaneDistance = renderList[i].nearZ * -0.9f;
-                farPlaneDistance = renderList[i].farZ * -1.1f;
+                farPlaneDistance = renderList[i].farZ * -1.5f;
                 if (nearPlaneDistance < MinNearPlaneDistance)
                     nearPlaneDistance = MinNearPlaneDistance;
                 if (farPlaneDistance / nearPlaneDistance > MaxFarNearRatio)
