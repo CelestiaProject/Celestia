@@ -1,0 +1,1009 @@
+# translation of pt.po to Português
+# translation of pt.po to
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Andre Lourenco <andrelourenco@yahoo.com>, 2004.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pt\n"
+"POT-Creation-Date: 2003-12-28 18:28+0100\n"
+"PO-Revision-Date: 2004-09-09 17:45+0100\n"
+"Last-Translator: Andre Lourenco <andrelourenco@yahoo.com>\n"
+"Language-Team: Português <andrelouremco@yahoo.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.2\n"
+
+#: rc.cpp:1
+msgid "&Navigation"
+msgstr "&Navegação"
+
+#: rc.cpp:3
+msgid "Objects"
+msgstr "Objectos"
+
+#: rc.cpp:4 kdepreferencesdialog.cpp:149
+msgid "Labels"
+msgstr "Nomes"
+
+#: rc.cpp:5
+msgid "OpenGL Render Path"
+msgstr "Tipo de Render OpenGL"
+
+#: rc.cpp:6
+msgid "Time"
+msgstr "Tempo"
+
+#: rc.cpp:7
+msgid "MultiView"
+msgstr "Multi-Vista"
+
+#: rc.cpp:9 kdepreferencesdialog.cpp:388
+msgid "Now"
+msgstr "Agora"
+
+#: celestialbrowser.cpp:27 kdeapp.cpp:395 rc.cpp:1
+msgid "Celestial Browser"
+msgstr "Browser Celeste"
+
+#: celestialbrowser.cpp:191 rc.cpp:16
+msgid "Planet"
+msgstr "Planeta"
+
+#: celestialbrowser.cpp:194 rc.cpp:17
+msgid "Moon"
+msgstr "Lua"
+
+#: celestialbrowser.cpp:197
+msgid "Asteroid"
+msgstr "Asteróide"
+
+#: celestialbrowser.cpp:200
+msgid "Comet"
+msgstr "Cometa"
+
+#: celestialbrowser.cpp:203
+msgid "Spacecraft"
+msgstr "Sonda"
+
+#: celestialbrowser.cpp:207
+msgid "-"
+msgstr "-"
+
+#: eclipsefinderdlg.cpp:20 kdeapp.cpp:396 rc.cpp:15
+msgid "Eclipse Finder"
+msgstr "Buscador de Eclipses"
+
+#: eclipsefinderdlg.cpp:117 selectionpopup.cpp:310
+msgid "&Goto"
+msgstr "&Ir para"
+
+#: kcelbookmarkmenu.cpp:171
+msgid "Add a bookmark for the current document"
+msgstr "Adicionar um marcador para o documento actual"
+
+#: kcelbookmarkmenu.cpp:181
+msgid "Add &Relative Bookmark"
+msgstr "Adicionar Marcador &Relativo"
+
+#: kcelbookmarkmenu.cpp:188
+msgid "Add a relative bookmark for the current document"
+msgstr "Adicionar um marcador relativo para o documento actual"
+
+#: kcelbookmarkmenu.cpp:196
+msgid "Add &Settings Bookmark"
+msgstr "Adicionar Marcador de &Opções"
+
+#: kcelbookmarkmenu.cpp:203
+msgid "Add a settings bookmark for the current document"
+msgstr "Adicionar um marcador de opções para o documento actual"
+
+#: kcelbookmarkmenu.cpp:214
+msgid "Edit your bookmark collection in a separate window"
+msgstr "Editar os favoritos noutra janela"
+
+#: kcelbookmarkmenu.cpp:220
+msgid "&New Folder..."
+msgstr "&Nova Pasta..."
+
+#: kcelbookmarkmenu.cpp:227
+msgid "Create a new bookmark folder in this menu"
+msgstr "Criar nova pasta de favoritos neste menu"
+
+#: kcelbookmarkmenu.cpp:307 kcelbookmarkmenu.cpp:354 kcelbookmarkmenu.cpp:401
+msgid "Can't add bookmark with empty URL"
+msgstr "Não pode adicionar um URL vazio aos favoritos"
+
+#: kdeapp.cpp:310
+msgid "Go to &URL..."
+msgstr "Ir para &URL"
+
+#: kdeapp.cpp:311
+msgid "Go to &Long/Lat..."
+msgstr "Ir para &Long/Lat..."
+
+#: kdeapp.cpp:313
+msgid "&Back"
+msgstr "&Recuar"
+
+#: kdeapp.cpp:316
+msgid "&Forward"
+msgstr "&Avançar"
+
+#: kdeapp.cpp:323
+msgid "Home"
+msgstr "Inicio"
+
+#: kdeapp.cpp:330
+msgid "Bookmarks"
+msgstr "Favoritos"
+
+#: kdeapp.cpp:339
+msgid "Full Screen"
+msgstr "Écran Completo"
+
+#: kdeapp.cpp:340
+msgid "Copy URL"
+msgstr "Copiar URL"
+
+#: kdeapp.cpp:343
+msgid "Set Time..."
+msgstr "Acertar Hora"
+
+#: kdeapp.cpp:344
+msgid "Set Time to Now"
+msgstr "Hora Actual"
+
+#: kdeapp.cpp:345
+msgid "Accelerate Time"
+msgstr "Acelerar Tempo"
+
+#: kdeapp.cpp:346
+msgid "Decelerate Time"
+msgstr "Abrandar Tempo"
+
+#: kdeapp.cpp:347
+msgid "Pause Time"
+msgstr "Parar Tempo"
+
+#: kdeapp.cpp:348
+msgid "Reverse Time"
+msgstr "Inverter Tempo"
+
+#: kdeapp.cpp:350
+msgid "Split View Vertically"
+msgstr "Dividir Vista Verticalmente"
+
+#: kdeapp.cpp:351
+msgid "Split View Horizontally"
+msgstr "Dividir Vista Horizontalmente"
+
+#: kdeapp.cpp:352
+msgid "Cycle View"
+msgstr "Alternar Vista"
+
+#: kdeapp.cpp:353
+msgid "Single View"
+msgstr "Vista Única"
+
+#: kdeapp.cpp:354
+msgid "Delete View"
+msgstr "Apagar Vista"
+
+#: kdeapp.cpp:355
+msgid "Frames Visible"
+msgstr "Caixa Visível"
+
+#: kdeapp.cpp:368
+msgid "Active Frame Visible"
+msgstr "Caixa Activa Visível"
+
+#: kdeapp.cpp:380
+msgid "Synchronize Time"
+msgstr "Sincronizar Tempo"
+
+#: kdeapp.cpp:392
+msgid "Alt-Azimuth Mode"
+msgstr "Modo Alt-Azimute"
+
+#: kdeapp.cpp:393
+msgid "Go To Surface"
+msgstr "Ir Para Superficie"
+
+#: kdeapp.cpp:421
+msgid "Show Stars"
+msgstr "Mostrar Etrelas"
+
+#: kdeapp.cpp:424
+msgid "Show Planets"
+msgstr "Mostrar Planetas"
+
+#: kdeapp.cpp:427
+msgid "Show Galaxies"
+msgstr "Mostrar Galáxias"
+
+#: kdeapp.cpp:430
+msgid "Show Constellations"
+msgstr "Mostrar Constelações"
+
+#: kdeapp.cpp:433
+msgid "Show CloudMaps"
+msgstr "Mostrar Nuvens"
+
+#: kdeapp.cpp:436
+msgid "Show Orbits"
+msgstr "Mostrar Órbitas"
+
+#: kdeapp.cpp:439
+msgid "Show Asteroid Orbits"
+msgstr "Mostrar Órbitas de Asteróides"
+
+#: kdeapp.cpp:442
+msgid "Show Comet Orbits"
+msgstr "Mostrar Órbitas de Cometas"
+
+#: kdeapp.cpp:445
+msgid "Show Moon Orbits"
+msgstr "Mostrar Órbitas de Luas"
+
+#: kdeapp.cpp:448
+msgid "Show Planet Orbits"
+msgstr "Mostrar Órbitas de Planetas"
+
+#: kdeapp.cpp:451
+msgid "Show Spacecraft Orbits"
+msgstr "Mostrar Órbitas de Sondas"
+
+#: kdeapp.cpp:454
+msgid "Show Celestial Grid"
+msgstr "Mostrar Grelha Celeste"
+
+#: kdeapp.cpp:457
+msgid "Show Night Side Lights"
+msgstr "Mostrar Luzes Nocturnas"
+
+#: kdeapp.cpp:460
+msgid "Show Markers"
+msgstr "Mostrar Marcador"
+
+#: kdeapp.cpp:463
+msgid "Show Atmospheres"
+msgstr "Mostrar Atmosferas"
+
+#: kdeapp.cpp:466
+msgid "Show Smooth Orbit Lines"
+msgstr "Mostrar Órbitas Suaves"
+
+#: kdeapp.cpp:469
+msgid "Show Eclipse Shadows"
+msgstr "Mostrar Sombras de Eclipses"
+
+#: kdeapp.cpp:472
+msgid "Cycle Star Mode"
+msgstr "Alternar Modo de Estrelas"
+
+#: kdeapp.cpp:474
+msgid "Show Ring Shadows"
+msgstr "Mostrar Sombras Anelares"
+
+#: kdeapp.cpp:477
+msgid "Show Boundaries"
+msgstr "Mostrar Limites"
+
+#: kdeapp.cpp:480 kdepreferencesdialog.cpp:128
+msgid "Auto Magnitudes"
+msgstr "Magnitudes Automáticas"
+
+#: kdeapp.cpp:483
+msgid "Show Comet Tails"
+msgstr "Mostrar Cauda de Cometas"
+
+#: kdeapp.cpp:486
+msgid "Show Star Labels"
+msgstr "Mostrar Nome de Estrelas"
+
+#: kdeapp.cpp:491
+msgid "Show Planet Labels"
+msgstr "Mostrar Nome de Planetas"
+
+#: kdeapp.cpp:494
+msgid "Show Moon Labels"
+msgstr "Mostrar Nome de Luas"
+
+#: kdeapp.cpp:497
+msgid "Show Comet Labels"
+msgstr "Mostrar Nome de Cometas"
+
+#: kdeapp.cpp:500
+msgid "Show Constellation Labels"
+msgstr "Mostrar Nome de Constelações"
+
+#: kdeapp.cpp:503
+msgid "Show Galaxy Labels"
+msgstr "Mostrar Nome de Galáxias"
+
+#: kdeapp.cpp:506
+msgid "Show Asteroid Labels"
+msgstr "Mostrar Nome de Asteróides"
+
+#: kdeapp.cpp:509
+msgid "Show Spacecraft Labels"
+msgstr "Mostrar Nome de Sondas"
+
+#: kdeapp.cpp:512
+msgid "Show Location Labels"
+msgstr "Mostrar Nome de Locais"
+
+#: kdeapp.cpp:515
+msgid "Display Local Time"
+msgstr "Mostrar Tempo Local"
+
+#: kdeapp.cpp:520
+msgid "Show City Locations"
+msgstr "Mostrar Locais de Cidades"
+
+#: kdeapp.cpp:523
+msgid "Show Observatory Locations"
+msgstr "Mostrar Locais de Observatórios"
+
+#: kdeapp.cpp:526
+msgid "Show Landing Sites Locations"
+msgstr "Mostrar Locais de Aterragem"
+
+#: kdeapp.cpp:529
+msgid "Show Crater Locations"
+msgstr "Mostrar Locais de Crateras"
+
+#: kdeapp.cpp:532
+msgid "Show Mons Locations"
+msgstr "Mostrar Locais de Mons"
+
+#: kdeapp.cpp:535
+msgid "Show Terra Locations"
+msgstr "Mostrar Locais de Terra"
+
+#: kdeapp.cpp:538
+msgid "Show Vallis Locations"
+msgstr "Mostrar Locais de Vallis"
+
+#: kdeapp.cpp:541
+msgid "Show Mare Locations"
+msgstr "Mostrar Locais de Mare"
+
+#: kdeapp.cpp:544
+msgid "Show Other Locations"
+msgstr "Mostrar Outros Locais"
+
+#: kdeapp.cpp:548
+msgid "Wireframe Mode"
+msgstr "Modo Wireframe"
+
+#: kdeapp.cpp:550
+msgid "Center on Orbit"
+msgstr "Centrar na Órbita"
+
+#: kdeapp.cpp:554 kdepreferencesdialog.cpp:431
+msgid "Basic"
+msgstr "Basic"
+
+#: kdeapp.cpp:556 kdepreferencesdialog.cpp:433
+msgid "Multitexture"
+msgstr "Multitexture"
+
+#: kdeapp.cpp:558 kdepreferencesdialog.cpp:435
+msgid "NvCombiners"
+msgstr "NvCombiners"
+
+#: kdeapp.cpp:560 kdepreferencesdialog.cpp:437
+msgid "DOT3 ARBVP"
+msgstr "DOT3 ARBVP"
+
+#: kdeapp.cpp:562 kdepreferencesdialog.cpp:439
+msgid "NvCombiner NvVP"
+msgstr "NvCombiner NvVP"
+
+#: kdeapp.cpp:564 kdepreferencesdialog.cpp:441
+msgid "NvCombiner ARBVP"
+msgstr "NvCombiner ARBVP"
+
+#: kdeapp.cpp:566 kdepreferencesdialog.cpp:443
+msgid "ARBFP ARBVP"
+msgstr "ARBFP ARBVP"
+
+#: kdeapp.cpp:568 kdepreferencesdialog.cpp:445
+msgid "NV30"
+msgstr "NV30"
+
+#: kdeapp.cpp:570
+msgid "Cycle OpenGL Render Path"
+msgstr "Alterar Render OpenGL"
+
+#: kdeapp.cpp:572
+msgid "Grab Image"
+msgstr "Obter Imagem"
+
+#: kdeapp.cpp:574
+msgid "OpenGL info"
+msgstr "Informação OpenGL"
+
+#: kdeapp.cpp:580
+msgid "Show Bookmark Toolbar"
+msgstr "Mostrar Barra dos Favoritos"
+
+#: kdeapp.cpp:825
+msgid "OpenGL Info"
+msgstr "Informação OpenGL"
+
+#: kdeapp.cpp:1130 kdepreferencesdialog.cpp:328 kdepreferencesdialog.cpp:339
+msgid "UTC"
+msgstr "UTC"
+
+#: kdeapp.cpp:1215
+msgid "Enter URL"
+msgstr "Introduza URL"
+
+#: kdeapp.cpp:1307
+msgid "Object: "
+msgstr "Objecto: "
+
+#: kdeapp.cpp:1312
+msgid "Longitude: "
+msgstr "Longitude: "
+
+#: kdeapp.cpp:1318
+msgid "East"
+msgstr "Este: "
+
+#: kdeapp.cpp:1319
+msgid "West"
+msgstr "Oeste: "
+
+#: kdeapp.cpp:1321
+msgid "Latitude: "
+msgstr "Latitude: "
+
+#: kdeapp.cpp:1327
+msgid "North"
+msgstr "Norte: "
+
+#: kdeapp.cpp:1328
+msgid "South"
+msgstr "Sul: "
+
+#: kdeapp.cpp:1330
+msgid "Altitude: "
+msgstr "Altitude: "
+
+#: kdeapp.cpp:1335
+msgid "km"
+msgstr "km"
+
+#: kdeapp.cpp:1405
+msgid "Celestia encountered an error while processing your script"
+msgstr "Foi encontrado um erro ao processar o script"
+
+#: kdemain.cpp:25 kdemain.cpp:37
+msgid "Celestia"
+msgstr "Celestia"
+
+#: kdemain.cpp:30
+msgid "Start and go to url"
+msgstr "Iniciar e ir para url"
+
+#: kdepreferencesdialog.cpp:56
+msgid "Celestia Preferences"
+msgstr "Opções do Celestia"
+
+#: kdepreferencesdialog.cpp:62
+msgid "Rendering"
+msgstr "Tipo de Render"
+
+#: kdepreferencesdialog.cpp:70
+msgid "Show"
+msgstr "Mostrar"
+
+#: kdepreferencesdialog.cpp:72 kdepreferencesdialog.cpp:152
+msgid "Stars"
+msgstr "Estrelas"
+
+#: kdepreferencesdialog.cpp:76 kdepreferencesdialog.cpp:162
+#: selectionpopup.cpp:385
+msgid "Planets"
+msgstr "Planetas"
+
+#: kdepreferencesdialog.cpp:80 kdepreferencesdialog.cpp:190
+msgid "Galaxies"
+msgstr "Galáxias"
+
+#: kdepreferencesdialog.cpp:84 kdepreferencesdialog.cpp:185
+msgid "Constellations"
+msgstr "Constelações"
+
+#: kdepreferencesdialog.cpp:88
+msgid "Clouds"
+msgstr "Núvens"
+
+#: kdepreferencesdialog.cpp:92 kdepreferencesdialog.cpp:147
+msgid "Orbits"
+msgstr "Órbitas"
+
+#: kdepreferencesdialog.cpp:96
+msgid "Celestial Grid"
+msgstr "Grelha Celeste"
+
+#: kdepreferencesdialog.cpp:100
+msgid "Night Side Lights"
+msgstr "Luzes Nocturnas"
+
+#: kdepreferencesdialog.cpp:104
+msgid "Markers"
+msgstr "Marcadores"
+
+#: kdepreferencesdialog.cpp:108
+msgid "Atmospheres"
+msgstr "Atmosferas"
+
+#: kdepreferencesdialog.cpp:112
+msgid "Smooth Orbit Lines"
+msgstr "Órbitas Suaves"
+
+#: kdepreferencesdialog.cpp:116
+msgid "Eclipse Shadows"
+msgstr "Sombra de Eclipses"
+
+#: kdepreferencesdialog.cpp:120
+msgid "Ring Shadows"
+msgstr "Sombras Anelares"
+
+#: kdepreferencesdialog.cpp:124
+msgid "Constellation Boundaries"
+msgstr "Limites das Constelações"
+
+#: kdepreferencesdialog.cpp:132
+msgid "Comet Tails"
+msgstr "Cauda de Cometas"
+
+#: kdepreferencesdialog.cpp:143
+msgid "Orbits / Labels"
+msgstr "Órbitas / Nomes"
+
+#: kdepreferencesdialog.cpp:171
+msgid "Moons"
+msgstr "Luas"
+
+#: kdepreferencesdialog.cpp:180
+msgid "Comets"
+msgstr "Cometas"
+
+#: kdepreferencesdialog.cpp:199
+msgid "Asteroids"
+msgstr "Asteróides"
+
+#: kdepreferencesdialog.cpp:208
+msgid "Spacecrafts"
+msgstr "Sondas"
+
+#: kdepreferencesdialog.cpp:213 kdepreferencesdialog.cpp:265
+msgid "Locations"
+msgstr "Locais"
+
+#: kdepreferencesdialog.cpp:222
+msgid "Ambient Light"
+msgstr "Luz Ambiente"
+
+#: kdepreferencesdialog.cpp:233
+msgid "Limiting Magnitude"
+msgstr "Limitar Magnitudes"
+
+#: kdepreferencesdialog.cpp:242
+msgid "Info Text"
+msgstr "Informação"
+
+#: kdepreferencesdialog.cpp:243
+msgid "Level: "
+msgstr "Nível"
+
+#: kdepreferencesdialog.cpp:245
+msgid "None"
+msgstr "Nenhum"
+
+#: kdepreferencesdialog.cpp:246
+msgid "Terse"
+msgstr "Médio"
+
+#: kdepreferencesdialog.cpp:247
+msgid "Verbose"
+msgstr "Total"
+
+#: kdepreferencesdialog.cpp:252
+msgid "Automatic FOV"
+msgstr "FOV Automático"
+
+#: kdepreferencesdialog.cpp:253
+msgid "Screen DPI: "
+msgstr "DPI do Écran: "
+
+#: kdepreferencesdialog.cpp:255
+msgid "Viewing Distance (cm): "
+msgstr "Distância ao Écran (cm): "
+
+#: kdepreferencesdialog.cpp:271
+msgid "Cities"
+msgstr "Cidades"
+
+#: kdepreferencesdialog.cpp:275
+msgid "Observatories"
+msgstr "Observatórios"
+
+#: kdepreferencesdialog.cpp:279
+msgid "Landing Sites"
+msgstr "Locais de Aterragem"
+
+#: kdepreferencesdialog.cpp:283
+msgid "Craters"
+msgstr "Crateras"
+
+#: kdepreferencesdialog.cpp:287
+msgid "Mons"
+msgstr "Mons"
+
+#: kdepreferencesdialog.cpp:291
+msgid "Terra"
+msgstr "Terra"
+
+#: kdepreferencesdialog.cpp:295
+msgid "Vallis"
+msgstr "Vallis"
+
+#: kdepreferencesdialog.cpp:299
+msgid "Mare"
+msgstr "Mare"
+
+#: kdepreferencesdialog.cpp:303
+msgid "Other"
+msgstr "Outros"
+
+#: kdepreferencesdialog.cpp:307
+msgid "Minimum Feature Size"
+msgstr "Tamanho Mínimo da Opção"
+
+#: kdepreferencesdialog.cpp:321
+msgid "Date/Time"
+msgstr "Data / Hora"
+
+#: kdepreferencesdialog.cpp:325
+msgid "Display"
+msgstr "Mostrar"
+
+#: kdepreferencesdialog.cpp:326 kdepreferencesdialog.cpp:337
+msgid "Timezone: "
+msgstr "Fuso-Horário"
+
+#: kdepreferencesdialog.cpp:329 kdepreferencesdialog.cpp:340
+msgid "Local Time"
+msgstr "Hora Local"
+
+#: kdepreferencesdialog.cpp:334
+msgid "Set"
+msgstr "Acertar"
+
+#: kdepreferencesdialog.cpp:335
+msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+msgstr "Hora Local apenas suportada entre os anos 1902 e 2037.\n"
+
+#: kdepreferencesdialog.cpp:409
+msgid ""
+"\n"
+"Selection: "
+msgstr ""
+"\n"
+"Selecção: "
+
+#: kdepreferencesdialog.cpp:416
+msgid "Include Light Travel Time"
+msgstr "Incluir Velocidade da Luz"
+
+#: kdepreferencesdialog.cpp:418
+msgid "Ignore Light Travel Time "
+msgstr "Ignorar Velocidade da Luz"
+
+#: kdepreferencesdialog.cpp:425
+msgid "OpenGL"
+msgstr "OpenGL"
+
+#: kdepreferencesdialog.cpp:470
+msgid "Key Bindings"
+msgstr "Atalhos de Teclado"
+
+#: kdepreferencesdialog.cpp:684
+msgid "<b>Unextended OpenGL 1.1</b>"
+msgstr "<b> OpenGL 1.1 Simples</b>"
+
+#: kdepreferencesdialog.cpp:687
+msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+msgstr "<b>Modo Multi-texture com extensão ARB_texenv_combine</b>"
+
+#: kdepreferencesdialog.cpp:690
+msgid "<b>NVIDIA combiners, no vertex programs</b>"
+msgstr "<b>Modo NVIDIA combiners, sem programas vertex</b>"
+
+#: kdepreferencesdialog.cpp:693
+msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+msgstr "<b>Extensão ARB_texenv_DOT3, extensão ARB_vertex_program</b>"
+
+#: kdepreferencesdialog.cpp:696
+msgid ""
+"<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+"mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon "
+"graphics card, though NvCombiner ARBVP is a slightly better option for "
+"Geforce users"
+msgstr "<b>Modo NVIDIA Combiners, extensão NV_vertex_program</b><br> Suporta bump mapping, sombras anelares e reflexos em qualquer placa gráfica Geforce ou ATI Radeon, no entanto NvCombiner ARBVP é uma melhor opção para placas Geforce."
+
+#: kdepreferencesdialog.cpp:702
+msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+msgstr "<b>Modo NVIDIA Combiners, extensão ARB_vertex_program</b>"
+
+#: kdepreferencesdialog.cpp:705
+msgid ""
+"<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+"advanced effects on Geforce FX and Radeon 9700 cards"
+msgstr "<b>Extensões ARB_fragment_program e ARB_vertex_program</b><br>suporta efeitos avançados em placas Geforce FX e Radeon 9700."
+
+#: kdepreferencesdialog.cpp:709
+msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+msgstr "<b>Extensões NV_fragment_program e ARB_vertex_program</b>"
+
+#: selectionpopup.cpp:74
+msgid "Distance: "
+msgstr "Distância"
+
+#: selectionpopup.cpp:76
+msgid "Abs (app) mag: "
+msgstr "Mag Abs (apx): "
+
+#: selectionpopup.cpp:84
+msgid "Class: "
+msgstr "Classe: "
+
+#: selectionpopup.cpp:88
+msgid "Surface Temp: "
+msgstr "Temp. Sup.: "
+
+#: selectionpopup.cpp:92
+msgid "Radius: "
+msgstr "Raio: "
+
+#: selectionpopup.cpp:125
+msgid "Marked objects"
+msgstr "Objectos marcados"
+
+#: selectionpopup.cpp:308
+msgid "&Select"
+msgstr "&Escolher"
+
+#: selectionpopup.cpp:309
+msgid "&Center"
+msgstr "&Centrar"
+
+#: selectionpopup.cpp:311
+msgid "&Follow"
+msgstr "&Seguir"
+
+#: selectionpopup.cpp:312
+msgid "S&ynch Orbit"
+msgstr "&Sincronizar Órbita"
+
+#: selectionpopup.cpp:313
+msgid "&Info"
+msgstr "&Info"
+
+#: selectionpopup.cpp:314
+msgid "Unmark &All"
+msgstr "Limpar &Todos "
+
+#: selectionpopup.cpp:317
+msgid "&Unmark"
+msgstr "&Limpar"
+
+#: selectionpopup.cpp:322
+msgid "Diamond"
+msgstr "Diamante"
+
+#: selectionpopup.cpp:323
+msgid "Triangle"
+msgstr "Triângulo"
+
+#: selectionpopup.cpp:324
+msgid "Square"
+msgstr "Quadrado"
+
+#: selectionpopup.cpp:325
+msgid "Plus"
+msgstr "Mais"
+
+#: selectionpopup.cpp:326
+msgid "X"
+msgstr "X"
+
+#: selectionpopup.cpp:327
+msgid "&Mark"
+msgstr "&Marcar"
+
+#: selectionpopup.cpp:338
+msgid "Normal"
+msgstr "Normal"
+
+#: selectionpopup.cpp:345
+msgid "&Alternate Surfaces"
+msgstr "&Superfícies Alternativas"
+
+#: selectionpopup.cpp:363
+msgid "Satellites"
+msgstr "Satélites"
+
+#: eclipsefinderdlgbase.uic.moc.cpp:34 eclipsefinderdlgbase.uic.moc.cpp:42
+msgid "EclipseFinderDlgBase"
+msgstr "EclipseFinderDlgBase"
+
+#: eclipsefinderdlg.moc.cpp:34 eclipsefinderdlg.moc.cpp:42
+msgid "EclipseFinderDlg"
+msgstr "EclipseFinderDlg"
+
+#: celestialbrowserbase.uic.moc.cpp:34 celestialbrowserbase.uic.moc.cpp:42
+msgid "CelestialBrowserBase"
+msgstr "CelestialBrowserBase"
+
+#: celestialbrowser.moc.cpp:34 celestialbrowser.moc.cpp:42
+msgid "CelestialBrowser"
+msgstr "CelestialBrowser"
+
+#: kdeapp.moc.cpp:34 kdeapp.moc.cpp:42
+msgid "KdeApp"
+msgstr "KdeApp"
+
+#: kdeapp.moc.cpp:448 kdeapp.moc.cpp:456
+msgid "LongLatDialog"
+msgstr "LongLatDialog"
+
+#: kdeglwidget.moc.cpp:34 kdeglwidget.moc.cpp:42
+msgid "KdeGlWidget"
+msgstr "KdeGlWidget"
+
+#: kdepreferencesdialog.moc.cpp:34 kdepreferencesdialog.moc.cpp:42
+msgid "KdePreferencesDialog"
+msgstr "KdePreferencesDialog"
+
+#: kdeuniquecelestia.moc.cpp:34 kdeuniquecelestia.moc.cpp:42
+msgid "KdeUniqueCelestia"
+msgstr "KdeUniqueCelestia"
+
+#: kcelbookmarkmenu.moc.cpp:34 kcelbookmarkmenu.moc.cpp:42
+msgid "KCelBookmarkMenu"
+msgstr "KCelBookmarkMenu"
+
+#: selectionpopup.moc.cpp:34 selectionpopup.moc.cpp:42
+msgid "SelectionPopup"
+msgstr "SelectionPopup"
+
+#: rc.cpp:3
+msgid "Name"
+msgstr "Nome"
+
+#: rc.cpp:4
+msgid "Dist."
+msgstr "Dist."
+
+#: rc.cpp:5
+msgid "App. Mag."
+msgstr "Mag. Apx."
+
+#: rc.cpp:6
+msgid "Abs. Mag."
+msgstr "Mag. Abs."
+
+#: rc.cpp:7
+msgid "Type"
+msgstr "Tipo"
+
+#: rc.cpp:8
+msgid "With Planets"
+msgstr "Com Planetas"
+
+#: rc.cpp:9
+msgid "Brightest (Abs.)"
+msgstr "Mais Brilhante (Abs.)"
+
+#: rc.cpp:10
+msgid "Brightest (App.)"
+msgstr "Mais Brilhante (Apx.)"
+
+#: rc.cpp:11
+msgid "Nearest"
+msgstr "Mais Perto"
+
+#: rc.cpp:13
+msgid "Alt+C"
+msgstr "Alt+C"
+
+#: rc.cpp:14
+msgid "Refresh"
+msgstr "Actualizar"
+
+#: rc.cpp:18
+msgid "Date"
+msgstr "Data"
+
+#: rc.cpp:19
+msgid "Start"
+msgstr "Inicio"
+
+#: rc.cpp:20
+msgid "End"
+msgstr "Fim"
+
+#: rc.cpp:21
+msgid "buttonGroup1"
+msgstr "buttonGroup1"
+
+#: rc.cpp:22
+msgid "Solar Eclipses"
+msgstr "Eclipses Solares"
+
+#: rc.cpp:23
+msgid "<p align=\"right\">On:</p>"
+msgstr "<p align=\"right\">Em:</p>"
+
+#: rc.cpp:24
+msgid "Earth"
+msgstr "Earth"
+
+#: rc.cpp:25
+msgid "Jupiter"
+msgstr "Jupiter"
+
+#: rc.cpp:26
+msgid "Saturn"
+msgstr "Saturn"
+
+#: rc.cpp:27
+msgid "Uranus"
+msgstr "Uranus"
+
+#: rc.cpp:28
+msgid "Neptune"
+msgstr "Neptune"
+
+#: rc.cpp:29
+msgid "Pluto"
+msgstr "Pluto"
+
+#: rc.cpp:30
+msgid "Moon Eclipses"
+msgstr "Eclipses Lunares"
+
+#: rc.cpp:31
+msgid "Search"
+msgstr "Procurar"
+
+#: rc.cpp:32
+msgid "<p align=\"right\">To:</p>"
+msgstr "<p align=\"right\">Ate:</p>"
+
+#: rc.cpp:33
+msgid "<p align=\"right\">From:</p>"
+msgstr "<p align=\"right\">De:</p>"
+
+#: _translatorinfo.cpp:1
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr "André Lourenço"
+
+#: _translatorinfo.cpp:3
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr "andrelourenco@yahoo.com"
+
