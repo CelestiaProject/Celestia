@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "kdeglwidget.h"
+#include <kaccel.h>
 
 #include <unistd.h> 
 #include <celengine/gl.h>
@@ -51,6 +52,8 @@ KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core
 //        cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
 //            "', probably due to improper installation\n";
     }
+    
+    actionColl = ((KdeApp*)parent)->actionCollection();
 
     setFocusPolicy(QWidget::ClickFocus);
 
@@ -335,6 +338,7 @@ bool KdeGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
 
 void KdeGlWidget::keyPressEvent( QKeyEvent* e )
 {
+    static bool inputMode = false;
     switch (e->key())
     {
     case Key_Escape:
@@ -356,7 +360,22 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
                 for (unsigned int i=0; i<e->text().length(); i++)
                 {           
                     char c = e->text().at(i).latin1();
-                    if (c > 0x20 || c == 0x0D || c== 0x08) appCore->charEntered(c);
+                    if (c == 0x0D) {
+                    	if (!inputMode) { // entering input mode
+                        	for (int n=0; n<actionColl->count(); n++) {
+                                	if (actionColl->action(n)->shortcut().count() > 0
+                                        	&& actionColl->action(n)->shortcut().seq(0).key(0).modFlags()==0 )
+                                		actionColl->action(n)->setEnabled(false);
+                                }
+                        } else { // living input mode
+                        	for (int n=0; n<actionColl->count(); n++) {
+                                	if (actionColl->action(n)->shortcut().seq(0).key(0).modFlags()==0)
+	                                	actionColl->action(n)->setEnabled(true);
+                                }
+                        }
+                    	inputMode = !inputMode;
+                    }
+                    if (c >= 0x20 || c == 0x0D || c== 0x08) appCore->charEntered(c);
                 }
             }
         }
