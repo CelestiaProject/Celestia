@@ -1050,7 +1050,7 @@ void CelestiaCore::charEntered(const char *c_p)
     {
         wchar_t wc = NULL;
         UTF8Decode(c_p, 0, strlen(c_p), wc);
-        if ( wc && (iswalpha(wc) || iswdigit(wc) || iswpunct(c)) )
+        if ( wc && (iswalpha(wc) || iswdigit(wc) || iswpunct(c) || c == ' ') )
         {
             typedText += std::string(c_p);
             typedTextCompletion = sim->getObjectCompletion(typedText, renderer->getLabelMode() & Renderer::LocationLabels);
