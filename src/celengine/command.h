@@ -208,11 +208,17 @@ class CommandCancel : public InstantaneousCommand
 class CommandPrint : public InstantaneousCommand
 {
  public:
-    CommandPrint(std::string);
+    CommandPrint(std::string, int horig, int vorig, int hoff, int voff,
+                 double duration);
     void process(ExecutionEnvironment&);
 
  private:
     std::string text;
+    int hOrigin;
+    int vOrigin;
+    int hOffset;
+    int vOffset;
+    double duration;
 };
 
 
