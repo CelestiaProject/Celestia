@@ -106,20 +106,20 @@ enum
     Menu_ShowConstellations  = 2003,
     Menu_ShowAtmospheres     = 2004,
     Menu_PlanetLabels        = 2005,
-    Menu_ShowClouds          = 2005,
-    Menu_ShowCelestialSphere = 2006,
-    Menu_ShowNightSideMaps   = 2007,
-    Menu_MoonLabels          = 2008,
-    Menu_AsteroidLabels      = 2009,
-    Menu_StarLabels          = 2010,
-    Menu_GalaxyLabels        = 2011,
-    Menu_ConstellationLabels = 2012,
-    Menu_PixelShaders        = 2013,
-    Menu_VertexShaders       = 2014,
-    Menu_ShowLocTime         = 2015,
-    Menu_ShowEclipseShadows  = 2016,
-    Menu_ShowStarsAsPoints   = 2017,
-    Menu_CraftLabels         = 2018,
+    Menu_ShowClouds          = 2006,
+    Menu_ShowCelestialSphere = 2007,
+    Menu_ShowNightSideMaps   = 2008,
+    Menu_MoonLabels          = 2009,
+    Menu_AsteroidLabels      = 2010,
+    Menu_StarLabels          = 2011,
+    Menu_GalaxyLabels        = 2012,
+    Menu_ConstellationLabels = 2013,
+    Menu_PixelShaders        = 2014,
+    Menu_VertexShaders       = 2015,
+    Menu_ShowLocTime         = 2016,
+    Menu_ShowEclipseShadows  = 2017,
+    Menu_ShowStarsAsPoints   = 2018,
+    Menu_CraftLabels         = 2019,
 };
 
 static void menuSelectSol()
@@ -1837,6 +1837,10 @@ void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func)
                            GTK_SIGNAL_FUNC(func),
                            NULL);
     }
+#ifdef DEBUG
+    else
+        DPRINTF(0,"Unable to attach signal to action %d!\n",action);
+#endif
 }
 
 
