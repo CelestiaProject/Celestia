@@ -44,6 +44,7 @@ libcelengine_a_SOURCES = \
 	opencluster.cpp \
 	orbit.cpp \
 	overlay.cpp \
+	parseobject.cpp \
 	parser.cpp \
 	regcombine.cpp \
 	rendcontext.cpp \
