@@ -118,7 +118,8 @@ CelestiaCore::CelestiaCore() :
     mouseWheelTime(0.0),
     currentTime(0.0),
     timeScale(1.0),
-    paused(false)
+    paused(false),
+    contextMenuCallback(NULL)
 {
     execEnv = new CoreExecutionEnvironment(*this);
     for (int i = 0; i < KeyCount; i++)
@@ -223,7 +224,8 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             Selection sel = sim->pickObject(pickRay);
             if (!sel.empty())
             {
-                // Context menu
+                if (contextMenuCallback != NULL)
+                    contextMenuCallback(x, y, sel);
             }
         }
     }
@@ -518,6 +520,20 @@ void CelestiaCore::charEntered(char c)
             setFaintest(sim->getFaintestVisible() + 0.5f);
         break;
 
+    case '{':
+        if (renderer->getAmbientLightLevel() > 0.05f)
+            renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() - 0.05f);
+        else
+            renderer->setAmbientLightLevel(0.0f);
+        break;
+
+    case '}':
+        if (renderer->getAmbientLightLevel() < 0.95f)
+            renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
+        else
+            renderer->setAmbientLightLevel(1.0f);
+        break;
+
     case '\n':
     case '\r':
         textEnterMode = true;
@@ -636,6 +652,12 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
         overlay->setWindowSize(w, h);
     width = w;
     height = h;
+}
+
+
+void CelestiaCore::setContextMenuCallback(ContextMenuFunc callback)
+{
+    contextMenuCallback = callback;
 }
 
 
@@ -817,39 +839,7 @@ bool CelestiaCore::initSimulation()
 {
     // Say we're not ready to render yet.
     // bReady = false;
-
-#if 0
-    appInstance = hInstance;
-
-    // Setup the window class.
-    WNDCLASS wc;
-    HWND hWnd;
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wc.lpfnWndProc = (WNDPROC) MainWindowProc;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hInstance = hInstance;
-    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-
-    wc.hbrBackground = NULL;
-    wc.lpszMenuName = NULL;
-    wc.lpszClassName = AppName;
-
-    if (strstr(lpCmdLine, "-fullscreen"))
-	fullscreen = true;
-    else
-	fullscreen = false;
-
-    if (RegisterClass(&wc) == 0)
-    {
-	MessageBox(NULL,
-                   "Failed to register the window class.", "Fatal Error",
-                   MB_OK | MB_ICONERROR);
-	return FALSE;
-    }
-#endif
-
+#ifdef REQUIRE_LICENSE_FILE
     // Check for the presence of the license file--don't run unless it's there.
     {
         ifstream license("License.txt");
@@ -859,6 +849,7 @@ bool CelestiaCore::initSimulation()
             return false;
         }
     }
+#endif
 
     config = ReadCelestiaConfig("celestia.cfg");
     if (config == NULL)
@@ -1033,74 +1024,6 @@ bool CelestiaCore::initRenderer()
     }
 
     return true;
-#if 0
-    // Add favorites to locations menu
-    if (favorites != NULL)
-    {
-        MENUITEMINFO menuInfo;
-        menuInfo.cbSize = sizeof(MENUITEMINFO);
-        menuInfo.fMask = MIIM_SUBMENU;
-        if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
-        {
-            HMENU locationsMenu = menuInfo.hSubMenu;
-
-            menuInfo.cbSize = sizeof MENUITEMINFO;
-            menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
-            menuInfo.fType = MFT_SEPARATOR;
-            menuInfo.fState = MFS_UNHILITE;
-            InsertMenuItem(locationsMenu, 1, TRUE, &menuInfo);
-
-            int index = 0;
-            for (FavoritesList::const_iterator iter = favorites->begin();
-                 iter != favorites->end();
-                 iter++, index++)
-            {
-                menuInfo.cbSize = sizeof MENUITEMINFO;
-                menuInfo.fMask = MIIM_TYPE | MIIM_ID;
-                menuInfo.fType = MFT_STRING;
-                // menuInfo.fState = MFS_DEFAULT;
-                menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + index;
-                menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
-                InsertMenuItem(locationsMenu, index + 2, TRUE, &menuInfo);
-            }
-        }
-    }
-#endif
-
-#if 0
-    // bReady = true;
-
-    // Usual running around in circles bit...
-    int bGotMsg;
-    MSG  msg;
-    PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
-    while (msg.message != WM_QUIT)
-    {
-	// Use PeekMessage() if the app is active, so we can use idle time to
-	// render the scene.  Else, use GetMessage() to avoid eating CPU time.
-	bGotMsg = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
-
-	if (bGotMsg)
-        {
-	    // Translate and dispatch the message
-            if (!TranslateAccelerator(hWnd, acceleratorTable, &msg))
-                TranslateMessage(&msg);
-	    DispatchMessage(&msg);
-	}
-        else
-        {
-	    InvalidateRect(hWnd, NULL, FALSE);
-	}
-    }
-
-    // Not ready to render anymore.
-    // bReady = false;
-
-    // Nuke all applicable scene stuff.
-    renderer->shutdown();
-
-    return msg.wParam;
-#endif
 }
 
 

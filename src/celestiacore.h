@@ -56,6 +56,8 @@ class CelestiaCore
         KeyCount     = 21,
     };
 
+    typedef void (*ContextMenuFunc)(float, float, Selection);
+
  public:
     CelestiaCore();
     ~CelestiaCore();
@@ -84,6 +86,8 @@ class CelestiaCore
     void activateFavorite(FavoritesEntry&);
     void addFavorite(string);
     const FavoritesList* getFavorites();
+
+    void setContextMenuCallback(ContextMenuFunc);
 
  private:
     void cancelScript();
@@ -135,6 +139,8 @@ class CelestiaCore
     bool paused;
 
     bool keysPressed[KeyCount];
+
+    ContextMenuFunc contextMenuCallback;
 };
 
 #endif // _CELESTIACORE_H_
