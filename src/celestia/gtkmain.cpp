@@ -124,6 +124,8 @@ enum
     Menu_ShowStarsAsPoints   = 2018,
     Menu_CraftLabels         = 2019,
     Menu_ShowBoundaries      = 2020,
+    Menu_AntiAlias           = 2021,
+    Menu_AutoMag             = 2022,
 };
 
 static void menuSelectSol()
@@ -219,6 +221,20 @@ static gint menuShowBoundaries(GtkWidget* w, gpointer data)
     appCore->charEntered('\002'); //Ctrl+B
     return TRUE;
 }
+static gint menuAntiAlias(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowSmoothLines, on);
+    appCore->charEntered('\030'); //Ctrl+X
+    return TRUE;
+}
+static gint menuAutoMag(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowAutoMag, on);
+    appCore->charEntered('\031'); //Ctrl+Y
+    return TRUE;
+}
 static gint menuPixelShaders(GtkWidget* w, gpointer data)
 {
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
@@ -238,7 +254,7 @@ static gint menuVertexShaders(GtkWidget* w, gpointer data)
 static gint menuShowNightSideMaps(GtkWidget* w, gpointer data)
 {
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowNightSideMaps, on);
+    // SetRenderFlag(Renderer::ShowNightMaps, on);
     appCore->charEntered('\014'); //Ctrl+L
     return TRUE;
 }
@@ -280,8 +296,8 @@ static gint menuShowLocTime(GtkWidget* w, gpointer data)
     bool on = (appCore->getTimeZoneBias()==0);
     if (on)
     {
-        appCore->setTimeZoneBias(-timezone);
-        appCore->setTimeZoneName(tzname[daylight?0:1]);
+        appCore->setTimeZoneBias(-timezone + 3600 * daylight);
+        appCore->setTimeZoneName(tzname[daylight]);
     }
     else
     {
@@ -529,7 +545,7 @@ void makeRadioItems(char **labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkTog
 static gint changeLMag(GtkSpinButton *spinner, void *dummy)
 {
     float tmp= gtk_spin_button_get_value_as_float(spinner);
-    if(tmp>1.0 && tmp < 12.0)
+    if(tmp>0.001f && tmp < 12.5f)
         appCore->setFaintest(tmp);
     return TRUE;
 }
@@ -597,6 +613,12 @@ static void menuOptions()
         DPRINTF(0,"Unable to get some Elements of the Options Dialog!\n");
         return;
     }
+    gtk_container_border_width(GTK_CONTAINER(limitBox), 10);
+    gtk_container_border_width(GTK_CONTAINER(ambientBox), 10);
+    gtk_container_border_width(GTK_CONTAINER(infoBox), 10);
+    gtk_container_border_width(GTK_CONTAINER(limitFrame), 2);
+    gtk_container_border_width(GTK_CONTAINER(ambientFrame), 2);
+    gtk_container_border_width(GTK_CONTAINER(infoFrame), 2);
     gtk_container_add(GTK_CONTAINER(limitFrame),GTK_WIDGET(limitBox));
     gtk_container_add(GTK_CONTAINER(ambientFrame),GTK_WIDGET(ambientBox));
     gtk_container_add(GTK_CONTAINER(infoFrame),GTK_WIDGET(infoBox));
@@ -613,14 +635,14 @@ static void menuOptions()
 
     GtkAdjustment *adj= (GtkAdjustment *)
                         gtk_adjustment_new((gfloat)appSim->getFaintestVisible(),
-                                           1.001, 11.999, 0.5, 2.0, 0.0);
+                                           0.001, 12.5, 0.5, 2.0, 0.0);
     spinner = gtk_spin_button_new (adj, 0.5, 0);
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spinner), TRUE);
     gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), FALSE);
     gtk_spin_button_set_shadow_type (GTK_SPIN_BUTTON (spinner), GTK_SHADOW_IN);
     gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON (spinner),FALSE);
-    gtk_entry_set_max_length(GTK_ENTRY (spinner), 6 );
-    gtk_spin_button_set_digits(GTK_SPIN_BUTTON (spinner), 3);
+    gtk_entry_set_max_length(GTK_ENTRY (spinner), 4 );
+    gtk_spin_button_set_digits(GTK_SPIN_BUTTON (spinner), 1);
     gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
     gtk_box_pack_start (GTK_BOX (limitBox), label, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(limitBox), spinner, TRUE, TRUE, 0);
@@ -1052,7 +1074,7 @@ static void menuTourGuide()
 
     gtk_option_menu_set_menu(GTK_OPTION_MENU(menubox), menu);
 
-    gtk_widget_set_usize(dialog, 400, 300);
+    gtk_widget_set_usize(dialog, 440, 300);
     gtk_widget_show(label);
     gtk_widget_show(menubox);
     gtk_widget_show(descLabel);
@@ -1843,52 +1865,55 @@ static void menuSetTime()
 
 static GtkItemFactoryEntry menuItems[] =
 {
-    { "/File",  NULL,                       NULL,          0, "<Branch>" },
-    { "/File/Capture Image...", "F10",      menuCaptureImage,0, NULL },
-    { "/File/Quit", "<control>Q",           gtk_main_quit, 0, NULL },
-    { "/Navigation", NULL,                  NULL,          0, "<Branch>" },
-    { "/Navigation/Select Sol", "H",        menuSelectSol, 0, NULL },
-    { "/Navigation/Tour Guide", NULL,       menuTourGuide, 0, NULL },
-    { "/Navigation/Select Object...", NULL, menuSelectObject, 0, NULL },
-    { "/Navigation/Goto Object...", NULL,   menuGotoObject,0, NULL },
+    { "/_File",  NULL,                       NULL,            0, "<Branch>" },
+    { "/File/_Capture Image...", "F10",      menuCaptureImage,0, NULL },
+    { "/File/_Quit", "<control>Q",           gtk_main_quit,   0, NULL },
+    { "/_Navigation", NULL,                  NULL,            0, "<Branch>" },
+    { "/Navigation/Select _Sol", "H",        menuSelectSol,   0, NULL },
+    { "/Navigation/_Tour Guide...", NULL,    menuTourGuide,   0, NULL },
+    { "/Navigation/Select _Object...", NULL, menuSelectObject,0, NULL },
+    { "/Navigation/_Goto Object...", NULL,   menuGotoObject,  0, NULL },
     { "/Navigation/sep1", NULL,             NULL,          0, "<Separator>" },
     { "/Navigation/_Center Selection", "C", menuCenter,    0, NULL },
     { "/Navigation/_Goto Selection", "G",   menuGoto,      0, NULL },
     { "/Navigation/_Follow Selection", "F", menuFollow,    0, NULL },
-    { "/Navigation/Sync Orbit", "Y",        menuSync,      0, NULL },
+    { "/Navigation/_Sync Orbit", "Y",        menuSync,        0, NULL },
     { "/Navigation/_Track Selection", "T",  menuTrack,     0, NULL },
     { "/Navigation/sep2", NULL,             NULL,          0, "<Separator>" },
-    { "/Navigation/Celestial Browser", NULL,menuBrowser,   0, NULL },
-    { "/Time", NULL,                        NULL,          0, "<Branch>" },
-    { "/Time/10x Faster", "L",              menuFaster,    0, NULL },
-    { "/Time/10x Slower", "K",              menuSlower,    0, NULL },
-    { "/Time/Pause", "space",               menuPause,     0, NULL },
-    { "/Time/Real Time", "backslash",       menuRealTime,  0, NULL },
-    { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
-    { "/Time/Set Time", NULL,               menuSetTime,   0, NULL },
-    { "/Time/sep1", NULL,                   NULL,          0, "<Separator>" },
-    { "/Time/Show Local T_ime", NULL,       NULL,          Menu_ShowLocTime, "<ToggleItem>" },
-    { "/Render", NULL,                      NULL,          0, "<Branch>" },
-    { "/Render/Options", NULL,              menuOptions,   0, NULL },
-    { "/Render/Show Info Text", "V",        menuShowInfo,  0, NULL },
-    { "/Render/sep1", NULL,                 NULL,          0, "<Separator>" },
-    { "/Render/Fewer Stars Visible", "bracketleft",  menuLessStars, 0, NULL },
-    { "/Render/More Stars Visible", "bracketright", menuMoreStars, 0, NULL },
-    { "/Help", NULL,                        NULL,          0, "<LastBranch>" },
+    { "/Navigation/Celestial _Browser...", NULL, menuBrowser, 0, NULL },
+    { "/_Time", NULL,                        NULL,            0, "<Branch>" },
+    { "/Time/10x _Faster", "L",              menuFaster,      0, NULL },
+    { "/Time/10x _Slower", "K",              menuSlower,      0, NULL },
+    { "/Time/_Pause", "space",               menuPause,       0, NULL },
+    { "/Time/Real _Time", "backslash",       menuRealTime,    0, NULL },
+    { "/Time/_Reverse Time", "J",            menuReverse,     0, NULL },
+    { "/Time/_Set Time...", NULL,            menuSetTime,     0, NULL },
+    { "/Time/sep3", NULL,                    NULL,            0, "<Separator>" },
+    { "/Time/Show _Local Time", NULL,        NULL,            Menu_ShowLocTime, "<ToggleItem>" },
+    { "/_Render", NULL,                      NULL,            0, "<Branch>" },
+    { "/Render/_Options...", NULL,           menuOptions,     0, NULL },
+    { "/Render/Show _Info Text", "V",        menuShowInfo,    0, NULL },
+    { "/Render/sep4", NULL,                  NULL,            0, "<Separator>" },
+    { "/Render/_Fewer Stars Visible", "bracketleft",  menuLessStars, 0, NULL },
+    { "/Render/_More Stars Visible", "bracketright",  menuMoreStars, 0, NULL },
+    { "/Render/AutoMag for _Stars","<control>Y", NULL, Menu_AutoMag, "<ToggleItem>"},
+    { "/Render/sep5", NULL,                  NULL,            0, "<Separator>"},
+    { "/Render/_Antialias for Lines", "<control>X", NULL, Menu_AntiAlias, "<ToggleItem>"},
+    { "/_Help", NULL,                       NULL,          0, "<LastBranch>" },
     { "/Help/Run _Demo", "D",               menuRunDemo,   0, NULL },  
-    { "/Help/sep1", NULL,                   NULL,          0, "<Separator>" },
-    { "/Help/Controls", NULL,       	    menuControls,  0, NULL },
-    { "/Help/OpenGL Info", NULL,            menuOpenGL,    0, NULL },
-    { "/Help/License", NULL,       	    menuLicense,   0, NULL },
-    { "/Help/sep2", NULL,                   NULL,          0, "<Separator>" },
-    { "/Help/About", NULL,                  menuAbout,     0, NULL },
+    { "/Help/sep6", NULL,                   NULL,          0, "<Separator>" },
+    { "/Help/_Controls", NULL,       	    menuControls,  0, NULL },
+    { "/Help/OpenGL _Info", NULL,           menuOpenGL,    0, NULL },
+    { "/Help/_License", NULL,       	    menuLicense,   0, NULL },
+    { "/Help/sep7", NULL,                   NULL,          0, "<Separator>" },
+    { "/Help/_About", NULL,                 menuAbout,     0, NULL },
 };
 
 
 static GtkItemFactoryEntry optMenuItems[] =
 {
-    { "/Render/Use Pixel Shaders", "<control>P", NULL,     Menu_PixelShaders, "<ToggleItem>" },
-    { "/Render/Use Vertex Shaders", "<control>V", NULL,    Menu_VertexShaders, "<ToggleItem>" },
+    { "/Render/Use _Pixel Shaders", "<control>P",  NULL,    Menu_PixelShaders, "<ToggleItem>" },
+    { "/Render/Use _Vertex Shaders", "<control>V", NULL,    Menu_VertexShaders, "<ToggleItem>" },
 };
 
 
@@ -1951,25 +1976,27 @@ int checkLabelFlag(int flag, char *path)
 static CheckFunc checks[] =
 {
     { NULL, NULL, "/Time/Show Local Time",	checkLocalTime,		3, 0, Menu_ShowLocTime, GTK_SIGNAL_FUNC(menuShowLocTime) },
-    { NULL, NULL, "/Render/Use Pixel Shaders",	checkPixelShaders,	0, 0, Menu_PixelShaders, GTK_SIGNAL_FUNC(menuPixelShaders) },
-    { NULL, NULL, "/Render/Use Vertex Shaders",	checkVertexShaders,	0, 0, Menu_VertexShaders, GTK_SIGNAL_FUNC(menuVertexShaders) },
-    { NULL, NULL, "/Render/Show Galaxies",	checkRenderFlag,	1, Renderer::ShowGalaxies, Menu_ShowGalaxies, GTK_SIGNAL_FUNC(menuShowGalaxies) },
-    { NULL, NULL, "/Render/Show Atmospheres",	checkRenderFlag,	1, Renderer::ShowAtmospheres, Menu_ShowAtmospheres, GTK_SIGNAL_FUNC(menuShowAtmospheres) },
-    { NULL, NULL, "/Render/Show Clouds",		checkRenderFlag,	1, Renderer::ShowCloudMaps, Menu_ShowClouds, GTK_SIGNAL_FUNC(menuShowClouds) },
-    { NULL, NULL, "/Render/Show Orbits",		checkRenderFlag,	1, Renderer::ShowOrbits, Menu_ShowOrbits, GTK_SIGNAL_FUNC(menuShowOrbits) },
-    { NULL, NULL, "/Render/Show Boundaries",	checkRenderFlag,	1, Renderer::ShowBoundaries, Menu_ShowBoundaries, GTK_SIGNAL_FUNC(menuShowBoundaries) },
-    { NULL, NULL, "/Render/Show Constellations",	checkRenderFlag,	1, Renderer::ShowDiagrams, Menu_ShowConstellations, GTK_SIGNAL_FUNC(menuShowConstellations) },
-    { NULL, NULL, "/Render/Show Coordinate Sphere",checkRenderFlag,	1, Renderer::ShowCelestialSphere, Menu_ShowCelestialSphere, GTK_SIGNAL_FUNC(menuShowCelestialSphere) },
-    { NULL, NULL, "/Render/Show Night Side Lights",checkRenderFlag,	1, Renderer::ShowNightMaps, Menu_ShowNightSideMaps, GTK_SIGNAL_FUNC(menuShowNightSideMaps) },
-    { NULL, NULL, "/Render/Show Eclipse Shadows", checkRenderFlag,	1, Renderer::ShowEclipseShadows, Menu_ShowEclipseShadows, GTK_SIGNAL_FUNC(menuShowEclipseShadows) },
-    { NULL, NULL, "/Render/Show Stars as Points", checkRenderFlag,	1, Renderer::ShowStarsAsPoints, Menu_ShowStarsAsPoints, GTK_SIGNAL_FUNC(menuShowStarsAsPoints) },
-    { NULL, NULL, "/Render/Label Planets",	checkLabelFlag,		1, Renderer::PlanetLabels, Menu_PlanetLabels, GTK_SIGNAL_FUNC(menuPlanetLabels) },
-    { NULL, NULL, "/Render/Label Moons",  	checkLabelFlag,		1, Renderer::MoonLabels, Menu_MoonLabels, GTK_SIGNAL_FUNC(menuMoonLabels) },
-    { NULL, NULL, "/Render/Label Asteroids&Comets",checkLabelFlag,	1, Renderer::AsteroidLabels, Menu_AsteroidLabels, GTK_SIGNAL_FUNC(menuAsteroidLabels) },
-    { NULL, NULL, "/Render/Label Spacecraft",	checkLabelFlag,		1, Renderer::SpacecraftLabels, Menu_CraftLabels, GTK_SIGNAL_FUNC(menuCraftLabels) },
-    { NULL, NULL, "/Render/Label Stars",		checkLabelFlag,		1, Renderer::StarLabels, Menu_StarLabels, GTK_SIGNAL_FUNC(menuStarLabels) },
-    { NULL, NULL, "/Render/Label Galaxies",	checkLabelFlag,		1, Renderer::GalaxyLabels, Menu_GalaxyLabels, GTK_SIGNAL_FUNC(menuGalaxyLabels) },
-    { NULL, NULL, "/Render/Label Constellations",	checkLabelFlag,	1, Renderer::ConstellationLabels, Menu_ConstellationLabels, GTK_SIGNAL_FUNC(menuConstellationLabels) },
+    { NULL, NULL, "/Render/Use Pixel Shaders",   checkPixelShaders, 3, 0, Menu_PixelShaders, GTK_SIGNAL_FUNC(menuPixelShaders) },
+    { NULL, NULL, "/Render/Use Vertex Shaders",  checkVertexShaders,3, 0, Menu_VertexShaders, GTK_SIGNAL_FUNC(menuVertexShaders) },
+    { NULL, NULL, "/Render/Antialias for Lines", checkRenderFlag,   3, Renderer::ShowSmoothLines, Menu_AntiAlias, GTK_SIGNAL_FUNC(menuAntiAlias) },
+    { NULL, NULL, "/Render/AutoMag for Stars",   checkRenderFlag,   3, Renderer::ShowAutoMag, Menu_AutoMag, GTK_SIGNAL_FUNC(menuAutoMag) },
+    { NULL, NULL, "/Render/Stars",		 checkLabelFlag,    1, Renderer::StarLabels, Menu_StarLabels, GTK_SIGNAL_FUNC(menuStarLabels) },
+    { NULL, NULL, "/Render/Spacecraft",	         checkLabelFlag,    1, Renderer::SpacecraftLabels, Menu_CraftLabels, GTK_SIGNAL_FUNC(menuCraftLabels) },
+    { NULL, NULL, "/Render/Planets",	         checkLabelFlag,    1, Renderer::PlanetLabels, Menu_PlanetLabels, GTK_SIGNAL_FUNC(menuPlanetLabels) },
+    { NULL, NULL, "/Render/Moons",  	         checkLabelFlag,    1, Renderer::MoonLabels, Menu_MoonLabels, GTK_SIGNAL_FUNC(menuMoonLabels) },
+    { NULL, NULL, "/Render/Galaxies",	         checkLabelFlag,    1, Renderer::GalaxyLabels, Menu_GalaxyLabels, GTK_SIGNAL_FUNC(menuGalaxyLabels) },
+    { NULL, NULL, "/Render/Constellations",	 checkLabelFlag,    1, Renderer::ConstellationLabels, Menu_ConstellationLabels, GTK_SIGNAL_FUNC(menuConstellationLabels) },
+    { NULL, NULL, "/Render/Asteroids & Comets",  checkLabelFlag,    1, Renderer::AsteroidLabels, Menu_AsteroidLabels, GTK_SIGNAL_FUNC(menuAsteroidLabels) },
+    { NULL, NULL, "/Render/Stars as Points",     checkRenderFlag,   1, Renderer::ShowStarsAsPoints, Menu_ShowStarsAsPoints, GTK_SIGNAL_FUNC(menuShowStarsAsPoints) },
+    { NULL, NULL, "/Render/Orbits",		 checkRenderFlag,   1, Renderer::ShowOrbits, Menu_ShowOrbits, GTK_SIGNAL_FUNC(menuShowOrbits) },
+    { NULL, NULL, "/Render/Night Side Lights",   checkRenderFlag,   1, Renderer::ShowNightMaps, Menu_ShowNightSideMaps, GTK_SIGNAL_FUNC(menuShowNightSideMaps) },
+    { NULL, NULL, "/Render/Galaxies",            checkRenderFlag,   1, Renderer::ShowGalaxies, Menu_ShowGalaxies, GTK_SIGNAL_FUNC(menuShowGalaxies) },
+    { NULL, NULL, "/Render/Eclipse Shadows",     checkRenderFlag,   1, Renderer::ShowEclipseShadows, Menu_ShowEclipseShadows, GTK_SIGNAL_FUNC(menuShowEclipseShadows) },
+    { NULL, NULL, "/Render/Constellation Boundaries", checkRenderFlag, 1, Renderer::ShowBoundaries, Menu_ShowBoundaries, GTK_SIGNAL_FUNC(menuShowBoundaries) },
+    { NULL, NULL, "/Render/Constellations",	 checkRenderFlag,   1, Renderer::ShowDiagrams, Menu_ShowConstellations, GTK_SIGNAL_FUNC(menuShowConstellations) },
+    { NULL, NULL, "/Render/Clouds",		 checkRenderFlag,   1, Renderer::ShowCloudMaps, Menu_ShowClouds, GTK_SIGNAL_FUNC(menuShowClouds) },
+    { NULL, NULL, "/Render/Celestial Grid",      checkRenderFlag,   1, Renderer::ShowCelestialSphere, Menu_ShowCelestialSphere, GTK_SIGNAL_FUNC(menuShowCelestialSphere) },
+    { NULL, NULL, "/Render/Atmospheres",         checkRenderFlag,   1, Renderer::ShowAtmospheres, Menu_ShowAtmospheres, GTK_SIGNAL_FUNC(menuShowAtmospheres) },
 };
 
 
@@ -1988,10 +2015,11 @@ void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func, Che
         else
             DPRINTF(0,"Unable to attach signal to action %d!\n",action);
 #endif
-        }
+        } else {
     char *optName=rindex(cfunc->path,'/');
     if(optName)
         cfunc->optWidget=makeCheckButton(++optName, ((cfunc->func==checkLabelFlag)?labelBox:showBox), 0, cfunc->sigFunc);
+	}
 }
 
 
@@ -2010,15 +2038,15 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
     appSim = appCore->getSimulation();
     g_assert(appSim);
 
-    if (appRenderer->fragmentShaderSupported())
+    //if (appRenderer->fragmentShaderSupported())
 	{
 	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[0], NULL, 1);
-	checks[1].active=1;
+	checks[1].active = 3;
 	}
-    if (appRenderer->vertexShaderSupported())
+    //if (appRenderer->vertexShaderSupported())
 	{
 	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[1], NULL, 1);
-	checks[2].active=1;
+	checks[2].active = 3;
 	}
 
     if (menubar != NULL)
@@ -2066,9 +2094,9 @@ gint initFunc(GtkWidget* widget)
         appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
 	localtime(&curtime); /* Only doing this to set timezone as a side
 			       effect*/
-	appCore->setTimeZoneBias(-timezone);
-	appCore->setTimeZoneName(tzname[daylight?0:1]);
-	timeOptions[1]=tzname[daylight?0:1];
+	appCore->setTimeZoneBias(-timezone + 3600 * daylight);
+	appCore->setTimeZoneName(tzname[daylight]);
+	timeOptions[1]=tzname[daylight];
     }
         
     return TRUE;
@@ -2308,7 +2336,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
             if ((event->string != NULL) && (*(event->string)))
             {
                 // See if our key accelerators will handle this event.
-                if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, (GdkModifierType)1))
+	        if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, GDK_MOD1_MASK))
                     return TRUE;
             
                 char* s = event->string;
@@ -2365,6 +2393,9 @@ void resyncMenus()
 	if (!cfunc->active)
 	    continue;
         unsigned int res=((*cfunc->func)(cfunc->funcdata, cfunc->path))?1:0;
+#if 0
+        cout <<"res  "<<res<<'\t'<<i<<'\t'<<cfunc->path<<endl;
+#endif
         if (cfunc->active & 2)
         {
             g_assert(cfunc->path);
@@ -2384,7 +2415,7 @@ void resyncMenus()
                 cfunc->widget->active=res;
                 gtk_widget_show(GTK_WIDGET(cfunc->widget));
             }
-        }
+        } else {
         if ((((unsigned int)(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cfunc->optWidget))?1:0)) != res) && (optionDialog))
         {
             // Change state of OptionButton *without* causing a message to be
@@ -2393,6 +2424,7 @@ void resyncMenus()
             (GTK_TOGGLE_BUTTON(cfunc->optWidget))->active=res;
             gtk_widget_show(GTK_WIDGET(cfunc->optWidget));
         }
+    }
     }
 }
 
@@ -2561,14 +2593,17 @@ int main(int argc, char* argv[])
     showFrame = gtk_frame_new("Show");
     g_assert(showFrame);
     showBox = gtk_vbox_new(FALSE, 3);
+    gtk_container_border_width(GTK_CONTAINER(showBox), 10);
     g_assert(showBox);
     gtk_container_add(GTK_CONTAINER(showFrame),GTK_WIDGET(showBox));
+    gtk_container_border_width(GTK_CONTAINER(showFrame), 2);
     labelFrame = gtk_frame_new("Label");
     g_assert(labelFrame);
     labelBox = gtk_vbox_new(FALSE, 3);
+    gtk_container_border_width(GTK_CONTAINER(labelBox), 10);
     g_assert(labelBox);
     gtk_container_add(GTK_CONTAINER(labelFrame),GTK_WIDGET(labelBox));
-
+    gtk_container_border_width(GTK_CONTAINER(labelFrame), 2);
     createMainMenu(mainWindow, &mainMenu);
 
     // gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(oglArea));
