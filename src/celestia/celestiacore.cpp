@@ -439,25 +439,32 @@ void CelestiaCore::runScript(const string& filename)
         ifstream scriptfile(filename.c_str());
         if (!scriptfile.good())
         {
-            flash("Error opening script");
+            char errMsg[1024];
+            sprintf(errMsg, "Error opening script '%s'", filename.c_str());
+            if (alerter != NULL)
+                alerter->fatalError(errMsg);
+            else
+                flash(errMsg);
         }
 
         celxScript = new LuaState();
         celxScript->init(this);
-        int status = celxScript->loadScript(scriptfile);
+        int status = celxScript->loadScript(scriptfile, filename);
         if (status != 0)
         {
-            char buf[1024];
-            sprintf(buf, "Error %d opening script %s", status, filename.c_str());
-            flash(buf);
+            string errMsg = celxScript->getErrorMessage();
+            if (errMsg.empty())
+                errMsg = "Unknown error opening script";
+            if (alerter != NULL)
+                alerter->fatalError(errMsg);
+            else
+                flash(errMsg);
+
             delete celxScript;
             celxScript = NULL;
         }
         else
         {
-            // Instantaneous execution
-            // lua_pcall(state.getState(), 0, 0, 0);
-
             // Coroutine execution; control may be transferred between the
             // script and Celestia's event loop
             if (celxScript->createThread())
@@ -466,7 +473,11 @@ void CelestiaCore::runScript(const string& filename)
             }
             else
             {
-                flash("Script coroutine initialization failed.\n");
+                char* errMsg = "Script coroutine initialization failed";
+                if (alerter != NULL)
+                    alerter->fatalError(errMsg);
+                else
+                    flash(errMsg);
                 delete celxScript;
                 celxScript = NULL;
             }
