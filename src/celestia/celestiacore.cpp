@@ -1914,12 +1914,12 @@ bool CelestiaCore::initSimulation()
     }
 
 #if 0
-        {
-            bool success = LoadSolarSystemObjectsXML("data/test.xml",
-                                                     *universe);
-            if (!success)
-                warning("Error opening test.xml\n");
-        }
+    {
+        bool success = LoadSolarSystemObjectsXML("data/test.xml",
+                                                 *universe);
+        if (!success)
+            warning("Error opening test.xml\n");
+    }
 #endif
 
     // Next, read all the solar system files in the extras directories
@@ -1948,6 +1948,7 @@ bool CelestiaCore::initSimulation()
         }
     }
 
+    DeepSkyCatalog* deepSkyCatalog = new DeepSkyCatalog();
     if (config->deepSkyCatalog != "")
     {
         ifstream deepSkyFile(config->deepSkyCatalog.c_str(), ios::in);
@@ -1957,10 +1958,43 @@ bool CelestiaCore::initSimulation()
         }
         else
         {
-            DeepSkyCatalog* catalog = ReadDeepSkyCatalog(deepSkyFile);
-            universe->setDeepSkyCatalog(catalog);
+            LoadDeepSkyObjects(*deepSkyCatalog, deepSkyFile);
         }
     }
+
+    // Next, read all the deep sky files in the extras directories
+    {
+        for (vector<string>::const_iterator iter = config->extrasDirs.begin();
+             iter != config->extrasDirs.end(); iter++)
+        {
+            if (*iter != "")
+            {
+                Directory* dir = OpenDirectory(*iter);
+                
+                string filename;
+                while (dir->nextFile(filename))
+                {
+                    if (DetermineFileType(filename) == Content_CelestiaDeepSkyCatalog)
+                    {
+                        string fullname = *iter + '/' + filename;
+                        ifstream deepSkyFile(fullname.c_str(), ios::in);
+                        if (deepSkyFile.good())
+                        {
+                            LoadDeepSkyObjects(*deepSkyCatalog, deepSkyFile);
+                        }
+                        else
+                        {
+                            // Log the failure
+                        }
+                    }
+                }
+
+                delete dir;
+            }
+        }
+    }
+
+    universe->setDeepSkyCatalog(deepSkyCatalog);
 
     if (config->asterismsFile != "")
     {
