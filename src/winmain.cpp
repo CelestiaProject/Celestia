@@ -36,19 +36,22 @@
 // Skeleton functions and variables.
 //-----------------
 char szAppName[] = "Celestia";
-float fTime=0.f, fDeltaTime=0.f;
+
 
 
 //----------------------------------
 // Timer info.
-LARGE_INTEGER TimerFreq;	// Timer Frequency.
-LARGE_INTEGER TimeStart;	// Time of start.
-LARGE_INTEGER TimeCur;		// Current time.
-
+static LARGE_INTEGER TimerFreq;	// Timer Frequency.
+static LARGE_INTEGER TimeStart;	// Time of start.
+static LARGE_INTEGER TimeCur;	// Current time.
+static double currentTime=0.0;
+static double deltaTime=0.0;
 
 static bool fullscreen;
 static int lastX = 0, lastY = 0;
 static int mouseMotion = 0;
+static double mouseWheelTime = -1000.0;
+static float mouseWheelMotion = 0.0f;
 float xrot = 0, yrot = 0;
 static bool upPress = false;
 static bool downPress = false;
@@ -1000,10 +1003,31 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
 	    x = LOWORD(lParam);
 	    y = HIWORD(lParam);
 
-            if ((wParam & (MK_LBUTTON | MK_RBUTTON)) == (MK_LBUTTON|MK_RBUTTON))
+            if ((wParam & (MK_LBUTTON | MK_RBUTTON)) == (MK_LBUTTON | MK_RBUTTON) ||
+                (wParam & (MK_LBUTTON | MK_CONTROL)) == (MK_LBUTTON | MK_CONTROL))
             {
                 float amount = (float) (lastY - y) / g_h;
                 sim->changeOrbitDistance(amount * 5);
+            }
+            else if ((wParam & (MK_LBUTTON | MK_SHIFT)) == (MK_LBUTTON | MK_SHIFT))
+            {
+                // Zoom control
+                float amount = (float) (lastY - y) / g_h;
+                float minFOV = 0.01f;
+                float maxFOV = 120.0f;
+                float fov = renderer->getFieldOfView();
+
+                if (fov < minFOV)
+                    fov = minFOV;
+
+                // In order for the zoom to have the right feel, it should be
+                // exponential.
+                float newFOV = minFOV + (float) exp(log(fov - minFOV) + amount * 4);
+                if (newFOV < minFOV)
+                    newFOV = minFOV;
+                else if (newFOV > maxFOV)
+                    newFOV = maxFOV;
+                renderer->setFieldOfView(newFOV);
             }
             else
             {
@@ -1084,11 +1108,6 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             POINT pt;
             pt.x = LOWORD(lParam);
             pt.y = HIWORD(lParam);
-#if 0
-            SolarSystem* solarsys = sim->getNearestSolarSystem();
-            if (solarsys != NULL)
-                handlePopupMenu(hWnd, pt, *solarsys);
-#endif
             Vec3f pickRay = renderer->getPickRay(LOWORD(lParam),
                                                  HIWORD(lParam));
             Selection sel = sim->pickObject(pickRay);
@@ -1097,11 +1116,11 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
         }
         break;
 
+#if 0
     case WM_MOUSEWHEEL:
         // The mouse wheel controls the zoom
         {
             short wheelMove = (short) HIWORD(wParam);
-            float factor = 1.0f;
             if (wheelMove > 0)
             {
                 if (renderer->getFieldOfView() > 0.1f)
@@ -1112,6 +1131,16 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                 if (renderer->getFieldOfView() < 120.0f)
                     renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
             }
+        }
+        break;
+#endif
+    case WM_MOUSEWHEEL:
+        // The mouse wheel controls the range to target
+        {
+            short wheelMove = (short) HIWORD(wParam);
+            float factor = wheelMove > 0 ? -1.0f : 1.0f;
+            mouseWheelTime = currentTime;
+            mouseWheelMotion = factor * 0.25f;
         }
         break;
 
@@ -1312,22 +1341,39 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
 	break;
 
     case WM_PAINT:
-	if (bReady) {
+	if (bReady)
+        {
 	    // Get the current time, and update the time controller.
 	    QueryPerformanceCounter(&TimeCur);
-	    float fOldTime = fTime;
-	    fTime = (float)((double)(TimeCur.QuadPart-TimeStart.QuadPart)/(double)TimerFreq.QuadPart);
-	    fDeltaTime = fTime - fOldTime;
+	    double lastTime = currentTime;
+	    currentTime = (double) (TimeCur.QuadPart - TimeStart.QuadPart) / (double) TimerFreq.QuadPart;
+	    double deltaTime = currentTime - lastTime;
+
+            if (mouseWheelMotion != 0.0f)
+            {
+                double mouseWheelSpan = 0.1;
+                double fraction;
+                
+                if (currentTime - mouseWheelTime >= mouseWheelSpan)
+                    fraction = (mouseWheelTime + mouseWheelSpan) - lastTime;
+                else
+                    fraction = deltaTime / mouseWheelSpan;
+
+                sim->changeOrbitDistance(mouseWheelMotion * (float) fraction);
+                cout << "Mouse wheel: " << fraction << '\n';
+                if (currentTime - mouseWheelTime >= mouseWheelSpan)
+                    mouseWheelMotion = 0.0f;
+            }
 
             Quatf q(1);
 	    if (leftPress)
-		q.zrotate(fDeltaTime * 2);
+		q.zrotate((float) deltaTime * 2);
 	    if (rightPress)
-		q.zrotate(fDeltaTime * -2);
+		q.zrotate((float) deltaTime * -2);
             if (downPress)
-                q.xrotate(fDeltaTime * 2);
+                q.xrotate((float) deltaTime * 2);
             if (upPress)
-                q.xrotate(fDeltaTime * -2);
+                q.xrotate((float) deltaTime * -2);
             sim->setOrientation(sim->getOrientation() * q);
             position = Point3f(0, 0, distanceFromCenter) * conjugate(sim->getOrientation()).toMatrix4();
 
@@ -1335,9 +1381,9 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
 
             // cap the time step at 0.05 secs--extremely long time steps
             // may make the simulation unstable
-            if (fDeltaTime > 0.05f)
-                fDeltaTime = 0.05f;
-            sim->update((double) fDeltaTime);
+            if (deltaTime > 0.05)
+                deltaTime = 0.05;
+            sim->update(deltaTime);
 	    sim->render(*renderer);
 	    SwapBuffers(hDC);
 
