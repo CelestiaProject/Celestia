@@ -6,7 +6,7 @@
 	print { text "Beginning demo . . .  Press ESC to end." }
 	wait { duration 2.0 }
 
-	print { text "Let's start someplace\nfamiliar . . ." }
+	print { text "Let's start near home . . ." }
 	select { object "Sol" }
 	select { object "Earth" }
 	cancel {}
@@ -48,7 +48,7 @@
 	wait { duration 3.0 }
 	print { text "For each second, a month of time elapses in the simulation." }
 	wait { duration 12.0 }
-	timerate { rate 0 }
+	timerate { rate 1 }
 	print { text "Now, time has been stopped completely." }
 
 	wait { duration 1.0 }
@@ -124,7 +124,7 @@
 	select { object "Antares" }
 	center { time 5 }
 	wait { duration 3 }
-	print { text "We'll now travel to the Antares, a red giant star in Scorpius." }
+	print { text "We'll now travel to Antares, a red giant star in Scorpius." }
 	wait { duration 2 }
 	renderflags { clear "constellations" }
 	labels { clear "constellations|stars" }
@@ -150,7 +150,7 @@
 	select { object "Sol" }
 	select { object "Earth" }
 	goto { time 20 distance 10 }
-
-	print { text "The End" }
-	wait { duration 2.0 }
+	wait { duration 20.0 }
+	print { text "Demo completed." }
+	wait { duration 3.0 }
 }
