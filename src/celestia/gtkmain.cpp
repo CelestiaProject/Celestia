@@ -39,12 +39,14 @@
 #include "celutil/debug.h"
 #include "imagecapture.h"
 #include "celestiacore.h"
+#include "celengine/simulation.h"
 
 
 char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
 static Renderer* appRenderer = NULL;
+static Simulation* appSim = NULL;
 
 // Mouse motion tracking
 static int lastX = 0;
@@ -506,14 +508,18 @@ public:
 static bool GetEntryFloat(GtkWidget* w, float& f)
 {
     GtkEntry* entry = GTK_ENTRY(w);
+    bool tmp;
     if (entry == NULL)
         return false;
 
-    gchar* text = gtk_entry_get_text(entry);
+    gchar* text = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
+    f = 0.0;
     if (text == NULL)
         return false;
 
-    return sscanf(text, " %f", &f) == 1;
+    tmp=sscanf(text, " %f", &f) == 1;
+    g_free(text);
+    return tmp;
 }
 
 
@@ -523,16 +529,14 @@ static gint GotoObject(GtkWidget* w, gpointer data)
     if (gotoObjectDlg == NULL)
         return FALSE;
 
-    Simulation* sim = appCore->getSimulation();
-
     gchar* objectName = gtk_entry_get_text(GTK_ENTRY(gotoObjectDlg->nameEntry));
     if (objectName != NULL)
     {
-        Selection sel = sim->findObjectFromPath(objectName);
+        Selection sel = appSim->findObjectFromPath(objectName);
         if (!sel.empty())
         {
-            sim->setSelection(sel);
-            sim->follow();
+            appSim->setSelection(sel);
+            appSim->follow();
 
             float distance = (float) (sel.radius() * 5.0f);
             if (GetEntryFloat(gotoObjectDlg->distEntry, distance))
@@ -545,7 +549,7 @@ static gint GotoObject(GtkWidget* w, gpointer data)
             if (GetEntryFloat(gotoObjectDlg->latEntry, latitude) &&
                 GetEntryFloat(gotoObjectDlg->longEntry, longitude))
             {
-                sim->gotoSelectionLongLat(5.0,
+                appSim->gotoSelectionLongLat(5.0,
                                           distance,
                                           degToRad(longitude),
                                           degToRad(latitude),
@@ -553,7 +557,7 @@ static gint GotoObject(GtkWidget* w, gpointer data)
             }
             else
             {
-                sim->gotoSelection(5.0,
+                appSim->gotoSelection(5.0,
                                    distance,
                                    Vec3f(0, 1, 0),
                                    astro::ObserverLocal);
@@ -719,24 +723,23 @@ static gint TourGuideSelect(GtkWidget* w, gpointer data)
 
 static gint TourGuideGoto(GtkWidget* w, gpointer data)
 {
-    Simulation* sim = appCore->getSimulation();
-    if (selectedDest != NULL && sim != NULL)
+    if (selectedDest != NULL && appSim != NULL)
     {
-        Selection sel = sim->findObjectFromPath(selectedDest->target);
+        Selection sel = appSim->findObjectFromPath(selectedDest->target);
         if (!sel.empty())
         {
-            sim->follow();
-            sim->setSelection(sel);
+            appSim->follow();
+            appSim->setSelection(sel);
             if (selectedDest->distance <= 0)
             {
                 // Use the default distance
-                sim->gotoSelection(5.0,
+                appSim->gotoSelection(5.0,
                                    Vec3f(0, 1, 0),
                                    astro::ObserverLocal);
             }
             else
             {
-                sim->gotoSelection(5.0,
+                appSim->gotoSelection(5.0,
                                    selectedDest->distance,
                                    Vec3f(0, 1, 0),
                                    astro::ObserverLocal);
@@ -1002,6 +1005,204 @@ static void menuOpenGL()
 
 
 
+static gint intAdjChanged(GtkAdjustment* adj, int *val)
+{
+    if (val)
+	{
+	*val=(int)adj->value;
+	return TRUE;
+	}
+    return FALSE;
+}
+
+
+char *timeOptions[]=
+{
+    "UTC",
+    NULL,
+    NULL
+};
+
+char *monthOptions[]=
+{
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+    NULL
+};
+
+static int tzone;
+static int *monthLoc=NULL;
+
+static gint zonechosen(GtkMenuItem *item, int zone)
+{
+    tzone=zone;
+    return TRUE;
+}
+
+static gint monthchosen(GtkMenuItem *item, int month)
+{
+    if (monthLoc)
+	*monthLoc=month;
+    return TRUE;
+}
+
+
+static void chooseOption(GtkWidget *hbox, char *str, char *choices[], int *val, char *sep, GtkSignalFunc chosen)
+{
+    GtkWidget *vbox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *label = gtk_label_new(str);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    GtkWidget *optmenu = gtk_option_menu_new ();
+    GtkWidget *menu = gtk_menu_new ();
+    GSList *group=NULL;
+    for(unsigned int i=0; choices[i]; i++)
+	{
+	GtkWidget *menu_item = gtk_radio_menu_item_new_with_label (group, choices[i]);
+	gtk_signal_connect (GTK_OBJECT (menu_item), "activate", chosen, (gpointer) (i+1));
+	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menu_item));
+	gtk_menu_append (GTK_MENU (menu), menu_item);
+	if ((((int)i+1))==*val)
+	    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), TRUE);
+	gtk_widget_show (menu_item);
+	}
+    gtk_option_menu_set_menu (GTK_OPTION_MENU (optmenu), menu);
+    gtk_option_menu_set_history (GTK_OPTION_MENU (optmenu), (*val-1));
+    gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox), optmenu, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
+    gtk_widget_show (label);
+    gtk_widget_show (optmenu);
+    gtk_widget_show (vbox);
+}
+
+
+static void intSpin(GtkWidget *hbox, char *str, int min, int max, int *val, char *sep)
+{
+    GtkWidget *vbox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *label = gtk_label_new(str);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new ((float)*val, (float) min, (float) max,
+							      1.0, 5.0, 0.0);
+    GtkWidget *spinner = gtk_spin_button_new (adj, 1.0, 0);
+    gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spinner), TRUE);
+    gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), TRUE);
+    gtk_spin_button_set_shadow_type (GTK_SPIN_BUTTON (spinner),
+                                     GTK_SHADOW_IN);
+    gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON (spinner),TRUE);
+    gtk_entry_set_max_length(GTK_ENTRY (spinner), ((max<99)?2:4) );
+
+    gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
+    if ((sep) && (*sep))
+    {
+	gtk_widget_show (label);
+	GtkWidget *hbox2 = gtk_hbox_new(FALSE, 3);
+	label = gtk_label_new(sep);
+	gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
+	gtk_box_pack_start (GTK_BOX (hbox2), spinner, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), hbox2, TRUE, TRUE, 0);
+	gtk_widget_show (label);
+	gtk_widget_show (hbox2);
+    }
+    else
+    {
+	gtk_box_pack_start (GTK_BOX (vbox), spinner, TRUE, TRUE, 0);
+    }
+    gtk_widget_show (label);
+    gtk_widget_show (spinner);
+    gtk_widget_show (vbox);
+    gtk_signal_connect(GTK_OBJECT(adj), "value-changed",
+		       GTK_SIGNAL_FUNC(intAdjChanged), val);
+}
+
+
+static void menuSetTime()
+{
+    int second;
+    GtkWidget *stimedialog = gnome_dialog_new("Set Time",
+			                      GNOME_STOCK_BUTTON_OK,
+					      "Set Current Time",
+			                      GNOME_STOCK_BUTTON_CANCEL,
+			                      NULL);
+    tzone=1;
+    if (appCore->getTimeZoneBias())
+	tzone=2;
+	
+    if (stimedialog == NULL)
+	{
+	DPRINTF("Unable to open 'Set Time' dialog!\n");
+	return;
+	}
+
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 6);
+    
+    if (hbox == NULL)
+	{
+	DPRINTF("Unable to get GTK Elements.\n");
+	return;
+	}
+    astro::Date date(appSim->getTime() +
+			    astro::secondsToJulianDate(appCore->getTimeZoneBias()));
+    monthLoc=&date.month;
+    GtkWidget *align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
+    gtk_widget_show(align);
+    gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
+    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), align, FALSE, FALSE, 0);
+    intSpin(hbox,"Hour", 1, 24, &date.hour, ":");
+    intSpin(hbox,"Minute", 1, 60, &date.minute, ":");
+    second=(int)date.seconds;
+    intSpin(hbox,"Second", 1, 60, &second, "  ");
+    chooseOption(hbox,"Timzone", timeOptions, &tzone, NULL, GTK_SIGNAL_FUNC(zonechosen));
+    gtk_widget_show(hbox);
+    hbox = gtk_hbox_new(FALSE, 6);
+    
+    if (hbox == NULL)
+	{
+	DPRINTF("Unable to get GTK Elements.\n");
+	return;
+	}
+    chooseOption(hbox,"Month", monthOptions, &date.month, " ", GTK_SIGNAL_FUNC(monthchosen));
+    intSpin(hbox,"Day", 1, 31, &date.day, ",");
+    intSpin(hbox,"Year", -9999, 9999, &date.year, " "); /* Hopefully,
+			    noone will need to go beyond these :-) */
+    align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
+    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), align, FALSE, FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
+    gtk_widget_show(align);
+    gtk_widget_show(hbox);
+
+    gnome_dialog_set_parent((GnomeDialog*) stimedialog, GTK_WINDOW(mainWindow));
+    gnome_dialog_set_default((GnomeDialog*) stimedialog, GNOME_YES);
+    gnome_dialog_close_hides((GnomeDialog*) stimedialog, FALSE);
+    gtk_window_set_modal(GTK_WINDOW(stimedialog), FALSE);
+    gint button=gnome_dialog_run_and_close(GNOME_DIALOG(stimedialog));
+    monthLoc=NULL;
+    if (button==1)  // Set current time and exit.
+    {
+	time_t curtime=time(NULL);
+	appSim->setTime((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
+	appSim->update(0.0);
+    }
+    else if (button==0)  // Set entered time and exit
+    {
+	appSim->setTime((double) date - ((tzone==1) ? 0 : astro::secondsToJulianDate(appCore->getTimeZoneBias())));
+	appSim->update(0.0);
+    }
+}
+
+
+
 static GtkItemFactoryEntry menuItems[] =
 {
     { "/_File",  NULL,                      NULL,          0, "<Branch>" },
@@ -1024,6 +1225,7 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Time/Pause", "space",               menuPause,     0, NULL },
     { "/Time/Real Time", "backslash",       menuRealTime,  0, NULL },
     { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
+    { "/Time/Set Time", NULL,               menuSetTime,   0, NULL },
     { "/Time/sep1", NULL,                   NULL,          0, "<Separator>" },
     { "/Time/Show Local Time", "I",         NULL,          Menu_ShowLocTime, "<ToggleItem>" },
     { "/_Render", NULL,                     NULL,          0, "<Branch>" },
@@ -1148,6 +1350,9 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
     gtk_item_factory_create_items(menuItemFactory, nItems, menuItems, NULL);
     appRenderer=appCore->getRenderer();
     g_assert(appRenderer);
+    appSim = appCore->getSimulation();
+    g_assert(appSim);
+
     if (appRenderer->fragmentShaderSupported())
 	{
 	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[0], NULL, 1);
@@ -1233,6 +1438,7 @@ gint initFunc(GtkWidget* widget)
 			       effect*/
 	appCore->setTimeZoneBias(-timezone);
 	appCore->setTimeZoneName(tzname[daylight?0:1]);
+	timeOptions[1]=tzname[daylight?0:1];
     }
         
     return TRUE;
