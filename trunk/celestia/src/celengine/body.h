@@ -167,6 +167,7 @@ class Body
 
     bool extant(double) const;
     void setLifespan(double, double);
+    void getLifespan(double&, double&) const;
 
     Surface* getAlternateSurface(const std::string&) const;
     void addAlternateSurface(const std::string&, Surface*);
