@@ -27,11 +27,11 @@ class StarBrowser
     };
 
     StarBrowser();
-    StarBrowser(Simulation *_appSim, int pred=NearestStars);
+    StarBrowser(Simulation *_appSim, int pred = NearestStars);
     void setSimulation(Simulation *_appSim);
     vector<const Star*>* listStars(unsigned int);
     const Star *nearestStar(void);
-    bool setPred(int pred);
+    bool setPredicate(int pred);
     void refresh();
 
  public:
@@ -43,10 +43,7 @@ class StarBrowser
 
  private:
     Simulation *appSim;
-
-
     int predicate;
-    
 };
 
 #endif // _CELENGINE_STARBROWSER_H_
