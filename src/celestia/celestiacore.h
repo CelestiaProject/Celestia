@@ -114,7 +114,7 @@ class CelestiaCore
     void mouseMove(float, float, int);
     void joystickAxis(int axis, float amount);
     void joystickButton(int button, bool down);
-    void resize(int w, int h);
+    void resize(GLsizei w, GLsizei h);
     void draw();
     void tick();
 
