@@ -704,6 +704,8 @@ static void syncMenusWithRendererState()
                      (renderFlags & Renderer::ShowCloudMaps) != 0);
     setMenuItemCheck(ID_RENDER_SHOWGALAXIES,
                      (renderFlags & Renderer::ShowGalaxies) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWCELESTIALSPHERE,
+                     (renderFlags & Renderer::ShowCelestialSphere) != 0);
 
     setMenuItemCheck(ID_RENDER_SHOWPLANETLABELS,
                      (labelMode & Renderer::MajorPlanetLabels) != 0);
@@ -1067,6 +1069,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
         case ID_RENDER_SHOWGALAXIES:
             appCore->charEntered('U');
+            syncMenusWithRendererState();
+            break;
+        case ID_RENDER_SHOWCELESTIALSPHERE:
+            appCore->charEntered(';');
             syncMenusWithRendererState();
             break;
 
