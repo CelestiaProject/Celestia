@@ -473,6 +473,82 @@ void StarPicker::process(const Star& star, float distance, float appMag)
 }
 
 
+class CloseStarPicker : public StarHandler
+{
+public:
+    CloseStarPicker(const UniversalCoord& pos,
+                    const Vec3f& dir,
+                    float _maxDistance,
+                    float angle);
+    ~CloseStarPicker() {};
+    void process(const Star& star, float distance, float appMag);
+
+public:
+    UniversalCoord pickOrigin;
+    Vec3f pickDir;
+    float maxDistance;
+    const Star* closestStar;
+    float closestDistance;
+    float cosAngleClosest;
+};
+
+
+CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
+                                 const Vec3f& dir,
+                                 float _maxDistance,
+                                 float angle) :
+    pickOrigin(pos),
+    pickDir(dir),
+    maxDistance(_maxDistance),
+    closestStar(NULL),
+    closestDistance(0.0f),
+    cosAngleClosest((float) cos(angle))
+{
+}
+
+void CloseStarPicker::process(const Star& star,
+                              float lowPrecDistance,
+                              float appMag)
+{
+    if (lowPrecDistance > maxDistance)
+        return;
+
+    // Ray-sphere intersection
+    Vec3f starDir = (star.getPosition() - pickOrigin) *
+        astro::lightYearsToKilometers(1.0f);
+    float v = starDir * pickDir;
+    float disc = square(star.getRadius()) - ((starDir * starDir) - square(v));
+
+    if (disc > 0.0f)
+    {
+        float distance = v - (float) sqrt(disc);
+        if (distance > 0.0)
+        {
+            if (closestStar == NULL || distance < closestDistance)
+            {
+                closestStar = &star;
+                closestDistance = starDir.length();
+                cosAngleClosest = 1.0f; // An exact hit--set the angle to zero
+            }
+        }
+    }
+    else
+    {
+        // We don't have an exact hit; check to see if we're close enough
+        float distance = starDir.length();
+        starDir *= (1.0f / distance);
+        float cosAngle = starDir * pickDir;
+        if (cosAngle > cosAngleClosest &&
+            (closestStar == NULL || distance < closestDistance))
+        {
+            closestStar = &star;
+            closestDistance = distance;
+            cosAngleClosest = cosAngle;
+        }
+    }
+}
+
+
 Selection Simulation::pickStar(Vec3f pickRay)
 {
     float angle = degToRad(0.5f);
@@ -480,6 +556,17 @@ Selection Simulation::pickStar(Vec3f pickRay)
     // Transform the pick direction
     pickRay = pickRay * observer.getOrientation().toMatrix4();
 
+    // Use a high precision pick test for any stars that are close to the
+    // observer.  If this test fails, use a low precision pick test for stars
+    // which are further away.  All this work is necessary because the low
+    // precision pick test isn't reliable close to a star and the high
+    // precision test isn't nearly fast enough to use on our database of
+    // over 100k stars.
+    CloseStarPicker closePicker(observer.getPosition(), pickRay, 1.0f, angle);
+    stardb->findCloseStars(closePicker, (Point3f) observer.getPosition(),1.0f);
+    if (closePicker.closestStar != NULL)
+        return Selection(const_cast<Star*>(closePicker.closestStar));
+    
     StarPicker picker((Point3f) observer.getPosition(), pickRay, angle);
     stardb->findVisibleStars(picker,
                              (Point3f) observer.getPosition(),
