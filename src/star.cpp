@@ -129,6 +129,16 @@ float Star::getTemperature() const
 }
 
 
+float Star::getRotationPeriod() const
+{
+    // For now, just return the equatorial rotation period of the sun;
+    // because the sun is a gaseous body, it exhibits differential rotation,
+    // and the poles rotate considerably slower.
+    // TODO: Compute a number based on the luminosity and class of the star
+    return 25.4f;
+}
+
+
 void Star::setCatalogNumber(uint32 n)
 {
     catalogNumber = n;
