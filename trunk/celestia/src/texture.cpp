@@ -84,11 +84,13 @@ typedef struct
 
 static bool initialized = false;
 static bool compressionSupported = false;
+static bool clampToEdgeSupported = false;
 
 
 static void initTextureLoader()
 {
     compressionSupported = ExtensionSupported("GL_ARB_texture_compression");
+    clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
     initialized = true;
 }
 
@@ -157,11 +159,15 @@ void CTexture::bindName(uint32 flags)
         return;
 
     GLuint textureType = GL_TEXTURE_2D;
-    GLuint wrapMode = wrap ? GL_REPEAT : GL_CLAMP;
+
+    // If we're not wrapping, use GL_CLAMP_TO_EDGE if it's available; we want
+    // to ignore the border color.
+    GLuint wrapMode = wrap ? GL_REPEAT :
+        (clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP);
     if (cubeMap)
     {
         textureType = GL_TEXTURE_CUBE_MAP_EXT;
-        wrapMode = GL_CLAMP_TO_EDGE;
+        wrapMode = clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP;
     }
 
     GLuint tn;
