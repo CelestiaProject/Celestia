@@ -29,6 +29,9 @@
             <Action name="showEclipseShadows"/>
             <Action name="showStarsAsPoints"/>
             <Action name="showRingShadows"/>
+            <Action name="showBoundaries"/>
+            <Action name="showAutoMag"/>
+            <Action name="showCometTails"/>
         </Menu>
         <Menu name="labels"><text>Labels</text>
             <Action name="showStarLabels"/>

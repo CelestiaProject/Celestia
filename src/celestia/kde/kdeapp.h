@@ -105,6 +105,9 @@ public slots:
     void slotShowEclipseShadows();
     void slotShowStarsAsPoints();
     void slotShowRingShadows();
+    void slotShowBoundaries();
+    void slotShowAutoMag();
+    void slotShowCometTails();
     void slotShowStarLabels();
     void slotShowPlanetLabels();
     void slotShowMoonLabels();
