@@ -96,7 +96,8 @@
 #define ID_RENDER_SHOWNIGHTLIGHTS       40054
 #define ID_RENDER_VERTEX_SHADERS        40055
 #define ID_NAVIGATION_GOTO_OBJECT       40056
-#define ID_FILE_SCREENCAPTURE           40057
+#define ID_FILE_CAPTUREIMAGE            40057
+#define ID_FILE_CAPTUREMOVIE            40058
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
 // Next default values for new objects
@@ -104,7 +105,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        117
-#define _APS_NEXT_COMMAND_VALUE         40058
+#define _APS_NEXT_COMMAND_VALUE         40059
 #define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
