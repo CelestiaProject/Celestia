@@ -203,6 +203,9 @@ CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_CXXFLAGS"
 LIBS="$LIBS $CELESTIALIBS"
 LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm -lz $X_EXTRA_LIBS"
 
+dnl Check for zlib -- libGL requires it.
+AC_CHECK_LIB(z, deflate,,AC_MSG_ERROR(zlib not found.))
+
 dnl Check for OpenGL headers first.
 AC_CHECK_HEADERS(GL/gl.h,,AC_MSG_ERROR([[No gl.h found.  See INSTALL file for ddetails about how to correct this problem.]]))
 
@@ -237,6 +240,7 @@ dnl Check for GLUT.
 fi
 AM_CONDITIONAL(ENABLE_GLUT, test "$enable_glut" = "yes")
 
+AM_GCONF_SOURCE_2
 if test "$enable_gtk" != "no" ; then
 	dnl GNOME is an extension to the GTK options
 	if test "$enable_gnome" = "yes" ; then
@@ -386,7 +390,6 @@ AC_CONFIG_FILES([ models/Makefile ])
 AC_CONFIG_FILES([ shaders/Makefile ])
 AC_CONFIG_FILES([ fonts/Makefile ])
 AC_CONFIG_FILES([ src/celestia/res/Makefile ])
-dnl AC_CONFIG_FILES([ macros/Makefile ])
 AC_CONFIG_FILES([ manual/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/po/Makefile ])
