@@ -32,6 +32,7 @@ OBJS=\
 	$(INTDIR)\deepskyobj.obj \
 	$(INTDIR)\dispmap.obj \
 	$(INTDIR)\execution.obj \
+	$(INTDIR)\frame.obj \
 	$(INTDIR)\galaxy.obj \
 	$(INTDIR)\glext.obj \
 	$(INTDIR)\lodspheremesh.obj \
