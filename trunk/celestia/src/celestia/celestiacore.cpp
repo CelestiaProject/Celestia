@@ -1384,12 +1384,31 @@ void CelestiaCore::renderOverlay()
         // Time and date
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(width - (11 + timeZoneName.length()) * emWidth,
+        glTranslatef(width - (11 + timeZoneName.length() + 1) * emWidth,
                      height - fontHeight, 0);
         overlay->beginText();
-        *overlay << astro::Date(sim->getTime() + 
-                                astro::secondsToJulianDate(timeZoneBias));
-        *overlay << " " << timeZoneName << '\n';
+
+	bool time_displayed = false;
+	if (timeZoneBias != 0 && sim->getTime() < 2465442 && sim->getTime() > 2415733) {
+	        time_t time = (int)astro::julianDateToSeconds(sim->getTime() - 2440587.5);
+	        struct tm *localt = localtime(&time);
+		if (localt != NULL) {
+		        astro::Date d;
+		        d.year = localt->tm_year + 1900;
+		        d.month = localt->tm_mon + 1;
+		        d.day = localt->tm_mday;
+		        d.hour = localt->tm_hour;
+		        d.minute = localt->tm_min;
+		        d.seconds = (int)localt->tm_sec;
+		        *overlay << d << " " << tzname[localt->tm_isdst>0?1:0] << '\n';
+			time_displayed = true;
+		}
+	} 
+	
+	if (!time_displayed) {
+	        *overlay << astro::Date(sim->getTime());
+	        *overlay << " UTC" << '\n';
+	}
 
         if (paused)
         {
