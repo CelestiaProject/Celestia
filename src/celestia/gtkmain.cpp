@@ -243,7 +243,7 @@ static gint menuShowConstellations(GtkWidget* w, gpointer data)
 static gint menuShowLocTime(GtkWidget* w, gpointer data)
 {
     bool on = (GTK_CHECK_MENU_ITEM(w)->active != FALSE);
-    if(on)
+    if (on)
     {
 	appCore->setTimeZoneBias(-timezone);
 	appCore->setTimeZone(tzname[daylight?0:1]);
@@ -855,7 +855,7 @@ char *readFromFile(char *fname)
 {
     ifstream textFile(fname, ios::in);
     string s("");
-    if(!textFile.is_open())
+    if (!textFile.is_open())
     {
 	s="Unable to open file '";
 	s+= fname ;
@@ -864,9 +864,9 @@ char *readFromFile(char *fname)
     char c;
     while(textFile.get(c))
     {
-	if(c=='\t')
+	if (c=='\t')
 	    s+="        "; // 8 spaces
-	else if(c=='\014') // Ctrl+L (form feed)
+	else if (c=='\014') // Ctrl+L (form feed)
 	    s+="\n\n\n\n";
 	else
 	    s+=c;
@@ -1148,7 +1148,7 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
     gtk_item_factory_create_items(menuItemFactory, nItems, menuItems, NULL);
     appRenderer=appCore->getRenderer();
     g_assert(appRenderer);
-    if(appRenderer->fragmentShaderSupported())
+    if (appRenderer->fragmentShaderSupported())
 	{
 	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[0], NULL, 1);
 	checks[1].active=1;
@@ -1188,7 +1188,7 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
                    GTK_SIGNAL_FUNC(menuShowCelestialSphere));
     setupCheckItem(menuItemFactory, Menu_ShowLocTime,
                    GTK_SIGNAL_FUNC(menuShowLocTime));
-    if(appRenderer->fragmentShaderSupported())
+    if (appRenderer->fragmentShaderSupported())
 	setupCheckItem(menuItemFactory, Menu_PixelShaders,
 		       GTK_SIGNAL_FUNC(menuPixelShaders));
     if (appRenderer->vertexShaderSupported())
@@ -1572,11 +1572,11 @@ int main(int argc, char* argv[])
     int i = sizeof(checks) / sizeof(checks[0]);
     for(CheckFunc *cfunc=&checks[--i];i>=0;cfunc=&checks[--i])
     {
-	if(!cfunc->active)
+	if (!cfunc->active)
 	    continue;
 	g_assert(cfunc->path);
 	cfunc->widget=GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(menuItemFactory, cfunc->path));
-	if(!cfunc->widget)
+	if (!cfunc->widget)
 	{
 	    cfunc->active=0;
 	    DPRINTF("Menu item %s status checking deactivated due to being unable to find it!", cfunc->path);
@@ -1584,9 +1584,9 @@ int main(int argc, char* argv[])
 	}
 	g_assert(cfunc->func);
 	int res=(*cfunc->func)(cfunc->funcdata);
-	if(res)
+	if (res)
 	{
-    	    if(cfunc->widget->active == FALSE)
+    	    if (cfunc->widget->active == FALSE)
 		{
 		// Change state of widget *without* causing a message to be
 		// sent (which would change the state again).
