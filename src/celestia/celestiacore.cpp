@@ -2441,8 +2441,8 @@ class SolarSystemLoader : public EnumFilesHandler
             if (solarSysFile.good())
             {
                 LoadSolarSystemObjects(solarSysFile,
-                                       *universe);
-                                       // getPath() + '/');
+                                       *universe,
+                                       getPath() + "/textures");
             }
         }
 
@@ -2558,7 +2558,7 @@ bool CelestiaCore::initSimulation()
             }
             else
             {
-                LoadSolarSystemObjects(solarSysFile, *universe); // , "");
+                LoadSolarSystemObjects(solarSysFile, *universe, "");
             }
         }
     }

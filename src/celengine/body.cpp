@@ -10,9 +10,9 @@
 #include <cstdlib>
 // Missing from g++ . . . why???
 // #include <limits>
+#include <cassert>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
-#include "astro.h"
 #include "body.h"
 
 using namespace std;
@@ -31,6 +31,7 @@ RotationElements::RotationElements() :
 
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
+    orbitFrame(astro::Equatorial),
     oblateness(0),
     orientation(1.0f),
     // Ugh.  Numeric_limits class is missing from g++
@@ -89,6 +90,26 @@ void Body::setOrbit(Orbit* _orbit)
     orbit = _orbit;
 }
 
+
+astro::CoordinateSystem Body::getOrbitFrame() const
+{
+    return orbitFrame;
+}
+
+
+void Body::setOrbitFrame(astro::CoordinateSystem _orbitFrame)
+{
+    switch (_orbitFrame)
+    {
+    case astro::Equatorial:
+    case astro::Ecliptical:
+    case astro::Geographic:
+        orbitFrame = _orbitFrame;
+        break;
+    default:
+        assert(0);
+    }
+}
 
 float Body::getRadius() const
 {
