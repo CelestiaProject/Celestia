@@ -43,7 +43,7 @@ Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
     case StellarClass::Spectral_R:
     case StellarClass::Spectral_S:
     case StellarClass::Spectral_N:
-        return Color(1.0f, 0.6f, 0.6f);
+        return Color(1.0f, 0.4f, 0.4f);
     default:
         // TODO: Figure out reasonable colors for Wolf-Rayet stars,
         // white dwarfs, and other oddities
