@@ -395,6 +395,7 @@ class Renderer
     std::vector<Label> labels;
     std::vector<Label> depthSortedLabels;
     std::vector<EclipseShadow> eclipseShadows;
+    std::vector<const Star*> nearStars;
 
     std::vector<StarLabel> labelledStars;
 

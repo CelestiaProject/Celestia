@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstdio>
+#include <cassert>
 #include <algorithm>
 #include <celmath/mathlib.h>
 #include <celmath/plane.h>
@@ -47,7 +48,8 @@ StarDatabase::StarDatabase() : nStars(0),
                                capacity(0),
                                stars(NULL),
                                names(NULL),
-                               octreeRoot(NULL)
+                               octreeRoot(NULL),
+                               nextAutoCatalogNumber(0xfffffffe)
 {
     crossIndexes.resize(MaxCatalog);
 }
@@ -734,6 +736,19 @@ void StarDatabase::finish()
 
     buildOctree();
     buildIndexes();
+
+    // Resolve all barycenters; this can't be done before star sorting
+    for (vector<BarycenterUsage>::const_iterator iter = barycenters.begin();
+         iter != barycenters.end(); iter++)
+    {
+        Star* star = find(iter->catNo);
+        Star* barycenter = find(iter->barycenterCatNo);
+        assert(star != NULL);
+        assert(barycenter != NULL);
+        if (star != NULL && barycenter != NULL)
+            star->setOrbitBarycenter(barycenter);
+    }
+    barycenters.clear();
 }
 
 
@@ -743,7 +758,6 @@ void StarDatabase::buildOctree()
     // ASSERT(octreeRoot == NULL);
 
     DPRINTF(1, "Sorting stars into octree . . .\n");
-    cout.flush();
     float absMag = astro::appToAbsMag(OctreeMagnitude,
                                       OctreeRootSize * (float) sqrt(3.0));
     DynamicStarOctree* root = new DynamicStarOctree(Point3f(1000, 1000, 1000),
@@ -752,7 +766,6 @@ void StarDatabase::buildOctree()
         root->insertStar(stars[i], OctreeRootSize);
 
     DPRINTF(1, "Spatially sorting stars for improved locality of reference . . .\n");
-    cout.flush();
     Star* sortedStars = new Star[nStars];
     Star* firstStar = sortedStars;
     root->rebuildAndSort(octreeRoot, firstStar);
@@ -786,9 +799,24 @@ void StarDatabase::buildIndexes()
 }
 
 
-static Star* CreateStar(uint32 catalogNumber,
-                        Hash* starData,
-                        const string& path)
+static void errorMessagePrelude(const Tokenizer& tok)
+{
+    cerr << "Error in .stc file (line " << tok.getLineNumber() << "): ";
+}
+
+static void stcError(const Tokenizer& tok,
+                     const string& msg)
+{
+    errorMessagePrelude(tok);
+    cerr << msg << '\n';
+}
+
+
+Star*
+StarDatabase::createStar(uint32 catalogNumber,
+                         Hash* starData,
+                         const string& path,
+                         bool isBarycenter)
 {
     double ra = 0.0;
     double dec = 0.0;
@@ -813,26 +841,36 @@ static Star* CreateStar(uint32 catalogNumber,
         return NULL;
     }
 
-    if (!starData->getString("SpectralType", spectralType))
-    {
-        DPRINTF(1, "Invalid star: missing spectral type.\n");
-        return NULL;
-    }
-    StellarClass sc = StellarClass::parse(spectralType);
-    StarDetails* details = NULL;
-    details = StarDetails::GetStarDetails(sc);
-    if (details == NULL)
-    {
-        DPRINTF(1, "Invalid star: bad spectral type.\n");
-        return NULL;
-    }
-
+    // Get the magnitude and spectral type; if the star is actually just
+    // a barycenter placeholder, these fields are ignored.
     double absMag = 0.0;
-    if (!starData->getNumber("AbsMag", absMag))
+    StarDetails* details = NULL;
+    if (isBarycenter)
     {
-        double appMag;
-        if (starData->getNumber("AppMag", appMag))
-            absMag = astro::appToAbsMag((float) appMag, (float) distance);
+        details = StarDetails::GetBarycenterDetails();
+        absMag = 30.0;
+    }
+    else
+    {
+        if (!starData->getString("SpectralType", spectralType))
+        {
+            DPRINTF(1, "Invalid star: missing spectral type.\n");
+            return NULL;
+        }
+        StellarClass sc = StellarClass::parse(spectralType);
+        details = StarDetails::GetStarDetails(sc);
+        if (details == NULL)
+        {
+            DPRINTF(1, "Invalid star: bad spectral type.\n");
+            return NULL;
+        }
+
+        if (!starData->getNumber("AbsMag", absMag))
+        {
+            double appMag;
+            if (starData->getNumber("AppMag", appMag))
+                absMag = astro::appToAbsMag((float) appMag, (float) distance);
+        }
     }
 
     string modelName;
@@ -864,12 +902,28 @@ static Star* CreateStar(uint32 catalogNumber,
         if (orbit != NULL)
         {
             details->setOrbit(orbit);
-            bool barycenterIsOrigin = false;
-            starData->getBoolean("BarycenterIsOrigin", barycenterIsOrigin);
-            if (barycenterIsOrigin)
-                details->setSystemOrigin(StarDetails::OriginBarycenter);
-            else
-                details->setSystemOrigin(StarDetails::OriginStar);
+
+            // See if a barycenter was specified as well
+            string barycenterName;
+            if (starData->getString("Barycenter", barycenterName))
+            {
+                uint32 barycenterCatNo = names->findCatalogNumber(barycenterName);
+                if (barycenterCatNo != Star::InvalidCatalogNumber)
+                {
+                    // We can't actually resolve the barycenter catalog number
+                    // to a Star pointer until after all stars have been loaded
+                    // and spatially sorted.  Just store it in a list to be
+                    // resolved after sorting.
+                    BarycenterUsage bc;
+                    bc.catNo = catalogNumber;
+                    bc.barycenterCatNo = barycenterCatNo;
+                    barycenters.push_back(bc);
+                }
+                else
+                {
+                    cerr << "Barycenter " << barycenterName << " does not exist.\n";
+                }
+            }
         }
     }
 
@@ -899,23 +953,48 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
-        if (tokenizer.getTokenType() != Tokenizer::TokenNumber)
+        bool isStar = true;
+        if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
-            DPRINTF(0, "Error parsing star file.\n");
-            return false;
+            if (tokenizer.getNameValue() == "Star")
+            {
+                isStar = true;
+            }
+            else if (tokenizer.getNameValue() == "Barycenter")
+            {
+                isStar = false;
+            }
+            else
+            {
+                stcError(tokenizer, "unrecognized object type");
+                return false;
+            }
+            tokenizer.nextToken();
         }
-        uint32 catalogNumber = (uint32) tokenizer.getNumberValue();
+
+        bool autoGenCatalogNumber = true;
+        uint32 catalogNumber = Star::InvalidCatalogNumber;
+        if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
+        {
+            autoGenCatalogNumber = false;
+            catalogNumber = (uint32) tokenizer.getNumberValue();
+            tokenizer.nextToken();
+        }
+
+        if (autoGenCatalogNumber)
+        {
+            catalogNumber = nextAutoCatalogNumber--;
+        }
 
         string name;
-        if (tokenizer.nextToken() == Tokenizer::TokenString)
+        if (tokenizer.getTokenType() == Tokenizer::TokenString)
         {
             // A star name (or names) is present
             name = tokenizer.getStringValue();
+            tokenizer.nextToken();
         }
-        else
-        {
-            tokenizer.pushBack();
-        }
+        
+        tokenizer.pushBack();
 
         Value* starDataValue = parser.readValue();
         if (starDataValue == NULL)
@@ -931,7 +1010,8 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         }
         Hash* starData = starDataValue->getHash();
 
-        Star* star = CreateStar(catalogNumber, starData, resourcePath);
+        Star* star = createStar(catalogNumber, starData, resourcePath,
+                                !isStar);
         if (star != NULL)
         {
             // Ensure that the star array is large enough
