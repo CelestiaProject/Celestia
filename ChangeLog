@@ -384,4 +384,7 @@ Code:
 * Scan extras directory for solar system catalog files
 * Fixed pixel shader rendering path so it uses star light color
 * Added support for textures in 3DS models
-
+* Fixed locations menu
+* Improved locations menu so that position and frame of reference are saved
+  and restored.
+* Fixed broken script commands: setposition, setorientation, and move
