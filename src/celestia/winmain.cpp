@@ -1685,7 +1685,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     wc.cbWndExtra = 0;
     wc.hInstance = appInstance;
     wc.hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hCursor = LoadCursor(NULL, IDC_CROSS);
     wc.hbrBackground = NULL;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = AppName;
