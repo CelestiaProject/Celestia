@@ -352,7 +352,8 @@ bool StarDatabase::loadBinary(istream& in)
 	    DPRINTF(0, "Warning, distance of star # %ld of %12.2f ly seems excessive (parallax: %2.5f)!\n", catNo, distance, parallax);
 	}
 #endif // DEBUG
-        star->setPosition(astro::equatorialToCelestialCart(RA, dec, (float) distance));
+        Point3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
+        star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
 
 	// Use apparent magnitude and distance to determine the absolute
 	// magnitude of the star.
@@ -501,7 +502,9 @@ static Star* CreateStar(uint32 catalogNumber, Hash* starData)
 
     // Convert ra from degrees to hours for eqToCelCart function
     ra /= 15.0;
-    star->setPosition(astro::equatorialToCelestialCart((float) ra, (float) dec, (float) distance));
+
+    Point3d pos = astro::equatorialToCelestialCart(ra, dec, distance);
+    star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
 
     return star;
 }
