@@ -190,14 +190,14 @@ void LODSphereMesh::render(const GLContext& context,
 
     // If one of the textures is split into subtextures, we may have to
     // use extra patches, since there can be at most one subtexture per patch.
-    int minSplit = 1;
     int i;
+    int minSplit = 1;
     for (i = 0; i < nTextures; i++)
     {
-        if (tex[i]->getUSubtextures() > minSplit)
-            minSplit = tex[i]->getUSubtextures();
-        if (tex[i]->getVSubtextures() > minSplit)
-            minSplit = tex[i]->getVSubtextures();
+        if (tex[i]->getUTileCount(0) > minSplit)
+            minSplit = tex[i]->getUTileCount(0);
+        if (tex[i]->getVTileCount(0) > minSplit)
+            minSplit = tex[i]->getVTileCount(0);
     }
     
     if (split < minSplit)
@@ -211,6 +211,7 @@ void LODSphereMesh::render(const GLContext& context,
     nTexturesUsed = nTextures;
     for (i = 0; i < nTextures; i++)
     {
+        tex[i]->beginUsage();
         textures[i] = tex[i];
         subtextures[i] = 0;
         if (nTextures > 1)
@@ -366,6 +367,8 @@ void LODSphereMesh::render(const GLContext& context,
 
     for (i = 0; i < nTextures; i++)
     {
+        tex[i]->endUsage();
+
         if (nTextures > 1)
         {
             glx::glClientActiveTextureARB(GL_TEXTURE0_ARB + i);
@@ -526,12 +529,15 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
 
     // Second cull test uses the bounding sphere of the patch
 #if 0
+    // Is this a better choice for the patch center?
     Point3f patchCenter = spherePoint(theta0 + thetaExtent / 2,
                                       phi0 + phiExtent / 2);
-#endif
+#else
+    // . . . or is the average of the points better?
     Point3f patchCenter = Point3f(p0.x + p1.x + p2.x + p3.x,
                                   p0.y + p1.y + p2.y + p3.y,
                                   p0.z + p1.z + p2.z + p3.z) * 0.25f;
+#endif
     float boundingRadius = 0.0f;
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p0));
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p1));
@@ -586,7 +592,6 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
         int y = phi0 / extent;
         if (width * height <= MaxPatchesShown)
             visiblePatches[y * width + x] = 1;
-        //printf("%d %d\n", phi0 / extent, theta0 / extent);
     }
 #endif // SHOW_PATCH_VISIBILITY
     // assert(step >= minStep);
@@ -616,8 +621,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
 
         if (textures[tex] != NULL)
         {
-            int uTexSplit = textures[tex]->getUSubtextures();
-            int vTexSplit = textures[tex]->getVSubtextures();
+            int uTexSplit = textures[tex]->getUTileCount(0);
+            int vTexSplit = textures[tex]->getVTileCount(0);
             int patchSplit = maxDivisions / extent;
             assert(patchSplit >= uTexSplit && patchSplit >= vTexSplit);
 
@@ -638,8 +643,14 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             u /= patchesPerUSubtex;
             v /= patchesPerVSubtex;
 
+            TextureTile tile = textures[tex]->getTile(0,
+                                                      uTexSplit - u - 1,
+                                                      vTexSplit - v - 1);
+#if 0
             unsigned int tn = textures[tex]->getName(uTexSplit - u - 1,
                                                      vTexSplit - v - 1);
+#endif
+            unsigned int tn = tile.texID;
             // We track the current texture to avoid unnecessary and costly
             // texture state changes.
             if (tn != subtextures[tex])
@@ -712,6 +723,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
         }
     }
 
+    // TODO: Fix this--number of rings can reach zero and cause dropout
+    // int nRings = max(phiExtent / step, 1); // buggy
     int nRings = phiExtent / step;
     int nSlices = thetaExtent / step;
     for (int i = 0; i < nRings; i++)

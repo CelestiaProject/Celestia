@@ -36,6 +36,7 @@ OBJS=\
 	$(INTDIR)\galaxy.obj \
 	$(INTDIR)\glcontext.obj \
 	$(INTDIR)\glext.obj \
+	$(INTDIR)\image.obj \
 	$(INTDIR)\location.obj \
 	$(INTDIR)\lodspheremesh.obj \
 	$(INTDIR)\marker.obj \
@@ -67,6 +68,7 @@ OBJS=\
 	$(INTDIR)\universe.obj \
 	$(INTDIR)\vertexlist.obj \
 	$(INTDIR)\vertexprog.obj \
+	$(INTDIR)\virtualtex.obj \
 	$(INTDIR)\vsop87.obj
 
 TARGETLIB = cel_engine.lib

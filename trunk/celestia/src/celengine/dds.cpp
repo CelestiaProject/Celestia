@@ -13,7 +13,7 @@
 #include <celutil/bytes.h>
 #include <celengine/gl.h>
 #include <celengine/glext.h>
-#include <celengine/texture.h>
+#include <celengine/image.h>
 
 using namespace std;
 
@@ -78,7 +78,7 @@ static uint32 FourCC(const char* s)
 }
 
 
-Texture* CreateDDSTexture(const string& filename)
+Image* LoadDDSImage(const string& filename)
 {
     // We only load compressed DDS textures, so if S3 texture compression
     // isn't supported by the driver, give up now.
@@ -111,21 +111,17 @@ Texture* CreateDDSTexture(const string& filename)
         LE_TO_CPU_INT32(ddsd.format.fourCC, ddsd.format.fourCC);
 
     int format = 0;
-    int mipMapSizeFactor = 1;
     if (ddsd.format.fourCC == FourCC("DXT1"))
     {
         format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-        mipMapSizeFactor = 2;
     }
     else if (ddsd.format.fourCC == FourCC("DXT3"))
     {
         format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-        mipMapSizeFactor = 4;
     }
     else if (ddsd.format.fourCC == FourCC("DXT5"))
     {
         format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-        mipMapSizeFactor = 4;
     }
     else
     {
@@ -134,35 +130,22 @@ Texture* CreateDDSTexture(const string& filename)
         return NULL;
     }
 
-    int size = ddsd.pitch;
-    if (ddsd.mipMapLevels > 1)
-        size *= mipMapSizeFactor;
-
     // TODO: Verify that the reported texture size matches the amount of
     // data expected.
 
-    Texture* tex = new Texture((int) ddsd.width, (int) ddsd.height, format);
-    if (tex == NULL)
+    Image* img = new Image(format,
+                           (int) ddsd.width,
+                           (int) ddsd.height,
+                           ddsd.mipMapLevels);
+    if (img == NULL)
         return NULL;
 
-    // This is a hack; the members of texture should really be private
-    tex->pixels = new unsigned char[size];
-    if (tex->pixels == NULL)
-    {
-        DPRINTF(0, "Unable to allocated memory for DDS texture.\n");
-        delete tex;
-        return NULL;
-    }
-
-    if (ddsd.mipMapLevels == 1)
-        tex->setMaxMipMapLevel(0);
-
-    in.read(reinterpret_cast<char*>(tex->pixels), size);
+    in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize());
     if (!in.eof() && !in.good())
     {
         DPRINTF(0, "Failed reading data from DDS texture file %s.\n",
                 filename.c_str());
-        delete tex;
+        delete img;
         return NULL;
     }
 
@@ -178,5 +161,5 @@ Texture* CreateDDSTexture(const string& filename)
     cout << "DXT5: " << FourCC("DXT5") << '\n';
 #endif
 
-    return tex;
+    return img;
 }

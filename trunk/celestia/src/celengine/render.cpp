@@ -340,14 +340,11 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
         lodSphere = new LODSphereMesh();
 
         starTex = CreateProceduralTexture(64, 64, GL_RGB, StarTextureEval);
-        starTex->bindName();
 
-        glareTex = CreateJPEGTexture("textures/flare.jpg");
+        glareTex = LoadTextureFromFile("textures/flare.jpg");
         if (glareTex == NULL)
             glareTex = CreateProceduralTexture(64, 64, GL_RGB, GlareTextureEval);
-        glareTex->bindName();
 
-        shadowTex = CreateProceduralTexture(256, 256, GL_RGB, ShadowTextureEval);
         // Max mipmap level doesn't work reliably on all graphics
         // cards.  In particular, Rage 128 and TNT cards resort to software
         // rendering when this feature is enabled.  The only workaround is to
@@ -355,10 +352,19 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
         // supported, which solves the problem much more elegantly than all
         // the mipmap level nonsense.
         // shadowTex->setMaxMipMapLevel(3);
+        Texture::AddressMode shadowTexAddress = Texture::EdgeClamp;
+        Texture::MipMapMode shadowTexMip = Texture::NoMipMaps;
         useClampToBorder = context->extensionSupported("GL_ARB_texture_border_clamp");
-        uint32 texFlags = useClampToBorder ? Texture::BorderClamp : Texture::NoMipMaps;
+        if (useClampToBorder)
+        {
+            shadowTexAddress = Texture::BorderClamp;
+            shadowTexMip = Texture::DefaultMipMaps;
+        }
+        
+        shadowTex = CreateProceduralTexture(256, 256, GL_RGB,
+                                            ShadowTextureEval,
+                                            shadowTexAddress, shadowTexMip);
         shadowTex->setBorderColor(Color::White);
-        shadowTex->bindName(texFlags);
 
         // Create the eclipse shadow textures
         {
@@ -366,12 +372,12 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
             {
                 ShadowTextureFunction func(i * 0.25f);
                 eclipseShadowTextures[i] =
-                    CreateProceduralTexture(128, 128, GL_RGB, func);
+                    CreateProceduralTexture(128, 128, GL_RGB, func,
+                                            shadowTexAddress, shadowTexMip);
                 if (eclipseShadowTextures[i] != NULL)
                 {
                     // eclipseShadowTextures[i]->setMaxMipMapLevel(2);
                     eclipseShadowTextures[i]->setBorderColor(Color::White);
-                    eclipseShadowTextures[i]->bindName(texFlags);
                 }
             }
         }
@@ -380,7 +386,7 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
         {
             ShadowMaskTextureFunction func;
             shadowMaskTexture = CreateProceduralTexture(128, 1, GL_RGBA, func);
-            shadowMaskTexture->bindName();
+            //shadowMaskTexture->bindName();
         }
 
         starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg", 0));
@@ -393,7 +399,6 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
         {
             // normalizationTex = CreateNormalizationCubeMap(64);
             normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
-            normalizationTex->bindName();
         }
 
         // Create labels for celestial sphere

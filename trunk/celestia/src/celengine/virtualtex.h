@@ -27,15 +27,12 @@ class VirtualTexture : public Texture
     virtual const TextureTile getTile(int lod, int u, int v);
     virtual void bind();
 
+    virtual int getUTileCount(int lod) const;
+    virtual int getVTileCount(int lod) const;
     virtual void beginUsage();
     virtual void endUsage();
 
  private:
-    void populateTileTree();
-    void addTileToTree(Tile* tile, uint lod, uint v, uint u);
-    bool makeResident(Tile* tile, uint lod, uint v, uint u);
-    ImageTexture* loadTileTexture(uint lod, uint u, uint v);
-
     struct Tile
     {
         Tile() : lastUsed(0), tex(NULL), loadFailed(false) {};
@@ -55,7 +52,12 @@ class VirtualTexture : public Texture
         Tile* tile;
         TileQuadtreeNode* children[4];
     };
-    
+
+    void populateTileTree();
+    void addTileToTree(Tile* tile, uint lod, uint v, uint u);
+    void makeResident(Tile* tile, uint lod, uint v, uint u);
+    ImageTexture* loadTileTexture(uint lod, uint u, uint v);
+
     Tile* tiles;
     Tile* findTile(unsigned int lod,
                    unsigned int u, unsigned int v);
@@ -74,7 +76,7 @@ class VirtualTexture : public Texture
         TileLoadFailed = -2,
     };
 
-    TileQuadtreeNode tileTree[2];
+    TileQuadtreeNode* tileTree[2];
 };
 
 

@@ -26,6 +26,15 @@ class TextureInfo : public ResourceInfo<Texture>
     float bumpHeight;
     unsigned int resolution;
 
+    enum {
+        WrapTexture      = 0x1,
+        CompressTexture  = 0x2,
+        NoMipMaps        = 0x4,
+        AutoMipMaps      = 0x8,
+        AllowSplitting   = 0x10,
+        BorderClamp      = 0x20,
+    };
+
     TextureInfo(const std::string _source,
                 const std::string _path,
                 unsigned int _flags,
