@@ -51,6 +51,7 @@ U  : Toggle galaxy rendering
 O  : Toggle planet orbits
 /  : Toggle constellation diagrams
 Ctrl+A : Toggle atmospheres
+Ctrl+B : Toggle constellation boundaries 
 I  : Toggle cloud textures
 Ctrl+L : Toggle night side planet maps (light pollution)
 Ctrl+E : Toggle eclipse shadow rendering
