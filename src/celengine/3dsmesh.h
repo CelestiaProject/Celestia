@@ -26,7 +26,7 @@ class Mesh3DS : public Mesh
     void render(unsigned int attributes, float lod);
     void render(unsigned int attributes, const Frustum&, float lod);
     bool pick(const Ray3d& ray, double& distance);
-    void normalize();
+    void normalize(const Vec3f& centerOffset);
 
  private:
     typedef std::vector<VertexList*> VertexListVec;
