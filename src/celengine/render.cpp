@@ -4001,7 +4001,7 @@ renderRingShadowsVS(Model* model,
 
 void Renderer::renderLocations(const vector<Location*>& locations,
                                const Quatf& cameraOrientation,
-                               const Point3f& position,
+                               const Point3f& positionf,
                                const Quatf& orientation,
                                float scale)
 {
@@ -4017,6 +4017,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 
     Vec3f viewNormal = Vec3f(0.0f, 0.0f, -1.0f) *
         cameraOrientation.toMatrix3();
+    Vec3d viewNormald = Vec3d(viewNormal.x, viewNormal.y, viewNormal.z);
 
     double modelview[16];
     double projection[16];
@@ -4044,9 +4045,11 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     glTranslatef(GLfloat((int) (windowWidth / 2)),
                  GLfloat((int) (windowHeight / 2)), -0.999f);
 
-    Ellipsoidf ellipsoid(position, Vec3f(scale, scale, scale));
+    Point3d position(positionf.x, positionf.y, positionf.z);
+    Point3d origin(0.0, 0.0, 0.0);
 
-    Point3f origin(0.0f, 0.0f, 0.0f);
+    Ellipsoidd ellipsoid(position, Vec3d(scale, scale, scale));
+
     float iScale = 1.0f / scale;
     Mat3f mat = orientation.toMatrix3();
 
@@ -4055,28 +4058,40 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     {
         if ((*iter)->getFeatureType() & locationFilter)
         {
-            Vec3f off = (*iter)->getPosition();
-            Vec3f off_t = off * mat;
-            Point3f wpos(position + off_t * 1.0001f);
+            // Get the position of the label with respect to the planet center
+            Vec3f ppos = (*iter)->getPosition();
+            // Get the rotated position
+            Vec3f pposRotated = ppos * mat;
+            // Double precision required for stable intersection calculations
+            Vec3d pposd(pposRotated.x, pposRotated.y, pposRotated.z);
+            // Get the position in camera space.  Add a slight scale factor
+            // to keep the point from being exactly on the surface.
+            Point3d cpos(position + pposd * 1.0001);
 
             float effSize = (*iter)->getImportance();
             if (effSize < 0.0f)
                 effSize = (*iter)->getSize();
-            float pixSize = effSize / (wpos.distanceFromOrigin() * pixelSize);
+            float pixSize = effSize / (float) (cpos.distanceFromOrigin() * pixelSize);
             
             if (pixSize > minFeatureSize &&
-                (wpos - origin) * viewNormal > 0.0f)
+                (cpos - origin) * viewNormald > 0.0)
             {
-                float r = off_t.length();
-                if (r < scale * 0.99f)
-                    wpos = position + off_t * (scale * 1.01f / r);
+                double r = pposd.length();
+                if (r < scale * 0.99)
+                    cpos = position + pposd * (scale * 1.01 / r);
                 
-                float t = 0.0f;
-                bool hit = testIntersection(Ray3f(origin, wpos - origin),
+                double t = 0.0f;
+
+                // Test for a intersection of the eye-to-location ray with
+                // the planet ellipsoid.  If we hit the planet first, then
+                // the label is obscured by the planet.  An exact calculation
+                // for irregular objects would be too expensive, and the
+                // ellipsoid approximation works reasonably well for them.
+                bool hit = testIntersection(Ray3d(origin, cpos - origin),
                                             ellipsoid, t);
-                if (!hit || t >= 1.0f)
+                if (!hit || t >= 1.0)
                 {
-                    if (gluProject(off.x * iScale, off.y * iScale, off.z * iScale,
+                    if (gluProject(ppos.x * iScale, ppos.y * iScale, ppos.z * iScale,
                                    modelview,
                                    projection,
                                    (const GLint*) view,
