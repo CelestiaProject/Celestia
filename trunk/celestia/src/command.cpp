@@ -26,7 +26,6 @@ CommandWait::~CommandWait()
 
 void CommandWait::process(Simulation* sim, Renderer* renderer, double t, double dt)
 {
-    cout << "Wait: " << t << '\n';
 }
 
 
@@ -172,4 +171,33 @@ CommandChangeDistance::CommandChangeDistance(double _duration, double _rate) :
 void CommandChangeDistance::process(Simulation* sim, Renderer* renderer, double t, double dt)
 {
     sim->changeOrbitDistance((float) (rate * dt));
+}
+
+
+////////////////
+// Set position command: set the position of the camera
+
+CommandSetPosition::CommandSetPosition(const UniversalCoord& uc) : pos(uc)
+{
+}
+
+void CommandSetPosition::process(Simulation* sim, Renderer* renderer)
+{
+    sim->getObserver().setPosition(pos);
+}
+
+
+////////////////
+// Set position command: set the position of the camera
+
+CommandSetOrientation::CommandSetOrientation(const Vec3f& _axis, float _angle) :
+    axis(_axis), angle(_angle)
+{
+}
+
+void CommandSetOrientation::process(Simulation* sim, Renderer* renderer)
+{
+    Quatf q(1);
+    q.setAxisAngle(axis, angle);
+    sim->getObserver().setOrientation(q);
 }
