@@ -103,7 +103,7 @@ static NSMutableDictionary* tagMap;
 //	TAGDEF(999,@"showPartialTrajectories")
 	TAGDEF(409,@"showSmoothLines")
 	TAGDEF(410,@"showEclipseShadows")
-//	TAGDEF(999,@"showRingShadows")
+	TAGDEF(412,@"showRingShadows")
 	TAGDEF(411,@"showStarsAsPoints")
 	TAGDEF(414,@"showAutoMag")
 	TAGDEF(406,@"showCelestialSphere")
