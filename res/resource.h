@@ -16,6 +16,7 @@
 #define IDD_STARBROWSER                 113
 #define IDD_TOURGUIDE                   114
 #define IDD_CONTROLSHELP                115
+#define IDD_GOTO_OBJECT                  116
 
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
@@ -35,6 +36,13 @@
 #define IDC_COMBO_TOURGUIDE             1018
 #define IDC_TEXT_DESCRIPTION            1019
 #define IDC_TEXT_CONTROLSHELP           1020
+#define IDC_EDIT_OBJECTNAME             1021
+#define IDC_EDIT_LONGITUDE              1022
+#define IDC_EDIT_LATITUDE               1023
+#define IDC_EDIT_DISTANCE               1024
+#define IDC_RADIO_KM                    1025
+#define IDC_RADIO_AU                    1026
+#define IDC_RADIO_RADII                 1027
 
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
@@ -90,6 +98,7 @@
 #define ID_HELP_CONTROLS                40053
 #define ID_RENDER_SHOWNIGHTLIGHTS       40054
 #define ID_RENDER_VERTEX_SHADERS        40055
+#define ID_NAVIGATION_GOTO_OBJECT       40056
 
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
@@ -97,9 +106,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        116
-#define _APS_NEXT_COMMAND_VALUE         40056
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_RESOURCE_VALUE        117
+#define _APS_NEXT_COMMAND_VALUE         40057
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

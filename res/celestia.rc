@@ -37,6 +37,7 @@ BEGIN
         MENUITEM "Select &Sol\tH",              ID_NAVIGATION_HOME
 	MENUITEM "Tour G&uide...",              ID_NAVIGATION_TOURGUIDE
         MENUITEM "Select &Object...",           ID_NAVIGATION_SELECT
+	MENUITEM "Goto Object...",              ID_NAVIGATION_GOTO_OBJECT
         MENUITEM SEPARATOR
         MENUITEM "&Center Selection\tC",        ID_NAVIGATION_CENTER
         MENUITEM "&Go to Selection\tG",         ID_NAVIGATION_GOTO
@@ -143,7 +144,7 @@ CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
-    CTEXT           "Celestia 1.1.4pre0",IDC_STATIC,6,7,297,9
+    CTEXT           "Celestia 1.1.4pre1",IDC_STATIC,6,7,297,9
     CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
                     IDC_STATIC,6,53,297,9
@@ -262,6 +263,25 @@ BEGIN
     LTEXT           "",IDC_TEXT_DESCRIPTION,7,47,167,91
 END
 
+IDD_GOTO_OBJECT DIALOG DISCARDABLE  0, 0, 245, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Go to Object"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,71,74,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,132,74,50,14
+    EDITTEXT        IDC_EDIT_OBJECTNAME,60,14,148,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_LONGITUDE,60,34,56,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_LATITUDE,147,33,60,12,ES_AUTOHSCROLL
+    LTEXT           "Object",IDC_STATIC,7,18,50,9
+    EDITTEXT        IDC_EDIT_DISTANCE,60,52,56,12,ES_AUTOHSCROLL
+    LTEXT           "Long.",IDC_STATIC,7,35,19,9
+    LTEXT           "Lat.",IDC_STATIC,128,35,18,9
+    LTEXT           "Distance",IDC_STATIC,7,54,29,9
+    CONTROL         "km",IDC_RADIO_KM,"Button",BS_AUTORADIOBUTTON|WS_GROUP,125,55,25,10
+    CONTROL         "au",IDC_RADIO_AU,"Button",BS_AUTORADIOBUTTON,153,55,24,10
+    CONTROL         "radii",IDC_RADIO_RADII,"Button",BS_AUTORADIOBUTTON,181,55,29,10
+END
 
 
 /////////////////////////////////////////////////////////////////////////////
