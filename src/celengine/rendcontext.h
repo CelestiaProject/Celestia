@@ -12,6 +12,46 @@
 
 #include "mesh.h"
 
+
+static const unsigned int MaxLights = 8;
+
+struct DirectionalLight
+{
+    Color color;
+    float irradiance;
+    Vec3f direction_eye;
+    Vec3f direction_obj;
+
+    // Required for eclipse shadows only--may be able to use
+    // distance instead of position.
+    Point3d position;
+    float apparentSize;
+};
+
+struct EclipseShadow
+{
+    Point3f origin;
+    Vec3f direction;
+    float penumbraRadius;
+    float umbraRadius;
+};
+
+struct LightingState
+{
+    LightingState() : nLights(0),
+                      eyeDir_obj(0.0f, 0.0f, -1.0f),
+                      eyePos_obj(0.0f, 0.0f, -1.0f)
+    { shadows[0] = NULL; };
+
+    unsigned int nLights;
+    DirectionalLight lights[MaxLights];
+    std::vector<EclipseShadow>* shadows[MaxLights];
+
+    Vec3f eyeDir_obj;
+    Point3f eyePos_obj;
+};
+
+
 class RenderContext
 {
  public:
@@ -64,6 +104,7 @@ class VP_FP_RenderContext : public RenderContext
 
 class VP_Combiner_RenderContext : public RenderContext
 {
+ public:
     VP_Combiner_RenderContext();
     VP_Combiner_RenderContext(const Mesh::Material*);
 
@@ -72,6 +113,21 @@ class VP_Combiner_RenderContext : public RenderContext
                                  void* vertexData);
 };
 
+
+class GLSL_RenderContext : public RenderContext
+{
+ public:
+    GLSL_RenderContext(const LightingState& ls);
+    GLSL_RenderContext(const LightingState& ls,
+		       const Mesh::Material*);
+    
+    virtual void makeCurrent(const Mesh::Material&);
+    virtual void setVertexArrays(const Mesh::VertexDescription& desc,
+				 void* vertexData);
+
+ private:
+    const LightingState& lightingState;
+};
 
 #endif // _CELENGINE_RENDCONTEXT_H_
 
