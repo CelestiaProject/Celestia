@@ -333,6 +333,8 @@ Image* LoadImageFromFile(const string& filename)
     ContentType type = DetermineFileType(filename);
     Image* img = NULL;
 
+    clog << "Loading image from file " << filename << '\n';
+
     switch (type)
     {
     case Content_JPEG:
@@ -348,7 +350,7 @@ Image* LoadImageFromFile(const string& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        DPRINTF(0, "Unrecognized or unsupported image file type.\n");
+        clog << filename << ": unrecognized or unsupported image file type.\n";
         break;
     }
 
@@ -611,14 +613,14 @@ Image* LoadPNGImage(const string& filename)
     fp = fopen(filename.c_str(), "rb");
     if (fp == NULL)
     {
-        DPRINTF(0, "Error opening image file %s\n", filename.c_str());
+        clog << "Error opening image file " << filename << '\n';
         return NULL;
     }
    
     fread(header, 1, sizeof(header), fp);
     if (png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
-        DPRINTF(0, "Error: %s is not a PNG file.\n", filename.c_str());
+        clog << "Error: " << filename << " is not a PNG file.\n";
         fclose(fp);
         return NULL;
     }
@@ -645,7 +647,7 @@ Image* LoadPNGImage(const string& filename)
         if (img != NULL)
             delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        DPRINTF(0, "Error reading PNG image file %s\n", filename.c_str());
+        clog << "Error reading PNG image file " << filename << '\n';
         return NULL;
     }
 

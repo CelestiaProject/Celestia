@@ -57,8 +57,7 @@ string MeshInfo::resolve(const string& baseDir)
 
 Mesh* MeshInfo::load(const string& filename)
 {
-    DPRINTF(1, "Loading mesh: %s\n", filename.c_str());
-    // cout << "Loading mesh: " << filename << '\n';
+    clog << "Loading mesh: " << filename << '\n';
     ContentType fileType = DetermineFileType(filename);
 
     if (fileType == Content_3DStudio)
