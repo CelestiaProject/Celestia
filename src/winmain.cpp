@@ -289,6 +289,35 @@ HMENU CreateMenuBar()
 }
 
 
+static void ToggleLabelState(int menuItem, int labelState)
+{
+    if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
+    {
+        renderer->setLabelMode(renderer->getLabelMode() | labelState);
+        CheckMenuItem(menuBar, menuItem, MF_CHECKED);
+    }
+    else
+    {
+        renderer->setLabelMode(renderer->getLabelMode() & ~labelState);
+        CheckMenuItem(menuBar, menuItem, MF_UNCHECKED);
+    }
+}
+
+
+static bool ToggleMenuItem(int menuItem)
+{
+    if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
+    {
+        CheckMenuItem(menuBar, menuItem, MF_CHECKED);
+        return true;
+    }
+    else
+    {
+        CheckMenuItem(menuBar, menuItem, MF_UNCHECKED);
+        return false;
+    }
+}
+
 
 VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
                               const SolarSystem& solarSystem)
@@ -304,11 +333,82 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
                    body->getName().c_str());
     }
 
-    ClientToScreen (hwnd, (LPPOINT) &point);
+    if (!fullscreen)
+        ClientToScreen(hwnd, (LPPOINT) &point);
 
     TrackPopupMenu (hMenu, 0, point.x, point.y, 0, hwnd, NULL);
 
     DestroyMenu (hMenu);
+}
+
+
+HMENU CreatePlanetarySystemMenu(const PlanetarySystem* planets)
+{
+    HMENU menu = CreatePopupMenu();
+    
+    for (int i = 0; i < planets->getSystemSize(); i++)
+    {
+        Body* body = planets->getBody(i);
+        AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + i,
+                   body->getName().c_str());
+    }
+
+    return menu;
+}
+
+
+VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
+                              const Selection& sel)
+{
+    HMENU hMenu;
+    string name;
+
+    hMenu = CreatePopupMenu();
+
+    if (sel.body != NULL)
+    {
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, sel.body->getName().c_str());
+        AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Info");
+
+        const PlanetarySystem* satellites = sel.body->getSatellites();
+        if (satellites != NULL && satellites->getSystemSize() != 0)
+        {
+            HMENU satMenu = CreatePlanetarySystemMenu(satellites);
+            AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) satMenu,
+                       "&Satellites");
+        }
+    }
+    else if (sel.star != NULL)
+    {
+        name = starDB->getStarName(sel.star->getCatalogNumber());
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
+        AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Info");
+
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
+        if (iter != solarSystemCatalog->end())
+        {
+            SolarSystem* solarSys = iter->second;
+            HMENU planetsMenu = CreatePlanetarySystemMenu(solarSys->getPlanets());
+            AppendMenu(hMenu,
+                       MF_POPUP | MF_STRING,
+                       (DWORD) planetsMenu,
+                       "&Planets");
+        }
+    }
+
+    ClientToScreen(hwnd, (LPPOINT) &point);
+
+    sim->setSelection(sel);
+    TrackPopupMenu(hMenu, 0, point.x, point.y, 0, hwnd, NULL);
+
+    // TODO: Do we need to explicitly destroy submenus or does DestroyMenu
+    // work recursively?
+    DestroyMenu(hMenu);
 }
 
 
@@ -437,12 +537,16 @@ void handleKeyPress(int c)
         sim->setTimeScale(10.0 * sim->getTimeScale());
         break;
 
+    case 'B':
+        ToggleLabelState(ID_RENDER_SHOWSTARLABELS, Renderer::StarLabels);
+        break;
+
     case 'N':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetLabels);
+        ToggleLabelState(ID_RENDER_SHOWPLANETLABELS, Renderer::PlanetLabels);
         break;
 
     case 'O':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetOrbits);
+        ToggleLabelState(ID_RENDER_SHOWORBITS, Renderer::PlanetOrbits);
         break;
 
     case 'P':
@@ -755,36 +859,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 }
 
 
-static void ToggleLabelState(int menuItem, int labelState)
-{
-    if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
-    {
-        renderer->setLabelMode(renderer->getLabelMode() | labelState);
-        CheckMenuItem(menuBar, menuItem, MF_CHECKED);
-    }
-    else
-    {
-        renderer->setLabelMode(renderer->getLabelMode() & ~labelState);
-        CheckMenuItem(menuBar, menuItem, MF_UNCHECKED);
-    }
-}
-
-
-static bool ToggleMenuItem(int menuItem)
-{
-    if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
-    {
-        CheckMenuItem(menuBar, menuItem, MF_CHECKED);
-        return true;
-    }
-    else
-    {
-        CheckMenuItem(menuBar, menuItem, MF_UNCHECKED);
-        return false;
-    }
-}
-
-
 LRESULT CALLBACK SkeletonProc(HWND hWnd,
 			      UINT uMsg,
 			      WPARAM wParam, LPARAM lParam)
@@ -871,6 +945,7 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                                                  HIWORD(lParam));
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay);
+            sim->setSelection(newSel);
             if (!oldSel.empty() && oldSel == newSel)
                 sim->centerSelection();
         }
@@ -893,9 +968,16 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             POINT pt;
             pt.x = LOWORD(lParam);
             pt.y = HIWORD(lParam);
+#if 0
             SolarSystem* solarsys = sim->getNearestSolarSystem();
             if (solarsys != NULL)
                 handlePopupMenu(hWnd, pt, *solarsys);
+#endif
+            Vec3f pickRay = renderer->getPickRay(LOWORD(lParam),
+                                                 HIWORD(lParam));
+            Selection sel = sim->pickObject(pickRay);
+            if (!sel.empty())
+                handlePopupMenu(hWnd, pt, sel);
         }
         break;
 
