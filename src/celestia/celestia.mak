@@ -24,6 +24,7 @@ OBJS=\
 	$(INTDIR)\celestiacore.obj \
 	$(INTDIR)\configfile.obj \
 	$(INTDIR)\destination.obj \
+	$(INTDIR)\eclipsefinder.obj \
 	$(INTDIR)\favorites.obj \
 	$(INTDIR)\imagecapture.obj \
 	$(INTDIR)\ODMenu.obj \
