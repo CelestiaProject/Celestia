@@ -174,6 +174,7 @@ class Body
 
     std::vector<Location*>* getLocations() const;
     void addLocation(Location*);
+    void computeLocations();
 
  private:
     std::string name;
@@ -208,6 +209,7 @@ class Body
     AltSurfaceTable *altSurfaces;
 
     std::vector<Location*>* locations;
+    mutable bool locationsComputed;
 };
 
 #endif // _BODY_H_

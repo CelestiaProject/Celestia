@@ -13,6 +13,8 @@
 #include <cassert>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
+#include "mesh.h"
+#include "meshmanager.h"
 #include "body.h"
 
 using namespace std;
@@ -47,7 +49,8 @@ Body::Body(PlanetarySystem* _system) :
     satellites(NULL),
     classification(Unknown),
     altSurfaces(NULL),
-    locations(NULL)
+    locations(NULL),
+    locationsComputed(false)
 {
     system = _system;
 }
@@ -493,6 +496,44 @@ void Body::addLocation(Location* loc)
 vector<Location*>* Body::getLocations() const
 {
     return locations;
+}
+
+
+// Compute the positions of locations on an irregular object using ray-mesh
+// intersections.  This is not automatically done when a location is added
+// because it would force the loading of all meshes for objects with 
+// defined locations; on-demand (i.e. when the object becomes visible to
+// a user) loading of meshes is preferred.
+void Body::computeLocations()
+{
+    if (locationsComputed)
+        return;
+
+    locationsComputed = true;
+
+    // No work to do if there's no mesh, or if the mesh cannot be loaded
+    if (mesh == InvalidResource)
+        return;
+    Mesh* m = GetMeshManager()->find(mesh);
+    if (m == NULL)
+        return;
+
+    for (vector<Location*>::const_iterator iter = locations->begin();
+         iter != locations->end(); iter++)
+    {
+        Vec3f v = (*iter)->getPosition();
+        float alt = v.length() - radius;
+        if (alt != -radius)
+            v.normalize();
+
+        Ray3d ray(Point3d(v.x, v.y, v.z), Vec3d(-v.x, -v.y, -v.z));
+        double t = 0.0;
+        if (m->pick(ray, t))
+        {
+            v *= (1.0f - t) * radius + alt;
+            (*iter)->setPosition(v);
+        }
+    }
 }
 
 
