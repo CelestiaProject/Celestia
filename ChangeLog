@@ -207,3 +207,21 @@ Code:
   matrix representation of the conjugate.
 * Moved common UI code into CelestiaCore
 
+
+1.1.1
+* Added spectral type field to star browser
+* Fixed bug that was causing garbled fonts in some cases
+* Added missing minus character to default label font
+* Many more options for goto--pick a specific long and lat, set coordinate
+  frame, choose up vector
+* Changed camera rotation interpolation--now use quaternion slerp
+* Constrained parallaxes of stars which are components of multistar systems;
+  binary stars now actually close to each other and not just when viewed
+  from Earth.
+* Fixed another stupid sign problem--north celestial pole is now positive,
+  not negative y.  This change should be invisible to a user.
+* Replaced welcome message with logo texture
+
+Code:
+* Moved selection info code from Simulation to CelestiaCore
+* Fixed bug in Texture destructor

@@ -16,12 +16,11 @@ USER INTERFACE
   * Orbits should be occluded by planets
 * Next/prev body commands
 * Add preferences for text color to config file
-* Fix camera rotation wackiness when using goto--probably slerp between orientations
 * Dialog box for displaying detailed information about a star or planet
 * Create a manual
 * Improve web info feature
 * Added accelerator key labels to Windows menus
-* Star browser: show spectral type and whether the star has planets
+* Star browser: flag stars with planetary systems
 * Star browser: allow user to select how many stars to show
 * Solar system browser: add icons
 * Make a Gnome UI for UNIX version
@@ -67,13 +66,12 @@ SIMULATION ACCURACY
 * Make some attempt at calculating stellar rotation rates
 * Model the irregular rotations of objects like Toutatis and Hyperion
 * Double star systems
-* Make the planets appear in their proper positions relative to the stars
 
 BUGS
 * Find out why picking sometimes stops working, apparently after orbiting
 * Fix wobbling of planet shadow on rings when time is accelerated
-* Find out about texture problems on Matrox G450
-* Investigate possible visual anomalies with ring shadows on ATI Rage cards
+* Find out about texture problems on Matrox G450 (Fixed?)
+* Investigate possible visual anomalies with ring shadows on ATI Rage cards (Fixed?)
 
 OPTIMIZATION
 * Add option to force 16-bit textures

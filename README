@@ -84,6 +84,8 @@ Y  : Orbit the selected object at a rate synced to its rotation
 HOME : Move closer to object
 END  : Move farther from object
 ESC  : Cancel motion or script
+Left/Right Arrows : Roll Camera
+Up / Down Arrows  : Change Camera Pitch
 
 Time:
 Space : stop time
