@@ -1,11 +1,23 @@
-bin_PROGRAMS = celestia
+SUBDIRS = res kde
 
+bin_PROGRAMS = celestia
 INCLUDES = -I..
 
 if ENABLE_GTK
 FRONTENDSOURCE = gtkmain.cpp
 else
-FRONTENDSOURCE = glutmain.cpp
+if ENABLE_KDE
+FRONTENDSOURCE = ''
+celestia_LDADD = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) $(LIBSOCKET) \
+	../celengine/libcelengine.a \
+	../celtxf/libceltxf.a \
+	../cel3ds/libcel3ds.a \
+	../celmath/libcelmath.a \
+	../celutil/libcelutil.a \
+	kde/libkdegui.a
+
+celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+endif
 endif
 
 COMMONSOURCES = \
@@ -13,7 +25,8 @@ COMMONSOURCES = \
 	configfile.cpp \
 	destination.cpp \
 	favorites.cpp \
-	imagecapture.cpp
+	imagecapture.cpp \
+	url.cpp
 
 WINSOURCES = \
 	wingotodlg.cpp \
@@ -43,4 +56,5 @@ CLEANFILES= ../../celestia
 ../../celestia: celestia
 	(cd ../..; ln -s src/celestia/celestia)
 
-SUBDIRS = res
+
+
