@@ -24,6 +24,8 @@
 #include "render.h"
 
 
+// TODO: Move FrameOfReference and RigidTransform out of simulation.h
+// and into separate modules.  And think of a better name for RigidTransform.
 struct FrameOfReference
 {
     FrameOfReference() :
@@ -143,13 +145,6 @@ class Simulation
     };
 
  private:
-    RigidTransform toUniversal(const FrameOfReference&,
-                               const RigidTransform&,
-                               double);
-    RigidTransform fromUniversal(const FrameOfReference&,
-                                 const RigidTransform&,
-                                 double);
-
     SolarSystem* getSolarSystem(const Star* star);
     Selection pickPlanet(Observer& observer,
                          const Star& sun,
