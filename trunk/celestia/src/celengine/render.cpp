@@ -40,6 +40,11 @@ using namespace std;
 #define NEAR_DIST      0.5f
 #define FAR_DIST   10000000.0f
 
+// This should be in the GL headers, but where?
+#ifndef GL_COLOR_SUM_EXT
+#define GL_COLOR_SUM_EXT 0x8458
+#endif
+
 static const int StarVertexListSize = 1024;
 
 // Fractional pixel offset used when rendering text as texture mapped
@@ -1944,10 +1949,13 @@ static void renderSphere_Combiners(const RenderInfo& ri,
 }
 
 
-static void renderSphere_Combiners_NvVP(const RenderInfo& ri,
-                                       const Frustum& frustum)
+#if 0
+static void renderSphere_DOT3_VP(const RenderInfo& ri,
+                                 const Frustum& frustum,
+                                 const GLContext& context)
 {
-    Texture* textures[4];
+    VertexProcessor* vproc = context.getVertexProcessor();
+    assert(vproc != NULL);
 
     if (ri.baseTex == NULL)
     {
@@ -1959,50 +1967,16 @@ static void renderSphere_Combiners_NvVP(const RenderInfo& ri,
         ri.baseTex->bind();
     }
 
-    // Compute the half angle vector required for specular lighting
-    Vec3f halfAngle_obj = ri.eyeDir_obj + ri.sunDir_obj;
-    if (halfAngle_obj.length() != 0.0f)
-        halfAngle_obj.normalize();
-
-    // Set up the fog parameters if the haze density is non-zero
-    float hazeDensity = ri.hazeColor.alpha();
-
-    // This is a last minute fix . . . there appears to be a difference in
-    // how the fog coordinate is handled by the GeForce3 and the rest of the
-    // nVidia cards.  For now, just disable haze if we're running on anything
-    // but a GeForce3 :<
-    if (buggyVertexProgramEmulation)
-        hazeDensity = 0.0f;
-
-    if (hazeDensity > 0.0f)
-    {
-        glEnable(GL_FOG);
-        float fogColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        fogColor[0] = ri.hazeColor.red();
-        fogColor[1] = ri.hazeColor.green();
-        fogColor[2] = ri.hazeColor.blue();
-        glFogfv(GL_FOG_COLOR, fogColor);
-        glFogi(GL_FOG_MODE, GL_LINEAR);
-        glFogf(GL_FOG_START, 0.0);
-        glFogf(GL_FOG_END, 1.0f / hazeDensity);
-    }
-
-    vp::enable();
-    vp::parameter(15, ri.eyePos_obj);
-    vp::parameter(16, ri.sunDir_obj);
-    vp::parameter(17, halfAngle_obj);
-    vp::parameter(20, ri.sunColor * ri.color);
-    vp::parameter(32, ri.ambientColor * ri.color);
-    vp::parameter(33, ri.hazeColor);
-    vp::parameter(40, 0.0f, 1.0f, 0.5f, ri.specularPower);
+    vproc->parameter(vp::EyePosition, ri.eyePos_obj);
+    vproc->parameter(vp::SunDirection, ri.sunDir_obj);
+    vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+    vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
+    vproc->parameter(vp::SpecularColor, ri.sunColor * ri.specularColor);
+    vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
 
     if (ri.bumpTex != NULL)
     {
-        vp::enable();
-        if (hazeDensity > 0.0f)
-            vp::use(vp::diffuseBumpHaze);
-        else
-            vp::use(vp::diffuseBump);
+        vproc->use(vp::diffuseBump);
         SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
@@ -2016,12 +1990,12 @@ static void renderSphere_Combiners_NvVP(const RenderInfo& ri,
         {
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE);
-            vp::parameter(34, ri.sunColor * ri.specularColor);
-            vp::use(vp::specular);
+            glEnable(GL_COLOR_SUM_EXT);
+            vproc->use(vp::specular);
 
             // Disable ambient and diffuse
-            vp::parameter(20, Color::Black);
-            vp::parameter(32, Color::Black);
+            vproc->parameter(vp::AmbientColor, Color::Black);
+            vproc->parameter(vp::DiffuseColor, Color::Black);
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
 
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
@@ -2030,42 +2004,37 @@ static void renderSphere_Combiners_NvVP(const RenderInfo& ri,
                               textures, 1);
 
             // re-enable diffuse
-            vp::parameter(20, ri.sunColor * ri.color);
+            vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
 
             DisableCombiners();
+            glDisable(GL_COLOR_SUM_EXT);
             glDisable(GL_BLEND);
         }
     }
     else if (ri.specularColor != Color::Black)
     {
-        vp::parameter(34, ri.sunColor * ri.specularColor);
-        vp::use(vp::specular);
-        SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
+        glEnable(GL_COLOR_SUM_EXT);
+        vproc->use(vp::specular);
+        SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
         unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
             Mesh::VertexProgParams;
         lodSphere->render(attributes, frustum, ri.lod,
                           ri.baseTex, ri.glossTex);
         DisableCombiners();
+        glDisable(GL_COLOR_SUM_EXT);
     }
     else
     {
-        if (hazeDensity > 0.0f)
-            vp::use(vp::diffuseHaze);
-        else
-            vp::use(vp::diffuse);
+        vproc->use(vp::diffuse);
         lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
                           ri.baseTex);
     }
 
-    if (hazeDensity > 0.0f)
-        glDisable(GL_FOG);
-
-    if (ri.nightTex != NULL && ri.useTexEnvCombine)
+    if (ri.nightTex != NULL)
     {
         ri.nightTex->bind();
-        vp::use(vp::nightLights);
-        vp::parameter(32, Color::Black); // Disable ambient color
+        vproc->use(vp::nightLights);
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
@@ -2074,14 +2043,19 @@ static void renderSphere_Combiners_NvVP(const RenderInfo& ri,
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
-    vp::disable();
+    vproc->disable();
+
 }
+#endif
 
 
-static void renderSphere_Combiners_ARBVP(const RenderInfo& ri,
-                                         const Frustum& frustum)
+static void renderSphere_Combiners_VP(const RenderInfo& ri,
+                                      const Frustum& frustum,
+                                      const GLContext& context)
 {
     Texture* textures[4];
+    VertexProcessor* vproc = context.getVertexProcessor();
+    assert(vproc != NULL);
 
     if (ri.baseTex == NULL)
     {
@@ -2114,22 +2088,22 @@ static void renderSphere_Combiners_ARBVP(const RenderInfo& ri,
         glFogf(GL_FOG_END, 1.0f / hazeDensity);
     }
 
-    glEnable(GL_VERTEX_PROGRAM_ARB);
+    vproc->enable();
 
-    arbvp::parameter(arbvp::EyePosition, ri.eyePos_obj);
-    arbvp::parameter(arbvp::SunDirection, ri.sunDir_obj);
-    arbvp::parameter(arbvp::DiffuseColor, ri.sunColor * ri.color);
-    arbvp::parameter(arbvp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
-    arbvp::parameter(arbvp::SpecularColor, ri.sunColor * ri.specularColor);
-    arbvp::parameter(arbvp::AmbientColor, ri.ambientColor * ri.color);
-    arbvp::parameter(arbvp::HazeColor, ri.hazeColor);
+    vproc->parameter(vp::EyePosition, ri.eyePos_obj);
+    vproc->parameter(vp::SunDirection, ri.sunDir_obj);
+    vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+    vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
+    vproc->parameter(vp::SpecularColor, ri.sunColor * ri.specularColor);
+    vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
+    vproc->parameter(vp::HazeColor, ri.hazeColor);
 
     if (ri.bumpTex != NULL)
     {
         if (hazeDensity > 0.0f)
-            glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::diffuseBumpHaze);
+            vproc->use(vp::diffuseBumpHaze);
         else
-            glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::diffuseBump);
+            vproc->use(vp::diffuseBump);
         SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
@@ -2138,18 +2112,17 @@ static void renderSphere_Combiners_ARBVP(const RenderInfo& ri,
                           ri.baseTex, ri.bumpTex);
         DisableCombiners();
 
-#if 0
         // Render a specular pass
         if (ri.specularColor != Color::Black)
         {
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE);
-            vp::parameter(34, ri.sunColor * ri.specularColor);
-            vp::use(vp::specular);
+            glEnable(GL_COLOR_SUM_EXT);
+            vproc->use(vp::specular);
 
             // Disable ambient and diffuse
-            vp::parameter(20, Color::Black);
-            vp::parameter(32, Color::Black);
+            vproc->parameter(vp::AmbientColor, Color::Black);
+            vproc->parameter(vp::DiffuseColor, Color::Black);
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
 
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
@@ -2158,31 +2131,31 @@ static void renderSphere_Combiners_ARBVP(const RenderInfo& ri,
                               textures, 1);
 
             // re-enable diffuse
-            vp::parameter(20, ri.sunColor * ri.color);
+            vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
 
             DisableCombiners();
+            glDisable(GL_COLOR_SUM_EXT);
             glDisable(GL_BLEND);
         }
-#endif
     }
     else if (ri.specularColor != Color::Black)
     {
-        glEnable(0x8458);
-        glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::specular);
+        glEnable(GL_COLOR_SUM_EXT);
+        vproc->use(vp::specular);
         SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
         unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
             Mesh::VertexProgParams;
         lodSphere->render(attributes, frustum, ri.lod,
                           ri.baseTex, ri.glossTex);
         DisableCombiners();
-        glDisable(0x8458);
+        glDisable(GL_COLOR_SUM_EXT);
     }
     else
     {
         if (hazeDensity > 0.0f)
-            glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::diffuseHaze);
+            vproc->use(vp::diffuseHaze);
         else
-            glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::diffuse);
+            vproc->use(vp::diffuse);
         lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
                           ri.baseTex);
@@ -2194,7 +2167,7 @@ static void renderSphere_Combiners_ARBVP(const RenderInfo& ri,
     if (ri.nightTex != NULL)
     {
         ri.nightTex->bind();
-        glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::nightLights);
+        vproc->use(vp::nightLights);
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
@@ -2203,7 +2176,7 @@ static void renderSphere_Combiners_ARBVP(const RenderInfo& ri,
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
-    glDisable(GL_VERTEX_PROGRAM_ARB);
+    vproc->disable();
 }
 
 
@@ -2912,26 +2885,20 @@ void Renderer::renderObject(Point3f pos,
     Mesh* mesh = NULL;
     if (obj.mesh == InvalidResource)
     {
-        // This is a spherical mesh
-        // Currently, there are three different rendering paths:
-        //   1. Generic OpenGL 1.1
-        //   2. OpenGL 1.2 + nVidia register combiners
-        //   3. OpenGL 1.2 + nVidia register combiners + vertex programs
-        // Unfortunately, this means that unless you've got a GeForce card,
-        // you'll miss out on a lot of the eye candy . . .
+        // A null mesh indicates that this body is a sphere
         if (lit)
         {
             switch (context->getRenderPath())
             {
             case GLContext::GLPath_NvCombiner_ARBVP:
-                renderSphere_Combiners_ARBVP(ri, viewFrustum);
-                break;
             case GLContext::GLPath_NvCombiner_NvVP:
-                renderSphere_Combiners_NvVP(ri, viewFrustum);
+                renderSphere_Combiners_VP(ri, viewFrustum, *context);
                 break;
+
             case GLContext::GLPath_NvCombiner:
                 renderSphere_Combiners(ri, viewFrustum);
                 break;
+
             default:
                 renderSphereDefault(ri, viewFrustum, true);
             }
