@@ -134,7 +134,7 @@ findStars(const StarDatabase& stardb, Pred pred, int nStars)
 
     // Move the best matching stars into the vector
     finalStars->reserve(nStars);
-    for (StarSet::const_iterator iter = firstStars.begin();
+    for (typename StarSet::const_iterator iter = firstStars.begin();
          iter != firstStars.end(); iter++)
     {
         finalStars->insert(finalStars->end(), *iter);
