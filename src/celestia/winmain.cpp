@@ -123,6 +123,7 @@ static LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
 
 #define MENU_CHOOSE_PLANET   32000
+#define MENU_CHOOSE_SURFACE  31000
 
 
 struct AppPreferences
@@ -1391,7 +1392,7 @@ static void setMenuItemCheck(int menuItem, bool checked)
 }
 
 
-HMENU CreatePlanetarySystemMenu(const PlanetarySystem* planets)
+static HMENU CreatePlanetarySystemMenu(const PlanetarySystem* planets)
 {
     HMENU menu = CreatePopupMenu();
     
@@ -1400,6 +1401,21 @@ HMENU CreatePlanetarySystemMenu(const PlanetarySystem* planets)
         Body* body = planets->getBody(i);
         AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + i,
                    body->getName().c_str());
+    }
+
+    return menu;
+}
+
+
+static HMENU CreateAlternateSurfaceMenu(const vector<string>& surfaces)
+{
+    HMENU menu = CreatePopupMenu();
+
+    AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE, "Normal");
+    for (int i = 0; i < surfaces.size(); i++)
+    {
+        AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE + i + 1,
+                   surfaces[i].c_str());
     }
 
     return menu;
@@ -1430,6 +1446,18 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             HMENU satMenu = CreatePlanetarySystemMenu(satellites);
             AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) satMenu,
                        "&Satellites");
+        }
+
+        vector<string>* altSurfaces = sel.body->getAlternateSurfaceNames();
+        if (altSurfaces != NULL)
+        {
+            if (altSurfaces->size() != NULL)
+            {
+                HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
+                AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) surfMenu,
+                           "&Alternate Surfaces");
+            }
+            delete altSurfaces;
         }
     }
     else if (sel.star != NULL)
@@ -3510,20 +3538,40 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
                          LOWORD(wParam) < MENU_CHOOSE_PLANET + 1000)
                 {
+                    // Handle the satellite/child object submenu
                     Selection sel = appCore->getSimulation()->getSelection();
-                    if(sel.star)
+                    if (sel.star != NULL)
                     {
                         appCore->getSimulation()->selectPlanet(LOWORD(wParam) - MENU_CHOOSE_PLANET);
                     }
-                    else if(sel.body)
+                    else if (sel.body != NULL)
                     {
                         PlanetarySystem* satellites = (PlanetarySystem*)sel.body->getSatellites();
                         appCore->getSimulation()->setSelection(Selection(satellites->getBody(LOWORD(wParam) - MENU_CHOOSE_PLANET)));
                     }
-                    else if(sel.deepsky)
+                    else if (sel.deepsky != NULL)
                     {
                         // Current deep sky object/galaxy implementation does
                         // not have children to select.
+                    }
+                }
+                else if (LOWORD(wParam) >= MENU_CHOOSE_SURFACE &&
+                         LOWORD(wParam) < MENU_CHOOSE_SURFACE + 1000)
+                {
+                    // Handle the alternate surface submenu
+                    Selection sel = appCore->getSimulation()->getSelection();
+                    if (sel.body != NULL)
+                    {
+                        int index = (int) LOWORD(wParam) - MENU_CHOOSE_SURFACE - 1;
+                        vector<string>* surfNames = sel.body->getAlternateSurfaceNames();
+                        if (surfNames != NULL)
+                        {
+                            string surfName;
+                            if (index >= 0 && index < surfNames->size())
+                                surfName = surfNames->at(index);
+                            appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(surfName);
+                            delete surfNames;
+                        }
                     }
                 }
             }
