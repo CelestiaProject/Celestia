@@ -23,7 +23,9 @@ Console::Console(int rows, int cols) :
     cursorColumn(0),
     font(NULL),
     xscale(1.0f),
-    yscale(1.0f)
+    yscale(1.0f),
+    top(0.0f),
+    left(0.0f)
 {
     text = new char*[nRows];
     for (int i = 0; i < nRows; i++)
@@ -63,6 +65,13 @@ void Console::setScale(float _xscale, float _yscale)
 {
     xscale = _xscale;
     yscale = _yscale;
+}
+
+
+void Console::setOrigin(float _left, float _top)
+{
+    left = _left;
+    top = _top;
 }
 
 
@@ -131,6 +140,13 @@ void Console::LF()
 }
 
 
+void Console::backspace()
+{
+    cursorLeft();
+    setCharAt('\0', cursorRow, cursorColumn);
+}
+
+
 void Console::setCharAt(char c, int row, int col)
 {
     if (row >= 0 && row < nRows && col >= 0 && col < nColumns)
@@ -184,8 +200,6 @@ void Console::render()
 {
     float width = 1.8f;
     float height = 1.8f;
-    float top = 0.9f;
-    float left = -0.9f;
     float aspectRatio = 4.0f / 3.0f;
     float charHeight = height / (float) nRows;
     float charWidth = charHeight / aspectRatio / 2.0f;
@@ -204,7 +218,7 @@ void Console::render()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(-1, 0.9f, -1);
+    glTranslatef(-1.0f + left * 2.0f, 0.9f - top * 2.0f, -1.0f);
     glScalef(xscale, yscale, 1);
 
     for (int i = 0; i < nRows; i++)
