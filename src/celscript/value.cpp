@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <cstdio>
 #include <celscript/value.h>
 
 using namespace std;
@@ -91,6 +92,88 @@ Value& Value::operator=(const Value& v)
     }
 
     return *this;
+}
+
+
+bool Value::operator==(const Value& v) const
+{
+    if (v.type != type)
+        return false;
+
+    switch (type)
+    {
+    case BooleanType:
+        return v.val.boolVal == val.boolVal;
+    case NumberType:
+        return v.val.numVal == val.numVal;
+    case StringType:
+        return v.val.strVal == val.strVal;
+    default:
+        return false;
+    }
+}
+
+
+bool Value::operator!=(const Value& v) const
+{
+    return !(*this == v);
+}
+
+
+bool Value::toBoolean() const
+{
+    switch (type)
+    {
+    case BooleanType:
+        return val.boolVal;
+    case NumberType:
+        return val.numVal != 0.0;
+    case StringType:
+        return !val.strVal->empty();
+    default:
+        return false;
+    }
+}
+
+
+double Value::toNumber() const
+{
+    switch (type)
+    {
+    case BooleanType:
+        return val.boolVal ? 1.0 : 0.0;
+    case NumberType:
+        return val.numVal;
+    case StringType:
+        return 0.0; // TODO: attempt conversion to number
+    default:
+        return 0.0;
+    }
+}
+
+
+string Value::toString() const
+{
+    switch (type)
+    {
+    case BooleanType:
+        if (val.boolVal)
+            return string("true");
+        else
+            return string("false");
+    case NumberType:
+        {
+            char buf[256];
+            sprintf(buf, "%f", val.numVal);
+            return string(buf);
+        }
+
+    case StringType:
+        return *val.strVal;
+
+    default:
+        return string("");
+    }
 }
 
 

@@ -50,3 +50,39 @@ IfStatement::IfStatement(Expression* _cond, Statement* _ifClause,
 IfStatement::~IfStatement()
 {
 }
+
+Statement::Control IfStatement::execute()
+{
+    if (condition->eval().toBoolean())
+        return ifClause->execute();
+    else
+        return elseClause->execute();
+}
+
+
+WhileStatement::WhileStatement(Expression* _cond, Statement* _body) :
+    condition(_cond), body(_body)
+{
+}
+
+WhileStatement::~WhileStatement()
+{
+}
+
+Statement::Control WhileStatement::execute()
+{
+    Control control = ControlAdvance;
+    while (condition->eval().toBoolean())
+    {
+        control = body->execute();
+        if (control == ControlReturn || control == ControlBreak)
+            break;
+    }
+
+    if (control == ControlReturn)
+        return ControlReturn;
+    else
+        return ControlAdvance;
+}
+
+
