@@ -3428,7 +3428,11 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), 0.0f);
+
+    // Render the labels very close to the near plane with z=-0.999f.  In fact,
+    // z=-1.0f should work, but I'm concerned that some OpenGL implementations
+    // might clip things placed right on the near plane.
+    glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), -0.999f);
 
     Ellipsoidf ellipsoid(position, Vec3f(scale, scale, scale));
 
