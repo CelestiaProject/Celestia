@@ -45,7 +45,7 @@ OBJS=\
 RESOURCES=\
 	$(INTDIR)\celestia.res
 
-!IF "$(CELX)" != "enable"
+!IF "$(CELX)" == "enable"
 LUALIBS=lua.lib lualib.lib
 OBJS=$(OBJS) $(INTDIR)\celx.obj
 EXTRADEFS=/D "CELX"
