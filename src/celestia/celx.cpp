@@ -405,6 +405,15 @@ static Observer* to_observer(lua_State* l, int index)
 }
 
 
+static int observer_tostring(lua_State* l)
+{
+    cout << "observer_tostring\n"; cout.flush();
+    lua_pushstring(l, "[Observer]");
+
+    return 1;
+}
+
+
 // First argument is the target object; optional second argument is the travel time
 static int observer_goto(lua_State* l)
 {
@@ -578,13 +587,34 @@ static int observer_track(lua_State* l)
 }
 
 
-static int observer_tostring(lua_State* l)
+// Return true if the observer is still moving as a result of a goto, center,
+// or similar command.
+static int observer_travelling(lua_State* l)
 {
-    cout << "observer_tostring\n"; cout.flush();
-    lua_pushstring(l, "[Observer]");
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function observer:travelling");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        if (o->getMode() == Observer::Travelling)
+            lua_pushboolean(l, 1);
+        else
+            lua_pushboolean(l, 0);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad method call");
+        lua_error(l);
+    }
 
     return 1;
 }
+
 
 static void CreateObserverMetaTable(lua_State* l)
 {
@@ -598,6 +628,7 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "chase", observer_chase);
     RegisterMethod(l, "lock", observer_lock);
     RegisterMethod(l, "track", observer_track);
+    RegisterMethod(l, "travelling", observer_travelling);
 
     lua_pop(l, 1); // remove metatable from stack
 }
