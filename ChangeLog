@@ -388,3 +388,7 @@ Code:
 * Improved locations menu so that position and frame of reference are saved
   and restored.
 * Fixed broken script commands: setposition, setorientation, and move
+* Display the names of tracked and followed objects
+* Windows: replaced proliferating render and label options in menu with
+  a single modeless dialog.
+* Fixed period and rotation of Phoebe
