@@ -32,7 +32,8 @@ class Renderer
     void setFieldOfView(float);
 
     void setRenderMode(int);
-
+    void autoMag(float faintestMagNight, float& faintestMag, 
+		 float& saturationMag);
     void render(const Observer&,
                 const Universe&,
                 float faintestVisible,
@@ -70,6 +71,7 @@ class Renderer
         ShowStarsAsPoints   = 0x0800,
         ShowRingShadows     = 0x1000,
         ShowBoundaries      = 0x2000,
+        ShowAutoMag         = 0x4000,
     };
 
     int getRenderFlags() const;
