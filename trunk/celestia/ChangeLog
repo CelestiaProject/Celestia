@@ -335,7 +335,7 @@ Code:
   texturefont.cpp
 
 
-1.1.5
+1.2.0
 * Fixed problem with image capture function that saved skewed images for some
   windows widths.
 * Changed field of view display to use minutes and seconds
