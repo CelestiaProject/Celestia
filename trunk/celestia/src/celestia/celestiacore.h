@@ -62,6 +62,7 @@ class View
     int labelMode;
 
     void walkTreeResize(View*, int);
+    void walkTreeResizeDelta(View*, float);
 };
 
 
@@ -271,6 +272,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool wireframe;
     bool editMode;
     bool altAzimuthMode;
+    bool lightTravelFlag;
     double flashFrameStart;
 
     Timer* timer;
@@ -323,6 +325,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     std::vector<View*> views;
     int activeView;
+    bool showActiveViewFrame;
+    bool showViewFrames;
+    View *resizeSplit;
 };
 
 #endif // _CELESTIACORE_H_
