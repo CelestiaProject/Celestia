@@ -112,7 +112,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 
     // Create our OpenGL widget
     glWidget = new KdeGlWidget( this, "kdeglwidget", appCore);
-
+    
     setCentralWidget(glWidget);
     initActions();
 

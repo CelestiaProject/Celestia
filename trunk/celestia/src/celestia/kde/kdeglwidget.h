@@ -31,14 +31,16 @@
   *@author Christophe Teyssier
   */
 
-class KdeGlWidget : public QGLWidget  {
+class KdeGlWidget : public QGLWidget, public CelestiaCore::CursorHandler {
     Q_OBJECT
 
 public:
     KdeGlWidget( QWidget* parent, const char* name, CelestiaCore* core );
     ~KdeGlWidget();
 
-
+    void setCursorShape(CelestiaCore::CursorShape);
+    CelestiaCore::CursorShape getCursorShape() const;
+    
 protected:
 
     void initializeGL();
@@ -59,6 +61,7 @@ private:
     Simulation* appSim;
     int lastX;
     int lastY;
+    CelestiaCore::CursorShape currentCursor;
 
     KActionCollection* actionColl;
 
