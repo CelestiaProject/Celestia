@@ -89,7 +89,14 @@ Star* StarDatabase::find(string name) const
 {
     string altName;
 
-    if (compareIgnoringCase(name, HDCatalogPrefix, HDCatalogPrefix.length()) == 0)
+    if (name[0] == '#')
+    {
+        // Search by the default catalog number
+        uint32 catalogNumber = (uint32) atoi(string(name, 1, string::npos).c_str());
+        return find(catalogNumber, 0);
+        
+    }
+    else if (compareIgnoringCase(name, HDCatalogPrefix, HDCatalogPrefix.length()) == 0)
     {
         // Search by catalog number
         uint32 catalogNumber = (uint32) atoi(string(name, HDCatalogPrefix.length(),
