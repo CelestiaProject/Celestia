@@ -13,6 +13,7 @@
 #include <vector>
 #include <map>
 #include <celmath/vecmath.h>
+#include <celmath/quaternion.h>
 #include <celutil/color.h>
 #include <celengine/tokenizer.h>
 
@@ -27,13 +28,14 @@ class AssociativeArray
     Value* getValue(string) const;
     void addValue(string, Value&);
 
-    bool getNumber(string, double&) const;
-    bool getNumber(string, float&) const;
-    bool getString(string, string&) const;
-    bool getBoolean(string, bool&) const;
-    bool getVector(string, Vec3d&) const;
-    bool getVector(string, Vec3f&) const;
-    bool getColor(string, Color&) const;
+    bool getNumber(const std::string&, double&) const;
+    bool getNumber(const std::string&, float&) const;
+    bool getString(const std::string&, std::string&) const;
+    bool getBoolean(const std::string&, bool&) const;
+    bool getVector(const std::string&, Vec3d&) const;
+    bool getVector(const std::string&, Vec3f&) const;
+    bool getRotation(const std::string&, Quatf&) const;
+    bool getColor(const std::string&, Color&) const;
     
  private:
     map<string, Value*> assoc;
