@@ -766,6 +766,8 @@ bool LoadSolarSystemObjects(istream& in,
         else if (itemType == "AltSurface")
         {
             Surface* surface = new Surface();
+            surface->color = Color(1.0f, 1.0f, 1.0f);
+            surface->hazeColor = Color(0.0f, 0.0f, 0.0f, 0.0f);
             FillinSurface(objectData, surface, directory);
             if (surface != NULL && parent.body() != NULL)
                 parent.body()->addAlternateSurface(name, surface);
