@@ -175,6 +175,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
     void setFaintest(float);
+    void setFaintestAutoMag();
 
     void flash(const std::string&, double duration = 1.0);
 
