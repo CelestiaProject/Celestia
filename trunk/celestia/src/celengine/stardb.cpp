@@ -85,9 +85,10 @@ Star* StarDatabase::find(uint32 catalogNumber, unsigned int whichCatalog) const
 }
 
 
-Star* StarDatabase::find(string name) const
+Star* StarDatabase::find(const string& name) const
 {
-    string altName;
+    if (name.empty())
+        return NULL;
 
     if (name[0] == '#')
     {
@@ -124,6 +125,9 @@ Star* StarDatabase::find(string name) const
 
         if (names != NULL)
         {
+            string priName = name;
+            string altName;
+
             // See if the name is a Bayer or Flamsteed designation
             {
                 string::size_type pos = name.find(' ');
@@ -157,26 +161,26 @@ Star* StarDatabase::find(string name) const
                             // Matched . . . this is a Bayer designation
                             if (digit == ' ')
                             {
-                                name = letter + ' ' + con->getAbbreviation();
+                                priName = letter + ' ' + con->getAbbreviation();
                                 // If 'let con' doesn't match, try using
                                 // 'let1 con' instead.
                                 altName = letter + '1' + ' ' + con->getAbbreviation();
                             }
                             else
                             {
-                                name = letter + digit + ' ' + con->getAbbreviation();
+                                priName = letter + digit + ' ' + con->getAbbreviation();
                             }
                         }
                         else
                         {
                             // Something other than a Bayer designation
-                            name = prefix + ' ' + con->getAbbreviation();
+                            priName = prefix + ' ' + con->getAbbreviation();
                         }
                     }
                 }
             }
 
-            uint32 catalogNumber = names->findCatalogNumber(name);
+            uint32 catalogNumber = names->findCatalogNumber(priName);
 
             // If the first search failed, try using the alternate name
             if (catalogNumber == Star::InvalidCatalogNumber &&
