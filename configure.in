@@ -110,25 +110,44 @@ GTK_LIBS=""
 GTKGL_LIBS=""
 GTK_CFLAGS=""
 
-AM_PATH_GTK(1.2.0,enable_gtk_default="yes",enable_gtk_default="no")
-if test "$enable_gtk_default" == "yes" ; then
-	OLD_LIBS="$LIBS"
-	LIBS="$LIBS $GTK_LIBS -lGL"
-	AC_CHECK_LIB(gtkgl,gdk_gl_query,,enable_gtk_default="no")
-	LIBS="$OLD_LIBS"
-fi
-
-AC_MSG_CHECKING([whether to use GTK.])
+AC_MSG_CHECKING([whether to disable GTK.])
 AC_ARG_WITH(gtk, [  --with-gtk              Use Gtk for an enhanced GUI],
-	    enable_gtk="$withval", enable_gtk="$enable_gtk_default")
-AC_MSG_RESULT($enable_gtk)
+	    enable_gtk="$withval";enable_by_default="no", enable_gtk="yes";enable_by_default="yes")
 
 if test "$enable_gtk" == "yes" ; then
+	AC_MSG_RESULT(no, so try to find GTK)
+	AM_PATH_GTK(1.2.0,enable_gtk="yes",enable_gtk="no")
+	
+	dnl Complain only if the user insisted we do GTK
+	if test "$enable_by_default" == "no" -a "$enable_gtk" == "no"; then
+		AC_MSG_ERROR(Unable to find GTK)
+	fi
+else
+	AC_MSG_RESULT(yes)
+fi
+
+if test "$enable_gtk" == "yes" ; then
+	OLD_LIBS="$LIBS"
+	LIBS="$LIBS $GTK_LIBS -lGL"
+	AC_CHECK_LIB(gtkgl,gdk_gl_query,,enable_gtk="no")
+	
+	dnl Complain only if the user insisted we do GTK
+	if test "$enable_by_default" == "no" -a "$enable_gtk" == "no"; then
+		AC_MSG_ERROR(Unable to find gtkglarea)
+	fi
+fi
+
+if test "$enable_gtk" == "yes" ; then
+	LIBS="$OLD_LIBS"
 	GNOME_INIT
 	GNOME_COMPILE_WARNINGS
 	GNOME_X_CHECKS
 	GTKGL_LIBS=-lgtkgl
 else
+	if test "$enable_by_default" == "yes" ; then
+		AC_MSG_WARN(Disabled GTK GUI because of missing necessary packages)
+	fi
+
 	dnl Check for X11.
 	AC_PATH_XTRA
 
@@ -143,6 +162,16 @@ CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_CXXFLAGS $GTK_CFLAGS $GNOME_CFLAGS 
 LIBS="$LIBS $CELESTIALIBS $GTK_LIBS $GNOME_LIBS $GNOMEUI_LIBS $GTKGL_LIBS"
 LDFLAGS="$LDFLAGS $GNOME_LIBDIR"
 
+dnl Check for OpenGL headers first.
+AC_CHECK_HEADERS(GL/gl.h,,AC_MSG_ERROR([[No gl.h found.\
+ Usually, this means that you either have no OpenGL library on your system,\
+ or if you are using a package based distribution, that you have failed to\
+ install the corresponding development package for your library. If for\
+ instance you have Mesa installed, you will also have to install the\
+ mesa-devel package (or something named similarly). Also, if in fact it *WAS*\
+ the devel package missing, make sure you have the devel packages for GLU and\
+ GLUT installed as they will also be needed.]]))
+
 dnl Check for OpenGL. Taken partly from the plib sources.
 AC_CHECK_LIB(GL,glNewList)
 
@@ -152,6 +181,16 @@ if test "x$ac_cv_lib_GL_glNewList" = "xno" ; then
 		     AC_MSG_ERROR(GL library was not found))
 fi
 
+dnl Check for GLU headers.
+AC_CHECK_HEADERS(GL/glu.h,,AC_MSG_ERROR([[No glu.h found.\
+ Usually, this means that you either have no GLU library on your system,\
+ or if you are using a package based distribution, that you have failed to\
+ install the corresponding development package for your library. If for\
+ instance you have MesaGLU installed, you will also have to install the\
+ mesaglu-devel package (or something named similarly). It is also possible\
+ that you have the xf86glu package installed, in which case you'll need the\
+ xf86glu-devel package or similar.]]))
+
 AC_CHECK_LIB(GLU,gluLookAt)
 
 if test "x$ac_cv_lib_GLU_gluLookAt" = "xno"; then
@@ -160,6 +199,14 @@ if test "x$ac_cv_lib_GLU_gluLookAt" = "xno"; then
 	AC_MSG_ERROR(GLU library was not found))
 fi
 
+
+dnl Check for GLUT headers first.
+AC_CHECK_HEADERS(GL/glut.h,,AC_MSG_ERROR([[No glut.h found.\
+ Usually, this means that you either have no GLUT library on your system,\
+ or if you are using a package based distribution, that you have failed to\
+ install the corresponding development package for your library. If for\
+ instance you have Mesa installed, you will also have to install the\
+ mesaglut-devel package (or something named similarly).]]))
 
 dnl Check for GLUT.
 AC_CHECK_LIB(glut, glutKeyboardUpFunc,,
@@ -178,7 +225,7 @@ dnl Checks for header files.
 
 AC_HEADER_STDC
 
-AC_CHECK_HEADERS(GL/gl.h GL/glut.h)
+#AC_CHECK_HEADERS(GL/gl.h GL/glut.h)
 
 # AC_DEFINE(TEXTURE_DIR,"textures")
 # AC_DEFINE(FONT_DIR,"fonts")

@@ -203,3 +203,7 @@ determining which stars from a StarDatabase are visible to an Observer.  The
 fairly simple trick used to help alleviate the problem involves only checking a
 portion of the database for visibility at each update.
 
+UNIX
+----
+To develop under Unix, you will probably need some of the following packages:
+autoconf, automake, and of course the usual array of c++ compilers/linkers.
