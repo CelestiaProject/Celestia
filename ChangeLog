@@ -496,3 +496,9 @@ Code:
 * Celestia Watcher extended. (dramsey)
 * Unix Glut: Keyboard handling corrected. (dramsey)
 * Galaxy labels were being placed incorrectly. (dramsey)
+* Fixed slowdown while rendering shadows on TNT, Rage Pro cards
+* Model precession of rotation axis
+* New script commands: set, gotoloc, chase, lock
+* Fixed orbits of major planets so that they don't get wacky far into the
+  future or past
+* Windows: fixed image capture in Windows so it doesn't screw up texture loading
