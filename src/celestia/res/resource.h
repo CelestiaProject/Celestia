@@ -11,7 +11,7 @@
 #define IDD_LICENSE                     108
 #define IDD_SETTIME                     109
 #define IDD_GLINFO                      110
-#define IDD_ADDLOCATION                 111
+#define IDD_ADDBOOKMARK                 111
 #define IDD_SSBROWSER                   112
 #define IDD_STARBROWSER                 113
 #define IDD_TOURGUIDE                   114
@@ -20,18 +20,19 @@
 #define IDD_MOVIE_PARAMS_CHOOSER        117
 #define IDD_DISPLAYMODE                 118
 #define IDD_VIEWOPTIONS                 119
-#define IDI_LOCATION                    123
+#define IDD_LOCATIONS                   120
+#define IDI_BOOKMARK                    123
 #define IDI_CLOSEDFOLDER                125
 #define IDI_OPENFOLDER                  126
 #define IDI_ROOTFOLDER                  127
-#define IDD_ADDLOCATION_FOLDER          128
-#define IDD_ORGANIZE_LOCATIONS          129
-#define IDD_RENAME_LOCATION             130
+#define IDD_ADDBOOKMARK_FOLDER          128
+#define IDD_ORGANIZE_BOOKMARKS          129
+#define IDD_RENAME_BOOKMARK             130
 #define IDD_COMPUTEECLIPSES             131
 #define IDD_ECLIPSEFINDER               132
 #define IDB_FOLDERCLOSED                532
 #define IDB_FOLDEROPENED                534
-#define IDB_LOCATION                    536
+#define IDB_BOOKMARK                    536
 #define IDB_CAMERA                      537
 #define IDB_CAMCORDER                   538
 #define IDB_SCRIPT                      539
@@ -42,7 +43,7 @@
 #define IDC_CALENDAR                    1006
 #define IDC_TIMEPICKER                  1007
 #define IDC_DATEPICKER                  1008
-#define IDC_LOCATION_EDIT               1009
+#define IDC_BOOKMARK_EDIT               1009
 #define IDC_SSBROWSER_TREE              1010
 #define IDC_BUTTON_CENTER               1011
 #define IDC_BUTTON_GOTO                 1012
@@ -85,15 +86,15 @@
 #define IDC_INFOTEXT0                   1049
 #define IDC_INFOTEXT1                   1050
 #define IDC_INFOTEXT2                   1051
-#define IDC_LOCATION_CREATEIN           1052
-#define IDC_LOCATION_NEWFOLDER          1053
-#define IDC_LOCATION_FOLDERTREE         1054
-#define IDC_LOCATIONFOLDER              1057
-#define IDC_ORGANIZE_LOCATION_TREE      1058
-#define IDC_ORGANIZE_LOCATIONS_NEWFOLDER 1059
-#define IDC_ORGANIZE_LOCATIONS_RENAME   1060
-#define IDC_ORGANIZE_LOCATIONS_DELETE   1061
-#define IDC_NEWLOCATION                 1062
+#define IDC_BOOKMARK_CREATEIN           1052
+#define IDC_BOOKMARK_NEWFOLDER          1053
+#define IDC_BOOKMARK_FOLDERTREE         1054
+#define IDC_BOOKMARKFOLDER              1057
+#define IDC_ORGANIZE_BOOKMARK_TREE      1058
+#define IDC_ORGANIZE_BOOKMARKS_NEWFOLDER 1059
+#define IDC_ORGANIZE_BOOKMARKS_RENAME   1060
+#define IDC_ORGANIZE_BOOKMARKS_DELETE   1061
+#define IDC_NEWBOOKMARK                 1062
 #define IDC_SHOWSTARSASPOINTS           1063
 #define IDC_LABELASTEROIDS              1064
 #define IDC_LABELSPACECRAFT             1065
@@ -112,6 +113,19 @@
 #define IDC_SHOWRINGSHADOWS             1088
 #define IDC_ECLIPSETYPE                 1089
 #define IDC_ECLIPSETARGET               1090
+#define IDC_SHOW_CITIES                 1100
+#define IDC_SHOW_OBSERVATORIES          1101
+#define IDC_SHOW_LANDING_SITES          1102
+#define IDC_SHOW_MONTES                 1103
+#define IDC_SHOW_MARIA                  1104
+#define IDC_SHOW_CRATERS                1105
+#define IDC_SHOW_VALLES                 1106
+#define IDC_SHOW_TERRAE                 1107
+#define IDC_SHOW_OTHERS                 1108
+#define IDC_LABELFEATURES               1109
+#define IDC_MARKFEATURES                1110
+#define IDC_SLIDER_FEATURE_SIZE         1150
+#define IDC_EDIT_FEATURE_SIZE           1151
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -140,7 +154,8 @@
 #define ID_TIME_REALTIME                40030
 #define ID_TIME_SETTIME                 40032
 #define ID_HELP_GLINFO                  40033
-#define ID_LOCATIONS_ADDLOCATION        40034
+#define ID_BOOKMARKS_ADDBOOKMARK        40034
+#define ID_RENDER_LOCATIONS             40035
 #define ID_INFO                         40040
 #define ID_HELP_RUNDEMO                 40041
 #define ID_RENDER_MORESTARS             40042
@@ -160,7 +175,7 @@
 #define ID_RENDER_FULLSCREEN            40060
 #define ID_RENDER_VIEWOPTIONS           40061
 #define ID_RENDER_ANTIALIASING          40062
-#define ID_LOCATIONS_ORGANIZE           40063
+#define ID_BOOKMARKS_ORGANIZE           40063
 #define ID_FILE_OPENSCRIPT              40064
 #define ID_TOOLS_MARK                   40065
 #define ID_TOOLS_UNMARK                 40066
@@ -170,15 +185,14 @@
 #define ID_VIEW_SINGLE                  40070
 #define ID_VIEW_SHOW_FRAMES             40071
 #define ID_VIEW_SYNC_TIME               40072
-#define ID_LOCATIONS_FIRSTLOCATION      41000
+#define ID_BOOKMARKS_FIRSTBOOKMARK      41000
 
 // Next default values for new objects
-// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        134
 #define _APS_NEXT_COMMAND_VALUE         40065
-#define _APS_NEXT_CONTROL_VALUE         1091
+#define _APS_NEXT_CONTROL_VALUE         1152
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
