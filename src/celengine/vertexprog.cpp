@@ -33,6 +33,10 @@ unsigned int vp::nightLights = 0;
 unsigned int vp::glossMap = 0;
 unsigned int vp::perFragmentSpecular = 0;
 unsigned int vp::perFragmentSpecularAlpha = 0;
+unsigned int vp::diffuse_2light = 0;
+unsigned int vp::diffuseHaze_2light = 0;
+unsigned int vp::diffuseTexOffset_2light = 0;
+unsigned int vp::specular_2light = 0;
 
 
 class VertexProcessorNV : public VertexProcessor
@@ -188,6 +192,7 @@ static bool LoadARBVertexProgram(const string& filename, unsigned int& id)
 }
 
 
+// ARB path is preferred; NV vertex program path will eventually go away
 VertexProcessor* vp::initNV()
 {
     cout << "Initializing NV vertex programs . . .\n";
@@ -213,6 +218,14 @@ VertexProcessor* vp::initNV()
         return NULL;
     // if (!LoadNvVertexProgram("shaders/comet.vp", cometTail))
     //    return false;
+
+    // Two light shaders have only been written for the ARB vertex program path
+    // Fall back to the the one light versions.
+    diffuse_2light = diffuse;
+    diffuseHaze_2light = diffuseHaze;
+    diffuseTexOffset_2light = diffuseTexOffset;
+    specular_2light = specular;
+
     everything = 0;
     cout << "All NV vertex programs loaded successfully.\n";
 
@@ -249,6 +262,14 @@ VertexProcessor* vp::initARB()
     if (!LoadARBVertexProgram("shaders/night_arb.vp", nightLights))
         return NULL;
     if (!LoadARBVertexProgram("shaders/glossmap_arb.vp", glossMap))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/diffuse2_arb.vp", diffuse_2light))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/haze2_arb.vp", diffuseHaze_2light))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/diffuse_texoff2_arb.vp", diffuseTexOffset_2light))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/specular2_arb.vp", specular_2light))
         return NULL;
 
     // Load vertex programs that are only required with fragment programs
@@ -368,17 +389,17 @@ void VertexProcessor::parameter(vp::Parameter param, const Color& c)
 
 static unsigned int parameterMappings[] = 
 {
-    16, // SunDirection,
-    15, // EyePosition,
-    20, // DiffuseColor
-    34, // SpecularColor
+    16, // LightDirection0
+    15, // EyePosition
+    20, // DiffuseColor0
+    34, // SpecularColor0
     40, // SpecularExponent
     32, // AmbientColor
     33, // HazeColor
     41, // TextureTranslation
     90, // Constant0 - relevant for NV_vertex_program only
      0, // Unused
-    41, // TexGen_S,
+    41, // TexGen_S
     42, // TexGen_T
      0, // TexGen_S2
      0, // TexGen_T2
@@ -386,6 +407,9 @@ static unsigned int parameterMappings[] =
      0, // TexGen_T3
      0, // TexGen_S4
      0, // TexGen_T4
+    50, // LightDirection1
+    51, // DiffuseColor1,
+    52, // SpecularColor1
 };
 
 VertexProcessorNV::VertexProcessorNV()

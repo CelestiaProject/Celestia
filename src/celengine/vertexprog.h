@@ -30,10 +30,10 @@ namespace vp
     void parameter(unsigned int, float, float, float, float);
 
     enum Parameter {
-        SunDirection       = 0,
+        LightDirection0    = 0,
         EyePosition        = 1,
-        DiffuseColor       = 2,
-        SpecularColor      = 3,
+        DiffuseColor0      = 2,
+        SpecularColor0     = 3,
         SpecularExponent   = 4,
         AmbientColor       = 5,
         HazeColor          = 6,
@@ -47,6 +47,9 @@ namespace vp
         TexGen_T3          = 15,
         TexGen_S4          = 16,
         TexGen_T4          = 17,
+        LightDirection1    = 18,
+        DiffuseColor1      = 19,
+        SpecularColor1     = 20,
     };
 
     extern unsigned int specular;
@@ -65,25 +68,15 @@ namespace vp
     extern unsigned int glossMap;
     extern unsigned int perFragmentSpecular;
     extern unsigned int perFragmentSpecularAlpha;
+    extern unsigned int diffuse_2light;
+    extern unsigned int diffuseTexOffset_2light;
+    extern unsigned int diffuseHaze_2light;
+    extern unsigned int specular_2light;
 };
 
 
 namespace arbvp
 {
-    enum EnvParam {
-        SunDirection       = 0,
-        EyePosition        = 1,
-        DiffuseColor       = 2,
-        SpecularColor      = 3,
-        SpecularExponent   = 4,
-        AmbientColor       = 5,
-        HazeColor          = 6,
-        TextureTranslation = 7,
-        Constant0          = 8,
-        TexGen_S           = 10,
-        TexGen_T           = 11,
-    };
-
     void parameter(unsigned int, const Vec3f&);
     void parameter(unsigned int, const Point3f&);
     void parameter(unsigned int, const Color&);
