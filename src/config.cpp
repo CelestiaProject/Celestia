@@ -64,6 +64,9 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     configParams->getString("StarNameDatabase", config->starNamesFile);
     configParams->getString("Font", config->mainFont);
     configParams->getString("LabelFont", config->labelFont);
+    configParams->getString("LogoTexture", config->logoTextureFile);
+    // configParams->getNumber("LogoWidth", config->logoWidth);
+    // configParams->getNumber("LogoHeight", config->logoHeight);
 
     Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
     if (solarSystemsVal != NULL)
