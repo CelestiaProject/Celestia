@@ -28,6 +28,7 @@ using namespace std;
 enum {
     BrightestStars = 0,
     NearestStars = 1,
+    StarsWithPlanets = 2,
 };
 
 
@@ -98,6 +99,31 @@ struct BrighterStarPredicate
 
         return (star0->getApparentMagnitude(d0) <
                 star1->getApparentMagnitude(d1));
+    }
+};
+
+struct SolarSystemPredicate
+{
+    Point3f pos;
+    SolarSystemCatalog* solarSystems;
+
+    bool operator()(const Star* star0, const Star* star1) const
+    {
+        SolarSystemCatalog::iterator iter;
+
+        iter = solarSystems->find(star0->getCatalogNumber());
+        bool hasPlanets0 = (iter != solarSystems->end());
+        iter = solarSystems->find(star1->getCatalogNumber());
+        bool hasPlanets1 = (iter != solarSystems->end());
+        if (hasPlanets1 == hasPlanets0)
+        {
+            return ((pos - star0->getPosition()).lengthSquared() <
+                    (pos - star1->getPosition()).lengthSquared());
+        }
+        else
+        {
+            return hasPlanets0;
+        }
     }
 };
 
@@ -176,6 +202,8 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
 {
     Simulation* sim = browser->appCore->getSimulation();
     StarDatabase* stardb = browser->appCore->getSimulation()->getStarDatabase();
+    SolarSystemCatalog* solarSystems = browser->appCore->getSimulation()->getSolarSystemCatalog();
+
     vector<const Star*>* stars = NULL;
     switch (browser->predicate)
     {
@@ -193,6 +221,18 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
             CloserStarPredicate closerPred;
             closerPred.pos = browser->pos;
             stars = FindStars(*stardb, closerPred, browser->nStars);
+        }
+        break;
+
+    case StarsWithPlanets:
+        {
+            if (solarSystems == NULL)
+                return false;
+            SolarSystemPredicate solarSysPred;
+            solarSysPred.pos = browser->pos;
+            solarSysPred.solarSystems = solarSystems;
+            stars = FindStars(*stardb, solarSysPred,
+                              min(browser->nStars, solarSystems->size()));
         }
         break;
 
@@ -344,7 +384,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
             HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
             InitStarBrowserColumns(hwnd);
             InitStarBrowserItems(hwnd, browser);
-            CheckRadioButton(hDlg, IDC_RADIO_NEAREST, IDC_RADIO_BRIGHTEST, IDC_RADIO_NEAREST);
+            CheckRadioButton(hDlg, IDC_RADIO_NEAREST, IDC_RADIO_WITHPLANETS, IDC_RADIO_NEAREST);
             return(TRUE);
         }
 
@@ -383,6 +423,10 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
 
         case IDC_RADIO_NEAREST:
             browser->predicate = NearestStars;
+            break;
+
+        case IDC_RADIO_WITHPLANETS:
+            browser->predicate = StarsWithPlanets;
             break;
 
         case IDC_BUTTON_REFRESH:
