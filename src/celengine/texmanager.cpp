@@ -9,6 +9,8 @@
 
 #include "celestia.h"
 #include <celutil/debug.h>
+#include <iostream>
+#include <fstream>
 #include "multitexture.h"
 #include "texmanager.h"
 
@@ -33,12 +35,28 @@ TextureManager* GetTextureManager()
 }
 
 
-Texture* TextureInfo::load(const string& baseDir)
+string TextureInfo::resolve(const string& baseDir)
+{
+    if (!path.empty())
+    {
+        string filename = path + directories[resolution] + source;
+        // cout << "Resolve: testing [" << filename << "]\n";
+        ifstream in(filename.c_str());
+        if (in.good())
+            return filename;
+    }
+
+    return baseDir + directories[resolution] + source;
+}
+
+
+Texture* TextureInfo::load(const string& name)
 {
     if (bumpHeight == 0.0f)
     {
-        DPRINTF(0, "Loading texture: %s%s%s\n", baseDir.c_str(), directories[resolution], source.c_str());
-        Texture* tex = LoadTextureFromFile(baseDir + directories[resolution] + source);
+        DPRINTF(0, "Loading texture: %s\n", name.c_str());
+        // cout << "Loading texture: " << name << '\n';
+        Texture* tex = LoadTextureFromFile(name);
 
         if (tex != NULL)
         {
@@ -48,8 +66,9 @@ Texture* TextureInfo::load(const string& baseDir)
     }
     else
     {
-        DPRINTF(0, "Loading bump map: %s%s%s\n", baseDir.c_str(), directories[resolution], source.c_str());
-        Texture* tex = LoadTextureFromFile(baseDir + directories[resolution] + source);
+        DPRINTF(0, "Loading bump map: %s\n", name.c_str());
+        // cout << "Loading texture: " << name << '\n';
+        Texture* tex = LoadTextureFromFile(name);
 
         if (tex != NULL)
         {

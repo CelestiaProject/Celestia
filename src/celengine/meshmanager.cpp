@@ -38,6 +38,11 @@ MeshManager* GetMeshManager()
 }
 
 
+string MeshInfo::resolve(const string& baseDir)
+{
+    return "blah";
+}
+
 Mesh* MeshInfo::load(const string& baseDir)
 {
     DPRINTF(1, "Loading mesh: %s\n", source.c_str());

@@ -54,7 +54,8 @@ bool getDate(Hash* hash, const string& name, double& jd)
 }
 
 
-static Surface* CreateSurface(Hash* surfaceData)
+static Surface* CreateSurface(Hash* surfaceData,
+                              const std::string& path)
 {
     Surface* surface = new Surface();
 
@@ -118,17 +119,17 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->appearanceFlags |= Surface::SpecularReflection;
 
     if (applyBaseTexture)
-        surface->baseTexture.setTexture(baseTexture, baseFlags);
+        surface->baseTexture.setTexture(baseTexture, path, baseFlags);
     if (applyNightMap)
-        surface->nightTexture.setTexture(nightTexture, nightFlags);
+        surface->nightTexture.setTexture(nightTexture, path, nightFlags);
     if (separateSpecular)
-        surface->specularTexture.setTexture(specularTexture, specularFlags);
+        surface->specularTexture.setTexture(specularTexture, path, specularFlags);
 
     // If both are present, NormalMap overrides BumpMap
     if (applyNormalMap)
-        surface->bumpTexture.setTexture(normalTexture, bumpFlags);
+        surface->bumpTexture.setTexture(normalTexture, path, bumpFlags);
     else if (applyBumpMap)
-        surface->bumpTexture.setTexture(bumpTexture, bumpHeight, bumpFlags);
+        surface->bumpTexture.setTexture(bumpTexture, path, bumpHeight, bumpFlags);
 
     return surface;
 }
@@ -249,6 +250,7 @@ static RotationElements CreateRotationElements(Hash* rotationData,
 // are in years and AU rather than days and kilometers
 static Body* CreatePlanet(PlanetarySystem* system,
                           Hash* planetData,
+                          const string& path,
                           bool usePlanetUnits = true)
 {
     Body* body = new Body(system);
@@ -327,7 +329,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
         else
             classification = Body::Unknown;
     }
-    if(classification == Body::Unknown)
+
+    if (classification == Body::Unknown)
     {
         //Try to guess the type
         if (system->getPrimaryBody() != NULL)
@@ -374,7 +377,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
 
     body->setRotationElements(CreateRotationElements(planetData, orbit->getPeriod()));
 
-    Surface* surface = CreateSurface(planetData);
+    Surface* surface = CreateSurface(planetData, path);
     body->setSurface(*surface);
     delete surface;
 
@@ -414,6 +417,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 if (atmosData->getString("CloudMap", cloudTexture))
                 {
                     atmosphere->cloudTexture.setTexture(cloudTexture,
+                                                        path,
                                                         Texture::WrapTexture);
                 }
 
@@ -446,9 +450,10 @@ static Body* CreatePlanet(PlanetarySystem* system,
 
                 string textureName;
                 ringsData->getString("Texture", textureName);
+                MultiResTexture ringTex(textureName, path);
 
                 body->setRings(RingSystem((float) inner, (float) outer,
-                                          color, textureName));
+                                          color, ringTex));
             }
         }
     }
@@ -457,7 +462,9 @@ static Body* CreatePlanet(PlanetarySystem* system,
 }
 
 
-bool LoadSolarSystemObjects(istream& in, Universe& universe)
+bool LoadSolarSystemObjects(istream& in,
+                            Universe& universe,
+                            const std::string& directory)
 {
     Tokenizer tokenizer(&in); 
     Parser parser(&tokenizer);
@@ -534,7 +541,7 @@ bool LoadSolarSystemObjects(istream& in, Universe& universe)
                         parentName.c_str(), name.c_str());
             }
 
-            Body* body = CreatePlanet(parentSystem, objectData, !orbitsPlanet);
+            Body* body = CreatePlanet(parentSystem, objectData, directory, !orbitsPlanet);
             if (body != NULL)
             {
                 body->setName(name);

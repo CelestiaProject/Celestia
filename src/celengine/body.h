@@ -17,6 +17,7 @@
 #include <celengine/atmosphere.h>
 #include <celengine/orbit.h>
 #include <celengine/star.h>
+#include <celengine/astro.h>
 
 
 class Body;
@@ -80,8 +81,8 @@ class RingSystem
     RingSystem(float inner, float outer, Color _color, int _loTexture = -1, int _texture = -1) :
         innerRadius(inner), outerRadius(outer), color(_color), texture(_loTexture, _texture)
         { };
-    RingSystem(float inner, float outer, Color _color, const std::string& textureName) :
-        innerRadius(inner), outerRadius(outer), color(_color), texture(textureName)
+    RingSystem(float inner, float outer, Color _color, const MultiResTexture& _texture) :
+        innerRadius(inner), outerRadius(outer), color(_color), texture(_texture)
         { };
 };
 
@@ -107,6 +108,8 @@ class Body
     void setName(const std::string);
     Orbit* getOrbit() const;
     void setOrbit(Orbit*);
+    astro::CoordinateSystem getOrbitFrame() const;
+    void setOrbitFrame(astro::CoordinateSystem);
     RotationElements getRotationElements() const;
     void setRotationElements(const RotationElements&);
     float getRadius() const;
@@ -163,6 +166,7 @@ class Body
 
     PlanetarySystem* system;
     Orbit* orbit;
+    astro::CoordinateSystem orbitFrame;
     RotationElements rotationElements;
 
     float radius;
