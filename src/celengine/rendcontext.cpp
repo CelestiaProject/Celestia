@@ -150,10 +150,12 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
         {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDepthMask(GL_FALSE);
         }
         else
         {
             glDisable(GL_BLEND);
+            glDepthMask(GL_TRUE);
         }
     }
 
