@@ -2798,7 +2798,7 @@ setEclipseShadowShaderConstants(const LightingState& ls,
                                 CelestiaGLProgram& prog)
 {
     for (unsigned int li = 0;
-         li < min(ls.nLights, (unsigned int) MaxShaderLights);
+         li < min(ls.nLights, MaxShaderLights);
          li++)
     {
         vector<EclipseShadow>* shadows = ls.shadows[li];
@@ -2845,6 +2845,103 @@ setEclipseShadowShaderConstants(const LightingState& ls,
                 shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
             }
         }
+    }
+}
+
+
+static void setLightParameters_VP(VertexProcessor& vproc,
+                                  const LightingState& ls,
+                                  Color materialDiffuse,
+                                  Color materialSpecular)
+{
+    Vec3f diffuseColor(materialDiffuse.red(),
+                       materialDiffuse.green(),
+                       materialDiffuse.blue());
+    Vec3f specularColor(materialSpecular.red(),
+                        materialSpecular.green(),
+                        materialSpecular.blue());
+
+    for (unsigned int i = 0; i < ls.nLights; i++)
+    {
+        const DirectionalLight& light = ls.lights[i];
+
+        Vec3f lightColor = Vec3f(light.color.red(),
+                                 light.color.green(),
+                                 light.color.blue()) * light.irradiance;
+        Vec3f diffuse(diffuseColor.x * lightColor.x,
+                      diffuseColor.y * lightColor.y,
+                      diffuseColor.z * lightColor.z);
+        Vec3f specular(specularColor.x * lightColor.x,
+                       specularColor.y * lightColor.y,
+                       specularColor.z * lightColor.z);
+
+        // Just handle two light sources for now
+        if (i == 0)
+        {
+            vproc.parameter(vp::LightDirection0, ls.lights[0].direction_obj);
+            vproc.parameter(vp::DiffuseColor0, diffuse);
+            vproc.parameter(vp::SpecularColor0, specular);
+        }
+        else if (i == 1)
+        {
+            vproc.parameter(vp::LightDirection1, ls.lights[1].direction_obj);
+            vproc.parameter(vp::DiffuseColor1, diffuse);
+            vproc.parameter(vp::SpecularColor1, specular);
+        }
+    }
+}
+
+
+static void setLightParameters_GLSL(CelestiaGLProgram& prog,
+                                    const ShaderProperties& shadprop,
+                                    const LightingState& ls,
+                                    Color materialDiffuse,
+                                    Color materialSpecular)
+{
+    Vec3f diffuseColor(materialDiffuse.red(),
+                       materialDiffuse.green(),
+                       materialDiffuse.blue());
+    Vec3f specularColor(materialSpecular.red(),
+                        materialSpecular.green(),
+                        materialSpecular.blue());
+    
+    for (unsigned int i = 0; i < ls.nLights; i++)
+    {
+        const DirectionalLight& light = ls.lights[i];
+
+        Vec3f lightColor = Vec3f(light.color.red(),
+                                 light.color.green(),
+                                 light.color.blue()) * light.irradiance;
+        prog.lights[i].direction = light.direction_obj;
+
+        if (shadprop.usesShadows() ||
+            shadprop.usesFragmentLighting() ||
+            shadprop.lightModel == ShaderProperties::RingIllumModel)
+        {
+            prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
+                                           lightColor.y * diffuseColor.y,
+                                           lightColor.z * diffuseColor.z);
+            if (shadprop.lightModel == ShaderProperties::SpecularModel)
+            {
+                prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
+                                                   lightColor.y * specularColor.y,
+                                                   lightColor.z * specularColor.z);
+            }
+        }
+        else
+        {
+            prog.lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
+                                           lightColor.y * diffuseColor.y,
+                                           lightColor.z * diffuseColor.z);
+        }
+        prog.lights[i].specular = Vec3f(lightColor.x * specularColor.x,
+                                        lightColor.y * specularColor.y,
+                                        lightColor.z * specularColor.z);
+
+        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
+        if (halfAngle_obj.length() != 0.0f)
+            halfAngle_obj.normalize();
+        prog.lights[i].halfVector = halfAngle_obj;
     }
 }
 
@@ -3051,15 +3148,7 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
 
     vproc->enable();
     vproc->parameter(vp::EyePosition, ri.eyePos_obj);
-    vproc->parameter(vp::LightDirection0, ls.lights[0].direction_obj);
-    vproc->parameter(vp::DiffuseColor0, ls.lights[0].color * ri.color);
-    vproc->parameter(vp::SpecularColor0, ls.lights[0].color * ri.specularColor);
-    if (ls.nLights > 1)
-    {
-        vproc->parameter(vp::LightDirection1, ls.lights[1].direction_obj);
-        vproc->parameter(vp::DiffuseColor1, ls.lights[1].color * ri.color);
-        vproc->parameter(vp::SpecularColor1, ls.lights[1].color * ri.specularColor);
-    }
+    setLightParameters_VP(*vproc, ls, ri.color, ri.specularColor);
 
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
     vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
@@ -3200,11 +3289,6 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         ri.baseTex->bind();
     }
 
-    // Compute the half angle vector required for specular lighting
-    Vec3f halfAngle_obj = ri.eyeDir_obj + ri.sunDir_obj;
-    if (halfAngle_obj.length() != 0.0f)
-        halfAngle_obj.normalize();
-
     // Set up the fog parameters if the haze density is non-zero
     float hazeDensity = ri.hazeColor.alpha();
 
@@ -3224,15 +3308,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
     vproc->enable();
 
     vproc->parameter(vp::EyePosition, ri.eyePos_obj);
-    vproc->parameter(vp::LightDirection0, ls.lights[0].direction_obj);
-    vproc->parameter(vp::DiffuseColor0, ls.lights[0].color * ri.color);
-    vproc->parameter(vp::SpecularColor0, ls.lights[0].color * ri.specularColor);
-    if (ls.nLights > 1)
-    {
-        vproc->parameter(vp::LightDirection1, ls.lights[1].direction_obj);
-        vproc->parameter(vp::DiffuseColor1, ls.lights[1].color * ri.color);
-        vproc->parameter(vp::SpecularColor1, ls.lights[1].color * ri.specularColor);
-    }
+    setLightParameters_VP(*vproc, ls, ri.color, ri.specularColor);
 
     vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
@@ -3526,60 +3602,6 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
     }
 
     vproc->disable();
-}
-
-
-static void setLightParameters_GLSL(CelestiaGLProgram& prog,
-                                    const ShaderProperties& shadprop,
-                                    const LightingState& ls,
-                                    Color materialDiffuse,
-                                    Color materialSpecular)
-{
-    Vec3f diffuseColor(materialDiffuse.red(),
-                       materialDiffuse.green(),
-                       materialDiffuse.blue());
-    Vec3f specularColor(materialSpecular.red(),
-                        materialSpecular.green(),
-                        materialSpecular.blue());
-    
-    for (unsigned int i = 0; i < ls.nLights; i++)
-    {
-        const DirectionalLight& light = ls.lights[i];
-
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
-        prog.lights[i].direction = light.direction_obj;
-
-        if (shadprop.usesShadows() ||
-            shadprop.usesFragmentLighting() ||
-            shadprop.lightModel == ShaderProperties::RingIllumModel)
-        {
-            prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
-                                           lightColor.y * diffuseColor.y,
-                                           lightColor.z * diffuseColor.z);
-            if (shadprop.lightModel == ShaderProperties::SpecularModel)
-            {
-                prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
-                                                   lightColor.y * specularColor.y,
-                                                   lightColor.z * specularColor.z);
-            }
-        }
-        else
-        {
-            prog.lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
-                                           lightColor.y * diffuseColor.y,
-                                           lightColor.z * diffuseColor.z);
-        }
-        prog.lights[i].specular = Vec3f(lightColor.x * specularColor.x,
-                                        lightColor.y * specularColor.y,
-                                        lightColor.z * specularColor.z);
-
-        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
-        if (halfAngle_obj.length() != 0.0f)
-            halfAngle_obj.normalize();
-        prog.lights[i].halfVector = halfAngle_obj;
-    }
 }
 
 
