@@ -68,7 +68,7 @@ class Simulation
     void update(double dt);
     void render(Renderer&);
 
-    Selection pickObject(Vec3f pickRay);
+    Selection pickObject(Vec3f pickRay, float tolerance = 0.0f);
 
     Universe* getUniverse() const;
 
