@@ -329,7 +329,7 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
 
     if (showSubObjects && sel.body() != NULL)
     {
-        std::vector<std::string>* altSurfaces = sel.body->getAlternateSurfaceNames();
+        std::vector<std::string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
         if (altSurfaces != NULL)
         {
             if (altSurfaces->size() != NULL)

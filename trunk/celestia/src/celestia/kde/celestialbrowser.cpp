@@ -100,10 +100,11 @@ void CelestialBrowser::slotRefresh()
     std::vector<const Star*> *stars = sbrowser.listStars(100);
     
     listStars->clear();  
-    browserSel.select((Star *)(*stars)[0]);
-    
-    SolarSystemCatalog* solarSystemCatalog = appSim->getUniverse()->getSolarSystemCatalog();  
-    
+    browserSel.obj = const_cast<Star*>((*stars)[0]);
+    browserSel.type = Selection::Type_Star;
+
+    SolarSystemCatalog* solarSystemCatalog = appSim->getUniverse()->getSolarSystemCatalog();
+
     UniversalCoord ucPos = appSim->getObserver().getPosition();
     Point3f obsPos( (double)ucPos.x * 1e-6,
                     (double)ucPos.y * 1e-6,
