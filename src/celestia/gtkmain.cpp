@@ -1865,8 +1865,8 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Render/Options", NULL,              menuOptions,   0, NULL },
     { "/Render/Show Info Text", "V",        menuShowInfo,  0, NULL },
     { "/Render/sep1", NULL,                 NULL,          0, "<Separator>" },
-    { "/Render/Fewer Stars Visible", "bracketleft",  menuMoreStars, 0, NULL },
-    { "/Render/More Stars Visible", "bracketright", menuLessStars, 0, NULL },
+    { "/Render/Fewer Stars Visible", "bracketleft",  menuLessStars, 0, NULL },
+    { "/Render/More Stars Visible", "bracketright", menuMoreStars, 0, NULL },
     { "/Help", NULL,                        NULL,          0, "<LastBranch>" },
     { "/Help/Run _Demo", "D",               menuRunDemo,   0, NULL },  
     { "/Help/sep1", NULL,                   NULL,          0, "<Separator>" },
@@ -2286,7 +2286,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
             if ((event->string != NULL) && (*(event->string)))
             {
                 // See if our key accelerators will handle this event.
-                if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, (GdkModifierType)1))
+                if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, (GdkModifierType)0))
                     return TRUE;
             
                 char* s = event->string;
