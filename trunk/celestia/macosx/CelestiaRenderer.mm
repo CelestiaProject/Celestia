@@ -202,4 +202,9 @@ NSDictionary* _renderFlags;
     [self renderer]->setResolution([res unsignedIntValue]);
 }
 
+-(void)archive
+{
+    [[NSUserDefaults standardUserDefaults] setObject:[NSDictionary dictionaryWithObjectsAndKeys:[self labelFlags],@"labelFlags",[self renderFlags],@"renderFlags",[self brightnessBias],@"brightnessBias",[self resolution],@"resolution",[self saturationMagnitude],@"saturationMagnitude",[self vertexShaderEnabled],@"vertexShaderEnabled",[self fragmentShaderEnabled],@"fragmentShaderEnabled",nil,nil] forKey:@"renderPreferences"];
+}
+
 @end

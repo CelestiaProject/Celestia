@@ -9,6 +9,7 @@
 #import <AppKit/AppKit.h>
 #import "CelestiaAppCore.h"
 #import "FavoritesDrawerController.h"
+#import "RenderPanelController.h"
 
 @interface CelestiaController : NSWindowController 
 {
@@ -19,6 +20,7 @@
     IBOutlet NSWindow *mainWindow;
     IBOutlet NSWindow *gotoWindow;
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
+    IBOutlet RenderPanelController *renderPanelController;
     NSTimer* timer;
 }
 -(BOOL)applicationShouldTerminate:(id)sender;

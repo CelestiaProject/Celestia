@@ -44,4 +44,5 @@
 -(NSNumber*)resolution;
 -(void)setResolution:(NSNumber*)res;
 
+-(void)archive;
 @end
