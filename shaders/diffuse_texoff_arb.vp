@@ -1,0 +1,38 @@
+!!ARBvp1.0
+
+# Compute the diffuse light from a single source and apply a texture
+# translation.
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iNormal       = vertex.normal;
+ATTRIB iTex0         = vertex.texcoord[0];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir      = program.env[0];
+PARAM  diffuse       = program.env[2];
+PARAM  texOffset     = program.env[7];
+PARAM  ambient       = state.lightmodel.ambient;
+PARAM  zeroVec       = { 0, 0, 0, 0 };
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oTex0         = result.texcoord[0];
+
+TEMP   diffuseFactor;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Compute the diffuse light component
+DP3   diffuseFactor, iNormal, lightDir;
+# Clamp the diffuse component to zero
+MAX   diffuseFactor, diffuseFactor, zeroVec;
+
+# Output the texture
+ADD   oTex0, iTex0, texOffset;
+# Output the primary color
+MAD   oColor, diffuse, diffuseFactor, ambient;
+
+END
+
