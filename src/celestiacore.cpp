@@ -1063,6 +1063,10 @@ void CelestiaCore::renderOverlay()
         {
             modeName = "Travelling";
         }
+        else if(mode == Simulation::Tracking)
+        {
+            modeName = "Tracking";
+        }
         else
         {
             switch (sim->getFrame().coordSys)
