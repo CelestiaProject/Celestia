@@ -16,8 +16,30 @@
 #include "quaternion.h"
 
 
+typedef std::vector<Point3f> GalacticForm;
+
 class Galaxy
 {
+ public:
+    enum GalaxyType {
+        S0,
+        Sa,
+        Sb,
+        Sc,
+        SBa,
+        SBb,
+        SBc,
+        E0,
+        E1,
+        E2,
+        E3,
+        E4,
+        E5,
+        E6,
+        E7,
+        Irr
+    };
+        
  public:
     Galaxy();
 
@@ -29,12 +51,18 @@ class Galaxy
     void setOrientation(Quatf);
     float getRadius() const;
     void setRadius(float);
+    GalaxyType getType() const;
+    void setType(GalaxyType);
+
+    GalacticForm* getForm() const;
     
  private:
     std::string name;
     Point3d position;
     Quatf orientation;
     float radius;
+    GalaxyType type;
+    GalacticForm* form;
 };
 
 
