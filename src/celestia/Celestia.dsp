@@ -83,7 +83,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib Winmm.lib libjpeg.lib libpng1d.lib zlibd.lib cel_3ds.lib cel_engine.lib cel_math.lib cel_txf.lib cel_util.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept /libpath:"." /libpath:"..\..\lib" /libpath:"..\cel3ds\Debug" /libpath:"..\celengine\Debug" /libpath:"..\celmath\Debug" /libpath:"..\celtxf\Debug" /libpath:"..\celutil\Debug"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib Winmm.lib libjpeg.lib libpng1d.lib zlibd.lib cel_3ds.lib cel_engine.lib cel_math.lib cel_txf.lib cel_util.lib vfw32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept /libpath:"." /libpath:"..\..\lib" /libpath:"..\cel3ds\Debug" /libpath:"..\celengine\Debug" /libpath:"..\celmath\Debug" /libpath:"..\celtxf\Debug" /libpath:"..\celutil\Debug"
 
 !ENDIF 
 
@@ -142,6 +142,10 @@ SOURCE=.\winstarbrowser.cpp
 
 SOURCE=.\wintourguide.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\winviewoptsdlg.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -189,6 +193,10 @@ SOURCE=.\winstarbrowser.h
 # Begin Source File
 
 SOURCE=.\wintourguide.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\winviewoptsdlg.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

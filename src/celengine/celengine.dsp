@@ -221,6 +221,10 @@ SOURCE=.\univcoord.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\universe.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\vertexlist.cpp
 # End Source File
 # Begin Source File
@@ -390,6 +394,10 @@ SOURCE=.\tokenizer.h
 # Begin Source File
 
 SOURCE=.\univcoord.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\universe.h
 # End Source File
 # Begin Source File
 
