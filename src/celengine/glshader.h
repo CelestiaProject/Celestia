@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 #include <celmath/vecmath.h>
 
 class GLShaderLoader;
@@ -146,5 +147,8 @@ class GLShaderLoader
                                         const std::string& fs,
                                         GLProgram**);
 };
+
+
+extern std::ostream* g_shaderLogFile;
 
 #endif // _CELENGINE_GLSHADER_H_
