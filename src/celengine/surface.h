@@ -26,6 +26,7 @@ class Surface
         baseTexture(),
         bumpTexture(),
         nightTexture(),
+        overlayTexture(),
         bumpHeight(0.0f)
     {};
 
@@ -39,6 +40,7 @@ class Surface
         SpecularReflection   = 0x40,
         Emissive             = 0x80,
         SeparateSpecularMap  = 0x100,
+        ApplyOverlay         = 0x200,
     };
 
     uint32 appearanceFlags;
@@ -50,6 +52,7 @@ class Surface
     MultiResTexture bumpTexture;    // normal map based on terrain relief
     MultiResTexture nightTexture;   // artificial lights to show on night side
     MultiResTexture specularTexture;// specular mask
+    MultiResTexture overlayTexture; // overlay texture, applied last
     float bumpHeight;               // scale of bump map relief
 };
 

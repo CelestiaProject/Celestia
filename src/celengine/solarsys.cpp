@@ -77,12 +77,15 @@ static Surface* CreateSurface(Hash* surfaceData,
     string nightTexture;
     string specularTexture;
     string normalTexture;
+    string overlayTexture;
     bool applyBaseTexture = surfaceData->getString("Texture", baseTexture);
     bool applyBumpMap = surfaceData->getString("BumpMap", bumpTexture);
     bool applyNightMap = surfaceData->getString("NightTexture", nightTexture);
     bool separateSpecular = surfaceData->getString("SpecularTexture",
                                                    specularTexture);
     bool applyNormalMap = surfaceData->getString("NormalMap", normalTexture);
+    bool applyOverlay = surfaceData->getString("OverlayTexture",
+                                               overlayTexture);
 
     unsigned int baseFlags = Texture::WrapTexture | Texture::AllowSplitting;
     unsigned int bumpFlags = Texture::WrapTexture | Texture::AllowSplitting;
@@ -115,6 +118,8 @@ static Surface* CreateSurface(Hash* surfaceData,
         surface->appearanceFlags |= Surface::ApplyNightMap;
     if (separateSpecular)
         surface->appearanceFlags |= Surface::SeparateSpecularMap;
+    if (applyOverlay)
+        surface->appearanceFlags |= Surface::ApplyOverlay;
     if (surface->specularColor != Color(0.0f, 0.0f, 0.0f))
         surface->appearanceFlags |= Surface::SpecularReflection;
 
@@ -130,6 +135,9 @@ static Surface* CreateSurface(Hash* surfaceData,
         surface->bumpTexture.setTexture(normalTexture, path, bumpFlags);
     else if (applyBumpMap)
         surface->bumpTexture.setTexture(bumpTexture, path, bumpHeight, bumpFlags);
+
+    if (applyOverlay)
+        surface->overlayTexture.setTexture(overlayTexture, path, baseFlags);
 
     return surface;
 }

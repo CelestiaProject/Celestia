@@ -1718,6 +1718,7 @@ struct RenderInfo
     Texture* bumpTex;
     Texture* nightTex;
     Texture* glossTex;
+    Texture* overlayTex;
     Color hazeColor;
     Color specularColor;
     float specularPower;
@@ -1736,6 +1737,7 @@ struct RenderInfo
                    bumpTex(NULL),
                    nightTex(NULL),
                    glossTex(NULL),
+                   overlayTex(NULL),
                    hazeColor(0.0f, 0.0f, 0.0f),
                    specularColor(0.0f, 0.0f, 0.0f),
                    specularPower(0.0f),
@@ -2297,6 +2299,17 @@ static void renderSphereDefault(const RenderInfo& ri,
         glAmbientLightColor(ri.ambientColor);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
+
+    if (ri.overlayTex != NULL)
+    {
+        ri.overlayTex->bind();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          ri.overlayTex);
+        glBlendFunc(GL_ONE, GL_ONE);
+    }
 }
 
 
@@ -2358,6 +2371,27 @@ static void renderSphere_Combiners(const RenderInfo& ri,
                          ri.lod,
                          frustum,
                          true);
+    }
+
+    if (ri.overlayTex != NULL)
+    {
+        glEnable(GL_LIGHTING);
+        ri.overlayTex->bind();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          ri.overlayTex);
+#if 0
+        renderSmoothMesh(context,
+                         *(ri.overlayTex),
+                         ri.sunDir_eye,
+                         ri.orientation,
+                         ri.ambientColor,
+                         ri.lod,
+                         frustum);
+#endif
+        glBlendFunc(GL_ONE, GL_ONE);
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -2450,8 +2484,19 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
-    vproc->disable();
+    if (ri.overlayTex != NULL)
+    {
+        ri.overlayTex->bind();
+        vproc->use(vp::diffuse);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          ri.overlayTex);
+        glBlendFunc(GL_ONE, GL_ONE);
+    }
 
+    vproc->disable();
 }
 
 
@@ -2585,6 +2630,18 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
                           Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
                           ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
+
+    if (ri.overlayTex != NULL)
+    {
+        ri.overlayTex->bind();
+        vproc->use(vp::diffuse);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          ri.overlayTex);
+        glBlendFunc(GL_ONE, GL_ONE);
     }
 
     vproc->disable();
@@ -3190,6 +3247,8 @@ void Renderer::renderObject(Point3f pos,
         ri.nightTex = obj.surface->nightTexture.find(textureResolution);
     if ((obj.surface->appearanceFlags & Surface::SeparateSpecularMap) != 0)
         ri.glossTex = obj.surface->specularTexture.find(textureResolution);
+    if ((obj.surface->appearanceFlags & Surface::ApplyOverlay) != 0)
+        ri.overlayTex = obj.surface->overlayTexture.find(textureResolution);
 
     // Apply the modelview transform for the object
     glPushMatrix();
