@@ -1782,6 +1782,39 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
 }
 
 
+static void renderShadowedMeshDefault(const RenderInfo& ri,
+                                      const Frustum& frustum,
+                                      float* sPlane, float* tPlane)
+{
+    glEnable(GL_TEXTURE_GEN_S);
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    glTexGenfv(GL_S, GL_OBJECT_PLANE, sPlane);
+    glEnable(GL_TEXTURE_GEN_T);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    glTexGenfv(GL_T, GL_OBJECT_PLANE, tPlane);
+    glColor4f(1, 1, 1, 1);
+    glDisable(GL_LIGHTING);
+    lodSphere->render(Mesh::Normals, frustum, ri.lod);
+    glEnable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+}
+
+
+static void renderShadowedMeshVertexShader(const RenderInfo& ri,
+                                           const Frustum& frustum,
+                                           float* sPlane, float* tPlane)
+{
+    vp::enable();
+    vp::parameter(20, 1, 1, 1, 1); // color = white
+    vp::parameter(41, sPlane[0], sPlane[1], sPlane[2], sPlane[3]);
+    vp::parameter(42, tPlane[0], tPlane[1], tPlane[2], tPlane[3]);
+    vp::use(vp::shadowTexture);
+    lodSphere->render(Mesh::Normals, frustum, ri.lod);
+    vp::disable();
+}
+
+
 static float getSphereLOD(float discSizeInPixels)
 {
     if (discSizeInPixels < 10)
@@ -2112,6 +2145,8 @@ void Renderer::renderObject(Point3f pos,
             else
                 eclipseTex = shadowTex;
 
+            // Compute the transformation to use for generating texture
+            // coordinates from the object vertices.
             Point3f origin = shadow.origin * planetMat;
             Vec3f dir = shadow.direction * planetMat;
             float scale = radius / shadow.penumbraRadius;
@@ -2129,25 +2164,31 @@ void Renderer::renderObject(Point3f pos,
             sPlane[3] = (Point3f(0, 0, 0) - origin) * sAxis / radius + 0.5f;
             tPlane[3] = (Point3f(0, 0, 0) - origin) * tAxis / radius + 0.5f;
 
-            glEnable(GL_TEXTURE_GEN_S);
-            glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-            glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
-            glEnable(GL_TEXTURE_GEN_T);
-            glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-            glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
+            // TODO: Areas in eclipse shadow should be no darker than the
+            // ambient color.
+            // TODO: Multiple eclipse shadows should be rendered in a single
+            // pass using multitexture.
             if (eclipseTex != NULL)
                 eclipseTex->bind();
-            glColor4f(1, 1, 1, 1);
-            glDisable(GL_LIGHTING);
             glEnable(GL_BLEND);
             glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-            lodSphere->render(Mesh::Normals, viewFrustum, ri.lod);
+
+            // Since invariance between nVidia's vertex programs and the
+            // standard transformation pipeline is guaranteed, we have to
+            // make sure to use the same transformation engine on subsequent
+            // rendering passes as we did on the initial one.
+            if (vertexShaderEnabled)
+            {
+                renderShadowedMeshVertexShader(ri, viewFrustum,
+                                               sPlane, tPlane);
+            }
+            else
+            {
+                renderShadowedMeshDefault(ri, viewFrustum, sPlane, tPlane);
+            }
+
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             glDisable(GL_BLEND);
-            glEnable(GL_LIGHTING);
-
-            glDisable(GL_TEXTURE_GEN_S);
-            glDisable(GL_TEXTURE_GEN_T);
         }
     }
 
