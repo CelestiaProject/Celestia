@@ -24,7 +24,6 @@
 #include "vecmath.h"
 #include "quaternion.h"
 #include "util.h"
-#include "timer.h"
 #include "mathlib.h"
 #include "astro.h"
 #include "celestiacore.h"
@@ -33,10 +32,6 @@
 char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
-
-// Timer info.
-static double currentTime = 0.0;
-static Timer* timer = NULL;
 
 static bool fullscreen = false;
 static bool ready = false;
@@ -81,11 +76,7 @@ void Idle(void)
     if (glutGetWindow() != mainWindow)
         glutSetWindow(mainWindow);
 
-    double lastTime = currentTime;
-    currentTime = timer->getTime();
-    double dt = currentTime - lastTime;
-
-    appCore->tick(dt);
+    appCore->tick();
 
     Display();
 }
@@ -271,8 +262,6 @@ int main(int argc, char* argv[])
 
     // GL should be all set up, now initialize the renderer.
     appCore->initRenderer();
-
-    timer = CreateTimer();
 
     // Set the simulation starting time to the current system time
     appCore->start((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
