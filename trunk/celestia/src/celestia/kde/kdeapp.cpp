@@ -52,7 +52,6 @@
 
 #include <qdatetime.h>
 #include <kshortcut.h>
-#include <ksplashscreen.h>
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
@@ -65,6 +64,10 @@
 #include <kbookmarkbar.h>
 #include <kcelbookmarkmanager.h>
 #include <kdeversion.h>
+
+#if KDE_VERSION >= 0x030200 
+#include <ksplashscreen.h>
+#endif
 
 #include "kdeglwidget.h"
 #include "kdeapp.h"
