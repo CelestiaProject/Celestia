@@ -664,6 +664,13 @@ int LuaState::loadScript(istream& in, const string& streamname)
     info.bufSize = sizeof(buf);
     info.in = &in;
 
+    if (streamname != "string")
+    {
+        lua_pushstring(state, "celestia-scriptpath");
+        lua_pushstring(state, streamname.c_str());
+        lua_settable(state, LUA_REGISTRYINDEX);
+    }
+
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str());
     if (status != 0)
         cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
@@ -4452,6 +4459,16 @@ static int celestia_requestsystemaccess(lua_State* l)
     return 0;
 }
 
+static int celestia_getscriptpath(lua_State* l)
+{
+    // ignore possible argument for future extensions
+    checkArgs(l, 1, 1, "No argument expected for celestia:requestsystemaccess()");
+    this_celestia(l);
+    lua_pushstring(l, "celestia-scriptpath");
+    lua_gettable(l, LUA_REGISTRYINDEX);
+    return 1;
+}
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -4514,6 +4531,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "takescreenshot", celestia_takescreenshot);
     RegisterMethod(l, "createcelscript", celestia_createcelscript);
     RegisterMethod(l, "requestsystemaccess", celestia_requestsystemaccess);
+    RegisterMethod(l, "getscriptpath", celestia_getscriptpath);
 
     lua_pop(l, 1);
 }
