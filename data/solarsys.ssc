@@ -60,8 +60,8 @@
 
 "Earth" "Sol"
 {
-	# Texture "earth8k.jpg"
-	Texture "earth.png"
+	# Texture "earth.png"
+	# Texture "earth8k.dds"
 	NightTexture "earthnight.jpg"
 	# CompressTexture true
 	Color [ 0.85 0.85 1.0 ]
@@ -954,6 +954,31 @@
 	}
 
 	RotationPeriod    5.342
+}
+
+"Gaspra" "Sol"
+{
+	Mesh "gaspra.3ds"
+	Texture "asteroid.jpg"
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+
+	Radius 9.5
+
+	EllipticalOrbit
+	{
+	Epoch           2452332.5
+	Period          3.284564
+	SemiMajorAxis   2.2096245
+	Eccentricity    0.1730324
+	Inclination     4.10285
+	AscendingNode   253.31108
+	ArgOfPericenter 129.42680
+	MeanAnomaly     353.04048
+	}
+
+	RotationPeriod 7.042
+	Albedo 0.1
 }
 
 "Ida" "Sol"
