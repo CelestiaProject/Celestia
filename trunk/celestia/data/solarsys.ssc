@@ -1184,8 +1184,8 @@ AltSurface "limit of knowledge" "Sol/Pluto"
 	SemiMajorAxis	19636
 	Eccentricity	0.0002
 	Inclination	0.0048
-	AscendingNode	93.5582
-	ArgOfPericenter	133.7606
+	AscendingNode	273.5582
+	ArgOfPericenter	313.7606
 	MeanAnomaly	93.4395
 	}
 
