@@ -75,11 +75,14 @@ static Surface* CreateSurface(Hash* surfaceData)
     string bumpTexture;
     string nightTexture;
     string specularTexture;
+    string normalTexture;
     bool applyBaseTexture = surfaceData->getString("Texture", baseTexture);
     bool applyBumpMap = surfaceData->getString("BumpMap", bumpTexture);
     bool applyNightMap = surfaceData->getString("NightTexture", nightTexture);
     bool separateSpecular = surfaceData->getString("SpecularTexture",
                                                    specularTexture);
+    bool applyNormalMap = surfaceData->getString("NormalMap", normalTexture);
+
     unsigned int baseFlags = Texture::WrapTexture | Texture::AllowSplitting;
     unsigned int bumpFlags = Texture::WrapTexture | Texture::AllowSplitting;
     unsigned int nightFlags = Texture::WrapTexture | Texture::AllowSplitting;
@@ -105,7 +108,7 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->appearanceFlags |= Surface::Emissive;
     if (applyBaseTexture)
         surface->appearanceFlags |= Surface::ApplyBaseTexture;
-    if (applyBumpMap)
+    if (applyBumpMap || applyNormalMap)
         surface->appearanceFlags |= Surface::ApplyBumpMap;
     if (applyNightMap)
         surface->appearanceFlags |= Surface::ApplyNightMap;
@@ -116,12 +119,16 @@ static Surface* CreateSurface(Hash* surfaceData)
 
     if (applyBaseTexture)
         surface->baseTexture.setTexture(baseTexture, baseFlags);
-    if (applyBumpMap)
-        surface->bumpTexture.setTexture(bumpTexture, bumpHeight, bumpFlags);
     if (applyNightMap)
         surface->nightTexture.setTexture(nightTexture, nightFlags);
     if (separateSpecular)
         surface->specularTexture.setTexture(specularTexture, specularFlags);
+
+    // If both are present, NormalMap overrides BumpMap
+    if (applyNormalMap)
+        surface->bumpTexture.setTexture(normalTexture, bumpFlags);
+    else if (applyBumpMap)
+        surface->bumpTexture.setTexture(bumpTexture, bumpHeight, bumpFlags);
 
     return surface;
 }
