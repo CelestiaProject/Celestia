@@ -50,11 +50,11 @@ static const float fIncrementFactor = 10.0f;
 static const double fMinSlewRate = 3.0;
 static const double fMaxKeyAccel = 20.0;
 static const float fAltitudeThreshold = 4.0f;
-static const float KeyRotationAccel = degToRad(120.0f);
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
 static const float stdFOV = 45.0f;
+static float KeyRotationAccel = degToRad(120.0f);
 
 
 static void warning(string s)
@@ -1028,13 +1028,13 @@ void CelestiaCore::tick()
     float fov = renderer->getFieldOfView()/stdFOV;
 
     if (keysPressed[Key_Left])
-        av += Vec3f(0, 0, dt);
+        av += Vec3f(0, 0, dt * -KeyRotationAccel);
     if (keysPressed[Key_Right])
-        av += Vec3f(0, 0, -dt);
+        av += Vec3f(0, 0, dt * KeyRotationAccel);
     if (keysPressed[Key_Down])
-        av += Vec3f(dt * fov, 0, 0);
+        av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
     if (keysPressed[Key_Up])
-        av += Vec3f(-dt * fov, 0, 0);
+        av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
 
     if (keysPressed[Key_NumPad4])
         av += Vec3f(0, dt * fov * -KeyRotationAccel, 0);
@@ -1707,6 +1707,8 @@ bool CelestiaCore::initSimulation()
         fatalError("Error reading configuration file.");;
         return false;
     }
+
+    KeyRotationAccel = degToRad(config->rotateAcceleration);
 
     readFavoritesFile();
 
