@@ -23,10 +23,10 @@
     NSOpenGLPixelFormatAttribute attrs[] = 
     {
         NSOpenGLPFADoubleBuffer,
-        NSOpenGLPFANoRecovery,
-        NSOpenGLPFAAccelerated,
+//        NSOpenGLPFANoRecovery,
+//        NSOpenGLPFAAccelerated,
         NSOpenGLPFADepthSize,
-        (NSOpenGLPixelFormatAttribute)1,
+        (NSOpenGLPixelFormatAttribute)24,
         nil
     } ;
 
@@ -221,23 +221,20 @@
 
 - (void) drawRect: (NSRect) rect
 {
-        NSOpenGLContext *oglContext;
-        [self lockFocus];
-        oglContext = [self openGLContext];
-        if (oglContext != nil) 
-        {
-            [controller display];
-            glFinish();
-            [oglContext flushBuffer] ;
-
-        }
-        [self unlockFocus];
+    NSOpenGLContext *oglContext;
+    oglContext = [self openGLContext];
+    if (oglContext != nil) 
+    {
+        [controller display];
+        glFinish();
+        [oglContext flushBuffer];
+    }
 }
 
 - (void) update
 {
-        [controller setDirty];
-        [super update];
+    [controller setDirty];
+    [super update];
 }
 
 - (void) writeStringToPasteboard: (NSPasteboard *) pb
@@ -245,9 +242,9 @@
     NSString *value;
     [pb declareTypes:
         [NSArray arrayWithObject: NSStringPboardType] owner: self];
-        CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-        value = [appCore currentURL];
-        [ pb setString: value forType: NSStringPboardType ];
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    value = [appCore currentURL];
+    [ pb setString: value forType: NSStringPboardType ];
 }
 
 - (BOOL) readStringFromPasteboard: (NSPasteboard *) pb
