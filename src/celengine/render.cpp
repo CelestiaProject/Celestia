@@ -3262,11 +3262,9 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     {
         if ((*iter)->getFeatureType() & locationFilter)
         {
-            Point3f off = (*iter)->getPosition();
-            Point3f off_t = off * mat;
-            Point3f wpos(position.x + off_t.x * 1.01f,
-                         position.y + off_t.y * 1.01f,
-                         position.z + off_t.z * 1.01f);
+            Vec3f off = (*iter)->getPosition();
+            Vec3f off_t = off * mat;
+            Point3f wpos(position + off_t * 1.01f);
 
             float effSize = (*iter)->getImportance();
             if (effSize < 0.0f)
@@ -3275,7 +3273,10 @@ void Renderer::renderLocations(const vector<Location*>& locations,
             
             if (pixSize > minFeatureSize)
             {
-
+                float r = off_t.length();
+                if (r < scale * 0.99f)
+                    wpos = position + off_t * (scale * 1.01f / r);
+                
                 float t = 0.0f;
                 bool hit = testIntersection(Ray3f(origin, wpos - origin),
                                             ellipsoid, t);
@@ -3794,7 +3795,7 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
 }
 
 
-void Renderer::renderPlanet(const Body& body,
+void Renderer::renderPlanet(Body& body,
                             Point3f pos,
                             Vec3f sunDirection,
                             float distance,
@@ -3893,6 +3894,8 @@ void Renderer::renderPlanet(const Body& body,
         }
 
         rp.locations = body.getLocations();
+        if (rp.locations != NULL && (labelMode & LocationLabels) != 0)
+            body.computeLocations();
 
         // Calculate eclipse circumstances
         if ((renderFlags & ShowEclipseShadows) != 0 &&

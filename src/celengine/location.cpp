@@ -86,13 +86,13 @@ void Location::setName(const string& _name)
 }
 
 
-Point3f Location::getPosition() const
+Vec3f Location::getPosition() const
 {
     return position;
 }
 
 
-void Location::setPosition(const Point3f& _position)
+void Location::setPosition(const Vec3f& _position)
 {
     position = _position;
 }
