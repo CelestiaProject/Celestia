@@ -88,6 +88,16 @@ BEGIN
         MENUITEM "Use Pi&xel Shaders\tCtrl+P",  ID_RENDER_PIXEL_SHADERS
         MENUITEM "Use &Vertex Shaders\tCtrl+V", ID_RENDER_VERTEX_SHADERS
     END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Split &Horizontally\tCtrl+R", ID_VIEW_HSPLIT
+	MENUITEM "Split &Vertically\tCtrl+U",   ID_VIEW_VSPLIT
+	MENUITEM "&Delete Active View\tDEL",    ID_VIEW_DELETE_ACTIVE
+        MENUITEM "&Single View\tCtrl+D",        ID_VIEW_SINGLE
+        MENUITEM SEPARATOR
+	MENUITEM "Show &Frames",                ID_VIEW_SHOW_FRAMES
+	MENUITEM "Synchronize &Time",           ID_VIEW_SYNC_TIME
+    END
     POPUP "&Locations"
     BEGIN
         MENUITEM "&Add To Locations...",        ID_LOCATIONS_ADDLOCATION
@@ -143,7 +153,7 @@ CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,175,50,14
-    CTEXT           "Celestia 1.2.6",IDC_STATIC,6,7,297,9
+    CTEXT           "Celestia 1.3.0",IDC_STATIC,6,7,297,9
     CTEXT           "Copyright (C) 2001-2003, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
                     IDC_STATIC,6,33,297,9
