@@ -130,6 +130,24 @@ class Renderer
         }
     } RenderListEntry;
 
+    class StarVertexBuffer
+    {
+    public:
+        StarVertexBuffer(unsigned int _capacity);
+        ~StarVertexBuffer();
+        void render();
+        void addStar(const Point3f&, const Color&, float);
+        void setBillboardOrientation(const Quatf&);
+
+    private:
+        unsigned int capacity;
+        unsigned int nStars;
+        float* vertices;
+        float* texCoords;
+        unsigned char* colors;
+        Vec3f v0, v1, v2, v3;
+    };
+
  private:
     void renderStars(const StarDatabase& starDB,
                      float faintestVisible,
@@ -191,10 +209,9 @@ class Renderer
     float brightnessBias;
     float brightnessScale;
 
+    StarVertexBuffer* starVertexBuffer;
     std::vector<RenderListEntry> renderList;
-    std::vector<Particle> starParticles;
     std::vector<Particle> glareParticles;
-    std::vector<Particle> planetParticles;
     std::vector<Label> labels;
 
     std::vector<Star*> labelledStars;
