@@ -779,6 +779,8 @@ static void setTable(lua_State* l, const char* field, const char* value)
 // must be declared for vector_add:
 static UniversalCoord* to_position(lua_State* l, int index);
 static int position_new(lua_State* l, const UniversalCoord& uc);
+// for frame_getrefobject / gettargetobject
+static int object_new(lua_State* l, const Selection& sel);
 
 // ==================== Vector ====================
 static int vector_new(lua_State* l, const Vec3d& v)
@@ -1602,6 +1604,67 @@ static int frame_to(lua_State* l)
     return 1;
 }
 
+static int frame_getrefobject(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for frame:getrefobject()");
+
+    FrameOfReference* frame = this_frame(l);
+    if (frame->refObject.getType() == Selection::Type_Nil)
+    {
+        lua_pushnil(l);
+    }
+    else
+    {
+        object_new(l, frame->refObject);
+    }
+    return 1;
+}
+
+static int frame_gettargetobject(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for frame:gettarget()");
+
+    FrameOfReference* frame = this_frame(l);
+    if (frame->targetObject.getType() == Selection::Type_Nil)
+    {
+        lua_pushnil(l);
+    }
+    else
+    {
+        object_new(l, frame->targetObject);
+    }
+    return 1;
+}
+
+static int frame_getcoordinatesystem(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for frame:getcoordinatesystem()");
+
+    FrameOfReference* frame = this_frame(l);
+    string coordsys;
+    switch (frame->coordSys)
+    {
+    case astro::Universal: 
+        coordsys = "universal"; break;
+    case astro::Ecliptical: 
+        coordsys = "ecliptic"; break;
+    case astro::Equatorial: 
+        coordsys = "equatorial"; break;
+    case astro::Geographic: 
+        coordsys = "planetographic"; break;
+    case astro::ObserverLocal: 
+        coordsys = "observer"; break;
+    case astro::PhaseLock: 
+        coordsys = "lock"; break;
+    case astro::Chase: 
+        coordsys = "chase"; break;
+    default: 
+        coordsys = "invalid";
+    }
+    lua_pushstring(l, coordsys.c_str());
+    return 1;
+}
+
 static int frame_tostring(lua_State* l)
 {
     // TODO: print out the actual information about the frame
@@ -1617,6 +1680,9 @@ static void CreateFrameMetaTable(lua_State* l)
     RegisterMethod(l, "__tostring", frame_tostring);
     RegisterMethod(l, "to", frame_to);
     RegisterMethod(l, "from", frame_from);
+    RegisterMethod(l, "getcoordinatesystem", frame_getcoordinatesystem);
+    RegisterMethod(l, "getrefobject", frame_getrefobject);
+    RegisterMethod(l, "gettargetobject", frame_gettargetobject);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -1781,6 +1847,8 @@ static int object_getinfo(lua_State* l)
     {
         Star* star = sel->star();
         setTable(l, "type", "star");
+        setTable(l, "name", getAppCore(l, AllErrors)->getSimulation()->getUniverse()
+                       ->getStarCatalog()->getStarName(*(sel->star())).c_str());
         setTable(l, "catalogNumber", star->getCatalogNumber());
         setTable(l, "stellarClass", star->getStellarClass().str().c_str());
         setTable(l, "absoluteMagnitude", (lua_Number)star->getAbsoluteMagnitude());
@@ -2457,8 +2525,7 @@ static int observer_centerorbit(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First argument to observer:centerorbit must be an object");
-        lua_error(l);
+        doError(l, "First argument to observer:centerorbit must be an object");
     }
     double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:centerorbit must be a number", 5.0);
 
@@ -2674,6 +2741,7 @@ static int observer_setfov(lua_State* l)
     if ((fov >= degToRad(0.001f)) && (fov <= degToRad(120.0f)))
     {
         obs->setFOV((float) fov);
+        getAppCore(l, AllErrors)->setZoomFromFOV();
     }
     return 0;
 }
@@ -2933,7 +3001,10 @@ static int celestia_show(lua_State* l)
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings"); 
+        string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings");
+        if (renderFlag == "lightdelay")
+            appCore->setLightDelayActive(true);
+        else
         if (RenderFlagMap.count(renderFlag) > 0)
             flags |= RenderFlagMap[renderFlag];
     }
@@ -2954,6 +3025,9 @@ static int celestia_hide(lua_State* l)
     for (int i = 2; i <= argc; i++)
     {
         string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings"); 
+        if (renderFlag == "lightdelay")
+            appCore->setLightDelayActive(false);
+        else
         if (RenderFlagMap.count(renderFlag) > 0)
             flags |= RenderFlagMap[renderFlag];
     }
@@ -3444,6 +3518,27 @@ static int celestia_tojulianday(lua_State* l)
     return 1;
 }
 
+static int celestia_fromjulianday(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Wrong number of arguments to function celestia:fromjulianday");
+
+    // for error checking only:
+    this_celestia(l);
+
+    double jd = safeGetNumber(l, 2, AllErrors, "First arg to celestia:fromjulianday must be a number", 0.0);
+    astro::Date date(jd);
+
+    lua_newtable(l);
+    setTable(l, "year", (double)date.year);
+    setTable(l, "month", (double)date.month);
+    setTable(l, "day", (double)date.day);
+    setTable(l, "hour", (double)date.hour);
+    setTable(l, "minute", (double)date.minute);
+    setTable(l, "seconds", date.seconds);
+
+    return 1;
+}
+
 static int celestia_unmarkall(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function celestia:unmarkall");
@@ -3919,6 +4014,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
     RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
     RegisterMethod(l, "tojulianday", celestia_tojulianday);
+    RegisterMethod(l, "fromjulianday", celestia_fromjulianday);
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
     RegisterMethod(l, "getstar", celestia_getstar);
     RegisterMethod(l, "newframe", celestia_newframe);
