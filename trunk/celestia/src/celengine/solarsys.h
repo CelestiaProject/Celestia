@@ -22,13 +22,13 @@ class SolarSystem
  public:
     SolarSystem(Star*);
 
-    const Star* getStar() const;
+    Star* getStar() const;
     Point3f getCenter() const;
     PlanetarySystem* getPlanets() const;
     
  private:
     PlanetarySystem* planets;
-    const Star* star;
+    Star* star;
 };
 
 typedef std::map<uint32, SolarSystem*> SolarSystemCatalog;
