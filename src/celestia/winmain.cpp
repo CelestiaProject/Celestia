@@ -2689,6 +2689,13 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                CelestiaCore::RightButton);
         break;
 
+    case WM_MBUTTONUP:
+        lastX = LOWORD(lParam);
+        lastY = HIWORD(lParam);
+        appCore->mouseButtonUp(LOWORD(lParam), HIWORD(lParam),
+                               CelestiaCore::MiddleButton);
+        break;
+
     case WM_MOUSEWHEEL:
         {
             int modifiers = 0;
