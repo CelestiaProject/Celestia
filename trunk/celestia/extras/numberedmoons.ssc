@@ -296,7 +296,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	# 5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		747.70		# mean
 	SemiMajorAxis	23749000	# mean
 	Eccentricity	0.2976		# mean
@@ -319,7 +319,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		889.20		# mean
 	SemiMajorAxis	26658000	# mean
 	Eccentricity	0.3316		# mean
@@ -342,7 +342,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		490.45		# mean
 	SemiMajorAxis	17929000	# mean
 	Eccentricity	0.2217		# mean
@@ -365,7 +365,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		547.50		# mean
 	SemiMajorAxis	19294000	# mean
 	Eccentricity	0.3664		# mean
@@ -388,7 +388,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		781.03		# mean
 	SemiMajorAxis	24450000	# mean
 	Eccentricity	0.1634		# mean
@@ -411,7 +411,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		616.82		# mean
 	SemiMajorAxis	20890000	# mean
 	Eccentricity	0.1411		# mean
@@ -434,7 +434,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		714.00		# mean
 	SemiMajorAxis	23030000	# mean
 	Eccentricity	0.4030		# mean
@@ -457,7 +457,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		623.39		# mean
 	SemiMajorAxis	21038000	# mean
 	Eccentricity	0.2372		# mean
@@ -480,7 +480,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		713.51		# mean
 	SemiMajorAxis	23020000	# mean
 	Eccentricity	0.2133		# mean
@@ -503,7 +503,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		625.16		# mean
 	SemiMajorAxis	21078000	# mean
 	Eccentricity	0.3491		# mean
@@ -526,7 +526,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		702.95		# mean
 	SemiMajorAxis	22792000	# mean
 	Eccentricity	0.2623		# mean
@@ -549,7 +549,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		536.23		# mean
 	SemiMajorAxis	19028000	# mean
 	Eccentricity	0.3679		# mean
@@ -572,12 +572,12 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		742.93		# mean
 	SemiMajorAxis	23648000	# mean
 	Eccentricity	0.4320		# mean
 	Inclination	140.930
-	AscendingNode	221.382
+	AscendingNode	282.698
 	ArgOfPericenter	212.248
 	MeanAnomaly     277.417
 	}
@@ -595,12 +595,12 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		761.45		# mean
 	SemiMajorAxis	24039000	# mean
 	Eccentricity	0.3070		# mean
 	Inclination	136.948
-	AscendingNode	301.261
+	AscendingNode	2.577
 	ArgOfPericenter	126.992
 	MeanAnomaly     225.672
 	}
@@ -618,12 +618,12 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		678.19		# mean
 	SemiMajorAxis	22253000	# mean
 	Eccentricity	0.1199		# mean
 	Inclination	141.481
-	AscendingNode	205.850
+	AscendingNode	267.166
 	ArgOfPericenter	34.821
 	MeanAnomaly     263.190
 	}
@@ -641,12 +641,12 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		598.04		# mean
 	SemiMajorAxis	20464000	# mean
 	Eccentricity	0.2419		# mean
 	Inclination	147.023
-	AscendingNode	340.280
+	AscendingNode	41.597
 	ArgOfPericenter	76.683
 	MeanAnomaly     201.357
 	}
@@ -664,12 +664,12 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		708.81		# mean
 	SemiMajorAxis	22918000	# mean
 	Eccentricity	0.1947		# mean
 	Inclination	161.891
-	AscendingNode	271.266
+	AscendingNode	332.582
 	ArgOfPericenter	346.951
 	MeanAnomaly     317.640
 	}
@@ -687,14 +687,37 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452644.5	#5 Jan 2003
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		511.75		# mean
 	SemiMajorAxis	18445000	# mean
 	Eccentricity	0.2322		# mean
 	Inclination	147.041
-	AscendingNode	146.298
+	AscendingNode	207.615
 	ArgOfPericenter	123.097
 	MeanAnomaly     176.706
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003J19" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		701.3		# mean
+	SemiMajorAxis	22800000	# mean
+	Eccentricity	0.334		# mean
+	Inclination	161.966
+	AscendingNode	53.230
+	ArgOfPericenter	178.522
+	MeanAnomaly     35.719
 	}
 
 	RotationPeriod  10   # Guess
@@ -962,6 +985,29 @@
 	AscendingNode	10.905	#
 	ArgOfPericenter	350.499	# J2000.0
 	MeanAnomaly     317.642	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2003S1" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.3
+
+	EllipticalOrbit
+	{
+	Epoch		2452629.5	# 2002 Dec 21
+	Period		956.19		# mean
+	SemiMajorAxis	18719000	# mean
+	Eccentricity	0.3522		# mean
+	Inclination	106.989
+	AscendingNode	9.524
+	ArgOfPericenter	172.396
+	MeanAnomaly     139.109
 	}
 
 	RotationPeriod  10   # Guess
