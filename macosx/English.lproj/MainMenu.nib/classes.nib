@@ -12,6 +12,7 @@
                 back = id; 
                 forward = id; 
                 openScript = id; 
+                rerunScript = id; 
                 showInfoURL = id; 
                 showPanel = id; 
             }; 
