@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <celmath/mathlib.h>
+#include <cstring>
 #include "celestia.h"
 #include "astro.h"
 #include "star.h"
@@ -24,12 +25,25 @@
 
 // Star temperature data from Carroll and Ostlie's
 // _Modern Astrophysics_ (1996), p. A-13 - A-18.  Temperatures from
-// missing (an typically not used) types in those tables were just
+// missing (and typically not used) types in those tables were just
 // interpolated.
 
 // TODO
 // These temperatures are valid for main sequence stars . . . add
 // tables for giants and supergiants
+
+struct SpectralTypeInfo
+{
+    char* name;
+    float temperature;
+    float rotationPeriod;
+};
+
+static StarDetails** normalStarDetails = NULL;
+static StarDetails** whiteDwarfDetails = NULL;
+static StarDetails*  neutronStarDetails = NULL;
+static StarDetails*  blackHoleDetails = NULL;
+
 static float tempO[10] =
 {
     50000, 50000, 50000, 50000, 47000,
@@ -295,6 +309,372 @@ static float rotperiod_M[3][10] =
 };
 
 
+char* LumClassNames[StellarClass::Lum_Count] = {
+    "I-a0", "I-a", "I-b", "II", "III", "IV", "V", "VI", ""
+};
+
+char* SubclassNames[11] = {
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ""
+};
+
+char* SpectralClassNames[StellarClass::NormalClassCount] = {
+    "O", "B", "A", "F", "G", "K", "M", "R",
+    "S", "N", "WC", "WN", "?", "L", "T", "C",
+};
+
+char* WDSpectralClassNames[StellarClass::WDClassCount] = {
+    "DA", "DB", "DC", "DO", "DQ", "DZ", "D"
+};
+
+
+StarDetails*
+StarDetails::GetStarDetails(const StellarClass& sc)
+{
+    switch (sc.getStarType())
+    {
+    case StellarClass::NormalStar:
+        return GetNormalStarDetails(sc.getSpectralClass(),
+                                    sc.getSubclass(),
+                                    sc.getLuminosityClass());
+                                    
+    case StellarClass::WhiteDwarf:
+        return GetWhiteDwarfDetails(sc.getSpectralClass(),
+                                    sc.getSubclass());
+    case StellarClass::NeutronStar:
+        return GetNeutronStarDetails();
+    case StellarClass::BlackHole:
+        return GetBlackHoleDetails();
+    default:
+        return NULL;
+    }
+}
+
+StarDetails*
+StarDetails::CreateStandardStarType(const std::string& specTypeName,
+                                    float _temperature,
+                                    float _rotationPeriod)
+                                    
+{
+    StarDetails* details = new StarDetails();
+
+    details->setTemperature(_temperature);
+    details->setRotationPeriod(_rotationPeriod);
+    details->setSpectralType(specTypeName);
+
+    return details;
+}
+
+
+StarDetails*
+StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
+                                  unsigned int subclass,
+                                  StellarClass::LuminosityClass lumClass)
+{
+    if (normalStarDetails == NULL)
+    {
+        unsigned int nTypes = StellarClass::Spectral_Count * 11 * 
+            StellarClass::Lum_Count;
+        normalStarDetails = new StarDetails*[nTypes];
+        for (unsigned int i = 0; i < nTypes; i++)
+            normalStarDetails[i] = NULL;
+    }
+
+    if (subclass > StellarClass::Subclass_Unknown)
+        subclass = StellarClass::Subclass_Unknown;
+
+    uint index = subclass + (specClass + lumClass * StellarClass::Spectral_Count) * 11;
+    if (normalStarDetails[index] == NULL)
+    {
+        char name[16];
+        sprintf(name, "%s%s%s",
+                SpectralClassNames[specClass],
+                SubclassNames[subclass],
+                LumClassNames[lumClass]);
+
+        // Use the same properties for an unknown subclass as for subclass 5
+        if (subclass == StellarClass::Subclass_Unknown)
+            subclass = 5;
+
+        float temp = 0.0f;
+        switch (specClass)
+        {
+        case StellarClass::Spectral_O:
+            temp = tempO[subclass];
+            break;
+        case StellarClass::Spectral_B:
+            temp = tempB[subclass];
+            break;
+        case StellarClass::Spectral_Unknown:
+        case StellarClass::Spectral_A:
+            temp = tempA[subclass];
+            break;
+        case StellarClass::Spectral_F:
+            temp = tempF[subclass];
+            break;
+        case StellarClass::Spectral_G:
+            temp = tempG[subclass];
+            break;
+        case StellarClass::Spectral_K:
+            temp = tempK[subclass];
+            break;
+        case StellarClass::Spectral_M:
+            temp = tempM[subclass];
+            break;
+        case StellarClass::Spectral_R:
+            temp = tempK[subclass];
+            break;
+        case StellarClass::Spectral_S:
+            temp = tempM[subclass];
+            break;
+        case StellarClass::Spectral_N:
+            temp = tempM[subclass];
+            break;
+        case StellarClass::Spectral_C:
+            temp = tempM[subclass];
+            break;
+        case StellarClass::Spectral_WN:
+        case StellarClass::Spectral_WC:
+            temp = tempO[subclass];
+            break;
+        case StellarClass::Spectral_L:
+            temp = tempL[subclass];
+            break;
+        case StellarClass::Spectral_T:
+            temp = tempT[subclass];
+            break;
+        }
+
+        unsigned int lumIndex = 0;
+        switch (lumClass)
+        {
+        case StellarClass::Lum_Ia0:
+        case StellarClass::Lum_Ia:
+        case StellarClass::Lum_Ib:
+        case StellarClass::Lum_II:
+            lumIndex = 2;
+            break;
+        case StellarClass::Lum_III:
+        case StellarClass::Lum_IV:
+            lumIndex = 1;
+            break;
+        case StellarClass::Lum_V:
+        case StellarClass::Lum_VI:
+        case StellarClass::Lum_Unknown:
+            lumIndex = 0;
+            break;
+        }
+
+        float bmagCorrection = 0.0f;
+        float period = 1.0f;
+        switch (specClass)
+        {
+        case StellarClass::Spectral_O:
+            period = rotperiod_O[lumIndex][subclass];
+            bmagCorrection = bmag_correctionO[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_B:
+            period = rotperiod_B[lumIndex][subclass];
+            bmagCorrection = bmag_correctionB[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_Unknown:
+        case StellarClass::Spectral_A:
+            period = rotperiod_A[lumIndex][subclass];
+            bmagCorrection = bmag_correctionA[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_F:
+            period = rotperiod_F[lumIndex][subclass];
+            bmagCorrection = bmag_correctionF[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_G:
+            period = rotperiod_G[lumIndex][subclass];
+            bmagCorrection = bmag_correctionG[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_K:
+            period = rotperiod_K[lumIndex][subclass];
+            bmagCorrection = bmag_correctionK[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_M:
+            period = rotperiod_M[lumIndex][subclass];
+            bmagCorrection = bmag_correctionM[lumIndex][subclass];
+            break;
+
+        case StellarClass::Spectral_R:
+        case StellarClass::Spectral_S:
+        case StellarClass::Spectral_N:
+        case StellarClass::Spectral_C:
+            period = rotperiod_M[lumIndex][subclass];
+            bmagCorrection = bmag_correctionM[lumIndex][subclass];
+            break;
+
+        case StellarClass::Spectral_WC:
+        case StellarClass::Spectral_WN:
+            period = rotperiod_O[lumIndex][subclass];
+            bmagCorrection = bmag_correctionO[lumIndex][subclass];
+            break;
+
+        case StellarClass::Spectral_L:
+            // Assume that brown dwarfs are fast rotators like late M dwarfs
+            period = 0.2f;
+            bmagCorrection = bmag_correctionL[subclass];
+            break;
+
+        case StellarClass::Spectral_T:
+            // Assume that brown dwarfs are fast rotators like late M dwarfs
+            period = 0.2f;
+            bmagCorrection = bmag_correctionT[subclass];
+            break;
+        }
+
+        normalStarDetails[index] = CreateStandardStarType(name, temp, period);
+        normalStarDetails[index]->setBolometricCorrection(bmagCorrection);
+    }
+
+    return normalStarDetails[index];
+}
+
+
+StarDetails*
+StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
+                                  unsigned int subclass)
+{
+    // Hack assumes all WD types are consecutive
+    unsigned int scIndex = static_cast<unsigned int>(specClass) -
+        StellarClass::FirstWDClass;
+
+    if (whiteDwarfDetails == NULL)
+    {
+        unsigned int nTypes = 
+            StellarClass::WDClassCount * StellarClass::SubclassCount;
+        whiteDwarfDetails = new StarDetails*[nTypes];
+        for (unsigned int i = 0; i < nTypes; i++)
+            whiteDwarfDetails[i] = NULL;
+    }
+
+    if (subclass > StellarClass::Subclass_Unknown)
+        subclass = StellarClass::Subclass_Unknown;
+
+    uint index = subclass + (scIndex * StellarClass::SubclassCount);
+    if (whiteDwarfDetails[index] == NULL)
+    {
+        char name[16];
+        sprintf(name, "%s%s",
+                WDSpectralClassNames[scIndex],
+                SubclassNames[subclass]);
+
+        float temp;
+        if (subclass == 0)
+            temp = 100000.0f;
+        if (subclass == StellarClass::Subclass_Unknown)
+            temp = 10080.0f;  // Treat unknown as subclass 5
+        else
+            temp = 50400.0f / subclass;
+
+        // Assign white dwarfs a rotation period of half an hour; very
+        // rough, as white rotation rates vary a lot.
+        float period = 1.0f / 48.0f;
+        
+        whiteDwarfDetails[index] = CreateStandardStarType(name, temp, period);
+    }
+
+    return whiteDwarfDetails[index];
+}
+
+
+StarDetails*
+StarDetails::GetNeutronStarDetails()
+{
+    if (neutronStarDetails == NULL)
+    {
+        // The default neutron star has a rotation period of one second,
+        // surface temperature of five million K.
+        neutronStarDetails = CreateStandardStarType("Q", 5000000.0f,
+                                                    1.0f / 86400.0f);
+        neutronStarDetails->setRadius(10.0f);
+    }
+
+    return neutronStarDetails;
+}
+
+
+StarDetails*
+StarDetails::GetBlackHoleDetails()
+{
+    if (blackHoleDetails == NULL)
+    {
+        // Default black hole parameters are based on a one solar mass
+        // black hole.
+        // The temperature is computed from the equation:
+        //      T=h_bar c^3/(8 pi G k m)
+        blackHoleDetails = CreateStandardStarType("X", 6.15e-8f,
+                                                  1.0f / 86400.0f);
+        blackHoleDetails->setRadius(2.9f);
+    }
+
+    return blackHoleDetails;
+}
+
+
+StarDetails::StarDetails() :
+    radius(0.0f),
+    temperature(0.0f),
+    bolometricCorrection(0.0f),
+    rotationPeriod(1.0f),
+    knowledge(0u)
+{
+    spectralType[0] = '\0';
+}
+
+
+void
+StarDetails::setRadius(float _radius)
+{
+    radius = _radius;
+}
+
+
+void
+StarDetails::setTemperature(float _temperature)
+{
+    temperature = _temperature;
+}
+
+
+void
+StarDetails::setRotationPeriod(float _rotationPeriod)
+{
+    rotationPeriod = _rotationPeriod;
+}
+
+
+void
+StarDetails::setSpectralType(const std::string& s)
+{
+    strncpy(spectralType, s.c_str(), sizeof(spectralType));
+    spectralType[sizeof(spectralType) - 1] = '\0';
+}
+
+
+void
+StarDetails::setKnowledge(uint32 _knowledge)
+{
+    knowledge = _knowledge;
+}
+
+
+void
+StarDetails::addKnowledge(uint32 _knowledge)
+{
+    knowledge |= _knowledge;
+}
+
+
+void
+StarDetails::setBolometricCorrection(float correction)
+{
+    bolometricCorrection = correction;
+}
+
+
 // Return the radius of the star in kilometers
 float Star::getRadius() const
 {
@@ -318,250 +698,6 @@ float Star::getRadius() const
 }
 
 
-// Return the temperature in Kelvin
-float Star::getTemperature() const
-{
-    if (stellarClass.getStarType() == StellarClass::NormalStar)
-    {
-        unsigned int specSubClass = stellarClass.getSpectralSubclass();
-        switch (stellarClass.getSpectralClass())
-        {
-        case StellarClass::Spectral_O:
-            return tempO[specSubClass];
-        case StellarClass::Spectral_B:
-            return tempB[specSubClass];
-        case StellarClass::Spectral_Unknown:
-        case StellarClass::Spectral_A:
-            return tempA[specSubClass];
-        case StellarClass::Spectral_F:
-            return tempF[specSubClass];
-        case StellarClass::Spectral_G:
-            return tempG[specSubClass];
-        case StellarClass::Spectral_K:
-            return tempK[specSubClass];
-        case StellarClass::Spectral_M:
-            return tempM[specSubClass];
-        case StellarClass::Spectral_R:
-            return tempK[specSubClass];
-        case StellarClass::Spectral_S:
-            return tempM[specSubClass];
-        case StellarClass::Spectral_N:
-            return tempM[specSubClass];
-        case StellarClass::Spectral_C:
-            return tempM[specSubClass];
-        case StellarClass::Spectral_WN:
-        case StellarClass::Spectral_WC:
-            return tempO[specSubClass];
-        case StellarClass::Spectral_L:
-            return tempL[specSubClass];
-        case StellarClass::Spectral_T:
-            return tempT[specSubClass];
-        default:
-            // TODO: Bad spectral class
-            return -1;
-        }
-    }
-    else if (stellarClass.getStarType() == StellarClass::WhiteDwarf)
-    {
-        // TODO
-        // Return a better temperature estimate for white dwarf
-        // and neutron stars.
-        return 10000;
-    }
-    else if (stellarClass.getStarType() == StellarClass::NeutronStar)
-    {
-        return 10000;
-    }
-    else if (stellarClass.getStarType() == StellarClass::BlackHole)
-    {
-        return 0;
-    }
-    else
-    {
-        // TODO: Bad star type
-        return -1;
-    }
-}
-
-
-// Estimate the bolometric magnitude of the star from the absolute visual
-// magnitude and the spectral class.
-float Star::getBolometricMagnitude() const
-{
-    float bolometricCorrection = 0.0f;
-
-    if (stellarClass.getStarType() == StellarClass::NormalStar)
-    {
-        unsigned int specSubClass = stellarClass.getSpectralSubclass();
-        unsigned int lumIndex = 0;
-        
-        switch (stellarClass.getLuminosityClass())
-        {
-        case StellarClass::Lum_Ia0:
-        case StellarClass::Lum_Ia:
-        case StellarClass::Lum_Ib:
-        case StellarClass::Lum_II:
-            lumIndex = 2;
-            break;
-        case StellarClass::Lum_III:
-        case StellarClass::Lum_IV:
-            lumIndex = 1;
-            break;
-        case StellarClass::Lum_V:
-        case StellarClass::Lum_VI:
-            lumIndex = 0;
-            break;
-        }
-
-        switch (stellarClass.getSpectralClass())
-        {
-        case StellarClass::Spectral_O:
-            bolometricCorrection = bmag_correctionO[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_B:
-            bolometricCorrection = bmag_correctionB[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_Unknown:
-        case StellarClass::Spectral_A:
-            bolometricCorrection = bmag_correctionA[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_F:
-            bolometricCorrection = bmag_correctionF[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_G:
-            bolometricCorrection = bmag_correctionG[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_K:
-            bolometricCorrection = bmag_correctionK[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_M:
-            bolometricCorrection = bmag_correctionM[lumIndex][specSubClass];
-            break;
-            
-        case StellarClass::Spectral_R:
-        case StellarClass::Spectral_S:
-        case StellarClass::Spectral_N:
-        case StellarClass::Spectral_C:
-            bolometricCorrection = bmag_correctionM[lumIndex][8];
-            break;
-
-        case StellarClass::Spectral_WC:
-        case StellarClass::Spectral_WN:
-            // Treat Wolf-Rayet stars like O
-            bolometricCorrection = bmag_correctionO[lumIndex][specSubClass];
-            break;
-
-        // Brown dwarf types
-        case StellarClass::Spectral_L:
-            bolometricCorrection = bmag_correctionL[specSubClass];
-            break;
-        case StellarClass::Spectral_T:
-            bolometricCorrection = bmag_correctionT[specSubClass];
-            break;
-        }
-    }
-    else if (stellarClass.getStarType() == StellarClass::WhiteDwarf)
-    {
-        bolometricCorrection = 0.0f;
-    }
-    else if (stellarClass.getStarType() == StellarClass::NeutronStar)
-    {
-        bolometricCorrection = 0.0f;
-    }
-
-    return getAbsoluteMagnitude() + bolometricCorrection;
-}
-
-
-// Return the rotation period of the star in days.  For normal stars, we use
-// the rotation period tables defined above.
-float Star::getRotationPeriod() const
-{
-    float period = 1.0f;
-
-    if (stellarClass.getStarType() == StellarClass::NormalStar)
-    {
-        unsigned int specSubClass = stellarClass.getSpectralSubclass();
-        unsigned int lumIndex = 0;
-        
-        switch (stellarClass.getLuminosityClass())
-        {
-        case StellarClass::Lum_Ia0:
-        case StellarClass::Lum_Ia:
-        case StellarClass::Lum_Ib:
-        case StellarClass::Lum_II:
-            lumIndex = 2;
-            break;
-        case StellarClass::Lum_III:
-        case StellarClass::Lum_IV:
-            lumIndex = 1;
-            break;
-        case StellarClass::Lum_V:
-        case StellarClass::Lum_VI:
-            lumIndex = 0;
-            break;
-        }
-
-        switch (stellarClass.getSpectralClass())
-        {
-        case StellarClass::Spectral_O:
-            period = rotperiod_O[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_B:
-            period = rotperiod_B[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_Unknown:
-        case StellarClass::Spectral_A:
-            period = rotperiod_A[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_F:
-            period = rotperiod_F[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_G:
-            period = rotperiod_G[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_K:
-            period = rotperiod_K[lumIndex][specSubClass];
-            break;
-        case StellarClass::Spectral_M:
-            period = rotperiod_M[lumIndex][specSubClass];
-            break;
-
-        case StellarClass::Spectral_R:
-        case StellarClass::Spectral_S:
-        case StellarClass::Spectral_N:
-        case StellarClass::Spectral_C:
-            period = rotperiod_M[lumIndex][specSubClass];
-            break;
-
-        case StellarClass::Spectral_WC:
-        case StellarClass::Spectral_WN:
-            period = rotperiod_O[lumIndex][specSubClass];
-            break;
-
-        case StellarClass::Spectral_L:
-        case StellarClass::Spectral_T:
-            // Assume that brown dwarfs are fast rotators like late M dwarfs
-            period = 0.2f;
-            break;
-        }
-    }
-    else if (stellarClass.getStarType() == StellarClass::WhiteDwarf)
-    {
-        // Assign white dwarfs a rotation period of half an hour; very
-        // rough, as white rotation rates vary a lot.
-        return 1.0f / 48.0f;
-    }
-    else if (stellarClass.getStarType() == StellarClass::NeutronStar)
-    {
-        // Let all neutron stars have a rotation period of one second
-        return 1.0f / 86400.0f;
-    }
-
-    return period;
-}
-
-
 void Star::setCatalogNumber(uint32 n)
 {
     catalogNumber = n;
@@ -576,13 +712,6 @@ void Star::setPosition(Point3f p)
 {
     position = p;
 }
-
-
-void Star::setStellarClass(StellarClass sc)
-{
-    stellarClass = sc;
-}
-
 
 void Star::setAbsoluteMagnitude(float mag)
 {
@@ -604,4 +733,9 @@ float Star::getLuminosity() const
 void Star::setLuminosity(float lum)
 {
     absMag = astro::lumToAbsMag(lum);
+}
+
+void Star::setDetails(StarDetails* sd)
+{
+    details = sd;
 }
