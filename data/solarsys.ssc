@@ -1197,6 +1197,8 @@
 	Class "asteroid"
 	Mesh   "eros.3ds"
 	Texture "asteroid.jpg"
+	# Texture "white.jpg"
+	# NormalMap "erosbump2k.jpg"
 	# Color sampled from true color photo taken by NEAR
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
@@ -1204,16 +1206,21 @@
 
 	EllipticalOrbit
 	{
-	Period            1.76
-	SemiMajorAxis     1.4583
-	Eccentricity      0.2230
-	Inclination      10.831
-	AscendingNode   304.435
-	ArgOfPericenter   0.987
-        MeanAnomaly     310.0
+	Epoch           2451171 #23 Dec 1998 NEAR fly-by
+	Period            1.761 #average
+	SemiMajorAxis     1.458261 #at epoch
+	Eccentricity      0.222885 #at epoch
+	Inclination      10.830143 #at epoch
+	AscendingNode   304.430882 #at epoch
+	ArgOfPericenter 178.613184 #at epoch
+	MeanAnomaly     208.403434 #at epoch
 	}
 
-	RotationPeriod    5.270
+	RotationPeriod         5.270
+	Obliquity             78.70
+	EquatorAscendingNode 107.23
+	RotationOffset       158.165
+
 	Albedo            0.16
 }
 
@@ -1413,145 +1420,164 @@
 
 
 # Comets
-"Halley" "Sol"
-{
-	Class "comet"
-	Mesh "asteroid.cms"
-	Texture "asteroid.jpg"
-	Radius 7.5
-
-	EllipticalOrbit
-	{
-	Period            75.7
-	SemiMajorAxis    17.9541
-	Eccentricity      0.9673
-	Inclination       162.24
-	AscendingNode    58.86
-	ArgOfPericenter 111.87
-        MeanAnomaly       0.0
-	Epoch       2446480.5
-	}
-
-	RotationPeriod  170     # Guess; see http://www.lpi.usra.edu/meetings/dps97/html/H2918/H2918.html
-	Albedo            0.04
-}
-
-"Borrelly" "Sol"
-{
-	Class "comet"
-	Mesh "borrelly.cms"
-	Texture "asteroid.jpg"
-	Radius 2.5
-
-	EllipticalOrbit
-	{
-	Period            6.8631
-	SemiMajorAxis     3.61145
-	Eccentricity      0.623919
-	Inclination       30.3244
-	AscendingNode    75.4248
-	ArgOfPericenter 353.3741
-        MeanAnomaly       0.0
-	Epoch       2452200.5
-	}
-
-	RotationPeriod  170     #
-	Albedo            0.04
-}
-
-"Ikeya-Zhang" "Sol" 
+"Halley" "Sol" 
 { 
-	Class "comet"
+	Class "comet" 
+	Mesh "borrelly.cms" #similar 2:1 proportions to Borrelly 
 	Texture "asteroid.jpg" 
-	Mesh "roughsphere.cms"
+	Radius 7.5 
 
 	EllipticalOrbit 
 	{ 
-	Period 367.181906
-	SemiMajorAxis 51.276792
-	Eccentricity 0.990111 
-	Inclination 28.1206
-	AscendingNode 93.3718
-	ArgOfPericenter 34.6666 
-	MeanAnomaly 0
-	Epoch 2452352.47847
+	Period            75.31589 
+	SemiMajorAxis     17.834144 
+	Eccentricity       0.967143 
+	Inclination      162.262690 
+	AscendingNode     58.420081 
+	ArgOfPericenter  111.332485 
+	MeanAnomaly       38.384264 
+	Epoch         2449400.5 
+	} 
+
+	# chaotic rotation, imperfectly defined: 
+	# this version from "The New Solar System", 4th Edition; Eds.
+	# JK Beatty, CC Petersen, A Chaikin 
+
+	Orientation [90 0 0 1]   # rotates around long axis 
+	Obliquity        66    
+	RotationPeriod  170      # 7.1 day axial rotation period 
+	PrecessionRate   89      # 3.7 day precession period 
+
+	Albedo            0.04 
+} 
+
+"Borrelly" "Sol" 
+{ 
+	Class "comet" 
+	Mesh "borrelly.cms" 
+	Texture "asteroid.jpg" 
+	Radius 2.2 
+	InfoURL "http://www.lpi.usra.edu/meetings/lpsc2002/pdf/1256.pdf" 
+
+	EllipticalOrbit 
+	{ 
+	Period             6.86302 
+	SemiMajorAxis      3.611363 
+	Eccentricity       0.623908 
+	Inclination       30.324612 
+	AscendingNode     75.424869 
+	ArgOfPericenter  353.375385 
+	MeanAnomaly       -1.043909 
+	Epoch        2452174.5 
+	} 
+
+	Obliquity                90 
+	EquatorAscendingNode    315 
+	RotationPeriod           25 
+
+	Albedo            0.04 
+} 
+
+"Ikeya-Zhang" "Sol" 
+{ 
+	Class "comet" 
+	Texture "asteroid.jpg" 
+	Mesh "roughsphere.cms" 
+
+	EllipticalOrbit 
+	{ 
+	Period           367.181906 
+	SemiMajorAxis     51.276792 
+	Eccentricity       0.990111 
+	Inclination       28.1206 
+	AscendingNode     93.3718 
+	ArgOfPericenter   34.6666 
+	MeanAnomaly        0 
+	Epoch        2452352.47847 
 	} 
 
 	# These are all made up (copied from Halley) 
-	Radius 7.5 
+	Radius           7.5 
 	RotationPeriod 170 
+
 	Albedo 0.04 
-}
+} 
+
 
 # Centaurs
-"Chiron" "Sol"
-{
-	Class "asteroid"
-	Texture "asteroid.jpg"
-	Radius 90
+"Chiron" "Sol" 
+{ 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 144 
 
-	EllipticalOrbit
-	{
-	Period            50.7
-	SemiMajorAxis     13.6481
-	Eccentricity      0.3806
-	Inclination       6.937
-	AscendingNode   209.381
-	ArgOfPericenter 339.483
-        MeanAnomaly      13.177
-	Epoch       2450800.5
-	}
+	EllipticalOrbit 
+	{ 
+	Period            50.90359 
+	SemiMajorAxis     13.734941 
+	Eccentricity       0.384424 
+	Inclination        6.927771 
+	AscendingNode    209.395188 
+	ArgOfPericenter  339.432152 
+	MeanAnomaly      -10.016331 
+	Epoch        2449608.5 
+	} 
 
-	RotationPeriod    5.9
+	RotationPeriod 5.918 
+
+	Albedo 0.048 
 }
+
 
 # Kuiper belt objects
 
-# 20000 Varuna
-"Varuna" "Sol"
-{
-	Class "asteroid"
-	InfoURL "http://spacewatch.lpl.arizona.edu/2000wr106.html"
-	Texture "asteroid.jpg"
-	Radius 450
+# 20000 Varuna 
+"Varuna" "Sol" 
+{ 
+	Class "asteroid" 
+	InfoURL "http://spacewatch.lpl.arizona.edu/2000wr106.html" 
+	#InfoURL "http://www.ifa.hawaii.edu/faculty/jewitt/papers/VARUNA2/JS2002.pdf" 
+	Texture "asteroid.jpg" 
+	Radius 450 
 
-	EllipticalOrbit
-	{
-	Period           284.664
-	SemiMajorAxis     43.274
-	Eccentricity      0.056
-	Inclination      17.1
-	AscendingNode    97.3
-	ArgOfPericenter 274.9
-        MeanAnomaly      81.7
-	Epoch       2452003.0
-	}
+	EllipticalOrbit 
+	{ 
+	Period           284.83446 
+	SemiMajorAxis     43.290196 
+	Eccentricity       0.053794 
+	Inclination       17.12557 
+	AscendingNode     97.2843 
+	ArgOfPericenter  275.5744 
+	MeanAnomaly     82.67171 
+	Epoch      2452400.5 
+	} 
 
-	Albedo 0.07
+	RotationPeriod 6.3442 # for a double-peaked light curve 
 
-	RotationPeriod     48.0   # Just a guess . . .
+	Albedo 0.4 
+} 
+
+# 2001 KX76 
+"Ixion" "Sol" 
+{ 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 600 
+
+	EllipticalOrbit 
+	{ 
+	Period           246.50564 
+	SemiMajorAxis     39.3138672 
+	Eccentricity       0.2447032 
+	Inclination       19.68326 
+	AscendingNode     71.0155 
+	ArgOfPericenter  300.9234 
+	MeanAnomaly      259.585 
+	Epoch        2452400.5 
+	} 
+
+	Albedo 0.07 
+
+	RotationPeriod 30.0 
 }
 
-# 2001 KX76
-"2001 KX76" "Sol"
-{
-	Class "asteroid"
-	Texture "asteroid.jpg"
-	Radius 600
-
-	EllipticalOrbit
-	{
-	Period           245.797
-	SemiMajorAxis     39.293
-	Eccentricity      0.246
-	Inclination      19.7
-	AscendingNode    71.0
-	ArgOfPericenter 301.0
-        MeanAnomaly     258.8
-	Epoch       2452003.0
-	}
-
-	Albedo 0.07
-
-	RotationPeriod     48.0   # Just a guess . . .	
-}
