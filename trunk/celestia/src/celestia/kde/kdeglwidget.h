@@ -20,6 +20,7 @@
 
 #include <qgl.h>
 #include <qevent.h>
+#include <kaction.h>
 
 #include "celestiacore.h"
 #include "celengine/simulation.h"
@@ -59,6 +60,7 @@ private:
     int lastX;
     int lastY;
 
+    KActionCollection* actionColl;
 
 };
 
