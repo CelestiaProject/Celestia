@@ -20,7 +20,7 @@
 class SolarSystem
 {
  public:
-    SolarSystem(const Star*);
+    SolarSystem(Star*);
 
     const Star* getStar() const;
     Point3f getCenter() const;

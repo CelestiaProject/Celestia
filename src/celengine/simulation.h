@@ -37,9 +37,13 @@ struct FrameOfReference
         coordSys(_coordSys), refObject(_galaxy) {};
     FrameOfReference(astro::CoordinateSystem _coordSys, const Selection& sel) :
         coordSys(_coordSys), refObject(sel) {};
+    FrameOfReference(astro::CoordinateSystem _coordSys, const Selection& ref,
+                     const Selection& target) :
+        coordSys(_coordSys), refObject(ref), targetObject(target) {};
 
     astro::CoordinateSystem coordSys;
     Selection refObject;
+    Selection targetObject;
 };
 
 struct RigidTransform
@@ -101,6 +105,7 @@ class Simulation
     void centerSelection(double centerTime = 0.5);
     void follow();
     void geosynchronousFollow();
+    void phaseLock();
     void cancelMotion();
 
     Observer& getObserver();

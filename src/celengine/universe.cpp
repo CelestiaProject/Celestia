@@ -93,7 +93,7 @@ SolarSystem* Universe::getSolarSystem(const Star* star) const
 
 // Create a new solar system for a star and return a pointer to it; if it
 // already has a solar system, just return a pointer to the existing one.
-SolarSystem* Universe::createSolarSystem(const Star* star) const
+SolarSystem* Universe::createSolarSystem(Star* star) const
 {
     SolarSystem* solarSystem = getSolarSystem(star);
     if (solarSystem != NULL)
@@ -341,11 +341,11 @@ void CloseStarPicker::process(const Star& star,
     if (lowPrecDistance > maxDistance)
         return;
 
-    Vec3f starDir = (star.getPosition() - pickOrigin) *
-        astro::lightYearsToKilometers(1.0f);
+    Point3d hPos = astro::heliocentricPosition(pickOrigin, star.getPosition());
+    Vec3f starDir((float) -hPos.x, (float) -hPos.y, (float) -hPos.z);
     float distance = 0.0f;
 
-    if (testIntersection(Ray3f(Point3f(0, 0, 0), pickDir),
+     if (testIntersection(Ray3f(Point3f(0, 0, 0), pickDir),
                          Spheref(Point3f(starDir.x, starDir.y, starDir.z),
                                  star.getRadius()), distance))
     {
@@ -381,6 +381,11 @@ Selection Universe::pickStar(const UniversalCoord& origin,
                              float faintestMag,
                              float tolerance)
 {
+    Point3f o = (Point3f) origin;
+    o.x *= 1e-6f;
+    o.y *= 1e-6f;
+    o.z *= 1e-6f;
+
     // Use a high precision pick test for any stars that are close to the
     // observer.  If this test fails, use a low precision pick test for stars
     // which are further away.  All this work is necessary because the low
@@ -388,7 +393,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     // precision test isn't nearly fast enough to use on our database of
     // over 100k stars.
     CloseStarPicker closePicker(origin, direction, 1.0f, tolerance);
-    starCatalog->findCloseStars(closePicker, (Point3f) origin, 1.0f);
+    starCatalog->findCloseStars(closePicker, o, 1.0f);
     if (closePicker.closestStar != NULL)
         return Selection(const_cast<Star*>(closePicker.closestStar));
 
@@ -413,10 +418,10 @@ Selection Universe::pickStar(const UniversalCoord& origin,
         axis.normalize();
         rotation.setAxisAngle(axis, (float) acos(cosAngle));
     }
-    
-    StarPicker picker((Point3f) origin, direction, tolerance);
+
+    StarPicker picker(o, direction, tolerance);
     starCatalog->findVisibleStars(picker,
-                                  (Point3f) origin,
+                                  o,
                                   rotation,
                                   tolerance, 1.0f,
                                   faintestMag);
@@ -561,7 +566,9 @@ Selection Universe::findPath(const string& s,
 // with in one light year.
 SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) const
 {
+    Point3f pos = (Point3f) position;
+    Point3f lyPos(pos.x * 1e-6, pos.y * 1e-6, pos.z * 1e-6);
     ClosestStarFinder closestFinder(1.0f);
-    starCatalog->findCloseStars(closestFinder, (Point3f) position, 1.0f);
+    starCatalog->findCloseStars(closestFinder, lyPos, 1.0f);
     return getSolarSystem(closestFinder.closestStar);
 }
