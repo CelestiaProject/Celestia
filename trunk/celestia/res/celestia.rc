@@ -66,6 +66,8 @@ BEGIN
         MENUITEM "&Real Time",                  ID_TIME_REALTIME
 	MENUITEM "Re&verse Time",               ID_TIME_REVERSE
         MENUITEM "Set &Time...",                ID_TIME_SETTIME
+	MENUITEM SEPARATOR
+	MENUITEM "Show Local Time",             ID_TIME_SHOWLOCAL
     END
     POPUP "&Render"
     BEGIN
