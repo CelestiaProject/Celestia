@@ -817,6 +817,7 @@ static void syncMenusWithRendererState()
                      (labelMode & Renderer::ConstellationLabels) != 0);
     setMenuItemCheck(ID_RENDER_SHOWMINORPLANETLABELS,
                      (labelMode & Renderer::MinorPlanetLabels) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWHUDTEXT, appCore->getHudDetail() != 0);
 
     setMenuItemCheck(ID_RENDER_PIXEL_SHADERS,
                      appCore->getRenderer()->getFragmentShaderEnabled());
@@ -1547,6 +1548,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_RENDER_SHOWHUDTEXT:
             appCore->charEntered('V');
+            syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWPLANETLABELS:
             appCore->charEntered('N');
