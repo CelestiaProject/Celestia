@@ -820,6 +820,9 @@ AsciiModelWriter::writeMesh(const Mesh& mesh)
 {
     out << "mesh\n";
 
+    if (!mesh.getName().empty())
+        out << "# " << mesh.getName() << '\n';
+
     writeVertexDescription(mesh.getVertexDescription());
     out << '\n';
 
