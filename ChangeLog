@@ -423,4 +423,4 @@ Code:
   shininess to OpenGL specular exponents.
 * Multi Resolution Texturing. (dramsey)
 * Unix: Much improved recognition of missing packages in configure. (dramsey)
-	
+* Added rendering of eclipse shadows
