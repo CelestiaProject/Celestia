@@ -121,6 +121,8 @@ class Body
     void setOrientation(const Quatf&);
     int getClassification() const;
     void setClassification(int);
+    std::string getInfoURL() const;
+    void setInfoURL(const std::string&);
 
     PlanetarySystem* getSatellites() const;
     void setSatellites(PlanetarySystem*);
@@ -175,6 +177,8 @@ class Body
     PlanetarySystem* satellites;
 
     int classification;
+
+    std::string infoURL;
 };
 
 #endif // _BODY_H_
