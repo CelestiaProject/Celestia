@@ -21,7 +21,9 @@
 #include "celengine/astro.h"
 #include "url.h"
 
-Url::Url(const std::string& str, CelestiaCore *core) {
+
+Url::Url(const std::string& str, CelestiaCore *core)
+{
     urlStr = str;
     appCore = core;
     std::string::size_type pos, endPrevious;
@@ -29,7 +31,8 @@ Url::Url(const std::string& str, CelestiaCore *core) {
     Simulation *sim = appCore->getSimulation();
     std::map<std::string, std::string> params = parseUrlParams(urlStr);
 
-    if (urlStr.substr(0, 6) != "cel://") {
+    if (urlStr.substr(0, 6) != "cel://")
+    {
         urlStr = "";
         return;
     }
@@ -41,28 +44,34 @@ Url::Url(const std::string& str, CelestiaCore *core) {
     else modeStr = decode_string(urlStr.substr(6, pos - 6));
 
 
-    if (modeStr == "Freeflight") {
+    if (modeStr == "Freeflight") 
+    {
         mode = astro::Universal;
         nbBodies = 0;
     }
-    if (modeStr == "Fallow")    {
+    else if (modeStr == "Follow") 
+    {
         mode = astro::Ecliptical;
         nbBodies = 1;
     }
-    if (modeStr == "SyncOrbit") {
+    else if (modeStr == "SyncOrbit")
+    {
         mode = astro::Geographic;
         nbBodies = 1;
     }
-    if (modeStr == "Chase") {
+    else if (modeStr == "Chase")
+    {
         mode = astro::Chase;
         nbBodies = 1;
     }
-    if (modeStr == "PhaseLock") {
+    else if (modeStr == "PhaseLock")
+    {
         mode = astro::PhaseLock;
         nbBodies = 2;
     }
 
-    if (nbBodies == -1) {
+    if (nbBodies == -1)
+    {
         urlStr = "";
         return; // Mode not recognized
     }
@@ -255,12 +264,14 @@ std::map<std::string, std::string> Url::parseUrlParams(const std::string& url) c
     return params;
 }
 
-std::string Url::getCoordSysName(astro::CoordinateSystem mode) const {
-    switch (mode) {
+std::string Url::getCoordSysName(astro::CoordinateSystem mode) const
+{
+    switch (mode)
+    {
     case astro::Universal:
         return "Freeflight";
     case astro::Ecliptical:
-        return "Fallow";
+        return "Follow";
     case astro::Geographic:
         return "SyncOrbit";
     case astro::Chase:
@@ -272,15 +283,20 @@ std::string Url::getCoordSysName(astro::CoordinateSystem mode) const {
 }
 
 
-std::string Url::getSelectionName(const Selection& selection) const {
+std::string Url::getSelectionName(const Selection& selection) const
+{
     Universe *universe = appCore->getSimulation()->getUniverse();
-    if (selection.body != 0) {
+    if (selection.body != 0)
+    {
         std::string name=selection.body->getName();
-        if (selection.body->getSystem() != 0) {
-            if (selection.body->getSystem()->getPrimaryBody() != 0) {
+        if (selection.body->getSystem() != 0)
+        {
+            if (selection.body->getSystem()->getPrimaryBody() != 0)
+            {
                 name=selection.body->getSystem()->getPrimaryBody()->getName() + ":" + name;
             }
-            if (selection.body->getSystem()->getStar() != 0) {
+            if (selection.body->getSystem()->getStar() != 0)
+            {
                 name=universe->getStarCatalog()->getStarName(*(selection.body->getSystem()->getStar()))
                     + ":" + name;
             }
@@ -293,8 +309,10 @@ std::string Url::getSelectionName(const Selection& selection) const {
     return "";
 }
 
-void Url::goTo() {
-    if (urlStr == "") return;
+void Url::goTo()
+{
+    if (urlStr == "")
+        return;
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
     std::string::size_type pos;
@@ -310,7 +328,8 @@ void Url::goTo() {
     renderer->setLabelMode(labelMode);
 
     pos = 0;
-    while(pos != std::string::npos) {
+    while(pos != std::string::npos)
+    {
         pos = selectedStr.find(":", pos + 1);
         if (pos != std::string::npos) selectedStr[pos]='/';
         Selection sel = sim->findObjectFromPath(selectedStr);
@@ -318,7 +337,8 @@ void Url::goTo() {
     }
 
     pos = 0;
-    while(pos != std::string::npos) {
+    while(pos != std::string::npos)
+    {
         pos = trackedStr.find(":", pos + 1);
         if (pos != std::string::npos) trackedStr[pos]='/';
         Selection sel = sim->findObjectFromPath(trackedStr);
@@ -327,15 +347,18 @@ void Url::goTo() {
 
 }
 
-Url::~Url() {
+Url::~Url()
+{
 }
 
-std::string Url::decode_string(const std::string& str) {
+std::string Url::decode_string(const std::string& str)
+{
     std::string::size_type a=0, b;
     std::string out = "";
                       
     b = str.find("%");
-    while (b != std::string::npos) {
+    while (b != std::string::npos)
+    {
         char c;
         out += str.substr(a, b-a);      
         std::string c_code = str.substr(b+1, 2); 
