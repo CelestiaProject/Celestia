@@ -213,6 +213,10 @@ static Body* CreatePlanet(PlanetarySystem* system,
     planetData->getNumber("RotationPeriod", rotationPeriod);
     body->setRotationPeriod(rotationPeriod / 24.0);
 
+    double rotationPhase = 0.0;
+    planetData->getNumber("RotationPhase", rotationPhase);
+    body->setRotationPhase((float) degToRad(rotationPhase));
+
     Surface* surface = CreateSurface(planetData);
     body->setSurface(*surface);
     delete surface;

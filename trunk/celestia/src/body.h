@@ -89,6 +89,8 @@ class Body
     void setAlbedo(float);
     float getRotationPeriod() const;
     void setRotationPeriod(float);
+    float getRotationPhase() const;
+    void setRotationPhase(float);
 
     const PlanetarySystem* getSatellites() const;
     void setSatellites(PlanetarySystem*);
@@ -125,6 +127,7 @@ class Body
     float obliquity; // aka 'axial tilt'
     float albedo;
     float rotationPeriod;
+    float rotationPhase;
 
     std::string mesh;
     Surface surface;
