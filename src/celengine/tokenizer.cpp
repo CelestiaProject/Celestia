@@ -325,7 +325,6 @@ Tokenizer::TokenType Tokenizer::nextToken()
                     UTF8Encode((wchar_t) unicodeValue, utf8Encoded);
                     textToken += utf8Encoded;
                     state = StringState;
-                    printf("escape: %04x\n", unicodeValue);
                 }
             }
             else
