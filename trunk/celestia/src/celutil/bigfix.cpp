@@ -185,3 +185,137 @@ void BigFix::dump()
 	printf("%04x ", n[i]);
     printf("\n");
 }
+
+
+
+static unsigned char alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+BigFix::BigFix(const char* val)
+{
+    static char inalphabet[256], decoder[256];
+    int i, bits, c, char_count, errors = 0, j;
+
+    for (i = (sizeof alphabet) - 1; i >= 0 ; i--)
+    {
+        inalphabet[alphabet[i]] = 1;
+        decoder[alphabet[i]] = i;
+    }
+
+    for (i = 0; i < 8 ; i++)
+        n[i] = 0;
+
+    char_count = 0;
+    bits = 0;
+    j = 0;
+    i = 0;
+    while ((c = val[j]) != '\0')
+    {
+        j++;
+        if (c == '=')
+            break;
+        if (c > 255 || ! inalphabet[c])
+            continue;
+        bits += decoder[c];
+        char_count++;
+        if (char_count == 4)
+        {
+            n[i/2] >>= 8;
+            n[i/2] += (bits >> 8) & 0xff00;
+            i++;
+            n[i/2] >>= 8;
+            n[i/2] += bits & 0xff00;
+            i++;
+            n[i/2] >>= 8;
+            n[i/2] += (bits << 8) & 0xff00;
+            i++;
+            bits = 0;
+            char_count = 0;
+        }
+        else
+        {
+            bits <<= 6;
+        }
+    }
+
+    switch (char_count)
+    {
+    case 2:
+        n[i/2] >>= 8;
+        n[i/2] += (bits >> 2) & 0xff00;
+        i++;
+        break;
+    case 3:
+        n[i/2] >>= 8;
+        n[i/2] += (bits >> 8) & 0xff00;
+        i++;
+        n[i/2] >>= 8;
+        n[i/2] += bits & 0xff00;
+        i++;
+        break;
+    }
+
+    if (i & 1)
+        n[i/2] >>= 8;
+}
+
+
+std::string BigFix::toString()
+{
+
+    std::string encoded("");
+    int bits, c, char_count, started, i, j;
+
+    char_count = 0;
+    bits = 0;
+    started = 0;
+
+    // Find first significant (non null) byte
+    i = 16;
+    do {
+        i--;
+        c = n[i/2];
+        if (i & 1) c >>= 8;
+        c &= 0xff;
+    } while ((c == 0) && (i != 0));
+
+    if (i == 0)
+        return encoded;
+
+    // Then we encode starting by the LSB (i+1 bytes to encode)
+    j = 0;
+    while (j <= i)
+    {
+        c = n[j/2];
+        if ( j & 1 ) c >>= 8;
+        c &= 0xff;
+        j++;
+        bits += c;
+        char_count++;
+        if (char_count == 3)
+        {
+            encoded += alphabet[bits >> 18];
+            encoded += alphabet[(bits >> 12) & 0x3f];
+            encoded += alphabet[(bits >> 6) & 0x3f];
+            encoded += alphabet[bits & 0x3f];
+            bits = 0;
+            char_count = 0;
+        }
+        else
+        {
+            bits <<= 8;
+        }
+    }
+
+    if (char_count != 0)
+    {
+        bits <<= 16 - (8 * char_count);
+        encoded += alphabet[bits >> 18];
+        encoded += alphabet[(bits >> 12) & 0x3f];
+        if (char_count != 1)
+            encoded += alphabet[(bits >> 6) & 0x3f];
+    }
+
+    return encoded;
+}
+
+
