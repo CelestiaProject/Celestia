@@ -392,7 +392,7 @@ Command* CommandParser::parseCommand()
         double duration;
         paramList->getNumber("duration", duration);
         paramList->getVector("velocity", velocity);
-        cmd = new CommandMove(duration, velocity * astro::kilometersToLightYears(1.0));
+        cmd = new CommandMove(duration, velocity * astro::kilometersToMicroLightYears(1.0));
     }
     else if (commandName == "setposition")
     {
@@ -410,6 +410,10 @@ Command* CommandParser::parseCommand()
         paramList->getVector("axis", axis);
         cmd = new CommandSetOrientation(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                                         (float) degToRad(angle));
+    }
+    else if (commandName == "lookingback")
+    {
+        cmd = new CommandLookingBack();
     }
     else if (commandName == "renderflags")
     {
