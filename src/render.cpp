@@ -776,7 +776,8 @@ void Renderer::render(const Observer& observer,
                 {
                     // Only correct for spherical objects . . .
                     float d = center.distanceFromOrigin();
-                    iter->farZ = d - square(radius) / d;
+                    iter->farZ = -(d - square(radius) / d);
+                    cout << "farZ: " << iter->farZ << '\n';
                 }
 
                 *notCulled = *iter;
@@ -1027,6 +1028,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
                                     float renderZ,
                                     bool useHaloes)
 {
+    cout << "renderZ: " << renderZ << '\n';
     if (discSizeInPixels < 4 || useHaloes)
     {
         float a = 1;
