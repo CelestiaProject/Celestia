@@ -24,6 +24,7 @@
 using namespace std;
 
 vector<Eclipse> Eclipses_;
+WNDPROC oldListViewProc;
 
 extern void SetMouseCursor(LPCTSTR lpCursor);
 
@@ -430,6 +431,29 @@ int CALLBACK EclipseFinderCompareFunc(LPARAM lParam0, LPARAM lParam1,
     }
 }
 
+BOOL APIENTRY EclipseListViewProc(HWND hWnd,
+                                  UINT message,
+                                  UINT wParam,
+                                  LONG lParam)
+{
+    switch(message)
+    {
+    case WM_LBUTTONDBLCLK:
+        {
+            LVHITTESTINFO lvHit;
+            lvHit.pt.x = LOWORD(lParam);
+            lvHit.pt.y = HIWORD(lParam);
+            int listIndex = ListView_HitTest(hWnd, &lvHit);
+            if (listIndex >= 0)
+            {
+                SendMessage(GetParent(hWnd), WM_COMMAND, MAKEWPARAM(IDSETDATEANDGO, 0), NULL);
+            }
+        }
+        break;
+    }
+
+    return CallWindowProc(oldListViewProc, hWnd, message, wParam, lParam);
+}
 
 BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                                 UINT message,
@@ -465,6 +489,11 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             eclipse->strPlaneteToFindOn = "Earth";
 
             InitDateControls(hDlg, astro::Date(eclipse->appCore->getSimulation()->getTime()), eclipse->fromTime, eclipse->toTime);
+
+            //Subclass the ListView to intercept WM_LBUTTONUP messages
+            HWND hCtrl;
+            if (hCtrl = GetDlgItem(hDlg, IDC_ECLIPSES_LIST))
+                oldListViewProc = (WNDPROC)SetWindowLong(hCtrl, GWL_WNDPROC, (DWORD)EclipseListViewProc);
         }
         return(TRUE);
 
@@ -519,6 +548,12 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             {
                 Simulation* sim = eclipseFinder->appCore->getSimulation();
                 sim->setTime(eclipseFinder->TimetoSet_);
+
+                //
+                // TODO:
+                // Need to position observer between sun and eclipseFinder->BodytoSet_
+                //
+
                 sim->setSelection(Selection(eclipseFinder->BodytoSet_));
                 sim->follow();
                 sim->centerSelection();
