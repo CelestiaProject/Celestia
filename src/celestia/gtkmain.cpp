@@ -616,7 +616,7 @@ static const char * const infoLabels[]=
 static GtkToggleButton *ambientGads[4]; // Store the Gadgets here for later mods
 static GtkToggleButton *infoGads[3];
 
-void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkToggleButton **gads)
+void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkToggleButton **gads, gpointer data)
 {
     GSList *group = NULL;
     for(int i=0; labels[i]; i++)
@@ -634,6 +634,9 @@ void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sig
         gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
         gtk_widget_show (button);
         g_signal_connect(GTK_OBJECT(button), "pressed", sigFunc, (gpointer)i);
+
+		if (data != NULL)
+			g_object_set_data(G_OBJECT(button), "data", data);
     }
 }
 
@@ -777,8 +780,8 @@ static void menuOptions()
 	g_signal_connect(GTK_OBJECT(slider), "value-changed", G_CALLBACK(changeDistanceLimit), NULL);
 	changeDistanceLimit(GTK_RANGE(GTK_HSCALE(slider)), NULL);
 
-    makeRadioItems(ambientLabels,ambientBox,GTK_SIGNAL_FUNC(ambientChanged),ambientGads);
-    makeRadioItems(infoLabels,infoBox,GTK_SIGNAL_FUNC(infoChanged),infoGads);
+    makeRadioItems(ambientLabels,ambientBox,GTK_SIGNAL_FUNC(ambientChanged),ambientGads, NULL);
+    makeRadioItems(infoLabels,infoBox,GTK_SIGNAL_FUNC(infoChanged),infoGads, NULL);
 
     gtk_widget_show(showFrame);
     gtk_widget_show(showBox);
@@ -848,7 +851,7 @@ static void menuSelectObject()
 }
 
 
-static const char * const unitLabels[]=
+static const char * const unitLabels[] =
 {
 	"km",
 	"radii",
@@ -856,13 +859,10 @@ static const char * const unitLabels[]=
 	NULL
 };
 
-class GotoObjectDialog
-{
-public:
-    GotoObjectDialog();
-    ~GotoObjectDialog();
-    bool init();
 
+typedef struct _gotoObjectData gotoObjectData;
+
+struct _gotoObjectData {
     GtkWidget* dialog;
     GtkWidget* nameEntry;
     GtkWidget* latEntry;
@@ -892,12 +892,8 @@ static bool GetEntryFloat(GtkWidget* w, float& f)
 
 
 //static gint GotoObject(GtkWidget*, gpointer data)
-static void GotoObject(const gpointer data)
+static void GotoObject(gotoObjectData* gotoObjectDlg)
 {
-    GotoObjectDialog* gotoObjectDlg = reinterpret_cast<GotoObjectDialog*>(data);
-    if (gotoObjectDlg == NULL)
-		return;
-
     const gchar* objectName = gtk_entry_get_text(GTK_ENTRY(gotoObjectDlg->nameEntry));
     if (objectName != NULL)
     {
@@ -910,6 +906,12 @@ static void GotoObject(const gpointer data)
             float distance = (float) (sel.radius() * 5.0f);
             if (GetEntryFloat(gotoObjectDlg->distEntry, distance))
             {
+				// Adjust for km (0), radii (1), au (2)
+				if (gotoObjectDlg->units == 2)
+					distance = astro::AUtoKilometers(distance);
+				else if (gotoObjectDlg->units == 1)
+					distance = distance * (float) sel.radius();
+
                 distance += (float) sel.radius();
             }
             distance = astro::kilometersToLightYears(distance);
@@ -936,77 +938,66 @@ static void GotoObject(const gpointer data)
 }
 
 
-int changeGotoUnits(GtkButton*, int selection)
+// CALLBACK: for km|radii|au in Goto Object dialog
+int changeGotoUnits(GtkButton* w, int selection)
 {
-	cout << selection << endl;
+	gotoObjectData* data = (gotoObjectData *)g_object_get_data(G_OBJECT(w), "data");
+
+	data->units = selection;
+	
 	return TRUE;
 }
 
 
-GotoObjectDialog::GotoObjectDialog() :
-    dialog(NULL),
-    nameEntry(NULL),
-    latEntry(NULL),
-    longEntry(NULL),
-    distEntry(NULL)
+// CALLBACK: Navigation->Goto Object
+void menuGotoObject()
 {
-}
+	gotoObjectData *data = g_new0(gotoObjectData, 1);
 
-GotoObjectDialog::~GotoObjectDialog()
-{
-}
-
-bool GotoObjectDialog::init()
-{
-	gint go;
-
-    dialog = gtk_dialog_new_with_buttons("Goto Object",
-	                                     GTK_WINDOW(mainWindow),
-										 GTK_DIALOG_DESTROY_WITH_PARENT,
-										 "Go To",
-										 GTK_RESPONSE_OK,
-	                                     GTK_STOCK_CANCEL,
-										 GTK_RESPONSE_CANCEL,
-	                                     NULL);
-    nameEntry = gtk_entry_new();
-    latEntry = gtk_entry_new();
-    longEntry = gtk_entry_new();
-    distEntry = gtk_entry_new();
+    data->dialog = gtk_dialog_new_with_buttons("Goto Object",
+	                                           GTK_WINDOW(mainWindow),
+											   GTK_DIALOG_DESTROY_WITH_PARENT,
+											   "Go To",
+											   GTK_RESPONSE_OK,
+											   GTK_STOCK_CANCEL,
+											   GTK_RESPONSE_CANCEL,
+											   NULL);
+    data->nameEntry = gtk_entry_new();
+    data->latEntry = gtk_entry_new();
+    data->longEntry = gtk_entry_new();
+    data->distEntry = gtk_entry_new();
     
-    if (dialog == NULL ||
-        nameEntry == NULL ||
-        latEntry == NULL ||
-        longEntry == NULL ||
-        distEntry == NULL)
+    if (data->dialog == NULL ||
+        data->nameEntry == NULL ||
+        data->latEntry == NULL ||
+        data->longEntry == NULL ||
+        data->distEntry == NULL)
     {
         // Potential memory leak here . . .
-        return false;
+        return;
     }
 
 	// Set up the values (from windows cpp file)
 	double distance, longitude, latitude;
 	appSim->getSelectionLongLat(distance, longitude, latitude);
 
-/*
-UNCOMMENT WHEN SYNCED WITH CVS
 	//Display information in format appropriate for object
 	if (appSim->getSelection().body() != NULL)
 	{
 		char temp[20];
 		distance = distance - (double) appSim->getSelection().body()->getRadius();
 		sprintf(temp, "%.1f", (float)distance);
-		gtk_entry_set_text(GTK_ENTRY(distEntry), temp);
+		gtk_entry_set_text(GTK_ENTRY(data->distEntry), temp);
 		sprintf(temp, "%.5f", (float)longitude);
-		gtk_entry_set_text(GTK_ENTRY(longEntry), temp);
+		gtk_entry_set_text(GTK_ENTRY(data->longEntry), temp);
 		sprintf(temp, "%.5f", (float)latitude);
-		gtk_entry_set_text(GTK_ENTRY(latEntry), temp);
-		gtk_entry_set_text(GTK_ENTRY(nameEntry), (char*) appSim->getSelection().body()->getName().c_str());
+		gtk_entry_set_text(GTK_ENTRY(data->latEntry), temp);
+		gtk_entry_set_text(GTK_ENTRY(data->nameEntry), (char*) appSim->getSelection().body()->getName().c_str());
 	}
-*/
 
 	GtkWidget* vbox = gtk_vbox_new(TRUE, CELSPACING);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), CELSPACING);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(data->dialog)->vbox), vbox, TRUE, TRUE, 0);
 
 	GtkWidget* align = NULL;
     GtkWidget* hbox = NULL;
@@ -1017,7 +1008,7 @@ UNCOMMENT WHEN SYNCED WITH CVS
     hbox = gtk_hbox_new(FALSE, CELSPACING);
     label = gtk_label_new("Object name:");
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), nameEntry, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), data->nameEntry, FALSE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(align), hbox);
     gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, TRUE, 0);
 
@@ -1026,7 +1017,7 @@ UNCOMMENT WHEN SYNCED WITH CVS
     hbox = gtk_hbox_new(FALSE, CELSPACING);
     label = gtk_label_new("Latitude:");
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), latEntry, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), data->latEntry, FALSE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(align), hbox);
     gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, TRUE, 0);
 
@@ -1034,7 +1025,7 @@ UNCOMMENT WHEN SYNCED WITH CVS
     hbox = gtk_hbox_new(FALSE, CELSPACING);
     label = gtk_label_new("Longitude:");
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), longEntry, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), data->longEntry, FALSE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(align), hbox);
     gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, TRUE, 0);
 
@@ -1043,34 +1034,22 @@ UNCOMMENT WHEN SYNCED WITH CVS
     hbox = gtk_hbox_new(FALSE, CELSPACING);
     label = gtk_label_new("Distance:");
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), distEntry, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), data->distEntry, FALSE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(align), hbox);
     gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, TRUE, 0);
 
 	// Distance Options
-	units = 0;
+	data->units = 0;
     hbox = gtk_hbox_new(FALSE, CELSPACING);
-	makeRadioItems(unitLabels, hbox, GTK_SIGNAL_FUNC(changeGotoUnits), NULL);
+	makeRadioItems(unitLabels, hbox, GTK_SIGNAL_FUNC(changeGotoUnits), NULL, data);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 	
 	gtk_widget_show_all(vbox);
 
-	go = gtk_dialog_run(GTK_DIALOG(dialog));
-
-	if (go == GTK_RESPONSE_OK)
-		GotoObject(this);
+	if (gtk_dialog_run(GTK_DIALOG(data->dialog)) == GTK_RESPONSE_OK)
+		GotoObject(data);
 	
-	gtk_widget_destroy(dialog);
-
-    return true;
-}
-
-
-static void menuGotoObject()
-{
-    GotoObjectDialog* gotoObjectDlg = new GotoObjectDialog();
-
-    gotoObjectDlg->init();
+	gtk_widget_destroy(data->dialog);
 }
 
 
@@ -1813,7 +1792,7 @@ static void menuStarBrowser()
 
 	// Radio Buttons
 	vbox = gtk_vbox_new(TRUE, CELSPACING);
-    makeRadioItems(radioLabels, vbox, GTK_SIGNAL_FUNC(radioClicked), NULL);
+    makeRadioItems(radioLabels, vbox, GTK_SIGNAL_FUNC(radioClicked), NULL, NULL);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
     // Common Buttons
