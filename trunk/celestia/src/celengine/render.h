@@ -68,6 +68,7 @@ class Renderer
         ShowSmoothLines     = 0x0200,
         ShowEclipseShadows  = 0x0400,
         ShowStarsAsPoints   = 0x0800,
+        ShowRingShadows     = 0x1000,
     };
 
     int getRenderFlags() const;
