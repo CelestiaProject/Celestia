@@ -23,10 +23,16 @@ int main(int argc, char* argv[])
     while (scanner.nextToken() != Scanner::TokenEnd)
     {
         scanner.pushBack();
-        if (parser.parseStatement())
+        Statement* statement = parser.parseStatement();
+        if (statement != NULL)
+        {
             cout << "Valid\n";
+            statement->execute();
+        }
         else
+        {
             cout << "Invalid\n";
+        }
     }
 
     return 0;

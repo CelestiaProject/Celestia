@@ -21,6 +21,14 @@ class Statement
  public:
     Statement();
     virtual ~Statement();
+
+    enum Control
+    {
+        ControlAdvance,
+        ControlReturn,
+    };
+
+    virtual Control execute() { return ControlAdvance; };
 };
 
 
@@ -34,6 +42,8 @@ class ExpressionStatement : public Statement
  public:
     ExpressionStatement(Expression*);
     virtual ~ExpressionStatement();
+
+    virtual Control execute();
 
  private:
     Expression* expr;
