@@ -1,23 +1,28 @@
 # Skylab model created by Shrox -- http://www.shrox.com/
 
-"Skylab" "Sol/Earth"
-{
+"Skylab" "Sol/Earth" {
+	
 	Class "spacecraft"
 	Mesh "skylab.3ds"
 	Radius 0.015
 
-	# I'm missing good orbital data for Skylab.  The SMA, eccentricity,
-	# and inclination are all approximately correct.
-	EllipticalOrbit {
-		Period            0.055
-		SemiMajorAxis  6813
-		Eccentricity      0
-		Inclination      50   
-		AscendingNode    96
-		ArgOfPericenter 131
-		MeanAnomaly      43
-	}
+	Beginning         2441817     # 14 May 1973
+	Ending            2444066     # 11 Jul 1979
+
+	EllipticalOrbit {		
+		Epoch       2462901.80828343		
+		Period            0.06475959		
+		SemiMajorAxis  6811.939		
+		Eccentricity      0.0009421		
+		Inclination      50.0459		
+		AscendingNode    24.3850		
+		ArgOfPericenter 272.0174		
+		MeanAnomaly      87.9670		
+	}		
+	
+	Obliquity        23.45       # Sun-synchronous orientation 
+	RotationPeriod 8766.15265008 # by Matt McIrvin
+	RotationOffset  191          #
 
 	Albedo 	      0.10
 }
-
