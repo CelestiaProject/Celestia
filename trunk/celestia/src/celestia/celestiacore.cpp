@@ -1351,6 +1351,16 @@ void CelestiaCore::renderOverlay()
         glPopMatrix();
 
         glPushMatrix();
+        glTranslatef((width + movieWidth) / 2 - emWidth * 5,
+                     (height + movieHeight) / 2 + 2, 0);
+        float sec = movieCapture->getFrameCount() /
+            movieCapture->getFrameRate();
+        int min = (int) (sec / 60);
+        sec -= min * 60.0f;
+        overlay->printf("%3d:%05.2f", min, sec);
+        glPopMatrix();
+
+        glPushMatrix();
         glTranslatef((width - movieWidth) / 2,
                      (height - movieHeight) / 2 - fontHeight - 2, 0);
         *overlay << "F11 Start/Pause    F12 Stop";
