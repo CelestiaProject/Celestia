@@ -375,6 +375,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     double currentTime;
     double timeScale;
     bool paused;
+    bool scriptPaused;
 
     Vec3f joystickRotation;
     bool joyButtonsPressed[JoyButtonCount];
