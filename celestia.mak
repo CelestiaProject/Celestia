@@ -164,6 +164,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\execution.obj" \
 	"$(INTDIR)\favorites.obj" \
 	"$(INTDIR)\filetype.obj" \
+	"$(INTDIR)\frustum.obj" \
 	"$(INTDIR)\galaxy.obj" \
 	"$(INTDIR)\glext.obj" \
 	"$(INTDIR)\meshmanager.obj" \
@@ -239,6 +240,7 @@ CLEAN :
 	-@erase "$(INTDIR)\execution.obj"
 	-@erase "$(INTDIR)\favorites.obj"
 	-@erase "$(INTDIR)\filetype.obj"
+	-@erase "$(INTDIR)\frustum.obj"
 	-@erase "$(INTDIR)\galaxy.obj"
 	-@erase "$(INTDIR)\glext.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
@@ -347,6 +349,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\execution.obj" \
 	"$(INTDIR)\favorites.obj" \
 	"$(INTDIR)\filetype.obj" \
+	"$(INTDIR)\frustum.obj" \
 	"$(INTDIR)\galaxy.obj" \
 	"$(INTDIR)\glext.obj" \
 	"$(INTDIR)\meshmanager.obj" \
@@ -524,6 +527,12 @@ SOURCE=.\src\favorites.cpp
 SOURCE=.\src\filetype.cpp
 
 "$(INTDIR)\filetype.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\frustum.cpp
+
+"$(INTDIR)\frustum.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
