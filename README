@@ -28,20 +28,20 @@ resides or else it will not find its data files.  A real installer is
 forthcoming.
 
 Celestia will start up in a window, and if everything is working
-correctly, you'll see the asteroid Eros moving past a field of
+correctly, you'll see the planet Neptune in front of a field of
 stars.  In the left corner is a welcome message and some information
-about your target (Eros), your speed, and the current time (Universal
+about your target (Neptune), your speed, and the current time (Universal
 Time, so it'll probably be a few hours off from your computer's clock.)
-Right drag the mouse to orbit Eros and you should see the Earth and some
-familiar constellations.  Left dragging the mouse changes your
+Right drag the mouse to orbit Neptune and you should see other planets and
+some familiar constellations.  Left dragging the mouse changes your
 orientation too, but the camera rotates about its center instead of
-rotating around Eros.  Rolling the mouse wheel will change your distance
+rotating around Neptune.  Rolling the mouse wheel will change your distance
 to the space station--you can move light years away, then roll the wheel
 in the opposite direction to get back to your starting location.  If your
 mouse lacks a wheel, you can use the Home and End keys instead.
 
-In Celestia, you'll generally have an object selected; currently,
-it's Eros, but it could also be a star, planet, spacecraft, or galaxy.
+In Celestia, you'll usually have some object selected; currently,
+it's Neptune, but it could also be a star, planet, spacecraft, or galaxy.
 The simplest way to select an object is to click on it.  Try clicking
 on a star to select it.  The information about Eros is replaced with
 some details about the star.  Press G (or use the navigation menu),
@@ -71,7 +71,7 @@ Use the mouse wheel to adjust distance to selection
 Left drag while holding shift to zoom
 Click the wheel to reset the field of view to 45 degrees
 Left-click to select; double click to center selection
-Right-click to bring up planets menu
+Right-click to bring up context menu
 
 KEYBOARD COMMANDS
 
@@ -80,11 +80,39 @@ H  : Select the sun (Home)
 C  : Center on selected object
 G  : Goto selected object
 F  : Follow selected object
-ESC: Cancel motion
-
-Free movement:
+Y  : Orbit the selected object at a rate synced to its rotation
 HOME : Move closer to object
 END  : Move farther from object
+ESC  : Cancel motion or script
+
+Time:
+Space : stop time
+L  : Time 10x faster
+K  : Time 10x slower
+J  : Reverse time
+
+Labels:
+N  : Toggle planet and moon labels
+B  : Toggle star labels
+=  : Toggle constellation labels
+V  : Toggle info text
+
+Options:
+U  : Toggle galaxy rendering
+I  : Toggle planet atmospheres (cloud textures)
+O  : Toggle planet orbits
+/  : Toggle constellation diagrams
+;  : Show an earth-based equatorial coordinate sphere
+P  : Toggle per-pixel lighting (if supported)
+[  : Decrease limiting magnitude (fewer stars visible)
+]  : Increase limiting magnitude (more stars visible)
+{  : Decrease ambient illumination
+}  : Increase ambient illumination
+,  : Narrow field of view
+.  : Widen field of view
+W  : Toggle wireframe mode
+
+Spaceflight:
 F1 : Stop 
 F2 : Set velocity to 1 km/s
 F3 : Set velocity to 1,000 km/s
@@ -96,30 +124,32 @@ Z  : Decrease velocity by 10x
 Q  : Reverse direction
 X  : Set movement direction toward center of screen
 
-Time:
-Space : stop time
-L  : Time 10x faster
-K  : Time 10x slower
-J  : Reverse time
-
-Options:
-U  : Toggle galaxy rendering
-N  : Toggle planet and moon labels
-O  : Toggle planet orbits
-V  : Toggle HUD Text
-I  : Toggle planet atmospheres (cloud textures)
-W  : Toggle wireframe mode
-/  : Toggle constellation diagrams
-=  : Toggle constellation labels
-B  : Toggle star labels
-P  : Toggle per-pixel lighting (if supported)
-[  : Decrease limiting magnitude (fewer stars visible)
-]  : Increase limiting magnitude (more stars visible)
-
 Other:
 D  : Run demo
 `  : Show frames rendered per second
+ENTER : Select a star or planet by typing its name
 
+
+Star and Planet Browsers:
+[For the moment This only applies to the Windows version of Celestia.]
+In the navigation menu are 'Solar System Browser' and 'Star Browser'
+options.  The Solar System Browser pops up a window with a tree view
+of all the objects in the nearest solar system (if there is one at all
+within a light year of your current position.)  Clicking on the name
+of any planet in the window will select it; you can then use the center
+or goto buttons to see it in the main Celestia window.  The star
+browser is a window showing a table of the hundred nearest stars,
+along with their distances and apparent and absolute magnitudes. 
+Clicking on the column headers will sort the stars.  The table is
+not continuously updated--if you travel to another star, you should
+press the Refresh button to update the table for your current position.
+The radio buttons beneath the table let you switch between viewing
+a list of nearest or brightest stars.  As with the solar system browser,
+clicking on any star name in the table will select it--use this feature
+along with the center button to tour the stars visible from any night
+sky in the galaxy.
+
+Selecting Objects by Name:
 It's possible to choose a star or planet by name.  There are two ways to
 enter a star name: choose 'Select Object' from the Navigation menu to
 bring up a dialog box, or by hitting Enter, typing in the name, and
