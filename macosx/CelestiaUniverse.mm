@@ -47,10 +47,13 @@
 {
     return [[[CelestiaSelection alloc] initWithSelection:[self universe]->pickStar([origin universalCoord],[direction vec3f],[faintestMag floatValue],[tolerance floatValue])] autorelease];
 }
+/*
 -(CelestiaSelection*)pickStar:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction faintestMag:(NSNumber*)faintestMag
 {
     return [[[CelestiaSelection alloc] initWithSelection:[self universe]->pickStar([origin universalCoord],[direction vec3f],[faintestMag floatValue])] autorelease];
 }
+*/
+
 /*
     StarDatabase* getStarCatalog() const;
     void setStarCatalog(StarDatabase*);
