@@ -11,6 +11,7 @@
 #include "mathlib.h"
 #include "astro.h"
 #include "parser.h"
+#include "customorbit.h"
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "solarsys.h"
@@ -76,6 +77,72 @@ static Surface* CreateSurface(Hash* surfaceData)
 }
 
 
+static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
+                                              bool usePlanetUnits)
+{
+    // SemiMajorAxis and Period are absolutely required; everything
+    // else has a reasonable default.
+    double semiMajorAxis = 0.0;
+    if (!orbitData->getNumber("SemiMajorAxis", semiMajorAxis))
+    {
+        DPRINTF("SemiMajorAxis missing!  Skipping planet . . .\n");
+        return NULL;
+    }
+
+    double period = 0.0;
+    if (!orbitData->getNumber("Period", period))
+    {
+        DPRINTF("Period missing!  Skipping planet . . .\n");
+        return NULL;
+    }
+
+    double eccentricity = 0.0;
+    orbitData->getNumber("Eccentricity", eccentricity);
+
+    double inclination = 0.0;
+    orbitData->getNumber("Inclination", inclination);
+
+    double ascendingNode = 0.0;
+    orbitData->getNumber("AscendingNode", ascendingNode);
+
+    double argOfPericenter = 0.0;
+    if (!orbitData->getNumber("ArgOfPericenter", argOfPericenter))
+    {
+        double longOfPericenter = 0.0;
+        if (orbitData->getNumber("LongOfPericenter", longOfPericenter))
+            argOfPericenter = longOfPericenter - ascendingNode;
+    }
+
+    double epoch = astro::J2000;
+    orbitData->getNumber("Epoch", epoch);
+
+    // Accept either the mean anomaly or mean longitude--use mean anomaly
+    // if both are specified.
+    double anomalyAtEpoch = 0.0;
+    if (!orbitData->getNumber("MeanAnomaly", anomalyAtEpoch))
+    {
+        double longAtEpoch = 0.0;
+        if (orbitData->getNumber("MeanLongitude", longAtEpoch))
+            anomalyAtEpoch = longAtEpoch - (argOfPericenter + ascendingNode);
+    }
+
+    if (usePlanetUnits)
+    {
+        semiMajorAxis = astro::AUtoKilometers(semiMajorAxis);
+        period = period * 365.25f;
+    }
+
+    return new EllipticalOrbit(semiMajorAxis,
+                               eccentricity,
+                               degToRad(inclination),
+                               degToRad(ascendingNode),
+                               degToRad(argOfPericenter),
+                               degToRad(anomalyAtEpoch),
+                               period,
+                               epoch);
+}
+
+
 // Create a body (planet or moon) using the values from a hash
 // The usePlanetsUnits flags specifies whether period and semi-major axis
 // are in years and AU rather than days and kilometers
@@ -91,66 +158,40 @@ static Body* CreatePlanet(PlanetarySystem* system,
     
     DPRINTF("Reading planet %s\n", name.c_str());
 
-    double semiMajorAxis = 0.0;
-    if (!planetData->getNumber("SemiMajorAxis", semiMajorAxis))
+    Orbit* orbit = NULL;
+    string customOrbitName;
+    if (planetData->getString("CustomOrbit", customOrbitName))
     {
-        DPRINTF("SemiMajorAxis missing!  Skipping planet . . .\n");
+        orbit = GetCustomOrbit(customOrbitName);
+        if (orbit == NULL)
+            DPRINTF("Could not find custom orbit named '%s'\n",
+                    customOrbitName.c_str());
+    }
+    if (orbit == NULL)
+    {
+        Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
+        if (orbitDataValue != NULL)
+        {
+            if (orbitDataValue->getType() != Value::HashType)
+            {
+                DPRINTF("Object '%s' has incorrect elliptical orbit syntax.\n",
+                        name.c_str());
+            }
+            else
+            {
+                orbit = CreateEllipticalOrbit(orbitDataValue->getHash(),
+                                              usePlanetUnits);
+            }
+        }
+    }
+    if (orbit == NULL)
+    {
+        DPRINTF("No valid orbit specified for object '%s'; skipping . . .\n",
+                name.c_str());
         delete body;
         return NULL;
     }
-
-    double period = 0.0;
-    if (!planetData->getNumber("Period", period))
-    {
-        DPRINTF("Period missing!  Skipping planet . . .\n");
-        delete body;
-        return NULL;
-    }
-
-    double eccentricity = 0.0;
-    planetData->getNumber("Eccentricity", eccentricity);
-
-    double inclination = 0.0;
-    planetData->getNumber("Inclination", inclination);
-
-    double ascendingNode = 0.0;
-    planetData->getNumber("AscendingNode", ascendingNode);
-
-    double argOfPericenter = 0.0;
-    if (!planetData->getNumber("ArgOfPericenter", argOfPericenter))
-    {
-        double longOfPericenter = 0.0;
-        if (planetData->getNumber("LongOfPericenter", longOfPericenter))
-            argOfPericenter = longOfPericenter - ascendingNode;
-    }
-
-    double epoch = astro::J2000;
-    planetData->getNumber("Epoch", epoch);
-
-    // Accept either the mean anomaly or mean longitude--use mean anomaly
-    // if both are specified.
-    double anomalyAtEpoch = 0.0;
-    if (!planetData->getNumber("MeanAnomaly", anomalyAtEpoch))
-    {
-        double longAtEpoch = 0.0;
-        if (planetData->getNumber("MeanLongitude", longAtEpoch))
-            anomalyAtEpoch = longAtEpoch - (argOfPericenter + ascendingNode);
-    }
-
-    if (usePlanetUnits)
-    {
-        semiMajorAxis = astro::AUtoKilometers(semiMajorAxis);
-        period = period * 365.25f;
-    }
-
-    body->setOrbit(new EllipticalOrbit(semiMajorAxis,
-                                       eccentricity,
-                                       degToRad(inclination),
-                                       degToRad(ascendingNode),
-                                       degToRad(argOfPericenter),
-                                       degToRad(anomalyAtEpoch),
-                                       period,
-                                       epoch));
+    body->setOrbit(orbit);
     
     double obliquity = 0.0;
     planetData->getNumber("Obliquity", obliquity);
@@ -169,7 +210,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     body->setOblateness(oblateness);
 
     // The default rotation period is the same as the orbital period
-    double rotationPeriod = period * 24.0;
+    double rotationPeriod = orbit->getPeriod() * 24.0;
     planetData->getNumber("RotationPeriod", rotationPeriod);
     body->setRotationPeriod(rotationPeriod / 24.0);
 
