@@ -89,6 +89,7 @@ CLEAN :
 	-@erase "$(INTDIR)\vertexlist.obj"
 	-@erase "$(INTDIR)\vertexprog.obj"
 	-@erase "$(INTDIR)\visstars.obj"
+	-@erase "$(INTDIR)\wingotodlg.obj"
 	-@erase "$(INTDIR)\winmain.obj"
 	-@erase "$(INTDIR)\winssbrowser.obj"
 	-@erase "$(INTDIR)\winstarbrowser.obj"
@@ -141,7 +142,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\celestia.bsc"
 BSC32_SBRS=
 
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijgjpeg.lib zlib.lib libpng1.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\celestia.pdb" /machine:I386 /out:"$(OUTDIR)\celestia.exe" 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib winmm.lib opengl32.lib glu32.lib ijgjpeg.lib zlib.lib libpng1.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\celestia.pdb" /machine:I386 /out:"$(OUTDIR)\celestia.exe" 
 LINK32_OBJS= \
 	"$(INTDIR)\3dsmesh.obj" \
 	"$(INTDIR)\3dsmodel.obj" \
@@ -194,6 +195,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\vertexlist.obj" \
 	"$(INTDIR)\vertexprog.obj" \
 	"$(INTDIR)\visstars.obj" \
+	"$(INTDIR)\wingotodlg.obj" \
 	"$(INTDIR)\winmain.obj" \
 	"$(INTDIR)\winssbrowser.obj" \
 	"$(INTDIR)\winstarbrowser.obj" \
@@ -272,6 +274,7 @@ CLEAN :
 	-@erase "$(INTDIR)\visstars.obj"
 	-@erase "$(INTDIR)\vertexlist.obj"
 	-@erase "$(INTDIR)\vertexprog.obj"
+	-@erase "$(INTDIR)\wingotodlg.obj"
 	-@erase "$(INTDIR)\winmain.obj"
 	-@erase "$(INTDIR)\winssbrowser.obj"
 	-@erase "$(INTDIR)\winstarbrowser.obj"
@@ -326,7 +329,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\celestia.bsc"
 BSC32_SBRS=
 
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijgjpeg.lib zlibd.lib libpng1d.lib /nologo /subsystem:windows /incremental:yes /pdb:"$(OUTDIR)\celestia.pdb" /debug /machine:I386 /out:"$(OUTDIR)\celestia.exe" /pdbtype:sept 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib winmm.lib opengl32.lib glu32.lib ijgjpeg.lib zlibd.lib libpng1d.lib /nologo /subsystem:windows /incremental:yes /pdb:"$(OUTDIR)\celestia.pdb" /debug /machine:I386 /out:"$(OUTDIR)\celestia.exe" /pdbtype:sept 
 LINK32_OBJS= \
 	"$(INTDIR)\3dsmesh.obj" \
 	"$(INTDIR)\3dsmodel.obj" \
@@ -379,6 +382,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\vertexlist.obj" \
 	"$(INTDIR)\vertexprog.obj" \
+	"$(INTDIR)\wingotodlg.obj" \
 	"$(INTDIR)\winmain.obj" \
 	"$(INTDIR)\winssbrowser.obj" \
 	"$(INTDIR)\winstarbrowser.obj" \
@@ -707,6 +711,12 @@ SOURCE=.\src\vertexlist.cpp
 SOURCE=.\src\vertexprog.cpp
 
 "$(INTDIR)\vertexprog.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\wingotodlg.cpp
+
+"$(INTDIR)\wingotodlg.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
