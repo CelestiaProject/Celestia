@@ -195,6 +195,22 @@ class Renderer
     };
 
  private:
+    struct SkyVertex
+    {
+        float x, y, z;
+        unsigned char color[4];
+    };
+
+    struct SkyContourPoint
+    {
+        Vec3f v;
+        Vec3f eyeDir;
+        float centerDist;
+        float eyeDist;
+        float cosSkyCapAltitude;
+    };
+
+ private:
     void setFieldOfView(float);
     void renderStars(const StarDatabase& starDB,
                      float faintestVisible,
@@ -252,6 +268,15 @@ class Renderer
                               const Quatf& orientation,
                               float renderDistance,
                               bool useHaloes);
+
+    void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
+                                   Point3f center,
+                                   const Quatf& orientation,
+                                   Vec3f semiAxes,
+                                   const Vec3f& sunDirection,
+                                   Color ambientColor,
+                                   float fade,
+                                   bool lit);
 
     bool testEclipse(const Body&, const Body&, double now);
 
@@ -330,6 +355,10 @@ class Renderer
 
     float minOrbitSize;
     float distanceLimit;
+
+    SkyVertex* skyVertices;
+    uint32* skyIndices;
+    SkyContourPoint* skyContour;
 };
 
 #endif // _RENDER_H_
