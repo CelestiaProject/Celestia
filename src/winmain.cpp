@@ -400,6 +400,9 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
                           UINT wParam,
                           LONG lParam)
 {
+    HWND timeItem = NULL;
+    HWND dateItem = NULL;
+
     switch (message)
     {
     case WM_INITDIALOG:
@@ -415,17 +418,17 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
             sysTime.wSecond = (int) newTime.seconds;
             sysTime.wMilliseconds = 0;
 
-            HWND hwnd = GetDlgItem(hDlg, IDC_DATEPICKER);
-            if (hwnd != NULL)
+            dateItem = GetDlgItem(hDlg, IDC_DATEPICKER);
+            if (dateItem != NULL)
             {
-                DateTime_SetFormat(hwnd, "dd' 'MMM' 'yyy");
-                DateTime_SetSystemtime(hwnd, GDT_VALID, &sysTime);
+                DateTime_SetFormat(dateItem, "dd' 'MMM' 'yyy");
+                DateTime_SetSystemtime(dateItem, GDT_VALID, &sysTime);
             }
-            hwnd = GetDlgItem(hDlg, IDC_TIMEPICKER);
-            if (hwnd != NULL)
+            timeItem = GetDlgItem(hDlg, IDC_TIMEPICKER);
+            if (timeItem != NULL)
             {
-                DateTime_SetFormat(hwnd, "HH':'mm':'ss' UT'");
-                DateTime_SetSystemtime(hwnd, GDT_VALID, &sysTime);
+                DateTime_SetFormat(timeItem, "HH':'mm':'ss' UT'");
+                DateTime_SetSystemtime(timeItem, GDT_VALID, &sysTime);
             }
         }
         return(TRUE);
@@ -449,13 +452,18 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
                 LPNMDATETIMECHANGE change = (LPNMDATETIMECHANGE) lParam;
                 if (change->dwFlags == GDT_VALID)
                 {
-                    astro::Date date(change->st.wYear, change->st.wMonth, change->st.wDay);
-                    newTime.year = change->st.wYear;
-                    newTime.month = change->st.wMonth;
-                    newTime.day = change->st.wDay;
-                    newTime.hour = change->st.wHour;
-                    newTime.minute = change->st.wMinute;
-                    newTime.seconds = change->st.wSecond + (double) change->st.wMilliseconds / 1000.0;
+                    if (wParam == IDC_DATEPICKER)
+                    {
+                        newTime.year = change->st.wYear;
+                        newTime.month = change->st.wMonth;
+                        newTime.day = change->st.wDay;
+                    }
+                    else if (wParam == IDC_TIMEPICKER)
+                    {
+                        newTime.hour = change->st.wHour;
+                        newTime.minute = change->st.wMinute;
+                        newTime.seconds = change->st.wSecond + (double) change->st.wMilliseconds / 1000.0;
+                    }
                 }
             }
         }
