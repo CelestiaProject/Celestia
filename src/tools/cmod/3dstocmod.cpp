@@ -71,7 +71,8 @@ int main(int argc, char* argv[])
 void
 Convert3DSMesh(Model& model,
                M3DTriangleMesh& mesh3ds,
-               const M3DScene& scene)
+               const M3DScene& scene,
+               const string& meshName)
 {
     int nFaces = mesh3ds.getFaceCount();
     int nVertices = mesh3ds.getVertexCount();
@@ -259,6 +260,8 @@ Convert3DSMesh(Model& model,
     mesh->setVertexDescription(Mesh::VertexDescription(offset, nAttributes, attributes));
     mesh->setVertices(nOutputVertices, vertices);
 
+    mesh->setName(meshName);
+
     // Vertex lists are not indexed, so the conversion to an indexed format is
     // trivial (although much space is wasted storing unnecessary indices.)
     uint32* indices = new uint32[nOutputVertices];
@@ -320,7 +323,7 @@ Convert3DSModel(const M3DScene& scene, const string& texPath)
 
                 if (mesh != NULL && mesh->getFaceCount() > 0)
                 {
-                    Convert3DSMesh(*model, *mesh, scene);
+                    Convert3DSMesh(*model, *mesh, scene, model3ds->getName());
                 }
             }
         }
