@@ -1375,8 +1375,8 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 
 <chapter id="adjusting_time">
 <title>Adjusting Time</title>
-<para>Many events in space take place at certain times.  Planets experience seasons, spacecraft are launched and eventually fall back to Earth, moons eclipse the Sun on specific dates, comets pass by, space probes fly by target planets and take their measurements, etc.  &celestia; gives you the opportunity to set a specific date and time, or to speed up or slow down the passage of time.  Your time will appear in the upper right corner of the screen.  For example, to see a planet turning under you, simply speed up the clock and it will rotate faster.  The keyboard commands for selecting date and time are accessed from the Time Menu at the top of the screen, or by the following keystrokes:</para>
-
+<para>Many events in space take place at certain times.  Planets experience seasons, spacecraft are launched and eventually fall back to Earth, moons eclipse the Sun on specific dates, comets pass by, space probes fly by target planets and take their measurements, etc.  &celestia; gives you the opportunity to set a specific date and time, or to speed up or slow down the passage of time.  Your time will appear in the upper right corner of the screen.  For example, to see a planet turning under you, simply speed up the clock and it will rotate faster. Conversely, since objects in space move at thousands of km/sec, they will disappear from view if you release your hold on them.  To slow things down a bit and watch them move away, you can slow down time. </para>
+<para>You can use the <guimenu>Time</guimenu> menu at the top of the viewscreen to change the passage of time.  Simply pull down the menu with your mouse and choose an option.  However, most folks use the simple keyboard shortcuts.  They are:</para>
 <variablelist>
 <varlistentry><term>&pause;</term><listitem><para>Stop or pause time</para></listitem></varlistentry>
 <varlistentry><term>&time_faster;</term><listitem><para>Time 10x faster (repeat for faster time)</para></listitem></varlistentry>
@@ -1385,6 +1385,12 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 <varlistentry><term>&time_1;</term><listitem><para>Return to Real Time</para></listitem></varlistentry>
 <varlistentry><term>&time_now;</term><listitem><para>Set time to the current clock time</para></listitem></varlistentry>
 </variablelist>
+
+<para>For example, to see things move faster, position yourself hovering above Neptune by clicking <ulink url="cel://Follow/Sol:Neptune/2003-01-09T03:28:43.42030?x=wBhe5SR38W3yDQ&amp;y=imymGcoCjVU&amp;z=JfUGTa/Jh4NpAQ&amp;ow=0.725271&amp;ox=0.000512&amp;oy=0.617424&amp;oz=0.304579&amp;select=Sol:Neptune&amp;fov=31.999985&amp;ts=1.000000&amp;ltd=0&amp;rf=40855&amp;lm=0">here</ulink>.  Notice that Neptune is not visibly turning (in real time, it takes 19 hours to turn once on its axis).  Now, press the &time_faster; key twice to speed up time to 100x faster.  Neptune will visibly turn below you.  To see how slowing down time can be useful, let’s visit the Voyage 2 spacecraft.  To do so, click <ulink url="cel://Follow/Sol:Voyager 2/2005-04-08T22:13:57.17183?x=71Jx3RyNZDsDDg&amp;y=IHKCwYFkhqym/f///////w&amp;z=HlkjTcu8ok7eAw&amp;ow=0.174183&amp;ox=0.053942&amp;oy=0.896863&amp;oz=0.402973&amp;select=Sol:Voyager+2&amp;fov=31.999994&amp;ts=1.000000&amp;ltd=0&amp;rf=40855&amp;lm=1862271104">here</ulink>.  Voyager is stationary because you are following it.  To see just how fast it is really traveling in space, release your hold on it by pressing the &Esc; key.  Voyager will recede from you at over 36,000 mph.  Now, press the &follow; key to again follow Voyager and the &goto; key to go to it.  Slow down time with the &time_slower; key to about -1000x slower, and release Voyager by pressing the &Esc; key.  It will now slowly drift away from you.</para>
+
+<para>To change a date in &celestia;, pull down the <guimenu>Time menu</guimenu> and choose <guimenuitem>Set Time</guimenuitem>.  A dialog box will appear with pull down arrows, allowing you to reset the date and time.  The new time will be in Universal Time (UT).  To set the time to the current date and time, choose the <guibutton>Set to Current time</guibutton> button in the Set Time dialog box, or press the &time_now; key on the keyboard.</para>
+
+<note><para>At present, you cannot manually reset a date in the future past the year 9999.  Resetting a date in the past can be done with this menu command backwards to the year 1800.  Dates beyond those boundaries can be reached by speeding up the clock and letting time run.</para></note>
 
 <note><para>&celestia; has programmed some of its spacecraft to appear in space and then actually fall back to Earth (disappear) on the day that they really did so.  For example, the Russian space station Mir was launched on 02/20/1986 and fell back to earth on 03/21/2001.  To see Mir in orbit above the Earth, you will have to reset the date to some period between those two dates.</para></note>
 </chapter>
@@ -1396,6 +1402,8 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 <para>The &adjlighttraveldelay; key controls light time delay adjustment; if it's turned on, a message will appear and the displayed time will have the light time delay subtracted.  Most lists of solar system phenomena give times that include light time delay.  When observing these events with &celestia;, automatic light time adjustment is extremely helpful.</para>
 
 <para>For example, if a transit of a moon of Saturn is set to occur at 14:00 hours and you are one light hour away from Saturn, pressing the &adjlighttraveldelay; key will reset the time to 13:00 hours, so that you can witness the event in real time.</para>
+
+<note><para>Time delay does not function for stars, including our Sun.</para></note>
 </chapter>
 
 <chapter id="saving_images_and_locations">
@@ -1407,13 +1415,16 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 <title>Save Image</title>
 <para>To save a graphic file (in .jpg or .png format), simply set up the screen exactly as you want it, pull down the <guimenu>File</guimenu> Menu and select <guimenuitem>Capture Image</guimenuitem>.  A dialog will appear.  Choose the folder you wish to put the file into, type a name for it; decide if it is to be saved as a jpg or png file and click <guibutton>Save</guibutton>.</para>
 
-<para>JPG files are common graphic files that are most useful for viewing in a computer running typical application software such as word processing or slideshows.  They are smaller than png files but do have limitations.</para>
+<para>JPG files are common graphic files that have good quality and occupy less disk space because they are first compressed by the program into a "smaller" size for storage.  Compression, however, always results in some small loss of image quality, in exchange for smaller file size.  Thus, jpg images can be convenient to use in e-mails, websites and documents where quality is not overly critical, and too large an image size might slow down the software or make it difficult to transfer over the internet.</para>
 
-<para>PNG files are graphic files that are designed for viewing best on the Internet.  If you wish to add your image to a webpage or E-mail it to a friend, save it in png format.  Otherwise, use jpg format.  To view a jpg or png image, click on it and your default graphic image viewer or browser in your computer will open it.  You do not need &celestia; running.  You can paste and view images anywhere you wish.</para>
+<para>PNG files are also lossless compressed graphic files, they maintain a higher image quality due to the way they save data.  As a result, they do require much more disk space for storage.  For example, an image save by &celestia; would use about 60 KB  in jpg format, and 360 KB if saved as a png file.  If you wish to use a &celestia; image in a high quality presentation requiring the best image, save the file in png format.</para>
 </sect1>
 
 <sect1 id="save_movie">
 <title>Save Movie</title>
+
+<para>&celestia; gives you the opportunity to create an animation/movie of anything you experience in the program's universe.  For example, if you wish to position yourself beyond Jupiter and fly past it at high speed with the planet whizzing by, you can record that maneuver in a movie.  You can record a rare solar eclipse as it happens or demonstrate the occultation of a star by a planetary limb.  You can execute any command you wish while taping a movie.  For example, you can accelerate in your spaceship, move the screen with your mouse, zoom in or out, speed up time, etc.  In this manner, you can set up your own movie "demo" of celestial places or events for others to see.</para>
+
 <para>To save a movie file (in .avi format), set up the screen as you want it, set the time moving forward at the speed you desire or temporarily pause it, pull down the <guimenu>File</guimenu> Menu and select <guimenuitem>Capture MovieImage</guimenuitem>.  Choose the folder you wish to put the movie into, and type a file name for the movie.  Then choose the size of the video.  Generally, <quote>320x240</quote> or <quote>640x480</quote> are the preferred sizes.  Next, choose a frame rate.  We recommend <quote>24 frames per second</quote>.  24 fps is used in film, 25 fps is used for PAL (Europe) video and 29.97 for NTSC (US/Canada) video.  15 fps is often adequate for displaying video on the web.</para>
 
 <variablelist>
@@ -1428,10 +1439,11 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 </sect1>
 
 <sect1 id="save_location">
-<title>Save Location</title>
-<para>To save a particular location, simply set up your position and time as you would like it, pull down the <guimenu>Locations Menu</guimenu> and choose <guimenuitem>Add to Locations</guimenuitem>.  Type a name and click <guibutton>OK</guibutton>.  To return to that location at any time, simply click on the <guimenu>Location Menu</guimenu> again, choose a saved location and you will go there instantly.</para>
+<title>Save Bookmarks</title>
+<para>To save a particular location, simply set up your position and time as you would like it, pull down the <guimenu>Bookmarks</guimenu> and choose <guimenuitem>Add Bookmark</guimenuitem>.  Type a name and click <guibutton>OK</guibutton>.  To return to that location at any time, simply click on the <guimenu>Bookmarks Menu</guimenu> again, choose a saved location and you will go there instantly.</para>
 
-<note><para>Locations are available only on Windows, you can use Bookmarks instead on the KDE version.</para></note>
+<para>To delete a location, rearrange the list or otherwise organize them, use the <guimenuitem>Organize Bookmarks</guimenuitem> option in the pulldown menu.  The Location/Bookmarks feature is very handy to have and use.  For example, if you have taken some time to position yourself in a particularly good view location in space or at the beginning of a celestial event, save that position with a bookmark and you can come back to it or show others the same event by an instant click on the bookmark.</para>
+
 </sect1>
 
 <sect1 id="save_url">
@@ -1458,6 +1470,8 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 <para>cel:// URLs are ideal for showing others a particular discovery made in the world of &celestia;.  For example, perhaps you've positioned yourself to witness the passing of a Near-Earth asteroid as it whizzes past Earth, or have assumed a position off the North Pole of the Sun with orbits selected and the entire solar system orbiting below you.  Saving that location to a cel:// URL and pasting it on the web or in an e-mail for others to activate is an ideal way to share your &celestia; experience.  You'll find cel:// URLs used frequently in the &celestia; forum.</para>
 
 <note><para>Be careful using cel:// URLs with add-ons.  If you save the camera position near a body that is part of an add-on you installed, someone who later clicks on the URL will likely see a very dull view of empty space unless they also have the same add-on installed.</para></note>
+
+<note><para>Also please note:  When you click a cel://url, &celestia; must reset your View Options to match the cel://url commands.  When you are done visiting the location or enjoying the view that the cel://url brought you to, there is no quick reset command to return your view settings to the way you had them before.  You will have to open the Render menu and make sure the check boxes you desire are again selected.  Alternatively, you can choose all of the options you desire and create your own cel:url hyperlink which will contain all of the options just the way you like them. Save that cel:url as a hyperlink somewhere outside of the program.  Call it "Reset".  Then, if someone's else's cel:/url resets your program to settings you do not want, you may minimize the program for a moment, locate and click on your hyperlink and it will reset your settings back to the way you desire them. </para></note>
 
 </sect1>
 </chapter>
@@ -1494,7 +1508,7 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 
 <para>Part 3 of the User's Guide will teach you how to create scripts, which are a series of lists that &celestia; follows one at a time to take a space journey.  For example, you can design a script to open &celestia; orbiting a Red Giant star thousands of light years away.  Then as you watch, your spacecraft will accelerate and fly back to Earth at warp speed.  You can also insert text messages for the viewer to read.  The Run Demo referenced earlier in this Guide is just such a script journey.</para>
 
-
+<para>One of our forum members, Don Goyette, has also written a comprehensive guide that will teach you how to create scripts, which are a series of lists that &celestia; follows one at a time to take a space journey.  For example, you can design a script to open &celestia; orbiting a Red Giant star thousands of light years away.  Then as you watch, your spacecraft will accelerate and fly back to Earth at warp speed.  You can also insert text messages for the viewer to read.  The Run Demo referenced earlier in this Guide is just such a script journey.  It is an excellent tutorial on how to develop scripts.  You can find it and download it in a variety of formats at <ulink url="http://www.donandcarla.com/Celestia/">Script Guide</ulink>.</para>
 </chapter>
 
 <chapter id="credits">
