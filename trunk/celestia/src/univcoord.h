@@ -23,8 +23,8 @@ class UniversalCoord
     UniversalCoord();
     UniversalCoord(BigFix, BigFix, BigFix);
     UniversalCoord(double, double, double);
-    UniversalCoord(Point3d&);
-    UniversalCoord(Point3f&);
+    UniversalCoord(const Point3d&);
+    UniversalCoord(const Point3f&);
 
     operator Point3d() const;
     operator Point3f() const;
