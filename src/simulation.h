@@ -57,8 +57,8 @@ class Simulation
     void selectStar(uint32);
     void selectPlanet(int);
     UniversalCoord getSelectionPosition(Selection& sel, double when);
-    Selection findObject(string s);
-    Selection findObjectFromPath(string s);
+    Selection findObject(std::string s);
+    Selection findObjectFromPath(std::string s);
     void gotoSelection(double gotoTime,
                        Vec3f up, astro::CoordinateSystem upFrame);
     void gotoSelection(double gotoTime, double distance,

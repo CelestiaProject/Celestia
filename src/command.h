@@ -70,7 +70,7 @@ class CommandSelect : public InstantaneousCommand
     void process(ExecutionEnvironment&);
 
  private:
-    string target;
+    std::string target;
 };
 
 

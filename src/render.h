@@ -86,12 +86,12 @@ class Renderer
     void showAsterisms(AsterismList*);
 
     typedef struct {
-        string text;
+        std::string text;
         Color color;
         Point3f position;
     } Label;
 
-    void addLabel(string, Color, Point3f);
+    void addLabel(std::string, Color, Point3f);
     void clearLabels();
 
     void setFont(TextureFont*);
