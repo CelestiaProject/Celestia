@@ -1,7 +1,7 @@
 #celmodel__ascii
 
 material
-diffuse  0.5 0.12 0.16
+diffuse  1 1 1
 texture0 "amalthea.*"
 end_material
 
@@ -3220,3 +3220,4 @@ tristrip 0 72
 2655 2693 2656 2694 2657 2695 2658 2696 2659 2697 2660 2698 
 
 end_mesh
+
