@@ -53,6 +53,7 @@ OBJS=\
 	$(INTDIR)\opencluster.obj \
 	$(INTDIR)\orbit.obj \
 	$(INTDIR)\overlay.obj \
+	$(INTDIR)\parseobject.obj \
 	$(INTDIR)\parser.obj \
 	$(INTDIR)\regcombine.obj \
 	$(INTDIR)\render.obj \
