@@ -181,6 +181,10 @@ SOURCE=.\render.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\samporbit.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\selection.cpp
 # End Source File
 # Begin Source File
@@ -358,6 +362,10 @@ SOURCE=.\regcombine.h
 # Begin Source File
 
 SOURCE=.\render.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\samporbit.h
 # End Source File
 # Begin Source File
 
