@@ -673,6 +673,8 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'G':
+        if (sim->getFrame().coordSys == astro::Universal)
+            sim->follow();
         sim->gotoSelection(5.0, Vec3f(0, 1, 0), astro::ObserverLocal);
         break;
 
