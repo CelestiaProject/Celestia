@@ -16,9 +16,9 @@ using namespace std;
 
 
 struct Constellation_s {
-    char *name;
-    char *gen;
-    char *abbr;
+    const char *name;
+    const char *gen;
+    const char *abbr;
 };
 
 static struct Constellation_s constellationInfo[] = {
@@ -115,7 +115,7 @@ static struct Constellation_s constellationInfo[] = {
 static Constellation **constellations = NULL;
 
 
-Constellation::Constellation(char *_name, char *_genitive, char *_abbrev)
+Constellation::Constellation(const char *_name, const char *_genitive, const char *_abbrev)
 {
     name = string(_name);
     genitive = string(_genitive);

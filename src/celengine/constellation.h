@@ -23,7 +23,7 @@ public:
     std::string getAbbreviation();
 
 private:
-    Constellation(char *_name, char *_genitive, char *_abbrev);
+    Constellation(const char *_name, const char *_genitive, const char *_abbrev);
     static void initialize();
 
     std::string name;

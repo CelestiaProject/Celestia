@@ -24,7 +24,7 @@
 using namespace std;
 
 
-static char *greekAlphabet[] =
+static const char *greekAlphabet[] =
 {
     "Alpha",
     "Beta",
@@ -52,7 +52,7 @@ static char *greekAlphabet[] =
     "Omega"
 };
 
-static char* canonicalAbbrevs[] =
+static const char* canonicalAbbrevs[] =
 {
     "ALF", "BET", "GAM", "DEL", "EPS", "ZET", "ETA", "TET",
     "IOT", "KAP", "LAM", "MU" , "NU" , "XI" , "OMI", "PI" ,

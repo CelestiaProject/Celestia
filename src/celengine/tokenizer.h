@@ -74,7 +74,7 @@ private:
     bool pushedBack;
 
     int readChar();
-    void syntaxError(char*);
+    void syntaxError(const char*);
 
     double numberValue;
 
