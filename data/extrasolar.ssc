@@ -215,6 +215,7 @@ AltSurface "limit of knowledge" "HIP 57087/b"
 "e" "HD 75732"   # Rho1 Cnc
 {
 	Texture "venuslike.*"
+	NightTexture "venuslikenight.*"
 
 	Mass      14     # M.sin(i) = 14 earths
 	Radius     15500
