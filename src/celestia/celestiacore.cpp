@@ -1490,6 +1490,12 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         break;
 
+    case '^':
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNebulae);
+        notifyWatchers(RenderFlagsChanged);
+        break;
+
+
     case '&':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::LocationLabels);
         notifyWatchers(LabelFlagsChanged);
@@ -1808,6 +1814,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
         sim->chase();
         break;
+
+
 
     case '[':
         if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
