@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #define JPEG_SUPPORT
+#define PNG_SUPPORT
 
 #include <cmath>
 #include <fstream>
@@ -16,9 +17,14 @@
 #ifdef JPEG_SUPPORT
 #include "ijl.h"
 #endif
+#ifdef PNG_SUPPORT
+#include "setjmp.h"
+#include "png.h"
+#endif
 
 #include "celestia.h"
 #include "vecmath.h"
+#include "filetype.h"
 #include "texture.h"
 
 using namespace std;
@@ -128,6 +134,7 @@ void CTexture::bindName(uint32 flags)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
     int internalFormat = components;
+    // compress = true;
     if (compress)
     {
         switch (format)
@@ -277,17 +284,20 @@ CTexture* CreateProceduralTexture(int width, int height,
 
 CTexture* LoadTextureFromFile(const string& filename)
 {
-    int extPos = filename.length() - 3;
-    if (extPos < 0)
-        extPos = 0;
-    string ext = string(filename, extPos, 3);
+    ContentType type = DetermineFileType(filename);
 
-    if (ext.compare("JPG") == 0 || ext.compare("jpg") == 0)
+    switch (type)
+    {
+    case Content_JPEG:
         return CreateJPEGTexture(filename.c_str());
-    else if (ext.compare("BMP") == 0 || ext.compare("bmp") == 0)
+    case Content_BMP:
         return CreateBMPTexture(filename.c_str());
-    else
+    case Content_PNG:
+        return CreatePNGTexture(filename);
+    default:
+        DPRINTF("Unrecognized or unsupported image file type.\n");
         return NULL;
+    }
 }
 
 
@@ -399,6 +409,141 @@ CTexture* CreateJPEGTexture(const char* filename,
     
     return tex;
 #endif // JPEG_SUPPORT
+}
+
+
+void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
+{
+    FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
+    fread((void*) data, 1, length, fp);
+}
+
+
+static CTexture* CreatePNGTexture(const string& filename)
+{
+#ifndef PNG_SUPPORT
+    return NULL;
+#else
+    char header[8];
+    png_structp png_ptr;
+    png_infop info_ptr;
+    unsigned int sig_read = 0;
+    png_uint_32 width, height;
+    int bit_depth, color_type, interlace_type;
+    int glformat;
+    FILE* fp = NULL;
+    CTexture* tex = NULL;
+    png_bytep* row_pointers = NULL;
+
+    fp = fopen(filename.c_str(), "rb");
+    if (fp == NULL)
+    {
+        DPRINTF("Error opening texture file %s\n", filename.c_str());
+        return NULL;
+    }
+   
+    fread(header, 1, sizeof(header), fp);
+    if (png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
+    {
+        DPRINTF("Error: %s is not a PNG file.\n", filename.c_str());
+        fclose(fp);
+        return NULL;
+    }
+
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+                                     NULL, NULL, NULL);
+    if (png_ptr == NULL)
+    {
+        fclose(fp);
+        return NULL;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == NULL)
+    {
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
+        return NULL;
+    }
+   
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        fclose(fp);
+        if (tex != NULL)
+            delete tex;
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+        DPRINTF("Error reading PNG texture file %s\n", filename.c_str());
+        return NULL;
+    }
+
+    // png_init_io(png_ptr, fp);
+    png_set_read_fn(png_ptr, (void*) fp, PNGReadData);
+    png_set_sig_bytes(png_ptr, sizeof(header));
+
+    png_read_info(png_ptr, info_ptr);
+
+    png_get_IHDR(png_ptr, info_ptr,
+                 &width, &height, &bit_depth,
+                 &color_type, &interlace_type,
+                 NULL, NULL);
+    switch (color_type)
+    {
+    case PNG_COLOR_TYPE_GRAY:
+        glformat = GL_LUMINANCE;
+        break;
+    case PNG_COLOR_TYPE_GRAY_ALPHA:
+        glformat = GL_LUMINANCE_ALPHA;
+        break;
+    case PNG_COLOR_TYPE_RGB:
+        glformat = GL_RGB;
+        break;
+    case PNG_COLOR_TYPE_PALETTE:
+    case PNG_COLOR_TYPE_RGB_ALPHA:
+        glformat = GL_RGBA;
+        break;
+    default:
+        // badness
+        break;
+    }
+
+    tex = new CTexture(width, height, glformat);
+    if (tex == NULL)
+    {
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+        return NULL;
+    }
+
+    // TODO: consider using paletted textures if they're available
+    if (color_type == PNG_COLOR_TYPE_PALETTE)
+        png_set_palette_to_rgb(png_ptr);
+
+    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+        png_set_gray_1_2_4_to_8(png_ptr);
+
+    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+        png_set_tRNS_to_alpha(png_ptr);
+
+    // TODO: consider passing textures with < 8 bits/component to
+    // GL without expanding
+    if (bit_depth == 16)
+        png_set_strip_16(png_ptr);
+    else if (bit_depth < 8)
+        png_set_packing(png_ptr);
+
+    row_pointers = new png_bytep[height];
+    for (int i = 0; i < height; i++)
+        row_pointers[i] = (png_bytep) &tex->pixels[tex->components * width * i];
+
+    png_read_image(png_ptr, row_pointers);
+
+    delete[] row_pointers;
+
+    png_read_end(png_ptr, NULL);
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+
+    return tex;
+#endif
 }
 
 
@@ -673,6 +818,50 @@ CTexture* CreateNormalizationCubeMap(int size)
                 tex->pixels[(y * size + x) * 3]     = 128 + (int) (127 * v.x);
                 tex->pixels[(y * size + x) * 3 + 1] = 128 + (int) (127 * v.y);
                 tex->pixels[(y * size + x) * 3 + 2] = 128 + (int) (127 * v.z);
+            }
+        }
+
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT + face,
+                     0, GL_RGB8,
+                     size, size,
+                     0, GL_RGB,
+                     GL_UNSIGNED_BYTE,
+                     tex->pixels);
+    }
+
+    return tex;
+}
+
+
+CTexture* CreateDiffuseLightCubeMap(int size)
+{
+    // assert(ExtensionSupported("GL_EXT_texture_cube_map"));
+    
+    CTexture* tex = new CTexture(size, size, GL_RGB);
+    if (tex == NULL)
+        return NULL;
+
+    GLuint tn;
+    glGenTextures(1, &tn);
+    glBindTexture(GL_TEXTURE_2D, tn);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    for (int face = 0; face < 6; face++)
+    {
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float s = (float) x / (float) size * 2 - 1;
+                float t = (float) y / (float) size * 2 - 1;
+                Vec3f v = cubeVector(face, s, t);
+                float Lz = v.z < 0.0f ? 0.0f : v.z;
+                tex->pixels[(y * size + x) * 3]     = (int) (255.99f * Lz);
+                tex->pixels[(y * size + x) * 3 + 1] = (int) (255.99f * Lz);
+                tex->pixels[(y * size + x) * 3 + 2] = (int) (255.99f * Lz);
             }
         }
 

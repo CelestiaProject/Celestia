@@ -58,9 +58,11 @@ extern CTexture* CreateProceduralTexture(int width, int height,
 extern CTexture* CreateJPEGTexture(const char* filename,
                                    int channels = CTexture::ColorChannel);
 extern CTexture* CreateBMPTexture(const char* filename);
+extern CTexture* CreatePNGTexture(const std::string& filename);
 
 extern CTexture* LoadTextureFromFile(const std::string& filename);
 
 extern CTexture* CreateNormalizationCubeMap(int size);
+extern CTexture* CreateDiffuseLightCubeMap(int size);
 
 #endif // _TEXTURE_H_
