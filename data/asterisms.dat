@@ -28,7 +28,7 @@
 "Draco"
 [
 [ "Lambda Dra" "Kappa Dra" "Alpha Dra" "Iota Dra"
-  "Theta Dra" "Eta Dra" "Zeta Dra" "Chi Dra"
+  "Theta Dra" "Eta Dra" "Zeta Dra" "Chi Dra" "Tau Dra"
   "Epsilon Dra" "Delta Dra" "Xi Dra" "Gamma Dra"
   "Beta Dra" "Nu1 Dra" "Xi Dra" ]
 ]
@@ -204,6 +204,12 @@
   "Kappa Vel" "Mu Vel" ]
 ]
 
+"Puppis"
+[
+[ "Nu Pup" "Pi Pup" "Xi Pup" "Rho Pup"
+  "Zeta Pup" "P Pup" "I Pup" ]
+]
+
 "Virgo"
 [
 [ "Spica" "Zeta Vir" "Delta Vir" "Omicron Vir" "Nu Vir"
@@ -270,6 +276,51 @@
   "Iota Cap" "Theta Cap" "Alpha1 Cap" ]
 ]
 
+"Aquarius"
+[
+[ "Delta Aqr" "Tau2 Aqr" "Lambda Aqr" "Eta Aqr"
+  "Zeta Aqr" "Gamma Aqr" "Alpha Aqr" "Beta Aqr"
+  "Epsilon Aqr" ]
+]
 
+"Octans"
+[
+[ "Nu Oct" "Beta Oct" "Chi Oct" "Delta Oct" ]
+]
 
+"Hydra"
+[
+[ "Pi Hya" "Gamma Hya" "Beta Hya" "Xi Hya"
+  "Nu Hya" "Mu Hya" "Lambda Hya" "Upsilon1 Hya"
+  "Alphard" "Iota Hya" "Tau2 Hya" "Theta Hya"
+  "Zeta Hya" "Rho Hya" "Eta Hya" "Sigma Hya"
+  "Delta Hya" "Epsilon Hya" "Rho Hya" ]
+]
 
+"Ara"
+[
+[ "Delta Ara" "Gamma Ara" "Beta Ara" "Alpha Ara"
+  "Epsilon1 Ara" "Zeta Ara" "Eta Ara" "Delta Ara" ]
+]
+
+"Tucana"
+[
+[ "Beta Tuc" "Zeta Tuc" "Gamma Tuc" "Alpha Tuc" ]
+]
+
+"Phoenix"
+[
+[ "Epsilon Phe" "Kappa Phe" "Alpha Phe" "Beta Phe"
+  "Gamma Phe" "Psi Phe" "Delta Phe" "Beta Phe" ]
+[ "Delta Phe" "Zeta Phe" ]
+]
+
+"Hydrus"
+[
+[ "Alpha Hyi" "Delta Hyi" "Epsilon Hyi" "Gamma Hyi" "Beta Hyi" ]
+]
+
+"Camelopardalis"
+[
+[ "Beta Cam" "Alpha Cam" "Gamma Cam" ]
+]
