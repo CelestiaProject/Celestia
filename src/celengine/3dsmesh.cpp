@@ -86,7 +86,7 @@ void Mesh3DS::render(unsigned int attributes, float)
             // transparent ones are after the opaque ones.  Thus we can assume
             // that once we find a transparent vertext list, it's ok to leave
             // blending on.
-            if (!blendOn && (*i)->getDiffuseColor().alpha() != 1.0f)
+            if (!blendOn && (*i)->getDiffuseColor().alpha() <= 254.0f / 255.0f)
             {
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
