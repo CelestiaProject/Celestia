@@ -38,6 +38,14 @@ in /usr/local/share/Celestia , but you may specify a new location with the
 All the other usual configure parameters apply; you may see which options
 are available using 'configure --help'
 
+If while running configure you see an error reporting that gl.h,
+is missing, you either don't have OpenGL installed on your system,
+or you don't have the corresponding devel package installed.  If for
+instance you have Mesa installed, you will also have to install the
+mesa-devel package (or something named similarly).  Missing glu.h or glut.h
+means that you don't have GLU, GLUT, or their devel pacakges installed.
+
+
 Chris Laurel                &      Deon Ramsey
 claurel@.shatters.net              dramsey@users.sourceforge.net
 

@@ -163,14 +163,7 @@ LIBS="$LIBS $CELESTIALIBS $GTK_LIBS $GNOME_LIBS $GNOMEUI_LIBS $GTKGL_LIBS"
 LDFLAGS="$LDFLAGS $GNOME_LIBDIR"
 
 dnl Check for OpenGL headers first.
-AC_CHECK_HEADERS(GL/gl.h,,AC_MSG_ERROR([[No gl.h found.\
- Usually, this means that you either have no OpenGL library on your system,\
- or if you are using a package based distribution, that you have failed to\
- install the corresponding development package for your library. If for\
- instance you have Mesa installed, you will also have to install the\
- mesa-devel package (or something named similarly). Also, if in fact it *WAS*\
- the devel package missing, make sure you have the devel packages for GLU and\
- GLUT installed as they will also be needed.]]))
+AC_CHECK_HEADERS(GL/gl.h,,AC_MSG_ERROR([[No gl.h found.  See INSTALL file for ddetails about how to correct this problem.]]))
 
 dnl Check for OpenGL. Taken partly from the plib sources.
 AC_CHECK_LIB(GL,glNewList)
@@ -182,14 +175,7 @@ if test "x$ac_cv_lib_GL_glNewList" = "xno" ; then
 fi
 
 dnl Check for GLU headers.
-AC_CHECK_HEADERS(GL/glu.h,,AC_MSG_ERROR([[No glu.h found.\
- Usually, this means that you either have no GLU library on your system,\
- or if you are using a package based distribution, that you have failed to\
- install the corresponding development package for your library. If for\
- instance you have MesaGLU installed, you will also have to install the\
- mesaglu-devel package (or something named similarly). It is also possible\
- that you have the xf86glu package installed, in which case you'll need the\
- xf86glu-devel package or similar.]]))
+AC_CHECK_HEADERS(GL/glu.h,,AC_MSG_ERROR([[No glu.h found.  See INSTALL file for details on how to correct this problem.]]))
 
 AC_CHECK_LIB(GLU,gluLookAt)
 
@@ -201,12 +187,7 @@ fi
 
 
 dnl Check for GLUT headers first.
-AC_CHECK_HEADERS(GL/glut.h,,AC_MSG_ERROR([[No glut.h found.\
- Usually, this means that you either have no GLUT library on your system,\
- or if you are using a package based distribution, that you have failed to\
- install the corresponding development package for your library. If for\
- instance you have Mesa installed, you will also have to install the\
- mesaglut-devel package (or something named similarly).]]))
+AC_CHECK_HEADERS(GL/glut.h,,AC_MSG_ERROR([[No glut.h found.  See INSTALL file for details on correcting this problem.]]))
 
 dnl Check for GLUT.
 AC_CHECK_LIB(glut, glutKeyboardUpFunc,,
