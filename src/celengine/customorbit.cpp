@@ -273,6 +273,55 @@ void computePlanetCoords(int p, double map, double da, double dhl, double dl,
     distance *= KM_PER_AU;
 }
 
+void ComputeGalileanElements(double t,
+                             double& l1, double& l2, double& l3, double& l4,
+                             double& p1, double& p2, double& p3, double& p4,
+                             double& w1, double& w2, double& w3, double& w4,
+                             double& gamma, double& phi, double& psi,
+                             double& G, double& Gp)
+{
+    // Parameter t is Julian days, epoch 1950.0.
+    l1 = 106.07719 + 203.488955790*t;
+    l2 = 175.73161 + 101.374724735*t;
+    l3 = 120.55883 + 50.317609207*t;
+    l4 = 84.44459 + 21.571071177*t;
+
+    p1 = 97.0881 + 0.16138586*t;
+    p2 = 154.8663 + 0.04726307*t;
+    p3 = 188.1840 + 0.00712734*t;
+    p4 = 335.2868 + 0.00184*t;
+
+    w1 = 312.3346 - 0.13279386*t;
+    w2 = 100.4411 - 0.03263064*t;
+    w3 = 119.1942 - 0.00717703*t;
+    w4 = 322.6186 - 0.00175934*t;
+
+    gamma = 0.33033*sin(2.85674 + 1.8347e-5*t) + 0.03439*sin(0.60189 - 2.82274e-4*t);
+    phi = 199.6766 + 0.1737919*t;
+    psi = 316.5182 - 2.08e-6*t;
+    G = 30.23756 + 0.0830925701*t + gamma;
+    Gp = 31.97853 + 0.0334597339*t;
+
+    //Convert all elements to radians
+    l1 = degToRad(l1);
+    l2 = degToRad(l2);
+    l3 = degToRad(l3);
+    l4 = degToRad(l4);
+    p1 = degToRad(p1);
+    p2 = degToRad(p2);
+    p3 = degToRad(p3);
+    p4 = degToRad(p4);
+    w1 = degToRad(w1);
+    w2 = degToRad(w2);
+    w3 = degToRad(w3);
+    w4 = degToRad(w4);
+    gamma = degToRad(gamma);
+    phi = degToRad(phi);
+    psi = degToRad(psi);
+    G = degToRad(G);
+    Gp = degToRad(Gp);
+}
+
 
 // Custom orbit classes are derived from CachingOrbit.  The custom orbital
 // calculations can be expensive to compute, with more than 50 periodic terms.
@@ -348,7 +397,7 @@ class MercuryOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= PI / 2;
+    eclLat -= (PI/2);
     eclLong += PI;
 
     return Point3d(cos(eclLong) * sin(eclLat) * distance,
@@ -413,7 +462,7 @@ class VenusOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= PI / 2;
+    eclLat -= (PI/2);
     eclLong += PI;
 
     return Point3d(cos(eclLong) * sin(eclLat) * distance,
@@ -618,7 +667,7 @@ class LunarOrbit : public CachingOrbit
     EclipticToEquatorial(t, eclLat, eclLon, RA, dec);
 
     //Corrections for internal coordinate system
-    dec -= PI / 2;
+    dec -= (PI/2);
     RA += PI;
 
     return Point3d(cos(RA) * sin(dec) * distance,
@@ -630,9 +679,6 @@ class LunarOrbit : public CachingOrbit
     {
         return 27.321661;
     };
-
-private:
-    int nonZeroSize;
 };
 
 class MarsOrbit : public CachingOrbit
@@ -697,7 +743,7 @@ class MarsOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= PI / 2;
+    eclLat -= (PI/2);
     eclLong += PI;
 
     return Point3d(cos(eclLong) * sin(eclLat) * distance,
@@ -800,7 +846,7 @@ class JupiterOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= PI / 2;
+    eclLat -= (PI/2);
     eclLong += PI;
 
     return Point3d(cos(eclLong) * sin(eclLat) * distance,
@@ -930,7 +976,7 @@ class SaturnOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= PI / 2;
+    eclLat -= (PI/2);
     eclLong += PI;
 
     return Point3d(cos(eclLong) * sin(eclLat) * distance,
@@ -1015,7 +1061,7 @@ class UranusOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= PI / 2;
+    eclLat -= (PI/2);
     eclLong += PI;
 
     return Point3d(cos(eclLong) * sin(eclLat) * distance,
@@ -1090,7 +1136,7 @@ class NeptuneOrbit : public CachingOrbit
                         eclLong, eclLat, distance);
 
     //Corrections for internal coordinate system
-    eclLat -= PI / 2;
+    eclLat -= (PI/2);
     eclLong += PI;
 
     return Point3d(cos(eclLong) * sin(eclLat) * distance,
@@ -1141,6 +1187,347 @@ class PlutoOrbit : public CachingOrbit
     };
 };
 
+class IoOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+    //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
+    double t;
+    double l1, l2, l3, l4;
+    double p1, p2, p3, p4;
+    double w1, w2, w3, w4;
+    double gamma, phi, psi, G, Gp, LPE, jupiterRadius;
+    double sigma, L, B, R;
+    double T, P;
+
+    //Longitude of perihelion of Jupiter (in radians)
+    LPE = 0.23509484;
+    jupiterRadius = 71398.0;
+
+    //Epoch for Galilean satellites is 1950.0
+    t = jd - 2443000.5;
+
+    ComputeGalileanElements(t,
+                            l1, l2, l3, l4,
+                            p1, p2, p3, p4,
+                            w1, w2, w3, w4,
+                            gamma, phi, psi, G, Gp);
+
+    //Calculate periodic terms for longitude
+    sigma = 0.47259*sin(2*(l1 - l2)) - 0.03478*sin(p3 - p4)
+          + 0.01081*sin(l2 - 2*l3 + p3) + 7.38e-3*sin(phi)
+          + 7.13e-3*sin(l2 - 2*l3 + p2) - 6.74e-3*sin(p1 + p3 - 2*LPE - 2*G)
+          + 6.66e-3*sin(l2 - 2*l3 + p4) + 4.45e-3*sin(l1 - p3)
+          - 3.54e-3*sin(l1 - l2) - 3.17e-3*sin(2*(psi - LPE))
+          + 2.65e-3*sin(l1 - p4) - 1.86e-3*sin(G)
+          + 1.62e-3*sin(p2 - p3) + 1.58e-3*sin(4*(l1 - l2))
+          - 1.55e-3*sin(l1 - l3) - 1.38e-3*sin(psi + w3 - 2*LPE - 2*G)
+          - 1.15e-3*sin(2*(l1 - 2*l2 + w2)) + 8.9e-4*sin(p2 - p4)
+          + 8.5e-4*sin(l1 + p3 - 2*LPE - 2*G) + 8.3e-4*sin(w2 - w3)
+          + 5.3e-4*sin(psi - w2);
+    sigma = degToRad(sigma);
+    L = l1 + sigma;
+
+    //Calculate periodic terms for the tangent of the latitude
+    B = 6.393e-4*sin(L - w1) + 1.825e-4*sin(L - w2)
+      + 3.29e-5*sin(L - w3) - 3.11e-5*sin(L - psi)
+      + 9.3e-6*sin(L - w4) + 7.5e-6*sin(3*L - 4*l2 - 1.9927*sigma + w2)
+      + 4.6e-6*sin(L + psi - 2*LPE - 2*G);
+    B = degToRad(B);
+    B = atan(B);    //Not sure this is necessary.
+
+    //Calculate the periodic terms for distance
+    R = -4.1339e-3*cos(2*(l1 - l2)) - 3.87e-5*cos(l1 - p3)
+      - 2.14e-5*cos(l1 - p4) + 1.7e-5*cos(l1 - l2)
+      - 1.31e-5*cos(4*(l1 - l2)) + 1.06e-5*cos(l1 - l3)
+      - 6.6e-6*cos(l1 + p3 - 2*LPE - 2*G);
+    R = 5.90569 * jupiterRadius * (1 + R);
+
+    T = (jd - 2433282.423) / 36525.0;
+    P = 1.3966626*T + 3.088e-4*T*T;
+    L += degToRad(P);
+
+    //Corrections for internal coordinate system
+    B -= (PI/2);
+    L += PI;
+
+    return Point3d(cos(L) * sin(B) * R,
+                   cos(B) * R,
+                   -sin(L) * sin(B) * R);
+    };
+
+    double getPeriod() const
+    {
+        return 1.769138;
+    };
+};
+
+class EuropaOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+    //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
+    double t;
+    double l1, l2, l3, l4;
+    double p1, p2, p3, p4;
+    double w1, w2, w3, w4;
+    double gamma, phi, psi, G, Gp, LPE, jupiterRadius;
+    double sigma, L, B, R;
+    double T, P;
+
+    //Longitude of perihelion of Jupiter (in radians)
+    LPE = 0.23509484;
+    jupiterRadius = 71398.0;
+
+    //Epoch for Galilean satellites is 1950.0
+    t = jd - 2443000.5;
+
+    ComputeGalileanElements(t,
+                            l1, l2, l3, l4,
+                            p1, p2, p3, p4,
+                            w1, w2, w3, w4,
+                            gamma, phi, psi, G, Gp);
+
+    //Calculate periodic terms for longitude
+    sigma = 1.06476*sin(2*(l2 - l3)) + 0.04256*sin(l1 - 2*l2 + p3)
+          + 0.03581*sin(l2 - p3) + 0.02395*sin(l1 - 2*l2 + p4)
+          + 0.01984*sin(l2 - p4) - 0.01778*sin(phi)
+          + 0.01654*sin(l2 - p2) + 0.01334*sin(l2 - 2*l3 + p2)
+          + 0.01294*sin(p3 - p4) - 0.01142*sin(l2 - l3)
+          - 0.01057*sin(G) - 7.75e-3*sin(2*(psi - LPE))
+          + 5.24e-3*sin(2*(l1 - l2)) - 4.6e-3*sin(l1 - l3)
+          + 3.16e-3*sin(psi - 2*G + w3 - 2*LPE) - 2.03e-3*sin(p1 + p3 - 2*LPE - 2*G)
+          + 1.46e-3*sin(psi - w3) - 1.45e-3*sin(2*G)
+          + 1.25e-3*sin(psi - w4) - 1.15e-3*sin(l1 - 2*l3 + p3)
+          - 9.4e-4*sin(2*(l2 - w2)) + 8.6e-4*sin(2*(l1 - 2*l2 + w2))
+          - 8.6e-4*sin(5*Gp - 2*G + 0.9115) - 7.8e-4*sin(l2 - l4)
+          - 6.4e-4*sin(3*l3 - 7*l4 + 4*p4) + 6.4e-4*sin(p1 - p4)
+          - 6.3e-4*sin(l1 - 2*l3 + p4) + 5.8e-4*sin(w3 - w4)
+          + 5.6e-4*sin(2*(psi - LPE - G)) + 5.6e-4*sin(2*(l2 - l4))
+          + 5.5e-4*sin(2*(l1 - l3)) + 5.2e-4*sin(3*l3 - 7*l4 + p3 +3*p4)
+          - 4.3e-4*sin(l1 - p3) + 4.1e-4*sin(5*(l2 - l3))
+          + 4.1e-4*sin(p4 - LPE) + 3.2e-4*sin(w2 - w3)
+          + 3.2e-4*sin(2*(l3 - G - LPE));
+    sigma = degToRad(sigma);
+    L = l2 + sigma;
+
+    //Calculate periodic terms for the tangent of the latitude
+    B = 8.1004e-3*sin(L - w2) + 4.512e-4*sin(L - w3)
+      - 3.284e-4*sin(L - psi) + 1.160e-4*sin(L - w4)
+      + 2.72e-5*sin(l1 - 2*l3 + 1.0146*sigma + w2) - 1.44e-5*sin(L - w1)
+      + 1.43e-5*sin(L + psi - 2*LPE - 2*G) + 3.5e-6*sin(L - psi + G)
+      - 2.8e-6*sin(l1 - 2*l3 + 1.0146*sigma + w3);
+    B = degToRad(B);
+    B = atan(B);    //Not sure this is necessary.
+
+    //Calculate the periodic terms for distance
+    R = 9.3848e-3*cos(l1 - l2) - 3.116e-4*cos(l2 - p3)
+      - 1.744e-4*cos(l2 - p4) - 1.442e-4*cos(l2 - p2)
+      + 5.53e-5*cos(l2 - l3) + 5.23e-5*cos(l1 - l3)
+      - 2.9e-5*cos(2*(l1 - l2)) + 1.64e-5*cos(2*(l2 - w2))
+      + 1.07e-5*cos(l1 - 2*l3 + p3) - 1.02e-5*cos(l2 - p1)
+      - 9.1e-6*cos(2*(l1 - l3));
+    R = 9.39657 * jupiterRadius * (1 + R);
+
+    T = (jd - 2433282.423) / 36525.0;
+    P = 1.3966626*T + 3.088e-4*T*T;
+    L += degToRad(P);
+
+    //Corrections for internal coordinate system
+    B -= (PI/2);
+    L += PI;
+
+    return Point3d(cos(L) * sin(B) * R,
+                   cos(B) * R,
+                   -sin(L) * sin(B) * R);
+    };
+
+    double getPeriod() const
+    {
+        return 3.551810;
+    };
+};
+
+class GanymedeOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+    //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
+    double t;
+    double l1, l2, l3, l4;
+    double p1, p2, p3, p4;
+    double w1, w2, w3, w4;
+    double gamma, phi, psi, G, Gp, LPE, jupiterRadius;
+    double sigma, L, B, R;
+    double T, P;
+
+    //Longitude of perihelion of Jupiter (in radians)
+    LPE = 0.23509484;
+    jupiterRadius = 71398.0;
+
+    //Epoch for Galilean satellites is 1950.0
+    t = jd - 2443000.5;
+
+    ComputeGalileanElements(t,
+                            l1, l2, l3, l4,
+                            p1, p2, p3, p4,
+                            w1, w2, w3, w4,
+                            gamma, phi, psi, G, Gp);
+
+    //Calculate periodic terms for longitude
+    sigma = 0.1649*sin(l3 - p3) + 0.09081*sin(l3 - p4)
+          - 0.06907*sin(l2 - l3) + 0.03784*sin(p3 - p4)
+          + 0.01846*sin(2*(l3 - l4)) - 0.01340*sin(G)
+          - 0.01014*sin(2*(psi - LPE)) + 7.04e-3*sin(l2 - 2*l3 + p3)
+          - 6.2e-3*sin(l2 - 2*l3 + p2) - 5.41e-3*sin(l3 - l4)
+          + 3.81e-3*sin(l2 - 2*l3 + p4) + 2.35e-3*sin(psi - w3)
+          + 1.98e-3*sin(psi - w4) + 1.76e-3*sin(phi)
+          + 1.3e-3*sin(3*(l3 - l4)) + 1.25e-3*sin(l1 - l3)
+          - 1.19e-3*sin(5*Gp - 2*G + 0.9115) + 1.09e-3*sin(l1 - l2)
+          - 1.0e-3*sin(3*l3 - 7*l4 + 4*p4) + 9.1e-4*sin(w3 - w4)
+          + 8.0e-4*sin(3*l3 - 7*l4 + p3 + 3*p4) - 7.5e-4*sin(2*l2 - 3*l3 + p3)
+          + 7.2e-4*sin(p1 + p3 - 2*LPE - 2*G) + 6.9e-4*sin(p4 - LPE)
+          - 5.8e-4*sin(2*l3 - 3*l4 + p4) - 5.7e-4*sin(l3 - 2*l4 + p4)
+          + 5.6e-4*sin(l3 + p3 - 2*LPE - 2*G) - 5.2e-4*sin(l2 - 2*l3 + p1)
+          - 5.0e-4*sin(p2 - p3) + 4.8e-4*sin(l3 - 2*l4 + p3)
+          - 4.5e-4*sin(2*l2 - 3*l3 + p4) - 4.1e-4*sin(p2 - p4)
+          - 3.8e-4*sin(2*G) - 3.7e-4*sin(p3 - p4 + w3 - w4)
+          - 3.2e-4*sin(3*l3 - 7*l4 + 2*p3 + 2*p4) + 3.0e-4*sin(4*(l3 - l4))
+          + 2.9e-4*sin(l3 + p4 - 2*LPE - 2*G) - 2.8e-4*sin(w3 + psi - 2*LPE - 2*G)
+          + 2.6e-4*sin(l3 - LPE - G) + 2.4e-4*sin(l2 - 3*l3 + 2*l4)
+          + 2.1e-4*sin(2*(l3 - LPE - G)) - 2.1e-4*sin(l3 - p2)
+          + 1.7e-4*sin(l3 - p3);
+    sigma = degToRad(sigma);
+    L = l3 + sigma;
+
+    //Calculate periodic terms for the tangent of the latitude
+    B = 3.2402e-3*sin(L - w3) - 1.6911e-3*sin(L - psi)
+      + 6.847e-4*sin(L - w4) - 2.797e-4*sin(L - w2)
+      + 3.21e-5*sin(L + psi - 2*LPE - 2*G) + 5.1e-6*sin(L - psi + G)
+      - 4.5e-6*sin(L - psi - G) - 4.5e-6*sin(L + psi - 2*LPE)
+      + 3.7e-6*sin(L + psi - 2*LPE - 3*G) + 3.0e-6*sin(2*l2 - 3*L + 4.03*sigma + w2)
+      - 2.1e-6*sin(2*l2 - 3*L + 4.03*sigma + w3);
+    B = degToRad(B);
+    B = atan(B);    //Not sure this is necessary.
+
+    //Calculate the periodic terms for distance
+    R = -1.4388e-3*cos(l3 - p3) - 7.919e-4*cos(l3 - p4)
+      + 6.342e-4*cos(l2 - l3) - 1.761e-4*cos(2*(l3 - l4))
+      + 2.94e-5*cos(l3 - l4) - 1.56e-5*cos(3*(l3 - l4))
+      + 1.56e-5*cos(l1 - l3) - 1.53e-5*cos(l1 - l2)
+      + 7.0e-6*cos(2*l2 - 3*l3 + p3) - 5.1e-6*cos(l3 + p3 - 2*LPE - 2*G);
+    R = 14.98832 * jupiterRadius * (1 + R);
+
+    T = (jd - 2433282.423) / 36525.0;
+    P = 1.3966626*T + 3.088e-4*T*T;
+    L += degToRad(P);
+
+    //Corrections for internal coordinate system
+    B -= (PI/2);
+    L += PI;
+
+    return Point3d(cos(L) * sin(B) * R,
+                   cos(B) * R,
+                   -sin(L) * sin(B) * R);
+    };
+
+    double getPeriod() const
+    {
+        return 7.154553;
+    };
+};
+
+class CallistoOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+    //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
+    double t;
+    double l1, l2, l3, l4;
+    double p1, p2, p3, p4;
+    double w1, w2, w3, w4;
+    double gamma, phi, psi, G, Gp, LPE, jupiterRadius;
+    double sigma, L, B, R;
+    double T, P;
+
+    //Longitude of perihelion of Jupiter (in radians)
+    LPE = 0.23509484;
+    jupiterRadius = 71398.0;
+
+    //Epoch for Galilean satellites is 1950.0
+    t = jd - 2443000.5;
+
+    ComputeGalileanElements(t,
+                            l1, l2, l3, l4,
+                            p1, p2, p3, p4,
+                            w1, w2, w3, w4,
+                            gamma, phi, psi, G, Gp);
+
+    //Calculate periodic terms for longitude
+    sigma = 0.84287*sin(l4 - p4) + 0.03431*sin(p4 - p3)
+          - 0.03305*sin(2*(psi - LPE)) - 0.03211*sin(G)
+          - 0.01862*sin(l4 - p3) + 0.01186*sin(psi - w4)
+          + 6.23e-3*sin(l4 + p4 - 2*G - 2*LPE) + 3.87e-3*sin(2*(l4 - p4))
+          - 2.84e-3*sin(5*Gp - 2*G + 0.9115) - 2.34e-3*sin(2*(psi - p4))
+          - 2.23e-3*sin(l3 - l4) - 2.08e-3*sin(l4 - LPE)
+          + 1.78e-3*sin(psi + w4 - 2*p4) + 1.34e-3*sin(p4 - LPE)
+          + 1.25e-3*sin(2*(l4 - G - LPE)) - 1.17e-3*sin(2*G)
+          - 1.12e-3*sin(2*(l3 - l4)) + 1.07e-3*sin(3*l3 - 7*l4 + 4*p4)
+          + 1.02e-3*sin(l4 - G - LPE) + 9.6e-4*sin(2*l4 - psi - w4)
+          + 8.7e-4*sin(2*(psi - w4)) - 8.5e-4*sin(3*l3 - 7*l4 + p3 + 3*p4)
+          + 8.5e-4*sin(l3 - 2*l4 + p4) - 8.1e-4*sin(2*(l4 - psi))
+          + 7.1e-4*sin(l4 + p4 - 2*LPE - 3*G) + 6.1e-4*sin(l1 - l4)
+          - 5.6e-4*sin(psi - w3) - 5.4e-4*sin(l3 - 2*l4 + p3)
+          + 5.1e-4*sin(l2 - l4) + 4.2e-4*sin(2*(psi - G - LPE))
+          + 3.9e-4*sin(2*(p4 - w4)) + 3.6e-4*sin(psi + LPE - p4 - w4)
+          + 3.5e-4*sin(2*Gp - G + 3.2877) - 3.5e-4*sin(l4 - p4 + 2*LPE - 2*psi)
+          - 3.2e-4*sin(l4 + p4 - 2*LPE - G) + 3.0e-4*sin(2*Gp - 2*G + 2.6032)
+          + 2.9e-4*sin(3*l3 - 7*l4 + 2*p3 + 2*p4) + 2.8e-4*sin(l4 - p4 + 2*psi - 2*LPE)
+          - 2.8e-4*sin(2*(l4 - w4)) - 2.7e-4*sin(p3 - p4 + w3 - w4)
+          - 2.6e-4*sin(5*Gp - 3*G + 3.2877) + 2.5e-4*sin(w4 - w3)
+          - 2.5e-4*sin(l2 - 3*l3 + 2*l4) - 2.3e-4*sin(3*(l3 - l4))
+          + 2.1e-4*sin(2*l4 - 2*LPE - 3*G) - 2.1e-4*sin(2*l3 - 3*l4 + p4)
+          + 1.9e-4*sin(l4 - p4 - G) - 1.9e-4*sin(2*l4 - p3 - p4)
+          - 1.8e-4*sin(l4 - p4 + G) - 1.6e-4*sin(l4 + p3 - 2*LPE - 2*G);
+    sigma = degToRad(sigma);
+    L = l4 + sigma;
+
+    //Calculate periodic terms for the tangent of the latitude
+    B = -7.6579e-3*sin(L - psi) + 4.4134e-3*sin(L - w4)
+      - 5.112e-4*sin(L - w3) + 7.73e-5*sin(L + psi - 2*LPE - 2*G)
+      + 1.04e-5*sin(L - psi + G) - 1.02e-5*sin(L - psi - G)
+      + 8.8e-6*sin(L + psi - 2*LPE - 3*G) - 3.8e-6*sin(L + psi - 2*LPE - G);
+    B = degToRad(B);
+    B = atan(B);    //Not sure this is necessary.
+
+    //Calculate the periodic terms for distance
+    R = -7.3546e-3*cos(l4 - p4) + 1.621e-4*cos(l4 - p3)
+      + 9.74e-3*cos(l3 - l4) - 5.43e-3*cos(l4 + p4 - 2*LPE - 2*G)
+      - 2.71e-3*cos(2*(l4 - p4)) + 1.82e-3*cos(l4 - LPE)
+      + 1.77e-3*cos(2*(l3 - l4)) - 1.67e-3*cos(2*l4 - psi - w4)
+      + 1.67e-3*cos(psi - w4) - 1.55e-3*cos(2*(l4 - LPE - G))
+      + 1.42e-3*cos(2*(l4 - psi));
+    R = 26.36273 * jupiterRadius * (1 + R);
+
+    T = (jd - 2433282.423) / 36525.0;
+    P = 1.3966626*T + 3.088e-4*T*T;
+    L += degToRad(P);
+
+    //Corrections for internal coordinate system
+    B -= (PI/2);
+    L += PI;
+
+    return Point3d(cos(L) * sin(B) * R,
+                   cos(B) * R,
+                   -sin(L) * sin(B) * R);
+    };
+
+    double getPeriod() const
+    {
+        return 16.689018;
+    };
+};
+
 Orbit* GetCustomOrbit(const std::string& name)
 {
     if (name == "mercury")
@@ -1163,6 +1550,14 @@ Orbit* GetCustomOrbit(const std::string& name)
         return new NeptuneOrbit();
     if (name == "pluto")
         return new PlutoOrbit();
+    if (name == "io")
+        return new IoOrbit();
+    if (name == "europa")
+        return new EuropaOrbit();
+    if (name == "ganymede")
+        return new GanymedeOrbit();
+    if (name == "callisto")
+        return new CallistoOrbit();
     else
         return NULL;
 }
