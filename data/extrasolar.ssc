@@ -1491,3 +1491,145 @@ Planets [
 ]
 }
 
+"HD 68988"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      600
+	Radius    75000
+
+	# orbital data
+	Period          0.0172
+	SemiMajorAxis   0.071
+	Eccentricity    0.14
+}
+]
+}
+
+"HD 142"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      430
+	Radius    73000
+
+	# orbital data
+	Period          0.925
+	SemiMajorAxis   0.980
+	Eccentricity    0.37
+}
+]
+}
+
+"HD 4203"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      520
+	Radius    75000
+
+	# orbital data
+	Period          1.112
+	SemiMajorAxis   1.09
+	Eccentricity    0.53
+}
+]
+}
+
+"HD 114783"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      320
+	Radius    71500
+
+	# orbital data
+	Period          1.372
+	SemiMajorAxis   1.20
+	Eccentricity    0.10
+}
+]
+}
+
+"HD 23079"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      877
+	Radius    70000
+
+	# orbital data
+	Period          1.719
+	SemiMajorAxis   1.48
+	Eccentricity    0.03
+}
+]
+}
+
+"HD 4208"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      290
+	Radius    69000
+
+	# orbital data
+	Period          2.270
+	SemiMajorAxis   1.69
+	Eccentricity    0.04
+}
+]
+}
+
+"HD 33636"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      2500
+	Radius    65000
+
+	# orbital data
+	Period          4.252
+	SemiMajorAxis   2.62
+	Eccentricity    0.39
+}
+]
+}
+
+"HD 39091"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      3160
+	Radius    65000
+
+	# orbital data
+	Period          6.242
+	SemiMajorAxis   3.50
+	Eccentricity    0.67
+}
+]
+}
+
+
+
+
+
+
+
