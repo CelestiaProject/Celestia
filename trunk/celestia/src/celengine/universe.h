@@ -45,6 +45,8 @@ class Universe
                    float tolerance = 0.0f);
     Selection pickStar(const UniversalCoord&, const Vec3f&, float faintest,
                        float tolerance = 0.0f);
+    Selection pickGalaxy(const UniversalCoord&, const Vec3f&, float faintest,
+                         float tolerance = 0.0f);
     Selection find(const std::string& s,
                    PlanetarySystem** solarSystems = NULL,
                    int nSolarSystems = 0);
