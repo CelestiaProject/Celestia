@@ -359,7 +359,8 @@ bool Renderer::init(int winWidth, int winHeight)
     if (ExtensionSupported("GL_ARB_multitexture"))
     {
         DPRINTF(1, "Renderer: multi-texture supported.\n");
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &nSimultaneousTextures);
+        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
+                      (GLint*) &nSimultaneousTextures);
     }
     if (ExtensionSupported("GL_EXT_texture_env_combine"))
     {
@@ -581,7 +582,7 @@ void Renderer::addLabel(string text, Color color, Point3f pos, float depth)
     if (gluProject(pos.x, pos.y, pos.z,
                    modelMatrix,
                    projMatrix,
-                   view,
+                   (const GLint*) view,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Label l;

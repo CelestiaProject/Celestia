@@ -42,6 +42,9 @@
 #include "setjmp.h"
 #endif // PNG_SUPPORT
 
+#ifdef MACOSX
+#include "../celestia/Celestia.app.skel/Contents/Frameworks/Headers/jpeglib.h"
+#else
 extern "C" {
 #ifdef _WIN32
 #include "jpeglib.h"
@@ -49,10 +52,16 @@ extern "C" {
 #include <jpeglib.h>
 #endif
 }
+#endif // MACOSX
+
 #endif
 
 #ifdef PNG_SUPPORT
+#ifdef MACOSX
+#include "../celestia/Celestia.app.skel/Contents/Frameworks/Headers/png.h"
+#else
 #include "png.h"
+#endif // MACOSX
 
 // Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
 #ifndef png_jmpbuf
@@ -231,7 +240,7 @@ Texture::~Texture()
         for (int i = 0; i < uSplit * vSplit; i++)
         {
             if (glNames[i] != 0)
-                glDeleteTextures(1, &glNames[i]);
+                glDeleteTextures(1, (const GLuint*) &glNames[i]);
         }
         delete[] glNames;
     }
@@ -1327,7 +1336,7 @@ Texture* CreateNormalizationCubeMap(int size)
     if (tex == NULL)
         return NULL;
 
-    glGenTextures(1, &tex->glNames[0]);
+    glGenTextures(1, (GLuint*) &tex->glNames[0]);
     glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, tex->glNames[0]);
     
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
