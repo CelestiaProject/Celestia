@@ -31,6 +31,10 @@ class Color
     inline float blue() const;
     inline float alpha() const;
 
+    friend bool operator==(Color, Color);
+    friend bool operator!=(Color, Color);
+    friend Color operator*(Color, Color);
+
  private:
     unsigned char c[4];
 };
@@ -56,5 +60,23 @@ float Color::alpha() const
     return c[Alpha] * (1.0f / 255.0f);
 }
 
-#endif // _COLOR_H_
+inline bool operator==(Color a, Color b)
+{
+    return (a.c[0] == b.c[2] && a.c[1] == b.c[1] &&
+            a.c[2] == b.c[2] && a.c[3] == b.c[3]);
+}
 
+inline bool operator!=(Color a, Color b)
+{
+    return !(a == b);
+}
+
+inline Color operator*(Color a, Color b)
+{
+    return Color(a.red() * b.red(),
+                 a.green() * b.green(),
+                 a.blue() * b.blue(),
+                 a.alpha() * b.alpha());
+}
+
+#endif // _COLOR_H_
