@@ -82,9 +82,10 @@ public:
         return core.getRenderer();
     }
 
-    void showText(string s)
+    void showText(string s, int horig, int vorig, int hoff, int voff,
+                  double duration)
     {
-        core.showText(s);
+        core.showText(s, horig, vorig, hoff, voff, duration);
     }
 };
 
@@ -102,6 +103,12 @@ CelestiaCore::CelestiaCore() :
     font(NULL),
     titleFont(NULL),
     messageText(""),
+    messageHOrigin(0),
+    messageVOrigin(0),
+    messageHOffset(0),
+    messageVOffset(0),
+    messageStart(0.0),
+    messageDuration(0.0),
     typedText(""),
     textEnterMode(false),
     hudDetail(1),
@@ -583,6 +590,10 @@ void CelestiaCore::charEntered(char c)
 
     case '\031':  // Ctrl+Y
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAutoMag);
+        if (renderer->getRenderFlags() & Renderer::ShowAutoMag)
+            flash("Auto-magnitude enabled");
+        else
+            flash("Auto-magnitude disabled");
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -602,6 +613,7 @@ void CelestiaCore::charEntered(char c)
             if (!sim->getTrackedObject().empty())
                 sim->setTrackedObject(Selection());
         }
+        flash("Cancel");
         break;
 
     case ' ':
@@ -617,6 +629,10 @@ void CelestiaCore::charEntered(char c)
             // CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_CHECKED);
         }
         paused = !paused;
+        if (paused)
+            flash("Pause");
+        else
+            flash("Resume");
         break;
 
     case '!':
@@ -689,6 +705,7 @@ void CelestiaCore::charEntered(char c)
 	break;
 
     case 'F':
+        flash("Follow");
         sim->follow();
         break;
 
@@ -709,15 +726,29 @@ void CelestiaCore::charEntered(char c)
 
     case 'J':
         sim->setTimeScale(-sim->getTimeScale());
+        if (sim->getTimeScale() > 0)
+            flash("Time: Forward");
+        else
+            flash("Time: Backward");
         break;
 
     case 'K':
-        sim->setTimeScale(sim->getTimeScale() / fIncrementFactor);
+        {
+            sim->setTimeScale(sim->getTimeScale() / fIncrementFactor);
+            char buf[128];
+            sprintf(buf, "Time rate: %.1f", sim->getTimeScale());
+            flash(buf);
+        }
         break;
 
     case 'L':
         if (sim->getTimeScale() < MaximumTimeRate)
+        {
             sim->setTimeScale(sim->getTimeScale() * fIncrementFactor);
+            char buf[128];
+            sprintf(buf, "Time rate: %.1f", sim->getTimeScale());
+            flash(buf);
+        }
         break;
 
     case 'M':
@@ -781,14 +812,17 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'Y':
+        flash("Sync Orbit");
         sim->geosynchronousFollow();
         break;
 
     case ':':
+        flash("Lock");
         sim->phaseLock();
         break;
 
     case '"':
+        flash("Chase");
         sim->chase();
         break;
 
@@ -797,6 +831,9 @@ void CelestiaCore::charEntered(char c)
         {
             setFaintest(sim->getFaintestVisible() - 0.5f);
             notifyWatchers(FaintestChanged);
+            char buf[128];
+            sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
+            flash(buf);
         }
         break;
 
@@ -809,6 +846,9 @@ void CelestiaCore::charEntered(char c)
         {
             setFaintest(sim->getFaintestVisible() + 0.5f);
             notifyWatchers(FaintestChanged);
+            char buf[128];
+            sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
+            flash(buf);
         }
         break;
 
@@ -1043,9 +1083,18 @@ Simulation* CelestiaCore::getSimulation() const
     return sim;
 }
 
-void CelestiaCore::showText(string s)
+void CelestiaCore::showText(string s,
+                            int horig, int vorig,
+                            int hoff, int voff,
+                            double duration)
 {
     messageText = s;
+    messageHOrigin = horig;
+    messageVOrigin = vorig;
+    messageHOffset = hoff;
+    messageVOffset = voff;
+    messageStart = currentTime;
+    messageDuration = duration;
 }
 
 static void displayDistance(Overlay& overlay, double distance)
@@ -1435,15 +1484,38 @@ void CelestiaCore::renderOverlay()
     }
 
     // Text messages
-    if (messageText != "")
+    if (messageText != "" && currentTime < messageStart + messageDuration)
     {
+        int emWidth = titleFont->getWidth("M");
+        int fontHeight = titleFont->getHeight();
+        int x = messageHOffset * emWidth;
+        int y = messageVOffset * fontHeight;
+
+        if (messageHOrigin == 0)
+            x += width / 2;
+        else if (messageHOrigin > 0)
+            x += width;
+        if (messageVOrigin == 0)
+            y += height / 2;
+        else if (messageVOrigin > 0)
+            y += height;
+        else if (messageVOrigin < 0)
+            y -= fontHeight;
+        
+        cout << '(' << x << ',' << y << ") horig=" << messageHOrigin << ", vorigin=" << messageVOrigin << '\n';
+        overlay->setFont(titleFont);
         glPushMatrix();
-        glColor4f(1, 1, 1, 1);
-        glTranslatef(0, fontHeight * 5 + 5, 0);
+
+        float alpha = 1.0f;
+        if (currentTime > messageStart + messageDuration - 0.5)
+            alpha = (float) ((messageStart + messageDuration - currentTime) / 0.5);
+        glColor4f(1, 1, 1, alpha);
+        glTranslatef(x, y, 0);
         overlay->beginText();
         *overlay << messageText;
         overlay->endText();
         glPopMatrix();
+        overlay->setFont(font);
     }
 
     if (movieCapture != NULL)
@@ -1716,7 +1788,7 @@ bool CelestiaCore::initRenderer()
     renderer->setRenderFlags(Renderer::ShowStars |
                              Renderer::ShowPlanets |
                              Renderer::ShowAtmospheres |
-                             Renderer::ShowAutoMag );
+                             Renderer::ShowAutoMag);
 
     // Prepare the scene for rendering.
     if (!renderer->init((int) width, (int) height))
@@ -1966,6 +2038,12 @@ bool CelestiaCore::isCaptureActive()
 bool CelestiaCore::isRecording()
 {
     return recording;
+}
+
+void CelestiaCore::flash(const std::string& s, double duration)
+{
+    if (hudDetail > 0)
+        showText(s, -1, -1, 0, 5, duration);
 }
 
 
