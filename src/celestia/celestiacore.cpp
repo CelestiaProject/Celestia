@@ -1684,7 +1684,7 @@ bool CelestiaCore::initRenderer()
     if (config->mainFont == "")
         font = LoadTextureFont("fonts/default.txf");
     else
-        font = LoadTextureFont(string("fonts") + "/" + config->mainFont);
+        font = LoadTextureFont(string("fonts/") + config->mainFont);
     if (font == NULL)
     {
         cout << "Error loading font; text will not be visible.\n";
