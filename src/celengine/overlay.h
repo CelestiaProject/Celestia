@@ -46,7 +46,7 @@ class Overlay : public std::ostream
     void setWindowSize(int, int);
     void setFont(TextureFont*);
 
-    void rect(float x, float y, float w, float h);
+    void rect(float x, float y, float w, float h, bool fill = true);
 
     void beginText();
     void endText();
