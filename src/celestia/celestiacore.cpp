@@ -51,6 +51,7 @@ static const float fAltitudeThreshold = 4.0f;
 static const float KeyRotationAccel = degToRad(120.0f);
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
+static const double MaximumTimeRate = 1.0e15;
 
 
 static void warning(string s)
@@ -690,7 +691,8 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'L':
-        sim->setTimeScale(sim->getTimeScale() * fIncrementFactor);
+        if (sim->getTimeScale() < MaximumTimeRate)
+            sim->setTimeScale(sim->getTimeScale() * fIncrementFactor);
         break;
 
     case 'M':
@@ -1255,9 +1257,17 @@ void CelestiaCore::renderOverlay()
         glColor4f(0.6f, 0.6f, 1.0f, 1);
 
         if (sim->getObserverMode() == Simulation::Travelling)
-            *overlay << "Travelling\n";
-        else
+        {
+            *overlay << "Travelling ";
+            double timeLeft = sim->getArrivalTime() - sim->getRealTime();
+            if (timeLeft >= 1)
+                *overlay << '(' << (int) timeLeft << ')';
             *overlay << '\n';
+        }
+        else
+        {
+            *overlay << '\n';
+        }
 
         if (!sim->getTrackedObject().empty())
         {
