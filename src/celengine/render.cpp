@@ -1385,6 +1385,13 @@ void Renderer::render(const Observer& observer,
     glPolygonMode(GL_BACK, GL_FILL);
 
     renderLabels();
+    if ((renderFlags & ShowMarkers) != 0)
+    {
+        renderMarkers(*universe.getMarkers(),
+                      observer.getPosition(),
+                      observer.getOrientation(),
+                      now);
+    }
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
@@ -4160,6 +4167,83 @@ void Renderer::renderLabels()
                      labels[i].position.z);
         font->render(labels[i].text);
         glPopMatrix();
+    }
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glDisable(GL_DEPTH_TEST);
+}
+
+
+void Renderer::renderMarkers(const MarkerList& markers,
+                             const UniversalCoord& position,
+                             const Quatf& orientation,
+                             double jd)
+{
+    double identity4x4[16] = { 1.0, 0.0, 0.0, 0.0,
+                               0.0, 1.0, 0.0, 0.0,
+                               0.0, 0.0, 1.0, 0.0,
+                               0.0, 0.0, 0.0, 1.0
+                             };
+    int view[4] = { 0, 0, 0, 0 };
+    view[0] = -windowWidth / 2;
+    view[1] = -windowHeight / 2;
+    view[2] = windowWidth;
+    view[3] = windowHeight;
+
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glDisable(GL_LIGHTING);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_TEXTURE_2D);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, windowWidth, 0, windowHeight);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), 0);
+
+    Mat3f rot = conjugate(orientation).toMatrix3();
+
+    for (MarkerList::const_iterator iter = markers.begin();
+         iter != markers.end(); iter++)
+    {
+        UniversalCoord uc = iter->getPosition(jd);
+        Vec3d offset = uc - position;
+        Vec3f eyepos = Vec3f(offset.x, offset.y, offset.z) * rot;
+        eyepos.normalize();
+        eyepos *= 1000.0f;
+
+        double winX, winY, winZ;
+        if (gluProject(eyepos.x, eyepos.y, eyepos.z,
+                       identity4x4,
+                       projMatrix,
+                       (const GLint*) view,
+                       &winX, &winY, &winZ) != GL_FALSE)
+        {
+            if (eyepos.z < 0.0f)
+            {
+                glPushMatrix();
+                glTranslatef(winX, winY, 0.0f);
+
+                glColor(iter->getColor());
+                glBegin(GL_LINE_LOOP);
+
+                float s = iter->getSize() / 2.0f;
+                glVertex3f(0.0f, s, 0.0f);
+                glVertex3f(s, 0.0f, 0.0f);
+                glVertex3f(0.0f, -s, 0.0f);
+                glVertex3f(-s, 0.0f, 0.0f);
+                glEnd();
+                
+                glPopMatrix();
+            }
+        }
     }
 
     glPopMatrix();

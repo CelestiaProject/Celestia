@@ -35,11 +35,13 @@ OBJS=\
 	$(INTDIR)\galaxy.obj \
 	$(INTDIR)\glext.obj \
 	$(INTDIR)\lodspheremesh.obj \
+	$(INTDIR)\marker.obj \
 	$(INTDIR)\meshmanager.obj \
 	$(INTDIR)\multitexture.obj \
 	$(INTDIR)\nebula.obj \
 	$(INTDIR)\observer.obj \
 	$(INTDIR)\octree.obj \
+	$(INTDIR)\opencluster.obj \
 	$(INTDIR)\orbit.obj \
 	$(INTDIR)\overlay.obj \
 	$(INTDIR)\parser.obj \

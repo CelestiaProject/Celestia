@@ -23,13 +23,16 @@ Universe::Universe() :
     starCatalog(NULL),
     solarSystemCatalog(NULL),
     deepSkyCatalog(NULL),
-    asterisms(NULL)/*,
-    boundaries(NULL)*/
+    asterisms(NULL),
+    /*boundaries(NULL),*/
+    markers(NULL)
 {
+    markers = new MarkerList();
 }
 
 Universe::~Universe()
 {
+    delete markers;
     // TODO: Clean up!
 }
 
@@ -116,6 +119,43 @@ SolarSystem* Universe::createSolarSystem(Star* star) const
                                           solarSystem));
 
     return solarSystem;
+}
+
+
+MarkerList* Universe::getMarkers() const
+{
+    return markers;
+}
+
+void Universe::markObject(const Selection& sel, float size, Color color)
+{
+    for (MarkerList::const_iterator iter = markers->begin();
+         iter != markers->end(); iter++)
+    {
+        if (iter->getObject() == sel)
+        {
+            // If the object is already marked, return without doing anything
+            return;
+        }
+    }
+
+    Marker marker(sel);
+    marker.setColor(color);
+    marker.setSize(size);
+    markers->insert(markers->end(), marker);
+}
+
+void Universe::unmarkObject(const Selection& sel)
+{
+    for (MarkerList::iterator iter = markers->begin();
+         iter != markers->end(); iter++)
+    {
+        if (iter->getObject() == sel)
+        {
+            markers->erase(iter);
+            break;
+        }
+    }
 }
 
 

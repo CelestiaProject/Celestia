@@ -90,6 +90,7 @@ class Renderer
         ShowBoundaries      = 0x2000,
         ShowAutoMag         = 0x4000,
         ShowCometTails      = 0x8000,
+        ShowMarkers         = 0x10000,
     };
 
     int getRenderFlags() const;
@@ -266,6 +267,10 @@ class Renderer
     void renderParticles(const std::vector<Particle>& particles,
                          Quatf orientation);
     void renderLabels();
+    void renderMarkers(const MarkerList&,
+                       const UniversalCoord& position,
+                       const Quatf& orientation,
+                       double jd);
 
     void renderOrbit(Body*, double);
     void renderOrbits(PlanetarySystem*, const Selection&, double,
