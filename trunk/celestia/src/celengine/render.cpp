@@ -53,6 +53,12 @@ static const float MaxFarNearRatio      = 10000.0f;
 
 static const float RenderDistance       = 50.0f;
 
+
+// The minimum apparent size of an objects orbit in pixels before we display
+// a label for it.  This minimizes label clutter.
+static const float MinOrbitSizeForLabel = 20.0f;
+
+
 // Static meshes and textures used by all instances of Simulation
 
 static bool commonDataInitialized = false;
@@ -463,20 +469,6 @@ TextureFont* Renderer::getFont() const
 void Renderer::setFont(TextureFont* txf)
 {
     font = txf;
-}
-
-bool Renderer::isSelectionInRenderList(Selection* sel)
-{
-    for (vector<RenderListEntry>::iterator iter = renderList.begin();
-         iter != renderList.end(); iter++)
-    {
-        if ((sel->body && iter->body) && (sel->body == iter->body))
-            return true;
-        if ((sel->star && iter->star) && (sel->star == iter->star))
-            return true;
-    }
-
-    return false;
 }
 
 void Renderer::setRenderMode(int _renderMode)
@@ -2634,36 +2626,38 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.appMag = appMag;
             renderList.insert(renderList.end(), rle);
         }
-#if 1
+
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
-            if (body->getRadius() >= 1000.0 && (labelMode & MajorPlanetLabels) != 0)
-
+            float boundingRadiusSize = (float) (body->getOrbit()->getBoundingRadius() / distanceFromObserver) / pixelSize;
+            if (boundingRadiusSize > MinOrbitSizeForLabel)
             {
-                addLabel(body->getName(),
-                         Color(0.0f, 1.0f, 0.0f),
-                         Point3f(pos.x, pos.y, pos.z),
-                         1.0f);
-            }
-            else if (body->getRadius() < 1000.0 && (labelMode & MinorPlanetLabels) != 0)
-            {
-                addLabel(body->getName(),
-                         Color(0.0f, 0.6f, 0.0f),
-                         Point3f(pos.x, pos.y, pos.z),
-                         1.0f);
+                if (body->getRadius() >= 1000.0 &&
+                    (labelMode & MajorPlanetLabels) != 0)
+                {
+                    addLabel(body->getName(),
+                             Color(0.0f, 1.0f, 0.0f),
+                             Point3f(pos.x, pos.y, pos.z),
+                             1.0f);
+                }
+                else if (body->getRadius() < 1000.0 &&
+                         (labelMode & MinorPlanetLabels) != 0)
+                {
+                    addLabel(body->getName(),
+                             Color(0.0f, 0.6f, 0.0f),
+                             Point3f(pos.x, pos.y, pos.z),
+                             1.0f);
+                }
             }
         }
-#endif
 
         if (appMag < faintestPlanetMag)
         {
             const PlanetarySystem* satellites = body->getSatellites();
             if (satellites != NULL)
             {
-                // Only show labels for satellites if within 250 planet radii.
-                bool showSatelliteLabels = showLabels && (distanceFromObserver < (double)body->getRadius() * 250.0);
-                renderPlanetarySystem(sun, *satellites, observer, newFrame, now,
-                                      showSatelliteLabels);
+                renderPlanetarySystem(sun, *satellites, observer,
+                                      newFrame, now, showLabels);
             }
         }
 
