@@ -21,6 +21,7 @@ OBJS=\
 	$(INTDIR)\bigfix.obj \
 	$(INTDIR)\color.obj \
 	$(INTDIR)\debug.obj \
+	$(INTDIR)\directory.obj \
 	$(INTDIR)\filetype.obj \
 	$(INTDIR)\util.obj \
 	$(INTDIR)\windirectory.obj \

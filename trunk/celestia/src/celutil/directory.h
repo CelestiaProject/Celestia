@@ -11,6 +11,23 @@
 #define _CELUTIL_DIRECTORY_H_
 
 #include <string>
+#include <vector>
+
+class EnumFilesHandler
+{
+ public:
+    EnumFilesHandler();
+    virtual ~EnumFilesHandler() {};
+
+    void pushDir(const std::string&);
+    void popDir();
+    const std::string& getPath() const; 
+
+    virtual bool process(const std::string& filename) = 0;
+
+ private:
+    std::vector<std::string> dirStack;
+};
 
 class Directory
 {
@@ -19,8 +36,13 @@ class Directory
     virtual ~Directory() {};
 
     virtual bool nextFile(std::string&) = 0;
+
+    virtual bool enumFiles(EnumFilesHandler& handler, bool deep);
 };
 
+
 extern Directory* OpenDirectory(const std::string&);
+extern bool IsDirectory(const std::string&);
+
 
 #endif // _CELUTIL_DIRECTORY_H_
