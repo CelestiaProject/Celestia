@@ -21,10 +21,6 @@ USA.
 
 --
 
-
-This is a very rough release of Celestia, but all the basic
-functionality is there. Navigation and UI in general are very rudimentary.
-
 Getting started:
 
 Important:  Celestia must be started from the directory in which the EXE
@@ -32,24 +28,25 @@ resides or else it will not find its data files.  A real installer is
 forthcoming.
 
 Celestia will start up in a window, and if everything is working
-correctly, you'll see the Mir space station in front of a field of
+correctly, you'll see the asteroid Eros moving past a field of
 stars.  In the left corner is a welcome message and some information
-about your target (Mir), your speed, and the current time (Universal
+about your target (Eros), your speed, and the current time (Universal
 Time, so it'll probably be a few hours off from your computer's clock.)
-Right drag the mouse to orbit Mir and you should see the Earth and some
+Right drag the mouse to orbit Eros and you should see the Earth and some
 familiar constellations.  Left dragging the mouse changes your
 orientation too, but the camera rotates about its center instead of
-rotating around Mir.  Rolling the mouse wheel will change your distance
+rotating around Eros.  Rolling the mouse wheel will change your distance
 to the space station--you can move light years away, then roll the wheel
-in the opposite direction to get back to low Earth orbit.
-In Celestia, you'll generally have an object
-selected; currently, it's the Mir space station, but it could also be
-a star, planet, asteroid, or comet.  The simplest way to select an
-object is to click on it.  Try clicking on a star to select it.  The
-information about Mir is replaced with some details about the star.
-Press G (or use the navigation menu), and you'll zoom through space
-toward the selected star.  If you press G again, you'll approach
-the star even closer.
+in the opposite direction to get back to your starting location.  If your
+mouse lacks a wheel, you can use the Home and End keys instead.
+
+In Celestia, you'll generally have an object selected; currently,
+it's Eros, but it could also be a star, planet, spacecraft, or galaxy.
+The simplest way to select an object is to click on it.  Try clicking
+on a star to select it.  The information about Eros is replaced with
+some details about the star.  Press G (or use the navigation menu),
+and you'll zoom through space toward the selected star.  If you
+press G again, you'll approach the star even closer.
 
 Press H to select our Sun, and then G to go back to our solar system.
 You'll find yourself half a light year away from the sun, which looks
@@ -106,15 +103,22 @@ K  : Time 10x slower
 J  : Reverse time
 
 Options:
+U  : Toggle galaxy rendering
 N  : Toggle planet and moon labels
 O  : Toggle planet orbits
 V  : Toggle HUD Text
+I  : Toggle planet atmospheres (cloud textures)
 W  : Toggle wireframe mode
 /  : Toggle constellation diagrams
+=  : Toggle constellation labels
+B  : Toggle star labels
 P  : Toggle per-pixel lighting (if supported)
 [  : Decrease limiting magnitude (fewer stars visible)
 ]  : Increase limiting magnitude (more stars visible)
 
+Other:
+D  : Run demo
+`  : Show frames rendered per second
 
 It's possible to choose a star or planet by name.  There are two ways to
 enter a star name: choose 'Select Object' from the Navigation menu to
