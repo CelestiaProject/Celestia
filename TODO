@@ -28,7 +28,6 @@ VISUALS
 * Get a real texture map for Eros
 * Change the color of the light illuminating planets based on star class;
   probably only M and maybe K class stars should have a noticeable hue
-* Better and flashier star rendering: improve corona effects, add limb
   darkening, change  convection cell size based on spectral class, etc.
 * Non-Lambertian illumination functions for planets
 * Add haloes around bright planets similar to the ones around stars
@@ -36,7 +35,6 @@ VISUALS
 * Add some deep sky objects--planetary nebula, supernova remnants, etc.
 * Procedural textures for extrasolar planets
 * Atmospheric veils around planets
-* Specularity map for Earth (and other hypothetical ocean bearing worlds)
 * Bump mapped cloud layers
 * Render galaxies with colors--bluish spiral arms, yellowish center
 * Render dark dust bands in galaxies
@@ -61,13 +59,13 @@ SIMULATION ACCURACY
 * Use a better estimate for star radius
 * Make some attempt at calculating stellar rotation rates
 * Model the irregular rotations of objects like Toutatis and Hyperion
-* Double star systems
+* Double star systems: make the stars actually orbit each other
 
 BUGS
-* Find out why picking sometimes stops working, apparently after orbiting
+* Find out why picking sometimes stops working, apparently after orbiting (fixed?)
 * Fix wobbling of planet shadow on rings when time is accelerated
-* Find out about texture problems on Matrox G450 (Fixed?)
-* Investigate possible visual anomalies with ring shadows on ATI Rage cards (Fixed?)
+* Find out about texture problems on Matrox G450
+* Investigate possible visual anomalies with ring shadows on ATI Rage cards
 
 OPTIMIZATION
 * Add option to force 16-bit textures
@@ -79,8 +77,6 @@ CODE
 * Finish assert-ing the code
 
 PORTING
-* Make 3DS loading code byte-order and FP format independent
-* Make stars.dat loading code byte-order and FP format independent
 * Bring UNIX UI up to level of Windows UI
   * Implement solar system and star browsers
   * Context menus for both GLUT and Gtk versions
