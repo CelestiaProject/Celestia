@@ -915,7 +915,8 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
                 glLoadIdentity();
                 gluPerspective(fov,
                                (float) windowWidth / (float) windowHeight,
-                               farDistance * 1e-6f, farDistance * 1.1f);
+                               max( farDistance * 1e-6f, (float)(1e-5/2./tan(fov*3.14159/360.0)) ),
+                               farDistance * 1.1f );
                 glMatrixMode(GL_MODELVIEW);
                 renderOrbit(body, t);
 
