@@ -50,3 +50,10 @@ int compareIgnoringCase(const string& s1, const string& s2, int n)
     else
         return 0;
 }
+
+
+bool CompareIgnoringCasePredicate::operator()(const string& s1,
+                                              const string& s2) const
+{
+    return compareIgnoringCase(s1, s2) < 0;
+}
