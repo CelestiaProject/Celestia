@@ -45,7 +45,7 @@
 //-----------------
 char AppName[] = "Celestia";
 
-static string welcomeMessage1("Welcome to Celestia 1.07");
+static string welcomeMessage1("Welcome to Celestia 1.0.10");
 static string welcomeMessage2("Press D to run demo");
 
 
@@ -1032,6 +1032,8 @@ void RenderOverlay()
             double timeScale = sim->getTimeScale();
             if (abs(timeScale - 1) < 1e-6)
                 *overlay << "Real time";
+            else if (abs(timeScale) == 0.0f)
+                *overlay << "Time stopped";
             else if (abs(timeScale) > 1.0)
                 *overlay << timeScale << "x faster";
             else
@@ -1779,6 +1781,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
         case ID_RENDER_SHOWGALAXIES:
             ToggleRenderFlag(ID_RENDER_SHOWGALAXIES, Renderer::ShowGalaxies);
+            break;
+
+        case ID_RENDER_MORESTARS:
+            if (sim->getFaintestVisible() < 8.0f)
+                SetFaintest(sim->getFaintestVisible() + 0.5f);
+            break;
+
+        case ID_RENDER_FEWERSTARS:
+            if (sim->getFaintestVisible() > 1.0f)
+                SetFaintest(sim->getFaintestVisible() - 0.5f);
             break;
 
         case ID_RENDER_AMBIENTLIGHT_NONE:
