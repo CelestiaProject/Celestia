@@ -18,7 +18,7 @@
 
 
 #define MAX_SPHERE_MESH_TEXTURES 4
-
+#define NUM_SPHERE_VERTEX_BUFFERS 2
 
 class LODSphereMesh
 {
@@ -72,12 +72,21 @@ public:
     float* normals;
     float* texCoords[MAX_SPHERE_MESH_TEXTURES];
     float* tangents;
+
+    int maxVertices;
+    int vertexSize;
+
     int nIndices;
     unsigned short* indices;
 
     int nTexturesUsed;
     Texture* textures[MAX_SPHERE_MESH_TEXTURES];
     unsigned int subtextures[MAX_SPHERE_MESH_TEXTURES];
+
+    bool vertexBuffersInitialized;
+    bool useVertexBuffers;
+    int currentVB;
+    unsigned int vertexBuffers[NUM_SPHERE_VERTEX_BUFFERS];
 };
 
 #endif // CELENGINE_LODSPHEREMESH_H_

@@ -33,6 +33,13 @@ static float* cosPhi = NULL;
 static float* sinTheta = NULL;
 static float* cosTheta = NULL;
 
+// largest vertex:
+//     position   - 3 floats,
+//     normal     - 3 floats,
+//     tangent    - 3 floats,
+//     tex coords - 2 floats * MAX_SPHERE_MESH_TEXTURES
+static int MaxVertexSize = 3 + 3 + 3 + MAX_SPHERE_MESH_TEXTURES * 2;
+
 #ifdef SHOW_PATCH_VISIBILITY
 static const int MaxPatchesShown = 4096;
 static int visiblePatches[MaxPatchesShown];
@@ -88,22 +95,17 @@ static float getSphereLOD(float discSizeInPixels)
 
 LODSphereMesh::LODSphereMesh() :
     vertices(NULL),
-    normals(NULL),
-    tangents(NULL)
+    vertexBuffersInitialized(false),
+    useVertexBuffers(false)
 {
     if (!trigArraysInitialized)
         InitTrigArrays();
 
     int maxThetaSteps = thetaDivisions / minStep;
     int maxPhiSteps = phiDivisions / minStep;
-    int maxVertices = (maxPhiSteps + 1) * (maxThetaSteps + 1);
-    
-    vertices = new float[maxVertices * 3];
-    normals = new float[maxVertices * 3];
-    for (int i = 0; i < MAX_SPHERE_MESH_TEXTURES; i++)
-        texCoords[i] = new float[maxVertices * 2];
-    tangents = new float[maxVertices * 3];
+    maxVertices = (maxPhiSteps + 1) * (maxThetaSteps + 1);
 
+    vertices = new float[MaxVertexSize * maxVertices];
     indices = new unsigned short[maxPhiSteps * 2 * (maxThetaSteps + 1)];
 }
 
@@ -111,15 +113,6 @@ LODSphereMesh::~LODSphereMesh()
 {
     if (vertices != NULL)
         delete[] vertices;
-    if (normals != NULL)
-        delete[] normals;
-    if (tangents != NULL)
-        delete[] tangents;
-    for (int i = 0; i < MAX_SPHERE_MESH_TEXTURES; i++)
-    {
-        if (texCoords != NULL)
-            delete[] texCoords[i];
-    }
 }
 
 
@@ -175,7 +168,7 @@ void LODSphereMesh::render(const GLContext& context,
                            int nTextures)
 {
     int lod = 64;
-    float lodBias = getSphereLOD(pixWidth);
+    float lodBias = getSphereLOD(pixWidth) + 2.0f;
 
     if (lodBias < 0.0f)
     {
@@ -249,6 +242,58 @@ void LODSphereMesh::render(const GLContext& context,
         glEnable(GL_TEXTURE_2D);
     }
 
+#if 0
+    if (!vertexBuffersInitialized)
+    {
+        // TODO: assumes that the same context is used every time we
+        // render.  Valid now, but not necessarily in the future.  Still,
+        // would only cause problems if we rendered in two different contexts
+        // and only one had vertex buffer objects.
+        vertexBuffersInitialized = true;
+        if (context.extensionSupported("GL_ARB_vertex_buffer_object"))
+        {
+            cout << "GL_ARB_vertex_buffer_object supported\n";
+            cout.flush();
+            for (int i = 0; i < NUM_SPHERE_VERTEX_BUFFERS; i++)
+            {
+                GLuint vbname = 0;
+                glx::glGenBuffersARB(1, &vbname);
+                vertexBuffers[i] = (unsigned int) vbname;
+                cout << "Binding buffer: " << vertexBuffers[i] << '\n';
+                cout.flush();
+                glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffers[i]);
+                cout << "glBufferDataARB()\n";
+                cout.flush();
+                glx::glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                                     maxVertices * vertexSize, NULL,
+                                     GL_STREAM_DRAW_ARB);
+                cout << "So far so good...\n";
+                cout.flush();
+            }
+            glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+            
+            useVertexBuffers = true;
+
+            // HACK: delete the user arrays--we shouldn't need to allocate
+            // these at all if we're using vertex buffer objects.
+            delete[] vertices;
+        }
+    }
+#endif
+
+    if (useVertexBuffers)
+    {
+        currentVB = 0;
+        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffers[currentVB]);
+    }
+
+    // Compute the size of a vertex
+    vertexSize = 3;
+    if ((attributes & Tangents) != 0)
+        vertexSize += 3;
+    for (i = 0; i < nTextures; i++)
+        vertexSize += 2;
+
     // Set up the mesh vertices 
     int nRings = phiExtent / ri.step;
     int nSlices = thetaExtent / ri.step;
@@ -264,50 +309,43 @@ void LODSphereMesh::render(const GLContext& context,
         }
     }
 
+    GLsizei stride = (GLsizei) (vertexSize * sizeof(float));
+    int tangentOffset = 3;
+    int texCoordOffset = ((attributes & Tangents) != 0) ? 6 : 3;
+    float* vertexBase = useVertexBuffers ? (float*) NULL : vertices;
+
+    glVertexPointer(3, GL_FLOAT, stride, vertexBase + 0);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
 
     if ((attributes & Normals) != 0)
     {
+        glNormalPointer(GL_FLOAT, stride, vertexBase);
         glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, 0, vertices);
     }
     else
     {
         glDisableClientState(GL_NORMAL_ARRAY);
     }
 
-#if 0
-    if (texCoords != NULL && ((attributes & TexCoords0) != 0))
-    {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-    }
-    else
-    {
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    }
-#endif
-
     for (i = 0; i < nTextures; i++)
     {
         if (nTextures > 1)
             glx::glClientActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glTexCoordPointer(2, GL_FLOAT, stride,  vertexBase + (i * 2) + texCoordOffset);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, texCoords[i]);
     }
 
     glDisableClientState(GL_COLOR_ARRAY);
 
-    if (tangents != NULL && ((attributes & Tangents) != 0))
+    if ((attributes & Tangents) != 0)
     {
         // Need to have vertex programs enabled in order to make
         // use of surface tangents.
         VertexProcessor* vproc = context.getVertexProcessor();
         if (vproc != NULL)
         {
+            vproc->attribArray(6, 3, GL_FLOAT, stride, vertexBase + tangentOffset);
             vproc->enableAttribArray(6);
-            vproc->attribArray(6, 3, GL_FLOAT, 0, tangents);
         }
     }
 
@@ -372,7 +410,7 @@ void LODSphereMesh::render(const GLContext& context,
         // cout << "Rendered " << nPatches << " of " << square(split) << " patches\n";
     }
 
-    if (tangents != NULL && ((attributes & Tangents) != 0))
+    if ((attributes & Tangents) != 0)
     {
         VertexProcessor* vproc = context.getVertexProcessor();
         if (vproc != NULL)
@@ -397,6 +435,12 @@ void LODSphereMesh::render(const GLContext& context,
     {
         glx::glClientActiveTextureARB(GL_TEXTURE0_ARB);
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    }
+
+    if (useVertexBuffers)
+    {
+        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+        vertices = NULL;
     }
 
 #ifdef SHOW_FRUSTUM
@@ -615,6 +659,13 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     float u0[MAX_SPHERE_MESH_TEXTURES];
     float v0[MAX_SPHERE_MESH_TEXTURES];
 
+    if (useVertexBuffers)
+    {
+        vertices = reinterpret_cast<float*>(glx::glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+        if (vertices == NULL)
+            return;
+    }
+
     // Set the current texture.  This is necessary because the texture
     // may be split into subtextures.
     for (int tex = 0; tex < nTexturesUsed; tex++)
@@ -668,6 +719,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         }
     }
 
+    int vindex = 0;
     for (int phi = phi0; phi <= phi1; phi += ri.step)
     {
         float cphi = cosPhi[phi];
@@ -680,17 +732,23 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
                 float ctheta = cosTheta[theta];
                 float stheta = sinTheta[theta];
 
-                vertices[n3]      = cphi * ctheta;
-                vertices[n3 + 1]  = sphi;
-                vertices[n3 + 2]  = cphi * stheta;
+                vertices[vindex]      = cphi * ctheta;
+                vertices[vindex + 1]  = sphi;
+                vertices[vindex + 2]  = cphi * stheta;
 
                 // Compute the tangent--required for bump mapping
-                tangents[n3]      = stheta;
-                tangents[n3 + 1]  = 0.0f;
-                tangents[n3 + 2]  = -ctheta;
-                
-                n2 += 2;
-                n3 += 3;
+                vertices[vindex + 3] = stheta;
+                vertices[vindex + 4] = 0.0f;
+                vertices[vindex + 5] = -ctheta;
+
+                vindex += 6;
+
+                for (int tex = 0; tex < nTexturesUsed; tex++)
+                {
+                    vertices[vindex]     = u0[tex] - theta * du[tex];
+                    vertices[vindex + 1] = v0[tex] - phi * dv[tex];
+                    vindex += 2;
+                }
             }
         }
         else
@@ -700,32 +758,26 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
                 float ctheta = cosTheta[theta];
                 float stheta = sinTheta[theta];
 
-                vertices[n3]      = cphi * ctheta;
-                vertices[n3 + 1]  = sphi;
-                vertices[n3 + 2]  = cphi * stheta;
-                n2 += 2;
-                n3 += 3;
+                vertices[vindex]      = cphi * ctheta;
+                vertices[vindex + 1]  = sphi;
+                vertices[vindex + 2]  = cphi * stheta;
+
+                vindex += 3;
+
+                for (int tex = 0; tex < nTexturesUsed; tex++)
+                {
+                    vertices[vindex]     = u0[tex] - theta * du[tex];
+                    vertices[vindex + 1] = v0[tex] - phi * dv[tex];
+                    vindex += 2;
+                }
             }
         }
+    }
 
-        // Texture coordinates
-        for (int tex = 0; tex < nTexturesUsed; tex++)
-        {
-            float u = u0[tex];
-            float v = v0[tex];
-            float du_ = du[tex];
-            float dv_ = dv[tex];
-
-            n2 -= (theta1 - theta0) / ri.step * 2 + 2;
-            for (int theta = theta0; theta <= theta1; theta += ri.step)
-            {
-                float ctheta = cosTheta[theta];
-                float stheta = sinTheta[theta];
-                texCoords[tex][n2]     = u - theta * du_;
-                texCoords[tex][n2 + 1] = v - phi * dv_;
-                n2 += 2;
-            }
-        }
+    if (useVertexBuffers)
+    {
+        if (!glx::glUnmapBufferARB(GL_ARRAY_BUFFER_ARB))
+            return;
     }
 
     // TODO: Fix this--number of rings can reach zero and cause dropout
@@ -739,4 +791,14 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
                        GL_UNSIGNED_SHORT,
                        indices + (nSlices + 1) * 2 * i);
     }
+
+    // Cycle through the vertex buffers
+    if (useVertexBuffers)
+    {
+        currentVB++;
+        if (currentVB == NUM_SPHERE_VERTEX_BUFFERS)
+            currentVB = 0;
+        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffers[currentVB]);
+    }
 }
+
