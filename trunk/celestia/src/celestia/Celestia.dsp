@@ -124,6 +124,14 @@ SOURCE=.\imagecapture.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\odmenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\wineclipses.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\wingotodlg.cpp
 # End Source File
 # Begin Source File
@@ -180,7 +188,15 @@ SOURCE=.\imagecapture.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ODMenu.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\wineclipses.h
 # End Source File
 # Begin Source File
 
@@ -212,6 +228,14 @@ SOURCE=.\winviewoptsdlg.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
+SOURCE=.\res\camcorder.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Camera.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\Celestia.ico
 # End Source File
 # Begin Source File
@@ -221,6 +245,22 @@ SOURCE=.\res\Clsdfold.ico
 # Begin Source File
 
 SOURCE=.\res\Clsdfolder.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\FolderClosed.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\FolderOpened.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\FolderRoot.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Location.bmp
 # End Source File
 # Begin Source File
 
