@@ -30,23 +30,25 @@ IDR_MAIN_MENU MENU DISCARDABLE
 BEGIN
     POPUP "&File"
     BEGIN
+        MENUITEM "Screen Capture",              ID_FILE_SCREENCAPTURE
+        MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_FILE_EXIT
     END
     POPUP "&Navigation"
     BEGIN
         MENUITEM "Select &Sol\tH",              ID_NAVIGATION_HOME
-	MENUITEM "Tour G&uide...",              ID_NAVIGATION_TOURGUIDE
+        MENUITEM "Tour G&uide...",              ID_NAVIGATION_TOURGUIDE
         MENUITEM "Select &Object...",           ID_NAVIGATION_SELECT
-	MENUITEM "Goto Object...",              ID_NAVIGATION_GOTO_OBJECT
+        MENUITEM "Goto Object...",              ID_NAVIGATION_GOTO_OBJECT
         MENUITEM SEPARATOR
         MENUITEM "&Center Selection\tC",        ID_NAVIGATION_CENTER
         MENUITEM "&Go to Selection\tG",         ID_NAVIGATION_GOTO
         MENUITEM "&Follow Selection\tF",        ID_NAVIGATION_FOLLOW
-	MENUITEM "S&ync Orbit Selection\tY",    ID_NAVIGATION_SYNCORBIT
-	MENUITEM "&Track Selection\tT",         ID_NAVIGATION_TRACK
-	MENUITEM SEPARATOR
-	MENUITEM "Solar System &Browser...",    ID_NAVIGATION_SSBROWSER
-	MENUITEM "Star B&rowser...",            ID_NAVIGATION_STARBROWSER
+        MENUITEM "S&ync Orbit Selection\tY",    ID_NAVIGATION_SYNCORBIT
+        MENUITEM "&Track Selection\tT",         ID_NAVIGATION_TRACK
+        MENUITEM SEPARATOR
+        MENUITEM "Solar System &Browser...",    ID_NAVIGATION_SSBROWSER
+        MENUITEM "Star B&rowser...",            ID_NAVIGATION_STARBROWSER
     END
     POPUP "&Time"
     BEGIN
@@ -54,30 +56,32 @@ BEGIN
         MENUITEM "10x &Slower\tK",              ID_TIME_SLOWER
         MENUITEM "Free&ze\tSpace",              ID_TIME_FREEZE
         MENUITEM "&Real Time\t\\",              ID_TIME_REALTIME
-	MENUITEM "Re&verse Time\tJ",            ID_TIME_REVERSE
+        MENUITEM "Re&verse Time\tJ",            ID_TIME_REVERSE
         MENUITEM "Set &Time...",                ID_TIME_SETTIME
-	MENUITEM SEPARATOR
-	MENUITEM "Show Local Time",             ID_TIME_SHOWLOCAL
+        MENUITEM SEPARATOR
+        MENUITEM "Show Local Time",             ID_TIME_SHOWLOCAL
     END
     POPUP "&Render"
     BEGIN
-	MENUITEM "Show &Galaxies\tU",           ID_RENDER_SHOWGALAXIES
-	MENUITEM "Show A&tmospheres\tI",        ID_RENDER_SHOWATMOSPHERES
+        MENUITEM "Show &Galaxies\tU",           ID_RENDER_SHOWGALAXIES
+        MENUITEM "Show A&tmospheres\tI",        ID_RENDER_SHOWATMOSPHERES
         MENUITEM "Show &Orbits\tO",             ID_RENDER_SHOWORBITS
-	MENUITEM "Show &Constellations\t/",     ID_RENDER_SHOWCONSTELLATIONS
-	MENUITEM "Show Celestial &Grid\t;",     ID_RENDER_SHOWCELESTIALSPHERE
-	MENUITEM "Show Night Side &Lights",     ID_RENDER_SHOWNIGHTLIGHTS
-	MENUITEM SEPARATOR
-	MENUITEM "More Stars Visible\t]",       ID_RENDER_MORESTARS
-	MENUITEM "Fewer Stars Visible\t[",      ID_RENDER_FEWERSTARS
-	MENUITEM SEPARATOR
+        MENUITEM "Show &Constellations\t/",     ID_RENDER_SHOWCONSTELLATIONS
+        MENUITEM "Show Celestial &Grid\t;",     ID_RENDER_SHOWCELESTIALSPHERE
+
+        MENUITEM "Show Night Side &Lights",     ID_RENDER_SHOWNIGHTLIGHTS
+        MENUITEM SEPARATOR
+        MENUITEM "More Stars Visible\t]",       ID_RENDER_MORESTARS
+        MENUITEM "Fewer Stars Visible\t[",      ID_RENDER_FEWERSTARS
+        MENUITEM SEPARATOR
         MENUITEM "Label Major &Planets\tN",     ID_RENDER_SHOWPLANETLABELS
-	MENUITEM "Label &Minor Planets\tM",     ID_RENDER_SHOWMINORPLANETLABELS
+        MENUITEM "Label &Minor Planets\tM",     ID_RENDER_SHOWMINORPLANETLABELS
+
         MENUITEM "Label &Stars\tB",             ID_RENDER_SHOWSTARLABELS
-	MENUITEM "Label Co&nstellations\t=",    ID_RENDER_SHOWCONSTLABELS
+        MENUITEM "Label Co&nstellations\t=",    ID_RENDER_SHOWCONSTLABELS
         MENUITEM "Show &Info Text",             ID_RENDER_SHOWHUDTEXT
         , CHECKED
-	MENUITEM SEPARATOR
+        MENUITEM SEPARATOR
         POPUP "&Ambient Light"
         BEGIN
             MENUITEM "&None",                       ID_RENDER_AMBIENTLIGHT_NONE
@@ -87,21 +91,21 @@ BEGIN
             MENUITEM "&Medium",                     ID_RENDER_AMBIENTLIGHT_MEDIUM
 
         END
-	MENUITEM "Use Pixel Shaders\tCtrl+P",	    ID_RENDER_PIXEL_SHADERS
-	MENUITEM "Use Vertex Shaders\tCtrl+V",	    ID_RENDER_VERTEX_SHADERS
+        MENUITEM "Use Pixel Shaders\tCtrl+P",   ID_RENDER_PIXEL_SHADERS
+        MENUITEM "Use Vertex Shaders\tCtrl+V",  ID_RENDER_VERTEX_SHADERS
     END
     POPUP "&Locations"
     BEGIN
-        MENUITEM "&Add Location...",                ID_LOCATIONS_ADDLOCATION
+        MENUITEM "&Add Location...",            ID_LOCATIONS_ADDLOCATION
     END
     POPUP "&Help"
     BEGIN
-	MENUITEM "Run &Demo",                   ID_HELP_RUNDEMO
-	MENUITEM SEPARATOR
-	MENUItem "&Controls",                   ID_HELP_CONTROLS
-	MENUITEM "&OpenGL Info",                ID_HELP_GLINFO
+        MENUITEM "Run &Demo",                   ID_HELP_RUNDEMO
+        MENUITEM SEPARATOR
+        MENUITEM "&Controls",                   ID_HELP_CONTROLS
+        MENUITEM "&OpenGL Info",                ID_HELP_GLINFO
         MENUITEM "&License",                    ID_HELP_LICENSE
-	MENUITEM SEPARATOR
+        MENUITEM SEPARATOR
         MENUITEM "&About Celestia",             ID_HELP_ABOUT
     END
 END
@@ -174,7 +178,7 @@ BEGIN
 END
 
 IDD_CONTROLSHELP DIALOG DISCARDABLE  100, 50, 286, 249
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Celestia Controls"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -193,7 +197,7 @@ BEGIN
                     ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
 END
 
-IDD_SETTIME DIALOG DISCARDABLE  200, 100, 135, 66
+IDD_SETTIME DIALOG DISCARDABLE  200, 100, 135, 90
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Set Simulation Time"
 FONT 8, "MS Sans Serif"
@@ -203,8 +207,9 @@ BEGIN
     CONTROL         "DateTimePicker2",IDC_TIMEPICKER,"SysDateTimePick32",
                     DTS_RIGHTALIGN | DTS_UPDOWN | DTS_APPCANPARSE | 
                     WS_TABSTOP | 0x8,7,24,121,15
-    DEFPUSHBUTTON   "OK",IDOK,7,45,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,62,45,50,14
+    DEFPUSHBUTTON   "OK",IDOK,15,67,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,70,67,50,14
+    PUSHBUTTON      "Set To Current Time",IDC_SETCURRENTTIME,15,47,104,14
 END
 
 IDD_ADDLOCATION DIALOG DISCARDABLE  100, 50, 220, 45
@@ -218,23 +223,22 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,160,23,50,14
 END
 
-
 IDD_SSBROWSER DIALOG DISCARDABLE  0, 0, 226, 194
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Solar System Browser"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,169,154,50,14
-    CONTROL         "Solar System",IDC_SSBROWSER_TREE,"SysTreeView32",WS_BORDER | WS_TABSTOP | TVS_HASLINES | TVS_HASBUTTONS,
-                    7,26,153,161
+    CONTROL         "Solar System",IDC_SSBROWSER_TREE,"SysTreeView32",
+                    TVS_HASBUTTONS | TVS_HASLINES | WS_BORDER | WS_TABSTOP,7,
+                    26,153,161
     PUSHBUTTON      "&Center",IDC_BUTTON_CENTER,169,26,50,14
     PUSHBUTTON      "&Go To",IDC_BUTTON_GOTO,169,44,50,14
     LTEXT           "Solar System Objects",IDC_STATIC,7,13,74,8
 END
 
-
 IDD_STARBROWSER DIALOG DISCARDABLE  0, 0, 328, 177
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Star Browser"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -242,16 +246,18 @@ BEGIN
     PUSHBUTTON      "&Center",IDC_BUTTON_CENTER,271,7,50,14
     PUSHBUTTON      "&Go To",IDC_BUTTON_GOTO,271,26,50,14
     PUSHBUTTON      "&Refresh",IDC_BUTTON_REFRESH,271,55,50,14
-    CONTROL         "List3",IDC_STARBROWSER_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | WS_BORDER | 
-                    WS_TABSTOP,7,7,253,148
+    CONTROL         "List3",IDC_STARBROWSER_LIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,7,7,253,148
     CONTROL         "Nearest",IDC_RADIO_NEAREST,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP,7,160,41,10
-    CONTROL         "Brightest",IDC_RADIO_BRIGHTEST,"Button",BS_AUTORADIOBUTTON,                       84,160,43,10
-    CONTROL         "With planets",IDC_RADIO_WITHPLANETS,"Button",BS_AUTORADIOBUTTON,                       161,160,63,10
+    CONTROL         "Brightest",IDC_RADIO_BRIGHTEST,"Button",
+                    BS_AUTORADIOBUTTON,84,160,43,10
+    CONTROL         "With planets",IDC_RADIO_WITHPLANETS,"Button",
+                    BS_AUTORADIOBUTTON,161,160,63,10
 END
 
 IDD_TOURGUIDE DIALOG DISCARDABLE  0, 0, 240, 145
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Tour Guide"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -278,9 +284,12 @@ BEGIN
     LTEXT           "Long.",IDC_STATIC,7,35,19,9
     LTEXT           "Lat.",IDC_STATIC,128,35,18,9
     LTEXT           "Distance",IDC_STATIC,7,54,29,9
-    CONTROL         "km",IDC_RADIO_KM,"Button",BS_AUTORADIOBUTTON|WS_GROUP,125,55,25,10
-    CONTROL         "au",IDC_RADIO_AU,"Button",BS_AUTORADIOBUTTON,153,55,24,10
-    CONTROL         "radii",IDC_RADIO_RADII,"Button",BS_AUTORADIOBUTTON,181,55,29,10
+    CONTROL         "km",IDC_RADIO_KM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,
+                    125,55,25,10
+    CONTROL         "au",IDC_RADIO_AU,"Button",BS_AUTORADIOBUTTON,153,55,24,
+                    10
+    CONTROL         "radii",IDC_RADIO_RADII,"Button",BS_AUTORADIOBUTTON,181,
+                    55,29,10
 END
 
 
@@ -319,9 +328,8 @@ BEGIN
     IDD_SETTIME, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 191
         TOPMARGIN, 7
-        BOTTOMMARGIN, 139
+        BOTTOMMARGIN, 66
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -405,6 +413,10 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     ID_NAVIGATION_FOLLOW    "Ctrl+F"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
     ID_FILE_EXIT            "Alt+F4"
 END
 
