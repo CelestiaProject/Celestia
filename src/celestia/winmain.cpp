@@ -3100,6 +3100,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('\033');
             break;
         case VK_INSERT:
+        case 'C':
             if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
             {
                 CopyStateURLToClipboard();
