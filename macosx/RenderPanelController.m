@@ -20,18 +20,7 @@ NSDictionary *_labelDict, *_renderDict;
     _renderDict = [[NSDictionary dictionaryWithObjectsAndKeys:@"Atmospheres",[NSValue valueWithNonretainedObject:rAtmospheres],@"AutoMag",[NSValue valueWithNonretainedObject:rAutoMag],@"Boundaries",[NSValue valueWithNonretainedObject:rBoundaries],@"CelestialSphere",[NSValue valueWithNonretainedObject:rCelestialSphere],@"CloudMaps",[NSValue valueWithNonretainedObject:rCloudMaps],@"CometTails",[NSValue valueWithNonretainedObject:rCometTails],@"Diagrams",[NSValue valueWithNonretainedObject:rDiagrams],@"EclipseShadows",[NSValue valueWithNonretainedObject:rEclipseShadows],@"Galaxies",[NSValue valueWithNonretainedObject:rGalaxies],@"Markers",[NSValue valueWithNonretainedObject:rMarkers],@"NightMaps",[NSValue valueWithNonretainedObject:rNightMaps],@"Orbits",[NSValue 
 valueWithNonretainedObject:rOrbits],@"Planets",[NSValue valueWithNonretainedObject:rPlanets],@"RingShadows",[NSValue valueWithNonretainedObject:rRingShadows],@"SmoothLines",[NSValue valueWithNonretainedObject:rSmoothLines],@"Stars",[NSValue valueWithNonretainedObject:rStars],@"StarsAsPoints",[NSValue valueWithNonretainedObject:rStarsAsPoints],nil,nil] retain];
 
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"]!=nil) {
-        NSDictionary *prefs;
-//        NSLog(@"deserializing render preferences from user defaults");
-        prefs = [[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"];
-        [renderer setLabelFlags:[prefs objectForKey:@"labelFlags"]];
-        [renderer setRenderFlags:[prefs objectForKey:@"renderFlags"]];
-        [renderer setBrightnessBias:[prefs objectForKey:@"brightnessBias"]];
-        [renderer setSaturationMagnitude:[prefs objectForKey:@"saturationMagnitude"]];
-        [renderer setVertexShaderEnabled:[prefs objectForKey:@"vertexShaderEnabled"]];
-        [renderer setFragmentShaderEnabled:[prefs objectForKey:@"fragmentShaderEnabled"]];
-        [renderer setResolution:[prefs objectForKey:@"resolution"]];
-    }
+    [renderer unarchive];
 
 //    NSLog(@"enumerate renderFlags");
     flags = [renderer renderFlags];
