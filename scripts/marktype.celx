@@ -1,0 +1,18 @@
+function mark_spectraltype(x)
+    local obs = celestia:getobserver()
+    local nstars = celestia:getstarcount()
+    local i = 0
+    while i < nstars do
+        star = celestia:getstar(i)
+        first, last = string.find(star:spectraltype(), x, 1, true)
+        if first == 1 then
+	    celestia:mark(star)
+        end
+        i = i + 1
+    end
+end
+
+spectral = "O"
+celestia:flash("Marking all " .. spectral .. " stars.")
+mark_spectraltype(spectral)
+

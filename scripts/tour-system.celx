@@ -1,0 +1,23 @@
+function goto(o, t)
+    local obs = celestia:getobserver()
+    obs:follow(o)
+    obs:goto(o, t)
+        while (obs:travelling()) do
+        wait(0)
+    end
+end
+
+function visit(o)
+    local i, v
+    celestia:select(o)
+    celestia:flash(o:type() .. " - " .. o:name())
+    goto(o, 3)
+    wait(0.5)
+    local children = celestia:getchildren(o)
+    for i, v in ipairs(children) do
+        visit(v)
+    end
+end
+
+sol = celestia:find("Sol")
+visit(sol)
