@@ -23,6 +23,7 @@
 #include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
+#include <celengine/astro.h>
 #include "astro.h"
 #include "cmdparser.h"
 
@@ -248,20 +249,43 @@ Command* CommandParser::parseCommand()
         double t = 1.0;
         paramList->getNumber("time", t);
         Vec3d pos(0, 1, 0);
-        paramList->getVector("position", pos);
-        pos = pos * astro::kilometersToMicroLightYears(1.0);
-        double xrot = 0.0;
-        paramList->getNumber("xrot", xrot);
-        double yrot = 0.0;
-        paramList->getNumber("yrot", yrot);
-        double zrot = 0.0;
-        paramList->getNumber("zrot", zrot);
-        zrot = degToRad(zrot);
-        Quatf rotation = Quatf::xrotation((float) degToRad(xrot)) *
-            Quatf::yrotation((float) degToRad(yrot)) *
-            Quatf::zrotation((float) degToRad(zrot));
-        cmd = new CommandGotoLocation(t, Point3d(0.0, 0.0, 0.0) + pos,
-                                      rotation);
+        if (paramList->getVector("position", pos))
+        {
+            pos = pos * astro::kilometersToMicroLightYears(1.0);
+            double xrot = 0.0;
+            paramList->getNumber("xrot", xrot);
+            double yrot = 0.0;
+            paramList->getNumber("yrot", yrot);
+            double zrot = 0.0;
+            paramList->getNumber("zrot", zrot);
+            zrot = degToRad(zrot);
+            Quatf rotation = Quatf::xrotation((float) degToRad(xrot)) *
+                Quatf::yrotation((float) degToRad(yrot)) *
+                Quatf::zrotation((float) degToRad(zrot));
+            cmd = new CommandGotoLocation(t, Point3d(0.0, 0.0, 0.0) + pos,
+                                          rotation);
+        }
+        else
+        {
+            std::string x, y, z;
+            paramList->getString("x", x);
+            paramList->getString("y", y);
+            paramList->getString("z", z);
+            double ow, ox, oy, oz;
+            paramList->getNumber("ow", ow);
+            paramList->getNumber("ox", ox);
+            paramList->getNumber("oy", oy);
+            paramList->getNumber("oz", oz);
+            Quatf orientation((float)ow, (float)ox, (float)oy, (float)oz);
+            cmd = new CommandGotoLocation(t, Point3d((double)BigFix(x), (double)BigFix(y), (double)BigFix(z)),
+                                          orientation);
+        }
+    }
+    else if (commandName == "seturl")
+    {
+        std::string url;
+        paramList->getString("url", url);
+        cmd = new CommandSetUrl(url);
     }
     else if (commandName == "center")
     {
@@ -369,7 +393,16 @@ Command* CommandParser::parseCommand()
     else if (commandName == "time")
     {
         double jd = 2451545;
-        paramList->getNumber("jd", jd);
+        if (!paramList->getNumber("jd", jd))
+        {
+            std::string utc;
+            paramList->getString("utc", utc);
+            astro::Date date = astro::Date(0.0);
+            sscanf(utc.c_str(), "%d-%d-%dT%d:%d:%lf",
+                &date.year, &date.month, &date.day,
+                &date.hour, &date.minute, &date.seconds);
+            jd = (double)date;
+        }
         cmd = new CommandSetTime(jd);
     }
     else if (commandName == "timerate")
@@ -421,19 +454,44 @@ Command* CommandParser::parseCommand()
     else if (commandName == "setposition")
     {
         Vec3d base, offset;
-        paramList->getVector("base", base);
-        paramList->getVector("offset", offset);
-        cmd = new CommandSetPosition(astro::universalPosition(Point3d(offset.x, offset.y, offset.z),
-                                                              Point3f((float) base.x, (float) base.y, (float) base.z)));
+        if (paramList->getVector("base", base))
+        {
+            paramList->getVector("offset", offset);
+            cmd = new CommandSetPosition(astro::universalPosition(Point3d(offset.x, offset.y, offset.z),
+                                                                  Point3f((float) base.x, (float) base.y, (float) base.z)));
+        }
+        else
+        {
+            std::string x, y, z;
+            paramList->getString("x", x);
+            paramList->getString("y", y);
+            paramList->getString("z", z);
+            cmd = new CommandSetPosition(UniversalCoord(BigFix(x), BigFix(y), BigFix(z)));
+        }
     }
     else if (commandName == "setorientation")
     {
         Vec3d axis;
         double angle;
-        paramList->getNumber("angle", angle);
-        paramList->getVector("axis", axis);
-        cmd = new CommandSetOrientation(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
-                                        (float) degToRad(angle));
+        if (paramList->getNumber("angle", angle))
+        {
+            paramList->getVector("axis", axis);
+            cmd = new CommandSetOrientation(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
+                                            (float) degToRad(angle));
+        }
+        else
+        {
+            double ow, ox, oy, oz;
+            paramList->getNumber("ow", ow);
+            paramList->getNumber("ox", ox);
+            paramList->getNumber("oy", oy);
+            paramList->getNumber("oz", oz);
+            Quatf orientation((float)ow, (float)ox, (float)oy, (float)oz);
+            Vec3f axis;
+            float angle;
+            orientation.getAxisAngle(axis, angle);
+            cmd = new CommandSetOrientation(axis, angle);
+        }
     }
     else if (commandName == "lookback")
     {

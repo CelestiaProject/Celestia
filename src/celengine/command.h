@@ -124,6 +124,16 @@ class CommandGotoLocation : public InstantaneousCommand
     Quatf rotation;
 };
 
+class CommandSetUrl : public InstantaneousCommand
+{
+ public:
+    CommandSetUrl(const std::string& _url);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string url;
+};
+
 
 class CommandCenter : public InstantaneousCommand
 {

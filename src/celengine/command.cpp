@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <celutil/util.h>
+#include <celestia/celestiacore.h>
 #include "astro.h"
 #include "command.h"
 #include "execution.h"
@@ -127,6 +128,18 @@ void CommandGotoLocation::process(ExecutionEnvironment& env)
     env.getSimulation()->gotoLocation(to, gotoTime);
 }
 
+/////////////////////////////
+// SetUrl
+
+CommandSetUrl::CommandSetUrl(const std::string& _url) :
+    url(_url)
+{
+}
+
+void CommandSetUrl::process(ExecutionEnvironment& env)
+{
+    env.getCelestiaCore()->goToUrl(url);
+}
 
 
 ////////////////
