@@ -330,7 +330,7 @@ void readTextureCoordArray(ifstream& in, M3DTriangleMesh* triMesh)
     {
         float u = readFloat(in);
         float v = readFloat(in);
-        triMesh->addTexCoord(Point2f(u, v));
+        triMesh->addTexCoord(Point2f(u, -v));
     }
 }
 
