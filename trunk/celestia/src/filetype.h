@@ -16,6 +16,7 @@ enum ContentType {
     Content_JPEG,
     Content_BMP,
     Content_GIF,
+    Content_PNG,
     Content_Targa,
     Content_CelestiaTexture,
     Content_3DStudio,

@@ -16,6 +16,7 @@ using namespace std;
 static const string JPEGExt(".jpg");
 static const string BMPExt(".bmp");
 static const string TargaExt(".tga");
+static const string PNGExt(".png");
 static const string ThreeDSExt(".3ds");
 static const string CelestiaTextureExt(".ctx");
 static const string CelestiaMeshExt(".cms");
@@ -51,6 +52,8 @@ ContentType DetermineFileType(const string& filename)
         return Content_BMP;
     else if (compareIgnoringCase(TargaExt, ext) == 0)
         return Content_Targa;
+    else if (compareIgnoringCase(PNGExt, ext) == 0)
+        return Content_PNG;
     else if (compareIgnoringCase(ThreeDSExt, ext) == 0)
         return Content_3DStudio;
     else if (compareIgnoringCase(CelestiaTextureExt, ext) == 0)
