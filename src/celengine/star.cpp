@@ -719,10 +719,7 @@ void
 StarDetails::setOrbit(Orbit* o)
 {
     orbit = o;
-    if (o != NULL)
-        orbitalRadius = (float) astro::kilometersToLightYears(o->getBoundingRadius());
-    else
-        orbitalRadius = 0.0f;
+    computeOrbitalRadius();
 }
 
 
@@ -730,6 +727,23 @@ void
 StarDetails::setOrbitBarycenter(Star* bc)
 {
     barycenter = bc;
+    computeOrbitalRadius();
+}
+
+
+void
+StarDetails::computeOrbitalRadius()
+{
+    if (orbit == NULL)
+    {
+        orbitalRadius = 0.0f;
+    }
+    else
+    {
+        orbitalRadius = (float) astro::kilometersToLightYears(orbit->getBoundingRadius());
+        if (barycenter != NULL)
+            orbitalRadius += barycenter->getOrbitalRadius();
+    }
 }
 
 
@@ -859,4 +873,9 @@ void Star::setDetails(StarDetails* sd)
 void Star::setOrbitBarycenter(Star* s)
 {
     details->setOrbitBarycenter(s);
+}
+
+void Star::computeOrbitalRadius()
+{
+    details->computeOrbitalRadius();
 }
