@@ -27,10 +27,11 @@ template<class T> class ResourceInfo
 {
  public:
     ResourceInfo() : state(ResourceNotLoaded), resource(NULL) {};
+    virtual ~ResourceInfo() {};
 
     virtual T* load(const std::string&) = 0;
 
-    typedef typename T ResourceType;
+    typedef T ResourceType;
     ResourceState state;
     T* resource;
 };
@@ -74,7 +75,7 @@ template<class T> class ResourceManager
 
     ResourceType* find(ResourceHandle h)
     {
-        if (h >= handles.size() || h < 0)
+        if (h >= (int) handles.size() || h < 0)
         {
             return NULL;
         }

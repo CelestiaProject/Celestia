@@ -763,7 +763,11 @@ static void displayPlanetInfo(Overlay& overlay,
     overlay << "Distance: ";
     displayDistance(overlay, distance);
     overlay << '\n';
-    overlay << "Radius: " << body.getRadius() << " km\n";
+    overlay << "Radius: ";
+    if (body.getRadius() < 1.0f)
+        overlay << body.getRadius() * 1000.0f << " m\n";
+    else
+        overlay << body.getRadius() << " km\n";
     overlay << "Day length: " << body.getRotationPeriod() * 24.0 << " hours\n";
 }
 
@@ -830,7 +834,8 @@ void CelestiaCore::renderOverlay()
         *overlay << '\n';
         if (showFPSCounter)
             *overlay << "FPS: " << fps;
-        *overlay << "\nSpeed: " << setprecision(3) << fixed;
+        overlay->setf(ios::fixed);
+        *overlay << "\nSpeed: " << setprecision(3);
 
         double speed = sim->getObserver().getVelocity().length();
         if (speed < astro::kilometersToLightYears(1.0f))

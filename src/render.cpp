@@ -774,8 +774,6 @@ void Renderer::render(const Observer& observer,
         {
             if (renderList[i].discSizeInPixels > 1)
             {
-                // float distance = renderList[i].distance;
-                float distance = abs(renderList[i].nearZ);
                 float radius = 1.0f;
                 if (renderList[i].body != NULL)
                     radius = renderList[i].body->getRadius();
@@ -995,7 +993,6 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // z value in this depth bucket, and scaling the render distance is
         // just hack to accomplish this.  There are cases where it will fail
         // and a more robust method should be implemented.
-        float distance = position.distanceFromOrigin();
         float size = pixelSize * 1.5f * renderZ;
         float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
 
@@ -1834,7 +1831,6 @@ void Renderer::renderStar(const Star& star,
     Color color = star.getStellarClass().getApparentColor();
     float radius = star.getRadius();
     float discSizeInPixels = radius / (distance * pixelSize);
-    float discSize = radius / distance * RENDER_DISTANCE;
 
     if (discSizeInPixels > 1)
     {

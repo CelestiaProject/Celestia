@@ -18,7 +18,7 @@ COMMONSOURCES = \
 	cmdparser.cpp \
 	color.cpp \
 	command.cpp \
-	config.cpp \
+	configfile.cpp \
 	constellation.cpp \
 	debug.cpp \
 	destination.cpp \
@@ -26,6 +26,7 @@ COMMONSOURCES = \
 	execution.cpp \
 	favorites.cpp \
 	filetype.cpp \
+	frustum.cpp \
 	galaxy.cpp \
 	glext.cpp \
 	meshmanager.cpp \
@@ -37,7 +38,6 @@ COMMONSOURCES = \
 	perlin.cpp \
 	regcombine.cpp \
 	render.cpp \
-	resmanager.cpp \
 	selection.cpp \
 	simulation.cpp \
 	solarsys.cpp \
@@ -54,6 +54,7 @@ COMMONSOURCES = \
 	univcoord.cpp \
 	unixtimer.cpp \
 	util.cpp \
-	vertexlist.cpp
+	vertexlist.cpp \
+	vertexprog.cpp
 
 celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)

@@ -94,12 +94,12 @@ static Body* CreatePlanet(PlanetarySystem* system,
     planetData->getString("Name", name);
     body->setName(name);
     
-    cout << "Reading planet " << name << "\n";
+    DPRINTF("Reading planet %s\n", name.c_str());
 
     double semiMajorAxis = 0.0;
     if (!planetData->getNumber("SemiMajorAxis", semiMajorAxis))
     {
-        cout << "SemiMajorAxis missing!  Skipping planet . . .\n";
+        DPRINTF("SemiMajorAxis missing!  Skipping planet . . .\n");
         delete body;
         return NULL;
     }
@@ -107,7 +107,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     double period = 0.0;
     if (!planetData->getNumber("Period", period))
     {
-        cout << "Period missing!  Skipping planet . . .\n";
+        DPRINTF("Period missing!  Skipping planet . . .\n");
         delete body;
         return NULL;
     }
@@ -246,7 +246,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
             if (moonsData->size() != 0)
                 satellites = new PlanetarySystem(body);
             
-            for (int i = 0; i < moonsData->size(); i++)
+            for (unsigned int i = 0; i < moonsData->size(); i++)
             {
                 Value* moonValue = (*moonsData)[i];
                 if (moonValue != NULL &&
@@ -329,7 +329,7 @@ static SolarSystem* ReadSolarSystem(Parser& parser,
         {
             Array* planetsData = planetsDataValue->getArray();
             // ASSERT(planetsData != NULL);
-            for (int i = 0; i < planetsData->size(); i++)
+            for (unsigned int i = 0; i < planetsData->size(); i++)
             {
                 Value* planetValue = (*planetsData)[i];
                 if (planetValue != NULL &&

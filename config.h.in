@@ -3,6 +3,10 @@
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
 
+/* Define if your processor stores words with the most significant
+   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
+#undef WORDS_BIGENDIAN
+
 /* Define if the X Window System is missing or not being used.  */
 #undef X_DISPLAY_MISSING
 
@@ -16,6 +20,9 @@
 
 /* Define if you have the <X11/SM/SMlib.h> header file.  */
 #undef HAVE_X11_SM_SMLIB_H
+
+/* Define if you have the <byteswap.h> header file.  */
+#undef HAVE_BYTESWAP_H
 
 /* Define if you have the GL library (-lGL).  */
 #undef HAVE_LIBGL

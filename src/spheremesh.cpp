@@ -181,7 +181,6 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 // Generate vertex normals for a quad mesh by averaging face normals
 void SphereMesh::generateNormals()
 {
-    Vec3f zero(0, 0, 0);
     int nQuads = nSlices * (nRings - 1);
     Vec3f* faceNormals = new Vec3f[nQuads];
     int i;
