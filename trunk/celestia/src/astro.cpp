@@ -30,7 +30,8 @@ const double astro::J2000 = 2451545.0;
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
 
-static Mat3f equatorialToCelestial = Mat3f::xrotation(degToRad(23.4392911));
+static Mat3f equatorialToCelestial = Mat3f::xrotation(degToRad(23.4392911f));
+static Mat3d equatorialToCelestiald = Mat3d::xrotation(degToRad(23.4392911));
 
 
 float astro::lumToAbsMag(float lum)
@@ -180,6 +181,51 @@ Point3f astro::equatorialToCelestialCart(float ra, float dec, float distance)
     return (Point3f((float) x, (float) y, (float) z) * equatorialToCelestial);
 }
 
+
+// Convert equatorial coordinates to Cartesian celestial (or ecliptical)
+// coordinates.
+Point3d astro::equatorialToCelestialCart(double ra, double dec, double distance)
+{
+    double theta = ra / 24.0 * PI * 2 + PI;
+    double phi = (dec / 90.0 - 1.0) * PI / 2;
+    double x = cos(theta) * sin(phi) * distance;
+    double y = cos(phi) * distance;
+    double z = -sin(theta) * sin(phi) * distance;
+
+    return (Point3d(x, y, z) * equatorialToCelestiald);
+}
+
+
+double astro::eccentricAnomaly(double meanAnomaly)
+{
+    double e, delta, err;
+    double tol = 0.00000001745;
+    int iterations = 20;	//limit while() to maximum of 20 iterations.
+
+    e = meanAnomaly;
+    err = 1;
+    while(abs(err) > tol && iterations > 0)
+    {
+        err = e - 0.016713 * sin(e) - meanAnomaly;
+        delta = err / (1 - 0.016713 * sin(e));
+        e -= delta;
+        iterations--;
+    }
+
+    return e;
+}
+
+
+double astro::meanEclipticObliquity(double jd)
+{
+    double t, de;
+
+    jd -= 2451545.0;
+    t = jd / 36525;
+    de = (46.815 * t + 0.0006 * t * t - 0.00181 * t * t * t) / 3600;
+
+    return 23.439292 - de;
+}
 
 
 astro::Date::Date(int Y, int M, int D)
