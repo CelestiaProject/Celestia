@@ -1488,3 +1488,21 @@
 		Eccentricity   0.71
 	}
 }
+
+
+# HD 136118 system
+# The 'planet' around HD 136118 has M sin i = 11.9, so it is very likely
+# a brown dwarf.
+"b" "HD 136118"
+{
+	Texture "browndwarf.jpg"
+	Mass 3800
+	Radius 64000
+
+	EllipticalOrbit {
+		Period         3.39
+		SemiMajorAxis  2.44
+		Eccentricity   0.39
+		# Omega 314
+	}
+}
