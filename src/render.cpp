@@ -774,10 +774,18 @@ void Renderer::render(const Observer& observer,
                 }
                 else
                 {
-                    // Only correct for spherical objects . . .
+                    // Make the far plane as close as possible; this
+                    // calculation is correct only for spherical bodies.  It
+                    // should work well enough for ellipsoids.
                     float d = center.distanceFromOrigin();
-                    iter->farZ = -(d - square(radius) / d);
-                    cout << "farZ: " << iter->farZ << '\n';
+
+                    // TODO: The factor of 0.5 should not be necessary, but
+                    // we get incorrect clipping without it.  Figure out what's
+                    // going on here so that we can use a smaller frustum and
+                    // cull as much as possible.
+                    iter->farZ = -(d - square(radius) / d * 0.5f);
+                    if (iter->farZ < -d)
+                        iter->farZ = -d;
                 }
 
                 *notCulled = *iter;
@@ -1028,7 +1036,6 @@ void Renderer::renderBodyAsParticle(Point3f position,
                                     float renderZ,
                                     bool useHaloes)
 {
-    cout << "renderZ: " << renderZ << '\n';
     if (discSizeInPixels < 4 || useHaloes)
     {
         float a = 1;
