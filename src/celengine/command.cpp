@@ -10,9 +10,11 @@
 #include <iostream>
 #include <celutil/util.h>
 #include <celestia/celestiacore.h>
+#include <celestia/imagecapture.h>
 #include "astro.h"
 #include "command.h"
 #include "execution.h"
+#include "glcontext.h"
 
 using namespace std;
 
@@ -306,6 +308,18 @@ void CommandClearScreen::process(ExecutionEnvironment& env)
 {
 }
 
+
+////////////////
+// Exit command: quit the program
+
+CommandExit::CommandExit()
+{
+}
+
+void CommandExit::process(ExecutionEnvironment& env)
+{
+    exit(0);
+}
 
 ////////////////
 // Set time command: set the simulation time
@@ -664,6 +678,56 @@ void CommandPreloadTextures::process(ExecutionEnvironment& env)
         env.getRenderer()->loadTextures(target.body());
 }
 
+
+////////////////
+// Capture command
+
+CommandCapture::CommandCapture(const std::string& _type,
+    const std::string& _filename) : type(_type), filename(_filename)
+{
+}
+
+void CommandCapture::process(ExecutionEnvironment& env)
+{
+    bool success = false;
+
+    // Get the dimensions of the current viewport
+    int viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    
+    if (compareIgnoringCase(type, "jpeg") == 0)
+    {
+        success = CaptureGLBufferToJPEG(filename,
+                                        viewport[0], viewport[1],
+                                        viewport[2], viewport[3]);
+    }
+    if (compareIgnoringCase(type, "png") == 0)
+    {
+        success = CaptureGLBufferToPNG(filename,
+                                       viewport[0], viewport[1],
+                                       viewport[2], viewport[3]);
+    }
+}
+
+
+////////////////
+// Set RenderPath command
+
+CommandRenderPath::CommandRenderPath(GLContext::GLRenderPath _path) :
+    path(_path)
+{
+}
+
+void CommandRenderPath::process(ExecutionEnvironment& env)
+{
+    GLContext* context = env.getRenderer()->getGLContext();
+
+    if (context != NULL)
+    {
+        context->setRenderPath(path);
+        env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+    }
+}
 
 
 ///////////////

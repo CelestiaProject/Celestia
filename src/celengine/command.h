@@ -238,6 +238,17 @@ class CommandCancel : public InstantaneousCommand
 };
 
 
+class CommandExit : public InstantaneousCommand
+{
+ public:
+    CommandExit();
+    void process(ExecutionEnvironment&);
+
+ private:
+    int dummy;   // Keep the class from having zero size
+};
+
+
 class CommandPrint : public InstantaneousCommand
 {
  public:
@@ -488,6 +499,29 @@ class CommandUnmarkAll : public InstantaneousCommand
 
  private:
     int dummy;   // Keep the class from having zero size
+};
+
+
+class CommandCapture : public InstantaneousCommand
+{
+ public:
+    CommandCapture(const std::string&, const std::string&);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string type;
+    std::string filename;
+};
+
+
+class CommandRenderPath : public InstantaneousCommand
+{
+ public:
+    CommandRenderPath(GLContext::GLRenderPath);
+    void process(ExecutionEnvironment&);
+
+ private:
+    GLContext::GLRenderPath path;
 };
 
 
