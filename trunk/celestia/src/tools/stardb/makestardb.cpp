@@ -558,6 +558,7 @@ bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
         string scString;
         in >> scString;
         StellarClass sc = parseSpectralType(scString);
+#if 0
         StarDetails* details = StarDetails::GetStarDetails(sc);
         if (details == NULL)
         {
@@ -565,7 +566,6 @@ bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
             return false;
         }
 
-#if 0
         // For spectral type parser debugging . . .
         cout << scString << ' ' << details->getSpectralType() << '\n';
 #endif
