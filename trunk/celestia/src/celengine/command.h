@@ -181,6 +181,17 @@ class CommandChase : public InstantaneousCommand
 };
 
 
+class CommandTrack : public InstantaneousCommand
+{
+ public:
+    CommandTrack();
+    void process(ExecutionEnvironment&);
+
+ private:
+    int dummy;
+};
+
+
 class CommandSetFrame : public InstantaneousCommand
 {
  public:

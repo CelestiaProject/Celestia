@@ -265,6 +265,10 @@ Command* CommandParser::parseCommand()
     {
         cmd = new CommandChase();
     }
+    else if (commandName == "track")
+    {
+        cmd = new CommandTrack();
+    }
     else if (commandName == "cancel")
     {
         cmd = new CommandCancel();
