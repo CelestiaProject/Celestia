@@ -537,7 +537,7 @@ void Renderer::render(const Observer& observer,
     // Set up the camera
     Point3f observerPos = (Point3f) observer.getPosition();
     glPushMatrix();
-    glRotate(~observer.getOrientation());
+    glRotate(observer.getOrientation());
 
     // Get the model matrix *before* translation.  We'll use this for positioning
     // star and planet labels.
@@ -1047,7 +1047,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
     // Set up the texture transformation--the light direction and the
     // viewer orientation both need to be considered.
     glMatrixMode(GL_TEXTURE);
-    glRotate(lightOrientation * orientation);
+    glRotate(lightOrientation * ~orientation);
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -1129,7 +1129,7 @@ static void renderSmoothMesh(Mesh& mesh,
     // Set up the texture transformation--the light direction and the
     // viewer orientation both need to be considered.
     glMatrixMode(GL_TEXTURE);
-    glRotate(lightOrientation * orientation);
+    glRotate(lightOrientation * ~orientation);
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
