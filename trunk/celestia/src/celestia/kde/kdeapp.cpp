@@ -287,6 +287,7 @@ void KdeApp::initActions()
     new KAction(i18n("Copy URL"), "edit_copy", CTRL + Key_C, this, SLOT(slotCopyUrl()), actionCollection(), "copyUrl");
 
 
+    new KAction(i18n("Set Time..."), "kalarm", ALT + Key_T, this, SLOT(slotSetTime()), actionCollection(), "setTime");
     new KAction(i18n("Set Time to Now"), "player_eject", Key_Exclam, this, SLOT(slotSetTimeNow()), actionCollection(), "setTimeNow");
     new KAction(i18n("Accelerate Time"), "1uparrow", Key_L, this, SLOT(slotAccelerateTime()), actionCollection(), "accelerateTime");
     new KAction(i18n("Decelerate Time"), "1downarrow", Key_K, this, SLOT(slotSlowDownTime()), actionCollection(), "slowDownTime");
@@ -608,6 +609,14 @@ void KdeApp::slotPreferences() {
 
     dlg.exec();
 }
+
+void KdeApp::slotSetTime() {
+    KdePreferencesDialog dlg(this, appCore);
+
+    dlg.showPage(1);
+    dlg.exec();
+}
+
 
 void KdeApp::slotFileOpenRecent(const KURL&)
 {

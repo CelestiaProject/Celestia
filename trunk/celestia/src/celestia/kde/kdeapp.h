@@ -86,6 +86,7 @@ public slots:
     void slotKeyBindings();
     void slotOpenGLInfo();
     void slotPreferences();
+    void slotSetTime();
     void slotSetTimeNow();
     void slotAccelerateTime();
     void slotSlowDownTime();

@@ -22,6 +22,7 @@
 #include <qtextedit.h>
 #include <qcombobox.h>
 #include <klocale.h>
+#include <kconfig.h>
 #include <kiconloader.h>
 #include <qframe.h>
 #include <qgrid.h>
@@ -208,14 +209,23 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     setTimezoneCombo = new QComboBox(hbox2);
     setTimezoneCombo->insertItem(i18n("UTC"));
     setTimezoneCombo->insertItem(i18n("Local Time"));
-    setTimezoneCombo->setCurrentItem((appCore->getTimeZoneBias()==0)?0:1);
+//    setTimezoneCombo->setCurrentItem((appCore->getTimeZoneBias()==0)?0:1);
+    KGlobal::config()->setGroup("ConfigureDialog");
+    if (KGlobal::config()->hasKey("SetTimeTimeZoneLocal"))
+        setTimezoneCombo->setCurrentItem(KGlobal::config()->readNumEntry("SetTimeTimeZoneLocal"));
+    KGlobal::config()->setGroup(0);
+    connect(setTimezoneCombo, SIGNAL(activated(int)), SLOT(slotTimeHasChanged()));
     
+        
     QHBox *hboxdate = new QHBox(setTimezoneGroup);
     QLabel* spacerdate1 = new QLabel(" ", hboxdate);
     timeFrame->setStretchFactor(spacerdate1, 2);
     YSpin = new QSpinBox(-1000000000, 1000000000, 1, hboxdate);
+    YSpin->setWrapping(true);
     MSpin = new QSpinBox(1, 12, 1, hboxdate);
+    MSpin->setWrapping(true);
     DSpin = new QSpinBox(1, 31, 1, hboxdate);
+    DSpin->setWrapping(true);
     QLabel* spacerdate2 = new QLabel(" ", hboxdate);
     timeFrame->setStretchFactor(spacerdate2, 2);
   
@@ -224,38 +234,20 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QLabel* spacer1 = new QLabel(" ", hbox3);
     hbox3->setStretchFactor(spacer1, 10);
     hSpin = new QSpinBox(0, 23, 1, hbox3);
+    hSpin->setWrapping(true);
     new QLabel(":", hbox3);
     mSpin = new QSpinBox(0, 59, 1, hbox3);
+    mSpin->setWrapping(true);
     new QLabel(":", hbox3);
     sSpin = new QSpinBox(0, 59, 1, hbox3);
+    sSpin->setWrapping(true);
     QLabel* spacer2 = new QLabel(" ", hbox3);
     hbox3->setStretchFactor(spacer2, 10);
 
     QLabel* spacer3 = new QLabel(" ", timeFrame);
     timeFrame->setStretchFactor(spacer3, 2);
 
-    if (appCore->getTimeZoneBias() != 0 && appCore->getSimulation()->getTime() < 2465442 
-    		&& appCore->getSimulation()->getTime() > 2415733) { 
-    	time_t date_t = (int) astro::julianDateToSeconds( appCore->getSimulation()->getTime() 
-    			- (float)astro::Date(1970, 1, 1) );
-
-    	struct tm* tm;
-    	tm = localtime ( &date_t); 
-	YSpin->setValue(tm->tm_year + 1900);
-	MSpin->setValue(tm->tm_mon + 1);
-	DSpin->setValue(tm->tm_mday);    
-	hSpin->setValue(tm->tm_hour);
-	mSpin->setValue(tm->tm_min);
-	sSpin->setValue(tm->tm_sec);    
-    } else {
-        astro::Date date(appCore->getSimulation()->getTime());
-	YSpin->setValue(date.year);
-	MSpin->setValue(date.month);
-	DSpin->setValue(date.day);    
-        hSpin->setValue(date.hour);
-        mSpin->setValue(date.minute);
-        sSpin->setValue(int(date.seconds));
-    }
+    setTime(appCore->getSimulation()->getTime());
     connect(YSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
     connect(MSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
     connect(DSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
@@ -268,7 +260,31 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QSizePolicy nowButtonSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     nowButton->setSizePolicy(nowButtonSizePolicy);
     connect(nowButton, SIGNAL(clicked()), SLOT(setNow()));
-
+    
+    Selection selection = appCore->getSimulation()->getSelection();
+    std::string sel_name;
+    if (selection.body != 0) {
+        QHBox* ltBox = new QHBox(setTimezoneGroup);
+        char time[50];
+        sel_name = selection.body->getName();
+        Vec3d v = selection.getPosition(appCore->getSimulation()->getTime()) - 
+                  appCore->getSimulation()->getObserver().getPosition();
+        double dist = astro::lightYearsToKilometers(v.length()*1e-6);
+        double lt = dist / astro::speedOfLight;
+        long lt_h = (long)(lt / 3600);
+        int lt_m = (int)((lt - lt_h * 3600) / 60);
+        double lt_s = (lt - lt_h * 3600 - lt_m * 60);
+        if (lt_h == 0) snprintf(time, 50, "%d min %02.1f s", lt_m, lt_s);
+        else snprintf(time, 50, "%ld h %02d min %02.1f s", lt_h, lt_m, lt_s);
+        
+        new QLabel(i18n("Selection: " + QString(sel_name.c_str()) 
+        + QString("\nLight Travel Time: %2").arg(time)), ltBox);
+        
+        KPushButton *ltButton = new KPushButton(ltBox);
+        ltButton->setText(i18n("Subtract"));
+        ltButton->setSizePolicy(nowButtonSizePolicy);
+        connect(ltButton, SIGNAL(clicked()), SLOT(ltSubstract()));
+    }
 
     // OpenGL Page
     QVBox* openGL = addVBoxPage(i18n("OpenGL"), i18n("OpenGL"),
@@ -312,19 +328,85 @@ KdePreferencesDialog::~KdePreferencesDialog() {
 void KdePreferencesDialog::setNow() {
     time_t date_t;
     time(&date_t);
-
     struct tm* tm;
     if (setTimezoneCombo->currentItem() != 0) { 
-    	tm = localtime ( &date_t); 
+        tm = localtime ( &date_t); 
     } else {
-    	tm = gmtime ( &date_t);   
+        tm = gmtime ( &date_t);   
     }
-	YSpin->setValue(tm->tm_year + 1900);
-	MSpin->setValue(tm->tm_mon + 1);
-	DSpin->setValue(tm->tm_mday);    
-	hSpin->setValue(tm->tm_hour);
-	mSpin->setValue(tm->tm_min);
-	sSpin->setValue(tm->tm_sec);    
+    YSpin->setValue(tm->tm_year + 1900);
+    MSpin->setValue(tm->tm_mon + 1);
+    DSpin->setValue(tm->tm_mday);    
+    hSpin->setValue(tm->tm_hour);
+    mSpin->setValue(tm->tm_min);
+    sSpin->setValue(tm->tm_sec);
+}
+
+void KdePreferencesDialog::ltSubstract() {
+    double d;
+    
+    d = getTime();
+    
+    Selection selection = appCore->getSimulation()->getSelection();
+    std::string sel_name;
+    if (selection.body != 0) {
+        sel_name = selection.body->getName();
+        Vec3d v = selection.getPosition(d) - 
+                  appCore->getSimulation()->getObserver().getPosition();
+        double dist = astro::lightYearsToKilometers(v.length()*1e-6);
+        double lt = dist / astro::speedOfLight;
+        d -= lt / 86400.;
+    }    
+    
+    setTime(d);
+}
+
+void KdePreferencesDialog::setTime(double d) {
+    if (setTimezoneCombo->currentItem() != 0 && d < 2465442 && d > 2415733) { 
+        time_t date_t = (int) astro::julianDateToSeconds( d - (float)astro::Date(1970, 1, 1) );
+
+        struct tm* tm;
+        tm = localtime ( &date_t); 
+        YSpin->setValue(tm->tm_year + 1900);
+        MSpin->setValue(tm->tm_mon + 1);
+        DSpin->setValue(tm->tm_mday);    
+        hSpin->setValue(tm->tm_hour);
+        mSpin->setValue(tm->tm_min);
+        sSpin->setValue(tm->tm_sec);    
+    } else {
+        astro::Date date(d);
+        YSpin->setValue(date.year);
+        MSpin->setValue(date.month);
+        DSpin->setValue(date.day);    
+        hSpin->setValue(date.hour);
+        mSpin->setValue(date.minute);
+        sSpin->setValue(int(date.seconds));
+    }
+}
+
+double KdePreferencesDialog::getTime() const {
+    double d;
+    
+    if (setTimezoneCombo->currentItem() == 0 || YSpin->value() < 1902 || YSpin->value() > 2037) {  
+        astro::Date date(0.0);
+        date.year=YSpin->value();
+        date.month=MSpin->value();
+        date.day=DSpin->value();        
+        date.hour=hSpin->value();
+        date.minute=mSpin->value();
+        date.seconds=float(sSpin->value());
+        d = (double) date;
+    } else {
+        struct tm time;
+        time.tm_year = YSpin->value() - 1900;
+        time.tm_mon = MSpin->value() - 1;
+        time.tm_mday = DSpin->value();
+        time.tm_hour = hSpin->value();
+        time.tm_min = mSpin->value();
+        time.tm_sec = sSpin->value();
+        d = astro::secondsToJulianDate(mktime(&time)) + (double) astro::Date(1970, 1, 1);
+    }
+    return d;
 }
 
 void KdePreferencesDialog::slotOk() {
@@ -356,6 +438,10 @@ void KdePreferencesDialog::slotApply() {
     savedPixelShader = appCore->getRenderer()->getFragmentShaderEnabled();
 
     keyChooser->commitChanges();
+
+    KGlobal::config()->setGroup("ConfigureDialog");
+    KGlobal::config()->writeEntry("SetTimeTimeZoneLocal", setTimezoneCombo->currentItem());
+    KGlobal::config()->setGroup(0);
 
     if (timeHasChanged) {
       if (setTimezoneCombo->currentItem() == 0 || YSpin->value() < 1902 || YSpin->value() > 2037) {  

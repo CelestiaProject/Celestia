@@ -39,9 +39,11 @@ public slots:
     void slotApply();
     void slotCancel();
     void setNow();
+    void ltSubstract();
     void slotTimeHasChanged();
     void slotAmbientLightLevel(int l);
     void slotFaintestVisible(int m);
+    
 
 protected:
     CelestiaCore* appCore;
@@ -68,5 +70,8 @@ protected:
 
     QCheckBox *pixelShaderCheck, *vertexShaderCheck;
     QLabel* ambientLabel, *faintestLabel;
+    
+    void setTime(double d);
+    double getTime() const;
 };        
 
