@@ -44,6 +44,7 @@ class GLContext
     GLRenderPath getRenderPath() const { return renderPath; };
     bool setRenderPath(GLRenderPath);
     bool renderPathSupported(GLRenderPath) const;
+    GLRenderPath nextRenderPath();
 
     bool extensionSupported(const std::string&) const;
 

@@ -69,18 +69,18 @@ void GLContext::init(const vector<string>& ignoreExt)
         }
     }
 
-    if (extensionSupported("GL_ARB_multitexture") &&
-        glx::glActiveTextureARB != NULL)
-    {
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
-                      (GLint*) &maxSimultaneousTextures);
-    }
-
     // Initialize all extensions used
     for (vector<string>::const_iterator iter = extensions.begin();
          iter != extensions.end(); iter++)
     {
         InitExtension(iter->c_str());
+    }
+
+    if (extensionSupported("GL_ARB_multitexture") &&
+        glx::glActiveTextureARB != NULL)
+    {
+        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
+                      (GLint*) &maxSimultaneousTextures);
     }
 
     if (extensionSupported("GL_ARB_vertex_program") &&
@@ -153,8 +153,11 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
                 vertexProc != NULL);
 
     case GLPath_NvCombiner_NvVP:
+        // If ARB_vertex_program is supported, don't report support for
+        // this render path.
         return (extensionSupported("GL_NV_register_combiners") &&
                 extensionSupported("GL_NV_vertex_program") &&
+                !extensionSupported("GL_ARB_vertex_program") &&
                 vertexProc != NULL);
 
     case GLPath_NvCombiner_ARBVP:
@@ -177,6 +180,22 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
     default:
         return false;
     }
+}
+
+
+GLContext::GLRenderPath GLContext::nextRenderPath()
+{
+    GLContext::GLRenderPath newPath = renderPath;
+
+    do {
+        newPath = (GLRenderPath) ((int) newPath + 1);;
+        if (newPath > GLPath_NV30)
+            newPath = GLPath_Basic;
+    } while (newPath != renderPath && !renderPathSupported(newPath));
+
+    renderPath = newPath;
+
+    return renderPath;
 }
 
 
