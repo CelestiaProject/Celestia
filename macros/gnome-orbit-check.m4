@@ -14,7 +14,7 @@ AC_DEFUN([GNOME_ORBIT_HOOK],[
 			gnome_cv_orbit_found=yes
 		fi
 	])
-	AM_CONDITIONAL(HAVE_ORBIT, test x$gnome_cv_orbit_found = xyes)
+dnl	AM_CONDITIONAL(HAVE_ORBIT, test x$gnome_cv_orbit_found = xyes)
 	if test x$gnome_cv_orbit_found = xyes; then
 		$1
 		ORBIT_CFLAGS=`orbit-config --cflags client server`

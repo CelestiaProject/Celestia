@@ -16,7 +16,7 @@ AC_DEFUN([GNOME_GNORBA_HOOK],[
 			fi
 		fi
 	])
-	AM_CONDITIONAL(HAVE_GNORBA, test x$gnome_cv_gnorba_found = xyes)
+dnl	AM_CONDITIONAL(HAVE_GNORBA, test x$gnome_cv_gnorba_found = xyes)
 	if test x$gnome_cv_orbit_found = xyes; then
 		$1
 		GNORBA_CFLAGS="`gnome-config --cflags gnorba gnomeui`"
