@@ -3200,6 +3200,7 @@ static int celestia_show(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setRenderFlags(r->getRenderFlags() | flags);
+    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -3223,6 +3224,7 @@ static int celestia_hide(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setRenderFlags(r->getRenderFlags() & ~flags);
+    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -3281,6 +3283,8 @@ static int celestia_setrenderflags(lua_State* l)
         lua_pop(l,1);
     }
     appCore->getRenderer()->setRenderFlags(renderFlags);
+    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+
     return 0;
 }
 
@@ -3321,6 +3325,7 @@ static int celestia_showlabel(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setLabelMode(r->getLabelMode() | flags);
+    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
 
     return 0;
 }
@@ -3341,6 +3346,7 @@ static int celestia_hidelabel(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setLabelMode(r->getLabelMode() & ~flags);
+    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
 
     return 0;
 }
@@ -3395,6 +3401,8 @@ static int celestia_setlabelflags(lua_State* l)
         lua_pop(l,1);
     }
     appCore->getRenderer()->setLabelMode(labelFlags);
+    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
+
     return 0;
 }
 
@@ -3496,6 +3504,7 @@ static int celestia_setfaintestvisible(lua_State* l)
     {
         faintest = min(15.0f, max(1.0f, faintest));
         appCore->setFaintest(faintest);
+        appCore->notifyWatchers(CelestiaCore::FaintestChanged);
     }
     else
     {
@@ -3782,6 +3791,8 @@ static int celestia_setambient(lua_State* l)
 
     if (renderer != NULL)
         renderer->setAmbientLightLevel((float)ambientLightLevel);
+    appCore->notifyWatchers(CelestiaCore::AmbientLightChanged);
+
     return 0;
 }
 
@@ -3930,6 +3941,8 @@ static int celestia_setstarstyle(lua_State* l)
         {
             doError(l, "Invalid starstyle");
         }
+        appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+        
     }
     return 0;
 }
