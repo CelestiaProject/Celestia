@@ -742,6 +742,13 @@ Selection Universe::findPath(const string& s,
         if (ssys != NULL)
             worlds = ssys->getPlanets();
     }
+    else if (sel.getType() == Selection::Type_Location)
+    {
+        if (sel.location()->getParentBody() != NULL)
+        {
+            worlds = sel.location()->getParentBody()->getSatellites();
+        }
+    }
 
     while (worlds != NULL)
     {
@@ -757,6 +764,16 @@ Selection Universe::findPath(const string& s,
         Body* body = worlds->find(name);
         if (body == NULL)
         {
+            if (nextPos == string::npos)
+            {
+                if (worlds->getPrimaryBody() != NULL)
+                {
+                    Location* loc =
+                        worlds->getPrimaryBody()->findLocation(name);
+                    if (loc != NULL)
+                        return Selection(loc);
+                }
+            }
             return Selection();
         }
         else if (nextPos == string::npos)

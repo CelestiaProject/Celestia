@@ -15,6 +15,8 @@
 #include <celmath/vecmath.h>
 
 
+class Body;
+
 class Location
 {
  public:
@@ -38,6 +40,12 @@ class Location
 
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
+
+    void setParentBody(Body*);
+    Body* getParentBody() const;
+
+    Point3d getPlanetocentricPosition(double) const;
+    Point3d getHeliocentricPosition(double) const;
 
     static uint32 parseFeatureType(const std::string&);
 
@@ -75,6 +83,7 @@ class Location
     };
 
  private:
+    Body* parent;
     std::string name;
     Vec3f position;
     float size;
