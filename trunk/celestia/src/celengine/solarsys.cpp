@@ -8,11 +8,13 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+
 #ifndef _WIN32
-#include "config.h"
-#endif
-#include "celutil/debug.h"
-#include "celmath/mathlib.h"
+#include <config.h>
+#endif /* _WIN32 */
+
+#include <celutil/debug.h>
+#include <celmath/mathlib.h>
 #include "astro.h"
 #include "parser.h"
 #include "customorbit.h"

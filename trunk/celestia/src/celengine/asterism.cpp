@@ -8,9 +8,13 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include "config.h"
-#include "celutil/util.h"
-#include "celutil/debug.h"
+
+#ifndef _WIN32
+#include <config.h>
+#endif /* _WIN32 */
+
+#include <celutil/util.h>
+#include <celutil/debug.h>
 #include "parser.h"
 #include "asterism.h"
 

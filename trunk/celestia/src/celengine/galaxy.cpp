@@ -10,13 +10,13 @@
 #include <algorithm>
 #include <stdio.h>
 #include "celestia.h"
-#include "celmath/mathlib.h"
-#include "celmath/perlin.h"
+#include <celmath/mathlib.h>
+#include <celmath/perlin.h>
 #include "astro.h"
 #include "galaxy.h"
 #include "parser.h"
-#include "celutil/util.h"
-#include "celutil/debug.h"
+#include <celutil/util.h>
+#include <celutil/debug.h>
 
 using namespace std;
 

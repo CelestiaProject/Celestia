@@ -17,12 +17,12 @@
 #include <cstdio>
 
 #ifndef _WIN32
-#include "config.h"
-#endif
+#include <config.h>
+#endif /* _WIN32 */
 
-#include "celmath/vecmath.h"
-#include "celutil/filetype.h"
-#include "celutil/debug.h"
+#include <celmath/vecmath.h>
+#include <celutil/filetype.h>
+#include <celutil/debug.h>
 
 #include "gl.h"
 #include "glext.h"

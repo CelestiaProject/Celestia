@@ -10,12 +10,14 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
+
 #ifndef _WIN32
-#include "config.h"
-#endif
-#include "celutil/debug.h"
-#include "celmath/frustum.h"
-#include "celmath/perlin.h"
+#include <config.h>
+#endif /* _WIN32 */
+
+#include <celutil/debug.h>
+#include <celmath/frustum.h>
+#include <celmath/perlin.h>
 #include "gl.h"
 #include "astro.h"
 #include "glext.h"

@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "celestia.h"
-#include "celutil/debug.h"
+#include <celutil/debug.h>
 #include "texmanager.h"
 
 using namespace std;

@@ -13,7 +13,7 @@
 #if 0
 #ifndef _WIN32
 #include "../config.h"
-#endif
+#endif /* _WIN32 */
 #endif
 
 /* Use the system byteswap.h definitions if we have them */
