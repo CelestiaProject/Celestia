@@ -4137,6 +4137,9 @@ int main(int argc, char* argv[])
 	
     SetDebugVerbosity(verbose);
 
+	// Force number displays into C locale.
+	setlocale(LC_NUMERIC, "C");
+
     appCore = new CelestiaCore();
     if (appCore == NULL)
     {
