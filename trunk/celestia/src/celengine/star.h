@@ -49,6 +49,7 @@ class StarDetails
     void setModel(ResourceHandle);
     void setOrbit(Orbit*);
     void setOrbitBarycenter(Star*);
+    void computeOrbitalRadius();
     void setVisibility(bool);
     
     enum
@@ -203,6 +204,7 @@ public:
 
     void setDetails(StarDetails*);
     void setOrbitBarycenter(Star*);
+    void computeOrbitalRadius();
 
     // Accessor methods that delegate to StarDetails
     float getRadius() const;
