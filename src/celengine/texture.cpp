@@ -15,6 +15,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <cstdio>
+#include <cassert>
 
 #ifndef _WIN32
 #include <config.h>
@@ -99,7 +100,7 @@ static bool initialized = false;
 static bool compressionSupported = false;
 static bool clampToEdgeSupported = false;
 static bool autoMipMapSupported = false;
-
+static GLint maxTextureSize = 0;
 
 static void initTextureLoader()
 {
@@ -110,6 +111,8 @@ static void initTextureLoader()
     clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
 #endif // GL_VERSION_1_2
     autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    maxTextureSize = 512;
 
     initialized = true;
 }
@@ -120,12 +123,13 @@ Texture::Texture(int w, int h, int fmt, bool _cubeMap) :
     height(h),
     format(fmt),
     maxMipMapLevel(-1),
-    cubeMap(_cubeMap)
+    cubeMap(_cubeMap),
+    glNames(NULL)
 {
     cmap = NULL;
     cmapEntries = 0;
 
-    // assert(!cubeMap || height == width);
+    assert(!cubeMap || height == width);
 
     // Yuck . . .
     if (!initialized)
@@ -157,9 +161,27 @@ Texture::Texture(int w, int h, int fmt, bool _cubeMap) :
     }
 
     int faces = cubeMap ? 6 : 1;
-    pixels = new unsigned char[width * height * components * faces];
 
-    glName = 0;
+    // Determine the amount of texture splitting required.
+    int uSplit = width / maxTextureSize;
+    int vSplit = height / maxTextureSize;
+    if (uSplit <= 1 && vSplit <= 1)
+    {
+        // The texture is less than or equal to the maximum texture size,
+        // so no splitting is necessary.
+        split = 1;
+    }
+    else
+    {
+        // We require the level of horizontal and vertical splitting to
+        // be identical for now.  This is not ideal.
+        split = width / maxTextureSize;
+    }
+    glNames = new unsigned int[split * split];
+    for (int i = 0; i < split * split; i++)
+        glNames[i] = 0;
+
+    pixels = new unsigned char[width * height * components * faces];
 }
 
 
@@ -169,8 +191,15 @@ Texture::~Texture()
         delete[] pixels;
     if (cmap != NULL)
         delete[] cmap;
-    if (glName != 0)
-        glDeleteTextures(1, &glName);
+    if (glNames != NULL)
+    {
+        for (int i = 0; i < split * split; i++)
+        {
+            if (glNames[i] != 0)
+                glDeleteTextures(1, &glNames[i]);
+        }
+        delete[] glNames;
+    }
 }
 
 
@@ -180,11 +209,17 @@ void Texture::bindName(uint32 flags)
     bool compress = ((flags & CompressTexture) != 0) && compressionSupported;
     bool mipmap = ((flags & NoMipMaps) == 0);
     bool automipmap = ((flags & AutoMipMaps) != 0) && autoMipMapSupported && mipmap;
-
     if (pixels == NULL)
         return;
 
     GLenum textureType = GL_TEXTURE_2D;
+
+    if ((flags & AllowSplitting) == 0)
+        split = 1;
+
+    // Disable wrapping if the texture is split
+    if (split > 1)
+        wrap = false;
 
     // If we're not wrapping, use GL_CLAMP_TO_EDGE if it's available; we want
     // to ignore the border color.
@@ -195,19 +230,6 @@ void Texture::bindName(uint32 flags)
         textureType = GL_TEXTURE_CUBE_MAP_EXT;
         wrapMode = clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP;
     }
-
-    GLuint tn;
-    glGenTextures(1, &tn);
-    glBindTexture(textureType, tn);
-
-    glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapMode);
-    glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapMode);
-    glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER,
-                    mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-
-    if (automipmap)
-        glTexParameteri(textureType, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
     // compress = true;
     int internalFormat = 0;
@@ -258,37 +280,84 @@ void Texture::bindName(uint32 flags)
         textureTarget = (unsigned int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT;
     }
 
-    for (int face = 0; face < nFaces; face++)
+    int subtexWidth = width / split;
+    int subtexHeight = height / split;
+
+    unsigned char* subtexPixelBuffer = NULL;
+    unsigned char* pixelSource = NULL;
+    if (split > 1)
     {
-        if (mipmap && !automipmap)
+        subtexPixelBuffer = new unsigned char[subtexWidth * subtexHeight * components];
+        pixelSource = subtexPixelBuffer;
+    }
+    else
+    {
+        pixelSource = pixels;
+    }
+
+    for (int i = 0; i < split; i++)
+    {
+        for (int j = 0; j < split; j++)
         {
-            if (maxMipMapLevel > 0)
+            if (split > 1)
             {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL,
-                                maxMipMapLevel);
+                unsigned char* subtexPixels = pixels +
+                    (i * subtexHeight * width + j * subtexWidth) * components;
+                for (int y = 0; y < subtexHeight; y++)
+                {
+                    memcpy(subtexPixelBuffer + y * subtexWidth * components,
+                           subtexPixels + y * width * components,
+                           subtexWidth * components);
+                }
             }
-            gluBuild2DMipmaps((GLenum) (textureTarget + face),
-                              internalFormat,
-                              width, height,
-                              (GLenum) format,
-                              GL_UNSIGNED_BYTE,
-                              pixels + face * width * height * components);
-        }
-        else
-        {
-            glTexImage2D(GL_TEXTURE_2D,
-                         0,
-                         internalFormat,
-                         width, height,
-                         0,
-                         (GLenum) format,
-                         GL_UNSIGNED_BYTE,
-                         pixels + face * width * height * components);
+
+            GLuint tn;
+            glGenTextures(1, &tn);
+            glBindTexture(textureType, tn);
+            glNames[i * split + j] = tn;
+
+            glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapMode);
+            glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapMode);
+            glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER,
+                            mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+            
+            if (automipmap)
+                glTexParameteri(textureType, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+
+            for (int face = 0; face < nFaces; face++)
+            {
+                if (mipmap && !automipmap)
+                {
+                    if (maxMipMapLevel > 0)
+                    {
+                        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL,
+                                        maxMipMapLevel);
+                    }
+                    gluBuild2DMipmaps((GLenum) (textureTarget + face),
+                                      internalFormat,
+                                      subtexWidth, subtexHeight,
+                                      (GLenum) format,
+                                      GL_UNSIGNED_BYTE,
+                                      pixelSource + face * width * height * components);
+                }
+                else
+                {
+                    glTexImage2D(GL_TEXTURE_2D,
+                                 0,
+                                 internalFormat,
+                                 subtexWidth, subtexHeight,
+                                 0,
+                                 (GLenum) format,
+                                 GL_UNSIGNED_BYTE,
+                                 pixelSource + face * width * height * components);
+                }
+            }
         }
     }
-    
-    glName = tn;
 
+    if (subtexPixelBuffer != NULL)
+        delete[] subtexPixelBuffer;
     delete[] pixels;
     pixels = NULL;
 }
@@ -296,14 +365,31 @@ void Texture::bindName(uint32 flags)
 
 unsigned int Texture::getName()
 {
-    return glName;
+    assert(glNames != NULL);
+    return glNames[0];
+}
+
+unsigned int Texture::getName(int u, int v)
+{
+    assert(glNames != NULL);
+    assert(u < split && v < split);
+    return glNames[v * split + u];
 }
 
 
 void Texture::bind() const
 {
+    assert(glNames != NULL);
     glBindTexture(cubeMap ? GL_TEXTURE_CUBE_MAP_EXT : GL_TEXTURE_2D,
-                  glName);
+                  glNames[0]);
+}
+
+void Texture::bind(int u, int v) const
+{
+    assert(glNames != NULL);
+    assert(u < split && v < split);
+    glBindTexture(cubeMap ? GL_TEXTURE_CUBE_MAP_EXT : GL_TEXTURE_2D,
+                  glNames[v * split + u]);
 }
 
 
@@ -315,6 +401,35 @@ int Texture::getWidth() const
 int Texture::getHeight() const
 {
     return height;
+}
+
+int Texture::getComponents() const
+{
+    return components;
+}
+
+bool Texture::hasAlpha() const
+{
+    switch (format)
+    {
+    case GL_RGBA:
+    case GL_ALPHA:
+    case GL_LUMINANCE_ALPHA:
+        return true;
+    default:
+        return false;
+    }
+}
+
+
+int Texture::getUSubtextures() const
+{
+    return split;
+}
+
+int Texture::getVSubtextures() const
+{
+    return split;
 }
 
 
@@ -1043,8 +1158,8 @@ Texture* CreateNormalizationCubeMap(int size)
     if (tex == NULL)
         return NULL;
 
-    glGenTextures(1, &tex->glName);
-    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, tex->glName);
+    glGenTextures(1, &tex->glNames[0]);
+    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, tex->glNames[0]);
     
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

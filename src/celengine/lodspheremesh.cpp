@@ -101,15 +101,17 @@ static Point3f spherePoint(int theta, int phi)
 
 
 void LODSphereMesh::render(const Frustum& frustum,
-                           float lodBias)
+                           float lodBias,
+                           Texture* tex)
 {
-    render(Mesh::Normals | Mesh::TexCoords0, frustum, lodBias);
+    render(Mesh::Normals | Mesh::TexCoords0, frustum, lodBias, tex);
 }
 
 
 void LODSphereMesh::render(unsigned int attributes,
                            const Frustum& frustum,
-                           float lodBias)
+                           float lodBias,
+                           Texture* tex)
 {
     Point3f fp[8];
 
@@ -130,7 +132,7 @@ void LODSphereMesh::render(unsigned int attributes,
         if (lod > maxDivisions)
             lod = maxDivisions;
     }
-    
+
     int step = maxDivisions / lod;
     int thetaExtent = maxDivisions;
     int phiExtent = thetaExtent / 2;
@@ -142,6 +144,20 @@ void LODSphereMesh::render(unsigned int attributes,
         thetaExtent /= split;
         phiExtent /= split;
     }
+
+    // If the texture is split into subtextures, we may have to extra
+    // patches, since there can be at most one subtexture per per patch.
+    int minSplit = (tex == NULL) ? 1 : tex->getUSubtextures();
+    if (split < minSplit)
+    {
+        thetaExtent /= (minSplit / split);
+        phiExtent /= (minSplit / split);
+        split = minSplit;
+    }
+
+    // Set the current texture
+    texture0 = tex;
+    subtexture0 = 0;
 
     // Set up the mesh vertices 
     int nRings = phiExtent / step;
@@ -231,61 +247,6 @@ void LODSphereMesh::render(unsigned int attributes,
             cout << "x: " << fp[foo].x << "  y: " << fp[foo].y << "  z: " << fp[foo].z << '\n';
 #endif
 
-#if 0
-        for (int phi = 0; phi < split; phi++)
-        {
-            for (int theta = 0; theta < split; theta++)
-            {
-                int phi0 = phi * phiExtent;
-                int theta0 = theta * thetaExtent;
-
-                // Compute the plane separating this section of the sphere from
-                // the rest of the sphere.  If the view frustum lies entirely
-                // on the side of the plane that does not contain the sphere
-                // patch, we cull the patch.
-                Point3f p0 = spherePoint(theta0, phi0);
-                Point3f p1 = spherePoint(theta0 + thetaExtent, phi0);
-                Point3f p2 = spherePoint(theta0 + thetaExtent,
-                                         phi0 + phiExtent);
-                Point3f p3 = spherePoint(theta0, phi0 + phiExtent);
-                Vec3f v0 = p1 - p0;
-                Vec3f v2 = p3 - p2;
-                Vec3f normal;
-                if (v0.lengthSquared() > v2.lengthSquared())
-                    normal = (p0 - p3) ^ v0;
-                else
-                    normal = (p2 - p1) ^ v2;
-
-                // If the normal is near zero length, something's going wrong
-                assert(normal.length() > 1.0e-6);
-                normal.normalize();
-                Planef separatingPlane(normal, p0);
-
-                bool outside = true;
-                for (int i = 0; i < 8; i++)
-                {
-                    if (separatingPlane.distanceTo(fp[i]) > 0.0f)
-                    {
-                        outside = false;
-                        break;
-                    }
-                }
-
-                if (!outside)
-                {
-                    renderSection(phi0, theta0,
-                                  thetaExtent,
-                                  step, attributes);
-                    nQuads += (thetaExtent / step) * (thetaExtent / step) / 2;
-                }
-                else
-                {
-                    reject++;
-                }
-            }
-        }
-#endif
-
         int nPatches = 0;
         {
             int extent = maxDivisions / 2;
@@ -303,7 +264,6 @@ void LODSphereMesh::render(unsigned int attributes,
                 }
             }
         }
-
         // cout << "Rendered " << nPatches << " of " << square(split) << " patches\n";
     }
 
@@ -312,7 +272,7 @@ void LODSphereMesh::render(unsigned int attributes,
         glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
     }
 
-#if 0
+#if SHOW_FRUSTUM
     // Debugging code for visualizing the frustum.
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -445,10 +405,44 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
     int phi1 = phi0 + phiExtent;
     float du = (float) 1.0f / thetaDivisions;
     float dv = (float) 1.0f / phiDivisions;
+    float u0 = 1.0f;
+    float v0 = 1.0f;
     int n3 = 0;
     int n2 = 0;
 
-    
+    // Set the current texture.  This is necessary because the texture
+    // may be split into subtextures.
+    if (texture0 != NULL)
+    {
+        int texSplit = texture0->getUSubtextures();
+        int patchSplit = maxDivisions / extent;
+        assert(patchSplit >= texSplit);
+
+        int u = theta0 / thetaExtent;
+        int v = phi0 / phiExtent;
+        int patchesPerSubtex = patchSplit / texSplit;
+
+        du *= texSplit;
+        dv *= texSplit;
+        u0 = 1.0f - (float) (u % patchesPerSubtex) / (float) patchesPerSubtex;
+        v0 = 1.0f - (float) (v % patchesPerSubtex) / (float) patchesPerSubtex;
+        u0 += theta0 * du;
+        v0 += phi0 * dv;
+
+        u /= patchesPerSubtex;
+        v /= patchesPerSubtex;
+
+        unsigned int tn = texture0->getName(texSplit - u - 1,
+                                            texSplit - v - 1);
+        if (tn != subtexture0)
+        {
+            // We track the current texture to avoid unnecessary and costly
+            // texture state changes.
+            glBindTexture(GL_TEXTURE_2D, tn);
+            subtexture0 = tn;
+        }
+    }
+
     for (int phi = phi0; phi <= phi1; phi += step)
     {
         float cphi = cosPhi[phi];
@@ -464,8 +458,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
                 vertices[n3]      = cphi * ctheta;
                 vertices[n3 + 1]  = sphi;
                 vertices[n3 + 2]  = cphi * stheta;
-                texCoords[n2]     = 1.0f - theta * du;
-                texCoords[n2 + 1] = 1.0f - phi * dv;
+                texCoords[n2]     = u0 - theta * du;
+                texCoords[n2 + 1] = v0 - phi * dv;
 
                 // Compute the tangent--required for bump mapping
                 float tx = sphi * stheta;
@@ -489,8 +483,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
                 vertices[n3]      = cphi * ctheta;
                 vertices[n3 + 1]  = sphi;
                 vertices[n3 + 2]  = cphi * stheta;
-                texCoords[n2]     = 1.0f - theta * du;
-                texCoords[n2 + 1] = 1.0f - phi * dv;
+                texCoords[n2]     = u0 - theta * du;
+                texCoords[n2 + 1] = v0 - phi * dv;
                 n2 += 2;
                 n3 += 3;
             }
