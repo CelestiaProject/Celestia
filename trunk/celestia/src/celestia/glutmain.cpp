@@ -456,11 +456,12 @@ int main(int argc, char* argv[])
     ready = false;
 
     char c;
-    while ((c = getopt(argc, argv, "v::")) > -1)
+	int startfile = 0;
+    while ((c = getopt(argc, argv, "v::f")) > -1)
     {
         if (c == '?')
         {
-            cout << "Usage: celestia [-v]\n";
+            cout << "Usage: celestia [-v] [-f <filename>]\n";
             exit(1);
         }
         else if (c == 'v')
@@ -470,6 +471,9 @@ int main(int argc, char* argv[])
             else
                 SetDebugVerbosity(0);
         }
+		else if (c == 'f') {
+			startfile = 1;
+		}
     }
 
     appCore = new CelestiaCore();
@@ -524,6 +528,16 @@ int main(int argc, char* argv[])
     appCore->setTimeZoneBias(-timezone);
     appCore->setTimeZoneName(tzname[daylight?0:1]);
     #endif
+
+	if (startfile == 1) {
+		if (argv[argc - 1][0] == '-') {
+			cout << "Missing Filename.\n";
+			return 1;
+		}
+	
+		cout << "*** Using CEL File: " << argv[argc - 1] << endl;
+		appCore->runScript(argv[argc - 1]);
+	}
 
     ready = true;
     glutMainLoop();
