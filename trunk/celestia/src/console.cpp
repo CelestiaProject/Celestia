@@ -21,11 +21,7 @@ Console::Console(int rows, int cols) :
     nColumns(cols),
     cursorRow(0),
     cursorColumn(0),
-    font(NULL),
-    xscale(1.0f),
-    yscale(1.0f),
-    top(0.0f),
-    left(0.0f)
+    font(NULL)
 {
     text = new char*[nRows];
     for (int i = 0; i < nRows; i++)
@@ -58,20 +54,6 @@ void Console::setFont(TexFont* _font)
 TexFont* Console::getFont()
 {
     return font;
-}
-
-
-void Console::setScale(float _xscale, float _yscale)
-{
-    xscale = _xscale;
-    yscale = _yscale;
-}
-
-
-void Console::setOrigin(float _left, float _top)
-{
-    left = _left;
-    top = _top;
 }
 
 
@@ -198,32 +180,15 @@ void Console::printf(char* format, ...)
 
 void Console::render()
 {
-    float width = 1.8f;
-    float height = 1.8f;
-    float aspectRatio = 4.0f / 3.0f;
-    float charHeight = height / (float) nRows;
-    float charWidth = charHeight / aspectRatio / 2.0f;
-    float scale = 0.005f;
-
     if (font == NULL)
         return;
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, font->texobj);
 
-    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glTranslatef(-1.0f + left * 2.0f, 0.9f - top * 2.0f, -1.0f);
-    glScalef(xscale, yscale, 1);
-
     for (int i = 0; i < nRows; i++)
     {
-        float x = left;
         char* s = text[i];
 
         glPushMatrix();
@@ -235,11 +200,7 @@ void Console::render()
         glPopMatrix();
         glTranslatef(0, -(1 + font->max_ascent + font->max_descent), 0);
     }
-
     glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
 }
 
 

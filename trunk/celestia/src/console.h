@@ -49,9 +49,6 @@ class Console : public std::ostream
     void setFont(TexFont*);
     TexFont* getFont();
 
-    void setOrigin(float, float);
-    void setScale(float, float);
-
     void render();
     void clear();
     void home();

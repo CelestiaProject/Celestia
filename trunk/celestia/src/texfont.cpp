@@ -261,6 +261,7 @@ TexFont *txfLoadFont(char *filename)
 
 	switch (format) {
 	case TXF_FORMAT_BYTE:
+            printf("TXT_FORMAT_BYTE\n");
 		if (useLuminanceAlpha) {
 			unsigned char *orig;
 
@@ -297,6 +298,7 @@ TexFont *txfLoadFont(char *filename)
 		}
 		break;
 	case TXF_FORMAT_BITMAP:
+            printf("TXF_FORMAT_BITMAP\n");
 		width = txf->tex_width;
 		height = txf->tex_height;
 		stride = (width + 7) >> 3;
@@ -388,6 +390,8 @@ txfEstablishTexture(TexFont * txf, GLuint texobj, GLboolean setupMipmaps)
 							  GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
 							  txf->teximage);
 		} else {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA,
 						 txf->tex_width, txf->tex_height, 0,
 						 GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
@@ -403,6 +407,8 @@ txfEstablishTexture(TexFont * txf, GLuint texobj, GLboolean setupMipmaps)
 							  GL_LUMINANCE, GL_UNSIGNED_BYTE,
 							  txf->teximage);
 		} else {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_INTENSITY4,
 						 txf->tex_width, txf->tex_height, 0,
 						 GL_LUMINANCE, GL_UNSIGNED_BYTE, txf->teximage);
@@ -489,10 +495,10 @@ void txfRenderGlyph(TexFont * txf, int c)
 	glBegin(GL_QUADS);
         glTexCoord2fv(tgvi->t0);
 	// glVertex2sv(tgvi->v0);
-        glVertex2f(tgvi->v0[0], tgvi->v0[1] - 0.1f);
+        glVertex2f(tgvi->v0[0], tgvi->v0[1]);
         glTexCoord2fv(tgvi->t1);
 	// glVertex2sv(tgvi->v1);
-        glVertex2f(tgvi->v1[0], tgvi->v1[1] - 0.1f);
+        glVertex2f(tgvi->v1[0], tgvi->v1[1]);
         glTexCoord2fv(tgvi->t2);
 	glVertex2sv(tgvi->v2);
 	glTexCoord2fv(tgvi->t3);
