@@ -9,7 +9,6 @@
 #include <string.h>
 #include <cstdarg>
 #include "gl.h"
-#include "texfont.h"
 #include "console.h"
 
 using namespace std;
@@ -45,13 +44,13 @@ Console::~Console()
 }
 
 
-void Console::setFont(TexFont* _font)
+void Console::setFont(TextureFont* _font)
 {
     font = _font;
 }
 
 
-TexFont* Console::getFont()
+TextureFont* Console::getFont()
 {
     return font;
 }
@@ -184,7 +183,7 @@ void Console::render()
         return;
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, font->texobj);
+    glBindTexture(GL_TEXTURE_2D, font->getTextureName());
 
     glPushMatrix();
     for (int i = 0; i < nRows; i++)
@@ -194,11 +193,11 @@ void Console::render()
         glPushMatrix();
         while (*s != '\0')
         {
-            txfRenderGlyph(font, *s);
+            font->render((int) *s);
             s++;
         }
         glPopMatrix();
-        glTranslatef(0, -(1 + font->max_ascent + font->max_descent), 0);
+        glTranslatef(0, -(1 + font->getHeight()), 0);
     }
     glPopMatrix();
 }
