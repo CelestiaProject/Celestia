@@ -182,7 +182,7 @@ void logChunk(uint16 chunkType, int chunkSize)
     default:
         break;
     }
-
+#if 0
     indent();
 
     if (name == NULL)
@@ -196,6 +196,7 @@ void logChunk(uint16 chunkType, int chunkSize)
     }
 
     cout.flush();
+#endif
 }
 
 
@@ -526,7 +527,7 @@ bool processSceneChunk(ifstream& in,
 
         M3DModel* model = new M3DModel();
         model->setName(name);
-        indent(); cout << "  [" << name << "]\n";
+        // indent(); cout << "  [" << name << "]\n";
         read3DSChunks(in,
                       contentSize - (name.length() + 1),
                       processModelChunk,
