@@ -284,7 +284,7 @@ CelestiaCore::CelestiaCore() :
     messageDuration(0.0),
     typedText(""),
     typedTextCompletionIdx(-1),
-    textEnterMode(false),
+    textEnterMode(KbNormal),
     hudDetail(1),
     wireframe(false),
     editMode(false),
@@ -1002,7 +1002,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
     // Only process alphanumeric keys if we're not in text enter mode
     if (islower(key))
         key = toupper(key);
-    if (!(key >= 'A' && key <= 'Z' && textEnterMode))
+    if (!(key >= 'A' && key <= 'Z' && (textEnterMode != KbNormal) ))
     {
         if (modifiers & ShiftKey)
             shiftKeysPressed[key] = true;
@@ -1024,7 +1024,17 @@ void CelestiaCore::charEntered(char c)
 {
     Observer* observer = sim->getActiveObserver();
 
-    if (textEnterMode)
+    if (celxScript != NULL && (textEnterMode & KbPassToScript))
+    {
+        if (c != '\033' && celxScript->charEntered(c))
+        {
+            return;
+        }
+        // TODO: What to do with AutoComplete-activation while
+        // in PassToScript-mode?
+    }
+
+    if (textEnterMode & KbAutoComplete)
     {
         if ( c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
         {
@@ -1095,10 +1105,7 @@ void CelestiaCore::charEntered(char c)
         }
         else if (c == '\033') // ESC
         {
-            typedText = "";
-            textEnterMode = false;
-            typedTextCompletion.clear();
-            typedTextCompletionIdx = -1;
+            setTextEnterMode(textEnterMode & ~KbAutoComplete);
         }
         else if (c == '\n' || c == '\r')
         {
@@ -1112,9 +1119,7 @@ void CelestiaCore::charEntered(char c)
                 }
                 typedText = "";
             }
-            textEnterMode = false;
-            typedTextCompletion.clear();
-            typedTextCompletionIdx = -1;
+            setTextEnterMode(textEnterMode & ~KbAutoComplete);
         }
         return;
     }
@@ -1134,7 +1139,7 @@ void CelestiaCore::charEntered(char c)
 
     case '\n':
     case '\r':
-        textEnterMode = true;
+        setTextEnterMode(textEnterMode | KbAutoComplete);
         break;
 
     case '\b':
@@ -1320,9 +1325,9 @@ void CelestiaCore::charEntered(char c)
     case '\033': // Escape
         cancelScript();
         addToHistory();
-        if (textEnterMode == true)
+        if (textEnterMode != KbNormal)
         {
-            textEnterMode = false;
+            setTextEnterMode(KbNormal);
         }
         else
         {
@@ -3038,7 +3043,7 @@ void CelestiaCore::renderOverlay()
     }
 
     // Text input
-    if (textEnterMode)
+    if (textEnterMode & KbAutoComplete)
     {
         overlay->setFont(titleFont);
 //        glPushMatrix();
@@ -3698,6 +3703,22 @@ bool CelestiaCore::getLightDelayActive() const
 void CelestiaCore::setLightDelayActive(bool lightDelayActive)
 {
     lightTravelFlag = lightDelayActive;
+}
+
+void CelestiaCore::setTextEnterMode(int mode)
+{
+    cout << "setTextEnterMode("<<mode<<")\n";
+    if (mode != textEnterMode)
+    {
+        if ((mode & KbAutoComplete) != (textEnterMode & KbAutoComplete))
+        {
+            typedText = "";
+            typedTextCompletion.clear();
+            typedTextCompletionIdx = -1;
+        }
+        textEnterMode = mode;
+        notifyWatchers(TextEnterModeChanged);
+    }
 }
 
 int CelestiaCore::getTextEnterMode() const
