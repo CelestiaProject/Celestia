@@ -687,7 +687,7 @@ void CelestiaCore::charEntered(char c)
 
     case '*':
         addToHistory();
-        sim->setObserverOrientation(Quatf(1));
+	sim->reverseObserverOrientation();
         break;
 
     case ',':
