@@ -316,7 +316,6 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == MiddleButton)
 	{
-            printf("Middle button!\n");
             if (renderer->getFieldOfView() != stdFOV)
 	    { 
                 oldFOV = renderer->getFieldOfView();	    
