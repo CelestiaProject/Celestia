@@ -64,7 +64,7 @@ F1 : Stop
 F2 : Set velocity to 1 km/s
 F3 : Set velocity to 1,000 km/s
 F4 : Set velocity to speed of light
-F5 : Set velocity to 1,000,000 km/s
+F5 : Set velocity to 10x the speed of light.
 F6 : Set velocity to 1 AU/s
 F7 : Set velocity to 1 ly/s
 A  : Increase velocity
