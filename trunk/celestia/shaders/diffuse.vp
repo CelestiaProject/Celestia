@@ -22,8 +22,8 @@ DP4   o[HPOS].w, c[3], v[OPOS];
 DP3   R2, v[NRML], c[16];
 # Clamp the diffuse component to zero
 MAX   R2, R2, c[40].xxxx;
-ADD   R2, c[40].y, -R2;
-MAD   R2, R2, -R2, c[40].y;
+#ADD   R2, c[40].y, -R2;
+#MAD   R2, R2, -R2, c[40].y;
 
 # Output the texture
 MOV   o[TEX0], v[TEX0];
