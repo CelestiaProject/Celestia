@@ -1,0 +1,12 @@
+!!VP1.0
+
+# c[0]..c[3] contains the concatenation of the modelview and projection matrices.
+
+# Transform the vertex by the modelview matrix
+DP4   o[HPOS].x, c[0], v[OPOS];
+DP4   o[HPOS].y, c[1], v[OPOS];
+DP4   o[HPOS].z, c[2], v[OPOS];
+DP4   o[HPOS].w, c[3], v[OPOS];
+
+END
+
