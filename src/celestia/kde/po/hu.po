@@ -1,0 +1,1009 @@
+# translation of hu.po to Hungarian
+# translation of celestia-kde.po to Hungarian
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Aron Novak <aaron@szentimre.hu>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hu\n"
+"POT-Creation-Date: 2003-12-28 18:28+0100\n"
+"PO-Revision-Date: 2005-02-27 15:44+0100\n"
+"Last-Translator: Aron Novak <aaron@szentimre.hu>\n"
+"Language-Team: Hungarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.3.1\n"
+
+#: rc.cpp:1
+msgid "&Navigation"
+msgstr "%Navigálás"
+
+#: rc.cpp:3
+msgid "Objects"
+msgstr "Objektumok"
+
+#: rc.cpp:4 kdepreferencesdialog.cpp:149
+msgid "Labels"
+msgstr "Címkék"
+
+#: rc.cpp:5
+msgid "OpenGL Render Path"
+msgstr "OpenGL megjelenítési útvonal"
+
+#: rc.cpp:6
+msgid "Time"
+msgstr "Idő"
+
+#: rc.cpp:7
+msgid "MultiView"
+msgstr "TöbbNézet"
+
+#: rc.cpp:9 kdepreferencesdialog.cpp:388
+msgid "Now"
+msgstr "Most"
+
+#: celestialbrowser.cpp:27 kdeapp.cpp:395 rc.cpp:1
+msgid "Celestial Browser"
+msgstr "Égi objektumok"
+
+#: celestialbrowser.cpp:191 rc.cpp:16
+msgid "Planet"
+msgstr "Bolygó"
+
+#: celestialbrowser.cpp:194 rc.cpp:17
+msgid "Moon"
+msgstr "Hold"
+
+#: celestialbrowser.cpp:197
+msgid "Asteroid"
+msgstr "Kisbolygó"
+
+#: celestialbrowser.cpp:200
+msgid "Comet"
+msgstr "Üstökös"
+
+#: celestialbrowser.cpp:203
+msgid "Spacecraft"
+msgstr "Űrhajó"
+
+#: celestialbrowser.cpp:207
+msgid "-"
+msgstr "-"
+
+#: eclipsefinderdlg.cpp:20 kdeapp.cpp:396 rc.cpp:15
+msgid "Eclipse Finder"
+msgstr "Fogyatkozáskereső"
+
+#: eclipsefinderdlg.cpp:117 selectionpopup.cpp:310
+msgid "&Goto"
+msgstr "&Ugrás"
+
+#: kcelbookmarkmenu.cpp:171
+msgid "Add a bookmark for the current document"
+msgstr "A jelenlegi dokumentumra mutató könyvjelző hozzáadása"
+
+#: kcelbookmarkmenu.cpp:181
+msgid "Add &Relative Bookmark"
+msgstr "&Viszonylagos könyvjelző hozzáadása"
+
+#: kcelbookmarkmenu.cpp:188
+msgid "Add a relative bookmark for the current document"
+msgstr "A jelenlegi dokumentumra mutató viszonylagos könyvjelző hozzáadása"
+
+#: kcelbookmarkmenu.cpp:196
+msgid "Add &Settings Bookmark"
+msgstr "&Beállítás könyvjelző hozzáadása"
+
+#: kcelbookmarkmenu.cpp:203
+msgid "Add a settings bookmark for the current document"
+msgstr "A jelenlegi dokumentumra mutató beállítás könyvjelző hozzáadása"
+
+#: kcelbookmarkmenu.cpp:214
+msgid "Edit your bookmark collection in a separate window"
+msgstr "Könyvjelzők szerkesztése külön ablakban"
+
+#: kcelbookmarkmenu.cpp:220
+msgid "&New Folder..."
+msgstr "%Új mappa..."
+
+#: kcelbookmarkmenu.cpp:227
+msgid "Create a new bookmark folder in this menu"
+msgstr "Új könyvjelzőmappa létrehozása ebben a menüben"
+
+#: kcelbookmarkmenu.cpp:307 kcelbookmarkmenu.cpp:354 kcelbookmarkmenu.cpp:401
+msgid "Can't add bookmark with empty URL"
+msgstr "Nem lehet üres URL-lel könyvjelzőt létrehozni"
+
+#: kdeapp.cpp:310
+msgid "Go to &URL..."
+msgstr "Ugrás az &URL-re..."
+
+#: kdeapp.cpp:311
+msgid "Go to &Long/Lat..."
+msgstr "Ugrás a Hossz/Szé&l..."
+
+#: kdeapp.cpp:313
+msgid "&Back"
+msgstr "&Vissza"
+
+#: kdeapp.cpp:316
+msgid "&Forward"
+msgstr "&Előre"
+
+#: kdeapp.cpp:323
+msgid "Home"
+msgstr "Otthon"
+
+#: kdeapp.cpp:330
+msgid "Bookmarks"
+msgstr "Könyvjelzők"
+
+#: kdeapp.cpp:339
+msgid "Full Screen"
+msgstr "Tejles képernyő"
+
+#: kdeapp.cpp:340
+msgid "Copy URL"
+msgstr "URL másolása"
+
+#: kdeapp.cpp:343
+msgid "Set Time..."
+msgstr "Idő beállítása..."
+
+#: kdeapp.cpp:344
+msgid "Set Time to Now"
+msgstr "Pillanatnyi időre állítás"
+
+#: kdeapp.cpp:345
+msgid "Accelerate Time"
+msgstr "Idő gyorsítása"
+
+#: kdeapp.cpp:346
+msgid "Decelerate Time"
+msgstr "Idő lassítása"
+
+#: kdeapp.cpp:347
+msgid "Pause Time"
+msgstr "Idő megállítása"
+
+#: kdeapp.cpp:348
+msgid "Reverse Time"
+msgstr "Idő visszaállítása"
+
+#: kdeapp.cpp:350
+msgid "Split View Vertically"
+msgstr "Nézet vízszintes felosztása"
+
+#: kdeapp.cpp:351
+msgid "Split View Horizontally"
+msgstr "Nézet függőleges felosztása"
+
+#: kdeapp.cpp:352
+msgid "Cycle View"
+msgstr "Kör nézet"
+
+#: kdeapp.cpp:353
+msgid "Single View"
+msgstr "Egyablakos nézet"
+
+#: kdeapp.cpp:354
+msgid "Delete View"
+msgstr "Nézet törlése"
+
+#: kdeapp.cpp:355
+msgid "Frames Visible"
+msgstr "Látható keret"
+
+#: kdeapp.cpp:368
+msgid "Active Frame Visible"
+msgstr "Aktív nézet kerete látható"
+
+#: kdeapp.cpp:380
+msgid "Synchronize Time"
+msgstr "Idő szinkronizálása"
+
+#: kdeapp.cpp:392
+msgid "Alt-Azimuth Mode"
+msgstr "Alt-Aizmuth mód"
+
+#: kdeapp.cpp:393
+msgid "Go To Surface"
+msgstr "Ugrás a felszínre"
+
+#: kdeapp.cpp:421
+msgid "Show Stars"
+msgstr "Csillagok mutatása"
+
+#: kdeapp.cpp:424
+msgid "Show Planets"
+msgstr "Bolygók mutatása"
+
+#: kdeapp.cpp:427
+msgid "Show Galaxies"
+msgstr "Galaxisok mutatása"
+
+#: kdeapp.cpp:430
+msgid "Show Constellations"
+msgstr "Csillagképek mutatása"
+
+#: kdeapp.cpp:433
+msgid "Show CloudMaps"
+msgstr "Felhőtérképek mutatása"
+
+#: kdeapp.cpp:436
+msgid "Show Orbits"
+msgstr "Pályák mutatása"
+
+#: kdeapp.cpp:439
+msgid "Show Asteroid Orbits"
+msgstr "Kisbolygópályák mutatása"
+
+#: kdeapp.cpp:442
+msgid "Show Comet Orbits"
+msgstr "Üstököspályák mutatása"
+
+#: kdeapp.cpp:445
+msgid "Show Moon Orbits"
+msgstr "Holdpályák mutatása"
+
+#: kdeapp.cpp:448
+msgid "Show Planet Orbits"
+msgstr "Bolygópályák mutatása"
+
+#: kdeapp.cpp:451
+msgid "Show Spacecraft Orbits"
+msgstr "Űrhajópályák mutatása"
+
+#: kdeapp.cpp:454
+msgid "Show Celestial Grid"
+msgstr "Égi háló mutatása"
+
+#: kdeapp.cpp:457
+msgid "Show Night Side Lights"
+msgstr "Éjszakai oldal fényeinek mutatása"
+
+#: kdeapp.cpp:460
+msgid "Show Markers"
+msgstr "Jelölők mutatása"
+
+#: kdeapp.cpp:463
+msgid "Show Atmospheres"
+msgstr "Légkör mutatása"
+
+#: kdeapp.cpp:466
+msgid "Show Smooth Orbit Lines"
+msgstr "Sima pályavonalak mutatása"
+
+#: kdeapp.cpp:469
+msgid "Show Eclipse Shadows"
+msgstr "Fogyatkozás árnyékainak mutatása"
+
+#: kdeapp.cpp:472
+msgid "Cycle Star Mode"
+msgstr "Csillagkörüli mód"
+
+#: kdeapp.cpp:474
+msgid "Show Ring Shadows"
+msgstr "Gyűrűárnyékok mutatása"
+
+#: kdeapp.cpp:477
+msgid "Show Boundaries"
+msgstr "Határok mutatása"
+
+#: kdeapp.cpp:480 kdepreferencesdialog.cpp:128
+msgid "Auto Magnitudes"
+msgstr "Önműködő fényesség"
+
+#: kdeapp.cpp:483
+msgid "Show Comet Tails"
+msgstr "Üstököscsóvák mutatása"
+
+#: kdeapp.cpp:486
+msgid "Show Star Labels"
+msgstr "Csillagok címkéinek mutatása"
+
+#: kdeapp.cpp:491
+msgid "Show Planet Labels"
+msgstr "Bolygók címkéinek mutatása"
+
+#: kdeapp.cpp:494
+msgid "Show Moon Labels"
+msgstr "Holdak címkéinek mutatása"
+
+#: kdeapp.cpp:497
+msgid "Show Comet Labels"
+msgstr "Üstökösök címkéinek mutatása"
+
+#: kdeapp.cpp:500
+msgid "Show Constellation Labels"
+msgstr "Csillagképek címkéinek mutatása"
+
+#: kdeapp.cpp:503
+msgid "Show Galaxy Labels"
+msgstr "Galaxisok címkéinek mutatása"
+
+#: kdeapp.cpp:506
+msgid "Show Asteroid Labels"
+msgstr "Kisbolygók címkéinek mutatása"
+
+#: kdeapp.cpp:509
+msgid "Show Spacecraft Labels"
+msgstr "Űrhajók címkéinek mutatása"
+
+#: kdeapp.cpp:512
+msgid "Show Location Labels"
+msgstr "Helyek címkéinek mutatása"
+
+#: kdeapp.cpp:515
+msgid "Display Local Time"
+msgstr "Helyi idő megjelenítése"
+
+#: kdeapp.cpp:520
+msgid "Show City Locations"
+msgstr "Városok helyeinek mutatása"
+
+#: kdeapp.cpp:523
+msgid "Show Observatory Locations"
+msgstr "Csillagvizsgálók mutatása"
+
+#: kdeapp.cpp:526
+msgid "Show Landing Sites Locations"
+msgstr "Leszállóhelyek mutatása"
+
+#: kdeapp.cpp:529
+msgid "Show Crater Locations"
+msgstr "Kráterek mutatása"
+
+#: kdeapp.cpp:532
+msgid "Show Mons Locations"
+msgstr "Hegyek mutatása"
+
+#: kdeapp.cpp:535
+msgid "Show Terra Locations"
+msgstr "Földterületek mutatása"
+
+#: kdeapp.cpp:538
+msgid "Show Vallis Locations"
+msgstr "Völgyek mutatása"
+
+#: kdeapp.cpp:541
+msgid "Show Mare Locations"
+msgstr "Tengerek mutatása"
+
+#: kdeapp.cpp:544
+msgid "Show Other Locations"
+msgstr "Egyebek mutatása"
+
+#: kdeapp.cpp:548
+msgid "Wireframe Mode"
+msgstr "Drótvázas mód"
+
+#: kdeapp.cpp:550
+msgid "Center on Orbit"
+msgstr "Középre a pályán"
+
+#: kdeapp.cpp:554 kdepreferencesdialog.cpp:431
+msgid "Basic"
+msgstr "Alap"
+
+#: kdeapp.cpp:556 kdepreferencesdialog.cpp:433
+msgid "Multitexture"
+msgstr "Multitextúra"
+
+#: kdeapp.cpp:558 kdepreferencesdialog.cpp:435
+msgid "NvCombiners"
+msgstr "NvCombiners"
+
+#: kdeapp.cpp:560 kdepreferencesdialog.cpp:437
+msgid "DOT3 ARBVP"
+msgstr "DOT3 ARBVP"
+
+#: kdeapp.cpp:562 kdepreferencesdialog.cpp:439
+msgid "NvCombiner NvVP"
+msgstr "NvCombiner NvVP"
+
+#: kdeapp.cpp:564 kdepreferencesdialog.cpp:441
+msgid "NvCombiner ARBVP"
+msgstr "NvCombiner ARBVP"
+
+#: kdeapp.cpp:566 kdepreferencesdialog.cpp:443
+msgid "ARBFP ARBVP"
+msgstr "ARBFP ARBVP"
+
+#: kdeapp.cpp:568 kdepreferencesdialog.cpp:445
+msgid "NV30"
+msgstr "NV30"
+
+#: kdeapp.cpp:570
+msgid "Cycle OpenGL Render Path"
+msgstr "Kör OpenGL megjelenítés"
+
+#: kdeapp.cpp:572
+msgid "Grab Image"
+msgstr "Kép elmentése"
+
+#: kdeapp.cpp:574
+msgid "OpenGL info"
+msgstr "OpenGL adatok"
+
+#: kdeapp.cpp:580
+msgid "Show Bookmark Toolbar"
+msgstr "Könyvjelző eszköztár mutatása"
+
+#: kdeapp.cpp:825
+msgid "OpenGL Info"
+msgstr "OpenGL adatok"
+
+#: kdeapp.cpp:1130 kdepreferencesdialog.cpp:328 kdepreferencesdialog.cpp:339
+msgid "UTC"
+msgstr "UTC"
+
+#: kdeapp.cpp:1215
+msgid "Enter URL"
+msgstr "URL megadása"
+
+#: kdeapp.cpp:1307
+msgid "Object: "
+msgstr "Objektum: "
+
+#: kdeapp.cpp:1312
+msgid "Longitude: "
+msgstr "Hosszúság: "
+
+#: kdeapp.cpp:1318
+msgid "East"
+msgstr "Kelet"
+
+#: kdeapp.cpp:1319
+msgid "West"
+msgstr "Nyugat"
+
+#: kdeapp.cpp:1321
+msgid "Latitude: "
+msgstr "Szélesség: "
+
+#: kdeapp.cpp:1327
+msgid "North"
+msgstr "Észak"
+
+#: kdeapp.cpp:1328
+msgid "South"
+msgstr "Dél"
+
+#: kdeapp.cpp:1330
+msgid "Altitude: "
+msgstr "Magasság: "
+
+#: kdeapp.cpp:1335
+msgid "km"
+msgstr "km"
+
+#: kdeapp.cpp:1405
+msgid "Celestia encountered an error while processing your script"
+msgstr "A Celestia hibát észlelt a parancsfájl feldolgozása közben"
+
+#: kdemain.cpp:25 kdemain.cpp:37
+msgid "Celestia"
+msgstr "Celestia"
+
+#: kdemain.cpp:30
+msgid "Start and go to url"
+msgstr "Indít és URL-re lép"
+
+#: kdepreferencesdialog.cpp:56
+msgid "Celestia Preferences"
+msgstr "Celestia beállítások"
+
+#: kdepreferencesdialog.cpp:62
+msgid "Rendering"
+msgstr "Megjelenítés"
+
+#: kdepreferencesdialog.cpp:70
+msgid "Show"
+msgstr "Mutat"
+
+#: kdepreferencesdialog.cpp:72 kdepreferencesdialog.cpp:152
+msgid "Stars"
+msgstr "Csillagok"
+
+#: kdepreferencesdialog.cpp:76 kdepreferencesdialog.cpp:162
+#: selectionpopup.cpp:385
+msgid "Planets"
+msgstr "Bolygók"
+
+#: kdepreferencesdialog.cpp:80 kdepreferencesdialog.cpp:190
+msgid "Galaxies"
+msgstr "Galaxisok"
+
+#: kdepreferencesdialog.cpp:84 kdepreferencesdialog.cpp:185
+msgid "Constellations"
+msgstr "Csillagképek"
+
+#: kdepreferencesdialog.cpp:88
+msgid "Clouds"
+msgstr "Felhők"
+
+#: kdepreferencesdialog.cpp:92 kdepreferencesdialog.cpp:147
+msgid "Orbits"
+msgstr "Pályák"
+
+#: kdepreferencesdialog.cpp:96
+msgid "Celestial Grid"
+msgstr "Égi háló"
+
+#: kdepreferencesdialog.cpp:100
+msgid "Night Side Lights"
+msgstr "Éjjeli oldal fényei"
+
+#: kdepreferencesdialog.cpp:104
+msgid "Markers"
+msgstr "Jelölők"
+
+#: kdepreferencesdialog.cpp:108
+msgid "Atmospheres"
+msgstr "Légkör"
+
+#: kdepreferencesdialog.cpp:112
+msgid "Smooth Orbit Lines"
+msgstr "Sima pályavonalak"
+
+#: kdepreferencesdialog.cpp:116
+msgid "Eclipse Shadows"
+msgstr "Fogyatkozás árnyékok"
+
+#: kdepreferencesdialog.cpp:120
+msgid "Ring Shadows"
+msgstr "Gyűrűárnyékok"
+
+#: kdepreferencesdialog.cpp:124
+msgid "Constellation Boundaries"
+msgstr "Csillagképek határa"
+
+#: kdepreferencesdialog.cpp:132
+msgid "Comet Tails"
+msgstr "Üstököscsóvák"
+
+#: kdepreferencesdialog.cpp:143
+msgid "Orbits / Labels"
+msgstr "Pályák / Címkék"
+
+#: kdepreferencesdialog.cpp:171
+msgid "Moons"
+msgstr "Holdak"
+
+#: kdepreferencesdialog.cpp:180
+msgid "Comets"
+msgstr "Üstökösök"
+
+#: kdepreferencesdialog.cpp:199
+msgid "Asteroids"
+msgstr "Kisbolygók"
+
+#: kdepreferencesdialog.cpp:208
+msgid "Spacecrafts"
+msgstr "Űrhajók"
+
+#: kdepreferencesdialog.cpp:213 kdepreferencesdialog.cpp:265
+msgid "Locations"
+msgstr "Helyek"
+
+#: kdepreferencesdialog.cpp:222
+msgid "Ambient Light"
+msgstr "Környező fények"
+
+#: kdepreferencesdialog.cpp:233
+msgid "Limiting Magnitude"
+msgstr "Fényesség korlátozása"
+
+#: kdepreferencesdialog.cpp:242
+msgid "Info Text"
+msgstr "Adatok"
+
+#: kdepreferencesdialog.cpp:243
+msgid "Level: "
+msgstr "Mennyisége: "
+
+#: kdepreferencesdialog.cpp:245
+msgid "None"
+msgstr "Semmi"
+
+#: kdepreferencesdialog.cpp:246
+msgid "Terse"
+msgstr "Tömör"
+
+#: kdepreferencesdialog.cpp:247
+msgid "Verbose"
+msgstr "Bőséges"
+
+#: kdepreferencesdialog.cpp:252
+msgid "Automatic FOV"
+msgstr "Önműködő látómező"
+
+#: kdepreferencesdialog.cpp:253
+msgid "Screen DPI: "
+msgstr "Képernyő felbontása (DPI): "
+
+#: kdepreferencesdialog.cpp:255
+msgid "Viewing Distance (cm): "
+msgstr "Látótávolság (cm): "
+
+#: kdepreferencesdialog.cpp:271
+msgid "Cities"
+msgstr "Városok"
+
+#: kdepreferencesdialog.cpp:275
+msgid "Observatories"
+msgstr "Csillagvizsgálók"
+
+#: kdepreferencesdialog.cpp:279
+msgid "Landing Sites"
+msgstr "Leszállóhelyek"
+
+#: kdepreferencesdialog.cpp:283
+msgid "Craters"
+msgstr "Kráterek"
+
+#: kdepreferencesdialog.cpp:287
+msgid "Mons"
+msgstr "Hegyek"
+
+#: kdepreferencesdialog.cpp:291
+msgid "Terra"
+msgstr "Föld"
+
+#: kdepreferencesdialog.cpp:295
+msgid "Vallis"
+msgstr "Völgy"
+
+#: kdepreferencesdialog.cpp:299
+msgid "Mare"
+msgstr "Tenger"
+
+#: kdepreferencesdialog.cpp:303
+msgid "Other"
+msgstr "Egyebek"
+
+#: kdepreferencesdialog.cpp:307
+msgid "Minimum Feature Size"
+msgstr "Legkisebb méret, amit kiemel"
+
+#: kdepreferencesdialog.cpp:321
+msgid "Date/Time"
+msgstr "Dátum/Idő"
+
+#: kdepreferencesdialog.cpp:325
+msgid "Display"
+msgstr "Megjelenítés"
+
+#: kdepreferencesdialog.cpp:326 kdepreferencesdialog.cpp:337
+msgid "Timezone: "
+msgstr "Időzóna: "
+
+#: kdepreferencesdialog.cpp:329 kdepreferencesdialog.cpp:340
+msgid "Local Time"
+msgstr "Helyi idő"
+
+#: kdepreferencesdialog.cpp:334
+msgid "Set"
+msgstr "Beállítás"
+
+#: kdepreferencesdialog.cpp:335
+msgid "Local Time is only supported for dates between 1902 and 2037.\n"
+msgstr "A helyi idő 1902 és 2037 között lehetséges.\n"
+
+#: kdepreferencesdialog.cpp:409
+msgid ""
+"\n"
+"Selection: "
+msgstr ""
+"\n"
+"Kijelölés: "
+
+#: kdepreferencesdialog.cpp:416
+msgid "Include Light Travel Time"
+msgstr "Fény utazási idejével együtt"
+
+#: kdepreferencesdialog.cpp:418
+msgid "Ignore Light Travel Time "
+msgstr "Fény utazási sebessége nélkül"
+
+#: kdepreferencesdialog.cpp:425
+msgid "OpenGL"
+msgstr "OpenGL"
+
+#: kdepreferencesdialog.cpp:470
+msgid "Key Bindings"
+msgstr "Gyorsbillentyűk"
+
+#: kdepreferencesdialog.cpp:684
+msgid "<b>Unextended OpenGL 1.1</b>"
+msgstr "<b>Kiterjesztések nélküli OpenGL 1.1</b>"
+
+#: kdepreferencesdialog.cpp:687
+msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
+msgstr "<b>Többféle textúra és az ARB_texenv_combine kiterjesztés</b>"
+
+#: kdepreferencesdialog.cpp:690
+msgid "<b>NVIDIA combiners, no vertex programs</b>"
+msgstr "<b>NVIDIA combiners, vertex program nélkül</b>"
+
+#: kdepreferencesdialog.cpp:693
+msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
+msgstr "<b>ARB_texenv_DOT3 kiterjesztés, ARB_vertex_program kiterjesztés</b>"
+
+#: kdepreferencesdialog.cpp:696
+msgid ""
+"<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+"mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon "
+"graphics card, though NvCombiner ARBVP is a slightly better option for "
+"Geforce users"
+msgstr "<b>NVIDIA Combiners, NV_vertex_program extension</b><br>bump mapping-gel, gyűrű árnyékok és tükröződő körvonalak bármilyen Geforce vagy ATI Radeon videokártyán, bár az NvCombiner ARBVP sokkal jobb választás a Geforce felhasználóknak."
+
+#: kdepreferencesdialog.cpp:702
+msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
+msgstr "<b>NVIDIA Combiners, ARB_vertex_program kiegészítés</b>"
+
+#: kdepreferencesdialog.cpp:705
+msgid ""
+"<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+"advanced effects on Geforce FX and Radeon 9700 cards"
+msgstr "<b>ARB_fragment_program és ARB_vertex_program kiterjesztések</b><br>összetett hatásokat nyújtanak Geforce FX és Radeon 9700 videokártyákon"
+
+#: kdepreferencesdialog.cpp:709
+msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
+msgstr "<b>NV_fragment_program és ARB_vertex_program kiterjesztések</b>"
+
+#: selectionpopup.cpp:74
+msgid "Distance: "
+msgstr "Távolság: "
+
+#: selectionpopup.cpp:76
+msgid "Abs (app) mag: "
+msgstr "Absz. (app) fény:"
+
+#: selectionpopup.cpp:84
+msgid "Class: "
+msgstr "Osztály:"
+
+#: selectionpopup.cpp:88
+msgid "Surface Temp: "
+msgstr "Felszíni hőm.:"
+
+#: selectionpopup.cpp:92
+msgid "Radius: "
+msgstr "Sugár: "
+
+#: selectionpopup.cpp:125
+msgid "Marked objects"
+msgstr "Megjelölt objektumok"
+
+#: selectionpopup.cpp:308
+msgid "&Select"
+msgstr "&Kiválaszt"
+
+#: selectionpopup.cpp:309
+msgid "&Center"
+msgstr "Kö&zépre"
+
+#: selectionpopup.cpp:311
+msgid "&Follow"
+msgstr "Köve&t"
+
+#: selectionpopup.cpp:312
+msgid "S&ynch Orbit"
+msgstr "Pálya &szink."
+
+#: selectionpopup.cpp:313
+msgid "&Info"
+msgstr "&Adatok"
+
+#: selectionpopup.cpp:314
+msgid "Unmark &All"
+msgstr "&Megjelölések megszűntetése"
+
+#: selectionpopup.cpp:317
+msgid "&Unmark"
+msgstr "Jelölés &törlése"
+
+#: selectionpopup.cpp:322
+msgid "Diamond"
+msgstr "Gyémánt"
+
+#: selectionpopup.cpp:323
+msgid "Triangle"
+msgstr "Háromszög"
+
+#: selectionpopup.cpp:324
+msgid "Square"
+msgstr "Négyzet"
+
+#: selectionpopup.cpp:325
+msgid "Plus"
+msgstr "Plusz"
+
+#: selectionpopup.cpp:326
+msgid "X"
+msgstr "X"
+
+#: selectionpopup.cpp:327
+msgid "&Mark"
+msgstr "&Jelöl"
+
+#: selectionpopup.cpp:338
+msgid "Normal"
+msgstr "Alap"
+
+#: selectionpopup.cpp:345
+msgid "&Alternate Surfaces"
+msgstr "&Felületek"
+
+#: selectionpopup.cpp:363
+msgid "Satellites"
+msgstr "Mellékbolygók"
+
+#: eclipsefinderdlgbase.uic.moc.cpp:34 eclipsefinderdlgbase.uic.moc.cpp:42
+msgid "EclipseFinderDlgBase"
+msgstr "FogyatkozásKeresőPárbeszédAblak"
+
+#: eclipsefinderdlg.moc.cpp:34 eclipsefinderdlg.moc.cpp:42
+msgid "EclipseFinderDlg"
+msgstr "FogyatkozáskeresőAbl"
+
+#: celestialbrowserbase.uic.moc.cpp:34 celestialbrowserbase.uic.moc.cpp:42
+msgid "CelestialBrowserBase"
+msgstr "CelestialBöngészőAbl"
+
+#: celestialbrowser.moc.cpp:34 celestialbrowser.moc.cpp:42
+msgid "CelestialBrowser"
+msgstr "CelestialBöngésző"
+
+#: kdeapp.moc.cpp:34 kdeapp.moc.cpp:42
+msgid "KdeApp"
+msgstr "KdeApp"
+
+#: kdeapp.moc.cpp:448 kdeapp.moc.cpp:456
+msgid "LongLatDialog"
+msgstr "SzélHosszPárb"
+
+#: kdeglwidget.moc.cpp:34 kdeglwidget.moc.cpp:42
+msgid "KdeGlWidget"
+msgstr "KdeGlWidget"
+
+#: kdepreferencesdialog.moc.cpp:34 kdepreferencesdialog.moc.cpp:42
+msgid "KdePreferencesDialog"
+msgstr "KdeBeállításPárbeszédablak"
+
+#: kdeuniquecelestia.moc.cpp:34 kdeuniquecelestia.moc.cpp:42
+msgid "KdeUniqueCelestia"
+msgstr "KdeEgyediCelestia"
+
+#: kcelbookmarkmenu.moc.cpp:34 kcelbookmarkmenu.moc.cpp:42
+msgid "KCelBookmarkMenu"
+msgstr "KCelKönyvjelzőMenü"
+
+#: selectionpopup.moc.cpp:34 selectionpopup.moc.cpp:42
+msgid "SelectionPopup"
+msgstr "KijelölésFelugróablak"
+
+#: rc.cpp:3
+msgid "Name"
+msgstr "Név"
+
+#: rc.cpp:4
+msgid "Dist."
+msgstr "Táv."
+
+#: rc.cpp:5
+msgid "App. Mag."
+msgstr "Látható Fény."
+
+#: rc.cpp:6
+msgid "Abs. Mag."
+msgstr "Absz. Fény."
+
+#: rc.cpp:7
+msgid "Type"
+msgstr "Típus"
+
+#: rc.cpp:8
+msgid "With Planets"
+msgstr "Bolygókkal"
+
+#: rc.cpp:9
+msgid "Brightest (Abs.)"
+msgstr "Legfényesebb (absz.)"
+
+#: rc.cpp:10
+msgid "Brightest (App.)"
+msgstr "Legfényesebb (láth.)"
+
+#: rc.cpp:11
+msgid "Nearest"
+msgstr "Legközelebbi"
+
+#: rc.cpp:13
+msgid "Alt+C"
+msgstr "Alt+C"
+
+#: rc.cpp:14
+msgid "Refresh"
+msgstr "Frissítés"
+
+#: rc.cpp:18
+msgid "Date"
+msgstr "Dátum"
+
+#: rc.cpp:19
+msgid "Start"
+msgstr "Indítás"
+
+#: rc.cpp:20
+msgid "End"
+msgstr "Vége"
+
+#: rc.cpp:21
+msgid "buttonGroup1"
+msgstr "gombCsoport1"
+
+#: rc.cpp:22
+msgid "Solar Eclipses"
+msgstr "Napfogyatkozások"
+
+#: rc.cpp:23
+msgid "<p align=\"right\">On:</p>"
+msgstr "<p align=\"right\">Helye:</p>"
+
+#: rc.cpp:24
+msgid "Earth"
+msgstr "Föld"
+
+#: rc.cpp:25
+msgid "Jupiter"
+msgstr "Jupiter"
+
+#: rc.cpp:26
+msgid "Saturn"
+msgstr "Szaturnusz"
+
+#: rc.cpp:27
+msgid "Uranus"
+msgstr "Uránusz"
+
+#: rc.cpp:28
+msgid "Neptune"
+msgstr "Neptunusz"
+
+#: rc.cpp:29
+msgid "Pluto"
+msgstr "Plútó"
+
+#: rc.cpp:30
+msgid "Moon Eclipses"
+msgstr "Holdfogyatkozások"
+
+#: rc.cpp:31
+msgid "Search"
+msgstr "Keresés"
+
+#: rc.cpp:32
+msgid "<p align=\"right\">To:</p>"
+msgstr "<p align=\"right\">Eddig:</p>"
+
+#: rc.cpp:33
+msgid "<p align=\"right\">From:</p>"
+msgstr "<p align=\"right\">Ettől:</p>"
+
+#: _translatorinfo.cpp:1
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr "Novák Áron"
+
+#: _translatorinfo.cpp:3
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr "aaron@szentimre.hu"
+
