@@ -779,14 +779,14 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452800.5	# 2003 Jun 10
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		628.09 		# mean
 	SemiMajorAxis	21162000	# mean
 	Eccentricity	0.2206		# mean
-	Inclination	152.847
-	AscendingNode	308.427
-	ArgOfPericenter	183.398
-	MeanAnomaly     194.024
+	Inclination	150.941
+	AscendingNode	215.311
+	ArgOfPericenter	323.714
+	MeanAnomaly     191.904
 	}
 
 	RotationPeriod  10   # Guess
@@ -802,14 +802,14 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2452800.5	# 2003 Jun 10
+	Epoch		2452644.5	# 2003 Jan 5
 	Period		732.44 		# mean
 	SemiMajorAxis	23563000	# mean
 	Eccentricity	0.2714		# mean
-	Inclination	145.484
-	AscendingNode	66.574
-	ArgOfPericenter	255.409
-	MeanAnomaly     148.832
+	Inclination	146.420
+	AscendingNode	67.747
+	ArgOfPericenter	253.422
+	MeanAnomaly     328.912
 	}
 
 	RotationPeriod  10   # Guess
