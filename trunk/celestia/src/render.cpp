@@ -1397,16 +1397,17 @@ void Renderer::renderPlanet(const Body& body,
                 float sPlane[4] = { 0, 0, 0, 0.5f };
                 float tPlane[4] = { 0, 0, 0, 0.5f };
 
-            // Compute the projection vectors based on the sun direction.
-            // I'm being a little careless here--if the sun direction lies
-            // along the y-axis, this will fail.  It's unlikely that a planet
-            // would ever orbit underneath its sun (an orbital inclination of
-            // 90 degrees), but this should be made more robust anyway.
+                // Compute the projection vectors based on the sun direction.
+                // I'm being a little careless here--if the sun direction lies
+                // along the y-axis, this will fail.  It's unlikely that a planet
+                // would ever orbit underneath its sun (an orbital inclination of
+                // 90 degrees), but this should be made more robust anyway.
+                float scale = rings->innerRadius / body.getRadius();
                 Vec3f axis = Vec3f(0, 1, 0) ^ localSunDir;
                 float angle = (float) acos(Vec3f(0, 1, 0) * localSunDir);
                 Mat4f mat = Mat4f::rotation(axis, -angle);
-                Vec3f sAxis = Vec3f(0.5f, 0, 0) * mat;
-                Vec3f tAxis = Vec3f(0, 0, 0.5f) * mat;
+                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
 
                 sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
                 tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
