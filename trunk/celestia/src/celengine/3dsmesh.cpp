@@ -213,7 +213,7 @@ bool Mesh3DS::pick(const Ray3d& r, double& distance)
 
 // Transform and scale the model so that it fits into an axis aligned bounding
 // box with corners at (1, 1, 1) and (-1, -1, -1)
-void Mesh3DS::normalize()
+void Mesh3DS::normalize(const Vec3f& centerOffset)
 {
     AxisAlignedBox bbox;
 
@@ -221,7 +221,7 @@ void Mesh3DS::normalize()
     for (i = vertexLists.begin(); i != vertexLists.end(); i++)
         bbox.include((*i)->getBoundingBox());
 
-    Point3f center = bbox.getCenter();
+    Point3f center = bbox.getCenter() + centerOffset;
     Vec3f extents = bbox.getExtents();
     float maxExtent = extents.x;
     if (extents.y > maxExtent)

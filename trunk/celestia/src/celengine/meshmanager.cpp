@@ -71,7 +71,7 @@ Mesh* MeshInfo::load(const string& filename)
                 mesh3 = new Mesh3DS(*scene, path);
             else
                 mesh3 = new Mesh3DS(*scene, "");
-            mesh3->normalize();
+            mesh3->normalize(center);
             delete scene;
             return mesh3;
         }
