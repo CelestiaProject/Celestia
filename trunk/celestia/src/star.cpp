@@ -142,7 +142,12 @@ float Star::getRotationPeriod() const
 
 void Star::setCatalogNumber(uint32 n)
 {
-    catalogNumber = n;
+    catalogNumbers[0] = n;
+}
+
+void Star::setCatalogNumber(unsigned int which, uint32 n)
+{
+    catalogNumbers[which] = n;
 }
 
 void Star::setPosition(float x, float y, float z)
