@@ -21,6 +21,7 @@
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtkgl/gtkglarea.h>
+#include <gnome.h>
 #include "celestia.h"
 #include "vecmath.h"
 #include "quaternion.h"
@@ -202,6 +203,237 @@ static void menuRunDemo()
     appCore->charEntered('D');
 }
 
+static void menuAbout()
+{
+    const gchar* authors[] = {
+        "Chris Laurel <claurel@shatters.net>",
+        NULL
+    };
+    GtkWidget* about;
+    about = gnome_about_new("Celestia",
+                            "1.1.2",
+                            "(c) 2001 Chris Laurel",
+                            authors,
+                            "3D Space Simulation",
+                            NULL);
+    if (about == NULL)
+        return;
+
+    gtk_window_set_modal(GTK_WINDOW(about), TRUE);
+    gtk_widget_show(about);
+}
+
+
+static void menuSelectObject()
+{
+    GtkWidget* dialog = gnome_dialog_new("Find Object",
+                                         GNOME_STOCK_BUTTON_OK,
+                                         GNOME_STOCK_BUTTON_CANCEL,
+                                         NULL);
+    if (dialog == NULL)
+        return;
+
+    GtkWidget* label = gtk_label_new("Enter object name:");
+    if (label == NULL)
+        return;
+    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (dialog)->vbox),
+                       label,
+                       TRUE,
+                       TRUE,
+                       0);
+
+    GtkWidget* entry = gtk_entry_new();
+    if (entry == NULL)
+        return;
+    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (dialog)->vbox),
+                       entry,
+                       TRUE,
+                       TRUE,
+                       0);
+
+    gtk_widget_show(label);
+    gtk_widget_show(entry);
+
+    gnome_dialog_close_hides(GNOME_DIALOG(dialog), true);
+    // gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+    gint whichButton = gnome_dialog_run(GNOME_DIALOG(dialog));
+    if (whichButton == 0)
+    {
+        gchar* name = gtk_entry_get_text(GTK_ENTRY(entry));
+        if (name != NULL)
+        {
+            Selection sel = appCore->getSimulation()->findObject(name);
+            if (!sel.empty())
+                appCore->getSimulation()->setSelection(sel);
+        }
+    }
+
+    gnome_dialog_close(GNOME_DIALOG(dialog));
+}
+
+static Destination* selectedDest = NULL;
+static gint TourGuideSelect(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowGalaxies, on);
+    // appCore->charEntered('U');
+    GtkMenu* menu = GTK_MENU(w);
+    if (menu == NULL)
+        return FALSE;
+
+    GtkWidget* item = gtk_menu_get_active(GTK_MENU(menu));
+    if (item == NULL)
+        return FALSE;
+
+    GList* list = gtk_container_children(GTK_CONTAINER(menu));
+    int itemIndex = g_list_index(list, item);
+
+    const DestinationList* destinations = appCore->getDestinations();
+    if (destinations != NULL &&
+        itemIndex >= 0 && itemIndex < (int) destinations->size())
+    {
+        selectedDest = (*destinations)[itemIndex];
+    }
+
+    GtkLabel* descLabel = GTK_LABEL(data);
+    if (descLabel != NULL && selectedDest != NULL)
+    {
+        gtk_label_set_text(descLabel, selectedDest->description.c_str());
+    }
+
+    return TRUE;
+}
+
+static gint TourGuideGoto(GtkWidget* w, gpointer data)
+{
+    Simulation* sim = appCore->getSimulation();
+    if (selectedDest != NULL && sim != NULL)
+    {
+        Selection sel = sim->findObjectFromPath(selectedDest->target);
+        if (!sel.empty())
+        {
+            sim->setSelection(sel);
+            if (selectedDest->distance <= 0)
+            {
+                // Use the default distance
+                sim->gotoSelection(5.0,
+                                   Vec3f(0, 1, 0),
+                                   astro::ObserverLocal);
+            }
+            else
+            {
+                sim->gotoSelection(5.0,
+                                   selectedDest->distance,
+                                   Vec3f(0, 1, 0),
+                                   astro::ObserverLocal);
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+
+static void menuTourGuide()
+{
+    GtkWidget* dialog = gnome_dialog_new("Tour Guide...",
+                                         GNOME_STOCK_BUTTON_OK,
+                                         NULL);
+    if (dialog == NULL)
+        return;
+
+    GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+    if (hbox == NULL)
+        return;
+
+    GtkWidget* label = gtk_label_new("Select your destination:");
+    if (label == NULL)
+        return;
+    gtk_box_pack_start(GTK_BOX(hbox),
+                       label,
+                       FALSE,
+                       TRUE,
+                       0);
+
+    GtkWidget* menubox = gtk_option_menu_new();
+    if (menubox == NULL)
+        return;
+    gtk_box_pack_start(GTK_BOX(hbox),
+                       menubox,
+                       FALSE,
+                       TRUE,
+                       0);
+
+    GtkWidget* gotoButton = gtk_button_new_with_label("   Go To   ");
+    if (gotoButton == NULL)
+        return;
+    gtk_box_pack_start(GTK_BOX(hbox),
+                       gotoButton,
+                       TRUE,
+                       FALSE,
+                       0);
+
+    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
+                       hbox,
+                       FALSE,
+                       TRUE,
+                       0);
+
+    gtk_widget_show(hbox);
+    
+
+    GtkWidget* descLabel = gtk_label_new("");
+    if (descLabel == NULL)
+        return;
+    gtk_label_set_line_wrap(GTK_LABEL(descLabel), TRUE);
+    gtk_label_set_justify(GTK_LABEL(descLabel), GTK_JUSTIFY_FILL);
+    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
+                       descLabel,
+                       TRUE,
+                       TRUE,
+                       0);
+
+    GtkWidget* menu = gtk_menu_new();
+    const DestinationList* destinations = appCore->getDestinations();
+    if (destinations != NULL)
+    {
+        for (DestinationList::const_iterator iter = destinations->begin();
+             iter != destinations->end(); iter++)
+        {
+            Destination* dest = *iter;
+            if (dest != NULL)
+            {
+                GtkWidget* item = gtk_menu_item_new_with_label(dest->name.c_str());
+                gtk_menu_append(GTK_MENU(menu), item);
+                gtk_widget_show(item);
+            }
+        }
+    }
+
+    gtk_signal_connect(GTK_OBJECT(menu),
+                       "selection-done",
+                       GTK_SIGNAL_FUNC(TourGuideSelect),
+                       GTK_OBJECT(descLabel));
+    gtk_signal_connect(GTK_OBJECT(gotoButton),
+                       "pressed",
+                       GTK_SIGNAL_FUNC(TourGuideGoto),
+                       NULL);
+
+    gtk_option_menu_set_menu(GTK_OPTION_MENU(menubox), menu);
+
+    gtk_widget_set_usize(dialog, 400, 300);
+    gtk_widget_show(label);
+    gtk_widget_show(menubox);
+    gtk_widget_show(descLabel);
+    gtk_widget_show(gotoButton);
+    // gtk_widget_set_usize(descLabel, 250, 150);
+
+    gnome_dialog_run_and_close(GNOME_DIALOG(dialog));
+
+    // gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+    // gtk_widget_show(dialog);
+}
+
 
 
 static GtkItemFactoryEntry menuItems[] =
@@ -210,7 +442,8 @@ static GtkItemFactoryEntry menuItems[] =
     { "/File/Quit", "<control>Q",           gtk_main_quit, 0, NULL },
     { "/_Navigation", NULL,                 NULL,          0, "<Branch>" },
     { "/Navigation/Select Sol", "H",        menuSelectSol, 0, NULL },
-    { "/Navigation/Select Object...", NULL, NULL,          0, NULL },
+    { "/Navigation/Tour Guide", NULL,       menuTourGuide, 0, NULL },
+    { "/Navigation/Select Object...", NULL, menuSelectObject, 0, NULL },
     { "/Navigation/sep1", NULL,             NULL,          0, "<Separator>" },
     { "/Navigation/Center Selection", "C",  menuCenter,    0, NULL },
     { "/Navigation/Goto Selection", "G",    menuGoto,      0, NULL },
@@ -235,7 +468,7 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Render/LabelConstellations", "=",   NULL,          Menu_ConstellationLabels, "<ToggleItem>" },
     { "/_Help", NULL,                       NULL,          0, "<LastBranch>" },
     { "/Help/Run Demo", "D",                menuRunDemo,   0, NULL },  
-    { "/Help/About", NULL,                  NULL,          0, NULL },
+    { "/Help/About", NULL,                  menuAbout,     0, NULL },
 };
 
 
@@ -529,8 +762,8 @@ int main(int argc, char* argv[])
     timer = CreateTimer();
 
 
-    // Now initialize OpenGL and Gtk
-    gtk_init(&argc, &argv);
+    // Now initialize OpenGL and Gnome
+    gnome_init("Celestia", "1.1.2", argc, argv);
 
     // Check if OpenGL is supported
     if (gdk_gl_query() == FALSE)
