@@ -1098,7 +1098,23 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '\023':  // Ctrl+S
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowStarsAsPoints);
+        renderer->setStarStyle((Renderer::StarStyle) (((int) renderer->getStarStyle() + 1) %
+                                                      (int) Renderer::StarStyleCount));
+        switch (renderer->getStarStyle())
+        {
+        case Renderer::FuzzyPointStars:
+            flash("Star style: fuzzy points");
+            break;
+        case Renderer::PointStars:
+            flash("Star style: points");
+            break;
+        case Renderer::ScaledDiscStars:
+            flash("Star style: scaled discs");
+            break;
+        default:
+            break;
+        }
+
         notifyWatchers(RenderFlagsChanged);
         break;
 

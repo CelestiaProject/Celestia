@@ -143,6 +143,7 @@ struct AppPreferences
     int fullScreenMode;
     uint32 lastVersion;
     string altSurfaceName;
+    Renderer::StarStyle starStyle;
 };
 
 void ChangeDisplayMode()
@@ -1927,6 +1928,14 @@ static void syncMenusWithRendererState()
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
     }
 
+    Renderer::StarStyle style = appCore->getRenderer()->getStarStyle();
+    CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_FUZZY,
+                  style == Renderer::FuzzyPointStars ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_POINTS,
+                  style == Renderer::PointStars ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_DISCS,
+                  style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
+
     MENUITEMINFO menuInfo;
     menuInfo.cbSize = sizeof(MENUITEMINFO);
     menuInfo.fMask = MIIM_STATE;
@@ -2125,6 +2134,9 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "HudDetail", &prefs.hudDetail, sizeof(prefs.hudDetail));
     GetRegistryValue(key, "FullScreenMode", &prefs.fullScreenMode, sizeof(prefs.fullScreenMode));
 
+    prefs.starStyle = Renderer::FuzzyPointStars;
+    GetRegistryValue(key, "StarStyle", &prefs.starStyle, sizeof(prefs.starStyle));
+
     GetRegistryValue(key, "LastVersion", &prefs.lastVersion, sizeof(prefs.lastVersion));
 
     char surfaceName[512];
@@ -2176,6 +2188,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "HudDetail", prefs.hudDetail);
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
+    SetRegistryInt(key, "StarStyle", prefs.starStyle);
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
 
     RegCloseKey(key);
@@ -2206,6 +2219,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.fullScreenMode = lastFullScreenMode;
     prefs.lastVersion = 0x01020500;
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
+    prefs.starStyle = appCore->getRenderer()->getStarStyle();
 
     return true;
 }
@@ -2878,6 +2892,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
     appCore->getRenderer()->setLabelMode(prefs.labelMode);
     appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
+    appCore->getRenderer()->setStarStyle(prefs.starStyle);
     appCore->setHudDetail(prefs.hudDetail);
     if (prefs.showLocalTime == 1)
         ShowLocalTime(appCore);
@@ -3224,9 +3239,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             Renderer* r = appCore->getRenderer();
             int oldRenderFlags = r->getRenderFlags();
             int oldLabelMode = r->getLabelMode();
+            Renderer::StarStyle oldStarStyle = r->getStarStyle();
             appCore->charEntered(charCode);
             if (r->getRenderFlags() != oldRenderFlags ||
-                r->getLabelMode() != oldLabelMode)
+                r->getLabelMode() != oldLabelMode ||
+                r->getStarStyle() != oldStarStyle)
             {
                 syncMenusWithRendererState();
             }
@@ -3443,6 +3460,21 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
             appCore->getRenderer()->setAmbientLightLevel(0.25f);
+            break;
+
+        case ID_RENDER_STARSTYLE_FUZZY:
+            appCore->getRenderer()->setStarStyle(Renderer::FuzzyPointStars);
+            syncMenusWithRendererState();
+            break;
+
+        case ID_RENDER_STARSTYLE_POINTS:
+            appCore->getRenderer()->setStarStyle(Renderer::PointStars);
+            syncMenusWithRendererState();
+            break;
+
+        case ID_RENDER_STARSTYLE_DISCS:
+            appCore->getRenderer()->setStarStyle(Renderer::ScaledDiscStars);
+            syncMenusWithRendererState();
             break;
 
         case ID_RENDER_ANTIALIASING:
