@@ -665,7 +665,7 @@ AltSurface "limit of knowledge" "HD 75289/b"
 		Inclination     71.7
 		AscendingNode   325.1
 		ArgOfPericenter 205
-		MeanAnomaly     148
+		MeanAnomaly     141
 	}
 
 	Obliquity             72 # guess, to match inclination
@@ -1198,6 +1198,30 @@ AltSurface "limit of knowledge" "HD 13445/b"
 }
 
 
+"b" "HD 99492"   # 83 Leo B
+{
+	Texture "gasgiant.*"
+
+	Mass       40     # M.sin(i) = 0.12 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD99492.html"
+
+	EllipticalOrbit {
+		Period          0.0465
+		SemiMajorAxis   0.12
+		Eccentricity    0.05
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 99492/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 195019"
 {
 	Texture "gasgiant.*"
@@ -1219,30 +1243,6 @@ AltSurface "limit of knowledge" "HD 13445/b"
 }
 
 AltSurface "limit of knowledge" "HD 195019/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 102117"
-{
-	Texture "gasgiant.*"
-
-	Mass       60     # M.sin(i) = 0.18 jupiters
-	Radius     84000
-
-	InfoURL "http://www.obspm.fr/encycl/HD102117.html"
-
-	EllipticalOrbit {
-		Period          0.0569
-		SemiMajorAxis   0.13
-		Eccentricity    0.08
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 102117/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1299,30 +1299,6 @@ AltSurface "limit of knowledge" "HD 192263/b"
 }
 
 
-"b" "HD 117618"
-{
-	Texture "gasgiant.*"
-
-	Mass       50     # M.sin(i) = 0.16 jupiters
-	Radius     84000
-
-	InfoURL "http://www.obspm.fr/encycl/HD117618.html"
-
-	EllipticalOrbit {
-		Period          0.0706
-		SemiMajorAxis   0.15
-		Eccentricity    0.31
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 117618/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
 "c" "Gliese 876"   # IL Aqr
 {
 	Texture "jupiterlike.*"
@@ -1371,6 +1347,79 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 }
 
 AltSurface "limit of knowledge" "Gliese 876/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 102117"
+{
+	Texture "gasgiant.*"
+
+	Mass       60     # M.sin(i) = 0.18 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD102117.html"
+
+	EllipticalOrbit {
+		Period          0.0849
+		SemiMajorAxis   0.15
+		Eccentricity    0.08
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 102117/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 11964"
+{
+	Texture "gasgiant.*"
+
+	Mass       40     # M.sin(i) = 0.11 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD11964.html"
+
+	EllipticalOrbit {
+		Period          0.1035
+		SemiMajorAxis   0.229
+		Eccentricity    0.15
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 11964/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 11964"
+{
+	Texture "jupiterlike.*"
+
+	Mass       220     # M.sin(i) = 0.7 jupiters
+	Radius     70000
+	Oblateness 0.08
+
+	InfoURL "http://www.obspm.fr/encycl/HD11964.html"
+
+	EllipticalOrbit {
+		Period          5.3114
+		SemiMajorAxis   3.167
+		Eccentricity    0.3
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 11964/c"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1451,6 +1500,30 @@ AltSurface "limit of knowledge" "HD 74156/b"
 }
 
 AltSurface "limit of knowledge" "HD 74156/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 117618"
+{
+	Texture "gasgiant.*"
+
+	Mass       70     # M.sin(i) = 0.22 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD117618.html"
+
+	EllipticalOrbit {
+		Period          0.1424
+		SemiMajorAxis   0.28
+		Eccentricity    0.25
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 117618/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1775,6 +1848,31 @@ AltSurface "limit of knowledge" "HD 216770/b"
 }
 
 AltSurface "limit of knowledge" "HD 52265/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 34445"
+{
+	Texture "jupiterlike.*"
+
+	Mass       180     # M.sin(i) = 0.58 jupiters
+	Radius     56000
+	Oblateness 0.05
+
+	InfoURL "http://www.obspm.fr/encycl/HD34445.html"
+
+	EllipticalOrbit {
+		Period          0.345
+		SemiMajorAxis   0.51
+		Eccentricity    0.4
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 34445/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2388,6 +2486,31 @@ AltSurface "limit of knowledge" "HD 28185/b"
 }
 
 
+"b" "HD 196885"
+{
+	Texture "jupiterlike.*"
+
+	Mass       590     # M.sin(i) = 1.84 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://www.obspm.fr/encycl/HD196885.html"
+
+	EllipticalOrbit {
+		Period          1.0568
+		SemiMajorAxis   1.12
+		Eccentricity    0.3
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 196885/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 142415"
 {
 	Texture "jupiterlike.*"
@@ -2527,24 +2650,49 @@ AltSurface "limit of knowledge" "HD 4203/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       840     # M.sin(i) = 2.63 jupiters
+	Mass       820     # M.sin(i) = 2.58 jupiters
 	Radius     70000
 	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD128311.html"
 
 	EllipticalOrbit {
-		Period          1.1335
-		SemiMajorAxis   1.01
-		Eccentricity    0.21
+		Period          1.1499
+		SemiMajorAxis   1.02
+		Eccentricity    0.3
 		ArgOfPericenter 143
-		MeanAnomaly     232
+		MeanAnomaly     224
 	}
 
 	RotationPeriod  10 # plausible guess
 }
 
 AltSurface "limit of knowledge" "HD 128311/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 128311"
+{
+	Texture "jupiterlike.*"
+
+	Mass       1030     # M.sin(i) = 3.24 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://www.obspm.fr/encycl/HD128311.html"
+
+	EllipticalOrbit {
+		Period          2.5161
+		SemiMajorAxis   1.743
+		Eccentricity    0.29
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 128311/c"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2626,6 +2774,31 @@ AltSurface "limit of knowledge" "HD 210277/b"
 }
 
 AltSurface "limit of knowledge" "HD 19994/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 188015"
+{
+	Texture "jupiterlike.*"
+
+	Mass       520     # M.sin(i) = 1.64 jupiters
+	Radius     70000
+	Oblateness 0.04
+
+	InfoURL "http://www.obspm.fr/encycl/HD188015.html"
+
+	EllipticalOrbit {
+		Period          1.2891
+		SemiMajorAxis   1.22
+		Eccentricity    0.26
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 188015/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2786,6 +2959,31 @@ AltSurface "limit of knowledge" "HD 222582/b"
 }
 
 AltSurface "limit of knowledge" "HD 65216/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 183263"
+{
+	Texture "jupiterlike.*"
+
+	Mass       1200     # M.sin(i) = 3.77 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://www.obspm.fr/encycl/HD183263.html"
+
+	EllipticalOrbit {
+		Period          1.7288
+		SemiMajorAxis   1.52
+		Eccentricity    0.37
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 183263/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2975,6 +3173,31 @@ AltSurface "limit of knowledge" "HD 4208/b"
 }
 
 AltSurface "limit of knowledge" "HD 114386/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 45350"
+{
+	Texture "jupiterlike.*"
+
+	Mass       330     # M.sin(i) = 1.03 jupiters
+	Radius     70000
+	Oblateness 0.06
+
+	InfoURL "http://www.obspm.fr/encycl/HD45350.html"
+
+	EllipticalOrbit {
+		Period          2.4367
+		SemiMajorAxis   1.86
+		Eccentricity    0.78
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 45350/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -3647,6 +3870,56 @@ AltSurface "limit of knowledge" "HD 22049/c"
 }
 
 AltSurface "limit of knowledge" "HD 30177/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 50499"
+{
+	Texture "jupiterlike.*"
+
+	Mass       590     # M.sin(i) = 1.84 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://www.obspm.fr/encycl/HD50499.html"
+
+	EllipticalOrbit {
+		Period          8.1862
+		SemiMajorAxis   4.4
+		Eccentricity    0.32
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 50499/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 89307"
+{
+	Texture "jupiterlike.*"
+
+	Mass       870     # M.sin(i) = 2.73 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://www.obspm.fr/encycl/HD89307.html"
+
+	EllipticalOrbit {
+		Period          8.46
+		SemiMajorAxis   4.15
+		Eccentricity    0.27
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 89307/b"
 {
 	Texture "extrasolar-lok.*"
 }
