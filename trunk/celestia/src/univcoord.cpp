@@ -82,12 +82,9 @@ Vec3f operator-(const Point3f& p, const UniversalCoord& uc)
 
 UniversalCoord operator+(const UniversalCoord& uc, const Vec3d& v)
 {
-    UniversalCoord u(uc.x + (BigFix) v.x,
+    return UniversalCoord(uc.x + (BigFix) v.x,
                           uc.y + (BigFix) v.y,
                           uc.z + (BigFix) v.z);
-    double dx = (double) (u.x - uc.x);
-    cout << "x: " << (dx - v.x) << '\n';
-    return u;
 }
 
 UniversalCoord operator+(const UniversalCoord& uc, const Vec3f& v)
