@@ -3145,7 +3145,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 if (cd->cbData > 3) // minimum of "cel:"
                 {
                     string urlString(urlChars, cd->cbData);
-                    appCore->flash(string("UUURL: ") + urlString);
+                    appCore->flash("Loading URL");
                     Url url(string(urlString), appCore);
                     url.goTo();
                 }
