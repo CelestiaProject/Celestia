@@ -29,6 +29,7 @@ libcelengine_a_SOURCES = \
 	glcontext.cpp \
 	glext.cpp \
 	image.cpp \
+	jpleph.cpp \
 	location.cpp \
 	lodspheremesh.cpp \
 	marker.cpp \
