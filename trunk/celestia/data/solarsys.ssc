@@ -84,7 +84,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.3
 	Radius 6378.140  # equatorial
-	Oblateness 0.0034
+	# Oblateness 0.0034
 
 	# NormalMap "earthbump4k.jpg"
 	# BumpMap "earthbump.*"
@@ -128,7 +128,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	BumpMap "moonbump1k.*"
 	BumpHeight 0.7
 	Radius   1737.53
-	Oblateness 0.002
+	# Oblateness 0.002
 
 	CustomOrbit "moon"
 	EllipticalOrbit {
@@ -230,7 +230,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.45
 	Radius 3396 # equatorial
-	Oblateness 0.0069
+	# Oblateness 0.0069
 
 	Atmosphere {
 		Height 30
