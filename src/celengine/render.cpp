@@ -2607,16 +2607,19 @@ void Renderer::renderObject(Point3f pos,
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glColor4f(1, 1, 1, 1);
 
-            if (useVertexPrograms)
+            if (vertexShaderEnabled)
             {
                 vp::enable();
-                vp::use(vp::diffuse);
+                vp::use(vp::diffuseTexOffset);
+                vp::parameter(41,
+                              (float) -pfmod(now * atmosphere->cloudSpeed / (2*PI), 1.0),
+                              0.0f, 0.0f, 0.0f);
             }
             lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
                               viewFrustum,
                               ri.lod,
                               cloudTex);
-            if (useVertexPrograms)
+            if (vertexShaderEnabled)
             {
                 vp::disable();
             }

@@ -24,6 +24,7 @@ unsigned int vp::diffuseBump = 0;
 unsigned int vp::diffuseBumpHaze = 0;
 unsigned int vp::shadowTexture = 0;
 unsigned int vp::everything = 0;
+unsigned int vp::diffuseTexOffset = 0;
 
 
 static string* ReadTextFromFile(const string& filename)
@@ -89,6 +90,8 @@ bool vp::init()
     if (!LoadVertexProgram("shaders/bumphaze.vp", diffuseBumpHaze))
         return false;
     if (!LoadVertexProgram("shaders/shadowtex.vp", shadowTexture))
+        return false;
+    if (!LoadVertexProgram("shaders/diffuse_texoff.vp", diffuseTexOffset))
         return false;
     everything = 0;
 
