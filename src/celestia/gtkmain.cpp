@@ -18,12 +18,17 @@
 #include <time.h>
 #include <unistd.h>
 #include "celengine/gl.h"
+#include "celengine/celestia.h"
+
+#ifndef DEBUG
+#  define G_DISABLE_ASSERT
+#endif
+
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtkgl/gtkglarea.h>
 #include <gnome.h>
-#include "celengine/celestia.h"
 #include "celmath/vecmath.h"
 #include "celmath/quaternion.h"
 #include "celmath/mathlib.h"
@@ -81,8 +86,16 @@ enum
     Menu_ShowConstellations  = 2003,
     Menu_ShowAtmospheres     = 2004,
     Menu_PlanetLabels        = 2005,
-    Menu_StarLabels          = 2006,
-    Menu_ConstellationLabels = 2007,
+    Menu_ShowClouds          = 2005,
+    Menu_ShowCelestialSphere = 2006,
+    Menu_ShowNightSideMaps   = 2007,
+    Menu_MajorPlanetLabels   = 2008,
+    Menu_MinorPlanetLabels   = 2009,
+    Menu_StarLabels          = 2010,
+    Menu_GalaxyLabels        = 2011,
+    Menu_ConstellationLabels = 2012,
+    Menu_PixelShaders        = 2013,
+    Menu_VertexShaders       = 2014,
 };
 
 static void menuSelectSol()
@@ -98,6 +111,16 @@ static void menuCenter()
 static void menuGoto()
 {
     appCore->charEntered('G');
+}
+
+static void menuSync()
+{
+    appCore->charEntered('Y');
+}
+
+static void menuTrack()
+{
+    appCore->charEntered('T');
 }
 
 static void menuFollow()
@@ -122,7 +145,7 @@ static void menuPause()
 
 static void menuRealTime()
 {
-    // sim->setTimeScale(1.0);
+    appCore->charEntered('\\');
 }
 
 static void menuReverse()
@@ -132,7 +155,7 @@ static void menuReverse()
 
 static gint menuShowGalaxies(GtkWidget* w, gpointer data)
 {
-    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetRenderFlag(Renderer::ShowGalaxies, on);
     appCore->charEntered('U');
     return TRUE;
@@ -140,23 +163,63 @@ static gint menuShowGalaxies(GtkWidget* w, gpointer data)
 
 static gint menuShowOrbits(GtkWidget* w, gpointer data)
 {
-    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetRenderFlag(Renderer::ShowOrbits, on);
     appCore->charEntered('O');
     return TRUE;
 }
 
-static gint menuShowAtmospheres(GtkWidget* w, gpointer data)
+static gint menuShowClouds(GtkWidget* w, gpointer data)
 {
-    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetRenderFlag(Renderer::ShowCloudMaps, on);
     appCore->charEntered('I');
     return TRUE;
 }
 
+static gint menuShowAtmospheres(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowAtmospheres, on);
+    appCore->charEntered('\001'); //Ctrl+A
+    return TRUE;
+}
+
+static gint menuPixelShaders(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowNightSideMaps, on);
+    appCore->charEntered('\020'); //Ctrl+P
+    return TRUE;
+}
+
+static gint menuVertexShaders(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowNightSideMaps, on);
+    appCore->charEntered('\026'); //Ctrl+V
+    return TRUE;
+}
+
+static gint menuShowNightSideMaps(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowNightSideMaps, on);
+    appCore->charEntered('\014'); //Ctrl+L
+    return TRUE;
+}
+
+static gint menuShowCelestialSphere(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowCelestialSphere, on);
+    appCore->charEntered(';');
+    return TRUE;
+}
+
 static gint menuShowConstellations(GtkWidget* w, gpointer data)
 {
-    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetRenderFlag(Renderer::ShowDiagrams, on);
     appCore->charEntered('/');
     return TRUE;
@@ -164,28 +227,43 @@ static gint menuShowConstellations(GtkWidget* w, gpointer data)
 
 static gint menuStarLabels(GtkWidget* w, gpointer data)
 {
-    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetLabelFlag(Renderer::StarLabels, on);
     appCore->charEntered('B');
     return TRUE;
 }
 
+static gint menuGalaxyLabels(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetLabelFlag(Renderer::StarLabels, on);
+    appCore->charEntered('E');
+    return TRUE;
+}
+
 static gint menuConstellationLabels(GtkWidget* w, gpointer data)
 {
-    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetLabelFlag(Renderer::ConstellationLabels, on);
     appCore->charEntered('=');
     return TRUE;
 }
 
-static gint menuPlanetLabels(GtkWidget* w, gpointer data)
+static gint menuMajorPlanetLabels(GtkWidget* w, gpointer data)
 {
-    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetLabelFlag(Renderer::MajorPlanetLabels, on);
     appCore->charEntered('N');
     return TRUE;
 }
 
+static gint menuMinorPlanetLabels(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetLabelFlag(Renderer::MinorPlanetLabels, on);
+    appCore->charEntered('M');
+    return TRUE;
+}
 
 static void menuMoreStars()
 {
@@ -195,6 +273,31 @@ static void menuMoreStars()
 static void menuLessStars()
 {
     appCore->charEntered('[');
+}
+
+static void menuNoAmbient()
+{
+    appCore->getRenderer()->setAmbientLightLevel(0.0f);
+}
+
+static void menuLowAmbient()
+{
+    appCore->getRenderer()->setAmbientLightLevel(0.02f);
+}
+
+static void menuMedAmbient()
+{
+    appCore->getRenderer()->setAmbientLightLevel(0.1f);
+}
+
+static void menuHiAmbient()
+{
+    appCore->getRenderer()->setAmbientLightLevel(0.25f);
+}
+
+static void menuShowInfo()
+{
+    appCore->charEntered('V');
 }
 
 static void menuRunDemo()
@@ -702,40 +805,59 @@ static void menuTourGuide()
 static GtkItemFactoryEntry menuItems[] =
 {
     { "/_File",  NULL,                      NULL,          0, "<Branch>" },
-    { "/File/Capture Image...", "F10",       menuCaptureImage, 0, NULL },
+    { "/File/Capture Image...", "F10",      menuCaptureImage,0, NULL },
     { "/File/Quit", "<control>Q",           gtk_main_quit, 0, NULL },
     { "/_Navigation", NULL,                 NULL,          0, "<Branch>" },
     { "/Navigation/Select Sol", "H",        menuSelectSol, 0, NULL },
     { "/Navigation/Tour Guide", NULL,       menuTourGuide, 0, NULL },
     { "/Navigation/Select Object...", NULL, menuSelectObject, 0, NULL },
-    { "/Navigation/Goto Object...", NULL,   menuGotoObject, 0, NULL },
+    { "/Navigation/Goto Object...", NULL,   menuGotoObject,0, NULL },
     { "/Navigation/sep1", NULL,             NULL,          0, "<Separator>" },
     { "/Navigation/Center Selection", "C",  menuCenter,    0, NULL },
     { "/Navigation/Goto Selection", "G",    menuGoto,      0, NULL },
     { "/Navigation/Follow Selection", "F",  menuFollow,    0, NULL },
+    { "/Navigation/Sync Orbit", "Y",        menuSync,      0, NULL },
+    { "/Navigation/Track Selection", "T",   menuTrack,     0, NULL },
     { "/_Time", NULL,                       NULL,          0, "<Branch>" },
     { "/Time/10x Faster", "L",              menuFaster,    0, NULL },
     { "/Time/10x Slower", "K",              menuSlower,    0, NULL },
-    { "/Time/Pause", " ",               menuPause,     0, NULL },
-    { "/Time/Real Time", NULL,              menuRealTime,  0, NULL },
+    { "/Time/Pause", "space",               menuPause,     0, NULL },
+    { "/Time/Real Time", "backslash",       menuRealTime,  0, NULL },
     { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
     { "/_Render", NULL,                     NULL,          0, "<Branch>" },
-    { "/Render/Show Galaxies", "U",        NULL,          Menu_ShowGalaxies, "<ToggleItem>" },
-    { "/Render/Show Atmospheres", "I",     NULL,          Menu_ShowAtmospheres, "<ToggleItem>" },
-    { "/Render/Show Orbits", "O",          NULL,          Menu_ShowOrbits, "<ToggleItem>" },
-    { "/Render/Show Constellations", "-",  NULL,          Menu_ShowConstellations, "<ToggleItem>" },
+    { "/Render/Show Galaxies", "U",         NULL,          Menu_ShowGalaxies, "<ToggleItem>" },
+    { "/Render/Show Atmospheres", "<control>A",NULL,       Menu_ShowAtmospheres, "<ToggleItem>" },
+    { "/Render/Show Clouds", "I",           NULL,          Menu_ShowClouds, "<ToggleItem>" },
+    { "/Render/Show Orbits", "O",           NULL,          Menu_ShowOrbits, "<ToggleItem>" },
+    { "/Render/Show Constellations", "minus",NULL,         Menu_ShowConstellations, "<ToggleItem>" },
+    { "/Render/Show Coordinate Sphere", "semicolon",NULL,  Menu_ShowCelestialSphere, "<ToggleItem>" },
+    { "/Render/Show Night Side Lights", "<control>L",NULL, Menu_ShowNightSideMaps, "<ToggleItem>" },
     { "/Render/sep1", NULL,                 NULL,          0, "<Separator>" },
-    { "/Render/More Stars", "]",            menuMoreStars, 0, NULL },
-    { "/Render/Fewer Stars", "[",           menuLessStars, 0, NULL },
+    { "/Render/More Stars Visible", "bracketleft",  menuMoreStars, 0, NULL },
+    { "/Render/Fewer Stars Visible", "bracketright", menuLessStars, 0, NULL },
     { "/Render/sep2", NULL,                 NULL,          0, "<Separator>" },
-    { "/Render/Label Planets", "N",         NULL,          Menu_PlanetLabels, "<ToggleItem>" },
+    { "/Render/Label Major Planets", "N",   NULL,          Menu_MajorPlanetLabels, "<ToggleItem>" },
+    { "/Render/Label Minor Planets", "M",   NULL,          Menu_MinorPlanetLabels, "<ToggleItem>" },
     { "/Render/Label Stars", "B",           NULL,          Menu_StarLabels, "<ToggleItem>" },
-    { "/Render/LabelConstellations", "=",   NULL,          Menu_ConstellationLabels, "<ToggleItem>" },
+    { "/Render/Label Galaxies", "E",        NULL,          Menu_GalaxyLabels, "<ToggleItem>" },
+    { "/Render/LabelConstellations", "equal",NULL,         Menu_ConstellationLabels, "<ToggleItem>" },
+    { "/Render/Show Info Text", "V",        menuShowInfo,  0, NULL },
+    { "/Render/sep3", NULL,                 NULL,          0, "<Separator>" },
+    { "/Render/_Ambient", NULL,             NULL,          0, "<Branch>" },
+    { "/Render/Ambient/None", NULL,         menuNoAmbient, 0, NULL },
+    { "/Render/Ambient/Low", NULL,          menuLowAmbient,0, NULL },
+    { "/Render/Ambient/Medium", NULL,       menuMedAmbient,0, NULL },
+    { "/Render/Ambient/High", NULL,         menuHiAmbient, 0, NULL },
     { "/_Help", NULL,                       NULL,          0, "<LastBranch>" },
     { "/Help/Run Demo", "D",                menuRunDemo,   0, NULL },  
     { "/Help/About", NULL,                  menuAbout,     0, NULL },
 };
 
+static GtkItemFactoryEntry optMenuItems[] =
+{
+    { "/Render/Use Pixel Shaders", "<control>P", NULL,     Menu_PixelShaders, "<ToggleItem>" },
+    { "/Render/Use Vertex Shaders", "<control>V", NULL,    Menu_PixelShaders, "<ToggleItem>" },
+};
 
 void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func)
 {
@@ -758,6 +880,12 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
                                            "<main>",
                                            accelGroup);
     gtk_item_factory_create_items(menuItemFactory, nItems, menuItems, NULL);
+    Renderer *renderer=appCore->getRenderer();
+    g_assert(renderer);
+    if(renderer->fragmentShaderSupported())
+	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[0], NULL, 1);
+    if (renderer->vertexShaderSupported())
+	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[1], NULL, 1);
 
     gtk_window_add_accel_group(GTK_WINDOW(window), accelGroup);
     if (menubar != NULL)
@@ -769,14 +897,30 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
                    GTK_SIGNAL_FUNC(menuShowConstellations));
     setupCheckItem(menuItemFactory, Menu_ShowAtmospheres,
                    GTK_SIGNAL_FUNC(menuShowAtmospheres));
+    setupCheckItem(menuItemFactory, Menu_ShowClouds,
+                   GTK_SIGNAL_FUNC(menuShowClouds));
+    setupCheckItem(menuItemFactory, Menu_ShowNightSideMaps,
+                   GTK_SIGNAL_FUNC(menuShowNightSideMaps));
     setupCheckItem(menuItemFactory, Menu_ShowOrbits,
                    GTK_SIGNAL_FUNC(menuShowOrbits));
-    setupCheckItem(menuItemFactory, Menu_PlanetLabels,
-                   GTK_SIGNAL_FUNC(menuPlanetLabels));
+    setupCheckItem(menuItemFactory, Menu_MajorPlanetLabels,
+                   GTK_SIGNAL_FUNC(menuMajorPlanetLabels));
+    setupCheckItem(menuItemFactory, Menu_MinorPlanetLabels,
+                   GTK_SIGNAL_FUNC(menuMinorPlanetLabels));
     setupCheckItem(menuItemFactory, Menu_StarLabels,
                    GTK_SIGNAL_FUNC(menuStarLabels));
+    setupCheckItem(menuItemFactory, Menu_GalaxyLabels,
+                   GTK_SIGNAL_FUNC(menuGalaxyLabels));
     setupCheckItem(menuItemFactory, Menu_ConstellationLabels,
                    GTK_SIGNAL_FUNC(menuConstellationLabels));
+    setupCheckItem(menuItemFactory, Menu_ShowCelestialSphere,
+                   GTK_SIGNAL_FUNC(menuShowCelestialSphere));
+    if(renderer->fragmentShaderSupported())
+	setupCheckItem(menuItemFactory, Menu_PixelShaders,
+		       GTK_SIGNAL_FUNC(menuPixelShaders));
+    if (renderer->vertexShaderSupported())
+	setupCheckItem(menuItemFactory, Menu_VertexShaders,
+		       GTK_SIGNAL_FUNC(menuVertexShaders));
 }
 
 
@@ -949,6 +1093,9 @@ static bool handleSpecialKey(int key, bool down)
         break;
     case GDK_F6:
         k = CelestiaCore::Key_F6;
+        break;
+    case GDK_F7:
+        k = CelestiaCore::Key_F7;
         break;
     case GDK_F10:
         if (down)
