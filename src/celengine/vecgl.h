@@ -47,20 +47,29 @@ inline void glColor(const Color& c, float a)
     glColor4f(c.red(), c.green(), c.blue(), c.alpha() * a);
 }
 
+
+inline void glMatrix(const Mat4f& m)
+{
+    Mat4f& trans = m.transpose();
+    glMultMatrixf(&trans[0].x);
+}
+
+
+inline void glMatrix(const Mat4d& m)
+{
+    Mat4d& trans = m.transpose();
+    glMultMatrixd(&trans[0].x);
+}
+
+
 inline void glRotate(const Quatf& q)
 {
-    Vec3f axis;
-    float angle;
-    q.getAxisAngle(axis, angle);
-    glRotatef(radToDeg(angle), axis.x, axis.y, axis.z);
+    glMatrix(q.toMatrix4());
 }
 
 inline void glRotate(const Quatd& q)
 {
-    Vec3d axis;
-    double angle;
-    q.getAxisAngle(axis, angle);
-    glRotated(radToDeg(angle), axis.x, axis.y, axis.z);
+    glMatrix(q.toMatrix4());
 }
 
 inline void glTranslate(const Vec3f& v)
