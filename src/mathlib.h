@@ -79,6 +79,17 @@ template<class T> int sign(T x)
         return 0;
 }
 
+// This function is like fmod except that it always returns
+// a positive value in the range [ 0, y )
+template<class T> T pfmod(T x, T y)
+{
+    int quotient = (int) abs(x / y);
+    if (x < 0.0)
+        return x + (quotient + 1) * y;
+    else
+        return x - quotient * y;
+}
+
 template<class T> T circleArea(T r)
 {
     return (T) PI * r * r;
