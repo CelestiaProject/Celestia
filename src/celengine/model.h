@@ -55,7 +55,7 @@ class Model
     bool pick(const Ray3d& r, double& distance) const;
 
     //! Render the model in the current OpenGL context
-    void render();
+    void render(RenderContext&);
 
     /*! Apply a uniform scale to the model so that it fits into
      *  a box with a center at centerOffset and a maximum side

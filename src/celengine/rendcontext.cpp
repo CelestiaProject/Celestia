@@ -18,7 +18,10 @@ static Mesh::Material defaultMaterial;
 
 
 RenderContext::RenderContext() :
-    material(&defaultMaterial)
+    material(&defaultMaterial),
+    specularOn(false),
+    blendOn(false),
+    locked(false)
 {
 }
 
@@ -35,16 +38,36 @@ RenderContext::RenderContext(const Mesh::Material* _material)
 void
 RenderContext::makeCurrent()
 {
-    if (material->opacity == 1.0f)
+    Texture* t = NULL;
+    if (material->tex0 != InvalidResource)
+        t = GetTextureManager()->find(material->tex0);
+
+    if (t == NULL)
     {
-        blendOn = false;
-        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
     }
     else
     {
-        blendOn = true;
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_TEXTURE_2D);
+        t->bind();
+    }
+
+    bool blendOnNow = false;
+    if (material->opacity != 1.0f || (t != NULL && t->hasAlpha))
+        blendOnNow = true;
+
+    if (blendOnNow != blendOn)
+    {
+        blendOn = blendOnNow;
+        if (blendOn)
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+        else
+        {
+            glDisable(GL_BLEND);
+        }
     }
 
     glColor4f(material->diffuse.red(),
@@ -80,30 +103,35 @@ RenderContext::makeCurrent()
     }
 
 
-    Texture* t = NULL;
-    if (material->tex0 != InvalidResource)
-        t = GetTextureManager()->find(material->tex0);
-    if (t == NULL)
-    {
-        glDisable(GL_TEXTURE_2D);
-    }
-    else
-    {
-        glEnable(GL_TEXTURE_2D);
-        t->bind();
-    }
 }
 
 
 void
 RenderContext::setMaterial(const Mesh::Material* newMaterial)
 {
-    if (newMaterial == NULL)
-        newMaterial = &defaultMaterial;
-
-    if (newMaterial != material)
+    if (!locked)
     {
-        material = newMaterial;
-        makeCurrent();
+        if (newMaterial == NULL)
+            newMaterial = &defaultMaterial;
+
+        if (newMaterial != material)
+        {
+            material = newMaterial;
+            makeCurrent();
+        }
     }
+}
+
+
+void
+RenderContext::lock()
+{
+    locked = true;
+}
+
+
+void
+RenderContext::unlock()
+{
+    locked = false;
 }

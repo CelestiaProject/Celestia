@@ -16,6 +16,7 @@
 #include "astro.h"
 #include "nebula.h"
 #include "meshmanager.h"
+#include "rendcontext.h"
 #include "gl.h"
 #include "vecgl.h"
 
@@ -69,6 +70,8 @@ void Nebula::render(const Vec3f& offset,
     glScalef(getRadius(), getRadius(), getRadius());
     glRotate(getOrientation());
 
-    m->render();
+    RenderContext rc;
+    m->render(rc);
+
     glEnable(GL_BLEND);
 }
