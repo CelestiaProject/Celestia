@@ -81,6 +81,16 @@ void M3DMaterial::setShininess(float _shininess)
     shininess = _shininess;
 }
 
+string M3DMaterial::getTextureMap() const
+{
+    return texmap;
+}
+
+void M3DMaterial::setTextureMap(const string& _texmap)
+{
+    texmap = _texmap;
+}
+
 
 M3DTriangleMesh::M3DTriangleMesh()
 {
