@@ -75,7 +75,7 @@ msgstr "&Nuova cartella..."
 
 #: kcelbookmarkmenu.cpp:227
 msgid "Create a new bookmark folder in this menu"
-msgstr "Crea una nuova cartella di segnalibri in questo menù"
+msgstr "Crea una nuova cartella di segnalibri in questo menu'"
 
 #: kcelbookmarkmenu.cpp:307 kcelbookmarkmenu.cpp:354 kcelbookmarkmenu.cpp:401
 msgid "Can't add bookmark with empty URL"
@@ -98,9 +98,8 @@ msgid "&Forward"
 msgstr "&Avanti"
 
 #: kdeapp.cpp:314
-#, fuzzy
 msgid "Home"
-msgstr "Cometa"
+msgstr "Inizio"
 
 #: kdeapp.cpp:321
 msgid "Bookmarks"
@@ -164,7 +163,7 @@ msgstr "Bordi visibili"
 
 #: kdeapp.cpp:359
 msgid "Active Frame Visible"
-msgstr "Bordo vista attiva visibile"
+msgstr "Visualizza bordo vista attiva"
 
 #: kdeapp.cpp:371
 msgid "Synchronize Time"
@@ -256,7 +255,7 @@ msgstr "Mostra le ombre delle eclissi"
 
 #: kdeapp.cpp:455
 msgid "Cycle Star Mode"
-msgstr ""
+msgstr "Modo stelle ciclico"
 
 #: kdeapp.cpp:457
 msgid "Show Ring Shadows"
@@ -284,7 +283,7 @@ msgstr "Mostra nomi dei pianeti"
 
 #: kdeapp.cpp:475
 msgid "Show Moon Labels"
-msgstr "Mostra nomidei satelliti"
+msgstr "Mostra nomi dei satelliti"
 
 #: kdeapp.cpp:478
 msgid "Show Comet Labels"
@@ -308,7 +307,7 @@ msgstr "Mostra nomi astronavi"
 
 #: kdeapp.cpp:494
 msgid "Show Location Labels"
-msgstr "Mostra nomi località"
+msgstr "Mostra nomi localita' "
 
 #: kdeapp.cpp:497
 msgid "Display Local Time"
@@ -320,7 +319,7 @@ msgstr "Modo wireframe"
 
 #: kdeapp.cpp:502
 msgid "Center on Orbit"
-msgstr ""
+msgstr "Centra rispetto all'orbita"
 
 #: kdeapp.cpp:506 kdepreferencesdialog.cpp:364
 msgid "Basic"
@@ -332,7 +331,7 @@ msgstr "Multitexture"
 
 #: kdeapp.cpp:510 kdepreferencesdialog.cpp:368
 msgid "NvCombiners"
-msgstr "NvCombiners"
+msgstr "Combinatori NVidia"
 
 #: kdeapp.cpp:512 kdepreferencesdialog.cpp:370
 msgid "DOT3 ARBVP"
@@ -340,11 +339,11 @@ msgstr "DOT3 ARBVP"
 
 #: kdeapp.cpp:514 kdepreferencesdialog.cpp:372
 msgid "NvCombiner NvVP"
-msgstr "NvCombiner NvVP"
+msgstr "Combinatori NVidia NvVP"
 
 #: kdeapp.cpp:516 kdepreferencesdialog.cpp:374
 msgid "NvCombiner ARBVP"
-msgstr "NvCombiner ARBVP"
+msgstr "Combinatori NVidia ARBVP"
 
 #: kdeapp.cpp:518 kdepreferencesdialog.cpp:376
 msgid "ARBFP ARBVP"
@@ -364,7 +363,7 @@ msgstr "Cattura immagine"
 
 #: kdeapp.cpp:526
 msgid "OpenGL info"
-msgstr "Info OpenGL"
+msgstr "Info su OpenGL"
 
 #: kdeapp.cpp:532
 msgid "Show Bookmark Toolbar"
@@ -525,7 +524,7 @@ msgstr "Astronavi"
 
 #: kdepreferencesdialog.cpp:204
 msgid "Locations"
-msgstr "Località"
+msgstr "Localita' "
 
 #: kdepreferencesdialog.cpp:213
 msgid "Ambient Light"
@@ -553,7 +552,7 @@ msgstr "Pulito"
 
 #: kdepreferencesdialog.cpp:238
 msgid "Verbose"
-msgstr "Completo"
+msgstr "Dettagliato"
 
 #: kdepreferencesdialog.cpp:243
 msgid "Automatic FOV"
@@ -589,7 +588,7 @@ msgstr "Insieme"
 
 #: kdepreferencesdialog.cpp:268
 msgid "Local Time is only supported for dates between 1902 and 2037.\n"
-msgstr "L'ora locale è supportato sol per le date tra il 1902 ed il 2037.\n"
+msgstr "L'ora locale e' supportata solo per le date tra il 1902 ed il 2037.\n"
 
 #: kdepreferencesdialog.cpp:342
 msgid ""
@@ -640,8 +639,8 @@ msgid ""
 msgstr ""
 "<b>Combinatori NVIDIA, estensioni NV_vertex_program</b><br> permette di "
 "utilizzare le bump-map, le ombre degli anelli  e i riflessi speculari su "
-"tutte lele schede grafiche GeForce e ATI Radeon. Comunque NvCombiner ARBVP è "
-"unascelta migliore per gli utilizzatori della GeForce."
+"tutte lele schede grafiche GeForce e ATI Radeon. Comunque NvCombiner ARBVP e' "
+"una scelta migliore per gli utilizzatori della GeForce."
 
 #: kdepreferencesdialog.cpp:624
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
@@ -845,15 +844,15 @@ msgstr "Con pianeti"
 
 #: rc.cpp:9
 msgid "Brightest (Abs.)"
-msgstr "Più brillanti (ass.)"
+msgstr "Piu' brillanti (ass.)"
 
 #: rc.cpp:10
 msgid "Brightest (App.)"
-msgstr "Più brillanti (app.)"
+msgstr "Piu' brillanti (app.)"
 
 #: rc.cpp:11
 msgid "Nearest"
-msgstr "Più vicini"
+msgstr "Piu' vicini"
 
 #: rc.cpp:13
 msgid "Alt+C"
@@ -947,3 +946,4 @@ msgstr "pangeli70@virgilio.it"
 
 #~ msgid "Normal (default surface)"
 #~ msgstr "Normale"
+
