@@ -31,6 +31,7 @@ unsigned int vp::ringShadow = 0;
 unsigned int vp::cometTail = 0;
 unsigned int vp::nightLights = 0;
 unsigned int vp::glossMap = 0;
+unsigned int vp::perFragmentSpecular = 0;
 
 
 class VertexProcessorNV : public VertexProcessor
@@ -238,8 +239,6 @@ VertexProcessor* vp::initARB()
         return NULL;
     if (!LoadARBVertexProgram("shaders/shadowtex_arb.vp", shadowTexture))
         return NULL;
-    if (!LoadARBVertexProgram("shaders/multishadow_arb.vp", multiShadow))
-        return NULL;
     if (!LoadARBVertexProgram("shaders/diffuse_texoff_arb.vp", diffuseTexOffset))
         return NULL;
     if (!LoadARBVertexProgram("shaders/rings_arb.vp", ringIllum))
@@ -250,6 +249,17 @@ VertexProcessor* vp::initARB()
         return NULL;
     if (!LoadARBVertexProgram("shaders/glossmap_arb.vp", glossMap))
         return NULL;
+
+    // Load vertex programs that are only required with fragment programs
+    if (ExtensionSupported("GL_NV_fragment_program") ||
+        ExtensionSupported("GL_ARB_fragment_program"))
+    {
+        if (!LoadARBVertexProgram("shaders/multishadow_arb.vp", multiShadow))
+            return NULL;
+        if (!LoadARBVertexProgram("shaders/texphong_arb.vp", perFragmentSpecular))
+            return NULL;
+    }
+
     cout << "All ARB vertex programs loaded successfully.\n";
 
     return new VertexProcessorARB();

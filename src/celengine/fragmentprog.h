@@ -47,6 +47,9 @@ namespace fp
     extern unsigned int sphereShadowOnRings;
     extern unsigned int eclipseShadow1;
     extern unsigned int eclipseShadow2;
+    extern unsigned int texDiffuse;
+    extern unsigned int texDiffuseBump;
+    extern unsigned int texSpecular;
 };
 
 

@@ -20,6 +20,9 @@ using namespace std;
 unsigned int fp::sphereShadowOnRings = 0;
 unsigned int fp::eclipseShadow1      = 0;
 unsigned int fp::eclipseShadow2      = 0;
+unsigned int fp::texDiffuse          = 0;
+unsigned int fp::texDiffuseBump      = 0;
+unsigned int fp::texSpecular         = 0;
 
 
 class FragmentProcessorNV : public FragmentProcessor
@@ -124,6 +127,13 @@ FragmentProcessor* fp::initNV()
         return NULL;
     if (!LoadNvFragmentProgram("shaders/eclipse2_nv.fp", eclipseShadow2))
         return NULL;
+    if (!LoadNvFragmentProgram("shaders/diffuse_nv.fp", texDiffuse))
+        return NULL;
+    if (!LoadNvFragmentProgram("shaders/bumpdiffuse_nv.fp", texDiffuseBump))
+        return NULL;
+    if (!LoadNvFragmentProgram("shaders/texphong_nv.fp", texSpecular))
+        return NULL;
+
     cout << "All NV fragment programs loaded successfully.\n";
 
     return new FragmentProcessorNV();
