@@ -1038,9 +1038,15 @@ static void HandleScreenCapture(HWND hWnd)
         int viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
 
-        CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
-                              viewport[0], viewport[1],
-                              viewport[2], viewport[3]);
+        bool success = CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
+                                             viewport[0], viewport[1],
+                                             viewport[2], viewport[3]);
+        if (!success)
+        {
+            MessageBox(NULL,
+                       "Could not save image file.", "Error",
+                       MB_OK | MB_ICONERROR);
+        }
     }
 }
 
