@@ -31,14 +31,15 @@ static const string AVIExt(".avi");
 static const string DDSExt(".dds");
 static const string CelestiaLegacyScriptExt(".cel");
 static const string CelestiaScriptExt(".clx");
+static const string CelestiaScriptExt2(".celx");
 
 
 ContentType DetermineFileType(const string& filename)
 {
-    int extPos = filename.length() - 4;
-    if (extPos < 0)
-        extPos = 0;
-    string ext = string(filename, extPos, 4);
+    int extPos = filename.rfind('.');
+    if (extPos == string::npos)
+        return Content_Unknown;
+    string ext = string(filename, extPos, filename.length() - extPos + 1);
 
     if (compareIgnoringCase(JPEGExt, ext) == 0 ||
         compareIgnoringCase(JPGExt, ext) == 0 ||
@@ -68,7 +69,8 @@ ContentType DetermineFileType(const string& filename)
         return Content_DDS;
     else if (compareIgnoringCase(CelestiaLegacyScriptExt, ext) == 0)
         return Content_CelestiaLegacyScript;
-    else if (compareIgnoringCase(CelestiaScriptExt, ext) == 0)
+    else if (compareIgnoringCase(CelestiaScriptExt, ext) == 0 ||
+             compareIgnoringCase(CelestiaScriptExt2, ext) == 0)
         return Content_CelestiaScript;
     else
         return Content_Unknown;
