@@ -26,6 +26,7 @@ Y    : Orbit the selected object at a rate synced to its rotation
 "    : Chase selected object (orientation is based on selection's velocity)
 T    : Track selected object (keep selected object centered in view)
 HOME : Move closer to object
+*    : Looking back
 END  : Move farther from object
 ESC  : Cancel motion or script
 Left/Right Arrows : Roll Camera
@@ -37,6 +38,7 @@ Space : stop time
 L     : Time 10x faster
 K     : Time 10x slower
 J     : Reverse time
+!     : Set time to now
 
 Labels:
 =  : Toggle constellation labels
@@ -55,12 +57,15 @@ U  : Toggle galaxy rendering
 O  : Toggle planet orbits
 /  : Toggle constellation diagrams
 ;  : Show an earth-based equatorial coordinate sphere
-[  : Decrease limiting magnitude (fewer stars visible)
-]  : Increase limiting magnitude (more stars visible)
+[  : If autoMag OFF: Decrease limiting magnitude (fewer stars visible)
+     If autoMag ON : Decrease limiting magnitude at 45 deg field of view 
+]  : If autoMag OFF: Increase limiting magnitude (more stars visible)
+     If autoMag ON : Increase limiting magnitude at 45 deg field of view 
 {  : Decrease ambient illumination
 }  : Increase ambient illumination
 ,  : Narrow field of view
 .  : Widen field of view
+Backspace: Cancel current selection
 Ctrl+A : Toggle atmospheres
 Ctrl+B : Toggle constellation boundaries 
 Ctrl+E : Toggle eclipse shadow rendering
