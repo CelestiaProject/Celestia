@@ -53,18 +53,19 @@ MUL   oFog.x, diffuseFactor.x, diffuseFactor.y;
 
 # Haze is complete; now do the bump mapping setup
 
-# Compute the binormal--cross product of tangent and normal
+# Compute the binormal--cross product of normal and tangent
 MOV   t, iTangent;
-MUL   binormal, t.zxyw, iNormal.yzxw;
-MAD   binormal, t.yzxw, iNormal.zxyw, -binormal;
+MUL   binormal, iNormal.zxyw, t.yzxw;
+MAD   binormal, iNormal.yzxw, t.zxyw, -binormal;
 
-DP3   binormal.w, binormal, binormal;
-RSQ   binormal.w, binormal.w;
-MUL   binormal.xyz, binormal, binormal.w;
+# Normalization should not be necessary
+#DP3   binormal.w, binormal, binormal;
+#RSQ   binormal.w, binormal.w;
+#MUL   binormal.xyz, binormal, binormal.w;
 
 # Transform the light direction from object space into surface space
-DP3   light_surf.x, binormal, lightDir;
-DP3   light_surf.y, iTangent, lightDir;
+DP3   light_surf.x, iTangent, lightDir;
+DP3   light_surf.y, binormal, lightDir;
 DP3   light_surf.z, iNormal, lightDir;
 
 # Compress the light direction to fit in the primary color and output it
