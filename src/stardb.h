@@ -15,13 +15,19 @@
 #include "constellation.h"
 #include "starname.h"
 #include "star.h"
+#include "octree.h"
 
 
 typedef std::map<uint32, StarName*> StarNameDatabase;
 
+struct StarRecord
+{
+    Star* star;
+};
+
 class StarDatabase
 {
-public:
+ public:
     static StarDatabase* read(std::istream&);
     static StarNameDatabase* readNames(std::istream&);
 
@@ -33,15 +39,27 @@ public:
     Star* find(uint32 catalogNumber) const;
     Star* find(std::string) const;
 
+    void processVisibleStars(StarHandler& starHandler,
+                             const Point3f& position,
+                             const Quatf& orientation,
+                             float fovY,
+                             float aspectRatio,
+                             float limitingMag) const;
+
     string getStarName(uint32 catalogNumber) const;
 
     StarNameDatabase* getNameDatabase() const;
     void setNameDatabase(StarNameDatabase*);
 
-private:
+ private:
+    void buildOctree();
+    void buildIndexes();
+
     int nStars;
     Star *stars;
     StarNameDatabase* names;
+    StarRecord* catalogNumberIndex;
+    StarOctree* octreeRoot;
 };
 
 
@@ -54,12 +72,5 @@ uint32 StarDatabase::size() const
 {
     return nStars;
 }
-
-
-#if 0
-bool GetCatalogNumber(std::string name,
-                      const StarNameDatabase& namedb,
-                      uint32& catalogNumber);
-#endif
 
 #endif // _STARDB_H_

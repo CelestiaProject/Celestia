@@ -14,7 +14,6 @@
 #include <string>
 #include "stardb.h"
 #include "visstars.h"
-#include "octree.h"
 #include "observer.h"
 #include "solarsys.h"
 #include "galaxy.h"
@@ -43,7 +42,6 @@ class Renderer
     void render(const Observer&,
                 const StarDatabase&,
                 const VisibleStarSet&,
-                const StarOctree&,
                 float faintestVisible,
                 SolarSystem*,
                 GalaxyList*,
@@ -133,7 +131,6 @@ class Renderer
                      float faintestVisible,
                      const Observer& observer);
     void renderStars(const StarDatabase& starDB,
-                     const StarOctree& visTree,
                      float faintestVisible,
                      const Observer& observer);
     void renderGalaxies(const GalaxyList& galaxies,

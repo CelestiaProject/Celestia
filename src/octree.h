@@ -26,13 +26,38 @@ class StarHandler
 };
 
 
-class StarOctreeNode
+class StarOctree;
+
+class DynamicStarOctree
 {
  public:
-    StarOctreeNode(const Point3f& _center, float _absMag);
-    ~StarOctreeNode();
+    DynamicStarOctree(const Point3f& _center, float _absMag);
+    ~DynamicStarOctree();
 
     void insertStar(const Star&, float);
+    void rebuildAndSort(StarOctree*& node, Star*& sortedStars);
+
+ private:
+    void addStar(const Star&);
+    void split(float);
+    void sortStarsIntoChildNodes();
+
+    Point3f center;
+    float absMag;
+    std::vector<const Star*>* stars;
+    DynamicStarOctree** children;
+};
+
+
+class StarOctree
+{
+ public:
+    StarOctree(const Point3f& _center,
+               float _absMag,
+               Star* _firstStar,
+               uint32 _nStars);
+    ~StarOctree();
+
     void processVisibleStars(StarHandler& starHandler,
                              const Point3f& position,
                              const Planef* frustumPlanes,
@@ -41,39 +66,15 @@ class StarOctreeNode
     int countChildren() const;
     int countStars() const;
 
- private:
-    void addStar(const Star&);
-    void split(float);
-    void sortStarsIntoChildNodes();
+    friend DynamicStarOctree;
 
-    int nFaintStars;
+ private:
     Point3f center;
     float absMag;
-    std::vector<const Star*>* stars;
-    StarOctreeNode** children;
+    Star* firstStar;
+    uint32 nStars;
+    StarOctree** children;
 };
 
-
-class StarOctree
-{
- public:
-    StarOctree(const Point3f& center, float _scale, float limitingMag);
-    ~StarOctree();
-
-    void insertStar(const Star&);
-    void processVisibleStars(StarHandler& starHandler,
-                             const Point3f& position,
-                             const Quatf& orientation,
-                             float fovY,
-                             float aspectRatio,
-                             float limitingMag) const;
-    int countNodes() const;
-    int countStars() const;
-
- private:
-    StarOctreeNode* root;
-    float scale;
-    float absMag;
-};
 
 #endif // _OCTREE_H_
