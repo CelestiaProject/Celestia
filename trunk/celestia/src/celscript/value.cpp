@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cstdio>
 #include <celscript/value.h>
+#include <celscript/function.h>
 
 using namespace std;
 using namespace celx;

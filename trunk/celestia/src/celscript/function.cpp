@@ -9,6 +9,7 @@
 
 #include <celscript/function.h>
 #include <celscript/statement.h>
+#include <celscript/execution.h>
 
 using namespace celx;
 using namespace std;
@@ -29,3 +30,18 @@ Function::~Function()
     // delete arguments;
     // delete body;
 }
+
+
+Value Function::call(ExecutionContext& context)
+{
+    Statement::Control control = body->execute(context);
+    if (control == Statement::ControlReturn)
+    {
+        return context.popReturnValue();
+    }
+    else
+    {
+        return Value();
+    }
+}
+
