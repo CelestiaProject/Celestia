@@ -404,6 +404,19 @@ void Renderer::setFont(TextureFont* txf)
     font = txf;
 }
 
+bool Renderer::isSelectionInRenderList(Selection* sel)
+{
+    for (vector<RenderListEntry>::iterator iter = renderList.begin();
+         iter != renderList.end(); iter++)
+    {
+        if ((sel->body && iter->body) && (sel->body == iter->body))
+            return true;
+        if ((sel->star && iter->star) && (sel->star == iter->star))
+            return true;
+    }
+
+    return false;
+}
 
 void Renderer::setRenderMode(int _renderMode)
 {
