@@ -951,7 +951,7 @@
 	Albedo 0.06
 }
 
-"Thrym" "Sol/Saturn"
+"Thrymr" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -973,7 +973,7 @@
 	Albedo 0.06
 }
 
-"Skadi" "Sol/Saturn"
+"Skathi" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1061,7 +1061,7 @@
 	Albedo 0.06
 }
 
-"Suttung" "Sol/Saturn"
+"Suttungr" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
