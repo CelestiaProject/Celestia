@@ -160,6 +160,8 @@
 #define ID_RENDER_ANTIALIASING          40062
 #define ID_LOCATIONS_ORGANIZE           40063
 #define ID_FILE_OPENSCRIPT              40064
+#define ID_TOOLS_MARK                   40065
+#define ID_TOOLS_UNMARK                 40066
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
 // Next default values for new objects
