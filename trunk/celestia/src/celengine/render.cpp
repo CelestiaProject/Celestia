@@ -1120,6 +1120,7 @@ setupLightSources(const vector<const Star*>& nearStars,
             Renderer::LightSource ls;
             ls.position = Point3d(v.x, v.y, v.z);
             ls.luminosity = (*iter)->getLuminosity();
+            ls.radius = (*iter)->getRadius();
 
             // If the star is sufficiently cool, change the light color
             // from white.  Though our sun appears yellow, we still make
@@ -1692,7 +1693,6 @@ void Renderer::render(const Observer& observer,
                 {
                     renderCometTail(*renderList[i].body,
                                     renderList[i].position,
-                                    renderList[i].sun,
                                     renderList[i].distance,
                                     renderList[i].appMag,
                                     now,
@@ -1703,7 +1703,6 @@ void Renderer::render(const Observer& observer,
                 {
                     renderPlanet(*renderList[i].body,
                                  renderList[i].position,
-                                 renderList[i].sun,
                                  renderList[i].distance,
                                  renderList[i].appMag,
                                  now,
@@ -2792,6 +2791,62 @@ static void setupTexenvGlossMapAlpha()
 }
 
 
+static void
+setEclipseShadowShaderConstants(const LightingState& ls,
+                                float planetRadius,
+                                const Mat4f& planetMat,
+                                CelestiaGLProgram& prog)
+{
+    for (unsigned int li = 0; li < min(ls.nLights, MaxShaderLights); li++)
+    {
+        vector<EclipseShadow>* shadows = ls.shadows[li];
+
+        if (shadows != NULL)
+        {
+            unsigned int nShadows = min((size_t) MaxShaderShadows, 
+                                        shadows->size());
+
+            for (unsigned int i = 0; i < nShadows; i++)
+            {
+                EclipseShadow& shadow = shadows->at(i);
+                CelestiaGLProgramShadow& shadowParams = prog.shadows[li][i];
+
+                float R2 = 0.25f;
+                float umbra = shadow.umbraRadius / shadow.penumbraRadius;
+                umbra = umbra * umbra;
+                if (umbra < 0.0001f)
+                    umbra = 0.0001f;
+                else if (umbra > 0.99f)
+                    umbra = 0.99f;
+
+                float umbraRadius = R2 * umbra;
+                float penumbraRadius = R2;
+                float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
+                shadowParams.bias = shadowBias;
+                shadowParams.scale = -shadowBias / umbraRadius;
+
+                // Compute the transformation to use for generating texture
+                // coordinates from the object vertices.
+                Point3f origin = shadow.origin * planetMat;
+                Vec3f dir = shadow.direction * planetMat;
+                float scale = planetRadius / shadow.penumbraRadius;
+                Vec3f axis = Vec3f(0, 1, 0) ^ dir;
+                float angle = (float) acos(Vec3f(0, 1, 0) * dir);
+                axis.normalize();
+                Mat4f mat = Mat4f::rotation(axis, -angle);
+                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+                float sw = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
+                float tw = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
+                shadowParams.texGenS = Vec4f(sAxis.x, sAxis.y, sAxis.z, sw);
+                shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
+            }
+        }
+    }
+}
+
+
 static void renderModelDefault(Model* model,
                                const RenderInfo& ri,
                                bool lit)
@@ -3476,6 +3531,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
                               const LightingState& ls,
                               RingSystem* rings,
                               float radius,
+                              const Mat4f& planetMat,
                               const Frustum& frustum,
                               const GLContext& context)
 {
@@ -3519,7 +3575,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         shadprop.texUsage |= ShaderProperties::NightTexture;
         textures[nTextures++] = ri.nightTex;
     }
-
+    
     if (rings != NULL)
 #if 0
         (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
@@ -3540,6 +3596,20 @@ static void renderSphere_GLSL(const RenderInfo& ri,
             glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
+        }
+    }
+
+    // Set the shadow information.
+    // Track the total number of shadows; if there are too many, we'll have
+    // to fall back to multipass.
+    unsigned int totalShadows = 0;
+    for (unsigned int li = 0; li < ls.nLights; li++)
+    {
+        if (ls.shadows[li] && !ls.shadows[li]->empty())
+        {
+            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, ls.shadows[li]->size());
+            shadprop.setShadowCountForLight(li, nShadows);
+            totalShadows += nShadows;
         }
     }
 
@@ -3599,6 +3669,8 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         prog->ringWidth = 1.0f / (ringWidth / radius);
     }
 
+    if (shadprop.shadowCounts != 0)    
+        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
 
     glColor(ri.color);
 
@@ -3919,7 +3991,7 @@ static void renderRings(RingSystem& rings,
 
 static void
 renderEclipseShadows(Model* model,
-                     vector<Renderer::EclipseShadow>& eclipseShadows,
+                     vector<EclipseShadow>& eclipseShadows,
                      RenderInfo& ri,
                      float planetRadius,
                      Mat4f& planetMat,
@@ -3930,10 +4002,10 @@ renderEclipseShadows(Model* model,
     if (model != NULL)
         return;
 
-    for (vector<Renderer::EclipseShadow>::iterator iter = eclipseShadows.begin();
+    for (vector<EclipseShadow>::iterator iter = eclipseShadows.begin();
          iter != eclipseShadows.end(); iter++)
     {
-        Renderer::EclipseShadow shadow = *iter;
+        EclipseShadow shadow = *iter;
 
 #ifdef DEBUG_ECLIPSE_SHADOWS
         // Eclipse debugging: render the central axis of the eclipse
@@ -4066,7 +4138,7 @@ renderEclipseShadows(Model* model,
 
 static void
 renderEclipseShadows_Shaders(Model* model,
-                             vector<Renderer::EclipseShadow>& eclipseShadows,
+                             vector<EclipseShadow>& eclipseShadows,
                              RenderInfo& ri,
                              float planetRadius,
                              Mat4f& planetMat,
@@ -4088,10 +4160,10 @@ renderEclipseShadows_Shaders(Model* model,
     float shadowParams[4][4];
 
     int n = 0;
-    for (vector<Renderer::EclipseShadow>::iterator iter = eclipseShadows.begin();
+    for (vector<EclipseShadow>::iterator iter = eclipseShadows.begin();
          iter != eclipseShadows.end() && n < 4; iter++, n++)
     {
-        Renderer::EclipseShadow shadow = *iter;
+        EclipseShadow shadow = *iter;
 
         float R2 = 0.25f;
         float umbra = shadow.umbraRadius / shadow.penumbraRadius;
@@ -4528,6 +4600,11 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
         distance = astro::kilometersToAU((float) dir.length());
         ls.lights[i].irradiance = suns[i].luminosity / (distance * distance);
         ls.lights[i].color = suns[i].color;
+
+        // Store the position and apparent size because we'll need them for
+        // testing for eclipses.
+        ls.lights[i].position = suns[i].position;
+        ls.lights[i].apparentSize = (float) (suns[i].radius / dir.length());
     }
 
     // Sort light sources by brightness.  Light zero should always be the
@@ -4768,7 +4845,7 @@ void Renderer::renderObject(Point3f pos,
             {
             case GLContext::GLPath_GLSL:
                 renderSphere_GLSL(ri, ls, obj.rings, obj.radius,
-                                  viewFrustum, *context);
+                                  planetMat, viewFrustum, *context);
                 break;
 
             case GLContext::GLPath_NV30:
@@ -4963,8 +5040,11 @@ void Renderer::renderObject(Point3f pos,
         }
     }
 
-    if (obj.eclipseShadows != NULL &&
-        (obj.surface->appearanceFlags & Surface::Emissive) == 0)
+    // No separate shadow rendering pass required for GLSL path
+    if (ls.shadows[0] != NULL &&
+        ls.shadows[0]->size() != 0 &&
+        (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
+        context->getRenderPath() != GLContext::GLPath_GLSL)
     {
 #if 1
         // renderEclipseShadows_Shaders() still needs some more work.
@@ -4972,7 +5052,7 @@ void Renderer::renderObject(Point3f pos,
             context->getFragmentProcessor() != NULL)
         {
             renderEclipseShadows_Shaders(model,
-                                         *obj.eclipseShadows,
+                                         *ls.shadows[0],
                                          ri,
                                          radius, planetMat, viewFrustum,
                                          *context);
@@ -4981,7 +5061,7 @@ void Renderer::renderObject(Point3f pos,
 #endif
         {
             renderEclipseShadows(model,
-                                 *obj.eclipseShadows,
+                                 *ls.shadows[0],
                                  ri,
                                  radius, planetMat, viewFrustum,
                                  *context);
@@ -5057,9 +5137,13 @@ void Renderer::renderObject(Point3f pos,
 }
 
 
-bool Renderer::testEclipse(const Body& receiver, const Body& caster,
-                           double now)
+bool Renderer::testEclipse(const Body& receiver,
+                           const Body& caster,
+                           const DirectionalLight& light,
+                           double now,
+                           vector<EclipseShadow>& shadows)
 {
+
     // Ignore situations where the shadow casting body is much smaller than
     // the receiver, as these shadows aren't likely to be relevant.  Also,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
@@ -5080,10 +5164,11 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
         Point3d posReceiver = receiver.getHeliocentricPosition(now);
         Point3d posCaster = caster.getHeliocentricPosition(now);
 
-        const Star* sun = receiver.getSystem()->getStar();
-        assert(sun != NULL);
-        double distToSun = posReceiver.distanceFromOrigin();
-        float appSunRadius = (float) (sun->getRadius() / distToSun);
+        //const Star* sun = receiver.getSystem()->getStar();
+        //assert(sun != NULL);
+        //double distToSun = posReceiver.distanceFromOrigin();
+        //float appSunRadius = (float) (sun->getRadius() / distToSun);
+        float appSunRadius = light.apparentSize;
 
         Vec3d dir = posCaster - posReceiver;
         double distToCaster = dir.length() - receiver.getRadius();
@@ -5107,13 +5192,13 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
         // radii, then we have an eclipse.
         float R = receiver.getRadius() + shadowRadius;
         double dist = distance(posReceiver,
-                               Ray3d(posCaster, posCaster - Point3d(0, 0, 0)));
+                               Ray3d(posCaster, posCaster - light.position));
         if (dist < R)
         {
-            Vec3d sunDir = posCaster - Point3d(0, 0, 0);
+            Vec3d sunDir = posCaster - light.position;
             sunDir.normalize();
 
-            Renderer::EclipseShadow shadow;
+            EclipseShadow shadow;
             shadow.origin = Point3f((float) dir.x,
                                     (float) dir.y,
                                     (float) dir.z);
@@ -5123,7 +5208,7 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
             shadow.penumbraRadius = shadowRadius;
             shadow.umbraRadius = caster.getRadius() *
                 (appOccluderRadius - appSunRadius) / appOccluderRadius;
-            eclipseShadows.insert(eclipseShadows.end(), shadow);
+            shadows.push_back(shadow);
 
             return true;
         }
@@ -5135,7 +5220,6 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
 
 void Renderer::renderPlanet(Body& body,
                             Point3f pos,
-                            Vec3f sunDirection,
                             float distance,
                             float appMag,
                             double now,
@@ -5194,54 +5278,72 @@ void Renderer::renderPlanet(Body& body,
         if (rp.locations != NULL && (labelMode & LocationLabels) != 0)
             body.computeLocations();
 
-        // Calculate eclipse circumstances
-        if ((renderFlags & ShowEclipseShadows) != 0 &&
-            body.getClassification() != Body::Invisible)
-        {
-            PlanetarySystem* system = body.getSystem();
-            if (system != NULL)
-            {
-                // Clear out the list of eclipse shadows
-                eclipseShadows.clear();
-
-                if (system->getPrimaryBody() == NULL &&
-                    body.getSatellites() != NULL)
-                {
-                    // The body is a planet.  Check for eclipse shadows
-                    // from all of its satellites.
-                    PlanetarySystem* satellites = body.getSatellites();
-                    if (satellites != NULL)
-                    {
-                        int nSatellites = satellites->getSystemSize();
-                        for (int i = 0; i < nSatellites; i++)
-                            testEclipse(body, *satellites->getBody(i), now);
-                    }
-                }
-                else if (system->getPrimaryBody() != NULL)
-                {
-                    // The body is a moon.  Check for eclipse shadows from
-                    // the parent planet and all satellites in the system.
-                    Body* planet = system->getPrimaryBody();
-                    testEclipse(body, *planet, now);
-
-                    int nSatellites = system->getSystemSize();
-                    for (int i = 0; i < nSatellites; i++)
-                    {
-                        if (system->getBody(i) != &body)
-                            testEclipse(body, *system->getBody(i), now);
-                    }
-                }
-
-                if (eclipseShadows.size() != 0)
-                    rp.eclipseShadows = &eclipseShadows;
-            }
-        }
-
         LightingState lights;
         setupObjectLighting(lightSources,
                             body.getHeliocentricPosition(now),
                             rp.orientation,
                             lights);
+        assert(lights.nLights < MaxLights);
+
+        {
+            // Clear out the list of eclipse shadows
+            for (unsigned int li = 0; li < lights.nLights; li++)
+            {
+                eclipseShadows[li].clear();
+                lights.shadows[li] = &eclipseShadows[li];
+            }
+        }
+
+
+        // Calculate eclipse circumstances
+        if ((renderFlags & ShowEclipseShadows) != 0 &&
+            body.getClassification() != Body::Invisible &&
+            body.getSystem() != NULL)
+        {
+            PlanetarySystem* system = body.getSystem();
+
+            if (system->getPrimaryBody() == NULL &&
+                body.getSatellites() != NULL)
+            {
+                // The body is a planet.  Check for eclipse shadows
+                // from all of its satellites.
+                PlanetarySystem* satellites = body.getSatellites();
+                if (satellites != NULL)
+                {
+                    int nSatellites = satellites->getSystemSize();
+                    for (unsigned int li = 0; li < lights.nLights; li++)
+                    {
+                        for (int i = 0; i < nSatellites; i++)
+                            testEclipse(body, *satellites->getBody(i),
+                                        lights.lights[li],
+                                        now, *lights.shadows[li]);
+                    }
+                }
+            }
+            else if (system->getPrimaryBody() != NULL)
+            {
+                for (unsigned int li = 0; li < lights.nLights; li++)
+                {
+                    // The body is a moon.  Check for eclipse shadows from
+                    // the parent planet and all satellites in the system.
+                    Body* planet = system->getPrimaryBody();
+                    testEclipse(body, *planet, lights.lights[li],
+                                now, *lights.shadows[li]);
+                    
+                    int nSatellites = system->getSystemSize();
+                    for (int i = 0; i < nSatellites; i++)
+                    {
+                        if (system->getBody(i) != &body)
+                        {
+                            testEclipse(body, *system->getBody(i),
+                                        lights.lights[li],
+                                        now, *lights.shadows[li]);
+                        }
+                    }
+                }
+            }
+        }
+
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
                      rp, lights);
@@ -5466,7 +5568,6 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
 
 void Renderer::renderCometTail(const Body& body,
                                Point3f pos,
-                               Vec3f sunDirection,
                                float distance,
                                float appMag,
                                double now,
