@@ -361,8 +361,11 @@ StarDetails::CreateStandardStarType(const std::string& specTypeName,
     StarDetails* details = new StarDetails();
 
     details->setTemperature(_temperature);
-    details->setRotationPeriod(_rotationPeriod);
     details->setSpectralType(specTypeName);
+
+    RotationElements re = details->getRotationElements();
+    re.period = _rotationPeriod;
+    details->setRotationElements(re);
 
     return details;
 }
@@ -639,13 +642,13 @@ StarDetails::StarDetails() :
     radius(0.0f),
     temperature(0.0f),
     bolometricCorrection(0.0f),
-    rotationPeriod(1.0f),
     knowledge(0u),
     visible(true),
     model(InvalidResource),
     orbit(NULL),
     orbitalRadius(0.0f),
-    barycenter(NULL)
+    barycenter(NULL),
+    semiAxes(1.0f, 1.0f, 1.0f)
 {
     spectralType[0] = '\0';
 }
@@ -662,13 +665,6 @@ void
 StarDetails::setTemperature(float _temperature)
 {
     temperature = _temperature;
-}
-
-
-void
-StarDetails::setRotationPeriod(float _rotationPeriod)
-{
-    rotationPeriod = _rotationPeriod;
 }
 
 
@@ -754,6 +750,13 @@ StarDetails::setVisibility(bool b)
 }
 
 
+void
+StarDetails::setRotationElements(const RotationElements& re)
+{
+    rotationElements = re;
+}
+
+
 // Return the radius of the star in kilometers
 float Star::getRadius() const
 {
@@ -777,6 +780,13 @@ float Star::getRadius() const
     return SOLAR_RADIUS * (float) sqrt(boloLum) *
         square(SOLAR_TEMPERATURE / getTemperature());
 #endif
+}
+
+
+void
+StarDetails::setEllipsoidSemiAxes(const Vec3f& v)
+{
+    semiAxes = v;
 }
 
 
@@ -878,4 +888,10 @@ void Star::setOrbitBarycenter(Star* s)
 void Star::computeOrbitalRadius()
 {
     details->computeOrbitalRadius();
+}
+
+void
+Star::setRotationElements(const RotationElements& re)
+{
+    details->setRotationElements(re);
 }

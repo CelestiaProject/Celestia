@@ -737,7 +737,11 @@ void StarDatabase::finish()
     buildOctree();
     buildIndexes();
 
-    // Resolve all barycenters; this can't be done before star sorting
+    // Resolve all barycenters; this can't be done before star sorting. There's
+    // still a bug here: final orbital radii aren't available until after
+    // the barycenters have been resolved, and these are required when building
+    // the octree.  This will only rarely cause a problem, but it still needs
+    // to be addressed.
     for (vector<BarycenterUsage>::const_iterator iter = barycenters.begin();
          iter != barycenters.end(); iter++)
     {
@@ -877,9 +881,23 @@ StarDatabase::createStar(uint32 catalogNumber,
     string textureName;
     bool hasTexture = starData->getString("Texture", textureName);
     bool hasModel = starData->getString("Mesh", modelName);
+
+    RotationElements re = details->getRotationElements();
+    FillinRotationElements(starData, re);
+    bool hasRotationElements = !(re == details->getRotationElements());
+    if (hasRotationElements)
+        cout << "Has rotation elements!\n";
+
+    Vec3d semiAxes;
+    bool hasSemiAxes = starData->getVector("SemiAxes", semiAxes);
+
     Orbit* orbit = CreateOrbit(NULL, starData, path, true);
 
-    if (hasTexture || hasModel || orbit != NULL)
+    if (hasTexture      ||
+        hasModel        ||
+        orbit != NULL   ||
+        hasSemiAxes     ||
+        hasRotationElements)
     {
         // If the star definition has extended information, clone the
         // star details so we can customize it without affecting other
@@ -897,6 +915,13 @@ StarDatabase::createStar(uint32 catalogNumber,
         {
             ResourceHandle modelHandle = GetModelManager()->getHandle(ModelInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f)));
             details->setModel(modelHandle);
+        }
+
+        if (hasSemiAxes)
+        {
+            details->setEllipsoidSemiAxes(Vec3f((float) semiAxes.x,
+                                                (float) semiAxes.y,
+                                                (float) semiAxes.z));
         }
 
         if (orbit != NULL)
@@ -925,6 +950,9 @@ StarDatabase::createStar(uint32 catalogNumber,
                 }
             }
         }
+
+        if (hasRotationElements)
+            details->setRotationElements(re);
     }
 
     Star* star = new Star();

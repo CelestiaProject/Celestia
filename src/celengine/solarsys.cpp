@@ -203,35 +203,6 @@ static void FillinSurface(Hash* surfaceData,
 }
 
 
-static void FillinRotationElements(Hash* rotationData,
-                                   RotationElements& re,
-                                   float orbitalPeriod)
-{
-    // The default is synchronous rotation (rotation period == orbital period)
-    float period = orbitalPeriod;
-    if (rotationData->getNumber("RotationPeriod", period))
-        re.period = period / 24.0f;
-
-    float offset = 0.0f;
-    if (rotationData->getNumber("RotationOffset", offset))
-        re.offset = degToRad(offset);
-
-    rotationData->getNumber("RotationEpoch", re.epoch);
-
-    float obliquity = 0.0f;
-    if (rotationData->getNumber("Obliquity", obliquity))
-        re.obliquity = degToRad(obliquity);
-
-    float ascendingNode = 0.0f;
-    if (rotationData->getNumber("EquatorAscendingNode", ascendingNode))
-        re.ascendingNode = degToRad(ascendingNode);
-
-    float precessionRate = 0.0f;
-    if (rotationData->getNumber("PrecessionRate", precessionRate))
-        re.precessionRate = degToRad(precessionRate);
-}
-
-
 // Create a body (planet or moon) using the values from a hash
 // The usePlanetsUnits flags specifies whether period and semi-major axis
 // are in years and AU rather than days and kilometers
@@ -344,7 +315,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     RotationElements re = body->getRotationElements();
     if (disposition != ModifyObject)
         re.period = (float) body->getOrbit()->getPeriod();
-    FillinRotationElements(planetData, re, (float) body->getOrbit()->getPeriod());
+    FillinRotationElements(planetData, re);
     body->setRotationElements(re);
 
     Surface surface;
