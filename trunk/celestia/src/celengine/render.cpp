@@ -76,7 +76,6 @@ static Texture* normalizationTex = NULL;
 
 static Texture* starTex = NULL;
 static Texture* glareTex = NULL;
-static Texture* galaxyTex = NULL;
 static Texture* shadowTex = NULL;
 
 static Texture* eclipseShadowTextures[4];
@@ -330,9 +329,6 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
 
         starTex = CreateProceduralTexture(64, 64, GL_RGB, StarTextureEval);
         starTex->bindName();
-
-        galaxyTex = CreateProceduralTexture(128, 128, GL_RGBA, GlareTextureEval);
-        galaxyTex->bindName();
 
         glareTex = CreateJPEGTexture("textures/flare.jpg");
         if (glareTex == NULL)
@@ -4092,7 +4088,6 @@ void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
         return;
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    galaxyTex->bind();
 
     for (DeepSkyCatalog::const_iterator iter = catalog.begin();
          iter != catalog.end(); iter++)
