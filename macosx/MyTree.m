@@ -141,7 +141,7 @@
     NSEnumerator* enumerator = nil;
     NSDictionary* childDict = nil;
     id <NSCoding> nodeValue = nil;
-    NSLog(@"[MyTree initWithDictionary:%@ parent:%@]",dict,parent);
+    // NSLog(@"[MyTree initWithDictionary:%@ parent:%@]",dict,parent);
     // this part could use some work
     nodeValue = [[[CelestiaFavorite alloc] initWithDictionary:[dict objectForKey:@"nodeValue"]] autorelease];
     // Leaf
