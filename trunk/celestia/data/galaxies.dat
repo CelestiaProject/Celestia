@@ -42,9 +42,9 @@
 	RA        0.712
 	Dec      41.27
 	Distance  2.9e6
-	Radius   95000
+	Radius   75000
 	Axis [ -0.596 -0.191 0.780 ]
-	Angle 320
+	Angle 195
 }
 
 # Triangulum spiral / NGC 598
