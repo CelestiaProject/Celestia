@@ -1528,7 +1528,7 @@
 	Orientation [90 0 0 1]   # rotates around long axis 
 	Obliquity        66    
 	RotationPeriod  170      # 7.1 day axial rotation period 
-	PrecessionRate   89      # 3.7 day precession period 
+	PrecessionRate   97      # 3.7 day precession period 
 
 	Albedo            0.04 
 } 
