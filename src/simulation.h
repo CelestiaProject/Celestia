@@ -45,8 +45,6 @@ class Simulation
 
     Observer& getObserver();
 
-    Quatf getOrientation();
-    void setOrientation(Quatf q);
     void orbit(Quatf q);
     void rotate(Quatf q);
     void changeOrbitDistance(float d);
@@ -58,7 +56,8 @@ class Simulation
     void selectStar(uint32);
     void selectPlanet(int);
     Selection findObject(string s);
-    void gotoSelection(double gotoTime = 5.0);
+    void gotoSelection(double gotoTime);
+    void gotoSelection(double gotoTime, double distance);
     void centerSelection(double centerTime = 0.5);
     void follow();
     void cancelMotion();
@@ -113,7 +112,7 @@ class Simulation
                          SolarSystem& solarSystem,
                          Vec3f pickRay);
     Selection pickStar(Vec3f pickRay);
-    void computeGotoParameters(Selection& sel, JourneyParams& jparams, double gotoTime);
+    void computeGotoParameters(Selection& sel, JourneyParams& jparams, double gotoTime, double distance);
     void computeCenterParameters(Selection& sel, JourneyParams& jparams, double centerTime);
     void displaySelectionInfo(Console&);
 
