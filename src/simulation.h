@@ -19,6 +19,7 @@
 #include "mesh.h"
 #include "stardb.h"
 #include "solarsys.h"
+#include "astro.h"
 #include "galaxy.h"
 #include "texmanager.h"
 #include "render.h"
@@ -58,8 +59,14 @@ class Simulation
     void selectPlanet(int);
     Selection findObject(string s);
     Selection findObjectFromPath(string s);
-    void gotoSelection(double gotoTime);
-    void gotoSelection(double gotoTime, double distance);
+    void gotoSelection(double gotoTime,
+                       Vec3f up, astro::CoordinateSystem upFrame);
+    void gotoSelection(double gotoTime, double distance,
+                       Vec3f up, astro::CoordinateSystem upFrame);
+    void gotoSelectionLongLat(double gotoTime,
+                              double distance,
+                              float longitude, float latitude,
+                              Vec3f up);
     void centerSelection(double centerTime = 0.5);
     void follow();
     void geosynchronousFollow();
@@ -96,6 +103,8 @@ class Simulation
         UniversalCoord to;
         UniversalCoord initialFocus;
         UniversalCoord finalFocus;
+        Quatf initialOrientation;
+        Quatf finalOrientation;
         Vec3f up;
     } JourneyParams;
 
@@ -116,7 +125,11 @@ class Simulation
                          SolarSystem& solarSystem,
                          Vec3f pickRay);
     Selection pickStar(Vec3f pickRay);
-    void computeGotoParameters(Selection& sel, JourneyParams& jparams, double gotoTime, double distance);
+    void computeGotoParameters(Selection& sel,
+                               JourneyParams& jparams,
+                               double gotoTime,
+                               Vec3d offset, astro::CoordinateSystem offsetFrame,
+                               Vec3f up, astro::CoordinateSystem upFrame);
     void computeCenterParameters(Selection& sel, JourneyParams& jparams, double centerTime);
     void displaySelectionInfo(Console&);
 

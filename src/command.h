@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include "execenv.h"
+#include "astro.h"
 
 
 class Command
@@ -76,13 +77,35 @@ class CommandSelect : public InstantaneousCommand
 class CommandGoto : public InstantaneousCommand
 {
  public:
-    CommandGoto(double t, double dist);
+    CommandGoto(double t, double dist,
+                Vec3f _up, astro::CoordinateSystem _upFrame);
     ~CommandGoto();
     void process(ExecutionEnvironment&);
 
  private:
     double gotoTime;
     double distance;
+    Vec3f up;
+    astro::CoordinateSystem upFrame;
+};
+
+
+class CommandGotoLongLat : public InstantaneousCommand
+{
+ public:
+    CommandGotoLongLat::CommandGotoLongLat(double t,
+                                           double dist,
+                                           float _longitude, float _latitude,
+                                           Vec3f _up);
+    ~CommandGotoLongLat();
+    void process(ExecutionEnvironment&);
+
+ private:
+    double gotoTime;
+    double distance;
+    float longitude;
+    float latitude;
+    Vec3f up;
 };
 
 
