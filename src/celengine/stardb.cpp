@@ -156,14 +156,11 @@ std::vector<std::string> StarDatabase::getCompletion(const string& name) const
 {
     std::vector<std::string> completion;
 
-    if (name.empty())
-        return completion;
-
     // only named stars are supported by completion.
-    if (names != NULL)
-    {
+    if (!name.empty() && names != NULL)
         return names->getCompletion(name);
-    }
+    else
+        return completion;
 }
 
 
