@@ -122,7 +122,7 @@ void EclipseFinderDlg::gotoEclipse(QListViewItem* item, const QPoint& p, int col
         Selection sel = appCore->getSimulation()->findObjectFromPath(std::string(item->text(col == 1).latin1()));
         appCore->getSimulation()->setSelection(sel);
         QString date = item->text(2);
-        int yearEnd = date.find('-'); 
+        int yearEnd = date.find('-', 1); 
         astro::Date d(date.left(yearEnd).toInt(), 
                       date.mid(yearEnd + 1, 2).toInt(),
                       date.mid(yearEnd + 4, 2).toInt());
