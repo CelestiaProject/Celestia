@@ -1,6 +1,6 @@
 // winmain.cpp
 // 
-// Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Windows front end for Celestia.
 //
@@ -48,6 +48,7 @@ static bool fullscreen = false;
 static bool bReady = false;
 
 HINSTANCE appInstance;
+HWND mainWindow = 0;
 HWND ssBrowserWindow = 0;
 
 static HMENU menuBar = 0;
@@ -121,6 +122,12 @@ bool LoadItemTextFromFile(HWND hWnd,
     ifstream textFile(filename, ios::in | ios::binary);
     string s;
 
+    if (!textFile.good())
+    {
+        SetDlgItemText(hWnd, item, "License file missing!\r\r\nSee http://www.gnu.org/copyleft/gpl.html");
+        return true;
+    }
+
     char c;
     while (textFile.get(c))
     {
@@ -129,9 +136,6 @@ bool LoadItemTextFromFile(HWND hWnd,
         else
             s += c;
     }
-
-    if (textFile.bad())
-        return false;
 
     SetDlgItemText(hWnd, item, s.c_str());
 
@@ -170,7 +174,7 @@ BOOL APIENTRY LicenseProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
-        LoadItemTextFromFile(hDlg, IDC_LICENSE_TEXT, "License.txt");
+        LoadItemTextFromFile(hDlg, IDC_LICENSE_TEXT, "COPYING");
         return(TRUE);
 
     case WM_COMMAND:
@@ -951,73 +955,6 @@ static void setMenuItemCheck(int menuItem, bool checked)
     CheckMenuItem(menuBar, menuItem, checked ? MF_CHECKED : MF_UNCHECKED);
 }
 
-#if 0
-static void ToggleLabelState(int menuItem, int labelState)
-{
-    if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
-    {
-        renderer->setLabelMode(renderer->getLabelMode() | labelState);
-        CheckMenuItem(menuBar, menuItem, MF_CHECKED);
-    }
-    else
-    {
-        renderer->setLabelMode(renderer->getLabelMode() & ~labelState);
-        CheckMenuItem(menuBar, menuItem, MF_UNCHECKED);
-    }
-}
-
-static void ToggleRenderFlag(int menuItem, int renderFlag)
-{
-    if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
-    {
-        renderer->setRenderFlags(renderer->getRenderFlags() | renderFlag);
-        CheckMenuItem(menuBar, menuItem, MF_CHECKED);
-    }
-    else
-    {
-        renderer->setRenderFlags(renderer->getRenderFlags() & ~renderFlag);
-        CheckMenuItem(menuBar, menuItem, MF_UNCHECKED);
-    }
-}
-
-static bool ToggleMenuItem(int menuItem)
-{
-    if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
-    {
-        CheckMenuItem(menuBar, menuItem, MF_CHECKED);
-        return true;
-    }
-    else
-    {
-        CheckMenuItem(menuBar, menuItem, MF_UNCHECKED);
-        return false;
-    }
-}
-#endif
-
-
-VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
-                              const SolarSystem& solarSystem)
-{
-    HMENU hMenu;
-
-    hMenu = CreatePopupMenu();
-    PlanetarySystem* planets = solarSystem.getPlanets();
-    for (int i = 0; i < planets->getSystemSize(); i++)
-    {
-        Body* body = planets->getBody(i);
-        AppendMenu(hMenu, MF_STRING, MENU_CHOOSE_PLANET + i,
-                   body->getName().c_str());
-    }
-
-    if (!fullscreen)
-        ClientToScreen(hwnd, (LPPOINT) &point);
-
-    TrackPopupMenu (hMenu, 0, point.x, point.y, 0, hwnd, NULL);
-
-    DestroyMenu (hMenu);
-}
-
 
 HMENU CreatePlanetarySystemMenu(const PlanetarySystem* planets)
 {
@@ -1034,8 +971,8 @@ HMENU CreatePlanetarySystemMenu(const PlanetarySystem* planets)
 }
 
 
-#if 0
-VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
+VOID APIENTRY handlePopupMenu(HWND hwnd,
+                              float x, float y,
                               const Selection& sel)
 {
     HMENU hMenu;
@@ -1062,12 +999,14 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
     }
     else if (sel.star != NULL)
     {
-        name = starDB->getStarName(sel.star->getCatalogNumber());
+        Simulation* sim = appCore->getSimulation();
+        name = sim->getStarDatabase()->getStarName(sel.star->getCatalogNumber());
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
         AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
         AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
 
+        SolarSystemCatalog* solarSystemCatalog = sim->getSolarSystemCatalog();
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
         {
@@ -1080,7 +1019,12 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
         }
     }
 
-    ClientToScreen(hwnd, (LPPOINT) &point);
+    POINT point;
+    point.x = (int) x;
+    point.y = (int) y;
+    
+    if (!fullscreen)
+        ClientToScreen(hwnd, (LPPOINT) &point);
 
     appCore->getSimulation()->setSelection(sel);
     TrackPopupMenu(hMenu, 0, point.x, point.y, 0, hwnd, NULL);
@@ -1089,7 +1033,6 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
     // work recursively?
     DestroyMenu(hMenu);
 }
-#endif
 
 
 // This still needs a lot of work . . .
@@ -1122,6 +1065,12 @@ void ShowWWWInfo(const Selection& sel)
     char* command = "c:\\program files\\internet explorer\\iexplore";
 
     _spawnl(_P_NOWAIT, command, "iexplore", url.c_str(), NULL);
+}
+
+
+void ContextMenu(float x, float y, Selection sel)
+{
+    handlePopupMenu(mainWindow, x, y, sel);
 }
 
 
@@ -1362,6 +1311,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	return FALSE;
     }
 
+    mainWindow = hWnd;
+
     ShowWindow(hWnd, SW_SHOW);
     UpdateWindow(hWnd);
 
@@ -1380,6 +1331,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     BuildFavoritesMenu();
     syncMenusWithRendererState();
+
+    appCore->setContextMenuCallback(ContextMenu);
 
     bReady = true;
     appCore->start((double) time(NULL) / 86400.0 +
