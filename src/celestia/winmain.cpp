@@ -593,29 +593,7 @@ BOOL APIENTRY AddLocationFolderProc(HWND hDlg,
                 if (GetWindowText(hEdit, name, sizeof(name)))
                 {
                     //Create new folder in parent dialog tree control.
-                    HWND hTree = hLocationTree;
-                    //Add new item to Location item
-                    TVINSERTSTRUCT tvis;
-                    HTREEITEM hParent = TreeView_GetChild(hTree, TVI_ROOT);
-                    if (hParent)
-                    {
-                        HTREEITEM hItem;
-                        tvis.hParent = hParent;
-                        tvis.hInsertAfter = TVI_LAST;
-                        tvis.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-                        tvis.item.pszText = name;
-                        tvis.item.iImage = 2;
-                        tvis.item.iSelectedImage = 1;
-                        if (hItem = TreeView_InsertItem(hTree, &tvis))
-                        {
-                            //Make sure root tree item is open and newly
-                            //added item is visible.
-                            TreeView_Expand(hTree, hParent, TVE_EXPAND);
-
-                            //Select the item
-                            TreeView_SelectItem(hTree, hItem);
-                        }
-                    }
+                    AddNewLocationFolderInTree(hLocationTree, name);
                 }
             }
 

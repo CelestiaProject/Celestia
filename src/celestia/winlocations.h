@@ -21,6 +21,7 @@
 void BuildFavoritesMenu(HMENU, CelestiaCore*);
 HTREEITEM PopulateLocationFolders(HWND, CelestiaCore*, HINSTANCE);
 HTREEITEM PopulateLocationsTree(HWND, CelestiaCore*, HINSTANCE);
+void AddNewLocationFolderInTree(HWND, char*);
 void SyncTreeFoldersWithFavoriteFolders(HWND, CelestiaCore*);
 void InsertLocationInFavorites(HWND, char*, CelestiaCore*);
 void DeleteLocationFromFavorites(HWND, CelestiaCore*);
