@@ -104,10 +104,12 @@ LODSphereMesh::LODSphereMesh() :
     int maxThetaSteps = thetaDivisions / minStep;
     int maxPhiSteps = phiDivisions / minStep;
     maxVertices = (maxPhiSteps + 1) * (maxThetaSteps + 1);
-
     vertices = new float[MaxVertexSize * maxVertices];
-    indices = new unsigned short[maxPhiSteps * 2 * (maxThetaSteps + 1)];
+
+    nIndices = maxPhiSteps * 2 * (maxThetaSteps + 1);
+    indices = new unsigned short[nIndices];
 }
+
 
 LODSphereMesh::~LODSphereMesh()
 {
@@ -270,6 +272,8 @@ void LODSphereMesh::render(const GLContext& context,
                                      GL_STREAM_DRAW_ARB);
             }
             glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+            glx::glGenBuffersARB(1, &indexBuffer);
             
             useVertexBuffers = true;
 
@@ -299,6 +303,15 @@ void LODSphereMesh::render(const GLContext& context,
             indices[n2 + 1] = (i + 1) * (nSlices + 1) + j;
             n2 += 2;
         }
+    }
+
+    if (useVertexBuffers)
+    {
+        glx::glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexBuffer);
+        glx::glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
+                             nIndices * sizeof(indices[0]),
+                             indices,
+                             GL_DYNAMIC_DRAW_ARB);
     }
 
     // Compute the size of a vertex
@@ -417,6 +430,7 @@ void LODSphereMesh::render(const GLContext& context,
     if (useVertexBuffers)
     {
         glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+        glx::glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
         vertices = NULL;
     }
 
@@ -786,12 +800,13 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     // int nRings = max(phiExtent / ri.step, 1); // buggy
     int nRings = phiExtent / ri.step;
     int nSlices = thetaExtent / ri.step;
+    unsigned short* indexBase = useVertexBuffers ? (unsigned short*) NULL : indices;
     for (int i = 0; i < nRings; i++)
     {
         glDrawElements(GL_QUAD_STRIP,
                        (nSlices + 1) * 2,
                        GL_UNSIGNED_SHORT,
-                       indices + (nSlices + 1) * 2 * i);
+                       indexBase + (nSlices + 1) * 2 * i);
     }
 
     // Cycle through the vertex buffers
