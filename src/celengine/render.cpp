@@ -1513,8 +1513,11 @@ void Renderer::render(const Observer& observer,
                         // one.
                         float farthest = min(lastFar, renderList[i].farZ);
                         float nearest = max(lastNear, renderList[i].nearZ);
+                        static int blah = 0;
 
-                        if (farthest / nearest < MaxFarNearRatio)
+                        // Need just a bit of slack in the farthest/nearest
+                        // ratio test.
+                        if (farthest / nearest < MaxFarNearRatio * 1.01f)
                         {
                             // Far/near ratio is acceptable, so coalesce
                             // this object's depth bucket with the previous
@@ -1524,6 +1527,13 @@ void Renderer::render(const Observer& observer,
                                 renderList[j].farZ  = farthest;
                                 renderList[j].nearZ = nearest;
                             }
+#if DEBUG_COALESCE
+                            clog << "Coalesce #" << i << ": " <<
+                                renderList[i].body->getName()  << ", " <<
+                                nearest << ", " << farthest << " -- " << blah++ << '\n';
+#endif
+                            lastNear = nearest;
+                            lastFar = farthest;
                         }
                         else
                         {
@@ -1533,6 +1543,11 @@ void Renderer::render(const Observer& observer,
                             firstCoalesced = i;
                             lastNear = renderList[i].nearZ;
                             lastFar = renderList[i].farZ;
+#if DEBUG_COALESCE
+                            clog << "Coalesce #" << i << ": " <<
+                                renderList[i].body->getName() << " failed! " <<
+                                nearest << ", " << farthest << " -- " << blah++ << '\n';
+#endif
                         }
                     }
                     renderList[i].depthBucket = nDepthBuckets - 1;
@@ -4371,6 +4386,7 @@ void Renderer::renderObject(Point3f pos,
         if (cloudTex != NULL)
         {
             glPushMatrix();
+
             float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
             glScalef(cloudScale, cloudScale, cloudScale);
 
@@ -4380,7 +4396,6 @@ void Renderer::renderObject(Point3f pos,
                 glFrontFace(GL_CW);
 
             float texOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0));
-
             if (atmosphere->cloudSpeed != 0.0f)
             {
                 // Make the clouds appear to rotate above the surface of
@@ -4440,6 +4455,7 @@ void Renderer::renderObject(Point3f pos,
 
             glDepthMask(GL_TRUE);
             glFrontFace(GL_CCW);
+
             glPopMatrix();
         }
     }
@@ -4510,6 +4526,7 @@ void Renderer::renderObject(Point3f pos,
 
     if (obj.rings != NULL && distance > obj.rings->innerRadius)
     {
+        glDepthMask(GL_FALSE);
         renderRings(*obj.rings, ri, radius, obj.oblateness,
                     textureResolution,
                     (context->hasMultitexture() &&
