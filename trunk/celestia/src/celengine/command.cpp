@@ -507,7 +507,7 @@ void CommandSet::process(ExecutionEnvironment& env)
     else if (compareIgnoringCase(name, "FOV") == 0)
     {
         if (env.getRenderer() != NULL)
-            env.getRenderer()->setFieldOfView((float) value);
+            env.getSimulation()->getActiveObserver()->setFOV(degToRad((float) value));
     }
     else if (compareIgnoringCase(name, "StarDistanceLimit") == 0)
     {
