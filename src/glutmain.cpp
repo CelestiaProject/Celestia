@@ -1,6 +1,6 @@
 // glutmain.cpp
 // 
-// Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // GLUT front-end for Celestia.
 //
@@ -52,6 +52,7 @@ static int mainWindow = 1;
 // Mouse wheel button assignments
 #define MOUSE_WHEEL_UP   3
 #define MOUSE_WHEEL_DOWN 4
+
 
 
 void Resize(GLsizei w, GLsizei h)
