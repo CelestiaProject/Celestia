@@ -495,3 +495,4 @@ Code:
 * Unix Gtk: Options Dialog. (dramsey)
 * Celestia Watcher extended. (dramsey)
 * Unix Glut: Keyboard handling corrected. (dramsey)
+* Galaxy labels were being placed incorrectly. (dramsey)

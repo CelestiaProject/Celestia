@@ -729,7 +729,8 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
     double distance = (center - observerPos).length();
 
     // At the solar system scale, we'll handle all calculations in AU
-    Vec3d opos = (center - Point3d(0.0, 0.0, 0.0)) * astro::kilometersToAU(1.0);
+    // Not used anymore
+    // Vec3d opos = (center - Point3d(0.0, 0.0, 0.0)) * astro::kilometersToAU(1.0);
 
     int nBodies = planets->getSystemSize();
     for (int i = 0; i < nBodies; i++)
@@ -3272,7 +3273,7 @@ void Renderer::renderCelestialSphere(const Observer& observer)
 void Renderer::labelGalaxies(const GalaxyList& galaxies,
                           const Observer& observer)
 {
-    Point3f observerPos = (Point3f) observer.getPosition();
+    Point3f observerPos_ly = (Point3f) observer.getPosition() * ((float)1e-6);
 
     for (GalaxyList::const_iterator iter = galaxies.begin();
          iter != galaxies.end(); iter++)
@@ -3281,7 +3282,7 @@ void Renderer::labelGalaxies(const GalaxyList& galaxies,
         Point3d posd = galaxy->getPosition();
         Point3f pos(posd.x,posd.y,posd.z);
 
-        Vec3f rpos = pos - observerPos;
+        Vec3f rpos = pos - observerPos_ly;
         if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
             addLabel(galaxy->getName(), Color(0.7f, 0.7f, 0.0f),
@@ -3295,10 +3296,7 @@ void Renderer::labelStars(const vector<Star*>& stars,
                           const StarDatabase& starDB,
                           const Observer& observer)
 {
-    Point3f observerPos = (Point3f) observer.getPosition();
-    Point3f observerPos_ly(observerPos.x * 1e-6,
-                           observerPos.y * 1e-6,
-                           observerPos.z * 1e-6);
+    Point3f observerPos_ly = (Point3f) observer.getPosition() * ((float)1e-6);
 
     for (vector<Star*>::const_iterator iter = stars.begin(); iter != stars.end(); iter++)
     {
