@@ -706,7 +706,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 "Hyperion" "Sol/Saturn"
 {
 	Mesh "hyperion.3ds"
-	Texture "asteroid.jpg"
+	Texture "hyperion.*" # Phil Stooke
 	Radius    171 # maximum semi-axis
 	MeshCenter [ 3.424 10.938 -4.498 ]
 
@@ -729,6 +729,11 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	PrecessionRate  	 51.43 # 7-day wobble in light curve
 
 	Albedo         0.3
+}
+
+AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
+{
+	Texture "hyperion-lok.*" # Phil Stooke
 }
 
 "Iapetus" "Sol/Saturn"
