@@ -45,7 +45,7 @@ Url::Url(const std::string& str, CelestiaCore *core) {
         mode = astro::Universal;
         nbBodies = 0;
     }
-    if (modeStr == "Follow")    {
+    if (modeStr == "Fallow")    {
         mode = astro::Ecliptical;
         nbBodies = 1;
     }
@@ -260,7 +260,7 @@ std::string Url::getCoordSysName(astro::CoordinateSystem mode) const {
     case astro::Universal:
         return "Freeflight";
     case astro::Ecliptical:
-        return "Follow";
+        return "Fallow";
     case astro::Geographic:
         return "SyncOrbit";
     case astro::Chase:
