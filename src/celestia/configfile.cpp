@@ -101,6 +101,8 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
         }
     }
 
+    configParams->getString("ExtrasDirectory", config->extrasDir);
+
     Value* xrefsVal = configParams->getValue("StarCatalogCrossReferences");
     if (xrefsVal != NULL)
     {
