@@ -657,7 +657,7 @@ Orbit* CreateVSOP87Orbit(const string& name)
                                    earth_R, 6,
                                    365.25,
                                    160000000.0);
-        return new MixedOrbit(o, yearToJD(2000), yearToJD(4000),
+        return new MixedOrbit(o, yearToJD(-4000), yearToJD(4000),
                               astro::SolarMass);
     }
 
