@@ -139,7 +139,7 @@ GalacticForm* Galaxy::getForm() const
 }
 
 
-bool Galaxy::load(AssociativeArray* params)
+bool Galaxy::load(AssociativeArray* params, const string& resPath)
 {
     double detail = 1.0;
     params->getNumber("Detail", detail);
@@ -158,7 +158,7 @@ bool Galaxy::load(AssociativeArray* params)
     }
     setType(type);
     
-    return DeepSkyObject::load(params);
+    return DeepSkyObject::load(params, resPath);
 }
 
 

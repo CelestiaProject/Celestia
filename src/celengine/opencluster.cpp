@@ -27,11 +27,11 @@ OpenCluster::OpenCluster()
 }
 
 
-bool OpenCluster::load(AssociativeArray* params)
+bool OpenCluster::load(AssociativeArray* params, const string& resPath)
 {
     // No parameters specific to open cluster, though a list of member stars
     // could be useful.
-    return DeepSkyObject::load(params);
+    return DeepSkyObject::load(params, resPath);
 }
 
 
