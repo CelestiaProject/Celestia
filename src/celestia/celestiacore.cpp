@@ -1020,7 +1020,7 @@ void CelestiaCore::renderOverlay()
         else
         {
             double timeScale = sim->getTimeScale();
-            if ((abs(timeScale) - 1) < 1e-6)
+            if (abs(abs(timeScale) - 1) < 1e-6)
             {
                 if (sign(timeScale) == 1)
                     *overlay << "Real time";
