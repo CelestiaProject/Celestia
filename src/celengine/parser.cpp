@@ -267,7 +267,7 @@ void AssociativeArray::addValue(string key, Value& val)
     assoc.insert(map<string, Value*>::value_type(key, &val));
 }
 
-bool AssociativeArray::getNumber(string key, double& val) const
+bool AssociativeArray::getNumber(const string& key, double& val) const
 {
     Value* v = getValue(key);
     if (v == NULL || v->getType() != Value::NumberType)
@@ -278,7 +278,7 @@ bool AssociativeArray::getNumber(string key, double& val) const
     return true;
 }
 
-bool AssociativeArray::getNumber(string key, float& val) const
+bool AssociativeArray::getNumber(const string& key, float& val) const
 {
     double dval;
 
@@ -293,7 +293,7 @@ bool AssociativeArray::getNumber(string key, float& val) const
     }
 }
 
-bool AssociativeArray::getString(string key, string& val) const
+bool AssociativeArray::getString(const string& key, string& val) const
 {
     Value* v = getValue(key);
     if (v == NULL || v->getType() != Value::StringType)
@@ -304,7 +304,7 @@ bool AssociativeArray::getString(string key, string& val) const
     return true;
 }
 
-bool AssociativeArray::getBoolean(string key, bool& val) const
+bool AssociativeArray::getBoolean(const string& key, bool& val) const
 {
     Value* v = getValue(key);
     if (v == NULL || v->getType() != Value::BooleanType)
@@ -315,7 +315,7 @@ bool AssociativeArray::getBoolean(string key, bool& val) const
     return true;
 }
 
-bool AssociativeArray::getVector(string key, Vec3d& val) const
+bool AssociativeArray::getVector(const string& key, Vec3d& val) const
 {
     Value* v = getValue(key);
     if (v == NULL || v->getType() != Value::ArrayType)
@@ -334,14 +334,12 @@ bool AssociativeArray::getVector(string key, Vec3d& val) const
         z->getType() != Value::NumberType)
         return false;
 
-    val = Vec3d((float) x->getNumber(),
-                (float) y->getNumber(),
-                (float) z->getNumber());
+    val = Vec3d(x->getNumber(), y->getNumber(), z->getNumber());
 
     return true;
 }
 
-bool AssociativeArray::getVector(string key, Vec3f& val) const
+bool AssociativeArray::getVector(const string& key, Vec3f& val) const
 {
     Vec3d vecVal;
 
@@ -353,7 +351,39 @@ bool AssociativeArray::getVector(string key, Vec3f& val) const
     return true;
 }
 
-bool AssociativeArray::getColor(string key, Color& val) const
+
+bool AssociativeArray::getRotation(const string& key, Quatf& val) const
+{
+    Value* v = getValue(key);
+    if (v == NULL || v->getType() != Value::ArrayType)
+        return false;
+
+    Array* arr = v->getArray();
+    if (arr->size() != 4)
+        return false;
+
+    Value* w = (*arr)[0];
+    Value* x = (*arr)[1];
+    Value* y = (*arr)[2];
+    Value* z = (*arr)[3];
+
+    if (w->getType() != Value::NumberType ||
+        x->getType() != Value::NumberType ||
+        y->getType() != Value::NumberType ||
+        z->getType() != Value::NumberType)
+        return false;
+
+    Vec3f axis((float) x->getNumber(),
+               (float) y->getNumber(),
+               (float) z->getNumber());
+    axis.normalize();
+    float angle = degToRad((float) w->getNumber());
+    val.setAxisAngle(axis, angle);
+
+    return true;
+}
+
+bool AssociativeArray::getColor(const string& key, Color& val) const
 {
     Vec3d vecVal;
 
