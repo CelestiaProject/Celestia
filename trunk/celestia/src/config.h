@@ -16,6 +16,7 @@ struct CelestiaConfig
     std::string starNamesFile;
     std::vector<std::string> solarSystemFiles;
     std::vector<std::string> labelledStars;
+    float faintestVisible;
 };
 
 
