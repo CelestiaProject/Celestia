@@ -1,0 +1,285 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.1.2-Based Variant V1.1//EN"
+ "dtd/kdex.dtd" [
+  <!ENTITY celestia "Celestia">
+  <!ENTITY kappname "&celestia;">
+  <!ENTITY package "kde-module">
+  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+  <!ENTITY % addindex "IGNORE">
+]>
+
+<book lang="&language;">
+
+<bookinfo>
+<title>The &celestia; Handbook</title>
+
+<authorgroup>
+<author>
+<firstname>Frank</firstname>
+<surname>Gregorio</surname>
+<affiliation><jobtitle>Documentation writter</jobtitle>
+</affiliation>
+</author>
+
+<othercredit role="developer">
+<firstname>Chris</firstname>
+<surname>Laurel</surname>
+<affiliation><address><email>claurel@shatters.net</email></address></affiliation>
+<contrib>Developer</contrib>
+</othercredit>
+
+<othercredit role="developer">
+<firstname>Clint</firstname>
+<surname>Weisbrod</surname>
+<affiliation><address><email>cweisbrod@adelphia.net</email></address></affiliation>
+<contrib>Developer</contrib>
+</othercredit>
+
+<othercredit role="developer">
+<firstname>Fridger</firstname>
+<surname>Schrempp</surname>
+<affiliation><address><email>t00fri@mail.desy.de</email></address></affiliation>
+<contrib>Developer</contrib>
+</othercredit>
+
+<othercredit role="developer">
+<firstname>Bob</firstname>
+<surname>Ippolito</surname>
+<affiliation><address><email>bob@redivi.com</email></address></affiliation>
+<contrib>Developer</contrib>
+</othercredit>
+
+<othercredit role="developer">
+<firstname>Christophe</firstname>
+<surname>Teyssier</surname>
+<affiliation><address><email>chris@teyssier.org</email></address></affiliation>
+<contrib>Developer</contrib>
+</othercredit>
+
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<copyright>
+<year>2000</year> <year>2003</year>
+<holder>Chris Laurel</holder>
+</copyright>
+
+<legalnotice><para>
+Permission is granted to copy, distribute and/or modify this
+document under the terms of the GNU Free Documentation License,
+Version 1.1 or any later version published by the Free Software
+Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+with no Back-Cover Texts.  A copy of the license is included in the section entitled "GNU Free Documentation License".</para>
+</legalnotice>
+
+<date>2003-03-20</date>
+<releaseinfo>1.2.5</releaseinfo>
+
+<abstract><para>
+&celestia; is a free real-time space simulation that lets you experience
+our universe in three dimensions. Unlike most planetarium software,
+&celestia; does not confine you to the surface of the Earth. You can travel
+throughout the solar system, to any of over 100,000 stars, or even beyond
+the galaxy. All travel in &celestia; is seamless; the exponential zoom
+feature lets you explore space across a huge range of scales, from galaxy
+clusters down to spacecraft only a few meters across. A 'point-and-goto'
+interface makes it simple to navigate through the universe to the object
+you want to visit. Many add-ons and vastly improved textures of high
+resolution are available for &celestia;.
+</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>Celestia</keyword>
+<keyword>Astronomy</keyword>
+<keyword>OpenGL</keyword>
+<keyword>Simulation</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title>Introduction</title>
+<para>
+Many of us have looked up at the stars on a dark night and wondered what it would be like to launch ourselves into space and soar among the stars.  What do the astronauts of the space shuttle really see when they look down upon our beautiful Earth turning slowly below?  What wonders might we encounter if we could really visit Saturn and journey right through its rings?  What might they actually look like up close?  If you have ever wondered about these things and would like to find out the answers, we of the &celestia; community are happy to introduce you to &celestia;!
+</para>
+
+<para>
+&celestia; is a free real-time space simulation that lets you visually experience our universe in three dimensions.  &celestia; was the initial inspiration and creation of Mr. Chris Laurel, a Seattle, WA computer programmer who in 2001, decided to write a free software program to be made available to everyone on the internet that would place you in control of a virtual reality world of the solar system.  His vision and dedication gave birth to a program that is unlike any other planetarium program in existence.  &celestia; doesn't confine you to the surface of the Earth as many other programs do.  Instead, Chris created a capability to travel throughout the solar system and anywhere else in space, at any speed and in any direction you choose.  If you wish, you can fly via your own ?hyperdrive? spacecraft to visit stars circling the center of the Milky Way beyond the confines of our Sun.  You can even travel completely out of the Milky Way galaxy and view it from far space.
+</para>
+
+<para>
+When &celestia; version 1.0 first appeared available for download on the Internet, space enthusiasts all over the world discovered and quickly realized the potential of this beautiful program.  Within a year, many talented people worldwide joined Chris in a collaborative volunteer effort to make &celestia; into not only a good graphical space simulation program but into a great one, capable of producing a virtual world of space rivaling the visual quality seen only in Hollywood films.
+</para>
+
+<para>
+They have succeeded.  As of this writing, over 500 members of the public are part of the &celestia; forum community.  Over 1 million people have downloaded the program for use at home or school.  The list grows daily and includes talented graphic artists, computer programmers, astronomers, astrophysicists, animators, engineers, teachers, students, professionals from scores of occupations and ordinary citizens in over 20 countries around the world.  We invite you to join the &celestia; forum at <ulink url="http://www.shatters.net/forum/profile.php?mode=register">http://www.shatters.net/forum/profile.php?mode=register</ulink>.
+</para>
+
+<para>
+&celestia; is available free of charge for Windows, Linux, and Mac OS X from <ulink url="http://www.shatters.net/celestia/download.html">http://www.shatters.net/celestia/download.html</ulink>.  Hopefully, you?ve already downloaded &celestia; and are really to install it and experience the beauty of space.  Here is just a taste of what you will be able to encounter:
+</para>
+
+<itemizedlist>
+<listitem><para>Hover over each of the nine planets in our solar system as they rotate slowly below you.  See clouds actually move and drift by (where applicable).  Look carefully and you may be able to see three-dimensional mountains, canyons and craters on the planet surfaces with shadows being cast by them as the Sun sets low on the horizon.
+</para></listitem>
+
+<listitem><para>Take a spin down to the Earth's surface at a lazy speed or at thousands of miles/km per hour in your own spacecraft.  Skim over the oceans of Earth as you actually fly below the clouds.  See the sky turn a pale blue and eventually, transform into the crimson color of a Sunset.  Soar back into space in time to see the lights come on in the cities of Earth and glow an eerie white as the dark side of Earth turns below you.
+</para></listitem>
+
+<listitem><para>Position yourself above the giant gas world of Jupiter and watch as its large moons drift across the face of the planet, casting eclipse shadows on its banded clouds and Great Red Spot.
+</para></listitem>
+
+<listitem><para>Hover far beyond Saturn, speed up time and count its many moons revolving around its magnificent ringed body like pearls swirling on an invisible necklace.
+</para></listitem>
+
+<listitem><para>Journey to the frozen wasteland of Pluto and its moon Charon and imagine their icy coldness as the Sun's faint light casts pale shadows across their cratered ice surfaces.
+</para></listitem>
+
+<listitem><para>Take up station behind the comet Halley, set Celestia's clock back in time and follow this famous comet on a trip into the inner solar system, sailing past Earth with its gaseous blue tail streaming out behind it.
+</para></listitem>
+
+<listitem><para>Set your spacecraft speed and journey from the Earth's surface up to the International Space Station or the Hubble Space Telescope.  Test your skill at rendezvousing with them as they orbit Earth every 90 minutes.
+</para></listitem>
+
+<listitem><para>Fly out to the very edges of our solar system, locate and follow behind Voyager 1 and 2 as they speed farther and farther away from their creators back on Earth, headed on a one way journey through the blackness of frigid space toward distant stars that will take them millions of years to reach.
+</para></listitem>
+
+<listitem><para>Set your ship at faster-than-light speed and sail to Rigel Kentaurus A and B, located 4.5 light years from Earth.  See if you can find their tiny red dwarf companion Proxima Centauri, the closest star to our own Sun, or choose to observe rotating Sunspots on any of a whopping 2,000,000 other stars drawn by your computer in the Celestia universe (to see all of those stars, a separate add-on is required).
+</para></listitem>
+
+<listitem><para>Download some of the many stunning add-ons available for Celestia (see User's Guide Part 2) and your experience becomes filled with even more wonders.  Visit the massive rotating Space Station from the movie, 2001, a Space Odyssey, as it orbits Earth or hover above Discovery, another spaceship from the film, dark, abandoned and adrift somewhere in Jupiter space with the HAL computer inside.
+</para></listitem>
+
+<listitem><para>Journey to the edges of a massive rotating Black Hole as it spins near its stellar companion.
+</para></listitem>
+
+<listitem><para>Track the spacecraft Cassini as it approaches a precise rendezvous with Saturn in 2004.
+</para></listitem>
+
+<listitem><para>Journey to the heart of a distant solar system dominated by a massive Red Giant star glowing a deep crimson, a star that is swallowing its nearest planetary companion.
+</para></listitem>
+
+<listitem><para>Witness a pulsar spinning rapidly as it sends its twin beacons of light out through its remaining solar system.
+</para></listitem>
+
+<listitem><para>Travel back in time to witness what the Earth and Moon looked like billions of years ago, when both were young, violent worlds orbiting within a few thousand miles of each other.
+</para></listitem>
+
+<listitem><para>Are you a Star Wars fan?  The Celestia community has made available for download an entire Star Wars solar system.  Orbit the planet Tatooine and you will be amazed as the realism of its arid deserts.  Fly via hyperdrive over the ice world, Hoth or to Endor but be careful for tractor beams.  Somewhere in that solar system will be the giant imperial Deathstar, glinting as the light from the system's yellow Sun actually reflects off its evil metallic skin.
+</para></listitem>
+
+</itemizedlist>
+
+<para>
+These are just a few of &celestia;'s features.  Each week, new features are being added by &celestia;'s programmers and other talented contributors.  It is a program undergoing a rapid evolution in computer graphics.  Add-on features, for example, will include entirely new solar systems with dozens of planets and moons drawn in vivid detail, gaseous nebula clouds, new galaxies, stars, globular clusters and spacecraft both real and imaginary.  Periodically as new features are added, this User's Guide will also be revised.  If this list above excites you, let?s get started on our journey into the heart of &celestia;.
+</para>
+
+</chapter>
+
+<chapter id="solar_system_tutorial">
+<title>Solar System Tutorial</title>
+<para>
+&celestia; is a stunning program to observe and explore the solar system.  To help you discover some of its beauty and secrets, &celestia; has an excellent journey already laid out for you.  To see it, launch the program as described below, pull down the Help Menu and select Run Demo.  We also suggest you visit <ulink url="http://www.shatters.net/celestia/index.html">http://www.shatters.net/celestia/index.html</ulink>  and download the &celestia; Lesson Plan by Frank Gregorio.  It is written for use both by the general public and by teachers or students, and provides a good systematic &celestia; tour of the nine planets.  &celestia; developers are also collaborating closely with NASA to use &celestia; on the NASA educational website.  Exciting lesson plans and new &celestia; journeys are under development.
+</para>
+</chapter>
+
+<chapter id="what_is_available">
+<title>What is Available</title>
+
+<para>
+&celestia; is a computer program written in the computer language C++.  The code is Open Source, and may be examined and freely modified by anyone under the terms of the GNU Public License.  For experienced programmers who have an interest, directions on how to locate and access &celestia;'s source code on the web will be provided in Part 2 of this User's Guide.
+</para><para>
+In addition to the actual program, &celestia; includes many other files (graphics and data) that the program must use.  Part 2 gives you a brief tutorial in &celestia;'s use of these files, and explains how you may create or modify your own files.  If you choose to download the entire library of over 120 &celestia; add-on files designed to date by its many contributors, they can take up over 650 MB (megabytes) of disc space.  For many people with limited computer memory and/or internet download speed, that is very large.  To offer &celestia; in a reasonable fashion, therefore, the program is provided for download with a comprehensive but limited set of files, sufficient to experience its capabilities without overtaxing your computer.  "Links" (web addresses) to guide you to the additional add-on files available are listed on the web within the User's forum and &celestia; website.  To fully experience what &celestia; has to offer, we urge you to seek out and download some of these other add-on files.
+</para><para>
+The &celestia; package for computers running <trademark class="registered">Microsoft Windows</trademark> 95, 98, ME, 2000, XP, or NT 4.0 is offered as a fully "executable" program.  It will install itself into your computer.  The current Windows version is 11 megabytes in size and is called &celestia;-win32-1.3.0.exe.  It is available for download at <ulink url="http://www.shatters.net/celestia/download.html">http://www.shatters.net/celestia/download.html</ulink>.  If you have a computer that is less than 3 years old, this is the only file you will need to get started.  If you have an older computer, or one with a graphics card with less than 16 megabytes (MB) of memory (see below), the &celestia; package with low-resolution textures is only 4.5 MB in size and may run better on your system.  You can find it at the same website above.  Please note that you do not need both of them.  See hardware comments in the next section below for more detail.
+&celestia; is also available to Apple Macintosh users running MacOS X (&celestia; version 1.2.5).  The comments mentioned above for Windows also apply to the Apple version of &celestia;.
+</para><para>
+&celestia; is available for Linux in three different versions.  All of them are available in a single tarred, gzipped source archive at http://www.shatters.net/celestia/download.html.  Which version you choose to install depends upon which desktop environment you have installed.  The most polished version of &celestia; for Linux requires KDE3 (&celestia; is not compatible with earlier versions of KDE.)  If you do have KDE3, it's highly recommended that you choose the KDE version of &celestia;, as it's under the most active development.  &celestia; can also be compiled to use Gnome/Gtk, although Gnome interface is not up to par with KDE and Windows UI.  It's still possible to build &celestia; even if you don't have either KDE3 or Gnome.  The third version of &celestia; is the GLUT version.  GLUT is a cross platform framework for OpenGL applications that should be installed on nearly every Linux computer with OpenGL.  However, it provides only a bare minimum of GUI features; if you use the GLUT version of &celestia;, you will be missing the helpful menus and dialog boxes of the other versions.
+</para>
+
+<important>
+<title>Required Libraries</title>
+<para>
+All versions of &celestia; for Linux require that you have OpenGL installed.  More and more distributions are shipping with OpenGL, so if you've recently installed or re-installed Linux, there's a good chance that you already have a working OpenGL configuration.  In order to build &celestia;, you need to have the OpenGL developers packages installed.  They should be available on your distribution CD or ftp site if they're not already installed.  After you've successfully built &celestia;, you will want to be able to run it with hardware 3D acceleration.  For this, you'll need a Linux OpenGL driver from your graphics chipset maker.  If it's not already installed, you'll have to download it from the chipset maker's web site.  NVIDIA and ATI are the two largest graphics hardware makers, and both offer Linux drivers in the drivers section of their web sites.  &celestia; requires the image format libraries libjpeg and libpng; both should be present on all up to date Linux installations.  In order to build the Gnome/Gtk version of &celestia;, the gtkglarea library is necessary.  It is available at <ulink url="http://www.student.oulu.fi/~jlof/gtkglarea/">http://www.student.oulu.fi/~jlof/gtkglarea/</ulink> if not already installed on your computer.
+</para>
+</important>
+</chapter>
+
+
+<chapter id="hardware_requirements">
+<title>Hardware Requirements</title>
+<para>
+&celestia; is a sophisticated program that not only positions and graphically depicts the complete solar system in 3D; it also plots and tracks a sky full of hundreds of thousands of stars in real time.  This takes computer power and computer memory.  &celestia; also has available scores of add-on files.  Some of them are large graphics files that require lots of RAM memory.  Thus, identifying what level of computer performance you need to enjoy the program depends upon what level of detail you wish to achieve.
+</para><para>
+In general, to run the basic &celestia; solar system program, your computer should have a CPU (processor) that has a speed of at least 300 million cycles per second (300 MHz).  Typically, computers bought new within the last 2 -3 years have adequate CPU speeds.  If your computer is more than 3 years old or is a Pentium II or equivalent with a processor speed slower than 300 MHz, &celestia; may run slowly and you will be disappointed.
+</para><para>
+The basic &celestia; program also requires a minimum of 128 megabytes of RAM memory.  The graphics files that &celestia; use are large, and if your computer does not have at least 128 megabytes of RAM, &celestia; may run very slowly, not run at all or may lock up.  In addition, if you wish to explore &celestia;'s maximum capabilities, you will need 256 megabytes of RAM memory, with 512 megabytes of RAM recommended.
+</para><para>
+Although it's not absolutely required, the program will be vastly more enjoyable if you also have a 3D video graphics accelerator in your computer.  This is a piece of hardware circuitry that helps to draw complex graphic images on your video display monitor.  &celestia; should run with any 3D accelerator card that has at least 8 megabytes of memory.  However, a 16 megabyte or 32 megabyte card is preferred if you intend to use &celestia;'s most detailed graphic files.  If you have such a card, you will know it.  &celestia; will run smoothly and its graphics will be complete, crisp and sharp.  It is runs too slowly, is blurry, locks up, or objects appear to be moving with jerky motions, you may need to locate a faster computer or one with more memory or graphics capability.
+</para>
+<important>
+<para>&celestia; uses the OpenGL API to render 3D graphics.  In order to get the most from &celestia;, you should have a modern OpenGL graphics card with the latest drivers from the manufacturer.  If you have problems running &celestia;, the first thing to do is verify that your graphics card is capable enough to run &celestia;, and that the drivers are up to date.  If in doubt about the OpenGL driver, download and install a new one.  It will be available free from your card maker's web site.  Having a new driver is the best thing you can do to ensure that &celestia; runs properly.
+</para>
+<para>
+While a graphic video card might use Open GL processing, &celestia; does not run well on all such card brands or models.  Major improvements have been made in version 1.3.0 to render &celestia; more compatible with as many brands of cards as possible, but several graphic cards may handle images in a manner that &celestia; still cannot control properly.  To date, &celestia;'s features will work best on the video chipsets manufactured by NVIDIA, Inc.  Those video cards are sold under the model names "Riva", "GeForce" and "Quadro".  If an NVIDIA Open GL card is not present in your computer, &celestia; can still offer you a beautiful solar system experience, but some of its advanced features may not function smoothly or may not work at all.  These include shadows on mountains and craters (bump mapping), Sunlight reflections off water, land or atmosphere (specular highlights), the shadows of moon eclipses, and atmospheric haze near a planet's surface.
+</para><para>
+As development of &celestia; continues, better support for graphics hardware will continue to be introduced; if not all the features of your graphics card are supported yet, be patient.  Better yet, join the &celestia; development team and help improve the program.
+</para></important>
+</chapter>
+
+<chapter id="installation_uninstallation">
+<title>Installation and Uninstallation</title>
+<para>
+If you have a video card incorporating a graphics accelerator with at least 8 MB of memory, install the full Celestia installation (i.e. - celestia-win32-1.3.0.exe).  If your computer is an older model, does not have a graphics accelerator or does not support Open GL processing, obtain the Celestia package with low-resolution textures and install that.  The views you see in Celestia will be simpler and less detailed, but this version of the program and its files require less RAM and it may run more smoothly.  Also, see the Celestia website for additional answers to troubleshooting questions at http://www.shatters.net/celestia/faq.html.  Alternatively, the main Celestia package includes some low-resolution image files.  While running Celestia, you can actually switch from one resolution of graphics to another by tapping the [R] key on the keyboard (for large resolution), or the [r] key (to change to low resolution images).  This alone may speed up your program.  Note, however, that not every image in Celestia is represented by both a high and low-resolution image.  If you tap the [r] key and nothing happens, it just means there is no smaller resolution image of that moon or asteroid or spacecraft to use.
+</para>
+
+<sect1 id="win">
+<title>Windows Operating System (95, 98, ME, 2000, NT, XP)</title>
+<para>
+Once you have obtained and downloaded the executable file, simply click twice (double-click) rapidly on its name with your left mouse button.  The file will begin running and will install Celestia.  In general, just click [Next" whenever it asks a question.  Celestia has its preferred choices and unless you have reasons for altering them, we suggest you follow them.
+</para>
+</sect1>
+
+<sect1 id="mac">
+<title>Macintosh OS Operating Systems</title>
+<para>
+To install the Macintosh version, click on it and follow the on-screen menu instructions.
+</para>
+</sect1>
+
+<sect1 id="linux">
+<title>Linux Operating Systems</title>
+<para>
+To install the Linux version, unpack it and its libraries with gzip and tar via the command:</para>
+<para><command>gzip</command> <option>-dc</option> <filename>celestia-1.2.5.tar.gz</filename> <command>| tar</command> <option>xvf</option></para>
+<para>
+Then change directory (cd) into the newly created directory and configure Celestia.  Run configure with the appropriate command line for the version that you want to compile:</para>
+<para>
+KDE: ./configure -with-kde
+Gnome/Gtk: ./configure -with-gtk
+GLUT: ./configure
+Configure may complain if you are missing a required component, or if you have an out of date version of a required component.  Check the error output from configure to determine what's missing, install the necessary items, and then try rerunning configure.  If neither the KDE orGnome versions of Celestia will build, try falling back to the GLUT version.  There are many options for configure; you can view them all-together with a brief explanation for each-by running configure -help.
+</para>
+<para>
+After running configure, compile and install Celestia:
+make
+make -install
+Note that make -install will need to be run as the root unless you've overridden the default install directory by invoking configure with the -prefix option.
+</para>
+<para>
+Hopefully, compilation of Celestia will go smoothly.  If it doesn't, it's most likely because some required package is missing.  A relatively common problem is that the OpenGL developer package necessary for building OpenGL applications has not been installed.  If the compiler complains that gl.h or glu.h is not found, it's a symptom of a missing or improperly installed OpenGL developer package.  Once make completes without errors, you're ready to run Celestia from either your desktop of choice or the command line.
+</para>
+</sect1>
+
+<sect1 id="uninstall">
+<title>Uninstall</title>
+<para>
+To uninstall Celestia in Windows, click the Start button at the bottom left of your screen, select "Settings", then select "Control Panel", then select Add/Remove Programs.  Locate Celestia in the pull-down list and click the button that says, "Add/Remove".  For Apple and UNIX owners, follow your system's standard uninstall procedure.
+</para>
+</sect1>
+
+</chapter>
+
+</book>
