@@ -24,6 +24,7 @@ struct CelestiaConfig
     float faintestVisible;
     std::string favoritesFile;
     std::string initScriptFile;
+    std::string demoScriptFile;
 };
 
 
