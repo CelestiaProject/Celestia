@@ -17,6 +17,7 @@
 #include "frustum.h"
 #include "perlin.h"
 #include "spheremesh.h"
+#include "lodspheremesh.h"
 #include "regcombine.h"
 #include "vertexprog.h"
 #include "texmanager.h"
@@ -50,7 +51,7 @@ static bool commonDataInitialized = false;
 
 #define SPHERE_LODS 5
 
-static SphereMesh* sphereMesh[SPHERE_LODS];
+static LODSphereMesh* lodSphere = NULL;
 static SphereMesh* asteroidMesh = NULL;
 
 static Texture* normalizationTex = NULL;
@@ -239,11 +240,7 @@ bool Renderer::init(int winWidth, int winHeight)
     // Initialize static meshes and textures common to all instances of Renderer
     if (!commonDataInitialized)
     {
-        sphereMesh[0] = new SphereMesh(1.0f, 11, 10);
-        sphereMesh[1] = new SphereMesh(1.0f, 21, 40);
-        sphereMesh[2] = new SphereMesh(1.0f, 31, 60);
-        sphereMesh[3] = new SphereMesh(1.0f, 41, 80);
-        sphereMesh[4] = new SphereMesh(1.0f, 61, 120);
+        lodSphere = new LODSphereMesh();
         asteroidMesh = new SphereMesh(Vec3f(0.7f, 1.1f, 1.0f),
                                       21, 20,
                                       AsteroidDisplacementFunc,
@@ -1063,7 +1060,8 @@ static void renderBumpMappedMesh(Mesh& mesh,
                                  Texture& bumpTexture,
                                  Vec3f lightDirection,
                                  Quatf orientation,
-                                 Color ambientColor)
+                                 Color ambientColor,
+                                 float lod)
 {
     // We're doing our own per-pixel lighting, so disable GL's lighting
     glDisable(GL_LIGHTING);
@@ -1071,7 +1069,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
     // Render the base texture on the first pass . . .  The base
     // texture and color should have been set up already by the
     // caller.
-    mesh.render();
+    mesh.render(lod);
 
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
@@ -1134,7 +1132,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    mesh.render();
+    mesh.render(lod);
 
     // Reset the second texture unit
     glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1155,6 +1153,7 @@ static void renderSmoothMesh(Mesh& mesh,
                              Vec3f lightDirection,
                              Quatf orientation,
                              Color ambientColor,
+                             float lod,
                              bool invert = false)
 {
     // We're doing our own per-pixel lighting, so disable GL's lighting
@@ -1217,7 +1216,7 @@ static void renderSmoothMesh(Mesh& mesh,
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    mesh.render();
+    mesh.render(lod);
 
     // Reset the second texture unit
     glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1250,6 +1249,7 @@ struct RenderInfo
     Color sunColor;
     Color ambientColor;
     Quatf orientation;
+    float lod;
     bool useTexEnvCombine;
 
     RenderInfo() : mesh(NULL),
@@ -1268,6 +1268,7 @@ struct RenderInfo
                    sunColor(1.0f, 1.0f, 1.0f),
                    ambientColor(0.0f, 0.0f, 0.0f),
                    orientation(1.0f, 0.0f, 0.0f, 0.0f),
+                   lod(0.0f),
                    useTexEnvCombine(false)
     {};
 };
@@ -1321,7 +1322,7 @@ static void renderMeshDefault(const RenderInfo& ri, float scale,
 
     glColor(ri.color);
 
-    ri.mesh->render();
+    ri.mesh->render(ri.lod);
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
@@ -1333,7 +1334,7 @@ static void renderMeshDefault(const RenderInfo& ri, float scale,
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        ri.mesh->render();
+        ri.mesh->render(ri.lod);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -1342,7 +1343,7 @@ static void renderMeshDefault(const RenderInfo& ri, float scale,
         ri.cloudTex->bind();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        ri.mesh->render();
+        ri.mesh->render(ri.lod);
     }
 }
 
@@ -1372,7 +1373,8 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
                              *(ri.bumpTex),
                              ri.sunDir_eye,
                              ri.orientation,
-                             ri.ambientColor);
+                             ri.ambientColor,
+                             ri.lod);
     }
     else if (ri.baseTex != NULL)
     {
@@ -1380,7 +1382,8 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
                          *(ri.baseTex),
                          ri.sunDir_eye,
                          ri.orientation,
-                         ri.ambientColor);
+                         ri.ambientColor,
+                         ri.lod);
         if (ri.nightTex != NULL)
         {
             ri.nightTex->bind();
@@ -1391,14 +1394,14 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
                              ri.sunDir_eye, 
                              ri.orientation,
                              ri.ambientColor,
+                             ri.lod,
                              true);
-            // ri.mesh->render();
         }
     }
     else
     {
         glEnable(GL_LIGHTING);
-        ri.mesh->render();
+        ri.mesh->render(ri.lod);
     }
 
     if (ri.cloudTex != NULL)
@@ -1407,7 +1410,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_LIGHTING);
-        ri.mesh->render();
+        ri.mesh->render(ri.lod);
     }
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
@@ -1475,7 +1478,7 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
         ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams);
+                        Mesh::VertexProgParams, ri.lod);
         DisableCombiners();
     }
     else if (ri.specularColor != Color(0.0f, 0.0f, 0.0f))
@@ -1484,7 +1487,7 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         vp::use(vp::specular);
         SetupCombinersGlossMapWithFog();
         ri.mesh->render(Mesh::Normals | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams);
+                        Mesh::VertexProgParams, ri.lod);
         DisableCombiners();
     }
     else
@@ -1494,7 +1497,7 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         else
             vp::use(vp::diffuse);
         ri.mesh->render(Mesh::Normals | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams);
+                        Mesh::VertexProgParams, ri.lod);
     }
 
     if (hazeDensity > 0.0f)
@@ -1512,7 +1515,7 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         vp::use(vp::diffuse);
-        ri.mesh->render();
+        ri.mesh->render(ri.lod);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -1522,7 +1525,7 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         vp::use(vp::diffuse);
-        ri.mesh->render();
+        ri.mesh->render(ri.lod);
     }
 
     vp::disable();
@@ -1553,22 +1556,10 @@ void Renderer::renderPlanet(const Body& body,
         // Determine the mesh to use
         if (body.getMesh() == InvalidResource)
         {
-            int lod = 0;
-            if (discSizeInPixels < 10)
-                lod = 0;
-            else if (discSizeInPixels < 50)
-                lod = 1;
-            else if (discSizeInPixels < 200)
-                lod = 2;
-            else if (discSizeInPixels < 400)
-                lod = 3;
-            else
-                lod = 4;
-    
             if (body.getRadius() < 50)
                 ri.mesh = asteroidMesh;
             else
-                ri.mesh = sphereMesh[lod];
+                ri.mesh = lodSphere;
         }
         else
         {
@@ -1628,6 +1619,22 @@ void Renderer::renderPlanet(const Body& body,
         ri.eyeDir_obj.normalize();
         ri.eyePos_obj = Point3f(-pos.x, -pos.y, -pos.z) * planetMat;
         ri.orientation = orientation;
+
+        // Determine the appropriate level of detail
+        if (discSizeInPixels < 10)
+            ri.lod = -3.0f;
+        else if (discSizeInPixels < 50)
+            ri.lod = -2.0f;
+        else if (discSizeInPixels < 100)
+            ri.lod = -1.0f;
+        else if (discSizeInPixels < 200)
+            ri.lod = 0.0f;
+        else if (discSizeInPixels < 400)
+            ri.lod = 1.0f;
+        else if (discSizeInPixels < 800)
+            ri.lod = 2.0f;
+        else
+            ri.lod = 3.0f;
 
         // Set up the colors
         if (ri.baseTex == NULL ||
@@ -1897,15 +1904,22 @@ void Renderer::renderStar(const Star& star,
             tex->bind();
         }
 
-        int lod = 0;
+        // Determine the appropriate level of detail
+        float lod = 0.0f;
         if (discSizeInPixels < 10)
-            lod = 0;
+            lod = -3.0f;
         else if (discSizeInPixels < 50)
-            lod = 1;
+            lod = -2.0f;
+        else if (discSizeInPixels < 100)
+            lod = -1.0f;
         else if (discSizeInPixels < 200)
-            lod = 2;
+            lod = 0.0f;
+        else if (discSizeInPixels < 400)
+            lod = 1.0f;
+        else if (discSizeInPixels < 800)
+            lod = 2.0f;
         else
-            lod = 3;
+            lod = 3.0f;
 
         // Rotate the star
         {
@@ -1916,7 +1930,7 @@ void Renderer::renderStar(const Star& star,
             glRotatef((float) (-remainder * 360.0), 0, 1, 0);
         }
 
-        sphereMesh[lod]->render();;
+        lodSphere->render(lod);;
 
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
