@@ -12,11 +12,10 @@
 using namespace std;
 
 
-Execution::Execution(CommandSequence& cmd, Simulation* s, Renderer* r) :
+Execution::Execution(CommandSequence& cmd, ExecutionEnvironment& _env) :
     currentCommand(cmd.begin()),
     finalCommand(cmd.end()),
-    sim(s),
-    renderer(r),
+    env(_env),
     commandTime(0.0)
 {
 }
@@ -31,7 +30,7 @@ bool Execution::tick(double dt)
         double timeLeft = cmd->getDuration() - commandTime;
         if (dt >= timeLeft)
         {
-            cmd->process(sim, renderer, cmd->getDuration(), timeLeft);
+            cmd->process(env, cmd->getDuration(), timeLeft);
             dt -= timeLeft;
             commandTime = 0.0;
             currentCommand++;
@@ -39,7 +38,7 @@ bool Execution::tick(double dt)
         else
         {
             commandTime += dt;
-            cmd->process(sim, renderer, commandTime, dt);
+            cmd->process(env, commandTime, dt);
             dt = 0.0;
         }
     }
