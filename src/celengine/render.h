@@ -253,6 +253,7 @@ class Renderer
                          Quatf orientation);
     void renderLabels();
 
+    void renderOrbit(Body*, double);
     
  private:
     int windowWidth;
@@ -297,6 +298,14 @@ class Renderer
     bool useVertexPrograms;
     bool useRescaleNormal;
     unsigned int textureResolution;
+
+    struct CachedOrbit
+    {
+        Body* body;
+        std::vector<Point3f> trajectory;
+        bool keep;
+    };
+    std::vector<CachedOrbit*> orbitCache;
 };
 
 #endif // _RENDER_H_
