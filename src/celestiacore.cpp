@@ -392,7 +392,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'G':
-        sim->gotoSelection(5.0, Vec3f(0, 1, 0), astro::Equatorial);
+        sim->gotoSelection(5.0, Vec3f(0, 1, 0), astro::ObserverLocal);
         break;
 
     case 'C':
