@@ -335,6 +335,10 @@ void KdeApp::initActions()
         framesVisible->setChecked(visible);
         appCore->setFramesVisible(visible);
     }
+    else
+    {
+        framesVisible->setChecked(appCore->getFramesVisible());
+    }
 
     KToggleAction* activeFrameVisible = new KToggleAction(i18n("Active Frame Visible"), 0, 0, this, SLOT(slotToggleActiveFrameVisible()), actionCollection(), "activeFrameVisible");
     if (KGlobal::config()->hasKey("ActiveFrameVisible"))
@@ -343,7 +347,22 @@ void KdeApp::initActions()
         activeFrameVisible->setChecked(visible);
         appCore->setActiveFrameVisible(visible);
     }
+    else
+    {
+        activeFrameVisible->setChecked(appCore->getActiveFrameVisible());
+    }
 
+    KToggleAction* timeSync = new KToggleAction(i18n("Synchronize Time"), 0, 0, this, SLOT(slotToggleSyncTime()), actionCollection(), "syncTime");
+    if (KGlobal::config()->hasKey("SyncTime"))
+    {
+        bool sync = KGlobal::config()->readBoolEntry("SyncTime");
+        timeSync->setChecked(sync);
+        appCore->getSimulation()->setSyncTime(sync);
+    }
+    else
+    {
+        timeSync->setChecked(appCore->getSimulation()->getSyncTime());
+    }
 
     new KAction(i18n("Alt-Azimuth Mode"), 0, ALT + Key_F, this, SLOT(slotAltAzMode()), actionCollection(), "altAzMode");
     new KAction(i18n("Go To Surface"), 0, ALT + Key_S, this, SLOT(slotGoToSurface()), actionCollection(), "goToSurface");
@@ -494,6 +513,7 @@ bool KdeApp::queryExit() {
     conf->writeEntry("RenderPath", appCore->getRenderer()->getGLContext()->getRenderPath());
     conf->writeEntry("FramesVisible", appCore->getFramesVisible());
     conf->writeEntry("ActiveFrameVisible", appCore->getActiveFrameVisible());
+    conf->writeEntry("SyncTime", appCore->getSimulation()->getSyncTime());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
     openRecent->saveEntries(KGlobal::config());
@@ -562,6 +582,10 @@ void KdeApp::slotToggleFramesVisible() {
 
 void KdeApp::slotToggleActiveFrameVisible() {
     appCore->setActiveFrameVisible(!appCore->getActiveFrameVisible());
+}
+
+void KdeApp::slotToggleSyncTime() {
+    appCore->getSimulation()->setSyncTime(!appCore->getSimulation()->getSyncTime());
 }
 
 void KdeApp::slotConfigureToolbars()
@@ -1075,6 +1099,20 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         popup.insertItem(i18n("&Follow"), 4);
         popup.insertItem(i18n("S&ynch Orbit"), 5);
         popup.insertItem(i18n("&Info"), 6);
+        if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
+        {
+            popup.insertItem(i18n("&Unmark"), 7);
+        }
+        else
+        {
+            KPopupMenu *markMenu = new KPopupMenu(app);
+            markMenu->insertItem(i18n("Diamond"), 10);
+            markMenu->insertItem(i18n("Triangle"), 11);
+            markMenu->insertItem(i18n("Square"), 12);
+            markMenu->insertItem(i18n("Plus"), 13);
+            markMenu->insertItem(i18n("X"), 14);
+            popup.insertItem(i18n("&Mark"), markMenu);
+        }
 
         const PlanetarySystem* satellites = sel.body->getSatellites();
         planets = satellites;
@@ -1085,7 +1123,7 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
             for (int i = 0; i < satellites->getSystemSize(); i++)
             {
                 Body* body = satellites->getBody(i);
-                planetaryMenu->insertItem(body->getName().c_str(), 10+i);
+                planetaryMenu->insertItem(body->getName().c_str(), 100+i);
             }
             popup.insertItem(i18n("Satellites"), planetaryMenu);
         }
@@ -1093,12 +1131,12 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
     else if (sel.star != NULL)
     {
         std::string name = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star);
-        
+
         double distance = v.length() * 1e-6;
         char buff[50];
-        
+
         ostringstream o;
-        
+
         if (abs(distance) >= astro::AUtoLightYears(1000.0f))
             sprintf(buff, "%.3f ly", distance);
         else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
@@ -1107,25 +1145,25 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
             sprintf(buff, "%.3f km", astro::lightYearsToKilometers(distance));
         else
             sprintf(buff, "%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
-        
+
         o << i18n("Distance: ") << buff << "\n";
-       
+
         o << i18n("Abs (app) mag: ");
-               
+
         sprintf(buff, "%.2f (%.2f)",
                    sel.star->getAbsoluteMagnitude(),
-                   astro::absToAppMag(sel.star->getAbsoluteMagnitude(), 
+                   astro::absToAppMag(sel.star->getAbsoluteMagnitude(),
                                       (float) distance));
-        o << buff << "\n";                                                                       
-        
+        o << buff << "\n";
+
         o << i18n("Class: ");
         sprintf(buff, "%s", sel.star->getStellarClass().str().c_str());
         o << buff << "\n";
-                        
+
         o << i18n("Surface Temp: ");
         sprintf(buff, "%.0f K", sel.star->getTemperature());
         o << buff << "\n";
-               
+
         o << i18n("Radius: ");
         sprintf(buff, "%.2f Rsun", sel.star->getRadius() / 696000.0f);
         o << buff;
@@ -1133,7 +1171,7 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         QLabel *starDetails = new QLabel(QString(o.str().c_str()), &popup);
         starDetails->setPalette(pal);
         starDetails->setFont(rsFont);
-        
+
         popup.insertTitle(name.c_str(), 0, 0);
         popup.insertItem(starDetails);
         popup.insertSeparator();
@@ -1141,7 +1179,22 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         popup.insertItem(i18n("&Center"), 2);
         popup.insertItem(i18n("&Goto"), 3);
         popup.insertItem(i18n("&Info"), 6);
-                                      
+        if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
+        {
+            popup.insertItem(i18n("&Unmark"), 7);
+        }
+        else
+        {
+            KPopupMenu *markMenu = new KPopupMenu(app);
+            markMenu->insertItem(i18n("Diamond"), 10);
+            markMenu->insertItem(i18n("Triangle"), 11);
+            markMenu->insertItem(i18n("Square"), 12);
+            markMenu->insertItem(i18n("Plus"), 13);
+            markMenu->insertItem(i18n("X"), 14);
+            popup.insertItem(i18n("&Mark"), markMenu);
+        }
+
+
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
@@ -1153,10 +1206,10 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
             for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
             {
                 Body* body = solarSys->getPlanets()->getBody(i);
-                planetsMenu->insertItem(body->getName().c_str(), 10+i);
+                planetsMenu->insertItem(body->getName().c_str(), 100+i);
             }
             popup.insertItem(i18n("Planets"), planetsMenu);
-        }               
+        }
     }
     else if (sel.deepsky != NULL)
     {
@@ -1165,6 +1218,21 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         popup.insertItem(i18n("&Center"), 2);
         popup.insertItem(i18n("&Goto"), 3);
         popup.insertItem(i18n("&Info"), 6);
+        if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
+        {
+            popup.insertItem(i18n("&Unmark"), 7);
+        }
+        else
+        {
+            KPopupMenu *markMenu = new KPopupMenu(app);
+            markMenu->insertItem(i18n("Diamond"), 10);
+            markMenu->insertItem(i18n("Triangle"), 11);
+            markMenu->insertItem(i18n("Square"), 12);
+            markMenu->insertItem(i18n("Plus"), 13);
+            markMenu->insertItem(i18n("X"), 14);
+            popup.insertItem(i18n("&Mark"), markMenu);
+        }
+
     }
 
     int id=popup.exec(app->glWidget->mapToGlobal(QPoint(int(x),int(y))));
@@ -1206,26 +1274,46 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=HIP %1")
                       .arg(sel.star->getCatalogNumber() & ~0xf0000000);
             } else {
-                url = QString("http://www.nineplanets.org/sun.html");           
+                url = QString("http://www.nineplanets.org/sun.html");
             }
         } else if (sel.deepsky != NULL) {
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=%1")
-                      .arg(sel.deepsky->getName().c_str());            
+                      .arg(sel.deepsky->getName().c_str());
         }
         KRun::runURL(url, "text/html");
         return;
     }
+    if (id == 7)
+    {
+        Simulation* sim = app->appCore->getSimulation();
+        if (sim->getUniverse() != NULL)
+            sim->getUniverse()->unmarkObject(sel, 1);
+        return;
+    }
+    if (id >= 10 && id <= 14)
+    {
+        Simulation* sim = app->appCore->getSimulation();
+        if (sim->getUniverse() != NULL)
+        {
+            sim->getUniverse()->markObject(sel,
+                                           10.0f,
+                                           Color(0.0f, 1.0f, 0.0f, 0.9f),
+                                           (Marker::Symbol)(id - 10),
+                                           1);
+        }
+        return;
+    }
 
-    if (id >= 10 && planets != 0) { // Planet or Satellite.
-        Selection new_sel(planets->getBody(id - 10));
+    if (id >= 100 && planets != 0) { // Planet or Satellite.
+        Selection new_sel(planets->getBody(id - 100));
         app->appCore->getSimulation()->setSelection(new_sel);
         app->appCore->charEntered('g');
         return;
     }
 }
 
-LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) : 
-   KDialogBase(parent, "long_lat", true, "Go to Long/Lat"), appCore(appCore) 
+LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
+   KDialogBase(parent, "long_lat", true, "Go to Long/Lat"), appCore(appCore)
 {
     QGrid* grid = makeGridMainWidget(3, Qt::Horizontal);
     

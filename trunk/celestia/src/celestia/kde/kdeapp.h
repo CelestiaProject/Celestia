@@ -126,6 +126,7 @@ public slots:
     void slotCycleView();
     void slotToggleFramesVisible();
     void slotToggleActiveFrameVisible();
+    void slotToggleSyncTime();
     void slotAltAzMode();
     void slotSingleView();
     void slotDeleteView();
