@@ -374,7 +374,8 @@ bool Renderer::init(int winWidth, int winHeight)
     }
 
     // Get GL extension information
-    if (ExtensionSupported("GL_ARB_multitexture"))
+    if (ExtensionSupported("GL_ARB_multitexture") &&
+        EXTglActiveTextureARB != NULL)
     {
         DPRINTF(1, "Renderer: multi-texture supported.\n");
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
@@ -3237,6 +3238,50 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
     glColor4f(0.0f, 0.5f, 1.0f, shade);
     glVertex(v.point);
 }
+
+#if 0
+static void ProcessCometTailVertex(const CometTailVertex& v,
+                                   const Point3f& eyePos_obj,
+                                   float b,
+                                   float h)
+{
+    float shade = 0.0f;
+    Vec3f R = v.point - eyePos_obj;
+    float c0 = b * (square(eyePos_obj.x) + square(eyePos_obj.y)) + eyePos_obj.z;
+    float c1 = 2 * b * (R.x * eyePos_obj.x + R.y * eyePos_obj.y) - R.z;
+    float c2 = b * (square(R.x) + square(R.y));
+
+    float disc = square(c1) - 4 * c0 * c2;
+
+    if (disc < 0.0f)
+    {
+        shade = 0.0f;
+    }
+    else
+    {
+        disc = (float) sqrt(disc);
+        float s = 1.0f / (2 * c2);
+        float t0 = (h - eyePos_obj.z) / R.z;
+        float t1 = (c1 - disc) * s;
+        float t2 = (c1 + disc) * s;
+        float u0 = m(t0, 0.0f);
+        float u1, u2;
+
+        if (R.z < 0.0f)
+        {
+            u1 = max(t1, t0);
+            u2 = max(t2, t0);
+        }
+        else
+        {
+            u1 = min(t1, t0);
+            u2 = min(t2, t0);
+        }
+        u1 = max(0.0f, u1);
+        u2 = max(0.0f, u2);
+    }
+}
+#endif
 
 
 void Renderer::renderCometTail(const Body& body,
