@@ -41,13 +41,13 @@ class ColorTemperatureTable
     float tempScale;
 };
 
-enum ColorTable
+enum ColorTableType
 {
     ColorTable_Enhanced,
     ColorTable_Blackbody_D65,
 };
 
-extern ColorTemperatureTable* GetStarColorTable(ColorTable);
+extern ColorTemperatureTable* GetStarColorTable(ColorTableType);
 
 
 #endif // _CELENGINE_STARCOLORS_H_
