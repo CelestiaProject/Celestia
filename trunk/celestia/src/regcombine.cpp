@@ -15,6 +15,41 @@
 #include "glext.h"
 #include "regcombine.h"
 
+#if 0
+namespace rc
+{
+    enum {
+        Combiner0 = GL_COMBINER0_NV,
+        Combiner1 = GL_COMBINER1_NV,
+        Combiner2 = GL_COMBINER2_NV,
+        Combiner3 = GL_COMBINER3_NV,
+    };
+
+    enum {
+        A  = GL_VARIABLE_A_NV,
+        B  = GL_VARIABLE_B_NV,
+        C  = GL_VARIABLE_C_NV,
+        D  = GL_VARIABLE_D_NV,
+        E  = GL_VARIABLE_E_NV,
+        F  = GL_VARIABLE_F_NV,
+        G  = GL_VARIABLE_G_NV,
+    };
+
+    enum {
+        RGBPortion   = GL_RGB,
+        AlphaPortion = GL_ALPHA,
+        BluePortion  = GL_BLUE,
+    };
+
+    enum {
+        UnsignedIdentity    = GL_UNSIGNED_IDENTITY_NV,
+        UnsignedInvert      = GL_UNSIGNED_INVERT_NV,
+        ExpandNormal        = GL_EXPAND_NORMAL_NV,
+    };
+
+    inputRGB(
+};
+#endif
 
 void SetupCombinersBumpMap(Texture& bumpTexture,
                            Texture& normalizationTexture,
@@ -183,7 +218,6 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
     bumpTexture.bind();
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    // Just a single combiner stage required . . .
     glCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV, 2);
 
     float ambient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -234,35 +268,42 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
 
     // In the second combiner, sum the ambient color and product of the
     // diffuse and self-shadowing terms.
+    glCombinerInputNV(GL_COMBINER1_NV, GL_RGB, GL_VARIABLE_A_NV,
+                      GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
+    glCombinerInputNV(GL_COMBINER1_NV, GL_RGB, GL_VARIABLE_B_NV,
+                      GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
+    glCombinerInputNV(GL_COMBINER1_NV, GL_RGB, GL_VARIABLE_C_NV,
+                      GL_CONSTANT_COLOR0_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
+    glCombinerInputNV(GL_COMBINER1_NV, GL_RGB, GL_VARIABLE_D_NV,
+                      GL_ZERO, GL_UNSIGNED_INVERT_NV, GL_RGB);
+    glCombinerOutputNV(GL_COMBINER1_NV, GL_RGB,
+                       GL_DISCARD_NV, GL_DISCARD_NV, GL_SPARE0_NV,
+                       GL_NONE, GL_NONE, GL_FALSE, GL_FALSE, GL_FALSE);
     
-#if 0
-    // A = SPARE0_alpha = per-pixel self-shadowing term
-    glFinalCombinerInputNV(GL_VARIABLE_A_NV,
-                           GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
-    glFinalCombinerInputNV(GL_VARIABLE_B_NV,
-                           GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
-
-    // E = SPARE0_alpha = per-pixel self-shadowing term
+    // E = SPARE0 = fragment brightness, including ambient, diffuse, and
+    // self shadowing.
     glFinalCombinerInputNV(GL_VARIABLE_E_NV,
-                           GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
-    // F = SPARE0_rgb = diffuse illumination (L dot N)
-    glFinalCombinerInputNV(GL_VARIABLE_F_NV,
                            GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
-    glFinalCombinerInputNV(GL_VARIABLE_A_NV,
-                           GL_E_TIMES_F_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
-    glFinalCombinerInputNV(GL_
+    // F = decal texture rgb
+    glFinalCombinerInputNV(GL_VARIABLE_F_NV,
+                           GL_TEXTURE0_ARB, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
 
-    // C = zero
+    // A = fog factor
+    glFinalCombinerInputNV(GL_VARIABLE_A_NV,
+                           GL_FOG, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
+    // B = color
+    glFinalCombinerInputNV(GL_VARIABLE_B_NV,
+                           GL_E_TIMES_F_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
+    // C = fog color
     glFinalCombinerInputNV(GL_VARIABLE_C_NV,
+                           GL_FOG, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
+    // D = zero
+    glFinalCombinerInputNV(GL_VARIABLE_D_NV,
                            GL_ZERO, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
 
-    // D = ambient color
-    glFinalCombinerInputNV(GL_VARIABLE_D_NV,
-                           GL_CONSTANT_COLOR0_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
     // G = diffuse illumination contribution = L dot N
     glFinalCombinerInputNV(GL_VARIABLE_G_NV,
                            GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
-#endif
 }
 
 
