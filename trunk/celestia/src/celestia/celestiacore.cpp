@@ -2710,7 +2710,9 @@ static void displayStarInfo(Overlay& overlay,
                    star.getAbsoluteMagnitude(),
                    astro::absToAppMag(star.getAbsoluteMagnitude(),
                                       (float) distance));
-    overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
+
+    if (star.getLuminosity() > 1.0e-10f)
+        overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
     overlay << "Class: ";
     if (star.getSpectralType()[0] == 'Q')
         overlay << "Neutron star";
