@@ -1814,12 +1814,12 @@ void Renderer::renderPlanet(const Body& body,
         }
         glEnable(GL_LIGHT0);
 
+        Frustum viewFrustum(degToRad(fov),
+                            (float) windowWidth / (float) windowHeight,
+                            nearPlaneDistance, farPlaneDistance);
+
         if (ri.mesh != NULL)
         {
-            Frustum viewFrustum(degToRad(fov),
-                                (float) windowWidth / (float) windowHeight,
-                                nearPlaneDistance, farPlaneDistance);
-
             // Compute the inverse model/view matrix
             Mat4f invMV = (orientation.toMatrix4() *
                            Mat4f::translation(Point3f(-pos.x,-pos.y,-pos.z)) *
@@ -1864,7 +1864,7 @@ void Renderer::renderPlanet(const Body& body,
                 fade = 1.0f;
             }
 
-            if (fade > 0)
+            if (fade > 0 && (renderFlags & ShowAtmospheres) != 0)
             {
                 glPushMatrix();
                 glLoadIdentity();
@@ -1905,7 +1905,9 @@ void Renderer::renderPlanet(const Body& body,
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glColor4f(1, 1, 1, 1);
-                ri.mesh->render(ri.lod);
+                ri.mesh->render(Mesh::Normals | Mesh::TexCoords0,
+                                viewFrustum,
+                                ri.lod);
                 glDepthMask(GL_TRUE);
                 glFrontFace(GL_CCW);
                 glPopMatrix();
