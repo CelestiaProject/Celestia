@@ -299,7 +299,10 @@ CelestiaCore::CelestiaCore() :
 
     int i;
     for (i = 0; i < KeyCount; i++)
+    {
         keysPressed[i] = false;
+        shiftKeysPressed[i] = false;
+    }
     for (i = 0; i < JoyButtonCount; i++)
         joyButtonsPressed[i] = false;
 }
@@ -830,7 +833,7 @@ void CelestiaCore::joystickButton(int button, bool down)
 }
 
 
-void CelestiaCore::keyDown(int key)
+void CelestiaCore::keyDown(int key, int modifiers)
 {
     switch (key)
     {
@@ -885,15 +888,21 @@ void CelestiaCore::keyDown(int key)
     if (islower(key))
         key = toupper(key);
     if (!(key >= 'A' && key <= 'Z' && textEnterMode))
-        keysPressed[key] = true;
+    {
+        if (modifiers & ShiftKey)
+            shiftKeysPressed[key] = true;
+        else
+            keysPressed[key] = true;
+    }
 }
 
-void CelestiaCore::keyUp(int key)
+void CelestiaCore::keyUp(int key, int modifiers)
 {
     KeyAccel = 1.0;
     if (islower(key))
         key = toupper(key);
     keysPressed[key] = false;
+    shiftKeysPressed[key] = false;
 }
 
 void CelestiaCore::charEntered(char c)
@@ -1761,6 +1770,7 @@ void CelestiaCore::tick()
     av = av * (float) exp(-dt * RotationDecay);
 
     float fov = sim->getActiveObserver()->getFOV() / stdFOV;
+    FrameOfReference frame = sim->getFrame();
 
     if (!altAzimuthMode)
     {
@@ -1775,7 +1785,6 @@ void CelestiaCore::tick()
     }
     else
     {
-        FrameOfReference frame = sim->getFrame();
         if (!frame.refObject.empty())
         {
             Quatf orientation = sim->getObserver().getOrientation();
@@ -1847,6 +1856,21 @@ void CelestiaCore::tick()
         //Force observer velocity vector to align with observer direction if an observer
         //angular velocity still exists.
         sim->setTargetSpeed(sim->getTargetSpeed());
+    }
+
+    if (!frame.refObject.empty())
+    {
+        Quatf q(1.0f);
+
+        if (shiftKeysPressed[Key_Left])
+            q = q * Quatf::yrotation(dt * -KeyRotationAccel);
+        if (shiftKeysPressed[Key_Right])
+            q = q * Quatf::yrotation(dt *  KeyRotationAccel);
+        if (shiftKeysPressed[Key_Up])
+            q = q * Quatf::xrotation(dt * -KeyRotationAccel);
+        if (shiftKeysPressed[Key_Down])
+            q = q * Quatf::xrotation(dt *  KeyRotationAccel);
+        sim->orbit(q);
     }
 
     // If there's a script running, tick it

@@ -1801,6 +1801,11 @@ void DestroyOpenGLWindow()
 void handleKey(WPARAM key, bool down)
 {
     int k = -1;
+    int modifiers = 0;
+
+    if (GetKeyState(VK_SHIFT) & 0x8000)
+        modifiers |= CelestiaCore::ShiftKey;
+
     switch (key)
     {
     case VK_UP:
@@ -1892,9 +1897,9 @@ void handleKey(WPARAM key, bool down)
     if (k >= 0)
     {
         if (down)
-            appCore->keyDown(k);
+            appCore->keyDown(k, modifiers);
         else
-            appCore->keyUp(k);
+            appCore->keyUp(k, modifiers);
     }
 }
 
