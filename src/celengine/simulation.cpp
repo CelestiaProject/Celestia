@@ -18,14 +18,14 @@ using namespace std;
 
 Simulation::Simulation(Universe* _universe) :
     realTime(0.0),
-    simTime(0.0),
     timeScale(1.0),
+    syncTime(true),
     universe(_universe),
     closestSolarSystem(NULL),
     selection(),
     faintestVisible(5.0f)
 {
-    activeObserver = new Observer(this);
+    activeObserver = new Observer();
     observers.insert(observers.end(), activeObserver);
 }
 
@@ -55,8 +55,7 @@ void Simulation::render(Renderer& renderer)
     renderer.render(*activeObserver,
                     *universe,
                     faintestVisible,
-                    selection,
-                    simTime);
+                    selection);
 }
 
 
@@ -65,8 +64,7 @@ void Simulation::render(Renderer& renderer, Observer& observer)
     renderer.render(observer,
                     *universe,
                     faintestVisible,
-                    selection,
-                    simTime);
+                    selection);
 }
 
 
@@ -79,13 +77,24 @@ Universe* Simulation::getUniverse() const
 // Get the time (Julian date)
 double Simulation::getTime() const
 {
-    return simTime;
+    return activeObserver->getTime();
 }
 
 // Set the time to the specified Julian date
 void Simulation::setTime(double jd)
 {
-    simTime = jd;
+    if (syncTime)
+    {
+        for (vector<Observer*>::iterator iter = observers.begin();
+             iter != observers.end(); iter++)
+        {
+            (*iter)->setTime(jd);
+        }
+    }
+    else
+    {
+        activeObserver->setTime(jd);
+    }
 }
 
 
@@ -106,12 +115,11 @@ double Simulation::getArrivalTime() const
 void Simulation::update(double dt)
 {
     realTime += dt;
-    simTime += (dt / 86400.0) * timeScale;
 
     for (vector<Observer*>::iterator iter = observers.begin();
          iter != observers.end(); iter++)
     {
-        (*iter)->update(dt);
+        (*iter)->update(dt, timeScale);
     }
 
     // Find the closest solar system
@@ -155,7 +163,7 @@ Selection Simulation::pickObject(Vec3f pickRay, float tolerance)
 {
     return universe->pick(activeObserver->getPosition(),
                           pickRay * activeObserver->getOrientation().toMatrix4(),
-                          simTime,
+                          activeObserver->getTime(),
                           faintestVisible,
                           tolerance);
 }
@@ -174,7 +182,7 @@ Observer& Simulation::getObserver()
 
 Observer* Simulation::addObserver()
 {
-    Observer* o = new Observer(this);
+    Observer* o = new Observer();
     observers.insert(observers.end(), o);
     return o;
 }
@@ -448,7 +456,7 @@ Selection Simulation::findObjectFromPath(string s)
 }
 
 
-double Simulation::getTimeScale()
+double Simulation::getTimeScale() const
 {
     return timeScale;
 }
@@ -456,6 +464,16 @@ double Simulation::getTimeScale()
 void Simulation::setTimeScale(double _timeScale)
 {
     timeScale = _timeScale;
+}
+
+bool Simulation::getSyncTime() const
+{
+    return syncTime;
+}
+
+void Simulation::setSyncTime(bool sync)
+{
+    syncTime = sync;
 }
 
 
