@@ -64,6 +64,7 @@ class Renderer
         GalaxyLabels        = 0x10,
         AsteroidLabels      = 0x20,
         SpacecraftLabels    = 0x40,
+        LocationLabels      = 0x80,
         BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels),
     };
 
@@ -97,6 +98,8 @@ class Renderer
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
     void setMinimumOrbitSize(float);
+    float getMinimumFeatureSize() const;
+    void setMinimumFeatureSize(float);
     float getDistanceLimit() const;
     void setDistanceLimit(float);
 
@@ -363,6 +366,7 @@ class Renderer
 
     float minOrbitSize;
     float distanceLimit;
+    float minFeatureSize;
 
     SkyVertex* skyVertices;
     uint32* skyIndices;

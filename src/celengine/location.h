@@ -30,6 +30,9 @@ class Location
     float getSize() const;
     void setSize(float);
 
+    float getImportance() const;
+    void setImportance(float);
+
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
@@ -59,6 +62,7 @@ class Location
     std::string name;
     Point3f position;
     float size;
+    float importance;
     std::string* infoURL;
 };
 
