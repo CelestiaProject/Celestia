@@ -270,7 +270,7 @@ dnl  KDE_SET_PREFIX
   AC_ENABLE_STATIC(no)
 
   KDE_PROG_LIBTOOL
-dnl  AM_KDE_WITH_NLS
+  AM_KDE_WITH_NLS
 
 dnl  KDE_USE_QT(3)
   AC_PATH_KDE
@@ -381,6 +381,7 @@ AC_CONFIG_FILES([ src/celestia/res/Makefile ])
 AC_CONFIG_FILES([ macros/Makefile ])
 AC_CONFIG_FILES([ manual/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/Makefile ])
+AC_CONFIG_FILES([ src/celestia/kde/po/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/data/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/doc/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/doc/celestia/Makefile ])
