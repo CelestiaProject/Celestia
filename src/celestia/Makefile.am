@@ -39,8 +39,10 @@ WINSOURCES = \
 	winssbrowser.cpp \
 	winstarbrowser.cpp \
 	wintourguide.cpp \
-        winviewoptsdlg.cpp \
-	avicapture.cpp
+	winviewoptsdlg.cpp \
+	avicapture.cpp \
+	ODMenu.cpp \
+        wineclipses.cpp
 
 if     ENABLE_GTK
 celestia_SOURCES = $(COMMONSOURCES) gtkmain.cpp
