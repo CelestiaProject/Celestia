@@ -46,7 +46,7 @@
 KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core )
     : QGLWidget( parent, name )
 {
-    if (chdir(CONFIG_DATA_DIR "/celestia" ) == -1)
+    if (chdir(CONFIG_DATA_DIR) == -1)
     {
 //        cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
 //            "', probably due to improper installation\n";

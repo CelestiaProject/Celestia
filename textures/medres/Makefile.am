@@ -1,4 +1,4 @@
-pkgdatadir = $(datadir)/@PACKAGE@/textures/medres
+pkgdatadir = @datadir@/@PACKAGE@/textures/medres
 
 pkgdata_DATA = $(wildcard *.jpg) $(wildcard *.png)
 

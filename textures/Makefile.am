@@ -1,4 +1,4 @@
-pkgdatadir = $(datadir)/@PACKAGE@/textures
+pkgdatadir = @datadir@/@PACKAGE@/textures
 
 SUBDIRS = lores medres hires
 
