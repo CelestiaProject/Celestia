@@ -24,7 +24,9 @@ class Surface
         baseTexture(InvalidResource),
         bumpTexture(InvalidResource),
         cloudTexture(InvalidResource),
-        nightTexture(InvalidResource)
+        nightTexture(InvalidResource),
+        specBaseTexture(InvalidResource),
+        bumpHeight(0.0f)
     {};
 
     // Appearance flags
@@ -32,17 +34,23 @@ class Surface
         BlendTexture         = 0x1,
         ApplyBaseTexture     = 0x2,
         ApplyBumpMap         = 0x4,
-        ApplyCloudMap        = 0x10,
-        ApplyNightMap        = 0x20,
+        ApplyCloudMap        = 0x8,
+        ApplyNightMap        = 0x10,
+        ApplySpecularityMap  = 0x20,
+        SpecularReflection   = 0x40,
     };
 
     uint32 appearanceFlags;
     Color color;
-    ResourceHandle baseTexture;
-    ResourceHandle bumpTexture;
-    ResourceHandle cloudTexture;
-    ResourceHandle nightTexture;
-    float bumpHeight;
+    Color hazeColor;
+    Color specularColor;
+    float specularPower;
+    ResourceHandle baseTexture;     // surface colors
+    ResourceHandle bumpTexture;     // normal map based on terrain relief
+    ResourceHandle cloudTexture;    // cloud layer
+    ResourceHandle nightTexture;    // artificial lights to show on night side
+    ResourceHandle specBaseTexture; // base tex with specularity in alpha
+    float bumpHeight;               // scale of bump map relief
 };
 
 #endif // _SURFACE_H_
