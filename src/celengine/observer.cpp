@@ -313,33 +313,29 @@ void Observer::update(double dt, double timeScale)
             }
             else if (journey.traj == CircularOrbit)
             {
-                Quatf r = journey.rotation1;
-                Quatd qd = ~Quatd::slerp(Quatd(1.0),
-                                         Quatd(r.w, r.x, r.y, r.z),
-                                         dt / journey.duration);
-                
-                Selection center = journey.centerObject;
+                Selection centerObj = frame.refObject;
 
-                // Get the focus position (center of rotation) in frame
-                // coordinates; in order to make this function work in all
-                // frames of reference, it's important to work in frame
-                // coordinates.
-                UniversalCoord focusPosition = center.getPosition(getTime());
-                focusPosition = frame.fromUniversal(RigidTransform(focusPosition), getTime()).translation;
+                UniversalCoord ufrom  = frame.toUniversal(RigidTransform(journey.from, Quatf(1.0f)), simTime).translation;
+                UniversalCoord uto    = frame.toUniversal(RigidTransform(journey.to, Quatf(1.0f)), simTime).translation;
+                UniversalCoord origin = centerObj.getPosition(simTime);
+                Vec3d v0 = ufrom - origin;
+                Vec3d v1 = uto - origin;
 
-                // v = the vector from the observer's position to the focus
-                Vec3d v = situation.translation - focusPosition;
-
-                // Roundoff errors will accumulate and cause the distance
-                // between viewer and focus to drift unless we take steps
-                // to keep the length of v constant.
-                double distance = v.length();
-                v = v * qd.toMatrix3();
-                v.normalize();
-                v *= distance;
-
-                situation.rotation = situation.rotation * qd;
-                situation.translation = focusPosition + v;
+                if (jv.length() == 0.0)
+                {
+                    p = journey.from;
+                }
+                else
+                {
+                    //x = astro::kilometersToMicroLightYears(x / jv.length());
+                    Quatd q0(1.0);
+                    Quatd q1(journey.rotation1.w, journey.rotation1.x,
+                             journey.rotation1.y, journey.rotation1.z);
+                    p = origin + v0 * Quatd::slerp(q0, q1, t).toMatrix3();
+                                              
+                    p = frame.fromUniversal(RigidTransform(p, Quatf(1.0f)),
+                                            simTime).translation;
+                }
             }
         }
 
@@ -350,8 +346,18 @@ void Observer::update(double dt, double timeScale)
         {
             // Smooth out the interpolation to avoid jarring changes in
             // orientation
-            double v = pow( sin( (t - journey.startInterpolation) /
-                                 (journey.endInterpolation - journey.startInterpolation) * PI / 2), 2);
+            double v;
+            if (journey.traj == CircularOrbit)
+            {
+                // In circular orbit mode, interpolation of orientation must
+                // match the interpolation of position.
+                v = t;
+            }
+            else
+            {
+                v = pow(sin((t - journey.startInterpolation) /
+                            (journey.endInterpolation - journey.startInterpolation) * PI / 2), 2);
+            }
 
             // Be careful to choose the shortest path when interpolating
             if (norm(journey.initialOrientation - journey.finalOrientation) <
@@ -375,8 +381,7 @@ void Observer::update(double dt, double timeScale)
             orientation = journey.finalOrientation;
         }
 
-        if (journey.traj != CircularOrbit)
-            situation = RigidTransform(p, orientation);
+        situation = RigidTransform(p, orientation);
 
         // If the journey's complete, reset to manual control
         if (t == 1.0f)
@@ -692,8 +697,40 @@ void Observer::computeCenterCOParameters(const Selection& destination,
         n = Vec3d(1.0, 0.0, 0.0);
     }
 
-    jparams.rotation1.setAxisAngle(Vec3f((float) n.x, (float) n.y, (float)n.z),
-                                   (float) angle);
+    Selection centerObj = frame.refObject;
+    UniversalCoord centerPos = centerObj.getPosition(getTime());
+    UniversalCoord targetPosition = destination.getPosition(getTime());
+
+    Quatd qd;
+    qd.setAxisAngle(n, -angle);
+    Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
+
+    jparams.from = getPosition();
+    jparams.to = centerPos + ((getPosition() - centerPos) * qd.toMatrix3());
+    jparams.initialOrientation = getOrientation();
+    jparams.finalOrientation = getOrientation() * q;
+    
+    jparams.startInterpolation = 0.0;
+    jparams.endInterpolation = 1.0;
+
+    jparams.rotation1 = q;
+
+    // Convert to frame coordinates
+    RigidTransform from(jparams.from, jparams.initialOrientation);
+    from = frame.fromUniversal(from, getTime());
+    jparams.from = from.translation;
+    jparams.initialOrientation= Quatf((float) from.rotation.w,
+                                      (float) from.rotation.x,
+                                      (float) from.rotation.y,
+                                      (float) from.rotation.z);
+
+    RigidTransform to(jparams.to, jparams.finalOrientation);
+    to = frame.fromUniversal(to, getTime());
+    jparams.to = to.translation;
+    jparams.finalOrientation= Quatf((float) to.rotation.w,
+                                    (float) to.rotation.x,
+                                    (float) to.rotation.y,
+                                    (float) to.rotation.z);
 }
 
 
