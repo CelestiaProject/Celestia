@@ -8,7 +8,8 @@
 // of the License, or (at your option) any later version.
 
 #include <cstdlib>
-#include <limits>
+// Missing from g++ . . . why???
+// #include <limits>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include "astro.h"
@@ -32,8 +33,12 @@ Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     oblateness(0),
     orientation(1.0f),
-    protos(-numeric_limits<double>::infinity()),
-    eschatos(numeric_limits<double>::infinity()),
+    // Ugh.  Numeric_limits class is missing from g++
+    // protos(-numeric_limits<double>::infinity()),
+    // eschatos(numeric_limits<double>::infinity()),
+    // Do it the ugly way instead:
+    protos(-1.0e+50),
+    eschatos(1.0e+50),
     mesh(InvalidResource),
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
