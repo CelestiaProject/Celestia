@@ -165,6 +165,9 @@ class Mesh
     void remapIndices(const std::vector<uint32>& indexMap);
     void clearGroups();
 
+    const std::string& getName() const;
+    void setName(const std::string&);
+
     bool pick(const Ray3d& r, double& distance) const;
     void render(const std::vector<const Material*>& materials,
                 RenderContext&) const;
@@ -192,6 +195,8 @@ class Mesh
     void* vertices;
 
     std::vector<PrimitiveGroup*> groups;
+
+    std::string name;
 };
 
 
