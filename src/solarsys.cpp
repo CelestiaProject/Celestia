@@ -24,6 +24,16 @@ static Surface* CreateSurface(Hash* surfaceData)
     surface->color = Color(1.0f, 1.0f, 1.0f);
     surfaceData->getColor("Color", surface->color);
 
+    Color hazeColor;
+    float hazeDensity = 0.0f;
+    surfaceData->getColor("HazeColor", hazeColor);
+    surfaceData->getNumber("HazeDensity", hazeDensity);
+    surface->hazeColor = Color(hazeColor.red(), hazeColor.green(),
+                               hazeColor.blue(), hazeDensity);
+
+    surfaceData->getColor("SpecularColor", surface->specularColor);
+    surfaceData->getNumber("SpecularPower", surface->specularPower);
+
     string baseTexture;
     string bumpTexture;
     string cloudTexture;
@@ -52,6 +62,8 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->appearanceFlags |= Surface::ApplyCloudMap;
     if (applyNightMap)
         surface->appearanceFlags |= Surface::ApplyNightMap;
+    if (surface->specularColor != Color(0.0f, 0.0f, 0.0f))
+        surface->appearanceFlags |= Surface::SpecularReflection;
 
     TextureManager* texMan = GetTextureManager();
     if (applyBaseTexture)
