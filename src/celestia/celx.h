@@ -39,6 +39,7 @@ public:
 
     bool createThread();
     int resume();
+    bool tick(double);
     void cleanup();
     bool isAlive() const;
     bool timesliceExpired();
@@ -52,6 +53,7 @@ private:
     lua_State* costate; // coroutine stack
     bool alive;
     Timer* timer;
+    double scriptAwakenTime;
 };
 
 View* getViewByObserver(CelestiaCore*, Observer*);

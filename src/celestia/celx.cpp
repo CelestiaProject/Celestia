@@ -351,7 +351,8 @@ LuaState::LuaState() :
     state(NULL),
     costate(NULL),
     alive(false),
-    timer(NULL)
+    timer(NULL),
+    scriptAwakenTime(0.1)
 {
     state = lua_open();
     timer = CreateTimer();
@@ -680,6 +681,49 @@ static void doError(lua_State* l, const char* errorMsg)
     }
     lua_pushstring(l, errorMsg);
     lua_error(l);
+}
+
+
+bool LuaState::tick(double dt)
+{
+    // Due to the way CelestiaCore::tick is called (at least for KDE),
+    // this method may be entered a second time when we show the error-alerter
+    // Workaround: check if we are alive, return true(!) when we aren't anymore
+    // this way the script isn't deleted after the second enter, but only
+    // when we return from the first enter. OMG.
+    
+    // better Solution: defer showing the error-alterter to CelestiaCore, using
+    // getErrorMessage()
+    if (!isAlive())
+        return false;
+
+    if (scriptAwakenTime > getTime())
+        return false;
+   
+    int nArgs = resume();
+    if (!isAlive())
+    {
+        // The script is complete
+        return true;
+    }
+    else
+    {
+        // The script has returned control to us, but it is not completed.
+        lua_State* state = getState();
+
+        // The values on the stack indicate what event will wake up the
+        // script.  For now, we just support wait()
+        double delay;
+        if (nArgs == 1 && lua_isnumber(state, -1))
+            delay = lua_tonumber(state, -1);
+        else
+            delay = 0.0;
+        scriptAwakenTime = getTime() + delay;
+
+        // Clean up the stack
+        lua_pop(state, nArgs);
+        return false;
+    }
 }
 
 
