@@ -63,7 +63,7 @@ static struct Constellation_s constellationInfo[] = {
     { "Corona Borealias", "Coronae Borealis", "CrB" },
     { "Corvus", "Corvi", "Crv" },
     { "Crater", "Crateris", "Crt" },
-    { "Cygnus", "Cyngi", "Cyg" },
+    { "Cygnus", "Cygni", "Cyg" },
     { "Delphinus", "Delphini", "Del" },
     { "Draco", "Draconis", "Dra" },
     { "Equuleus", "Equulei", "Equ" },
