@@ -6,6 +6,7 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
+#define __AIFF__
 #import <Foundation/Foundation.h>
 
 #import "CelestiaDestination.h"
@@ -17,6 +18,7 @@
 @interface CelestiaAppCore : NSObject {
     CelestiaDestinations* _destinations;
 }
+-(int)toCelestiaKey:(unichar)key;
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
 -(void)archive;
 +(CelestiaAppCore *)sharedAppCore;
@@ -48,4 +50,9 @@
 -(int)hudDetail;
 -(void)setHudDetail:(int)hudDetail;
 -(void)setContextMenuCallback:(id)cObj;
+-(void)back;
+-(void)forward;
+- (NSURL *) currentURL;
+-(void)goToUrl:(NSString *)url;
+
 @end
