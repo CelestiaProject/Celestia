@@ -188,6 +188,8 @@ Ctrl+F ........... Alt-azimuth mode (toggle). Used with Ctrl-G (Goto surface).
                      The Left & Right Arrow keys become Yaw Left / Yaw Right.
 F10 .............. Capture Image to file (screenshot)
 Shift+F10 ........ Capture Movie to file (video)
+F11 .............. While in Movie Capture: Start / Pause capture
+F12 .............. While in Movie Capture: Stop capture
 Ctrl+C ........... Copy location URL to clipboard (Cel:// URL)
 Ctrl+Insert ...... Copy location URL to clipboard (Cel:// URL)
 ~ ................ Display "file loading" information (toggle). Use to debug
