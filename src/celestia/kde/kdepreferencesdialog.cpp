@@ -96,6 +96,19 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showRingShadows")->connect(showRingShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
     showRingShadowsCheck->setChecked(renderFlags & Renderer::ShowRingShadows);
 
+    QCheckBox* showBoundariesCheck = new QCheckBox(i18n("Constellation Boundaries"), showGroup);
+    actionColl->action("showBoundaries")->connect(showBoundariesCheck, SIGNAL(clicked()), SLOT(activate()));
+    showBoundariesCheck->setChecked(renderFlags & Renderer::ShowBoundaries);
+
+    QCheckBox* showAutoMagCheck = new QCheckBox(i18n("Auto Magnitudes"), showGroup);
+    actionColl->action("showAutoMag")->connect(showAutoMagCheck, SIGNAL(clicked()), SLOT(activate()));
+    showAutoMagCheck->setChecked(renderFlags & Renderer::ShowAutoMag);
+
+    QCheckBox* showCometTailsCheck = new QCheckBox(i18n("Comet Tails"), showGroup);
+    actionColl->action("showCometTails")->connect(showCometTailsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showCometTailsCheck->setChecked(renderFlags & Renderer::ShowCometTails);
+
+
     QVBox* vbox1 = new QVBox(renderFrame);
     int labelMode = appCore->getRenderer()->getLabelMode();
     savedLabelMode = labelMode;
