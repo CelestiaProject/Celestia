@@ -216,15 +216,7 @@ void SelectionPopup::process(int id)
     }
     if (actionId == 8)
     {
-        MarkerList* markers = sim->getUniverse()->getMarkers();
-        if (markers != 0)
-        {
-            for (vector<Marker>::const_iterator iter = markers->begin();
-                 iter < markers->end(); iter++)
-            {
-                sim->getUniverse()->unmarkObject((*iter).getObject(), 1);
-            }
-        }
+        sim->getUniverse()->unmarkAll();
         return;
     }
     if (actionId >= 10 && actionId <= 14)
