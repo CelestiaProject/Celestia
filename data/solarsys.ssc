@@ -80,6 +80,7 @@ Planets [
 		Upper [ 0.3 0.3 0.6 ]
 		Sky [ 0.3 0.6 0.9 ]
 		CloudHeight 7
+		CloudSpeed 170
 		CloudMap "earth-clouds.png"
 	}
 
@@ -311,11 +312,14 @@ Planets [
 
 		EllipticalOrbit
 		{
+		Epoch 2443000.00038375
 		Period         1.769138
 		SemiMajorAxis  421600
 		Eccentricity   0.0041
 		Inclination    0.040
-		MeanAnomaly    50
+		AscendingNode    312.981
+		LongOfPericenter  97.735
+		MeanLongitude    106.724
 		}
 
 		Albedo         0.61
@@ -327,11 +331,14 @@ Planets [
 
 		EllipticalOrbit
 		{
+		Epoch 2443000.00038375
 		Period         3.551810
 		SemiMajorAxis  670900
 		Eccentricity   0.0101
 		Inclination    0.470
-		MeanAnomaly    310
+		AscendingNode    101.087
+		LongOfPericenter 155.512
+		MeanLongitude    176.377
 		}
 
 		Albedo         0.64
@@ -343,11 +350,14 @@ Planets [
 
 		EllipticalOrbit
 		{
+		Epoch 2443000.00038375
 		Period         7.154553
 		SemiMajorAxis  1070000
 		Eccentricity   0.0015
 		Inclination    0.195
-		MeanAnomaly    243
+		AscendingNode    119.841
+		LongOfPericenter 188.831
+		MeanLongitude    121.206
 		}
 
 		Albedo         0.42
@@ -359,11 +369,14 @@ Planets [
 
 		EllipticalOrbit
 		{
+		Epoch 2443000.00038375
 		Period        16.689018
 		SemiMajorAxis  1883000
 		Eccentricity   0.007
 		Inclination    0.281
-		MeanAnomaly    120
+		AscendingNode    323.265
+		LongOfPericenter 335.933
+		MeanLongitude     85.091
 		}
 
 		Albedo         0.20
