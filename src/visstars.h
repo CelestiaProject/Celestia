@@ -34,6 +34,7 @@ public:
     void updateAll(const Observer&);
     vector<uint32>* getVisibleSet() const;
     vector<uint32>* getCloseSet() const;
+    float getLimitingMagnitude() const;
     void setLimitingMagnitude(float);
     void setCloseDistance(float);
 

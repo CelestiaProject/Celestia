@@ -138,6 +138,12 @@ vector<uint32>* VisibleStarSet::getCloseSet() const
 }
 
 
+float VisibleStarSet::getLimitingMagnitude() const
+{
+    return faintest;
+}
+
+
 void VisibleStarSet::setLimitingMagnitude(float mag)
 {
     faintest = mag;
