@@ -459,3 +459,5 @@ Code:
   crashes on some systems
 * UNIX: Modified GL extension handling code to make it possible to compile
   against Mesa 4 headers.
+* Unix Gtk: removed bug in Text enter mode. (dramsey)
+* Unix Gtk: Menus for new Labels. (dramsey)
