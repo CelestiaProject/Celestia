@@ -18,6 +18,18 @@
 using namespace std;
 
 
+static unsigned int getUint(Hash* params,
+                            const string& paramName,
+                            unsigned int defaultValue)
+{
+    double value = 0.0;
+    if (params->getNumber(paramName, value))
+        return (unsigned int) value;
+    else
+        return defaultValue;
+}
+
+
 CelestiaConfig* ReadCelestiaConfig(string filename)
 {
     ifstream configFile(filename.c_str());
@@ -81,6 +93,11 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     config->scriptScreenshotCount = 0.0f;
     configParams->getNumber("ScriptScreenshotCount", config->scriptScreenshotCount);    
     configParams->getString("ScriptScreenshotDirectory", config->scriptScreenshotDirectory);
+
+    config->ringSystemSections = getUint(configParams, "RingSystemSections", 100);
+    config->orbitPathSamplePoints = getUint(configParams, "OrbitPathSamplePoints", 100);
+    config->shadowTextureSize = getUint(configParams, "ShadowTextureSize", 256);
+    config->eclipseTextureSize = getUint(configParams, "EclipseTextureSize", 128);
 
     Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
     if (solarSystemsVal != NULL)
