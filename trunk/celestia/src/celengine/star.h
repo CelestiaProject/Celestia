@@ -53,6 +53,7 @@ class StarDetails
     void setModel(ResourceHandle);
     void setOrbit(Orbit*);
     void setOrbitBarycenter(Star*);
+    void setOrbitalRadius(float);
     void computeOrbitalRadius();
     void setVisibility(bool);
     void setRotationElements(const RotationElements&);
@@ -102,6 +103,13 @@ class StarDetails
     static StarDetails* GetNeutronStarDetails();
     static StarDetails* GetBlackHoleDetails();
     static StarDetails* GetBarycenterDetails();
+
+    static void InitializeStarTextures();
+    static ResourceHandle starTexB;
+    static ResourceHandle starTexA;
+    static ResourceHandle starTexG;
+    static ResourceHandle starTexM;
+    static ResourceHandle starTexL;
 };
 
 
