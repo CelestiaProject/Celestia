@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
+#include <cassert>
 #include <process.h>
 #include <time.h>
 #include <windows.h>
@@ -51,7 +52,15 @@ char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
 
-static bool fullscreen = false;
+static vector<DEVMODE>* displayModes = NULL;
+static int currentScreenMode = 0;
+static int newScreenMode = 0;
+static int lastFullScreenMode = 0;
+static RECT windowRect;
+
+static HGLRC glContext;
+static HDC deviceContext;
+
 static bool bReady = false;
 
 static LPTSTR CelestiaRegKey = "Software\\Shatters.net\\Celestia";
@@ -532,6 +541,7 @@ void UpdateSetTimeDlgDateTimeControls(HWND hDlg, astro::Date& newTime)
     }
 }
 
+
 BOOL APIENTRY SetTimeProc(HWND hDlg,
                           UINT message,
                           UINT wParam,
@@ -595,6 +605,66 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
 
     return FALSE;
 }
+
+
+int selectedScreenMode = 0;
+BOOL APIENTRY SelectDisplayModeProc(HWND hDlg,
+                                    UINT message,
+                                    UINT wParam,
+                                    LONG lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        {
+            char buf[100];
+            HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_RESOLUTION);
+
+            // Add windowed mode as the first item on the menu
+            SendMessage(hwnd, CB_INSERTSTRING, -1,
+                        reinterpret_cast<LPARAM>("Windowed Mode"));
+
+            for (vector<DEVMODE>::const_iterator iter= displayModes->begin();
+                 iter != displayModes->end(); iter++)
+            {
+                sprintf(buf, "%d x %d x %d",
+                        iter->dmPelsWidth, iter->dmPelsHeight,
+                        iter->dmBitsPerPel);
+                SendMessage(hwnd, CB_INSERTSTRING, -1,
+                            reinterpret_cast<LPARAM>(buf));
+            }
+            SendMessage(hwnd, CB_SETCURSEL, currentScreenMode, 0);
+        }
+        return TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK)
+        {
+            newScreenMode = selectedScreenMode;
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDC_COMBO_RESOLUTION)
+        {
+            if (HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                HWND hwnd = reinterpret_cast<HWND>(lParam);
+                int item = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
+                if (item != CB_ERR)
+                    selectedScreenMode = item;
+            }
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
 
 HMENU CreateMenuBar()
 {
@@ -674,7 +744,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     point.x = (int) x;
     point.y = (int) y;
     
-    if (!fullscreen)
+    if (currentScreenMode != 0)
         ClientToScreen(hwnd, (LPPOINT) &point);
 
     appCore->getSimulation()->setSelection(sel);
@@ -723,6 +793,190 @@ void ShowWWWInfo(const Selection& sel)
 void ContextMenu(float x, float y, Selection sel)
 {
     handlePopupMenu(mainWindow, x, y, sel);
+}
+
+
+bool EnableFullScreen(const DEVMODE& dm)
+{
+    DEVMODE devMode;
+
+    ZeroMemory(&devMode, sizeof devMode);
+    devMode.dmSize = sizeof devMode;
+    devMode.dmPelsWidth  = dm.dmPelsWidth;
+    devMode.dmPelsHeight = dm.dmPelsHeight;
+    devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+
+    if (ChangeDisplaySettings(&devMode, CDS_FULLSCREEN) != 
+        DISP_CHANGE_SUCCESSFUL)
+    {
+	MessageBox(NULL,
+                   "Unable to switch to full screen mode; running in window mode",
+                   "Error",
+                   MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    return true;
+}
+
+
+void DisableFullScreen()
+{
+    ChangeDisplaySettings(0, 0);
+}
+
+
+// Select the pixel format for a given device context
+void SetDCPixelFormat(HDC hDC)
+{
+    static PIXELFORMATDESCRIPTOR pfd = {
+	sizeof(PIXELFORMATDESCRIPTOR),	// Size of this structure
+	1,				// Version of this structure
+	PFD_DRAW_TO_WINDOW |		// Draw to Window (not to bitmap)
+	PFD_SUPPORT_OPENGL |		// Support OpenGL calls in window
+	PFD_DOUBLEBUFFER,		// Double buffered mode
+	PFD_TYPE_RGBA,			// RGBA Color mode
+	GetDeviceCaps(hDC, BITSPIXEL),	// Want the display bit depth		
+	0,0,0,0,0,0,			// Not used to select mode
+	0,0,				// Not used to select mode
+	0,0,0,0,0,			// Not used to select mode
+	16,				// Size of depth buffer
+	0,				// Not used to select mode
+	0,				// Not used to select mode
+	PFD_MAIN_PLANE,			// Draw in main plane
+	0,				// Not used to select mode
+	0,0,0                           // Not used to select mode
+    };
+
+    // Choose a pixel format that best matches that described in pfd
+    int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
+
+    // Set the pixel format for the device context
+    SetPixelFormat(hDC, nPixelFormat, &pfd);
+}
+
+
+HWND CreateOpenGLWindow(int x, int y, int width, int height,
+                        int mode, int& newMode)
+{
+    assert(mode >= 0 && mode < displayModes->size());
+    if (mode != 0)
+    {
+        x = 0;
+        y = 0;
+        width = displayModes->at(mode - 1).dmPelsWidth;
+        height = displayModes->at(mode - 1).dmPelsHeight;
+    }
+
+    // Set up and register the window class
+    WNDCLASS wc;
+    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wc.lpfnWndProc = (WNDPROC) MainWindowProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = appInstance;
+    wc.hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hbrBackground = NULL;
+    wc.lpszMenuName = NULL;
+    wc.lpszClassName = AppName;
+    if (RegisterClass(&wc) == 0)
+    {
+	MessageBox(NULL,
+                   "Failed to register the window class.", "Fatal Error",
+                   MB_OK | MB_ICONERROR);
+	return NULL;
+    }
+
+    newMode = currentScreenMode;
+    if (mode != 0)
+    {
+        if (EnableFullScreen(displayModes->at(mode - 1)))
+            newMode = mode;
+    }
+    else
+    {
+        DisableFullScreen();
+        newMode = 0;
+    }
+
+    // Determine the proper window style to use
+    DWORD dwStyle;
+    if (newMode != 0)
+    {
+        dwStyle = WS_POPUP;
+    }
+    else
+    {
+        dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+    }
+
+    // Create the window
+    HWND hwnd = CreateWindow(AppName,
+                             AppName,
+                             dwStyle,
+                             x, y,
+                             width, height,
+                             NULL,
+                             NULL,
+                             appInstance,
+                             NULL);
+
+    if (hwnd == NULL)
+        return NULL;
+
+    ShowWindow(hwnd, SW_SHOW);
+    SetForegroundWindow(hwnd);
+    SetFocus(hwnd);
+
+    deviceContext = GetDC(hwnd);
+    SetDCPixelFormat(deviceContext);
+    if (glContext == NULL)
+        glContext = wglCreateContext(deviceContext);
+    wglMakeCurrent(deviceContext, glContext);
+
+    if (newMode == 0)
+        SetMenu(hwnd, menuBar);
+
+    return hwnd;
+}
+
+
+void DestroyOpenGLWindow()
+{
+#if 0
+    if (glContext != NULL)
+    {
+        wglMakeCurrent(NULL, NULL);
+        if (!wglDeleteContext(glContext))
+        {
+            MessageBox(NULL,
+                       "Releasing GL context failed.", "Error",
+                       MB_OK | MB_ICONERROR);
+        }
+        glContext = NULL;
+    }
+#endif
+
+    if (deviceContext != NULL)
+    {
+        if (!ReleaseDC(mainWindow, deviceContext))
+        {
+            MessageBox(NULL,
+                       "Releasing device context failed.", "Error",
+                       MB_OK | MB_ICONERROR);
+        }
+        deviceContext = NULL;
+    }
+
+    if (mainWindow != NULL)
+    {
+        SetMenu(mainWindow, NULL);
+        DestroyWindow(mainWindow);
+        mainWindow = NULL;
+    }
+
+    UnregisterClass(AppName, appInstance);
 }
 
 
@@ -820,38 +1074,6 @@ void handleKey(WPARAM key, bool down)
         else
             appCore->keyUp(k);
     }
-}
-
-
-// Select the pixel format for a given device context
-void SetDCPixelFormat(HDC hDC)
-{
-    int nPixelFormat;
-
-    static PIXELFORMATDESCRIPTOR pfd = {
-	sizeof(PIXELFORMATDESCRIPTOR),	// Size of this structure
-	1,				// Version of this structure
-	PFD_DRAW_TO_WINDOW |		// Draw to Window (not to bitmap)
-	PFD_SUPPORT_OPENGL |		// Support OpenGL calls in window
-	PFD_DOUBLEBUFFER,		// Double buffered mode
-	PFD_TYPE_RGBA,			// RGBA Color mode
-	GetDeviceCaps(hDC, BITSPIXEL),	// Want the display bit depth		
-	0,0,0,0,0,0,			// Not used to select mode
-	0,0,				// Not used to select mode
-	0,0,0,0,0,			// Not used to select mode
-	16,				// Size of depth buffer
-	0,				// Not used to select mode
-	0,				// Not used to select mode
-	PFD_MAIN_PLANE,			// Draw in main plane
-	0,				// Not used to select mode
-	0,0,0                           // Not used to select mode
-    };
-
-    // Choose a pixel format that best matches that described in pfd
-    nPixelFormat = ChoosePixelFormat(hDC, &pfd);
-
-    // Set the pixel format for the device context
-    SetPixelFormat(hDC, nPixelFormat, &pfd);
 }
 
 
@@ -1422,6 +1644,71 @@ static void HandleCaptureMovie(HWND hWnd)
 }
 
 
+bool operator<(const DEVMODE& a, const DEVMODE& b)
+{
+    if (a.dmBitsPerPel != b.dmBitsPerPel)
+        return a.dmBitsPerPel < b.dmBitsPerPel;
+    if (a.dmPelsWidth != b.dmPelsWidth)
+        return a.dmPelsWidth < b.dmPelsWidth;
+    if (a.dmPelsHeight != b.dmPelsHeight)
+        return a.dmPelsHeight < b.dmPelsHeight;
+    return a.dmDisplayFrequency < b.dmDisplayFrequency;
+}
+
+vector<DEVMODE>* EnumerateDisplayModes(int minBPP)
+{
+    vector<DEVMODE>* modes = new vector<DEVMODE>();
+    if (modes == NULL)
+        return NULL;
+
+    DEVMODE dm;
+    int i = 0;
+    while (EnumDisplaySettings(NULL, i, &dm))
+    {
+        if (dm.dmBitsPerPel >= minBPP)
+            modes->insert(modes->end(), dm);
+        i++;
+    }
+    sort(modes->begin(), modes->end());
+
+    // Go through the sorted list and eliminate modes that differ only
+    // by refresh rates.
+    vector<DEVMODE>::iterator keepIter = modes->begin();
+    vector<DEVMODE>::const_iterator iter = modes->begin();
+    iter++;
+    for (; iter != modes->end(); iter++)
+    {
+        if (iter->dmPelsWidth != keepIter->dmPelsWidth ||
+            iter->dmPelsHeight != keepIter->dmPelsHeight ||
+            iter->dmBitsPerPel != keepIter->dmBitsPerPel)
+        {
+            *++keepIter = *iter;
+        }
+    }
+
+    modes->resize(keepIter - modes->begin());
+
+    // Select the default display mode--choose 640x480 at the current
+    // pixel depth.  If for some bizarre reason that's not available,
+    // fall back to the first mode in the list.
+    lastFullScreenMode = 0;
+    for (iter = modes->begin(); iter != modes->end(); iter++)
+    {
+        if (iter->dmPelsWidth == 640 && iter->dmPelsHeight == 480)
+        {
+            // Add one to the mode index, since mode 0 means windowed mode
+            lastFullScreenMode = (iter - modes->begin()) + 1;
+            break;
+        }
+    }
+    if (lastFullScreenMode == 0 && modes->size() > 0)
+        lastFullScreenMode = 1;
+
+    return modes;
+}
+
+
+
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR     lpCmdLine,
@@ -1438,7 +1725,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.winHeight = 600;
     prefs.winX = CW_USEDEFAULT;
     prefs.winY = CW_USEDEFAULT;
-    prefs.ambientLight = 0.1f;  //Low
+    prefs.ambientLight = 0.1f;  // Low
     prefs.labelMode = 0;
     prefs.pixelShader = 0;
     prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars | Renderer::ShowPlanets;
@@ -1462,35 +1749,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             prefs.winY = screenHeight - prefs.winHeight;
     }
 
-    // Setup the window class.
-    WNDCLASS wc;
-    HWND hWnd;
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wc.lpfnWndProc = (WNDPROC) MainWindowProc;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hInstance = hInstance;
-    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-
-    wc.hbrBackground = NULL;
-    wc.lpszMenuName = NULL;
-    wc.lpszClassName = AppName;
-
+    bool startFullscreen;
     if (strstr(lpCmdLine, "-fullscreen"))
-	fullscreen = true;
+	startFullscreen = true;
     else
-	fullscreen = false;
-
-    if (RegisterClass(&wc) == 0)
-    {
-	MessageBox(NULL,
-                   "Failed to register the window class.", "Fatal Error",
-                   MB_OK | MB_ICONERROR);
-	return FALSE;
-    }
+	startFullscreen = false;
 
     joystickAvailable = InitJoystick(joystickCaps);
+
+    displayModes = EnumerateDisplayModes(16);
 
     appCore = new CelestiaCore();
     if (appCore == NULL)
@@ -1508,32 +1775,21 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return 1;
     }
 
-    if (!fullscreen)
-    {
-        
-        menuBar = CreateMenuBar();
-        acceleratorTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATORS));
+    menuBar = CreateMenuBar();
+    acceleratorTable = LoadAccelerators(hInstance,
+                                        MAKEINTRESOURCE(IDR_ACCELERATORS));
 
-	hWnd = CreateWindow(AppName,
-			    AppName,
-			    WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN|WS_CLIPSIBLINGS,
-                            prefs.winX, prefs.winY,
-			    prefs.winWidth, prefs.winHeight,
-			    NULL,
-                            menuBar,
-			    hInstance,
-			    NULL );
+    HWND hWnd;
+    if (startFullscreen)
+    {
+        hWnd = CreateOpenGLWindow(0, 0, 800, 600,
+                                  lastFullScreenMode, currentScreenMode);
     }
     else
     {
-	hWnd = CreateWindow(AppName,
-			    AppName,
-			    WS_POPUP,
-			    0, 0,
-			    800, 600,
-			    NULL, NULL,
-			    hInstance,
-			    NULL );
+        hWnd = CreateOpenGLWindow(prefs.winX, prefs.winY,
+                                  prefs.winWidth, prefs.winHeight,
+                                  0, currentScreenMode);
     }
 
     if (hWnd == NULL)
@@ -1547,8 +1803,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     mainWindow = hWnd;
 
-    ShowWindow(hWnd, SW_SHOW);
-    UpdateWindow(hWnd);
+    UpdateWindow(mainWindow);
 
     // Initialize common controls
     INITCOMMONCONTROLSEX icex;
@@ -1561,7 +1816,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return 1;
     }
 
-    //Set values saved in registry: renderFlags, visualMagnitude, labelMode and timezone bias.
+    // Set values saved in registry: renderFlags, visualMagnitude, labelMode and timezone bias.
     appCore->getSimulation()->setFaintestVisible(prefs.visualMagnitude);
     appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
     appCore->getRenderer()->setLabelMode(prefs.labelMode);
@@ -1617,7 +1872,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	    // Translate and dispatch the message
             if (!dialogMessage)
             {
-                if (!TranslateAccelerator(hWnd, acceleratorTable, &msg))
+                if (!TranslateAccelerator(mainWindow, acceleratorTable, &msg))
                     TranslateMessage(&msg);
                 DispatchMessage(&msg);
             }
@@ -1625,15 +1880,46 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         else
         {
             // And force a redraw
-	    InvalidateRect(hWnd, NULL, FALSE);
+	    InvalidateRect(mainWindow, NULL, FALSE);
 	}
 
         if (useJoystick)
             HandleJoystick();
+
+        if (currentScreenMode != newScreenMode)
+        {
+            if (currentScreenMode == 0)
+                GetWindowRect(mainWindow, &windowRect);
+            else
+                lastFullScreenMode = currentScreenMode;
+            DestroyOpenGLWindow();
+            mainWindow = CreateOpenGLWindow(windowRect.left,
+                                            windowRect.top,
+                                            windowRect.right-windowRect.left,
+                                            windowRect.bottom-windowRect.top,
+                                            newScreenMode,
+                                            currentScreenMode);
+            UpdateWindow(mainWindow);
+        }
+    }
+
+    // Save application preferences
+    {
+        AppPreferences prefs;
+        if (GetCurrentPreferences(prefs))
+            SavePreferencesToRegistry(CelestiaRegKey, prefs);
     }
 
     // Not ready to render anymore.
     bReady = false;
+
+    // Clean up the window
+    DestroyOpenGLWindow();
+    if (currentScreenMode != 0)
+        RestoreDisplayMode();
+
+    if (appCore != NULL)
+        delete appCore;
 
     return msg.wParam;
 }
@@ -1657,20 +1943,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                 UINT uMsg,
                                 WPARAM wParam, LPARAM lParam)
 {
-
-    static HGLRC hRC;
-    static HDC hDC;
-
     switch(uMsg)
     {
     case WM_CREATE:
-	    hDC = GetDC(hWnd);
-	    if(fullscreen)
-	        ChangeDisplayMode();
-	    SetDCPixelFormat(hDC);
-	    hRC = wglCreateContext(hDC);
-	    wglMakeCurrent(hDC, hRC);
-	    break;
+	break;
 
     case WM_MOUSEMOVE:
         {
@@ -1902,6 +2178,22 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 starBrowser = new StarBrowser(appInstance, hWnd, appCore);
             break;
 
+        case ID_RENDER_DISPLAYMODE:
+            newScreenMode = currentScreenMode;
+            CreateDialogParam(appInstance,
+                              MAKEINTRESOURCE(IDD_DISPLAYMODE),
+                              hWnd,
+                              SelectDisplayModeProc,
+                              NULL);
+            break;
+
+        case ID_RENDER_FULLSCREEN:
+            if (currentScreenMode == 0)
+                newScreenMode = lastFullScreenMode;
+            else
+                newScreenMode = 0;
+            break;
+
         case ID_RENDER_SHOWHUDTEXT:
             appCore->charEntered('V');
             syncMenusWithRendererState();
@@ -2068,7 +2360,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_FILE_EXIT:
-            DestroyWindow(hWnd);
+            SendMessage(hWnd, WM_CLOSE, 0, 0);
             break;
 
         default:
@@ -2103,24 +2395,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         }
         break;
 
-    case WM_DESTROY:
-    {
-        AppPreferences prefs;
-        if (GetCurrentPreferences(prefs))
-        {
-            SavePreferencesToRegistry(CelestiaRegKey, prefs);
-        }
-
-        if (appCore != NULL)
-            delete appCore;
-
-        wglMakeCurrent(hDC, NULL);
-        wglDeleteContext(hRC);
-        if (fullscreen)
-            RestoreDisplayMode();
+    case WM_CLOSE:
         PostQuitMessage(0);
         break;
-    }
 
     case WM_SIZE:
         appCore->resize(LOWORD(lParam), HIWORD(lParam));
@@ -2130,7 +2407,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 	if (bReady)
         {
             appCore->draw();
-	    SwapBuffers(hDC);
+	    SwapBuffers(deviceContext);
 	    ValidateRect(hWnd, NULL);
 	}
 	break;
