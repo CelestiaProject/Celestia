@@ -433,7 +433,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'V':
-        hudDetail = 1 - hudDetail;
+        hudDetail = (hudDetail + 1) % 3;
         break;
 
     case ',':
@@ -753,8 +753,10 @@ static void displayDistance(Overlay& overlay, double distance)
 }
 
 static void displayStarInfo(Overlay& overlay,
+                            int detail,
                             Star& star,
                             StarDatabase& starDB,
+                            SolarSystemCatalog& solarSystems,
                             double distance)
 {
     {
@@ -782,18 +784,29 @@ static void displayStarInfo(Overlay& overlay,
                    star.getAbsoluteMagnitude(),
                    astro::absToAppMag(star.getAbsoluteMagnitude(), (float) distance));
     overlay << "Class: " << star.getStellarClass() << '\n';
-    overlay.printf("Radius: %.2f Rsun\n", star.getRadius() / 696000.0f);
+    if (detail > 1)
+    {
+        overlay << "Surface Temp: " << star.getTemperature() << " K\n";
+        overlay.printf("Radius: %.2f Rsun\n", star.getRadius() / 696000.0f);
+
+        SolarSystemCatalog::iterator iter = solarSystems.find(star.getCatalogNumber());
+        if (iter != solarSystems.end())
+            overlay << "Planetary companions present\n";
+    }
 }
 
 static void displayPlanetInfo(Overlay& overlay,
+                              int detail,
                               Body& body,
+                              double t,
                               double distance)
 {
     overlay << body.getName() << '\n';
 
     //If within fAltitudeThreshold radii of planet, show altitude instead of distance
     double kmDistance = astro::lightYearsToKilometers(distance);
-    if((kmDistance < (fAltitudeThreshold * body.getRadius())) && (kmDistance > body.getRadius()))
+    if((kmDistance < (fAltitudeThreshold * body.getRadius())) &&
+       (kmDistance > body.getRadius()))
     {
         kmDistance -= body.getRadius();
         overlay << "Altitude: ";
@@ -813,10 +826,30 @@ static void displayPlanetInfo(Overlay& overlay,
     displayDistance(overlay, distance);
     overlay << '\n';
 
-    overlay << "Day length: " << body.getRotationPeriod() * 24.0 << " hours\n";
+    if (detail > 1)
+    {
+        overlay << "Day length: " << body.getRotationPeriod() * 24.0 << " hours\n";
+        
+        PlanetarySystem* system = body.getSystem();
+        if (system != NULL)
+        {
+            const Star* sun = system->getStar();
+            if (sun != NULL)
+            {
+                double distFromSun = body.getHeliocentricPosition(t).distanceFromOrigin();
+                float planetTemp = sun->getTemperature() * 
+                    (float) (pow(1 - body.getAlbedo(), 0.25) *
+                             sqrt(sun->getRadius() / (2 * distFromSun)));
+                overlay << setprecision(0);
+                overlay << "Temperature: " << planetTemp << " K\n";
+                overlay << setprecision(3);
+            }
+        }
+    }
 }
 
 static void displayGalaxyInfo(Overlay& overlay,
+                              int detail,
                               Galaxy& galaxy,
                               double distance)
 {
@@ -946,12 +979,26 @@ void CelestiaCore::renderOverlay()
         Vec3d v = sim->getSelectionPosition(sel, sim->getTime()) - 
             sim->getObserver().getPosition();
         if (sel.star != NULL)
-            displayStarInfo(*overlay, *sel.star,
-                            *(sim->getStarDatabase()), v.length());
+        {
+            displayStarInfo(*overlay,
+                            hudDetail,
+                            *sel.star,
+                            *(sim->getStarDatabase()),
+                            *(sim->getSolarSystemCatalog()),
+                            v.length());
+        }
         else if (sel.body != NULL)
-            displayPlanetInfo(*overlay, *sel.body, v.length());
+        {
+            displayPlanetInfo(*overlay,
+                              hudDetail,
+                              *sel.body,
+                              sim->getTime(),
+                              v.length());
+        }
         else if (sel.galaxy != NULL)
-            displayGalaxyInfo(*overlay, *sel.galaxy, v.length());
+        {
+            displayGalaxyInfo(*overlay, hudDetail, *sel.galaxy, v.length());
+        }
         overlay->endText();
 
         glPopMatrix();
