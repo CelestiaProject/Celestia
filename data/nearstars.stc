@@ -978,7 +978,7 @@ Barycenter "Keid:OMI2 Eri:40 Eri:Gliese 166" # Orbits of A & (BC) unknown
 	AppMag 4.43
 }
 
-Barycenter "Keid B-C: OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
+Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 {
 	RA 63.841667
 	Dec -7.659722
