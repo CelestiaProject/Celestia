@@ -10,7 +10,10 @@
 #ifndef _TEXTUREFONT_H_
 #define _TEXTUREFONT_H_
 
+#include <vector>
 #include <string>
+#include <iostream>
+#include "basictypes.h"
 #include "gl.h"
 #include "texfont.h"
 
@@ -18,27 +21,79 @@
 class TextureFont
 {
  public:
-    TextureFont(TexFont*);
+    TextureFont();
     ~TextureFont();
 
-    void render(int c);
-    void render(std::string);
+    void render(int c) const;
+    void render(const std::string&) const;
 
-    int getWidth(std::string);
-    //    int getWidth(int c);
+    int getWidth(const std::string&) const;
+    int getWidth(int c) const;
+    int getMaxWidth() const;
+    int getHeight() const;
 
-    int getHeight();
+    int getMaxAscent() const;
+    void setMaxAscent(int);
+    int getMaxDescent() const;
+    void setMaxDescent(int);
 
-    int getTextureName();
+    int getTextureName() const;
 
     void bind();
 
+    bool buildTexture();
+
+ public:
+    struct TexCoord
+    {
+        float u, v;
+    };
+
+    struct Glyph
+    {
+        Glyph(unsigned short _id) : id(_id) {};
+
+        unsigned short id;
+        unsigned short width;
+        unsigned short height;
+        short x;
+        short xoff;
+        short y;
+        short yoff;
+        short advance;
+        TexCoord texCoords[4];
+    };
+
+    enum {
+        TxfByte = 0,
+        TxfBitmap = 1,
+    };
+
  private:
-    TexFont* txf;
+    void addGlyph(const Glyph&);
+    const TextureFont::Glyph* getGlyph(int) const;
+    void rebuildGlyphLookupTable();
+
+ private:
+    int maxAscent;
+    int maxDescent;
+    int maxWidth;
+
+    int texWidth;
+    int texHeight;
+    unsigned char* fontImage;
+    unsigned int texName;
+
+    std::vector<Glyph> glyphs;
+
+    const Glyph** glyphLookup;
+    int glyphLookupTableSize;
+
+ public:
+    static TextureFont* load(std::istream& in);
 };
 
-TextureFont* LoadTextureFont(std::string filename);
-
+TextureFont* LoadTextureFont(const std::string&);
 
 #endif // _TEXTUREFONT_H_
 
