@@ -62,6 +62,7 @@ extern "C" {
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include <cmath>
 
 using namespace std;
