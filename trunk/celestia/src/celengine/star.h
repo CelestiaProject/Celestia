@@ -34,16 +34,12 @@ class StarDetails
     inline MultiResTexture getTexture() const;
     inline Orbit* getOrbit() const;
     inline float getOrbitalRadius() const;
-    inline uint32 getKnowledge() const;
-    inline bool getKnowledge(uint32) const;
     inline const char* getSpectralType() const;
     inline float getBolometricCorrection() const;
 
     void setRadius(float);
     void setTemperature(float);
     void setRotationPeriod(float);
-    void setKnowledge(uint32);
-    void addKnowledge(uint32);
     void setSpectralType(const std::string&);
     void setBolometricCorrection(float);
     void setTexture(const MultiResTexture&);
@@ -55,6 +51,18 @@ class StarDetails
         KnowRadius   = 0x1,
         KnowRotation = 0x2,
     };
+    inline uint32 getKnowledge() const;
+    inline bool getKnowledge(uint32) const;
+    void setKnowledge(uint32);
+    void addKnowledge(uint32);
+
+    enum SystemOrigin
+    {
+        OriginStar       = 0,
+        OriginBarycenter = 1,
+    };
+    inline SystemOrigin getSystemOrigin() const;
+    void setSystemOrigin(SystemOrigin);
 
  private:
     float radius;
@@ -70,6 +78,7 @@ class StarDetails
 
     Orbit* orbit;
     float orbitalRadius;
+    SystemOrigin origin;
 
  public:
     static StarDetails* GetStarDetails(const StellarClass&);
@@ -159,6 +168,12 @@ StarDetails::getBolometricCorrection() const
     return bolometricCorrection;
 }
 
+StarDetails::SystemOrigin
+StarDetails::getSystemOrigin() const
+{
+    return origin;
+}
+
 
 class Star
 {
@@ -174,6 +189,8 @@ public:
 
     // Return the exact position of the star, accounting for its orbit
     UniversalCoord getPosition(double t) const;
+    // Get the center of the system, about which planets and stars orbit
+    UniversalCoord getSystemCenter(double t) const;
 
     void setCatalogNumber(uint32);
     void setPosition(float, float, float);

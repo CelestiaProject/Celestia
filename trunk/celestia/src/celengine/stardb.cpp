@@ -822,7 +822,15 @@ static Star* CreateStar(uint32 catalogNumber,
         }
 
         if (orbit != NULL)
+        {
             details->setOrbit(orbit);
+            bool barycenterIsOrigin = false;
+            starData->getBoolean("BarycenterIsOrigin", barycenterIsOrigin);
+            if (barycenterIsOrigin)
+                details->setSystemOrigin(StarDetails::OriginBarycenter);
+            else
+                details->setSystemOrigin(StarDetails::OriginStar);
+        }
     }
 
     Star* star = new Star();

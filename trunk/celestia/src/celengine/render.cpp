@@ -1085,35 +1085,36 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
 }
 
 
-// Convert a position in the universal coordinate system to heliocentric
-// (actually, astrocentric) coordinates, taking into account possible orbital
-// motion of the star.
-static Point3d heliocentricPosition(UniversalCoord& pos,
+// Convert a position in the universal coordinate system to solar system
+// coordinates.  The solar system position is the same as the astrocentric
+// position for the same star except when the star is part of a multiple
+// star system in which planets orbit the barycenter.
+static Point3d solarSystemPosition(UniversalCoord& pos,
+                                   const Star& star,
+                                   double t)
+{
+    UniversalCoord starPos = star.getSystemCenter(t);
+        
+    Vec3d v = pos - starPos;
+    return Point3d(astro::microLightYearsToKilometers(v.x),
+                   astro::microLightYearsToKilometers(v.y),
+                   astro::microLightYearsToKilometers(v.z));
+}
+
+
+// Convert a position in the universal coordinate system to astrocentric
+// coordinates, taking into account possible orbital motion of the star.
+static Point3d astrocentricPosition(UniversalCoord& pos,
                                     const Star& star,
                                     double t)
 {
-    const Orbit* orbit = star.getOrbit();
-    if (!orbit)
-    {
-        return astro::heliocentricPosition(pos, star.getPosition());
-    }
-    else
-    {
-        Point3f barycenterPosLY = star.getPosition();
-        Point3f barycenterPos(barycenterPosLY.x * 1.0e6f,
-                              barycenterPosLY.y * 1.0e6f,
-                              barycenterPosLY.z * 1.0e6f);
+    UniversalCoord starPos = star.getPosition(t);
 
-        UniversalCoord starPos = UniversalCoord(barycenterPos) +
-            ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0f)) *
-             astro::kilometersToMicroLightYears(1.0));
-        Vec3d v = pos - starPos;
-        return Point3d(astro::microLightYearsToKilometers(v.x),
-                       astro::microLightYearsToKilometers(v.y),
-                       astro::microLightYearsToKilometers(v.z));
-    }
+    Vec3d v = pos - starPos;
+    return Point3d(astro::microLightYearsToKilometers(v.x),
+                   astro::microLightYearsToKilometers(v.y),
+                   astro::microLightYearsToKilometers(v.z));
 }
-
 
 
 void Renderer::autoMag(float& faintestMag)
@@ -1380,12 +1381,8 @@ void Renderer::render(const Observer& observer,
             enableSmoothLines();
         
         const Star* sun = solarSystem->getStar();
-#if 0
-        Point3d obsPos = astro::heliocentricPosition(observer.getPosition(),
-                                                     sun->getPosition());
-#endif
-        Point3d obsPos = heliocentricPosition(observer.getPosition(),
-                                              *sun, observer.getTime());
+        Point3d obsPos = solarSystemPosition(observer.getPosition(),
+                                             *sun, observer.getTime());
         glPushMatrix();
         glTranslatef((float) astro::kilometersToAU(-obsPos.x),
                      (float) astro::kilometersToAU(-obsPos.y),
@@ -5372,8 +5369,8 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                                      bool showLabels)
 {
     Point3f starPos = sun.getPosition();
-    Point3d observerPos = heliocentricPosition(observer.getPosition(),
-                                               sun, now);
+    Point3d observerPos = solarSystemPosition(observer.getPosition(),
+                                              sun, now);
 
     int nBodies = solSystem.getSystemSize();
     for (int i = 0; i < nBodies; i++)
@@ -5597,8 +5594,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // This is a much more accurate (and expensive) distance
             // calculation than the previous one which used the observer's
             // position rounded off to floats.
-            //Point3d hPos = astro::heliocentricPosition(observer->getPosition(), starPos);
-            Point3d hPos = heliocentricPosition(observer->getPosition(),
+            Point3d hPos = astrocentricPosition(observer->getPosition(),
                                                 star,
                                                 observer->getTime());
             relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) *
