@@ -23,6 +23,7 @@ void DebugPrint(char *format, ...)
     char buf[1024];
     vsprintf(buf, format, args);
     OutputDebugString(buf);
+    vfprintf(stdout, format, args);
 #else
     vfprintf(stderr, format, args);
 #endif

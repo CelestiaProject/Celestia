@@ -31,6 +31,7 @@
 #include "timer.h"
 #include "mathlib.h"
 #include "astro.h"
+#include "filetype.h"
 #include "celestiacore.h"
 #include "imagecapture.h"
 #include "winstarbrowser.h"
@@ -1062,15 +1063,20 @@ static void HandleScreenCapture(HWND hWnd)
         }
         else
         {
-            //Select file type based on user-supplied extension.
-            char* pExtension = Ofn.lpstrFile + Ofn.nFileExtension;
-            if(!stricmp(pExtension, "jpg") ||
-               !stricmp(pExtension, "jif") ||
-               !stricmp(pExtension, "jpeg"))
+            switch (DetermineFileType(Ofn.lpstrFile))
+            {
+            case Content_JPEG:
                 nFileType = 1;
-            else if(!stricmp(pExtension, "png"))
+                break;
+            case Content_PNG:
                 nFileType = 2;
+                break;
+            default:
+                nFileType = 0;
+                break;
+            }
         }
+
         if (nFileType == 1)
         {
             success = CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
@@ -1085,7 +1091,7 @@ static void HandleScreenCapture(HWND hWnd)
         }
         else
         {
-            //Invalid file extension specified.
+            // Invalid file extension specified.
             DPRINTF("WTF? Unknown file extension specified for screen capture.\n");
         }
 

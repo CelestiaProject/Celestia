@@ -22,3 +22,38 @@ double Selection::radius() const
     else
         return 0.0;
 }
+
+
+UniversalCoord Selection::getPosition(double t) const
+{
+    if (body != NULL)
+    {
+        Point3f sunPos(0.0f, 0.0f, 0.0f);
+        PlanetarySystem* system = body->getSystem();
+        if (system != NULL)
+        {
+            const Star* sun = system->getStar();
+            if (sun != NULL)
+                sunPos = sun->getPosition();
+        }
+
+        return astro::universalPosition(body->getHeliocentricPosition(t),
+                                        sunPos);
+    }
+    else if (star != NULL)
+    {
+        return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
+                                        star->getPosition());
+    }
+    else if (galaxy != NULL)
+    {
+        Point3d p = galaxy->getPosition();
+        return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
+                                        Point3f((float) p.x, (float) p.y, (float) p.z));
+    }
+    else
+    {
+        return UniversalCoord(Point3d(0.0, 0.0, 0.0));
+    }
+}
+

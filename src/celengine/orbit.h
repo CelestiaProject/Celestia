@@ -32,7 +32,7 @@ public:
     double getPeriod() const;
 
 private:
-    double semiMajorAxis;
+    double pericenterDistance;
     double eccentricity;
     double inclination;
     double ascendingNode;

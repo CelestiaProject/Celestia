@@ -394,7 +394,7 @@ void Simulation::update(double dt)
         }
     }
 
-    if (observerMode == Free || observerMode == Tracking)
+    if (observerMode == Free)
     {
         if (observer.getVelocity() != targetVelocity)
         {
@@ -417,16 +417,13 @@ void Simulation::update(double dt)
 
     updateObserver();
 
-    if (observerMode == Tracking)
+    if (!trackObject.empty())
     {
-        if (!selection.empty())
-        {
-            Vec3f up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
-            Vec3d vn = getSelectionPosition(selection, simTime) -
-                observer.getPosition();
-            Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
-            observer.setOrientation(lookAt(Point3f(0, 0, 0), to, up));
-        }
+        Vec3f up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
+        Vec3d vn = getSelectionPosition(trackObject, simTime) -
+            observer.getPosition();
+        Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
+        observer.setOrientation(lookAt(Point3f(0, 0, 0), to, up));
     }
 
     // Find the closest solar system
@@ -1171,10 +1168,7 @@ void Simulation::geosynchronousFollow()
 
 void Simulation::track()
 {
-    if (observerMode == Tracking)
-        observerMode = Free;
-    else
-        observerMode = Tracking;
+    trackObject = selection;
 }
 
 

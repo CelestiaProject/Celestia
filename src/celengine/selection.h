@@ -26,6 +26,7 @@ class Selection
 
     bool empty() { return star == NULL && body == NULL && galaxy == NULL; };
     double radius() const;
+    UniversalCoord getPosition(double t) const;
         
     Star* star;
     Body* body;

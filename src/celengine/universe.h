@@ -32,11 +32,15 @@ class Universe
     void setSolarSystemCatalog(SolarSystemCatalog*);
     GalaxyList* getGalaxyCatalog() const;
     void setGalaxyCatalog(GalaxyList*);
+    AsterismList* getAsterisms() const;
+    void setAsterisms(AsterismList*);
 
     void render(Renderer&);
 
     Selection pick(const UniversalCoord& origin,
-                   const Vec3f& direction);
+                   const Vec3f& direction,
+                   double when,
+                   float faintestMag);
     Selection find(const std::string& s,
                    PlanetarySystem** solarSystems = NULL,
                    int nSolarSystems = 0);
@@ -51,13 +55,15 @@ class Universe
     Selection pickPlanet(SolarSystem& solarSystem,
                          const UniversalCoord&,
                          const Vec3f&,
-                         double);
-    Selection pickStar(const UniversalCoord&, const Vec3f&);
+                         double when,
+                         float faintestMag);
+    Selection pickStar(const UniversalCoord&, const Vec3f&, float faintest);
 
  private:
     StarDatabase* starCatalog;
     SolarSystemCatalog* solarSystemCatalog;
     GalaxyList* galaxyCatalog;
+    AsterismList* asterisms;
 };
 
 #endif // UNIVERSE_H_
