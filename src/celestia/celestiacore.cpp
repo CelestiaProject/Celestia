@@ -641,7 +641,7 @@ void CelestiaCore::charEntered(char c)
         notifyWatchers(RenderFlagsChanged);
         break;
 
-    case '\021': // Ctrl+Q
+    case '\025': // Ctrl+U
         splitView(true);
         flash("Added view");
         break;
