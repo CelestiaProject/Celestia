@@ -88,7 +88,6 @@ static StarNameDatabase* starNameDB = NULL;
 static SolarSystemCatalog* solarSystemCatalog = NULL;
 static GalaxyList* galaxies = NULL;
 static AsterismList* asterisms = NULL;
-static bool showAsterisms = false;
 
 static FavoritesList* favorites = NULL;
 
@@ -529,6 +528,19 @@ static void ToggleLabelState(int menuItem, int labelState)
     }
 }
 
+static void ToggleRenderFlag(int menuItem, int renderFlag)
+{
+    if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
+    {
+        renderer->setRenderFlags(renderer->getRenderFlags() | renderFlag);
+        CheckMenuItem(menuBar, menuItem, MF_CHECKED);
+    }
+    else
+    {
+        renderer->setRenderFlags(renderer->getRenderFlags() & ~renderFlag);
+        CheckMenuItem(menuBar, menuItem, MF_UNCHECKED);
+    }
+}
 
 static bool ToggleMenuItem(int menuItem)
 {
@@ -782,19 +794,15 @@ void handleKeyPress(int c)
         break;
 
     case 'I':
-        {
-            bool enabled = !renderer->getCloudMapping();
-            CheckMenuItem(menuBar, ID_RENDER_SHOWATMOSPHERES,
-                          enabled ? MF_CHECKED : MF_UNCHECKED);
-            renderer->setCloudMapping(enabled);
-        }
+        ToggleRenderFlag(ID_RENDER_SHOWATMOSPHERES, Renderer::ShowCloudMaps);
+        break;
+
+    case 'U':
+        ToggleRenderFlag(ID_RENDER_SHOWGALAXIES, Renderer::ShowGalaxies);
         break;
 
     case '/':
-        showAsterisms = !showAsterisms;
-        CheckMenuItem(menuBar, ID_RENDER_SHOWCONSTELLATIONS,
-                      showAsterisms ? MF_CHECKED : MF_UNCHECKED);
-        renderer->showAsterisms(showAsterisms ? asterisms : NULL);
+        ToggleRenderFlag(ID_RENDER_SHOWCONSTELLATIONS, Renderer::ShowDiagrams);
         break;
 
     case '~':
@@ -1268,6 +1276,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     renderer->setBrightnessBias(0.0f);
     renderer->setBrightnessScale(1.0f / (config->faintestVisible + 1.0f));
 
+    renderer->showAsterisms(asterisms);
+
     // Set up the overlay
     overlay = new Overlay();
     overlay->setWindowSize(g_w, g_h);
@@ -1624,18 +1634,13 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             ToggleLabelState(ID_RENDER_SHOWORBITS, Renderer::PlanetOrbits);
             break;
         case ID_RENDER_SHOWCONSTELLATIONS:
-            showAsterisms = !showAsterisms;
-            CheckMenuItem(menuBar, ID_RENDER_SHOWCONSTELLATIONS,
-                          showAsterisms ? MF_CHECKED : MF_UNCHECKED);
-            renderer->showAsterisms(showAsterisms ? asterisms : NULL);
+            ToggleRenderFlag(ID_RENDER_SHOWCONSTELLATIONS, Renderer::ShowDiagrams);
             break;
         case ID_RENDER_SHOWATMOSPHERES:
-            {
-                bool enabled = !renderer->getCloudMapping();
-                CheckMenuItem(menuBar, ID_RENDER_SHOWATMOSPHERES,
-                              enabled ? MF_CHECKED : MF_UNCHECKED);
-                renderer->setCloudMapping(enabled);
-            }
+            ToggleRenderFlag(ID_RENDER_SHOWATMOSPHERES, Renderer::ShowCloudMaps);
+            break;
+        case ID_RENDER_SHOWGALAXIES:
+            ToggleRenderFlag(ID_RENDER_SHOWGALAXIES, Renderer::ShowGalaxies);
             break;
 
         case ID_RENDER_AMBIENTLIGHT_NONE:
