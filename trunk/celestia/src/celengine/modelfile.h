@@ -55,5 +55,37 @@ Model* LoadModel(std::istream&);
 Model* LoadModel(std::istream& in, const std::string& texPath);
 
 bool SaveModelAscii(const Model* model, std::ostream& out);
+bool SaveModelBinary(const Model* model, std::ostream& out);
 
-#endif // !_CELMESH_MODEL_H_
+
+// Binary file tokens
+enum ModelFileToken
+{
+    CMOD_Material       = 1001,
+    CMOD_EndMaterial    = 1002,
+    CMOD_Diffuse        = 1003,
+    CMOD_Specular       = 1004,
+    CMOD_SpecularPower  = 1005,
+    CMOD_Opacity        = 1006,
+    CMOD_Texture0       = 1007,
+    CMOD_Texture1       = 1008,
+    CMOD_Mesh           = 1009,
+    CMOD_EndMesh        = 1010,
+    CMOD_VertexDesc     = 1011,
+    CMOD_EndVertexDesc  = 1012,
+    CMOD_Vertices       = 1013,
+    CMOD_Emissive       = 1014,
+};
+
+enum ModelFileType
+{
+    CMOD_Float1         = 1,
+    CMOD_Float2         = 2,
+    CMOD_Float3         = 3,
+    CMOD_Float4         = 4,
+    CMOD_String         = 5,
+    CMOD_Uint32         = 6,
+    CMOD_Color          = 7,
+};
+
+#endif // !_CELMESH_MODELFILE_H_
