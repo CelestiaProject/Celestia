@@ -15,7 +15,7 @@
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
 #include <celmath/vecmath.h>
-#include "GL/gl.h"
+#include <celengine/gl.h>
 #include "imagecapture.h"
 
 // Ugh . . . the C++ standard says that stringstream should be in
