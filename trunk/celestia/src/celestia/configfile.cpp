@@ -78,6 +78,9 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     configParams->getString("DeepSkyCatalog", config->deepSkyCatalog);
     configParams->getString("StarDatabase", config->starDatabaseFile);
     configParams->getString("StarNameDatabase", config->starNamesFile);
+    configParams->getString("HDCrossIndex", config->HDCrossIndexFile);
+    configParams->getString("SAOCrossIndex", config->SAOCrossIndexFile);
+    configParams->getString("GlieseCrossIndex", config->GlieseCrossIndexFile);
     configParams->getString("Font", config->mainFont);
     configParams->getString("LabelFont", config->labelFont);
     configParams->getString("TitleFont", config->titleFont);
@@ -170,36 +173,6 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
         else
         {
             DPRINTF(0, "%s: ExtrasDirectories must be an array or string.\n", filename.c_str());
-        }
-    }
-
-    Value* xrefsVal = configParams->getValue("StarCatalogCrossReferences");
-    if (xrefsVal != NULL)
-    {
-        if (xrefsVal->getType() != Value::ArrayType)
-        {
-            DPRINTF(0, "%s: StarCatalogCrossReferences must be an array.\n", filename.c_str());
-        }
-        else
-        {
-            Array* xrefs = xrefsVal->getArray();
-            // assert(xrefs != NULL);
-
-            for (Array::iterator iter = xrefs->begin(); iter != xrefs->end(); iter++)
-            {
-                Value* xrefNameVal = *iter;
-                // assert(xrefNameVal != NULL);
-                if (xrefNameVal->getType() == Value::StringType)
-                {
-                    config->catalogXrefFiles.insert(config->catalogXrefFiles.end(),
-                                                    xrefNameVal->getString());
-                }
-                else
-                {
-                    DPRINTF(0, "%s: Catalog cross reference name must be a string.\n",
-                            filename.c_str());
-                }
-            }
         }
     }
 
