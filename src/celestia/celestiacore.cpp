@@ -1068,7 +1068,7 @@ void CelestiaCore::renderOverlay()
         overlay->beginText();
         *overlay << astro::Date(sim->getTime() + 
                                 astro::secondsToJulianDate(timeZoneBias));
-	if(timezone)
+	if (timeZone)
 	{
 	    *overlay << " " << timeZone;
 	}
