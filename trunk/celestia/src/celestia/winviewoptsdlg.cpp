@@ -207,13 +207,7 @@ void ViewOptionsDialog::RestoreSettings(HWND hDlg)
     appCore->setHudDetail(initialHudDetail);
 }
 
-void ViewOptionsDialog::renderFlagsChanged()
-{
-    if (parent != NULL)
-        SetControls(hwnd);
-}
-
-void ViewOptionsDialog::labelFlagsChanged()
+void ViewOptionsDialog::notifyChange(int)
 {
     if (parent != NULL)
         SetControls(hwnd);
