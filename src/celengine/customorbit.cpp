@@ -1616,10 +1616,10 @@ static double cosD(double theta)
 }
 
 
-// static const double SatAscendingNode = 168.8112;
-// static const double SatTilt = 28.0817;
-static const double SatAscendingNode = 169.530;
-static const double SatTilt = 28.049;
+static const double SatAscendingNode = 168.8112;
+static const double SatTilt = 28.0817;
+// static const double SatAscendingNode = 169.530;
+// static const double SatTilt = 28.049;
 
 // Calculations for the orbits of Mimas, Enceladus, Tethys, Dione, Rhea,
 // Titan, Hyperion, and Iapetus are from Jean Meeus's Astronomical Algorithms,
@@ -1665,7 +1665,7 @@ static Point3d SaturnMoonPosition(double lam, double gam, double Om, double r)
 
     u = degToRad(u);
     w = degToRad(w);
-    gam = degToRad(gam);
+    gam = -degToRad(gam);
     r = r * SaturnRadius;
 
     // Corrections for Celestia's coordinate system
