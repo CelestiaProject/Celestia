@@ -102,8 +102,8 @@ void CelestialBrowser::slotRefresh()
     
     UniversalCoord ucPos = appSim->getObserver().getPosition();
     Point3f obsPos( (double)ucPos.x * 1e-6,
-                    (double)ucPos.x * 1e-6,
-                    (double)ucPos.x * 1e-6);    
+                    (double)ucPos.y * 1e-6,
+                    (double)ucPos.z * 1e-6);    
                     
     for (std::vector<const Star*>::iterator i = stars->begin(); 
          i != stars->end() ; 
