@@ -70,7 +70,8 @@ BEGIN
         MENUITEM "Show &Orbits",                ID_RENDER_SHOWORBITS
 	MENUITEM "Show &Constellations",        ID_RENDER_SHOWCONSTELLATIONS
 	MENUITEM SEPARATOR
-        MENUITEM "Label &Planets"     ,         ID_RENDER_SHOWPLANETLABELS
+        MENUITEM "Label Major &Planets",        ID_RENDER_SHOWPLANETLABELS
+	MENUITEM "Label &Minor Planets",        ID_RENDER_SHOWMINORPLANETLABELS
         MENUITEM "Label &Stars",                ID_RENDER_SHOWSTARLABELS
 	MENUITEM "Label Co&nstellations",       ID_RENDER_SHOWCONSTLABELS
         MENUITEM "Show &HUD Text",              ID_RENDER_SHOWHUDTEXT
@@ -93,9 +94,12 @@ BEGIN
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "&About",                      ID_HELP_ABOUT
+	MENUITEM "Run &Demo",                   ID_HELP_RUNDEMO
+	MENUITEM SEPARATOR
 	MENUITEM "&OpenGL Info",                ID_HELP_GLINFO
         MENUITEM "&License",                    ID_HELP_LICENSE
+	MENUITEM SEPARATOR
+        MENUITEM "&About Celestia",             ID_HELP_ABOUT
     END
 END
 
