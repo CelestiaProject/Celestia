@@ -7,8 +7,26 @@
 //
 
 #import "MyTree.h"
+// HACK
+#import "CelestiaFavorite.h"
 #import <objc/objc-class.h>
 @implementation MyVector
+-(void)encodeWithCoder:(NSCoder*)coder
+{
+    NSLog(@"[MyVector encodeWithCoder:%@]",coder);
+    //[super encodeWithCoder:coder];
+    [coder encodeObject:_array];
+    //[coder encodeValueOfObjCType:@encode(Class) at:&_myClass];
+}
+-(id)initWithCoder:(NSCoder*)coder
+{
+    NSLog(@"[MyVector initWithCoder:%@]",coder);
+    //self = [super initWithCoder:coder];
+    self = [self init];
+    _array = [[coder decodeObject] retain];
+    //[coder decodeValueOfObjCType:@encode(Class) at:&_myClass];
+    return self;
+}
 -(id)init
 {
     self = [super init];
@@ -59,6 +77,24 @@
 @end
 
 @implementation MyTree
+-(void)encodeWithCoder:(NSCoder*)coder
+{
+    NSLog(@"[MyTree encodeWithCoder:%@]",coder);
+    //[super encodeWithCoder:coder];
+    [coder encodeObject:_nodeValue];
+    [coder encodeObject:_children];
+}
+-(id)initWithCoder:(NSCoder*)coder
+{
+    NSLog(@"[MyTree initWithCoder:%@]",coder);
+    //self = [super initWithCoder:coder];
+    self = [self init];
+    _parent = nil;
+    _nodeValue = [[coder decodeObject] retain];
+    _children = [[coder decodeObject] retain];
+    [_children makeObjectsPerformSelector:@selector(setParent:) withObject:self];
+    return self;
+}
 -(id)init
 {
     self = [super init];
@@ -104,8 +140,10 @@
     NSArray* origArray = nil;
     NSEnumerator* enumerator = nil;
     NSDictionary* childDict = nil;
-    id nodeValue = nil;
-    nodeValue = [dict objectForKey:@"nodeValue"];
+    id <NSCoding> nodeValue = nil;
+    NSLog(@"[MyTree initWithDictionary:%@ parent:%@]",dict,parent);
+    // this part could use some work
+    nodeValue = [[[CelestiaFavorite alloc] initWithDictionary:[dict objectForKey:@"nodeValue"]] autorelease];
     // Leaf
     if ((origArray = [dict objectForKey:@"children"]) == nil)
         return [self initWithNode:nodeValue parent:parent];
@@ -158,7 +196,7 @@
 }
 -(NSDictionary*)dictionary
 {
-    return [NSDictionary dictionaryWithObjectsAndKeys:[self nodeValue],@"nodeValue",[NSNumber numberWithBool:[self isLeaf]],@"isLeaf",[self children],@"children",nil,nil];
+    return [NSDictionary dictionaryWithObjectsAndKeys:[[self nodeValue] dictionary],@"nodeValue",[NSNumber numberWithBool:[self isLeaf]],@"isLeaf",[self children],@"children",nil,nil];
 }
 -(NSDictionary*)recursiveDictionary
 {
@@ -171,7 +209,7 @@
     array = [NSMutableArray arrayWithCapacity:[[self children] count]];
     while ((obj = [enumerator nextObject]) != nil)
         [array addObject:[obj recursiveDictionary]];
-    return [NSDictionary dictionaryWithObjectsAndKeys:_nodeValue,@"nodeValue",array,@"children",nil,nil];
+    return [NSDictionary dictionaryWithObjectsAndKeys:[[self nodeValue] dictionary],@"nodeValue",[NSArray arrayWithArray:array],@"children",nil,nil];
 }
 -(NSString*)description
 {

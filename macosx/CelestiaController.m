@@ -13,6 +13,17 @@
 
 @implementation CelestiaController
 
+-(BOOL)applicationShouldTerminate:(id)sender
+{
+    if (timer != nil) {
+        [timer invalidate];
+        [timer release];
+    }
+    timer = nil;
+    [[CelestiaAppCore sharedAppCore] archive];
+    return YES;
+}
+
 -(BOOL)windowShouldClose:(id)sender
 {
     [NSApp terminate:nil];
