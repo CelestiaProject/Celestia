@@ -179,6 +179,8 @@ Url::Url(const std::string& str, CelestiaCore *core)
     }
     if (params["ltd"] != "") {
         lightTimeDelay = (strcmp(params["ltd"].c_str(), "1") == 0);
+    } else {
+    	lightTimeDelay = false;
     }
 
     evalName();
