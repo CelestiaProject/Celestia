@@ -251,16 +251,9 @@ StarDatabase::searchCrossIndex(Catalog catalog, uint32 number) const
     CrossIndex::iterator iter = lower_bound(xindex->begin(), xindex->end(),
                                             xindexEnt);
     if (iter == xindex->end() || iter->catalogNumber != number)
-    {
         return NULL;
-    }
     else
-    {
-        if (iter->celCatalogNumber >= (uint32) nStars)
-            return NULL;
-        else
-            return find(iter->celCatalogNumber);
-    }
+        return find(iter->celCatalogNumber);
 }
 
 
