@@ -293,6 +293,21 @@ bool AssociativeArray::getNumber(const string& key, float& val) const
     }
 }
 
+bool AssociativeArray::getNumber(const string& key, int& val) const
+{
+    double ival;
+
+    if (!getNumber(key, ival))
+    {
+        return false;
+    }
+    else
+    {
+        val = (int) ival;
+        return true;
+    }
+}
+
 bool AssociativeArray::getString(const string& key, string& val) const
 {
     Value* v = getValue(key);

@@ -30,6 +30,7 @@ class AssociativeArray
 
     bool getNumber(const std::string&, double&) const;
     bool getNumber(const std::string&, float&) const;
+    bool getNumber(const std::string&, int&) const;
     bool getString(const std::string&, std::string&) const;
     bool getBoolean(const std::string&, bool&) const;
     bool getVector(const std::string&, Vec3d&) const;
