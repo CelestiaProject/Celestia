@@ -117,6 +117,8 @@ enum
     Menu_PixelShaders        = 2013,
     Menu_VertexShaders       = 2014,
     Menu_ShowLocTime         = 2015,
+    Menu_ShowEclipseShadows  = 2016,
+    Menu_ShowStarsAsPoints   = 2017,
 };
 
 static void menuSelectSol()
@@ -227,6 +229,22 @@ static gint menuShowNightSideMaps(GtkWidget* w, gpointer data)
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetRenderFlag(Renderer::ShowNightSideMaps, on);
     appCore->charEntered('\014'); //Ctrl+L
+    return TRUE;
+}
+
+static gint menuShowStarsAsPoints(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowStarsAsPoints, on);
+    appCore->charEntered('\023'); //Ctrl+S
+    return TRUE;
+}
+
+static gint menuShowEclipseShadows(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowEclipseShadows, on);
+    appCore->charEntered('\005'); //Ctrl+E
     return TRUE;
 }
 
@@ -1686,6 +1704,8 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Render/Show Constellations", "slash",NULL,         Menu_ShowConstellations, "<ToggleItem>" },
     { "/Render/Show Coordinate Sphere", "semicolon",NULL,  Menu_ShowCelestialSphere, "<ToggleItem>" },
     { "/Render/Show Night Side Lights", "<control>L",NULL, Menu_ShowNightSideMaps, "<ToggleItem>" },
+    { "/Render/Show Eclipse Shadows", "<control>E",NULL,   Menu_ShowEclipseShadows, "<ToggleItem>" },
+    { "/Render/Show Stars as Points", "<control>S",NULL,   Menu_ShowStarsAsPoints, "<ToggleItem>" },
     { "/Render/sep1", NULL,                 NULL,          0, "<Separator>" },
     { "/Render/More Stars Visible", "bracketleft",  menuMoreStars, 0, NULL },
     { "/Render/Fewer Stars Visible", "bracketright", menuLessStars, 0, NULL },
@@ -1768,6 +1788,8 @@ static CheckFunc checks[] =
     { NULL,	"/Render/Show Constellations",	checkRenderFlag,	1, Renderer::ShowDiagrams },
     { NULL,	"/Render/Show Coordinate Sphere",checkRenderFlag,	1, Renderer::ShowCelestialSphere },
     { NULL,	"/Render/Show Night Side Lights",checkRenderFlag,	1, Renderer::ShowNightMaps },
+    { NULL,	"/Render/Show Eclipse Shadows", checkRenderFlag,	1, Renderer::ShowEclipseShadows },
+    { NULL,	"/Render/Show Stars as Points", checkRenderFlag,	1, Renderer::ShowStarsAsPoints },
     { NULL,	"/Render/Label Major Planets",	checkLabelFlag,		1, Renderer::MajorPlanetLabels },
     { NULL,	"/Render/Label Minor Planets",	checkLabelFlag,		1, Renderer::MinorPlanetLabels },
     { NULL,	"/Render/Label Stars",		checkLabelFlag,		1, Renderer::StarLabels },
@@ -1827,6 +1849,10 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
                    GTK_SIGNAL_FUNC(menuShowClouds));
     setupCheckItem(menuItemFactory, Menu_ShowNightSideMaps,
                    GTK_SIGNAL_FUNC(menuShowNightSideMaps));
+    setupCheckItem(menuItemFactory, Menu_ShowEclipseShadows,
+                   GTK_SIGNAL_FUNC(menuShowEclipseShadows));
+    setupCheckItem(menuItemFactory, Menu_ShowStarsAsPoints,
+                   GTK_SIGNAL_FUNC(menuShowStarsAsPoints));
     setupCheckItem(menuItemFactory, Menu_ShowOrbits,
                    GTK_SIGNAL_FUNC(menuShowOrbits));
     setupCheckItem(menuItemFactory, Menu_MajorPlanetLabels,
