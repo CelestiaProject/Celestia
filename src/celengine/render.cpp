@@ -1108,6 +1108,35 @@ void Renderer::autoMag(float& faintestMag)
 }
 
 
+// Set up the light sources for rendering a solar system.  The positions of
+// all nearby stars are converted from universal to solar system coordinates.
+static void
+setupLightSources(const vector<const Star*>& nearStars,
+                  const Star& sun,
+                  double t,
+                  vector<Renderer::LightSource>& lightSources)
+{
+    UniversalCoord center = sun.getPosition(t);
+
+    lightSources.clear();
+
+    for (vector<const Star*>::const_iterator iter = nearStars.begin();
+         iter != nearStars.end(); iter++)
+    {
+        if ((*iter)->getVisibility())
+        {
+            Vec3d v = ((*iter)->getPosition(t) - center) *
+                astro::microLightYearsToKilometers(1.0);
+            Renderer::LightSource ls;
+            ls.position = Point3d(v.x, v.y, v.z);
+            ls.luminosity = (*iter)->getLuminosity();
+            ls.color = Color::White;
+            lightSources.push_back(ls);
+        }
+    }
+}
+
+
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
                       float faintestMagNight,
@@ -1172,24 +1201,6 @@ void Renderer::render(const Observer& observer,
     // faintestPlanetMag = faintestMag + (2.5f * (float) log10((double) square(45.0f / fov)));
     faintestPlanetMag = faintestMag;
 
-
-#if 0
-    // See if there's a solar system nearby that we need to render.
-    SolarSystem* solarSystem = universe.getNearestSolarSystem(observer.getPosition());
-    const Star* sun = NULL;
-    if (solarSystem != NULL)
-        sun = solarSystem->getStar();
-
-    if ((sun != NULL) && ((renderFlags & ShowPlanets) != 0))
-    {
-        renderPlanetarySystem(*sun,
-                              *solarSystem->getPlanets(),
-                              observer,
-                              now,
-                              (labelMode & (BodyLabelMask)) != 0);
-        starTex->bind();
-    }
-#else
     if (renderFlags & ShowPlanets)
     {
         nearStars.clear();
@@ -1201,6 +1212,7 @@ void Renderer::render(const Observer& observer,
             SolarSystem* solarSystem = universe.getSolarSystem(sun);
             if (solarSystem != NULL)
             {
+                setupLightSources(nearStars, *sun, now, lightSources);
                 renderPlanetarySystem(*sun,
                                       *solarSystem->getPlanets(),
                                       observer,
@@ -1208,9 +1220,8 @@ void Renderer::render(const Observer& observer,
                                       (labelMode & (BodyLabelMask)) != 0);
             }
         }
+        starTex->bind();
     }
-#endif
-    
 
     Color skyColor(0.0f, 0.0f, 0.0f);
 
@@ -1373,13 +1384,13 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
-#if 0
-    if ((renderFlags & ShowOrbits) != 0 && orbitMask != 0 && solarSystem != NULL)
+    // Render orbit paths
+    if ((renderFlags & ShowOrbits) != 0 && orbitMask != 0)
     {
-        vector<CachedOrbit*>::const_iterator iter;
-
         // Clear the keep flag for all orbits in the cache; if they're not
-        // used when rendering this frame, they'll get marked for recycling.
+        // used when rendering this frame, they'll get marked for
+        // recycling.
+        vector<CachedOrbit*>::const_iterator iter;
         for (iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
             (*iter)->keep = false;
 
@@ -1388,16 +1399,25 @@ void Renderer::render(const Observer& observer,
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
         
-        const Star* sun = solarSystem->getStar();
-        Point3d obsPos = astrocentricPosition(observer.getPosition(),
-                                              *sun, observer.getTime());
-        glPushMatrix();
-        glTranslatef((float) astro::kilometersToAU(-obsPos.x),
-                     (float) astro::kilometersToAU(-obsPos.y),
-                     (float) astro::kilometersToAU(-obsPos.z));
-        renderOrbits(solarSystem->getPlanets(), sel, now,
-                     obsPos, Point3d(0.0, 0.0, 0.0));
-        glPopMatrix();
+        for (vector<const Star*>::const_iterator starIter = nearStars.begin();
+             starIter != nearStars.end(); starIter++)
+        {
+            const Star* sun = *starIter;
+            SolarSystem* solarSystem = universe.getSolarSystem(sun);
+
+            if (solarSystem != NULL)
+            {
+                Point3d obsPos = astrocentricPosition(observer.getPosition(),
+                                                      *sun, observer.getTime());
+                glPushMatrix();
+                glTranslatef((float) astro::kilometersToAU(-obsPos.x),
+                             (float) astro::kilometersToAU(-obsPos.y),
+                             (float) astro::kilometersToAU(-obsPos.z));
+                renderOrbits(solarSystem->getPlanets(), sel, now,
+                             obsPos, Point3d(0.0, 0.0, 0.0));
+                glPopMatrix();
+            }
+        }
 
         if ((renderFlags & ShowSmoothLines) != 0)
             disableSmoothLines();
@@ -1408,9 +1428,7 @@ void Renderer::render(const Observer& observer,
             if (!(*iter)->keep)
                 (*iter)->body = NULL;
         }
-
     }
-#endif
 
     renderLabels();
 
@@ -2109,6 +2127,21 @@ struct RenderInfo
                    pixWidth(1.0f),
                    useTexEnvCombine(false)
     {};
+};
+
+
+// Used to sort light sources in order of decreasing intensity
+struct LightIntensityPredicate
+{
+    int unused;
+
+    LightIntensityPredicate() {};
+
+    bool operator()(const DirectionalLight& l0,
+                    const DirectionalLight& l1) const
+    {
+        return (l0.intensity > l1.intensity);
+    }
 };
 
 
@@ -4280,21 +4313,84 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 }
 
 
+static void
+setupObjectLighting(const vector<Renderer::LightSource>& suns,
+                    const Point3d& objPosition,
+                    LightingState& ls)
+{
+    unsigned int nLights = min(MaxLights, suns.size());
+    if (nLights == 0)
+        return;
+
+    unsigned int i;
+    for (i = 0; i < nLights; i++)
+    {
+        Vec3d dir = suns[i].position - objPosition;
+        ls.lights[i].direction =
+            Vec3f((float) dir.x, (float) dir.y, (float) dir.z);
+        float distance = astro::kilometersToAU(ls.lights[i].direction.length());
+        ls.lights[i].intensity = suns[i].luminosity / (distance * distance);
+        ls.lights[i].color = suns[i].color;
+    }
+
+    // Sort light sources by brightness.  Light zero should always be the
+    // brightest.  Optimize common cases of one and two lights.
+    if (nLights == 2)
+    {
+        if (ls.lights[0].intensity < ls.lights[1].intensity)
+            swap(ls.lights[0], ls.lights[1]);
+    }
+    else if (nLights > 2)
+    {
+        sort(ls.lights, ls.lights + nLights, LightIntensityPredicate());
+    }
+
+    // After sorting, the first light is always the brightest
+    float maxIntensity = ls.lights[0].intensity;
+
+    // Normalize the brightnesses of the light sources.
+    // TODO: Skip this step when high dynamic range rendering to floating point
+    //   buffers is enabled.
+    // TODO: Investigate logarithmic functions for scaling light brightness, to
+    //   better simulate what the human eye would see.
+    ls.nLights = 0;
+    for (i = 0; i < nLights; i++)
+    {
+        ls.lights[i].intensity /= maxIntensity;
+
+        // Cull light sources that don't contribute significantly (less than
+        // the resolution of an 8-bit color channel.)
+        if (ls.lights[i].intensity < 1.0f / 255.0f)
+            break;
+
+        ls.nLights++;
+    }
+}
+              
+
 void Renderer::renderObject(Point3f pos,
                             float distance,
                             double now,
                             Quatf cameraOrientation,
                             float nearPlaneDistance,
                             float farPlaneDistance,
-                            Vec3f sunDirection,
-                            Color sunColor,
-                            RenderProperties& obj)
+                            RenderProperties& obj,
+                            const LightingState& ls)
 {
     RenderInfo ri;
 
     float altitude = distance - obj.radius;
     float discSizeInPixels = obj.radius /
         (max(nearPlaneDistance, altitude) * pixelSize);
+
+    // HACK 
+    Vec3f sunDirection(0.0f, 1.0f, 0.0f);
+    Color sunColor(0.0f, 0.0f, 0.0f);
+    if (ls.nLights > 0)
+    {
+        sunDirection = ls.lights[0].direction;
+        sunColor     = ls.lights[0].color;// * ls.lights[0].intensity;
+    }
 
     // Enable depth buffering
     glEnable(GL_DEPTH_TEST);
@@ -4327,7 +4423,7 @@ void Renderer::renderObject(Point3f pos,
     // small, the potentially nonuniform scale factor shouldn't mess up
     // the lighting calculations enough to be noticeable.
     // TODO:  Figure out a better way to render ellipsoids than applying
-    // a nonunifom scale factor to a sphere . . . it makes me nervous.
+    // a nonunifom scale factor to a sphere.
     float radius = obj.radius;
     Vec3f semiMajorAxes(radius, radius * (1.0f - obj.oblateness), radius);
     glScale(semiMajorAxes);
@@ -4934,9 +5030,13 @@ void Renderer::renderPlanet(Body& body,
             }
         }
 
+        LightingState lights;
+        setupObjectLighting(lightSources,
+                            body.getHeliocentricPosition(now),
+                            lights);
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
-                     sunDirection, sunColor, rp);
+                     rp, lights);
 
         // Render the horizon compass for spherical and ellipsoidal bodies
         if ((renderFlags & ShowCelestialSphere) != 0 &&
@@ -5080,7 +5180,7 @@ void Renderer::renderStar(const Star& star,
 
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
-                     Vec3f(1.0f, 0.0f, 0.0f), Color(1.0f, 1.0f, 1.0f), rp);
+                     rp, LightingState());
 
         glEnable(GL_TEXTURE_2D);
     }
