@@ -27,6 +27,7 @@ libcelengine_a_SOURCES = \
 	galaxy.cpp \
 	glcontext.cpp \
 	glext.cpp \
+	location.cpp \
 	lodspheremesh.cpp \
 	marker.cpp \
 	meshmanager.cpp \
