@@ -2249,6 +2249,8 @@ public:
         double gamma = 2.0 * asin(sqrt(square(b0) + square(b1)));
         double theta = atan2(b1, b0);
 
+        L += degToRad(174.99);
+
         // Now that we have all the orbital elements, compute the position
         double M = L - p;
 
@@ -2257,6 +2259,7 @@ public:
         double ecc = M;
         for (i = 0; i < 4; i++)
             ecc = M + e * sin(ecc);
+
         double x = a * (cos(ecc) - e);
         double z = a * sqrt(1 - square(e)) * -sin(ecc);
 
