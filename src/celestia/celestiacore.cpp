@@ -157,6 +157,49 @@ void View::walkTreeResize(View* sibling, int sign) {
     if (sibling->child2) walkTreeResize(sibling->child2, sign);
 }
 
+void View::walkTreeResizeDelta(View* v, float delta )
+{
+   View *p=v;
+   int sign = -1;
+   float ratio;
+
+   if (v->child1) walkTreeResizeDelta(v->child1, delta);
+   if (v->child2) walkTreeResizeDelta(v->child2, delta);
+
+   while ( p != child1 && p != child2 && (p = p->parent) ) ;
+   if (p == child1) sign = 1;
+   switch (type)
+    {
+    case View::HorizontalSplit:
+        delta = -delta;
+        ratio = (p->height  + sign * delta) / p->height;
+        v->height *= ratio;
+        if (sign == 1)
+        {
+            v->y = p->y + (v->y - p->y) * ratio;
+        }
+        else
+        {
+            v->y = p->y + delta + (v->y - p->y) * ratio;
+        }
+        break;
+
+    case View::VerticalSplit:
+        ratio = (p->width + sign * delta) / p->width;
+        v->width *= ratio;
+        if (sign == 1)
+        {
+            v->x = p->x + (v->x - p->x) * ratio;
+        }
+        else
+        {
+            v->x = p->x + delta + (v->x - p->x) * ratio;
+        }
+        break;
+    case View::ViewWindow:
+        break;
+    }
+}
 
 CelestiaCore::CelestiaCore() :
     config(NULL),
@@ -183,6 +226,7 @@ CelestiaCore::CelestiaCore() :
     wireframe(false),
     editMode(false),
     altAzimuthMode(false),
+    lightTravelFlag(false),
     flashFrameStart(0.0),
     timer(NULL),
     currentScript(NULL),
@@ -213,7 +257,10 @@ CelestiaCore::CelestiaCore() :
     logoTexture(NULL),
     alerter(NULL),
     historyCurrent(0),
-    activeView(0)
+    activeView(0),
+    showActiveViewFrame(false),
+    showViewFrames(true),
+    resizeSplit(0)
 {
     /* Get a renderer here so it may be queried for capabilities of the
        underlying engine even before rendering is enabled. It's initRenderer()
@@ -361,6 +408,48 @@ bool checkMask(int modifiers, int mask)
 void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
     mouseMotion = 0.0f;
+
+    if (views.size() > 1 && button == LeftButton) // look if click is near a view border
+    {
+        View *v1 = 0, *v2 = 0;
+        for(std::vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+        {
+            View* v = *i;
+            float vx, vy, vxp, vyp;
+            vx = ( x / width - v->x ) / v->width;
+            vy = ( (1 - y / height ) - v->y ) / v->height;
+            vxp = vx * v->width * width;
+            vyp = vy * v->height * height;
+            if ( vx >=0 && vx <= 1 && ( abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2)
+              || vy >=0 && vy <= 1 && ( abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)   )
+            {
+                if (v1 == 0)
+                {
+                    v1 = v;
+                }
+                else
+                {
+                    v2 = v;
+                    break;
+                }
+            }
+        }
+        if (v2 != 0) {
+             // Look for common ancestor to v1 & v2 = split being draged.
+             View *p1 = v1, *p2 = v2;
+             while ( (p1 = p1->parent) )
+             {
+                 p2 = v2;
+                 while ( (p2 = p2->parent) && p1 != p2) ;
+                 if (p2 != 0) break;
+             }
+             if (p2 != 0)
+             {
+                 resizeSplit = p1;
+             }
+        }
+    }
+
 }
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
@@ -368,6 +457,12 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
     // Four pixel tolerance for picking
     float pickTolerance = sim->getActiveObserver()->getFOV() / height * 4.0f;
+
+    if (resizeSplit)
+    {
+        resizeSplit = 0;
+        return;
+    }
 
     // If the mouse hasn't moved much since it was pressed, treat this
     // as a selection or context menu event.  Otherwise, assume that the
@@ -388,6 +483,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
                 }
                 activeView = n;
                 sim->setActiveObserver(views[activeView]->observer);
+                if (!showActiveViewFrame) flashFrameStart = currentTime;
                 return;
             }
 
@@ -426,7 +522,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         else if (button == MiddleButton)
 	{
             if (sim->getActiveObserver()->getFOV() != stdFOV)
-	    { 
+	    {
                 oldFOV = sim->getActiveObserver()->getFOV();
                 sim->getActiveObserver()->setFOV(stdFOV);
             }
@@ -461,6 +557,22 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
 
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
+    if (resizeSplit != 0)
+    {
+        switch(resizeSplit->type) {
+        case View::HorizontalSplit:
+            resizeSplit->walkTreeResizeDelta(resizeSplit->child1, dy / height);
+            resizeSplit->walkTreeResizeDelta(resizeSplit->child2, dy / height);
+            break;
+        case View::VerticalSplit:
+            resizeSplit->walkTreeResizeDelta(resizeSplit->child1, dx / width);
+            resizeSplit->walkTreeResizeDelta(resizeSplit->child2, dx / width);
+            break;
+        case View::ViewWindow:
+            break;
+        }
+        return;
+    }
     if ((modifiers & (LeftButton | RightButton)) != 0)
     {
         if (editMode && checkMask(modifiers, LeftButton | ShiftKey | ControlKey))
@@ -720,7 +832,7 @@ void CelestiaCore::charEntered(char c)
         if (activeView >= (int) views.size())
             activeView = 0;
         sim->setActiveObserver(views[activeView]->observer);
-        flashFrameStart = currentTime;
+        if (!showActiveViewFrame) flashFrameStart = currentTime;
         break;
 
     case '\020':  // Ctrl+P
@@ -912,28 +1024,17 @@ void CelestiaCore::charEntered(char c)
 
     case '-': 
         addToHistory();
+
         if (sim->getSelection().body)
         {
-            Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
-            sim->getObserver().getPosition();
-            int hours, mins;
-            float secs;
-            char buf[128];
-	    if (astro::microLightYearsToKilometers(v.length()) < 
-                86400.0 * astro::speedOfLight)
-	    { 
-	        // If Light travel delay < 1 day, display in [ hr : min : sec ]
-                getLightTravelDelay(v.length(), hours, mins, secs);
-                if (hours == 0)
-                    sprintf(buf,"Light travel time:  %d min  %.1f s  subtracted", 
-                            mins, secs);
+	    lightTravelFlag = !lightTravelFlag;
+	    if (lightTravelFlag)
+	        flash("Light travel delay included");
                 else
-		    sprintf(buf,"Light travel time:  %d h  %d min  %.1f s  subtracted"
-                            ,hours, mins, secs);
-                flash(buf, 2.0);
-                setLightTravelDelay(v.length());
-	    }
+                flash("Light travel delay neglected");
 	}
+        else
+            flash("Light travel delay neglected");
         break;
 
     case ',':
@@ -1650,6 +1751,8 @@ void CelestiaCore::deleteView()
 
     delete(v->parent);
     delete(v);
+
+    if (!showActiveViewFrame) flashFrameStart = currentTime;
 }
 
 
@@ -1865,16 +1968,33 @@ void CelestiaCore::renderOverlay()
 
     overlay->begin();
 
-    // Render a very simple border around the active view
+
     if (views.size() > 1)
     {
+    // Render a thin border arround all views
+        if (showViewFrames || resizeSplit)
+        {
+            glLineWidth(1.0f);
+            glDisable(GL_TEXTURE_2D);
+            glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
+            for(std::vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+            {
+                showViewFrame(*i, width, height);
+            }
+        }
+        glLineWidth(1.0f);
+
+    // Render a very simple border around the active view
         View* av = views[activeView];
 
-        glLineWidth(2.0f);
-        glDisable(GL_TEXTURE_2D);
-        glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-        showViewFrame(av, width, height);
-        glLineWidth(1.0f);
+        if (showActiveViewFrame)
+        {
+            glLineWidth(2.0f);
+            glDisable(GL_TEXTURE_2D);
+            glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
+            showViewFrame(av, width, height);
+            glLineWidth(1.0f);
+        }
 
         if (currentTime < flashFrameStart + 0.5)
         {
@@ -1891,13 +2011,28 @@ void CelestiaCore::renderOverlay()
         // Time and date
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(width - (11 + timeZoneName.length() + 1) * emWidth,
+        glTranslatef(width - (11 + timeZoneName.length() + 3) * emWidth,
                      height - fontHeight, 0);
         overlay->beginText();
 
 	bool time_displayed = false;
-	if (timeZoneBias != 0 && sim->getTime() < 2465442 && sim->getTime() > 2415733) {
-	        time_t time = (int)astro::julianDateToSeconds(sim->getTime() - 2440587.5);
+        double lt = 0.0;
+        if (sim->getSelection().body)
+	{                   
+	    if (lightTravelFlag) 
+	    {
+	        Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
+                          sim->getObserver().getPosition();
+	        // light travel time in days
+		lt = astro::microLightYearsToKilometers(v.length())/
+	             (86400.0 * astro::speedOfLight);
+	    } 
+	}
+	if (timeZoneBias != 0 && sim->getTime() < 2465442 && sim->getTime() 
+                                                > 2415733) 
+        {
+
+	   time_t time = (int)astro::julianDateToSeconds(sim->getTime() - 2440587.5 - lt);
 	        struct tm *localt = localtime(&time);
 		if (localt != NULL) {
 		        astro::Date d;
@@ -1907,14 +2042,31 @@ void CelestiaCore::renderOverlay()
 		        d.hour = localt->tm_hour;
 		        d.minute = localt->tm_min;
 		        d.seconds = (int)localt->tm_sec;
-		        *overlay << d << " " << tzname[localt->tm_isdst>0?1:0] << '\n';
+		        *overlay << d << " " << tzname[localt->tm_isdst>0?1:0];
 			time_displayed = true;
+                        if (lightTravelFlag)
+	                {
+                            glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
+                            *overlay <<"  LT" << '\n';
+                            glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+	                }
+	                else
+                            *overlay << '\n';
+
 		}
 	} 
 	
 	if (!time_displayed) {
-	        *overlay << astro::Date(sim->getTime());
-	        *overlay << " UTC" << '\n';
+	        *overlay << astro::Date(sim->getTime() - lt);
+	        *overlay << " UTC";
+                if (lightTravelFlag)
+	        {
+                    glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
+                    *overlay <<"  LT" << '\n';
+                    glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+	         }
+	         else
+                    *overlay << '\n';
 	}
 
         if (paused)
