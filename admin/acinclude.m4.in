@@ -600,10 +600,10 @@ AC_DEFUN([KDE_SUBST_PROGRAMS],
             KDE_FIND_PATH(kconfig_compiler, KCONFIG_COMPILER, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(kconfig_compiler)])
             KDE_FIND_PATH(dcopidlng, DCOPIDLNG, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(dcopidlng)])
         fi
-        if test -n "$kde33ornewer"; then
-            KDE_FIND_PATH(makekdewidgets, MAKEKDEWIDGETS, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(makekdewidgets)])
-            AC_SUBST(MAKEKDEWIDGETS)
-        fi
+dnl        if test -n "$kde33ornewer"; then
+dnl            KDE_FIND_PATH(makekdewidgets, MAKEKDEWIDGETS, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(makekdewidgets)])
+dnl            AC_SUBST(MAKEKDEWIDGETS)
+dnl        fi
         KDE_FIND_PATH(xmllint, XMLLINT, [${prefix}/bin ${exec_prefix}/bin], [XMLLINT=""])
 
         if test -n "$MEINPROC" && test ! "$MEINPROC" = "compiled"; then  
