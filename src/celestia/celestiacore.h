@@ -82,6 +82,26 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         ControlKey   = 0x10,
     };
 
+    enum CursorShape {
+        ArrowCursor         = 0,
+        UpArrowCursor       = 1,
+        CrossCursor         = 2,
+        InvertedCrossCursor = 3,
+        WaitCursor          = 4,
+        BusyCursor          = 5,
+        IbeamCursor         = 6,
+        SizeVerCursor       = 7,
+        SizeHorCursor       = 8,
+        SizeBDiagCursor     = 9,
+        SizeFDiagCursor     = 10,
+        SizeAllCursor       = 11,
+        SplitVCursor        = 12,
+        SplitHCursor        = 13,
+        PointingHandCursor  = 14,
+        ForbiddenCursor     = 15,
+        WhatsThisCursor     = 16,
+    };
+    
     enum {
         Joy_XAxis           = 0,
         Joy_YAxis           = 1,
@@ -188,6 +208,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void mouseButtonDown(float, float, int);
     void mouseButtonUp(float, float, int);
     void mouseMove(float, float, int);
+    void mouseMove(float, float);
+    void pickView(float, float);
     void joystickAxis(int axis, float amount);
     void joystickButton(int button, bool down);
     void resize(GLsizei w, GLsizei h);
@@ -270,6 +292,17 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setAlerter(Alerter*);
     Alerter* getAlerter() const;
 
+    class CursorHandler
+    {
+    public:
+        virtual ~CursorHandler() {};
+        virtual void setCursorShape(CursorShape) = 0;
+        virtual CursorShape getCursorShape() const = 0;
+    };
+    
+    void setCursorHandler(CursorHandler*);
+    CursorHandler* getCursorHandler() const;
+    
  private:
     bool readStars(const CelestiaConfig&);
     void renderOverlay();
@@ -358,6 +391,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     Alerter* alerter;
     std::vector<CelestiaWatcher*> watchers;
+    CursorHandler* cursorHandler;
+    CursorShape defaultCursorShape;
     
     std::vector<Url> history;
     std::vector<Url>::size_type historyCurrent;

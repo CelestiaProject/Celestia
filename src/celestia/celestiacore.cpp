@@ -321,6 +321,8 @@ CelestiaCore::CelestiaCore() :
     contextMenuCallback(NULL),
     logoTexture(NULL),
     alerter(NULL),
+    cursorHandler(NULL),
+    defaultCursorShape(CelestiaCore::CrossCursor),
     historyCurrent(0),
     activeView(0),
     showActiveViewFrame(false),
@@ -348,7 +350,7 @@ CelestiaCore::CelestiaCore() :
 
     clog.rdbuf(console.rdbuf());
     cerr.rdbuf(console.rdbuf());
-    console.setWindowHeight(ConsolePageRows);
+    console.setWindowHeight(ConsolePageRows);    
 }
 
 CelestiaCore::~CelestiaCore()
@@ -442,7 +444,7 @@ const DestinationList* CelestiaCore::getDestinations()
 }
 
 
-// Used in the super-secret edit mode
+/// Used in the super-secret edit mode
 void showSelectionInfo(const Selection& sel)
 {
     Vec3f axis(0.0f, 1.0, 0.0f);
@@ -630,6 +632,11 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
     mouseMotion = 0.0f;
 
+    if (views.size() > 1) {
+        // To select the clicked into view before a drag.
+        pickView(x, y);
+    }
+    
     if (views.size() > 1 && button == LeftButton) // look if click is near a view border
     {
         View *v1 = 0, *v2 = 0;
@@ -692,23 +699,8 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     {
         if (button == LeftButton)
         {
-            if (x < views[activeView]->x * width || x > (views[activeView]->x + views[activeView]->width) * width
-             || (height - y) < views[activeView]->y * height ||  (height - y) > (views[activeView]->y + views[activeView]->height) * height)
-            {
-                std::vector<View*>::iterator i = views.begin();
-                int n = 0;
-                while (i < views.end() && (x < (*i)->x * width || x > ((*i)->x + (*i)->width) * width
-                                            || (height - y) < (*i)->y * height ||  (height - y) > ((*i)->y + (*i)->height) * height))
-                {
-                     i++; n++;
-                }
-                activeView = n;
-                sim->setActiveObserver(views[activeView]->observer);
-                if (!showActiveViewFrame)
-                    flashFrameStart = currentTime;
-                return;
-            }
-
+            pickView(x, y);
+            
             float pickX, pickY;
             float aspectRatio = ((float) width / (float) height);
             views[activeView]->mapWindowToView((float) x / (float) width,
@@ -778,6 +770,37 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
     }
 }
 
+/// Handles cursor shape changes on view borders if the cursorHandler is defined.
+/// This must be called on mouse move events on the OpenGL Widget.
+/// x and y are the pixel coordinates relative to the widget.
+void CelestiaCore::mouseMove(float x, float y)
+{
+    if (views.size() > 1 && cursorHandler != NULL) {
+        View *v1 = 0, *v2 = 0;
+        for(std::vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+        {
+            View* v = *i;
+            float vx, vy, vxp, vyp;
+            vx = ( x / width - v->x ) / v->width;
+            vy = ( (1 - y / height ) - v->y ) / v->height;
+            vxp = vx * v->width * width;
+            vyp = vy * v->height * height;
+            if ( vx >=0 && vx <= 1 && ( abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2) ) 
+            {
+                cursorHandler->setCursorShape(CelestiaCore::SizeVerCursor);
+                return;
+            } 
+            else if (vy >=0 && vy <= 1 && ( abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)) 
+            {
+                cursorHandler->setCursorShape(CelestiaCore::SizeHorCursor);
+                return;
+            } 
+        }
+        cursorHandler->setCursorShape(defaultCursorShape);
+    }
+    return;
+}
+    
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
     if (resizeSplit != 0)
@@ -919,6 +942,26 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
     }
 }
 
+/// Makes the view under x, y the active view.
+void CelestiaCore::pickView(float x, float y)
+{
+    if (x+2 < views[activeView]->x * width || x-2 > (views[activeView]->x + views[activeView]->width) * width
+        || (height - y)+2 < views[activeView]->y * height ||  (height - y)-2 > (views[activeView]->y + views[activeView]->height) * height)
+    {
+        std::vector<View*>::iterator i = views.begin();
+        int n = 0;
+        while (i < views.end() && (x+2 < (*i)->x * width || x-2 > ((*i)->x + (*i)->width) * width
+                                    || (height - y)+2 < (*i)->y * height ||  (height - y)-2 > ((*i)->y + (*i)->height) * height))
+        {
+                i++; n++;
+        }
+        activeView = n;
+        sim->setActiveObserver(views[activeView]->observer);
+        if (!showActiveViewFrame)
+            flashFrameStart = currentTime;
+        return;
+    }
+}
 
 void CelestiaCore::joystickAxis(int axis, float amount)
 {
@@ -3520,6 +3563,21 @@ bool CelestiaCore::initSimulation()
     View* view = new View(View::ViewWindow, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f);
     views.insert(views.end(), view);
 
+    if (!compareIgnoringCase(getConfig()->cursor, "inverting crosshair")) 
+    {
+        defaultCursorShape = CelestiaCore::InvertedCrossCursor;
+    }
+    
+    if (!compareIgnoringCase(getConfig()->cursor, "arrow")) 
+    {
+        defaultCursorShape = CelestiaCore::ArrowCursor;
+    }
+    
+    if (cursorHandler != NULL)
+    {
+        cursorHandler->setCursorShape(defaultCursorShape);
+    }
+
     return true;
 }
 
@@ -3679,8 +3737,8 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
 }
 
 
-// Set the faintest visible star magnitude; adjust the renderer's
-// brightness parameters appropriately.
+/// Set the faintest visible star magnitude; adjust the renderer's
+/// brightness parameters appropriately.
 void CelestiaCore::setFaintest(float magnitude)
 {
     renderer->setBrightnessBias(0.1f);
@@ -3688,9 +3746,9 @@ void CelestiaCore::setFaintest(float magnitude)
     sim->setFaintestVisible(magnitude);
 }
 
-// Set faintest visible star magnitude and saturation magnitude 
-// for a given field of view;
-// adjust the renderer's brightness parameters appropriately.
+/// Set faintest visible star magnitude and saturation magnitude 
+/// for a given field of view;
+/// adjust the renderer's brightness parameters appropriately.
 void CelestiaCore::setFaintestAutoMag()
 {
     float faintestMag;
@@ -3716,6 +3774,19 @@ void CelestiaCore::setAlerter(Alerter* a)
 CelestiaCore::Alerter* CelestiaCore::getAlerter() const
 {
     return alerter;
+}
+
+/// Sets the cursor handler object.
+/// This must be set before calling initSimulation
+/// or the default cursor will not be used.
+void CelestiaCore::setCursorHandler(CursorHandler* handler)
+{
+    cursorHandler = handler;
+}
+
+CelestiaCore::CursorHandler* CelestiaCore::getCursorHandler() const
+{
+    return cursorHandler;
 }
 
 int CelestiaCore::getTimeZoneBias() const
