@@ -420,6 +420,8 @@ NSString* fatalErrorMessage;
 - (BOOL)     validateMenuItem: (id) item
 {
     if ( [startupCondition condition] == 0 ) return NO;
+    if ( [item action] == nil  ) return NO;
+    if ( [item action] != @selector(activateMenuItem:) ) return YES;
     if ( [item tag] == 0 )
     {
         return [item isEnabled];
