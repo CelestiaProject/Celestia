@@ -767,7 +767,10 @@ void CelestiaCore::charEntered(char c)
 
     case '[':
         if (sim->getFaintestVisible() > 1.0f)
+        {
             setFaintest(sim->getFaintestVisible() - 0.5f);
+            notifyWatchers(CelestiaWatcher::Faintest);
+        }
         break;
 
     case '\\':
@@ -776,7 +779,10 @@ void CelestiaCore::charEntered(char c)
 
     case ']':
         if (sim->getFaintestVisible() < 12.0f)
+        {
             setFaintest(sim->getFaintestVisible() + 0.5f);
+            notifyWatchers(CelestiaWatcher::Faintest);
+        }
         break;
 
     case '`':
@@ -788,6 +794,7 @@ void CelestiaCore::charEntered(char c)
             renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() - 0.05f);
         else
             renderer->setAmbientLightLevel(0.0f);
+        notifyWatchers(CelestiaWatcher::AmbientLight);
         break;
 
     case '}':
@@ -795,6 +802,7 @@ void CelestiaCore::charEntered(char c)
             renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
         else
             renderer->setAmbientLightLevel(1.0f);
+        notifyWatchers(CelestiaWatcher::AmbientLight);
         break;
 
     case '~':
@@ -1803,6 +1811,7 @@ int CelestiaCore::getTextEnterMode() const
 void CelestiaCore::setTimeZoneBias(int bias)
 {
     timeZoneBias = bias;
+    notifyWatchers(CelestiaWatcher::TimeZone);
 }
 
 
