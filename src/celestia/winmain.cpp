@@ -46,6 +46,7 @@
 #include "wingotodlg.h"
 #include "winviewoptsdlg.h"
 #include "winlocations.h"
+#include "wineclipses.h"
 #include "odmenu.h"
 
 #include "res/resource.h"
@@ -78,6 +79,7 @@ static StarBrowser* starBrowser = NULL;
 static TourGuide* tourGuide = NULL;
 static GotoObjectDialog* gotoObjectDlg = NULL;
 static ViewOptionsDialog* viewOptionsDlg = NULL;
+static EclipseFinder* eclipseFinder = NULL;
 
 static HMENU menuBar = 0;
 ODMenu odAppMenu;
@@ -2466,6 +2468,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             if (viewOptionsDlg != NULL &&
                 IsDialogMessage(viewOptionsDlg->hwnd, &msg))
                 dialogMessage = true;
+            if (eclipseFinder != NULL &&
+                IsDialogMessage(eclipseFinder->hwnd, &msg))
+                dialogMessage = true;
 
             // Translate and dispatch the message
             if (!dialogMessage)
@@ -2792,6 +2797,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 delete viewOptionsDlg;
                 viewOptionsDlg = NULL;
             }
+            else if (reinterpret_cast<LPARAM>(eclipseFinder) == lParam &&
+                     eclipseFinder != NULL)
+            {
+                delete eclipseFinder;
+                eclipseFinder = NULL;
+            }
             break;
 
         case ID_NAVIGATION_TOURGUIDE:
@@ -2807,6 +2818,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_NAVIGATION_STARBROWSER:
             if (starBrowser == NULL)
                 starBrowser = new StarBrowser(appInstance, hWnd, appCore);
+            break;
+
+        case ID_NAVIGATION_ECLIPSEFINDER:
+            if (eclipseFinder == NULL)
+                eclipseFinder = new EclipseFinder(appInstance, hWnd, appCore);
             break;
 
         case ID_RENDER_DISPLAYMODE:
