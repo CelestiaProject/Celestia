@@ -19,7 +19,6 @@ COMMONSOURCES = \
 	color.cpp \
 	command.cpp \
 	config.cpp \
-	console.cpp \
 	constellation.cpp \
 	debug.cpp \
 	destination.cpp \
