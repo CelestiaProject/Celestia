@@ -139,6 +139,7 @@ struct AppPreferences
     int showLocalTime;
     int hudDetail;
     int fullScreenMode;
+    uint32 lastVersion;
 };
 
 void ChangeDisplayMode()
@@ -1869,6 +1870,14 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "HudDetail", &prefs.hudDetail, sizeof(prefs.hudDetail));
     GetRegistryValue(key, "FullScreenMode", &prefs.fullScreenMode, sizeof(prefs.fullScreenMode));
 
+    GetRegistryValue(key, "LastVersion", &prefs.lastVersion, sizeof(prefs.lastVersion));
+    if (prefs.lastVersion < 0x01020500)
+    {
+        prefs.renderFlags |= Renderer::ShowCometTails;
+        prefs.renderFlags |= Renderer::ShowRingShadows;
+    }
+    prefs.lastVersion = 0x01020500;
+
     RegCloseKey(key);
 
     return true;
@@ -1906,6 +1915,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "ShowLocalTime", prefs.showLocalTime);
     SetRegistryInt(key, "HudDetail", prefs.hudDetail);
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
+    SetRegistryInt(key, "LastVersion", prefs.lastVersion);
 
     RegCloseKey(key);
 
@@ -1935,6 +1945,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
     prefs.hudDetail = appCore->getHudDetail();
     prefs.fullScreenMode = lastFullScreenMode;
+    prefs.lastVersion = 0x01020500;
 
     return true;
 }
@@ -2295,7 +2306,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     appInstance = hInstance;
 
-    //Specify some default values in case registry keys are not found.
+    // Specify some default values in case registry keys are not found.
     AppPreferences prefs;
     prefs.winWidth = 800;
     prefs.winHeight = 600;
@@ -2305,12 +2316,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.labelMode = 0;
     prefs.pixelShader = 0;
     prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars |
-                        Renderer::ShowPlanets | Renderer::ShowSmoothLines;
+                        Renderer::ShowPlanets | Renderer::ShowSmoothLines |
+                        Renderer::ShowCometTails | Renderer::ShowRingShadows;
     prefs.vertexShader = 0;
     prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
     prefs.hudDetail = 1;
     prefs.fullScreenMode = -1;
+    prefs.lastVersion = 0x00000000;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Adjust window dimensions for screen dimensions
@@ -2553,10 +2566,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
     switch(uMsg)
     {
     case WM_CREATE:
-        //Instruct menu class to enumerate menu structure
-        odAppMenu.Init(hWnd, menuBar);
+        // Instruct menu class to enumerate menu structure
+        // NOTE: Temporarily disabled until I can figure out how to make
+        // this work in fullscreen mode.
+        // odAppMenu.Init(hWnd, menuBar);
 
-        //Associate a menu item with a bitmap resource
+        // Associate a menu item with a bitmap resource
         odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREIMAGE, IDB_CAMERA);
         break;
 
