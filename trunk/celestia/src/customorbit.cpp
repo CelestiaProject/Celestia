@@ -10,12 +10,10 @@
 #include "mathlib.h"
 #include "astro.h"
 #include "customorbit.h"
+#include <vector>
 
 using namespace std;
 
-#define EPHEMERIS_CALC_TOL  1.0 //In days
-
-double gLastJD;
 double gPlanetElements[8][9];
 double gElements[8][23] = {
 	{   /*     mercury... */
@@ -221,21 +219,17 @@ void auxJSun(double t, double* x1, double* x2, double* x3, double* x4,
     *x6 = 2 * *x2 - 6 * *x3 + 3 * *x4;
 }
 
-void computePlanetElements(double mjd)
+void computePlanetElements(double mjd, vector<int> pList)
 {
 	double *ep, *pp;
 	double aa, t;
-	int planet, i;
-
-    //If date of last computation of elements is less than tolerance controlling calculations
-    if(abs(mjd - gLastJD) < EPHEMERIS_CALC_TOL)
-        return;
-
-    gLastJD = mjd;
+	int i, j, planet;
 
 	t = mjd/36525.0;
-	for(planet = 0; planet < 8; planet++)
+
+    for(i=0; i < pList.size(); i++)
     {
+        planet = pList[i];
 	    ep = gElements[planet];
 	    pp = gPlanetElements[planet];
 	    aa = ep[1]*t;
@@ -243,8 +237,8 @@ void computePlanetElements(double mjd)
 	    *pp = pfmod(*pp, 360.0);
 	    pp[1] = (ep[1]*9.856263e-3) + (ep[2] + ep[3])/36525;
 
-	    for(i = 4; i < 20; i += 4)
-		    pp[i/4+1] = ((ep[i+3]*t + ep[i+2])*t + ep[i+1])*t + ep[i+0];
+	    for(j = 4; j < 20; j += 4)
+		    pp[j/4+1] = ((ep[j+3]*t + ep[j+2])*t + ep[j+1])*t + ep[j+0];
 
 	    pp[6] = ep[20];
 	    pp[7] = ep[21];
@@ -317,7 +311,8 @@ class MercuryOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    int p = 0;  //Planet 0
+    const int p = 0;  //Planet 0
+    vector<int> pList;
     double t, jd19;
     double map[4];
     double dl, dr, dml, ds, dm, da, dhl;
@@ -328,7 +323,11 @@ class MercuryOrbit : public CachingOrbit
     jd19 = jd - 2415020.0;
 	t = jd19/36525.0;
 
-    computePlanetElements(jd19);
+    //Specify which planets we must compute elements for
+    pList.push_back(0);
+    pList.push_back(1);
+    pList.push_back(3);
+    computePlanetElements(jd19, pList);
 
     //Compute necessary planet mean anomalies
     map[0] = degToRad(gPlanetElements[0][0] - gPlanetElements[0][2]);
@@ -369,7 +368,8 @@ class VenusOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    int p = 1;  //Planet 1
+    const int p = 1;  //Planet 1
+    vector<int> pList;
     double t, jd19;
     double map[4], mas;
     double dl, dr, dml, ds, dm, da, dhl;
@@ -381,7 +381,11 @@ class VenusOrbit : public CachingOrbit
 	t = jd19/36525.0;
 
     mas = meanAnomalySun(t);
-    computePlanetElements(jd19);
+
+    //Specify which planets we must compute elements for
+    pList.push_back(1);
+    pList.push_back(3);
+    computePlanetElements(jd19, pList);
 
     //Compute necessary planet mean anomalies
     map[0] = 0.0;
@@ -637,7 +641,8 @@ class MarsOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    int p = 2;  //Planet 2
+    const int p = 2;  //Planet 2
+    vector<int> pList;
     double t, jd19;
     double map[4], mas, a;
     double dl, dr, dml, ds, dm, da, dhl;
@@ -649,7 +654,12 @@ class MarsOrbit : public CachingOrbit
 	t = jd19/36525.0;
 
     mas = meanAnomalySun(t);
-    computePlanetElements(jd19);
+
+    //Specify which planets we must compute elements for
+    pList.push_back(1);
+    pList.push_back(2);
+    pList.push_back(3);
+    computePlanetElements(jd19, pList);
 
     //Compute necessary planet mean anomalies
     map[0] = 0.0;
@@ -707,7 +717,8 @@ class JupiterOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    int p = 3;  //Planet 3
+    const int p = 3;  //Planet 3
+    vector<int> pList(1, p);
     double t, jd19, map;
     double dl, dr, dml, ds, dm, da, dhl, s;
     double dp;
@@ -723,7 +734,7 @@ class JupiterOrbit : public CachingOrbit
     jd19 = jd - 2415020.0;
 	t = jd19/36525.0;
 
-    computePlanetElements(jd19);
+    computePlanetElements(jd19, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -809,7 +820,8 @@ class SaturnOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    int p = 4;  //Planet 4
+    const int p = 4;  //Planet 4
+    vector<int> pList(1, p);
     double t, jd19, map;
     double dl, dr, dml, ds, dm, da, dhl, s;
     double dp;
@@ -826,7 +838,7 @@ class SaturnOrbit : public CachingOrbit
     jd19 = jd - 2415020.0;
 	t = jd19/36525.0;
 
-    computePlanetElements(jd19);
+    computePlanetElements(jd19, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -938,7 +950,8 @@ class UranusOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    int p = 5;  //Planet 5
+    const int p = 5;  //Planet 5
+    vector<int> pList(1, p);
     double t, jd19, map;
     double dl, dr, dml, ds, dm, da, dhl, s;
     double dp;
@@ -954,7 +967,7 @@ class UranusOrbit : public CachingOrbit
     jd19 = jd - 2415020.0;
 	t = jd19/36525.0;
 
-    computePlanetElements(jd19);
+    computePlanetElements(jd19, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -1022,7 +1035,8 @@ class NeptuneOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    int p = 6;  //Planet 6
+    const int p = 6;  //Planet 6
+    vector<int> pList(1, p);
     double t, jd19, map;
     double dl, dr, dml, ds, dm, da, dhl, s;
     double dp;
@@ -1038,7 +1052,7 @@ class NeptuneOrbit : public CachingOrbit
     jd19 = jd - 2415020.0;
 	t = jd19/36525.0;
 
-    computePlanetElements(jd19);
+    computePlanetElements(jd19, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -1096,7 +1110,8 @@ class PlutoOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    int p = 7;  //Planet 7
+    const int p = 7;  //Planet 7
+    vector<int> pList(1, p);
     double t, jd19, map;
     double dl, dr, dml, ds, dm, da, dhl;
     double eclLong, eclLat, distance;    //heliocentric longitude, latitude, distance
@@ -1106,7 +1121,7 @@ class PlutoOrbit : public CachingOrbit
     jd19 = jd - 2415020.0;
 	t = jd19/36525.0;
 
-    computePlanetElements(jd19);
+    computePlanetElements(jd19, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
