@@ -361,8 +361,10 @@ void Texture::normalMap(float scale, bool wrap)
             float rmag = 1.0f / mag;
 
             int n = (i * width + j) * 4;
-            npixels[n]     = (unsigned char) (128 + 127 * dy * rmag);
-            npixels[n + 1] = (unsigned char) (128 - 127 * dx * rmag);
+            npixels[n]     = (unsigned char) (128 + 127 * dx * rmag);
+            npixels[n + 1] = (unsigned char) (128 - 127 * dy * rmag);
+            // npixels[n]     = (unsigned char) (128 + 127 * dy * rmag);
+            // npixels[n + 1] = (unsigned char) (128 - 127 * dx * rmag);
             // npixels[n]     = (unsigned char) (128 - 127 * dx * rmag);
             // npixels[n + 1] = (unsigned char) (128 + 127 * dy * rmag);
             npixels[n + 2] = (unsigned char) (128 + 127 * rmag);
