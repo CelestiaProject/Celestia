@@ -1505,37 +1505,30 @@ static int object_name(lua_State* l)
 
 static int object_spectraltype(lua_State* l)
 {
-    cout << "spectraltype enter\n"; cout.flush();
     checkArgs(l, 1, 1, "No arguments expected to function object:spectraltype");
 
-    cout << "spectraltype this_object\n"; cout.flush();
     Selection* sel = this_object(l);
     if (sel->star() != NULL)
     {
         char buf[16];
-        cout << "spectraltype x1\n"; cout.flush();
         StellarClass sc = sel->star()->getStellarClass();
-        cout << "spectraltype x2\n"; cout.flush();
         if (sc.str(buf, sizeof(buf)))
         {
             lua_pushstring(l, buf);
         }
         else
         {
-            cout << "spectraltype x3\n"; cout.flush();
             // This should only happen if the spectral type has > 15 chars
             // (i.e. never, unless there's a bug)
             assert(0);
             lua_pushstring(l, "Bad spectral type (this is a bug!)");
             lua_error(l);
         }
-        cout << "spectraltype x4\n"; cout.flush();
     }
     else
     {
         lua_pushnil(l);
     }
-    cout << "spectraltype x5\n"; cout.flush();
 
     return 1;
 }
