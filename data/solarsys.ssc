@@ -26,6 +26,12 @@
 	Albedo            0.06
 }
 
+AltSurface "limit of knowledge" "Sol/Mercury"
+{
+	Texture "mercury.jpg"
+	OverlayTexture "mercury-lok-mask.png"
+}
+
 "Venus" "Sol"
 {
 	Texture "venussurface.jpg"
@@ -545,6 +551,12 @@
 	Albedo         0.5
 }
 
+AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
+{
+	Texture "mimas.jpg"
+	OverlayTexture "mimas-lok-mask.png"
+}
+
 "Enceladus" "Sol/Saturn"
 {
 	Texture "enceladus.jpg"
@@ -801,6 +813,12 @@
 	Albedo         0.32
 }
 
+AltSurface "limit of knowledge" "Sol/Uranus/Miranda"
+{
+	Texture "miranda.jpg"
+	OverlayTexture "miranda-lok-mask.png"
+}
+
 "Ariel" "Sol/Uranus"
 {
 	Texture "ariel.jpg"
@@ -851,6 +869,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 	Albedo         0.21
 }
 
+AltSurface "limit of knowledge" "Sol/Uranus/Umbriel"
+{
+	Texture "umbriel.jpg"
+	OverlayTexture "umbriel-lok-mask.png"
+}
+
 "Titania" "Sol/Uranus"
 {
 	Texture "titania.jpg"
@@ -873,6 +897,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 	Albedo         0.27
 }
 
+AltSurface "limit of knowledge" "Sol/Uranus/Titania"
+{
+	Texture "titania.jpg"
+	OverlayTexture "titania-lok-mask.png"
+}
+
 "Oberon" "Sol/Uranus"
 {
 	Texture "oberon.jpg"
@@ -893,6 +923,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 	RotationOffset 		168.2
 
 	Albedo         0.23
+}
+
+AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
+{
+	Texture "oberon.jpg"
+	OverlayTexture "oberon-lok-mask.png"
 }
 
 
@@ -988,6 +1024,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 	RotationOffset		 71.5 # at epoch
 
 	Albedo         0.756
+}
+
+AltSurface "limit of knowledge" "Sol/Neptune/Triton"
+{
+	Texture "triton.jpg"
+	OverlayTexture "triton-lok-mask.png"
 }
 
 "Nereid" "Sol/Neptune"
