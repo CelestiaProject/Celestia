@@ -248,7 +248,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
             //If object picked is a satellite but it is not in the render list,
             //pick the satellites' primary object.
-            if(newSel.body && newSel.body->getSystem()->getPrimaryBody() &&
+            if (newSel.body && newSel.body->getSystem()->getPrimaryBody() &&
                !renderer->isSelectionInRenderList(&newSel))
                 newSel = Selection(newSel.body->getSystem()->getPrimaryBody());
             
@@ -423,7 +423,7 @@ void CelestiaCore::keyDown(int key)
         break;
     }
 
-    if(KeyAccel < fMaxKeyAccel)
+    if (KeyAccel < fMaxKeyAccel)
         KeyAccel *= 1.1;
 
     // Only process alphanumeric keys if we're not in text enter mode
@@ -471,86 +471,17 @@ void CelestiaCore::charEntered(char c)
     c = toupper(c);
     switch (c)
     {
-    case 'S':
-        sim->setTargetSpeed(0);
+    case '\001': // Ctrl+A
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAtmospheres);
         break;
 
-    case 'Q':
-        sim->setTargetSpeed(-sim->getTargetSpeed());
+    case '\n':
+    case '\r':
+        textEnterMode = true;
         break;
 
-    case 'X':
-        sim->setTargetSpeed(sim->getTargetSpeed());
-        break;
-
-    case 'G':
-        sim->gotoSelection(5.0, Vec3f(0, 1, 0), astro::ObserverLocal);
-        break;
-
-    case 'C':
-        sim->centerSelection();
-        break;
-
-    case 'F':
-        sim->follow();
-        break;
-
-    case 'Y':
-        sim->geosynchronousFollow();
-        break;
-
-    case 'T':
-        sim->track();
-        break;
-
-    case 'H':
-        sim->selectStar(0);
-        break;
-
-    case 'V':
-        hudDetail = (hudDetail + 1) % 3;
-        break;
-
-    case ',':
-        if (renderer->getFieldOfView() > 0.01f)
-            renderer->setFieldOfView(renderer->getFieldOfView() / 1.1f);
-        break;
-
-    case '.':
-        if (renderer->getFieldOfView() < 120.0f)
-            renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
-        break;
-
-    case 'K':
-        sim->setTimeScale(sim->getTimeScale() / fIncrementFactor);
-        break;
-
-    case 'L':
-        sim->setTimeScale(sim->getTimeScale() * fIncrementFactor);
-        break;
-
-    case 'J':
-        sim->setTimeScale(-sim->getTimeScale());
-        break;
-
-    case '\\':
-        sim->setTimeScale(1.0);
-        break;
-
-    case 'B':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::StarLabels);
-        break;
-        
-    case 'N':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MajorPlanetLabels);
-        break;
-
-    case 'M':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MinorPlanetLabels);
-        break;
-
-    case 'O':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
+    case '\014': // Ctrl+L
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
         break;
 
     case '\020':  // Ctrl+P
@@ -561,110 +492,6 @@ void CelestiaCore::charEntered(char c)
     case '\026':  // Ctrl+V
         if (renderer->vertexShaderSupported())
             renderer->setVertexShaderEnabled(!renderer->getVertexShaderEnabled());
-        break;
-
-    case 'I':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCloudMaps);
-        break;
-
-    case 'U':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
-        break;
-
-    case '/':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowDiagrams);
-        break;
-
-    case ';':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCelestialSphere);
-        break;
-
-    case '\014': // Ctrl+L
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
-        break;
-
-    case '\001': // Ctrl+A
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAtmospheres);
-        break;
-
-    case '=':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::ConstellationLabels);
-        break;
-
-    case '~':
-        editMode = !editMode;
-        break;
-
-    case '!':
-        if (editMode)
-            showSelectionInfo(sim->getSelection());
-        break;
-
-    case '`':
-        showFPSCounter = !showFPSCounter;
-        break;
-
-    case 'D':
-        if (runningScript == NULL && demoScript != NULL)
-            runningScript = new Execution(*demoScript, *execEnv);
-        break;
-
-    case 'E':
-	renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
-	break;
-
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-        sim->selectPlanet(c - '1');
-        break;
-
-    case '0':
-        sim->selectPlanet(-1);
-        break;
-
-    case 'W':
-        wireframe = !wireframe;
-        renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
-        break;
-
-    case '[':
-        if (sim->getFaintestVisible() > 1.0f)
-            setFaintest(sim->getFaintestVisible() - 0.5f);
-        break;
-
-    case ']':
-        if (sim->getFaintestVisible() < 12.0f)
-            setFaintest(sim->getFaintestVisible() + 0.5f);
-        break;
-
-    case '{':
-        if (renderer->getAmbientLightLevel() > 0.05f)
-            renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() - 0.05f);
-        else
-            renderer->setAmbientLightLevel(0.0f);
-        break;
-
-    case '}':
-        if (renderer->getAmbientLightLevel() < 0.95f)
-            renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
-        else
-            renderer->setAmbientLightLevel(1.0f);
-        break;
-
-    case '*':
-        sim->getObserver().setOrientation(Quatf(1));
-        break;
-
-    case '\n':
-    case '\r':
-        textEnterMode = true;
         break;
 
     case '\033': // Escape
@@ -695,6 +522,179 @@ void CelestiaCore::charEntered(char c)
             // CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_CHECKED);
         }
         paused = !paused;
+        break;
+
+    case '!':
+        if (editMode)
+            showSelectionInfo(sim->getSelection());
+        break;
+
+    case '*':
+        sim->getObserver().setOrientation(Quatf(1));
+        break;
+
+    case ',':
+        if (renderer->getFieldOfView() > 0.01f)
+            renderer->setFieldOfView(renderer->getFieldOfView() / 1.1f);
+        break;
+
+    case '.':
+        if (renderer->getFieldOfView() < 120.0f)
+            renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
+        break;
+
+    case '/':
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowDiagrams);
+        break;
+
+    case '0':
+        sim->selectPlanet(-1);
+        break;
+
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+        sim->selectPlanet(c - '1');
+        break;
+
+    case ';':
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCelestialSphere);
+        break;
+
+    case '=':
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::ConstellationLabels);
+        break;
+
+    case 'B':
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::StarLabels);
+        break;
+        
+    case 'C':
+        sim->centerSelection();
+        break;
+
+    case 'D':
+        if (runningScript == NULL && demoScript != NULL)
+            runningScript = new Execution(*demoScript, *execEnv);
+        break;
+
+    case 'E':
+	renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
+	break;
+
+    case 'F':
+        sim->follow();
+        break;
+
+    case 'G':
+        sim->gotoSelection(5.0, Vec3f(0, 1, 0), astro::ObserverLocal);
+        break;
+
+    case 'H':
+        sim->selectStar(0);
+        break;
+
+    case 'I':
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCloudMaps);
+        break;
+
+    case 'J':
+        sim->setTimeScale(-sim->getTimeScale());
+        break;
+
+    case 'K':
+        sim->setTimeScale(sim->getTimeScale() / fIncrementFactor);
+        break;
+
+    case 'L':
+        sim->setTimeScale(sim->getTimeScale() * fIncrementFactor);
+        break;
+
+    case 'M':
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MinorPlanetLabels);
+        break;
+
+    case 'N':
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MajorPlanetLabels);
+        break;
+
+    case 'O':
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
+        break;
+
+    case 'Q':
+        sim->setTargetSpeed(-sim->getTargetSpeed());
+        break;
+
+    case 'S':
+        sim->setTargetSpeed(0);
+        break;
+
+    case 'T':
+        sim->track();
+        break;
+
+    case 'U':
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
+        break;
+
+    case 'V':
+        hudDetail = (hudDetail + 1) % 3;
+        break;
+
+    case 'W':
+        wireframe = !wireframe;
+        renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
+        break;
+
+    case 'X':
+        sim->setTargetSpeed(sim->getTargetSpeed());
+        break;
+
+    case 'Y':
+        sim->geosynchronousFollow();
+        break;
+
+    case '[':
+        if (sim->getFaintestVisible() > 1.0f)
+            setFaintest(sim->getFaintestVisible() - 0.5f);
+        break;
+
+    case '\\':
+        sim->setTimeScale(1.0);
+        break;
+
+    case ']':
+        if (sim->getFaintestVisible() < 12.0f)
+            setFaintest(sim->getFaintestVisible() + 0.5f);
+        break;
+
+    case '`':
+        showFPSCounter = !showFPSCounter;
+        break;
+
+    case '{':
+        if (renderer->getAmbientLightLevel() > 0.05f)
+            renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() - 0.05f);
+        else
+            renderer->setAmbientLightLevel(0.0f);
+        break;
+
+    case '}':
+        if (renderer->getAmbientLightLevel() < 0.95f)
+            renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
+        else
+            renderer->setAmbientLightLevel(1.0f);
+        break;
+
+    case '~':
+        editMode = !editMode;
         break;
     }
 }
@@ -825,7 +825,7 @@ void CelestiaCore::tick()
 
         sim->setTargetSpeed(sim->getTargetSpeed() / (float) exp(dt * 3));
     }
-    if(!bSetTargetSpeed && av.length() > 0.0f)
+    if (!bSetTargetSpeed && av.length() > 0.0f)
     {
         //Force observer velocity vector to align with observer direction if an observer
         //angular velocity still exists.
@@ -1139,7 +1139,7 @@ void CelestiaCore::renderOverlay()
         {
             modeName = "Travelling";
         }
-        else if(mode == Simulation::Tracking)
+        else if (mode == Simulation::Tracking)
         {
             modeName = "Tracking";
         }
@@ -1165,9 +1165,9 @@ void CelestiaCore::renderOverlay()
         glColor4f(0.6f, 0.6f, 1.0f, 1);
         *overlay << modeName << '\n';
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        if(degrees > 0)
+        if (degrees > 0)
             overlay->printf("FOV: %d° %02d' %.1f\"\n", degrees, minutes, seconds);
-        else if(minutes > 0)
+        else if (minutes > 0)
             overlay->printf("FOV: %02d' %.1f\"\n", minutes, seconds);
         else
             overlay->printf("FOV: %.1f\"\n", seconds);
