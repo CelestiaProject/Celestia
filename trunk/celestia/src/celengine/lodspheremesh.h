@@ -13,15 +13,14 @@
 #include <celmath/vecmath.h>
 #include <celengine/mesh.h>
 
-class LODSphereMesh : public Mesh
+class LODSphereMesh
 {
 public:
     LODSphereMesh();
     ~LODSphereMesh();
 
-    void render(float lod);
-    void render(unsigned int attributes, float lod);
     void render(unsigned int attributes, const Frustum&, float lod);
+    void render(const Frustum&, float lod);
 
  private:
     int renderPatches(int phi0, int theta0, 
