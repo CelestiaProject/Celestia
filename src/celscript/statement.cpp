@@ -116,6 +116,7 @@ ReturnStatement::~ReturnStatement()
 Statement::Control ReturnStatement::execute(ExecutionContext& context)
 {
     Value val = expr->eval(context);
+    context.pushReturnValue(val);
 
     return ControlReturn;
 }

@@ -14,10 +14,12 @@
 #include <string>
 #include <iostream>
 #include <celscript/type.h>
-#include <celscript/function.h>
+
 
 namespace celx
 {
+
+class Function;
 
 class Value
 {

@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <celscript/expression.h>
+#include <celscript/function.h>
 
 using namespace std;
 using namespace celx;
@@ -238,7 +239,7 @@ Value FunctionCallExpression::eval(ExecutionContext& context)
         return Value();
     }
 
-    return Value();
+    return f->call(context);
 }
 
 void FunctionCallExpression::addArgument(Expression* expr)
