@@ -15,6 +15,9 @@
 #include <celengine/texture.h>
 
 
+#define MAX_SPHERE_MESH_TEXTURES 4
+
+
 class LODSphereMesh
 {
 public:
@@ -22,9 +25,12 @@ public:
     ~LODSphereMesh();
 
     void render(unsigned int attributes, const Frustum&, float lod,
-                Texture* tex);
+                Texture** tex, int nTextures);
+    void render(unsigned int attributes, const Frustum&, float lod,
+                Texture* tex0 = NULL, Texture* tex1 = NULL,
+                Texture* tex2 = NULL, Texture* tex3 = NULL);
     void render(const Frustum&, float lod,
-                Texture* tex);
+                Texture** tex, int nTextures);
 
  private:
     int renderPatches(int phi0, int theta0, 
@@ -41,13 +47,14 @@ public:
 
     float* vertices;
     float* normals;
-    float* texCoords;
+    float* texCoords[MAX_SPHERE_MESH_TEXTURES];
     float* tangents;
     int nIndices;
     unsigned short* indices;
 
-    Texture* texture0;
-    unsigned int subtexture0;
+    int nTexturesUsed;
+    Texture* textures[MAX_SPHERE_MESH_TEXTURES];
+    unsigned int subtextures[MAX_SPHERE_MESH_TEXTURES];
 };
 
 #endif // _LODSPHEREMESH_H_

@@ -61,7 +61,6 @@ static void InitTrigArrays()
 LODSphereMesh::LODSphereMesh() :
     vertices(NULL),
     normals(NULL),
-    texCoords(NULL),
     tangents(NULL)
 {
     if (!trigArraysInitialized)
@@ -73,7 +72,8 @@ LODSphereMesh::LODSphereMesh() :
     
     vertices = new float[maxVertices * 3];
     normals = new float[maxVertices * 3];
-    texCoords = new float[maxVertices * 2];
+    for (int i = 0; i < MAX_SPHERE_MESH_TEXTURES; i++)
+        texCoords[i] = new float[maxVertices * 2];
     tangents = new float[maxVertices * 3];
 
     indices = new unsigned short[maxPhiSteps * 2 * (maxThetaSteps + 1)];
@@ -83,12 +83,15 @@ LODSphereMesh::~LODSphereMesh()
 {
     if (vertices != NULL)
         delete[] vertices;
-    if (texCoords != NULL)
-        delete[] texCoords;
     if (normals != NULL)
         delete[] normals;
     if (tangents != NULL)
         delete[] tangents;
+    for (int i = 0; i < MAX_SPHERE_MESH_TEXTURES; i++)
+    {
+        if (texCoords != NULL)
+            delete[] texCoords[i];
+    }
 }
 
 
@@ -102,16 +105,42 @@ static Point3f spherePoint(int theta, int phi)
 
 void LODSphereMesh::render(const Frustum& frustum,
                            float lodBias,
-                           Texture* tex)
+                           Texture** tex,
+                           int nTextures)
 {
-    render(Mesh::Normals | Mesh::TexCoords0, frustum, lodBias, tex);
+    render(Mesh::Normals | Mesh::TexCoords0, frustum, lodBias, tex,
+           nTextures);
 }
 
 
 void LODSphereMesh::render(unsigned int attributes,
                            const Frustum& frustum,
                            float lodBias,
-                           Texture* tex)
+                           Texture* tex0,
+                           Texture* tex1,
+                           Texture* tex2,
+                           Texture* tex3)
+{
+    Texture* textures[MAX_SPHERE_MESH_TEXTURES];
+    int nTextures = 0;
+
+    if (tex0 != NULL)
+        textures[nTextures++] = tex0;
+    if (tex1 != NULL)
+        textures[nTextures++] = tex1;
+    if (tex2 != NULL)
+        textures[nTextures++] = tex2;
+    if (tex3 != NULL)
+        textures[nTextures++] = tex3;
+    render(attributes, frustum, lodBias, textures, nTextures);
+}
+
+
+void LODSphereMesh::render(unsigned int attributes,
+                           const Frustum& frustum,
+                           float lodBias,
+                           Texture** tex,
+                           int nTextures)
 {
     Point3f fp[8];
 
@@ -145,15 +174,19 @@ void LODSphereMesh::render(unsigned int attributes,
         phiExtent /= split;
     }
 
-    // If the texture is split into subtextures, we may have to extra
-    // patches, since there can be at most one subtexture per per patch.
+    if (tex == NULL)
+        nTextures = 0;
+
+    // If one of the textures is split into subtextures, we may have to
+    // use extra patches, since there can be at most one subtexture per patch.
     int minSplit = 1;
-    if (tex != NULL)
+    int i;
+    for (i = 0; i < nTextures; i++)
     {
-        if (tex->getUSubtextures() > minSplit)
-            minSplit = tex->getUSubtextures();
-        if (tex->getVSubtextures() > minSplit)
-            minSplit = tex->getVSubtextures();
+        if (tex[i]->getUSubtextures() > minSplit)
+            minSplit = tex[i]->getUSubtextures();
+        if (tex[i]->getVSubtextures() > minSplit)
+            minSplit = tex[i]->getVSubtextures();
     }
     
     if (split < minSplit)
@@ -163,16 +196,22 @@ void LODSphereMesh::render(unsigned int attributes,
         split = minSplit;
     }
 
-    // Set the current texture
-    texture0 = tex;
-    subtexture0 = 0;
+    // Set the current textures
+    nTexturesUsed = nTextures;
+    for (i = 0; i < nTextures; i++)
+    {
+        textures[i] = tex[i];
+        subtextures[i] = 0;
+        EXTglActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glEnable(GL_TEXTURE_2D);
+    }
 
     // Set up the mesh vertices 
     int nRings = phiExtent / step;
     int nSlices = thetaExtent / step;
 
     int n2 = 0;
-    for (int i = 0; i < nRings; i++)
+    for (i = 0; i < nRings; i++)
     {
         for (int j = 0; j <= nSlices; j++)
         {
@@ -195,6 +234,7 @@ void LODSphereMesh::render(unsigned int attributes,
         glDisableClientState(GL_NORMAL_ARRAY);
     }
 
+#if 0
     if (texCoords != NULL && ((attributes & Mesh::TexCoords0) != 0))
     {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -204,6 +244,15 @@ void LODSphereMesh::render(unsigned int attributes,
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
+#endif
+
+    for (i = 0; i < nTextures; i++)
+    {
+        EXTglClientActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, texCoords[i]);
+    }
+
     glDisableClientState(GL_COLOR_ARRAY);
 
     // Use nVidia's vertex program extension . . .  right now, we
@@ -279,6 +328,15 @@ void LODSphereMesh::render(unsigned int attributes,
     {
         glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
     }
+
+    for (i = 0; i < nTextures; i++)
+    {
+        EXTglClientActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+    EXTglClientActiveTextureARB(GL_TEXTURE0_ARB);
+
+    EXTglActiveTextureARB(GL_TEXTURE0_ARB);
 
 #if SHOW_FRUSTUM
     // Debugging code for visualizing the frustum.
@@ -411,45 +469,57 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
     int phiExtent = extent / 2;
     int theta1 = theta0 + thetaExtent;
     int phi1 = phi0 + phiExtent;
-    float du = (float) 1.0f / thetaDivisions;
-    float dv = (float) 1.0f / phiDivisions;
-    float u0 = 1.0f;
-    float v0 = 1.0f;
     int n3 = 0;
     int n2 = 0;
 
+    float du[MAX_SPHERE_MESH_TEXTURES];
+    float dv[MAX_SPHERE_MESH_TEXTURES];
+    float u0[MAX_SPHERE_MESH_TEXTURES];
+    float v0[MAX_SPHERE_MESH_TEXTURES];
+
     // Set the current texture.  This is necessary because the texture
     // may be split into subtextures.
-    if (texture0 != NULL)
+    for (int tex = 0; tex < nTexturesUsed; tex++)
     {
-        int uTexSplit = texture0->getUSubtextures();
-        int vTexSplit = texture0->getVSubtextures();
-        int patchSplit = maxDivisions / extent;
-        assert(patchSplit >= uTexSplit && patchSplit >= vTexSplit);
+        du[tex] = (float) 1.0f / thetaDivisions;;
+        dv[tex] = (float) 1.0f / phiDivisions;;
+        u0[tex] = 1.0f;
+        v0[tex] = 1.0f;
 
-        int u = theta0 / thetaExtent;
-        int v = phi0 / phiExtent;
-        int patchesPerUSubtex = patchSplit / uTexSplit;
-        int patchesPerVSubtex = patchSplit / vTexSplit;
-
-        du *= uTexSplit;
-        dv *= vTexSplit;
-        u0 = 1.0f - (float) (u % patchesPerUSubtex) / (float)patchesPerUSubtex;
-        v0 = 1.0f - (float) (v % patchesPerVSubtex) / (float)patchesPerVSubtex;
-        u0 += theta0 * du;
-        v0 += phi0 * dv;
-
-        u /= patchesPerUSubtex;
-        v /= patchesPerVSubtex;
-
-        unsigned int tn = texture0->getName(uTexSplit - u - 1,
-                                            vTexSplit - v - 1);
-        if (tn != subtexture0)
+        if (textures[tex] != NULL)
         {
+            int uTexSplit = textures[tex]->getUSubtextures();
+            int vTexSplit = textures[tex]->getVSubtextures();
+            int patchSplit = maxDivisions / extent;
+            assert(patchSplit >= uTexSplit && patchSplit >= vTexSplit);
+
+            int u = theta0 / thetaExtent;
+            int v = phi0 / phiExtent;
+            int patchesPerUSubtex = patchSplit / uTexSplit;
+            int patchesPerVSubtex = patchSplit / vTexSplit;
+
+            du[tex] *= uTexSplit;
+            dv[tex] *= vTexSplit;
+            u0[tex] = 1.0f - ((float) (u % patchesPerUSubtex) /
+                              (float) patchesPerUSubtex);
+            v0[tex] = 1.0f - ((float) (v % patchesPerVSubtex) /
+                              (float) patchesPerVSubtex);
+            u0[tex] += theta0 * du[tex];
+            v0[tex] += phi0 * dv[tex];
+
+            u /= patchesPerUSubtex;
+            v /= patchesPerVSubtex;
+
+            unsigned int tn = textures[tex]->getName(uTexSplit - u - 1,
+                                                     vTexSplit - v - 1);
             // We track the current texture to avoid unnecessary and costly
             // texture state changes.
-            glBindTexture(GL_TEXTURE_2D, tn);
-            subtexture0 = tn;
+            if (tn != subtextures[tex])
+            {
+                EXTglActiveTextureARB(GL_TEXTURE0_ARB + tex);
+                glBindTexture(GL_TEXTURE_2D, tn);
+                subtextures[tex] = tn;
+            }
         }
     }
 
@@ -468,8 +538,6 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
                 vertices[n3]      = cphi * ctheta;
                 vertices[n3 + 1]  = sphi;
                 vertices[n3 + 2]  = cphi * stheta;
-                texCoords[n2]     = u0 - theta * du;
-                texCoords[n2 + 1] = v0 - phi * dv;
 
                 // Compute the tangent--required for bump mapping
                 float tx = sphi * stheta;
@@ -493,10 +561,27 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
                 vertices[n3]      = cphi * ctheta;
                 vertices[n3 + 1]  = sphi;
                 vertices[n3 + 2]  = cphi * stheta;
-                texCoords[n2]     = u0 - theta * du;
-                texCoords[n2 + 1] = v0 - phi * dv;
                 n2 += 2;
                 n3 += 3;
+            }
+        }
+
+        // Texture coordinates
+        for (int tex = 0; tex < nTexturesUsed; tex++)
+        {
+            float u = u0[tex];
+            float v = v0[tex];
+            float du_ = du[tex];
+            float dv_ = dv[tex];
+
+            n2 -= (theta1 - theta0) / step * 2 + 2;
+            for (int theta = theta0; theta <= theta1; theta += step)
+            {
+                float ctheta = cosTheta[theta];
+                float stheta = sinTheta[theta];
+                texCoords[tex][n2]     = u - theta * du_;
+                texCoords[tex][n2 + 1] = v - phi * dv_;
+                n2 += 2;
             }
         }
     }
