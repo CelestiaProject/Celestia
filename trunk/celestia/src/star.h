@@ -27,6 +27,7 @@ public:
     inline float getLuminosity() const;
     float getRadius() const;
     float getTemperature() const;
+    float getRotationPeriod() const;
 
     void setCatalogNumber(uint32);
     void setPosition(float, float, float);
