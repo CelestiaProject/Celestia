@@ -11,10 +11,14 @@
 
 // parentFolder is totally vestigal crap
 
-@interface CelestiaFavorite : NSObject {
+@interface CelestiaFavorite : NSObject <NSCoding> {
     NSValue* _data;
     BOOL _freeWhenDone;
 }
+-(void)encodeWithCoder:(NSCoder*)coder;
+-(id)initWithCoder:(NSCoder*)coder;
+-(id)initWithDictionary:(NSDictionary*)dictionary;
+-(NSDictionary*)dictionary;
 -(void)activate;
 -(void)setName:(NSString*)name;
 -(id)initWithName:(NSString*)name;
@@ -32,7 +36,7 @@
 -(BOOL)isEqualToFavorite:(CelestiaFavorite*)fav;
 -(BOOL)isEqualToString:(NSString*)str;
 -(BOOL)isEqual:(id)obj;
--(NSDictionary*)dictionaryRepresentation;
+//-(NSDictionary*)dictionaryRepresentation;
 -(NSString*)description;
 -(void)setName:(NSString*)name;
 -(NSString*)selectionName;

@@ -10,9 +10,13 @@
 #import "CelestiaVector.h"
 #import "CelestiaUniversalCoord.h"
 
-@interface CelestiaUniversalCoord : NSObject {
+@interface CelestiaUniversalCoord : NSObject <NSCoding> {
     NSData* _data;
 }
+-(void)encodeWithCoder:(NSCoder*)coder;
+-(id)initWithCoder:(NSCoder*)coder;
+-(NSData*)data;
+-(id)initWithData:(NSData*)data;
 -(CelestiaVector*)celestiaVector;
 -(NSNumber*)distanceTo:(CelestiaUniversalCoord*)t;
 -(CelestiaUniversalCoord*)difference:(CelestiaUniversalCoord*)t;

@@ -76,9 +76,15 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     _destinations = nil;
     return self;
 }
+-(void)archive
+{
+    NSLog(@"[CelestiaAppCore archive]");
+    [[CelestiaFavorites sharedFavorites] archive];
+}
 
 - (void)dealloc
 {
+    NSLog(@"[CelestiaAppCore dealloc]");
     if (_destinations != nil) {
         [_destinations release];
         _destinations = nil;

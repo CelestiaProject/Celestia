@@ -12,4 +12,9 @@
 @interface CelestiaFavorite(PrivateAPI)
 -(CelestiaFavorite*)initWithFavorite:(FavoritesEntry*)fav;
 -(FavoritesEntry*)favorite;
+-(void)setSelectionName:(NSString*)name;
+-(void)setPosition:(CelestiaUniversalCoord*)position;
+-(void)setOrientation:(CelestiaVector*)orientation;
+-(void)setJd:(NSNumber*)jd;
+-(void)setCoordinateSystem:(NSString*)coordSys;
 @end

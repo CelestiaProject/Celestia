@@ -24,6 +24,30 @@
 @end
 
 @implementation CelestiaUniversalCoord
+-(NSData*)data
+{
+    return _data;
+}
+-(id)initWithData:(NSData*)data
+{
+    self = [super init];
+    _data = [data retain];
+    return self;
+}
+-(void)encodeWithCoder:(NSCoder*)coder
+{
+    NSLog(@"[CelestiaUniversalCoord encodeWithCoder:%@]",coder);
+    //[super encodeWithCoder:coder];
+    [coder encodeObject:_data];
+}
+-(id)initWithCoder:(NSCoder*)coder
+{
+    NSLog(@"[CelestiaUniversalCoord initWithCoder:%@]",coder);
+    //self = [super initWithCoder:coder];
+    self = [super init];
+    _data = [[coder decodeObject] retain];
+    return self;
+}
 -(void)dealloc
 {
     if (_data != nil) {

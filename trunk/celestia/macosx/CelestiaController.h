@@ -21,6 +21,7 @@
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     NSTimer* timer;
 }
+-(BOOL)applicationShouldTerminate:(id)sender;
 - (BOOL)windowShouldClose:(id)sender;
 - (IBAction)showGotoObject:(id)sender;
 - (IBAction)gotoObject:(id)sender;

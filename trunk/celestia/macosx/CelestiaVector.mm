@@ -135,6 +135,18 @@
 @end
 
 @implementation CelestiaVector
+-(void)encodeWithCoder:(NSCoder*)coder
+{
+    //[super encodeWithCoder:coder];
+    [coder encodeObject:_array];
+}
+-(id)initWithCoder:(NSCoder*)coder
+{
+    //self = [super initWithCoder:coder];
+    self = [self init];
+    _array = [[coder decodeObject] retain];
+    return self;
+}
 -(void)dealloc
 {
     if (_array != nil) {
