@@ -4036,7 +4036,7 @@ void CelestiaCore::back()
     }
     historyCurrent--;
     history[historyCurrent].goTo();
-    notifyWatchers(HistoryChanged);
+    notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
@@ -4045,7 +4045,7 @@ void CelestiaCore::forward()
     if (historyCurrent == history.size()-1) return;
     historyCurrent++;
     history[historyCurrent].goTo();
-    notifyWatchers(HistoryChanged);
+    notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
@@ -4067,7 +4067,7 @@ void CelestiaCore::setHistoryCurrent(std::vector<Url>::size_type curr)
     }
     historyCurrent = curr;
     history[curr].goTo();
-    notifyWatchers(HistoryChanged);
+    notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
