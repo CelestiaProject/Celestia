@@ -70,6 +70,9 @@ public:
     bool isReal() const;
     T normalize();
 
+    static Quaternion<T> xrotation(T);
+    static Quaternion<T> yrotation(T);
+    static Quaternion<T> zrotation(T);
 #if 0
     // This code is disabled until I can 
 #ifndef BROKEN_FRIEND_TEMPLATES
@@ -629,5 +632,26 @@ template<class T> void Quaternion<T>::zrotate(T angle)
     *this = Quaternion<T>(c, 0, 0, s) * *this;
 }
 
+
+template<class T> Quaternion<T> Quaternion<T>::xrotation(T angle)
+{
+    T s, c;
+    Math<T>::sincos(angle * (T) 0.5, s, c);
+    return Quaternion<T>(c, s, 0, 0);
+}
+
+template<class T> Quaternion<T> Quaternion<T>::yrotation(T angle)
+{
+    T s, c;
+    Math<T>::sincos(angle * (T) 0.5, s, c);
+    return Quaternion<T>(c, 0, s, 0);
+}
+
+template<class T> Quaternion<T> Quaternion<T>::zrotation(T angle)
+{
+    T s, c;
+    Math<T>::sincos(angle * (T) 0.5, s, c);
+    return Quaternion<T>(c, 0, 0, s);
+}
 
 #endif // _QUATERNION_H_
