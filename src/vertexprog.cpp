@@ -21,6 +21,8 @@ unsigned int vp::diffuse = 0;
 unsigned int vp::specular = 0;
 unsigned int vp::diffuseHaze = 0;
 unsigned int vp::diffuseBump = 0;
+unsigned int vp::diffuseBumpHaze = 0;
+unsigned int vp::everything = 0;
 
 
 static string* ReadTextFromFile(const string& filename)
@@ -83,6 +85,9 @@ bool vp::init()
         return false;
     if (!LoadVertexProgram("shaders/bumpdiffuse.vp", diffuseBump))
         return false;
+    if (!LoadVertexProgram("shaders/bumphaze.vp", diffuseBumpHaze))
+        return false;
+    everything = 0;
 
     glTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
                     0, GL_MODELVIEW_PROJECTION_NV, GL_IDENTITY_NV);
