@@ -4,29 +4,33 @@
 #
 # M.sin(i) has been used as an estimate of mass. Where this is greater than 11 jupiters, the
 # body is rendered as a brown dwarf, since its true mass is likely to exceed the brown dwarf
-# limit of 13 jupiters.
+# limit of 13 jupiters. When M.sin(i) is less than 0.03 jupiters (10 earths), the body is
+# rendered as a terrestrial planet rather than a gas giant.
 #
-# Planetary radius is usually unknown. Theoretical models are available, but depend on other
+# Gas giant radii are usually unknown. Theoretical models are available, but depend on other
 # unknowns - atmospheric composition, age, albedo and true mass. Radii have therefore been
 # only roughly approximated here, since any more precise values would be misleading.
 # Hot objects (>800K) have a radius of 1.4 jupiters if M.sin(i) is less than 1.2 jupiters, and
 # a radius of 1.2 jupiters if they are more massive. At temperatures between 500K and 800K, these
 # same objects are assigned radii of 1.2 and 1 jupiters, respectively. Cold objects have a radius
 # of 1 jupiter unless M.sin(i)<0.7, at which point radius is reduced to 0.8 jupiters.
+# The low-mass planets of PSR 1257+12 have been assigned radii which give them a density comparable
+# to Mercury or Earth.
 #
 # Planetary rotation periods have been estimated from the tidal spin-down formulae in 'Solar
 # System Dynamics' by CD Murray & SF Dermott, Cambridge University Press 1999, ISBN 0521 57597 4.
 # The results are highly approximate - spin-down time is fixed at 4 billion years, and initial
 # rotation rate has been set to 10 hours for objects with M.sin(i) > 0.3 jupiters (by analogy
-# with Jupiter and Saturn), and 17 hours for lower-mass objects (by analogy with Uranus and
-# Neptune). The various bulk planetary parameters necessary for the calculation have been set
-# equal to those of Jupiter. Bodies in close orbits are generally in captured synchronous
-# rotation, while outer-system bodies retain their primordial rotation periods. Objects with
-# intermediate orbits are tidally slowed to various extents.
+# with Jupiter and Saturn), 17 hours for lower-mass giants (by analogy with Uranus and
+# Neptune), and 5 hours for terrestrials (by analogy with the estimated primordial rotation
+# period of Earth). The various bulk planetary parameters necessary for the calculation have been
+# set equal to those of Jupiter (gas giants) or Mars (terrestrials). Bodies in close orbits are
+# generally in captured synchronous rotation, while outer-system bodies retain their primordial
+# rotation periods. Objects with intermediate orbits are tidally slowed to various extents.
 #
 # Oblateness is consistent with the estimated mass, radius and rotation period, if the bulk
-# parameters are assumed to be similar to those of Jupiter. An oblateness value is assigned
-# if the calculated value exceeds 0.01.
+# parameters are assumed to be similar to those of Jupiter (gas giants) or Earth (terrestrials).
+# An oblateness value is assigned only if the calculated value exceeds 0.01.
 #
 # Planets with an estimated temperature greater than 1000K have been assigned a glowing nightside
 # texture.
@@ -357,6 +361,7 @@
 		Eccentricity    0
 		Inclination     71.7
 		AscendingNode   325.1
+		Inclination     71.7
 		ArgOfPericenter 205
 		MeanAnomaly     148
 	}
@@ -696,7 +701,7 @@
 		MeanAnomaly     67
 	}
 
-	RotationPeriod  1063 # tidal slowing significant
+	# likely to be in captured synchronous rotation
 }
 
 "d" "HD 75732"   # Rho Cnc
@@ -857,7 +862,7 @@
 		MeanAnomaly     190
 	}
 
-	RotationPeriod  959 # tidal slowing significant
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 74156"
@@ -2622,10 +2627,118 @@
 		Period          10.6831
 		SemiMajorAxis   4.8
 		Eccentricity    0.48
-		ArgOfPericenter 36
+		ArgOfPericenter 44
 		MeanAnomaly     91
 	}
 
+	RotationPeriod  10 # plausible guess
+}
+
+"b" "PSR 1257+12"   # PSR J1300+1240
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.jpg"
+	Mass      0.02     # M.sin(i) = 0.02 earths
+	Radius     1680
+
+	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
+
+	EllipticalOrbit {
+		Period          0.0692
+		SemiMajorAxis   0.19
+		AscendingNode   119
+		Inclination     152 # approx. plane of other planets
+		ArgOfPericenter 89
+		MeanAnomaly     165
+	}
+
+	Obliquity            152   # guess, to match inclination
+	EquatorAscendingNode 119   # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+"c" "PSR 1257+12"   # PSR J1300+1240
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.jpg"
+	Mass      4.3     # M.sin(i) = 4.3 earths
+	Radius     10500
+
+	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
+
+	EllipticalOrbit {
+		Period          0.1822
+		SemiMajorAxis   0.36
+		Eccentricity    0.0186
+		AscendingNode   119
+		Inclination     156
+		ArgOfPericenter 91
+		MeanAnomaly     253
+	}
+
+	Obliquity            156   # guess, to match inclination
+	EquatorAscendingNode 119   # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+"d" "PSR 1257+12"   # PSR J1300+1240
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.jpg"
+	Mass      3.9     # M.sin(i) = 3.9 earths
+	Radius     9800
+
+	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
+
+	EllipticalOrbit {
+		Period          0.2689
+		SemiMajorAxis   0.46
+		Eccentricity    0.0252
+		AscendingNode   119
+		Inclination     149
+		ArgOfPericenter 87
+		MeanAnomaly     39
+	}
+
+	Obliquity            149   # guess, to match inclination
+	EquatorAscendingNode 119   # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+"b" "PSR 1620-26"   # PSR J1623-2631
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "jupiterlike.jpg"
+
+	Mass       790     # M.sin(i) = 2.5 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://www.obspm.fr/encycl/1620-26.html"
+
+	EllipticalOrbit {
+		Period          100
+		SemiMajorAxis   23
+		AscendingNode   95
+		Inclination     213
+		ArgOfPericenter 81
+		MeanAnomaly     15
+	}
+
+
+	Obliquity            213   # guess, to match inclination
+	EquatorAscendingNode  95   # guess, to match ascending node
 	RotationPeriod  10 # plausible guess
 }
 
