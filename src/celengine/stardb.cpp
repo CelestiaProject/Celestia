@@ -855,12 +855,16 @@ StarDatabase::createStar(uint32 catalogNumber,
     bool hasBarycenter = false;
     Point3f barycenterPosition;
 
+    double radius;
+    bool hasRadius = starData->getNumber("Radius", radius);
+
     Orbit* orbit = CreateOrbit(NULL, starData, path, true);
 
     if (hasTexture      ||
         hasModel        ||
         orbit != NULL   ||
         hasSemiAxes     ||
+        hasRadius       ||
         hasRotationElements)
     {
         // If the star definition has extended information, clone the
@@ -886,6 +890,12 @@ StarDatabase::createStar(uint32 catalogNumber,
             details->setEllipsoidSemiAxes(Vec3f((float) semiAxes.x,
                                                 (float) semiAxes.y,
                                                 (float) semiAxes.z));
+        }
+
+        if (hasRadius)
+        {
+            details->setRadius((float) radius);
+            details->addKnowledge(StarDetails::KnowRadius);
         }
 
         if (orbit != NULL)
