@@ -14,7 +14,7 @@
 # a radius of 1.2 jupiters if they are more massive. At temperatures between 500K and 800K, these
 # same objects are assigned radii of 1.2 and 1 jupiters, respectively. Cold objects have a radius
 # of 1 jupiter unless M.sin(i)<0.7, at which point radius is reduced to 0.8 jupiters.
-# Planets with a mass less than 0.05 jupiter masses have been assigned radii which give them a
+# Planets with a mass less than 0.075 jupiter masses have been assigned radii which give them a
 # density comparable to Mercury or Earth.
 #
 # Planetary rotation periods have been estimated from the tidal spin-down formulae in 'Solar
@@ -181,6 +181,137 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 }
 
 AltSurface "limit of knowledge" "HD 73256/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HIP 57087"   # GJ 436
+{
+	Texture "venuslike.*"
+
+	Mass      21     # M.sin(i) = 21 earths
+	Radius     17700
+
+	InfoURL "http://www.obspm.fr/encycl/GJ436.html"
+
+	EllipticalOrbit {
+		Period          0.0072
+		SemiMajorAxis   0.0278
+		Eccentricity    0.12
+		ArgOfPericenter 227
+		MeanAnomaly     194
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HIP 57087/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"e" "HD 75732"   # Rho Cnc
+{
+	Texture "venuslike.*"
+
+	Mass      14     # M.sin(i) = 14 earths
+	Radius     15500
+
+	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
+
+	EllipticalOrbit {
+		Period          0.0077
+		SemiMajorAxis   0.038
+		Eccentricity    0.174
+		ArgOfPericenter 119
+		MeanAnomaly     41
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 75732/e"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 75732"   # Rho Cnc
+{
+	Texture "gasgiant.*"
+
+	Mass       270     # M.sin(i) = 0.84 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
+
+	EllipticalOrbit {
+		Period          0.0401
+		SemiMajorAxis   0.115
+		Eccentricity    0.02
+		ArgOfPericenter 317
+		MeanAnomaly     122
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 75732/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 75732"   # Rho Cnc
+{
+	Texture "jupiterlike.*"
+
+	Mass       70     # M.sin(i) = 0.21 jupiters
+	Radius     56000
+
+	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
+
+	EllipticalOrbit {
+		Period          0.1212
+		SemiMajorAxis   0.241
+		Eccentricity    0.339
+		ArgOfPericenter 279
+		MeanAnomaly     67
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 75732/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "HD 75732"   # Rho Cnc
+{
+	Texture "jupiterlike.*"
+
+	Mass       1290     # M.sin(i) = 4.05 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
+
+	EllipticalOrbit {
+		Period          14.6749
+		SemiMajorAxis   5.9
+		Eccentricity    0.16
+		ArgOfPericenter 59
+		MeanAnomaly     277
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 75732/d"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -890,85 +1021,6 @@ AltSurface "limit of knowledge" "HD 38529/b"
 }
 
 AltSurface "limit of knowledge" "HD 38529/c"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 75732"   # Rho Cnc
-{
-	Texture "gasgiant.*"
-
-	Mass       270     # M.sin(i) = 0.84 jupiters
-	Radius     84000
-
-	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
-
-	EllipticalOrbit {
-		Period          0.0401
-		SemiMajorAxis   0.115
-		Eccentricity    0.02
-		ArgOfPericenter 317
-		MeanAnomaly     122
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 75732/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"c" "HD 75732"   # Rho Cnc
-{
-	Texture "jupiterlike.*"
-
-	Mass       70     # M.sin(i) = 0.21 jupiters
-	Radius     56000
-
-	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
-
-	EllipticalOrbit {
-		Period          0.1212
-		SemiMajorAxis   0.241
-		Eccentricity    0.339
-		ArgOfPericenter 279
-		MeanAnomaly     67
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 75732/c"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"d" "HD 75732"   # Rho Cnc
-{
-	Texture "jupiterlike.*"
-
-	Mass       1290     # M.sin(i) = 4.05 jupiters
-	Radius     70000
-	Oblateness 0.01
-
-	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
-
-	EllipticalOrbit {
-		Period          14.6749
-		SemiMajorAxis   5.9
-		Eccentricity    0.16
-		ArgOfPericenter 59
-		MeanAnomaly     277
-	}
-
-	RotationPeriod  10 # plausible guess
-}
-
-AltSurface "limit of knowledge" "HD 75732/d"
 {
 	Texture "extrasolar-lok.*"
 }
