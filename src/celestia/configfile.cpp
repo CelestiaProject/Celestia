@@ -86,6 +86,13 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     // configParams->getNumber("LogoWidth", config->logoWidth);
     // configParams->getNumber("LogoHeight", config->logoHeight);
 
+    double aaSamples = 1;
+    configParams->getNumber("AntialiasingSamples", aaSamples);
+    config->aaSamples = (unsigned int) aaSamples;
+
+    config->hdr = false;
+    configParams->getBoolean("HighDynamicRange", config->hdr);
+
     config->rotateAcceleration = 120.0f;
     configParams->getNumber("RotateAcceleration", config->rotateAcceleration);
     config->mouseRotationSensitivity = 1.0f;
