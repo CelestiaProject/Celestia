@@ -858,8 +858,8 @@ static int rotation_mult(lua_State* l)
     else
     if (istype(l, 1, _Rotation) && istype(l, 2, _Vec3))
     {
-        v = to_vector(l, 1);
-        r1 = to_rotation(l, 2);
+        r1 = to_rotation(l, 1);
+        v = to_vector(l, 2);
         rotation_new(l, *v * *r1);
     }
     else
