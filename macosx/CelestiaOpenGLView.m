@@ -273,7 +273,7 @@ NSLog(@"read paste");
         {
             value = [[NSURL URLWithString: (NSString*) [((NSArray*)[ pb propertyListForType: type ]) objectAtIndex: 0 ]] path];
             NSLog(value);
-            [appCore runScript: value ];
+            [controller runScript: value ];
         
             return NO;
             if (value != nil)
@@ -282,7 +282,7 @@ NSLog(@"read paste");
                 if (value != nil )
                 {
                     NSLog(value);
-                    [appCore runScript: value ];
+                    [controller runScript: value ];
                 }
             }
         }
