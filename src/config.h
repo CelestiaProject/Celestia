@@ -17,6 +17,7 @@ struct CelestiaConfig
 {
     std::string starDatabaseFile;
     std::string starNamesFile;
+    std::vector<std::string> catalogXrefFiles;
     std::vector<std::string> solarSystemFiles;
     std::string galaxyCatalog;
     std::vector<std::string> labelledStars;
@@ -31,6 +32,6 @@ struct CelestiaConfig
 };
 
 
-CelestiaConfig* ReadCelestiaConfig(string filename);
+CelestiaConfig* ReadCelestiaConfig(std::string filename);
 
 #endif // _CONFIG_H_

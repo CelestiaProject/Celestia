@@ -98,6 +98,36 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
         }
     }
 
+    Value* xrefsVal = configParams->getValue("StarCatalogCrossReferences");
+    if (xrefsVal != NULL)
+    {
+        if (xrefsVal->getType() != Value::ArrayType)
+        {
+            DPRINTF("%s: StarCatalogCrossReferences must be an array.\n", filename.c_str());
+        }
+        else
+        {
+            Array* xrefs = xrefsVal->getArray();
+            // assert(xrefs != NULL);
+
+            for (Array::iterator iter = xrefs->begin(); iter != xrefs->end(); iter++)
+            {
+                Value* xrefNameVal = *iter;
+                // assert(xrefNameVal != NULL);
+                if (xrefNameVal->getType() == Value::StringType)
+                {
+                    config->catalogXrefFiles.insert(config->catalogXrefFiles.end(),
+                                                    xrefNameVal->getString());
+                }
+                else
+                {
+                    DPRINTF("%s: Catalog cross reference name must be a string.\n",
+                            filename.c_str());
+                }
+            }
+        }
+    }
+
     Value* labelledStarsVal = configParams->getValue("LabelledStars");
     if (labelledStarsVal != NULL)
     {
