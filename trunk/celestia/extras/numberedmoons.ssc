@@ -748,6 +748,28 @@
 	Albedo 0.04
 }
 
+"2003J21" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.0
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		613.40		# mean
+	SemiMajorAxis	20813000	# mean
+	Eccentricity	0.1886		# mean
+	Inclination	145.821
+	AscendingNode	36.877
+	ArgOfPericenter	58.289
+	MeanAnomaly     156.264
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
 
 # Additional moons of Saturn
 
@@ -1131,4 +1153,5 @@
 
 	Albedo 0.155
 }
+
 
