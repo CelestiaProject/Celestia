@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="12">
+<kpartgui name="celestia" version="13">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -8,7 +8,7 @@
   <Menu name="go_web" noMerge="1"><text>&amp;Navigation</text>
     <Action name="go_back" />
     <Action name="go_forward" />
-    <Action name="go_home" />
+    <Action name="home" />
     <Separator />
     <Action name="go_to" />
     <Action name="go_to_long_lat" />

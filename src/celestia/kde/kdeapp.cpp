@@ -311,7 +311,7 @@ void KdeApp::initActions()
     connect( backAction->popupMenu(), SIGNAL( activated( int ) ), SLOT( slotBackActivated( int ) ) );
     connect( forwardAction->popupMenu(), SIGNAL( aboutToShow() ), SLOT( slotForwardAboutToShow() ) );
     connect( forwardAction->popupMenu(), SIGNAL( activated( int ) ), SLOT( slotForwardActivated( int ) ) );
-    KStdAction::home(this, SLOT(slotHome()), actionCollection());
+    new KAction(i18n("Home"), "gohome", CTRL + Key_Home, this, SLOT(slotHome()), actionCollection(), "home");
     action("go_forward")->setEnabled(false);
     action("go_back")->setEnabled(false);
 
