@@ -11,6 +11,7 @@
 #define _SPHEREMESH_H_
 
 #include <celmath/vecmath.h>
+#include <celmath/frustum.h>
 #include <celengine/mesh.h>
 #include <celengine/dispmap.h>
 

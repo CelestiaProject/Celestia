@@ -138,7 +138,7 @@ void LODSphereMesh::render(const GLContext& context,
                            int nTextures)
 {
     render(context,
-           Mesh::Normals | Mesh::TexCoords0, frustum, pixWidth, tex,
+           Normals | TexCoords0, frustum, pixWidth, tex,
            nTextures);
 }
 
@@ -267,7 +267,7 @@ void LODSphereMesh::render(const GLContext& context,
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-    if ((attributes & Mesh::Normals) != 0)
+    if ((attributes & Normals) != 0)
     {
         glEnableClientState(GL_NORMAL_ARRAY);
         glNormalPointer(GL_FLOAT, 0, vertices);
@@ -278,7 +278,7 @@ void LODSphereMesh::render(const GLContext& context,
     }
 
 #if 0
-    if (texCoords != NULL && ((attributes & Mesh::TexCoords0) != 0))
+    if (texCoords != NULL && ((attributes & TexCoords0) != 0))
     {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
@@ -299,7 +299,7 @@ void LODSphereMesh::render(const GLContext& context,
 
     glDisableClientState(GL_COLOR_ARRAY);
 
-    if (tangents != NULL && ((attributes & Mesh::Tangents) != 0))
+    if (tangents != NULL && ((attributes & Tangents) != 0))
     {
         // Need to have vertex programs enabled in order to make
         // use of surface tangents.
@@ -372,7 +372,7 @@ void LODSphereMesh::render(const GLContext& context,
         // cout << "Rendered " << nPatches << " of " << square(split) << " patches\n";
     }
 
-    if (tangents != NULL && ((attributes & Mesh::Tangents) != 0))
+    if (tangents != NULL && ((attributes & Tangents) != 0))
     {
         VertexProcessor* vproc = context.getVertexProcessor();
         if (vproc != NULL)
@@ -673,7 +673,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         float cphi = cosPhi[phi];
         float sphi = sinPhi[phi];
 
-        if ((ri.attributes & Mesh::Tangents) != 0)
+        if ((ri.attributes & Tangents) != 0)
         {
             for (int theta = theta0; theta <= theta1; theta += ri.step)
             {

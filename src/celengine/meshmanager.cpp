@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 #include "celestia.h"
 #include <celutil/debug.h>
@@ -17,28 +18,32 @@
 #include <celmath/perlin.h>
 #include <cel3ds/3dsread.h>
 
-#include "3dsmesh.h"
+//#include "3dsmesh.h"
+#include "modelfile.h"
+#include "vertexlist.h"
 #include "parser.h"
 #include "spheremesh.h"
+#include "texmanager.h"
 #include "meshmanager.h"
 
 using namespace std;
 
 
-static Mesh* LoadCelestiaMesh(const string& filename);
+static Model* LoadCelestiaMesh(const string& filename);
+static Model* Convert3DSModel(const M3DScene& scene, const string& texPath);
 
-static MeshManager* meshManager = NULL;
+static ModelManager* modelManager = NULL;
 
 
-MeshManager* GetMeshManager()
+ModelManager* GetModelManager()
 {
-    if (meshManager == NULL)
-        meshManager = new MeshManager("models");
-    return meshManager;
+    if (modelManager == NULL)
+        modelManager = new ModelManager("models");
+    return modelManager;
 }
 
 
-string MeshInfo::resolve(const string& baseDir)
+string ModelInfo::resolve(const string& baseDir)
 {
     if (!path.empty())
     {
@@ -54,36 +59,46 @@ string MeshInfo::resolve(const string& baseDir)
     return baseDir + "/" + source;
 }
 
-Mesh* MeshInfo::load(const string& filename)
+
+Model* ModelInfo::load(const string& filename)
 {
-    clog << "Loading mesh: " << filename << '\n';
-    Mesh* mesh = NULL;
+    clog << "Loading model: " << filename << '\n';
+    Model* model = NULL;
     ContentType fileType = DetermineFileType(filename);
 
     if (fileType == Content_3DStudio)
     {
-        Mesh3DS* mesh3 = NULL;
         M3DScene* scene = Read3DSFile(filename);
         if (scene != NULL)
         {
             if (resolvedToPath)
-                mesh3 = new Mesh3DS(*scene, path);
+                model = Convert3DSModel(*scene, path);
             else
-                mesh3 = new Mesh3DS(*scene, "");
-            mesh3->normalize(center);
+                model = Convert3DSModel(*scene, "");
+            model->normalize(center);
+
             delete scene;
-            mesh = mesh3;
+        }
+    }
+    else if (fileType == Content_CelestiaModel)
+    {
+        ifstream in(filename.c_str());
+        if (in.good())
+        {
+            model = LoadModel(in, path);
+            if (model != NULL)
+                model->normalize(center);
         }
     }
     else if (fileType == Content_CelestiaMesh)
     {
-        mesh = LoadCelestiaMesh(filename);
+        model = LoadCelestiaMesh(filename);
     }
 
-    if (mesh == NULL)
-        cerr << "Error loading mesh '" << filename << "'\n";
+    if (model == NULL)
+        cerr << "Error loading model '" << filename << "'\n";
  
-    return mesh;
+    return model;
 }
 
 
@@ -96,6 +111,7 @@ struct NoiseMeshParameters
     float slices;
     float rings;
 };
+
 
 static float NoiseDisplacementFunc(float u, float v, void* info)
 {
@@ -112,8 +128,11 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
                       (int) params->octaves) * params->featureHeight;
 }
 
-Mesh* LoadCelestiaMesh(const string& filename)
+
+Model* LoadCelestiaMesh(const string& filename)
 {
+    return NULL;
+#if 0
     ifstream meshFile(filename.c_str(), ios::in);
     if (!meshFile.good())
     {
@@ -178,4 +197,301 @@ Mesh* LoadCelestiaMesh(const string& filename)
                           (int) params.rings, (int) params.slices,
                           NoiseDisplacementFunc,
                           (void*) &params);
+#endif
+}
+
+
+static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
+                                       const M3DScene& scene,
+                                       const string& texturePath)
+{
+    int nFaces = mesh.getFaceCount();
+    int nVertices = mesh.getVertexCount();
+    int nTexCoords = mesh.getTexCoordCount();
+    bool smooth = (mesh.getSmoothingGroupCount() == nFaces);
+    int i;
+
+    uint32 parts = VertexList::VertexNormal;
+    if (nTexCoords == nVertices)
+        parts |= VertexList::TexCoord0;
+    VertexList* vl = new VertexList(parts);
+    
+    Vec3f* faceNormals = new Vec3f[nFaces];
+    Vec3f* vertexNormals = new Vec3f[nFaces * 3];
+    int* faceCounts = new int[nVertices];
+    int** vertexFaces = new int*[nVertices];
+
+    for (i = 0; i < nVertices; i++)
+    {
+        faceCounts[i] = 0;
+        vertexFaces[i] = NULL;
+    }
+
+    // generate face normals
+    for (i = 0; i < nFaces; i++)
+    {
+        uint16 v0, v1, v2;
+        mesh.getFace(i, v0, v1, v2);
+
+        faceCounts[v0]++;
+        faceCounts[v1]++;
+        faceCounts[v2]++;
+
+        Point3f p0 = mesh.getVertex(v0);
+        Point3f p1 = mesh.getVertex(v1);
+        Point3f p2 = mesh.getVertex(v2);
+        faceNormals[i] = cross(p1 - p0, p2 - p1);
+        faceNormals[i].normalize();
+    }
+
+    if (!smooth && 0)
+    {
+        for (i = 0; i < nFaces; i++)
+        {
+            vertexNormals[i * 3] = faceNormals[i];
+            vertexNormals[i * 3 + 1] = faceNormals[i];
+            vertexNormals[i * 3 + 2] = faceNormals[i];
+        }
+    }
+    else
+    {
+        // allocate space for vertex face indices
+        for (i = 0; i < nVertices; i++)
+        {
+            vertexFaces[i] = new int[faceCounts[i] + 1];
+            vertexFaces[i][0] = faceCounts[i];
+        }
+
+        for (i = 0; i < nFaces; i++)
+        {
+            uint16 v0, v1, v2;
+            mesh.getFace(i, v0, v1, v2);
+            vertexFaces[v0][faceCounts[v0]--] = i;
+            vertexFaces[v1][faceCounts[v1]--] = i;
+            vertexFaces[v2][faceCounts[v2]--] = i;
+        }
+
+        // average face normals to compute the vertex normals
+        for (i = 0; i < nFaces; i++)
+        {
+            uint16 v0, v1, v2;
+            mesh.getFace(i, v0, v1, v2);
+            // uint32 smoothingGroups = mesh.getSmoothingGroups(i);
+
+            int j;
+            Vec3f v = Vec3f(0, 0, 0);
+            for (j = 1; j <= vertexFaces[v0][0]; j++)
+            {
+                int k = vertexFaces[v0][j];
+                // if (k == i || (smoothingGroups & mesh.getSmoothingGroups(k)) != 0)
+                if (faceNormals[i] * faceNormals[k] > 0.5f)
+                    v += faceNormals[k];
+            }
+            v.normalize();
+            vertexNormals[i * 3] = v;
+
+            v = Vec3f(0, 0, 0);
+            for (j = 1; j <= vertexFaces[v1][0]; j++)
+            {
+                int k = vertexFaces[v1][j];
+                // if (k == i || (smoothingGroups & mesh.getSmoothingGroups(k)) != 0)
+                if (faceNormals[i] * faceNormals[k] > 0.5f)
+                    v += faceNormals[k];
+            }
+            v.normalize();
+            vertexNormals[i * 3 + 1] = v;
+
+            v = Vec3f(0, 0, 0);
+            for (j = 1; j <= vertexFaces[v2][0]; j++)
+            {
+                int k = vertexFaces[v2][j];
+                // if (k == i || (smoothingGroups & mesh.getSmoothingGroups(k)) != 0)
+                if (faceNormals[i] * faceNormals[k] > 0.5f)
+                    v += faceNormals[k];
+            }
+            v.normalize();
+            vertexNormals[i * 3 + 2] = v;
+        }
+    }
+
+    // build the triangle list
+    for (i = 0; i < nFaces; i++)
+    {
+        uint16 triVert[3];
+        mesh.getFace(i, triVert[0], triVert[1], triVert[2]);
+
+        for (int j = 0; j < 3; j++)
+        {
+            VertexList::Vertex v;
+            v.point = mesh.getVertex(triVert[j]);
+            v.normal = vertexNormals[i * 3 + j];
+            if ((parts & VertexList::TexCoord0) != 0)
+                v.texCoords[0] = mesh.getTexCoord(triVert[j]);
+            vl->addVertex(v);
+        }
+    }
+
+    // Set the material properties
+    {
+        string materialName = mesh.getMaterialName();
+        if (materialName.length() > 0)
+        {
+            int nMaterials = scene.getMaterialCount();
+            for (i = 0; i < nMaterials; i++)
+            {
+                M3DMaterial* material = scene.getMaterial(i);
+                if (materialName == material->getName())
+                {
+                    M3DColor diffuse = material->getDiffuseColor();
+                    vl->setDiffuseColor(Color(diffuse.red, diffuse.green, diffuse.blue, material->getOpacity()));
+                    M3DColor specular = material->getSpecularColor();
+                    vl->setSpecularColor(Color(specular.red, specular.green, specular.blue));
+                    float shininess = material->getShininess();
+                    
+                    // Map the shininess from the 3DS file into the 0-128
+                    // range that OpenGL uses for the specular exponent.
+                    shininess = (float) pow(2, 10.0 * shininess);
+                    if (shininess > 128.0f)
+                        shininess = 128.0f;
+                    vl->setShininess(128.0f);
+
+                    if (material->getTextureMap() != "")
+                    {
+                        ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texturePath, TextureInfo::WrapTexture));
+                        vl->setTexture(tex);
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    // clean up
+    if (faceNormals != NULL)
+        delete[] faceNormals;
+    if (vertexNormals != NULL)
+        delete[] vertexNormals;
+    if (faceCounts != NULL)
+        delete[] faceCounts;
+    if (vertexFaces != NULL)
+    {
+        for (i = 0; i < nVertices; i++)
+        {
+            if (vertexFaces[i] != NULL)
+                delete[] vertexFaces[i];
+        }
+        delete[] vertexFaces;
+    }
+
+    return vl;
+}
+
+
+static Mesh*
+ConvertVertexListToMesh(VertexList* vlist, const string& texPath, uint32 material)
+{
+    Mesh::VertexAttribute attributes[8];
+    uint32 nAttributes = 0;
+    uint32 offset = 0;
+
+    uint32 parts = vlist->getVertexParts();
+
+    // Position attribute is always present in a vertex list
+    attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, 0);
+    nAttributes++;
+    offset += 12;
+
+    if ((parts & VertexList::VertexNormal) != 0)
+    {
+        attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Normal, Mesh::Float3, offset);
+        nAttributes++;
+        offset += 12;
+    }
+
+    if ((parts & VertexList::VertexColor0) != 0)
+    {
+        attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Color0, Mesh::UByte4, offset);
+        nAttributes++;
+        offset += 4;
+    }
+
+    if ((parts & VertexList::TexCoord0) != 0)
+    {
+        attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Texture0, Mesh::Float2, offset);
+        nAttributes++;
+        offset += 8;
+    }
+
+    if ((parts & VertexList::TexCoord1) != 0)
+    {
+        attributes[nAttributes] = Mesh::VertexAttribute(Mesh::Texture1, Mesh::Float2, offset);
+        nAttributes++;
+        offset += 8;
+    }
+
+    uint32 nVertices = vlist->getVertexCount();
+
+    Mesh* mesh = new Mesh();
+    mesh->setVertexDescription(Mesh::VertexDescription(offset, nAttributes, attributes));
+    mesh->setVertices(nVertices, vlist->getVertexData());
+
+    // Vertex lists are not indexed, so the conversion to an indexed format is
+    // trivial (although much space is wasted storing unnecessary indices.)
+    uint32* indices = new uint32[nVertices];
+    for (uint32 i = 0; i < nVertices; i++)
+        indices[i] = i;
+
+    mesh->addGroup(Mesh::TriList, material, nVertices, indices);
+
+    return mesh;
+}
+
+
+static Model*
+Convert3DSModel(const M3DScene& scene, const string& texPath)
+{
+    Model* model = new Model();
+    uint32 materialIndex = 1;
+
+    for (unsigned int i = 0; i < scene.getModelCount(); i++)
+    {
+        M3DModel* model3ds = scene.getModel(i);
+        if (model3ds != NULL)
+        {
+            for (unsigned int j = 0; j < model3ds->getTriMeshCount(); j++)
+            {
+                M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
+                if (mesh != NULL)
+                {
+                    // The vertex list is just an intermediate stage in conversion
+                    // to a Celestia model structure.  Eventually, we should handle
+                    // the conversion in a single step.
+                    VertexList* vlist = ConvertToVertexList(*mesh, scene, texPath);
+                    Mesh* mesh = ConvertVertexListToMesh(vlist, texPath, materialIndex);
+
+                    // Convert the vertex list material
+                    Mesh::Material* material = new Mesh::Material();
+                    material->diffuse = vlist->getDiffuseColor();
+                    material->specular = vlist->getSpecularColor();
+                    material->specularPower = vlist->getShininess();
+                    material->opacity = vlist->getDiffuseColor().alpha();
+                    material->tex0 = vlist->getTexture();
+                    model->addMaterial(material);
+                    materialIndex++;
+
+                    model->addMesh(mesh);
+
+                    delete vlist;
+                }
+            }
+        }
+    }
+
+    return model;
+#if 0
+    // Sort the vertex lists to make sure that the transparent ones are
+    // rendered after the opaque ones and material state changes are minimized.
+    sort(vertexLists.begin(), vertexLists.end(), compareVertexLists);
+#endif
 }

@@ -23,30 +23,30 @@ using namespace std;
 
 
 Nebula::Nebula() :
-    mesh(InvalidResource)
+    model(InvalidResource)
 {
 }
 
 
-ResourceHandle Nebula::getMesh() const
+ResourceHandle Nebula::getModel() const
 {
-    return mesh;
+    return model;
 }
 
-void Nebula::setMesh(ResourceHandle _mesh)
+void Nebula::setModel(ResourceHandle _model)
 {
-    mesh = _mesh;
+    model = _model;
 }
 
 
 bool Nebula::load(AssociativeArray* params, const string& resPath)
 {
-    string mesh;
-    if (params->getString("Mesh", mesh))
+    string model;
+    if (params->getString("Mesh", model))
     {
-        ResourceHandle meshHandle =
-            GetMeshManager()->getHandle(MeshInfo(mesh, resPath));
-        setMesh(meshHandle);
+        ResourceHandle modelHandle =
+            GetModelManager()->getHandle(ModelInfo(model, resPath));
+        setModel(modelHandle);
     }
     
     return DeepSkyObject::load(params, resPath);
@@ -58,9 +58,9 @@ void Nebula::render(const Vec3f& offset,
                     float brightness,
                     float pixelSize)
 {
-    Mesh* m = NULL;
-    if (mesh != InvalidResource)
-        m = GetMeshManager()->find(mesh);
+    Model* m = NULL;
+    if (model != InvalidResource)
+        m = GetModelManager()->find(model);
     if (m == NULL)
         return;
 
@@ -69,5 +69,6 @@ void Nebula::render(const Vec3f& offset,
     glScalef(getRadius(), getRadius(), getRadius());
     glRotate(getOrientation());
 
-    m->render(Mesh::TexCoords0, 0);
+    //m->render(Mesh::TexCoords0, 0);
+    m->render();
 }

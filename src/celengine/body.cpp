@@ -43,7 +43,7 @@ Body::Body(PlanetarySystem* _system) :
     // Do it the ugly way instead:
     protos(-1.0e+50),
     eschatos(1.0e+50),
-    mesh(InvalidResource),
+    model(InvalidResource),
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
     rings(NULL),
@@ -207,14 +207,14 @@ void Body::setSurface(const Surface& surf)
 }
 
 
-ResourceHandle Body::getMesh() const
+ResourceHandle Body::getModel() const
 {
-    return mesh;
+    return model;
 }
 
-void Body::setMesh(ResourceHandle _mesh)
+void Body::setModel(ResourceHandle _model)
 {
-    mesh = _mesh;
+    model = _model;
 }
 
 
@@ -549,9 +549,9 @@ void Body::computeLocations()
     locationsComputed = true;
 
     // No work to do if there's no mesh, or if the mesh cannot be loaded
-    if (mesh == InvalidResource)
+    if (model == InvalidResource)
         return;
-    Mesh* m = GetMeshManager()->find(mesh);
+    Model* m = GetModelManager()->find(model);
     if (m == NULL)
         return;
 

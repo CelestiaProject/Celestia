@@ -7,16 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _MESHMANAGER_H_
-#define _MESHMANAGER_H_
+#ifndef _CELENGINE_MODELMANAGER_H_
+#define _CELENGINE_MODELMANAGER_H_
 
 #include <string>
 #include <map>
 #include <celutil/resmanager.h>
-#include <celengine/mesh.h>
+#include <celengine/model.h>
 
 
-class MeshInfo : public ResourceInfo<Mesh>
+class ModelInfo : public ResourceInfo<Model>
 {
  public:
     std::string source;
@@ -24,17 +24,17 @@ class MeshInfo : public ResourceInfo<Mesh>
     bool resolvedToPath;
     Vec3f center;
 
-    MeshInfo(const std::string _source,
-             const std::string _path = "") :
+    ModelInfo(const std::string _source,
+              const std::string _path = "") :
         source(_source),
         path(_path),
         resolvedToPath(false),
         center(0.0, 0.0f, 0.0f)
         {};
 
-    MeshInfo(const std::string _source,
-             const std::string _path,
-             const Vec3f& _center) :
+    ModelInfo(const std::string _source,
+              const std::string _path,
+              const Vec3f& _center) :
         source(_source),
         path(_path),
         resolvedToPath(false),
@@ -42,10 +42,10 @@ class MeshInfo : public ResourceInfo<Mesh>
         {};
 
     virtual std::string resolve(const std::string&);
-    virtual Mesh* load(const std::string&);
+    virtual Model* load(const std::string&);
 };
 
-inline bool operator<(const MeshInfo& mi0, const MeshInfo& mi1)
+inline bool operator<(const ModelInfo& mi0, const ModelInfo& mi1)
 {
     if (mi0.source != mi1.source)
         return mi0.source < mi1.source;
@@ -59,9 +59,9 @@ inline bool operator<(const MeshInfo& mi0, const MeshInfo& mi1)
         return mi0.center.z < mi1.center.z;
 }
 
-typedef ResourceManager<MeshInfo> MeshManager;
+typedef ResourceManager<ModelInfo> ModelManager;
 
-extern MeshManager* GetMeshManager();
+extern ModelManager* GetModelManager();
 
-#endif // _MESHMANAGER_H_
+#endif // _CELENGINE_MODELMANAGER_H_
 

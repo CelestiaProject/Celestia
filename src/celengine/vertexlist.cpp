@@ -47,8 +47,13 @@ VertexList::VertexList(uint32 _parts, uint32 initialVertexPoolSize) :
 
 VertexList::~VertexList()
 {
+    // HACK: Don't delete the vertex data; the VertexList class as an intermediate
+    // step in converting from 3DS models to Celestia models, and after the
+    // conversion, the Celestia model will own the vertex data pointer.
+#if 0
     if (vertices != NULL)
         delete[] vertices;
+#endif
 }
 
 
@@ -298,3 +303,20 @@ bool VertexList::pick(const Ray3d& ray, double& distance)
     }
 }
 
+
+uint32 VertexList::getVertexParts() const
+{
+    return parts;
+}
+
+
+void* VertexList::getVertexData() const
+{
+    return reinterpret_cast<void*>(vertices);
+}
+
+
+uint32 VertexList::getVertexCount() const
+{
+    return nVertices;
+}

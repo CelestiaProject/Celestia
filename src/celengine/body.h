@@ -140,8 +140,8 @@ class Body
     Atmosphere* getAtmosphere();
     void setAtmosphere(const Atmosphere&);
 
-    void setMesh(ResourceHandle);
-    ResourceHandle getMesh() const;
+    void setModel(ResourceHandle);
+    ResourceHandle getModel() const;
     void setSurface(const Surface&);
     const Surface& getSurface() const;
     Surface& getSurface();
@@ -196,7 +196,7 @@ class Body
     double protos;
     double eschatos;
 
-    ResourceHandle mesh;
+    ResourceHandle model;
     Surface surface;
 
     Atmosphere* atmosphere;

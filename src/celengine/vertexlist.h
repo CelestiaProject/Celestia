@@ -66,6 +66,10 @@ class VertexList
     AxisAlignedBox getBoundingBox() const;
     void transform(Vec3f translation, float scale);
 
+    uint32 getVertexParts() const;
+    void* getVertexData() const;
+    uint32 getVertexCount() const;
+
  private:
     uint32 parts;
     uint32 vertexSize;
@@ -83,4 +87,3 @@ class VertexList
 };
 
 #endif // _CELENGINE_VERTEXLIST_H_
-
