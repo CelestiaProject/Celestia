@@ -20,11 +20,14 @@ class RenderContext
 
     void makeCurrent();
     void setMaterial(const Mesh::Material*);
+    void lock();
+    void unlock();
 
  private:
     const Mesh::Material* material;
     bool specularOn;
     bool blendOn;
+    bool locked;
 };
 
 #endif // _CELENGINE_RENDCONTEXT_H_

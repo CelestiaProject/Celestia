@@ -116,10 +116,8 @@ Model::pick(const Ray3d& r, double& distance) const
 
 
 void
-Model::render()
+Model::render(RenderContext& rc)
 {
-    RenderContext rc;
-
     for (vector<Mesh*>::const_iterator iter = meshes.begin();
          iter != meshes.end(); iter++)
     {
