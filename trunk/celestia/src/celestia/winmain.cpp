@@ -119,6 +119,7 @@ struct AppPreferences
     float ambientLight;
     int pixelShader;
     int vertexShader;
+    int timezoneBias;
 };
 
 
@@ -945,6 +946,17 @@ static void syncMenusWithRendererState()
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
     }
+
+    MENUITEMINFO menuInfo;
+    menuInfo.cbSize = sizeof(MENUITEMINFO);
+    menuInfo.fMask = MIIM_STATE;
+    if (GetMenuItemInfo(menuBar, ID_TIME_SHOWLOCAL, FALSE, &menuInfo))
+    {
+        if(appCore->getTimeZoneBias() == 0)
+            CheckMenuItem(menuBar, ID_TIME_SHOWLOCAL, MF_UNCHECKED);
+        else
+            CheckMenuItem(menuBar, ID_TIME_SHOWLOCAL, MF_CHECKED);
+    }
 }
 
 
@@ -1121,6 +1133,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
     GetRegistryValue(key, "PixelShader", &prefs.pixelShader, sizeof(prefs.pixelShader));
     GetRegistryValue(key, "VertexShader", &prefs.vertexShader, sizeof(prefs.vertexShader));
+    GetRegistryValue(key, "TimezoneBias", &prefs.timezoneBias, sizeof(prefs.timezoneBias));
 
     RegCloseKey(key);
 
@@ -1156,6 +1169,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryBin(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
     SetRegistryInt(key, "PixelShader", prefs.pixelShader);
     SetRegistryInt(key, "VertexShader", prefs.vertexShader);
+    SetRegistryInt(key, "TimezoneBias", prefs.timezoneBias);
 
     RegCloseKey(key);
 
@@ -1182,6 +1196,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.ambientLight = appCore->getRenderer()->getAmbientLightLevel();
     prefs.pixelShader = appCore->getRenderer()->getFragmentShaderEnabled()?1:0;
     prefs.vertexShader = appCore->getRenderer()->getVertexShaderEnabled()?1:0;
+    prefs.timezoneBias = appCore->getTimeZoneBias();
 
     return true;
 }
@@ -1428,6 +1443,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars | Renderer::ShowPlanets;
     prefs.vertexShader = 0;
     prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
+    prefs.timezoneBias = 0;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Adjust window dimensions for screen dimensions
@@ -1491,8 +1507,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return 1;
     }
 
-    appCore->getSimulation()->setFaintestVisible(prefs.visualMagnitude);
-
     if (!fullscreen)
     {
         
@@ -1546,12 +1560,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return 1;
     }
 
-    //Set renderFlags and labelMode
+    //Set values saved in registry: renderFlags, visualMagnitude, labelMode and timezone bias.
+    appCore->getSimulation()->setFaintestVisible(prefs.visualMagnitude);
     appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
     appCore->getRenderer()->setLabelMode(prefs.labelMode);
     appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
     appCore->getRenderer()->setFragmentShaderEnabled(prefs.pixelShader == 1);
     appCore->getRenderer()->setVertexShaderEnabled(prefs.vertexShader == 1);
+    appCore->setTimeZoneBias(prefs.timezoneBias);
 
     timer = CreateTimer();
 
