@@ -912,13 +912,7 @@ void KdeApp::slotSetRenderPathNV30() {
 }
 
 void KdeApp::slotCycleRenderPath() {
-    int path = (int)appCore->getRenderer()->getGLContext()->getRenderPath();
-    do {
-        path++;
-        if (path > 7) path -= 8;
-    } while (!appCore->getRenderer()->getGLContext()->renderPathSupported((GLContext::GLRenderPath)path));
-    appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)path);
-    resyncMenus();
+    appCore->charEntered('\026');
 }
 
 void KdeApp::slotGrabImage() {
