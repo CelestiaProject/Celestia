@@ -85,6 +85,7 @@ float Star::getTemperature() const
             return tempO[specSubClass];
         case StellarClass::Spectral_B:
             return tempB[specSubClass];
+        case StellarClass::Spectral_Unknown:
         case StellarClass::Spectral_A:
             return tempA[specSubClass];
         case StellarClass::Spectral_F:

@@ -57,7 +57,7 @@ ostream& operator<<(ostream& s, const StellarClass& sc)
     }
     else if (st == StellarClass::NormalStar)
     {
-	s << "OBAFGKMRSNWW"[(unsigned int) sc.getSpectralClass()];
+	s << "OBAFGKMRSNWW?"[(unsigned int) sc.getSpectralClass()];
 	s << "0123456789"[sc.getSpectralSubclass()];
         s << ' ';
 	switch (sc.getLuminosityClass())
