@@ -256,11 +256,10 @@ Url::Url(CelestiaCore* core, UrlType type) {
         fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
         timeScale = sim->getTimeScale();
         lightTimeDelay = appCore->getLightDelayActive();
-        sprintf(buff, "&fov=%f&ts=%f&rf=%d&lm=%d&ltd=%c", fieldOfView,
+        sprintf(buff, "&fov=%f&ts=%f&rf=%d&lm=%d&ltd=%c&", fieldOfView,
             timeScale, renderFlags, labelMode, lightTimeDelay?'1':'0');
         urlStr += buff;
-        break;
-    case Settings:
+    case Settings: // Intentional Fall-Through
         renderFlags = renderer->getRenderFlags();
         labelMode = renderer->getLabelMode();
         sprintf(buff, "rf=%d&lm=%d", renderFlags, labelMode);
