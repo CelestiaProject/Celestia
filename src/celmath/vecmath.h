@@ -141,6 +141,8 @@ template<class T> class Matrix3
     static Matrix3<T> xrotation(T);
     static Matrix3<T> yrotation(T);
     static Matrix3<T> zrotation(T);
+    static Matrix3<T> scaling(const Vector3<T>&);
+    static Matrix3<T> scaling(T);
 
     inline const Vector3<T>& operator[](int) const;
     inline Vector3<T> row(int) const;
@@ -757,6 +759,20 @@ template<class T> Matrix3<T> Matrix3<T>::zrotation(T angle)
     return Matrix3<T>(Vector3<T>(c, -s, 0),
                       Vector3<T>(s, c, 0),
                       Vector3<T>(0, 0, 1));
+}
+
+
+template<class T> Matrix3<T> Matrix3<T>::scaling(const Vector3<T>& scale)
+{
+    return Matrix3<T>(Vector3<T>(scale.x, 0, 0),
+                      Vector3<T>(0, scale.y, 0),
+                      Vector3<T>(0, 0, scale.z));
+}
+
+
+template<class T> Matrix3<T> Matrix3<T>::scaling(T scale)
+{
+    return scaling(Vector3<T>(scale, scale, scale));
 }
 
 
