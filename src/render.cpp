@@ -13,6 +13,7 @@
 #include "astro.h"
 #include "glext.h"
 #include "vecgl.h"
+#include "frustum.h"
 #include "perlin.h"
 #include "spheremesh.h"
 #include "regcombine.h"
@@ -57,7 +58,6 @@ static Texture* starTex = NULL;
 static Texture* glareTex = NULL;
 static Texture* galaxyTex = NULL;
 static Texture* shadowTex = NULL;
-static Texture* veilTex = NULL;
 
 static Texture* starTexB = NULL;
 static Texture* starTexA = NULL;
@@ -159,21 +159,6 @@ static void ShadowTextureEval(float u, float v, float w,
     pixel[2] = pixVal;
 }
 
-static void VeilTextureEval(float u, float v, float w,
-                            unsigned char* pixel)
-{
-    float t = 0.0f;
-    if (w > 0)
-    {
-        t = 1.0f - clamp(abs(w - 0.04f) * 25);
-    }
-        
-    pixel[0] = 0;
-    pixel[1] = 0;
-    pixel[2] = 255;
-    pixel[3] = (int) (128.99f * t);
-    // pixel[3] = (int) (128.99f * (1 - (float) pow(abs(w), 0.5f)));
-}
 
 #if 0
 static void BoxTextureEval(float u, float v, float w,
@@ -373,14 +358,6 @@ bool Renderer::init(int winWidth, int winHeight)
     }
 
     cout << "Simultaneous textures supported: " << nSimultaneousTextures << '\n';
-
-    if (useCubeMaps)
-    {
-        // Initialize texture use for rendering atmospheric veils
-        veilTex = CreateProceduralCubeMap(128, GL_RGBA, VeilTextureEval);
-        veilTex->bindName();
-    }
-
 
     glLoadIdentity();
 
@@ -680,18 +657,6 @@ void Renderer::render(const Observer& observer,
         sun = starDB.find(solarSystem->getStarNumber());
     if (sun != NULL)
     {
-#if 0
-        // Change the projection matrix for rendering planets and moons.  Since
-        // planets are all rendered at a fixed distance of RENDER_DISTANCE from
-        // the viewer, we'll set up the near and far planes to just enclose that
-        // range and make the most of our depth buffer resolution
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective(fov,
-                       (float) windowWidth / (float) windowHeight,
-                       NEAR_DIST, RENDER_DISTANCE * 2.0f);
-        glMatrixMode(GL_MODELVIEW);
-#endif
         renderPlanetarySystem(*sun,
                               *solarSystem->getPlanets(),
                               observer,
@@ -701,6 +666,105 @@ void Renderer::render(const Observer& observer,
     }
 
     {
+        Frustum frustum(degToRad(fov),
+                        (float) windowWidth / (float) windowHeight,
+                        MinNearPlaneDistance);
+        Mat3f viewMat = conjugate(observer.getOrientation()).toMatrix3();
+
+        // Remove objects from the render list that lie completely outside the
+        // view frustum.
+        vector<RenderListEntry>::iterator notCulled = renderList.begin();
+        for (vector<RenderListEntry>::iterator iter = renderList.begin();
+             iter != renderList.end(); iter++)
+        {
+            Point3f center = iter->position * viewMat;
+
+            float radius = 1.0f;
+            if (iter->body != NULL)
+                radius = iter->body->getRadius();
+            else if (iter->star != NULL)
+                radius = iter->star->getRadius();
+
+            // Test the object's bounding sphere against the view frustum
+            if (frustum.testSphere(center, radius) != Frustum::Outside)
+            {
+#if 0
+                float nearZ = center.z - radius;
+
+                // Now, determine where to set the near clip plane so that
+                // it's close to, but does not intersect, the bounding sphere.
+                if (frustum.test(center + Vec3f(0, 0, radius)) !=
+                    Frustum::Outside)
+                {
+                    // If the frontmost point of the sphere lies within the
+                    // view frustum, that's our closest point . . .
+                    nearZ = center.z + radius;
+                }
+                else
+                {
+                    float maxDist = 0.0f;
+                    if (frustum.test(center) == Frustum::Inside)
+                        maxDist = radius;
+
+                    // Otherwise we need to check the intersections of
+                    // the sphere with each of the frustum planes.
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Planef plane = frustum.getPlane(i);
+
+                        // See if the sphere intersects this plane
+                        float distanceToCenter = plane.distanceTo(center);
+                        if (distanceToCenter > -radius &&
+                            distanceToCenter < maxDist)
+                        {
+                            // Compute the z value of frontmost point of
+                            // the circle formed by the intersection of the
+                            // frustum plane and the bounding sphere.
+                            Point3f closestPoint = center -
+                                plane.normal * distanceToCenter;
+                            float r = (float) sqrt(square(radius) -
+                                                   square(distanceToCenter));
+                            float z = closestPoint.z +
+                                r * sqrt(1 - square(plane.normal.z));
+                            if (z > nearZ)
+                                nearZ = z;
+
+                            {
+                                switch (i) {
+                                case 0: cout << "Bottom "; break;
+                                case 1: cout << "Top    "; break;
+                                case 2: cout << "Left   "; break;
+                                case 3: cout << "Right  "; break;
+                                case 4: cout << "Near   "; break;
+                                };
+                                cout << z << " : " << closestPoint.z << '\n';
+                            }
+                        }
+                    }
+                }
+#endif
+                float nearZ = center.distanceFromOrigin() - radius;
+                float maxSpan = (float) sqrt(square((float) windowWidth) +
+                                             square((float) windowHeight));
+                cout << "nearZ = " << nearZ;
+                nearZ = -nearZ / (float) cos(degToRad(fov)) *
+                    ((float) windowHeight / maxSpan);
+                cout << ", " << nearZ << '\n';
+
+                if (nearZ > -MinNearPlaneDistance)
+                    iter->nearZ = -MinNearPlaneDistance;
+                else
+                    iter->nearZ = nearZ;
+                iter->farZ = center.z - radius;
+
+                *notCulled = *iter;
+                notCulled++;
+            }
+        }
+
+        renderList.resize(notCulled - renderList.begin());
+        cout << renderList.size() << " objects not culled.\n";
+        
         // The calls to renderSolarSystem/renderStars filled renderList
         // with visible planetary bodies.  Sort it by distance, then
         // render each entry.
@@ -747,18 +811,26 @@ void Renderer::render(const Observer& observer,
         {
             if (renderList[i].discSizeInPixels > 1)
             {
-                float distance = renderList[i].distance;
-                float radius = 0.0f;
+                // float distance = renderList[i].distance;
+                float distance = abs(renderList[i].nearZ);
+                float radius = 1.0f;
                 if (renderList[i].body != NULL)
                     radius = renderList[i].body->getRadius();
                 else if (renderList[i].star != NULL)
                     radius = renderList[i].star->getRadius();
-
+#if 0
                 float distanceToSurface = distance - radius;
-                nearPlaneDistance = distance - 1.5f * radius;
+                nearPlaneDistance = distance - 1.1f * radius;
                 farPlaneDistance = distance + 1.1f * radius;
                 if (distanceToSurface < radius * 2.0f)
                     nearPlaneDistance = distanceToSurface / 2.0f;
+                if (nearPlaneDistance < MinNearPlaneDistance)
+                    nearPlaneDistance = MinNearPlaneDistance;
+                if (farPlaneDistance / nearPlaneDistance > MaxFarNearRatio)
+                    farPlaneDistance = nearPlaneDistance * MaxFarNearRatio;
+#endif
+                nearPlaneDistance = renderList[i].nearZ * -0.9f;
+                farPlaneDistance = renderList[i].farZ * -1.1f;
                 if (nearPlaneDistance < MinNearPlaneDistance)
                     nearPlaneDistance = MinNearPlaneDistance;
                 if (farPlaneDistance / nearPlaneDistance > MaxFarNearRatio)
@@ -769,7 +841,14 @@ void Renderer::render(const Observer& observer,
                 gluPerspective(fov, (float) windowWidth / (float) windowHeight,
                                nearPlaneDistance, farPlaneDistance);
                 glMatrixMode(GL_MODELVIEW);
-                cout << "near: " << nearPlaneDistance << "     far: " << farPlaneDistance << '\n';
+#if 1
+                if (renderList[i].body != NULL)
+                {
+                    cout << renderList[i].body->getName() << " : ";
+                    cout << "near: " << nearPlaneDistance << "     far: " << farPlaneDistance << "  ";
+                    cout << "z: " << renderList[i].nearZ << "   r: " << radius << '\n';
+                }
+#endif
             }
 
             if (renderList[i].body != NULL)
@@ -944,7 +1023,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
                                     float discSizeInPixels,
                                     Color color,
                                     const Quatf& orientation,
-                                    float renderDistance,
+                                    float renderZ,
                                     bool useHaloes)
 {
     if (discSizeInPixels < 4 || useHaloes)
@@ -972,8 +1051,8 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // just hack to accomplish this.  There are cases where it will fail
         // and a more robust method should be implemented.
         float distance = position.distanceFromOrigin();
-        float size = pixelSize * 1.5f * renderDistance;
-        float posScale = renderDistance / position.distanceFromOrigin();
+        float size = pixelSize * 1.5f * renderZ;
+        float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
 
         Point3f center(position.x * posScale,
                        position.y * posScale,
@@ -1006,12 +1085,12 @@ void Renderer::renderBodyAsParticle(Point3f position,
         if (useHaloes && appMag < 1.0f)
         {
             a = 0.4f * clamp((appMag - 1) * -0.8f);
-            float s = renderDistance * 0.001f * (3 - (appMag - 1)) * 2;
+            float s = renderZ * 0.001f * (3 - (appMag - 1)) * 2;
             if (s > size * 3)
                 size = s;
             else
                 size = size * 3;
-            float realSize = discSizeInPixels * pixelSize * renderDistance;
+            float realSize = discSizeInPixels * pixelSize * renderZ;
             if (size < realSize * 10)
                 size = realSize * 10;
             glareTex->bind();
@@ -1410,7 +1489,8 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
-        ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0);
+        ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
+                        Mesh::VertexProgParams);
         DisableCombiners();
     }
     else if (ri.specularColor != Color(0.0f, 0.0f, 0.0f))
@@ -1418,7 +1498,8 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         vp::parameter(34, ri.sunColor * ri.specularColor);
         vp::use(vp::specular);
         SetupCombinersGlossMapWithFog();
-        ri.mesh->render();
+        ri.mesh->render(Mesh::Normals | Mesh::TexCoords0 |
+                        Mesh::VertexProgParams);
         DisableCombiners();
     }
     else
@@ -1427,7 +1508,8 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
             vp::use(vp::diffuseHaze);
         else
             vp::use(vp::diffuse);
-        ri.mesh->render();
+        ri.mesh->render(Mesh::Normals | Mesh::TexCoords0 |
+                        Mesh::VertexProgParams);
     }
 
     if (hazeDensity > 0.0f)
