@@ -1,0 +1,21 @@
+!!ARBvp1.0
+
+# Transform the position by the modelview/projection matrix, and that's it!
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iTex0         = vertex.texcoord[0];
+PARAM  mvp[4]        = { state.matrix.mvp };
+OUTPUT oPos          = result.position;
+OUTPUT oTex0         = result.texcoord[0];
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Output the texture
+MOV   oTex0, iTex0;
+
+END
+

@@ -1,0 +1,54 @@
+!!ARBvp1.0
+
+# Compute the diffuse light from a single source and a haze effect
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iNormal       = vertex.normal;
+ATTRIB iTex0         = vertex.texcoord[0];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  eyePos        = program.env[1];
+PARAM  lightDir      = program.env[0];
+PARAM  diffuse       = program.env[2];
+PARAM  ambient       = state.lightmodel.ambient;
+PARAM  haze          = program.env[6];
+PARAM  zero          = 0;
+PARAM  one           = 1;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oTex0         = result.texcoord[0];
+OUTPUT oFog          = result.fogcoord;
+
+TEMP   diffuseFactor;
+TEMP   eyeVec;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Compute the diffuse light component
+DP3   diffuseFactor, iNormal, lightDir;
+# Clamp the diffuse component to zero
+MAX   diffuseFactor, diffuseFactor, zero;
+
+# Get the vector from the eye to the vertex
+SUB   eyeVec, eyePos, iPos;
+
+# Normalize it
+DP3   eyeVec.w, eyeVec, eyeVec;
+RSQ   eyeVec.w, eyeVec.w;
+MUL   eyeVec, eyeVec, eyeVec.w;
+
+# Haze
+DP3   diffuseFactor.y, iNormal, eyeVec;
+SUB   diffuseFactor.y, one, diffuseFactor.y;
+MUL   oFog.x, diffuseFactor.x, diffuseFactor.y;
+
+# Output the texture
+MOV   oTex0, iTex0;
+# Output the primary color
+MAD   oColor, diffuse, diffuseFactor, ambient;
+
+END
+
