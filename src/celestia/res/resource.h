@@ -144,6 +144,7 @@
 #define ID_HELP_RUNDEMO                 40041
 #define ID_RENDER_MORESTARS             40042
 #define ID_RENDER_FEWERSTARS            40043
+#define ID_RENDER_AUTOMAG               40044
 #define ID_NAVIGATION_SYNCORBIT         40045
 #define ID_NAVIGATION_SSBROWSER         40046
 #define ID_NAVIGATION_STARBROWSER       40047

@@ -1876,7 +1876,8 @@ static void syncMenusWithRendererState()
 
     CheckMenuItem(menuBar, ID_RENDER_ANTIALIASING,
         (renderFlags & Renderer::ShowSmoothLines)?MF_CHECKED:MF_UNCHECKED);
-    
+    CheckMenuItem(menuBar, ID_RENDER_AUTOMAG,
+        (renderFlags & Renderer::ShowAutoMag)?MF_CHECKED:MF_UNCHECKED);
 }
 
 
@@ -3332,6 +3333,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_RENDER_FEWERSTARS:
             appCore->charEntered('[');
+            break;
+
+        case ID_RENDER_AUTOMAG:
+            appCore->charEntered('\031');
+            syncMenusWithRendererState();
             break;
 
         case ID_RENDER_AMBIENTLIGHT_NONE:
