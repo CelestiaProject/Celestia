@@ -144,6 +144,7 @@ TexFont *txfLoadFont(char *filename)
 	txf->tgvi = NULL;
 	txf->lut = NULL;
 	txf->teximage = NULL;
+        txf->texobj = 0;
 
 	got = fread(fileid, 1, 4, file);
 	if (got != 4 || strncmp(fileid, "\377txf", 4)) {
