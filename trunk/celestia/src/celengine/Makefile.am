@@ -1,0 +1,44 @@
+noinst_LIBRARIES = libcelengine.a
+
+INCLUDES = -I..
+
+libcelengine_a_SOURCES = \
+	3dsmesh.cpp \
+	asterism.cpp \
+	astro.cpp \
+	body.cpp \
+	catalogxref.cpp \
+	cmdparser.cpp \
+	command.cpp \
+	constellation.cpp \
+	customorbit.cpp \
+	dispmap.cpp \
+	execution.cpp \
+	galaxy.cpp \
+	glext.cpp \
+	lodspheremesh.cpp \
+	meshmanager.cpp \
+	observer.cpp \
+	octree.cpp \
+	orbit.cpp \
+	overlay.cpp \
+	parser.cpp \
+	regcombine.cpp \
+	render.cpp \
+	selection.cpp \
+	simulation.cpp \
+	solarsys.cpp \
+	spheremesh.cpp \
+	star.cpp \
+	stardb.cpp \
+	starname.cpp \
+	stellarclass.cpp \
+	texmanager.cpp \
+	texture.cpp \
+	tokenizer.cpp \
+	univcoord.cpp \
+	vertexlist.cpp \
+	vertexprog.cpp
+
+
+
