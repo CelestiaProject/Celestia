@@ -59,10 +59,29 @@
 //    }
 }
 
+-(void) keyPress:(int) code hold: (int) time
+{
+    keyCode = code;
+    keyTime = time;
+    [appCore keyDown: keyCode ];
+}
+
 - (void)idle
 {
     //NSLog(@"[CelestiaController idle]");
-    if (ready) {
+    if (ready)
+    {
+       if ( keyCode != 0 )
+       {
+            if ( keyTime <= 0 )
+            {
+               [ appCore keyUp: keyCode];
+               keyCode = 0;  
+            }
+            else 
+               keyTime --;
+       }
+    
         [appCore tick];
         [glView setNeedsDisplay:YES];
     }
@@ -170,7 +189,6 @@
 
 - (IBAction)back:(id)sender
 {
-    NSLog( [[appCore currentURL] relativeString]  );
     [appCore back];
 }
 
@@ -178,5 +196,87 @@
 {
     [appCore forward];
 }
+
+- (BOOL) itemFlag: (id) item
+{
+    CelestiaRenderer *renderer;
+    int tag = [item tag];
+    BOOL label = NO;
+    NSDictionary *flags;
+    NSString *key = NULL;
+    NSNumber* state;
+    if (tag == 32 )
+    {
+       if(  fabs([[[ appCore simulation] getTimeScale] doubleValue]) == 0.0 ) 
+            return YES;
+        else
+            return NO;
+    }
+    switch ( tag)
+    {
+        case 112: key = @"Planets"; label = YES; break;
+        case 109: key = @"Moons"; label = YES; break;
+        case 119: key = @"Asteroids"; label = YES; break;
+        case  98: key = @"Stars"; label = YES; break;
+        case 101: key = @"Galaxies"; label = YES; break;
+        case 110: key = @"Spacecraft"; label = YES; break;
+        case  61: key = @"Constellations"; label = YES; break;
+        case 105: key = @"CloudMaps"; label = NO; break;
+        case   1: key = @"Atmospheres"; label = NO; break;
+        case  12: key = @"NightMaps"; label = NO; break;
+        case   5: key = @"EclipseShadows"; label = NO; break;
+        case 111: key = @"Orbits"; label = NO; break;
+        case 117: key = @"Galaxies"; label = NO; break;
+        case  47: key = @"Diagrams"; label = NO; break;
+        case   2: key = @"Boundaries"; label = NO; break;
+        case  59: key = @"CelestialSphere"; label = NO; break;
+        case  25: key = @"AutoMag"; label = NO; break;
+        case  20: key = @"CometTails"; label = NO; break;
+        case  11: key = @"Markers"; label = NO; break;
+        case  19: key = @"StarsAsPoints"; label = NO; break;
+        case  24: key = @"SmoothLines"; label = NO; break;
+        default : break;
+    }
+    if ( key == NULL ) return NO;
+    renderer = [[CelestiaAppCore sharedAppCore] renderer];
+    if ( label )
+       flags = [renderer labelFlags];
+    else
+       flags = [renderer renderFlags];
+    state = (NSNumber*) [ flags objectForKey: key ];
+    if ( state == NULL ) return NO;
+    return [state boolValue];    
+}
+
+
+- (BOOL)     validateMenuItem: (id) item
+{
+    if ( [item tag] == 0 )
+    {
+        return [item isEnabled];
+    }
+    else
+    {
+      if ( [self itemFlag: item] )
+        [item setState: NSOnState ];
+      else
+        [item setState: NSOffState ];      
+    }
+    return YES;
+}
+
+- (IBAction) activateMenuItem: (id) item
+{
+    if ( [item tag] != 0 )
+    {
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    if ( [item tag] < 0 )
+        [self keyPress: -[item tag] hold: 2];
+    else if ( [item tag] < 128 )
+       [ appCore charEntered: [item tag] ];
+    
+    }
+}
+
 
 @end

@@ -22,6 +22,7 @@
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     IBOutlet RenderPanelController *renderPanelController;
     NSTimer* timer;
+    int keyCode, keyTime;
 }
 -(BOOL)applicationShouldTerminate:(id)sender;
 - (BOOL)windowShouldClose:(id)sender;
@@ -36,5 +37,9 @@
 - (void)display;
 - (void)idle;
 - (void)awakeFromNib;
+-(void) keyPress:(int)code hold:(int)time;
+
+- (BOOL)     validateMenuItem: (id) item;
+- (IBAction) activateMenuItem: (id) item;
 
 @end
