@@ -30,10 +30,14 @@ static string GlieseCatalogPrefix("Gliese ");
 static string RossCatalogPrefix("Ross ");
 static string LacailleCatalogPrefix("Lacaille ");
 static string TychoCatalogPrefix("TYC ");
+static string SAOCatalogPrefix("SAO ");
 
 static const float OctreeRootSize = 15000.0f;
 static const float OctreeMagnitude = 6.0f;
 static const float ExtraRoom = 0.01f; // Reserve 1% capacity for extra stars
+
+const char* StarDatabase::FileHeader = "CELSTARS";
+const char* StarDatabase::CrossIndexFileHeader = "CELINDEX";
 
 
 StarDatabase::StarDatabase() : nStars(0),
@@ -42,6 +46,7 @@ StarDatabase::StarDatabase() : nStars(0),
                                names(NULL),
                                octreeRoot(NULL)
 {
+    crossIndexes.resize(MaxCatalog);
 }
 
 
@@ -50,10 +55,14 @@ StarDatabase::~StarDatabase()
     if (stars != NULL)
 	delete [] stars;
 
-    for (int i = 0; i < Star::CatalogCount; i++)
+    if (catalogNumberIndex != NULL)
+        delete [] catalogNumberIndex;
+
+    for (vector<CrossIndex*>::iterator iter = crossIndexes.begin();
+         iter != crossIndexes.end(); iter++)
     {
-        if (catalogNumberIndexes[i] != NULL)
-            delete [] catalogNumberIndexes[i];
+        if (*iter != NULL)
+            delete *iter;
     }
 }
 
@@ -61,32 +70,55 @@ StarDatabase::~StarDatabase()
 // Used to sort stars by catalog number
 struct CatalogNumberPredicate
 {
-    int which;
+    int unused;
 
-    CatalogNumberPredicate(int _which) : which(_which) {};
+    CatalogNumberPredicate() {};
 
     bool operator()(const Star* const & star0, const Star* const & star1) const
     {
-        return (star0->getCatalogNumber(which) < star1->getCatalogNumber(which));
+        return (star0->getCatalogNumber() < star1->getCatalogNumber());
     }
 };
 
 
-Star* StarDatabase::find(uint32 catalogNumber, unsigned int whichCatalog) const
+Star* StarDatabase::find(uint32 catalogNumber) const
 {
-    // assert(whichCatalog < Star::CatalogCount);
     Star refStar;
-    refStar.setCatalogNumber(whichCatalog, catalogNumber);
+    refStar.setCatalogNumber(catalogNumber);
 
-    CatalogNumberPredicate pred(whichCatalog);
-    Star** star = lower_bound(catalogNumberIndexes[whichCatalog],
-                              catalogNumberIndexes[whichCatalog] + nStars,
-                              &refStar, pred);
-    if (star != catalogNumberIndexes[whichCatalog] + nStars &&
-        (*star)->getCatalogNumber(whichCatalog) == catalogNumber)
+    Star** star = lower_bound(catalogNumberIndex,
+                              catalogNumberIndex + nStars,
+                              &refStar,
+                              CatalogNumberPredicate());
+
+    if (star != catalogNumberIndex + nStars &&
+        (*star)->getCatalogNumber() == catalogNumber)
         return *star;
     else
         return NULL;
+}
+
+
+uint32
+StarDatabase::crossIndex(Catalog catalog, uint32 celCatalogNumber) const
+{
+    if (static_cast<uint32>(catalog) >= crossIndexes.size())
+        return Star::InvalidCatalogNumber;
+
+    CrossIndex* xindex = crossIndexes[catalog];
+    if (xindex == NULL)
+        return Star::InvalidCatalogNumber;
+
+    // A simple linear search.  We could store cross indices sorted by
+    // both catalog numbers and trade memory for speed
+    for (CrossIndex::const_iterator iter = xindex->begin();
+         iter != xindex->end(); iter++)
+    {
+        if (celCatalogNumber == iter->celCatalogNumber)
+            return iter->catalogNumber;
+    }
+
+    return Star::InvalidCatalogNumber;
 }
 
 
@@ -164,6 +196,42 @@ static bool parseCelestiaCatalogNumber(const string& name,
 }
 
 
+bool operator< (const StarDatabase::CrossIndexEntry& a,
+                const StarDatabase::CrossIndexEntry& b)
+{
+    return a.catalogNumber < b.catalogNumber;
+}
+
+
+Star*
+StarDatabase::searchCrossIndex(Catalog catalog, uint32 number) const
+{
+    if (static_cast<unsigned int>(catalog) >= crossIndexes.size())
+        return NULL;
+
+    CrossIndex* xindex = crossIndexes[catalog];
+    if (xindex == NULL)
+        return NULL;
+
+    CrossIndexEntry xindexEnt;
+    xindexEnt.catalogNumber = number;
+
+    CrossIndex::iterator iter = lower_bound(xindex->begin(), xindex->end(),
+                                            xindexEnt);
+    if (iter == xindex->end() || iter->catalogNumber != number)
+    {
+        return NULL;
+    }
+    else
+    {
+        if (iter->celCatalogNumber >= (uint32) nStars)
+            return NULL;
+        else
+            return find(iter->celCatalogNumber);
+    }
+}
+
+
 Star* StarDatabase::find(const string& name) const
 {
     if (name.empty())
@@ -173,40 +241,32 @@ Star* StarDatabase::find(const string& name) const
 
     if (parseCelestiaCatalogNumber(name, &catalogNumber))
     {
-        return find(catalogNumber, 0);
+        return find(catalogNumber);
     }
     else if (parseHIPPARCOSCatalogNumber(name, &catalogNumber))
     {
-        return find(catalogNumber, Star::HIPCatalog);
-    }
-    else if (parseHDCatalogNumber(name, &catalogNumber))
-    {
-        return find(catalogNumber, Star::HDCatalog);
+        return find(catalogNumber);
     }
     else if (parseTychoCatalogNumber(name, &catalogNumber))
     {
-        return find(catalogNumber, Star::HIPCatalog);
+        return find(catalogNumber);
+    }
+    else if (parseHDCatalogNumber(name, &catalogNumber))
+    {
+        return searchCrossIndex(HenryDraper, catalogNumber);
+    }
+    else if (parseSimpleCatalogNumber(name, SAOCatalogPrefix,
+                                      &catalogNumber))
+    {
+        return searchCrossIndex(SAO, catalogNumber);
     }
     else
     {
-#if 0
-        // Search through the catalog cross references
-        {
-            for (vector<CatalogCrossReference*>::const_iterator iter = catalogs->begin();
-                 iter != catalogs->end(); iter++)
-            {
-                Star* star = (*iter)->lookup(name);
-                if (star != NULL)
-                    return star;
-            }
-        }
-#endif
-
         if (names != NULL)
         {
             uint32 catalogNumber = names->findName(name);
             if (catalogNumber != Star::InvalidCatalogNumber)
-                return find(catalogNumber, Star::HIPCatalog);
+                return find(catalogNumber);
         }
 
         return NULL;
@@ -233,7 +293,7 @@ std::vector<std::string> StarDatabase::getCompletion(const string& name) const
 //      the HIPPARCOS catalog number.
 //
 // CAREFUL:
-// If the star name is not present int the names database, a new
+// If the star name is not present in the names database, a new
 // string is constructed to contain the catalog number--keep in
 // mind that calling this method could possibly incur the overhead
 // of a memory allocation (though no explcit deallocation is
@@ -252,9 +312,12 @@ string StarDatabase::getStarName(const Star& star) const
     }
 
     char buf[20];
-    if (star.getCatalogNumber(Star::HDCatalog) != Star::InvalidCatalogNumber)
-        sprintf(buf, "HD %d", star.getCatalogNumber(Star::HDCatalog));
-    else
+    /*
+      // Get the HD catalog name
+      if (star.getCatalogNumber() != Star::InvalidCatalogNumber)
+      sprintf(buf, "HD %d", star.getCatalogNumber(Star::HDCatalog));
+      else
+    */
     {
         if (catalogNumber < 1000000)
         {
@@ -340,13 +403,75 @@ void StarDatabase::setNameDatabase(StarNameDatabase* _names)
 }
 
 
-void StarDatabase::addCrossReference(const CatalogCrossReference* xref)
+bool StarDatabase::loadCrossIndex(Catalog catalog, istream& in)
 {
-    catalogs.insert(catalogs.end(), xref);
+    if (static_cast<unsigned int>(catalog) >= crossIndexes.size())
+        return false;
+
+    if (crossIndexes[catalog] != NULL)
+        delete crossIndexes[catalog];
+
+    // Verify that the star database file has a correct header
+    {
+        int headerLength = strlen(CrossIndexFileHeader);
+        char* header = new char[headerLength];
+        in.read(header, headerLength);
+        if (strncmp(header, CrossIndexFileHeader, headerLength))
+        {
+            cerr << "Bad header for cross index\n";
+            return false;
+        }
+        delete[] header;
+    }
+
+    // Verify the version
+    {
+        uint16 version;
+        in.read((char*) &version, sizeof version);
+        LE_TO_CPU_INT16(version, version);
+        if (version != 0x0100)
+        {
+            cerr << "Bad version for cross index\n";
+            return false;
+        }
+    }
+
+    CrossIndex* xindex = new CrossIndex();
+    if (xindex == NULL)
+        return false;
+
+    unsigned int record = 0;
+    for (;;)
+    {
+        CrossIndexEntry ent;
+        in.read((char *) &ent.catalogNumber, sizeof ent.catalogNumber);
+        LE_TO_CPU_INT32(ent.catalogNumber, ent.catalogNumber);
+        if (in.eof())
+            break;
+
+        in.read((char *) &ent.celCatalogNumber, sizeof ent.celCatalogNumber);
+        LE_TO_CPU_INT32(ent.celCatalogNumber, ent.celCatalogNumber);
+        if (in.fail())
+        {
+            cerr << "Loading cross index failed at record " << record << '\n';
+            delete xindex;
+            return false;
+        }
+
+        xindex->insert(xindex->end(), ent);
+
+        record++;
+    }
+
+    sort(xindex->begin(), xindex->end());
+
+    crossIndexes[catalog] = xindex;
+
+    return true;
 }
 
 
-bool StarDatabase::loadBinary(istream& in)
+bool StarDatabase::loadOldFormatBinary(istream& in)
 {
     uint32 nStarsInFile = 0;
     in.read((char *) &nStarsInFile, sizeof nStarsInFile);
@@ -427,8 +552,9 @@ bool StarDatabase::loadBinary(istream& in)
 			(StellarClass::LuminosityClass) (stellarClass & 0xf));
 	star->setStellarClass(sc);
 
-	star->setCatalogNumber(Star::HIPCatalog, catNo);
-        star->setCatalogNumber(Star::HDCatalog, hdCatNo);
+        star->setCatalogNumber(catNo);
+	//star->setCatalogNumber(Star::HIPCatalog, catNo);
+        //star->setCatalogNumber(Star::HDCatalog, hdCatNo);
 
 	// TODO: Use a photometric estimate of distance if parallaxError is
 	// greater than 25%.
@@ -439,6 +565,103 @@ bool StarDatabase::loadBinary(istream& in)
 	    else
 		fixUp++;
 	}
+
+	nStars++;
+    }
+
+    if (in.bad())
+        return false;
+
+    DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
+    cout << "nStars: " << nStars << '\n';
+
+    return true;
+}
+
+
+bool StarDatabase::loadBinary(istream& in)
+{
+    uint32 nStarsInFile = 0;
+
+    // Verify that the star database file has a correct header
+    {
+        int headerLength = strlen(FileHeader);
+        char* header = new char[headerLength];
+        in.read(header, headerLength);
+        if (strncmp(header, FileHeader, headerLength))
+            return false;
+        delete[] header;
+    }
+
+    // Verify the version
+    {
+        uint16 version;
+        in.read((char*) &version, sizeof version);
+        LE_TO_CPU_INT16(version, version);
+        if (version != 0x0100)
+            return false;
+    }
+
+    // Read the star count
+    in.read((char *) &nStarsInFile, sizeof nStarsInFile);
+    LE_TO_CPU_INT32(nStarsInFile, nStarsInFile);
+    if (!in.good())
+        return false;
+
+    int requiredCapacity = (int) ((nStars + nStarsInFile) * (1.0 + ExtraRoom));
+    if (capacity < requiredCapacity)
+    {
+        Star* newStars = new Star[requiredCapacity];
+        if (newStars == NULL)
+            return false;
+        
+        if (stars != NULL)
+        {
+            copy(stars, stars + nStars, newStars);
+            delete[] stars;
+        }
+
+        stars = newStars;
+
+        capacity = requiredCapacity;
+    }
+    
+    unsigned int totalStars = nStars + nStarsInFile;
+
+    while (((unsigned int) nStars) < totalStars)
+    {
+	uint32 catNo = 0;
+	float x = 0.0f, y = 0.0f, z = 0.0f;
+	int16 absMag;
+	uint16 stellarClass;
+
+	in.read((char *) &catNo, sizeof catNo);
+        LE_TO_CPU_INT32(catNo, catNo);
+	in.read((char *) &x, sizeof x);
+        LE_TO_CPU_FLOAT(x, x);
+	in.read((char *) &y, sizeof y);
+        LE_TO_CPU_FLOAT(y, y);
+	in.read((char *) &z, sizeof z);
+        LE_TO_CPU_FLOAT(z, z);
+	in.read((char *) &absMag, sizeof absMag);
+        LE_TO_CPU_INT16(absMag, absMag);
+	in.read((char *) &stellarClass, sizeof stellarClass);
+        LE_TO_CPU_INT16(stellarClass, stellarClass);
+        if (in.bad())
+	    break;
+
+	Star* star = &stars[nStars];
+
+        star->setPosition(x, y, z);
+	star->setAbsoluteMagnitude((float) absMag / 256.0f);
+
+	StellarClass sc((StellarClass::StarType) (stellarClass >> 12),
+			(StellarClass::SpectralClass)(stellarClass >> 8 & 0xf),
+			(unsigned int) (stellarClass >> 4 & 0xf),
+			(StellarClass::LuminosityClass) (stellarClass & 0xf));
+	star->setStellarClass(sc);
+
+	star->setCatalogNumber(catNo);
 
 	nStars++;
     }
@@ -500,19 +723,12 @@ void StarDatabase::buildIndexes()
 
     DPRINTF(1, "Building catalog number indexes . . .\n");
 
-    for (unsigned int whichCatalog = 0;
-         whichCatalog < sizeof(catalogNumberIndexes) / sizeof(catalogNumberIndexes[0]);
-         whichCatalog++)
-    {
-        DPRINTF(1, "Sorting catalog number index %d\n", whichCatalog);
-        catalogNumberIndexes[whichCatalog] = new Star*[nStars];
-        for (int i = 0; i < nStars; i++)
-            catalogNumberIndexes[whichCatalog][i] = &stars[i];
+    catalogNumberIndex = new Star*[nStars];
+    for (int i = 0; i < nStars; i++)
+        catalogNumberIndex[i] = &stars[i];
 
-        CatalogNumberPredicate pred(whichCatalog);
-        sort(catalogNumberIndexes[whichCatalog],
-             catalogNumberIndexes[whichCatalog] + nStars, pred);
-    }
+    sort(catalogNumberIndex, catalogNumberIndex + nStars,
+         CatalogNumberPredicate());
 }
 
 

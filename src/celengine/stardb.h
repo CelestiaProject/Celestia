@@ -15,7 +15,6 @@
 #include <celengine/constellation.h>
 #include <celengine/starname.h>
 #include <celengine/star.h>
-#include <celengine/catalogxref.h>
 #include <celengine/octree.h>
 
 
@@ -27,7 +26,7 @@ class StarDatabase
 
     inline Star* getStar(uint32) const;
     inline uint32 size() const;
-    Star* find(uint32 catalogNumber, unsigned int whichCatalog = 0) const;
+    Star* find(uint32 catalogNumber) const;
     Star* find(const std::string&) const;
     std::vector<std::string> getCompletion(const std::string&) const;
 
@@ -49,13 +48,36 @@ class StarDatabase
     StarNameDatabase* getNameDatabase() const;
     void setNameDatabase(StarNameDatabase*);
     
-    void addCrossReference(const CatalogCrossReference*);
     bool load(std::istream&);
     bool loadBinary(std::istream&);
+    bool loadOldFormatBinary(std::istream&);
+
+    
+    enum Catalog
+    {
+        HenryDraper = 0,
+        Gliese      = 1,
+        SAO         = 2,
+        MaxCatalog  = 3,
+    };
+
+    struct CrossIndexEntry
+    {
+        uint32 catalogNumber;
+        uint32 celCatalogNumber;
+    };
+
+    typedef std::vector<CrossIndexEntry> CrossIndex;
+    bool loadCrossIndex(Catalog, std::istream&);
+    Star* searchCrossIndex(Catalog catalog, uint32 number) const;
+    uint32 crossIndex(Catalog catalog, uint32 number) const;
 
     void finish();
 
     static StarDatabase* read(std::istream&);
+
+    static const char* FileHeader;
+    static const char* CrossIndexFileHeader;
 
  private:
     void buildOctree();
@@ -65,10 +87,10 @@ class StarDatabase
     int capacity;
     Star* stars;
     StarNameDatabase* names;
-    Star** catalogNumberIndexes[Star::CatalogCount];
+    Star** catalogNumberIndex;
     StarOctree* octreeRoot;
 
-    std::vector<const CatalogCrossReference*> catalogs;
+    std::vector<CrossIndex*> crossIndexes;
 };
 
 
