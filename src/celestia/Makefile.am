@@ -20,6 +20,7 @@ COMMONSOURCES = \
 	celestiacore.cpp \
 	configfile.cpp \
 	destination.cpp \
+	eclipsefinder.cpp\
 	favorites.cpp \
 	imagecapture.cpp \
 	url.cpp
