@@ -142,6 +142,7 @@ void Simulation::setSelection(const Selection& sel)
         universe->markObject(selection,
                              10.0f,
                              Color(1.0f, 0.0f, 0.0f, 0.9f),
+                             Marker::Diamond,
                              0);
     }
 }
