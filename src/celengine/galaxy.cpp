@@ -286,7 +286,7 @@ GalaxyList* ReadGalaxyList(istream& in)
             galaxyParams->getNumber("Dec", dec);
             Point3d p = astro::equatorialToCelestialCart(RA, dec, distance);
             galaxy->setPosition(p);
-            DPRINTF("%s: %f, %f, %f\n", galaxy->getName().c_str(),
+            DVPRINTF("%s: %f, %f, %f\n", galaxy->getName().c_str(),
                     p.x, p.y, p.z);
         }
 

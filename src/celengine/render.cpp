@@ -303,40 +303,43 @@ bool Renderer::init(int winWidth, int winHeight)
         commonDataInitialized = true;
     }
 
-    cout << "GL extensions supported:\n";
-    cout << glGetString(GL_EXTENSIONS) << '\n';
+    if(verbose)
+    {
+        cout << "GL extensions supported:\n";
+        cout << glGetString(GL_EXTENSIONS) << '\n';
+    }
 
     // Get GL extension information
     if (ExtensionSupported("GL_ARB_multitexture"))
     {
-        DPRINTF("Renderer: multi-texture supported.\n");
+        DVPRINTF("Renderer: multi-texture supported.\n");
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &nSimultaneousTextures);
     }
     if (ExtensionSupported("GL_EXT_texture_env_combine"))
     {
         useTexEnvCombine = true;
-        DPRINTF("Renderer: texture env combine supported.\n");
+        DVPRINTF("Renderer: texture env combine supported.\n");
     }
     if (ExtensionSupported("GL_NV_register_combiners"))
     {
-        DPRINTF("Renderer: nVidia register combiners supported.\n");
+        DVPRINTF("Renderer: nVidia register combiners supported.\n");
         useRegisterCombiners = true;
     }
     if (ExtensionSupported("GL_NV_vertex_program") && glGenProgramsNV)
     {
-        DPRINTF("Renderer: nVidia vertex programs supported.\n");
+        DVPRINTF("Renderer: nVidia vertex programs supported.\n");
         useVertexPrograms = vp::init();
     }
     if (ExtensionSupported("GL_EXT_texture_cube_map"))
     {
-        DPRINTF("Renderer: cube texture maps supported.\n");
+        DVPRINTF("Renderer: cube texture maps supported.\n");
         useCubeMaps = true;
     }
     if (ExtensionSupported("GL_EXT_rescale_normal"))
     {
         // We need this enabled because we use glScale, but only
         // with uniform scale factors.
-        DPRINTF("Renderer: EXT_rescale_normal supported.\n");
+        DVPRINTF("Renderer: EXT_rescale_normal supported.\n");
         useRescaleNormal = true;
         glEnable(GL_RESCALE_NORMAL_EXT);
     }
@@ -360,7 +363,8 @@ bool Renderer::init(int winWidth, int winHeight)
         }
     }
 
-    cout << "Simultaneous textures supported: " << nSimultaneousTextures << '\n';
+    if(verbose)
+        cout << "Simultaneous textures supported: " << nSimultaneousTextures << '\n';
 
     glLoadIdentity();
 

@@ -413,3 +413,5 @@ Code:
 * Unix GTK: Got Ctrl-Q to exit the Program properly. (dramsey)
 * Unix GTK: Capture Filenames now starts up with a proper filename, remembers
             the last directory, and complains about bad filenames. (dramsey)
+* Added 'verbose' option, and supressed most non-error type messages unless
+  verbose is set. (dramsey)
