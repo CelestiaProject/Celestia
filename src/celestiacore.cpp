@@ -1330,12 +1330,15 @@ bool CelestiaCore::initRenderer()
         font = LoadTextureFont(string("fonts") + "/" + config->mainFont);
     if (font == NULL)
     {
-        cout << "Error loading font; text will not be visible.";
+        cout << "Error loading font; text will not be visible.\n";
     }
+    font->buildTexture();
 
     if (config->titleFont != "")
         titleFont = LoadTextureFont(string("fonts") + "/" + config->titleFont);
-    if (titleFont == NULL)
+    if (titleFont != NULL)
+        titleFont->buildTexture();
+    else
         titleFont = font;
 
     // Set up the overlay
@@ -1350,9 +1353,14 @@ bool CelestiaCore::initRenderer()
     {
         TextureFont* labelFont = LoadTextureFont(string("fonts") + "/" + config->labelFont);
         if (labelFont == NULL)
+        {
             renderer->setFont(font);
+        }
         else
+        {
+            titleFont->buildTexture();
             renderer->setFont(labelFont);
+        }
     }
 
     if (config->logoTextureFile != "")
