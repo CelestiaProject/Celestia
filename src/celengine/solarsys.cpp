@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-#include <limits>
+// #include <limits>
 
 #ifndef _WIN32
 #ifndef MACOSX_PB
@@ -317,8 +317,11 @@ static Body* CreatePlanet(PlanetarySystem* system,
     }
     body->setClassification(classification);
 
-    double beginning   = -numeric_limits<double>::infinity();
-    double ending      =  numeric_limits<double>::infinity();
+    // g++ is missing limits header, so we can use this
+    // double beginning   = -numeric_limits<double>::infinity();
+    // double ending      =  numeric_limits<double>::infinity();
+    double beginning   = -1.0e+50;
+    double ending      =  1.0e+50;
     planetData->getNumber("Beginning", beginning);
     planetData->getNumber("Ending", ending);
     body->setLifespan(beginning, ending);
