@@ -640,6 +640,8 @@ Code:
    - TAB    : cycle active view
    - DEL    : delete active view
    - Ctrl+D : delete all views except active one
+   - Views may be resized by dragging on borders
+   - Multview functions also available in the view menu
 * Eliminated eclipse shadows appearing on wrong side of planet
 * Added support for specular and bump map effects across a wider range
   of graphics hardware.
@@ -653,3 +655,6 @@ Code:
 * Enabled loading of .cel scripts through the Windows or KDE shell
 * New directory structure for add-ons; meshes, textures, and other media
   may now be located withing an add-on subdirectory.
+* Added texture for Eros
+* Added separate cloud and surface textures for Venus
+
