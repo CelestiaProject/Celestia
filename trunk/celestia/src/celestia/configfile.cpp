@@ -141,6 +141,38 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
         }
     }
 
+    Value* starCatalogsVal = configParams->getValue("StarCatalogs");
+    if (starCatalogsVal != NULL)
+    {
+        if (starCatalogsVal->getType() != Value::ArrayType)
+        {
+            DPRINTF(0, "%s: StarCatalogs must be an array.\n",
+                    filename.c_str());
+        }
+        else
+        {
+            Array* starCatalogs = starCatalogsVal->getArray();
+            assert(starCatalogs != NULL);
+
+            for (Array::iterator iter = starCatalogs->begin();
+                 iter != starCatalogs->end(); iter++)
+            {
+                Value* catalogNameVal = *iter;
+                assert(catalogNameVal != NULL);
+
+                if (catalogNameVal->getType() == Value::StringType)
+                {
+                    config->starCatalogFiles.push_back(catalogNameVal->getString());
+                }
+                else
+                {
+                    DPRINTF(0, "%s: Star catalog name must be a string.\n",
+                            filename.c_str());
+                }
+            }
+        }
+    }
+
     Value* extrasDirsVal = configParams->getValue("ExtrasDirectories");
     if (extrasDirsVal != NULL)
     {
