@@ -605,6 +605,12 @@ Planets [
 	Obliquity        97.92
 	Albedo            0.66
 
+	Rings {
+		Inner  41800
+		Outer  51149
+		Texture "uranus-rings.png"
+	}
+
 	Moons [
 	{
 		Name "Miranda"
