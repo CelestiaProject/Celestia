@@ -30,6 +30,8 @@ using namespace std;
 
 #define FAINTEST_MAGNITUDE  5.5f
 
+static const float PixelOffset = 0.375f;
+
 // Static meshes and textures used by all instances of Simulation
 
 static bool commonDataInitialized = false;
@@ -61,7 +63,7 @@ Renderer::Renderer() :
     brightnessBias(0.0f),
     perPixelLightingEnabled(false),
     console(NULL),
-    entryConsole(NULL),
+    inputConsole(NULL),
     nSimultaneousTextures(1),
     useRegisterCombiners(false),
     useCubeMaps(false)
@@ -69,8 +71,7 @@ Renderer::Renderer() :
     textureManager = new TextureManager("textures");
     meshManager = new MeshManager("models");
     console = new Console(30, 100);
-    entryConsole = new Console(2, 100);
-    entryConsole->setOrigin(0.0f, 0.85f);
+    inputConsole = new Console(2, 100);
 }
 
 
@@ -187,7 +188,7 @@ bool Renderer::init(int winWidth, int winHeight)
         // font = txfLoadFont("fonts\\helvetica_14b.txf");
         font = txfLoadFont("fonts\\default.txf");
         if (font != NULL)
-            txfEstablishTexture(font, 0, GL_TRUE);
+            txfEstablishTexture(font, 0, GL_FALSE);
 
         // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
@@ -242,7 +243,7 @@ bool Renderer::init(int winWidth, int winHeight)
     glEnable(GL_RESCALE_NORMAL_EXT);
 
     console->setFont(font);
-    entryConsole->setFont(font);
+    inputConsole->setFont(font);
 
     resize(winWidth, winHeight);
 
@@ -296,9 +297,9 @@ Console* Renderer::getConsole() const
     return console;
 }
 
-Console* Renderer::getEntryConsole() const
+Console* Renderer::getInputConsole() const
 {
-    return entryConsole;
+    return inputConsole;
 }
 
 
@@ -622,12 +623,28 @@ void Renderer::render(const Observer& observer,
     renderLabels();
 
     glColor4f(0.8f, 0.8f, 1.0f, 1);
-    console->setScale(2.0f / (float) windowWidth, 2.0f / (float) windowHeight);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, windowWidth, 0, windowHeight);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(0, windowHeight - 20 + PixelOffset, 0);
     console->render();
+    glPopMatrix();
 
     glColor4f(0.7f, 0.7f, 1.0f, 1);
-    entryConsole->setScale(2.0f / (float) windowWidth, 2.0f / (float) windowHeight);
-    entryConsole->render();
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(0, 50 + PixelOffset, 0);
+    inputConsole->render();
+    glPopMatrix();
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
@@ -1668,18 +1685,19 @@ void Renderer::renderLabels()
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
+    gluOrtho2D(0, windowWidth, 0, windowHeight);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glScalef(xscale, yscale, 1);
+    glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), 0);
 
     for (int i = 0; i < labels.size(); i++)
     {
         glColor(labels[i].color);
         glPushMatrix();
         glTranslatef((int) labels[i].position.x,
-                     (int) labels[i].position.y,
-                     -1);
+                     (int) labels[i].position.y + PixelOffset,
+                     0);
         txfRenderString(font, labels[i].text);
         glPopMatrix();
     }
