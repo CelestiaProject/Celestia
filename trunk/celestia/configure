@@ -6311,7 +6311,7 @@ cat >>confdefs.h <<EOF
 #define CONFIG_DATA_DIR "$PKGDATADIR"
 EOF
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/celutil/Makefile src/celmath/Makefile src/cel3ds/Makefile src/celtxf/Makefile src/celengine/Makefile src/celestia/Makefile data/Makefile textures/Makefile models/Makefile shaders/Makefile fonts/Makefile res/Makefile macros/Makefile manual/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/celutil/Makefile src/celmath/Makefile src/cel3ds/Makefile src/celtxf/Makefile src/celengine/Makefile src/celestia/Makefile data/Makefile textures/Makefile models/Makefile shaders/Makefile fonts/Makefile src/celestia/res/Makefile macros/Makefile manual/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -6641,7 +6641,7 @@ do
   "models/Makefile" ) CONFIG_FILES="$CONFIG_FILES models/Makefile" ;;
   "shaders/Makefile" ) CONFIG_FILES="$CONFIG_FILES shaders/Makefile" ;;
   "fonts/Makefile" ) CONFIG_FILES="$CONFIG_FILES fonts/Makefile" ;;
-  "res/Makefile" ) CONFIG_FILES="$CONFIG_FILES res/Makefile" ;;
+  "src/celestia/res/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/celestia/res/Makefile" ;;
   "macros/Makefile" ) CONFIG_FILES="$CONFIG_FILES macros/Makefile" ;;
   "manual/Makefile" ) CONFIG_FILES="$CONFIG_FILES manual/Makefile" ;;
   "default-1" ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;

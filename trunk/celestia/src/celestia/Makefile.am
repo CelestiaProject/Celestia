@@ -41,3 +41,4 @@ CLEANFILES= ../../celestia
 ../../celestia: celestia
 	(cd ../..; ln -s src/celestia/celestia)
 
+SUBDIRS = res
