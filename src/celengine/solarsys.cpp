@@ -36,7 +36,7 @@ enum Disposition
 {
     AddObject,
     ReplaceObject,
-    OverrideObject,
+    ModifyObject,
 };
 
 
@@ -61,7 +61,7 @@ enum Disposition
   - Add - Default if none is specified.  Add the item even if one of the
     same name already exists.
   - Replace - Replace an existing item with the new one
-  - Override - Modify the existing item, changing the fields that appear
+  - Modify - Modify the existing item, changing the fields that appear
     in the new definition.
 
   All dispositions are equivalent to add if no item of the same name
@@ -411,7 +411,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
 {
     Body* body = NULL;
   
-    if (disposition == OverrideObject)
+    if (disposition == ModifyObject)
     {
         body = existingBody;
     }
@@ -514,7 +514,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     body->setRotationElements(re);
 
     Surface surface;
-    if (disposition == OverrideObject)
+    if (disposition == ModifyObject)
     {
         surface = body->getSurface();
     }
@@ -558,7 +558,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 assert(atmosData != NULL);
                 
                 Atmosphere* atmosphere = NULL;
-                if (disposition == OverrideObject)
+                if (disposition == ModifyObject)
                 {
                     atmosphere = body->getAtmosphere();
                     if (atmosphere == NULL)
@@ -590,7 +590,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 }
 
                 body->setAtmosphere(*atmosphere);
-                if (disposition != OverrideObject)
+                if (disposition != ModifyObject)
                     delete atmosphere;
             }
 
@@ -658,9 +658,9 @@ bool LoadSolarSystemObjects(istream& in,
                 disposition = ReplaceObject;
                 tokenizer.nextToken();
             }
-            else if (tokenizer.getNameValue() == "Override")
+            else if (tokenizer.getNameValue() == "Modify")
             {
-                disposition = OverrideObject;
+                disposition = ModifyObject;
                 tokenizer.nextToken();
             }
         }
