@@ -43,7 +43,7 @@ Source: "data\stars.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\solarsys.ssc"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\extrasolar.ssc"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\starnames.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
-Source: "data\galaxies.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
+Source: "data\deepsky.dsc"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\asterisms.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\boundaries.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\galileo.xyz"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
