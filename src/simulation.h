@@ -117,8 +117,6 @@ class Simulation
     enum ObserverMode {
         Free                    = 0,
         Travelling              = 1,
-        Following               = 2,
-        GeosynchronousFollowing = 3,
         Tracking                = 4,
     };
 
