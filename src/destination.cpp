@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "celestia.h"
 #include "util.h"
+#include "astro.h"
 #include "parser.h"
 #include "destination.h"
 
@@ -69,6 +70,17 @@ DestinationList* ReadDestinationList(istream& in)
             destParams->getString("Target", dest->target);
             destParams->getString("Description", dest->description);
             destParams->getNumber("Distance", dest->distance);
+
+            // Default unit of distance is the light year
+            string distanceUnits;
+            if (destParams->getString("DistanceUnits", distanceUnits))
+            {
+                if (!compareIgnoringCase(distanceUnits, "km"))
+                    dest->distance = astro::kilometersToLightYears(dest->distance);
+                else if (!compareIgnoringCase(distanceUnits, "au"))
+                    dest->distance = astro::AUtoLightYears(dest->distance);
+            }
+
             destinations->insert(destinations->end(), dest);
         }
 
