@@ -14,6 +14,7 @@ COMMONSOURCES = \
 	astro.cpp \
 	bigfix.cpp \
 	body.cpp \
+	celestiacore.cpp \
 	cmdparser.cpp \
 	color.cpp \
 	command.cpp \
