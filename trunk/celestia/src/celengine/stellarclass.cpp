@@ -166,9 +166,9 @@ StellarClass::unpack(uint16 st)
         lumClass = static_cast<LuminosityClass>(st & 0xf);
         break;
     case WhiteDwarf:
-        specClass = static_cast<SpectralClass>((st >> 8 & 0xf) + Spectral_DA);
-        if (specClass >= WDClassCount)
+        if ((st >> 8 & 0xf) >= WDClassCount)
             return false;
+        specClass = static_cast<SpectralClass>((st >> 8 & 0xf) + Spectral_DA);
         subclass = st >> 4 & 0xf;
         lumClass = Lum_Unknown;
         break;
