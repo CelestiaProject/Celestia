@@ -141,6 +141,7 @@ class CelestiaCore
     bool isRecording();
 
     int getHudDetail();
+    void setHudDetail(int);
 
     void setContextMenuCallback(ContextMenuFunc);
 
