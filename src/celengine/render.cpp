@@ -1722,8 +1722,9 @@ void Renderer::renderPlanet(const Body& body,
         // Watch out for the precision limits of floats when computing planet
         // rotation . . .
         {
+            // double rotations = (now - 2453450.0239467593) / (double) body.getRotationPeriod();
             double rotations = now / (double) body.getRotationPeriod();
-            int wholeRotations = (int) rotations;
+            double wholeRotations = floor(rotations);
             double remainder = rotations - wholeRotations;
             planetRotation = remainder * 2 * PI + body.getRotationPhase();
             glRotatef((float) (remainder * 360.0 + radToDeg(body.getRotationPhase())),
@@ -2576,11 +2577,20 @@ void Renderer::labelStars(const vector<Star*>& stars,
         Star* star = *iter;
         Point3f pos = star->getPosition();
         float distance = pos.distanceTo(observerPos);
-        float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(), distance);
+        float appMag = (distance > 0.0f) ?
+            astro::absToAppMag(star->getAbsoluteMagnitude(), distance) : -100.0f;
         
-        if (appMag < 6.0f)
+        if (appMag < faintestMag)
         {
             Vec3f rpos = pos - observerPos;
+
+            // Use a more accurate and expensive calculation if the
+            // distance to the star is less than a light year.  Single
+            // precision arithmetic isn't good enough when we're very close
+            // to the star.
+            if (distance < 1.0f)
+                rpos = pos - observer.getPosition();
+
             if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
             {
                 addLabel(starDB.getStarName(*star),
