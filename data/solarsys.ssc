@@ -265,7 +265,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# BumpMap "phobosbump.jpg"
 	# BumpHeight 5
 	Radius 13.0 # maximum semi-axis
-	MeshCenter [ 0.233 -0.156 0.168 ]
+	MeshCenter [ -0.233 -0.156 -0.168 ]
 
 	EllipticalOrbit
 	{
@@ -278,7 +278,6 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly    191.771   # J2000
 	}
 
-	Orientation	[ 180 0 1 0 ]
 	Obliquity		  0.0
 	RotationOffset	      	354.2
 
@@ -290,7 +289,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Mesh "deimos.3ds"
 	Texture "deimos.*"
 	Radius 7.9 # maximum semi-axis
-	MeshCenter [ 0.299 -0.284 -0.369 ]
+	MeshCenter [ -0.299 -0.284 0.369 ]
 
 	EllipticalOrbit
 	{
@@ -303,7 +302,6 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly     344.128
 	}
 
-	Orientation	[ 180 0 1 0 ]
 	Obliquity		  0.9
 	EquatorAscendingNode	183.0
 	RotationOffset		214.7
@@ -358,7 +356,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Color   [ 0.5 0.12 0.16 ]
 	Mesh "amalthea.3ds"
 	Radius    134 # maximum semi-axis
-	MeshCenter [ 13.616 -0.448 4.436 ]
+	MeshCenter [ -13.616 -0.448 -4.436 ]
 
 	EllipticalOrbit
 	{
@@ -372,7 +370,6 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly     319.3794140
 	}
 
-	Orientation	[ 180 0 1 0 ]
 	Obliquity		  0.0
 	RotationOffset		252.1
 
@@ -550,10 +547,10 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 "Prometheus" "Sol/Saturn"
 {
-	Texture	 	"prometheus.jpg"
+	Texture	 	"prometheus.*"
 	Mesh		"prometheus.3ds"
 	Radius    74 # maximum semi-axis
-	MeshCenter [ -0.75 -2.68 -1.064 ]
+	MeshCenter [ 0.75 -2.68 1.064 ]
 
 	EllipticalOrbit
 	{
@@ -565,17 +562,39 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	MeanAnomaly     22.695	#
 	}
 
-	RotationOffset  	56
+	RotationOffset  	236
 
 	Albedo 0.6
 }
 
+"Pandora" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"pandora.3ds"
+	Radius		57 # maximum semi-axis
+	MeshCenter [ 0.692 -1.454 -0.422 ]
+
+	EllipticalOrbit
+	{
+	Period		0.628804
+	SemiMajorAxis	141700
+	Eccentricity	0.0044
+	Inclination	0.000
+	LongOfPericenter 234.458 # J2000.0
+	MeanAnomaly     62.483	 #
+	}
+
+	RotationOffset          117
+
+	Albedo 0.5
+}
+
 "Epimetheus" "Sol/Saturn"
 {
-	Texture	 	"epimetheus.jpg"
+	Texture	 	"epimetheus.*"
 	Mesh		"epimetheus.3ds"
 	Radius    72 # maximum semi-axis
-	MeshCenter [ 5.196 -2.241 1.878 ]
+	MeshCenter [ -5.196 -2.241 -1.878 ]
 
 	EllipticalOrbit
 	{
@@ -588,7 +607,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	MeanAnomaly     192.354	#
 	}
 
-	RotationOffset  	69
+	RotationOffset  	249
 
 	Albedo 0.5
 }
@@ -600,10 +619,10 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 
 "Janus" "Sol/Saturn"
 {
-	Texture	 	"janus.jpg"
+	Texture	 	"janus.*"
 	Mesh		"janus.3ds"
 	Radius    96 # maximum semi-axis
-	MeshCenter [ 1.552 1.358 -2.257 ]
+	MeshCenter [ -1.552 1.358 2.257 ]
 
 	EllipticalOrbit
 	{
@@ -616,7 +635,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	MeanAnomaly     79.973	#
 	}
 
-	RotationOffset  	244
+	RotationOffset  	64
 
 	Albedo 0.6
 }
@@ -777,7 +796,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Mesh "hyperion.3ds"
 	Texture "hyperion.*" # Phil Stooke
 	Radius    171 # maximum semi-axis
-	MeshCenter [ 3.424 10.938 -4.498 ]
+	MeshCenter [ -3.424 10.938 4.498 ]
 
 	CustomOrbit "hyperion"
 	EllipticalOrbit
@@ -792,6 +811,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	# The rotation of Hyperion is chaotic; we don't attempt to model
 	# the rotation exactly, but instead use non-zero precession rate to
 	# make the rotation appear somewhat irregular.
+
 	Obliquity       	 61    # pole at time of 
 	EquatorAscendingNode	145    # Voyager 2 encounter
 	RotationPeriod  	120    # 5-day best-fit rotation
@@ -1080,12 +1100,37 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	}
 }
 
+"Larissa" "Sol/Neptune"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"larissa.3ds"
+	Radius		100 # maximum semi-axis
+	MeshCenter [ 4.564 -0.126 0.302 ]
+
+	EllipticalOrbit
+	{
+	Period		0.554654
+	SemiMajorAxis	73548
+	Eccentricity	0.0014
+	Inclination	0.748	#
+	AscendingNode	321.000	#
+	ArgOfPericenter	227.893	# J2000.0
+	MeanAnomaly     146.131	#
+	}
+
+	Obliquity              	  0.1
+	EquatorAscendingNode 	349.1
+	RotationOffset          165.8
+
+	Albedo 0.056
+}
+
 "Proteus" "Sol/Neptune"
 {
 	Mesh "proteus.3ds"
 	Texture "proteus.*" # Phil Stooke
 	Radius    219 # maximum semi-axis
-	MeshCenter [ 4.146 -0.022 -5.153 ]
+	MeshCenter [ -4.146 -0.022 5.153 ]
 
 	EllipticalOrbit
 	{
@@ -1099,7 +1144,6 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	MeanAnomaly	206.367   # at epoch 
 	}
 
-	Orientation	[ 180 0 1 0 ]
 	Obliquity              	  0.6
 	EquatorAscendingNode 	331.0
 	RotationOffset       	 97.8
@@ -1327,7 +1371,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	Albedo 0.159 
 } 
 
-"Juno" "Sol" 
+"Juno" "Sol"
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -1358,7 +1402,9 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	Mesh   "vesta.3ds" 
 	Texture "asteroid.jpg" 
 	Radius    279 # maximum semi-axis
-	MeshCenter [ -0.77 3.424 0.554 ]
+	MeshCenter [ 0.77 3.424 -0.554 ]
+
+	InfoURL "http://www.solarviews.com/eng/vesta.htm"
 
 	EllipticalOrbit 
 	{ 
@@ -1372,7 +1418,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	MeanAnomaly     104.980 
 	} 
 
-	Orientation          [ 180 0 1 0 ]
 	RotationPeriod         5.342 
 	RotationEpoch    2450124.90833 # 1996 May 11 09:48UT 
 	Obliquity             40 
@@ -1393,7 +1438,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
 	Radius    9.1 # maximum semi-axis
-	MeshCenter [ -1.540 -0.064 0.118 ]
+	MeshCenter [ 1.540 -0.064 -0.118 ]
 
 	EllipticalOrbit
 	{
@@ -1407,7 +1452,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	MeanAnomaly     280.769206 # at epoch
 	}
 
-	Orientation          [ 180 0 1 0 ]
 	RotationPeriod         7.042073
 	Obliquity             69.28
 	EquatorAscendingNode 109.59
@@ -1423,7 +1467,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	#Texture "asteroid.jpg"
 	Texture "idamosaic.*" # Phil Stooke
 	Radius    28.9 # maximum semi-axis
-	MeshCenter [ 1.424 0.417 -0.115 ]
+	MeshCenter [ -1.424 -0.417 0.115 ]
 
 	EllipticalOrbit
 	{
@@ -1437,7 +1481,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly     131.594945 # at epoch
 	}
 
-	Orientation          [ 180 0 0 1 ] # retrograde rotation
 	RotationPeriod         4.633632
 	Obliquity	     156.96
 	EquatorAscendingNode 352.77
@@ -1450,7 +1493,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 {
 	# Data for Dactyl taken from: 
 	# Petit et al.: The Long-Term Dynamics of Dactyl's Orbit
-	# (Icarus 1997: 130; 177-197)
+	# (Icarus 1997: 130; 177-197) - linked in the InfoURL
 
 	InfoURL "http://www.lpl.arizona.edu/~hurfordt/research/papers/Icarus130.pdf"
 
@@ -1487,7 +1530,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
 	Radius 16.3 # maximum semi-axis
-	MeshCenter [ 1.262 0.168 0.164 ]
+	MeshCenter [ -1.262 0.168 -0.164 ]
 
 	EllipticalOrbit
 	{
@@ -1501,7 +1544,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	MeanAnomaly     208.403434 # at epoch
 	}
 
-	Orientation          [ 180 0 1 0 ]
 	RotationPeriod         5.270
 	Obliquity             78.70
 	EquatorAscendingNode 107.23
@@ -1520,7 +1562,10 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  2.3
+	Radius  2.3 # maximum semi-axis
+	MeshCenter [ 0.0313 0.2171 0.0064 ]
+
+	InfoURL "http://echo.jpl.nasa.gov/asteroids/4179_Toutatis/toutatis.html"
 
 	EllipticalOrbit
 	{
@@ -1534,7 +1579,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly      86.28120
 	}
 
-	Orientation     [ -90 1 0 0 ]
 	RotationPeriod  129.6         # 5.41 days
 	Obliquity       145
 	PrecessionRate  -48.98        # 7.35 day period
@@ -1550,9 +1594,10 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  2.555
+	Radius  2.53 # maximum semi-axis
+	MeshCenter [ 0.154 -0.002 -0.026 ]
 
-	InfoURL "http://www-personal.engin.umich.edu/~scheeres/reprints/Icarus_geographos.pdf"
+	InfoURL "http://www.solarviews.com/eng/geograph.htm"
 
 	EllipticalOrbit
 	{
@@ -1566,7 +1611,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly     180.595
 	}
 
-	Orientation          [ 90 1 0 0 ] 
 	RotationPeriod         5.223 
 	Obliquity            136 
 	EquatorAscendingNode 145 
@@ -1582,9 +1626,10 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  109
+	Radius  110 # maximum semi-axis
+	MeshCenter [ -3.049 2.379 1.429 ]
 
-	InfoURL "http://www-personal.engin.umich.edu/~scheeres/reprints/Science_kleopatra.pdf" 
+	InfoURL "http://echo.jpl.nasa.gov/~ostro/kle/index.html" 
 
 	EllipticalOrbit
 	{
@@ -1598,7 +1643,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly     225.804
 	}
 
-	Orientation          [ 90 1 0 0 ] 
 	RotationPeriod         5.385
 	Obliquity             63 
 	EquatorAscendingNode 162    
@@ -1616,7 +1660,10 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  0.015
+	Radius  0.015 # maximum semi-axis
+	MeshCenter [ -0.000718 -0.000099 0.000556 ]
+
+	InfoURL "http://echo.jpl.nasa.gov/~ostro/KY26/index.html"
 
 	EllipticalOrbit
 	{
@@ -1630,7 +1677,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly     356.6879717
 	}
 
-	Orientation    [ 90 1 0 0 ]
 	RotationPeriod 0.178
 
 	Albedo 0.15
@@ -1645,7 +1691,8 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  0.55
+	Radius  0.55 # maximum semi-axis
+	MeshCenter [ -0.00936 -0.00610 0.00289 ]
 
 	InfoURL "http://echo.jpl.nasa.gov/~ostro/bacchus/index.html" 
 
@@ -1661,7 +1708,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly     229.8627955
 	}
 
-	Orientation          [ 90 1 0 0 ] 
 	RotationPeriod        14.90 
 	Obliquity            116 
 	EquatorAscendingNode 114 
@@ -1677,9 +1723,10 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  0.34
+	Radius  0.34 # maximum semi-axis
+	MeshCenter [ -0.0289 -0.0111 -0.0331 ]
 
-	InfoURL "http://www2.crl.go.jp/ka/radioastro/people/koyama/golevka.pdf" 
+	InfoURL "http://echo.jpl.nasa.gov/~ostro/gol/index.html" 
 
 	EllipticalOrbit
 	{
@@ -1693,7 +1740,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly     159.8983670
 	}
 
-	Orientation          [ 90 1 0 0 ] 
 	RotationPeriod         6.0289 
 	Obliquity            135 
 	EquatorAscendingNode 292 
@@ -1709,7 +1755,10 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  2.0
+	Radius  0.81 # maximum semi-axis
+	MeshCenter [ -0.0456 -0.0347 -0.0178 ]
+
+	InfoURL "http://echo.jpl.nasa.gov/asteroids/4769_Castalia/cast01.html"
 
 	EllipticalOrbit
 	{
@@ -1723,7 +1772,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly     152.5186007
 	}
 
-	Orientation          [ 90 1 0 0 ] 
 	RotationPeriod         4.095 
 	Obliquity            146 
 	EquatorAscendingNode 325 
@@ -1736,9 +1784,10 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 "Halley" "Sol" 
 { 
 	Class "comet" 
-	Mesh "borrelly.cms" #similar 2:1 proportions to Borrelly 
+	Mesh "halley.3ds"
 	Texture "asteroid.jpg" 
-	Radius 7.5 
+	Radius 7.6 # maximum semi-axis
+	MeshCenter [ -0.338 1.303 0.230 ]
 
 	EllipticalOrbit 
 	{ 
@@ -1756,7 +1805,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	# this version from "The New Solar System", 4th Edition; Eds.
 	# JK Beatty, CC Petersen, A Chaikin 
 
-	Orientation    [ 90 0 0 1 ] # rotates around long axis 
 	RotationPeriod 170          # 7.1 day axial rotation period 
 	Obliquity       66    
 	PrecessionRate  97          # 3.7 day precession period 
@@ -1771,7 +1819,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	Texture "asteroid.jpg" 
 	Radius 2.2 
 
-	InfoURL "http://www.lpi.usra.edu/meetings/lpsc2002/pdf/1256.pdf" 
+	InfoURL "http://www.solarviews.com/eng/borrelly.htm"
 
 	EllipticalOrbit 
 	{ 
@@ -1851,8 +1899,6 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
 	Radius 450 
-
-	InfoURL "http://www.ifa.hawaii.edu/faculty/jewitt/papers/VARUNA2/JS2002.pdf" 
 
 	EllipticalOrbit 
 	{ 
