@@ -818,7 +818,7 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
         return getCompletion(s, solarSystems, nSolarSystems);
 
     string base(s, 0, pos);
-    Selection sel = find(base, solarSystems, nSolarSystems);
+    Selection sel = findPath(base, solarSystems, nSolarSystems);
 
     if (sel.empty())
         return completion;
