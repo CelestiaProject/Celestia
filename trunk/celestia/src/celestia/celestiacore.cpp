@@ -154,6 +154,23 @@ CelestiaCore::~CelestiaCore()
     delete execEnv;
 }
 
+void CelestiaCore::readFavoritesFile()
+{
+    // Set up favorites list
+    if (config->favoritesFile != "")
+    {
+        ifstream in(config->favoritesFile.c_str(), ios::in);
+
+        if (in.good())
+        {
+            favorites = ReadFavoritesList(in);
+            if (favorites == NULL)
+            {
+                warning("Error reading favorites file.");
+            }
+        }
+    }
+}
 
 void CelestiaCore::writeFavoritesFile()
 {
@@ -1423,20 +1440,7 @@ bool CelestiaCore::initSimulation()
         return false;
     }
 
-    // Set up favorites list
-    if (config->favoritesFile != "")
-    {
-        ifstream in(config->favoritesFile.c_str(), ios::in);
-
-        if (in.good())
-        {
-            favorites = ReadFavoritesList(in);
-            if (favorites == NULL)
-            {
-                warning("Error reading favorites file.");
-            }
-        }
-    }
+    readFavoritesFile();
 
     // If we couldn't read the favorites list from a file, allocate
     // an empty list.
