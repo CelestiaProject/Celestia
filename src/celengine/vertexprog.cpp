@@ -29,6 +29,7 @@ unsigned int vp::ringIllum = 0;
 unsigned int vp::ringShadow = 0;
 unsigned int vp::cometTail = 0;
 unsigned int vp::nightLights = 0;
+unsigned int vp::glossMap = 0;
 
 
 class VertexProcessorNV : public VertexProcessor
@@ -227,6 +228,8 @@ VertexProcessor* vp::initARB()
     if (!LoadARBVertexProgram("shaders/ringshadow_arb.vp", ringShadow))
         return NULL;
     if (!LoadARBVertexProgram("shaders/night_arb.vp", nightLights))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/glossmap_arb.vp", glossMap))
         return NULL;
     cout << "All ARB vertex programs loaded successfully.\n";
 
