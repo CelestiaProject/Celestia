@@ -20,5 +20,14 @@ int main(int argc, char* argv[])
 
     cout << "Testing parser . . .\n";
 
+    while (scanner.nextToken() != Scanner::TokenEnd)
+    {
+        scanner.pushBack();
+        if (parser.parseStatement())
+            cout << "Valid\n";
+        else
+            cout << "Invalid\n";
+    }
+
     return 0;
 }

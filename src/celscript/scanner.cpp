@@ -149,6 +149,14 @@ Scanner::TokenType Scanner::nextToken()
             {
                 state = EqualState;
             }
+            else if (nextChar == '<')
+            {
+                state = LessState;
+            }
+            else if (nextChar == '>')
+            {
+                state = GreaterState;
+            }
             else if (nextChar == '|')
             {
                 newToken = TokenBar;
@@ -173,8 +181,19 @@ Scanner::TokenType Scanner::nextToken()
             }
             else
             {
-                newToken = TokenName;
-                haveValidName = true;
+                if (textToken == "for")
+                    newToken = KeywordFor;
+                else if (textToken == "while")
+                    newToken = KeywordWhile;
+                else if (textToken == "if")
+                    newToken = KeywordIf;
+                else if (textToken == "else")
+                    newToken = KeywordElse;
+                else
+                {
+                    newToken = TokenName;
+                    haveValidName = true;
+                }
             }
             break;
 
@@ -252,6 +271,34 @@ Scanner::TokenType Scanner::nextToken()
             else
             {
                 newToken = TokenAssign;
+                state = StartState;
+            }
+            break;
+
+        case LessState:
+            if (nextChar == '=')
+            {
+                newToken = TokenLesserEqual;
+                nextChar = readChar();
+                state = StartState;
+            }
+            else
+            {
+                newToken = TokenLesser;
+                state = StartState;
+            }
+            break;
+
+        case GreaterState:
+            if (nextChar == '=')
+            {
+                newToken = TokenGreaterEqual;
+                nextChar = readChar();
+                state = StartState;
+            }
+            else
+            {
+                newToken = TokenGreater;
                 state = StartState;
             }
             break;
