@@ -1114,24 +1114,6 @@ Texture* CreatePNGTexture(const string& filename)
 }
 
 
-#ifdef WORDS_BIGENDIAN
-
-static int readInt(ifstream& in)
-{
-    unsigned char b[4];
-    in.read(reinterpret_cast<char*>(b), 4);
-    return reinterpret_cast<int>(b);
-}
-
-static short readShort(ifstream& in)
-{
-    unsigned char b[2];
-    in.read(reinterpret_cast<char*>(b), 2);
-    return reinterpret_cast<short>(b);
-}
-
-#else
-
 static int readInt(ifstream& in)
 {
     unsigned char b[4];
@@ -1147,7 +1129,6 @@ static short readShort(ifstream& in)
     return ((short) b[1] << 8) + (short) b[0];
 }
 
-#endif
 
 static Texture* CreateBMPTexture(ifstream& in)
 {
