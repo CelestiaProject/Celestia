@@ -1,0 +1,56 @@
+!!ARBvp1.0
+
+# Vertex program used for applying ring shadow textures.  Ray cast from a
+# point on the object in the direction of the sun (assumed to be an
+# infinitely distant light source here.)  Compute the intersection of
+# the ray with the ring plane.  Then use the distance of the intersection
+# point from the planet's center to compute a texture coordinate.  Vertex
+# programs are cool!
+
+ATTRIB iPos          = vertex.position;
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir      = program.env[0];
+PARAM  diffuse       = program.env[2];
+PARAM  ringSize      = program.env[10];
+PARAM  rcpSunY       = program.env[11];
+PARAM  zero          = 0;
+PARAM  half          = 0.5;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oTex0         = result.texcoord[0];
+
+TEMP   s;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Scale by oblateness . . . off for now because it makes Saturn look
+# weird, even though I think it's more realistic.
+# MUL   p, iPos, scale;
+
+MUL   s.x, iPos.y, -rcpSunY.x;
+MAX   s.x, s.x, zero;        # Clamp to zero--don't trace both directions
+MAD   s, s.x, lightDir, iPos;
+
+# Compute the distance from the center.  The s coordinate is the distance
+# from the center, modified by the ring width and inner radius
+DP3   s.x, s, s;
+RSQ   s.x, s.x;
+RCP   s.x, s.x;
+
+# Scale and bias by ring width and radius
+MUL   s.x, s.x, ringSize.y;
+ADD   s.x, s.x, -ringSize.x;
+
+# Now we have our s coordinate . . .
+MOV   oTex0.x, s.x;
+# The t coordinate is always 0.5
+MOV   oTex0.y, half;
+
+MOV   oColor, diffuse;
+
+END
+
