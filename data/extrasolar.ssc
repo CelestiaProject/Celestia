@@ -396,27 +396,6 @@ Planets [
 }
 
 
-# HD 46735 system
-#
-# M sin i = 0.249 Jupiters
-"HD 46735"
-{
-Planets [
-{
-	Name "b"
-	Texture "gasgiant.jpg"
-	Mass      80
-	Radius    49000
-
-	# orbital data
-	Period          0.00828
-	SemiMajorAxis   0.041
-	Eccentricity    0.04
-}
-]
-}
-
-
 # BD -10 3166 system
 #
 # M sin i = 0.48 Jupiters
