@@ -31,11 +31,14 @@ class Marker
     void setColor(Color);
     float getSize() const;
     void setSize(float);
+    int getPriority() const;
+    void setPriority(int);
 
  private:
     Selection obj;
     float size;
     Color color;
+    int priority;
 };
 
 typedef std::vector<Marker> MarkerList;
