@@ -112,6 +112,8 @@ astro::Date newTime(0.0);
 static int lastX = 0;
 static int lastY = 0;
 
+static char* installPath = NULL;
+
 HWND hLocationTree;
 char locationName[33];
 
@@ -254,12 +256,14 @@ CelestiaDropTarget::DragLeave(void)
     return S_OK;
 }
 
+
 STDMETHODIMP
 CelestiaDropTarget::Drop(IDataObject* pDataObject,
                          DWORD grfKeyState,
                          POINTL pt,
                          DWORD* pdwEffect)
 {
+    
     IEnumFORMATETC* enumFormat = NULL;
     HRESULT hr = pDataObject->EnumFormatEtc(DATADIR_GET, &enumFormat);
     if (FAILED(hr) || enumFormat == NULL)
@@ -269,7 +273,9 @@ CelestiaDropTarget::Drop(IDataObject* pDataObject,
     ULONG nFetched;
     while (enumFormat->Next(1, &format, &nFetched) == S_OK)
     {
-        if (format.cfFormat == CF_TEXT)
+        char buf[512];
+        if (GetClipboardFormatName(format.cfFormat, buf, 511) != 0 &&
+            !strcmp(buf, "UniformResourceLocator"))
         {
             STGMEDIUM medium;
             if (pDataObject->GetData(&format, &medium) == S_OK)
@@ -280,6 +286,7 @@ CelestiaDropTarget::Drop(IDataObject* pDataObject,
                     Url url(s, appCore);
                     GlobalUnlock(medium.hGlobal);
                     url.goTo();
+                    break;
                 }
             }
         }
@@ -289,7 +296,6 @@ CelestiaDropTarget::Drop(IDataObject* pDataObject,
 
     return E_FAIL;
 }
-
 
 
 static void acronymify(char* words, int length)
@@ -2554,6 +2560,24 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     appCore->setAlerter(new WinAlerter());
+
+#if 0
+    // See if we can find celestia.cfg in the current directory; if not, try 
+    // switching to the install directory and looking there.
+    {
+        ifstream test("celestia.cfg");
+        if (test.good())
+        {
+            test.close();
+        }
+        else
+        {
+            installPath = "c:\\celestia\\celestia";
+            if (installPath != NULL)
+                SetCurrentDirectory(installPath);
+        }
+    }
+#endif
 
     if (!appCore->initSimulation())
     {
