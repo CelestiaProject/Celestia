@@ -571,7 +571,6 @@ bool StarDatabase::load(istream& in)
                         next++;
                     }
                     names->add(catalogNumber, name.substr(startPos, length));
-                    cout << "Star name: " << name.substr(startPos, length) << '\n';
                     startPos = next;
                 }
             }
