@@ -8,11 +8,14 @@
 // of the License, or (at your option) any later version.
 
 #include <cmath>
+#include <iostream>
 #include "gl.h"
 #include "glext.h"
 #include "mathlib.h"
 #include "vecmath.h"
 #include "lodspheremesh.h"
+
+using namespace std;
 
 
 static bool trigArraysInitialized = false;
@@ -43,9 +46,9 @@ static void InitTrigArrays()
 
     for (i = 0; i < phiDivisions; i++)
     {
-        double theta = ((double) i / (double) thetaDivisions - 0.5) * PI;
-        sinTheta[i] = (float) sin(theta);
-        cosTheta[i] = (float) cos(theta);
+        double phi = ((double) i / (double) phiDivisions - 0.5) * PI;
+        sinPhi[i] = (float) sin(phi);
+        cosPhi[i] = (float) cos(phi);
     }
 
     trigArraysInitialized = true;
@@ -97,8 +100,13 @@ void LODSphereMesh::render(unsigned int attributes)
     int lod = 64;
     int step = maxDivisions / lod;
     int phi0 = 0;
+    int thetaExtent = maxDivisions;
+    int phiExtent = thetaExtent / 2;
 
     // Set up the mesh vertices 
+    int nRings = phiExtent / step;
+    int nSlices = thetaExtent / step;
+
     int n2 = 0;
     for (int i = 0; i < nRings - 1; i++)
     {
@@ -144,7 +152,7 @@ void LODSphereMesh::render(unsigned int attributes)
     }
 
     // Now, render the sphere section by section.
-    renderSection(0, 0, maxDivisions, step, attributes);
+    renderSection(0, 0, thetaExtent, step, attributes);
 
     if (tangents != NULL && ((attributes & Tangents) != 0))
     {
@@ -191,8 +199,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             normals[n3]       = x;
             normals[n3 + 1]   = y;
             normals[n3 + 2]   = z;
-            texCoords[n2]     = theta * du;
-            texCoords[n2 + 1] = phi * dv;
+            texCoords[n2]     = 1.0f - theta * du;
+            texCoords[n2 + 1] = 1.0f - phi * dv;
 
             // Compute the tangent--required for bump mapping
             float tx = sphi * stheta;
@@ -212,8 +220,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
     for (int i = 0; i < nRings; i++)
     {
         glDrawElements(GL_QUAD_STRIP,
-                       nSlices * 2,
+                       (nSlices + 1) * 2,
                        GL_UNSIGNED_SHORT,
-                       indices + nSlices * 2 * i);
+                       indices + (nSlices + 1) * 2 * i);
     }
 }
