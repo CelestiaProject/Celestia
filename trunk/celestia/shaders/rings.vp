@@ -1,0 +1,62 @@
+!!VP1.0
+
+# Compute ring illumination.  Assumes rings made of spherical particles,
+# and no occlusion or shadowing between ring particles.  We also compute the
+# texture coordinates for the projected shadow of a planet.
+
+# c[0]..c[3] contains the concatenation of the modelview and projection matrices.
+# c[4]..c[7] contains the inverse transpose of the modelview
+# c[15] contains the eye position in object space
+# c[16] contains the light direction in object space
+# c[17] contains H, the normalized sum of the eye and light direction
+# c[20] contains the object color * light color
+# c[32] contains the ambient light color
+# c[33] contains the haze color
+# c[34] contains the specular color * light color
+# c[41] and c[42] contain the shadow projection matrix
+# c[40] contains (0, 1, 0, specPower)
+# c[90] contains (0, 0.5, 1, 0)
+# v[OPOS] contains the per-vertex position
+# v[NRML] contains the per-vertex normal
+# v[TEX0] contains the per-vertex texture coordinate 0
+# o[HPOS] output register for homogeneous position
+# o[TEX0] output register for texture coordinate 0
+# o[COL0] output register for primary color
+# R0...R11 temporary registers
+
+# Transform the vertex by the modelview matrix
+DP4   R1.x, c[0], v[OPOS];
+DP4   R1.y, c[1], v[OPOS];
+DP4   R1.z, c[2], v[OPOS];
+DP4   R1.w, c[3], v[OPOS];
+
+# Get the vector from the eye to the vertex
+ADD   R4, c[15], -v[OPOS];
+
+# Normalize it
+DP3   R0.w, R4, R4;
+RSQ   R0.w, R0.w;
+MUL   R4.xyz, R4, R0.w;
+
+# Compute the illumination
+DP3   R2.x, R4, c[16];
+ADD   R2.x, R2.x, c[90].z;
+MUL   R2.x, R2.x, c[90].y;
+
+# Output the primary color
+MOV   R0, c[32];
+MAD   o[COL0], c[20], R2.xxxx, R0;
+
+# Output the texture
+MOV   o[TEX0], v[TEX0];
+# MOV   o[TEX1], v[TEX1];
+
+# The second texture is the shadow; we need to compute the
+# it from the vertex coordinate.
+DP4   o[TEX1].x, c[41], v[OPOS];
+DP4   o[TEX1].y, c[42], v[OPOS];
+
+# Output the vertex
+MOV   o[HPOS], R1;
+
+END
