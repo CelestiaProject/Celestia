@@ -569,6 +569,8 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowBoundaries;
             else if (compareIgnoringCase(name, "markers") == 0)
                 flags |= Renderer::ShowMarkers;
+            else if (compareIgnoringCase(name, "automag") == 0)
+                flags |= Renderer::ShowAutoMag;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
