@@ -391,7 +391,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
     case WM_DESTROY:
         if (browser != NULL && browser->parent != NULL)
         {
-            SendMessage(browser->parent, WM_COMMAND, ID_CLOSE_STARBROWSER,
+            SendMessage(browser->parent, WM_COMMAND, IDCLOSE,
                         reinterpret_cast<LPARAM>(browser));
         }
         break;
@@ -403,7 +403,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
         case IDCANCEL:
             if (browser != NULL && browser->parent != NULL)
             {
-                SendMessage(browser->parent, WM_COMMAND, ID_CLOSE_STARBROWSER,
+                SendMessage(browser->parent, WM_COMMAND, IDCLOSE,
                             reinterpret_cast<LPARAM>(browser));
             }
             EndDialog(hDlg, 0);
