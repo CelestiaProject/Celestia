@@ -73,10 +73,14 @@ template<class T> void binwrite(ostream& out, T x)
 
 void HipparcosStar::write(ostream& out)
 {
+#if 0
     if (HDCatalogNumber != NullCatalogNumber)
         binwrite(out, HDCatalogNumber);
     else
         binwrite(out, HIPCatalogNumber | 0x10000000);
+#endif
+    binwrite(out, HIPCatalogNumber);
+    binwrite(out, HDCatalogNumber);
     binwrite(out, ascension);
     binwrite(out, declination);
     binwrite(out, parallax);
@@ -124,22 +128,34 @@ public:
     HipparcosComponent();
 
     HipparcosStar* star;
+    char componentID;
+    char refComponentID;
+    float ascension;
+    float declination;
     float appMag;
     float bMag;
     float vMag;
-    char componentID;
     bool hasBV;
+    float positionAngle;
+    float separation;
 };
 
 HipparcosComponent::HipparcosComponent() :
     star(NULL),
     componentID('A'),
-    hasBV(false)
+    refComponentID('A'),
+    appMag(0.0f),
+    bMag(0.0f),
+    vMag(0.0f),
+    hasBV(false),
+    positionAngle(0.0f),
+    separation(0.0f)
 {
 }
 
 
 vector<HipparcosStar> stars;
+vector<HipparcosStar> companions;
 vector<HipparcosComponent> components;
 vector<HipparcosStar*> starIndex;
 
@@ -290,6 +306,7 @@ HipparcosStar TheSun()
     HipparcosStar star;
 
     star.HDCatalogNumber = 0;
+    star.HIPCatalogNumber = 0;
     star.ascension = 0.0f;
     star.declination = 0.0f;
     star.parallax = 1000000.0f;
@@ -328,26 +345,39 @@ bool ReadStarRecord(istream& in)
         // cout << "Error reading parallax.\n";
     }
 
-    int hh = 0;
-    int mm = 0;
-    float seconds;
-    if (sscanf(buf + 17, "%d %d %f", &hh, &mm, &seconds) != 3)
+    bool coordReadError = false;
+    if (sscanf(buf + 51, "%f", &star.ascension) != 1)
+        coordReadError = true;
+    if (sscanf(buf + 64, "%f", &star.declination) != 1)
+        coordReadError = true;
+    star.ascension = (float) (star.ascension * 24.0 / 360.0);
+
+    // Read the lower resolution coordinates in hhmmss form if we failed
+    // to read the coordinates in degrees.  Not sure why the high resolution
+    // coordinates are occasionally missing . . .
+    if (coordReadError)
     {
-        cout << "Error reading ascension.\n";
-        return false;
-    }
-    star.ascension = hh + (float) mm / 60.0f + (float) seconds / 3600.0f;
+        int hh = 0;
+        int mm = 0;
+        float seconds;
+        if (sscanf(buf + 17, "%d %d %f", &hh, &mm, &seconds) != 3)
+        {
+            cout << "Error reading ascension.\n";
+            return false;
+        }
+        star.ascension = hh + (float) mm / 60.0f + (float) seconds / 3600.0f;
     
-    char decSign;
-    int deg;
-    if (sscanf(buf + 29, "%c%d %d %f", &decSign, &deg, &mm, &seconds) != 4)
-    {
-        cout << "Error reading declination.\n";
-        return false;
+        char decSign;
+        int deg;
+        if (sscanf(buf + 29, "%c%d %d %f", &decSign, &deg, &mm, &seconds) != 4)
+        {
+            cout << "Error reading declination.\n";
+            return false;
+        }
+        star.declination = deg + (float) mm / 60.0f + (float) seconds / 3600.0f;
+        if (decSign == '-')
+            star.declination = -star.declination;
     }
-    star.declination = deg + (float) mm / 60.0f + (float) seconds / 3600.0f;
-    if (decSign == '-')
-        star.declination = -star.declination;
 
     char* spectralType = buf + 435;
     spectralType[12] = '\0';
@@ -355,6 +385,7 @@ bool ReadStarRecord(istream& in)
 
     int asc = 0;
     int dec = 0;
+    char decSign = ' ';
     if (sscanf(buf + 327, "%d%c%d", &asc, &decSign, &dec) == 3)
     {
         if (decSign == '-')
@@ -410,6 +441,60 @@ bool ReadComponentRecord(istream& in)
         return false;
     }
 
+    if (sscanf(buf + 175, "%c", &component.refComponentID) != 1)
+    {
+        cout << "Error reading reference component.\n";
+        return false;
+    }
+    if (component.refComponentID == ' ')
+        component.refComponentID = component.componentID;
+
+    // Read astrometric information
+    if (sscanf(buf + 88, "%f", &component.ascension) != 1)
+    {
+        cout << "Missing ascension for component.\n";
+        return false;
+    }
+    component.ascension = (float) (component.ascension * 24.0 / 360.0);
+
+    if (sscanf(buf + 101, "%f", &component.declination) != 1)
+    {
+        cout << "Missing declination for component.\n";
+        return false;
+    }
+
+    // Read photometric information
+    if (sscanf(buf + 49, "%f", &component.appMag) != 1)
+    {
+        cout << "Missing magnitude for component.\n";
+        return false;
+    }
+
+    // vMag and bMag may be necessary to guess the spectral type
+    if (sscanf(buf + 62, "%f", &component.bMag) != 1 ||
+        sscanf(buf + 69, "%f", &component.vMag) != 1)
+    {
+        component.bMag = component.vMag = component.appMag;
+    }
+    else
+    {
+        component.hasBV = true;
+    }
+
+    if (component.componentID != component.refComponentID)
+    {
+        if (sscanf(buf + 177, "%f", &component.positionAngle) != 1)
+        {
+            cout << "Missing position angle for component.\n";
+            return false;
+        }
+        if (sscanf(buf + 185, "%f", &component.separation) != 1)
+        {
+            cout << "Missing separation for component.\n";
+            return false;
+        }
+    }
+
     components.insert(components.end(), component);
 
     return true;
@@ -450,6 +535,59 @@ void BuildMultistarSystemCatalog()
 }
 
 
+StellarClass guessSpectralType(float colorIndex, float absMag)
+{
+    StellarClass::SpectralClass specClass = StellarClass::Spectral_Unknown;
+    float subclass = 0.0f;
+
+    if (colorIndex < -0.25f)
+    {
+        specClass = StellarClass::Spectral_O;
+        subclass = (colorIndex + 0.5f) / 0.25f;
+    }
+    else if (colorIndex < 0.0f)
+    {
+        specClass = StellarClass::Spectral_B;
+        subclass = (colorIndex + 0.25f) / 0.25f;
+    }
+    else if (colorIndex < 0.25f)
+    {
+        specClass = StellarClass::Spectral_A;
+        subclass = (colorIndex - 0.0f) / 0.25f;
+    }
+    else if (colorIndex < 0.6f)
+    {
+        specClass = StellarClass::Spectral_F;
+        subclass = (colorIndex - 0.25f) / 0.35f;
+    }
+    else if (colorIndex < 0.85f)
+    {
+        specClass = StellarClass::Spectral_G;
+        subclass = (colorIndex - 0.6f) / 0.25f;
+    }
+    else if (colorIndex < 1.4f)
+    {
+        specClass = StellarClass::Spectral_K;
+        subclass = (colorIndex - 0.85f) / 0.55f;
+    }
+    else
+    {
+        specClass = StellarClass::Spectral_M;
+        subclass = (colorIndex - 1.4f) / 1.0f;
+    }
+
+    if (subclass < 0.0f)
+        subclass = 0.0f;
+    else if (subclass > 1.0f)
+        subclass = 1.0f;
+
+    return StellarClass(StellarClass::NormalStar,
+                        specClass,
+                        (unsigned int) (subclass * 9.99f),
+                        StellarClass::Lum_V);
+}
+
+
 void ConstrainComponentParallaxes()
 {
     for (MultistarSystemCatalog::iterator iter = starSystems.begin();
@@ -461,7 +599,7 @@ void ConstrainComponentParallaxes()
             for (int i = 1; i < multiSystem->nStars; i++)
                 multiSystem->stars[i]->parallax = multiSystem->stars[0]->parallax;
         }
-
+#if 0
         if (multiSystem->nStars > 2)
         {
             cout << multiSystem->nStars << ": ";
@@ -471,6 +609,7 @@ void ConstrainComponentParallaxes()
                 cout << "HIP " << multiSystem->stars[0]->HIPCatalogNumber;
             cout << '\n';
         }
+#endif
     }
 }
 
@@ -487,6 +626,47 @@ void CorrectErrors()
             iter->stellarClass = StellarClass(StellarClass::NormalStar,
                                               StellarClass::Spectral_G, 0,
                                               StellarClass::Lum_III);
+        }
+    }
+}
+
+
+// Process the vector of star components and insert those that are companions
+// of stars in the primary database into the companions vector.
+void CreateCompanionList()
+{
+    for (vector<HipparcosComponent>::iterator iter = components.begin();
+         iter != components.end(); iter++)
+    {
+        // Don't insert the reference component, as this star should already
+        // be in the primary database.
+        if (iter->componentID != iter->refComponentID)
+        {
+            int componentNumber = iter->componentID - 'A';
+            if (componentNumber > 0 && componentNumber < 8)
+            {
+                HipparcosStar star;
+
+                star.HDCatalogNumber = NullCatalogNumber;
+                star.HIPCatalogNumber = iter->star->HIPCatalogNumber | 
+                    (componentNumber << 25);
+
+                star.ascension = iter->ascension;
+                star.declination = iter->declination;
+                star.parallax = iter->star->parallax;
+                star.appMag = iter->appMag;
+                if (iter->hasBV)
+                    star.stellarClass = guessSpectralType(iter->bMag - iter->vMag, 0.0f);
+                else
+                    star.stellarClass = StellarClass(StellarClass::NormalStar,
+                                                     StellarClass::Spectral_Unknown,
+                                                     0, StellarClass::Lum_V);
+
+                star.CCDMIdentifier = iter->star->CCDMIdentifier;
+                star.parallaxError = iter->star->parallaxError;
+
+                companions.insert(companions.end(), star);
+            }
         }
     }
 }
@@ -547,6 +727,10 @@ int main(int argc, char* argv[])
         }
 
         HIPCatalogComparePredicate pred;
+
+        // It may not even be necessary to sort the records, if the
+        // HIPPARCOS catalog is strictly ordered by catalog number.  I'm not
+        // sure about this however,
         random_shuffle(starIndex.begin(), starIndex.end());
         sort(starIndex.begin(), starIndex.end(), pred);
     }
@@ -569,6 +753,34 @@ int main(int argc, char* argv[])
     }
     cout << "Read " << components.size() << " components.\n";
 
+    {    
+        int aComp = 0, bComp = 0, cComp = 0, dComp = 0, eComp = 0, otherComp = 0;
+        int bvComp = 0;
+        for (int i = 0; i < components.size(); i++)
+        {
+            switch (components[i].componentID)
+            {
+            case 'A':
+                aComp++; break;
+            case 'B':
+                bComp++; break;
+            case 'C':
+                cComp++; break;
+            case 'D':
+                dComp++; break;
+            case 'E':
+                eComp++; break;
+            default:
+                otherComp++; break;
+            }
+            if (components[i].hasBV && components[i].componentID != 'A')
+                bvComp++;
+        }
+        
+        cout << "A:" << aComp << "  B:" << bComp << "  C:" << cComp << "  D:" << dComp << "  E:" << eComp << '\n';
+        cout << "Components with B-V mag: " << bvComp << '\n';
+    }
+
     cout << "Building catalog of multiple star systems.\n";
     BuildMultistarSystemCatalog();
     
@@ -579,7 +791,11 @@ int main(int argc, char* argv[])
 
     CorrectErrors();
 
-    // ShowStarsWithComponents();
+    // CreateCompanionList();
+    cout << "Companion stars: " << companions.size() << '\n';
+    cout << "Total stars: " << stars.size() + companions.size() << '\n';
+
+    ShowStarsWithComponents();
 
     char* outputFile = "stars.dat";
     if (argc > 1)
@@ -593,12 +809,48 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    binwrite(out, stars.size());
-    for (vector<HipparcosStar>::iterator iter = stars.begin();
-         iter != stars.end(); iter++)
+    binwrite(out, stars.size() + companions.size());
     {
-        iter->write(out);
+        vector<HipparcosStar>::iterator iter;
+        for (iter = stars.begin(); iter != stars.end(); iter++)
+            iter->write(out);
+        for (iter = companions.begin(); iter != companions.end(); iter++)
+            iter->write(out);
     }
+
+#if 0
+    char* hdOutputFile = "hdxref.dat";
+    
+    cout << "Writing out HD cross reference to " << hdOutputFile << '\n';
+    ofstream hdout(hdOutputFile, ios::out | ios::binary);
+    if (!out.good())
+    {
+        cout << "Error opening " << hdOutputFile << '\n';
+        exit(1);
+    }
+
+    {
+        int nHD = 0;
+        vector<HipparcosStar>::iterator iter;
+        for (iter = stars.begin(); iter != stars.end(); iter++)
+        {
+            if (iter->HDCatalogNumber != NullCatalogNumber)
+                nHD++;
+        }
+        binwrite(hdout, nHD);
+
+        cout << nHD << " stars have HD numbers.\n";
+        
+        for (iter = stars.begin(); iter != stars.end(); iter++)
+        {
+            if (iter->HDCatalogNumber != NullCatalogNumber)
+            {
+                binwrite(hdout, iter->HDCatalogNumber);
+                binwrite(hdout, iter->HIPCatalogNumber);
+            }
+        }        
+    }
+#endif
 
     return 0;
 }
