@@ -271,7 +271,10 @@ astro::Date::Date(double jd)
     int f = (int) ((c - e) / 30.6001);
 
     double dday = c - e - (int) (30.6001 * f) + ((jd + 0.5) - (int) (jd + 0.5));
-    month = f - 1 - 12 * (int) (f / 14.0);
+
+    /* This following used to be 14.0, but gcc was computing it incorrectly, so
+       it was changed to 14 */
+    month = f - 1 - 12 * (int) (f / 14);
     year = d - 4715 - (int) ((7.0 + month) / 10.0);
     day = (int) dday;
     
