@@ -47,3 +47,11 @@ bool Execution::tick(double dt)
 }
 
 
+void Execution::reset(CommandSequence& cmd)
+{
+    currentCommand = cmd.begin();
+    finalCommand = cmd.end();
+    commandTime = 0.0;
+}
+
+
