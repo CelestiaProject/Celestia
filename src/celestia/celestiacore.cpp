@@ -531,7 +531,12 @@ void CelestiaCore::charEntered(char c)
     {
     case '\001': // Ctrl+A
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAtmospheres);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
+        break;
+
+    case '\002': // Ctrl+B
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowBoundaries);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\n':
@@ -541,12 +546,12 @@ void CelestiaCore::charEntered(char c)
 
     case '\014': // Ctrl+L
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\005':  // Ctrl+E
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowEclipseShadows);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\020':  // Ctrl+P
@@ -556,7 +561,7 @@ void CelestiaCore::charEntered(char c)
 
     case '\023':  // Ctrl+S
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowStarsAsPoints);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\026':  // Ctrl+V
@@ -571,7 +576,7 @@ void CelestiaCore::charEntered(char c)
 
     case '\030':  // Ctrl+X
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowSmoothLines);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\033': // Escape
@@ -627,7 +632,7 @@ void CelestiaCore::charEntered(char c)
 
     case '/':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowDiagrams);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '0':
@@ -648,17 +653,17 @@ void CelestiaCore::charEntered(char c)
 
     case ';':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCelestialSphere);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '=':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::ConstellationLabels);
-        notifyWatchers(CelestiaWatcher::LabelFlags);
+        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'B':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::StarLabels);
-        notifyWatchers(CelestiaWatcher::LabelFlags);
+        notifyWatchers(LabelFlagsChanged);
         break;
         
     case 'C':
@@ -672,7 +677,7 @@ void CelestiaCore::charEntered(char c)
 
     case 'E':
 	renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
-        notifyWatchers(CelestiaWatcher::LabelFlags);
+        notifyWatchers(LabelFlagsChanged);
 	break;
 
     case 'F':
@@ -691,7 +696,7 @@ void CelestiaCore::charEntered(char c)
 
     case 'I':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCloudMaps);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'J':
@@ -709,22 +714,22 @@ void CelestiaCore::charEntered(char c)
 
     case 'M':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MoonLabels);
-        notifyWatchers(CelestiaWatcher::LabelFlags);
+        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'N':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::SpacecraftLabels);
-        notifyWatchers(CelestiaWatcher::LabelFlags);
+        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'O':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'P':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetLabels);
-        notifyWatchers(CelestiaWatcher::LabelFlags);
+        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'Q':
@@ -751,7 +756,7 @@ void CelestiaCore::charEntered(char c)
 
     case 'U':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
-        notifyWatchers(CelestiaWatcher::RenderFlags);
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'V':
@@ -760,7 +765,7 @@ void CelestiaCore::charEntered(char c)
 
     case 'W':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::AsteroidLabels);
-        notifyWatchers(CelestiaWatcher::LabelFlags);
+        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'X':
@@ -783,7 +788,7 @@ void CelestiaCore::charEntered(char c)
         if (sim->getFaintestVisible() > 1.0f)
         {
             setFaintest(sim->getFaintestVisible() - 0.5f);
-            notifyWatchers(CelestiaWatcher::Faintest);
+            notifyWatchers(FaintestChanged);
         }
         break;
 
@@ -795,7 +800,7 @@ void CelestiaCore::charEntered(char c)
         if (sim->getFaintestVisible() < 12.0f)
         {
             setFaintest(sim->getFaintestVisible() + 0.5f);
-            notifyWatchers(CelestiaWatcher::Faintest);
+            notifyWatchers(FaintestChanged);
         }
         break;
 
@@ -808,7 +813,7 @@ void CelestiaCore::charEntered(char c)
             renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() - 0.05f);
         else
             renderer->setAmbientLightLevel(0.0f);
-        notifyWatchers(CelestiaWatcher::AmbientLight);
+        notifyWatchers(AmbientLightChanged);
         break;
 
     case '}':
@@ -816,7 +821,7 @@ void CelestiaCore::charEntered(char c)
             renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
         else
             renderer->setAmbientLightLevel(1.0f);
-        notifyWatchers(CelestiaWatcher::AmbientLight);
+        notifyWatchers(AmbientLightChanged);
         break;
 
     case '~':
@@ -1631,6 +1636,20 @@ bool CelestiaCore::initSimulation()
         }
     }
 
+    if (config->boundariesFile != "")
+    {
+        ifstream boundariesFile(config->boundariesFile.c_str(), ios::in);
+        if (!boundariesFile.good())
+        {
+            warning("Error opening constellation boundaries files.");
+        }
+        else
+        {
+            ConstellationBoundaries* boundaries = ReadBoundaries(boundariesFile);
+            universe->setBoundaries(boundaries);
+        }
+    }
+
     // Load initialization script
     if (config->initScriptFile != "")
     {
@@ -1864,7 +1883,7 @@ int CelestiaCore::getTextEnterMode() const
 void CelestiaCore::setTimeZoneBias(int bias)
 {
     timeZoneBias = bias;
-    notifyWatchers(CelestiaWatcher::TimeZone);
+    notifyWatchers(TimeZoneChanged);
 }
 
 
@@ -1888,7 +1907,7 @@ int CelestiaCore::getHudDetail()
 void CelestiaCore::setHudDetail(int newHudDetail)
 {
     hudDetail = newHudDetail%3;
-    notifyWatchers(CelestiaWatcher::VerbosityLevel);
+    notifyWatchers(VerbosityLevelChanged);
 }
 
 
@@ -1930,6 +1949,8 @@ bool CelestiaCore::isRecording()
     return recording;
 }
 
+
+#if 1
 void CelestiaCore::addWatcher(CelestiaWatcher* watcher)
 {
     assert(watcher != NULL);
@@ -1949,20 +1970,7 @@ void CelestiaCore::notifyWatchers(int property)
     for (vector<CelestiaWatcher*>::iterator iter = watchers.begin();
          iter != watchers.end(); iter++)
     {
-        (*iter)->notifyChange(property);
+        (*iter)->notifyChange(this, property);
     }
 }
-
-
-CelestiaWatcher::CelestiaWatcher(CelestiaCore* _appCore) :
-    appCore(_appCore)
-{
-    if (appCore != NULL)
-        appCore->addWatcher(this);
-}
-
-CelestiaWatcher::~CelestiaWatcher()
-{
-    if (appCore != NULL)
-        appCore->removeWatcher(this);
-}
+#endif
