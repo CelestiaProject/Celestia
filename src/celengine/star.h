@@ -167,7 +167,7 @@ public:
     inline float getTemperature() const;
     inline float getRotationPeriod() const;
     inline const char* getSpectralType() const;
-    float getBolometricMagnitude() const;
+    inline float getBolometricMagnitude() const;
 
     enum {
         InvalidCatalogNumber = 0xffffffff

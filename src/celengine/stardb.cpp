@@ -667,7 +667,7 @@ bool StarDatabase::loadBinary(istream& in)
 
         if (details == NULL)
         {
-            cerr << "Bad spectral type in star database, star #\n";
+            cerr << "Bad spectral type in star database, star #" << nStars << "\n";
             return false;
         }
 
