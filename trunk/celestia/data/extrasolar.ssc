@@ -1716,3 +1716,131 @@
 }
 
 
+# HD 13507
+"b" "HD 13507"
+{
+	Texture "jupiterlike.jpg"
+	Mass 1080
+	Radius 67000
+
+	EllipticalOrbit {
+		Period        4.97
+		SemiMajorAxis 2.39
+	        Eccentricity  0.13
+                # Omega       235
+	}
+}
+
+
+# HD 20367
+"b" "HD 20367"
+{
+	Texture "jupiterlike.jpg"
+	Mass 340
+	Radius 72000
+
+	EllipticalOrbit {
+		Period        1.37
+		SemiMajorAxis 1.25
+	        Eccentricity  0.23
+                # Omega       83
+	}
+}
+
+
+# HD 23596
+"b" "HD 23596"
+{
+	Texture "jupiterlike.jpg"
+	Mass 2300
+	Radius 65000
+
+	EllipticalOrbit {
+		Period        4.27
+		SemiMajorAxis 2.72
+	        Eccentricity  0.314
+                # Omega       269
+	}
+}
+
+
+# HD 150706
+"b" "HD 150706"
+{
+	Texture "jupiterlike.jpg"
+	Mass 320
+	Radius 71000
+
+	EllipticalOrbit {
+		Period        0.72
+		SemiMajorAxis 0.82
+	        Eccentricity  0.38
+                # Omega       178
+	}
+}
+
+
+# HD 114386
+"b" "HD 114386"
+{
+	Texture "jupiterlike.jpg"
+	Mass 315
+	Radius 71000
+
+	EllipticalOrbit {
+		Period        2.39
+		SemiMajorAxis 1.62
+	        Eccentricity  0.28
+                # Omega       345
+	}
+}
+
+
+# HD 147513
+"b" "HD 147513"
+{
+	Texture "jupiterlike.jpg"
+	Mass 320
+	Radius 71000
+
+	EllipticalOrbit {
+		Period        1.48
+		SemiMajorAxis 1.26
+	        Eccentricity  0.52
+                # Omega       294
+	}
+}
+
+
+# HD 223084
+"b" "HD 223084"
+{
+	Texture "jupiterlike.jpg"
+	Mass 375
+	Radius 73000
+
+	EllipticalOrbit {
+		Period        0.277
+		SemiMajorAxis 0.41
+	        Eccentricity  0.48
+                # Omega       247
+	}
+}
+
+
+# HD 190360A
+"b" "HD 190360"
+{
+	Texture "jupiterlike.jpg"
+	Mass 370
+	Radius 73000
+
+	EllipticalOrbit {
+		Period        7.15
+		SemiMajorAxis 3.65
+	        Eccentricity  0
+                # Omega       0
+	}
+}
+
+
