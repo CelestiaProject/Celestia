@@ -226,6 +226,11 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showDiagrams"))->setChecked(rFlags & Renderer::ShowDiagrams);
     ((KToggleAction*)action("showCloudMaps"))->setChecked(rFlags & Renderer::ShowCloudMaps);
     ((KToggleAction*)action("showOrbits"))->setChecked(rFlags & Renderer::ShowOrbits);
+    ((KToggleAction*)action("showAsteroidOrbits"))->setChecked(rFlags & Renderer::ShowAsteroidOrbits);
+    ((KToggleAction*)action("showCometOrbits"))->setChecked(rFlags & Renderer::ShowCometOrbits);
+    ((KToggleAction*)action("showMoonOrbits"))->setChecked(rFlags & Renderer::ShowMoonOrbits);
+    ((KToggleAction*)action("showPlanetOrbits"))->setChecked(rFlags & Renderer::ShowPlanetOrbits);
+    ((KToggleAction*)action("showSpacecraftOrbits"))->setChecked(rFlags & Renderer::ShowSpacecraftOrbits);
     ((KToggleAction*)action("showCelestialSphere"))->setChecked(rFlags & Renderer::ShowCelestialSphere);
     ((KToggleAction*)action("showNightMaps"))->setChecked(rFlags & Renderer::ShowNightMaps);
     ((KToggleAction*)action("showMarkers"))->setChecked(rFlags & Renderer::ShowMarkers);
@@ -242,6 +247,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showStarLabels"))->setChecked(lMode & Renderer::StarLabels);
     ((KToggleAction*)action("showPlanetLabels"))->setChecked(lMode & Renderer::PlanetLabels);
     ((KToggleAction*)action("showMoonLabels"))->setChecked(lMode & Renderer::MoonLabels);
+    ((KToggleAction*)action("showCometLabels"))->setChecked(lMode & Renderer::CometLabels);
     ((KToggleAction*)action("showConstellationLabels"))->setChecked(lMode & Renderer::ConstellationLabels);
     ((KToggleAction*)action("showGalaxyLabels"))->setChecked(lMode & Renderer::GalaxyLabels);
     ((KToggleAction*)action("showAsteroidLabels"))->setChecked(lMode & Renderer::AsteroidLabels);
@@ -411,6 +417,21 @@ void KdeApp::initActions()
     KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, SLOT(slotShowOrbits()), actionCollection(), "showOrbits");
     showOrbits->setChecked(rFlags & Renderer::ShowOrbits);
 
+    KToggleAction* showAsteroidOrbits = new KToggleAction(i18n("Show Asteroid Orbits"), 0, this, SLOT(slotShowAsteroidOrbits()), actionCollection(), "showAsteroidOrbits");
+    showAsteroidOrbits->setChecked(rFlags & Renderer::ShowAsteroidOrbits);
+
+    KToggleAction* showCometOrbits = new KToggleAction(i18n("Show Comet Orbits"), 0, this, SLOT(slotShowCometOrbits()), actionCollection(), "showCometOrbits");
+    showCometOrbits->setChecked(rFlags & Renderer::ShowCometOrbits);
+
+    KToggleAction* showMoonOrbits = new KToggleAction(i18n("Show Moon Orbits"), 0, this, SLOT(slotShowMoonOrbits()), actionCollection(), "showMoonOrbits");
+    showMoonOrbits->setChecked(rFlags & Renderer::ShowMoonOrbits);
+
+    KToggleAction* showPlanetOrbits = new KToggleAction(i18n("Show Planet Orbits"), 0, this, SLOT(slotShowPlanetOrbits()), actionCollection(), "showPlanetOrbits");
+    showPlanetOrbits->setChecked(rFlags & Renderer::ShowPlanetOrbits);
+
+    KToggleAction* showSpacecraftOrbits = new KToggleAction(i18n("Show Spacecraft Orbits"), 0, this, SLOT(slotShowSpacecraftOrbits()), actionCollection(), "showSpacecraftOrbits");
+    showSpacecraftOrbits->setChecked(rFlags & Renderer::ShowSpacecraftOrbits);
+
     KToggleAction* showCelestialSphere = new KToggleAction(i18n("Show Celestial Grid"), Key_Semicolon, this, SLOT(slotShowCelestialSphere()), actionCollection(), "showCelestialSphere");
     showCelestialSphere->setChecked(rFlags & Renderer::ShowCelestialSphere);
 
@@ -452,6 +473,10 @@ void KdeApp::initActions()
 
     KToggleAction* showMoonLabels = new KToggleAction(i18n("Show Moon Labels"), Key_M, this, SLOT(slotShowMoonLabels()), actionCollection(), "showMoonLabels");
     showMoonLabels->setChecked(lMode & Renderer::MoonLabels);
+
+    KToggleAction* showCometLabels = new KToggleAction(i18n("Show Comet Labels"), SHIFT + Key_W, this, SLOT(slotShowCometLabels()), actionCollection(), "showCometLabels");
+    showMoonLabels->setChecked(lMode & Renderer::CometLabels);
+
 
     KToggleAction* showConstellationLabels = new KToggleAction(i18n("Show Constellation Labels"), Key_Equal, this, SLOT(slotShowConstellationLabels()), actionCollection(), "showConstellationLabels");
     showConstellationLabels->setChecked(lMode & Renderer::ConstellationLabels);
@@ -807,6 +832,31 @@ void KdeApp::slotShowOrbits() {
             appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowOrbits);
 }
 
+void KdeApp::slotShowAsteroidOrbits() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowAsteroidOrbits);
+}
+
+void KdeApp::slotShowCometOrbits() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowCometOrbits);
+}
+
+void KdeApp::slotShowMoonOrbits() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowMoonOrbits);
+}
+
+void KdeApp::slotShowPlanetOrbits() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowPlanetOrbits);
+}
+
+void KdeApp::slotShowSpacecraftOrbits() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowSpacecraftOrbits);
+}
+
 void KdeApp::slotShowCelestialSphere() {
      appCore->getRenderer()->setRenderFlags(
             appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowCelestialSphere);
@@ -874,6 +924,11 @@ void KdeApp::slotShowPlanetLabels() {
 void KdeApp::slotShowMoonLabels() {
      appCore->getRenderer()->setLabelMode(
             appCore->getRenderer()->getLabelMode() ^ Renderer::MoonLabels);
+}
+
+void KdeApp::slotShowCometLabels() {
+     appCore->getRenderer()->setLabelMode(
+            appCore->getRenderer()->getLabelMode() ^ Renderer::CometLabels);
 }
 
 void KdeApp::slotShowConstellationLabels() {

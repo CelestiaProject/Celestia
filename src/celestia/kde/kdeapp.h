@@ -111,6 +111,13 @@ public slots:
     void slotShowDiagrams();
     void slotShowCloudMaps();
     void slotShowOrbits();
+
+    void slotShowAsteroidOrbits();
+    void slotShowCometOrbits();
+    void slotShowMoonOrbits();
+    void slotShowPlanetOrbits();
+    void slotShowSpacecraftOrbits();
+
     void slotShowCelestialSphere();
     void slotShowNightMaps();
     void slotShowMarkers();
@@ -125,6 +132,7 @@ public slots:
     void slotShowStarLabels();
     void slotShowPlanetLabels();
     void slotShowMoonLabels();
+    void slotShowCometLabels();
     void slotShowConstellationLabels();
     void slotShowGalaxyLabels();
     void slotShowAsteroidLabels();
