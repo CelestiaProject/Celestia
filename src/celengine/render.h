@@ -53,8 +53,7 @@ class Renderer
     void render(const Observer&,
                 const Universe&,
                 float faintestVisible,
-                const Selection& sel,
-                double now);
+                const Selection& sel);
     
     enum {
         NoLabels            = 0x00,

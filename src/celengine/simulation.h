@@ -91,8 +91,10 @@ class Simulation
 
     SolarSystem* getNearestSolarSystem() const;
 
-    double getTimeScale();
+    double getTimeScale() const;
     void setTimeScale(double);
+    bool getSyncTime() const;
+    void setSyncTime(bool);
 
     float getFaintestVisible() const;
     void setFaintestVisible(float);
@@ -109,8 +111,8 @@ class Simulation
 
  private:
     double realTime;
-    double simTime;
     double timeScale;
+    bool syncTime;
 
     Universe* universe;
 

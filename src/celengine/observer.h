@@ -20,12 +20,10 @@
 
 #include <celengine/frame.h>
 
-class Simulation;
-
 class Observer
 {
 public:
-    Observer(Simulation*);
+    Observer();
 
     // The getPosition method returns the observer's position in light
     // years.
@@ -54,7 +52,7 @@ public:
     float          getFOV() const;
     void           setFOV(float);
 
-    void           update(double dt);
+    void           update(double dt, double timeScale);
 
     Vec3f          getPickRay(float x, float y) const;
 
@@ -103,7 +101,8 @@ public:
 
     double getArrivalTime() const;
 
-    double getSimTime() const;
+    double getTime() const;
+    void setTime(double);
 
     enum ObserverMode {
         Free                    = 0,
@@ -139,7 +138,7 @@ public:
                                  double centerTime);
 
  private:
-    Simulation*    sim;
+    double         simTime;
 
     RigidTransform situation;
     Vec3d          velocity;

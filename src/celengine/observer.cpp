@@ -20,8 +20,8 @@ using namespace std;
 
 
 
-Observer::Observer(Simulation* _sim) :
-    sim(_sim),
+Observer::Observer() :
+    simTime(0.0),
     velocity(0.0, 0.0, 0.0),
     angularVelocity(0.0f, 0.0f, 0.0f),
     realTime(0.0),
@@ -36,17 +36,22 @@ Observer::Observer(Simulation* _sim) :
 }
 
 
-double Observer::getSimTime() const
+double Observer::getTime() const
 {
-    return sim->getTime();
+    return simTime;
 };
+
+void Observer::setTime(double jd)
+{
+    simTime = jd;
+}
 
 
 UniversalCoord Observer::getPosition() const
 {
     // TODO: Optimize this!  Dirty bit should be set by Simulation::setTime and
     // by Observer::update(), Observer::setOrientation(), Observer::setPosition()
-    return frame.toUniversal(situation, getSimTime()).translation;
+    return frame.toUniversal(situation, getTime()).translation;
 }
 
 
@@ -67,16 +72,16 @@ Point3d Observer::getRelativePosition(const Point3d& p) const
 
 Quatf Observer::getOrientation() const
 {
-    Quatd q = frame.toUniversal(situation, getSimTime()).rotation;
+    Quatd q = frame.toUniversal(situation, getTime()).rotation;
     return Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 }
 
 
 void Observer::setOrientation(const Quatf& q)
 {
-    RigidTransform rt = frame.toUniversal(situation, getSimTime());
+    RigidTransform rt = frame.toUniversal(situation, getTime());
     rt.rotation = Quatd(q.w, q.x, q.y, q.z);
-    situation = frame.fromUniversal(rt, getSimTime());
+    situation = frame.fromUniversal(rt, getTime());
 }
 
 
@@ -118,21 +123,21 @@ void Observer::setPosition(const Point3d& p)
 
 void Observer::setPosition(const UniversalCoord& p)
 {
-    RigidTransform rt = frame.toUniversal(situation, getSimTime());
+    RigidTransform rt = frame.toUniversal(situation, getTime());
     rt.translation = p;
-    situation = frame.fromUniversal(rt, getSimTime());
+    situation = frame.fromUniversal(rt, getTime());
 }
 
 
 RigidTransform Observer::getSituation() const
 {
-    return frame.toUniversal(situation, getSimTime());
+    return frame.toUniversal(situation, getTime());
 }
 
 
 void Observer::setSituation(const RigidTransform& xform)
 {
-    situation = frame.fromUniversal(xform, getSimTime());
+    situation = frame.fromUniversal(xform, getTime());
 }
 
 
@@ -199,9 +204,10 @@ double Observer::getArrivalTime() const
 
 
 // Tick the simulation by dt seconds
-void Observer::update(double dt)
+void Observer::update(double dt, double timeScale)
 {
     realTime += dt;
+    simTime += (dt / 86400.0) * timeScale;
 
     if (observerMode == Travelling)
     {
@@ -305,7 +311,7 @@ void Observer::update(double dt)
     if (!trackObject.empty())
     {
         Vec3f up = Vec3f(0, 1, 0) * getOrientation().toMatrix3();
-        Vec3d vn = trackObject.getPosition(getSimTime()) - getPosition();
+        Vec3d vn = trackObject.getPosition(getTime()) - getPosition();
         Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
         setOrientation(lookAt(Point3f(0, 0, 0), to, up));
     }
@@ -355,7 +361,7 @@ void Observer::computeGotoParameters(const Selection& destination,
                                      Vec3f up,
                                      astro::CoordinateSystem upFrame)
 {
-    UniversalCoord targetPosition = destination.getPosition(getSimTime());
+    UniversalCoord targetPosition = destination.getPosition(getTime());
     Vec3d v = targetPosition - getPosition();
     v.normalize();
 
@@ -367,11 +373,11 @@ void Observer::computeGotoParameters(const Selection& destination,
 
     // The destination position lies along the line between the current
     // position and the star
-    offset = toUniversal(offset, *this, destination, getSimTime(), offsetFrame);
+    offset = toUniversal(offset, *this, destination, getTime(), offsetFrame);
     jparams.to = targetPosition + offset;
 
     Vec3d upd(up.x, up.y, up.z);
-    upd = toUniversal(upd, *this, destination, getSimTime(), upFrame);
+    upd = toUniversal(upd, *this, destination, getTime(), upFrame);
     Vec3f upf = Vec3f((float) upd.x, (float) upd.y, (float) upd.z);
 
     jparams.initialOrientation = getOrientation();
@@ -390,14 +396,14 @@ void Observer::computeGotoParameters(const Selection& destination,
 
     // Convert to frame coordinates
     RigidTransform from(jparams.from, jparams.initialOrientation);
-    from = frame.fromUniversal(from, getSimTime());
+    from = frame.fromUniversal(from, getTime());
     jparams.from = from.translation;
     jparams.initialOrientation= Quatf((float) from.rotation.w,
                                       (float) from.rotation.x,
                                       (float) from.rotation.y,
                                       (float) from.rotation.z);
     RigidTransform to(jparams.to, jparams.finalOrientation);
-    to = frame.fromUniversal(to, getSimTime());
+    to = frame.fromUniversal(to, getTime());
     jparams.to = to.translation;
     jparams.finalOrientation= Quatf((float) to.rotation.w,
                                     (float) to.rotation.x,
@@ -410,7 +416,7 @@ void Observer::computeCenterParameters(const Selection& destination,
                                        JourneyParams& jparams,
                                        double centerTime)
 {
-    UniversalCoord targetPosition = destination.getPosition(getSimTime());
+    UniversalCoord targetPosition = destination.getPosition(getTime());
 
     jparams.duration = centerTime;
     jparams.startTime = realTime;
@@ -431,7 +437,7 @@ void Observer::computeCenterParameters(const Selection& destination,
 
     // Convert to frame coordinates
     RigidTransform from(jparams.from, jparams.initialOrientation);
-    from = frame.fromUniversal(from, getSimTime());
+    from = frame.fromUniversal(from, getTime());
     jparams.from = from.translation;
     jparams.initialOrientation= Quatf((float) from.rotation.w,
                                       (float) from.rotation.x,
@@ -439,7 +445,7 @@ void Observer::computeCenterParameters(const Selection& destination,
                                       (float) from.rotation.z);
 
     RigidTransform to(jparams.to, jparams.finalOrientation);
-    to = frame.fromUniversal(to, getSimTime());
+    to = frame.fromUniversal(to, getTime());
     jparams.to = to.translation;
     jparams.finalOrientation= Quatf((float) to.rotation.w,
                                     (float) to.rotation.x,
@@ -461,9 +467,9 @@ void Observer::setMode(Observer::ObserverMode mode)
 
 void Observer::setFrame(const FrameOfReference& _frame)
 {
-    RigidTransform transform = frame.toUniversal(situation, getSimTime());
+    RigidTransform transform = frame.toUniversal(situation, getTime());
     frame = _frame;
-    situation = frame.fromUniversal(transform, getSimTime());
+    situation = frame.fromUniversal(transform, getTime());
 }
 
 
@@ -498,8 +504,8 @@ void Observer::orbit(const Selection& selection, Quatf q)
         // coordinates; in order to make this function work in all
         // frames of reference, it's important to work in frame
         // coordinates.
-        UniversalCoord focusPosition = center.getPosition(getSimTime());
-        focusPosition = frame.fromUniversal(RigidTransform(focusPosition), getSimTime()).translation;
+        UniversalCoord focusPosition = center.getPosition(getTime());
+        focusPosition = frame.fromUniversal(RigidTransform(focusPosition), getTime()).translation;
 
         // v = the vector from the observer's position to the focus
         Vec3d v = situation.translation - focusPosition;
@@ -542,7 +548,7 @@ void Observer::changeOrbitDistance(const Selection& selection, float d)
 
     if (!center.empty())
     {
-        UniversalCoord focusPosition = center.getPosition(getSimTime());
+        UniversalCoord focusPosition = center.getPosition(getTime());
         
         double size = center.radius();
 
@@ -565,7 +571,7 @@ void Observer::changeOrbitDistance(const Selection& selection, float d)
             double newDistance = minOrbitDistance + naturalOrbitDistance * exp(log(r) + d);
             v = v * (newDistance / currentDistance);
             RigidTransform framePos = frame.fromUniversal(RigidTransform(focusPosition + v),
-                                                          getSimTime());
+                                                          getTime());
             situation.translation = framePos.translation;
         }
     }
@@ -609,7 +615,7 @@ void Observer::gotoSelection(const Selection& selection,
 {
     if (!selection.empty())
     {
-        UniversalCoord pos = selection.getPosition(getSimTime());
+        UniversalCoord pos = selection.getPosition(getTime());
         Vec3d v = pos - getPosition();
         double distance = v.length();
 
@@ -646,7 +652,7 @@ void Observer::gotoSelection(const Selection& selection,
 {
     if (!selection.empty())
     {
-        UniversalCoord pos = selection.getPosition(getSimTime());
+        UniversalCoord pos = selection.getPosition(getTime());
         Vec3d v = pos - getPosition();
         v.normalize();
 
@@ -687,7 +693,7 @@ void Observer::gotoLocation(const RigidTransform& transform,
     journey.duration = duration;
     
     RigidTransform from(getPosition(), getOrientation());
-    from = frame.fromUniversal(from, getSimTime());
+    from = frame.fromUniversal(from, getTime());
     journey.from = from.translation;
     journey.initialOrientation= Quatf((float) from.rotation.w, (float) from.rotation.x,
                                       (float) from.rotation.y, (float) from.rotation.z);
@@ -720,7 +726,7 @@ void Observer::getSelectionLongLat(const Selection& selection,
     {
         FrameOfReference refFrame(astro::Geographic, selection.body);
         RigidTransform xform = refFrame.fromUniversal(RigidTransform(getPosition(), getOrientation()),
-                                                      getSimTime());
+                                                      getTime());
 
         Point3d pos = (Point3d) xform.translation;
 
@@ -736,7 +742,7 @@ void Observer::getSelectionLongLat(const Selection& selection,
 
 void Observer::gotoSurface(const Selection& sel, double duration)
 {
-    Vec3d vd = getPosition() - sel.getPosition(getSimTime());
+    Vec3d vd = getPosition() - sel.getPosition(getTime());
     Vec3f vf((float) vd.x, (float) vd.y, (float) vd.z);
     vf.normalize();
     Vec3f viewDir = Vec3f(0, 0, -1) * getOrientation().toMatrix3();
@@ -752,7 +758,7 @@ void Observer::gotoSurface(const Selection& sel, double duration)
     
     FrameOfReference frame(astro::Geographic, sel);
     RigidTransform rt = frame.fromUniversal(RigidTransform(getPosition(), q),
-                                            getSimTime());
+                                            getTime());
 
     double height = 1.0001 * astro::kilometersToMicroLightYears(sel.radius());
     Vec3d dir = rt.translation - Point3d(0.0, 0.0, 0.0);
