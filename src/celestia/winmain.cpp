@@ -152,6 +152,7 @@ struct AppPreferences
     int fullScreenMode;
     uint32 lastVersion;
     string altSurfaceName;
+    uint32 textureResolution;
     Renderer::StarStyle starStyle;
 };
 
@@ -2441,6 +2442,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "StarStyle", &prefs.starStyle, sizeof(prefs.starStyle));
 
     GetRegistryValue(key, "LastVersion", &prefs.lastVersion, sizeof(prefs.lastVersion));
+    GetRegistryValue(key, "TextureResolution", &prefs.textureResolution, sizeof(prefs.textureResolution));
 
     char surfaceName[512];
     surfaceName[0] = '\0';
@@ -2494,6 +2496,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
     SetRegistryInt(key, "StarStyle", prefs.starStyle);
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
+    SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
 
     RegCloseKey(key);
 
@@ -2525,6 +2528,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.lastVersion = 0x01020500;
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
     prefs.starStyle = appCore->getRenderer()->getStarStyle();
+    prefs.textureResolution = appCore->getRenderer()->getResolution();
 
     return true;
 }
@@ -3112,6 +3116,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.hudDetail = 1;
     prefs.fullScreenMode = -1;
     prefs.lastVersion = 0x00000000;
+    prefs.textureResolution = 1;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Adjust window dimensions for screen dimensions
@@ -3252,6 +3257,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     else
         ShowUniversalTime(appCore);
     appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
+    appCore->getRenderer()->setResolution(prefs.textureResolution);
 
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     syncMenusWithRendererState();
