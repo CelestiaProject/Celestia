@@ -54,6 +54,11 @@ template<class T> T square(T x)
     return x * x;
 }
 
+template<class T> T cube(T x)
+{
+    return x * x * x;
+}
+
 template<class T> T clamp(T x)
 {
     if (x < 0)
