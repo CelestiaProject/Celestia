@@ -76,7 +76,7 @@ class Renderer
         ShowGalaxies        = 0x0004,
         ShowDiagrams        = 0x0008,
         ShowCloudMaps       = 0x0010,
-        ShowPlanetOrbits    = 0x0020,
+        ShowOrbits          = 0x0020,
         ShowCelestialSphere = 0x0040,
         ShowNightMaps       = 0x0080,
         ShowAtmospheres     = 0x0100,
@@ -88,15 +88,14 @@ class Renderer
         ShowAutoMag         = 0x4000,
         ShowCometTails      = 0x8000,
         ShowMarkers         = 0x10000,
-        ShowMoonOrbits      = 0x20000,
-        ShowAsteroidOrbits  = 0x40000,
-        ShowCometOrbits     = 0x80000,
-        ShowSpacecraftOrbits= 0x100000,
-        ShowOrbitMask       = (ShowPlanetOrbits | ShowMoonOrbits | ShowAsteroidOrbits | ShowCometOrbits | ShowSpacecraftOrbits),
+    };
 
-        // Used for compatibility with older versions of Celestia that
-        // rendered only planet and moon orbits.
-        ShowOrbits          = (ShowPlanetOrbits | ShowMoonOrbits),
+    enum StarStyle 
+    {
+        FuzzyPointStars  = 0,
+        PointStars       = 1,
+        ScaledDiscStars  = 2,
+        StarStyleCount   = 3,
     };
 
     int getRenderFlags() const;
@@ -112,6 +111,8 @@ class Renderer
     void setMinimumFeatureSize(float);
     float getDistanceLimit() const;
     void setDistanceLimit(float);
+    int getOrbitMask() const;
+    void setOrbitMask(int);
 
     bool getFragmentShaderEnabled() const;
     void setFragmentShaderEnabled(bool);
@@ -126,6 +127,8 @@ class Renderer
     void setSaturationMagnitude(float);
     float getBrightnessBias() const;
     void setBrightnessBias(float);
+    void setStarStyle(StarStyle);
+    StarStyle getStarStyle() const;
     void setResolution(unsigned int resolution);
     unsigned int getResolution();
 
@@ -334,6 +337,7 @@ class Renderer
     int renderMode;
     int labelMode;
     int renderFlags;
+    int orbitMask;
     float ambientLightLevel;
     bool fragmentShaderEnabled;
     bool vertexShaderEnabled;
@@ -344,6 +348,7 @@ class Renderer
     float faintestPlanetMag;
     float saturationMagNight;
     float saturationMag;
+    StarStyle starStyle;
 
     Color ambientColor;
     std::string displayedSurface;
