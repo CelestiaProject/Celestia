@@ -166,8 +166,8 @@ void CelestiaCore::activateFavorite(FavoritesEntry& fav)
 {
     sim->cancelMotion();
     sim->setTime(fav.jd);
-    sim->getObserver().setPosition(fav.position);
-    sim->getObserver().setOrientation(fav.orientation);
+    sim->setObserverPosition(fav.position);
+    sim->setObserverOrientation(fav.orientation);
 }
 
 void CelestiaCore::addFavorite(string name)
@@ -525,7 +525,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '*':
-        sim->getObserver().setOrientation(Quatf(1));
+        sim->setObserverOrientation(Quatf(1));
         break;
 
     case ',':
@@ -1177,7 +1177,7 @@ void CelestiaCore::renderOverlay()
         glTranslatef(0, height - titleFont->getHeight(), 0);
 
         overlay->beginText();
-        Vec3d v = sim->getSelectionPosition(sel, sim->getTime()) - 
+        Vec3d v = sel.getPosition(sim->getTime()) -
             sim->getObserver().getPosition();
         if (sel.star != NULL)
         {
