@@ -9,6 +9,7 @@ libcelutil_a_SOURCES = \
 	debug.cpp \
 	filetype.cpp \
 	util.cpp \
+	unixdirectory.cpp \
 	unixtimer.cpp
 
 WINSOURCES = \

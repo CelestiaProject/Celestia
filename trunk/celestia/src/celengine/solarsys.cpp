@@ -413,7 +413,6 @@ bool LoadSolarSystemObjects(istream& in, Universe& universe)
             {
                 body->setName(name);
                 parentSystem->addBody(body);
-                cout << "Yes\n";
             }
         }
     }
