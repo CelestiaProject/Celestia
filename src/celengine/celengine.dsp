@@ -121,6 +121,10 @@ SOURCE=.\customorbit.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\dds.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\dispmap.cpp
 # End Source File
 # Begin Source File
@@ -142,6 +146,10 @@ SOURCE=.\lodspheremesh.cpp
 # Begin Source File
 
 SOURCE=.\meshmanager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\multitexture.cpp
 # End Source File
 # Begin Source File
 
@@ -231,6 +239,10 @@ SOURCE=.\vertexlist.cpp
 
 SOURCE=.\vertexprog.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\vsop87.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -314,6 +326,10 @@ SOURCE=.\mesh.h
 # Begin Source File
 
 SOURCE=.\meshmanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\multitexture.h
 # End Source File
 # Begin Source File
 
@@ -414,6 +430,10 @@ SOURCE=.\vertexlist.h
 # Begin Source File
 
 SOURCE=.\vertexprog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\vsop87.h
 # End Source File
 # End Group
 # End Target
