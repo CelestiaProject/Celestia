@@ -32,6 +32,7 @@ OBJS=\
 	$(INTDIR)\wineclipses.obj \
 	$(INTDIR)\wingotodlg.obj \
 	$(INTDIR)\winbookmarks.obj \
+	$(INTDIR)\winhyperlinks.obj \
 	$(INTDIR)\winlocations.obj \
 	$(INTDIR)\winmain.obj \
 	$(INTDIR)\winssbrowser.obj \
