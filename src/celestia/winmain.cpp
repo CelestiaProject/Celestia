@@ -1843,6 +1843,10 @@ static void syncMenusWithRendererState()
                      appCore->getRenderer()->getFragmentShaderEnabled());
     setMenuItemCheck(ID_RENDER_VERTEX_SHADERS,
                      appCore->getRenderer()->getVertexShaderEnabled());
+    setMenuItemCheck(ID_VIEW_SHOW_FRAMES,
+                     appCore->getFramesVisible());
+    setMenuItemCheck(ID_VIEW_SYNC_TIME,
+                     appCore->getSimulation()->getSyncTime());
 
     if(abs(0.0 - (double)ambientLight) < 1.0e-3)
     {
@@ -2809,7 +2813,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     syncMenusWithRendererState();
 
-    //Gray-out Render menu options that hardware does not support.
+    // Gray-out Render menu options that hardware does not support.
     if(!appCore->getRenderer()->fragmentShaderSupported())
         EnableMenuItem(menuBar, ID_RENDER_PIXEL_SHADERS, MF_BYCOMMAND | MF_GRAYED);
     if(!appCore->getRenderer()->vertexShaderSupported())
@@ -3345,6 +3349,37 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 ShowLocalTime(appCore);
             else
                 ShowUniversalTime(appCore);
+            break;
+
+        case ID_VIEW_HSPLIT:
+            appCore->splitView(View::HorizontalSplit);
+            break;
+
+        case ID_VIEW_VSPLIT:
+            appCore->splitView(View::VerticalSplit);
+            break;
+
+        case ID_VIEW_SINGLE:
+            appCore->singleView();
+            break;
+
+        case ID_VIEW_DELETE_ACTIVE:
+            appCore->deleteView();
+            break;
+
+        case ID_VIEW_SHOW_FRAMES:
+            appCore->setFramesVisible(!appCore->getFramesVisible());
+            syncMenusWithRendererState();
+            break;
+
+        case ID_VIEW_SYNC_TIME:
+            {
+                Simulation* sim = appCore->getSimulation();
+                sim->setSyncTime(!sim->getSyncTime());
+                if (sim->getSyncTime())
+                    sim->synchronizeTime();
+                syncMenusWithRendererState();
+            }
             break;
 
         case ID_LOCATIONS_ADDLOCATION:
