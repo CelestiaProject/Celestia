@@ -221,9 +221,6 @@ static void AddFavorite(string name)
 }
 
 
-
-
-
 void CancelScript()
 {
     if (runningScript != NULL)
@@ -442,6 +439,14 @@ void Idle(void)
     double lastTime = currentTime;
     currentTime = timer->getTime();
     double dt = currentTime - lastTime;
+
+    if (runningScript != NULL)
+    {
+        bool finished = runningScript->tick(dt);
+        if (finished)
+            CancelScript();
+    }
+
     sim->update(dt);
 
     Display();
@@ -542,6 +547,10 @@ void KeyPress(unsigned char c, int x, int y)
     case '\n':
     case '\r':
         textEnterMode = true;
+        break;
+    case '\e':
+        CancelScript();
+        textEnterMode = false;
         break;
     case 'A':
         if (sim->getTargetSpeed() == 0)
@@ -709,6 +718,32 @@ void KeyPress(unsigned char c, int x, int y)
 }
 
 
+void SpecialKeyPress(int key, int x, int y)
+{
+    switch (key)
+    {
+    case GLUT_KEY_F1:
+        sim->setTargetSpeed(0);
+        break;
+    case GLUT_KEY_F2:
+        sim->setTargetSpeed(astro::kilometersToLightYears(1.0));
+        break;
+    case GLUT_KEY_F3:
+        sim->setTargetSpeed(astro::kilometersToLightYears(1000.0));
+        break;
+    case GLUT_KEY_F4:
+        sim->setTargetSpeed(astro::kilometersToLightYears(1000000.0));
+        break;
+    case GLUT_KEY_F5:
+        sim->setTargetSpeed(astro::AUtoLightYears(1));
+        break;
+    case GLUT_KEY_F6:
+        sim->setTargetSpeed(1);
+        break;
+    }
+}
+
+
 int main(int argc, char* argv[])
 {
     // Say we're not ready to render yet.
@@ -822,6 +857,7 @@ int main(int argc, char* argv[])
     glutMouseFunc(MouseButton);
     glutMotionFunc(MouseDrag);
     glutKeyboardFunc(KeyPress);
+    glutSpecialFunc(SpecialKeyPress);
 
     timer = CreateTimer();
     renderer = new Renderer();
