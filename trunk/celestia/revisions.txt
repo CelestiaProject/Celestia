@@ -1,0 +1,57 @@
+Celestia Revision History
+-------------------------
+
+1.00
+* Initial public release
+
+
+1.01
+* Added more realistic and aesthetically pleasing ring illumination function
+* Made planets project shadows onto their rings (requires multitexturing)
+* Detect and use ARB_multitexture extension
+* Some configuration parameters now read from a file
+* Support for multiple solar system catalog files
+* Split solar system files into solarsys.ssc and extrasolar.ssc
+* Added Help/License menu
+* Added simple camera orbit mode
+* Fixed up parsing and printing of catalog numbers--still kludgy though
+
+
+1.02
+* Made Celestia icon appear in corner of window.  Whee.
+* Fixed an extremely subtle numerical precision bug which manifested itself in
+  a number of ways:  jittering when following small objects, incorrect
+  targeting of small objects with goto, occasional flashes when closely
+  approaching an object, and probably other things as well.
+* Reversed rotation directions when orbiting--it's much more intuitive now
+* Added an exponential dolly capability to the camera
+* Double-clicking will now center on the selected object
+* Fixed bug in elliptical orbit calculation
+* When orbits are displayed, the Orbit for the selected object is highlighted
+* Incorporated Scott Hudson's asteroid geometry data for Toutatis, Kleopatra,
+  and Geographos.
+* Fixed problems with disappearing labels and with misplaced labels for
+  extrasolar planets
+* Eliminated 'sticking' when mouse buttons released outside of Celestia window
+* Added Real Time option to Time menu
+* Reversed planet rotation direction so it's correct.  Oops.
+* Added about a dozen extrasolar systems from Jean Schneider's catalog
+* Create two new textures for extrasolar planets
+* Moved Selection class outside of Simulation, as it's generally useful
+
+
+1.03
+* Rotating the camera is now more responsive to mouse movement
+* 'Infinite mouse' hack allows rotating and dollying without having to pick up
+  the mouse and reposition the cursor in the window
+* Fixed z ordering for planets and satellites so small that they only appear
+  as points.  Small satellites will no longer get obscured by planets they're
+  in front of.
+* Apparent magnitude calculation for planets now takes into account phase
+* At close range, stars are now rendered as textured sphere meshes.
+* Choosing stars by catalog number no longer selects a star even when the specified
+  star doesn't exist.
+* Added labels for stars; the list of labelled stars is read from celestia.cfg
+* Cleaned up vecmath.h, added consts and reference parameters where appropriate
+* Cleaned up StarNameDatabase
+  
