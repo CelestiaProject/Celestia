@@ -26,6 +26,7 @@ libcelengine_a_SOURCES = \
 	galaxy.cpp \
 	glext.cpp \
 	lodspheremesh.cpp \
+	marker.cpp \
 	meshmanager.cpp \
 	multitexture.cpp \
 	nebula.cpp \
