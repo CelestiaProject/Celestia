@@ -385,7 +385,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
         string mesh("");
         if (planetData->getString("Mesh", mesh))
         {
-            ResourceHandle meshHandle = GetMeshManager()->getHandle(MeshInfo(mesh));
+            ResourceHandle meshHandle = GetMeshManager()->getHandle(MeshInfo(mesh, path));
             body->setMesh(meshHandle);
         }
     }

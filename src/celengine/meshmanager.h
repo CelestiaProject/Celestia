@@ -20,8 +20,11 @@ class MeshInfo : public ResourceInfo<Mesh>
 {
  public:
     std::string source;
+    std::string path;
 
-    MeshInfo(const std::string _source) : source(_source) {};
+    MeshInfo(const std::string _source,
+             const std::string _path = "") :
+        source(_source), path(_path) {};
 
     virtual std::string resolve(const std::string&);
     virtual Mesh* load(const std::string&);
@@ -29,7 +32,10 @@ class MeshInfo : public ResourceInfo<Mesh>
 
 inline bool operator<(const MeshInfo& mi0, const MeshInfo& mi1)
 {
-    return mi0.source < mi1.source;
+    if (mi0.source == mi1.source)
+        return mi0.path < mi1.path;
+    else
+        return mi0.source < mi1.source;
 }
 
 typedef ResourceManager<MeshInfo> MeshManager;

@@ -40,18 +40,28 @@ MeshManager* GetMeshManager()
 
 string MeshInfo::resolve(const string& baseDir)
 {
-    return "blah";
+    if (!path.empty())
+    {
+        string filename = path + "/models/" + source;
+        // cout << "Resolve: testing [" << filename << "]\n";
+        ifstream in(filename.c_str());
+        if (in.good())
+            return filename;
+    }
+
+    return baseDir + "/" + source;
 }
 
-Mesh* MeshInfo::load(const string& baseDir)
+Mesh* MeshInfo::load(const string& filename)
 {
-    DPRINTF(1, "Loading mesh: %s\n", source.c_str());
-    ContentType fileType = DetermineFileType(source);
+    DPRINTF(1, "Loading mesh: %s\n", filename.c_str());
+    // cout << "Loading mesh: " << filename << '\n';
+    ContentType fileType = DetermineFileType(filename);
 
     if (fileType == Content_3DStudio)
     {
         Mesh3DS* mesh3 = NULL;
-        M3DScene* scene = Read3DSFile(baseDir + '/' + source);
+        M3DScene* scene = Read3DSFile(filename);
         if (scene != NULL)
         {
             mesh3 = new Mesh3DS(*scene);
@@ -62,7 +72,7 @@ Mesh* MeshInfo::load(const string& baseDir)
     }
     else if (fileType == Content_CelestiaMesh)
     {
-        return LoadCelestiaMesh(baseDir + '/' + source);
+        return LoadCelestiaMesh(filename);
     }
  
     return NULL;
@@ -154,7 +164,7 @@ Mesh* LoadCelestiaMesh(const string& filename)
 
     delete meshDefValue;
 
-    cout << "Read Celestia mesh " << filename << " successfully!\n";
+    // cout << "Read Celestia mesh " << filename << " successfully!\n";
 
     return new SphereMesh(params.size,
                           (int) params.rings, (int) params.slices,

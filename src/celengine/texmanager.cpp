@@ -39,7 +39,7 @@ string TextureInfo::resolve(const string& baseDir)
 {
     if (!path.empty())
     {
-        string filename = path + directories[resolution] + source;
+        string filename = path + "/textures" + directories[resolution] + source;
         // cout << "Resolve: testing [" << filename << "]\n";
         ifstream in(filename.c_str());
         if (in.good())

@@ -2442,7 +2442,7 @@ class SolarSystemLoader : public EnumFilesHandler
             {
                 LoadSolarSystemObjects(solarSysFile,
                                        *universe,
-                                       getPath() + "/textures");
+                                       getPath());
             }
         }
 
