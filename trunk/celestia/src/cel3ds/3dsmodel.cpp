@@ -81,6 +81,16 @@ void M3DMaterial::setShininess(float _shininess)
     shininess = _shininess;
 }
 
+float M3DMaterial::getOpacity() const
+{
+    return opacity;
+}
+
+void M3DMaterial::setOpacity(float _opacity)
+{
+    opacity = _opacity;
+}
+
 string M3DMaterial::getTextureMap() const
 {
     return texmap;

@@ -567,6 +567,15 @@ bool processMaterialChunk(ifstream& in,
         material->setShininess(shininess);
         return true;
     }
+    else if (chunkType == M3DCHUNK_MATERIAL_TRANSPARENCY)
+    {
+        float transparency;
+        read3DSChunks(in, contentSize, processPercentageChunk,
+                      (void*) &transparency);
+        material->setOpacity(1.0f - transparency / 100.0f);
+        return true;
+    }
+
     else if (chunkType == M3DCHUNK_MATERIAL_TEXMAP)
     {
         read3DSChunks(in, contentSize, processTexmapChunk, (void*) material);
