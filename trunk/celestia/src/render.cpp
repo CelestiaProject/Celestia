@@ -1985,7 +1985,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
                     (pixelSize / NEAR_DIST);
             }
 
-            float appMag = astro::lumToAppMag(star->getLuminosity(), distance);
+            float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(), distance);
         
             alpha = clamp(1.0f - appMag * brightnessScale + brightnessBias);
 
@@ -2142,7 +2142,7 @@ void Renderer::labelStars(const vector<Star*>& stars,
         Star* star = *iter;
         Point3f pos = star->getPosition();
         float distance = pos.distanceTo(observerPos);
-        float appMag = astro::lumToAppMag(star->getLuminosity(), distance);
+        float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(), distance);
         
         if (appMag < 6.0f)
         {

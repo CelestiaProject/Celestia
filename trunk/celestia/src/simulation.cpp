@@ -371,7 +371,7 @@ void Simulation::update(double dt)
         observer.update(dt);
     }
 
-#if 1
+#if 0
     if (visibleStars != NULL)
         visibleStars->update(observer, 0.05f);
 #endif

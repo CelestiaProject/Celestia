@@ -21,6 +21,12 @@ enum
     ZPos = 4,
 };
 
+// The splitThreshold is the number of stars a node must contain before it's
+// children are generated.  Increasing this number will decrease the number of
+// octree nodes in the tree, which will use less memory but make culling less
+// efficient.  In testing, changing splitThreshold from 100 to 50 nearly doubled
+// the number of nodes in the tree, but provided anywhere from a 0 to 5 percent
+// frame rate improvement.
 static const int splitThreshold = 100;
 
 static const float sqrt3 = 1.732050808f;
@@ -29,8 +35,8 @@ static const float sqrt3 = 1.732050808f;
 StarOctree::StarOctree(const Point3f& center, float _scale, float limitingMag) :
     root(NULL), scale(_scale)
 {
-    luminosity = astro::appMagToLum(limitingMag, scale * sqrt3);
-    root = new StarOctreeNode(center, luminosity);
+    absMag = astro::appToAbsMag(limitingMag, scale * sqrt3);
+    root = new StarOctreeNode(center, absMag);
 }
 
 StarOctree::~StarOctree()
@@ -84,8 +90,8 @@ int StarOctree::countStars() const
 }
 
 
-StarOctreeNode::StarOctreeNode(const Point3f& _center, float _luminosity) :
-    stars(NULL), children(NULL), center(_center), luminosity(_luminosity)
+StarOctreeNode::StarOctreeNode(const Point3f& _center, float _absMag) :
+    stars(NULL), children(NULL), center(_center), absMag(_absMag)
 {
 }
 
@@ -116,9 +122,9 @@ static int childIndex(const Star& star, const Point3f& center)
 
 void StarOctreeNode::insertStar(const Star& star, float scale)
 {
-    // If the star is brighter than the node's luminosity, insert
+    // If the star is brighter than the node's magnitude, insert
     // it here now.
-    if (star.getLuminosity() >= luminosity)
+    if (star.getAbsoluteMagnitude() <= absMag)
     {
         addStar(star);
     }
@@ -126,7 +132,7 @@ void StarOctreeNode::insertStar(const Star& star, float scale)
     {
         // If we haven't allocated child nodes yet, try to fit
         // the star in this node, even though it's fainter than
-        // this node's luminosity.  Only if there are more than
+        // this node's magnitude.  Only if there are more than
         // splitThreshold stars in the node will we attempt to
         // place the star into a child node.  This is done in order
         // to avoid having the octree degenerate into one star per node.
@@ -172,23 +178,28 @@ void StarOctreeNode::processVisibleStars(StarHandler& starHandler,
         }
     }
 
+    // Compute the distance to node; this is equal to the distance to
+    // the center of the node minus the radius of the node, scale * sqrt3.
+    float minDistance = (position - center).length() - scale * sqrt3;
+
     // Process the stars in this node
     if (stars != NULL)
     {
+        float dimmest = minDistance > 0 ? astro::appToAbsMag(limitingMag, minDistance) : 100;
         for (vector<const Star*>::const_iterator iter = stars->begin();
              iter != stars->end(); iter++)
         {
-            float distance = (position - (*iter)->getPosition()).length();
-            float appMag = astro::lumToAppMag((*iter)->getLuminosity(), distance);
-            if (appMag < limitingMag)
-                starHandler.process(**iter, distance, appMag);
+            if ((*iter)->getAbsoluteMagnitude() < dimmest)
+            {
+                float distance = (position - (*iter)->getPosition()).length();
+                float appMag = astro::absToAppMag((*iter)->getAbsoluteMagnitude(), distance);
+                if (appMag < limitingMag)
+                    starHandler.process(**iter, distance, appMag);
+            }
         }
     }
 
-    // Compute the distance to node; this is equal to the distance to
-    // the center of the node minus the radius of the node, scale * sqrt3.
-    float distance = (position - center).length() - scale * sqrt3;
-    if (distance <= 0 || astro::lumToAppMag(luminosity, distance) <= limitingMag)
+    if (minDistance <= 0 || astro::absToAppMag(absMag, minDistance) <= limitingMag)
     {
         // Recurse into the child nodes
         if (children != NULL)
@@ -223,7 +234,7 @@ void StarOctreeNode::split(float scale)
         p.x += ((i & XPos) != 0) ? scale : -scale;
         p.y += ((i & YPos) != 0) ? scale : -scale;
         p.z += ((i & ZPos) != 0) ? scale : -scale;
-        children[i] = new StarOctreeNode(p, luminosity * 0.25f);
+        children[i] = new StarOctreeNode(p, astro::lumToAbsMag(astro::absMagToLum(absMag) / 4.0f));
     }
     sortStarsIntoChildNodes();
 }
@@ -239,7 +250,7 @@ void StarOctreeNode::sortStarsIntoChildNodes()
     for (int i = 0; i < stars->size(); i++)
     {
         const Star* star = (*stars)[i];
-        if (star->getLuminosity() >= luminosity)
+        if (star->getAbsoluteMagnitude() <= absMag)
         {
             (*stars)[nBrightStars] = (*stars)[i];
             nBrightStars++;
