@@ -580,6 +580,11 @@ void CelestiaCore::charEntered(char c)
         notifyWatchers(RenderFlagsChanged);
         break;
 
+    case '\013': // Ctrl+K
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowMarkers);
+        notifyWatchers(RenderFlagsChanged);
+        break;
+
     case '\005':  // Ctrl+E
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowEclipseShadows);
         notifyWatchers(RenderFlagsChanged);
