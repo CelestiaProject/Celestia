@@ -57,13 +57,15 @@ bool Directory::enumFiles(EnumFilesHandler& handler, bool deep)
 
 EnumFilesHandler::EnumFilesHandler()
 {
-    dirStack.push_back(".");
 }
 
 
 void EnumFilesHandler::pushDir(const std::string& dirName)
 {
-    dirStack.push_back(dirStack.back() + string("/") + dirName);
+    if (dirStack.size() > 0)
+        dirStack.push_back(dirStack.back() + string("/") + dirName);
+    else
+        dirStack.push_back(dirName);
 }
 
 
@@ -75,5 +77,11 @@ void EnumFilesHandler::popDir()
 
 const string& EnumFilesHandler::getPath() const
 {
-    return dirStack.back();
+    // need this so we can return a non-temporary value:
+    static const string emptyString("");
+
+    if (dirStack.size() > 0)
+        return dirStack.back();
+    else
+        return emptyString;
 }
