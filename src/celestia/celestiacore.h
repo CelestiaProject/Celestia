@@ -120,6 +120,7 @@ class CelestiaCore
     Renderer* getRenderer() const;
     void showText(std::string s);
 
+    void readFavoritesFile();
     void writeFavoritesFile();
     void activateFavorite(FavoritesEntry&);
     void addFavorite(std::string, std::string, FavoritesList::const_iterator* iter=NULL);
