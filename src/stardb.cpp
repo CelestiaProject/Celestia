@@ -41,7 +41,7 @@ StarDatabase::~StarDatabase()
 
 // Less than operator for stars is used to sort and find stars by catalog
 // number
-bool operator<(Star& a, Star& b)
+bool operator<(const Star& a, const Star& b)
 {
     return a.getCatalogNumber() < b.getCatalogNumber();
 }
@@ -62,16 +62,27 @@ Star* StarDatabase::find(uint32 catalogNumber) const
 }
 
 
+#if 0
+bool startsWith(const string& s, const string& prefix)
+{
+#ifndef NONSTANDARD_STRING_COMPARE
+    return s.compare(0, prefix.length(), prefix) == 0;
+#else
+    return s.compare(prefix, 0, prefix.length());
+#endif // NONSTANDARD_STRING_COMPARE
+}
+#endif
+
 Star* StarDatabase::find(string name) const
 {
-    if (name.compare(0, HDCatalogPrefix.length(), HDCatalogPrefix) == 0)
+    if (compareIgnoringCase(name, HDCatalogPrefix, HDCatalogPrefix.length()) == 0)
     {
         // Search by catalog number
         uint32 catalogNumber = (uint32) atoi(string(name, HDCatalogPrefix.length(),
                                                     string::npos).c_str());
         return find(catalogNumber);
     }
-    else if (name.compare(0, HIPPARCOSCatalogPrefix.length(), HIPPARCOSCatalogPrefix) == 0)
+    else if (compareIgnoringCase(name, HIPPARCOSCatalogPrefix, HIPPARCOSCatalogPrefix.length()) == 0)
     {
         uint32 catalogNumber = (uint32) atoi(string(name, HIPPARCOSCatalogPrefix.length(), string::npos).c_str()) | 0x10000000;
         return find(catalogNumber);

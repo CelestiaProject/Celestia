@@ -94,7 +94,7 @@ class Body
     void setSatellites(PlanetarySystem*);
 
     RingSystem* getRings() const;
-    void setRings(RingSystem&);
+    void setRings(const RingSystem&);
 
     void setMesh(std::string);
     std::string getMesh() const;

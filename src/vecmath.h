@@ -569,6 +569,7 @@ template<class T> Matrix3<T>::Matrix3(const Vector3<T>& r0,
 }
 
 
+#if 0
 template<class T, class U> Matrix3<T>::Matrix3(const Matrix3<U>& m)
 {
 #if 0
@@ -580,6 +581,7 @@ template<class T, class U> Matrix3<T>::Matrix3(const Matrix3<U>& m)
     r[1].x = m.r[1].x; r[1].y = m.r[1].y; r[1].z = m.r[1].z;
     r[2].x = m.r[2].x; r[2].y = m.r[2].y; r[2].z = m.r[2].z;
 }
+#endif
 
 
 //**** Matrix3 operators

@@ -133,7 +133,7 @@ class Renderer
     void renderPlanetarySystem(const Star& sun,
                                const PlanetarySystem& solSystem,
                                const Observer& observer,
-                               Mat4d& frame,
+                               const Mat4d& frame,
                                double now,
                                bool showLabels = false);
     void renderPlanet(const Body& body,

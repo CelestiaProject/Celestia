@@ -14,12 +14,14 @@ PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC glCompressedTexSubImage2DARB;
 PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC glCompressedTexSubImage1DARB;
 
 // ARB_multitexture command function pointers
+#ifndef GL_ARB_multitexture
 PFNGLMULTITEXCOORD2IARBPROC glMultiTexCoord2iARB;
 PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
 PFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB;
 PFNGLMULTITEXCOORD3FVARBPROC glMultiTexCoord3fvARB;
 PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
 PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
+#endif
 
 // NV_register_combiners command function pointers
 PFNGLCOMBINERPARAMETERFVNVPROC glCombinerParameterfvNV;
@@ -106,6 +108,7 @@ bool InitGLExtensions(void)
 // ARB_multitexture
 void InitExtMultiTexture()
 {
+#ifndef GL_ARB_multitexture
     glMultiTexCoord2iARB =
         (PFNGLMULTITEXCOORD2IARBPROC) wglGetProcAddress("glMultiTexCoord2iARB");
     glMultiTexCoord2fARB =
@@ -118,6 +121,7 @@ void InitExtMultiTexture()
         (PFNGLACTIVETEXTUREARBPROC) wglGetProcAddress("glActiveTextureARB");
     glClientActiveTextureARB =
         (PFNGLCLIENTACTIVETEXTUREARBPROC) wglGetProcAddress("glClientActiveTextureARB");
+#endif
 }
 
 
