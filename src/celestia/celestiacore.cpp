@@ -112,6 +112,7 @@ CelestiaCore::CelestiaCore() :
     runningScript(NULL),
     execEnv(NULL),
     timeZoneBias(0),
+    timeZone(NULL),
     showFPSCounter(false),
     nFrames(0),
     fps(0.0),
@@ -1063,10 +1064,15 @@ void CelestiaCore::renderOverlay()
         // Time and date
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(width - 11 * emWidth, height - fontHeight, 0);
+        glTranslatef(width - (timeZone ? 11 + strlen(timeZone) : 11) * emWidth, height - fontHeight, 0);
         overlay->beginText();
         *overlay << astro::Date(sim->getTime() + 
-                                astro::secondsToJulianDate(timeZoneBias)) << '\n';
+                                astro::secondsToJulianDate(timeZoneBias));
+	if(timezone)
+	{
+	    *overlay << " " << timeZone;
+	}
+	*overlay << '\n';
         if (paused)
         {
             glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -1616,10 +1622,29 @@ int CelestiaCore::getTimeZoneBias() const
 }
 
 
+int CelestiaCore::getTextEnterMode() const
+{
+    return textEnterMode;
+}
+
+
 void CelestiaCore::setTimeZoneBias(int bias)
 {
     timeZoneBias = bias;
 }
+
+
+char *CelestiaCore::getTimeZone() const
+{
+    return timeZone;
+}
+
+
+void CelestiaCore::setTimeZone(char *zone)
+{
+    timeZone = zone;
+}
+
 
 int CelestiaCore::getHudDetail()
 {

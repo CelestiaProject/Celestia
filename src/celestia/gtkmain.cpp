@@ -18,6 +18,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <celengine/gl.h>
+#include <celengine/glext.h>
 #include <celengine/celestia.h>
 
 #ifndef DEBUG
@@ -43,10 +44,23 @@
 char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
+static Renderer* appRenderer = NULL;
 
 // Mouse motion tracking
 static int lastX = 0;
 static int lastY = 0;
+
+typedef struct _checkFunc CheckFunc;
+typedef int (*Callback)(int);
+
+struct _checkFunc
+{
+  GtkCheckMenuItem *widget;
+  char *path;
+  Callback func;
+  int active;
+  int funcdata;
+};
 
 static GtkWidget* mainWindow = NULL;
 static GtkWidget* mainMenu = NULL;
@@ -68,13 +82,13 @@ static GtkItemFactory* menuItemFactory = NULL;
 #if 0
 static void SetRenderFlag(int flag, bool state)
 {
-    renderer->setRenderFlags((renderer->getRenderFlags() & ~flag) |
+    appRenderer->setRenderFlags((appRenderer->getRenderFlags() & ~flag) |
                              (state ? flag : 0));
 }
 
 static void SetLabelFlag(int flag, bool state)
 {
-    renderer->setLabelMode((renderer->getLabelMode() & ~flag) |
+    appRenderer->setLabelMode((appRenderer->getLabelMode() & ~flag) |
                            (state ? flag : 0));
 }
 #endif
@@ -96,6 +110,7 @@ enum
     Menu_ConstellationLabels = 2012,
     Menu_PixelShaders        = 2013,
     Menu_VertexShaders       = 2014,
+    Menu_ShowLocTime         = 2015,
 };
 
 static void menuSelectSol()
@@ -225,6 +240,22 @@ static gint menuShowConstellations(GtkWidget* w, gpointer data)
     return TRUE;
 }
 
+static gint menuShowLocTime(GtkWidget* w, gpointer data)
+{
+    bool on = (GTK_CHECK_MENU_ITEM(w)->active != FALSE);
+    if(on)
+    {
+	appCore->setTimeZoneBias(-timezone);
+	appCore->setTimeZone(tzname[daylight?0:1]);
+    }
+    else
+    {
+	appCore->setTimeZoneBias(0);
+	appCore->setTimeZone("UTC");
+    }
+    return TRUE;
+}
+
 static gint menuStarLabels(GtkWidget* w, gpointer data)
 {
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
@@ -309,20 +340,33 @@ static void menuAbout()
 {
     const gchar* authors[] = {
         "Chris Laurel <claurel@shatters.net>",
+	"Deon Ramsey <miavir@furry.de>",
         NULL
     };
-    GtkWidget* about;
-    about = gnome_about_new("Celestia",
-                            VERSION,
-                            "(c) 2001 Chris Laurel",
-                            authors,
-                            "3D Space Simulation",
-                            NULL);
-    if (about == NULL)
-        return;
+    const gchar* logo = gnome_pixmap_file("gnome-hello-logo.png");
+    static GtkWidget* about;
+    if (about != NULL) 
+    {
+	// Try to de-iconify and raise the dialog. 
 
-    gtk_window_set_modal(GTK_WINDOW(about), TRUE);
-    gtk_widget_show(about);
+	gdk_window_show(about->window);
+	gdk_window_raise(about->window);
+    }
+    else
+    {
+	about = gnome_about_new("Celestia",
+				VERSION,
+				"(c) 2001 Chris Laurel",
+				authors,
+				"3D Space Simulation",
+				logo);
+	if (about == NULL)
+	    return;
+
+	gtk_window_set_modal(GTK_WINDOW(about), TRUE);
+	gnome_dialog_set_parent((GnomeDialog*) about, GTK_WINDOW(mainWindow));
+	gtk_widget_show(about);
+    }
 }
 
 
@@ -426,6 +470,8 @@ static void menuSelectObject()
 
     gnome_dialog_close_hides(GNOME_DIALOG(dialog), true);
     // gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+    gnome_dialog_set_parent((GnomeDialog*) dialog, GTK_WINDOW(mainWindow));
+    gnome_dialog_set_default((GnomeDialog*) dialog, GNOME_YES);
     gint whichButton = gnome_dialog_run(GNOME_DIALOG(dialog));
     if (whichButton == 0)
     {
@@ -536,7 +582,7 @@ GotoObjectDialog::~GotoObjectDialog()
 bool GotoObjectDialog::init()
 {
     dialog = gnome_dialog_new("Goto Object",
-                              GNOME_STOCK_BUTTON_CANCEL,
+			      GNOME_STOCK_BUTTON_CANCEL,
                               NULL);
     nameEntry = gtk_entry_new();
     latEntry = gtk_entry_new();
@@ -622,6 +668,8 @@ bool GotoObjectDialog::init()
                        GTK_SIGNAL_FUNC(GotoObject),
                        this);
 
+    gnome_dialog_set_parent((GnomeDialog*) dialog, GTK_WINDOW(mainWindow));
+    gnome_dialog_set_default((GnomeDialog*) dialog, GNOME_NO);
     gnome_dialog_run_and_close(GNOME_DIALOG(dialog));
 
     return true;
@@ -794,10 +842,162 @@ static void menuTourGuide()
     gtk_widget_show(gotoButton);
     // gtk_widget_set_usize(descLabel, 250, 150);
 
+    gnome_dialog_set_parent((GnomeDialog*) dialog, GTK_WINDOW(mainWindow));
+    gnome_dialog_set_default((GnomeDialog*) dialog, GNOME_YES);
     gnome_dialog_run_and_close(GNOME_DIALOG(dialog));
 
     // gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
     // gtk_widget_show(dialog);
+}
+
+
+char *readFromFile(char *fname)
+{
+    ifstream textFile(fname, ios::in);
+    string s("");
+    if(!textFile.is_open())
+    {
+	s="Unable to open file '";
+	s+= fname ;
+	s+= "', probably due to improper installation !\n";
+    }
+    char c;
+    while(textFile.get(c))
+    {
+	if(c=='\t')
+	    s+="        "; // 8 spaces
+	else if(c=='\014') // Ctrl+L (form feed)
+	    s+="\n\n\n\n";
+	else
+	    s+=c;
+    }
+    return g_strdup(s.c_str());
+}
+
+
+static void textInfoDialog(GtkWidget** dialog, const char *txt, const char *title)
+{
+    /* I would use a gnome_message_box dialog for this, except they don't seem
+       to notice that the texts are so big that they create huge windows, and
+       would work better with a scrolled window. Deon */
+    if (*dialog != NULL) 
+    {
+	// Try to de-iconify and raise the dialog. 
+	gdk_window_show((*dialog)->window);
+	gdk_window_raise((*dialog)->window);
+	gnome_dialog_run_and_close(GNOME_DIALOG(*dialog));
+    }
+    else
+    {
+	*dialog = gnome_dialog_new(title,
+				   GNOME_STOCK_BUTTON_OK,
+				   NULL);
+	if (*dialog == NULL)
+	    {
+	    DPRINTF("Unable to open '%s' dialog!\n",title);
+	    return;
+	    }
+
+	GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+	gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (*dialog)->vbox), scrolled_window, TRUE, TRUE, 0);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+					GTK_POLICY_AUTOMATIC,
+					GTK_POLICY_AUTOMATIC);
+	gtk_widget_show (scrolled_window);
+
+	GtkWidget *text = gtk_text_new (NULL, NULL);
+	gtk_text_set_editable (GTK_TEXT (text), FALSE);
+	gtk_text_set_word_wrap (GTK_TEXT (text), FALSE);
+	gtk_text_set_line_wrap (GTK_TEXT (text), FALSE);
+	gtk_container_add (GTK_CONTAINER (scrolled_window), text);
+
+	gtk_text_insert (GTK_TEXT (text), NULL, NULL, NULL, txt, -1);
+	
+	gtk_widget_show (text);
+
+	gtk_widget_set_usize(*dialog, 500, 400);
+
+	gnome_dialog_set_parent((GnomeDialog*) *dialog, GTK_WINDOW(mainWindow));
+	gnome_dialog_set_default((GnomeDialog*) *dialog, GNOME_YES);
+	gnome_dialog_close_hides((GnomeDialog*) *dialog, TRUE);
+	gtk_window_set_modal(GTK_WINDOW(*dialog), FALSE);
+	gnome_dialog_run_and_close(GNOME_DIALOG(*dialog));
+    }
+}
+
+
+static GtkWidget* controldialog=NULL;
+
+static void menuControls()
+{
+    char *txt=readFromFile("controls.txt");
+    textInfoDialog(&controldialog,txt,"Mouse and Keyboard Controls");
+    g_free(txt);
+}
+
+
+static GtkWidget* licdialog=NULL;
+
+static void menuLicense()
+{
+    char *txt=readFromFile("COPYING");
+    textInfoDialog(&licdialog,txt,"Celestia License");
+    g_free(txt);
+}
+
+static GtkWidget* ogldialog=NULL;
+
+static void menuOpenGL()
+{
+    // Code grabbed from winmain.gtk
+    char* vendor = (char*) glGetString(GL_VENDOR);
+    char* render = (char*) glGetString(GL_RENDERER);
+    char* version = (char*) glGetString(GL_VERSION);
+    char* ext = (char*) glGetString(GL_EXTENSIONS);
+    string s;
+    s = "Vendor : ";
+    if (vendor != NULL)
+	s += vendor;
+    s += "\n";
+
+    s += "Renderer : ";
+    if (render != NULL)
+	s += render;
+    s += "\n";
+
+    s += "Version : ";
+    if (version != NULL)
+	s += version;
+    s += "\n";
+
+    char buf[100];
+    GLint simTextures = 1;
+    if (ExtensionSupported("GL_ARB_multitexture"))
+	glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
+    sprintf(buf, "Max simultaneous textures: %d\n",
+	    simTextures);
+    s += buf;
+
+    GLint maxTextureSize = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    sprintf(buf, "Max texture size: %d\n\n",
+	    maxTextureSize);
+    s += buf;
+
+    s += "Supported Extensions:\n    ";
+    if (ext != NULL)
+    {
+	string extString(ext);
+	unsigned int pos = extString.find(' ', 0);
+	while (pos != string::npos)
+	{
+	    extString.replace(pos, 1, "\n    ");
+	    pos = extString.find(' ', pos+5);
+	}
+	s += extString;
+    }
+
+    textInfoDialog(&ogldialog,s.c_str(),"Open GL Info");
 }
 
 
@@ -824,12 +1024,14 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Time/Pause", "space",               menuPause,     0, NULL },
     { "/Time/Real Time", "backslash",       menuRealTime,  0, NULL },
     { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
+    { "/Time/sep1", NULL,                   NULL,          0, "<Separator>" },
+    { "/Time/Show Local Time", "I",         NULL,          Menu_ShowLocTime, "<ToggleItem>" },
     { "/_Render", NULL,                     NULL,          0, "<Branch>" },
     { "/Render/Show Galaxies", "U",         NULL,          Menu_ShowGalaxies, "<ToggleItem>" },
     { "/Render/Show Atmospheres", "<control>A",NULL,       Menu_ShowAtmospheres, "<ToggleItem>" },
     { "/Render/Show Clouds", "I",           NULL,          Menu_ShowClouds, "<ToggleItem>" },
     { "/Render/Show Orbits", "O",           NULL,          Menu_ShowOrbits, "<ToggleItem>" },
-    { "/Render/Show Constellations", "minus",NULL,         Menu_ShowConstellations, "<ToggleItem>" },
+    { "/Render/Show Constellations", "slash",NULL,         Menu_ShowConstellations, "<ToggleItem>" },
     { "/Render/Show Coordinate Sphere", "semicolon",NULL,  Menu_ShowCelestialSphere, "<ToggleItem>" },
     { "/Render/Show Night Side Lights", "<control>L",NULL, Menu_ShowNightSideMaps, "<ToggleItem>" },
     { "/Render/sep1", NULL,                 NULL,          0, "<Separator>" },
@@ -840,7 +1042,7 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Render/Label Minor Planets", "M",   NULL,          Menu_MinorPlanetLabels, "<ToggleItem>" },
     { "/Render/Label Stars", "B",           NULL,          Menu_StarLabels, "<ToggleItem>" },
     { "/Render/Label Galaxies", "E",        NULL,          Menu_GalaxyLabels, "<ToggleItem>" },
-    { "/Render/LabelConstellations", "equal",NULL,         Menu_ConstellationLabels, "<ToggleItem>" },
+    { "/Render/Label Constellations", "equal",NULL,        Menu_ConstellationLabels, "<ToggleItem>" },
     { "/Render/Show Info Text", "V",        menuShowInfo,  0, NULL },
     { "/Render/sep3", NULL,                 NULL,          0, "<Separator>" },
     { "/Render/_Ambient", NULL,             NULL,          0, "<Branch>" },
@@ -850,14 +1052,77 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Render/Ambient/High", NULL,         menuHiAmbient, 0, NULL },
     { "/_Help", NULL,                       NULL,          0, "<LastBranch>" },
     { "/Help/Run Demo", "D",                menuRunDemo,   0, NULL },  
+    { "/Help/sep1", NULL,                   NULL,          0, "<Separator>" },
+    { "/Help/Controls", NULL,       	    menuControls,  0, NULL },
+    { "/Help/OpenGL Info", NULL,            menuOpenGL,    0, NULL },
+    { "/Help/License", NULL,       	    menuLicense,   0, NULL },
+    { "/Help/sep2", NULL,                   NULL,          0, "<Separator>" },
     { "/Help/About", NULL,                  menuAbout,     0, NULL },
 };
+
 
 static GtkItemFactoryEntry optMenuItems[] =
 {
     { "/Render/Use Pixel Shaders", "<control>P", NULL,     Menu_PixelShaders, "<ToggleItem>" },
     { "/Render/Use Vertex Shaders", "<control>V", NULL,    Menu_PixelShaders, "<ToggleItem>" },
 };
+
+
+int checkLocalTime(int dummy)
+{
+	return(appCore->getTimeZoneBias()!=0);
+}
+
+
+int checkPixelShaders(int dummy)
+{
+	return(appRenderer->getFragmentShaderEnabled());
+}
+
+
+int checkVertexShaders(int dummy)
+{
+	return(appRenderer->getVertexShaderEnabled());
+}
+
+
+int checkShowGalaxies(int dummy)
+{
+	return((appRenderer->getRenderFlags() & Renderer::ShowGalaxies) == Renderer::ShowGalaxies);
+}
+
+
+int checkRenderFlag(int flag)
+{
+	return((appRenderer->getRenderFlags() & flag) == flag);
+}
+
+
+int checkLabelFlag(int flag)
+{
+	return((appRenderer->getLabelMode() & flag) == flag);
+}
+
+
+static CheckFunc checks[] =
+{
+    { NULL,	"/Time/Show Local Time",	checkLocalTime,		1, 0 },
+    { NULL,	"/Render/Use Pixel Shaders",	checkPixelShaders,	0, 0 },
+    { NULL,	"/Render/Use Vertex Shaders",	checkVertexShaders,	0, 0 },
+    { NULL,	"/Render/Show Galaxies",	checkRenderFlag,	1, Renderer::ShowGalaxies },
+    { NULL,	"/Render/Show Atmospheres",	checkRenderFlag,	1, Renderer::ShowAtmospheres },
+    { NULL,	"/Render/Show Clouds",		checkRenderFlag,	1, Renderer::ShowCloudMaps },
+    { NULL,	"/Render/Show Orbits",		checkRenderFlag,	1, Renderer::ShowOrbits },
+    { NULL,	"/Render/Show Constellations",	checkRenderFlag,	1, Renderer::ShowDiagrams },
+    { NULL,	"/Render/Show Coordinate Sphere",checkRenderFlag,	1, Renderer::ShowCelestialSphere },
+    { NULL,	"/Render/Show Night Side Lights",checkRenderFlag,	1, Renderer::ShowNightMaps },
+    { NULL,	"/Render/Label Major Planets",	checkLabelFlag,		1, Renderer::MajorPlanetLabels },
+    { NULL,	"/Render/Label Minor Planets",	checkLabelFlag,		1, Renderer::MinorPlanetLabels },
+    { NULL,	"/Render/Label Stars",		checkLabelFlag,		1, Renderer::StarLabels },
+    { NULL,	"/Render/Label Galaxies",	checkLabelFlag,		1, Renderer::GalaxyLabels },
+    { NULL,	"/Render/Label Constellations",	checkRenderFlag,	1, Renderer::ConstellationLabels },
+};
+
 
 void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func)
 {
@@ -879,15 +1144,21 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
     menuItemFactory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
                                            "<main>",
                                            accelGroup);
+    gtk_accel_group_attach (accelGroup, GTK_OBJECT (window));
     gtk_item_factory_create_items(menuItemFactory, nItems, menuItems, NULL);
-    Renderer *renderer=appCore->getRenderer();
-    g_assert(renderer);
-    if(renderer->fragmentShaderSupported())
+    appRenderer=appCore->getRenderer();
+    g_assert(appRenderer);
+    if(appRenderer->fragmentShaderSupported())
+	{
 	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[0], NULL, 1);
-    if (renderer->vertexShaderSupported())
+	checks[1].active=1;
+	}
+    if (appRenderer->vertexShaderSupported())
+	{
 	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[1], NULL, 1);
+	checks[2].active=1;
+	}
 
-    gtk_window_add_accel_group(GTK_WINDOW(window), accelGroup);
     if (menubar != NULL)
         *menubar = gtk_item_factory_get_widget(menuItemFactory, "<main>");
 
@@ -915,10 +1186,12 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
                    GTK_SIGNAL_FUNC(menuConstellationLabels));
     setupCheckItem(menuItemFactory, Menu_ShowCelestialSphere,
                    GTK_SIGNAL_FUNC(menuShowCelestialSphere));
-    if(renderer->fragmentShaderSupported())
+    setupCheckItem(menuItemFactory, Menu_ShowLocTime,
+                   GTK_SIGNAL_FUNC(menuShowLocTime));
+    if(appRenderer->fragmentShaderSupported())
 	setupCheckItem(menuItemFactory, Menu_PixelShaders,
 		       GTK_SIGNAL_FUNC(menuPixelShaders));
-    if (renderer->vertexShaderSupported())
+    if (appRenderer->vertexShaderSupported())
 	setupCheckItem(menuItemFactory, Menu_VertexShaders,
 		       GTK_SIGNAL_FUNC(menuVertexShaders));
 }
@@ -954,7 +1227,12 @@ gint initFunc(GtkWidget* widget)
             return TRUE;
         }
 
-        appCore->start((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
+	time_t curtime=time(NULL);
+        appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
+	localtime(&curtime); /* Only doing this to set timezone as a side
+			       effect*/
+	appCore->setTimeZoneBias(-timezone);
+	appCore->setTimeZone(tzname[daylight?0:1]);
     }
         
     return TRUE;
@@ -1227,8 +1505,7 @@ int main(int argc, char* argv[])
     }
 
     // Create the main window
-    mainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(mainWindow), AppName);
+    mainWindow=gnome_app_new("Celestia",AppName);
     gtk_container_set_border_width(GTK_CONTAINER(mainWindow), 1);
 
     mainBox = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
@@ -1274,7 +1551,7 @@ int main(int argc, char* argv[])
     createMainMenu(mainWindow, &mainMenu);
 
     // gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(oglArea));
-    gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(mainBox));
+    gnome_app_set_contents((GnomeApp *)mainWindow, GTK_WIDGET(mainBox));
     gtk_box_pack_start(GTK_BOX(mainBox), mainMenu, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(mainBox), oglArea, TRUE, TRUE, 0);
     gtk_widget_show(GTK_WIDGET(oglArea));
@@ -1290,6 +1567,35 @@ int main(int argc, char* argv[])
 
     bReady = true;
 
+    g_assert(menuItemFactory);
+    // Check all the toggle items that they are set on/off correctly
+    int i = sizeof(checks) / sizeof(checks[0]);
+    for(CheckFunc *cfunc=&checks[--i];i>=0;cfunc=&checks[--i])
+    {
+	if(!cfunc->active)
+	    continue;
+	g_assert(cfunc->path);
+	cfunc->widget=GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(menuItemFactory, cfunc->path));
+	if(!cfunc->widget)
+	{
+	    cfunc->active=0;
+	    DPRINTF("Menu item %s status checking deactivated due to being unable to find it!", cfunc->path);
+	    continue;
+	}
+	g_assert(cfunc->func);
+	int res=(*cfunc->func)(cfunc->funcdata);
+	if(res)
+	{
+    	    if(cfunc->widget->active == FALSE)
+		{
+		// Change state of widget *without* causing a message to be
+		// sent (which would change the state again).
+		gtk_widget_hide(GTK_WIDGET(cfunc->widget));
+		cfunc->widget->active=TRUE;
+		gtk_widget_show(GTK_WIDGET(cfunc->widget));
+		}
+	}
+    }
     gtk_main();
 
     return 0;

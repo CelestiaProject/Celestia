@@ -1,6 +1,6 @@
 dosstuff = celestia.mak $(wildcard *.bat) Celestia.dsp
-noinst_DATA = $(wildcard *.txt) $(dosstuff)
-pkgdata_DATA = celestia.cfg $(wildcard *.cel)
+noinst_DATA = devguide.txt $(dosstuff)
+pkgdata_DATA = celestia.cfg $(wildcard *.cel) controls.txt COPYING
 
 EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA)
 

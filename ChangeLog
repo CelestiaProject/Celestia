@@ -370,5 +370,8 @@ Code:
 * Unix: Integrated a current gnome macros package. (dramsey)
 * Removed many errors and compiler warnings (dramsey)
 * Label Galaxies option. (dramsey)
-* Unix: Added several menu options already present in the windows version to
-        the Gtk version. (dramsey)
+* Unix Gtk : Added several menu options already present in the windows version.
+             (dramsey)
+* Unix Gtk : Fixed problem where giving keyboard commands wasn't updating
+	     the toggle menu gadgets. (dramsey)
+* Unix : Handle timezones correctly. (dramsey)
