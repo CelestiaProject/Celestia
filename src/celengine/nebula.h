@@ -30,6 +30,9 @@ class Nebula : public DeepSkyObject
                         float brightness,
                         float pixelSize);
 
+    virtual unsigned int getRenderMask();
+    virtual unsigned int getLabelMask();
+
     void setModel(ResourceHandle);
     ResourceHandle getModel() const;
 

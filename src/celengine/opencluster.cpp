@@ -18,6 +18,7 @@
 #include "meshmanager.h"
 #include "gl.h"
 #include "vecgl.h"
+#include "render.h"
 
 using namespace std;
 
@@ -44,4 +45,16 @@ void OpenCluster::render(const Vec3f& offset,
     // constituent stars and a label when labels are turned on.  A good idea
     // would be to add an 'sky chart' mode, in which clusters are rendered as
     // circles.  
+}
+
+
+unsigned int OpenCluster::getRenderMask()
+{
+    return Renderer::ShowOpenClusters;
+}
+
+
+unsigned int OpenCluster::getLabelMask()
+{
+    return Renderer::OpenClusterLabels;
 }

@@ -18,6 +18,10 @@
 #include <celengine/parser.h>
 
 
+class Nebula;
+class Galaxy;
+class OpenCluster;
+
 class DeepSkyObject
 {
  public:
@@ -45,6 +49,9 @@ class DeepSkyObject
                         const Quatf& viewerOrientation,
                         float brightness,
                         float pixelSize) = 0;
+
+    virtual unsigned int getRenderMask() { return 0; };
+    virtual unsigned int getLabelMask() { return 0; };
 
  private:
     std::string name;
