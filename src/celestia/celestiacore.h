@@ -296,6 +296,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool wireframe;
     bool editMode;
     bool altAzimuthMode;
+    bool showConsole;
     bool lightTravelFlag;
     double flashFrameStart;
 
