@@ -42,7 +42,7 @@ using namespace std;
 static const int DragThreshold = 3;
 
 //Perhaps you'll want to put this stuff in configuration file.
-static const float fIncrementFactor = 2.0f;
+static const float fIncrementFactor = 10.0f;
 static const double fMinSlewRate = 3.0;
 static const double fMaxKeyAccel = 20.0;
 static const float fAltitudeThreshold = 4.0f;
