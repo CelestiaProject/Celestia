@@ -335,7 +335,7 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
             if (altSurfaces->size() != NULL)
             {
                 KPopupMenu *surfaces = new KPopupMenu(this);
-                surfaces->insertItem(i18n("Normal (default surface)", "Normal"), baseId + 20);
+                surfaces->insertItem(i18n("Normal"), baseId + 20);
                 int j=0;
                 for (std::vector<std::string>::const_iterator i = altSurfaces->begin();
                      i < altSurfaces->end() && j < MENUMAXSIZE - 1; i++, j++)
