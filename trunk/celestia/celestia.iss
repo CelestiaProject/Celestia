@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.3.2 pre4
+AppVerName=Celestia 1.3.2 pre6
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -80,7 +80,7 @@ Source: "textures\medres\charon-lok.jpg";      DestDir: "{app}/textures/medres";
 Source: "textures\medres\charon-lok-spec.jpg"; DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\deimos.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\dione.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\earth.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\earth.png";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\earth-clouds.png";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\earthnight.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\enceladus.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
