@@ -16,6 +16,7 @@
 #define _BIGFIX_H_
 
 #define N_WORDS 8
+#include <string>
 
 class BigFix
 {
@@ -23,6 +24,7 @@ public:
 	BigFix();
 	BigFix(int);
 	BigFix(double);
+	BigFix(const char*);
 
 	operator double() const;
 	operator float() const;
@@ -39,6 +41,7 @@ public:
 
 	// for debugging
 	void dump();
+	std::string toString();
 
 private:
 	unsigned short n[N_WORDS];  // high 16-bits is n[N_WORDS - 1]
