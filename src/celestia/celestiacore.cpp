@@ -1062,7 +1062,7 @@ static void displaySelectionName(Overlay& overlay,
         overlay << sel.body->getName();
     else if (sel.galaxy != NULL)
         overlay << sel.galaxy->getName();
-    else
+    else if (sel.star != NULL)
         displayStarNames(overlay, *sel.star, *univ.getStarCatalog(), 1);
 }
 
