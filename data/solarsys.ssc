@@ -76,7 +76,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Texture "earth.*"
 	NightTexture "earthnight.*"
 	
-	SpecularTexture "earth-spec.*"
+	# SpecularTexture "earth-spec.*"
 	Color [ 0.85 0.85 1.0 ]
 	SpecularColor [ 0.5 0.5 0.55 ]
 	SpecularPower 25.0
