@@ -61,6 +61,7 @@ class Simulation
     void gotoSelection();
     void centerSelection();
     void follow();
+    void cancelMotion();
 
     SolarSystem* getNearestSolarSystem() const;
 
