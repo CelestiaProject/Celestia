@@ -33,6 +33,7 @@ public:
         TokenEndArray       = 9,
         TokenEquals         = 10,
         TokenError          = 11,
+        TokenBar            = 12,
     };
 
     Tokenizer(istream*);

@@ -124,6 +124,11 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 newToken = TokenEquals;
                 nextChar = readChar();
             }
+            else if (nextChar == '|')
+            {
+                newToken = TokenBar;
+                nextChar = readChar();
+            }
             else if (nextChar == -1)
             {
                 newToken = TokenEnd;
