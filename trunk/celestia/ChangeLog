@@ -648,3 +648,5 @@ Code:
    - Added IgnoreGLExtensions directive for celestia.cfg
 * Added track command for script
 * Fixed eclipse shadow z-fighting artifacts
+* Fixed vertical mirroring of textures on 3DS models
+* Fixed problems with bump mapping
