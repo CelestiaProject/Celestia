@@ -126,8 +126,8 @@ void
 FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
 {
     Texture* t = NULL;
-    if (m.tex0 != InvalidResource)
-        t = GetTextureManager()->find(m.tex0);
+    if (m.maps[Mesh::DiffuseMap] != InvalidResource)
+        t = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
 
     if (t == NULL)
     {
