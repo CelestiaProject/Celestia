@@ -1822,6 +1822,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     else
 	    startFullscreen = false;
 
+    if (strstr(lpCmdLine, "-verbose"))
+	    verbose = 1;
+
     joystickAvailable = InitJoystick(joystickCaps);
 
     displayModes = EnumerateDisplayModes(16);

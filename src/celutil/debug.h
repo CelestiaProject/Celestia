@@ -16,8 +16,10 @@
 
 #ifndef DEBUG
 #define DPRINTF(args...)
+#define DVPRINTF(args...)
 #else
 #define DPRINTF(args...) DebugPrint(args)
+#define DVPRINTF(args...) if(verbose) DebugPrint(args)
 extern void DebugPrint(char *format, ...);
 #endif
 
@@ -33,6 +35,7 @@ extern void DebugPrint(char *format, ...);
 #endif
 
 extern void Log(char *format, ...);
+extern int verbose;
 
 #endif // _DEBUG_H_
 

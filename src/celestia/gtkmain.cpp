@@ -41,6 +41,7 @@
 #include "imagecapture.h"
 #include "celestiacore.h"
 #include "celengine/simulation.h"
+#include <libgnomeui/gnome-init.h>
 
 
 char AppName[] = "Celestia";
@@ -2131,6 +2132,28 @@ gint glarea_key_release(GtkWidget* widget, GdkEventKey* event)
     return handleSpecialKey(event->keyval, false);
 }
 
+struct poptOption options[] =
+{
+    {
+    "verbose",
+    'v',
+    POPT_ARG_NONE,
+    &verbose,
+    0,
+    "Lots of additional Messages",
+    NULL
+    },
+
+    {
+    NULL,
+    '\0',
+    0,
+    NULL,
+    0,
+    NULL,
+    NULL
+  }
+};
 
 int main(int argc, char* argv[])
 {
@@ -2147,6 +2170,10 @@ int main(int argc, char* argv[])
             "', probably due to improper installation\n";
     }
 
+    // Now initialize OpenGL and Gnome
+    gnome_init_with_popt_table("Celestia", VERSION, argc, argv, options, 0,
+                               NULL);
+
     appCore = new CelestiaCore();
     if (appCore == NULL)
     {
@@ -2159,9 +2186,6 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-
-    // Now initialize OpenGL and Gnome
-    gnome_init("Celestia", VERSION, argc, argv);
 
     // Check if OpenGL is supported
     if (gdk_gl_query() == FALSE)

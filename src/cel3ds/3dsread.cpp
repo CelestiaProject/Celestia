@@ -13,6 +13,7 @@
 #include "3dsmodel.h"
 #include "3dsread.h"
 #include <celutil/bytes.h>
+#include <celutil/debug.h>
 
 using namespace std;
 
@@ -660,7 +661,8 @@ M3DScene* Read3DSFile(ifstream& in)
         return NULL;
     }
     
-    cout << "3DS file, " << chunkSize << " bytes\n";
+    if(verbose)
+        cout << "3DS file, " << chunkSize << " bytes\n";
     M3DScene* scene = new M3DScene();
     int contentSize = chunkSize - 6;
 
