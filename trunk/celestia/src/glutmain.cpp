@@ -22,6 +22,7 @@
 #include "vecmath.h"
 #include "quaternion.h"
 #include "util.h"
+#include "timer.h"
 #include "stardb.h"
 #include "solarsys.h"
 #include "asterism.h"
@@ -46,10 +47,9 @@ static string welcomeMessage1("Welcome to Celestia 1.07");
 static string welcomeMessage2("Press D to run demo");
 
 
-//----------------------------------
 // Timer info.
-static double currentTime=0.0;
-static double deltaTime=0.0;
+static double currentTime = 0.0;
+static Timer* timer = NULL;
 
 static int nFrames = 0;
 static double fps = 0.0;
@@ -409,6 +409,20 @@ void RenderOverlay()
     overlay->end();
 }
 
+static void ToggleLabelState(int labelState)
+{
+    renderer->setLabelMode(renderer->getLabelMode() ^ labelState);
+}
+
+static void ToggleRenderFlag(int renderFlag)
+{
+    renderer->setRenderFlags(renderer->getRenderFlags() ^ renderFlag);
+}
+
+
+/*
+ * Definition of GLUT callback functions
+ */
 
 void Display(void)
 {
@@ -424,13 +438,17 @@ void Idle(void)
 {
     if (glutGetWindow() != mainWindow)
         glutSetWindow(mainWindow);
-    sim->update(0.1f);
+
+    double lastTime = currentTime;
+    currentTime = timer->getTime();
+    double dt = currentTime - lastTime;
+    sim->update(dt);
+
     Display();
 }
 
 void MouseDrag(int x, int y)
 {
-    cout << leftButton << ',' << middleButton << ',' << rightButton << '\n';
     if (leftButton ^ rightButton)
     {
         Quatf q(1);
@@ -444,7 +462,6 @@ void MouseDrag(int x, int y)
         Vec3f axis;
         float angle = 0;
         sim->getObserver().getOrientation().getAxisAngle(axis, angle);
-        cout << "[" << axis.x << "," << axis.y << "," << axis.z << "] " << angle << "\n";
     }
     else if (rightButton && !leftButton)
     {
@@ -470,21 +487,29 @@ void MouseButton(int button, int state, int x, int y)
         middleButton = (state == GLUT_DOWN);
     lastX = x;
     lastY = y;
+
+    if (state == GLUT_DOWN)
+    {
+        mouseMotion = 0;
+    }
+    else
+    {
+        if (mouseMotion < 3)
+        {
+            if (button == GLUT_LEFT_BUTTON)
+            {
+                Vec3f pickRay = renderer->getPickRay(x, y);
+                Selection oldSel = sim->getSelection();
+                Selection newSel = sim->pickObject(pickRay);
+                sim->setSelection(newSel);
+                if (!oldSel.empty() && oldSel == newSel)
+                    sim->centerSelection();
+            }
+        }
+    }
 }
 
-
-static void ToggleLabelState(int labelState)
-{
-    renderer->setLabelMode(renderer->getLabelMode() ^ labelState);
-}
-
-static void ToggleRenderFlag(int renderFlag)
-{
-    renderer->setRenderFlags(renderer->getRenderFlags() ^ renderFlag);
-}
-
-
-void HandleKeyPress(unsigned char c, int x, int y)
+void KeyPress(unsigned char c, int x, int y)
 {
     if (textEnterMode)
     {
@@ -497,12 +522,27 @@ void HandleKeyPress(unsigned char c, int x, int y)
             if (typedText.size() > 0)
                 typedText = string(typedText, 0, typedText.size() - 1);
         }
+        else if (c == '\n' || c == '\r')
+        {
+            if (typedText != "")
+            {
+                Selection sel = sim->findObject(typedText);
+                if (!sel.empty())
+                    sim->setSelection(sel);
+                typedText = "";
+            }
+            textEnterMode = false;
+        }
         return;
     }
 
     c = toupper(c);
     switch (c)
     {
+    case '\n':
+    case '\r':
+        textEnterMode = true;
+        break;
     case 'A':
         if (sim->getTargetSpeed() == 0)
             sim->setTargetSpeed(0.000001f);
@@ -769,20 +809,21 @@ int main(int argc, char* argv[])
     sim->setTime((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
     sim->update(0.0);
 
-    glutInitWindowSize(400, 300);
+    glutInitWindowSize(480, 360);
     glutInitWindowPosition(0, 0);
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     mainWindow = glutCreateWindow("Celestia");
-    ChangeSize(400, 300);
+    ChangeSize(480, 360);
 
     glutReshapeFunc(ChangeSize);
     glutDisplayFunc(Display);
     glutIdleFunc(Idle);
     glutMouseFunc(MouseButton);
     glutMotionFunc(MouseDrag);
-    glutKeyboardFunc(HandleKeyPress);
+    glutKeyboardFunc(KeyPress);
 
+    timer = CreateTimer();
     renderer = new Renderer();
 
     // Prepare the scene for rendering.

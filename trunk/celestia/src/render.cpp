@@ -220,7 +220,7 @@ bool Renderer::init(int winWidth, int winHeight)
         galaxyTex = CreateProceduralTexture(128, 128, GL_RGBA, GlareTextureEval);
         galaxyTex->bindName();
 
-        glareTex = CreateJPEGTexture("textures\\flare.jpg");
+        glareTex = CreateJPEGTexture("textures/flare.jpg");
         if (glareTex == NULL)
             glareTex = CreateProceduralTexture(64, 64, GL_RGB, GlareTextureEval);
         glareTex->bindName();
@@ -229,7 +229,7 @@ bool Renderer::init(int winWidth, int winHeight)
         shadowTex->bindName();
 
         // font = txfLoadFont("fonts\\helvetica_14b.txf");
-        font = txfLoadFont("fonts\\default.txf");
+        font = txfLoadFont("fonts/default.txf");
         if (font != NULL)
             txfEstablishTexture(font, 0, GL_FALSE);
 
