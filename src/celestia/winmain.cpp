@@ -1194,7 +1194,7 @@ public:
 
     void fatalError(const std::string& msg)
     {
-	MessageBox(NULL,
+	    MessageBox(NULL,
                    msg.c_str(),
                    "Fatal Error",
                    MB_OK | MB_ICONERROR);
@@ -1751,9 +1751,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     bool startFullscreen;
     if (strstr(lpCmdLine, "-fullscreen"))
-	startFullscreen = true;
+	    startFullscreen = true;
     else
-	startFullscreen = false;
+	    startFullscreen = false;
 
     joystickAvailable = InitJoystick(joystickCaps);
 
@@ -1794,11 +1794,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     if (hWnd == NULL)
     {
-	MessageBox(NULL,
-		   "Failed to create the application window.",
-		   "Fatal Error",
-		   MB_OK | MB_ICONERROR);
-	return FALSE;
+        MessageBox(NULL,
+	           "Failed to create the application window.",
+	           "Fatal Error",
+	           MB_OK | MB_ICONERROR);
+        return FALSE;
     }
 
     mainWindow = hWnd;
@@ -1850,9 +1850,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         // If Celestia is in an inactive state, we should use GetMessage
         // to avoid sucking CPU cycles--if time is paused, we can probably
         // avoid constantly rendering.
-	int bGotMsg = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
-
-	if (bGotMsg)
+        if(PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
         {
             bool dialogMessage = false;
 
@@ -1869,19 +1867,19 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                 IsDialogMessage(gotoObjectDlg->hwnd, &msg))
                 dialogMessage = true;
 
-	    // Translate and dispatch the message
+            // Translate and dispatch the message
             if (!dialogMessage)
             {
                 if (!TranslateAccelerator(mainWindow, acceleratorTable, &msg))
                     TranslateMessage(&msg);
                 DispatchMessage(&msg);
             }
-	}
+        }
         else
         {
             // And force a redraw
-	    InvalidateRect(mainWindow, NULL, FALSE);
-	}
+            InvalidateRect(mainWindow, NULL, FALSE);
+        }
 
         if (useJoystick)
             HandleJoystick();
@@ -1946,7 +1944,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
     switch(uMsg)
     {
     case WM_CREATE:
-	break;
+        break;
 
     case WM_MOUSEMOVE:
         {
@@ -2027,7 +2025,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         lastY = HIWORD(lParam);
         appCore->mouseButtonDown(LOWORD(lParam), HIWORD(lParam),
                                  CelestiaCore::LeftButton);
-	break;
+        break;
     case WM_RBUTTONDOWN:
         lastX = LOWORD(lParam);
         lastY = HIWORD(lParam);
@@ -2046,7 +2044,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             RestoreCursor();
         appCore->mouseButtonUp(LOWORD(lParam), HIWORD(lParam),
                                CelestiaCore::LeftButton);
-	break;
+        break;
 
     case WM_RBUTTONUP:
         if (!cursorVisible)
@@ -2075,11 +2073,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             handleKey(wParam, true);
             break;
         }
-	break;
+        break;
 
     case WM_KEYUP:
-	handleKey(wParam, false);
-	break;
+        handleKey(wParam, false);
+        break;
 
     case WM_CHAR:
         {
@@ -2401,19 +2399,19 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
     case WM_SIZE:
         appCore->resize(LOWORD(lParam), HIWORD(lParam));
-	break;
+        break;
 
     case WM_PAINT:
-	if (bReady)
+        if (bReady)
         {
             appCore->draw();
-	    SwapBuffers(deviceContext);
-	    ValidateRect(hWnd, NULL);
-	}
-	break;
+            SwapBuffers(deviceContext);
+            ValidateRect(hWnd, NULL);
+        }
+        break;
 
     default:
-	return DefWindowProc( hWnd, uMsg, wParam, lParam );
+        return DefWindowProc( hWnd, uMsg, wParam, lParam );
     }
 
     return 0;
