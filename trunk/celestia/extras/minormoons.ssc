@@ -493,7 +493,7 @@
 "Pan" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
+	#Mesh		"asteroid.cms"
 	Radius		10
 
 	EllipticalOrbit
@@ -620,8 +620,8 @@
 	SemiMajorAxis	49752
 	Eccentricity	0.0003
 	Inclination	0.085
-	AscendingNode	127.256	#
-	ArgOfPericenter	96.012	# J2000.0
+	AscendingNode	307.256	#
+	ArgOfPericenter	276.012	# J2000.0
 	MeanAnomaly     352.546	#
 	}
 	
@@ -642,8 +642,8 @@
 	SemiMajorAxis	53764
 	Eccentricity	0.0099
 	Inclination	0.104
-	AscendingNode	272.308	#
-	ArgOfPericenter	345.041	# J2000.0
+	AscendingNode	92.308	#
+	ArgOfPericenter	165.041	# J2000.0
 	MeanAnomaly     78.064	#
 	}
 	
@@ -664,8 +664,8 @@
 	SemiMajorAxis	59165
 	Eccentricity	0.0009
 	Inclination	0.193
-	AscendingNode	62.850	#
-	ArgOfPericenter	204.255	# J2000.0
+	AscendingNode	242.850	#
+	ArgOfPericenter	24.255	# J2000.0
 	MeanAnomaly     324.540	#
 	}
 	
@@ -686,8 +686,8 @@
 	SemiMajorAxis	61777
 	Eccentricity	0.0004
 	Inclination	0.006
-	AscendingNode	292.262	#
-	ArgOfPericenter	4.425	# J2000.0
+	AscendingNode	112.262	#
+	ArgOfPericenter	184.425	# J2000.0
 	MeanAnomaly     3.135	#
 	}
 
@@ -709,8 +709,8 @@
 	SemiMajorAxis	62659
 	Eccentricity	0.0001
 	Inclination	0.113
-	AscendingNode	313.615	#
-	ArgOfPericenter	321.145	# J2000.0
+	AscendingNode	133.615	#
+	ArgOfPericenter	141.145	# J2000.0
 	MeanAnomaly     357.199	#
 	}
 
@@ -731,8 +731,8 @@
 	SemiMajorAxis	64358
 	Eccentricity	0.0007
 	Inclination	0.065
-	AscendingNode	152.582	#
-	ArgOfPericenter	212.168 # J2000.0
+	AscendingNode	332.582	#
+	ArgOfPericenter	32.168 # J2000.0
 	MeanAnomaly     51.564	#
 	}
 	
@@ -753,8 +753,8 @@
 	SemiMajorAxis	66097
 	Eccentricity	0.0001
 	Inclination	0.059
-	AscendingNode	128.717	#
-	ArgOfPericenter	204.520	# J2000.0
+	AscendingNode	308.717	#
+	ArgOfPericenter	24.520	# J2000.0
 	MeanAnomaly     356.184	#
 	}
 	
@@ -775,8 +775,8 @@
 	SemiMajorAxis	69927
 	Eccentricity	0.0001
 	Inclination	0.279
-	AscendingNode	26.572	#
-	ArgOfPericenter	0.858	# J2000.0
+	AscendingNode	206.572	#
+	ArgOfPericenter	180.858	# J2000.0
 	MeanAnomaly     9.041	#
 	}
 	
@@ -797,8 +797,8 @@
 	SemiMajorAxis	75255
 	Eccentricity	0.0001
 	Inclination	0.031
-	AscendingNode	97.820	#
-	ArgOfPericenter	299.908	# J2000.0
+	AscendingNode	277.820	#
+	ArgOfPericenter	119.908	# J2000.0
 	MeanAnomaly     6.896	#
 	}
 	
@@ -819,8 +819,8 @@
 	SemiMajorAxis	86004
 	Eccentricity	0.0001
 	Inclination	0.319
-	AscendingNode	34.713	#
-	ArgOfPericenter	213.582	# J2000.0
+	AscendingNode	214.713	#
+	ArgOfPericenter	33.582	# J2000.0
 	MeanAnomaly     12.990	#
 	}
 	
@@ -839,11 +839,11 @@
 	{
 	Period		579.73
 	SemiMajorAxis	7231000
-	Eccentricity	0.1588
-	Inclination	137.513	#
-	AscendingNode	187.156	#
-	ArgOfPericenter	148.332	# J2000.0
-	MeanAnomaly     26.287	#
+	Eccentricity	0.1587
+	Inclination	42.491	#
+	AscendingNode	7.152	#
+	ArgOfPericenter	328.345	# J2000.0
+	MeanAnomaly     26.273	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -859,13 +859,13 @@
 
 	EllipticalOrbit
 	{
-	Period		677.37
+	Period		677.36
 	SemiMajorAxis	8004000
-	Eccentricity	0.2295
-	Inclination	132.537	#
-	AscendingNode	198.302	#
-	ArgOfPericenter	178.816	# J2000.0
-	MeanAnomaly     255.378	#
+	Eccentricity	0.2292
+	Inclination	47.483	#
+	AscendingNode	18.306	#
+	ArgOfPericenter	358.810	# J2000.0
+	MeanAnomaly     255.381	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -881,12 +881,12 @@
 
 	EllipticalOrbit
 	{
-	Period		1288.28
+	Period		1288.30
 	SemiMajorAxis	12179000
 	Eccentricity	0.5224
-	Inclination	97.811	#
-	AscendingNode	207.683	#
-	ArgOfPericenter	105.486	# J2000.0
+	Inclination	82.190	#
+	AscendingNode	27.683	#
+	ArgOfPericenter	285.483	# J2000.0
 	MeanAnomaly     261.598	#
 	}
 
@@ -903,13 +903,13 @@
 
 	EllipticalOrbit
 	{
-	Period		1977.29
-	SemiMajorAxis	16243000
-	Eccentricity	0.4431
-	Inclination	67.938	#
-	AscendingNode	196.112	#
-	ArgOfPericenter	201.094	# J2000.0
-	MeanAnomaly     247.377	#
+	Period		1978.29
+	SemiMajorAxis	16256000
+	Eccentricity	0.4448
+	Inclination	112.068	#
+	AscendingNode	16.124	#
+	ArgOfPericenter	21.033	# J2000.0
+	MeanAnomaly     247.473	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -925,13 +925,13 @@
 
 	EllipticalOrbit
 	{
-	Period		2234.77
-	SemiMajorAxis	17501000
-	Eccentricity	0.5843
-	Inclination	100.701	#
-	AscendingNode	213.748	#
-	ArgOfPericenter	95.730	# J2000.0
-	MeanAnomaly     173.589	#
+	Period		2225.21
+	SemiMajorAxis	17418000
+	Eccentricity	0.5914
+	Inclination	79.227	#
+	AscendingNode	33.869	#
+	ArgOfPericenter	275.958	# J2000.0
+	MeanAnomaly     173.109	#
 	}
 
 	RotationPeriod  10   # Guess
