@@ -184,7 +184,7 @@ bool Universe::isMarked(const Selection& sel, int priority) const
          iter != markers->end(); iter++)
     {
         if (iter->getObject() == sel)
-            return priority >= iter->getPriority();
+            return iter->getPriority() >= priority;
     }
 
     return false;
