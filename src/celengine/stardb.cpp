@@ -19,6 +19,8 @@
 #include "astro.h"
 #include "stardb.h"
 #include "parser.h"
+#include "multitexture.h"
+#include "meshmanager.h"
 #include <celutil/debug.h>
 
 using namespace std;
@@ -743,7 +745,9 @@ void StarDatabase::buildIndexes()
 }
 
 
-static Star* CreateStar(uint32 catalogNumber, Hash* starData)
+static Star* CreateStar(uint32 catalogNumber,
+                        Hash* starData,
+                        const string& path)
 {
     double ra = 0.0;
     double dec = 0.0;
@@ -790,6 +794,32 @@ static Star* CreateStar(uint32 catalogNumber, Hash* starData)
             absMag = astro::appToAbsMag((float) appMag, (float) distance);
     }
 
+    string modelName;
+    string textureName;
+    bool hasTexture = starData->getString("Texture", textureName);
+    bool hasModel = starData->getString("Mesh", modelName);
+
+    if (hasTexture || hasModel)
+    {
+        // If the star definition has extended information, clone the
+        // star details so we can customize it without affecting other
+        // stars of the same spectral type.
+        // TODO: Need better management of star details objects.  The
+        // standard ones should be persistent, but the custom ones should
+        // probably be destroyed in the star destructor.  Reference counting
+        // is probably the best strategy.
+        details = new StarDetails(*details);
+    }
+
+    if (hasTexture)
+        details->setTexture(MultiResTexture(textureName, path));
+
+    if (hasModel)
+    {
+        ResourceHandle modelHandle = GetModelManager()->getHandle(ModelInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f)));
+        details->setModel(modelHandle);
+    }
+
     Star* star = new Star();
     star->setDetails(details);
     star->setCatalogNumber(catalogNumber);
@@ -805,7 +835,7 @@ static Star* CreateStar(uint32 catalogNumber, Hash* starData)
 }
 
 
-bool StarDatabase::load(istream& in)
+bool StarDatabase::load(istream& in, const string& resourcePath)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
@@ -844,7 +874,7 @@ bool StarDatabase::load(istream& in)
         }
         Hash* starData = starDataValue->getHash();
 
-        Star* star = CreateStar(catalogNumber, starData);
+        Star* star = CreateStar(catalogNumber, starData, resourcePath);
         if (star != NULL)
         {
             // Ensure that the star array is large enough

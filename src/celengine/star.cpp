@@ -675,6 +675,20 @@ StarDetails::setBolometricCorrection(float correction)
 }
 
 
+void
+StarDetails::setTexture(const MultiResTexture& tex)
+{
+    texture = tex;
+}
+
+
+void
+StarDetails::setModel(ResourceHandle rh)
+{
+    model = rh;
+}
+
+
 // Return the radius of the star in kilometers
 float Star::getRadius() const
 {
@@ -695,6 +709,20 @@ float Star::getRadius() const
     return SOLAR_RADIUS * (float) sqrt(boloLum) *
         square(SOLAR_TEMPERATURE / getTemperature());
 #endif
+}
+
+
+MultiResTexture
+Star::getTexture() const
+{
+    return details->getTexture();
+}
+
+
+ResourceHandle
+Star::getModel() const
+{
+    return details->getModel();
 }
 
 
