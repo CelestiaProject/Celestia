@@ -8,6 +8,7 @@
 
 #define __AIFF__
 #import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 #import "CelestiaDestination.h"
 #import "CelestiaFavorite.h"
@@ -18,7 +19,7 @@
 @interface CelestiaAppCore : NSObject {
     CelestiaDestinations* _destinations;
 }
--(int)toCelestiaKey:(unichar)key;
+-(int)toCelestiaKey:(NSEvent*)theEvent;
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
 -(void)archive;
 +(CelestiaAppCore *)sharedAppCore;
