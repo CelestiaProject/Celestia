@@ -10,6 +10,7 @@
 #ifndef CELSCRIPT_VALUE_H_
 #define CELSCRIPT_VALUE_H_
 
+#include <celscript/celx.h>
 #include <string>
 #include <iostream>
 #include <celscript/type.h>

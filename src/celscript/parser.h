@@ -10,6 +10,7 @@
 #ifndef _CELSCRIPT_SCRIPTPARSER_H_
 #define _CELSCRIPT_SCRIPTPARSER_H_
 
+#include <celscript/celx.h>
 #include <string>
 #include <vector>
 #include <celscript/scanner.h>
@@ -33,6 +34,7 @@ public:
     Expression* parseAddExpression();
     Expression* parseEqualityExpression();
     Expression* parseRelationalExpression();
+    Expression* parseAssignmentExpression();
 
     Statement* parseStatement();
     Statement* parseVarStatement();
