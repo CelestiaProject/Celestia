@@ -7,8 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _3DSMESH_H_
-#define _3DSMESH_H_
+#ifndef _CELENGINE_3DSMESH_H_
+#define _CELENGINE_3DSMESH_H_
 
 #include <vector>
 #include <celengine/mesh.h>
@@ -24,6 +24,7 @@ class Mesh3DS : public Mesh
     void render(float lod);
     void render(unsigned int attributes, float lod);
     void render(unsigned int attributes, const Frustum&, float lod);
+    bool pick(const Ray3d& ray, double& distance);
     void normalize();
 
  private:
@@ -31,4 +32,4 @@ class Mesh3DS : public Mesh
     VertexListVec vertexLists;
 };
 
-#endif // _3DSMESH_H_
+#endif // _CELENGINE_3DSMESH_H_

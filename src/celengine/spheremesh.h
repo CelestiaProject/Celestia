@@ -31,6 +31,7 @@ public:
     void render(float lod);
     void render(unsigned int attributes, float lod);
     void render(unsigned int attributes, const Frustum&, float lod);
+    virtual bool pick(const Ray3d&, double&) { return true; };
 
  private:
     void createSphere(float radius, int nRings, int nSlices);

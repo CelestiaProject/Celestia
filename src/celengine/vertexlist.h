@@ -7,14 +7,15 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _VERTEXLIST_H_
-#define _VERTEXLIST_H_
+#ifndef _CELENGINE_VERTEXLIST_H_
+#define _CELENGINE_VERTEXLIST_H_
 
 #include <celutil/basictypes.h>
 #include <celutil/color.h>
 #include <celutil/reshandle.h>
 #include <celmath/vecmath.h>
 #include <celmath/aabox.h>
+#include <celmath/ray.h>
 
 
 class VertexList
@@ -60,6 +61,7 @@ class VertexList
     void setTexture(ResourceHandle);
 
     void render();
+    bool pick(const Ray3d& ray, double& distance);
 
     AxisAlignedBox getBoundingBox() const;
     void transform(Vec3f translation, float scale);
@@ -80,5 +82,5 @@ class VertexList
     AxisAlignedBox bbox;
 };
 
-#endif // _VERTEXLIST_H_
+#endif // _CELENGINE_VERTEXLIST_H_
 
