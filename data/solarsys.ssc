@@ -60,7 +60,7 @@
 
 "Earth" "Sol"
 {
-	# Texture "earth.png"
+	Texture "earth.png"
 	# Texture "earth8k.dds"
 	NightTexture "earthnight.jpg"
 	# CompressTexture true
