@@ -25,6 +25,10 @@ template<class T> class Plane
 
     T distanceTo(const Point3<T>&) const;
 
+    static Point3<T> intersection(const Plane<T>&,
+                                  const Plane<T>&,
+                                  const Plane<T>&);
+
  public:
     Vector3<T> normal;
     T d;
@@ -70,6 +74,18 @@ template<class T> Plane<T> operator*(const Plane<T>& p, const Matrix4<T>& m)
 {
     Vector4<T> v = Vector4<T>(p.normal.x, p.normal.y, p.normal.z, p.d) * m;
     return Plane<T>(Vector3<T>(v.x, v.y, v.z), v.w);
+}
+
+template<class T> Point3<T> Plane<T>::intersection(const Plane<T>& p0,
+                                                   const Plane<T>& p1,
+                                                   const Plane<T>& p2)
+{
+    T d = Matrix3<T>(p0.normal, p1.normal, p2.normal).determinant();
+
+    Vector3<T> v = (p0.d * cross(p1.normal, p2.normal) +
+                    p1.d * cross(p2.normal, p0.normal) +
+                    p2.d * cross(p0.normal, p1.normal)) * (1.0f / d);
+    return Point3<T>(v.x, v.y, v.z);
 }
 
 #endif // _PLANE_H_
