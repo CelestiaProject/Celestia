@@ -89,11 +89,8 @@
 #define ID_NAVIGATION_SYNCORBIT         40045
 #define ID_NAVIGATION_SSBROWSER         40046
 #define ID_NAVIGATION_STARBROWSER       40047
-#define ID_CLOSE_SSBROWSER              40048
-#define ID_CLOSE_STARBROWSER            40049
 #define ID_TIME_SHOWLOCAL               40050
 #define ID_NAVIGATION_TRACK             40051
-#define ID_CLOSE_TOURGUIDE              40052
 #define ID_HELP_CONTROLS                40053
 #define ID_RENDER_SHOWNIGHTLIGHTS       40054
 #define ID_RENDER_VERTEX_SHADERS        40055
