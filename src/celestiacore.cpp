@@ -39,10 +39,6 @@
 
 using namespace std;
 
-
-static string welcomeMessage1("Welcome to Celestia 1.1.0");
-static string welcomeMessage2("Press D to run demo");
-
 static const int DragThreshold = 3;
 
 
@@ -119,7 +115,8 @@ CelestiaCore::CelestiaCore() :
     currentTime(0.0),
     timeScale(1.0),
     paused(false),
-    contextMenuCallback(NULL)
+    contextMenuCallback(NULL),
+    logoTexture(NULL)
 {
     execEnv = new CoreExecutionEnvironment(*this);
     for (int i = 0; i < KeyCount; i++)
@@ -446,6 +443,10 @@ void CelestiaCore::charEntered(char c)
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MajorPlanetLabels);
         break;
 
+    case 'M':
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MinorPlanetLabels);
+        break;
+
     case 'O':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
         break;
@@ -691,6 +692,77 @@ void CelestiaCore::showText(string s)
     messageText = s;
 }
 
+
+static void displayDistance(Overlay& overlay, double distance)
+{
+    if (distance >= astro::AUtoLightYears(1000.0f))
+        overlay.printf("%.3f ly", distance);
+    else if (distance >= astro::kilometersToLightYears(10000000.0))
+        overlay.printf("%.3f au", astro::lightYearsToAU(distance));
+    else
+        overlay.printf("%.3f km", astro::lightYearsToKilometers(distance));
+}
+
+static void displayStarInfo(Overlay& overlay,
+                            Star& star,
+                            StarDatabase& starDB,
+                            double distance)
+{
+    StarNameDatabase* starNameDB = starDB.getNameDatabase();
+
+    // Print the star name and designations
+    StarNameDatabase::iterator iter = starNameDB->find(star.getCatalogNumber());
+    if (iter != starNameDB->end())
+    {
+        StarName* starName = iter->second;
+
+        if (starName->getName() != "")
+            overlay << starName->getName() << "  /  ";
+
+        Constellation* constellation = starName->getConstellation();
+        if (constellation != NULL)
+            overlay << starName->getDesignation() << ' ' <<  constellation->getGenitive() << "  /  ";
+    }
+    if ((star.getCatalogNumber() & 0xf0000000) == 0)
+        overlay << "HD " << star.getCatalogNumber() << '\n';
+    else
+        overlay << "HIP " << (star.getCatalogNumber() & 0x0fffffff) << '\n';
+
+    overlay << "Distance: ";
+    displayDistance(overlay, distance);
+    overlay << '\n';
+    
+    overlay.printf("Abs (app) mag = %.2f (%.2f)\n",
+                   star.getAbsoluteMagnitude(),
+                   astro::absToAppMag(star.getAbsoluteMagnitude(), (float) distance));
+    overlay << "Class: " << star.getStellarClass() << '\n';
+    overlay.printf("Radius: %.2f Rsun\n", star.getRadius() / 696000.0f);
+}
+
+static void displayPlanetInfo(Overlay& overlay,
+                              Body& body,
+                              double distance)
+{
+    overlay << body.getName() << '\n';
+    overlay << "Distance: ";
+    displayDistance(overlay, distance);
+    overlay << '\n';
+    overlay << "Radius: " << body.getRadius() << " km\n";
+    overlay << "Day length: " << body.getRotationPeriod() * 24.0 << " hours\n";
+}
+
+static void displayGalaxyInfo(Overlay& overlay,
+                              Galaxy& galaxy,
+                              double distance)
+{
+    overlay << galaxy.getName() << '\n';
+    overlay << "Distance: ";
+    displayDistance(overlay, distance);
+    overlay << '\n';
+    overlay << "Type: " << galaxy.getType() << '\n';
+    overlay << "Radius: " << galaxy.getRadius() << " ly\n";
+}
+
 void CelestiaCore::renderOverlay()
 {
     if (font == NULL)
@@ -793,6 +865,29 @@ void CelestiaCore::renderOverlay()
         glPopMatrix();
     }
 
+    // Selection info
+    Selection sel = sim->getSelection();
+    if (!sel.empty())
+    {
+        glPushMatrix();
+        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+        glTranslatef(0, height - fontHeight, 0);
+
+        overlay->beginText();
+        Vec3d v = sim->getSelectionPosition(sel, sim->getTime()) - 
+            sim->getObserver().getPosition();
+        if (sel.star != NULL)
+            displayStarInfo(*overlay, *sel.star,
+                            *(sim->getStarDatabase()), v.length());
+        else if (sel.body != NULL)
+            displayPlanetInfo(*overlay, *sel.body, v.length());
+        else if (sel.galaxy != NULL)
+            displayGalaxyInfo(*overlay, *sel.galaxy, v.length());
+        overlay->endText();
+
+        glPopMatrix();
+    }
+
     // Text input
     if (textEnterMode)
     {
@@ -817,26 +912,6 @@ void CelestiaCore::renderOverlay()
         glPopMatrix();
     }
 
-    // Intro message
-    if (currentTime < 5.0)
-    {
-
-        float alpha = 1.0f;
-        if (currentTime > 3.0)
-            alpha = 0.5f * (float) (5.0 - currentTime);
-        glColor4f(1, 1, 1, alpha);
-
-        glPushMatrix();
-        glTranslatef((width - font->getWidth(welcomeMessage1)) / 2, height / 2, 0);
-        *overlay << welcomeMessage1;
-        glPopMatrix();
-
-        glPushMatrix();
-        glTranslatef((width - font->getWidth(welcomeMessage2)) / 2, height / 2 - fontHeight, 0);
-        *overlay << welcomeMessage2;
-        glPopMatrix();
-    }
-
     if (editMode)
     {
         glPushMatrix();
@@ -844,6 +919,48 @@ void CelestiaCore::renderOverlay()
         glColor4f(1, 0, 1, 1);
         *overlay << "Edit Mode";
         glPopMatrix();
+    }
+
+    // Show logo at start
+    if (logoTexture != NULL)
+    {
+        if (currentTime < 5.0)
+        {
+            int xSize = logoTexture->getWidth() * 0.8f;
+            int ySize = logoTexture->getHeight() * 0.8f;
+            int left = (width - xSize) / 2;
+            int bottom = height / 2;
+
+            float topAlpha, botAlpha;
+            if (currentTime < 4.0)
+            {
+                botAlpha = (float) clamp(currentTime / 1.0);
+                topAlpha = (float) clamp(currentTime / 4.0);
+            }
+            else
+            {
+                botAlpha = topAlpha = (float) (5.0 - currentTime);
+            }
+
+            glBindTexture(GL_TEXTURE_2D, logoTexture->getName());
+            glBegin(GL_QUADS);
+            glColor4f(0.8f, 0.8f, 1.0f, botAlpha);
+            glTexCoord2f(0, 1);
+            glVertex2f(left, bottom);
+            glTexCoord2f(1, 1);
+            glVertex2f(left + xSize, bottom);
+            glColor4f(0.6f, 0.6f, 1.0f, topAlpha);
+            glTexCoord2f(1, 0);
+            glVertex2f(left + xSize, bottom + ySize);
+            glTexCoord2f(0, 0);
+            glVertex2f(left, bottom + ySize);
+            glEnd();
+        }
+        else
+        {
+            delete logoTexture;
+            logoTexture = NULL;
+        }
     }
 
     overlay->end();
@@ -1019,7 +1136,7 @@ bool CelestiaCore::initRenderer()
     {
         cout << "Error loading font; text will not be visible.";
     }
-    
+
     // Set up the overlay
     overlay = new Overlay();
     overlay->setWindowSize(width, height);
@@ -1038,6 +1155,12 @@ bool CelestiaCore::initRenderer()
             renderer->setFont(labelFont);
     }
 
+    if (config->logoTextureFile != "")
+    {
+        logoTexture = LoadTextureFromFile(string("textures") + "/" + config->logoTextureFile);
+        logoTexture->bindName();
+    }
+    
     return true;
 }
 
