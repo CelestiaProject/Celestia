@@ -79,10 +79,10 @@ Galaxy "M32"
 	Detail 0.5
 }
 
-# M82 / NGC 3031
+# M81 / NGC 3031
 # Distance estimate based on Hipparcos results and HST
 # observations of Cepheid variables.
-Galaxy "M82"
+Galaxy "M81"
 {
 	Type "Sb"
 	RA 9.9267
