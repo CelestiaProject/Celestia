@@ -17,7 +17,7 @@
 #include <commctrl.h>
 #include "wintourguide.h"
 
-#include "../../res/resource.h"
+#include "res/resource.h"
 
 using namespace std;
 
