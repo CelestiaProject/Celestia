@@ -20,6 +20,11 @@ const double astro::speedOfLight = 299792.458; // km/s
 // epoch J2000: 12 UT on 1 Jan 2000
 const double astro::J2000 = 2451545.0;
 
+const double astro::G = 6.672e-11; // N m^2 / kg^2
+
+const double astro::SolarMass = 1.989e30;
+const double astro::EarthMass = 5.976e24;
+
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
 
