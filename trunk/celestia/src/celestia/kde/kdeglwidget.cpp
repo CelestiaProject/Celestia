@@ -123,6 +123,8 @@ void KdeGlWidget::initializeGL()
     KGlobal::config()->setGroup("Preferences");
     if (KGlobal::config()->hasKey("RendererFlags"))
         appRenderer->setRenderFlags(KGlobal::config()->readNumEntry("RendererFlags"));
+    if (KGlobal::config()->hasKey("OrbitMask"))
+        appRenderer->setOrbitMask(KGlobal::config()->readNumEntry("OrbitMask"));
     if (KGlobal::config()->hasKey("LabelMode"))
         appRenderer->setLabelMode(KGlobal::config()->readNumEntry("LabelMode"));
     if (KGlobal::config()->hasKey("AmbientLightLevel"))

@@ -1,6 +1,6 @@
 
 rcdir = $(kde_datadir)/celestia
-rc_DATA = celestiaui.rc bookmarks.xml
+rc_DATA = celestiaui.rc bookmarks.xml celestia-splash.jpg
 
 faviconsdir = $(kde_datadir)/celestia/favicons
 favicons_DATA = $(wildcard celestia_*.png)
