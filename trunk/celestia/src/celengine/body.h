@@ -36,6 +36,7 @@ class PlanetarySystem
     Body* getBody(int i) const { return satellites[i]; };
     void addBody(Body* body);
     void removeBody(Body* body);
+    void replaceBody(Body* oldBody, Body* newBody);
 
     enum TraversalResult
     {
