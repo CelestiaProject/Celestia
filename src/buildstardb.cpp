@@ -1252,7 +1252,7 @@ int main(int argc, char* argv[])
     if (verbose>0)
         ShowStarsWithComponents();
 
-    char* outputFile = "stars.dat";
+    const char* outputFile = "stars.dat";
     if (argv[optind])
         outputFile = argv[optind];
 
