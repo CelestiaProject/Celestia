@@ -36,6 +36,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             //Set dialog controls to reflect current label and render modes
             Dlg->SetControls(hDlg);
 
+            //Start timer to maintain button states
+            SetTimer(hDlg, 1, 500, NULL);
+
             return(TRUE);
         }
         break;
@@ -105,12 +108,18 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         }
         break;
     }
+    case WM_TIMER:
+        if(wParam == 1)
+            Dlg->SetControls(hDlg);
+        break;
+
     case WM_DESTROY:
         if (Dlg != NULL && Dlg->parent != NULL)
         {
             SendMessage(Dlg->parent, WM_COMMAND, IDCLOSE,
                         reinterpret_cast<LPARAM>(Dlg));
         }
+        KillTimer(hDlg, 1);
         EndDialog(hDlg, 0);
         return TRUE;
     }
