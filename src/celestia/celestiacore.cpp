@@ -1768,6 +1768,16 @@ void CelestiaCore::setFramesVisible(bool visible)
     showViewFrames = visible;
 }
 
+bool CelestiaCore::getActiveFrameVisible() const
+{
+    return showActiveViewFrame;
+}
+
+void CelestiaCore::setActiveFrameVisible(bool visible)
+{
+    showActiveViewFrame = visible;
+}
+
 
 void CelestiaCore::setContextMenuCallback(ContextMenuFunc callback)
 {
