@@ -104,7 +104,8 @@ Planets [
 	Moons [
 	{
 		Name "Phobos"
-		Texture "asteroid.jpg"
+		Mesh "phobos.3ds"
+		Texture "phobos.jpg"
 		Radius 11
 
 		# orbital data
@@ -118,7 +119,8 @@ Planets [
 	}
 	{
 		Name "Deimos"
-		Texture "asteroid.jpg"
+		Mesh "deimos.3ds"
+		Texture "deimos.jpg"
 		Radius 6
 
 		# orbital data
@@ -343,7 +345,7 @@ Planets [
 	}
 	{
 		Name "Hyperion"
-		Mesh "hyperion.cms"
+		Mesh "hyperion.3ds"
 		Texture "asteroid.jpg"
 		Radius   205
 
@@ -495,7 +497,7 @@ Planets [
 	Moons [
 	{
 		Name "Proteus"
-		Mesh "proteus.cms"
+		Mesh "proteus.3ds"
 		Texture "asteroid.jpg"
 		Radius   218
 
@@ -629,6 +631,7 @@ Planets [
 
 {
 	Name   "Vesta"
+	Mesh   "vesta.3ds"
 	Texture "asteroid.jpg"
 	Radius 265
 
@@ -646,6 +649,7 @@ Planets [
 
 {
 	Name   "Ida"
+	Mesh   "ida.3ds"
 	Texture "asteroid.jpg"
 	Radius 45
 
