@@ -100,6 +100,8 @@ static ResourceHandle starTexG = InvalidResource;
 static ResourceHandle starTexM = InvalidResource;
 static ResourceHandle starTexL = InvalidResource;
 
+static const Color compassColor(0.4f, 0.4f, 1.0f);
+
 static const float CoronaHeight = 0.2f;
 
 static bool buggyVertexProgramEmulation = true;
@@ -2487,8 +2489,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 void renderCompass(Point3f center,
                    const Quatf& orientation,
                    Vec3f semiAxes,
-                   const Quatf& bodyOrientation,
-                   float pixelScale)
+                   float pixelSize)
 {
     Mat3f rot = orientation.toMatrix3();
     Mat3f irot = conjugate(orientation).toMatrix3();
@@ -2529,9 +2530,8 @@ void renderCompass(Point3f center,
     normal = normal / (float) centerDist;
 
     Vec3f uAxis, vAxis;
-    Vec3f pole = Vec3f(0.0f, 1.0f, 0.0f) * bodyOrientation.toMatrix3();
-    pole = pole * irot;
-    vAxis = normal ^ pole;
+    Vec3f northPole(0.0f, 1.0f, 0.0f);
+    vAxis = normal ^ northPole;
     vAxis.normalize();
     uAxis = vAxis ^ normal;
 
@@ -2549,14 +2549,16 @@ void renderCompass(Point3f center,
         compassPoints[i] = toCenter * rot;
     }
 
-    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+    glColor(compassColor);
     glBegin(GL_LINES);
     glDisable(GL_LIGHTING);
     for (i = 0; i < nCompassPoints; i++)
     {
-        float length = 5.0f / pixelScale;
+        float distance = (center + compassPoints[i]).distanceFromOrigin();
+        
+        float length = distance * pixelSize * 8.0f;
         if (i % 4 == 0)
-            length *= 4.0f;
+            length *= 3.0f;
         else if (i % 2 == 0)
             length *= 2.0f;
         
@@ -4865,7 +4867,9 @@ void Renderer::renderPlanet(Body& body,
                      orientation, nearPlaneDistance, farPlaneDistance,
                      sunDirection, sunColor, rp);
 
+        // Render the horizon compass for spherical and ellipsoidal bodies
         if ((renderFlags & ShowCelestialSphere) != 0 &&
+            rp.model == InvalidResource &&
             discSizeInPixels > 100.0f)
         {
             glPushMatrix();
@@ -4873,19 +4877,24 @@ void Renderer::renderPlanet(Body& body,
             glDisable(GL_TEXTURE_2D);
             glRotate(orientation);
             
-            Vec3f semiMajorAxes(rp.radius, rp.radius * (1.0f - body.getOblateness()), rp.radius);
+            Vec3f semiMajorAxes(rp.radius,
+                                rp.radius * (1.0f - body.getOblateness()),
+                                rp.radius);
 
             // Compute the orientation of the planet before axial rotation
             Quatd q = body.getEclipticalToEquatorial(now);
             Quatf qf = Quatf((float) q.w, (float) q.x, (float) q.y,
                              (float) q.z);
-            renderCompass(pos, orientation, semiMajorAxes, qf,
-                          rp.radius / (distance * pixelSize));
+
+            if ((renderFlags & ShowSmoothLines) != 0)
+                enableSmoothLines();
+            renderCompass(pos, qf, semiMajorAxes, pixelSize / rp.radius);
+            if ((renderFlags & ShowSmoothLines) != 0)
+                disableSmoothLines();
 
             glEnable(GL_TEXTURE_2D);
             glPopMatrix();
         }
-
     }
 
     glEnable(GL_TEXTURE_2D);
