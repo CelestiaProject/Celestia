@@ -7,8 +7,8 @@ Galaxy "Milky Way"
 	Dec -28.93
 	Distance 28000
 	Radius 50000
-	Axis [ 0.712 0.533 0.456 ]
-	Angle 149
+	Axis [ 0.866 0.491 0.091 ] 
+	Angle 176 
 }
 
 # Large Magellanic Cloud / 
