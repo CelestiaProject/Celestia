@@ -18,8 +18,10 @@ extern "C" {
 #include "lua.h"
 }
 #include <celutil/timer.h>
+#include <celengine/observer.h>
 
 class CelestiaCore;
+class View;
 
 class LuaState
 {
@@ -50,5 +52,8 @@ private:
     bool alive;
     Timer* timer;
 };
+
+View* getViewByObserver(CelestiaCore*, Observer*);
+void getObservers(CelestiaCore*, std::vector<Observer*>&);
 
 #endif // _CELESTIA_CELX_H_
