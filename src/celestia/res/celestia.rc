@@ -630,13 +630,13 @@ END
 // Bitmap
 //
 
-IDB_FOLDERCLOSED        BITMAP  DISCARDABLE     "folderclosed.bmp"
-IDB_FOLDEROPENED        BITMAP  DISCARDABLE     "folderopened.bmp"
-IDB_LOCATION            BITMAP  DISCARDABLE     "location.bmp"
-IDB_CAMERA              BITMAP  DISCARDABLE     "camera.bmp"
-IDB_CAMCORDER           BITMAP  DISCARDABLE     "camcorder.bmp"
-IDB_SCRIPT              BITMAP  DISCARDABLE     "script.bmp"
-IDB_CLOCK               BITMAP  DISCARDABLE     "clock.bmp"
+IDB_FOLDERCLOSED        BITMAP  DISCARDABLE     "folderclosed2.bmp"
+IDB_FOLDEROPENED        BITMAP  DISCARDABLE     "folderopened2.bmp"
+IDB_LOCATION            BITMAP  DISCARDABLE     "location2.bmp"
+IDB_CAMERA              BITMAP  DISCARDABLE     "camera2.bmp"
+IDB_CAMCORDER           BITMAP  DISCARDABLE     "camcorder2.bmp"
+IDB_SCRIPT              BITMAP  DISCARDABLE     "script2.bmp"
+IDB_CLOCK               BITMAP  DISCARDABLE     "clock2.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
