@@ -44,6 +44,7 @@ class Renderer
     void resize(int, int);
 
     float getFieldOfView();
+    float calcPixelSize(float fov, float windowHeight);
     void setFieldOfView(float);
     void setFaintestAM45deg(float);
     float getFaintestAM45deg();
