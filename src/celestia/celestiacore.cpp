@@ -757,9 +757,44 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '\026':  // Ctrl+V
-        if (renderer->vertexShaderSupported())
-            renderer->setVertexShaderEnabled(!renderer->getVertexShaderEnabled());
-        notifyWatchers(RenderFlagsChanged);
+        {
+            GLContext* context = renderer->getGLContext();
+            GLContext::GLRenderPath path = context->getRenderPath();
+            GLContext::GLRenderPath newPath = context->nextRenderPath();
+
+            if (newPath != path)
+            {
+                switch (newPath)
+                {
+                case GLContext::GLPath_Basic:
+                    flash("Render path: Basic");
+                    break;
+                case GLContext::GLPath_Multitexture:
+                    flash("Render path: Multitexture");
+                    break;
+                case GLContext::GLPath_NvCombiner:
+                    flash("Render path: NVIDIA combiners");
+                    break;
+                case GLContext::GLPath_DOT3_ARBVP:
+                    flash("Render path: OpenGL vertex program");
+                    break;
+                case GLContext::GLPath_NvCombiner_NvVP:
+                    flash("Render path: NVIDIA vertex program and combiners");
+                    break;
+                case GLContext::GLPath_NvCombiner_ARBVP:
+                    flash("Render path: OpenGL vertex program/NVIDIA combiners");
+                    break;
+                case GLContext::GLPath_ARBFP_ARBVP:
+                    flash("Render path: OpenGL 1.5 vertex/fragment program");
+                    break;
+                case GLContext::GLPath_NV30:
+                    flash("Render path: NVIDIA GeForce FX");
+                    break;
+                }
+                context->setRenderPath(newPath);
+                notifyWatchers(RenderFlagsChanged);
+            }
+        }
         break;
 
     case '\027':  // Ctrl+W
