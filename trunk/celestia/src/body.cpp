@@ -217,14 +217,14 @@ Point3d Body::getHeliocentricPosition(double when)
 Quatd Body::getEclipticalToEquatorial()
 {
     Quatd q(1);
-    q.xrotate(obliquity);
+    q.xrotate(-obliquity);
     return q;
 }
 
 
 Quatd Body::getEclipticalToGeographic(double when)
 {
-    return getEclipticalToEquatorial() * getEquatorialToGeographic(when);
+    return getEquatorialToGeographic(when) * getEclipticalToEquatorial();
 }
 
 
@@ -240,7 +240,7 @@ Quatd Body::getEquatorialToGeographic(double when)
     double remainder = rotations - wholeRotations;
     
     Quatd q(1);
-    q.yrotate(-remainder * 2 * PI - getRotationPhase());
+    q.yrotate(remainder * 2 * PI + getRotationPhase());
     return q;
 }
 
