@@ -104,19 +104,53 @@
 
 - (BOOL) isFlipped {return YES;}
 
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+    CelestiaSelection* selection;
+    NSString* selectionName;
+    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: self];
+    NSPoint location2 = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+
+    [appCore charEntered: 8 ];
+    [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
+    [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
+
+    selection = [[appCore simulation] selection];
+    selectionName = [[[appCore simulation] selection] briefName];
+    if ([selectionName isEqualToString: @""])
+    {
+        [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
+        [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
+        selection = [[appCore simulation] selection];
+        selectionName = [[[appCore simulation] selection] name];
+    } 
+    if ([selectionName isEqualToString: @""]) return NULL;
+    [[[self menu] itemAtIndex: 0] setTitle: selectionName ];
+    [[[self menu] itemAtIndex: 0] setEnabled: YES ];
+    return [self menu];
+}
+
 - (void) keyDown: (NSEvent*)theEvent
 {
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    if ( [[theEvent characters] characterAtIndex: 0] < 128 )
-       [ appCore charEntered: [[theEvent characters] characterAtIndex: 0] ];
-    [ appCore keyDown: [appCore toCelestiaKey: [[theEvent characters] characterAtIndex: 0] ] ];
+    unichar key = [[theEvent characters] characterAtIndex: 0];
+
+        if (key == 127)
+            key = 8; // delete = backspace 
+        if ( key == NSDeleteFunctionKey ) 
+           key = 127; // del = delete
+//        if ( [theEvent modifierFlags] && NSFunctionKeyMask ) NSLog( @"isFunctionKey");
+    if ( (key<128) && ((key < '0') || (key>'9') || !([theEvent modifierFlags] && NSNumericPadKeyMask)) )
+       [ appCore charEntered: key ];
+    [ appCore keyDown: [appCore toCelestiaKey: theEvent ] ];
 }
 
 - (void) keyUp: (NSEvent*)theEvent
 {
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    if ( [[theEvent characters] characterAtIndex: 0] >= 128 )
-        [ appCore keyUp: [appCore toCelestiaKey: [[theEvent characters] characterAtIndex: 0] ] ];
+        [ appCore keyUp: [appCore toCelestiaKey: theEvent] ];
 //    NSLog(@"keyUp: %@",theEvent);
 }
 
@@ -139,6 +173,7 @@
 */
 - (void) mouseDown: (NSEvent*)theEvent
 {
+[ [self window] makeFirstResponder: self ];
     if ( [theEvent modifierFlags] & NSAlternateKeyMask )
     {
         [self rightMouseDown: theEvent];
