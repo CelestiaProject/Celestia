@@ -327,6 +327,7 @@ CelestiaCore::CelestiaCore() :
     currentTime(0.0),
     timeScale(1.0),
     paused(false),
+    scriptPaused(false),
     joystickRotation(0.0f, 0.0f, 0.0f),
     KeyAccel(1.0),
     movieCapture(NULL),
@@ -478,6 +479,7 @@ void CelestiaCore::cancelScript()
     if (runningScript != NULL)
     {
         delete runningScript;
+        scriptPaused = false;
         runningScript = NULL;
     }
 #ifdef CELX
@@ -488,6 +490,7 @@ void CelestiaCore::cancelScript()
             setTextEnterMode(textEnterMode & ~KbPassToScript);
         delete celxScript;
         celxScript = NULL;
+        scriptPaused = false;
         scriptAwakenTime = 0.0;
     }
 #endif
@@ -1463,16 +1466,27 @@ void CelestiaCore::charEntered(const char *c_p)
         {
             sim->setTimeScale(timeScale);
             // CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_UNCHECKED);
+            scriptPaused = false;
         }
         else
         {
             timeScale = sim->getTimeScale();
             sim->setTimeScale(0.0);
+            // Spacebar=pause time and script Spacebar+Shift=Pause time only.
+            if ( ((runningScript != NULL) || (celxScript != NULL)) && (GetKeyState(VK_SHIFT) & 0x8000) )
+                scriptPaused = false;
+            else
+                scriptPaused = true;
             // CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_CHECKED);
         }
+
         paused = !paused;
+
         if (paused)
-            flash("Pause");
+            if (scriptPaused)
+                flash("Time and script are paused");
+            else
+                flash("Time is paused");
         else
             flash("Resume");
         break;
@@ -1958,6 +1972,10 @@ void CelestiaCore::tick()
     {
         dt = sysTime - lastTime;
     }
+
+    // Pause script execution
+    if (scriptPaused)
+        dt = 0.0;
 
     currentTime += dt;
 
