@@ -53,6 +53,7 @@ class Renderer
         MajorPlanetLabels = 2,
         MinorPlanetLabels = 4,
         ConstellationLabels = 8,
+        GalaxyLabels = 16,
     };
     enum {
         ShowNothing         =   0,
@@ -188,6 +189,8 @@ class Renderer
                               const Quatf& orientation,
                               float renderDistance,
                               bool useHaloes);
+    void labelGalaxies(const GalaxyList& galaxies,
+                    const Observer& observer);
     void labelStars(const std::vector<Star*>& stars,
                     const StarDatabase& starDB,
                     const Observer& observer);

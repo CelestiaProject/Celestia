@@ -369,3 +369,6 @@ Code:
 * Unix: Inserted testing code for GtkGLArea into configure.in (dramsey)
 * Unix: Integrated a current gnome macros package. (dramsey)
 * Removed many errors and compiler warnings (dramsey)
+* Label Galaxies option. (dramsey)
+* Unix: Added several menu options already present in the windows version to
+        the Gtk version. (dramsey)

@@ -722,6 +722,8 @@ void Renderer::render(const Observer& observer,
         }
     }
 
+    if ((labelMode & GalaxyLabels) != 0)
+        labelGalaxies(*galaxies, observer);
     if ((labelMode & StarLabels) != 0)
         labelStars(labelledStars, starDB, observer);
     if ((labelMode & ConstellationLabels) != 0 && asterisms != NULL)
@@ -2611,6 +2613,28 @@ void Renderer::renderCelestialSphere(const Observer& observer)
         if ((pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
             addLabel(coordLabels[i].label, Color(0.0f, 0.0f, 1.0f, 0.7f), pos);
+        }
+    }
+}
+
+
+void Renderer::labelGalaxies(const GalaxyList& galaxies,
+                          const Observer& observer)
+{
+    Point3f observerPos = (Point3f) observer.getPosition();
+
+    for (GalaxyList::const_iterator iter = galaxies.begin();
+         iter != galaxies.end(); iter++)
+    {
+        Galaxy* galaxy = *iter;
+        Point3d posd = galaxy->getPosition();
+        Point3f pos(posd.x,posd.y,posd.z);
+
+        Vec3f rpos = pos - observerPos;
+        if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
+        {
+            addLabel(galaxy->getName(), Color(0.7f, 0.7f, 0.0f),
+                     Point3f(rpos.x, rpos.y, rpos.z));
         }
     }
 }
