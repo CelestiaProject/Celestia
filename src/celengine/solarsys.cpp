@@ -21,6 +21,7 @@
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "universe.h"
+#include "multitexture.h"
 
 using namespace std;
 
@@ -74,15 +75,12 @@ static Surface* CreateSurface(Hash* surfaceData)
     if (surface->specularColor != Color(0.0f, 0.0f, 0.0f))
         surface->appearanceFlags |= Surface::SpecularReflection;
 
-    TextureManager* texMan = GetTextureManager();
     if (applyBaseTexture)
-        surface->baseTexture = texMan->getHandle(TextureInfo(baseTexture,
-                                                             compressTexture));
+        surface->baseTexture.setTexture(baseTexture,compressTexture);
     if (applyBumpMap)
-        surface->bumpTexture = texMan->getHandle(TextureInfo(bumpTexture,
-                                                             bumpHeight));
+        surface->bumpTexture.setTexture(bumpTexture,bumpHeight);
     if (applyNightMap)
-        surface->nightTexture = texMan->getHandle(TextureInfo(nightTexture));
+        surface->nightTexture.setTexture(nightTexture);
 
     return surface;
 }
@@ -297,8 +295,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 string cloudTexture;
                 if (atmosData->getString("CloudMap", cloudTexture))
                 {
-                    atmosphere->cloudTex =
-                        GetTextureManager()->getHandle(TextureInfo(cloudTexture));
+                    atmosphere->cloudTexture.setTexture(cloudTexture);
                 }
 
                 body->setAtmosphere(*atmosphere);
@@ -330,10 +327,9 @@ static Body* CreatePlanet(PlanetarySystem* system,
 
                 string textureName;
                 ringsData->getString("Texture", textureName);
-                ResourceHandle texture = GetTextureManager()->getHandle(TextureInfo(textureName));
 
                 body->setRings(RingSystem((float) inner, (float) outer,
-                                          color, texture));
+                                          color, textureName));
             }
         }
     }

@@ -13,6 +13,7 @@
 #include <celutil/basictypes.h>
 #include <celutil/color.h>
 #include <celutil/reshandle.h>
+#include "multitexture.h"
 
 
 class Surface
@@ -21,10 +22,9 @@ class Surface
     Surface(Color c = Color(0.0f, 0.0f, 0.0f)) :
         appearanceFlags(0),
         color(c),
-        baseTexture(InvalidResource),
-        bumpTexture(InvalidResource),
-        nightTexture(InvalidResource),
-        specBaseTexture(InvalidResource),
+        baseTexture(),
+        bumpTexture(),
+        nightTexture(),
         bumpHeight(0.0f)
     {};
 
@@ -44,10 +44,9 @@ class Surface
     Color hazeColor;
     Color specularColor;
     float specularPower;
-    ResourceHandle baseTexture;     // surface colors
-    ResourceHandle bumpTexture;     // normal map based on terrain relief
-    ResourceHandle nightTexture;    // artificial lights to show on night side
-    ResourceHandle specBaseTexture; // base tex with specularity in alpha
+    MultiTexture baseTexture;       // surface colors
+    MultiTexture bumpTexture;       // normal map based on terrain relief
+    MultiTexture nightTexture;      // artificial lights to show on night side
     float bumpHeight;               // scale of bump map relief
 };
 

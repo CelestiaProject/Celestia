@@ -484,10 +484,7 @@ Texture* CreateJPEGTexture(const char* filename,
     FILE *in;
     in = fopen(filename, "rb");
     if (in == NULL)
-    {
-        printf("Can't open texture file '%s'\n", filename);
         return NULL;
-    }
 
     // Step 1: allocate and initialize JPEG decompression object
     // We set up the normal JPEG error routines, then override error_exit.
@@ -595,6 +592,19 @@ Texture* CreateJPEGTexture(const char* filename,
 #else
     return NULL;
 #endif // IJG_JPEG_SUPPORT
+}
+
+
+Texture* getJPEGTexture(const char* filename,
+                            int channels)
+{
+    Texture *res=CreateJPEGTexture(filename, channels);
+    if (res == NULL)
+    {
+        printf("Error trying to read JPEG texture file '%s'\n", filename);
+        return NULL;
+    }
+    return res;
 }
 
 

@@ -9,12 +9,20 @@
 
 #include "celestia.h"
 #include <celutil/debug.h>
+#include "multitexture.h"
 #include "texmanager.h"
 
 using namespace std;
 
 
 static TextureManager* textureManager = NULL;
+
+static char *directories[]=
+{
+    "/lores/",
+    "/medres/",
+    "/hires/"
+};
 
 
 TextureManager* GetTextureManager()
@@ -29,8 +37,8 @@ Texture* TextureInfo::load(const string& baseDir)
 {
     if (bumpHeight == 0.0f)
     {
-        DPRINTF(0, "Loading texture: %s\n", source.c_str());
-        Texture* tex = LoadTextureFromFile(baseDir + "/" + source);
+        DPRINTF(0, "Loading texture: %s%s%s\n", baseDir.c_str(), directories[resolution], source.c_str());
+        Texture* tex = LoadTextureFromFile(baseDir + directories[resolution] + source);
 
         if (tex != NULL)
         {
@@ -43,8 +51,8 @@ Texture* TextureInfo::load(const string& baseDir)
     }
     else
     {
-        DPRINTF(0, "Loading bump map: %s\n", source.c_str());
-        Texture* tex = LoadTextureFromFile(baseDir + "/" + source);
+        DPRINTF(0, "Loading bump map: %s%s%s\n", baseDir.c_str(), directories[resolution], source.c_str());
+        Texture* tex = LoadTextureFromFile(baseDir + directories[resolution] + source);
 
         if (tex != NULL)
         {

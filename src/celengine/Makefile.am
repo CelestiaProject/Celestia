@@ -24,6 +24,7 @@ libcelengine_a_SOURCES = \
 	glext.cpp \
 	lodspheremesh.cpp \
 	meshmanager.cpp \
+	multitexture.cpp \
 	observer.cpp \
 	octree.cpp \
 	orbit.cpp \
