@@ -401,6 +401,7 @@ void Url::goTo()
     case Relative:
         sim->setFrame(ref);
         sim->getActiveObserver()->setFOV(degToRad(fieldOfView));
+        appCore->setZoomFromFOV();
         sim->setTimeScale(timeScale);
         appCore->setLightDelayActive(lightTimeDelay);
 

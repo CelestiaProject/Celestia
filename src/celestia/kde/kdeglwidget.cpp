@@ -25,6 +25,7 @@
 #include <celengine/starbrowser.h>
 #include <kmainwindow.h>
 #include <kconfig.h>
+#include <qpaintdevicemetrics.h>
 
 #ifndef DEBUG
 #  define G_DISABLE_ASSERT
@@ -44,6 +45,7 @@
 
 #include "kdeapp.h"
 
+#include <math.h>
 
 KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core )
     : QGLWidget( parent, name )
@@ -177,10 +179,17 @@ void KdeGlWidget::initializeGL()
     }
 
     KGlobal::config()->setGroup(0);
+
+    QPaintDeviceMetrics pdm(this);
+    appCore->setScreenDpi(pdm.logicalDpiY());
 }
 
 void KdeGlWidget::resizeGL( int w, int h )
 {
+/*    QPaintDeviceMetrics pdm(this);
+    double fov = 2 * atan(h / (pdm.logicalDpiY() / 25.4) / 2. / 400.);
+    appCore->getSimulation()->getActiveObserver()->setFOV(fov);
+*/
     appCore->resize(w, h);
 }
 

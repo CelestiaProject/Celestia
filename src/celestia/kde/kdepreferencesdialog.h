@@ -44,7 +44,7 @@ public slots:
     void slotAmbientLightLevel(int l);
     void slotFaintestVisible(int m);
     void slotRenderPath(int);
-    
+    void slotDistanceToScreen(int);
 
 protected:
     CelestiaCore* appCore;
@@ -59,6 +59,7 @@ protected:
     int savedHudDetail;
     int savedDisplayLocalTime;
     int savedRenderPath;
+    int savedDistanceToScreen;
 
     bool timeHasChanged;
 
@@ -67,6 +68,8 @@ protected:
     QSpinBox *YSpin, *MSpin, *DSpin;
 
     QSpinBox *hSpin, *mSpin, *sSpin;
+
+    QSpinBox *dtsSpin;
 
     QComboBox *renderPathCombo;
     QLabel* renderPathLabel;

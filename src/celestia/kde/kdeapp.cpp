@@ -117,6 +117,12 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     restoreWindowSize(conf);
     conf->setGroup(0);
 
+    KGlobal::config()->setGroup("Preferences");
+    if (KGlobal::config()->hasKey("DistanceToScreen"))
+    {
+        appCore->setDistanceToScreen(KGlobal::config()->readNumEntry("DistanceToScreen"));
+    }
+
    if (bookmarkBar->isHidden()) ((KToggleAction*)actionCollection()->action("showBookmarkBar"))->setChecked(false);
     else ((KToggleAction*)actionCollection()->action("showBookmarkBar"))->setChecked(true);
 
@@ -517,6 +523,7 @@ bool KdeApp::queryExit() {
     conf->writeEntry("FramesVisible", appCore->getFramesVisible());
     conf->writeEntry("ActiveFrameVisible", appCore->getActiveFrameVisible());
     conf->writeEntry("SyncTime", appCore->getSimulation()->getSyncTime());
+    conf->writeEntry("DistanceToScreen", appCore->getDistanceToScreen());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
     openRecent->saveEntries(KGlobal::config());
