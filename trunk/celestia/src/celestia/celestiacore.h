@@ -63,6 +63,8 @@ class View
     float height;
     int renderFlags;
     int labelMode;
+    float zoom;
+    float alternateZoom;
 
     void walkTreeResize(View*, int);
     bool walkTreeResizeDelta(View*, float, bool);
@@ -236,6 +238,13 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setActiveFrameVisible(bool);
     bool getLightDelayActive() const;
     void setLightDelayActive(bool);
+    int getScreenDpi() const;
+    void setScreenDpi(int);
+    int getDistanceToScreen() const;
+    void setDistanceToScreen(int);
+
+    void setFOVFromZoom();
+    void setZoomFromFOV();
 
     void flash(const std::string&, double duration = 1.0);
 
@@ -348,6 +357,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool showActiveViewFrame;
     bool showViewFrames;
     View *resizeSplit;
+
+    int screenDpi;
+    int distanceToScreen;
 };
 
 #endif // _CELESTIACORE_H_
