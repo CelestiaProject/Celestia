@@ -16,7 +16,7 @@
 #include <string>
 #include <iostream>
 #include "gl.h"
-#include "texfont.h"
+#include "texturefont.h"
 
 using namespace std;
 
@@ -46,8 +46,8 @@ class Console : public std::ostream
     Console(int rows, int cols);
     ~Console();
 
-    void setFont(TexFont*);
-    TexFont* getFont();
+    void setFont(TextureFont*);
+    TextureFont* getFont();
 
     void render();
     void clear();
@@ -72,7 +72,7 @@ class Console : public std::ostream
     int nColumns;
     char** text;
 
-    TexFont* font;
+    TextureFont* font;
     
     int cursorRow;
     int cursorColumn;

@@ -14,7 +14,6 @@
 #include "vecgl.h"
 #include "perlin.h"
 #include "spheremesh.h"
-#include "texfont.h"
 #include "console.h"
 #include "gui.h"
 #include "regcombine.h"
@@ -48,8 +47,6 @@ static CTexture* glareTex = NULL;
 static CTexture* galaxyTex = NULL;
 static CTexture* shadowTex = NULL;
 static CTexture* veilTex = NULL;
-
-static TexFont* font = NULL;
 
 
 Renderer::Renderer() :
@@ -227,11 +224,6 @@ bool Renderer::init(int winWidth, int winHeight)
         shadowTex = CreateProceduralTexture(256, 256, GL_RGB, ShadowTextureEval);
         shadowTex->bindName();
 
-        // font = txfLoadFont("fonts\\helvetica_14b.txf");
-        font = txfLoadFont("fonts/default.txf");
-        if (font != NULL)
-            txfEstablishTexture(font, 0, GL_FALSE);
-
         // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
             InitExtMultiTexture();
@@ -327,8 +319,6 @@ bool Renderer::init(int winWidth, int winHeight)
     // TODO: Do a proper check for this extension before enabling
     glEnable(GL_RESCALE_NORMAL_EXT);
 
-    console->setFont(font);
-
     resize(winWidth, winHeight);
 
     return true;
@@ -352,6 +342,18 @@ float Renderer::getFieldOfView()
 void Renderer::setFieldOfView(float _fov)
 {
     fov = _fov;
+}
+
+
+TextureFont* Renderer::getFont() const
+{
+    return font;
+}
+
+void Renderer::setFont(TextureFont* txf)
+{
+    font = txf;
+    console->setFont(txf);
 }
 
 
@@ -2165,8 +2167,11 @@ void Renderer::renderParticles(const vector<Particle>& particles,
 
 void Renderer::renderLabels()
 {
+    if (font == NULL)
+        return;
+
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, font->texobj);
+    glBindTexture(GL_TEXTURE_2D, font->getTextureName());
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -2184,7 +2189,7 @@ void Renderer::renderLabels()
         glTranslatef((int) labels[i].position.x + PixelOffset,
                      (int) labels[i].position.y + PixelOffset,
                      0);
-        txfRenderString(font, labels[i].text);
+        font->render(labels[i].text);
         glPopMatrix();
     }
 

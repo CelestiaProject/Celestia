@@ -12,7 +12,7 @@
 
 #include <string>
 #include <iostream>
-#include "texfont.h"
+#include "texturefont.h"
 
 
 class Overlay;
@@ -44,7 +44,7 @@ class Overlay : public std::ostream
     void end();
 
     void setWindowSize(int, int);
-    void setFont(TexFont*);
+    void setFont(TextureFont*);
 
     void rect(float x, float y, float w, float h);
 
@@ -58,7 +58,7 @@ class Overlay : public std::ostream
  private:
     int windowWidth;
     int windowHeight;
-    TexFont* font;
+    TextureFont* font;
     bool useTexture;
     int textBlock;
 

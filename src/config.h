@@ -25,6 +25,8 @@ struct CelestiaConfig
     std::string favoritesFile;
     std::string initScriptFile;
     std::string demoScriptFile;
+    std::string mainFont;
+    std::string labelFont;
 };
 
 

@@ -21,6 +21,7 @@
 #include "meshmanager.h"
 #include "console.h"
 #include "selection.h"
+#include "texturefont.h"
 
 
 class Renderer
@@ -94,6 +95,9 @@ class Renderer
 
     void addLabel(string, Color, Point3f);
     void clearLabels();
+
+    void setFont(TextureFont*);
+    TextureFont* getFont() const;
 
  public:
     // Internal types
@@ -173,6 +177,7 @@ class Renderer
     TextureManager* textureManager;
     MeshManager* meshManager;
     Console* console;
+    TextureFont* font;
 
     int renderMode;
     int labelMode;
