@@ -54,6 +54,7 @@ protected:
 
     int savedRendererFlags;
     int savedLabelMode;
+    int savedOrbitMask;
     int savedAmbientLightLevel;
     int savedFaintestVisible;
     int savedHudDetail;
