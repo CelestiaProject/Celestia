@@ -43,6 +43,8 @@ public:
     void          setOrientation(const Quatd&);
     Vec3d         getVelocity() const;
     void          setVelocity(const Vec3d&);
+    Vec3f         getAngularVelocity() const;
+    void          setAngularVelocity(const Vec3f&);
 
     void          setPosition(BigFix x, BigFix y, BigFix z);
     void          setPosition(const UniversalCoord&);
@@ -54,6 +56,7 @@ private:
     UniversalCoord position;
     Quatf          orientation;
     Vec3d          velocity;
+    Vec3f          angularVelocity;
 };
 
 #endif // _OBSERVER_H_
