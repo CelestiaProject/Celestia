@@ -7,13 +7,8 @@ if ENABLE_GTK
 FRONTENDSOURCE = gtkmain.cpp
 else
 if ENABLE_KDE
-FRONTENDSOURCE = ''
-celestia_LDADD = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) $(LIBSOCKET) \
-	../celengine/libcelengine.a \
-	../celtxf/libceltxf.a \
-	../cel3ds/libcel3ds.a \
-	../celmath/libcelmath.a \
-	../celutil/libcelutil.a \
+FRONTENDSOURCE = 
+celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) $(LIBSOCKET) \
 	kde/libkdegui.a
 
 celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
@@ -42,7 +37,7 @@ celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
 EXTRA_celestia_SOURCES = gtkmain.cpp glutmain.cpp $(WINSOURCES)
 EXTRA_DIST =  Celestia.dsp celestia.mak
 
-LDADD = \
+celestia_LDADD = $(celestiaKDELIBS)\
 	../celengine/libcelengine.a \
 	../celtxf/libceltxf.a \
 	../cel3ds/libcel3ds.a \
