@@ -34,9 +34,11 @@ struct RenderListEntry
     float appMag;
     bool isCometTail;
     int depthBucket;
+    int solarSysIndex;
 };
 
 static const unsigned int MaxLights = 8;
+static const unsigned int MaxSolarSystems = 16;
 
 struct DirectionalLight
 {
@@ -310,6 +312,7 @@ class Renderer
                                const PlanetarySystem& solSystem,
                                const Observer& observer,
                                double now,
+                               unsigned int solarSysIndex,
                                bool showLabels = false);
 
     void renderObject(Point3f pos,
@@ -327,6 +330,7 @@ class Renderer
                       float appMag,
                       double now,
                       Quatf orientation,
+                      const vector<LightSource>& lightSources,
                       float, float);
 
     void renderStar(const Star& star,
@@ -435,7 +439,7 @@ class Renderer
     std::vector<EclipseShadow> eclipseShadows[MaxLights];
     std::vector<const Star*> nearStars;
 
-    std::vector<LightSource> lightSources;
+    std::vector<LightSource> lightSourceLists[MaxSolarSystems];
 
     std::vector<StarLabel> labelledStars;
 
