@@ -111,6 +111,7 @@ public:
                          astro::CoordinateSystem upFrame);
     void gotoSurface(const Selection&, double duration);
     void centerSelection(const Selection&, double centerTime = 0.5);
+    void centerSelectionCO(const Selection&, double centerTime = 0.5);
     void follow(const Selection&);
     void geosynchronousFollow(const Selection&);
     void phaseLock(const Selection&);
@@ -136,8 +137,9 @@ public:
     void setMode(ObserverMode);
 
     enum TrajectoryType {
-        Linear      = 0,
-        GreatCircle = 1,
+        Linear        = 0,
+        GreatCircle   = 1,
+        CircularOrbit = 2,          
     };
 
     struct JourneyParams
@@ -152,6 +154,7 @@ public:
         double endInterpolation;   // end of orientation interpolation phase [0-1]
         double expFactor;
         double accelTime;
+        Quatf rotation1; // rotation on the CircularOrbit around centerObject
 
         Selection centerObject;
         
@@ -183,6 +186,9 @@ public:
     void computeCenterParameters(const Selection& sel,
                                  JourneyParams& jparams,
                                  double centerTime);
+    void computeCenterCOParameters(const Selection& sel,
+                                   JourneyParams& jparams,
+                                   double centerTime);
 
  private:
     double         simTime;

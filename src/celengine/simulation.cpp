@@ -346,6 +346,11 @@ void Simulation::centerSelection(double centerTime)
     activeObserver->centerSelection(selection, centerTime);
 }
 
+void Simulation::centerSelectionCO(double centerTime)
+{
+    activeObserver->centerSelectionCO(selection, centerTime);
+}
+
 void Simulation::follow()
 {
     activeObserver->follow(selection);

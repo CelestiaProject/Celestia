@@ -1461,7 +1461,10 @@ void CelestiaCore::charEntered(char c)
         
     case 'C':
         addToHistory();
-        sim->centerSelection();
+        if (c == 'c')
+            sim->centerSelection();
+        else
+            sim->centerSelectionCO();
         break;
 
     case 'D':
