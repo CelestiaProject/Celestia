@@ -109,7 +109,9 @@ View::View(View::Type _type,
     width(_width),
     height(_height),
     renderFlags(0),
-    labelMode(0)
+    labelMode(0),
+    zoom(1),
+    alternateZoom(1)
 {
 }
 
@@ -283,7 +285,9 @@ CelestiaCore::CelestiaCore() :
     showActiveViewFrame(false),
     showViewFrames(true),
     resizeSplit(0),
-    typedTextCompletionIdx(-1)
+    typedTextCompletionIdx(-1),
+    screenDpi(96),
+    distanceToScreen(400)
 {
     /* Get a renderer here so it may be queried for capabilities of the
        underlying engine even before rendering is enabled. It's initRenderer()
@@ -644,15 +648,16 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == MiddleButton)
 	{
-            if (sim->getActiveObserver()->getFOV() != stdFOV)
+            if (views[activeView]->zoom != 1)
 	    {
-                oldFOV = sim->getActiveObserver()->getFOV();
-                sim->getActiveObserver()->setFOV(stdFOV);
+                views[activeView]->alternateZoom = views[activeView]->zoom;
+                views[activeView]->zoom = 1;
             }
             else
             {
-                sim->getActiveObserver()->setFOV(oldFOV);
+                views[activeView]->zoom = views[activeView]->alternateZoom;
             }
+            setFOVFromZoom();
 
             // If AutoMag, adapt the faintestMag to the new fov
             if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
@@ -703,6 +708,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         case View::ViewWindow:
             break;
         }
+        setFOVFromZoom();
         return;
     }
     if ((modifiers & (LeftButton | RightButton)) != 0)
@@ -769,6 +775,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             else if (newFOV > maxFOV)
                 newFOV = maxFOV;
             sim->getActiveObserver()->setFOV(newFOV);
+            setZoomFromFOV();
+
 	    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
 	    {
 	        setFaintestAutoMag();
@@ -898,6 +906,8 @@ void CelestiaCore::charEntered(char c)
         {
             typedText += c;
             typedTextCompletion = sim->getObjectCompletion(typedText);
+            typedTextCompletionIdx = -1;
+#ifdef AUTO_COMPLETION
             if (typedTextCompletion.size() == 1)
             {
                 std::string::size_type pos = typedText.rfind('/', typedText.length());
@@ -906,14 +916,17 @@ void CelestiaCore::charEntered(char c)
                 else
                     typedText = typedTextCompletion[0];
             }
+#endif
         }
         else if (c == '\b')
         {
             typedTextCompletionIdx = -1;
             if (typedText.size() > 0)
             {
+#ifdef AUTO_COMPLETION
                 do
                 {
+#endif
                     typedText = string(typedText, 0, typedText.size() - 1);
                     if (typedText.size() > 0)
                     {
@@ -921,7 +934,9 @@ void CelestiaCore::charEntered(char c)
                     } else {
                         typedTextCompletion.clear();
                     }
+#ifdef AUTO_COMPLETION
                 } while (typedText.size() > 0 && typedTextCompletion.size() == 1);
+#endif
             }
         }
         else if (c == '\011') // TAB
@@ -1280,6 +1295,7 @@ void CelestiaCore::charEntered(char c)
         if (observer->getFOV() > MinimumFOV)
 	{
 	    observer->setFOV(observer->getFOV() / 1.05f);
+            setZoomFromFOV();
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
 	    {
 	        setFaintestAutoMag();
@@ -1295,9 +1311,10 @@ void CelestiaCore::charEntered(char c)
         if (observer->getFOV() < MaximumFOV)
 	{
 	    observer->setFOV(observer->getFOV() * 1.05f);
+            setZoomFromFOV();
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
 	    {
-	        setFaintestAutoMag();   
+	        setFaintestAutoMag();
 		char buf[128];
 		sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
 		flash(buf);
@@ -1881,6 +1898,8 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
         overlay->setWindowSize(w, h);
     width = w;
     height = h;
+
+    setFOVFromZoom();
 }
 
 
@@ -1945,10 +1964,31 @@ void CelestiaCore::splitView(View::Type type)
                           w, h);
     split->child2 = view;
     view->parent = split;
+    view->zoom = views[activeView]->zoom;
 
     views.insert(views.end(), view);
+
+    setFOVFromZoom();
 }
 
+void CelestiaCore::setFOVFromZoom()
+{
+    for (std::vector<View*>::iterator i = views.begin(); i < views.end(); i++)
+        if ((*i)->type == View::ViewWindow)
+        {
+            double fov = 2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) / (*i)->zoom;
+            (*i)->observer->setFOV(fov);
+        }
+}
+
+void CelestiaCore::setZoomFromFOV()
+{
+    for (std::vector<View*>::iterator i = views.begin(); i < views.end(); i++)
+        if ((*i)->type == View::ViewWindow)
+        {
+            (*i)->zoom = 2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) /  (*i)->observer->getFOV();
+        }
+}
 
 void CelestiaCore::singleView()
 {
@@ -1973,6 +2013,7 @@ void CelestiaCore::singleView()
     views.clear();
     views.insert(views.end(), av);
     activeView = 0;
+    setFOVFromZoom();
 }
 
 void CelestiaCore::deleteView()
@@ -2021,6 +2062,7 @@ void CelestiaCore::deleteView()
 
     if (!showActiveViewFrame)
         flashFrameStart = currentTime;
+    setFOVFromZoom();
 }
 
 bool CelestiaCore::getFramesVisible() const
@@ -2496,11 +2538,12 @@ void CelestiaCore::renderOverlay()
         astro::decimalToDegMinSec((double) fov, degrees, minutes, seconds);
 
         if (degrees > 0)
-            overlay->printf("FOV: %d %02d' %.1f\"\n", degrees, minutes, seconds);
+            overlay->printf("FOV: %d %02d' %.1f\"", degrees, minutes, seconds);
         else if (minutes > 0)
-            overlay->printf("FOV: %02d' %.1f\"\n", minutes, seconds);
+            overlay->printf("FOV: %02d' %.1f\"", minutes, seconds);
         else
-            overlay->printf("FOV: %.1f\"\n", seconds);
+            overlay->printf("FOV: %.1f\"", seconds);
+        overlay->printf(" (%.2f x)\n", views[activeView]->zoom);
         overlay->endText();
         glPopMatrix();
     }
@@ -2574,7 +2617,7 @@ void CelestiaCore::renderOverlay()
         *overlay << "Target name: " << typedText;
         overlay->endText();
         overlay->setFont(font);
-        if (typedTextCompletion.size() > 1)
+        if (typedTextCompletion.size() >= 1)
         {
             int nb_cols = 4;
             int nb_lines = 3;
@@ -3217,7 +3260,7 @@ bool CelestiaCore::getLightDelayActive() const
   return  lightTravelFlag;
 }
 
-void CelestiaCore::setLightDelayActive(bool lightDelayActive ) 
+void CelestiaCore::setLightDelayActive(bool lightDelayActive )
 {
   lightTravelFlag = lightDelayActive ;
 }
@@ -3227,6 +3270,27 @@ int CelestiaCore::getTextEnterMode() const
     return textEnterMode;
 }
 
+void CelestiaCore::setScreenDpi(int dpi)
+{
+    screenDpi = dpi;
+    setFOVFromZoom();
+}
+
+int CelestiaCore::getScreenDpi() const
+{
+    return screenDpi;
+}
+
+void CelestiaCore::setDistanceToScreen(int dts)
+{
+    distanceToScreen = dts;
+    setFOVFromZoom();
+}
+
+int CelestiaCore::getDistanceToScreen() const
+{
+    return distanceToScreen;
+}
 
 void CelestiaCore::setTimeZoneBias(int bias)
 {
