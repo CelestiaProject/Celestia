@@ -339,7 +339,7 @@ StarDatabase *StarDatabase::read(istream& in)
 	in.read((char *) &appMag, sizeof appMag);
         LE_TO_CPU_INT16(appMag, appMag);
 	in.read((char *) &stellarClass, sizeof stellarClass);
-        LE_TO_CPU_INT32(stellarClass, stellarClass);
+        LE_TO_CPU_INT16(stellarClass, stellarClass);
 	in.read((char *) &parallaxError, sizeof parallaxError);
 	if (!in.good())
 	    break;
