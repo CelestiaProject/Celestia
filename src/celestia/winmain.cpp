@@ -3428,7 +3428,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     sim->getUniverse()->markObject(sim->getSelection(),
                                                    10.0f,
                                                    Color(0.0f, 1.0f, 0.0f, 0.9f),
-                                                   Marker::Square,
+                                                   Marker::Diamond,
                                                    1);
                 }
             }
