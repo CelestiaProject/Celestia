@@ -572,10 +572,10 @@ Code:
   click, notably for small fields of view in the arcsec range. 
 * Fixed the 'move' script command
 * New script commands: setfaintestautomag45deg {magnitude float}, 
-  lookingback {} 
+  lookback {} 
 * [,] keys now adjust the limiting magnitude at 45 degrees 
   field of view, if automag is ON. Values displayed via flash messages  
-* Associated the 'looking back' operation  with the '*' key shortcut
+* Associated the 'look back' command  with the '*' key shortcut
 * Linux: Added KDE interface, all features of the GTK interface are 
   available (except for the Tour Guide), new features include:
    - Bookmarks / URLs;

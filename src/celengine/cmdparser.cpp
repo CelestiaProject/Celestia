@@ -411,9 +411,9 @@ Command* CommandParser::parseCommand()
         cmd = new CommandSetOrientation(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                                         (float) degToRad(angle));
     }
-    else if (commandName == "lookingback")
+    else if (commandName == "lookback")
     {
-        cmd = new CommandLookingBack();
+        cmd = new CommandLookBack();
     }
     else if (commandName == "renderflags")
     {
