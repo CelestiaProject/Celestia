@@ -43,11 +43,6 @@ using namespace std;
 static const int DragThreshold = 3;
 
 
-static void fatalError(string s)
-{
-    cout << s;
-}
-
 static void warning(string s)
 {
     cout << s;
@@ -106,6 +101,7 @@ CelestiaCore::CelestiaCore() :
     demoScript(NULL),
     runningScript(NULL),
     execEnv(NULL),
+    timeZoneBias(0),
     showFPSCounter(false),
     nFrames(0),
     fps(0.0),
@@ -117,7 +113,8 @@ CelestiaCore::CelestiaCore() :
     timeScale(1.0),
     paused(false),
     contextMenuCallback(NULL),
-    logoTexture(NULL)
+    logoTexture(NULL),
+    alerter(NULL)
 {
     execEnv = new CoreExecutionEnvironment(*this);
     for (int i = 0; i < KeyCount; i++)
@@ -804,7 +801,8 @@ void CelestiaCore::renderOverlay()
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
         glTranslatef(width - 11 * emWidth, height - fontHeight, 0);
         overlay->beginText();
-        *overlay << astro::Date(sim->getTime()) << '\n';
+        *overlay << astro::Date(sim->getTime() + 
+                                astro::secondsToJulianDate(timeZoneBias)) << '\n';
         if (paused)
         {
             glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -848,7 +846,7 @@ void CelestiaCore::renderOverlay()
             *overlay << astro::lightYearsToKilometers(speed) / astro::speedOfLight << 'c';
         else
             *overlay << speed << " ly/s";
-        *overlay << setprecision(6) << scientific;
+        *overlay << setprecision(3);
 
         overlay->endText();
         glPopMatrix();
@@ -1222,4 +1220,31 @@ void CelestiaCore::setFaintest(float magnitude)
     renderer->setBrightnessBias(0.0f);
     renderer->setBrightnessScale(1.0f / (magnitude + 1.0f));
     sim->setFaintestVisible(magnitude);
+}
+
+
+void CelestiaCore::fatalError(const string& msg)
+{
+    if (alerter == NULL)
+        cout << msg;
+    else
+        alerter->fatalError(msg);
+}
+
+
+void CelestiaCore::setAlerter(Alerter* a)
+{
+    alerter = a;
+}
+
+
+int CelestiaCore::getTimeZoneBias() const
+{
+    return timeZoneBias;
+}
+
+
+void CelestiaCore::setTimeZoneBias(int bias)
+{
+    timeZoneBias = bias;
 }
