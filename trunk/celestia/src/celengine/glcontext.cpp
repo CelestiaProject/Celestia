@@ -166,9 +166,12 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
                 vertexProc != NULL);
 
     case GLPath_ARBFP_ARBVP:
+        return false;
+        /*
         return (extensionSupported("GL_ARB_vertex_program") &&
                 extensionSupported("GL_ARB_fragment_program") &&
                 vertexProc != NULL);
+        */
 
     case GLPath_NV30:
         return false;
