@@ -1497,7 +1497,8 @@ void Renderer::renderBodyAsParticle(Point3f position,
 }
 
 
-static void renderBumpMappedMesh(Texture& baseTexture,
+static void renderBumpMappedMesh(const GLContext& context,
+                                 Texture& baseTexture,
                                  Texture& bumpTexture,
                                  Vec3f lightDirection,
                                  Quatf orientation,
@@ -1510,7 +1511,8 @@ static void renderBumpMappedMesh(Texture& baseTexture,
 
     // Render the base texture on the first pass . . .  The color
     // should have already been set up by the caller.
-    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
+    lodSphere->render(context,
+                      Mesh::Normals | Mesh::TexCoords0, frustum, lod,
                       &baseTexture);
 
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
@@ -1574,7 +1576,8 @@ static void renderBumpMappedMesh(Texture& baseTexture,
     glMatrixMode(GL_MODELVIEW);
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
+    lodSphere->render(context,
+                      Mesh::Normals | Mesh::TexCoords0, frustum, lod,
                       &bumpTexture);
 
     // Reset the second texture unit
@@ -1591,7 +1594,8 @@ static void renderBumpMappedMesh(Texture& baseTexture,
 }
 
 
-static void renderSmoothMesh(Texture& baseTexture,
+static void renderSmoothMesh(const GLContext& context,
+                             Texture& baseTexture,
                              Vec3f lightDirection,
                              Quatf orientation,
                              Color ambientColor,
@@ -1662,7 +1666,8 @@ static void renderSmoothMesh(Texture& baseTexture,
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
     textures[0] = &baseTexture;
-    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
+    lodSphere->render(context,
+                      Mesh::Normals | Mesh::TexCoords0, frustum, lod,
                       textures, 1);
 
     // Reset the second texture unit
@@ -1892,7 +1897,8 @@ static void renderMeshDefault(Mesh* mesh,
 
 static void renderSphereDefault(const RenderInfo& ri,
                                 const Frustum& frustum,
-                                bool lit)
+                                bool lit,
+                                const GLContext& context)
 {
     if (lit)
         glEnable(GL_LIGHTING);
@@ -1911,7 +1917,8 @@ static void renderSphereDefault(const RenderInfo& ri,
 
     glColor(ri.color);
 
-    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+    lodSphere->render(context,
+                      Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
                       ri.baseTex);
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
@@ -1920,7 +1927,8 @@ static void renderSphereDefault(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glAmbientLightColor(Color::Black); // Disable ambient light
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
                           ri.nightTex);
         glAmbientLightColor(ri.ambientColor);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -1929,7 +1937,8 @@ static void renderSphereDefault(const RenderInfo& ri,
 
 
 static void renderSphere_Combiners(const RenderInfo& ri,
-                                   const Frustum& frustum)
+                                   const Frustum& frustum,
+                                   const GLContext& context)
 {
     glDisable(GL_LIGHTING);
 
@@ -1947,7 +1956,8 @@ static void renderSphere_Combiners(const RenderInfo& ri,
 
     if (ri.bumpTex != NULL)
     {
-        renderBumpMappedMesh(*(ri.baseTex),
+        renderBumpMappedMesh(context,
+                             *(ri.baseTex),
                              *(ri.bumpTex),
                              ri.sunDir_eye,
                              ri.orientation,
@@ -1957,7 +1967,8 @@ static void renderSphere_Combiners(const RenderInfo& ri,
     }
     else if (ri.baseTex != NULL)
     {
-        renderSmoothMesh(*(ri.baseTex),
+        renderSmoothMesh(context,
+                         *(ri.baseTex),
                          ri.sunDir_eye,
                          ri.orientation,
                          ri.ambientColor,
@@ -1967,7 +1978,7 @@ static void renderSphere_Combiners(const RenderInfo& ri,
     else
     {
         glEnable(GL_LIGHTING);
-        lodSphere->render(frustum, ri.lod, NULL, 0);
+        lodSphere->render(context, frustum, ri.lod, NULL, 0);
     }
 
     if (ri.nightTex != NULL)
@@ -1975,7 +1986,8 @@ static void renderSphere_Combiners(const RenderInfo& ri,
         ri.nightTex->bind();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        renderSmoothMesh(*(ri.nightTex),
+        renderSmoothMesh(context,
+                         *(ri.nightTex),
                          ri.sunDir_eye, 
                          ri.orientation,
                          Color::Black,
@@ -1988,7 +2000,6 @@ static void renderSphere_Combiners(const RenderInfo& ri,
 }
 
 
-#if 1
 static void renderSphere_DOT3_VP(const RenderInfo& ri,
                                  const Frustum& frustum,
                                  const GLContext& context)
@@ -2024,7 +2035,8 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
         ri.bumpTex->bind();
         setupBumpTexenv();
-        lodSphere->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
                           ri.bumpTex, ri.baseTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -2033,7 +2045,8 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     {
         vproc->use(vp::diffuse);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
                           ri.baseTex);
     }
@@ -2051,7 +2064,8 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         else
             setupTexenvGlossMapAlpha();
 
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0,
                           frustum, ri.lod,
                           ri.glossTex != NULL ? ri.glossTex : ri.baseTex);
 
@@ -2066,7 +2080,8 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
                           ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
@@ -2074,7 +2089,6 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     vproc->disable();
 
 }
-#endif
 
 
 static void renderSphere_Combiners_VP(const RenderInfo& ri,
@@ -2135,7 +2149,8 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
-        lodSphere->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
                           ri.baseTex, ri.bumpTex);
         DisableCombiners();
@@ -2154,7 +2169,8 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
 
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
-            lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+            lodSphere->render(context,
+                              Mesh::Normals | Mesh::TexCoords0,
                               frustum, ri.lod,
                               textures, 1);
 
@@ -2173,7 +2189,8 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
         unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
             Mesh::VertexProgParams;
-        lodSphere->render(attributes, frustum, ri.lod,
+        lodSphere->render(context,
+                          attributes, frustum, ri.lod,
                           ri.baseTex, ri.glossTex);
         DisableCombiners();
         glDisable(GL_COLOR_SUM_EXT);
@@ -2184,7 +2201,8 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
             vproc->use(vp::diffuseHaze);
         else
             vproc->use(vp::diffuse);
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
                           ri.baseTex);
     }
@@ -2199,7 +2217,8 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
                           ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
@@ -2221,7 +2240,8 @@ static void renderShadowedMeshDefault(Mesh* mesh,
                                       float *sPlane,
                                       float *tPlane,
                                       const Vec3f& lightDir,
-                                      bool useShadowMask)
+                                      bool useShadowMask,
+                                      const GLContext& context)
 {
     glEnable(GL_TEXTURE_GEN_S);
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
@@ -2246,7 +2266,8 @@ static void renderShadowedMeshDefault(Mesh* mesh,
 
     if (mesh == NULL)
     {
-        lodSphere->render(Mesh::Normals | Mesh::Multipass,
+        lodSphere->render(context,
+                          Mesh::Normals | Mesh::Multipass,
                           frustum, ri.lod, NULL);
     }
     else
@@ -2281,7 +2302,8 @@ static void renderShadowedMeshVertexShader(const RenderInfo& ri,
     vproc->parameter(vp::TexGen_T, tPlane);
     vproc->use(vp::shadowTexture);
 
-    lodSphere->render(Mesh::Normals | Mesh::Multipass, frustum, ri.lod, NULL);
+    lodSphere->render(context,
+                      Mesh::Normals | Mesh::Multipass, frustum, ri.lod, NULL);
 
     vproc->disable();
 }
@@ -2576,7 +2598,8 @@ renderEclipseShadows(Mesh* mesh,
             renderShadowedMeshDefault(mesh, ri, viewFrustum,
                                       sPlane, tPlane,
                                       dir,
-                                      ri.useTexEnvCombine);
+                                      ri.useTexEnvCombine,
+                                      context);
         }
 
         if (ri.useTexEnvCombine)
@@ -2607,7 +2630,8 @@ renderRingShadows(Mesh* mesh,
                   RenderInfo& ri,
                   float planetRadius,
                   Mat4f& planetMat,
-                  Frustum& viewFrustum)
+                  Frustum& viewFrustum,
+                  const GLContext& context)
 {
     // Compute the transformation to use for generating texture
     // coordinates from the object vertices.
@@ -2654,7 +2678,8 @@ renderRingShadows(Mesh* mesh,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
 
     renderShadowedMeshDefault(mesh, ri, viewFrustum,
-                              sPlane, tPlane, Vec3f(0.0f, 0.0f, 0.0f), false);
+                              sPlane, tPlane, Vec3f(0.0f, 0.0f, 0.0f), false,
+                              context);
 
     if (ri.useTexEnvCombine)
     {
@@ -2736,7 +2761,7 @@ renderRingShadowsVS(Mesh* mesh,
                      1.0f / (ringWidth / planetRadius),
                      0.0f, 0.5f);
     vproc->parameter(vp::TexGen_T, scale, 0, 0, 0);
-    lodSphere->render(Mesh::Multipass, viewFrustum, ri.lod, NULL);
+    lodSphere->render(context, Mesh::Multipass, viewFrustum, ri.lod, NULL);
     vproc->disable();
 
     // Restore the texture combiners
@@ -2924,7 +2949,7 @@ void Renderer::renderObject(Point3f pos,
                 break;
 
             case GLContext::GLPath_NvCombiner:
-                renderSphere_Combiners(ri, viewFrustum);
+                renderSphere_Combiners(ri, viewFrustum, *context);
                 break;
 
             case GLContext::GLPath_DOT3_ARBVP:
@@ -2932,12 +2957,12 @@ void Renderer::renderObject(Point3f pos,
                 break;
 
             default:
-                renderSphereDefault(ri, viewFrustum, true);
+                renderSphereDefault(ri, viewFrustum, true, *context);
             }
         }
         else
         {
-            renderSphereDefault(ri, viewFrustum, false);
+            renderSphereDefault(ri, viewFrustum, false, *context);
         }
     }
     else
@@ -3047,7 +3072,8 @@ void Renderer::renderObject(Point3f pos,
                                      texOffset, 0.0f, 0.0f, 0.0f);
                 }
 
-                lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+                lodSphere->render(*context,
+                                  Mesh::Normals | Mesh::TexCoords0,
                                   viewFrustum,
                                   ri.lod,
                                   cloudTex);
@@ -3058,7 +3084,8 @@ void Renderer::renderObject(Point3f pos,
             else
             {
                 glDisable(GL_LIGHTING);
-                lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+                lodSphere->render(*context,
+                                  Mesh::Normals | Mesh::TexCoords0,
                                   viewFrustum,
                                   ri.lod,
                                   cloudTex);
@@ -3118,7 +3145,8 @@ void Renderer::renderObject(Point3f pos,
                                   *obj.rings,
                                   sunDir,
                                   ri,
-                                  radius, planetMat, viewFrustum);
+                                  radius, planetMat, viewFrustum,
+                                  context);
 #endif
             }
         }

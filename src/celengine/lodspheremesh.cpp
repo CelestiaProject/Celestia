@@ -103,17 +103,20 @@ static Point3f spherePoint(int theta, int phi)
 }
 
 
-void LODSphereMesh::render(const Frustum& frustum,
+void LODSphereMesh::render(const GLContext& context,
+                           const Frustum& frustum,
                            float lodBias,
                            Texture** tex,
                            int nTextures)
 {
-    render(Mesh::Normals | Mesh::TexCoords0, frustum, lodBias, tex,
+    render(context,
+           Mesh::Normals | Mesh::TexCoords0, frustum, lodBias, tex,
            nTextures);
 }
 
 
-void LODSphereMesh::render(unsigned int attributes,
+void LODSphereMesh::render(const GLContext& context,
+                           unsigned int attributes,
                            const Frustum& frustum,
                            float lodBias,
                            Texture* tex0,
@@ -132,11 +135,12 @@ void LODSphereMesh::render(unsigned int attributes,
         textures[nTextures++] = tex2;
     if (tex3 != NULL)
         textures[nTextures++] = tex3;
-    render(attributes, frustum, lodBias, textures, nTextures);
+    render(context, attributes, frustum, lodBias, textures, nTextures);
 }
 
 
-void LODSphereMesh::render(unsigned int attributes,
+void LODSphereMesh::render(const GLContext& context,
+                           unsigned int attributes,
                            const Frustum& frustum,
                            float lodBias,
                            Texture** tex,
@@ -262,8 +266,18 @@ void LODSphereMesh::render(unsigned int attributes,
     // extension.  Need to come up with a better solution . . .
     if (tangents != NULL && ((attributes & Mesh::Tangents) != 0))
     {
+#if 0
         glEnableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
         glx::glVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
+        glx::glEnableVertexAttribArrayARB(6);
+        glx::glVertexAttribPointerARB(6, 3, GL_FLOAT, GL_FALSE, 0, tangents);
+#endif
+        VertexProcessor* vproc = context.getVertexProcessor();
+        if (vproc != NULL)
+        {
+            vproc->enableAttribArray(6);
+            vproc->attribArray(6, 3, GL_FLOAT, 0, tangents);
+        }
     }
 
     if (split == 1)
@@ -328,7 +342,13 @@ void LODSphereMesh::render(unsigned int attributes,
 
     if (tangents != NULL && ((attributes & Mesh::Tangents) != 0))
     {
+#if 0
         glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
+        glDisableVertexAttribArrayARB(6);
+#endif
+        VertexProcessor* vproc = context.getVertexProcessor();
+        if (vproc != NULL)
+            vproc->disableAttribArray(6);
     }
 
     for (i = 0; i < nTextures; i++)

@@ -12,7 +12,7 @@
 
 #include <celmath/vecmath.h>
 #include <celutil/color.h>
-
+#include <celengine/gl.h>
 
 class VertexProcessor;
 
@@ -97,6 +97,14 @@ class VertexProcessor
     virtual void parameter(vp::Parameter, const Color&);
     virtual void parameter(vp::Parameter, float, float, float, float) = 0;
     virtual void parameter(vp::Parameter, const float*) = 0;
+
+    virtual void enableAttribArray(unsigned int) = 0;
+    virtual void disableAttribArray(unsigned int) = 0;
+    virtual void attribArray(unsigned int index,
+                             int size,
+                             GLenum type,
+                             unsigned int strude,
+                             const void* pointer) = 0;
 
  private:
     int dummy;
