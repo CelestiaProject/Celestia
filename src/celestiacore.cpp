@@ -972,11 +972,13 @@ bool CelestiaCore::initRenderer()
         return false;
     }
 
+#ifdef _WIN32
     if (renderer->perPixelLightingSupported())
     {
         renderer->setPerPixelLighting(true);
         // CheckMenuItem(menuBar, ID_RENDER_PERPIXEL_LIGHTING, MF_CHECKED);
     }
+#endif
 
     // Set up the star labels
     for (vector<string>::const_iterator iter = config->labelledStars.begin();
