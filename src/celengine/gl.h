@@ -29,10 +29,15 @@
 
 #endif
 
+#ifndef MACOSX
 #define GL_ARB_multitexture
 #include <GL/gl.h>
 #undef GL_ARB_multitexture
 #include <GL/glu.h>
+#else
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#endif
 
 #endif // _GL_H_
 
