@@ -2359,7 +2359,7 @@ static void HandleCaptureMovie(HWND hWnd)
 }
 
 
-static CommandSequence* HandleOpenScript(HWND hWnd)
+static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
 {
     // Display File Open dialog to allow user to specify name and location of
     // of captured screen image.
@@ -2373,7 +2373,7 @@ static CommandSequence* HandleOpenScript(HWND hWnd)
     ZeroMemory(&Ofn, sizeof(OPENFILENAME));
     Ofn.lStructSize = sizeof(OPENFILENAME);
     Ofn.hwndOwner = hWnd;
-    Ofn.lpstrFilter = "Celestia Script\0*.cel\0";
+    Ofn.lpstrFilter = "Celestia Script\0*.celx;*.clx;*.cel\0";
     Ofn.lpstrFile= szFile;
     Ofn.nMaxFile = sizeof(szFile);
     Ofn.lpstrFileTitle = szFileTitle;
@@ -2389,33 +2389,41 @@ static CommandSequence* HandleOpenScript(HWND hWnd)
         // If you got here, a path and file has been specified.
         // Ofn.lpstrFile contains full path to specified file
         // Ofn.lpstrFileTitle contains just the filename with extension
-        ifstream scriptfile(Ofn.lpstrFile);
-        if (!scriptfile.good())
+        ContentType type = DetermineFileType(Ofn.lpstrFile);
+
+        if (type == Content_CelestiaScript)
         {
-            MessageBox(hWnd, "Error opening script file.", "Error",
-                       MB_OK | MB_ICONERROR);
+            appCore->runScript(Ofn.lpstrFile);
         }
-        else
+        else if (type == Content_CelestiaLegacyScript)
         {
-            CommandParser parser(scriptfile);
-            CommandSequence* script = parser.parse();
-            if (script == NULL)
+            ifstream scriptfile(Ofn.lpstrFile);
+            if (!scriptfile.good())
             {
-                const vector<string>* errors = parser.getErrors();
-                const char* errorMsg = "";
-                if (errors->size() > 0)
-                    errorMsg = (*errors)[0].c_str();
-                MessageBox(hWnd, errorMsg, "Error in script file.",
+                MessageBox(hWnd, "Error opening script file.", "Error",
                            MB_OK | MB_ICONERROR);
             }
             else
             {
-                return script;
+                CommandParser parser(scriptfile);
+                CommandSequence* script = parser.parse();
+                if (script == NULL)
+                {
+                    const vector<string>* errors = parser.getErrors();
+                    const char* errorMsg = "";
+                    if (errors->size() > 0)
+                        errorMsg = (*errors)[0].c_str();
+                    MessageBox(hWnd, errorMsg, "Error in script file.",
+                               MB_OK | MB_ICONERROR);
+                }
+                else
+                {
+                    appCore->cancelScript(); // cancel any running script
+                    appCore->runScript(script);
+                }
             }
         }
     }
-
-    return NULL;
 }
 
 
@@ -3444,14 +3452,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_FILE_OPENSCRIPT:
-            {
-                CommandSequence* script = HandleOpenScript(hWnd);
-                if (script != NULL)
-                {
-                    appCore->cancelScript(); // cancel any running script
-                    appCore->runScript(script);
-                }
-            }
+            HandleOpenScript(hWnd, appCore);
             break;
 
         case ID_FILE_CAPTUREIMAGE:
