@@ -297,7 +297,7 @@ Convert3DSMesh(Model& model,
         }
     }
 
-    uint32 materialIndex = model.addMaterial(material);
+    uint32 materialIndex = model.addMaterial(material) - 1;
     mesh->addGroup(Mesh::TriList, materialIndex, nOutputVertices, indices);
     model.addMesh(mesh);
 }
