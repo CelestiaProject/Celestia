@@ -880,7 +880,7 @@
 }
 
 
-# A few asteriods for fun . . .
+# A few asteroids for fun . . .
 "Ceres" "Sol"
 {
 	Class "asteroid"

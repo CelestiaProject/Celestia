@@ -461,3 +461,6 @@ Code:
   against Mesa 4 headers.
 * Unix Gtk: removed bug in Text enter mode. (dramsey)
 * Unix Gtk: Menus for new Labels. (dramsey)
+* Unix Gtk: Star Browser Body Types. (dramsey)
+* Unix Gtk: Correct Underlines for Menus. (dramsey)
+* Guess Body Types more accurately. (dramsey)

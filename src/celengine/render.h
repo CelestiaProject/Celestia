@@ -51,6 +51,7 @@ class Renderer
         GalaxyLabels        = 0x10,
         AsteroidLabels      = 0x20,
         SpacecraftLabels    = 0x40,
+        BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels),
     };
 
     enum {
