@@ -109,6 +109,7 @@ namespace astro
     extern const double G; // gravitational constant
     extern const double SolarMass;
     extern const double EarthMass;
+    extern const double LunarMass;
 };
 
 // Convert a date structure to a Julian date
