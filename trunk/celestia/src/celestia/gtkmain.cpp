@@ -2,7 +2,8 @@
 // 
 // Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
 //
-// GTk front end for Celestia.
+// GTK front end for Celestia.
+// GTK2 port by Pat Suwalski <pat@suwalski.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -29,6 +30,7 @@
 #ifdef GNOME
 #include <gnome.h>
 #include <libgnomeui/libgnomeui.h>
+#include <gconf/gconf-client.h>
 #endif
 
 #include <gtk/gtk.h>
@@ -67,9 +69,11 @@ static int numListStars = 100;
 static int lastX = 0;
 static int lastY = 0;
 
-// Keep track of fullscreen mode
-static int fullscreen = 0;
-
+// GConf for Gnome
+#ifdef GNOME
+GConfClient *client;
+#endif
+	
 typedef struct _checkFunc CheckFunc;
 typedef int (*Callback)(int, char *);
 
@@ -99,6 +103,25 @@ int oglAttributeList[] =
     GDK_GL_DOUBLEBUFFER,
     GDK_GL_NONE,
 };
+
+struct AppPreferences
+{
+	int winWidth;
+	int winHeight;
+	int winX;
+	int winY;
+	int renderFlags;
+	int labelMode;
+	int orbitMask;
+	float visualMagnitude;
+	float ambientLight;
+	int showLocalTime;
+	int hudDetail;
+	int fullScreen;
+	string altSurfaceName;
+	Renderer::StarStyle starStyle;
+};
+AppPreferences* prefs;
 
 static GtkItemFactory* menuItemFactory = NULL;
 
@@ -140,6 +163,8 @@ enum
 	Menu_AmbientNone         = 2031,
 	Menu_AmbientLow          = 2032,
 	Menu_AmbientMed          = 2033,
+	Menu_CometLabels         = 2034,
+	Menu_LocationLabels      = 2035,
 };
 
 static void menuSelectSol()
@@ -241,17 +266,23 @@ static gint menuVertexShaders(GtkWidget*, gpointer)
 
 static gint menuShowLocTime(GtkWidget*, gpointer)
 {
-    bool on = (appCore->getTimeZoneBias()==0);
-    if (on)
+    if (appCore->getTimeZoneBias() == 0)
     {
         appCore->setTimeZoneBias(-timezone + 3600 * daylight);
         appCore->setTimeZoneName(tzname[daylight]);
+		prefs->showLocalTime = TRUE;
     }
     else
     {
         appCore->setTimeZoneBias(0);
         appCore->setTimeZoneName("UTC");
+		prefs->showLocalTime = FALSE;
     }
+
+	#ifdef GNOME
+	gconf_client_set_bool(client, "/apps/celestia/showLocalTime", prefs->showLocalTime, NULL);
+	#endif
+	
     return TRUE;
 }
 
@@ -266,7 +297,20 @@ static bool getActiveState(GtkWidget* w)
 
 	return FALSE;
 }
+
+#ifdef GNOME
+void setFlag(int type, const char* name, int value) {
+	// type: 0=render, 1=orbit, 2=label
+	gchar key[60];
+	switch (type) {
+		case 0: sprintf(key, "%s%s", "/apps/celestia/render/", name); break;
+		case 1: sprintf(key, "%s%s", "/apps/celestia/orbit/", name); break;
+		case 2: sprintf(key, "%s%s", "/apps/celestia/labels/", name); break;
+	}
 	
+	gconf_client_set_bool(client, key, value, NULL);
+}
+#endif
 
 // Render Checkbox control superfunction!
 // Renderer::Show* passed as (gpointer)
@@ -276,55 +320,118 @@ static gint menuRenderer(GtkWidget* w, gpointer flag)
 
     appRenderer->setRenderFlags((appRenderer->getRenderFlags() & ~(int)flag) |
                              (state ? (int)flag : 0));
+
+	prefs->renderFlags = appRenderer->getRenderFlags();
+
+	#ifdef GNOME
+	// Update GConf
+	switch ((int)flag) {
+		case Renderer::ShowStars: setFlag(0, "stars", state); break;
+		case Renderer::ShowPlanets: setFlag(0, "planets", state); break;
+		case Renderer::ShowGalaxies: setFlag(0, "galaxies", state); break;
+		case Renderer::ShowDiagrams: setFlag(0, "diagrams", state); break;
+		case Renderer::ShowCloudMaps: setFlag(0, "cloudMaps", state); break;
+		case Renderer::ShowOrbits: setFlag(0, "orbits", state); break;
+		case Renderer::ShowCelestialSphere: setFlag(0, "celestialSphere", state); break;
+		case Renderer::ShowNightMaps: setFlag(0, "nightMaps", state); break;
+		case Renderer::ShowAtmospheres: setFlag(0, "atmospheres", state); break;
+		case Renderer::ShowSmoothLines: setFlag(0, "smoothLines", state); break;
+		case Renderer::ShowEclipseShadows: setFlag(0, "eclipseShadows", state); break;
+		case Renderer::ShowStarsAsPoints: setFlag(0, "starsAsPoints", state); break;
+		case Renderer::ShowRingShadows: setFlag(0, "ringShadows", state); break;
+		case Renderer::ShowBoundaries: setFlag(0, "boundaries", state); break;
+		case Renderer::ShowAutoMag: setFlag(0, "autoMag", state); break;
+		case Renderer::ShowCometTails: setFlag(0, "cometTails", state); break;
+		case Renderer::ShowMarkers: setFlag(0, "markers", state); break;
+	}
+	#endif
+
 	return TRUE;
 }
 
 // Label Checkbox control superfunction!
-// Rendered::*Labels passed as (gpointer)
+// Renderer::*Labels passed as (gpointer)
 static gint menuLabeler(GtkWidget* w, gpointer flag)
 {
 	bool state = getActiveState(w);
 
     appRenderer->setLabelMode((appRenderer->getLabelMode() & ~(int)flag) |
                            (state ? (int)flag : 0));
+
+	#ifdef GNOME
+	// Update GConf
+	switch ((int)flag) {
+		case Renderer::StarLabels: setFlag(2, "star", state); break;
+		case Renderer::PlanetLabels: setFlag(2, "planet", state); break;
+		case Renderer::MoonLabels: setFlag(2, "moon", state); break;
+		case Renderer::ConstellationLabels: setFlag(2, "constellation", state); break;
+		case Renderer::GalaxyLabels: setFlag(2, "galaxy", state); break;
+		case Renderer::AsteroidLabels: setFlag(2, "asteroid", state); break;
+		case Renderer::SpacecraftLabels: setFlag(2, "spacecraft", state); break;
+		case Renderer::LocationLabels: setFlag(2, "location", state); break;
+		case Renderer::CometLabels: setFlag(2, "comet", state); break;
+	}
+	#endif
+
 	return TRUE;
 }
 
 // Star Style radio group control superfunction!
 static gint menuStarStyle(GtkWidget*, gpointer flag)
 {
-	Renderer::StarStyle style = appCore->getRenderer()->getStarStyle();
-
 	// Set up the desired style
 	switch ((int)flag)
 	{
 		case Renderer::FuzzyPointStars:
-			style = Renderer::FuzzyPointStars;
+			prefs->starStyle = Renderer::FuzzyPointStars;
 			break;
 		case Renderer::PointStars:
-			style = Renderer::PointStars;
+			prefs->starStyle = Renderer::PointStars;
 			break;
 		case Renderer::ScaledDiscStars:
-			style = Renderer::ScaledDiscStars;
+			prefs->starStyle = Renderer::ScaledDiscStars;
 	}
 
-    appRenderer->setStarStyle(style);
+    appRenderer->setStarStyle(prefs->starStyle);
+
+	#ifdef GNOME
+	gconf_client_set_int(client, "/apps/celestia/starStyle", prefs->starStyle, NULL);
+	#endif
+	
 	return TRUE;
 }
 
 static void menuMoreStars()
 {
     appCore->charEntered(']');
+
+	prefs->visualMagnitude = appSim->getFaintestVisible();
+
+	#ifdef GNOME
+	gconf_client_set_float(client, "/apps/celestia/visualMagnitude", prefs->visualMagnitude, NULL);
+	#endif
 }
 
 static void menuLessStars()
 {
     appCore->charEntered('[');
+
+	prefs->visualMagnitude = appSim->getFaintestVisible();
+
+	#ifdef GNOME
+	gconf_client_set_float(client, "/apps/celestia/visualMagnitude", prefs->visualMagnitude, NULL);
+	#endif
 }
 
 static void menuShowInfo()
 {
     appCore->charEntered('V');
+
+	prefs->hudDetail = appCore->getHudDetail();
+	
+	#ifdef GNOME
+	gconf_client_set_int(client, "/apps/celestia/hudDetail", prefs->hudDetail, NULL);
+	#endif
 }
 
 static void menuRunDemo()
@@ -357,14 +464,18 @@ static void menuUnMark()
 // CALLBACK: Toggle fullscreen mode
 static void menuFullScreen()
 {
-	if (fullscreen == 0) {
+	if (prefs->fullScreen == FALSE) {
 		gtk_window_fullscreen(GTK_WINDOW(mainWindow));
-		fullscreen = 1;
+		prefs->fullScreen = TRUE;
 	}
 	else {
 		gtk_window_unfullscreen(GTK_WINDOW(mainWindow));
-		fullscreen = 0;
+		prefs->fullScreen = FALSE;
 	}
+
+	#ifdef GNOME
+	gconf_client_set_bool(client, "/apps/celestia/fullScreen", prefs->fullScreen, NULL);
+	#endif
 }
 
 static void menuAbout()
@@ -481,7 +592,7 @@ void menuViewerSize()
 
 	char res[15];
 
-	if (fullscreen) {
+	if (prefs->fullScreen) {
 		sprintf(res, "Fullscreen");
 		gtk_widget_set_sensitive(menubox, FALSE);
 	}
@@ -795,6 +906,13 @@ static int ambientChanged(GtkWidget*, int lev)
     if (lev>=0 && lev<3)
     {
         appCore->getRenderer()->setAmbientLightLevel(amLevels[lev]);
+
+		prefs->ambientLight = amLevels[lev];
+
+		#ifdef GNOME
+		gconf_client_set_float(client, "/apps/celestia/ambientLight", prefs->ambientLight, NULL);
+		#endif
+		
         return TRUE;
     }
     return FALSE;
@@ -803,7 +921,14 @@ static int ambientChanged(GtkWidget*, int lev)
 
 static int infoChanged(GtkButton*, int info)
 {
-    appCore->setHudDetail(info);
+	prefs->hudDetail = info;
+
+	appCore->setHudDetail(prefs->hudDetail);
+	
+	#ifdef GNOME
+	gconf_client_set_int(client, "/apps/celestia/hudDetail", prefs->hudDetail, NULL);
+	#endif
+	
     return TRUE;
 }
 
@@ -2780,8 +2905,10 @@ static CheckFunc checks[] =
     { NULL, NULL, "/Render/Spacecraft",            checkLabelFlag,     1, Renderer::SpacecraftLabels, Menu_CraftLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Planets",               checkLabelFlag,     1, Renderer::PlanetLabels, Menu_PlanetLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Moons",                 checkLabelFlag,     1, Renderer::MoonLabels, Menu_MoonLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Locations",             checkLabelFlag,     1, Renderer::LocationLabels, Menu_LocationLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Galaxies",              checkLabelFlag,     1, Renderer::GalaxyLabels, Menu_GalaxyLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Constellations",        checkLabelFlag,     1, Renderer::ConstellationLabels, Menu_ConstellationLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Comets",                checkLabelFlag,     1, Renderer::CometLabels, Menu_CometLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Asteroids",             checkLabelFlag,     1, Renderer::AsteroidLabels, Menu_AsteroidLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Stars",                 checkRenderFlag,    1, Renderer::ShowStars, Menu_ShowStars, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/Render/Ring Shadows",          checkRenderFlag,    1, Renderer::ShowRingShadows, Menu_ShowRingShadows, GTK_SIGNAL_FUNC(menuRenderer) },
@@ -3201,9 +3328,12 @@ gint reshapeFunc(GtkWidget* widget, GdkEventConfigure*, gpointer)
 	if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 		return FALSE;
 
-	int w = widget->allocation.width;
-	int h = widget->allocation.height;
-	appCore->resize(w, h);
+	prefs->winWidth = widget->allocation.width;
+	prefs->winHeight = widget->allocation.height;
+	appCore->resize(prefs->winWidth, prefs->winHeight);
+
+	// GConf changes only saved upon exit, since caused a lot of CPU activity
+	// while saving intermediate steps.
 
 	gdk_gl_drawable_gl_end (gldrawable);
     return TRUE;
@@ -3467,14 +3597,32 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer)
         appCore->charEntered('\033');
         break;
 
-    case 'q':
-    case 'Q':
-        if(event->state & GDK_CONTROL_MASK)
-            {  /* Why isn't Ctrl-Q sending char 21 ? I have no idea, but as
-                  long as it isn't, this will work. */
-            	//gtk_main_quit();
-            }
-        // Intentional fallthrough if *not* Ctrl-Q
+	// The next few things are sort of "hacks"
+	// They catch any keypresses that have preferences associeated with them
+	// but don't have menu entries. This way the prefs can be updated.
+	case 's':
+	case 'S':
+		if(event->state & GDK_CONTROL_MASK) {
+			appCore->charEntered(event->string);
+			prefs->starStyle = appCore->getRenderer()->getStarStyle();
+
+			#ifdef GNOME
+			gconf_client_set_int(client, "/apps/celestia/starStyle", prefs->starStyle, NULL);
+			#endif
+
+			break;
+		}
+
+	case '{':
+	case '}':
+		appCore->charEntered(event->string);
+		prefs->ambientLight = appRenderer->getAmbientLightLevel();
+
+		#ifdef GNOME
+		gconf_client_set_float(client, "/apps/celestia/ambientLight", prefs->ambientLight, NULL);
+		#endif
+
+		break;
 
     default:
         if (!handleSpecialKey(event->keyval, true))
@@ -3661,6 +3809,270 @@ void GtkWatcher::notifyChange(CelestiaCore*, int property)
 
 GtkWatcher *gtkWatcher=NULL;
 
+
+#ifdef GNOME
+// Reads in GConf->Main preferences into AppPreferences
+void readGConfMain(AppPreferences* p) {
+	// This area should, in theory, have error checking
+	p->winWidth = gconf_client_get_int(client, "/apps/celestia/winWidth", NULL);
+	p->winHeight = gconf_client_get_int(client, "/apps/celestia/winHeight", NULL);
+	p->winX = gconf_client_get_int(client, "/apps/celestia/winX", NULL);
+	p->winY = gconf_client_get_int(client, "/apps/celestia/winY", NULL);
+	p->ambientLight = gconf_client_get_float(client, "/apps/celestia/ambientLight", NULL);
+	p->visualMagnitude = gconf_client_get_float(client, "/apps/celestia/visualMagnitude", NULL);
+	p->showLocalTime = gconf_client_get_bool(client, "/apps/celestia/showLocalTime", NULL);
+	p->hudDetail = gconf_client_get_int(client, "/apps/celestia/hudDetail", NULL);
+	p->fullScreen = gconf_client_get_bool(client, "/apps/celestia/fullScreen", NULL);
+	p->starStyle = (Renderer::StarStyle)gconf_client_get_int(client, "/apps/celestia/starStyle", NULL);
+	p->altSurfaceName = gconf_client_get_string(client, "/apps/celestia/altSurfaceName", NULL);
+}
+
+// Reads in GConf->Labels preferences into AppPreferences
+void readGConfLabels(AppPreferences* p) {
+	p->labelMode = Renderer::NoLabels;
+	p->labelMode |= Renderer::StarLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/star", NULL);
+	p->labelMode |= Renderer::PlanetLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/planet", NULL);
+	p->labelMode |= Renderer::MoonLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/moon", NULL);
+	p->labelMode |= Renderer::ConstellationLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/constellation", NULL);
+	p->labelMode |= Renderer::GalaxyLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/galaxy", NULL);
+	p->labelMode |= Renderer::AsteroidLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/asteroid", NULL);
+	p->labelMode |= Renderer::SpacecraftLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/spacecraft", NULL);
+	p->labelMode |= Renderer::LocationLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/location", NULL);
+	p->labelMode |= Renderer::CometLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/comet", NULL);
+}
+
+// Reads in GConf->Render preferences into AppPreferences
+void readGConfRender(AppPreferences* p) {
+	p->renderFlags = Renderer::ShowNothing;
+	p->renderFlags |= Renderer::ShowStars * gconf_client_get_bool(client, "/apps/celestia/render/stars",  NULL);
+	p->renderFlags |= Renderer::ShowPlanets * gconf_client_get_bool(client, "/apps/celestia/render/planets",  NULL);
+	p->renderFlags |= Renderer::ShowGalaxies * gconf_client_get_bool(client, "/apps/celestia/render/galaxies",  NULL);
+	p->renderFlags |= Renderer::ShowDiagrams * gconf_client_get_bool(client, "/apps/celestia/render/diagrams",  NULL);
+	p->renderFlags |= Renderer::ShowCloudMaps * gconf_client_get_bool(client, "/apps/celestia/render/cloudMaps",  NULL);
+	p->renderFlags |= Renderer::ShowOrbits * gconf_client_get_bool(client, "/apps/celestia/render/orbits",  NULL);
+	p->renderFlags |= Renderer::ShowCelestialSphere * gconf_client_get_bool(client, "/apps/celestia/render/celestialSphere",  NULL);
+	p->renderFlags |= Renderer::ShowNightMaps * gconf_client_get_bool(client, "/apps/celestia/render/nightMaps",  NULL);
+	p->renderFlags |= Renderer::ShowAtmospheres * gconf_client_get_bool(client, "/apps/celestia/render/atmospheres",  NULL);
+	p->renderFlags |= Renderer::ShowSmoothLines * gconf_client_get_bool(client, "/apps/celestia/render/smoothLines",  NULL);
+	p->renderFlags |= Renderer::ShowEclipseShadows * gconf_client_get_bool(client, "/apps/celestia/render/eclipseShadows",  NULL);
+	p->renderFlags |= Renderer::ShowStarsAsPoints * gconf_client_get_bool(client, "/apps/celestia/render/starsAsPoints",  NULL);
+	p->renderFlags |= Renderer::ShowRingShadows * gconf_client_get_bool(client, "/apps/celestia/render/ringShadows",  NULL);
+	p->renderFlags |= Renderer::ShowBoundaries * gconf_client_get_bool(client, "/apps/celestia/render/boundaries",  NULL);
+	p->renderFlags |= Renderer::ShowAutoMag * gconf_client_get_bool(client, "/apps/celestia/render/autoMag",  NULL);
+	p->renderFlags |= Renderer::ShowCometTails * gconf_client_get_bool(client, "/apps/celestia/render/cometTails",  NULL);
+	p->renderFlags |= Renderer::ShowMarkers * gconf_client_get_bool(client, "/apps/celestia/render/markers",  NULL);
+}
+
+// Reads in GConf->Orbits preferences into AppPreferences
+void readGConfOrbits(AppPreferences* p) {
+	p->orbitMask = 0;
+	p->orbitMask |= Body::Planet * gconf_client_get_bool(client, "/apps/celestia/orbits/planet",  NULL);
+	p->orbitMask |= Body::Moon * gconf_client_get_bool(client, "/apps/celestia/orbits/moon",  NULL);
+	p->orbitMask |= Body::Asteroid * gconf_client_get_bool(client, "/apps/celestia/orbits/asteroid",  NULL);
+	p->orbitMask |= Body::Comet * gconf_client_get_bool(client, "/apps/celestia/orbits/comet",  NULL);
+	p->orbitMask |= Body::Spacecraft * gconf_client_get_bool(client, "/apps/celestia/orbits/spacecraft",  NULL);
+	p->orbitMask |= Body::Invisible * gconf_client_get_bool(client, "/apps/celestia/orbits/invisible",  NULL);
+	p->orbitMask |= Body::Unknown * gconf_client_get_bool(client, "/apps/celestia/orbits/unknown",  NULL);
+}
+#endif
+
+// Loads saved preferences into AppPreference struct
+// Uses GConf for Gnome, text file for GTK
+void loadSavedPreferences(AppPreferences* p) {
+	// Defaults, although GConf will have its own
+	p->winWidth = 640;
+	p->winHeight = 480;
+	p->winX = -1;
+	p->winY = -1;
+	p->ambientLight = 0.1f;  // Low
+	p->labelMode = 0;
+	p->orbitMask = Body::Planet | Body::Moon;
+	p->renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars |
+	                 Renderer::ShowPlanets | Renderer::ShowSmoothLines |
+	                 Renderer::ShowCometTails | Renderer::ShowRingShadows;
+	p->visualMagnitude = 8.5f;   //Default specified in Simulation::Simulation()
+	p->showLocalTime = 0;
+	p->hudDetail = 1;
+	p->fullScreen = 0;
+	p->starStyle = Renderer::FuzzyPointStars;
+	p->altSurfaceName = "";
+
+	#ifdef GNOME
+	readGConfMain(p);
+	readGConfLabels(p);
+	readGConfRender(p);
+	readGConfOrbits(p);
+	#endif
+}
+
+// Applies all the preferences in AppPreferences except window size/position.
+void applyPreferences(AppPreferences* p) {
+	// This should eventually call all the various update functions.
+	// For now, some duplication is okay.
+
+	// Apply any preferences that do not apply directly to GTK UI
+	appCore->getSimulation()->setFaintestVisible(p->visualMagnitude);
+	appCore->getRenderer()->setRenderFlags(p->renderFlags);
+	appCore->getRenderer()->setLabelMode(p->labelMode);
+	appCore->getRenderer()->setOrbitMask(p->orbitMask);
+	appCore->getRenderer()->setAmbientLightLevel(p->ambientLight);
+	appCore->getRenderer()->setStarStyle(p->starStyle);
+	appCore->setHudDetail(p->hudDetail);
+	if (p->showLocalTime) {
+		appCore->setTimeZoneBias(-timezone + 3600 * daylight);
+		appCore->setTimeZoneName(tzname[daylight]);
+	}
+	else {
+		appCore->setTimeZoneBias(0);
+		appCore->setTimeZoneName("UTC");
+	}
+	appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(p->altSurfaceName);
+}
+
+#ifdef GNOME
+// GCONF CALLBACK: Reloads labels upon change
+void confLabels(GConfClient*, guint, GConfEntry*, gpointer) {
+	// Reload all the labels
+	readGConfLabels(prefs);
+
+	// Set label flags
+	appCore->getRenderer()->setLabelMode(prefs->labelMode);
+}
+
+// GCONF CALLBACK: Reloads render flags upon change
+void confRender(GConfClient*, guint, GConfEntry*, gpointer) {
+	// Reload all the render flags
+	readGConfRender(prefs);
+
+	// Set render flags
+	appCore->getRenderer()->setRenderFlags(prefs->renderFlags);
+}
+
+// GCONF CALLBACK: Reloads orbits upon change
+void confOrbits(GConfClient*, guint, GConfEntry*, gpointer) {
+	// Reload all the labels
+	readGConfOrbits(prefs);
+
+	// Set orbit flags
+	appCore->getRenderer()->setOrbitMask(prefs->orbitMask);
+}
+
+// GCONF CALLBACK: Sets window width upon change
+void confWinWidth(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	int w = gconf_client_get_int(c, gconf_entry_get_key(e), NULL);
+
+	if (w != prefs->winWidth) {
+		int winX, winY;
+		gtk_window_get_size(GTK_WINDOW(mainWindow), &winX, &winY);
+		gtk_window_resize(GTK_WINDOW(mainWindow), w + winX - prefs->winWidth, winY);
+		prefs->winWidth = w;
+	}
+}
+
+// GCONF CALLBACK: Sets window height upon change
+void confWinHeight(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	int h = gconf_client_get_int(c, gconf_entry_get_key(e), NULL);
+
+	if (h != prefs->winHeight) {
+		int winX, winY;
+		gtk_window_get_size(GTK_WINDOW(mainWindow), &winX, &winY);
+		gtk_window_resize(GTK_WINDOW(mainWindow), winX, h + winY - prefs->winHeight);
+		prefs->winHeight = h;
+	}
+}
+
+// GCONF CALLBACK: Sets window X position upon change
+void confWinX(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	int x = gconf_client_get_int(c, gconf_entry_get_key(e), NULL);
+
+	if (x != prefs->winX) {
+		prefs->winX = x;
+		if (prefs->winX > 0 && prefs->winY > 0)
+			gtk_window_move(GTK_WINDOW(mainWindow), prefs->winX, prefs->winY);
+	}
+}
+
+// GCONF CALLBACK: Sets window Y position upon change
+void confWinY(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	int y = gconf_client_get_int(c, gconf_entry_get_key(e), NULL);
+
+	if (y != prefs->winY) {
+		prefs->winY = y;
+		if (prefs->winX > 0 && prefs->winY > 0)
+			gtk_window_move(GTK_WINDOW(mainWindow), prefs->winX, prefs->winY);
+	}
+}
+
+// GCONF CALLBACK: Reloads ambient light setting upon change
+void confAmbientLight(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	prefs->ambientLight = gconf_client_get_float(c, gconf_entry_get_key(e), NULL);
+	appCore->getRenderer()->setAmbientLightLevel(prefs->ambientLight);
+}
+
+// GCONF CALLBACK: Reloads visual magnitude setting upon change
+void confVisualMagnitude(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	prefs->visualMagnitude = gconf_client_get_float(c, gconf_entry_get_key(e), NULL);
+	appCore->getSimulation()->setFaintestVisible(prefs->visualMagnitude);
+}
+
+// GCONF CALLBACK: Sets "show local time" setting upon change
+void confShowLocalTime(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	prefs->showLocalTime = gconf_client_get_bool(c, gconf_entry_get_key(e), NULL);
+	if (prefs->showLocalTime) {
+		appCore->setTimeZoneBias(-timezone + 3600 * daylight);
+		appCore->setTimeZoneName(tzname[daylight]);
+	}
+	else {
+		appCore->setTimeZoneBias(0);
+		appCore->setTimeZoneName("UTC");
+	}
+}
+
+// GCONF CALLBACK: Sets HUD detail when changed
+void confHudDetail(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	prefs->hudDetail = gconf_client_get_int(c, gconf_entry_get_key(e), NULL);
+	appCore->setHudDetail(prefs->hudDetail);
+}
+
+// GCONF CALLBACK: Sets window to fullscreen when change occurs
+void confFullScreen(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	prefs->fullScreen = gconf_client_get_bool(c, gconf_entry_get_key(e), NULL);
+	if (prefs->fullScreen)
+		gtk_window_fullscreen(GTK_WINDOW(mainWindow));
+}
+
+// GCONF CALLBACK: Sets star style when changed
+void confStarStyle(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	prefs->starStyle = (Renderer::StarStyle)gconf_client_get_int(c, gconf_entry_get_key(e), NULL);
+	appCore->getRenderer()->setStarStyle(prefs->starStyle);
+}
+
+// GCONF CALLBACK: Sets alternate surface texture when changed
+void confAltSurfaceName(GConfClient* c, guint, GConfEntry* e, gpointer) {
+	prefs->altSurfaceName = gconf_client_get_string(c, gconf_entry_get_key(e), NULL);
+	appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs->altSurfaceName);
+}
+// End GConf callbacks
+#endif
+
+// CALLBACK: When window position changed
+int moveWindowCallback(GtkWidget* w, gpointer) {
+	int x, y;
+	gtk_window_get_position(GTK_WINDOW(w), &x, &y);
+
+	prefs->winX = x;
+	prefs->winY = y;
+
+	// Saving of preferences was removed from here to the end of the main
+	// function. It was much too CPU intensive to save after every slightest
+	// change during a window move.
+
+	// Return false so other handlers run too
+	return FALSE;
+}
+
+
+// MAIN
 int main(int argc, char* argv[])
 {
     // Say we're not ready to render yet.
@@ -3709,8 +4121,6 @@ int main(int argc, char* argv[])
 	mainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	#endif
 
-	gtk_container_set_border_width(GTK_CONTAINER(mainWindow), 1);
-
     mainBox = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
     gtk_container_set_border_width(GTK_CONTAINER(mainBox), 0);
 
@@ -3740,6 +4150,21 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	// Load saved settings
+	AppPreferences preferences;
+	prefs = &preferences;
+	#ifdef GNOME
+	client = gconf_client_get_default();
+	gconf_client_add_dir(client, "/apps/celestia", GCONF_CLIENT_PRELOAD_RECURSIVE, NULL);
+	#endif
+	loadSavedPreferences(prefs);
+
+	if (prefs->winX > 0 && prefs->winY > 0)
+		gtk_window_move(GTK_WINDOW(mainWindow), prefs->winX, prefs->winY);
+
+	if (prefs->fullScreen)
+		gtk_window_fullscreen(GTK_WINDOW(mainWindow));
+
 	// Create area to be used for OpenGL display
 	oglArea = gtk_drawing_area_new();
 	
@@ -3759,7 +4184,7 @@ int main(int argc, char* argv[])
                           GDK_POINTER_MOTION_MASK);
 
     // Set the default size
-	gtk_widget_set_size_request(oglArea, 640, 480);
+	gtk_widget_set_size_request(oglArea, prefs->winWidth, prefs->winHeight);
 
     // Connect signal handlers
     g_signal_connect(GTK_OBJECT(oglArea), "expose_event",
@@ -3780,6 +4205,9 @@ int main(int argc, char* argv[])
                        G_CALLBACK(glarea_key_press), NULL);
     g_signal_connect(GTK_OBJECT(oglArea), "key_release_event",
                        G_CALLBACK(glarea_key_release), NULL);
+
+    g_signal_connect(GTK_OBJECT(mainWindow), "configure-event",
+                       G_CALLBACK(moveWindowCallback), NULL);
 
     // Frames and boxes for the Options Dialog
     showFrame = gtk_frame_new("Show");
@@ -3803,6 +4231,7 @@ int main(int argc, char* argv[])
 	#ifdef GNOME
 	// Set window contents (GNOME)
     gnome_app_set_contents((GnomeApp *)mainWindow, GTK_WIDGET(mainBox));
+	gtk_window_set_default_icon_from_file("celestia.svg", NULL);
 	#else
 	// Set window contents (GTK)
     gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(mainBox));
@@ -3810,10 +4239,7 @@ int main(int argc, char* argv[])
 
     gtk_box_pack_start(GTK_BOX(mainBox), mainMenu, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(mainBox), oglArea, TRUE, TRUE, 0);
-    gtk_widget_show(GTK_WIDGET(oglArea));
-    gtk_widget_show(GTK_WIDGET(mainBox));
-    gtk_widget_show(GTK_WIDGET(mainMenu));
-    gtk_widget_show(GTK_WIDGET(mainWindow));
+
     g_signal_connect(GTK_OBJECT(mainBox), "event",
                        G_CALLBACK(resyncAll), NULL);
 
@@ -3821,22 +4247,61 @@ int main(int argc, char* argv[])
     GTK_WIDGET_SET_FLAGS(oglArea, GTK_CAN_FOCUS);
     gtk_widget_grab_focus(GTK_WIDGET(oglArea));
 
+	// Set context menu callback for the core
+	appCore->setContextMenuCallback(contextMenu);
+
 	// Main call to execute redraw
 	gtk_idle_add(glarea_idle, NULL);
 
-    bReady = true;
     gtkWatcher = new GtkWatcher(appCore);
 
     g_assert(menuItemFactory);
     resyncAll();
 
-	appCore->setContextMenuCallback(contextMenu);
+	gtk_widget_show_all(mainWindow);
+    bReady = true;
+
+	// HACK: Now that window is drawn, set minimum window size
+	gtk_widget_set_size_request(oglArea, 320, 240);
 	
+	// Apply loaded preferences
+	applyPreferences(prefs);
+
+	#ifdef GNOME
+	// Add preference client notifiers.
+	gconf_client_notify_add (client, "/apps/celestia/labels", confLabels, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/render", confRender, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/orbits", confOrbits, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/winWidth", confWinWidth, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/winHeight", confWinHeight, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/winX", confWinX, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/winY", confWinY, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/ambientLight", confAmbientLight, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/visualMagnitude", confVisualMagnitude, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/showLocalTime", confShowLocalTime, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/hudDetail", confHudDetail, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/fullScreen", confFullScreen, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/starStyle", confStarStyle, NULL, NULL, NULL);
+	gconf_client_notify_add (client, "/apps/celestia/altSurfaceName", confAltSurfaceName, NULL, NULL, NULL);
+	#endif
+
 	// Call Main GTK Loop
 	gtk_main();
     
 	// Clean up
 	delete captureFilename;
+
+	#ifdef GNOME
+	// Save window position
+	gconf_client_set_int(client, "/apps/celestia/winX", prefs->winX, NULL);
+	gconf_client_set_int(client, "/apps/celestia/winY", prefs->winY, NULL);
+
+	// Save window  size
+    gconf_client_set_int(client, "/apps/celestia/winWidth", prefs->winWidth, NULL);
+    gconf_client_set_int(client, "/apps/celestia/winHeight", prefs->winHeight, NULL);
+
+	g_object_unref (G_OBJECT (client));
+	#endif
 
     return 0;
 }
