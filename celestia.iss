@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.3.0
+AppVerName=Celestia 1.3.1
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -74,10 +74,12 @@ Source: "textures\medres\earth-clouds.png"; DestDir: "{app}/textures/medres"; Co
 Source: "textures\medres\earthnight.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\enceladus.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\epimetheus.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\epimetheus-lok.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\eros.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\europa.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\ganymede.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\gasgiant.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\gasgiantnight.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\gaspramosaic.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\hyperion.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\hyperion-lok.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
@@ -136,10 +138,12 @@ Source: "textures\lores\earth-clouds.png"; DestDir: "{app}/textures/lores"; Copy
 Source: "textures\lores\earthnight.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\enceladus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\epimetheus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\epimetheus-lok.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\eros.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\europa.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\ganymede.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\gasgiant.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\gasgiantnight.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\gaspramosaic.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\hyperion.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\hyperion-lok.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
@@ -161,6 +165,7 @@ Source: "textures\lores\miranda-lok-mask.png"; DestDir: "{app}/textures/lores"; 
 Source: "textures\lores\moon.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\moonbump.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\neptune.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\neptune-rings.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\oberon.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\oberon-lok-mask.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\phobos.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
