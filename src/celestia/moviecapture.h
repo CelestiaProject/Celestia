@@ -25,6 +25,7 @@ class MovieCapture
     virtual bool end() = 0;
     virtual bool captureFrame() = 0;
 
+    virtual int getFrameCount() const = 0;
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
     virtual float getFrameRate() const = 0;
