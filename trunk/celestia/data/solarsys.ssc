@@ -30,6 +30,8 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 {
 	Texture "mercury.jpg"
 	OverlayTexture "mercury-lok-mask.png"
+	BumpMap "mercurybump.jpg"
+	BumpHeight 2.5
 }
 
 "Venus" "Sol"
@@ -1055,9 +1057,10 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 
 "Pluto" "Sol"
 {
-	Texture "pluto.jpg"
-	#BumpMap "plutobump1k.jpg"
-	#BumpHeight 2.5
+	Texture "pluto-lok.jpg"
+        SpecularTexture "pluto-lok-spec.jpg"
+        SpecularColor            [ 0.135 0.12 0.08 ]
+        SpecularPower             9.5
 
 	Radius 1137
 
@@ -1091,7 +1094,10 @@ AltSurface "limit of knowledge" "Sol/Pluto"
 
 "Charon" "Sol/Pluto"
 {
-	Texture "charon.jpg"
+	Texture "charon-lok.jpg"
+        SpecularTexture "charon-lok-spec.jpg"
+        SpecularColor            [ 0.135 0.12 0.08 ]
+        SpecularPower             9.5
 	Radius   586
 
 	InfoURL "http://www.nineplanets.org/pluto.html#Charon"
