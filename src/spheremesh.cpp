@@ -15,6 +15,27 @@
 #include "spheremesh.h"
 
 
+static bool trigArraysInitialized = false;
+static int maxDivisions = 4096;
+static float* sinArray = NULL;
+static float* cosArray = NULL;
+
+
+static void InitTrigArrays()
+{
+    sinArray = new float[maxDivisions * 2 + 1];
+    cosArray = new float[maxDivisions * 2 + 1];
+
+    for (int i = 0; i < maxDivisions * 2 + 1; i++)
+    {
+        double theta = ((double) i / (double) maxDivisions - 1.0) * 2.0 * PI;
+        sinArray[i] = (float) sin(theta);
+        cosArray[i] = (float) cos(theta);
+    }
+    trigArraysInitialized = true;
+}
+
+
 SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices) :
     vertices(NULL), normals(NULL), texCoords(NULL), indices(NULL)
 {
@@ -400,3 +421,22 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
         }
     }
 }
+
+#if 0
+void SphereMesh::renderSection(int phi0, int theta0,
+                               int phi1, int theta1,
+                               int phiStep, int thetaStep)
+{
+    for (int phi = phi0; phi < phi1; phi += phiStep)
+    {
+        for (int theta = theta0; theta < theta1; theta += thetaStep)
+        {
+            float ctheta = cosArray[theta];
+            float stheta = sinArray[theta];
+            float cphi = cosArray[phi];
+            float sphi = sinArray[phi];
+            
+        }
+    }
+}
+#endif
