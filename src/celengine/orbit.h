@@ -44,4 +44,37 @@ private:
     double epoch;
 };
 
+
+
+// Custom orbit classes should be derived from CachingOrbit.  The custom
+// orbits can be expensive to compute, with more than 50 periodic terms.
+// Celestia may need require position of a planet more than once per frame; in
+// order to avoid redundant calculation, the CachingOrbit class saves the
+// result of the last calculation and uses it if the time matches the cached
+// time.
+class CachingOrbit : public Orbit
+{
+public:
+    CachingOrbit() : lastTime(1.0e-30) {};
+
+    virtual Point3d computePosition(double jd) const = 0;
+    virtual double getPeriod() const = 0;
+    virtual double getBoundingRadius() const = 0;
+
+    Point3d positionAtTime(double jd) const
+    {
+        if (jd != lastTime)
+        {
+            lastTime = jd;
+            lastPosition = computePosition(jd);
+        }
+        return lastPosition;
+    };
+
+private:
+    mutable Point3d lastPosition;
+    mutable double lastTime;
+};
+
+
 #endif // _ORBIT_H_
