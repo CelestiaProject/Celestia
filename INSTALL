@@ -2,10 +2,10 @@ Celestia Install instructions for UNIX
 --------------------------------------
 
 You need to have the following components installed before Celestia
-will build: OpenGL (tested with Mesa 3.4), glu, glut, libjpeg, and libpng.
+will build: OpenGL (tested with Mesa 3.4), glu, libjpeg, and libpng.
 Should you have a package based installation (most Linux distributions these
 days are), you will also need to install the devel packages for your OpenGL,
-glu, glut and glibc packages.
+glu and glibc packages.
 
 OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
@@ -14,12 +14,53 @@ what you need to do to build and run Celestia:
 	make
 	make install
 
-Celestia can be built with or without support for Gtk, by default the Gtk+
-version will be built if you have Gtk+ and GtkGLArea available, otherwise it
-just uses GLUT and has no GUI. If you need/want to build the non-Gtk+ version
-even though you have Gtk+ and GtkGLArea, run configure with --without-gtk:
+Three interfaces are available for Celestia:
+- glut: minimal interface, barebone Celestia core with no toolbar or menu...
+- gtk1/gnome1: minimal GTK1 interface, adds a menu, a configuration dialog
+               some other utilities. This interface is still supported but
+	       is not developped any further.
+- KDE3: brings contextual menus, toolbars, KDE integration, internationalization,
+        bookmarks...
 
-	configure --without-gtk
+By default the KDE interface will be built. It requires the various kde devel
+packages.
+
+To build the GTK interface (requires gtkglarea and gtkglarea devel):
+	configure --with-gtk
+
+To build the GLUT interface (requires glut and glut devel):
+	configure --without-kde --without-gtk
+
+The configure output tells you which interface has been selected, you should
+check it before running make.
+
+For KDE you will get:
+	checking whether to enable GLUT... no
+	checking interface to build... KDE
+	checking whether to disable GTK.... yes
+
+For GTK:
+	checking whether to enable GLUT... no
+	checking interface to build... GTK
+	checking whether to disable GTK.... no
+
+And for GLUT:
+	checking whether to enable GLUT... yes
+	checking interface to build... GLUT
+	checking whether to disable GTK.... yes
+
+Starting with version 1.3.1, Lua is the new scripting engine for Celestia, 
+the old homegrown scripting engine is still available. By default Lua support
+will NOT be compiled in, to enable it you need to download the Lua library from:
+	http://www.lua.org/
+Version 5.0 or newer is required.
+
+Once Lua has been installed on your system, you need to run:
+	configure --with-lua=/path/to/lua
+
+To check wether your Celestia has been compiled with Lua support, go to File
+-> Open. If you have '*.cel *.celx' in the filter box, then Lua is available
+otherwise the filter will contain only '*.cel'.
 
 The GtkGLArea widget that is required in order to build Celestia with Gtk+ may
 be downloaded from http://www.student.oulu.fi/~jlof/gtkglarea/ . Note that
@@ -48,4 +89,8 @@ means that you don't have GLU, GLUT, or their devel pacakges installed.
 
 Chris Laurel                &      Deon Ramsey
 claurel@.shatters.net              dramsey@users.sourceforge.net
+
+Updated 2003-06-10 by
+Christophe Teyssier
+chris@teyssier.org
 
