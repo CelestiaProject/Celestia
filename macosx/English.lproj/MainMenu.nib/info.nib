@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
-<plist version="0.9">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <dict>
 	<key>IBDocumentLocation</key>
-	<string>13 29 515 457 0 0 1152 746 </string>
+	<string>809 50 757 419 0 0 1600 1002 </string>
 	<key>IBEditorPositions</key>
 	<dict>
 		<key>242</key>
 		<string>441 337 270 342 0 0 1152 746 </string>
 		<key>29</key>
-		<string>19 661 452 44 0 0 1152 746 </string>
+		<string>147 899 851 44 0 0 1600 1002 </string>
 		<key>296</key>
-		<string>491 338 170 341 0 0 1152 746 </string>
+		<string>972 613 170 341 0 0 1600 1002 </string>
 		<key>335</key>
-		<string>522 588 98 114 0 0 1152 746 </string>
+		<string>744 826 98 114 0 0 1600 1002 </string>
 		<key>342</key>
-		<string>455 433 117 66 0 0 1152 746 </string>
+		<string>734 690 117 66 0 0 1600 1002 </string>
+		<key>792</key>
+		<string>689 547 98 84 0 0 1600 1002 </string>
 	</dict>
 	<key>IBFramework Version</key>
-	<string>263.2</string>
+	<string>283.0</string>
 	<key>IBLockedObjects</key>
 	<array>
 		<integer>352</integer>
 	</array>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>352</integer>
 		<integer>21</integer>
+		<integer>335</integer>
+		<integer>352</integer>
+		<integer>792</integer>
+		<integer>687</integer>
+		<integer>716</integer>
 		<integer>383</integer>
+		<integer>242</integer>
 		<integer>29</integer>
+		<integer>342</integer>
+		<integer>296</integer>
 	</array>
 	<key>IBSystem Version</key>
-	<string>5S66</string>
+	<string>6I32</string>
 </dict>
 </plist>

@@ -7,12 +7,20 @@
             SUPERCLASS = NSApplication; 
         }, 
         {
-            ACTIONS = {gotoObject = id; showGotoObject = id; }; 
+            ACTIONS = {
+                activateMenuItem = id; 
+                back = id; 
+                forward = id; 
+                gotoObject = id; 
+                showGotoObject = id; 
+            }; 
             CLASS = CelestiaController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
                 favoritesDrawerController = FavoritesDrawerController; 
                 glView = NSOpenGLView; 
+                gotoWindow = NSWindow; 
+                mainWindow = NSWindow; 
                 renderPanelController = RenderPanelController; 
             }; 
             SUPERCLASS = NSWindowController; 
@@ -53,11 +61,11 @@
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {gotoObject = id; }; 
+            ACTIONS = {gotoObject = id; showWindow = id; }; 
             CLASS = GotoWindowController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
-                distanceField = NSTextField; 
+                distanceField = NSPopUpButton; 
                 latitudeField = NSTextField; 
                 longitudeField = NSTextField; 
                 objectField = NSTextField; 
@@ -86,10 +94,12 @@
                 rBoundaries = NSButton; 
                 rCelestialSphere = NSButton; 
                 rCloudMaps = NSButton; 
+                rCometTails = NSButton; 
                 rDiagrams = NSButton; 
                 rEclipseShadows = NSButton; 
                 rFragmentShader = NSButton; 
                 rGalaxies = NSButton; 
+                rMarkers = NSButton; 
                 rNightMaps = NSButton; 
                 rOrbits = NSButton; 
                 rPlanets = NSButton; 
@@ -99,6 +109,13 @@
                 rStarsAsPoints = NSButton; 
                 rVertexShader = NSButton; 
             }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {
+            ACTIONS = {setTime = id; showWindow = id; }; 
+            CLASS = SetTimeWindowController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {dateField = NSTextField; timeField = NSTextField; }; 
             SUPERCLASS = NSWindowController; 
         }
     ); 
