@@ -143,7 +143,7 @@
         if ( key == NSDeleteFunctionKey ) 
            key = 127; // del = delete
 //        if ( [theEvent modifierFlags] && NSFunctionKeyMask ) NSLog( @"isFunctionKey");
-    if ( (key<128) && ((key < '0') || (key>'9') || !([theEvent modifierFlags] && NSNumericPadKeyMask)) )
+    if ( (key<128) && ((key < '0') || (key>'9') || !([theEvent modifierFlags] & NSNumericPadKeyMask)) )
        [ appCore charEntered: key ];
 //    [ appCore keyDown: [appCore toCelestiaKey: theEvent ] ];
         [ appCore keyDown: [appCore toCelestiaKey: theEvent] 
