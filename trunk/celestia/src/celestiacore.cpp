@@ -396,6 +396,10 @@ void CelestiaCore::charEntered(char c)
         sim->follow();
         break;
 
+    case 'Y':
+        sim->geosynchronousFollow();
+        break;
+
     case 'H':
         sim->selectStar(0);
         break;
@@ -738,6 +742,8 @@ void CelestiaCore::renderOverlay()
             modeName = "Travelling";
         else if (mode == Simulation::Following)
             modeName = "Following";
+        else if (mode == Simulation::GeosynchronousFollowing)
+            modeName = "Sync Following";
 
         glPushMatrix();
         glTranslatef(width - emWidth * 11, fontHeight + 5, 0);
