@@ -1825,7 +1825,7 @@ int CelestiaCore::getHudDetail()
 
 void CelestiaCore::setHudDetail(int newHudDetail)
 {
-    hudDetail = newHudDetail;
+    hudDetail = newHudDetail%3;
     notifyWatchers(CelestiaWatcher::VerbosityLevel);
 }
 
