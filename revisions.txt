@@ -134,3 +134,9 @@ Code revisions:
   time units.
 * Eliminated brain damaged observer methods in Simulation
 * Cleaned up Console class
+
+
+1.07
+* More corrections to planetary orbital calculations
+* Accept LongOfPericenter as well ArgOfPericenter in solar system catalog files
+* Render the Milky Way and other galaxies
