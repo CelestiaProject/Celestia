@@ -337,15 +337,21 @@ Statement* Parser::parseCompoundStatement()
         return NULL;
     }
 
+    CompoundStatement* compound = new CompoundStatement();
     while (scanner.nextToken() != Scanner::TokenEndGroup)
     {
         scanner.pushBack();
         Statement* statement = parseStatement();
         if (statement == NULL)
+        {
+            delete compound;
             return NULL;
+        }
+        
+        compound->addStatement(statement);
     }
 
-    return new CompoundStatement();
+    return compound;
 }
 
 
