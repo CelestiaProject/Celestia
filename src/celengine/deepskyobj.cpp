@@ -26,7 +26,8 @@ DeepSkyObject::DeepSkyObject() :
     name(""),
     position(0, 0, 0),
     orientation(1),
-    radius(1)
+    radius(1),
+    infoURL(NULL)
 {
 }
 
@@ -75,6 +76,22 @@ void DeepSkyObject::setRadius(float r)
     radius = r;
 }
 
+string DeepSkyObject::getInfoURL() const
+{
+    if (infoURL == NULL)
+        return "";
+    else
+        return *infoURL;
+}
+
+void DeepSkyObject::setInfoURL(const std::string& s)
+{
+    if (infoURL == NULL)
+        infoURL = new string(s);
+    else
+        *infoURL = s;
+}
+
 bool DeepSkyObject::load(AssociativeArray* params)
 {
     // Get position
@@ -105,9 +122,13 @@ bool DeepSkyObject::load(AssociativeArray* params)
                    (float) degToRad(angle));
     setOrientation(q);
     
-    double radius = 0.0;
+    double radius = 1.0;
     params->getNumber("Radius", radius);
     setRadius((float) radius);
+
+    string infoURL;
+    if (params->getString("InfoURL", infoURL))
+        setInfoURL(infoURL);
 
     return true;
 }
