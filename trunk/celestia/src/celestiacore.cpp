@@ -95,6 +95,7 @@ CelestiaCore::CelestiaCore() :
     width(1),
     height(1),
     font(NULL),
+    titleFont(NULL),
     messageText(""),
     typedText(""),
     textEnterMode(false),
@@ -347,7 +348,9 @@ void CelestiaCore::keyDown(int key)
     if(KeyAccel < fMaxKeyAccel)
         KeyAccel *= 1.1;
 
-    keysPressed[key] = true;
+    // Only process alphanumeric keys if we're not in text enter mode
+    if (!(key >= 'A' && key <= 'Z' && textEnterMode))
+        keysPressed[key] = true;
 }
 
 void CelestiaCore::keyUp(int key)
@@ -386,16 +389,6 @@ void CelestiaCore::charEntered(char c)
     c = toupper(c);
     switch (c)
     {
-    case 'A':
-        if (sim->getTargetSpeed() == 0)
-            sim->setTargetSpeed(0.000001f);
-        else
-            sim->setTargetSpeed(sim->getTargetSpeed() * fIncrementFactor);
-        break;
-    case 'Z':
-        sim->setTargetSpeed(sim->getTargetSpeed() / fIncrementFactor);
-        break;
-
     case 'S':
         sim->setTargetSpeed(0);
         break;
@@ -678,6 +671,18 @@ void CelestiaCore::tick(double dt)
       q.zrotate((float)degToRad(dt * fMinSlewRate * KeyAccel));
     sim->rotate(q);
 
+    if (keysPressed['A'])
+    {
+        if (sim->getTargetSpeed() == 0.0f)
+            sim->setTargetSpeed(astro::kilometersToLightYears(0.1f));
+        else
+            sim->setTargetSpeed(sim->getTargetSpeed() * (float) exp(dt * 3));
+    }
+    if (keysPressed['Z'])
+    {
+        sim->setTargetSpeed(sim->getTargetSpeed() / (float) exp(dt * 3));
+    }
+
     // If there's a script running, tick it
     if (runningScript != NULL)
     {
@@ -752,30 +757,53 @@ static void displayDistance(Overlay& overlay, double distance)
         overlay.printf("%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
 }
 
+
+static void displayStarNames(Overlay& overlay,
+                             Star& star,
+                             StarDatabase& starDB)
+{
+    StarNameDatabase::NumberIndex::const_iterator iter =
+        starDB.getStarNames(star.getCatalogNumber());
+
+    bool first = true;
+    while (iter != starDB.finalName() &&
+           iter->first == star.getCatalogNumber())
+    {
+        if (!first)
+            overlay << " / ";
+        else
+            first = false;
+        overlay << iter->second;
+        iter++;
+    }
+
+    uint32 hd = star.getCatalogNumber(Star::HDCatalog);
+    uint32 hip = star.getCatalogNumber(Star::HIPCatalog);
+    if (hd != Star::InvalidCatalogNumber && hd != 0)
+    {
+        if (!first)
+            overlay << " / ";
+        else
+            first = false;
+        overlay << "HD " << hd;
+    }
+    if (hip != Star::InvalidCatalogNumber && hip != 0)
+    {
+        if (!first)
+            overlay << " / ";
+        else
+            first = false;
+        overlay << "HIP " << hip;
+    }
+}
+
+
 static void displayStarInfo(Overlay& overlay,
                             int detail,
                             Star& star,
-                            StarDatabase& starDB,
                             SolarSystemCatalog& solarSystems,
                             double distance)
 {
-    {
-        StarNameDatabase::NumberIndex::const_iterator iter =
-            starDB.getStarNames(star.getCatalogNumber());
-        while (iter != starDB.finalName() &&
-               iter->first == star.getCatalogNumber())
-        {
-            overlay << iter->second << " / ";
-            iter++;
-        }
-    }
-
-    if (star.getCatalogNumber(Star::HDCatalog) != Star::InvalidCatalogNumber)
-        overlay << "HD " << star.getCatalogNumber(Star::HDCatalog) << "  /  ";
-    if (star.getCatalogNumber(Star::HIPCatalog) != Star::InvalidCatalogNumber)
-        overlay << "HIP " << (star.getCatalogNumber(Star::HIPCatalog));
-    overlay << '\n';
-
     overlay << "Distance: ";
     displayDistance(overlay, distance);
     overlay << '\n';
@@ -801,9 +829,7 @@ static void displayPlanetInfo(Overlay& overlay,
                               double t,
                               double distance)
 {
-    overlay << body.getName() << '\n';
-
-    //If within fAltitudeThreshold radii of planet, show altitude instead of distance
+    // If within fAltitudeThreshold radii of planet, show altitude instead of distance
     double kmDistance = astro::lightYearsToKilometers(distance);
     if((kmDistance < (fAltitudeThreshold * body.getRadius())) &&
        (kmDistance > body.getRadius()))
@@ -853,7 +879,6 @@ static void displayGalaxyInfo(Overlay& overlay,
                               Galaxy& galaxy,
                               double distance)
 {
-    overlay << galaxy.getName() << '\n';
     overlay << "Distance: ";
     displayDistance(overlay, distance);
     overlay << '\n';
@@ -865,6 +890,8 @@ void CelestiaCore::renderOverlay()
 {
     if (font == NULL)
         return;
+
+    overlay->setFont(font);
 
     int fontHeight = font->getHeight();
     int emWidth = font->getWidth("M");
@@ -973,22 +1000,31 @@ void CelestiaCore::renderOverlay()
     {
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(0, height - fontHeight, 0);
+        glTranslatef(0, height - titleFont->getHeight(), 0);
 
         overlay->beginText();
         Vec3d v = sim->getSelectionPosition(sel, sim->getTime()) - 
             sim->getObserver().getPosition();
         if (sel.star != NULL)
         {
+            overlay->setFont(titleFont);
+            displayStarNames(*overlay,
+                             *sel.star,
+                             *(sim->getStarDatabase()));
+            overlay->setFont(font);
+            *overlay << '\n';
             displayStarInfo(*overlay,
                             hudDetail,
                             *sel.star,
-                            *(sim->getStarDatabase()),
                             *(sim->getSolarSystemCatalog()),
                             v.length());
         }
         else if (sel.body != NULL)
         {
+            overlay->setFont(titleFont);
+            *overlay << sel.body->getName();
+            overlay->setFont(font);
+            *overlay << '\n';
             displayPlanetInfo(*overlay,
                               hudDetail,
                               *sel.body,
@@ -997,6 +1033,10 @@ void CelestiaCore::renderOverlay()
         }
         else if (sel.galaxy != NULL)
         {
+            overlay->setFont(titleFont);
+            *overlay << sel.galaxy->getName();
+            overlay->setFont(font);
+            *overlay << '\n';
             displayGalaxyInfo(*overlay, hudDetail, *sel.galaxy, v.length());
         }
         overlay->endText();
@@ -1007,6 +1047,7 @@ void CelestiaCore::renderOverlay()
     // Text input
     if (textEnterMode)
     {
+        overlay->setFont(titleFont);
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 0.2f);
         overlay->rect(0, 0, width, 70);
@@ -1014,6 +1055,7 @@ void CelestiaCore::renderOverlay()
         glColor4f(0.6f, 0.6f, 1.0f, 1);
         *overlay << "Target name: " << typedText;
         glPopMatrix();
+        overlay->setFont(font);
     }
 
     // Text messages
@@ -1263,10 +1305,14 @@ bool CelestiaCore::initRenderer()
         cout << "Error loading font; text will not be visible.";
     }
 
+    if (config->titleFont != "")
+        titleFont = LoadTextureFont(string("fonts") + "/" + config->titleFont);
+    if (titleFont == NULL)
+        titleFont = font;
+
     // Set up the overlay
     overlay = new Overlay();
     overlay->setWindowSize(width, height);
-    overlay->setFont(font);
 
     if (config->labelFont == "")
     {

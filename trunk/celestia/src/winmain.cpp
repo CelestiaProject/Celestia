@@ -638,24 +638,28 @@ void handleKey(WPARAM key, bool down)
     case VK_F7:
         k = CelestiaCore::Key_F7;
         break;
-     case VK_NUMPAD2:
-         k = CelestiaCore::Key_NumPad2;
-         break;
-     case VK_NUMPAD4:
-         k = CelestiaCore::Key_NumPad4;
-         break;
-     case VK_NUMPAD6:
-         k = CelestiaCore::Key_NumPad6;
-         break;
-     case VK_NUMPAD7:
-         k = CelestiaCore::Key_NumPad7;
-         break;
-     case VK_NUMPAD8:
-         k = CelestiaCore::Key_NumPad8;
-         break;
-     case VK_NUMPAD9:
-         k = CelestiaCore::Key_NumPad9;
-         break;
+    case VK_NUMPAD2:
+        k = CelestiaCore::Key_NumPad2;
+        break;
+    case VK_NUMPAD4:
+        k = CelestiaCore::Key_NumPad4;
+        break;
+    case VK_NUMPAD6:
+        k = CelestiaCore::Key_NumPad6;
+        break;
+    case VK_NUMPAD7:
+        k = CelestiaCore::Key_NumPad7;
+        break;
+    case VK_NUMPAD8:
+        k = CelestiaCore::Key_NumPad8;
+        break;
+    case VK_NUMPAD9:
+        k = CelestiaCore::Key_NumPad9;
+        break;
+    case 'A':
+    case 'Z':
+        k = key;
+        break;
     }
 
     if (k >= 0)
