@@ -39,12 +39,15 @@ class M3DMaterial
     void setDiffuseColor(M3DColor);
     M3DColor getSpecularColor() const;
     void setSpecularColor(M3DColor);
+    float getShininess() const;
+    void setShininess(float);
 
  private:
     std::string name;
     M3DColor ambient;
     M3DColor diffuse;
     M3DColor specular;
+    float shininess;
 };
 
 
