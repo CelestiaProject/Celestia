@@ -144,6 +144,34 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
 }
 
 
+static RotationElements CreateRotationElements(Hash* rotationData,
+                                               float orbitalPeriod)
+{
+    RotationElements re;
+
+    // The default is synchronous rotation (rotation period == orbital period)
+    float period = orbitalPeriod * 24.0f;
+    rotationData->getNumber("RotationPeriod", period);
+    re.period = period / 24.0f;
+
+    float offset = 0.0f;
+    rotationData->getNumber("RotationOffset", offset);
+    re.offset = degToRad(offset);
+
+    rotationData->getNumber("RotationEpoch", re.epoch);
+
+    float obliquity = 0.0f;
+    rotationData->getNumber("Obliquity", obliquity);
+    re.obliquity = degToRad(obliquity);
+
+    float axisLongitude = 0.0f;
+    rotationData->getNumber("LongOfRotationAxis", axisLongitude);
+    re.axisLongitude = degToRad(axisLongitude);
+
+    return re;
+}
+
+
 // Create a body (planet or moon) using the values from a hash
 // The usePlanetsUnits flags specifies whether period and semi-major axis
 // are in years and AU rather than days and kilometers
@@ -194,10 +222,6 @@ static Body* CreatePlanet(PlanetarySystem* system,
     }
     body->setOrbit(orbit);
     
-    double obliquity = 0.0;
-    planetData->getNumber("Obliquity", obliquity);
-    body->setObliquity(degToRad(obliquity));
-
     double albedo = 0.5;
     planetData->getNumber("Albedo", albedo);
     body->setAlbedo(albedo);
@@ -210,14 +234,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     planetData->getNumber("Oblateness", oblateness);
     body->setOblateness(oblateness);
 
-    // The default rotation period is the same as the orbital period
-    double rotationPeriod = orbit->getPeriod() * 24.0;
-    planetData->getNumber("RotationPeriod", rotationPeriod);
-    body->setRotationPeriod(rotationPeriod / 24.0);
-
-    double rotationPhase = 0.0;
-    planetData->getNumber("RotationPhase", rotationPhase);
-    body->setRotationPhase((float) degToRad(rotationPhase));
+    body->setRotationElements(CreateRotationElements(planetData, orbit->getPeriod()));
 
     Surface* surface = CreateSurface(planetData);
     body->setSurface(*surface);

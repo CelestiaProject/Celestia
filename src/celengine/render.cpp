@@ -1722,12 +1722,18 @@ void Renderer::renderPlanet(const Body& body,
         // Watch out for the precision limits of floats when computing planet
         // rotation . . .
         {
-            // double rotations = (now - 2453450.0239467593) / (double) body.getRotationPeriod();
-            double rotations = now / (double) body.getRotationPeriod();
+            RotationElements re = body.getRotationElements();
+            double rotations = (now - re.epoch) / (double) re.period;
             double wholeRotations = floor(rotations);
             double remainder = rotations - wholeRotations;
-            planetRotation = remainder * 2 * PI + body.getRotationPhase();
-            glRotatef((float) (remainder * 360.0 + radToDeg(body.getRotationPhase())),
+
+            // Add an extra half rotation because of the convention in all
+            // planet texture maps where zero deg long. is in the middle of
+            // the texture.
+            remainder += 0.5;
+
+            planetRotation = remainder * 2 * PI + re.offset;
+            glRotatef((float) (remainder * 360.0 + radToDeg(re.offset)),
                       0, 1, 0);
         }
 
@@ -2192,7 +2198,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
     {
         Body* body = solSystem.getBody(i);
         Point3d localPos = body->getOrbit()->positionAtTime(now);
-        Mat4d newFrame = Mat4d::xrotation(-body->getObliquity()) * Mat4d::translation(localPos) * frame;
+        Mat4d newFrame = Mat4d::xrotation(-body->getRotationElements().obliquity) * Mat4d::translation(localPos) * frame;
         Point3d bodyPos = Point3d(0, 0, 0) * newFrame;
         bodyPos = body->getHeliocentricPosition(now);
         
