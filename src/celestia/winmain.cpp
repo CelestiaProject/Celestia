@@ -135,9 +135,97 @@ void SetMouseCursor(LPCTSTR lpCursor)
 {
 	HCURSOR hNewCrsr;
 	
-	if(hNewCrsr = LoadCursor(NULL, lpCursor))
+	if (hNewCrsr = LoadCursor(NULL, lpCursor))
 	    SetCursor(hNewCrsr);
 }
+
+void CenterWindow(HWND hParent, HWND hWnd)
+{
+    //Center window with hWnd handle relative to hParent.
+    if (hParent && hWnd)
+    {
+        RECT or, ir;
+        if (GetWindowRect(hParent, &or))
+        {
+            if (GetWindowRect(hWnd, &ir))
+            {
+                int x, y;
+
+                x = or.left + (or.right - or.left - (ir.right - ir.left)) / 2;
+                y = or.top + (or.bottom - or.top - (ir.bottom - ir.top)) / 2;;
+                SetWindowPos(hWnd, HWND_TOP, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+            }
+        }
+    }
+}
+
+void RemoveButtonDefaultStyle(HWND hWnd)
+{
+    SetWindowLong(hWnd, GWL_STYLE,
+		::GetWindowLong(hWnd, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
+	InvalidateRect(hWnd, NULL, TRUE);
+}
+
+void AddButtonDefaultStyle(HWND hWnd)
+{
+    SetWindowLong(hWnd, GWL_STYLE,
+        ::GetWindowLong(hWnd, GWL_STYLE) | BS_DEFPUSHBUTTON);
+	InvalidateRect(hWnd, NULL, TRUE);
+}
+
+/*
+/////////////////////////////////////////////////////////////////////////////
+//	This function returns the handle of the tree item specified using standard
+//	path notation.
+/////////////////////////////////////////////////////////////////////////////
+HTREEITEM GetTreeViewItemHandle(HWND hTree, char* path, HTREEITEM hParent)
+{
+    if (!hTree || !hParent)
+        return NULL;
+
+    char* cP;
+    char itemName[33];
+    char pathBuf[66];
+    TVITEM Item;
+    HTREEITEM hItem;
+
+    strcpy(pathBuf, path);
+
+    if (cP = strchr(pathBuf, '/'))
+	    *cP = '\0';
+
+    hItem = NULL;
+    itemName[0] = '\0';
+    Item.mask = TVIF_TEXT | TVIF_HANDLE;
+    Item.pszText = itemName;
+    Item.cchTextMax = sizeof(itemName);
+    Item.hItem = hParent;
+    if (TreeView_GetItem(hTree, &Item))
+    {
+	    while (strcmp(pathBuf, itemName))
+	    {
+            Item.hItem = TreeView_GetNextSibling(hTree, Item.hItem);
+            if (!Item.hItem)
+                break;
+
+            TreeView_GetItem(hTree, &Item);
+        }
+        hItem = Item.hItem;
+    }
+    if (!hItem)
+        return NULL;
+
+    //Prepare to call recursively
+    if (cP)
+    {
+        strcpy(pathBuf, cP + 1);
+        hItem = TreeView_GetChild(hTree, hItem);
+        hItem = GetTreeViewItemHandle(hTree, pathBuf, hItem);
+    }
+
+    return hItem;
+}
+*/
 
 void ChangeDisplayMode()
 {
@@ -253,26 +341,6 @@ static bool ToggleMenuItem(HMENU menu, int id)
     }
     return false;
 }
-
-
-void AppendLocationToMenu(string name, int index)
-{
-    MENUITEMINFO menuInfo;
-    menuInfo.cbSize = sizeof(MENUITEMINFO);
-    menuInfo.fMask = MIIM_SUBMENU;
-    if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
-    {
-        HMENU locationsMenu = menuInfo.hSubMenu;
-
-        menuInfo.cbSize = sizeof MENUITEMINFO;
-        menuInfo.fMask = MIIM_TYPE | MIIM_ID;
-        menuInfo.fType = MFT_STRING;
-        menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + index;
-        menuInfo.dwTypeData = const_cast<char*>(name.c_str());
-        InsertMenuItem(locationsMenu, index + 2, TRUE, &menuInfo);
-    }
-}
-
 
 bool LoadItemTextFromFile(HWND hWnd,
                           int item,
@@ -544,6 +612,512 @@ BOOL APIENTRY FindObjectProc(HWND hDlg,
     return FALSE;
 }
 
+/*
+void PopulateLocationsTree(HWND hTree)
+{
+    //First create an image list for the icons in the control
+    HIMAGELIST himlIcons;
+    HICON hIcon;
+    int iconIndices[3];
+
+    //Create a masked image list large enough to hold the icons. 
+    himlIcons = ImageList_Create(16, 16, ILC_MASK, 3, 0);
+ 
+    // Load the icon resources, and add the icons to the image list. 
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_OPENFOLDER)); 
+    iconIndices[0] = ImageList_AddIcon(himlIcons, hIcon);
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CLOSEDFOLDER)); 
+    iconIndices[1] = ImageList_AddIcon(himlIcons, hIcon);
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_LOCATION)); 
+    iconIndices[2] = ImageList_AddIcon(himlIcons, hIcon);
+
+    // Associate the image list with the tree-view control.
+    TreeView_SetImageList(hTree, himlIcons, TVSIL_NORMAL);
+
+    const FavoritesList* favorites = appCore->getFavorites();
+    if (favorites != NULL)
+    {
+        int resourceIndex = 0;
+        FavoritesList::const_iterator iter = favorites->begin();
+        while (iter != favorites->end())
+        {
+            TVINSERTSTRUCT tvis;
+
+            //Is this a folder?
+            if ((*iter)->folder)
+            {
+                //Create a subtree item
+                HTREEITEM hParentItem;
+
+                tvis.hParent = TVI_ROOT;
+                tvis.hInsertAfter = TVI_LAST;
+                tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+                tvis.item.pszText = const_cast<char*>((*iter)->name.c_str());
+                tvis.item.iImage = iconIndices[1];
+                tvis.item.iSelectedImage = iconIndices[0];
+                tvis.item.lParam = resourceIndex;
+
+                if (hParentItem = (HTREEITEM)SendMessage(hTree, TVM_INSERTITEM, 0,
+                              (LPARAM)(LPTVINSERTSTRUCT)&tvis))
+                {
+                    iter++;
+                    resourceIndex++;
+                    while (iter != favorites->end())
+                    {
+                        if (!(*iter)->folder)
+                        {
+                            //Add items to sub tree
+                            tvis.hParent = hParentItem;
+                            tvis.hInsertAfter = TVI_LAST;
+                            tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+                            tvis.item.pszText = const_cast<char*>((*iter)->name.c_str());
+                            tvis.item.iImage = iconIndices[2];
+                            tvis.item.iSelectedImage = iconIndices[2];
+                            tvis.item.lParam = resourceIndex;
+                            SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvis);
+
+                            iter++;
+                            resourceIndex++;
+                        }
+                        else
+                            break;
+                    }
+                    continue;
+                }
+            }
+            else
+            {
+                //Add item to root
+                tvis.hParent = TVI_ROOT;
+                tvis.hInsertAfter = TVI_LAST;
+                tvis.item.mask = TVIF_TEXT | TVIF_PARAM;
+                tvis.item.pszText = const_cast<char*>((*iter)->name.c_str());;
+                tvis.item.lParam = resourceIndex;
+                SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvis);
+
+                iter++;
+                resourceIndex++;
+            }
+        }
+    }
+}
+*/
+
+static void BuildFavoritesMenu()
+{
+    // Add favorites to locations menu
+    int numStaticItems = 2; //The number of items defined in the .rc file.
+
+    const FavoritesList* favorites = appCore->getFavorites();
+    if (favorites != NULL)
+    {
+        MENUITEMINFO menuInfo;
+        menuInfo.cbSize = sizeof(MENUITEMINFO);
+        menuInfo.fMask = MIIM_SUBMENU;
+        if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
+        {
+            HMENU locationsMenu = menuInfo.hSubMenu;
+
+            //First, tear down existing menu beyond separator.
+            while (DeleteMenu(locationsMenu, numStaticItems, MF_BYPOSITION));
+
+            //Don't continue if there are not items in favorites
+            if (favorites->size() == 0)
+                return;
+
+            //Insert separator
+            menuInfo.cbSize = sizeof MENUITEMINFO;
+            menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
+            menuInfo.fType = MFT_SEPARATOR;
+            menuInfo.fState = MFS_UNHILITE;
+            InsertMenuItem(locationsMenu, numStaticItems++, TRUE, &menuInfo);
+
+            //Add folders and their sub items
+            int rootMenuIndex = numStaticItems;
+            int subMenuIndex, resourceIndex;
+            FavoritesList::const_iterator iter = favorites->begin();
+            while (iter != favorites->end())
+            {
+                //Is this a folder?
+                if ((*iter)->isFolder)
+                {
+                    //Create a submenu
+                    HMENU subMenu;
+                    if (subMenu = CreatePopupMenu())
+                    {
+                        //Create a menu item that displays a popup sub menu
+                        menuInfo.cbSize = sizeof MENUITEMINFO;
+                        menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE;
+                        menuInfo.fType = MFT_STRING;
+                        menuInfo.hSubMenu = subMenu;
+                        menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
+                        if (InsertMenuItem(locationsMenu, rootMenuIndex, TRUE, &menuInfo))
+                        {
+                            rootMenuIndex++;
+
+                            //Now iterate through all Favorites and add items to this folder
+                            //where parentFolder == folderName
+                            resourceIndex = subMenuIndex = 0;
+                            string folderName = (*iter)->name;
+                            FavoritesList::const_iterator subIter = favorites->begin();
+                            while (subIter != favorites->end())
+                            {
+                                if (!(*subIter)->isFolder && (*subIter)->parentFolder == folderName)
+                                {
+                                    //Add items to sub menu
+                                    menuInfo.cbSize = sizeof MENUITEMINFO;
+                                    menuInfo.fMask = MIIM_TYPE | MIIM_ID;
+                                    menuInfo.fType = MFT_STRING;
+                                    menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + resourceIndex;
+                                    menuInfo.dwTypeData = const_cast<char*>((*subIter)->name.c_str());
+                                    InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo);
+                                    subMenuIndex++;
+                                }
+                                subIter++;
+                                resourceIndex++;
+                            }
+                        }
+                    }
+                }
+                iter++;
+            }
+
+            //Add root locations items
+            resourceIndex = 0;
+            iter = favorites->begin();
+            while (iter != favorites->end())
+            {
+                //Is this a non folder item?
+                if (!(*iter)->isFolder && (*iter)->parentFolder == "")
+                {
+                    //Append to locationsMenu
+                    AppendMenu(locationsMenu, MF_STRING,
+                        ID_LOCATIONS_FIRSTLOCATION + resourceIndex,
+                        const_cast<char*>((*iter)->name.c_str()));
+                }
+                iter++;
+                resourceIndex++;
+            }
+        }
+    }
+}
+
+HTREEITEM PopulateLocationFolders(HWND hTree)
+{
+    //First create an image list for the icons in the control
+    HTREEITEM hParent;
+    HIMAGELIST himlIcons;
+    HICON hIcon;
+
+    //Create a masked image list large enough to hold the icons. 
+    himlIcons = ImageList_Create(16, 16, ILC_MASK, 3, 0);
+ 
+    // Load the icon resources, and add the icons to the image list.
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_ROOTFOLDER)); 
+    ImageList_AddIcon(himlIcons, hIcon);
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_OPENFOLDER)); 
+    ImageList_AddIcon(himlIcons, hIcon);
+    hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CLOSEDFOLDER)); 
+    ImageList_AddIcon(himlIcons, hIcon);
+
+    // Associate the image list with the tree-view control.
+    TreeView_SetImageList(hTree, himlIcons, TVSIL_NORMAL);
+
+    const FavoritesList* favorites = appCore->getFavorites();
+    if (favorites != NULL)
+    {
+        //Create a subtree item called "Locations"
+        TVINSERTSTRUCT tvis;
+
+        tvis.hParent = TVI_ROOT;
+        tvis.hInsertAfter = TVI_LAST;
+        tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+        tvis.item.pszText = "Locations";
+        tvis.item.iImage = 0;
+        tvis.item.iSelectedImage = 0;
+        if (hParent = (HTREEITEM)SendMessage(hTree, TVM_INSERTITEM, 0,
+                      (LPARAM)(LPTVINSERTSTRUCT)&tvis))
+        {
+            FavoritesList::const_iterator iter = favorites->begin();
+            while (iter != favorites->end())
+            {
+                TVINSERTSTRUCT tvis;
+
+                //Is this a folder?
+                if ((*iter)->isFolder)
+                {
+                    //Create a subtree item for the folder
+                    tvis.hParent = hParent;
+                    tvis.hInsertAfter = TVI_LAST;
+                    tvis.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+                    tvis.item.pszText = const_cast<char*>((*iter)->name.c_str());
+                    tvis.item.iImage = 2;
+                    tvis.item.iSelectedImage = 1;
+
+                    SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvis);
+                }
+
+                iter++;
+            }
+
+            //Select "Locations" folder
+            TreeView_SelectItem(hTree, hParent);
+        }
+    }
+
+    return hParent;
+}
+
+void InsertLocationInFavorites(HWND hTree, char* name)
+{
+    const FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList::const_iterator iter;
+    TVITEM tvItem;
+    HTREEITEM hItem, hParent;
+    char itemName[33];
+    string newLocation(name);
+    bool found;
+
+    if (favorites != NULL)
+    {
+        //Scan through tree control folders and add any folder that does
+        //not exist in Favorites.
+        if (hParent = (HTREEITEM)TreeView_GetChild(hTree, TVI_ROOT))
+        {
+            
+            hItem = (HTREEITEM)TreeView_GetChild(hTree, hParent);
+            do
+            {
+                //Get information on item
+                tvItem.hItem = hItem;
+                tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+                tvItem.pszText = itemName;
+                tvItem.cchTextMax = sizeof(itemName);
+                if (TreeView_GetItem(hTree, &tvItem))
+                {
+                    string name(itemName);
+                    if (favorites->size() == 0)
+                    {
+                        //Just append the folder
+                        appCore->addFavoriteFolder(name);
+                        continue;
+                    }
+
+                    //Loop through favorites to find item = itemName
+                    found = false;
+                    iter = favorites->begin();
+                    while (iter != favorites->end())
+                    {
+                        if ((*iter)->isFolder && (*iter)->name == itemName)
+                        {
+                            found = true;
+                            break;
+                        }
+                        iter++;
+                    }
+                    if (!found)
+                    {
+                        //If not found in favorites, add it.
+                        //We want all folders to appear before root items so this
+                        //new folder must be inserted after the last item of the 
+                        //last folder.
+                        //Locate position of last folder.
+                        FavoritesList::const_iterator folderIter = favorites->begin();
+                        iter = favorites->begin();
+                        while (iter != favorites->end())
+                        {
+                            if ((*iter)->isFolder)
+                                folderIter = iter;
+
+                            iter++;
+                        }
+                        //Now iterate through items until end of folder found
+                        folderIter++;
+                        while ((*folderIter)->parentFolder != "")
+                            folderIter++;
+                        
+                        //Insert item
+                        appCore->addFavoriteFolder(name, &folderIter);
+                    }
+                }
+            } while (hItem = TreeView_GetNextSibling(hTree, hItem));
+        }
+    }
+
+    //Determine which tree item is selected (if any)
+    found = false;
+    hItem = (HTREEITEM)TreeView_GetChild(hTree, hParent);
+    do
+    {
+        //Get information on item
+        tvItem.hItem = hItem;
+        tvItem.mask = TVIF_TEXT | TVIF_HANDLE | TVIF_STATE;
+        tvItem.pszText = itemName;
+        tvItem.stateMask = TVIS_SELECTED;
+        tvItem.cchTextMax = sizeof(itemName);
+        if (TreeView_GetItem(hTree, &tvItem))
+        {
+            if (tvItem.state & TVIS_SELECTED)
+            {
+                found = true;
+                break;
+            }
+        }
+    } while (hItem = TreeView_GetNextSibling(hTree, hItem));
+    if (found)
+    {
+        //Iterate through Favorites to locate folder = selected tree item
+        iter = favorites->begin();
+        while (iter != favorites->end())
+        {
+            if ((*iter)->isFolder && (*iter)->name == itemName)
+            {
+                //To insert new item at end of folder menu, we have to iterate
+                //to the one item past the last item in the folder.
+                //vector::insert() inserts item before specified iterator.
+                iter++;
+                while (!((*iter)->isFolder) && (*iter)->parentFolder != "" &&
+                      iter != favorites->end())
+                    iter++;
+
+                //Insert new location at position in iteration.
+                string parentFolder(itemName);
+                appCore->addFavorite(newLocation, parentFolder, &iter);
+                break;
+            }
+            iter++;
+        }
+    }
+    else
+    {
+        //Folder not specified, add to end of favorites
+        appCore->addFavorite(newLocation, "");
+    }
+
+    //Rebuild Locations menu.
+    BuildFavoritesMenu();
+}
+
+BOOL APIENTRY AddLocationFolderProc(HWND hDlg,
+                                    UINT message,
+                                    UINT wParam,
+                                    LONG lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        {
+        //Center dialog directly over parent
+        HWND hParent = GetParent(hDlg);
+        CenterWindow(hParent, hDlg);
+
+        //Limit text of folder name to 32 chars
+        HWND hEdit = GetDlgItem(hDlg, IDC_LOCATIONFOLDER);
+        SendMessage(hEdit, EM_LIMITTEXT, 32, 0);
+
+        //Set initial button states
+        HWND hOK = GetDlgItem(hDlg, IDOK);
+        HWND hCancel = GetDlgItem(hDlg, IDCANCEL);
+        EnableWindow(hOK, FALSE);
+        RemoveButtonDefaultStyle(hOK);
+        AddButtonDefaultStyle(hCancel);
+
+        return(TRUE);
+        }
+
+    case WM_COMMAND:
+        {
+        if (HIWORD(wParam) == EN_CHANGE)
+        {
+            HWND hOK = GetDlgItem(hDlg, IDOK);
+            HWND hCancel = GetDlgItem(hDlg, IDCANCEL);
+
+            if (hOK && hCancel)
+            {
+                //If edit control contains text, enable OK button
+                char name[33];
+                GetWindowText((HWND)lParam, name, sizeof(name));
+                if (name[0])
+                {
+                    //Remove Cancel button default style
+                    RemoveButtonDefaultStyle(hCancel);
+
+                    //Enable OK button
+                    EnableWindow(hOK, TRUE);
+
+                    //Make OK button default
+                    AddButtonDefaultStyle(hOK);
+                }
+                else
+                {
+                    //Disable OK button
+                    EnableWindow(hOK, FALSE);
+
+                    //Remove OK button default style
+                    RemoveButtonDefaultStyle(hOK);
+
+                    //Make Cancel button default
+                    AddButtonDefaultStyle(hCancel);
+                }
+            }
+        }
+        if (LOWORD(wParam) == IDOK)
+        {
+            //Get text entered in Folder Name Edit box
+            char name[33];
+            HWND hEdit = GetDlgItem(hDlg, IDC_LOCATIONFOLDER);
+            if (hEdit)
+            {
+                if (GetWindowText(hEdit, name, sizeof(name)))
+                {
+                    //Create new folder in parent dialog tree control.
+                    //First, get parent HWND
+                    HWND hParentDlg = GetParent(hDlg);
+                    if (hParentDlg)
+                    {
+                        HWND hTree;
+                        if (hTree = GetDlgItem(hParentDlg, IDC_LOCATION_FOLDERTREE))
+                        {
+                            //Add new item to Location item
+                            TVINSERTSTRUCT tvis;
+                            HTREEITEM hParent = TreeView_GetChild(hTree, TVI_ROOT);
+                            if (hParent)
+                            {
+                                HTREEITEM hItem;
+                                tvis.hParent = hParent;
+                                tvis.hInsertAfter = TVI_LAST;
+                                tvis.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+                                tvis.item.pszText = name;
+                                tvis.item.iImage = 2;
+                                tvis.item.iSelectedImage = 1;
+                                if (hItem = TreeView_InsertItem(hTree, &tvis))
+                                {
+                                    //Make sure root tree item is open and newly
+                                    //added item is visible.
+                                    TreeView_Expand(hTree, hParent, TVE_EXPAND);
+
+                                    //Select the item
+                                    TreeView_SelectItem(hTree, hItem);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, 0);
+            return FALSE;
+        }
+        }
+    }
+
+    return FALSE;
+}
 
 BOOL APIENTRY AddLocationProc(HWND hDlg,
                               UINT message,
@@ -553,19 +1127,98 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
+        {
+        RECT dlgRect, treeRect;
+        HWND hCtrl;
+        if (GetWindowRect(hDlg, &dlgRect))
+        {
+            if (hCtrl = GetDlgItem(hDlg, IDC_LOCATION_FOLDERTREE))
+            {
+                if (GetWindowRect(hCtrl, &treeRect))
+                {
+                    int width = dlgRect.right - dlgRect.left;
+                    int height = treeRect.top - dlgRect.top;
+                    SetWindowPos(hDlg, HWND_TOP, 0, 0, width, height,
+                                 SWP_NOMOVE | SWP_NOZORDER);
+                }
+
+                HTREEITEM hParent = PopulateLocationFolders(hCtrl);
+
+                //Expand Locations item
+                SendMessage(hCtrl, TVM_EXPAND, TVE_EXPAND, (LPARAM)hParent);
+            }
+        }
+
+        //Set initial button states
+        HWND hOK = GetDlgItem(hDlg, IDOK);
+        HWND hCancel = GetDlgItem(hDlg, IDCANCEL);
+        EnableWindow(hOK, FALSE);
+        RemoveButtonDefaultStyle(hOK);
+        AddButtonDefaultStyle(hCancel);
+
+        //Set Location text to selection text
+        if (hCtrl = GetDlgItem(hDlg, IDC_LOCATION_EDIT))
+        {
+            //If this is a body, set the text.
+            Selection sel = appCore->getSimulation()->getSelection();
+            if (sel.body != NULL)
+            {
+                string name = sel.body->getName();
+                SetWindowText(hCtrl, (char*)name.c_str());
+            }
+        }
+        
         return(TRUE);
+        }
 
     case WM_COMMAND:
+        {
+        if (HIWORD(wParam) == EN_CHANGE)
+        {
+            HWND hOK = GetDlgItem(hDlg, IDOK);
+            HWND hCancel = GetDlgItem(hDlg, IDCANCEL);
+
+            if (hOK && hCancel)
+            {
+                //If edit control contains text, enable OK button
+                char name[33];
+                GetWindowText((HWND)lParam, name, sizeof(name));
+                if (name[0])
+                {
+                    //Remove Cancel button default style
+                    RemoveButtonDefaultStyle(hCancel);
+
+                    //Enable OK button
+                    EnableWindow(hOK, TRUE);
+
+                    //Make OK button default
+                    AddButtonDefaultStyle(hOK);
+                }
+                else
+                {
+                    //Disable OK button
+                    EnableWindow(hOK, FALSE);
+
+                    //Remove OK button default style
+                    RemoveButtonDefaultStyle(hOK);
+
+                    //Make Cancel button default
+                    AddButtonDefaultStyle(hCancel);
+                }
+            }
+        }
+        //Event is from dialog, not the stinking tree control!
         if (LOWORD(wParam) == IDOK)
         {
-            char buf[1024];
-            int len = GetDlgItemText(hDlg, IDC_LOCATION_EDIT, buf, 1024);
+            char name[33];
+            int len = GetDlgItemText(hDlg, IDC_LOCATION_EDIT, name, sizeof(name));
             if (len > 0)
             {
-                string name(buf);
-
-                appCore->addFavorite(name);
-                AppendLocationToMenu(name, appCore->getFavorites()->size() - 1);
+                HWND hTree;
+                if(hTree = GetDlgItem(hDlg, IDC_LOCATION_FOLDERTREE))
+                {
+                    InsertLocationInFavorites(hTree, name);
+                }
             }
             EndDialog(hDlg, 0);
             return TRUE;
@@ -575,11 +1228,60 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
             EndDialog(hDlg, 0);
             return FALSE;
         }
+        else if (LOWORD(wParam) == IDC_LOCATION_CREATEIN)
+        {
+            HWND button;
+            RECT dlgRect, treeRect;
+            HWND hTree;
+            char text[16];
+            if (GetWindowRect(hDlg, &dlgRect))
+            {
+                if (hTree = GetDlgItem(hDlg, IDC_LOCATION_FOLDERTREE))
+                {
+                    if (GetWindowRect(hTree, &treeRect))
+                    {
+                        if (button = GetDlgItem(hDlg, IDC_LOCATION_CREATEIN))
+                        {
+                            if (GetWindowText(button, text, sizeof(text)))
+                            {
+                                int width = dlgRect.right - dlgRect.left;
+                                if (strstr(text, ">>"))
+                                {
+                                    //Increase size of dialog
+                                    int height = treeRect.bottom - dlgRect.top + 12;
+                                    SetWindowPos(hDlg, HWND_TOP, 0, 0, width, height,
+                                                 SWP_NOMOVE | SWP_NOZORDER);
+                                    //Change text in button
+                                    strcpy(text + strlen(text) - 2, "<<");
+                                    SetWindowText(button, text);
+                                }
+                                else
+                                {
+                                    //Decrease size of dialog
+                                    int height = treeRect.top - dlgRect.top;
+                                    SetWindowPos(hDlg, HWND_TOP, 0, 0, width, height,
+                                                 SWP_NOMOVE | SWP_NOZORDER);
+                                    //Change text in button
+                                    strcpy(text + strlen(text) - 2, ">>");
+                                    SetWindowText(button, text);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (LOWORD(wParam) == IDC_LOCATION_NEWFOLDER)
+        {
+            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDLOCATION_FOLDER), hDlg, AddLocationFolderProc);
+        }
         break;
+        }
     }
 
     return FALSE;
 }
+
 
 void UpdateSetTimeDlgDateTimeControls(HWND hDlg, astro::Date& newTime)
 {
@@ -1142,44 +1844,6 @@ void handleKey(WPARAM key, bool down)
             appCore->keyUp(k);
     }
 }
-
-
-static void BuildFavoritesMenu()
-{
-    // Add favorites to locations menu
-    const FavoritesList* favorites = appCore->getFavorites();
-    if (favorites != NULL)
-    {
-        MENUITEMINFO menuInfo;
-        menuInfo.cbSize = sizeof(MENUITEMINFO);
-        menuInfo.fMask = MIIM_SUBMENU;
-        if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
-        {
-            HMENU locationsMenu = menuInfo.hSubMenu;
-
-            menuInfo.cbSize = sizeof MENUITEMINFO;
-            menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
-            menuInfo.fType = MFT_SEPARATOR;
-            menuInfo.fState = MFS_UNHILITE;
-            InsertMenuItem(locationsMenu, 1, TRUE, &menuInfo);
-
-            int index = 0;
-            for (FavoritesList::const_iterator iter = favorites->begin();
-                 iter != favorites->end();
-                 iter++, index++)
-            {
-                menuInfo.cbSize = sizeof MENUITEMINFO;
-                menuInfo.fMask = MIIM_TYPE | MIIM_ID;
-                menuInfo.fType = MFT_STRING;
-                // menuInfo.fState = MFS_DEFAULT;
-                menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + index;
-                menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
-                InsertMenuItem(locationsMenu, index + 2, TRUE, &menuInfo);
-            }
-        }
-    }
-}
-
 
 static void syncMenusWithRendererState()
 {

@@ -20,6 +20,11 @@
 #define IDD_MOVIE_PARAMS_CHOOSER        117
 #define IDD_DISPLAYMODE                 118
 #define IDD_VIEWOPTIONS                 119
+#define IDI_LOCATION                    123
+#define IDI_CLOSEDFOLDER                125
+#define IDI_OPENFOLDER                  126
+#define IDI_ROOTFOLDER                  127
+#define IDD_ADDLOCATION_FOLDER          128
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
 #define IDC_GLINFO_TEXT                 1005
@@ -69,6 +74,10 @@
 #define IDC_INFOTEXT0                   1049
 #define IDC_INFOTEXT1                   1050
 #define IDC_INFOTEXT2                   1051
+#define IDC_LOCATION_CREATEIN           1052
+#define IDC_LOCATION_NEWFOLDER          1053
+#define IDC_LOCATION_FOLDERTREE         1054
+#define IDC_LOCATIONFOLDER              1057
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -116,15 +125,16 @@
 #define ID_RENDER_FULLSCREEN            40060
 #define ID_RENDER_VIEWOPTIONS           40061
 #define ID_RENDER_ANTIALIASING          40062
+#define ID_LOCATIONS_ORGANIZE           40063
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        120
-#define _APS_NEXT_COMMAND_VALUE         40063
-#define _APS_NEXT_CONTROL_VALUE         1052
+#define _APS_NEXT_RESOURCE_VALUE        129
+#define _APS_NEXT_COMMAND_VALUE         40064
+#define _APS_NEXT_CONTROL_VALUE         1058
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
