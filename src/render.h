@@ -60,13 +60,14 @@ class Renderer
         ConstellationLabels = 8,
     };
     enum {
-        ShowNothing     =  0,
-        ShowStars       =  1,
-        ShowPlanets     =  2,
-        ShowGalaxies    =  4,
-        ShowDiagrams    =  8,
-        ShowCloudMaps   = 16,
-        ShowOrbits      = 32
+        ShowNothing         =  0,
+        ShowStars           =  1,
+        ShowPlanets         =  2,
+        ShowGalaxies        =  4,
+        ShowDiagrams        =  8,
+        ShowCloudMaps       = 16,
+        ShowOrbits          = 32,
+        ShowCelestialSphere = 64,
     };
     int getRenderFlags() const;
     void setRenderFlags(int);
@@ -133,6 +134,7 @@ class Renderer
                      const Observer& observer);
     void renderGalaxies(const GalaxyList& galaxies,
                         const Observer& observer);
+    void renderCelestialSphere(const Observer& observer);
     void renderPlanetarySystem(const Star& sun,
                                const PlanetarySystem& solSystem,
                                const Observer& observer,
