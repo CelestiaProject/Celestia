@@ -104,6 +104,8 @@ namespace astro
                                  const Point3f& starPosition);
     UniversalCoord universalPosition(const Point3d& heliocentric,
                                      const Point3f& starPosition);
+    UniversalCoord universalPosition(const Point3d& heliocentric,
+                                     const UniversalCoord& starPosition);
 
     Point3f equatorialToCelestialCart(float ra, float dec, float distance);
     Point3d equatorialToCelestialCart(double ra, double dec, double distance);

@@ -240,6 +240,16 @@ UniversalCoord astro::universalPosition(const Point3d& heliocentric,
               kilometersToMicroLightYears(heliocentric.z));
 }
 
+// universalPosition is the inverse operation of heliocentricPosition
+UniversalCoord astro::universalPosition(const Point3d& heliocentric,
+                                        const UniversalCoord& starPosition)
+{
+    return starPosition +
+        Vec3d(kilometersToMicroLightYears(heliocentric.x),
+              kilometersToMicroLightYears(heliocentric.y),
+              kilometersToMicroLightYears(heliocentric.z));
+}
+
 
 // Convert equatorial coordinates to Cartesian celestial (or ecliptical)
 // coordinates.
