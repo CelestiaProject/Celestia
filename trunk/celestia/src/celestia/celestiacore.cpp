@@ -894,8 +894,14 @@ void CelestiaCore::charEntered(char c)
         {
             typedText += c;
             typedTextCompletion = sim->getObjectCompletion(typedText);
-                if (typedTextCompletion.size() == 1)
+            if (typedTextCompletion.size() == 1)
+            {
+                std::string::size_type pos = typedText.rfind('/', typedText.length());
+                if (pos != std::string::npos)
+                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[0];
+                else
                     typedText = typedTextCompletion[0];
+            }
         }
         else if (c == '\b')
         {
@@ -921,7 +927,11 @@ void CelestiaCore::charEntered(char c)
             else if (typedTextCompletion.size() > 0 && typedTextCompletionIdx + 1 == typedTextCompletion.size())
                 typedTextCompletionIdx = 0;
             if (typedTextCompletionIdx >= 0) {
-                typedText = typedTextCompletion[typedTextCompletionIdx];
+                std::string::size_type pos = typedText.rfind('/', typedText.length());
+                if (pos != std::string::npos)
+                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx];
+                else
+                    typedText = typedTextCompletion[typedTextCompletionIdx];
             }
         }
         else if (c == Key_BackTab)
@@ -933,7 +943,11 @@ void CelestiaCore::charEntered(char c)
             else if (typedTextCompletion.size() > 0)
                 typedTextCompletionIdx = typedTextCompletion.size() - 1;
             if (typedTextCompletionIdx >= 0) {
-                typedText = typedTextCompletion[typedTextCompletionIdx];
+                std::string::size_type pos = typedText.rfind('/', typedText.length());
+                if (pos != std::string::npos)
+                    typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx];
+                else
+                    typedText = typedTextCompletion[typedTextCompletionIdx];
             }
         }
         else if (c == '\033') // ESC
