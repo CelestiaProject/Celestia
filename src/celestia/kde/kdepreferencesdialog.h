@@ -43,6 +43,7 @@ public slots:
     void slotTimeHasChanged();
     void slotAmbientLightLevel(int l);
     void slotFaintestVisible(int m);
+    void slotRenderPath(int);
     
 
 protected:
@@ -57,8 +58,7 @@ protected:
     int savedFaintestVisible;
     int savedHudDetail;
     int savedDisplayLocalTime;
-    bool savedVertexShader;
-    bool savedPixelShader;
+    int savedRenderPath;
 
     bool timeHasChanged;
 
@@ -68,10 +68,13 @@ protected:
 
     QSpinBox *hSpin, *mSpin, *sSpin;
 
-    QCheckBox *pixelShaderCheck, *vertexShaderCheck;
+    QComboBox *renderPathCombo;
+    QLabel* renderPathLabel;
     QLabel* ambientLabel, *faintestLabel;
     
     void setTime(double d);
     double getTime() const;
+
+    void setRenderPathLabel();
 };        
 

@@ -238,6 +238,32 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showAsteroidLabels"))->setChecked(lMode & Renderer::AsteroidLabels);
     ((KToggleAction*)action("showSpacecraftLabels"))->setChecked(lMode & Renderer::SpacecraftLabels);
 
+    switch (renderer->getGLContext()->getRenderPath()) {
+    case GLContext::GLPath_Basic:
+        ((KToggleAction*)action("renderPathBasic"))->setChecked(true);
+        break;
+    case GLContext::GLPath_Multitexture:
+        ((KToggleAction*)action("renderPathMultitexture"))->setChecked(true);
+        break;
+    case GLContext::GLPath_NvCombiner:
+        ((KToggleAction*)action("renderPathNvCombiner"))->setChecked(true);
+        break;
+    case GLContext::GLPath_DOT3_ARBVP:
+        ((KToggleAction*)action("renderPathDOT3ARBVP"))->setChecked(true);
+        break;
+    case GLContext::GLPath_NvCombiner_NvVP:
+        ((KToggleAction*)action("renderPathNvCombinerNvVP"))->setChecked(true);
+        break;
+    case GLContext::GLPath_NvCombiner_ARBVP:
+        ((KToggleAction*)action("renderPathNvCombinerARBVP"))->setChecked(true);
+        break;
+    case GLContext::GLPath_ARBFP_ARBVP:
+        ((KToggleAction*)action("renderPathARBFPARBVP"))->setChecked(true);
+        break;
+    case GLContext::GLPath_NV30:
+        ((KToggleAction*)action("renderPathNV30"))->setChecked(true);
+        break;
+    }
 }
 
 void KdeApp::resyncAmbient() {
@@ -398,8 +424,24 @@ void KdeApp::initActions()
 
     new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
 
-    new KToggleAction(i18n("Enable Vertex Shader"), CTRL + Key_V, this, SLOT(slotVertexShader()), actionCollection(), "vertexShader");
-    new KToggleAction(i18n("Enable Pixel Shader"), CTRL + Key_P, this, SLOT(slotPixelShader()), actionCollection(), "pixelShader");
+    KToggleAction *renderPath = 0;
+    renderPath = new KToggleAction(i18n("Basic"), 0, this, SLOT(slotSetRenderPathBasic()), actionCollection(), "renderPathBasic");
+    renderPath->setExclusiveGroup("renderPath");
+    renderPath = new KToggleAction(i18n("Multitexture"), 0, this, SLOT(slotSetRenderPathMultitexture()), actionCollection(), "renderPathMultitexture");
+    renderPath->setExclusiveGroup("renderPath");
+    renderPath = new KToggleAction(i18n("NvCombiners"), 0, this, SLOT(slotSetRenderPathNvCombiner()), actionCollection(), "renderPathNvCombiner");
+    renderPath->setExclusiveGroup("renderPath");
+    renderPath = new KToggleAction(i18n("DOT3 ARBVP"), 0, this, SLOT(slotSetRenderPathDOT3ARBVP()), actionCollection(), "renderPathDOT3ARBVP");
+    renderPath->setExclusiveGroup("renderPath");
+    renderPath = new KToggleAction(i18n("NvCombiner NvVP"), 0, this, SLOT(slotSetRenderPathNvCombinerNvVP()), actionCollection(), "renderPathNvCombinerNvVP");
+    renderPath->setExclusiveGroup("renderPath");
+    renderPath = new KToggleAction(i18n("NvCombiner ARBVP"), 0, this, SLOT(slotSetRenderPathNvCombinerARBVP()), actionCollection(), "renderPathNvCombinerARBVP");
+    renderPath->setExclusiveGroup("renderPath");
+    renderPath = new KToggleAction(i18n("ARBFP ARBVP"), 0, this, SLOT(slotSetRenderPathARBFPARBVP()), actionCollection(), "renderPathARBFPARBVP");
+    renderPath->setExclusiveGroup("renderPath");
+    renderPath = new KToggleAction(i18n("NV30"), 0, this, SLOT(slotSetRenderPathNV30()), actionCollection(), "renderPathNV30");
+    renderPath->setExclusiveGroup("renderPath");
+    new KAction(i18n("Cycle OpenGL Render Path"), "reload", CTRL + Key_V, this, SLOT(slotCycleRenderPath()), actionCollection(), "cycleRenderPath");
 
     new KAction(i18n("Grab Image"), "filesave", CTRL + Key_G, this, SLOT(slotGrabImage()), actionCollection(), "grabImage");
 
@@ -432,7 +474,7 @@ bool KdeApp::queryExit() {
     conf->writeEntry("FaintestVisible", appCore->getSimulation()->getFaintestVisible());
     conf->writeEntry("HudDetail", appCore->getHudDetail());
     conf->writeEntry("TimeZoneBias", appCore->getTimeZoneBias());
-    conf->writeEntry("VertexShader", appCore->getRenderer()->getVertexShaderEnabled());
+    conf->writeEntry("RenderPath", appCore->getRenderer()->getGLContext()->getRenderPath());
     conf->writeEntry("PixelShader", appCore->getRenderer()->getFragmentShaderEnabled());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
@@ -620,6 +662,7 @@ void KdeApp::slotPreferences() {
     KdePreferencesDialog dlg(this, appCore);
 
     dlg.exec();
+    resyncMenus();
 }
 
 void KdeApp::slotSetTime() {
@@ -828,14 +871,49 @@ void KdeApp::slotWireframeMode() {
 	renderer->setRenderMode(mode ? GL_LINE : GL_FILL);
 }
 
-void KdeApp::slotVertexShader() {
-    if (!appCore->getRenderer()->vertexShaderSupported()) return;
-    appCore->getRenderer()->setVertexShaderEnabled(!appCore->getRenderer()->getVertexShaderEnabled());
+void KdeApp::slotSetRenderPathBasic() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_Basic)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_Basic);
 }
 
-void KdeApp::slotPixelShader() {
-    if (!appCore->getRenderer()->fragmentShaderSupported()) return;
-    appCore->getRenderer()->setFragmentShaderEnabled(!appCore->getRenderer()->getFragmentShaderEnabled());
+void KdeApp::slotSetRenderPathMultitexture() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_Multitexture)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_Multitexture);
+}
+
+void KdeApp::slotSetRenderPathNvCombiner() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_NvCombiner)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_NvCombiner);
+}
+void KdeApp::slotSetRenderPathDOT3ARBVP() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_DOT3_ARBVP)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_DOT3_ARBVP);
+}
+void KdeApp::slotSetRenderPathNvCombinerNvVP() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_NvCombiner_NvVP)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_NvCombiner_NvVP);
+}
+void KdeApp::slotSetRenderPathNvCombinerARBVP() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_NvCombiner_ARBVP)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_NvCombiner_ARBVP);
+}
+void KdeApp::slotSetRenderPathARBFPARBVP() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_ARBFP_ARBVP)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_ARBFP_ARBVP);
+}
+void KdeApp::slotSetRenderPathNV30() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_NV30)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_NV30);
+}
+
+void KdeApp::slotCycleRenderPath() {
+    int path = (int)appCore->getRenderer()->getGLContext()->getRenderPath();
+    do {
+        path++;
+        if (path > 7) path -= 8;
+    } while (!appCore->getRenderer()->getGLContext()->renderPathSupported((GLContext::GLRenderPath)path));
+    appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)path);
+    resyncMenus();
 }
 
 void KdeApp::slotGrabImage() {

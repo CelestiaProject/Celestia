@@ -36,6 +36,7 @@
 #include "kdeapp.h"
 #include "kdepreferencesdialog.h"
 #include "celengine/render.h"
+#include "celengine/glcontext.h"
 
 KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) :
     KDialogBase (KDialogBase::IconList, "",
@@ -219,7 +220,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
         setTimezoneCombo->setCurrentItem(KGlobal::config()->readNumEntry("SetTimeTimeZoneLocal"));
     KGlobal::config()->setGroup(0);
     connect(setTimezoneCombo, SIGNAL(activated(int)), SLOT(slotTimeHasChanged()));
-    
+
         
     QHBox *hboxdate = new QHBox(setTimezoneGroup);
     QLabel* spacerdate1 = new QLabel(" ", hboxdate);
@@ -264,7 +265,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QSizePolicy nowButtonSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     nowButton->setSizePolicy(nowButtonSizePolicy);
     connect(nowButton, SIGNAL(clicked()), SLOT(setNow()));
-    
+
     Selection selection = appCore->getSimulation()->getSelection();
     std::string sel_name;
     if (selection.body != 0) {
@@ -294,22 +295,41 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QVBox* openGL = addVBoxPage(i18n("OpenGL"), i18n("OpenGL"),
         KGlobal::iconLoader()->loadIcon("misc", KIcon::NoGroup));
 
-    vertexShaderCheck = new QCheckBox(i18n("Vertex Shader"), openGL);
-    pixelShaderCheck = new QCheckBox(i18n("Pixel Shader"), openGL);
-    savedVertexShader = savedPixelShader = false;
-    if (!appCore->getRenderer()->vertexShaderSupported()) vertexShaderCheck->setDisabled(true);
-    if (appCore->getRenderer()->getVertexShaderEnabled()) {
-        vertexShaderCheck->setChecked(true);
-        savedVertexShader = true;
-    }
-    if (!appCore->getRenderer()->fragmentShaderSupported()) pixelShaderCheck->setDisabled(true);
-    if (appCore->getRenderer()->getFragmentShaderEnabled()) {
-        pixelShaderCheck->setChecked(true);
-        savedPixelShader = true;
+    renderPathCombo = new QComboBox(openGL);
+    savedRenderPath = (int)appCore->getRenderer()->getGLContext()->getRenderPath();
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Basic))
+        renderPathCombo->insertItem(i18n("Basic"));
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Multitexture))
+        renderPathCombo->insertItem(i18n("Multitexture"));
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner))
+        renderPathCombo->insertItem(i18n("NvCombiners"));
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_DOT3_ARBVP))
+        renderPathCombo->insertItem(i18n("DOT3 ARBVP"));
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner_NvVP))
+        renderPathCombo->insertItem(i18n("NvCombiner NvVP"));
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner_ARBVP))
+        renderPathCombo->insertItem(i18n("NvCombiner ARBVP"));
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_ARBFP_ARBVP))
+        renderPathCombo->insertItem(i18n("ARBFP ARBVP"));
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NV30))
+        renderPathCombo->insertItem(i18n("NV30"));
+
+    connect(renderPathCombo, SIGNAL(activated(int)), SLOT(slotRenderPath(int)));
+
+    {
+        int path=0, ipathIdx=0;
+        while (path != appCore->getRenderer()->getGLContext()->getRenderPath()) {
+            ipathIdx++;
+            do {
+                path++;
+            } while (!appCore->getRenderer()->getGLContext()->renderPathSupported((GLContext::GLRenderPath)path));
+        }
+        renderPathCombo->setCurrentItem(ipathIdx);
     }
 
-    ((KdeApp*)parent)->connect(vertexShaderCheck, SIGNAL(clicked()), SLOT(slotVertexShader()));
-    ((KdeApp*)parent)->connect(pixelShaderCheck, SIGNAL(clicked()), SLOT(slotPixelShader()));
+    renderPathLabel = new QLabel(openGL);
+    renderPathLabel->setTextFormat(Qt::RichText);
+    setRenderPathLabel();
 
     QTextEdit* edit = new QTextEdit(openGL);
     edit->append(((KdeApp*)parent)->getOpenGLInfo());
@@ -424,10 +444,8 @@ void KdePreferencesDialog::slotCancel() {
     appCore->getRenderer()->setAmbientLightLevel(savedAmbientLightLevel/100.);
     appCore->getSimulation()->setFaintestVisible(savedFaintestVisible/100.);
     appCore->setHudDetail(savedHudDetail);
-    appCore->getRenderer()->setVertexShaderEnabled(savedVertexShader);
-    appCore->getRenderer()->setFragmentShaderEnabled(savedPixelShader);
+    appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)savedRenderPath);
 
-                                                  
     reject();
 }
 
@@ -438,8 +456,7 @@ void KdePreferencesDialog::slotApply() {
     savedFaintestVisible = int(appCore->getSimulation()->getFaintestVisible() * 100);
     savedHudDetail = appCore->getHudDetail();
     savedDisplayLocalTime = appCore->getTimeZoneBias();
-    savedVertexShader = appCore->getRenderer()->getVertexShaderEnabled();
-    savedPixelShader = appCore->getRenderer()->getFragmentShaderEnabled();
+    savedRenderPath = (int)appCore->getRenderer()->getGLContext()->getRenderPath();
 
     keyChooser->commitChanges();
 
@@ -492,4 +509,49 @@ void KdePreferencesDialog::slotAmbientLightLevel(int l) {
     ambientLabel->setText(buff);
 }
 
+void KdePreferencesDialog::slotRenderPath(int pathIdx) {
+    int path=0, ipathIdx=0;
+    while (ipathIdx != pathIdx) {
+        ipathIdx++;
+        do {
+            path++;
+        } while (!appCore->getRenderer()->getGLContext()->renderPathSupported((GLContext::GLRenderPath)path));
+    }
+
+    appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)path);
+    setRenderPathLabel();
+}
+
+void KdePreferencesDialog::setRenderPathLabel() {
+    switch(appCore->getRenderer()->getGLContext()->getRenderPath()) {
+    case GLContext::GLPath_Basic:
+        renderPathLabel->setText(i18n("<b>Unextended OpenGL 1.1</b>"));
+        break;
+    case GLContext::GLPath_Multitexture:
+        renderPathLabel->setText(i18n("<b>Multiple textures and the ARB_texenv_combine extension</b>"));
+        break;
+    case GLContext::GLPath_NvCombiner:
+        renderPathLabel->setText(i18n("<b>NVIDIA combiners, no vertex programs</b>"));
+        break;
+    case GLContext::GLPath_DOT3_ARBVP:
+        renderPathLabel->setText(i18n("<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"));
+        break;
+    case GLContext::GLPath_NvCombiner_NvVP:
+        renderPathLabel->setText(i18n("<b>NVIDIA Combiners, NV_vertex_program extension</b><br> "
+                                      "provide bump mapping, ring shadows, and specular "
+                                      "highlights on any Geforce or ATI Radeon graphics card, though "
+                                      "NvCombiner ARBVP is a slightly better option for Geforce users"));
+        break;
+    case GLContext::GLPath_NvCombiner_ARBVP:
+        renderPathLabel->setText(i18n("<b>NVIDIA Combiners, ARB_vertex_program extension</b>"));
+        break;
+    case GLContext::GLPath_ARBFP_ARBVP:
+        renderPathLabel->setText(i18n("<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>"
+                                      "provide advanced effects on Geforce FX and Radeon 9700 cards"));
+        break;
+    case GLContext::GLPath_NV30:
+        renderPathLabel->setText(i18n("<b>NV_fragment_program and ARB_vertex_program extensions</b>"));
+        break;
+    }
+}
 

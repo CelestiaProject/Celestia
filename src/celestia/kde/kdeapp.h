@@ -35,6 +35,7 @@
 #include "celestiacore.h"
 #include "kdeglwidget.h"
 #include "celengine/render.h"
+#include "celengine/glcontext.h"
 #include "url.h"
 
 class KdeApp;
@@ -126,14 +127,21 @@ public slots:
     void slotAltAzMode();
     void slotSingleView();
     void slotDeleteView();
+    void slotSetRenderPathBasic();
+    void slotSetRenderPathMultitexture();
+    void slotSetRenderPathNvCombiner();
+    void slotSetRenderPathDOT3ARBVP();
+    void slotSetRenderPathNvCombinerNvVP();
+    void slotSetRenderPathNvCombinerARBVP();
+    void slotSetRenderPathARBFPARBVP();
+    void slotSetRenderPathNV30();
+    void slotCycleRenderPath();
 
     void slotCelestialBrowser();
     void slotEclipseFinder();
     
     void slotDisplayLocalTime();
     void slotWireframeMode();
-    void slotVertexShader();
-    void slotPixelShader();
     void slotGrabImage();
     void slotFullScreen();
 
