@@ -1,0 +1,4 @@
+#undef HAVE_LIBSM
+
+#undef CONFIG_DATA_DIR
+

@@ -50,7 +50,7 @@ dnl alpha*-*-linux-*) CELESTIA_CFLAGS="$CELESTIA_CFLAGS -mieee";;
 dnl esac
 
 AC_ARG_ENABLE(debug,     [  --enable-debug          Produce an executable with debugging symbols], 
-			 [CELESTIA_CFLAGS="-g -Wall"; CELESTIA_CXXFLAGS="-g -Wall"],
+			 [CELESTIA_CFLAGS="-g -Wall -DDEBUG"; CELESTIA_CXXFLAGS="-g -Wall -DDEBUG"],
 			 [CELESTIA_CPPFLAGS="$CELESTIA_CPPFLAGS -DCELESTIA_NO_ASSERT=1"])
 
 AC_ARG_ENABLE(pedantic,  [  --enable-pedantic       Enable -pedantic (and -ansi for C) when compiling], CELESTIA_CFLAGS="$CELESTIA_CFLAGS -ansi -pedantic"; CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -pedantic")

@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <cstdarg>
 
-
+#ifdef DEBUG
 void DebugPrint(char *format, ...)
 {
     va_list args;
@@ -29,7 +29,7 @@ void DebugPrint(char *format, ...)
 
     va_end(args);
 }
-
+#endif
 
 void Log(char *format, ...)
 {
