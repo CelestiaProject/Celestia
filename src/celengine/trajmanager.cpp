@@ -46,7 +46,7 @@ string TrajectoryInfo::resolve(const string& baseDir)
 Orbit* TrajectoryInfo::load(const string& filename)
 {
     DPRINTF(1, "Loading trajectory: %s\n", filename.c_str());
-    cout << "Loading trajectory: " << filename << '\n';
+    // cout << "Loading trajectory: " << filename << '\n';
 
     return LoadSampledOrbit(filename);
 }
