@@ -478,7 +478,24 @@ Command* CommandParser::parseCommand()
         Vec3d colorv(1.0f, 0.0f, 0.0f);
         paramList->getVector("color", colorv);
         Color color((float) colorv.x, (float) colorv.y, (float) colorv.z, 0.9f);
-        cmd = new CommandMark(object, color, (float) size);
+
+        Marker::Symbol symbol = Marker::Diamond;
+        string symbolString;
+        if (paramList->getString("symbol", symbolString))
+        {
+            if (compareIgnoringCase(symbolString, "diamond") == 0)
+                symbol = Marker::Diamond;
+            else if (compareIgnoringCase(symbolString, "square") == 0)
+                symbol = Marker::Square;
+            else if (compareIgnoringCase(symbolString, "triangle") == 0)
+                symbol = Marker::Triangle;
+            else if (compareIgnoringCase(symbolString, "plus") == 0)
+                symbol = Marker::Plus;
+            else if (compareIgnoringCase(symbolString, "x") == 0)
+                symbol = Marker::X;
+        }
+        
+        cmd = new CommandMark(object, color, (float) size, symbol);
     }
     else if (commandName == "unmark")
     {
