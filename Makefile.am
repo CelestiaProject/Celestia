@@ -1,4 +1,4 @@
-dosstuff = celestia.mak $(wildcard *.bat) Celestia.dsp
+dosstuff = celestia.mak $(wildcard *.bat)
 noinst_DATA = devguide.txt $(dosstuff)
 pkgdata_DATA = celestia.cfg $(wildcard *.cel) controls.txt COPYING
 
