@@ -45,9 +45,15 @@
          <Action name="showAsteroidLabels"/>
          <Action name="showSpacecraftLabels"/>
      </Menu>
-     <Menu name="opengl" icon="configure"><text>OpenGL</text>
-         <Action name="vertexShader"/>
-         <Action name="pixelShader"/>
+     <Menu name="opengl" icon="configure"><text>OpenGL Render Path</text>
+         <Action name="renderPathBasic"/>
+         <Action name="renderPathMultitexture"/>
+         <Action name="renderPathNvCombiner"/>
+         <Action name="renderPathDOT3ARBVP"/>
+         <Action name="renderPathNvCombinerNvVP"/>
+         <Action name="renderPathNvCombinerARBVP"/>
+         <Action name="renderPathARBFPARBVP"/>
+         <Action name="renderPathNV30"/>
      </Menu>
   </Menu>
   <Menu name="time" icon="kalarm"><text>Time</text>
