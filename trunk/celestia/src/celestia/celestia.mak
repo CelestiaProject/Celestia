@@ -27,6 +27,7 @@ OBJS=\
 	$(INTDIR)\favorites.obj \
 	$(INTDIR)\imagecapture.obj \
 	$(INTDIR)\wingotodlg.obj \
+	$(INTDIR)\winlocations.obj \
 	$(INTDIR)\winmain.obj \
 	$(INTDIR)\winssbrowser.obj \
 	$(INTDIR)\winstarbrowser.obj \
