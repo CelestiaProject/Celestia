@@ -18,7 +18,13 @@ using namespace std;
 
 Color StellarClass::getApparentColor() const
 {
-    switch (getSpectralClass())
+    return getApparentColor(getSpectralClass());
+}
+
+
+Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
+{
+    switch (sc)
     {
     case Spectral_O:
         return Color(0.7f, 0.8f, 1.0f);

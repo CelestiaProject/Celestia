@@ -63,10 +63,15 @@ static Texture* glareTex = NULL;
 static Texture* galaxyTex = NULL;
 static Texture* shadowTex = NULL;
 
-static ResourceHandle starTexB = InvalidResource;
-static ResourceHandle starTexA = InvalidResource;
-static ResourceHandle starTexG = InvalidResource;
-static ResourceHandle starTexM = InvalidResource;
+static Surface starSurfs[StellarClass::Spectral_Unknown+1];
+
+static char *starTextures[]=
+{
+    "bstar.jpg",
+    "astar.jpg",
+    "gstar.jpg",
+    "mstar.jpg"
+};
 
 static const float CoronaHeight = 0.2f;
 
@@ -107,7 +112,8 @@ Renderer::Renderer() :
     useRegisterCombiners(false),
     useCubeMaps(false),
     useVertexPrograms(false),
-    useRescaleNormal(false)
+    useRescaleNormal(false),
+    textureResolution(medres)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
 }
@@ -173,10 +179,10 @@ static void IllumMapEval(float x, float y, float z,
                          unsigned char* pixel)
 {
     Vec3f v(x, y, z);
-    Vec3f n(0, 0, 1);
     Vec3f u(0, 0, 1);
 
 #if 0
+    Vec3f n(0, 0, 1);
     // Experimental illumination function
     float c = v * n;
     if (c < 0.0f)
@@ -235,7 +241,7 @@ bool Renderer::init(int winWidth, int winHeight)
         galaxyTex = CreateProceduralTexture(128, 128, GL_RGBA, GlareTextureEval);
         galaxyTex->bindName();
 
-        glareTex = CreateJPEGTexture("textures/flare.jpg");
+        glareTex = getJPEGTexture("textures/flare.jpg");
         if (glareTex == NULL)
             glareTex = CreateProceduralTexture(64, 64, GL_RGB, GlareTextureEval);
         glareTex->bindName();
@@ -243,10 +249,23 @@ bool Renderer::init(int winWidth, int winHeight)
         shadowTex = CreateProceduralTexture(256, 256, GL_RGB, ShadowTextureEval);
         shadowTex->bindName();
 
-        starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg"));
-        starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg"));
-        starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg"));
-        starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg"));
+        StellarClass sc;
+
+        for (unsigned int spectralClass=StellarClass::Spectral_O;
+             spectralClass<=StellarClass::Spectral_Unknown; spectralClass++)
+        {
+            int off=spectralClass/2;
+            if(off>3)
+                --off; // S & N stars have same textures as M & R stars.
+            if(off>3)
+                off=1; // WC, WN and Unknowns get the A class texture.
+            starSurfs[spectralClass].baseTexture.setTexture(starTextures[off]);
+            starSurfs[spectralClass].appearanceFlags |= Surface::ApplyBaseTexture;
+            starSurfs[spectralClass].appearanceFlags |= Surface::Emissive;
+            starSurfs[spectralClass].color =
+                sc.getApparentColor((StellarClass::SpectralClass)spectralClass);
+        }
+
 
         // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
@@ -394,6 +413,19 @@ float Renderer::getFieldOfView()
 void Renderer::setFieldOfView(float _fov)
 {
     fov = _fov;
+}
+
+
+unsigned int Renderer::getResolution()
+{
+    return textureResolution;
+}
+
+
+void Renderer::setResolution(unsigned int resolution)
+{
+    if(resolution < TEXTURE_RESOLUTION)
+        textureResolution = resolution;
 }
 
 
@@ -626,7 +658,7 @@ void Renderer::render(const Observer& observer,
     // limiting magnitude of stars (so stars aren't visible in the daytime
     // on planets with thick atmospheres.)
     {
-        vector<RenderListEntry>::iterator notCulled = renderList.begin();
+        //vector<RenderListEntry>::iterator notCulled = renderList.begin();
         for (vector<RenderListEntry>::iterator iter = renderList.begin();
              iter != renderList.end(); iter++)
         {
@@ -1776,16 +1808,15 @@ void Renderer::renderObject(Point3f pos,
     glDisable(GL_BLEND);
 
     // Get the textures . . .
-    TextureManager* textureManager = GetTextureManager();
-    if (obj.surface->baseTexture != InvalidResource)
-        ri.baseTex = textureManager->find(obj.surface->baseTexture);
+    if (obj.surface->baseTexture.tex[textureResolution] != InvalidResource)
+        ri.baseTex = obj.surface->baseTexture.find(textureResolution);
     if ((obj.surface->appearanceFlags & Surface::ApplyBumpMap) != 0 &&
         (fragmentShaderEnabled && useRegisterCombiners && useCubeMaps) &&
-        obj.surface->bumpTexture != InvalidResource)
-        ri.bumpTex = textureManager->find(obj.surface->bumpTexture);
+        obj.surface->bumpTexture.tex[textureResolution] != InvalidResource)
+        ri.bumpTex = obj.surface->bumpTexture.find(textureResolution);
     if ((obj.surface->appearanceFlags & Surface::ApplyNightMap) != 0 &&
         (renderFlags & ShowNightMaps) != 0)
-        ri.nightTex = textureManager->find(obj.surface->nightTexture);
+        ri.nightTex = obj.surface->nightTexture.find(textureResolution);
 
     // Apply the modelview transform for the object
     glPushMatrix();
@@ -1932,7 +1963,7 @@ void Renderer::renderObject(Point3f pos,
 
     if (obj.atmosphere != NULL)
     {
-        const Atmosphere* atmosphere = obj.atmosphere;
+        Atmosphere* atmosphere = const_cast<Atmosphere *>(obj.atmosphere);
 
         // Compute the apparent thickness in pixels of the atmosphere.
         // If it's only one pixel thick, it can look quite unsightly
@@ -1972,8 +2003,8 @@ void Renderer::renderObject(Point3f pos,
         // If there's a cloud layer, we'll render it now.
         Texture* cloudTex = NULL;
         if ((renderFlags & ShowCloudMaps) != 0 &&
-            atmosphere->cloudTex != InvalidResource)
-            cloudTex = textureManager->find(atmosphere->cloudTex);
+            atmosphere->cloudTexture.tex[textureResolution] != InvalidResource)
+            cloudTex = atmosphere->cloudTexture.find(textureResolution);
 
         if (cloudTex != NULL)
         {
@@ -2090,7 +2121,7 @@ void Renderer::renderObject(Point3f pos,
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        Texture* ringsTex = GetTextureManager()->find(rings->texture);
+        Texture* ringsTex = rings->texture.find(textureResolution);
 
         if (ringsTex != NULL)
             ringsTex->bind();
@@ -2176,7 +2207,7 @@ void Renderer::renderPlanet(const Body& body,
     {
         RenderProperties rp;
 
-        rp.surface = &body.getSurface();
+        rp.surface = const_cast<Surface *>(&body.getSurface());
         rp.atmosphere = body.getAtmosphere();
         rp.rings = body.getRings();
         rp.radius = body.getRadius();
@@ -2258,44 +2289,18 @@ void Renderer::renderStar(const Star& star,
 
     if (discSizeInPixels > 1)
     {
-        Surface surface;
+        Surface *surface;
         Atmosphere atmosphere;
         RenderProperties rp;
 
-        surface.color = color;
-        switch (star.getStellarClass().getSpectralClass())
-        {
-        case StellarClass::Spectral_O:
-        case StellarClass::Spectral_B:
-            surface.baseTexture = starTexB;
-            break;
-        case StellarClass::Spectral_A:
-        case StellarClass::Spectral_F:
-            surface.baseTexture = starTexA;
-            break;
-        case StellarClass::Spectral_G:
-        case StellarClass::Spectral_K:
-            surface.baseTexture = starTexG;
-            break;
-        case StellarClass::Spectral_M:
-        case StellarClass::Spectral_R:
-        case StellarClass::Spectral_S:
-        case StellarClass::Spectral_N:
-            surface.baseTexture = starTexM;
-            break;
-        default:
-            surface.baseTexture = starTexA;
-            break;
-        }
-        surface.appearanceFlags |= Surface::ApplyBaseTexture;
-        surface.appearanceFlags |= Surface::Emissive;
+        surface=&(starSurfs[star.getStellarClass().getSpectralClass()]);
 
         atmosphere.height = radius * CoronaHeight;
         atmosphere.lowerColor = color;
         atmosphere.upperColor = color;
         atmosphere.skyColor = color;
 
-        rp.surface = &surface;
+        rp.surface = surface;
         rp.atmosphere = &atmosphere;
         rp.rings = NULL;
         rp.radius = star.getRadius();

@@ -21,7 +21,7 @@ class Atmosphere
         height(0.0f),
         cloudHeight(0.0f),
         cloudSpeed(0.0f),
-        cloudTex(InvalidResource) {};
+        cloudTexture() {};
 
  public:
     float height;
@@ -30,7 +30,7 @@ class Atmosphere
     Color skyColor;
     float cloudHeight;
     float cloudSpeed;
-    ResourceHandle cloudTex;
+    MultiTexture cloudTexture;
 };
 
 #endif // _ATMOSPHERE_H_

@@ -58,6 +58,7 @@ Ctrl+L : Toggle night side planet maps (light pollution)
 W  : Toggle wireframe mode
 Ctrl+P : Toggle per-pixel lighting (if supported)
 Ctrl+V : Toggle vertex programs (if supported)
+r R: lower or raise texture resolution
 
 Spaceflight:
 F1 : Stop 

@@ -83,6 +83,8 @@ class Renderer
     void setSaturationMagnitude(float);
     float getBrightnessBias() const;
     void setBrightnessBias(float);
+    void setResolution(unsigned int resolution);
+    unsigned int getResolution();
 
     typedef struct {
         std::string text;
@@ -142,7 +144,7 @@ class Renderer
             orientation(1.0f)
         {};
 
-        const Surface* surface;
+        Surface* surface;
         const Atmosphere* atmosphere;
         RingSystem* rings;
         RotationElements re;
@@ -272,6 +274,7 @@ class Renderer
     bool useCompressedTextures;
     bool useVertexPrograms;
     bool useRescaleNormal;
+    unsigned int textureResolution;
 };
 
 #endif // _RENDER_H_

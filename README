@@ -140,6 +140,7 @@ Ctrl+L : Toggle night side planet maps (light pollution)
 W  : Toggle wireframe mode
 Ctrl+P : Toggle per-pixel lighting (if supported)
 Ctrl+V : Toggle vertex programs (if supported)
+r R: lower or raise texture resolution
 
 Spaceflight:
 F1 : Stop 
@@ -316,6 +317,9 @@ around are at http://apollo.spaceports.com/~jhasting/
 The Venus, Saturn, and Saturn's rings textures are from Bjorn Jonsson.
 His site is http://www.mmedia.is/~bjj/ and is an excellent resource
 for solar system rendering.
+
+The lower resolution textures were all converted from their higher resolution
+Versions using Gimp.
 
 3D asteroid models of Toutatis, Kleopatra, and Geographos are courtesy of
 Scott Hudson, Washington State University.  His site is:

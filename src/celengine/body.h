@@ -71,13 +71,16 @@ class RingSystem
     float innerRadius;
     float outerRadius;
     Color color;
-    int texture;
+    MultiTexture texture;
 
     RingSystem(float inner, float outer) :
-        innerRadius(inner), outerRadius(outer), color(1.0f, 1.0f, 1.0f), texture(-1)
+        innerRadius(inner), outerRadius(outer), color(1.0f, 1.0f, 1.0f), texture()
         { }
-    RingSystem(float inner, float outer, Color _color, int _texture = -1) :
-        innerRadius(inner), outerRadius(outer), color(_color), texture(_texture)
+    RingSystem(float inner, float outer, Color _color, int _loTexture=-1, int _texture = -1) :
+        innerRadius(inner), outerRadius(outer), color(_color), texture(_loTexture, _texture)
+        { }
+    RingSystem(float inner, float outer, Color _color, string textureName) :
+        innerRadius(inner), outerRadius(outer), color(_color), texture(textureName)
         { }
 };
 
