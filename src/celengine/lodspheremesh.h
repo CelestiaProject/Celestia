@@ -24,6 +24,13 @@ public:
     void render(unsigned int attributes, const Frustum&, float lod);
 
  private:
+    int renderPatches(int phi0, int theta0, 
+                      int extent,
+                      int level,
+                      int step,
+                      unsigned int attributes,
+                      Point3f* fp);
+
     void renderSection(int phi0, int theta0,
                        int extent,
                        int step,
