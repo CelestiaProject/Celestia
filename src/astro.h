@@ -14,6 +14,12 @@
 #include "vecmath.h"
 #include "univcoord.h"
 
+#define SOLAR_ABSMAG  4.83f
+#define LN_MAG        1.085736
+#define LY_PER_PARSEC 3.26
+#define KM_PER_LY     9466411842000.000
+#define KM_PER_AU     149597870.7
+#define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
 
 namespace astro
 {
@@ -75,7 +81,8 @@ namespace astro
     Point3f equatorialToCelestialCart(float ra, float dec, float distance);
     Point3d equatorialToCelestialCart(double ra, double dec, double distance);
 
-    double eccentricAnomaly(double meanAnomaly);
+    void Anomaly(double meanAnomaly, double eccentricity,
+                 double& trueAnomaly, double& eccentricAnomaly);
     double meanEclipticObliquity(double jd);
 
     extern const double J2000;
