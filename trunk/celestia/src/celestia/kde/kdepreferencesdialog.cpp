@@ -241,12 +241,12 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     pixelShaderCheck = new QCheckBox(i18n("Pixel Shader"), openGL);
     savedVertexShader = savedPixelShader = false;
     if (!appCore->getRenderer()->vertexShaderSupported()) vertexShaderCheck->setDisabled(true);
-    if (!appCore->getRenderer()->getVertexShaderEnabled()) {
+    if (appCore->getRenderer()->getVertexShaderEnabled()) {
         vertexShaderCheck->setChecked(true);
         savedVertexShader = true;
     }
     if (!appCore->getRenderer()->fragmentShaderSupported()) pixelShaderCheck->setDisabled(true);
-    if (!appCore->getRenderer()->getFragmentShaderEnabled()) {
+    if (appCore->getRenderer()->getFragmentShaderEnabled()) {
         pixelShaderCheck->setChecked(true);
         savedPixelShader = true;
     }
