@@ -479,7 +479,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case ',':
-        if (renderer->getFieldOfView() > 1.0f)
+        if (renderer->getFieldOfView() > 0.01f)
             renderer->setFieldOfView(renderer->getFieldOfView() / 1.1f);
         break;
 
@@ -1056,7 +1056,11 @@ void CelestiaCore::renderOverlay()
     if (hudDetail > 0)
     {
         float fov = renderer->getFieldOfView();
+        int hours, minutes;
+        double seconds;
 
+        astro::decimalToHrMinSec((double)fov, hours, minutes, seconds);
+        
         Simulation::ObserverMode mode = sim->getObserverMode();
         char* modeName = "";
         if (mode == Simulation::Travelling)
@@ -1086,7 +1090,7 @@ void CelestiaCore::renderOverlay()
         glColor4f(0.6f, 0.6f, 1.0f, 1);
         *overlay << modeName << '\n';
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        overlay->printf("FOV: %6.2f\n", fov);
+        overlay->printf("FOV: %d° %02d' %.1f\"\n", hours, minutes, seconds);
         overlay->endText();
         glPopMatrix();
     }
