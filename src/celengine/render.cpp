@@ -362,6 +362,12 @@ bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 }
 
 
+bool operator<(const Renderer::Label& a, const Renderer::Label& b)
+{
+    return a.position.z > b.position.z;
+}
+
+
 bool Renderer::init(GLContext* _context,
                     int winWidth, int winHeight,
                     DetailOptions& _detailOptions)
@@ -737,7 +743,10 @@ bool Renderer::vertexShaderSupported() const
 }
 
 
-void Renderer::addLabel(string text, Color color, Point3f pos, float depth)
+void Renderer::addLabel(string text,
+                        Color color,
+                        const Point3f& pos,
+                        float depth)
 {
     double winX, winY, winZ;
     int view[4] = { 0, 0, 0, 0 };
@@ -745,6 +754,9 @@ void Renderer::addLabel(string text, Color color, Point3f pos, float depth)
     view[1] = -windowHeight / 2;
     view[2] = windowWidth;
     view[3] = windowHeight;
+    depth = (float) (pos.x * modelMatrix[2] +
+                     pos.y * modelMatrix[6] +
+                     pos.z * modelMatrix[10]);
     if (gluProject(pos.x, pos.y, pos.z,
                    modelMatrix,
                    projMatrix,
@@ -754,8 +766,34 @@ void Renderer::addLabel(string text, Color color, Point3f pos, float depth)
         Label l;
         l.text = text;
         l.color = color;
-        l.position = Point3f((float) winX, (float) winY, depth);
+        l.position = Point3f((float) winX, (float) winY, -depth);
         labels.insert(labels.end(), l);
+    }
+}
+
+
+void Renderer::addSortedLabel(string text, Color color, const Point3f& pos)
+{
+    double winX, winY, winZ;
+    int view[4] = { 0, 0, 0, 0 };
+    view[0] = -windowWidth / 2;
+    view[1] = -windowHeight / 2;
+    view[2] = windowWidth;
+    view[3] = windowHeight;
+    float depth = (float) (pos.x * modelMatrix[2] +
+                           pos.y * modelMatrix[6] +
+                           pos.z * modelMatrix[10]);
+    if (gluProject(pos.x, pos.y, pos.z,
+                   modelMatrix,
+                   projMatrix,
+                   (const GLint*) view,
+                   &winX, &winY, &winZ) != GL_FALSE)
+    {
+        Label l;
+        l.text = text;
+        l.color = color;
+        l.position = Point3f((float) winX, (float) winY, -depth);
+        depthSortedLabels.insert(depthSortedLabels.end(), l);
     }
 }
 
@@ -763,6 +801,7 @@ void Renderer::addLabel(string text, Color color, Point3f pos, float depth)
 void Renderer::clearLabels()
 {
     labels.clear();
+    depthSortedLabels.clear();
 }
 
 
@@ -1284,6 +1323,8 @@ void Renderer::render(const Observer& observer,
 
     }
 
+    renderLabels();
+
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
     glPolygonMode(GL_BACK, (GLenum) renderMode);
 
@@ -1398,6 +1439,9 @@ void Renderer::render(const Observer& observer,
         // render each entry.
         stable_sort(renderList.begin(), renderList.end());
 
+        // Sort the labels
+        sort(depthSortedLabels.begin(), depthSortedLabels.end());
+
         int nEntries = renderList.size();
 
         // Determine how to split up the depth buffer.  Each body with an
@@ -1434,9 +1478,13 @@ void Renderer::render(const Observer& observer,
                        nearPlaneDistance, farPlaneDistance);
         glMatrixMode(GL_MODELVIEW);
 
+        vector<Label>::iterator label = depthSortedLabels.begin();
+
         // Render all the bodies in the render list.
         for (i = nEntries - 1; i >= 0; i--)
         {
+            label = renderSortedLabels(label, -renderList[i].farZ);
+
             if (renderList[i].discSizeInPixels > 1)
             {
                 nearPlaneDistance = renderList[i].nearZ * -0.9f;
@@ -1499,6 +1547,8 @@ void Renderer::render(const Observer& observer,
             }
         }
 
+        renderSortedLabels(label, 0.0f);
+
         // reset the depth range
         glDepthRange(0, 1);
     }
@@ -1512,7 +1562,14 @@ void Renderer::render(const Observer& observer,
     glPolygonMode(GL_FRONT, GL_FILL);
     glPolygonMode(GL_BACK, GL_FILL);
 
-    renderLabels();
+    {
+        Mat3f m = observer.getOrientation().toMatrix3();
+        for (int i = 0; i < (int) labels.size(); i++)
+        {
+            
+        }
+    }
+
     if ((renderFlags & ShowMarkers) != 0)
     {
         renderMarkers(*universe.getMarkers(),
@@ -5110,8 +5167,8 @@ void Renderer::renderPlanetarySystem(const Star& sun,
 
                 if (showLabel)
                 {
-                    addLabel(body->getName(), labelColor,
-                             Point3f(pos.x, pos.y, pos.z), 1.0f);
+                    addSortedLabel(body->getName(), labelColor,
+                                   Point3f(pos.x, pos.y, pos.z));
                 }
             }
         }
@@ -5631,7 +5688,7 @@ void Renderer::renderLabels()
     if (font == NULL)
         return;
 
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     font->bind();
     glEnable(GL_BLEND);
@@ -5653,7 +5710,7 @@ void Renderer::renderLabels()
         glPushMatrix();
         glTranslatef((int) labels[i].position.x + PixelOffset + 2.0f,
                      (int) labels[i].position.y + PixelOffset,
-                     labels[i].position.z);
+                     0.0f);
         font->render(labels[i].text);
         glPopMatrix();
     }
@@ -5663,6 +5720,49 @@ void Renderer::renderLabels()
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glDisable(GL_DEPTH_TEST);
+}
+
+
+vector<Renderer::Label>::iterator
+Renderer::renderSortedLabels(vector<Label>::iterator iter, float depth)
+{
+    if (font == NULL)
+        return iter;
+
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+    font->bind();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, windowWidth, 0, windowHeight);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(GLfloat((int) (windowWidth / 2)),
+                 GLfloat((int) (windowHeight / 2)), 0);
+
+    for (; iter != depthSortedLabels.end() && iter->position.z > depth; iter++)
+    {
+        glColor(iter->color);
+        glPushMatrix();
+        glTranslatef((int) iter->position.x + PixelOffset + 2.0f,
+                     (int) iter->position.y + PixelOffset,
+                     0.0f);
+        font->render(iter->text);
+        glPopMatrix();
+    }
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glDisable(GL_DEPTH_TEST);
+
+    return iter;
 }
 
 
