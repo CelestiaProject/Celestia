@@ -2875,6 +2875,8 @@ static void renderSphereDefault(const RenderInfo& ri,
 }
 
 
+// DEPRECATED -- renderSphere_Combiners_VP should be used instead; only
+// very old drivers don't support vertex programs.
 static void renderSphere_Combiners(const RenderInfo& ri,
                                    const Frustum& frustum,
                                    const GLContext& context)
@@ -2962,6 +2964,7 @@ static void renderSphere_Combiners(const RenderInfo& ri,
 
 
 static void renderSphere_DOT3_VP(const RenderInfo& ri,
+                                 const LightingState& ls,
                                  const Frustum& frustum,
                                  const GLContext& context)
 {
@@ -2980,11 +2983,18 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
 
     vproc->enable();
     vproc->parameter(vp::EyePosition, ri.eyePos_obj);
-    vproc->parameter(vp::SunDirection, ri.sunDir_obj);
-    vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
-    vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
-    vproc->parameter(vp::SpecularColor, ri.sunColor * ri.specularColor);
+    vproc->parameter(vp::LightDirection0, ls.lights[0].direction_obj);
+    vproc->parameter(vp::DiffuseColor0, ls.lights[0].color * ri.color);
+    vproc->parameter(vp::SpecularColor0, ls.lights[0].color * ri.specularColor);
+    if (ls.nLights > 1)
+    {
+        vproc->parameter(vp::LightDirection1, ls.lights[1].direction_obj);
+        vproc->parameter(vp::DiffuseColor1, ls.lights[1].color * ri.color);
+        vproc->parameter(vp::SpecularColor1, ls.lights[1].color * ri.specularColor);
+    }
+
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
+    vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
 
     if (ri.bumpTex != NULL && ri.baseTex != NULL)
     {
@@ -3035,7 +3045,10 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     }
     else
     {
-        vproc->use(vp::diffuse);
+        if (ls.nLights > 1)
+            vproc->use(vp::diffuse_2light);
+        else
+            vproc->use(vp::diffuse);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         lodSphere->render(context,
                           LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
@@ -3098,6 +3111,7 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
 
 
 static void renderSphere_Combiners_VP(const RenderInfo& ri,
+                                      const LightingState& ls,
                                       const Frustum& frustum,
                                       const GLContext& context)
 {
@@ -3139,10 +3153,17 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
     vproc->enable();
 
     vproc->parameter(vp::EyePosition, ri.eyePos_obj);
-    vproc->parameter(vp::SunDirection, ri.sunDir_obj);
-    vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+    vproc->parameter(vp::LightDirection0, ls.lights[0].direction_obj);
+    vproc->parameter(vp::DiffuseColor0, ls.lights[0].color * ri.color);
+    vproc->parameter(vp::SpecularColor0, ls.lights[0].color * ri.specularColor);
+    if (ls.nLights > 1)
+    {
+        vproc->parameter(vp::LightDirection1, ls.lights[1].direction_obj);
+        vproc->parameter(vp::DiffuseColor1, ls.lights[1].color * ri.color);
+        vproc->parameter(vp::SpecularColor1, ls.lights[1].color * ri.specularColor);
+    }
+
     vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
-    vproc->parameter(vp::SpecularColor, ri.sunColor * ri.specularColor);
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
     vproc->parameter(vp::HazeColor, ri.hazeColor);
 
@@ -3172,7 +3193,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
 
             // Disable ambient and diffuse
             vproc->parameter(vp::AmbientColor, Color::Black);
-            vproc->parameter(vp::DiffuseColor, Color::Black);
+            vproc->parameter(vp::DiffuseColor0, Color::Black);
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
 
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
@@ -3182,7 +3203,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
                               textures, 1);
 
             // re-enable diffuse
-            vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+            vproc->parameter(vp::DiffuseColor0, ri.sunColor * ri.color);
 
             DisableCombiners();
             glDisable(GL_COLOR_SUM_EXT);
@@ -3192,7 +3213,10 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
     else if (ri.specularColor != Color::Black)
     {
         glEnable(GL_COLOR_SUM_EXT);
-        vproc->use(vp::specular);
+        if (ls.nLights > 1)
+            vproc->use(vp::specular_2light);
+        else
+            vproc->use(vp::specular);
         SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
         unsigned int attributes = LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
             LODSphereMesh::VertexProgParams;
@@ -3204,10 +3228,21 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
     }
     else
     {
-        if (hazeDensity > 0.0f)
-            vproc->use(vp::diffuseHaze);
+        if (ls.nLights > 1)
+        {
+            if (hazeDensity > 0.0f)
+                vproc->use(vp::diffuseHaze_2light);
+            else
+                vproc->use(vp::diffuse_2light);
+        }
         else
-            vproc->use(vp::diffuse);
+        {
+            if (hazeDensity > 0.0f)
+                vproc->use(vp::diffuseHaze);
+            else
+                vproc->use(vp::diffuse);
+        }
+
         lodSphere->render(context,
                           LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
                           LODSphereMesh::VertexProgParams,
@@ -3293,10 +3328,10 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
     vproc->enable();
 
     vproc->parameter(vp::EyePosition, ri.eyePos_obj);
-    vproc->parameter(vp::SunDirection, ri.sunDir_obj);
-    vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+    vproc->parameter(vp::LightDirection0, ri.sunDir_obj);
+    vproc->parameter(vp::DiffuseColor0, ri.sunColor * ri.color);
     vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
-    vproc->parameter(vp::SpecularColor, ri.sunColor * ri.specularColor);
+    vproc->parameter(vp::SpecularColor0, ri.sunColor * ri.specularColor);
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
     vproc->parameter(vp::HazeColor, ri.hazeColor);
 
@@ -3326,7 +3361,7 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
 
             // Disable ambient and diffuse
             vproc->parameter(vp::AmbientColor, Color::Black);
-            vproc->parameter(vp::DiffuseColor, Color::Black);
+            vproc->parameter(vp::DiffuseColor0, Color::Black);
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
 
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
@@ -3336,7 +3371,7 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
                               textures, 1);
 
             // re-enable diffuse
-            vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+            vproc->parameter(vp::DiffuseColor0, ri.sunColor * ri.color);
 
             DisableCombiners();
             glDisable(GL_COLOR_SUM_EXT);
@@ -3491,7 +3526,7 @@ static void renderShadowedModelVertexShader(const RenderInfo& ri,
     assert(vproc != NULL);
 
     vproc->enable();
-    vproc->parameter(vp::SunDirection, lightDir);
+    vproc->parameter(vp::LightDirection0, lightDir);
     vproc->parameter(vp::TexGen_S, sPlane);
     vproc->parameter(vp::TexGen_T, tPlane);
     vproc->use(vp::shadowTexture);
@@ -3543,8 +3578,8 @@ static void renderRings(RingSystem& rings,
     {
         vproc->enable();
         vproc->use(vp::ringIllum);
-        vproc->parameter(vp::SunDirection, ri.sunDir_obj);
-        vproc->parameter(vp::DiffuseColor, ri.sunColor * rings.color);
+        vproc->parameter(vp::LightDirection0, ri.sunDir_obj);
+        vproc->parameter(vp::DiffuseColor0, ri.sunColor * rings.color);
         vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
         vproc->parameter(vp::Constant0, Vec3f(0, 0.5, 1.0));
     }
@@ -3974,7 +4009,7 @@ renderEclipseShadows_Shaders(Model* model,
         vproc->parameter(vp::TexGen_T4, tPlanes[3]);
     }
 
-    //vproc->parameter(vp::SunDirection, lightDir);
+    //vproc->parameter(vp::LightDirection0, lightDir);
 
     lodSphere->render(context,
                       LODSphereMesh::Normals | LODSphereMesh::Multipass,
@@ -4171,8 +4206,8 @@ renderRingShadowsVS(Model* model,
 
     vproc->enable();
     vproc->use(vp::ringShadow);
-    vproc->parameter(vp::SunDirection, ri.sunDir_obj);
-    vproc->parameter(vp::DiffuseColor, 1, 1, 1, alpha); // color = white
+    vproc->parameter(vp::LightDirection0, ri.sunDir_obj);
+    vproc->parameter(vp::DiffuseColor0, 1, 1, 1, alpha); // color = white
     vproc->parameter(vp::TexGen_S,
                      rings.innerRadius / planetRadius,
                      1.0f / (ringWidth / planetRadius),
@@ -4316,6 +4351,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 static void
 setupObjectLighting(const vector<Renderer::LightSource>& suns,
                     const Point3d& objPosition,
+                    const Quatf& objOrientation,
                     LightingState& ls)
 {
     unsigned int nLights = min(MaxLights, suns.size());
@@ -4326,9 +4362,11 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
     for (i = 0; i < nLights; i++)
     {
         Vec3d dir = suns[i].position - objPosition;
-        ls.lights[i].direction =
+        ls.lights[i].direction_eye =
             Vec3f((float) dir.x, (float) dir.y, (float) dir.z);
-        float distance = astro::kilometersToAU(ls.lights[i].direction.length());
+        float distance = ls.lights[i].direction_eye.length();
+        ls.lights[i].direction_eye *= 1.0f / distance;
+        distance = astro::kilometersToAU((float) dir.length());
         ls.lights[i].intensity = suns[i].luminosity / (distance * distance);
         ls.lights[i].color = suns[i].color;
     }
@@ -4347,6 +4385,7 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
 
     // After sorting, the first light is always the brightest
     float maxIntensity = ls.lights[0].intensity;
+    Mat3f m = (~objOrientation).toMatrix3();
 
     // Normalize the brightnesses of the light sources.
     // TODO: Skip this step when high dynamic range rendering to floating point
@@ -4357,11 +4396,14 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
     for (i = 0; i < nLights; i++)
     {
         ls.lights[i].intensity /= maxIntensity;
-
+        
         // Cull light sources that don't contribute significantly (less than
         // the resolution of an 8-bit color channel.)
         if (ls.lights[i].intensity < 1.0f / 255.0f)
             break;
+
+        // Compute the direction of the light in object space
+        ls.lights[i].direction_obj = ls.lights[i].direction_eye * m;
 
         ls.nLights++;
     }
@@ -4383,13 +4425,14 @@ void Renderer::renderObject(Point3f pos,
     float discSizeInPixels = obj.radius /
         (max(nearPlaneDistance, altitude) * pixelSize);
 
-    // HACK 
-    Vec3f sunDirection(0.0f, 1.0f, 0.0f);
-    Color sunColor(0.0f, 0.0f, 0.0f);
+    ri.sunDir_eye = Vec3f(0.0f, 1.0f, 0.0f);
+    ri.sunDir_obj = Vec3f(0.0f, 1.0f, 0.0f);
+    ri.sunColor = Color(0.0f, 0.0f, 0.0f);
     if (ls.nLights > 0)
     {
-        sunDirection = ls.lights[0].direction;
-        sunColor     = ls.lights[0].color;// * ls.lights[0].intensity;
+        ri.sunDir_eye = ls.lights[0].direction_eye;
+        ri.sunDir_obj = ls.lights[0].direction_obj;
+        ri.sunColor   = ls.lights[0].color;// * ls.lights[0].intensity;
     }
 
     // Enable depth buffering
@@ -4429,9 +4472,6 @@ void Renderer::renderObject(Point3f pos,
     glScale(semiMajorAxes);
 
     Mat4f planetMat = (~obj.orientation).toMatrix4();
-    ri.sunDir_eye = sunDirection;
-    ri.sunDir_eye.normalize();
-    ri.sunDir_obj = ri.sunDir_eye * planetMat;
     ri.eyeDir_obj = (Point3f(0, 0, 0) - pos) * planetMat;
     ri.eyeDir_obj.normalize();
     ri.eyePos_obj = Point3f(-pos.x / radius,
@@ -4449,8 +4489,7 @@ void Renderer::renderObject(Point3f pos,
         ri.color = obj.surface->color;
     }
 
-    ri.sunColor = sunColor;
-    ri.ambientColor = ambientColor * ri.sunColor;
+    ri.ambientColor = ambientColor;
     ri.hazeColor = obj.surface->hazeColor;
     ri.specularColor = obj.surface->specularColor;
     ri.specularPower = obj.surface->specularPower;
@@ -4459,42 +4498,50 @@ void Renderer::renderObject(Point3f pos,
     // See if the surface should be lit
     bool lit = (obj.surface->appearanceFlags & Surface::Emissive) == 0;
 
-    // Set up the light source for the sun
-    glLightDirection(GL_LIGHT0, ri.sunDir_obj);
+    // Set the OpenGL light state
+    unsigned int i;
+    for (i = 0; i < ls.nLights; i++)
+    {
+        const DirectionalLight& light = ls.lights[i];
 
-    // RANT ALERT!
-    // This sucks, but it's necessary.  glScale is used to scale a unit
-    // sphere up to planet size.  Since normals are transformed by the
-    // inverse transpose of the model matrix, this means they end up
-    // getting scaled by a factor of 1.0 / planet radius (in km).  This
-    // has terrible effects on lighting: the planet appears almost
-    // completely dark.  To get around this, the GL_rescale_normal
-    // extension was introduced and eventually incorporated into into the
-    // OpenGL 1.2 standard.  Of course, not everyone implemented this
-    // incredibly simple and essential little extension.  Microsoft is
-    // notorious for half-assed support of OpenGL, but 3dfx should have
-    // known better: no Voodoo 1/2/3 drivers seem to support this
-    // extension.  The following is an attempt to get around the problem by
-    // scaling the light brightness by the planet radius.  According to the
-    // OpenGL spec, this should work fine, as clamping of colors to [0, 1]
-    // occurs *after* lighting.  It works fine on my GeForce3 when I
-    // disable EXT_rescale_normal, but I'm not certain whether other
-    // drivers are as well behaved as nVidia's.
-    //
-    // Addendum: Unsurprisingly, using color values outside [0, 1] produces
-    // problems on Savage4 cards.
-    //
-    if (useRescaleNormal)
-    {
-        glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
-        glLightColor(GL_LIGHT0, GL_SPECULAR, ri.sunColor);
+        glLightDirection(GL_LIGHT0 + i, ls.lights[i].direction_obj);
+
+        // RANT ALERT!
+        // This sucks, but it's necessary.  glScale is used to scale a unit
+        // sphere up to planet size.  Since normals are transformed by the
+        // inverse transpose of the model matrix, this means they end up
+        // getting scaled by a factor of 1.0 / planet radius (in km).  This
+        // has terrible effects on lighting: the planet appears almost
+        // completely dark.  To get around this, the GL_rescale_normal
+        // extension was introduced and eventually incorporated into into the
+        // OpenGL 1.2 standard.  Of course, not everyone implemented this
+        // incredibly simple and essential little extension.  Microsoft is
+        // notorious for half-assed support of OpenGL, but 3dfx should have
+        // known better: no Voodoo 1/2/3 drivers seem to support this
+        // extension.  The following is an attempt to get around the problem by
+        // scaling the light brightness by the planet radius.  According to the
+        // OpenGL spec, this should work fine, as clamping of colors to [0, 1]
+        // occurs *after* lighting.  It works fine on my GeForce3 when I
+        // disable EXT_rescale_normal, but I'm not certain whether other
+        // drivers are as well behaved as nVidia's.
+        //
+        // Addendum: Unsurprisingly, using color values outside [0, 1] produces
+        // problems on Savage4 cards.
+
+        Vec3f lightColor = Vec3f(light.color.red(),
+                                 light.color.green(),
+                                 light.color.blue()) * light.intensity;
+        if (useRescaleNormal)
+        {
+            glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
+            glLightColor(GL_LIGHT0 + i, GL_SPECULAR, lightColor);
+        }
+        else
+        {
+            glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor * radius);
+        }
+        glEnable(GL_LIGHT0 + i);
     }
-    else
-    {
-        glLightColor(GL_LIGHT0, GL_DIFFUSE,
-                     Vec3f(ri.sunColor.red(), ri.sunColor.green(), ri.sunColor.blue()) * radius);
-    }
-    glEnable(GL_LIGHT0);
 
     // Compute the inverse model/view matrix
     Mat4f invMV = (cameraOrientation.toMatrix4() *
@@ -4530,7 +4577,7 @@ void Renderer::renderObject(Point3f pos,
 
             case GLContext::GLPath_NvCombiner_ARBVP:
             case GLContext::GLPath_NvCombiner_NvVP:
-                renderSphere_Combiners_VP(ri, viewFrustum, *context);
+                renderSphere_Combiners_VP(ri, ls, viewFrustum, *context);
                 break;
 
             case GLContext::GLPath_NvCombiner:
@@ -4538,7 +4585,7 @@ void Renderer::renderObject(Point3f pos,
                 break;
 
             case GLContext::GLPath_DOT3_ARBVP:
-                renderSphere_DOT3_VP(ri, viewFrustum, *context);
+                renderSphere_DOT3_VP(ri, ls, viewFrustum, *context);
                 break;
 
             default:
@@ -4665,11 +4712,23 @@ void Renderer::renderObject(Point3f pos,
                 if (vproc != NULL)
                 {
                     vproc->enable();
-                    vproc->use(vp::diffuseTexOffset);
-                    vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+                    vproc->parameter(vp::LightDirection0, ls.lights[0].direction_obj);
+                    vproc->parameter(vp::DiffuseColor0, ls.lights[0].color * ri.color);
                     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
                     vproc->parameter(vp::TextureTranslation,
                                      texOffset, 0.0f, 0.0f, 0.0f);
+                    if (ls.nLights > 1)
+                    {
+                        vproc->use(vp::diffuseTexOffset_2light);
+                        vproc->parameter(vp::LightDirection1,
+                                         ls.lights[1].direction_obj);
+                        vproc->parameter(vp::DiffuseColor1,
+                                         ls.lights[1].color * ri.color);
+                    }
+                    else
+                    {
+                        vproc->use(vp::diffuseTexOffset);
+                    }
                 }
 
                 lodSphere->render(*context,
@@ -4778,6 +4837,11 @@ void Renderer::renderObject(Point3f pos,
                     *context,
                     detailOptions.ringSystemSections);
     }
+
+    // Disable all light sources other than the first
+    for (i = 0; i < ls.nLights; i++)
+        glDisable(GL_LIGHT0 + i);
+
 
     if (obj.locations != NULL && (labelMode & LocationLabels) != 0)
         renderLocations(*obj.locations,
@@ -5033,6 +5097,7 @@ void Renderer::renderPlanet(Body& body,
         LightingState lights;
         setupObjectLighting(lightSources,
                             body.getHeliocentricPosition(now),
+                            rp.orientation,
                             lights);
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
