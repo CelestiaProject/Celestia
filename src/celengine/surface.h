@@ -36,6 +36,7 @@ class Surface
         ApplyNightMap        = 0x10,
         ApplySpecularityMap  = 0x20,
         SpecularReflection   = 0x40,
+        Emissive             = 0x80,
     };
 
     uint32 appearanceFlags;
