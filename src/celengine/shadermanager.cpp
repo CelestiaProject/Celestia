@@ -423,7 +423,7 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
     else
     {
         // Sum the diffuse contribution from all lights
-        source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 1);\n";
+        source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 1.0);\n";
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
@@ -482,7 +482,7 @@ Shadow(unsigned int light, unsigned int shadow)
 
     source += "shadowCenter = " +
         IndexedParameter("shadowTexCoord", light, shadow) +
-        " - vec2(0.5, 0.5);\n";
+        ".st - vec2(0.5, 0.5);\n";
     source += "shadowR = clamp(dot(shadowCenter, shadowCenter) * " +
         IndexedParameter("shadowScale", light, shadow) + " + " +
         IndexedParameter("shadowBias", light, shadow) + ", 0.0, 1.0);\n";
@@ -601,7 +601,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::NightTexture)
     {
         // Output the blend factor for night lights textures
-        source += "totalLight = 1 - totalLight;\n";
+        source += "totalLight = 1.0 - totalLight;\n";
         source += "totalLight = totalLight * totalLight * totalLight * totalLight;\n";
     }
 
@@ -648,7 +648,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         {
             source += "ringShadowProj = gl_Vertex.xyz + " +
                 LightProperty(j, "direction") +
-                " * max(0, gl_Vertex.y / -" +
+                " * max(0.0, gl_Vertex.y / -" +
                 LightProperty(j, "direction") + ".y);\n";
             source += IndexedParameter("ringShadowTexCoord", j) +
                 " = length(ringShadowProj) * ringWidth - ringRadius;\n";
