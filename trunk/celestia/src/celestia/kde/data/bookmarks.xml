@@ -5,8 +5,8 @@
   <bookmark icon="favicons/celestia_20021212191412299" href="cel://Follow/Sol%3AEarth/2002-12-04T07%3A19%3A19.92?x=0EOJDZAWdoDCDA&amp;y=DUux+MVJJA&amp;z=9Yd09bIPyTHx/////////w&amp;ow=0.978316&amp;ox=0.150961&amp;oy=0.106951&amp;oz=-0.093109&amp;select=Sol:Earth&amp;fov=45.000000&amp;ts=1.000000&amp;rf=6035&amp;lm=0" >
    <title>Follow Earth [Earth]</title>
   </bookmark>
-  <bookmark icon="favicons/celestia_20021215164253375" href="cel://Follow/Sol%3AJupiter%3AIo/2002-08-30T17%3A27%3A08.78?x=EiKSQ/EmXmOTDA&amp;y=beZI6iT9uaU&amp;z=78Iu9Lx8oXO4/////////w&amp;ow=-0.892454&amp;ox=0.001159&amp;oy=-0.450907&amp;oz=-0.014422&amp;select=Sol:Jupiter:Io&amp;fov=44.999992&amp;ts=1.000000&amp;rf=6035&amp;lm=0" >
-   <title>Follow Io [Io]</title>
+  <bookmark icon="favicons/celestia_20021215170159036" href="cel://PhaseLock/Sol%3AEarth/Sol%3AEarth%3AMoon/2004-05-29T11%3A23%3A46.24?x=yqIWPagG2MO3DA&amp;y=EQYCseMOLQ&amp;z=sX69wCu2LOQO&amp;ow=0.659796&amp;ox=-0.215912&amp;oy=-0.698286&amp;oz=-0.174491&amp;select=Sol:Earth&amp;fov=0.903882&amp;ts=100000.000000&amp;rf=6035&amp;lm=0" >
+   <title>Moon Libration from Earth</title>
   </bookmark>
   <bookmark icon="favicons/celestia_20021215164511359" href="cel://Freeflight/2002-08-28T23%3A25%3A37.09?x=u/ndPJMYP+KnDA&amp;y=3Sinqryzz9c&amp;z=4gXBzXSeLVDx/////////w&amp;ow=0.980822&amp;ox=0.017664&amp;oy=0.189654&amp;oz=-0.041327&amp;track=Sol:Mars&amp;select=Sol:Mars&amp;fov=45.000000&amp;ts=100.000000&amp;rf=6035&amp;lm=0" >
    <title>Mars Fly-by</title>
@@ -26,17 +26,8 @@
   <bookmark icon="favicons/celestia_20021210223316001" href="cel://PhaseLock/Sol%3AEarth/Sol%3AEarth%3AMoon/0755-11-23T19%3A09%3A33.51?x=BN+WHH/aR7u/DA&amp;y=L7ysS34bYQs&amp;z=EMbWV62Yh5jw/////////w&amp;ow=0.251295&amp;ox=-0.056195&amp;oy=0.018929&amp;oz=0.966093&amp;select=Sol:Earth:Moon&amp;fov=0.463834&amp;ts=1.000000&amp;rf=51091&amp;lm=0" >
    <title>Moon Eclipse w/ Jupiter conjonction</title>
   </bookmark>
-  <bookmark icon="favicons/celestia_20021210231438479" href="cel://Follow/Sol%3ASaturn%3ATitan/1612-11-15T20%3A31%3A23.09?x=ZldZtZHQze9TDQ&amp;y=G896KEgKkHb6/////////w&amp;z=yw/BFclcvN4U&amp;ow=0.754114&amp;ox=-0.031300&amp;oy=-0.655946&amp;oz=-0.008206&amp;track=Sol:Saturn:Enceladus&amp;select=Sol:Saturn:Enceladus&amp;fov=0.100944&amp;ts=0.000000&amp;rf=50067&amp;lm=0" >
-   <title>Solar Eclipse on Titan</title>
-  </bookmark>
-  <bookmark icon="favicons/celestia_20021210232301951" href="cel://PhaseLock/Sol%3AJupiter%3AIo/Sol/1997-11-11T02%3A28%3A17.10?x=3oNzGbPsLQf/DA&amp;y=eCz5VVP+Zrn+/////////w&amp;z=WQst/CHmOEgt&amp;ow=-0.369466&amp;ox=0.002269&amp;oy=-0.929202&amp;oz=-0.008589&amp;select=Sol&amp;fov=45.000000&amp;ts=100.000000&amp;rf=51091&amp;lm=0" >
-   <title>Io double eclipse</title>
-  </bookmark>
-  <bookmark icon="favicons/celestia_20021210232649343" href="cel://Follow/Sol%3AJupiter%3ACallisto/1997-11-11T03%3A38%3A55.16?x=AFCRu5PhQ7r+DA&amp;y=Clk/XNtWJbv+/////////w&amp;z=VaL72ayL/BAt&amp;ow=-0.454248&amp;ox=0.009597&amp;oy=-0.890682&amp;oz=-0.015902&amp;select=Sol:Jupiter:Callisto&amp;fov=0.162571&amp;ts=0.000000&amp;rf=51091&amp;lm=0" >
+  <bookmark icon="favicons/celestia_20030106235954721" href="cel://Follow/Sol%3AJupiter%3AGanymede/1997-11-11T03%3A38%3A10.18?x=AJquUthZHrj+DA&amp;y=yl4GWfDM8Ln+/////////w&amp;z=VSDhaX9o/RMt&amp;ow=-0.470125&amp;ox=0.013224&amp;oy=-0.882430&amp;oz=-0.011156&amp;select=Sol:Jupiter:Ganymede&amp;fov=0.383795&amp;ts=100.000000&amp;rf=51091&amp;lm=0" >
    <title>Io Ganymede Callisto Conjonction</title>
   </bookmark>
  </folder>
- <bookmark icon="favicons/celestia_20021215170159036" href="cel://PhaseLock/Sol%3AEarth/Sol%3AEarth%3AMoon/2004-05-29T11%3A23%3A46.24?x=yqIWPagG2MO3DA&amp;y=EQYCseMOLQ&amp;z=sX69wCu2LOQO&amp;ow=0.659796&amp;ox=-0.215912&amp;oy=-0.698286&amp;oz=-0.174491&amp;select=Sol:Earth&amp;fov=0.903882&amp;ts=100000.000000&amp;rf=6035&amp;lm=0" >
-  <title>Moon Libration from Earth</title>
- </bookmark>
 </xbel>
