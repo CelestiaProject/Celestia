@@ -21,6 +21,8 @@
 #include "celengine/astro.h"
 #include "url.h"
 
+Url::Url() 
+{};
 
 Url::Url(const std::string& str, CelestiaCore *core)
 {
@@ -117,32 +119,61 @@ Url::Url(const std::string& str, CelestiaCore *core)
     else time = urlStr.substr(endPrevious + 1, pos - endPrevious -1);
     time = decode_string(time);
 
-    int t;
-    date = astro::Date(0.0);
-    sscanf(time.substr(0, 4).c_str(), "%04d", &t);
-    date.year=t;
-    sscanf(time.substr(5, 2).c_str(), "%02d", &t);
-    date.month=t;
-    sscanf(time.substr(8, 2).c_str(), "%02d", &t);
-    date.day=t;
-    sscanf(time.substr(11, 2).c_str(), "%02d", &t);
-    date.hour=t;
-    sscanf(time.substr(14, 2).c_str(), "%02d", &t);
-    date.minute=t;
-    float s;
-    sscanf(time.substr(17, 5).c_str(), "%f", &s);
-    date.seconds=s;
+    if (params["dist"] != "") {
+        type = Relative;
+    } else {
+        type = Absolute;
+    }
+      
+    switch (type) {
+    case Absolute:
+        int t;
+        date = astro::Date(0.0);
+        sscanf(time.substr(0, 4).c_str(), "%04d", &t);
+        date.year=t;
+        sscanf(time.substr(5, 2).c_str(), "%02d", &t);
+        date.month=t;
+        sscanf(time.substr(8, 2).c_str(), "%02d", &t);
+        date.day=t;
+        sscanf(time.substr(11, 2).c_str(), "%02d", &t);
+        date.hour=t;
+        sscanf(time.substr(14, 2).c_str(), "%02d", &t);
+        date.minute=t;
+        float s;
+        sscanf(time.substr(17, 5).c_str(), "%f", &s);
+        date.seconds=s;
+    
+        BigFix *x, *y, *z;
+        x = new BigFix(params["x"].c_str());
+        y = new BigFix(params["y"].c_str());
+        z = new BigFix(params["z"].c_str());
+        coord = UniversalCoord(*x,*y,*z);
+        delete(x);
+        delete(y);
+        delete(z);
+        
+        float ow, ox, oy, oz;
+        sscanf(params["ow"].c_str(), "%f", &ow);
+        sscanf(params["ox"].c_str(), "%f", &ox);
+        sscanf(params["oy"].c_str(), "%f", &oy);
+        sscanf(params["oz"].c_str(), "%f", &oz);
 
-    BigFix x(params["x"].c_str()), y(params["y"].c_str()), z(params["z"].c_str());
-    coord = UniversalCoord(x,y,z);
+        orientation = Quatf(ow, ox, oy, oz);
+        
+        break;
+    case Relative:
+        if (params["dist"] != "") {
+            sscanf(params["dist"].c_str(), "%lf", &distance);
+        }
+        if (params["long"] != "") {
+            sscanf(params["long"].c_str(), "%lf", &longitude);
+        }
+        if (params["lat"] != "") {
+            sscanf(params["lat"].c_str(), "%lf", &latitude);
+        }
+        break;
+    }
 
-    float ow, ox, oy, oz;
-    sscanf(params["ow"].c_str(), "%f", &ow);
-    sscanf(params["ox"].c_str(), "%f", &ox);
-    sscanf(params["oy"].c_str(), "%f", &oy);
-    sscanf(params["oz"].c_str(), "%f", &oz);
-
-    orientation = Quatf(ow, ox, oy, oz);
 
     if (params["fov"] != "") {
         sscanf(params["fov"].c_str(), "%f", &fieldOfView);
@@ -163,17 +194,15 @@ Url::Url(const std::string& str, CelestiaCore *core)
         trackedStr = params["track"];
     }
 
-    name = modeStr;
-    if (body1 != "") name += " " + getBodyShortName(body1);
-    if (body2 != "") name += " " + getBodyShortName(body2);
-    if (trackedStr != "") name += " -> " + getBodyShortName(trackedStr);
-    if (selectedStr != "") name += " [" + getBodyShortName(selectedStr) + "]";
+    evalName();
 }
 
-Url::Url(CelestiaCore* core) {
+Url::Url(CelestiaCore* core, UrlType type) {
     appCore = core;
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
+    
+    this->type = type;
 
     modeStr = getCoordSysName(sim->getFrame().coordSys);
     ref = sim->getFrame();
@@ -189,18 +218,29 @@ Url::Url(CelestiaCore* core) {
 
     char date_str[30];
     date = astro::Date(sim->getTime());
-    sprintf(date_str, "%04d-%02d-%02dT%02d:%02d:%05.2f",
-        date.year, date.month, date.day, date.hour, date.minute, date.seconds);
-
-    coord = sim->getObserver().getPosition();
-    urlStr += std::string("/") + date_str + "?x=" + coord.x.toString();
-    urlStr += "&y=" +  coord.y.toString();
-    urlStr += "&z=" +  coord.z.toString();
-
-    orientation = sim->getObserver().getOrientation();
     char buff[255];
-    sprintf(buff, "&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w, orientation.x, orientation.y, orientation.z);
-    urlStr += buff;
+    
+    switch (type) {
+    case Absolute:    
+        sprintf(date_str, "%04d-%02d-%02dT%02d:%02d:%05.2f",
+            date.year, date.month, date.day, date.hour, date.minute, date.seconds);
+
+        coord = sim->getObserver().getPosition();
+        urlStr += std::string("/") + date_str + "?x=" + coord.x.toString();
+        urlStr += "&y=" +  coord.y.toString();
+        urlStr += "&z=" +  coord.z.toString();
+        
+        orientation = sim->getObserver().getOrientation();
+        sprintf(buff, "&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w, orientation.x, orientation.y, orientation.z);
+        urlStr += buff;
+        break;
+    case Relative:   
+        sim->getSelectionLongLat(distance, longitude, latitude);
+        sprintf(buff, "dist=%f&long=%f&lat=%f", distance, longitude, latitude);
+        urlStr += std::string("/?") + buff;
+        break;
+    }
+        
 
     tracked = sim->getTrackedObject();
     trackedStr = getSelectionName(tracked);
@@ -218,12 +258,7 @@ Url::Url(CelestiaCore* core) {
         timeScale, renderFlags, labelMode);
     urlStr += buff; 
 
-    name = modeStr;
-    if (body1 != "") name += " " + getBodyShortName(body1);
-    if (body2 != "") name += " " + getBodyShortName(body2);
-    if (trackedStr != "") name += " -> " + getBodyShortName(trackedStr);
-    if (selectedStr != "") name += " [" + getBodyShortName(selectedStr) + "]";
-
+    evalName();
 }
 
 std::string Url::getAsString() const {
@@ -232,6 +267,29 @@ std::string Url::getAsString() const {
 
 std::string Url::getName() const {
     return name;
+}
+
+void Url::evalName() {
+    switch(type) {
+    case Absolute:
+        name = modeStr;
+        if (body1 != "") name += " " + getBodyShortName(body1);
+        if (body2 != "") name += " " + getBodyShortName(body2);
+        if (trackedStr != "") name += " -> " + getBodyShortName(trackedStr);
+        if (selectedStr != "") name += " [" + getBodyShortName(selectedStr) + "]";
+        break;
+    case Relative:
+        if (selectedStr != "") name = getBodyShortName(selectedStr) + " ";
+        char buff[50];
+        double lo = longitude, la = latitude;
+        char los = 'E';
+        char las = 'N';
+        if (lo < 0) { lo = -lo; los = 'W'; }
+        if (la < 0) { la = -la; las = 'S'; }
+        sprintf(buff, "(%.1lf°%c, %.1lf°%c)", lo, los, la, las);
+        name += buff;
+        break;
+    }
 }
 
 std::string Url::getBodyShortName(const std::string& body) const {
@@ -322,11 +380,8 @@ void Url::goTo()
     Renderer *renderer = appCore->getRenderer();
     std::string::size_type pos;
 
-    sim->setTime((double) date);
     sim->update(0.0);
     sim->setFrame(ref);
-    sim->setObserverPosition(coord);
-    sim->setObserverOrientation(orientation);
     renderer->setFieldOfView(fieldOfView);
     sim->setTimeScale(timeScale);
     renderer->setRenderFlags(renderFlags);
@@ -350,6 +405,16 @@ void Url::goTo()
         sim->setTrackedObject(sel);
     }
 
+    switch(type) {
+    case Absolute:
+        sim->setTime((double) date);
+        sim->setObserverPosition(coord);
+        sim->setObserverOrientation(orientation);
+        break;
+    case Relative:
+        sim->gotoSelectionLongLat(0, astro::kilometersToLightYears(distance), longitude * PI / 180, latitude * PI / 180, Vec3f(0, 1, 0));
+        break;
+    }
 }
 
 Url::~Url()

@@ -26,21 +26,28 @@ class CelestiaCore;
 class Url
 {
 public:
+    enum UrlType {
+        Absolute = 0,
+        Relative = 1
+    };
+    
+    Url();
+    
     // parses str
     Url(const std::string& str, CelestiaCore *core);
     // current url of appCore
-    Url(CelestiaCore* appCore);
+    Url(CelestiaCore* appCore, UrlType type = Absolute);
     ~Url();
 
     std::string getAsString() const;
     std::string getName() const;
     void goTo();
 
+    
 private:
     std::string urlStr, name;
     std::string modeStr;
     std::string body1, body2, selectedStr, trackedStr;
-
 
     CelestiaCore *appCore;
 
@@ -50,13 +57,10 @@ private:
 
     astro::CoordinateSystem mode;
     int nbBodies;
-    UniversalCoord coord;
-    Quatf orientation;
     float fieldOfView;
     float timeScale;
     int renderFlags;
     int labelMode;
-    astro::Date date;
 
     std::map<std::string, std::string> parseUrlParams(const std::string& url) const;
     std::string getCoordSysName(astro::CoordinateSystem mode) const;
@@ -65,7 +69,17 @@ private:
     static std::string decode_string(const std::string& str);
 
     bool fromString;
-
+    UrlType type;
+    
+    void evalName();
+    
+    // Variables specific to Global Urls
+    UniversalCoord coord;
+    astro::Date date;
+    Quatf orientation;
+    
+    // Variables specific to Relative Urls
+    double distance, longitude, latitude;
 };
 
 #endif
