@@ -17,7 +17,7 @@ using namespace std;
 
 static TextureManager* textureManager = NULL;
 
-static char *directories[]=
+static const char *directories[]=
 {
     "/lores/",
     "/medres/",
