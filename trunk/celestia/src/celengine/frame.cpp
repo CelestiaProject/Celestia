@@ -69,7 +69,7 @@ RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
                 m = Mat3d(v, u, lookDir);
             }
         default:
-            break;
+            return xform;
         }
 
         Point3d p = (Point3d) xform.translation * m;
@@ -97,7 +97,7 @@ RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
             }
             break;
         default:
-            break;
+            return xform;
         }
 
         Point3d p = (Point3d) xform.translation * m;
@@ -173,7 +173,7 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
             }
 
         default:
-            break;
+            return xform;
         }
 
         Vec3d v = (xform.translation - origin) * m.transpose();
@@ -202,7 +202,7 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
             break;
 
         default:
-            break;
+            return xform;
         }
 
         Vec3d v = (xform.translation - origin) * m.transpose();
