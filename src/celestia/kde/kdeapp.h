@@ -150,6 +150,7 @@ public slots:
     void slotCopyUrl();
     void slotGoTo();
     void slotGoToLongLat();
+    void slotGoToSurface();
 
     void slotShowBookmarkBar();
 
