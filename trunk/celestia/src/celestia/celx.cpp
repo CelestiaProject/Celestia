@@ -4434,6 +4434,7 @@ static int celestia_takescreenshot(lua_State* l)
         int viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
 
+#ifndef MACOSX
         if (strncmp(filetype, "jpg", 3) == 0)
         {
             string filepath = path + filenamestem + ".jpg";
@@ -4448,6 +4449,7 @@ static int celestia_takescreenshot(lua_State* l)
                                            viewport[0], viewport[1],
                                            viewport[2], viewport[3]);
         }
+#endif
         lua_pushboolean(l, success);
     }
     else
