@@ -112,7 +112,6 @@ CelestiaCore::CelestiaCore() :
     runningScript(NULL),
     execEnv(NULL),
     timeZoneBias(0),
-    timeZone(NULL),
     showFPSCounter(false),
     nFrames(0),
     fps(0.0),
@@ -693,6 +692,10 @@ void CelestiaCore::charEntered(char c)
             renderer->setAmbientLightLevel(1.0f);
         break;
 
+    case '*':
+        sim->getObserver().setOrientation(Quatf(1));
+        break;
+
     case '~':
         editMode = !editMode;
         break;
@@ -1064,15 +1067,13 @@ void CelestiaCore::renderOverlay()
         // Time and date
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(width - (timeZone ? 11 + strlen(timeZone) : 11) * emWidth, height - fontHeight, 0);
+        glTranslatef(width - (11 + timeZoneName.length()) * emWidth,
+                     height - fontHeight, 0);
         overlay->beginText();
         *overlay << astro::Date(sim->getTime() + 
                                 astro::secondsToJulianDate(timeZoneBias));
-	if (timeZone)
-	{
-	    *overlay << " " << timeZone;
-	}
-	*overlay << '\n';
+        *overlay << " " << timeZoneName << '\n';
+
         if (paused)
         {
             glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -1634,15 +1635,15 @@ void CelestiaCore::setTimeZoneBias(int bias)
 }
 
 
-char *CelestiaCore::getTimeZone() const
+string CelestiaCore::getTimeZoneName() const
 {
-    return timeZone;
+    return timeZoneName;
 }
 
 
-void CelestiaCore::setTimeZone(char *zone)
+void CelestiaCore::setTimeZoneName(const string& zone)
 {
-    timeZone = zone;
+    timeZoneName = zone;
 }
 
 

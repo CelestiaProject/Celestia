@@ -128,8 +128,8 @@ class CelestiaCore
 
     int getTimeZoneBias() const;
     void setTimeZoneBias(int);
-    char *getTimeZone() const;
-    void setTimeZone(char *);
+    std::string getTimeZoneName() const;
+    void setTimeZoneName(const std::string&);
     int getTextEnterMode() const;
 
     void initMovieCapture(MovieCapture*);
@@ -192,8 +192,8 @@ class CelestiaCore
     Execution* runningScript;
     ExecutionEnvironment* execEnv;
 
-    int timeZoneBias;      // diff in seconds between local time and GMT
-    char *timeZone;	   // Name of the local TimeZone
+    int timeZoneBias;              // Diff in secs between local time and GMT
+    std:: string timeZoneName;	   // Name of the current time zone
 
     // Frame rate counter variables
     bool showFPSCounter;
