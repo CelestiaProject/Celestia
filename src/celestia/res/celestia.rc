@@ -143,7 +143,7 @@ CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
-    CTEXT           "Celestia 1.2.5",IDC_STATIC,6,7,297,9
+    CTEXT           "Celestia 1.2.6",IDC_STATIC,6,7,297,9
     CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
                     IDC_STATIC,6,53,297,9
@@ -563,8 +563,8 @@ IDI_ROOTFOLDER          ICON    DISCARDABLE     "Rootfolder.ico"
 
 IDR_ACCELERATORS ACCELERATORS DISCARDABLE 
 BEGIN
-    "F",            ID_NAVIGATION_FOLLOW,   VIRTKEY, CONTROL, NOINVERT
-    "G",            ID_NAVIGATION_GOTO,     VIRTKEY, CONTROL, NOINVERT
+//    "F",            ID_NAVIGATION_FOLLOW,   VIRTKEY, CONTROL, NOINVERT
+//    "G",            ID_NAVIGATION_GOTO,     VIRTKEY, CONTROL, NOINVERT
     "H",            ID_NAVIGATION_HOME,     VIRTKEY, CONTROL, NOINVERT
     "O",            ID_NAVIGATION_SELECT,   VIRTKEY, CONTROL, NOINVERT
     VK_F4,          ID_FILE_EXIT,           VIRTKEY, ALT, NOINVERT
@@ -638,10 +638,10 @@ IDB_CLOCK               BITMAP  DISCARDABLE     "clock.bmp"
 // String Table
 //
 
-STRINGTABLE DISCARDABLE 
-BEGIN
-    ID_NAVIGATION_FOLLOW    "Ctrl+F"
-END
+//STRINGTABLE DISCARDABLE 
+//BEGIN
+//    ID_NAVIGATION_FOLLOW    "Ctrl+F"
+//END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
