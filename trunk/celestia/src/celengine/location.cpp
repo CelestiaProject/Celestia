@@ -16,6 +16,7 @@ using namespace std;
 Location::Location() :
     position(0.0f, 0.0f, 0.0f),
     size(0.0f),
+    importance(-1.0f),
     infoURL(NULL)
 {
 }
@@ -60,6 +61,18 @@ float Location::getSize() const
 void Location::setSize(float _size)
 {
     size = _size;
+}
+
+
+float Location::getImportance() const
+{
+    return importance;
+}
+
+
+void Location::setImportance(float _importance)
+{
+    importance = _importance;
 }
 
 

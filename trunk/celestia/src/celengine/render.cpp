@@ -65,6 +65,9 @@ static const float RenderDistance       = 50.0f;
 // a label for it.  This minimizes label clutter.
 static const float MinOrbitSizeForLabel = 20.0f;
 
+// The minimum apparent size of a surface feature in pixels before we display
+// a label for it.
+static const float MinFeatureSizeForLabel = 20.0f;
 
 // Static meshes and textures used by all instances of Simulation
 
@@ -135,6 +138,7 @@ Renderer::Renderer() :
     useMinMaxBlending(false),
     textureResolution(medres),
     minOrbitSize(MinOrbitSizeForLabel),
+    minFeatureSize(MinFeatureSizeForLabel),
     distanceLimit(1.0e6f)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
@@ -605,6 +609,18 @@ float Renderer::getAmbientLightLevel() const
 void Renderer::setAmbientLightLevel(float level)
 {
     ambientLightLevel = level;
+}
+
+
+float Renderer::getMinimumFeatureSize() const
+{
+    return minFeatureSize;
+}
+
+
+void Renderer::setMinimumFeatureSize(float pixels)
+{
+    minFeatureSize = pixels;
 }
 
 
@@ -3245,6 +3261,14 @@ void Renderer::renderLocations(const vector<Location*>& locations,
         Point3f wpos(position.x + off_t.x * 1.01f,
                      position.y + off_t.y * 1.01f,
                      position.z + off_t.z * 1.01f);
+
+        float effSize = (*iter)->getImportance();
+        if (effSize < 0.0f)
+            effSize = (*iter)->getSize();
+
+        if (effSize / (wpos.distanceFromOrigin() * pixelSize) < minFeatureSize)
+            continue;
+
         float t = 0.0f;
         bool hit = testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f),
                                           wpos - Point3f(0.0f, 0.0f, 0.0f)),
@@ -3677,7 +3701,7 @@ void Renderer::renderObject(Point3f pos,
                     *context);
     }
 
-    if (obj.locations != NULL)
+    if (obj.locations != NULL && (labelMode & LocationLabels) != 0)
         renderLocations(*obj.locations, pos, obj.orientation, radius);
 
     glPopMatrix();
