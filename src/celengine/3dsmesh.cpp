@@ -21,10 +21,11 @@ using namespace std;
 
 
 static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
-                                       const M3DScene& scene);
+                                       const M3DScene& scene,
+                                       const string& texturePath);
 static int compareVertexLists(VertexList*, VertexList*);
 
-Mesh3DS::Mesh3DS(const M3DScene& scene)
+Mesh3DS::Mesh3DS(const M3DScene& scene, const string& texturePath)
 {
     for (unsigned int i = 0; i < scene.getModelCount(); i++)
     {
@@ -37,7 +38,7 @@ Mesh3DS::Mesh3DS(const M3DScene& scene)
                 if (mesh != NULL)
                 {
                     vertexLists.insert(vertexLists.end(),
-                                       convertToVertexList(*mesh, scene));
+                                       convertToVertexList(*mesh, scene, texturePath));
                 }
             }
         }
@@ -206,7 +207,8 @@ void Mesh3DS::normalize()
 
 
 static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
-                                       const M3DScene& scene)
+                                       const M3DScene& scene,
+                                       const string& texturePath)
 {
     int nFaces = mesh.getFaceCount();
     int nVertices = mesh.getVertexCount();
@@ -360,7 +362,7 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
 
                     if (material->getTextureMap() != "")
                     {
-                        ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), "", Texture::WrapTexture));
+                        ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texturePath, Texture::WrapTexture));
                         vl->setTexture(tex);
                     }
 

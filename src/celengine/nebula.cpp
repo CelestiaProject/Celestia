@@ -39,16 +39,17 @@ void Nebula::setMesh(ResourceHandle _mesh)
 }
 
 
-bool Nebula::load(AssociativeArray* params)
+bool Nebula::load(AssociativeArray* params, const string& resPath)
 {
     string mesh;
     if (params->getString("Mesh", mesh))
     {
-        ResourceHandle meshHandle = GetMeshManager()->getHandle(MeshInfo(mesh));
+        ResourceHandle meshHandle =
+            GetMeshManager()->getHandle(MeshInfo(mesh, resPath));
         setMesh(meshHandle);
     }
     
-    return DeepSkyObject::load(params);
+    return DeepSkyObject::load(params, resPath);
 }
 
 

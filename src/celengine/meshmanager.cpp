@@ -46,7 +46,10 @@ string MeshInfo::resolve(const string& baseDir)
         // cout << "Resolve: testing [" << filename << "]\n";
         ifstream in(filename.c_str());
         if (in.good())
+        {
+            resolvedToPath = true;
             return filename;
+        }
     }
 
     return baseDir + "/" + source;
@@ -64,7 +67,10 @@ Mesh* MeshInfo::load(const string& filename)
         M3DScene* scene = Read3DSFile(filename);
         if (scene != NULL)
         {
-            mesh3 = new Mesh3DS(*scene);
+            if (resolvedToPath)
+                mesh3 = new Mesh3DS(*scene, path);
+            else
+                mesh3 = new Mesh3DS(*scene, "");
             mesh3->normalize();
             delete scene;
             return mesh3;

@@ -21,10 +21,11 @@ class MeshInfo : public ResourceInfo<Mesh>
  public:
     std::string source;
     std::string path;
+    bool resolvedToPath;
 
     MeshInfo(const std::string _source,
              const std::string _path = "") :
-        source(_source), path(_path) {};
+        source(_source), path(_path), resolvedToPath(false) {};
 
     virtual std::string resolve(const std::string&);
     virtual Mesh* load(const std::string&);
