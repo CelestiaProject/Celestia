@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
+#include <process.h>
 #include <time.h>
 #include <windows.h>
 #include <commctrl.h>
@@ -618,7 +619,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
         AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Info");
+        AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
 
         const PlanetarySystem* satellites = sel.body->getSatellites();
         if (satellites != NULL && satellites->getSystemSize() != 0)
@@ -634,7 +635,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
         AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Info");
+        AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
 
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
@@ -671,6 +672,40 @@ void ShowSelectionInfo(const Selection& sel)
         cout << "Orientation: " << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
     }
 }
+
+
+// This still needs a lot of work . . .
+// TODO: spawn isn't the best way to launch IE--we don't want to start a new
+//       process every time.
+// TODO: the location of IE is assumed to be c:\program files\internet explorer
+// TODO: get rid of fixed urls
+void ShowWWWInfo(const Selection& sel)
+{
+    string url;
+    if (sel.body != NULL)
+    {
+        string name = sel.body->getName();
+        for (int i = 0; i < name.size(); i++)
+            name[i] = tolower(name[i]);
+
+        url = string("http://www.nineplanets.org/") + name + ".html";
+    }
+    else if (sel.star != NULL)
+    {
+        char name[32];
+        if ((sel.star->getCatalogNumber() & 0xf0000000) == 0)
+            sprintf(name, "HD%d", sel.star->getCatalogNumber());
+        else
+            sprintf(name, "HIP%d", sel.star->getCatalogNumber() & ~0xf0000000);
+
+        url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
+    }
+
+    char* command = "c:\\program files\\internet explorer\\iexplore";
+
+    _spawnl(_P_NOWAIT, command, "iexplore", url.c_str(), NULL);
+}
+
 
 void handleKey(WPARAM key, bool down)
 {
@@ -785,7 +820,7 @@ void handleKeyPress(int c)
         break;
 
     case 'N':
-        ToggleLabelState(ID_RENDER_SHOWPLANETLABELS, Renderer::PlanetLabels);
+        ToggleLabelState(ID_RENDER_SHOWPLANETLABELS, Renderer::MajorPlanetLabels);
         break;
 
     case 'O':
@@ -1012,7 +1047,6 @@ void RenderOverlay()
     if (hudDetail > 0)
     {
         float fov = renderer->getFieldOfView();
-        // fov = ((int) (fov * 1000)) / 1000.0f;
 
         Simulation::ObserverMode mode = sim->getObserverMode();
         char* modeName = "";
@@ -1648,7 +1682,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             }
             break;
         case ID_RENDER_SHOWPLANETLABELS:
-            ToggleLabelState(ID_RENDER_SHOWPLANETLABELS, Renderer::PlanetLabels);
+            ToggleLabelState(ID_RENDER_SHOWPLANETLABELS, Renderer::MajorPlanetLabels);
+            break;
+        case ID_RENDER_SHOWMINORPLANETLABELS:
+            ToggleLabelState(ID_RENDER_SHOWMINORPLANETLABELS, Renderer::MinorPlanetLabels);
             break;
         case ID_RENDER_SHOWSTARLABELS:
             ToggleLabelState(ID_RENDER_SHOWSTARLABELS, Renderer::StarLabels);
@@ -1742,6 +1779,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_HELP_LICENSE:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_LICENSE), hWnd, LicenseProc);
+            break;
+
+        case ID_INFO:
+            ShowWWWInfo(sim->getSelection());
             break;
 
         case ID_FILE_EXIT:
