@@ -702,6 +702,106 @@ Selection Universe::pick(const UniversalCoord& origin,
 }
 
 
+// Search by name for an immediate child of the specified object.
+Selection Universe::findChildObject(const Selection& sel,
+                                    const string& name) const
+{
+    switch (sel.getType())
+    {
+    case Selection::Type_Star:
+        {
+            SolarSystem* sys = getSolarSystem(sel.star());
+            if (sys != NULL)
+            {
+                PlanetarySystem* planets = sys->getPlanets();
+                if (planets != NULL)
+                    return Selection(planets->find(name, false));
+            }
+        }
+        break;
+
+    case Selection::Type_Body:
+        {
+            // First, search for a satellite
+            PlanetarySystem* sats = sel.body()->getSatellites();
+            if (sats != NULL)
+            {
+                Body* body = sats->find(name, false);
+                if (body != NULL)
+                    return Selection(body);
+            }
+
+            // If a satellite wasn't found, check this object's locations
+            Location* loc = sel.body()->findLocation(name);
+            if (loc != NULL)
+                return Selection(loc);
+        }
+        break;
+
+    case Selection::Type_Location:
+        // Locations have no children
+        break;
+
+    case Selection::Type_DeepSky:
+        // Deep sky objects have no children
+        break;
+
+    default:
+        break;
+    }
+
+    return Selection();
+}
+
+
+// Search for a name within an object's context.  For stars, planets (bodies),
+// and locations, the context includes all bodies in the associated solar
+// system.  For locations and planets, the context additionally includes
+// sibling or child locations, respectively.
+Selection Universe::findObjectInContext(const Selection& sel,
+                                        const string& name) const
+{
+    Body* contextBody = NULL;
+
+    switch (sel.getType())
+    {
+    case Selection::Type_Body:
+        contextBody = sel.body();
+        break;
+
+    case Selection::Type_Location:
+        contextBody = sel.location()->getParentBody();
+        break;
+
+    default:
+        break;
+    }
+
+    // First, search for bodies . . .
+    SolarSystem* sys = getSolarSystem(sel);
+    if (sys != NULL)
+    {
+        PlanetarySystem* planets = sys->getPlanets();
+        if (planets != NULL)
+        {
+            Body* body = planets->find(name, true);
+            if (body != NULL)
+                return Selection(body);
+        }
+    }
+
+    // . . . and then locations.
+    if (contextBody != NULL)
+    {
+        Location* loc = contextBody->findLocation(name);
+        if (loc != NULL)
+            return Selection(loc);
+    }
+
+    return Selection();
+}
+
+
 // Select an object by name, with the following priority:
 //   1. Try to look up the name in the star catalog
 //   2. Search the deep sky catalog for a matching name.
@@ -752,37 +852,15 @@ Selection Universe::findPath(const string& s,
 {
     string::size_type pos = s.find('/', 0);
 
+    // No delimiter found--just do a normal find.
     if (pos == string::npos)
         return find(s, solarSystems, nSolarSystems);
 
+    // Find the base object
     string base(s, 0, pos);
     Selection sel = find(base, solarSystems, nSolarSystems);
-    if (sel.empty())
-        return sel;
 
-    if (sel.getType() == Selection::Type_DeepSky)
-        return Selection();
-
-    const PlanetarySystem* worlds = NULL;
-    if (sel.getType() == Selection::Type_Body)
-    {
-        worlds = sel.body()->getSatellites();
-    }
-    else if (sel.getType() == Selection::Type_Star)
-    {
-        SolarSystem* ssys = getSolarSystem(sel.star());
-        if (ssys != NULL)
-            worlds = ssys->getPlanets();
-    }
-    else if (sel.getType() == Selection::Type_Location)
-    {
-        if (sel.location()->getParentBody() != NULL)
-        {
-            worlds = sel.location()->getParentBody()->getSatellites();
-        }
-    }
-
-    while (worlds != NULL)
+    while (!sel.empty() && pos != string::npos)
     {
         string::size_type nextPos = s.find('/', pos + 1);
         string::size_type len;
@@ -790,37 +868,16 @@ Selection Universe::findPath(const string& s,
             len = s.size() - pos - 1;
         else
             len = nextPos - pos - 1;
-
         string name = string(s, pos + 1, len);
 
-        Body* body = worlds->find(name);
-        if (body == NULL)
-        {
-            if (nextPos == string::npos)
-            {
-                if (worlds->getPrimaryBody() != NULL)
-                {
-                    Location* loc =
-                        worlds->getPrimaryBody()->findLocation(name);
-                    if (loc != NULL)
-                        return Selection(loc);
-                }
-            }
-            return Selection();
-        }
-        else if (nextPos == string::npos)
-        {
-            return Selection(body);
-        }
-        else
-        {
-            worlds = body->getSatellites();
-            pos = nextPos;
-        }
+        sel = findChildObject(sel, name);
+
+        pos = nextPos;
     }
 
-    return Selection();
+    return sel;
 }
+
 
 std::vector<std::string> Universe::getCompletion(const string& s,
                          PlanetarySystem** solarSystems,
