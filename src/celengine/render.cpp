@@ -277,8 +277,17 @@ bool Renderer::init(int winWidth, int winHeight)
         glareTex->bindName();
 
         shadowTex = CreateProceduralTexture(256, 256, GL_RGB, ShadowTextureEval);
-        shadowTex->setMaxMipMapLevel(3);
-        shadowTex->bindName();
+        // Max mipmap level doesn't work reliably on all graphics
+        // cards.  In particular, Rage 128 and TNT cards resort to software
+        // rendering when this feature is enabled.  The only workaround is to
+        // disable mipmapping completely unless texture border clamping is
+        // supported, which solves the problem much more elegantly than all
+        // the mipmap level nonsense.
+        // shadowTex->setMaxMipMapLevel(3);
+        bool clampToBorderSupported = ExtensionSupported("GL_ARB_texture_border_clamp");
+        uint32 texFlags = clampToBorderSupported ? Texture::BorderClamp : Texture::NoMipMaps;
+        shadowTex->setBorderColor(Color::White);
+        shadowTex->bindName(texFlags);
 
         // Create the eclipse shadow textures
         {
@@ -289,8 +298,9 @@ bool Renderer::init(int winWidth, int winHeight)
                     CreateProceduralTexture(128, 128, GL_RGB, func);
                 if (eclipseShadowTextures[i] != NULL)
                 {
-                    eclipseShadowTextures[i]->setMaxMipMapLevel(2);
-                    eclipseShadowTextures[i]->bindName();
+                    // eclipseShadowTextures[i]->setMaxMipMapLevel(2);
+                    eclipseShadowTextures[i]->setBorderColor(Color::White);
+                    eclipseShadowTextures[i]->bindName(texFlags);
                 }
             }
         }
