@@ -118,7 +118,7 @@ class Renderer
         float discSizeInPixels;
         float appMag;
 
-        bool operator<(const _RenderListEntry& r)
+        bool operator<(const _RenderListEntry& r) const
         {
             return distance < r.distance;
         }
@@ -200,10 +200,6 @@ class Renderer
     bool useRegisterCombiners;
     bool useCubeMaps;
     bool useCompressedTextures;
-
- public:
-    friend bool operator<(const Renderer::RenderListEntry&,
-                          const Renderer::RenderListEntry&);
 };
 
 

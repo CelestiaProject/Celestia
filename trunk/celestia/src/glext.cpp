@@ -109,6 +109,7 @@ bool InitGLExtensions(void)
 void InitExtMultiTexture()
 {
 #ifndef GL_ARB_multitexture
+#ifdef _WIN32
     glMultiTexCoord2iARB =
         (PFNGLMULTITEXCOORD2IARBPROC) wglGetProcAddress("glMultiTexCoord2iARB");
     glMultiTexCoord2fARB =
@@ -121,13 +122,15 @@ void InitExtMultiTexture()
         (PFNGLACTIVETEXTUREARBPROC) wglGetProcAddress("glActiveTextureARB");
     glClientActiveTextureARB =
         (PFNGLCLIENTACTIVETEXTUREARBPROC) wglGetProcAddress("glClientActiveTextureARB");
-#endif
+#endif // _WIN32
+#endif // GL_ARB_multitexture
 }
 
 
 // ARB_texture_compression
 void InitExtTextureCompression()
 {
+#ifdef _WIN32
     glCompressedTexImage3DARB =
         (PFNGLCOMPRESSEDTEXIMAGE3DARBPROC)
         wglGetProcAddress("glCompressedTexImage3DARB");
@@ -146,12 +149,14 @@ void InitExtTextureCompression()
     glCompressedTexSubImage1DARB =
         (PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC)
         wglGetProcAddress("glCompressedTexSubImage1DARB");
+#endif // _WIN32
 }
 
 
 // NV_register_combiners
 void InitExtRegisterCombiners()
 {
+#ifdef _WIN32
   /* Retrieve all NV_register_combiners routines. */
   glCombinerParameterfvNV =
     (PFNGLCOMBINERPARAMETERFVNVPROC)
@@ -192,21 +197,26 @@ void InitExtRegisterCombiners()
   glGetFinalCombinerInputParameterivNV =
     (PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC)
     wglGetProcAddress("glGetFinalCombinerInputParameterivNV");
+#endif // _WIN32
 }
 
 
 void InitExtPalettedTexture()
 {
+#ifdef _WIN32
     // glColorTableEXT = (void *) wglGetProcAddress("glColorTableEXT");
+#endif // _WIN32
 }
 
 
 void InitExtSwapControl()
 {
+#ifdef _WIN32
     wglSwapIntervalEXT = 
         (PFNWGLSWAPINTERVALEXTPROC) wglGetProcAddress("wglSwapIntervalEXT");
     wglGetSwapIntervalEXT =
         (PFNWGLGETSWAPINTERVALEXTPROC) wglGetProcAddress("wglGetSwapIntervalEXT");
+#endif // _WIN32
 }
 
 

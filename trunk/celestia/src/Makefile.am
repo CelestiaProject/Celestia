@@ -21,7 +21,6 @@ celestia_SOURCES = \
 	filetype.cpp \
 	galaxy.cpp \
 	glext.cpp \
-	glutmain.cpp \
 	meshmanager.cpp \
 	observer.cpp \
 	orbit.cpp \
