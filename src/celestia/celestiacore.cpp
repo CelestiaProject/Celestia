@@ -2649,11 +2649,12 @@ static string starNameList(Star& star,
                 starNames += " / ";
             if (hip >= 1000000)
             {
-                uint32 tyc3 = hip / 1000000000;
-                hip -= tyc3 * 1000000000;
-                uint32 tyc2 = hip / 10000;
-                hip -= tyc2 * 10000;
-                uint32 tyc1 = hip;
+                uint32 h = hip;
+                uint32 tyc3 = h / 1000000000;
+                h -= tyc3 * 1000000000;
+                uint32 tyc2 = h / 10000;
+                h -= tyc2 * 10000;
+                uint32 tyc1 = h;
                 sprintf(numString, "TYC %u-%u-%u", tyc1, tyc2, tyc3);
                 starNames += numString;
             }
