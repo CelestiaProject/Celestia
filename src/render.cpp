@@ -856,7 +856,10 @@ void Renderer::renderPlanet(const Body& body,
         if (surface.baseTexture != "")
         {
             if (!textureManager->find(surface.baseTexture, &tex))
-                tex = textureManager->load(surface.baseTexture);
+            {
+                bool compress = ((surface.appearanceFlags & Surface::CompressBaseTexture) != 0);
+                tex = textureManager->load(surface.baseTexture, compress);
+            }
         }
 
         // If this renderer can support bump mapping then get the bump texture

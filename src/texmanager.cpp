@@ -25,12 +25,18 @@ bool TextureManager::find(const string& name, CTexture** tex)
 }
 
 
-CTexture* TextureManager::load(const string& name)
+CTexture* TextureManager::load(const string& name, bool compress)
 {
     DPRINTF("Loading texture: %s\n", name.c_str());
     CTexture* tex = LoadTextureFromFile(baseDir + "\\" + name);
+
     if (tex != NULL)
-        tex->bindName(true);
+    {
+        uint32 texFlags = CTexture::WrapTexture;
+        if (compress)
+            texFlags |= CTexture::CompressTexture;
+        tex->bindName(texFlags);
+    }
     addResource(name, (void*) tex);
  
     return tex;
@@ -43,8 +49,8 @@ CTexture* TextureManager::loadBumpMap(const string& name)
     CTexture* tex = LoadTextureFromFile(baseDir + "\\" + name);
     if (tex != NULL)
     {
-        tex->normalMap(5.0f, true);
-        tex->bindName();
+        tex->normalMap(2.5f, true);
+        tex->bindName(CTexture::WrapTexture);
     }
     addResource(name, static_cast<void*>(tex));
 
