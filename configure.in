@@ -3,18 +3,26 @@ dnl Celestia autoconf file
 dnl Process this file with autoconf to make a configure script
 dnl
 
-AC_INIT(configure.in)
+AC_INIT(acinclude.m4) dnl a source file from your sub dir
 
 dnl For KDE interface
 AC_CONFIG_AUX_DIR(admin)
 
-AM_INIT_AUTOMAKE(celestia, 1.2.5)
-AM_CONFIG_HEADER(config.h)
+dnl This ksh/zsh feature conflicts with `cd blah ; pwd`
+unset CDPATH
 
 AM_ACLOCAL_INCLUDE(macros)
 
 dnl Check system type
 AC_CANONICAL_HOST
+
+dnl Checking host/target/build systems, for make, install etc.
+AC_CANONICAL_SYSTEM
+dnl Perform program name transformation
+AC_ARG_PROGRAM
+
+AM_INIT_AUTOMAKE(celestia, 1.3.0)
+AM_CONFIG_HEADER(config.h)
 
 dnl Check for compilers.  Set CFLAGS and CXXFLAGS to null if unset, so
 dnl that these macros won't set the to default values that we don't want.
@@ -116,102 +124,82 @@ GTK_LIBS=""
 GTKGL_LIBS=""
 GTK_CFLAGS=""
 
-AC_MSG_CHECKING([whether to disable GTK.])
 AC_ARG_WITH(gtk, [  --with-gtk              Use Gtk for an enhanced GUI],
-	    enable_gtk="$withval";enable_gtk_by_default="no", enable_gtk="yes";enable_gtk_by_default="yes")
+	    enable_gtk="$withval";gtk_by_default="no", enable_gtk="no";gtk_by_default="yes")
 
 AC_ARG_WITH(kde, [  --with-kde              Use KDE for an enhanced GUI],
-	    enable_kde="$withval";enable_kde_by_default="no", enable_kde="yes";enable_kde_by_default="yes")
+	    enable_kde="$withval";kde_by_default="no", enable_kde="yes";kde_by_default="yes")
 
 
-dnl disables the one that was not explicitly enabled.
-dnl enables gtk by default
-
-if test "$enable_kde_by_default" == "yes" -a  "$enable_gtk" == "yes" ; then
-	enable_kde="no"
-	enable_kde_by_default="no"
+AC_MSG_CHECKING([whether to enable GLUT])
+dnl if gtk and kde are explicitly disabled, enable GLUT
+if test "$enable_gtk" == "no" -a "$gtk_by_default" == "no" -a "$enable_kde" == "no" -a "$kde_by_default" == "no"; then
+	enable_glut="yes"
+	AC_MSG_RESULT(yes)
 else
-	if test "$enable_gtk_by_default" == "yes" -a  "$enable_kde" == "yes" ; then
-		enable_gtk="no"
-		enable_gtk_by_default="no"
-	fi 
+	AC_MSG_RESULT(no)
 fi
+
+dnl if both kde and gtk are explicitly enabled, disable gtk
+if test "$enable_gtk" != "no" -a "$gtk_by_default" == "no" -a  "$enable_kde" != "no" -a "$kde_by_default" == "no"; then
+	enable_gtk="no"
+fi
+
+dnl if gtk is explicitly enabled, disable kde
+if test "$enable_gtk" != "no" -a "$gtk_by_default" == "no" -a "$kde_by_default" == "yes" ; then
+	enable_kde="no"
+fi
+
+dnl if kde is explicitly disabled, enable gtk
+if test "$enable_gtk" == "no" -a "$gtk_by_default" == "yes" -a "$enable_kde" == "no" -a "$kde_by_default" == "no" ; then
+	enable_gtk="yes"
+fi
+
+
+AC_MSG_CHECKING([interface to build])
+if test "$enable_kde" != "no" ; then
+	AC_MSG_RESULT(KDE)
+fi
+if test "$enable_gtk" != "no" ; then
+	AC_MSG_RESULT(GTK)
+fi
+if test "$enable_glut" == "yes" ; then
+	AC_MSG_RESULT(GLUT)
+fi
+
 
 dnl
 dnl GTK
 dnl
-    
+
+AC_MSG_CHECKING([whether to disable GTK.])
 if test "$enable_gtk" == "yes" ; then
-	enable_kde="no"
 	AC_MSG_RESULT(no, so try to find GTK)
 	AM_PATH_GTK(1.2.0,enable_gtk="yes",enable_gtk="no")
-	
+
 	dnl Complain only if the user insisted we do GTK
 	if test "$enable_gtk_by_default" == "no" -a "$enable_gtk" == "no"; then
-		AC_MSG_ERROR(Unable to find GTK)
+		AC_MSG_RESULT(Unable to find GTK, building GLUT only version)
+                enable_glut="yes"
 	fi
 else
 	AC_MSG_RESULT(yes)
 fi
 
-if test "$enable_gtk" == "yes" ; then
-	OLD_LIBS="$LIBS"
-	LIBS="$LIBS $GTK_LIBS -lGL"
-	AC_CHECK_LIB(gtkgl,gdk_gl_query,,enable_gtk="no")
-	
-	dnl Complain only if the user insisted we do GTK
-	if test "$enable_gtk_by_default" == "no" -a "$enable_gtk" == "no"; then
-		AC_MSG_ERROR(Unable to find gtkglarea)
-	fi
-fi
-
-if test "$enable_gtk" == "yes" ; then
-	LIBS="$OLD_LIBS"
-	GNOME_INIT
-	GNOME_COMPILE_WARNINGS
-	GNOME_X_CHECKS
-	GTKGL_LIBS=-lgtkgl
-else
-	if test "$enable_gtk_by_default" == "yes" ; then
-		AC_MSG_WARN(Disabled GTK GUI because of missing necessary packages)
-	fi
-
-	dnl Check for X11.
-	AC_PATH_XTRA
-
-	LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm $X_EXTRA_LIBS"
-	CFLAGS="$CFLAGS $X_CFLAGS"
-fi
-AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" == "yes")
- 
-
-dnl
-dnl KDE
-dnl
-
-if test "$enable_kde" == "yes" ; then
-dnl  KDE_SET_PREFIX
-  AC_CHECK_COMPILERS
-  AC_ENABLE_SHARED(yes)
-  AC_ENABLE_STATIC(no)
-
-  KDE_PROG_LIBTOOL
-dnl  AM_KDE_WITH_NLS
-
-  KDE_USE_QT(3)
-  AC_PATH_KDE
-fi
-AM_CONDITIONAL(ENABLE_KDE, test "$enable_kde" == "yes")
+AC_CHECK_COMPILERS
 
 
-CFLAGS="$CFLAGS $CELESTIAFLAGS $CELESTIA_CFLAGS $GTK_CFLAGS $GNOME_CFLAGS"
-CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_CXXFLAGS $GTK_CFLAGS $GNOME_CFLAGS $GNOME_INCLUDEDIR"
-LIBS="$LIBS $CELESTIALIBS $GTK_LIBS $GNOME_LIBS $GNOMEUI_LIBS $GTKGL_LIBS"
-LDFLAGS="$LDFLAGS $GNOME_LIBDIR"
+AC_PATH_XTRA
+CFLAGS="$CFLAGS $X_CFLAGS"
+CFLAGS="$CFLAGS $CELESTIAFLAGS $CELESTIA_CFLAGS"
+CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_CXXFLAGS"
+LIBS="$LIBS $CELESTIALIBS"
+LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm -lz $X_EXTRA_LIBS"
 
 dnl Check for OpenGL headers first.
 AC_CHECK_HEADERS(GL/gl.h,,AC_MSG_ERROR([[No gl.h found.  See INSTALL file for ddetails about how to correct this problem.]]))
 
+LIBS="$LIBS -lGL"
 dnl Check for OpenGL. Taken partly from the plib sources.
 AC_CHECK_LIB(GL,glNewList)
 
@@ -223,7 +211,6 @@ fi
 
 dnl Check for GLU headers.
 AC_CHECK_HEADERS(GL/glu.h,,AC_MSG_ERROR([[No glu.h found.  See INSTALL file for details on how to correct this problem.]]))
-
 AC_CHECK_LIB(GLU,gluLookAt)
 
 if test "x$ac_cv_lib_GLU_gluLookAt" = "xno"; then
@@ -233,17 +220,70 @@ if test "x$ac_cv_lib_GLU_gluLookAt" = "xno"; then
 fi
 
 
+if test "$enable_gtk" != "no" -o "$enable_glut" == "yes" ; then
 dnl Check for GLUT headers first.
-AC_CHECK_HEADERS(GL/glut.h,,AC_MSG_ERROR([[No glut.h found.  See INSTALL file for details on correcting this problem.]]))
+	AC_CHECK_HEADERS(GL/glut.h,,AC_MSG_ERROR([[No glut.h found.  See INSTALL file for details on correcting this problem.]]))
 
 dnl Check for GLUT.
-AC_CHECK_LIB(glut, glutKeyboardUpFunc,,
-	AC_MSG_ERROR(GLUT library version >= 3.7 not found))
+	AC_CHECK_LIB(glut, glutKeyboardUpFunc,,
+		AC_MSG_ERROR(GLUT library version >= 3.7 not found))
+fi
+AM_CONDITIONAL(ENABLE_GLUT, test "$enable_glut" == "yes")
+
+if test "$enable_gtk" != "no" ; then
+	OLD_LIBS="$LIBS"
+	LIBS="$LIBS $GTK_LIBS"
+	AC_CHECK_LIB(gtkgl,gdk_gl_query,,enable_gtk="no")
+
+	dnl Complain only if the user insisted we do GTK
+	if test "$enable_gtk_by_default" == "no" -a "$enable_gtk" == "no"; then
+		AC_MSG_ERROR(Unable to find gtkglarea)
+	fi
+
+        LIBS="$OLD_LIBS"
+	GNOME_INIT
+	GNOME_COMPILE_WARNINGS
+	GNOME_X_CHECKS
+
+	GTKGL_LIBS=-lgtkgl
+
+	CFLAGS="$CFLAGS $GTK_CFLAGS $GNOME_CFLAGS"
+	CXXFLAGS="$CXXFLAGS $GTK_CFLAGS $GNOME_CFLAGS $GNOME_INCLUDEDIR"
+	LIBS="$LIBS $GTK_LIBS $GNOME_LIBS $GNOMEUI_LIBS $GTKGL_LIBS"
+	LDFLAGS="$LDFLAGS $GNOME_LIBDIR"
+else
+	if test "$enable_gtk_by_default" == "yes" ; then
+		AC_MSG_WARN(Disabled GTK GUI because of missing necessary packages)
+	fi
+
+fi
+AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" == "yes")
+
+
+dnl
+dnl KDE
+dnl
+
+if test "$enable_kde" != "no" ; then
+dnl  KDE_SET_PREFIX
+  AC_ENABLE_SHARED(yes)
+  AC_ENABLE_STATIC(no)
+
+  KDE_PROG_LIBTOOL
+dnl  AM_KDE_WITH_NLS
+
+dnl  KDE_USE_QT(3)
+  AC_PATH_KDE
+fi
+AM_CONDITIONAL(ENABLE_KDE, test "$enable_kde" == "yes")
+
+
 
 
 dnl Check for JPEG library.
 AC_CHECK_LIB(jpeg, jpeg_start_decompress,,
              AC_MSG_ERROR(jpeg library not found))
+
 
 dnl Check for PNG library.
 AC_CHECK_LIB(png, png_create_info_struct,,
@@ -292,29 +332,57 @@ fi
 AC_MSG_RESULT($enable_hipparcos)
 AM_CONDITIONAL(ENABLE_HIPPARCOS, test "x$enable_hipparcos" = "xyes")
 
-AC_OUTPUT( Makefile                  \
-           src/Makefile              \
-           src/celutil/Makefile      \
-           src/celmath/Makefile      \
-           src/cel3ds/Makefile       \
-           src/celtxf/Makefile       \
-           src/celengine/Makefile    \
-           src/celestia/Makefile     \
-           data/Makefile             \
-           extras/Makefile           \
-           textures/Makefile         \
-           textures/lores/Makefile   \
-           textures/medres/Makefile  \
-           textures/hires/Makefile   \
-           models/Makefile           \
-           shaders/Makefile          \
-           fonts/Makefile            \
-           src/celestia/res/Makefile \
-           macros/Makefile           \
-           manual/Makefile           \
-           src/celestia/kde/Makefile \
-           src/celestia/kde/data/Makefile \
-         )
+AC_ARG_WITH(lua,     [  --with-lua[=DIR]          Use Lua for Celestia Extension Language support],
+	    enable_lua="$withval", enable_lua="no")
+AC_ARG_WITH(lua-inc, [  --with-lua-includes[=DIR] Specify location of Lua headers],
+	    lua_includes="$withval", lua_includes="no")
+AC_ARG_WITH(lua-lib, [  --with-lua-libs[=DIR]     Specify location of Lua libs],
+	    lua_libs="$withval", lua_libs="no")
+
+AC_MSG_CHECKING([whether we enable Celestia Extension Language])
+if test "$enable_lua" != "no" ; then
+      CXXFLAGS="$CXXFLAGS -DCELX"
+      LDFLAGS="$LDFLAGS -llualib -llua"
+      if test "$lua_includes" != "no" ; then
+           CXXFLAGS="$CXXFLAGS -I$lua_includes"
+      fi
+      if test "$lua_libs" != "no" ; then
+           LIBS="$LIBS -L$lua_libs"
+      fi
+      AC_MSG_RESULT(yes)
+      if test "$enable_lua" != "yes" ; then
+           CXXFLAGS="$CXXFLAGS -I$enable_lua/include"
+           LIBS="$LIBS  -L$enable_lua/lib"
+      fi
+else
+      AC_MSG_RESULT(no)
+fi
+AM_CONDITIONAL(ENABLE_CELX, test "$enable_lua" != "no")
+
+
+AC_CONFIG_FILES([ Makefile ])
+AC_CONFIG_FILES([ src/Makefile ])
+AC_CONFIG_FILES([ src/celutil/Makefile ])
+AC_CONFIG_FILES([ src/celmath/Makefile ])
+AC_CONFIG_FILES([ src/cel3ds/Makefile ])
+AC_CONFIG_FILES([ src/celtxf/Makefile ])
+AC_CONFIG_FILES([ src/celengine/Makefile ])
+AC_CONFIG_FILES([ src/celestia/Makefile ])
+AC_CONFIG_FILES([ data/Makefile ])
+AC_CONFIG_FILES([ extras/Makefile ])
+AC_CONFIG_FILES([ textures/Makefile ])
+AC_CONFIG_FILES([ textures/lores/Makefile ])
+AC_CONFIG_FILES([ textures/medres/Makefile ])
+AC_CONFIG_FILES([ textures/hires/Makefile ])
+AC_CONFIG_FILES([ models/Makefile ])
+AC_CONFIG_FILES([ shaders/Makefile ])
+AC_CONFIG_FILES([ fonts/Makefile ])
+AC_CONFIG_FILES([ src/celestia/res/Makefile ])
+AC_CONFIG_FILES([ macros/Makefile ])
+AC_CONFIG_FILES([ manual/Makefile ])
+AC_CONFIG_FILES([ src/celestia/kde/Makefile ])
+AC_CONFIG_FILES([ src/celestia/kde/data/Makefile ])
+AC_OUTPUT
 
 AC_MSG_RESULT()
 AC_MSG_RESULT()

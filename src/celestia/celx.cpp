@@ -24,7 +24,7 @@
 #include "celx.h"
 #include "celestiacore.h"
 extern "C" {
-#include "lua/lualib.h"
+#include "lualib.h"
 }
 
 using namespace std;

@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 extern "C" {
-#include "lua/lua.h"
+#include "lua.h"
 }
 
 class CelestiaCore;
