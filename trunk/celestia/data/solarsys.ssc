@@ -60,9 +60,10 @@
 
 "Earth" "Sol"
 {
+	# Texture "earth8k.jpg"
 	Texture "earth.png"
 	NightTexture "earthnight.jpg"
-	# CompressTexture true    # looks bad up close with this enabled
+	# CompressTexture true
 	Color [ 0.85 0.85 1.0 ]
 	SpecularColor [ 0.5 0.5 0.55 ]
 	SpecularPower 25.0
@@ -881,13 +882,14 @@
 
 	EllipticalOrbit
 	{
-	Period            4.60
-	SemiMajorAxis     2.7678
-	Eccentricity      0.0774
-	Inclination      10.581
-	AscendingNode    80.530
-	ArgOfPericenter  73.460
-        MeanAnomaly     207.082
+	Epoch      2452600.5
+	Period            4.60014
+	SemiMajorAxis     2.7660
+	Eccentricity      0.0793
+	Inclination      10.584
+	AscendingNode    80.483
+	ArgOfPericenter  74.043
+        MeanAnomaly     232.067
 	}
 
 	RotationPeriod    9.075
@@ -900,13 +902,14 @@
 
 	EllipticalOrbit
 	{
-	Period            4.61
-	SemiMajorAxis     2.7739
-	Eccentricity      0.2323
-	Inclination      34.823
-	AscendingNode   173.237
-	ArgOfPericenter 309.824
-        MeanAnomaly     194.832
+	Epoch      2452600.5
+	Period            4.61868
+	SemiMajorAxis     2.7733
+	Eccentricity      0.2300
+	Inclination      34.846
+	AscendingNode   173.166
+	ArgOfPericenter 310.423
+        MeanAnomaly     218.057
 	}
 
 	RotationPeriod    7.811
@@ -919,13 +922,14 @@
 
 	EllipticalOrbit
 	{
-	Period            4.36
-	SemiMajorAxis     2.669
-	Eccentricity      0.2579
-	Inclination      12.97
-	AscendingNode    90.0
-	ArgOfPericenter 180.0
-        MeanAnomaly     270.0
+	Epoch      2452600.5
+	Period            4.35540
+	SemiMajorAxis     2.6669
+	Eccentricity      0.2589
+	Inclination      12.972
+	AscendingNode   170.133
+	ArgOfPericenter 247.948
+        MeanAnomaly     119.146
 	}
 
 	RotationPeriod    7.811
@@ -939,13 +943,14 @@
 
 	EllipticalOrbit
 	{
-	Period            4.36
-	SemiMajorAxis     2.3607
-	Eccentricity      0.0904
-	Inclination       7.135
-	AscendingNode   103.962
-	ArgOfPericenter 149.854
-        MeanAnomaly     138.500
+	Epoch       2452000.5
+	Period            3.62729
+	SemiMajorAxis     2.3670775
+	Eccentricity      0.089753
+	Inclination       7.1346
+	AscendingNode   103.9510
+	ArgOfPericenter 149.4585
+        MeanAnomaly     104.980
 	}
 
 	RotationPeriod    5.342
@@ -1238,6 +1243,28 @@
 	Albedo            0.04
 }
 
+"Ikeya-Zhang" "Sol" 
+{ 
+	Texture "asteroid.jpg" 
+	Mesh "roughsphere.cms"
+
+	EllipticalOrbit 
+	{ 
+	Period 367.181906
+	SemiMajorAxis 51.276792
+	Eccentricity 0.990111 
+	Inclination 28.1206
+	AscendingNode 93.3718
+	ArgOfPericenter 34.6666 
+	MeanAnomaly 0
+	Epoch 2452352.47847
+	} 
+
+	# These are all made up (copied from Halley) 
+	Radius 7.5 
+	RotationPeriod 170 
+	Albedo 0.04 
+}
 
 # Centaurs
 "Chiron" "Sol"
