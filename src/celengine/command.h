@@ -143,6 +143,28 @@ class CommandSynchronous : public InstantaneousCommand
 };
 
 
+class CommandLock : public InstantaneousCommand
+{
+ public:
+    CommandLock();
+    void process(ExecutionEnvironment&);
+
+ private:
+    int dummy;
+};
+
+
+class CommandChase : public InstantaneousCommand
+{
+ public:
+    CommandChase();
+    void process(ExecutionEnvironment&);
+
+ private:
+    int dummy;
+};
+
+
 class CommandCancel : public InstantaneousCommand
 {
  public:
@@ -297,6 +319,17 @@ class CommandSetVisibilityLimit : public InstantaneousCommand
 
  private:
     double magnitude;
+};
+
+
+class CommandSetAmbientLight : public InstantaneousCommand
+{
+ public:
+    CommandSetAmbientLight(float);
+    void process(ExecutionEnvironment&);
+
+ private:
+    float lightLevel;
 };
 
 
