@@ -2322,7 +2322,10 @@ void Renderer::renderObject(Point3f pos,
     ri.sunDir_obj = ri.sunDir_eye * planetMat;
     ri.eyeDir_obj = (Point3f(0, 0, 0) - pos) * planetMat;
     ri.eyeDir_obj.normalize();
-    ri.eyePos_obj = Point3f(-pos.x, -pos.y, -pos.z) * planetMat;
+    ri.eyePos_obj = Point3f(-pos.x / radius,
+                            -pos.y / ((1.0f - obj.oblateness) * radius),
+                            -pos.z / radius) * planetMat;
+    
     ri.orientation = cameraOrientation;
 
     ri.lod = getSphereLOD(discSizeInPixels);
