@@ -18,11 +18,33 @@
 using namespace std;
 
 
+
+class BinaryModelLoader : public ModelLoader
+{
+public:
+    BinaryModelLoader(istream& _in);
+    ~BinaryModelLoader();
+
+    virtual Model* load();
+
+private:
+    istream& in;
+};
+
+
+// Material default values
+static Color DefaultDiffuse(0.0f, 0.0f, 0.0f);
+static Color DefaultSpecular(0.0f, 0.0f, 0.0f);
+static Color DefaultEmissive(0.0f, 0.0f, 0.0f);
+static float DefaultSpecularPower = 1.0f;
+static float DefaultOpacity = 1.0f;
+
+
 /*!
 This is an approximate Backus Naur form for the contents of ASCII cmod
-files. For brevity, the categories <unsigned_int> and <float> aren't
+files. For brevity, the categories &lt;unsigned_int&gt; and &lt;float&gt; aren't
 defined here--they have the obvious definitions.
-
+\code
 <modelfile>           ::= <header> <model>
 
 <header>              ::= #celmodel__ascii
@@ -71,34 +93,11 @@ defined here--they have the obvious definitions.
                           { <unsigned_int> }
 
 <prim_group_type>     ::= trilist | tristrip | trifan |
-                          linelist | linestrip | pointlist
+                          linelist | linestrip | points
 
 <material_index>      :: <unsigned_int> | -1
+\endcode
 */
-
-
-// Material default values
-static Color DefaultDiffuse(0.0f, 0.0f, 0.0f);
-static Color DefaultSpecular(0.0f, 0.0f, 0.0f);
-static Color DefaultEmissive(0.0f, 0.0f, 0.0f);
-static float DefaultSpecularPower = 1.0f;
-static float DefaultOpacity = 1.0f;
-
-
-
-class BinaryModelLoader : public ModelLoader
-{
-public:
-    BinaryModelLoader(istream& _in);
-    ~BinaryModelLoader();
-
-    virtual Model* load();
-
-private:
-    istream& in;
-};
-
-
 class AsciiModelLoader : public ModelLoader
 {
 public:
