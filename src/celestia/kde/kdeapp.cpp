@@ -32,6 +32,8 @@
 #include <qregexp.h>
 #include <qpalette.h>
 #include <qfont.h>
+#include <qlineedit.h>
+#include <qvalidator.h> 
 
 #include <qmenubar.h>
 #include <qpopupmenu.h>
@@ -154,14 +156,8 @@ void KdeApp::openBookmarkURL(const QString& _url) {
     appCore->goToUrl(url.prettyURL().latin1());
 }
 
-QString KdeApp::currentTitle() const {
-    Url url(appCore);
-    return QString(url.getName().c_str());
-}
-
-QString KdeApp::currentURL() const {
-    Url url(appCore);
-    return QString(url.getAsString().c_str());
+Url KdeApp::currentUrl(Url::UrlType type) const {
+    return Url(appCore, type);
 }
 
 QString KdeApp::currentIcon() const {
@@ -258,7 +254,8 @@ void KdeApp::initActions()
 
     KStdAction::quit(this, SLOT(slotClose()), actionCollection());
 
-    new KAction(i18n("Go to..."), 0, ALT + Key_G, this, SLOT(slotGoTo()), actionCollection(), "go_to");
+    new KAction(i18n("Go to &URL..."), 0, ALT + Key_G, this, SLOT(slotGoTo()), actionCollection(), "go_to");
+    new KAction(i18n("Go to &Long/Lat..."), 0, ALT + Key_L, this, SLOT(slotGoToLongLat()), actionCollection(), "go_to_long_lat");
 
     backAction = new KToolBarPopupAction( i18n("&Back"), "back",
                                            KStdAccel::key(KStdAccel::Back), this, SLOT( slotBack() ),
@@ -828,6 +825,12 @@ void KdeApp::slotGoTo() {
     }
 }
 
+void KdeApp::slotGoToLongLat() {
+    LongLatDialog dlg(this, appCore);
+
+    dlg.exec();
+}
+
 void KdeApp::dragEnterEvent(QDragEnterEvent* event) {
     KURL::List urls;
     event->accept(KURLDrag::canDecode(event) && KURLDrag::decode(event, urls) && urls.first().protocol() == "cel");
@@ -876,9 +879,9 @@ void KdeApp::slotForwardActivated(int i) {
 }
 
 void KdeApp::slotCelestialBrowser() {
-    CelestialBrowser cb(this, appCore);
+    static CelestialBrowser *cb = new CelestialBrowser(this, appCore);
 
-    cb.exec(); 
+    cb->show(); 
 }
 
 void KdeApp::popupMenu(float x, float y, Selection sel) {
@@ -1055,4 +1058,101 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
     }
 }
 
+LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) : 
+   KDialogBase(parent, "long_lat", true, "Go to Long/Lat"), appCore(appCore) 
+{
+    QGrid* grid = makeGridMainWidget(3, Qt::Horizontal);
+    
+    
+    QLabel* objLab = new QLabel(i18n("Object: "), grid);
+    objLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    objEdit = new QLineEdit(grid);
+    new QLabel("", grid);
+    
+    QLabel* longLab = new QLabel(i18n("Longitude: "), grid);
+    longLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    longEdit = new QLineEdit(grid);
+    longEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    longEdit->setValidator(new QDoubleValidator(0, 180, 3, longEdit));
+    longSign = new QComboBox( grid );
+    longSign->insertItem(i18n("East", "E"));
+    longSign->insertItem(i18n("West", "W"));
+    
+    QLabel* latLab = new QLabel(i18n("Latitude: "), grid);
+    latLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    latEdit = new QLineEdit(grid);
+    latEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    latEdit->setValidator(new QDoubleValidator(0, 90, 3, latEdit));
+    latSign = new QComboBox( grid );
+    latSign->insertItem(i18n("North", "N"));
+    latSign->insertItem(i18n("South", "S"));
+    
+    QLabel* altLab = new QLabel(i18n("Altitude: "), grid);
+    altLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    altEdit = new QLineEdit(grid);
+    altEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    altEdit->setValidator(new QDoubleValidator(altEdit));
+    new QLabel(i18n("km"), grid);
+    
+    double distance, longitude, latitude;
+    appCore->getSimulation()->getSelectionLongLat(distance, longitude, latitude);
+    
+    if (longitude < 0) {
+        longitude = -longitude;
+        longSign->setCurrentItem(1);
+    }
+    if (latitude < 0) {
+        latitude = -latitude;
+        latSign->setCurrentItem(1);
+    }
+    
+    Selection selection = appCore->getSimulation()->getSelection();
+    QString objName(selection.getName().c_str());
+    objEdit->setText(objName.mid(objName.findRev('/') + 1));
+    
+    latEdit->setText(QString("%1").arg(latitude, 0, 'f', 3));
+    longEdit->setText(QString("%1").arg(longitude, 0, 'f', 3));
+    altEdit->setText(QString("%1").arg(distance - selection.radius(), 0, 'f', 0));
+
+}
+
+void LongLatDialog::slotCancel() {
+    reject();
+}
+
+void LongLatDialog::slotOk() {
+    slotApply();
+    accept();
+}
+
+void LongLatDialog::slotApply() {
+    Simulation* appSim = appCore->getSimulation();
+    Selection sel = appSim->findObjectFromPath(objEdit->text().latin1());
+    if (!sel.empty())
+    {
+        appSim->setSelection(sel);
+        appSim->follow();
+
+        double altitude = altEdit->text().toDouble();
+        if (altitude < 0.020) altitude = .020;
+        double distance = altitude + sel.radius();
+        distance = astro::kilometersToLightYears(distance);
+
+        double longitude = longEdit->text().toDouble();
+        if (longSign->currentItem() == 1) {
+            longitude = -longitude;
+        }
+
+        double latitude = latEdit->text().toDouble();
+        if (latSign->currentItem() == 1) {
+            latitude = -latitude;
+        }
+
+        appSim->gotoSelectionLongLat(5.0,
+                                distance,
+                                degToRad(longitude),
+                                degToRad(latitude),
+                                Vec3f(0, 1, 0));
+    }
+}
 

@@ -2,6 +2,7 @@
 #include <klistview.h>
 #include <kpopupmenu.h>
 #include <klocale.h>
+#include <qstatusbar.h>
 
 #include <vector>
 
@@ -35,6 +36,7 @@ CelestialBrowser::CelestialBrowser( QWidget* parent, CelestiaCore* appCore)
     
     sbrowser.setSimulation(appSim);
     radioNearest->setChecked(true);
+    statusBar()->hide();
 }
 
 /*  

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia">
+<kpartgui name="celestia" version="2">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -11,6 +11,7 @@
     <Action name="go_home" />
     <Separator />
     <Action name="go_to" />
+    <Action name="go_to_long_lat" />
     <Action name="celestialBrowser" />
   </Menu>
   <Action name="bookmarks" />
