@@ -113,6 +113,7 @@ astro::Date newTime(0.0);
 #define INFINITE_MOUSE
 static int lastX = 0;
 static int lastY = 0;
+static bool ignoreNextMoveEvent = false;
 
 static const WPARAM ID_GOTO_URL = 62000;
 
@@ -1539,6 +1540,10 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     // work recursively?
     // According to the MSDN documentation, DestroyMenu() IS recursive. Clint 11/01.
     DestroyMenu(hMenu);
+
+#ifdef INFINITE_MOUSE
+    ignoreNextMoveEvent = true;
+#endif // INFINITE_MOUSE
 }
 
 
@@ -3084,7 +3089,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 // cursor position to the center of the window.  Once the
                 // drag is complete, we'll restore the cursor position and
                 // make it visible again.
-                if (cursorVisible)
+                if (ignoreNextMoveEvent)
+                {
+                    // This hack is required because there's a move event
+                    // right after canceling a context menu by clicking
+                    // outside of it.  Because it was canceled by clicking,
+                    // the mouse button down bits are set, and the infinite
+                    // mouse code gets confused.
+                    ignoreNextMoveEvent = false;
+                }
+                else if (cursorVisible)
                 {
                     // Hide the cursor
                     ShowCursor(FALSE);
