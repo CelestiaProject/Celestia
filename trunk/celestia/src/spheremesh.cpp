@@ -130,8 +130,8 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
             normals[n * 3]       = x;
             normals[n * 3 + 1]   = y;
             normals[n * 3 + 2]   = z;
-            texCoords[n * 2]     = (float) j / (float) nSlices;
-            texCoords[n * 2 + 1] = (float) i / (float) (nRings - 1);
+            texCoords[n * 2]     = 1.0f - (float) j / (float) nSlices;
+            texCoords[n * 2 + 1] = 1.0f - (float) i / (float) (nRings - 1);
         }
     }
 
