@@ -362,13 +362,13 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
                     char c = e->text().at(i).latin1();
                     if (c == 0x0D) {
                     	if (!inputMode) { // entering input mode
-                        	for (int n=0; n<actionColl->count(); n++) {
+                        	for (unsigned int n=0; n<actionColl->count(); n++) {
                                 	if (actionColl->action(n)->shortcut().count() > 0
                                         	&& actionColl->action(n)->shortcut().seq(0).key(0).modFlags()==0 )
                                 		actionColl->action(n)->setEnabled(false);
                                 }
                         } else { // living input mode
-                        	for (int n=0; n<actionColl->count(); n++) {
+                        	for (unsigned int n=0; n<actionColl->count(); n++) {
                                 	if (actionColl->action(n)->shortcut().seq(0).key(0).modFlags()==0)
 	                                	actionColl->action(n)->setEnabled(true);
                                 }

@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 
-#include <fstream.h>
+#include <fstream>
 #include <sstream>
 
 #include <qpushbutton.h>
@@ -248,7 +248,7 @@ void KdeApp::initActions()
     openRecent->loadEntries(KGlobal::config());
     connect(openRecent, SIGNAL(urlSelected(const KURL&)), SLOT(slotOpenFileURL(const KURL&)));
 
-    KAction *c = KStdAction::quit(this, SLOT(slotClose()), actionCollection());
+    KStdAction::quit(this, SLOT(slotClose()), actionCollection());
 
     new KAction(i18n("Go to..."), 0, ALT + Key_G, this, SLOT(slotGoTo()), actionCollection(), "go_to");
 
@@ -346,7 +346,7 @@ void KdeApp::initActions()
     KToggleAction* showBoundaries = new KToggleAction(i18n("Show Boundaries"), CTRL + Key_B, this, SLOT(slotShowBoundaries()), actionCollection(), "showBoundaries");
     showBoundaries->setChecked(rFlags & Renderer::ShowBoundaries);
 
-    KToggleAction* showAutoMag = new KToggleAction(i18n("Auto Magnitudes"), CTRL + Key_Y, this, SLOT(slotShowAutoMag()), actionCollection(), "showAutoMag");
+    new KToggleAction(i18n("Auto Magnitudes"), CTRL + Key_Y, this, SLOT(slotShowAutoMag()), actionCollection(), "showAutoMag");
     showBoundaries->setChecked(rFlags & Renderer::ShowAutoMag);
 
     KToggleAction* showCometTails = new KToggleAction(i18n("Show Comet Tails"), CTRL + Key_T, this, SLOT(slotShowCometTails()), actionCollection(), "showCometTails");
@@ -376,7 +376,7 @@ void KdeApp::initActions()
     KToggleAction* displayLocalTime = new KToggleAction(i18n("Display Local Time"), CTRL + Key_U, this, SLOT(slotDisplayLocalTime()), actionCollection(), "displayLocalTime");
     displayLocalTime->setChecked(isLocal);
 
-    KToggleAction* wireframeMode = new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
+    new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
 
     new KToggleAction(i18n("Enable Vertex Shader"), CTRL + Key_V, this, SLOT(slotVertexShader()), actionCollection(), "vertexShader");
     new KToggleAction(i18n("Enable Pixel Shader"), CTRL + Key_P, this, SLOT(slotPixelShader()), actionCollection(), "pixelShader");
@@ -389,7 +389,7 @@ void KdeApp::initActions()
     toggleMenubar=KStdAction::showMenubar(this, SLOT(slotToggleMenubar()), actionCollection());
     toggleToolbar=KStdAction::showToolbar(this, SLOT(slotToggleToolbar()), actionCollection());
 
-    KToggleAction *toggleBookmarkBar = new KToggleAction(i18n("Show Bookmark Toolbar"), 0, this,
+    new KToggleAction(i18n("Show Bookmark Toolbar"), 0, this,
         SLOT(slotShowBookmarkBar()), actionCollection(), "showBookmarkBar");
 
     createGUI();
@@ -562,7 +562,7 @@ QString KdeApp::getOpenGLInfo() {
 
     char buf[100];
     GLint simTextures = 1;
-    if (ExtensionSupported("GL_ARB_multitexture"))
+    if (ExtensionSupported(const_cast<char*>("GL_ARB_multitexture")))
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
     sprintf(buf, "Max simultaneous textures: %d\n", simTextures);
     s += buf;
@@ -854,7 +854,7 @@ void KdeApp::slotForwardAboutToShow() {
     int i;
     KPopupMenu* menu = forwardAction->popupMenu();
     std::vector<Url>::size_type current = appCore->getHistoryCurrent();
-    int pos;
+    std::vector<Url>::size_type pos;
     std::vector<Url> history = appCore->getHistory();
 
     menu->clear();
