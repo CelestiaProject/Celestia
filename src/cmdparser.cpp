@@ -10,7 +10,16 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+
+// Ugh . . . the C++ standard says that stringstream should be in
+// sstream, but the GNU C++ compiler uses strstream instead.
+#ifdef HAVE_SSTREAM
 #include <sstream>
+#else
+#include <strstream>
+#define istringstream strstream
+#endif
+
 #include "util.h"
 #include "mathlib.h"
 #include "astro.h"
@@ -274,7 +283,11 @@ Command* CommandParser::parseCommand()
 
 int parseRenderFlags(string s)
 {
+#ifdef HAVE_SSTREAM    
     istringstream in(s);
+#else
+    istrstream in(s.c_str());
+#endif
     Tokenizer tokenizer(&in);
     int flags = 0;
 
@@ -314,7 +327,11 @@ int parseRenderFlags(string s)
 
 int parseLabelFlags(string s)
 {
+#ifdef HAVE_SSTREAM
     istringstream in(s);
+#else
+    istrstream in(s.c_str());
+#endif
     Tokenizer tokenizer(&in);
     int flags = 0;
 
