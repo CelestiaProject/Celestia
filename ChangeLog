@@ -334,3 +334,6 @@ Code:
 Code:
 * Rewrote texture font code; texfont.cpp is gone, everything now in
   texturefont.cpp
+
+1.1.5
+* fixed problems with '--enable-debug' under Unix automake (dramsey)

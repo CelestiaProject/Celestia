@@ -20,9 +20,9 @@
 #ifdef __GNUC__
 
 #ifndef DEBUG
-#define DPRINTF(fmt, args...)
+#define DPRINTF(args...)
 #else
-#define DPRINTF(fmt, args...) DebugPrint(fmt, args)
+#define DPRINTF(args...) DebugPrint(args)
 #endif
 
 #else
