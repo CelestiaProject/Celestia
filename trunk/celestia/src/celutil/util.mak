@@ -24,6 +24,7 @@ OBJS=\
 	$(INTDIR)\directory.obj \
 	$(INTDIR)\filetype.obj \
 	$(INTDIR)\formatnum.obj \
+	$(INTDIR)\utf8.obj \
 	$(INTDIR)\util.obj \
 	$(INTDIR)\windirectory.obj \
 	$(INTDIR)\wintimer.obj \
