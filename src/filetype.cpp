@@ -14,7 +14,9 @@
 using namespace std;
 
 
-static const string JPEGExt(".jpg");
+static const string JPEGExt(".jpeg");
+static const string JPGExt(".jpg");
+static const string JFIFExt(".jif");
 static const string BMPExt(".bmp");
 static const string TargaExt(".tga");
 static const string PNGExt(".png");
@@ -30,7 +32,9 @@ ContentType DetermineFileType(const string& filename)
         extPos = 0;
     string ext = string(filename, extPos, 4);
 
-    if (compareIgnoringCase(JPEGExt, ext) == 0)
+    if (compareIgnoringCase(JPEGExt, ext) == 0 ||
+        compareIgnoringCase(JPGExt, ext) == 0 ||
+        compareIgnoringCase(JFIFExt, ext) == 0)
         return Content_JPEG;
     else if (compareIgnoringCase(BMPExt, ext) == 0)
         return Content_BMP;
