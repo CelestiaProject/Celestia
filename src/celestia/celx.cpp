@@ -1264,6 +1264,68 @@ static int celestia_unmarkall(lua_State* l)
 }
 
 
+static int celestia_getstarcount(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No argument expected to function celestia:getstarcount");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Universe* u = appCore->getSimulation()->getUniverse();
+        lua_pushnumber(l, u->getStarCatalog()->size());
+    }
+    else
+    {
+        lua_pushstring(l, "Bad celestia object");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
+static int celestia_getstar(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function celestia:getstar");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        if (lua_isnumber(l, 2))
+        {
+            double starIndex = lua_tonumber(l, 2);
+            Universe* u = appCore->getSimulation()->getUniverse();
+            Star* star = u->getStarCatalog()->getStar((uint32) starIndex);
+            if (star == NULL)
+                lua_pushnil(l);
+            else
+                object_new(l, Selection(star));
+        }
+        else
+        {
+            lua_pushnil(l);
+        }
+    }
+    else
+    {
+        lua_pushstring(l, "Bad celestia object");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -1294,6 +1356,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "gettimescale", celestia_gettimescale);
     RegisterMethod(l, "settimescale", celestia_settimescale);
     RegisterMethod(l, "tojulianday", celestia_tojulianday);
+    RegisterMethod(l, "getstarcount", celestia_getstarcount);
+    RegisterMethod(l, "getstar", celestia_getstar);
 
     lua_pop(l, 1);
 }
