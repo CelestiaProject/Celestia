@@ -101,6 +101,7 @@ public slots:
     void slotShowOrbits();
     void slotShowCelestialSphere();
     void slotShowNightMaps();
+    void slotShowMarkers();
     void slotShowAtmospheres();
     void slotShowSmoothLines();
     void slotShowEclipseShadows();
