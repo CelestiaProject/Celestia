@@ -46,6 +46,7 @@
 #include "kdeapp.h"
 
 #include <math.h>
+#include <vector>
 
 KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core )
     : QGLWidget( parent, name )
@@ -379,6 +380,7 @@ bool KdeGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
 void KdeGlWidget::keyPressEvent( QKeyEvent* e )
 {
     static bool inputMode = false;
+    static std::vector<KAction*> actions;
     switch (e->key())
     {
     case Key_Escape:
@@ -413,15 +415,18 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
                     if (c == 0x0D || c=='\033') {
                     	if (!inputMode) { // entering input mode
                         	for (unsigned int n=0; n<actionColl->count(); n++) {
-                                	if (actionColl->action(n)->shortcut().count() > 0
-                                        	&& actionColl->action(n)->shortcut().seq(0).key(0).modFlags()==0 )
+                                	if (actionColl->action(n)->shortcut().count() > 0 
+                                        	&& (actionColl->action(n)->shortcut().seq(0).key(0).modFlags()
+                                                & (KKey::CTRL | KKey::ALT | KKey::WIN )) == 0 ) {
+                                    actions.push_back(actionColl->action(n));
                                 		actionColl->action(n)->setEnabled(false);
+                                  }
                                 }
                         } else { // living input mode
-                        	for (unsigned int n=0; n<actionColl->count(); n++) {
-                                	if (actionColl->action(n)->shortcut().seq(0).key(0).modFlags()==0)
-	                                	actionColl->action(n)->setEnabled(true);
+                        	for (std::vector<KAction*>::iterator n=actions.begin(); n<actions.end(); n++) {
+	                                	(*n)->setEnabled(true);
                                 }
+                           actions.clear();
                         }
                     	inputMode = !inputMode;
                     }
