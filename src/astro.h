@@ -63,6 +63,8 @@ namespace astro
     UniversalCoord universalPosition(Point3d heliocentric,
                                      Point3f starPosition);
 
+    Point3f equatorialToCelestialCart(float ra, float dec, float distance);
+
     extern const double J2000;
 };
 

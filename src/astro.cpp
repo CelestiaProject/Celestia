@@ -10,6 +10,7 @@
 #include <cmath>
 #include <iomanip>
 #include "celestia.h"
+#include "mathlib.h"
 #include "astro.h"
 
 using namespace std;
@@ -26,6 +27,8 @@ const double astro::J2000 = 2451545.0;
 
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
+
+static Mat3f equatorialToCelestial = Mat3f::xrotation(degToRad(-23.4392911));
 
 
 float astro::lumToAbsMag(float lum)
@@ -160,6 +163,21 @@ UniversalCoord astro::universalPosition(Point3d heliocentric,
               kilometersToLightYears(heliocentric.y),
               kilometersToLightYears(heliocentric.z));
 }
+
+
+// Convert equatorial coordinates to Cartesian celestia (or ecliptical)
+// coordinates.
+Point3f astro::equatorialToCelestialCart(float ra, float dec, float distance)
+{
+    double theta = ra / 24.0 * PI * 2;
+    double phi = (dec / 90.0 - 1.0) * PI / 2;
+    double x = -cos(theta) * sin(phi) * distance;
+    double y = -cos(phi) * distance;
+    double z = -sin(theta) * sin(phi) * distance;
+
+    return (Point3f((float) x, (float) y, (float) z) * equatorialToCelestial);
+}
+
 
 
 astro::Date::Date(int Y, int M, int D)
