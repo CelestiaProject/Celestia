@@ -90,41 +90,102 @@ Star* StarDatabase::find(uint32 catalogNumber, unsigned int whichCatalog) const
 }
 
 
+static bool parseSimpleCatalogNumber(const string& name,
+                                     const string& prefix,
+                                     uint32* catalogNumber)
+{
+    char extra[4];
+    if (compareIgnoringCase(name, prefix, prefix.length()) == 0)
+    {
+        unsigned int num;
+        // Use scanf to see if we have a valid catalog number; it must be
+        // of the form: <prefix> <non-negative integer>  No additional
+        // characters other than whitespace are allowed after the number.
+        if (sscanf(name.c_str() + prefix.length(), " %u %c", &num, extra) == 1)
+        {
+            *catalogNumber = (uint32) num;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+static bool parseHIPPARCOSCatalogNumber(const string& name, 
+                                        uint32* catalogNumber)
+{
+    return parseSimpleCatalogNumber(name, HIPPARCOSCatalogPrefix,
+                                    catalogNumber);
+}
+
+
+static bool parseHDCatalogNumber(const string& name, 
+                                 uint32* catalogNumber)
+{
+    return parseSimpleCatalogNumber(name, HDCatalogPrefix,
+                                    catalogNumber);
+}
+
+
+static bool parseTychoCatalogNumber(const string& name,
+                                    uint32* catalogNumber)
+{
+    if (compareIgnoringCase(name, TychoCatalogPrefix, TychoCatalogPrefix.length()) == 0)
+    {
+        unsigned int tyc1 = 0, tyc2 = 0, tyc3 = 0;
+        if (sscanf(string(name, TychoCatalogPrefix.length(), string::npos).c_str(), " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
+        {
+            *catalogNumber = (uint32) (tyc3 * 1000000000 + tyc2 * 10000 + tyc1);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+static bool parseCelestiaCatalogNumber(const string& name,
+                                       uint32* catalogNumber)
+{
+    char extra[4];
+
+    if (name[0] == '#')
+    {
+        unsigned int num;
+        if (sscanf(name.c_str(), "#%u %c", &num, &extra) == 1)
+        {
+            *catalogNumber = (uint32) num;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 Star* StarDatabase::find(const string& name) const
 {
     if (name.empty())
         return NULL;
 
-    if (name[0] == '#')
-    {
-        // Search by the default catalog number
-        uint32 catalogNumber = (uint32) atoi(string(name, 1, string::npos).c_str());
-        return find(catalogNumber, 0);
+    uint32 catalogNumber = 0;
 
+    if (parseCelestiaCatalogNumber(name, &catalogNumber))
+    {
+        return find(catalogNumber, 0);
     }
-    else if (compareIgnoringCase(name, HDCatalogPrefix, HDCatalogPrefix.length()) == 0)
+    else if (parseHIPPARCOSCatalogNumber(name, &catalogNumber))
     {
-        // Search by catalog number
-        uint32 catalogNumber = (uint32) atoi(string(name, HDCatalogPrefix.length(),
-                                                    string::npos).c_str());
-        return find(catalogNumber, Star::HDCatalog);
-    } else if (compareIgnoringCase(name, HIPPARCOSCatalogPrefix, HIPPARCOSCatalogPrefix.length()) == 0)
-    {
-        uint32 catalogNumber = (uint32) atoi(string(name, HIPPARCOSCatalogPrefix.length(), string::npos).c_str());
         return find(catalogNumber, Star::HIPCatalog);
+    }
+    else if (parseHDCatalogNumber(name, &catalogNumber))
+    {
+        return find(catalogNumber, Star::HDCatalog);
     }
     else if (compareIgnoringCase(name, TychoCatalogPrefix, TychoCatalogPrefix.length()) == 0)
     {
-        uint32 tyc1 = 0, tyc2 = 0, tyc3 = 0;
-        if (sscanf(string(name, TychoCatalogPrefix.length(), string::npos).c_str(), " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
-        {
-            return find(tyc3 * 1000000000 + tyc2 * 10000 + tyc1,
-                        Star::HIPCatalog);
-        }
-        else
-        {
-            return NULL;
-        }
+        return find(catalogNumber, Star::HIPCatalog);
     }
     else
     {
