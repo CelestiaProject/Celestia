@@ -50,12 +50,16 @@ static Surface* CreateSurface(Hash* surfaceData)
     string baseTexture;
     string bumpTexture;
     string nightTexture;
+    string specularTexture;
     bool applyBaseTexture = surfaceData->getString("Texture", baseTexture);
     bool applyBumpMap = surfaceData->getString("BumpMap", bumpTexture);
     bool applyNightMap = surfaceData->getString("NightTexture", nightTexture);
+    bool separateSpecular = surfaceData->getString("SpecularTexture",
+                                                   specularTexture);
     unsigned int baseFlags = Texture::WrapTexture | Texture::AllowSplitting;
     unsigned int bumpFlags = Texture::WrapTexture | Texture::AllowSplitting;
     unsigned int nightFlags = Texture::WrapTexture | Texture::AllowSplitting;
+    unsigned int specularFlags = Texture::WrapTexture | Texture::AllowSplitting;
     
     float bumpHeight = 2.5f;
     surfaceData->getNumber("BumpHeight", bumpHeight);
@@ -81,6 +85,8 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->appearanceFlags |= Surface::ApplyBumpMap;
     if (applyNightMap)
         surface->appearanceFlags |= Surface::ApplyNightMap;
+    if (separateSpecular)
+        surface->appearanceFlags |= Surface::SeparateSpecularMap;
     if (surface->specularColor != Color(0.0f, 0.0f, 0.0f))
         surface->appearanceFlags |= Surface::SpecularReflection;
 
@@ -90,6 +96,8 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->bumpTexture.setTexture(bumpTexture, bumpHeight, bumpFlags);
     if (applyNightMap)
         surface->nightTexture.setTexture(nightTexture, nightFlags);
+    if (separateSpecular)
+        surface->specularTexture.setTexture(specularTexture, specularFlags);
 
     return surface;
 }
