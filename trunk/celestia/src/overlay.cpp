@@ -100,7 +100,7 @@ void Overlay::print(char c)
         if (!useTexture || fontChanged)
         {
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, font->getTextureName());
+            font->bind();
             useTexture = true;
             fontChanged = false;
         }
