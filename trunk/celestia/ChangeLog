@@ -722,3 +722,19 @@ Code:
   weights calculated from their numbers of inhabitants
 * Added solar system location labels
 
+1.3.2
+* Added support for extended character sets (most of WGL4) and UTF-8 encoded
+  strings
+* Updated info display to show apparent size of selected object
+* Enable tab completion of location names
+* Added view management commands for Lua scripting
+* Introduced support for JPL ephemeris files
+* Fixed crash in Windows star browser that occurred after changing the number
+  of stars and pressing return.
+* Fixed bug that made stars and galaxies appear square when certain nebulae
+  were in view.
+* Made the delete button in the Windows bookmarks organizer actually work
+* Updated orbits for Amalthea and Phoebe
+* Fixed seams in Jupiter and Phobos textures
+* Spacecraft orbit paths adaptively sampled for smoother results
+* Eliminated obscuring of location labels that occurred low view aspect ratios
