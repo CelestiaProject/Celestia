@@ -394,6 +394,24 @@ void Simulation::update(double dt)
         }
     }
 
+    if (observerMode == Free || observerMode == Tracking)
+    {
+        if (observer.getVelocity() != targetVelocity)
+        {
+            double t = clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
+            observer.setVelocity(observer.getVelocity() * (1.0 - t) +
+                                 targetVelocity * t);
+        }
+
+        // This no longer has any effect . . .  the velocity is instead applied
+        // to the transform, and the observer is updated from that.  The new
+        // method has the advantage that it works in any coordinate system.
+        // observer.update(dt);
+
+        transform.translation = transform.translation +
+            observer.getVelocity() * dt;
+    }
+
     updateObserver();
 
     if (observerMode == Tracking)
@@ -406,18 +424,6 @@ void Simulation::update(double dt)
             Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
             observer.setOrientation(lookAt(Point3f(0, 0, 0), to, up));
         }
-    }
-
-    if (observerMode == Free || observerMode == Tracking)
-    {
-        if (observer.getVelocity() != targetVelocity)
-        {
-            double t = clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
-            observer.setVelocity(observer.getVelocity() * (1.0 - t) +
-                                 targetVelocity * t);
-        }
-
-        observer.update(dt);
     }
 
     // Find the closest solar system
