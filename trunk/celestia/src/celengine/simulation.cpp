@@ -284,7 +284,16 @@ void Simulation::gotoSelection(double gotoTime,
                                Vec3f up,
                                astro::CoordinateSystem upFrame)
 {
-    activeObserver->gotoSelection(selection, gotoTime, up, upFrame);
+    if (selection.getType() == Selection::Type_Location)
+    {
+        activeObserver->gotoSelectionGC(selection,
+                                        gotoTime, 0.0, 0.5,
+                                        up, upFrame);
+    }
+    else
+    {
+        activeObserver->gotoSelection(selection, gotoTime, up, upFrame);
+    }
 }
 
 void Simulation::gotoSelection(double gotoTime,
@@ -302,7 +311,7 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
                                       Vec3f up)
 {
     activeObserver->gotoSelectionLongLat(selection, gotoTime, distance,
-                                  longitude, latitude, up);
+                                         longitude, latitude, up);
 }
 
 
