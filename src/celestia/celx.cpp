@@ -12,6 +12,7 @@
 #include <cassert>
 #include <cstring>
 #include <celengine/celestia.h>
+#include <celmath/vecmath.h>
 
 // Ugh . . . the C++ standard says that stringstream should be in
 // sstream, but the GNU C++ compiler uses strstream instead.
@@ -129,6 +130,29 @@ static void* CheckUserData(lua_State* l, int index, int id)
     }
 }
 
+static bool istype(lua_State* l, int index, int id)
+{
+    // get registry[metatable]
+    if (!lua_getmetatable(l, index))
+        return false;
+    lua_rawget(l, LUA_REGISTRYINDEX);
+
+    if (lua_type(l, -1) != LUA_TSTRING)
+    {
+        cout << "istype failed!  Unregistered class.\n";
+        lua_pop(l, 1);
+        return false;
+    }
+
+    const char* classname = lua_tostring(l, -1);
+    if (classname != NULL && strcmp(classname, ClassNames[id]) == 0)
+    {
+        lua_pop(l, 1);
+        return true;
+    }
+    lua_pop(l, 1);
+    return false;
+}
 
 LuaState::LuaState() :
     state(NULL),
@@ -424,7 +448,7 @@ int LuaState::resume()
         return false;
 
     lua_State* co = lua_tothread(state, -1);
-    assert(co == costate);
+    //assert(co == costate); // co can be NULL after error (top stack is errorstring)
     if (co != costate)
         return false;
 
@@ -460,6 +484,146 @@ int LuaState::resume()
     }
 }
 
+static int vector_new(lua_State* l, const Vec3d& v)
+{
+    Vec3d* v3 = reinterpret_cast<Vec3d*>(lua_newuserdata(l, sizeof(Vec3d)));
+    *v3 = v;
+    SetClass(l, _Vec3);
+    
+    return 1;
+}
+    
+static Vec3d* to_vector(lua_State* l, int index)
+{
+    return static_cast<Vec3d*>(CheckUserData(l, index, _Vec3));
+}
+
+static Vec3d* this_vector(lua_State* l)
+{
+    Vec3d* v3 = to_vector(l, 1);
+    if (v3 == NULL)
+    {
+        lua_pushstring(l, "Bad vector object!");
+        lua_error(l);
+    }
+    
+    return v3;       
+}
+
+static int vector_getx(lua_State* l)
+{
+    Vec3d* v3 = to_vector(l, 1);
+    if (v3 == NULL)
+    {
+        lua_pushstring(l, "Bad vector object!");
+        lua_error(l);
+    }
+    else 
+    {
+        lua_Number x;
+        x = static_cast<lua_Number>(v3->x);
+        lua_pushnumber(l, x);
+    }
+
+    return 1;
+}
+
+static int vector_gety(lua_State* l)
+{
+    Vec3d* v3 = to_vector(l, 1);
+    if (v3 == NULL)
+    {
+        lua_pushstring(l, "Bad vector object!");
+        lua_error(l);
+    }
+    else 
+    {
+        lua_Number y;
+        y = static_cast<lua_Number>(v3->y);
+        lua_pushnumber(l, y);
+    }
+
+    return 1;
+}
+
+static int vector_getz(lua_State* l)
+{
+    Vec3d* v3 = to_vector(l, 1);
+    if (v3 == NULL)
+    {
+        lua_pushstring(l, "Bad vector object!");
+        lua_error(l);
+    }
+    else 
+    {
+        lua_Number z;
+        z = static_cast<lua_Number>(v3->z);
+        lua_pushnumber(l, z);
+    }
+
+    return 1;
+}
+
+
+static int vector_tostring(lua_State* l)
+{
+    lua_pushstring(l, "[Vector]");
+    return 1;
+}
+
+static void CreateVectorMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _Vec3);
+    
+    RegisterMethod(l, "__tostring", vector_tostring);
+    RegisterMethod(l, "getx", vector_getx);
+    RegisterMethod(l, "gety", vector_gety);
+    RegisterMethod(l, "getz", vector_getz);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+
+static int rotation_new(lua_State* l, const Quatd& qd)
+{
+    Quatd* q = reinterpret_cast<Quatd*>(lua_newuserdata(l, sizeof(Quatd)));
+    *q = qd;
+    SetClass(l, _Rotation);
+    
+    return 1;
+}
+    
+static Quatd* to_rotation(lua_State* l, int index)
+{
+    return static_cast<Quatd*>(CheckUserData(l, index, _Rotation));
+}
+
+static Quatd* this_rotation(lua_State* l)
+{
+    Quatd* q = to_rotation(l, 1);
+    if (q == NULL)
+    {
+        lua_pushstring(l, "Bad rotation object!");
+        lua_error(l);
+    }
+    
+    return q;       
+}
+
+static int rotation_tostring(lua_State* l)
+{
+    lua_pushstring(l, "[Rotation]");
+    return 1;
+}
+
+static void CreateRotationMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _Rotation);
+    
+    RegisterMethod(l, "__tostring", rotation_tostring);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+
 
 // position - a 128-bit per component universal coordinate
 static int position_new(lua_State* l, const UniversalCoord& uc)
@@ -489,6 +653,84 @@ static UniversalCoord* this_position(lua_State* l)
     return uc;
 }
 
+static int position_getx(lua_State* l)
+{
+    UniversalCoord* uc = this_position(l);
+    if (uc != NULL) 
+    {
+        lua_Number x;
+        x = uc->x;
+        lua_pushnumber(l, x);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad position object!");
+        lua_error(l);
+    }
+
+    return 1;        
+    
+}
+
+static int position_gety(lua_State* l)
+{
+    UniversalCoord* uc = this_position(l);
+    if (uc != NULL) 
+    {
+        lua_Number y;
+        y = uc->y;
+        lua_pushnumber(l, y);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad position object!");
+        lua_error(l);
+    }
+
+    return 1;        
+    
+}
+
+static int position_getz(lua_State* l)
+{
+    UniversalCoord* uc = this_position(l);
+    if (uc != NULL) 
+    {
+        lua_Number z;
+        z = uc->z;
+        lua_pushnumber(l, z);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad position object!");
+        lua_error(l);
+    }
+
+    return 1;        
+    
+}
+
+static int position_vectorto(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to position:vectorto");
+    UniversalCoord* uc = this_position(l);
+    UniversalCoord* uc2 = to_position(l, 2);
+    
+    if (uc == NULL)
+    {
+        lua_pushstring(l, "Bad position object!");
+        lua_error(l);
+    }
+    if (uc2 == NULL) 
+    {
+        lua_pushstring(l, "Argument to position:vectorto must be a position");
+        lua_error(l);
+    }
+    Vec3d diff = *uc2 - *uc;
+    vector_new(l, diff);    
+    return 1;            
+}
+
 static int position_tostring(lua_State* l)
 {
     // TODO: print out the coordinate as it would appear in a cel:// URL
@@ -515,12 +757,39 @@ static int position_distanceto(lua_State* l)
     return 1;
 }
 
+static int position_addvector(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to position:addvector()");
+    UniversalCoord* uc = this_position(l);
+    Vec3d* v3d = to_vector(l, 2);
+    if (v3d == NULL)
+    {
+        lua_pushstring(l, "Vector expected as argument to position:addvector");
+        lua_error(l);
+    }
+    else
+    if (uc != NULL && v3d != NULL)
+    {
+        // Is this ok? I assume we can directly manipulate memory of uc, hoping 
+        // it is legal within lua.
+        UniversalCoord ucnew = *uc + *v3d;
+        position_new(l, ucnew);        
+    }
+    return 1;
+}
+    
+
 static void CreatePositionMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Position);
     
     RegisterMethod(l, "__tostring", position_tostring);
     RegisterMethod(l, "distanceto", position_distanceto);
+    RegisterMethod(l, "vectorto", position_vectorto);
+    RegisterMethod(l, "addvector", position_addvector);
+    RegisterMethod(l, "getx", position_getx);
+    RegisterMethod(l, "gety", position_gety);
+    RegisterMethod(l, "getz", position_getz);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -549,29 +818,56 @@ static FrameOfReference* to_frame(lua_State* l, int index)
 // the stack.
 static int frame_from(lua_State* l)
 {
+    checkArgs(l, 2, 3, "Two or three arguments required for frame:from");
     int argc = lua_gettop(l);
-    if (argc < 3)
-    {
-        lua_pushstring(l, "Two arguments expected to function frame:from");
-        lua_error(l);
-    }
 
     FrameOfReference* frame = to_frame(l, 1);
     if (frame != NULL)
     {
-        // Time is the first argument
-        if (!lua_isnumber(l, 2))
-        {
-            lua_pushstring(l, "Time expected as first argument to frame:from()");
-            lua_error(l);
-        }
-        double jd = lua_tonumber(l, 2);
-
         RigidTransform rt;
-        UniversalCoord* uc = to_position(l, 3);
+        UniversalCoord* uc = NULL;
+        Quatd* q = NULL;
+        double jd;
+        if (istype(l, 2, _Position))
+        {
+            uc = to_position(l, 2);
+        }
+        else
+        if (istype(l, 2, _Rotation))
+        {
+            q = to_rotation(l, 2);
+        }
+        
+        if (lua_isnumber(l, 3))
+        {
+             jd = lua_tonumber(l, 3);
+        }
+        else
+        {
+            CelestiaCore* appCore = getAppCore(l);
+            if (appCore != NULL)
+            {
+                Simulation* sim = appCore->getSimulation();
+                jd = sim->getTime();
+            }
+            else
+            {
+                lua_pushstring(l, "Internal error: couldn't get CelestiaCore in frame:from");
+                lua_error(l);
+            }
+        }
         if (uc != NULL)
         {
             rt.translation = *uc;
+            rt = frame->toUniversal(rt, jd);
+            position_new(l, rt.translation);
+        }
+        else
+        if (q != NULL)
+        {
+            rt.rotation = *q;
+            rt = frame->toUniversal(rt, jd);
+            rotation_new(l, rt.rotation);
         }
         else
         {
@@ -579,13 +875,6 @@ static int frame_from(lua_State* l)
             lua_error(l);
         }
 
-        if (argc > 3)
-        {
-            // handle optional orientation
-        }
-
-        rt = frame->toUniversal(rt, jd);
-        position_new(l, rt.translation);
     }
     else
     {
@@ -604,29 +893,56 @@ static int frame_from(lua_State* l)
 // the stack.
 static int frame_to(lua_State* l)
 {
+    checkArgs(l, 2, 3, "Two or three arguments required for frame:to");
     int argc = lua_gettop(l);
-    if (argc < 3)
-    {
-        lua_pushstring(l, "Two arguments expected to function frame:to");
-        lua_error(l);
-    }
 
     FrameOfReference* frame = to_frame(l, 1);
     if (frame != NULL)
     {
-        // Time is the first argument
-        if (!lua_isnumber(l, 2))
-        {
-            lua_pushstring(l, "Time expected as first argument to frame:to()");
-            lua_error(l);
-        }
-        double jd = lua_tonumber(l, 2);
-
         RigidTransform rt;
-        UniversalCoord* uc = to_position(l, 3);
+        UniversalCoord* uc = NULL;
+        Quatd* q = NULL;
+        double jd;
+        if (istype(l, 2, _Position))
+        {
+            uc = to_position(l, 2);
+        }
+        else
+        if (istype(l, 2, _Rotation))
+        {
+            q = to_rotation(l, 2);
+        }
+        
+        if (lua_isnumber(l, 3))
+        {
+             jd = lua_tonumber(l, 3);
+        }
+        else
+        {
+            CelestiaCore* appCore = getAppCore(l);
+            if (appCore != NULL)
+            {
+                Simulation* sim = appCore->getSimulation();
+                jd = sim->getTime();
+            }
+            else
+            {
+                lua_pushstring(l, "Internal error: couldn't get CelestiaCore in frame:to");
+                lua_error(l);
+            }
+        }
         if (uc != NULL)
         {
             rt.translation = *uc;
+            rt = frame->fromUniversal(rt, jd);
+            position_new(l, rt.translation);
+        }
+        else
+        if (q != NULL)
+        {
+            rt.rotation = *q;
+            rt = frame->fromUniversal(rt, jd);
+            rotation_new(l, rt.rotation);
         }
         else
         {
@@ -634,13 +950,6 @@ static int frame_to(lua_State* l)
             lua_error(l);
         }
 
-        if (argc > 3)
-        {
-            // handle optional orientation
-        }
-
-        rt = frame->fromUniversal(rt, jd);
-        position_new(l, rt.translation);
     }
     else
     {
@@ -1133,12 +1442,100 @@ static Observer* this_observer(lua_State* l)
 
 static int observer_tostring(lua_State* l)
 {
-    cout << "observer_tostring\n"; cout.flush();
     lua_pushstring(l, "[Observer]");
 
     return 1;
 }
 
+static int observer_setposition(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for setpos");
+    Observer* o = to_observer(l,1);
+    if (o == NULL) {
+        lua_pushstring(l, "Invalid object");
+        lua_error(l);
+    }
+    UniversalCoord* uc = to_position(l,2);
+    if (uc == NULL)
+    {
+        lua_pushstring(l, "Argument to observer:setposition must be a position");
+        lua_error(l);
+    }
+    o->setPosition(*uc);
+    return 0;
+}
+
+static int observer_setorientation(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for setorientation");
+    Observer* o = to_observer(l,1);
+    if (o == NULL) {
+        lua_pushstring(l, "Invalid object");
+        lua_error(l);
+    }
+    Quatd* q = to_rotation(l,2);
+    if (q == NULL)
+    {
+        lua_pushstring(l, "Argument to observer:setorientation must be a rotation");
+        lua_error(l);
+    }
+    o->setOrientation(*q);
+    return 0;
+}
+
+static int observer_rotate(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for rotate");
+    Observer* o = to_observer(l,1);
+    if (o == NULL) {
+        lua_pushstring(l, "Invalid object");
+        lua_error(l);
+    }
+    Quatd* q = to_rotation(l,2);
+    if (q == NULL)
+    {
+        lua_pushstring(l, "Argument to observer:setpos must be a rotation");
+        lua_error(l);
+    }
+    Quatf qf(q->w, q->x, q->y, q->z);
+    o->rotate(qf);
+    return 0;
+}
+
+static int observer_lookat(lua_State* l)
+{
+    checkArgs(l, 4, 4, "Three arguments required for lookat");
+    Observer* o = to_observer(l,1);
+    if (o == NULL) {
+        lua_pushstring(l, "Invalid object");
+        lua_error(l);
+    }
+    UniversalCoord* from = to_position(l, 2);
+    UniversalCoord* to = to_position(l, 3);
+    if (to == NULL || from == NULL)
+    {
+        lua_pushstring(l, "Arguments 2 and 3 to observer:lookat must be of type position");
+        lua_error(l);
+    }
+    Vec3d* upd = to_vector(l, 4);
+    if (upd == NULL)
+    {
+        lua_pushstring(l, "Arguments 4 to observer:lookat must be of type vector");
+        lua_error(l);
+    }        
+    Vec3d nd = (*to) - (*from);
+    // need Vec3f instead:
+    Vec3f up = Vec3f(upd->x, upd->y, upd->z);
+    Vec3f n = Vec3f(nd.x, nd.y, nd.z);
+    
+    n.normalize();
+    Vec3f v = n ^ up;
+    v.normalize();
+    Vec3f u = v ^ n;
+    Quatf qf = Quatf(Mat3f(v, u, -n));
+    o->setOrientation(qf);
+    return 0;
+}
 
 // First argument is the target object or position; optional second argument
 // is the travel time
@@ -1190,6 +1587,40 @@ static int observer_goto(lua_State* l)
     }
 
     return 0;
+}
+
+
+// First argument is the target object or position; optional second argument
+// is the travel time
+static int observer_gotolocation(lua_State* l)
+{
+    checkArgs(l, 2,3,"Need at least 2 or 3 arguments to gotolocation");
+    int argc = lua_gettop(l);
+    
+    double travelTime = 5.0;
+    if (argc == 3)
+    {
+        if (lua_isnumber(l, 3))
+            travelTime = lua_tonumber(l, 3);
+    }
+
+    Observer* o = this_observer(l);
+    if (o != NULL)
+    {
+        UniversalCoord* uc = to_position(l, 2);
+        if (uc != NULL)
+        {
+            RigidTransform rt = o->getSituation();
+            rt.translation = *uc;
+            o->gotoLocation(rt, travelTime);
+        }
+
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
 
@@ -1355,6 +1786,48 @@ static int observer_setsurface(lua_State* l)
     return 0;
 }
 
+static int observer_getframe(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for observer:getframe()");
+    Observer* obs = this_observer(l);
+    if (obs != NULL) 
+    {
+        FrameOfReference frame = obs->getFrame();
+        frame_new(l, frame);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }        
+    return 1;
+}
+
+static int observer_setframe(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for observer:setframe()");
+    Observer* obs = this_observer(l);
+    if (obs != NULL) 
+    {
+        FrameOfReference* frame;
+        frame = to_frame(l, 2);
+        if (frame != NULL)
+        {
+            obs->setFrame(*frame);
+        }
+        else
+        {
+            lua_pushstring(l, "Argument to observer:setframe must be a frame");
+            lua_error(l);
+        }
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }        
+    return 0;
+}            
 
 static void CreateObserverMetaTable(lua_State* l)
 {
@@ -1362,6 +1835,11 @@ static void CreateObserverMetaTable(lua_State* l)
     
     RegisterMethod(l, "__tostring", observer_tostring);
     RegisterMethod(l, "goto", observer_goto);
+    RegisterMethod(l, "gotolocation", observer_gotolocation);
+    RegisterMethod(l, "setposition", observer_setposition);
+    RegisterMethod(l, "lookat", observer_lookat);
+    RegisterMethod(l, "setorientation", observer_setorientation);
+    RegisterMethod(l, "rotate", observer_rotate);
     RegisterMethod(l, "center", observer_center);
     RegisterMethod(l, "follow", observer_follow);
     RegisterMethod(l, "synchronous", observer_synchronous);
@@ -1369,6 +1847,8 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "lock", observer_lock);
     RegisterMethod(l, "track", observer_track);
     RegisterMethod(l, "travelling", observer_travelling);
+    RegisterMethod(l, "getframe", observer_getframe);
+    RegisterMethod(l, "setframe", observer_setframe);
     RegisterMethod(l, "gettime", observer_gettime);
     RegisterMethod(l, "getposition", observer_getposition);
     RegisterMethod(l, "getsurface", observer_getsurface);
@@ -1414,13 +1894,22 @@ static CelestiaCore* this_celestia(lua_State* l)
 
 static int celestia_flash(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:flash");
+    checkArgs(l, 2, 3, "One or two arguments expected to function celestia:flash");
     CelestiaCore* appCore = this_celestia(l);
-
+    int argc = lua_gettop(l);
     const char* s = lua_tostring(l, 2);
+    double time = 1.5;
+    if (argc > 2) 
+    {
+        time = lua_tonumber(l, 3);
+        if (time < 0.0) 
+        {
+            time = 1.5;
+        }
+    }
 
     if (appCore != NULL && s != NULL)
-        appCore->flash(s, 1.5);
+        appCore->flash(s, time);
 
     return 0;
 }
@@ -1828,13 +2317,74 @@ static int celestia_getstar(lua_State* l)
     return 1;
 }
 
+static int celestia_newvector(lua_State* l)
+{
+    checkArgs(l, 4, 4, "Need 3 arguments for celestia:newvector");
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        for (int i = 2; i < 5; i++) 
+        {
+            if (!lua_isnumber(l, i))
+            {
+                lua_pushstring(l, "newvector: argument must be a number");
+                lua_error(l);
+            }
+        }
+        double x, y, z;
+        x = lua_tonumber(l, 2);
+        y = lua_tonumber(l, 3);
+        z = lua_tonumber(l, 4);
+        vector_new(l, Vec3d(x,y,z));
+    }
+    else
+    {
+        lua_pushstring(l, "Bad celestia object");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+static int celestia_newrotation(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Need 2 arguments for celestia:newrotation");
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Vec3d* v = to_vector(l, 2);
+        if (v == NULL)
+        {
+            lua_pushstring(l, "newrotation: first argument must be a vector");
+            lua_error(l);
+        }
+        double angle = 0.0;
+        if (!lua_isnumber(l, 3))
+        {
+            lua_pushstring(l, "newrotation: second argument must be a number");
+            lua_error(l);
+        }
+        angle = static_cast<double>(lua_tonumber(l, 3));
+        Quatd q;
+        q.setAxisAngle(*v, angle); 
+        rotation_new(l, q);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad celestia object");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
 
 static int celestia_newframe(lua_State* l)
 {
     int argc = lua_gettop(l);
     if (argc < 2)
     {
-        lua_pushstring(l, "At least argument expected to function celestia:getstar");
+        lua_pushstring(l, "At least argument expected to function celestia:newframe");
         lua_error(l);
     }
 
@@ -1865,6 +2415,8 @@ static int celestia_newframe(lua_State* l)
                 {
                     lua_pushstring(l, "newframe: two objects required for lock frame");
                     lua_error(l);
+                } else {
+                    frame_new(l, FrameOfReference(coordSys, *ref, *target));
                 }
             }
             else
@@ -1875,10 +2427,10 @@ static int celestia_newframe(lua_State* l)
                 {
                     lua_pushstring(l, "newframe: one object argument required for frame");
                     lua_error(l);
+                } else {
+                    frame_new(l, FrameOfReference(coordSys, *ref));
                 }
-            }
-            
-            frame_new(l, FrameOfReference(coordSys, *ref, *target));
+            }   
         }
     }
     else
@@ -1924,6 +2476,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
     RegisterMethod(l, "getstar", celestia_getstar);
     RegisterMethod(l, "newframe", celestia_newframe);
+    RegisterMethod(l, "newvector", celestia_newvector);
+    RegisterMethod(l, "newrotation", celestia_newrotation);
 
     lua_pop(l, 1);
 }
@@ -1950,7 +2504,9 @@ bool LuaState::init(CelestiaCore* appCore)
     CreateObserverMetaTable(state);
     CreateCelestiaMetaTable(state);
     CreatePositionMetaTable(state);
-
+    CreateVectorMetaTable(state);
+    CreateRotationMetaTable(state);
+    CreateFrameMetaTable(state);
     // Create the celestia object
     lua_pushstring(state, "celestia");
     celestia_new(state, appCore);
