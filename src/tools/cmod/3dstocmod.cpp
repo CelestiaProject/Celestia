@@ -156,6 +156,8 @@ Convert3DSMesh(Model& model,
                 if (faceNormals[i] * faceNormals[k] > 0.5f)
                     v += faceNormals[k];
             }
+            if (v * v == 0.0f)
+                v = Vec3f(1.0f, 0.0f, 0.0f);
             v.normalize();
             vertexNormals[i * 3] = v;
 
@@ -167,6 +169,8 @@ Convert3DSMesh(Model& model,
                 if (faceNormals[i] * faceNormals[k] > 0.5f)
                     v += faceNormals[k];
             }
+            if (v * v == 0.0f)
+                v = Vec3f(1.0f, 0.0f, 0.0f);
             v.normalize();
             vertexNormals[i * 3 + 1] = v;
 
@@ -178,6 +182,8 @@ Convert3DSMesh(Model& model,
                 if (faceNormals[i] * faceNormals[k] > 0.5f)
                     v += faceNormals[k];
             }
+            if (v * v == 0.0f)
+                v = Vec3f(1.0f, 0.0f, 0.0f);
             v.normalize();
             vertexNormals[i * 3 + 2] = v;
         }
@@ -283,13 +289,10 @@ Convert3DSMesh(Model& model,
                 material->specularPower = specPow;
 
                 material->opacity = material3ds->getOpacity();
-#if 0
                 if (material3ds->getTextureMap() != "")
                 {
-                    ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texturePath, TextureInfo::WrapTexture));
-                    vl->setTexture(tex);
+                    material->tex0 = GetTextureManager()->getHandle(TextureInfo(material3ds->getTextureMap(), ".", TextureInfo::WrapTexture));
                 }
-#endif
             }
         }
     }
@@ -314,7 +317,8 @@ Convert3DSModel(const M3DScene& scene, const string& texPath)
             for (unsigned int j = 0; j < model3ds->getTriMeshCount(); j++)
             {
                 M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
-                if (mesh != NULL)
+
+                if (mesh != NULL && mesh->getFaceCount() > 0)
                 {
                     Convert3DSMesh(*model, *mesh, scene);
                 }
