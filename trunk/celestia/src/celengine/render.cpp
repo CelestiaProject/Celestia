@@ -3492,6 +3492,9 @@ void Renderer::renderPlanetarySystem(const Star& sun,
     for (int i = 0; i < nBodies; i++)
     {
         Body* body = solSystem.getBody(i);
+        if (!body->extant(now))
+            continue;
+
         Point3d localPos = body->getOrbit()->positionAtTime(now);
         Mat4d newFrame =
             Mat4d::xrotation(-body->getRotationElements().obliquity) *

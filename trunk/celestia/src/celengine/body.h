@@ -155,6 +155,9 @@ class Body
     Quatd getEclipticalToGeographic(double);
     Mat4d getGeographicToHeliocentric(double);
 
+    bool extant(double) const;
+    void setLifespan(double, double);
+
  private:
     std::string name;
 
@@ -167,6 +170,9 @@ class Body
     float oblateness;
     float albedo;
     Quatf orientation;
+
+    double protos;
+    double eschatos;
 
     ResourceHandle mesh;
     Surface surface;
