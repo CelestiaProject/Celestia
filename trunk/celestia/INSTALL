@@ -26,9 +26,6 @@ Four interfaces are available for Celestia:
 - KDE3: brings contextual menus, toolbars, KDE integration,
         internationalization, bookmarks...
 
-By default the KDE interface will be built. It requires the various kde-devel
-packages.
-
 To build the KDE interface (requires various kde-devel packages):
 	configure --with-kde
 
