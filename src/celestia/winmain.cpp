@@ -37,6 +37,7 @@
 #include "../celengine/glext.h"
 #include "celestiacore.h"
 #include "imagecapture.h"
+#include "avicapture.h"
 #include "winstarbrowser.h"
 #include "winssbrowser.h"
 #include "wintourguide.h"
@@ -77,6 +78,10 @@ static bool joystickAvailable = false;
 static JOYCAPS joystickCaps;
 
 bool cursorVisible = true;
+static POINT saveCursorPos;
+
+static bool capturingMovie = false;
+static MovieCapture* movieCapture = NULL;
 
 astro::Date newTime(0.0);
 
@@ -130,6 +135,23 @@ void ChangeDisplayMode()
 void RestoreDisplayMode()
 {
     ChangeDisplaySettings(0, 0);
+}
+
+
+static bool BeginMovieCapture(const std::string& filename)
+{
+    if (movieCapture == NULL)
+        movieCapture = new AVICapture();
+
+    capturingMovie = movieCapture->start(filename, 320, 240);
+    
+    return capturingMovie;
+}
+
+static void EndMovieCapture()
+{
+    movieCapture->end();
+    capturingMovie = false;
 }
 
 
@@ -688,6 +710,12 @@ void handleKey(WPARAM key, bool down)
             useJoystick = !useJoystick;
         }
         break;
+    case VK_F11:
+        cout << "F11\n";
+        if (capturingMovie)
+            EndMovieCapture();
+        break;
+
     case VK_NUMPAD2:
         k = CelestiaCore::Key_NumPad2;
         break;
@@ -1091,7 +1119,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
 }
 
 
-static void HandleScreenCapture(HWND hWnd)
+static void HandleCaptureImage(HWND hWnd)
 {
     // Display File SaveAs dialog to allow user to specify name and location of
     // of captured screen image.
@@ -1192,6 +1220,100 @@ static void HandleScreenCapture(HWND hWnd)
                 sprintf(errorMsg, "Specified file extension is not recognized.");
             else
                 sprintf(errorMsg, "Could not save image file.");
+
+            MessageBox(hWnd, errorMsg, "Error", MB_OK | MB_ICONERROR);
+        }
+    }
+}
+
+
+static void HandleCaptureMovie(HWND hWnd)
+{
+    // Display File SaveAs dialog to allow user to specify name and location of
+    // of captured movie
+    OPENFILENAME Ofn;
+    char szFile[_MAX_PATH+1], szFileTitle[_MAX_PATH+1];
+
+    szFile[0] = '\0';
+    szFileTitle[0] = '\0';
+
+    // Initialize OPENFILENAME
+    ZeroMemory(&Ofn, sizeof(OPENFILENAME));
+    Ofn.lStructSize = sizeof(OPENFILENAME);
+    Ofn.hwndOwner = hWnd;
+    Ofn.lpstrFilter = "Microsoft AVI\0*.avi\0";
+    Ofn.lpstrFile= szFile;
+    Ofn.nMaxFile = sizeof(szFile);
+    Ofn.lpstrFileTitle = szFileTitle;
+    Ofn.nMaxFileTitle = sizeof(szFileTitle);
+    Ofn.lpstrInitialDir = (LPSTR)NULL;
+
+    // Comment this out if you just want the standard "Save As" caption.
+    Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
+
+    // OFN_HIDEREADONLY - Do not display read-only video files
+    // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
+    Ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+
+    // Display the Save dialog box.
+    if (GetSaveFileName(&Ofn))
+    {
+        // If you got here, a path and file has been specified.
+        // Ofn.lpstrFile contains full path to specified file
+        // Ofn.lpstrFileTitle contains just the filename with extension
+
+        bool success = false;
+
+        DWORD nFileType=0;
+        char defaultExtensions[][4] = { "avi" };
+        if (Ofn.nFileExtension == 0)
+        {
+            // If no extension was specified, use the selection of filter to
+            // determine which type of file should be created, instead of
+            // just defaulting to AVI.
+            nFileType = Ofn.nFilterIndex;
+            strcat(Ofn.lpstrFile, ".");
+            strcat(Ofn.lpstrFile, defaultExtensions[nFileType-1]);
+        }
+        else if (*(Ofn.lpstrFile + Ofn.nFileExtension) == '\0')
+        {
+            // If just a period was specified for the extension, use
+            // the selection of filter to determine which type of file
+            // should be created, instead of just defaulting to AVI.
+            nFileType = Ofn.nFilterIndex;
+            strcat(Ofn.lpstrFile, defaultExtensions[nFileType-1]);
+        }
+        else
+        {
+            switch (DetermineFileType(Ofn.lpstrFile))
+            {
+            case Content_AVI:
+                nFileType = 1;
+                break;
+            default:
+                nFileType = 0;
+                break;
+            }
+        }
+
+        if (nFileType != 1)
+        {
+            // Invalid file extension specified.
+            DPRINTF("Unknown file extension specified for movie capture.\n");
+        }
+        else
+        {
+            success = BeginMovieCapture(string(Ofn.lpstrFile));
+        }
+
+        if (!success)
+        {
+            char errorMsg[64];
+
+            if(nFileType == 0)
+                sprintf(errorMsg, "Specified file extension is not recognized.");
+            else
+                sprintf(errorMsg, "Could not capture movie.");
 
             MessageBox(hWnd, errorMsg, "Error", MB_OK | MB_ICONERROR);
         }
@@ -1422,6 +1544,14 @@ bool modifiers(WPARAM wParam, WPARAM mods)
 }
 
 
+static void RestoreCursor()
+{
+    ShowCursor(TRUE);
+    cursorVisible = true;
+    SetCursorPos(saveCursorPos.x, saveCursorPos.y);
+}
+
+
 LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                 UINT uMsg,
                                 WPARAM wParam, LPARAM lParam)
@@ -1457,12 +1587,41 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 pt.x = lastX;
                 pt.y = lastY;
                 ClientToScreen(hWnd, &pt);
-                if (x - lastX != 0 || y - lastY != 0)
-                    SetCursorPos(pt.x, pt.y);
+
+                // If the cursor is still visible, this is the first mouse
+                // move message of this drag.  Hide the cursor and set the
+                // cursor position to the center of the window.  Once the
+                // drag is complete, we'll restore the cursor position and
+                // make it visible again.
                 if (cursorVisible)
                 {
+                    // Hide the cursor
                     ShowCursor(FALSE);
                     cursorVisible = false;
+
+                    // Save the cursor position
+                    saveCursorPos = pt;
+
+                    // Compute the center point of the client area
+                    RECT rect;
+                    GetClientRect(hWnd, &rect);
+                    POINT center;
+                    center.x = (rect.right - rect.left) / 2;
+                    center.y = (rect.bottom - rect.top) / 2;
+
+                    // Set the cursor position to the center of the window
+                    x = center.x + (x - lastX);
+                    y = center.y + (y - lastY);
+                    lastX = center.x;
+                    lastY = center.y;
+
+                    ClientToScreen(hWnd, &center);
+                    SetCursorPos(center.x, center.y);
+                }
+                else
+                {
+                    if (x - lastX != 0 || y - lastY != 0)
+                        SetCursorPos(pt.x, pt.y);
                 }
 #else
                 lastX = x;
@@ -1506,20 +1665,14 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
     case WM_LBUTTONUP:
         if (!cursorVisible)
-        {
-            ShowCursor(TRUE);
-            cursorVisible = true;
-        }
+            RestoreCursor();
         appCore->mouseButtonUp(LOWORD(lParam), HIWORD(lParam),
                                CelestiaCore::LeftButton);
 	break;
 
     case WM_RBUTTONUP:
         if (!cursorVisible)
-        {
-            ShowCursor(TRUE);
-            cursorVisible = true;
-        }
+            RestoreCursor();
         appCore->mouseButtonUp(LOWORD(lParam), HIWORD(lParam),
                                CelestiaCore::RightButton);
         break;
@@ -1804,12 +1957,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             ShowWWWInfo(appCore->getSimulation()->getSelection());
             break;
 
-        case ID_FILE_SCREENCAPTURE:
-            HandleScreenCapture(hWnd);
+        case ID_FILE_CAPTUREIMAGE:
+            HandleCaptureImage(hWnd);
+            break;
+
+        case ID_FILE_CAPTUREMOVIE:
+            HandleCaptureMovie(hWnd);
             break;
 
         case ID_FILE_EXIT:
-	        DestroyWindow(hWnd);
+            DestroyWindow(hWnd);
             break;
 
         default:
@@ -1852,12 +2009,15 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             SavePreferencesToRegistry(CelestiaRegKey, prefs);
         }
 
-	    wglMakeCurrent(hDC, NULL);
-	    wglDeleteContext(hRC);
-	    if (fullscreen)
-	        RestoreDisplayMode();
-	    PostQuitMessage(0);
-	    break;
+        if (capturingMovie)
+            EndMovieCapture();
+
+        wglMakeCurrent(hDC, NULL);
+        wglDeleteContext(hRC);
+        if (fullscreen)
+            RestoreDisplayMode();
+        PostQuitMessage(0);
+        break;
     }
 
     case WM_SIZE:
@@ -1870,6 +2030,8 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->draw();
 	    SwapBuffers(hDC);
 	    ValidateRect(hWnd, NULL);
+            if (capturingMovie)
+                movieCapture->captureFrame();
 	}
 	break;
 
