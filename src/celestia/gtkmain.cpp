@@ -15,7 +15,6 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
-#include <sstream>
 #include <time.h>
 #include <unistd.h>
 #include <celengine/gl.h>
@@ -345,6 +344,7 @@ static void menuAbout()
     const gchar* authors[] = {
         "Chris Laurel <claurel@shatters.net>",
 	"Deon Ramsey <miavir@furry.de>",
+        "Clint Weisbrod <cweisbrod@adelphia.net>",
         NULL
     };
     const gchar* logo = gnome_pixmap_file("gnome-hello-logo.png");
@@ -360,7 +360,7 @@ static void menuAbout()
     {
 	about = gnome_about_new("Celestia",
 				VERSION,
-				"(c) 2001 Chris Laurel",
+				"(c) 2001-2002 Chris Laurel",
 				authors,
 				"3D Space Simulation",
 				logo);
@@ -1041,30 +1041,30 @@ void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkCTreeNode *parent, 
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
 	Body* world = sys->getBody(i);
-	tmp[0]=g_strdup(world->getName().c_str());
-        if(lev == 2)
-            {
-            if(world->getRadius() >= 1000.0)
+	tmp[0] = g_strdup(world->getName().c_str());
+        if (lev == 2)
+        {
+            if (world->getRadius() >= 1000.0)
                 tmp[1]="Planet";
             else
                 tmp[1]="Planetoid";
-            }
+        }
         else
-            {
-            if(world->getRadius() > 0.1)
+        {
+            if (world->getRadius() > 0.1)
                 tmp[1]="Moon";
             else
                 tmp[1]="Satellite";
-            }
+        }
 	const PlanetarySystem* satellites = world->getSatellites();
-	child=gtk_ctree_insert_node (GTK_CTREE(ctree), parent, NULL,
-                                     (char **)tmp , 0 , NULL, NULL, NULL, NULL,
-                                     (satellites ? FALSE : TRUE), TRUE);
+	child=gtk_ctree_insert_node(GTK_CTREE(ctree), parent, NULL,
+                                    (char**) tmp , 0 , NULL, NULL, NULL, NULL,
+                                    (satellites ? FALSE : TRUE), TRUE);
         gtk_ctree_node_set_row_data(GTK_CTREE(ctree), child, world);
 	gtk_ctree_collapse (GTK_CTREE(ctree), child);
-	g_free((char *)tmp[0]);
+	g_free((char*) tmp[0]);
 	if (satellites != NULL)
-		addPlanetarySystemToTree(satellites, child, lev + 1);
+            addPlanetarySystemToTree(satellites, child, lev + 1);
     }
 }
 
@@ -1075,7 +1075,7 @@ static Selection browserSel;
 static gint listSelect(GtkCList *list, gint row, gint column, gpointer dummy, gpointer dumm2)
 {
     Star *selStar =(Star *)gtk_clist_get_row_data(list,row);
-    if(selStar)
+    if (selStar)
     {
         browserSel.select(selStar);
 	return TRUE;
@@ -1087,20 +1087,20 @@ static gint listSelect(GtkCList *list, gint row, gint column, gpointer dummy, gp
 static gint treeSelect(GtkCTree *tree, GtkCTreeNode *node, gint column, gpointer dummy)
 {
     Body *body;
-    if(column <0)
+    if (column < 0)
     {
         /* This will happen when the tree attempts to autoselect a node
            as it is just being switched to, but is still empty */
         return FALSE;
     }
     if ((body=(Body *)gtk_ctree_node_get_row_data(tree,node)))
-	{
-        if(body ==(Body *) nearestStar)
-            browserSel.select((Star *)nearestStar);
+    {
+        if (body == (Body *) nearestStar)
+            browserSel.select((Star *) nearestStar);
         else
             browserSel.select(body);
 	return TRUE;
-	}
+    }
     DPRINTF("Unable to find body for this node.\n");
     return FALSE;
 }
@@ -1119,7 +1119,7 @@ static gint selectBrowsed()
 
 static gint centerBrowsed()
 {
-    if(!selectBrowsed())
+    if (!selectBrowsed())
         return FALSE;
     appCore->charEntered('C');
     return TRUE;
@@ -1128,7 +1128,7 @@ static gint centerBrowsed()
 
 static gint gotoBrowsed()
 {
-    if(!selectBrowsed())
+    if (!selectBrowsed())
         return FALSE;
     appCore->charEntered('G');
     return TRUE;
@@ -1169,31 +1169,30 @@ static void addStars()
     currentLength=(*stars).size();
     browserSel.select((Star *)(*stars)[0]);
     UniversalCoord ucPos = appSim->getObserver().getPosition();
+    
     for (unsigned int i = 0; i < currentLength; i++)
     {
+        char buf[20];
         const Star *star=(*stars)[i];
-        tmp[0]=g_strdup((stardb->getStarName(*star)).c_str());
-        ostringstream dstr("", ios::ate);
-        dstr.precision(3);
-        dstr.setf(ios::fixed, ios::floatfield);
-        dstr << ' ' << (ucPos.distanceTo(star->getPosition())) << ' ';
-        tmp[1]=g_strdup(dstr.str().c_str());
-        dstr.seekp(0);
-        dstr.precision(2);
+        tmp[0] = g_strdup((stardb->getStarName(*star)).c_str());
+
+        sprintf(buf, " %.3f ", ucPos.distanceTo(star->getPosition()));
+        tmp[1] = g_strdup(buf);
+
         Vec3f r = star->getPosition() - ucPos;
-        dstr << " " << astro::absToAppMag(star->getAbsoluteMagnitude(),r.length()) << " \0";
-        tmp[2]=g_strdup(dstr.str().c_str());
-        dstr.seekp(0);
-        dstr.precision(2);
-        dstr << ' ' <<  star->getAbsoluteMagnitude() << " \0";
-        tmp[3]=g_strdup(dstr.str().c_str());
-        dstr.seekp(0);
-        dstr << ' ' << star->getStellarClass();
-        tmp[4]=g_strdup(dstr.str().c_str());
-        gint row=gtk_clist_append(GTK_CLIST(clist), (char **)tmp);
-        gtk_clist_set_row_data(GTK_CLIST(clist), row, (gpointer)star);
-        for(unsigned int j=0; j<5; j++)
-            g_free((void *)tmp[j]);
+        sprintf(buf, " %.2f ", astro::absToAppMag(star->getAbsoluteMagnitude(),r.length()));
+        tmp[2] = g_strdup(buf);
+
+        sprintf(buf, " %.2f ", star->getAbsoluteMagnitude());
+        tmp[3] = g_strdup(buf);
+
+        star->getStellarClass().str(buf, sizeof buf);
+        tmp[4] = g_strdup(buf);
+
+        gint row = gtk_clist_append(GTK_CLIST(clist), (char**) tmp);
+        gtk_clist_set_row_data(GTK_CLIST(clist), row, (gpointer) star);
+        for (unsigned int j = 0; j < 5; j++)
+            g_free((void*) tmp[j]);
     }
     gtk_clist_thaw(GTK_CLIST(clist));
     delete stars;
@@ -1202,7 +1201,7 @@ static void addStars()
 
 static int radioClicked(GtkButton *button, int pred)
 {
-    if(!sbrowser.setPred(pred))
+    if (!sbrowser.setPredicate(pred))
         return FALSE;
     addStars();
     return TRUE;
@@ -1227,15 +1226,17 @@ static void loadNearestStarSystem()
 	nearestStar=solarSys->getStar();
     else
         nearestStar=sbrowser.nearestStar();
-    tmp[0]=g_strdup((stardb->getStarName(*nearestStar)).c_str());
-    ostringstream ostr("", ios::ate);
-    ostr << nearestStar->getStellarClass() << " Class Star";
-    tmp[1]=(char *)(ostr.str()).c_str();
-    GtkCTreeNode *top=gtk_ctree_insert_node (GTK_CTREE(ctree), NULL, NULL,
-                                             (char **)tmp , 0 , NULL, NULL,
-                                             NULL, NULL, FALSE, TRUE);
+    tmp[0] = const_cast<char*>(stardb->getStarName(*nearestStar).c_str());
+
+    char buf[30];
+    sprintf(buf, "%s Star", (nearestStar->getStellarClass().str().c_str()));
+    tmp[1] = buf;
+
+    GtkCTreeNode *top = gtk_ctree_insert_node (GTK_CTREE(ctree), NULL, NULL,
+                                               (char**) tmp , 0 , NULL, NULL,
+                                               NULL, NULL, FALSE, TRUE);
     gtk_ctree_node_set_row_data(GTK_CTREE(ctree), top, (gpointer)nearestStar);
-    g_free((gpointer)tmp[0]);
+
     if (solarSys != NULL)
     {
 	const PlanetarySystem* planets = solarSys->getPlanets();
@@ -1250,7 +1251,7 @@ static const Star *tmpSel=NULL;
 
 int nbookSwitch(GtkNotebook *nbook, gpointer dummy, gint page, gpointer dummy2)
 {
-    if(page==1) // Page switch to the Solar System Browser 
+    if (page == 1) // Page switch to the Solar System Browser 
     {
         sbrowser.refresh();
         loadNearestStarSystem();
@@ -1346,7 +1347,7 @@ static void menuBrowser()
         gtk_signal_connect(GTK_OBJECT(button), "pressed",
                            GTK_SIGNAL_FUNC(radioClicked), (gpointer)i );
     }
-    if(buttonMake(hbox, "   Refresh   ", (GtkSignalFunc)refreshBrowser, NULL))
+    if (buttonMake(hbox, "   Refresh   ", (GtkSignalFunc)refreshBrowser, NULL))
         return;
     
     gtk_widget_show (clist);
@@ -1404,16 +1405,16 @@ static void menuBrowser()
     // Common Buttons
     hbox = gtk_hbox_new(FALSE, 3);
     gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (browser)->vbox), hbox, FALSE, FALSE, 0);
-    if(buttonMake(hbox, "   Select   ", (GtkSignalFunc)selectBrowsed, NULL))
+    if (buttonMake(hbox, "   Select   ", (GtkSignalFunc)selectBrowsed, NULL))
         return;
-    if(buttonMake(hbox, "   Center   ", (GtkSignalFunc)centerBrowsed, NULL))
+    if (buttonMake(hbox, "   Center   ", (GtkSignalFunc)centerBrowsed, NULL))
         return;
-    if(buttonMake(hbox, "   Go To   ", (GtkSignalFunc)gotoBrowsed, NULL))
+    if (buttonMake(hbox, "   Go To   ", (GtkSignalFunc)gotoBrowsed, NULL))
         return;
 
     gtk_widget_show (hbox);
 
-    gtk_widget_set_usize(browser, 500, 400); //Absolute Size, urghhh
+    gtk_widget_set_usize(browser, 500, 400); // Absolute Size, urghhh
 
     gnome_dialog_set_parent((GnomeDialog*) browser, GTK_WINDOW(mainWindow));
     gnome_dialog_set_default((GnomeDialog*) browser, GNOME_YES);
@@ -1430,10 +1431,10 @@ static void menuBrowser()
 static gint intAdjChanged(GtkAdjustment* adj, int *val)
 {
     if (val)
-	{
+    {
 	*val=(int)adj->value;
 	return TRUE;
-	}
+    }
     return FALSE;
 }
 
@@ -1562,34 +1563,34 @@ static void menuSetTime()
 	tzone=2;
 	
     if (stimedialog == NULL)
-	{
+    {
 	DPRINTF("Unable to open 'Set Time' dialog!\n");
 	return;
-	}
+    }
 
     GtkWidget *hbox = gtk_hbox_new(FALSE, 6);
     GtkWidget *frame = gtk_frame_new("Time");
     GtkWidget *align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
     
     if ((hbox == NULL) || (frame == NULL) || (align == NULL))
-	{
+    {
 	DPRINTF("Unable to get GTK Elements.\n");
 	return;
-	}
+    }
     astro::Date date(appSim->getTime() +
-			    astro::secondsToJulianDate(appCore->getTimeZoneBias()));
-    monthLoc=&date.month;
+                     astro::secondsToJulianDate(appCore->getTimeZoneBias()));
+    monthLoc = &date.month;
     gtk_widget_show(align);
     gtk_widget_show(frame);
     gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
     gtk_container_add(GTK_CONTAINER(frame),GTK_WIDGET(align));
     gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
     gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), frame, FALSE, FALSE, 0);
-    intSpin(hbox,"Hour", 1, 24, &date.hour, ":");
-    intSpin(hbox,"Minute", 1, 60, &date.minute, ":");
+    intSpin(hbox, "Hour", 1, 24, &date.hour, ":");
+    intSpin(hbox, "Minute", 1, 60, &date.minute, ":");
     second=(int)date.seconds;
-    intSpin(hbox,"Second", 1, 60, &second, "  ");
-    chooseOption(hbox,"Timzone", timeOptions, &tzone, NULL, GTK_SIGNAL_FUNC(zonechosen));
+    intSpin(hbox, "Second", 1, 60, &second, "  ");
+    chooseOption(hbox, "Timzone", timeOptions, &tzone, NULL, GTK_SIGNAL_FUNC(zonechosen));
     gtk_widget_show_all(hbox);
     hbox = gtk_hbox_new(FALSE, 6);
     frame = gtk_frame_new("Date");
@@ -1597,10 +1598,10 @@ static void menuSetTime()
     gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
     
     if ((hbox == NULL) || (frame == NULL) || (align == NULL))
-	{
+    {
 	DPRINTF("Unable to get GTK Elements.\n");
 	return;
-	}
+    }
     chooseOption(hbox,"Month", monthOptions, &date.month, " ", GTK_SIGNAL_FUNC(monthchosen));
     intSpin(hbox,"Day", 1, 31, &date.day, ",");
     intSpin(hbox,"Year", -9999, 9999, &date.year, " "); /* (Hopefully,
