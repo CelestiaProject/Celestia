@@ -19,7 +19,7 @@ static bool featureTableInitialized = false;
 
 struct FeatureNameEntry
 {
-    char* name;
+    const char* name;
     uint32 flag;
 };
 
@@ -57,7 +57,7 @@ FeatureNameEntry FeatureNames[] =
     { "Landing Site", Location::LandingSite },
     { "Crater", Location::Crater },
 };
-
+ 
 
 Location::Location() :
     parent(NULL),
@@ -130,7 +130,7 @@ string Location::getInfoURL() const
 }
 
 
-void Location::setInfoURL(const string& url)
+void Location::setInfoURL(const string&)
 {
 }
 
@@ -153,7 +153,7 @@ static void initFeatureTypeTable()
 
     for (int i = 0; i < (int)(sizeof(FeatureNames) / sizeof(FeatureNames[0])); i++)
     {
-        FeatureNameToFlag[FeatureNames[i].name] = FeatureNames[i].flag;
+        FeatureNameToFlag[string(FeatureNames[i].name)] = FeatureNames[i].flag;
     }
 }
 
@@ -164,7 +164,7 @@ uint32 Location::parseFeatureType(const string& s)
         initFeatureTypeTable();
 
     int flag = FeatureNameToFlag[s];
-    return flag != 0 ? flag : Other;
+    return flag != 0 ? flag : (uint32) Other;
 }
 
 

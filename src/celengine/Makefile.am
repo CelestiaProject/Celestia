@@ -9,7 +9,6 @@ EXTRA_DIST = $(noinst_DATA)
 INCLUDES = -I..
 
 libcelengine_a_SOURCES = \
-	3dsmesh.cpp \
 	asterism.cpp \
 	astro.cpp \
 	body.cpp \
@@ -33,7 +32,10 @@ libcelengine_a_SOURCES = \
 	location.cpp \
 	lodspheremesh.cpp \
 	marker.cpp \
+	mesh.cpp \
 	meshmanager.cpp \
+	model.cpp \
+	modelfile.cpp \
 	multitexture.cpp \
 	nebula.cpp \
 	observer.cpp \
@@ -43,6 +45,7 @@ libcelengine_a_SOURCES = \
 	overlay.cpp \
 	parser.cpp \
 	regcombine.cpp \
+	rendcontext.cpp \
 	render.cpp \
         samporbit.cpp \
 	selection.cpp \
