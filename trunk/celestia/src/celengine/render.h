@@ -165,7 +165,6 @@ class Renderer
         Surface* surface;
         const Atmosphere* atmosphere;
         RingSystem* rings;
-        RotationElements re;
         float radius;
         float oblateness;
         ResourceHandle mesh;
@@ -303,6 +302,7 @@ class Renderer
     bool useCompressedTextures;
     bool useVertexPrograms;
     bool useRescaleNormal;
+    bool useMinMaxBlending;
     unsigned int textureResolution;
 
     struct CachedOrbit
