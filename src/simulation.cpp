@@ -84,6 +84,10 @@ static void displayStarInfo(Console& console,
         console << "HD " << star.getCatalogNumber() << '\n';
     else
         console << "HIP " << (star.getCatalogNumber() & 0x0fffffff) << '\n';
+
+    console << "Distance: ";
+    displayDistance(console, distance);
+    console << '\n';
     
     console.printf("Abs (app) mag = %.2f (%.2f)\n",
                    star.getAbsoluteMagnitude(),
@@ -98,6 +102,9 @@ static void displayPlanetInfo(Console& console,
                               double distance)
 {
     console << body.getName() << '\n';
+    console << "Distance: ";
+    displayDistance(console, distance);
+    console << '\n';
     console << "Radius: " << body.getRadius() << " km\n";
     console << "Day length: " << body.getRotationPeriod() << " hours\n";
 }
@@ -105,31 +112,14 @@ static void displayPlanetInfo(Console& console,
 
 void Simulation::displaySelectionInfo(Console& console)
 {
+    if (selection.empty())
+        return;
+
+    Vec3d v = getSelectionPosition(selection, simTime) - observer.getPosition();
     if (selection.star != NULL)
-    {
-        Vec3d v = astro::universalPosition(Point3d(0, 0, 0), selection.star->getPosition()) - 
-            observer.getPosition();
-        console << "Distance to target: ";
-        displayDistance(console, v.length());
-        console << '\n';
         displayStarInfo(console, *selection.star, *stardb, v.length());
-    }
     else if (selection.body != NULL)
-    {
-        uint32 starNumber = Star::InvalidStar;
-        if (selection.body->getSystem() != NULL)
-            starNumber = selection.body->getSystem()->getStarNumber();
-        Star *star = stardb->find(starNumber);
-        
-        if (star != NULL)
-        {
-            Vec3d v = astro::universalPosition(selection.body->getHeliocentricPosition(simTime), star->getPosition()) - observer.getPosition();
-            console << "Distance to target: ";
-            displayDistance(console, v.length());
-            console << '\n';
-            displayPlanetInfo(console, *selection.body, v.length());
-        }
-    }
+        displayPlanetInfo(console, *selection.body, v.length());
 }
 
 
@@ -139,47 +129,9 @@ void  Simulation::render(Renderer& renderer)
     console->clear();
     console->home();
 
-    // Temporary hack, just for this version . . .
-    if (realTime < 15.0)
-    {
-        console->printf("Welcome to Celestia 1.05 (Mir Edition)\n");
-        console->printf("Right drag mouse to rotate around Mir\n");
-        console->printf("Hit ESC to stop tracking Mir and explore the rest of the universe\n\n");
-    }
-
     if (hudDetail > 0)
     {
-        console->printf("Visible stars = %d\n", visibleStars->getVisibleSet()->size());
-
-        // Display the velocity
-        {
-            double v = observer.getVelocity().length();
-            char* units;
-
-            if (v < astro::AUtoLightYears(1000))
-            {
-                if (v < astro::kilometersToLightYears(10000000.0f))
-                {
-                    v = astro::lightYearsToKilometers(v);
-                    units = "km/s";
-                }
-                else
-                {
-                    v = astro::lightYearsToAU(v);
-                    units = "AU/s";
-                }
-            }
-            else
-            {
-                units = "ly/s";
-            }
-
-            console->printf("Speed: %f %s\n", v, units);
-        }
-
-        // Display the date
-        *console << astro::Date(simTime) << '\n';
-
+        // console->printf("Visible stars = %d\n", visibleStars->getVisibleSet()->size());
         displaySelectionInfo(*console);
     }
 
@@ -624,6 +576,16 @@ Observer& Simulation::getObserver()
     return observer;
 }
 
+Simulation::ObserverMode Simulation::getObserverMode() const
+{
+    return observerMode;
+}
+
+void Simulation::setObserverMode(Simulation::ObserverMode mode)
+{
+    observerMode = mode;
+}
+
 // Rotate the observer about its center.
 void Simulation::rotate(Quatf q)
 {
@@ -692,6 +654,10 @@ void Simulation::changeOrbitDistance(float d)
         // Determine distance and direction to the selected object
         Vec3d v = observer.getPosition() - focusPosition;
         double currentDistance = v.length();
+
+        // TODO: This is sketchy . . .
+        if (currentDistance < minOrbitDistance)
+            minOrbitDistance = currentDistance * 0.5;
 
         if (currentDistance >= minOrbitDistance && naturalOrbitDistance != 0)
         {
@@ -818,12 +784,26 @@ void Simulation::selectBody(string s)
     {
         selectStar(star->getCatalogNumber());
     }
-    else if (selection.star != NULL)
+    else
     {
-        SolarSystem* solarSystem = getSolarSystem(selection.star);
+        const PlanetarySystem* solarSystem = NULL;
+
+        if (selection.star != NULL)
+        {
+            SolarSystem* sys = getSolarSystem(selection.star);
+            if (sys != NULL)
+                solarSystem = sys->getPlanets();
+        }
+        else if (selection.body != NULL)
+        {
+            solarSystem = selection.body->getSystem();
+            while (solarSystem != NULL && solarSystem->getPrimaryBody() != NULL)
+                solarSystem = solarSystem->getPrimaryBody()->getSystem();
+        }
+            
         if (solarSystem != NULL)
         {
-            Body* body = solarSystem->getPlanets()->find(s, true);
+            Body* body = solarSystem->find(s, true);
             if (body != NULL)
                 selection = Selection(body);
         }
