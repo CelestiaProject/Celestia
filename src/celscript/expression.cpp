@@ -73,10 +73,10 @@ BinaryExpression::~BinaryExpression()
         delete right;
 }
 
-Value BinaryExpression::eval()
+Value BinaryExpression::eval(ExecutionContext& context)
 {
-    Value a = left->eval();
-    Value b = right->eval();
+    Value a = left->eval(context);
+    Value b = right->eval(context);
     return BinaryOperatorFunctions[op](a, b);
 }
 
@@ -94,9 +94,9 @@ UnaryExpression::~UnaryExpression()
         delete expr;
 }
 
-Value UnaryExpression::eval()
+Value UnaryExpression::eval(ExecutionContext& context)
 {
-    Value v = expr->eval();
+    Value v = expr->eval(context);
     return UnaryOperatorFunctions[op](v);
 }
 
@@ -110,24 +110,28 @@ ConstantExpression::~ConstantExpression()
 {
 }
 
-Value ConstantExpression::eval()
+Value ConstantExpression::eval(ExecutionContext&)
 {
     return value;
 }
 
 
-NameExpression::NameExpression(const string& _name) :
+IdentifierExpression::IdentifierExpression(const string& _name) :
     name(_name)
 {
 }
 
-NameExpression::~NameExpression()
+IdentifierExpression::~IdentifierExpression()
 {
 }
 
-Value NameExpression::eval()
+Value IdentifierExpression::eval(ExecutionContext& context)
 {
-    return Value();
+    Value* val = context.getEnvironment()->lookup(name);
+    if (val == NULL)
+        return Value();
+    else
+        return *val;
 }
 
 

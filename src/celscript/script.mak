@@ -18,6 +18,8 @@ NULL=nul
 !ENDIF 
 
 OBJS=\
+	$(INTDIR)\environment.obj \
+	$(INTDIR)\execution.obj \
 	$(INTDIR)\expression.obj \
 	$(INTDIR)\parser.obj \
 	$(INTDIR)\scanner.obj \

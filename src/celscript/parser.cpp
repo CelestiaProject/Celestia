@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include <celscript/parser.h>
 
 using namespace std;
@@ -14,7 +15,8 @@ using namespace celx;
 
 
 Parser::Parser(Scanner& _scanner) :
-    scanner(_scanner)
+    scanner(_scanner),
+    loopDepth(0)
 {
 }
 
@@ -35,6 +37,10 @@ Expression* Parser::parseFinalExpression()
     {
         return new ConstantExpression(Value(scanner.getNumberValue()));
     }
+    else if (tok == Scanner::KeywordNull)
+    {
+        return new ConstantExpression(Value());
+    }
     else if (tok == Scanner::KeywordTrue)
     {
         return new ConstantExpression(Value(true));
@@ -45,7 +51,7 @@ Expression* Parser::parseFinalExpression()
     }
     else if (tok == Scanner::TokenName)
     {
-        return new NameExpression(scanner.getNameValue());
+        return new IdentifierExpression(scanner.getNameValue());
     }
     else
     {
@@ -329,6 +335,57 @@ Statement* Parser::parseIfStatement()
 }
 
 
+Statement* Parser::parseVarStatement()
+{
+    if (scanner.nextToken() != Scanner::KeywordVar)
+    {
+        syntaxError("var expected");
+        return NULL;
+    }
+
+    if (scanner.nextToken() != Scanner::TokenName)
+    {
+        syntaxError("identifier expected");
+        return NULL;
+    }
+
+    string name = scanner.getNameValue();
+    Expression* initializer;
+
+    if (scanner.nextToken() != Scanner::TokenEndStatement)
+    {
+        if (scanner.getTokenType() != Scanner::TokenAssign)
+        {
+            syntaxError("variable initialiazer expected");
+            return NULL;
+        }
+
+        initializer = parseExpression();
+        if (initializer == NULL)
+        {
+            return NULL;
+        }
+
+        scanner.nextToken();
+    }
+    else
+    {
+        initializer = new ConstantExpression(Value());
+    }
+
+    if (scanner.getTokenType() != Scanner::TokenEndStatement)
+    {
+        delete initializer;
+        return NULL;
+    }
+    else
+    {
+        defineLocal(name);
+        return new VarStatement(name, initializer);
+    }
+}
+
+
 Statement* Parser::parseCompoundStatement()
 {
     if (scanner.nextToken() != Scanner::TokenBeginGroup)
@@ -337,6 +394,7 @@ Statement* Parser::parseCompoundStatement()
         return NULL;
     }
 
+    beginFrame();
     CompoundStatement* compound = new CompoundStatement();
     while (scanner.nextToken() != Scanner::TokenEndGroup)
     {
@@ -345,11 +403,13 @@ Statement* Parser::parseCompoundStatement()
         if (statement == NULL)
         {
             delete compound;
+            endFrame();
             return NULL;
         }
         
         compound->addStatement(statement);
     }
+    endFrame();
 
     return compound;
 }
@@ -407,6 +467,9 @@ Statement* Parser::parseStatement()
     case Scanner::KeywordIf:
         return parseIfStatement();
 
+    case Scanner::KeywordVar:
+        return parseVarStatement();
+
     case Scanner::TokenBeginGroup:
         return parseCompoundStatement();
 
@@ -416,6 +479,47 @@ Statement* Parser::parseStatement()
     default:
         return parseExpressionStatement();
     }
+}
+
+
+int Parser::resolveName(const std::string& name)
+{
+    int i = scope.size();
+    int stackDepth = 0;
+    while (i-- > 0)
+    {
+        if (!scope[i].empty())
+        {
+            if (scope[i] == name)
+                return stackDepth;
+            stackDepth++;
+        }
+    }
+
+    return -1;
+}
+
+
+void Parser::defineLocal(const std::string& name)
+{
+    scope.push_back(name);
+}
+
+
+void Parser::beginFrame()
+{
+    scope.push_back("");
+}
+
+void Parser::endFrame()
+{
+    assert(!scope.empty());
+    while (!scope.back().empty())
+    {
+        scope.pop_back();
+        assert(!scope.empty());
+    }
+    scope.pop_back();
 }
 
 

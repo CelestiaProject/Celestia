@@ -17,6 +17,8 @@ int main(int argc, char* argv[])
 {
     Scanner scanner(&cin);
     Parser parser(scanner);
+    GlobalEnvironment* env = new GlobalEnvironment();
+    ExecutionContext context(env);
 
     cout << "Testing parser . . .\n";
 
@@ -27,7 +29,7 @@ int main(int argc, char* argv[])
         if (statement != NULL)
         {
             cout << "Valid\n";
-            statement->execute();
+            statement->execute(context);
         }
         else
         {

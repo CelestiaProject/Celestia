@@ -53,6 +53,8 @@ public:
         KeywordWhile        = 53,
         KeywordTrue         = 54,
         KeywordFalse        = 55,
+        KeywordNull         = 56,
+        KeywordVar          = 57,
         TokenError          = 255,
     };
 
