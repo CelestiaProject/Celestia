@@ -2401,12 +2401,6 @@ static void renderRings(RingSystem& rings,
 
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     }
-    else
-    {
-        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
-        glDisable(GL_TEXTURE_2D);
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-    }
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
