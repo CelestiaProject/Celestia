@@ -3794,7 +3794,8 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
 
         // if (discSize > 1 || appMag < 1.0f / brightnessScale)
-        if (discSize > 1 || appMag < faintestPlanetMag)
+        if ((discSize > 1 || appMag < faintestPlanetMag) &&
+            body->getClassification() != Body::Invisible)
         {
             RenderListEntry rle;
             rle.body = body;
