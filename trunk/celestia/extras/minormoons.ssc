@@ -19,6 +19,8 @@
 	MeanAnomaly	7.649	#
 	}
 
+	RotationOffset		366
+
 	Albedo 0.061
 }
 
@@ -39,6 +41,8 @@
 	MeanAnomaly	344.875	#
 	}
 
+	RotationOffset		 55
+
 	Albedo 0.1
 }
 
@@ -53,11 +57,14 @@
 	Period		0.6745
 	SemiMajorAxis	221900
 	Eccentricity	0.0177
-	Inclination	1.065	#
-	AscendingNode	0.728	#
-	ArgOfPericenter 27.039	# J2000.0
-	MeanAnomaly	181.725	#
+	Inclination	1.075	#
+	AscendingNode	0.415	#
+	ArgOfPericenter 28.001	# J2000.0
+	MeanAnomaly	181.090	#
 	}
+
+	Obliquity		  0.0
+	RotationOffset		 29.5
 
 	Albedo 0.047
 }
@@ -498,6 +505,9 @@
 	MeanLongitude	188.905 #J2000.0
 	}
 
+	Obliquity		  0.0
+	RotationOffset		  8.8
+
 	Albedo 0.5
 }
 
@@ -516,6 +526,9 @@
 	MeanLongitude   282.107	#J2000.0
 	}
 
+	Obliquity		  0.0
+	RotationOffset		 97.9
+
 	Albedo 0.4
 }
 
@@ -533,12 +546,13 @@
 	Eccentricity	0.0010
 	Inclination	1.170	#
 	AscendingNode	188.718	#
-	ArgOfPericenter	358.961	# J2000.0
-	MeanAnomaly     18.537	#
+	ArgOfPericenter	358.944	# J2000.0
+	MeanAnomaly     18.554	#
 	}
 
 	Obliquity		  1.2
 	EquatorAscendingNode	 80.8
+	RotationOffset		306.0
 
 	Albedo 1.0
 }
@@ -557,12 +571,13 @@
 	Eccentricity	0.0005
 	Inclination	1.472	#
 	AscendingNode	273.860	#
-	ArgOfPericenter	186.299	# J2000.0
-	MeanAnomaly     348.164	#
+	ArgOfPericenter	186.307	# J2000.0
+	MeanAnomaly     348.156	#
 	}
 
 	Obliquity		  1.6	#
 	EquatorAscendingNode	 12.4	# J2000.0
+	RotationOffset		255
 
 	Albedo 0.7
 }
@@ -581,9 +596,11 @@
 	Eccentricity	0.0001
 	Inclination	0.202	#
 	AscendingNode	121.154	#
-	ArgOfPericenter	48.576	# J2000.0
-	MeanAnomaly     19.780	# 
+	ArgOfPericenter	48.574	# J2000.0
+	MeanAnomaly     19.782	# 
 	}
+
+	RotationOffset		 10
 
 	Albedo 0.6
 }
@@ -607,6 +624,8 @@
 	ArgOfPericenter	96.012	# J2000.0
 	MeanAnomaly     352.546	#
 	}
+	
+	RotationOffset		 36
 
 	Albedo 0.07
 }
@@ -627,6 +646,8 @@
 	ArgOfPericenter	345.041	# J2000.0
 	MeanAnomaly     78.064	#
 	}
+	
+	RotationOffset		155
 
 	Albedo 0.07
 }
@@ -647,6 +668,8 @@
 	ArgOfPericenter	204.255	# J2000.0
 	MeanAnomaly     324.540	#
 	}
+	
+	RotationOffset		 52
 
 	Albedo 0.07
 }
@@ -668,6 +691,9 @@
 	MeanAnomaly     3.135	#
 	}
 
+	
+	RotationOffset		120
+
 	Albedo 0.07
 }
 
@@ -688,6 +714,8 @@
 	MeanAnomaly     357.199	#
 	}
 
+	RotationOffset		  92
+	
 	Albedo 0.07
 }
 
@@ -707,6 +735,8 @@
 	ArgOfPericenter	212.168 # J2000.0
 	MeanAnomaly     51.564	#
 	}
+	
+	RotationOffset		236
 
 	Albedo 0.07
 }
@@ -727,6 +757,8 @@
 	ArgOfPericenter	204.520	# J2000.0
 	MeanAnomaly     356.184	#
 	}
+	
+	RotationOffset		149
 
 	Albedo 0.07
 }
@@ -747,6 +779,8 @@
 	ArgOfPericenter	0.858	# J2000.0
 	MeanAnomaly     9.041	#
 	}
+	
+	RotationOffset		216
 
 	Albedo 0.07
 }
@@ -767,6 +801,8 @@
 	ArgOfPericenter	299.908	# J2000.0
 	MeanAnomaly     6.896	#
 	}
+	
+	RotationOffset		225
 
 	Albedo 0.07
 }
@@ -787,6 +823,8 @@
 	ArgOfPericenter	213.582	# J2000.0
 	MeanAnomaly     12.990	#
 	}
+	
+	RotationOffset		 81
 
 	Albedo 0.07
 }
@@ -921,6 +959,10 @@
 	MeanAnomaly     5.947	#
 	}
 
+	Obliquity		  0.1
+	EquatorAscendingNode	346.7
+	RotationOffset		242.9
+
 	Albedo 0.060
 }
 
@@ -940,6 +982,8 @@
 	ArgOfPericenter	278.052	# J2000.0
 	MeanAnomaly     353.320	#
 	}
+
+	RotationOffset		77.6
 
 	Albedo 0.060
 }
@@ -961,6 +1005,8 @@
 	MeanAnomaly     356.923	#
 	}
 
+	RotationOffset		282.0
+	
 	Albedo 0.059
 }
 
@@ -981,6 +1027,7 @@
 	MeanAnomaly     3.172	#
 	}
 
+	RotationOffset		233.6
+
 	Albedo 0.063
 }
-
