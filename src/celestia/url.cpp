@@ -38,7 +38,7 @@ Url::Url(const std::string& str, CelestiaCore *core)
         urlStr = "";
         return;
     }
-
+    
     pos = urlStr.find("/", 6);
     if (pos == std::string::npos) pos = urlStr.find("?", 6);
 
@@ -46,32 +46,32 @@ Url::Url(const std::string& str, CelestiaCore *core)
     else modeStr = decode_string(urlStr.substr(6, pos - 6));
 
 
-    if (modeStr == "Freeflight")
+    if (!strcasecmp(modeStr.c_str(), "Freeflight"))
     {
         mode = astro::Universal;
         nbBodies = 0;
     }
-    else if (modeStr == "Follow")
+    else if (!strcasecmp(modeStr.c_str(), "Follow"))
     {
         mode = astro::Ecliptical;
         nbBodies = 1;
     }
-    else if (modeStr == "SyncOrbit")
+    else if (!strcasecmp(modeStr.c_str(), "SyncOrbit"))
     {
         mode = astro::Geographic;
         nbBodies = 1;
     }
-    else if (modeStr == "Chase")
+    else if (!strcasecmp(modeStr.c_str(), "Chase"))
     {
         mode = astro::Chase;
         nbBodies = 1;
     }
-    else if (modeStr == "PhaseLock")
+    else if (!strcasecmp(modeStr.c_str(), "PhaseLock"))
     {
         mode = astro::PhaseLock;
         nbBodies = 2;
     }
-    else if (modeStr == "Settings")
+    else if (!strcasecmp(modeStr.c_str(), "Settings"))
     {
         type = Settings;
         nbBodies = 0;
@@ -123,7 +123,7 @@ Url::Url(const std::string& str, CelestiaCore *core)
     if (pos == std::string::npos) time = urlStr.substr(endPrevious + 1);
     else time = urlStr.substr(endPrevious + 1, pos - endPrevious -1);
     time = decode_string(time);
-
+    
     if (type != Settings)
     {
         if (params["dist"] != "")
