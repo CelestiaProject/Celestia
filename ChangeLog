@@ -761,4 +761,11 @@ Code:
   too crowded location labels for Mars, Venus and the Moon
 * Added new textures for Titan based on recent imaging from the Cassini
   mission 
-	
+* Improved depth sorting so that hidden surface removal works properly for
+  overlapping objects
+* Added theoretical estimates of oblateness and rotation rate for extrasolar
+  planets
+* Replaced old Io and Europa textures with improved versions
+* Added disposition modifier for ssc objects to control what happens when
+  an object with the same name and parent already exists.  The three possible
+  behaviors are Add (the default), Replace, and Modify.
