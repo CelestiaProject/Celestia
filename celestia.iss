@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.3.2 pre6
+AppVerName=Celestia 1.3.2 pre10
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -147,6 +147,7 @@ Source: "textures\lores\tethys.jpg";            DestDir: "{app}/textures/lores";
 Source: "textures\lores\titania.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\titania-lok-mask.png";  DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\titan.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\titan-clouds.jpg";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\triton.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\triton-lok-mask.png";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\umbriel.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
@@ -215,6 +216,8 @@ Source: "textures\medres\proteus.jpg";         DestDir: "{app}/textures/medres";
 Source: "textures\medres\rhea.jpg";            DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\saturn.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\tethys.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\titan.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\titan-clouds.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\titania.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\triton.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\umbriel.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
@@ -251,23 +254,25 @@ Source: "shaders\ringshadow_arb.vp";     DestDir: "{app}/shaders"; Flags: ignore
 Source: "shaders\shadowtex_arb.vp";      DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\simple_arb.vp";         DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\specular_arb.vp";       DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\texphong_arb.vp";       DestDir: "{app}/shaders"; Flags: ignoreversion
 
 
 ; Shaders (NV pixel)
+Source: "shaders\bumpdiffuse_nv.fp";     DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\diffuse_nv.fp";         DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\eclipse1_nv.fp";        DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\eclipse2_nv.fp";        DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\shadow_on_rings_nv.fp"; DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\texphong_nv.fp";        DestDir: "{app}/shaders"; Flags: ignoreversion
 
 
 ; Models
-;Source: "models\amalthea.3ds";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\amalthea.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\asteroid.cms";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\bacchus.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\borrelly.cms";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\cassini.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\castalia.3ds";     DestDir: "{app}/models"; Flags: ignoreversion
-;Source: "models\deimos.3ds";       DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\deimos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\epimetheus.3ds";   DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\eros.3ds";         DestDir: "{app}/models"; Flags: ignoreversion
@@ -278,7 +283,6 @@ Source: "models\golevka.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\halley.3ds";       DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\hubble.3ds";       DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\huygens.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
-;Source: "models\hyperion.3ds";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\hyperion.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\ida.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\iss.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
@@ -288,7 +292,6 @@ Source: "models\ky26.3ds";         DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\larissa.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\mir.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\pandora.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
-;Source: "models\phobos.3ds";       DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\phobos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\prometheus.3ds";   DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\proteus.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
