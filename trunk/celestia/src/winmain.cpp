@@ -22,6 +22,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "gl.h"
+#include "glext.h"
 #include "celestia.h"
 #include "vecmath.h"
 #include "quaternion.h"
@@ -276,6 +277,20 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
             if (version != NULL)
                 s += version;
             s += "\r\r\n";
+
+            char buf[100];
+            GLint simTextures = 1;
+            if (ExtensionSupported("GL_ARB_multitexture"))
+                glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
+            sprintf(buf, "Max simultaneous textures: %d\r\r\n",
+                    simTextures);
+            s += buf;
+
+            GLint maxTextureSize = 0;
+            glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+            sprintf(buf, "Max texture size: %d\r\r\n",
+                    maxTextureSize);
+            s += buf;
 
             s += "\r\r\nSupported Extensions:\r\r\n";
             if (ext != NULL)
