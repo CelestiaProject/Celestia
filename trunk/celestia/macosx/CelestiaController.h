@@ -12,6 +12,7 @@
 #import "CelestiaSettings.h"
 #import "FavoritesDrawerController.h"
 #import "RenderPanelController.h"
+#import "BrowserWindowController.h"
 
 @interface CelestiaController : NSWindowController 
 {
@@ -26,6 +27,7 @@
     IBOutlet NSWindow *gotoWindow;
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     IBOutlet RenderPanelController *renderPanelController;
+    BrowserWindowController* browserWindowController;
     NSTimer* timer;
     volatile NSThread *computeThread;
     volatile BOOL computeThreadShouldTerminate;
@@ -52,6 +54,8 @@
 -(void)setupResourceDirectory;
 +(CelestiaController*) shared;
 - (void) fatalError: (NSString *) msg;
+
+-(IBAction) showPanel: (id) sender;
 
 -(void)addSurfaceMenu:(NSMenu*)contextMenu;
 -(BOOL)validateMenuItem:(id)item;
