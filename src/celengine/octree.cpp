@@ -79,11 +79,29 @@ static int childIndex(const Star& star, const Point3f& center)
 }
 
 
+inline bool
+starOrbitStraddlesNodes(const Star& star, const Point3f& center)
+{
+    float orbitalRadius = star.getOrbitalRadius();
+    if (orbitalRadius == 0.0f)
+        return false;
+
+    Point3f starPos = star.getPosition();
+    return (abs(starPos.x - center.x) < orbitalRadius ||
+            abs(starPos.y - center.y) < orbitalRadius ||
+            abs(starPos.z - center.z) < orbitalRadius);
+}
+
+
 void DynamicStarOctree::insertStar(const Star& star, float scale)
 {
     // If the star is brighter than the node's magnitude, insert
-    // it here now.
-    if (star.getAbsoluteMagnitude() <= absMag)
+    // it here now.  Also, if the star is in an orbit in a multiple
+    // star system, check for the case where the sphere containing
+    // the orbit straddles two or more child nodes.  If it does, we
+    // must keep the star in the parent.
+    if (star.getAbsoluteMagnitude() <= absMag ||
+        starOrbitStraddlesNodes(star, center))
     {
         addStar(star);
     }
@@ -145,13 +163,19 @@ void DynamicStarOctree::sortStarsIntoChildNodes()
     for (unsigned int i = 0; i < stars->size(); i++)
     {
         const Star* star = (*stars)[i];
-        if (star->getAbsoluteMagnitude() <= absMag)
+
+        if (star->getAbsoluteMagnitude() <= absMag ||
+            starOrbitStraddlesNodes(*star, center))
         {
+            // If the star is bright enough or if it's in an orbit in
+            // a multiple star system with an orbit straddling two or
+            // more child nodes, then keep the star in the parent...
             (*stars)[nBrightStars] = (*stars)[i];
             nBrightStars++;
         }
         else
         {
+            // ...otherwise, assign it to a child node.
             children[childIndex(*star, center)]->addStar(*star);
         }
     }
