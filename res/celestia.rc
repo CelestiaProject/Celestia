@@ -69,6 +69,7 @@ BEGIN
         MENUITEM "Show &Planet Labels",         ID_RENDER_SHOWPLANETLABELS
         MENUITEM "Show &Star Labels",           ID_RENDER_SHOWSTARLABELS
 	MENUITEM "Show &Constellations",        ID_RENDER_SHOWCONSTELLATIONS
+	MENUITEM "Show A&tmospheres",           ID_RENDER_SHOWATMOSPHERES
         MENUITEM "Show &HUD Text",              ID_RENDER_SHOWHUDTEXT
         , CHECKED
         POPUP "&Ambient Light"
