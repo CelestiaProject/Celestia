@@ -44,9 +44,11 @@ public:
 
     void fatalError(const std::string& msg)
     {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         NSLog(@"alerter fatalError!");
         [[CelestiaController shared] fatalError: [NSString stringWithStdString: msg] ];
         NSLog(@"alerter fatalError finis");
+        [pool release];
     }
 };
 
