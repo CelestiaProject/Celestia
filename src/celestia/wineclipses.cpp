@@ -1,7 +1,6 @@
 // wineclipses.cpp by Kendrix <kendrix@wanadoo.fr>
+// modified by Chris Laurel
 // 
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
-//
 // Compute Solar Eclipses for our Solar System planets
 //
 // This program is free software; you can redistribute it and/or
@@ -16,6 +15,7 @@
 #include <cassert>
 #include <windows.h>
 #include <commctrl.h>
+#include "eclipsefinder.h"
 #include "wineclipses.h"
 #include "res/resource.h"
 #include "celmath/mathlib.h"
@@ -24,8 +24,9 @@
 
 using namespace std;
 
-vector<Eclipse> Eclipses_;
 WNDPROC oldListViewProc;
+
+static vector<Eclipse> eclipseList;
 
 extern void SetMouseCursor(LPCTSTR lpCursor);
 
@@ -35,16 +36,6 @@ char* MonthNames[12] =
     "May", "Jun", "Jul", "Aug",
     "Sep", "Oct", "Nov", "Dec"
 };
-
-Eclipse::Eclipse(int Y, int M, int D)
-{
-    date = new astro::Date(Y, M, D);
-}
-
-Eclipse::Eclipse(double JD)
-{
-    date = new astro::Date(JD);
-}
 
 bool InitEclipseFinderColumns(HWND listView)
 {
@@ -83,7 +74,7 @@ bool InitEclipseFinderColumns(HWND listView)
 }
 
 
-bool InitEclipseFinderLVItems(HWND listView)
+bool InitEclipseFinderItems(HWND listView, const vector<Eclipse>& eclipses)
 {
     LVITEM lvi;
 
@@ -92,22 +83,15 @@ bool InitEclipseFinderLVItems(HWND listView)
     lvi.stateMask = 0;
     lvi.pszText = LPSTR_TEXTCALLBACK;
 
-    for (int i = 0; i < Eclipses_.size(); i++)
+    for (int i = 0; i < eclipses.size(); i++)
     {
         lvi.iItem = i;
         lvi.iSubItem = 0;
-        lvi.lParam = (LPARAM) &(Eclipses_[i]);
+        lvi.lParam = (LPARAM) &(eclipses[i]);
         ListView_InsertItem(listView, &lvi);
     }
 
     return true;
-}
-
-
-bool InitEclipseFinderItems(HWND listView)
-{
-    bool succeeded = InitEclipseFinderLVItems(listView);
-    return succeeded;
 }
 
 
@@ -171,190 +155,6 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
             nm->item.pszText = callbackScratch;
         }
         break;
-    }
-}
-
-
-bool testEclipse(const Body& receiver, const Body& caster,
-                 double now)
-{
-    // Ignore situations where the shadow casting body is much smaller than
-    // the receiver, as these shadows aren't likely to be relevant.  Also,
-    // ignore eclipses where the caster is not an ellipsoid, since we can't
-    // generate correct shadows in this case.
-    if (caster.getRadius() * 100 >= receiver.getRadius() &&
-        caster.getMesh() == InvalidResource)
-    {
-        // All of the eclipse related code assumes that both the caster
-        // and receiver are spherical.  Irregular receivers will work more
-        // or less correctly, but casters that are sufficiently non-spherical
-        // will produce obviously incorrect shadows.  Another assumption we
-        // make is that the distance between the caster and receiver is much
-        // less than the distance between the sun and the receiver.  This
-        // approximation works everywhere in the solar system, and likely
-        // works for any orbitally stable pair of objects orbiting a star.
-        Point3d posReceiver = receiver.getHeliocentricPosition(now);
-        Point3d posCaster = caster.getHeliocentricPosition(now);
-
-        const Star* sun = receiver.getSystem()->getStar();
-        assert(sun != NULL);
-        double distToSun = posReceiver.distanceFromOrigin();
-        float appSunRadius = (float) (sun->getRadius() / distToSun);
-
-        Vec3d dir = posCaster - posReceiver;
-        double distToCaster = dir.length() - receiver.getRadius();
-        float appOccluderRadius = (float) (caster.getRadius() / distToCaster);
-
-        // The shadow radius is the radius of the occluder plus some additional
-        // amount that depends upon the apparent radius of the sun.  For
-        // a sun that's distant/small and effectively a point, the shadow
-        // radius will be the same as the radius of the occluder.
-        float shadowRadius = (1 + appSunRadius / appOccluderRadius) *
-            caster.getRadius();
-
-        // Test whether a shadow is cast on the receiver.  We want to know
-        // if the receiver lies within the shadow volume of the caster.  Since
-        // we're assuming that everything is a sphere and the sun is far
-        // away relative to the caster, the shadow volume is a
-        // cylinder capped at one end.  Testing for the intersection of a
-        // singly capped cylinder is as simple as checking the distance
-        // from the center of the receiver to the axis of the shadow cylinder.
-        // If the distance is less than the sum of the caster's and receiver's
-        // radii, then we have an eclipse.
-        float R = receiver.getRadius() + shadowRadius;
-        double dist = distance(posReceiver,
-                               Ray3d(posCaster, posCaster - Point3d(0, 0, 0)));
-        if (dist < R)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-double findEclipseSpan(const Body& receiver, const Body& caster,
-                       double now, double dt)
-{
-    double t = now;
-    while (testEclipse(receiver, caster, t))
-        t += dt;
-
-    return t;
-}
-
-
-void CalculateEclipses(CelestiaCore* appCore, string planetetofindon, SYSTEMTIME fromTime, SYSTEMTIME toTime, bool bSolar)
-{
-    Simulation* sim = appCore->getSimulation();
-    Eclipse* eclipse;
-    astro::Date from(fromTime.wYear, fromTime.wMonth, fromTime.wDay), to(toTime.wYear, toTime.wMonth, toTime.wDay);
-    double JDfrom, JDto;
-    double* JDback = NULL;
-    int nIDplanetetofindon;
-    int nSattelites;
-
-    JDfrom = (double)from;
-    JDto = (double)to;
-
-    const SolarSystem* sys = sim->getNearestSolarSystem();
-    if ((!sys))
-    {
-        MessageBox(NULL, "Only usable in our Solar System.", "Eclipse Finder Error", MB_OK | MB_ICONERROR);
-        eclipse = new Eclipse(0.);
-        eclipse->planete = "None";
-        Eclipses_.insert(Eclipses_.end(), *eclipse);
-        delete eclipse;
-        return;
-    }
-    else if ((sys->getStar()->getCatalogNumber(0) != 0) && (sys->getStar()->getCatalogNumber(1) != 0))
-    {
-        MessageBox(NULL, "Only usable in our Solar System.", "Eclipse Finder Error", MB_OK | MB_ICONERROR);
-        eclipse = new Eclipse(0.);
-        eclipse->planete = "None";
-        Eclipses_.insert(Eclipses_.end(), *eclipse);
-        delete eclipse;
-        return;
-    }
-
-    PlanetarySystem* system = sys->getPlanets();
-    int nbPlanets = system->getSystemSize();
-
-    for (int i = 0; i < nbPlanets; ++i)
-    {
-        Body* planete = system->getBody(i);
-        if (planete != NULL)
-            if (planetetofindon == planete->getName())
-            {
-                nIDplanetetofindon = i;
-                PlanetarySystem* satellites = planete->getSatellites();
-                if (satellites)
-                {
-                    nSattelites = satellites->getSystemSize();
-                    JDback = new double[nSattelites];
-                    memset(JDback, 0, nSattelites*sizeof(double));
-                }
-                break;
-            }
-    }
-
-    Body* planete = system->getBody(nIDplanetetofindon);
-    while (JDfrom < JDto)
-    {
-        PlanetarySystem* satellites = planete->getSatellites();
-        if (satellites)
-        {
-            for (int j = 0; j < nSattelites; ++j)
-            {
-                Body* caster = NULL;
-                Body* receiver = NULL;
-                bool test = false;
-
-                if (satellites->getBody(j)->getClassification() != Body::Spacecraft)
-                {
-                    if (bSolar)
-                    {
-                        caster = satellites->getBody(j);
-                        receiver = planete;
-                    }
-                    else
-                    {
-                        caster = planete;
-                        receiver = satellites->getBody(j);
-                    }
-
-                    test = testEclipse(*receiver, *caster, JDfrom);
-                }
-
-                if (test && JDfrom - JDback[j] > 1)
-                {
-                    JDback[j] = JDfrom;
-                    eclipse = new Eclipse(JDfrom);
-                    eclipse->startTime = findEclipseSpan(*receiver, *caster,
-                                                         JDfrom,
-                                                         -1.0 / (24.0 * 60.0));
-                    eclipse->endTime   = findEclipseSpan(*receiver, *caster,
-                                                         JDfrom,
-                                                         1.0 / (24.0 * 60.0));
-                    eclipse->body = receiver;
-                    eclipse->planete = planete->getName();
-                    eclipse->sattelite = satellites->getBody(j)->getName();
-                    Eclipses_.insert(Eclipses_.end(), *eclipse);
-                    delete eclipse;
-                }
-            }
-        }
-        JDfrom += 1.0 / 24.0;
-    }
-    if (JDback)
-        delete JDback;
-    if (Eclipses_.empty())
-    {
-        eclipse = new Eclipse(0.);
-        eclipse->planete = "None";
-        Eclipses_.insert(Eclipses_.end(), *eclipse);
-        delete eclipse;
     }
 }
 
@@ -461,14 +261,14 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                                 UINT wParam,
                                 LONG lParam)
 {
-    EclipseFinder* eclipseFinder = reinterpret_cast<EclipseFinder*>(GetWindowLong(hDlg, DWL_USER));
+    EclipseFinderDialog* eclipseFinderDlg = reinterpret_cast<EclipseFinderDialog*>(GetWindowLong(hDlg, DWL_USER));
 
     switch (message)
     {
     case WM_INITDIALOG:
         {
-            EclipseFinder* eclipse = reinterpret_cast<EclipseFinder*>(lParam);
-            if (eclipse == NULL)
+            EclipseFinderDialog* efd = reinterpret_cast<EclipseFinderDialog*>(lParam);
+            if (efd == NULL)
                 return EndDialog(hDlg, 0);
             SetWindowLong(hDlg, DWL_USER, lParam);
             HWND hwnd = GetDlgItem(hDlg, IDC_ECLIPSES_LIST);
@@ -478,7 +278,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_ADDSTRING, 0, (LPARAM)"solar");
             SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_ADDSTRING, 0, (LPARAM)"moon");
             SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_SETCURSEL, 0, 0);
-            eclipse->bSolar = true;
+            efd->bSolar = true;
 
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Earth");
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Jupiter");
@@ -487,23 +287,22 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Neptune");
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Pluto");
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_SETCURSEL, 0, 0);
-            eclipse->strPlaneteToFindOn = "Earth";
+            efd->strPlaneteToFindOn = "Earth";
 
-            InitDateControls(hDlg, astro::Date(eclipse->appCore->getSimulation()->getTime()), eclipse->fromTime, eclipse->toTime);
+            InitDateControls(hDlg, astro::Date(efd->appCore->getSimulation()->getTime()), efd->fromTime, efd->toTime);
 
-            //Subclass the ListView to intercept WM_LBUTTONUP messages
+            // Subclass the ListView to intercept WM_LBUTTONUP messages
             HWND hCtrl;
             if (hCtrl = GetDlgItem(hDlg, IDC_ECLIPSES_LIST))
-                oldListViewProc = (WNDPROC)SetWindowLong(hCtrl, GWL_WNDPROC, (DWORD)EclipseListViewProc);
+                oldListViewProc = (WNDPROC) SetWindowLong(hCtrl, GWL_WNDPROC, (DWORD) EclipseListViewProc);
         }
         return(TRUE);
 
     case WM_DESTROY:
-        if (eclipseFinder != NULL && eclipseFinder->parent != NULL)
+        if (eclipseFinderDlg != NULL && eclipseFinderDlg->parent != NULL)
         {
-            Eclipses_.clear();
-            SendMessage(eclipseFinder->parent, WM_COMMAND, IDCLOSE,
-                        reinterpret_cast<LPARAM>(eclipseFinder));
+            SendMessage(eclipseFinderDlg->parent, WM_COMMAND, IDCLOSE,
+                        reinterpret_cast<LPARAM>(eclipseFinderDlg));
         }
         break;
 
@@ -518,39 +317,46 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             {
                 HWND hwnd = GetDlgItem(hDlg, IDC_ECLIPSES_LIST);
                 ListView_DeleteAllItems(hwnd);
-                Eclipses_.clear();
-                if (eclipseFinder->strPlaneteToFindOn.empty())
-                    eclipseFinder->strPlaneteToFindOn = "Earth";
+                if (eclipseFinderDlg->strPlaneteToFindOn.empty())
+                    eclipseFinderDlg->strPlaneteToFindOn = "Earth";
                 SetMouseCursor(IDC_WAIT);
-                CalculateEclipses(eclipseFinder->appCore,
-                                  eclipseFinder->strPlaneteToFindOn,
-                                  eclipseFinder->fromTime,
-                                  eclipseFinder->toTime,
-                                  eclipseFinder->bSolar);
-                InitEclipseFinderItems(hwnd);
+
+
+                astro::Date from(eclipseFinderDlg->fromTime.wYear,
+                                 eclipseFinderDlg->fromTime.wMonth,
+                                 eclipseFinderDlg->fromTime.wDay);
+                astro::Date to(eclipseFinderDlg->toTime.wYear,
+                               eclipseFinderDlg->toTime.wMonth,
+                               eclipseFinderDlg->toTime.wDay);
+                EclipseFinder ef(eclipseFinderDlg->appCore,
+                                 eclipseFinderDlg->strPlaneteToFindOn,
+                                 eclipseFinderDlg->bSolar ? Eclipse::Solar : Eclipse::Moon,
+                                 (double) from,
+                                 (double) to);
+                eclipseList = ef.getEclipses();
+                InitEclipseFinderItems(hwnd, eclipseList);
                 SetMouseCursor(IDC_ARROW);
                 break;
             }
 
         case IDCLOSE:
             {
-                if (eclipseFinder != NULL && eclipseFinder->parent != NULL)
+                if (eclipseFinderDlg != NULL && eclipseFinderDlg->parent != NULL)
                 {
-                    Eclipses_.clear();
-                    SendMessage(eclipseFinder->parent, WM_COMMAND, IDCLOSE,
-                                reinterpret_cast<LPARAM>(eclipseFinder));
+                    SendMessage(eclipseFinderDlg->parent, WM_COMMAND, IDCLOSE,
+                                reinterpret_cast<LPARAM>(eclipseFinderDlg));
                 }
                 EndDialog(hDlg, 0);
                 break;
             }
 
         case IDSETDATEANDGO:
-            if (eclipseFinder->BodytoSet_)
+            if (eclipseFinderDlg->BodytoSet_)
             {
-                Simulation* sim = eclipseFinder->appCore->getSimulation();
-                sim->setTime(eclipseFinder->TimetoSet_);
-                Selection target(eclipseFinder->BodytoSet_);
-                Selection ref(eclipseFinder->BodytoSet_->getSystem()->getStar());
+                Simulation* sim = eclipseFinderDlg->appCore->getSimulation();
+                sim->setTime(eclipseFinderDlg->TimetoSet_);
+                Selection target(eclipseFinderDlg->BodytoSet_);
+                Selection ref(eclipseFinderDlg->BodytoSet_->getSystem()->getStar());
                 // Use the phase lock coordinate system to set a position
                 // on the line between the sun and the body where the eclipse
                 // is occurring.
@@ -570,10 +376,10 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 switch(SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0))
                 {
                 case 0:
-                    eclipseFinder->bSolar = true;
+                    eclipseFinderDlg->bSolar = true;
                     break;
                 case 1:
-                    eclipseFinder->bSolar = false;
+                    eclipseFinderDlg->bSolar = false;
                     break;
                 }
             }
@@ -584,22 +390,22 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 switch(SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0))
                 {
                 case 0:
-                    eclipseFinder->strPlaneteToFindOn = "Earth";
+                    eclipseFinderDlg->strPlaneteToFindOn = "Earth";
                     break;
                 case 1:
-                    eclipseFinder->strPlaneteToFindOn = "Jupiter";
+                    eclipseFinderDlg->strPlaneteToFindOn = "Jupiter";
                     break;
                 case 2:
-                    eclipseFinder->strPlaneteToFindOn = "Saturn";
+                    eclipseFinderDlg->strPlaneteToFindOn = "Saturn";
                     break;
                 case 3:
-                    eclipseFinder->strPlaneteToFindOn = "Uranus";
+                    eclipseFinderDlg->strPlaneteToFindOn = "Uranus";
                     break;
                 case 4:
-                    eclipseFinder->strPlaneteToFindOn = "Neptune";
+                    eclipseFinderDlg->strPlaneteToFindOn = "Neptune";
                     break;
                 case 5:
-                    eclipseFinder->strPlaneteToFindOn = "Pluto";
+                    eclipseFinderDlg->strPlaneteToFindOn = "Pluto";
                     break;
                 }
             }
@@ -625,9 +431,9 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                             Eclipse* eclipse = reinterpret_cast<Eclipse*>(nm->lParam);
                             if (eclipse != NULL)
                             {
-                                eclipseFinder->TimetoSet_ = 
+                                eclipseFinderDlg->TimetoSet_ = 
                                     (eclipse->startTime + eclipse->endTime) / 2.0f;
-                                eclipseFinder->BodytoSet_ = eclipse->body;
+                                eclipseFinderDlg->BodytoSet_ = eclipse->body;
                             }
                         }
                         break;
@@ -641,7 +447,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                             EclipseFinderSortInfo sortInfo;
                             sortInfo.subItem = nm->iSubItem;
 //                            sortInfo.sattelite = ;
-//                            sortInfo.pos = eclipseFinder->pos;
+//                            sortInfo.pos = eclipseFinderDlg->pos;
                             ListView_SortItems(hwnd, EclipseFinderCompareFunc,
                                                reinterpret_cast<LPARAM>(&sortInfo));
                         }
@@ -656,15 +462,15 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 {
                     if (wParam == IDC_DATEFROM)
                     {
-                        eclipseFinder->fromTime.wYear = change->st.wYear;
-                        eclipseFinder->fromTime.wMonth = change->st.wMonth;
-                        eclipseFinder->fromTime.wDay = change->st.wDay;
+                        eclipseFinderDlg->fromTime.wYear = change->st.wYear;
+                        eclipseFinderDlg->fromTime.wMonth = change->st.wMonth;
+                        eclipseFinderDlg->fromTime.wDay = change->st.wDay;
                     }
                     else if (wParam == IDC_DATETO)
                     {
-                        eclipseFinder->toTime.wYear = change->st.wYear;
-                        eclipseFinder->toTime.wMonth = change->st.wMonth;
-                        eclipseFinder->toTime.wDay = change->st.wDay;
+                        eclipseFinderDlg->toTime.wYear = change->st.wYear;
+                        eclipseFinderDlg->toTime.wMonth = change->st.wMonth;
+                        eclipseFinderDlg->toTime.wDay = change->st.wDay;
                     }
                 }
             }
@@ -676,9 +482,9 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
 }
 
 
-EclipseFinder::EclipseFinder(HINSTANCE appInstance,
-                             HWND _parent,
-                             CelestiaCore* _appCore) :
+EclipseFinderDialog::EclipseFinderDialog(HINSTANCE appInstance,
+                                         HWND _parent,
+                                         CelestiaCore* _appCore) :
     appCore(_appCore),
     parent(_parent),
     BodytoSet_(NULL)
