@@ -167,7 +167,7 @@ static Quatf lookAt(Point3f from, Point3f to, Vec3f up)
     v.normalize();
     Mat4f r = Mat4f::rotation(v, (float) PI / 2);
     Vec3f u = n * r;
-    return ~Quatf(Mat3f(v, u, n));
+    return Quatf(Mat3f(v, u, n));
 }
 
 
@@ -365,7 +365,7 @@ void Simulation::update(double dt)
         Point3d posRelToSun = followInfo.body->getHeliocentricPosition(simTime) + followInfo.offset * followInfo.body->getEclipticalToGeographic(simTime).toMatrix4();
         observer.setPosition(astro::universalPosition(posRelToSun,
                                                       followInfo.sun->getPosition()));
-        Quatd q = followInfo.body->getEclipticalToGeographic(simTime) * followInfo.offsetR;
+        Quatd q = followInfo.offsetR * followInfo.body->getEclipticalToGeographic(simTime);
         observer.setOrientation(Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z));
     }
     else
@@ -641,11 +641,11 @@ void Simulation::rotate(Quatf q)
     if (observerMode == GeosynchronousFollowing)
     {
         Quatd qd(q.w, q.x, q.y, q.z);
-        followInfo.offsetR = followInfo.offsetR * qd;
+        followInfo.offsetR = qd * followInfo.offsetR;
     }
     else
     {
-        observer.setOrientation(observer.getOrientation() * q);
+        observer.setOrientation(q * observer.getOrientation());
     }
 }
 
@@ -659,59 +659,42 @@ void Simulation::orbit(Quatf q)
         Vec3d v = observer.getPosition() - focusPosition;
         double distance = v.length();
 
-        Mat3f m = conjugate(observer.getOrientation()).toMatrix3();
+        // To give the right feel for rotation, we want to premultiply
+        // the current orientation by q.  However, because of the order in
+        // which we apply transformations later on, we can't pre-multiply.
+        // To get around this, we compute a rotation q2 such
+        // that q1 * r = r * q2.
+        Quatf o = observer.getOrientation();
+        Quatf q2 = ~o * q * o;
 
-        // Convert the matrix to double precision so we can multiply it
-        // by the double precision vector.  Yuck.  VC doesn't seem to
-        // be able to figure out that the constructor declared in
-        // vecmath.h should allow: md = m
-        Mat3d md;
-        md[0][0] = m[0][0]; md[0][1] = m[0][1]; md[0][2] = m[0][2];
-        md[1][0] = m[1][0]; md[1][1] = m[1][1]; md[1][2] = m[1][2];
-        md[2][0] = m[2][0]; md[2][1] = m[2][1]; md[2][2] = m[2][2];
-        v = v * md;
+        // Make sure the quaternion remains a rotation
+        q2.normalize();
 
         if (observerMode == GeosynchronousFollowing)
         {
-            // TODO: This is bogus; something's screwed up about the
-            // way this coordinate system is working.
+            // Get a double precision version of the rotation
             Quatd qd(q.w, q.x, q.y, q.z);
-            followInfo.offsetR = qd * followInfo.offsetR;
-            followInfo.offset = followInfo.offset * qd.toMatrix3();
+            Quatd qd2 = ~followInfo.offsetR * qd * followInfo.offsetR;
+            qd2.normalize();
+
+            followInfo.offsetR = followInfo.offsetR * qd2;
+            followInfo.offset = followInfo.offset * qd2.toMatrix3();
         }
         else
         {
-            observer.setOrientation(observer.getOrientation() * q);
-        }
-        
-        m = observer.getOrientation().toMatrix3();
-        md[0][0] = m[0][0]; md[0][1] = m[0][1]; md[0][2] = m[0][2];
-        md[1][0] = m[1][0]; md[1][1] = m[1][1]; md[1][2] = m[1][2];
-        md[2][0] = m[2][0]; md[2][1] = m[2][1]; md[2][2] = m[2][2];
-        v = v * md;
+            Quatd qd2(q2.w, q2.x, q2.y, q2.z);
 
-        // Roundoff errors will accumulate and cause the distance between
-        // viewer and focus to change unless we take steps to keep the
-        // length of v constant.
-#if 0
-        {
-            Quatd qd(q.w, q.x, q.y, q.z);
-            Vec3d v2 = observer.getPosition() - focusPosition;
-            // v = (qd).toMatrix3() * v2;
-            v = 
-        }
-#endif
-        v.normalize();
-        v *= distance;
+            // Roundoff errors will accumulate and cause the distance between
+            // viewer and focus to change unless we take steps to keep the
+            // length of v constant.
+            v = v * qd2.toMatrix3();
+            v.normalize();
+            v *= distance;
 
-        if (observerMode != GeosynchronousFollowing)
-        {
             observer.setPosition(focusPosition + v);
-        }
-
-        if (observerMode == Following)
-        {
-            followInfo.offset = v * astro::lightYearsToKilometers(1.0);
+            observer.setOrientation(observer.getOrientation() * q2);
+            if (observerMode == Following)
+                followInfo.offset = v * astro::lightYearsToKilometers(1.0);
         }
     }
 }
@@ -866,8 +849,8 @@ void Simulation::geosynchronousFollow()
                 Quatf o = observer.getOrientation();
                 Quatd od(o.w, o.x, o.y, o.z);
                 Quatd q = followInfo.body->getEclipticalToGeographic(simTime);
-                followInfo.offsetR = ~q * od;
-                followInfo.offset = (observerPos - planetPos) * conjugate(q).toMatrix4();
+                followInfo.offsetR = od * ~q;
+                followInfo.offset = (observerPos - planetPos) * (~q).toMatrix4();
             }
         }
     }
