@@ -37,10 +37,6 @@
 // #include <celengine/solarsysxml.h>
 #include <celengine/multitexture.h>
 #include "favorites.h"
-//#define CELX
-#ifdef CELX
-#include "celx.h"
-#endif
 #include "celestiacore.h"
 #include <celutil/debug.h>
 #include "url.h"
@@ -256,6 +252,10 @@ CelestiaCore::CelestiaCore() :
     demoScript(NULL),
     runningScript(NULL),
     execEnv(NULL),
+#ifdef CELX
+    celxScript(NULL),
+    scriptAwakenTime(0.0),
+#endif // CELX
     timeZoneBias(0),
     showFPSCounter(false),
     nFrames(0),
@@ -425,7 +425,7 @@ void CelestiaCore::runScript(CommandSequence* script)
 void CelestiaCore::runScript(const string& filename)
 {
 #ifdef CELX
-    if (runningScript == NULL)
+    if (runningScript == NULL && celxScript == NULL)
     {
         ifstream scriptfile(filename.c_str());
         if (!scriptfile.good())
@@ -433,21 +433,71 @@ void CelestiaCore::runScript(const string& filename)
             flash("Error opening script");
         }
 
-        LuaState state;
-        state.init(this);
-        int status = state.loadScript(scriptfile);
+        celxScript = new LuaState();
+        celxScript->init(this);
+        int status = celxScript->loadScript(scriptfile);
         if (status != 0)
         {
             char buf[1024];
             sprintf(buf, "Error %d opening script %s", status, filename.c_str());
             flash(buf);
+            delete celxScript;
+            celxScript = NULL;
         }
         else
         {
-            lua_pcall(state.getState(), 0, 0, 0);
+            // Instantaneous execution
+            // lua_pcall(state.getState(), 0, 0, 0);
+
+            // Coroutine execution; control may be transferred between the
+            // script and Celestia's event loop
+            if (celxScript->createThread())
+            {
+                resumeScript();
+            }
+            else
+            {
+                flash("Script coroutine initialization failed.\n");
+                delete celxScript;
+                celxScript = NULL;
+            }
         }
     }
 #endif
+}
+
+
+void CelestiaCore::resumeScript()
+{
+#ifdef CELX
+    if (celxScript != NULL)
+    {
+        int nArgs = celxScript->resume();
+        if (!celxScript->isAlive())
+        {
+            // The script is complete
+            delete celxScript;
+            celxScript = NULL;
+        }
+        else
+        {
+            // The script has returned control to us, but it is not completed.
+            lua_State* state = celxScript->getState();
+
+            // The values on the stack indicate what event will wake up the
+            // script.  For now, we just support wait()
+            double delay;
+            if (nArgs == 1 && lua_isnumber(state, -1))
+                delay = lua_tonumber(state, -1);
+            else
+                delay = 0.0;
+            scriptAwakenTime = currentTime + delay;
+
+            // Clean up the stack
+            lua_pop(state, nArgs);
+        }
+    }
+#endif // CELX    
 }
 
 
@@ -1475,6 +1525,12 @@ void CelestiaCore::tick()
     }
 
     currentTime += dt;
+
+    if (celxScript != NULL && scriptAwakenTime != 0.0)
+    {
+        if (currentTime >= scriptAwakenTime)
+            resumeScript();
+    }
 
     // Mouse wheel zoom
     if (zoomMotion != 0.0f)
