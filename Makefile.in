@@ -98,7 +98,7 @@ pkgdata_DATA = celestia.cfg $(wildcard *.cel)
 
 EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA)
 
-SUBDIRS = src data textures models shaders fonts res macros manual
+SUBDIRS = src data textures models shaders fonts macros manual
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
