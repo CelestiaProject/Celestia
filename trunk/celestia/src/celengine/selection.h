@@ -41,6 +41,7 @@ class Selection
     double radius() const;
     UniversalCoord getPosition(double t) const;
     std::string getName() const;
+    Selection parent() const;
 
     Star* star() const
     {
