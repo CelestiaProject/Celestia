@@ -13,10 +13,6 @@
 #include <string>
 #include <celengine/orbit.h>
 
-#define TWOPI 6.28318530717958647692
-#define LPEJ 0.23509484  //Longitude of perihelion of Jupiter
-#define RADIUS_JUPITER 71398.0
-
 Orbit* GetCustomOrbit(const std::string& name);
 
 #endif // _CUSTOMORBIT_H_
