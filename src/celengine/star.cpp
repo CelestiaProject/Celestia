@@ -25,14 +25,6 @@
 #define SOLAR_TEMPERATURE    5860.0f
 #define SOLAR_RADIUS         696000
 
-// Star temperature data from Carroll and Ostlie's
-// _Modern Astrophysics_ (1996), p. A-13 - A-18.  Temperatures from
-// missing (and typically not used) types in those tables were just
-// interpolated.
-
-// TODO
-// These temperatures are valid for main sequence stars . . . add
-// tables for giants and supergiants
 
 struct SpectralTypeInfo
 {
@@ -54,8 +46,9 @@ static StarDetails*  blackHoleDetails = NULL;
 static StarDetails*  barycenterDetails = NULL;
 
 
-// Temperatures for standard spectral types.  From Lang's Astrophysical Data:
-// Planets and Stars.
+// Star temperature data from Lang's _Astrophysical Data: Planets and Stars_
+// Temperatures from missing (and typically not used) types in those
+// tables were just interpolated.
 static float tempO[3][10] =
 {
     { 52500, 52500, 52500, 52500, 48000, 44500, 41000, 38000, 35800, 33000 },
