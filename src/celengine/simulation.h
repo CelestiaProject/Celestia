@@ -99,6 +99,7 @@ class Simulation
                               double distance,
                               float longitude, float latitude,
                               Vec3f up);
+    void gotoLocation(const RigidTransform& transform, double duration);
     void getSelectionLongLat(double& distance,
                              double& longitude,
                              double& latitude);
@@ -130,6 +131,7 @@ class Simulation
     ObserverMode getObserverMode() const;
 
     void setFrame(astro::CoordinateSystem, const Selection&);
+    void setFrame(const FrameOfReference&);
     FrameOfReference getFrame() const;
 
  private:
@@ -139,11 +141,8 @@ class Simulation
         double startTime;
         UniversalCoord from;
         UniversalCoord to;
-        UniversalCoord initialFocus;
-        UniversalCoord finalFocus;
         Quatf initialOrientation;
         Quatf finalOrientation;
-        Vec3f up;
         double expFactor;
         double accelTime;
     };
