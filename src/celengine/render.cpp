@@ -63,6 +63,8 @@ static Texture* glareTex = NULL;
 static Texture* galaxyTex = NULL;
 static Texture* shadowTex = NULL;
 
+static Texture* eclipseShadowTextures[4];
+
 static ResourceHandle starTexB = InvalidResource;
 static ResourceHandle starTexA = InvalidResource;
 static ResourceHandle starTexG = InvalidResource;
@@ -173,6 +175,43 @@ static void ShadowTextureEval(float u, float v, float w,
 }
 
 
+// ShadowTextureFunction is a function object for creating shadow textures
+// used for rendering eclipses.
+class ShadowTextureFunction : public TexelFunctionObject
+{
+public:
+    ShadowTextureFunction(float _umbra) : umbra(_umbra) {};
+    void operator()(float, float, float, unsigned char*);
+    float umbra;
+};
+
+void ShadowTextureFunction::operator()(float u, float v, float w,
+                                       unsigned char* pixel)
+{
+    float r = (float) sqrt(u * u + v * v);
+    int pixVal = 255;
+
+    // Leave some white pixels around the edges to the shadow doesn't
+    // 'leak'.  We'll also set the maximum mip map level for this texture to 3
+    // so we don't have problems with the edge texels at high mip map levels.
+    r = r / (15.0f / 16.0f);
+    if (r < 1)
+    {
+        // The pixel value should depend on the area of the sun which is
+        // occluded.  We just fudge it here and use the square root of the
+        // radius.
+        if (r <= umbra)
+            pixVal = 0;
+        else
+            pixVal = (int) (sqrt((r - umbra) / (1 - umbra)) * 255.99f);
+    }
+
+    pixel[0] = pixVal;
+    pixel[1] = pixVal;
+    pixel[2] = pixVal;
+};
+
+
 static void IllumMapEval(float x, float y, float z,
                          unsigned char* pixel)
 {
@@ -230,6 +269,21 @@ bool Renderer::init(int winWidth, int winHeight)
         shadowTex = CreateProceduralTexture(256, 256, GL_RGB, ShadowTextureEval);
         shadowTex->setMaxMipMapLevel(3);
         shadowTex->bindName();
+
+        // Create the eclipse shadow textures
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                eclipseShadowTextures[i] =
+                    CreateProceduralTexture(128, 128, GL_RGB,
+                                            ShadowTextureFunction(i * 0.25f));
+                if (eclipseShadowTextures[i] != NULL)
+                {
+                    eclipseShadowTextures[i]->setMaxMipMapLevel(2);
+                    eclipseShadowTextures[i]->bindName();
+                }
+            }
+        }
 
         starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg"));
         starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg"));
@@ -2043,9 +2097,29 @@ void Renderer::renderObject(Point3f pos,
             glEnable(GL_TEXTURE_2D);
 #endif
 
+            // Determine which eclipse shadow texture to use.  This is only
+            // a very rough approximation to reality.  Since there are an
+            // infinite number of possible eclipse volumes, what we should be
+            // doing is generating the eclipse textures on the fly using
+            // render-to-texture.  But for now, we'll just choose from a fixed
+            // set of eclipse shadow textures based on the relative size of
+            // the umbra and penumbra.
+            Texture* eclipseTex = NULL;
+            float umbra = shadow.umbraRadius / shadow.penumbraRadius;
+            if (umbra < 0.1f)
+                eclipseTex = eclipseShadowTextures[0];
+            else if (umbra < 0.35f)
+                eclipseTex = eclipseShadowTextures[1];
+            else if (umbra < 0.6f)
+                eclipseTex = eclipseShadowTextures[2];
+            else if (umbra < 0.9f)
+                eclipseTex = eclipseShadowTextures[3];
+            else
+                eclipseTex = shadowTex;
+
             Point3f origin = shadow.origin * planetMat;
             Vec3f dir = shadow.direction * planetMat;
-            float scale = radius / shadow.umbraRadius;
+            float scale = radius / shadow.penumbraRadius;
             Vec3f axis = Vec3f(0, 1, 0) ^ dir;
             float angle = (float) acos(Vec3f(0, 1, 0) * dir);
             axis.normalize();
@@ -2059,7 +2133,6 @@ void Renderer::renderObject(Point3f pos,
             tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
             sPlane[3] = (Point3f(0, 0, 0) - origin) * sAxis / radius + 0.5f;
             tPlane[3] = (Point3f(0, 0, 0) - origin) * tAxis / radius + 0.5f;
-            cout << "s: " << sPlane[3] << ", t: " << tPlane[3] << '\n';
 
             glEnable(GL_TEXTURE_GEN_S);
             glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
@@ -2067,7 +2140,8 @@ void Renderer::renderObject(Point3f pos,
             glEnable(GL_TEXTURE_GEN_T);
             glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
             glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
-            shadowTex->bind();
+            if (eclipseTex != NULL)
+                eclipseTex->bind();
             glColor4f(1, 1, 1, 1);
             glDisable(GL_LIGHTING);
             glEnable(GL_BLEND);
@@ -2241,6 +2315,22 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
         Point3d posReceiver = receiver.getHeliocentricPosition(now);
         Point3d posCaster = caster.getHeliocentricPosition(now);
 
+        const Star* sun = receiver.getSystem()->getStar();
+        assert(sun != NULL);
+        double distToSun = posReceiver.distanceFromOrigin();
+        float appSunRadius = (float) (sun->getRadius() / distToSun);
+
+        Vec3d dir = posCaster - posReceiver;
+        double distToCaster = dir.length() - receiver.getRadius();
+        float appOccluderRadius = (float) (caster.getRadius() / distToCaster);
+
+        // The shadow radius is the radius of the occluder plus some additional
+        // amount that depends upon the apparent radius of the sun.  For
+        // a sun that's distant/small and effectively a point, the shadow
+        // radius will be the same as the radius of the occluder.
+        float shadowRadius = (1 + appSunRadius / appOccluderRadius) *
+            caster.getRadius();
+
         // Test whether a shadow is cast on the receiver.  We want to know
         // if the receiver lies within the shadow volume of the caster.  Since
         // we're assuming that everything is a sphere and the sun is far
@@ -2250,18 +2340,13 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
         // from the center of the receiver to the axis of the shadow cylinder.
         // If the distance is less than the sum of the caster's and receiver's
         // radii, then we have an eclipse.
-        float R = receiver.getRadius() + caster.getRadius();
+        float R = receiver.getRadius() + shadowRadius;
         double dist = distance(posReceiver,
                                Ray3d(posCaster, posCaster - Point3d(0, 0, 0)));
         if (dist < R)
         {
-            Vec3d dir = posCaster - posReceiver;
             Vec3d sunDir = posCaster - Point3d(0, 0, 0);
             sunDir.normalize();
-            double distToCaster = dir.length() - receiver.getRadius();
-            double distToSun = posReceiver.distanceFromOrigin();
-            const Star* sun = receiver.getSystem()->getStar();
-            assert(sun != NULL);
 
             Renderer::EclipseShadow shadow;
             shadow.origin = Point3f((float) dir.x,
@@ -2270,13 +2355,9 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
             shadow.direction = Vec3f((float) sunDir.x,
                                      (float) sunDir.y,
                                      (float) sunDir.z);
-            shadow.penumbraRadius = caster.getRadius();
-
-            float appSunRadius = sun->getRadius() / distToSun;
-            float appOccluderRadius = caster.getRadius() / distToCaster;
-            shadow.umbraRadius = shadow.penumbraRadius *
+            shadow.penumbraRadius = shadowRadius;
+            shadow.umbraRadius = caster.getRadius() *
                 (appOccluderRadius - appSunRadius) / appOccluderRadius;
-            // cout << "umbra radius: " << shadow.umbraRadius << '\n';
             eclipseShadows.insert(eclipseShadows.end(), shadow);
 
             return true;
