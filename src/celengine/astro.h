@@ -68,6 +68,7 @@ namespace astro
     float AUtoLightYears(float);
     float AUtoKilometers(float);
     float kilometersToAU(float);
+    double kilometersToAU(double);
 
     float microLightYearsToKilometers(float);
     double microLightYearsToKilometers(double);
@@ -87,10 +88,10 @@ namespace astro
     float sphereIlluminationFraction(Point3d spherePos,
                                      Point3d viewerPos);
 
-    Point3d heliocentricPosition(UniversalCoord universal,
-                                 Point3f starPosition);
-    UniversalCoord universalPosition(Point3d heliocentric,
-                                     Point3f starPosition);
+    Point3d heliocentricPosition(const UniversalCoord& universal,
+                                 const Point3f& starPosition);
+    UniversalCoord universalPosition(const Point3d& heliocentric,
+                                     const Point3f& starPosition);
 
     Point3f equatorialToCelestialCart(float ra, float dec, float distance);
     Point3d equatorialToCelestialCart(double ra, double dec, double distance);

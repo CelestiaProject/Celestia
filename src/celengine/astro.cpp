@@ -114,6 +114,11 @@ float astro::kilometersToAU(float km)
     return km / (float) KM_PER_AU;
 }
 
+double astro::kilometersToAU(double km)
+{
+    return km / KM_PER_AU;
+}
+
 double astro::secondsToJulianDate(double sec)
 {
     return sec / 86400.0;
@@ -197,8 +202,8 @@ double astro::AUtoMicroLightYears(double au)
 // precisions used here:  star coordinates are stored as floats in units of
 // light years, position within a solar system are doubles in units of
 // kilometers, and p is highest-precision in units of light years.
-Point3d astro::heliocentricPosition(UniversalCoord universal,
-                                    Point3f starPosition)
+Point3d astro::heliocentricPosition(const UniversalCoord& universal,
+                                    const Point3f& starPosition)
 {
     // Get the offset vector
     Vec3d v = universal - Point3d(starPosition.x * 1e6,
@@ -212,8 +217,8 @@ Point3d astro::heliocentricPosition(UniversalCoord universal,
 }
 
 // universalPosition is the inverse operation of heliocentricPosition
-UniversalCoord astro::universalPosition(Point3d heliocentric,
-                                        Point3f starPosition)
+UniversalCoord astro::universalPosition(const Point3d& heliocentric,
+                                        const Point3f& starPosition)
 {
     return UniversalCoord(Point3d(starPosition.x * 1e6,
                                   starPosition.y * 1e6,
