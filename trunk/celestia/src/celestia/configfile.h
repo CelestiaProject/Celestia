@@ -36,6 +36,7 @@ struct CelestiaConfig
     std::string cursor;
     std::vector<std::string> ignoreGLExtensions;
     float rotateAcceleration;
+    float mouseRotationSensitivity;
 };
 
 

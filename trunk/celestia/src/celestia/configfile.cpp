@@ -76,6 +76,8 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
 
     config->rotateAcceleration = 120.0f;
     configParams->getNumber("RotateAcceleration", config->rotateAcceleration);
+    config->mouseRotationSensitivity = 1.0f;
+    configParams->getNumber("MouseRotationSensitivity", config->mouseRotationSensitivity);
 
     Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
     if (solarSystemsVal != NULL)
