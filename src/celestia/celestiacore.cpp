@@ -316,6 +316,7 @@ CelestiaCore::CelestiaCore() :
 
     clog.rdbuf(console.rdbuf());
     cerr.rdbuf(console.rdbuf());
+    console.setWindowHeight(ConsolePageRows);
 }
 
 CelestiaCore::~CelestiaCore()
@@ -848,23 +849,22 @@ void CelestiaCore::joystickButton(int button, bool down)
 
 static void scrollConsole(Console& con, int lines)
 {
-    int currentRow = con.getWindowRow();
     int topRow = con.getWindowRow();
     int height = con.getHeight();
 
     if (lines < 0)
     {
-        if ((topRow <= currentRow) != (topRow + lines <= currentRow))
-            console.setWindowRow(currentRow);
+        if (topRow + lines > -height)
+            console.setWindowRow(topRow + lines);
         else
-            console.setWindowRow((topRow + lines) % height);
+            console.setWindowRow(-(height - 1));
     }
     else
     {
-        if ((topRow < currentRow) != (topRow + lines < currentRow))
-            console.setWindowRow(currentRow);
+        if (topRow + lines <= -ConsolePageRows)
+            console.setWindowRow(topRow + lines);
         else
-            console.setWindowRow((topRow + lines) % height);
+            console.setWindowRow(-(ConsolePageRows - 1));
     }
 }
 
@@ -2033,7 +2033,7 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
         renderer->resize(w, h);
     if (overlay != NULL)
         overlay->setWindowSize(w, h);
-    console.setWindowSize(w, h);
+    console.setScale(w, h);
     width = w;
     height = h;
 
