@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include "gl.h"
+#include "glext.h"
 #include "mathlib.h"
 #include "vecmath.h"
 #include "spheremesh.h"
@@ -64,7 +65,7 @@ SphereMesh::~SphereMesh()
 }
 
 
-void SphereMesh::render()
+void SphereMesh::render(unsigned int attributes)
 {
     if (vertices != NULL)
     {
@@ -72,7 +73,7 @@ void SphereMesh::render()
         glVertexPointer(3, GL_FLOAT, 0, vertices);
     }
 
-    if (normals != NULL)
+    if (normals != NULL && ((attributes & Normals) != 0))
     {
         glEnableClientState(GL_NORMAL_ARRAY);
         glNormalPointer(GL_FLOAT, 0, normals);
@@ -82,7 +83,7 @@ void SphereMesh::render()
         glDisableClientState(GL_NORMAL_ARRAY);
     }
 
-    if (texCoords != NULL)
+    if (texCoords != NULL && ((attributes & TexCoords0) != 0))
     {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
@@ -92,6 +93,15 @@ void SphereMesh::render()
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
+    // Use nVidia's vertex program extension . . .  right now, we
+    // just assume that we only send down tangents if we're using this
+    // extension.  Need to come up with a better solution . . .
+    if (tangents != NULL && ((attributes & Tangents) != 0))
+    {
+        glEnableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
+        glVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
+    }
+
     for (int i = 0; i < nRings - 1; i++)
     {
         glDrawElements(GL_QUAD_STRIP,
@@ -99,6 +109,17 @@ void SphereMesh::render()
                        GL_UNSIGNED_SHORT,
                        indices + (nSlices + 1) * 2 * i);
     }
+
+    if (tangents != NULL && ((attributes & Tangents) != 0))
+    {
+        glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
+    }
+}
+
+
+void SphereMesh::render()
+{
+    render(Normals | TexCoords0);
 }
 
 
@@ -112,6 +133,7 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
     texCoords = new float[nVertices * 2];
     nIndices = (nRings - 1) * (nSlices + 1) * 2;
     indices = new unsigned short[nIndices];
+    tangents = new float[nVertices * 3];
     
     int i;
     for (i = 0; i < nRings; i++)
@@ -132,6 +154,14 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
             normals[n * 3 + 2]   = z;
             texCoords[n * 2]     = 1.0f - (float) j / (float) nSlices;
             texCoords[n * 2 + 1] = 1.0f - (float) i / (float) (nRings - 1);
+
+            // Compute the tangent--required for bump mapping
+            float tx = (sin(phi) * sin(theta));
+            float ty = cos(phi);
+            float tz = (sin(phi) * cos(theta));
+            tangents[n * 3]      = tx;
+            tangents[n * 3 + 1]  = ty;
+            tangents[n * 3 + 2]  = tz;
         }
     }
 

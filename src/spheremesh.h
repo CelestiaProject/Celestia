@@ -29,6 +29,7 @@ public:
     ~SphereMesh();
 
     void render();
+    void render(unsigned int attributes);
 
  private:
     void createSphere(float radius, int nRings, int nSlices);
@@ -44,6 +45,7 @@ public:
     float* vertices;
     float* normals;
     float* texCoords;
+    float* tangents;
     int nIndices;
     unsigned short* indices;
 };
