@@ -175,7 +175,7 @@
 	}
 }
 
-"b" "TYC 5503-946-1"   # BD -10 3166
+"b" "TYC 5503-946-1"   # BD-10 3166
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -908,7 +908,7 @@
 	RotationPeriod 10     # guess
 }
 
-"b" "HD 219542 B"   # BD-02 5917 B
+"b" "BD-02 5917 B"   # HD 219542 B
 
 # Star not present in Celestia's default stars.dat file.
 
