@@ -35,6 +35,7 @@
 #include "winstarbrowser.h"
 #include "winssbrowser.h"
 #include "wintourguide.h"
+#include "wingotodlg.h"
 
 #include "../res/resource.h"
 
@@ -60,6 +61,7 @@ HWND mainWindow = 0;
 static SolarSystemBrowser* solarSystemBrowser = NULL;
 static StarBrowser* starBrowser = NULL;
 static TourGuide* tourGuide = NULL;
+static GotoObjectDialog* gotoObjectDlg = NULL;
 
 static HMENU menuBar = 0;
 static HACCEL acceleratorTable = 0;
@@ -1068,7 +1070,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         if (prefs.winY + prefs.winHeight > screenHeight)
             prefs.winY = screenHeight - prefs.winHeight;
     }
-    
 
     // Setup the window class.
     WNDCLASS wc;
@@ -1184,8 +1185,17 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
     while (msg.message != WM_QUIT)
     {
-	// Use PeekMessage() if the app is active, so we can use idle time to
-	// render the scene.  Else, use GetMessage() to avoid eating CPU time.
+        // Get the current time, and update the time controller.
+        double lastTime = currentTime;
+        currentTime = timer->getTime();
+        double dt = currentTime - lastTime;
+        
+        // Tick the simulation
+        appCore->tick(dt);
+
+        // If Celestia is in an inactive state, we should use GetMessage
+        // to avoid sucking CPU cycles--if time is paused, we can probably
+        // avoid constantly rendering.
 	int bGotMsg = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
 
 	if (bGotMsg)
@@ -1197,14 +1207,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
         else
         {
-	    // Get the current time, and update the time controller.
-	    double lastTime = currentTime;
-            currentTime = timer->getTime();
-	    double dt = currentTime - lastTime;
-
-            // Tick the simulation
-            appCore->tick(dt);
-
             // And force a redraw
 	    InvalidateRect(hWnd, NULL, FALSE);
 	}
@@ -1405,18 +1407,40 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_NAVIGATION_SELECT:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
             break;
-
-        case ID_NAVIGATION_TOURGUIDE:
-            if (tourGuide == NULL)
-                tourGuide = new TourGuide(appInstance, hWnd, appCore);
+        case ID_NAVIGATION_GOTO_OBJECT:
+            if (gotoObjectDlg == NULL)
+                gotoObjectDlg = new GotoObjectDialog(appInstance, hWnd, appCore);
             break;
-        case ID_CLOSE_TOURGUIDE:
-            if (reinterpret_cast<LPARAM>(tourGuide) == lParam &&
-                tourGuide != NULL)
+        case IDCLOSE:
+            if (reinterpret_cast<LPARAM>(gotoObjectDlg) == lParam &&
+                gotoObjectDlg != NULL)
+            {
+                delete gotoObjectDlg;
+                gotoObjectDlg = NULL;
+            }
+            else if (reinterpret_cast<LPARAM>(tourGuide) == lParam &&
+                     tourGuide != NULL)
             {
                 delete tourGuide;
                 tourGuide = NULL;
             }
+            else if (reinterpret_cast<LPARAM>(starBrowser) == lParam &&
+                     starBrowser != NULL)
+            {
+                delete starBrowser;
+                starBrowser = NULL;
+            }
+            else if (reinterpret_cast<LPARAM>(solarSystemBrowser) == lParam &&
+                     solarSystemBrowser != NULL)
+            {
+                delete solarSystemBrowser;
+                solarSystemBrowser = NULL;
+            }
+            break;
+
+        case ID_NAVIGATION_TOURGUIDE:
+            if (tourGuide == NULL)
+                tourGuide = new TourGuide(appInstance, hWnd, appCore);
             break;
 
         case ID_NAVIGATION_SSBROWSER:
@@ -1424,27 +1448,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 solarSystemBrowser = new SolarSystemBrowser(appInstance, hWnd, appCore);
             break;
 
-        case ID_CLOSE_SSBROWSER:
-            if (reinterpret_cast<LPARAM>(solarSystemBrowser) == lParam &&
-                solarSystemBrowser != NULL)
-            {
-                delete solarSystemBrowser;
-                solarSystemBrowser = NULL;
-            }
-            break;
-
         case ID_NAVIGATION_STARBROWSER:
             if (starBrowser == NULL)
                 starBrowser = new StarBrowser(appInstance, hWnd, appCore);
             break;
-
-        case ID_CLOSE_STARBROWSER:
-            if (reinterpret_cast<LPARAM>(starBrowser) == lParam &&
-                starBrowser != NULL)
-            {
-                delete starBrowser;
-                starBrowser = NULL;
-            }
 
         case ID_RENDER_SHOWHUDTEXT:
             appCore->charEntered('V');
