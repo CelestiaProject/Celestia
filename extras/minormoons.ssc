@@ -952,11 +952,11 @@
 	{
 	Period		0.294396
 	SemiMajorAxis	48227
-	Eccentricity	0.0003
-	Inclination	5.135	#
-	AscendingNode	7.545	#
-	ArgOfPericenter	36.057	# J2000.0
-	MeanAnomaly     5.947	#
+	Eccentricity	0.0004
+	Inclination	5.167	#
+	AscendingNode	8.998	#
+	ArgOfPericenter	30.956	# J2000.0
+	MeanAnomaly     7.538	#
 	}
 
 	Obliquity		  0.1
@@ -977,10 +977,10 @@
 	Period		0.311485
 	SemiMajorAxis	50075
 	Eccentricity	0.0002
-	Inclination	0.370	#
-	AscendingNode	346.174	#
-	ArgOfPericenter	278.052	# J2000.0
-	MeanAnomaly     353.320	#
+	Inclination	0.381	#
+	AscendingNode	353.390	#
+	ArgOfPericenter	274.850	# J2000.0
+	MeanAnomaly     350.880	#
 	}
 
 	RotationOffset		77.6
@@ -998,11 +998,11 @@
 	{
 	Period		0.334655
 	SemiMajorAxis	52526
-	Eccentricity	0.0001
+	Eccentricity	0.0002
 	Inclination	0.589	#
-	AscendingNode	329.733	#
-	ArgOfPericenter	135.342	# J2000.0
-	MeanAnomaly     356.923	#
+	AscendingNode	334.279	#
+	ArgOfPericenter	133.891	# J2000.0
+	MeanAnomaly     349.678	#
 	}
 
 	RotationOffset		282.0
@@ -1020,11 +1020,11 @@
 	{
 	Period		0.428745
 	SemiMajorAxis	61953
-	Eccentricity	0.0001
-	Inclination	0.559	#
-	AscendingNode	323.127	#
-	ArgOfPericenter	87.291	# J2000.0
-	MeanAnomaly     3.172	#
+	Eccentricity	0.0000
+	Inclination	0.565	#
+	AscendingNode	327.929	#
+	ArgOfPericenter	89.060	# J2000.0
+	MeanAnomaly     2.357	#
 	}
 
 	RotationOffset		233.6
