@@ -53,10 +53,15 @@ static string resolveWildcard(const string& filename)
     }
     string ddsfile = base + "dds";
     {
-        cout << "Trying DDS: " << ddsfile << '\n';
         ifstream in(ddsfile.c_str());
         if (in.good())
             return ddsfile;
+    }
+    string ctxfile = base + "ctx";
+    {
+        ifstream in(ctxfile.c_str());
+        if (in.good())
+            return ctxfile;
     }
 
     return "";
@@ -105,30 +110,32 @@ string TextureInfo::resolve(const string& baseDir)
 
 Texture* TextureInfo::load(const string& name)
 {
+    Texture::AddressMode addressMode = Texture::EdgeClamp;
+    Texture::MipMapMode mipMode = Texture::DefaultMipMaps;
+
+    if (flags & WrapTexture)
+        addressMode = Texture::Wrap;
+    else if (flags & BorderClamp)
+        addressMode = Texture::BorderClamp;
+
+    if (flags & NoMipMaps)
+        mipMode = Texture::NoMipMaps;
+    else if (flags & AutoMipMaps)
+        mipMode = Texture::AutoMipMaps;
+
     if (bumpHeight == 0.0f)
     {
         DPRINTF(0, "Loading texture: %s\n", name.c_str());
         // cout << "Loading texture: " << name << '\n';
-        Texture* tex = LoadTextureFromFile(name);
 
-        if (tex != NULL)
-        {
-            tex->bindName(flags);
-            return tex;
-        }
+        return LoadTextureFromFile(name, addressMode, mipMode);
     }
     else
     {
         DPRINTF(0, "Loading bump map: %s\n", name.c_str());
         // cout << "Loading texture: " << name << '\n';
-        Texture* tex = LoadTextureFromFile(name);
 
-        if (tex != NULL)
-        {
-            tex->normalMap(bumpHeight, true);
-            tex->bindName(flags);
-            return tex;
-        }
+        return LoadHeightMapFromFile(name, bumpHeight, addressMode);
     }
 
     return NULL;

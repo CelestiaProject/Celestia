@@ -107,6 +107,38 @@ SolarSystem* Universe::getSolarSystem(const Star* star) const
 }
 
 
+// A more general version of the method above--return the solar system
+// that contains an object, or NULL if there is no solar sytstem.
+SolarSystem* Universe::getSolarSystem(const Selection& sel) const
+{
+    switch (sel.getType())
+    {
+    case Selection::Type_Star:
+        return getSolarSystem(sel.star());
+
+    case Selection::Type_Body:
+        {
+            PlanetarySystem* system = sel.body()->getSystem();
+            while (system != NULL)
+            {
+                Body* parent = system->getPrimaryBody();
+                if (parent != NULL)
+                    system = parent->getSystem();
+                else
+                    return getSolarSystem(Selection(system->getStar()));
+            }
+            return NULL;
+        }
+
+    case Selection::Type_Location:
+        return getSolarSystem(Selection(sel.location()->getParentBody()));
+
+    default:
+        return NULL;
+    }
+}
+
+
 // Create a new solar system for a star and return a pointer to it; if it
 // already has a solar system, just return a pointer to the existing one.
 SolarSystem* Universe::createSolarSystem(Star* star) const

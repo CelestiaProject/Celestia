@@ -174,7 +174,6 @@ void Galaxy::render(const Vec3f& offset,
     {
         galaxyTex = CreateProceduralTexture(128, 128, GL_RGBA,
                                             GalaxyTextureEval);
-        galaxyTex->bindName();
     }
     assert(galaxyTex != NULL);
 
