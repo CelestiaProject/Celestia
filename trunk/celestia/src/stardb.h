@@ -39,12 +39,15 @@ class StarDatabase
     Star* find(uint32 catalogNumber) const;
     Star* find(std::string) const;
 
-    void processVisibleStars(StarHandler& starHandler,
-                             const Point3f& position,
-                             const Quatf& orientation,
-                             float fovY,
-                             float aspectRatio,
-                             float limitingMag) const;
+    void findVisibleStars(StarHandler& starHandler,
+                          const Point3f& position,
+                          const Quatf& orientation,
+                          float fovY,
+                          float aspectRatio,
+                          float limitingMag) const;
+    void findCloseStars(StarHandler& starHandler,
+                        const Point3f& position,
+                        float radius) const;
 
     string getStarName(uint32 catalogNumber) const;
 
