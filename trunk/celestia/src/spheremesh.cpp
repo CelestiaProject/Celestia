@@ -15,27 +15,6 @@
 #include "spheremesh.h"
 
 
-static bool trigArraysInitialized = false;
-static int maxDivisions = 4096;
-static float* sinArray = NULL;
-static float* cosArray = NULL;
-
-
-static void InitTrigArrays()
-{
-    sinArray = new float[maxDivisions * 2 + 1];
-    cosArray = new float[maxDivisions * 2 + 1];
-
-    for (int i = 0; i < maxDivisions * 2 + 1; i++)
-    {
-        double theta = ((double) i / (double) maxDivisions - 1.0) * 2.0 * PI;
-        sinArray[i] = (float) sin(theta);
-        cosArray[i] = (float) cos(theta);
-    }
-    trigArraysInitialized = true;
-}
-
-
 SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices) :
     vertices(NULL), normals(NULL), texCoords(NULL), indices(NULL)
 {
