@@ -1004,10 +1004,8 @@ void Renderer::render(const Observer& observer,
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
-        /*
         if (universe.getBoundaries() != NULL)
             universe.getBoundaries()->render();
-        */
         if ((renderFlags & ShowSmoothLines) != 0)
             disableSmoothLines();
     }
