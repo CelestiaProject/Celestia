@@ -125,6 +125,8 @@ class CelestiaCore
     int getTimeZoneBias() const;
     void setTimeZoneBias(int);
 
+    int getHudDetail();
+
     void setContextMenuCallback(ContextMenuFunc);
 
     class Alerter
