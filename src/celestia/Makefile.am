@@ -21,6 +21,7 @@ WINSOURCES = \
 	winssbrowser.cpp \
 	winstarbrowser.cpp \
 	wintourguide.cpp \
+        winviewoptsdlg.cpp \
 	avicapture.cpp
 
 celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
