@@ -1,10 +1,12 @@
+Allow more than one star system to be visible simultaneously.
+
+
+
 Celestia To Do List
 -------------------
 
 USER INTERFACE
 * More star label modes--nearest stars, brightest stars
-* Views of planet and satellite orbits
-  * User control over which orbits should be displayed
 * Add preferences for text color to config file
 * Dialog box for displaying detailed information about a star or planet
 * Star browser: flag stars with planetary systems
@@ -54,23 +56,13 @@ BUGS
 
 OPTIMIZATION
 * Add option to force 16-bit textures
-* Add low resolution texture package
 
 CODE
 * Make parser more robust (and fix that EOF problem)
 * Change random printfs to DPRINTFs and Logs
 * Finish assert-ing the code
 
-PORTING
-* Bring UNIX UI up to level of Windows UI
-  * Implement solar system and star browsers
-  * Context menus for both GLUT and Gtk versions
-* Make bump mapping and other GL extension stuff work better on OSes other
-  than Windows.
-* Use OpenGL 1.4's vertex program extension
-
 MISC
-* Create more powerful scripting system
 * Make solar system creation applet, for adding hypothetical systems to
   a Celestia universe
 * Switch to UNICODE
