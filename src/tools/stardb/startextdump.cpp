@@ -21,9 +21,18 @@
 using namespace std;
 
 
+static string inputFilename;
+static string outputFilename;
+static string hdFilename;
+static bool useOldFormat = false;
+
+
 void Usage()
 {
     cerr << "Usage: startextdump [options] <star database file> [output file]\n";
+    cerr << "  Options:\n";
+    cerr << "    --old (or -o) : input star database is pre 2.0 format\n";
+    cerr << "    --hd          : dump HD catalog cross reference\n";
 }
 
 
@@ -88,35 +97,43 @@ void printStellarClass(uint16 sc, ostream& out)
         unsigned int spectralClass = (sc >> 8 & 0xf);
         unsigned int spectralSubclass = (sc >> 4 & 0xf);
         unsigned int luminosityClass = (sc & 0xf);
-	out << "OBAFGKMRSNWW?LTC"[spectralClass];
-	out << "0123456789"[spectralSubclass];
-	switch (luminosityClass)
+
+        if (spectralClass == 12)
         {
-	case StellarClass::Lum_Ia0:
-	    out << "I-a0";
-	    break;
-	case StellarClass::Lum_Ia:
-	    out << "I-a";
-	    break;
-	case StellarClass::Lum_Ib:
-	    out << "I-b";
-	    break;
-	case StellarClass::Lum_II:
-	    out << "II";
-	    break;
-	case StellarClass::Lum_III:
-	    out << "III";
-	    break;
-	case StellarClass::Lum_IV:
-	    out << "IV";
-	    break;
-	case StellarClass::Lum_V:
-	    out << "V";
-	    break;
-	case StellarClass::Lum_VI:
-	    out << "VI";
-	    break;
-	}
+            out << '?';
+        }
+        else
+        {
+            out << "OBAFGKMRSNWW?LTC"[spectralClass];
+            out << "0123456789"[spectralSubclass];
+            switch (luminosityClass)
+            {
+            case StellarClass::Lum_Ia0:
+                out << "I-a0";
+                break;
+            case StellarClass::Lum_Ia:
+                out << "I-a";
+                break;
+            case StellarClass::Lum_Ib:
+                out << "I-b";
+                break;
+            case StellarClass::Lum_II:
+                out << "II";
+                break;
+            case StellarClass::Lum_III:
+                out << "III";
+                break;
+            case StellarClass::Lum_IV:
+                out << "IV";
+                break;
+            case StellarClass::Lum_V:
+                out << "V";
+                break;
+            case StellarClass::Lum_VI:
+                out << "VI";
+                break;
+            }
+        }
     }
     else
     {
@@ -125,7 +142,7 @@ void printStellarClass(uint16 sc, ostream& out)
 }
 
 
-bool DumpStarDatabase(istream& in, ostream& out)
+bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut)
 {
     uint32 nStarsInFile = readUint(in);
     if (!in.good())
@@ -133,6 +150,8 @@ bool DumpStarDatabase(istream& in, ostream& out)
         cerr << "Error reading count of stars from database.\n";
         return false;
     }
+
+    out << nStarsInFile << '\n';
 
     for (uint32 i = 0; i < nStarsInFile; i++)
     {
@@ -159,8 +178,67 @@ bool DumpStarDatabase(istream& in, ostream& out)
         out << catalogNum << ' ';
         out << setprecision(7);
         out << (float) pos.x << ' ' << (float) pos.y << ' ' << (float) pos.z << ' ';
-        out << setprecision(4);
+        out << setprecision(5);
         out << absMag << ' ';
+        printStellarClass(stellarClass, out);
+        out << '\n';
+
+        // Dump HD catalog cross reference
+        if (hdOut != NULL && HDCatalogNum != ~0)
+            *hdOut << HDCatalogNum << ' ' << catalogNum << '\n';
+    }
+
+    return true;
+}
+
+
+bool DumpStarDatabase(istream& in, ostream& out, ostream* hdOut)
+{
+    char header[8];
+    in.read(header, sizeof header);
+    if (strncmp(header, "CELSTARS", sizeof header))
+    {
+        cerr << "Missing header in star database.\n";
+        return false;
+    }
+
+    uint16 version = readUshort(in);
+    if (version != 0x0100)
+    {
+        cerr << "Unsupported file version " << (version >> 8) << '.' <<
+            (version & 0xff) << '\n';
+        return false;
+    }
+
+    uint32 nStarsInFile = readUint(in);
+    if (!in.good())
+    {
+        cerr << "Error reading count of stars from database.\n";
+        return false;
+    }
+
+    out << nStarsInFile << '\n';
+
+    for (uint32 i = 0; i < nStarsInFile; i++)
+    {
+        if (!in.good())
+        {
+            cerr << "Error reading from star database at record " << i << endl;
+            return false;
+        }
+
+        uint32 catalogNum    = readUint(in);
+        float  x             = readFloat(in);
+        float  y             = readFloat(in);
+        float  z             = readFloat(in);
+        int16  absMag        = readShort(in);
+        uint16 stellarClass  = readUshort(in);
+
+        out << catalogNum << ' ';
+        out << setprecision(7);
+        out << x << ' ' << y << ' ' << z << ' ';
+        out << setprecision(4);
+        out << ((float) absMag / 256.0f) << ' ';
         printStellarClass(stellarClass, out);
         out << '\n';
     }
@@ -169,37 +247,105 @@ bool DumpStarDatabase(istream& in, ostream& out)
 }
 
 
+bool parseCommandLine(int argc, char* argv[])
+{
+    int i = 1;
+    int fileCount = 0;
+
+    while (i < argc)
+    {
+        if (argv[i][0] == '-')
+        {
+            if (!strcmp(argv[i], "--hd"))
+            {
+                if (i == argc - 1)
+                {
+                    return false;
+                }
+                else
+                {
+                    i++;
+                    hdFilename = string(argv[i]);
+                }
+            }
+            else if (!strcmp(argv[i], "-o") || !strcmp(argv[i], "--old"))
+            {
+                useOldFormat = true;
+            }
+            else
+            {
+                cerr << "Unknown command line switch: " << argv[i] << '\n';
+                return false;
+            }
+            i++;
+        }
+        else
+        {
+            if (fileCount == 0)
+            {
+                // input filename first
+                inputFilename = string(argv[i]);
+                fileCount++;
+            }
+            else if (fileCount == 1)
+            {
+                // output filename second
+                outputFilename = string(argv[i]);
+                fileCount++;
+            }
+            else
+            {
+                // more than two filenames on the command line is an error
+                return false;
+            }
+            i++;
+        }
+    }
+}
+
+
 int main(int argc, char* argv[])
 {
-    if (argc < 2 || argc > 3)
+    if (!parseCommandLine(argc, argv) || inputFilename.empty())
     {
         Usage();
         return 1;
     }
 
-    ifstream stardbFile(argv[1], ios::in | ios::binary);
+    ifstream stardbFile(inputFilename.c_str(), ios::in | ios::binary);
     if (!stardbFile.good())
     {
-        cerr << "Error opening star database file " << argv[1] << '\n';
+        cerr << "Error opening star database file " << inputFilename << '\n';
         return 1;
     }
 
-    bool success;
-    if (argc > 2)
+    ofstream* hdOut = NULL;
+    if (!hdFilename.empty())
     {
-        ofstream out(argv[2], ios::out);
-        if (!out.good())
+        hdOut = new ofstream(hdFilename.c_str(), ios::out);
+        if (!hdOut->good())
         {
-            cerr << "Error opening output file " << argv[2] << '\n';
+            cerr << "Error opening HD catalog output file " << hdFilename << '\n';
             return 1;
         }
+    }
 
-        success = DumpStarDatabase(stardbFile, out);
-    }
-    else
+    bool success;
+    ostream* out = &cout;
+    if (!outputFilename.empty())
     {
-        success = DumpStarDatabase(stardbFile, cout);
+        out = new ofstream(outputFilename.c_str(), ios::out);
+        if (!out->good())
+        {
+            cerr << "Error opening output file " << outputFilename << '\n';
+            return 1;
+        }
     }
+
+    if (useOldFormat)
+        success = DumpOldStarDatabase(stardbFile, *out, hdOut);
+    else
+        success = DumpStarDatabase(stardbFile, *out, hdOut);
 
     return success ? 0 : 1;
 }
