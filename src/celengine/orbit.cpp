@@ -36,21 +36,6 @@ EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
 }
 
 
-// First four terms of a series solution to Kepler's equation
-// for orbital motion.  This only works for small eccentricities,
-// and in fact the series diverges for e > 0.6627434
-/* currently not used anymore
-static double solveKeplerSeries(double M, double e)
-{
-    return (M +
-            e * sin(M) +
-            e * e * 0.5 * sin(2 * M) +
-            e * e * e * (0.325 * sin(3 * M) - 0.125 * sin(M)) +
-            e * e * e * e * (1.0 / 3.0 * sin(4 * M) - 1.0 / 6.0 * sin(2 * M)));
-
-}*/
-
-
 // Standard iteration for solving Kepler's Equation
 struct SolveKeplerFunc1 : public unary_function<double, double>
 {
@@ -82,16 +67,6 @@ struct SolveKeplerFunc2 : public unary_function<double, double>
     }
 };
 
-
-static double sign(double x)
-{
-    if (x < 0)
-        return -1.0;
-    else if (x > 0)
-        return 1.0;
-    else
-        return 0.0;
-}
 
 struct SolveKeplerLaguerreConway : public unary_function<double, double>
 {
@@ -133,8 +108,87 @@ struct SolveKeplerLaguerreConwayHyp : public unary_function<double, double>
     }
 };
 
-
 typedef pair<double, double> Solution;
+
+
+double EllipticalOrbit::eccentricAnomaly(double M) const
+{
+    if (eccentricity == 0.0)
+    {
+        // Circular orbit
+        return M;
+    }
+    else if (eccentricity < 0.2)
+    {
+        // Low eccentricity, so use the standard iteration technique
+        Solution sol = solve_iteration_fixed(SolveKeplerFunc1(eccentricity, M), M, 5);
+        return sol.first;
+    }
+    else if (eccentricity < 0.9)
+    {
+        // Higher eccentricity elliptical orbit; use a more complex but
+        // much faster converging iteration.
+        Solution sol = solve_iteration_fixed(SolveKeplerFunc2(eccentricity, M), M, 6);
+        // Debugging
+        // printf("ecc: %f, error: %f mas\n",
+        //        eccentricity, radToDeg(sol.second) * 3600000);
+        return sol.first;
+    }
+    else if (eccentricity < 1.0)
+    {
+        // Extremely stable Laguerre-Conway method for solving Kepler's
+        // equation.  Only use this for high-eccentricity orbits, as it
+        // requires more calcuation.
+        double E = M + 0.85 * eccentricity * sign(sin(M));
+        Solution sol = solve_iteration_fixed(SolveKeplerLaguerreConway(eccentricity, M), E, 8);
+        return sol.first;
+    }
+    else if (eccentricity == 1.0)
+    {
+        // Nearly parabolic orbit; very common for comets
+        // TODO: handle this
+        return M;
+    }
+    else
+    {
+        // Laguerre-Conway method for hyperbolic (ecc > 1) orbits.
+        double E = log(2 * M / eccentricity + 1.85);
+        Solution sol = solve_iteration_fixed(SolveKeplerLaguerreConwayHyp(eccentricity, M), E, 30);
+        return sol.first;
+    }
+}
+
+
+Point3d EllipticalOrbit::positionAtE(double E) const
+{
+    double x, z;
+
+    if (eccentricity < 1.0)
+    {
+        double a = pericenterDistance / (1.0 - eccentricity);
+        x = a * (cos(E) - eccentricity);
+        z = a * sqrt(1 - square(eccentricity)) * -sin(E);
+    }
+    else if (eccentricity > 1.0)
+    {
+        double a = pericenterDistance / (1.0 - eccentricity);
+        x = -a * (eccentricity - cosh(E));
+        z = -a * sqrt(square(eccentricity) - 1) * -sinh(E);
+    }
+    else
+    {
+        // TODO: Handle parabolic orbits
+        x = 0.0;
+        z = 0.0;
+    }
+
+    Mat3d R = (Mat3d::yrotation(ascendingNode) *
+               Mat3d::xrotation(inclination) *
+               Mat3d::yrotation(argOfPeriapsis));
+
+    return R * Point3d(x, 0, z);
+}
+
 
 // Return the offset from the center
 Point3d EllipticalOrbit::positionAtTime(double t) const
@@ -142,7 +196,10 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
     t = t - epoch;
     double meanMotion = 2.0 * PI / period;
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
-
+    double E = eccentricAnomaly(meanAnomaly);
+    
+    return positionAtE(E);
+#if 0
     double x, z;
 
     // TODO: It's probably not a good idea to use this calculation for orbits
@@ -172,7 +229,6 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
                                                                   meanAnomaly),
                                                  meanAnomaly, 6);
             eccAnomaly = sol.first;
-
             // Debugging
             // printf("ecc: %f, error: %f mas\n",
             //        eccentricity, radToDeg(sol.second) * 3600000);
@@ -216,6 +272,7 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
                Mat3d::yrotation(argOfPeriapsis));
 
     return R * Point3d(x, 0, z);
+#endif
 }
 
 
@@ -229,4 +286,34 @@ double EllipticalOrbit::getBoundingRadius() const
 {
     // TODO: watch out for unbounded parabolic and hyperbolic orbits
     return pericenterDistance * ((1.0 + eccentricity) / (1.0 - eccentricity));
+}
+
+
+void EllipticalOrbit::sample(double start, double t, int nSamples,
+                             OrbitSampleProc& proc) const
+{
+    double dE = 2 * PI / (double) nSamples;
+    for (int i = 0; i < nSamples; i++)
+        proc.sample(positionAtE(dE * i));
+}
+
+
+
+Point3d CachingOrbit::positionAtTime(double jd) const
+{
+    if (jd != lastTime)
+    {
+        lastTime = jd;
+        lastPosition = computePosition(jd);
+    }
+    return lastPosition;
+}
+
+
+void CachingOrbit::sample(double start, double t, int nSamples,
+                          OrbitSampleProc& proc) const
+{
+    double dt = t / (double) nSamples;
+    for (int i = 0; i < nSamples; i++)
+        proc.sample(positionAtTime(start + dt * i));
 }
