@@ -7,6 +7,7 @@ libcelutil_a_SOURCES = \
 	bigfix.cpp \
 	color.cpp \
 	debug.cpp \
+	directory.cpp \
 	filetype.cpp \
 	util.cpp \
 	unixdirectory.cpp \
