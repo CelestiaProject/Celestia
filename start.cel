@@ -1,9 +1,11 @@
 {
-	select { object "Sol/Neptune" }
-	gotolonglat { time 0 distance 1e11 longitude 0 latitude 0 }
+	select { object "Sol/Eros" }
+	follow {}
+	goto { time 10 }
+	# gotolonglat { time 0 distance 1e11 longitude 0 latitude 0 }
 	# gotolonglat { time 0 distance 2.5 longitude -122 latitude 47 } # Seattle!
-	wait { duration 0.1 }
-	orbit { axis [ 0 1 0 ] rate 10 duration 7 }
-	goto { time 5 distance 10 }
-	wait { duration 5.0 }
+	# wait { duration 0.1 }
+	# orbit { axis [ 0 1 0 ] rate 10 duration 7 }
+	# goto { time 5 distance 10 }
+	# wait { duration 5.0 }
 }
