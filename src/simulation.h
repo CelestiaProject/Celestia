@@ -19,6 +19,7 @@
 #include "mesh.h"
 #include "stardb.h"
 #include "visstars.h"
+#include "octree.h"
 #include "solarsys.h"
 #include "galaxy.h"
 #include "texmanager.h"
@@ -126,6 +127,7 @@ class Simulation
     GalaxyList* galaxies;
 
     VisibleStarSet* visibleStars;
+    StarOctree* visTree;
     SolarSystem* closestSolarSystem;
     Star* selectedStar;
     Body* selectedBody;

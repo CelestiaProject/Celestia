@@ -14,6 +14,7 @@
 #include <string>
 #include "stardb.h"
 #include "visstars.h"
+#include "octree.h"
 #include "observer.h"
 #include "solarsys.h"
 #include "galaxy.h"
@@ -42,6 +43,8 @@ class Renderer
     void render(const Observer&,
                 const StarDatabase&,
                 const VisibleStarSet&,
+                const StarOctree&,
+                float faintestVisible,
                 SolarSystem*,
                 GalaxyList*,
                 const Selection& sel,
@@ -110,7 +113,7 @@ class Renderer
 
     typedef struct _RenderListEntry
     {
-        Star* star;
+        const Star* star;
         Body* body;
         Point3f position;
         Vec3f sun;
@@ -127,6 +130,11 @@ class Renderer
  private:
     void renderStars(const StarDatabase& starDB,
                      const VisibleStarSet& visset,
+                     float faintestVisible,
+                     const Observer& observer);
+    void renderStars(const StarDatabase& starDB,
+                     const StarOctree& visTree,
+                     float faintestVisible,
                      const Observer& observer);
     void renderGalaxies(const GalaxyList& galaxies,
                         const Observer& observer);
