@@ -10,6 +10,7 @@
 #include <cctype>
 #include <cmath>
 #include <iomanip>
+#include <celutil/utf8.h>
 #include "tokenizer.h"
 
 
@@ -179,21 +180,30 @@ Tokenizer::TokenType Tokenizer::nextToken()
             if (nextChar == '\\')
             {
                 textToken += '\\';
+                state = StringState;
             }
             else if (nextChar == 'n')
             {
                 textToken += '\n';
+                state = StringState;
             }
             else if (nextChar == '"')
             {
                 textToken += '"';
+                state = StringState;
+            }
+            else if (nextChar == 'u')
+            {
+                unicodeValue = 0;
+                unicodeEscapeDigits = 0;
+                state = UnicodeEscapeState;
             }
             else
             {
                 newToken = TokenError;
                 syntaxError("Unknown escape code in string");
+                state = StringState;
             }
-            state = StringState;
             break;
 
         case NumberState:
@@ -294,6 +304,34 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 state = ErrorState;
                 syntaxError("'.' in stupid place");
+            }
+            break;
+
+        case UnicodeEscapeState:
+            if (isxdigit(nextChar))
+            {
+                unsigned int digitValue;
+                if (nextChar >= 'a' && nextChar <= 'f')
+                    digitValue = nextChar - 'a' + 10;
+                else if (nextChar >= 'A' && nextChar <= 'F')
+                    digitValue = nextChar - 'A' + 10;
+                else
+                    digitValue = nextChar - '0';
+                unicodeValue = (unicodeValue << 4) + digitValue;
+                unicodeEscapeDigits++;
+                if (unicodeEscapeDigits == 4)
+                {
+                    char utf8Encoded[7];
+                    UTF8Encode((wchar_t) unicodeValue, utf8Encoded);
+                    textToken += utf8Encoded;
+                    state = StringState;
+                    printf("escape: %04x\n", unicodeValue);
+                }
+            }
+            else
+            {
+                state = ErrorState;
+                syntaxError("Bad Unicode escape in string");
             }
             break;
         }
