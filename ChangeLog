@@ -660,3 +660,7 @@ Code:
 * Added separate cloud and surface textures for Venus
 * New "invisible" class for solar system objects
 * Fixed crashes that occurred when viewing ringed planets on older hardware
+* Got rid of three zeros after decimal point when displaying time rate
+* Updated configuration files for new versions of autoconf
+
+
