@@ -228,6 +228,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     double fps;
     double fpsCounterStartTime;
 
+    float oldFOV;
     float mouseMotion;
     double dollyMotion;
     double dollyTime;
