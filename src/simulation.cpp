@@ -58,9 +58,9 @@ static const Star* getSun(Body* body)
 }
 
 
-RigidTransform Simulation::toUniversal(const FrameOfReference& frame,
-                                       const RigidTransform& xform,
-                                       double t)
+static RigidTransform toUniversal(const FrameOfReference& frame,
+                                  const RigidTransform& xform,
+                                  double t)
 {
     // Handle the easy case . . .
     if (frame.coordSys == astro::Universal)
@@ -108,9 +108,9 @@ RigidTransform Simulation::toUniversal(const FrameOfReference& frame,
 }
 
 
-RigidTransform Simulation::fromUniversal(const FrameOfReference& frame,
-                                         const RigidTransform& xform,
-                                         double t)
+static RigidTransform fromUniversal(const FrameOfReference& frame,
+                                    const RigidTransform& xform,
+                                    double t)
 {
     // Handle the easy case . . .
     if (frame.coordSys == astro::Universal)
@@ -785,14 +785,14 @@ void Simulation::computeGotoParameters(Selection& destination,
 
     // The destination position lies along the line between the current
     // position and the star
-    offset = ::toUniversal(offset, observer, selection, simTime, offsetFrame);
+    offset = toUniversal(offset, observer, selection, simTime, offsetFrame);
     jparams.to = targetPosition + offset;
     jparams.initialFocus = jparams.from +
         (Vec3f(0, 0, -1.0f) * observer.getOrientation().toMatrix4());
     jparams.finalFocus = targetPosition;
 
     Vec3d upd(up.x, up.y, up.z);
-    upd = ::toUniversal(upd, observer, selection, simTime, upFrame);
+    upd = toUniversal(upd, observer, selection, simTime, upFrame);
     jparams.up = Vec3f((float) upd.x, (float) upd.y, (float) upd.z);
 
     jparams.initialOrientation = observer.getOrientation();
