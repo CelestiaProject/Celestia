@@ -75,6 +75,8 @@
 
 #include "celengine/glext.h"
 
+#define MENUMAXSIZE 40
+
 KdeApp* KdeApp::app=0;
 
 KBookmarkManager* KCelBookmarkManager::s_bookmarkManager;
@@ -1073,49 +1075,31 @@ void KdeApp::slotEclipseFinder() {
     ef->raise();
 }
 
+void KdeApp::popupInsert(KPopupMenu &popup, Selection sel, int baseId) {
+    popup.insertItem(i18n("&Select"), baseId + 1);
+    popup.insertItem(i18n("&Center"), baseId + 2);
+    popup.insertItem(i18n("&Goto"), baseId + 3);
+    popup.insertItem(i18n("&Follow"), baseId + 4);
+    popup.insertItem(i18n("S&ynch Orbit"), baseId + 5);
+    popup.insertItem(i18n("&Info"), baseId + 6);
+    if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
+    {
+        popup.insertItem(i18n("&Unmark"), baseId + 7);
+    }
+    else
+    {
+        KPopupMenu *markMenu = new KPopupMenu(app);
+        markMenu->insertItem(i18n("Diamond"), baseId + 10);
+        markMenu->insertItem(i18n("Triangle"), baseId + 11);
+        markMenu->insertItem(i18n("Square"), baseId + 12);
+        markMenu->insertItem(i18n("Plus"), baseId + 13);
+        markMenu->insertItem(i18n("X"), baseId + 14);
+        popup.insertItem(i18n("&Mark"), markMenu);
+    }
 
-void KdeApp::popupMenu(float x, float y, Selection sel) {
-    KPopupMenu popup(app);
-    const PlanetarySystem* planets = 0;
-    
-    QLabel *lab = new QLabel("", &popup);
-    QPalette pal( lab->palette() );
-    pal.setColor( QPalette::Normal, QColorGroup::Background, QColor( "White" ) );
-    pal.setColor( QPalette::Normal, QColorGroup::Foreground, QColor( "Black" ) );
-    pal.setColor( QPalette::Inactive, QColorGroup::Foreground, QColor( "Black" ) );
-    
-    QFont rsFont = lab->font();
-    rsFont.setPointSize( rsFont.pointSize() - 2 ); 
-    
-    Simulation *sim = app->appCore->getSimulation();
-    Vec3d v = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
-        
     if (sel.body != NULL)
     {
-        popup.insertTitle(sel.body->getName().c_str(), 0, 0);
-        popup.insertItem(i18n("&Select"), 1);
-        popup.insertItem(i18n("&Center"), 2);
-        popup.insertItem(i18n("&Goto"), 3);
-        popup.insertItem(i18n("&Follow"), 4);
-        popup.insertItem(i18n("S&ynch Orbit"), 5);
-        popup.insertItem(i18n("&Info"), 6);
-        if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
-        {
-            popup.insertItem(i18n("&Unmark"), 7);
-        }
-        else
-        {
-            KPopupMenu *markMenu = new KPopupMenu(app);
-            markMenu->insertItem(i18n("Diamond"), 10);
-            markMenu->insertItem(i18n("Triangle"), 11);
-            markMenu->insertItem(i18n("Square"), 12);
-            markMenu->insertItem(i18n("Plus"), 13);
-            markMenu->insertItem(i18n("X"), 14);
-            popup.insertItem(i18n("&Mark"), markMenu);
-        }
-
         const PlanetarySystem* satellites = sel.body->getSatellites();
-        planets = satellites;
         if (satellites != NULL && satellites->getSystemSize() != 0)
         {
             popup.insertSeparator();
@@ -1123,10 +1107,101 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
             for (int i = 0; i < satellites->getSystemSize(); i++)
             {
                 Body* body = satellites->getBody(i);
-                planetaryMenu->insertItem(body->getName().c_str(), 100+i);
+                Selection satSel(body);
+                KPopupMenu *satMenu = new KPopupMenu(app);
+                popupInsert(*satMenu, satSel, baseId * MENUMAXSIZE + (i + 1) * MENUMAXSIZE);
+                planetaryMenu->insertItem(body->getName().c_str(), satMenu);
             }
             popup.insertItem(i18n("Satellites"), planetaryMenu);
         }
+    }
+    else if (sel.star != NULL)
+    {
+        popup.setItemEnabled(baseId + 5, false);
+        Simulation *sim = appCore->getSimulation();
+        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
+        if (iter != solarSystemCatalog->end())
+        {
+            popup.insertSeparator();
+            SolarSystem* solarSys = iter->second;
+            KPopupMenu* planetsMenu = new KPopupMenu(app);
+            for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
+            {
+                Body* body = solarSys->getPlanets()->getBody(i);
+                Selection satSel(body);
+                KPopupMenu *satMenu = new KPopupMenu(app);
+                popupInsert(*satMenu, satSel, baseId * MENUMAXSIZE + (i + 1) * MENUMAXSIZE);
+                planetsMenu->insertItem(body->getName().c_str(), satMenu);
+            }
+            popup.insertItem(i18n("Planets"), planetsMenu);
+        }
+    }
+    else if (sel.deepsky != NULL)
+    {
+        popup.setItemEnabled(baseId + 5, false);
+    }
+}
+
+Selection KdeApp::getSelectionFromId(Selection sel, int id) {
+    if (id == 0) return sel;
+
+    int subId = id;
+    int level = 1;
+    while (id > MENUMAXSIZE) {
+        id /= MENUMAXSIZE;
+        level *= MENUMAXSIZE;
+    }
+    subId -= id * level;
+    if (subId < 0) subId = 0;
+
+    if (sel.body != NULL)
+    {
+        const PlanetarySystem* satellites = sel.body->getSatellites();
+        if (satellites != NULL && satellites->getSystemSize() != 0)
+        {
+            Body* body = satellites->getBody(id - 1);
+            Selection satSel(body);
+            return getSelectionFromId(satSel, subId);
+        }
+    }
+    else if (sel.star != NULL)
+    {
+        Simulation *sim = appCore->getSimulation();
+        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
+        if (iter != solarSystemCatalog->end())
+        {
+            SolarSystem* solarSys = iter->second;
+            Body* body = solarSys->getPlanets()->getBody(id - 1);
+            Selection satSel(body);
+            return getSelectionFromId(satSel, subId);
+        }
+    }
+
+    return sel;
+}
+
+void KdeApp::popupMenu(float x, float y, Selection sel) {
+    KPopupMenu popup(app);
+    const PlanetarySystem* planets = 0;
+
+    QLabel *lab = new QLabel("", &popup);
+    QPalette pal( lab->palette() );
+    pal.setColor( QPalette::Normal, QColorGroup::Background, QColor( "White" ) );
+    pal.setColor( QPalette::Normal, QColorGroup::Foreground, QColor( "Black" ) );
+    pal.setColor( QPalette::Inactive, QColorGroup::Foreground, QColor( "Black" ) );
+
+    QFont rsFont = lab->font();
+    rsFont.setPointSize( rsFont.pointSize() - 2 );
+
+    Simulation *sim = app->appCore->getSimulation();
+    Vec3d v = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
+
+    if (sel.body != NULL)
+    {
+        popup.insertTitle(sel.body->getName().c_str(), 0, 0);
+        app->popupInsert(popup, sel, 0);
     }
     else if (sel.star != NULL)
     {
@@ -1175,67 +1250,20 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         popup.insertTitle(name.c_str(), 0, 0);
         popup.insertItem(starDetails);
         popup.insertSeparator();
-        popup.insertItem(i18n("&Select"), 1);
-        popup.insertItem(i18n("&Center"), 2);
-        popup.insertItem(i18n("&Goto"), 3);
-        popup.insertItem(i18n("&Info"), 6);
-        if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
-        {
-            popup.insertItem(i18n("&Unmark"), 7);
-        }
-        else
-        {
-            KPopupMenu *markMenu = new KPopupMenu(app);
-            markMenu->insertItem(i18n("Diamond"), 10);
-            markMenu->insertItem(i18n("Triangle"), 11);
-            markMenu->insertItem(i18n("Square"), 12);
-            markMenu->insertItem(i18n("Plus"), 13);
-            markMenu->insertItem(i18n("X"), 14);
-            popup.insertItem(i18n("&Mark"), markMenu);
-        }
-
-
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
-        if (iter != solarSystemCatalog->end())
-        {
-            popup.insertSeparator();
-            SolarSystem* solarSys = iter->second;
-            KPopupMenu* planetsMenu = new KPopupMenu(app);
-            planets = solarSys->getPlanets();
-            for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
-            {
-                Body* body = solarSys->getPlanets()->getBody(i);
-                planetsMenu->insertItem(body->getName().c_str(), 100+i);
-            }
-            popup.insertItem(i18n("Planets"), planetsMenu);
-        }
+        app->popupInsert(popup, sel, 0);
     }
     else if (sel.deepsky != NULL)
     {
         popup.insertTitle(sel.deepsky->getName().c_str(), 0);
-        popup.insertItem(i18n("&Select"), 1);
-        popup.insertItem(i18n("&Center"), 2);
-        popup.insertItem(i18n("&Goto"), 3);
-        popup.insertItem(i18n("&Info"), 6);
-        if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
-        {
-            popup.insertItem(i18n("&Unmark"), 7);
-        }
-        else
-        {
-            KPopupMenu *markMenu = new KPopupMenu(app);
-            markMenu->insertItem(i18n("Diamond"), 10);
-            markMenu->insertItem(i18n("Triangle"), 11);
-            markMenu->insertItem(i18n("Square"), 12);
-            markMenu->insertItem(i18n("Plus"), 13);
-            markMenu->insertItem(i18n("X"), 14);
-            popup.insertItem(i18n("&Mark"), markMenu);
-        }
-
+        app->popupInsert(popup, sel, 0);
     }
 
-    int id=popup.exec(app->glWidget->mapToGlobal(QPoint(int(x),int(y))));
+    int id = popup.exec(app->glWidget->mapToGlobal(QPoint(int(x),int(y))));
+
+    int selId = id / MENUMAXSIZE;
+    id = id - selId * MENUMAXSIZE;
+
+    sel = app->getSelectionFromId(sel, selId);
 
     if (id == 1) {
         app->appCore->getSimulation()->setSelection(sel);
@@ -1303,21 +1331,14 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         }
         return;
     }
-
-    if (id >= 100 && planets != 0) { // Planet or Satellite.
-        Selection new_sel(planets->getBody(id - 100));
-        app->appCore->getSimulation()->setSelection(new_sel);
-        app->appCore->charEntered('g');
-        return;
-    }
 }
 
 LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
    KDialogBase(parent, "long_lat", true, "Go to Long/Lat"), appCore(appCore)
 {
     QGrid* grid = makeGridMainWidget(3, Qt::Horizontal);
-    
-    
+
+
     QLabel* objLab = new QLabel(i18n("Object: "), grid);
     objLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     objEdit = new QLineEdit(grid);

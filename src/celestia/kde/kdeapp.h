@@ -190,6 +190,9 @@ protected:
 
     KToolBarPopupAction *backAction, *forwardAction;
     static KdeApp* app;
+
+    void popupInsert(KPopupMenu &popup, Selection sel, int baseId);
+    Selection getSelectionFromId(Selection sel, int id);
 };
 
 class LongLatDialog : public KDialogBase {
