@@ -193,6 +193,8 @@ class Mesh
 
     uint32 nVertices;
     void* vertices;
+    mutable uint32 vbObject;
+    mutable bool vbInitialized;
 
     std::vector<PrimitiveGroup*> groups;
 
