@@ -453,14 +453,7 @@ ImageTexture::ImageTexture(Image& img,
     }
     else
     {
-        glTexImage2D(GL_TEXTURE_2D,
-                     0,
-                     internalFormat,
-                     getWidth(), getHeight(),
-                     0,
-                     (GLenum) img.getFormat(),
-                     GL_UNSIGNED_BYTE,
-                     img.getPixels());
+        LoadMiplessTexture(img, GL_TEXTURE_2D);
     }
 }
 
