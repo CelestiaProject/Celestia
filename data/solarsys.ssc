@@ -10,7 +10,7 @@ Planets [
 	BumpHeight 2.5
 	Radius 2440
 
-	# orbital data
+	EllipticalOrbit {
 	Period            0.2408
 	SemiMajorAxis     0.3871
 	Eccentricity      0.2056
@@ -18,6 +18,7 @@ Planets [
 	AscendingNode    48.33167
 	LongOfPericenter 77.456
         MeanLongitude   252.251
+	}
 
 	RotationPeriod 1047.51
 	Obliquity         7.0
@@ -39,14 +40,15 @@ Planets [
 		Sky [ 0.8 0.8 0.5 ]
 	}
 
-	# orbital data
-	Period            0.6152
-	SemiMajorAxis     0.7233
-	Eccentricity      0.0068
-	Inclination       3.3947
-	AscendingNode     76.681
-	LongOfPericenter 131.533
-        MeanLongitude    181.979
+	EllipticalOrbit {
+		Period            0.6152
+		SemiMajorAxis     0.7233
+		Eccentricity      0.0068
+		Inclination       3.3947
+		AscendingNode     76.681
+		LongOfPericenter 131.533
+	        MeanLongitude    181.979
+	}
 
 	RotationPeriod  5832.444
 	Obliquity       177.4
@@ -56,7 +58,6 @@ Planets [
 {
 	Name   "Earth"
 	Texture "earth.png"
-	CloudMap "earth-clouds.png"
 	NightTexture "earthnight.jpg"
 	# CompressTexture true    # looks bad up close with this enabled
 	Color [ 0.85 0.85 1.0 ]
@@ -72,16 +73,19 @@ Planets [
 		Lower [ 0.5 0.5 0.65 ]
 		Upper [ 0.3 0.3 0.6 ]
 		Sky [ 0.3 0.6 0.9 ]
+		CloudHeight 7
+		CloudMap "earth-clouds.png"
 	}
 
-	# orbital data
-	Period            1.0000
-	SemiMajorAxis     1.0000
-	Eccentricity      0.0167
-	Inclination       0.0001
-	AscendingNode   348.739
-	LongOfPericenter 102.947
-        MeanLongitude   100.464
+	EllipticalOrbit {	
+		Period            1.0000
+		SemiMajorAxis     1.0000
+		Eccentricity      0.0167
+		Inclination       0.0001
+		AscendingNode   348.739
+		LongOfPericenter 102.947
+	        MeanLongitude   100.464
+	}
 
 	RotationPeriod   23.93419
 	RotationPhase    120.0
@@ -97,11 +101,13 @@ Planets [
 		Radius   1737.53
 		Oblateness 0.002
 
-		# orbital data
-		Period           27.321661
-		SemiMajorAxis    384400
-		Eccentricity     0.054900
-		Inclination      5.15
+		CustomOrbit "moon"
+		EllipticalOrbit {
+			Period           27.321661
+			SemiMajorAxis    384400
+			Eccentricity     0.054900
+			Inclination      5.15
+		}
 
 		Albedo           0.12
 	}
@@ -112,13 +118,15 @@ Planets [
 
 		# Assuming these elements to be constant isn't accurate . . .
 		# Celestia really needs to support better orbit models.
-		Period            0.06415338
-		SemiMajorAxis  6769
-		Eccentricity      0.0000831
-		Inclination      51.6461
-		AscendingNode    83.8459
-		ArgOfPericenter 296.4901
-		MeanAnomaly      63.6005
+		EllipticalOrbit {
+			Period            0.06415338
+			SemiMajorAxis  6769
+			Eccentricity      0.0000831
+			Inclination      51.6461
+			AscendingNode    83.8459
+			ArgOfPericenter 296.4901
+			MeanAnomaly      63.6005
+		}
 
 		Albedo 	      0.10
 	}
@@ -127,14 +135,16 @@ Planets [
 		Mesh "iss.3ds"
 		Radius 0.015
 
-		Period          0.064176392
-		SemiMajorAxis   6767
-		Eccentricity    0.0016886
-		Inclination      51.5684
-		AscendingNode   343.1518
-		ArgOfPericenter 346.2476
-		MeanAnomaly      13.8216
-		Epoch           2452028.18381755
+		EllipticalOrbit {
+			Period          0.064176392
+			SemiMajorAxis   6767
+			Eccentricity    0.0016886
+			Inclination      51.5684
+			AscendingNode   343.1518
+			ArgOfPericenter 346.2476
+			MeanAnomaly      13.8216
+			Epoch           2452028.18381755
+		}
 
 		Albedo        0.10
 	}
@@ -143,14 +153,16 @@ Planets [
 		Mesh "hubble.3ds"
 		Radius 0.015
 
-		Period          0.06903
-		SemiMajorAxis   6767
-		Eccentricity    0.0012082
-		Inclination      28.4675
-		AscendingNode    51.0100
-		ArgOfPericenter  27.0378
-		MeanAnomaly     333.0836
-		Epoch           2452028.18381755
+		EllipticalOrbit {
+			Period          0.06903
+			SemiMajorAxis   6767
+			Eccentricity    0.0012082
+			Inclination      28.4675
+			AscendingNode    51.0100
+			ArgOfPericenter  27.0378
+			MeanAnomaly     333.0836
+			Epoch           2452028.18381755
+		}
 
 		Albedo       0.10
 	}
@@ -176,7 +188,8 @@ Planets [
 		Sky [ 0.83 0.75 0.65 ]
 	}
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            1.8809
 	SemiMajorAxis     1.5237
 	Eccentricity      0.0934
@@ -184,6 +197,7 @@ Planets [
 	AscendingNode     49.479
 	LongOfPericenter 336.041
         MeanLongitude    355.453
+	}
 
 	RotationPeriod    24.622962
 	Obliquity         23.98
@@ -198,12 +212,14 @@ Planets [
 		# BumpHeight 5
 		Radius 11
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         0.318910
 		SemiMajorAxis  9377.2
 		Eccentricity   0.0151
 		Inclination    1.082
 		MeanAnomaly    50
+		}
 
 		Albedo         0.07
 	}
@@ -213,12 +229,15 @@ Planets [
 		Texture "deimos.jpg"
 		Radius 6
 
-		# orbital data
+
+		EllipticalOrbit
+		{
 		Period         1.262441
 		SemiMajorAxis  23463.2
 		Eccentricity   0.00033
 		Inclination    1.791
 		MeanAnomaly    150
+		}
 
 		Albedo         0.08
 	}
@@ -234,7 +253,8 @@ Planets [
 	Radius 71398
 	Oblateness 0.064
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period           11.8622
 	SemiMajorAxis     5.2034
 	Eccentricity      0.0484
@@ -242,6 +262,7 @@ Planets [
 	AscendingNode   100.556
 	LongOfPericenter 14.7539
         MeanLongitude    34.404
+	}
 
 	RotationPeriod    9.92425
 	Obliquity         3.08
@@ -256,12 +277,14 @@ Planets [
 		Mesh "amalthea.3ds"
 		Radius    124
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period          0.498179
 		SemiMajorAxis   181300
 		Eccentricity    0.003
 		Inclination     0.40
 		MeanAnomaly     210
+		}
 
 		Albedo          0.06
 	}
@@ -271,12 +294,14 @@ Planets [
 		Texture "io.jpg"
 		Radius   1821
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         1.769138
 		SemiMajorAxis  421600
 		Eccentricity   0.0041
 		Inclination    0.040
 		MeanAnomaly    50
+		}
 
 		Albedo         0.61
 	}
@@ -285,12 +310,14 @@ Planets [
 		Texture "europa.jpg"
 		Radius   1565
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         3.551810
 		SemiMajorAxis  670900
 		Eccentricity   0.0101
 		Inclination    0.470
 		MeanAnomaly    310
+		}
 
 		Albedo         0.64
 	}
@@ -299,12 +326,14 @@ Planets [
 		Texture "ganymede.jpg"
 		Radius   2634
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         7.154553
 		SemiMajorAxis  1070000
 		Eccentricity   0.0015
 		Inclination    0.195
 		MeanAnomaly    243
+		}
 
 		Albedo         0.42
 	}
@@ -313,12 +342,14 @@ Planets [
 		Texture "callisto.jpg"
 		Radius   2403
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period        16.689018
 		SemiMajorAxis  1883000
 		Eccentricity   0.007
 		Inclination    0.281
 		MeanAnomaly    120
+		}
 
 		Albedo         0.20
 	}
@@ -327,12 +358,14 @@ Planets [
 		Mesh "galileo.3ds"
 		Radius   0.01
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period        18
 		SemiMajorAxis  1883000
 		Eccentricity   0.2
 		Inclination    0.281
 		MeanAnomaly    215
+		}
 
 		Albedo         0.50
 	}
@@ -348,7 +381,8 @@ Planets [
 	Radius 60330
 	Oblateness 0.1076
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period           29.4577
 	SemiMajorAxis     9.5371
 	Eccentricity      0.0542
@@ -356,6 +390,7 @@ Planets [
 	AscendingNode   113.715
 	LongOfPericenter 92.432
         MeanLongitude    49.944
+	}
 
 	RotationPeriod   10.65622
 	Obliquity         26.73
@@ -383,12 +418,14 @@ Planets [
 		BlendTexture true
 		Radius    199
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         0.9424218
 		SemiMajorAxis  185520
 		Eccentricity   0.0202
 		Inclination    1.53
 		MeanAnomaly    23
+		}
 
 		Albedo         0.5
 	}
@@ -397,12 +434,14 @@ Planets [
 		Texture "asteroid.jpg"
 		Radius     249
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         1.370218
 		SemiMajorAxis  238020
 		Eccentricity   0.0045
 		Inclination    0.02
 		MeanAnomaly    215
+		}
 
 		Albedo         0.99
 	}
@@ -411,12 +450,14 @@ Planets [
 		Texture "tethys.jpg"
 		Radius     530
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         1.887802
 		SemiMajorAxis  294660
 		Eccentricity   0.0
 		Inclination    1.09
 		MeanAnomaly    98
+		}
 
 		Albedo         0.9
 	}
@@ -425,12 +466,14 @@ Planets [
 		Texture "dione.jpg"
 		Radius     560
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         2.736915
 		SemiMajorAxis  377400
 		Eccentricity   0.0022
 		Inclination    0.02
 		MeanAnomaly    310
+		}
 
 		Albedo         0.7
 	}
@@ -439,12 +482,14 @@ Planets [
 		Texture "rhea.jpg"
 		Radius     764
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         4.517500
 		SemiMajorAxis  527040
 		Eccentricity   0.0010
 		Inclination    0.35
 		MeanAnomaly    190
+		}
 
 		Albedo         0.7
 	}
@@ -463,13 +508,14 @@ Planets [
 			Sky [ 0.8 0.4 0.1 ]
 		}
 
-
-		# orbital data
+		EllipticalOrbit
+		{
 		Period        15.945421
 		SemiMajorAxis  1221850
 		Eccentricity   0.0292
 		Inclination    0.33
 		MeanAnomaly    120
+		}
 
 		Albedo         0.21
 	}
@@ -479,12 +525,14 @@ Planets [
 		Texture "asteroid.jpg"
 		Radius   205
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period        21.276609
 		SemiMajorAxis  1481100
 		Eccentricity   0.1042
 		Inclination    0.43
 		MeanAnomaly    350
+		}
 
 		Albedo         0.3
 	}
@@ -493,12 +541,14 @@ Planets [
 		Texture "iapetus.jpg"
 		Radius     718
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         79.330183
 		SemiMajorAxis  3561300
 		Eccentricity   0.0283
 		Inclination    7.52
 		MeanAnomaly    245
+		}
 
 		Albedo         0.2
 	}
@@ -508,12 +558,14 @@ Planets [
 		Texture "asteroid.jpg"
 		Radius     110
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         2.736915
 		SemiMajorAxis  12952000
 		Eccentricity   0.163
 		Inclination    175.3
 		MeanAnomaly    52
+		}
 
 		Albedo         0.05
 	}
@@ -529,7 +581,8 @@ Planets [
 	Radius 26200
 	Oblateness 0.024
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period           84.0139
 	SemiMajorAxis    19.1913
 	Eccentricity      0.0472
@@ -537,6 +590,7 @@ Planets [
 	AscendingNode     74.230
 	LongOfPericenter 170.964
         MeanLongitude    313.232
+	}
 
 	RotationPeriod   17.24
 	Obliquity        97.92
@@ -548,60 +602,70 @@ Planets [
 		Texture "asteroid.jpg"
 		Radius   235
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         1.413
 		SemiMajorAxis  129800
 		Eccentricity   0.0027
 		Inclination    4.22
 		MeanAnomaly    120
+		}
 	}
 	{
 		Name "Ariel"
 		Texture "asteroid.jpg"
 		Radius   576
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         2.520
 		SemiMajorAxis  191200
 		Eccentricity   0.0034
 		Inclination    0.31
 		MeanAnomaly    56
+		}
 	}
 	{
 		Name "Umbriel"
 		Texture "asteroid.jpg"
 		Radius   585
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         4.144
 		SemiMajorAxis  266000
 		Eccentricity   0.0050
 		Inclination    0.36
 		MeanAnomaly    280
+		}
 	}
 	{
 		Name "Titania"
 		Texture "asteroid.jpg"
 		Radius   789
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         8.706
 		SemiMajorAxis  435800
 		Eccentricity   0.0022
 		Inclination    0.10
 		MeanAnomaly    30
+		}
 	}
 	{
 		Name "Oberon"
 		Texture "asteroid.jpg"
 		Radius   761
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period        13.463
 		SemiMajorAxis  583600
 		Eccentricity   0.0008
 		Inclination    0.10
 		MeanAnomaly    150
+		}
 	}
 	]
 }
@@ -615,7 +679,8 @@ Planets [
 	Radius 25225
 	Oblateness 0.027
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period           164.793
 	SemiMajorAxis     30.0690
 	Eccentricity      0.0086
@@ -623,6 +688,7 @@ Planets [
 	AscendingNode   131.722
 	LongOfPericenter 44.971
         MeanLongitude   304.880
+	}
 
 	RotationPeriod   16.11
 	Obliquity        28.8
@@ -635,12 +701,14 @@ Planets [
 		Texture "asteroid.jpg"
 		Radius   218
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         1.122315
 		SemiMajorAxis  117647
 		Eccentricity   0.000
 		Inclination    0.55
 		MeanAnomaly    310
+		}
 
 		Albedo         0.2
 	}
@@ -649,12 +717,21 @@ Planets [
 		Texture "triton.jpg"
 		Radius   1353
 
-		# orbital data
+		Atmosphere {
+			Height 1
+			Lower [ 0.5 0.5 0.5 ]
+			Upper [ 0.5 0.5 0.5 ]
+			Sky [ 0.0 0.0 0.0 ]
+		}
+
+		EllipticalOrbit
+		{
 		Period         5.876854
 		SemiMajorAxis  354760
 		Eccentricity   0.00004
 		Inclination    156.834
 		MeanAnomaly    120
+		}
 
 		Albedo         0.7
 	}
@@ -664,12 +741,14 @@ Planets [
 		Texture "asteroid.jpg"
 		Radius   170
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         360.13619
 		SemiMajorAxis  5513400
 		Eccentricity   0.7512
 		Inclination    7.23
 		MeanAnomaly    185
+		}
 	}
 	]
 }
@@ -681,7 +760,8 @@ Planets [
 	BumpHeight 2.5
 	Radius 1137
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            248.54
 	SemiMajorAxis     39.48168677
 	Eccentricity       0.24880766
@@ -689,6 +769,7 @@ Planets [
 	AscendingNode    110.30347
 	LongOfPericenter 224.06776
         MeanLongitude    238.92881
+	}
 
 	RotationPeriod  153.29
 	Obliquity       122.53
@@ -700,12 +781,14 @@ Planets [
 		Texture "charon.jpg"
 		Radius   593
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         6.387083
 		SemiMajorAxis  19636
 		Eccentricity   0.0076
 		Inclination    0.0 # 96.163 degrees relative to ecliptic
 		MeanAnomaly    120
+		}
 	
 		Albedo         0.3
 	}
@@ -718,7 +801,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 456
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            4.60
 	SemiMajorAxis     2.7678
 	Eccentricity      0.0774
@@ -726,6 +810,7 @@ Planets [
 	AscendingNode    80.530
 	ArgOfPericenter  73.460
         MeanAnomaly     207.082
+	}
 
 	RotationPeriod    9.075
 }
@@ -735,7 +820,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 260
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            4.61
 	SemiMajorAxis     2.7739
 	Eccentricity      0.2323
@@ -743,6 +829,7 @@ Planets [
 	AscendingNode   173.237
 	ArgOfPericenter 309.824
         MeanAnomaly     194.832
+	}
 
 	RotationPeriod    7.811
 }
@@ -752,7 +839,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 120
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            4.36
 	SemiMajorAxis     2.669
 	Eccentricity      0.2579
@@ -760,6 +848,7 @@ Planets [
 	AscendingNode    90.0
 	ArgOfPericenter 180.0
         MeanAnomaly     270.0
+	}
 
 	RotationPeriod    7.811
 }
@@ -770,7 +859,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 265
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            4.36
 	SemiMajorAxis     2.3607
 	Eccentricity      0.0904
@@ -778,6 +868,7 @@ Planets [
 	AscendingNode   103.962
 	ArgOfPericenter 149.854
         MeanAnomaly     138.500
+	}
 
 	RotationPeriod    5.342
 }
@@ -788,7 +879,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 45
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            4.84
 	SemiMajorAxis     2.861
 	Eccentricity      0.0451
@@ -796,6 +888,7 @@ Planets [
 	AscendingNode   324.419
 	ArgOfPericenter 112.419
         MeanAnomaly      92.511
+	}
 
 	RotationPeriod    4.633
 
@@ -808,10 +901,12 @@ Planets [
 		Mesh "roughsphere.cms"
 		Radius   0.7
 
-		# orbital data
+		EllipticalOrbit
+		{
 		Period         1.13
 		SemiMajorAxis  98
 		Eccentricity   0.05
+		}
 	}
 	]
 }
@@ -825,7 +920,8 @@ Planets [
 	BlendTexture true
 	Radius 16.5
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            1.76
 	SemiMajorAxis     1.4583
 	Eccentricity      0.2230
@@ -833,6 +929,7 @@ Planets [
 	AscendingNode   304.435
 	ArgOfPericenter   0.987
         MeanAnomaly     310.0
+	}
 
 	RotationPeriod    5.270
 	Albedo            0.16
@@ -847,7 +944,8 @@ Planets [
 	BlendTexture true
 	Radius  2.3
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            3.98
 	SemiMajorAxis     2.510
 	Eccentricity      0.634
@@ -856,6 +954,7 @@ Planets [
 	ArgOfPericenter 274.8
         MeanAnomaly      36.7
 	# Epoch        20010401
+	}
 
 	RotationPeriod  180
 	Albedo            0.16
@@ -870,7 +969,8 @@ Planets [
 	BlendTexture true
 	Radius  1.0
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            1.39 
 	SemiMajorAxis     1.2455
 	Eccentricity      0.3354
@@ -879,6 +979,7 @@ Planets [
 	ArgOfPericenter 276.756
         MeanAnomaly     180.595
 	Epoch      2450800.5
+	}
 
 	RotationPeriod    5.222
 	Albedo            0.16
@@ -893,7 +994,8 @@ Planets [
 	BlendTexture true
 	Radius  109
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            4.67
 	SemiMajorAxis     2.793
 	Eccentricity      0.2535
@@ -902,6 +1004,7 @@ Planets [
 	ArgOfPericenter 276.756
         MeanAnomaly     180.595
 	Epoch      2450800.5
+	}
 
 	RotationPeriod    5.385
 	Albedo            0.16
@@ -916,7 +1019,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 7.5
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            75.7
 	SemiMajorAxis    17.9541
 	Eccentricity      0.9673
@@ -925,6 +1029,7 @@ Planets [
 	ArgOfPericenter 111.87
         MeanAnomaly       0.0
 	Epoch       2446480.5
+	}
 
 	RotationPeriod  170     # Guess; see http://www.lpi.usra.edu/meetings/dps97/html/H2918/H2918.html
 	Albedo            0.04
@@ -936,7 +1041,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 2.5
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            6.8631
 	SemiMajorAxis     3.61145
 	Eccentricity      0.623919
@@ -945,6 +1051,7 @@ Planets [
 	ArgOfPericenter 353.3741
         MeanAnomaly       0.0
 	Epoch       2452200.5
+	}
 
 	RotationPeriod  170     #
 	Albedo            0.04
@@ -956,7 +1063,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 90
 
-	# orbital data
+	EllipticalOrbit
+	{
 	Period            50.7
 	SemiMajorAxis     13.6481
 	Eccentricity      0.3806
@@ -965,6 +1073,7 @@ Planets [
 	ArgOfPericenter 339.483
         MeanAnomaly      13.177
 	Epoch       2450800.5
+	}
 
 	RotationPeriod    5.9
 }
@@ -977,6 +1086,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 450
 
+	EllipticalOrbit
+	{
 	Period           284.664
 	SemiMajorAxis     43.274
 	Eccentricity      0.056
@@ -985,6 +1096,7 @@ Planets [
 	ArgOfPericenter 274.9
         MeanAnomaly      81.7
 	Epoch       2452003.0
+	}
 
 	Albedo 0.07
 
@@ -997,6 +1109,8 @@ Planets [
 	Texture "asteroid.jpg"
 	Radius 600
 
+	EllipticalOrbit
+	{
 	Period           245.797
 	SemiMajorAxis     39.293
 	Eccentricity      0.246
@@ -1005,6 +1119,7 @@ Planets [
 	ArgOfPericenter 301.0
         MeanAnomaly     258.8
 	Epoch       2452003.0
+	}
 
 	Albedo 0.07
 
