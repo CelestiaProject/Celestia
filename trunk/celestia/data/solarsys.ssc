@@ -1014,90 +1014,112 @@
 
 
 # A few main belt asteroids . . 
-"Ceres" "Sol"
-{
-	Class "asteroid"
-	Texture "asteroid.jpg"
-	Radius 456
+"Ceres" "Sol" 
+{ 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 456 
 
-	EllipticalOrbit
-	{
-	Epoch      2452600.5
-	Period            4.60014
-	SemiMajorAxis     2.7660
-	Eccentricity      0.0793
-	Inclination      10.584
-	AscendingNode    80.483
-	ArgOfPericenter  74.043
-        MeanAnomaly     232.067
-	}
+	EllipticalOrbit 
+	{ 
+	Epoch      2452600.5 #2002 Nov 22 00:00:00UT 
+	Period            4.60014 
+	SemiMajorAxis     2.7660 
+	Eccentricity      0.0793 
+	Inclination      10.584 
+	AscendingNode    80.483 
+	ArgOfPericenter  74.043 
+	MeanAnomaly     232.067 
+	} 
 
-	RotationPeriod    9.075
-}
+	Obliquity             11 
+	EquatorAscendingNode  29 
+	RotationEpoch    2449249.91125 #1993 Sep 19 09:52:12UT 
+	RotationOffset       -20.15 
+	RotationPeriod         9.075 
 
-"Pallas" "Sol"
-{
-	Class "asteroid"
-	Texture "asteroid.jpg"
-	Radius 260
+	Albedo 0.113 
+} 
 
-	EllipticalOrbit
-	{
-	Epoch      2452600.5
-	Period            4.61868
-	SemiMajorAxis     2.7733
-	Eccentricity      0.2300
-	Inclination      34.846
-	AscendingNode   173.166
-	ArgOfPericenter 310.423
-        MeanAnomaly     218.057
-	}
+"Pallas" "Sol" 
+{ 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 260 
 
-	RotationPeriod    7.811
-}
+	EllipticalOrbit 
+	{ 
+	Epoch      2452600.5 #2002 Nov 22 00:00:00UT 
+	Period            4.61868 
+	SemiMajorAxis     2.7733 
+	Eccentricity      0.2300 
+	Inclination      34.846 
+	AscendingNode   173.166 
+	ArgOfPericenter 310.423 
+	MeanAnomaly     218.057 
+	} 
 
-"Juno" "Sol"
-{
-	Class "asteroid"
-	Texture "asteroid.jpg"
-	Radius 120
+	Obliquity            102 
+	EquatorAscendingNode 162 
+	RotationOffset        -7.23 
+	RotationPeriod         7.81323264 
 
-	EllipticalOrbit
-	{
-	Epoch      2452600.5
-	Period            4.35540
-	SemiMajorAxis     2.6669
-	Eccentricity      0.2589
-	Inclination      12.972
-	AscendingNode   170.133
-	ArgOfPericenter 247.948
-        MeanAnomaly     119.146
-	}
+	Albedo 0.159 
+} 
 
-	RotationPeriod    7.811
-}
+"Juno" "Sol" 
+{ 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 120 
 
-"Vesta" "Sol"
-{
-	Class "asteroid"
-	Mesh   "vesta.3ds"
-	Texture "asteroid.jpg"
-	Radius 265
+	EllipticalOrbit 
+	{ 
+	Epoch      2452600.5 #2002 Nov 22 00:00:00UT 
+	Period            4.35540 
+	SemiMajorAxis     2.6669 
+	Eccentricity      0.2589 
+	Inclination      12.972 
+	AscendingNode   170.133 
+	ArgOfPericenter 247.948 
+	MeanAnomaly     119.146 
+	} 
 
-	EllipticalOrbit
-	{
-	Epoch       2452000.5
-	Period            3.62729
-	SemiMajorAxis     2.3670775
-	Eccentricity      0.089753
-	Inclination       7.1346
-	AscendingNode   103.9510
-	ArgOfPericenter 149.4585
-        MeanAnomaly     104.980
-	}
+	Obliquity             56 
+	EquatorAscendingNode 196 
+	RotationPeriod         7.811 
 
-	RotationPeriod    5.342
-}
+	Albedo 0.238 
+} 
+
+"Vesta" "Sol" 
+{ 
+	Class "asteroid" 
+	Mesh   "vesta.3ds" 
+	Texture "asteroid.jpg" 
+	Radius 265 
+
+	EllipticalOrbit 
+	{ 
+	Epoch       2452000.5 #2001 Apr 1 00:00:00UT 
+	Period            3.62729 
+	SemiMajorAxis     2.3670775 
+	Eccentricity      0.089753 
+	Inclination       7.1346 
+	AscendingNode   103.9510 
+	ArgOfPericenter 149.4585 
+	MeanAnomaly     104.980 
+	} 
+
+	Obliquity             40 
+	EquatorAscendingNode  91 
+	RotationEpoch    2450124.90833 #1996 May 11 09:48UT 
+	RotationOffset       145.77 
+	RotationPeriod         5.342 
+
+	Albedo 0.423 
+} 
+
 
 
 # Some of the asteroids visited by spacecraft
@@ -1128,7 +1150,7 @@
 	EquatorAscendingNode 109.59
 	Obliquity            69.28
 
-        RotationOffset       238.865
+	RotationOffset       238.865
 
 	Albedo 0.1
 }
@@ -1245,12 +1267,12 @@
 	AscendingNode   128.24788
 	ArgOfPericenter 274.78070
         MeanAnomaly      86.28120
-	Epoch        2452200.5
+	Epoch        2452200.5 # 2001 Oct 18 00:00:00UT
 	}
 
 	Obliquity       35
-	RotationPeriod  129.6 # 5.41 days
-	PrecessionRate  48.98 # 7.35 day period
+	RotationPeriod  -129.6 # 5.41 days
+	PrecessionRate  -48.98 # 7.35 day period
 	Orientation     [ 90 1 0 0 ]
 
 	Albedo            0.16
@@ -1264,7 +1286,8 @@
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  1.0
+	Radius  2.555
+	InfoURL "http://www-personal.engin.umich.edu/~scheeres/reprints/Icarus_geographos.pdf"
 
 	EllipticalOrbit
 	{
@@ -1275,11 +1298,15 @@
 	AscendingNode   337.352
 	ArgOfPericenter 276.756
         MeanAnomaly     180.595
-	Epoch      2450800.5
+	Epoch      2450800.5 # 1997 Dec 18 00:00:00UT
 	}
 
-	RotationPeriod    5.222
-	Albedo            0.16
+	Orientation       [90 1 0 0] 
+	Obliquity               136 
+	EquatorAscendingNode    145 
+	RotationPeriod            5.223 # from JPL Horizons 
+
+	Albedo            0.326 #from JPL Horizons 
 }
 
 "Kleopatra" "Sol"
@@ -1291,6 +1318,7 @@
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
 	Radius  109
+	InfoURL "http://www-personal.engin.umich.edu/~scheeres/reprints/Science_kleopatra.pdf" 
 
 	EllipticalOrbit
 	{
@@ -1303,6 +1331,10 @@
         MeanAnomaly     180.595
 	Epoch      2450800.5
 	}
+
+	Orientation       [90 1 0 0] 
+	Obliquity                63 
+	EquatorAscendingNode    162    
 
 	RotationPeriod    5.385
 	Albedo            0.16
@@ -1332,7 +1364,9 @@
 	Epoch       2452000.5 
 	}
 
+	Orientation	  [ 90 1 0 0 ]
 	RotationPeriod    0.178
+
 	Albedo            0.15
 
 }
@@ -1345,7 +1379,9 @@
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  1.1
+	Radius  0.55
+
+	InfoURL "http://echo.jpl.nasa.gov/~ostro/bacchus/index.html" 
 
 	EllipticalOrbit
 	{
@@ -1359,9 +1395,12 @@
 	Epoch       2452000.5 
 	}
 
-	RotationPeriod   14.9
-	Albedo            0.15
+	Orientation       [90 1 0 0] 
+	Obliquity               116 
+	EquatorAscendingNode    114 
+	RotationPeriod           14.90 
 
+	Albedo            0.15
 }
 
 "Golevka" "Sol"
@@ -1372,11 +1411,12 @@
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius  0.53
+	Radius  0.34
+	InfoURL "http://www2.crl.go.jp/ka/radioastro/people/koyama/golevka.pdf" 
 
 	EllipticalOrbit
 	{
-	Period            3.982
+	Period            3.995
 	SemiMajorAxis     2.5120500
 	Eccentricity      0.60117380
 	Inclination       2.28701
@@ -1386,9 +1426,12 @@
 	Epoch       2452000.5 
 	}
 
-	RotationPeriod    6.026
-	Albedo            0.15
-
+	Orientation       [90 1 0 0] 
+	Obliquity               135 
+	EquatorAscendingNode    292 
+	RotationPeriod            6.0289 
+    
+	Albedo            0.15 
 }
 
 "Castalia" "Sol"
@@ -1403,19 +1446,22 @@
 
 	EllipticalOrbit
 	{
-	Period            4.67
+	Period            1.096
 	SemiMajorAxis     1.0632007
 	Eccentricity      0.48324394
 	Inclination       8.88806
 	AscendingNode   325.71246
 	ArgOfPericenter 121.26355
         MeanAnomaly     152.5186007
-	Epoch       2452000.5 
+	Epoch       2452000.5 # 2001 Apr 1 00:00:00
 	}
 
-	RotationPeriod  130.0
-	Albedo            0.15
+	Orientation         [90 1 0 0] 
+	Obliquity            146 
+	EquatorAscendingNode 325 
+	RotationPeriod         4.095 
 
+	Albedo            0.15 
 }
 
 
