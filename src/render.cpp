@@ -47,8 +47,6 @@ static const float MaxFarNearRatio      = 10000.0f;
 
 static bool commonDataInitialized = false;
 
-#define SPHERE_LODS 5
-
 static LODSphereMesh* lodSphere = NULL;
 static SphereMesh* asteroidMesh = NULL;
 
@@ -162,33 +160,6 @@ static void ShadowTextureEval(float u, float v, float w,
     pixel[2] = pixVal;
 }
 
-
-#if 0
-static void BoxTextureEval(float u, float v, float w,
-                            unsigned char* pixel)
-{
-    int r = 0, g = 0, b = 0;
-    if (abs(u) > abs(v))
-    {
-        if (abs(u) > abs(w))
-            r = 255;
-        else
-            b = 255;
-    }
-    else
-    {
-        if (abs(v) > abs(w))
-            g = 255;
-        else
-            b = 255;
-    }
-
-    pixel[0] = r;
-    pixel[1] = g;
-    pixel[2] = b;
-    pixel[3] = 80;
-}
-#endif
 
 static void IllumMapEval(float x, float y, float z,
                          unsigned char* pixel)
@@ -574,8 +545,6 @@ void Renderer::render(const Observer& observer,
                       const Selection& sel,
                       double now)
 {
-    cout << "Render frame\n";
-
     // Compute the size of a pixel
     pixelSize = calcPixelSize(fov, windowHeight);
 
@@ -675,18 +644,8 @@ void Renderer::render(const Observer& observer,
     else
         brightnessScale = 0.25f;
 
-#if 0
-    // Adjust the ambient color based on the sky color.  This simulates an
-    // effect you see when looking at the moon in daylight: the shadowed areas
-    // of the moon are not black, but are instead the same color as the sky.
-    // TODO: This doesn't actually work; the color must be clamped to a min
-    // of skyColor on a per pixel basis . . .
-    ambientColor = Color(max(ambientLightLevel, skyColor.red()),
-                         max(ambientLightLevel, skyColor.green()),
-                         max(ambientLightLevel, skyColor.blue()));
-#else
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
-#endif
+
     // Create the ambient light source.  For realistic scenes in space, this
     // should be black.
     glAmbientLightColor(ambientColor);
@@ -897,24 +856,6 @@ void Renderer::render(const Observer& observer,
                              now,
                              observer.getOrientation(),
                              nearPlaneDistance, farPlaneDistance);
-#if 0
-                if ((labelMode & MajorPlanetLabels) != 0 &&
-                    renderList[i].body->getRadius() >= 1000.0f)
-                {
-                    addLabel(renderList[i].body->getName(),
-                             Color(0.0f, 1.0f, 0.0f),
-                             renderList[i].position,
-                             depthBucket * depthRange * -2 + 1);
-                }
-                else if ((labelMode & MinorPlanetLabels) != 0 &&
-                         renderList[i].body->getRadius() < 1000.0f)
-                {
-                    addLabel(renderList[i].body->getName(),
-                             Color(0.0f, 0.6f, 0.0f),
-                             renderList[i].position,
-                             depthBucket * depthRange * -2 + 1);
-                }
-#endif
             }
             else if (renderList[i].star != NULL)
             {
@@ -1472,7 +1413,8 @@ void renderAtmosphere(const Atmosphere& atmosphere,
 }
 
 
-static void renderMeshDefault(const RenderInfo& ri)
+static void renderMeshDefault(const RenderInfo& ri,
+                              const Frustum& frustum)
 {
     glEnable(GL_LIGHTING);
 
@@ -1506,7 +1448,8 @@ static void renderMeshDefault(const RenderInfo& ri)
 }
 
 
-static void renderMeshFragmentShader(const RenderInfo& ri)
+static void renderMeshFragmentShader(const RenderInfo& ri,
+                                     const Frustum& frustum)
 {
     glDisable(GL_LIGHTING);
 
@@ -1563,7 +1506,8 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
 }
 
 
-static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
+static void renderMeshVertexAndFragmentShader(const RenderInfo& ri,
+                                              const Frustum& frustum)
 {
     if (ri.baseTex == NULL)
     {
@@ -1625,7 +1569,7 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
         ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams, ri.lod);
+                        Mesh::VertexProgParams, frustum, ri.lod);
         DisableCombiners();
     }
     else if (ri.specularColor != Color(0.0f, 0.0f, 0.0f))
@@ -1634,7 +1578,7 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         vp::use(vp::specular);
         SetupCombinersGlossMapWithFog();
         ri.mesh->render(Mesh::Normals | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams, ri.lod);
+                        Mesh::VertexProgParams, frustum, ri.lod);
         DisableCombiners();
     }
     else
@@ -1644,7 +1588,7 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
         else
             vp::use(vp::diffuse);
         ri.mesh->render(Mesh::Normals | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams, ri.lod);
+                        Mesh::VertexProgParams, frustum, ri.lod);
     }
 
     if (hazeDensity > 0.0f)
@@ -1670,6 +1614,25 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
 }
 
 
+static float getSphereLOD(float discSizeInPixels)
+{
+    if (discSizeInPixels < 10)
+        return -3.0f;
+    else if (discSizeInPixels < 20)
+        return -2.0f;
+    else if (discSizeInPixels < 50)
+        return -1.0f;
+    else if (discSizeInPixels < 200)
+        return 0.0f;
+    else if (discSizeInPixels < 600)
+        return 1.0f;
+    else if (discSizeInPixels < 1800)
+        return 2.0f;
+    else
+        return 3.0f;
+}
+
+
 void Renderer::renderPlanet(const Body& body,
                             Point3f pos,
                             Vec3f sunDirection,
@@ -1680,7 +1643,10 @@ void Renderer::renderPlanet(const Body& body,
                             float nearPlaneDistance,
                             float farPlaneDistance)
 {
-    float discSizeInPixels = body.getRadius() / (distance * pixelSize);
+    float altitude = distance - body.getRadius();
+    float discSizeInPixels = body.getRadius() /
+        (max(nearPlaneDistance, altitude) * pixelSize);
+
     if (discSizeInPixels > 1)
     {
         RenderInfo ri;
@@ -1763,21 +1729,7 @@ void Renderer::renderPlanet(const Body& body,
         ri.eyePos_obj = Point3f(-pos.x, -pos.y, -pos.z) * planetMat;
         ri.orientation = orientation;
 
-        // Determine the appropriate level of detail
-        if (discSizeInPixels < 10)
-            ri.lod = -3.0f;
-        else if (discSizeInPixels < 20)
-            ri.lod = -2.0f;
-        else if (discSizeInPixels < 50)
-            ri.lod = -1.0f;
-        else if (discSizeInPixels < 200)
-            ri.lod = 0.0f;
-        else if (discSizeInPixels < 400)
-            ri.lod = 1.0f;
-        else if (discSizeInPixels < 1200)
-            ri.lod = 2.0f;
-        else
-            ri.lod = 3.0f;
+        ri.lod = getSphereLOD(discSizeInPixels);
 
         // Set up the colors
         if (ri.baseTex == NULL ||
@@ -1862,20 +1814,34 @@ void Renderer::renderPlanet(const Body& body,
         }
         glEnable(GL_LIGHT0);
 
-        // Currently, there are three different rendering paths:
-        //   1. Generic OpenGL 1.1
-        //   2. OpenGL 1.2 + nVidia register combiners
-        //   3. OpenGL 1.2 + nVidia register combiners + vertex programs
-        // Unfortunately, this means that unless you've got a GeForce card,
-        // you'll miss out on a lot of the eye candy . . .
         if (ri.mesh != NULL)
         {
+            Frustum viewFrustum(degToRad(fov),
+                                (float) windowWidth / (float) windowHeight,
+                                nearPlaneDistance, farPlaneDistance);
+
+            // Compute the inverse model/view matrix
+            Mat4f invMV = (orientation.toMatrix4() *
+                           Mat4f::translation(Point3f(-pos.x,-pos.y,-pos.z)) *
+                           planetMat *
+                           Mat4f::scaling(1.0f / radius));
+
+            // Transform the frustum into object coordinates using the
+            // inverse model/view matrix.
+            viewFrustum.transform(invMV);
+
+            // Currently, there are three different rendering paths:
+            //   1. Generic OpenGL 1.1
+            //   2. OpenGL 1.2 + nVidia register combiners
+            //   3. OpenGL 1.2 + nVidia register combiners + vertex programs
+            // Unfortunately, this means that unless you've got a GeForce card,
+            // you'll miss out on a lot of the eye candy . . .
             if (fragmentShaderEnabled && vertexShaderEnabled)
-                renderMeshVertexAndFragmentShader(ri);
+                renderMeshVertexAndFragmentShader(ri, viewFrustum);
             else if (fragmentShaderEnabled && !vertexShaderEnabled)
-                renderMeshFragmentShader(ri);
+                renderMeshFragmentShader(ri, viewFrustum);
             else
-                renderMeshDefault(ri);
+                renderMeshDefault(ri, viewFrustum);
         }
 
         if (body.getAtmosphere() != NULL)
@@ -1916,6 +1882,7 @@ void Renderer::renderPlanet(const Body& body,
                 glPopMatrix();
             }
 
+            // If there's a cloud layer, we'll render it now.
             Texture* cloudTex = NULL;
             if ((renderFlags & ShowCloudMaps) != 0 &&
                 atmosphere->cloudTex != InvalidResource)
@@ -2084,6 +2051,7 @@ void Renderer::renderPlanet(const Body& body,
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
     }
+
     renderBodyAsParticle(pos,
                          appMag,
                          discSizeInPixels,
@@ -2157,23 +2125,6 @@ void Renderer::renderStar(const Star& star,
             tex->bind();
         }
 
-        // Determine the appropriate level of detail
-        float lod = 0.0f;
-        if (discSizeInPixels < 10)
-            lod = -3.0f;
-        else if (discSizeInPixels < 50)
-            lod = -2.0f;
-        else if (discSizeInPixels < 100)
-            lod = -1.0f;
-        else if (discSizeInPixels < 200)
-            lod = 0.0f;
-        else if (discSizeInPixels < 400)
-            lod = 1.0f;
-        else if (discSizeInPixels < 800)
-            lod = 2.0f;
-        else
-            lod = 3.0f;
-
         // Rotate the star
         {
             // Use doubles to avoid precision problems here . . .
@@ -2183,7 +2134,7 @@ void Renderer::renderStar(const Star& star,
             glRotatef((float) (-remainder * 360.0), 0, 1, 0);
         }
 
-        lodSphere->render(lod);;
+        lodSphere->render(getSphereLOD(discSizeInPixels));
 
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
