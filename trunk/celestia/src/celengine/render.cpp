@@ -488,7 +488,7 @@ bool Renderer::init(int winWidth, int winHeight)
 
         if (nScanned >= 2)
         {
-            if (major > 1 || minor > 3 || extra >= 1)
+            if (major > 1 || minor > 3 || (minor == 3 && extra >= 1))
                 buggyVertexProgramEmulation = false;
         }
     }
