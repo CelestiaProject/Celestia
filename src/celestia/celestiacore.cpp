@@ -734,6 +734,10 @@ void CelestiaCore::charEntered(char c)
         sim->phaseLock();
         break;
 
+    case '"':
+        sim->chase();
+        break;
+
     case '[':
         if (sim->getFaintestVisible() > 1.0f)
             setFaintest(sim->getFaintestVisible() - 0.5f);
@@ -1243,6 +1247,21 @@ void CelestiaCore::renderOverlay()
                 displaySelectionName(*overlay, frame.refObject,
                                      *sim->getUniverse());
                 break;
+            case astro::PhaseLock:
+                *overlay << "Lock ";
+                displaySelectionName(*overlay, frame.refObject,
+                                     *sim->getUniverse());
+                *overlay << " -> ";
+                displaySelectionName(*overlay, frame.targetObject,
+                                     *sim->getUniverse());
+                break;
+
+            case astro::Chase:
+                *overlay << "Chase ";
+                displaySelectionName(*overlay, frame.refObject,
+                                     *sim->getUniverse());
+                break;
+
 	    default:
 		break;
             }
