@@ -6,6 +6,7 @@
 #include "celestialbrowserbase.uic.h"
 #include <vector>
 #include <qlistview.h>
+#include "kdeapp.h"
 
 class Simulation;
 class CelestiaCore;
@@ -28,6 +29,7 @@ public slots:
     void slotRightClickOnStar(QListViewItem*, const QPoint&,int );
     
 private:
+    KdeApp *parent;
     CelestiaCore *appCore;
     Simulation *appSim;
     StarBrowser sbrowser;
