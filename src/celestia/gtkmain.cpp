@@ -325,7 +325,6 @@ static gint menuAsteroidLabels(GtkWidget* w, gpointer data)
 {
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetLabelFlag(Renderer::AsteroidLabels, on);
-    DPRINTF(0,"Asteroid Labels Toggling\n");
     appCore->charEntered('W');
     return TRUE;
 }
