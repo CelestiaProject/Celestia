@@ -1,0 +1,458 @@
+<gconfschemafile>
+  <schemalist>
+    <!-- MAIN OPTIONS -->
+    <schema>
+      <key>/schemas/apps/celestia/winWidth</key>
+      <applyto>/apps/celestia/winWidth</applyto>
+      <owner>celestia</owner>
+      <type>int</type>
+      <default>640</default>
+      <locale name="C">
+        <short>Render area width.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/winHeight</key>
+      <applyto>/apps/celestia/winHeight</applyto>
+      <owner>celestia</owner>
+      <type>int</type>
+      <default>480</default>
+      <locale name="C">
+        <short>Render area height.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/winX</key>
+      <applyto>/apps/celestia/winX</applyto>
+      <owner>celestia</owner>
+      <type>int</type>
+      <default>-1</default>
+      <locale name="C">
+        <short>Horizontal window position.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/winY</key>
+      <applyto>/apps/celestia/winY</applyto>
+      <owner>celestia</owner>
+      <type>int</type>
+      <default>-1</default>
+      <locale name="C">
+        <short>Vertical window position.</short>
+      </locale>
+    </schema>
+
+
+    <!-- VISUAL OPTIONS -->
+    <schema>
+      <key>/schemas/apps/celestia/ambientLight</key>
+      <applyto>/apps/celestia/ambientLight</applyto>
+      <owner>celestia</owner>
+      <type>float</type>
+      <default>0.1</default>
+      <locale name="C">
+        <short>Ambient light value (default: low).</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/visualMagnitude</key>
+      <applyto>/apps/celestia/visualMagnitude</applyto>
+      <owner>celestia</owner>
+      <type>float</type>
+      <default>8.5</default>
+      <locale name="C">
+        <short>Visual magnitude.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/showLocalTime</key>
+      <applyto>/apps/celestia/showLocalTime</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Display time in terms of local time zone.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/hudDetail</key>
+      <applyto>/apps/celestia/hudDetail</applyto>
+      <owner>celestia</owner>
+      <type>int</type>
+      <default>1</default>
+      <locale name="C">
+        <short>Verbosity of information text displayed.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/fullScreen</key>
+      <applyto>/apps/celestia/fullScreen</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Fullscreen state.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/starStyle</key>
+      <applyto>/apps/celestia/starStyle</applyto>
+      <owner>celestia</owner>
+      <type>int</type>
+      <default>0</default>
+      <locale name="C">
+        <short>Style of star rendering.</short>
+		<long>0=Fuzzy Points, 1=Points, 2=Scaled Discs</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/altSurfaceName</key>
+      <applyto>/apps/celestia/altSurfaceName</applyto>
+      <owner>celestia</owner>
+      <type>string</type>
+      <default></default>
+      <locale name="C">
+        <short>Alternate surface description.</short>
+      </locale>
+    </schema>
+
+
+    <!-- RENDER OPTIONS -->
+    <schema>
+      <key>/schemas/apps/celestia/render/stars</key>
+      <applyto>/apps/celestia/render/stars</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Render stars.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/planets</key>
+      <applyto>/apps/celestia/render/planets</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Render planets.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/galaxies</key>
+      <applyto>/apps/celestia/render/galaxies</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render galaxies.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/diagrams</key>
+      <applyto>/apps/celestia/render/diagrams</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render constellation lines.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/cloudMaps</key>
+      <applyto>/apps/celestia/render/cloudMaps</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Render clouds on planetary bodies.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/orbits</key>
+      <applyto>/apps/celestia/render/orbits</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render orbit lines.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/celestialSphere</key>
+      <applyto>/apps/celestia/render/celestialSphere</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render celestial grid lines.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/nightMaps</key>
+      <applyto>/apps/celestia/render/nightMaps</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render night-side textures on planets.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/atmospheres</key>
+      <applyto>/apps/celestia/render/atmospheres</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Render atmosphere on planets.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/smoothLines</key>
+      <applyto>/apps/celestia/render/smoothLines</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Render lines anti-aliased.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/eclipseShadows</key>
+      <applyto>/apps/celestia/render/eclipseShadows</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render shadows of bodies on other bodies.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/starsAsPoints</key>
+      <applyto>/apps/celestia/render/starsAsPoints</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render stars as single-pixel points.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/ringShadows</key>
+      <applyto>/apps/celestia/render/ringShadows</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Render shadows cast by planetary rings.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/boundaries</key>
+      <applyto>/apps/celestia/render/boundaries</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render boundary lines between constellations.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/autoMag</key>
+      <applyto>/apps/celestia/render/autoMag</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render body brightness with auto-magnitude.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/cometTails</key>
+      <applyto>/apps/celestia/render/cometTails</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Render tails on comet objects.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/markers</key>
+      <applyto>/apps/celestia/render/markers</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render coloured markers.</short>
+      </locale>
+    </schema>
+
+
+    <!-- LABEL OPTIONS -->
+    <schema>
+      <key>/schemas/apps/celestia/labels/star</key>
+      <applyto>/apps/celestia/labels/star</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label stars.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/planet</key>
+      <applyto>/apps/celestia/labels/planet</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label planetary bodies.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/moon</key>
+      <applyto>/apps/celestia/labels/moon</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label moons.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/constellation</key>
+      <applyto>/apps/celestia/labels/constellation</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label constellations.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/galaxy</key>
+      <applyto>/apps/celestia/labels/galaxy</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label known galaxies.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/asteroid</key>
+      <applyto>/apps/celestia/labels/asteroid</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label asteroid objects.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/spacecraft</key>
+      <applyto>/apps/celestia/labels/spacecraft</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label man-made vehicles.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/location</key>
+      <applyto>/apps/celestia/labels/location</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label surface locations on bodies.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/comet</key>
+      <applyto>/apps/celestia/labels/comet</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label comet objects.</short>
+      </locale>
+    </schema>
+
+
+    <!-- ORBIT VIEW OPTIONS -->
+    <schema>
+      <key>/schemas/apps/celestia/orbits/planet</key>
+      <applyto>/apps/celestia/orbits/planet</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Show orbits of planets.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/orbits/moon</key>
+      <applyto>/apps/celestia/orbits/moon</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Show orbits of moons.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/orbits/asteroid</key>
+      <applyto>/apps/celestia/orbits/asteroid</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Show orbits of asteroids.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/orbits/comet</key>
+      <applyto>/apps/celestia/orbits/comet</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Show orbits of comets.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/orbits/spacecraft</key>
+      <applyto>/apps/celestia/orbits/spacecraft</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Show orbits of spacecraft.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/orbits/invisible</key>
+      <applyto>/apps/celestia/orbits/invisible</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Show orbits of invisible objects.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/orbits/unknown</key>
+      <applyto>/apps/celestia/orbits/unknown</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Show orbits of unclassified objects.</short>
+      </locale>
+    </schema>
+  </schemalist>
+</gconfschemafile>
