@@ -36,6 +36,7 @@ namespace vp
     extern unsigned int ringIllum;
     extern unsigned int ringShadow;
     extern unsigned int cometTail;
+    extern unsigned int nightLights;
 };
 
 #endif // _VERTEXPROG_H_
