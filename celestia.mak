@@ -50,7 +50,7 @@ CLEAN :
 	-@erase "$(INTDIR)\cmdparser.obj"
 	-@erase "$(INTDIR)\color.obj"
 	-@erase "$(INTDIR)\command.obj"
-	-@erase "$(INTDIR)\config.obj"
+	-@erase "$(INTDIR)\configfile.obj"
 	-@erase "$(INTDIR)\console.obj"
 	-@erase "$(INTDIR)\constellation.obj"
 	-@erase "$(INTDIR)\debug.obj"
@@ -138,10 +138,10 @@ RSC=rc.exe
 RSC_PROJ=/l 0x409 /fo"$(INTDIR)\celestia.res" /d "NDEBUG" 
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\celestia.bsc" 
-BSC32_SBRS= \
-	
+BSC32_SBRS=
+
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijl.lib zlib.lib libpng1.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\celestia.pdb" /machine:I386 /out:"$(OUTDIR)\celestia.exe" 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijgjpeg.lib zlib.lib libpng1.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\celestia.pdb" /machine:I386 /out:"$(OUTDIR)\celestia.exe" 
 LINK32_OBJS= \
 	"$(INTDIR)\3dsmesh.obj" \
 	"$(INTDIR)\3dsmodel.obj" \
@@ -155,7 +155,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\cmdparser.obj" \
 	"$(INTDIR)\color.obj" \
 	"$(INTDIR)\command.obj" \
-	"$(INTDIR)\config.obj" \
+	"$(INTDIR)\configfile.obj" \
 	"$(INTDIR)\console.obj" \
 	"$(INTDIR)\constellation.obj" \
 	"$(INTDIR)\debug.obj" \
@@ -231,7 +231,7 @@ CLEAN :
 	-@erase "$(INTDIR)\cmdparser.obj"
 	-@erase "$(INTDIR)\color.obj"
 	-@erase "$(INTDIR)\command.obj"
-	-@erase "$(INTDIR)\config.obj"
+	-@erase "$(INTDIR)\configfile.obj"
 	-@erase "$(INTDIR)\console.obj"
 	-@erase "$(INTDIR)\constellation.obj"
 	-@erase "$(INTDIR)\debug.obj"
@@ -323,10 +323,10 @@ RSC=rc.exe
 RSC_PROJ=/l 0x409 /fo"$(INTDIR)\celestia.res" /d "_DEBUG" 
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\celestia.bsc" 
-BSC32_SBRS= \
-	
+BSC32_SBRS=
+
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijl.lib zlibd.lib libpng1d.lib /nologo /subsystem:windows /incremental:yes /pdb:"$(OUTDIR)\celestia.pdb" /debug /machine:I386 /out:"$(OUTDIR)\celestia.exe" /pdbtype:sept 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijgjpeg.lib zlibd.lib libpng1d.lib /nologo /subsystem:windows /incremental:yes /pdb:"$(OUTDIR)\celestia.pdb" /debug /machine:I386 /out:"$(OUTDIR)\celestia.exe" /pdbtype:sept 
 LINK32_OBJS= \
 	"$(INTDIR)\3dsmesh.obj" \
 	"$(INTDIR)\3dsmodel.obj" \
@@ -340,7 +340,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\cmdparser.obj" \
 	"$(INTDIR)\color.obj" \
 	"$(INTDIR)\command.obj" \
-	"$(INTDIR)\config.obj" \
+	"$(INTDIR)\configfile.obj" \
 	"$(INTDIR)\console.obj" \
 	"$(INTDIR)\constellation.obj" \
 	"$(INTDIR)\debug.obj" \
@@ -476,9 +476,9 @@ SOURCE=.\src\command.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=.\src\config.cpp
+SOURCE=.\src\configfile.cpp
 
-"$(INTDIR)\config.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\configfile.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
