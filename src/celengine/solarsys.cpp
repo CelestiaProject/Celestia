@@ -116,10 +116,10 @@ static Surface* CreateSurface(Hash* surfaceData,
     bool applyOverlay = surfaceData->getString("OverlayTexture",
                                                overlayTexture);
 
-    unsigned int baseFlags = Texture::WrapTexture | Texture::AllowSplitting;
-    unsigned int bumpFlags = Texture::WrapTexture | Texture::AllowSplitting;
-    unsigned int nightFlags = Texture::WrapTexture | Texture::AllowSplitting;
-    unsigned int specularFlags = Texture::WrapTexture | Texture::AllowSplitting;
+    unsigned int baseFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
+    unsigned int bumpFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
+    unsigned int nightFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
+    unsigned int specularFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
     
     float bumpHeight = 2.5f;
     surfaceData->getNumber("BumpHeight", bumpHeight);
@@ -133,7 +133,7 @@ static Surface* CreateSurface(Hash* surfaceData,
     bool compressTexture = false;
     surfaceData->getBoolean("CompressTexture", compressTexture);
     if (compressTexture)
-        baseFlags |= Texture::CompressTexture;
+        baseFlags |= TextureInfo::CompressTexture;
 
     if (blendTexture)
         surface->appearanceFlags |= Surface::BlendTexture;
@@ -468,7 +468,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 {
                     atmosphere->cloudTexture.setTexture(cloudTexture,
                                                         path,
-                                                        Texture::WrapTexture);
+                                                        TextureInfo::WrapTexture);
                 }
 
                 body->setAtmosphere(*atmosphere);

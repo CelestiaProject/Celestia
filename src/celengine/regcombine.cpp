@@ -73,11 +73,11 @@ void SetupCombinersBumpMap(Texture& bumpTexture,
     glDisable(GL_LIGHTING);
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
     glEnable(GL_TEXTURE_CUBE_MAP_EXT);
-    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, normalizationTexture.getName());
+    normalizationTexture.bind();
 
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, bumpTexture.getName());
+    bumpTexture.bind();
 
     // Just a single combiner stage required . . .
     glx::glCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV, 1);
@@ -156,10 +156,10 @@ void SetupCombinersSmooth(Texture& baseTexture,
     glDisable(GL_LIGHTING);
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
     glEnable(GL_TEXTURE_CUBE_MAP_EXT);
-    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, normalizationTexture.getName());
+    normalizationTexture.bind();
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, baseTexture.getName());
+    baseTexture.bind();
 
     // Just a single combiner stage required . . .
     glx::glCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV, 1);

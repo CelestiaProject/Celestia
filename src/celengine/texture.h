@@ -1,21 +1,38 @@
 // texture.h
 //
-// Copyright (C) 2001, Chris Laurel
+// Copyright (C) 2001-2003, Chris Laurel
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _TEXTURE_H_
-#define _TEXTURE_H_
+#ifndef _CELENGINE_TEXTURE_H_
+#define _CELENGINE_TEXTURE_H_
 
 #include <string>
 #include <celutil/basictypes.h>
 #include <celutil/color.h>
+#include <celengine/image.h>
 
 
 typedef void (*ProceduralTexEval)(float, float, float, unsigned char*);
+
+
+struct TextureTile
+{
+    TextureTile(unsigned int _texID) :
+        u(0.0f), v(0.0f), du(1.0f), dv(1.0f), texID(_texID) {};
+    TextureTile(unsigned int _texID, float _u, float _v) :
+        u(_u), v(_v), du(1.0f), dv(1.0f), texID(_texID) {};
+    TextureTile(unsigned int _texID, float _u, float _v, float _du, float _dv) :
+        u(_u), v(_v), du(_du), dv(_dv), texID(_texID) {};
+
+    float u, v;
+    float du, dv;
+    unsigned int texID;
+};
+
 
 class TexelFunctionObject
 {
@@ -30,83 +47,122 @@ class TexelFunctionObject
 class Texture
 {
  public:
-    Texture(int w, int h, int fmt, bool _cubeMap = false);
-    ~Texture();
+    Texture(int w, int h, int d = 1);
+    virtual ~Texture();
 
-    enum {
-        WrapTexture      = 0x1,
-        CompressTexture  = 0x2,
-        NoMipMaps        = 0x4,
-        AutoMipMaps      = 0x8,
-        AllowSplitting   = 0x10,
-        BorderClamp      = 0x20,
-    };
+    virtual const TextureTile getTile(int lod, int u, int v) = 0;
+    virtual void bind() = 0;
 
-    void bindName(uint32 flags = 0);
-    unsigned int getName();
-    unsigned int getName(int, int);
-    void normalMap(float scale, bool wrap);
-    void bind() const;
-    void bind(int, int) const;
+    virtual int getLODCount() const;
+    virtual int getUTileCount(int lod) const;
+    virtual int getVTileCount(int lod) const;
+    virtual int getWTileCount(int lod) const;
+
+    // Currently, these methods are only implemented by virtual textures; they
+    // may be useful later when a more sophisticated texture management scheme
+    // is implemented.
+    virtual void beginUsage() {};
+    virtual void endUsage() {};
+
+    virtual void setBorderColor(Color);
 
     int getWidth() const;
     int getHeight() const;
-    int getComponents() const;
-    bool hasAlpha() const;
+    int getDepth() const;
 
-    int getUSubtextures() const;
-    int getVSubtextures() const;
+    enum AddressMode
+    {
+        Wrap        = 0,
+        BorderClamp = 1,
+        EdgeClamp   = 2,
+    };
 
-    void setMaxMipMapLevel(int);
-    void setBorderColor(Color);
-
-    enum {
-        ColorChannel = 1,
-        AlphaChannel = 2
+    enum MipMapMode
+    {
+        DefaultMipMaps = 0,
+        NoMipMaps      = 1,
+        AutoMipMaps    = 2,
     };
 
  private:
-    void loadCompressedTexture(unsigned char*, int, int);
-
- public:
     int width;
     int height;
-    int components;
-    int format;
-    int maxMipMapLevel;
-    bool cubeMap;
-    bool isNormalMap;
-    unsigned char* pixels;
+    int depth;
+};
 
-    int cmapEntries;
-    int cmapFormat;
-    unsigned char* cmap;
 
+class ImageTexture : public Texture
+{
+ public:
+    ImageTexture(Image& img, AddressMode, MipMapMode);
+    ~ImageTexture();
+
+    virtual const TextureTile getTile(int lod, int u, int v);
+    virtual void bind();
+    virtual void setBorderColor(Color);
+
+    unsigned int getName() const;
+
+ private:
+    unsigned int glName;
+};
+
+
+class TiledTexture : public Texture
+{
+ public:
+    TiledTexture(Image& img, int _uSplit, int _vSplit, MipMapMode);
+    ~TiledTexture();
+
+    virtual const TextureTile getTile(int lod, int u, int v);
+    virtual void bind();
+    virtual void setBorderColor(Color);
+
+    virtual int getUTileCount(int lod) const;
+    virtual int getVTileCount(int lod) const;
+
+ private:
     int uSplit;
     int vSplit;
     unsigned int* glNames;
+};
 
-    Color borderColor;
+
+class CubeMap : public Texture
+{
+ public:
+    CubeMap(Image* faces[]);
+    ~CubeMap();
+
+    virtual const TextureTile getTile(int lod, int u, int v);
+    virtual void bind();
+    virtual void setBorderColor(Color);
+
+ private:
+    unsigned int glName;
 };
 
 
 extern Texture* CreateProceduralTexture(int width, int height,
                                         int format,
-                                        ProceduralTexEval func);
+                                        ProceduralTexEval func,
+                                        Texture::AddressMode addressMode = Texture::EdgeClamp,
+                                        Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 extern Texture* CreateProceduralTexture(int width, int height,
                                         int format,
-                                        TexelFunctionObject& func);
+                                        TexelFunctionObject& func,
+                                        Texture::AddressMode addressMode = Texture::EdgeClamp,
+                                        Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 extern Texture* CreateProceduralCubeMap(int size, int format,
                                         ProceduralTexEval func);
-extern Texture* CreateJPEGTexture(const char* filename,
-                                  int channels = Texture::ColorChannel);
-extern Texture* CreateBMPTexture(const char* filename);
-extern Texture* CreatePNGTexture(const std::string& filename);
-extern Texture* CreateDDSTexture(const std::string& filename);
 
-extern Texture* LoadTextureFromFile(const std::string& filename);
+extern Texture* LoadTextureFromFile(const std::string& filename,
+                                    Texture::AddressMode addressMode = Texture::EdgeClamp,
+                                    Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 
-extern Texture* CreateNormalizationCubeMap(int size);
-extern Texture* CreateDiffuseLightCubeMap(int size);
+extern Texture* LoadHeightMapFromFile(const std::string& filename,
+                                      float height,
+                                      Texture::AddressMode addressMode = Texture::EdgeClamp);
 
-#endif // _TEXTURE_H_
+
+#endif // _CELENGINE_TEXTURE_H_
