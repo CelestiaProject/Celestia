@@ -177,6 +177,7 @@ class Renderer
                     float, float);
     void renderBodyAsParticle(Point3f center,
                               float appMag,
+                              float _faintestMag,
                               float discSizeInPixels,
                               Color color,
                               const Quatf& orientation,
@@ -212,6 +213,7 @@ class Renderer
 
     float brightnessScale;
     float faintestMag;
+    float faintestPlanetMag;
     float saturationMagNight;
     float saturationMag;
 
