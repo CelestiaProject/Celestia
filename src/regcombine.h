@@ -19,6 +19,9 @@
 extern void SetupCombinersBumpMap(CTexture& bumpTexture,
                                   CTexture& normalizationTexture,
                                   Color ambientColor);
+void SetupCombinersSmooth(CTexture& baseTexture,
+                          CTexture& normalizationTexture,
+                          Color ambientColor);
 extern void DisableCombiners();
 
 #endif // _REGCOMBINE_H_

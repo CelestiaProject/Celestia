@@ -551,6 +551,7 @@ void Renderer::render(const Observer& observer,
             opos = Vec3d(astro::lightYearsToAU(opos.x) * 100,
                          astro::lightYearsToAU(opos.y) * 100,
                          astro::lightYearsToAU(opos.z) * 100);
+            glPushMatrix();
             glTranslated(-opos.x, -opos.y, -opos.z);
         
             glDisable(GL_LIGHTING);
@@ -583,10 +584,33 @@ void Renderer::render(const Observer& observer,
                     glEnd();
                 }
             }
+
+            glPopMatrix();
         }
     }
 
     glPopMatrix();
+
+#ifdef DISPLAY_AXES
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    {
+        Point3f orig(-0.5f, -0.5f, -2);
+        Mat3f m = conjugate(observer.getOrientation()).toMatrix3();
+
+        glBegin(GL_LINES);
+        glColor4f(1, 0, 0, 1);
+        glVertex(orig);
+        glVertex(orig - Vec3f(0.2f, 0, 0) * m);
+        glColor4f(0, 1, 0, 1);
+        glVertex(orig);
+        glVertex(orig - Vec3f(0, 0.2f, 0) * m);
+        glColor4f(0, 0, 1, 1);
+        glVertex(orig);
+        glVertex(orig - Vec3f(0, 0, 0.2f) * m);
+        glEnd();
+    }
+#endif
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
@@ -840,6 +864,88 @@ static void renderBumpMappedMesh(Mesh& mesh,
 }
 
 
+static void renderSmoothMesh(Mesh& mesh,
+                             CTexture& baseTexture,
+                             Vec3f lightDirection,
+                             Quatf orientation,
+                             Color ambientColor)
+{
+    // We're doing our own per-pixel lighting, so disable GL's lighting
+    glDisable(GL_LIGHTING);
+
+    // The 'default' light vector for the bump map is (0, 0, 1).  Determine
+    // a rotation transformation that will move the sun direction to
+    // this vector.
+    Quatf lightOrientation;
+    {
+        Vec3f zeroLightDirection(0, 0, 1);
+        Vec3f axis = lightDirection ^ zeroLightDirection;
+        float cosAngle = zeroLightDirection * lightDirection;
+        float angle = 0.0f;
+        float epsilon = 1e-5f;
+
+        if (cosAngle + 1 < epsilon)
+        {
+            axis = Vec3f(0, 1, 0);
+            angle = (float) PI;
+        }
+        else if (cosAngle - 1 > -epsilon)
+        {
+            axis = Vec3f(0, 1, 0);
+            angle = 0.0f;
+        }
+        else
+        {
+            axis.normalize();
+            angle = (float) acos(cosAngle);
+        }
+        lightOrientation.setAxisAngle(axis, angle);
+    }
+
+    SetupCombinersSmooth(baseTexture, *normalizationTex, ambientColor);
+
+    // The second set texture coordinates will contain the light
+    // direction in tangent space.  We'll generate the texture coordinates
+    // from the surface normals using GL_NORMAL_MAP_EXT and then
+    // use the texture matrix to rotate them into tangent space.
+    // This method of generating tangent space light direction vectors
+    // isn't as general as transforming the light direction by an
+    // orthonormal basis for each mesh vertex, but it works well enough
+    // for spheres illuminated by directional light sources.
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+
+    // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
+    // mode is part of the cube map extension.
+    glEnable(GL_TEXTURE_GEN_R);
+    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+    glEnable(GL_TEXTURE_GEN_S);
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+    glEnable(GL_TEXTURE_GEN_T);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+
+    // Set up the texture transformation--the light direction and the
+    // viewer orientation both need to be considered.
+    glMatrixMode(GL_TEXTURE);
+    glRotate(lightOrientation * orientation);
+    glMatrixMode(GL_MODELVIEW);
+    glActiveTextureARB(GL_TEXTURE0_ARB);
+
+    mesh.render();
+
+    // Reset the second texture unit
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glMatrixMode(GL_TEXTURE);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glDisable(GL_TEXTURE_GEN_R);
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+
+    DisableCombiners();
+}
+
+
+
 void Renderer::renderPlanet(const Body& body,
                             Point3f pos,
                             Vec3f sunDirection,
@@ -959,10 +1065,32 @@ void Renderer::renderPlanet(const Body& body,
         {
             if (perPixelLightingEnabled)
             {
+                Color ambientColor(ambientLightLevel, ambientLightLevel, ambientLightLevel);
+#if 0
                 renderBumpMappedMesh(*mesh,
                                      bumpTex == NULL ? *smoothTex : *bumpTex,
                                      sunDirection, orientation,
-                                     Color(ambientLightLevel, ambientLightLevel, ambientLightLevel));
+                                     ambientColor);
+#endif
+                if (bumpTex != NULL)
+                {
+                    renderBumpMappedMesh(*mesh,
+                                         *bumpTex,
+                                         sunDirection, orientation,
+                                         ambientColor);
+                }
+                else if (tex != NULL)
+                {
+                    renderSmoothMesh(*mesh,
+                                     *tex,
+                                     sunDirection, orientation,
+                                     ambientColor);
+                }
+                else
+                {
+                    mesh->render();
+                }
+
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             }
             else
