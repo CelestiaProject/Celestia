@@ -1459,6 +1459,11 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
         }
     }
 
+    if (appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
+        AppendMenu(hMenu, MF_STRING, ID_TOOLS_UNMARK, "&Unmark");
+    else
+        AppendMenu(hMenu, MF_STRING, ID_TOOLS_MARK, "&Mark");
+
     POINT point;
     point.x = (int) x;
     point.y = (int) y;
@@ -3393,6 +3398,27 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     Url url(string(urlString), appCore);
                     url.goTo();
                 }
+            }
+            break;
+
+        case ID_TOOLS_MARK:
+            {
+                Simulation* sim = appCore->getSimulation();
+                if (sim->getUniverse() != NULL)
+                {
+                    sim->getUniverse()->markObject(sim->getSelection(),
+                                                   10.0f,
+                                                   Color(0.0f, 1.0f, 0.0f, 0.9f),
+                                                   1);
+                }
+            }
+            break;
+
+        case ID_TOOLS_UNMARK:
+            {
+                Simulation* sim = appCore->getSimulation();
+                if (sim->getUniverse() != NULL)
+                    sim->getUniverse()->unmarkObject(sim->getSelection(), 1);
             }
             break;
 
