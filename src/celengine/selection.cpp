@@ -138,3 +138,35 @@ string Selection::getName() const
         return "";
     }
 }
+
+
+Selection Selection::parent() const
+{
+    switch (type)
+    {
+    case Type_Location:
+        return Selection(location()->getParentBody());
+
+    case Type_Body:
+        if (body()->getSystem())
+        {
+            if (body()->getSystem()->getPrimaryBody() != NULL)
+                return Selection(body()->getSystem()->getPrimaryBody());
+            else
+                return Selection(body()->getSystem()->getStar());
+        }
+        else
+        {
+            return Selection();
+        }
+        break;
+
+    case Type_Star:
+    case Type_DeepSky:
+        // Currently no hierarchy for stars and deep sky objects.
+        return Selection();
+
+    default:
+        return Selection();
+    }
+}
