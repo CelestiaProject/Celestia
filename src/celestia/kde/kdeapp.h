@@ -63,7 +63,7 @@ public:
     void dragEnterEvent(QDragEnterEvent* event);
     void dropEvent(QDropEvent* event);
     void setStartURL(KURL url);
-    void goToURL(KURL url);
+    void goToURL(const KURL& url);
 
     void openBookmarkURL(const QString& _url);
     QString currentTitle() const ;
