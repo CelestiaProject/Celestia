@@ -17,6 +17,42 @@ static LPTSTR hyperLinkOriginalProc = "_Hyperlink_Original_Proc_";
 static LPTSTR hyperLinkOriginalFont = "_Hyperlink_Original_Font_";
 static LPTSTR hyperLinkUnderlineFont = "_Hyperlink_Underline_Font_";
 
+bool GetTextRect(HWND hWnd, RECT* rectText)
+{
+    bool result = false;
+    SIZE sizeText;
+    RECT rectControl;
+    char staticText[1024];
+    HDC hDC;
+    HFONT hFont, hOldFont;
+    HWND hWndScreen;
+
+    // Get DC of static control and select font so that text extent is computed accurately
+    if (hDC = GetDC(hWnd))
+    {
+        hFont = (HFONT)GetProp(hWnd, hyperLinkOriginalFont);
+        hOldFont = (HFONT)SelectObject(hDC, hFont);
+        GetWindowText(hWnd, staticText, sizeof(staticText) - 1);
+        if (GetTextExtentPoint32(hDC, staticText, strlen(staticText), &sizeText))
+        {
+            // Construct bounding rectangle of text, assuming text is centered in client area
+            if (GetClientRect(hWnd, &rectControl))
+            {
+                hWndScreen = GetDesktopWindow();
+                rectText->left = (rectControl.right - sizeText.cx) / 2;
+                rectText->top = (rectControl.bottom - sizeText.cy) / 2;
+                rectText->right = rectText->left + sizeText.cx;
+                rectText->bottom = rectText->top + sizeText.cy;
+                result = true;
+            }
+        }
+        SelectObject(hDC, hOldFont);
+        ReleaseDC(hWnd, hDC);
+    }
+
+    return result;
+}
+
 LRESULT CALLBACK _HyperlinkParentProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     WNDPROC origProc = (WNDPROC)GetProp(hWnd, hyperLinkOriginalProc);
@@ -59,18 +95,30 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         {
             if (GetCapture() != hWnd)
             {
-                HFONT hFont = (HFONT)GetProp(hWnd, hyperLinkUnderlineFont);
-                SendMessage(hWnd, WM_SETFONT, (WPARAM)hFont, FALSE);
-                InvalidateRect(hWnd, NULL, FALSE);
-                SetCapture(hWnd);
+                RECT rect;
+                if (!GetTextRect(hWnd, &rect))
+                    GetClientRect(hWnd, &rect);
+
+                POINT pt = { LOWORD(lParam), HIWORD(lParam) };
+                if (PtInRect(&rect, pt))
+                {
+                    HFONT hFont = (HFONT)GetProp(hWnd, hyperLinkUnderlineFont);
+                    SendMessage(hWnd, WM_SETFONT, (WPARAM)hFont, FALSE);
+                    InvalidateRect(hWnd, NULL, FALSE);
+                    SetCapture(hWnd);
+                    HCURSOR hCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND));
+                    if (NULL == hCursor)
+                        hCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW));
+                    SetCursor(hCursor);
+                }
             }
             else
             {
                 RECT rect;
-                GetWindowRect(hWnd, &rect);
+                if (!GetTextRect(hWnd, &rect))
+                    GetClientRect(hWnd, &rect);
 
                 POINT pt = { LOWORD(lParam), HIWORD(lParam) };
-                ClientToScreen(hWnd, &pt);
                 if (!PtInRect(&rect, pt))
                 {
                     HFONT hFont = (HFONT)GetProp(hWnd, hyperLinkOriginalFont);
@@ -80,16 +128,6 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
                 }
             }
             break;
-        }
-    case WM_SETCURSOR:
-        {
-            // IDC_HAND is not available on all operating systems so use
-            // the arrow cursor if IDC_HAND is not present.
-            HCURSOR hCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND));
-            if (NULL == hCursor)
-                hCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW));
-            SetCursor(hCursor);
-            return TRUE;
         }
     case WM_DESTROY:
         {
