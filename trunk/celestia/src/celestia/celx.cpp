@@ -3014,10 +3014,13 @@ static void CreateObserverMetaTable(lua_State* l)
 // ==================== Celscript-object ====================
 
 // create a CelScriptWrapper from a string:
-static int celscript_from_string(lua_State* l, const char* script_text)
+static int celscript_from_string(lua_State* l, string& script_text)
 {
-    // TODO: check which objects need gc:
-    istrstream scriptfile(script_text, strlen(script_text));
+#ifdef HAVE_SSTREAM
+    istringstream scriptfile(script_text);
+#else
+    istrstream scriptfile(script_text.c_str());
+#endif
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     CelScriptWrapper* celscript = new CelScriptWrapper(*appCore, scriptfile);
     if (celscript->getErrorMessage() != "")
@@ -4132,7 +4135,7 @@ static int celestia_takescreenshot(lua_State* l)
 static int celestia_createcelscript(lua_State* l)
 {
     checkArgs(l, 2, 2, "Need one argument for celestia:createcelscript()");
-    const char* scripttext = safeGetString(l, 2, AllErrors, "Argument to celestia:createcelscript() must be a string");
+    string scripttext = safeGetString(l, 2, AllErrors, "Argument to celestia:createcelscript() must be a string");
     return celscript_from_string(l, scripttext);
 }
 
