@@ -1154,6 +1154,27 @@
 	Albedo 0.155
 }
 
+"2002N4" "Sol/Neptune"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		30
+
+	EllipticalOrbit
+	{
+	Period		8863.08
+	SemiMajorAxis	46570000
+	Eccentricity	0.5273
+	Inclination	112.492	#
+	AscendingNode	355.870	#
+	ArgOfPericenter	 83.635	# J2000.0
+	MeanAnomaly     203.660	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.155
+}
 
 "2003N1" "Sol/Neptune"
 {
@@ -1176,4 +1197,5 @@
 
 	Albedo 0.155
 }
+
 
