@@ -39,17 +39,17 @@ UniversalCoord Selection::getPosition(double t) const
     {
     case Type_Body:
         {
-            Point3f sunPos(0.0f, 0.0f, 0.0f);
             PlanetarySystem* system = body()->getSystem();
+            const Star* sun = NULL;
             if (system != NULL)
-            {
-                const Star* sun = system->getStar();
-                if (sun != NULL)
-                    sunPos = sun->getPosition();
-            }
+                sun = system->getStar();
 
-            return astro::universalPosition(body()->getHeliocentricPosition(t),
-                                            sunPos);
+            Point3d hpos = body()->getHeliocentricPosition(t);
+            if (sun != NULL)
+                return astro::universalPosition(hpos, sun->getPosition(t));
+            else
+                return astro::universalPosition(hpos, Point3f(0.0f, 0.0f, 0.0f));
+                                                
         }
         
     case Type_Star:
