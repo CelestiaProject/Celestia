@@ -19,6 +19,12 @@
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2, int n);
 
+class CompareIgnoringCasePredicate : public std::binary_function<std::string, std::string, bool>
+{
+ public:
+    bool operator()(const std::string&, const std::string&) const;
+};
+
 template <class T> struct printlineFunc : public std::unary_function<T, void>
 {
     printlineFunc(std::ostream& o) : out(o) {};
