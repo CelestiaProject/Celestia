@@ -40,19 +40,19 @@ MUL   o[FOGC].x, R2.x, R2.y;
 MOV   R1, v[NRML];
 MOV   R2, v[6];
 
-# Compute the binormal--cross product of tangent and normal
-MUL   R3, R2.zxyw, R1.yzxw;
-MAD   R3, R2.yzxw, R1.zxyw, -R3;
+# Compute the binormal--cross product of normal and tangent
+MUL   R3, R1.zxyw, R2.yzxw;
+MAD   R3, R1.yzxw, R2.zxyw, -R3;
 
 # Assume that the tangent and normal are orthonormal; otherwise
-# we need to normalize R2
-DP3   R0.w, R3, R3;
-RSQ   R0.w, R0.w;
-MUL   R3.xyz, R3, R0.w;
+# we need to normalize R3
+#DP3   R0.w, R3, R3;
+#RSQ   R0.w, R0.w;
+#MUL   R3.xyz, R3, R0.w;
 
 # Transform the light direction from object space into surface space
-DP3   R0.x, R3, c[16];
-DP3   R0.y, R2, c[16];
+DP3   R0.x, R2, c[16];
+DP3   R0.y, R3, c[16];
 DP3   R0.z, R1, c[16];
 # Compress the light direction to fit in the primary color and output it
 MOV   R5, c[40];
