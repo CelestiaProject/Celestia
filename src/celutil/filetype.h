@@ -21,6 +21,7 @@ enum ContentType {
     Content_CelestiaTexture,
     Content_3DStudio,
     Content_CelestiaMesh,
+    Content_AVI,
     Content_Unknown
 };
 
