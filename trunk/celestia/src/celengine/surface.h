@@ -22,6 +22,7 @@ class Surface
     Surface(Color c = Color(0.0f, 0.0f, 0.0f)) :
         appearanceFlags(0),
         color(c),
+        specularPower(0.0f),
         baseTexture(),
         bumpTexture(),
         nightTexture(),
