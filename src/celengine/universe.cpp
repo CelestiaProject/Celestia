@@ -14,10 +14,12 @@
 #include "astro.h"
 #include "universe.h"
 
+using namespace std;
+
 
 Universe::Universe() :
     starCatalog(NULL),
-    solarSysCatalog(NULL),
+    solarSystemCatalog(NULL),
     galaxyCatalog(NULL)
 {
 }
@@ -41,12 +43,12 @@ void Universe::setStarCatalog(StarDatabase* catalog)
 
 SolarSystemCatalog* Universe::getSolarSystemCatalog() const
 {
-    return solarSysCatalog;
+    return solarSystemCatalog;
 }
 
 void Universe::setSolarSystemCatalog(SolarSystemCatalog* catalog)
 {
-    solarSysCatalog = catalog;
+    solarSystemCatalog = catalog;
 }
 
 
@@ -314,7 +316,7 @@ void CloseStarPicker::process(const Star& star,
 
 
 Selection Universe::pickStar(const UniversalCoord& origin,
-                             Vec3f direction)
+                             const Vec3f& direction)
 {
     float angle = degToRad(0.5f);
 
@@ -325,16 +327,16 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     // precision test isn't nearly fast enough to use on our database of
     // over 100k stars.
     CloseStarPicker closePicker(origin, direction, 1.0f, angle);
-    stardb->findCloseStars(closePicker, (Point3f) origin, 1.0f);
+    starCatalog->findCloseStars(closePicker, (Point3f) origin, 1.0f);
     if (closePicker.closestStar != NULL)
         return Selection(const_cast<Star*>(closePicker.closestStar));
     
     StarPicker picker((Point3f) origin, direction, angle);
-    stardb->findVisibleStars(picker,
-                             (Point3f) origin,
-                             observer.getOrientation(),
-                             angle, 1.0f,
-                             faintestVisible);
+    starCatalog->findVisibleStars(picker,
+                                  (Point3f) origin,
+                                  Quatf(1.0f), // observer.getOrientation(),
+                                  angle, 1.0f,
+                                  faintestVisible);
     if (picker.pickedStar != NULL)
         return Selection(const_cast<Star*>(picker.pickedStar));
     else
@@ -347,15 +349,17 @@ Selection Universe::pick(const UniversalCoord& origin,
 {
     Selection sel;
 
+#if 0
     if (closestSolarSystem != NULL)
     {
         const Star* sun = closestSolarSystem->getPlanets()->getStar();
         if (sun != NULL)
             sel = pickPlanet(origin, direction, *closestSolarSystem, pickRay);
     }
+#endif
 
     if (sel.empty())
-        sel = pickStar(pickRay);
+        sel = pickStar(origin, direction);
 
     return sel;
 }
@@ -367,9 +371,9 @@ Selection Universe::pick(const UniversalCoord& origin,
 //   3. Check the solar systems for planet names; we don't make any decisions
 //      about which solar systems are relevant, and let the caller pass them
 //      to us to search.
-Selection Simulation::find(const string& s,
-                           PlanetarySystem* solarSystems[],
-                           int nSolarSystems)
+Selection Universe::find(const string& s,
+                         PlanetarySystem** solarSystems,
+                         int nSolarSystems)
 {
     if (galaxyCatalog != NULL)
     {
@@ -405,9 +409,9 @@ Selection Simulation::find(const string& s,
 // to search for objects--this is roughly analgous to the PATH environment
 // variable in Unix and Windows.  Typically, the solar system will be one
 // in which the user is currently located.
-Selection Simulation::findPath(string s,
-                               PlanetarySystem* solarSystems[],
-                               int nSolarSystems)
+Selection Universe::findPath(const string& s,
+                             PlanetarySystem* solarSystems[],
+                             int nSolarSystems)
 {
     string::size_type pos = s.find('/', 0);
 
