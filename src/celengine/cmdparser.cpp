@@ -20,9 +20,9 @@
 #include <strstream>
 #endif // HAVE_SSTREAM
 
-#include "celutil/util.h"
-#include "celutil/debug.h"
-#include "celmath/mathlib.h"
+#include <celutil/util.h>
+#include <celutil/debug.h>
+#include <celmath/mathlib.h>
 #include "astro.h"
 #include "cmdparser.h"
 
