@@ -73,6 +73,10 @@ namespace astro
                                      Point3f starPosition);
 
     Point3f equatorialToCelestialCart(float ra, float dec, float distance);
+    Point3d equatorialToCelestialCart(double ra, double dec, double distance);
+
+    double eccentricAnomaly(double meanAnomaly);
+    double meanEclipticObliquity(double jd);
 
     extern const double J2000;
     extern const double speedOfLight; // km/s
