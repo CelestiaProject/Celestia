@@ -172,7 +172,8 @@ OTHER KEYS
 ----------
 Esc............... Cancels: motion, scripts, Follow, Track, Lock, Sync,
                    object entry mode
-Spacebar.......... Pause/Restart time
+Spacebar.......... Pause/Restart time and scripts
+Spacebar+Shift.... Pause/Restart time only
 Backspace......... If the selection is a star, clears the selection
                    If the selection is a body, selects the parent body or star
                    If the selection is a location, selects the parent body

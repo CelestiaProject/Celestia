@@ -105,7 +105,8 @@ S ................ Stop motion
 
 Time Control
 ------------
-Spacebar ......... Pause/Resume the flow of time (toggle)
+Spacebar ......... Pause/Resume the flow of time and scripts (toggle)
+Spacebar+Shift.... Pause the flow of time only
 J ................ Reverse/Forward time (toggle)
 \ ................ Set time: 1x forward (norm), cancels faster/slower x factors
 L ................ Set time: 10x faster
