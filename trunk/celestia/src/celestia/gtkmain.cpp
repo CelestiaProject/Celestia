@@ -26,8 +26,10 @@
 #  define G_DISABLE_ASSERT
 #endif
 
+#ifdef GNOME
 #include <gnome.h>
 #include <libgnomeui/libgnomeui.h>
+#endif
 
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
@@ -305,6 +307,7 @@ static void menuAbout()
         "Chris Laurel <claurel@shatters.net>",
         "Deon Ramsey <dramsey@sourceforge.net>",
         "Clint Weisbrod <cweisbrod@adelphia.net>",
+		"Fridger Schrempp <fridger.schrempp@dedy.de>",
 		"Pat Suwalski <pat@suwalski.net>",
         NULL
     };
@@ -318,19 +321,37 @@ static void menuAbout()
     }
     else
     {
+		#ifdef GNOME
         about = gnome_about_new("Celestia",
        			VERSION,
-				"(c) 2001-2003 Chris Laurel",
+				"(c) 2001-2004 Chris Laurel",
 				"3D Space Simulation",
 				authors,
 				NULL,
 				NULL,
 				NULL);
+		#else
+		about = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
+		                               GTK_DIALOG_DESTROY_WITH_PARENT,
+									   GTK_MESSAGE_INFO,
+									   GTK_BUTTONS_CLOSE,
+									   "Celestia, (c) 2001-2004 Chris Laurel\n%s,\n%s,\n%s,\n%s,\n%s",
+									   authors[0],
+									   authors[1],
+									   authors[2],
+									   authors[3],
+									   authors[4]);
+		#endif
 		if (about == NULL)
 		    return;
 
+		#ifdef GNOME
 		g_signal_connect(G_OBJECT(about), "destroy", G_CALLBACK(gtk_widget_destroyed), &about);
 		gtk_window_present(GTK_WINDOW(about));
+		#else
+		gtk_dialog_run (GTK_DIALOG(about));
+		gtk_widget_destroy (about);
+		#endif
     }
 }
 
@@ -2568,7 +2589,11 @@ static GtkItemFactoryEntry menuItems[] =
     { (gchar *)"/Help/OpenGL _Info",                   NULL,                    menuOpenGL,       0,                NULL,                    NULL },
     { (gchar *)"/Help/_License",                       NULL,                    menuLicense,      0,                NULL,                    NULL },
     { (gchar *)"/Help/-",                              NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+	#ifdef GNOME
     { (gchar *)"/Help/_About",                         NULL,                    menuAbout,        0,                (gchar *)"<StockItem>",  GNOME_STOCK_ABOUT },
+	#else
+    { (gchar *)"/Help/_About",                         NULL,                    menuAbout,        0,                NULL,                    NULL },
+	#endif
 };
 
 /*
@@ -3058,7 +3083,8 @@ gint glarea_key_release(GtkWidget* widget, GdkEventKey* event, gpointer)
 }
 
 
-// GTK initializing function options struct
+#ifdef GNOME
+// GNOME initializing function options struct
 struct poptOption options[] =
 {
     {
@@ -3081,6 +3107,7 @@ struct poptOption options[] =
 		NULL
   }
 };
+#endif
 
 
 void resyncMenus()
@@ -3223,15 +3250,16 @@ int main(int argc, char* argv[])
             "', probably due to improper installation\n";
     }
 
+	#ifdef GNOME
 	// GNOME Initialization
 	GnomeProgram *program;
 	program = gnome_program_init("Celestia", VERSION, LIBGNOMEUI_MODULE,
 	                             argc, argv, GNOME_PARAM_POPT_TABLE, options,
 								 GNOME_PARAM_NONE);
-	
+	#else
 	// GTK-Only Initialization
-	//gtk_init(&argc, &argv);
-
+	gtk_init(&argc, &argv);
+	#endif
 	
     SetDebugVerbosity(verbose);
 
@@ -3247,10 +3275,15 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    // Create the main window
+	#ifdef GNOME
+    // Create the main window (GNOME)
     mainWindow = gnome_app_new("Celestia", AppName);
-	//mainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_container_set_border_width(GTK_CONTAINER(mainWindow), 1);
+	#else
+    // Create the main window (GTK)
+	mainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	#endif
+
+	gtk_container_set_border_width(GTK_CONTAINER(mainWindow), 1);
 
     mainBox = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
     gtk_container_set_border_width(GTK_CONTAINER(mainBox), 0);
@@ -3341,8 +3374,13 @@ int main(int argc, char* argv[])
 	// Create the main menu bar
 	createMainMenu(mainWindow, &mainMenu);
 
+	#ifdef GNOME
+	// Set window contents (GNOME)
     gnome_app_set_contents((GnomeApp *)mainWindow, GTK_WIDGET(mainBox));
-    //gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(mainBox));
+	#else
+	// Set window contents (GTK)
+    gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(mainBox));
+	#endif
 
     gtk_box_pack_start(GTK_BOX(mainBox), mainMenu, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(mainBox), oglArea, TRUE, TRUE, 0);
