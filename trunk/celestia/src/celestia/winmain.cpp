@@ -117,7 +117,7 @@ struct AppPreferences
     int timezoneBias;
 };
 
-void SetMousePointer(LPCTSTR lpCursor)
+void SetMouseCursor(LPCTSTR lpCursor)
 {
 	HCURSOR hNewCrsr;
 	

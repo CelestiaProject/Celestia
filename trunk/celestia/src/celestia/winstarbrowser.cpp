@@ -19,7 +19,7 @@
 
 #include "res/resource.h"
 
-extern void SetMousePointer(LPCTSTR lpCursor);
+extern void SetMouseCursor(LPCTSTR lpCursor);
 
 using namespace std;
 
@@ -372,7 +372,7 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
 
 void RefreshItems(HWND hDlg, StarBrowser* browser)
 {
-    SetMousePointer(IDC_WAIT);
+    SetMouseCursor(IDC_WAIT);
 
     Simulation* sim = browser->appCore->getSimulation();
     browser->ucPos = sim->getObserver().getPosition();
@@ -384,7 +384,7 @@ void RefreshItems(HWND hDlg, StarBrowser* browser)
         InitStarBrowserItems(hwnd, browser);
     }
 
-    SetMousePointer(IDC_ARROW);
+    SetMouseCursor(IDC_ARROW);
 }
 
 BOOL APIENTRY StarBrowserProc(HWND hDlg,
