@@ -1581,10 +1581,11 @@ static const char * const cstitles[]=
     "Type"
 };
 
-static const char * const radioLabels[]=
+static const char * const starBrowserLabels[]=
 {
     "Nearest",
-    "Brightest",
+	"Brightest (App.)",
+    "Brightest (Abs.)",
     "With Planets",
     NULL
 };
@@ -2006,7 +2007,7 @@ static void menuStarBrowser()
     gtk_container_add(GTK_CONTAINER(frame), hbox);
 
 	// List viewing preference settings
-	GtkWidget *vbox = gtk_vbox_new(FALSE, CELSPACING);
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     GtkWidget *hbox2 = gtk_hbox_new(FALSE, CELSPACING);
 	GtkWidget *label = gtk_label_new("Maximum Stars Displayed in List");
     gtk_box_pack_start(GTK_BOX(hbox2), label, TRUE, FALSE, 0);
@@ -2032,8 +2033,8 @@ static void menuStarBrowser()
 	}
 
 	// Radio Buttons
-	vbox = gtk_vbox_new(TRUE, CELSPACING);
-    makeRadioItems(radioLabels, vbox, GTK_SIGNAL_FUNC(radioClicked), NULL, NULL);
+	vbox = gtk_vbox_new(TRUE, 0);
+    makeRadioItems(starBrowserLabels, vbox, GTK_SIGNAL_FUNC(radioClicked), NULL, NULL);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
     // Common Buttons
