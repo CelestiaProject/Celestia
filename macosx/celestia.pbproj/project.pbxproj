@@ -248,11 +248,14 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = ../src;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "/usr/lib/gcc/darwin/2.95.2 /Users/bob/src/celestia/macosx/Frameworks";
+				LIBRARY_SEARCH_PATHS = "/usr/lib/gcc/darwin/3.1 /Users/bob/src/celestia/macosx/Frameworks";
 				OTHER_CFLAGS = "";
+				PFE_FILE_C_DIALECTS = "objective-c c++ objective-c++";
 				PREBINDING = NO;
 				PRODUCT_NAME = Celestia;
 				SECTORDER_FLAGS = "";
+				USE_GCC3 = YES;
+				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
 			};

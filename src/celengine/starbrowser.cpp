@@ -90,16 +90,16 @@ struct SolarSystemPredicate
 
 // Find the nearest/brightest/X-est N stars in a database.  The
 // supplied predicate determines which of two stars is a better match.
-template<class Pred> static vector<const Star*>*
+template<class Pred> static std::vector<const Star*>*
 findStars(const StarDatabase& stardb, Pred pred, int nStars)
 {
-    vector<const Star*>* finalStars = new vector<const Star*>();
+    std::vector<const Star*>* finalStars = new std::vector<const Star*>();
     if (nStars == 0)
         return finalStars;
     if(nStars > 500)
         nStars = 500;
 
-    typedef multiset<const Star*, Pred> StarSet;
+    typedef std::multiset<const Star*, Pred> StarSet;
     StarSet firstStars(pred);
 
     int totalStars = stardb.size();
@@ -144,14 +144,14 @@ const Star* StarBrowser::nearestStar()
     Universe* univ = appSim->getUniverse();
     CloserStarPredicate closerPred;
     closerPred.pos = pos;
-    vector<const Star*>* stars = findStars(*(univ->getStarCatalog()), closerPred, 1);
+    std::vector<const Star*>* stars = findStars(*(univ->getStarCatalog()), closerPred, 1);
     const Star *star = (*stars)[0];
     delete stars;
     return star;
 }
 
 
-vector<const Star*>*
+std::vector<const Star*>*
 StarBrowser::listStars(unsigned int nStars)
 {
     Universe* univ = appSim->getUniverse();
