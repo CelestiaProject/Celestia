@@ -311,12 +311,8 @@ if (test "$prefix" = "NONE"); then
 	prefix=$ac_default_prefix
 fi
 
-if (test "$ui_kde" = "yes"); then
-    PKGDATADIR=`eval echo "${kde_datadir}/$PACKAGE"`
-    datadir=${kde_datadir}
-else
-    PKGDATADIR=`eval echo "${datadir}/$PACKAGE"`
-fi
+PKGDATADIR=`eval echo "${datadir}/$PACKAGE"`
+
 AC_SUBST(PKGDATADIR)
 
 AC_DEFINE_UNQUOTED(CONFIG_DATA_DIR, "$PKGDATADIR",
