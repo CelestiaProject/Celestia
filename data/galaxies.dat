@@ -7,8 +7,8 @@
 	Dec -28.93
 	Distance 28000
 	Radius 50000
-	Axis [ 1 0 0 ]
-	Angle 50
+	Axis [ 0.640 0.749 -0.173 ]
+	Angle -117
 }
 
 # Large Magellanic Cloud / 
@@ -39,6 +39,8 @@
 	Dec      41.27
 	Distance  2.9e6
 	Radius   95000
+	Axis [ -0.390 -0.783 -0.485 ]
+	Angle 272.9 # 17.329 # 188.798
 }
 
 # Triangulum spiral / NGC 598
@@ -49,4 +51,24 @@
 	Dec  30.65
 	Distance 3e6
 	Radius 30000
+}
+
+# NGC 205, satellite of M31
+"M110"
+{
+	Type "E5"
+	RA    0.6883
+	Dec   41.683
+	Distance 2.9e6
+	Radius 8500
+}
+
+# NGC 221, satellite of M31
+"M32"
+{
+	Type "E2"
+	RA    0.712
+        Dec  40.867
+	Distance 2.9e6
+	Radius 4000
 }
