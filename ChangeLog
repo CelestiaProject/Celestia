@@ -635,4 +635,16 @@ Code:
    - Implemented markers into KDE interface	
 * Added triangle-accurate picking of mesh objects
 * Multiview
+   - Ctrl+R : split view vertically
+   - Ctrl+U : split view horizontally
+   - TAB    : cycle active view
+   - DEL    : delete active view
+   - Ctrl+D : delete all views except active one
 * Eliminated eclipse shadows appearing on wrong side of planet
+* Added support for specular and bump map effects across a wider range
+  of graphics hardware.
+   - Introduced notion of a render path
+   - Ctrl+V changed to cycle render path instead of toggle vertex shader
+   - Added IgnoreGLExtensions directive for celestia.cfg
+* Added track command for script
+* Fixed eclipse shadow z-fighting artifacts
