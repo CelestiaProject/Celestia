@@ -151,6 +151,47 @@ float astro::sphereIlluminationFraction(Point3d spherePos,
     return 1.0f;
 }
 
+float astro::microLightYearsToKilometers(float ly)
+{
+    return ly * ((float) KM_PER_LY * 1e-6f);
+}
+
+double astro::microLightYearsToKilometers(double ly)
+{
+    return ly * (KM_PER_LY * 1e-6);
+}
+
+float astro::kilometersToMicroLightYears(float km)
+{
+    return km / ((float) KM_PER_LY * 1e-6f);
+}
+
+double astro::kilometersToMicroLightYears(double km)
+{
+    return km / (KM_PER_LY * 1e-6);
+}
+
+float astro::microLightYearsToAU(float ly)
+{
+    return ly * AU_PER_LY * 1e-6f;
+}
+
+double astro::microLightYearsToAU(double ly)
+{
+    return ly * AU_PER_LY * 1e-6;
+}
+
+float astro::AUtoMicroLightYears(float au)
+{
+    return au / ((float) AU_PER_LY * 1e-6f);
+}
+
+double astro::AUtoMicroLightYears(double au)
+{
+    return au / (AU_PER_LY * 1e-6);
+}
+
+
 // Convert the position in univeral coordinates to a star-centric
 // coordinates in units of kilometers.  Note that there are three different
 // precisions used here:  star coordinates are stored as floats in units of
@@ -160,22 +201,26 @@ Point3d astro::heliocentricPosition(UniversalCoord universal,
                                     Point3f starPosition)
 {
     // Get the offset vector
-    Vec3d v = universal - Point3d(starPosition.x, starPosition.y, starPosition.z);
+    Vec3d v = universal - Point3d(starPosition.x * 1e6,
+                                  starPosition.y * 1e6,
+                                  starPosition.z * 1e6);
 
     // . . . and convert it to kilometers
-    return Point3d(lightYearsToKilometers(v.x),
-                   lightYearsToKilometers(v.y),
-                   lightYearsToKilometers(v.z));
+    return Point3d(microLightYearsToKilometers(v.x),
+                   microLightYearsToKilometers(v.y),
+                   microLightYearsToKilometers(v.z));
 }
 
 // universalPosition is the inverse operation of heliocentricPosition
 UniversalCoord astro::universalPosition(Point3d heliocentric,
                                         Point3f starPosition)
 {
-    return UniversalCoord(starPosition) +
-        Vec3d(kilometersToLightYears(heliocentric.x),
-              kilometersToLightYears(heliocentric.y),
-              kilometersToLightYears(heliocentric.z));
+    return UniversalCoord(Point3d(starPosition.x * 1e6,
+                                  starPosition.y * 1e6,
+                                  starPosition.z * 1e6)) +
+        Vec3d(kilometersToMicroLightYears(heliocentric.x),
+              kilometersToMicroLightYears(heliocentric.y),
+              kilometersToMicroLightYears(heliocentric.z));
 }
 
 
