@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <celmath/mathlib.h>
 #include <celmath/solve.h>
 #include "observer.h"
 #include "simulation.h"
@@ -29,7 +30,8 @@ Observer::Observer(Simulation* _sim) :
     initialVelocity(0.0, 0.0, 0.0),
     beginAccelTime(0.0),
     observerMode(Free),
-    trackingOrientation(1.0f, 0.0f, 0.0f, 0.0f)
+    trackingOrientation(1.0f, 0.0f, 0.0f, 0.0f),
+    fov((float) (PI / 4.0))
 {
 }
 
@@ -820,3 +822,24 @@ void Observer::chase(const Selection& selection)
 }
 
 
+float Observer::getFOV() const
+{
+    return fov;
+}
+
+
+void Observer::setFOV(float _fov)
+{
+    fov = _fov;
+}
+
+
+Vec3f Observer::getPickRay(float x, float y) const
+{
+    float s = 2 * (float) tan(fov / 2.0);
+
+    Vec3f pickDirection = Vec3f(x * s, y * s, -1.0f);
+    pickDirection.normalize();
+
+    return pickDirection;
+}
