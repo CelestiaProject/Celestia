@@ -1838,6 +1838,7 @@ void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     float radius = semiAxes.x;
     Vec3f eyeVec = center - Point3f(0.0f, 0.0f, 0.0f);
+    eyeVec = eyeVec * irot;
     double centerDist = eyeVec.length();
 
     Vec3f normal = eyeVec;
@@ -1865,6 +1866,7 @@ void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     Vec3f recipSemiAxes(1.0f / semiAxes.x, 1.0f / semiAxes.y, 1.0f / semiAxes.z);
     Vec3f e = -eyeVec;
     Vec3f e_(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
+    float ee = e_ * e_;
 
     glBegin(GL_QUAD_STRIP);
     int divisions = 180;
@@ -1884,34 +1886,24 @@ void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         // computes the value of t that results in a discriminant of zero.
         Vec3f w_(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
         float ww = w_ * w_;
-        float ee = e_ * e_;
         float ew = w_ * e_;
-#if 0
-        // all ew terms dropped; only valid for spheres
-        float a =  4 * ee * ee - 4 * (ee * ee + ee * ww - ee - ww);
-        float b = -8 * ee * ee - 4 * (-2 * ee * ee + 2 * ee);
-        float c =  4 * ee * ee - 4 * (ee * ee - ee);
-#endif
+
+        // Before elimination of terms:
+        // float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
+        // float b = -8 * ee * (ee + ew)  - 4 * (-2 * (ee + ew) * (ee - 1.0f));
+        // float c =  4 * ee * ee         - 4 * (ee * (ee - 1.0f));
+
         float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
-        float b = -8 * ee * (ee + ew)  - 4 * (-2 * (ee + ew) * (ee - 1.0f));
-        float c =  4 * ee * ee         - 4 * (ee * (ee - 1.0f));
+        float b = -8 * (ee + ew);
+        float c =  4 * ee;
 
         float t = 0.0f;
         float discriminant = b * b - 4 * a * c;
 
         if (discriminant < 0.0f)
-        {
-            // Bad!
-            t = (-b + (float) sqrt(-discriminant)) / (2 * a);
-#if 0
-            if (i == 0)
-                cout << "Bad! a: " << a << "   b: " << b << "   c: " << c << "   t: " << t << '\n';
-#endif
-        }
+            t = (-b + (float) sqrt(-discriminant)) / (2 * a); // Bad!
         else
-        {
             t = (-b + (float) sqrt(discriminant)) / (2 * a);
-        }
 
         // V is the direction vector.  We now need the point of intersection.
         Vec3f v = -e * (1 - t) + w * t;
@@ -1920,17 +1912,9 @@ void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         float b1 = 2.0f * v_ * e_;
         float t1 = -b1 / (2 * a1);
 
-#if 0
-        float c1 = e_ * e_ - 1.0f;
-        float disc1 = b1 * b1 - 4 * a1 * c1;
-        if (i == 0)
-            cout << "disc1 = " << disc1 << '\n';
-#endif
-
         Vec3f toCenter = e + v * t1;
+        toCenter = toCenter * rot;
         Point3f base = center + toCenter;
-        base = rot * base;
-        toCenter = rot * toCenter;
 
         float cosSunAngle = (toCenter * sunDirection) / radius;
         float brightness = 1.0f;
@@ -1942,7 +1926,7 @@ void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         topColor[0] = atmosphere.upperColor.red();
         topColor[1] = atmosphere.upperColor.green();
         topColor[2] = atmosphere.upperColor.blue();
-#if 0
+
         if (cosSunAngle < 0.2f && lit)
         {
             if (cosSunAngle < -0.2f)
@@ -1961,7 +1945,7 @@ void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                 topColor[2] = Mathf::lerp(t, 0.0f, topColor[2]);
             }
         }
-#endif
+
         glColor4f(botColor[0], botColor[1], botColor[2],
                   0.85f * fade * brightness + ambientColor.red());
         glVertex(base - toCenter * height * 0.05f);
@@ -3171,11 +3155,13 @@ void Renderer::renderObject(Point3f pos,
             }
             else
             {
+                glRotate(cameraOrientation);
                 renderEllipsoidAtmosphere(*atmosphere,
                              pos,
-                             cameraOrientation,
+                             obj.orientation,
                              Vec3f(radius, radius * (1.0f - obj.oblateness), radius),
-                             ri.sunDir_eye * (~cameraOrientation).toMatrix3(),
+                             //ri.sunDir_eye * (~cameraOrientation).toMatrix3(),
+                             ri.sunDir_eye,
                              ri.ambientColor,
                              fade,
                              lit);
