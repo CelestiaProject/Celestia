@@ -52,12 +52,14 @@ private:
     vector<Sample> samples;
     double boundingRadius;
     double period;
+    mutable int lastSample;
 };
 
 
 SampledOrbit::SampledOrbit() :
     boundingRadius(0.0),
-    period(1.0)
+    period(1.0),
+    lastSample(0)
 {
 }
 
@@ -95,7 +97,6 @@ double SampledOrbit::getBoundingRadius() const
 
 Point3d SampledOrbit::computePosition(double jd) const
 {
-
     Point3d pos;
     if (samples.size() == 0)
     {
@@ -109,10 +110,17 @@ Point3d SampledOrbit::computePosition(double jd) const
     {
         Sample samp;
         samp.t = jd;
-        vector<Sample>::const_iterator iter = lower_bound(samples.begin(),
-                                                          samples.end(),
-                                                          samp);
-        int n = iter - samples.begin();
+        int n = lastSample;
+
+        if (n < 1 || jd < samples[n - 1].t || jd > samples[n].t)
+        {
+            vector<Sample>::const_iterator iter = lower_bound(samples.begin(),
+                                                              samples.end(),
+                                                              samp);
+            n = iter - samples.begin();
+            lastSample = n;
+        }
+
         if (n == 0)
         {
             pos = Point3d(samples[n].x, samples[n].y, samples[n].z);
@@ -123,7 +131,7 @@ Point3d SampledOrbit::computePosition(double jd) const
             Sample s1 = samples[n];
             // TODO: Linear interpolation between samples is inadequate; we
             // need something more sophisticated.
-            double t = (jd - (double) s0.t) / ((double) s1.t - (double) s0.t);
+            double t = (jd - s0.t) / (s1.t - s0.t);
             pos = Point3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
                           Mathd::lerp(t, (double) s0.y, (double) s1.y),
                           Mathd::lerp(t, (double) s0.z, (double) s1.z));
