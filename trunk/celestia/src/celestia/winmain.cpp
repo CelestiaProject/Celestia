@@ -47,6 +47,7 @@
 #include "wingotodlg.h"
 #include "winviewoptsdlg.h"
 #include "winlocations.h"
+#include "winbookmarks.h"
 #include "wineclipses.h"
 #include "odmenu.h"
 
@@ -81,6 +82,7 @@ static TourGuide* tourGuide = NULL;
 static GotoObjectDialog* gotoObjectDlg = NULL;
 static ViewOptionsDialog* viewOptionsDlg = NULL;
 static EclipseFinderDialog* eclipseFinder = NULL;
+static LocationsDialog* locationsDlg = NULL;
 
 static HMENU menuBar = 0;
 ODMenu odAppMenu;
@@ -114,8 +116,8 @@ static int lastY = 0;
 
 static const WPARAM ID_GOTO_URL = 62000;
 
-HWND hLocationTree;
-char locationName[33];
+HWND hBookmarkTree;
+char bookmarkName[33];
 
 static LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                        UINT uMsg,
@@ -689,7 +691,7 @@ BOOL APIENTRY FindObjectProc(HWND hDlg,
     return FALSE;
 }
 
-BOOL APIENTRY AddLocationFolderProc(HWND hDlg,
+BOOL APIENTRY AddBookmarkFolderProc(HWND hDlg,
                                     UINT message,
                                     UINT wParam,
                                     LONG lParam)
@@ -703,7 +705,7 @@ BOOL APIENTRY AddLocationFolderProc(HWND hDlg,
         CenterWindow(hParent, hDlg);
 
         //Limit text of folder name to 32 chars
-        HWND hEdit = GetDlgItem(hDlg, IDC_LOCATIONFOLDER);
+        HWND hEdit = GetDlgItem(hDlg, IDC_BOOKMARKFOLDER);
         SendMessage(hEdit, EM_LIMITTEXT, 32, 0);
 
         //Set initial button states
@@ -756,13 +758,13 @@ BOOL APIENTRY AddLocationFolderProc(HWND hDlg,
         {
             //Get text entered in Folder Name Edit box
             char name[33];
-            HWND hEdit = GetDlgItem(hDlg, IDC_LOCATIONFOLDER);
+            HWND hEdit = GetDlgItem(hDlg, IDC_BOOKMARKFOLDER);
             if (hEdit)
             {
                 if (GetWindowText(hEdit, name, sizeof(name)))
                 {
                     //Create new folder in parent dialog tree control.
-                    AddNewLocationFolderInTree(hLocationTree, name);
+                    AddNewBookmarkFolderInTree(hBookmarkTree, name);
                 }
             }
 
@@ -780,7 +782,7 @@ BOOL APIENTRY AddLocationFolderProc(HWND hDlg,
     return FALSE;
 }
 
-BOOL APIENTRY AddLocationProc(HWND hDlg,
+BOOL APIENTRY AddBookmarkProc(HWND hDlg,
                               UINT message,
                               UINT wParam,
                               LONG lParam)
@@ -793,7 +795,7 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
         HWND hCtrl;
         if (GetWindowRect(hDlg, &dlgRect))
         {
-            if (hCtrl = GetDlgItem(hDlg, IDC_LOCATION_FOLDERTREE))
+            if (hCtrl = GetDlgItem(hDlg, IDC_BOOKMARK_FOLDERTREE))
             {
                 if (GetWindowRect(hCtrl, &treeRect))
                 {
@@ -804,9 +806,9 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
                 }
 
                 HTREEITEM hParent;
-                if (hParent = PopulateLocationFolders(hCtrl, appCore, appInstance))
+                if (hParent = PopulateBookmarkFolders(hCtrl, appCore, appInstance))
                 {
-                    //Expand Locations item
+                    //Expand bookmarks item
                     TreeView_Expand(hCtrl, hParent, TVE_EXPAND);
                 }
             }
@@ -819,8 +821,8 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
         RemoveButtonDefaultStyle(hOK);
         AddButtonDefaultStyle(hCancel);
 
-        //Set Location text to selection text
-        if (hCtrl = GetDlgItem(hDlg, IDC_LOCATION_EDIT))
+        //Set bookmark text to selection text
+        if (hCtrl = GetDlgItem(hDlg, IDC_BOOKMARK_EDIT))
         {
             //If this is a body, set the text.
             Selection sel = appCore->getSimulation()->getSelection();
@@ -873,17 +875,17 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
         if (LOWORD(wParam) == IDOK)
         {
             char name[33];
-            int len = GetDlgItemText(hDlg, IDC_LOCATION_EDIT, name, sizeof(name));
+            int len = GetDlgItemText(hDlg, IDC_BOOKMARK_EDIT, name, sizeof(name));
             if (len > 0)
             {
                 HWND hTree;
-                if(hTree = GetDlgItem(hDlg, IDC_LOCATION_FOLDERTREE))
+                if(hTree = GetDlgItem(hDlg, IDC_BOOKMARK_FOLDERTREE))
                 {
-                    InsertLocationInFavorites(hTree, name, appCore);
+                    InsertBookmarkInFavorites(hTree, name, appCore);
 
                     appCore->writeFavoritesFile();
 
-                    //Rebuild Locations menu.
+                    //Rebuild bookmarks menu.
                     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
                 }
             }
@@ -895,7 +897,7 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
             EndDialog(hDlg, 0);
             return FALSE;
         }
-        else if (LOWORD(wParam) == IDC_LOCATION_CREATEIN)
+        else if (LOWORD(wParam) == IDC_BOOKMARK_CREATEIN)
         {
             HWND button;
             RECT dlgRect, treeRect;
@@ -903,11 +905,11 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
             char text[16];
             if (GetWindowRect(hDlg, &dlgRect))
             {
-                if (hTree = GetDlgItem(hDlg, IDC_LOCATION_FOLDERTREE))
+                if (hTree = GetDlgItem(hDlg, IDC_BOOKMARK_FOLDERTREE))
                 {
                     if (GetWindowRect(hTree, &treeRect))
                     {
-                        if (button = GetDlgItem(hDlg, IDC_LOCATION_CREATEIN))
+                        if (button = GetDlgItem(hDlg, IDC_BOOKMARK_CREATEIN))
                         {
                             if (GetWindowText(button, text, sizeof(text)))
                             {
@@ -938,11 +940,12 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
                 }
             }
         }
-        else if (LOWORD(wParam) == IDC_LOCATION_NEWFOLDER)
+        else if (LOWORD(wParam) == IDC_BOOKMARK_NEWFOLDER)
         {
-            if(hLocationTree = GetDlgItem(hDlg, IDC_LOCATION_FOLDERTREE))
+            if(hBookmarkTree = GetDlgItem(hDlg, IDC_BOOKMARK_FOLDERTREE))
             {
-                DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDLOCATION_FOLDER), hDlg, AddLocationFolderProc);
+                DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER),
+                          hDlg, AddBookmarkFolderProc);
             }
         }
         break;
@@ -952,7 +955,7 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
     return FALSE;
 }
 
-BOOL APIENTRY RenameLocationProc(HWND hDlg,
+BOOL APIENTRY RenameBookmarkProc(HWND hDlg,
                                  UINT message,
                                  UINT wParam,
                                  LONG lParam)
@@ -966,11 +969,11 @@ BOOL APIENTRY RenameLocationProc(HWND hDlg,
         CenterWindow(hParent, hDlg);
 
         //Limit text of folder name to 32 chars
-        HWND hEdit = GetDlgItem(hDlg, IDC_NEWLOCATION);
+        HWND hEdit = GetDlgItem(hDlg, IDC_NEWBOOKMARK);
         SendMessage(hEdit, EM_LIMITTEXT, 32, 0);
 
-        //Set text in edit control to current location name
-        SetWindowText(hEdit, locationName);
+        //Set text in edit control to current bookmark name
+        SetWindowText(hEdit, bookmarkName);
 
         return(TRUE);
         }
@@ -1015,11 +1018,11 @@ BOOL APIENTRY RenameLocationProc(HWND hDlg,
         {
             //Get text entered in Folder Name Edit box
             char name[33];
-            HWND hEdit = GetDlgItem(hDlg, IDC_NEWLOCATION);
+            HWND hEdit = GetDlgItem(hDlg, IDC_NEWBOOKMARK);
             if (hEdit)
             {
                 if (GetWindowText(hEdit, name, sizeof(name)))
-                    RenameLocationInFavorites(hLocationTree, name, appCore);
+                    RenameBookmarkInFavorites(hBookmarkTree, name, appCore);
             }
 
             EndDialog(hDlg, 0);
@@ -1036,7 +1039,7 @@ BOOL APIENTRY RenameLocationProc(HWND hDlg,
     return FALSE;
 }
 
-BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
+BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
                                     UINT message,
                                     UINT wParam,
                                     LONG lParam)
@@ -1047,18 +1050,18 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
     case WM_INITDIALOG:
         {
         HWND hCtrl;
-        if (hCtrl = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+        if (hCtrl = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
         {
             HTREEITEM hParent;
-            if (hParent = PopulateLocationsTree(hCtrl, appCore, appInstance))
+            if (hParent = PopulateBookmarksTree(hCtrl, appCore, appInstance))
             {
-                //Expand Locations item
+                // Expand bookmarks item
                 TreeView_Expand(hCtrl, hParent, TVE_EXPAND);
             }
         }
-        if (hCtrl = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATIONS_DELETE))
+        if (hCtrl = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARKS_DELETE))
             EnableWindow(hCtrl, FALSE);
-        if (hCtrl = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATIONS_RENAME))
+        if (hCtrl = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARKS_RENAME))
             EnableWindow(hCtrl, FALSE);
 
         return(TRUE);
@@ -1069,13 +1072,13 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
         if (LOWORD(wParam) == IDOK)
         {
             HWND hTree;
-            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                 SyncTreeFoldersWithFavoriteFolders(hTree, appCore);
 
-            //Write any change to favorites
+            // Write any change to bookmarks
             appCore->writeFavoritesFile();
 
-            //Rebuild Locations menu.
+            // Rebuild bookmarks menu
             BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
 
             EndDialog(hDlg, 0);
@@ -1089,37 +1092,39 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
             EndDialog(hDlg, 0);
             return FALSE;
         }
-        else if (LOWORD(wParam) == IDC_ORGANIZE_LOCATIONS_NEWFOLDER)
+        else if (LOWORD(wParam) == IDC_ORGANIZE_BOOKMARKS_NEWFOLDER)
         {
-            if (hLocationTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+            if (hBookmarkTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
             {
-                DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDLOCATION_FOLDER), hDlg, AddLocationFolderProc);
+                DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER), hDlg, AddBookmarkFolderProc);
             }
         }
-        else if (LOWORD(wParam) == IDC_ORGANIZE_LOCATIONS_RENAME)
+        else if (LOWORD(wParam) == IDC_ORGANIZE_BOOKMARKS_RENAME)
         {
-            if (hLocationTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+            if (hBookmarkTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
             {
                 HTREEITEM hItem;
                 TVITEM tvItem;
-                if (hItem = TreeView_GetSelection(hLocationTree))
+                if (hItem = TreeView_GetSelection(hBookmarkTree))
                 {
                     tvItem.hItem = hItem;
                     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-                    tvItem.pszText = locationName;
-                    tvItem.cchTextMax = sizeof(locationName);
-                    if (TreeView_GetItem(hLocationTree, &tvItem))
+                    tvItem.pszText = bookmarkName;
+                    tvItem.cchTextMax = sizeof(bookmarkName);
+                    if (TreeView_GetItem(hBookmarkTree, &tvItem))
                     {
-                        DialogBox(appInstance, MAKEINTRESOURCE(IDD_RENAME_LOCATION), hDlg, RenameLocationProc);
+                        DialogBox(appInstance,
+                                  MAKEINTRESOURCE(IDD_RENAME_BOOKMARK),
+                                  hDlg, RenameBookmarkProc);
                     }
                 }
             }
         }
-        else if (LOWORD(wParam) == IDC_ORGANIZE_LOCATIONS_DELETE)
+        else if (LOWORD(wParam) == IDC_ORGANIZE_BOOKMARKS_DELETE)
         {
             HWND hTree;
-            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
-                DeleteLocationFromFavorites(hTree, appCore);
+            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
+                DeleteBookmarkFromFavorites(hTree, appCore);
         }
         break;
         }
@@ -1128,15 +1133,15 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
             if (((LPNMHDR)lParam)->code == TVN_SELCHANGED)
             {
                 HWND hTree;
-                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                 {
                     //Enable buttons as necessary
                     HTREEITEM hItem;
                     if (hItem = TreeView_GetSelection(hTree))
                     {
                         HWND hDelete, hRename;
-                        hDelete = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATIONS_DELETE);
-                        hRename = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATIONS_RENAME);
+                        hDelete = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARKS_DELETE);
+                        hRename = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARKS_RENAME);
                         if (hDelete && hRename)
                         {
                             if (TreeView_GetParent(hTree, hItem))
@@ -1161,7 +1166,7 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
                 LPNMTREEVIEW nm = (LPNMTREEVIEW)lParam;
                 HTREEITEM hItem = nm->itemNew.hItem;
 
-                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                 {
                     tvItem.hItem = hItem;
                     tvItem.mask = TVIF_PARAM | TVIF_HANDLE;
@@ -1171,7 +1176,7 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
                         {
                             //Start a timer to handle auto-scrolling
                             dragDropTimer = SetTimer(hDlg, 1, 100, NULL);
-                            OrganizeLocationsOnBeginDrag(hTree, (LPNMTREEVIEW)lParam);
+                            OrganizeBookmarksOnBeginDrag(hTree, (LPNMTREEVIEW)lParam);
                         }
                     }
                 }
@@ -1180,12 +1185,12 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
         break;
     case WM_MOUSEMOVE:
         {
-            if(isOrganizeLocationsDragDropActive())
+            if(isOrganizeBookmarksDragDropActive())
             {
                 HWND hTree;
-                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                 {
-                    OrganizeLocationsOnMouseMove(hTree, GET_X_LPARAM(lParam),
+                    OrganizeBookmarksOnMouseMove(hTree, GET_X_LPARAM(lParam),
                         GET_Y_LPARAM(lParam));
                 }
             }
@@ -1193,29 +1198,29 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
         break;
     case WM_LBUTTONUP:
         {
-            if(isOrganizeLocationsDragDropActive())
+            if(isOrganizeBookmarksDragDropActive())
             {
                 HWND hTree;
-                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                 {
                     //Kill the auto-scroll timer
                     KillTimer(hDlg, dragDropTimer);
 
-                    OrganizeLocationsOnLButtonUp(hTree);
-                    MoveLocationInFavorites(hTree, appCore);
+                    OrganizeBookmarksOnLButtonUp(hTree);
+                    MoveBookmarkInFavorites(hTree, appCore);
                 }
             }
         }
         break;
     case WM_TIMER:
         {
-            if(isOrganizeLocationsDragDropActive())
+            if(isOrganizeBookmarksDragDropActive())
             {
                 if(wParam == 1)
                 {
                     //Handle 
                     HWND hTree;
-                    if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                    if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                     {
                         DragDropAutoScroll(hTree);
                     }
@@ -2895,6 +2900,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             if (eclipseFinder != NULL &&
                 IsDialogMessage(eclipseFinder->hwnd, &msg))
                 dialogMessage = true;
+            if (locationsDlg != NULL &&
+                IsDialogMessage(locationsDlg->hwnd, &msg))
+                dialogMessage = true;
 
             // Translate and dispatch the message
             if (!dialogMessage)
@@ -3316,6 +3324,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 delete eclipseFinder;
                 eclipseFinder = NULL;
             }
+            else if (reinterpret_cast<LPARAM>(locationsDlg) == lParam &&
+                     locationsDlg != NULL)
+            {
+                delete locationsDlg;
+                locationsDlg = NULL;
+            }
             break;
 
         case ID_NAVIGATION_TOURGUIDE:
@@ -3357,6 +3371,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_RENDER_VIEWOPTIONS:
             if (viewOptionsDlg == NULL)
                 viewOptionsDlg = new ViewOptionsDialog(appInstance, hWnd, appCore);
+            break;
+
+        case ID_RENDER_LOCATIONS:
+            if (locationsDlg == NULL)
+                locationsDlg = new LocationsDialog(appInstance, hWnd, appCore);
             break;
 
         case ID_RENDER_MORESTARS:
@@ -3453,12 +3472,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             }
             break;
 
-        case ID_LOCATIONS_ADDLOCATION:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDLOCATION), hWnd, AddLocationProc);
+        case ID_BOOKMARKS_ADDBOOKMARK:
+            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDBOOKMARK), hWnd, AddBookmarkProc);
             break;
 
-        case ID_LOCATIONS_ORGANIZE:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ORGANIZE_LOCATIONS), hWnd, OrganizeLocationsProc);
+        case ID_BOOKMARKS_ORGANIZE:
+            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ORGANIZE_BOOKMARKS), hWnd, OrganizeBookmarksProc);
             break;
 
         case ID_HELP_RUNDEMO:
@@ -3545,9 +3564,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             {
                 const FavoritesList* favorites = appCore->getFavorites();
                 if (favorites != NULL &&
-                    LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION < favorites->size())
+                    LOWORD(wParam) - ID_BOOKMARKS_FIRSTBOOKMARK < favorites->size())
                 {
-                    int whichFavorite = LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION;
+                    int whichFavorite = LOWORD(wParam) - ID_BOOKMARKS_FIRSTBOOKMARK;
                     appCore->activateFavorite(*(*favorites)[whichFavorite]);
                 }
                 else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
