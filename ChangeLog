@@ -506,3 +506,8 @@ Code:
 * Added preloadtex command for scripting
 * Enforce a maximum time rate of 1e15 times normal
 
+
+1.2.5
+* Implemented text-based auxilliary star catalogs
+* Added orientation property for planets
+* Corrected rotation of Toutatis
