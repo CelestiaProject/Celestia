@@ -78,6 +78,7 @@ BEGIN
             MENUITEM "&Medium",                     ID_RENDER_AMBIENTLIGHT_MEDIUM
 
         END
+	MENUITEM "Use Per-pixel Lighting",	    ID_RENDER_PERPIXEL_LIGHTING
     END
     POPUP "&Help"
     BEGIN
