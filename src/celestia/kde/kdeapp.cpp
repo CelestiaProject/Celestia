@@ -123,8 +123,6 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
         appCore->setDistanceToScreen(KGlobal::config()->readNumEntry("DistanceToScreen"));
     }
 
-   if (bookmarkBar->isHidden()) ((KToggleAction*)actionCollection()->action("showBookmarkBar"))->setChecked(false);
-    else ((KToggleAction*)actionCollection()->action("showBookmarkBar"))->setChecked(true);
 
     if (conf->hasGroup("Shortcuts"))
         actionCollection()->readShortcutSettings("Shortcuts", conf);
@@ -132,6 +130,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     if (toolBar()->isHidden()) toggleToolbar->setChecked(false);
     if (menuBar()->isHidden()) toggleMenubar->setChecked(false);
 
+    
     // We use a timer with a null timeout value
     // to add appCore->tick to Qt's event loop
     QTimer *t = new QTimer( dynamic_cast<QObject *>(this) );
@@ -297,6 +296,7 @@ void KdeApp::initActions()
     connect(openRecent, SIGNAL(urlSelected(const KURL&)), SLOT(slotOpenFileURL(const KURL&)));
 
     KStdAction::quit(this, SLOT(slotClose()), actionCollection());
+    KStdAction::configureToolbars( this, SLOT( slotConfigureToolbars() ), actionCollection() );
 
     new KAction(i18n("Go to &URL..."), 0, ALT + Key_G, this, SLOT(slotGoTo()), actionCollection(), "go_to");
     new KAction(i18n("Go to &Long/Lat..."), 0, ALT + Key_L, this, SLOT(slotGoToLongLat()), actionCollection(), "go_to_long_lat");
@@ -533,12 +533,28 @@ void KdeApp::initActions()
         SLOT(slotShowBookmarkBar()), actionCollection(), "showBookmarkBar");
 
     createGUI();
+    
+    bookmarkBarActionCollection = new KActionCollection( this );
+    bookmarkBarActionCollection->setHighlightingEnabled( true );
 
-    bookmarkBar = new KToolBar(this, QMainWindow::Top, true, "bookmarkBar");
-    new KBookmarkBar( KCelBookmarkManager::self(), this, bookmarkBar, actionCollection(), this, "bookmarkBar");
-    
-    
+    bookmarkBar = 0;
+    initBookmarkBar();    
+
 }
+
+void KdeApp::initBookmarkBar() {
+    KToolBar *bar = new KToolBar(this, QMainWindow::Top, true, "bookmarkBar");
+    
+    if (bookmarkBar) delete bookmarkBar;
+    bookmarkBar = new KBookmarkBar( KCelBookmarkManager::self(), this, bar, bookmarkBarActionCollection, this, "bookmarkBar");
+    if (bar->count() == 0) bar->hide();
+
+    applyMainWindowSettings( KGlobal::config(), "MainWindow" );
+
+    if (bar->isHidden()) ((KToggleAction*)actionCollection()->action("showBookmarkBar"))->setChecked(false);
+    else ((KToggleAction*)actionCollection()->action("showBookmarkBar"))->setChecked(true);
+}
+
 
 bool KdeApp::queryExit() { 
     KConfig* conf = kapp->config();
@@ -639,6 +655,7 @@ void KdeApp::slotConfigureToolbars()
     if (dlg.exec())
     {
         createGUI();
+        initBookmarkBar();
     }
 }
 
@@ -1067,8 +1084,9 @@ void KdeApp::slotGrabImage() {
 }
 
 void KdeApp::slotShowBookmarkBar() {
-    if (bookmarkBar->isVisible()) bookmarkBar->hide();
-    else bookmarkBar->show();
+    KToolBar * bar = static_cast<KToolBar *>( child( "bookmarkBar", "KToolBar" ) );
+    if (bar->isVisible()) bar->hide();
+    else bar->show();
 }
 
 void KdeApp::slotBack() {
