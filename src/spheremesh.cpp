@@ -92,6 +92,7 @@ void SphereMesh::render(unsigned int attributes)
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
+    glDisableClientState(GL_COLOR_ARRAY);
 
     // Use nVidia's vertex program extension . . .  right now, we
     // just assume that we only send down tangents if we're using this
