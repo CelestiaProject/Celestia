@@ -385,7 +385,7 @@ void StarDatabase::buildOctree()
             1 + octreeRoot->countChildren(), octreeRoot->countStars());
 
     // Clean up . . .
-    delete stars;
+    delete[] stars;
     delete root;
 
     stars = sortedStars;
