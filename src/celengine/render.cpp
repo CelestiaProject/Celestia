@@ -2640,7 +2640,7 @@ void Renderer::renderPlanet(const Body& body,
         rp.re = body.getRotationElements();
 
         // Compute the orientation of the planet before axial rotation
-        Quatd q = body.getEclipticalToEquatorial();
+        Quatd q = body.getEclipticalToEquatorial(now);
         rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y,
                                (float) q.z);
 

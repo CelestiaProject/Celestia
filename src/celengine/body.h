@@ -62,6 +62,7 @@ class RotationElements
     double epoch;
     float obliquity;     // tilt of rotation axis
     float axisLongitude; // longitude of rot. axis projected onto orbital plane
+    float precessionRate; // rate of precession of rotation axis in rads/day
 };
 
 
@@ -143,12 +144,12 @@ class Body
                                const Vec3d& sunPosition,
                                const Vec3d& viewerPosition) const;
 
-    Mat4d getLocalToHeliocentric(double when) const;
-    Point3d getHeliocentricPosition(double when) const;
-    Quatd getEquatorialToGeographic(double when);
-    Quatd getEclipticalToEquatorial() const;
-    Quatd getEclipticalToGeographic(double when);
-    Mat4d getGeographicToHeliocentric(double when);
+    Mat4d getLocalToHeliocentric(double) const;
+    Point3d getHeliocentricPosition(double) const;
+    Quatd getEquatorialToGeographic(double);
+    Quatd getEclipticalToEquatorial(double) const;
+    Quatd getEclipticalToGeographic(double);
+    Mat4d getGeographicToHeliocentric(double);
 
  private:
     std::string name;
