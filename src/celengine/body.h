@@ -31,7 +31,8 @@ class PlanetarySystem
     Body* getPrimaryBody() const { return primary; };
     int getSystemSize() const { return satellites.size(); };
     Body* getBody(int i) const { return satellites[i]; };
-    void addBody(Body* body) { satellites.insert(satellites.end(), body); };
+    void addBody(Body* body);
+    void removeBody(Body* body);
 
     enum TraversalResult
     {
@@ -85,6 +86,7 @@ class Body
 {
  public:
     Body(PlanetarySystem*);
+    ~Body();
 
     PlanetarySystem* getSystem() const;
     std::string getName() const;
