@@ -271,35 +271,35 @@ Source: "shaders\texphong_alpha_nv.fp";  DestDir: "{app}/shaders"; Flags: ignore
 ; Models
 Source: "models\amalthea.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\asteroid.cms";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\bacchus.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\bacchus.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\borrelly.cms";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\cassini.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\castalia.3ds";     DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\castalia.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\deimos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\epimetheus.3ds";   DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\eros.3ds";         DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\epimetheus.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\eros.cmod";        DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\galileo.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\gaspra.3ds";       DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\geographos.3ds";   DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\golevka.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\halley.3ds";       DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\gaspra.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\geographos.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\golevka.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\halley.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\hubble.3ds";       DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\huygens.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\hyperion.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\ida.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\ida.cmod";         DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\iss.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\janus.3ds";        DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\kleopatra.3ds";    DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\ky26.3ds";         DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\larissa.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\janus.cmod";       DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\kleopatra.cmod";   DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\ky26.cmod";        DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\larissa.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\mir.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\pandora.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\pandora.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\phobos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\prometheus.3ds";   DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\proteus.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\prometheus.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\proteus.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\roughsphere.cms";  DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\toutatis.3ds";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\vesta.3ds";        DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\toutatis.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\vesta.cmod";       DestDir: "{app}/models"; Flags: ignoreversion
 
 
 ; Fonts
