@@ -62,6 +62,9 @@ class Galaxy : public DeepSkyObject
                         float brightness,
                         float pixelSize);
 
+    virtual unsigned int getRenderMask();
+    virtual unsigned int getLabelMask();
+
     GalacticForm* getForm() const;
     
  private:

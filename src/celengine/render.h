@@ -17,6 +17,7 @@
 #include <celengine/selection.h>
 #include <celengine/glcontext.h>
 #include <celengine/starcolors.h>
+#include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
 
 
@@ -37,44 +38,8 @@ struct RenderListEntry
     int solarSysIndex;
 };
 
-static const unsigned int MaxLights = 8;
 static const unsigned int MaxSolarSystems = 16;
 
-struct DirectionalLight
-{
-    Color color;
-    float irradiance;
-    Vec3f direction_eye;
-    Vec3f direction_obj;
-
-    // Required for eclipse shadows only--may be able to use
-    // distance instead of position.
-    Point3d position;
-    float apparentSize;
-};
-
-struct EclipseShadow
-{
-    Point3f origin;
-    Vec3f direction;
-    float penumbraRadius;
-    float umbraRadius;
-};
-
-struct LightingState
-{
-    LightingState() : nLights(0),
-                      eyeDir_obj(0.0f, 0.0f, -1.0f),
-                      eyePos_obj(0.0f, 0.0f, -1.0f)
-    { shadows[0] = NULL; };
-
-    unsigned int nLights;
-    DirectionalLight lights[MaxLights];
-    vector<EclipseShadow>* shadows[MaxLights];
-
-    Vec3f eyeDir_obj;
-    Point3f eyePos_obj;
-};
 
 class Renderer
 {
@@ -117,6 +82,8 @@ class Renderer
         SpacecraftLabels    = 0x040,
         LocationLabels      = 0x080,
         CometLabels         = 0x100,
+	NebulaLabels        = 0x200,
+	OpenClusterLabels   = 0x400,
         BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
 
@@ -140,6 +107,8 @@ class Renderer
         ShowCometTails      = 0x8000,
         ShowMarkers         = 0x10000,
         ShowPartialTrajectories = 0x20000,
+	ShowNebulae         = 0x40000,
+	ShowOpenClusters    = 0x80000,
     };
 
     enum StarStyle 
@@ -379,8 +348,8 @@ class Renderer
                      double now,
                      vector<EclipseShadow>& shadows);
 
-    void labelGalaxies(const DeepSkyCatalog& catalog,
-                       const Observer& observer);
+    void labelDeepSkyObjects(const DeepSkyCatalog& catalog,
+			     const Observer& observer);
     void labelStars(const std::vector<StarLabel>& stars,
                     const StarDatabase& starDB,
                     const Observer& observer);

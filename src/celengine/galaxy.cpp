@@ -20,6 +20,7 @@
 #include "gl.h"
 #include "vecgl.h"
 #include "texture.h"
+#include "render.h"
 
 using namespace std;
 
@@ -234,6 +235,18 @@ void Galaxy::render(const Vec3f& offset,
         }
     }
     glEnd();
+}
+
+
+unsigned int Galaxy::getRenderMask()
+{
+    return Renderer::ShowGalaxies;
+}
+
+
+unsigned int Galaxy::getLabelMask()
+{
+    return Renderer::GalaxyLabels;
 }
 
 

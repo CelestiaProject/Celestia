@@ -19,6 +19,7 @@
 #include "rendcontext.h"
 #include "gl.h"
 #include "vecgl.h"
+#include "render.h"
 
 using namespace std;
 
@@ -82,4 +83,16 @@ void Nebula::render(const Vec3f& offset,
     glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
 
     glEnable(GL_BLEND);
+}
+
+
+unsigned int Nebula::getRenderMask()
+{
+    return Renderer::ShowNebulae;
+}
+
+
+unsigned int Nebula::getLabelMask()
+{
+    return Renderer::NebulaLabels;
 }
