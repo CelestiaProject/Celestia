@@ -115,10 +115,12 @@ public slots:
     void slotShowGalaxyLabels();
     void slotShowAsteroidLabels();
     void slotShowSpacecraftLabels();
-    void slotAmbientLightLevel(int l);
-    void slotFaintestVisible(int m);
+    void slotAmbientLightLevel(float l);
+    void slotFaintestVisible(float m);
     void slotHudDetail(int l);
 
+    void slotCelestialBrowser();
+    
     void slotDisplayLocalTime();
     void slotWireframeMode();
     void slotVertexShader();

@@ -17,6 +17,7 @@
 
 
 #include <fstream.h>
+#include <sstream>
 
 #include <qpushbutton.h>
 #include <qslider.h>
@@ -29,6 +30,8 @@
 #include <qlabel.h>
 #include <qclipboard.h>
 #include <qregexp.h>
+#include <qpalette.h>
+#include <qfont.h>
 
 #include <qmenubar.h>
 #include <qpopupmenu.h>
@@ -64,8 +67,9 @@
 #include "kdepreferencesdialog.h"
 #include "celengine/cmdparser.h"
 #include "url.h"
+#include "celestialbrowser.h"
 
-extern "C" bool ExtensionSupported(char *ext);
+#include "celengine/glext.h"
 
 KdeApp* KdeApp::app=0;
 
@@ -105,6 +109,9 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     conf->setGroup("MainWindow");
     restoreWindowSize(conf);
     conf->setGroup(0);
+
+   if (bookmarkBar->isHidden()) ((KToggleAction*)actionCollection()->action("showBookmarkBar"))->setChecked(false);
+    else ((KToggleAction*)actionCollection()->action("showBookmarkBar"))->setChecked(true);
 
     if (conf->hasGroup("Shortcuts"))
         actionCollection()->readShortcutSettings("Shortcuts", conf);
@@ -224,6 +231,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showGalaxyLabels"))->setChecked(lMode & Renderer::GalaxyLabels);
     ((KToggleAction*)action("showAsteroidLabels"))->setChecked(lMode & Renderer::AsteroidLabels);
     ((KToggleAction*)action("showSpacecraftLabels"))->setChecked(lMode & Renderer::SpacecraftLabels);
+
 }
 
 void KdeApp::resyncAmbient() {
@@ -240,10 +248,9 @@ void KdeApp::initActions()
     openRecent->loadEntries(KGlobal::config());
     connect(openRecent, SIGNAL(urlSelected(const KURL&)), SLOT(slotOpenFileURL(const KURL&)));
 
-    KAction *c = KStdAction::close(this, SLOT(slotClose()), actionCollection());
-    c->setAccel( CTRL + Key_Q );
+    KAction *c = KStdAction::quit(this, SLOT(slotClose()), actionCollection());
 
-    new KAction(i18n("Go to..."), 0, 0, this, SLOT(slotGoTo()), actionCollection(), "go_to");
+    new KAction(i18n("Go to..."), 0, ALT + Key_G, this, SLOT(slotGoTo()), actionCollection(), "go_to");
 
     backAction = new KToolBarPopupAction( i18n("&Back"), "back",
                                            KStdAccel::key(KStdAccel::Back), this, SLOT( slotBack() ),
@@ -271,15 +278,17 @@ void KdeApp::initActions()
     KStdAction::configureToolbars(this, SLOT(slotConfigureToolbars()), actionCollection());
     KStdAction::keyBindings(this, SLOT(slotKeyBindings()), actionCollection());
 
-    new KAction(i18n("Full Screen"), "window_fullscreen", 0, this, SLOT(slotFullScreen()), actionCollection(), "fullScreen");
-    new KAction(i18n("Copy URL"), "edit_copy", 0, this, SLOT(slotCopyUrl()), actionCollection(), "copyUrl");
+    new KAction(i18n("Full Screen"), "window_fullscreen", CTRL + Key_F, this, SLOT(slotFullScreen()), actionCollection(), "fullScreen");
+    new KAction(i18n("Copy URL"), "edit_copy", CTRL + Key_C, this, SLOT(slotCopyUrl()), actionCollection(), "copyUrl");
 
 
-    new KAction(i18n("Set Time to Now"), "player_eject", 0, this, SLOT(slotSetTimeNow()), actionCollection(), "setTimeNow");
-    new KAction(i18n("Accelerate Time"), "1uparrow", 0, this, SLOT(slotAccelerateTime()), actionCollection(), "accelerateTime");
-    new KAction(i18n("Slow Down Time"), "1downarrow", 0, this, SLOT(slotSlowDownTime()), actionCollection(), "slowDownTime");
-    new KAction(i18n("Pause Time"), "player_pause", 0, this, SLOT(slotPauseTime()), actionCollection(), "pauseTime");
-    new KAction(i18n("Reverse Time"), "flipv", 0, this, SLOT(slotReverseTime()), actionCollection(), "reverseTime");
+    new KAction(i18n("Set Time to Now"), "player_eject", Key_Exclam, this, SLOT(slotSetTimeNow()), actionCollection(), "setTimeNow");
+    new KAction(i18n("Accelerate Time"), "1uparrow", Key_L, this, SLOT(slotAccelerateTime()), actionCollection(), "accelerateTime");
+    new KAction(i18n("Decelerate Time"), "1downarrow", Key_K, this, SLOT(slotSlowDownTime()), actionCollection(), "slowDownTime");
+    new KAction(i18n("Pause Time"), "player_pause", Key_Space, this, SLOT(slotPauseTime()), actionCollection(), "pauseTime");
+    new KAction(i18n("Reverse Time"), "flipv", Key_J, this, SLOT(slotReverseTime()), actionCollection(), "reverseTime");
+
+    new KAction(i18n("Celestial Browser"), 0, ALT + Key_C, this, SLOT(slotCelestialBrowser()), actionCollection(), "celestialBrowser");
 
     int rFlags, lMode;
     bool isLocal = true;                   
@@ -301,19 +310,19 @@ void KdeApp::initActions()
     KToggleAction* showPlanets = new KToggleAction(i18n("Show Planets"), 0, this, SLOT(slotShowPlanets()), actionCollection(), "showPlanets");
     showPlanets->setChecked(rFlags & Renderer::ShowPlanets);
 
-    KToggleAction* showGalaxies = new KToggleAction(i18n("Show Galaxies"), 0, this, SLOT(slotShowGalaxies()), actionCollection(), "showGalaxies");
+    KToggleAction* showGalaxies = new KToggleAction(i18n("Show Galaxies"), Key_U, this, SLOT(slotShowGalaxies()), actionCollection(), "showGalaxies");
     showGalaxies->setChecked(rFlags & Renderer::ShowGalaxies);
 
-    KToggleAction* showDiagrams = new KToggleAction(i18n("Show Constellations"), 0, this, SLOT(slotShowDiagrams()), actionCollection(), "showDiagrams");
+    KToggleAction* showDiagrams = new KToggleAction(i18n("Show Constellations"), Key_Slash, this, SLOT(slotShowDiagrams()), actionCollection(), "showDiagrams");
     showDiagrams->setChecked(rFlags & Renderer::ShowDiagrams);
 
-    KToggleAction* showCloudMaps = new KToggleAction(i18n("Show CloudMaps"), 0, this, SLOT(slotShowCloudMaps()), actionCollection(), "showCloudMaps");
+    KToggleAction* showCloudMaps = new KToggleAction(i18n("Show CloudMaps"), Key_I, this, SLOT(slotShowCloudMaps()), actionCollection(), "showCloudMaps");
     showCloudMaps->setChecked(rFlags & Renderer::ShowCloudMaps);
 
-    KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), 0, this, SLOT(slotShowOrbits()), actionCollection(), "showOrbits");
+    KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, SLOT(slotShowOrbits()), actionCollection(), "showOrbits");
     showOrbits->setChecked(rFlags & Renderer::ShowOrbits);
 
-    KToggleAction* showCelestialSphere = new KToggleAction(i18n("Show Celestial Grid"), 0, this, SLOT(slotShowCelestialSphere()), actionCollection(), "showCelestialSphere");
+    KToggleAction* showCelestialSphere = new KToggleAction(i18n("Show Celestial Grid"), Key_Semicolon, this, SLOT(slotShowCelestialSphere()), actionCollection(), "showCelestialSphere");
     showCelestialSphere->setChecked(rFlags & Renderer::ShowCelestialSphere);
 
     KToggleAction* showNightMaps = new KToggleAction(i18n("Show Night Side Lights"), CTRL + Key_L, this, SLOT(slotShowNightMaps()), actionCollection(), "showNightMaps");
@@ -343,28 +352,28 @@ void KdeApp::initActions()
     KToggleAction* showCometTails = new KToggleAction(i18n("Show Comet Tails"), CTRL + Key_T, this, SLOT(slotShowCometTails()), actionCollection(), "showCometTails");
     showCometTails->setChecked(rFlags & Renderer::ShowCometTails);
 
-    KToggleAction* showStarLabels = new KToggleAction(i18n("Show Star Labels"), 0, this, SLOT(slotShowStarLabels()), actionCollection(), "showStarLabels");
+    KToggleAction* showStarLabels = new KToggleAction(i18n("Show Star Labels"), Key_B, this, SLOT(slotShowStarLabels()), actionCollection(), "showStarLabels");
     showStarLabels->setChecked(lMode & Renderer::StarLabels);
 
-    KToggleAction* showPlanetLabels = new KToggleAction(i18n("Show Planet Labels"), 0, this, SLOT(slotShowPlanetLabels()), actionCollection(), "showPlanetLabels");
+    KToggleAction* showPlanetLabels = new KToggleAction(i18n("Show Planet Labels"), Key_P, this, SLOT(slotShowPlanetLabels()), actionCollection(), "showPlanetLabels");
     showPlanetLabels->setChecked(lMode & Renderer::PlanetLabels);
 
-    KToggleAction* showMoonLabels = new KToggleAction(i18n("Show Moon Labels"), 0, this, SLOT(slotShowMoonLabels()), actionCollection(), "showMoonLabels");
+    KToggleAction* showMoonLabels = new KToggleAction(i18n("Show Moon Labels"), Key_M, this, SLOT(slotShowMoonLabels()), actionCollection(), "showMoonLabels");
     showMoonLabels->setChecked(lMode & Renderer::MoonLabels);
 
-    KToggleAction* showConstellationLabels = new KToggleAction(i18n("Show Constellation Labels"), 0, this, SLOT(slotShowConstellationLabels()), actionCollection(), "showConstellationLabels");
+    KToggleAction* showConstellationLabels = new KToggleAction(i18n("Show Constellation Labels"), Key_Equal, this, SLOT(slotShowConstellationLabels()), actionCollection(), "showConstellationLabels");
     showConstellationLabels->setChecked(lMode & Renderer::ConstellationLabels);
-
-    KToggleAction* showGalaxyLabels = new KToggleAction(i18n("Show Galaxy Labels"), 0, this, SLOT(slotShowGalaxyLabels()), actionCollection(), "showGalaxyLabels");
+    
+    KToggleAction* showGalaxyLabels = new KToggleAction(i18n("Show Galaxy Labels"), Key_E, this, SLOT(slotShowGalaxyLabels()), actionCollection(), "showGalaxyLabels");
     showGalaxyLabels->setChecked(lMode & Renderer::GalaxyLabels);
 
-    KToggleAction* showAsteroidLabels = new KToggleAction(i18n("Show Asteroid Labels"), 0, this, SLOT(slotShowAsteroidLabels()), actionCollection(), "showAsteroidLabels");
+    KToggleAction* showAsteroidLabels = new KToggleAction(i18n("Show Asteroid Labels"), Key_W, this, SLOT(slotShowAsteroidLabels()), actionCollection(), "showAsteroidLabels");
     showAsteroidLabels->setChecked(lMode & Renderer::AsteroidLabels);
 
-    KToggleAction* showSpacecraftLabels = new KToggleAction(i18n("Show Spacecraft Labels"), 0, this, SLOT(slotShowSpacecraftLabels()), actionCollection(), "showSpacecraftLabels");
+    KToggleAction* showSpacecraftLabels = new KToggleAction(i18n("Show Spacecraft Labels"), Key_N, this, SLOT(slotShowSpacecraftLabels()), actionCollection(), "showSpacecraftLabels");
     showSpacecraftLabels->setChecked(lMode & Renderer::SpacecraftLabels);
 
-    KToggleAction* displayLocalTime = new KToggleAction(i18n("Display Local Time"), 0, this, SLOT(slotDisplayLocalTime()), actionCollection(), "displayLocalTime");
+    KToggleAction* displayLocalTime = new KToggleAction(i18n("Display Local Time"), CTRL + Key_U, this, SLOT(slotDisplayLocalTime()), actionCollection(), "displayLocalTime");
     displayLocalTime->setChecked(isLocal);
 
     KToggleAction* wireframeMode = new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
@@ -372,7 +381,7 @@ void KdeApp::initActions()
     new KToggleAction(i18n("Enable Vertex Shader"), CTRL + Key_V, this, SLOT(slotVertexShader()), actionCollection(), "vertexShader");
     new KToggleAction(i18n("Enable Pixel Shader"), CTRL + Key_P, this, SLOT(slotPixelShader()), actionCollection(), "pixelShader");
 
-    new KAction(i18n("Grab Image"), "filesave", 0, this, SLOT(slotGrabImage()), actionCollection(), "grabImage");
+    new KAction(i18n("Grab Image"), "filesave", CTRL + Key_G, this, SLOT(slotGrabImage()), actionCollection(), "grabImage");
 
     new KAction(i18n("OpenGL info"), 0, this, SLOT(slotOpenGLInfo()),
                       actionCollection(), "opengl_info");
@@ -387,9 +396,8 @@ void KdeApp::initActions()
 
     bookmarkBar = new KToolBar(this, QMainWindow::Top, true, "bookmarkBar");
     new KBookmarkBar( KCelBookmarkManager::self(), this, bookmarkBar, actionCollection(), this, "bookmarkBar");
-
-    if (bookmarkBar->isHidden()) toggleBookmarkBar->setChecked(false);
-    else toggleBookmarkBar->setChecked(true);
+    
+    
 }
 
 bool KdeApp::queryExit() { 
@@ -618,22 +626,9 @@ void KdeApp::slotSlowDownTime() {
 }
 
 void KdeApp::slotSetTimeNow() {
-    QDateTime qdatetime=QDateTime::currentDateTime();
-    qdatetime=qdatetime.addSecs(timezone-3600*daylight);
-
-    QDate qdate=qdatetime.date();
-    QTime qtime=qdatetime.time();
-
-    astro::Date date(0.0);
-    date.year=qdate.year();
-    date.month=qdate.month();
-    date.day=qdate.day();
-    date.hour=qtime.hour();
-    date.minute=qtime.minute();
-    date.seconds=qtime.second();
-    appCore->getSimulation()->setTime((double) date );
-	appCore->getSimulation()->update(0.0);
-
+    time_t curtime=time(NULL);
+    appCore->getSimulation()->setTime((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
+    appCore->getSimulation()->update(0.0);
 }
 
 void KdeApp::slotShowStars() {
@@ -751,11 +746,11 @@ void KdeApp::slotShowSpacecraftLabels() {
             appCore->getRenderer()->getLabelMode() ^ Renderer::SpacecraftLabels);
 }
 
-void KdeApp::slotAmbientLightLevel(int l) {
-    appCore->getRenderer()->setAmbientLightLevel(l / 100.);
+void KdeApp::slotAmbientLightLevel(float l) {
+    appCore->getRenderer()->setAmbientLightLevel(l);
 }
 
-void KdeApp::slotFaintestVisible(int m) {
+void KdeApp::slotFaintestVisible(float m) {
     appCore->getSimulation()->setFaintestVisible(m);
 }
 
@@ -774,7 +769,7 @@ void KdeApp::slotDisplayLocalTime() {
 }
 
 void KdeApp::slotWireframeMode() {
-	static bool mode = true;
+	static bool mode = false;
 	mode = !mode;
 	renderer->setRenderMode(mode ? GL_LINE : GL_FILL);
 }
@@ -872,15 +867,36 @@ void KdeApp::slotForwardActivated(int i) {
     appCore->setHistoryCurrent(i);
 }
 
+void KdeApp::slotCelestialBrowser() {
+    CelestialBrowser cb(this, appCore);
+
+    cb.exec(); 
+}
+
 void KdeApp::popupMenu(float x, float y, Selection sel) {
     KPopupMenu popup(app);
     const PlanetarySystem* planets = 0;
+    
+    QLabel *lab = new QLabel("", &popup);
+    QPalette pal( lab->palette() );
+    pal.setColor( QPalette::Normal, QColorGroup::Background, QColor( "White" ) );
+    pal.setColor( QPalette::Normal, QColorGroup::Foreground, QColor( "Black" ) );
+    pal.setColor( QPalette::Inactive, QColorGroup::Foreground, QColor( "Black" ) );
+    
+    QFont rsFont = lab->font();
+    rsFont.setPointSize( rsFont.pointSize() - 2 ); 
+    
+    Simulation *sim = app->appCore->getSimulation();
+    Vec3d v = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
+        
     if (sel.body != NULL)
     {
         popup.insertTitle(sel.body->getName().c_str(), 0, 0);
-        popup.insertItem(i18n("&Goto"), 1, 1);
-        popup.insertItem(i18n("&Fallow"), 2, 2);
-        popup.insertItem(i18n("S&ynch Orbit"), 3, 3);
+        popup.insertItem(i18n("&Select"), 1, 1);
+        popup.insertItem(i18n("&Center"), 2, 2);
+        popup.insertItem(i18n("&Goto"), 3, 3);
+        popup.insertItem(i18n("&Follow"), 4, 4);
+        popup.insertItem(i18n("S&ynch Orbit"), 5, 5);
 
         const PlanetarySystem* satellites = sel.body->getSatellites();
         planets = satellites;
@@ -898,16 +914,60 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
     }
     else if (sel.star != NULL)
     {
-        Simulation *sim = app->appCore->getSimulation();
         std::string name = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star);
+        
+        double distance = v.length() * 1e-6;
+        char buff[50];
+        
+        ostringstream o;
+        
+        if (abs(distance) >= astro::AUtoLightYears(1000.0f))
+            sprintf(buff, "%.3f ly", distance);
+        else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
+            sprintf(buff, "%.3f au", astro::lightYearsToAU(distance));
+        else if (abs(distance) > astro::kilometersToLightYears(1.0f))
+            sprintf(buff, "%.3f km", astro::lightYearsToKilometers(distance));
+        else
+            sprintf(buff, "%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
+        
+        o << i18n("Distance: ") << buff << "\n";
+       
+        o << i18n("Abs (app) mag: ");
+               
+        sprintf(buff, "%.2f (%.2f)",
+                   sel.star->getAbsoluteMagnitude(),
+                   astro::absToAppMag(sel.star->getAbsoluteMagnitude(), 
+                                      (float) distance));
+        o << buff << "\n";                                                                       
+        
+        o << i18n("Class: ");
+        sprintf(buff, "%s", sel.star->getStellarClass().str().c_str());
+        o << buff << "\n";
+                        
+        o << i18n("Surface Temp: ");
+        sprintf(buff, "%.0f K", sel.star->getTemperature());
+        o << buff << "\n";
+               
+        o << i18n("Radius: ");
+        sprintf(buff, "%.2f Rsun", sel.star->getRadius() / 696000.0f);
+        o << buff;
+
+        QLabel *starDetails = new QLabel(o.str(), &popup);
+        starDetails->setPalette(pal);
+        starDetails->setFont(rsFont);
+        
         popup.insertTitle(name.c_str(), 0, 0);
-        popup.insertItem(i18n("&Goto"), 1, 1);
-                               
+        popup.insertItem(starDetails);
+        popup.insertSeparator();
+        popup.insertItem(i18n("&Select"), 1);
+        popup.insertItem(i18n("&Center"), 2);
+        popup.insertItem(i18n("&Goto"), 3);
+                                       
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
         {
-            popup.insertSeparator(4);
+            popup.insertSeparator();
             SolarSystem* solarSys = iter->second;
             KPopupMenu* planetsMenu = new KPopupMenu(app);
             planets = solarSys->getPlanets();
@@ -916,28 +976,39 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
                 Body* body = solarSys->getPlanets()->getBody(i);
                 planetsMenu->insertItem(body->getName().c_str(), 10+i);
             }
-            popup.insertItem(i18n("Planets"), planetsMenu, 5, 5);
+            popup.insertItem(i18n("Planets"), planetsMenu, 5);
         }               
     }
     else if (sel.galaxy != NULL)
     {
         popup.insertTitle(sel.galaxy->getName().c_str(), 0, 0);
-        popup.insertItem(i18n("&Goto"), 1, 1);
+        popup.insertItem(i18n("&Select"), 1, 1);
+        popup.insertItem(i18n("&Center"), 2, 2);
+        popup.insertItem(i18n("&Goto"), 3, 3);
     }
 
     int id=popup.exec(app->glWidget->mapToGlobal(QPoint(int(x),int(y))));
 
     if (id == 1) {
         app->appCore->getSimulation()->setSelection(sel);
-        app->appCore->charEntered('g');
         return;
     }
     if (id == 2) {
         app->appCore->getSimulation()->setSelection(sel);
-        app->appCore->charEntered('f');
+        app->appCore->charEntered('c');
         return;
     }
     if (id == 3) {
+        app->appCore->getSimulation()->setSelection(sel);
+        app->appCore->charEntered('g');
+        return;
+    }
+    if (id == 4) {
+        app->appCore->getSimulation()->setSelection(sel);
+        app->appCore->charEntered('f');
+        return;
+    }
+    if (id == 5) {
         app->appCore->getSimulation()->setSelection(sel);
         app->appCore->charEntered('y');
         return;
