@@ -27,6 +27,7 @@ struct CelestiaConfig
     std::string demoScriptFile;
     std::string mainFont;
     std::string labelFont;
+    std::string logoTextureFile;
 };
 
 
