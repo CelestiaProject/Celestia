@@ -46,32 +46,32 @@ Url::Url(const std::string& str, CelestiaCore *core)
     else modeStr = decode_string(urlStr.substr(6, pos - 6));
 
 
-    if (!strcasecmp(modeStr.c_str(), "Freeflight"))
+    if (!compareIgnoringCase(modeStr, std::string("Freeflight")))
     {
         mode = astro::Universal;
         nbBodies = 0;
     }
-    else if (!strcasecmp(modeStr.c_str(), "Follow"))
+    else if (!compareIgnoringCase(modeStr, std::string("Follow")))
     {
         mode = astro::Ecliptical;
         nbBodies = 1;
     }
-    else if (!strcasecmp(modeStr.c_str(), "SyncOrbit"))
+    else if (!compareIgnoringCase(modeStr, std::string("SyncOrbit")))
     {
         mode = astro::Geographic;
         nbBodies = 1;
     }
-    else if (!strcasecmp(modeStr.c_str(), "Chase"))
+    else if (!compareIgnoringCase(modeStr, std::string("Chase")))
     {
         mode = astro::Chase;
         nbBodies = 1;
     }
-    else if (!strcasecmp(modeStr.c_str(), "PhaseLock"))
+    else if (!compareIgnoringCase(modeStr, std::string("PhaseLock")))
     {
         mode = astro::PhaseLock;
         nbBodies = 2;
     }
-    else if (!strcasecmp(modeStr.c_str(), "Settings"))
+    else if (!compareIgnoringCase(modeStr, std::string("Settings")))
     {
         type = Settings;
         nbBodies = 0;
