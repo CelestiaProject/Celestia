@@ -596,3 +596,25 @@ Code:
      If an instance is already running the script will be run in that instance
      or that instance's location will be changed to match the URL.
 * Added drag and drop and copy to clipboard for cel:// URLs on Windows
+
+
+1.2.6
+* Integrated more of Grant Hutchinson's corrections for the orientations of
+  solar system bodies
+* Updates for asteroids Ida and Gaspra from Grant Hutchinson:
+   - Added Phil Stooke's textures for the asteroids Ida and Gaspra
+   - Fixed mirror-reversal of Ida and Gaspra meshes (Grant Hutchinson)
+   - Use orbital elements valid for the Galileo encounters
+* Made name matching for galaxies case-insensitive
+* Corrected orbits of Uranians satellites Miranda, Ariel, Umbriel, Titania and
+  Oberon.
+* cel:// URL fixes
+   - Added support for relative URLs
+   - Improved drag and drop support on Windows
+* Added new keyboard commands for dealing with light time delay
+   - ? : show light time delay between current position and selected object
+   - - (minus) : compensate for light time : subtract light travel time to
+     selected object from the current time
+* KDE interface: add subtract light time button to Set Time dialog
+* Added cubic interpolation option for sampled trajectories (.xyz files)
+
