@@ -299,6 +299,9 @@ void KdeApp::initActions()
     new KAction(i18n("Split View Horizontally"), "view_top_bottom", CTRL + Key_R, this, SLOT(slotSplitH()), actionCollection(), "splitH");
     new KAction(i18n("Split View Vertically"), "view_left_right", CTRL + Key_U, this, SLOT(slotSplitV()), actionCollection(), "splitV");
     new KAction(i18n("Cycle View"), "rotate_cw", Key_Tab, this, SLOT(slotCycleView()), actionCollection(), "cycleView");
+    new KAction(i18n("Single View"), "view_remove", CTRL + Key_D, this, SLOT(slotSingleView()), actionCollection(), "singleView");
+
+    new KAction(i18n("Alt-Azimuth Mode"), 0, CTRL + Key_A, this, SLOT(slotAltAzMode()), actionCollection(), "altAzMode");
 
     new KAction(i18n("Celestial Browser"), 0, ALT + Key_C, this, SLOT(slotCelestialBrowser()), actionCollection(), "celestialBrowser");
     new KAction(i18n("Eclipse Finder"), 0, ALT + Key_E, this, SLOT(slotEclipseFinder()), actionCollection(), "eclipseFinder");
@@ -696,8 +699,7 @@ void KdeApp::slotShowNightMaps() {
 }
 
 void KdeApp::slotShowMarkers() {
-     appCore->getRenderer()->setRenderFlags(
-            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowMarkers);
+     appCore->charEntered('\013');
 }
 
 void KdeApp::slotShowAtmospheres() {
@@ -785,6 +787,14 @@ void KdeApp::slotSplitV() {
 
 void KdeApp::slotCycleView() {
     appCore->charEntered('\011');
+}
+
+void KdeApp::slotAltAzMode() {
+    appCore->charEntered('\006');
+}
+
+void KdeApp::slotSingleView() {
+    appCore->charEntered('\004');
 }
 
 void KdeApp::slotAmbientLightLevel(float l) {

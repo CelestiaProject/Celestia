@@ -123,6 +123,8 @@ public slots:
     void slotSplitH();
     void slotSplitV();
     void slotCycleView();
+    void slotAltAzMode();
+    void slotSingleView();
 
     void slotCelestialBrowser();
     void slotEclipseFinder();
