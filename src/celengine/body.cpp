@@ -565,13 +565,13 @@ void Body::computeLocations()
         float alt = v.length() - radius;
         if (alt != -radius)
             v.normalize();
-        v *= boundingRadius;
+        v *= (float) boundingRadius;
 
         Ray3d ray(Point3d(v.x, v.y, v.z), Vec3d(-v.x, -v.y, -v.z));
         double t = 0.0;
         if (m->pick(ray, t))
         {
-            v *= ((1.0 - t) * radius + alt);
+            v *= (float) ((1.0 - t) * radius + alt);
             (*iter)->setPosition(v);
         }
     }
