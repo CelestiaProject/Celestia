@@ -27,6 +27,10 @@
 #include "favorites.h"
 #include "destination.h"
 #include "moviecapture.h"
+//#define CELX
+#ifdef CELX
+#include "celx.h"
+#endif
 class Url;
 
 // class CelestiaWatcher;
@@ -211,6 +215,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void runScript(CommandSequence*);
     void runScript(const std::string& filename);
     void cancelScript();
+    void resumeScript();
 
     int getHudDetail();
     void setHudDetail(int);
@@ -287,6 +292,11 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CommandSequence* demoScript;
     Execution* runningScript;
     ExecutionEnvironment* execEnv;
+
+#ifdef CELX
+    LuaState* celxScript;
+    double scriptAwakenTime;
+#endif // CELX    
 
     int timeZoneBias;              // Diff in secs between local time and GMT
     std:: string timeZoneName;	   // Name of the current time zone
