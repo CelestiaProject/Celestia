@@ -2139,6 +2139,10 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
         {
             if (event->string != NULL)
             {
+                // See if our key accelerators will handle this event.
+                if(gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, (GdkModifierType)event->state))
+                    return TRUE;
+            
                 char* s = event->string;
 
                 while (*s != '\0')
