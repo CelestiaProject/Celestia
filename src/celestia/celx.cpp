@@ -58,6 +58,7 @@ static const int _Frame    = 7;
 static const double MaxTimeslice = 5.0;
 
 static const char* KbdCallback = "celestia_keyboard_callback";
+static const char* CleanupCallback = "celestia_cleanup_callback";
 
 // select which type of error will be fatal (call lua_error) and
 // which will return a default value instead
@@ -205,13 +206,13 @@ double LuaState::getTime() const
 
 // Callback for CelestiaCore::charEntered.
 // Returns true if keypress has been consumed 
-bool LuaState::charEntered(char c)
+bool LuaState::charEntered(const char* c_p)
 {
     int stack_top = lua_gettop(costate);
     bool result = true;
     lua_pushstring(costate, KbdCallback);
     lua_gettable(costate, LUA_GLOBALSINDEX);
-    lua_pushnumber(costate, static_cast<lua_Number>(c));
+    lua_pushstring(costate, c_p);
     timeout = getTime() + 1.0;
     if (lua_pcall(costate, 1, 1, 0) != 0)
     {
@@ -228,6 +229,22 @@ bool LuaState::charEntered(char c)
     // cleanup stack - is this necessary?
     lua_settop(costate, stack_top);
     return result;
+}
+
+// allow the script to perform cleanup
+void LuaState::cleanup()
+{
+    lua_pushstring(costate, CleanupCallback);
+    lua_gettable(costate, LUA_GLOBALSINDEX);
+    if (lua_isnil(costate, -1))
+    {
+        return;
+    }
+    timeout = getTime() + 1.0;
+    if (lua_pcall(costate, 0, 0, 0) != 0)
+    {
+        cerr << "Error while executing cleanup-callback: " << lua_tostring(costate, -1) << "\n";
+    }
 }
 
 static void checkTimeslice(lua_State *l, lua_Debug *ar)

@@ -472,12 +472,14 @@ void CelestiaCore::cancelScript()
     else if (celxScript != NULL)
     {
         // The script is complete
+        celxScript->cleanup();
+        if (textEnterMode & KbPassToScript)
+            setTextEnterMode(textEnterMode & ~KbPassToScript);
         delete celxScript;
         celxScript = NULL;
         scriptAwakenTime = 0.0;
     }
 #endif
-    messageText = "";
 }
 
 
@@ -557,8 +559,7 @@ void CelestiaCore::resumeScript()
         if (!celxScript->isAlive())
         {
             // The script is complete
-            delete celxScript;
-            celxScript = NULL;
+            cancelScript();
         }
         else
         {
@@ -1037,7 +1038,7 @@ void CelestiaCore::charEntered(const char *c_p)
 #ifdef CELX
     if (celxScript != NULL && (textEnterMode & KbPassToScript))
     {
-        if (c != '\033' && celxScript->charEntered(c))
+        if (c != '\033' && celxScript->charEntered(c_p))
         {
             return;
         }
