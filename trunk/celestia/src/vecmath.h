@@ -53,6 +53,8 @@ public:
 
     inline T distanceTo(const Point3&) const;
     inline T distanceToSquared(const Point3&) const;
+    inline T distanceFromOrigin() const;
+    inline T distanceFromOriginSquared() const;
 
     T x, y, z;
 };
@@ -396,6 +398,17 @@ template<class T> T Point3<T>::distanceToSquared(const Point3& p) const
             (p.y - y) * (p.y - y) +
             (p.z - z) * (p.z - z));
 }
+
+template<class T> T Point3<T>::distanceFromOrigin() const
+{
+    return (T) sqrt(x * x + y * y + z * z);
+}
+
+template<class T> T Point3<T>::distanceFromOriginSquared() const
+{
+    return x * x + y * y + z * z;
+}
+
 
 
 //**** Vector2 constructors
