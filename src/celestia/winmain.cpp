@@ -1371,7 +1371,7 @@ void DisableFullScreen()
 
 
 // Select the pixel format for a given device context
-void SetDCPixelFormat(HDC hDC)
+bool SetDCPixelFormat(HDC hDC)
 {
     static PIXELFORMATDESCRIPTOR pfd = {
 	sizeof(PIXELFORMATDESCRIPTOR),	// Size of this structure
@@ -1394,9 +1394,17 @@ void SetDCPixelFormat(HDC hDC)
 
     // Choose a pixel format that best matches that described in pfd
     int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
-
-    // Set the pixel format for the device context
-    SetPixelFormat(hDC, nPixelFormat, &pfd);
+    if (nPixelFormat == 0)
+    {
+        // Uh oh . . . looks like we can't handle OpenGL on this device.
+        return false;
+    }
+    else
+    {
+        // Set the pixel format for the device context
+        SetPixelFormat(hDC, nPixelFormat, &pfd);
+        return true;
+    }
 }
 
 
@@ -1474,7 +1482,14 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     SetFocus(hwnd);
 
     deviceContext = GetDC(hwnd);
-    SetDCPixelFormat(deviceContext);
+    if (!SetDCPixelFormat(deviceContext))
+    {
+	MessageBox(NULL,
+                   "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
+                   MB_OK | MB_ICONERROR);
+	return NULL;
+    }
+
     if (glContext == NULL)
         glContext = wglCreateContext(deviceContext);
     wglMakeCurrent(deviceContext, glContext);
