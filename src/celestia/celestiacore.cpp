@@ -235,6 +235,9 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
+    // Four pixel tolerance for picking
+    float pickTolerance = degToRad(renderer->getFieldOfView()) / height * 4.0f;
+
     // If the mouse hasn't moved much since it was pressed, treat this
     // as a selection or context menu event.  Otherwise, assume that the
     // mouse was dragged and ignore the event.
@@ -244,7 +247,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         {
             Vec3f pickRay = renderer->getPickRay((int) x, (int) y);
             Selection oldSel = sim->getSelection();
-            Selection newSel = sim->pickObject(pickRay);
+            Selection newSel = sim->pickObject(pickRay, pickTolerance);
 
             //If object picked is a satellite but it is not in the render list,
             //pick the satellites' primary object.
@@ -259,7 +262,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         else if (button == RightButton)
         {
             Vec3f pickRay = renderer->getPickRay((int) x, (int) y);
-            Selection sel = sim->pickObject(pickRay);
+            Selection sel = sim->pickObject(pickRay, pickTolerance);
             if (!sel.empty())
             {
                 if (contextMenuCallback != NULL)
