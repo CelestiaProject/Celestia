@@ -241,10 +241,10 @@
         MeanLongitude    355.453
 	}
 
-	RotationPeriod    24.622962
-	Obliquity         26.72
-	EquatorAscendingNode 82.91
-	RotationOffset    136.005
+	RotationPeriod    	 24.622962
+	Obliquity         	 26.72
+	EquatorAscendingNode	 82.91
+	RotationOffset    	136.005
 
 	Albedo            0.150
 }
@@ -340,7 +340,7 @@
 
 	EllipticalOrbit
 	{
-	Epoch      2452583.763194445
+	Epoch      2452583.763194445 # 2002 Nov 5 06:19UT (Galileo encounter)
 	Period          0.49817905
 	SemiMajorAxis   181994.98
 	Eccentricity    0.0046637841
@@ -896,14 +896,14 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2450085.5 #revised value - 1996 Jan 03.0 (earliest Horizons data)
-	Period		1.122315  #revised to mean value
-	SemiMajorAxis	117600    #revised to mean value
-	Eccentricity	0.0004    #revised to mean value
-	Inclination	1.101     #revised value - at epoch
-	AscendingNode	327.378   #revised value - at epoch
-	ArgOfPericenter	277.888   #revised value - at epoch 
-	MeanAnomaly	206.367   #revised value - at epoch 
+	Epoch		2450085.5 # 1996 Jan 3 00:00UT
+	Period		1.122315  # mean
+	SemiMajorAxis	117600    # mean
+	Eccentricity	0.0004    # mean
+	Inclination	1.101     # at epoch
+	AscendingNode	327.378   # at epoch
+	ArgOfPericenter	277.888   # at epoch 
+	MeanAnomaly	206.367   # at epoch 
 	}
 
 	Obliquity              	  0.6
@@ -927,22 +927,21 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2447763.5 #revised value - 1989 Aug 25.00 (Voyager encounter)
-	Period		5.8768541 #revised to mean value
-	SemiMajorAxis	354765.286 #revised value - at epoch
-	Eccentricity	0.000022849 #revised value - at epoch
-	Inclination	156.826240 #revised value - at epoch
-	#AscendingNode	172.426656 #revised value - at epoch
-	AscendingNode	147.899288 #revised value - at epoch
-	ArgOfPericenter	293.092400 #revised value - at epoch
-	MeanAnomaly	315.726316 #revised value - at epoch
+	Epoch		2447763.5  # 1989 Aug 25 00:00UT (Voyager encounter)
+	Period		5.8768541  #  mean
+	SemiMajorAxis	354765.286 # at epoch
+	Eccentricity	0.00002285 # at epoch
+	Inclination	156.826240 # at epoch
+	#AscendingNode	172.426656 # at epoch
+	AscendingNode	147.899288 # at epoch
+	ArgOfPericenter	293.092400 # at epoch
+	MeanAnomaly	315.726316 # at epoch
 	}
 
-	RotationPeriod	       -141.0444984 # retrograde rotation
-	Obliquity		 23.2 # at epoch
-	EquatorAscendingNode	327.9 # at epoch
-	RotationEpoch	    2447763.5 # 1989 Aug 25.00
-	RotationOffset		108.5 # at epoch
+	RotationEpoch	    2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
+	Obliquity		156.8 # at epoch
+	EquatorAscendingNode	147.9 # at epoch
+	RotationOffset		 71.5 # at epoch
 
 	Albedo         0.756
 }
@@ -955,17 +954,17 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2447763.5 #revised value - 1989 Aug 25.00 (Voyager encounter)
-	Period		360.13619 #revised to mean value
-	SemiMajorAxis	5513400   #revised to mean value
-	Eccentricity	0.7512    #revised to mean value
-	Inclination	28.385    #revised value - at epoch
-	AscendingNode	190.678   #revised value - at epoch
-	ArgOfPericenter 17.690    #revised value - at epoch
-	MeanAnomaly    	36.056    #revised value - at epoch
+	Epoch		2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
+	Period		360.13619 # mean
+	SemiMajorAxis	5513400   # mean
+	Eccentricity	0.7512    # mean
+	Inclination	28.385    # at epoch
+	AscendingNode	190.678   # at epoch
+	ArgOfPericenter 17.690    # at epoch
+	MeanAnomaly    	36.056    # at epoch
 	}
 
-	Albedo 0.155
+	Albedo          0.155
 }
 
 
@@ -993,13 +992,13 @@
 	EquatorAscendingNode	228.34
 	RotationOffset		320.75
 	
-	Albedo            0.3
+	Albedo           0.55
 }
 
 "Charon" "Sol/Pluto"
 {
 	Texture "charon.jpg"
-	Radius   593
+	Radius   586
 
 	InfoURL "http://www.nineplanets.org/pluto.html#Charon"
 
@@ -1014,12 +1013,11 @@
 	MeanAnomaly	93.4395
 	}
 
-	RotationPeriod		153.293904
 	Obliquity		  1.0
 	EquatorAscendingNode	287.6
-	RotationOffset		213.3
+	RotationOffset	 	213.3
 	
-	Albedo         0.3
+	Albedo          0.35
 }
 
 
@@ -1063,7 +1061,7 @@
 
 	EllipticalOrbit 
 	{ 
-	Epoch      2452600.5 #2002 Nov 22 00:00:00UT 
+	Epoch       2452600.5     # 2002 Nov 22 00:00UT 
 	Period            4.60014 
 	SemiMajorAxis     2.7660 
 	Eccentricity      0.0793 
@@ -1073,11 +1071,11 @@
 	MeanAnomaly     232.067 
 	} 
 
+	RotationPeriod         9.075 
+	RotationEpoch    2449249.91125 # 1993 Sep 19 09:52:12UT 
 	Obliquity             11 
 	EquatorAscendingNode  29 
-	RotationEpoch    2449249.91125 #1993 Sep 19 09:52:12UT 
-	RotationOffset       -20.15 
-	RotationPeriod         9.075 
+	RotationOffset       339.85 
 
 	Albedo 0.113 
 } 
@@ -1090,7 +1088,7 @@
 
 	EllipticalOrbit 
 	{ 
-	Epoch      2452600.5 #2002 Nov 22 00:00:00UT 
+	Epoch       2452600.5     # 2002 Nov 22 00:00UT 
 	Period            4.61868 
 	SemiMajorAxis     2.7733 
 	Eccentricity      0.2300 
@@ -1100,10 +1098,10 @@
 	MeanAnomaly     218.057 
 	} 
 
+	RotationPeriod         7.81323264 
 	Obliquity            102 
 	EquatorAscendingNode 162 
-	RotationOffset        -7.23 
-	RotationPeriod         7.81323264 
+	RotationOffset       352.77 
 
 	Albedo 0.159 
 } 
@@ -1116,7 +1114,7 @@
 
 	EllipticalOrbit 
 	{ 
-	Epoch      2452600.5 #2002 Nov 22 00:00:00UT 
+	Epoch       2452600.5     # 2002 Nov 22 00:00UT 
 	Period            4.35540 
 	SemiMajorAxis     2.6669 
 	Eccentricity      0.2589 
@@ -1126,9 +1124,9 @@
 	MeanAnomaly     119.146 
 	} 
 
+	RotationPeriod         7.811 
 	Obliquity             56 
 	EquatorAscendingNode 196 
-	RotationPeriod         7.811 
 
 	Albedo 0.238 
 } 
@@ -1142,7 +1140,7 @@
 
 	EllipticalOrbit 
 	{ 
-	Epoch       2452000.5 #2001 Apr 1 00:00:00UT 
+	Epoch       2452000.5       # 2001 Apr 1 00:00UT 
 	Period            3.62729 
 	SemiMajorAxis     2.3670775 
 	Eccentricity      0.089753 
@@ -1152,11 +1150,11 @@
 	MeanAnomaly     104.980 
 	} 
 
+	RotationPeriod         5.342 
+	RotationEpoch    2450124.90833 # 1996 May 11 09:48UT 
 	Obliquity             40 
 	EquatorAscendingNode  91 
-	RotationEpoch    2450124.90833 #1996 May 11 09:48UT 
 	RotationOffset       145.77 
-	RotationPeriod         5.342 
 
 	Albedo 0.423 
 } 
@@ -1172,25 +1170,23 @@
 	Texture "gaspramosaic.jpg" # Phil Stooke
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-
 	Radius 9.5
 
 	EllipticalOrbit
 	{
-	Epoch           2448559    #1991 Oct 29 - Galileo encounter
-	Period          3.2837     #average
-	SemiMajorAxis   2.2096348  #at epoch
-	Eccentricity    0.1738752  #at epoch
-	Inclination     4.0975771  #at epoch
-	AscendingNode   253.445592 #at epoch
-	ArgOfPericenter 129.045896 #at epoch
-	MeanAnomaly     280.769206 #at epoch
+	Epoch     2448559.0        # 1991 Oct 29 12:00UT (Galileo encounter)
+	Period          3.2837     # average
+	SemiMajorAxis   2.2096348  # at epoch
+	Eccentricity    0.1738752  # at epoch
+	Inclination     4.0975771  # at epoch
+	AscendingNode   253.445592 # at epoch
+	ArgOfPericenter 129.045896 # at epoch
+	MeanAnomaly     280.769206 # at epoch
 	}
 
-	RotationPeriod       7.042073
+	RotationPeriod         7.042073
+	Obliquity             69.28
 	EquatorAscendingNode 109.59
-	Obliquity            69.28
-
 	RotationOffset       238.865
 
 	Albedo 0.1
@@ -1201,34 +1197,36 @@
 	Class "asteroid"
 	Mesh "ida.3ds"
 	#Texture "asteroid.jpg"
-	Texture "idamosaic.jpg" #Phil Stooke
+	Texture "idamosaic.jpg" # Phil Stooke
 	Radius 45
 
 	EllipticalOrbit
 	{
-	Epoch		2449228      #1993 Aug 28: Galileo encounter
-	Period          4.8417       #average
-	SemiMajorAxis   2.863731     #at epoch
-	Eccentricity    0.043109     #at epoch
-	Inclination     1.137110     #at epoch
-	AscendingNode   324.586055   #at epoch
-	ArgOfPericenter 113.017101   #at epoch
-        MeanAnomaly     131.594945   #at epoch
+	Epoch	  2449228.0        # 1993 Aug 28 12:00UT (Galileo encounter)
+	Period          4.8417     # mean
+	SemiMajorAxis   2.863731   # at epoch
+	Eccentricity    0.043109   # at epoch
+	Inclination     1.137110   # at epoch
+	AscendingNode   324.586055 # at epoch
+	ArgOfPericenter 113.017101 # at epoch
+        MeanAnomaly     131.594945 # at epoch
 	}
 
-	RotationPeriod       -4.633632
-	EquatorAscendingNode  172.77
-	Obliquity	      23.04
-	RotationOffset        0.54
+	Orientation          [ 180 1 0 0 ] # retrograde rotation
+	RotationPeriod         4.633632
+	Obliquity	     156.96
+	EquatorAscendingNode 352.77
+	RotationOffset       179.46
 
 	Albedo 0.24
 }
 
 "Dactyl" "Sol/Ida"
 {
-	#Data for Dactyl taken from: 
-	#Petit et al.: The Long-Term Dynamics of Dactyl's Orbit
-	#(Icarus 1997: 130; 177-197)
+	# Data for Dactyl taken from: 
+	# Petit et al.: The Long-Term Dynamics of Dactyl's Orbit
+	# (Icarus 1997: 130; 177-197)
+
 	InfoURL "http://www.lpl.arizona.edu/~hurfordt/research/papers/Icarus130.pdf"
 
 	Class "asteroid"
@@ -1238,18 +1236,17 @@
 
 	EllipticalOrbit
 	{
-	Epoch	         2449228.2028 #1993 Aug 28 16:52:05
-	Period           -0.96534 #stable 5:1 resonant orbit (Petit et al.)
-	SemiMajorAxis    83.5     #stable 5:1 resonant orbit (Petit et al.)
-	Eccentricity     0.13     #stable 5:1 resonant orbit (Petit et al.)
-	LongOfPericenter 230      #stable pericenter at 90:E Ida longitude (Petit et al.)
-	AscendingNode    90       #VERY approximate - chosen to place Dactyl north 
-                                  #of Ida's equator, as seen at time of Galileo encounter
-	Inclination      8        #estimated at 7-9 degrees (Petit et al.)
+	Epoch	     2449228.2028  # 1993 Aug 28 16:52:05UT
+	Period             0.96534 # stable 5:1 resonant orbit (Petit et al.)
+	SemiMajorAxis     83.5     # stable 5:1 resonant orbit (Petit et al.)
+	Eccentricity       0.13    # stable 5:1 resonant orbit (Petit et al.)
+	LongOfPericenter 310       # stable pericenter at 90:E Ida longitude (Petit et al.)
+	AscendingNode     90       # VERY approximate - chosen to place Dactyl north 
+                                   # of Ida's equator, as seen at time of Galileo encounter
+	Inclination        8       # estimated at 7-9 degrees (Petit et al.)
 	}
 
-	RotationPeriod  -23.16816 #enforce synchronous rotation
-	RotationOffset  57        #place prime meridian facing Ida
+	RotationOffset   123       # place prime meridian facing Ida
 
 	Albedo 0.2
 }
@@ -1260,7 +1257,6 @@
 	Class "asteroid"
 	Mesh   "eros.3ds"
 	Texture "eros.jpg"
-	# Texture "white.jpg"
 	# NormalMap "erosbump2k.jpg"
 	# Color sampled from true color photo taken by NEAR
 	Color   [ 0.52 0.47 0.42 ]
@@ -1269,14 +1265,14 @@
 
 	EllipticalOrbit
 	{
-	Epoch           2451171 #23 Dec 1998 NEAR fly-by
-	Period            1.761 #average
-	SemiMajorAxis     1.458261 #at epoch
-	Eccentricity      0.222885 #at epoch
-	Inclination      10.830143 #at epoch
-	AscendingNode   304.430882 #at epoch
-	ArgOfPericenter 178.613184 #at epoch
-	MeanAnomaly     208.403434 #at epoch
+	Epoch       2451171.0      # 1998 Dec 23 12:00UT (NEAR-Shoemaker encounter)
+	Period            1.761    # average
+	SemiMajorAxis     1.458261 # at epoch
+	Eccentricity      0.222885 # at epoch
+	Inclination      10.830143 # at epoch
+	AscendingNode   304.430882 # at epoch
+	ArgOfPericenter 178.613184 # at epoch
+	MeanAnomaly     208.403434 # at epoch
 	}
 
 	RotationPeriod         5.270
@@ -1284,7 +1280,7 @@
 	EquatorAscendingNode 107.23
 	RotationOffset       158.165
 
-	Albedo            0.16
+	Albedo 0.16
 }
 
 
@@ -1301,6 +1297,7 @@
 
 	EllipticalOrbit
 	{
+	Epoch       2452200.5       # 2001 Oct 18 00:00UT
 	Period            3.976715
 	SemiMajorAxis     2.5100537
 	Eccentricity      0.6342274
@@ -1308,15 +1305,14 @@
 	AscendingNode   128.24788
 	ArgOfPericenter 274.78070
         MeanAnomaly      86.28120
-	Epoch        2452200.5 # 2001 Oct 18 00:00:00UT
 	}
 
-	Obliquity       35
-	RotationPeriod  -129.6 # 5.41 days
-	PrecessionRate  -48.98 # 7.35 day period
-	Orientation     [ 90 1 0 0 ]
+	Orientation     [ -90 1 0 0 ]
+	RotationPeriod  129.6         # 5.41 days
+	Obliquity       145
+	PrecessionRate  -48.98        # 7.35 day period
 
-	Albedo            0.16
+	Albedo 0.16
 }
 
 "Geographos" "Sol"
@@ -1328,10 +1324,12 @@
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
 	Radius  2.555
+
 	InfoURL "http://www-personal.engin.umich.edu/~scheeres/reprints/Icarus_geographos.pdf"
 
 	EllipticalOrbit
 	{
+	Epoch       2450800.5    # 1997 Dec 18 00:00UT
 	Period            1.39 
 	SemiMajorAxis     1.2455
 	Eccentricity      0.3354
@@ -1339,15 +1337,14 @@
 	AscendingNode   337.352
 	ArgOfPericenter 276.756
         MeanAnomaly     180.595
-	Epoch      2450800.5 # 1997 Dec 18 00:00:00UT
 	}
 
-	Orientation       [90 1 0 0] 
-	Obliquity               136 
-	EquatorAscendingNode    145 
-	RotationPeriod            5.223 # from JPL Horizons 
+	Orientation          [ 90 1 0 0 ] 
+	RotationPeriod         5.223 
+	Obliquity            136 
+	EquatorAscendingNode 145 
 
-	Albedo            0.326 #from JPL Horizons 
+	Albedo 0.326 
 }
 
 "Kleopatra" "Sol"
@@ -1359,26 +1356,27 @@
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
 	Radius  109
+
 	InfoURL "http://www-personal.engin.umich.edu/~scheeres/reprints/Science_kleopatra.pdf" 
 
 	EllipticalOrbit
 	{
+	Epoch       2450800.5    # 1997 Dec 12 00:00UT
 	Period            4.67
-	SemiMajorAxis     2.793
-	Eccentricity      0.2535
-	Inclination      13.14
-	AscendingNode   337.352
-	ArgOfPericenter 276.756
-        MeanAnomaly     180.595
-	Epoch      2450800.5
+	SemiMajorAxis     2.791
+	Eccentricity      0.2531
+	Inclination      13.138
+	AscendingNode   215.699
+	ArgOfPericenter 179.350
+        MeanAnomaly     225.804
 	}
 
-	Orientation       [90 1 0 0] 
-	Obliquity                63 
-	EquatorAscendingNode    162    
+	Orientation          [ 90 1 0 0 ] 
+	RotationPeriod         5.385
+	Obliquity             63 
+	EquatorAscendingNode 162    
 
-	RotationPeriod    5.385
-	Albedo            0.16
+	Albedo 0.16
 	# Class M
 
 }
@@ -1395,6 +1393,7 @@
 
 	EllipticalOrbit
 	{
+	Epoch       2452000.5        # 2001 Apr 1 00:00UT
 	Period            1.3752
 	SemiMajorAxis     1.2320798
 	Eccentricity      0.20151423
@@ -1402,13 +1401,12 @@
 	AscendingNode    84.45490
 	ArgOfPericenter 209.14766
         MeanAnomaly     356.6879717
-	Epoch       2452000.5 
 	}
 
-	Orientation	  [ 90 1 0 0 ]
-	RotationPeriod    0.178
+	Orientation    [ 90 1 0 0 ]
+	RotationPeriod 0.178
 
-	Albedo            0.15
+	Albedo 0.15
 
 }
 
@@ -1426,6 +1424,7 @@
 
 	EllipticalOrbit
 	{
+	Epoch       2452000.5        # 2001 Apr 1 00:00UT 
 	Period            1.1223
 	SemiMajorAxis     1.0781035
 	Eccentricity      0.34951251
@@ -1433,15 +1432,14 @@
 	AscendingNode    33.23590
 	ArgOfPericenter  55.18040
         MeanAnomaly     229.8627955
-	Epoch       2452000.5 
 	}
 
-	Orientation       [90 1 0 0] 
-	Obliquity               116 
-	EquatorAscendingNode    114 
-	RotationPeriod           14.90 
+	Orientation          [ 90 1 0 0 ] 
+	RotationPeriod        14.90 
+	Obliquity            116 
+	EquatorAscendingNode 114 
 
-	Albedo            0.15
+	Albedo 0.15
 }
 
 "Golevka" "Sol"
@@ -1453,10 +1451,12 @@
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
 	Radius  0.34
+
 	InfoURL "http://www2.crl.go.jp/ka/radioastro/people/koyama/golevka.pdf" 
 
 	EllipticalOrbit
 	{
+	Epoch       2452000.5        # 2001 Apr 1 00:00UT 
 	Period            3.995
 	SemiMajorAxis     2.5120500
 	Eccentricity      0.60117380
@@ -1464,15 +1464,14 @@
 	AscendingNode   212.16560
 	ArgOfPericenter  65.25133
         MeanAnomaly     159.8983670
-	Epoch       2452000.5 
 	}
 
-	Orientation       [90 1 0 0] 
-	Obliquity               135 
-	EquatorAscendingNode    292 
-	RotationPeriod            6.0289 
+	Orientation          [ 90 1 0 0 ] 
+	RotationPeriod         6.0289 
+	Obliquity            135 
+	EquatorAscendingNode 292 
     
-	Albedo            0.15 
+	Albedo 0.15 
 }
 
 "Castalia" "Sol"
@@ -1487,6 +1486,7 @@
 
 	EllipticalOrbit
 	{
+	Epoch       2452000.5        # 2001 Apr 1 00:00UT
 	Period            1.096
 	SemiMajorAxis     1.0632007
 	Eccentricity      0.48324394
@@ -1494,15 +1494,14 @@
 	AscendingNode   325.71246
 	ArgOfPericenter 121.26355
         MeanAnomaly     152.5186007
-	Epoch       2452000.5 # 2001 Apr 1 00:00:00
 	}
 
-	Orientation         [90 1 0 0] 
+	Orientation          [ 90 1 0 0 ] 
+	RotationPeriod         4.095 
 	Obliquity            146 
 	EquatorAscendingNode 325 
-	RotationPeriod         4.095 
 
-	Albedo            0.15 
+	Albedo 0.15 
 }
 
 
@@ -1516,6 +1515,7 @@
 
 	EllipticalOrbit 
 	{ 
+	Epoch        2449400.5      #1994 Feb 17 00:00UT
 	Period            75.31589 
 	SemiMajorAxis     17.834144 
 	Eccentricity       0.967143 
@@ -1523,19 +1523,18 @@
 	AscendingNode     58.420081 
 	ArgOfPericenter  111.332485 
 	MeanAnomaly       38.384264 
-	Epoch         2449400.5 
 	} 
 
 	# chaotic rotation, imperfectly defined: 
 	# this version from "The New Solar System", 4th Edition; Eds.
 	# JK Beatty, CC Petersen, A Chaikin 
 
-	Orientation [90 0 0 1]   # rotates around long axis 
-	Obliquity        66    
-	RotationPeriod  170      # 7.1 day axial rotation period 
-	PrecessionRate   97      # 3.7 day precession period 
+	Orientation    [ 90 0 0 1 ] # rotates around long axis 
+	RotationPeriod 170          # 7.1 day axial rotation period 
+	Obliquity       66    
+	PrecessionRate  97          # 3.7 day precession period 
 
-	Albedo            0.04 
+	Albedo 0.04 
 } 
 
 "Borrelly" "Sol" 
@@ -1544,25 +1543,26 @@
 	Mesh "borrelly.cms" 
 	Texture "asteroid.jpg" 
 	Radius 2.2 
+
 	InfoURL "http://www.lpi.usra.edu/meetings/lpsc2002/pdf/1256.pdf" 
 
 	EllipticalOrbit 
 	{ 
+	Epoch        2452174.5      # 2001 Sep 22 00:00UT
 	Period             6.86302 
 	SemiMajorAxis      3.611363 
 	Eccentricity       0.623908 
 	Inclination       30.324612 
 	AscendingNode     75.424869 
 	ArgOfPericenter  353.375385 
-	MeanAnomaly       -1.043909 
-	Epoch        2452174.5 
+	MeanAnomaly      358.956091 
 	} 
 
-	Obliquity                90 
-	EquatorAscendingNode    315 
-	RotationPeriod           25 
+	RotationPeriod        25 
+	Obliquity             90 
+	EquatorAscendingNode 315 
 
-	Albedo            0.04 
+	Albedo 0.04 
 } 
 
 "Ikeya-Zhang" "Sol" 
@@ -1573,6 +1573,7 @@
 
 	EllipticalOrbit 
 	{ 
+	Epoch        2452352.47847  # 2002 Mar 18 23:29UT
 	Period           367.181906 
 	SemiMajorAxis     51.276792 
 	Eccentricity       0.990111 
@@ -1580,10 +1581,9 @@
 	AscendingNode     93.3718 
 	ArgOfPericenter   34.6666 
 	MeanAnomaly        0 
-	Epoch        2452352.47847 
 	} 
 
-	# These are all made up (copied from Halley) 
+	# These are all made up (copied from Halley)
 	Radius           7.5 
 	RotationPeriod 170 
 
@@ -1600,14 +1600,14 @@
 
 	EllipticalOrbit 
 	{ 
+	Epoch        2449608.5      # 1994 Sep 13 00:00UT
 	Period            50.90359 
 	SemiMajorAxis     13.734941 
 	Eccentricity       0.384424 
 	Inclination        6.927771 
 	AscendingNode    209.395188 
 	ArgOfPericenter  339.432152 
-	MeanAnomaly      -10.016331 
-	Epoch        2449608.5 
+	MeanAnomaly      349.983669 
 	} 
 
 	RotationPeriod 5.918 
@@ -1622,21 +1622,21 @@
 "Varuna" "Sol" 
 { 
 	Class "asteroid" 
-	InfoURL "http://spacewatch.lpl.arizona.edu/2000wr106.html" 
-	#InfoURL "http://www.ifa.hawaii.edu/faculty/jewitt/papers/VARUNA2/JS2002.pdf" 
 	Texture "asteroid.jpg" 
 	Radius 450 
 
+	InfoURL "http://www.ifa.hawaii.edu/faculty/jewitt/papers/VARUNA2/JS2002.pdf" 
+
 	EllipticalOrbit 
 	{ 
+	Epoch        2452400.5      # 2002 May 6 00:00UT 
 	Period           284.83446 
 	SemiMajorAxis     43.290196 
 	Eccentricity       0.053794 
 	Inclination       17.12557 
 	AscendingNode     97.2843 
 	ArgOfPericenter  275.5744 
-	MeanAnomaly     82.67171 
-	Epoch      2452400.5 
+	MeanAnomaly       82.67171 
 	} 
 
 	RotationPeriod 6.3442 # for a double-peaked light curve 
@@ -1653,6 +1653,7 @@
 
 	EllipticalOrbit 
 	{ 
+	Epoch        2452400.5       # 2002 May 6 00:00UT
 	Period           246.50564 
 	SemiMajorAxis     39.3138672 
 	Eccentricity       0.2447032 
@@ -1660,11 +1661,9 @@
 	AscendingNode     71.0155 
 	ArgOfPericenter  300.9234 
 	MeanAnomaly      259.585 
-	Epoch        2452400.5 
 	} 
 
-	Albedo 0.07 
-
 	RotationPeriod 30.0 
-}
 
+	Albedo 0.07 
+}
