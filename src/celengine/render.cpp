@@ -1826,6 +1826,47 @@ static void setupNightTextureCombine()
 }
 
 
+static void setupBumpTexenv()
+{
+    // Set up the texenv_combine extension to do DOT3 bump mapping.
+    // No support for ambient light yet.
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+
+    // The primary color contains the light direction in surface
+    // space, and texture0 is a normal map.  The lighting is
+    // calculated by computing the dot product.
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+
+    // In the second stage, modulate the lighting value by the
+    // base texture color.
+    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+    glEnable(GL_TEXTURE_2D);
+
+    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+}
+
+
+static void setupTexenvGlossMapAlpha()
+{
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_ALPHA);
+
+}
+
+
 static void renderMeshDefault(Mesh* mesh,
                               const RenderInfo& ri,
                               bool lit)
@@ -1949,7 +1990,7 @@ static void renderSphere_Combiners(const RenderInfo& ri,
 }
 
 
-#if 0
+#if 1
 static void renderSphere_DOT3_VP(const RenderInfo& ri,
                                  const Frustum& frustum,
                                  const GLContext& context)
@@ -1967,6 +2008,7 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         ri.baseTex->bind();
     }
 
+    vproc->enable();
     vproc->parameter(vp::EyePosition, ri.eyePos_obj);
     vproc->parameter(vp::SunDirection, ri.sunDir_obj);
     vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
@@ -1974,61 +2016,49 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     vproc->parameter(vp::SpecularColor, ri.sunColor * ri.specularColor);
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
 
-    if (ri.bumpTex != NULL)
+    if (ri.bumpTex != NULL && ri.baseTex != NULL)
     {
+        // We don't yet handle the case where there's a bump map but no
+        // base texture.
         vproc->use(vp::diffuseBump);
-        SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
-                                      ri.ambientColor * ri.color,
-                                      ri.sunColor * ri.color);
+        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+        ri.baseTex->bind();
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+        ri.bumpTex->bind();
+        setupBumpTexenv();
         lodSphere->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
-                          ri.baseTex, ri.bumpTex);
-        DisableCombiners();
-
-        // Render a specular pass
-        if (ri.specularColor != Color::Black)
-        {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE, GL_ONE);
-            glEnable(GL_COLOR_SUM_EXT);
-            vproc->use(vp::specular);
-
-            // Disable ambient and diffuse
-            vproc->parameter(vp::AmbientColor, Color::Black);
-            vproc->parameter(vp::DiffuseColor, Color::Black);
-            SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
-
-            textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
-            lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
-                              frustum, ri.lod,
-                              textures, 1);
-
-            // re-enable diffuse
-            vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
-
-            DisableCombiners();
-            glDisable(GL_COLOR_SUM_EXT);
-            glDisable(GL_BLEND);
-        }
-    }
-    else if (ri.specularColor != Color::Black)
-    {
-        glEnable(GL_COLOR_SUM_EXT);
-        vproc->use(vp::specular);
-        SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
-        unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
-            Mesh::VertexProgParams;
-        lodSphere->render(attributes, frustum, ri.lod,
-                          ri.baseTex, ri.glossTex);
-        DisableCombiners();
-        glDisable(GL_COLOR_SUM_EXT);
+                          ri.bumpTex, ri.baseTex);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
     else
     {
         vproc->use(vp::diffuse);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
                           ri.baseTex);
+    }
+
+    // Render a specular pass; can't be done in one pass because
+    // specular needs to be modulated with a gloss map.
+    if (ri.specularColor != Color::Black)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        vproc->use(vp::glossMap);
+
+        if (ri.glossTex != NULL)
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        else
+            setupTexenvGlossMapAlpha();
+
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+                          frustum, ri.lod,
+                          ri.glossTex != NULL ? ri.glossTex : ri.baseTex);
+
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glDisable(GL_BLEND);
     }
 
     if (ri.nightTex != NULL)
@@ -2897,6 +2927,10 @@ void Renderer::renderObject(Point3f pos,
 
             case GLContext::GLPath_NvCombiner:
                 renderSphere_Combiners(ri, viewFrustum);
+                break;
+
+            case GLContext::GLPath_DOT3_ARBVP:
+                renderSphere_DOT3_VP(ri, viewFrustum, *context);
                 break;
 
             default:
