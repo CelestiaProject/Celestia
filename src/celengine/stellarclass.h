@@ -11,6 +11,7 @@
 #define _STELLARCLASS_H_
 
 #include <iostream>
+#include <string>
 #include <celutil/basictypes.h>
 #include <celutil/color.h>
 
@@ -66,6 +67,9 @@ public:
     inline LuminosityClass getLuminosityClass() const;
 
     Color getApparentColor() const;
+
+    char* str(char* buf, unsigned int buflen) const;
+    std::string str() const;
 
     friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
