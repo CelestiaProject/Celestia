@@ -68,7 +68,7 @@ SampledOrbit::SampledOrbit() :
     boundingRadius(0.0),
     period(1.0),
     lastSample(0),
-    interpolation(Linear)
+    interpolation(Cubic)
 {
 }
 
@@ -180,8 +180,8 @@ Point3d SampledOrbit::computePosition(double jd) const
                 Vec3d v1((double) s3.x - (double) s1.x,
                          (double) s3.y - (double) s1.y,
                          (double) s3.z - (double) s1.z);
-                v0 *= 1.0 / (s2.t - s0.t);
-                v1 *= 1.0 / (s3.t - s1.t);
+                v0 *= (s2.t - s1.t) / (s2.t - s0.t);
+                v1 *= (s2.t - s1.t) / (s3.t - s1.t);
 
                 pos = cubicInterpolate(p0, v0, p1, v1, t);
             }
