@@ -342,6 +342,8 @@ static int parseRenderFlag(const string& name)
         return Renderer::ShowAtmospheres;
     else if (compareIgnoringCase(name, "grid") == 0)
         return Renderer::ShowCelestialSphere;
+    else if (compareIgnoringCase(name, "smoothlines") == 0)
+        return Renderer::ShowSmoothLines;
     else
         return 0;
 }
@@ -365,6 +367,8 @@ static int parseLabelFlag(const string& name)
         return Renderer::StarLabels;
     else if (compareIgnoringCase(name, "galaxies") == 0)
         return Renderer::GalaxyLabels;
+    else if (compareIgnoringCase(name, "locations") == 0)
+        return Renderer::LocationLabels;
     else
         return 0;
 }
@@ -870,6 +874,22 @@ static int rotation_mult(lua_State* l)
     return 1;
 }
 
+static int rotation_imag(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for rotation_imag");
+    Quatd* q = this_rotation(l);
+    vector_new(l, imag(*q));
+    return 1;
+}
+
+static int rotation_real(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for rotation_real");
+    Quatd* q = this_rotation(l);
+    lua_pushnumber(l, real(*q));
+    return 1;
+}
+
 static int rotation_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Rotation]");
@@ -880,6 +900,8 @@ static void CreateRotationMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Rotation);
 
+    RegisterMethod(l, "real", rotation_real);
+    RegisterMethod(l, "imag", rotation_imag);
     RegisterMethod(l, "__tostring", rotation_tostring);
     RegisterMethod(l, "__add", rotation_add);
     RegisterMethod(l, "__mul", rotation_mult);
@@ -1608,6 +1630,17 @@ static int observer_setorientation(lua_State* l)
     return 0;
 }
 
+static int observer_getorientation(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to observer:getorientation()");
+
+    Observer* o = this_observer(l);
+    Quatf q = o->getOrientation();
+    rotation_new(l, Quatd(q.w, q.x, q.y, q.z));
+
+    return 1;
+}
+
 static int observer_rotate(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument required for rotate");
@@ -1975,6 +2008,7 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "setposition", observer_setposition);
     RegisterMethod(l, "lookat", observer_lookat);
     RegisterMethod(l, "setorientation", observer_setorientation);
+    RegisterMethod(l, "getorientation", observer_getorientation);
     RegisterMethod(l, "rotate", observer_rotate);
     RegisterMethod(l, "center", observer_center);
     RegisterMethod(l, "follow", observer_follow);
