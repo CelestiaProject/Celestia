@@ -15,12 +15,13 @@ USER INTERFACE
   * User control over which orbits should be displayed
   * Orbits should be occluded by planets
 * Next/prev body commands
-* Add preferences for font and text color for labels to config file
+* Add preferences for text color to config file
 * Make context menus work properly in full-screen mode
 * Fix camera rotation wackiness when using goto--probably slerp between orientations
 * Dialog box for displaying detailed information about a star or planet
 * Create a help file
 * Improve web info feature
+* Added accelerator key labels to Windows menus
 
 VISUALS
 * Shadows from rings on planet
@@ -48,6 +49,7 @@ POLISH
 * Add a flashy intro screen
 * Add screen shot feature
 * Preload some textures to avoid loading delay
+* Use antialiased fonts
 
 SIMULATION ACCURACY
 * Fix apparent magnitude calculation for planets
@@ -67,15 +69,15 @@ BUGS
 * Investigate possible visual anomalies with ring shadows on ATI Rage cards
 
 OPTIMIZATION
-* Add view frustum culling for stars
-* Convert the VisibleStarSet class to use an octree based algorithm
 * Add option to force 16-bit textures
+* Add low resolution texture package
 
 CODE
 * Make parser more robust (and fix that EOF problem)
 * Change random printfs to DPRINTFs and Logs
 * Finish assert-ing the code
-* Move common code from glutmain.cpp and winmain.cpp to a single module
+* Move common code from glutmain.cpp, gtkmain.cpp, and winmain.cpp 
+  to a single module
 
 PORTING
 * Make 3DS loading code byte-order and FP format independent
@@ -84,5 +86,9 @@ PORTING
 * MacOS port
 
 MISC
-* Make solar system creation applet, for adding hypothetical systems to a Celestia universe
+* Make solar system creation applet, for adding hypothetical systems to
+  a Celestia universe
+* Allow lists of bodies from different .ssc files to be incorporated into
+  the same planetary system
+
 
