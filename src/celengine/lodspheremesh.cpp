@@ -425,7 +425,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
         int uTexSplit = texture0->getUSubtextures();
         int vTexSplit = texture0->getVSubtextures();
         int patchSplit = maxDivisions / extent;
-        assert(patchSplit >= texSplit);
+        assert(patchSplit >= uTexSplit && patchSplit >= vTexSplit);
 
         int u = theta0 / thetaExtent;
         int v = phi0 / phiExtent;
