@@ -132,6 +132,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         Key_NumPad7         = 31,
         Key_NumPad8         = 32,
         Key_NumPad9         = 33,
+        Key_BackTab         = 127,
         KeyCount            = 128,
     };
 
@@ -279,6 +280,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     double messageStart;
     double messageDuration;
     std::string typedText;
+    std::vector<std::string> typedTextCompletion;
+    int typedTextCompletionIdx;
     bool textEnterMode;
     int hudDetail;
     bool wireframe;

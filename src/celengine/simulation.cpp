@@ -456,6 +456,32 @@ Selection Simulation::findObjectFromPath(string s)
     return universe->findPath(s, path, nPathEntries);
 }
 
+std::vector<std::string> Simulation::getObjectCompletion(string s)
+{
+    PlanetarySystem* path[2];
+    int nPathEntries = 0;
+    PlanetarySystem* sys = NULL;
+
+    if (selection.star != NULL)
+    {
+        SolarSystem* solsys = universe->getSolarSystem(selection.star);
+        if (solsys != NULL)
+            sys =  path[nPathEntries++] = solsys->getPlanets();
+    }
+    else if (selection.body != NULL)
+    {
+        sys = selection.body->getSystem();
+        while (sys != NULL && sys->getPrimaryBody() != NULL)
+            sys = sys->getPrimaryBody()->getSystem();
+        path[nPathEntries++] = sys;
+    }
+
+    if (closestSolarSystem != NULL && closestSolarSystem->getPlanets() != sys)
+        path[nPathEntries++] = closestSolarSystem->getPlanets();
+
+    return universe->getCompletionPath(s, path, nPathEntries);
+}
+
 
 double Simulation::getTimeScale() const
 {

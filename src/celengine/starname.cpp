@@ -91,6 +91,20 @@ uint32 StarNameDatabase::findCatalogNumber(const string& name) const
         return iter->second;
 }
 
+std::vector<std::string> StarNameDatabase::getCompletion(const std::string& name) const
+{
+    std::vector<std::string> completion;
+    for (NameIndex::const_iterator iter = nameIndex.begin();
+         iter != nameIndex.end() ; iter++)
+    {
+        if (!compareIgnoringCase(iter->first, name, name.length()))
+        {
+            completion.push_back(iter->first);
+        }
+    }
+    return completion;
+}
+
 
 // Return the first name matching the catalog number or finalName()
 // if there are no matching names.  The first name *should* be the

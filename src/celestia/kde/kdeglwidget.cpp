@@ -363,9 +363,19 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
     switch (e->key())
     {
     case Key_Escape:
+        if (inputMode)
+        {
+            for (unsigned int n=0; n<actionColl->count(); n++) {
+                if (actionColl->action(n)->shortcut().seq(0).key(0).modFlags()==0)
+                    actionColl->action(n)->setEnabled(true);
+            }
+            inputMode = !inputMode;
+        }
         appCore->charEntered('\033');
         break;
-
+    case Key_BackTab:
+        appCore->charEntered(CelestiaCore::Key_BackTab);
+        break;
     case Key_Q:
         if( e->state() == ControlButton )
         {
@@ -379,9 +389,9 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
             if ((e->text() != 0) && (e->text() != ""))
             {
                 for (unsigned int i=0; i<e->text().length(); i++)
-                {           
+                {
                     char c = e->text().at(i).latin1();
-                    if (c == 0x0D) {
+                    if (c == 0x0D || c=='\033') {
                     	if (!inputMode) { // entering input mode
                         	for (unsigned int n=0; n<actionColl->count(); n++) {
                                 	if (actionColl->action(n)->shortcut().count() > 0
@@ -396,7 +406,7 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
                         }
                     	inputMode = !inputMode;
                     }
-                    if (c >= 0x20 || c == 0x0D || c== 0x08) appCore->charEntered(c);
+                    if (c >= 0x20 || c == 0x0D || c== 0x08 || c=='\011') appCore->charEntered(c);
                 }
             }
         }
