@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include <vector>
 #include <celmath/mathlib.h>
 #include "astro.h"
@@ -2119,25 +2120,18 @@ class PhoebeOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-        double t_d = jd - 2433282.5;
-        double t = t_d / 365.25;
-        double t_cen = t / 100.0;
-        double t_cen_2 = square(t_cen);
+        double t = jd - 2433282.5;
+        double T = t / 365.25;
 
-        double gam_ = 173.949 - 0.020 * t;
-        double i = 28.0817 + gam_;
-        // double a = 18720552.0 / SaturnRadius;
-        double a = 12952000.0 / SaturnRadius;
-        double lam_ = 277.8720 - 0.6541068 * t_d;
-        double Om = 245.998 - 0.41353 * t;
-        double om = 280.165 - 0.19586 * t;
-        double ecc = 0.16326;
-
-        // lam_ = 2 * Om - lam_;
-        // om = 2 * Om - om;
+        double a = astro::AUtoKilometers(0.0865752f) / SaturnRadius;
+        double lam_ = 277.872 - 0.6541068 * t - 90;
+        double e = 0.16326;
+        double pi = 280.165 - 0.19586 * T;
+        double i = 173.949 - 0.020 * T;
+        double Om = 245.998 - 0.41353 * T;
 
         double lam, gam, r, w;
-        OuterSaturnMoonParams(a, ecc, i, Om, lam_ - om, lam_,
+        OuterSaturnMoonParams(a, e, i, Om, lam_ - pi, lam_,
                               lam, gam, r, w);
 
         return SaturnMoonPosition(lam, gam, w, r);
@@ -2152,6 +2146,189 @@ class PhoebeOrbit : public CachingOrbit
     {
         return 15100000 * BoundingRadiusSlack;
     };
+};
+
+
+class UranianSatelliteOrbit : public CachingOrbit
+{
+private:
+    double a;
+    double n;
+    double L0;
+    double L1;
+    double *L_k, *L_theta, *L_phi;
+    int LTerms;
+    double *z_k, *z_theta, *z_phi;
+    int zTerms;
+    double *zeta_k, *zeta_theta, *zeta_phi;
+    int zetaTerms;
+
+public:
+    UranianSatelliteOrbit(double _a,
+                          double _n,
+                          double _L0, double _L1,
+                          int _LTerms, int _zTerms, int _zetaTerms,
+                          double* _L_k, double* _L_theta, double* _L_phi,
+                          double* _z_k, double* _z_theta, double* _z_phi,
+                          double* _zeta_k, double* _zeta_theta,
+                          double* _zeta_phi) :
+        a(_a), n(_n), L0(_L0), L1(_L1),
+        LTerms(_LTerms), zTerms(_zTerms), zetaTerms(_zetaTerms),
+        L_k(_L_k), L_theta(_L_theta), L_phi(_L_phi),
+        z_k(_z_k), z_theta(_z_theta), z_phi(_z_phi),
+        zeta_k(_zeta_k), zeta_theta(_zeta_theta), zeta_phi(_zeta_phi)
+    {
+    };
+
+public:
+    double getPeriod() const
+    {
+        return 2 * PI / n;
+    }
+
+    double getBoundingRadius() const
+    {
+        // Not quite correct, but should work since e is pretty low
+        // for most of the Uranian moons.
+        return a * BoundingRadiusSlack;
+    }
+
+    Point3d computePosition(double jd) const
+    {
+        double t = jd - 2444239.5;
+        int i;
+
+        double L = L0 + L1 * t;
+        for (i = 0; i < LTerms; i++)
+            L += L_k[i] * sin(L_theta[i] * t + L_phi[i]);
+
+        double a0 = 0.0;
+        double a1 = 0.0;
+        for (i = 0; i < zTerms; i++)
+        {
+            double w = z_theta[i] * t + z_phi[i];
+            a0 += z_k[i] * cos(w);
+            a1 += z_k[i] * sin(w);
+        }
+
+        double b0 = 0.0;
+        double b1 = 0.0;
+        for (i = 0; i < zetaTerms; i++)
+        {
+            double w = zeta_theta[i] * t + zeta_phi[i];
+            b0 += zeta_k[i] * cos(w);
+            b1 += zeta_k[i] * sin(w);
+        }
+
+        double e = sqrt(square(a0) + square(a1));
+        double p = atan2(a1, a0);
+        double gamma = 2.0 * asin(sqrt(square(b0) + square(b1)));
+        double theta = atan2(b1, b0);
+
+        // Now that we have all the orbital elements, compute the position
+        double M = L - p;
+
+        // Iterate a few times to compute the eccentric anomaly from the
+        // mean anomaly.
+        double ecc = M;
+        for (i = 0; i < 4; i++)
+            ecc = M + e * sin(ecc);
+        double x = a * (cos(ecc) - e);
+        double z = a * sqrt(1 - square(e)) * -sin(ecc);
+
+        Mat3d R = (Mat3d::yrotation(theta) *
+                   Mat3d::xrotation(gamma) *
+                   Mat3d::yrotation(p - theta));
+        return R * Point3d(x, 0, z);
+    }
+};
+
+
+static double uran_n[5] =
+{ -4.44352267, 2.49254257, 1.51595490, 0.72166316, 0.46658054 };
+static double uran_a[5] =
+{ 129800, 191200, 266000, 435800, 583600 };
+static double uran_L0[5] =
+{ -0.23805158, 3.09804641, 2.28540169, 0.85635879, -0.91559180 };
+static double uran_L1[5] =
+{ 4.44519055, 2.49295252, 1.51614811, 0.72171851, 0.46669212 };
+static double uran_L_k[5][3] = {
+{  0.02547217, -0.00308831, -3.181e-4 },
+{ -1.86050e-3, 2.1999e-4, 0 },
+{ 6.6057e-4, 0, 0 },
+{ 0, 0, 0 },
+{ 0, 0, 0 }
+};
+static double uran_L_theta[5][3] = {
+{ -2.18167e-4, -4.36336e-4, -6.54502e-4 },
+{ -2.18167e-4, -4.36336e-4, 0 },
+{ -2.18167e-4, 0, 0 },
+{ 0, 0, 0 },
+{ 0, 0, 0 }
+};
+static double uran_L_phi[5][3] = {
+{ 1.32, 2.64, 3.97 },
+{ 1.32, 2.64, 0 },
+{ 1.32, 0, 0 },
+{ 0, 0, 0 },
+{ 0, 0, 0 },   
+};
+static double uran_z_k[5][5] = {
+{ 1.31238e-3, -1.2331e-4, -1.9410e-4, 0, 0 },
+{ 1.18763e-3, 8.6159e-4, 0, 0, 0 },
+{ -2.2795e-4, 3.90496e-3, 3.0917e-4, 2.2192e-4, 5.4923e-4 },
+{ 9.3281e-4, 1.12089e-3, 7.9343e-4, 0, 0 },
+{ -7.5868e-4, 1.39734e-3, -9.8726e-4, 0, 0 }
+};
+static double uran_z_theta[5][5] = {
+{ 1.5273e-4, 0.08606, 0.709, 0, 0 },
+{ 4.727824e-5, 2.179316e-5, 0, 0, 0 },
+{ 4.727824e-5, 2.179132e-5, 1.580524e-5, 2.9363068e-6, -0.01157 },
+{ 1.580524e-5, 2.9363068e-6, -6.9008e-3, 0, 0 },
+{ 1.580524e-5, 2.9363068e-6, -6.9008e-3, 0, 0 }
+};
+static double uran_z_phi[5][5] = {
+{ 0.61, 0.15, 6.04, 0, 0 },
+{ 2.41, 2.07, 0, 0, 0 },
+{ 2.41, 2.07, 0.74, 0.43, 5.71 },
+{ 0.74, 0.43, 1.82, 0, 0 },
+{ 0.74, 0.43, 1.82, 0, 0 }
+};
+static double uran_zeta_k[5][2] = {
+{ 0.03787171, 0 },
+{ 3.5825e-4, 2.9008e-4 },
+{ 1.11336e-3, 3.5014e-4 },
+{ 6.8572e-4, 3.7832e-4 },
+{ -5.9633e-4, 4.5169e-4 }
+};
+static double uran_zeta_theta[5][2] = {
+{ -1.54449e-4, 0 },
+{ -4.782474e-5, -2.156628e-5 },
+{ -2.156628e-5, -1.401373e-5 },
+{ -1.401373e-5, -1.9713918e-6 },
+{ -1.401373e-5, -1.9713918e-6 }
+};
+static double uran_zeta_phi[5][2] = {
+{ 5.70, 0 },
+{ 0.40, 0.59 },
+{ 0.59, 1.75 },
+{ 1.75, 4.21 },
+{ 1.75, 4.21 },
+};
+
+static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
+{
+    assert(n >= 1 && n <= 5);
+    n--;
+
+    return new UranianSatelliteOrbit(uran_a[n], uran_n[n],
+                                     uran_L0[n], uran_L1[n],
+                                     3, 5, 2,
+                                     uran_L_k[n], uran_L_theta[n],
+                                     uran_L_phi[n], uran_z_k[n],
+                                     uran_z_theta[n], uran_z_phi[n],
+                                     uran_zeta_k[n], uran_zeta_theta[n],
+                                     uran_zeta_phi[n]);
 };
 
 
@@ -2203,6 +2380,16 @@ Orbit* GetCustomOrbit(const std::string& name)
         return new IapetusOrbit();
     if (name == "phoebe")
         return new PhoebeOrbit();
+    if (name == "miranda")
+        return CreateUranianSatelliteOrbit(1);
+    if (name == "ariel")
+        return CreateUranianSatelliteOrbit(2);
+    if (name == "umbriel")
+        return CreateUranianSatelliteOrbit(3);
+    if (name == "titania")
+        return CreateUranianSatelliteOrbit(4);
+    if (name == "oberon")
+        return CreateUranianSatelliteOrbit(5);
     else
         return NULL;
 }
