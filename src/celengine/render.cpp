@@ -190,7 +190,7 @@ class ShadowTextureFunction : public TexelFunctionObject
 {
 public:
     ShadowTextureFunction(float _umbra) : umbra(_umbra) {};
-    void operator()(float, float, float, unsigned char*);
+    virtual void operator()(float u, float v, float w, unsigned char* pixel);
     float umbra;
 };
 
@@ -219,7 +219,6 @@ void ShadowTextureFunction::operator()(float u, float v, float w,
     pixel[1] = pixVal;
     pixel[2] = pixVal;
 };
-
 
 static void IllumMapEval(float x, float y, float z,
                          unsigned char* pixel)
@@ -283,9 +282,9 @@ bool Renderer::init(int winWidth, int winHeight)
         {
             for (int i = 0; i < 4; i++)
             {
+                ShadowTextureFunction func(i * 0.25f);
                 eclipseShadowTextures[i] =
-                    CreateProceduralTexture(128, 128, GL_RGB,
-                                            ShadowTextureFunction(i * 0.25f));
+                    CreateProceduralTexture(128, 128, GL_RGB, func);
                 if (eclipseShadowTextures[i] != NULL)
                 {
                     eclipseShadowTextures[i]->setMaxMipMapLevel(2);

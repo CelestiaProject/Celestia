@@ -26,9 +26,9 @@ class TextureInfo : public ResourceInfo<Texture>
     unsigned int resolution;
 
     TextureInfo(const std::string _source, unsigned int _flags, unsigned int _resolution = medres) :
-        source(_source), bumpHeight(0.0f), flags(_flags), resolution(_resolution) {};
+        source(_source), flags(_flags), bumpHeight(0.0f), resolution(_resolution) {};
     TextureInfo(const std::string _source, float _bumpHeight, unsigned int _flags, unsigned int _resolution = medres) :
-        source(_source), bumpHeight(_bumpHeight), flags(_flags), resolution(_resolution) {};
+        source(_source), flags(_flags), bumpHeight(_bumpHeight), resolution(_resolution) {};
     virtual Texture* load(const std::string&);
 };
 
