@@ -15,9 +15,9 @@
 #ifdef __GNUC__
 
 #ifndef DEBUG
-#define DPRINTF(int level, args...)
+#define DPRINTF(level, args...)
 #else
-#define DPRINTF(int level, args...) DebugPrint(level, args)
+#define DPRINTF(level, args...) DebugPrint(level, args)
 extern void DebugPrint(int level, char *format, ...);
 #endif
 
