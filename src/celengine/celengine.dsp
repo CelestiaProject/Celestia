@@ -101,6 +101,10 @@ SOURCE=.\body.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\boundaries.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\catalogxref.cpp
 # End Source File
 # Begin Source File
@@ -270,6 +274,10 @@ SOURCE=.\atmosphere.h
 # Begin Source File
 
 SOURCE=.\body.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\boundaries.h
 # End Source File
 # Begin Source File
 
