@@ -18,8 +18,7 @@ template<class T> class Ray3
     Ray3();
     Ray3(const Point3<T>&, const Vector3<T>&);
  
-    bool testIntersectSphere(const Point3<T>&, T, T&);
-    bool testIntersectEllipsoid(const Point3<T>&, const Vector3<T>&, T&);
+    Point3<T> point(T) const;
    
  public:
     Point3<T> origin;
@@ -41,6 +40,12 @@ template<class T> Ray3<T>::Ray3(const Point3<T>& _origin,
 {
 
 }
+
+template<class T> Point3<T> Ray3<T>::point(T t) const
+{
+    return origin + direction * t;
+}
+
 template<class T> Ray3<T> operator*(const Ray3<T>& r, const Matrix3<T>& m)
 {
     return Ray3<T>(r.origin * m, r.direction * m);
