@@ -43,7 +43,7 @@ HTREEITEM PopulateLocationsTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
     // Associate the image list with the tree-view control.
     TreeView_SetImageList(hTree, himlIcons, TVSIL_NORMAL);
 
-    const FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList* favorites = appCore->getFavorites();
     if (favorites != NULL)
     {
         //Create a subtree item called "Locations"
@@ -58,7 +58,7 @@ HTREEITEM PopulateLocationsTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
         tvis.item.iSelectedImage = 2;
         if (hParent = TreeView_InsertItem(hTree, &tvis))
         {
-            FavoritesList::const_iterator iter = favorites->begin();
+            FavoritesList::iterator iter = favorites->begin();
             while (iter != favorites->end())
             {
                 TVINSERTSTRUCT tvis;
@@ -77,7 +77,7 @@ HTREEITEM PopulateLocationsTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
 
                     if (hParentItem = TreeView_InsertItem(hTree, &tvis))
                     {
-                        FavoritesList::const_iterator subIter = favorites->begin();
+                        FavoritesList::iterator subIter = favorites->begin();
                         while (subIter != favorites->end())
                         {
                             if (!(*subIter)->isFolder && (*subIter)->parentFolder == (*iter)->name)
@@ -143,7 +143,7 @@ HTREEITEM PopulateLocationFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
     // Associate the image list with the tree-view control.
     TreeView_SetImageList(hTree, himlIcons, TVSIL_NORMAL);
 
-    const FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList* favorites = appCore->getFavorites();
     if (favorites != NULL)
     {
         //Create a subtree item called "Locations"
@@ -158,7 +158,7 @@ HTREEITEM PopulateLocationFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
         tvis.item.iSelectedImage = 2;
         if (hParent = TreeView_InsertItem(hTree, &tvis))
         {
-            FavoritesList::const_iterator iter = favorites->begin();
+            FavoritesList::iterator iter = favorites->begin();
             while (iter != favorites->end())
             {
                 TVINSERTSTRUCT tvis;
@@ -193,7 +193,7 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
     // Add favorites to locations menu
     int numStaticItems = 2; //The number of items defined in the .rc file.
 
-    const FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList* favorites = appCore->getFavorites();
     if (favorites != NULL)
     {
         MENUITEMINFO menuInfo;
@@ -225,7 +225,7 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
             // Add folders and their sub items
             int rootMenuIndex = numStaticItems;
             int subMenuIndex, resourceIndex = 0;
-            FavoritesList::const_iterator iter = favorites->begin();
+            FavoritesList::iterator iter = favorites->begin();
             while (iter != favorites->end())
             {
                 // Is this a folder?
@@ -369,8 +369,8 @@ void AddNewLocationFolderInTree(HWND hTree, char* folderName)
 
 void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
 {
-    const FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::const_iterator iter;
+    FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList::iterator iter;
     TVITEM tvItem;
     HTREEITEM hItem, hParent;
     char itemName[33];
@@ -423,7 +423,7 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
                         //new folder must be inserted after the last item of the 
                         //last folder.
                         //Locate position of last folder.
-                        FavoritesList::const_iterator folderIter = favorites->begin();
+                        FavoritesList::iterator folderIter = favorites->begin();
                         iter = favorites->begin();
                         while (iter != favorites->end())
                         {
@@ -448,8 +448,8 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
 
 void InsertLocationInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
 {
-    const FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::const_iterator iter;
+    FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList::iterator iter;
     TVITEM tvItem;
     HTREEITEM hItem;
     char itemName[33];
@@ -501,8 +501,8 @@ void InsertLocationInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
 
 void DeleteLocationFromFavorites(HWND hTree, CelestiaCore* appCore)
 {
-    const FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::const_iterator iter;
+    FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList::iterator iter;
     TVITEM tvItem;
     HTREEITEM hItem, hFolder;
     char itemName[33], folderName[33];
@@ -543,8 +543,8 @@ void DeleteLocationFromFavorites(HWND hTree, CelestiaCore* appCore)
                             {
                                 if ((*iter)->name == itemName || (*iter)->parentFolder == itemName)
                                 {
-                                    //Delete item from favorites.
-                                    ((FavoritesList*)favorites)->erase((FavoritesList::iterator)iter);
+				    // Delete item from favorites.
+                                    favorites->erase(iter);
                                 }
                                 else
                                     iter++;
@@ -559,11 +559,11 @@ void DeleteLocationFromFavorites(HWND hTree, CelestiaCore* appCore)
                         {
                             if ((*iter)->name == itemName && (*iter)->parentFolder == folderName)
                             {
-                                //Delete the tree item
+                                // Delete the tree item
                                 if (TreeView_DeleteItem(hTree, hItem))
                                 {
-                                    //Delete item from favorites.
-                                    ((FavoritesList*)favorites)->erase((FavoritesList::iterator)iter);
+                                    // Delete item from favorites.
+                                    favorites->erase(iter);
                                 }
                                 break;
                             }
@@ -578,8 +578,8 @@ void DeleteLocationFromFavorites(HWND hTree, CelestiaCore* appCore)
 
 void RenameLocationInFavorites(HWND hTree, char* newName, CelestiaCore* appCore)
 {
-    const FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::const_iterator iter;
+    FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList::iterator iter;
     TVITEM tvItem;
     HTREEITEM hItem, hFolder;
     char itemName[33], folderName[33];
@@ -658,8 +658,8 @@ void RenameLocationInFavorites(HWND hTree, char* newName, CelestiaCore* appCore)
 
 void MoveLocationInFavorites(HWND hTree, CelestiaCore* appCore)
 {
-    const FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::const_iterator iter;
+    FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList::iterator iter;
     TVITEM tvItem;
     TVINSERTSTRUCT tvis;
     HTREEITEM hDragItemFolder, hDropItem;
@@ -735,7 +735,7 @@ void MoveLocationInFavorites(HWND hTree, CelestiaCore* appCore)
         {
             if ((*iter)->name == dragItemName && (*iter)->parentFolder == dragItemFolderName)
             {
-                FavoritesList::const_iterator subIter;
+                FavoritesList::iterator subIter;
 
                 FavoritesEntry* fav = new FavoritesEntry();
                 fav->name = dragItemName;
@@ -763,8 +763,8 @@ void MoveLocationInFavorites(HWND hTree, CelestiaCore* appCore)
                                   (*subIter)->parentFolder != "")
                                   subIter++;
 
-                            //Insert new location at position in iteration.
-                            ((FavoritesList*)favorites)->insert((FavoritesList::iterator)subIter, fav);
+                            // Insert new location at position in iteration.
+                            favorites->insert(subIter, fav);
                             break;
                         }
 
@@ -777,8 +777,8 @@ void MoveLocationInFavorites(HWND hTree, CelestiaCore* appCore)
                     {
                         if ((*iter)->name == dragItemName && (*iter)->parentFolder == dragItemFolderName)
                         {
-                            //Delete item from favorites.
-                            ((FavoritesList*)favorites)->erase((FavoritesList::iterator)iter);
+                            // Delete item from favorites.
+                            favorites->erase(iter);
                             break;
                         }
 
@@ -787,11 +787,11 @@ void MoveLocationInFavorites(HWND hTree, CelestiaCore* appCore)
                 }
                 else
                 {
-                    //Just append item to end for root folders
-                    ((FavoritesList*)favorites)->insert((FavoritesList::iterator)favorites->end(), fav);
+                    // Just append item to end for root folders
+                    favorites->insert(favorites->end(), fav);
 
-                    //Delete item from favorites.
-                    ((FavoritesList*)favorites)->erase((FavoritesList::iterator)iter);
+                    // Delete item from favorites.
+                    favorites->erase(iter);
                 }
 
                 break;
