@@ -215,10 +215,7 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
             v.point = mesh.getVertex(triVert[j]);
             v.normal = vertexNormals[i * 3 + j];
             if ((parts & VertexList::TexCoord0) != 0)
-            {
                 v.texCoords[0] = mesh.getTexCoord(triVert[j]);
-                cout << "vt " << v.texCoords[0].x << ',' << v.texCoords[0].y << '\n';
-            }
             vl->addVertex(v);
         }
     }
