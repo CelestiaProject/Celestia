@@ -1372,7 +1372,6 @@ static void renderSmoothMesh(Mesh& mesh,
 
 struct RenderInfo
 {
-    Mesh* mesh;
     Color color;
     Texture* baseTex;
     Texture* bumpTex;
@@ -1390,8 +1389,7 @@ struct RenderInfo
     float lod;
     bool useTexEnvCombine;
 
-    RenderInfo() : mesh(NULL),
-                   color(1.0f, 1.0f, 1.0f),
+    RenderInfo() : color(1.0f, 1.0f, 1.0f),
                    baseTex(NULL),
                    bumpTex(NULL),
                    nightTex(NULL),
@@ -1504,8 +1502,19 @@ void renderAtmosphere(const Atmosphere& atmosphere,
 }
 
 
-static void renderMeshDefault(const RenderInfo& ri,
-                              const Frustum& frustum)
+static void setupNightTextureCombine()
+{
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_ONE_MINUS_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+}
+
+
+static void renderMeshDefault(Mesh* mesh,
+                              const RenderInfo& ri)
 {
     glEnable(GL_LIGHTING);
 
@@ -1521,26 +1530,42 @@ static void renderMeshDefault(const RenderInfo& ri,
 
     glColor(ri.color);
 
-    ri.mesh->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
+    mesh->render(Mesh::Normals | Mesh::TexCoords0, ri.lod);
+}
+
+
+static void renderPlanetDefault(const RenderInfo& ri,
+                                const Frustum& frustum)
+{
+    glEnable(GL_LIGHTING);
+
+    if (ri.baseTex == NULL)
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+        ri.baseTex->bind();
+    }
+
+    glColor(ri.color);
+
+    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_ONE_MINUS_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+        setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        ri.mesh->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 }
 
 
-static void renderMeshFragmentShader(const RenderInfo& ri,
-                                     const Frustum& frustum)
+static void renderPlanetFragmentShader(const RenderInfo& ri,
+                                       const Frustum& frustum)
 {
     glDisable(GL_LIGHTING);
 
@@ -1558,7 +1583,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri,
 
     if (ri.bumpTex != NULL)
     {
-        renderBumpMappedMesh(*(ri.mesh),
+        renderBumpMappedMesh(*lodSphere,
                              *(ri.bumpTex),
                              ri.sunDir_eye,
                              ri.orientation,
@@ -1568,7 +1593,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri,
     }
     else if (ri.baseTex != NULL)
     {
-        renderSmoothMesh(*(ri.mesh),
+        renderSmoothMesh(*lodSphere,
                          *(ri.baseTex),
                          ri.sunDir_eye,
                          ri.orientation,
@@ -1580,7 +1605,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri,
             ri.nightTex->bind();
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE);
-            renderSmoothMesh(*(ri.mesh),
+            renderSmoothMesh(*lodSphere,
                              *(ri.nightTex),
                              ri.sunDir_eye, 
                              ri.orientation,
@@ -1593,15 +1618,15 @@ static void renderMeshFragmentShader(const RenderInfo& ri,
     else
     {
         glEnable(GL_LIGHTING);
-        ri.mesh->render(ri.lod);
+        lodSphere->render(ri.lod);
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
 
 
-static void renderMeshVertexAndFragmentShader(const RenderInfo& ri,
-                                              const Frustum& frustum)
+static void renderPlanetVertexAndFragmentShader(const RenderInfo& ri,
+                                                const Frustum& frustum)
 {
     if (ri.baseTex == NULL)
     {
@@ -1662,8 +1687,8 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri,
         SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
-        ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams, frustum, ri.lod);
+        lodSphere->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
+                          Mesh::VertexProgParams, frustum, ri.lod);
         DisableCombiners();
     }
     else if (ri.specularColor != Color(0.0f, 0.0f, 0.0f))
@@ -1671,8 +1696,8 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri,
         vp::parameter(34, ri.sunColor * ri.specularColor);
         vp::use(vp::specular);
         SetupCombinersGlossMapWithFog();
-        ri.mesh->render(Mesh::Normals | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams, frustum, ri.lod);
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
+                          Mesh::VertexProgParams, frustum, ri.lod);
         DisableCombiners();
     }
     else
@@ -1681,8 +1706,8 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri,
             vp::use(vp::diffuseHaze);
         else
             vp::use(vp::diffuse);
-        ri.mesh->render(Mesh::Normals | Mesh::TexCoords0 |
-                        Mesh::VertexProgParams, frustum, ri.lod);
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
+                          Mesh::VertexProgParams, frustum, ri.lod);
     }
 
     if (hazeDensity > 0.0f)
@@ -1691,16 +1716,11 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri,
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_ONE_MINUS_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+        setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         vp::use(vp::diffuse);
-        ri.mesh->render(ri.lod);
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -1718,12 +1738,14 @@ static float getSphereLOD(float discSizeInPixels)
         return -1.0f;
     else if (discSizeInPixels < 200)
         return 0.0f;
-    else if (discSizeInPixels < 800)
+    else if (discSizeInPixels < 1200)
         return 1.0f;
-    else if (discSizeInPixels < 3200)
+    else if (discSizeInPixels < 7200)
         return 2.0f;
-    else
+    else if (discSizeInPixels < 53200)
         return 3.0f;
+    else
+        return 4.0f;
 }
 
 
@@ -1750,19 +1772,6 @@ void Renderer::renderPlanet(const Body& body,
         glDepthMask(GL_TRUE);
 
         glDisable(GL_BLEND);
-
-        // Determine the mesh to use
-        if (body.getMesh() == InvalidResource)
-        {
-            if (body.getRadius() < 50)
-                ri.mesh = asteroidMesh;
-            else
-                ri.mesh = lodSphere;
-        }
-        else
-        {
-            ri.mesh = GetMeshManager()->find(body.getMesh());
-        }
 
         const Surface& surface = body.getSurface();
 
@@ -1892,7 +1901,7 @@ void Renderer::renderPlanet(const Body& body,
         // inverse transpose of the model matrix, this means they end up
         // getting scaled by a factor of 1.0 / planet radius (in km).  This
         // has terrible effects on lighting: the planet appears almost
-        // completely dark.  To get aroundthis, the GL_rescale_normal
+        // completely dark.  To get around this, the GL_rescale_normal
         // extension was introduced and eventually incorporated into into the
         // OpenGL 1.2 standard.  Of course, not everyone implemented this
         // incredibly simple and essential little extension.  Microsoft is
@@ -1920,22 +1929,22 @@ void Renderer::renderPlanet(const Body& body,
         }
         glEnable(GL_LIGHT0);
 
+        // Compute the inverse model/view matrix
+        Mat4f invMV = (orientation.toMatrix4() *
+                       Mat4f::translation(Point3f(-pos.x, -pos.y, -pos.z)) *
+                       planetMat *
+                       Mat4f::scaling(1.0f / radius));
+
+        // Transform the frustum into object coordinates using the
+        // inverse model/view matrix.
         Frustum viewFrustum(degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             nearPlaneDistance, farPlaneDistance);
+        viewFrustum.transform(invMV);
 
-        if (ri.mesh != NULL)
+        if (body.getMesh() == InvalidResource)
         {
-            // Compute the inverse model/view matrix
-            Mat4f invMV = (orientation.toMatrix4() *
-                           Mat4f::translation(Point3f(-pos.x,-pos.y,-pos.z)) *
-                           planetMat *
-                           Mat4f::scaling(1.0f / radius));
-
-            // Transform the frustum into object coordinates using the
-            // inverse model/view matrix.
-            viewFrustum.transform(invMV);
-
+            // This is a spherical mesh
             // Currently, there are three different rendering paths:
             //   1. Generic OpenGL 1.1
             //   2. OpenGL 1.2 + nVidia register combiners
@@ -1943,11 +1952,18 @@ void Renderer::renderPlanet(const Body& body,
             // Unfortunately, this means that unless you've got a GeForce card,
             // you'll miss out on a lot of the eye candy . . .
             if (fragmentShaderEnabled && vertexShaderEnabled)
-                renderMeshVertexAndFragmentShader(ri, viewFrustum);
+                renderPlanetVertexAndFragmentShader(ri, viewFrustum);
             else if (fragmentShaderEnabled && !vertexShaderEnabled)
-                renderMeshFragmentShader(ri, viewFrustum);
+                renderPlanetFragmentShader(ri, viewFrustum);
             else
-                renderMeshDefault(ri, viewFrustum);
+                renderPlanetDefault(ri, viewFrustum);
+        }
+        else
+        {
+            // This is a mesh loaded from a file
+            Mesh* mesh = GetMeshManager()->find(body.getMesh());
+            if (mesh != NULL)
+                renderMeshDefault(mesh, ri);
         }
 
         if (body.getAtmosphere() != NULL)
@@ -1979,7 +1995,7 @@ void Renderer::renderPlanet(const Body& body,
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 renderAtmosphere(*atmosphere,
-                                 pos * conjugate(orientation).toMatrix3(),
+                                 pos * (~orientation).toMatrix3(),
                                  radius,
                                  ri.sunDir_eye * (~orientation).toMatrix3(),
                                  ri.ambientColor,
@@ -2024,9 +2040,9 @@ void Renderer::renderPlanet(const Body& body,
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glColor4f(1, 1, 1, 1);
-                ri.mesh->render(Mesh::Normals | Mesh::TexCoords0,
-                                viewFrustum,
-                                ri.lod);
+                lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+                                  viewFrustum,
+                                  ri.lod);
 
                 // Reset the texture matrix
                 glMatrixMode(GL_TEXTURE);
