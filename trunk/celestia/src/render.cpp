@@ -170,7 +170,7 @@ bool Renderer::init(int winWidth, int winHeight)
         starTex = CreateProceduralTexture(64, 64, GL_RGB, StarTextureEval);
         starTex->bindName();
 
-        glareTex = CreateJPEGTexture("textures\\glare.jpg");
+        glareTex = CreateJPEGTexture("textures\\flare.jpg");
         if (glareTex == NULL)
             glareTex = CreateProceduralTexture(64, 64, GL_RGB, GlareTextureEval);
         glareTex->bindName();
