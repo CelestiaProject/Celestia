@@ -16,25 +16,11 @@
 
 #include "celestiacore.h"
 
-class Eclipse
-{
-public:
-    Eclipse(int Y, int M, int D);
-    Eclipse(double JD);
 
-public:
-    Body* body;
-    std::string planete;
-    std::string sattelite;
-    astro::Date* date;
-    double startTime;
-    double endTime;
-};
-
-class EclipseFinder
+class EclipseFinderDialog
 {
  public:
-    EclipseFinder(HINSTANCE, HWND, CelestiaCore*);
+    EclipseFinderDialog(HINSTANCE, HWND, CelestiaCore*);
 
  public:
     CelestiaCore* appCore;
