@@ -23,6 +23,7 @@ static const string PNGExt(".png");
 static const string ThreeDSExt(".3ds");
 static const string CelestiaTextureExt(".ctx");
 static const string CelestiaMeshExt(".cms");
+static const string CelestiaCatalogExt(".ssc");
 static const string AVIExt(".avi");
 
 
@@ -49,6 +50,8 @@ ContentType DetermineFileType(const string& filename)
         return Content_CelestiaTexture;
     else if (compareIgnoringCase(CelestiaMeshExt, ext) == 0)
         return Content_CelestiaMesh;
+    else if (compareIgnoringCase(CelestiaCatalogExt, ext) == 0)
+        return Content_CelestiaCatalog;
     else if (compareIgnoringCase(AVIExt, ext) == 0)
         return Content_AVI;
     else
