@@ -7,6 +7,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cstdio>
+#include <cstring>
+#include <cctype>
 #include "color.h"
 
 const Color Color::White = Color(1.0f, 1.0f, 1.0f);
@@ -62,3 +65,68 @@ Color::Color(Color& color, float alpha)
     c[Alpha] = (unsigned char) (clamp(alpha) * 255.99f);
 }
 
+
+// Parse a color string and return true if it was a valid color, otherwise
+// false.  Accetable inputs are HTML/X11 style #xxxxxx colors (where x is 
+// hexadecimal digit) or one of a list of named colors.
+bool Color::parse(const char* s, Color& c)
+{
+    if (s[0] == '#')
+    {
+        s++;
+
+        int length = strlen(s);
+
+        // Verify that the string contains only hex digits
+        for (int i = 0; i < length; i++)
+        {
+            if (!isxdigit(s[i]))
+                return false;
+        }
+        
+        unsigned int n;
+        sscanf(s, "%x", &n);
+        if (length == 3)
+        {
+            c = Color((unsigned char) ((n >> 8) * 17),
+                      (unsigned char) (((n & 0x0f0) >> 4) * 17),
+                      (unsigned char) ((n & 0x00f) * 17));
+            return true;
+        }
+        else if (length == 6)
+        {
+            c = Color((unsigned char) (n >> 16),
+                      (unsigned char) ((n & 0x00ff00) >> 8),
+                      (unsigned char) (n & 0x0000ff));
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        // TODO: replace this sequence of strcmps with an STL map
+        if (!strcmp(s, "red"))
+            c = Color(1.0f, 0.0f, 0.0f);
+        else if (!strcmp(s, "green"))
+            c = Color(0.0f, 1.0f, 0.0f);
+        else if (!strcmp(s, "blue"))
+            c = Color(0.0f, 0.0f, 1.0f);
+        else if (!strcmp(s, "cyan"))
+            c = Color(0.0f, 1.0f, 1.0f);
+        else if (!strcmp(s, "magenta"))
+            c = Color(1.0f, 0.0f, 1.0f);
+        else if (!strcmp(s, "yellow"))
+            c = Color(1.0f, 1.0f, 0.0f);
+        else if (!strcmp(s, "black"))
+            c = Color(0.0f, 0.0f, 0.0f);
+        else if (!strcmp(s, "white"))
+            c = Color(1.0f, 1.0f, 1.0f);
+        else
+            return false;
+        
+        return true;
+    }
+}
