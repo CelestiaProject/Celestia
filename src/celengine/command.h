@@ -374,6 +374,17 @@ class CommandSet : public InstantaneousCommand
 };
 
 
+class CommandPreloadTextures : public InstantaneousCommand
+{
+ public:
+    CommandPreloadTextures(const std::string&);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string name;
+};
+
+
 class Execution;
 
 class RepeatCommand : public Command
