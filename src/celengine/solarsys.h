@@ -23,6 +23,7 @@ class SolarSystem
     SolarSystem(const Star*);
 
     const Star* getStar() const;
+    Point3f getCenter() const;
     PlanetarySystem* getPlanets() const;
     
  private:

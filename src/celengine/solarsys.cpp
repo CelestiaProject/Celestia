@@ -83,11 +83,15 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
 {
     // SemiMajorAxis and Period are absolutely required; everything
     // else has a reasonable default.
+    double pericenterDistance = 0.0;
     double semiMajorAxis = 0.0;
     if (!orbitData->getNumber("SemiMajorAxis", semiMajorAxis))
     {
-        DPRINTF("SemiMajorAxis missing!  Skipping planet . . .\n");
-        return NULL;
+        if (!orbitData->getNumber("PericenterDistance", pericenterDistance))
+        {
+            DPRINTF("SemiMajorAxis/PericenterDistance missing!  Skipping planet . . .\n");
+            return NULL;
+        }
     }
 
     double period = 0.0;
@@ -130,10 +134,16 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
     if (usePlanetUnits)
     {
         semiMajorAxis = astro::AUtoKilometers(semiMajorAxis);
+        pericenterDistance = astro::AUtoKilometers(pericenterDistance);
         period = period * 365.25f;
     }
 
-    return new EllipticalOrbit(semiMajorAxis,
+    // If we read the semi-major axis, use it to compute the pericenter
+    // distance.
+    if (semiMajorAxis != 0.0)
+        pericenterDistance = semiMajorAxis * (1.0 - eccentricity);
+
+    return new EllipticalOrbit(pericenterDistance,
                                eccentricity,
                                degToRad(inclination),
                                degToRad(ascendingNode),
@@ -271,6 +281,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 atmosData->getColor("Upper", atmosphere->upperColor);
                 atmosData->getColor("Sky", atmosphere->skyColor);
                 atmosData->getNumber("CloudHeight", atmosphere->cloudHeight);
+                atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed);
+                atmosphere->cloudSpeed = degToRad(atmosphere->cloudSpeed);
 
                 string cloudTexture;
                 if (atmosData->getString("CloudMap", cloudTexture))
@@ -500,6 +512,14 @@ SolarSystem::SolarSystem(const Star* _star) : star(_star)
 const Star* SolarSystem::getStar() const
 {
     return star;
+}
+
+Point3f SolarSystem::getCenter() const
+{
+    // TODO: This is a very simple method at the moment, but it will get
+    // more complex when planets around multistar systems are supported
+    // where the planets may orbit the center of mass of two stars.
+    return star->getPosition();
 }
 
 PlanetarySystem* SolarSystem::getPlanets() const
