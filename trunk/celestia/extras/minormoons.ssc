@@ -1,3 +1,9 @@
+# Minor moons of the giant planets.
+#
+# Note: The mean anomalies listed for the orbits are pure fiction--I just
+# wanted something other than the default value of zero to avoid a weird
+# conjunction at epoch.
+
 # Minor moons of Jupiter
 
 "Metis" "Sol/Jupiter"
@@ -62,6 +68,8 @@
 	Inclination	27
 	MeanAnomaly     310
 	}
+
+	RotationPeriod  10   # Guess
 }
 
 "Himalia" "Sol/Jupiter"
@@ -76,8 +84,10 @@
 	SemiMajorAxis	11480000
 	Eccentricity	0.163
 	Inclination	25
-	}
 	MeanAnomaly	324
+	}
+
+	RotationPeriod  9.6
 }
 
 "Lysithea" "Sol/Jupiter"
@@ -94,6 +104,8 @@
 	Inclination	29
 	MeanAnomaly     85
 	}
+
+	RotationPeriod  10   # Guess
 }
 
 "Elara" "Sol/Jupiter"
@@ -110,6 +122,8 @@
 	Inclination	28
 	MeanAnomaly     133
 	}
+
+	RotationPeriod  12
 }
 
 "Ananke" "Sol/Jupiter"
@@ -126,6 +140,8 @@
 	Inclination	147
 	MeanAnomaly     220
 	}
+
+	RotationPeriod  10   # Guess
 }
 
 "Carme" "Sol/Jupiter"
@@ -142,6 +158,8 @@
 	Inclination	163
 	MeanAnomaly     47
 	}
+
+	RotationPeriod  10   # Guess
 }
 
 "Pasiphae" "Sol/Jupiter"
@@ -158,6 +176,8 @@
 	Inclination	148
 	MeanAnomaly     88
 	}
+
+	RotationPeriod  10   # Guess
 }
 
 "Sinope" "Sol/Jupiter"
@@ -174,6 +194,8 @@
 	Inclination	153
 	MeanAnomaly     165
 	}
+
+	RotationPeriod  10   # Guess
 }
 
 
@@ -323,3 +345,285 @@
 	}
 }
 
+
+# Minor moons of Uranus
+
+"Cordelia" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		13
+
+	EllipticalOrbit
+	{
+	Period		0.3350331
+	SemiMajorAxis	49752
+	Eccentricity	0
+	Inclination	0.1
+	MeanAnomaly     215
+	}
+}
+
+"Ophelia" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		16
+
+	EllipticalOrbit
+	{
+	Period		0.3764089
+	SemiMajorAxis	53764
+	Eccentricity	0.010
+	Inclination	0.1
+	MeanAnomaly     32
+	}
+}
+
+"Bianca" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		22
+
+	EllipticalOrbit
+	{
+	Period		0.4345772
+	SemiMajorAxis	59165
+	Eccentricity	0.001
+	Inclination	0.2
+	MeanAnomaly     108
+	}
+}
+
+"Cressida" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		33
+
+	EllipticalOrbit
+	{
+	Period		0.4635700
+	SemiMajorAxis	61767
+	Eccentricity	0.000
+	Inclination	0.0
+	MeanAnomaly     217
+	}
+}
+
+"Desdemona" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		29
+
+	EllipticalOrbit
+	{
+	Period		0.4736510
+	SemiMajorAxis	62659
+	Eccentricity	0
+	Inclination	0.2
+	MeanAnomaly     345
+	}
+}
+
+"Juliet" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		42
+
+	EllipticalOrbit
+	{
+	Period		0.4930660
+	SemiMajorAxis	64358
+	Eccentricity	0.001
+	Inclination	0.1
+	MeanAnomaly     84
+	}
+}
+
+"Portia" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		55
+
+	EllipticalOrbit
+	{
+	Period		0.5131958
+	SemiMajorAxis	66097
+	Eccentricity	0
+	Inclination	0.1
+	MeanAnomaly     71
+	}
+}
+
+"Rosalind" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		29
+
+	EllipticalOrbit
+	{
+	Period		0.5584589
+	SemiMajorAxis	69927
+	Eccentricity	0
+	Inclination	0.3
+	MeanAnomaly     25
+	}
+}
+
+"Belinda" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		34
+
+	EllipticalOrbit
+	{
+	Period		0.6235248
+	SemiMajorAxis	75255
+	Eccentricity	0
+	Inclination	0.0
+	MeanAnomaly     176
+	}
+}
+
+"Puck" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		77
+
+	EllipticalOrbit
+	{
+	Period		0.7618321
+	SemiMajorAxis	86004
+	Eccentricity	0
+	Inclination	0.3
+	MeanAnomaly     255
+	}
+}
+
+"Caliban" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		40
+
+	EllipticalOrbit
+	{
+	Period		580
+	SemiMajorAxis	7169000
+	Eccentricity	0.0823
+	Inclination	139.67
+	MeanAnomaly     80
+	}
+
+	RotationPeriod  10   # Guess
+}
+
+"Sycorax" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		80
+
+	EllipticalOrbit
+	{
+	Period		1289
+	SemiMajorAxis	12213000
+	Eccentricity	0.5091
+	Inclination	152.67
+	MeanAnomaly     288
+	}
+
+	RotationPeriod  10   # Guess
+}
+
+
+
+# Minor satellites of Neptune
+
+"Naiad" "Sol/Neptune"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		29
+
+	EllipticalOrbit
+	{
+	Period		0.294396
+	SemiMajorAxis	48227
+	Eccentricity	0.0
+	Inclination	4.74
+	MeanAnomaly     132
+	}
+}
+
+"Thalassa" "Sol/Neptune"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		40
+
+	EllipticalOrbit
+	{
+	Period		0.311485
+	SemiMajorAxis	50075
+	Eccentricity	0.0
+	Inclination	0.21
+	MeanAnomaly     63
+	}
+}
+
+"Despina" "Sol/Neptune"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		74
+
+	EllipticalOrbit
+	{
+	Period		0.334655
+	SemiMajorAxis	52526
+	Eccentricity	0.0
+	Inclination	0.07
+	MeanAnomaly     318
+	}
+}
+
+"Galatea" "Sol/Neptune"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		79
+
+	EllipticalOrbit
+	{
+	Period		0.428745
+	SemiMajorAxis	61953
+	Eccentricity	0.0
+	Inclination	0.05
+	MeanAnomaly     99
+	}
+}
+
+"Larissa" "Sol/Neptune"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		94
+
+	EllipticalOrbit
+	{
+	Period		0.554654
+	SemiMajorAxis	73548
+	Eccentricity	0.0
+	Inclination	0.20
+	MeanAnomaly     229
+	}
+}
