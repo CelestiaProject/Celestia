@@ -1753,28 +1753,6 @@ static float getSphereLOD(float discSizeInPixels)
 }
 
 
-struct RenderProperties
-{
-    RenderProperties() : surface(NULL),
-                         atmosphere(NULL),
-                         rings(NULL),
-                         radius(1.0f),
-                         oblateness(0.0f),
-                         mesh(InvalidResource),
-                         orientation(1.0f)
-    {};
-
-    Surface* surface;
-    Atmosphere* atmosphere;
-    RingSystem* rings;
-    RotationElements re;
-    float radius;
-    float oblateness;
-    ResourceHandle mesh;
-    Quatf orientation;
-};
-
-
 void Renderer::renderObject(Point3f pos,
                             float distance,
                             double now,
@@ -2145,7 +2123,6 @@ void Renderer::renderObject(Point3f pos,
                          (float) (sunAngle + PI / 2),
                          (float) (sunAngle + 3 * PI / 2),
                          nSections / 2);
-        // glNormal3f(0, -1, 0);
         renderRingSystem(inner, outer,
                          (float) (sunAngle +  3 * PI / 2),
                          (float) (sunAngle + PI / 2),
@@ -2162,12 +2139,10 @@ void Renderer::renderObject(Point3f pos,
         }
 
         // Render the unshadowed side
-        // glNormal3f(0, 1, 0);
         renderRingSystem(inner, outer,
                          (float) (sunAngle - PI / 2),
                          (float) (sunAngle + PI / 2),
                          nSections / 2);
-        // glNormal3f(0, -1, 0);
         renderRingSystem(inner, outer,
                          (float) (sunAngle + PI / 2),
                          (float) (sunAngle - PI / 2),
