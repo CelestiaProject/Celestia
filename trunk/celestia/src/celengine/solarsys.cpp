@@ -18,6 +18,7 @@
 #include "astro.h"
 #include "parser.h"
 #include "customorbit.h"
+#include "samporbit.h"
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "universe.h"
@@ -215,6 +216,22 @@ static Body* CreatePlanet(PlanetarySystem* system,
         if (orbit == NULL)
             DPRINTF(0, "Could not find custom orbit named '%s'\n",
                     customOrbitName.c_str());
+    }
+
+    if (orbit == NULL)
+    {
+        string sampOrbitFile;
+        if (planetData->getString("SampledOrbit", sampOrbitFile))
+        {
+            DPRINTF(1, "Attempting to load sampled orbit file '%s'\n",
+                    sampOrbitFile.c_str());
+            orbit = LoadSampledOrbit(string("data/") + sampOrbitFile);
+            if (orbit == NULL)
+            {
+                DPRINTF(0, "Could not load sampled orbit file '%s'\n",
+                        sampOrbitFile.c_str());
+            }
+        }
     }
 
     if (orbit == NULL)
@@ -467,6 +484,3 @@ PlanetarySystem* SolarSystem::getPlanets() const
 {
     return planets;
 }
-
-
-
