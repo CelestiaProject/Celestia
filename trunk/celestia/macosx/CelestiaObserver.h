@@ -25,4 +25,6 @@
 -(void)setPosition:(CelestiaUniversalCoord*)p;
 -(void)setPositionWithPoint:(CelestiaVector*)p;
 -(void)update:(NSNumber*)dt timeScale: (NSNumber*)ts;
+-(unsigned int) getLocationFilter;
+-(void) setLocationFilter: (unsigned int) filter;
 @end
