@@ -29,28 +29,28 @@ class UniversalCoord
     operator Point3d() const;
     operator Point3f() const;
 
-    friend Vec3d operator-(const UniversalCoord, const UniversalCoord);
-    friend Vec3d operator-(const UniversalCoord, const Point3d);
-    friend Vec3d operator-(const Point3d, const UniversalCoord);
-    friend Vec3f operator-(const UniversalCoord, const Point3f);
-    friend Vec3f operator-(const Point3f, const UniversalCoord);
-    friend UniversalCoord operator+(const UniversalCoord, const Vec3d);
-    friend UniversalCoord operator+(const UniversalCoord, const Vec3f);
-    friend UniversalCoord operator-(const UniversalCoord, const Vec3d);
-    friend UniversalCoord operator-(const UniversalCoord, const Vec3f);
+    friend Vec3d operator-(const UniversalCoord&, const UniversalCoord&);
+    friend Vec3d operator-(const UniversalCoord&, const Point3d&);
+    friend Vec3d operator-(const Point3d&, const UniversalCoord&);
+    friend Vec3f operator-(const UniversalCoord&, const Point3f&);
+    friend Vec3f operator-(const Point3f&, const UniversalCoord&);
+    friend UniversalCoord operator+(const UniversalCoord&, const Vec3d&);
+    friend UniversalCoord operator+(const UniversalCoord&, const Vec3f&);
+    friend UniversalCoord operator-(const UniversalCoord&, const Vec3d&);
+    friend UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
 
     BigFix x, y, z;
 };
 
-Vec3d operator-(const UniversalCoord, const UniversalCoord);
-Vec3d operator-(const UniversalCoord, const Point3d);
-Vec3d operator-(const Point3d, const UniversalCoord);
-Vec3f operator-(const UniversalCoord, const Point3f);
-Vec3f operator-(const Point3f, const UniversalCoord);
-UniversalCoord operator+(const UniversalCoord, const Vec3d);
-UniversalCoord operator+(const UniversalCoord, const Vec3f);
-UniversalCoord operator-(const UniversalCoord, const Vec3d);
-UniversalCoord operator-(const UniversalCoord, const Vec3f);
+Vec3d operator-(const UniversalCoord&, const UniversalCoord&);
+Vec3d operator-(const UniversalCoord&, const Point3d&);
+Vec3d operator-(const Point3d&, const UniversalCoord&);
+Vec3f operator-(const UniversalCoord&, const Point3f&);
+Vec3f operator-(const Point3f&, const UniversalCoord&);
+UniversalCoord operator+(const UniversalCoord&, const Vec3d&);
+UniversalCoord operator+(const UniversalCoord&, const Vec3f&);
+UniversalCoord operator-(const UniversalCoord&, const Vec3d&);
+UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
 
 #endif // _UNIVCOORD_H_
 

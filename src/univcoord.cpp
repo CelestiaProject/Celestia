@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <iostream>
 #include "univcoord.h"
 
 
@@ -44,63 +45,66 @@ UniversalCoord::operator Point3f() const
     return Point3f((float) x, (float) y, (float) z);
 }
 
-Vec3d operator-(const UniversalCoord uc0, const UniversalCoord uc1)
+Vec3d operator-(const UniversalCoord& uc0, const UniversalCoord& uc1)
 {
     return Vec3d((double) (uc0.x - uc1.x),
                  (double) (uc0.y - uc1.y),
                  (double) (uc0.z - uc1.z));
 }
 
-Vec3d operator-(const UniversalCoord uc, const Point3d p)
+Vec3d operator-(const UniversalCoord& uc, const Point3d& p)
 {
     return Vec3d((double) (uc.x - (BigFix) p.x),
                  (double) (uc.y - (BigFix) p.y),
                  (double) (uc.z - (BigFix) p.z));
 }
 
-Vec3d operator-(const Point3d p, const UniversalCoord uc)
+Vec3d operator-(const Point3d& p, const UniversalCoord& uc)
 {
     return Vec3d((double) ((BigFix) p.x - uc.x),
                  (double) ((BigFix) p.y - uc.y),
                  (double) ((BigFix) p.z - uc.z));
 }
 
-Vec3f operator-(const UniversalCoord uc, const Point3f p)
+Vec3f operator-(const UniversalCoord& uc, const Point3f& p)
 {
     return Vec3f((float) (uc.x - (BigFix) p.x),
                  (float) (uc.y - (BigFix) p.y),
                  (float) (uc.z - (BigFix) p.z));
 }
 
-Vec3f operator-(const Point3f p, const UniversalCoord uc)
+Vec3f operator-(const Point3f& p, const UniversalCoord& uc)
 {
     return Vec3f((float) ((BigFix) p.x - uc.x),
                  (float) ((BigFix) p.y - uc.y),
                  (float) ((BigFix) p.z - uc.z));
 }
 
-UniversalCoord operator+(const UniversalCoord uc, const Vec3d v)
+UniversalCoord operator+(const UniversalCoord& uc, const Vec3d& v)
 {
-    return UniversalCoord(uc.x + BigFix(v.x),
-                          uc.y + BigFix(v.y),
-                          uc.z + BigFix(v.z));
+    UniversalCoord u(uc.x + (BigFix) v.x,
+                          uc.y + (BigFix) v.y,
+                          uc.z + (BigFix) v.z);
+    double dx = (double) (u.x - uc.x);
+    cout << "x: " << (dx - v.x) << '\n';
+    return u;
 }
 
-UniversalCoord operator+(const UniversalCoord uc, const Vec3f v)
+UniversalCoord operator+(const UniversalCoord& uc, const Vec3f& v)
 {
     return UniversalCoord(uc.x + BigFix((double) v.x),
                           uc.y + BigFix((double) v.y),
                           uc.z + BigFix((double) v.z));
 }
 
-UniversalCoord operator-(const UniversalCoord uc, const Vec3d v)
+UniversalCoord operator-(const UniversalCoord& uc, const Vec3d& v)
 {
     return UniversalCoord(uc.x - BigFix(v.x),
                           uc.y - BigFix(v.y),
                           uc.z - BigFix(v.z));
 }
 
-UniversalCoord operator-(const UniversalCoord uc, const Vec3f v)
+UniversalCoord operator-(const UniversalCoord& uc, const Vec3f& v)
 {
     return UniversalCoord(uc.x - BigFix((double) v.x),
                           uc.y - BigFix((double) v.y),
