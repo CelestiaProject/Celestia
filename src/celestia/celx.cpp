@@ -1441,6 +1441,19 @@ static int rotation_setaxisangle(lua_State* l)
     return 0;
 }
 
+static int rotation_slerp(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Two arguments expected for rotation:slerp()");
+    Quatd* q1 = this_rotation(l);
+    Quatd* q2 = to_rotation(l, 2);
+    if (q2 == NULL)
+    {
+        doError(l, "slerp: first argument must be a rotation");
+    }
+    double t = safeGetNumber(l, 3, AllErrors, "second argument to rotation:slerp must be a number");
+    rotation_new(l, Quatd::slerp(*q1, *q2, t));
+    return 1;
+}
 
 static int rotation_get(lua_State* l)
 {
@@ -1511,6 +1524,7 @@ static void CreateRotationMetaTable(lua_State* l)
     RegisterMethod(l, "imag", rotation_imag);
     RegisterMethod(l, "transform", rotation_transform);
     RegisterMethod(l, "setaxisangle", rotation_setaxisangle);
+    RegisterMethod(l, "slerp", rotation_slerp);
     RegisterMethod(l, "__tostring", rotation_tostring);
     RegisterMethod(l, "__add", rotation_add);
     RegisterMethod(l, "__mul", rotation_mult);
