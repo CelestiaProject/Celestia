@@ -1,0 +1,68 @@
+!!ARBvp1.0
+
+# Compute specular just the specular light for use in a separate gloss
+# mapping pass.  A separate pass is necessary when using texenv
+# combiners because they can't use the secondary color; therefore
+# this vertex program outputs the specular lighting term primary
+# color.
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iNormal       = vertex.normal;
+ATTRIB iTex0         = vertex.texcoord[0];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir      = program.env[0];
+PARAM  eyePos        = program.env[1];
+PARAM  specExp       = program.env[4];
+PARAM  specular      = program.env[3];
+PARAM  zero          = 0;
+PARAM  one           = 1;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oTex0         = result.texcoord[0];
+
+TEMP   diffuseFactor;
+TEMP   eyeVec;
+TEMP   halfAngle;
+TEMP   dotProds;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Compute the diffuse light component
+DP3   diffuseFactor, iNormal, lightDir;
+# Clamp the diffuse component to zero
+MAX   diffuseFactor, diffuseFactor, zero;
+
+# Get the vector from the eye to the vertex
+SUB   eyeVec, eyePos, iPos;
+
+# Normalize it
+DP3   eyeVec.w, eyeVec, eyeVec;
+RSQ   eyeVec.w, eyeVec.w;
+MUL   eyeVec, eyeVec, eyeVec.w;
+
+# Compute the half angle vector for specular lighting
+ADD   halfAngle, eyeVec, lightDir;
+DP3   halfAngle.w, halfAngle, halfAngle;
+RSQ   halfAngle.w, halfAngle.w;
+MUL   halfAngle, halfAngle, halfAngle.w;
+
+# Set up the specular dot products vectors:
+#    dotProds = { diffuse factor, spec factor, 0, spec exponent }
+MOV   dotProds.x, diffuseFactor.x;
+DP3   dotProds.y, halfAngle, iNormal;
+MAX   dotProds.y, dotProds.y, zero;
+MOV   dotProds.w, specExp.w;
+
+# Output the texture
+MOV   oTex0, iTex0;
+
+# Compute and output the specular color
+LIT   dotProds, dotProds;
+MUL   oColor, specular, dotProds.z;
+
+END
+
