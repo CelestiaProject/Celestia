@@ -99,7 +99,13 @@
 #define IDC_LABELASTEROIDS              1064
 #define IDC_LABELSPACECRAFT             1065
 #define IDC_SHOWMARKERS                 1066
+#define IDC_ASTEROIDORBITS              1067
+#define IDC_MOONORBITS                  1068
+#define IDC_PLANETORBITS                1069
+#define IDC_SPACECRAFTORBITS            1070
 #define IDC_ECLIPSES_LIST               1071
+#define IDC_LABELCOMETS                 1072
+#define IDC_COMETORBITS                 1073
 #define IDCOMPUTE                       1078
 #define IDC_DATEFROM                    1079
 #define IDC_ECLIPSEFROM                 1079
