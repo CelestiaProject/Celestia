@@ -43,6 +43,14 @@ class VertexProcessorNV : public VertexProcessor
     virtual void use(unsigned int);
     virtual void parameter(vp::Parameter, float, float, float, float);
     virtual void parameter(vp::Parameter, const float*);
+
+    virtual void enableAttribArray(unsigned int);
+    virtual void disableAttribArray(unsigned int);
+    virtual void attribArray(unsigned int index,
+                             int size,
+                             GLenum type,
+                             unsigned int stride,
+                             const void* pointer);
 };
 
 class VertexProcessorARB : public VertexProcessor
@@ -56,6 +64,14 @@ class VertexProcessorARB : public VertexProcessor
     virtual void use(unsigned int);
     virtual void parameter(vp::Parameter, float, float, float, float);
     virtual void parameter(vp::Parameter, const float*);
+
+    virtual void enableAttribArray(unsigned int);
+    virtual void disableAttribArray(unsigned int);
+    virtual void attribArray(unsigned int index,
+                             int size,
+                             GLenum type,
+                             unsigned int stride,
+                             const void* pointer);
 };
 
 
@@ -386,6 +402,25 @@ void VertexProcessorNV::parameter(vp::Parameter param, const float* fv)
                                  parameterMappings[param], fv);
 }
 
+void VertexProcessorNV::enableAttribArray(unsigned int index)
+{
+    glEnableClientState(GL_VERTEX_ATTRIB_ARRAY0_NV + index);
+}
+
+void VertexProcessorNV::disableAttribArray(unsigned int index)
+{
+    glDisableClientState(GL_VERTEX_ATTRIB_ARRAY0_NV + index);
+}
+
+void VertexProcessorNV::attribArray(unsigned int index,
+                                     int size,
+                                     GLenum type,
+                                     unsigned int stride,
+                                     const void* ptr)
+{
+    glx::glVertexAttribPointerNV(index, size, type, stride, ptr);
+}
+
 
 
 // VertexProcessorARB implementation
@@ -423,3 +458,23 @@ void VertexProcessorARB::parameter(vp::Parameter param, const float* fv)
 {
     glx::glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, param, fv);
 }
+
+void VertexProcessorARB::enableAttribArray(unsigned int index)
+{
+    glx::glEnableVertexAttribArrayARB(index);
+}
+
+void VertexProcessorARB::disableAttribArray(unsigned int index)
+{
+    glx::glDisableVertexAttribArrayARB(index);
+}
+
+void VertexProcessorARB::attribArray(unsigned int index,
+                                     int size,
+                                     GLenum type,
+                                     unsigned int stride,
+                                     const void* ptr)
+{
+    glx::glVertexAttribPointerARB(index, size, type, GL_FALSE, stride, ptr);
+}
+
