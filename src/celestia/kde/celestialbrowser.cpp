@@ -25,6 +25,7 @@
 CelestialBrowser::CelestialBrowser( QWidget* parent, CelestiaCore* appCore)
     : CelestialBrowserBase( parent, i18n("Celestial Browser"))
 {
+    this->parent = dynamic_cast<KdeApp*>(parent);
     this->appCore = appCore;
     this->appSim = appCore->getSimulation();
     listStars->setAllColumnsShowFocus(true);
@@ -209,34 +210,14 @@ QString CelestialBrowser::getClassification(int c) const{
 
 
 void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p, int col) {
-    KPopupMenu menu(this);
-    menu.insertTitle(item->text(0));
-    menu.insertItem(i18n("&Select"), 1, 1);
-    menu.insertItem(i18n("&Center"), 2, 2);
-    menu.insertItem(i18n("&Goto"), 3, 3);
-    
     QListViewItem *i = item;
     QString name = i->text(0);
     while ( (i = i->parent()) ) {
         name = i->text(0) + "/" + name;
     }
-    
-    int id=menu.exec(p);
-    
-    if (id == 1) {
-        Selection sel = appSim->findObjectFromPath(std::string(name.latin1()));
-        appSim->setSelection(sel);
-    }
-    if (id == 2) {
-        Selection sel = appSim->findObjectFromPath(std::string(name.latin1()));
-        appSim->setSelection(sel);
-        appCore->charEntered('c');
-    }
-    if (id == 3) {
-        Selection sel = appSim->findObjectFromPath(std::string(name.latin1()));
-        appSim->setSelection(sel);
-        appCore->charEntered('g');
-    }
+    Selection sel = appSim->findObjectFromPath(std::string(name.latin1()));
+
+    parent->popupMenu(this, p, sel);
 }
 
 

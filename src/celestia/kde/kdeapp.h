@@ -164,6 +164,7 @@ public slots:
     void slotForwardActivated(int i);
 
     static void popupMenu(float x, float y, Selection sel);
+    static void popupMenu(QWidget* parent, const QPoint& p, Selection sel);
 
 protected:
     CelestiaCore* appCore;
