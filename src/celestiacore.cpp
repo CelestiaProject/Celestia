@@ -40,7 +40,7 @@
 using namespace std;
 
 
-static string welcomeMessage1("Welcome to Celestia 1.0.10");
+static string welcomeMessage1("Welcome to Celestia 1.1.0");
 static string welcomeMessage2("Press D to run demo");
 
 static const int DragThreshold = 3;
