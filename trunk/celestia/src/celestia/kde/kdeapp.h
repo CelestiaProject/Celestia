@@ -120,6 +120,7 @@ public slots:
     void slotHudDetail(int l);
 
     void slotDisplayLocalTime();
+    void slotWireframeMode();
     void slotVertexShader();
     void slotPixelShader();
     void slotGrabImage();

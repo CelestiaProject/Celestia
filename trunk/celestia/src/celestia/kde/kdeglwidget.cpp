@@ -356,7 +356,7 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
                 for (unsigned int i=0; i<e->text().length(); i++)
                 {           
                     char c = e->text().at(i).latin1();
-                    appCore->charEntered(c);
+                    if (c > 0x20) appCore->charEntered(c);
                 }
             }
         }
