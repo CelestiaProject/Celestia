@@ -59,7 +59,7 @@ template<class T> class ResourceManager
  public:
     ResourceHandle getHandle(const T& info)
     {
-        ResourceHandleMap::iterator iter = handles.find(info);
+        typename ResourceHandleMap::iterator iter = handles.find(info);
         if (iter != handles.end())
         {
             return iter->second;
