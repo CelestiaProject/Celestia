@@ -147,7 +147,15 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         AmbientLightChanged   = 16,
         FaintestChanged       = 32,
         HistoryChanged        = 64,
+        TextEnterModeChanged  = 128,
     };
+
+    enum
+    {
+        KbNormal         = 0,
+        KbAutoComplete   = 1,
+        KbPassToScript   = 2,
+    };        
 
     typedef void (*ContextMenuFunc)(float, float, Selection);
 
@@ -205,6 +213,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setTimeZoneBias(int);
     std::string getTimeZoneName() const;
     void setTimeZoneName(const std::string&);
+    void setTextEnterMode(int);
     int getTextEnterMode() const;
 
     void initMovieCapture(MovieCapture*);
@@ -293,7 +302,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::string typedText;
     std::vector<std::string> typedTextCompletion;
     int typedTextCompletionIdx;
-    bool textEnterMode;
+    int textEnterMode;
     int hudDetail;
     bool wireframe;
     bool editMode;
