@@ -556,10 +556,10 @@ class VSOP87Orbit : public CachingOrbit
 {
 private:
     VSOPSeries* L;
-    VSOPSeries* B;
-    VSOPSeries* R;
     int nL;
+    VSOPSeries* B;
     int nB;
+    VSOPSeries* R;
     int nR;
     double period;
     double boundingRadius;
