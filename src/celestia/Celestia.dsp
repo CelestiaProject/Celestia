@@ -148,6 +148,10 @@ SOURCE=.\wingotodlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\winhyperlinks.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\winlocations.cpp
 # End Source File
 # Begin Source File
@@ -225,6 +229,10 @@ SOURCE=.\wineclipses.h
 # Begin Source File
 
 SOURCE=.\wingotodlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\winhyperlinks.h
 # End Source File
 # Begin Source File
 
