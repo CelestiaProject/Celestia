@@ -60,6 +60,7 @@ static Surface* CreateSurface(Hash* surfaceData)
     surfaceData->getColor("Color", surface->color);
     bool applyBaseTexture = surfaceData->getString("Texture", surface->baseTexture);
     bool applyBumpMap = surfaceData->getString("BumpMap", surface->bumpTexture);
+    bool applyCloudMap = surfaceData->getString("CloudMap", surface->cloudTexture);
     surface->bumpHeight = 2.5f;
     surfaceData->getNumber("BumpHeight", surface->bumpHeight);
     bool blendTexture = false;
@@ -72,6 +73,8 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->appearanceFlags |= Surface::ApplyBaseTexture;
     if (applyBumpMap)
         surface->appearanceFlags |= Surface::ApplyBumpMap;
+    if (applyCloudMap)
+        surface->appearanceFlags |= Surface::ApplyCloudMap;
     if (compressTexture)
         surface->appearanceFlags |= Surface::CompressBaseTexture;
 
@@ -203,28 +206,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
     // The default rotation period is the same as the orbital period
     double rotationPeriod = period * 24.0;
     planetData->getNumber("RotationPeriod", rotationPeriod);
-    body->setRotationPeriod(rotationPeriod);
+    body->setRotationPeriod(rotationPeriod / 24.0);
 
-#if 0    
-    Surface surface;
-    surface.color = Color(1.0f, 1.0f, 1.0f);
-    planetData->getColor("Color", surface.color);
-    bool applyBaseTexture = planetData->getString("Texture", surface.baseTexture);
-    bool applyBumpMap = planetData->getString("BumpMap", surface.bumpTexture);
-    bool blendTexture = false;
-    planetData->getBoolean("BlendTexture", blendTexture);
-    bool compressTexture = false;
-    planetData->getBoolean("CompressTexture", compressTexture);
-    if (blendTexture)
-        surface.appearanceFlags |= Surface::BlendTexture;
-    if (applyBaseTexture)
-        surface.appearanceFlags |= Surface::ApplyBaseTexture;
-    if (applyBumpMap)
-        surface.appearanceFlags |= Surface::ApplyBumpMap;
-    if (compressTexture)
-        surface.appearanceFlags |= Surface::CompressBaseTexture;
-    body->setSurface(surface);
-#endif
     Surface* surface = CreateSurface(planetData);
     body->setSurface(*surface);
     delete surface;
