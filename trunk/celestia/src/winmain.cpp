@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <algorithm>
 #include <set>
 #include <cstdlib>
@@ -575,11 +576,11 @@ static StarBrowserInstance* starBrowser = NULL;
 bool InitStarBrowserColumns(HWND listView)
 {
     LVCOLUMN lvc;
-    LVCOLUMN columns[4];
+    LVCOLUMN columns[5];
 
     lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     lvc.fmt = LVCFMT_LEFT;
-    lvc.cx = 75;
+    lvc.cx = 60;
     lvc.pszText = "";
 
     int nColumns = sizeof(columns) / sizeof(columns[0]);
@@ -592,10 +593,12 @@ bool InitStarBrowserColumns(HWND listView)
     columns[0].cx = 100;
     columns[1].pszText = "Distance";
     columns[1].fmt = LVCFMT_RIGHT;
+    columns[1].cx = 75;
     columns[2].pszText = "App. mag";
     columns[2].fmt = LVCFMT_RIGHT;
     columns[3].pszText = "Abs. mag";
     columns[3].fmt = LVCFMT_RIGHT;
+    columns[4].pszText = "Type";
 
     for (i = 0; i < nColumns; i++)
     {
@@ -751,6 +754,7 @@ bool InitStarBrowserItems(HWND listView, int pred, int nItems)
 // Crud used for the list item display callbacks
 static string starNameString("");
 static char callbackScratch[256];
+static ostringstream browserOss(ostringstream::out);
 
 struct StarBrowserSortInfo
 {
@@ -792,6 +796,14 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
 
     case 3:
         return sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
+
+    case 4:
+        if (star0->getStellarClass() < star1->getStellarClass())
+            return -1;
+        else if (star1->getStellarClass() < star0->getStellarClass())
+            return 1;
+        else
+            return 0;
 
     default:
         return 0;
@@ -841,6 +853,17 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, Simulation* sim)
             nm->item.pszText = callbackScratch;
         }
         break;
+
+    case 4:
+        {
+            // Convoluted way of getting the stellar class string . . .
+            // Seek to the beginning of an stringstream, output, then grab
+            // the string and copy it to the scratch buffer.
+            browserOss.seekp(0);
+            browserOss << star->getStellarClass() << '\0';
+            strcpy(callbackScratch, browserOss.str().c_str());
+            nm->item.pszText = callbackScratch;
+        }
     }
 }
 
@@ -1651,11 +1674,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_TIME_SLOWER:
             appCore->charEntered('K');
             break;
-#if 0
         case ID_TIME_REALTIME:
-            sim->setTimeScale(1.0);
+            appCore->charEntered('\\');
             break;
-#endif
+
         case ID_TIME_FREEZE:
             appCore->charEntered(' ');
             break;
