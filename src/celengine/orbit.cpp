@@ -215,7 +215,7 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
                Mat3d::xrotation(inclination) *
                Mat3d::yrotation(argOfPeriapsis));
 
-    return R * Point3d(x, 0, -z);
+    return R * Point3d(x, 0, z);
 }
 
 
