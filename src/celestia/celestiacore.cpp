@@ -52,12 +52,6 @@ static const float KeyRotationAccel = degToRad(120.0f);
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
 
-enum
-{
-    LabelFlags = 1,
-    RenderFlags = 2
-};
-
 
 static void warning(string s)
 {
@@ -524,7 +518,7 @@ void CelestiaCore::charEntered(char c)
     {
     case '\001': // Ctrl+A
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAtmospheres);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case '\n':
@@ -534,12 +528,12 @@ void CelestiaCore::charEntered(char c)
 
     case '\014': // Ctrl+L
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case '\005':  // Ctrl+E
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowEclipseShadows);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case '\020':  // Ctrl+P
@@ -549,7 +543,7 @@ void CelestiaCore::charEntered(char c)
 
     case '\023':  // Ctrl+S
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowStarsAsPoints);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case '\026':  // Ctrl+V
@@ -564,7 +558,7 @@ void CelestiaCore::charEntered(char c)
 
     case '\030':  // Ctrl+X
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowSmoothLines);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case '\033': // Escape
@@ -620,7 +614,7 @@ void CelestiaCore::charEntered(char c)
 
     case '/':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowDiagrams);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case '0':
@@ -641,17 +635,17 @@ void CelestiaCore::charEntered(char c)
 
     case ';':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCelestialSphere);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case '=':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::ConstellationLabels);
-        notifyWatchers(LabelFlags);
+        notifyWatchers(CelestiaWatcher::LabelFlags);
         break;
 
     case 'B':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::StarLabels);
-        notifyWatchers(LabelFlags);
+        notifyWatchers(CelestiaWatcher::LabelFlags);
         break;
         
     case 'C':
@@ -665,7 +659,7 @@ void CelestiaCore::charEntered(char c)
 
     case 'E':
 	renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
-        notifyWatchers(LabelFlags);
+        notifyWatchers(CelestiaWatcher::LabelFlags);
 	break;
 
     case 'F':
@@ -684,7 +678,7 @@ void CelestiaCore::charEntered(char c)
 
     case 'I':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCloudMaps);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case 'J':
@@ -701,22 +695,22 @@ void CelestiaCore::charEntered(char c)
 
     case 'M':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MoonLabels);
-        notifyWatchers(LabelFlags);
+        notifyWatchers(CelestiaWatcher::LabelFlags);
         break;
 
     case 'N':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::SpacecraftLabels);
-        notifyWatchers(LabelFlags);
+        notifyWatchers(CelestiaWatcher::LabelFlags);
         break;
 
     case 'O':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case 'P':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetLabels);
-        notifyWatchers(LabelFlags);
+        notifyWatchers(CelestiaWatcher::LabelFlags);
         break;
 
     case 'Q':
@@ -743,16 +737,16 @@ void CelestiaCore::charEntered(char c)
 
     case 'U':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
-        notifyWatchers(RenderFlags);
+        notifyWatchers(CelestiaWatcher::RenderFlags);
         break;
 
     case 'V':
-        hudDetail = (hudDetail + 1) % 3;
+        setHudDetail((getHudDetail() + 1) % 3);
         break;
 
     case 'W':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::AsteroidLabels);
-        notifyWatchers(LabelFlags);
+        notifyWatchers(CelestiaWatcher::LabelFlags);
         break;
 
     case 'X':
@@ -1832,6 +1826,7 @@ int CelestiaCore::getHudDetail()
 void CelestiaCore::setHudDetail(int newHudDetail)
 {
     hudDetail = newHudDetail;
+    notifyWatchers(CelestiaWatcher::VerbosityLevel);
 }
 
 
@@ -1892,10 +1887,7 @@ void CelestiaCore::notifyWatchers(int property)
     for (vector<CelestiaWatcher*>::iterator iter = watchers.begin();
          iter != watchers.end(); iter++)
     {
-        if (property == RenderFlags)
-            (*iter)->renderFlagsChanged();
-        else if (property == LabelFlags)
-            (*iter)->labelFlagsChanged();
+        (*iter)->notifyChange(property);
     }
 }
 
@@ -1911,12 +1903,4 @@ CelestiaWatcher::~CelestiaWatcher()
 {
     if (appCore != NULL)
         appCore->removeWatcher(this);
-}
-
-void CelestiaWatcher::renderFlagsChanged()
-{
-}
-
-void CelestiaWatcher::labelFlagsChanged()
-{
 }

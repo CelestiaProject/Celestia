@@ -22,8 +22,7 @@ class ViewOptionsDialog : public CelestiaWatcher
     void SetControls(HWND);
     void RestoreSettings(HWND);
 
-    virtual void renderFlagsChanged();
-    virtual void labelFlagsChanged();
+    virtual void notifyChange(int);
 
  public:
     CelestiaCore* appCore;

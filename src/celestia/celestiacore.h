@@ -246,8 +246,14 @@ class CelestiaWatcher
     CelestiaWatcher(CelestiaCore* _appCore);
     virtual ~CelestiaWatcher();
 
-    virtual void renderFlagsChanged();
-    virtual void labelFlagsChanged();
+    virtual void notifyChange(int) = 0;
+
+    enum
+    {
+        LabelFlags = 1,
+        RenderFlags = 2,
+        VerbosityLevel = 4,
+    };
 
  private:
     CelestiaCore* appCore;
