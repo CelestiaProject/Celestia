@@ -107,7 +107,9 @@ View::View(View::Type _type,
     x(_x),
     y(_y),
     width(_width),
-    height(_height)
+    height(_height),
+    renderFlags(0),
+    labelMode(0)
 {
 }
 
@@ -181,6 +183,7 @@ CelestiaCore::CelestiaCore() :
     wireframe(false),
     editMode(false),
     altAzimuthMode(false),
+    flashFrameStart(0.0),
     timer(NULL),
     currentScript(NULL),
     initScript(NULL),
@@ -717,7 +720,8 @@ void CelestiaCore::charEntered(char c)
         if (activeView >= (int) views.size())
             activeView = 0;
         sim->setActiveObserver(views[activeView]->observer);
-        flash("Cycle view");
+        // flash("Cycle view");
+        flashFrameStart = currentTime;
         break;
 
     case '\020':  // Ctrl+P
@@ -1839,6 +1843,17 @@ static void displaySelectionName(Overlay& overlay,
 }
 
 
+static void showViewFrame(const View* v, int width, int height)
+{
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(v->x * width, v->y * height, 0.0f);
+    glVertex3f(v->x * width, (v->y + v->height) * height - 1, 0.0f);
+    glVertex3f((v->x + v->width) * width - 1, (v->y + v->height) * height - 1, 0.0f);
+    glVertex3f((v->x + v->width) * width - 1, v->y * height, 0.0f);
+    glEnd();
+}
+
+
 void CelestiaCore::renderOverlay()
 {
     if (font == NULL)
@@ -1859,15 +1874,17 @@ void CelestiaCore::renderOverlay()
         glLineWidth(2.0f);
         glDisable(GL_TEXTURE_2D);
         glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-
-        glBegin(GL_LINE_LOOP);
-        glVertex3f(av->x * width, av->y * height, 0.0f);
-        glVertex3f(av->x * width, (av->y + av->height) * height - 1, 0.0f);
-        glVertex3f((av->x + av->width) * width - 1, (av->y + av->height) * height - 1, 0.0f);
-        glVertex3f((av->x + av->width) * width - 1, av->y * height, 0.0f);
-        glEnd();
-
+        showViewFrame(av, width, height);
         glLineWidth(1.0f);
+
+        if (currentTime < flashFrameStart + 0.5)
+        {
+            glLineWidth(8.0f);
+            glColor4f(0.5f, 0.5f, 1.0f,
+                      1.0f - (currentTime - flashFrameStart) / 0.5f);
+            showViewFrame(av, width, height);
+            glLineWidth(1.0f);
+        }
     }
 
     if (hudDetail > 0)
