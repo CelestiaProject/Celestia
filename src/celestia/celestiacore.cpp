@@ -2595,43 +2595,8 @@ static void displayStarNames(Overlay& overlay,
     {
         if (count != 0)
             overlay << " / ";
-
-        // Ugly hack to translate Greek letter abbreviations into UTF-8
-        // encodings.
-        bool isBayerDesignation = false;
-        if (iter->second.length() > 3)
-        {
-            // All greek letter abbreviations begin with two capital
-            // letters.  Use this fact to quickly filter out most names.
-            if (iter->second[0] >= 'A' && iter->second[0] <= 'Z' &&
-                iter->second[1] >= 'A' && iter->second[1] <= 'Z')
-            {
-                // Linear search through all letter abbreviations
-                for (int i = 0; i < Greek::instance->nLetters; i++)
-                {
-                    const string& abbr = Greek::instance->abbrevs[i];
-                    if (iter->second.compare(0, abbr.length(), abbr) == 0)
-                    {
-                        // The star name begins with a Greek letter
-                        // abbreviation.
-                        wchar_t utf8Letter = wchar_t(0x03b1 + i);
-                        // Final sigma is in the middle of the UTF-8 range
-                        // for lowercase Greek letters.
-                        if (i + 1 >= (int) Greek::Sigma)
-                            utf8Letter++;
-
-                        overlay.print(utf8Letter);
-                        overlay << (iter->second.c_str() + abbr.length());
-
-                        isBayerDesignation = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!isBayerDesignation)
-            overlay << iter->second;
+        
+        overlay << ReplaceGreekLetterAbbr(iter->second);
         iter++;
         count++;
     }
@@ -3202,7 +3167,7 @@ void CelestiaCore::renderOverlay()
         glTranslatef(0, fontHeight * 3 + 35, 0);
         glColor4f(0.6f, 0.6f, 1.0f, 1);
         overlay->beginText();
-        *overlay << "Target name: " << typedText;
+        *overlay << "Target name: " << ReplaceGreekLetterAbbr(typedText);
         overlay->endText();
         overlay->setFont(font);
         if (typedTextCompletion.size() >= 1)
@@ -3227,7 +3192,7 @@ void CelestiaCore::renderOverlay()
                         glColor4f(1.0f, 0.6f, 0.6f, 1);
                     else
                         glColor4f(0.6f, 0.6f, 1.0f, 1);
-                    *overlay << *iter << "\n";
+                    *overlay << ReplaceGreekLetterAbbr(*iter) << "\n";
                 }
                 overlay->endText();
                 glPopMatrix();
