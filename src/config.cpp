@@ -57,6 +57,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     configParams->getNumber("FaintestVisibleMagnitude", config->faintestVisible);
     configParams->getString("FavoritesFile", config->favoritesFile);
     configParams->getString("InitScript", config->initScriptFile);
+    configParams->getString("DemoScript", config->demoScriptFile);
     configParams->getString("AsterismsFile", config->asterismsFile);
     configParams->getString("GalaxyCatalog", config->galaxyCatalog);
     configParams->getString("StarDatabase", config->starDatabaseFile);
