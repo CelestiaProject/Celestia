@@ -41,6 +41,8 @@ class M3DMaterial
     void setSpecularColor(M3DColor);
     float getShininess() const;
     void setShininess(float);
+    float getOpacity() const;
+    void setOpacity(float);
     std::string getTextureMap() const;
     void setTextureMap(const std::string&);
 
@@ -51,6 +53,7 @@ class M3DMaterial
     M3DColor diffuse;
     M3DColor specular;
     float shininess;
+    float opacity;
 };
 
 
