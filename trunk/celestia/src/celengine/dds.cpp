@@ -118,7 +118,7 @@ Image* LoadDDSImage(const string& filename)
 
     int format = -1;
 
-    if (ddsd.flags & DDPF_FOURCC && ddsd.format.fourCC != 0)
+    if (ddsd.format.fourCC != 0)
     {
         if (ddsd.format.fourCC == FourCC("DXT1"))
         {
@@ -134,15 +134,12 @@ Image* LoadDDSImage(const string& filename)
         }
         else
         {
-            DPRINTF(0, "Unknown FourCC in DDS file: %08x\n", ddsd.format.fourCC);
+            cerr << "Unknown FourCC in DDS file: " << ddsd.format.fourCC;
         }
     }
     else
     {
-        printf("bpp=%d\n", ddsd.format.bpp);
-        printf("a=%08x r=%08x g=%08x b=%08x\n",
-               ddsd.format.alphaMask, ddsd.format.redMask,
-               ddsd.format.greenMask, ddsd.format.blueMask);
+        clog << "DDS Format: " << ddsd.format.fourCC << '\n';
         if (ddsd.format.bpp == 32)
         {
             if (ddsd.format.redMask   == 0x00ff0000 &&

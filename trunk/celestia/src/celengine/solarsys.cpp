@@ -33,6 +33,19 @@
 using namespace std;
 
 
+static void errorMessagePrelude(const Tokenizer& tok)
+{
+    cerr << "Error in .ssc file (line " << tok.getLineNumber() << "): ";
+}
+
+static void sscError(const Tokenizer& tok,
+                     const string& msg)
+{
+    errorMessagePrelude(tok);
+    cerr << msg << '\n';
+}
+
+
 bool getDate(Hash* hash, const string& name, double& jd)
 {
     // Check first for a number value representing a Julian date
@@ -534,14 +547,14 @@ bool LoadSolarSystemObjects(istream& in,
 
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            cout << "Error parsing solar system file.\n";
+            sscError(tokenizer, "object name expected");
             return false;
         }
         string name = tokenizer.getStringValue();
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
-            cout << "Error parsing solar system file; invalid parent name.\n";
+            sscError(tokenizer, "bad parent object name");
             return false;
         }
         string parentName = tokenizer.getStringValue();
@@ -549,18 +562,16 @@ bool LoadSolarSystemObjects(istream& in,
         Value* objectDataValue = parser.readValue();
         if (objectDataValue == NULL)
         {
-            cout << "Error reading solar system object.\n";
+            sscError(tokenizer, "bad object definition");
             return false;
         }
 
         if (objectDataValue->getType() != Value::HashType)
         {
-            cout << "Bad solar system object.\n";
+            sscError(tokenizer, "{ expected");
             return false;
         }
         Hash* objectData = objectDataValue->getHash();
-
-        DPRINTF(2, "%s %s %s\n", itemType.c_str(), parentName.c_str(), name.c_str());
 
         Selection parent = universe.findPath(parentName, NULL, 0);
         PlanetarySystem* parentSystem = NULL;
@@ -594,15 +605,17 @@ bool LoadSolarSystemObjects(istream& in,
             }
             else
             {
-                cout << "Parent body '" << parentName << "' of '" << name << "' not found.\n";
+                errorMessagePrelude(tokenizer);
+                cerr << "parent body '" << parentName << "' of '" << name << "' not found.\n";
             }
 
             if (parentSystem != NULL)
             {
                 if (parentSystem->find(name))
                 {
-                    DPRINTF(0, "Warning duplicate definition of %s %s!\n",
-                            parentName.c_str(), name.c_str());
+                    errorMessagePrelude(tokenizer);
+                    cerr << "warning duplicate definition of " <<
+                        parentName << " " <<  name << '\n';
                 }
                 
                 Body* body = CreatePlanet(parentSystem, objectData, directory, !orbitsPlanet);
@@ -619,7 +632,7 @@ bool LoadSolarSystemObjects(istream& in,
             if (surface != NULL && parent.body() != NULL)
                 parent.body()->addAlternateSurface(name, surface);
             else
-                DPRINTF(0, "Bad alternate surface\n");
+                sscError(tokenizer, "bad alternate surface");
         }
         else if (itemType == "Location")
         {
@@ -633,12 +646,13 @@ bool LoadSolarSystemObjects(istream& in,
                 }
                 else
                 {
-                    DPRINTF(0, "Bad location\n");
+                    sscError(tokenizer, "bad location");
                 }
             }
             else
             {
-                DPRINTF(0, "Parent body of location does not exist\n");
+                errorMessagePrelude(tokenizer);
+                cerr << "parent body '" << parentName << "' of '" << name << "' not found.\n";
             }
         }
     }
