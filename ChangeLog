@@ -251,3 +251,36 @@ Code:
 Code:
 * Moved star browser and solar system browser code into separate modules
 * Fixed DPRINTF macro so it's not broken in g++
+
+
+1.1.3
+* Added city light map for night side of Earth
+* Specular reflections for Earth's oceans
+* Haze effects for planets and moons with atmospheres
+* Optimized star rendering--faster, uses substantially less memory
+  when many stars visible
+* Changed minimum limiting magnitude from 8.0 to 12.0
+* Support for nVidia vertex programs
+* Eliminated 'seams' in normalization cube maps used for lighting
+* View frustum culling of planets and nearby stars
+* Fixed clipping that occurred when close to planets
+* Fixed depth buffer precision problems (most apparent with spacecraft)
+* Tidied up display of speed, distance, and star/planet statistics.
+* Changed how modes work--goto won't break follow and sync follow modes
+  any more
+* Fixed underlit planets on GL implementations without EXT_rescale_normal
+* Type K, M, R, S, and N stars now cast a red tinted light on their planets
+* New Earth texture
+* Print less debugging spew on startup
+* Integrated Colin Walters endianness fixes
+* Windows version: info about max texture size and number of simultaneous
+  textures added to OpenGL Info dialog.
+* New objects: Comet Borrelly, the giant Kuiper Belt object 2001 KX76,
+  and the Hubble Space Telescope
+	
+Code:
+* Rewrote texture and model managers
+* Cleaned up simulation.cpp to use frames of reference and eliminated a lot
+  of special case code for the different 'modes'
+* Stopped using the Intel JPEG library on Windows; instead, the Independent
+  JPEG Group's library is now used on all platforms.
