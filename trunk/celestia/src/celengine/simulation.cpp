@@ -401,7 +401,12 @@ Selection Simulation::getSelection() const
 
 void Simulation::setSelection(const Selection& sel)
 {
-    selection = sel;
+    if (sel != selection)
+    {
+        universe->unmarkObject(selection);
+        selection = sel;
+        universe->markObject(selection, 10.0f, Color(1.0f, 0.0f, 0.0f, 0.9f));
+    }
 }
 
 
@@ -963,7 +968,7 @@ void Simulation::selectStar(uint32 catalogNo)
 {
     StarDatabase* stardb = universe->getStarCatalog();
     if (stardb != NULL)
-        selection = Selection(stardb->find(catalogNo));
+        setSelection(Selection(stardb->find(catalogNo)));
 }
 
 
@@ -999,7 +1004,7 @@ void Simulation::selectPlanet(int index)
         if (solarSystem != NULL &&
             index < solarSystem->getPlanets()->getSystemSize())
         {
-            selection = Selection(solarSystem->getPlanets()->getBody(index));
+            setSelection(Selection(solarSystem->getPlanets()->getBody(index)));
         }
     }
 }

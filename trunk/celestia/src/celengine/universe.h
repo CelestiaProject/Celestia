@@ -18,6 +18,7 @@
 #include <celengine/deepskyobj.h>
 #include <celengine/asterism.h>
 #include <celengine/boundaries.h>
+#include <celengine/marker.h>
 #include <celengine/selection.h>
 
 
@@ -59,6 +60,10 @@ class Universe
     SolarSystem* getSolarSystem(const Star* star) const;
     SolarSystem* createSolarSystem(Star* star) const;
 
+    void markObject(const Selection&, float size, Color color);
+    void unmarkObject(const Selection&);
+    MarkerList* getMarkers() const;
+
  private:
     Selection pickPlanet(SolarSystem& solarSystem,
                          const UniversalCoord&,
@@ -73,6 +78,7 @@ class Universe
     DeepSkyCatalog* deepSkyCatalog;
     AsterismList* asterisms;
     ConstellationBoundaries* boundaries;
+    MarkerList* markers;
 };
 
 #endif // UNIVERSE_H_
