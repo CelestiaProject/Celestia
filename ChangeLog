@@ -436,4 +436,5 @@ Code:
 * Added accurate orbital calculations for the five largest moons of Uranus
 * Added option to render stars as points (for a less fuzzy appearance)
 * Corrected sizing of planets' shadows on their ring systems
+* Unix Gtk: New Renderer Options
 * Corrected orientation of 
