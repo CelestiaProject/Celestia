@@ -1079,7 +1079,7 @@ static bool readTypeFloat1(istream& in, float& f)
 
 static bool readTypeColor(istream& in, Color& c)
 {
-    if (readType(in) != CMOD_Float1)
+    if (readType(in) != CMOD_Color)
         return false;
 
     float r = readFloat(in);
