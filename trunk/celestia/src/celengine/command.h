@@ -458,6 +458,17 @@ class CommandUnmark : public InstantaneousCommand
 };
 
 
+class CommandUnmarkAll : public InstantaneousCommand
+{
+ public:
+    CommandUnmarkAll();
+    void process(ExecutionEnvironment&);
+
+ private:
+    int dummy;   // Keep the class from having zero size
+};
+
+
 class Execution;
 
 class RepeatCommand : public Command
