@@ -64,9 +64,10 @@ whatever standards are chosen are used consistently throughout a project.
 This document describes the coding style already in use throughout the
 Celestia code base.  As Celestia grows, there will undoubtedly be
 clarifications, additions, and edits made to this document, and I encourage
-suggestions.  However, no recommendations will be entertained which require
-reformatting or renaming huge chunks of the existing code.  No stylistic
-convention is so inherently superior that it's worth all that hassle.
+suggestions.  However, recommendations that require
+reformatting or renaming huge chunks of the existing code will be ignored.
+No stylistic convention is so inherently superior that it's worth all that
+hassle.
 </p>
 
 <div>
@@ -273,16 +274,18 @@ x=y;
 x = y+z;
 a = b -> c;
 </pre>
-<li>There should be no space between a unary operator and its argument.
+<li>There should be no space between a unary operator and its operand.
 <li>Wherever a pointer type appears, there should be no space between the
 base type and the asterisk.  For pointer variable declarations, a space should
 separate the type name from the variable name.
 <pre style="code">
 // Celestia style
 char* str;
+str = reinterpret_cast&lt;char*&gt;(p);
 
 // Not Celestia style
 char *str;
+str = reinterpret_cast&lt;char *&gt;(p);
 </pre>
 <li>In function calls or definitions, there should be no space
 between the parentheses and either the arguments or the function name.
@@ -353,5 +356,48 @@ type-based naming conventions are not used.  There are a few important
 exceptions.  Convenience typedefs for class templates in Celestia's vector
 math library do contain type informations.  For example,
 Vector3&lt;float&gt; is Vec3f and Matrix4&lt;double&gt; is Mat4d.
+</ul>
+<br>
+
+<div>
+<span class="sectiontitle">Portability</span><br>
+Celestia is a cross-platform project, and this requires working around the
+quirks of several different compilers.  Here are a few to watch out for.
+<br>
+<p><span class="subsectiontitle">The Scope of for</span><br>
+The ANSI C++ standard states that the scope of a variable declared in
+the initialization part of a for statement is just the for loop.  Microsoft
+Visual C 6.0 disagrees and lets the definition "leak" out of the loop.  Other
+compilers (like the GNU C++ compiler) conform to the C++ standard.
+Avoid writing code that relies on either behavior.  The simplest
+rule is to never declare variables in the initialization spection of a for loop.
+If you do declare a variable there, make sure that it is not referenced outside
+of the for loop.
+<blockquote>
+<pre style="code">
+// This won't compile with Visual C++ (because it's broken)
+int sum = 0;
+for (int i = 0; i &lt; 5; i++)
+    sum += i;
+for (int i = 0; i &lt; 5; i++)
+    sum += i * i;
+
+// This version won't compile with g++ (because it conforms to the standard)
+int sum = 0;
+for (int i = 0; i &lt; 5; i++)
+    sum += i;
+for (i = 0; i &lt; 5; i++)
+    sum += i * i;
+
+// This version works on any compiler
+int sum = 0;
+int i;
+for (i = 0; i &lt; 5; i++)
+    sum += i;
+for (i = 0; i &lt; 5; i++)
+    sum += i * i;
+</pre>
+</blockquote>
+</div>
 </body>
 </html>
