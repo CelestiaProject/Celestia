@@ -95,9 +95,8 @@ msgid "&Forward"
 msgstr "&Vooruit"
 
 #: kdeapp.cpp:314
-#, fuzzy
 msgid "Home"
-msgstr "Komeet"
+msgstr "Naar Huis"
 
 #: kdeapp.cpp:321
 msgid "Bookmarks"
@@ -253,7 +252,7 @@ msgstr "Toon Eclipsschaduwen"
 
 #: kdeapp.cpp:455
 msgid "Cycle Star Mode"
-msgstr ""
+msgstr "Doorloop Sterren Mode"
 
 #: kdeapp.cpp:457
 msgid "Show Ring Shadows"
@@ -317,7 +316,7 @@ msgstr "Draadmodel modus"
 
 #: kdeapp.cpp:502
 msgid "Center on Orbit"
-msgstr ""
+msgstr "Centreren op Omloopbanen"
 
 #: kdeapp.cpp:506 kdepreferencesdialog.cpp:364
 msgid "Basic"
@@ -754,7 +753,7 @@ msgstr "&Selecteer"
 
 #: selectionpopup.cpp:309
 msgid "&Center"
-msgstr "&Centreer"
+msgstr "&Centreren"
 
 #: selectionpopup.cpp:311
 msgid "&Follow"
@@ -941,3 +940,5 @@ msgstr "Nee... Geen Meel Adres"
 
 #~ msgid "Stars As Points"
 #~ msgstr "Sterren Als Punten"
+
+
