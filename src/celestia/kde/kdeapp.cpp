@@ -1016,7 +1016,7 @@ void KdeApp::slotWireframeMode() {
 }
 
 void KdeApp::slotCenterCO() {
-	appCore->charEntered('\003');
+	appCore->charEntered('C');
 }
 
 void KdeApp::slotSetRenderPathBasic() {
