@@ -69,6 +69,7 @@ BEGIN
 	MENUITEM "Show A&tmospheres",           ID_RENDER_SHOWATMOSPHERES
         MENUITEM "Show &Orbits",                ID_RENDER_SHOWORBITS
 	MENUITEM "Show &Constellations",        ID_RENDER_SHOWCONSTELLATIONS
+	MENUITEM "Show Celestial &Grid",        ID_RENDER_SHOWCELESTIALSPHERE
 	MENUITEM SEPARATOR
 	MENUITEM "More Stars Visible",          ID_RENDER_MORESTARS
 	MENUITEM "Fewer Stars Visible",         ID_RENDER_FEWERSTARS
