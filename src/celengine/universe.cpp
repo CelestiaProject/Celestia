@@ -274,8 +274,8 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
 
-    // Reject invisible bodies
-    if (body->getClassification() == Body::Invisible)
+    // Reject invisible bodies and bodies that don't exist at the current time
+    if (body->getClassification() == Body::Invisible || !body->extant(pickInfo->jd))
         return true;
 
     Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
@@ -318,6 +318,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
 
     // Test for intersection with the bounding sphere
     if (body->getClassification() != Body::Invisible &&
+        body->extant(pickInfo->jd) &&
         testIntersection(pickInfo->pickRay, Sphered(bpos, radius), distance))
     {
         if (body->getMesh() == InvalidResource)
@@ -425,7 +426,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
 	// sufficiently close to the pickRay 
 
 	solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
-					 (void*) &pickInfo);
+                                           (void*) &pickInfo);
         if (pickInfo.closestBody == closestBody)
 	  return  Selection(closestBody); 
         // Nothing else around, select the body and return
