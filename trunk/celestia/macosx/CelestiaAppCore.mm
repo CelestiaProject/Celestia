@@ -50,12 +50,48 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 
 @implementation CelestiaAppCore
 
--(int)toCelestiaKey:(unichar)key {
+-(int)toCelestiaKey:(NSEvent*)theEvent {
 
     int	celestiaKey = 0;
+    unichar key = [[theEvent characters] characterAtIndex: 0];
 
+   if ( ([theEvent modifierFlags] && NSNumericPadKeyMask) && (key >= '0') && (key <= '9'))
     switch(key)
     {
+        case '0':
+            celestiaKey = CelestiaCore::Key_NumPad0;
+            break;
+        case '1':
+            celestiaKey = CelestiaCore::Key_NumPad1;
+            break;
+        case '2':
+            celestiaKey = CelestiaCore::Key_NumPad2;
+            break;
+        case '3':
+            celestiaKey = CelestiaCore::Key_NumPad3;
+            break;
+        case '4':
+            celestiaKey = CelestiaCore::Key_NumPad4;
+            break;
+        case '5':
+            celestiaKey = CelestiaCore::Key_NumPad5;
+            break;
+        case '6':
+            celestiaKey = CelestiaCore::Key_NumPad6;
+            break;
+        case '7':
+            celestiaKey = CelestiaCore::Key_NumPad7;
+            break;
+        case '8':
+            celestiaKey = CelestiaCore::Key_NumPad8;
+            break;
+        case '9':
+            celestiaKey = CelestiaCore::Key_NumPad9;
+            break;
+        default: break;
+        }
+        else switch(key)
+        {
         case NSF1FunctionKey:
             celestiaKey = CelestiaCore::Key_F1;
             break;
@@ -132,6 +168,8 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons {
     int cModifiers = 0;
+    if (modifiers & NSCommandKeyMask)
+        cModifiers |= CelestiaCore::ControlKey;
     if (modifiers & NSControlKeyMask)
         cModifiers |= CelestiaCore::ControlKey;
     if (modifiers & NSShiftKeyMask)
@@ -215,7 +253,7 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 
 -(void)charEntered:(char)c
 {
-    if (c == 127) c = 8; // map del to bs
+// moved to CelestiaOpenGLView...    if (c == 127) c = 8; 
     appCore->charEntered(c);
 }
 
