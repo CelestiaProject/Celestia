@@ -55,6 +55,13 @@ namespace astro
         Chase           = 6,
     };
 
+    enum ReferencePlane
+    {
+        BodyEquator,        // planet equator if moon, ecliptic if planet
+        Ecliptic_J2000,
+        Equator_J2000,
+    };
+
     float lumToAbsMag(float lum);
     float lumToAppMag(float lum, float lyrs);
     float absMagToLum(float mag);
@@ -71,6 +78,7 @@ namespace astro
     double lightYearsToAU(double);
     float AUtoLightYears(float);
     float AUtoKilometers(float);
+    double AUtoKilometers(double);
     float kilometersToAU(float);
     double kilometersToAU(double);
 

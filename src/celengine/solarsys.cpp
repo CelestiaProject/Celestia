@@ -351,6 +351,26 @@ static Body* CreatePlanet(PlanetarySystem* system,
             }
         }
     }
+
+    if (orbit == NULL)
+    {
+        Vec3d longlat(0.0, 0.0, 0.0);
+        if (planetData->getVector("LongLat", longlat))
+        {
+            Body* parent = system->getPrimaryBody();
+            if (parent != NULL)
+            {
+                Vec3f pos = parent->planetocentricToCartesian((float) longlat.x, (float) longlat.y, (float) longlat.z);
+                Point3d posd(pos.x, pos.y, pos.z);
+                orbit = new SynchronousOrbit(*parent, posd);
+            }
+            else
+            {
+                // TODO: Allow fixing objects to the surface of stars.
+            }
+        }
+    }
+
     if (orbit == NULL)
     {
         DPRINTF(0, "No valid orbit specified for object '%s'; skipping . . .\n",
@@ -362,7 +382,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
 
     double radius = 10000.0;
     planetData->getNumber("Radius", radius);
-    body->setRadius(radius);
+    body->setRadius((float) radius);
 
     int classification = Body::Unknown;
     string classificationName;
@@ -419,17 +439,17 @@ static Body* CreatePlanet(PlanetarySystem* system,
     
     double albedo = 0.5;
     planetData->getNumber("Albedo", albedo);
-    body->setAlbedo(albedo);
+    body->setAlbedo((float) albedo);
 
     double oblateness = 0.0;
     planetData->getNumber("Oblateness", oblateness);
-    body->setOblateness(oblateness);
+    body->setOblateness((float) oblateness);
 
     Quatf orientation;
     if (planetData->getRotation("Orientation", orientation))
         body->setOrientation(orientation);
 
-    body->setRotationElements(CreateRotationElements(planetData, orbit->getPeriod()));
+    body->setRotationElements(CreateRotationElements(planetData, (float) orbit->getPeriod()));
 
     Surface* surface = CreateSurface(planetData, path);
     body->setSurface(*surface);
