@@ -17,6 +17,7 @@
 //static NSPoint lastLoc = NSMakePoint(0.0, 0.0);
 
 @implementation CelestiaOpenGLView
+
 /*
 - (int)_mapNativeKeyCodeToGLUTCode: (unichar)unicodeKey isAscii: (BOOL *)isascii
 {
@@ -99,15 +100,26 @@
 
     return asciiKey;
 }
+*/
+
+- (BOOL) isFlipped {return YES;}
+
 - (void) keyDown: (NSEvent*)theEvent
 {
-    NSLog(@"keyDown: %@",theEvent);
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    if ( [[theEvent characters] characterAtIndex: 0] < 128 )
+       [ appCore charEntered: [[theEvent characters] characterAtIndex: 0] ];
+    [ appCore keyDown: [appCore toCelestiaKey: [[theEvent characters] characterAtIndex: 0] ] ];
 }
+
 - (void) keyUp: (NSEvent*)theEvent
 {
-    NSLog(@"keyUp: %@",theEvent);
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+//    if ( [[theEvent characters] characterAtIndex: 0] >= 128 )
+        [ appCore keyUp: [appCore toCelestiaKey: [[theEvent characters] characterAtIndex: 0] ] ];
+//    NSLog(@"keyUp: %@",theEvent);
 }
-*/
+
 /*
 - (void) _updateModifierFlags: (NSEvent*)theEvent
 {
@@ -127,24 +139,41 @@
 */
 - (void) mouseDown: (NSEvent*)theEvent
 {
-    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+    if ( [theEvent modifierFlags] & NSAlternateKeyMask )
+    {
+        [self rightMouseDown: theEvent];
+        return;
+    }
+//    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: self];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    NSLog(@"mouseDown: %@",theEvent);
+//    NSLog(@"mouseDown: %@",theEvent);
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
 
 }
+
 - (void) mouseUp: (NSEvent*)theEvent
 {
+    if ( [theEvent modifierFlags] & NSAlternateKeyMask )
+    {
+        [self rightMouseUp: theEvent];
+        return;
+    }
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    NSLog(@"mouseUp: %@", theEvent);
+//    NSLog(@"mouseUp: %@", theEvent);
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
 }
 - (void) mouseDragged: (NSEvent*) theEvent
 {
+    if ( [theEvent modifierFlags] & NSAlternateKeyMask )
+    {
+        [self rightMouseDragged: theEvent];
+        return;
+    }
 //    NSSize delta = [self convertSize:NSMakeSize([theEvent deltaX], [theEvent deltaY]) fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    NSLog(@"mouseDragged: %@",theEvent);
+//    NSLog(@"mouseDragged: %@",theEvent);
     [appCore mouseMove:NSMakePoint([theEvent deltaX], [theEvent deltaY]) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
 //    [appCore mouseMove:NSMakePoint(delta.width, delta.height) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
 }
@@ -152,25 +181,47 @@
 {
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    NSLog(@"rightMouseDown: %@",theEvent);
+//    NSLog(@"rightMouseDown: %@",theEvent);
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
 }
 - (void) rightMouseUp: (NSEvent*)theEvent
 {
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    NSLog(@"rightMouseUp: %@", theEvent);
+//    NSLog(@"rightMouseUp: %@", theEvent);
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
 }
+
 - (void) rightMouseDragged: (NSEvent*) theEvent
 {
     //NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     //NSSize delta = [self convertSize:NSMakeSize([theEvent deltaX], [theEvent deltaY]) fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    NSLog(@"rightMouseDragged: %@",theEvent);
+//    NSLog(@"rightMouseDragged: %@",theEvent);
     [appCore mouseMove:NSMakePoint([theEvent deltaX], [theEvent deltaY]) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
 //    [appCore mouseMove:NSMakePoint(delta.width, delta.height) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
 }
+
+- (void) scrollWheel: (NSEvent*)theEvent
+{
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    if ( [[theEvent characters] characterAtIndex: 0] < 128 )
+       [ appCore charEntered: [[theEvent characters] characterAtIndex: 0] ];
+    [ appCore mouseWheel: [theEvent deltaZ]
+       modifiers: [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0] ];
+}
+
+- (BOOL) acceptsFirstResponder: (NSEvent*)theEvent
+{
+    return YES;
+}
+
+- (BOOL) becomeFirstResponder
+{
+    //NSLog(@"Becoming first responder");
+    return YES;
+}
+
 - (BOOL) acceptsFirstMouse: (NSEvent*)theEvent
 {
     return YES;
@@ -194,5 +245,69 @@
         [controller setDirty];
         [super update];
 }
+
+- (void) writeStringToPasteboard: (NSPasteboard *) pb
+{
+    NSString *value;
+    [pb declareTypes:
+        [NSArray arrayWithObject: NSStringPboardType] owner: self];
+//        NSLog ( value );
+        CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+        value = [ [appCore currentURL] relativeString ];
+        [ pb setString: value forType: NSStringPboardType ];
+}
+
+- (BOOL) readStringFromPasteboard: (NSPasteboard *) pb
+{
+    NSString *value;
+    NSString *type = [pb availableTypeFromArray:
+        [NSArray arrayWithObject: NSStringPboardType]];
+    if ( type != nil )
+    {
+        value = [ pb stringForType: NSStringPboardType ];
+//        NSLog ( value );
+        CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+        [appCore goToUrl: value ];
+        return YES;
+    }
+    return NO;
+}
+- (unsigned int) draggingEntered: (id <NSDraggingInfo>) sender
+{
+    NSPasteboard *pb = [sender draggingPasteboard];
+    NSString *type = [pb availableTypeFromArray:
+        [NSArray arrayWithObject: NSStringPboardType]];
+    NSLog(@"dragentered");
+    if ( type != nil )
+    {
+        return NSDragOperationCopy;
+    }
+    return NSDragOperationNone;
+}
+
+- (BOOL) prepareForDragOperation: (id <NSDraggingInfo>) sender
+{
+    return YES;
+}
+
+- (BOOL) performDragOperation: (id <NSDraggingInfo>) sender
+{
+    NSPasteboard *pb = [sender draggingPasteboard];
+    return [ self readStringFromPasteboard: pb ];
+}
+
+- (IBAction) paste: (id) sender
+{
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    [ self readStringFromPasteboard: pb ];
+}
+
+- (IBAction) copy: (id) sender
+{
+    NSPasteboard *pb = [NSPasteboard generalPasteboard];
+    [ self writeStringToPasteboard: pb ];
+}
+
+
 
 @end
