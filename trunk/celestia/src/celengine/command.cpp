@@ -599,11 +599,11 @@ CommandPreloadTextures::CommandPreloadTextures(const string& _name) :
 void CommandPreloadTextures::process(ExecutionEnvironment& env)
 {
     Selection target = env.getSimulation()->findObjectFromPath(name);
-    if (target.body == NULL)
+    if (target.body() == NULL)
         return;
 
     if (env.getRenderer() != NULL)
-        env.getRenderer()->loadTextures(target.body);
+        env.getRenderer()->loadTextures(target.body());
 }
 
 

@@ -821,15 +821,22 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
         RemoveButtonDefaultStyle(hOK);
         AddButtonDefaultStyle(hCancel);
 
-        //Set bookmark text to selection text
+        // Set bookmark text to selection text
         if (hCtrl = GetDlgItem(hDlg, IDC_BOOKMARK_EDIT))
         {
             //If this is a body, set the text.
             Selection sel = appCore->getSimulation()->getSelection();
-            if (sel.body != NULL)
-            {
-                string name = sel.body->getName();
-                SetWindowText(hCtrl, (char*)name.c_str());
+            switch (sel.getType())
+            {                
+            case Selection::Type_Body:
+                {
+                    string name = sel.body()->getName();
+                    SetWindowText(hCtrl, (char*)name.c_str());
+                }
+                break;
+
+            default:
+                break;
             }
         }
         
@@ -1437,63 +1444,79 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
 
     hMenu = CreatePopupMenu();
 
-    if (sel.body != NULL)
+    switch (sel.getType())
     {
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, sel.body->getName().c_str());
-        AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, "S&ync Orbit");
-        AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
-
-        const PlanetarySystem* satellites = sel.body->getSatellites();
-        if (satellites != NULL && satellites->getSystemSize() != 0)
+    case Selection::Type_Body:
         {
-            HMENU satMenu = CreatePlanetarySystemMenu(satellites);
-            AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) satMenu,
-                       "&Satellites");
-        }
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER,
+                       sel.body()->getName().c_str());
+            AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, "S&ync Orbit");
+            AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
 
-        vector<string>* altSurfaces = sel.body->getAlternateSurfaceNames();
-        if (altSurfaces != NULL)
-        {
-            if (altSurfaces->size() != NULL)
+            const PlanetarySystem* satellites = sel.body()->getSatellites();
+            if (satellites != NULL && satellites->getSystemSize() != 0)
             {
-                HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
-                AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) surfMenu,
-                           "&Alternate Surfaces");
+                HMENU satMenu = CreatePlanetarySystemMenu(satellites);
+                AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) satMenu,
+                           "&Satellites");
             }
-            delete altSurfaces;
-        }
-    }
-    else if (sel.star != NULL)
-    {
-        Simulation* sim = appCore->getSimulation();
-        name = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star);
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
-        AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
-        AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
 
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
-        if (iter != solarSystemCatalog->end())
-        {
-            SolarSystem* solarSys = iter->second;
-            HMENU planetsMenu = CreatePlanetarySystemMenu(solarSys->getPlanets());
-            AppendMenu(hMenu,
-                       MF_POPUP | MF_STRING,
-                       (DWORD) planetsMenu,
-                       "&Planets");
+            vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
+            if (altSurfaces != NULL)
+            {
+                if (altSurfaces->size() != NULL)
+                {
+                    HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) surfMenu,
+                               "&Alternate Surfaces");
+                }
+                delete altSurfaces;
+            }
         }
-    }
-    else if (sel.deepsky != NULL)
-    {
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, sel.deepsky->getName().c_str());
-        AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
-        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
-        AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
+        break;
+
+    case Selection::Type_Star:
+        {
+            Simulation* sim = appCore->getSimulation();
+            name = sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star()));
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
+            AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
+            AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
+
+            SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
+            SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
+            if (iter != solarSystemCatalog->end())
+            {
+                SolarSystem* solarSys = iter->second;
+                HMENU planetsMenu = CreatePlanetarySystemMenu(solarSys->getPlanets());
+                AppendMenu(hMenu,
+                           MF_POPUP | MF_STRING,
+                           (DWORD) planetsMenu,
+                           "&Planets");
+            }
+        }
+        break;
+
+    case Selection::Type_DeepSky:
+        {
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER,
+                       sel.deepsky()->getName().c_str());
+            AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
+            AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
+        }
+        break;
+
+    case Selection::Type_Location:
+        break;
+
+    default:
+        break;
     }
 
     if (appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
@@ -1522,28 +1545,40 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
 void ShowWWWInfo(const Selection& sel)
 {
     string url;
-    if (sel.body != NULL)
+    switch (sel.getType())
     {
-        url = sel.body->getInfoURL();
-        if (url.empty())
+    case Selection::Type_Body:
         {
-            string name = sel.body->getName();
-            for (int i = 0; i < name.size(); i++)
-                name[i] = tolower(name[i]);
+            url = sel.body()->getInfoURL();
+            if (url.empty())
+            {
+                string name = sel.body()->getName();
+                for (int i = 0; i < name.size(); i++)
+                    name[i] = tolower(name[i]);
 
-            url = string("http://www.nineplanets.org/") + name + ".html";
+                url = string("http://www.nineplanets.org/") + name + ".html";
+            }
         }
-    }
-    else if (sel.star != NULL)
-    {
-        char name[32];
-        sprintf(name, "HIP%d", sel.star->getCatalogNumber() & ~0xf0000000);
+        break;
 
-        url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
-    }
-    else if (sel.deepsky != NULL)
-    {
-        url = sel.deepsky->getInfoURL();
+    case Selection::Type_Star:
+        {
+            char name[32];
+            sprintf(name, "HIP%d", sel.star()->getCatalogNumber() & ~0xf0000000);
+
+            url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
+        }
+        break;
+
+    case Selection::Type_DeepSky:
+        url = sel.deepsky()->getInfoURL();
+        break;
+
+    case Selection::Type_Location:
+        break;
+
+    default:
+        break;
     }
 
     ShellExecute(mainWindow,
@@ -3574,19 +3609,29 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 {
                     // Handle the satellite/child object submenu
                     Selection sel = appCore->getSimulation()->getSelection();
-                    if (sel.star != NULL)
+                    switch (sel.getType())
                     {
+                    case Selection::Type_Star:
                         appCore->getSimulation()->selectPlanet(LOWORD(wParam) - MENU_CHOOSE_PLANET);
-                    }
-                    else if (sel.body != NULL)
-                    {
-                        PlanetarySystem* satellites = (PlanetarySystem*)sel.body->getSatellites();
-                        appCore->getSimulation()->setSelection(Selection(satellites->getBody(LOWORD(wParam) - MENU_CHOOSE_PLANET)));
-                    }
-                    else if (sel.deepsky != NULL)
-                    {
+                        break;
+
+                    case Selection::Type_Body:
+                        {
+                            PlanetarySystem* satellites = (PlanetarySystem*) sel.body()->getSatellites();
+                            appCore->getSimulation()->setSelection(Selection(satellites->getBody(LOWORD(wParam) - MENU_CHOOSE_PLANET)));
+                            break;
+                        }
+
+                    case Selection::Type_DeepSky:
                         // Current deep sky object/galaxy implementation does
                         // not have children to select.
+                        break;
+
+                    case Selection::Type_Location:
+                        break;
+
+                    default:
+                        break;
                     }
                 }
                 else if (LOWORD(wParam) >= MENU_CHOOSE_SURFACE &&
@@ -3594,10 +3639,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 {
                     // Handle the alternate surface submenu
                     Selection sel = appCore->getSimulation()->getSelection();
-                    if (sel.body != NULL)
+                    if (sel.body() != NULL)
                     {
                         int index = (int) LOWORD(wParam) - MENU_CHOOSE_SURFACE - 1;
-                        vector<string>* surfNames = sel.body->getAlternateSurfaceNames();
+                        vector<string>* surfNames = sel.body()->getAlternateSurfaceNames();
                         if (surfNames != NULL)
                         {
                             string surfName;

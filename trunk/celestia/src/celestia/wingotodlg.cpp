@@ -63,13 +63,13 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
             sim->getSelectionLongLat(distance, longitude, latitude);
 
             //Display information in format appropriate for object
-            if (sim->getSelection().body != NULL)
+            if (sim->getSelection().body() != NULL)
             {
-                distance = distance - (double)sim->getSelection().body->getRadius();
+                distance = distance - (double) sim->getSelection().body()->getRadius();
                 SetDialogFloat(hDlg, IDC_EDIT_DISTANCE, "%.1f", (float)distance);
                 SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, "%.5f", (float)longitude);
                 SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, "%.5f", (float)latitude);
-                SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, (char*)sim->getSelection().body->getName().c_str());
+                SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, (char*) sim->getSelection().body()->getName().c_str());
             }
 //            else if (sim->getSelection().star != NULL)
 //            {

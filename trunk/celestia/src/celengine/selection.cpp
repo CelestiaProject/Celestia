@@ -16,46 +16,57 @@ using namespace std;
 
 double Selection::radius() const
 {
-    if (star != NULL)
-        return star->getRadius();
-    else if (body != NULL)
-        return body->getRadius();
-    else if (deepsky != NULL)
-        return astro::lightYearsToKilometers(deepsky->getRadius());
-    else
+    switch (type)
+    {
+    case Type_Star:
+        return star()->getRadius();
+    case Type_Body:
+        return body()->getRadius();
+    case Type_DeepSky:
+        return astro::lightYearsToKilometers(deepsky()->getRadius());
+    case Type_Location:
+        // The size of a location is its diameter, so divide by 2.
+        return location()->getSize() / 2.0f;
+    default:
         return 0.0;
+    }
 }
 
 
 UniversalCoord Selection::getPosition(double t) const
 {
-    if (body != NULL)
+    switch (type)
     {
-        Point3f sunPos(0.0f, 0.0f, 0.0f);
-        PlanetarySystem* system = body->getSystem();
-        if (system != NULL)
+    case Type_Body:
         {
-            const Star* sun = system->getStar();
-            if (sun != NULL)
-                sunPos = sun->getPosition();
-        }
+            Point3f sunPos(0.0f, 0.0f, 0.0f);
+            PlanetarySystem* system = body()->getSystem();
+            if (system != NULL)
+            {
+                const Star* sun = system->getStar();
+                if (sun != NULL)
+                    sunPos = sun->getPosition();
+            }
 
-        return astro::universalPosition(body->getHeliocentricPosition(t),
-                                        sunPos);
-    }
-    else if (star != NULL)
-    {
+            return astro::universalPosition(body()->getHeliocentricPosition(t),
+                                            sunPos);
+        }
+        
+    case Type_Star:
         return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
-                                        star->getPosition());
-    }
-    else if (deepsky != NULL)
-    {
-        Point3d p = deepsky->getPosition();
-        return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
-                                        Point3f((float) p.x, (float) p.y, (float) p.z));
-    }
-    else
-    {
+                                        star()->getPosition());
+
+    case Type_DeepSky:
+        {
+            Point3d p = deepsky()->getPosition();
+            return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
+                                            Point3f((float) p.x, (float) p.y, (float) p.z));
+        }
+        
+    case Type_Location:
+        return UniversalCoord(Point3d(0.0, 0.0, 0.0));
+
+    default:
         return UniversalCoord(Point3d(0.0, 0.0, 0.0));
     }
 }
@@ -63,44 +74,47 @@ UniversalCoord Selection::getPosition(double t) const
 
 string Selection::getName() const
 {
-    if (star != NULL)
+    switch (type)
     {
+    case Type_Star:
         char buf[20];
-        sprintf(buf, "#%d", star->getCatalogNumber());
+        sprintf(buf, "#%d", star()->getCatalogNumber());
         return string(buf);
-    }
-    else if (deepsky != NULL)
-    {
-        return deepsky->getName();
-    }
-    else if (body != NULL)
-    {
-        string name = body->getName();
-        PlanetarySystem* system = body->getSystem();
-        while (system != NULL)
+
+    case Type_DeepSky:
+        return deepsky()->getName();
+        
+    case Type_Body:
         {
-            Body* parent = system->getPrimaryBody();
-            if (parent != NULL)
+            string name = body()->getName();
+            PlanetarySystem* system = body()->getSystem();
+            while (system != NULL)
             {
-                name = parent->getName() + '/' + name;
-                system = parent->getSystem();
-            }
-            else
-            {
-                const Star* parentStar = system->getStar();
-                if (parentStar != NULL)
+                Body* parent = system->getPrimaryBody();
+                if (parent != NULL)
                 {
-                    char buf[20];
-                    sprintf(buf, "#%d", parentStar->getCatalogNumber());
-                    name = string(buf) + '/' + name;
+                    name = parent->getName() + '/' + name;
+                    system = parent->getSystem();
                 }
-                system = NULL;
+                else
+                {
+                    const Star* parentStar = system->getStar();
+                    if (parentStar != NULL)
+                    {
+                        char buf[20];
+                        sprintf(buf, "#%d", parentStar->getCatalogNumber());
+                        name = string(buf) + '/' + name;
+                    }
+                    system = NULL;
+                }
             }
+            return name;
         }
-        return name;
-    }
-    else
-    {
+
+    case Type_Location:
+        return "";
+
+    default:
         return "";
     }
 }

@@ -556,27 +556,27 @@ bool LoadSolarSystemObjects(istream& in,
         if (itemType == "Body")
         {
             bool orbitsPlanet = false;
-            if (parent.star != NULL)
+            if (parent.star() != NULL)
             {
-                SolarSystem* solarSystem = universe.getSolarSystem(parent.star);
+                SolarSystem* solarSystem = universe.getSolarSystem(parent.star());
                 if (solarSystem == NULL)
                 {
                     // No solar system defined for this star yet, so we need
                     // to create it.
-                    solarSystem = universe.createSolarSystem(parent.star);
+                    solarSystem = universe.createSolarSystem(parent.star());
                 }
                 parentSystem = solarSystem->getPlanets();
             }
-            else if (parent.body != NULL)
+            else if (parent.body() != NULL)
             {
                 // Parent is a planet or moon
-                parentSystem = parent.body->getSatellites();
+                parentSystem = parent.body()->getSatellites();
                 if (parentSystem == NULL)
                 {
                     // If the planet doesn't already have any satellites, we
                     // have to create a new planetary system for it.
-                    parentSystem = new PlanetarySystem(parent.body);
-                    parent.body->setSatellites(parentSystem);
+                    parentSystem = new PlanetarySystem(parent.body());
+                    parent.body()->setSatellites(parentSystem);
                 }
                 orbitsPlanet = true;
             }
@@ -604,20 +604,20 @@ bool LoadSolarSystemObjects(istream& in,
         else if (itemType == "AltSurface")
         {
             Surface* surface = CreateSurface(objectData, directory);
-            if (surface != NULL && parent.body != NULL)
-                parent.body->addAlternateSurface(name, surface);
+            if (surface != NULL && parent.body() != NULL)
+                parent.body()->addAlternateSurface(name, surface);
             else
                 DPRINTF(0, "Bad alternate surface\n");
         }
         else if (itemType == "Location")
         {
-            if (parent.body != NULL)
+            if (parent.body() != NULL)
             {
-                Location* location = CreateLocation(objectData, parent.body);
+                Location* location = CreateLocation(objectData, parent.body());
                 if (location != NULL)
                 {
                     location->setName(name);
-                    parent.body->addLocation(location);
+                    parent.body()->addLocation(location);
                 }
                 else
                 {
