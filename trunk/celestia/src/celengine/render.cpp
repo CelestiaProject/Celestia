@@ -4961,7 +4961,6 @@ void Renderer::renderStar(const Star& star,
     if (discSizeInPixels > 1)
     {
         Surface surface;
-        Atmosphere atmosphere;
         RenderProperties rp;
 
         surface.color = color;
@@ -5010,17 +5009,21 @@ void Renderer::renderStar(const Star& star,
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;
 
-        atmosphere.height = radius * CoronaHeight;
-        atmosphere.lowerColor = color;
-        atmosphere.upperColor = color;
-        atmosphere.skyColor = color;
-
         rp.surface = &surface;
-        rp.atmosphere = &atmosphere;
         rp.rings = NULL;
         rp.radius = star.getRadius();
         rp.oblateness = 0.0f;
         rp.model = star.getModel();
+
+        Atmosphere atmosphere;
+        atmosphere.height = radius * CoronaHeight;
+        atmosphere.lowerColor = color;
+        atmosphere.upperColor = color;
+        atmosphere.skyColor = color;
+        if (rp.model == InvalidResource)
+            rp.atmosphere = &atmosphere;
+        else
+            rp.atmosphere = NULL;
 
         double rotation = 0.0;
         // Watch out for the precision limits of floats when computing
@@ -5533,7 +5536,6 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
     if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f)
     {
-        //Color starColor = star.getStellarClass().getApparentColor();
         Color starColor = colorTemp->lookupColor(star.getTemperature());
         float renderDistance = distance;
         float s = renderDistance * size;

@@ -31,7 +31,8 @@ class StarDetails
     inline Vec3f getSemiAxes() const;
     inline ResourceHandle getModel() const;
     inline MultiResTexture getTexture() const;
-    inline const Orbit* getOrbit() const;
+    inline Orbit* getOrbit() const;
+    inline float getOrbitalRadius() const;
     inline uint32 getKnowledge() const;
     inline bool getKnowledge(uint32) const;
     inline const char* getSpectralType() const;
@@ -46,6 +47,7 @@ class StarDetails
     void setBolometricCorrection(float);
     void setTexture(const MultiResTexture&);
     void setModel(ResourceHandle);
+    void setOrbit(Orbit*);
     
     enum
     {
@@ -64,6 +66,9 @@ class StarDetails
 
     MultiResTexture texture;
     ResourceHandle model;
+
+    Orbit* orbit;
+    float orbitalRadius;
 
  public:
     static StarDetails* GetStarDetails(const StellarClass&);
@@ -117,10 +122,16 @@ StarDetails::getTexture() const
     return texture;
 }
 
-const Orbit*
+Orbit*
 StarDetails::getOrbit() const
 {
-    return NULL;
+    return orbit;
+}
+
+float
+StarDetails::getOrbitalRadius() const
+{
+    return 0.0f;
 }
 
 uint32
@@ -176,6 +187,9 @@ public:
     inline float getBolometricMagnitude() const;
     MultiResTexture getTexture() const;
     ResourceHandle getModel() const;
+    inline Orbit* getOrbit() const;
+    inline float getOrbitalRadius() const;
+    inline uint32 getKnowledge() const;
 
     enum {
         InvalidCatalogNumber = 0xffffffff
@@ -237,6 +251,18 @@ float
 Star::getBolometricMagnitude() const
 {
     return absMag + details->getBolometricCorrection();
+}
+
+Orbit*
+Star::getOrbit() const
+{
+    return details->getOrbit();
+}
+
+float
+Star::getOrbitalRadius() const
+{
+    return details->getOrbitalRadius();
 }
 
 #endif // _STAR_H_
