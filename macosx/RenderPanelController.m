@@ -3,11 +3,7 @@
 
 NSDictionary *_labelDict, *_renderDict;
 
-@interface RenderPanelController(PrivateAPI)
--(void)finishSetup;
-@end
-
-@implementation RenderPanelController(PrivateAPI)
+@implementation RenderPanelController
 -(void)finishSetup
 {
     CelestiaRenderer *renderer;
@@ -17,10 +13,24 @@ NSDictionary *_labelDict, *_renderDict;
     NSLog(@"[RenderPanelController(PrivateAPI) finishSetup]");
     renderer = [[CelestiaAppCore sharedAppCore] renderer];
     NSLog(@"setup _labelDict");
-    
+
     _labelDict = [[NSDictionary dictionaryWithObjectsAndKeys:@"Asteroids",[NSValue valueWithNonretainedObject:lAsteroids],@"Constellations",[NSValue valueWithNonretainedObject:lConstellations],@"Galaxies",[NSValue valueWithNonretainedObject:lGalaxies],@"Moons",[NSValue valueWithNonretainedObject:lMoons],@"Planets",[NSValue valueWithNonretainedObject:lPlanets],@"Spacecraft",[NSValue valueWithNonretainedObject:lSpacecraft],@"Stars",[NSValue valueWithNonretainedObject:lStars],nil,nil] retain];
     NSLog(@"setup _renderDict");
+    
     _renderDict = [[NSDictionary dictionaryWithObjectsAndKeys:@"Atmospheres",[NSValue valueWithNonretainedObject:rAtmospheres],@"AutoMag",[NSValue valueWithNonretainedObject:rAutoMag],@"Boundaries",[NSValue valueWithNonretainedObject:rBoundaries],@"CelestialSphere",[NSValue valueWithNonretainedObject:rCelestialSphere],@"CloudMaps",[NSValue valueWithNonretainedObject:rCloudMaps],@"Diagrams",[NSValue valueWithNonretainedObject:rDiagrams],@"EclipseShadows",[NSValue valueWithNonretainedObject:rEclipseShadows],@"Galaxies",[NSValue valueWithNonretainedObject:rGalaxies],@"NightMaps",[NSValue valueWithNonretainedObject:rNightMaps],@"Orbits",[NSValue valueWithNonretainedObject:rOrbits],@"Planets",[NSValue valueWithNonretainedObject:rPlanets],@"RingShadows",[NSValue valueWithNonretainedObject:rRingShadows],@"SmoothLines",[NSValue valueWithNonretainedObject:rSmoothLines],@"Stars",[NSValue valueWithNonretainedObject:rStars],@"StarsAsPoints",[NSValue valueWithNonretainedObject:rStarsAsPoints],nil,nil] retain];
+
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"]!=nil) {
+        NSDictionary *prefs;
+        NSLog(@"deserializing render preferences from user defaults");
+        prefs = [[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"];
+        [renderer setLabelFlags:[prefs objectForKey:@"labelFlags"]];
+        [renderer setRenderFlags:[prefs objectForKey:@"renderFlags"]];
+        [renderer setBrightnessBias:[prefs objectForKey:@"brightnessBias"]];
+        [renderer setSaturationMagnitude:[prefs objectForKey:@"saturationMagnitude"]];
+        [renderer setVertexShaderEnabled:[prefs objectForKey:@"vertexShaderEnabled"]];
+        [renderer setFragmentShaderEnabled:[prefs objectForKey:@"fragmentShaderEnabled"]];
+        [renderer setResolution:[prefs objectForKey:@"resolution"]];
+    }
 
     NSLog(@"enumerate renderFlags");
     flags = [renderer renderFlags];
@@ -47,11 +57,8 @@ NSDictionary *_labelDict, *_renderDict;
     [fResolution selectItemAtIndex:[[renderer resolution] intValue]];
 
     [self applyChanges:nil];
-
 }
-@end
 
-@implementation RenderPanelController
 -(void)awakeFromNib
 {
     _labelDict = nil;
