@@ -103,6 +103,7 @@
 {
 	Texture "moon.jpg"
 	BumpMap "moonbump1k.jpg"
+	# Texture "moon4k.dds"
 	BumpHeight 0.7
 	Radius   1737.53
 	Oblateness 0.002
@@ -122,6 +123,7 @@
 
 "Mir" "Sol/Earth"
 {
+	Class "spacecraft"
 	Mesh "mir.3ds"
 	Radius 0.015      # Mir is about 30 meters long
 
@@ -142,6 +144,7 @@
 
 "ISS" "Sol/Earth"
 {
+	Class "spacecraft"
 	Mesh "iss.3ds"
 	Radius 0.015
 
@@ -161,6 +164,7 @@
 
 "Hubble" "Sol/Earth"
 {
+	Class "spacecraft"
 	Mesh "hubble.3ds"
 	Radius 0.015
 
@@ -181,7 +185,7 @@
 "Mars" "Sol"
 {
 	Texture "mars.jpg"
-	CompressTexture true
+	# Texture "mars4k.dds"
 	BumpMap "marsbump1k.jpg"
 	BumpHeight 2.5
 	Color   [ 1 0.75 0.7 ]
@@ -306,6 +310,7 @@
 "Io" "Sol/Jupiter"
 {
 	Texture "io.jpg"
+	# Texture "io2k.dds"
 	Radius   1821
 
 	CustomOrbit "io"
@@ -389,6 +394,7 @@
 
 "Galileo" "Sol/Jupiter"
 {
+	Class "spacecraft"
 	Mesh "galileo.3ds"
 	Radius   0.01
 
@@ -877,6 +883,7 @@
 # A few asteriods for fun . . .
 "Ceres" "Sol"
 {
+	Class "asteroid"
 	Texture "asteroid.jpg"
 	Radius 456
 
@@ -897,6 +904,7 @@
 
 "Pallas" "Sol"
 {
+	Class "asteroid"
 	Texture "asteroid.jpg"
 	Radius 260
 
@@ -917,6 +925,7 @@
 
 "Juno" "Sol"
 {
+	Class "asteroid"
 	Texture "asteroid.jpg"
 	Radius 120
 
@@ -937,6 +946,7 @@
 
 "Vesta" "Sol"
 {
+	Class "asteroid"
 	Mesh   "vesta.3ds"
 	Texture "asteroid.jpg"
 	Radius 265
@@ -958,6 +968,7 @@
 
 "Gaspra" "Sol"
 {
+	Class "asteroid"
 	Mesh "gaspra.3ds"
 	Texture "asteroid.jpg"
 	Color   [ 0.52 0.47 0.42 ]
@@ -983,6 +994,7 @@
 
 "Ida" "Sol"
 {
+	Class "asteroid"
 	Mesh   "ida.3ds"
 	Texture "asteroid.jpg"
 	Radius 45
@@ -1003,6 +1015,7 @@
 
 "Dactyl" "Sol/Ida"
 {
+	Class "asteroid"
 	# Data for Dactyl is a very rough guess based on a value of
 	# 2.8 g/cm^3 for Ida
 	Texture "asteroid.jpg"
@@ -1020,6 +1033,7 @@
 
 "Eros" "Sol"
 {
+	Class "asteroid"
 	Mesh   "eros.3ds"
 	Texture "asteroid.jpg"
 	# Color sampled from true color photo taken by NEAR
@@ -1044,6 +1058,7 @@
 
 "Toutatis" "Sol"
 {
+	Class "asteroid"
 	Mesh   "toutatis.3ds"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
@@ -1069,6 +1084,7 @@
 
 "Geographos" "Sol"
 {
+	Class "asteroid"
 	Mesh   "geographos.3ds"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
@@ -1094,6 +1110,7 @@
 
 "Kleopatra" "Sol"
 {
+	Class "asteroid"
 	Mesh   "kleopatra.3ds"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
@@ -1121,6 +1138,7 @@
 
 "1998 KY26" "Sol"
 {
+	Class "asteroid"
 	Mesh   "ky26.3ds"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
@@ -1147,6 +1165,7 @@
 
 "Bacchus" "Sol"
 {
+	Class "asteroid"
 	Mesh   "bacchus.3ds"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
@@ -1173,6 +1192,7 @@
 
 "Golevka" "Sol"
 {
+	Class "asteroid"
 	Mesh   "golevka.3ds"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
@@ -1199,6 +1219,7 @@
 
 "Castalia" "Sol"
 { 
+	Class "asteroid"
 	Mesh   "castalia.3ds"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
@@ -1227,6 +1248,8 @@
 # Comets
 "Halley" "Sol"
 {
+	Class "comet"
+	Mesh "asteroid.cms"
 	Texture "asteroid.jpg"
 	Radius 7.5
 
@@ -1248,6 +1271,7 @@
 
 "Borrelly" "Sol"
 {
+	Class "comet"
 	Mesh "borrelly.cms"
 	Texture "asteroid.jpg"
 	Radius 2.5
@@ -1270,6 +1294,7 @@
 
 "Ikeya-Zhang" "Sol" 
 { 
+	Class "comet"
 	Texture "asteroid.jpg" 
 	Mesh "roughsphere.cms"
 
@@ -1294,6 +1319,7 @@
 # Centaurs
 "Chiron" "Sol"
 {
+	Class "asteroid"
 	Texture "asteroid.jpg"
 	Radius 90
 
@@ -1317,6 +1343,7 @@
 # 20000 Varuna
 "Varuna" "Sol"
 {
+	Class "asteroid"
 	Texture "asteroid.jpg"
 	Radius 450
 
@@ -1340,6 +1367,7 @@
 # 2001 KX76
 "2001 KX76" "Sol"
 {
+	Class "asteroid"
 	Texture "asteroid.jpg"
 	Radius 600
 
