@@ -1,0 +1,10 @@
+# borrelly.cms
+# Cheesy attempt to make a 3D model of Comet Borrelly
+
+SphereDisplacementMesh
+{
+	Size [ 1.0 0.5 0.45 ]
+	NoiseOffset [ 11 43 24 ]
+	FeatureHeight  0.3
+	Octaves 3
+}
