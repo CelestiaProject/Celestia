@@ -34,7 +34,6 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                                     UINT wParam,
                                     LONG lParam)
 {
-    printf("GotoObjectProc\n");
     GotoObjectDialog* gotoDlg = reinterpret_cast<GotoObjectDialog*>(GetWindowLong(hDlg, DWL_USER));
 
     switch (message)
@@ -42,7 +41,6 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
     case WM_INITDIALOG:
         {
             GotoObjectDialog* gotoDlg = reinterpret_cast<GotoObjectDialog*>(lParam);
-            printf("INITDIALOG: %p\n", gotoDlg);
             if (gotoDlg == NULL)
                 return EndDialog(hDlg, 0);
             SetWindowLong(hDlg, DWL_USER, lParam);
