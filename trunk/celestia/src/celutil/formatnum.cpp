@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <string>
 #include "formatnum.h"
 
 
