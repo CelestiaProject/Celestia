@@ -177,6 +177,7 @@ void Galaxy::render(const Vec3f& offset,
     }
     assert(galaxyTex != NULL);
 
+    glEnable(GL_TEXTURE_2D);
     galaxyTex->bind();
 
     Mat3f viewMat = viewerOrientation.toMatrix3();
