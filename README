@@ -344,12 +344,15 @@ maps created by Marc Buie at Lowell Observatory.  Buie's maps were generated
 from photometric data gathered during six years of mutual occultations of
 Pluto and Charon.
 
-Venus's clouds and the textures for Io, Europa, Ganymede, Callisto and Saturn
+Venus's clouds and the textures for Europa, Ganymede, Callisto and Saturn
 are from Björn Jónsson. His site at http://www.mmedia.is/~bjj/ is an excellent
 resource for solar system rendering.
 
-Saturn's rings were built by Grant Hutchison from early Cassini imaging, and
-stellar transit data obtained from:
+The Io map is by Steve Albers. His planetary maps are at:
+   http://laps.fsl.noaa.gov/albers/sos/sos.html
+
+Saturn's rings were built by Grant Hutchison from Cassini imaging, with
+transparency information derived from stellar transit data obtained from:
   http://pds-rings.arc.nasa.gov/ringocc/ringocc.html
 
 Venus's surface is a copyright-free NASA image.
