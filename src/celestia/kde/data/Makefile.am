@@ -19,6 +19,9 @@ apps_DATA = celestia.desktop
 
 KDE_ICON = celestia
 
+docdir = $(kde_htmldir)/en/celestia
+doc_DATA = index.docbook
+
 EXTRA_DIST = $(rc_DATA) $(favicons_DATA) $(favicons_DATA)\
              $(kdelnk_DATA) $(conf_DATA) $(mime_DATA)\
              $(apps_DATA) hi16-app-celestia.png\
