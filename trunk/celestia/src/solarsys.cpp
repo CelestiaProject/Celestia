@@ -153,25 +153,36 @@ static Body* CreatePlanet(PlanetarySystem* system,
     double ascendingNode = 0.0;
     planetData->getNumber("AscendingNode", ascendingNode);
 
-    double argOfPeriapsis = 0.0;
-    planetData->getNumber("ArgOfPeriapsis", argOfPeriapsis);
+    double longOfPericenter = 0.0;
+    planetData->getNumber("ArgOfPeriapsis", longOfPericenter);
 
-    double trueAnomaly = 0.0;
-    planetData->getNumber("TrueAnomaly", trueAnomaly);
+    double epoch = astro::J2000;
+    planetData->getNumber("Epoch", epoch);
+
+    // Accept either the mean anomaly or mean longitude--use mean anomaly
+    // if both are specified.
+    double anomalyAtEpoch = 0.0;
+    if (!planetData->getNumber("MeanAnomaly", anomalyAtEpoch))
+    {
+        double longAtEpoch = 0.0;
+        if (planetData->getNumber("MeanLongitude", longAtEpoch))
+            anomalyAtEpoch = longAtEpoch - longOfPericenter;
+    }
 
     if (usePlanetUnits)
     {
         semiMajorAxis = astro::AUtoKilometers(semiMajorAxis);
-        period = period * 265.25f;
+        period = period * 365.25f;
     }
 
     body->setOrbit(new EllipticalOrbit(semiMajorAxis,
                                        eccentricity,
                                        degToRad(inclination),
                                        degToRad(ascendingNode),
-                                       degToRad(argOfPeriapsis),
-                                       degToRad(trueAnomaly),
-                                       period));
+                                       degToRad(longOfPericenter),
+                                       degToRad(anomalyAtEpoch),
+                                       period,
+                                       epoch));
     
     double obliquity = 0.0;
     planetData->getNumber("Obliquity", obliquity);
