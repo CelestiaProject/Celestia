@@ -11,32 +11,23 @@
 #define _STARDB_H_
 
 #include <iostream>
-#include <map>
+#include <vector>
 #include "constellation.h"
 #include "starname.h"
 #include "star.h"
+#include "catalogxref.h"
 #include "octree.h"
 
 
-typedef std::map<uint32, StarName*> StarNameDatabase;
-
-struct StarRecord
-{
-    Star* star;
-};
-
 class StarDatabase
-{
+{        
  public:
-    static StarDatabase* read(std::istream&);
-    static StarNameDatabase* readNames(std::istream&);
-
     StarDatabase();
     ~StarDatabase();
 
     inline Star* getStar(uint32) const;
     inline uint32 size() const;
-    Star* find(uint32 catalogNumber) const;
+    Star* find(uint32 catalogNumber, unsigned int whichCatalog = 0) const;
     Star* find(std::string) const;
 
     void findVisibleStars(StarHandler& starHandler,
@@ -49,20 +40,29 @@ class StarDatabase
                         const Point3f& position,
                         float radius) const;
 
-    string getStarName(uint32 catalogNumber) const;
+    std::string getStarName(const Star&) const;
+    StarNameDatabase::NumberIndex::const_iterator 
+        getStarNames(uint32 catalogNumber) const;
+    StarNameDatabase::NumberIndex::const_iterator finalName() const;
 
     StarNameDatabase* getNameDatabase() const;
     void setNameDatabase(StarNameDatabase*);
+    
+    void addCrossReference(const CatalogCrossReference*);
+
+    static StarDatabase* read(std::istream&);
 
  private:
     void buildOctree();
     void buildIndexes();
 
     int nStars;
-    Star *stars;
+    Star* stars;
     StarNameDatabase* names;
-    StarRecord* catalogNumberIndex;
+    Star** catalogNumberIndexes[Star::CatalogCount];
     StarOctree* octreeRoot;
+
+    std::vector<const CatalogCrossReference*> catalogs;
 };
 
 
