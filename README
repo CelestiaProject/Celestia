@@ -166,16 +166,18 @@ Backspace: Cancel current selection
 Ctrl+A : Toggle atmospheres
 Ctrl+B : Toggle constellation boundaries 
 Ctrl+E : Toggle eclipse shadow rendering
+Ctrl+K : Toggle display of markers
 Ctrl+L : Toggle night side planet maps (light pollution)
+Ctrl+P : Mark selected object
 Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
-Ctrl+P : Toggle per-pixel lighting (if supported)
 Ctrl+T : Toggle rendering of comet tails
-Ctrl+V : Toggle vertex programs (if supported)
+Ctrl+V : Cycle between supported OpenGL render paths
 Ctrl+W : Toggle wireframe mode
 Ctrl+X : Toggle antialias lines
 Ctrl+Y : Toggle autoMag = auto adaptation of star visibility to field
          of view   
 r R: lower or raise texture resolution
++  : Switch between artistic and limit of knowledge planet textures
 
 Multiview:
 Ctrl+R : Split view vertically
@@ -347,7 +349,15 @@ Grant Hutchison (solarsys.ssc guru)
 James Holmes
 
 
-Contributors:
+Documentation:
+
+Frank Gregorio (Celestia User's Guide)
+Hitoshi Suzuki (Japanese README translation)
+Christophe Teyssier (DocBook and HTML conversion of User's Guide)
+Diego Rodriguez (Acrobat conversion of User's Guide)
+
+
+Other Contributors:
 
 Models of Mars Global Surveyor and Mars Odyssey were created by
 Shrox: http://www.shrox.com/
@@ -358,9 +368,15 @@ with fictional terrain added to fill in gaps.  The model of the Galileo
 spacecraft is also from David Seal's site (though it was converter from
 Inventor to 3DS format.)
 
-The Mars, Moon, and Pluto textures and bump maps are all from
+The Mars, Moon, Neptune, and Uranus textures and bump maps are all from
 James Hastings-Trew's collection.  Some of the prettiest planet maps
 around are at http://apollo.spaceports.com/~jhasting/
+
+Fridger Schrempp produced the 'available data' Pluto texture using images
+taken with the ESA's Faint Object Camera aboard the Hubble Space Telescope.
+The interpretive Pluto texture was created by Don Edwards by combining the
+large scale albedo features from the Hubble map with detail taken from
+Voyager 2 images of Triton.
 
 The Venus, Saturn, and Saturn's rings textures are from Bjorn Jonsson.
 His site is http://www.mmedia.is/~bjj/ and is an excellent resource
@@ -391,6 +407,9 @@ Non-Spherical Worlds:  http://publish.uwo.ca/~pjstooke/plancart.htm
 
 Grant Hutchison supplied the correct orientations for the major planets,
 their moons, and a number of asteroids.
+
+Selden Ball deserves a special mention for suffering more prerelease versions
+finding more bugs, and giving more feedback than anyone else.
 
 The Mac OS X icon was designed by Chris Alford (http://www.chrisalford.com/)
 
