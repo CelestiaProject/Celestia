@@ -630,5 +630,7 @@ Code:
    - Markers may also be set on objects using the right-click context menu
    - Added mark/unmark commands for scripts
    - Bound Ctrl+K to toggle display of markers
+   - Added flash messages indicating on|off status of markers 
+   - Implemented markers into KDE interface	
 * Added triangle-accurate picking of mesh objects
 
