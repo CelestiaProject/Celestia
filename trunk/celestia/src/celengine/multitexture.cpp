@@ -1,4 +1,4 @@
-// multitexture.cpp
+// multirestexture.cpp
 //
 // Copyright (C) 2002 Deon Ramsey <dramsey@sourceforge.net>
 //
@@ -14,33 +14,59 @@
 using namespace std;
 
 
-void MultiTexture::setTexture(const string &source, bool compress)
+MultiResTexture::MultiResTexture()
 {
-    TextureManager* texMan = GetTextureManager();
-    tex[lores]=texMan->getHandle(TextureInfo(source, compress, lores));
-    tex[medres]=texMan->getHandle(TextureInfo(source, compress, medres));
-    tex[hires]=texMan->getHandle(TextureInfo(source, compress, hires));
+    tex[lores] = InvalidResource;
+    tex[medres] = InvalidResource;
+    tex[hires] = InvalidResource;
 }
 
 
-void MultiTexture::setTexture(const string &source, float height)
+MultiResTexture::MultiResTexture(ResourceHandle loTex,
+                                 ResourceHandle medTex,
+                                 ResourceHandle hiTex)
 {
-    TextureManager* texMan = GetTextureManager();
-    tex[lores]=texMan->getHandle(TextureInfo(source, height, lores));
-    tex[medres]=texMan->getHandle(TextureInfo(source, height, medres));
-    tex[hires]=texMan->getHandle(TextureInfo(source, height, hires));
+    tex[lores] = loTex;
+    tex[medres] = medTex;
+    tex[hires] = hiTex;
 }
 
-Texture* MultiTexture::find(unsigned int resolution)
+
+MultiResTexture::MultiResTexture(const std::string& source)
+{
+    setTexture(source);
+}
+
+
+void MultiResTexture::setTexture(const string& source, bool compress)
 {
     TextureManager* texMan = GetTextureManager();
-    Texture *res=texMan->find(tex[resolution]);
-    if(res||resolution==lores)
+    tex[lores] = texMan->getHandle(TextureInfo(source, compress, lores));
+    tex[medres] = texMan->getHandle(TextureInfo(source, compress, medres));
+    tex[hires] = texMan->getHandle(TextureInfo(source, compress, hires));
+}
+
+
+void MultiResTexture::setTexture(const string& source, float height)
+{
+    TextureManager* texMan = GetTextureManager();
+    tex[lores] = texMan->getHandle(TextureInfo(source, height, lores));
+    tex[medres] = texMan->getHandle(TextureInfo(source, height, medres));
+    tex[hires] = texMan->getHandle(TextureInfo(source, height, hires));
+}
+
+
+Texture* MultiResTexture::find(unsigned int resolution)
+{
+    TextureManager* texMan = GetTextureManager();
+    Texture* res = texMan->find(tex[resolution]);
+    if (res != NULL || resolution == lores)
         return res;
-    tex[resolution]=tex[resolution-1];
-    res=texMan->find(tex[resolution]);
-    if(res||resolution==medres)
+    tex[resolution] = tex[resolution - 1];
+    res = texMan->find(tex[resolution]);
+    if(res != NULL || resolution == medres)
         return res;
-    tex[hires]=tex[medres]=tex[lores];
+    tex[hires] = tex[medres] = tex[lores];
+
     return texMan->find(tex[lores]);
 }
