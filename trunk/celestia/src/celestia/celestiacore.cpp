@@ -95,6 +95,18 @@ public:
 };
 
 
+View::View(Observer* _observer,
+           float _x, float _y,
+           float _width, float _height) :
+    observer(_observer),
+    x(_x),
+    y(_y),
+    width(_width),
+    height(_height)
+{
+}
+    
+
 CelestiaCore::CelestiaCore() :
     config(NULL),
     universe(NULL),
@@ -119,6 +131,7 @@ CelestiaCore::CelestiaCore() :
     hudDetail(1),
     wireframe(false),
     editMode(false),
+    altAzimuthMode(false),
     timer(NULL),
     currentScript(NULL),
     initScript(NULL),
@@ -147,7 +160,8 @@ CelestiaCore::CelestiaCore() :
     contextMenuCallback(NULL),
     logoTexture(NULL),
     alerter(NULL),
-    historyCurrent(0)
+    historyCurrent(0),
+    activeView(0)
 {
     /* Get a renderer here so it may be queried for capabilities of the
        underlying engine even before rendering is enabled. It's initRenderer()
@@ -309,7 +323,9 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     {
         if (button == LeftButton)
         {
-            Vec3f pickRay = renderer->getPickRay((int) x, (int) y);
+            int pickX = x - (int) (views[activeView]->x * width);
+            int pickY = y - (int) (views[activeView]->y * height);
+            Vec3f pickRay = renderer->getPickRay((int) pickX, (int) pickY);
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, pickTolerance);
             addToHistory();
@@ -596,10 +612,43 @@ void CelestiaCore::charEntered(char c)
         notifyWatchers(RenderFlagsChanged);
         break;
 
+    case '\007':  // Ctrl+G
+        flash("Goto surface");
+        addToHistory();
+        //if (sim->getFrame().coordSys == astro::Universal)
+            sim->geosynchronousFollow();
+        sim->gotoSurface(5.0);
+        // sim->gotoSelection(0.0001, Vec3f(0, 1, 0), astro::ObserverLocal);
+        break;
+
+    case '\006': // Ctrl+F
+        flash("Alt-azimuth mode");
+        addToHistory();
+        altAzimuthMode = !altAzimuthMode;
+        break;
+
+    case '\011': // TAB
+        activeView++;
+        if (activeView >= views.size())
+            activeView = 0;
+        sim->setActiveObserver(views[activeView]->observer);
+        flash("Cycle view");
+        break;
+
     case '\020':  // Ctrl+P
         if (renderer->fragmentShaderSupported())
             renderer->setFragmentShaderEnabled(!renderer->getFragmentShaderEnabled());
         notifyWatchers(RenderFlagsChanged);
+        break;
+
+    case '\021': // Ctrl+Q
+        splitView(true);
+        flash("Added view");
+        break;
+
+    case '\022': // Ctrl+R
+        splitView(false);
+        flash("Added view");
         break;
 
     case '\023':  // Ctrl+S
@@ -656,8 +705,8 @@ void CelestiaCore::charEntered(char c)
         }
         else
         {
-            if (sim->getObserverMode() == Simulation::Travelling)
-                sim->setObserverMode(Simulation::Free);
+            if (sim->getObserverMode() == Observer::Travelling)
+                sim->setObserverMode(Observer::Free);
             else
                 sim->setFrame(astro::Universal, Selection());
             if (!sim->getTrackedObject().empty())
@@ -859,7 +908,7 @@ void CelestiaCore::charEntered(char c)
 
     case 'H':
         addToHistory();
-        sim->selectStar(0);
+        sim->setSelection(sim->getUniverse()->getStarCatalog()->find(0));
         break;
 
     case 'I':
@@ -989,25 +1038,25 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '[':
-	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
-	    {
+        if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
+        {
             if (sim->getFaintestVisible() > 1.0f)
-	    {
-	        setFaintest(sim->getFaintestVisible() - 0.2f);
-            notifyWatchers(FaintestChanged);
+            {
+                setFaintest(sim->getFaintestVisible() - 0.2f);
+                notifyWatchers(FaintestChanged);
+                char buf[128];
+                sprintf(buf, "Magnitude limit: %.2f",sim->getFaintestVisible());
+                flash(buf);
+            }
+        }
+        else if (renderer->getFaintestAM45deg() > 6.0f)
+        {
+            renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() - 0.1f);
+            setFaintestAutoMag();
             char buf[128];
-		sprintf(buf, "Magnitude limit: %.2f",sim->getFaintestVisible());
+            sprintf(buf, "Auto magnitude limit at 45 degrees:  %.2f",renderer->getFaintestAM45deg());
             flash(buf);
         }
-        }
-	else if (renderer->getFaintestAM45deg() > 6.0f)
-	{
-	    renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() - 0.1f);
-	    setFaintestAutoMag();
-	    char buf[128];
-	    sprintf(buf, "Auto magnitude limit at 45 degrees:  %.2f",renderer->getFaintestAM45deg());
-	    flash(buf);
-	}
         break;
 
     case '\\':
@@ -1016,16 +1065,16 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case ']':
-	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
+        if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
         {
             if (sim->getFaintestVisible() < 15.0f)
 	    {
 	        setFaintest(sim->getFaintestVisible() + 0.2f);
-            notifyWatchers(FaintestChanged);
-            char buf[128];
+                notifyWatchers(FaintestChanged);
+                char buf[128];
 		sprintf(buf, "Magnitude limit: %.2f",sim->getFaintestVisible());
-            flash(buf);
-        }
+                flash(buf);
+            }
         }
 	else if (renderer->getFaintestAM45deg() < 12.0f)
 	{
@@ -1062,6 +1111,7 @@ void CelestiaCore::charEntered(char c)
         break;
     }
 }
+
 
 void CelestiaCore::getLightTravelDelay(double distance, int& hours, int& mins, 
                                     float& secs)
@@ -1184,14 +1234,42 @@ void CelestiaCore::tick()
 
     float fov = renderer->getFieldOfView()/stdFOV;
 
-    if (keysPressed[Key_Left])
-        av += Vec3f(0, 0, dt * -KeyRotationAccel);
-    if (keysPressed[Key_Right])
-        av += Vec3f(0, 0, dt * KeyRotationAccel);
-    if (keysPressed[Key_Down])
-        av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
-    if (keysPressed[Key_Up])
-        av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
+    if (!altAzimuthMode)
+    {
+        if (keysPressed[Key_Left])
+            av += Vec3f(0, 0, dt * -KeyRotationAccel);
+        if (keysPressed[Key_Right])
+            av += Vec3f(0, 0, dt * KeyRotationAccel);
+        if (keysPressed[Key_Down])
+            av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
+        if (keysPressed[Key_Up])
+            av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
+    }
+    else
+    {
+        FrameOfReference frame = sim->getFrame();
+        if (!frame.refObject.empty())
+        {
+            Quatf orientation = sim->getObserver().getOrientation();
+            Vec3d upd = sim->getObserver().getPosition() -
+                frame.refObject.getPosition(sim->getTime());
+            upd.normalize();
+
+            Vec3f up((float) upd.x, (float) upd.y, (float) upd.z);
+
+            Vec3f v = up * (float) (KeyRotationAccel * dt);
+            v = v * (~orientation).toMatrix3();
+
+            if (keysPressed[Key_Left])
+                av -= v;
+            if (keysPressed[Key_Right])
+                av += v;
+            if (keysPressed[Key_Down])
+                av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
+            if (keysPressed[Key_Up])
+                av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
+        }
+    }
 
     if (keysPressed[Key_NumPad4])
         av += Vec3f(0, dt * fov * -KeyRotationAccel, 0);
@@ -1257,7 +1335,40 @@ void CelestiaCore::tick()
 
 void CelestiaCore::draw()
 {
-    sim->render(*renderer);
+    if (views.size() == 1)
+    {
+        // I'm not certain that a special case for one view is required; but,
+        // it's possible that there exists some broken hardware out there
+        // that has to fall back to software rendering if the scissor test
+        // is enable.  To keep performance on this hypothetical hardware
+        // reasonable in the typical single view case, we'll use this
+        // scissorless special case.  I'm only paranoid because I've been
+        // burned by crap hardware so many times. cjl
+        sim->render(*renderer);
+    }
+    else
+    {
+        glEnable(GL_SCISSOR_TEST);
+        for (vector<View*>::iterator iter = views.begin();
+             iter != views.end(); iter++)
+        {
+            View* view = *iter;
+
+            glScissor((GLint) (view->x * width),
+                      (GLint) (view->y * height),
+                      (GLsizei) (view->width * width),
+                      (GLsizei) (view->height * height));
+            glViewport((GLint) (view->x * width),
+                       (GLint) (view->y * height),
+                       (GLsizei) (view->width * width),
+                       (GLsizei) (view->height * height));
+            renderer->resize(view->width * width, view->height * height);
+            sim->render(*renderer, *view->observer);
+        }
+        glDisable(GL_SCISSOR_TEST);
+        glViewport(0, 0, width, height);
+    }
+
     renderOverlay();
 
     if (movieCapture != NULL && recording)
@@ -1294,6 +1405,30 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
         overlay->setWindowSize(w, h);
     width = w;
     height = h;
+}
+
+
+void CelestiaCore::splitView(bool vertical)
+{
+    Observer* o = sim->addObserver();
+
+    // Make the new observer a copy of the old one
+    // TODO: This works, but an assignment operator for Observer
+    // should be defined.
+    *o = *(sim->getActiveObserver());
+
+    float w = views[activeView]->width * (vertical ? 0.5f : 1.0f);
+    float h = views[activeView]->height * (vertical ? 1.0f : 0.5f);
+
+    views[activeView]->width = w;
+    views[activeView]->height = h;
+
+    View* view = new View(o,
+                          views[activeView]->x + (vertical ? w : 0),
+                          views[activeView]->y + (vertical ? 0 : h),
+                          w, h);
+    views.insert(views.end(), view);
+
 }
 
 
@@ -1498,6 +1633,25 @@ void CelestiaCore::renderOverlay()
 
     overlay->begin();
 
+    // Render a very simple border around the active view
+    if (views.size() > 1)
+    {
+        View* av = views[activeView];
+
+        glLineWidth(2.0f);
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
+
+        glBegin(GL_LINE_LOOP);
+        glVertex3f(av->x * width, av->y * height, 0.0f);
+        glVertex3f(av->x * width, (av->y + av->height) * height - 1, 0.0f);
+        glVertex3f((av->x + av->width) * width - 1, (av->y + av->height) * height - 1, 0.0f);
+        glVertex3f((av->x + av->width) * width - 1, av->y * height, 0.0f);
+        glEnd();
+
+        glLineWidth(1.0f);
+    }
+
     if (hudDetail > 0)
     {
         // Time and date
@@ -1588,7 +1742,7 @@ void CelestiaCore::renderOverlay()
         overlay->beginText();
         glColor4f(0.6f, 0.6f, 1.0f, 1);
 
-        if (sim->getObserverMode() == Simulation::Travelling)
+        if (sim->getObserverMode() == Observer::Travelling)
         {
             *overlay << "Travelling ";
             double timeLeft = sim->getArrivalTime() - sim->getRealTime();
@@ -2075,6 +2229,9 @@ bool CelestiaCore::initSimulation()
     sim = new Simulation(universe);
     if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     sim->setFaintestVisible(config->faintestVisible);
+
+    View* view = new View(sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f);
+    views.insert(views.end(), view);
 
     return true;
 }
