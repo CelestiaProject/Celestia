@@ -509,6 +509,43 @@ AltSurface "limit of knowledge" "HD 76700/b"
 }
 
 
+"b" "OGLE-TR-111"
+
+# Detected via transit as well as radial velocity methods; from transit,
+# inclination is fixed at 86.5-90 degrees, so mass can be determined.
+# Radius is estimated at 1 jupiter.
+
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       170     # M.sin(i) = 0.53 jupiters
+	Radius     70000
+
+	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-111.html"
+
+	EllipticalOrbit {
+		Period          0.011
+		SemiMajorAxis   0.047
+		Eccentricity    0
+		Inclination     110.5
+		AscendingNode   161.1
+		ArgOfPericenter 21
+		MeanAnomaly     153
+	}
+
+	Obliquity             111 # guess, to match inclination
+	EquatorAscendingNode  161 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "OGLE-TR-111/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 217014"   # 51 Peg
 {
 	Texture "gasgiant.*"
@@ -3430,7 +3467,7 @@ AltSurface "limit of knowledge" "HD 190360/b"
 	Texture "asteroid.*"
 
 	Mass      0.02     # M.sin(i) = 0.02 earths
-	Radius     1680
+	Radius     1700
 
 	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
 
@@ -3462,7 +3499,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/a"
 	Texture "asteroid.*"
 
 	Mass      4.3     # M.sin(i) = 4.3 earths
-	Radius     10500
+	Radius     10400
 
 	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
 
@@ -3495,7 +3532,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/b"
 	Texture "asteroid.*"
 
 	Mass      3.9     # M.sin(i) = 3.9 earths
-	Radius     9800
+	Radius     10000
 
 	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
 
@@ -3552,5 +3589,3 @@ AltSurface "limit of knowledge" "PSR 1620-26/b"
 {
 	Texture "extrasolar-lok.*"
 }
-
-
