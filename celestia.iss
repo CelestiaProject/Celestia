@@ -91,6 +91,7 @@ Source: "textures\medres\rhea.jpg"; DestDir: "{app}/textures/medres"; CopyMode: 
 Source: "textures\medres\saturn.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\tethys.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\titania.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\triton.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\umbriel.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\venus.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\venuslike.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
