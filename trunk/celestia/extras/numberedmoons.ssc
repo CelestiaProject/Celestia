@@ -1209,13 +1209,13 @@
 
 	EllipticalOrbit
 	{
-	Period		1874.83
-	SemiMajorAxis	15686000
-	Eccentricity	0.5720
-	Inclination	138.937	#
-	AscendingNode	162.954	#
-	ArgOfPericenter	148.033	# J2000.0
-	MeanAnomaly     229.825	#
+	Period		1879.71
+	SemiMajorAxis	15728000
+	Eccentricity	0.5711
+	Inclination	139.094	#
+	AscendingNode	163.249	#
+	ArgOfPericenter	148.454	# J2000.0
+	MeanAnomaly     230.015	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1231,13 +1231,13 @@
 
 	EllipticalOrbit
 	{
-	Period		2918.94
-	SemiMajorAxis	22452000
-	Eccentricity	0.2973
-	Inclination	26.278	#
-	AscendingNode	23.901	#
-	ArgOfPericenter	48.159	# J2000.0
-	MeanAnomaly     14.134	#
+	Period		2914.07
+	SemiMajorAxis	22422000
+	Eccentricity	0.2931
+	Inclination	26.351	#
+	AscendingNode	23.961	#
+	ArgOfPericenter	47.566	# J2000.0
+	MeanAnomaly     14.560	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1253,13 +1253,13 @@
 
 	EllipticalOrbit
 	{
-	Period		2982.27
-	SemiMajorAxis	22580000
-	Eccentricity	0.4789
-	Inclination	11.799	#
-	AscendingNode	14.281	#
-	ArgOfPericenter	128.853	# J2000.0
-	MeanAnomaly     141.864	#
+	Period		3167.85
+	SemiMajorAxis	23571000
+	Eccentricity	0.4237
+	Inclination	9.933	#
+	AscendingNode	13.595	#
+	ArgOfPericenter	122.752	# J2000.0
+	MeanAnomaly     154.007	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1275,13 +1275,13 @@
 
 	EllipticalOrbit
 	{
-	Period		8863.08
-	SemiMajorAxis	46570000
-	Eccentricity	0.5273
-	Inclination	112.492	#
-	AscendingNode	355.870	#
-	ArgOfPericenter	 83.635	# J2000.0
-	MeanAnomaly     203.660	#
+	Period		9373.99
+	SemiMajorAxis	48387000
+	Eccentricity	0.4945
+	Inclination	113.569	#
+	AscendingNode	351.648	#
+	ArgOfPericenter	 77.981	# J2000.0
+	MeanAnomaly     216.988	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1297,13 +1297,13 @@
 
 	EllipticalOrbit
 	{
-	Period		9136.11
-	SemiMajorAxis	46738000
-	Eccentricity	0.4503
-	Inclination	118.728	#
-	AscendingNode	288.166	#
-	ArgOfPericenter	161.337	# J2000.0
-	MeanAnomaly     182.124	#
+	Period		9115.91
+	SemiMajorAxis	46695000
+	Eccentricity	0.4499
+	Inclination	118.763	#
+	AscendingNode	288.194	#
+	ArgOfPericenter	161.232	# J2000.0
+	MeanAnomaly     182.071	#
 	}
 
 	RotationPeriod  10   # Guess
