@@ -392,6 +392,11 @@ HMENU CreateMenuBar()
     return LoadMenu(appInstance, MAKEINTRESOURCE(IDR_MAIN_MENU));
 }
 
+static void setMenuItemCheck(int menuItem, bool checked)
+{
+    CheckMenuItem(menuBar, menuItem, checked ? MF_CHECKED : MF_UNCHECKED);
+}
+
 #if 0
 static void ToggleLabelState(int menuItem, int labelState)
 {
@@ -687,6 +692,30 @@ static void BuildFavoritesMenu()
 }
 
 
+static void syncMenusWithRendererState()
+{
+    int renderFlags = appCore->getRenderer()->getRenderFlags();
+    int labelMode = appCore->getRenderer()->getLabelMode();
+
+    setMenuItemCheck(ID_RENDER_SHOWORBITS, (renderFlags & Renderer::ShowOrbits) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWCONSTELLATIONS,
+                     (renderFlags & Renderer::ShowDiagrams) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWATMOSPHERES,
+                     (renderFlags & Renderer::ShowCloudMaps) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWGALAXIES,
+                     (renderFlags & Renderer::ShowGalaxies) != 0);
+
+    setMenuItemCheck(ID_RENDER_SHOWPLANETLABELS,
+                     (labelMode & Renderer::MajorPlanetLabels) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWSTARLABELS,
+                     (labelMode & Renderer::StarLabels) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWCONSTLABELS,
+                     (labelMode & Renderer::ConstellationLabels) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWMINORPLANETLABELS,
+                     (labelMode & Renderer::MinorPlanetLabels) != 0);
+}
+
+
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR     lpCmdLine,
@@ -734,7 +763,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return false;
     }
 
-    appCore->initSimulation();
+    if (!appCore->initSimulation())
+    {
+        return 1;
+    }
 
     if (!fullscreen)
     {
@@ -782,10 +814,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     icex.dwICC = ICC_DATE_CLASSES;
     InitCommonControlsEx(&icex);
 
-    appCore->initRenderer();
+    if (!appCore->initRenderer())
+    {
+        return 1;
+    }
+
     timer = CreateTimer();
 
     BuildFavoritesMenu();
+    syncMenusWithRendererState();
 
     bReady = true;
     appCore->start((double) time(NULL) / 86400.0 +
@@ -966,7 +1003,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 	break;
 
     case WM_CHAR:
-        appCore->charEntered((char) wParam);
+        {
+            int oldRenderFlags = appCore->getRenderer()->getRenderFlags();
+            int oldLabelMode = appCore->getRenderer()->getLabelMode();
+            appCore->charEntered((char) wParam);
+            if (appCore->getRenderer()->getRenderFlags() != oldRenderFlags ||
+                appCore->getRenderer()->getLabelMode() != oldLabelMode)
+            {
+                syncMenusWithRendererState();
+            }
+        }
         break;
 
     case WM_COMMAND:
@@ -988,38 +1034,42 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
             break;
 
-#if 0
         case ID_RENDER_SHOWHUDTEXT:
             appCore->charEntered('V');
             break;
         case ID_RENDER_SHOWPLANETLABELS:
             appCore->charEntered('N');
+            syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWMINORPLANETLABELS:
-            // ToggleLabelState(ID_RENDER_SHOWMINORPLANETLABELS, Renderer::MinorPlanetLabels);
+            appCore->charEntered('M');
+            syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWSTARLABELS:
             appCore->charEntered('B');
             break;
         case ID_RENDER_SHOWCONSTLABELS:
-            // ToggleLabelState(ID_RENDER_SHOWCONSTLABELS, Renderer::ConstellationLabels);
             appCore->charEntered('=');
+            syncMenusWithRendererState();
             break;
 
         case ID_RENDER_SHOWORBITS:
-            // ToggleRenderFlag(ID_RENDER_SHOWORBITS, Renderer::ShowOrbits);
             appCore->charEntered('O');
+            syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWCONSTELLATIONS:
-            //ToggleRenderFlag(ID_RENDER_SHOWCONSTELLATIONS, Renderer::ShowDiagrams);
+            appCore->charEntered('/');
+            syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWATMOSPHERES:
-            ToggleRenderFlag(ID_RENDER_SHOWATMOSPHERES, Renderer::ShowCloudMaps);
+            appCore->charEntered('I');
+            syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWGALAXIES:
-            ToggleRenderFlag(ID_RENDER_SHOWGALAXIES, Renderer::ShowGalaxies);
+            appCore->charEntered('U');
+            syncMenusWithRendererState();
             break;
-#endif
+
         case ID_RENDER_MORESTARS:
             appCore->charEntered(']');
             break;
