@@ -7,8 +7,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cstdio>
 #include "astro.h"
 #include "selection.h"
+
+using namespace std;
 
 
 double Selection::radius() const
@@ -57,3 +60,47 @@ UniversalCoord Selection::getPosition(double t) const
     }
 }
 
+
+string Selection::getName() const
+{
+    if (star != NULL)
+    {
+        char buf[20];
+        sprintf(buf, "#%d", star->getCatalogNumber());
+        return string(buf);
+    }
+    else if (galaxy != NULL)
+    {
+        return galaxy->getName();
+    }
+    else if (body != NULL)
+    {
+        string name = body->getName();
+        PlanetarySystem* system = body->getSystem();
+        while (system != NULL)
+        {
+            Body* parent = system->getPrimaryBody();
+            if (parent != NULL)
+            {
+                name = parent->getName() + '/' + name;
+                system = parent->getSystem();
+            }
+            else
+            {
+                const Star* parentStar = system->getStar();
+                if (parentStar != NULL)
+                {
+                    char buf[20];
+                    sprintf(buf, "#%d", parentStar->getCatalogNumber());
+                    name = string(buf) + '/' + name;
+                }
+                system = NULL;
+            }
+        }
+        return name;
+    }
+    else
+    {
+        return "";
+    }
+}
