@@ -55,17 +55,17 @@ BigFix::BigFix(double d)
         d -= n[7] * 65536 * 65536 * 65536;
         n[6] = (unsigned short) (d / (65536.0 * 65536.0));
         d -= n[6] * 65536 * 65536;
-        n[5] = (unsigned short) (d / 65536);
+        n[5] = (unsigned short) (d / 65536.0);
         d -= n[5] * 65536;
         n[4] = (unsigned short) d;
         d -= n[4];
-        n[3] = (unsigned short) (d * 65536);
-        d -= n[3] / 65536;
-        n[2] = (unsigned short) (d * 65536 * 65536);
-        d -= n[2] / 65536;
-        n[1] = (unsigned short) (d * 65536 * 65536 * 65536);
-        d -= n[1] / 65536;
-        n[0] = (unsigned short) (d * 65536 * 65536 * 65536 * 65536);
+        n[3] = (unsigned short) (d * 65536.0);
+        d -= n[3] / 65536.0;
+        n[2] = (unsigned short) (d * 65536.0 * 65536.0);
+        d -= n[2] / (65536.0 * 65536.0);
+        n[1] = (unsigned short) (d * 65536.0 * 65536.0 * 65536.0);
+        d -= n[1] / (65536.0 * 65536.0 * 65536.0);
+        n[0] = (unsigned short) (d * 65536.0 * 65536.0 * 65536.0 * 65536.0);
     }
 
     if (sign < 0)
