@@ -26,6 +26,8 @@
 #include <kurl.h>
 #include <krun.h>
 
+#include "celutil/utf8.h"
+
 SelectionPopup::SelectionPopup(QWidget* parent, CelestiaCore* _appCore, Selection _sel)
 :KPopupMenu(parent),
  appCore(_appCore),
@@ -50,7 +52,7 @@ void SelectionPopup::init()
 
     if (sel.body() != NULL)
     {
-        insertTitle(sel.body()->getName().c_str(), 0, 0);
+        insertTitle(QString::fromUtf8(sel.body()->getName().c_str()), 0, 0);
         insert(this, sel, MENUMAXSIZE);
     }
     else if (sel.star() != NULL)
@@ -97,14 +99,14 @@ void SelectionPopup::init()
         starDetails->setPalette(pal);
         starDetails->setFont(rsFont);
 
-        insertTitle(name.c_str(), 0, 0);
+        insertTitle(QString::fromUtf8(ReplaceGreekLetterAbbr(name).c_str()), 0, 0);
         insertItem(starDetails);
         insertSeparator();
         insert(this, sel, MENUMAXSIZE);
     }
     else if (sel.deepsky() != NULL)
     {
-        insertTitle(sel.deepsky()->getName().c_str(), 0);
+        insertTitle(QString::fromUtf8(sel.deepsky()->getName().c_str()), 0);
         insert(this, sel, MENUMAXSIZE);
     }
 
