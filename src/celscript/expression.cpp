@@ -9,6 +9,7 @@
 
 #include <celscript/expression.h>
 
+using namespace std;
 using namespace celx;
 
 
@@ -25,7 +26,7 @@ BinaryExpression::~BinaryExpression()
 {
     if (left != NULL)
         delete left;
-    if (righ != NULL)
+    if (right != NULL)
         delete right;
 }
 
@@ -66,4 +67,19 @@ ConstantExpression::~ConstantExpression()
 Value ConstantExpression::eval()
 {
     return value;
+}
+
+
+NameExpression::NameExpression(const string& _name) :
+    name(_name)
+{
+}
+
+NameExpression::~NameExpression()
+{
+}
+
+Value NameExpression::eval()
+{
+    return Value();
 }

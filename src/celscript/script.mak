@@ -21,6 +21,7 @@ OBJS=\
 	$(INTDIR)\expression.obj \
 	$(INTDIR)\parser.obj \
 	$(INTDIR)\scanner.obj \
+	$(INTDIR)\statement.obj \
 	$(INTDIR)\value.obj \
 	$(INTDIR)\testparser.obj
 

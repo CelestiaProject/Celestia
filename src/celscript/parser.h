@@ -12,6 +12,7 @@
 
 #include <celscript/scanner.h>
 #include <celscript/expression.h>
+#include <celscript/statement.h>
 
 namespace celx
 {
@@ -23,8 +24,20 @@ public:
     ~Parser();
 
     Expression* parseExpression();
+    Expression* parseFinalExpression();
+    Expression* parseSubexpression();
+    Expression* parseMultiplyExpression();
+    Expression* parseAddExpression();
+    Expression* parseRelationalExpression();
+
+    Statement* parseStatement();
+    Statement* parseCompoundStatement();
+    Statement* parseExpressionStatement();
+    Statement* parseIfStatement();
 
 private:
+    void syntaxError(const std::string&);
+
     Scanner& scanner;
 };
 
