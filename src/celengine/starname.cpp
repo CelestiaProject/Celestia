@@ -17,6 +17,7 @@
 
 #include <celutil/util.h>
 #include <celutil/debug.h>
+#include <celutil/utf8.h>
 #include "celestia.h"
 #include "star.h"
 #include "starname.h"
@@ -97,7 +98,7 @@ std::vector<std::string> StarNameDatabase::getCompletion(const std::string& name
     for (NameIndex::const_iterator iter = nameIndex.begin();
          iter != nameIndex.end() ; iter++)
     {
-        if (!compareIgnoringCase(iter->first, name, name.length()))
+        if (!UTF8StringCompare(iter->first, name, name.length()))
         {
             completion.push_back(iter->first);
         }

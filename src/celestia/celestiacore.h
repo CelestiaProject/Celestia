@@ -180,6 +180,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setHistoryCurrent(std::vector<Url>::size_type curr);
 
     // event processing methods
+    void charEntered(const char*);
     void charEntered(char);
     void keyDown(int key, int modifiers = 0);
     void keyUp(int key, int modifiers = 0);

@@ -383,18 +383,9 @@ bool KdeGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
 void KdeGlWidget::keyPressEvent( QKeyEvent* e )
 {
     static bool inputMode = false;
-    static std::vector<KAction*> actions;
     switch (e->key())
     {
     case Key_Escape:
-        if (inputMode)
-        {
-            for (unsigned int n=0; n<actionColl->count(); n++) {
-                if (actionColl->action(n)->shortcut().seq(0).key(0).modFlags()==0)
-                    actionColl->action(n)->setEnabled(true);
-            }
-            inputMode = !inputMode;
-        }
         appCore->charEntered('\033');
         break;
     case Key_BackTab:
@@ -408,38 +399,14 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
         // Intentional fallthrough if *not* Ctrl-Q
 
     default:
-        if (!handleSpecialKey(e, true))
+        if (appCore->getTextEnterMode() != CelestiaCore::KbNormal || !handleSpecialKey(e, true))
         {
             if ((e->text() != 0) && (e->text() != ""))
             {
-                for (unsigned int i=0; i<e->text().length(); i++)
-                {
-                    char c = e->text().at(i).latin1();
-                    if (c == 0x0D || c=='\033') {
-                    	if (!inputMode) { // entering input mode
-                        	for (unsigned int n=0; n<actionColl->count(); n++) {
-                                	if (actionColl->action(n)->shortcut().count() > 0 
-                                        	&& (actionColl->action(n)->shortcut().seq(0).key(0).modFlags()
-                                                & (KKey::CTRL | KKey::ALT | KKey::WIN )) == 0 ) {
-                                    actions.push_back(actionColl->action(n));
-                                		actionColl->action(n)->setEnabled(false);
-                                  }
-                                }
-                        } else { // living input mode
-                        	for (std::vector<KAction*>::iterator n=actions.begin(); n<actions.end(); n++) {
-	                                	(*n)->setEnabled(true);
-                                }
-                           actions.clear();
-                        }
-                    	inputMode = !inputMode;
-                    }
-                    if (c >= 0x20 || c == 0x0D || c== 0x08 || c=='\011') appCore->charEntered(c);
-                }
+                appCore->charEntered(e->text().utf8().data());
             }
         }
     }
-
-
 }
 
 

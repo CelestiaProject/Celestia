@@ -1022,7 +1022,17 @@ void CelestiaCore::keyUp(int key, int)
 
 void CelestiaCore::charEntered(char c)
 {
+    char C[2];
+    C[0] = c;
+    C[1] = '\0';
+    charEntered(C);
+}
+
+void CelestiaCore::charEntered(const char *c_p)
+{
     Observer* observer = sim->getActiveObserver();
+
+    char c = *c_p;
 
 #ifdef CELX
     if (celxScript != NULL && (textEnterMode & KbPassToScript))
@@ -1036,10 +1046,12 @@ void CelestiaCore::charEntered(char c)
 
     if (textEnterMode & KbAutoComplete)
     {
-        if ( c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
+        wchar_t wc = NULL;
+        UTF8Decode(c_p, 0, strlen(c_p), wc);
+        if ( wc && (iswalpha(wc) || iswdigit(wc) || iswpunct(c)) )
         {
-            typedText += c;
-            typedTextCompletion = sim->getObjectCompletion(typedText);
+            typedText += std::string(c_p);
+            typedTextCompletion = sim->getObjectCompletion(typedText, renderer->getLabelMode() & Renderer::LocationLabels);
             typedTextCompletionIdx = -1;
 #ifdef AUTO_COMPLETION
             if (typedTextCompletion.size() == 1)
@@ -1061,10 +1073,16 @@ void CelestiaCore::charEntered(char c)
                 do
                 {
 #endif
+                    // We remove bytes like b10xxx xxxx at the end of typeText
+                    // these are guarantied to not be the first byte of a UTF-8 char
+                    while (typedText.size() && ((typedText[typedText.size() - 1] & 0xC0) == 0x80)) {
+                        typedText = string(typedText, 0, typedText.size() - 1);                                            
+                    }
+                    // We then remove the first byte of the last UTF-8 char of typedText.
                     typedText = string(typedText, 0, typedText.size() - 1);
                     if (typedText.size() > 0)
                     {
-                        typedTextCompletion = sim->getObjectCompletion(typedText);
+                        typedTextCompletion = sim->getObjectCompletion(typedText, renderer->getLabelMode() & Renderer::LocationLabels);
                     } else {
                         typedTextCompletion.clear();
                     }
