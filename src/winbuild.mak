@@ -43,27 +43,29 @@ clean:
 	nmake /nologo /f celestia.mak clean CFG=$(CFG)
 	cd ..
 
-$(LIBUTIL):
+always:
+
+$(LIBUTIL): always
 	cd celutil
 	nmake /NOLOGO util.mak CFG=$(CFG)
 	cd ..
 
-$(LIBMATH):
+$(LIBMATH): always
 	cd celmath
 	nmake /NOLOGO math.mak CFG=$(CFG)
 	cd ..
 
-$(LIB3DS):
+$(LIB3DS): always
 	cd cel3ds
 	nmake /NOLOGO 3ds.mak CFG=$(CFG)
 	cd ..
 
-$(LIBTXF):
+$(LIBTXF): always
 	cd celtxf
 	nmake /NOLOGO txf.mak CFG=$(CFG)
 	cd ..
 
-$(LIBCEL):
+$(LIBCEL): always
 	cd celengine
 	nmake /NOLOGO engine.mak CFG=$(CFG)
 	cd ..
