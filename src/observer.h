@@ -36,16 +36,16 @@ public:
     // getRelativePosition returns in units of kilometers the difference
     // between the position of the observer and a location specified in
     // light years.
-    Point3d       getRelativePosition(Point3d&) const;
+    Point3d       getRelativePosition(const Point3d&) const;
 
     Quatf         getOrientation() const;
-    void          setOrientation(Quatf);
+    void          setOrientation(const Quatf&);
     Vec3d         getVelocity() const;
-    void          setVelocity(Vec3d);
+    void          setVelocity(const Vec3d&);
 
     void          setPosition(BigFix x, BigFix y, BigFix z);
-    void          setPosition(UniversalCoord);
-    void          setPosition(Point3d);
+    void          setPosition(const UniversalCoord&);
+    void          setPosition(const Point3d&);
 
     void          update(double dt);
     
