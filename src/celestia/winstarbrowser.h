@@ -19,6 +19,7 @@ class StarBrowser
 {
  public:
     StarBrowser(HINSTANCE, HWND, CelestiaCore*);
+    ~StarBrowser();
 
  public:
     CelestiaCore* appCore;
