@@ -54,6 +54,10 @@ int TextureFont::getTextureName()
     return txf->texobj;
 }
 
+void TextureFont::bind()
+{
+    glBindTexture(GL_TEXTURE_2D, getTextureName());
+}
     
 TextureFont* LoadTextureFont(string filename)
 {
