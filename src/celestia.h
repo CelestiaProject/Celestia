@@ -22,6 +22,15 @@
 extern void DebugPrint(char *format, ...);
 #endif
 
+#ifdef _MSC_VER
+#define BROKEN_FRIEND_TEMPLATES
+#endif // _MSC_VER
+
+#define HAVE_SSTREAM
+#ifdef __GNUC__
+#undef HAVE_SSTREAM
+#endif // __GNUC__
+
 extern void Log(char *format, ...);
 
 #endif // _CELESTIA_H_
