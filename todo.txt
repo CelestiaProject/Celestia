@@ -18,8 +18,8 @@ USER INTERFACE
 * Make context menus work properly in full-screen mode
 * Fix camera rotation wackiness when using goto--probably slerp between orientations
 * Dialog box for displaying detailed information about a star or planet
-* More detailed info via the Internet--link to Nine Planets, simbad, etc.
 * Create a help file
+* Improve web info feature
 
 VISUALS
 * Shadows from rings on planet
@@ -31,18 +31,18 @@ VISUALS
   darkening, change  convection cell size based on spectral class, etc.
 * Non-Lambertian illumination functions for planets
 * Add haloes around bright planets similar to the ones around stars
-* Render the Milky Way
 * Comets with dust and ion tails
 * Add some deep sky objects--planetary nebula, supernova remnants, etc.
 * Procedural textures for extrasolar planets
 * Atmospheric veils around planets
 * Specularity map for Earth (and other hypothetical ocean bearing worlds)
 * Bump mapped cloud layers
-* Show the Milky Way and neighboring galaxies
+* Render galaxies with colors--bluish spiral arms, yellowish center
+* Render dark dust bands in galaxies
+* Add textures to ISS and Mir models
 
 POLISH
 * Get a real installer working for Windows version
-* Demo mode
 * Tutorial mode
 * Add a flashy intro screen
 * Add screen shot feature
@@ -57,6 +57,7 @@ SIMULATION ACCURACY
 * Make some attempt at calculating stellar rotation rates
 * Model the irregular rotations of objects like Toutatis and Hyperion
 * Double star systems
+* Make the planets appear in their proper positions relative to the stars
 
 BUGS
 * Find out why picking sometimes stops working, apparently after orbiting
