@@ -206,6 +206,17 @@ class CommandSetFrame : public InstantaneousCommand
 };
 
 
+class CommandSetSurface : public InstantaneousCommand
+{
+ public:
+    CommandSetSurface(const std::string&);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string surfaceName;
+};
+
+
 class CommandCancel : public InstantaneousCommand
 {
  public:

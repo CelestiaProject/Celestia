@@ -214,7 +214,7 @@ void CommandLock::process(ExecutionEnvironment& env)
 
 
 ////////////////
-// Select command: select a body
+// Setframe command
 
 CommandSetFrame::CommandSetFrame(astro::CoordinateSystem _coordSys,
                                  const string& refName,
@@ -232,6 +232,19 @@ void CommandSetFrame::process(ExecutionEnvironment& env)
     env.getSimulation()->setFrame(FrameOfReference(coordSys, ref, target));
 }
 
+
+////////////////
+// SetSurface command: select an alternate surface to show
+
+CommandSetSurface::CommandSetSurface(const string& _surfaceName) :
+    surfaceName(_surfaceName)
+{
+}
+
+void CommandSetSurface::process(ExecutionEnvironment& env)
+{
+    env.getSimulation()->getActiveObserver()->setDisplayedSurface(surfaceName);
+}
 
 
 ////////////////

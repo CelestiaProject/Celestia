@@ -184,6 +184,12 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandSetFrame(coordSys, refName, targetName);
     }
+    else if (commandName == "setsurface")
+    {
+        string name;
+        paramList->getString("name", name);
+        cmd = new CommandSetSurface(name);
+    }
     else if (commandName == "goto")
     {
         double t = 1.0;
