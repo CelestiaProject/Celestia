@@ -117,9 +117,6 @@ static const WPARAM ID_GOTO_URL = 62000;
 HWND hLocationTree;
 char locationName[33];
 
-#define ROTATION_SPEED  6
-#define ACCELERATION    20.0f
-
 static LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                        UINT uMsg,
                                        WPARAM wParam, LPARAM lParam);
@@ -138,8 +135,6 @@ struct AppPreferences
     int labelMode;
     float visualMagnitude;
     float ambientLight;
-    int pixelShader;
-    int vertexShader;
     int showLocalTime;
     int hudDetail;
     int fullScreenMode;
@@ -2052,8 +2047,6 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "LabelMode", &prefs.labelMode, sizeof(prefs.labelMode));
     GetRegistryValue(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
     GetRegistryValue(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
-    GetRegistryValue(key, "PixelShader", &prefs.pixelShader, sizeof(prefs.pixelShader));
-    GetRegistryValue(key, "VertexShader", &prefs.vertexShader, sizeof(prefs.vertexShader));
     GetRegistryValue(key, "ShowLocalTime", &prefs.showLocalTime, sizeof(prefs.showLocalTime));
     GetRegistryValue(key, "HudDetail", &prefs.hudDetail, sizeof(prefs.hudDetail));
     GetRegistryValue(key, "FullScreenMode", &prefs.fullScreenMode, sizeof(prefs.fullScreenMode));
@@ -2099,8 +2092,6 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "LabelMode", prefs.labelMode);
     SetRegistryBin(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
     SetRegistryBin(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
-    SetRegistryInt(key, "PixelShader", prefs.pixelShader);
-    SetRegistryInt(key, "VertexShader", prefs.vertexShader);
     SetRegistryInt(key, "ShowLocalTime", prefs.showLocalTime);
     SetRegistryInt(key, "HudDetail", prefs.hudDetail);
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
@@ -2129,8 +2120,6 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.labelMode = appCore->getRenderer()->getLabelMode();
     prefs.visualMagnitude = appCore->getSimulation()->getFaintestVisible();
     prefs.ambientLight = appCore->getRenderer()->getAmbientLightLevel();
-    prefs.pixelShader = appCore->getRenderer()->getFragmentShaderEnabled()?1:0;
-    prefs.vertexShader = appCore->getRenderer()->getVertexShaderEnabled()?1:0;
     prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
     prefs.hudDetail = appCore->getHudDetail();
     prefs.fullScreenMode = lastFullScreenMode;
@@ -2682,11 +2671,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.winY = CW_USEDEFAULT;
     prefs.ambientLight = 0.1f;  // Low
     prefs.labelMode = 0;
-    prefs.pixelShader = 0;
     prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars |
                         Renderer::ShowPlanets | Renderer::ShowSmoothLines |
                         Renderer::ShowCometTails | Renderer::ShowRingShadows;
-    prefs.vertexShader = 0;
     prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
     prefs.hudDetail = 1;
@@ -2809,8 +2796,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
     appCore->getRenderer()->setLabelMode(prefs.labelMode);
     appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
-    appCore->getRenderer()->setFragmentShaderEnabled(prefs.pixelShader == 1);
-    appCore->getRenderer()->setVertexShaderEnabled(prefs.vertexShader == 1);
     appCore->setHudDetail(prefs.hudDetail);
     if (prefs.showLocalTime == 1)
         ShowLocalTime(appCore);
@@ -3121,6 +3106,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 appCore->flash("Copied URL");
             }            
             break;
+
         default:
             handleKey(wParam, true);
             break;
@@ -3142,16 +3128,18 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 (cScanCode >= 79 && cScanCode <= 83))
                  break;
 
+             int charCode = (char) wParam;
+
+             // Catch backtab (shift+Tab)
+             if (charCode == '\011' && (GetKeyState(VK_SHIFT) & 0x8000) != 0)
+                 charCode = CelestiaCore::Key_BackTab;
+
             Renderer* r = appCore->getRenderer();
             int oldRenderFlags = r->getRenderFlags();
             int oldLabelMode = r->getLabelMode();
-            bool oldFragmentShaderState = r->getFragmentShaderEnabled();
-            bool oldVertexShaderState = r->getVertexShaderEnabled();
-            appCore->charEntered((char) wParam);
+            appCore->charEntered(charCode);
             if (r->getRenderFlags() != oldRenderFlags ||
-                r->getLabelMode() != oldLabelMode ||
-                r->getFragmentShaderEnabled() != oldFragmentShaderState ||
-                r->getVertexShaderEnabled() != oldVertexShaderState)
+                r->getLabelMode() != oldLabelMode)
             {
                 syncMenusWithRendererState();
             }
