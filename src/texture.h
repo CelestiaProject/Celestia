@@ -32,6 +32,7 @@ class Texture
     void bindName(uint32 flags = 0);
     unsigned int getName();
     void normalMap(float scale, bool wrap);
+    void bind() const;
 
     int getWidth() const;
     int getHeight() const;
