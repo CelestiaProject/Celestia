@@ -356,10 +356,12 @@ void KdeApp::initActions()
     KStdAction::keyBindings(this, SLOT(slotKeyBindings()), actionCollection());
 
     KShortcut fullscreen_shortcut(CTRL + Key_F);
-    fullscreen_shortcut.append(QKeySequence(ALT + Key_Return));
+    fullscreen_shortcut.append(KKeySequence(QKeySequence(ALT + Key_Return)));
+    //fullscreen_shortcut.append(KShortcut(ALT + Key_Return));
     new KAction(i18n("Full Screen"), "window_fullscreen", fullscreen_shortcut, this, SLOT(slotFullScreen()), actionCollection(), "fullScreen");
     KShortcut copy_url_shortcut(CTRL + Key_C);
-    copy_url_shortcut.append(QKeySequence(CTRL + Key_Insert));
+    copy_url_shortcut.append(KKeySequence(QKeySequence(CTRL + Key_Insert)));
+    //copy_url_shortcut.append(KShortcut(CTRL + Key_Insert));
     new KAction(i18n("Copy URL"), "edit_copy", copy_url_shortcut, this, SLOT(slotCopyUrl()), actionCollection(), "copyUrl");
 
 
@@ -617,7 +619,7 @@ void KdeApp::initBookmarkBar() {
     KToolBar *bar = new KToolBar(this, QMainWindow::Top, true, "bookmarkBar");
     
     if (bookmarkBar) delete bookmarkBar;
-    bookmarkBar = new KBookmarkBar( KCelBookmarkManager::self(), this, bar, bookmarkBarActionCollection, this, "bookmarkBar");
+    bookmarkBar = new KBookmarkBar( KCelBookmarkManager::self(), this, bar, bookmarkBarActionCollection, 0, "bookmarkBar");
     if (bar->count() == 0) bar->hide();
 
     applyMainWindowSettings( KGlobal::config(), "MainWindow" );
