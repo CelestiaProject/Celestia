@@ -3357,9 +3357,13 @@ gint reshapeFunc(GtkWidget* widget, GdkEventConfigure*, gpointer)
 	if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 		return FALSE;
 
-	prefs->winWidth = widget->allocation.width;
-	prefs->winHeight = widget->allocation.height;
-	appCore->resize(prefs->winWidth, prefs->winHeight);
+	// Don't save window size if going into fullscreen
+	if (prefs->fullScreen == false) {
+		prefs->winWidth = widget->allocation.width;
+		prefs->winHeight = widget->allocation.height;
+	}
+	
+	appCore->resize(widget->allocation.width, widget->allocation.height);
 
 	// GConf changes only saved upon exit, since caused a lot of CPU activity
 	// while saving intermediate steps.
@@ -4089,8 +4093,11 @@ int moveWindowCallback(GtkWidget* w, gpointer) {
 	int x, y;
 	gtk_window_get_position(GTK_WINDOW(w), &x, &y);
 
-	prefs->winX = x;
-	prefs->winY = y;
+	// Don't save window position if going into fullscreen
+	if (prefs->fullScreen == false) {
+		prefs->winX = x;
+		prefs->winY = y;
+	}
 
 	// Saving of preferences was removed from here to the end of the main
 	// function. It was much too CPU intensive to save after every slightest
