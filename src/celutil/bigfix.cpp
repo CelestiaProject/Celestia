@@ -52,11 +52,11 @@ BigFix::BigFix(double d)
     if (e < 32767)
     {
         n[7] = (unsigned short) e;
-        d -= n[7] * 65536 * 65536 * 65536;
+        d -= n[7] * 65536.0 * 65536.0 * 65536.0;
         n[6] = (unsigned short) (d / (65536.0 * 65536.0));
-        d -= n[6] * 65536 * 65536;
+        d -= n[6] * 65536.0 * 65536.0;
         n[5] = (unsigned short) (d / 65536.0);
-        d -= n[5] * 65536;
+        d -= n[5] * 65536.0;
         n[4] = (unsigned short) d;
         d -= n[4];
         n[3] = (unsigned short) (d * 65536.0);
