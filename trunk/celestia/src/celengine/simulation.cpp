@@ -413,34 +413,14 @@ void Simulation::selectPlanet(int index)
 //   4. Search the planets and moons in any 'nearby' (< 0.1 ly) planetary systems
 Selection Simulation::findObject(string s)
 {
-    PlanetarySystem* path[2];
+    Selection path[2];
     int nPathEntries = 0;
 
-    switch (selection.getType())
-    {
-    case Selection::Type_Star:
-        {
-            SolarSystem* sys = universe->getSolarSystem(selection.star());
-            if (sys != NULL)
-                path[nPathEntries++] = sys->getPlanets();
-        }
-        break;
-
-    case Selection::Type_Body:
-        {
-            PlanetarySystem* sys = selection.body()->getSystem();
-            while (sys != NULL && sys->getPrimaryBody() != NULL)
-                sys = sys->getPrimaryBody()->getSystem();
-            path[nPathEntries++] = sys;
-        }
-        break;
-        
-    default:
-        break;
-    }
+    if (!selection.empty())
+        path[nPathEntries++] = selection;
 
     if (closestSolarSystem != NULL)
-        path[nPathEntries++] = closestSolarSystem->getPlanets();
+        path[nPathEntries++] = Selection(closestSolarSystem->getStar());
 
     return universe->find(s, path, nPathEntries);
 }
@@ -451,69 +431,32 @@ Selection Simulation::findObject(string s)
 // paths that contain galaxies.
 Selection Simulation::findObjectFromPath(string s)
 {
-    PlanetarySystem* path[2];
+    Selection path[2];
     int nPathEntries = 0;
 
-    switch (selection.getType())
-    {
-    case Selection::Type_Star:
-        {
-            SolarSystem* sys = universe->getSolarSystem(selection.star());
-            if (sys != NULL)
-                path[nPathEntries++] = sys->getPlanets();
-        }
-        break;
-
-    case Selection::Type_Body:
-        {
-            PlanetarySystem* sys = selection.body()->getSystem();
-            while (sys != NULL && sys->getPrimaryBody() != NULL)
-                sys = sys->getPrimaryBody()->getSystem();
-            path[nPathEntries++] = sys;
-        }
-        break;
-
-    default:
-        break;
-    }
+    if (!selection.empty())
+        path[nPathEntries++] = selection;
 
     if (closestSolarSystem != NULL)
-        path[nPathEntries++] = closestSolarSystem->getPlanets();
+        path[nPathEntries++] = Selection(closestSolarSystem->getStar());
 
     return universe->findPath(s, path, nPathEntries);
 }
 
+
 std::vector<std::string> Simulation::getObjectCompletion(string s)
 {
-    PlanetarySystem* path[2];
+    Selection path[2];
     int nPathEntries = 0;
-    PlanetarySystem* sys = NULL;
 
-    switch (selection.getType())
+    if (!selection.empty())
+        path[nPathEntries++] = selection;
+
+    if (closestSolarSystem != NULL &&
+        closestSolarSystem != universe->getSolarSystem(selection))
     {
-    case Selection::Type_Star:
-        {
-            SolarSystem* solsys = universe->getSolarSystem(selection.star());
-            if (solsys != NULL)
-                sys = path[nPathEntries++] = solsys->getPlanets();
-        }
-        break;
-
-    case Selection::Type_Body:
-        {
-            sys = selection.body()->getSystem();
-            while (sys != NULL && sys->getPrimaryBody() != NULL)
-                sys = sys->getPrimaryBody()->getSystem();
-            path[nPathEntries++] = sys;
-        }
-        break;
-
-    default:
-        break;
+        path[nPathEntries++] = Selection(closestSolarSystem->getStar());
     }
-
-    if (closestSolarSystem != NULL && closestSolarSystem->getPlanets() != sys)
-        path[nPathEntries++] = closestSolarSystem->getPlanets();
 
     return universe->getCompletionPath(s, path, nPathEntries);
 }

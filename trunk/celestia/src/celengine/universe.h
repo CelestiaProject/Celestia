@@ -50,21 +50,23 @@ class Universe
                                 const Vec3f&, float faintest,
                                 float tolerance = 0.0f);
     Selection find(const std::string& s,
-                   PlanetarySystem** solarSystems = NULL,
-                   int nSolarSystems = 0);
+                   Selection* contexts = NULL,
+                   int nContexts = 0);
     Selection findPath(const std::string& s,
-                       PlanetarySystem** solarSystems = NULL,
-                       int nSolarSystems = 0);
-    std::vector<std::string> getCompletion(const std::string& s,
-                       PlanetarySystem** solarSystems = NULL,
-                       int nSolarSystems = 0);
-    std::vector<std::string> getCompletionPath(const std::string& s,
-                       PlanetarySystem** solarSystems = NULL,
-                       int nSolarSystems = 0);
+                       Selection* contexts = NULL,
+                       int nContexts = 0);
     Selection findChildObject(const Selection& sel,
                               const string& name) const;
     Selection findObjectInContext(const Selection& sel,
                                   const string& name) const;
+
+    std::vector<std::string> getCompletion(const std::string& s,
+                                           Selection* contexts = NULL,
+                                           int nContexts = 0);
+    std::vector<std::string> getCompletionPath(const std::string& s,
+                                               Selection* contexts = NULL,
+                                               int nContexts = 0);
+
 
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
     SolarSystem* getSolarSystem(const Star* star) const;
