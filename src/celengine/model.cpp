@@ -62,7 +62,10 @@ Model::~Model()
 const Mesh::Material*
 Model::getMaterial(uint32 index) const
 {
-    return materials[index];
+    if (index < materials.size())
+        return materials[index];
+    else
+        return NULL;
 }
 
 
@@ -77,7 +80,10 @@ Model::addMaterial(const Mesh::Material* m)
 const Mesh*
 Model::getMesh(uint32 index) const
 {
-    return meshes[index];
+    if (index < meshes.size())
+        return meshes[index];
+    else
+        return NULL;
 }
 
 

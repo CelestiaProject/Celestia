@@ -131,6 +131,10 @@ private:
     void writeMaterial(const Mesh::Material&);
     void writeGroup(const Mesh::PrimitiveGroup&);
     void writeVertexDescription(const Mesh::VertexDescription&);
+    void writeVertices(const void* vertexData,
+                       uint32 nVertices,
+                       uint32 stride,
+                       const Mesh::VertexDescription& desc);
     
     ostream& out;
 };
@@ -219,6 +223,17 @@ ModelLoader::OpenModel(istream& in)
         cerr << "Model file has invalid header.\n";
         return NULL;
     }
+}
+
+
+bool SaveModelAscii(const Model* model, std::ostream& out)
+{
+    if (model == NULL)
+        return false;
+
+    AsciiModelWriter(out).write(*model);
+
+    return true;
 }
 
 
@@ -493,6 +508,8 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
                     delete[] vertexData;
                 }
                 data[j] = tok.getNumberValue();
+
+                // TODO: range check unsigned byte values
             }
 
             uint32 base = offset + vertexDesc.attributes[attr].offset;
@@ -722,13 +739,13 @@ AsciiModelWriter::write(const Model& model)
 {
     out << CEL_MODEL_HEADER_ASCII << "\n\n";
 
-    for (uint32 matIndex = 0; matIndex++; model.getMaterial(matIndex))
+    for (uint32 matIndex = 0; model.getMaterial(matIndex); matIndex++)
     {
         writeMaterial(*model.getMaterial(matIndex));
         out << '\n';
     }
 
-    for (uint32 meshIndex = 0; meshIndex++; model.getMesh(meshIndex))
+    for (uint32 meshIndex = 0; model.getMesh(meshIndex); meshIndex++)
     {
         writeMesh(*model.getMesh(meshIndex));
         out << '\n';
@@ -744,31 +761,31 @@ AsciiModelWriter::writeGroup(const Mesh::PrimitiveGroup& group)
     switch (group.prim)
     {
     case Mesh::TriList:
-        cout << "trilist"; break;
+        out << "trilist"; break;
     case Mesh::TriStrip:
-        cout << "tristrip"; break;
+        out << "tristrip"; break;
     case Mesh::TriFan:
-        cout << "trifan"; break;
+        out << "trifan"; break;
     case Mesh::LineList:
-        cout << "linelist"; break;
+        out << "linelist"; break;
     case Mesh::LineStrip:
-        cout << "linestrip"; break;
+        out << "linestrip"; break;
     case Mesh::PointList:
-        cout << "points"; break;
+        out << "points"; break;
     default:
         return;
     }
-
-    cout << ' ' << group.materialIndex << ' ' << group.nIndices << '\n';
+    
+    out << ' ' << group.materialIndex << ' ' << group.nIndices << '\n';
 
     // Print the indices, twelve per line
     for (uint32 i = 0; i < group.nIndices; i++)
     {
-        cout << group.indices[i];
+        out << group.indices[i];
         if (i % 12 == 11 || i == group.nIndices - 1)
-            cout << '\n';
+            out << '\n';
         else
-            cout << ' ';
+            out << ' ';
     }
 }
 
@@ -778,12 +795,68 @@ AsciiModelWriter::writeMesh(const Mesh& mesh)
 {
     out << "mesh\n";
 
-    writeVertexDescription(*mesh.getVertexDescription());
+    writeVertexDescription(mesh.getVertexDescription());
     out << '\n';
 
-    for (uint32 groupIndex = 0; groupIndex++; mesh.getGroup(groupIndex))
+    writeVertices(mesh.getVertexData(),
+                  mesh.getVertexCount(),
+                  mesh.getVertexStride(),
+                  mesh.getVertexDescription());
+    out << '\n';
+
+    for (uint32 groupIndex = 0; mesh.getGroup(groupIndex); groupIndex++)
     {
         writeGroup(*mesh.getGroup(groupIndex));
+        out << '\n';
+    }
+
+    out << "end_mesh\n";
+}
+
+
+void
+AsciiModelWriter::writeVertices(const void* vertexData,
+                                uint32 nVertices,
+                                uint32 stride,
+                                const Mesh::VertexDescription& desc)
+{
+    const unsigned char* vertex = reinterpret_cast<const unsigned char*>(vertexData);
+
+    out << "vertices " << nVertices << '\n';
+    for (uint32 i = 0; i < nVertices; i++, vertex += stride)
+    {
+        for (uint32 attr = 0; attr < desc.nAttributes; attr++)
+        {
+            const unsigned char* ubdata = vertex + desc.attributes[attr].offset;
+            const float* fdata = reinterpret_cast<const float*>(ubdata);
+
+            switch (desc.attributes[attr].format)
+            {
+            case Mesh::Float1:
+                out << fdata[0];
+                break;
+            case Mesh::Float2:
+                out << fdata[0] << ' ' << fdata[1];
+                break;
+            case Mesh::Float3:
+                out << fdata[0] << ' ' << fdata[1] << ' ' << fdata[2];
+                break;
+            case Mesh::Float4:
+                out << fdata[0] << ' ' << fdata[1] << ' ' <<
+                       fdata[2] << ' ' << fdata[3];
+                break;
+            case Mesh::UByte4:
+                out << (int) ubdata[0] << ' ' << (int) ubdata[1] << ' ' <<
+                       (int) ubdata[2] << ' ' << (int) ubdata[3];
+                break;
+            default:
+                assert(0);
+                break;
+            }
+
+            out << ' ';
+        }
+
         out << '\n';
     }
 }
@@ -792,6 +865,73 @@ AsciiModelWriter::writeMesh(const Mesh& mesh)
 void
 AsciiModelWriter::writeVertexDescription(const Mesh::VertexDescription& desc)
 {
+    out << "vertexdesc\n";
+    for (uint32 attr = 0; attr < desc.nAttributes; attr++)
+    {
+        // We should never have a vertex description with invalid
+        // fields . . .
+
+        switch (desc.attributes[attr].semantic)
+        {
+        case Mesh::Position:
+            out << "position";
+            break;
+        case Mesh::Color0:
+            out << "color0";
+            break;
+        case Mesh::Color1:
+            out << "color1";
+            break;
+        case Mesh::Normal:
+            out << "normal";
+            break;
+        case Mesh::Tangent:
+            out << "tangent";
+            break;
+        case Mesh::Texture0:
+            out << "texcoord0";
+            break;
+        case Mesh::Texture1:
+            out << "texcoord1";
+            break;
+        case Mesh::Texture2:
+            out << "texcoord2";
+            break;
+        case Mesh::Texture3:
+            out << "texcoord3";
+            break;
+        default:
+            assert(0);
+            break;
+        }
+
+        out << ' ';
+
+        switch (desc.attributes[attr].format)
+        {
+        case Mesh::Float1:
+            out << "f1";
+            break;
+        case Mesh::Float2:
+            out << "f2";
+            break;
+        case Mesh::Float3:
+            out << "f3";
+            break;
+        case Mesh::Float4:
+            out << "f4";
+            break;
+        case Mesh::UByte4:
+            out << "ub4";
+            break;
+        default:
+            assert(0);
+            break;
+        }
+
+        out << '\n';
+    }
+    out << "end_vertexdesc\n";
 }
 
 
@@ -801,7 +941,7 @@ AsciiModelWriter::writeMaterial(const Mesh::Material& material)
     out << "material\n";
     if (material.diffuse != DefaultDiffuse)
     {
-        cout << "diffuse " <<
+        out << "diffuse " <<
             material.diffuse.red() << ' ' <<
             material.diffuse.green() << ' ' <<
             material.diffuse.blue() << '\n';
@@ -809,7 +949,7 @@ AsciiModelWriter::writeMaterial(const Mesh::Material& material)
 
     if (material.emissive != DefaultEmissive)
     {
-        cout << "emissive " <<
+        out << "emissive " <<
             material.emissive.red() << ' ' <<
             material.emissive.green() << ' ' <<
             material.emissive.blue() << '\n';
@@ -817,17 +957,17 @@ AsciiModelWriter::writeMaterial(const Mesh::Material& material)
 
     if (material.specular != DefaultSpecular)
     {
-        cout << "specular " <<
+        out << "specular " <<
             material.specular.red() << ' ' <<
             material.specular.green() << ' ' <<
             material.specular.blue() << '\n';
     }
 
     if (material.specularPower != DefaultSpecularPower)
-        cout << "specpower " << material.specularPower << '\n';
+        out << "specpower " << material.specularPower << '\n';
 
     if (material.opacity != DefaultOpacity)
-        cout << "opacity " << material.opacity << '\n';
+        out << "opacity " << material.opacity << '\n';
 
-    out << "end_material";
+    out << "end_material\n";
 }
