@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <cstdio>
 
 #include "celestia.h"
 // Ugh . . . the C++ standard says that stringstream should be in
