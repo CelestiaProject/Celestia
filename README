@@ -33,11 +33,17 @@ The most basic commands are
 
 This will build the GTK version.
 
-The new KDE3 version is built with
+The KDE3 version is built with
 
         ./configure --with-kde 
         make 
-        make install 
+        make install
+
+The Gnome version is built with
+
+		./configure --with-gnome
+		make
+		make install
 
 Running Celestia:
 

@@ -14,21 +14,26 @@ what you need to do to build and run Celestia:
 	make
 	make install
 
-Three interfaces are available for Celestia:
+Four interfaces are available for Celestia:
 - glut: minimal interface, barebone Celestia core with no toolbar or menu...
-- gtk1/gnome1: minimal GTK1 interface, adds a menu, a configuration dialog
-               some other utilities. This interface is still supported but
-	       is not developped any further.
+- GTK: A full interface with minimal dependencies, adds a menu, a configuration
+       dialog some other utilities.
+- Gnome: The full GTK interface plus a few Gnome integration goodies, such as
+         preference saving in GConf. This looks and works almost identical to
+		 the Windows interface.
 - KDE3: brings contextual menus, toolbars, KDE integration, internationalization,
         bookmarks...
 
-By default the KDE interface will be built. It requires the various kde devel
+By default the KDE interface will be built. It requires the various kde-devel
 packages.
 
-To build the GTK interface (requires gtkglarea and gtkglarea devel):
+To build the Gnome interface (requires gnome-devel and everything GTK requires):
+	configure --with-gnome
+
+To build the GTK interface (requires gtkglext and gtkglext-devel):
 	configure --with-gtk
 
-To build the GLUT interface (requires glut and glut devel):
+To build the GLUT interface (requires glut and glut-devel):
 	configure --without-kde --without-gtk
 
 The configure output tells you which interface has been selected, you should
