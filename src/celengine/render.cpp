@@ -4468,15 +4468,15 @@ void Renderer::renderObject(Point3f pos,
     // TODO:  Figure out a better way to render ellipsoids than applying
     // a nonunifom scale factor to a sphere.
     float radius = obj.radius;
-    Vec3f semiMajorAxes(radius, radius * (1.0f - obj.oblateness), radius);
-    glScale(semiMajorAxes);
+    Vec3f semiAxes = obj.radius * obj.semiAxes;
+    glScale(semiAxes);
 
     Mat4f planetMat = (~obj.orientation).toMatrix4();
     ri.eyeDir_obj = (Point3f(0, 0, 0) - pos) * planetMat;
     ri.eyeDir_obj.normalize();
-    ri.eyePos_obj = Point3f(-pos.x / radius,
-                            -pos.y / ((1.0f - obj.oblateness) * radius),
-                            -pos.z / radius) * planetMat;
+    ri.eyePos_obj = Point3f(-pos.x / semiAxes.x,
+                            -pos.y / semiAxes.y,
+                            -pos.z / semiAxes.z) * planetMat;
     
     ri.orientation = cameraOrientation;
 
@@ -4607,7 +4607,7 @@ void Renderer::renderObject(Point3f pos,
 
     if (obj.rings != NULL && distance <= obj.rings->innerRadius)
     {
-        renderRings(*obj.rings, ri, radius, obj.oblateness,
+        renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y,
                     textureResolution,
                     context->getMaxTextures() > 1 &&
                     (renderFlags & ShowRingShadows) != 0 && lit,
@@ -4658,7 +4658,7 @@ void Renderer::renderObject(Point3f pos,
             renderEllipsoidAtmosphere(*atmosphere,
                                       pos,
                                       obj.orientation,
-                                      semiMajorAxes,
+                                      semiAxes,
                                       ri.sunDir_eye,
                                       ri.ambientColor,
                                       thicknessInPixels,
@@ -4807,7 +4807,7 @@ void Renderer::renderObject(Point3f pos,
                                     *obj.rings,
                                     sunDir,
                                     ri,
-                                    radius, obj.oblateness,
+                                    radius, 1.0f - obj.semiAxes.y,
                                     planetMat, viewFrustum,
                                     *context);
             }
@@ -4830,7 +4830,7 @@ void Renderer::renderObject(Point3f pos,
     if (obj.rings != NULL && distance > obj.rings->innerRadius)
     {
         glDepthMask(GL_FALSE);
-        renderRings(*obj.rings, ri, radius, obj.oblateness,
+        renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y,
                     textureResolution,
                     (context->hasMultitexture() &&
                      (renderFlags & ShowRingShadows) != 0 && lit),
@@ -4963,13 +4963,11 @@ void Renderer::renderPlanet(Body& body,
         rp.atmosphere = body.getAtmosphere();
         rp.rings = body.getRings();
         rp.radius = body.getRadius();
-        rp.oblateness = body.getOblateness();
+        rp.semiAxes = Vec3f(1.0f, 1.0f - body.getOblateness(), 1.0f);
         rp.model = body.getModel();
 
         // Compute the orientation of the planet before axial rotation
         Quatd q = body.getEclipticalToEquatorial(now);
-        rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y,
-                               (float) q.z);
 
         double rotation = 0.0;
         // Watch out for the precision limits of floats when computing
@@ -4987,8 +4985,9 @@ void Renderer::renderPlanet(Body& body,
 
             rotation = remainder * 2 * PI + re.offset;
         }
-        rp.orientation.yrotate((float) -rotation);
-        rp.orientation = body.getOrientation() * rp.orientation;
+        q.yrotate(-rotation);
+        rp.orientation = body.getOrientation() *
+            Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
         Color sunColor(1.0f, 1.0f, 1.0f);
         {
@@ -5113,9 +5112,7 @@ void Renderer::renderPlanet(Body& body,
             glDisable(GL_TEXTURE_2D);
             glRotate(orientation);
             
-            Vec3f semiMajorAxes(rp.radius,
-                                rp.radius * (1.0f - body.getOblateness()),
-                                rp.radius);
+            Vec3f semiAxes = rp.semiAxes * rp.radius;
 
             // Compute the orientation of the planet before axial rotation
             Quatd q = body.getEclipticalToEquatorial(now);
@@ -5124,7 +5121,7 @@ void Renderer::renderPlanet(Body& body,
 
             if ((renderFlags & ShowSmoothLines) != 0)
                 enableSmoothLines();
-            renderCompass(pos, qf, semiMajorAxes, pixelSize / rp.radius);
+            renderCompass(pos, qf, semiAxes, pixelSize / rp.radius);
             if ((renderFlags & ShowSmoothLines) != 0)
                 disableSmoothLines();
 
@@ -5218,7 +5215,7 @@ void Renderer::renderStar(const Star& star,
         rp.surface = &surface;
         rp.rings = NULL;
         rp.radius = star.getRadius();
-        rp.oblateness = 0.0f;
+        rp.semiAxes = star.getEllipsoidSemiAxes();
         rp.model = star.getModel();
 
         Atmosphere atmosphere;
@@ -5231,17 +5228,31 @@ void Renderer::renderStar(const Star& star,
         else
             rp.atmosphere = NULL;
 
+        const RotationElements& re = star.getRotationElements();
+        double ascendingNode = (double) re.ascendingNode +
+            re.precessionRate * (now - astro::J2000);
+        Quatd q =
+            Quatd::xrotation(-re.obliquity) *
+            Quatd::yrotation(-ascendingNode);
+
         double rotation = 0.0;
         // Watch out for the precision limits of floats when computing
         // rotation . . .
         {
-            double period = star.getRotationPeriod();
-            double rotations = now / period;
-            double remainder = rotations - floor(rotations);
-            rotation = remainder * 2 * PI;
+            const RotationElements& re = star.getRotationElements();
+            double rotations = (now - re.epoch) / (double) re.period;
+            double wholeRotations = floor(rotations);
+            double remainder = rotations - wholeRotations;
+
+            // Add an extra half rotation because of the convention in all
+            // planet texture maps where zero deg long. is in the middle of
+            // the texture.
+            remainder += 0.5;
+
+            rotation = remainder * 2 * PI + re.offset;
         }
-        rp.orientation = Quatf(1.0f);
-        rp.orientation.yrotate((float) -rotation);
+        q.yrotate(-rotation);
+        rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
