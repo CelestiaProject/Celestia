@@ -21,14 +21,14 @@ class TextureInfo : public ResourceInfo<Texture>
 {
  public:
     std::string source;
+    unsigned int flags;
     float bumpHeight;
-    bool compressed;
     unsigned int resolution;
 
-    TextureInfo(const std::string _source, bool _compressed = false, unsigned int _resolution = medres) :
-        source(_source), bumpHeight(0.0f), compressed(_compressed), resolution(_resolution) {};
-    TextureInfo(const std::string _source, float _bumpHeight, unsigned int _resolution = medres) :
-        source(_source), bumpHeight(_bumpHeight), compressed(false), resolution(_resolution) {};
+    TextureInfo(const std::string _source, unsigned int _flags, unsigned int _resolution = medres) :
+        source(_source), bumpHeight(0.0f), flags(_flags), resolution(_resolution) {};
+    TextureInfo(const std::string _source, float _bumpHeight, unsigned int _flags, unsigned int _resolution = medres) :
+        source(_source), bumpHeight(_bumpHeight), flags(_flags), resolution(_resolution) {};
     virtual Texture* load(const std::string&);
 };
 

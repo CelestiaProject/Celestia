@@ -42,10 +42,7 @@ Texture* TextureInfo::load(const string& baseDir)
 
         if (tex != NULL)
         {
-            uint32 texFlags = Texture::WrapTexture;
-            if (compressed)
-                texFlags |= Texture::CompressTexture;
-            tex->bindName(texFlags);
+            tex->bindName(flags);
             return tex;
         }
     }
@@ -57,7 +54,7 @@ Texture* TextureInfo::load(const string& baseDir)
         if (tex != NULL)
         {
             tex->normalMap(bumpHeight, true);
-            tex->bindName(Texture::WrapTexture);
+            tex->bindName(flags);
             return tex;
         }
     }

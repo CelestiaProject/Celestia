@@ -35,16 +35,24 @@ class Texture
         WrapTexture      = 0x1,
         CompressTexture  = 0x2,
         NoMipMaps        = 0x4,
-        AutoMipMaps      = 0x8
+        AutoMipMaps      = 0x8,
+        AllowSplitting   = 0x10,
     };
 
     void bindName(uint32 flags = 0);
     unsigned int getName();
+    unsigned int getName(int, int);
     void normalMap(float scale, bool wrap);
     void bind() const;
+    void bind(int, int) const;
 
     int getWidth() const;
     int getHeight() const;
+    int getComponents() const;
+    bool hasAlpha() const;
+
+    int getUSubtextures() const;
+    int getVSubtextures() const;
 
     void setMaxMipMapLevel(int);
 
@@ -67,7 +75,8 @@ class Texture
     int cmapFormat;
     unsigned char* cmap;
 
-    unsigned int glName;
+    int split;
+    unsigned int* glNames;
 };
 
 

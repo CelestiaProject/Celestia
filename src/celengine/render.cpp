@@ -294,10 +294,10 @@ bool Renderer::init(int winWidth, int winHeight)
             }
         }
 
-        starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg"));
-        starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg"));
-        starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg"));
-        starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg"));
+        starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg", 0));
+        starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg", 0));
+        starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg", 0));
+        starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg", 0));
 
         // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
@@ -1256,7 +1256,8 @@ static void renderBumpMappedMesh(Texture& bumpTexture,
     // Render the base texture on the first pass . . .  The base
     // texture and color should have been set up already by the
     // caller.
-    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
+    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
+                      NULL);
 
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
@@ -1319,7 +1320,8 @@ static void renderBumpMappedMesh(Texture& bumpTexture,
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
+    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
+                      &bumpTexture);
 
     // Reset the second texture unit
     glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1403,7 +1405,8 @@ static void renderSmoothMesh(Texture& baseTexture,
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
+    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
+                      &baseTexture);
 
     // Reset the second texture unit
     glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1608,14 +1611,16 @@ static void renderSphereDefault(const RenderInfo& ri,
 
     glColor(ri.color);
 
-    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
+    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                      ri.baseTex);
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 }
@@ -1672,7 +1677,7 @@ static void renderSphereFragmentShader(const RenderInfo& ri,
     else
     {
         glEnable(GL_LIGHTING);
-        lodSphere->render(frustum, ri.lod);
+        lodSphere->render(frustum, ri.lod, NULL);
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -1742,7 +1747,8 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
         lodSphere->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.lod);
+                          Mesh::VertexProgParams, frustum, ri.lod,
+                          ri.baseTex);
         DisableCombiners();
     }
     else if (ri.specularColor != Color(0.0f, 0.0f, 0.0f))
@@ -1751,7 +1757,8 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
         vp::use(vp::specular);
         SetupCombinersGlossMapWithFog();
         lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.lod);
+                          Mesh::VertexProgParams, frustum, ri.lod,
+                          ri.baseTex);
         DisableCombiners();
     }
     else
@@ -1761,7 +1768,8 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
         else
             vp::use(vp::diffuse);
         lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.lod);
+                          Mesh::VertexProgParams, frustum, ri.lod,
+                          ri.baseTex);
     }
 
     if (hazeDensity > 0.0f)
@@ -1774,7 +1782,8 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         vp::use(vp::diffuse);
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -1782,7 +1791,8 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
 }
 
 
-static void renderShadowedMeshDefault(const RenderInfo& ri,
+static void renderShadowedMeshDefault(Mesh* mesh,
+                                      const RenderInfo& ri,
                                       const Frustum& frustum,
                                       float* sPlane, float* tPlane)
 {
@@ -1794,7 +1804,10 @@ static void renderShadowedMeshDefault(const RenderInfo& ri,
     glTexGenfv(GL_T, GL_OBJECT_PLANE, tPlane);
     glColor4f(1, 1, 1, 1);
     glDisable(GL_LIGHTING);
-    lodSphere->render(Mesh::Normals, frustum, ri.lod);
+    if (mesh == NULL)
+        lodSphere->render(Mesh::Normals, frustum, ri.lod, NULL);
+    else
+        mesh->render(Mesh::Normals, ri.lod);
     glEnable(GL_LIGHTING);
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
@@ -1810,7 +1823,7 @@ static void renderShadowedMeshVertexShader(const RenderInfo& ri,
     vp::parameter(41, sPlane[0], sPlane[1], sPlane[2], sPlane[3]);
     vp::parameter(42, tPlane[0], tPlane[1], tPlane[2], tPlane[3]);
     vp::use(vp::shadowTexture);
-    lodSphere->render(Mesh::Normals, frustum, ri.lod);
+    lodSphere->render(Mesh::Normals, frustum, ri.lod, NULL);
     vp::disable();
 }
 
@@ -1981,6 +1994,7 @@ void Renderer::renderObject(Point3f pos,
                         nearPlaneDistance, farPlaneDistance);
     viewFrustum.transform(invMV);
 
+    Mesh* mesh = NULL;
     if (obj.mesh == InvalidResource)
     {
         // This is a spherical mesh
@@ -2007,7 +2021,7 @@ void Renderer::renderObject(Point3f pos,
     else
     {
         // This is a mesh loaded from a file
-        Mesh* mesh = GetMeshManager()->find(obj.mesh);
+        mesh = GetMeshManager()->find(obj.mesh);
         if (mesh != NULL)
             renderMeshDefault(mesh, ri, lit);
     }
@@ -2089,7 +2103,8 @@ void Renderer::renderObject(Point3f pos,
             glColor4f(1, 1, 1, 1);
             lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
                               viewFrustum,
-                              ri.lod);
+                              ri.lod,
+                              cloudTex);
 
             // Reset the texture matrix
             glMatrixMode(GL_TEXTURE);
@@ -2177,14 +2192,15 @@ void Renderer::renderObject(Point3f pos,
             // standard transformation pipeline is guaranteed, we have to
             // make sure to use the same transformation engine on subsequent
             // rendering passes as we did on the initial one.
-            if (vertexShaderEnabled)
+            if (vertexShaderEnabled && mesh == NULL)
             {
                 renderShadowedMeshVertexShader(ri, viewFrustum,
                                                sPlane, tPlane);
             }
             else
             {
-                renderShadowedMeshDefault(ri, viewFrustum, sPlane, tPlane);
+                renderShadowedMeshDefault(mesh, ri, viewFrustum,
+                                          sPlane, tPlane);
             }
 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -2875,8 +2891,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             faintestMagNight);
+    starRenderer.starVertexBuffer->finish();
 
-    starRenderer.starVertexBuffer->render();
     glareTex->bind();
     renderParticles(glareParticles, observer.getOrientation());
 }
@@ -3245,6 +3261,14 @@ void Renderer::StarVertexBuffer::render()
         glDrawArrays(GL_QUADS, 0, nStars * 4);
         nStars = 0;
     }
+}
+
+void Renderer::StarVertexBuffer::finish()
+{
+    render();
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void Renderer::StarVertexBuffer::addStar(const Point3f& pos,
