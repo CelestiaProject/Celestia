@@ -74,10 +74,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 "Earth" "Sol"
 {
 	Texture "earth.*"
-	# Texture "earth8k.dds"
 	NightTexture "earthnight.*"
 	
-	# SpecularTexture "earthspec2k.jpg"
+	SpecularTexture "earth-spec.*"
 	Color [ 0.85 0.85 1.0 ]
 	SpecularColor [ 0.5 0.5 0.55 ]
 	SpecularPower 25.0
@@ -86,7 +85,6 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Radius 6378.140  # equatorial
 	# Oblateness 0.0034
 
-	# NormalMap "earthbump4k.jpg"
 	# BumpMap "earthbump.*"
 	# BumpHeight 4.5
 
@@ -123,10 +121,8 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 "Moon" "Sol/Earth"
 {
 	Texture "moon.*"
-	# Texture "clem-moon-4k.jpg"
-	# Texture "moon4k.dds"
-	BumpMap "moonbump1k.*"
-	BumpHeight 0.7
+	BumpMap "moonbump.*"
+	BumpHeight 0.3
 	Radius   1737.53
 	# Oblateness 0.002
 
