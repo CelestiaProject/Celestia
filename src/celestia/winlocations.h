@@ -17,8 +17,9 @@
 #include <commctrl.h>
 #include "favorites.h"
 #include "celestiacore.h"
+#include "ODMenu.h"
 
-void BuildFavoritesMenu(HMENU, CelestiaCore*);
+void BuildFavoritesMenu(HMENU, CelestiaCore*, HINSTANCE, ODMenu*);
 HTREEITEM PopulateLocationFolders(HWND, CelestiaCore*, HINSTANCE);
 HTREEITEM PopulateLocationsTree(HWND, CelestiaCore*, HINSTANCE);
 void AddNewLocationFolderInTree(HWND, char*);

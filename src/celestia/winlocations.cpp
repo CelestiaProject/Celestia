@@ -188,7 +188,7 @@ HTREEITEM PopulateLocationFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
     return hParent;
 }
 
-void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore)
+void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInstance, ODMenu* odMenu)
 {
     // Add favorites to locations menu
     int numStaticItems = 2; //The number of items defined in the .rc file.
@@ -204,7 +204,8 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore)
             HMENU locationsMenu = menuInfo.hSubMenu;
 
             //First, tear down existing menu beyond separator.
-            while (DeleteMenu(locationsMenu, numStaticItems, MF_BYPOSITION));
+            while (DeleteMenu(locationsMenu, numStaticItems, MF_BYPOSITION))
+                odMenu->DeleteItem(locationsMenu, numStaticItems);
 
             //Don't continue if there are no items in favorites
             if (favorites->size() == 0)
@@ -215,11 +216,15 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore)
             menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
             menuInfo.fType = MFT_SEPARATOR;
             menuInfo.fState = MFS_UNHILITE;
-            InsertMenuItem(locationsMenu, numStaticItems++, TRUE, &menuInfo);
+            if(InsertMenuItem(locationsMenu, numStaticItems, TRUE, &menuInfo))
+            {
+                odMenu->AddItem(locationsMenu, numStaticItems);
+                numStaticItems++;
+            }
 
             //Add folders and their sub items
             int rootMenuIndex = numStaticItems;
-            int subMenuIndex, resourceIndex;
+            int subMenuIndex, resourceIndex = 0;
             FavoritesList::const_iterator iter = favorites->begin();
             while (iter != favorites->end())
             {
@@ -232,33 +237,45 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore)
                     {
                         //Create a menu item that displays a popup sub menu
                         menuInfo.cbSize = sizeof MENUITEMINFO;
-                        menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE;
+                        menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
                         menuInfo.fType = MFT_STRING;
+                        menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + resourceIndex;
                         menuInfo.hSubMenu = subMenu;
                         menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
                         if (InsertMenuItem(locationsMenu, rootMenuIndex, TRUE, &menuInfo))
                         {
+                            odMenu->AddItem(locationsMenu, rootMenuIndex);
+                            odMenu->SetItemImage(appInstance, menuInfo.wID, IDB_FOLDERCLOSED);
+
                             rootMenuIndex++;
+                            resourceIndex++;
 
                             //Now iterate through all Favorites and add items to this folder
                             //where parentFolder == folderName
-                            resourceIndex = subMenuIndex = 0;
+                            subMenuIndex = 0;
                             string folderName = (*iter)->name;
-                            FavoritesList::const_iterator subIter = favorites->begin();
-                            while (subIter != favorites->end())
+                            iter++;
+                            while (iter != favorites->end())
                             {
-                                if (!(*subIter)->isFolder && (*subIter)->parentFolder == folderName)
+                                if (!(*iter)->isFolder && (*iter)->parentFolder == folderName)
                                 {
                                     //Add items to sub menu
                                     menuInfo.cbSize = sizeof MENUITEMINFO;
                                     menuInfo.fMask = MIIM_TYPE | MIIM_ID;
                                     menuInfo.fType = MFT_STRING;
                                     menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + resourceIndex;
-                                    menuInfo.dwTypeData = const_cast<char*>((*subIter)->name.c_str());
-                                    InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo);
-                                    subMenuIndex++;
+                                    menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
+                                    if(InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo))
+                                    {
+                                        odMenu->AddItem(subMenu, subMenuIndex);
+                                        odMenu->SetItemImage(appInstance, menuInfo.wID, IDB_LOCATION);
+                                        subMenuIndex++;
+                                    }
                                 }
-                                subIter++;
+                                else
+                                    break;
+
+                                iter++;
                                 resourceIndex++;
                             }
 
@@ -270,16 +287,19 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore)
                                 menuInfo.fType = MFT_STRING;
                                 menuInfo.fState = MFS_DISABLED;
                                 menuInfo.dwTypeData = "(empty)";
-                                InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo);
+                                if(InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo))
+                                {
+                                    odMenu->AddItem(subMenu, subMenuIndex);
+                                }
                             }
                         }
                     }
                 }
-                iter++;
+                else
+                    iter++;
             }
 
             //Add root locations items
-            resourceIndex = 0;
             iter = favorites->begin();
             while (iter != favorites->end())
             {
@@ -290,9 +310,12 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore)
                     AppendMenu(locationsMenu, MF_STRING,
                         ID_LOCATIONS_FIRSTLOCATION + resourceIndex,
                         const_cast<char*>((*iter)->name.c_str()));
+
+                    odMenu->AddItem(locationsMenu, rootMenuIndex);
+                    odMenu->SetItemImage(appInstance, ID_LOCATIONS_FIRSTLOCATION + resourceIndex, IDB_LOCATION);
+                    rootMenuIndex++;
                 }
                 iter++;
-                resourceIndex++;
             }
         }
     }

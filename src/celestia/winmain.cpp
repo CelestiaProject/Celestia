@@ -46,6 +46,7 @@
 #include "wingotodlg.h"
 #include "winviewoptsdlg.h"
 #include "winlocations.h"
+#include "ODMenu.h"
 
 #include "res/resource.h"
 
@@ -79,6 +80,7 @@ static GotoObjectDialog* gotoObjectDlg = NULL;
 static ViewOptionsDialog* viewOptionsDlg = NULL;
 
 static HMENU menuBar = 0;
+ODMenu odAppMenu;
 static HACCEL acceleratorTable = 0;
 static bool hideMenuBar = false;
 
@@ -716,7 +718,7 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
                     appCore->writeFavoritesFile();
 
                     //Rebuild Locations menu.
-                    BuildFavoritesMenu(menuBar, appCore);
+                    BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
                 }
             }
             EndDialog(hDlg, 0);
@@ -908,7 +910,7 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
             appCore->writeFavoritesFile();
 
             //Rebuild Locations menu.
-            BuildFavoritesMenu(menuBar, appCore);
+            BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
 
             EndDialog(hDlg, 0);
             return TRUE;
@@ -2420,7 +2422,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     else
         ShowUniversalTime(appCore);
 
-    BuildFavoritesMenu(menuBar, appCore);
+    BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     syncMenusWithRendererState();
 
     //Gray-out Render menu options that hardware does not support.
@@ -2542,7 +2544,20 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
     switch(uMsg)
     {
     case WM_CREATE:
+        //Instruct menu class to enumerate menu structure
+        odAppMenu.Init(hWnd, menuBar);
+
+        //Associate a menu item with a bitmap resource
+        odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREIMAGE, IDB_CAMERA);
         break;
+
+    case WM_MEASUREITEM:
+        odAppMenu.MeasureItem(hWnd, lParam);
+        return TRUE;
+
+    case WM_DRAWITEM:
+        odAppMenu.DrawItem(hWnd, lParam);
+        return TRUE;
 
     case WM_MOUSEMOVE:
         {
