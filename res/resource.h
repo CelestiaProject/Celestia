@@ -15,6 +15,7 @@
 #define IDD_SSBROWSER                   112
 #define IDD_STARBROWSER                 113
 #define IDD_TOURGUIDE                   114
+#define IDD_CONTROLSHELP                115
 
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
@@ -32,6 +33,7 @@
 #define IDC_RADIO_BRIGHTEST             1016
 #define IDC_COMBO_TOURGUIDE             1017
 #define IDC_TEXT_DESCRIPTION            1018
+#define IDC_TEXT_CONTROLSHELP           1019
 
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
@@ -84,6 +86,7 @@
 #define ID_TIME_SHOWLOCAL               40050
 #define ID_NAVIGATION_TRACK             40051
 #define ID_CLOSE_TOURGUIDE              40052
+#define ID_HELP_CONTROLS                40053
 
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
@@ -91,9 +94,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        115
-#define _APS_NEXT_COMMAND_VALUE         40053
-#define _APS_NEXT_CONTROL_VALUE         1019
+#define _APS_NEXT_RESOURCE_VALUE        116
+#define _APS_NEXT_COMMAND_VALUE         40054
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
