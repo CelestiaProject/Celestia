@@ -30,7 +30,7 @@ IDR_MAIN_MENU MENU DISCARDABLE
 BEGIN
     POPUP "&File"
     BEGIN
-	MENUITEM "&Open Script...",             ID_FILE_OPENSCRIPT
+        MENUITEM "&Open Script...",             ID_FILE_OPENSCRIPT
         MENUITEM SEPARATOR
         MENUITEM "Capture &Image...\tF10",      ID_FILE_CAPTUREIMAGE
         MENUITEM "Capture &Movie...\tShift+F10", ID_FILE_CAPTUREMOVIE
@@ -582,6 +582,17 @@ END
 
 #endif    // !_MAC
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_FOLDERCLOSED        BITMAP  DISCARDABLE     "FolderClosed.bmp"
+IDB_FOLDEROPENED        BITMAP  DISCARDABLE     "FolderOpened.bmp"
+IDB_FOLDERROOT          BITMAP  DISCARDABLE     "FolderRoot.bmp"
+IDB_LOCATION            BITMAP  DISCARDABLE     "Location.bmp"
+IDB_CAMERA              BITMAP  DISCARDABLE     "Camera.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
