@@ -49,6 +49,12 @@ void Observer::setOrientation(const Quatf& q)
 }
 
 
+void Observer::setOrientation(const Quatd& q)
+{
+    orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+}
+
+
 Vec3d Observer::getVelocity() const
 {
     return velocity;
