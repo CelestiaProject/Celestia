@@ -200,7 +200,6 @@ double Observer::getArrivalTime() const
 void Observer::update(double dt)
 {
     realTime += dt;
-    printf("time: %lf\n", realTime);
 
     if (observerMode == Travelling)
     {

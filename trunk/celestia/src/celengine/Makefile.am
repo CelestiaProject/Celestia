@@ -23,6 +23,7 @@ libcelengine_a_SOURCES = \
 	deepskyobj.cpp \
 	dispmap.cpp \
 	execution.cpp \
+	frame.cpp \
 	galaxy.cpp \
 	glext.cpp \
 	lodspheremesh.cpp \
