@@ -28,6 +28,7 @@ class Mesh
         TexCoords0 = 0x08,
         TexCoords1 = 0x10,
         VertexProgParams = 0x1000,
+        Multipass  = 0x10000000,
     };
 };
 

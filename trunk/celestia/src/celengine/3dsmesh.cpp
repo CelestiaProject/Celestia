@@ -71,60 +71,64 @@ void Mesh3DS::render(unsigned int attributes, float)
 
     for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
     {
-        // Ugly hack to set the diffuse color parameters when vertex programs
-        // are enabled.
-        if (attributes & VertexProgParams)
-            vp::parameter(20, (*i)->getDiffuseColor());
-
-        // All the vertex lists should have been sorted so that the
-        // transparent ones are after the opaque ones.  Thus we can assume
-        // that once we find a transparent vertext list, it's ok to leave
-        // blending on.
-        // TODO: Playing around with the blend mode could potentially
-        // interfere with multipass rendering.  There should be an attribute
-        // that is set to tell us to not mess with the blend mode.
-        if (!blendOn && (*i)->getDiffuseColor().alpha() != 1.0f)
+        // Don't mess with the material, texture, blend function, etc. if the
+        // multipass attribute is set--when the multipass flag is on, all this
+        // state will have been set up by the caller in order to produce some
+        // effect (e.g. shadows).
+        if ((attributes & Multipass) == 0)
         {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
+            // Ugly hack to set the diffuse color parameters when vertex
+            // programs are enabled.
+            if (attributes & VertexProgParams)
+                vp::parameter(20, (*i)->getDiffuseColor());
 
-        Color specular = (*i)->getSpecularColor();
-        float shininess = (*i)->getShininess();
-        ResourceHandle texture = (*i)->getTexture();
-        bool useSpecular = (specular != black);
-
-        if (specularOn && !useSpecular)
-        {
-            float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-            float zero = 0.0f;
-            glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
-            glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
-        }
-        if (useSpecular)
-        {
-            float matSpecular[4] = { specular.red(), specular.green(),
-                                     specular.blue(), 1.0f };
-            glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
-            glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
-        }
-        specularOn = useSpecular;
-
-        if (currentTexture != texture)
-        {
-            if (texture == InvalidResource)
+            // All the vertex lists should have been sorted so that the
+            // transparent ones are after the opaque ones.  Thus we can assume
+            // that once we find a transparent vertext list, it's ok to leave
+            // blending on.
+            if (!blendOn && (*i)->getDiffuseColor().alpha() != 1.0f)
             {
-                glDisable(GL_TEXTURE_2D);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             }
-            else
+
+            Color specular = (*i)->getSpecularColor();
+            float shininess = (*i)->getShininess();
+            ResourceHandle texture = (*i)->getTexture();
+            bool useSpecular = (specular != black);
+
+            if (specularOn && !useSpecular)
             {
-                if (currentTexture == InvalidResource)
-                    glEnable(GL_TEXTURE_2D);
-                Texture* t = textureManager->find(texture);
-                if (t != NULL)
-                    t->bind();
+                float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+                float zero = 0.0f;
+                glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+                glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
             }
-            currentTexture = texture;
+            if (useSpecular)
+            {
+                float matSpecular[4] = { specular.red(), specular.green(),
+                                             specular.blue(), 1.0f };
+                glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+                glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
+            }
+            specularOn = useSpecular;
+
+            if (currentTexture != texture)
+            {
+                if (texture == InvalidResource)
+                {
+                    glDisable(GL_TEXTURE_2D);
+                }
+                else
+                {
+                    if (currentTexture == InvalidResource)
+                        glEnable(GL_TEXTURE_2D);
+                    Texture* t = textureManager->find(texture);
+                    if (t != NULL)
+                        t->bind();
+                }
+                currentTexture = texture;
+            }
         }
         
         (*i)->render();
