@@ -1118,13 +1118,13 @@
 
 	EllipticalOrbit
 	{
-	Period		2405.98
-	SemiMajorAxis	19345000
-	Eccentricity	0.4686
-	Inclination	32.341	#
-	AscendingNode	19.826	#
-	ArgOfPericenter	8.087	# J2000.0
-	MeanAnomaly     44.422	#
+	Period		2918.94
+	SemiMajorAxis	22452000
+	Eccentricity	0.2973
+	Inclination	26.278	#
+	AscendingNode	23.901	#
+	ArgOfPericenter	48.159	# J2000.0
+	MeanAnomaly     14.134	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1140,13 +1140,13 @@
 
 	EllipticalOrbit
 	{
-	Period		2674.87
-	SemiMajorAxis	20723000
-	Eccentricity	0.6005
-	Inclination	15.996	#
-	AscendingNode	10.850	#
-	ArgOfPericenter	140.223	# J2000.0
-	MeanAnomaly     124.409	#
+	Period		2982.27
+	SemiMajorAxis	22580000
+	Eccentricity	0.4789
+	Inclination	11.799	#
+	AscendingNode	14.281	#
+	ArgOfPericenter	128.853	# J2000.0
+	MeanAnomaly     141.864	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1197,5 +1197,6 @@
 
 	Albedo 0.155
 }
+
 
 
