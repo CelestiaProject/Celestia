@@ -11,6 +11,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <cstdio>
 #include <map>
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
@@ -3948,7 +3949,7 @@ static int celestia_takescreenshot(lua_State* l)
             luastate->screenshotCount++;
         bool success = false;
         char filenamestem[32];
-        snprintf(filenamestem, 32, "screenshot-%s%06i", fileid.c_str(), luastate->screenshotCount);
+        sprintf(filenamestem, "screenshot-%s%06i", fileid.c_str(), luastate->screenshotCount);
 
         // Get the dimensions of the current viewport
         int viewport[4];
