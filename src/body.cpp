@@ -20,6 +20,7 @@ Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     oblateness(0),
     rotationPeriod(1),
+    rotationPhase(0.0f),
     surface(Color(1.0f, 1.0f, 1.0f)),
     rings(NULL),
     satellites(NULL)
@@ -129,6 +130,18 @@ float Body::getRotationPeriod() const
 void Body::setRotationPeriod(float _rotationPeriod)
 {
     rotationPeriod = _rotationPeriod;
+}
+
+
+float Body::getRotationPhase() const
+{
+    return rotationPhase;
+}
+
+
+void Body::setRotationPhase(float _rotationPhase)
+{
+    rotationPhase = _rotationPhase;
 }
 
 
