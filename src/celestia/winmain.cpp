@@ -734,6 +734,8 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
                 {
                     InsertLocationInFavorites(hTree, name, appCore);
 
+                    appCore->writeFavoritesFile();
+
                     //Rebuild Locations menu.
                     BuildFavoritesMenu(menuBar, appCore);
                 }
@@ -918,6 +920,10 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
         {
         if (LOWORD(wParam) == IDOK)
         {
+            HWND hTree;
+            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                SyncTreeFoldersWithFavoriteFolders(hTree, appCore);
+
             //Write any change to favorites
             appCore->writeFavoritesFile();
 
@@ -976,11 +982,11 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
                 HWND hTree;
                 if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
                 {
-                    //Check to see if "Locations" folder is selected.
+                    //Enable buttons as necessary
                     HTREEITEM hItem;
                     if (hItem = TreeView_GetSelection(hTree))
                     {
-                        HWND hDelete, hRename;
+                        HWND hDelete, hRename, hMove;
                         hDelete = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATIONS_DELETE);
                         hRename = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATIONS_RENAME);
                         if (hDelete && hRename)
@@ -998,6 +1004,45 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
                         }
                     }
                 }
+            }
+            else if(((LPNMHDR)lParam)->code == TVN_BEGINDRAG)
+            {
+                //Do not allow folders to be dragged
+                HWND hTree;
+                TVITEM tvItem;
+                LPNMTREEVIEW nm = (LPNMTREEVIEW)lParam;
+                HTREEITEM hItem = nm->itemNew.hItem;
+
+                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                {
+                    tvItem.hItem = hItem;
+                    tvItem.mask = TVIF_PARAM | TVIF_HANDLE;
+                    if (TreeView_GetItem(hTree, &tvItem))
+                    {
+                        if(tvItem.lParam != 1)
+                            OrganizeLocationsOnBeginDrag(hTree, (LPNMTREEVIEW)lParam);
+                    }
+                }
+            }
+        }
+        break;
+    case WM_MOUSEMOVE:
+        {
+            HWND hTree;
+            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+            {
+                OrganizeLocationsOnMouseMove(hTree, GET_X_LPARAM(lParam),
+                    GET_Y_LPARAM(lParam));
+            }
+        }
+        break;
+    case WM_LBUTTONUP:
+        {
+            HWND hTree;
+            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+            {
+                OrganizeLocationsOnLButtonUp(hTree);
+                MoveLocationInFavorites(hTree, appCore);
             }
         }
         break;
