@@ -27,7 +27,7 @@ RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
             rotation = refObject.body()->getEclipticalToGeographic(t);
             break;
         case Selection::Type_Star:
-            rotation = Quatd(1, 0, 0, 0);
+            rotation = refObject.star()->getRotationElements().eclipticalToPlanetographic(t);
             break;
         case Selection::Type_Location:
             if (refObject.location()->getParentBody() != NULL)
@@ -44,22 +44,30 @@ RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
     else if (coordSys == astro::PhaseLock)
     {
         Mat3d m;
+        Vec3d lookDir = refObject.getPosition(t) - targetObject.getPosition(t);
+        lookDir.normalize();
 
         switch (refObject.getType())
         {
         case Selection::Type_Body:
             {
                 Body* body = refObject.body();
-                Vec3d lookDir = refObject.getPosition(t) -
-                    targetObject.getPosition(t);
                 Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
-                lookDir.normalize();
                 Vec3d v = axisDir ^ lookDir;
                 v.normalize();
                 Vec3d u = lookDir ^ v;
                 m = Mat3d(v, u, lookDir);
             }
             break;
+        case Selection::Type_Star:
+            {
+                Star* star = refObject.star();
+                Vec3d axisDir = Vec3d(0, 1, 0) * star->getRotationElements().eclipticalToEquatorial(t).toMatrix3();
+                Vec3d v = axisDir ^ lookDir;
+                v.normalize();
+                Vec3d u = lookDir ^ v;
+                m = Mat3d(v, u, lookDir);
+            }
         default:
             break;
         }
@@ -121,7 +129,7 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
             rotation = refObject.body()->getEclipticalToGeographic(t);
             break;
         case Selection::Type_Star:
-            rotation = Quatd(1, 0, 0, 0);
+            rotation = refObject.star()->getRotationElements().eclipticalToPlanetographic(t);
             break;
         case Selection::Type_Location:
             if (refObject.location()->getParentBody() != NULL)
@@ -138,22 +146,31 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
     else if (coordSys == astro::PhaseLock)
     {
         Mat3d m;
+        Vec3d lookDir = refObject.getPosition(t) - targetObject.getPosition(t);
+        lookDir.normalize();
 
         switch (refObject.getType())
         {
         case Selection::Type_Body:
             {
                 Body* body = refObject.body();
-                Vec3d lookDir = refObject.getPosition(t) -
-                    targetObject.getPosition(t);
                 Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
-                lookDir.normalize();
                 Vec3d v = axisDir ^ lookDir;
                 v.normalize();
                 Vec3d u = lookDir ^ v;
                 m = Mat3d(v, u, lookDir);
             }
             break;
+
+        case Selection::Type_Star:
+            {
+                Star* star = refObject.star();
+                Vec3d axisDir = Vec3d(0, 1, 0) * star->getRotationElements().eclipticalToEquatorial(t).toMatrix3();
+                Vec3d v = axisDir ^ lookDir;
+                v.normalize();
+                Vec3d u = lookDir ^ v;
+                m = Mat3d(v, u, lookDir);
+            }
 
         default:
             break;

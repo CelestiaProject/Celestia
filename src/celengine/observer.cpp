@@ -1251,11 +1251,13 @@ void Observer::follow(const Selection& selection)
 void Observer::geosynchronousFollow(const Selection& selection)
 {
     if (selection.body() != NULL ||
-        selection.location() != NULL)
+        selection.location() != NULL ||
+        selection.star() != NULL)
     {
         setFrame(FrameOfReference(astro::Geographic, selection));
     }
 }
+
 
 void Observer::phaseLock(const Selection& selection)
 {
@@ -1271,11 +1273,22 @@ void Observer::phaseLock(const Selection& selection)
             setFrame(FrameOfReference(astro::PhaseLock, frame.refObject, selection));
         }
     }
+    else if (frame.refObject.star() != NULL)
+    {
+        if (selection != frame.refObject)
+        {
+            setFrame(FrameOfReference(astro::PhaseLock, frame.refObject, selection));
+        }
+    }
 }
 
 void Observer::chase(const Selection& selection)
 {
     if (selection.body() != NULL)
+    {
+        setFrame(FrameOfReference(astro::Chase, selection));
+    }
+    else if (selection.star() != NULL)
     {
         setFrame(FrameOfReference(astro::Chase, selection));
     }
