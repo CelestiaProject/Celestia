@@ -290,9 +290,6 @@ void LODSphereMesh::render(unsigned int attributes,
     }
     else
     {
-        Vec3f viewNormal = frustum.getPlane(Frustum::Near).normal;
-        Point3f origin(0.0f, 0.0f, 0.0f);
-
         int reject = 0;
         // Render the sphere section by section.
         for (int phi = 0; phi < split; phi++)
@@ -301,7 +298,10 @@ void LODSphereMesh::render(unsigned int attributes,
             {
                 // For each section, compute a bounding sphere; only
                 // render the section if the bounding sphere lies within
-                // the view frustum.
+                // the view frustum.  This is far from optimal.  A much
+                // better choice would be to test for an intersection between
+                // the view frustum and the halfspace defined by the supporting
+                // plane of the sphere patch.
                 int phi0 = phi * phiExtent;
                 int theta0 = theta * thetaExtent;
                 Point3f p0 = spherePoint(theta0, phi0);
@@ -309,21 +309,10 @@ void LODSphereMesh::render(unsigned int attributes,
                 Point3f p2 = spherePoint(theta0 + thetaExtent,
                                          phi0 + phiExtent);
                 Point3f p3 = spherePoint(theta0, phi0 + phiExtent);
-
-                // See if the patch is back facing by testing the normals
-                // of the corners.
-                if (viewNormal * (origin - p0) < 0.0f &&
-                    viewNormal * (origin - p1) < 0.0f &&
-                    viewNormal * (origin - p2) < 0.0f &&
-                    viewNormal * (origin - p3) < 0.0f)
-                {
-                    reject++;
-                    continue;
-                }
-
                 Point3f center = Point3f((p0.x + p1.x + p2.x + p3.x) * 0.25f,
                                          (p0.y + p1.y + p2.y + p3.y) * 0.25f,
                                          (p0.z + p1.z + p2.z + p3.z) * 0.25f);
+
                 float radius = 0.0f;
                 radius = max(radius, p0.distanceToSquared(center));
                 radius = max(radius, p1.distanceToSquared(center));
