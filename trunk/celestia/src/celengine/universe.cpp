@@ -260,6 +260,33 @@ void ClosestStarFinder::process(const Star& star, float distance, float appMag)
 }
 
 
+class NearStarFinder : public StarHandler
+{
+public:
+    NearStarFinder(float _maxDistance, vector<const Star*>& nearStars);
+    ~NearStarFinder() {};
+    void process(const Star& star, float distance, float appMag);
+
+private:
+    float maxDistance;
+    vector<const Star*>& nearStars;
+};
+
+NearStarFinder::NearStarFinder(float _maxDistance,
+                               vector<const Star*>& _nearStars) :
+    maxDistance(_maxDistance),
+    nearStars(_nearStars)
+{
+}
+
+void NearStarFinder::process(const Star& star, float distance, float appMag)
+{
+    if (distance < maxDistance)
+        nearStars.push_back(&star);
+}
+
+
+
 struct PlanetPickInfo
 {
     double sinAngle2Closest;
@@ -1008,4 +1035,16 @@ SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) con
     ClosestStarFinder closestFinder(1.0f);
     starCatalog->findCloseStars(closestFinder, lyPos, 1.0f);
     return getSolarSystem(closestFinder.closestStar);
+}
+
+
+void
+Universe::getNearStars(const UniversalCoord& position,
+                       float maxDistance,
+                       vector<const Star*>& nearStars) const
+{
+    Point3f pos = (Point3f) position;
+    Point3f lyPos(pos.x * 1.0e-6f, pos.y * 1.0e-6f, pos.z * 1.0e-6f);
+    NearStarFinder finder(1.0f, nearStars);
+    starCatalog->findCloseStars(finder, lyPos, maxDistance);
 }

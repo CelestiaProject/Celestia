@@ -16,6 +16,7 @@
 #include <celengine/starname.h>
 #include <celengine/star.h>
 #include <celengine/octree.h>
+#include <celengine/parser.h>
 
 
 class StarDatabase
@@ -52,7 +53,11 @@ class StarDatabase
     bool loadBinary(std::istream&);
     bool loadOldFormatBinary(std::istream&);
 
-    
+    Star* createStar(uint32 catalogNumber,
+                     Hash* starData,
+                     const std::string& path,
+                     bool isBarycenter);
+
     enum Catalog
     {
         HenryDraper = 0,
@@ -91,6 +96,15 @@ class StarDatabase
     StarOctree* octreeRoot;
 
     std::vector<CrossIndex*> crossIndexes;
+
+    uint32 nextAutoCatalogNumber;
+
+    struct BarycenterUsage
+    {
+        uint32 catNo;
+        uint32 barycenterCatNo;
+    };
+    std::vector<BarycenterUsage> barycenters;
 };
 
 

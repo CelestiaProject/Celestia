@@ -44,6 +44,7 @@ static StarDetails** normalStarDetails = NULL;
 static StarDetails** whiteDwarfDetails = NULL;
 static StarDetails*  neutronStarDetails = NULL;
 static StarDetails*  blackHoleDetails = NULL;
+static StarDetails*  barycenterDetails = NULL;
 
 static float tempO[10] =
 {
@@ -350,6 +351,7 @@ StarDetails::GetStarDetails(const StellarClass& sc)
     }
 }
 
+
 StarDetails*
 StarDetails::CreateStandardStarType(const std::string& specTypeName,
                                     float _temperature,
@@ -617,15 +619,33 @@ StarDetails::GetBlackHoleDetails()
 }
 
 
+StarDetails*
+StarDetails::GetBarycenterDetails()
+{
+
+    if (barycenterDetails == NULL)
+    {
+        barycenterDetails = CreateStandardStarType("Bary", 1.0f, 1.0f);
+        barycenterDetails->setRadius(0.001f);
+        barycenterDetails->addKnowledge(KnowRadius);
+        barycenterDetails->setVisibility(false);
+    }
+
+    return barycenterDetails;
+}
+
+
 StarDetails::StarDetails() :
     radius(0.0f),
     temperature(0.0f),
     bolometricCorrection(0.0f),
     rotationPeriod(1.0f),
     knowledge(0u),
+    visible(false),
     model(InvalidResource),
     orbit(NULL),
-    orbitalRadius(0.0f)
+    orbitalRadius(0.0f),
+    barycenter(NULL)
 {
     spectralType[0] = '\0';
 }
@@ -707,9 +727,16 @@ StarDetails::setOrbit(Orbit* o)
 
 
 void
-StarDetails::setSystemOrigin(StarDetails::SystemOrigin o)
+StarDetails::setOrbitBarycenter(Star* bc)
 {
-    origin = o;
+    barycenter = bc;
+}
+
+
+void
+StarDetails::setVisibility(bool b)
+{
+    visible = b;
 }
 
 
@@ -745,50 +772,29 @@ Star::getPosition(double t) const
     const Orbit* orbit = getOrbit();
     if (!orbit)
     {
-        return UniversalCoord(position.x * 1.0e6f,
-                              position.y * 1.0e6f,
-                              position.z * 1.0e6f);
+        return UniversalCoord(position.x * 1.0e6,
+                              position.y * 1.0e6,
+                              position.z * 1.0e6);
     }
     else
     {
-        Point3f barycenterPosLY = position;
-        Point3d barycenterPos(barycenterPosLY.x * 1.0e6,
-                              barycenterPosLY.y * 1.0e6,
-                              barycenterPosLY.z * 1.0e6);
+        const Star* barycenter = getOrbitBarycenter();
 
-        return UniversalCoord(barycenterPos) +
-            ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0f)) *
-             astro::kilometersToMicroLightYears(1.0));
-    }
-}
-
-
-UniversalCoord
-Star::getSystemCenter(double t) const
-{
-    const Orbit* orbit = getOrbit();
-    if (!orbit)
-    {
-        return UniversalCoord(position.x * 1.0e6f,
-                              position.y * 1.0e6f,
-                              position.z * 1.0e6f);
-    }
-    else
-    {
-        Point3f barycenterPosLY = position;
-        Point3d barycenterPos(barycenterPosLY.x * 1.0e6,
-                              barycenterPosLY.y * 1.0e6,
-                              barycenterPosLY.z * 1.0e6);
-
-        if (details->getSystemOrigin() == StarDetails::OriginStar)
+        if (barycenter == NULL)
         {
+            Point3d barycenterPos(position.x * 1.0e6,
+                                  position.y * 1.0e6,
+                                  position.z * 1.0e6);
+
             return UniversalCoord(barycenterPos) +
-                ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0f)) *
+                ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
                  astro::kilometersToMicroLightYears(1.0));
         }
         else
         {
-            return UniversalCoord(barycenterPos);
+            return barycenter->getPosition(t) +
+                ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
+                 astro::kilometersToMicroLightYears(1.0));
         }
     }
 }
@@ -848,4 +854,9 @@ void Star::setLuminosity(float lum)
 void Star::setDetails(StarDetails* sd)
 {
     details = sd;
+}
+
+void Star::setOrbitBarycenter(Star* s)
+{
+    details->setOrbitBarycenter(s);
 }

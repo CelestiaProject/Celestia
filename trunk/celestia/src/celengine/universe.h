@@ -10,6 +10,7 @@
 #ifndef _UNIVERSE_H_
 #define _UNIVERSE_H_
 
+#include <vector>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <celengine/univcoord.h>
@@ -76,6 +77,10 @@ class Universe
     SolarSystem* getSolarSystem(const Star* star) const;
     SolarSystem* getSolarSystem(const Selection&) const;
     SolarSystem* createSolarSystem(Star* star) const;
+
+    void getNearStars(const UniversalCoord& position,
+                      float maxDistance,
+                      std::vector<const Star*>& stars) const;
 
     void markObject(const Selection&,
                     float size,
