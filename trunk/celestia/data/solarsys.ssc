@@ -81,7 +81,7 @@
 		CloudMap "earth-clouds.png"
 	}
 
-	CustomOrbit "earth"
+	CustomOrbit "vsop87-earth"
 	EllipticalOrbit {	
 		Period            1.0000
 		SemiMajorAxis     1.0000
