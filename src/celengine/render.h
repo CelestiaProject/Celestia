@@ -64,6 +64,7 @@ class Renderer
         ShowAtmospheres     = 0x0100,
         ShowSmoothLines     = 0x0200,
         ShowEclipseShadows  = 0x0400,
+        ShowStarsAsPoints   = 0x0800,
     };
 
     int getRenderFlags() const;
@@ -170,6 +171,7 @@ class Renderer
     public:
         StarVertexBuffer(unsigned int _capacity);
         ~StarVertexBuffer();
+        void start(bool _usePoints);
         void render();
         void finish();
         void addStar(const Point3f&, const Color&, float);
@@ -182,6 +184,7 @@ class Renderer
         float* texCoords;
         unsigned char* colors;
         Vec3f v0, v1, v2, v3;
+        bool usePoints;
     };
 
  private:
