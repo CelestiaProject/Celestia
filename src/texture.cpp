@@ -7,11 +7,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#ifdef _WIN32
 #define JPEG_SUPPORT
 #define PNG_SUPPORT
+#endif
 
 #include <cmath>
 #include <fstream>
+#include <cstdio>
 #include "gl.h"
 #include "glext.h"
 #ifdef JPEG_SUPPORT
@@ -435,14 +438,15 @@ CTexture* CreateJPEGTexture(const char* filename,
 }
 
 
+#ifdef PNG_SUPPORT
 void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
     FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
     fread((void*) data, 1, length, fp);
 }
+#endif
 
-
-static CTexture* CreatePNGTexture(const string& filename)
+CTexture* CreatePNGTexture(const string& filename)
 {
 #ifndef PNG_SUPPORT
     return NULL;
@@ -646,7 +650,7 @@ static CTexture* CreateBMPTexture(ifstream& in)
         in.read(reinterpret_cast<char*>(palette), imageHeader.colorsUsed * 4);
     }
 
-    in.seekg(fileHeader.offset, ios_base::beg);
+    in.seekg(fileHeader.offset, ios::beg);
 
     unsigned int bytesPerRow =
         (imageHeader.width * imageHeader.bpp / 8 + 1) & ~1;
