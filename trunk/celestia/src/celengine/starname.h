@@ -13,6 +13,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <vector>
 #include <celutil/basictypes.h>
 #include <celutil/util.h>
 #include <celengine/constellation.h>
@@ -73,6 +74,7 @@ class StarNameDatabase
     void add(uint32, const std::string&);
     uint32 findCatalogNumber(const std::string& name) const;
     uint32 findName(std::string name) const;
+    std::vector<std::string> getCompletion(const std::string& name) const;
     NumberIndex::const_iterator findFirstName(uint32 catalogNumber) const;
     NumberIndex::const_iterator finalName() const;
 

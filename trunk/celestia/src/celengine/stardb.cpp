@@ -100,7 +100,7 @@ Star* StarDatabase::find(const string& name) const
         // Search by the default catalog number
         uint32 catalogNumber = (uint32) atoi(string(name, 1, string::npos).c_str());
         return find(catalogNumber, 0);
-        
+
     }
     else if (compareIgnoringCase(name, HDCatalogPrefix, HDCatalogPrefix.length()) == 0)
     {
@@ -149,6 +149,20 @@ Star* StarDatabase::find(const string& name) const
         }
 
         return NULL;
+    }
+}
+
+std::vector<std::string> StarDatabase::getCompletion(const string& name) const
+{
+    std::vector<std::string> completion;
+
+    if (name.empty())
+        return completion;
+
+    // only named stars are supported by completion.
+    if (names != NULL)
+    {
+        return names->getCompletion(name);
     }
 }
 

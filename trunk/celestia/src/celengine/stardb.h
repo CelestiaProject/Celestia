@@ -29,6 +29,7 @@ class StarDatabase
     inline uint32 size() const;
     Star* find(uint32 catalogNumber, unsigned int whichCatalog = 0) const;
     Star* find(const std::string&) const;
+    std::vector<std::string> getCompletion(const std::string&) const;
 
     void findVisibleStars(StarHandler& starHandler,
                           const Point3f& position,

@@ -55,6 +55,12 @@ class Universe
     Selection findPath(const std::string& s,
                        PlanetarySystem** solarSystems = NULL,
                        int nSolarSystems = 0);
+    std::vector<std::string> getCompletion(const std::string& s,
+                       PlanetarySystem** solarSystems = NULL,
+                       int nSolarSystems = 0);
+    std::vector<std::string> getCompletionPath(const std::string& s,
+                       PlanetarySystem** solarSystems = NULL,
+                       int nSolarSystems = 0);
 
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
     SolarSystem* getSolarSystem(const Star* star) const;

@@ -45,6 +45,7 @@ class PlanetarySystem
 
     bool traverse(TraversalFunc, void*) const;
     Body* find(std::string, bool deepSearch = false) const;
+    std::vector<std::string> getCompletion(const std::string& _name) const;
 
  private:
     Star* star;
