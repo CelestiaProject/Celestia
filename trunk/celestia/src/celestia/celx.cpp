@@ -614,22 +614,22 @@ bool LuaState::charEntered(const char* c_p)
         appCore->setTextEnterMode(appCore->getTextEnterMode() & ~CelestiaCore::KbPassToScript);
         appCore->showText("", 0, 0, 0, 0);
         // Restore renderflags:
-        lua_pushstring(state, "celestia-savedrenderflags");
-        lua_gettable(state, LUA_REGISTRYINDEX);
-        if (lua_isuserdata(state, -1))
+        lua_pushstring(costate, "celestia-savedrenderflags");
+        lua_gettable(costate, LUA_REGISTRYINDEX);
+        if (lua_isuserdata(costate, -1))
         {
-            int* savedrenderflags = static_cast<int*>(lua_touserdata(state, -1));
+            int* savedrenderflags = static_cast<int*>(lua_touserdata(costate, -1));
             appCore->getRenderer()->setRenderFlags(*savedrenderflags);
             // now delete entry:
-            lua_pushstring(state, "celestia-savedrenderflags");
-            lua_pushnil(state);
-            lua_settable(state, LUA_REGISTRYINDEX);
+            lua_pushstring(costate, "celestia-savedrenderflags");
+            lua_pushnil(costate);
+            lua_settable(costate, LUA_REGISTRYINDEX);
         }
         else
         {
             cerr << "Oops, expected savedrenderflags to be userdata\n";
         }
-        lua_settop(state,stackTop);
+        lua_settop(costate,stackTop);
         return true;
     }
     int stack_top = lua_gettop(costate);
