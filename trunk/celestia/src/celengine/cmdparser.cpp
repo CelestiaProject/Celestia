@@ -162,7 +162,21 @@ Command* CommandParser::parseCommand()
         double value = 0.0;
         string name;
         paramList->getString("name", name);
-        paramList->getNumber("value", value);
+        if (!paramList->getNumber("value", value))
+        {
+            // Some values may be specified via strings
+            string valstr;
+            if (paramList->getString("value", valstr))
+            {
+                if (compareIgnoringCase(valstr, "fuzzypoints") == 0)
+                    value = (double) Renderer::FuzzyPointStars;
+                else if (compareIgnoringCase(valstr, "points") == 0)
+                    value = (double) Renderer::PointStars;
+                else if (compareIgnoringCase(valstr, "scaleddiscs") == 0)
+                    value = (double) Renderer::ScaledDiscStars;
+            }
+        }
+
         cmd = new CommandSet(name, value);
     }
     else if (commandName == "select")
