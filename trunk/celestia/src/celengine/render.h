@@ -254,6 +254,8 @@ class Renderer
     void renderLabels();
 
     void renderOrbit(Body*, double);
+    void renderOrbits(PlanetarySystem*, const Selection&, double,
+                      const Point3d&, const Point3d&);
     
  private:
     int windowWidth;
