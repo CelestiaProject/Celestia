@@ -66,14 +66,12 @@ bool WindowsDirectory::nextFile(std::string& filename)
                                      &findData);
         if (searchHandle == INVALID_HANDLE_VALUE)
         {
-            cout << GetLastError() << '\n';
             status = DirBad;
             return false;
         }
         else
         {
             filename = findData.cFileName;
-            cout << filename << '\n';
             return true;
         }
     }
