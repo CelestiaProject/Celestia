@@ -334,8 +334,13 @@ void LODSphereMesh::render(unsigned int attributes,
     for (i = 0; i < nTextures; i++)
     {
         if (nTextures > 1)
+        {
             glx::glClientActiveTextureARB(GL_TEXTURE0_ARB + i);
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        }
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        if (i > 0)
+            glDisable(GL_TEXTURE_2D);
     }
 
     if (nTextures > 1)
