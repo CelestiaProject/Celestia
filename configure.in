@@ -71,6 +71,9 @@ dnl Check for JPEG library.
 AC_CHECK_LIB(jpeg, jpeg_start_decompress,,
              AC_MSG_ERROR(jpeg library not found))
 
+dnl Check for PNG library.
+AC_CHECK_LIB(png, png_create_info_struct,,
+             AC_MSG_ERROR(png library not found))
 
 
 dnl Checks for header files.
@@ -91,10 +94,7 @@ AC_OUTPUT( Makefile          \
 AC_MSG_RESULT()
 AC_MSG_RESULT()
 AC_MSG_RESULT(********************************************************************)
-AC_MSG_RESULT(*** Before compiling Celestia take a look at the configuration )
-AC_MSG_RESULT(*** file in the conf directory. Default configuration file is tuned )
-AC_MSG_RESULT(*** for a GeForce card so if you own a less powerful card you'll )
-AC_MSG_RESULT(*** have to edit that file and read carefully )
+AC_MSG_RESULT(*** Celestia configuration complete.)
 AC_MSG_RESULT(********************************************************************)
 AC_MSG_RESULT()
 AC_MSG_RESULT()
