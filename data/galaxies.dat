@@ -29,6 +29,8 @@
 	Dec  -73.23
 	Distance 210000
 	Radius 12000
+	Axis [ 1 0 0 ]
+	Angle 100
 }
 
 # Andromeda / NGC 224
@@ -71,4 +73,16 @@
         Dec  40.867
 	Distance 2.9e6
 	Radius 4000
+}
+
+# M82 / NGC 3031
+# Distance estimate based on Hipparcos results and HST
+# observations of Cepheid variables.
+"M82"
+{
+	Type "Sb"
+	RA 9.9267
+	Dec 69.067
+	Distance 1.2e7
+	Radius 35000
 }
