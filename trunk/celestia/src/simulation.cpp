@@ -161,13 +161,12 @@ void  Simulation::render(Renderer& renderer)
 
 static Quatf lookAt(Point3f from, Point3f to, Vec3f up)
 {
-    Vec3f n = from - to;
+    Vec3f n = to - from;
     n.normalize();
-    Vec3f v = up ^ n;
+    Vec3f v = n ^ up;
     v.normalize();
-    Mat4f r = Mat4f::rotation(v, (float) PI / 2);
-    Vec3f u = n * r;
-    return Quatf(Mat3f(v, u, n));
+    Vec3f u = v ^ n;
+    return Quatf(Mat3f(v, u, -n));
 }
 
 
@@ -317,6 +316,7 @@ void Simulation::update(double dt)
         lookDir0.normalize();
         lookDir1.normalize();
         Vec3d lookDir;
+        Quatf orientation;
         if (t < 0.5f)
         {
             // Smooth out the interpolation of the focus point to avoid
@@ -328,6 +328,7 @@ void Simulation::update(double dt)
             if (c >= 1.0 || angle < 1.0e-6)
             {
                 lookDir = lookDir0;
+                orientation = journey.initialOrientation;
             }
             else
             {
@@ -338,21 +339,32 @@ void Simulation::update(double dt)
                 // intial and final directions.
                 lookDir = lookDir0 * (sin((1 - v) * angle) * is) +
                           lookDir1 * (sin(v * angle) * is);
-
-                // Linear interpolation wasn't such a good idea . . .
-                // lookDir = lookDir0 + (lookDir1 - lookDir0) * v;
+            }
+            if (norm(journey.initialOrientation - journey.finalOrientation) <
+                norm(journey.initialOrientation + journey.finalOrientation))
+            {
+                orientation = Quatf::slerp(journey.initialOrientation,
+                                           journey.finalOrientation, v);
+            }
+            else
+            {
+                orientation = Quatf::slerp(journey.initialOrientation,
+                                           -journey.finalOrientation, v);
             }
         }
         else
         {
             lookDir = lookDir1;
+            orientation = journey.finalOrientation;
         }
-
+#if 0
         observer.setOrientation(lookAt(Point3f(0, 0, 0),
                                        Point3f((float) lookDir.x,
                                                (float) lookDir.y,
                                                (float) lookDir.z),
                                        journey.up));
+#endif
+        observer.setOrientation(orientation);
         observer.setPosition(p);
 
         // If the journey's complete, reset to manual control
@@ -587,10 +599,55 @@ Selection Simulation::pickObject(Vec3f pickRay)
 }
 
 
+Vec3d toUniversal(const Vec3d& v,
+                  const Observer& observer,
+                  const Selection& sel,
+                  double t,
+                  astro::CoordinateSystem frame)
+{
+    switch (frame)
+    {
+    case astro::ObserverLocal:
+        {
+            Quatf q = observer.getOrientation();
+            Quatd qd(q.w, q.x, q.y, q.z);
+            return v * qd.toMatrix3();
+        }
+        
+    case astro::Geographic:
+        if (sel.body == NULL)
+            return v;
+        else
+            return v * sel.body->getGeographicToHeliocentric(t);
+        
+    case astro::Equatorial:
+        if (sel.body == NULL)
+            return v;
+        else
+            return v * sel.body->getLocalToHeliocentric(t);
+
+    case astro::Ecliptical:
+        // TODO: Multiply this by the planetary system's ecliptic orientation,
+        // once this field is added.
+        return v;
+
+    case astro::Universal:
+        return v;
+
+    default:
+        // assert(0);
+        return v;
+    }
+}
+
+
 void Simulation::computeGotoParameters(Selection& destination,
                                        JourneyParams& jparams,
                                        double gotoTime,
-                                       double distance)
+                                       Vec3d offset,
+                                       astro::CoordinateSystem offsetFrame,
+                                       Vec3f up,
+                                       astro::CoordinateSystem upFrame)
 {
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
     Vec3d v = targetPosition - observer.getPosition();
@@ -604,11 +661,20 @@ void Simulation::computeGotoParameters(Selection& destination,
 
     // The destination position lies along the line between the current
     // position and the star
-    jparams.to = targetPosition - v * distance;
+    offset = toUniversal(offset, observer, selection, simTime, offsetFrame);
+    jparams.to = targetPosition + offset;
     jparams.initialFocus = jparams.from +
         (Vec3f(0, 0, -1.0f) * observer.getOrientation().toMatrix4());
     jparams.finalFocus = targetPosition;
-    jparams.up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
+
+    Vec3d upd(up.x, up.y, up.z);
+    upd = toUniversal(upd, observer, selection, simTime, upFrame);
+    jparams.up = Vec3f((float) upd.x, (float) upd.y, (float) upd.z);
+
+    jparams.initialOrientation = observer.getOrientation();
+    Vec3d vn = targetPosition - jparams.to;
+    Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
+    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), to, jparams.up);
 }
 
 
@@ -628,6 +694,11 @@ void Simulation::computeCenterParameters(Selection& destination, JourneyParams& 
         (Vec3f(0, 0, -1.0f) * observer.getOrientation().toMatrix4());
     jparams.finalFocus = targetPosition;
     jparams.up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
+
+    jparams.initialOrientation = observer.getOrientation();
+    Vec3d vn = targetPosition - jparams.to;
+    Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
+    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), to, jparams.up);
 }
 
 Observer& Simulation::getObserver()
@@ -770,7 +841,9 @@ float Simulation::getTargetSpeed()
     return targetSpeed;
 }
 
-void Simulation::gotoSelection(double gotoTime)
+void Simulation::gotoSelection(double gotoTime, 
+                               Vec3f up,
+                               astro::CoordinateSystem upFrame)
 {
     if (!selection.empty())
     {
@@ -786,16 +859,47 @@ void Simulation::gotoSelection(double gotoTime)
             maxOrbitDistance = 0.5f;
         double orbitDistance = (distance > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distance * 0.1f;
 
-        computeGotoParameters(selection, journey, gotoTime, orbitDistance);
+        computeGotoParameters(selection, journey, gotoTime,
+                              v * -(orbitDistance / distance), astro::Universal,
+                              up, upFrame);
         observerMode = Travelling;
     }
 }
 
-void Simulation::gotoSelection(double gotoTime, double distance)
+void Simulation::gotoSelection(double gotoTime,
+                               double distance,
+                               Vec3f up,
+                               astro::CoordinateSystem upFrame)
 {
     if (!selection.empty())
     {
-        computeGotoParameters(selection, journey, gotoTime, distance);
+        UniversalCoord pos = getSelectionPosition(selection, simTime);
+        Vec3d v = pos - observer.getPosition();
+        v.normalize();
+
+        computeGotoParameters(selection, journey, gotoTime,
+                              v * -distance, astro::Universal,
+                              up, upFrame);
+        observerMode = Travelling;
+    }
+}
+
+void Simulation::gotoSelectionLongLat(double gotoTime,
+                                      double distance,
+                                      float longitude,
+                                      float latitude,
+                                      Vec3f up)
+{
+    if (!selection.empty())
+    {
+        double phi = -latitude + PI / 2;
+        double theta = longitude - PI;
+        double x = cos(theta) * sin(phi);
+        double y = cos(phi);
+        double z = -sin(theta) * sin(phi);
+        computeGotoParameters(selection, journey, gotoTime,
+                              Vec3d(x, y, z) * distance, astro::Geographic,
+                              up, astro::Geographic);
         observerMode = Travelling;
     }
 }

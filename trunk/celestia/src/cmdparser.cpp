@@ -147,7 +147,49 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("time", t);
         double distance = 5.0;
         paramList->getNumber("distance", distance);
-        cmd = new CommandGoto(t, distance);
+
+        astro::CoordinateSystem upFrame = astro::ObserverLocal;
+        string frameString;
+        if (paramList->getString("upframe", frameString))
+        {
+            if (compareIgnoringCase(frameString, "observer") == 0)
+                upFrame = astro::ObserverLocal;
+            else if (compareIgnoringCase(frameString, "geographic") == 0)
+                upFrame = astro::Geographic;
+            else if (compareIgnoringCase(frameString, "equatorial") == 0)
+                upFrame = astro::Equatorial;
+            else if (compareIgnoringCase(frameString, "ecliptical") == 0)
+                upFrame = astro::Ecliptical;
+            else if (compareIgnoringCase(frameString, "universal") == 0)
+                upFrame = astro::Universal;
+        }
+
+        Vec3d up(0, 1, 0);
+        paramList->getVector("up", up);
+
+        cmd = new CommandGoto(t,
+                              distance,
+                              Vec3f((float) up.x, (float) up.y, (float) up.z),
+                              upFrame);
+    }
+    else if (commandName == "gotolonglat")
+    {
+        double t = 1.0;
+        paramList->getNumber("time", t);
+        double distance = 5.0;
+        paramList->getNumber("distance", distance);
+        Vec3d up(0, 1, 0);
+        paramList->getVector("up", up);
+        double longitude;
+        paramList->getNumber("longitude", longitude);
+        double latitude;
+        paramList->getNumber("latitude", latitude);
+
+        cmd = new CommandGotoLongLat(t,
+                                     distance,
+                                     (float) degToRad(longitude),
+                                     (float) degToRad(latitude),
+                                     Vec3f((float) up.x, (float) up.y, (float) up.z));
     }
     else if (commandName == "center")
     {

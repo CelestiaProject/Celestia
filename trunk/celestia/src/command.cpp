@@ -52,7 +52,11 @@ void CommandSelect::process(ExecutionEnvironment& env)
 ////////////////
 // Goto command: go to the selected body
 
-CommandGoto::CommandGoto(double t, double dist) : gotoTime(t), distance(dist)
+CommandGoto::CommandGoto(double t,
+                         double dist,
+                         Vec3f _up,
+                         astro::CoordinateSystem _upFrame) :
+    gotoTime(t), distance(dist), up(_up), upFrame(_upFrame)
 {
 }
 
@@ -64,7 +68,38 @@ void CommandGoto::process(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->getSelection();
     env.getSimulation()->gotoSelection(gotoTime,
-                                       astro::kilometersToLightYears(sel.radius() * distance));
+                                       astro::kilometersToLightYears(sel.radius() * distance),
+                                       up, upFrame);
+}
+
+
+////////////////
+// GotoLongLat command: go to the selected body and hover over 
+
+CommandGotoLongLat::CommandGotoLongLat(double t,
+                                       double dist,
+                                       float _longitude,
+                                       float _latitude,
+                                       Vec3f _up) :
+    gotoTime(t),
+    distance(dist),
+    longitude(_longitude),
+    latitude(_latitude),
+    up(_up)
+{
+}
+
+CommandGotoLongLat::~CommandGotoLongLat()
+{
+}
+
+void CommandGotoLongLat::process(ExecutionEnvironment& env)
+{
+    Selection sel = env.getSimulation()->getSelection();
+    env.getSimulation()->gotoSelectionLongLat(gotoTime,
+                                              astro::kilometersToLightYears(sel.radius() * distance),
+                                              longitude, latitude,
+                                              up);
 }
 
 

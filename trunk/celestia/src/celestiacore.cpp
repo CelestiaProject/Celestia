@@ -387,7 +387,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'G':
-        sim->gotoSelection(5.0);
+        sim->gotoSelection(5.0, Vec3f(0, 1, 0), astro::Equatorial);
         break;
 
     case 'C':
@@ -432,6 +432,10 @@ void CelestiaCore::charEntered(char c)
 
     case 'J':
         sim->setTimeScale(-sim->getTimeScale());
+        break;
+
+    case '\\':
+        sim->setTimeScale(1.0);
         break;
 
     case 'B':
@@ -532,6 +536,10 @@ void CelestiaCore::charEntered(char c)
             renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
         else
             renderer->setAmbientLightLevel(1.0f);
+        break;
+
+    case '*':
+        sim->getObserver().setOrientation(Quatf(1));
         break;
 
     case '\n':
@@ -637,6 +645,13 @@ void CelestiaCore::draw()
 {
     sim->render(*renderer);
     renderOverlay();
+#if 0
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR)
+    {
+        cout << "GL error: " << gluErrorString(err) << '\n';
+    }
+#endif
 }
 
 
@@ -765,7 +780,7 @@ void CelestiaCore::renderOverlay()
         else if (mode == Simulation::Following)
             modeName = "Following";
         else if (mode == Simulation::GeosynchronousFollowing)
-            modeName = "Sync Following";
+            modeName = "Sync Orbiting";
 
         glPushMatrix();
         glTranslatef(width - emWidth * 11, fontHeight + 5, 0);
