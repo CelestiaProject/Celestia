@@ -9,10 +9,13 @@
 
 #include <cassert>
 #include <vector>
+#include <fstream>
+#include <iomanip>
 #include <celmath/mathlib.h>
 #include "astro.h"
 #include "customorbit.h"
 #include "vsop87.h"
+#include "jpleph.h"
 
 using namespace std;
 
@@ -31,6 +34,10 @@ static const double SaturnRadius = 60330.0;
 // multiply by this factor to make the bounding radius a bit larger than
 // the apocenter distance computed from the mean elements.
 static const double BoundingRadiusSlack = 1.2;
+
+static bool jplephInitialized = false;
+static JPLEphemeris* jpleph = NULL;
+
 
 double gPlanetElements[8][9];
 double gElements[8][23] = {
@@ -2402,6 +2409,65 @@ static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
 };
 
 
+class JPLEphOrbit : public CachingOrbit
+{
+public:
+    JPLEphOrbit(const JPLEphemeris& e, JPLEphemItem item,
+                double _period, double _boundingRadius) :
+        ephem(e),
+        body(item),
+        period(_period),
+        boundingRadius(_boundingRadius)
+    {
+    };
+
+    double getPeriod() const
+    {
+        return period;
+    }
+
+    double getBoundingRadius() const
+    {
+        return boundingRadius;
+    }
+
+    Point3d computePosition(double jd) const
+    {
+        Point3d baryPos = ephem.getPlanetPosition(body, jd);
+
+        // Convert from solar system barycentric position to heliocentric
+        // position.
+        Point3d sunPos = ephem.getPlanetPosition(JPLEph_Sun, jd);
+        Point3d heliocentricPos = Point3d(0.0, 0.0, 0.0) + (baryPos - sunPos);
+
+        // Rotate from the J2000 mean equator to the ecliptic
+        // 23 deg 26' 21".448
+
+        return Point3d(heliocentricPos.x,
+                       heliocentricPos.z,
+                       -heliocentricPos.y);
+    }
+
+private:
+    const JPLEphemeris& ephem;
+    JPLEphemItem body;
+    double period;
+    double boundingRadius;
+};
+
+
+static Orbit* CreateJPLEphOrbit(JPLEphemItem body,
+                                double period,
+                                double boundingRadius)
+{
+    Orbit* o = new JPLEphOrbit(*jpleph, body, period, boundingRadius);
+    return new MixedOrbit(o,
+                          jpleph->getStartDate(),
+                          jpleph->getEndDate(),
+                          astro::SolarMass);
+}
+
+
 static double yearToJD(int year)
 {
     return (double) astro::Date(year, 1, 1);
@@ -2410,6 +2476,23 @@ static double yearToJD(int year)
 
 Orbit* GetCustomOrbit(const string& name)
 {
+    // Attempt to load JPL ephemeris data if we haven't tried already
+    if (!jplephInitialized)
+    {
+        jplephInitialized = true;
+        ifstream in("data/jpleph.dat", ios::in | ios::binary);
+        if (in.good())
+            jpleph = JPLEphemeris::load(in);
+        if (jpleph != NULL)
+        {
+            clog << "Loaded DE" << jpleph->getDENumber() <<
+                " ephemeris. Valid from JD" <<
+                setprecision(8) <<
+                jpleph->getStartDate() << " to JD" <<
+                jpleph->getEndDate() << '\n';
+        }
+    }
+
     if (name == "mercury")
         return new MixedOrbit(new MercuryOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "venus")
@@ -2430,6 +2513,26 @@ Orbit* GetCustomOrbit(const string& name)
         return new MixedOrbit(new NeptuneOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "pluto")
         return new MixedOrbit(new PlutoOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
+    if (name == "mercury-jpl")
+        return CreateJPLEphOrbit(JPLEph_Mercury,  0.2408  * 365.25, 6.0e7);
+    if (name == "venus-jpl")
+        return CreateJPLEphOrbit(JPLEph_Venus,    0.6152  * 365.25, 1.0e8);
+    if (name == "earth-jpl")
+        return CreateJPLEphOrbit(JPLEph_EarthMoonBary,      365.25, 1.6e8);
+    if (name == "mars-jpl")
+        return CreateJPLEphOrbit(JPLEph_Mars,      1.8809 * 365.25, 2.4e8);
+    if (name == "jupiter-jpl")
+        return CreateJPLEphOrbit(JPLEph_Jupiter,  11.86   * 365.25, 8.0e8);
+    if (name == "saturn-jpl")
+        return CreateJPLEphOrbit(JPLEph_Saturn,   29.4577 * 365.25, 1.5e9);
+    if (name == "uranus-jpl")
+        return CreateJPLEphOrbit(JPLEph_Uranus,   84.0139 * 365.25, 3.0e9);
+    if (name == "neptune-jpl")
+        return CreateJPLEphOrbit(JPLEph_Neptune, 164.793  * 365.25, 4.7e9);
+    if (name == "pluto-jpl")
+        return CreateJPLEphOrbit(JPLEph_Pluto,   248.54   * 365.25, 6.0e9);
+    if (name == "moon-jpl")
+        return CreateJPLEphOrbit(JPLEph_Moon,     27.321661,        5.0e5);
     if (name == "io")
         return new IoOrbit();
     if (name == "europa")
