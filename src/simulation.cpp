@@ -1040,7 +1040,13 @@ void Simulation::gotoSelection(double gotoTime,
             maxOrbitDistance = astro::kilometersToLightYears(100.0f * selection.star->getRadius());
         else
             maxOrbitDistance = 0.5f;
+
+        double radius = getSelectionSize(selection);
+        double minOrbitDistance = astro::kilometersToLightYears(1.01 * radius);
+
         double orbitDistance = (distance > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distance * 0.1f;
+        if (orbitDistance < minOrbitDistance)
+            orbitDistance = minOrbitDistance;
 
         computeGotoParameters(selection, journey, gotoTime,
                               v * -(orbitDistance / distance), astro::Universal,
