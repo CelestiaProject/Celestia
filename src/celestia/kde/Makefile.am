@@ -7,6 +7,7 @@ noinst_HEADERS = $(wildcard *.h)
 INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
 
 libkdegui_a_SOURCES = \
+                 celestialbrowserbase.uic.h \
                  celestialbrowserbase.uic.cpp \
                  celestialbrowserbase.uic.moc.cpp \
                  celestialbrowser.cpp \
