@@ -720,7 +720,6 @@ void CelestiaCore::charEntered(char c)
         if (activeView >= (int) views.size())
             activeView = 0;
         sim->setActiveObserver(views[activeView]->observer);
-        // flash("Cycle view");
         flashFrameStart = currentTime;
         break;
 
@@ -2252,6 +2251,79 @@ void CelestiaCore::renderOverlay()
 }
 
 
+class SolarSystemLoader : public EnumFilesHandler
+{
+ public:
+    Universe* universe;
+    SolarSystemLoader(Universe* u) : universe(u) {};
+
+    bool process(const string& filename)
+    {
+        if (DetermineFileType(filename) == Content_CelestiaCatalog)
+        {
+            string fullname = getPath() + '/' + filename;
+            ifstream solarSysFile(fullname.c_str(), ios::in);
+            if (solarSysFile.good())
+                LoadSolarSystemObjects(solarSysFile, *universe);
+            cout << "Loading: " << fullname << '\n';
+        }
+
+        return true;
+    };
+};
+
+class DeepSkyLoader : public EnumFilesHandler
+{
+public:
+    DeepSkyCatalog* catalog;
+    DeepSkyLoader(DeepSkyCatalog* c) : catalog(c) {};
+
+    bool process(const string& filename)
+    {
+        if (DetermineFileType(filename) == Content_CelestiaDeepSkyCatalog)
+        {
+            string fullname = getPath() + '/' + filename;
+            ifstream deepSkyFile(fullname.c_str(), ios::in);
+            if (deepSkyFile.good())
+            {
+                LoadDeepSkyObjects(*catalog, deepSkyFile);
+            }
+            else
+            {
+                // Log the failure
+            }
+        }
+        return true;
+    };
+};
+
+class StarLoader : public EnumFilesHandler
+{
+public:
+    StarDatabase* starDB;
+    StarLoader(StarDatabase* s) : starDB(s) {};
+
+    bool process(const string& filename)
+    {
+        if (DetermineFileType(filename) == Content_CelestiaStarCatalog)
+        {
+            string fullname = getPath() + '/' + filename;
+            ifstream starFile(fullname.c_str(), ios::in);
+            if (starFile.good())
+            {
+                bool success = starDB->load(starFile);
+                if (!success)
+                {
+                    DPRINTF(0, "Error reading star file: %s\n",
+                            fullname.c_str());
+                }
+            }
+        }
+        return true;
+    };
+};
+
+
 bool CelestiaCore::initSimulation()
 {
     // Say we're not ready to render yet.
@@ -2314,6 +2386,7 @@ bool CelestiaCore::initSimulation()
     }
 
 #if 0
+    // XML support not ready yet
     {
         bool success = LoadSolarSystemObjectsXML("data/test.xml",
                                                  *universe);
@@ -2330,18 +2403,10 @@ bool CelestiaCore::initSimulation()
             if (*iter != "")
             {
                 Directory* dir = OpenDirectory(*iter);
-                
-                string filename;
-                while (dir->nextFile(filename))
-                {
-                    if (DetermineFileType(filename) == Content_CelestiaCatalog)
-                    {
-                        string fullname = *iter + '/' + filename;
-                        ifstream solarSysFile(fullname.c_str(), ios::in);
-                        if (solarSysFile.good())
-                            LoadSolarSystemObjects(solarSysFile, *universe);
-                    }
-                }
+
+                SolarSystemLoader loader(universe);
+                loader.pushDir(*iter);
+                dir->enumFiles(loader, true);
 
                 delete dir;
             }
@@ -2370,24 +2435,10 @@ bool CelestiaCore::initSimulation()
             if (*iter != "")
             {
                 Directory* dir = OpenDirectory(*iter);
-                
-                string filename;
-                while (dir->nextFile(filename))
-                {
-                    if (DetermineFileType(filename) == Content_CelestiaDeepSkyCatalog)
-                    {
-                        string fullname = *iter + '/' + filename;
-                        ifstream deepSkyFile(fullname.c_str(), ios::in);
-                        if (deepSkyFile.good())
-                        {
-                            LoadDeepSkyObjects(*deepSkyCatalog, deepSkyFile);
-                        }
-                        else
-                        {
-                            // Log the failure
-                        }
-                    }
-                }
+     
+                DeepSkyLoader loader(deepSkyCatalog);
+                loader.pushDir(*iter);
+                dir->enumFiles(loader, true);
 
                 delete dir;
             }
@@ -2618,6 +2669,12 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         {
             Directory* dir = OpenDirectory(*iter);
 
+            StarLoader loader(starDB);
+            loader.pushDir(*iter);
+            dir->enumFiles(loader, true);
+
+            delete dir;
+#if 0
             string filename;
             while (dir->nextFile(filename))
             {
@@ -2636,6 +2693,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
                     }
                 }
             }
+#endif
         }
     }
 
