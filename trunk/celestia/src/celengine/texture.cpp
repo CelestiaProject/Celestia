@@ -28,6 +28,11 @@
 #include "glext.h"
 #include "celestia.h"
 
+// OpenGL 1.2 stuff missing from Windows headers . . . probably should be
+// moved into glext.h
+#ifndef GL_TEXTURE_MAX_LEVEL
+#define GL_TEXTURE_MAX_LEVEL 0x813D
+#endif
 
 #ifdef IJG_JPEG_SUPPORT
 
@@ -114,6 +119,7 @@ Texture::Texture(int w, int h, int fmt, bool _cubeMap) :
     width(w),
     height(h),
     format(fmt),
+    maxMipMapLevel(-1),
     cubeMap(_cubeMap)
 {
     cmap = NULL;
@@ -256,6 +262,11 @@ void Texture::bindName(uint32 flags)
     {
         if (mipmap && !automipmap)
         {
+            if (maxMipMapLevel > 0)
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL,
+                                maxMipMapLevel);
+            }
             gluBuild2DMipmaps((GLenum) (textureTarget + face),
                               internalFormat,
                               width, height,
@@ -304,6 +315,12 @@ int Texture::getWidth() const
 int Texture::getHeight() const
 {
     return height;
+}
+
+
+void Texture::setMaxMipMapLevel(int level)
+{
+    maxMipMapLevel = level;
 }
 
 
@@ -592,19 +609,6 @@ Texture* CreateJPEGTexture(const char* filename,
 #else
     return NULL;
 #endif // IJG_JPEG_SUPPORT
-}
-
-
-Texture* getJPEGTexture(const char* filename,
-                            int channels)
-{
-    Texture *res=CreateJPEGTexture(filename, channels);
-    if (res == NULL)
-    {
-        printf("Error trying to read JPEG texture file '%s'\n", filename);
-        return NULL;
-    }
-    return res;
 }
 
 
