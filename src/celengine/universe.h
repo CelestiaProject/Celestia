@@ -66,6 +66,7 @@ class Universe
                     Marker::Symbol symbol,
                     int priority);
     void unmarkObject(const Selection&, int priority);
+    void unmarkAll();
     bool isMarked(const Selection&, int priority) const;
     MarkerList* getMarkers() const;
 
