@@ -55,6 +55,7 @@ libcelengine_a_SOURCES = \
 	spheremesh.cpp \
 	star.cpp \
 	starbrowser.cpp \
+	starcolors.cpp \
 	stardb.cpp \
 	starname.cpp \
 	stellarclass.cpp \
