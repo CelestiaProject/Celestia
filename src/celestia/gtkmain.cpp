@@ -28,7 +28,6 @@
 #include "vecmath.h"
 #include "quaternion.h"
 #include "util.h"
-#include "timer.h"
 #include "mathlib.h"
 #include "astro.h"
 #include "filetype.h"
@@ -39,10 +38,6 @@
 char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
-
-// Timer info.
-static double currentTime = 0.0;
-static Timer* timer = NULL;
 
 // Mouse motion tracking
 static int lastX = 0;
@@ -833,11 +828,7 @@ void Display(GtkWidget* widget)
 
 gint glarea_idle(void*)
 {
-    double lastTime = currentTime;
-    currentTime = timer->getTime();
-    double dt = currentTime - lastTime;
-
-    appCore->tick(dt);
+    appCore->tick();
     Display(GTK_WIDGET(oglArea));
 
     return TRUE;
@@ -1076,8 +1067,6 @@ int main(int argc, char* argv[])
     {
         return 1;
     }
-
-    timer = CreateTimer();
 
 
     // Now initialize OpenGL and Gnome
