@@ -50,7 +50,6 @@
 	EllipticalOrbit {
 		Period          0.0033
 		SemiMajorAxis   0.0225
-		Eccentricity    0
 		Inclination     89.4
 		AscendingNode   260.2
 		ArgOfPericenter 84
@@ -1051,6 +1050,24 @@
 	RotationPeriod 10     # guess
 }
 
+"b" "HD 219449"   # Psi1 Aqr
+{
+	Texture "gasgiant.jpg"
+	NightTexture "gasgiantnight.jpg"
+
+	Mass    920     # M.sin(i) = 2.9 jupiters
+	Radius  84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD219449.html"
+
+	EllipticalOrbit {
+		Period          0.4983
+		SemiMajorAxis   0.3
+	}
+
+	RotationPeriod 10     # guess
+}
+
 "b" "HD 73526"
 {
 	Texture "jupiterlike.jpg"
@@ -1302,6 +1319,23 @@
 		Eccentricity    0.38
 		ArgOfPericenter 14
 		MeanAnomaly     312
+	}
+
+	RotationPeriod 10     # guess
+}
+
+"b" "HD 59686"
+{
+	Texture "gasgiant.jpg"
+
+	Mass    2070     # M.sin(i) = 6.5 jupiters
+	Radius  84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD59686.html"
+
+	EllipticalOrbit {
+		Period          0.8296
+		SemiMajorAxis   0.8
 	}
 
 	RotationPeriod 10     # guess
