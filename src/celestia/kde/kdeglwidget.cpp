@@ -299,6 +299,12 @@ bool KdeGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
     case Key_F7:
         k = CelestiaCore::Key_F7;
         break;
+    case Key_PageDown:
+        k = CelestiaCore::Key_PageDown;
+        break;
+    case Key_PageUp:
+        k = CelestiaCore::Key_PageUp;
+        break;
 /*    case Key_F10:
         if (down)
             menuCaptureImage();
@@ -353,8 +359,12 @@ bool KdeGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
 
     if (k >= 0)
     {
+        int buttons = 0;
+        if (e->state() & ShiftButton)
+            buttons |= CelestiaCore::ShiftKey;
+
         if (down)
-            appCore->keyDown(k);
+            appCore->keyDown(k, buttons);
         else
             appCore->keyUp(k);
         return (k < 'A' || k > 'Z');
