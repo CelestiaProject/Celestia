@@ -58,6 +58,9 @@ class View
     float y;
     float width;
     float height;
+    int renderFlags;
+    int labelMode;
+
     void walkTreeResize(View*, int);
 };
 
@@ -268,6 +271,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool wireframe;
     bool editMode;
     bool altAzimuthMode;
+    double flashFrameStart;
 
     Timer* timer;
 
