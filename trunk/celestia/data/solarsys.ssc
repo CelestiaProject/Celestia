@@ -306,6 +306,7 @@
 	Texture "io.jpg"
 	Radius   1821
 
+	CustomOrbit "io"
 	EllipticalOrbit
 	{
 	Epoch 2443000.00038375
@@ -326,6 +327,7 @@
 	Texture "europa.jpg"
 	Radius   1565
 
+	CustomOrbit "europa"
 	EllipticalOrbit
 	{
 	Epoch 2443000.00038375
@@ -346,6 +348,7 @@
 	Texture "ganymede.jpg"
 	Radius   2634
 
+	CustomOrbit "ganymede"
 	EllipticalOrbit
 	{
 	Epoch 2443000.00038375
@@ -366,6 +369,7 @@
 	Texture "callisto.jpg"
 	Radius   2403
 
+	CustomOrbit "callisto"
 	EllipticalOrbit
 	{
 	Epoch 2443000.00038375
