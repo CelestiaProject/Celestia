@@ -22,6 +22,7 @@
 #include <config.h>
 #endif
 
+#include <time.h>
 #include <kapp.h>
 #include <qwidget.h>
 #include <kmainwindow.h>
