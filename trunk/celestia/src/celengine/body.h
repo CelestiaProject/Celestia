@@ -117,6 +117,8 @@ class Body
     void setOblateness(float);
     float getAlbedo() const;
     void setAlbedo(float);
+    Quatf getOrientation() const;
+    void setOrientation(const Quatf&);
     int getClassification() const;
     void setClassification(int);
 
@@ -162,6 +164,7 @@ class Body
     float mass;
     float oblateness;
     float albedo;
+    Quatf orientation;
 
     ResourceHandle mesh;
     Surface surface;
