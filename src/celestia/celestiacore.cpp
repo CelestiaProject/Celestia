@@ -3724,6 +3724,12 @@ void CelestiaCore::flash(const std::string& s, double duration)
 }
 
 
+CelestiaConfig* CelestiaCore::getConfig() const
+{
+    return config;
+}
+
+
 void CelestiaCore::addWatcher(CelestiaWatcher* watcher)
 {
     assert(watcher != NULL);
