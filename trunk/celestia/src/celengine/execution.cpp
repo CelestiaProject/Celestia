@@ -16,13 +16,22 @@ Execution::Execution(CommandSequence& cmd, ExecutionEnvironment& _env) :
     currentCommand(cmd.begin()),
     finalCommand(cmd.end()),
     env(_env),
-    commandTime(0.0)
+    commandTime(-1.0)
 {
 }
 
 
 bool Execution::tick(double dt)
 {
+    // ignore the very first call to tick, because on windows dt may include the
+    // time spent in the "Open File" dialog. Using commandTime < 0 as a flag
+    // to recognize the first call:
+    if (commandTime < 0.0)
+    {
+        commandTime = 0.0;
+        return false;
+    }
+
     while (dt > 0.0 && currentCommand != finalCommand)
     {
         Command* cmd = *currentCommand;
@@ -51,7 +60,7 @@ void Execution::reset(CommandSequence& cmd)
 {
     currentCommand = cmd.begin();
     finalCommand = cmd.end();
-    commandTime = 0.0;
+    commandTime = -1.0;
 }
 
 
