@@ -27,7 +27,6 @@ Simulation::Simulation() :
     realTime(0.0),
     simTime(0.0),
     timeScale(1.0),
-    typedText(""),
     stardb(NULL),
     solarSystemCatalog(NULL),
     visibleStars(NULL),
@@ -174,9 +173,6 @@ void  Simulation::render(Renderer& renderer)
         *console << astro::Date(simTime / 86400.0) << '\n';
 
         displaySelectionInfo(*console);
-        
-        *console << typedText;
-
     }
 
     renderer.render(observer,
@@ -276,7 +272,13 @@ void Simulation::setStarDatabase(StarDatabase* db,
 }
 
 
-// Set the time in seconds from J2000
+// Get the time in seconds (JD * 86400)
+double Simulation::getTime() const
+{
+    return simTime;
+}
+
+// Set the time in seconds (JD * 86400)
 void Simulation::setTime(double t)
 {
     simTime = t;
@@ -815,20 +817,6 @@ void Simulation::selectBody(string s)
         Body* body = closestSolarSystem->getPlanets()->find(s, true);
         if (body != NULL)
             selection = Selection(body);
-    }
-}
-
-
-void Simulation::typeChar(char c)
-{
-    if (c == '\n')
-    {
-        selectBody(typedText);
-        typedText = "";
-    }
-    else
-    {
-        typedText += c;
     }
 }
 
