@@ -22,6 +22,7 @@ unsigned int vp::specular = 0;
 unsigned int vp::diffuseHaze = 0;
 unsigned int vp::diffuseBump = 0;
 unsigned int vp::diffuseBumpHaze = 0;
+unsigned int vp::shadowTexture = 0;
 unsigned int vp::everything = 0;
 
 
@@ -86,6 +87,8 @@ bool vp::init()
     if (!LoadVertexProgram("shaders/bumpdiffuse.vp", diffuseBump))
         return false;
     if (!LoadVertexProgram("shaders/bumphaze.vp", diffuseBumpHaze))
+        return false;
+    if (!LoadVertexProgram("shaders/shadowtex.vp", shadowTexture))
         return false;
     everything = 0;
 
