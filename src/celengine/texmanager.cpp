@@ -29,7 +29,7 @@ Texture* TextureInfo::load(const string& baseDir)
 {
     if (bumpHeight == 0.0f)
     {
-        DPRINTF("Loading texture: %s\n", source.c_str());
+        DPRINTF(0, "Loading texture: %s\n", source.c_str());
         Texture* tex = LoadTextureFromFile(baseDir + "/" + source);
 
         if (tex != NULL)
@@ -43,7 +43,7 @@ Texture* TextureInfo::load(const string& baseDir)
     }
     else
     {
-        DPRINTF("Loading bump map: %s\n", source.c_str());
+        DPRINTF(0, "Loading bump map: %s\n", source.c_str());
         Texture* tex = LoadTextureFromFile(baseDir + "/" + source);
 
         if (tex != NULL)

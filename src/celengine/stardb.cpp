@@ -125,7 +125,7 @@ Star* StarDatabase::find(const string& name) const
 
         if (names != NULL)
         {
-            uint32 catalogNumber=names->findName(name);
+            uint32 catalogNumber = names->findName(name);
             if (catalogNumber != Star::InvalidCatalogNumber)
                 return find(catalogNumber, Star::HIPCatalog);
         }
@@ -300,9 +300,9 @@ StarDatabase *StarDatabase::read(istream& in)
 	// Compute distance based on parallax
 	double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
 #ifdef DEBUG
-	if(distance > 50000.0)
+	if (distance > 50000.0)
 	{
-	    DPRINTF("Warning, Distance on CatNo. %ld of %12.2f LYear seems excessive (Parallax: %2.5f)!\n",catNo, distance, parallax);
+	    DPRINTF(0, "Warning, distance of star # %ld of %12.2f ly seems excessive (parallax: %2.5f)!\n", catNo, distance, parallax);
 	}
 #endif DEBUG
         star->setPosition(astro::equatorialToCelestialCart(RA, dec, (float) distance));
@@ -340,8 +340,7 @@ StarDatabase *StarDatabase::read(istream& in)
 	db = NULL;
     }
 
-    if(verbose)
-        cout << "nStars = " << db->nStars << '\n';
+    DPRINTF(0, "StarDatabase::read: nStars = %d\n", db->nStars);
 
     db->buildOctree();
     db->buildIndexes();
@@ -355,8 +354,7 @@ void StarDatabase::buildOctree()
     // This should only be called once for the database
     // ASSERT(octreeRoot == NULL);
 
-    if(verbose)
-        cout << "Sorting stars into octree . . .\n";
+    DPRINTF(1, "Sorting stars into octree . . .\n");
     cout.flush();
     float absMag = astro::appToAbsMag(OctreeMagnitude,
                                       OctreeRootSize * (float) sqrt(3.0));
@@ -365,20 +363,16 @@ void StarDatabase::buildOctree()
     for (int i = 0; i < nStars; i++)
         root->insertStar(stars[i], OctreeRootSize);
 
-    if(verbose)
-        cout << "Spatially sorting stars for improved locality of reference . . .\n";
+    DPRINTF(1, "Spatially sorting stars for improved locality of reference . . .\n");
     cout.flush();
     Star* sortedStars = new Star[nStars];
     Star* firstStar = sortedStars;
     root->rebuildAndSort(octreeRoot, firstStar);
 
     // ASSERT((int) (firstStar - sortedStars) == nStars);
-    if(verbose)
-    {
-        cout << (int) (firstStar - sortedStars) << " stars total\n";
-        cout << "Octree has " << 1 + octreeRoot->countChildren() << " nodes " <<
-            " and " << octreeRoot->countStars() << " stars.\n";
-    }
+    DPRINTF(1, "%d stars total\n", (int) (firstStar - sortedStars));
+    DPRINTF(1, "Octree has %d nodes and %d stars.\n",
+            1 + octreeRoot->countChildren(), octreeRoot->countStars());
 
     // Clean up . . .
     delete stars;
@@ -393,16 +387,13 @@ void StarDatabase::buildIndexes()
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == NULL);
 
-    if(verbose)
-        cout << "Building catalog number indexes . . .\n";
-    cout.flush();
+    DPRINTF(1, "Building catalog number indexes . . .\n");
 
     for (unsigned int whichCatalog = 0;
          whichCatalog < sizeof(catalogNumberIndexes) / sizeof(catalogNumberIndexes[0]);
          whichCatalog++)
     {
-        if(verbose)
-            cout << "Sorting catalog number index #" << whichCatalog << '\n';
+        DPRINTF(1, "Sorting catalog number index %d\n", whichCatalog);
         catalogNumberIndexes[whichCatalog] = new Star*[nStars];
         for (int i = 0; i < nStars; i++)
             catalogNumberIndexes[whichCatalog][i] = &stars[i];

@@ -37,7 +37,7 @@ DestinationList* ReadDestinationList(istream& in)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenBeginGroup)
         {
-            DPRINTF("Error parsing destinations file.\n");
+            DPRINTF(0, "Error parsing destinations file.\n");
             for_each(destinations->begin(), destinations->end(), deleteFunc<Destination*>());
             delete destinations;
             return NULL;
@@ -47,7 +47,7 @@ DestinationList* ReadDestinationList(istream& in)
         Value* destValue = parser.readValue();
         if (destValue == NULL || destValue->getType() != Value::HashType)
         {
-            DPRINTF("Error parsing destination.\n");
+            DPRINTF(0, "Error parsing destination.\n");
             for_each(destinations->begin(), destinations->end(), deleteFunc<Destination*>());
             delete destinations;
             if (destValue != NULL)
@@ -60,7 +60,7 @@ DestinationList* ReadDestinationList(istream& in)
         
         if (!destParams->getString("Name", dest->name))
         {
-            DPRINTF("Skipping unnamed destination\n");
+            DPRINTF(1, "Skipping unnamed destination\n");
             delete dest;
         }
         else

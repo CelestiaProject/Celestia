@@ -233,19 +233,18 @@ int main(int argc, char* argv[])
     }
 
     char c;
-    while((c=getopt(argc,argv,"v"))>-1)
+    while ((c = getopt(argc, argv, "v")) > -1)
     {
-        if (c=='?')
+        if (c == '?')
         {
             cout << "Usage: celestia [-v]\n";
             exit(1);
         }
-        else if (c=='v')
+        else if (c == 'v')
         {
-            verbose=1;
+            SetDebugVerbosity(1);
         }
     }
-
 
     appCore = new CelestiaCore();
     if (appCore == NULL)
