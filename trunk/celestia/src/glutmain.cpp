@@ -1,8 +1,8 @@
-// winmain.cpp
+// glutmain.cpp
 // 
 // Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
 //
-// Windows front end for Celestia.
+// GLUT front-end for Celestia.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -102,7 +102,7 @@ static FavoritesList* favorites = NULL;
 static Simulation* sim = NULL;
 static Renderer* renderer = NULL;
 static Overlay* overlay = NULL;
-static TexFont* font = NULL;
+static TextureFont* font = NULL;
 
 static CommandSequence* script = NULL;
 static CommandSequence* demoScript = NULL;
@@ -257,6 +257,9 @@ void RenderOverlay()
     if (font == NULL)
         return;
 
+    int height = font->getHeight();
+    int emWidth = font->getWidth("M");
+
     overlay->begin();
 
     // Time and date
@@ -264,7 +267,7 @@ void RenderOverlay()
     {
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(g_w - 130, g_h - 15, 0);
+        glTranslatef(g_w - 11 * emWidth, g_h - height, 0);
         overlay->beginText();
         *overlay << astro::Date(sim->getTime()) << '\n';
         if (paused)
@@ -290,7 +293,7 @@ void RenderOverlay()
     if (hudDetail > 0)
     {
         glPushMatrix();
-        glTranslatef(0, 35, 0);
+        glTranslatef(0, height * 2 + 5, 0);
         overlay->beginText();
 
         double speed = sim->getObserver().getVelocity().length();
@@ -337,7 +340,7 @@ void RenderOverlay()
             modeName = "Following";
 
         glPushMatrix();
-        glTranslatef(g_w - 130, 20, 0);
+        glTranslatef(g_w - emWidth * 11, height + 5, 0);
         overlay->beginText();
         glColor4f(0.6f, 0.6f, 1.0f, 1);
         *overlay << modeName << '\n';
@@ -353,7 +356,7 @@ void RenderOverlay()
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 0.2f);
         overlay->rect(0, 0, g_w, 70);
-        glTranslatef(0, 50, 0);
+        glTranslatef(0, height * 3 + 5, 0);
         glColor4f(0.6f, 0.6f, 1.0f, 1);
         *overlay << "Target name: " << typedText;
         glPopMatrix();
@@ -364,7 +367,7 @@ void RenderOverlay()
     {
         glPushMatrix();
         glColor4f(1, 1, 1, 1);
-        glTranslatef(0, 80, 0);
+        glTranslatef(0, height * 5 + 5, 0);
         overlay->beginText();
         *overlay << messageText;
         overlay->endText();
@@ -380,26 +383,21 @@ void RenderOverlay()
             alpha = 0.5f * (float) (5.0 - currentTime);
         glColor4f(1, 1, 1, alpha);
 
-        int width = 0, maxAscent = 0, maxDescent = 0;
-        txfGetStringMetrics(font, welcomeMessage1, width, maxAscent, maxDescent);
         glPushMatrix();
-        glTranslatef((g_w - width) / 2, g_h / 2, 0);
+        glTranslatef((g_w - font->getWidth(welcomeMessage1)) / 2, g_h / 2, 0);
         *overlay << welcomeMessage1;
         glPopMatrix();
 
-        txfGetStringMetrics(font, welcomeMessage2, width, maxAscent, maxDescent);
         glPushMatrix();
-        glTranslatef((g_w - width) / 2, g_h / 2 - maxAscent, 0);
+        glTranslatef((g_w - font->getWidth(welcomeMessage2)) / 2, g_h / 2 - height, 0);
         *overlay << welcomeMessage2;
         glPopMatrix();
     }
 
     if (editMode)
     {
-        int width = 0, maxAscent = 0, maxDescent = 0;
-        txfGetStringMetrics(font, "Edit Mode", width, maxAscent, maxDescent);
         glPushMatrix();
-        glTranslatef((g_w - width) / 2, g_h - 15, 0);
+        glTranslatef((g_w - font->getWidth("Edit Mode")) / 2, g_h - height, 0);
         glColor4f(1, 0, 1, 1);
         *overlay << "Edit Mode";
         glPopMatrix();
@@ -407,6 +405,7 @@ void RenderOverlay()
 
     overlay->end();
 }
+
 
 static void ToggleLabelState(int labelState)
 {
@@ -720,6 +719,10 @@ void KeyPress(unsigned char c, int x, int y)
         renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
         break;
 
+    case '\021': // Ctrl-Q
+        exit(0);
+        break;
+
     case '[':
         if (sim->getFaintestVisible() > 1.0f)
             SetFaintest(sim->getFaintestVisible() - 0.5f);
@@ -957,14 +960,32 @@ int main(int argc, char* argv[])
 
     renderer->showAsterisms(asterisms);
 
+
+    if (config->mainFont == "")
+        font = LoadTextureFont("fonts/default.txf");
+    else
+        font = LoadTextureFont(string("fonts") + "/" + config->mainFont);
+    if (font == NULL)
+    {
+        cout << "Error loading font; text will not be visible.";
+    }
+
     // Set up the overlay
     overlay = new Overlay();
     overlay->setWindowSize(g_w, g_h);
-    font = txfLoadFont("fonts/default.txf");
-    if (font != NULL)
+    overlay->setFont(font);
+
+    if (config->labelFont == "")
     {
-        txfEstablishTexture(font, 0, GL_FALSE);
-        overlay->setFont(font);
+        renderer->setFont(font);
+    }
+    else
+    {
+        TextureFont* labelFont = LoadTextureFont(string("fonts") + "/" + config->labelFont);
+        if (labelFont == NULL)
+            renderer->setFont(font);
+        else
+            renderer->setFont(labelFont);
     }
 
     if (config->initScriptFile != "")

@@ -224,6 +224,8 @@ void StarOctree::findVisibleStars(StarHandler& starHandler,
 {
     // See if this node lies within the view frustum
     {
+        // Test the cubic octree node against each one of the five
+        // planes that define the infinite view frustum.
         for (int i = 0; i < 5; i++)
         {
             const Planef* plane = frustumPlanes + i;

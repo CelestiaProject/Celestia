@@ -590,7 +590,8 @@ CTexture* CreateJPEGTexture(const char* filename,
 
     tex = new CTexture(cinfo.image_width, cinfo.image_height, format);
 
-    cont = cinfo.output_height - 1;
+    // cont = cinfo.output_height - 1;
+    cont = 0;
     while (cinfo.output_scanline < cinfo.output_height)
     {
         // jpeg_read_scanlines expects an array of pointers to scanlines.
@@ -603,7 +604,7 @@ CTexture* CreateJPEGTexture(const char* filename,
         memcpy(tex->pixels +
                cinfo.image_width * cinfo.output_components * cont,
                buffer[0], row_stride);
-        cont--;
+        cont++;
     }
 
     // Step 7: Finish decompression
