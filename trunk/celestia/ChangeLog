@@ -486,3 +486,5 @@ Code:
   current reference object instead of the selection.
 * Made Goto command automatically switch to follow mode
 * Fixed customorbit.cpp to compile on HP/UX
+* Fixed appearance of galaxies when viewed from inside an atmosphere
+* Removed duplicate entry for Iota Horologii (HR 810) in exoplanet catalog
