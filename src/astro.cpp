@@ -1,0 +1,242 @@
+// astro.cpp
+//
+// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
+#include <cmath>
+#include <iomanip>
+#include "celestia.h"
+#include "astro.h"
+
+using namespace std;
+
+#define SOLAR_ABSMAG  4.83f
+#define LN_MAG        1.085736
+#define LY_PER_PARSEC 3.26
+#define KM_PER_LY     9466411842000.000
+#define KM_PER_AU     149597870.7
+#define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
+
+// epoch J2000: 12 UT on 1 Jan 2000
+#define J2000         2451545.0
+
+// epoch B1950: 22:09 UT on 21 Dec 1949
+#define B1950         2433282.423
+
+
+float astro::lumToAbsMag(float lum)
+{
+    return (float) (SOLAR_ABSMAG - log(lum) * LN_MAG);
+}
+
+// Return the apparent magnitude of a star with lum times solar
+// luminosity viewed at lyrs light years
+float astro::lumToAppMag(float lum, float lyrs)
+{
+    return absToAppMag(lumToAbsMag(lum), lyrs);
+}
+
+float astro::absMagToLum(float mag)
+{
+    return (float) exp((SOLAR_ABSMAG - mag) / LN_MAG);
+}
+
+float astro::appMagToLum(float mag, float lyrs)
+{
+    return absMagToLum(appToAbsMag(mag, lyrs));
+}
+
+float astro::absToAppMag(float absMag, float lyrs)
+{
+    return (float) (absMag - 5 + 5 * log10(lyrs / LY_PER_PARSEC));
+}
+
+float astro::appToAbsMag(float appMag, float lyrs)
+{
+    return (float) (appMag + 5 - 5 * log10(lyrs / LY_PER_PARSEC));
+}
+
+float astro::lightYearsToParsecs(float ly)
+{
+    return ly / (float) LY_PER_PARSEC;
+}
+
+float astro::parsecsToLightYears(float pc)
+{
+    return pc * (float) LY_PER_PARSEC;
+}
+
+float astro::lightYearsToKilometers(float ly)
+{
+    return ly * (float) KM_PER_LY;
+}
+
+double astro::lightYearsToKilometers(double ly)
+{
+    return ly * KM_PER_LY;
+}
+
+float astro::kilometersToLightYears(float km)
+{
+    return km / (float) KM_PER_LY;
+}
+
+double astro::kilometersToLightYears(double km)
+{
+    return km / KM_PER_LY;
+}
+
+float astro::lightYearsToAU(float ly)
+{
+    return ly * (float) AU_PER_LY;
+}
+
+double astro::lightYearsToAU(double ly)
+{
+    return ly * AU_PER_LY;
+}
+
+float astro::AUtoLightYears(float au)
+{
+    return au / (float) AU_PER_LY;
+}
+
+float astro::AUtoKilometers(float au)
+{
+    return au * (float) KM_PER_AU;
+}
+
+float astro::kilometersToAU(float km)
+{
+    return km / (float) KM_PER_AU;
+}
+
+double astro::secondsToJulianDate(double sec)
+{
+    return sec / 86400.0;
+}
+
+double astro::julianDateToSeconds(double jd)
+{
+    return jd * 86400.0;
+}
+
+
+// Compute the fraction of a sphere which is illuminated and visible
+// to a viewer.  The source of illumination is assumed to be at (0, 0, 0)
+float astro::sphereIlluminationFraction(Point3d spherePos,
+                                        Point3d viewerPos)
+{
+    return 1.0f;
+}
+
+// Convert the position in univeral coordinates to a star-centric
+// coordinates in units of kilometers.  Note that there are three different
+// precisions used here:  star coordinates are stored as floats in units of
+// light years, position within a solar system are doubles in units of
+// kilometers, and p is highest-precision in units of light years.
+Point3d astro::heliocentricPosition(UniversalCoord universal,
+                                    Point3f starPosition)
+{
+    // Get the offset vector
+    Vec3d v = universal - Point3d(starPosition.x, starPosition.y, starPosition.z);
+
+    // . . . and convert it to kilometers
+    return Point3d(lightYearsToKilometers(v.x),
+                   lightYearsToKilometers(v.y),
+                   lightYearsToKilometers(v.z));
+}
+
+// universalPosition is the inverse operation of heliocentricPosition
+UniversalCoord astro::universalPosition(Point3d heliocentric,
+                                        Point3f starPosition)
+{
+    return UniversalCoord(starPosition) +
+        Vec3d(kilometersToLightYears(heliocentric.x),
+              kilometersToLightYears(heliocentric.y),
+              kilometersToLightYears(heliocentric.z));
+}
+
+
+astro::Date::Date(int Y, int M, int D)
+{
+    year = Y;
+    month = M;
+    day = D;
+    hour = 0;
+    minute = 0;
+    seconds = 0.0;
+}
+
+
+astro::Date::Date(double jd)
+{
+    int a = (int) (jd + 0.5);
+    double c;
+    if (a < 2299161)
+    {
+        c = a + 1524;
+    }
+    else
+    {
+        double b = (int) ((a - 1867216.25) / 36524.25);
+        c = a + b - (int) (b / 4) + 1525;
+    }
+
+    int d = (int) ((c - 122.1) / 365.25);
+    int e = (int) (365.25 * d);
+    int f = (int) ((c - e) / 30.6001);
+
+    double dday = c - e - (int) (30.6001 * f) + ((jd + 0.5) - (int) (jd + 0.5));
+    month = f - 1 - 12 * (int) (f / 14.0);
+    year = d - 4715 - (int) ((7.0 + month) / 10.0);
+    day = (int) dday;
+    
+    double dhour = (dday - day) * 24;
+    hour = (int) dhour;
+
+    double dminute = (dhour - hour) * 60;
+    minute = (int) dminute;
+
+    seconds = (dminute - minute) * 60;
+}
+
+
+// Convert a calendar date to a Julian date
+astro::Date::operator double() const
+{
+    int y = year, m = month;
+    if (month <= 2)
+    {
+        y = year - 1;
+        m = month + 12;
+    }
+
+    // Correct for the lost days in Oct 1582 when the Gregorian calendar
+    // replaced the Julian calendar.
+    int B = -2;
+    if (year > 1582 || (year == 1582 && (month > 10 || (month == 10 && day >= 15))))
+    {
+        B = y / 400 - y / 100;
+    }
+
+    return (floor(365.25 * y) +
+            floor(30.6001 * (m + 1)) + B + 1720996.5 +
+            day + hour / 24.0 + minute / 1440.0 + seconds / 86400.0);
+}
+
+
+ostream& operator<<(ostream& s, const astro::Date d)
+{
+    s << d.year << ' ' << setw(2) << setfill('0') << d.month << ' ';
+    s << setw(2) << setfill('0') << d.day << ' ';
+    s << setw(2) << setfill('0') << d.hour << ':';
+    s << setw(2) << setfill('0') << d.minute << ':';
+    s << setw(2) << setfill('0') << (int) d.seconds;
+    return s;
+}
+
