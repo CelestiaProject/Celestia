@@ -150,16 +150,17 @@ Render/Display Options
 } ................ Ambient Light (Increase)
 Ctrl+X ........... Antialias displayed lines (ie. orbits)
 Ctrl+Y ........... Auto Magnitude (toggle) Auto adaptation of star visibility to
-                     Field of View (FOV)
+                     Field of View (FOV). Works best with the 2 million star
+                     database add-on.
 Alt+Enter......... Display mode toggle (Full-Screen / Windowed)
 , ................ Field Of View [FOV] (Narrow, also Shift+Left Drag)
 . ................ Field Of View [FOV] (Widen,  also Shift+Left Drag)
 [ ................ Magnitude Limit (decrease):
-                   - If autoMag OFF: Decrease limiting magnitude (fewer stars)
-                   - If autoMag ON : Decrease limiting magnitude at 45 deg FOV
+                   - If AutoMag OFF: Decrease limiting magnitude (fewer stars)
+                   - If AutoMag ON : Decrease limiting magnitude at 45 deg FOV
 ] ................ Magnitude Limit (increase):
-                   - If autoMag OFF: Increase limiting magnitude (more stars)
-                   - If autoMag ON : Increase limiting magnitude at 45 deg FOV
+                   - If AutoMag OFF: Increase limiting magnitude (more stars)
+                   - If AutoMag ON : Increase limiting magnitude at 45 deg FOV
 Ctrl+P ........... Mark selected object (Marker display must be active--Ctrl+K)
 r ................ Object file resolution (decrease)--use texture images in next
                      lower resolution directory (/celestia/lores-medres-hires)
