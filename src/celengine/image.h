@@ -38,6 +38,7 @@ class Image
     int getMipLevelSize(int mip) const;
 
     bool isCompressed() const;
+    bool hasAlpha() const;
 
     Image* computeNormalMap(float scale, bool wrap) const;
 

@@ -70,6 +70,8 @@ class Texture
     int getHeight() const;
     int getDepth() const;
 
+    bool hasAlpha() const { return alpha; }
+
     enum AddressMode
     {
         Wrap        = 0,
@@ -83,6 +85,9 @@ class Texture
         NoMipMaps      = 1,
         AutoMipMaps    = 2,
     };
+
+ protected:
+    bool alpha;
 
  private:
     int width;
