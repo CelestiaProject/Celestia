@@ -60,14 +60,15 @@
 #define IDC_SHOWNIGHTSIDELIGHTS         1040
 #define IDC_SHOWPLANETS                 1041
 #define IDC_SHOWSTARS                   1042
-#define IDC_LABELMAJORPLANETS           1043
-#define IDC_LABELMINORPLANETS           1044
-#define IDC_LABELSTARS                  1045
-#define IDC_LABELCONSTELLATIONS         1046
-#define IDC_INFOTEXT0                   1047
-#define IDC_INFOTEXT1                   1048
-#define IDC_INFOTEXT2                   1049
-#define IDC_LABELGALAXIES               1050
+#define IDC_SHOWECLIPSESHADOWS          1043
+#define IDC_LABELMAJORPLANETS           1044
+#define IDC_LABELMINORPLANETS           1045
+#define IDC_LABELSTARS                  1046
+#define IDC_LABELCONSTELLATIONS         1047
+#define IDC_LABELGALAXIES               1048
+#define IDC_INFOTEXT0                   1049
+#define IDC_INFOTEXT1                   1050
+#define IDC_INFOTEXT2                   1051
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -123,7 +124,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        120
 #define _APS_NEXT_COMMAND_VALUE         40063
-#define _APS_NEXT_CONTROL_VALUE         1051
+#define _APS_NEXT_CONTROL_VALUE         1052
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

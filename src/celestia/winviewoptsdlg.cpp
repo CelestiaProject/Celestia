@@ -56,6 +56,8 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowCloudMaps);
         else if(LOWORD(wParam) == IDC_SHOWCONSTELLATIONS)
             renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowDiagrams);
+        else if(LOWORD(wParam) == IDC_SHOWECLIPSESHADOWS)
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowEclipseShadows);
         else if(LOWORD(wParam) == IDC_SHOWGALAXIES)
             renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowGalaxies);
         else if(LOWORD(wParam) == IDC_SHOWNIGHTSIDELIGHTS)
@@ -158,6 +160,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         ((initialRenderFlags & appCore->getRenderer()->ShowCloudMaps) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONS, BM_SETCHECK,
         ((initialRenderFlags & appCore->getRenderer()->ShowDiagrams) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWECLIPSESHADOWS, BM_SETCHECK,
+        ((initialRenderFlags & appCore->getRenderer()->ShowEclipseShadows) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWGALAXIES, BM_SETCHECK,
         ((initialRenderFlags & appCore->getRenderer()->ShowGalaxies) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
