@@ -208,6 +208,19 @@ glx::PFNGLPROGRAMLOCALPARAMETER4DVNVPROC   glx::glProgramLocalParameter4dvNV;
 glx::PFNGLGETPROGRAMLOCALPARAMETERFVNVPROC glx::glGetProgramLocalParameterfvNV;
 glx::PFNGLGETPROGRAMLOCALPARAMETERDVNVPROC glx::glGetProgramLocalParameterdvNV;
 
+// ARB_vertex_buffer_object function pointers
+glx::PFNGLBINDBUFFERARBPROC                glx::glBindBufferARB;
+glx::PFNGLDELETEBUFFERSARBPROC             glx::glDeleteBuffersARB;
+glx::PFNGLGENBUFFERSARBPROC                glx::glGenBuffersARB;
+glx::PFNGLISBUFFERARBPROC                  glx::glIsBufferARB;
+glx::PFNGLBUFFERDATAARBPROC                glx::glBufferDataARB;
+glx::PFNGLBUFFERSUBDATAARBPROC             glx::glBufferSubDataARB;
+glx::PFNGLGETBUFFERSUBDATAARBPROC          glx::glGetBufferSubDataARB;
+glx::PFNGLMAPBUFFERARBPROC                 glx::glMapBufferARB;
+glx::PFNGLUNMAPBUFFERARBPROC               glx::glUnmapBufferARB;
+glx::PFNGLGETBUFFERPARAMETERIVARBPROC      glx::glGetBufferParameterivARB;
+glx::PFNGLGETBUFFERPOINTERVARBPROC         glx::glGetBufferPointervARB;
+
 
 // extern void Alert(const char *szFormat, ...);
 
@@ -679,6 +692,23 @@ static void InitExt_ARB_vertex_program()
 }
 
 
+static void InitExt_ARB_vertex_buffer_object()
+{
+#if defined(GET_GL_PROC_ADDRESS)
+    glx::glBindBufferARB = (glx::PFNGLBINDBUFFERARBPROC) GET_GL_PROC_ADDRESS("glBindBufferARB");
+    glx::glDeleteBuffersARB = (glx::PFNGLDELETEBUFFERSARBPROC) GET_GL_PROC_ADDRESS("glDeleteBuffersARB");
+    glx::glGenBuffersARB = (glx::PFNGLGENBUFFERSARBPROC) GET_GL_PROC_ADDRESS("glGenBuffersARB");
+    glx::glIsBufferARB = (glx::PFNGLISBUFFERARBPROC) GET_GL_PROC_ADDRESS("glIsBufferARB");
+    glx::glBufferDataARB = (glx::PFNGLBUFFERDATAARBPROC) GET_GL_PROC_ADDRESS("glBufferDataARB");
+    glx::glBufferSubDataARB = (glx::PFNGLBUFFERSUBDATAARBPROC) GET_GL_PROC_ADDRESS("glBufferSubDataARB");
+    glx::glGetBufferSubDataARB = (glx::PFNGLGETBUFFERSUBDATAARBPROC) GET_GL_PROC_ADDRESS("glGetBufferSubDataARB");
+    glx::glMapBufferARB = (glx::PFNGLMAPBUFFERARBPROC) GET_GL_PROC_ADDRESS("glMapBufferARB");
+    glx::glUnmapBufferARB = (glx::PFNGLUNMAPBUFFERARBPROC) GET_GL_PROC_ADDRESS("glUnmapBufferARB");
+    glx::glGetBufferParameterivARB = (glx::PFNGLGETBUFFERPARAMETERIVARBPROC) GET_GL_PROC_ADDRESS("glGetBufferParameterivARB");
+    glx::glGetBufferPointervARB = (glx::PFNGLGETBUFFERPOINTERVARBPROC) GET_GL_PROC_ADDRESS("glGetBufferPointervARB");
+#endif
+}
+
 void InitExtension(const char* ext)
 {
     if (!strcmp(ext, "GL_NV_fragment_program"))
@@ -687,6 +717,8 @@ void InitExtension(const char* ext)
         InitExt_ARB_vertex_program();
     else if (!strcmp(ext, "GL_ARB_multitexture"))
         InitExt_ARB_multitexture();
+    else if (!strcmp(ext, "GL_ARB_vertex_buffer_object"))
+        InitExt_ARB_vertex_buffer_object();
     else if (!strcmp(ext, "GL_NV_register_combiners"))
         InitExt_NV_register_combiners();
     else if (!strcmp(ext, "GL_NV_register_combiners2"))
