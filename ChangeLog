@@ -393,9 +393,16 @@ Code:
   a single modeless dialog.
 * Fixed period and rotation of Phoebe
 
+	
 1.2.1
 * Unix: configure.in changes to better find OpenGL libraries by Bruckner.
 * Added accurate orbital calculations for Galilean satellites.
 * Added tolerance parameter for picking to make picking objects in a narrow
   narrow field of view work better.
 * New texture for Miranda courtesy of Bruckner.
+* Windows: Fixed bug that caused a crash when canceling the view options dialog
+* Windows: Fixed crash that occurred when recalling a location with
+  no selection
+
+	
+1.2.2
