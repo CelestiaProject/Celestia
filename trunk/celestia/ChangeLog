@@ -727,7 +727,6 @@ Code:
   strings
 * Updated info display to show apparent size of selected object
 * Enable tab completion of location names
-* Added view management commands for Lua scripting
 * Introduced support for JPL ephemeris files
 * Fixed crash in Windows star browser that occurred after changing the number
   of stars and pressing return.
@@ -740,4 +739,14 @@ Code:
 * Eliminated obscuring of location labels that occurred low view aspect ratios
 * Added models of comet Halley and the small moons Pandora and Larissa
 * Added limit of knowledge masks for the Galilean moons
-
+* Changed spectral class of carbon stars to C, which supercedes and combines
+  R and N
+* Lua scripting additions
+  * View management commands
+  * Image capture commands
+  * Made setrenderflags and setlabelflags accept a table
+* Made the cursor shape change to the resize icon when positioned over view
+  borders
+* Added a new 3D file format: cmod, the Celestia model format
+* Documented the fields in celestia.cfg with extensive comments
+* Added newly discovered extrasolar planet HD 330075 b
