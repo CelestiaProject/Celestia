@@ -3,15 +3,60 @@ dnl Celestia autoconf file
 dnl
 
 AC_INIT(src/glutmain.cpp)
-AM_INIT_AUTOMAKE(Celestia, 1.08)
+AM_INIT_AUTOMAKE(Celestia, 1.0.10)
 AM_CONFIG_HEADER(config.h)
 
-dnl Checks for programs.
+dnl Check system type
+AC_CANONICAL_HOST
+
+dnl Check for compilers.  Set CFLAGS and CXXFLAGS to null if unset, so
+dnl that these macros won't set the to default values that we don't want.
+if test "x${CFLAGS-notset}" = "xnotset" ; then
+    export CFLAGS
+    CFLAGS=""
+fi
 AC_PROG_CC
+
+if test "x${CXXFLAGS-notset}" = "xnotset" ; then
+    export CXXFLAGS
+    CXXFLAGS=""
+fi
 AC_PROG_CXX
+
+
+dnl Checks for programs.
 AC_PROG_CPP
 AC_PROG_CXXCPP
 AC_PROG_INSTALL
+
+dnl
+dnl Compilation options
+dnl
+
+CELESTIA_CPPFLAGS=""
+CELESTIA_CFLAGS="-O2 -Wall -fomit-frame-pointer -ffast-math -fexpensive-optimizations"
+CELESTIA_CXXFLAGS="-O2 -Wall -fomit-frame-pointer -ffast-math -fexpensive-optimizations"
+dnl CELESTIA_CFLAGS="-O2 -g -Wall"
+dnl CELESTIA_CXXFLAGS="-O2 -g -Wall"
+
+dnl case "$host" in
+dnl i*86-*-*) CELESTIA_CFLAGS="$CELESTIA_CFLAGS -malign-loops=2 -malign-jumps=2 -malign-functions=2";
+dnl          CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -malign-loops=2 -malign-jumps=2 -malign-functions=2";;
+dnl alpha*-*-linux-*) CELESTIA_CFLAGS="$CELESTIA_CFLAGS -mieee";;
+dnl esac
+
+AC_ARG_ENABLE(debug,     [  --enable-debug          Produce an executable with debugging symbols], 
+			 [CELESTIA_CFLAGS="-g -Wall"; CELESTIA_CXXFLAGS="-g -Wall"],
+			 [CELESTIA_CPPFLAGS="$CELESTIA_CPPFLAGS -DCELESTIA_NO_ASSERT=1"])
+
+AC_ARG_ENABLE(pedantic,  [  --enable-pedantic       Enable -pedantic (and -ansi for C) when compiling], CELESTIA_CFLAGS="$CELESTIA_CFLAGS -ansi -pedantic"; CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -pedantic")
+
+AC_ARG_ENABLE(profile,[  --enable-profile        Produce a profiled executable],  [CELESTIA_CFLAGS="$CELESTIA_CFLAGS -pg"; CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -pg"])
+
+
+dnl
+dnl GL and GLUT libs
+dnl
 
 AC_ARG_WITH(
  gl-libs,
@@ -34,10 +79,25 @@ AC_ARG_WITH(
  CELESTIAFLAGS="$CELESTIAFLAGS -I$withval")
 
 
+dnl Use Gtk if requested
+GTK_LIBS=""
+GTKGL_LIBS=""
 
-CFLAGS="$CFLAGS $CELESTIAFLAGS $CELESTIA_EXTRA_CFLAGS"
-CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_EXTRA_CFLAGS"
-LIBS="$LIBS $CELESTIA_LIBS"
+AC_ARG_ENABLE(gtk, [  --enable-gtk            Use Gtk for an enhanced GUI],
+ enable_gtk="yes", enable_gtk="no")
+
+if test "$enable_gtk" == "yes" ; then
+	dnl Check for GTK libraries
+	AM_PATH_GTK(,,AC_MSG_ERROR([Cannot find proper gtk version]))
+
+	GTKGL_LIBS=-lgtkgl
+fi
+AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" == "yes")
+ 
+
+CFLAGS="$CFLAGS $CELESTIAFLAGS $CELESTIA_CFLAGS $GTK_CFLAGS"
+CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_CXXFLAGS $GTK_CFLAGS"
+LIBS="$LIBS $CELESTIA_LIBS $GTK_LIBS $GTKGL_LIBS"
 
 dnl Check for X11.
 AC_PATH_XTRA
