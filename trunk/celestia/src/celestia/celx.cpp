@@ -1978,6 +1978,63 @@ static int observer_gotolocation(lua_State* l)
 }
 
 
+static int observer_gotodistance(lua_State* l)
+{
+    checkArgs(l, 2, 5, "One to four arguments expected to observer:gotodistance");
+
+    Observer* o = this_observer(l);
+    Selection* sel = to_object(l, 2);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First arg to observer:gotodistance must be object");
+        lua_error(l);
+    }
+
+    double distance = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotodistance must be a number", 20000);
+    double travelTime = safeGetNumber(l, 4, WrongType, "Third arg to observer:gotodistance must be a number", 5.0);
+
+    Vec3f up(0,1,0);
+    if (lua_gettop(l) > 4)
+    {
+        Vec3d* up_arg = to_vector(l, 5);
+        if (up_arg == NULL)
+        {
+            lua_pushstring(l, "Fourth arg to observer:gotodistance must be a vector");
+            lua_error(l);
+        }
+        up.x = (float)up_arg->x;
+        up.y = (float)up_arg->y;
+        up.z = (float)up_arg->z;
+    }
+
+    o->gotoSelection(*sel, travelTime, astro::kilometersToLightYears(distance), up, astro::Universal);
+
+    return 0;
+}
+
+
+static int observer_gotosurface(lua_State* l)
+{
+    checkArgs(l, 2, 3, "One to two arguments expected to observer:gotosurface");
+
+    Observer* o = this_observer(l);
+    Selection* sel = to_object(l, 2);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First arg to observer:gotosurface must be object");
+        lua_error(l);
+    }
+
+    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotosurface must be a number", 5.0);
+
+    // This is needed because gotoSurface expects frame to be geosync:
+    o->geosynchronousFollow(*sel);
+    o->gotoSurface(*sel, travelTime);
+
+    return 0;
+}
+
+
 static int observer_center(lua_State* l)
 {
     checkArgs(l, 2, 3, "Expected one or two arguments for to observer:center");
@@ -2291,6 +2348,8 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "goto", observer_goto);
     RegisterMethod(l, "gotolonglat", observer_gotolonglat);
     RegisterMethod(l, "gotolocation", observer_gotolocation);
+    RegisterMethod(l, "gotodistance", observer_gotodistance);
+    RegisterMethod(l, "gotosurface", observer_gotosurface);
     RegisterMethod(l, "setposition", observer_setposition);
     RegisterMethod(l, "lookat", observer_lookat);
     RegisterMethod(l, "setorientation", observer_setorientation);
