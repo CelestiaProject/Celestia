@@ -27,6 +27,7 @@ libcelengine_a_SOURCES = \
 	galaxy.cpp \
 	glcontext.cpp \
 	glext.cpp \
+	image.cpp \
 	location.cpp \
 	lodspheremesh.cpp \
 	marker.cpp \
@@ -59,5 +60,6 @@ libcelengine_a_SOURCES = \
 	universe.cpp \
 	vertexlist.cpp \
 	vertexprog.cpp \
+	virtualtex.cpp \
         vsop87.cpp
 
