@@ -103,6 +103,12 @@ Texture* CreateDDSTexture(const string& filename)
 
     DDSurfaceDesc ddsd;
     in.read(reinterpret_cast<char*>(&ddsd), sizeof ddsd);
+        LE_TO_CPU_INT32(ddsd.size, ddsd.size);
+        LE_TO_CPU_INT32(ddsd.pitch, ddsd.pitch);
+        LE_TO_CPU_INT32(ddsd.width, ddsd.width);
+        LE_TO_CPU_INT32(ddsd.height, ddsd.height);
+        LE_TO_CPU_INT32(ddsd.mipMapLevels, ddsd.mipMapLevels);
+        LE_TO_CPU_INT32(ddsd.format.fourCC, ddsd.format.fourCC);
 
     int format = 0;
     int mipMapSizeFactor = 1;
