@@ -171,9 +171,17 @@ const string& Greek::canonicalAbbreviation(const std::string& letter)
 {
     if (instance == NULL)
         instance = new Greek();
-    for (int i = 0; i < Greek::instance->nLetters; i++)
+
+    int i;
+    for (i = 0; i < Greek::instance->nLetters; i++)
     {
         if (compareIgnoringCase(letter, instance->names[i]) == 0)
+            return instance->abbrevs[i];
+    }
+
+    for (i = 0; i < Greek::instance->nLetters; i++)
+    {
+        if (compareIgnoringCase(letter, instance->abbrevs[i]) == 0)
             return instance->abbrevs[i];
     }
 
