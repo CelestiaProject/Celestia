@@ -216,7 +216,7 @@ NSString* fatalErrorMessage;
     // paste URL if pending
     if (pendingUrl != nil )
     {
-        [ appCore goToUrl: pendingUrl ];
+        [ appCore setStartURL: pendingUrl ];
     }
         
     ready = YES;

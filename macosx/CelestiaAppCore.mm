@@ -481,6 +481,11 @@ static NSMutableDictionary* tagDict;
     appCore->goToUrl([url stdString]);
 }
 
+-(void)setStartURL:(NSString *)url
+{
+    appCore->setStartURL([url stdString]);
+}
+
 -(unsigned int) getLocationFilter
 {
     return appCore->getSimulation()->getActiveObserver()->getLocationFilter();
