@@ -1,10 +1,13 @@
 dnl
 dnl Celestia autoconf file
+dnl Process this file with autoconf to make a configure script
 dnl
 
-AC_INIT(src/glutmain.cpp)
-AM_INIT_AUTOMAKE(Celestia, 1.0.10)
+AC_INIT(configure.in)
+AM_INIT_AUTOMAKE(Celestia, 1.1.2)
 AM_CONFIG_HEADER(config.h)
+
+AM_ACLOCAL_INCLUDE(macros)
 
 dnl Check system type
 AC_CANONICAL_HOST
@@ -87,23 +90,23 @@ AC_ARG_ENABLE(gtk, [  --enable-gtk            Use Gtk for an enhanced GUI],
  enable_gtk="yes", enable_gtk="no")
 
 if test "$enable_gtk" == "yes" ; then
-	dnl Check for GTK libraries
-	AM_PATH_GTK(,,AC_MSG_ERROR([Cannot find proper gtk version]))
-
+	GNOME_INIT
+	GNOME_COMPILE_WARNINGS
+	GNOME_X_CHECKS
 	GTKGL_LIBS=-lgtkgl
+else
+	dnl Check for X11.
+	AC_PATH_XTRA
+
+	LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm $X_EXTRA_LIBS"
+	CFLAGS="$CFLAGS $X_CFLAGS"
 fi
 AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" == "yes")
  
 
-CFLAGS="$CFLAGS $CELESTIAFLAGS $CELESTIA_CFLAGS $GTK_CFLAGS"
-CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_CXXFLAGS $GTK_CFLAGS"
-LIBS="$LIBS $CELESTIA_LIBS $GTK_LIBS $GTKGL_LIBS"
-
-dnl Check for X11.
-AC_PATH_XTRA
-
-LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm $X_EXTRA_LIBS"
-CFLAGS="$CFLAGS $X_CFLAGS"
+CFLAGS="$CFLAGS $CELESTIAFLAGS $CELESTIA_CFLAGS $GTK_CFLAGS $GNOME_CFLAGS"
+CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_CXXFLAGS $GTK_CFLAGS $GNOME_CFLAGS $GNOME_INCLUDEDIR"
+LIBS="$LIBS $CELESTIA_LIBS $GTK_LIBS $GNOME_LIBS $GNOMEUI_LIBS $GTKGL_LIBS"
 
 dnl Check for OpenGL. Taken partly from the plib sources.
 AC_CHECK_LIB(GL,glNewList)
