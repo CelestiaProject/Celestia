@@ -16,20 +16,16 @@
  ***************************************************************************/
 
 #include <kdialogbase.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <klocale.h>
-#include <kiconloader.h>
-#include <qframe.h>
-#include <qgrid.h>
-#include <qvbox.h>
-#include <qcheckbox.h>
-#include <qvgroupbox.h>
-#include <qslider.h>
-#include <kkeydialog.h>
-#include <kdatepicker.h>
 
 #include "celestiacore.h"
+
+class QLabel;
+class QSpinBox;
+class QComboBox;
+class QCheckBox;
+class KKeyChooser;
+
+class KdeApp;
 
 class KdePreferencesDialog : public KDialogBase {
 Q_OBJECT
@@ -44,10 +40,13 @@ public slots:
     void slotCancel();
     void setNow();
     void slotTimeHasChanged();
+    void slotAmbientLightLevel(int l);
+    void slotFaintestVisible(int m);
 
 protected:
     CelestiaCore* appCore;
-
+    KdeApp* parent;
+    
     KKeyChooser* keyChooser;
 
     int savedRendererFlags;
@@ -63,10 +62,11 @@ protected:
 
     QComboBox* displayTimezoneCombo;
     QComboBox* setTimezoneCombo;
-    KDatePicker* datePicker;
+    QSpinBox *YSpin, *MSpin, *DSpin;
 
-    QComboBox *hCombo, *mCombo, *sCombo;
+    QSpinBox *hSpin, *mSpin, *sSpin;
 
     QCheckBox *pixelShaderCheck, *vertexShaderCheck;
+    QLabel* ambientLabel, *faintestLabel;
 };        
 

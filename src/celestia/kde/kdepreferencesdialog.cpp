@@ -16,14 +16,25 @@
  ***************************************************************************/
 
 #include <time.h>
-#include "kdepreferencesdialog.h"
-#include "celengine/render.h"
 #include <qvbox.h>
 #include <kmainwindow.h>
 #include <kpushbutton.h>
 #include <qtextedit.h>
+#include <qcombobox.h>
+#include <klocale.h>
+#include <kiconloader.h>
+#include <qframe.h>
+#include <qgrid.h>
+#include <qcheckbox.h>
+#include <qvgroupbox.h>
+#include <qslider.h>
+#include <kkeydialog.h>
+#include <qspinbox.h>
+#include <qlabel.h>
 
 #include "kdeapp.h"
+#include "kdepreferencesdialog.h"
+#include "celengine/render.h"
 
 KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) :
     KDialogBase (KDialogBase::IconList, "",
@@ -32,6 +43,8 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
 
     setCaption(i18n("Celestia Preferences"));
     appCore=core;
+    
+    this->parent = (KdeApp*)parent;
   
     // Render page
     QGrid* renderFrame = addGridPage(2, Qt::Horizontal, i18n("Rendering"), i18n("Rendering"),
@@ -143,14 +156,25 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     showSpacecraftLabelsCheck->setChecked(labelMode & Renderer::SpacecraftLabels);
 
     savedAmbientLightLevel = int(appCore->getRenderer()->getAmbientLightLevel() * 100);
-    QGroupBox* ambientLightGroup = new QGroupBox(1, Qt::Horizontal, i18n("Ambient Light"), vbox1);
+    QGroupBox* ambientLightGroup = new QGroupBox(1, Qt::Vertical, i18n("Ambient Light"), vbox1);
     QSlider* ambientLightSlider = new QSlider(0, 25, 1, savedAmbientLightLevel, Qt::Horizontal, ambientLightGroup);
-    ((KdeApp*)parent)->connect(ambientLightSlider, SIGNAL(valueChanged(int)), SLOT(slotAmbientLightLevel(int)));
+    connect(ambientLightSlider, SIGNAL(valueChanged(int)), SLOT(slotAmbientLightLevel(int)));
+    ambientLabel = new QLabel(ambientLightGroup);
+    ambientLabel->setMinimumWidth(40);
+    ambientLabel->setAlignment(Qt::AlignRight);
+    char buff[20];
+    sprintf(buff, "%.2f", savedAmbientLightLevel / 100.);
+    ambientLabel->setText(buff);
 
-    savedFaintestVisible = int(appCore->getSimulation()->getFaintestVisible());
-    QGroupBox* faintestVisibleGroup = new QGroupBox(1, Qt::Horizontal, i18n("Limiting Magnitude"), vbox1);
-    QSlider* faintestVisibleSlider = new QSlider(1, 12, 1, savedFaintestVisible, Qt::Horizontal, faintestVisibleGroup);
-    ((KdeApp*)parent)->connect(faintestVisibleSlider, SIGNAL(valueChanged(int)), SLOT(slotFaintestVisible(int)));
+    savedFaintestVisible = int(appCore->getSimulation()->getFaintestVisible() * 100);
+    QGroupBox* faintestVisibleGroup = new QGroupBox(1, Qt::Vertical, i18n("Limiting Magnitude"), vbox1);
+    QSlider* faintestVisibleSlider = new QSlider(1, 1200, 1, savedFaintestVisible, Qt::Horizontal, faintestVisibleGroup);
+    connect(faintestVisibleSlider, SIGNAL(valueChanged(int)), SLOT(slotFaintestVisible(int)));
+    faintestLabel = new QLabel(faintestVisibleGroup);
+    faintestLabel->setMinimumWidth(40);
+    faintestLabel->setAlignment(Qt::AlignRight);
+    sprintf(buff, "%.2f", savedFaintestVisible / 100.);
+    faintestLabel->setText(buff);
 
     QGroupBox* infoTextGroup = new QGroupBox(1, Qt::Vertical, i18n("Info Text"), vbox1);
     new QLabel(i18n("Level: "), infoTextGroup);
@@ -172,61 +196,74 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     new QLabel(i18n("Timezone: "), displayTimezoneGroup);
     displayTimezoneCombo = new QComboBox(displayTimezoneGroup);
     displayTimezoneCombo->insertItem(i18n("UTC"));
-    displayTimezoneCombo->insertItem(i18n("Local Time") + " (" + tzname[daylight?0:1] + ")");
+    displayTimezoneCombo->insertItem(i18n("Local Time"));
     displayTimezoneCombo->setCurrentItem((appCore->getTimeZoneBias()==0)?0:1);
     ((KdeApp*)parent)->connect(displayTimezoneCombo, SIGNAL(activated(int)), SLOT(slotDisplayLocalTime()));
     displayTimezoneGroup->addSpace(0);
 
-    QGroupBox* setTimezoneGroup = new QGroupBox(2, Qt::Horizontal, i18n("Set"), timeFrame);
-    datePicker = new KDatePicker(setTimezoneGroup);
-
-    QVBox *vbox3 = new QVBox(setTimezoneGroup);
-    QHBox *hbox2 = new QHBox(vbox3);
+    QGroupBox* setTimezoneGroup = new QGroupBox(1, Qt::Horizontal, i18n("Set"), timeFrame);
+    new QLabel(i18n("Local Time is only supported for dates between 1902 and 2037."), setTimezoneGroup);   
+    QHBox *hbox2 = new QHBox(setTimezoneGroup);
     new QLabel(i18n("Timezone: "), hbox2);
     setTimezoneCombo = new QComboBox(hbox2);
     setTimezoneCombo->insertItem(i18n("UTC"));
-    setTimezoneCombo->insertItem(i18n("Local Time") + " (" + tzname[daylight?0:1] + ")");
+    setTimezoneCombo->insertItem(i18n("Local Time"));
     setTimezoneCombo->setCurrentItem((appCore->getTimeZoneBias()==0)?0:1);
-
+    
+    QHBox *hboxdate = new QHBox(setTimezoneGroup);
+    QLabel* spacerdate1 = new QLabel(" ", hboxdate);
+    timeFrame->setStretchFactor(spacerdate1, 2);
+    YSpin = new QSpinBox(-1000000000, 1000000000, 1, hboxdate);
+    MSpin = new QSpinBox(1, 12, 1, hboxdate);
+    DSpin = new QSpinBox(1, 31, 1, hboxdate);
+    QLabel* spacerdate2 = new QLabel(" ", hboxdate);
+    timeFrame->setStretchFactor(spacerdate2, 2);
+  
+    QVBox *vbox3 = new QVBox(setTimezoneGroup);
     QHBox *hbox3 = new QHBox(vbox3);
     QLabel* spacer1 = new QLabel(" ", hbox3);
     hbox3->setStretchFactor(spacer1, 10);
-    hCombo = new QComboBox(hbox3);
+    hSpin = new QSpinBox(0, 23, 1, hbox3);
     new QLabel(":", hbox3);
-    mCombo = new QComboBox(hbox3);
+    mSpin = new QSpinBox(0, 59, 1, hbox3);
     new QLabel(":", hbox3);
-    sCombo = new QComboBox(hbox3);
+    sSpin = new QSpinBox(0, 59, 1, hbox3);
     QLabel* spacer2 = new QLabel(" ", hbox3);
     hbox3->setStretchFactor(spacer2, 10);
-
-    for (int i=0; i<24 ; i++) {
-        char buff[4];
-        sprintf(buff, "%02d", i);
-        hCombo->insertItem(buff);
-    }
-    for (int i=0; i<60 ; i++) {
-        char buff[4];
-        sprintf(buff, "%02d", i);
-        mCombo->insertItem(buff);
-        sCombo->insertItem(buff);
-    }
 
     QLabel* spacer3 = new QLabel(" ", timeFrame);
     timeFrame->setStretchFactor(spacer3, 2);
 
-    astro::Date date(appCore->getSimulation()->getTime() +
-                     astro::secondsToJulianDate(appCore->getTimeZoneBias()));
-    hCombo->setCurrentItem(date.hour);
-    mCombo->setCurrentItem(date.minute);
-    sCombo->setCurrentItem(int(date.seconds));
-    QDate qdate(date.year, date.month, date.day);
-    datePicker->setDate(qdate);
-    connect(datePicker, SIGNAL(dateChanged(QDate)), SLOT(slotTimeHasChanged()));
-    connect(hCombo, SIGNAL(activated(int)), SLOT(slotTimeHasChanged()));
-    connect(mCombo, SIGNAL(activated(int)), SLOT(slotTimeHasChanged()));
-    connect(sCombo, SIGNAL(activated(int)), SLOT(slotTimeHasChanged()));
+    if (appCore->getTimeZoneBias() != 0 && appCore->getSimulation()->getTime() < 2465442 
+    		&& appCore->getSimulation()->getTime() > 2415733) { 
+    	time_t date_t = (int) astro::julianDateToSeconds( appCore->getSimulation()->getTime() 
+    			- (float)astro::Date(1970, 1, 1) );
 
-    KPushButton *nowButton = new KPushButton(vbox3);
+    	struct tm* tm;
+    	tm = localtime ( &date_t); 
+	YSpin->setValue(tm->tm_year + 1900);
+	MSpin->setValue(tm->tm_mon + 1);
+	DSpin->setValue(tm->tm_mday);    
+	hSpin->setValue(tm->tm_hour);
+	mSpin->setValue(tm->tm_min);
+	sSpin->setValue(tm->tm_sec);    
+    } else {
+        astro::Date date(appCore->getSimulation()->getTime());
+	YSpin->setValue(date.year);
+	MSpin->setValue(date.month);
+	DSpin->setValue(date.day);    
+        hSpin->setValue(date.hour);
+        mSpin->setValue(date.minute);
+        sSpin->setValue(int(date.seconds));
+    }
+    connect(YSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
+    connect(MSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
+    connect(DSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
+    connect(hSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
+    connect(mSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
+    connect(sSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
+
+    KPushButton *nowButton = new KPushButton(setTimezoneGroup);
     nowButton->setText(i18n("Now"));
     QSizePolicy nowButtonSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     nowButton->setSizePolicy(nowButtonSizePolicy);
@@ -273,17 +310,21 @@ KdePreferencesDialog::~KdePreferencesDialog() {
   
 
 void KdePreferencesDialog::setNow() {
-    QDateTime qdate=QDateTime::currentDateTime();
-    if (setTimezoneCombo->currentItem()==0) {
-        qdate=qdate.addSecs(timezone-3600*daylight);
+    time_t date_t;
+    time(&date_t);
+
+    struct tm* tm;
+    if (setTimezoneCombo->currentItem() != 0) { 
+    	tm = localtime ( &date_t); 
+    } else {
+    	tm = gmtime ( &date_t);   
     }
-
-    datePicker->setDate(qdate.date());
-
-    QTime qtime=qdate.time();
-    hCombo->setCurrentItem(qtime.hour());
-    mCombo->setCurrentItem(qtime.minute());
-    sCombo->setCurrentItem(qtime.second());
+	YSpin->setValue(tm->tm_year + 1900);
+	MSpin->setValue(tm->tm_mon + 1);
+	DSpin->setValue(tm->tm_mday);    
+	hSpin->setValue(tm->tm_hour);
+	mSpin->setValue(tm->tm_min);
+	sSpin->setValue(tm->tm_sec);    
 }
 
 void KdePreferencesDialog::slotOk() {
@@ -295,17 +336,8 @@ void KdePreferencesDialog::slotCancel() {
     appCore->getRenderer()->setRenderFlags(savedRendererFlags);
     appCore->getRenderer()->setLabelMode(savedLabelMode);
     appCore->getRenderer()->setAmbientLightLevel(savedAmbientLightLevel/100.);
-    appCore->getSimulation()->setFaintestVisible(savedFaintestVisible);
+    appCore->getSimulation()->setFaintestVisible(savedFaintestVisible/100.);
     appCore->setHudDetail(savedHudDetail);
-    if (savedDisplayLocalTime != appCore->getTimeZoneBias()) {
-        if (appCore->getTimeZoneBias()) {
-            appCore->setTimeZoneBias(0);
-            appCore->setTimeZoneName(i18n("UTC").latin1());
-        } else {
-            appCore->setTimeZoneBias(-timezone+3600*daylight);
-            appCore->setTimeZoneName(tzname[daylight?0:1]);
-        }
-    }
     appCore->getRenderer()->setVertexShaderEnabled(savedVertexShader);
     appCore->getRenderer()->setFragmentShaderEnabled(savedPixelShader);
 
@@ -317,7 +349,7 @@ void KdePreferencesDialog::slotApply() {
     savedRendererFlags = appCore->getRenderer()->getRenderFlags();
     savedLabelMode = appCore->getRenderer()->getLabelMode();
     savedAmbientLightLevel = int(appCore->getRenderer()->getAmbientLightLevel() * 100);
-    savedFaintestVisible = appCore->getSimulation()->getFaintestVisible();
+    savedFaintestVisible = appCore->getSimulation()->getFaintestVisible() * 100;
     savedHudDetail = appCore->getHudDetail();
     savedDisplayLocalTime = appCore->getTimeZoneBias();
     savedVertexShader = appCore->getRenderer()->getVertexShaderEnabled();
@@ -326,20 +358,48 @@ void KdePreferencesDialog::slotApply() {
     keyChooser->commitChanges();
 
     if (timeHasChanged) {
+      if (setTimezoneCombo->currentItem() == 0 || YSpin->value() < 1902 || YSpin->value() > 2037) {  
         astro::Date date(0.0);
-        QDate qdate=datePicker->getDate();
-        date.year=qdate.year();
-        date.month=qdate.month();
-        date.day=qdate.day();
-        date.hour=hCombo->currentItem();
-        date.minute=mCombo->currentItem();
-        date.seconds=float(sCombo->currentItem());
-        appCore->getSimulation()->setTime((double) date - ((setTimezoneCombo->currentItem()==0) ? 0 : astro::secondsToJulianDate(-timezone+3600*daylight)));
+        date.year=YSpin->value();
+        date.month=MSpin->value();
+        date.day=DSpin->value();        
+        date.hour=hSpin->value();
+        date.minute=mSpin->value();
+        date.seconds=float(sSpin->value());
+        appCore->getSimulation()->setTime((double) date);
         appCore->getSimulation()->update(0.0);
+      } else {
+        struct tm time;
+        time.tm_year = YSpin->value() - 1900;
+        time.tm_mon = MSpin->value() - 1;
+        time.tm_mday = DSpin->value();
+        time.tm_hour = hSpin->value();
+        time.tm_min = mSpin->value();
+        time.tm_sec = sSpin->value();
+        appCore->getSimulation()->setTime(astro::secondsToJulianDate(mktime(&time)) + (double) astro::Date(1970, 1, 1));
+        appCore->getSimulation()->update(0.0);       
+      }
     }
 }
 
 void KdePreferencesDialog::slotTimeHasChanged() {
     timeHasChanged = true;
 }
+
+void KdePreferencesDialog::slotFaintestVisible(int m) {
+    char buff[20];
+    
+    parent->slotFaintestVisible(m / 100.);
+    sprintf(buff, "%.2f", m / 100.);
+    faintestLabel->setText(buff);
+}
+
+void KdePreferencesDialog::slotAmbientLightLevel(int l) {
+    char buff[20];
+    
+    parent->slotAmbientLightLevel(l / 100.);
+    sprintf(buff, "%.2f", l / 100.);
+    ambientLabel->setText(buff);
+}
+
 
