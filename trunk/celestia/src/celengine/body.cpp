@@ -337,6 +337,25 @@ Mat4d Body::getGeographicToHeliocentric(double when)
 }
 
 
+Vec3f Body::planetocentricToCartesian(float lon, float lat, float alt) const
+{
+    float phi = -degToRad(lat) + (float) PI / 2;
+    float theta = degToRad(lon) - (float) PI;
+
+    Vec3f pos((float) (cos(theta) * sin(phi)),
+              (float) (cos(phi)),
+              (float) (-sin(theta) * sin(phi)));
+
+    return pos * (getRadius() + alt);
+}
+
+
+Vec3f Body::planetocentricToCartesian(const Vec3f& lonLatAlt) const
+{
+    return planetocentricToCartesian(lonLatAlt.x, lonLatAlt.y, lonLatAlt.z);
+}
+
+
 bool Body::extant(double t) const
 {
     return t >= protos && t < eschatos;

@@ -162,6 +162,9 @@ class Body
     Quatd getEclipticalToGeographic(double);
     Mat4d getGeographicToHeliocentric(double);
 
+    Vec3f planetocentricToCartesian(float lon, float lat, float alt) const;
+    Vec3f planetocentricToCartesian(const Vec3f& lonLatAlt) const;
+
     bool extant(double) const;
     void setLifespan(double, double);
 
