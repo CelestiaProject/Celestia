@@ -129,7 +129,6 @@ Command* CommandParser::parseCommand()
     Hash* paramList = paramListValue->getHash();
     Command* cmd = NULL;
 
-    cout << "parsing: " << commandName << '\n';
     if (commandName == "wait")
     {
         double duration = 1.0;

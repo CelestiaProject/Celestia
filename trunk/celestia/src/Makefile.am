@@ -23,6 +23,7 @@ celestia_SOURCES = \
 	glext.cpp \
 	meshmanager.cpp \
 	observer.cpp \
+	octree.cpp \
 	orbit.cpp \
 	overlay.cpp \
 	parser.cpp \

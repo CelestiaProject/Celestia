@@ -39,8 +39,8 @@ Simulation::Simulation() :
     initialVelocity(0.0, 0.0, 0.0),
     beginAccelTime(0.0),
     observerMode(Free),
-    hudDetail(1),
-    faintestVisible(5.0f)
+    faintestVisible(5.0f),
+    hudDetail(1)
 {
 }
 
@@ -260,10 +260,9 @@ void Simulation::setStarDatabase(StarDatabase* db,
         visibleStars->updateAll(observer);
 
         visTree = new StarOctree(Point3f(1000, 1000, 1000), 5000.0f, 6.0f);
-        for (int i = 0; i < db->size(); i++)
-        {
+        for (int i = 0; i < (int) db->size(); i++)
             visTree->insertStar(*db->getStar(i));
-        }
+
         cout << "Node count: " << visTree->countNodes() << "\n";
         cout << "Total stars: " << visTree->countStars() << "\n";
     }
@@ -379,7 +378,7 @@ void Simulation::update(double dt)
     // Find the closest solar system
     Point3f observerPos = (Point3f) observer.getPosition();
     vector<uint32>* closeStars = visibleStars->getCloseSet();
-    for (int i = 0; i < closeStars->size(); i++)
+    for (int i = 0; i < (int) closeStars->size(); i++)
     {
         uint32 starIndex = (*closeStars)[i];
         Star* star = stardb->getStar(starIndex);
@@ -544,7 +543,7 @@ Selection Simulation::pickObject(Vec3f pickRay)
     vector<uint32>* closeStars = visibleStars->getCloseSet();
     Selection sel;
 
-    for (int i = 0; i < closeStars->size(); i++)
+    for (int i = 0; i < (int) closeStars->size(); i++)
     {
         uint32 starIndex = (*closeStars)[i];
         Star* star = stardb->getStar(starIndex);

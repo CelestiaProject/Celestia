@@ -21,10 +21,10 @@ static bool issep(char c)
 
 Tokenizer::Tokenizer(istream* _in) :
     in(_in),
-    haveValidName(false),
-    haveValidNumber(false),
-    haveValidString(false),
     tokenType(TokenBegin),
+    haveValidNumber(false),
+    haveValidName(false),
+    haveValidString(false),
     pushedBack(false)
 {
 }
@@ -32,9 +32,7 @@ Tokenizer::Tokenizer(istream* _in) :
 
 Tokenizer::TokenType Tokenizer::nextToken()
 {
-    bool complete = false;
     State state = StartState;
-    TokenType type = TokenNull;
 
     if (pushedBack)
     {
