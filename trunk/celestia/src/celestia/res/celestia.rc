@@ -137,18 +137,23 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOG DISCARDABLE  100, 50, 310, 97
+IDD_ABOUT DIALOG DISCARDABLE  100, 50, 310, 200
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
+    DEFPUSHBUTTON   "OK",IDOK,131,175,50,14
     CTEXT           "Celestia 1.2.6",IDC_STATIC,6,7,297,9
-    CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
+    CTEXT           "Copyright (C) 2001-2003, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
-                    IDC_STATIC,6,53,297,9
+                    IDC_STATIC,6,33,297,9
     CTEXT           "Celestia is free software and comes with absolutely no warranty.",
-                    IDC_STATIC,6,36,297,9
+                    IDC_STATIC,6,56,297,9
+    CTEXT           "Authors",IDC_STATIC,6,85,297,9
+    CTEXT           "Chris Laurel",IDC_STATIC,6,97,297,9
+    CTEXT           "Clint Weisbrod",IDC_STATIC,6,109,297,9
+    CTEXT           "Fridger Schrempp",IDC_STATIC,6,121,297,9
+    CTEXT           "Christophe Teyssier",IDC_STATIC,6,133,297,9
 END
 
 IDD_FINDOBJECT DIALOG DISCARDABLE  100, 50, 140, 54
@@ -602,7 +607,7 @@ BEGIN
             VALUE "FileDescription", "celestia\0"
             VALUE "FileVersion", "1, 0, 0, 1\0"
             VALUE "InternalName", "celestia\0"
-            VALUE "LegalCopyright", "Copyright © 2001, Chris Laurel\0"
+            VALUE "LegalCopyright", "Copyright © 2001-2003, Chris Laurel\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "celestia.exe\0"
             VALUE "PrivateBuild", "\0"
