@@ -959,7 +959,7 @@ static Texture* CreateTextureFromImage(Image& img,
     // when rendered on current hardware.
     if (!isPow2(img.getWidth()) || !isPow2(img.getHeight()))
     {
-        DPRINTF(0, "Texture has non-power of two dimensions.\n");
+        clog << "Texture has non-power of two dimensions.\n";
         return NULL;
     }
 
