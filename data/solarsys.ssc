@@ -15,8 +15,8 @@ Planets [
 	SemiMajorAxis     0.3871
 	Eccentricity      0.2056
 	Inclination       7.0049
-	AscendingNode    77.456
-	ArgOfPeriapsis   48.331
+	AscendingNode    48.33167
+	LongOfPericenter 77.456
         MeanLongitude   252.251
 
 	RotationPeriod 1047.51
@@ -35,9 +35,9 @@ Planets [
 	SemiMajorAxis     0.7233
 	Eccentricity      0.0068
 	Inclination       3.3947
-	AscendingNode   131.533
-	ArgOfPeriapsis   76.681
-        MeanLongitude   181.979
+	AscendingNode     76.681
+	LongOfPericenter 131.533
+        MeanLongitude    181.979
 
 	RotationPeriod  5832.444
 	Obliquity       177.4
@@ -58,8 +58,8 @@ Planets [
 	SemiMajorAxis     1.0000
 	Eccentricity      0.0167
 	Inclination       0.0001
-	AscendingNode   102.947
-	ArgOfPeriapsis  348.739
+	AscendingNode   348.739
+	LongOfPericenter 102.947
         MeanLongitude   100.464
 
 	RotationPeriod   23.93419
@@ -95,7 +95,7 @@ Planets [
 		Eccentricity      0.0000831
 		Inclination      51.6461
 		AscendingNode    83.8459
-		ArgOfPeriapsis  296.4901
+		ArgOfPericenter 296.4901
 		MeanAnomaly      63.6005
 
 		Albedo 	      0.10
@@ -118,9 +118,9 @@ Planets [
 	SemiMajorAxis     1.5237
 	Eccentricity      0.0934
 	Inclination       1.8506
-	AscendingNode   336.041
-	ArgOfPeriapsis   49.479
-        MeanLongitude   355.453
+	AscendingNode     49.479
+	LongOfPericenter 336.041
+        MeanLongitude    355.453
 
 	RotationPeriod    24.622962
 	Obliquity         23.98
@@ -163,6 +163,7 @@ Planets [
 {
 	Name   "Jupiter"
 	Texture "jupiter.jpg"
+
 	Radius 71398
 	Oblateness 0.064
 
@@ -171,8 +172,8 @@ Planets [
 	SemiMajorAxis     5.2034
 	Eccentricity      0.0484
 	Inclination       1.3053
-	AscendingNode    14.7539
-	ArgOfPeriapsis  100.556
+	AscendingNode   100.556
+	LongOfPericenter 14.7539
         MeanLongitude    34.404
 
 	RotationPeriod    9.92425
@@ -282,8 +283,8 @@ Planets [
 	SemiMajorAxis     9.5371
 	Eccentricity      0.0542
 	Inclination       2.4845
-	AscendingNode    92.432
-	ArgOfPeriapsis  113.715
+	AscendingNode   113.715
+	LongOfPericenter 92.432
         MeanLongitude    49.944
 
 	RotationPeriod   10.65622
@@ -446,9 +447,9 @@ Planets [
 	SemiMajorAxis    19.1913
 	Eccentricity      0.0472
 	Inclination       0.7699
-	AscendingNode   170.964
-	ArgOfPeriapsis   74.230
-        MeanLongitude   313.232
+	AscendingNode     74.230
+	LongOfPericenter 170.964
+        MeanLongitude    313.232
 
 	RotationPeriod   17.24
 	Obliquity        97.92
@@ -530,8 +531,8 @@ Planets [
 	SemiMajorAxis     30.0690
 	Eccentricity      0.0086
 	Inclination       1.7692
-	AscendingNode    44.971
-	ArgOfPeriapsis  131.722
+	AscendingNode   131.722
+	LongOfPericenter 44.971
         MeanLongitude   304.880
 
 	RotationPeriod   16.11
@@ -592,13 +593,13 @@ Planets [
 	Radius 1137
 
 	# orbital data
-	Period           248.54
+	Period            248.54
 	SemiMajorAxis     39.48168677
-	Eccentricity      0.24880766
-	Inclination      17.14175
-	AscendingNode   224.06776
-	ArgOfPeriapsis  110.30347
-        MeanLongitude   238.92881
+	Eccentricity       0.24880766
+	Inclination       17.14175
+	AscendingNode    110.30347
+	LongOfPericenter 224.06776
+        MeanLongitude    238.92881
 
 	RotationPeriod  153.29
 	Obliquity        28.8
@@ -634,7 +635,7 @@ Planets [
 	Eccentricity      0.0774
 	Inclination      10.581
 	AscendingNode    80.530
-	ArgOfPeriapsis   73.460
+	ArgOfPericenter  73.460
         MeanAnomaly     207.082
 
 	RotationPeriod    9.075
@@ -651,7 +652,7 @@ Planets [
 	Eccentricity      0.2323
 	Inclination      34.823
 	AscendingNode   173.237
-	ArgOfPeriapsis  309.824
+	ArgOfPericenter 309.824
         MeanAnomaly     194.832
 
 	RotationPeriod    7.811
@@ -668,7 +669,7 @@ Planets [
 	Eccentricity      0.2579
 	Inclination      12.97
 	AscendingNode    90.0
-	ArgOfPeriapsis  180.0
+	ArgOfPericenter 180.0
         MeanAnomaly     270.0
 
 	RotationPeriod    7.811
@@ -686,7 +687,7 @@ Planets [
 	Eccentricity      0.0904
 	Inclination       7.135
 	AscendingNode   103.962
-	ArgOfPeriapsis  149.854
+	ArgOfPericenter 149.854
         MeanAnomaly     138.500
 
 	RotationPeriod    5.342
@@ -704,7 +705,7 @@ Planets [
 	Eccentricity      0.0451
 	Inclination       1.14
 	AscendingNode   324.419
-	ArgOfPeriapsis  112.419
+	ArgOfPericenter 112.419
         MeanAnomaly      92.511
 
 	RotationPeriod    4.633
@@ -740,7 +741,7 @@ Planets [
 	Eccentricity      0.2230
 	Inclination      10.831
 	AscendingNode   304.435
-	ArgOfPeriapsis    0.987
+	ArgOfPericenter   0.987
         MeanAnomaly     310.0
 
 	RotationPeriod    5.270
@@ -762,7 +763,7 @@ Planets [
 	Eccentricity      0.634
 	Inclination       0.5
 	AscendingNode   128.2
-	ArgOfPeriapsis  274.8
+	ArgOfPericenter 274.8
         MeanAnomaly      36.7
 	# Epoch        20010401
 
@@ -785,7 +786,7 @@ Planets [
 	Eccentricity      0.3354
 	Inclination      13.34
 	AscendingNode   337.352
-	ArgOfPeriapsis  276.756
+	ArgOfPericenter 276.756
         MeanAnomaly     180.595
 	Epoch      2450800.5
 
@@ -808,7 +809,7 @@ Planets [
 	Eccentricity      0.2535
 	Inclination      13.14
 	AscendingNode   337.352
-	ArgOfPeriapsis  276.756
+	ArgOfPericenter 276.756
         MeanAnomaly     180.595
 	Epoch      2450800.5
 
@@ -831,7 +832,7 @@ Planets [
 	Eccentricity      0.9673
 	Inclination       162.24
 	AscendingNode    58.86
-	ArgOfPeriapsis  111.87
+	ArgOfPericenter 111.87
         MeanAnomaly       0.0
 	Epoch       2446480.5
 
@@ -851,7 +852,7 @@ Planets [
 	Eccentricity      0.3806
 	Inclination       6.937
 	AscendingNode   209.381
-	ArgOfPeriapsis  339.483
+	ArgOfPericenter 339.483
         MeanAnomaly      13.177
 	Epoch       2450800.5
 
