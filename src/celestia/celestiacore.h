@@ -209,6 +209,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool isRecording();
 
     void runScript(CommandSequence*);
+    void runScript(const std::string& filename);
     void cancelScript();
 
     int getHudDetail();

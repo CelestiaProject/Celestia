@@ -37,6 +37,10 @@
 // #include <celengine/solarsysxml.h>
 #include <celengine/multitexture.h>
 #include "favorites.h"
+//#define CELX
+#ifdef CELX
+#include "celx.h"
+#endif
 #include "celestiacore.h"
 #include <celutil/debug.h>
 #include "url.h"
@@ -162,7 +166,6 @@ bool View::walkTreeResizeDelta(View* v, float delta, bool check)
    View *p=v;
    int sign = -1;
    float ratio;
-   bool resizePossible;
    double newSize;
 
    if (v->child1)
@@ -416,6 +419,35 @@ void CelestiaCore::runScript(CommandSequence* script)
 {
     if (runningScript == NULL && script != NULL)
         runningScript = new Execution(*script, *execEnv);
+}
+
+
+void CelestiaCore::runScript(const string& filename)
+{
+#ifdef CELX
+    if (runningScript == NULL)
+    {
+        ifstream scriptfile(filename.c_str());
+        if (!scriptfile.good())
+        {
+            flash("Error opening script");
+        }
+
+        LuaState state;
+        state.init(this);
+        int status = state.loadScript(scriptfile);
+        if (status != 0)
+        {
+            char buf[1024];
+            sprintf(buf, "Error %d opening script %s", status, filename.c_str());
+            flash(buf);
+        }
+        else
+        {
+            lua_pcall(state.getState(), 0, 0, 0);
+        }
+    }
+#endif
 }
 
 
