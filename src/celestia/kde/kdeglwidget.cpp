@@ -52,10 +52,11 @@
 KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core )
     : QGLWidget( parent, name )
 {
+
     if (chdir(CONFIG_DATA_DIR) == -1)
     {
-//        cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
-//            "', probably due to improper installation\n";
+        ::std::cout << "Cannot chdir to '" << CONFIG_DATA_DIR << "', probably due to improper installation" << ::std::endl;
+	exit(1);
     }
     
     actionColl = ((KdeApp*)parent)->actionCollection();
