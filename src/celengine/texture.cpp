@@ -740,7 +740,7 @@ void Texture::normalMap(float scale, bool wrap)
             int h10 = (int) pixels[(i0 * width + j1) * components];
             int h01 = (int) pixels[(i1 * width + j0) * components];
             
-            float dx = (float) (h00 - h10) * (1.0f / 255.0f) * scale;
+            float dx = (float) (h10 - h00) * (1.0f / 255.0f) * scale;
             float dy = (float) (h00 - h01) * (1.0f / 255.0f) * scale;
 
             float mag = (float) sqrt(dx * dx + dy * dy + 1.0f);
