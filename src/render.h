@@ -17,8 +17,6 @@
 #include "solarsys.h"
 #include "galaxy.h"
 #include "asterism.h"
-#include "texmanager.h"
-#include "meshmanager.h"
 #include "selection.h"
 #include "texturefont.h"
 
@@ -167,18 +165,21 @@ class Renderer
                       float distance,
                       float appMag,
                       double now,
-                      Quatf orientation);
+                      Quatf orientation,
+                      float, float);
     void renderStar(const Star& star,
                     Point3f pos,
                     float distance,
                     float appMag,
                     Quatf orientation,
-                    double now);
+                    double now,
+                    float, float);
     void renderBodyAsParticle(Point3f center,
                               float appMag,
                               float discSizeInPixels,
                               Color color,
                               const Quatf& orientation,
+                              float renderDistance,
                               bool useHaloes);
     void labelStars(const std::vector<Star*>& stars,
                     const StarDatabase& starDB,
@@ -196,8 +197,6 @@ class Renderer
     float fov;
     float pixelSize;
 
-    TextureManager* textureManager;
-    MeshManager* meshManager;
     TextureFont* font;
 
     int renderMode;
