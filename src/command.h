@@ -208,4 +208,28 @@ class CommandSetOrientation : public InstantaneousCommand
 };
 
 
+class CommandRenderFlags : public InstantaneousCommand
+{
+ public:
+    CommandRenderFlags(int _setFlags, int _clearFlags);
+    void process(Simulation*, Renderer*);
+
+ private:
+    int setFlags;
+    int clearFlags;
+};
+
+
+class CommandLabels : public InstantaneousCommand
+{
+ public:
+    CommandLabels(int _setFlags, int _clearFlags);
+    void process(Simulation*, Renderer*);
+
+ private:
+    int setFlags;
+    int clearFlags;
+};
+
+
 #endif // _COMMAND_H_
