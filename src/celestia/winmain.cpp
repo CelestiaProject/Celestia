@@ -1209,11 +1209,18 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     appInstance = hInstance;
 
+    //Specify some default values in case registry keys are not found.
     AppPreferences prefs;
     prefs.winWidth = 800;
     prefs.winHeight = 600;
     prefs.winX = CW_USEDEFAULT;
     prefs.winY = CW_USEDEFAULT;
+    prefs.ambientLight = 0.1f;  //Low
+    prefs.labelMode = 0;
+    prefs.pixelShader = 0;
+    prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars | Renderer::ShowPlanets;
+    prefs.vertexShader = 0;
+    prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Adjust window dimensions for screen dimensions
