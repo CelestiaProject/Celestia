@@ -473,7 +473,7 @@ void KdeApp::initActions()
     KToggleAction* showGalaxies = new KToggleAction(i18n("Show Galaxies"), Key_U, this, SLOT(slotShowGalaxies()), actionCollection(), "showGalaxies");
     showGalaxies->setChecked(rFlags & Renderer::ShowGalaxies);
 
-    KToggleAction* showPartialTrajectories = new KToggleAction(i18n("Show Partial Trajectories"), Key_U, this, SLOT(slotShowPartialTrajectories()), actionCollection(), "showPartialTrajectories");
+    KToggleAction* showPartialTrajectories = new KToggleAction(i18n("Show Partial Trajectories"), 0, this, SLOT(slotShowPartialTrajectories()), actionCollection(), "showPartialTrajectories");
     showPartialTrajectories->setChecked(rFlags & Renderer::ShowPartialTrajectories);
 
     KToggleAction* showNebulae = new KToggleAction(i18n("Show Nebulae"), Key_AsciiCircum, this, SLOT(slotShowNebulae()), actionCollection(), "showNebulae");
