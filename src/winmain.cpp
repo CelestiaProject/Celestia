@@ -218,7 +218,7 @@ BOOL APIENTRY ControlsHelpProc(HWND hDlg,
         return(TRUE);
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK)
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             EndDialog(hDlg, 0);
             return TRUE;
@@ -399,6 +399,34 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
     return FALSE;
 }
 
+void UpdateSetTimeDlgDateTimeControls(HWND hDlg, astro::Date& newTime)
+{
+    HWND timeItem = NULL;
+    HWND dateItem = NULL;
+    SYSTEMTIME sysTime;
+
+    sysTime.wYear = newTime.year;
+    sysTime.wMonth = newTime.month;
+    sysTime.wDay = newTime.day;
+    sysTime.wDayOfWeek = ((int) ((double) newTime + 0.5) + 1) % 7;
+    sysTime.wHour = newTime.hour;
+    sysTime.wMinute = newTime.minute;
+    sysTime.wSecond = (int) newTime.seconds;
+    sysTime.wMilliseconds = 0;
+
+    dateItem = GetDlgItem(hDlg, IDC_DATEPICKER);
+    if (dateItem != NULL)
+    {
+        DateTime_SetFormat(dateItem, "dd' 'MMM' 'yyy");
+        DateTime_SetSystemtime(dateItem, GDT_VALID, &sysTime);
+    }
+    timeItem = GetDlgItem(hDlg, IDC_TIMEPICKER);
+    if (timeItem != NULL)
+    {
+        DateTime_SetFormat(timeItem, "HH':'mm':'ss' UT'");
+        DateTime_SetSystemtime(timeItem, GDT_VALID, &sysTime);
+    }
+}
 
 BOOL APIENTRY SetTimeProc(HWND hDlg,
                           UINT message,
@@ -412,29 +440,8 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
     {
     case WM_INITDIALOG:
         {
-            SYSTEMTIME sysTime;
             newTime = astro::Date(appCore->getSimulation()->getTime());
-            sysTime.wYear = newTime.year;
-            sysTime.wMonth = newTime.month;
-            sysTime.wDay = newTime.day;
-            sysTime.wDayOfWeek = ((int) ((double) newTime + 0.5) + 1) % 7;
-            sysTime.wHour = newTime.hour;
-            sysTime.wMinute = newTime.minute;
-            sysTime.wSecond = (int) newTime.seconds;
-            sysTime.wMilliseconds = 0;
-
-            dateItem = GetDlgItem(hDlg, IDC_DATEPICKER);
-            if (dateItem != NULL)
-            {
-                DateTime_SetFormat(dateItem, "dd' 'MMM' 'yyy");
-                DateTime_SetSystemtime(dateItem, GDT_VALID, &sysTime);
-            }
-            timeItem = GetDlgItem(hDlg, IDC_TIMEPICKER);
-            if (timeItem != NULL)
-            {
-                DateTime_SetFormat(timeItem, "HH':'mm':'ss' UT'");
-                DateTime_SetSystemtime(timeItem, GDT_VALID, &sysTime);
-            }
+            UpdateSetTimeDlgDateTimeControls(hDlg, newTime);
         }
         return(TRUE);
 
@@ -445,6 +452,14 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
                 appCore->getSimulation()->setTime((double) newTime);
             EndDialog(hDlg, 0);
             return TRUE;
+        }
+        if (LOWORD(wParam) == IDC_SETCURTIME)
+        {
+            //Set newTime = current system time;
+            newTime = astro::Date((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
+
+            //Force Date/Time controls to show current system time
+            UpdateSetTimeDlgDateTimeControls(hDlg, newTime);
         }
         break;
 
@@ -476,7 +491,6 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
 
     return FALSE;
 }
-
 
 HMENU CreateMenuBar()
 {
@@ -564,6 +578,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
 
     // TODO: Do we need to explicitly destroy submenus or does DestroyMenu
     // work recursively?
+    // According to the MSDN documentation, DestroyMenu() IS recursive. Clint 11/01.
     DestroyMenu(hMenu);
 }
 
@@ -980,6 +995,47 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     return true;
 }
 
+static void HandleScreenCapture(HWND hWnd)
+{
+    //Display File SaveAs dialog to allow user to specify name and location of
+    //of captured screen image.
+    OPENFILENAME Ofn;
+    char szFile[_MAX_PATH+1], szFileTitle[_MAX_PATH+1];
+
+    szFile[0] = '\0';
+    szFileTitle[0] = '\0';
+
+    // Initialize OPENFILENAME
+    ZeroMemory(&Ofn, sizeof(OPENFILENAME));
+    Ofn.lStructSize = sizeof(OPENFILENAME);
+    Ofn.hwndOwner = hWnd;
+    Ofn.lpstrFilter = "JPEG - JFIF Compliant\0*.jpg;*.jif;*.jpeg\0Portable Network Graphics\0*.png\0";
+    Ofn.lpstrFile= szFile;
+    Ofn.nMaxFile = sizeof(szFile);
+    Ofn.lpstrFileTitle = szFileTitle;
+    Ofn.nMaxFileTitle = sizeof(szFileTitle);
+    Ofn.lpstrInitialDir = (LPSTR)NULL;
+
+    //Comment this out if you just want the standard "Save As" caption.
+    Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
+
+    //OFN_HIDEREADONLY - Do not display read-only JPEG or PNG files
+    //OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
+    Ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+
+    // Display the Save dialog box.
+    if(GetSaveFileName(&Ofn))
+    {
+        //If you got here, a path and file has been specified.
+
+        //Ofn.lpstrFile contains full path to specified file
+        //Ofn.lpstrFileTitle contains just the filename with extension
+
+        /////////////////////////////////////////////////////////
+        //TODO: Call function that implement Screen Capture here.
+        /////////////////////////////////////////////////////////
+    }
+}
 
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -1542,6 +1598,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             ShowWWWInfo(appCore->getSimulation()->getSelection());
             break;
 
+        case ID_FILE_SCREENCAPTURE:
+            HandleScreenCapture(hWnd);
+            break;
+
         case ID_FILE_EXIT:
             {
                 AppPreferences prefs;
@@ -1565,7 +1625,20 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
                          LOWORD(wParam) < MENU_CHOOSE_PLANET + 1000)
                 {
-                    appCore->getSimulation()->selectPlanet(LOWORD(wParam) - MENU_CHOOSE_PLANET);
+                    Selection sel = appCore->getSimulation()->getSelection();
+                    if(sel.star)
+                    {
+                        appCore->getSimulation()->selectPlanet(LOWORD(wParam) - MENU_CHOOSE_PLANET);
+                    }
+                    else if(sel.body)
+                    {
+                        PlanetarySystem* satellites = (PlanetarySystem*)sel.body->getSatellites();
+                        appCore->getSimulation()->setSelection(Selection(satellites->getBody(LOWORD(wParam) - MENU_CHOOSE_PLANET)));
+                    }
+                    else if(sel.galaxy)
+                    {
+                        //Current Galaxy implementation does not have children to select.
+                    }
                 }
             }
             break;
