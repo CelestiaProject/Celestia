@@ -346,7 +346,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
     {
         numberValue = integerValue + fractionValue / fracExp;
         if (exponentValue != 0)
-            numberValue *= pow(10, exponentValue * exponentSign);
+            numberValue *= pow(10.0, exponentValue * exponentSign);
         numberValue *= sign;
     }
 

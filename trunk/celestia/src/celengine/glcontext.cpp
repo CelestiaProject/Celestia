@@ -199,7 +199,7 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
         return (extensionSupported("GL_ARB_shader_objects") &&
                 extensionSupported("GL_ARB_shading_language_100") &&
                 extensionSupported("GL_ARB_vertex_shader") &&
-                extensionSUpported("GL_ARB_fragment_shader"));
+                extensionSupported("GL_ARB_fragment_shader"));
 
     default:
         return false;

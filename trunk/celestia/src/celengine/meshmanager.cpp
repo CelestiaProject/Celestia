@@ -363,7 +363,7 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
                     
                     // Map the shininess from the 3DS file into the 0-128
                     // range that OpenGL uses for the specular exponent.
-                    shininess = (float) pow(2, 10.0 * shininess);
+                    shininess = (float) pow(2.0, 10.0 * shininess);
                     if (shininess > 128.0f)
                         shininess = 128.0f;
                     vl->setShininess(128.0f);
