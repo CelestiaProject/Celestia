@@ -384,7 +384,7 @@ Mesh* SphereMesh::convertToMesh() const
             indexData[j * 2 + 1] = (i + 1) * (nSlices + 1) + j;
         }
 
-        mesh->addGroup(Mesh::TriStrip, 0, (nSlices + 1) * 2, indexData);
+        mesh->addGroup(Mesh::TriStrip, ~0, (nSlices + 1) * 2, indexData);
     }
     
     return mesh;
