@@ -34,7 +34,7 @@
 }
 -(void)setCatalogNumber:(NSNumber*)cat atIndex:(NSNumber*)index
 {
-    [self star]->setCatalogNumber([index unsignedIntValue], [cat unsignedIntValue]);
+//    [self star]->setCatalogNumber([index unsignedIntValue], [cat unsignedIntValue]);
 }
 -(NSNumber*)catalogNumber
 {
@@ -42,7 +42,7 @@
 }
 -(NSNumber*)catalogNumberAtIndex:(NSNumber*)cat
 {
-    return [NSNumber numberWithUnsignedInt:[self star]->getCatalogNumber([cat unsignedIntValue])];
+//    return [NSNumber numberWithUnsignedInt:[self star]->getCatalogNumber([cat unsignedIntValue])];
 }
 -(void)dealloc
 {
@@ -79,7 +79,7 @@
 }
 -(NSNumber*)rotationPeriod
 {
-    return [NSNumber numberWithFloat:[self star]->getRotationPeriod()];
+//    return [NSNumber numberWithFloat:[self star]->getRotationPeriod()];
 }
 -(void)setAbsoluteMagnitude:(NSNumber*)m
 {
