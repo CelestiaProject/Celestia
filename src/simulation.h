@@ -24,6 +24,37 @@
 #include "render.h"
 
 
+struct FrameOfReference
+{
+    FrameOfReference() :
+        coordSys(astro::Universal), body(NULL), star(NULL), galaxy(NULL) {};
+    FrameOfReference(astro::CoordinateSystem _coordSys, Body* _body) :
+        coordSys(_coordSys), body(_body), star(NULL), galaxy(NULL) {};
+    FrameOfReference(astro::CoordinateSystem _coordSys, Star* _star) :
+        coordSys(_coordSys), body(NULL), star(_star), galaxy(NULL) {};
+    FrameOfReference(astro::CoordinateSystem _coordSys, Galaxy* _galaxy) :
+        coordSys(_coordSys), body(NULL), star(NULL), galaxy(_galaxy) {};
+
+    astro::CoordinateSystem coordSys;
+    Body* body;
+    Star* star;
+    Galaxy* galaxy;
+};
+
+struct RigidTransform
+{
+    RigidTransform() :
+        translation(0.0, 0.0, 0.0), rotation(1, 0, 0, 0) {};
+    RigidTransform(const UniversalCoord& uc) :
+        translation(uc), rotation(1.0) {};
+    RigidTransform(const UniversalCoord& uc, const Quatd& q) :
+        translation(uc), rotation(q) {};
+    RigidTransform(const UniversalCoord& uc, const Quatf& q) :
+        translation(uc), rotation(q.w, q.x, q.y, q.z) {};
+    UniversalCoord translation;
+    Quatd rotation;
+};
+
 class Simulation
 {
  public:
@@ -81,9 +112,6 @@ class Simulation
     float getFaintestVisible() const;
     void setFaintestVisible(float);
 
-    int getHUDDetail() const;
-    void setHUDDetail(int);
-
     enum ObserverMode {
         Free                    = 0,
         Travelling              = 1,
@@ -95,9 +123,11 @@ class Simulation
     void setObserverMode(ObserverMode);
     ObserverMode getObserverMode() const;
 
+    void setFrame(astro::CoordinateSystem, const Selection&);
+    FrameOfReference getFrame() const;
+
  private:
-    // Class-specific types
-    typedef struct 
+    struct JourneyParams
     {
         double duration;
         double startTime;
@@ -110,17 +140,16 @@ class Simulation
         Vec3f up;
         double expFactor;
         double accelTime;
-    } JourneyParams;
-
-    typedef struct
-    {
-        Body* body;
-        Star* sun;
-        Vec3d offset;
-        Quatd offsetR;
-    } FollowParams;
+    };
 
  private:
+    RigidTransform toUniversal(const FrameOfReference&,
+                               const RigidTransform&,
+                               double);
+    RigidTransform fromUniversal(const FrameOfReference&,
+                                 const RigidTransform&,
+                                 double);
+
     SolarSystem* getSolarSystem(Star* star);
     Star* getSun(Body* body);
     Selection pickPlanet(Observer& observer,
@@ -134,6 +163,8 @@ class Simulation
                                Vec3d offset, astro::CoordinateSystem offsetFrame,
                                Vec3f up, astro::CoordinateSystem upFrame);
     void computeCenterParameters(Selection& sel, JourneyParams& jparams, double centerTime);
+
+    void updateObserver();
 
  private:
     double realTime;
@@ -159,11 +190,10 @@ class Simulation
 
     ObserverMode observerMode;
     JourneyParams journey;
-    FollowParams followInfo;
+    FrameOfReference frame;
+    RigidTransform transform;
 
     float faintestVisible;
-
-    int hudDetail;
 };
 
 #endif // SIMULATION_H_

@@ -38,8 +38,7 @@ Simulation::Simulation() :
     initialVelocity(0.0, 0.0, 0.0),
     beginAccelTime(0.0),
     observerMode(Free),
-    faintestVisible(5.0f),
-    hudDetail(1)
+    faintestVisible(5.0f)
 {
 }
 
@@ -47,6 +46,108 @@ Simulation::~Simulation()
 {
     // TODO: Clean up!
 }
+
+
+RigidTransform Simulation::toUniversal(const FrameOfReference& frame,
+                                       const RigidTransform& xform,
+                                       double t)
+{
+    // Handle the easy case . . .
+    if (frame.coordSys == astro::Universal)
+        return xform;
+
+    Point3f base(0.0f, 0.0f, 0.0f);
+    Point3d offset(0.0, 0.0, 0.0);
+    if (frame.body != NULL)
+    {
+        Star* sun = getSun(frame.body);
+        if (sun != NULL)
+            base = sun->getPosition();
+        if (frame.coordSys == astro::Ecliptical ||
+            frame.coordSys == astro::Equatorial ||
+            frame.coordSys == astro::Geographic)
+            offset = frame.body->getHeliocentricPosition(t);
+    }
+    else if (frame.star != NULL)
+    {
+        base = frame.star->getPosition();
+    }
+    else if (frame.galaxy != NULL)
+    {
+        Point3d p = frame.galaxy->getPosition();
+        base = Point3f((float) p.x, (float) p.y, (float) p.z);
+    }
+    UniversalCoord origin = astro::universalPosition(offset, base);
+
+    if (frame.coordSys == astro::Geographic)
+    {
+        Quatd rotation(1, 0, 0, 0);
+        if (frame.body != NULL)
+            rotation = frame.body->getEclipticalToGeographic(t);
+        else if (frame.star != NULL)
+            rotation = Quatd(1, 0, 0, 0);
+        Point3d p = (Point3d) xform.translation * rotation.toMatrix4();
+
+        return RigidTransform(origin + Vec3d(p.x, p.y, p.z),
+                              xform.rotation * rotation);
+    }
+    else
+    {
+        return RigidTransform(origin + xform.translation, xform.rotation);
+    }
+}
+
+
+RigidTransform Simulation::fromUniversal(const FrameOfReference& frame,
+                                         const RigidTransform& xform,
+                                         double t)
+{
+    // Handle the easy case . . .
+    if (frame.coordSys == astro::Universal)
+        return xform;
+
+    Point3f base(0.0f, 0.0f, 0.0f);
+    Point3d offset(0.0, 0.0, 0.0);
+    if (frame.body != NULL)
+    {
+        Star* sun = getSun(frame.body);
+        if (sun != NULL)
+            base = sun->getPosition();
+        if (frame.coordSys == astro::Ecliptical ||
+            frame.coordSys == astro::Equatorial ||
+            frame.coordSys == astro::Geographic)
+            offset = frame.body->getHeliocentricPosition(t);
+    }
+    else if (frame.star != NULL)
+    {
+        base = frame.star->getPosition();
+    }
+    else if (frame.galaxy != NULL)
+    {
+        Point3d p = frame.galaxy->getPosition();
+        base = Point3f((float) p.x, (float) p.y, (float) p.z);
+    }
+    UniversalCoord origin = astro::universalPosition(offset, base);
+
+    if (frame.coordSys == astro::Geographic)
+    {
+        Quatd rotation(1, 0, 0, 0);
+        if (frame.body != NULL)
+            rotation = frame.body->getEclipticalToGeographic(t);
+        else if (frame.star != NULL)
+            rotation = Quatd(1, 0, 0, 0);
+        Vec3d v = (xform.translation - origin) * (~rotation).toMatrix4();
+        
+        return RigidTransform(UniversalCoord(v.x, v.y, v.z),
+                              xform.rotation * ~rotation);
+    }
+    else
+    {
+        return RigidTransform(xform.translation.difference(origin),
+                              xform.rotation);
+    }
+}
+
 
 
 void Simulation::render(Renderer& renderer)
@@ -198,6 +299,15 @@ void ClosestStarFinder::process(const Star& star, float distance, float appMag)
 }
 
 
+// Set the observer position and orientation based on the frame of reference
+void Simulation::updateObserver()
+{
+    RigidTransform t = toUniversal(frame, transform, simTime);
+    observer.setPosition(t.translation);
+    observer.setOrientation(t.rotation);
+}
+
+
 // Tick the simulation by dt seconds
 void Simulation::update(double dt)
 {
@@ -218,23 +328,6 @@ void Simulation::update(double dt)
         }
 #endif
 
-#if 0
-        // Another interpolation technique . . . the first half of the
-        // trip we accelerate, with x = e^(mt), where m is a value constant
-        // for a single trip that is computed from the trip distance.  The
-        // second half of the trip is a mirror of the first.
-        {
-            double c = astro::kilometersToLightYears(1.0);
-            double distance = astro::lightYearsToKilometers(journey.from.distanceTo(journey.to));
-            double m = 2.0 * log(distance / 2.0 + 1.0);
-            Vec3d v = jv;
-            v.normalize();
-            if (t < 0.5)
-                p = journey.from + v * astro::kilometersToLightYears(exp(m * t) - 1.0);
-            else
-                p = journey.to - v * astro::kilometersToLightYears(exp(m * (1.0 - t)) - 1.0);
-        }
-#endif
         // Another interpolation method . . . accelerate exponentially,
         // maintain a constant velocity for a period of time, then
         // decelerate.  The portion of the trip spent accelerating is
@@ -262,14 +355,8 @@ void Simulation::update(double dt)
                 p = journey.to - v * astro::kilometersToLightYears(x);
         }
 
-        // Interpolate the orientation using lookAt()
-        // We gradually change the focus point for lookAt() from the initial 
-        // focus to the destination star over the first half of the journey
-        Vec3d lookDir0 = journey.initialFocus - journey.from;
-        Vec3d lookDir1 = journey.finalFocus - journey.to;
-        lookDir0.normalize();
-        lookDir1.normalize();
-        Vec3d lookDir;
+        // Spherically interpolate the orientation over the first half
+        // of the journey.
         Quatf orientation;
         if (t < 0.5f)
         {
@@ -277,23 +364,7 @@ void Simulation::update(double dt)
             // orientation
             double v = sin(t * PI);
 
-            double c = lookDir0 * lookDir1;
-            double angle = acos(c);
-            if (c >= 1.0 || angle < 1.0e-6)
-            {
-                lookDir = lookDir0;
-                orientation = journey.initialOrientation;
-            }
-            else
-            {
-                double s = sin(angle);
-                double is = 1.0 / s;
-
-                // Spherically interpolate the look direction between the
-                // intial and final directions.
-                lookDir = lookDir0 * (sin((1 - v) * angle) * is) +
-                          lookDir1 * (sin(v * angle) * is);
-            }
+            // Be careful to choose the shortest path when interpolating
             if (norm(journey.initialOrientation - journey.finalOrientation) <
                 norm(journey.initialOrientation + journey.finalOrientation))
             {
@@ -308,43 +379,24 @@ void Simulation::update(double dt)
         }
         else
         {
-            lookDir = lookDir1;
             orientation = journey.finalOrientation;
         }
-#if 0
-        observer.setOrientation(lookAt(Point3f(0, 0, 0),
-                                       Point3f((float) lookDir.x,
-                                               (float) lookDir.y,
-                                               (float) lookDir.z),
-                                       journey.up));
-#endif
-        observer.setOrientation(orientation);
-        observer.setPosition(p);
+
+        transform = RigidTransform(p, orientation);
 
         // If the journey's complete, reset to manual control
         if (t == 1.0f)
         {
-            observer.setPosition(journey.to);
+            transform = RigidTransform(journey.to, journey.finalOrientation);
             observerMode = Free;
             observer.setVelocity(Vec3d(0, 0, 0));
             targetVelocity = Vec3d(0, 0, 0);
         }
     }
-    else if (observerMode == Following)
-    {
-        Point3d posRelToSun = followInfo.body->getHeliocentricPosition(simTime) + followInfo.offset;
-        observer.setPosition(astro::universalPosition(posRelToSun,
-                                                      followInfo.sun->getPosition()));
-    }
-    else if (observerMode == GeosynchronousFollowing)
-    {
-        Point3d posRelToSun = followInfo.body->getHeliocentricPosition(simTime) + followInfo.offset * followInfo.body->getEclipticalToGeographic(simTime).toMatrix4();
-        observer.setPosition(astro::universalPosition(posRelToSun,
-                                                      followInfo.sun->getPosition()));
-        Quatd q = followInfo.offsetR * followInfo.body->getEclipticalToGeographic(simTime);
-        observer.setOrientation(Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z));
-    }
-    else if (observerMode == Tracking)
+
+    updateObserver();
+
+    if (observerMode == Tracking)
     {
         if (!selection.empty())
         {
@@ -693,7 +745,7 @@ Vec3d toUniversal(const Vec3d& v,
     }
 }
 
-#if 1
+
 struct TravelExpFunc : public unary_function<double, double>
 {
     double dist, s;
@@ -706,7 +758,6 @@ struct TravelExpFunc : public unary_function<double, double>
         return exp(x * s) * (x * (1 - s) + 1) - 1 - dist;
     }
 };
-#endif
 
 
 void Simulation::computeGotoParameters(Selection& destination,
@@ -729,20 +780,20 @@ void Simulation::computeGotoParameters(Selection& destination,
 
     // The destination position lies along the line between the current
     // position and the star
-    offset = toUniversal(offset, observer, selection, simTime, offsetFrame);
+    offset = ::toUniversal(offset, observer, selection, simTime, offsetFrame);
     jparams.to = targetPosition + offset;
     jparams.initialFocus = jparams.from +
         (Vec3f(0, 0, -1.0f) * observer.getOrientation().toMatrix4());
     jparams.finalFocus = targetPosition;
 
     Vec3d upd(up.x, up.y, up.z);
-    upd = toUniversal(upd, observer, selection, simTime, upFrame);
+    upd = ::toUniversal(upd, observer, selection, simTime, upFrame);
     jparams.up = Vec3f((float) upd.x, (float) upd.y, (float) upd.z);
 
     jparams.initialOrientation = observer.getOrientation();
     Vec3d vn = targetPosition - jparams.to;
-    Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
-    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), to, jparams.up);
+    Point3f focus((float) vn.x, (float) vn.y, (float) vn.z);
+    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, jparams.up);
 
     jparams.accelTime = 0.5;
     double distance = astro::lightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
@@ -750,6 +801,20 @@ void Simulation::computeGotoParameters(Selection& destination,
                                                0.0001, 100.0,
                                                1e-10);
     jparams.expFactor = sol.first;
+
+    setFrame(frame.coordSys, destination);
+
+    // Convert to frame coordinates
+    RigidTransform from(jparams.from, jparams.initialOrientation);
+    from = fromUniversal(frame, from, simTime);
+    jparams.from = from.translation;
+    jparams.initialOrientation= Quatf((float) from.rotation.w, (float) from.rotation.x,
+                                      (float) from.rotation.y, (float) from.rotation.z);
+    RigidTransform to(jparams.to, jparams.finalOrientation);
+    to = fromUniversal(frame, to, simTime);
+    jparams.to = to.translation;
+    jparams.finalOrientation= Quatf((float) to.rotation.w, (float) to.rotation.x,
+                                    (float) to.rotation.y, (float) to.rotation.z);
 }
 
 
@@ -773,11 +838,25 @@ void Simulation::computeCenterParameters(Selection& destination,
 
     jparams.initialOrientation = observer.getOrientation();
     Vec3d vn = targetPosition - jparams.to;
-    Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
-    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), to, jparams.up);
+    Point3f focus((float) vn.x, (float) vn.y, (float) vn.z);
+    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, jparams.up);
 
     jparams.accelTime = 0.5;
     jparams.expFactor = 0;
+
+    setFrame(frame.coordSys, destination);
+
+    // Convert to frame coordinates
+    RigidTransform from(jparams.from, jparams.initialOrientation);
+    from = fromUniversal(frame, from, simTime);
+    jparams.from = from.translation;
+    jparams.initialOrientation= Quatf((float) from.rotation.w, (float) from.rotation.x,
+                                      (float) from.rotation.y, (float) from.rotation.z);
+    RigidTransform to(jparams.to, jparams.finalOrientation);
+    to = fromUniversal(frame, to, simTime);
+    jparams.to = to.translation;
+    jparams.finalOrientation= Quatf((float) to.rotation.w, (float) to.rotation.x,
+                                    (float) to.rotation.y, (float) to.rotation.z);
 }
 
 Observer& Simulation::getObserver()
@@ -795,18 +874,35 @@ void Simulation::setObserverMode(Simulation::ObserverMode mode)
     observerMode = mode;
 }
 
+void Simulation::setFrame(astro::CoordinateSystem coordSys,
+                          const Selection& sel)
+{
+    if (sel.body != NULL)
+        frame = FrameOfReference(coordSys, sel.body);
+    else if (sel.star != NULL)
+        frame = FrameOfReference(coordSys, sel.star);
+    else if (sel.galaxy != NULL)
+        frame = FrameOfReference(coordSys, sel.galaxy);
+    else
+        frame = FrameOfReference();
+
+    // Set the orientation and position in frame coordinates
+    transform = fromUniversal(frame,
+                              RigidTransform(observer.getPosition(), observer.getOrientation()),
+                              simTime);
+}
+
+FrameOfReference Simulation::getFrame() const
+{
+    return frame;
+}
+
 // Rotate the observer about its center.
 void Simulation::rotate(Quatf q)
 {
-    if (observerMode == GeosynchronousFollowing)
-    {
-        Quatd qd(q.w, q.x, q.y, q.z);
-        followInfo.offsetR = qd * followInfo.offsetR;
-    }
-    else
-    {
-        observer.setOrientation(q * observer.getOrientation());
-    }
+    Quatd qd(q.w, q.x, q.y, q.z);
+    transform.rotation = qd * transform.rotation;
+    updateObserver();
 }
 
 // Orbit around the selection (if there is one.)  This involves changing
@@ -815,51 +911,47 @@ void Simulation::orbit(Quatf q)
 {
     if (!selection.empty())
     {
+        // Before orbiting, make sure that the reference object matches the
+        // selection.
+        if (selection.body != frame.body || selection.star != frame.star ||
+            selection.galaxy != frame.galaxy)
+        {
+            setFrame(frame.coordSys, selection);
+        }
+
+        // Get the focus position (center of rotation) in frame
+        // coordinates; in order to make this function work in all
+        // frames of reference, it's important to work in frame
+        // coordinates.
         UniversalCoord focusPosition = getSelectionPosition(selection, simTime);
-        Vec3d v = observer.getPosition() - focusPosition;
-        double distance = v.length();
+        focusPosition = fromUniversal(frame, RigidTransform(focusPosition), simTime).translation;
+
+        // v = the vector from the observer's position to the focus
+        Vec3d v = transform.translation - focusPosition;
+
+        // Get a double precision version of the rotation
+        Quatd qd(q.w, q.x, q.y, q.z);
 
         // To give the right feel for rotation, we want to premultiply
         // the current orientation by q.  However, because of the order in
         // which we apply transformations later on, we can't pre-multiply.
         // To get around this, we compute a rotation q2 such
         // that q1 * r = r * q2.
-        Quatf o = observer.getOrientation();
-        Quatf q2 = ~o * q * o;
+        Quatd qd2 = ~transform.rotation * qd * transform.rotation;
+        qd2.normalize();
 
-        // Make sure the quaternion remains a rotation
-        q2.normalize();
+        // Roundoff errors will accumulate and cause the distance between
+        // viewer and focus to drift unless we take steps to keep the
+        // length of v constant.
+        double distance = v.length();
+        v = v * qd2.toMatrix3();
+        v.normalize();
+        v *= distance;
 
-        // TODO: Make Follow mode behave more like GeosynchronousFollow
-        // mode; these are both essentially the same mode, except in different
-        // coordinate systems.  In fact, Free mode is really just the trivial
-        // case of Follow in the universal coordinate system.
-        if (observerMode == GeosynchronousFollowing)
-        {
-            // Get a double precision version of the rotation
-            Quatd qd(q.w, q.x, q.y, q.z);
-            Quatd qd2 = ~followInfo.offsetR * qd * followInfo.offsetR;
-            qd2.normalize();
+        transform.rotation = transform.rotation * qd2;
+        transform.translation = focusPosition + v;
 
-            followInfo.offsetR = followInfo.offsetR * qd2;
-            followInfo.offset = followInfo.offset * qd2.toMatrix3();
-        }
-        else
-        {
-            Quatd qd2(q2.w, q2.x, q2.y, q2.z);
-
-            // Roundoff errors will accumulate and cause the distance between
-            // viewer and focus to change unless we take steps to keep the
-            // length of v constant.
-            v = v * qd2.toMatrix3();
-            v.normalize();
-            v *= distance;
-
-            observer.setPosition(focusPosition + v);
-            observer.setOrientation(observer.getOrientation() * q2);
-            if (observerMode == Following)
-                followInfo.offset = v * astro::lightYearsToKilometers(1.0);
-        }
+        updateObserver();
     }
 }
 
@@ -870,12 +962,21 @@ void Simulation::changeOrbitDistance(float d)
 {
     if (!selection.empty())
     {
+        // Before orbiting, make sure that the reference object matches the
+        // selection.
+        if (selection.body != frame.body || selection.star != frame.star ||
+            selection.galaxy != frame.galaxy)
+        {
+            setFrame(frame.coordSys, selection);
+        }
+
         UniversalCoord focusPosition = getSelectionPosition(selection, simTime);
+        
         double size = getSelectionSize(selection);
 
         // Somewhat arbitrary parameters to chosen to give the camera movement
         // a nice feel.  They should probably be function parameters.
-        double minOrbitDistance = astro::kilometersToLightYears(1.05 * size);
+        double minOrbitDistance = astro::kilometersToLightYears(size);
         double naturalOrbitDistance = astro::kilometersToLightYears(4.0 * size);
 
         // Determine distance and direction to the selected object
@@ -890,18 +991,14 @@ void Simulation::changeOrbitDistance(float d)
         {
             double r = (currentDistance - minOrbitDistance) / naturalOrbitDistance;
             double newDistance = minOrbitDistance + naturalOrbitDistance * exp(log(r) + d);
-
-            if (observerMode == GeosynchronousFollowing ||
-                     observerMode == Following)
-            {
-                followInfo.offset *= (newDistance / currentDistance);
-            }
-            else
-            {
-                v = v * (newDistance / currentDistance);
-                observer.setPosition(focusPosition + v);
-            }
+            v = v * (newDistance / currentDistance);
+            RigidTransform framePos = fromUniversal(frame,
+                                                    RigidTransform(focusPosition + v),
+                                                    simTime);
+            transform.translation = framePos.translation;
         }
+
+        updateObserver();
     }
 }
 
@@ -1001,57 +1098,24 @@ void Simulation::centerSelection(double centerTime)
 
 void Simulation::follow()
 {
-    if (observerMode == Following)
+    if (selection.body != NULL)
     {
-        observerMode = Free;
-    }
-    else
-    {
-        if (selection.body != NULL)
-        {
-            Star* sun = getSun(selection.body);
-            if (sun != NULL)
-            {
-                observerMode = Following;
-                followInfo.sun = sun;
-                followInfo.body = selection.body;
-                Point3d planetPos = selection.body->getHeliocentricPosition(simTime);
-                Point3d observerPos = astro::heliocentricPosition(observer.getPosition(),
-                                                                  sun->getPosition());
-                followInfo.offset = observerPos - planetPos;
-                Quatf o = observer.getOrientation();
-                followInfo.offsetR = Quatd(o.w, o.x, o.y, o.z);
-            }
-        }
+        frame = FrameOfReference(astro::Ecliptical, selection.body);
+
+        transform = fromUniversal(frame,
+                                  RigidTransform(observer.getPosition(), observer.getOrientation()),
+                                  simTime);
     }
 }
 
 void Simulation::geosynchronousFollow()
 {
-    if (observerMode == GeosynchronousFollowing)
+    if (selection.body != NULL)
     {
-        observerMode = Free;
-    }
-    else
-    {
-        if (selection.body != NULL)
-        {
-            Star* sun = getSun(selection.body);
-            if (sun != NULL)
-            {
-                observerMode = GeosynchronousFollowing;
-                followInfo.sun = sun;
-                followInfo.body = selection.body;
-                Point3d planetPos = selection.body->getHeliocentricPosition(simTime);
-                Point3d observerPos = astro::heliocentricPosition(observer.getPosition(),
-                                                                  sun->getPosition());
-                Quatf o = observer.getOrientation();
-                Quatd od(o.w, o.x, o.y, o.z);
-                Quatd q = followInfo.body->getEclipticalToGeographic(simTime);
-                followInfo.offsetR = od * ~q;
-                followInfo.offset = (observerPos - planetPos) * (~q).toMatrix4();
-            }
-        }
+        frame = FrameOfReference(astro::Geographic, selection.body);
+        transform = fromUniversal(frame,
+                                  RigidTransform(observer.getPosition(), observer.getOrientation()),
+                                  simTime);
     }
 }
 
@@ -1243,17 +1307,6 @@ float Simulation::getFaintestVisible() const
 void Simulation::setFaintestVisible(float magnitude)
 {
     faintestVisible = magnitude;
-}
-
-
-int Simulation::getHUDDetail() const
-{
-    return hudDetail;
-}
-
-void Simulation::setHUDDetail(int detail)
-{
-    hudDetail = detail;
 }
 
 
