@@ -15,7 +15,12 @@
 #include <celengine/mesh.h>
 #include <celengine/dispmap.h>
 
-class SphereMesh : public Mesh
+/*! The SphereMesh class is used to generate displacement mapped
+ *  spheres when loading the now-deprecated .cms geometry files.
+ *  It remains in the Celestia code base for backward compatibility,
+ *  and it's use is discouraged.
+ */
+class SphereMesh
 {
 public:
     SphereMesh(float radius, int _nRings, int _nSlices);
@@ -29,10 +34,8 @@ public:
                void* info);
     ~SphereMesh();
 
-    void render(float lod);
-    void render(unsigned int attributes, float lod);
-    void render(unsigned int attributes, const Frustum&, float lod);
-    virtual bool pick(const Ray3d&, double&) { return true; };
+    //! Convert this object into a standard Celestia mesh.
+    Mesh* convertToMesh() const;
 
  private:
     void createSphere(float radius, int nRings, int nSlices);
