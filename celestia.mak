@@ -40,6 +40,7 @@ CLEAN :
 	-@erase "$(INTDIR)\3dsmesh.obj"
 	-@erase "$(INTDIR)\3dsmodel.obj"
 	-@erase "$(INTDIR)\3dsread.obj"
+	-@erase "$(INTDIR)\asterism.obj"
 	-@erase "$(INTDIR)\astro.obj"
 	-@erase "$(INTDIR)\bigfix.obj"
 	-@erase "$(INTDIR)\body.obj"
@@ -60,6 +61,7 @@ CLEAN :
 	-@erase "$(INTDIR)\meshmanager.obj"
 	-@erase "$(INTDIR)\observer.obj"
 	-@erase "$(INTDIR)\orbit.obj"
+	-@erase "$(INTDIR)\overlay.obj"
 	-@erase "$(INTDIR)\parser.obj"
 	-@erase "$(INTDIR)\perlin.obj"
 	-@erase "$(INTDIR)\regcombine.obj"
@@ -134,6 +136,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\3dsmesh.obj" \
 	"$(INTDIR)\3dsmodel.obj" \
 	"$(INTDIR)\3dsread.obj" \
+	"$(INTDIR)\asterism.obj" \
 	"$(INTDIR)\astro.obj" \
 	"$(INTDIR)\bigfix.obj" \
 	"$(INTDIR)\body.obj" \
@@ -153,6 +156,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\meshmanager.obj" \
 	"$(INTDIR)\observer.obj" \
 	"$(INTDIR)\orbit.obj" \
+	"$(INTDIR)\overlay.obj" \
 	"$(INTDIR)\parser.obj" \
 	"$(INTDIR)\perlin.obj" \
 	"$(INTDIR)\regcombine.obj" \
@@ -196,6 +200,7 @@ CLEAN :
 	-@erase "$(INTDIR)\3dsmesh.obj"
 	-@erase "$(INTDIR)\3dsmodel.obj"
 	-@erase "$(INTDIR)\3dsread.obj"
+	-@erase "$(INTDIR)\asterism.obj"
 	-@erase "$(INTDIR)\astro.obj"
 	-@erase "$(INTDIR)\bigfix.obj"
 	-@erase "$(INTDIR)\body.obj"
@@ -216,6 +221,7 @@ CLEAN :
 	-@erase "$(INTDIR)\meshmanager.obj"
 	-@erase "$(INTDIR)\observer.obj"
 	-@erase "$(INTDIR)\orbit.obj"
+	-@erase "$(INTDIR)\overlay.obj"
 	-@erase "$(INTDIR)\parser.obj"
 	-@erase "$(INTDIR)\perlin.obj"
 	-@erase "$(INTDIR)\regcombine.obj"
@@ -293,6 +299,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\3dsmesh.obj" \
 	"$(INTDIR)\3dsmodel.obj" \
 	"$(INTDIR)\3dsread.obj" \
+	"$(INTDIR)\asterism.obj" \
 	"$(INTDIR)\astro.obj" \
 	"$(INTDIR)\bigfix.obj" \
 	"$(INTDIR)\body.obj" \
@@ -312,6 +319,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\meshmanager.obj" \
 	"$(INTDIR)\observer.obj" \
 	"$(INTDIR)\orbit.obj" \
+	"$(INTDIR)\overlay.obj" \
 	"$(INTDIR)\parser.obj" \
 	"$(INTDIR)\perlin.obj" \
 	"$(INTDIR)\regcombine.obj" \
@@ -368,6 +376,12 @@ SOURCE=.\src\3dsmodel.cpp
 SOURCE=.\src\3dsread.cpp
 
 "$(INTDIR)\3dsread.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\asterism.cpp
+
+"$(INTDIR)\asterism.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -482,6 +496,12 @@ SOURCE=.\src\observer.cpp
 SOURCE=.\src\orbit.cpp
 
 "$(INTDIR)\orbit.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\overlay.cpp
+
+"$(INTDIR)\overlay.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
