@@ -1021,7 +1021,6 @@ void Renderer::render(const Observer& observer,
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
-            enableSmoothLines();
         renderCelestialSphere(observer);
         if ((renderFlags & ShowSmoothLines) != 0)
             disableSmoothLines();
@@ -1047,7 +1046,6 @@ void Renderer::render(const Observer& observer,
         glColor4f(0.28f, 0.0f, 0.66f, 0.96f);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
-            enableSmoothLines();
             enableSmoothLines();
         AsterismList* asterisms = universe.getAsterisms();
         for (AsterismList::const_iterator iter = asterisms->begin();
@@ -1077,7 +1075,6 @@ void Renderer::render(const Observer& observer,
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
-	   enableSmoothLines();
         if (universe.getBoundaries() != NULL)
             universe.getBoundaries()->render();
         if ((renderFlags & ShowSmoothLines) != 0)
