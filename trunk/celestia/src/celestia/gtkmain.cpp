@@ -1860,7 +1860,7 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
     { "/Time/Set Time", NULL,               menuSetTime,   0, NULL },
     { "/Time/sep1", NULL,                   NULL,          0, "<Separator>" },
-    { "/Time/Show Local T_ime", "I",        NULL,          Menu_ShowLocTime, "<ToggleItem>" },
+    { "/Time/Show Local T_ime", NULL,       NULL,          Menu_ShowLocTime, "<ToggleItem>" },
     { "/Render", NULL,                      NULL,          0, "<Branch>" },
     { "/Render/Options", NULL,              menuOptions,   0, NULL },
     { "/Render/Show Info Text", "V",        menuShowInfo,  0, NULL },
@@ -2207,33 +2207,43 @@ static bool handleSpecialKey(int key, bool down)
         if (down)
             menuCaptureImage();
         break;
+    case GDK_KP_Insert:
     case GDK_KP_0:
         k = CelestiaCore::Key_NumPad0;
         break;
+    case GDK_KP_End:
     case GDK_KP_1:
         k = CelestiaCore::Key_NumPad1;
         break;
+    case  GDK_KP_Down:
     case GDK_KP_2:
         k = CelestiaCore::Key_NumPad2;
         break;
+    case GDK_KP_Next:
     case GDK_KP_3:
         k = CelestiaCore::Key_NumPad3;
         break;
+    case GDK_KP_Left:
     case GDK_KP_4:
         k = CelestiaCore::Key_NumPad4;
         break;
+    case GDK_KP_Begin:
     case GDK_KP_5:
         k = CelestiaCore::Key_NumPad5;
         break;
+    case GDK_KP_Right:
     case GDK_KP_6:
         k = CelestiaCore::Key_NumPad6;
         break;
+    case GDK_KP_Home:
     case GDK_KP_7:
         k = CelestiaCore::Key_NumPad7;
         break;
+    case GDK_KP_Up:
     case GDK_KP_8:
         k = CelestiaCore::Key_NumPad8;
         break;
+    case GDK_KP_Prior:
     case GDK_KP_9:
         k = CelestiaCore::Key_NumPad9;
         break;
@@ -2286,7 +2296,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
             if ((event->string != NULL) && (*(event->string)))
             {
                 // See if our key accelerators will handle this event.
-                if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, (GdkModifierType)0))
+                if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, (GdkModifierType)1))
                     return TRUE;
             
                 char* s = event->string;
