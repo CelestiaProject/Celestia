@@ -206,7 +206,7 @@ numberWithInt:Renderer::ShowPlanets],@"Planets",[NSNumber numberWithInt:Renderer
 - (int) getOrbitmask
 {
     return [self renderer]->getOrbitMask();
-    }
+}
 
 - (void) setOrbitMask: (int) mask
 {
@@ -216,17 +216,28 @@ numberWithInt:Renderer::ShowPlanets],@"Planets",[NSNumber numberWithInt:Renderer
 -(void)unarchive
 {
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"]!=nil) {
+        id obj;
         NSDictionary *prefs;
+        Class dictClass = [NSDictionary class];
+        SEL intValueSel = @selector(intValue);
+        SEL unsignedIntValueSel = @selector(unsignedIntValue);
 //        NSLog(@"deserializing render preferences from user defaults");
-        prefs = [[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"];
-        [self setLabelFlags:[prefs objectForKey:@"labelFlags"]];
-        [self setRenderFlags:[prefs objectForKey:@"renderFlags"]];
+        obj = [[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"];
+        if (obj && [obj isKindOfClass:dictClass]) {
+            prefs = (NSDictionary *)obj;
+            if ((obj = [prefs objectForKey:@"labelFlags"]) && [obj isKindOfClass:dictClass])
+                [self setLabelFlags:obj];
+            if ((obj = [prefs objectForKey:@"renderFlags"]) && [obj isKindOfClass:dictClass])
+                [self setRenderFlags:obj];
 //        [self setBrightnessBias:[prefs objectForKey:@"brightnessBias"]];
 //        [self setSaturationMagnitude:[prefs objectForKey:@"saturationMagnitude"]];
-        [self setVertexShaderEnabled:[prefs objectForKey:@"vertexShaderEnabled"]];
-        [self setFragmentShaderEnabled:[prefs objectForKey:@"fragmentShaderEnabled"]];
-        [self setResolution:[prefs objectForKey:@"resolution"]];
-        [self setOrbitMask:[[prefs objectForKey:@"orbitMask"]  intValue]];
+//        [self setVertexShaderEnabled:[prefs objectForKey:@"vertexShaderEnabled"]];
+//        [self setFragmentShaderEnabled:[prefs objectForKey:@"fragmentShaderEnabled"]];
+            if ((obj = [prefs objectForKey:@"resolution"]) && [obj respondsToSelector:unsignedIntValueSel])
+                [self setResolution:obj];
+            if ((obj = [prefs objectForKey:@"orbitMask"]) && [obj respondsToSelector:intValueSel])
+                [self setOrbitMask:[obj intValue]];
+        }
     }
 }
 
