@@ -310,3 +310,32 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
         break;
     }
 }
+
+
+GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls) :
+    lightingState(ls)
+{
+}
+
+
+GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls,
+				       const Mesh::Material* material) :
+    lightingState(ls)
+{
+}
+  
+
+
+void
+GLSL_RenderContext::makeCurrent(const Mesh::Material&)
+{
+}
+
+
+void
+GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
+				    void* vertexData)
+{
+}
+
+
