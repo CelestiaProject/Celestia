@@ -315,6 +315,10 @@ static Body* CreatePlanet(PlanetarySystem* system,
         }
     }
     body->setClassification(classification);
+
+    string infoURL;
+    if (planetData->getString("InfoURL", infoURL))
+        body->setInfoURL(infoURL);
     
     double albedo = 0.5;
     planetData->getNumber("Albedo", albedo);
