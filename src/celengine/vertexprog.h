@@ -34,6 +34,7 @@ namespace vp
     extern unsigned int shadowTexture;
     extern unsigned int diffuseTexOffset;
     extern unsigned int ringIllum;
+    extern unsigned int ringShadow;
 };
 
 #endif // _VERTEXPROG_H_

@@ -290,8 +290,8 @@ bool Renderer::init(int winWidth, int winHeight)
         // supported, which solves the problem much more elegantly than all
         // the mipmap level nonsense.
         // shadowTex->setMaxMipMapLevel(3);
-        bool clampToBorderSupported = ExtensionSupported("GL_ARB_texture_border_clamp");
-        uint32 texFlags = clampToBorderSupported ? Texture::BorderClamp : Texture::NoMipMaps;
+        useClampToBorder = ExtensionSupported("GL_ARB_texture_border_clamp");
+        uint32 texFlags = useClampToBorder ? Texture::BorderClamp : Texture::NoMipMaps;
         shadowTex->setBorderColor(Color::White);
         shadowTex->bindName(texFlags);
 
@@ -1354,9 +1354,9 @@ static void renderRingSystem(float innerRadius,
         float theta = beginAngle + t * angle;
         float s = (float) sin(theta);
         float c = (float) cos(theta);
-        glTexCoord2f(0, 0);
+        glTexCoord2f(0, 0.5f);
         glVertex3f(c * innerRadius, 0, s * innerRadius);
-        glTexCoord2f(1, 0);
+        glTexCoord2f(1, 0.5f);
         glVertex3f(c * outerRadius, 0, s * outerRadius);
     }
     glEnd();
@@ -2006,10 +2006,6 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
         SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
         unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
             Mesh::VertexProgParams;
-#if 0
-        if (ri.glossTex != NULL)
-            attributes |= Mesh::TexCoords1;
-#endif
         lodSphere->render(attributes, frustum, ri.lod,
                           ri.baseTex, ri.glossTex);
         DisableCombiners();
@@ -2379,6 +2375,159 @@ renderEclipseShadows(Mesh* mesh,
 }
 
 
+// Approximate ring shadows using texture coordinate generation.  Vertex
+// shaders are required for the real thing.
+static void
+renderRingShadows(Mesh* mesh,
+                  const RingSystem& rings,
+                  const Vec3f& sunDir,
+                  RenderInfo& ri,
+                  float planetRadius,
+                  Mat4f& planetMat,
+                  Frustum& viewFrustum)
+{
+    // Compute the transformation to use for generating texture
+    // coordinates from the object vertices.
+    float ringWidth = rings.outerRadius - rings.innerRadius;
+    Vec3f v = ri.sunDir_obj ^ Vec3f(0, 1, 0);
+    v.normalize();
+    Vec3f dir = v ^ ri.sunDir_obj;
+    dir.normalize();
+    Vec3f u = v ^ Vec3f(0, 1, 0);
+    u.normalize();
+    Vec3f origin = u * (rings.innerRadius / planetRadius);
+    float s = ri.sunDir_obj.y;
+    float scale = (abs(s) < 0.001f) ? 1000.0f : 1.0f / s;
+    scale *= planetRadius / ringWidth;
+    Vec3f sAxis = -(dir * scale);
+
+    float sPlane[4] = { 0, 0, 0, 0 };
+    float tPlane[4] = { 0, 0, 0, 0.5f };
+    sPlane[0] = sAxis.x;
+    sPlane[1] = sAxis.y;
+    sPlane[2] = sAxis.z;
+    sPlane[3] = (origin * sAxis);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
+
+    // If the ambient light level is greater than zero, reduce the
+    // darkness of the shadows.
+    if (ri.useTexEnvCombine)
+    {
+        float color[4] = { ri.ambientColor.red(), ri.ambientColor.green(),
+                           ri.ambientColor.blue(), 1.0f };
+        glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_CONSTANT_EXT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
+    }
+
+    float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
+
+    renderShadowedMeshDefault(mesh, ri, viewFrustum,
+                              sPlane, tPlane);
+
+    if (ri.useTexEnvCombine)
+    {
+        float color[4] = { 0, 0, 0, 0 };
+        glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glDisable(GL_BLEND);
+}
+
+
+static void
+renderRingShadowsVS(Mesh* mesh,
+                    const RingSystem& rings,
+                    const Vec3f& sunDir,
+                    RenderInfo& ri,
+                    float planetRadius,
+                    float oblateness,
+                    Mat4f& planetMat,
+                    Frustum& viewFrustum)
+{
+    // Compute the transformation to use for generating texture
+    // coordinates from the object vertices.
+    float ringWidth = rings.outerRadius - rings.innerRadius;
+    float s = ri.sunDir_obj.y;
+    float scale = (abs(s) < 0.001f) ? 1000.0f : 1.0f / s;
+
+    if (abs(s) > 1.0f - 1.0e-4f)
+    {
+        // Planet is illuminated almost directly from above, so
+        // no ring shadow will be cast on the planet.  Conveniently
+        // avoids some potential division by zero when ray-casting.
+        return;
+    }
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
+
+    // If the ambient light level is greater than zero, reduce the
+    // darkness of the shadows.
+    if (ri.useTexEnvCombine)
+    {
+        float color[4] = { ri.ambientColor.red(), ri.ambientColor.green(),
+                           ri.ambientColor.blue(), 1.0f };
+        glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_CONSTANT_EXT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
+    }
+
+    // Tweak the texture--set clamp to border and a border color with
+    // a zero alpha.  If a graphics card doesn't support clamp to border,
+    // it doesn't get to play.  It's possible to get reasonable behavior
+    // by turning off mipmaps and assuming transparent rows of pixels for
+    // the top and bottom of the ring textures . . . maybe later.
+    float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
+
+    // Ring shadows look strange if they're always completely black.  Vary
+    // the darkness of the shadow based on the angle between the sun and the
+    // ring plane.  There's some justification for this--the larger the angle
+    // between the sun and the ring plane (normal), the more ring material
+    // there is to travel through.
+    float alpha = (1.0f - abs(ri.sunDir_obj.y)) * 0.5f;
+
+    vp::enable();
+    vp::parameter(16, ri.sunDir_obj);
+    vp::parameter(20, 1, 1, 1, alpha); // color = white
+    vp::parameter(43, rings.innerRadius / planetRadius,
+                  1.0f / (ringWidth / planetRadius),
+                  0.0f, 0.5f);
+    vp::parameter(44, scale, 0, 0, 0);
+    vp::parameter(45, 1, 1.0f - oblateness, 1, 0);
+    vp::use(vp::ringShadow);
+    lodSphere->render(Mesh::Multipass, viewFrustum, ri.lod, NULL);
+    vp::disable();
+
+    // Restore the texture combiners
+    if (ri.useTexEnvCombine)
+    {
+        float color[4] = { 0, 0, 0, 0 };
+        glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glDisable(GL_BLEND);
+}
+
+
 static float getSphereLOD(float discSizeInPixels)
 {
     if (discSizeInPixels < 10)
@@ -2691,6 +2840,38 @@ void Renderer::renderObject(Point3f pos,
                              ri,
                              radius, planetMat, viewFrustum,
                              vertexShaderEnabled);
+    }
+
+    if (obj.rings != NULL && (renderFlags & ShowRingShadows) != 0)
+    {
+        Texture* ringsTex = obj.rings->texture.find(textureResolution);
+        if (ringsTex != NULL)
+        {
+            Vec3f sunDir = pos - Point3f(0, 0, 0);
+            sunDir.normalize();
+
+            ringsTex->bind();
+
+            if (useClampToBorder && vertexShaderEnabled)
+            {
+                renderRingShadowsVS(mesh,
+                                    *obj.rings,
+                                    sunDir,
+                                    ri,
+                                    radius, obj.oblateness,
+                                    planetMat, viewFrustum);
+            }
+            else if (useClampToBorder)
+            {
+                // Approximate ring shadow rendering . . . turned off
+                // for now.  Vertex shaders give you the real thing.
+                renderRingShadows(mesh,
+                                  *obj.rings,
+                                  sunDir,
+                                  ri,
+                                  radius, planetMat, viewFrustum);
+            }
+        }
     }
 
     if (obj.rings != NULL && distance > obj.rings->innerRadius)
@@ -3097,6 +3278,15 @@ void Renderer::renderCometTail(const Body& body,
     float dustTailRadius = dustTailLength * 0.1f;
     float comaRadius = dustTailRadius * 0.5f;
 
+    Point3f origin(0, 0, 0);
+    {
+        Point3d pd = body.getOrbit()->positionAtTime(t);
+        Point3f p = Point3f((float) pd.x, (float) pd.y, (float) pd.z);
+        Vec3f sunDir = p - Point3f(0, 0, 0);
+        sunDir.normalize();
+        origin -= sunDir * (body.getRadius() * 100);
+    }
+
     for (i = 0; i < MaxCometTailPoints; i++)
     {
         float alpha = (float) i / (float) MaxCometTailPoints;
@@ -3107,7 +3297,7 @@ void Renderer::renderCometTail(const Body& body,
         Vec3f sunDir = p - Point3f(0, 0, 0);
         sunDir.normalize();
         
-        cometPoints[i] = Point3f(0, 0, 0) + sunDir * (dustTailLength * alpha);
+        cometPoints[i] = origin + sunDir * (dustTailLength * alpha);
     }
 
     // We need three axes to define the coordinate system for rendering the
