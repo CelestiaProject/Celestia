@@ -24,7 +24,7 @@ using namespace std;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
-#define FAR_DIST   10000.0f
+#define FAR_DIST   10000000.0f
 
 #define RENDER_DISTANCE 50.0f
 
@@ -46,10 +46,13 @@ static CTexture* diffuseLightTex = NULL;
 
 static CTexture* starTex = NULL;
 static CTexture* glareTex = NULL;
+static CTexture* galaxyTex = NULL;
 static CTexture* shadowTex = NULL;
 static CTexture* veilTex = NULL;
 
-static TexFont* font;
+static TexFont* font = NULL;
+
+static GalaxyList galaxies;
 
 
 Renderer::Renderer() :
@@ -112,16 +115,17 @@ static void StarTextureEval(float u, float v, float w,
 }
 
 static void GlareTextureEval(float u, float v, float w,
-                            unsigned char *pixel)
+                             unsigned char *pixel)
 {
-    float r = 1 - (float) sqrt(u * u + v * v);
+    float r = 0.9f - (float) sqrt(u * u + v * v);
     if (r < 0)
         r = 0;
 
     int pixVal = (int) (r * 255.99f);
-    pixel[0] = pixVal;
-    pixel[1] = pixVal;
-    pixel[2] = pixVal;
+    pixel[0] = 65;
+    pixel[1] = 64;
+    pixel[2] = 65;
+    pixel[3] = pixVal;
 }
 
 static void ShadowTextureEval(float u, float v, float w,
@@ -215,6 +219,9 @@ bool Renderer::init(int winWidth, int winHeight)
         starTex = CreateProceduralTexture(64, 64, GL_RGB, StarTextureEval);
         starTex->bindName();
 
+        galaxyTex = CreateProceduralTexture(128, 128, GL_RGBA, GlareTextureEval);
+        galaxyTex->bindName();
+
         glareTex = CreateJPEGTexture("textures\\flare.jpg");
         if (glareTex == NULL)
             glareTex = CreateProceduralTexture(64, 64, GL_RGB, GlareTextureEval);
@@ -240,6 +247,39 @@ bool Renderer::init(int winWidth, int winHeight)
         }
 
         commonDataInitialized = true;
+    }
+
+    {
+        Galaxy* g = new Galaxy();
+        g->setName("Milky Way");
+        g->setPosition(Point3d(28000, 20, 0));
+        Quatf q(1);
+        q.setAxisAngle(Vec3f(1, 0, 0), degToRad(50.0f));
+        g->setOrientation(q);
+        g->setRadius(50000.0f);
+        g->setType(Galaxy::SBa);
+        galaxies.insert(galaxies.end(), g);
+
+        g = new Galaxy();
+        g->setName("Andromeda");
+        g->setPosition(Point3d(2000000, 1000000, 2000000));
+        g->setRadius(95000.0f);
+        g->setType(Galaxy::Sb);
+        galaxies.insert(galaxies.end(), g);
+
+        g = new Galaxy();
+        g->setName("LMC");
+        g->setPosition(Point3d(100000, -100000, 100000));
+        g->setRadius(15000.0f);
+        g->setType(Galaxy::Irr);
+        galaxies.insert(galaxies.end(), g);
+
+        g = new Galaxy();
+        g->setName("SMC");
+        g->setPosition(Point3d(50000, -150000, 80000));
+        g->setRadius(12500.0f);
+        g->setType(Galaxy::Irr);
+        galaxies.insert(galaxies.end(), g);
     }
 
     cout << "GL extensions supported:\n";
@@ -484,18 +524,21 @@ void Renderer::render(const Observer& observer,
     // star and planet labels.
     glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
     glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
-    glPushMatrix();
-    glTranslatef(-observerPos.x, -observerPos.y, -observerPos.z);
 
     glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     clearLabels();
     renderList.clear();
 
+    renderGalaxies(galaxies, observer);
+
+    // Translate the camera before rendering the stars
+    glPushMatrix();
+    glTranslatef(-observerPos.x, -observerPos.y, -observerPos.z);
     // Render stars
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     renderStars(starDB, visset, observer);
 
     // Render asterisms
@@ -681,12 +724,30 @@ void Renderer::render(const Observer& observer,
                 }
             }
 
+            glBegin(GL_LINES);
+            glColor4f(1, 0, 0, 1);
+            glVertex3f(3000, 0, 0);
+            glVertex3f(-3000, 0, 0);
+            glVertex3f(2800, 0, 200);
+            glVertex3f(3000, 0, 0);
+            glVertex3f(2800, 0, -200);
+            glVertex3f(3000, 0, 0);
+            glColor4f(0, 1, 0, 1);
+            glVertex3f(0, 0, 3000);
+            glVertex3f(0, 0, -3000);
+            glVertex3f(200, 0, 2800);
+            glVertex3f(0, 0, 3000);
+            glVertex3f(-200, 0, 2800);
+            glVertex3f(0, 0, 3000);
+            glEnd();
+
             glPopMatrix();
         }
     }
 
     glPopMatrix();
 
+    // #define DISPLAY_AXES
 #ifdef DISPLAY_AXES
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
@@ -697,13 +758,13 @@ void Renderer::render(const Observer& observer,
         glBegin(GL_LINES);
         glColor4f(1, 0, 0, 1);
         glVertex(orig);
-        glVertex(orig - Vec3f(0.2f, 0, 0) * m);
+        glVertex(orig + Vec3f(0.2f, 0, 0) * m);
         glColor4f(0, 1, 0, 1);
         glVertex(orig);
-        glVertex(orig - Vec3f(0, 0.2f, 0) * m);
+        glVertex(orig + Vec3f(0, 0.2f, 0) * m);
         glColor4f(0, 0, 1, 1);
         glVertex(orig);
-        glVertex(orig - Vec3f(0, 0, 0.2f) * m);
+        glVertex(orig + Vec3f(0, 0, 0.2f) * m);
         glEnd();
     }
 #endif
@@ -1681,11 +1742,6 @@ void Renderer::renderStars(const StarDatabase& starDB,
     Vec3f viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
 
     float size = pixelSize * 3.0f;
-    Mat3f m = observer.getOrientation().toMatrix3();
-    Vec3f v0 = Vec3f(-1, -1, 0) * m;
-    Vec3f v1 = Vec3f( 1, -1, 0) * m;
-    Vec3f v2 = Vec3f( 1,  1, 0) * m;
-    Vec3f v3 = Vec3f(-1,  1, 0) * m;
 
     starParticles.clear();
     glareParticles.clear();
@@ -1787,6 +1843,91 @@ void Renderer::renderStars(const StarDatabase& starDB,
     glBindTexture(GL_TEXTURE_2D, glareTex->getName());
     renderParticles(glareParticles, observer.getOrientation());
 }
+
+
+void Renderer::renderGalaxies(const GalaxyList& galaxies,
+                              const Observer& observer)
+{
+    Vec3f viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    Point3d observerPos = (Point3d) observer.getPosition();
+    Mat3f viewMat = observer.getOrientation().toMatrix3();
+    Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
+    Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
+    Vec3f v2 = Vec3f( 1,  1, 0) * viewMat;
+    Vec3f v3 = Vec3f(-1,  1, 0) * viewMat;
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBindTexture(GL_TEXTURE_2D, galaxyTex->getName());
+
+    for (GalaxyList::const_iterator iter = galaxies.begin();
+         iter != galaxies.end(); iter++)
+    {
+        Galaxy* galaxy = *iter;
+        Point3d pos = galaxy->getPosition();
+        float radius = galaxy->getRadius();
+        Point3f offset = Point3f((float) (observerPos.x - pos.x),
+                                 (float) (observerPos.y - pos.y),
+                                 (float) (observerPos.z - pos.z));
+        float distanceToGalaxy = offset.distanceTo(Point3f(0, 0, 0)) - radius;
+        if (distanceToGalaxy < 0)
+            distanceToGalaxy = 0;
+        float minimumFeatureSize = pixelSize * distanceToGalaxy;
+
+        GalacticForm* form = galaxy->getForm();
+        if (form != NULL)
+        {
+            glPushMatrix();
+            glTranslate(Point3f(0, 0, 0) - offset);
+
+            Mat4f m = (galaxy->getOrientation().toMatrix4() *
+                       Mat4f::scaling(radius));
+            float size = radius;
+            int pow2 = 1;
+
+            glBegin(GL_QUADS);
+            for (int i = 0; i < form->size(); i++)
+            {
+                Point3f p = (*form)[i] * m;
+                Vec3f relPos = p - offset;
+
+                if ((i & pow2) != 0)
+                {
+                    pow2 <<= 1;
+                    size /= 1.5f;
+                    if (size < minimumFeatureSize)
+                    {
+                        cout << galaxy->getName() << ": Quitting after " << i << " particles.\n";
+                        break;
+                    }
+                }
+
+                // if (relPos * viewNormal > 0)
+                {
+                    float distance = relPos.length();
+                    float screenFrac = size / distance;
+
+                    if (screenFrac < 0.05f)
+                    {
+                        float a = 8 * (0.05f - screenFrac);
+                        glColor4f(1, 1, 1, a);
+                        glTexCoord2f(0, 0);
+                        glVertex(p + (v0 * size));
+                        glTexCoord2f(1, 0);
+                        glVertex(p + (v1 * size));
+                        glTexCoord2f(1, 1);
+                        glVertex(p + (v2 * size));
+                        glTexCoord2f(0, 1);
+                        glVertex(p + (v3 * size));
+                    }
+                }
+            }
+            glEnd();
+
+            glPopMatrix();
+        }
+    }
+}
+
 
 
 void Renderer::labelStars(const vector<Star*>& stars,
