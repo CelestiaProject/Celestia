@@ -69,6 +69,20 @@ FavoritesList* ReadFavoritesList(istream& in)
         fav->jd = 0.0;
         favParams->getNumber("time", fav->jd);
 
+        // Get the selected object
+        favParams->getString("selection", fav->selectionName);
+
+        string coordSysName;
+        favParams->getString("coordsys", coordSysName);
+        if (coordSysName == "ecliptical")
+            fav->coordSys = astro::Ecliptical;
+        else if (coordSysName == "equatorial")
+            fav->coordSys = astro::Equatorial;
+        else if (coordSysName == "geographic")
+            fav->coordSys = astro::Geographic;
+        else
+            fav->coordSys = astro::Universal;
+
         favorites->insert(favorites->end(), fav);
     }
 
@@ -99,6 +113,23 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
         out << "\tangle  " << angle << '\n';
         out << setprecision(16);
         out << "\ttime   " << fav->jd << '\n';
+        out << "\tselection \"" << fav->selectionName << "\"\n";
+        out << "\tcoordsys \"";
+        switch (fav->coordSys)
+        {
+        case astro::Universal:
+            out << "universal"; break;
+        case astro::Ecliptical:
+            out << "ecliptical"; break;
+        case astro::Equatorial:
+            out << "equatorial"; break;
+        case astro::Geographic:
+            out << "geographic"; break;
+        case astro::ObserverLocal:
+            out << "local"; break;
+        }
+        out << "\"\n";
+
         out << "}\n\n";
     }
 }

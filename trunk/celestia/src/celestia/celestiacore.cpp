@@ -168,6 +168,8 @@ void CelestiaCore::activateFavorite(FavoritesEntry& fav)
     sim->setTime(fav.jd);
     sim->setObserverPosition(fav.position);
     sim->setObserverOrientation(fav.orientation);
+    sim->setSelection(sim->findObjectFromPath(fav.selectionName));
+    sim->setFrame(fav.coordSys, sim->getSelection());
 }
 
 void CelestiaCore::addFavorite(string name)
@@ -177,6 +179,9 @@ void CelestiaCore::addFavorite(string name)
     fav->position = sim->getObserver().getPosition();
     fav->orientation = sim->getObserver().getOrientation();
     fav->name = name;
+    fav->selectionName = sim->getSelection().getName();
+    fav->coordSys = sim->getFrame().coordSys;
+    
     favorites->insert(favorites->end(), fav);
     writeFavoritesFile();
 }
