@@ -369,6 +369,7 @@ bool Renderer::init(int winWidth, int winHeight)
 
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHTING);
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
     // LEQUAL rather than LESS required for multipass rendering
     glDepthFunc(GL_LEQUAL);
