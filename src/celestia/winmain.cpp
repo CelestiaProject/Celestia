@@ -97,6 +97,7 @@ static bool useJoystick = false;
 static bool joystickAvailable = false;
 static JOYCAPS joystickCaps;
 
+static HCURSOR hDefaultCursor = 0;
 bool cursorVisible = true;
 static POINT saveCursorPos;
 
@@ -1826,7 +1827,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     wc.cbWndExtra = 0;
     wc.hInstance = appInstance;
     wc.hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
-    wc.hCursor = LoadCursor(appInstance, MAKEINTRESOURCE(IDC_CROSSHAIR));
+    wc.hCursor = hDefaultCursor;
     wc.hbrBackground = NULL;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = AppName;
@@ -3019,6 +3020,16 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     menuBar = CreateMenuBar();
     acceleratorTable = LoadAccelerators(hInstance,
                                         MAKEINTRESOURCE(IDR_ACCELERATORS));
+
+    if (appCore->getConfig() != NULL)
+    {
+        if (!compareIgnoringCase(appCore->getConfig()->cursor, "arrow"))
+            hDefaultCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW));
+        else if (!compareIgnoringCase(appCore->getConfig()->cursor, "inverting crosshair"))
+            hDefaultCursor = LoadCursor(appInstance, MAKEINTRESOURCE(IDC_CROSSHAIR));
+        else
+            hDefaultCursor = LoadCursor(appInstance, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
+    }
 
     HWND hWnd;
     if (startFullscreen)

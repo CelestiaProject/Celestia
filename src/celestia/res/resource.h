@@ -30,6 +30,7 @@
 #define IDD_RENAME_BOOKMARK             130
 #define IDD_COMPUTEECLIPSES             131
 #define IDD_ECLIPSEFINDER               132
+#define IDC_CROSSHAIR_OPAQUE            133
 #define IDC_CROSSHAIR                   134
 #define IDB_STOP                        135
 #define IDB_EXIT                        136

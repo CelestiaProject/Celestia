@@ -720,6 +720,8 @@ IDB_GLOBE               BITMAP  DISCARDABLE     "globe.bmp"
 
 IDC_CROSSHAIR           CURSOR  DISCARDABLE     "crosshair.cur"
 
+IDC_CROSSHAIR_OPAQUE    CURSOR  DISCARDABLE     "crosshair-opaque.cur"
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table
