@@ -71,6 +71,7 @@
 #include "celengine/cmdparser.h"
 #include "url.h"
 #include "celestialbrowser.h"
+#include "eclipsefinderdlg.h"
 
 #include "celengine/glext.h"
 
@@ -295,6 +296,7 @@ void KdeApp::initActions()
     new KAction(i18n("Reverse Time"), "reload", Key_J, this, SLOT(slotReverseTime()), actionCollection(), "reverseTime");
 
     new KAction(i18n("Celestial Browser"), 0, ALT + Key_C, this, SLOT(slotCelestialBrowser()), actionCollection(), "celestialBrowser");
+    new KAction(i18n("Eclipse Finder"), 0, ALT + Key_E, this, SLOT(slotEclipseFinder()), actionCollection(), "eclipseFinder");
 
     int rFlags, lMode;
     bool isLocal = true;                   
@@ -896,6 +898,17 @@ void KdeApp::slotCelestialBrowser() {
     cb->showNormal();
     cb->raise();
 }
+
+void KdeApp::slotEclipseFinder() {
+    static EclipseFinderDlg *ef = new EclipseFinderDlg(this, appCore);
+
+    ef->show();
+    ef->setActiveWindow();
+    ef->setFocus();
+    ef->showNormal();
+    ef->raise();
+}
+
 
 void KdeApp::popupMenu(float x, float y, Selection sel) {
     KPopupMenu popup(app);
