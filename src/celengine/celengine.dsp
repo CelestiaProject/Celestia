@@ -117,6 +117,10 @@ SOURCE=.\command.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\console.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\constellation.cpp
 # End Source File
 # Begin Source File
@@ -154,6 +158,14 @@ SOURCE=.\glcontext.cpp
 # Begin Source File
 
 SOURCE=.\glext.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\image.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\location.cpp
 # End Source File
 # Begin Source File
 
@@ -257,6 +269,10 @@ SOURCE=.\tokenizer.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\trajmanager.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\univcoord.cpp
 # End Source File
 # Begin Source File
@@ -270,6 +286,10 @@ SOURCE=.\vertexlist.cpp
 # Begin Source File
 
 SOURCE=.\vertexprog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\virtualtex.cpp
 # End Source File
 # Begin Source File
 
@@ -321,6 +341,10 @@ SOURCE=.\command.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\console.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\constellation.h
 # End Source File
 # Begin Source File
@@ -362,6 +386,14 @@ SOURCE=.\glcontext.h
 # Begin Source File
 
 SOURCE=.\glext.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\image.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\location.h
 # End Source File
 # Begin Source File
 
@@ -473,6 +505,10 @@ SOURCE=.\tokenizer.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\trajmanager.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\univcoord.h
 # End Source File
 # Begin Source File
@@ -494,6 +530,10 @@ SOURCE=.\vertexlist.h
 # Begin Source File
 
 SOURCE=.\vertexprog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\virtualtex.h
 # End Source File
 # Begin Source File
 

@@ -136,6 +136,10 @@ SOURCE=.\url.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\winbookmarks.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\wineclipses.cpp
 # End Source File
 # Begin Source File
@@ -212,6 +216,10 @@ SOURCE=.\url.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\winbookmarks.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\wineclipses.h
 # End Source File
 # Begin Source File
@@ -265,6 +273,10 @@ SOURCE=.\res\Clsdfold.ico
 # Begin Source File
 
 SOURCE=.\res\Clsdfolder.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\crosshair.cur
 # End Source File
 # Begin Source File
 
