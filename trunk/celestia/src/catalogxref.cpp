@@ -10,6 +10,7 @@
 #include <cctype>
 #include <algorithm>
 #include "catalogxref.h"
+#include "stardb.h"
 #include "util.h"
 
 using namespace std;
@@ -136,4 +137,40 @@ void CatalogCrossReference::reserve(size_t n)
 {
     if (n > entries.size())
         entries.reserve(n);
+}
+
+
+static uint32 readUint32(istream& in)
+{
+    unsigned char b[4];
+    in.read(reinterpret_cast<char*>(b), 4);
+    return ((uint32) b[3] << 24) + ((uint32) b[2] << 16)
+        + ((uint32) b[1] << 8) + (uint32) b[0];
+}
+
+
+CatalogCrossReference* ReadCatalogCrossReference(istream& in,
+                                                 const StarDatabase& stardb)
+{
+    CatalogCrossReference* xref = new CatalogCrossReference();
+
+    uint32 nEntries = readUint32(in);
+    if (!in.good())
+    {
+        delete xref;
+        return NULL;
+    }
+
+    xref->reserve(nEntries);
+
+    for (uint32 i = 0; i < nEntries; i++)
+    {
+        uint32 catNo1 = readUint32(in);
+        uint32 catNo2 = readUint32(in);
+        Star* star = stardb.find(catNo2);
+        if (star != NULL)
+            xref->addEntry(catNo1, star);
+    }
+
+    return xref;
 }
