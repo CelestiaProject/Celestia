@@ -715,6 +715,7 @@ FEATUREMETHODS(Other)
             case  98: tag = 500; break;  // LabelStars
             case 101: tag = 504; break;  // LabelGalaxies
             case 110: tag = 506; break;  // LabelSpacecraft
+            case  87: tag = 508; break;  // LabelComets
             case  61: tag = 503; break;  // LabelConstellations
             case 105: tag = 404; break;  // CloudMaps
             case   1: tag = 408; break;  // Atmospheres
