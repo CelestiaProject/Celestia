@@ -583,13 +583,13 @@ void Texture::loadCompressedTexture(unsigned char* texels,
         int mmSize = compressedBlockSize(format) *
             ((mmWidth + 3) / 4) * ((mmHeight + 3) / 4);
                         
-        glCompressedTexImage2DARB(GL_TEXTURE_2D,
-                                  mipMapLevel,
-                                  format,
-                                  mmWidth, mmHeight,
-                                  0,
-                                  mmSize,
-                                  texels + mmOffset);
+        EXTglCompressedTexImage2DARB(GL_TEXTURE_2D,
+                                     mipMapLevel,
+                                     format,
+                                     mmWidth, mmHeight,
+                                     0,
+                                     mmSize,
+                                     texels + mmOffset);
         mmOffset += mmSize;
     }
 }

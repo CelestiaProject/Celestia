@@ -463,7 +463,9 @@ extern PFNGLGETCOMBINERSTAGEPARAMETERFVNVPROC EXTglGetCombinerStageParameterfvNV
 #define GL_MAP2_VERTEX_ATTRIB13_4_NV      0x867D
 #define GL_MAP2_VERTEX_ATTRIB14_4_NV      0x867E
 #define GL_MAP2_VERTEX_ATTRIB15_4_NV      0x867F
-#endif
+
+#endif // !defined(GL_NV_VERTEX_PROGRAM) || defined(MACOSX)
+
 #ifndef GL_VERTEX_ATTRIB_ARRAY6_NV
 #define GL_VERTEX_ATTRIB_ARRAY6_NV        0x8656
 #define GL_VERTEX_ATTRIB_ARRAY7_NV        0x8657
@@ -621,7 +623,6 @@ extern PFNGLCOLORTABLEEXTPROC EXTglColorTableEXT;
 
 /* EXT_blend_minmax defines and prototypes from <GL/gl.h> */
 #ifndef GL_EXT_blend_minmax
-#define GL_EXT_blend_minmax
 #define GL_FUNC_ADD_EXT                  0x8006
 #define GL_MIN_EXT                       0x8007
 #define GL_MAX_EXT                       0x8008
