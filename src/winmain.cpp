@@ -1000,10 +1000,11 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     return true;
 }
 
+
 static void HandleScreenCapture(HWND hWnd)
 {
-    //Display File SaveAs dialog to allow user to specify name and location of
-    //of captured screen image.
+    // Display File SaveAs dialog to allow user to specify name and location of
+    // of captured screen image.
     OPENFILENAME Ofn;
     char szFile[_MAX_PATH+1], szFileTitle[_MAX_PATH+1];
 
@@ -1015,32 +1016,50 @@ static void HandleScreenCapture(HWND hWnd)
     Ofn.lStructSize = sizeof(OPENFILENAME);
     Ofn.hwndOwner = hWnd;
     Ofn.lpstrFilter = "JPEG - JFIF Compliant\0*.jpg;*.jif;*.jpeg\0Portable Network Graphics\0*.png\0";
+    Ofn.lpstrDefExt = "jpg";
     Ofn.lpstrFile= szFile;
     Ofn.nMaxFile = sizeof(szFile);
     Ofn.lpstrFileTitle = szFileTitle;
     Ofn.nMaxFileTitle = sizeof(szFileTitle);
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
-    //Comment this out if you just want the standard "Save As" caption.
+    // Comment this out if you just want the standard "Save As" caption.
     Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
 
-    //OFN_HIDEREADONLY - Do not display read-only JPEG or PNG files
-    //OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
+    // OFN_HIDEREADONLY - Do not display read-only JPEG or PNG files
+    // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
     Ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 
     // Display the Save dialog box.
     if(GetSaveFileName(&Ofn))
     {
-        //If you got here, a path and file has been specified.
+        // If you got here, a path and file has been specified.
+        // Ofn.lpstrFile contains full path to specified file
+        // Ofn.lpstrFileTitle contains just the filename with extension
 
-        //Ofn.lpstrFile contains full path to specified file
-        //Ofn.lpstrFileTitle contains just the filename with extension
+        // Get the dimensions of the current viewport
         int viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
 
-        bool success = CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
-                                             viewport[0], viewport[1],
-                                             viewport[2], viewport[3]);
+        bool success = false;
+
+        if (Ofn.nFilterIndex == 1)
+        {
+            success = CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
+                                            viewport[0], viewport[1],
+                                            viewport[2], viewport[3]);
+        }
+        else if (Ofn.nFilterIndex == 2)
+        {
+            success = CaptureGLBufferToPNG(string(Ofn.lpstrFile),
+                                           viewport[0], viewport[1],
+                                           viewport[2], viewport[3]);
+        }
+        else
+        {
+            DPRINTF("WTF? Unknown filter index for screen capture.\n");
+        }
+
         if (!success)
         {
             MessageBox(NULL,
@@ -1049,6 +1068,7 @@ static void HandleScreenCapture(HWND hWnd)
         }
     }
 }
+
 
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
