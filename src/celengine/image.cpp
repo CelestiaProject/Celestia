@@ -257,6 +257,23 @@ bool Image::isCompressed() const
 }
 
 
+bool Image::hasAlpha() const
+{
+    switch (format)
+    {
+    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+    case GL_RGBA:
+    case GL_BGRA_EXT:
+    case GL_LUMINANCE_ALPHA:
+    case GL_ALPHA:
+        return true;
+    default:
+        return false;
+    }
+}
+
+
 // Convert an input height map to a normal map.  Ideally, a single channel
 // input should be used.  If not, the first color channel of the input image
 // is the one only one used when generating normals.  This produces the

@@ -340,7 +340,7 @@ static int CalcMipLevelCount(int w, int h)
 
 
 Texture::Texture(int w, int h, int d) :
-    width(w), height(h), depth(d)
+    width(w), height(h), depth(d), alpha(false)
 {
 }
 
@@ -457,6 +457,8 @@ ImageTexture::ImageTexture(Image& img,
     {
         LoadMiplessTexture(img, GL_TEXTURE_2D);
     }
+
+    alpha = img.hasAlpha();
 }
 
 
@@ -508,6 +510,8 @@ TiledTexture::TiledTexture(Image& img,
         for (int i = 0; i < uSplit * vSplit; i++)
             glNames[i] = 0;
     }
+
+    alpha = img.hasAlpha();
 
     bool mipmap = mipMapMode == DefaultMipMaps;
     bool precomputedMipMaps = false;
