@@ -16,7 +16,7 @@
   <!ENTITY eclipseshadows "<keycombo action='simul'>&Ctrl; <keycap>E</keycap></keycombo>">
   <!ENTITY galaxies "<keycap>U</keycap>">
   <!ENTITY nightsidelights "<keycombo action='simul'>&Ctrl; <keycap>L</keycap></keycombo>">
-  <!ENTITY orbits "<keycombo action='simul'>&Ctrl; <keycap>O</keycap></keycombo>">
+  <!ENTITY orbits "<keycap>O</keycap>">
   <!ENTITY starsaspoints "<keycombo action='simul'>&Ctrl; <keycap>S</keycap></keycombo>">
   <!ENTITY verbose "<keycap>V</keycap>">
   <!ENTITY dec_fov "<keycap>.</keycap>">
@@ -199,7 +199,7 @@ They have succeeded.  As of this writing, over 500 members of the public are par
 </para>
 
 <itemizedlist>
-<listitem><para>Hover over each of the nine planets in our solar system as they rotate slowly below you.  See clouds actually move and drift by (where applicable).  Look carefully and you may be able to see three-dimensional mountains, canyons and craters on the planet surfaces with shadows being cast by them as the Sun sets low on the horizon.
+<listitem><para>Hover over each of the nine planets in our solar system as they rotate slowly below you.  See clouds actually drift by (where applicable).  Look carefully and you may be able to see mountains, canyons and craters on the planet surfaces with shadows being cast by them as the Sun sets low on the horizon.
 </para></listitem>
 
 <listitem><para>Take a spin down to the Earth's surface at a lazy speed or at thousands of miles/km per hour in your own spacecraft.  Skim over the oceans of Earth as you actually fly below the clouds.  See the sky turn a pale blue and eventually, transform into the crimson color of a Sunset.  Soar back into space in time to see the lights come on in the cities of Earth and glow an eerie white as the dark side of Earth turns below you.
@@ -217,7 +217,7 @@ They have succeeded.  As of this writing, over 500 members of the public are par
 <listitem><para>Take up station behind the comet Halley, set Celestia's clock back in time and follow this famous comet on a trip into the inner solar system, sailing past Earth with its gaseous blue tail streaming out behind it.
 </para></listitem>
 
-<listitem><para>Set your spacecraft speed and journey from the Earth's surface up to the International Space Station or the Hubble Space Telescope.  Test your skill at rendezvousing with them as they orbit Earth every 90 minutes.
+<listitem><para>Set your spacecraft speed and journey from the Earth's surface up to the International Space Station or the Hubble Space Telescope.  Test your skill rendezvousing with them as they orbit Earth every 90 minutes.
 </para></listitem>
 
 <listitem><para>Fly out to the very edges of our solar system, locate and follow behind Voyager 1 and 2 as they speed farther and farther away from their creators back on Earth, headed on a one way journey through the blackness of frigid space toward distant stars that will take them millions of years to reach.
@@ -294,13 +294,14 @@ In general, to run the basic &celestia; solar system program, your computer shou
 </para><para>
 The basic &celestia; program also requires a minimum of 128 megabytes of RAM memory.  The graphics files that &celestia; use are large, and if your computer does not have at least 128 megabytes of RAM, &celestia; may run very slowly, not run at all or may lock up.  In addition, if you wish to explore &celestia;'s maximum capabilities, you will need 256 megabytes of RAM memory, with 512 megabytes of RAM recommended.
 </para><para>
-Although it's not absolutely required, the program will be vastly more enjoyable if you also have a 3D video graphics accelerator in your computer.  This is a piece of hardware circuitry that helps to draw complex graphic images on your video display monitor.  &celestia; should run with any 3D accelerator card that has at least 8 megabytes of memory.  However, a 16 megabyte or 32 megabyte card is preferred if you intend to use &celestia;'s most detailed graphic files.  If you have such a card, you will know it.  &celestia; will run smoothly and its graphics will be complete, crisp and sharp.  It is runs too slowly, is blurry, locks up, or objects appear to be moving with jerky motions, you may need to locate a faster computer or one with more memory or graphics capability.
+Although it's not absolutely required, the program will be vastly more enjoyable if you also have a 3D video graphics accelerator in your computer.  This is hardware circuitry that draws complex graphic images on your video display monitor.  &celestia; should run with any 3D accelerator card with at least 8 megabytes of memory.  However, a 16 megabyte or 32 megabyte card is preferred if you intend to use &celestia;'s most detailed graphic files.  If you have such a card, &celestia; will run smoothly and its graphics will be complete, crisp and sharp.  If is runs too slowly, is blurry, locks up, or objects appear to be moving with jerky motions, you may need to locate a faster computer or one with more memory or graphics capability.
 </para>
 <important>
-<para>&celestia; uses the OpenGL API to render 3D graphics.  In order to get the most from &celestia;, you should have a modern OpenGL graphics card with the latest drivers from the manufacturer.  If you have problems running &celestia;, the first thing to do is verify that your graphics card is capable enough to run &celestia;, and that the drivers are up to date.  If in doubt about the OpenGL driver, download and install a new one.  It will be available free from your card maker's web site.  Having a new driver is the best thing you can do to ensure that &celestia; runs properly.
+<para>&celestia; uses the OpenGL API to render 3D graphics.  In order to get the most from Celestia, you should have a modern OpenGL graphics card with the latest drivers from the manufacturer.  If you have problems running &celestia;, verify that your graphics card is capable enough to run &celestia;, and that the drivers are up to date.  If in doubt about the OpenGL driver, download and install a new one.  It will be available free from your card maker's web site.  Having a new driver is the best thing you can do to ensure that &celestia; runs properly.
 </para>
 <para>
-While a graphic video card might use Open GL processing, &celestia; does not run well on all such card brands or models.  Major improvements have been made in version &ver; to render &celestia; more compatible with as many brands of cards as possible, but several graphic cards may handle images in a manner that &celestia; still cannot control properly.  To date, &celestia;'s features will work best on the video chipsets manufactured by NVIDIA, Inc.  Those video cards are sold under the model names "Riva", "GeForce" and "Quadro".  If an NVIDIA Open GL card is not present in your computer, &celestia; can still offer you a beautiful solar system experience, but some of its advanced features may not function smoothly or may not work at all.  These include shadows on mountains and craters (bump mapping), Sunlight reflections off water, land or atmosphere (specular highlights), the shadows of moon eclipses, and atmospheric haze near a planet's surface.
+While a graphic video card might use Open GL processing, &celestia; does not run well on all such ca
+rd brands or models.  Version 1.3.0 incorporates major improvements to render &celestia; more compatible with as many brands of cards as possible, but several graphic cards handle images in a manner that &celestia; may not control properly.  To date, &celestia;'s features work best on the video chipsets manufactured by NVIDIA, Inc.  Those video cards sell under the model names "Riva", "GeForce" and "Quadro".  If an NVIDIA Open GL card is not present in your computer, &celestia; can still offer you a beautiful solar system experience, but some of its advanced features may not function.  These include shadows on mountains and craters (bump mapping), sunlight reflections off water (specular highlights), shadows of moon eclipses, and atmospheric haze.
 </para><para>
 As development of &celestia; continues, better support for graphics hardware will continue to be introduced; if not all the features of your graphics card are supported yet, be patient.  Better yet, join the &celestia; development team and help improve the program.
 </para></important>
@@ -384,14 +385,14 @@ To uninstall &celestia; in Windows, click the <guibutton>Start</guibutton> butto
 <para>
 To launch &celestia;, double-click on its icon either on your desktop or in the Programs menu that appears when you click your Start button.  The program will load and will open far out in space hovering above Io, one of Jupiter's most fascinating moons.  Mighty Jupiter will be visible somewhere behind Io.  The beauty of &celestia; is its accuracy.  The image in front of you is exactly what you would see if you were really positioned in space at that very spot right now.  In other words, Io, Jupiter, and all of the planets and stars and spacecraft visible on your computer screen really are located in space where &celestia; has put them.</para>
 
-<para>In the 1970s, the United States sent two space probes named Voyager 1 and Voyager 2 to explore the outer solar system.  The images you see in &celestia; have in part, been taken directly from Voyager photographs.  The image of Io in front of you is one of these.  The Voyagers found Io to be actively volcanic.  Those mountains and black smudges are really there on the moon and are volcanoes.  Some of them were erupting when Voyager flew by.
-The Opening Screen</para>
+<para>In the 1970s, the United States sent two space probes named Voyager 1 and Voyager 2 to explore the outer solar system.  The images you see in &celestia; have in part, been taken directly from Voyager photographs.  The image of Io in front of you is one of these.  The Voyagers found Io to be actively volcanic.  Those mountains and black smudges are really there on the moon and are volcanoes.  Some of them were erupting when Voyager flew by.</para>
+<para>The Opening Screen:</para>
 
 <screenshot>
 <screeninfo>Io orbiting Jupiter</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig1.png" format="PNG" />
+<imagedata fileref="fig1.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Io orbiting Jupiter</phrase>
@@ -418,7 +419,7 @@ The Opening Screen</para>
 <screeninfo>The FOV here is 45°.  Notice size of the moon behind Earth.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig2.png" format="PNG" />
+<imagedata fileref="fig2.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>The FOV here is 45°.  Notice size of the moon behind Earth.</phrase>
@@ -431,7 +432,7 @@ The Opening Screen</para>
 <screeninfo>The FOV here is 12°.  Earth and moon are now enlarged.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig3.png" format="PNG" />
+<imagedata fileref="fig3.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>The FOV here is 12°.  Earth and moon are now enlarged.</phrase>
@@ -468,12 +469,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Earth with Atmospheres selected.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig2.png" format="PNG" />
+<imagedata fileref="fig4.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Earth with Atmospheres selected.</phrase>
 </textobject>
-<caption><para><ulink url="">Earth with Atmospheres selected.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2003-03-24T14:39:30.34?x=vr3XsfrEz/GtDA&amp;y=tgu0u7PuJg&amp;z=dengFcStz/Y&amp;ow=-0.798872&amp;ox=-0.219731&amp;oy=-0.380711&amp;oz=-0.410586&amp;select=Sol:Earth&amp;fov=20.349142&amp;ts=1.000000&amp;rf=57239&amp;lm=0">Earth with Atmospheres selected.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -481,12 +482,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene without Atmospheres selected.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig3.png" format="PNG" />
+<imagedata fileref="fig5.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Same scene without Atmospheres selected.</phrase>
 </textobject>
-<caption><para><ulink url="">Same scene without Atmospheres selected.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2003-03-24T14:39:47.87?x=vr3rayPuz/GtDA&amp;y=NWaz3r3uJg&amp;z=dUGgtlNN0/Y&amp;ow=-0.798872&amp;ox=-0.219731&amp;oy=-0.380711&amp;oz=-0.410586&amp;select=Sol:Earth&amp;fov=20.349142&amp;ts=1.000000&amp;rf=56983&amp;lm=0">Same scene without Atmospheres selected.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -504,12 +505,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Sky with &celestia;l Grid Enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig3.png" format="PNG" />
+<imagedata fileref="fig6.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Sky with &celestia;l Grid Enabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Sky with &celestia;l Grid Enabled.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2003-03-24T14:40:38.16?x=wzJJcvet1/GtDA&amp;y=mFWLdBuqMg&amp;z=cXerPTw57PY&amp;ow=-0.414948&amp;ox=-0.532151&amp;oy=-0.593261&amp;oz=-0.438948&amp;select=Sol&amp;fov=45.000004&amp;ts=1.000000&amp;rf=57047&amp;lm=0">Sky with &celestia;l Grid Enabled.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </sect1>
@@ -527,12 +528,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Earth with moving clouds selected.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig2.png" format="PNG" />
+<imagedata fileref="fig7.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Earth with moving clouds selected.</phrase>
 </textobject>
-<caption><para><ulink url="">Earth with moving clouds selected.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2003-03-24T14:41:28.15?x=1Ct3g+sEIPKtDA&amp;y=GJV89/a89////////////w&amp;z=QbP79kGgovY&amp;ow=0.612877&amp;ox=0.057523&amp;oy=-0.780640&amp;oz=0.108050&amp;select=Sol:Earth&amp;fov=45.000004&amp;ts=1.000000&amp;rf=57239&amp;lm=0">Earth with moving clouds selected.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -540,12 +541,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene without clouds selected.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig3.png" format="PNG" />
+<imagedata fileref="fig8.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Same scene without clouds selected.</phrase>
 </textobject>
-<caption><para><ulink url="">Same scene without clouds selected.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2003-03-24T14:41:49.22?x=1Ct+4WU2IPKtDA&amp;y=PW8EJQO99////////////w&amp;z=QUtZbbH6pvY&amp;ow=0.612877&amp;ox=0.057523&amp;oy=-0.780640&amp;oz=0.108050&amp;select=Sol:Earth&amp;fov=45.000004&amp;ts=1.000000&amp;rf=57223&amp;lm=0">Same scene without clouds selected.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -563,12 +564,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Venus and comet Ikaya-Zhang in Feb, 2002.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig9.png" format="PNG" />
+<imagedata fileref="fig9.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Venus and comet Ikaya-Zhang in Feb, 2002.</phrase>
 </textobject>
-<caption><para><ulink url="">Venus and comet Ikaya-Zhang in Feb, 2002.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Venus/2002-02-12T09:44:37.36?x=GOVM1fji8HLIDA&amp;y=BDqKmqLy71L//////////w&amp;z=Zbojlky5uPID&amp;ow=0.871985&amp;ox=0.128293&amp;oy=-0.105704&amp;oz=-0.460446&amp;select=Sol:Ikeya-Zhang&amp;fov=11.675808&amp;ts=1.000000&amp;rf=57223&amp;lm=0">Venus and comet Ikaya-Zhang in Feb, 2002.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </sect1>
@@ -581,12 +582,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Constellations with borders and labels enabled.  As viewed from Earth, the Sun is "in" Capricorn.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig10.png" format="PNG" />
+<imagedata fileref="fig10.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Constellations with borders and labels enabled.  As viewed from Earth, the Sun is "in" Capricorn.</phrase>
 </textobject>
-<caption><para><ulink url="">Constellations with borders and labels enabled.  As viewed from Earth, the Sun is "in" Capricorn.</ulink></para></caption>
+<caption><para><ulink url="cel://PhaseLock/Sol:Earth/Sol/2003-01-28T21:43:22.11?x=Vm0ZM6hDJ/qzDA&amp;y=TSNET44/wv///////////w&amp;z=pcrvTh/EE9Lz/////////w&amp;ow=-0.260077&amp;ox=-0.143412&amp;oy=-0.945635&amp;oz=0.132543&amp;select=Sol&amp;fov=34.907467&amp;ts=1.000000&amp;rf=65439&amp;lm=8">Constellations with borders and labels enabled.  As viewed from Earth, the Sun is "in" Capricorn.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </sect1>
@@ -604,12 +605,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Io eclipsing Jupiter, an example of Eclipse Shadows.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig11.png" format="PNG" />
+<imagedata fileref="fig11.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Io eclipsing Jupiter, an example of Eclipse Shadows.</phrase>
 </textobject>
-<caption><para><ulink url="">Io eclipsing Jupiter, an example of Eclipse Shadows.</ulink></para></caption>
+<caption><para><ulink url="cel://PhaseLock/Sol:Jupiter:Io//2003-01-30T08:22:03.99?x=2HPYJQ8gkqeEDA&amp;y=nObZfKeMKQUB&amp;z=ZdL5mSrk6njC/////////w&amp;ow=0.948617&amp;ox=-0.019555&amp;oy=-0.314877&amp;oz=-0.024411&amp;select=Sol:Jupiter:Io&amp;fov=19.402893&amp;ts=10.000000&amp;rf=57239&amp;lm=0">Io eclipsing Jupiter, an example of Eclipse Shadows.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -617,12 +618,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>A total solar eclipse over Africa, as seen from space.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig12.png" format="PNG" />
+<imagedata fileref="fig12.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>A total solar eclipse over Africa, as seen from space.</phrase>
 </textobject>
-<caption><para><ulink url="">A total solar eclipse over Africa, as seen from space.</ulink></para></caption>
+<caption><para><ulink url="cel://PhaseLock/Sol:Earth//2006-03-29T10:00:10.14?x=CJhT/kKTMRGuDA&amp;y=Trq1EVGVMg&amp;z=92vpvZKWWFQC&amp;ow=0.633311&amp;ox=0.076168&amp;oy=-0.767258&amp;oz=-0.066564&amp;select=Sol:Earth&amp;fov=19.402893&amp;ts=1.000000&amp;rf=57239&amp;lm=0">A total solar eclipse over Africa, as seen from space.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -645,12 +646,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Neptune and Milky Way with Galaxies enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig13.png" format="PNG" />
+<imagedata fileref="fig13.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Neptune and Milky Way with Galaxies enabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Neptune and Milky Way with Galaxies enabled.</ulink></para></caption>
+<caption><para><ulink url="cel://PhaseLock/Sol:Neptune//2006-03-29T10:01:33.81?x=2Gskq/E6DO4bDg&amp;y=ir4/pNxkBYn+/////////w&amp;z=VXCvtfOiV8ZAAQ&amp;ow=0.017244&amp;ox=-0.142499&amp;oy=-0.989644&amp;oz=-0.000777&amp;select=Sol:Neptune&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57239&amp;lm=0">Neptune and Milky Way with Galaxies enabled.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -658,12 +659,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene without Galaxies enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig14.png" format="PNG" />
+<imagedata fileref="fig14.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Same scene without Galaxies enabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Same scene without Galaxies enabled.</ulink></para></caption>
+<caption><para><ulink url="cel://PhaseLock/Sol:Neptune//2006-03-29T10:01:48.90?x=cLQ0q1GcDO4bDg&amp;y=6jGoRGVgBYn+/////////w&amp;z=VcNKIyo3V8ZAAQ&amp;ow=0.017244&amp;ox=-0.142499&amp;oy=-0.989644&amp;oz=-0.000777&amp;select=Sol:Neptune&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57235&amp;lm=0">Same scene without Galaxies enabled.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -685,12 +686,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Earth, Sun and terminator with night-lights enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig15.png" format="PNG" />
+<imagedata fileref="fig15.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Earth, Sun and terminator with night-lights enabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Earth, Sun and terminator with night-lights enabled.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2006-03-29T04:38:33.20?x=2E27BL0aqA2uDA&amp;y=M4QqEncs3////////////w&amp;z=g6SKdIqs2kQC&amp;ow=0.633149&amp;ox=0.213732&amp;oy=0.692488&amp;oz=-0.271848&amp;select=Sol:Earth&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57239&amp;lm=0">Earth, Sun and terminator with night-lights enabled.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -698,12 +699,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene without night-lights enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig16.png" format="PNG" />
+<imagedata fileref="fig16.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Same scene without night-lights enabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Same scene without night-lights enabled.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2006-03-29T04:38:51.19?x=2E1CQPuTqA2uDA&amp;y=a2vZXHEs3////////////w&amp;z=g6RQFYpc3kQC&amp;ow=0.633149&amp;ox=0.213732&amp;oy=0.692488&amp;oz=-0.271848&amp;select=Sol:Earth&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57111&amp;lm=0">Same scene without night-lights enabled.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -720,12 +721,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Solar System with orbits enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig17.png" format="PNG" />
+<imagedata fileref="fig17.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Solar System with orbits enabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Solar System with orbits enabled.</ulink> The inclined orbit is that of Pluto, a large Kuiper Belt Object that may have swung into its current orbit through a past collision with another object.</para></caption>
+<caption><para><ulink url="cel://Follow/Sol/2006-03-29T04:39:48.33?x=AAAgHOqyiGVUCQ&amp;y=CkzQLZRSPWnc&amp;z=VcpQPfVHxHG59////////w&amp;ow=0.219300&amp;ox=-0.005459&amp;oy=0.973495&amp;oz=0.064688&amp;select=Sol&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57271&amp;lm=0">Solar System with orbits enabled.</ulink> The inclined orbit is that of Pluto, a large Kuiper Belt Object that may have swung into its current orbit through a past collision with another object.</para></caption>
 </mediaobject>
 </screenshot>
 </sect1>
@@ -748,12 +749,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Ring Shadows enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig18.png" format="PNG" />
+<imagedata fileref="fig18.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Ring Shadows enabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Ring Shadows enabled.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Saturn/2006-03-29T04:40:33.59?x=gJW90XX90hlhDA&amp;y=CpSPoBqCgcYB&amp;z=JXaSk5dugImR/////////w&amp;ow=-0.647476&amp;ox=-0.274139&amp;oy=0.707176&amp;oz=-0.074328&amp;select=Sol:Saturn&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57239&amp;lm=0">Ring Shadows enabled.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -761,12 +762,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene without night-lights enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig19.png" format="PNG" />
+<imagedata fileref="fig19.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Ring Shadows disabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Ring Shadows disabled.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Saturn/2006-03-29T04:40:49.83?x=gJUtN50Z0hlhDA&amp;y=CnRQz0uOgcYB&amp;z=JXaSIiIigYmR/////////w&amp;ow=-0.647476&amp;ox=-0.274139&amp;oy=0.707176&amp;oz=-0.074328&amp;select=Sol:Saturn&amp;fov=20.674709&amp;ts=1.000000&amp;rf=53143&amp;lm=0">Ring Shadows disabled.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -787,12 +788,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Voyager 1 against stars - windows mode - Stars as Points enabled.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig20.png" format="PNG" />
+<imagedata fileref="fig20.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Voyager 1 against stars - windows mode - Stars as Points enabled.</phrase>
 </textobject>
-<caption><para><ulink url="">Voyager 1 against stars - windows mode - Stars as Points enabled.</ulink></para></caption>
+<caption><para>Voyager 1 against stars - windows mode - Stars as Points enabled.</para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -800,12 +801,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Stars as Points off - at resolution of 800x600 (windows mode).</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig21.png" format="PNG" />
+<imagedata fileref="fig21.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Stars as Points off - at resolution of 800x600 (windows mode).</phrase>
 </textobject>
-<caption><para><ulink url="">Stars as Points off - at resolution of 800x600 (windows mode).</ulink></para></caption>
+<caption><para>Stars as Points off - at resolution of 800x600 (windows mode).</para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -813,12 +814,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene as figure 21 but at a higher screen resolution of 1280x720.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig22.png" format="PNG" />
+<imagedata fileref="fig22.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Same scene as figure 21 but at a higher screen resolution of 1280x720.</phrase>
 </textobject>
-<caption><para><ulink url="">Same scene as figure 21 but at a higher screen resolution of 1280x720.</ulink></para></caption>
+<caption><para>Same scene as figure 21 but at a higher screen resolution of 1280x720.</para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -843,12 +844,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Pluto and its moon Charon with Ambient Light set to None.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig23.png" format="PNG" />
+<imagedata fileref="fig23.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Pluto and its moon Charon with Ambient Light set to None.</phrase>
 </textobject>
-<caption><para><ulink url="">Pluto and its moon Charon with Ambient Light set to None.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Pluto/2006-03-29T04:42:34.18?x=gqIGr1vv4t2QDA&amp;y=aAp+YR6GBptA&amp;z=omslMym0YF3lAQ&amp;ow=0.609327&amp;ox=0.299510&amp;oy=0.684028&amp;oz=0.266685&amp;select=Sol:Pluto&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57239&amp;lm=0">Pluto and its moon Charon with Ambient Light set to None.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -856,12 +857,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene with Ambient Light set to Medium.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig24.png" format="PNG" />
+<imagedata fileref="fig24.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Same scene with Ambient Light set to Medium.</phrase>
 </textobject>
-<caption><para><ulink url="">Same scene with Ambient Light set to Medium.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Pluto/2006-03-29T04:43:12.52?x=gqKy2xVm5N2QDA&amp;y=aApudZYkBptA&amp;z=omuVl3saYV3lAQ&amp;ow=0.609327&amp;ox=0.299510&amp;oy=0.684028&amp;oz=0.266685&amp;select=Sol:Pluto&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57239&amp;lm=0">Same scene with Ambient Light set to Medium.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -883,12 +884,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Stars at Magnitude setting of 7.5.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig25.png" format="PNG" />
+<imagedata fileref="fig25.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Stars at Magnitude setting of 7.5.</phrase>
 </textobject>
-<caption><para><ulink url="">Stars at Magnitude setting of 7.5.</ulink></para></caption>
+<caption><para><ulink url="cel://Freeflight/2006-03-29T04:44:08.59?x=gqLMno/45N2QDA&amp;y=aAr62Hb+BZtA&amp;z=omu1nHpCYV3lAQ&amp;ow=0.027582&amp;ox=0.409991&amp;oy=0.910901&amp;oz=0.037506&amp;fov=20.674709&amp;ts=1.000000&amp;rf=40851&amp;lm=0">Stars at Magnitude setting of 7.5.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -896,12 +897,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene at Magnitude setting of 15.0.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig26.png" format="PNG" />
+<imagedata fileref="fig26.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Same scene at Magnitude setting of 15.0.</phrase>
 </textobject>
-<caption><para><ulink url="">Same scene at Magnitude setting of 15.0.</ulink></para></caption>
+<caption><para><ulink url="cel://Freeflight/2006-03-29T04:44:32.46?x=gqLMno/45N2QDA&amp;y=aAr62Hb+BZtA&amp;z=omu1nHpCYV3lAQ&amp;ow=0.027582&amp;ox=0.409991&amp;oy=0.910901&amp;oz=0.037506&amp;fov=20.674709&amp;ts=1.000000&amp;rf=40851&amp;lm=0">Same scene at Magnitude setting of 15.0.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -924,12 +925,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Open GL/Nvidia Combiners render path selected.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig27.png" format="PNG" />
+<imagedata fileref="fig27.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Open GL/Nvidia Combiners render path selected.</phrase>
 </textobject>
-<caption><para><ulink url="">Open GL/Nvidia Combiners render path selected.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2006-03-29T04:46:45.03?x=aA0yR2AW5A6uDA&amp;y=JBwWY99k5////////////w&amp;z=fTQlxr4wI0UC&amp;ow=0.356125&amp;ox=-0.047490&amp;oy=-0.915858&amp;oz=0.179234&amp;select=Sol:Earth&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57235&amp;lm=0">Open GL/Nvidia Combiners render path selected.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry><entry>
@@ -937,12 +938,12 @@ When you use &celestia; for the first time, you will need to choose some options
 <screeninfo>Same scene with Basic render path only.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig28.png" format="PNG" />
+<imagedata fileref="fig28.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>Same scene with Basic render path only.</phrase>
 </textobject>
-<caption><para><ulink url="">Same scene with Basic render path only.</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2006-03-29T04:47:04.95?x=aI3/iKuc5A6uDA&amp;y=DY6fEdlk5////////////w&amp;z=fXQFa4pFJ0UC&amp;ow=0.356125&amp;ox=-0.047490&amp;oy=-0.915858&amp;oz=0.179234&amp;select=Sol:Earth&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57235&amp;lm=0">Same scene with Basic render path only.</ulink></para></caption>
 </mediaobject>
 </screenshot>
 </entry>
@@ -995,7 +996,7 @@ When you use &celestia; for the first time, you will need to choose some options
 <listitem><para>Press the &lookback; on the keyboard.  This is a Lookback command.  It will reverse your view so that instead of looking forward, you will look behind you (a rearview window).  It is very useful when flying from one planet to another.  You can see forward and then examine your journey from the rear view, watching the planet or moon recede from you.</para>
 </listitem>
 </orderedlist>
-<para>Joystick control: You can also control your movement via a joystick (Windows only).  The seven commands for joystick control of &celestia; are listed in the back of this document, in the Keyboard and Mouse Command Summary.
+<para>Joystick control: You can also control your movement via a joystick (Windows only).  The commands for joystick control of &celestia;  are listed in the back of this document, in the Keyboard and Mouse Command Summary.
 </para>
 </chapter>
 
@@ -1013,7 +1014,7 @@ When you use &celestia; for the first time, you will need to choose some options
 
 <listitem><para>You can select the star and fly to it in your spaceship.  It takes longer but sometimes the journey is half the fun of getting there.  How to operate your spaceship is explained later below.</para></listitem>
 
-<listitem><para>You can select an object using keyboard commands, then use the recede and advance commands to get there.  Simply point at a star or planet, <mousebutton>left-click</mousebutton> on it with the mouse so that it is selected and tap either or both the &follow; and the &center; keys on the keyboard.  The &follow; key tells &celestia; to follow the selected object, keeping it the same distance from you even though it is moving through space.  To see that effect in action, swing the sky and locate Io.  <mousebutton>Left-click</mousebutton> on it to select it and press the &follow; key.  The words <quote>Follow Io</quote> will appear in the lower right corner of the screen.  Io will stay the same distance from you.  Now release your hold on Io by pressing the &esc; key.  Io will begin to drift away.  The &center; key tells &celestia; to center a selected object in the middle of your viewscreen.  Let's try it.  Point at a star, <mousebutton>left-click</mousebutton> on it to select it, and tap the &center; key on the keyboard.  Now, hold down the advance key (&advance; or the <mousebutton>mouse wheel</mousebutton>) and you will go to that star.  <mousebutton>Double-clicking</mousebutton> quickly on an object will also center it.</para></listitem>
+<listitem><para>You can select an object using keyboard commands, then use the recede and advance commands to get there.  Simply point at a star or planet, <mousebutton>left-click</mousebutton> on it with the mouse so that it is selected and tap either or both the &follow; and the &center; keys on the keyboard.  The &follow; key tells &celestia; to follow the selected object, keeping it the same distance from you even though it is moving through space.  To see that effect in action, swing the sky and locate Io.  <mousebutton>Left-click</mousebutton> on it to select it and press the &follow; key.  The words <quote>Follow Io</quote> will appear in the lower right corner of the screen.  Io will stay the same distance from you.  Now release your hold on Io by pressing the &esc; key.  Io will begin to drift away.  The &center; key tells &celestia; to center a selected object in the middle of your viewscreen.  Let's try it.  Point at a star, <mousebutton>left-click</mousebutton> on it to select it, and tap the &center; key on the keyboard.  Hold down the advance key (&advance; or the <mousebutton>mouse wheel</mousebutton>) and you will go to that star.  <mousebutton>Double-clicking</mousebutton> quickly on an object will also center it.</para></listitem>
 
 <listitem><para>You can select one object such as Io and follow it (&follow; key).  Then, select a second object such as Jupiter by <mousebutton>left-clicking</mousebutton> on it and press &lock; on the keyboard.  This will Lock Io and Jupiter together as a pair.  When you rotate the scene, Io will stay locked to Jupiter and the display will read distances between them.</para></listitem>
 </orderedlist>
@@ -1201,7 +1202,7 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 
 <sect1 id="save_image">
 <title>Save Image</title>
-<para>To save a graphic file (in .jpg or .png format), simply set up the screen as you want it, pull down the <guimenu>File</guimenu> Menu and select <guimenuitem>Capture Image</guimenuitem>.  A dialog will appear.  Choose the folder you wish to put the file into, type a name for it; decide if it is to be saved as a jpg or png file and click <guibutton>Save</guibutton>.</para>
+<para>To save a graphic file (in .jpg or .png format), simply set up the screen exactly as you want it, pull down the <guimenu>File</guimenu> Menu and select <guimenuitem>Capture Image</guimenuitem>.  A dialog will appear.  Choose the folder you wish to put the file into, type a name for it; decide if it is to be saved as a jpg or png file and click <guibutton>Save</guibutton>.</para>
 
 <para>JPG files are common graphic files that are most useful for viewing in a computer running typical application software such as word processing or slideshows.  They are smaller than png files but do have limitations.</para>
 
@@ -1238,12 +1239,12 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 <screeninfo>image captured via cel://URL</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig29.png" format="PNG" />
+<imagedata fileref="fig29.jpg" format="PNG" />
 </imageobject>
 <textobject>
 <phrase>image captured via cel://URL</phrase>
 </textobject>
-<caption><para><ulink url="">image captured via cel://URL</ulink></para></caption>
+<caption><para><ulink url="cel://Follow/Sol:Mars:Deimos/2006-03-29T08:40:41.81?x=LEueW+2U9BOyDA&amp;y=FPnwYaYYvsM&amp;z=iYQLCNslyQvp/////////w&amp;ow=-0.783633&amp;ox=0.170128&amp;oy=0.572217&amp;oz=-0.171884&amp;select=Sol:Mars:Deimos&amp;fov=20.674709&amp;ts=1.000000&amp;rf=57235&amp;lm=0">image captured via cel://URL</ulink></para></caption>
 </mediaobject>
 </screenshot>
 
@@ -1251,7 +1252,7 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 
 <para>To save your position in &celestia; as a hyperlink, press &copy_url_win; (&copy_url_lin; on Linux).  This will save the location to your computer clipboard.  To paste that link into a web browser, simply position your cursor in the address field at the top of the browser and press &paste;.  To paste the link into a text document or a PowerPoint presentation, you may be able to simply paste the link by positioning the cursor on the page and pressing &paste;.  If successful, the link will change color when you hit the Enter key and clicking on it will launch &celestia;.  If that doesn't work, you may have to paste the link by <quote>inserting a hyperlink</quote>.  See your application software for directions on how to do that.  cel:// URL addresses may also be dragged onto an open &celestia; window to get the same effect.</para>
 
-<para>cel:// URLs are ideal for showing others a particular discovery you've made in the world of &celestia;.  For example, perhaps you've positioned yourself to witness the passing of a Near-Earth asteroid as it whizzes past Earth, or have assumed a position off the North Pole of the Sun with orbits selected and the entire solar system orbiting below you.  Saving that location to a cel:// URL and pasting it on the web or in an e-mail for others to activate is an ideal way to share your &celestia; experience.  You'll find cel:// URLs used frequently in the &celestia; forum.</para>
+<para>cel:// URLs are ideal for showing others a particular discovery made in the world of &celestia;.  For example, perhaps you've positioned yourself to witness the passing of a Near-Earth asteroid as it whizzes past Earth, or have assumed a position off the North Pole of the Sun with orbits selected and the entire solar system orbiting below you.  Saving that location to a cel:// URL and pasting it on the web or in an e-mail for others to activate is an ideal way to share your &celestia; experience.  You'll find cel:// URLs used frequently in the &celestia; forum.</para>
 
 <note><para>Be careful using cel:// URLs with add-ons.  If you save the camera position near a body that is part of an add-on you installed, someone who later clicks on the URL will likely see a very dull view of empty space unless they also have the same add-on installed.</para></note>
 
@@ -1266,29 +1267,29 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 
 <para>The &cycleviews; key is used to cycle the active view.  A view that is no longer required may be removed by pressing the Delete &deleteview; key.  &deleteview; will delete the currently active view.</para>
 
-<para>Views can also be created and deleted with the <guimenu>View</guimenu> menu.  The <guimenu>View</guimenu> menu also contains two additional options which are not available via a keyboard command.  The first option changes the visibility of the view frames.  Drawing frames can be useful to delimit the different views, but it can also clutter the screen; it's entirely an issue of personal taste.  The other setting on the view menu is time synchronization.  Ordinarily, time is synchronized between all views, but if you deselect time synchronization, you can set the current time in each view independently by clicking within the view frame.  Turning time synchronization back on resets the time in all views to the time of the active view.</para>
-<note><para>Time rate cannot be set per-view; the time rate commands and pause always affect every view.</para></note>
+<para>Views can also be created and deleted with the <guimenu>View</guimenu> menu.  The <guimenu>View</guimenu> menu also contains two additional options not available via a keyboard command.  The first option changes the visibility of the view frames.  Drawing frames can be useful to delimit the different views, but it can also clutter the screen.  The other View menu setting is time synchronization. Ordinarily, time is synchronized between all views, but if you deselect time synchronization, you can set the current time in each view independently by clicking within the view frame.  Turning time synchronization back on resets the time in all views to that of the active view. </para>
+<note><para>The time rate cannot be set per-view; the time rate commands and pause always affect every view.</para></note>
 
 
 <screenshot>
-<screeninfo>Four &celestia; Multiviews seen at once</screeninfo>
+<screeninfo>Four &celestia; Multiviews seen at once.</screeninfo>
 <mediaobject>
 <imageobject>
-<imagedata fileref="fig30.png" format="PNG" />
+<imagedata fileref="fig30.jpg" format="PNG" />
 </imageobject>
 <textobject>
-<phrase>Four &celestia; Multiviews seen at once</phrase>
+<phrase>Four &celestia; Multiviews seen at once.</phrase>
 </textobject>
-<caption><para><ulink url="">Four &celestia; Multiviews seen at once</ulink></para></caption>
+<caption><para>Four &celestia; Multiviews seen at once.</para></caption>
 </mediaobject>
 </screenshot>
 </chapter>
 
 <chapter id="part23">
 <title>User's Guide Part 2 and 3</title>
-<para>This concludes Part 1 of the User's Guide to operating &celestia;.  In Part 2, you will learn what image files are, how &celestia; loads and uses them, and how data files of various kinds are used to instruct &celestia; in what to do and where to do it.  Part 2 will teach you how to modify those data files and locate and download scores of other add-on files designed by &celestia; users.  These files include exotic spacecraft, fictional solar systems, rotating black holes and much more.  Obtaining and using some of them will significantly boost your viewing pleasure in the &celestia; universe.</para>
+<para>This concludes Part 1 of the User's Guide to operating &celestia;.  In Part 2, you will learn what image files are, how &celestia; loads and uses them, and how data files of various kinds are used to instruct &celestia; in what to do and where to do it.  Part 2 will teach you how to modify those data files and locate and download scores of other add-on files designed by &celestia; users.  These files include exotic spacecraft, fictional solar systems, rotating black holes and much more.  Obtaining add-ons will significantly boost your viewing pleasure in &celestia;.</para>
 
-<para>Part 3 of the User's Guide will teach you how to create scripts which are a series of lists that &celestia; follows one at a time to take a space journey.  For example, you can design a script to open &celestia; not at Io but orbiting a Red Giant star thousands of light years away.  Then as you watch, your spacecraft will accelerate and fly back to Earth at warp speed.  You can also insert text messages for the viewer to read.  The Run Demo referenced earlier in this Guide is just such a script journey.</para>
+<para>Part 3 of the User's Guide will teach you how to create scripts, which are a series of lists that &celestia; follows one at a time to take a space journey.  For example, you can design a script to open &celestia; orbiting a Red Giant star thousands of light years away.  Then as you watch, your spacecraft will accelerate and fly back to Earth at warp speed.  You can also insert text messages for the viewer to read.  The Run Demo referenced earlier in this Guide is just such a script journey.</para>
 
 
 </chapter>
@@ -1644,6 +1645,7 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 
 <sect1 id="ref_joystick">
 <title>Joystick Functions</title>
+<note><para>Joystick buttons differ in function - experiment with yours.</para></note>
 <variablelist>
 <varlistentry>
 <term>&F8;</term>
@@ -1659,19 +1661,19 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 </varlistentry>
 <varlistentry>
 <term>L trigger</term>
-<listitem><para>roll left</para></listitem>
+<listitem><para>roll left (button C on a Microsoft Sidewinder Pro)</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>R trigger</term>
-<listitem><para>roll right</para></listitem>
+<listitem><para>roll right (button D)</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Button 1</term>
-<listitem><para>slower</para></listitem>
+<listitem><para>slower (trigger on Microsoft Sidewinder Pro)</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>Button 2</term>
-<listitem><para>faster</para></listitem>
+<listitem><para>faster (thumb button on Sidewinder Pro)</para></listitem>
 </varlistentry>
 </variablelist>
 </sect1>
