@@ -27,14 +27,16 @@
 #define IDD_ADDLOCATION_FOLDER          128
 #define IDD_ORGANIZE_LOCATIONS          129
 #define IDD_RENAME_LOCATION             130
-#define IDD_COMPUTEECLIPSES             136
-#define IDD_ECLIPSEFINDER               136
+#define IDD_COMPUTEECLIPSES             131
+#define IDD_ECLIPSEFINDER               132
 
 #define IDB_FOLDERCLOSED                532
 #define IDB_FOLDEROPENED                534
 #define IDB_LOCATION                    536
 #define IDB_CAMERA                      537
-
+#define IDB_CAMCORDER                   538
+#define IDB_SCRIPT                      539
+#define IDB_CLOCK                       540
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
 #define IDC_GLINFO_TEXT                 1005
@@ -173,7 +175,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        138
+#define _APS_NEXT_RESOURCE_VALUE        133
 #define _APS_NEXT_COMMAND_VALUE         40065
 #define _APS_NEXT_CONTROL_VALUE         1089
 #define _APS_NEXT_SYMED_VALUE           101

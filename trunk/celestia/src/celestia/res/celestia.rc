@@ -642,6 +642,9 @@ IDB_FOLDERCLOSED        BITMAP  DISCARDABLE     "folderclosed.bmp"
 IDB_FOLDEROPENED        BITMAP  DISCARDABLE     "folderopened.bmp"
 IDB_LOCATION            BITMAP  DISCARDABLE     "location.bmp"
 IDB_CAMERA              BITMAP  DISCARDABLE     "camera.bmp"
+IDB_CAMCORDER           BITMAP  DISCARDABLE     "camcorder.bmp"
+IDB_SCRIPT              BITMAP  DISCARDABLE     "script.bmp"
+IDB_CLOCK               BITMAP  DISCARDABLE     "clock.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
