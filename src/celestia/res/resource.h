@@ -46,6 +46,8 @@
 #define IDC_SETCURRENTTIME              1028
 #define IDC_COMBO_MOVIE_SIZE            1029
 #define IDC_COMBO_MOVIE_FRAMERATE       1030
+#define IDC_MAXSTARS_SLIDER             1031
+#define IDC_MAXSTARS_EDIT               1032
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -109,7 +111,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        118
 #define _APS_NEXT_COMMAND_VALUE         40059
-#define _APS_NEXT_CONTROL_VALUE         1031
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

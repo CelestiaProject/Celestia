@@ -117,7 +117,13 @@ struct AppPreferences
     int timezoneBias;
 };
 
-
+void SetMousePointer(LPCTSTR lpCursor)
+{
+	HCURSOR hNewCrsr;
+	
+	if(hNewCrsr = LoadCursor(NULL, lpCursor))
+	    SetCursor(hNewCrsr);
+}
 
 void ChangeDisplayMode()
 {
