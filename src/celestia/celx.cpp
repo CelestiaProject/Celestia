@@ -48,15 +48,18 @@ static const int _Rotation = 5;
 
 #define CLASS(i) ClassNames[(i)]
 
-static void lua_pushclass(lua_State* l, int id)
+
+// Push a class name onto the Lua stack
+static void PushClass(lua_State* l, int id)
 {
-    
     lua_pushlstring(l, ClassNames[id], strlen(ClassNames[id]));
 }
 
-static void lua_setclass(lua_State* l, int id)
+
+// Set the class (metatable) of the object on top of the stack
+static void SetClass(lua_State* l, int id)
 {
-    lua_pushclass(l, id);
+    PushClass(l, id);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
         cout << "Metatable for " << ClassNames[id] << " not found!\n";
@@ -64,6 +67,33 @@ static void lua_setclass(lua_State* l, int id)
         cout << "Error setting metatable for " << ClassNames[id] << '\n';
 }
 
+
+// Initialize the metatable for a class; sets the appropriate registry
+// entries and __index, leaving the metatable on the stack when done.
+static void CreateClassMetatable(lua_State* l, int id)
+{
+    lua_newtable(l);
+    PushClass(l, id);
+    lua_pushvalue(l, -2);
+    lua_rawset(l, LUA_REGISTRYINDEX); // registry.name = metatable
+    lua_pushvalue(l, -1);
+    PushClass(l, id);
+    lua_rawset(l, LUA_REGISTRYINDEX); // registry.metatable = name
+
+    lua_pushliteral(l, "__index");
+    lua_pushvalue(l, -2);
+    lua_rawset(l, -3);
+}
+
+
+// Register a class 'method' in the metatable (assumed to be on top of the stack)
+static void RegisterMethod(lua_State* l, const char* name, lua_CFunction fn)
+{
+    lua_pushstring(l, name);
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, fn, 1);
+    lua_settable(l, -3);
+}
 
 // Verify that an object at location index on the stack is of the
 // specified class
@@ -298,23 +328,18 @@ static int object_new(lua_State* l, const Selection& sel)
     Selection* ud = reinterpret_cast<Selection*>(lua_newuserdata(l, sizeof(Selection)));
     *ud = sel;
 
-    lua_setclass(l, _Object);
+    SetClass(l, _Object);
 
     return 1;
 }
 
 static Selection* to_object(lua_State* l, int index)
 {
-    cout << "to_object\n"; cout.flush();
-    // TODO: need to verify that this is actually an object, not some
-    // other userdata
-    // return static_cast<Selection*>(lua_touserdata(l, index));
     return static_cast<Selection*>(CheckUserData(l, index, _Object));
 }
 
 static int object_tostring(lua_State* l)
 {
-    cout << "object_tostring\n"; cout.flush();
     lua_pushstring(l, "[Object]");
 
     return 1;
@@ -346,29 +371,12 @@ static int object_radius(lua_State* l)
 
 static void CreateObjectMetaTable(lua_State* l)
 {
-    lua_newtable(l);
-    lua_pushclass(l, _Object);
-    lua_pushvalue(l, -2);
-    lua_rawset(l, LUA_REGISTRYINDEX); // registry.name = metatable
-    lua_pushvalue(l, -1);
-    lua_pushclass(l, _Object);
-    lua_rawset(l, LUA_REGISTRYINDEX); // registry.metatable = name
+    CreateClassMetatable(l, _Object);
 
-    lua_pushliteral(l, "__tostring");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, object_tostring, 1);
-    lua_rawset(l, -3);
+    RegisterMethod(l, "__tostring", object_tostring);
+    RegisterMethod(l, "radius", object_radius);
 
-    lua_pushliteral(l, "__index");
-    lua_pushvalue(l, -2);
-    lua_rawset(l, -3);
-
-    lua_pushstring(l, "radius");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, object_radius, 1);
-    lua_settable(l, -3);
-
-    lua_pop(l, 1);
+    lua_pop(l, 1); // pop metatable off the stack
 }
 
 
@@ -379,7 +387,7 @@ static int observer_new(lua_State* l, Observer* o)
     Observer** ud = static_cast<Observer**>(lua_newuserdata(l, sizeof(Observer*)));
     *ud = o;
 
-    lua_setclass(l, _Observer);
+    SetClass(l, _Observer);
 
     return 1;
 }
@@ -397,13 +405,21 @@ static Observer* to_observer(lua_State* l, int index)
 }
 
 
+// First argument is the target object; optional second argument is the travel time
 static int observer_goto(lua_State* l)
 {
     int argc = lua_gettop(l);
-    if (argc != 2)
+    if (argc < 2)
     {
-        lua_pushstring(l, "Two arguments expected to function observer:goto");
+        lua_pushstring(l, "At least one argument expected to function observer:goto");
         lua_error(l);
+    }
+
+    double travelTime = 5.0;
+    if (argc >= 3)
+    {
+        if (lua_isnumber(l, 3))
+            travelTime = lua_tonumber(l, 3);
     }
 
     Observer* o = to_observer(l, 1);
@@ -412,7 +428,7 @@ static int observer_goto(lua_State* l)
         Selection* sel = to_object(l, 2);
         if (sel != NULL)
         {
-            o->gotoSelection(*sel, 5.0, Vec3f(0, 1, 0), astro::ObserverLocal);
+            o->gotoSelection(*sel, travelTime, Vec3f(0, 1, 0), astro::ObserverLocal);
         }
     }
 
@@ -423,15 +439,139 @@ static int observer_goto(lua_State* l)
 static int observer_center(lua_State* l)
 {
     int argc = lua_gettop(l);
-    if (argc > 1)
+    if (argc < 2)
     {
-        lua_pushstring(l, "Too many argument to function observer:center");
+        lua_pushstring(l, "At least one argument expected to function observer:center");
+        lua_error(l);
+    }
+
+    double travelTime = 5.0;
+    if (argc >= 3)
+    {
+        if (lua_isnumber(l, 3))
+            travelTime = lua_tonumber(l, 3);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        Selection* sel = to_object(l, 2);
+        if (sel != NULL)
+            o->centerSelection(*sel, travelTime);
+    }
+
+    return 0;
+}
+
+
+static int observer_follow(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function observer:follow");
         lua_error(l);
     }
 
     Observer* o = to_observer(l, 1);
     if (o != NULL)
     {
+        Selection* sel = to_object(l, 2);
+        if (sel != NULL)
+            o->follow(*sel);
+    }
+
+    return 0;
+}
+
+
+static int observer_synchronous(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function observer:synchronous");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        Selection* sel = to_object(l, 2);
+        if (sel != NULL)
+            o->geosynchronousFollow(*sel);
+    }
+
+    return 0;
+}
+
+
+static int observer_lock(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function observer:lock");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        Selection* sel = to_object(l, 2);
+        if (sel != NULL)
+            o->phaseLock(*sel);
+    }
+
+    return 0;
+}
+
+
+static int observer_chase(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function observer:chase");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        Selection* sel = to_object(l, 2);
+        if (sel != NULL)
+            o->chase(*sel);
+    }
+
+    return 0;
+}
+
+
+static int observer_track(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function observer:chase");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        // If the argument is nil, clear the tracked object
+        if (lua_isnil(l, 2))
+        {
+            o->setTrackedObject(Selection());
+        }
+        else
+        {
+            // Otherwise, turn on tracking and set the tracked object
+            Selection* sel = to_object(l, 2);
+            if (sel != NULL)
+                o->setTrackedObject(*sel);
+        }
     }
 
     return 0;
@@ -448,30 +588,18 @@ static int observer_tostring(lua_State* l)
 
 static void CreateObserverMetaTable(lua_State* l)
 {
-    lua_pushclass(l, _Observer);
-    lua_newtable(l);
+    CreateClassMetatable(l, _Observer);
+    
+    RegisterMethod(l, "__tostring", observer_tostring);
+    RegisterMethod(l, "goto", observer_goto);
+    RegisterMethod(l, "center", observer_center);
+    RegisterMethod(l, "follow", observer_follow);
+    RegisterMethod(l, "synchronous", observer_synchronous);
+    RegisterMethod(l, "chase", observer_chase);
+    RegisterMethod(l, "lock", observer_lock);
+    RegisterMethod(l, "track", observer_track);
 
-    lua_pushliteral(l, "__tostring");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, observer_tostring, 1);
-    lua_rawset(l, -3);
-
-    lua_pushliteral(l, "__index");
-    lua_pushvalue(l, -2);
-    lua_rawset(l, -3);
-    lua_pushvalue(l, -1);
-
-    lua_pushstring(l, "goto");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, observer_goto, 1);
-    lua_settable(l, -4);
-    lua_pushstring(l, "center");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, observer_center, 1);
-    lua_settable(l, -4);
-    lua_pop(l, 1);
-
-    lua_rawset(l, LUA_REGISTRYINDEX);
+    lua_pop(l, 1); // remove metatable from stack
 }
 
 
@@ -482,7 +610,7 @@ static int celestia_new(lua_State* l, CelestiaCore* appCore)
     CelestiaCore** ud = reinterpret_cast<CelestiaCore**>(lua_newuserdata(l, sizeof(CelestiaCore*)));
     *ud = appCore;
 
-    lua_setclass(l, _Celestia);
+    SetClass(l, _Celestia);
 
     return 1;
 }
@@ -669,89 +797,17 @@ static int celestia_tostring(lua_State* l)
 
 static void CreateCelestiaMetaTable(lua_State* l)
 {
-    lua_newtable(l);
-    lua_pushclass(l, _Celestia);
-    lua_pushvalue(l, -2);
-    lua_rawset(l, LUA_REGISTRYINDEX);
+    CreateClassMetatable(l, _Celestia);
 
-    lua_pushliteral(l, "__tostring");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_tostring, 1);
-    lua_rawset(l, -3);
-
-    lua_pushliteral(l, "__index");
-    lua_pushvalue(l, -2);
-    lua_rawset(l, -3);
-
-    lua_pushstring(l, "flash");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_flash, 1);
-    lua_settable(l, -3);
-
-    lua_pushstring(l, "show");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_show, 1);
-    lua_settable(l, -3);
-
-    lua_pushstring(l, "hide");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_hide, 1);
-    lua_settable(l, -3);
-
-    lua_pushstring(l, "getobserver");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_getobserver, 1);
-    lua_settable(l, -3);
-
-    lua_pushstring(l, "find");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_find, 1);
-    lua_settable(l, -3);
-
-    lua_pushstring(l, "select");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_select, 1);
-    lua_settable(l, -3);
+    RegisterMethod(l, "__tostring", celestia_tostring);
+    RegisterMethod(l, "flash", celestia_flash);
+    RegisterMethod(l, "show", celestia_show);
+    RegisterMethod(l, "hide", celestia_hide);
+    RegisterMethod(l, "getobserver", celestia_getobserver);
+    RegisterMethod(l, "find", celestia_find);
+    RegisterMethod(l, "select", celestia_select);
 
     lua_pop(l, 1);
-#if 0
-    lua_pushclass(l, _Celestia);
-    lua_newtable(l);
-
-    lua_pushliteral(l, "__tostring");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_tostring, 1);
-    lua_rawset(l, -3);
-
-    lua_pushliteral(l, "__index");
-    lua_pushvalue(l, -2);
-    lua_rawset(l, -3);
-    lua_pushvalue(l, -1);
-
-    lua_pushstring(l, "flash");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_flash, 1);
-    lua_settable(l, -4);
-    lua_pushstring(l, "show");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_show, 1);
-    lua_settable(l, -4);
-    lua_pushstring(l, "hide");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_hide, 1);
-    lua_settable(l, -4);
-    lua_pushstring(l, "getobserver");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_getobserver, 1);
-    lua_settable(l, -4);
-    lua_pushstring(l, "find");
-    lua_pushvalue(l, -2);
-    lua_pushcclosure(l, celestia_find, 1);
-    lua_settable(l, -4);
-    lua_pop(l, 1);
-
-    lua_rawset(l, LUA_REGISTRYINDEX);
-#endif
 }
 
 
