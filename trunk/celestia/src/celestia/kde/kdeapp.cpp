@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #include <fstream>
 #include <sstream>
 
@@ -618,7 +617,11 @@ void KdeApp::slotKeyBindings()
 
 void KdeApp::slotFileOpen()
 {
+#ifdef CELX
+    QString fileOpen = KFileDialog::getOpenFileName(0, "*.cel *.celx");
+#else
     QString fileOpen = KFileDialog::getOpenFileName(0, "*.cel");
+#endif
     if (fileOpen == "") return;
 
     slotOpenFileURL(KURL(fileOpen));
@@ -626,6 +629,13 @@ void KdeApp::slotFileOpen()
 
 void KdeApp::slotOpenFileURL(const KURL& url) {
     QString file = url.directory(false) + url.fileName();
+
+#ifdef CELX
+    if (file.right(5).compare(QString(".celx")) == 0) {
+        appCore->runScript(file.latin1());
+        return;
+    }
+#endif
 
     ifstream scriptfile(file.latin1());
     if (!scriptfile.good()) {
