@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="10">
+<kpartgui name="celestia" version="11">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -44,6 +44,7 @@
          <Action name="showGalaxyLabels"/>
          <Action name="showAsteroidLabels"/>
          <Action name="showSpacecraftLabels"/>
+         <Action name="showLocationLabels"/>
      </Menu>
      <Menu name="opengl" icon="configure"><text>OpenGL Render Path</text>
          <Action name="renderPathBasic"/>
