@@ -150,10 +150,9 @@ class Simulation
                                  const RigidTransform&,
                                  double);
 
-    SolarSystem* getSolarSystem(Star* star);
-    Star* getSun(Body* body);
+    SolarSystem* getSolarSystem(const Star* star);
     Selection pickPlanet(Observer& observer,
-                         Star& sun,
+                         const Star& sun,
                          SolarSystem& solarSystem,
                          Vec3f pickRay);
     Selection pickStar(Vec3f pickRay);
