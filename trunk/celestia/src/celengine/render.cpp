@@ -2248,6 +2248,13 @@ void Renderer::renderObject(Point3f pos,
                         nearPlaneDistance, farPlaneDistance);
     viewFrustum.transform(invMV);
 
+    // Temporary hack until we fix culling for ringed planets
+    if (obj.rings != NULL)
+    {
+        if (ri.lod > 2.0f)
+            ri.lod = 2.0f;
+    }
+
     Mesh* mesh = NULL;
     if (obj.mesh == InvalidResource)
     {
@@ -2941,6 +2948,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starVertexBuffer->setBillboardOrientation(observer.getOrientation());
 
     starTex->bind();
+    starRenderer.starVertexBuffer->start((renderFlags & ShowStarsAsPoints) != 0);
     starDB.findVisibleStars(starRenderer,
                             (Point3f) observer.getPosition(),
                             observer.getOrientation(),
@@ -3274,7 +3282,8 @@ Renderer::StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
     capacity(_capacity),
     vertices(NULL),
     texCoords(NULL),
-    colors(NULL)
+    colors(NULL),
+    usePoints(false)
 {
     nStars = 0;
     vertices = new float[capacity * 12];
@@ -3303,18 +3312,39 @@ Renderer::StarVertexBuffer::~StarVertexBuffer()
         delete texCoords;
 }
 
+void Renderer::StarVertexBuffer::start(bool _usePoints)
+{
+    usePoints = _usePoints;
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
+    if (!usePoints)
+    {
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+    }
+    else
+    {
+        // An option to control the size of the stars would be helpful.
+        // Which size looks best depends a lot on the resolution and the
+        // type of display device.
+        // glPointSize(2.0f);
+        // glEnable(GL_POINT_SMOOTH);
+        glDisable(GL_TEXTURE_2D);
+    }
+    glDisableClientState(GL_NORMAL_ARRAY);
+}
+
 void Renderer::StarVertexBuffer::render()
 {
     if (nStars != 0)
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, vertices);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDrawArrays(GL_QUADS, 0, nStars * 4);
+        if (usePoints)
+            glDrawArrays(GL_POINTS, 0, nStars);
+        else
+            glDrawArrays(GL_QUADS, 0, nStars * 4);
         nStars = 0;
     }
 }
@@ -3325,6 +3355,8 @@ void Renderer::StarVertexBuffer::finish()
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    if (usePoints)
+        glEnable(GL_TEXTURE_2D);
 }
 
 void Renderer::StarVertexBuffer::addStar(const Point3f& pos,
@@ -3333,24 +3365,35 @@ void Renderer::StarVertexBuffer::addStar(const Point3f& pos,
 {
     if (nStars < capacity)
     {
-        int n = nStars * 12;
-        vertices[n + 0]  = pos.x + v0.x * size;
-        vertices[n + 1]  = pos.y + v0.y * size;
-        vertices[n + 2]  = pos.z + v0.z * size;
-        vertices[n + 3]  = pos.x + v1.x * size;
-        vertices[n + 4]  = pos.y + v1.y * size;
-        vertices[n + 5]  = pos.z + v1.z * size;
-        vertices[n + 6]  = pos.x + v2.x * size;
-        vertices[n + 7]  = pos.y + v2.y * size;
-        vertices[n + 8]  = pos.z + v2.z * size;
-        vertices[n + 9]  = pos.x + v3.x * size;
-        vertices[n + 10] = pos.y + v3.y * size;
-        vertices[n + 11] = pos.z + v3.z * size;
-        n = nStars * 16;
-        color.get(colors + n);
-        color.get(colors + n + 4);
-        color.get(colors + n + 8);
-        color.get(colors + n + 12);
+        if (usePoints)
+        {
+            int n = nStars * 3;
+            vertices[n + 0] = pos.x;
+            vertices[n + 1] = pos.y;
+            vertices[n + 2] = pos.z;
+            color.get(colors + nStars * 4);
+        }
+        else
+        {
+            int n = nStars * 12;
+            vertices[n + 0]  = pos.x + v0.x * size;
+            vertices[n + 1]  = pos.y + v0.y * size;
+            vertices[n + 2]  = pos.z + v0.z * size;
+            vertices[n + 3]  = pos.x + v1.x * size;
+            vertices[n + 4]  = pos.y + v1.y * size;
+            vertices[n + 5]  = pos.z + v1.z * size;
+            vertices[n + 6]  = pos.x + v2.x * size;
+            vertices[n + 7]  = pos.y + v2.y * size;
+            vertices[n + 8]  = pos.z + v2.z * size;
+            vertices[n + 9]  = pos.x + v3.x * size;
+            vertices[n + 10] = pos.y + v3.y * size;
+            vertices[n + 11] = pos.z + v3.z * size;
+            n = nStars * 16;
+            color.get(colors + n);
+            color.get(colors + n + 4);
+            color.get(colors + n + 8);
+            color.get(colors + n + 12);
+        }
         nStars++;
     }
 
