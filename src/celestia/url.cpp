@@ -78,8 +78,7 @@ Url::Url(const std::string& str, CelestiaCore *core)
 
     endPrevious = pos;
     int nb = nbBodies, i=1;
-    while (nb != 0 && endPrevious != std::string::npos)
-    {
+    while (nb != 0 && endPrevious != std::string::npos) {
         std::string bodyName="";
         pos = urlStr.find("/", endPrevious + 1);
         if (pos == std::string::npos) pos = urlStr.find("?", endPrevious + 1);
@@ -102,18 +101,14 @@ Url::Url(const std::string& str, CelestiaCore *core)
         i++;
     }
 
-    if (nb != 0)
-    {
+    if (nb != 0) {
         urlStr = "";
         return; // Number of bodies in Url doesn't match Mode
     }
 
-    if (nbBodies == 0)
-        ref = FrameOfReference();
-    else if (nbBodies == 1)
-        ref = FrameOfReference(mode, bodies[0]);
-    else if (nbBodies == 2)
-        ref = FrameOfReference(mode, bodies[0], bodies[1]);
+    if (nbBodies == 0) ref = FrameOfReference();
+    if (nbBodies == 1) ref = FrameOfReference(mode, bodies[0]);
+    if (nbBodies == 2) ref = FrameOfReference(mode, bodies[0], bodies[1]);
     fromString = true;
 
     std::string time="";
@@ -134,8 +129,9 @@ Url::Url(const std::string& str, CelestiaCore *core)
     date.hour=t;
     sscanf(time.substr(14, 2).c_str(), "%02d", &t);
     date.minute=t;
-    sscanf(time.substr(17, 2).c_str(), "%02d", &t);
-    date.seconds=float(t);
+    float s;
+    sscanf(time.substr(17, 5).c_str(), "%f", &s);
+    date.seconds=s;
 
     BigFix x(params["x"].c_str()), y(params["y"].c_str()), z(params["z"].c_str());
     coord = UniversalCoord(x,y,z);
@@ -174,9 +170,7 @@ Url::Url(const std::string& str, CelestiaCore *core)
     if (selectedStr != "") name += " [" + getBodyShortName(selectedStr) + "]";
 }
 
-
-Url::Url(CelestiaCore* core)
-{
+Url::Url(CelestiaCore* core) {
     appCore = core;
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
@@ -195,8 +189,8 @@ Url::Url(CelestiaCore* core)
 
     char date_str[30];
     date = astro::Date(sim->getTime());
-    sprintf(date_str, "%04d-%02d-%02dT%02d:%02d:%02d",
-        date.year, date.month, date.day, date.hour, date.minute, int(date.seconds));
+    sprintf(date_str, "%04d-%02d-%02dT%02d:%02d:%05.2f",
+        date.year, date.month, date.day, date.hour, date.minute, date.seconds);
 
     coord = sim->getObserver().getPosition();
     urlStr += std::string("/") + date_str + "?x=" + coord.x.toString();
@@ -232,18 +226,15 @@ Url::Url(CelestiaCore* core)
 
 }
 
-std::string Url::getAsString() const
-{
+std::string Url::getAsString() const {
     return urlStr;
 }
 
-std::string Url::getName() const
-{
+std::string Url::getName() const {
     return name;
 }
 
-std::string Url::getBodyShortName(const std::string& body) const
-{
+std::string Url::getBodyShortName(const std::string& body) const {
     std::string::size_type pos;
     if (body != "") {
         pos = body.rfind(":");
