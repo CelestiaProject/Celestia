@@ -102,7 +102,7 @@ class Renderer
     void setRenderFlags(int);
     int getLabelMode() const;
     void setLabelMode(int);
-    void addLabelledStar(Star*);
+    void addLabelledStar(Star*, const std::string&);
     void clearLabelledStars();
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
@@ -228,6 +228,23 @@ class Renderer
         float cosSkyCapAltitude;
     };
 
+    struct StarLabel
+    {
+        Star* star;
+        string label;
+
+        StarLabel() : star(NULL), label("") {};
+        StarLabel(Star* _star, const std::string& _label) :
+            star(_star), label(_label) {};
+        StarLabel(const StarLabel& sl) : star(sl.star), label(sl.label) {};
+        StarLabel& operator=(const StarLabel& sl)
+        {
+            star = sl.star;
+            label = sl.label;
+            return *this;
+        };
+    };
+
  private:
     void setFieldOfView(float);
     void renderStars(const StarDatabase& starDB,
@@ -306,7 +323,7 @@ class Renderer
 
     void labelGalaxies(const DeepSkyCatalog& catalog,
                        const Observer& observer);
-    void labelStars(const std::vector<Star*>& stars,
+    void labelStars(const std::vector<StarLabel>& stars,
                     const StarDatabase& starDB,
                     const Observer& observer);
     void labelConstellations(const AsterismList& asterisms,
@@ -360,7 +377,7 @@ class Renderer
     std::vector<Label> labels;
     std::vector<EclipseShadow> eclipseShadows;
 
-    std::vector<Star*> labelledStars;
+    std::vector<StarLabel> labelledStars;
 
     double modelMatrix[16];
     double projMatrix[16];
