@@ -222,7 +222,7 @@ Url::Url(CelestiaCore* core, UrlType type) {
     
     switch (type) {
     case Absolute:    
-        sprintf(date_str, "%04d-%02d-%02dT%02d:%02d:%05.2f",
+        sprintf(date_str, "%04d-%02d-%02dT%02d:%02d:%08.5f",
             date.year, date.month, date.day, date.hour, date.minute, date.seconds);
 
         coord = sim->getObserver().getPosition();
