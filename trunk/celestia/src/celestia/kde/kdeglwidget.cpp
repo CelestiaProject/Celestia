@@ -40,6 +40,7 @@
 #include "imagecapture.h"
 #include "celestiacore.h"
 #include "celengine/simulation.h"
+#include "celengine/glcontext.h"
 
 #include "kdeapp.h"
 
@@ -124,35 +125,55 @@ void KdeGlWidget::initializeGL()
     if (KGlobal::config()->hasKey("TimeZoneBias"))
         appCore->setTimeZoneBias(KGlobal::config()->readNumEntry("TimeZoneBias"));
 
-    if (appCore->getRenderer()->vertexShaderSupported()) {
-        if (KGlobal::config()->hasKey("VertexShader")) {
-            if (KGlobal::config()->readBoolEntry("VertexShader")) {
-                appCore->getRenderer()->setVertexShaderEnabled(KGlobal::config()->readNumEntry("VertexShader"));
-                ((KToggleAction*)(((KdeApp*)parentWidget())->action("vertexShader")))->setChecked(true);
-            } else {
-                ((KToggleAction*)(((KdeApp*)parentWidget())->action("vertexShader")))->setChecked(false);
-            }
-        } else {
-                ((KToggleAction*)(((KdeApp*)parentWidget())->action("vertexShader")))->setChecked(
-                    appCore->getRenderer()->getVertexShaderEnabled());
-        }
-    }  else {
-        ((KToggleAction*)(((KdeApp*)parentWidget())->action("vertexShader")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Basic))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathBasic")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Multitexture))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathMultitexture")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNvCombiner")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_DOT3_ARBVP))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathDOT3ARBVP")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner_NvVP))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNvCombinerNvVP")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner_ARBVP))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNvCombinerARBVP")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_ARBFP_ARBVP))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathARBFPARBVP")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NV30))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNV30")))->setEnabled(false);
+
+    if (KGlobal::config()->hasKey("RenderPath")) {
+       GLContext::GLRenderPath path = (GLContext::GLRenderPath)KGlobal::config()->readNumEntry("RenderPath");
+       if (appCore->getRenderer()->getGLContext()->renderPathSupported(path)) {
+            appCore->getRenderer()->getGLContext()->setRenderPath(path);
+       }
     }
-    if (appCore->getRenderer()->fragmentShaderSupported()) {
-        if (KGlobal::config()->hasKey("PixelShader")) {
-            if (KGlobal::config()->readBoolEntry("PixelShader")) {
-                appCore->getRenderer()->setFragmentShaderEnabled(KGlobal::config()->readNumEntry("PixelShader"));
-                ((KToggleAction*)(((KdeApp*)parentWidget())->action("pixelShader")))->setChecked(true);
-            } else {
-                ((KToggleAction*)(((KdeApp*)parentWidget())->action("pixelShader")))->setChecked(false);
-            }
-        } else {
-                ((KToggleAction*)(((KdeApp*)parentWidget())->action("pixelShader")))->setChecked(
-                    appCore->getRenderer()->getFragmentShaderEnabled());
-        }
-    }  else {
-        ((KToggleAction*)(((KdeApp*)parentWidget())->action("pixelShader")))->setEnabled(false);
+
+    switch (appCore->getRenderer()->getGLContext()->getRenderPath()) {
+    case GLContext::GLPath_Basic:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathBasic")))->setChecked(true);
+        break;
+    case GLContext::GLPath_Multitexture:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathMultitexture")))->setChecked(true);
+        break;
+    case GLContext::GLPath_NvCombiner:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNvCombiner")))->setChecked(true);
+        break;
+    case GLContext::GLPath_DOT3_ARBVP:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathDOT3ARBVP")))->setChecked(true);
+        break;
+    case GLContext::GLPath_NvCombiner_NvVP:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNvCombinerNvVP")))->setChecked(true);
+        break;
+    case GLContext::GLPath_NvCombiner_ARBVP:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNvCombinerARBVP")))->setChecked(true);
+        break;
+    case GLContext::GLPath_ARBFP_ARBVP:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathARBFPARBVP")))->setChecked(true);
+        break;
+    case GLContext::GLPath_NV30:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNV30")))->setChecked(true);
+        break;
     }
 
     KGlobal::config()->setGroup(0);
