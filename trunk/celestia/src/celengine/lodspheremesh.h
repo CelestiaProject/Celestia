@@ -26,29 +26,36 @@ public:
     ~LODSphereMesh();
 
     void render(const GLContext&,
-                unsigned int attributes, const Frustum&, float lod,
+                unsigned int attributes, const Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
     void render(const GLContext&,
-                unsigned int attributes, const Frustum&, float lod,
+                unsigned int attributes, const Frustum&, float pixWidth,
                 Texture* tex0 = NULL, Texture* tex1 = NULL,
                 Texture* tex2 = NULL, Texture* tex3 = NULL);
     void render(const GLContext&,
-                const Frustum&, float lod,
+                const Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
 
  private:
+    struct RenderInfo
+    {
+        RenderInfo(int _step, unsigned int _attr, const Frustum& _frustum) :
+            step(_step), attributes(_attr), frustum(_frustum)
+        {};
+
+        int step;                 
+        unsigned int attributes;  // vertex attributes
+        const Frustum& frustum;   // frustum, for culling
+        Point3f fp[8];            // frustum points, for culling
+        int texLOD[MAX_SPHERE_MESH_TEXTURES];
+    };
+
     int renderPatches(int phi0, int theta0, 
                       int extent,
                       int level,
-                      int step,
-                      unsigned int attributes,
-                      const Frustum&,
-                      Point3f* fp);
+                      const RenderInfo&);
 
-    void renderSection(int phi0, int theta0,
-                       int extent,
-                       int step,
-                       unsigned int attributes);
+    void renderSection(int phi0, int theta0, int extent, const RenderInfo&);
 
     float* vertices;
     float* normals;
