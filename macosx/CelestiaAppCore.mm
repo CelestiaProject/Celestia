@@ -50,6 +50,21 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 
 @implementation CelestiaAppCore
 
+-(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons {
+    int cModifiers = 0;
+    if (modifiers & NSControlKeyMask)
+        cModifiers |= CelestiaCore::ControlKey;
+    if (modifiers & NSShiftKeyMask)
+        cModifiers |= CelestiaCore::ShiftKey;
+    if (buttons & 1)
+        cModifiers |= CelestiaCore::LeftButton;
+    if (buttons & 2)
+        cModifiers |= CelestiaCore::MiddleButton;
+    if (buttons & 4)
+        cModifiers |= CelestiaCore::RightButton;
+    return cModifiers;
+}
+
 +(void)initialize
 {
     _sharedCelestiaAppCore = nil;
@@ -135,17 +150,17 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 
 -(void)mouseWheel:(float)motion modifiers:(int)modifiers
 {
-    appCore->mouseWheel(motion,modifiers);
+    appCore->mouseWheel(motion, modifiers);
 }
 
--(void)mouseButtonDown:(NSPoint)coord button:(int)button
+-(void)mouseButtonDown:(NSPoint)coord modifiers:(int)modifiers
 {
-    appCore->mouseButtonDown(coord.x,coord.y,button);
+    appCore->mouseButtonDown(coord.x,coord.y,modifiers);
 }
 
--(void)mouseButtonUp:(NSPoint)coord button:(int)button
+-(void)mouseButtonUp:(NSPoint)coord modifiers:(int)modifiers
 {
-    appCore->mouseButtonUp(coord.x,coord.y,button);
+    appCore->mouseButtonUp(coord.x,coord.y,modifiers);
 }
 
 -(void)mouseMove:(NSPoint)delta modifiers:(int)modifiers
