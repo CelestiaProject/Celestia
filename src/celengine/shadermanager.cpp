@@ -717,9 +717,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "shadowCenter = " +
                     IndexedParameter("shadowTexCoord", i, j) +
                     " - vec2(0.5, 0.5);\n";
-                source += "shadowR = min(dot(shadowCenter, shadowCenter) * " +
+                source += "shadowR =clamp(dot(shadowCenter, shadowCenter) * " +
                     IndexedParameter("shadowScale", i, j) + " + " +
-                    IndexedParameter("shadowBias", i, j) + ", 1);\n";
+                    IndexedParameter("shadowBias", i, j) + ", 0, 1);\n";
                 source += "shadow *= sqrt(shadowR);\n";
             }
 
