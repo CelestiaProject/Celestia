@@ -32,6 +32,7 @@
 #include <kdialogbase.h>
 
 #include <kbookmarkmanager.h>
+#include <kbookmarkbar.h>
 #include "kcelbookmarkowner.h"
 #include "celestiacore.h"
 #include "kdeglwidget.h"
@@ -184,6 +185,8 @@ public slots:
     void slotForwardAboutToShow();
     void slotForwardActivated(int i);
 
+    void initBookmarkBar();
+
     static void popupMenu(float x, float y, Selection sel);
 
 protected:
@@ -193,7 +196,7 @@ protected:
     KdeGlWidget* glWidget;
     void initActions();
     KRecentFilesAction *openRecent;
-    KToolBar *bookmarkBar;
+    KBookmarkBar *bookmarkBar;
 
     bool queryExit();
     bool queryClose();
@@ -212,6 +215,7 @@ protected:
     KToolBarPopupAction *backAction, *forwardAction;
     static KdeApp* app;
 
+    KActionCollection* bookmarkBarActionCollection;
 };
 
 class LongLatDialog : public KDialogBase {
