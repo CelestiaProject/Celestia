@@ -102,8 +102,8 @@ class Body
     const Atmosphere* getAtmosphere() const;
     void setAtmosphere(const Atmosphere&);
 
-    void setMesh(int);
-    int getMesh() const;
+    void setMesh(ResourceHandle);
+    ResourceHandle getMesh() const;
     void setSurface(const Surface&);
     const Surface& getSurface() const;
 
