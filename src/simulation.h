@@ -63,8 +63,11 @@ class Simulation
 
     SolarSystem* getNearestSolarSystem() const;
 
-    void setTimeScale(double);
     double getTimeScale();
+    void setTimeScale(double);
+
+    float getFaintestVisible() const;
+    void setFaintestVisible(float);
 
     int getHUDDetail() const;
     void setHUDDetail(int);
@@ -143,6 +146,8 @@ class Simulation
     bool following;
     JourneyParams journey;
     FollowParams followInfo;
+
+    float faintestVisible;
 
     int hudDetail;
 };

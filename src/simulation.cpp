@@ -38,7 +38,8 @@ Simulation::Simulation() :
     initialVelocity(0.0, 0.0, 0.0),
     beginAccelTime(0.0),
     observerMode(Free),
-    hudDetail(1)
+    hudDetail(1),
+    faintestVisible(5.0f)
 {
 }
 
@@ -268,7 +269,7 @@ void Simulation::setStarDatabase(StarDatabase* db,
     if (db != NULL)
     {
         visibleStars = new VisibleStarSet(stardb);
-        visibleStars->setLimitingMagnitude(5.0f);
+        visibleStars->setLimitingMagnitude(faintestVisible);
         visibleStars->setCloseDistance(10.0f);
         visibleStars->updateAll(observer);
     }
@@ -840,6 +841,18 @@ double Simulation::getTimeScale()
 void Simulation::setTimeScale(double _timeScale)
 {
     timeScale = _timeScale;
+}
+
+
+float Simulation::getFaintestVisible() const
+{
+    return faintestVisible;
+}
+
+void Simulation::setFaintestVisible(float magnitude)
+{
+    faintestVisible = magnitude;
+    visibleStars->setLimitingMagnitude(faintestVisible);
 }
 
 

@@ -65,6 +65,11 @@ class Renderer
     void setPerPixelLighting(bool);
     bool perPixelLightingSupported() const;
 
+    float getBrightnessScale() const;
+    void setBrightnessScale(float);
+    float getBrightnessBias() const;
+    void setBrightnessBias(float);
+
     typedef struct {
         string text;
         Color color;
@@ -152,6 +157,8 @@ class Renderer
     int labelMode;
     float ambientLightLevel;
     bool perPixelLightingEnabled;
+    float brightnessBias;
+    float brightnessScale;
 
     vector<RenderListEntry> renderList;
     vector<Particle> starParticles;
