@@ -16,6 +16,15 @@ class Mesh
  public:
     virtual ~Mesh() {};
     virtual void render() = 0;
+    virtual void render(unsigned int attributes) = 0;
+
+    enum {
+        Normals    = 0x01,
+        Tangents   = 0x02,
+        Colors     = 0x04,
+        TexCoords0 = 0x08,
+        TexCoords1 = 0x10,
+    };
 };
 
 #endif // _MESH_H_

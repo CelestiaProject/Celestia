@@ -23,6 +23,7 @@ class Mesh3DS : public Mesh
     ~Mesh3DS();
 
     void render();
+    void render(unsigned int attributes);
     void normalize();
 
  private:
