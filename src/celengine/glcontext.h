@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <celengine/vertexprog.h>
+#include <celengine/fragmentprog.h>
 
 class GLContext
 {
@@ -55,11 +56,13 @@ class GLContext
     VertexPath getVertexPath() const;
 
     VertexProcessor* getVertexProcessor() const;
+    FragmentProcessor* getFragmentProcessor() const;
 
  private:
     GLRenderPath renderPath;
     VertexPath vertexPath;
     VertexProcessor* vertexProc;
+    FragmentProcessor* fragmentProc;
 
     int maxSimultaneousTextures;
     std::vector<std::string> extensions;

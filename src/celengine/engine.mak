@@ -32,6 +32,7 @@ OBJS=\
 	$(INTDIR)\deepskyobj.obj \
 	$(INTDIR)\dispmap.obj \
 	$(INTDIR)\execution.obj \
+	$(INTDIR)\fragmentprog.obj \
 	$(INTDIR)\frame.obj \
 	$(INTDIR)\galaxy.obj \
 	$(INTDIR)\glcontext.obj \

@@ -40,7 +40,10 @@ namespace fp
         TextureTranslation = 7,
         TexGen_S           = 8,
         TexGen_T           = 9,
+        ShadowParams0      = 20,
     };
+
+    extern unsigned int sphereShadowOnRings;
 };
 
 

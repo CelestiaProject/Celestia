@@ -17,6 +17,9 @@
 using namespace std;
 
 
+unsigned int fp::sphereShadowOnRings = 0;
+
+
 class FragmentProcessorNV : public FragmentProcessor
 {
  public:
@@ -61,6 +64,22 @@ static string* ReadTextFromFile(const string& filename)
 }
 
 
+static int findLineNumber(const string& s, unsigned int index)
+{
+    if (index >= s.length())
+        return -1;
+
+    int lineno = 1;
+    for (unsigned int i = 0; i < index; i++)
+    {
+        if (s[i] == '\n')
+            lineno++;
+    }
+
+    return lineno;
+}
+
+
 static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
 {
     cout << "Loading NV fragment program: " << filename << '\n';
@@ -85,8 +104,8 @@ static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
     {
         GLint errPos = 0;
         glGetIntegerv(GL_PROGRAM_ERROR_POSITION_NV, &errPos);
-        cout << "Error in fragment program " << filename <<
-            " @ " << errPos << '\n';
+        cout << "Error in fragment program " << filename << ' ' <<
+            glGetString(GL_PROGRAM_ERROR_STRING_NV) << '\n';
         return false;
     }
 
@@ -94,48 +113,11 @@ static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
 }
 
 
-static int findLineNumber(const string& s, int index)
-{
-    if (index >= s.length())
-        return -1;
-
-    int lineno = 1;
-    for (int i = 0; i < index; i++)
-    {
-        if (s[i] == '\n')
-            lineno++;
-    }
-
-    return lineno;
-}
-
-
 FragmentProcessor* fp::initNV()
 {
     cout << "Initializing NV fragment programs . . .\n";
-#if 0
-    if (!LoadNvFragmentProgram("shaders/diffuse.vp", diffuse))
+    if (!LoadNvFragmentProgram("shaders/shadow_on_rings_nv.fp", sphereShadowOnRings))
         return NULL;
-    if (!LoadNvFragmentProgram("shaders/specular.vp", specular))
-        return NULL;
-    if (!LoadNvFragmentProgram("shaders/haze.vp", diffuseHaze))
-        return NULL;
-    if (!LoadNvFragmentProgram("shaders/bumpdiffuse.vp", diffuseBump))
-        return NULL;
-    if (!LoadNvFragmentProgram("shaders/bumphaze.vp", diffuseBumpHaze))
-        return NULL;
-    if (!LoadNvFragmentProgram("shaders/shadowtex.vp", shadowTexture))
-        return NULL;
-    if (!LoadNvFragmentProgram("shaders/diffuse_texoff.vp", diffuseTexOffset))
-        return NULL;
-    if (!LoadNvFragmentProgram("shaders/rings.vp", ringIllum))
-        return NULL;
-    if (!LoadNvFragmentProgram("shaders/ringshadow.vp", ringShadow))
-        return NULL;
-    if (!LoadNvFragmentProgram("shaders/night.vp", nightLights))
-        return NULL;
-    everything = 0;
-#endif 0
     cout << "All NV fragment programs loaded successfully.\n";
 
     return new FragmentProcessorNV();
@@ -177,21 +159,6 @@ void FragmentProcessor::parameter(fp::Parameter param, const Color& c)
 
 // FragmentProcessorNV implementation
 
-static unsigned int parameterMappingsNV[] = 
-{
-    0, // SunDirection,
-    1, // EyePosition,
-    2, // DiffuseColor
-    3, // SpecularColor
-    4, // SpecularExponent
-    5, // AmbientColor
-    6, // HazeColor
-    7, // TextureTranslation
-    8, // Unused
-    9, // TexGen_S,
-    10, // TexGen_T
-};
-
 FragmentProcessorNV::FragmentProcessorNV()
 {
 }
@@ -218,14 +185,13 @@ void FragmentProcessorNV::use(unsigned int prog)
 void FragmentProcessorNV::parameter(fp::Parameter param,
                                     float x, float y, float z, float w)
 {
-    glx::glProgramParameter4fNV(GL_FRAGMENT_PROGRAM_NV, 
-                                parameterMappingsNV[param], x, y, z, w);
+    glx::glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_NV,
+                                      param, x, y, z, w);
 }
 
 void FragmentProcessorNV::parameter(fp::Parameter param, const float* fv)
 {
-    glx::glProgramParameter4fvNV(GL_FRAGMENT_PROGRAM_NV,
-                                 parameterMappingsNV[param], fv);
+    glx::glProgramLocalParameter4fvARB(GL_FRAGMENT_PROGRAM_NV, param, fv);
 }
 
 
