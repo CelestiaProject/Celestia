@@ -164,6 +164,7 @@ class Body
 
     Vec3f planetocentricToCartesian(float lon, float lat, float alt) const;
     Vec3f planetocentricToCartesian(const Vec3f& lonLatAlt) const;
+    Vec3f cartesianToPlanetocentric(const Vec3f& v) const;
 
     bool extant(double) const;
     void setLifespan(double, double);

@@ -359,6 +359,18 @@ Vec3f Body::planetocentricToCartesian(const Vec3f& lonLatAlt) const
 }
 
 
+Vec3f Body::cartesianToPlanetocentric(const Vec3f& v) const
+{
+    Vec3f w = v;
+    w.normalize();
+
+    double lat = (float) PI / 2.0f - acos(w.y);
+    double lon = atan2(w.z, -w.x);
+
+    return Vec3f((float) lon, (float) lat, v.length() - getRadius());
+}
+
+
 bool Body::extant(double t) const
 {
     return t >= protos && t < eschatos;
