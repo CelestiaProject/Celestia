@@ -20,10 +20,16 @@ void DebugPrint(char *format, ...)
     va_start(args, format);
 
 #ifdef _MSC_VER
-    char buf[1024];
-    vsprintf(buf, format, args);
-    OutputDebugString(buf);
-    vfprintf(stdout, format, args);
+    if (IsDebuggerPresent())
+    {
+        char buf[1024];
+        vsprintf(buf, format, args);
+        OutputDebugString(buf);
+    }
+    else
+    {
+        vfprintf(stdout, format, args);
+    }
 #else
     vfprintf(stderr, format, args);
 #endif
