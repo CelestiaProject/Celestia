@@ -23,7 +23,7 @@ extern void SetMousePointer(LPCTSTR lpCursor);
 
 using namespace std;
 
-static const int MinListStars = 50;
+static const int MinListStars = 10;
 static const int MaxListStars = 500;
 static const int DefaultListStars = 100;
 
