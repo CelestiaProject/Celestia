@@ -39,6 +39,7 @@ class Simulation
     Selection pickObject(Vec3f pickRay);
 
     StarDatabase* getStarDatabase() const;
+    SolarSystemCatalog* getSolarSystemCatalog() const;
     void setStarDatabase(StarDatabase* db,
                          SolarSystemCatalog* catalog,
                          GalaxyList*);

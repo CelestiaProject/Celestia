@@ -241,6 +241,11 @@ StarDatabase* Simulation::getStarDatabase() const
     return stardb;
 }
 
+SolarSystemCatalog* Simulation::getSolarSystemCatalog() const
+{
+    return solarSystemCatalog;
+}
+
 void Simulation::setStarDatabase(StarDatabase* db,
                                  SolarSystemCatalog* catalog,
                                  GalaxyList* galaxyList)
