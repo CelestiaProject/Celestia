@@ -248,7 +248,8 @@ void CommandSetSurface::process(ExecutionEnvironment& env)
 
 
 ////////////////
-// Cancel command: cancel a follow or goto command
+// Cancel command: stop all motion, set the coordinate system to absolute,
+//                 and cancel any tracking
 
 CommandCancel::CommandCancel()
 {
@@ -257,6 +258,8 @@ CommandCancel::CommandCancel()
 void CommandCancel::process(ExecutionEnvironment& env)
 {
     env.getSimulation()->cancelMotion();
+    env.getSimulation()->setFrame(FrameOfReference());
+    env.getSimulation()->setTrackedObject(Selection());
 }
 
 
