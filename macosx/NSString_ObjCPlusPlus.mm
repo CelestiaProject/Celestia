@@ -11,14 +11,14 @@
 @implementation NSString(ObjCPlusPlus)
 -(std::string)stdString
 {
-    return std::string([self cString]);
+    return std::string([self UTF8String]);
 }
 -(NSString *)initWithStdString:(std::string)str
 {
-    return [self initWithCString:str.c_str()];
+    return [self initWithUTF8String:str.c_str()];
 }
 +(NSString *)stringWithStdString:(std::string)str
 {
-    return [NSString stringWithCString:str.c_str()];
+    return [NSString stringWithUTF8String:str.c_str()];
 }
 @end
