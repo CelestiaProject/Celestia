@@ -39,7 +39,7 @@ public:
     inline Quaternion(T, const Vector3<T>&);
     inline Quaternion(T, T, T, T);
 
-    Quaternion(Matrix3<T>&);
+    Quaternion(const Matrix3<T>&);
 
     inline Quaternion& operator+=(Quaternion);
     inline Quaternion& operator-=(Quaternion);
@@ -136,7 +136,7 @@ template<class T> Quaternion<T>::Quaternion(T _w, T _x, T _y, T _z) :
 }
 
 // Create a quaternion from a rotation matrix
-template<class T> Quaternion<T>::Quaternion(Matrix3<T>& m)
+template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
 {
     T trace = m[0][0] + m[1][1] + m[2][2];
     T root;

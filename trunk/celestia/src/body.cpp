@@ -171,7 +171,7 @@ RingSystem* Body::getRings() const
     return rings;
 }
 
-void Body::setRings(RingSystem& _rings)
+void Body::setRings(const RingSystem& _rings)
 {
     if (rings == NULL)
         rings = new RingSystem(_rings);

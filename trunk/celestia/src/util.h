@@ -17,6 +17,7 @@
 #include <functional>
 
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
+extern int compareIgnoringCase(const std::string& s1, const std::string& s2, int n);
 
 template <class T> struct printlineFunc : public std::unary_function<T, void>
 {

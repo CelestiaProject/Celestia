@@ -618,7 +618,8 @@ void Renderer::render(const Observer& observer,
         // to be modified to let overlapping objects share a depth buffer
         // range.
         int nDepthBuckets = 1;
-        for (int i = 0; i < nEntries; i++)
+        int i;
+        for (i = 0; i < nEntries; i++)
         {
             if (renderList[i].discSizeInPixels > 1)
                 nDepthBuckets++;
@@ -1662,7 +1663,7 @@ void Renderer::renderStar(const Star& star,
 void Renderer::renderPlanetarySystem(const Star& sun,
                                      const PlanetarySystem& solSystem,
                                      const Observer& observer,
-                                     Mat4d& frame,
+                                     const Mat4d& frame,
                                      double now,
                                      bool showLabels)
 {

@@ -63,7 +63,8 @@ void Mesh3DS::normalize()
 {
     AxisAlignedBox bbox;
 
-    for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
+    VertexListVec::iterator i;
+    for (i = vertexLists.begin(); i != vertexLists.end(); i++)
         bbox.include((*i)->getBoundingBox());
 
     Point3f center = bbox.getCenter();
@@ -73,8 +74,6 @@ void Mesh3DS::normalize()
         maxExtent = extents.y;
     if (extents.z > maxExtent)
         maxExtent = extents.z;
-
-    printf("Normalize: %f\n", maxExtent);
 
     for (i = vertexLists.begin(); i != vertexLists.end(); i++)
         (*i)->transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
