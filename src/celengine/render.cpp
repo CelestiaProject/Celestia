@@ -827,7 +827,7 @@ class OrbitRenderer : public OrbitSampleProc
 public:
     OrbitRenderer() {};
     
-    void sample(const Point3d& p)
+    void sample(double, const Point3d& p)
     {
         glVertex3f(astro::kilometersToAU((float) p.x * 100),
                    astro::kilometersToAU((float) p.y * 100),
@@ -843,13 +843,19 @@ private:
 class OrbitSampler : public OrbitSampleProc
 {
 public:
-    vector<Point3f>* samples;
+    vector<Renderer::OrbitSample>* samples;
 
-    OrbitSampler(vector<Point3f>* _samples) : samples(_samples) {};
-    void sample(const Point3d& p)
+    OrbitSampler(vector<Renderer::OrbitSample>* _samples) : samples(_samples) {};
+    void sample(double t, const Point3d& p)
     {
+        Renderer::OrbitSample samp;
+        samp.pos = Point3f((float) p.x, (float) p.y, (float) p.z);
+        samp.t = t;
+        samples->insert(samples->end(), samp);
+#if 0
         samples->insert(samples->end(),
                         Point3f((float) p.x, (float) p.y, (float) p.z));
+#endif
     };
 };
 
@@ -857,7 +863,7 @@ public:
 
 void Renderer::renderOrbit(Body* body, double t)
 {
-    vector<Point3f>* trajectory = NULL;
+    vector<OrbitSample>* trajectory = NULL;
     for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin();
          iter != orbitCache.end(); iter++)
     {
@@ -933,13 +939,42 @@ void Renderer::renderOrbit(Body* body, double t)
         glBegin(GL_LINE_LOOP);
     else
         glBegin(GL_LINE_STRIP);
-    for (vector<Point3f>::const_iterator p = trajectory->begin();
-         p != trajectory->end(); p++)
+
+    if ((renderFlags & ShowPartialTrajectories) == 0 ||
+        body->getOrbit()->isPeriodic())
     {
-        glVertex3f(astro::kilometersToAU(p->x),
-                   astro::kilometersToAU(p->y),
-                   astro::kilometersToAU(p->z));
+        // Show the complete trajectory
+        for (vector<OrbitSample>::const_iterator p = trajectory->begin();
+             p != trajectory->end(); p++)
+        {
+            glVertex3f(astro::kilometersToAU(p->pos.x),
+                       astro::kilometersToAU(p->pos.y),
+                       astro::kilometersToAU(p->pos.z));
+        }
     }
+    else
+    {
+        // Show the portion of the trajectory travelled up to this point
+        for (vector<OrbitSample>::const_iterator p = trajectory->begin();
+             p != trajectory->end() && p->t < t; p++)
+        {
+            glVertex3f(astro::kilometersToAU(p->pos.x),
+                       astro::kilometersToAU(p->pos.y),
+                       astro::kilometersToAU(p->pos.z));
+        }
+
+        // If we're midway through a non-periodic trajectory, we will need
+        // to render a partial orbit segment.
+        if (p != trajectory->end())
+        {
+            Point3d pos = body->getOrbit()->positionAtTime(t);
+            glVertex3f((float) astro::kilometersToAU(pos.x),
+                       (float) astro::kilometersToAU(pos.y),
+                       (float) astro::kilometersToAU(pos.z));
+        }
+    }
+
+
     glEnd();
 }
 

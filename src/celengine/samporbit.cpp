@@ -234,7 +234,7 @@ void SampledOrbit::sample(double start, double t, int nSamples,
     double end = start + t;
     double current = start;
 
-    proc.sample(positionAtTime(current));
+    proc.sample(current, positionAtTime(current));
 
     while (current < end)
     {
@@ -268,7 +268,7 @@ void SampledOrbit::sample(double start, double t, int nSamples,
             }
             else
             {
-                proc.sample(goodpt);
+                proc.sample(current + gooddt, goodpt);
                 break;
             }
         }
