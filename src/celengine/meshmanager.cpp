@@ -480,7 +480,7 @@ Convert3DSModel(const M3DScene& scene, const string& texPath)
                     material->specular = vlist->getSpecularColor();
                     material->specularPower = vlist->getShininess();
                     material->opacity = vlist->getDiffuseColor().alpha();
-                    material->tex0 = vlist->getTexture();
+                    material->maps[Mesh::DiffuseMap] = vlist->getTexture();
                     model->addMaterial(material);
                     materialIndex++;
 

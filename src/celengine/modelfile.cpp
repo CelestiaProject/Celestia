@@ -43,13 +43,19 @@ defined here--they have the obvious definitions.
                           { <material_attribute> }
                           end_material
 
+<texture_semantic>    ::= texture0       |
+                          normalmap      |
+                          specularmap    |
+                          emissivemap
+
+<texture>             ::= <texture_semantic> <string>
+
 <material_attribute>  ::= diffuse <color>   |
                           specular <color>  |
                           emissive <color>  |
                           specpower <float> |
                           opacity <float>   |
-                          texture0 <string> |
-                          texture1 <string>
+                          <texture>
 
 <color>               ::= <float> <float> <float>
 
@@ -319,8 +325,9 @@ AsciiModelLoader::loadMaterial()
            tok.getNameValue() != "end_material")
     {
         string property = tok.getNameValue();
+        Mesh::TextureSemantic texType = Mesh::parseTextureSemantic(property);
 
-        if (property == "texture0" || property == "texture1")
+        if (texType != Mesh::InvalidTextureSemantic)
         {
             if (tok.nextToken() != Tokenizer::TokenString)
             {
@@ -330,10 +337,8 @@ AsciiModelLoader::loadMaterial()
             }
 
             ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(tok.getStringValue(), getTexturePath(), TextureInfo::WrapTexture));
-            if (property == "texture0")
-                material->tex0 = tex;
-            else if (property == "texture1")
-                material->tex1 = tex;
+
+            material->maps[texType] = tex;
         }
         else
         {
@@ -989,7 +994,35 @@ AsciiModelWriter::writeMaterial(const Mesh::Material& material)
     if (material.opacity != DefaultOpacity)
         out << "opacity " << material.opacity << '\n';
 
-    if (material.tex0 != InvalidResource)
+    for (int i = 0; i < Mesh::TextureSemanticMax; i++)
+    {
+        const TextureInfo* texInfo = GetTextureManager()->getResourceInfo(material.maps[i]);
+        if (texInfo != NULL)
+        {
+            switch (Mesh::TextureSemantic(i))
+            {
+            case Mesh::DiffuseMap:
+                out << "texture0";
+                break;
+            case Mesh::NormalMap:
+                out << "normalmap";
+                break;
+            case Mesh::SpecularMap:
+                out << "specularmap";
+                break;
+            case Mesh::EmissiveMap:
+                out << "emissivemap";
+                break;
+            default:
+                assert(0);
+            }
+            
+            out << " \"" << texInfo->source << "\"\n";
+        }
+    }
+
+#if 0
+    if (material.maps[Mesh::DiffuseMap] != InvalidResource)
     {
         const TextureInfo* texInfo = GetTextureManager()->getResourceInfo(material.tex0);
         if (texInfo != NULL)
@@ -1002,6 +1035,7 @@ AsciiModelWriter::writeMaterial(const Mesh::Material& material)
         if (texInfo != NULL)
             out << "texture1 \"" << texInfo->source << "\"\n";
     }
+#endif
 
 
     out << "end_material\n";
@@ -1107,7 +1141,8 @@ static bool readTypeString(istream& in, string& s)
     else
     {
         char* buf = new char[len];
-        s = string(buf);
+        in.read(buf, len);
+        s = string(buf, len);
         delete[] buf;
     }
 
@@ -1284,9 +1319,16 @@ BinaryModelLoader::loadMaterial()
             }
             break;
 
-        case CMOD_Texture0:
-        case CMOD_Texture1:
+        case CMOD_Texture:
             {
+                int16 texType = readInt16(in);
+                if (texType < 0 || texType >= Mesh::TextureSemanticMax)
+                {
+                    reportError("Bad texture type");
+                    delete material;
+                    return NULL;
+                }
+
                 string texfile;
                 if (!readTypeString(in, texfile))
                 {
@@ -1301,14 +1343,10 @@ BinaryModelLoader::loadMaterial()
                     delete material;
                     return NULL;
                 }
-                else
-                {
-                    ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(texfile, getTexturePath(), TextureInfo::WrapTexture));
-                    if (tok == CMOD_Texture0)
-                        material->tex0 = tex;
-                    else
-                        material->tex1 = tex;
-                }
+
+                ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(texfile, getTexturePath(), TextureInfo::WrapTexture));
+                
+                material->maps[texType] = tex;
             }
             break;
             
@@ -1740,16 +1778,20 @@ BinaryModelWriter::writeMaterial(const Mesh::Material& material)
         writeTypeFloat1(out, material.opacity);
     }
 
-    if (material.tex0 != InvalidResource)
+    for (int i = 0; i < Mesh::TextureSemanticMax; i++)
     {
-        const TextureInfo* texInfo = GetTextureManager()->getResourceInfo(material.tex0);
-        if (texInfo != NULL)
+        if (material.maps[i] != InvalidResource)
         {
-            writeToken(out, CMOD_Texture0);
-            writeTypeString(out, texInfo->source);
+            const TextureInfo* texInfo = GetTextureManager()->getResourceInfo(material.maps[i]);
+            if (texInfo != NULL)
+            {
+                writeToken(out, CMOD_Texture);
+                writeInt16(out, (int16) i);
+                writeTypeString(out, texInfo->source);
+            }
         }
     }
-
+#if 0
     if (material.tex1 != InvalidResource)
     {
         const TextureInfo* texInfo = GetTextureManager()->getResourceInfo(material.tex1);
@@ -1759,6 +1801,7 @@ BinaryModelWriter::writeMaterial(const Mesh::Material& material)
             writeTypeString(out, texInfo->source);
         }
     }
+#endif
 
     writeToken(out, CMOD_EndMaterial);
 }
