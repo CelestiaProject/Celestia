@@ -12,12 +12,12 @@
 
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
+#include <celengine/univcoord.h>
 #include <celengine/stardb.h>
 #include <celengine/solarsys.h>
 #include <celengine/galaxy.h>
+#include <celengine/asterism.h>
 #include <celengine/selection.h>
-#include <celengine/univcoord.h>
-#include <celengine/render.h>
 
 
 class Universe
@@ -35,12 +35,11 @@ class Universe
     AsterismList* getAsterisms() const;
     void setAsterisms(AsterismList*);
 
-    void render(Renderer&);
-
     Selection pick(const UniversalCoord& origin,
                    const Vec3f& direction,
                    double when,
                    float faintestMag);
+    Selection pickStar(const UniversalCoord&, const Vec3f&, float faintest);
     Selection find(const std::string& s,
                    PlanetarySystem** solarSystems = NULL,
                    int nSolarSystems = 0);
@@ -48,16 +47,15 @@ class Universe
                        PlanetarySystem** solarSystems = NULL,
                        int nSolarSystems = 0);
 
-    SolarSystem* getNearestSolarSystem(const UniversalCoord& position);
+    SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
+    SolarSystem* getSolarSystem(const Star* star) const;
 
  private:
-    SolarSystem* getSolarSystem(const Star* star);
     Selection pickPlanet(SolarSystem& solarSystem,
                          const UniversalCoord&,
                          const Vec3f&,
                          double when,
                          float faintestMag);
-    Selection pickStar(const UniversalCoord&, const Vec3f&, float faintest);
 
  private:
     StarDatabase* starCatalog;

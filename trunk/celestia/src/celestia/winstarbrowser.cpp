@@ -206,9 +206,9 @@ bool InitStarBrowserLVItems(HWND listView, vector<const Star*>& stars)
 
 bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
 {
-    Simulation* sim = browser->appCore->getSimulation();
-    StarDatabase* stardb = browser->appCore->getSimulation()->getStarDatabase();
-    SolarSystemCatalog* solarSystems = browser->appCore->getSimulation()->getSolarSystemCatalog();
+    Universe* univ = browser->appCore->getSimulation()->getUniverse();
+    StarDatabase* stardb = univ->getStarCatalog();
+    SolarSystemCatalog* solarSystems = univ->getSolarSystemCatalog();
 
     vector<const Star*>* stars = NULL;
     switch (browser->predicate)
@@ -326,8 +326,8 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
     {
     case 0:
         {
-            Simulation* sim = browser->appCore->getSimulation();
-            starNameString = sim->getStarDatabase()->getStarName(*star);
+            Universe* u = browser->appCore->getSimulation()->getUniverse();
+            starNameString = u->getStarCatalog()->getStarName(*star);
             nm->item.pszText = const_cast<char*>(starNameString.c_str());
         }
         break;

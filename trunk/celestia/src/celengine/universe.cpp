@@ -76,7 +76,7 @@ void Universe::setAsterisms(AsterismList* _asterisms)
 
 
 // Return the planetary system of a star, or NULL if it has no planets.
-SolarSystem* Universe::getSolarSystem(const Star* star)
+SolarSystem* Universe::getSolarSystem(const Star* star) const
 {
     if (star == NULL)
         return NULL;
@@ -128,7 +128,7 @@ struct PlanetPickInfo
     double jd;
 };
 
-bool ApproxPlanetPickTraversal(Body* body, void* info)
+static bool ApproxPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
 
@@ -147,7 +147,7 @@ bool ApproxPlanetPickTraversal(Body* body, void* info)
 
 
 // Perform an intersection test between the pick ray and a body
-bool ExactPlanetPickTraversal(Body* body, void* info)
+static bool ExactPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
 
@@ -342,11 +342,33 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     starCatalog->findCloseStars(closePicker, (Point3f) origin, 1.0f);
     if (closePicker.closestStar != NULL)
         return Selection(const_cast<Star*>(closePicker.closestStar));
+
+    // Find visible stars expects an orientation, but we just have a direction
+    // vector.  Convert the direction vector into an orientation by computing
+    // the rotation required to map (0, 0, -1) to the direction.
+    Quatf rotation;
+    Vec3f n(0, 0, -1);
+    float epsilon = 1.0e-6f;
+    float cosAngle = n * direction;
+    if (cosAngle > 1.0f - epsilon)
+    {
+        rotation.setAxisAngle(Vec3f(1, 0, 0), 0);
+    }
+    else if (cosAngle < epsilon - 1.0f)
+    {
+        rotation.setAxisAngle(Vec3f(1, 0, 0), (float) PI);
+    }
+    else
+    {
+        Vec3f axis = direction ^ n;
+        axis.normalize();
+        rotation.setAxisAngle(axis, (float) acos(cosAngle));
+    }
     
     StarPicker picker((Point3f) origin, direction, angle);
     starCatalog->findVisibleStars(picker,
                                   (Point3f) origin,
-                                  Quatf(1.0f), // observer.getOrientation(),
+                                  rotation,
                                   angle, 1.0f,
                                   faintestMag);
     if (picker.pickedStar != NULL)
@@ -486,7 +508,7 @@ Selection Universe::findPath(const string& s,
 
 // Return the closest solar system to position, or NULL if there are no planets
 // with in one light year.
-SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position)
+SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) const
 {
     ClosestStarFinder closestFinder(1.0f);
     starCatalog->findCloseStars(closestFinder, (Point3f) position, 1.0f);

@@ -17,6 +17,7 @@
 #include <celengine/command.h>
 #include <celengine/execution.h>
 #include <celengine/texture.h>
+#include <celengine/universe.h>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include "configfile.h"
@@ -161,10 +162,8 @@ class CelestiaCore
 
  private:
     CelestiaConfig* config;
-    StarDatabase* starDB;
-    SolarSystemCatalog* solarSystemCatalog;
-    GalaxyList* galaxies;
-    AsterismList* asterisms;
+
+    Universe* universe;
 
     FavoritesList* favorites;
     DestinationList* destinations;

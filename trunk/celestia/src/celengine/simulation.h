@@ -16,8 +16,7 @@
 #include <celmath/quaternion.h>
 #include <celengine/texture.h>
 #include <celengine/mesh.h>
-#include <celengine/stardb.h>
-#include <celengine/solarsys.h>
+#include <celengine/universe.h>
 #include <celengine/astro.h>
 #include <celengine/galaxy.h>
 #include <celengine/texmanager.h>
@@ -60,7 +59,7 @@ struct RigidTransform
 class Simulation
 {
  public:
-    Simulation();
+    Simulation(Universe*);
     ~Simulation();
 
     double getTime() const; // Time in seconds
@@ -71,11 +70,7 @@ class Simulation
 
     Selection pickObject(Vec3f pickRay);
 
-    StarDatabase* getStarDatabase() const;
-    SolarSystemCatalog* getSolarSystemCatalog() const;
-    void setStarDatabase(StarDatabase* db,
-                         SolarSystemCatalog* catalog,
-                         GalaxyList*);
+    Universe* getUniverse() const;
 
     Observer& getObserver();
 
@@ -147,11 +142,6 @@ class Simulation
 
  private:
     SolarSystem* getSolarSystem(const Star* star);
-    Selection pickPlanet(Observer& observer,
-                         const Star& sun,
-                         SolarSystem& solarSystem,
-                         Vec3f pickRay);
-    Selection pickStar(Vec3f pickRay);
     void computeGotoParameters(Selection& sel,
                                JourneyParams& jparams,
                                double gotoTime,
@@ -166,9 +156,7 @@ class Simulation
     double simTime;
     double timeScale;
 
-    StarDatabase* stardb;
-    SolarSystemCatalog* solarSystemCatalog;
-    GalaxyList* galaxies;
+    Universe* universe;
 
     SolarSystem* closestSolarSystem;
     Star* selectedStar;
