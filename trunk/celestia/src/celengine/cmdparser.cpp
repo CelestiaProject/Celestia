@@ -321,6 +321,12 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("magnitude", mag);
         cmd = new CommandSetVisibilityLimit(mag);
     }
+    else if (commandName == "setambientlight")
+    {
+        double brightness = 0.0;
+        paramList->getNumber("brightness", brightness);
+        cmd = new CommandSetAmbientLight((float) brightness);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");
