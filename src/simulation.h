@@ -57,6 +57,7 @@ class Simulation
     void setSelection(const Selection&);
     void selectStar(uint32);
     void selectPlanet(int);
+    UniversalCoord getSelectionPosition(Selection& sel, double when);
     Selection findObject(string s);
     Selection findObjectFromPath(string s);
     void gotoSelection(double gotoTime,
@@ -119,7 +120,6 @@ class Simulation
  private:
     SolarSystem* getSolarSystem(Star* star);
     Star* getSun(Body* body);
-    UniversalCoord getSelectionPosition(Selection& sel, double when);
     Selection pickPlanet(Observer& observer,
                          Star& sun,
                          SolarSystem& solarSystem,
