@@ -30,6 +30,7 @@ class Color
     inline float green() const;
     inline float blue() const;
     inline float alpha() const;
+    inline void get(unsigned char*) const;
 
     friend bool operator==(Color, Color);
     friend bool operator!=(Color, Color);
@@ -58,6 +59,14 @@ float Color::blue() const
 float Color::alpha() const
 {
     return c[Alpha] * (1.0f / 255.0f);
+}
+
+void Color::get(unsigned char* rgba) const
+{
+    rgba[0] = c[Red];
+    rgba[1] = c[Green];
+    rgba[2] = c[Blue];
+    rgba[3] = c[Alpha];
 }
 
 inline bool operator==(Color a, Color b)
