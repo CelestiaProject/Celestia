@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include <celutil/debug.h>
 #include <celutil/bytes.h>
 #include <celengine/gl.h>

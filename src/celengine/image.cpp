@@ -39,6 +39,7 @@ extern "C" {
 #ifdef _WIN32
 #include "jpeglib.h"
 #else
+#include <cstdio>
 #include <jpeglib.h>
 #endif
 }
