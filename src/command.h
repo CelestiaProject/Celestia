@@ -109,6 +109,17 @@ class CommandFollow : public InstantaneousCommand
 };
 
 
+class CommandSynchronous : public InstantaneousCommand
+{
+ public:
+    CommandSynchronous();
+    void process(ExecutionEnvironment&);
+
+ private:
+    int dummy;   // Keep the class from having zero size
+};
+
+
 class CommandCancel : public InstantaneousCommand
 {
  public:
