@@ -534,14 +534,9 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	Albedo            0.50
 
 	Rings {
-		Inner   74660
+		Inner   74500  # includes some ringlets inside edge of C ring at 74660
 		Outer  140220
 		Texture "saturn-rings.png"
-
-		# Bjorn Jonsson <http://www.mmedia.is/~bjj> recommends this
-		# color for rendering Saturn's rings.  No idea if it's right,
-		# but it looks nice
-		Color  [ 1.0 0.88 0.82 ]
 	}
 }
 
