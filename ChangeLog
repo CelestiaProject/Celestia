@@ -408,10 +408,14 @@ Code:
 1.2.2
 * Improved find algorithm for starnames, and combined names from hdnames.dat
   into starnames.dat. Also added several additional names and variant spellings
-  from my Star Atlas into starnames.dat (whoose format has been completely
+  from my Star Atlas into starnames.dat (whose format has been completely
   revamped). (dramsey)
 * Unix GTK: Got Ctrl-Q to exit the Program properly. (dramsey)
 * Unix GTK: Capture Filenames now starts up with a proper filename, remembers
             the last directory, and complains about bad filenames. (dramsey)
 * Added 'verbose' option, and supressed most non-error type messages unless
   verbose is set. (dramsey)
+* Made picking exact for oblate planets
+* Optimized rendering of planet meshes
+* Switched to high levels of details when camera is near surface of a planet
+* Improved the appearance of the corona around stars
