@@ -11,6 +11,8 @@
 #define CELSCRIPT_EXPRESSION_H_
 
 #include <celscript/value.h>
+#include <celscript/execution.h>
+
 
 namespace celx
 {
@@ -20,7 +22,7 @@ class Expression
  public:
     Expression() {};
     virtual ~Expression() {};
-    virtual Value eval() = 0;
+    virtual Value eval(ExecutionContext&) = 0;
 };
 
 
@@ -45,7 +47,7 @@ class BinaryExpression : public Expression
 
     BinaryExpression(Operator, Expression*, Expression*);
     virtual ~BinaryExpression();
-    virtual Value eval();
+    virtual Value eval(ExecutionContext&);
 
  private:
     const Operator op;
@@ -66,7 +68,7 @@ class UnaryExpression : public Expression
 
     UnaryExpression(Operator, Expression*);
     virtual ~UnaryExpression();
-    virtual Value eval();
+    virtual Value eval(ExecutionContext&);
 
  private:
     const Operator op;
@@ -79,22 +81,23 @@ class ConstantExpression : public Expression
  public:
     ConstantExpression(const Value&);
     virtual ~ConstantExpression();
-    virtual Value eval();
+    virtual Value eval(ExecutionContext&);
 
  private:
     Value value;
 };
 
 
-class NameExpression : public Expression
+class IdentifierExpression : public Expression
 {
  public:
-    NameExpression(const std::string&);
-    virtual ~NameExpression();
-    virtual Value eval();
+    IdentifierExpression(const std::string&);
+    virtual ~IdentifierExpression();
+    virtual Value eval(ExecutionContext&);
 
  private:
     const std::string name;
+    int stackDepth;
 };
 
 } // namespace celx

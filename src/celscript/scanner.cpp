@@ -193,6 +193,10 @@ Scanner::TokenType Scanner::nextToken()
                     newToken = KeywordIf;
                 else if (textToken == "else")
                     newToken = KeywordElse;
+                else if (textToken == "var")
+                    newToken = KeywordVar;
+                else if (textToken == "null")
+                    newToken = KeywordNull;
                 else if (textToken == "true")
                     newToken = KeywordTrue;
                 else if (textToken == "false")

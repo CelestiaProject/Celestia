@@ -85,6 +85,8 @@ Value& Value::operator=(const Value& v)
         case BooleanType:
             val.boolVal = v.val.boolVal;
             break;
+        case NilType:
+            break;
         default:
             assert(0);
             break;

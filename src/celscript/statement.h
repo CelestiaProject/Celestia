@@ -7,11 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef STATEMENT_H_
-#define STATEMENT_H_
+#ifndef CELSCRIPT_STATEMENT_H_
+#define CELSCRIPT_STATEMENT_H_
 
 #include <vector>
 #include <celscript/expression.h>
+#include <celscript/execution.h>
 
 
 namespace celx 
@@ -31,7 +32,7 @@ class Statement
         ControlContinue,
     };
 
-    virtual Control execute() { return ControlAdvance; };
+    virtual Control execute(ExecutionContext&) { return ControlAdvance; };
 };
 
 
@@ -46,7 +47,7 @@ class ExpressionStatement : public Statement
     ExpressionStatement(Expression*);
     virtual ~ExpressionStatement();
 
-    virtual Control execute();
+    virtual Control execute(ExecutionContext&);
 
  private:
     Expression* expr;
@@ -59,12 +60,26 @@ class IfStatement : public Statement
     IfStatement(Expression*, Statement*, Statement*);
     virtual ~IfStatement();
 
-    virtual Control execute();
+    virtual Control execute(ExecutionContext&);
 
  private:
     Expression* condition;
     Statement* ifClause;
     Statement* elseClause;
+};
+
+
+class VarStatement : public Statement
+{
+ public:
+    VarStatement(const std::string&, Expression*);
+    virtual ~VarStatement();
+
+    virtual Control execute(ExecutionContext&);
+
+ private:
+    std::string name;
+    Expression* initializer;
 };
 
 
@@ -74,7 +89,7 @@ class CompoundStatement : public Statement
     CompoundStatement();
     virtual ~CompoundStatement();
 
-    virtual Control execute();
+    virtual Control execute(ExecutionContext&);
 
     void addStatement(Statement*);
 
@@ -89,14 +104,13 @@ class WhileStatement : public Statement
     WhileStatement(Expression*, Statement*);
     virtual ~WhileStatement();
 
-    virtual Control execute();
+    virtual Control execute(ExecutionContext&);
 
  private:
     Expression* condition;
     Statement* body;
 };
 
-
 } // namespace celx
 
-#endif // STATEMENT_H_
+#endif // CELSCRIPT_STATEMENT_H_

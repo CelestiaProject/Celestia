@@ -10,6 +10,8 @@
 #ifndef _CELSCRIPT_SCRIPTPARSER_H_
 #define _CELSCRIPT_SCRIPTPARSER_H_
 
+#include <string>
+#include <vector>
 #include <celscript/scanner.h>
 #include <celscript/expression.h>
 #include <celscript/statement.h>
@@ -33,6 +35,7 @@ public:
     Expression* parseRelationalExpression();
 
     Statement* parseStatement();
+    Statement* parseVarStatement();
     Statement* parseCompoundStatement();
     Statement* parseExpressionStatement();
     Statement* parseIfStatement();
@@ -41,7 +44,14 @@ public:
 private:
     void syntaxError(const std::string&);
 
+    int resolveName(const std::string&);
+    void defineLocal(const std::string&);
+    void beginFrame();
+    void endFrame();
+
     Scanner& scanner;
+    std::vector<std::string> scope;
+    int loopDepth;
 };
 
 } // namespace celx
