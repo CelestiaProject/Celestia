@@ -100,6 +100,8 @@ static JOYCAPS joystickCaps;
 static HCURSOR hDefaultCursor = 0;
 bool cursorVisible = true;
 static POINT saveCursorPos;
+class WinCursorHandler;
+WinCursorHandler* cursorHandler = NULL;
 
 static int MovieSizes[5][2] = { { 160, 120 },
                                 { 320, 240 },
@@ -301,6 +303,65 @@ CelestiaDropTarget::Drop(IDataObject* pDataObject,
 
     return E_FAIL;
 }
+
+
+// Cursor handler callback class for Windows.  We pass an instance to
+// the app core which the calls the setCursorShape method to change
+// the cursor icon.
+class WinCursorHandler : public CelestiaCore::CursorHandler
+{
+public:
+    WinCursorHandler(HCURSOR _defaultCursor);
+    virtual ~WinCursorHandler();
+    virtual void setCursorShape(CelestiaCore::CursorShape);
+    virtual CelestiaCore::CursorShape getCursorShape() const;
+
+private:
+    CelestiaCore::CursorShape shape;
+    HCURSOR defaultCursor;
+    HCURSOR sizeVertical;
+    HCURSOR sizeHorizontal;
+};
+
+
+WinCursorHandler::WinCursorHandler(HCURSOR _defaultCursor) :
+    shape(CelestiaCore::ArrowCursor),
+    defaultCursor(_defaultCursor)
+{
+    sizeVertical   = LoadCursor(NULL, IDC_SIZENS);
+    sizeHorizontal = LoadCursor(NULL, IDC_SIZEWE);
+}
+
+
+WinCursorHandler::~WinCursorHandler()
+{
+}
+
+
+void WinCursorHandler::setCursorShape(CelestiaCore::CursorShape _shape)
+{
+    shape = _shape;
+    switch (shape)
+    {
+    case CelestiaCore::SizeVerCursor:
+        SetCursor(sizeVertical);
+        break;
+    case CelestiaCore::SizeHorCursor:
+        SetCursor(sizeHorizontal);
+        break;
+    default:
+        SetCursor(defaultCursor);
+        break;
+    }
+}
+
+
+CelestiaCore::CursorShape WinCursorHandler::getCursorShape() const
+{
+    return shape;
+}
+
+// end WinCursorHandler methods
 
 
 static void acronymify(char* words, int length)
@@ -2274,7 +2335,6 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
         cout << "Error opening registry key: " << err << '\n';
         return false;
     }
-    cout << "Opened registry key\n";
 
     GetRegistryValue(key, "Width", &prefs.winWidth, sizeof(prefs.winWidth));
     GetRegistryValue(key, "Height", &prefs.winHeight, sizeof(prefs.winHeight));
@@ -2523,7 +2583,7 @@ static void HandleCaptureMovie(HWND hWnd)
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
     // Comment this out if you just want the standard "Save As" caption.
-    Ofn.lpstrTitle = "Save As - Specify File to Capture Movie";
+    Ofn.lpstrTitle = "Save As - Specify Output File for Capture Movie";
 
     // OFN_HIDEREADONLY - Do not display read-only video files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
@@ -2591,7 +2651,7 @@ static void HandleCaptureMovie(HWND hWnd)
         {
             char errorMsg[64];
 
-            if(nFileType == 0)
+            if (nFileType == 0)
                 sprintf(errorMsg, "Specified file extension is not recognized.");
             else
                 sprintf(errorMsg, "Could not capture movie.");
@@ -3036,6 +3096,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             hDefaultCursor = LoadCursor(appInstance, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
     }
 
+    cursorHandler = new WinCursorHandler(hDefaultCursor);
+    appCore->setCursorHandler(cursorHandler);
+
     HWND hWnd;
     if (startFullscreen)
     {
@@ -3128,7 +3191,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         // If Celestia is in an inactive state, we should use GetMessage
         // to avoid sucking CPU cycles--if time is paused, we can probably
         // avoid constantly rendering.
-        if(PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+        if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
         {
             bool dialogMessage = false;
 
@@ -3268,6 +3331,8 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 	    int x, y;
 	    x = LOWORD(lParam);
 	    y = HIWORD(lParam);
+            appCore->mouseMove(x, y);
+
             if ((wParam & (MK_LBUTTON | MK_RBUTTON)) != 0)
             {
 #ifdef INFINITE_MOUSE
@@ -3358,6 +3423,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 }
             }
         }
+
         break;
 
     case WM_LBUTTONDOWN:
