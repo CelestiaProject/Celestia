@@ -584,7 +584,7 @@ Code:
 * Linux: Added KDE interface, all features of the GTK interface are 
   available (except for the Tour Guide), new features include:
    - Bookmarks / URLs;
-   - History navigation;
+   - History navigation;* Improved drag and drop of cel:// URLs on Windows
    - Configurable shortcuts and tool bar;
    - Contextual menus;
    - Saved Settings and Preferences.
@@ -596,7 +596,7 @@ Code:
      If an instance is already running the script will be run in that instance
      or that instance's location will be changed to match the URL.
 * Added drag and drop and copy to clipboard for cel:// URLs on Windows
-
+* Improved drag and drop of cel:// URLs on Windows
 
 1.2.6
 * Integrated more of Grant Hutchinson's corrections for the orientations of
@@ -611,10 +611,17 @@ Code:
 * cel:// URL fixes
    - Added support for relative URLs
    - Improved drag and drop support on Windows
+   - Browser integration on Windows: clicking on a cel:// URL launches Celestia
 * Added new keyboard commands for dealing with light time delay
-   - ? : show light time delay between current position and selected object
+   - ? : show light time delay between curre* Improved drag and drop of cel:// URLs on Windowsnt position and selected object
    - - (minus) : compensate for light time : subtract light travel time to
      selected object from the current time
 * KDE interface: add subtract light time button to Set Time dialog
 * Added cubic interpolation option for sampled trajectories (.xyz files)
+* Added NormalMap field for .ssc files
+* Prevent crashing when CompressTexture true is specified for an already compressed texture.
+* KDE: Implement eclipse finder
+   - Eclipse finder code separated into UI and platform-independent parts
+* Added basic support for rendering nebula as 3ds meshes.
+* Modified format of galaxies file to handle other deep sky objects as well
 
