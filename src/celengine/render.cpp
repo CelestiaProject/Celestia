@@ -2973,7 +2973,8 @@ void Renderer::renderCometTail(const Body& body,
     float dt = 10000000.0f / (nSteps * (float) vd.length() * 100.0f);
     // float dt = 0.1f;
 
-    for (int i = 0; i < MaxCometTailPoints; i++)
+    int i;
+    for (i = 0; i < MaxCometTailPoints; i++)
     {
         Vec3d pd = body.getOrbit()->positionAtTime(t) - pos0;
         Point3f p = Point3f((float) pd.x, (float) pd.y, (float) pd.z);
@@ -3017,7 +3018,7 @@ void Renderer::renderCometTail(const Body& body,
     glPushMatrix();
     glTranslate(pos);
 
-    for (int i = 0; i < MaxCometTailPoints; i++)
+    for (i = 0; i < MaxCometTailPoints; i++)
     {
 #if 1
         if (i != 0 && i != MaxCometTailPoints - 1)
@@ -3053,7 +3054,7 @@ void Renderer::renderCometTail(const Body& body,
     }
 
     glBegin(GL_LINE_STRIP);
-    for (int i = 0; i < MaxCometTailPoints; i++)
+    for (i = 0; i < MaxCometTailPoints; i++)
     {
         glVertex(cometPoints[i]);
     }
