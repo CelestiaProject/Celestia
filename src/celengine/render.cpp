@@ -3004,7 +3004,7 @@ void Renderer::renderCometTail(const Body& body,
     glPushMatrix();
     glTranslate(pos);
 
-    for (i = 0; i < MaxCometTailPoints; i++)
+    for (int i = 0; i < MaxCometTailPoints; i++)
     {
 #if 1
         if (i != 0 && i != MaxCometTailPoints - 1)
@@ -3040,7 +3040,7 @@ void Renderer::renderCometTail(const Body& body,
     }
 
     glBegin(GL_LINE_STRIP);
-    for (i = 0; i < MaxCometTailPoints; i++)
+    for (int i = 0; i < MaxCometTailPoints; i++)
     {
         glVertex(cometPoints[i]);
     }
