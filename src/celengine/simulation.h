@@ -66,8 +66,11 @@ class Simulation
     Simulation(Universe*);
     ~Simulation();
 
-    double getTime() const; // Time in seconds
+    double getTime() const; // Julian date
     void setTime(double t);
+
+    double getRealTime() const;
+    double getArrivalTime() const;
 
     void update(double dt);
     void render(Renderer&);
