@@ -1,0 +1,52 @@
+# Galaxy catalog for Celestia
+
+"Milky Way"
+{
+	Type "SBa"
+	RA 17.75
+	Dec -28.93
+	Distance 28000
+	Radius 50000
+	Axis [ 1 0 0 ]
+	Angle 50
+}
+
+# Large Magellanic Cloud / 
+"LMC"
+{
+	Type "Irr"
+	RA   5.328
+	Dec  -68.95
+	Distance 179000
+	Radius 15000
+}
+
+# Small Magellanic Cloud / NGC 292
+"SMC"
+{
+	Type "Irr"
+	RA   0.862
+	Dec  -73.23
+	Distance 210000
+	Radius 12000
+}
+
+# Andromeda / NGC 224
+"M31"
+{
+	Type "Sb"
+	RA        0.712
+	Dec      41.27
+	Distance  2.9e6
+	Radius   95000
+}
+
+# Triangulum spiral / NGC 598
+"M33"
+{
+	Type "Sb"
+	RA    1.565
+	Dec  30.65
+	Distance 3e6
+	Radius 30000
+}
