@@ -38,7 +38,7 @@ class SampledOrbit : public CachingOrbit
 {
 public:
     SampledOrbit();
-    ~SampledOrbit();
+    virtual ~SampledOrbit();
 
     void addSample(double t, double x, double y, double z);
     void setPeriod();
@@ -116,7 +116,7 @@ Point3d SampledOrbit::computePosition(double jd) const
         {
             pos = Point3d(samples[n].x, samples[n].y, samples[n].z);
         }
-        else if (n < samples.size())
+        else if (n < (int) samples.size())
         {
             Sample s0 = samples[n - 1];
             Sample s1 = samples[n];
