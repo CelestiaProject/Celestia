@@ -46,7 +46,8 @@ Body::Body(PlanetarySystem* _system) :
     rings(NULL),
     satellites(NULL),
     classification(Unknown),
-    altSurfaces(NULL)
+    altSurfaces(NULL),
+    locations(NULL)
 {
     system = _system;
 }
@@ -457,6 +458,23 @@ vector<string>* Body::getAlternateSurfaceNames() const
     return names;
 }
 
+
+void Body::addLocation(Location* loc)
+{
+    assert(loc != NULL);
+    if (loc == NULL)
+        return;
+
+    if (locations == NULL)
+        locations = new vector<Location*>();
+    locations->insert(locations->end(), loc);
+}
+
+
+vector<Location*>* Body::getLocations() const
+{
+    return locations;
+}
 
 
 /**** Implementation of PlanetarySystem ****/

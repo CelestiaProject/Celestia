@@ -54,6 +54,27 @@ bool getDate(Hash* hash, const string& name, double& jd)
 }
 
 
+static Location* CreateLocation(Hash* locationData,
+                                Body* body)
+{
+    Location* location = new Location();
+
+    Vec3d longlat(0.0, 0.0, 0.0);
+    locationData->getVector("LongLat", longlat);
+
+    double phi = -degToRad(longlat.y) + PI / 2;
+    double theta = degToRad(longlat.x) - PI;
+
+    Vec3f position((float) (cos(theta) * sin(phi)),
+                   (float) (cos(phi)),
+                   (float) (-sin(theta) * sin(phi)));
+    position = position * (body->getRadius() + (float) longlat.z);
+    location->setPosition(Point3f(0.0f, 0.0f, 0.0f) + position);
+
+    return location;
+}
+
+
 static Surface* CreateSurface(Hash* surfaceData,
                               const std::string& path)
 {
@@ -579,6 +600,26 @@ bool LoadSolarSystemObjects(istream& in,
                 parent.body->addAlternateSurface(name, surface);
             else
                 DPRINTF(0, "Bad alternate surface\n");
+        }
+        else if (itemType == "Location")
+        {
+            if (parent.body != NULL)
+            {
+                Location* location = CreateLocation(objectData, parent.body);
+                if (location != NULL)
+                {
+                    location->setName(name);
+                    parent.body->addLocation(location);
+                }
+                else
+                {
+                    DPRINTF(0, "Bad location\n");
+                }
+            }
+            else
+            {
+                DPRINTF(0, "Parent body of location does not exist\n");
+            }
         }
     }
 
