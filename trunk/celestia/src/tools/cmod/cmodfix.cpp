@@ -28,6 +28,7 @@ string outputFilename;
 bool outputBinary = false;
 bool uniquify = false;
 bool genNormals = false;
+bool genTangents = false;
 bool weldVertices = false;
 float smoothAngle = 60.0f;
 
@@ -41,6 +42,7 @@ void usage()
     cerr << "   --normals (or -n)     : generate normals\n";
     cerr << "   --smooth (or -s) <angle> : smoothing angle for normal generation\n";
     cerr << "   --weld (or -w)        : merge identical vertices before normal generation\n";
+    cerr << "   --tangents (or -t)    : generate tangents\n";
 }
 
 
@@ -313,11 +315,11 @@ getTexCoord(const void* vertexData,
 
 
 Vec3f
-averageNormals(const vector<Face>& faces,
-               uint32 thisFace,
-               uint32* vertexFaces,
-               uint32 vertexFaceCount,
-               float cosSmoothingAngle)
+averageFaceVectors(const vector<Face>& faces,
+                   uint32 thisFace,
+                   uint32* vertexFaces,
+                   uint32 vertexFaceCount,
+                   float cosSmoothingAngle)
 {
     const Face& face = faces[thisFace];
 
@@ -395,10 +397,10 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
 
     if (!foundMatch)
     {
-        attributes[nAttributes++] = Mesh::VertexAttribute(Mesh::Normal,
-                                                          Mesh::Float3,
+        attributes[nAttributes++] = Mesh::VertexAttribute(semantic,
+                                                          format,
                                                           stride);
-        stride += Mesh::getVertexAttributeSize(Mesh::Float3);
+        stride += Mesh::getVertexAttributeSize(format);
     }
 
     delete[] desc.attributes;
@@ -419,11 +421,9 @@ mergeVertices(vector<Face>& faces,
         return;
 
     // Must have a position
-    if (desc.getAttribute(Mesh::Position) == NULL)
-        return;
-    assert(desc.getAttribute(Mesh::Position)->format == Mesh::Float3);
+    assert(desc.getAttribute(Mesh::Position).format == Mesh::Float3);
 
-    uint32 posOffset = desc.getAttribute(Mesh::Position)->offset;
+    uint32 posOffset = desc.getAttribute(Mesh::Position).offset;
     const char* vertexPoints = reinterpret_cast<const char*>(vertexData) +
         posOffset;
     uint32 nVertices = faces.size() * 3;
@@ -477,18 +477,13 @@ generateNormals(Mesh& mesh,
     float cosSmoothAngle = (float) cos(smoothAngle);
 
     const Mesh::VertexDescription& desc = mesh.getVertexDescription();
-    if (desc.getAttribute(Mesh::Position) == NULL)
-    {
-        cerr << "Bad vertex format--no position!\n";
-        return NULL;
-    }
 
-    if (desc.getAttribute(Mesh::Position)->format != Mesh::Float3)
+    if (desc.getAttribute(Mesh::Position).format != Mesh::Float3)
     {
         cerr << "Vertex position must be a float3\n";
         return NULL;
     }
-    uint32 posOffset = desc.getAttribute(Mesh::Position)->offset;
+    uint32 posOffset = desc.getAttribute(Mesh::Position).offset;
  
     uint32 nFaces = 0;
     uint32 i;
@@ -667,10 +662,10 @@ generateNormals(Mesh& mesh,
         for (uint32 j = 0; j < 3; j++)
         {
             vertexNormals[f * 3 + j] =
-                averageNormals(faces, f,
-                               &vertexFaces[face.vi[j]][1],
-                               vertexFaces[face.vi[j]][0],
-                               cosSmoothAngle);
+                averageFaceVectors(faces, f,
+                                   &vertexFaces[face.vi[j]][1],
+                                   vertexFaces[face.vi[j]][0],
+                                   cosSmoothAngle);
         }
     }
 
@@ -765,37 +760,25 @@ generateTangents(Mesh& mesh,
     // In order to generate tangents, we require positions, normals, and
     // 2D texture coordinates in the vertex description.
     const Mesh::VertexDescription& desc = mesh.getVertexDescription();
-    if (desc.getAttribute(Mesh::Position) == NULL)
-    {
-        cerr << "Bad vertex format--no position!\n";
-        return NULL;
-    }
-
-    if (desc.getAttribute(Mesh::Position)->format != Mesh::Float3)
+    if (desc.getAttribute(Mesh::Position).format != Mesh::Float3)
     {
         cerr << "Vertex position must be a float3\n";
         return NULL;
     }
 
-    if (desc.getAttribute(Mesh::Normal) == NULL)
+    if (desc.getAttribute(Mesh::Normal).format != Mesh::Float3)
     {
-        cerr << "Normals must be present in mesh to generate tangents\n";
+        cerr << "float3 format vertex normal required\n";
         return NULL;
     }
 
-    if (desc.getAttribute(Mesh::Normal)->format != Mesh::Float3)
-    {
-        cerr << "Vertex normal must be a float3\n";
-        return NULL;
-    }
-
-    if (desc.getAttribute(Mesh::Texture0) == NULL)
+    if (desc.getAttribute(Mesh::Texture0).format == Mesh::InvalidFormat)
     {
         cerr << "Texture coordinates must be present in mesh to generate tangents\n";
         return NULL;
     }
 
-    if (desc.getAttribute(Mesh::Texture0)->format != Mesh::Float2)
+    if (desc.getAttribute(Mesh::Texture0).format != Mesh::Float2)
     {
         cerr << "Texture coordinate must be a float2\n";
         return NULL;
@@ -846,9 +829,9 @@ generateTangents(Mesh& mesh,
         }
     }
 
-    uint32 posOffset = desc.getAttribute(Mesh::Position)->offset;
-    uint32 normOffset = desc.getAttribute(Mesh::Normal)->offset;
-    uint32 texCoordOffset = desc.getAttribute(Mesh::Texture0)->offset;
+    uint32 posOffset = desc.getAttribute(Mesh::Position).offset;
+    uint32 normOffset = desc.getAttribute(Mesh::Normal).offset;
+    uint32 texCoordOffset = desc.getAttribute(Mesh::Texture0).offset;
 
     const void* vertexData = mesh.getVertexData();
     
@@ -930,17 +913,17 @@ generateTangents(Mesh& mesh,
     }
 
     // Compute the vertex tangents by averaging
-    vector<Vec3f> vertexNormals(nFaces * 3);
+    vector<Vec3f> vertexTangents(nFaces * 3);
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
         for (uint32 j = 0; j < 3; j++)
         {
-            vertexNormals[f * 3 + j] =
-                averageNormals(faces, f,
-                               &vertexFaces[face.vi[j]][1],
-                               vertexFaces[face.vi[j]][0],
-                               0.0f);
+            vertexTangents[f * 3 + j] =
+                averageFaceVectors(faces, f,
+                                   &vertexFaces[face.vi[j]][1],
+                                   vertexFaces[face.vi[j]][0],
+                                   0.0f);
         }
     }
 
@@ -991,12 +974,36 @@ generateTangents(Mesh& mesh,
                        vertexData, desc,
                        face.i[j],
                        fromOffsets);
-            memcpy(newVertex + tangentOffset, &vertexNormals[f * 3 + j],
+            memcpy(newVertex + tangentOffset, &vertexTangents[f * 3 + j],
                    Mesh::getVertexAttributeSize(Mesh::Float3));
         }
     }
 
-    return NULL;
+    // Create the Celestia mesh
+    Mesh* newMesh = new Mesh();
+    newMesh->setVertexDescription(newDesc);
+    newMesh->setVertices(nFaces * 3, newVertexData);
+
+    // Create a trivial index list
+    uint32* indices = new uint32[nFaces * 3];
+    for (i = 0; i < nFaces * 3; i++)
+        indices[i] = i;
+
+    // TODO: This assumes that the mesh uses only one material.  Tangent
+    // generation should really be done one primitive group at a time.
+    uint32 materialIndex = mesh.getGroup(0)->materialIndex;
+    newMesh->addGroup(Mesh::TriList, materialIndex, nFaces * 3, indices);
+
+    // Clean up
+    delete[] faceCounts;
+    for (i = 0; i < nVertices; i++)
+    {
+        if (vertexFaces[i] != NULL)
+            delete[] vertexFaces[i];
+    }
+    delete[] vertexFaces;
+
+    return newMesh;
 }
 
 
@@ -1024,6 +1031,10 @@ bool parseCommandLine(int argc, char* argv[])
             else if (!strcmp(argv[i], "-n") || !strcmp(argv[i], "--normals"))
             {
                 genNormals = true;
+            }
+            else if (!strcmp(argv[i], "-t") || !strcmp(argv[i], "--tangents"))
+            {
+                genTangents = true;
             }
             else if (!strcmp(argv[i], "-w") || !strcmp(argv[i], "--weld"))
             {
@@ -1102,35 +1113,54 @@ int main(int argc, char* argv[])
     if (model == NULL)
         return 1;
     
-    if (genNormals)
+    if (genNormals || genTangents)
     {
-        Model* normGenModel = new Model();
+        Model* newModel = new Model();
         uint32 i;
 
         // Copy materials
         for (i = 0; model->getMaterial(i) != NULL; i++)
         {
-            normGenModel->addMaterial(model->getMaterial(i));
+            newModel->addMaterial(model->getMaterial(i));
         }
 
-        // Generate normals for each model in the mesh
+        // Generate normals and/or tangents for each model in the mesh
         for (i = 0; model->getMesh(i) != NULL; i++)
         {
             Mesh* mesh = model->getMesh(i);
-            Mesh* normGenMesh = generateNormals(*mesh,
-                                                degToRad(smoothAngle),
-                                                weldVertices);
-            if (normGenMesh == NULL)
+            Mesh* newMesh = NULL;
+
+            if (genNormals)
             {
-                cerr << "Error generating normals!\n";
-                return 1;
+                newMesh = generateNormals(*mesh,
+                                          degToRad(smoothAngle),
+                                          weldVertices);
+                if (newMesh == NULL)
+                {
+                    cerr << "Error generating normals!\n";
+                    return 1;
+                }
+                // TODO: clean up old mesh
+                mesh = newMesh;
             }
 
-            normGenModel->addMesh(normGenMesh);
+            if (genTangents)
+            {
+                newMesh = generateTangents(*mesh, weldVertices);
+                if (newMesh == NULL)
+                {
+                    cerr << "Error generating tangents!\n";
+                    return 1;
+                }
+                // TODO: clean up old mesh
+                mesh = newMesh;
+            }
+
+            newModel->addMesh(mesh);
         }
 
         // delete model;
-        model = normGenModel;
+        model = newModel;
     }
 
     if (uniquify)
