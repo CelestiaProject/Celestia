@@ -45,7 +45,7 @@ public:
     string getNameValue();
     string getStringValue();
 
-    int getLineNumber();
+    int getLineNumber() const;
 
 private:
     enum State
@@ -79,6 +79,8 @@ private:
     double numberValue;
 
     string textToken;
+
+    int lineNum;
 };
 
 #endif // _TOKENIZER_H_
