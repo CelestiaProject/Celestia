@@ -189,6 +189,8 @@ class Simulation
     RigidTransform transform;
 
     float faintestVisible;
+
+    Quatf trackingOrientation;   //Orientation prior to selecting tracking
 };
 
 #endif // SIMULATION_H_
