@@ -125,6 +125,19 @@ Planets [
 
 	RotationPeriod   10.0
 }
+{
+	Name "c"
+	Texture "gasgiant.jpg"
+	Mass     240     # Msin i is approx. 0.75 Jupiters
+	Radius   66000
+
+	# orbital data
+	Period          7.1
+	SemiMajorAxis   3.73
+	Eccentricity    0.0    # No information yet
+
+	RotationPeriod   10.0
+}
 ]
 }
 
