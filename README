@@ -335,9 +335,10 @@ A few of these maps were modified by me, with fictional terrain added to fill
 in gaps.  The model of the Galileo spacecraft is also from David Seal's site
 (though it was converted from Inventor to 3DS format.)
 
-The Mars, Neptune, and Uranus textures and Mars and Moon bump maps are all
-from James Hastings-Trew's collection.  Some of the prettiest planet maps
-around are at: http://gw.marketingden.com/planets/planets.html
+The Mars, Neptune, and Uranus textures and Mars, Moon and Mercury bump maps are
+all from James Hastings-Trew's collection, and the Mercury texture is a recolored 
+version of his. Some of the prettiest planet maps around are at: 
+  http://gw.marketingden.com/planets/planets.html
 
 Fridger Schrempp produced the 'available data' Pluto and Charon textures using
 maps created by Marc Buie at Lowell Observatory.  Buie's maps were generated
@@ -361,7 +362,9 @@ based on resources available from the imaging site (Ciclops) of the
 Cassini mission,  
   http://ciclops.lpl.arizona.edu/index.php
 
-Venus's surface is a copyright-free NASA image.
+Venus's surface is a copyright-free NASA image, prepared from Magellan radar
+data. The original is available at 
+  http://www.solarviews.com/cap/venus/venmap.htm
 
 The Earth texture was created by NASA using data from the MODIS instrument
 aboard the Terra satellite.  Further information is available from:
