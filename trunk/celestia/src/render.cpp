@@ -765,12 +765,18 @@ void Renderer::render(const Observer& observer,
                     iter->nearZ = -MinNearPlaneDistance;
                 else
                     iter->nearZ = nearZ;
-                iter->farZ = center.z - radius;
 
                 if (!convex)
                 {
+                    iter->farZ = center.z - radius;
                     if (iter->farZ / iter->nearZ > MaxFarNearRatio)
                         iter->nearZ = iter->farZ / MaxFarNearRatio;
+                }
+                else
+                {
+                    // Only correct for spherical objects . . .
+                    float d = center.distanceFromOrigin();
+                    iter->farZ = d - square(radius) / d;
                 }
 
                 *notCulled = *iter;
@@ -1109,6 +1115,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
                                  Vec3f lightDirection,
                                  Quatf orientation,
                                  Color ambientColor,
+                                 const Frustum& frustum,
                                  float lod)
 {
     // We're doing our own per-pixel lighting, so disable GL's lighting
@@ -1117,7 +1124,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
     // Render the base texture on the first pass . . .  The base
     // texture and color should have been set up already by the
     // caller.
-    mesh.render(lod);
+    mesh.render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
 
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
@@ -1180,7 +1187,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    mesh.render(lod);
+    mesh.render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
 
     // Reset the second texture unit
     glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1202,6 +1209,7 @@ static void renderSmoothMesh(Mesh& mesh,
                              Quatf orientation,
                              Color ambientColor,
                              float lod,
+                             const Frustum& frustum,
                              bool invert = false)
 {
     // We're doing our own per-pixel lighting, so disable GL's lighting
@@ -1264,7 +1272,7 @@ static void renderSmoothMesh(Mesh& mesh,
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    mesh.render(lod);
+    mesh.render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
 
     // Reset the second texture unit
     glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1430,7 +1438,7 @@ static void renderMeshDefault(const RenderInfo& ri,
 
     glColor(ri.color);
 
-    ri.mesh->render(ri.lod);
+    ri.mesh->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
@@ -1442,7 +1450,7 @@ static void renderMeshDefault(const RenderInfo& ri,
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        ri.mesh->render(ri.lod);
+        ri.mesh->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 }
@@ -1472,6 +1480,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri,
                              ri.sunDir_eye,
                              ri.orientation,
                              ri.ambientColor,
+                             frustum,
                              ri.lod);
     }
     else if (ri.baseTex != NULL)
@@ -1481,7 +1490,8 @@ static void renderMeshFragmentShader(const RenderInfo& ri,
                          ri.sunDir_eye,
                          ri.orientation,
                          ri.ambientColor,
-                         ri.lod);
+                         ri.lod,
+                         frustum);
         if (ri.nightTex != NULL)
         {
             ri.nightTex->bind();
@@ -1493,6 +1503,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri,
                              ri.orientation,
                              ri.ambientColor,
                              ri.lod,
+                             frustum,
                              true);
         }
     }
@@ -1624,9 +1635,9 @@ static float getSphereLOD(float discSizeInPixels)
         return -1.0f;
     else if (discSizeInPixels < 200)
         return 0.0f;
-    else if (discSizeInPixels < 600)
+    else if (discSizeInPixels < 800)
         return 1.0f;
-    else if (discSizeInPixels < 1800)
+    else if (discSizeInPixels < 3200)
         return 2.0f;
     else
         return 3.0f;
