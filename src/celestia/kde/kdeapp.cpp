@@ -293,7 +293,7 @@ void KdeApp::initActions()
     new KAction(i18n("Accelerate Time"), "1uparrow", Key_L, this, SLOT(slotAccelerateTime()), actionCollection(), "accelerateTime");
     new KAction(i18n("Decelerate Time"), "1downarrow", Key_K, this, SLOT(slotSlowDownTime()), actionCollection(), "slowDownTime");
     new KAction(i18n("Pause Time"), "player_pause", Key_Space, this, SLOT(slotPauseTime()), actionCollection(), "pauseTime");
-    new KAction(i18n("Reverse Time"), "flipv", Key_J, this, SLOT(slotReverseTime()), actionCollection(), "reverseTime");
+    new KAction(i18n("Reverse Time"), "reload", Key_J, this, SLOT(slotReverseTime()), actionCollection(), "reverseTime");
 
     new KAction(i18n("Celestial Browser"), 0, ALT + Key_C, this, SLOT(slotCelestialBrowser()), actionCollection(), "celestialBrowser");
 
