@@ -92,7 +92,7 @@ void DeepSkyObject::setInfoURL(const std::string& s)
         *infoURL = s;
 }
 
-bool DeepSkyObject::load(AssociativeArray* params)
+bool DeepSkyObject::load(AssociativeArray* params, const string&)
 {
     // Get position
     Vec3d position(0.0, 0.0, 0.0);
@@ -134,7 +134,8 @@ bool DeepSkyObject::load(AssociativeArray* params)
 }
 
 
-int LoadDeepSkyObjects(DeepSkyCatalog& catalog, istream& in)
+int LoadDeepSkyObjects(DeepSkyCatalog& catalog, istream& in,
+                       const string& path)
 {
     int count = 0;
     Tokenizer tokenizer(&in);
@@ -182,7 +183,7 @@ int LoadDeepSkyObjects(DeepSkyCatalog& catalog, istream& in)
         if (obj != NULL)
         {
             obj->setName(objName);
-            if (obj->load(objParams))
+            if (obj->load(objParams, path))
             {
                 catalog.insert(catalog.end(), obj);
                 count++;

@@ -11,6 +11,7 @@
 #define _CELENGINE_3DSMESH_H_
 
 #include <vector>
+#include <string>
 #include <celengine/mesh.h>
 #include <celengine/vertexlist.h>
 #include <cel3ds/3dsmodel.h>
@@ -18,7 +19,7 @@
 class Mesh3DS : public Mesh
 {
  public:
-    Mesh3DS(const M3DScene& scene);
+    Mesh3DS(const M3DScene& scene, const std::string& texturePath);
     ~Mesh3DS();
 
     void render(float lod);

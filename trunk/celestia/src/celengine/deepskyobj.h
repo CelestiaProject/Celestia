@@ -39,7 +39,7 @@ class DeepSkyObject
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
-    virtual bool load(AssociativeArray*);
+    virtual bool load(AssociativeArray*, const std::string& resPath);
 
     virtual void render(const Vec3f& offset,
                         const Quatf& viewerOrientation,
@@ -55,7 +55,8 @@ class DeepSkyObject
 };
 
 typedef std::vector<DeepSkyObject*> DeepSkyCatalog;
-int LoadDeepSkyObjects(DeepSkyCatalog&, std::istream& in);
+int LoadDeepSkyObjects(DeepSkyCatalog&, std::istream& in,
+                       const std::string& path);
 
 
 #endif // _CELENGINE_DEEPSKYOBJ_H_
