@@ -35,6 +35,6 @@ install-data-hook:
 		mv -f -b $(kde_datadir)/@PACKAGE@/* $(datadir)/@PACKAGE@/ ; \
 		rmdir $(kde_datadir)/@PACKAGE@ ; \
 	fi
-	if [ ! -a $(kde_datadir)/@PACKAGE@ ] ; then \
+	if [ ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
 		ln -s $(datadir)/@PACKAGE@ $(kde_datadir)/@PACKAGE@ ; \
 	fi
