@@ -7,9 +7,7 @@ USER INTERFACE
   * Make picking more accurate for non-spherical bodies
   * Make galaxies pickable
 * Views of planet and satellite orbits
-  * Add satellite orbits
   * User control over which orbits should be displayed
-* Next/prev body commands
 * Add preferences for text color to config file
 * Dialog box for displaying detailed information about a star or planet
 * Create a manual
@@ -30,7 +28,7 @@ VISUALS
 * Make atmospheres work for oblate planets
 * Render galaxies with colors--bluish spiral arms, yellowish center
 * Render dark dust bands in galaxies
-* Add textures to ISS and Mir models
+* Add textures to Mir model
 
 POLISH
 * Tutorial mode
@@ -48,11 +46,10 @@ SIMULATION ACCURACY
 * Obtain and read spacecraft ephemerii, so Galileo, Cassini, etc. appear in the proper places
 * Use a better estimate for star radius
 * Make some attempt at calculating stellar rotation rates
-* Model the irregular rotations of objects like Toutatis and Hyperion
+* Model the chaotic rotation of Hyperion
 * Double star systems: make the stars actually orbit each other
 
 BUGS
-* Find out why picking sometimes stops working, apparently after orbiting (fixed?)
 * Fix wobbling of planet shadow on rings when time is accelerated
 * Investigate possible visual anomalies with ring shadows on ATI Rage cards
 
@@ -70,13 +67,12 @@ PORTING
   * Implement solar system and star browsers
   * Context menus for both GLUT and Gtk versions
 * MacOS port
-* Make bump mapping and other GL extension stuff work under UNIX
+* Make bump mapping and other GL extension stuff work better on OSes other
+  than Windows.
 
 MISC
 * Create more powerful scripting system
 * Make solar system creation applet, for adding hypothetical systems to
   a Celestia universe
-* Allow lists of bodies from different .ssc files to be incorporated into
-  the same planetary system
 * Switch to UNICODE
 * Internationalization
