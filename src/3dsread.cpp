@@ -276,10 +276,12 @@ Mat4f readMeshMatrix(ifstream& in, int nBytes)
     float m31 = readFloat(in);
     float m32 = readFloat(in);
 
+#if 0
     cout << m00 << "   " << m01 << "   " << m02 << '\n';
     cout << m10 << "   " << m11 << "   " << m12 << '\n';
     cout << m20 << "   " << m21 << "   " << m22 << '\n';
     cout << m30 << "   " << m31 << "   " << m32 << '\n';
+#endif
 
     return Mat4f(Vec4f(m00, m01, m02, 0),
                  Vec4f(m10, m11, m12, 0),
@@ -307,6 +309,19 @@ void readPointArray(ifstream& in, M3DTriangleMesh* triMesh)
         float y = readFloat(in);
         float z = readFloat(in);
         triMesh->addVertex(Point3f(x, y, z));
+    }
+}
+
+
+void readTextureCoordArray(ifstream& in, M3DTriangleMesh* triMesh)
+{
+    uint16 nPoints = readUshort(in);
+
+    for (int i = 0; i < (int) nPoints; i++)
+    {
+        float u = readFloat(in);
+        float v = readFloat(in);
+        triMesh->addTexCoord(Point2f(u, v));
     }
 }
 
@@ -388,6 +403,11 @@ bool processTriMeshChunk(ifstream& in,
     if (chunkType == M3DCHUNK_POINT_ARRAY)
     {
         readPointArray(in, triMesh);
+        return true;
+    }
+    else if (chunkType == M3DCHUNK_MESH_TEXTURE_COORDS)
+    {
+        readTextureCoordArray(in, triMesh);
         return true;
     }
     else if (chunkType == M3DCHUNK_FACE_ARRAY)
@@ -585,26 +605,9 @@ M3DScene* Read3DSFile(ifstream& in)
 }
 
 
-M3DScene* Read3DSFile(string filename)
+M3DScene* Read3DSFile(const string& filename)
 {
     ifstream in(filename.c_str(), ios::in | ios::binary);
-    if (!in.good())
-    {
-        cerr << "Error opening " << filename << '\n';
-        return NULL;
-    }
-    else
-    {
-        M3DScene* scene = Read3DSFile(in);
-        in.close();
-        return scene;
-    }
-}
-
-
-M3DScene* Read3DSFile(char* filename)
-{
-    ifstream in(filename, ios::in | ios::binary);
     if (!in.good())
     {
         cerr << "Error opening " << filename << '\n';

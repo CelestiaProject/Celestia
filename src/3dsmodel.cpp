@@ -105,6 +105,21 @@ void M3DTriangleMesh::addVertex(Point3f p)
     points.insert(points.end(), p);
 }
 
+Point2f M3DTriangleMesh::getTexCoord(uint16 n) const
+{
+    return texCoords[n];
+}
+
+uint16 M3DTriangleMesh::getTexCoordCount() const
+{
+    return (uint16) (texCoords.size());
+}
+
+void M3DTriangleMesh::addTexCoord(Point2f p)
+{
+    texCoords.insert(texCoords.end(), p);
+}
+
 void M3DTriangleMesh::getFace(uint16 n, uint16& v0, uint16& v1, uint16& v2) const
 {
     int m = (int) n * 3;
