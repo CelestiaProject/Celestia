@@ -16,6 +16,18 @@
 #include "vecmath.h"
 
 
+template<class T> class Quaternion;
+
+template<class T> Quaternion<T> operator+(Quaternion<T>, Quaternion<T>);
+template<class T> Quaternion<T> operator-(Quaternion<T>, Quaternion<T>);
+template<class T> Quaternion<T> operator*(Quaternion<T>, Quaternion<T>);
+template<class T> Quaternion<T> operator*(T, Quaternion<T>);
+template<class T> Quaternion<T> operator*(Vector3<T>, Quaternion<T>);
+template<class T> bool operator==(Quaternion<T>, Quaternion<T>);
+template<class T> bool operator!=(Quaternion<T>, Quaternion<T>);
+template<class T> T real(Quaternion<T>);
+template<class T> Vector3<T> imag(Quaternion<T>);
+
 template<class T> class Quaternion
 {
 public:
@@ -54,17 +66,17 @@ public:
     bool isReal() const;
     T normalize();
 
-    friend Quaternion operator+(Quaternion, Quaternion);
-    friend Quaternion operator-(Quaternion, Quaternion);
-    friend Quaternion operator*(Quaternion, Quaternion);
-    friend Quaternion operator*(T, Quaternion);
-    friend Quaternion operator*(Vector3<T>, Quaternion);
+    friend Quaternion<T> operator+(Quaternion<T>, Quaternion<T>);
+    friend Quaternion<T> operator-(Quaternion<T>, Quaternion<T>);
+    friend Quaternion<T> operator*(Quaternion<T>, Quaternion<T>);
+    friend Quaternion<T> operator*(T, Quaternion<T>);
+    friend Quaternion<T> operator*(Vector3<T>, Quaternion<T>);
 
-    friend bool operator==(Quaternion, Quaternion);
-    friend bool operator!=(Quaternion, Quaternion);
+    friend bool operator==(Quaternion<T>, Quaternion<T>);
+    friend bool operator!=(Quaternion<T>, Quaternion<T>);
 
-    friend T real(Quaternion);
-    friend Vector3<T> imag(Quaternion);
+    friend T real(Quaternion<T>);
+    friend Vector3<T> imag(Quaternion<T>);
 
     // private:
     T w, x, y, z;
