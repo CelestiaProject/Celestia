@@ -56,6 +56,9 @@ template<class T> class ResourceManager
     typedef std::map<T, ResourceHandle> ResourceHandleMap;
     typedef std::map<std::string, ResourceType*> NameMap;
 
+    typedef typename ResourceHandleMap::value_type ResourceHandleMapValue;
+    typedef typename NameMap::value_type NameMapValue;
+
     ResourceTable resources;
     ResourceHandleMap handles;
     NameMap loadedResources;
@@ -72,7 +75,7 @@ template<class T> class ResourceManager
         {
             ResourceHandle h = handles.size();
             resources.insert(resources.end(), info);
-            handles.insert(ResourceHandleMap::value_type(info, h));
+            handles.insert(ResourceHandleMapValue(info, h));
             return h;
         }
     }
@@ -105,7 +108,7 @@ template<class T> class ResourceManager
                     else
                     {
                         resources[h].state = ResourceLoaded;
-                        loadedResources.insert(NameMap::value_type(resources[h].resolvedName, resources[h].resource));
+                        loadedResources.insert(NameMapValue(resources[h].resolvedName, resources[h].resource));
                     }
                 }
             }
