@@ -18,89 +18,31 @@
 
 @implementation CelestiaOpenGLView
 
-/*
-- (int)_mapNativeKeyCodeToGLUTCode: (unichar)unicodeKey isAscii: (BOOL *)isascii
-{
-    int	asciiKey = 'A';
-
-    *isascii = NO;
-    switch(unicodeKey)
+- (id) initWithCoder: (NSCoder *) coder
+{   
+    NSOpenGLPixelFormatAttribute attrs[] = 
     {
-        case NSF1FunctionKey:
-            asciiKey = GLUT_KEY_F1;
-            break;
-        case NSF2FunctionKey:
-            asciiKey = GLUT_KEY_F2;
-            break;
-        case NSF3FunctionKey:
-            asciiKey = GLUT_KEY_F3;
-            break;
-        case NSF4FunctionKey:
-            asciiKey = GLUT_KEY_F4;
-            break;
-        case NSF5FunctionKey:
-            asciiKey = GLUT_KEY_F5;
-            break;
-        case NSF6FunctionKey:
-            asciiKey = GLUT_KEY_F6;
-            break;
-        case NSF7FunctionKey:
-            asciiKey = GLUT_KEY_F7;
-            break;
-        case NSF8FunctionKey:
-            asciiKey = GLUT_KEY_F8;
-            break;
-        case NSF9FunctionKey:
-            asciiKey = GLUT_KEY_F9;
-            break;
-        case NSF10FunctionKey:
-            asciiKey = GLUT_KEY_F10;
-            break;
-        case NSF11FunctionKey:
-            asciiKey = GLUT_KEY_F11;
-            break;
-        case NSF12FunctionKey:
-            asciiKey = GLUT_KEY_F12;
-            break;
-        case NSUpArrowFunctionKey:
-            asciiKey = GLUT_KEY_UP;
-            break;
-        case NSDownArrowFunctionKey:
-            asciiKey = GLUT_KEY_DOWN;
-            break;
-        case NSLeftArrowFunctionKey:
-            asciiKey = GLUT_KEY_LEFT;
-            break;
-        case NSRightArrowFunctionKey:
-            asciiKey = GLUT_KEY_RIGHT;
-            break;
-        case NSPageUpFunctionKey:
-            asciiKey = GLUT_KEY_PAGE_UP;
-            break;
-        case NSPageDownFunctionKey:
-            asciiKey = GLUT_KEY_PAGE_DOWN;
-            break;
-        case NSHomeFunctionKey:
-            asciiKey = GLUT_KEY_HOME;
-            break;
-        case NSEndFunctionKey:
-            asciiKey = GLUT_KEY_END;
-            break;
-        case NSInsertFunctionKey:
-            asciiKey = GLUT_KEY_INSERT;
-            break;
-        default:
-            if(unicodeKey < 128)
-            {
-                *isascii = YES;
-                asciiKey = (int) (unicodeKey & 0x00FF);
-            }
-            break;
-    }
+        NSOpenGLPFADoubleBuffer,
+        nil
+    } ;
 
-    return asciiKey;
+    NSOpenGLPixelFormat* pixFmt ;
+    long swapInterval ;
+
+    self = [super initWithCoder: coder] ;
+    pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: attrs] ;
+
+    [self setPixelFormat: pixFmt] ;
+
+    swapInterval = 1 ;
+
+    [[self openGLContext]
+        setValues: &swapInterval
+        forParameter: NSOpenGLCPSwapInterval ] ;
+        
+    return self;
 }
-*/
+
 
 - (BOOL) isFlipped {return YES;}
 
@@ -128,7 +70,7 @@
     if ([selectionName isEqualToString: @""]) return NULL;
     [[[self menu] itemAtIndex: 0] setTitle: selectionName ];
     [[[self menu] itemAtIndex: 0] setEnabled: YES ];
-    [ appCore addSurfaceMenu: [self menu] ];
+    [ controller addSurfaceMenu: [self menu] ];
 //    [ [self menu] setAutoenablesItems: NO ];
     return [self menu];
 }
@@ -187,7 +129,8 @@
     }
 //     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     {
-    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: self];
+    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+//    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: self];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    NSLog(@"mouseDown: %@",theEvent);
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
@@ -259,12 +202,19 @@
 
 - (BOOL) acceptsFirstResponder: (NSEvent*)theEvent
 {
+//    NSLog(@"CelestiaOpenGLView acceptsFirstResponder" );
     return YES;
 }
 
 - (BOOL) becomeFirstResponder
 {
-    //NSLog(@"Becoming first responder");
+//    NSLog(@"CelestiaOpenGLView becomeFirstResponder" );
+    return YES;
+}
+
+- (BOOL) resignFirstResponder
+{
+//    NSLog(@"CelestiaOpenGLView resignFirstResponder" );
     return YES;
 }
 
@@ -275,15 +225,15 @@
 
 - (void) drawRect: (NSRect) rect
 {
-        //NSApplication* theApp = [NSApplication sharedApplication];        
         NSOpenGLContext *oglContext;
         [self lockFocus];
         oglContext = [self openGLContext];
         if (oglContext != nil) 
         {
-            [oglContext makeCurrentContext];
             [controller display];
             glFinish();
+            [oglContext flushBuffer] ;
+
         }
         [self unlockFocus];
 }
@@ -299,23 +249,47 @@
     NSString *value;
     [pb declareTypes:
         [NSArray arrayWithObject: NSStringPboardType] owner: self];
-//        NSLog ( value );
         CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-        value = [ [appCore currentURL] relativeString ];
+        value = [appCore currentURL];
         [ pb setString: value forType: NSStringPboardType ];
 }
 
 - (BOOL) readStringFromPasteboard: (NSPasteboard *) pb
 {
-    NSString *value;
+    NSString *value = nil;
     NSString *type = [pb availableTypeFromArray:
-        [NSArray arrayWithObject: NSStringPboardType]];
+        [NSArray arrayWithObjects: NSURLPboardType, NSFilenamesPboardType, NSStringPboardType, nil ]];
+NSLog(@"read paste");
     if ( type != nil )
     {
         CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-        value = [ pb stringForType: NSStringPboardType ];
-//        NSLog ( value );
-        [appCore goToUrl: value ];
+//        value = [ pb stringForType: NSURLPboardType ];
+          value = [ pb stringForType: NSStringPboardType ];
+        if (value != nil )
+        {
+            NSLog(value);
+            if ( [value rangeOfString:@"cel:" options: (NSCaseInsensitiveSearch|NSAnchoredSearch) ].location == 0 )
+                [appCore goToUrl: value ];
+            else
+                [appCore runScript: value ];
+        }
+        else
+        {
+            value = [[NSURL URLWithString: (NSString*) [((NSArray*)[ pb propertyListForType: type ]) objectAtIndex: 0 ]] path];
+            NSLog(value);
+            [appCore runScript: value ];
+        
+            return NO;
+            if (value != nil)
+            {
+                value = [ pb stringForType: NSFilenamesPboardType ];
+                if (value != nil )
+                {
+                    NSLog(value);
+                    [appCore runScript: value ];
+                }
+            }
+        }
         return YES;
     }
     return NO;
@@ -324,7 +298,7 @@
 {
     NSPasteboard *pb = [sender draggingPasteboard];
     NSString *type = [pb availableTypeFromArray:
-        [NSArray arrayWithObject: NSStringPboardType]];
+        [NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil ]];
     NSLog(@"dragentered");
     if ( type != nil )
     {
@@ -355,7 +329,5 @@
     NSPasteboard *pb = [NSPasteboard generalPasteboard];
     [ self writeStringToPasteboard: pb ];
 }
-
-
 
 @end
