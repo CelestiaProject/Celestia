@@ -61,7 +61,7 @@ private:
 class OrbitSampleProc
 {
  public:
-    virtual void sample(const Point3d&) = 0;
+    virtual void sample(double t, const Point3d&) = 0;
 };
 
 

@@ -224,7 +224,7 @@ void EllipticalOrbit::sample(double start, double t, int nSamples,
 {
     double dE = 2 * PI / (double) nSamples;
     for (int i = 0; i < nSamples; i++)
-        proc.sample(positionAtE(dE * i));
+        proc.sample(t, positionAtE(dE * i));
 }
 
 
@@ -245,7 +245,7 @@ void CachingOrbit::sample(double start, double t, int nSamples,
 {
     double dt = t / (double) nSamples;
     for (int i = 0; i < nSamples; i++)
-        proc.sample(positionAtTime(start + dt * i));
+        proc.sample(start + dt * i, positionAtTime(start + dt * i));
 }
 
 

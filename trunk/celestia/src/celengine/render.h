@@ -97,6 +97,7 @@ class Renderer
         ShowAutoMag         = 0x4000,
         ShowCometTails      = 0x8000,
         ShowMarkers         = 0x10000,
+        ShowPartialTrajectories = 0x20000,
     };
 
     enum StarStyle 
@@ -405,10 +406,18 @@ class Renderer
 
     DetailOptions detailOptions;
 
+ public:
+    struct OrbitSample 
+    {
+        double t;
+        Point3f pos;
+    };
+
+ private:
     struct CachedOrbit
     {
         Body* body;
-        std::vector<Point3f> trajectory;
+        std::vector<OrbitSample> trajectory;
         bool keep;
     };
     std::vector<CachedOrbit*> orbitCache;
