@@ -43,9 +43,7 @@ class Renderer
     void shutdown() {};
     void resize(int, int);
 
-    float getFieldOfView();
     float calcPixelSize(float fov, float windowHeight);
-    void setFieldOfView(float);
     void setFaintestAM45deg(float);
     float getFaintestAM45deg();
 
@@ -195,6 +193,7 @@ class Renderer
     };
 
  private:
+    void setFieldOfView(float);
     void renderStars(const StarDatabase& starDB,
                      float faintestVisible,
                      const Observer& observer);
