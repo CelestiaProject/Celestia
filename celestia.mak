@@ -68,6 +68,7 @@ CLEAN :
 	-@erase "$(INTDIR)\regcombine.obj"
 	-@erase "$(INTDIR)\render.obj"
 	-@erase "$(INTDIR)\resmanager.obj"
+	-@erase "$(INTDIR)\selection.obj"
 	-@erase "$(INTDIR)\simulation.obj"
 	-@erase "$(INTDIR)\solarsys.obj"
 	-@erase "$(INTDIR)\spheremesh.obj"
@@ -164,6 +165,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\regcombine.obj" \
 	"$(INTDIR)\render.obj" \
 	"$(INTDIR)\resmanager.obj" \
+	"$(INTDIR)\selection.obj" \
 	"$(INTDIR)\simulation.obj" \
 	"$(INTDIR)\solarsys.obj" \
 	"$(INTDIR)\spheremesh.obj" \
@@ -230,6 +232,7 @@ CLEAN :
 	-@erase "$(INTDIR)\regcombine.obj"
 	-@erase "$(INTDIR)\render.obj"
 	-@erase "$(INTDIR)\resmanager.obj"
+	-@erase "$(INTDIR)\selection.obj"
 	-@erase "$(INTDIR)\simulation.obj"
 	-@erase "$(INTDIR)\solarsys.obj"
 	-@erase "$(INTDIR)\spheremesh.obj"
@@ -329,6 +332,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\regcombine.obj" \
 	"$(INTDIR)\render.obj" \
 	"$(INTDIR)\resmanager.obj" \
+	"$(INTDIR)\selection.obj" \
 	"$(INTDIR)\simulation.obj" \
 	"$(INTDIR)\solarsys.obj" \
 	"$(INTDIR)\spheremesh.obj" \
@@ -542,6 +546,12 @@ SOURCE=.\src\render.cpp
 SOURCE=.\src\resmanager.cpp
 
 "$(INTDIR)\resmanager.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\selection.cpp
+
+"$(INTDIR)\selection.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
