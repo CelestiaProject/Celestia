@@ -20,7 +20,7 @@
 #include "customorbit.h"
 #include "texmanager.h"
 #include "meshmanager.h"
-#include "solarsys.h"
+#include "universe.h"
 
 using namespace std;
 
@@ -196,12 +196,12 @@ static Body* CreatePlanet(PlanetarySystem* system,
 {
     Body* body = new Body(system);
 
+#if 0
     string name("Unnamed");
     planetData->getString("Name", name);
     body->setName(name);
+#endif
     
-    DPRINTF("Reading planet %s\n", name.c_str());
-
     Orbit* orbit = NULL;
     string customOrbitName;
     if (planetData->getString("CustomOrbit", customOrbitName))
@@ -219,7 +219,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
             if (orbitDataValue->getType() != Value::HashType)
             {
                 DPRINTF("Object '%s' has incorrect elliptical orbit syntax.\n",
-                        name.c_str());
+                        body->getName().c_str());
             }
             else
             {
@@ -231,7 +231,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     if (orbit == NULL)
     {
         DPRINTF("No valid orbit specified for object '%s'; skipping . . .\n",
-                name.c_str());
+                body->getName().c_str());
         delete body;
         return NULL;
     }
@@ -333,177 +333,92 @@ static Body* CreatePlanet(PlanetarySystem* system,
         }
     }
 
-    // Read the moons
-    // TODO: This is largely cut-and-pasted from the ReadSolarSystem function
-    // It would be better if they actually used the same code
-    
-    Value* moonsDataValue = planetData->getValue("Moons");
-    if (moonsDataValue != NULL)
-    {
-        if (moonsDataValue->getType() != Value::ArrayType)
-        {
-            cout << "ReadSolarSystem: Moons must be an array.\n";
-        }
-        else
-        {
-            Array* moonsData = moonsDataValue->getArray();
-            // ASSERT(moonsData != NULL);
-
-            PlanetarySystem* satellites = NULL;
-            if (moonsData->size() != 0)
-                satellites = new PlanetarySystem(body);
-            
-            for (unsigned int i = 0; i < moonsData->size(); i++)
-            {
-                Value* moonValue = (*moonsData)[i];
-                if (moonValue != NULL &&
-                    moonValue->getType() == Value::HashType)
-                {
-                    Body* moon = CreatePlanet(satellites,
-                                              moonValue->getHash(),
-                                              false);
-                    if (moon != NULL)
-                        satellites->addBody(moon);
-                }
-                else
-                {
-                    cout << "ReadSolarSystem: Moon data must be an assoc array.\n";
-                }
-            }
-            body->setSatellites(satellites);
-        }
-    }
-
     return body;
 }
 
 
-static SolarSystem* ReadSolarSystem(Parser& parser,
-                                    const StarDatabase& starDB)
+bool LoadSolarSystemObjects(istream& in, Universe& universe)
 {
-    Value* starName = parser.readValue();
-    if (starName == NULL)
-    {
-        cout << "ReadSolarSystem: Error reading star name.\n";
-        return NULL;
-    }
+    Tokenizer tokenizer(&in); 
+    Parser parser(&tokenizer);
 
-    if (starName->getType() != Value::StringType)
+    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
-        cout << "ReadSolarSystem: Star name is not a string.\n";
-        delete starName;
-        return NULL;
-    }
-
-    Value* solarSystemDataValue = parser.readValue();
-    if (solarSystemDataValue == NULL)
-    {
-        cout << "ReadSolarSystem: Error reading solar system data\n";
-        delete starName;
-        return NULL;
-    }
-
-    if (solarSystemDataValue->getType() != Value::HashType)
-    {
-        cout << "ReadSolarSystem: Solar system data must be an assoc array\n";
-        delete starName;
-        delete solarSystemDataValue;
-        return NULL;
-    }
-
-    Hash* solarSystemData = solarSystemDataValue->getHash();
-    // ASSERT(solarSystemData != NULL);
-
-    Star* star = starDB.find(starName->getString());
-    if (star == NULL)
-    {
-        cout << "Cannot find star named '" << starName->getString() << "'\n";
-        delete starName;
-        delete solarSystemDataValue;
-        return NULL;
-    }
-
-    SolarSystem* solarSys = new SolarSystem(star);
-    
-    Value* planetsDataValue = solarSystemData->getValue("Planets");
-    if (planetsDataValue != NULL)
-    {
-        if (planetsDataValue->getType() != Value::ArrayType)
+        if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            cout << "ReadSolarSystem: Planets must be an array.\n";
+            cout << "Error parsing solar system file.\n";
+            return false;
+        }
+        string name = tokenizer.getStringValue();
+
+        if (tokenizer.nextToken() != Tokenizer::TokenString)
+        {
+            cout << "Error parsing solar system file; invalid parent name.\n";
+            return false;
+        }
+        string parentName = tokenizer.getStringValue();
+
+        Value* objectDataValue = parser.readValue();
+        if (objectDataValue == NULL)
+        {
+            cout << "Error reading solar system object.\n";
+            return false;
+        }
+
+        if (objectDataValue->getType() != Value::HashType)
+        {
+            cout << "Bad solar system object.\n";
+            return false;
+        }
+        Hash* objectData = objectDataValue->getHash();
+
+        DPRINTF("Reading planet %s\n", name.c_str());
+
+        Selection parent = universe.findPath(parentName, NULL, 0);
+        PlanetarySystem* parentSystem = NULL;
+        bool orbitsPlanet = false;
+        if (parent.star != NULL)
+        {
+            SolarSystem* solarSystem = universe.getSolarSystem(parent.star);
+            if (solarSystem == NULL)
+            {
+                // No solar system defined for this star yet, so we need
+                // to create it.
+                solarSystem = universe.createSolarSystem(parent.star);
+            }
+            parentSystem = solarSystem->getPlanets();
+        }
+        else if (parent.body != NULL)
+        {
+            // Parent is a planet or moon
+            parentSystem = parent.body->getSatellites();
+            if (parentSystem == NULL)
+            {
+                // If the planet doesn't already have any satellites, we
+                // have to create a new planetary system for it.
+                parentSystem = new PlanetarySystem(parent.body);
+                parent.body->setSatellites(parentSystem);
+            }
+            orbitsPlanet = true;
         }
         else
         {
-            Array* planetsData = planetsDataValue->getArray();
-            // ASSERT(planetsData != NULL);
-            for (unsigned int i = 0; i < planetsData->size(); i++)
+            cout << "Parent body '" << parentName << "' of '" << name << "' not found.\n";
+        }
+
+        if (parentSystem != NULL)
+        {
+            Body* body = CreatePlanet(parentSystem, objectData, !orbitsPlanet);
+            if (body != NULL)
             {
-                Value* planetValue = (*planetsData)[i];
-                if (planetValue != NULL &&
-                    planetValue->getType() == Value::HashType)
-                {
-                    Body* body = CreatePlanet(solarSys->getPlanets(),
-                                              planetValue->getHash());
-                    if (body != NULL)
-                        solarSys->getPlanets()->addBody(body);
-                }
-                else
-                {
-                    cout << "ReadSolarSystem: Planet data must be an assoc array.\n";
-                }
+                body->setName(name);
+                parentSystem->addBody(body);
+                cout << "Yes\n";
             }
         }
     }
 
-    delete starName;
-    delete solarSystemDataValue;
-
-    return solarSys;
-}
-
-
-SolarSystemCatalog* ReadSolarSystemCatalog(istream& in,
-                                           StarDatabase& starDB)
-{
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
-
-    SolarSystemCatalog* catalog = new SolarSystemCatalog();
-
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
-    {
-        tokenizer.pushBack();
-        SolarSystem* solarSystem = ReadSolarSystem(parser, starDB);
-        if (solarSystem != NULL)
-        {
-            catalog->insert(SolarSystemCatalog::value_type(solarSystem->getStar()->getCatalogNumber(),
-                                                           solarSystem));
-        }
-    }
-
-    return catalog;
-}
-
-
-bool ReadSolarSystems(istream& in,
-                      const StarDatabase& starDB,
-                      SolarSystemCatalog& catalog)
-{
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
-
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
-    {
-        tokenizer.pushBack();
-        SolarSystem* solarSystem = ReadSolarSystem(parser, starDB);
-        if (solarSystem != NULL)
-        {
-            catalog.insert(SolarSystemCatalog::value_type(solarSystem->getStar()->getCatalogNumber(),
-                                                          solarSystem));
-        }
-    }
-
-    // TODO: Return some notification if there's an error parsring the file
+    // TODO: Return some notification if there's an error parsing the file
     return true;
 }
 
@@ -531,44 +446,6 @@ PlanetarySystem* SolarSystem::getPlanets() const
 {
     return planets;
 }
-
-
-#if 0
-int SolarSystem::getSystemSize() const
-{
-    return bodies.size();
-}
-
-Body* SolarSystem::getBody(int n) const
-{
-    return bodies[n];
-}
-
-void SolarSystem::addBody(Body* sat)
-{
-    bodies.insert(bodies.end(), sat);
-}
-
-
-Body* SolarSystem::find(string _name, bool deepSearch) const
-{
-    for (int i = 0; i < bodies.size(); i++)
-    {
-        if (bodies[i]->getName() == _name)
-        {
-            return bodies[i];
-        }
-        else if (deepSearch && bodies[i]->getSatellites() != NULL)
-        {
-            Body* body = bodies[i]->getSatellites()->find(_name, deepSearch);
-            if (body != NULL)
-                return body;
-        }
-    }
-
-    return NULL;
-}
-#endif
 
 
 
