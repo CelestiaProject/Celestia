@@ -11,3 +11,6 @@
 
 /* Locale Directory for Gnome (Currently unused) */
 #undef GNOMELOCALEDIR
+
+/* The directory where the HIPPARCOS/TYCHO data resides */
+#undef HIP_DATA_DIR

@@ -18,6 +18,7 @@
 #include "celestia.h"
 #include "astro.h"
 #include "stardb.h"
+#include <celutil/debug.h>
 
 using namespace std;
 
@@ -348,6 +349,12 @@ StarDatabase *StarDatabase::read(istream& in)
 
 	// Compute distance based on parallax
 	double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
+#ifdef DEBUG
+	if(distance > 50000.0)
+	{
+	    DPRINTF("Warning, Distance on CatNo. %ld of %12.2f LYear seems excessive (Parallax: %2.5f)!\n",catNo, distance, parallax);
+	}
+#endif DEBUG
         star->setPosition(astro::equatorialToCelestialCart(RA, dec, (float) distance));
 
 	// Use apparent magnitude and distance to determine the absolute
