@@ -1877,9 +1877,10 @@ static void renderRings(RingSystem& rings,
         // planet would ever orbit underneath its sun (an orbital
         // inclination of 90 degrees), but this should be made
         // more robust anyway.
-        float scale = rings.innerRadius / planetRadius;
+        float scale = 1.0f;
         Vec3f axis = Vec3f(0, 1, 0) ^ ri.sunDir_obj;
         float angle = (float) acos(Vec3f(0, 1, 0) * ri.sunDir_obj);
+        axis.normalize();
         Mat4f mat = Mat4f::rotation(axis, -angle);
         Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
         Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
