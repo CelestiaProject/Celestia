@@ -1231,7 +1231,7 @@ void Renderer::renderPlanet(const Body& body,
             double rotations = now / (double) body.getRotationPeriod();
             int wholeRotations = (int) rotations;
             double remainder = rotations - wholeRotations;
-            planetRotation = -remainder * 2 * PI;
+            planetRotation = -remainder * 2 * PI - body.getRotationPhase();
             glRotatef((float) (-remainder * 360.0 - radToDeg(body.getRotationPhase())),
                       0, 1, 0);
         }
@@ -2098,8 +2098,8 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
 
 void Renderer::renderCelestialSphere(const Observer& observer)
 {
-    int raDivisions = 24;
-    int decDivisions = 18;
+    int raDivisions = 12;
+    int decDivisions = 12;
     int nSections = 60;
     float radius = 10.0f;
 
