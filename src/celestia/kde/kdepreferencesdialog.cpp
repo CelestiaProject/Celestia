@@ -90,6 +90,10 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showNightMaps")->connect(showNightMapsCheck, SIGNAL(clicked()), SLOT(activate()));
     showNightMapsCheck->setChecked(renderFlags & Renderer::ShowNightMaps);
 
+    QCheckBox* showMarkersCheck = new QCheckBox(i18n("Markers"), showGroup);
+    actionColl->action("showMarkers")->connect(showMarkersCheck, SIGNAL(clicked()), SLOT(activate()));
+    showMarkersCheck->setChecked(renderFlags & Renderer::ShowMarkers);
+
     QCheckBox* showAtmospheresCheck = new QCheckBox(i18n("Atmospheres"), showGroup);
     actionColl->action("showAtmospheres")->connect(showAtmospheresCheck, SIGNAL(clicked()), SLOT(activate()));
     showAtmospheresCheck->setChecked(renderFlags & Renderer::ShowAtmospheres);

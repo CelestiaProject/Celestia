@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="3">
+<kpartgui name="celestia" version="4">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -26,6 +26,7 @@
          <Action name="showOrbits"/>
          <Action name="showCelestialSphere"/>
          <Action name="showNightMaps"/>
+         <Action name="showMarkers"/>
          <Action name="showAtmospheres"/>
          <Action name="showSmoothLines"/>
          <Action name="showEclipseShadows"/>
