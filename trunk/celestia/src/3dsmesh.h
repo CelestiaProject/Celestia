@@ -22,8 +22,8 @@ class Mesh3DS : public Mesh
     Mesh3DS(const M3DScene& scene);
     ~Mesh3DS();
 
-    void render();
-    void render(unsigned int attributes);
+    void render(float lod);
+    void render(unsigned int attributes, float lod);
     void normalize();
 
  private:

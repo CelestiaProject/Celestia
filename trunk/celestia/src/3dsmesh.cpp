@@ -52,13 +52,13 @@ Mesh3DS::~Mesh3DS()
 }
 
 
-void Mesh3DS::render()
+void Mesh3DS::render(float lod)
 {
-    render(Normals | Colors);
+    render(Normals | Colors, lod);
 }
 
 
-void Mesh3DS::render(unsigned int attributes)
+void Mesh3DS::render(unsigned int attributes, float)
 {
     for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
     {

@@ -86,7 +86,7 @@ SphereMesh::~SphereMesh()
 }
 
 
-void SphereMesh::render(unsigned int attributes)
+void SphereMesh::render(unsigned int attributes, float)
 {
     if (vertices != NULL)
     {
@@ -139,9 +139,9 @@ void SphereMesh::render(unsigned int attributes)
 }
 
 
-void SphereMesh::render()
+void SphereMesh::render(float lod)
 {
-    render(Normals | TexCoords0);
+    render(Normals | TexCoords0, lod);
 }
 
 

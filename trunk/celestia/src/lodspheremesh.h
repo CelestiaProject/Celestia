@@ -20,8 +20,8 @@ public:
     LODSphereMesh();
     ~LODSphereMesh();
 
-    void render();
-    void render(unsigned int attributes);
+    void render(float lod);
+    void render(unsigned int attributes, float lod);
 
  private:
     void renderSection(int phi0, int theta0,
