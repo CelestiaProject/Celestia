@@ -1,4 +1,4 @@
-pkgdatadir = $(datadir)/@PACKAGE@/manual
+pkgdatadir = @datadir@/@PACKAGE@/manual
 
 pkgdata_DATA = $(wildcard *.html) $(wildcard *.css)
 
