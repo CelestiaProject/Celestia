@@ -12,6 +12,11 @@
 #include "astro.h"
 #include "customorbit.h"
 
+#define TWOPI 6.28318530717958647692
+#define LPEJ 0.23509484  // Longitude of perihelion of Jupiter
+#define RADIUS_JUPITER 71398.0
+#define RADIUS_SATURN  60330.0
+
 using namespace std;
 
 double gPlanetElements[8][9];
@@ -221,27 +226,27 @@ void computePlanetElements(double t, vector<int> pList)
     // Parameter t represents the Julian centuries elapsed since 1900.
     // In other words, t = (jd - 2415020.0) / 36525.0
 
-	double *ep, *pp;
-	double aa;
-	int planet;
+    double *ep, *pp;
+    double aa;
+    int planet;
 
-    for(unsigned i=0; i < pList.size(); i++)
+    for(unsigned i = 0; i < pList.size(); i++)
     {
         planet = pList[i];
-	    ep = gElements[planet];
-	    pp = gPlanetElements[planet];
-	    aa = ep[1]*t;
-	    pp[0] = ep[0] + 360*(aa-(int)aa) + (ep[3]*t + ep[2])*t*t;
-	    *pp = pfmod(*pp, 360.0);
-	    pp[1] = (ep[1]*9.856263e-3) + (ep[2] + ep[3])/36525;
+        ep = gElements[planet];
+        pp = gPlanetElements[planet];
+        aa = ep[1]*t;
+        pp[0] = ep[0] + 360*(aa-(int)aa) + (ep[3]*t + ep[2])*t*t;
+        *pp = pfmod(*pp, 360.0);
+        pp[1] = (ep[1]*9.856263e-3) + (ep[2] + ep[3])/36525;
 
-	    for(unsigned j = 4; j < 20; j += 4)
-		    pp[j/4+1] = ((ep[j+3]*t + ep[j+2])*t + ep[j+1])*t + ep[j+0];
+        for(unsigned j = 4; j < 20; j += 4)
+            pp[j/4+1] = ((ep[j+3]*t + ep[j+2])*t + ep[j+1])*t + ep[j+0];
 
-	    pp[6] = ep[20];
-	    pp[7] = ep[21];
-	    pp[8] = ep[22];
-	}
+        pp[6] = ep[20];
+        pp[7] = ep[21];
+        pp[8] = ep[22];
+    }
 }
 
 void computePlanetCoords(int p, double map, double da, double dhl, double dl,
@@ -1144,7 +1149,7 @@ class PlutoOrbit : public CachingOrbit
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
     //Calculate the Julian centuries elapsed since 1900
-	t = (jd - 2415020.0)/36525.0;
+    t = (jd - 2415020.0)/36525.0;
 
     computePlanetElements(t, pList);
 
@@ -1181,7 +1186,7 @@ class IoOrbit : public CachingOrbit
     double sigma, L, B, R;
     double T, P;
 
-    //Epoch for Galilean satellites is 1950.0
+    //Epoch for Galilean satellites is 1976.0 Aug 10
     t = jd - 2443000.5;
 
     ComputeGalileanElements(t,
@@ -1253,7 +1258,7 @@ class EuropaOrbit : public CachingOrbit
     double sigma, L, B, R;
     double T, P;
 
-    //Epoch for Galilean satellites is 1950.0
+    //Epoch for Galilean satellites is 1976 Aug 10
     t = jd - 2443000.5;
 
     ComputeGalileanElements(t,
@@ -1336,7 +1341,7 @@ class GanymedeOrbit : public CachingOrbit
     double sigma, L, B, R;
     double T, P;
 
-    //Epoch for Galilean satellites is 1950.0
+    //Epoch for Galilean satellites is 1976 Aug 10
     t = jd - 2443000.5;
 
     ComputeGalileanElements(t,
@@ -1422,7 +1427,7 @@ class CallistoOrbit : public CachingOrbit
     double sigma, L, B, R;
     double T, P;
 
-    //Epoch for Galilean satellites is 1950.0
+    //Epoch for Galilean satellites is 1976 Aug 10
     t = jd - 2443000.5;
 
     ComputeGalileanElements(t,
@@ -1497,6 +1502,295 @@ class CallistoOrbit : public CachingOrbit
     };
 };
 
+
+static double sind(double theta)
+{
+    return sin(degToRad(theta));
+}
+
+static double cosd(double theta)
+{
+    return cos(degToRad(theta));
+}
+
+
+void ComputeSaturnianElements(double t,
+                              double& t1, double& t2, double& t3,
+                              double& t4, double& t5, double& t6,
+                              double& t7, double& t8, double& t9,
+                              double& t10, double& t11,
+                              double& W0, double& W1, double& W2,
+                              double& W3, double& W4, double& W5,
+                              double& W6, double& W7, double& W8)
+{
+    t1 = t - 2411093.0;
+    t2 = t1 / 365.25;
+    t3 = (t - 2433282.423) / 365.25 + 1950.0;
+    t4 = t - 2411368.0;
+    t5 = t4 / 365.25;
+    t6 = t - 2415020.0;
+    t7 = t6 / 36525;
+    t8 = t6 / 365.25;
+    t9 = (t - 2442000.5) / 365.25;
+    t10 = t - 2409786.0;
+    t11 = t10 / 36525;
+
+    W0 = 5.095 * (t3 - 1866.39);
+    W1 = 74.4 + 32.39 * t2;
+    W2 = 134.3 + 92.62 * t2;
+    W3 = 42.0 - 0.5118 * t5;
+    W4 = 276.59 + 0.5118 * t5;
+    W5 = 267.2635 + 1222.1136 * t7;
+    W6 = 175.4762 + 1221.5515 * t7;
+    W7 = 2.4891 + 0.002435 * t7;
+    W8 = 113.35 - 0.2597 * t7;
+}
+
+
+static Point3d SaturnMoonXYZ(double lam, double gam, double Om, double r)
+{
+    double u = lam - Om;
+    double w = Om - 168.8112;
+
+    u = degToRad(u);
+    w = degToRad(w);
+    gam = degToRad(gam);
+    r = r * RADIUS_SATURN;
+
+    // Corrections for Celestia's coordinate system
+    u = -u;
+    w = -w;
+
+    double x = r * (cos(u) * cos(w) - sin(u) * sin(w) * cos(gam));
+    double y = r * sin(u) * sin(gam);
+    double z = r * (sin(u) * cos(w) * cos(gam) + cos(u) * sin(w));
+
+    return Point3d(x, y, z);
+}
+
+
+static void OuterSaturnMoonPosition(double a, double e, double i, double Om, double M)
+{
+    double s1 = sind(28.0817);
+    double c1 = cosd(28.0817);
+    double e_2 = e * e;
+    double e_3 = e_2 * e;
+    double e_4 = e_3 * e;
+    double e_5 = e_4 * e;
+    double C = (2 * e - 0.25 * e_3 + 0.0520833333 * e_5) * sin(M) +
+        (1.25 * e_2 - 0.458333333 * e_4) * sin(2 * M) +
+        (1.083333333 * e_3 - 0.671875 * e_5) * sin(3 * M) +
+        1.072917 * e_4 * sin(4 * M) + 1.142708 * e_5 * sin(5 * M);
+    double r = a * (1 - e * e) / (1 + e * cos(M + C));
+    double g = Om - 168.8112;
+    double a1 = sind(i) * sind(g);
+    double a2 = c1 * sind(i) * cosd(g) - s1 * cosd(i);
+    double u = radToDeg(atan2(a1, a2));
+    double w = 168.8112 + u;
+    double h = c1 * sind(i) - s1 * cosd(i) * cosd(g);
+    double psi = radToDeg(atan2(s1 * sind(g), h));
+    double lam = 0.0;
+}
+
+
+class MimasOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        // Computation will yield latitude(L), longitude(B) and distance(R)
+        // relative to Saturn.
+        double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+        double W0, W1, W2, W3, W4, W5, W6, W7, W8;
+
+        ComputeSaturnianElements(jd,
+                                 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
+                                 W0, W1, W2, W3, W4, W5, W6, W7, W8);
+
+        double L = 127.64 + 381.994497 * t1 - 43.57 * sind(W0) -
+            0.720 * sind( 3 * W0) - 0.02144 * sind(5 * W0);
+        double p = 106.1 + 365.549 * t2;
+        double M = L - p;
+        double C = 2.18287 * sind(M) + 0.025988 * sind(2 * M) +
+            0.00043 * sind(3 * M);
+        double lam = L + C;
+        double r = 3.06879 / (1 + 0.01905 * cosd(M + C));
+        double gam = 1.563;
+        double Om = 54.5 - 365.072 * t2;
+
+        return SaturnMoonXYZ(lam, gam, Om, r);
+    };
+
+    double getPeriod() const
+    {
+	return 0.9424218;
+    };
+};
+
+
+class EnceladusOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        // Computation will yield latitude(L), longitude(B) and distance(R)
+        // relative to Saturn.
+        double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+        double W0, W1, W2, W3, W4, W5, W6, W7, W8;
+
+        ComputeSaturnianElements(jd,
+                                 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
+                                 W0, W1, W2, W3, W4, W5, W6, W7, W8);
+
+        double L = 200.317 + 262.7319002 * t1 + 0.25667 * sind(W1) +
+            0.20883 * sind(W2);
+        double p = 309.107 + 123.44121 * t2;
+        double M = L - p;
+        double C = 0.55577 * sind(M) + 0.00168 * sind(2 * M);
+        double lam = L + C;
+        double r = 3.94118 / (1 + 0.00485 * cosd(M + C));
+        double gam = 0.0262;
+        double Om = 348 - 151.95 * t2;
+
+        return SaturnMoonXYZ(lam, gam, Om, r);
+    };
+
+    double getPeriod() const
+    {
+	return 1.370218;
+    };
+};
+
+
+class TethysOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        // Computation will yield latitude(L), longitude(B) and distance(R)
+        // relative to Saturn.
+        double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+        double W0, W1, W2, W3, W4, W5, W6, W7, W8;
+
+        ComputeSaturnianElements(jd,
+                                 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
+                                 W0, W1, W2, W3, W4, W5, W6, W7, W8);
+
+        double lam = 285.306 + 190.69791226 * t1 + 2.063 * sind(W0) +
+            0.03409 * sind(3 * W0) + 0.001015 * sind(5 * W0);
+        double r = 4.880998;
+        double gam = 1.0976;
+        double Om = 111.33 - 72.2441 * t2;
+
+        return SaturnMoonXYZ(lam, gam, Om, r);
+    };
+
+    double getPeriod() const
+    {
+        return 1.887802;
+    };
+};
+
+
+class DioneOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        // Computation will yield latitude(L), longitude(B) and distance(R)
+        // relative to Saturn.
+        double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+        double W0, W1, W2, W3, W4, W5, W6, W7, W8;
+
+        ComputeSaturnianElements(jd,
+                                 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
+                                 W0, W1, W2, W3, W4, W5, W6, W7, W8);
+
+        double L = 254.712 + 131.53493193 * t1 - 0.0215 * sind(W1) -
+            0.01733 * sind(W2);
+        double p = 174.8 + 30.820 * t2;
+        double M = L - p;
+        double C = 0.24717 * sind(M) + 0.00033 * sind(2 * M);
+        double lam = L + C;
+        double r = 6.24871 / (1 + 0.002157 * cosd(M + C));
+        double gam = 0.0139;
+        double Om = 232 - 30.27 * t2;
+        // cout << "Dione: " << pfmod(lam, 360.0) << ',' << gam << ',' << pfmod(Om, 360.0) << ',' << r << '\n';
+
+        return SaturnMoonXYZ(lam, gam, Om, r);
+    };
+
+    double getPeriod() const
+    {
+	return 2.736915;
+    };
+};
+
+
+class TitanOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        // Computation will yield latitude(L), longitude(B) and distance(R)
+        // relative to Saturn.
+        double t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
+        double W0, W1, W2, W3, W4, W5, W6, W7, W8;
+
+        // Dourneau's calculations for the orbits of Saturn's satellites
+        // are in the reference frame B1950.0
+        double t = jd - 2443282.4235;
+
+        ComputeSaturnianElements(t,
+                                 t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
+                                 W0, W1, W2, W3, W4, W5, W6, W7, W8);
+        double e1 = 0.05589 - 0.000346 * t7;
+
+        double L = 261.1582 + 22.57697855 * t4 + 0.074025 * sind(W3);
+        double i_ = 27.45141 + 0.295999 * cosd(W3);
+        double Om_ = 168.66925 + 0.628808 * sind(W3);
+        double a1 = sind(W7) * sind(Om_ - W8);
+        double a2 = cosd(W7) * sind(i_) - sind(W7) * cosd(i_) * cosd(Om_ - W8);
+        double g0 = 102.8623;
+        double psi = radToDeg(atan2(a1, a2));
+        double s = sqrt(square(a1) + square(a2));
+        double g = W4 - Om_ - psi;
+
+        // Three successive approximations will always be enough
+        double om;
+        for (int n = 0; n < 3; n++)
+        {
+            om = W4 + 0.37515 * (sind(2 * g) - sind(2 * g0));
+            g = om - Om_ - psi;
+        }
+
+        double e_ = 0.029092 + 0.00019048 * (cosd(2 * g) - cosd(2 * g0));
+        double q = 2 * (W5 - om);
+        double b1 = sind(i_) * sind(Om_ - W8);
+        double b2 = cosd(W7) * sind(i_) * cosd(Om_ - W8) - sind(W7) * cosd(i_);
+        double theta = radToDeg(atan2(b1, b2)) + W8;
+        double e = e_ + 0.002778797 * e_ * cosd(q);
+        double p = om + 0.159215 * sind(q);
+        double u = 2 * W5 - 2 * theta + psi;
+        double h = 0.9375 * square(e_) * sind(q) + 0.1875 * square(s) * sind(2 * (W5 - theta));
+        double lam = L - 0.254744 * (e1 * sind(W6) + 0.75 * square(1) * sind(2 * W6) + h);
+        double i = i_ + 0.031843 * s * cosd(u);
+        double Om = Om_ + (0.031843 * s * sind(u)) / sind(i_);
+        double a = 20.216193;
+#if 0
+        // Corrections for internal coordinate system
+        B -= (PI/2);
+        L += PI;
+
+        return Point3d(cos(L) * sin(B) * R,
+                       cos(B) * R,
+                       -sin(L) * sin(B) * R);
+#endif
+        return Point3d(0, 0, 0);
+    };
+
+    double getPeriod() const
+    {
+        return 15.9669028;
+    };
+};
+
+
 Orbit* GetCustomOrbit(const std::string& name)
 {
     if (name == "mercury")
@@ -1527,6 +1821,14 @@ Orbit* GetCustomOrbit(const std::string& name)
         return new GanymedeOrbit();
     if (name == "callisto")
         return new CallistoOrbit();
+    if (name == "mimas")
+        return new MimasOrbit();
+    if (name == "enceladus")
+        return new EnceladusOrbit();
+    if (name == "tethys")
+        return new TethysOrbit();
+    if (name == "dione")
+        return new DioneOrbit();
     else
         return NULL;
 }
