@@ -37,11 +37,9 @@ static Surface* CreateSurface(Hash* surfaceData)
 
     string baseTexture;
     string bumpTexture;
-    string cloudTexture;
     string nightTexture;
     bool applyBaseTexture = surfaceData->getString("Texture", baseTexture);
     bool applyBumpMap = surfaceData->getString("BumpMap", bumpTexture);
-    bool applyCloudMap = surfaceData->getString("CloudMap", cloudTexture);
     bool applyNightMap = surfaceData->getString("NightTexture", nightTexture);
 
     float bumpHeight = 2.5f;
@@ -59,8 +57,6 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->appearanceFlags |= Surface::ApplyBaseTexture;
     if (applyBumpMap)
         surface->appearanceFlags |= Surface::ApplyBumpMap;
-    if (applyCloudMap)
-        surface->appearanceFlags |= Surface::ApplyCloudMap;
     if (applyNightMap)
         surface->appearanceFlags |= Surface::ApplyNightMap;
     if (surface->specularColor != Color(0.0f, 0.0f, 0.0f))
@@ -73,8 +69,6 @@ static Surface* CreateSurface(Hash* surfaceData)
     if (applyBumpMap)
         surface->bumpTexture = texMan->getHandle(TextureInfo(bumpTexture,
                                                              bumpHeight));
-    if (applyCloudMap)
-        surface->cloudTexture = texMan->getHandle(TextureInfo(cloudTexture));
     if (applyNightMap)
         surface->nightTexture = texMan->getHandle(TextureInfo(nightTexture));
 
@@ -217,6 +211,14 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 atmosData->getColor("Lower", atmosphere->lowerColor);
                 atmosData->getColor("Upper", atmosphere->upperColor);
                 atmosData->getColor("Sky", atmosphere->skyColor);
+                atmosData->getNumber("CloudHeight", atmosphere->cloudHeight);
+
+                string cloudTexture;
+                if (atmosData->getString("CloudMap", cloudTexture))
+                {
+                    atmosphere->cloudTex =
+                        GetTextureManager()->getHandle(TextureInfo(cloudTexture));
+                }
 
                 body->setAtmosphere(*atmosphere);
                 delete atmosphere;
