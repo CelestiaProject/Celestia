@@ -65,7 +65,7 @@ dnl esac
 
 AC_MSG_CHECKING([whether to include debugging code])
 AC_ARG_ENABLE(debug,     [  --enable-debug          Produce an executable with debugging symbols], , enable_debug="no")
-if test "$enable_debug" == "yes" ; then
+if test "$enable_debug" = "yes" ; then
 	CELESTIA_CFLAGS="-g -Wall"; CELESTIA_CXXFLAGS="-g -Wall"
 	AC_DEFINE(DEBUG)
 fi
@@ -73,14 +73,14 @@ AC_MSG_RESULT($enable_debug)
 
 AC_MSG_CHECKING([whether to be pedantic])
 AC_ARG_ENABLE(pedantic,  [  --enable-pedantic       Enable -pedantic (and -ansi for C) when compiling], , enable_pedantic="no")
-if test "$enable_pedantic" == "yes" ; then
+if test "$enable_pedantic" = "yes" ; then
 	CELESTIA_CFLAGS="$CELESTIA_CFLAGS -ansi -pedantic"; CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -pedantic"
 fi
 AC_MSG_RESULT($enable_pedantic)
 
 AC_MSG_CHECKING([whether to do profiling])
 AC_ARG_ENABLE(profile,[  --enable-profile        Produce a profiled executable[default=no]], , enable_profile="no")
-if test "$enable_profile" == "yes" ; then
+if test "$enable_profile" = "yes" ; then
 	CELESTIA_CFLAGS="$CELESTIA_CFLAGS -pg"; CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -pg"
 else
   if test "$enable_debug" != "yes" ; then
@@ -133,7 +133,7 @@ AC_ARG_WITH(kde, [  --with-kde              Use KDE for an enhanced GUI],
 
 AC_MSG_CHECKING([whether to enable GLUT])
 dnl if gtk and kde are explicitly disabled, enable GLUT
-if test "$enable_gtk" == "no" -a "$gtk_by_default" == "no" -a "$enable_kde" == "no" -a "$kde_by_default" == "no"; then
+if test "$enable_gtk" = "no" -a "$gtk_by_default" = "no" -a "$enable_kde" = "no" -a "$kde_by_default" = "no"; then
 	enable_glut="yes"
 	AC_MSG_RESULT(yes)
 else
@@ -141,17 +141,17 @@ else
 fi
 
 dnl if both kde and gtk are explicitly enabled, disable gtk
-if test "$enable_gtk" != "no" -a "$gtk_by_default" == "no" -a  "$enable_kde" != "no" -a "$kde_by_default" == "no"; then
+if test "$enable_gtk" != "no" -a "$gtk_by_default" = "no" -a  "$enable_kde" != "no" -a "$kde_by_default" = "no"; then
 	enable_gtk="no"
 fi
 
 dnl if gtk is explicitly enabled, disable kde
-if test "$enable_gtk" != "no" -a "$gtk_by_default" == "no" -a "$kde_by_default" == "yes" ; then
+if test "$enable_gtk" != "no" -a "$gtk_by_default" = "no" -a "$kde_by_default" = "yes" ; then
 	enable_kde="no"
 fi
 
 dnl if kde is explicitly disabled, enable gtk
-if test "$enable_gtk" == "no" -a "$gtk_by_default" == "yes" -a "$enable_kde" == "no" -a "$kde_by_default" == "no" ; then
+if test "$enable_gtk" = "no" -a "$gtk_by_default" = "yes" -a "$enable_kde" = "no" -a "$kde_by_default" = "no" ; then
 	enable_gtk="yes"
 fi
 
@@ -163,7 +163,7 @@ fi
 if test "$enable_gtk" != "no" ; then
 	AC_MSG_RESULT(GTK)
 fi
-if test "$enable_glut" == "yes" ; then
+if test "$enable_glut" = "yes" ; then
 	AC_MSG_RESULT(GLUT)
 fi
 
@@ -173,12 +173,12 @@ dnl GTK
 dnl
 
 AC_MSG_CHECKING([whether to disable GTK.])
-if test "$enable_gtk" == "yes" ; then
+if test "$enable_gtk" = "yes" ; then
 	AC_MSG_RESULT(no, so try to find GTK)
 	AM_PATH_GTK(1.2.0,enable_gtk="yes",enable_gtk="no")
 
 	dnl Complain only if the user insisted we do GTK
-	if test "$enable_gtk_by_default" == "no" -a "$enable_gtk" == "no"; then
+	if test "$enable_gtk_by_default" = "no" -a "$enable_gtk" = "no"; then
 		AC_MSG_RESULT(Unable to find GTK, building GLUT only version)
                 enable_glut="yes"
 	fi
@@ -220,7 +220,7 @@ if test "x$ac_cv_lib_GLU_gluLookAt" = "xno"; then
 fi
 
 
-if test "$enable_gtk" != "no" -o "$enable_glut" == "yes" ; then
+if test "$enable_gtk" != "no" -o "$enable_glut" = "yes" ; then
 dnl Check for GLUT headers first.
 	AC_CHECK_HEADERS(GL/glut.h,,AC_MSG_ERROR([[No glut.h found.  See INSTALL file for details on correcting this problem.]]))
 
@@ -228,7 +228,7 @@ dnl Check for GLUT.
 	AC_CHECK_LIB(glut, glutKeyboardUpFunc,,
 		AC_MSG_ERROR(GLUT library version >= 3.7 not found))
 fi
-AM_CONDITIONAL(ENABLE_GLUT, test "$enable_glut" == "yes")
+AM_CONDITIONAL(ENABLE_GLUT, test "$enable_glut" = "yes")
 
 if test "$enable_gtk" != "no" ; then
 	OLD_LIBS="$LIBS"
@@ -236,7 +236,7 @@ if test "$enable_gtk" != "no" ; then
 	AC_CHECK_LIB(gtkgl,gdk_gl_query,,enable_gtk="no")
 
 	dnl Complain only if the user insisted we do GTK
-	if test "$enable_gtk_by_default" == "no" -a "$enable_gtk" == "no"; then
+	if test "$enable_gtk_by_default" = "no" -a "$enable_gtk" = "no"; then
 		AC_MSG_ERROR(Unable to find gtkglarea)
 	fi
 
@@ -252,12 +252,12 @@ if test "$enable_gtk" != "no" ; then
 	LIBS="$LIBS $GTK_LIBS $GNOME_LIBS $GNOMEUI_LIBS $GTKGL_LIBS"
 	LDFLAGS="$LDFLAGS $GNOME_LIBDIR"
 else
-	if test "$enable_gtk_by_default" == "yes" ; then
+	if test "$enable_gtk_by_default" = "yes" ; then
 		AC_MSG_WARN(Disabled GTK GUI because of missing necessary packages)
 	fi
 
 fi
-AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" == "yes")
+AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" = "yes")
 
 
 dnl
@@ -275,7 +275,7 @@ dnl  AM_KDE_WITH_NLS
 dnl  KDE_USE_QT(3)
   AC_PATH_KDE
 fi
-AM_CONDITIONAL(ENABLE_KDE, test "$enable_kde" == "yes")
+AM_CONDITIONAL(ENABLE_KDE, test "$enable_kde" = "yes")
 
 
 
@@ -307,7 +307,7 @@ if test "$prefix" = "NONE" ; then
 	prefix=$ac_default_prefix
 fi
 
-if test "$enable_kde" == "yes" ; then
+if test "$enable_kde" = "yes" ; then
     PKGDATADIR=`eval echo "${kde_datadir}/$PACKAGE"`
     datadir=${kde_datadir}
 else
