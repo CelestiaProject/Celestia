@@ -17,6 +17,7 @@ COMMONSOURCES = \
 
 WINSOURCES = \
 	wingotodlg.cpp \
+        winlocations.cpp \
 	winmain.cpp \
 	winssbrowser.cpp \
 	winstarbrowser.cpp \
