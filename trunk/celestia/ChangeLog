@@ -702,6 +702,23 @@ Code:
 * Added a MeshCenter field for properly position and rotation of 3DS meshes
 * Implemented virtual textures, for ultra-high resolution texture mapping of
   planets.
-* Added a texture for Hyperion
-* Added locations-labels of all world-capitals (240) with importance
+* Added textures for Hyperion and Proteus
+* Made cancel script command stop motion, tracking, and any object-relative
+  coordinate system.
+* Adjusted estimates for radii and rotation periods of extrasolar planets;
+  rotation rates account (somewhat) for the effects of tidal despinning. 
+* Fixed a bug that was causing precision loss in orientation values; this fixes
+  some of the jerkiness apparent at very low fields of view.
+* Corrected radii of Uranus's rings
+* Added ring system for Neptune
+* Corrected errors in Callisto's orbit
+* Modify the right-drag rotation rate based on the distance between the
+  camera and the selection.
+* Made ambient light work for bump mapped objects in the vertex program/DOT3
+  render path.
+* Bound Shift+C to center/orbit.  This places the selection in middle of
+  the view while keeping the reference object at the same point in the view.
+* Added locations-labels of all world capitals (240) with importance
   weights calculated from their numbers of inhabitants
+* Added solar system location labels
+
