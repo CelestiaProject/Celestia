@@ -51,7 +51,13 @@ public:
     RigidTransform getSituation() const;
     void           setSituation(const RigidTransform&);
 
-    void          update(double dt);
+    float          getFOV() const;
+    void           setFOV(float);
+
+    void           update(double dt);
+
+    Vec3f          getPickRay(float x, float y) const;
+
     
     void orbit(const Selection&, Quatf q);
     void rotate(Quatf q);
@@ -152,6 +158,8 @@ public:
     Selection        trackObject;
 
     Quatf trackingOrientation;   // orientation prior to selecting tracking
+
+    float fov;
 };
 
 #endif // _CELENGINE_OBSERVER_H_
