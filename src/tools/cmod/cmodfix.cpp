@@ -20,6 +20,9 @@
 #include <cstdio>
 #include <algorithm>
 #include <vector>
+#ifdef TRISTRIP
+#include <NvTriStrip.h>
+#endif
 
 using namespace std;
 
@@ -30,6 +33,9 @@ bool uniquify = false;
 bool genNormals = false;
 bool genTangents = false;
 bool weldVertices = false;
+bool mergeMeshes = false;
+bool stripify = false;
+unsigned int vertexCacheSize = 16;
 float smoothAngle = 60.0f;
 
 
@@ -39,10 +45,14 @@ void usage()
     cerr << "   --binary (or -b)      : output a binary .cmod file\n";
     cerr << "   --ascii (or -a)       : output an ASCII .cmod file\n";
     cerr << "   --uniquify (or -u)    : eliminate duplicate vertices\n";
+    cerr << "   --tangents (or -t)    : generate tangents\n";
     cerr << "   --normals (or -n)     : generate normals\n";
     cerr << "   --smooth (or -s) <angle> : smoothing angle for normal generation\n";
-    cerr << "   --weld (or -w)        : merge identical vertices before normal generation\n";
-    cerr << "   --tangents (or -t)    : generate tangents\n";
+    cerr << "   --weld (or -w)        : join identical vertices before normal generation\n";
+    cerr << "   --merge (or -m)       : merge submeshes to improve rendering performance\n";
+#ifdef TRISTRIP
+    cerr << "   --optimize (or -o)    : optimize by converting triangle lists to strips\n";
+#endif
 }
 
 
@@ -224,6 +234,98 @@ bool equalPoint(const Vertex& a, const Vertex& b)
 
     return *p0 == *p1;
 }
+
+
+bool operator==(const Mesh::VertexAttribute& a,
+                const Mesh::VertexAttribute& b)
+{
+    return (a.semantic == b.semantic &&
+            a.format   == b.format &&
+            a.offset   == b.offset);
+}
+
+
+bool operator<(const Mesh::VertexAttribute& a,
+               const Mesh::VertexAttribute& b)
+{
+    if (a.semantic < b.semantic)
+    {
+        return true;
+    }
+    else if (b.semantic < a.semantic)
+    {
+        return false;
+    }
+    else
+    {
+        if (a.format < b.format)
+            return true;
+        else if (b.format < a.format)
+            return false;
+        else
+            return a.offset < b.offset;
+    }
+}
+
+
+bool operator==(const Mesh::VertexDescription& a,
+                const Mesh::VertexDescription& b)
+{
+    if (a.stride != b.stride || a.nAttributes != b.nAttributes)
+        return false;
+
+    for (uint32 i = 0; i < a.nAttributes; i++)
+    {
+        if (!(a.attributes[i] == b.attributes[i]))
+            return false;
+    }
+
+    return true;
+}
+
+
+bool operator<(const Mesh::VertexDescription& a,
+               const Mesh::VertexDescription& b)
+{
+    if (a.stride < b.stride)
+        return true;
+    else if (b.stride < a.stride)
+        return false;
+
+    if (a.nAttributes < b.nAttributes)
+        return true;
+    else if (b.nAttributes < b.nAttributes)
+        return false;
+
+    for (uint32 i = 0; i < a.nAttributes; i++)
+    {
+        if (a.attributes[i] < b.attributes[i])
+            return true;
+        else if (b.attributes[i] < a.attributes[i])
+            return false;
+    }
+
+    return false;
+}
+
+
+class MeshVertexDescComparator :
+    public std::binary_function<const Mesh*, const Mesh*, bool>
+{
+public:
+    MeshVertexDescComparator()
+    {
+    }
+
+    bool operator()(const Mesh* a, const Mesh* b) const
+    {
+        return a->getVertexDescription() < b->getVertexDescription();
+    }
+
+private:
+    int ignore;
+};
+
 
 
 bool uniquifyVertices(Mesh& mesh)
@@ -411,7 +513,7 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
 
 
 template <typename T> void
-mergeVertices(vector<Face>& faces,
+joinVertices(vector<Face>& faces,
               const void* vertexData,
               const Mesh::VertexDescription& desc,
               T& comparator)
@@ -614,7 +716,7 @@ generateNormals(Mesh& mesh,
     // as the attribute indices.
     if (weld)
     {
-        mergeVertices(faces, vertexData, desc, PointComparator());
+        joinVertices(faces, vertexData, desc, PointComparator());
     }
     else
     {
@@ -872,7 +974,7 @@ generateTangents(Mesh& mesh,
     // as the attribute indices.
     if (weld)
     {
-        mergeVertices(faces, vertexData, desc, PointTexCoordComparator(0, 0, true));
+        joinVertices(faces, vertexData, desc, PointTexCoordComparator(0, 0, true));
     }
     else
     {
@@ -1007,6 +1109,204 @@ generateTangents(Mesh& mesh,
 }
 
 
+void
+addGroupWithOffset(Mesh& mesh,
+                   const Mesh::PrimitiveGroup& group,
+                   uint32 offset)
+{
+    if (group.nIndices == 0)
+        return;
+
+    uint32* newIndices = new uint32[group.nIndices];
+    for (uint32 i = 0; i < group.nIndices; i++)
+        newIndices[i] = group.indices[i] + offset;
+
+    mesh.addGroup(group.prim, group.materialIndex,
+                  group.nIndices, newIndices);
+}
+
+
+// Merge all meshes that share the same vertex description
+Model*
+mergeModelMeshes(const Model& model)
+{
+    vector<Mesh*> meshes;
+
+    for (uint32 i = 0; model.getMesh(i) != NULL; i++)
+    {
+        meshes.push_back(model.getMesh(i));
+    }
+
+    // Sort the meshes by vertex description
+    sort(meshes.begin(), meshes.end(), MeshVertexDescComparator());
+
+    Model* newModel = new Model();
+
+    // Copy materials into the new model
+    for (i = 0; model.getMaterial(i) != NULL; i++)
+    {
+        newModel->addMaterial(model.getMaterial(i));
+    }
+
+    uint32 meshIndex = 0;
+    while (meshIndex < meshes.size())
+    {
+        const Mesh::VertexDescription& desc =
+            meshes[meshIndex]->getVertexDescription();
+        
+        // Count the number of matching meshes
+        uint32 nMatchingMeshes;
+        for (nMatchingMeshes = 1;
+             meshIndex + nMatchingMeshes < meshes.size();
+             nMatchingMeshes++)
+        {
+            if (!(meshes[meshIndex + nMatchingMeshes]->getVertexDescription() == desc))
+            {
+                break;
+            }
+        }
+
+        // Count the number of vertices in all matching meshes
+        uint32 totalVertices = 0;
+        uint32 j;
+        for (j = meshIndex; j < meshIndex + nMatchingMeshes; j++)
+        {
+            totalVertices += meshes[j]->getVertexCount();
+        }
+
+        char* vertexData = new char[totalVertices * desc.stride];
+
+        // Create the new empty mesh
+        Mesh* mergedMesh = new Mesh();
+        mergedMesh->setVertexDescription(desc);
+        mergedMesh->setVertices(totalVertices, vertexData);
+        
+        // Copy the vertex data and reindex and add primitive groups
+        uint32 vertexCount = 0;
+        for (j = meshIndex; j < meshIndex + nMatchingMeshes; j++)
+        {
+            const Mesh* mesh = meshes[j];
+            memcpy(vertexData + vertexCount * desc.stride,
+                   mesh->getVertexData(),
+                   mesh->getVertexCount() * desc.stride);
+
+            for (uint32 k = 0; mesh->getGroup(k) != NULL; k++)
+            {
+                addGroupWithOffset(*mergedMesh, *mesh->getGroup(k),
+                                   vertexCount);
+            }
+
+            vertexCount += mesh->getVertexCount();
+        }
+        assert(vertexCount == totalVertices);
+
+        newModel->addMesh(mergedMesh);
+
+        meshIndex += nMatchingMeshes;
+    }
+
+    return newModel;
+}
+
+
+#ifdef TRISTRIP
+bool
+convertToStrips(Mesh& mesh)
+{
+    vector<Mesh::PrimitiveGroup*> groups;
+
+    // NvTriStrip library can only handle 16-bit indices
+    if (mesh.getVertexCount() >= 0x10000)
+    {
+        return true;
+    }
+
+    // Verify that the mesh contains just tri strips
+    uint32 i;
+    for (i = 0; mesh.getGroup(i) != NULL; i++)
+    {
+        if (mesh.getGroup(i)->prim != Mesh::TriList)
+            return true;
+    }
+
+    // Convert the existing groups to triangle strips
+    for (i = 0; mesh.getGroup(i) != NULL; i++)
+    {
+        const Mesh::PrimitiveGroup* group = mesh.getGroup(i);
+
+        // Convert the vertex indices to shorts for the TriStrip library
+        unsigned short* indices = new unsigned short[group->nIndices];
+        uint32 j;
+        for (j = 0; j < group->nIndices; j++)
+        {
+            indices[j] = (unsigned short) group->indices[j];
+        }
+
+        PrimitiveGroup* strips = NULL;
+        unsigned short nGroups;
+        bool r = GenerateStrips(indices,
+                                group->nIndices,
+                                &strips,
+                                &nGroups,
+                                false);
+        if (!r || strips == NULL)
+        {
+            cerr << "Generate tri strips failed\n";
+            return false;
+        }
+
+        // Call the tristrip library to convert the lists to strips.  Then,
+        // convert from the NvTriStrip's primitive group structure to the
+        // CMOD one and add it to the collection that will be added once
+        // the mesh's original primitive groups are cleared.
+        for (j = 0; j < nGroups; j++)
+        {
+            Mesh::PrimitiveGroupType prim = Mesh::InvalidPrimitiveGroupType;
+            switch (strips[j].type)
+            {
+            case PT_LIST:
+                prim = Mesh::TriList;
+                break;
+            case PT_STRIP:
+                prim = Mesh::TriStrip;
+                break;
+            case PT_FAN:
+                prim = Mesh::TriFan;
+                break;
+            }
+
+            if (prim != Mesh::InvalidPrimitiveGroupType &&
+                strips[j].numIndices != 0)
+            {
+                Mesh::PrimitiveGroup* newGroup = new Mesh::PrimitiveGroup();
+                newGroup->prim = prim;
+                newGroup->materialIndex = group->materialIndex;
+                newGroup->nIndices = strips[j].numIndices;
+                newGroup->indices = new uint32[newGroup->nIndices];
+                for (uint32 k = 0; k < newGroup->nIndices; k++)
+                    newGroup->indices[k] = strips[j].indices[k];
+                
+                groups.push_back(newGroup);
+            }
+        }
+
+        delete[] strips;
+    }
+
+    mesh.clearGroups();
+
+    // Add the stripified groups to the mesh
+    for (vector<Mesh::PrimitiveGroup*>::const_iterator iter = groups.begin();
+         iter != groups.end(); iter++)
+    {
+        mesh.addGroup(*iter);
+    }
+
+    return true;
+}
+#endif
+
+
 bool parseCommandLine(int argc, char* argv[])
 {
     int i = 1;
@@ -1039,6 +1339,14 @@ bool parseCommandLine(int argc, char* argv[])
             else if (!strcmp(argv[i], "-w") || !strcmp(argv[i], "--weld"))
             {
                 weldVertices = true;
+            }
+            else if (!strcmp(argv[i], "-m") || !strcmp(argv[i], "--merge"))
+            {
+                mergeMeshes = true;
+            }
+            else if (!strcmp(argv[i], "-o") || !strcmp(argv[i], "--optimize"))
+            {
+                stripify = true;
             }
             else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--smooth"))
             {
@@ -1163,6 +1471,11 @@ int main(int argc, char* argv[])
         model = newModel;
     }
 
+    if (mergeMeshes)
+    {
+        model = mergeModelMeshes(*model);
+    }
+
     if (uniquify)
     {
         for (uint32 i = 0; model->getMesh(i) != NULL; i++)
@@ -1171,6 +1484,18 @@ int main(int argc, char* argv[])
             uniquifyVertices(*mesh);
         }
     }
+
+#ifdef TRISTRIP
+    if (stripify)
+    {
+        SetCacheSize(vertexCacheSize);
+        for (uint32 i = 0; model->getMesh(i) != NULL; i++)
+        {
+            Mesh* mesh = model->getMesh(i);
+            convertToStrips(*mesh);
+        }
+    }
+#endif
 
     if (outputFilename.empty())
     {
