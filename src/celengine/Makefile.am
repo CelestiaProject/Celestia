@@ -47,7 +47,6 @@ libcelengine_a_SOURCES = \
 	univcoord.cpp \
 	universe.cpp \
 	vertexlist.cpp \
-	vertexprog.cpp
-
-
+	vertexprog.cpp \
+        vsop87.cpp
 
