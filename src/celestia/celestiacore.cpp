@@ -54,7 +54,6 @@ static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
 static const float stdFOV = 45.0f;
 
-static float oldFOV = stdFOV;
 
 static void warning(string s)
 {
@@ -119,6 +118,7 @@ CelestiaCore::CelestiaCore() :
     nFrames(0),
     fps(0.0),
     fpsCounterStartTime(0.0),
+    oldFOV(stdFOV),
     mouseMotion(0.0f),
     dollyMotion(0.0),
     dollyTime(0.0),
@@ -557,6 +557,7 @@ void CelestiaCore::charEntered(char c)
     case '\020':  // Ctrl+P
         if (renderer->fragmentShaderSupported())
             renderer->setFragmentShaderEnabled(!renderer->getFragmentShaderEnabled());
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\023':  // Ctrl+S
@@ -567,6 +568,7 @@ void CelestiaCore::charEntered(char c)
     case '\026':  // Ctrl+V
         if (renderer->vertexShaderSupported())
             renderer->setVertexShaderEnabled(!renderer->getVertexShaderEnabled());
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\027':  // Ctrl+W
@@ -578,6 +580,12 @@ void CelestiaCore::charEntered(char c)
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowSmoothLines);
         notifyWatchers(RenderFlagsChanged);
         break;
+
+    case '\031':  // Ctrl+Y
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAutoMag);
+        notifyWatchers(RenderFlagsChanged);
+        break;
+
 
     case '\033': // Escape
         cancelScript();
@@ -1697,7 +1705,8 @@ bool CelestiaCore::initRenderer()
 {
     renderer->setRenderFlags(Renderer::ShowStars |
                              Renderer::ShowPlanets |
-                             Renderer::ShowAtmospheres);
+                             Renderer::ShowAtmospheres |
+                             Renderer::ShowAutoMag );
 
     // Prepare the scene for rendering.
     if (!renderer->init((int) width, (int) height))
@@ -1706,7 +1715,7 @@ bool CelestiaCore::initRenderer()
         return false;
     }
 
-#ifdef _WIN32
+#if defined (_WIN32) || defined (__linux__)
     if (renderer->fragmentShaderSupported())
         renderer->setFragmentShaderEnabled(true);
     if (renderer->vertexShaderSupported())
