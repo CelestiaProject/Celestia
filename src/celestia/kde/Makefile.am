@@ -33,10 +33,6 @@ libkdegui_a_SOURCES = \
                  selectionpopup.cpp \
                  selectionpopup.moc.cpp
 
-dist-hook:
-	rm -f $(distdir)/*.uic.*
-	rm -f $(distdir)/*.moc.cpp
-                 
 %.uic.h: %.ui
 	$(UIC) $< -o $@
 
@@ -58,3 +54,7 @@ messages: rc.cpp
 		$(XGETTEXT) $$LIST -j -o $(podir)/celestia-kde.pot; \
 	fi
 
+dist-hook:
+	rm -f $(distdir)/*.uic.*
+	rm -f $(distdir)/*.moc.cpp
+                 
