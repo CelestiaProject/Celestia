@@ -42,6 +42,7 @@
 #include "winssbrowser.h"
 #include "wintourguide.h"
 #include "wingotodlg.h"
+#include "winviewoptsdlg.h"
 
 #include "res/resource.h"
 
@@ -72,6 +73,7 @@ static SolarSystemBrowser* solarSystemBrowser = NULL;
 static StarBrowser* starBrowser = NULL;
 static TourGuide* tourGuide = NULL;
 static GotoObjectDialog* gotoObjectDlg = NULL;
+static ViewOptionsDialog* viewOptionsDlg = NULL;
 
 static HMENU menuBar = 0;
 static HACCEL acceleratorTable = 0;
@@ -1184,32 +1186,6 @@ static void syncMenusWithRendererState()
     int labelMode = appCore->getRenderer()->getLabelMode();
     float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
 
-    setMenuItemCheck(ID_RENDER_SHOWORBITS, (renderFlags & Renderer::ShowOrbits) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWCONSTELLATIONS,
-                     (renderFlags & Renderer::ShowDiagrams) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWATMOSPHERES,
-                     (renderFlags & Renderer::ShowAtmospheres) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWCLOUDS,
-                     (renderFlags & Renderer::ShowCloudMaps) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWNIGHTLIGHTS,
-                     (renderFlags & Renderer::ShowNightMaps) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWGALAXIES,
-                     (renderFlags & Renderer::ShowGalaxies) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWCELESTIALSPHERE,
-                     (renderFlags & Renderer::ShowCelestialSphere) != 0);
-
-    setMenuItemCheck(ID_RENDER_SHOWPLANETLABELS,
-                     (labelMode & Renderer::MajorPlanetLabels) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWMINORPLANETLABELS,
-                     (labelMode & Renderer::MinorPlanetLabels) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWSTARLABELS,
-                     (labelMode & Renderer::StarLabels) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWCONSTLABELS,
-                     (labelMode & Renderer::ConstellationLabels) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWMINORPLANETLABELS,
-                     (labelMode & Renderer::MinorPlanetLabels) != 0);
-    setMenuItemCheck(ID_RENDER_SHOWHUDTEXT, appCore->getHudDetail() != 0);
-
     setMenuItemCheck(ID_RENDER_PIXEL_SHADERS,
                      appCore->getRenderer()->getFragmentShaderEnabled());
     setMenuItemCheck(ID_RENDER_VERTEX_SHADERS,
@@ -1933,6 +1909,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             if (gotoObjectDlg != NULL &&
                 IsDialogMessage(gotoObjectDlg->hwnd, &msg))
                 dialogMessage = true;
+            if (viewOptionsDlg != NULL &&
+                IsDialogMessage(viewOptionsDlg->hwnd, &msg))
+                dialogMessage = true;
 
             // Translate and dispatch the message
             if (!dialogMessage)
@@ -2226,6 +2205,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 delete solarSystemBrowser;
                 solarSystemBrowser = NULL;
             }
+            else if (reinterpret_cast<LPARAM>(viewOptionsDlg) == lParam &&
+                viewOptionsDlg != NULL)
+            {
+                delete viewOptionsDlg;
+                viewOptionsDlg = NULL;
+            }
             break;
 
         case ID_NAVIGATION_TOURGUIDE:
@@ -2259,53 +2244,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 newScreenMode = 0;
             break;
 
-        case ID_RENDER_SHOWHUDTEXT:
-            appCore->charEntered('V');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWPLANETLABELS:
-            appCore->charEntered('N');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWMINORPLANETLABELS:
-            appCore->charEntered('M');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWSTARLABELS:
-            appCore->charEntered('B');
-            break;
-        case ID_RENDER_SHOWCONSTLABELS:
-            appCore->charEntered('=');
-            syncMenusWithRendererState();
-            break;
-
-        case ID_RENDER_SHOWORBITS:
-            appCore->charEntered('O');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWCONSTELLATIONS:
-            appCore->charEntered('/');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWATMOSPHERES:
-            appCore->charEntered('\001');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWCLOUDS:
-            appCore->charEntered('I');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWNIGHTLIGHTS:
-            appCore->charEntered('\014');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWGALAXIES:
-            appCore->charEntered('U');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_SHOWCELESTIALSPHERE:
-            appCore->charEntered(';');
-            syncMenusWithRendererState();
+        case ID_RENDER_VIEWOPTIONS:
+            if (viewOptionsDlg == NULL)
+                viewOptionsDlg = new ViewOptionsDialog(appInstance, hWnd, appCore);
             break;
 
         case ID_RENDER_MORESTARS:
