@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.3.2
+AppVerName=Celestia 1.3.2pre1
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -137,6 +137,7 @@ Source: "textures\lores\ariel-lok-mask.png"; DestDir: "{app}/textures/lores"; Co
 Source: "textures\lores\asteroid.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\browndwarf.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\callisto.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\callisto-lok-mask.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\charon-lok.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\charon-lok-spec.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\deimos.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
@@ -149,7 +150,9 @@ Source: "textures\lores\epimetheus.jpg"; DestDir: "{app}/textures/lores"; CopyMo
 Source: "textures\lores\epimetheus-lok.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\eros.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\europa.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\europa-lok-mask.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\ganymede.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\ganymede-lok-mask.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\gasgiant.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\gasgiantnight.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\gaspramosaic.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
@@ -158,6 +161,7 @@ Source: "textures\lores\hyperion-lok.jpg"; DestDir: "{app}/textures/lores"; Copy
 Source: "textures\lores\iapetus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\idamosaic.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\io.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\io-lok-mask.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\janus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\jupiter.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\jupiterlike.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
@@ -236,6 +240,7 @@ Source: "models\galileo.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\gaspra.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\geographos.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\golevka.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
+Source: "models\halley.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\hubble.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\hyperion.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\ida.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
@@ -243,7 +248,9 @@ Source: "models\iss.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\janus.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\kleopatra.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\ky26.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
+Source: "models\larissa.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\mir.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
+Source: "models\pandora.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\phobos.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\prometheus.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
 Source: "models\proteus.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
