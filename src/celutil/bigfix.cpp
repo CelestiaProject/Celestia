@@ -209,7 +209,7 @@ BigFix::BigFix(const std::string& val)
 
     i = 0;
 
-    for (int j = 0; j < val.length(); j++)
+    for (int j = 0; j < (int)val.length(); j++)
     {
         c = val[j];
         if (c == '=')

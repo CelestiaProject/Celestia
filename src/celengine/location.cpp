@@ -151,7 +151,7 @@ static void initFeatureTypeTable()
 {
     featureTableInitialized = true;
 
-    for (int i = 0; i < sizeof(FeatureNames) / sizeof(FeatureNames[0]); i++)
+    for (int i = 0; i < (int)(sizeof(FeatureNames) / sizeof(FeatureNames[0])); i++)
     {
         FeatureNameToFlag[FeatureNames[i].name] = FeatureNames[i].flag;
     }

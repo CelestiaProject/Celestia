@@ -214,7 +214,7 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
     lod >>= baseSplit;
     u >>= baseSplit;
     v >>= baseSplit;
-    assert(lod < MaxResolutionLevels);
+    assert(lod < (unsigned)MaxResolutionLevels);
     
     char filename[64];
     sprintf(filename, "level%d/%s%d_%d", lod, tilePrefix.c_str(), u, v);

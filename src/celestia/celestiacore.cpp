@@ -1970,7 +1970,7 @@ void CelestiaCore::tick()
 
     sim->getObserver().setAngularVelocity(av);
 
-    if (keysPressed['A'] || joyButtonsPressed[JoyButton2])
+    if (keysPressed[(int)'A'] || joyButtonsPressed[JoyButton2])
     {
         bSetTargetSpeed = true;
 
@@ -1979,7 +1979,7 @@ void CelestiaCore::tick()
         else
             sim->setTargetSpeed(sim->getTargetSpeed() * (float) exp(dt * 3));
     }
-    if (keysPressed['Z'] || joyButtonsPressed[JoyButton1])
+    if (keysPressed[(int)'Z'] || joyButtonsPressed[JoyButton1])
     {
         bSetTargetSpeed = true;
 
