@@ -3366,7 +3366,7 @@ AltSurface "limit of knowledge" "HD 190360/b"
 }
 
 
-"b" "PSR 1257+12"   # PSR J1300+1240
+"a" "PSR 1257+12"   # PSR J1300+1240
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3398,7 +3398,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/b"
 }
 
 
-"c" "PSR 1257+12"   # PSR J1300+1240
+"b" "PSR 1257+12"   # PSR J1300+1240
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3431,7 +3431,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 }
 
 
-"d" "PSR 1257+12"   # PSR J1300+1240
+"c" "PSR 1257+12"   # PSR J1300+1240
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3496,5 +3496,3 @@ AltSurface "limit of knowledge" "PSR 1620-26/b"
 {
 	Texture "extrasolar-lok.jpg"
 }
-
-
