@@ -564,6 +564,144 @@
 	Albedo 0.04
 }
 
+"2003J13" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	#5 Jan 2003
+	Period		742.93		# mean
+	SemiMajorAxis	23648000	# mean
+	Eccentricity	0.4320		# mean
+	Inclination	140.930
+	AscendingNode	221.382
+	ArgOfPericenter	212.248
+	MeanAnomaly     277.417
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003J14" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	#5 Jan 2003
+	Period		761.45		# mean
+	SemiMajorAxis	24039000	# mean
+	Eccentricity	0.3070		# mean
+	Inclination	136.948
+	AscendingNode	301.261
+	ArgOfPericenter	126.992
+	MeanAnomaly     225.672
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003J15" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	#5 Jan 2003
+	Period		678.19		# mean
+	SemiMajorAxis	22253000	# mean
+	Eccentricity	0.1199		# mean
+	Inclination	141.481
+	AscendingNode	205.850
+	ArgOfPericenter	34.821
+	MeanAnomaly     263.190
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003J16" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	#5 Jan 2003
+	Period		598.04		# mean
+	SemiMajorAxis	20464000	# mean
+	Eccentricity	0.2419		# mean
+	Inclination	147.023
+	AscendingNode	340.280
+	ArgOfPericenter	76.683
+	MeanAnomaly     201.357
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003J17" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	#5 Jan 2003
+	Period		708.81		# mean
+	SemiMajorAxis	22918000	# mean
+	Eccentricity	0.1947		# mean
+	Inclination	161.891
+	AscendingNode	271.266
+	ArgOfPericenter	346.951
+	MeanAnomaly     317.640
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003J18" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	#5 Jan 2003
+	Period		511.75		# mean
+	SemiMajorAxis	18445000	# mean
+	Eccentricity	0.2322		# mean
+	Inclination	147.041
+	AscendingNode	146.298
+	ArgOfPericenter	123.097
+	MeanAnomaly     176.706
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
 
 # Additional moons of Saturn
 
