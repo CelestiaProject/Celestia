@@ -62,7 +62,7 @@ class View
     int labelMode;
 
     void walkTreeResize(View*, int);
-    void walkTreeResizeDelta(View*, float);
+    bool walkTreeResizeDelta(View*, float, bool);
 };
 
 
