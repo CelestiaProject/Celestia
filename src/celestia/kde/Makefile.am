@@ -44,7 +44,7 @@ dist-hook:
 %.moc.cpp: %.h
 	$(MOC) $< -o $@
                           
-SUBDIRS = data
+SUBDIRS = data doc
 
 endif
 
