@@ -155,7 +155,7 @@ void Alert(const char *szFormat, ...)
 // ARB_multitexture
 void InitExtMultiTexture()
 {
-#ifndef GL_ARB_multitexture
+// #ifndef GL_ARB_multitexture
 #ifdef GET_GL_PROC_ADDRESS
     glMultiTexCoord2iARB =
         (PFNGLMULTITEXCOORD2IARBPROC) GET_GL_PROC_ADDRESS("glMultiTexCoord2iARB");
@@ -170,14 +170,14 @@ void InitExtMultiTexture()
     glClientActiveTextureARB =
         (PFNGLCLIENTACTIVETEXTUREARBPROC) GET_GL_PROC_ADDRESS("glClientActiveTextureARB");
 #endif // GET_GL_PROC_ADDRESS
-#endif // GL_ARB_multitexture
+// #endif // GL_ARB_multitexture
 }
 
 
 // ARB_texture_compression
 void InitExtTextureCompression()
 {
-#if defined(GL_ARB_texture_compression) && defined(GET_GL_PROC_ADDRESS)
+#if defined(GET_GL_PROC_ADDRESS)
     glCompressedTexImage3DARB =
         (PFNGLCOMPRESSEDTEXIMAGE3DARBPROC)
         GET_GL_PROC_ADDRESS("glCompressedTexImage3DARB");
@@ -203,7 +203,7 @@ void InitExtTextureCompression()
 // NV_register_combiners
 void InitExtRegisterCombiners()
 {
-#if defined(GL_NV_register_combiners) && defined(GET_GL_PROC_ADDRESS)
+#if defined(GET_GL_PROC_ADDRESS)
   /* Retrieve all NV_register_combiners routines. */
   glCombinerParameterfvNV =
     (PFNGLCOMBINERPARAMETERFVNVPROC)
@@ -250,7 +250,7 @@ void InitExtRegisterCombiners()
 
 void InitExtRegisterCombiners2()
 {
-#if defined(GL_NV_register_combiners2) && defined(GET_GL_PROC_ADDRESS)
+#if defined(GET_GL_PROC_ADDRESS)
     /* Retrieve all NV_register_combiners routines. */
     glCombinerStageParameterfvNV =
         (PFNGLCOMBINERSTAGEPARAMETERFVNVPROC)
@@ -264,7 +264,7 @@ void InitExtRegisterCombiners2()
 
 void InitExtVertexProgram()
 {
-#if defined(GL_NV_vertex_program) && defined(GET_GL_PROC_ADDRESS)
+#if defined(GET_GL_PROC_ADDRESS)
     glAreProgramsResidentNV =
         (PFNGLAREPROGRAMSRESIDENTNVPROC)
         GET_GL_PROC_ADDRESS("glAreProgramsResidentNV");
@@ -460,7 +460,7 @@ void InitExtVertexProgram()
 
 void InitExtPalettedTexture()
 {
-#if defined(GL_EXT_paletted_texture) && defined(GET_GL_PROC_ADDRESS)
+#if defined(GET_GL_PROC_ADDRESS)
     glColorTableEXT = (PFNGLCOLORTABLEEXTPROC) GET_GL_PROC_ADDRESS("glColorTableEXT");
 #endif
 }
@@ -468,7 +468,7 @@ void InitExtPalettedTexture()
 
 void InitExtBlendMinmax()
 {
-#if defined(GL_EXT_blend_minmax) && defined(GET_GL_PROC_ADDRESS)
+#if defined(GET_GL_PROC_ADDRESS)
     glBlendEquationEXT = (PFNGLBLENDEQUATIONEXTPROC) GET_GL_PROC_ADDRESS("glBlendEquationEXT");
 #endif
 }

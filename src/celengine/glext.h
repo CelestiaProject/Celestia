@@ -205,6 +205,7 @@ extern PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
 
 /* NV_register_combiners defines and prototypes from <GL/gl.h> */
 #ifndef GL_NV_register_combiners
+#define GL_NV_register_combiners 1
 #define GL_REGISTER_COMBINERS_NV            ((GLenum) 0x8522)
 #define GL_COMBINER0_NV                     ((GLenum) 0x8550)
 #define GL_COMBINER1_NV                     ((GLenum) 0x8551)
