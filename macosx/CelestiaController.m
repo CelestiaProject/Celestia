@@ -204,6 +204,12 @@ NSString* fatalErrorMessage;
     // load settings
     [settings loadUserDefaults];
 
+    // paste URL if pending
+    if (pendingUrl != nil )
+    {
+        [ appCore setStartURL: pendingUrl ];
+    }
+
     // set the simulation starting time to the current system time
     [appCore start:[NSDate date] withTimeZone:[NSTimeZone defaultTimeZone]];
 
@@ -211,12 +217,6 @@ NSString* fatalErrorMessage;
     if (pendingScript != nil )
     {
         [appCore runScript: pendingScript ];
-    }
-
-    // paste URL if pending
-    if (pendingUrl != nil )
-    {
-        [ appCore setStartURL: pendingUrl ];
     }
         
     ready = YES;
@@ -452,10 +452,23 @@ NSString* fatalErrorMessage;
     [settings addSurfaceMenu: contextMenu ];
 }
 
+
+-(IBAction) showPanel: (id) sender
+{
+    switch( [sender tag] )
+    {
+        case 0:
+            if (!browserWindowController) browserWindowController = [[BrowserWindowController alloc] init];
+            [browserWindowController showWindow: self];
+            break;
+    }
+}
+
 // Dealloc Method ----------------------------------------------------------
 
 - (void)dealloc
 {
+    [browserWindowController release];
     if (appCore != nil) {
         [appCore release];
     }
