@@ -9,7 +9,7 @@
 
 float bias(float a, float b)
 {
-    return (float) pow(a, log(b) / log(0.5));
+    return (float) pow((double) a, log((double) b) / log(0.5));
 }
 
 float gain(float a, float b)
@@ -24,7 +24,7 @@ float gain(float a, float b)
     if (a < 0.5f)
 	return (float) pow(2 * a, p) / 2;
     else
-	return 1.0f - (float) pow(2 * (1.0 - a), p) / 2;
+	return 1.0f - (float) pow(2.0 * (1.0 - a), (double) p) / 2;
 }
 
 float noise(float vec[], int len)

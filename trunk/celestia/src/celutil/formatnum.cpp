@@ -39,7 +39,7 @@ double FormattedNumber::getRoundedValue() const
         }
         else
         {
-            double m = pow(10, floor(log10(fabs(value))) - precision + 1);
+            double m = pow(10.0, floor(log10(fabs(value))) - precision + 1);
             return floor(value / m + 0.5) * m;
         }
     }
