@@ -10,7 +10,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#define GL_GLEXT_PROTOTYPES
 #include "gl.h"
 #include "glext.h"
 #include "regcombine.h"
