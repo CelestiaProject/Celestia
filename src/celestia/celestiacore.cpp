@@ -1003,9 +1003,9 @@ void CelestiaCore::renderOverlay()
 
     overlay->begin();
 
-    // Time and date
     if (hudDetail > 0)
     {
+        // Time and date
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
         glTranslatef(width - 11 * emWidth, height - fontHeight, 0);
@@ -1020,8 +1020,13 @@ void CelestiaCore::renderOverlay()
         else
         {
             double timeScale = sim->getTimeScale();
-            if (abs(timeScale - 1) < 1e-6)
-                *overlay << "Real time";
+            if ((abs(timeScale) - 1) < 1e-6)
+            {
+                if (sign(timeScale) == 1)
+                    *overlay << "Real time";
+                else
+                    *overlay << "-Real time";
+            }
             else if (abs(timeScale) == 0.0f)
                 *overlay << "Time stopped";
             else if (abs(timeScale) > 1.0)
@@ -1031,11 +1036,8 @@ void CelestiaCore::renderOverlay()
         }
         overlay->endText();
         glPopMatrix();
-    }
 
-    // Speed
-    if (hudDetail > 0)
-    {
+        // Speed
         glPushMatrix();
         glTranslatef(0, fontHeight * 2 + 5, 0);
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
@@ -1062,11 +1064,8 @@ void CelestiaCore::renderOverlay()
 
         overlay->endText();
         glPopMatrix();
-    }
 
-    // Field of view and camera mode
-    if (hudDetail > 0)
-    {
+        // Field of view and camera mode
         float fov = renderer->getFieldOfView();
         int degrees, minutes;
         double seconds;
