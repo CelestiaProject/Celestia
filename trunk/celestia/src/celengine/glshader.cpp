@@ -65,6 +65,74 @@ GLShader::~GLShader()
 }
 
 
+
+//************* GLxxxProperty **********
+
+FloatShaderProperty::FloatShaderProperty() :
+    slot(-1)
+{
+}
+
+FloatShaderProperty::FloatShaderProperty(int obj, const char* name)
+{
+    slot = glx::glGetUniformLocationARB(obj, name);
+}
+
+FloatShaderProperty&
+FloatShaderProperty::operator=(float f)
+{
+    if (slot != -1)
+        glx::glUniform1fARB(slot, f);
+    return *this;
+}
+
+
+Vec3ShaderProperty::Vec3ShaderProperty() :
+    slot(-1)
+{
+}
+
+Vec3ShaderProperty::Vec3ShaderProperty(int obj, const char* name)
+{
+    slot = glx::glGetUniformLocationARB(obj, name);
+}
+
+Vec3ShaderProperty&
+Vec3ShaderProperty::operator=(const Vec3f& v)
+{
+    if (slot != -1)
+        glx::glUniform3fARB(slot, v.x, v.y, v.z);
+    return *this;
+}
+
+Vec3ShaderProperty&
+Vec3ShaderProperty::operator=(const Point3f& p)
+{
+    if (slot != -1)
+        glx::glUniform3fARB(slot, p.x, p.y, p.z);
+    return *this;
+}
+
+
+Vec4ShaderProperty::Vec4ShaderProperty() :
+    slot(-1)
+{
+}
+
+Vec4ShaderProperty::Vec4ShaderProperty(int obj, const char* name)
+{
+    slot = glx::glGetUniformLocationARB(obj, name);
+}
+
+Vec4ShaderProperty&
+Vec4ShaderProperty::operator=(const Vec4f& v)
+{
+    if (slot != -1)
+        glx::glUniform4fARB(slot, v.x, v.y, v.z, v.w);
+    return *this;
+}
+
+
 //************* GLProgram **************
 
 GLProgram::GLProgram(int _id) :
@@ -196,7 +264,11 @@ GLShaderLoader::CreateProgram(const GLVertexShader& vs,
 
     GLShaderStatus status = prog->link();
     if (status != ShaderStatus_OK)
+    {
+        cout << "Error linking shader program:\n";
+        cout << GetInfoLog(prog->getID());
         return status;
+    }
 
     *progOut = prog;
 
