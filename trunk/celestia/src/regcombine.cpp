@@ -46,10 +46,24 @@ namespace rc
         UnsignedInvert      = GL_UNSIGNED_INVERT_NV,
         ExpandNormal        = GL_EXPAND_NORMAL_NV,
     };
-
-    inputRGB(
 };
 #endif
+
+namespace rc
+{
+    void parameter(GLenum, Color);
+};
+
+
+void rc::parameter(GLenum which, Color color)
+{
+    float f[4];
+    f[0] = color.red();
+    f[1] = color.green();
+    f[2] = color.blue();
+    f[3] = color.alpha();
+    glCombinerParameterfvNV(which, f);
+}
 
 void SetupCombinersBumpMap(Texture& bumpTexture,
                            Texture& normalizationTexture,
@@ -85,7 +99,7 @@ void SetupCombinersBumpMap(Texture& bumpTexture,
     glCombinerInputNV(GL_COMBINER0_NV, GL_RGB,
                       GL_VARIABLE_B_NV, GL_TEXTURE1_ARB,
                       GL_EXPAND_NORMAL_NV, GL_RGB);
-    
+
     // Compute N dot L
     glCombinerOutputNV(GL_COMBINER0_NV, GL_RGB,
                        GL_SPARE0_NV, GL_DISCARD_NV, GL_DISCARD_NV,
@@ -209,7 +223,8 @@ void SetupCombinersSmooth(Texture& baseTexture,
 
 
 void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
-                                   Color ambientColor)
+                                   Color ambientColor,
+                                   Color diffuseColor)
 {
     glEnable(GL_REGISTER_COMBINERS_NV);
 
@@ -220,11 +235,8 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
 
     glCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV, 2);
 
-    float ambient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    ambient[0] = ambientColor.red();
-    ambient[1] = ambientColor.green();
-    ambient[2] = ambientColor.blue();
-    glCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV, ambient);
+    rc::parameter(GL_CONSTANT_COLOR0_NV, ambientColor);
+    rc::parameter(GL_CONSTANT_COLOR1_NV, diffuseColor);
 
     // Compute N dot L in the RGB portion of combiner 0
     // Load register A with a normal N from the bump map
@@ -240,10 +252,18 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
     glCombinerInputNV(GL_COMBINER0_NV, GL_RGB,
                       GL_VARIABLE_B_NV, GL_PRIMARY_COLOR_NV,
                       GL_EXPAND_NORMAL_NV, GL_RGB);
+
+    // Product C*D computes diffuse color * texture
+    glCombinerInputNV(GL_COMBINER0_NV, GL_RGB,
+                      GL_VARIABLE_C_NV, GL_TEXTURE0_ARB,
+                      GL_UNSIGNED_IDENTITY_NV, GL_RGB);
+    glCombinerInputNV(GL_COMBINER0_NV, GL_RGB,
+                      GL_VARIABLE_D_NV, GL_CONSTANT_COLOR1_NV,
+                      GL_UNSIGNED_IDENTITY_NV, GL_RGB);
     
-    // Compute N dot L
+    // Compute N dot L in spare0 and diffuse * decal texture in spare1
     glCombinerOutputNV(GL_COMBINER0_NV, GL_RGB,
-                       GL_SPARE0_NV, GL_DISCARD_NV, GL_DISCARD_NV,
+                       GL_SPARE0_NV, GL_SPARE1_NV, GL_DISCARD_NV,
                        GL_NONE, GL_NONE, GL_TRUE, GL_FALSE, GL_FALSE);
 
     // Compute the self-shadowing term in the alpha portion of combiner 0
@@ -284,9 +304,9 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
     // self shadowing.
     glFinalCombinerInputNV(GL_VARIABLE_E_NV,
                            GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
-    // F = decal texture rgb
+    // F = spare1 = decal texture rgb * diffuse color
     glFinalCombinerInputNV(GL_VARIABLE_F_NV,
-                           GL_TEXTURE0_ARB, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
+                           GL_SPARE1_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB);
 
     // A = fog factor
     glFinalCombinerInputNV(GL_VARIABLE_A_NV,
