@@ -474,7 +474,7 @@ static ColorTemperatureTable* enhanced = NULL;
 static ColorTemperatureTable* blackbodyD65 = NULL;
 
 ColorTemperatureTable*
-GetStarColorTable(ColorTable ct)
+GetStarColorTable(ColorTableType ct)
 {
     switch (ct)
     {
