@@ -760,6 +760,8 @@ const std::string& Greek::canonicalAbbreviation(const std::string& letter)
 
 //! Replaces the Greek letter abbreviation at the beginning
 //! of a string by the UTF-8 representation of that letter.
+//! Also, replace digits following Greek letters with UTF-8
+//! superscripts.
 std::string ReplaceGreekLetterAbbr(std::string str) 
 {
     std::string ret = str;
@@ -773,7 +775,27 @@ std::string ReplaceGreekLetterAbbr(std::string str)
             const std::string& abbr = Greek::instance->abbrevs[i];
             if (str.compare(0, abbr.length(), abbr) == 0)
             {
-                ret = std::string(greekAlphabetUTF8[i]) + str.substr(abbr.length());               
+                std::string superscript;
+                if (str.length() > abbr.length())
+                {
+                    if (str[abbr.length()] == '1')
+                        superscript = UTF8_SUPERSCRIPT_1;
+                    else if (str[abbr.length()] == '2')
+                        superscript = UTF8_SUPERSCRIPT_2;
+                    else if (str[abbr.length()] == '3')
+                        superscript = UTF8_SUPERSCRIPT_3;
+                }
+
+                if (superscript.empty())
+                {
+                    ret = std::string(greekAlphabetUTF8[i]) + str.substr(abbr.length());
+                }
+                else
+                {
+                    ret = std::string(greekAlphabetUTF8[i]) + superscript +
+                        str.substr(abbr.length() + 1);
+                }
+                        
                 break;
             }
         }
