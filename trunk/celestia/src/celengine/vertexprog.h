@@ -13,9 +13,13 @@
 #include <celmath/vecmath.h>
 #include <celutil/color.h>
 
+
+class VertexProcessor;
+
 namespace vp
 {
-    bool init();
+    VertexProcessor* initNV();
+    VertexProcessor* initARB();
     void enable();
     void disable();
     void use(unsigned int);
@@ -24,6 +28,20 @@ namespace vp
     void parameter(unsigned int, const Point3f&);
     void parameter(unsigned int, const Color&);
     void parameter(unsigned int, float, float, float, float);
+
+    enum Parameter {
+        SunDirection       = 0,
+        EyePosition        = 1,
+        DiffuseColor       = 2,
+        SpecularColor      = 3,
+        SpecularExponent   = 4,
+        AmbientColor       = 5,
+        HazeColor          = 6,
+        TextureTranslation = 7,
+        Constant0          = 8,
+        TexGen_S           = 10,
+        TexGen_T           = 11,
+    };
 
     extern unsigned int specular;
     extern unsigned int diffuse;
@@ -38,5 +56,50 @@ namespace vp
     extern unsigned int cometTail;
     extern unsigned int nightLights;
 };
+
+
+namespace arbvp
+{
+    enum EnvParam {
+        SunDirection       = 0,
+        EyePosition        = 1,
+        DiffuseColor       = 2,
+        SpecularColor      = 3,
+        SpecularExponent   = 4,
+        AmbientColor       = 5,
+        HazeColor          = 6,
+        TextureTranslation = 7,
+        Constant0          = 8,
+        TexGen_S           = 10,
+        TexGen_T           = 11,
+    };
+
+    void parameter(unsigned int, const Vec3f&);
+    void parameter(unsigned int, const Point3f&);
+    void parameter(unsigned int, const Color&);
+    void parameter(unsigned int, float, float, float, float);
+    void parameter(unsigned int, const float*);
+};
+
+
+class VertexProcessor
+{
+ public:
+    VertexProcessor();
+    virtual ~VertexProcessor();
+
+    virtual void enable() = 0;
+    virtual void disable() = 0;
+    virtual void use(unsigned int) = 0;
+    virtual void parameter(vp::Parameter, const Vec3f&);
+    virtual void parameter(vp::Parameter, const Point3f&);
+    virtual void parameter(vp::Parameter, const Color&);
+    virtual void parameter(vp::Parameter, float, float, float, float) = 0;
+    virtual void parameter(vp::Parameter, const float*) = 0;
+
+ private:
+    int dummy;
+};
+
 
 #endif // _VERTEXPROG_H_

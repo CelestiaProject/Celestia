@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <celengine/vertexprog.h>
 
 class GLContext
 {
@@ -31,6 +32,13 @@ class GLContext
         GLPath_NV30              = 7,
     };
 
+    enum VertexPath
+    {
+        VPath_Basic              = 0,
+        VPath_NV                 = 1,
+        VPath_ARB                = 2,
+    };
+
     void init(const std::vector<std::string>& ignoreExt);
     
     GLRenderPath getRenderPath() const { return renderPath; };
@@ -43,8 +51,15 @@ class GLContext
     bool hasMultitexture() const { return renderPath >= GLPath_Multitexture; };
     bool bumpMappingSupported() const;
 
+    VertexPath getVertexPath() const;
+
+    VertexProcessor* getVertexProcessor() const;
+
  private:
     GLRenderPath renderPath;
+    VertexPath vertexPath;
+    VertexProcessor* vertexProc;
+
     int maxSimultaneousTextures;
     std::vector<std::string> extensions;
 };

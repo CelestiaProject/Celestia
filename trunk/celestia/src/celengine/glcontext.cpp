@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <celutil/debug.h>
 #include "gl.h"
 #include "glext.h"
 #include "glcontext.h"
@@ -15,8 +16,14 @@
 using namespace std;
 
 
+static VertexProcessor* vpNV = NULL;
+static VertexProcessor* vpARB = NULL;
+
+
 GLContext::GLContext() :
     renderPath(GLPath_Basic),
+    vertexPath(VPath_Basic),
+    vertexProc(NULL),
     maxSimultaneousTextures(1)
 {
 }
@@ -75,20 +82,54 @@ void GLContext::init(const vector<string>& ignoreExt)
     {
         InitExtension(iter->c_str());
     }
+
+    if (extensionSupported("GL_ARB_vertex_program") &&
+        glx::glGenProgramsARB)
+    {
+        DPRINTF(1, "Renderer: ARB vertex programs supported.\n");
+        if (vpARB == NULL)
+            vpARB = vp::initARB();
+        vertexProc = vpARB;
+    }
+    else if (extensionSupported("GL_NV_vertex_program") &&
+             glx::glGenProgramsNV)
+    {
+        DPRINTF(1, "Renderer: nVidia vertex programs supported.\n");
+        if (vpNV == NULL)
+            vpNV = vp::initNV();
+        vertexProc = vpNV;
+    }
 }
 
 
 bool GLContext::setRenderPath(GLRenderPath path)
 {
-    if (renderPathSupported(path))
+    if (!renderPathSupported(path))
+        return false;
+
+    switch (path)
     {
-        renderPath = path;
-        return true;
-    }
-    else
-    {
+    case GLPath_Basic:
+    case GLPath_Multitexture:
+    case GLPath_NvCombiner:
+        vertexPath = VPath_Basic;
+        break;
+    case GLPath_NvCombiner_NvVP:
+        vertexPath = VPath_NV;
+        break;
+    case GLPath_DOT3_ARBVP:
+    case GLPath_NvCombiner_ARBVP:
+    case GLPath_ARBFP_ARBVP:
+    case GLPath_NV30:
+        vertexPath = VPath_ARB;
+        break;
+    default:
         return false;
     }
+
+    renderPath = path;
+
+    return true;
 }
 
 
@@ -108,23 +149,30 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
 
     case GLPath_DOT3_ARBVP:
         return (extensionSupported("GL_ARB_texture_env_dot3") &&
-                extensionSupported("GL_ARB_vertex_program"));
+                extensionSupported("GL_ARB_vertex_program") &&
+                vertexProc != NULL);
 
     case GLPath_NvCombiner_NvVP:
         return (extensionSupported("GL_NV_register_combiners") &&
-                extensionSupported("GL_NV_vertex_program"));
+                extensionSupported("GL_NV_vertex_program") &&
+                vertexProc != NULL);
 
     case GLPath_NvCombiner_ARBVP:
         return (extensionSupported("GL_NV_register_combiners") &&
-                extensionSupported("GL_ARB_vertex_program"));
+                extensionSupported("GL_ARB_vertex_program") &&
+                vertexProc != NULL);
 
     case GLPath_ARBFP_ARBVP:
         return (extensionSupported("GL_ARB_vertex_program") &&
-                extensionSupported("GL_ARB_fragment_program"));
+                extensionSupported("GL_ARB_fragment_program") &&
+                vertexProc != NULL);
 
     case GLPath_NV30:
+        return false;
+        /*
         return (extensionSupported("GL_ARB_vertex_program") &&
                 extensionSupported("GL_NV_fragment_program"));
+        */
 
     default:
         return false;
@@ -141,4 +189,16 @@ bool GLContext::extensionSupported(const string& ext) const
 bool GLContext::bumpMappingSupported() const
 {
     return renderPath > GLPath_Multitexture;
+}
+
+
+GLContext::VertexPath GLContext::getVertexPath() const
+{
+    return vertexPath;
+}
+
+
+VertexProcessor* GLContext::getVertexProcessor() const
+{
+    return vertexProc;
 }

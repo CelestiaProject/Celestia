@@ -15,6 +15,7 @@
 #include <celengine/observer.h>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
+#include <celengine/glcontext.h>
 #include <celtxf/texturefont.h>
 
 
@@ -39,7 +40,7 @@ class Renderer
     Renderer();
     ~Renderer();
     
-    bool init(int, int);
+    bool init(GLContext*, int, int);
     void shutdown() {};
     void resize(int, int);
 
@@ -273,6 +274,8 @@ class Renderer
                       const Point3d&, const Point3d&);
     
  private:
+    GLContext* context;
+
     int windowWidth;
     int windowHeight;
     float fov;
@@ -308,10 +311,6 @@ class Renderer
     double modelMatrix[16];
     double projMatrix[16];
 
-    int nSimultaneousTextures;
-    bool useTexEnvCombine;
-    bool useRegisterCombiners;
-    bool useCubeMaps;
     bool useCompressedTextures;
     bool useVertexPrograms;
     bool useRescaleNormal;
