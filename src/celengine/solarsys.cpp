@@ -1,6 +1,8 @@
-// solarsys.h
+// solarsys.cpp
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2004 Chris Laurel <claurel@shatters.net>
+//
+// Solar system catalog parser.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -23,14 +25,14 @@
 #include <cstdio>
 #include "astro.h"
 #include "parser.h"
-#include "customorbit.h"
 #include "texmanager.h"
 #include "meshmanager.h"
-#include "trajmanager.h"
 #include "universe.h"
 #include "multitexture.h"
+#include "parseobject.h"
 
 using namespace std;
+
 
 enum Disposition
 {
@@ -83,27 +85,6 @@ static void sscError(const Tokenizer& tok,
 {
     errorMessagePrelude(tok);
     cerr << msg << '\n';
-}
-
-
-bool getDate(Hash* hash, const string& name, double& jd)
-{
-    // Check first for a number value representing a Julian date
-    if (hash->getNumber(name, jd))
-        return true;
-
-    string dateString;
-    if (hash->getString(name, dateString))
-    {
-        astro::Date date(1, 1, 1);
-        if (astro::parseDate(dateString, date))
-        {
-            jd = (double) date;
-            return true;
-        }
-    }
-
-    return false;
 }
 
 
@@ -222,84 +203,6 @@ static void FillinSurface(Hash* surfaceData,
 }
 
 
-static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
-                                              bool usePlanetUnits)
-{
-    // SemiMajorAxis and Period are absolutely required; everything
-    // else has a reasonable default.
-    double pericenterDistance = 0.0;
-    double semiMajorAxis = 0.0;
-    if (!orbitData->getNumber("SemiMajorAxis", semiMajorAxis))
-    {
-        if (!orbitData->getNumber("PericenterDistance", pericenterDistance))
-        {
-            DPRINTF(0, "SemiMajorAxis/PericenterDistance missing!  Skipping planet . . .\n");
-            return NULL;
-        }
-    }
-
-    double period = 0.0;
-    if (!orbitData->getNumber("Period", period))
-    {
-        DPRINTF(0, "Period missing!  Skipping planet . . .\n");
-        return NULL;
-    }
-
-    double eccentricity = 0.0;
-    orbitData->getNumber("Eccentricity", eccentricity);
-
-    double inclination = 0.0;
-    orbitData->getNumber("Inclination", inclination);
-
-    double ascendingNode = 0.0;
-    orbitData->getNumber("AscendingNode", ascendingNode);
-
-    double argOfPericenter = 0.0;
-    if (!orbitData->getNumber("ArgOfPericenter", argOfPericenter))
-    {
-        double longOfPericenter = 0.0;
-        if (orbitData->getNumber("LongOfPericenter", longOfPericenter))
-            argOfPericenter = longOfPericenter - ascendingNode;
-    }
-
-    double epoch = astro::J2000;
-    getDate(orbitData, "Epoch", epoch);
-
-    // Accept either the mean anomaly or mean longitude--use mean anomaly
-    // if both are specified.
-    double anomalyAtEpoch = 0.0;
-    if (!orbitData->getNumber("MeanAnomaly", anomalyAtEpoch))
-    {
-        double longAtEpoch = 0.0;
-        if (orbitData->getNumber("MeanLongitude", longAtEpoch))
-            anomalyAtEpoch = longAtEpoch - (argOfPericenter + ascendingNode);
-    }
-
-    if (usePlanetUnits)
-    {
-        semiMajorAxis = astro::AUtoKilometers(semiMajorAxis);
-        pericenterDistance = astro::AUtoKilometers(pericenterDistance);
-        period = period * 365.25f;
-    }
-
-    // If we read the semi-major axis, use it to compute the pericenter
-    // distance.
-    if (semiMajorAxis != 0.0)
-        pericenterDistance = semiMajorAxis * (1.0 - eccentricity);
-
-    // cout << " bounding radius: " << semiMajorAxis * (1.0 + eccentricity) << "km\n";
-
-    return new EllipticalOrbit(pericenterDistance,
-                               eccentricity,
-                               degToRad(inclination),
-                               degToRad(ascendingNode),
-                               degToRad(argOfPericenter),
-                               degToRad(anomalyAtEpoch),
-                               period,
-                               epoch);
-}
-
-
 static void FillinRotationElements(Hash* rotationData,
                                    RotationElements& re,
                                    float orbitalPeriod)
@@ -328,76 +231,6 @@ static void FillinRotationElements(Hash* rotationData,
         re.precessionRate = degToRad(precessionRate);
 }
 
-
-static Orbit* CreateOrbit(PlanetarySystem* system,
-                          Hash* planetData,
-                          const string& path,
-                          bool usePlanetUnits)
-{
-    Orbit* orbit = NULL;
-
-    string customOrbitName;
-    if (planetData->getString("CustomOrbit", customOrbitName))
-    {
-        orbit = GetCustomOrbit(customOrbitName);
-        if (orbit != NULL)
-        {
-            return orbit;
-        }
-        DPRINTF(0, "Could not find custom orbit named '%s'\n",
-                customOrbitName.c_str());
-    }
-
-    string sampOrbitFile;
-    if (planetData->getString("SampledOrbit", sampOrbitFile))
-    {
-        DPRINTF(1, "Attempting to load sampled orbit file '%s'\n",
-                sampOrbitFile.c_str());
-        ResourceHandle orbitHandle =
-            GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile, path));
-        orbit = GetTrajectoryManager()->find(orbitHandle);
-        if (orbit != NULL)
-        {
-            return orbit;
-        }
-        DPRINTF(0, "Could not load sampled orbit file '%s'\n",
-                sampOrbitFile.c_str());
-    }
-
-    Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
-    if (orbitDataValue != NULL)
-    {
-        if (orbitDataValue->getType() != Value::HashType)
-        {
-            DPRINTF(0, "Object has incorrect elliptical orbit syntax.\n");
-            return NULL;
-        }
-        else
-        {
-            return CreateEllipticalOrbit(orbitDataValue->getHash(),
-                                         usePlanetUnits);
-        }
-    }
-
-    Vec3d longlat(0.0, 0.0, 0.0);
-    if (planetData->getVector("LongLat", longlat))
-    {
-        Body* parent = system->getPrimaryBody();
-        if (parent != NULL)
-        {
-            Vec3f pos = parent->planetocentricToCartesian((float) longlat.x, (float) longlat.y, (float) longlat.z);
-            Point3d posd(pos.x, pos.y, pos.z);
-            return new SynchronousOrbit(*parent, posd);
-        }
-        else
-        {
-            // TODO: Allow fixing objects to the surface of stars.
-        }
-        return NULL;
-    }
-
-    return NULL;
-}
 
 // Create a body (planet or moon) using the values from a hash
 // The usePlanetsUnits flags specifies whether period and semi-major axis
@@ -484,8 +317,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
     double beginning   = -1.0e+50;
     double ending      =  1.0e+50;
     body->getLifespan(beginning, ending);
-    getDate(planetData, "Beginning", beginning);
-    getDate(planetData, "Ending", ending);
+    ParseDate(planetData, "Beginning", beginning);
+    ParseDate(planetData, "Ending", ending);
     body->setLifespan(beginning, ending);
 
     string infoURL;
@@ -619,9 +452,9 @@ static Body* CreatePlanet(PlanetarySystem* system,
 
                 double inner = 0.0, outer = 0.0;
                 if (ringsData->getNumber("Inner", inner))
-                    rings.innerRadius = inner;
+                    rings.innerRadius = (float) inner;
                 if (ringsData->getNumber("Outer", outer))
-                    rings.outerRadius = outer;
+                    rings.outerRadius = (float) outer;
 
                 Color color(1.0f, 1.0f, 1.0f);
                 if (ringsData->getColor("Color", color))
