@@ -38,21 +38,21 @@ MultiResTexture::MultiResTexture(const std::string& source)
 }
 
 
-void MultiResTexture::setTexture(const string& source, bool compress)
+void MultiResTexture::setTexture(const string& source, unsigned int flags)
 {
     TextureManager* texMan = GetTextureManager();
-    tex[lores] = texMan->getHandle(TextureInfo(source, compress, lores));
-    tex[medres] = texMan->getHandle(TextureInfo(source, compress, medres));
-    tex[hires] = texMan->getHandle(TextureInfo(source, compress, hires));
+    tex[lores] = texMan->getHandle(TextureInfo(source, flags, lores));
+    tex[medres] = texMan->getHandle(TextureInfo(source, flags, medres));
+    tex[hires] = texMan->getHandle(TextureInfo(source, flags, hires));
 }
 
 
-void MultiResTexture::setTexture(const string& source, float height)
+void MultiResTexture::setTexture(const string& source, float height, unsigned int flags)
 {
     TextureManager* texMan = GetTextureManager();
-    tex[lores] = texMan->getHandle(TextureInfo(source, height, lores));
-    tex[medres] = texMan->getHandle(TextureInfo(source, height, medres));
-    tex[hires] = texMan->getHandle(TextureInfo(source, height, hires));
+    tex[lores] = texMan->getHandle(TextureInfo(source, height, flags, lores));
+    tex[medres] = texMan->getHandle(TextureInfo(source, height, flags, medres));
+    tex[hires] = texMan->getHandle(TextureInfo(source, height, flags, hires));
 }
 
 

@@ -12,6 +12,8 @@
 
 #include <celmath/vecmath.h>
 #include <celengine/mesh.h>
+#include <celengine/texture.h>
+
 
 class LODSphereMesh
 {
@@ -19,8 +21,10 @@ public:
     LODSphereMesh();
     ~LODSphereMesh();
 
-    void render(unsigned int attributes, const Frustum&, float lod);
-    void render(const Frustum&, float lod);
+    void render(unsigned int attributes, const Frustum&, float lod,
+                Texture* tex);
+    void render(const Frustum&, float lod,
+                Texture* tex);
 
  private:
     int renderPatches(int phi0, int theta0, 
@@ -41,6 +45,9 @@ public:
     float* tangents;
     int nIndices;
     unsigned short* indices;
+
+    Texture* texture0;
+    unsigned int subtexture0;
 };
 
 #endif // _LODSPHEREMESH_H_

@@ -171,6 +171,7 @@ class Renderer
         StarVertexBuffer(unsigned int _capacity);
         ~StarVertexBuffer();
         void render();
+        void finish();
         void addStar(const Point3f&, const Color&, float);
         void setBillboardOrientation(const Quatf&);
 

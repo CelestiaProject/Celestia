@@ -32,8 +32,8 @@ class MultiResTexture
                     ResourceHandle hiTex = InvalidResource);
     MultiResTexture(const std::string& source);
     ~MultiResTexture() {};
-    void setTexture(const std::string& source, bool compressed = false);
-    void setTexture(const std::string& source, float height);
+    void setTexture(const std::string& source, unsigned int flags = 0);
+    void setTexture(const std::string& source, float height, unsigned int flags);
     Texture* find(unsigned int resolution);
 
  public:
