@@ -2449,6 +2449,24 @@ static int observer_center(lua_State* l)
     return 0;
 }
 
+static int observer_centerorbit(lua_State* l)
+{
+    checkArgs(l, 2, 3, "Expected one or two arguments for to observer:center");
+
+    Observer* o = this_observer(l);
+    Selection* sel = to_object(l, 2);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First argument to observer:centerorbit must be an object");
+        lua_error(l);
+    }
+    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:centerorbit must be a number", 5.0);
+
+    o->centerSelectionCO(*sel, travelTime);
+
+    return 0;
+}
+
 static int observer_follow(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for observer:follow");
@@ -2812,6 +2830,7 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "setfov", observer_setfov);
     RegisterMethod(l, "rotate", observer_rotate);
     RegisterMethod(l, "center", observer_center);
+    RegisterMethod(l, "centerorbit", observer_centerorbit);
     RegisterMethod(l, "follow", observer_follow);
     RegisterMethod(l, "synchronous", observer_synchronous);
     RegisterMethod(l, "chase", observer_chase);
