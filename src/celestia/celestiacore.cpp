@@ -143,7 +143,8 @@ CelestiaCore::CelestiaCore() :
     recording(false),
     contextMenuCallback(NULL),
     logoTexture(NULL),
-    alerter(NULL)
+    alerter(NULL),
+    historyCurrent(0)
 {
     /* Get a renderer here so it may be queried for capabilities of the
        underlying engine even before rendering is enabled. It's initRenderer()
@@ -308,7 +309,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             Vec3f pickRay = renderer->getPickRay((int) x, (int) y);
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, pickTolerance);
-
+            addToHistory();
             sim->setSelection(newSel);
             if (!oldSel.empty() && oldSel == newSel)
                 sim->centerSelection();
@@ -537,8 +538,11 @@ void CelestiaCore::charEntered(char c)
             if (typedText != "")
             {
                 Selection sel = sim->findObjectFromPath(typedText);
-                if (!sel.empty())
+                if (!sel.empty()) 
+                {
+                    addToHistory();
                     sim->setSelection(sel);
+                }
                 typedText = "";
             }
             textEnterMode = false;
@@ -631,6 +635,7 @@ void CelestiaCore::charEntered(char c)
 
     case '\033': // Escape
         cancelScript();
+        addToHistory();
         if (textEnterMode == true)
         {
             textEnterMode = false;
@@ -678,10 +683,12 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '*':
+        addToHistory();
         sim->setObserverOrientation(Quatf(1));
         break;
 
     case ',':
+        addToHistory();
         if (renderer->getFieldOfView() > 0.01f)
 	{
 	    renderer->setFieldOfView(renderer->getFieldOfView() / 1.05f);
@@ -696,6 +703,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '.':
+        addToHistory();
         if (renderer->getFieldOfView() < 120.0f)
 	{
 	    renderer->setFieldOfView(renderer->getFieldOfView() * 1.05f);
@@ -715,6 +723,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '0':
+        addToHistory();
         sim->selectPlanet(-1);
         break;
 
@@ -727,6 +736,7 @@ void CelestiaCore::charEntered(char c)
     case '7':
     case '8':
     case '9':
+        addToHistory();
         sim->selectPlanet(c - '1');
         break;
 
@@ -746,11 +756,13 @@ void CelestiaCore::charEntered(char c)
         break;
         
     case 'C':
+        addToHistory();
         sim->centerSelection();
         break;
 
     case 'D':
-        if (runningScript == NULL && demoScript != NULL)
+       addToHistory();
+       if (runningScript == NULL && demoScript != NULL)
             runningScript = new Execution(*demoScript, *execEnv);
         break;
 
@@ -760,17 +772,20 @@ void CelestiaCore::charEntered(char c)
 	break;
 
     case 'F':
+        addToHistory();
         flash("Follow");
         sim->follow();
         break;
 
     case 'G':
+        addToHistory();
         if (sim->getFrame().coordSys == astro::Universal)
             sim->follow();
         sim->gotoSelection(5.0, Vec3f(0, 1, 0), astro::ObserverLocal);
         break;
 
     case 'H':
+        addToHistory();
         sim->selectStar(0);
         break;
 
@@ -780,6 +795,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'J':
+        addToHistory();
         sim->setTimeScale(-sim->getTimeScale());
         if (sim->getTimeScale() > 0)
             flash("Time: Forward");
@@ -788,6 +804,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'K':
+        addToHistory();
         {
             sim->setTimeScale(sim->getTimeScale() / fIncrementFactor);
             char buf[128];
@@ -797,6 +814,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'L':
+        addToHistory();
         if (sim->getTimeScale() < MaximumTimeRate)
         {
             sim->setTimeScale(sim->getTimeScale() * fIncrementFactor);
@@ -854,6 +872,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'T':
+        addToHistory();
         if (sim->getTrackedObject().empty())
             sim->setTrackedObject(sim->getSelection());
         else
@@ -880,16 +899,19 @@ void CelestiaCore::charEntered(char c)
 
     case 'Y':
         flash("Sync Orbit");
+        addToHistory();
         sim->geosynchronousFollow();
         break;
 
     case ':':
         flash("Lock");
+        addToHistory();
         sim->phaseLock();
         break;
 
     case '"':
         flash("Chase");
+        addToHistory();
         sim->chase();
         break;
 
@@ -908,6 +930,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '\\':
+        addToHistory();
         sim->setTimeScale(1.0);
         break;
 
@@ -960,6 +983,15 @@ void CelestiaCore::start(double t)
     // Set the simulation starting time to the current system time
     sim->setTime(t);
     sim->update(0.0);
+
+    if (startURL != "")
+        goToUrl(startURL);
+}
+
+
+void CelestiaCore::setStartURL(std::string url) {
+    startURL = url;
+    initScript =NULL;
 }
 
 
@@ -2163,3 +2195,75 @@ void CelestiaCore::notifyWatchers(int property)
     }
 }
 #endif
+
+
+void CelestiaCore::goToUrl(const std::string& urlStr)
+{
+    Url url(urlStr, this);
+    url.goTo();
+    notifyWatchers(RenderFlagsChanged|LabelFlagsChanged);
+}
+
+
+void CelestiaCore::addToHistory()
+{
+    Url url(this);
+    if (!history.empty() && historyCurrent < history.size() - 1)
+    {
+        // truncating history to current position
+        while (historyCurrent != history.size()-1)
+        {
+            history.pop_back();
+        }
+    }
+    history.push_back(url);
+    historyCurrent = history.size();
+    notifyWatchers(HistoryChanged);
+}
+
+
+void CelestiaCore::back()
+{
+    if (historyCurrent == 0) return;
+    if (historyCurrent == history.size())
+    {
+        addToHistory();
+        historyCurrent = history.size()-1;
+    }
+    historyCurrent--;
+    history[historyCurrent].goTo();
+    notifyWatchers(HistoryChanged);
+}
+
+
+void CelestiaCore::forward()
+{
+    if (historyCurrent == history.size()-1) return;
+    historyCurrent++;
+    history[historyCurrent].goTo();
+    notifyWatchers(HistoryChanged);
+}
+
+
+const std::vector<Url>& CelestiaCore::getHistory() const
+{
+    return history;
+}
+
+std::vector<Url>::size_type CelestiaCore::getHistoryCurrent() const
+{
+    return historyCurrent;
+}
+
+void CelestiaCore::setHistoryCurrent(std::vector<Url>::size_type curr)
+{
+    if (curr >= history.size()) return;
+    if (historyCurrent == history.size()) {
+        addToHistory();
+    }
+    historyCurrent = curr;
+    history[curr].goTo();
+    notifyWatchers(HistoryChanged);
+}
+
+
