@@ -225,9 +225,9 @@ static RotationElements CreateRotationElements(Hash* rotationData,
     rotationData->getNumber("Obliquity", obliquity);
     re.obliquity = degToRad(obliquity);
 
-    float axisLongitude = 0.0f;
-    rotationData->getNumber("LongOfRotationAxis", axisLongitude);
-    re.axisLongitude = degToRad(axisLongitude);
+    float ascendingNode = 0.0f;
+    rotationData->getNumber("EquatorAscendingNode", ascendingNode);
+    re.ascendingNode = degToRad(ascendingNode);
 
     float precessionRate = 0.0f;
     rotationData->getNumber("PrecessionRate", precessionRate);
@@ -521,13 +521,11 @@ bool LoadSolarSystemObjects(istream& in, Universe& universe)
 
         if (parentSystem != NULL)
         {
-#ifdef DEBUG
             if (parentSystem->find(name))
             {
                 DPRINTF(0, "Warning duplicate definition of %s %s!\n",
                         parentName.c_str(), name.c_str());
             }
-#endif // DEBUG
 
             Body* body = CreatePlanet(parentSystem, objectData, !orbitsPlanet);
             if (body != NULL)

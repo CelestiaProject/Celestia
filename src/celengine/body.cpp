@@ -23,7 +23,7 @@ RotationElements::RotationElements() :
     offset(0.0f),
     epoch(astro::J2000),
     obliquity(0.0f),
-    axisLongitude(0.0f),
+    ascendingNode(0.0f),
     precessionRate(0.0f)
 {
 }
@@ -237,13 +237,13 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
 // Get a matrix which converts from local to heliocentric coordinates
 Mat4d Body::getLocalToHeliocentric(double when) const
 {
-    double axisLongitude = (double) rotationElements.axisLongitude +
+    double ascendingNode = (double) rotationElements.ascendingNode +
         rotationElements.precessionRate * (when - astro::J2000);
 
     Point3d pos = orbit->positionAtTime(when);
     Mat4d frame = 
         Mat4d::xrotation(-rotationElements.obliquity) *
-        Mat4d::yrotation(-axisLongitude) *
+        Mat4d::yrotation(-ascendingNode) *
         Mat4d::translation(pos);
  
     // Recurse up the hierarchy . . .
@@ -263,11 +263,12 @@ Point3d Body::getHeliocentricPosition(double when) const
 
 Quatd Body::getEclipticalToEquatorial(double when) const
 {
-    double axisLongitude = (double) rotationElements.axisLongitude +
+    double ascendingNode = (double) rotationElements.ascendingNode +
         rotationElements.precessionRate * (when - astro::J2000);
 
-    Quatd q = Quatd::xrotation(-rotationElements.obliquity) *
-              Quatd::yrotation(-axisLongitude);
+    Quatd q =
+        Quatd::xrotation(-rotationElements.obliquity) *
+        Quatd::yrotation(-ascendingNode);
 
     // Recurse up the hierarchy . . .
     if (system != NULL && system->getPrimaryBody() != NULL)

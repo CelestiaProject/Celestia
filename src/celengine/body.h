@@ -60,8 +60,8 @@ class RotationElements
     float period;        // sidereal rotation period
     float offset;        // rotation at epoch
     double epoch;
-    float obliquity;     // tilt of rotation axis
-    float axisLongitude; // longitude of rot. axis projected onto orbital plane
+    float obliquity;     // tilt of rotation axis w.r.t. ecliptic
+    float ascendingNode; // long. of ascending node of equator on the ecliptic
     float precessionRate; // rate of precession of rotation axis in rads/day
 };
 
