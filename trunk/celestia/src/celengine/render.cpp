@@ -365,9 +365,11 @@ bool Renderer::init(int winWidth, int winHeight)
         }
 
         // Create the shadow mask texture
-        shadowMaskTexture = CreateProceduralTexture(128, 1, GL_RGBA,
-                                                    ShadowMaskTextureFunction());
-        shadowMaskTexture->bindName();
+        {
+            ShadowMaskTextureFunction func;
+            shadowMaskTexture = CreateProceduralTexture(128, 1, GL_RGBA, func);
+            shadowMaskTexture->bindName();
+        }
 
         starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg", 0));
         starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg", 0));
