@@ -21,7 +21,7 @@ AC_CANONICAL_SYSTEM
 dnl Perform program name transformation
 AC_ARG_PROGRAM
 
-AM_INIT_AUTOMAKE(celestia, 1.3.1)
+AM_INIT_AUTOMAKE(celestia, 1.3.2)
 AM_CONFIG_HEADER(config.h)
 
 dnl Check for compilers.  Set CFLAGS and CXXFLAGS to null if unset, so
