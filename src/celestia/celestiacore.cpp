@@ -1031,7 +1031,6 @@ void CelestiaCore::charEntered(char c)
 
 void CelestiaCore::charEntered(const char *c_p)
 {
-    PlanetarySystem* system;
     Observer* observer = sim->getActiveObserver();
 
     char c = *c_p;
@@ -1053,7 +1052,7 @@ void CelestiaCore::charEntered(const char *c_p)
         if ( wc && (iswalpha(wc) || iswdigit(wc) || iswpunct(c) || c == ' ') )
         {
             typedText += std::string(c_p);
-            typedTextCompletion = sim->getObjectCompletion(typedText, renderer->getLabelMode() & Renderer::LocationLabels);
+            typedTextCompletion = sim->getObjectCompletion(typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
             typedTextCompletionIdx = -1;
 #ifdef AUTO_COMPLETION
             if (typedTextCompletion.size() == 1)
@@ -1084,7 +1083,7 @@ void CelestiaCore::charEntered(const char *c_p)
                     typedText = string(typedText, 0, typedText.size() - 1);
                     if (typedText.size() > 0)
                     {
-                        typedTextCompletion = sim->getObjectCompletion(typedText, renderer->getLabelMode() & Renderer::LocationLabels);
+                        typedTextCompletion = sim->getObjectCompletion(typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
                     } else {
                         typedTextCompletion.clear();
                     }
@@ -2445,18 +2444,18 @@ static void displayAngle(Overlay& overlay, double angle)
 }
 
 
-static void displayApparentSize(Overlay& overlay,
+static void displayApparentDiameter(Overlay& overlay,
                                 double radius, double distance)
 {
     if (distance > radius)
     {
-        double arcSize = radToDeg(atan(radius / distance) * 2.0);
+        double arcSize = radToDeg(asin(radius / distance) * 2.0);
 
-        // Only display the arc size if it's less than 90 degrees and greater
+        // Only display the arc size if it's less than 160 degrees and greater
         // than one second--otherwise, it's probably not interesting data.
-        if (arcSize < 90.0 && arcSize > 1.0 / 3600.0)
+        if (arcSize < 160.0 arcSize > 1.0 / 3600.0)
         {
-            overlay << "Apparent size: ";
+            overlay << "Apparent diameter: ";
             displayAngle(overlay, arcSize);
             overlay << '\n';
         }
@@ -2551,8 +2550,8 @@ static void displayStarInfo(Overlay& overlay,
     overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
     overlay << "Class: " << star.getStellarClass() << '\n';
 
-    displayApparentSize(overlay, star.getRadius(),
-                        astro::lightYearsToKilometers(distance));
+    displayApparentDiameter(overlay, star.getRadius(),
+                            astro::lightYearsToKilometers(distance));
 
     if (detail > 1)
     {
@@ -2589,7 +2588,7 @@ static void displayPlanetInfo(Overlay& overlay,
     displayDistance(overlay, distance);
     overlay << '\n';
 
-    displayApparentSize(overlay, body.getRadius(), kmDistance);
+    displayApparentDiameter(overlay, body.getRadius(), kmDistance);
 
     if (detail > 1)
     {
@@ -3034,8 +3033,8 @@ void CelestiaCore::renderOverlay()
                 *overlay << "Distance: ";
                 displayDistance(*overlay, v.length() * 1e-6);
                 *overlay << '\n';
-                displayApparentSize(*overlay, sel.deepsky()->getRadius(),
-                                    v.length() * 1e-6);
+                displayApparentDiameter(*overlay, sel.deepsky()->getRadius(),
+                                        v.length() * 1e-6);
 #if 0
                 displayGalaxyInfo(*overlay, *sel.galaxy,
                                   v.length() * 1e-6);
