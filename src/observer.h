@@ -40,6 +40,7 @@ public:
 
     Quatf         getOrientation() const;
     void          setOrientation(const Quatf&);
+    void          setOrientation(const Quatd&);
     Vec3d         getVelocity() const;
     void          setVelocity(const Vec3d&);
 
