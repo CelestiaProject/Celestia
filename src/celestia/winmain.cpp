@@ -3460,7 +3460,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         switch (LOWORD(wParam))
         {
         case ID_NAVIGATION_CENTER:
-            appCore->charEntered('C');
+            appCore->charEntered('c');
             break;
         case ID_NAVIGATION_GOTO:
             appCore->charEntered('G');
