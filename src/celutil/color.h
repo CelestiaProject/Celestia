@@ -36,6 +36,9 @@ class Color
     friend bool operator!=(Color, Color);
     friend Color operator*(Color, Color);
 
+    static const Color Black;
+    static const Color White;
+
  private:
     unsigned char c[4];
 };
