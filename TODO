@@ -4,20 +4,16 @@ Celestia To Do List
 USER INTERFACE
 * More star label modes--nearest stars, brightest stars
 * Make picking more intelligent
-  * Picking a distant planet is likely to select one of its satellites
   * Make picking more accurate for non-spherical bodies
   * Make galaxies pickable
-* Add more intuitive free flight controls
 * Views of planet and satellite orbits
   * Add satellite orbits
   * User control over which orbits should be displayed
-  * Orbits should be occluded by planets
 * Next/prev body commands
 * Add preferences for text color to config file
 * Dialog box for displaying detailed information about a star or planet
 * Create a manual
 * Star browser: flag stars with planetary systems
-* Star browser: allow user to select how many stars to show
 * Solar system browser: add icons
 * Popup H-R diagram window
 * Use a slider widget for controlling ambient light level
@@ -39,9 +35,7 @@ VISUALS
 POLISH
 * Tutorial mode
 * Add a flashy intro screen
-* Add screen shot feature
 * Preload some textures to avoid loading delay
-* Use antialiased fonts
 * Use Greek letters in Bayer designations
 * Make the demo loop
 * Add a demo mode that visits random targets
@@ -51,7 +45,6 @@ POLISH
 SIMULATION ACCURACY
 * Fix apparent magnitude calculation for planets
 * Figure out a way to estimate gas giant's radius given its mass
-* Calculate the eccentric anomaly for orbits instead of just using the mean anomaly
 * Obtain and read spacecraft ephemerii, so Galileo, Cassini, etc. appear in the proper places
 * Use a better estimate for star radius
 * Make some attempt at calculating stellar rotation rates
