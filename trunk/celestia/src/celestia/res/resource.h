@@ -29,7 +29,6 @@
 #define IDD_RENAME_LOCATION             130
 #define IDB_FOLDERCLOSED                132
 #define IDB_FOLDEROPENED                134
-#define IDB_FOLDERROOT                  135
 #define IDB_LOCATION                    136
 #define IDB_CAMERA                      137
 #define IDC_FINDOBJECT_EDIT             1001
