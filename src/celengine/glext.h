@@ -1,7 +1,7 @@
 /* glext.h */
 
-#ifndef _GLEXT_H_
-#define _GLEXT_H_
+#ifndef _CELENGINE_GLEXT_H_
+#define _CELENGINE_GLEXT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,16 +13,19 @@ extern "C" {
 
 /* EXT_rescale_normal defines from <GL/gl.h> */
 #ifndef GL_EXT_rescale_normal
+#define GL_EXT_rescale_normal 1
 #define GL_RESCALE_NORMAL_EXT               0x803A
 #endif
 
 /* EXT_texture_edge_clamp defines from <GL/gl.h> */
 #ifndef GL_EXT_texture_edge_clamp
+#define GL_EXT_texture_edge_clamp 1
 #define GL_CLAMP_TO_EDGE_EXT                ((GLenum) 0x812F)
 #endif
 
 /* EXT_bgra defines from <GL/gl.h> */
 #ifndef GL_EXT_bgra
+#define GL_EXT_bgra 1
 #define GL_BGR_EXT                          0x80E0
 #define GL_BGRA_EXT                         0x80E1
 #endif
@@ -42,6 +45,7 @@ extern "C" {
 #define GL_TEXTURE_COMPRESSED_ARB         0x86A1
 #define GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB 0x86A2
 #define GL_COMPRESSED_TEXTURE_FORMATS_ARB 0x86A3
+#endif
 
 typedef void (APIENTRY * PFNGLCOMPRESSEDTEXIMAGE3DARBPROC) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data);
 typedef void (APIENTRY * PFNGLCOMPRESSEDTEXIMAGE2DARBPROC) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const GLvoid *data);
@@ -50,17 +54,16 @@ typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC) (GLenum target, GL
 typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *data);
 typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC) (GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const GLvoid *data);
 typedef void (APIENTRY * PFNGLGETCOMPRESSEDTEXIMAGEARBPROC) (GLenum target, GLint level, void *img);
-
 extern PFNGLCOMPRESSEDTEXIMAGE3DARBPROC glCompressedTexImage3DARB;
 extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB;
 extern PFNGLCOMPRESSEDTEXIMAGE1DARBPROC glCompressedTexImage1DARB;
 extern PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC glCompressedTexSubImage3DARB;
 extern PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC glCompressedTexSubImage2DARB;
 extern PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC glCompressedTexSubImage1DARB;
-#endif
 
 /* GL_EXT_texture_compression_s3tc */
 #ifndef GL_EXT_texture_compression_s3tc
+#define GL_EXT_texture_compression_s3tc 1
 #define GL_COMPRESSED_RGB_S3TC_DXT1_EXT   0x83F0
 #define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT  0x83F1
 #define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT  0x83F2
@@ -69,6 +72,7 @@ extern PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC glCompressedTexSubImage1DARB;
 
 /* ARB_multitexture defines and prototypes from <GL/gl.h> */
 #ifndef GL_ARB_multitexture
+#define GL_ARB_multitexture 1
 #define GL_ACTIVE_TEXTURE_ARB               0x84E0
 #define GL_CLIENT_ACTIVE_TEXTURE_ARB        0x84E1
 #define GL_MAX_TEXTURE_UNITS_ARB            0x84E2
@@ -76,6 +80,8 @@ extern PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC glCompressedTexSubImage1DARB;
 #define GL_TEXTURE1_ARB                     0x84C1
 #define GL_TEXTURE2_ARB                     0x84C2
 #define GL_TEXTURE3_ARB                     0x84C3
+#endif
+
 typedef void (APIENTRY * PFNGLMULTITEXCOORD1DARBPROC) (GLenum target, GLdouble s);
 typedef void (APIENTRY * PFNGLMULTITEXCOORD1DVARBPROC) (GLenum target, const GLdouble *v);
 typedef void (APIENTRY * PFNGLMULTITEXCOORD1FARBPROC) (GLenum target, GLfloat s);
@@ -117,7 +123,7 @@ extern PFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB;
 extern PFNGLMULTITEXCOORD3FVARBPROC glMultiTexCoord3fvARB;
 extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
 extern PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
-#endif
+
 
 /* EXT_texture_cube_map defines from <GL/gl.h> */
 #if !(defined( GL_EXT_texture_cube_map) || defined(__glext_h_))
@@ -255,6 +261,7 @@ extern PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
 #define GL_MAX_GENERAL_COMBINERS_NV         ((GLenum) 0x854D)
 #define GL_NUM_GENERAL_COMBINERS_NV         ((GLenum) 0x854E)
 #define GL_COLOR_SUM_CLAMP_NV               ((GLenum) 0x854F)
+#endif
 
 typedef void (APIENTRY * PFNGLCOMBINERPARAMETERFVNVPROC) (GLenum pname, const GLfloat *params);
 typedef void (APIENTRY * PFNGLCOMBINERPARAMETERFNVPROC) (GLenum pname, GLfloat param);
@@ -284,8 +291,6 @@ extern PFNGLGETCOMBINEROUTPUTPARAMETERFVNVPROC glGetCombinerOutputParameterfvNV;
 extern PFNGLGETCOMBINEROUTPUTPARAMETERIVNVPROC glGetCombinerOutputParameterivNV;
 extern PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC glGetFinalCombinerInputParameterfvNV;
 extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC glGetFinalCombinerInputParameterivNV;
-
-#endif
 
 
 /* NV_register_combiners2 */
@@ -463,6 +468,7 @@ extern PFNGLGETCOMBINERSTAGEPARAMETERFVNVPROC glGetCombinerStageParameterfvNV;
 #define GL_MAP2_VERTEX_ATTRIB13_4_NV      0x867D
 #define GL_MAP2_VERTEX_ATTRIB14_4_NV      0x867E
 #define GL_MAP2_VERTEX_ATTRIB15_4_NV      0x867F
+#endif
 
 typedef GLboolean (APIENTRY * PFNGLAREPROGRAMSRESIDENTNVPROC) (GLsizei n, const GLuint *programs, GLboolean *residences);
 typedef void (APIENTRY * PFNGLBINDPROGRAMNVPROC) (GLenum target, GLuint id);
@@ -484,8 +490,8 @@ typedef void (APIENTRY * PFNGLPROGRAMPARAMETER4DNVPROC) (GLenum target, GLuint i
 typedef void (APIENTRY * PFNGLPROGRAMPARAMETER4DVNVPROC) (GLenum target, GLuint index, const GLdouble *v);
 typedef void (APIENTRY * PFNGLPROGRAMPARAMETER4FNVPROC) (GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 typedef void (APIENTRY * PFNGLPROGRAMPARAMETER4FVNVPROC) (GLenum target, GLuint index, const GLfloat *v);
-typedef void (APIENTRY * PFNGLPROGRAMPARAMETERS4DVNVPROC) (GLenum target, GLuint index, GLsizei count, const GLdouble *v);
-typedef void (APIENTRY * PFNGLPROGRAMPARAMETERS4FVNVPROC) (GLenum target, GLuint index, GLsizei count, const GLfloat *v);
+typedef void (APIENTRY * PFNGLPROGRAMPARAMETERS4DVNVPROC) (GLenum target, GLuint index, GLuint count, const GLdouble *v);
+typedef void (APIENTRY * PFNGLPROGRAMPARAMETERS4FVNVPROC) (GLenum target, GLuint index, GLuint count, const GLfloat *v);
 typedef void (APIENTRY * PFNGLREQUESTRESIDENTPROGRAMSNVPROC) (GLsizei n, const GLuint *programs);
 typedef void (APIENTRY * PFNGLTRACKMATRIXNVPROC) (GLenum target, GLuint address, GLenum matrix, GLenum transform);
 typedef void (APIENTRY * PFNGLVERTEXATTRIBPOINTERNVPROC) (GLuint index, GLint fsize, GLenum type, GLsizei stride, const GLvoid *pointer);
@@ -592,9 +598,6 @@ extern PFNGLVERTEXATTRIBS4FVNVPROC glVertexAttribs4fvNV ;
 extern PFNGLVERTEXATTRIBS4SVNVPROC glVertexAttribs4svNV ;
 extern PFNGLVERTEXATTRIBS4UBVNVPROC glVertexAttribs4ubvNV ;
 
-#endif
-
-
 /* EXT_paletted_texture defines and prototypes from <GL/gl.h> */
 #ifndef GL_EXT_paletted_texture
 #define GL_COLOR_INDEX1_EXT               0x80E2
@@ -603,12 +606,12 @@ extern PFNGLVERTEXATTRIBS4UBVNVPROC glVertexAttribs4ubvNV ;
 #define GL_COLOR_INDEX8_EXT               0x80E5
 #define GL_COLOR_INDEX12_EXT              0x80E6
 #define GL_COLOR_INDEX16_EXT              0x80E7
-typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid * table);
+#endif
 
+typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid * table);
 /* EXT_paletted_texture command function pointers */
 extern PFNGLCOLORTABLEEXTPROC glColorTableEXT;
 
-#endif
 
 /* EXT_blend_minmax defines and prototypes from <GL/gl.h> */
 #ifndef GL_EXT_blend_minmax
@@ -670,4 +673,4 @@ extern void InitExtVertexProgram();
 }
 #endif
 
-#endif // _GLEXT_H_
+#endif // _CELENGINE_GLEXT_H_

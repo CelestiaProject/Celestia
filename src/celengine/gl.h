@@ -29,7 +29,9 @@
 
 #endif
 
+#define GL_ARB_multitexture
 #include <GL/gl.h>
+#undef GL_ARB_multitexture
 #include <GL/glu.h>
 
 #endif // _GL_H_

@@ -9,12 +9,13 @@
 
 #include <string.h>
 #include "gl.h"
-#include "glext.h"
 
 #ifndef _WIN32
 // Assume that this is a UNIX/X11 system if it's not Windows.
 #include "GL/glx.h"
 #endif
+
+#include "glext.h"
 
 // ARB_texture_compression
 PFNGLCOMPRESSEDTEXIMAGE3DARBPROC glCompressedTexImage3DARB;
@@ -25,14 +26,12 @@ PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC glCompressedTexSubImage2DARB;
 PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC glCompressedTexSubImage1DARB;
 
 // ARB_multitexture command function pointers
-#ifndef GL_ARB_multitexture
 PFNGLMULTITEXCOORD2IARBPROC glMultiTexCoord2iARB;
 PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
 PFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB;
 PFNGLMULTITEXCOORD3FVARBPROC glMultiTexCoord3fvARB;
 PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
 PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
-#endif
 
 // NV_register_combiners command function pointers
 PFNGLCOMBINERPARAMETERFVNVPROC glCombinerParameterfvNV;
@@ -49,7 +48,7 @@ PFNGLGETCOMBINEROUTPUTPARAMETERIVNVPROC glGetCombinerOutputParameterivNV;
 PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC glGetFinalCombinerInputParameterfvNV;
 PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC glGetFinalCombinerInputParameterivNV;
 
-// NV_register_combiners command function pointers
+// NV_register_combiners2 command function pointers
 PFNGLCOMBINERSTAGEPARAMETERFVNVPROC glCombinerStageParameterfvNV;
 PFNGLGETCOMBINERSTAGEPARAMETERFVNVPROC glGetCombinerStageParameterfvNV;
 
@@ -131,10 +130,21 @@ PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT;
 // extern void Alert(const char *szFormat, ...);
 
 #if defined(_WIN32)
+
 #define GET_GL_PROC_ADDRESS(name) wglGetProcAddress(name)
-#elif defined(GLX_ARB_get_proc_address)
+
+#else
+
+#ifdef GLX_VERSION_1_4
+extern "C" {
+extern void (*glXGetProcAddressARB(const GLubyte *procName))();
+}
+#define GET_GL_PROC_ADDRESS(name) glXGetProcAddressARB((GLubyte*) name)
+#else
 #define GET_GL_PROC_ADDRESS(name) glXGetProcAddressARB((GLubyte*) name)
 #endif
+
+#endif // defined(WIN32)
 
 
 void Alert(const char *szFormat, ...)
@@ -167,7 +177,7 @@ void InitExtMultiTexture()
 // ARB_texture_compression
 void InitExtTextureCompression()
 {
-#ifdef GET_GL_PROC_ADDRESS
+#if defined(GL_ARB_texture_compression) && defined(GET_GL_PROC_ADDRESS)
     glCompressedTexImage3DARB =
         (PFNGLCOMPRESSEDTEXIMAGE3DARBPROC)
         GET_GL_PROC_ADDRESS("glCompressedTexImage3DARB");
@@ -186,14 +196,14 @@ void InitExtTextureCompression()
     glCompressedTexSubImage1DARB =
         (PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC)
         GET_GL_PROC_ADDRESS("glCompressedTexSubImage1DARB");
-#endif // GET_GL_PROC_ADDRESS
+#endif // GL_ARB_texture_compression
 }
 
 
 // NV_register_combiners
 void InitExtRegisterCombiners()
 {
-#ifdef GET_GL_PROC_ADDRESS
+#if defined(GL_NV_register_combiners) && defined(GET_GL_PROC_ADDRESS)
   /* Retrieve all NV_register_combiners routines. */
   glCombinerParameterfvNV =
     (PFNGLCOMBINERPARAMETERFVNVPROC)
@@ -240,7 +250,7 @@ void InitExtRegisterCombiners()
 
 void InitExtRegisterCombiners2()
 {
-#ifdef GET_GL_PROC_ADDRESS
+#if defined(GL_NV_register_combiners2) && defined(GET_GL_PROC_ADDRESS)
     /* Retrieve all NV_register_combiners routines. */
     glCombinerStageParameterfvNV =
         (PFNGLCOMBINERSTAGEPARAMETERFVNVPROC)
@@ -254,7 +264,7 @@ void InitExtRegisterCombiners2()
 
 void InitExtVertexProgram()
 {
-#ifdef GET_GL_PROC_ADDRESS
+#if defined(GL_NV_vertex_program) && defined(GET_GL_PROC_ADDRESS)
     glAreProgramsResidentNV =
         (PFNGLAREPROGRAMSRESIDENTNVPROC)
         GET_GL_PROC_ADDRESS("glAreProgramsResidentNV");
@@ -450,17 +460,17 @@ void InitExtVertexProgram()
 
 void InitExtPalettedTexture()
 {
-#ifdef GET_GL_PROC_ADDRESS
+#if defined(GL_EXT_paletted_texture) && defined(GET_GL_PROC_ADDRESS)
     glColorTableEXT = (PFNGLCOLORTABLEEXTPROC) GET_GL_PROC_ADDRESS("glColorTableEXT");
-#endif // _GET_GL_PROC_ADDRESS
+#endif
 }
 
 
 void InitExtBlendMinmax()
 {
-#ifdef GET_GL_PROC_ADDRESS
+#if defined(GL_EXT_blend_minmax) && defined(GET_GL_PROC_ADDRESS)
     glBlendEquationEXT = (PFNGLBLENDEQUATIONEXTPROC) GET_GL_PROC_ADDRESS("glBlendEquationEXT");
-#endif // _GET_GL_PROC_ADDRESS
+#endif
 }
 
 
