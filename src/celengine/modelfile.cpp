@@ -77,6 +77,15 @@ defined here--they have the obvious definitions.
 */
 
 
+// Material default values
+static Color DefaultDiffuse(0.0f, 0.0f, 0.0f);
+static Color DefaultSpecular(0.0f, 0.0f, 0.0f);
+static Color DefaultEmissive(0.0f, 0.0f, 0.0f);
+static float DefaultSpecularPower = 1.0f;
+static float DefaultOpacity = 1.0f;
+
+
+
 class BinaryModelLoader : public ModelLoader
 {
 public:
@@ -107,6 +116,24 @@ public:
 
 private:
     Tokenizer tok;
+};
+
+
+class AsciiModelWriter : public ModelWriter
+{
+public:
+    AsciiModelWriter(ostream&);
+    ~AsciiModelWriter();
+
+    virtual bool write(const Model&);
+
+private:
+    void writeMesh(const Mesh&);
+    void writeMaterial(const Mesh::Material&);
+    void writeGroup(const Mesh::PrimitiveGroup&);
+    void writeVertexDescription(const Mesh::VertexDescription&);
+    
+    ostream& out;
 };
 
 
@@ -228,11 +255,11 @@ AsciiModelLoader::loadMaterial()
 
     Mesh::Material* material = new Mesh::Material();
 
-    material->diffuse = Color(0.0f, 0.0f, 0.0f);
-    material->specular = Color(0.0f, 0.0f, 0.0f);
-    material->emissive = Color(0.0f, 0.0f, 0.0f);
-    material->specularPower = 1.0f;
-    material->opacity = 1.0f;
+    material->diffuse = DefaultDiffuse;
+    material->specular = DefaultSpecular;
+    material->emissive = DefaultEmissive;
+    material->specularPower = DefaultSpecularPower;
+    material->opacity = DefaultOpacity;
 
     while (tok.nextToken() == Tokenizer::TokenName &&
            tok.getNameValue() != "end_material")
@@ -481,7 +508,7 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
             else
             {
                 for (int k = 0; k < readCount; k++)
-                    reinterpret_cast<float*>(vertexData + base)[k] = data[k];
+                    reinterpret_cast<float*>(vertexData + base)[k] = (float) data[k];
             }
         }
     }
@@ -676,4 +703,132 @@ BinaryModelLoader::load()
 {
     // TODO: Binary model loading not yet implemented
     return NULL;
+}
+
+
+
+AsciiModelWriter::AsciiModelWriter(ostream& _out) :
+    out(_out)
+{
+}
+
+
+AsciiModelWriter::~AsciiModelWriter()
+{
+}
+
+
+bool
+AsciiModelWriter::write(const Model& model)
+{
+    out << CEL_MODEL_HEADER_ASCII << "\n\n";
+
+    for (uint32 matIndex = 0; matIndex++; model.getMaterial(matIndex))
+    {
+        writeMaterial(*model.getMaterial(matIndex));
+        out << '\n';
+    }
+
+    for (uint32 meshIndex = 0; meshIndex++; model.getMesh(meshIndex))
+    {
+        writeMesh(*model.getMesh(meshIndex));
+        out << '\n';
+    }
+
+    return true;
+}
+
+
+void
+AsciiModelWriter::writeGroup(const Mesh::PrimitiveGroup& group)
+{
+    switch (group.prim)
+    {
+    case Mesh::TriList:
+        cout << "trilist"; break;
+    case Mesh::TriStrip:
+        cout << "tristrip"; break;
+    case Mesh::TriFan:
+        cout << "trifan"; break;
+    case Mesh::LineList:
+        cout << "linelist"; break;
+    case Mesh::LineStrip:
+        cout << "linestrip"; break;
+    case Mesh::PointList:
+        cout << "points"; break;
+    default:
+        return;
+    }
+
+    cout << ' ' << group.materialIndex << ' ' << group.nIndices << '\n';
+
+    // Print the indices, twelve per line
+    for (uint32 i = 0; i < group.nIndices; i++)
+    {
+        cout << group.indices[i];
+        if (i % 12 == 11 || i == group.nIndices - 1)
+            cout << '\n';
+        else
+            cout << ' ';
+    }
+}
+
+
+void
+AsciiModelWriter::writeMesh(const Mesh& mesh)
+{
+    out << "mesh\n";
+
+    writeVertexDescription(*mesh.getVertexDescription());
+    out << '\n';
+
+    for (uint32 groupIndex = 0; groupIndex++; mesh.getGroup(groupIndex))
+    {
+        writeGroup(*mesh.getGroup(groupIndex));
+        out << '\n';
+    }
+}
+
+
+void
+AsciiModelWriter::writeVertexDescription(const Mesh::VertexDescription& desc)
+{
+}
+
+
+void
+AsciiModelWriter::writeMaterial(const Mesh::Material& material)
+{
+    out << "material\n";
+    if (material.diffuse != DefaultDiffuse)
+    {
+        cout << "diffuse " <<
+            material.diffuse.red() << ' ' <<
+            material.diffuse.green() << ' ' <<
+            material.diffuse.blue() << '\n';
+    }
+
+    if (material.emissive != DefaultEmissive)
+    {
+        cout << "emissive " <<
+            material.emissive.red() << ' ' <<
+            material.emissive.green() << ' ' <<
+            material.emissive.blue() << '\n';
+    }
+
+    if (material.specular != DefaultSpecular)
+    {
+        cout << "specular " <<
+            material.specular.red() << ' ' <<
+            material.specular.green() << ' ' <<
+            material.specular.blue() << '\n';
+    }
+
+    if (material.specularPower != DefaultSpecularPower)
+        cout << "specpower " << material.specularPower << '\n';
+
+    if (material.opacity != DefaultOpacity)
+        cout << "opacity " << material.opacity << '\n';
+
+    out << "end_material";
 }

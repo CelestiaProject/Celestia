@@ -41,8 +41,19 @@ class ModelLoader
 };
 
 
+class ModelWriter
+{
+ public:
+    virtual ~ModelWriter() {};
+
+    virtual bool write(const Model&) = 0;
+};
+
+
 
 Model* LoadModel(std::istream&);
 Model* LoadModel(std::istream& in, const std::string& texPath);
+
+bool SaveModelAscii(const Model* model, std::ostream& out);
 
 #endif // !_CELMESH_MODEL_H_
