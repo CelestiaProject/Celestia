@@ -3,10 +3,6 @@
 #ifndef _CELENGINE_GLEXT_H_
 #define _CELENGINE_GLEXT_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef _WIN32
 #define APIENTRY
 #endif
@@ -951,9 +947,5 @@ extern void InitExtension(const char* ext);
 extern bool ExtensionSupported(char *ext);
 
 
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // _CELENGINE_GLEXT_H_
