@@ -192,7 +192,7 @@ static float bmag_correctionM[3][10] =
     // Lum class V (main sequence)
     {
         -1.38f, -1.62f, -1.89f, -2.15f, -2.38f,
-        -2.73f, -3.21f, -3.46f, -4.10f, -4.10f,
+        -2.73f, -3.21f, -3.46f, -4.10f, -4.40f,
     },
     // Lum class III
     {
@@ -204,6 +204,84 @@ static float bmag_correctionM[3][10] =
         -1.29f, -1.38f, -1.62f, -2.13f, -2.75f,
         -3.47f, -3.90f, -3.90f, -3.90f, -3.90f,
     }
+};
+
+// Brown dwarf data from Grant Hutchison
+static float bmag_correctionL[10] =
+{ 
+    -4.6f, -4.9f, -5.0f, -5.2f, -5.4f, -5.9f, -6.1f, -6.7f, -7.4f, -8.2f,
+};
+
+static float bmag_correctionT[10] =
+{ 
+    -8.9f, -9.6f, -10.8f, -11.9f, -13.1f, -14.4f, -16.1f, -17.9f, -19.6f, -19.6f,
+};
+
+// Stellar rotation by spectral and luminosity class.
+// Tables from Grant Hutchison:
+// "Most data are from Lang's _Astrophysical Data: Planets and Stars_ (I
+// calculated from theoretical radii and observed rotation velocities), but
+// with some additional information gleaned from elsewhere.
+// A big scatter in rotation periods, of course, particularly in the K and
+// early M dwarfs. I'm not hugely happy with the supergiant and giant rotation
+// periods for K and M, either - they may be considerably slower yet, but it's
+// obviously difficult to come by the data when the rotation velocity is too
+// slow to obviously affect the spectra."
+//
+// I add missing values by interpolating linearly--certainly not the best
+// technique, but adequate for our purposes.  The rotation rate of the Sun
+// was used for spectral class G2.
+
+static float rotperiod_O[3][10] =
+{
+    { 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f },
+    { 6.3f, 6.3f, 6.3f, 6.3f, 6.3f, 6.3f, 6.3f, 6.3f, 6.3f, 6.3f },
+    { 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f },
+};
+
+static float rotperiod_B[3][10] =
+{
+    { 2.0f, 1.8f, 1.6f, 1.4f, 1.1f, 0.8f, 0.8f, 0.8f, 0.8f, 0.7f },
+    { 6.3f, 5.6f, 5.0f, 4.3f, 3.7f, 3.1f, 2.9f, 2.8f, 2.7f, 2.6f },
+    { 15.0f, 24.0f, 33.0f, 42.0f, 52.0f, 63.0f, 65.0f, 67.0f, 70.0f, 72.0f },
+};
+
+static float rotperiod_A[3][10] =
+{
+    { 0.7f, 0.7f, 0.6f, 0.6f, 0.5f, 0.5f, 0.5f, 0.6f, 0.6f, 0.7f },
+    { 2.5f, 2.3f, 2.1f, 1.9f, 1.7f, 1.6f, 1.6f, 1.7f, 1.7f, 1.8f },
+    { 75.0f, 77.0f, 80.0f, 82.0f, 85.0f, 87.0f, 95.0f, 104.0f, 115.0f, 125.0f },
+};
+
+static float rotperiod_F[3][10] =
+{
+    { 0.7f, 0.7f, 0.6f, 0.6f, 0.5f, 0.5f, 0.5f, 0.6f, 0.6f, 0.7f },
+    { 1.9f, 2.5f, 3.0f, 3.5f, 4.0f, 4.6f, 5.6f, 6.7f, 7.8f, 8.9f },
+    { 135.0f, 141.0f, 148.0f, 155.0f, 162.0f, 169.0f, 175.0f, 182.0f, 188.0f, 195.0f },
+};
+
+static float rotperiod_G[3][10] =
+{
+    { 11.1f, 18.2f, 25.4f, 24.7f, 24.0f, 23.3f, 23.0f, 22.7f, 22.3f, 21.9f },
+    { 10.0f, 13.0f, 16.0f, 19.0f, 22.0f, 25.0f, 28.0f, 31.0f, 33.0f, 35.0f },
+    { 202.0f, 222.0f, 242.0f, 262.0f, 282.0f,
+      303.0f, 323.0f, 343.0f, 364.0f, 384.0f },
+};
+
+static float rotperiod_K[3][10] =
+{
+    { 21.5f, 20.8f, 20.2f, 19.4f, 18.8f, 18.2f, 17.6f, 17.0f, 16.4f, 15.8f },
+    { 38.0f, 43.0f, 48.0f, 53.0f, 58.0f, 63.0f, 71.0f, 78.0f, 86.0f, 93.0f },
+    { 405.0f, 526.0f, 648.0f, 769.0f, 891.0f,
+      1012.0f, 1063.0f, 1103.0f, 1154.0f, 1204.0f },
+};
+
+static float rotperiod_M[3][10] =
+{
+    { 15.2f, 12.4f, 9.6f, 6.8f, 4.0f, 1.3f, 1.0f, 0.7f, 0.4f, 0.2f },
+    { 101.0f, 101.0f, 101.0f, 101.0f, 101.0f, 101.0f, 101.0f, 101.0f, 101.0f, 101.0f },
+    { 1265.0f, 1265.0f, 1265.0f, 1265.0f, 1265.0f,
+      1265.0f, 1265.0f, 1265.0f, 1265.0f, 1265.0f },
 };
 
 
@@ -355,6 +433,14 @@ float Star::getBolometricMagnitude() const
             // Treat Wolf-Rayet stars like O
             bolometricCorrection = bmag_correctionO[lumIndex][specSubClass];
             break;
+
+        // Brown dwarf types
+        case StellarClass::Spectral_L:
+            bolometricCorrection = bmag_correctionL[specSubClass];
+            break;
+        case StellarClass::Spectral_L:
+            bolometricCorrection = bmag_correctionL[specSubClass];
+            break;
         }
     }
     else if (stellarClass.getStarType() == StellarClass::WhiteDwarf)
@@ -370,13 +456,91 @@ float Star::getBolometricMagnitude() const
 }
 
 
+// Return the rotation period of the star in days.  For normal stars, we use
+// the rotation period tables defined above.
 float Star::getRotationPeriod() const
 {
-    // For now, just return the equatorial rotation period of the sun;
-    // because the sun is a gaseous body, it exhibits differential rotation,
-    // and the poles rotate considerably slower.
-    // TODO: Compute a number based on the luminosity and class of the star
-    return 25.4f;
+    float period = 1.0f;
+
+    if (stellarClass.getStarType() == StellarClass::NormalStar)
+    {
+        unsigned int specSubClass = stellarClass.getSpectralSubclass();
+        unsigned int lumIndex = 0;
+        
+        switch (stellarClass.getLuminosityClass())
+        {
+        case StellarClass::Lum_Ia0:
+        case StellarClass::Lum_Ia:
+        case StellarClass::Lum_Ib:
+        case StellarClass::Lum_II:
+            lumIndex = 2;
+            break;
+        case StellarClass::Lum_III:
+        case StellarClass::Lum_IV:
+            lumIndex = 1;
+            break;
+        case StellarClass::Lum_V:
+        case StellarClass::Lum_VI:
+            lumIndex = 0;
+            break;
+        }
+
+        switch (stellarClass.getSpectralClass())
+        {
+        case StellarClass::Spectral_O:
+            period = rotperiod_O[lumIndex][specSubClass];
+            break;
+        case StellarClass::Spectral_B:
+            period = rotperiod_B[lumIndex][specSubClass];
+            break;
+        case StellarClass::Spectral_Unknown:
+        case StellarClass::Spectral_A:
+            period = rotperiod_A[lumIndex][specSubClass];
+            break;
+        case StellarClass::Spectral_F:
+            period = rotperiod_F[lumIndex][specSubClass];
+            break;
+        case StellarClass::Spectral_G:
+            period = rotperiod_G[lumIndex][specSubClass];
+            break;
+        case StellarClass::Spectral_K:
+            period = rotperiod_K[lumIndex][specSubClass];
+            break;
+        case StellarClass::Spectral_M:
+            period = rotperiod_M[lumIndex][specSubClass];
+            break;
+
+        case StellarClass::Spectral_R:
+        case StellarClass::Spectral_S:
+        case StellarClass::Spectral_N:
+            period = rotperiod_M[lumIndex][specSubClass];
+            break;
+
+        case StellarClass::Spectral_WC:
+        case StellarClass::Spectral_WN:
+            period = rotperiod_O[lumIndex][specSubClass];
+            break;
+
+        case StellarClass::Spectral_L:
+        case StellarClass::Spectral_T:
+            // Assume that brown dwarfs are fast rotators like late M dwarfs
+            period = 0.2f;
+            break;
+        }
+    }
+    else if (stellarClass.getStarType() == StellarClass::WhiteDwarf)
+    {
+        // Assign white dwarfs a rotation period of half an hour; very
+        // rough, as white rotation rates vary a lot.
+        return 1.0f / 48.0f;
+    }
+    else if (stellarClass.getStarType() == StellarClass::NeutronStar)
+    {
+        // Let all neutron stars have a rotation period of one second
+        return 1.0f / 86400.0f;
+    }
+
+    return period;
 }
 
 
