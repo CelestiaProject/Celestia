@@ -115,6 +115,7 @@ class Renderer
     void clearLabelledStars();
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
+    float getMinimumOrbitSize() const;
     void setMinimumOrbitSize(float);
     float getMinimumFeatureSize() const;
     void setMinimumFeatureSize(float);
