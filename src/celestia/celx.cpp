@@ -595,6 +595,7 @@ bool LuaState::charEntered(const char* c_p)
 {
     if (ioMode == Asking && getTime() > timeout)
     {
+        int stackTop = lua_gettop(costate);
         if (strcmp(c_p, "y") == 0)
         {
             luaopen_io(costate);
@@ -628,7 +629,7 @@ bool LuaState::charEntered(const char* c_p)
         {
             cerr << "Oops, expected savedrenderflags to be userdata\n";
         }
-        lua_pop(state,1);
+        lua_settop(state,stackTop);
         return true;
     }
     int stack_top = lua_gettop(costate);
@@ -720,6 +721,13 @@ int LuaState::resume()
     }
     else
     {
+        if (ioMode == Asking)
+        {
+            // timeout now is used to first only display warning, and 1s
+            // later allow response to avoid accidental activation
+            timeout = getTime() + 1.0;
+        }
+
         return nArgs; // arguments from yield
     }
 }
@@ -770,7 +778,6 @@ bool LuaState::tick(double dt)
         lua_gettable(state, LUA_REGISTRYINDEX);
         if (lua_isnil(state, -1))
         {
-            cerr << "renderflags not found, saving\n";
             lua_pushstring(state, "celestia-savedrenderflags");
             int* savedrenderflags = static_cast<int*>(lua_newuserdata(state, sizeof(int)));
             *savedrenderflags = appCore->getRenderer()->getRenderFlags();
@@ -844,11 +851,21 @@ void LuaState::requestIO()
     // disable keyboard again.
     if (ioMode == NoIO)
     {
-        ioMode = Asking;
-    
-        // timeout now is used to first only display warning, and 1s
-        // later allow response to avoid accidental activation
-        timeout = getTime() + 1.0;
+        CelestiaCore* appCore = getAppCore(state, AllErrors);
+        string policy = appCore->getConfig()->scriptSystemAccessPolicy;
+        if (policy == "allow")
+        {
+            luaopen_io(costate);
+            ioMode = IOAllowed;
+        }
+        else if (policy == "deny")
+        {
+            ioMode = IODenied;
+        }
+        else
+        {
+            ioMode = Asking;
+        }
     }
 }
 
@@ -4427,7 +4444,8 @@ static int celestia_createcelscript(lua_State* l)
 
 static int celestia_requestsystemaccess(lua_State* l)
 {
-    checkArgs(l, 1, 1, "Need one argument for celestia:createcelscript()");
+    // ignore possible argument for future extensions
+    checkArgs(l, 1, 2, "No argument expected for celestia:requestsystemaccess()");
     this_celestia(l);
     LuaState* luastate = getLuaStateObject(l);
     luastate->requestIO();
