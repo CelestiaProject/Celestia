@@ -43,7 +43,7 @@ CommandSelect::~CommandSelect()
 
 void CommandSelect::process(ExecutionEnvironment& env)
 {
-    Selection sel = env.getSimulation()->findObject(target);
+    Selection sel = env.getSimulation()->findObjectFromPath(target);
     env.getSimulation()->setSelection(sel);
 }
 
@@ -96,6 +96,20 @@ CommandFollow::CommandFollow()
 void CommandFollow::process(ExecutionEnvironment& env)
 {
     env.getSimulation()->follow();
+}
+
+
+////////////////
+// Synchronous command: maintain the current position relative to the
+// surface of the currently selected object.
+
+CommandSynchronous::CommandSynchronous()
+{
+}
+
+void CommandSynchronous::process(ExecutionEnvironment& env)
+{
+    env.getSimulation()->geosynchronousFollow();
 }
 
 
