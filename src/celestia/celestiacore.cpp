@@ -2472,6 +2472,10 @@ void CelestiaCore::showText(string s,
     messageDuration = duration;
 }
 
+int CelestiaCore::getTextWidth(string s) const
+{
+    return titleFont->getWidth(s);
+}
 
 static FormattedNumber SigDigitNum(double v, int digits)
 {

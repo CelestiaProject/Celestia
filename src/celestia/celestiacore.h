@@ -222,6 +222,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
                   int horig = 0, int vorig = 0,
                   int hoff = 0, int voff = 0, 
                   double duration = 1.0e9);
+    int getTextWidth(string s) const;
 
     void readFavoritesFile();
     void writeFavoritesFile();
