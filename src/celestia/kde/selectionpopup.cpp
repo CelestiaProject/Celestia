@@ -84,7 +84,7 @@ void SelectionPopup::init()
         o << buff << "\n";
 
         o << i18n("Class: ");
-        sprintf(buff, "%s", sel.star()->getStellarClass().str().c_str());
+        sprintf(buff, "%s", sel.star()->getSpectralType());
         o << buff << "\n";
 
         o << i18n("Surface Temp: ");

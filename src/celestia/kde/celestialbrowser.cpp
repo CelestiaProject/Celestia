@@ -134,8 +134,7 @@ void CelestialBrowser::slotRefresh()
         sprintf(buf, " %.2f ", star->getAbsoluteMagnitude());
         QString absMag(buf);
 
-        star->getStellarClass().str(buf, sizeof buf);
-        QString starClass(buf);
+        QString starClass(star->getSpectralType());
 
         CelListViewItem *starItem = new CelListViewItem(listStars, name,
                                     QString::fromUtf8(ReplaceGreekLetterAbbr(name.latin1()).c_str()), dist, appMag, absMag, starClass);
