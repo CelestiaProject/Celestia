@@ -10,6 +10,7 @@
 #import <Cocoa/Cocoa.h>
 #import "CelestiaController.h"
 #import "FavoritesDrawerController.h"
+#import "CGLInfo.h"
 
 @implementation CelestiaController
 
@@ -112,6 +113,9 @@
     [menuCallback setSelector:@selector(synchronizeFavoritesMenu)];
     [menuCallback setTarget:favoritesDrawerController];
     [[CelestiaFavorites sharedFavorites] setSynchronize:menuCallback];
+    [[CelestiaFavorites sharedFavorites] synchronize];
+    // DEBUG
+    NSLog(@"%@",[CGLInfo displayDescriptions]);
 }
 
 - (void)dealloc
