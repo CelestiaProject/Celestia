@@ -420,8 +420,7 @@ void Simulation::update(double dt)
     if (!trackObject.empty())
     {
         Vec3f up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
-        Vec3d vn = getSelectionPosition(trackObject, simTime) -
-            observer.getPosition();
+        Vec3d vn = trackObject.getPosition(simTime) - observer.getPosition();
         Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
         observer.setOrientation(lookAt(Point3f(0, 0, 0), to, up));
     }
@@ -771,7 +770,7 @@ void Simulation::computeGotoParameters(Selection& destination,
                                        Vec3f up,
                                        astro::CoordinateSystem upFrame)
 {
-    UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
+    UniversalCoord targetPosition = selection.getPosition(simTime);
     Vec3d v = targetPosition - observer.getPosition();
     v.normalize();
 
@@ -825,7 +824,7 @@ void Simulation::computeCenterParameters(Selection& destination,
                                          JourneyParams& jparams,
                                          double centerTime)
 {
-    UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
+    UniversalCoord targetPosition = selection.getPosition(simTime);
 
     jparams.duration = centerTime;
     jparams.startTime = realTime;
@@ -924,7 +923,7 @@ void Simulation::orbit(Quatf q)
         // coordinates; in order to make this function work in all
         // frames of reference, it's important to work in frame
         // coordinates.
-        UniversalCoord focusPosition = getSelectionPosition(selection, simTime);
+        UniversalCoord focusPosition = selection.getPosition(simTime);
         focusPosition = fromUniversal(frame, RigidTransform(focusPosition), simTime).translation;
 
         // v = the vector from the observer's position to the focus
@@ -971,7 +970,7 @@ void Simulation::changeOrbitDistance(float d)
             setFrame(frame.coordSys, selection);
         }
 
-        UniversalCoord focusPosition = getSelectionPosition(selection, simTime);
+        UniversalCoord focusPosition = selection.getPosition(simTime);
         
         double size = getSelectionSize(selection);
 
@@ -1038,7 +1037,7 @@ void Simulation::gotoSelection(double gotoTime,
 {
     if (!selection.empty())
     {
-        UniversalCoord pos = getSelectionPosition(selection, simTime);
+        UniversalCoord pos = selection.getPosition(simTime);
         Vec3d v = pos - observer.getPosition();
         double distance = v.length();
         double maxOrbitDistance;
@@ -1072,7 +1071,7 @@ void Simulation::gotoSelection(double gotoTime,
 {
     if (!selection.empty())
     {
-        UniversalCoord pos = getSelectionPosition(selection, simTime);
+        UniversalCoord pos = selection.getPosition(simTime);
         Vec3d v = pos - observer.getPosition();
         v.normalize();
 

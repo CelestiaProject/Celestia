@@ -20,7 +20,8 @@ using namespace std;
 Universe::Universe() :
     starCatalog(NULL),
     solarSystemCatalog(NULL),
-    galaxyCatalog(NULL)
+    galaxyCatalog(NULL),
+    asterisms(NULL)
 {
 }
 
@@ -60,6 +61,17 @@ GalaxyList* Universe::getGalaxyCatalog() const
 void Universe::setGalaxyCatalog(GalaxyList* catalog)
 {
     galaxyCatalog = catalog;
+}
+
+
+AsterismList* Universe::getAsterisms() const
+{
+    return asterisms;
+}
+
+void Universe::setAsterisms(AsterismList* _asterisms)
+{
+    asterisms = _asterisms;
 }
 
 
@@ -163,7 +175,8 @@ bool ExactPlanetPickTraversal(Body* body, void* info)
 Selection Universe::pickPlanet(SolarSystem& solarSystem,
                                const UniversalCoord& origin,
                                const Vec3f& direction,
-                               double t)
+                               double when,
+                               float faintestMag)
 {
     PlanetPickInfo pickInfo;
 
@@ -174,7 +187,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     pickInfo.cosClosestAngle = -1.0f;
     pickInfo.closestDistance = 1.0e50;
     pickInfo.closestBody = NULL;
-    pickInfo.jd = t;
+    pickInfo.jd = when;
 
     // First see if there's a planet that the pick ray intersects.
     // Select the closest planet intersected.
@@ -198,9 +211,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
 }
 
 
-/*
- * StarPicker is a callback class for StarDatabase::findVisibleStars
- */
+// StarPicker is a callback class for StarDatabase::findVisibleStars
 class StarPicker : public StarHandler
 {
 public:
@@ -316,7 +327,8 @@ void CloseStarPicker::process(const Star& star,
 
 
 Selection Universe::pickStar(const UniversalCoord& origin,
-                             const Vec3f& direction)
+                             const Vec3f& direction,
+                             float faintestMag)
 {
     float angle = degToRad(0.5f);
 
@@ -336,7 +348,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
                                   (Point3f) origin,
                                   Quatf(1.0f), // observer.getOrientation(),
                                   angle, 1.0f,
-                                  faintestVisible);
+                                  faintestMag);
     if (picker.pickedStar != NULL)
         return Selection(const_cast<Star*>(picker.pickedStar));
     else
@@ -345,21 +357,23 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 
 
 Selection Universe::pick(const UniversalCoord& origin,
-                         const Vec3f& direction)
+                         const Vec3f& direction,
+                         double when,
+                         float faintestMag)
 {
     Selection sel;
 
-#if 0
+    SolarSystem* closestSolarSystem = getNearestSolarSystem(origin);
     if (closestSolarSystem != NULL)
     {
-        const Star* sun = closestSolarSystem->getPlanets()->getStar();
-        if (sun != NULL)
-            sel = pickPlanet(origin, direction, *closestSolarSystem, pickRay);
+        sel = pickPlanet(*closestSolarSystem,
+                         origin, direction,
+                         when,
+                         faintestMag);
     }
-#endif
 
     if (sel.empty())
-        sel = pickStar(origin, direction);
+        sel = pickStar(origin, direction, faintestMag);
 
     return sel;
 }
@@ -475,6 +489,6 @@ Selection Universe::findPath(const string& s,
 SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position)
 {
     ClosestStarFinder closestFinder(1.0f);
-    stardb->findCloseStars(closestFinder, (Point3f) position, 1.0f);
+    starCatalog->findCloseStars(closestFinder, (Point3f) position, 1.0f);
     return getSolarSystem(closestFinder.closestStar);
 }

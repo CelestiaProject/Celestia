@@ -16,7 +16,7 @@
 using namespace std;
 
 
-EllipticalOrbit::EllipticalOrbit(double _semiMajorAxis,
+EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
                                  double _eccentricity,
                                  double _inclination,
                                  double _ascendingNode,
@@ -24,7 +24,7 @@ EllipticalOrbit::EllipticalOrbit(double _semiMajorAxis,
                                  double _meanAnomalyAtEpoch,
                                  double _period,
                                  double _epoch) :
-    semiMajorAxis(_semiMajorAxis),
+    pericenterDistance(_pericenterDistance),
     eccentricity(_eccentricity),
     inclination(_inclination),
     ascendingNode(_ascendingNode),
@@ -84,49 +84,62 @@ struct SolveKeplerFunc2 : public unary_function<double, double>
 
 typedef pair<double, double> Solution;
 
-// Return the offset from the barycenter
+// Return the offset from the center
 Point3d EllipticalOrbit::positionAtTime(double t) const
 {
     t = t - epoch;
     double meanMotion = 2.0 * PI / period;
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
 
-    // Compute the eccentric anomaly from the mean anomaly
-    double eccAnomaly;
-    if (eccentricity == 0.0)
+    double x, z;
+    if (eccentricity < 0.98)
     {
-        // Circular orbit
-        eccAnomaly = meanAnomaly;
-    }
-    else if (eccentricity < 0.2)
-    {
-        // Low eccentricity, so use the standard iteration technique
-        Solution sol = solve_iteration_fixed(SolveKeplerFunc1(eccentricity,
-                                                              meanAnomaly),
-                                             meanAnomaly, 5);
-        eccAnomaly = sol.first;
-    }
-    else if (eccentricity < 0.98)
-    {
-        // Higher eccentricity elliptical orbit; use a more complex but much
-        // faster converging iteration.
-        Solution sol = solve_iteration_fixed(SolveKeplerFunc2(eccentricity,
-                                                              meanAnomaly),
-                                             meanAnomaly, 6);
-        eccAnomaly = sol.first;
+        double eccAnomaly;
 
-        // Debugging
-        // printf("ecc: %f, error: %f mas\n",
-        //        eccentricity, radToDeg(sol.second) * 3600000);
+        if (eccentricity == 0.0)
+        {
+            // Circular orbit
+            eccAnomaly = meanAnomaly;
+        }
+        else if (eccentricity < 0.2)
+        {
+            // Low eccentricity, so use the standard iteration technique
+            Solution sol = solve_iteration_fixed(SolveKeplerFunc1(eccentricity,
+                                                                  meanAnomaly),
+                                                 meanAnomaly, 5);
+            eccAnomaly = sol.first;
+        }
+        else
+        {
+            // Higher eccentricity elliptical orbit; use a more complex but
+            // much faster converging iteration.
+            Solution sol = solve_iteration_fixed(SolveKeplerFunc2(eccentricity,
+                                                                  meanAnomaly),
+                                                 meanAnomaly, 6);
+            eccAnomaly = sol.first;
+
+            // Debugging
+            // printf("ecc: %f, error: %f mas\n",
+            //        eccentricity, radToDeg(sol.second) * 3600000);
+        }
+
+        double semiMajorAxis = pericenterDistance / (1.0 - eccentricity);
+        x = semiMajorAxis * (cos(eccAnomaly) - eccentricity);
+        z = semiMajorAxis * sqrt(1 - square(eccentricity)) * -sin(eccAnomaly);
+    }
+    else if (eccentricity < 1.02)
+    {
+        // Nearly parabolic orbit; very common for comets
+        // double b = sqrt(1 + a * a); 
+        x = 0.0;
+        z = 0.0;
     }
     else
     {
-        // Need a technique for handling orbits that are nearly parabolic.
-        eccAnomaly = meanAnomaly;
+        // Hyperbolic orbit
+        x = 0.0;
+        z = 0.0;
     }
-
-    double x = semiMajorAxis * (cos(eccAnomaly) - eccentricity);
-    double z = semiMajorAxis * sqrt(1 - square(eccentricity)) * -sin(eccAnomaly);
 
     Mat3d R = (Mat3d::yrotation(ascendingNode) *
                Mat3d::xrotation(inclination) *

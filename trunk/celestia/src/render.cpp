@@ -774,9 +774,9 @@ void Renderer::render(const Observer& observer,
                 }
                 else
                 {
-                    // Make the far plane as close as possible; this
-                    // calculation is correct only for spherical bodies.  It
-                    // should work well enough for ellipsoids.
+                    // Make the far plane as close as possible; the
+                    // calculation used is correct only for spherical bodies,
+                    // though it should work well enough for ellipsoids.
                     float d = center.distanceFromOrigin();
 
                     // TODO: The factor of 0.5 should not be necessary, but
@@ -2190,7 +2190,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
     {
         Body* body = solSystem.getBody(i);
         Point3d localPos = body->getOrbit()->positionAtTime(now);
-        Mat4d newFrame = Mat4d::xrotation(-body->getObliquity()) * Mat4d::translation(localPos) * frame;
+        Mat4d newFrame = Mat4d::xrotation(-body->getRotationElements().obliquity) * Mat4d::translation(localPos) * frame;
         Point3d bodyPos = Point3d(0, 0, 0) * newFrame;
         bodyPos = body->getHeliocentricPosition(now);
         
