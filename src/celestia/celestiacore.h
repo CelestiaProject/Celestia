@@ -12,6 +12,8 @@
 
 // #include "gl.h"
 #include <celutil/timer.h>
+#include <celutil/watcher.h>
+#include <celutil/watchable.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/command.h>
@@ -27,9 +29,13 @@
 #include "moviecapture.h"
 
 
-class CelestiaWatcher;
+// class CelestiaWatcher;
+class CelestiaCore;
 
-class CelestiaCore
+typedef Watcher<CelestiaCore> CelestiaWatcher;
+
+
+class CelestiaCore // : public Watchable<CelestiaCore>
 {
  public:
     enum {
@@ -93,6 +99,16 @@ class CelestiaCore
         Key_NumPad8         = 32,
         Key_NumPad9         = 33,
         KeyCount            = 128,
+    };
+
+    enum
+    {
+        LabelFlagsChanged     = 1,
+        RenderFlagsChanged    = 2,
+        VerbosityLevelChanged = 4,
+        TimeZoneChanged       = 8,
+        AmbientLightChanged   = 16,
+        FaintestChanged       = 32,
     };
 
     typedef void (*ContextMenuFunc)(float, float, Selection);
@@ -237,29 +253,6 @@ class CelestiaCore
 
     Alerter* alerter;
     std::vector<CelestiaWatcher*> watchers;
-};
-
-
-class CelestiaWatcher
-{
- public:
-    CelestiaWatcher(CelestiaCore* _appCore);
-    virtual ~CelestiaWatcher();
-
-    virtual void notifyChange(int) = 0;
-
-    enum
-    {
-        LabelFlags = 1,
-        RenderFlags = 2,
-        VerbosityLevel = 4,
-        TimeZone = 8,
-        AmbientLight = 16,
-        Faintest = 32,
-    };
-
- private:
-    CelestiaCore* appCore;
 };
 
 #endif // _CELESTIACORE_H_

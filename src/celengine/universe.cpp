@@ -22,7 +22,8 @@ Universe::Universe() :
     starCatalog(NULL),
     solarSystemCatalog(NULL),
     galaxyCatalog(NULL),
-    asterisms(NULL)
+    asterisms(NULL),
+    boundaries(NULL)
 {
 }
 
@@ -73,6 +74,17 @@ AsterismList* Universe::getAsterisms() const
 void Universe::setAsterisms(AsterismList* _asterisms)
 {
     asterisms = _asterisms;
+}
+
+
+ConstellationBoundaries* Universe::getBoundaries() const
+{
+    return boundaries;
+}
+
+void Universe::setBoundaries(ConstellationBoundaries* _boundaries)
+{
+    boundaries = _boundaries;
 }
 
 
