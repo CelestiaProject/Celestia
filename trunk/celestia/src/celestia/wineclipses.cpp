@@ -18,6 +18,7 @@
 #include <commctrl.h>
 #include "wineclipses.h"
 #include "res/resource.h"
+#include "celmath/mathlib.h"
 #include "celmath/ray.h"
 #include "celmath/distance.h"
 
@@ -548,16 +549,19 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             {
                 Simulation* sim = eclipseFinder->appCore->getSimulation();
                 sim->setTime(eclipseFinder->TimetoSet_);
+                Selection target(eclipseFinder->BodytoSet_);
+                Selection ref(eclipseFinder->BodytoSet_->getSystem()->getStar());
+                // Use the phase lock coordinate system to set a position
+                // on the line between the sun and the body where the eclipse
+                // is occurring.
+                sim->setFrame(FrameOfReference(astro::PhaseLock, target, ref));
+                sim->update(0.0);
 
-                //
-                // TODO:
-                // Need to position observer between sun and eclipseFinder->BodytoSet_
-                //
-
-                sim->setSelection(Selection(eclipseFinder->BodytoSet_));
-                sim->follow();
-                sim->centerSelection();
-                sim->gotoSelection(0., Vec3f(0, 1, 0), astro::ObserverLocal);
+                double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
+                RigidTransform to;
+                to.rotation = Quatd::yrotation(PI);
+                to.translation = Point3d(0, 0, -distance);
+                sim->gotoLocation(to, 2.5);
             }
             break;
         case IDC_ECLIPSETYPE:
