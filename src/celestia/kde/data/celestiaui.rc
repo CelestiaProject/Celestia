@@ -1,11 +1,11 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="9">
+<kpartgui name="celestia" version="10">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
     <Action name="copyUrl"/>
   </Menu>
-  <Menu name="go_web" noMerge="1"><text>&amp;Go</text>
+  <Menu name="go_web" noMerge="1"><text>&amp;Navigation</text>
     <Action name="go_back" />
     <Action name="go_forward" />
     <Action name="go_home" />
@@ -73,6 +73,7 @@
       <Action name="singleView"/>
       <Action name="framesVisible"/>
       <Action name="activeFrameVisible"/>
+      <Action name="syncTime"/>
   </Menu>
   <Menu name="settings">
         <Action name="showBookmarkBar" append="show_merge"/>
