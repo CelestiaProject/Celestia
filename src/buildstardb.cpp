@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <cstdio>
@@ -20,10 +21,11 @@ using namespace std;
 
 
 static string MainDatabaseFile("hip_main.dat");
-static string ComponentDatabase("h_dm_com.dat");
+static string ComponentDatabaseFile("h_dm_com.dat");
 static string OrbitalDatabase("hip_dm_o.dat");
 
 static const int HipStarRecordLength = 451;
+static const int HipComponentRecordLength = 239;
 
 static uint32 NullCCDMIdentifier = 0xffffffff;
 static uint32 NullCatalogNumber = 0xffffffff;
@@ -46,6 +48,7 @@ public:
 
     uint32 CCDMIdentifier;
     uint8 starsWithCCDM;
+    uint8 nComponents;
     uint8 parallaxError;
 };
 
@@ -58,6 +61,7 @@ HipparcosStar::HipparcosStar() :
     appMag(0.0f),
     CCDMIdentifier(NullCCDMIdentifier),
     starsWithCCDM(0),
+    nComponents(1),
     parallaxError(0)
 {
 }
@@ -81,6 +85,30 @@ void HipparcosStar::write(ostream& out)
     binwrite(out, parallaxError);
 }
 
+bool operator<(const HipparcosStar& a, const HipparcosStar& b)
+{
+    return a.HIPCatalogNumber < b.HIPCatalogNumber;
+}
+
+struct HIPCatalogComparePredicate
+{
+    HIPCatalogComparePredicate() : dummy(0)
+    {
+    }
+
+    bool operator()(const HipparcosStar* star0, const HipparcosStar* star1) const
+    {
+        return star0->HIPCatalogNumber < star1->HIPCatalogNumber;
+    }
+
+    bool operator()(const HipparcosStar* star0, uint32 hip)
+    {
+        return star0->HIPCatalogNumber < hip;
+    }
+
+    int dummy;
+};
+
 
 class MultistarSystem
 {
@@ -90,10 +118,50 @@ public:
 };
 
 
+class HipparcosComponent
+{
+public:
+    HipparcosComponent();
+
+    HipparcosStar* star;
+    float appMag;
+    float bMag;
+    float vMag;
+    char componentID;
+    bool hasBV;
+};
+
+HipparcosComponent::HipparcosComponent() :
+    star(NULL),
+    componentID('A'),
+    hasBV(false)
+{
+}
+
+
 vector<HipparcosStar> stars;
+vector<HipparcosComponent> components;
+vector<HipparcosStar*> starIndex;
 
 typedef map<uint32, MultistarSystem*> MultistarSystemCatalog;
 MultistarSystemCatalog starSystems;
+
+
+HipparcosStar* findStar(uint32 hip)
+{
+    HIPCatalogComparePredicate pred;
+
+    vector<HipparcosStar*>::iterator iter = lower_bound(starIndex.begin(),
+                                                        starIndex.end(),
+                                                        hip, pred);
+    if (iter == starIndex.end())
+        return NULL;
+    HipparcosStar* star = *iter;
+    if (star->HIPCatalogNumber == hip)
+        return star;
+    else
+        return NULL;
+}
 
 
 StellarClass ParseStellarClass(char *starType)
@@ -296,6 +364,8 @@ bool ReadStarRecord(istream& in)
         int n = 1;
         sscanf(buf + 340, "%d", &n);
         star.starsWithCCDM = (uint8) n;
+        sscanf(buf + 343, "%d", &n);
+        star.nComponents = (uint8) n;
     }
 
     float parallaxError = 0.0f;
@@ -307,11 +377,43 @@ bool ReadStarRecord(istream& in)
             star.parallaxError = (int8) (parallaxError / star.parallax * 200);
     }
     
-    
     stars.insert(stars.end(), star);
 
     return true;
 }
+
+
+bool ReadComponentRecord(istream& in)
+{
+    HipparcosComponent component;
+    char buf[HipComponentRecordLength];
+
+    in.read(buf, HipComponentRecordLength);
+
+    uint32 hip;
+    if (sscanf(buf + 42, "%ud", &hip) != 1)
+    {
+        cout << "Missing HIP catalog number for component.\n";
+        return false;
+    }
+
+    component.star = findStar(hip);
+    if (component.star == NULL)
+    {
+        cout << "Nonexistent HIP catalog number for component.\n";
+        return false;
+    }
+
+    if (sscanf(buf + 40, "%c", &component.componentID) != 1)
+    {
+        cout << "Missing component identifier.\n";
+        return false;
+    }
+
+    components.insert(components.end(), component);
+
+    return true;
+};
 
 
 void BuildMultistarSystemCatalog()
@@ -348,7 +450,7 @@ void BuildMultistarSystemCatalog()
 }
 
 
-void CorrectComponentParallaxes()
+void ConstrainComponentParallaxes()
 {
     for (MultistarSystemCatalog::iterator iter = starSystems.begin();
          iter != starSystems.end(); iter++)
@@ -359,6 +461,52 @@ void CorrectComponentParallaxes()
             for (int i = 1; i < multiSystem->nStars; i++)
                 multiSystem->stars[i]->parallax = multiSystem->stars[0]->parallax;
         }
+
+        if (multiSystem->nStars > 2)
+        {
+            cout << multiSystem->nStars << ": ";
+            if (multiSystem->stars[0]->HDCatalogNumber != NullCatalogNumber)
+                cout << "HD " << multiSystem->stars[0]->HDCatalogNumber;
+            else
+                cout << "HIP " << multiSystem->stars[0]->HIPCatalogNumber;
+            cout << '\n';
+        }
+    }
+}
+
+
+void CorrectErrors()
+{
+    for (vector<HipparcosStar>::iterator iter = stars.begin();
+         iter != stars.end(); iter++)
+    {
+        // Fix the spectral class of Capella, listed for some reason
+        // as M1 in the database.
+        if (iter->HDCatalogNumber == 34029)
+        {
+            iter->stellarClass = StellarClass(StellarClass::NormalStar,
+                                              StellarClass::Spectral_G, 0,
+                                              StellarClass::Lum_III);
+        }
+    }
+}
+
+
+void ShowStarsWithComponents()
+{
+    cout << "\nStars with >2 components\n";
+    for (vector<HipparcosStar>::iterator iter = stars.begin();
+         iter != stars.end(); iter++)
+    {
+        if (iter->nComponents > 2)
+        {
+            cout << (int) iter->nComponents << ": ";
+            if (iter->HDCatalogNumber != NullCatalogNumber)
+                cout << "HD " << iter->HDCatalogNumber;
+            else
+                cout << "HIP " << iter->HIPCatalogNumber;
+            cout << '\n';
+        }
     }
 }
 
@@ -367,24 +515,59 @@ int main(int argc, char* argv[])
 {
     assert(sizeof(StellarClass) == 2);
 
-    ifstream mainDatabase(MainDatabaseFile.c_str(), ios::in | ios::binary);
-    if (!mainDatabase.good())
+    // Read star records from the primary HIPPARCOS catalog
     {
-        cout << "Error opening " << MainDatabaseFile << '\n';
-        exit(1);
-    }
+        ifstream mainDatabase(MainDatabaseFile.c_str(), ios::in | ios::binary);
+        if (!mainDatabase.good())
+        {
+            cout << "Error opening " << MainDatabaseFile << '\n';
+            exit(1);
+        }
 
-    cout << "Reading HIPPARCOS data set.\n";
-    while (mainDatabase.good())
-    {
-        ReadStarRecord(mainDatabase);
-        if (stars.size() % 10000 == 0)
-            cout << stars.size() << " records.\n";
+        cout << "Reading HIPPARCOS data set.\n";
+        while (mainDatabase.good())
+        {
+            ReadStarRecord(mainDatabase);
+            if (stars.size() % 10000 == 0)
+                cout << stars.size() << " records.\n";
+        }
     }
-
     cout << "Read " << stars.size() << " stars from main database.\n";
 
+    cout << "Adding the Sun...\n";
     stars.insert(stars.end(), TheSun());
+
+    cout << "Sorting stars...\n";
+    {
+        starIndex.reserve(stars.size());
+        for (vector<HipparcosStar>::iterator iter = stars.begin();
+             iter != stars.end(); iter++)
+        {
+            starIndex.insert(starIndex.end(), iter);
+        }
+
+        HIPCatalogComparePredicate pred;
+        random_shuffle(starIndex.begin(), starIndex.end());
+        sort(starIndex.begin(), starIndex.end(), pred);
+    }
+        
+    // Read component records
+    {
+        ifstream componentDatabase(ComponentDatabaseFile.c_str(),
+                                   ios::in | ios::binary);
+        if (!componentDatabase.good())
+        {
+            cout << "Error opening " << ComponentDatabaseFile << '\n';
+            exit(1);
+        }
+
+        cout << "Reading HIPPARCOS component database.\n";
+        while (componentDatabase.good())
+        {
+            ReadComponentRecord(componentDatabase);
+        }
+    }
+    cout << "Read " << components.size() << " components.\n";
 
     cout << "Building catalog of multiple star systems.\n";
     BuildMultistarSystemCatalog();
@@ -392,7 +575,11 @@ int main(int argc, char* argv[])
     int nMultipleSystems = starSystems.size();
     cout << "Stars in multiple star systems: " << nMultipleSystems << '\n';
 
-    CorrectComponentParallaxes();
+    ConstrainComponentParallaxes();
+
+    CorrectErrors();
+
+    // ShowStarsWithComponents();
 
     char* outputFile = "stars.dat";
     if (argc > 1)
