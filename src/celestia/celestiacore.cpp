@@ -3069,6 +3069,10 @@ void CelestiaCore::setAlerter(Alerter* a)
     alerter = a;
 }
 
+CelestiaCore::Alerter* CelestiaCore::getAlerter() const
+{
+    return alerter;
+}
 
 int CelestiaCore::getTimeZoneBias() const
 {
