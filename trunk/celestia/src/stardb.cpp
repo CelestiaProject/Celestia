@@ -193,6 +193,8 @@ StarDatabase *StarDatabase::read(istream& in)
     uint32 throwOut = 0;
     uint32 fixUp = 0;
 
+    Mat3f equatorialToEcliptical = Mat3f::xrotation(degToRad(-23.4392911));
+
     while (db->nStars < MAX_STARS)
     {
 	uint32 catNo = 0;
@@ -223,7 +225,8 @@ StarDatabase *StarDatabase::read(istream& in)
 	double x = -cos(theta) * sin(phi) * distance;
 	double y = -cos(phi) * distance;
 	double z = -sin(theta) * sin(phi) * distance;
-	star->setPosition((float) x, (float) y, (float) z);
+	star->setPosition(Point3f((float) x, (float) y, (float) z) *
+                          equatorialToEcliptical);
 
 	// Use apparent magnitude and distance to determine the absolute
 	// magnitude of the star.
