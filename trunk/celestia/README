@@ -35,12 +35,22 @@ computer.  After setup is complete, launch Celestia by selecting it from
 the start menu.
 
 UNIX:
-See the file INSTALL for detailed UNIX installation instructions.  Briefly,
-though:
+
+Type ./configure --help for a list of options.
+
+The most basic commands are
+
 	./configure
 	make
 	make install
 
+This will build the GTK version.
+
+The new KDE3 version is built with
+
+        ./configure --with-kde 
+        make 
+        make install 
 
 Running Celestia:
 
@@ -82,69 +92,87 @@ you're off.
 
 That covers the very basics . . .
 
+Mouse and Keyboard Controls for Celestia
+----------------------------------------
 
-MOUSE FUNCTIONS:
+Mouse Functions:
 
-Left drag to orient camera
-Right drag to orbit the selected object
-Use the mouse wheel to adjust distance to selection
-    (for wheelless mice, dragging while holding left and right
-    buttons or left dragfing while holding control to dolly camera
-    will adjust distance)
-Left drag while holding shift to zoom
-Click the wheel to reset the field of view to 45 degrees
-Left-click to select; double click to center selection
-Right-click to bring up context menu
+Left drag:           orient camera
+Right drag:          orbit the selected object
+Wheel:               adjust distance to selection
+Right + Left drag:   adjust distance to selection
+Ctrl  + Left drag:   adjust distance to selection
+Shift + Left drag:   change field of view (e.g. => telescopic view)
+Wheel (middle button) click:  toggle field of view between 45 degrees 
+                              and the previous field (e.g. telescopic view)
+Left - click:        select object 
+Left double click:   center selection
+Right - click:       bring up context menu
 
-KEYBOARD COMMANDS
+Keyboard Commands:
 
 Navigation:
-H  : Select the sun (Home)
-C  : Center on selected object
-G  : Goto selected object
-F  : Follow selected object
-Y  : Orbit the selected object at a rate synced to its rotation
-:  : Lock on selected object
-"  : Chase selected object (orientation is based on selection's velocity)
-T  : Track selected object (keep selected object centered in view)
+H    : Select the sun (Home)
+C    : Center on selected object
+G    : Goto selected object
+F    : Follow selected object
+Y    : Orbit the selected object at a rate synced to its rotation
+:    : Lock on selected object
+"    : Chase selected object (orientation is based on selection's velocity)
+T    : Track selected object (keep selected object centered in view)
 HOME : Move closer to object
+*    : Look back
 END  : Move farther from object
 ESC  : Cancel motion or script
 Left/Right Arrows : Roll Camera
 Up / Down Arrows  : Change Camera Pitch
-1-9 : Select planets around nearby sun
+1-9  : Select planets around nearby sun
 
 Time:
 Space : stop time
-L  : Time 10x faster
-K  : Time 10x slower
-J  : Reverse time
+L     : Time 10x faster
+K     : Time 10x slower
+J     : Reverse time
+!     : Set time to now
 
 Labels:
-N  : Toggle planet and moon labels
-B  : Toggle star labels
 =  : Toggle constellation labels
-V  : Toggle info text
+B  : Toggle star labels
+E  : Toggle galaxy labels
+M  : Toggle moon labels
+W  : Toggle asteroid & comet labels
+N  : Toggle spacecraft labels
+P  : Toggle planet labels
+
+V  : Toggle verbosity of info text
 
 Options:
+I  : Toggle cloud textures
 U  : Toggle galaxy rendering
 O  : Toggle planet orbits
 /  : Toggle constellation diagrams
-Ctrl+A : Toggle atmospheres
-I  : Toggle cloud textures
-Ctrl+L : Toggle night side planet maps (light pollution)
-Ctrl+S : Toggle between textured and point stars
-Ctrl+E : Toggle rendering of eclipse shadows
 ;  : Show an earth-based equatorial coordinate sphere
-[  : Decrease limiting magnitude (fewer stars visible)
-]  : Increase limiting magnitude (more stars visible)
+[  : If autoMag OFF: Decrease limiting magnitude (fewer stars visible)
+     If autoMag ON : Decrease limiting magnitude at 45 deg field of view 
+]  : If autoMag OFF: Increase limiting magnitude (more stars visible)
+     If autoMag ON : Increase limiting magnitude at 45 deg field of view 
 {  : Decrease ambient illumination
 }  : Increase ambient illumination
 ,  : Narrow field of view
 .  : Widen field of view
-W  : Toggle wireframe mode
+Backspace: Cancel current selection
+Ctrl+A : Toggle atmospheres
+Ctrl+B : Toggle constellation boundaries 
+Ctrl+E : Toggle eclipse shadow rendering
+Ctrl+L : Toggle night side planet maps (light pollution)
+Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
 Ctrl+P : Toggle per-pixel lighting (if supported)
+Ctrl+T : Toggle rendering of comet tails
 Ctrl+V : Toggle vertex programs (if supported)
+Ctrl+W : Toggle wireframe mode
+Ctrl+X : Toggle antialias lines
+Ctrl+Y : Toggle autoMag = auto adaptation of star visibility to field
+         of view   
 r R: lower or raise texture resolution
 
 Spaceflight:
@@ -152,11 +180,11 @@ F1 : Stop
 F2 : Set velocity to 1 km/s
 F3 : Set velocity to 1,000 km/s
 F4 : Set velocity to speed of light
-F5 : Set velocity to 1,000,000 km/s
+F5 : Set velocity to 10x the speed of light.
 F6 : Set velocity to 1 AU/s
 F7 : Set velocity to 1 ly/s
-A  : Increase velocity (exponentially)
-Z  : Decrease velocity (exponentially)
+A  : Increase velocity
+Z  : Decrease velocity
 Q  : Reverse direction
 X  : Set movement direction toward center of screen
 
