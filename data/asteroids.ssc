@@ -80,7 +80,7 @@
 "Vesta" "Sol" 
 { 
 	Class "asteroid" 
-	Mesh   "vesta.3ds" 
+	Mesh   "vesta.cmod" 
 	Texture "asteroid.jpg" 
 	Radius    279 # maximum semi-axis
 	MeshCenter [ 0.77 3.424 -0.554 ]
@@ -114,7 +114,7 @@
 "Gaspra" "Sol"
 {
 	Class "asteroid"
-	Mesh "gaspra.3ds"
+	Mesh "gaspra.cmod"
 	Texture "gaspramosaic.*" # Phil Stooke
 	Color   [ 0.52 0.47 0.42 ]
 	Radius    9.1 # maximum semi-axis
@@ -143,7 +143,7 @@
 "Ida" "Sol"
 {
 	Class "asteroid"
-	Mesh "ida.3ds"
+	Mesh "ida.cmod"
 	#Texture "asteroid.jpg"
 	Texture "idamosaic.*" # Phil Stooke
 	Radius    28.9 # maximum semi-axis
@@ -203,7 +203,7 @@
 "Eros" "Sol"
 {
 	Class "asteroid"
-	Mesh   "eros.3ds"
+	Mesh   "eros.cmod"
 	Texture "eros.*"
 	# NormalMap "erosbump2k.jpg"
 	# Color sampled from true color photo taken by NEAR
@@ -237,7 +237,7 @@
 "Toutatis" "Sol"
 {
 	Class "asteroid"
-	Mesh   "toutatis.3ds"
+	Mesh   "toutatis.cmod"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
@@ -269,7 +269,7 @@
 "Geographos" "Sol"
 {
 	Class "asteroid"
-	Mesh   "geographos.3ds"
+	Mesh   "geographos.cmod"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
@@ -301,7 +301,7 @@
 "Kleopatra" "Sol"
 {
 	Class "asteroid"
-	Mesh   "kleopatra.3ds"
+	Mesh   "kleopatra.cmod"
 	Texture "asteroid.jpg"
 	Radius  110 # maximum semi-axis
 	MeshCenter [ -3.049 2.379 1.429 ]
@@ -332,7 +332,7 @@
 "1998 KY26" "Sol"
 {
 	Class "asteroid"
-	Mesh   "ky26.3ds"
+	Mesh   "ky26.cmod"
 	Texture "asteroid.jpg"
 	Radius  0.015 # maximum semi-axis
 	MeshCenter [ -0.000718 -0.000099 0.000556 ]
@@ -360,7 +360,7 @@
 "Bacchus" "Sol"
 {
 	Class "asteroid"
-	Mesh   "bacchus.3ds"
+	Mesh   "bacchus.cmod"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
@@ -392,7 +392,7 @@
 "Golevka" "Sol"
 {
 	Class "asteroid"
-	Mesh   "golevka.3ds"
+	Mesh   "golevka.cmod"
 	Texture "asteroid.jpg"
 	Radius  0.34 # maximum semi-axis
 	MeshCenter [ -0.0289 -0.0111 -0.0331 ]
@@ -421,7 +421,7 @@
 "Castalia" "Sol"
 { 
 	Class "asteroid"
-	Mesh   "castalia.3ds"
+	Mesh   "castalia.cmod"
 	Texture "asteroid.jpg"
 	# We'll just use the same color as Eros
 	Color   [ 0.52 0.47 0.42 ]
