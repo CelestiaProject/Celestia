@@ -12,7 +12,7 @@
 #include <windows.h>
 #include "wingotodlg.h"
 
-#include "../../res/resource.h"
+#include "res/resource.h"
 
 using namespace std;
 
