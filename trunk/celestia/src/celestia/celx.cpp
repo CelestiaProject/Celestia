@@ -1873,10 +1873,99 @@ static int observer_lookat(lua_State* l)
     return 0;
 }
 
+
+static int observer_gototable(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Expected one table as argument to goto");
+
+    Observer* o = this_observer(l);
+    if (!lua_istable(l, 2))
+    {
+        lua_pushstring(l, "Argument to goto must be a table");
+    }
+
+    Observer::JourneyParams jparams;
+    jparams.duration = 5.0;
+    jparams.from = o->getSituation().translation;
+    jparams.to = o->getSituation().translation;
+    jparams.initialOrientation = o->getOrientation();
+    jparams.finalOrientation = o->getOrientation();
+    jparams.startInterpolation = 0.25;
+    jparams.endInterpolation = 0.75;
+    jparams.accelTime = 0.5;
+    jparams.traj = Observer::Linear;
+
+    lua_pushstring(l, "duration");
+    lua_gettable(l, 2);
+    jparams.duration = safeGetNumber(l, 3, NoErrors, "", 5.0);
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "from");
+    lua_gettable(l, 2);
+    UniversalCoord* from = to_position(l, 3);
+    if (from != NULL)
+        jparams.from = *from;
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "to");
+    lua_gettable(l, 2);
+    UniversalCoord* to = to_position(l, 3);
+    if (to != NULL)
+        jparams.to = *to;
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "initialOrientation");
+    lua_gettable(l, 2);
+    Quatd* rot1 = to_rotation(l, 3);
+    if (rot1 != NULL)
+        jparams.initialOrientation = Quatf(rot1->w, rot1->x, rot1->y, rot1->z);
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "finalOrientation");
+    lua_gettable(l, 2);
+    Quatd* rot2 = to_rotation(l, 3);
+    if (rot2 != NULL)
+        jparams.finalOrientation = Quatf(rot2->w, rot2->x, rot2->y, rot2->z);
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "startInterpolation");
+    lua_gettable(l, 2);
+    jparams.startInterpolation = safeGetNumber(l, 3, NoErrors, "", 0.25);
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "endInterpolation");
+    lua_gettable(l, 2);
+    jparams.endInterpolation = safeGetNumber(l, 3, NoErrors, "", 0.75);
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "accelTime");
+    lua_gettable(l, 2);
+    jparams.accelTime = safeGetNumber(l, 3, NoErrors, "", 0.5);
+    lua_settop(l, 2);
+
+    jparams.duration = max(0.0, jparams.duration);
+    jparams.accelTime = min(1.0, max(0.1, jparams.accelTime));
+    jparams.startInterpolation = min(1.0, max(0.0, jparams.startInterpolation));
+    jparams.endInterpolation = min(1.0, max(0.0, jparams.endInterpolation));
+
+    // args are in universal coords, let setFrame handle conversion:
+    FrameOfReference tmp = o->getFrame();
+    o->setFrame(FrameOfReference());
+    o->gotoJourney(jparams);
+    o->setFrame(tmp);
+    return 0;
+}
+
+
 // First argument is the target object or position; optional second argument
 // is the travel time
 static int observer_goto(lua_State* l)
 {
+    if (lua_gettop(l) == 2 && lua_istable(l, 2))
+    {
+        // handle this in own function
+        return observer_gototable(l);
+    }
     checkArgs(l, 1, 5, "One to four arguments expected to observer:goto");
 
     Observer* o = this_observer(l);
@@ -1902,8 +1991,6 @@ static int observer_goto(lua_State* l)
     }
     else
     {
-        // TODO: would it be better to have a separate gotolocation
-        // command?  Probably.
         RigidTransform rt = o->getSituation();
         rt.translation = *uc;
         o->gotoLocation(rt, travelTime);
@@ -1911,6 +1998,7 @@ static int observer_goto(lua_State* l)
 
     return 0;
 }
+
 
 static int observer_gotolonglat(lua_State* l)
 {
@@ -1949,8 +2037,8 @@ static int observer_gotolonglat(lua_State* l)
     return 0;
 }
 
-// First argument is the target object or position; optional second argument
-// is the travel time
+
+// deprecated: wrong name, bad interface.
 static int observer_gotolocation(lua_State* l)
 {
     checkArgs(l, 2, 3,"Expected one or two arguments to observer:gotolocation");
