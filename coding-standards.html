@@ -219,14 +219,14 @@ many security holes.
 </div>
 <br>
 <div>
-<span class="sectiontitle">Indentation</span><br>
+<span class="sectiontitle">Indentation and Spacing</span><br>
 <ul>
 <li>Always set your editor to use spaces for indentation.  Text editors
 interpret tabs in various incompatible ways, but a space is always a space.
 <li>The bodies of functions, compound statements, and class definitions
 should be indented four spaces.
 <li>The braces around a function or compound statement should be on lines
-by themselves:
+by themselves but not indented with the body of the statement:
 <pre style="code">
 if (x)
 {
@@ -259,8 +259,50 @@ class Foo
 };
 </pre>
 </ul>
+<ul>
+<li>Put one space on either side of all binary operators except
+for -&gt;
+<pre style="code">
+// Celestia style
+x = y + z;
+x = y || z;
+a = b->c;
+
+// Not Celestia style
+x=y;
+x = y+z;
+a = b -> c;
+</pre>
+<li>There should be no space between a unary operator and its argument.
+<li>Wherever a pointer type appears, there should be no space between the
+base type and the asterisk.  For pointer variable declarations, a space should
+separate the type name from the variable name.
+<pre style="code">
+// Celestia style
+char* str;
+
+// Not Celestia style
+char *str;
+</pre>
+<li>In function calls or definitions, there should be no space
+between the parentheses and either the arguments or the function name.
+When there are multiple arguments, a single space should follow each comma
+separating arguments.
+<pre>
+// Celestia style
+y = square(x);
+y = atan2(x, z);
+
+// Not Celestia style
+y = square( x );
+y = square (x);
+y = atan2(x,z);
+y = atan2(x , z);
+</pre>
+</ul>
 </div>
 <br>
+
 <div>
 <span class="sectiontitle">Naming</span>
 <ul>
