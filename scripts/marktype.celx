@@ -6,7 +6,7 @@ function mark_spectraltype(x)
         star = celestia:getstar(i)
         first, last = string.find(star:spectraltype(), x, 1, true)
         if first == 1 then
-	    celestia:mark(star)
+            star:mark("#ff99ff", "triangle", 10)
         end
         i = i + 1
     end
