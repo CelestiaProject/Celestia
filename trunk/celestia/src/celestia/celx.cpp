@@ -256,7 +256,7 @@ static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
 
 
 static void checkArgs(lua_State* l,
-                      int minArgs, int maxArgs, char* errorMessage)
+                      int minArgs, int maxArgs, const char* errorMessage)
 {
     int argc = lua_gettop(l);
     if (argc < minArgs || argc > maxArgs)
