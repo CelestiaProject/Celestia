@@ -290,9 +290,9 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             q.yrotate(dx / width * coarseness);
             q.xrotate(dy / height * coarseness);
             if ((modifiers & RightButton) != 0)
-                sim->orbit(~q);
+                sim->orbit(q);
             else
-                sim->rotate(q);
+                sim->rotate(~q);
         }
 
         mouseMotion += abs(dy) + abs(dx);
