@@ -2621,7 +2621,7 @@ void CelestiaCore::renderOverlay()
         {
             int nb_cols = 4;
             int nb_lines = 3;
-            int start;
+            int start = 0;
             glTranslatef( 3, - font->getHeight() - 3, 0);
             std::vector<std::string>::const_iterator iter = typedTextCompletion.begin();
             if (typedTextCompletionIdx >= nb_cols * nb_lines)
