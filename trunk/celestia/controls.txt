@@ -39,23 +39,21 @@ K     : Time 10x slower
 J     : Reverse time
 
 Labels:
-N  : Toggle planet and moon labels
+=  : Toggle constellation labels
 B  : Toggle star labels
 E  : Toggle galaxy labels
-=  : Toggle constellation labels
-W  : Toggle asteroid labels
-V  : Toggle info text
+M  : Toggle moon labels
+W  : Toggle asteroid & comet labels
+N  : Toggle spacecraft labels
+P  : Toggle planet labels
+
+V  : Toggle verbosity of info text
 
 Options:
+I  : Toggle cloud textures
 U  : Toggle galaxy rendering
 O  : Toggle planet orbits
 /  : Toggle constellation diagrams
-Ctrl+A : Toggle atmospheres
-Ctrl+B : Toggle constellation boundaries 
-I  : Toggle cloud textures
-Ctrl+L : Toggle night side planet maps (light pollution)
-Ctrl+E : Toggle eclipse shadow rendering
-Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
 ;  : Show an earth-based equatorial coordinate sphere
 [  : Decrease limiting magnitude (fewer stars visible)
 ]  : Increase limiting magnitude (more stars visible)
@@ -63,9 +61,17 @@ Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
 }  : Increase ambient illumination
 ,  : Narrow field of view
 .  : Widen field of view
-Ctrl+W : Toggle wireframe mode
+Ctrl+A : Toggle atmospheres
+Ctrl+B : Toggle constellation boundaries 
+Ctrl+E : Toggle eclipse shadow rendering
+Ctrl+L : Toggle night side planet maps (light pollution)
+Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
 Ctrl+P : Toggle per-pixel lighting (if supported)
 Ctrl+V : Toggle vertex programs (if supported)
+Ctrl+W : Toggle wireframe mode
+Ctrl+X : Toggle antialias lines
+Ctrl+Y : Toggle autoMag = auto adaptation of star visibility to field
+         of view   
 r R: lower or raise texture resolution
 
 Spaceflight:
