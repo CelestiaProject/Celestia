@@ -71,7 +71,8 @@ class StarNameDatabase
     typedef std::multimap<uint32, std::string> NumberIndex;
 
     void add(uint32, const std::string&);
-    uint32 findCatalogNumber(const std::string& name);
+    uint32 findCatalogNumber(const std::string& name) const;
+    uint32 findName(std::string name) const;
     NumberIndex::const_iterator findFirstName(uint32 catalogNumber) const;
     NumberIndex::const_iterator finalName() const;
 
