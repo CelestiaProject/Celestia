@@ -114,6 +114,7 @@ astro::Date newTime(0.0);
 
 
 static GtkWidget* mainWindow = NULL;
+static GtkWidget* mainMenu = NULL;
 static GtkWidget* mainBox = NULL;
 static GtkWidget* oglArea = NULL;
 int oglAttributeList[] = 
@@ -126,6 +127,132 @@ int oglAttributeList[] =
     GDK_GL_DOUBLEBUFFER,
     GDK_GL_NONE,
 };
+
+
+static void SetFaintest(float magnitude)
+{
+    renderer->setBrightnessBias(0.0f);
+    renderer->setBrightnessScale(1.0f / (magnitude + 1.0f));
+    sim->setFaintestVisible(magnitude);
+}
+
+static void menuQuit()
+{
+}
+
+static void menuSelectSol()
+{
+    sim->selectStar(0);
+}
+
+static void menuCenter()
+{
+    sim->centerSelection();
+}
+
+static void menuGoto()
+{
+    sim->gotoSelection(5.0);
+}
+
+static void menuFollow()
+{
+    sim->follow();
+}
+
+static void menuFaster()
+{
+    sim->setTimeScale(10.0 * sim->getTimeScale());
+}
+
+static void menuSlower()
+{
+    sim->setTimeScale(0.1 * sim->getTimeScale());
+}
+
+static void menuPause()
+{
+    if (paused)
+    {
+        sim->setTimeScale(timeScale);
+    }
+    else
+    {
+        timeScale = sim->getTimeScale();
+        sim->setTimeScale(0.0);
+    }
+    paused = !paused;
+}
+
+static void menuRealTime()
+{
+    sim->setTimeScale(1.0);
+}
+
+static void menuReverse()
+{
+    sim->setTimeScale(-sim->getTimeScale());
+}
+
+static void menuMoreStars()
+{
+    if (sim->getFaintestVisible() < 8.0f)
+        SetFaintest(sim->getFaintestVisible() + 0.5f);
+}
+
+static void menuLessStars()
+{
+    if (sim->getFaintestVisible() > 1.0f)
+        SetFaintest(sim->getFaintestVisible() - 0.5f);
+}
+
+
+static GtkItemFactoryEntry menuItems[] =
+{
+    { "/_File",  NULL,                      NULL,          0, "<Branch>" },
+    { "/File/Quit", "<control>Q",           gtk_main_quit, 0, NULL },
+    { "/_Navigation", NULL,                 NULL,          0, "<Branch>" },
+    { "/Navigation/Select Sol", "H",        menuSelectSol, 0, NULL },
+    { "/Navigation/Select Object...", NULL, NULL,          0, NULL },
+    { "/Navigation/sep1", NULL,             NULL,          0, "<Separator>" },
+    { "/Navigation/Center Selection", "C",  menuCenter,    0, NULL },
+    { "/Navigation/Goto Selection", "G",    menuGoto,      0, NULL },
+    { "/Navigation/Follow Selection", "F",  menuFollow,    0, NULL },
+    { "/_Time", NULL,                       NULL,          0, "<Branch>" },
+    { "/Time/10x Faster", "L",              menuFaster,    0, NULL },
+    { "/Time/10x Slower", "K",              menuSlower,    0, NULL },
+    { "/Time/Pause", "Space",               menuPause,     0, NULL },
+    { "/Time/Real Time", NULL,              menuRealTime,  0, NULL },
+    { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
+    { "/_Render", NULL,                     NULL,          0, "<Branch>" },
+    { "/Render/Show Galaxies", NULL,        NULL,          0, "<ToggleItem>" },
+    { "/Render/Show Atmospheres", NULL,     NULL,          0, "<ToggleItem>" },
+    { "/Render/Show Orbits", NULL,          NULL,          0, "<ToggleItem>" },
+    { "/Render/Show Constellations", NULL,  NULL,          0, "<ToggleItem>" },
+    { "/Render/sep1", NULL,                 NULL,          0, "<Separator>" },
+    { "/Render/More Stars", "]",            menuMoreStars, 0, NULL },
+    { "/Render/Fewer Stars", "]",           menuLessStars, 0, NULL },
+    { "/_Help", NULL,                       NULL,          0, "<LastBranch>" },
+    { "/_Help/About", NULL,                 NULL,          0, NULL },
+};
+
+
+
+void createMainMenu(GtkWidget* window, GtkWidget** menubar)
+{
+    gint nItems = sizeof(menuItems) / sizeof(menuItems[0]);
+
+    GtkAccelGroup* accelGroup = gtk_accel_group_new();
+    GtkItemFactory* itemFactory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
+                                                       "<main>",
+                                                       accelGroup);
+    gtk_item_factory_create_items(itemFactory, nItems, menuItems, NULL);
+
+    gtk_window_add_accel_group(GTK_WINDOW(window), accelGroup);
+    if (menubar != NULL)
+        *menubar = gtk_item_factory_get_widget(itemFactory, "<main>");
+}
+
 
 // Extremely basic implementation of an ExecutionEnvironment for
 // running scripts.
@@ -185,14 +312,6 @@ bool ReadStars(string starsFileName, string namesFileName)
     starDB->setNameDatabase(starNameDB);
 
     return true;
-}
-
-
-static void SetFaintest(float magnitude)
-{
-    renderer->setBrightnessBias(0.0f);
-    renderer->setBrightnessScale(1.0f / (magnitude + 1.0f));
-    sim->setFaintestVisible(magnitude);
 }
 
 
@@ -1126,11 +1245,15 @@ int main(int argc, char* argv[])
     // Set the default size
     gtk_gl_area_size(GTK_GL_AREA(oglArea), 640, 480);
 
+    createMainMenu(mainWindow, &mainMenu);
+
     // gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(oglArea));
     gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(mainBox));
+    gtk_box_pack_start(GTK_BOX(mainBox), mainMenu, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(mainBox), oglArea, TRUE, TRUE, 0);
     gtk_widget_show(GTK_WIDGET(oglArea));
     gtk_widget_show(GTK_WIDGET(mainBox));
+    gtk_widget_show(GTK_WIDGET(mainMenu));
     gtk_widget_show(GTK_WIDGET(mainWindow));
 
     // Set focus to oglArea widget
