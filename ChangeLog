@@ -447,3 +447,15 @@ Code:
 * Fixed some clipping problems with 3DS meshes caused by bad center calculation
 * Enhanced Locations menu to support full manipulation and categorization of
   saved locations.
+
+
+1.2.3
+* Fixed bug in texturefont.cpp that produce an error with some STL
+  implementations (VS.NET, HPUX)
+* Added elapsed time counter to movie recording UI
+* Added support for orbits interpolated from sampled positions
+* Fixed 'crosshair' appearance of eclipse shadows on some cards
+* Enforced power of two texture size requirement--eliminates texture loading
+  crashes on some systems
+* UNIX: Modified GL extension handling code to make it possible to compile
+  against Mesa 4 headers.
