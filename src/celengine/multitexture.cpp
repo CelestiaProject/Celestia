@@ -60,13 +60,17 @@ Texture* MultiResTexture::find(unsigned int resolution)
 {
     TextureManager* texMan = GetTextureManager();
     Texture* res = texMan->find(tex[resolution]);
-    if (res != NULL || resolution == lores)
+    if (res != NULL)
         return res;
-    tex[resolution] = tex[resolution - 1];
+    if(resolution == lores)
+        tex[resolution] = tex[resolution +1];
+    else
+        tex[resolution] = tex[resolution -1];
     res = texMan->find(tex[resolution]);
-    if(res != NULL || resolution == medres)
+    if(res != NULL)
         return res;
-    tex[hires] = tex[medres] = tex[lores];
-
+    if(resolution == hires)
     return texMan->find(tex[lores]);
+    else
+        return texMan->find(tex[hires]);
 }
