@@ -34,6 +34,15 @@ namespace astro
         double seconds;
     };
 
+    enum CoordinateSystem
+    {
+        Universal       = 0,
+        Ecliptical      = 1,
+        Equatorial      = 2,
+        Geographic      = 3,
+        ObserverLocal   = 4,
+    };
+
     float lumToAbsMag(float lum);
     float lumToAppMag(float lum, float lyrs);
     float absMagToLum(float mag);

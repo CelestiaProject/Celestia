@@ -240,7 +240,7 @@ Quatd Body::getEquatorialToGeographic(double when)
     double remainder = rotations - wholeRotations;
     
     Quatd q(1);
-    q.yrotate(remainder * 2 * PI + getRotationPhase());
+    q.yrotate(-remainder * 2 * PI - getRotationPhase());
     return q;
 }
 

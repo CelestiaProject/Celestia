@@ -65,6 +65,24 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
     // eccAnomaly = solveKeplerSeries(meanAnomaly, eccentricity);
 
     double x = semiMajorAxis * (cos(eccAnomaly) - eccentricity);
+    double z = semiMajorAxis * sqrt(1 - square(eccentricity)) * -sin(eccAnomaly);
+
+    Mat3d R = (Mat3d::yrotation(ascendingNode) *
+               Mat3d::xrotation(inclination) *
+               Mat3d::yrotation(argOfPeriapsis));
+
+    return R * Point3d(x, 0, z);
+#if 0
+    t = t - epoch;
+    double meanMotion = 2.0 * PI / period;
+    double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
+
+    // TODO: calculate the *real* eccentric anomaly.  This is a reasonable
+    // approximation only for nearly circular orbits
+    double eccAnomaly = meanAnomaly;
+    // eccAnomaly = solveKeplerSeries(meanAnomaly, eccentricity);
+
+    double x = semiMajorAxis * (cos(eccAnomaly) - eccentricity);
     double z = semiMajorAxis * sqrt(1 - square(eccentricity)) * sin(eccAnomaly);
 
     Mat3d R = (Mat3d::yrotation(-ascendingNode) *
@@ -72,6 +90,7 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
                Mat3d::yrotation(-argOfPeriapsis));
 
     return R * Point3d(x, 0, z);
+#endif
 }
 
 
