@@ -526,7 +526,8 @@ void CelestiaCore::runScript(const string& filename)
             // script and Celestia's event loop
             if (celxScript->createThread())
             {
-                resumeScript();
+                // Awaken the script ASAP (0.0 is invalid)
+                scriptAwakenTime = 0.1;
             }
             else
             {
