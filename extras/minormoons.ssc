@@ -519,25 +519,6 @@
 	Albedo 0.4
 }
 
-"Prometheus" "Sol/Saturn"
-{
-	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		50.1
-
-	EllipticalOrbit
-	{
-	Period		0.612986
-	SemiMajorAxis	139350
-	Eccentricity	0.0023
-	Inclination	0.000
-	LongOfPericenter 32.879	# J2000.0 
-	MeanAnomaly     22.695	#
-	}
-
-	Albedo 0.6
-}
-
 "Pandora" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
@@ -555,46 +536,6 @@
 	}
 
 	Albedo 0.5
-}
-
-"Epimetheus" "Sol/Saturn"
-{
-	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		59.5
-
-	EllipticalOrbit
-	{
-	Period		0.694590
-	SemiMajorAxis	151422
-	Eccentricity	0.0205
-	Inclination	0.337	#
-	AscendingNode	149.880	#
-	ArgOfPericenter	86.905	# J2000.0
-	MeanAnomaly     192.354	#
-	}
-
-	Albedo 0.5
-}
-
-"Janus" "Sol/Saturn"
-{
-	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		88.8
-
-	EllipticalOrbit
-	{
-	Period		0.694590
-	SemiMajorAxis	151472
-	Eccentricity	0.0073
-	Inclination	0.168	#
-	AscendingNode	120.557	#
-	ArgOfPericenter	43.066	# J2000.0
-	MeanAnomaly     79.973	#
-	}
-
-	Albedo 0.6
 }
 
 "Telesto" "Sol/Saturn"
@@ -1081,3 +1022,4 @@
 
 	Albedo 0.056
 }
+
