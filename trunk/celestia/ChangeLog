@@ -396,3 +396,5 @@ Code:
 1.2.1
 * Unix: configure.in changes to better find OpenGL libraries by Bruckner
 * Added accurate orbital calculations for Galilean satellites.
+* Added tolerance parameter for picking to make picking objects in a narrow
+  narrow field of view work better.
