@@ -232,48 +232,50 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
 
     //Set checkboxes and radiobuttons
     SendDlgItemMessage(hDlg, IDC_SHOWATMOSPHERES, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowAtmospheres) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowAtmospheres)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCELESTIALGRID, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowCelestialSphere) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowCelestialSphere)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCLOUDS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowCloudMaps) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowCloudMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowDiagrams) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowDiagrams)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWECLIPSESHADOWS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowEclipseShadows) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowEclipseShadows)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWGALAXIES, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowGalaxies) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowGalaxies)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowNightMaps) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWORBITS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowOrbits) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowOrbits)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWPLANETS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowPlanets) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowPlanets)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowStars) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowStars)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARSASPOINTS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowStarsAsPoints) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowStarsAsPoints)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONBORDERS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowBoundaries) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowBoundaries)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWRINGSHADOWS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowRingShadows) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowRingShadows)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCOMETTAILS, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowCometTails) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (renderFlags & Renderer::ShowCometTails)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWMARKERS, BM_SETCHECK,
+        (renderFlags & Renderer::ShowMarkers)? BST_CHECKED:BST_UNCHECKED, 0);
 
     SendDlgItemMessage(hDlg, IDC_LABELCONSTELLATIONS, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->ConstellationLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (labelMode & Renderer::ConstellationLabels)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELGALAXIES, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->GalaxyLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (labelMode & Renderer::GalaxyLabels)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELPLANETS, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->PlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (labelMode & Renderer::PlanetLabels)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELMOONS, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->MoonLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (labelMode & Renderer::MoonLabels)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELSTARS, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->StarLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (labelMode & Renderer::StarLabels)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELASTEROIDS, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->AsteroidLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (labelMode & Renderer::AsteroidLabels)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELSPACECRAFT, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->SpacecraftLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        (labelMode & Renderer::SpacecraftLabels)? BST_CHECKED:BST_UNCHECKED, 0);
 
     CheckRadioButton(hDlg, IDC_INFOTEXT0, IDC_INFOTEXT2, IDC_INFOTEXT0 + hudDetail);
 
