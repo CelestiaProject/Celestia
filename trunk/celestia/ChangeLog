@@ -485,3 +485,4 @@ Code:
 * Changed orbit and dolly functions so they operate with respect to the
   current reference object instead of the selection.
 * Made Goto command automatically switch to follow mode
+* Fixed customorbit.cpp to compile on HP/UX
