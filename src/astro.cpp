@@ -22,6 +22,8 @@ using namespace std;
 #define KM_PER_AU     149597870.7
 #define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
 
+const double astro::speedOfLight = 299792.458; // km/s
+
 // epoch J2000: 12 UT on 1 Jan 2000
 const double astro::J2000 = 2451545.0;
 
