@@ -61,6 +61,7 @@ class Renderer
         ShowCelestialSphere =  64,
         ShowNightMaps       = 128,
         ShowAtmospheres     = 256,
+        ShowSmoothLines     = 512,
     };
     int getRenderFlags() const;
     void setRenderFlags(int);
