@@ -40,7 +40,7 @@ class Model
     /*! Return the mesh with the specified index, or NULL if the
      *  index is out of range.
      */
-    const Mesh* getMesh(uint32) const;
+    Mesh* getMesh(uint32) const;
 
     /*! Add a new mesh to the model; the return value is the
      *  total number of meshes in the model.

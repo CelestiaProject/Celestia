@@ -77,7 +77,7 @@ Model::addMaterial(const Mesh::Material* m)
 }
 
 
-const Mesh*
+Mesh*
 Model::getMesh(uint32 index) const
 {
     if (index < meshes.size())
