@@ -15,6 +15,8 @@
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
 #include <celmath/vecmath.h>
+#include "GL/gl.h"
+#include "imagecapture.h"
 
 // Ugh . . . the C++ standard says that stringstream should be in
 // sstream, but the GNU C++ compiler uses strstream instead.
@@ -280,6 +282,7 @@ LuaState::LuaState() :
 {
     state = lua_open();
     timer = CreateTimer();
+    screenshotCount = 0;
 }
 
 LuaState::~LuaState()
@@ -644,6 +647,27 @@ int LuaState::resume()
     {
         return nArgs; // arguments from yield
     }
+}
+
+LuaState* getLuaStateObject(lua_State* l)
+{
+    int stackSize = lua_gettop(l);
+    lua_pushstring(l, "celestia-luastate");
+    lua_gettable(l, LUA_REGISTRYINDEX);
+
+    if (!lua_islightuserdata(l, -1))
+    {
+        lua_pushstring(l, "Internal Error: Invalid table entry for LuaState-pointer");
+        lua_error(l);
+    }
+    LuaState* luastate_ptr = static_cast<LuaState*>(lua_touserdata(l, -1));
+    if (luastate_ptr == NULL)
+    {
+        lua_pushstring(l, "Internal Error: Invalid LuaState-pointer");
+        lua_error(l);
+    }
+    lua_settop(l, stackSize);
+    return luastate_ptr;
 }
 
 View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
@@ -3788,19 +3812,7 @@ static int celestia_getscripttime(lua_State* l)
     // for error checking only:
     this_celestia(l);
 
-    lua_pushstring(l, "celestia-luastate");
-    lua_gettable(l, LUA_REGISTRYINDEX);
-    if (!lua_islightuserdata(l, -1))
-    {
-        lua_pushstring(l, "Invalid table entry in celestia:getscripttime (internal error)");
-        lua_error(l);
-    }
-    LuaState* luastate_ptr = static_cast<LuaState*>(lua_touserdata(l, -1));
-    if (luastate_ptr == NULL)
-    {
-        lua_pushstring(l, "Invalid value in celestia:getscripttime (internal error)");
-        lua_error(l);
-    }
+    LuaState* luastate_ptr = getLuaStateObject(l);
     lua_pushnumber(l, luastate_ptr->getTime());
     return 1;
 }
@@ -3890,6 +3902,83 @@ static int celestia_requestkeyboard(lua_State* l)
     return 0;
 }
 
+static int celestia_takescreenshot(lua_State* l)
+{
+    checkArgs(l, 1, 3, "Need 0 to 2 arguments for celestia:takescreenshot");
+    CelestiaCore* appCore = this_celestia(l);
+    LuaState* luastate = getLuaStateObject(l);
+    // make sure we don't timeout because of taking a screenshot:
+    double timeToTimeout = luastate->timeout - luastate->getTime();
+
+    const char* filetype = safeGetString(l, 2, WrongType, "First argument to celestia:takescreenshot must be a string");
+    if (filetype == NULL)
+        filetype = "png";
+
+    // Let the script safely contribute one part of the filename: 
+    const char* fileid_ptr = safeGetString(l, 3, WrongType, "Second argument to celestia:takescreenshot must be a string");
+    if (fileid_ptr == NULL)
+        fileid_ptr = "";
+    string fileid(fileid_ptr);
+
+    // be paranoid about the fileid, make sure it only contains 'A-Za-z0-9_':
+    for (int i = 0; i < fileid.length(); i++)
+    {
+        char ch = fileid[i];
+        if (!((ch >= 'a' && ch <= 'z') || 
+              (fileid[i] >= 'A' && ch <= 'Z') || 
+              (ch >= '0' && ch <= '9') ) )
+            fileid[i] = '_';
+    }
+    // limit length of string
+    if (fileid.length() > 8)
+        fileid = fileid.substr(0, 8);
+    if (fileid.length() > 0)
+        fileid.append("-");
+
+    int maxCount = (int) appCore->getConfig()->scriptScreenshotCount;
+    if ((luastate->screenshotCount < maxCount)  || (maxCount == -1))
+    {
+        string path = appCore->getConfig()->scriptScreenshotDirectory;
+        if (path.length() > 0 && 
+            path[path.length()-1] != '/' && 
+            path[path.length()-1] != '\\')
+
+            path.append("/");
+
+            luastate->screenshotCount++;
+        bool success = false;
+        char filenamestem[32];
+        snprintf(filenamestem, 32, "screenshot-%s%06i", fileid.c_str(), luastate->screenshotCount);
+
+        // Get the dimensions of the current viewport
+        int viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+
+        if (strncmp(filetype, "jpg", 3) == 0)
+        {
+            string filepath = path + filenamestem + ".jpg";
+            success = CaptureGLBufferToJPEG(string(filepath),
+                                           viewport[0], viewport[1],
+                                           viewport[2], viewport[3]);
+        }
+        else
+        {
+            string filepath = path + filenamestem + ".png";
+            success = CaptureGLBufferToPNG(string(filepath),
+                                           viewport[0], viewport[1],
+                                           viewport[2], viewport[3]);
+        }
+        lua_pushboolean(l, success);
+    }
+    else
+    {
+        lua_pushboolean(l, false);
+    }
+    // no matter how long it really took, make it look like 0.1s to timeout check:
+    luastate->timeout = luastate->getTime() + timeToTimeout - 0.1;
+    return 1;    
+}
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -3945,6 +4034,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "newrotation", celestia_newrotation);
     RegisterMethod(l, "getscripttime", celestia_getscripttime);
     RegisterMethod(l, "requestkeyboard", celestia_requestkeyboard);
+    RegisterMethod(l, "takescreenshot", celestia_takescreenshot);
 
     lua_pop(l, 1);
 }

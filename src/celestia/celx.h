@@ -44,9 +44,10 @@ public:
     bool timesliceExpired();
 
     bool charEntered(const char*);
-    double getTime() const;    
-private:
+    double getTime() const;
+    int screenshotCount;
     double timeout;
+private:
     lua_State* state;
     lua_State* costate; // coroutine stack
     bool alive;
