@@ -36,6 +36,7 @@
 #include "favorites.h"
 #include "celestiacore.h"
 
+
 using namespace std;
 
 static const int DragThreshold = 3;
@@ -48,6 +49,7 @@ static const float fAltitudeThreshold = 4.0f;
 static const float KeyRotationAccel = degToRad(120.0f);
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
+
 
 static void warning(string s)
 {
@@ -124,6 +126,8 @@ CelestiaCore::CelestiaCore() :
     paused(false),
     joystickRotation(0.0f, 0.0f, 0.0f),
     KeyAccel(1.0),
+    movieCapture(NULL),
+    recording(false),
     contextMenuCallback(NULL),
     logoTexture(NULL),
     alerter(NULL)
@@ -139,6 +143,8 @@ CelestiaCore::CelestiaCore() :
 
 CelestiaCore::~CelestiaCore()
 {
+    if (movieCapture != NULL)
+        recordEnd();
     delete execEnv;
 }
 
@@ -385,6 +391,14 @@ void CelestiaCore::keyDown(int key)
         break;
     case Key_F7:
         sim->setTargetSpeed(1);
+        break;
+    case Key_F11:
+        if (movieCapture != NULL)
+            recording = !recording;
+        break;
+    case Key_F12:
+        if (movieCapture != NULL)
+            recordEnd();
         break;
     case Key_NumPad2:
     case Key_NumPad4:
@@ -804,6 +818,9 @@ void CelestiaCore::draw()
     sim->render(*renderer);
     renderOverlay();
 
+    if (movieCapture != NULL && recording)
+        movieCapture->captureFrame();
+
     // Frame rate counter
     nFrames++;
     if (nFrames == 100)
@@ -1194,6 +1211,33 @@ void CelestiaCore::renderOverlay()
         glPopMatrix();
     }
 
+    if (movieCapture != NULL)
+    {
+        int movieWidth = movieCapture->getWidth();
+        int movieHeight = movieCapture->getHeight();
+        glPushMatrix();
+        glColor4f(1, 0, 0, 1);
+        overlay->rect((width - movieWidth) / 2 - 1, (height - movieHeight) / 2 - 1,
+                      movieWidth + 1, movieHeight + 1, false);
+        glTranslatef((width - movieWidth) / 2, (height + movieHeight) / 2 + 2, 0);
+        *overlay << movieWidth << 'x' << movieHeight << " at " <<
+            movieCapture->getFrameRate() << " fps";
+        if (recording)
+            *overlay << "  Recording";
+        else
+            *overlay << "  Paused";
+
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef((width - movieWidth) / 2,
+                     (height - movieHeight) / 2 - fontHeight - 2, 0);
+        *overlay << "F11 Start/Pause    F12 Stop";
+        glPopMatrix();
+
+        glPopMatrix();
+    }
+
     if (editMode)
     {
         glPushMatrix();
@@ -1548,4 +1592,43 @@ void CelestiaCore::setTimeZoneBias(int bias)
 int CelestiaCore::getHudDetail()
 {
     return hudDetail;
+}
+
+
+void CelestiaCore::initMovieCapture(MovieCapture* mc)
+{
+    if (movieCapture == NULL)
+        movieCapture = mc;
+}
+
+void CelestiaCore::recordBegin()
+{
+    if (movieCapture != NULL)
+        recording = true;
+}
+
+void CelestiaCore::recordPause()
+{
+    recording = false;
+}
+
+void CelestiaCore::recordEnd()
+{
+    if (movieCapture != NULL)
+    {
+        movieCapture->end();
+        delete movieCapture;
+        movieCapture = NULL;
+    }
+    recording = false;
+}
+
+bool CelestiaCore::isCaptureActive()
+{
+    return movieCapture != NULL;
+}
+
+bool CelestiaCore::isRecording()
+{
+    return recording;
 }

@@ -80,8 +80,15 @@ static JOYCAPS joystickCaps;
 bool cursorVisible = true;
 static POINT saveCursorPos;
 
-static bool capturingMovie = false;
-static MovieCapture* movieCapture = NULL;
+static int MovieSizes[4][2] = { { 160, 120 },
+                                { 320, 240 },
+                                { 640, 480 },
+                                { 720, 480 } };
+static float MovieFramerates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
+
+static int movieSize = 1;
+static int movieFramerate = 1;
+
 
 astro::Date newTime(0.0);
 
@@ -138,22 +145,20 @@ void RestoreDisplayMode()
 }
 
 
-static bool BeginMovieCapture(const std::string& filename)
+static bool BeginMovieCapture(const std::string& filename,
+                              int width, int height,
+                              float framerate)
 {
-    if (movieCapture == NULL)
-        movieCapture = new AVICapture();
+    MovieCapture* movieCapture = new AVICapture();
 
-    capturingMovie = movieCapture->start(filename, 320, 240);
+    bool success = movieCapture->start(filename, width, height, framerate);
+    if (success)
+        appCore->initMovieCapture(movieCapture);
+    else
+        delete movieCapture;
     
-    return capturingMovie;
+    return success;
 }
-
-static void EndMovieCapture()
-{
-    movieCapture->end();
-    capturingMovie = false;
-}
-
 
 static bool ToggleMenuItem(HMENU menu, int id)
 {
@@ -356,6 +361,68 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
             return TRUE;
         }
         break;
+    }
+
+    return FALSE;
+}
+
+
+UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
+                                    WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        {
+            char buf[100];
+            HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_SIZE);
+            int nSizes = sizeof MovieSizes / sizeof MovieSizes[0];
+
+            int i;
+            for (i = 0; i < nSizes; i++)
+            {
+                sprintf(buf, "%d x %d", MovieSizes[i][0], MovieSizes[i][1]);
+                SendMessage(hwnd, CB_INSERTSTRING, -1,
+                            reinterpret_cast<LPARAM>(buf));
+
+            }
+            SendMessage(hwnd, CB_SETCURSEL, movieSize, 0);
+
+            hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_FRAMERATE);
+            int nFramerates = sizeof MovieFramerates / sizeof MovieFramerates[0];
+            for (i = 0; i < nFramerates; i++)
+            {
+                sprintf(buf, "%.2f", MovieFramerates[i]);
+                SendMessage(hwnd, CB_INSERTSTRING, -1,
+                            reinterpret_cast<LPARAM>(buf));
+            }
+            SendMessage(hwnd, CB_SETCURSEL, movieFramerate, 0);
+        }
+        return TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDC_COMBO_MOVIE_SIZE)
+        {
+            if (HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                HWND hwnd = reinterpret_cast<HWND>(lParam);
+                int item = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
+                if (item != CB_ERR)
+                    movieSize = item;
+            }
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDC_COMBO_MOVIE_FRAMERATE)
+        {
+            if (HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                HWND hwnd = reinterpret_cast<HWND>(lParam);
+                int item = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
+                if (item != CB_ERR)
+                    movieFramerate = item;
+            }
+            return TRUE;
+        }
     }
 
     return FALSE;
@@ -711,9 +778,10 @@ void handleKey(WPARAM key, bool down)
         }
         break;
     case VK_F11:
-        cout << "F11\n";
-        if (capturingMovie)
-            EndMovieCapture();
+        k = CelestiaCore::Key_F11;
+        break;
+    case VK_F12:
+        k = CelestiaCore::Key_F12;
         break;
 
     case VK_NUMPAD2:
@@ -1229,6 +1297,16 @@ static void HandleCaptureImage(HWND hWnd)
 
 static void HandleCaptureMovie(HWND hWnd)
 {
+    // TODO: The menu item should be disable so that the user doesn't even
+    // have the opportunity to record two movies simultaneously; the only
+    // thing missing to make this happen is notification when recording
+    // is complete.
+    if (appCore->isCaptureActive())
+    {
+        MessageBox(hWnd, "Stop current movie capture before starting another one.", "Error", MB_OK | MB_ICONERROR);
+        return;
+    }
+
     // Display File SaveAs dialog to allow user to specify name and location of
     // of captured movie
     OPENFILENAME Ofn;
@@ -1249,11 +1327,15 @@ static void HandleCaptureMovie(HWND hWnd)
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
     // Comment this out if you just want the standard "Save As" caption.
-    Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
+    Ofn.lpstrTitle = "Save As - Specify File to Capture Movie";
 
     // OFN_HIDEREADONLY - Do not display read-only video files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
-    Ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+    Ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT  | OFN_EXPLORER | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_NOCHANGEDIR;
+
+    Ofn.hInstance = appInstance;
+    Ofn.lpTemplateName = MAKEINTRESOURCE(IDD_MOVIE_PARAMS_CHOOSER);
+    Ofn.lpfnHook = ChooseMovieParamsProc;
 
     // Display the Save dialog box.
     if (GetSaveFileName(&Ofn))
@@ -1303,7 +1385,10 @@ static void HandleCaptureMovie(HWND hWnd)
         }
         else
         {
-            success = BeginMovieCapture(string(Ofn.lpstrFile));
+            success = BeginMovieCapture(string(Ofn.lpstrFile),
+                                        MovieSizes[movieSize][0],
+                                        MovieSizes[movieSize][1],
+                                        MovieFramerates[movieFramerate]);
         }
 
         if (!success)
@@ -2009,8 +2094,8 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             SavePreferencesToRegistry(CelestiaRegKey, prefs);
         }
 
-        if (capturingMovie)
-            EndMovieCapture();
+        if (appCore != NULL)
+            delete appCore;
 
         wglMakeCurrent(hDC, NULL);
         wglDeleteContext(hRC);
@@ -2030,8 +2115,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->draw();
 	    SwapBuffers(hDC);
 	    ValidateRect(hWnd, NULL);
-            if (capturingMovie)
-                movieCapture->captureFrame();
 	}
 	break;
 

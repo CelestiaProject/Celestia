@@ -21,9 +21,13 @@ class AVICapture : public MovieCapture
     AVICapture();
     virtual ~AVICapture();
 
-    bool start(const std::string& filename, int w, int h);
+    bool start(const std::string& filename, int w, int h, float fps);
     bool end();
     bool captureFrame();
+
+    int getWidth() const;
+    int getHeight() const;
+    float getFrameRate() const;
 
  private:
     void cleanup();

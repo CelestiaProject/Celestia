@@ -41,13 +41,15 @@ AVICapture::~AVICapture()
 
 
 bool AVICapture::start(const string& filename,
-                       int w, int h)
+                       int w, int h,
+                       float fps)
 {
     if (capturing)
         return false;
 
     width = w;
     height = h;
+    frameRate = fps;
 
     if (HIWORD(VideoForWindowsVersion()) < 0x010a)
     {
@@ -208,4 +210,20 @@ void AVICapture::cleanup()
         delete[] image;
         image = NULL;
     }
+}
+
+
+int AVICapture::getWidth() const
+{
+    return width;
+}
+
+int AVICapture::getHeight() const
+{
+    return height;
+}
+
+float AVICapture::getFrameRate() const
+{
+    return frameRate;
 }

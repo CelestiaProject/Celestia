@@ -21,6 +21,7 @@
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
+#include "moviecapture.h"
 
 
 class CelestiaCore
@@ -73,17 +74,19 @@ class CelestiaCore
         Key_F8              = 18,
         Key_F9              = 19,
         Key_F10             = 20,
-        Key_NumPadDecimal   = 21,
-        Key_NumPad0         = 22,
-        Key_NumPad1         = 23,
-        Key_NumPad2         = 24,
-        Key_NumPad3         = 25,
-        Key_NumPad4         = 26,
-        Key_NumPad5         = 27,
-        Key_NumPad6         = 28,
-        Key_NumPad7         = 29,
-        Key_NumPad8         = 30,
-        Key_NumPad9         = 31,
+        Key_F11             = 21,
+        Key_F12             = 22,
+        Key_NumPadDecimal   = 23,
+        Key_NumPad0         = 24,
+        Key_NumPad1         = 25,
+        Key_NumPad2         = 26,
+        Key_NumPad3         = 27,
+        Key_NumPad4         = 28,
+        Key_NumPad5         = 29,
+        Key_NumPad6         = 30,
+        Key_NumPad7         = 31,
+        Key_NumPad8         = 32,
+        Key_NumPad9         = 33,
         KeyCount            = 128,
     };
 
@@ -124,6 +127,13 @@ class CelestiaCore
 
     int getTimeZoneBias() const;
     void setTimeZoneBias(int);
+
+    void initMovieCapture(MovieCapture*);
+    void recordBegin();
+    void recordPause();
+    void recordEnd();
+    bool isCaptureActive();
+    bool isRecording();
 
     int getHudDetail();
 
@@ -198,6 +208,9 @@ class CelestiaCore
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
     double KeyAccel;
+
+    MovieCapture* movieCapture;
+    bool recording;
 
     ContextMenuFunc contextMenuCallback;
 

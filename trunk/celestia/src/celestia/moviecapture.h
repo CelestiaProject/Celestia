@@ -19,9 +19,15 @@ class MovieCapture
     MovieCapture() {};
     virtual ~MovieCapture() {};
 
-    virtual bool start(const std::string& filename, int width, int height) = 0;
+    virtual bool start(const std::string& filename,
+                       int width, int height,
+                       float fps) = 0;
     virtual bool end() = 0;
     virtual bool captureFrame() = 0;
+
+    virtual int getWidth() const = 0;
+    virtual int getHeight() const = 0;
+    virtual float getFrameRate() const = 0;
 };
 
 #endif // _MOVIECAPTURE_H_
