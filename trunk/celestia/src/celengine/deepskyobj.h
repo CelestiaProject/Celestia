@@ -36,6 +36,9 @@ class DeepSkyObject
     float getRadius() const;
     void setRadius(float);
 
+    std::string getInfoURL() const;
+    void setInfoURL(const std::string&);
+
     virtual bool load(AssociativeArray*);
 
     virtual void render(const Vec3f& offset,
@@ -48,6 +51,7 @@ class DeepSkyObject
     Point3d position;
     Quatf orientation;
     float radius;
+    std::string* infoURL;
 };
 
 typedef std::vector<DeepSkyObject*> DeepSkyCatalog;
