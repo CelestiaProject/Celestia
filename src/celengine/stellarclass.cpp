@@ -542,6 +542,10 @@ StellarClass::parse(const string& st)
                 specClass = StellarClass::Spectral_DQ;
                 i++;
                 break;
+            case 'X':
+                specClass = StellarClass::Spectral_DX;
+                i++;
+                break;
             case 'Z':
                 specClass = StellarClass::Spectral_DZ;
                 i++;
@@ -562,6 +566,7 @@ StellarClass::parse(const string& st)
             case 'O':
             case 'Q':
             case 'Z':
+            case 'X':
             case 'V': // variable
             case 'P': // magnetic stars with polarized light
             case 'H': // magnetic stars without polarized light

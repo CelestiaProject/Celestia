@@ -52,13 +52,14 @@ public:
         Spectral_DQ    = 20, // white dwarf Q, carbon features
         Spectral_DZ    = 21, // white dwarf Z, metal lines only, no H or He
         Spectral_D     = 22, // generic white dwarf, no additional data
-        Spectral_Count = 23,
+        Spectral_DX    = 23,
+        Spectral_Count = 24,
     };
 
     enum
     {
         FirstWDClass = 16,
-        WDClassCount = 7,
+        WDClassCount = 8,
         SubclassCount = 11,
         NormalClassCount = 16,
     };

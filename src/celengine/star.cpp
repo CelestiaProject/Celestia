@@ -353,7 +353,7 @@ char* SpectralClassNames[StellarClass::NormalClassCount] = {
 };
 
 char* WDSpectralClassNames[StellarClass::WDClassCount] = {
-    "DA", "DB", "DC", "DO", "DQ", "DZ", "D"
+    "DA", "DB", "DC", "DO", "DQ", "DZ", "D", "DX",
 };
 
 
