@@ -275,7 +275,7 @@
 
 - (void) drawRect: (NSRect) rect
 {
-        NSApplication* theApp = [NSApplication sharedApplication];        
+        //NSApplication* theApp = [NSApplication sharedApplication];        
         NSOpenGLContext *oglContext;
         [self lockFocus];
         oglContext = [self openGLContext];
