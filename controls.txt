@@ -71,16 +71,18 @@ Backspace: Cancel current selection
 Ctrl+A : Toggle atmospheres
 Ctrl+B : Toggle constellation boundaries 
 Ctrl+E : Toggle eclipse shadow rendering
+Ctrl+K : Toggle display of markers
 Ctrl+L : Toggle night side planet maps (light pollution)
+Ctrl+P : Mark selected object
 Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
-Ctrl+P : Toggle per-pixel lighting (if supported)
 Ctrl+T : Toggle rendering of comet tails
-Ctrl+V : Toggle vertex programs (if supported)
+Ctrl+V : Cycle between supported OpenGL render paths
 Ctrl+W : Toggle wireframe mode
 Ctrl+X : Toggle antialias lines
 Ctrl+Y : Toggle autoMag = auto adaptation of star visibility to field
          of view   
 r R: lower or raise texture resolution
++  : Switch between artistic and limit of knowledge planet textures
 
 Multiview:
 Ctrl+R : Split view vertically
