@@ -339,6 +339,8 @@ void CelestiaCore::joystickAxis(int axis, float amount)
     else
         amount = (amount - deadZone) * (1.0f / (1.0f - deadZone));
 
+    amount = sign(amount) * square(amount);
+
     if (axis == Joy_XAxis)
         joystickRotation.y = amount;
     else if (axis == Joy_YAxis)
@@ -665,15 +667,6 @@ void CelestiaCore::tick(double dt)
     double lastTime = currentTime;
     currentTime += dt;
 
-    // Frame rate counter
-    nFrames++;
-    if (nFrames == 100)
-    {
-        fps = (double) nFrames / (currentTime - fpsCounterStartTime);
-        nFrames = 0;
-        fpsCounterStartTime = currentTime;
-    }
-
     // Mouse wheel zoom
     if (zoomMotion != 0.0f)
     {
@@ -779,6 +772,15 @@ void CelestiaCore::draw()
 {
     sim->render(*renderer);
     renderOverlay();
+
+    // Frame rate counter
+    nFrames++;
+    if (nFrames == 100)
+    {
+        fps = (double) nFrames / (currentTime - fpsCounterStartTime);
+        nFrames = 0;
+        fpsCounterStartTime = currentTime;
+    }
 #if 0
     GLenum err = glGetError();
     if (err != GL_NO_ERROR)
