@@ -255,9 +255,44 @@ Expression* Parser::parseRelationalExpression()
     }
 }
 
+Expression* Parser::parseAssignmentExpression()
+{
+    Expression* left = parseRelationalExpression();
+    if (left == NULL)
+        return NULL;
+
+    Scanner::TokenType tok = scanner.nextToken();
+    if (tok == Scanner::TokenAssign)
+    {
+        // Assignment operator is right associative
+        Expression* right = parseAssignmentExpression();
+        if (right == NULL)
+        {
+            delete left;
+            return NULL;
+        }
+
+        if (!left->isLValue())
+        {
+            syntaxError("lvalue expected for assignment");
+            delete left;
+            delete right;
+            return NULL;
+        }
+
+        return new AssignmentExpression(left, right);
+    }
+    else
+    {
+        scanner.pushBack();
+        return left;
+    }
+}
+
+
 Expression* Parser::parseExpression()
 {
-    return parseRelationalExpression();
+    return parseAssignmentExpression();
 }
 
 

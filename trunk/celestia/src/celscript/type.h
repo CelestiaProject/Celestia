@@ -10,6 +10,9 @@
 #ifndef CELSCRIPT_TYPE_H_
 #define CELSCRIPT_TYPE_H_
 
+#include <celscript/celx.h>
+
+
 namespace celx
 {
 
