@@ -2,7 +2,7 @@
 "Halley" "Sol" 
 { 
 	Class "comet" 
-	Mesh "halley.3ds"
+	Mesh "halley.cmod"
 	Texture "asteroid.jpg" 
 	Radius 7.6 # maximum semi-axis
 	MeshCenter [ -0.338 1.303 0.230 ]
