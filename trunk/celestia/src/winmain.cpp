@@ -28,6 +28,7 @@
 #include "visstars.h"
 #include "mathlib.h"
 #include "astro.h"
+#include "overlay.h"
 #include "config.h"
 #include "favorites.h"
 #include "simulation.h"
@@ -42,6 +43,7 @@
 //-----------------
 char szAppName[] = "Celestia";
 
+static string welcomeMessage("Welcome to Celestia 1.06");
 
 
 //----------------------------------
@@ -53,17 +55,21 @@ static double currentTime=0.0;
 static double deltaTime=0.0;
 
 static bool fullscreen;
-static int lastX = 0, lastY = 0;
+
+// Mouse motion tracking
+static int lastX = 0;
+static int lastY = 0;
 static int mouseMotion = 0;
 static double mouseWheelTime = -1000.0;
 static float mouseWheelMotion = 0.0f;
-float xrot = 0, yrot = 0;
+
 static bool upPress = false;
 static bool downPress = false;
 static bool leftPress = false;
 static bool rightPress = false;
 static bool pgupPress = false;
 static bool pgdnPress = false;
+
 static bool wireframe = false;
 
 static bool paused = false;
@@ -72,7 +78,7 @@ static double timeScale = 0.0;
 static bool textEnterMode = false;
 static string typedText = "";
 
-static float distanceFromCenter = 0;
+static int hudDetail = 1;
 
 static CelestiaConfig* config = NULL;
 
@@ -84,6 +90,8 @@ static FavoritesList* favorites = NULL;
 
 static Simulation* sim = NULL;
 static Renderer* renderer = NULL;
+static Overlay* overlay = NULL;
+static TexFont* font = NULL;
 
 static CommandSequence* script = NULL;
 static Execution* runningScript = NULL;
@@ -174,6 +182,55 @@ static void SetFaintest(float magnitude)
     renderer->setBrightnessBias(0.0f);
     renderer->setBrightnessScale(1.0f / (magnitude + 1.0f));
     sim->setFaintestVisible(magnitude);
+}
+
+
+static void WriteFavoritesFile()
+{
+    if (config->favoritesFile != "")
+    {
+        ofstream out(config->favoritesFile.c_str(), ios::out);
+        if (out.good())
+        WriteFavoritesList(*favorites, out);
+    }
+}
+
+static void ActivateFavorite(FavoritesEntry& fav)
+{
+    sim->cancelMotion();
+    sim->setTime(fav.jd);
+    sim->getObserver().setPosition(fav.position);
+    sim->getObserver().setOrientation(fav.orientation);
+}
+
+static void AddFavorite(string name)
+{
+    FavoritesEntry* fav = new FavoritesEntry();
+    fav->jd = sim->getTime();
+    fav->position = sim->getObserver().getPosition();
+    fav->orientation = sim->getObserver().getOrientation();
+    fav->name = name;
+    favorites->insert(favorites->end(), fav);
+    WriteFavoritesFile();
+}
+
+
+void AppendLocationToMenu(string name, int index)
+{
+    MENUITEMINFO menuInfo;
+    menuInfo.cbSize = sizeof(MENUITEMINFO);
+    menuInfo.fMask = MIIM_SUBMENU;
+    if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
+    {
+        HMENU locationsMenu = menuInfo.hSubMenu;
+
+        menuInfo.cbSize = sizeof MENUITEMINFO;
+        menuInfo.fMask = MIIM_TYPE | MIIM_ID;
+        menuInfo.fType = MFT_STRING;
+        menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + index;
+        menuInfo.dwTypeData = const_cast<char*>(name.c_str());
+        InsertMenuItem(locationsMenu, index + 2, TRUE, &menuInfo);
+    }
 }
 
 
@@ -325,6 +382,43 @@ BOOL APIENTRY FindObjectProc(HWND hDlg,
             int len = GetDlgItemText(hDlg, IDC_FINDOBJECT_EDIT, buf, 1024);
             if (len > 0)
                 sim->selectBody(string(buf));
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        else if (LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, 0);
+            return FALSE;
+        }
+        break;
+    }
+
+    return FALSE;
+}
+
+
+BOOL APIENTRY AddLocationProc(HWND hDlg,
+                              UINT message,
+                              UINT wParam,
+                              LONG lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return(TRUE);
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK)
+        {
+            char buf[1024];
+            int len = GetDlgItemText(hDlg, IDC_LOCATION_EDIT, buf, 1024);
+            if (len > 0)
+            {
+                string name(buf);
+
+                AddFavorite(name);
+                AppendLocationToMenu(name, favorites->size() - 1);
+            }
             EndDialog(hDlg, 0);
             return TRUE;
         }
@@ -571,13 +665,11 @@ void handleKeyPress(int c)
         if (c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
         {
             typedText += c;
-            renderer->getInputConsole()->print(c);
         }
         else if (c == '\b')
         {
             if (typedText.size() > 0)
                 typedText = string(typedText, 0, typedText.size() - 1);
-            renderer->getInputConsole()->backspace();
         }
         return;
     }
@@ -625,6 +717,7 @@ void handleKeyPress(int c)
 
     case 'V':
         sim->setHUDDetail((sim->getHUDDetail() + 1) % 2);
+        hudDetail = 1 - hudDetail;
         break;
 
     case ',':
@@ -671,10 +764,12 @@ void handleKeyPress(int c)
         }
         break;
 
+#if 0
     case 'Y':
         if (runningScript == NULL)
             runningScript = new Execution(*script, sim, renderer);
         break;
+#endif
 
     case '1':
     case '2':
@@ -765,6 +860,8 @@ void ChangeSize(GLsizei w, GLsizei h)
     glViewport(0, 0, w, h);
     if (renderer != NULL)
         renderer->resize(w, h);
+    if (overlay != NULL)
+        overlay->setWindowSize(w, h);
 }
 
 
@@ -772,7 +869,130 @@ GLsizei g_w, g_h;
 int bReady;
 
 
-// Good ol' creation code.
+void RenderOverlay()
+{
+    if (font == NULL)
+        return;
+
+    overlay->begin();
+
+    // Time and date
+    if (hudDetail > 0)
+    {
+        glPushMatrix();
+        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+        glTranslatef(g_w - 130, g_h - 15, 0);
+        overlay->beginText();
+        *overlay << astro::Date(sim->getTime()) << '\n';
+        if (paused)
+        {
+            glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+            *overlay << "Paused";
+        }
+        else
+        {
+            double timeScale = sim->getTimeScale();
+            if (abs(timeScale - 1) < 1e-6)
+                *overlay << "Real time";
+            else if (timeScale > 1.0)
+                *overlay << timeScale << "x faster";
+            else
+                *overlay << 1.0 / timeScale << "x slower";
+        }
+        overlay->endText();
+        glPopMatrix();
+    }
+
+    // Speed
+    if (hudDetail > 0)
+    {
+        glPushMatrix();
+        glTranslatef(0, 20, 0);
+        overlay->beginText();
+
+        double speed = sim->getObserver().getVelocity().length();
+        char* units;
+        if (speed < astro::AUtoLightYears(1000))
+        {
+            if (speed < astro::kilometersToLightYears(10000000.0f))
+            {
+                speed = astro::lightYearsToKilometers(speed);
+                units = "km/s";
+            }
+            else
+            {
+                speed = astro::lightYearsToAU(speed);
+                units = "AU/s";
+            }
+        }
+        else
+        {
+            units = "ly/s";
+        }
+
+        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+        *overlay << "\nSpeed: " << speed << ' ' << units;
+
+        overlay->endText();
+        glPopMatrix();
+    }
+
+    // Field of view and camera mode
+    if (hudDetail > 0)
+    {
+        float fov = renderer->getFieldOfView();
+        // fov = ((int) (fov * 1000)) / 1000.0f;
+
+        Simulation::ObserverMode mode = sim->getObserverMode();
+        char* modeName = "";
+        if (mode == Simulation::Travelling)
+            modeName = "Travelling";
+        else if (mode == Simulation::Following)
+            modeName = "Following";
+
+        glPushMatrix();
+        glTranslatef(g_w - 130, 20, 0);
+        overlay->beginText();
+        glColor4f(0.6f, 0.6f, 1.0f, 1);
+        *overlay << modeName << '\n';
+        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+        overlay->printf("FOV: %6.2f\n", fov);
+        overlay->endText();
+        glPopMatrix();
+    }
+
+    // Text input
+    if (textEnterMode)
+    {
+        glPushMatrix();
+        glColor4f(0.7f, 0.7f, 1.0f, 0.2f);
+        overlay->rect(0, 0, g_w, 70);
+        glTranslatef(0, 50, 0);
+        glColor4f(0.6f, 0.6f, 1.0f, 1);
+        *overlay << "Target name: " << typedText;
+        glPopMatrix();
+    }
+
+    // Intro message
+    if (currentTime < 5.0)
+    {
+        int width = 0, maxAscent = 0, maxDescent = 0;
+        txfGetStringMetrics(font, welcomeMessage, width, maxAscent, maxDescent);
+        glPushMatrix();
+        glTranslatef((g_w - width) / 2, g_h / 2, 0);
+
+        float alpha = 1.0f;
+        if (currentTime > 3.0)
+            alpha = 0.5f * (float) (5.0 - currentTime);
+        glColor4f(1, 1, 1, alpha);
+        *overlay << welcomeMessage;
+        glPopMatrix();
+    }
+
+    overlay->end();
+}
+
+
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR     lpCmdLine,
@@ -832,16 +1052,27 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return FALSE;
     }
 
+    // Set up favorites list
     if (config->favoritesFile != "")
     {
-        favorites = ReadFavoritesList(config->favoritesFile);
-        if (favorites == NULL)
+        ifstream in(config->favoritesFile.c_str(), ios::in);
+
+        if (in.good())
         {
-            MessageBox(NULL,
-                       "Error reading favorites file.", "Warning",
-                       MB_OK | MB_ICONERROR);
+            favorites = ReadFavoritesList(in);
+            if (favorites == NULL)
+            {
+                MessageBox(NULL,
+                           "Error reading favorites file.", "Warning",
+                           MB_OK | MB_ICONERROR);
+            }
         }
     }
+
+    // If we couldn't read the favorites list from a file, allocate
+    // an empty list.
+    if (favorites == NULL)
+        favorites = new FavoritesList();
 
     if (!ReadStars(config->starDatabaseFile, config->starNamesFile))
     {
@@ -958,6 +1189,16 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     renderer->setBrightnessBias(0.0f);
     renderer->setBrightnessScale(1.0f / (config->faintestVisible + 1.0f));
 
+    // Set up the overlay
+    overlay = new Overlay();
+    overlay->setWindowSize(g_w, g_h);
+    font = txfLoadFont("fonts\\default.txf");
+    if (font != NULL)
+    {
+        txfEstablishTexture(font, 0, GL_FALSE);
+        overlay->setFont(font);
+    }
+
     // Add favorites to locations menu
     if (favorites != NULL)
     {
@@ -993,13 +1234,16 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // We're now ready.
     bReady = 1;
 
+#if 0
     // Start out at Mir
+    sim->selectBody("Sol");
     sim->selectBody("Mir");
     sim->gotoSelection();
     sim->setTimeScale(0.0f);
     sim->update(5.0);
     sim->setTimeScale(1.0f);
     sim->follow();
+#endif
 
     {
         ifstream scriptfile("test.cel");
@@ -1216,13 +1460,6 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                     sim->selectBody(typedText);
                     typedText = "";
                 }
-                renderer->getInputConsole()->clear();
-            }
-            else
-            {
-                renderer->getInputConsole()->home();
-                renderer->getInputConsole()->clear();
-                renderer->getInputConsole()->printf("Target name: ");
             }
             textEnterMode = !textEnterMode;
             break;
@@ -1280,7 +1517,11 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             break;
 
         case ID_RENDER_SHOWHUDTEXT:
-            sim->setHUDDetail(ToggleMenuItem(ID_RENDER_SHOWHUDTEXT) ? 1 : 0);
+            {
+                bool on = ToggleMenuItem(ID_RENDER_SHOWHUDTEXT);
+                sim->setHUDDetail(on ? 1 : 0);
+                hudDetail = on ? 1 : 0;
+            }
             break;
         case ID_RENDER_SHOWPLANETLABELS:
             ToggleLabelState(ID_RENDER_SHOWPLANETLABELS, Renderer::PlanetLabels);
@@ -1350,6 +1591,10 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_SETTIME), hWnd, SetTimeProc);
             break;
 
+        case ID_LOCATIONS_ADDLOCATION:
+            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDLOCATION), hWnd, AddLocationProc);
+            break;
+
         case ID_HELP_ABOUT:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_ABOUT), hWnd, AboutProc);
             break;
@@ -1372,9 +1617,10 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                 LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION < favorites->size())
             {
                 int whichFavorite = LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION;
-                if (runningScript != NULL)
-                    delete runningScript;
-                runningScript = new Execution(*(*favorites)[whichFavorite]->cmdSeq, sim, renderer);
+                // if (runningScript != NULL)
+                // delete runningScript;
+                // runningScript = new Execution(*(*favorites)[whichFavorite]->cmdSeq, sim, renderer);
+                ActivateFavorite(*(*favorites)[whichFavorite]);
             }
             else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
                      LOWORD(wParam) < MENU_CHOOSE_PLANET + 1000)
@@ -1453,6 +1699,7 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             }
             sim->update(deltaTime);
 	    sim->render(*renderer);
+            RenderOverlay();
 	    SwapBuffers(hDC);
 
 	    ValidateRect(hWnd, NULL);
