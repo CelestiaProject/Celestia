@@ -75,4 +75,6 @@ typedef std::vector<Galaxy*> GalaxyList;
 
 GalaxyList* ReadGalaxyList(std::istream& in);
 
+std::ostream& operator<<(std::ostream& s, const Galaxy::GalaxyType& sc);
+
 #endif // _GALAXY_H_

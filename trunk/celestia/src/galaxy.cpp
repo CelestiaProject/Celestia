@@ -307,3 +307,9 @@ GalaxyList* ReadGalaxyList(istream& in)
 
     return galaxies;
 }
+
+
+ostream& operator<<(ostream& s, const Galaxy::GalaxyType& sc)
+{
+    return s << GalaxyTypeNames[static_cast<int>(sc)].name;
+}
