@@ -102,6 +102,9 @@ namespace astro
 
     extern const double J2000;
     extern const double speedOfLight; // km/s
+    extern const double G; // gravitational constant
+    extern const double SolarMass;
+    extern const double EarthMass;
 };
 
 // Convert a date structure to a Julian date
