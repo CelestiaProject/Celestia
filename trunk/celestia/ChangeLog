@@ -568,6 +568,9 @@ Code:
   ambient light keys
 * Added support for multiple extras directories
 * Reduced minimum field of view down to 3 arcsec
+* Fixed glitch with center command that appeared under Linux and on Windows
+  when building with VS.NET
+* Cleaned up OpenGL extension initialization
 * Significantly improved the reliability of object selection via mouse
   click, notably for small fields of view in the arcsec range. 
 * Fixed the 'move' script command
@@ -575,7 +578,9 @@ Code:
   lookback {} 
 * [,] keys now adjust the limiting magnitude at 45 degrees 
   field of view, if automag is ON. Values displayed via flash messages  
-* Associated the 'look back' command  with the '*' key shortcut
+* Associated the 'looking back' operation  with the '*' key shortcut
+* Fixed bug in orbits of Galilean moons
+* Corrected equatorial planes and rotation offsets for the major planets
 * Linux: Added KDE interface, all features of the GTK interface are 
   available (except for the Tour Guide), new features include:
    - Bookmarks / URLs;
@@ -590,4 +595,4 @@ Code:
      started and the script will be run or the location set to that of the URL.
      If an instance is already running the script will be run in that instance
      or that instance's location will be changed to match the URL.
-
+* Added drag and drop and copy to clipboard for cel:// URLs on Windows
