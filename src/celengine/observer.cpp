@@ -31,7 +31,8 @@ Observer::Observer() :
     beginAccelTime(0.0),
     observerMode(Free),
     trackingOrientation(1.0f, 0.0f, 0.0f, 0.0f),
-    fov((float) (PI / 4.0))
+    fov((float) (PI / 4.0)),
+    reverseFlag(false)
 {
 }
 
@@ -335,6 +336,7 @@ void Observer::reverseOrientation()
     Quatf q = getOrientation();
     q.yrotate((float) PI);
     setOrientation(q);
+    reverseFlag = !reverseFlag;
 }
 
 
@@ -582,7 +584,8 @@ void Observer::setTargetSpeed(float s)
 {
     targetSpeed = s;
     Vec3f v;
-
+    if (reverseFlag)
+        s = -s;
     if (trackObject.empty())
     {
         trackingOrientation = getOrientation();

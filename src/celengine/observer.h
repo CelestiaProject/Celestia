@@ -159,6 +159,7 @@ public:
     Quatf trackingOrientation;   // orientation prior to selecting tracking
 
     float fov;
+    bool reverseFlag;
 };
 
 #endif // _CELENGINE_OBSERVER_H_
