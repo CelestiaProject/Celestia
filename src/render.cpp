@@ -247,7 +247,7 @@ bool Renderer::init(int winWidth, int winHeight)
             InitExtMultiTexture();
         if (ExtensionSupported("GL_NV_register_combiners"))
             InitExtRegisterCombiners();
-        if (ExtensionSupported("GL_NV_vertex_program"))
+        if (ExtensionSupported("GL_NV_vertex_program") && glGenProgramsNV)
             InitExtVertexProgram();
         if (ExtensionSupported("GL_EXT_texture_cube_map"))
         {
@@ -316,7 +316,7 @@ bool Renderer::init(int winWidth, int winHeight)
         DPRINTF("Renderer: nVidia register combiners supported.\n");
         useRegisterCombiners = true;
     }
-    if (ExtensionSupported("GL_NV_vertex_program"))
+    if (ExtensionSupported("GL_NV_vertex_program") && glGenProgramsNV)
     {
         DPRINTF("Renderer: nVidia vertex programs supported.\n");
         useVertexPrograms = vp::init();
