@@ -29,7 +29,7 @@ extern "C" {
 
 using namespace std;
 
-static char* ClassNames[] =
+static const char* ClassNames[] =
 {
     "class_celestia",
     "class_observer",
@@ -367,7 +367,6 @@ static int object_radius(lua_State* l)
 
     return 1;
 }
-
 
 static void CreateObjectMetaTable(lua_State* l)
 {
@@ -796,7 +795,7 @@ static int celestia_select(lua_State* l)
     int argc = lua_gettop(l);
     if (argc != 2)
     {
-        lua_pushstring(l, "One argument expected to function observer:select");
+        lua_pushstring(l, "One argument expected to function celestia:select");
         lua_error(l);
     }
 
@@ -815,6 +814,68 @@ static int celestia_select(lua_State* l)
     }
 
     return 0;
+}
+
+static int celestia_getchilds(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function celestia:getchilds");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Simulation* sim = appCore->getSimulation();
+        Selection* sel = to_object(l, 2);
+        lua_pop(l, 2);
+
+        if (sel != NULL)
+        {
+            lua_newtable(l);
+            if (sel->star != NULL)
+            {
+                SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
+                SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star->getCatalogNumber());
+                if (iter != solarSystemCatalog->end())
+                {
+                    SolarSystem* solarSys = iter->second;
+                    for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
+                    {
+                        Body* body = solarSys->getPlanets()->getBody(i);
+                        Selection satSel(body);
+                        lua_pushnumber(l, i+1);
+                        object_new(l, satSel);
+                        lua_settable(l, 1);
+                    }
+                }
+            }
+            if (sel->body != NULL)
+            {
+                const PlanetarySystem* satellites = sel->body->getSatellites();
+                if (satellites != NULL && satellites->getSystemSize() != 0)
+                {
+                    for (int i = 0; i < satellites->getSystemSize(); i++)
+                    {
+                        Body* body = satellites->getBody(i);
+                        Selection satSel(body);
+                        lua_pushnumber(l, i+1);
+                        object_new(l, satSel);
+                        lua_settable(l, 1);
+                    }
+                }
+            }
+        }
+        else
+        {
+            lua_pushstring(l, "Bad celestia object!\n");
+            lua_error(l);
+        }
+    }
+
+    return 1;
 }
 
 
@@ -837,6 +898,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "getobserver", celestia_getobserver);
     RegisterMethod(l, "find", celestia_find);
     RegisterMethod(l, "select", celestia_select);
+    RegisterMethod(l, "getchilds", celestia_getchilds);
 
     lua_pop(l, 1);
 }
