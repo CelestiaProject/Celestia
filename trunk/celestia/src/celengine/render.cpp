@@ -2611,6 +2611,8 @@ void Renderer::renderObject(Point3f pos,
             {
                 vp::enable();
                 vp::use(vp::diffuseTexOffset);
+                vp::parameter(20, ri.sunColor * ri.color);
+                vp::parameter(32, ri.ambientColor * ri.color);
                 vp::parameter(41,
                               (float) -pfmod(now * atmosphere->cloudSpeed / (2*PI), 1.0),
                               0.0f, 0.0f, 0.0f);
