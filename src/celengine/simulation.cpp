@@ -1071,7 +1071,7 @@ float Simulation::getFaintestVisible() const
 
 void Simulation::setFaintestVisible(float magnitude)
 {
-    cout << "fv: " << magnitude << '\n';
+  //    cout << "fv: " << magnitude << '\n';
     faintestVisible = magnitude;
 }
 
