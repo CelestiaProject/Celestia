@@ -1200,6 +1200,6 @@ KdeAlerter::KdeAlerter(QWidget* _parent) : parent(_parent)
 
 void KdeAlerter::fatalError(const std::string& err)
 {
-    KMessageBox::detailedError(parent, i18n("Celestia encountered an error while processing your script"), QString(err));
+    KMessageBox::detailedError(parent, i18n("Celestia encountered an error while processing your script"), QString(err.c_str()));
 }
 
