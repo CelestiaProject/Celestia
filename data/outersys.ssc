@@ -1,6 +1,7 @@
 # The largest Edgeworth-Kuiper belt objects
 
-"2004 DW" "Sol" { 
+# 90482 Orcus (2004 DW)
+"Orcus" "Sol" { 
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
