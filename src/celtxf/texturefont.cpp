@@ -206,7 +206,7 @@ void TextureFont::rebuildGlyphLookupTable()
 
     // Fill the table with glyph pointers
     for (iter = glyphs.begin(); iter != glyphs.end(); iter++)
-        glyphLookup[iter->id] = iter;
+        glyphLookup[iter->id] = &(*iter);
     glyphLookupTableSize = maxID + 1;
 }
 
