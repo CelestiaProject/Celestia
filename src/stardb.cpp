@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <cstdio>
 #include <algorithm>
 #include "celestia.h"
 #include "mathlib.h"
@@ -136,16 +137,23 @@ string StarDatabase::getStarName(uint32 catalogNumber) const
             name += constellation->getGenitive();
             return name;
         }
-        //return starName->getDesignation + " " + constellation->getGenitive();
     }
 
-    return "";
-#if 0
-    if ((star.getCatalogNumber() & 0xf0000000) == 0)
-        console << "HD " << star.getCatalogNumber() << '\n';
-    else
-        console << "HIP " << (star.getCatalogNumber() & 0x0fffffff) << '\n';
-#endif
+    char buf[20];
+    switch ((catalogNumber & 0xf0000000) >> 28)
+    {
+    case 0:
+        sprintf(buf, "HD %d", catalogNumber);
+        break;
+    case 1:
+        sprintf(buf, "HIP %d", catalogNumber & 0x0fffffff);
+        break;
+    default:
+        sprintf(buf, "? %d", catalogNumber & 0x0fffffff);
+        break;
+    }
+
+    return string(buf);
 }
 
 
