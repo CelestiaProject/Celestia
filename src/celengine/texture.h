@@ -37,6 +37,8 @@ class Texture
     int getWidth() const;
     int getHeight() const;
 
+    void setMaxMipMapLevel(int);
+
     enum {
         ColorChannel = 1,
         AlphaChannel = 2
@@ -47,6 +49,7 @@ class Texture
     int height;
     int components;
     int format;
+    int maxMipMapLevel;
     bool cubeMap;
     bool isNormalMap;
     unsigned char* pixels;
@@ -65,8 +68,6 @@ extern Texture* CreateProceduralTexture(int width, int height,
 extern Texture* CreateProceduralCubeMap(int size, int format,
                                         ProceduralTexEval func);
 extern Texture* CreateJPEGTexture(const char* filename,
-                                  int channels = Texture::ColorChannel);
-extern Texture* getJPEGTexture(const char* filename,
                                   int channels = Texture::ColorChannel);
 extern Texture* CreateBMPTexture(const char* filename);
 extern Texture* CreatePNGTexture(const std::string& filename);
