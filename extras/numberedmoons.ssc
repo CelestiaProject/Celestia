@@ -1113,7 +1113,7 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		10
+	Radius		5
 
 	EllipticalOrbit
 	{
