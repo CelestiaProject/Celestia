@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <time.h>
 #include <qvbox.h>
 #include <kmainwindow.h>
 #include <kpushbutton.h>
