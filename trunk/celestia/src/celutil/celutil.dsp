@@ -109,6 +109,10 @@ SOURCE=.\formatnum.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\utf8.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\util.cpp
 # End Source File
 # Begin Source File
@@ -170,6 +174,10 @@ SOURCE=.\resmanager.h
 # Begin Source File
 
 SOURCE=.\timer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\utf8.h
 # End Source File
 # Begin Source File
 
