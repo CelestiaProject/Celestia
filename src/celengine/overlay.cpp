@@ -142,14 +142,27 @@ void Overlay::printf(char* format, ...)
 }
 
 
-void Overlay::rect(float x, float y, float w, float h)
+void Overlay::rect(float x, float y, float w, float h, bool fill)
 {
     if (useTexture)
     {
         glDisable(GL_TEXTURE_2D);
         useTexture = false;
     }
-    glRectf(x, y, x + w, y + h);
+
+    if (fill)
+    {
+        glRectf(x, y, x + w, y + h);
+    }
+    else
+    {
+        glBegin(GL_LINE_LOOP);
+        glVertex3f(x, y, 0);
+        glVertex3f(x + w, y, 0);
+        glVertex3f(x + w, y + h, 0);
+        glVertex3f(x, y + h, 0);
+        glEnd();
+    }
 }
 
 
