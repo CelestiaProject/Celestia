@@ -1802,6 +1802,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             prefs.winY = screenHeight - prefs.winHeight;
     }
 
+    //Make sure windowRect contains default window size in case Celestia is
+    //launched in fullscreen mode. Without this code, CreateOpenGLWindow() will
+    //be called with windowRect = {0, 0, 0, 0} when the user switches to
+    //windowed mode.
+    windowRect.left = prefs.winX;
+    windowRect.top = prefs.winY;
+    windowRect.right = windowRect.left + prefs.winWidth;
+    windowRect.bottom = windowRect.top + prefs.winHeight;
+
     bool startFullscreen;
     if (strstr(lpCmdLine, "-fullscreen"))
 	    startFullscreen = true;
@@ -1841,6 +1850,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     {
         hWnd = CreateOpenGLWindow(0, 0, 800, 600,
                                   lastFullScreenMode, currentScreenMode);
+
+        //Prevent unnecessary destruction and recreation of OpenGLWindow in
+        //while() loop below.
+        newScreenMode = currentScreenMode;
     }
     else
     {
