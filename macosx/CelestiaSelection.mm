@@ -88,14 +88,14 @@
 -(CelestiaGalaxy*)galaxy
 {
     if ([self selection].getType() != Selection::Type_DeepSky) return nil;
-    return [[[CelestiaGalaxy alloc] initWithGalaxy:[self selection].deepsky()] autorelease];
+    return [[[CelestiaGalaxy alloc] initWithGalaxy:((Galaxy*)[self selection].deepsky())] autorelease];
 }
 -(NSString *)name
 {
     return [NSString stringWithStdString:[self selection].getName()];
 }
 
--(NSString *)briefName
+-(NSString *) briefName
 {
     NSString* name;
     if ([self star] != NULL)
