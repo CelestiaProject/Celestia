@@ -574,6 +574,26 @@ int LuaState::resume()
 }
 
 
+// get current linenumber of script and create
+// useful error-message
+static void doError(lua_State* l, const char* errorMsg)
+{
+    lua_Debug debug;
+    if (lua_getstack(l, 1, &debug))
+    {
+        char buf[1024];
+        if (lua_getinfo(l, "l", &debug))
+        {
+            sprintf(buf, "In line %i: %s", debug.currentline, errorMsg);
+            lua_pushstring(l, buf);
+            lua_error(l);
+        }
+    }
+    lua_pushstring(l, errorMsg);
+    lua_error(l);
+}
+
+
 // Check if the number of arguments on the stack matches
 // the allowed range [minArgs, maxArgs]. Cause an error if not. 
 static void checkArgs(lua_State* l,
@@ -582,8 +602,7 @@ static void checkArgs(lua_State* l,
     int argc = lua_gettop(l);
     if (argc < minArgs || argc > maxArgs)
     {
-        lua_pushstring(l, errorMessage);
-        lua_error(l);
+        doError(l, errorMessage);
     }
 }
 
@@ -635,14 +654,12 @@ LuaState* getLuaStateObject(lua_State* l)
 
     if (!lua_islightuserdata(l, -1))
     {
-        lua_pushstring(l, "Internal Error: Invalid table entry for LuaState-pointer");
-        lua_error(l);
+        doError(l, "Internal Error: Invalid table entry for LuaState-pointer");
     }
     LuaState* luastate_ptr = static_cast<LuaState*>(lua_touserdata(l, -1));
     if (luastate_ptr == NULL)
     {
-        lua_pushstring(l, "Internal Error: Invalid LuaState-pointer");
-        lua_error(l);
+        doError(l, "Internal Error: Invalid LuaState-pointer");
     }
     lua_settop(l, stackSize);
     return luastate_ptr;
@@ -690,8 +707,7 @@ static const char* safeGetString(lua_State* l, int index, FatalErrors fatalError
     {
         if (fatalErrors & WrongArgc)
         {
-            lua_pushstring(l, errorMsg);
-            lua_error(l);
+            doError(l, errorMsg);
         }
         else
             return NULL;
@@ -700,8 +716,7 @@ static const char* safeGetString(lua_State* l, int index, FatalErrors fatalError
     {
         if (fatalErrors & WrongType)
         {
-            lua_pushstring(l, errorMsg);
-            lua_error(l);
+            doError(l, errorMsg);
         }
         else
             return NULL;
@@ -726,8 +741,7 @@ static lua_Number safeGetNumber(lua_State* l, int index, FatalErrors fatalErrors
     {
         if (fatalErrors & WrongArgc)
         {
-            lua_pushstring(l, errorMsg);
-            lua_error(l);
+            doError(l, errorMsg);
         }
         else
             return defaultValue;
@@ -736,8 +750,7 @@ static lua_Number safeGetNumber(lua_State* l, int index, FatalErrors fatalErrors
     {
         if (fatalErrors & WrongType)
         {
-            lua_pushstring(l, errorMsg);
-            lua_error(l);
+            doError(l, errorMsg);
         }
         else
             return defaultValue;
@@ -787,8 +800,7 @@ static Vec3d* this_vector(lua_State* l)
     Vec3d* v3 = to_vector(l, 1);
     if (v3 == NULL)
     {
-        lua_pushstring(l, "Bad vector object!");
-        lua_error(l);
+        doError(l, "Bad vector object!");
     }
 
     return v3;
@@ -802,8 +814,7 @@ static int vector_sub(lua_State* l)
     Vec3d* op2 = to_vector(l, 2);
     if (op1 == NULL || op2 == NULL)
     {
-        lua_pushstring(l, "Subtraction only defined for two vectors");
-        lua_error(l);
+        doError(l, "Subtraction only defined for two vectors");
     }
     else
     {
@@ -835,8 +846,7 @@ static int vector_get(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Internal error: couldn't get metatable");
-            lua_error(l);
+            doError(l, "Internal error: couldn't get metatable");
         }
     }
     lua_pushnumber(l, (lua_Number)value);
@@ -857,8 +867,7 @@ static int vector_set(lua_State* l)
         v3->z = value;
     else
     {
-        lua_pushstring(l, "Invalid key in vector-access");
-        lua_error(l);
+        doError(l, "Invalid key in vector-access");
     }
     return 0;
 }
@@ -937,8 +946,7 @@ static int vector_add(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Bad vector addition!");
-        lua_error(l);
+        doError(l, "Bad vector addition!");
     }
     return 1;
 }
@@ -971,8 +979,7 @@ static int vector_mult(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Bad vector multiplication!");
-        lua_error(l);
+        doError(l, "Bad vector multiplication!");
     }
     return 1;
 }
@@ -990,8 +997,7 @@ static int vector_cross(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Bad vector multiplication!");
-        lua_error(l);
+        doError(l, "Bad vector multiplication!");
     }
     return 1;
 
@@ -1043,8 +1049,7 @@ static Quatd* this_rotation(lua_State* l)
     Quatd* q = to_rotation(l, 1);
     if (q == NULL)
     {
-        lua_pushstring(l, "Bad rotation object!");
-        lua_error(l);
+        doError(l, "Bad rotation object!");
     }
 
     return q;
@@ -1058,8 +1063,7 @@ static int rotation_add(lua_State* l)
     Quatd* q2 = to_rotation(l, 2);
     if (q1 == NULL || q2 == NULL)
     {
-        lua_pushstring(l, "Addition only defined for two rotations");
-        lua_error(l);
+        doError(l, "Addition only defined for two rotations");
     }
     else
     {
@@ -1105,8 +1109,7 @@ static int rotation_mult(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Bad rotation multiplication!");
-        lua_error(l);
+        doError(l, "Bad rotation multiplication!");
     }
     return 1;
 }
@@ -1151,8 +1154,7 @@ static int rotation_get(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Internal error: couldn't get metatable");
-            lua_error(l);
+            doError(l, "Internal error: couldn't get metatable");
         }
     }
     lua_pushnumber(l, (lua_Number)value);
@@ -1177,8 +1179,7 @@ static int rotation_set(lua_State* l)
         w = value;
     else
     {
-        lua_pushstring(l, "Invalid key in rotation-access");
-        lua_error(l);
+        doError(l, "Invalid key in rotation-access");
     }
     *q3 = Quatd(w, v);
     return 0;
@@ -1227,8 +1228,7 @@ static UniversalCoord* this_position(lua_State* l)
     UniversalCoord* uc = to_position(l, 1);
     if (uc == NULL)
     {
-        lua_pushstring(l, "Bad position object!");
-        lua_error(l);
+        doError(l, "Bad position object!");
     }
 
     return uc;
@@ -1257,8 +1257,7 @@ static int position_get(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Internal error: couldn't get metatable");
-            lua_error(l);
+            doError(l, "Internal error: couldn't get metatable");
         }
     }
     lua_pushnumber(l, (lua_Number)value);
@@ -1279,8 +1278,7 @@ static int position_set(lua_State* l)
         uc->z = value;
     else
     {
-        lua_pushstring(l, "Invalid key in position-access");
-        lua_error(l);
+        doError(l, "Invalid key in position-access");
     }
     return 0;
 }
@@ -1330,8 +1328,7 @@ static int position_vectorto(lua_State* l)
 
     if (uc2 == NULL)
     {
-        lua_pushstring(l, "Argument to position:vectorto must be a position");
-        lua_error(l);
+        doError(l, "Argument to position:vectorto must be a position");
     }
     Vec3d diff = *uc2 - *uc;
     vector_new(l, diff);
@@ -1347,15 +1344,13 @@ static int position_orientationto(lua_State* l)
 
     if (target == NULL)
     {
-        lua_pushstring(l, "First argument to position:orientationto must be a position");
-        lua_error(l);
+        doError(l, "First argument to position:orientationto must be a position");
     }
 
     Vec3d* upd = to_vector(l, 3);
     if (upd == NULL)
     {
-        lua_pushstring(l, "Second argument to position:orientationto must be a vector");
-        lua_error(l);
+        doError(l, "Second argument to position:orientationto must be a vector");
     }
 
     Vec3d src2target = *target - *src;
@@ -1385,8 +1380,7 @@ static int position_distanceto(lua_State* l)
     UniversalCoord* uc2 = to_position(l, 2);
     if (uc2 == NULL)
     {
-        lua_pushstring(l, "Position expected as argument to position:distanceto");
-        lua_error(l);
+        doError(l, "Position expected as argument to position:distanceto");
     }
 
     Vec3d v = *uc2 - *uc;
@@ -1418,8 +1412,7 @@ static int position_add(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Bad position addition!");
-        lua_error(l);
+        doError(l, "Bad position addition!");
     }
     return 1;
 }
@@ -1446,8 +1439,7 @@ static int position_sub(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Bad position subtraction!");
-        lua_error(l);
+        doError(l, "Bad position subtraction!");
     }
     return 1;
 }
@@ -1459,8 +1451,7 @@ static int position_addvector(lua_State* l)
     Vec3d* v3d = to_vector(l, 2);
     if (v3d == NULL)
     {
-        lua_pushstring(l, "Vector expected as argument to position:addvector");
-        lua_error(l);
+        doError(l, "Vector expected as argument to position:addvector");
     }
     else
     if (uc != NULL && v3d != NULL)
@@ -1512,8 +1503,7 @@ static FrameOfReference* this_frame(lua_State* l)
     FrameOfReference* f = to_frame(l, 1);
     if (f == NULL)
     {
-        lua_pushstring(l, "Bad frame object!");
-        lua_error(l);
+        doError(l, "Bad frame object!");
     }
 
     return f;
@@ -1544,8 +1534,7 @@ static int frame_from(lua_State* l)
     }
     if (uc == NULL && q == NULL)
     {
-        lua_pushstring(l, "Position or rotation expected as second argument to frame:from()");
-        lua_error(l);
+        doError(l, "Position or rotation expected as second argument to frame:from()");
     }
 
     jd = safeGetNumber(l, 3, WrongType, "Second arg to frame:from must be a number", appCore->getSimulation()->getTime());
@@ -1592,8 +1581,7 @@ static int frame_to(lua_State* l)
 
     if (uc == NULL && q == NULL)
     {
-        lua_pushstring(l, "Position or rotation expected as second argument to frame:to()");
-        lua_error(l);
+        doError(l, "Position or rotation expected as second argument to frame:to()");
     }
 
     jd = safeGetNumber(l, 3, WrongType, "Second arg to frame:to must be a number", appCore->getSimulation()->getTime());
@@ -1655,8 +1643,7 @@ static Selection* this_object(lua_State* l)
     Selection* sel = to_object(l, 1);
     if (sel == NULL)
     {
-        lua_pushstring(l, "Bad position object!");
-        lua_error(l);
+        doError(l, "Bad position object!");
     }
 
     return sel;
@@ -1772,8 +1759,7 @@ static int object_spectraltype(lua_State* l)
             // This should only happen if the spectral type has > 15 chars
             // (i.e. never, unless there's a bug)
             assert(0);
-            lua_pushstring(l, "Bad spectral type (this is a bug!)");
-            lua_error(l);
+            doError(l, "Bad spectral type (this is a bug!)");
         }
     }
     else
@@ -2075,8 +2061,7 @@ static Observer* this_observer(lua_State* l)
     Observer* obs = to_observer(l, 1);
     if (obs == NULL)
     {
-        lua_pushstring(l, "Bad observer object (maybe tried to access a deleted view?)!");
-        lua_error(l);
+        doError(l, "Bad observer object (maybe tried to access a deleted view?)!");
     }
 
     return obs;
@@ -2106,8 +2091,7 @@ static int observer_setposition(lua_State* l)
     UniversalCoord* uc = to_position(l,2);
     if (uc == NULL)
     {
-        lua_pushstring(l, "Argument to observer:setposition must be a position");
-        lua_error(l);
+        doError(l, "Argument to observer:setposition must be a position");
     }
     o->setPosition(*uc);
     return 0;
@@ -2122,8 +2106,7 @@ static int observer_setorientation(lua_State* l)
     Quatd* q = to_rotation(l,2);
     if (q == NULL)
     {
-        lua_pushstring(l, "Argument to observer:setorientation must be a rotation");
-        lua_error(l);
+        doError(l, "Argument to observer:setorientation must be a rotation");
     }
     o->setOrientation(*q);
     return 0;
@@ -2149,8 +2132,7 @@ static int observer_rotate(lua_State* l)
     Quatd* q = to_rotation(l,2);
     if (q == NULL)
     {
-        lua_pushstring(l, "Argument to observer:setpos must be a rotation");
-        lua_error(l);
+        doError(l, "Argument to observer:setpos must be a rotation");
     }
     Quatf qf(q->w, q->x, q->y, q->z);
     o->rotate(qf);
@@ -2173,8 +2155,7 @@ static int observer_lookat(lua_State* l)
         upd = to_vector(l, 3);
         if (to == NULL)
         {
-            lua_pushstring(l, "Argument 1 (of 2) to observer:lookat must be of type position");
-            lua_error(l);
+            doError(l, "Argument 1 (of 2) to observer:lookat must be of type position");
         }
     }
     else
@@ -2186,14 +2167,12 @@ static int observer_lookat(lua_State* l)
 
         if (to == NULL || from == NULL)
         {
-            lua_pushstring(l, "Argument 1 and 2 (of 3) to observer:lookat must be of type position");
-            lua_error(l);
+            doError(l, "Argument 1 and 2 (of 3) to observer:lookat must be of type position");
         }
     }
     if (upd == NULL)
     {
-        lua_pushstring(l, "Last argument to observer:lookat must be of type vector");
-        lua_error(l);
+        doError(l, "Last argument to observer:lookat must be of type vector");
     }
     Vec3d nd;
     if (from == NULL)
@@ -2316,8 +2295,7 @@ static int observer_goto(lua_State* l)
     UniversalCoord* uc = to_position(l, 2);
     if (sel == NULL && uc == NULL)
     {
-        lua_pushstring(l, "First arg to observer:goto must be object or position");
-        lua_error(l);
+        doError(l, "First arg to observer:goto must be object or position");
     }
 
     double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:goto must be a number", 5.0);
@@ -2350,8 +2328,7 @@ static int observer_gotolonglat(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First arg to observer:gotolonglat must be an object");
-        lua_error(l);
+        doError(l, "First arg to observer:gotolonglat must be an object");
     }
     double defaultDistance = sel->radius() * 5.0;
 
@@ -2368,8 +2345,7 @@ static int observer_gotolonglat(lua_State* l)
         Vec3d* uparg = to_vector(l, 7);
         if (uparg == NULL)
         {
-            lua_pushstring(l, "Sixth argument to observer:gotolonglat must be a vector");
-            lua_error(l);
+            doError(l, "Sixth argument to observer:gotolonglat must be a vector");
         }
         up = Vec3f((float)uparg->x, (float)uparg->y, (float)uparg->z);
     }
@@ -2398,8 +2374,7 @@ static int observer_gotolocation(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "First arg to observer:gotolocation must be a position");
-        lua_error(l);
+        doError(l, "First arg to observer:gotolocation must be a position");
     }
 
     return 0;
@@ -2413,8 +2388,7 @@ static int observer_gotodistance(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First arg to observer:gotodistance must be object");
-        lua_error(l);
+        doError(l, "First arg to observer:gotodistance must be object");
     }
 
     double distance = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotodistance must be a number", 20000);
@@ -2426,8 +2400,7 @@ static int observer_gotodistance(lua_State* l)
         Vec3d* up_arg = to_vector(l, 5);
         if (up_arg == NULL)
         {
-            lua_pushstring(l, "Fourth arg to observer:gotodistance must be a vector");
-            lua_error(l);
+            doError(l, "Fourth arg to observer:gotodistance must be a vector");
         }
         up.x = (float)up_arg->x;
         up.y = (float)up_arg->y;
@@ -2447,8 +2420,7 @@ static int observer_gotosurface(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First arg to observer:gotosurface must be object");
-        lua_error(l);
+        doError(l, "First arg to observer:gotosurface must be object");
     }
 
     double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotosurface must be a number", 5.0);
@@ -2468,8 +2440,7 @@ static int observer_center(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First argument to observer:center must be an object");
-        lua_error(l);
+        doError(l, "First argument to observer:center must be an object");
     }
     double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:center must be a number", 5.0);
 
@@ -2486,8 +2457,7 @@ static int observer_follow(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First argument to observer:follow must be an object");
-        lua_error(l);
+        doError(l, "First argument to observer:follow must be an object");
     }
     o->follow(*sel);
 
@@ -2502,8 +2472,7 @@ static int observer_synchronous(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First argument to observer:synchronous must be an object");
-        lua_error(l);
+        doError(l, "First argument to observer:synchronous must be an object");
     }
     o->geosynchronousFollow(*sel);
 
@@ -2518,8 +2487,7 @@ static int observer_lock(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First argument to observer:phaseLock must be an object");
-        lua_error(l);
+        doError(l, "First argument to observer:phaseLock must be an object");
     }
     o->phaseLock(*sel);
 
@@ -2534,8 +2502,7 @@ static int observer_chase(lua_State* l)
     Selection* sel = to_object(l, 2);
     if (sel == NULL)
     {
-        lua_pushstring(l, "First argument to observer:chase must be an object");
-        lua_error(l);
+        doError(l, "First argument to observer:chase must be an object");
     }
     o->chase(*sel);
 
@@ -2559,8 +2526,7 @@ static int observer_track(lua_State* l)
         Selection* sel = to_object(l, 2);
         if (sel == NULL)
         {
-            lua_pushstring(l, "First argument to observer:center must be an object");
-            lua_error(l);
+            doError(l, "First argument to observer:center must be an object");
         }
         o->setTrackedObject(*sel);
     }
@@ -2655,8 +2621,7 @@ static int observer_setframe(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Argument to observer:setframe must be a frame");
-        lua_error(l);
+        doError(l, "Argument to observer:setframe must be a frame");
     }
     return 0;
 }
@@ -2761,8 +2726,7 @@ static int observer_setlocationflags(lua_State* l)
     Observer* obs = this_observer(l);
     if (!lua_istable(l, 2))
     {
-        lua_pushstring(l, "Argument to observer:setlocationflags() must be a table");
-        lua_error(l);
+        doError(l, "Argument to observer:setlocationflags() must be a table");
     }
 
     lua_pushnil(l);
@@ -2777,8 +2741,7 @@ static int observer_setlocationflags(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Keys in table-argument to observer:setlocationflags() must be strings");
-            lua_error(l);
+            doError(l, "Keys in table-argument to observer:setlocationflags() must be strings");
         }
         if (lua_isboolean(l, -1))
         {
@@ -2786,8 +2749,7 @@ static int observer_setlocationflags(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Values in table-argument to observer:setlocationflags() must be boolean");
-            lua_error(l);
+            doError(l, "Values in table-argument to observer:setlocationflags() must be boolean");
         }
         if (LocationFlagMap.count(key) == 0)
         {
@@ -2897,8 +2859,7 @@ static CelestiaCore* this_celestia(lua_State* l)
     CelestiaCore* appCore = to_celestia(l, 1);
     if (appCore == NULL)
     {
-        lua_pushstring(l, "Bad celestia object!");
-        lua_error(l);
+        doError(l, "Bad celestia object!");
     }
 
     return appCore;
@@ -2990,8 +2951,7 @@ static int celestia_setrenderflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     if (!lua_istable(l, 2))
     {
-        lua_pushstring(l, "Argument to celestia:setrenderflags() must be a table");
-        lua_error(l);
+        doError(l, "Argument to celestia:setrenderflags() must be a table");
     }
 
     int renderFlags = appCore->getRenderer()->getRenderFlags();
@@ -3006,8 +2966,7 @@ static int celestia_setrenderflags(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Keys in table-argument to celestia:setrenderflags() must be strings");
-            lua_error(l);
+            doError(l, "Keys in table-argument to celestia:setrenderflags() must be strings");
         }
         if (lua_isboolean(l, -1))
         {
@@ -3015,8 +2974,7 @@ static int celestia_setrenderflags(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Values in table-argument to celestia:setrenderflags() must be boolean");
-            lua_error(l);
+            doError(l, "Values in table-argument to celestia:setrenderflags() must be boolean");
         }
         if (key == "lightdelay")
         {
@@ -3111,8 +3069,7 @@ static int celestia_setlabelflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     if (!lua_istable(l, 2))
     {
-        lua_pushstring(l, "Argument to celestia:setlabelflags() must be a table");
-        lua_error(l);
+        doError(l, "Argument to celestia:setlabelflags() must be a table");
     }
 
     int labelFlags = appCore->getRenderer()->getLabelMode();
@@ -3127,8 +3084,7 @@ static int celestia_setlabelflags(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Keys in table-argument to celestia:setlabelflags() must be strings");
-            lua_error(l);
+            doError(l, "Keys in table-argument to celestia:setlabelflags() must be strings");
         }
         if (lua_isboolean(l, -1))
         {
@@ -3136,8 +3092,7 @@ static int celestia_setlabelflags(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Values in table-argument to celestia:setlabelflags() must be boolean");
-            lua_error(l);
+            doError(l, "Values in table-argument to celestia:setlabelflags() must be boolean");
         }
         if (LabelFlagMap.count(key) == 0)
         {
@@ -3185,8 +3140,7 @@ static int celestia_setorbitflags(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     if (!lua_istable(l, 2))
     {
-        lua_pushstring(l, "Argument to celestia:setorbitflags() must be a table");
-        lua_error(l);
+        doError(l, "Argument to celestia:setorbitflags() must be a table");
     }
 
     int orbitFlags = appCore->getRenderer()->getOrbitMask();
@@ -3201,8 +3155,7 @@ static int celestia_setorbitflags(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Keys in table-argument to celestia:setorbitflags() must be strings");
-            lua_error(l);
+            doError(l, "Keys in table-argument to celestia:setorbitflags() must be strings");
         }
         if (lua_isboolean(l, -1))
         {
@@ -3210,8 +3163,7 @@ static int celestia_setorbitflags(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Values in table-argument to celestia:setorbitflags() must be boolean");
-            lua_error(l);
+            doError(l, "Values in table-argument to celestia:setorbitflags() must be boolean");
         }
         if (BodyTypeMap.count(key) == 0)
         {
@@ -3333,8 +3285,7 @@ static int celestia_find(lua_State* l)
     checkArgs(l, 2, 2, "One argument expected for function celestia:find()");
     if (!lua_isstring(l, 2))
     {
-        lua_pushstring(l, "Argument to find must be a string");
-        lua_error(l);
+        doError(l, "Argument to find must be a string");
     }
 
     CelestiaCore* appCore = this_celestia(l);
@@ -3379,8 +3330,7 @@ static int celestia_mark(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Argument to celestia:mark must be an object");
-        lua_error(l);
+        doError(l, "Argument to celestia:mark must be an object");
     }
 
     return 0;
@@ -3400,8 +3350,7 @@ static int celestia_unmark(lua_State* l)
     }
     else
     {
-        lua_pushstring(l, "Argument to celestia:unmark must be an object");
-        lua_error(l);
+        doError(l, "Argument to celestia:unmark must be an object");
     }
 
     return 0;
@@ -3523,8 +3472,7 @@ static int celestia_getambient(lua_State* l)
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        lua_pushstring(l, "Internal Error: renderer is NULL!");
-        lua_error(l);
+        doError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -3542,8 +3490,7 @@ static int celestia_setminorbitsize(lua_State* l)
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        lua_pushstring(l, "Internal Error: renderer is NULL!");
-        lua_error(l);
+        doError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -3562,8 +3509,7 @@ static int celestia_setstardistancelimit(lua_State* l)
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        lua_pushstring(l, "Internal Error: renderer is NULL!");
-        lua_error(l);
+        doError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -3580,8 +3526,7 @@ static int celestia_getstardistancelimit(lua_State* l)
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        lua_pushstring(l, "Internal Error: renderer is NULL!");
-        lua_error(l);
+        doError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -3598,8 +3543,7 @@ static int celestia_getstarstyle(lua_State* l)
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        lua_pushstring(l, "Internal Error: renderer is NULL!");
-        lua_error(l);
+        doError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -3628,8 +3572,7 @@ static int celestia_setstarstyle(lua_State* l)
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        lua_pushstring(l, "Internal Error: renderer is NULL!");
-        lua_error(l);
+        doError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -3647,8 +3590,7 @@ static int celestia_setstarstyle(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Invalid starstyle");
-            lua_error(l);
+            doError(l, "Invalid starstyle");
         }
     }
     return 0;
@@ -3703,8 +3645,7 @@ static int celestia_newposition(lua_State* l)
         }
         else
         {
-            lua_pushstring(l, "Arguments to celestia:newposition must be either numbers or strings");
-            lua_error(l);
+            doError(l, "Arguments to celestia:newposition must be either numbers or strings");
         }
     }
 
@@ -3734,8 +3675,7 @@ static int celestia_newrotation(lua_State* l)
         Vec3d* v = to_vector(l, 2);
         if (v == NULL)
         {
-            lua_pushstring(l, "newrotation: first argument must be a vector");
-            lua_error(l);
+            doError(l, "newrotation: first argument must be a vector");
         }
         double angle = safeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
         Quatd q;
@@ -3783,8 +3723,7 @@ static int celestia_newframe(lua_State* l)
 
         if (ref == NULL || target == NULL)
         {
-            lua_pushstring(l, "newframe: two objects required for lock frame");
-            lua_error(l);
+            doError(l, "newframe: two objects required for lock frame");
         }
 
         frame_new(l, FrameOfReference(coordSys, *ref, *target));
@@ -3795,8 +3734,7 @@ static int celestia_newframe(lua_State* l)
             ref = to_object(l, 3);
         if (ref == NULL)
         {
-            lua_pushstring(l, "newframe: one object argument required for frame");
-            lua_error(l);
+            doError(l, "newframe: one object argument required for frame");
         }
 
         frame_new(l, FrameOfReference(coordSys, *ref));
@@ -3812,8 +3750,7 @@ static int celestia_requestkeyboard(lua_State* l)
 
     if (!lua_isboolean(l, 2))
     {
-        lua_pushstring(l, "First argument for celestia:requestkeyboard must be a boolean");
-        lua_error(l);
+        doError(l, "First argument for celestia:requestkeyboard must be a boolean");
     }
 
     int mode = appCore->getTextEnterMode();
@@ -3825,8 +3762,7 @@ static int celestia_requestkeyboard(lua_State* l)
         lua_gettable(l, LUA_GLOBALSINDEX);
         if (lua_isnil(l, -1))
         {
-            lua_pushstring(l, "script requested keyboard, but did not provide callback");
-            lua_error(l);
+            doError(l, "script requested keyboard, but did not provide callback");
         }
         lua_remove(l, -1);
 
