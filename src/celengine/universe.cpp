@@ -489,7 +489,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
 class StarPicker : public StarHandler
 {
 public:
-    StarPicker(const Point3f&, const Vec3f&, float);
+    StarPicker(const Point3f&, const Vec3f&, double, float);
     ~StarPicker() {};
 
     void process(const Star&, float, float);
@@ -499,27 +499,56 @@ public:
     Point3f pickOrigin;
     Vec3f pickRay;
     double sinAngle2Closest;
+    double when;
 };
 
-StarPicker::StarPicker(const Point3f& _pickOrigin, const Vec3f& _pickRay,
+StarPicker::StarPicker(const Point3f& _pickOrigin,
+                       const Vec3f& _pickRay,
+                       double _when,
                        float angle) :
     pickedStar(NULL),
     pickOrigin(_pickOrigin),
     pickRay(_pickRay),
     sinAngle2Closest(sin(angle/2.0) > ANGULAR_RES ? sin(angle/2.0) : 
-                                      ANGULAR_RES )
+                                                    ANGULAR_RES ),
+    when(_when)
 {
 }
 
 void StarPicker::process(const Star& star, float distance, float appMag)
 {
-    Vec3f starDir = star.getPosition() - pickOrigin;
+    Vec3f relativeStarPos = star.getPosition() - pickOrigin;
+    Vec3f starDir = relativeStarPos;
     starDir.normalize();
+
+    double sinAngle2 = 0.0;
+
+    // Stars with orbits need special handling
+    float orbitalRadius = star.getOrbitalRadius();
+    if (orbitalRadius != 0.0f)
+    {
+        float distance;
+
+        // Check for an intersection with orbital bounding sphere; if there's
+        // no intersection, then just use normal calculation.  We actually test
+        // intersection with a larger sphere to make sure we don't miss a star
+        // right on the edge of the sphere.
+        if (testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f), pickRay),
+                             Spheref(Point3f(0.0f, 0.0f, 0.0f) + relativeStarPos,
+                                     orbitalRadius * 2.0f),
+                             distance))
+        {
+            Point3d starPos = star.getPosition(when);
+            starDir = Vec3f((float) (starPos.x * 1.0e-6 - pickOrigin.x),
+                            (float) (starPos.y * 1.0e-6 - pickOrigin.y),
+                            (float) (starPos.z * 1.0e-6 - pickOrigin.z));
+            starDir.normalize();
+        }
+    }
 
     Vec3f starMiss = starDir - pickRay;
     Vec3d sMd = Vec3d(starMiss.x, starMiss.y, starMiss.z); 
-    
-    double sinAngle2 = sqrt(sMd * sMd)/2.0;
+    sinAngle2 = sqrt(sMd * sMd)/2.0;
 
     if (sinAngle2 <= sinAngle2Closest)
     {
@@ -660,7 +689,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
         axis.normalize();
         rotation.setAxisAngle(axis, (float) (2.0 * asin(sinAngle2)));
     }
-    StarPicker picker(o, direction, tolerance);
+    StarPicker picker(o, direction, when, tolerance);
     starCatalog->findVisibleStars(picker,
                                   o,
                                   rotation,
