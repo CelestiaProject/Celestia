@@ -44,7 +44,8 @@
 //-----------------
 char AppName[] = "Celestia";
 
-static string welcomeMessage("Welcome to Celestia 1.07");
+static string welcomeMessage1("Welcome to Celestia 1.07");
+static string welcomeMessage2("Press D to run demo");
 
 
 //----------------------------------
@@ -1128,16 +1129,23 @@ void RenderOverlay()
     // Intro message
     if (currentTime < 5.0)
     {
-        int width = 0, maxAscent = 0, maxDescent = 0;
-        txfGetStringMetrics(font, welcomeMessage, width, maxAscent, maxDescent);
-        glPushMatrix();
-        glTranslatef((g_w - width) / 2, g_h / 2, 0);
 
         float alpha = 1.0f;
         if (currentTime > 3.0)
             alpha = 0.5f * (float) (5.0 - currentTime);
         glColor4f(1, 1, 1, alpha);
-        *overlay << welcomeMessage;
+
+        int width = 0, maxAscent = 0, maxDescent = 0;
+        txfGetStringMetrics(font, welcomeMessage1, width, maxAscent, maxDescent);
+        glPushMatrix();
+        glTranslatef((g_w - width) / 2, g_h / 2, 0);
+        *overlay << welcomeMessage1;
+        glPopMatrix();
+
+        txfGetStringMetrics(font, welcomeMessage2, width, maxAscent, maxDescent);
+        glPushMatrix();
+        glTranslatef((g_w - width) / 2, g_h / 2 - maxAscent, 0);
+        *overlay << welcomeMessage2;
         glPopMatrix();
     }
 
@@ -1825,6 +1833,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDLOCATION), hWnd, AddLocationProc);
             break;
 
+        case ID_HELP_RUNDEMO:
+            if (runningScript == NULL && demoScript != NULL)
+                runningScript = new Execution(*demoScript, execEnv);
+            break;
+            
         case ID_HELP_ABOUT:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_ABOUT), hWnd, AboutProc);
             break;
