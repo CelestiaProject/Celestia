@@ -1018,9 +1018,9 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
             popup.insertItem(i18n("Planets"), planetsMenu);
         }               
     }
-    else if (sel.galaxy != NULL)
+    else if (sel.deepsky != NULL)
     {
-        popup.insertTitle(sel.galaxy->getName().c_str(), 0);
+        popup.insertTitle(sel.deepsky->getName().c_str(), 0);
         popup.insertItem(i18n("&Select"), 1);
         popup.insertItem(i18n("&Center"), 2);
         popup.insertItem(i18n("&Goto"), 3);
@@ -1068,9 +1068,9 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
             } else {
                 url = QString("http://www.nineplanets.org/sun.html");           
             }
-        } else if (sel.galaxy != NULL) {
+        } else if (sel.deepsky != NULL) {
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=%1")
-                      .arg(sel.galaxy->getName().c_str());            
+                      .arg(sel.deepsky->getName().c_str());            
         }
         KRun::runURL(url, "text/html");
         return;
