@@ -692,6 +692,44 @@ static bool handleSpecialKey(int key, bool down)
     case GDK_F6:
         k = CelestiaCore::Key_F6;
         break;
+    case GDK_KP_0:
+        k = CelestiaCore::Key_NumPad0;
+        break;
+    case GDK_KP_1:
+        k = CelestiaCore::Key_NumPad1;
+        break;
+    case GDK_KP_2:
+        k = CelestiaCore::Key_NumPad2;
+        break;
+    case GDK_KP_3:
+        k = CelestiaCore::Key_NumPad3;
+        break;
+    case GDK_KP_4:
+        k = CelestiaCore::Key_NumPad4;
+        break;
+    case GDK_KP_5:
+        k = CelestiaCore::Key_NumPad5;
+        break;
+    case GDK_KP_6:
+        k = CelestiaCore::Key_NumPad6;
+        break;
+    case GDK_KP_7:
+        k = CelestiaCore::Key_NumPad7;
+        break;
+    case GDK_KP_8:
+        k = CelestiaCore::Key_NumPad8;
+        break;
+    case GDK_KP_9:
+        k = CelestiaCore::Key_NumPad9;
+        break;
+    case GDK_A:
+    case GDK_a:
+        k = 'A';
+        break;
+    case GDK_Z:
+    case GDK_z:
+        k = 'Z';
+        break;
     }
 
     if (k >= 0)
@@ -700,7 +738,7 @@ static bool handleSpecialKey(int key, bool down)
             appCore->keyDown(k);
         else
             appCore->keyUp(k);
-        return true;
+        return (k < 'A' || k > 'Z');
     }
     else
     {
@@ -711,6 +749,7 @@ static bool handleSpecialKey(int key, bool down)
 
 gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
 {
+    cout << "down\n";
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_press_event");
     switch (event->keyval)
     {
@@ -740,6 +779,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
 
 gint glarea_key_release(GtkWidget* widget, GdkEventKey* event)
 {
+    cout << "up\n";
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_release_event");
     return handleSpecialKey(event->keyval, false);
 }
@@ -772,7 +812,7 @@ int main(int argc, char* argv[])
 
 
     // Now initialize OpenGL and Gnome
-    gnome_init("Celestia", "1.1.2", argc, argv);
+    gnome_init("Celestia", VERSION, argc, argv);
 
     // Check if OpenGL is supported
     if (gdk_gl_query() == FALSE)
