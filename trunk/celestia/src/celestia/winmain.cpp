@@ -53,6 +53,7 @@
 #include "odmenu.h"
 
 #include "res/resource.h"
+#include "wglext.h"
 
 using namespace std;
 
@@ -1628,7 +1629,7 @@ static HMENU CreateAlternateSurfaceMenu(const vector<string>& surfaces)
     HMENU menu = CreatePopupMenu();
 
     AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE, "Normal");
-    for (int i = 0; i < surfaces.size(); i++)
+    for (unsigned int i = 0; i < surfaces.size(); i++)
     {
         AppendMenu(menu, MF_STRING, MENU_CHOOSE_SURFACE + i + 1,
                    surfaces[i].c_str());
@@ -1759,7 +1760,7 @@ void ShowWWWInfo(const Selection& sel)
             if (url.empty())
             {
                 string name = sel.body()->getName();
-                for (int i = 0; i < name.size(); i++)
+                for (unsigned int i = 0; i < name.size(); i++)
                     name[i] = tolower(name[i]);
 
                 url = string("http://www.nineplanets.org/") + name + ".html";
@@ -1832,39 +1833,122 @@ void DisableFullScreen()
 }
 
 
+unsigned int
+ChooseBestMSAAPixelFormat(HDC hdc, int *formats, unsigned int numFormats,
+                          int samplesRequested)
+{
+    int idealFormat = 0;
+    int	bestFormat  = 0;
+    int	bestSamples = 0;
+
+    for (unsigned int i = 0; i < numFormats; i++)
+    {
+        int query = WGL_SAMPLES_ARB;
+    	int result = 0;
+        bool isFloatFormat = false;
+
+        query = WGL_SAMPLES_ARB;
+        wglGetPixelFormatAttribivARB(hdc, formats[i], 0, 1, &query, &result);
+
+        if (result <= samplesRequested && result >= bestSamples)
+        {
+            bestSamples = result;
+            bestFormat = formats[i];
+        }
+
+        if (result == samplesRequested)
+            idealFormat = formats[i];
+    }
+
+    if (idealFormat != 0)
+        return idealFormat;
+
+    return bestFormat;
+}
+
+
 // Select the pixel format for a given device context
 bool SetDCPixelFormat(HDC hDC)
 {
-    static PIXELFORMATDESCRIPTOR pfd = {
-	sizeof(PIXELFORMATDESCRIPTOR),	// Size of this structure
-	1,				// Version of this structure
-	PFD_DRAW_TO_WINDOW |		// Draw to Window (not to bitmap)
-	PFD_SUPPORT_OPENGL |		// Support OpenGL calls in window
-	PFD_DOUBLEBUFFER,		// Double buffered mode
-	PFD_TYPE_RGBA,			// RGBA Color mode
-	GetDeviceCaps(hDC, BITSPIXEL),	// Want the display bit depth
-	0,0,0,0,0,0,			// Not used to select mode
-	0,0,				// Not used to select mode
-	0,0,0,0,0,			// Not used to select mode
-	24,				// Size of depth buffer
-	0,				// Not used to select mode
-	0,				// Not used to select mode
-	PFD_MAIN_PLANE,			// Draw in main plane
-	0,				// Not used to select mode
-	0,0,0                           // Not used to select mode
-    };
-
-    // Choose a pixel format that best matches that described in pfd
-    int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
-    if (nPixelFormat == 0)
+    bool msaa = false;
+    if (appCore->getConfig()->aaSamples > 1 &&
+        WGLExtensionSupported("WGL_ARB_pixel_format") &&
+        WGLExtensionSupported("WGL_ARB_multisample"))
     {
-        // Uh oh . . . looks like we can't handle OpenGL on this device.
-        return false;
+        msaa = true;
+    }
+        
+    if (!msaa)
+    {
+        static PIXELFORMATDESCRIPTOR pfd = {
+            sizeof(PIXELFORMATDESCRIPTOR),	// Size of this structure
+            1,				// Version of this structure
+            PFD_DRAW_TO_WINDOW |	// Draw to Window (not to bitmap)
+            PFD_SUPPORT_OPENGL |	// Support OpenGL calls in window
+            PFD_DOUBLEBUFFER,		// Double buffered mode
+            PFD_TYPE_RGBA,		// RGBA Color mode
+            GetDeviceCaps(hDC, BITSPIXEL),// Want the display bit depth
+            0,0,0,0,0,0,		  // Not used to select mode
+            0,0,			// Not used to select mode
+            0,0,0,0,0,			// Not used to select mode
+            24,				// Size of depth buffer
+            0,				// Not used to select mode
+            0,				// Not used to select mode
+            PFD_MAIN_PLANE,             // Draw in main plane
+            0,                          // Not used to select mode
+            0,0,0                       // Not used to select mode
+        };
+
+        // Choose a pixel format that best matches that described in pfd
+        int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
+        if (nPixelFormat == 0)
+        {
+            // Uh oh . . . looks like we can't handle OpenGL on this device.
+            return false;
+        }
+        else
+        {
+            // Set the pixel format for the device context
+            SetPixelFormat(hDC, nPixelFormat, &pfd);
+            return true;
+        }
     }
     else
     {
-        // Set the pixel format for the device context
-        SetPixelFormat(hDC, nPixelFormat, &pfd);
+        PIXELFORMATDESCRIPTOR pfd;
+
+        int ifmtList[] = {
+            WGL_DRAW_TO_WINDOW_ARB,        TRUE,
+            WGL_SUPPORT_OPENGL_ARB,        TRUE,
+            WGL_DOUBLE_BUFFER_ARB,         TRUE,
+            WGL_PIXEL_TYPE_ARB,            WGL_TYPE_RGBA_ARB,
+            WGL_DEPTH_BITS_ARB,            24,
+            WGL_COLOR_BITS_ARB,            24,
+            WGL_RED_BITS_ARB,               8,
+            WGL_GREEN_BITS_ARB,             8,
+            WGL_BLUE_BITS_ARB,              8,
+            WGL_ALPHA_BITS_ARB,             0,
+            WGL_ACCUM_BITS_ARB,             0,
+            WGL_STENCIL_BITS_ARB,           0,
+            WGL_SAMPLE_BUFFERS_ARB,         appCore->getConfig()->aaSamples > 1,
+            0
+        };
+
+        int             pixelFormatIndex;
+        int             pixFormats[256];
+        unsigned int    numFormats;
+
+        wglChoosePixelFormatARB(hDC, ifmtList, NULL, 256, pixFormats, &numFormats);
+
+        pixelFormatIndex = ChooseBestMSAAPixelFormat(hDC, pixFormats,
+                                                     numFormats,
+                                                     appCore->getConfig()->aaSamples);
+
+        DescribePixelFormat(hDC, pixelFormatIndex,
+                            sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+        if (!SetPixelFormat(hDC, pixelFormatIndex, &pfd))
+            return false;
+
         return true;
     }
 }
@@ -1896,10 +1980,10 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     wc.lpszClassName = AppName;
     if (RegisterClass(&wc) == 0)
     {
-	MessageBox(NULL,
+        MessageBox(NULL,
                    "Failed to register the window class.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-	return NULL;
+    return NULL;
     }
 
     newMode = currentScreenMode;
@@ -1946,10 +2030,10 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     deviceContext = GetDC(hwnd);
     if (!SetDCPixelFormat(deviceContext))
     {
-	MessageBox(NULL,
+    MessageBox(NULL,
                    "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-	return NULL;
+    return NULL;
     }
 
     if (glContext == NULL)
@@ -2181,7 +2265,7 @@ public:
 
     void fatalError(const std::string& msg)
     {
-	    MessageBox(NULL,
+        MessageBox(NULL,
                    msg.c_str(),
                    "Fatal Error",
                    MB_OK | MB_ICONERROR);
@@ -2240,7 +2324,7 @@ static bool GetRegistryValue(HKEY hKey, LPSTR cpValueName, LPVOID lpBuf, DWORD i
     Key specified by open handle.
 
     hKey        - Handle of open key for which a key value is requested.
-    cpValueName	- Name of Key Value to obtain value for.
+    cpValueName    - Name of Key Value to obtain value for.
     lpBuf      - Buffer to receive value of Key Value.
     iBufSize   - Size of buffer pointed to by lpBuf.
 
@@ -2253,15 +2337,15 @@ static bool GetRegistryValue(HKEY hKey, LPSTR cpValueName, LPVOID lpBuf, DWORD i
              This function assumes you have an open registry key. Be sure to call
              CloseKey() when finished.
 */
-	DWORD dwValueType, dwDataSize=0;
-	bool bRC=false;
+    DWORD dwValueType, dwDataSize=0;
+    bool bRC=false;
 
-	dwDataSize = iBufSize;
-	if(RegQueryValueEx(hKey, cpValueName, NULL, &dwValueType,
-		(LPBYTE)lpBuf, &dwDataSize) == ERROR_SUCCESS)
-		bRC = true;
+    dwDataSize = iBufSize;
+    if(RegQueryValueEx(hKey, cpValueName, NULL, &dwValueType,
+        (LPBYTE)lpBuf, &dwDataSize) == ERROR_SUCCESS)
+        bRC = true;
 
-	return bRC;
+    return bRC;
 }
 
 static bool SetRegistryInt(HKEY key, LPCTSTR value, int intVal)
@@ -2307,12 +2391,15 @@ static bool SetRegistryBin(HKEY hKey, LPSTR cpValueName, LPVOID lpData, int iDat
                     CloseKey() when finished.
 */
 
-	bool bRC=false;
+    bool bRC = false;
 
-	if(RegSetValueEx(hKey, cpValueName, 0, REG_BINARY, (LPBYTE)lpData, (DWORD)iDataSize) == ERROR_SUCCESS)
-		bRC = true;
+    if (RegSetValueEx(hKey, cpValueName, 0, REG_BINARY,
+                      (LPBYTE) lpData, (DWORD) iDataSize) == ERROR_SUCCESS)
+    {
+        bRC = true;
+    }
 
-	return bRC;
+    return bRC;
 }
 
 
@@ -2751,7 +2838,7 @@ bool operator<(const DEVMODE& a, const DEVMODE& b)
     return a.dmDisplayFrequency < b.dmDisplayFrequency;
 }
 
-vector<DEVMODE>* EnumerateDisplayModes(int minBPP)
+vector<DEVMODE>* EnumerateDisplayModes(unsigned int minBPP)
 {
     vector<DEVMODE>* modes = new vector<DEVMODE>();
     if (modes == NULL)
@@ -3100,6 +3187,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     cursorHandler = new WinCursorHandler(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler);
 
+    InitWGLExtensions(appInstance);
+
     HWND hWnd;
     if (startFullscreen)
     {
@@ -3120,8 +3209,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (hWnd == NULL)
     {
         MessageBox(NULL,
-	           "Failed to create the application window.",
-	           "Fatal Error",
+                   "Failed to create the application window.",
+                   "Fatal Error",
 	           MB_OK | MB_ICONERROR);
         return FALSE;
     }
@@ -3341,7 +3430,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 	    int x, y;
 	    x = LOWORD(lParam);
 	    y = HIWORD(lParam);
-            appCore->mouseMove(x, y);
+            appCore->mouseMove((float) x, (float) y);
 
             if ((wParam & (MK_LBUTTON | MK_RBUTTON)) != 0)
             {
@@ -3417,7 +3506,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 buttons |= CelestiaCore::ShiftKey;
             if ((wParam & MK_CONTROL) != 0)
                 buttons |= CelestiaCore::ControlKey;
-            appCore->mouseMove(x - lastX, y - lastY, buttons);
+            appCore->mouseMove((float) (x - lastX), (float) (y - lastY), buttons);
 
             if (currentScreenMode != 0)
             {
