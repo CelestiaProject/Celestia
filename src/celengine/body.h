@@ -100,6 +100,7 @@ class Body
         Asteroid   = 0x04,
         Comet      = 0x08,
         Spacecraft = 0x10,
+        Invisible  = 0x20,
         Unknown    = 0x10000,
     };
 

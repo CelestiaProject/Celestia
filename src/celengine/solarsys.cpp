@@ -328,6 +328,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
             classification = Body::Asteroid;
         else if (compareIgnoringCase(classificationName, "spacecraft") == 0)
             classification = Body::Spacecraft;
+        else if (compareIgnoringCase(classificationName, "invisible") == 0)
+            classification = Body::Invisible;
         else
             classification = Body::Unknown;
     }
