@@ -64,8 +64,6 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
         string name = tokenizer.getStringValue();
         Asterism* ast = new Asterism(name);
 
-        cout << "Asterism: " << name << '\n';
-
         Value* chainsValue = parser.readValue();
         if (chainsValue == NULL || chainsValue->getType() != Value::ArrayType)
         {
@@ -87,7 +85,6 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                 {
                     if ((*iter)->getType() == Value::StringType)
                     {
-                        cout << (*iter)->getString() << '\n';
                         Star* star = stardb.find((*iter)->getString());
                         if (star != NULL)
                             chain->insert(chain->end(), star->getPosition());
