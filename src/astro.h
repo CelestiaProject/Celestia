@@ -75,6 +75,7 @@ namespace astro
     Point3f equatorialToCelestialCart(float ra, float dec, float distance);
 
     extern const double J2000;
+    extern const double speedOfLight; // km/s
 };
 
 // Convert a date structure to a Julian date
