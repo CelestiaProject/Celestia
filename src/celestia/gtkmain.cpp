@@ -518,51 +518,43 @@ static void menuAbout()
         NULL
     };
 
-	static GtkWidget* about = NULL;
-    if (about != NULL) 
-    {
-        // Try to de-iconify and raise the dialog. 
-        gdk_window_show(about->window);
-        gdk_window_raise(about->window);
-    }
-    else
-    {
-		#ifdef GNOME
-        about = gnome_about_new("Celestia",
-       			VERSION,
-				"(c) 2001-2004 Chris Laurel",
-				"3D Space Simulation",
-				authors,
-				NULL,
-				NULL,
-				NULL);
-		#else
-		// Join the author array into a single string.
-		int i = 0;
-		string auth = "Celestia, (c) 2001-2004 Chris Laurel\n\n";
-		while (authors[i] != NULL) {
-			if (i != 0) auth += ",\n";
-			auth += authors[i];
-			i++;
-		}
-		
-		about = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
-		                               GTK_DIALOG_DESTROY_WITH_PARENT,
-									   GTK_MESSAGE_INFO,
-									   GTK_BUTTONS_CLOSE,
-		                               (gchar *)auth.c_str());
-		#endif
-		if (about == NULL)
-		    return;
+	GtkWidget* about = NULL;
 
-		#ifdef GNOME
-		g_signal_connect(G_OBJECT(about), "destroy", G_CALLBACK(gtk_widget_destroyed), &about);
-		gtk_window_present(GTK_WINDOW(about));
-		#else
-		gtk_dialog_run (GTK_DIALOG(about));
-		gtk_widget_destroy (about);
-		#endif
-    }
+	#ifdef GNOME
+    about = gnome_about_new("Celestia",
+	                        VERSION,
+	                        "(c) 2001-2004 Chris Laurel",
+	                        "3D Space Simulation",
+	                        authors,
+	                        NULL,
+	                        NULL,
+	                        NULL);
+	#else
+	// Join the author array into a single string.
+	int i = 0;
+	string auth = "Celestia, (c) 2001-2004 Chris Laurel\n\n";
+	while (authors[i] != NULL) {
+		if (i != 0) auth += ",\n";
+		auth += authors[i];
+		i++;
+	}
+	
+	about = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
+	                               GTK_DIALOG_DESTROY_WITH_PARENT,
+	                               GTK_MESSAGE_INFO,
+	                               GTK_BUTTONS_CLOSE,
+	                               (gchar *)auth.c_str());
+	#endif
+	if (about == NULL)
+	    return;
+
+	#ifdef GNOME
+	g_signal_connect(G_OBJECT(about), "destroy", G_CALLBACK(gtk_widget_destroyed), &about);
+	gtk_window_present(GTK_WINDOW(about));
+	#else
+	gtk_dialog_run (GTK_DIALOG(about));
+	gtk_widget_destroy (about);
+	#endif
 }
 
 static int glResX = 0;
