@@ -10,7 +10,9 @@
 #include <algorithm>
 #include <iostream>
 #include "gl.h"
+#ifndef MACOSX
 #include "glext.h"
+#endif /* MACOSX */
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "3dsmesh.h"

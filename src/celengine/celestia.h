@@ -26,7 +26,9 @@
 #endif // __GNUC__
 
 #ifndef _WIN32
+#ifndef MACOSX_PB
 #include <config.h>
+#endif /* MACOSX_PB */
 #endif /* _WIN32 */
 
 #endif // _CELESTIA_H_

@@ -11,7 +11,9 @@
 #define _BYTES_H_
 
 #ifndef _WIN32
+#ifndef MACOSX_PB
 #include <config.h>
+#endif /* MACOSX_PB */
 #endif /* _WIN32 */
 
 /* Use the system byteswap.h definitions if we have them */
