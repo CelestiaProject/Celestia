@@ -425,7 +425,7 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
     else
     {
         // Sum the diffuse contribution from all lights
-        source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 0.0);\n";
+        source += "diff.rgb += " + LightProperty(i, "diffuse") + " * nDotVP;\n";
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
@@ -437,8 +437,8 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
         }
         else
         {
-            source += "spec += vec4(" + LightProperty(i, "specular") +
-                " * (pow(nDotHV, shininess) * nDotVP), 0.0);\n";
+            source += "spec.rgb += " + LightProperty(i, "specular") +
+                " * (pow(nDotHV, shininess) * nDotVP);\n";
         }
     }
 
@@ -822,15 +822,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             if (props.hasShadowsForLight(i))
                 source += ShadowsForLightSource(props, i);
 
-            source += "diff += vec4(" + illum + " * " +
-                FragLightProperty(i, "color") + ", 0.0);\n";
+            source += "diff.rgb += " + illum + " * " +
+                FragLightProperty(i, "color") + ";\n";
 
             if (props.lightModel == ShaderProperties::SpecularModel &&
                 props.usesShadows())
             {
-                source += "spec += " + illum + " * " + SeparateSpecular(i) +
-                    " * vec4(" + FragLightProperty(i, "specColor") +
-                    ", 0.0);\n";
+                source += "spec.rgb += " + illum + " * " + SeparateSpecular(i) +
+                    " * " + FragLightProperty(i, "specColor") +
+                    ";\n";
             }
         }
     }
@@ -840,13 +840,13 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         for (unsigned i = 0; i < props.nLights; i++)
         {
             source += ShadowsForLightSource(props, i);
-            source += "diff += shadow * vec4(" +
-                FragLightProperty(i, "color") + ", 0.0);\n";
+            source += "diff.rgb += shadow * " +
+                FragLightProperty(i, "color") + ";\n";
             if (props.lightModel == ShaderProperties::SpecularModel)
             {
-                source += "spec += shadow * " + SeparateSpecular(i) +
-                    " * vec4(" +
-                    FragLightProperty(i, "specColor") + ", 0.0);\n";
+                source += "spec.rgb += shadow * " + SeparateSpecular(i) +
+                    " * " +
+                    FragLightProperty(i, "specColor") + ";\n";
             }
         }
     }
@@ -1020,13 +1020,13 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
             source += Shadow(i, 0);
             source += "shadow = min(1.0, shadow + step(0.0, " +
                 IndexedParameter("shadowTexCoord", i, 0) + ".z));\n";
-            source += "diff += (shadow * " + SeparateDiffuse(i) + ") * vec4(" +
-                FragLightProperty(i, "color") + ", 0.0);\n";
+            source += "diff.rgb += (shadow * " + SeparateDiffuse(i) + ") * " +
+                FragLightProperty(i, "color") + ";\n";
         }
         else
         {
-            source += "diff += " + SeparateDiffuse(i) + " * vec4(" +
-                FragLightProperty(i, "color") + ", 0.0);\n";
+            source += "diff.rgb += " + SeparateDiffuse(i) + " * " +
+                FragLightProperty(i, "color") + ";\n";
         }
     }
 
