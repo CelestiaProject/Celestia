@@ -1225,6 +1225,10 @@ static void syncMenusWithRendererState()
         else
             CheckMenuItem(menuBar, ID_TIME_SHOWLOCAL, MF_CHECKED);
     }
+
+    CheckMenuItem(menuBar, ID_RENDER_ANTIALIASING,
+        (renderFlags & Renderer::ShowSmoothLines)?MF_CHECKED:MF_UNCHECKED);
+    
 }
 
 
@@ -1779,7 +1783,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.ambientLight = 0.1f;  // Low
     prefs.labelMode = 0;
     prefs.pixelShader = 0;
-    prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars | Renderer::ShowPlanets;
+    prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars |
+                        Renderer::ShowPlanets | Renderer::ShowSmoothLines;
     prefs.vertexShader = 0;
     prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
@@ -2319,6 +2324,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
             appCore->getRenderer()->setAmbientLightLevel(0.25f);
+            break;
+
+        case ID_RENDER_ANTIALIASING:
+            appCore->charEntered('\030');
+            syncMenusWithRendererState();
             break;
 
         case ID_RENDER_PIXEL_SHADERS:
