@@ -25,3 +25,10 @@ EXTRA_DIST = $(rc_DATA) $(favicons_DATA) $(favicons_DATA)\
              hi22-app-celestia.png\
              hi32-app-celestia.png\
              hi48-app-celestia.png
+
+messages: rc.cpp
+	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
+	if test -n "$$LIST"; then \
+		$(XGETTEXT) $$LIST -o $(podir)/celestia-kde.pot; \
+	fi
+
