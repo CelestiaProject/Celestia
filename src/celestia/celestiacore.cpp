@@ -1390,7 +1390,6 @@ void CelestiaCore::draw()
         // burned by crap hardware so many times. cjl
         glViewport(0, 0, width, height);
         renderer->resize(width, height);
-        renderer->setFieldOfView(radToDeg(views[0]->observer->getFOV()));
         sim->render(*renderer);
     }
     else
@@ -1411,7 +1410,6 @@ void CelestiaCore::draw()
                        (GLsizei) (view->height * height));
             renderer->resize((int) (view->width * width),
                              (int) (view->height * height));
-            renderer->setFieldOfView(radToDeg(view->observer->getFOV()));
             sim->render(*renderer, *view->observer);
         }
         glDisable(GL_SCISSOR_TEST);
