@@ -3511,6 +3511,7 @@ gint glarea_button_release(GtkWidget*, GdkEventButton* event, gpointer)
 static bool handleSpecialKey(int key, bool down)
 {
     int k = -1;
+
     switch (key)
     {
     case GDK_Up:
@@ -3624,6 +3625,7 @@ static bool handleSpecialKey(int key, bool down)
 gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer)
 {
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_press_event");
+
     switch (event->keyval)
     {
     case GDK_Escape:
@@ -3658,28 +3660,25 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer)
 		break;
 
     default:
-        if (!handleSpecialKey(event->keyval, true))
-        {
-            if ((event->string != NULL) && (*(event->string)))
-            {
-                // See if our key accelerators will handle this event.
-	        if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (G_OBJECT (mainWindow), event->keyval, GDK_SHIFT_MASK))
-                    return TRUE;
-            
-                char* s = event->string;
+		if (!handleSpecialKey(event->keyval, true)) {
+			if ((event->string != NULL) && (*(event->string))) {
+				// See if our key accelerators will handle this event.
+				if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (G_OBJECT (mainWindow), event->keyval, GDK_SHIFT_MASK))
+					return TRUE;
 
-                while (*s != '\0')
-                {
-                    char c = *s++;
-                    appCore->charEntered(c);
-                }
-            }
-        }
-        if (event->state & GDK_MOD1_MASK)
-	    return FALSE;
-    }
+				char* s = event->string;
 
-    return TRUE;
+				while (*s != '\0') {
+					char c = *s++;
+					appCore->charEntered(c);
+				}
+			}
+		}
+		if (event->state & GDK_MOD1_MASK)
+			return FALSE;
+	}
+
+	return TRUE;
 }
 
 
@@ -3828,6 +3827,19 @@ GtkWatcher::GtkWatcher(CelestiaCore* _appCore) :
 
 void GtkWatcher::notifyChange(CelestiaCore*, int property)
 {
+	GtkWidget *menubar = gtk_item_factory_get_widget(menuItemFactory, "<main>");
+
+	// Disable menu bar when entering text
+	// This is needed because otherwise keyboard shortcuts get in the way.
+	if (property == CelestiaCore::TextEnterModeChanged) {
+		if (appCore->getTextEnterMode() != 0) {
+			gtk_widget_set_sensitive(menubar, FALSE);
+		}
+		else {
+			gtk_widget_set_sensitive(menubar, TRUE);
+		}
+	}
+
     if ((property & (CelestiaCore::RenderFlagsChanged|CelestiaCore::LabelFlagsChanged|CelestiaCore::TimeZoneChanged)))
         resyncMenus();
     else if (property & CelestiaCore::AmbientLightChanged)
