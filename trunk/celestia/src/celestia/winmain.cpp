@@ -2566,13 +2566,14 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
     switch(uMsg)
     {
     case WM_CREATE:
-        // Instruct menu class to enumerate menu structure
-        // NOTE: Temporarily disabled until I can figure out how to make
-        // this work in fullscreen mode.
-        // odAppMenu.Init(hWnd, menuBar);
+        //Instruct menu class to enumerate menu structure
+        odAppMenu.Init(hWnd, menuBar);
 
-        // Associate a menu item with a bitmap resource
+        //Associate a menu item with a bitmap resource
+        odAppMenu.SetItemImage(appInstance, ID_FILE_OPENSCRIPT, IDB_SCRIPT);
         odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREIMAGE, IDB_CAMERA);
+        odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREMOVIE, IDB_CAMCORDER);
+        odAppMenu.SetItemImage(appInstance, ID_TIME_SETTIME, IDB_CLOCK);
         break;
 
     case WM_MEASUREITEM:
