@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <cstring>
 #include "gl.h"
 #include "astro.h"
 #include "glext.h"
@@ -63,6 +64,8 @@ static Texture* starTexB = NULL;
 static Texture* starTexA = NULL;
 static Texture* starTexG = NULL;
 static Texture* starTexM = NULL;
+
+static bool isGF3 = false;
 
 struct SphericalCoordLabel
 {
@@ -286,6 +289,10 @@ bool Renderer::init(int winWidth, int winHeight)
             normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
             normalizationTex->bindName();
         }
+
+        char* glRenderer = (char*) glGetString(GL_RENDERER);
+        if (glRenderer != NULL && strstr(glRenderer, "GeForce3") != NULL)
+            isGF3 = true;
 
         // Create labels for celestial sphere
         {
@@ -1425,6 +1432,14 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
 
     // Set up the fog parameters if the haze density is non-zero
     float hazeDensity = ri.hazeColor.alpha();
+
+    // This is a last minute fix . . . there appears to be a difference in
+    // how the fog coordinate is handled by the GeForce3 and the rest of the
+    // nVidia cards.  For now, just disable haze if we're running on anything
+    // but a GeForce3 :<
+    if (!isGF3)
+        hazeDensity = 0.0f;
+
     if (hazeDensity > 0.0f)
     {
         glEnable(GL_FOG);
