@@ -33,8 +33,10 @@ class SolarSystem
 
 typedef std::map<uint32, SolarSystem*> SolarSystemCatalog;
 
-SolarSystemCatalog* ReadSolarSystemCatalog(std::istream&, StarDatabase&);
+class Universe;
+
 bool ReadSolarSystems(std::istream&, const StarDatabase&, SolarSystemCatalog&);
+bool LoadSolarSystemObjects(std::istream& in, Universe& universe);
 
 #endif // _SOLARSYS_H_
 
