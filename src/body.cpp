@@ -229,10 +229,15 @@ Point3d Body::getHeliocentricPosition(double when)
 }
 
 
-Quatd Body::getEclipticalToEquatorial()
+Quatd Body::getEclipticalToEquatorial() const
 {
     Quatd q(1);
     q.xrotate(-obliquity);
+
+    // Recurse up the hierarchy . . .
+    if (system != NULL && system->getPrimaryBody() != NULL)
+        q = q * system->getPrimaryBody()->getEclipticalToEquatorial();
+
     return q;
 }
 
