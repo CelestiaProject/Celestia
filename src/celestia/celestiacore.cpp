@@ -310,7 +310,6 @@ CelestiaCore::CelestiaCore() :
     execEnv(NULL),
 #ifdef CELX
     celxScript(NULL),
-    scriptAwakenTime(0.0),
 #endif // CELX
     timeZoneBias(0),
     showFPSCounter(false),
@@ -491,7 +490,6 @@ void CelestiaCore::cancelScript()
         delete celxScript;
         celxScript = NULL;
         scriptPaused = false;
-        scriptAwakenTime = 0.0;
     }
 #endif
 }
@@ -575,12 +573,7 @@ void CelestiaCore::runScript(const string& filename)
         {
             // Coroutine execution; control may be transferred between the
             // script and Celestia's event loop
-            if (celxScript->createThread())
-            {
-                // Awaken the script ASAP (0.0 is invalid)
-                scriptAwakenTime = 0.1;
-            }
-            else
+            if (!celxScript->createThread())
             {
                 const char* errMsg = "Script coroutine initialization failed";
                 if (alerter != NULL)
@@ -600,42 +593,6 @@ void CelestiaCore::runScript(const string& filename)
         else
             flash("Invalid filetype");
     }
-}
-
-
-void CelestiaCore::resumeScript()
-{
-#ifdef CELX
-    if (celxScript != NULL)
-    {
-        int nArgs = celxScript->resume();
-        if (celxScript == NULL) {
-            return;
-        }
-        if (!celxScript->isAlive())
-        {
-            // The script is complete
-            cancelScript();
-        }
-        else
-        {
-            // The script has returned control to us, but it is not completed.
-            lua_State* state = celxScript->getState();
-
-            // The values on the stack indicate what event will wake up the
-            // script.  For now, we just support wait()
-            double delay;
-            if (nArgs == 1 && lua_isnumber(state, -1))
-                delay = lua_tonumber(state, -1);
-            else
-                delay = 0.0;
-            scriptAwakenTime = currentTime + delay;
-
-            // Clean up the stack
-            lua_pop(state, nArgs);
-        }
-    }
-#endif // CELX    
 }
 
 
@@ -2146,10 +2103,11 @@ void CelestiaCore::tick()
     }
 
 #ifdef CELX
-    if (celxScript != NULL && scriptAwakenTime != 0.0)
+    if (celxScript != NULL)
     {
-        if (currentTime >= scriptAwakenTime)
-            resumeScript();
+        bool finished = celxScript->tick(dt);
+        if (finished)
+            cancelScript();
     }
 #endif // CELX
 

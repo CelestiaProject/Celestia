@@ -353,7 +353,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
 #ifdef CELX
     LuaState* celxScript;
-    double scriptAwakenTime;
 #endif // CELX    
 
     int timeZoneBias;              // Diff in secs between local time and GMT
