@@ -602,7 +602,7 @@ Code:
 * Added drag and drop and copy to clipboard for cel:// URLs on Windows
 * Improved drag and drop of cel:// URLs on Windows
 
-1.2.6
+1.3.0
 * Integrated more of Grant Hutchinson's corrections for the orientations of
   solar system bodies
 * Updates for asteroids and comets from Grant Hutchinson:
@@ -666,5 +666,11 @@ Code:
 * Fixed crashes that occurred when viewing ringed planets on older hardware
 * Got rid of three zeros after decimal point when displaying time rate
 * Updated configuration files for new versions of autoconf
+
+1.3.1
 * Improved inclusion of light travel delay, also in KDE time setting dialog 
 * Fixed lookback command for subsequent changes of target speed
+* Allow wildcard character * inplace of extension for texture filenames
+* Fix bump mapping (again)
+* Use standard normal maps instead of x-reversed ones
+
