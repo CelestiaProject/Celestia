@@ -296,6 +296,10 @@ void KdeApp::initActions()
     new KAction(i18n("Pause Time"), "player_pause", Key_Space, this, SLOT(slotPauseTime()), actionCollection(), "pauseTime");
     new KAction(i18n("Reverse Time"), "reload", Key_J, this, SLOT(slotReverseTime()), actionCollection(), "reverseTime");
 
+    new KAction(i18n("Split View Horizontally"), "view_top_bottom", CTRL + Key_R, this, SLOT(slotSplitH()), actionCollection(), "splitH");
+    new KAction(i18n("Split View Vertically"), "view_left_right", CTRL + Key_U, this, SLOT(slotSplitV()), actionCollection(), "splitV");
+    new KAction(i18n("Cycle View"), "rotate_cw", Key_Tab, this, SLOT(slotCycleView()), actionCollection(), "cycleView");
+
     new KAction(i18n("Celestial Browser"), 0, ALT + Key_C, this, SLOT(slotCelestialBrowser()), actionCollection(), "celestialBrowser");
     new KAction(i18n("Eclipse Finder"), 0, ALT + Key_E, this, SLOT(slotEclipseFinder()), actionCollection(), "eclipseFinder");
 
@@ -769,6 +773,18 @@ void KdeApp::slotShowAsteroidLabels() {
 void KdeApp::slotShowSpacecraftLabels() {
      appCore->getRenderer()->setLabelMode(
             appCore->getRenderer()->getLabelMode() ^ Renderer::SpacecraftLabels);
+}
+
+void KdeApp::slotSplitH() {
+    appCore->charEntered('\022');
+}
+
+void KdeApp::slotSplitV() {
+    appCore->charEntered('\025');
+}
+
+void KdeApp::slotCycleView() {
+    appCore->charEntered('\011');
 }
 
 void KdeApp::slotAmbientLightLevel(float l) {
