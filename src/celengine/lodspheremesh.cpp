@@ -170,7 +170,7 @@ void LODSphereMesh::render(const GLContext& context,
                            int nTextures)
 {
     int lod = 64;
-    float lodBias = getSphereLOD(pixWidth) + 2.0f;
+    float lodBias = getSphereLOD(pixWidth);
 
     if (lodBias < 0.0f)
     {
