@@ -24,12 +24,12 @@ UniversalCoord::UniversalCoord(double _x, double _y, double _z) :
 {
 }
 
-UniversalCoord::UniversalCoord(Point3d& p) :
+UniversalCoord::UniversalCoord(const Point3d& p) :
     x(p.x), y(p.y), z(p.z)
 {
 }
 
-UniversalCoord::UniversalCoord(Point3f& p) :
+UniversalCoord::UniversalCoord(const Point3f& p) :
     x(p.x), y(p.y), z(p.z)
 {
 }
