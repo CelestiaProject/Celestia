@@ -101,7 +101,32 @@ static bool initialized = false;
 static bool compressionSupported = false;
 static bool clampToEdgeSupported = false;
 static bool autoMipMapSupported = false;
+static bool maxLevelSupported = false;
 static GLint maxTextureSize = 0;
+
+
+static bool testMaxLevel()
+{
+    unsigned char texels[64];
+
+    glEnable(GL_TEXTURE_2D);
+    // Test whether GL_TEXTURE_MAX_LEVEL is supported . . .
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 8, 8,
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 texels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2);
+    float maxLev = -1.0f;
+    glGetTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, &maxLev);
+    glDisable(GL_TEXTURE_2D);
+
+    return maxLev == 2;
+}
+
 
 static void initTextureLoader()
 {
@@ -115,6 +140,7 @@ static void initTextureLoader()
     clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
 #endif // GL_VERSION_1_2
     autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
+    maxLevelSupported = testMaxLevel();
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
  
     initialized = true;
@@ -265,7 +291,7 @@ void Texture::bindName(uint32 flags)
     bool compress = ((flags & CompressTexture) != 0) && compressionSupported;
     bool mipmap = ((flags & NoMipMaps) == 0);
     bool automipmap = ((flags & AutoMipMaps) != 0) && autoMipMapSupported && mipmap;
-    if (maxMipMapLevel == 0)
+    if (maxMipMapLevel == 0 || (maxMipMapLevel > 0 && !maxLevelSupported))
         mipmap = false;
 
     if (pixels == NULL)
@@ -735,24 +761,48 @@ Texture* CreateProceduralTexture(int width, int height,
 }
 
 
+static bool isPow2(int x)
+{
+    return ((x & (x - 1)) == 0);
+}
+
 Texture* LoadTextureFromFile(const string& filename)
 {
     ContentType type = DetermineFileType(filename);
+    Texture* tex = NULL;
 
     switch (type)
     {
     case Content_JPEG:
-        return CreateJPEGTexture(filename.c_str());
+        tex = CreateJPEGTexture(filename.c_str());
+        break;
     case Content_BMP:
-        return CreateBMPTexture(filename.c_str());
+        tex = CreateBMPTexture(filename.c_str());
+        break;
     case Content_PNG:
-        return CreatePNGTexture(filename);
+        tex = CreatePNGTexture(filename);
+        break;
     case Content_DDS:
-        return CreateDDSTexture(filename);
+        tex = CreateDDSTexture(filename);
+        break;
     default:
         DPRINTF(0, "Unrecognized or unsupported image file type.\n");
-        return NULL;
+        break;
     }
+
+    if (tex != NULL)
+    {
+        // Require dimensions of textures to be powers of two.
+        if (!isPow2(tex->width) || !isPow2(tex->height))
+        {
+            DPRINTF(0, "Texture %s has non-power of two dimensions.\n",
+                    filename.c_str());
+            delete tex;
+            tex = NULL;
+        }
+    }
+
+    return tex;
 }
 
 
