@@ -306,7 +306,9 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         {
             Quatf q(1);
             // For a small field of view, rotate the camera more finely
-            float coarseness = renderer->getFieldOfView() / 30.0f;
+            float coarseness = 1.5f;
+            if ((modifiers & RightButton) == 0)
+                coarseness = renderer->getFieldOfView() / 30.0f;
             q.yrotate(dx / width * coarseness);
             q.xrotate(dy / height * coarseness);
             if ((modifiers & RightButton) != 0)
@@ -1317,8 +1319,8 @@ bool CelestiaCore::initRenderer()
             renderer->addLabelledStar(star);
     }
 
-    renderer->setBrightnessBias(0.0f);
-    renderer->setBrightnessScale(1.0f / (config->faintestVisible + 1.0f));
+    renderer->setBrightnessBias(0.1f);
+    renderer->setSaturationMagnitude(1.0f);
 
     renderer->showAsterisms(asterisms);
 
@@ -1403,8 +1405,8 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
 // brightness parameters appropriately.
 void CelestiaCore::setFaintest(float magnitude)
 {
-    renderer->setBrightnessBias(0.0f);
-    renderer->setBrightnessScale(1.0f / (magnitude + 1.0f));
+    renderer->setBrightnessBias(0.05f);
+    renderer->setSaturationMagnitude(1.0f);
     sim->setFaintestVisible(magnitude);
 }
 
