@@ -54,6 +54,14 @@ inline void glRotate(const Quatf& q)
     glRotatef(radToDeg(angle), axis.x, axis.y, axis.z);
 }
 
+inline void glRotate(const Quatd& q)
+{
+    Vec3d axis;
+    double angle;
+    q.getAxisAngle(axis, angle);
+    glRotated(radToDeg(angle), axis.x, axis.y, axis.z);
+}
+
 inline void glTranslate(const Vec3f& v)
 {
     glTranslatef(v.x, v.y, v.z);
