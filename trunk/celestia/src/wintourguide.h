@@ -22,6 +22,7 @@ class TourGuide
 
  public:
     CelestiaCore* appCore;
+    Destination* selectedDest;
     HWND parent;
     HWND hwnd;
 };
