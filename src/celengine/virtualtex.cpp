@@ -84,7 +84,8 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
     cout << "getTile(" << lod << ", " << u << ", " << v << ")\n";
 #endif
 
-    lod <<= baseSplit;
+    lod += baseSplit;
+    
     if (lod < 0 || (uint) lod >= nResolutionLevels || 
         u < 0 || u >= (2 << lod) ||
         v < 0 || v >= (1 << lod))
@@ -212,8 +213,7 @@ uint VirtualTexture::tileIndex(unsigned int lod,
 ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
 {
     lod >>= baseSplit;
-    u >>= baseSplit;
-    v >>= baseSplit;
+
     assert(lod < (unsigned)MaxResolutionLevels);
     
     char filename[64];
@@ -311,7 +311,7 @@ void VirtualTexture::addTileToTree(Tile* tile, uint lod, uint u, uint v)
         node = node->children[child];
     }
 #if 0
-    cout << "addTileToTree: " << node << ", " << lod << ", " << u << ", " << v << '\n';
+    clog << "addTileToTree: " << node << ", " << lod << ", " << u << ", " << v << '\n';
 #endif
 
     // Verify that the tile doesn't already exist
