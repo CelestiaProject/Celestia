@@ -137,7 +137,10 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     Simulation* getSimulation() const;
     Renderer* getRenderer() const;
-    void showText(std::string s);
+    void showText(std::string s,
+                  int horig = 0, int vorig = 0,
+                  int hoff = 0, int voff = 0, 
+                  double duration = 1.0e9);
 
     void readFavoritesFile();
     void writeFavoritesFile();
@@ -173,6 +176,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void removeWatcher(CelestiaWatcher*);
     void setFaintest(float);
 
+    void flash(const std::string&, double duration = 1.0);
+
     class Alerter
     {
     public:
@@ -204,7 +209,14 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     TextureFont* font;
     TextureFont* titleFont;
+
     std::string messageText;
+    int messageHOrigin;
+    int messageVOrigin;
+    int messageHOffset;
+    int messageVOffset;
+    double messageStart;
+    double messageDuration;
     std::string typedText;
     bool textEnterMode;
     int hudDetail;
