@@ -436,5 +436,10 @@ Code:
 * Added accurate orbital calculations for the five largest moons of Uranus
 * Added option to render stars as points (for a less fuzzy appearance)
 * Corrected sizing of planets' shadows on their ring systems
+* Enabled used of extremely high resolution textures through splitting into
+  subtextures.
+* Corrected orbital elements for Ceres, Pallas, Juno, and Vesta.
+* Added Ikeya-Zhang to solar system
+* Fixed position calculation for orbits with 0.98 < e < 1
+* Enabled rendering of 3DS meshes with transparent parts
 * Unix Gtk: New Renderer Options
-* Corrected orientation of 
