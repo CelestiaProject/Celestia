@@ -38,6 +38,8 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                 return EndDialog(hDlg, 0);
             SetWindowLong(hDlg, DWL_USER, lParam);
 
+            guide->selectedDest = NULL;
+
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_TOURGUIDE);
             const DestinationList* destinations = guide->appCore->getDestinations();
             if (hwnd != NULL && destinations != NULL)
@@ -89,7 +91,29 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
         }
         else if (LOWORD(wParam) == IDC_BUTTON_GOTO)
         {
-            tourGuide->appCore->charEntered('G');
+            Simulation* sim = tourGuide->appCore->getSimulation();
+            if (tourGuide->selectedDest != NULL && sim != NULL)
+            {
+                Selection sel = sim->findObjectFromPath(tourGuide->selectedDest->target);
+                if (!sel.empty())
+                {
+                    sim->setSelection(sel);
+                    if (tourGuide->selectedDest->distance <= 0)
+                    {
+                        // Use the default distance
+                        sim->gotoSelection(5.0,
+                                           Vec3f(0, 1, 0),
+                                           astro::ObserverLocal);
+                    }
+                    else
+                    {
+                        sim->gotoSelection(5.0,
+                                           tourGuide->selectedDest->distance,
+                                           Vec3f(0, 1, 0),
+                                           astro::ObserverLocal);
+                    }
+                }
+            }
         }
         else if (LOWORD(wParam) == IDC_COMBO_TOURGUIDE)
         {
@@ -101,16 +125,10 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                 if (item != CB_ERR && item < destinations->size())
                 {
                     Destination* dest = (*destinations)[item];
-                    Selection sel = tourGuide->appCore->getSimulation()->findObjectFromPath(dest->target);
-
                     SetDlgItemText(hDlg,
                                    IDC_TEXT_DESCRIPTION,
                                    dest->description.c_str());
-
-                    if (!sel.empty())
-                    {
-                        tourGuide->appCore->getSimulation()->setSelection(sel);
-                    }
+                    tourGuide->selectedDest = dest;
                 }
             }
         }
@@ -125,6 +143,7 @@ TourGuide::TourGuide(HINSTANCE appInstance,
                      HWND _parent,
                      CelestiaCore* _appCore) :
     appCore(_appCore),
+    selectedDest(NULL),
     parent(_parent)
 {
     hwnd = CreateDialogParam(appInstance,
