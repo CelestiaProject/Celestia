@@ -1533,49 +1533,92 @@ class CallistoOrbit : public CachingOrbit
                             gamma, phi, psi, G, Gp);
 
     //Calculate periodic terms for longitude
-    sigma = 0.84287*sin(l4 - p4) + 0.03431*sin(p4 - p3)
-          - 0.03305*sin(2*(psi - LPEJ)) - 0.03211*sin(G)
-          - 0.01862*sin(l4 - p3) + 0.01186*sin(psi - w4)
-          + 6.23e-3*sin(l4 + p4 - 2*G - 2*LPEJ) + 3.87e-3*sin(2*(l4 - p4))
-          - 2.84e-3*sin(5*Gp - 2*G + 0.9115) - 2.34e-3*sin(2*(psi - p4))
-          - 2.23e-3*sin(l3 - l4) - 2.08e-3*sin(l4 - LPEJ)
-          + 1.78e-3*sin(psi + w4 - 2*p4) + 1.34e-3*sin(p4 - LPEJ)
-          + 1.25e-3*sin(2*(l4 - G - LPEJ)) - 1.17e-3*sin(2*G)
-          - 1.12e-3*sin(2*(l3 - l4)) + 1.07e-3*sin(3*l3 - 7*l4 + 4*p4)
-          + 1.02e-3*sin(l4 - G - LPEJ) + 9.6e-4*sin(2*l4 - psi - w4)
-          + 8.7e-4*sin(2*(psi - w4)) - 8.5e-4*sin(3*l3 - 7*l4 + p3 + 3*p4)
-          + 8.5e-4*sin(l3 - 2*l4 + p4) - 8.1e-4*sin(2*(l4 - psi))
-          + 7.1e-4*sin(l4 + p4 - 2*LPEJ - 3*G) + 6.1e-4*sin(l1 - l4)
-          - 5.6e-4*sin(psi - w3) - 5.4e-4*sin(l3 - 2*l4 + p3)
-          + 5.1e-4*sin(l2 - l4) + 4.2e-4*sin(2*(psi - G - LPEJ))
-          + 3.9e-4*sin(2*(p4 - w4)) + 3.6e-4*sin(psi + LPEJ - p4 - w4)
-          + 3.5e-4*sin(2*Gp - G + 3.2877) - 3.5e-4*sin(l4 - p4 + 2*LPEJ - 2*psi)
-          - 3.2e-4*sin(l4 + p4 - 2*LPEJ - G) + 3.0e-4*sin(2*Gp - 2*G + 2.6032)
-          + 2.9e-4*sin(3*l3 - 7*l4 + 2*p3 + 2*p4) + 2.8e-4*sin(l4 - p4 + 2*psi - 2*LPEJ)
-          - 2.8e-4*sin(2*(l4 - w4)) - 2.7e-4*sin(p3 - p4 + w3 - w4)
-          - 2.6e-4*sin(5*Gp - 3*G + 3.2877) + 2.5e-4*sin(w4 - w3)
-          - 2.5e-4*sin(l2 - 3*l3 + 2*l4) - 2.3e-4*sin(3*(l3 - l4))
-          + 2.1e-4*sin(2*l4 - 2*LPEJ - 3*G) - 2.1e-4*sin(2*l3 - 3*l4 + p4)
-          + 1.9e-4*sin(l4 - p4 - G) - 1.9e-4*sin(2*l4 - p3 - p4)
-          - 1.8e-4*sin(l4 - p4 + G) - 1.6e-4*sin(l4 + p3 - 2*LPEJ - 2*G);
+    sigma =
+        0.84287*sin(l4 - p4)
+        + 0.03431*sin(p4 - p3)
+        - 0.03305*sin(2*(psi - LPEJ))
+        - 0.03211*sin(G)
+        - 0.01862*sin(l4 - p3)
+        + 0.01186*sin(psi - w4)
+        + 6.23e-3*sin(l4 + p4 - 2*G - 2*LPEJ)
+        + 3.87e-3*sin(2*(l4 - p4))
+        - 2.84e-3*sin(5*Gp - 2*G + 0.9115)
+        - 2.34e-3*sin(2*(psi - p4))
+        - 2.23e-3*sin(l3 - l4)
+        - 2.08e-3*sin(l4 - LPEJ)
+        + 1.78e-3*sin(psi + w4 - 2*p4)
+        + 1.34e-3*sin(p4 - LPEJ)
+        + 1.25e-3*sin(2*(l4 - G - LPEJ))
+        - 1.17e-3*sin(2*G)
+        - 1.12e-3*sin(2*(l3 - l4))
+        + 1.07e-3*sin(3*l3 - 7*l4 + 4*p4)
+        + 1.02e-3*sin(l4 - G - LPEJ)
+        + 9.6e-4*sin(2*l4 - psi - w4)
+        + 8.7e-4*sin(2*(psi - w4))
+        - 8.5e-4*sin(3*l3 - 7*l4 + p3 + 3*p4)
+        + 8.5e-4*sin(l3 - 2*l4 + p4)
+        - 8.1e-4*sin(2*(l4 - psi))
+        + 7.1e-4*sin(l4 + p4 - 2*LPEJ - 3*G)
+        + 6.1e-4*sin(l1 - l4)
+        - 5.6e-4*sin(psi - w3)
+        - 5.4e-4*sin(l3 - 2*l4 + p3)
+        + 5.1e-4*sin(l2 - l4)
+        + 4.2e-4*sin(2*(psi - G - LPEJ))
+        + 3.9e-4*sin(2*(p4 - w4))
+        + 3.6e-4*sin(psi + LPEJ - p4 - w4)
+        + 3.5e-4*sin(2*Gp - G + 3.2877)
+        - 3.5e-4*sin(l4 - p4 + 2*LPEJ - 2*psi)
+        - 3.2e-4*sin(l4 + p4 - 2*LPEJ - G)
+        + 3.0e-4*sin(2*Gp - 2*G + 2.6032)
+        + 2.9e-4*sin(3*l3 - 7*l4 + 2*p3 + 2*p4)
+        + 2.8e-4*sin(l4 - p4 + 2*psi - 2*LPEJ)
+        - 2.8e-4*sin(2*(l4 - w4))
+        - 2.7e-4*sin(p3 - p4 + w3 - w4)
+        - 2.6e-4*sin(5*Gp - 3*G + 3.2877)
+        + 2.5e-4*sin(w4 - w3)
+        - 2.5e-4*sin(l2 - 3*l3 + 2*l4)
+        - 2.3e-4*sin(3*(l3 - l4))
+        + 2.1e-4*sin(2*l4 - 2*LPEJ - 3*G)
+        - 2.1e-4*sin(2*l3 - 3*l4 + p4)
+        + 1.9e-4*sin(l4 - p4 - G)
+        - 1.9e-4*sin(2*l4 - p3 - p4)
+        - 1.8e-4*sin(l4 - p4 + G)
+        - 1.6e-4*sin(l4 + p3 - 2*LPEJ - 2*G);
     sigma = pfmod(sigma, 360.0);
     sigma = degToRad(sigma);
     L = l4 + sigma;
 
     //Calculate periodic terms for the tangent of the latitude
-    B = -7.6579e-3*sin(L - psi) + 4.4134e-3*sin(L - w4)
-      - 5.112e-4*sin(L - w3) + 7.73e-5*sin(L + psi - 2*LPEJ - 2*G)
-      + 1.04e-5*sin(L - psi + G) - 1.02e-5*sin(L - psi - G)
-      + 8.8e-6*sin(L + psi - 2*LPEJ - 3*G) - 3.8e-6*sin(L + psi - 2*LPEJ - G);
+    B =
+        - 7.6579e-3 * sin(L - psi)
+        + 4.4134e-3 * sin(L - w4)
+        - 5.112e-4  * sin(L - w3)
+        + 7.73e-5   * sin(L + psi - 2*LPEJ - 2*G)
+        + 1.04e-5   * sin(L - psi + G)
+        - 1.02e-5   * sin(L - psi - G)
+        + 8.8e-6    * sin(L + psi - 2*LPEJ - 3*G)
+        - 3.8e-6    * sin(L + psi - 2*LPEJ - G);
     B = atan(B);
 
     //Calculate the periodic terms for distance
-    R = -7.3546e-3*cos(l4 - p4) + 1.621e-4*cos(l4 - p3)
-      + 9.74e-3*cos(l3 - l4) - 5.43e-3*cos(l4 + p4 - 2*LPEJ - 2*G)
-      - 2.71e-3*cos(2*(l4 - p4)) + 1.82e-3*cos(l4 - LPEJ)
-      + 1.77e-3*cos(2*(l3 - l4)) - 1.67e-3*cos(2*l4 - psi - w4)
-      + 1.67e-3*cos(psi - w4) - 1.55e-3*cos(2*(l4 - LPEJ - G))
-      + 1.42e-3*cos(2*(l4 - psi));
+    R =
+        - 7.3546e-3 * cos(l4 - p4)
+        + 1.621e-4  * cos(l4 - p3)
+        + 9.74e-5   * cos(l3 - l4)
+        - 5.43e-5   * cos(l4 + p4 - 2*LPEJ - 2*G)
+        - 2.71e-5   * cos(2*(l4 - p4))
+        + 1.82e-5   * cos(l4 - LPEJ)
+        + 1.77e-5   * cos(2*(l3 - l4))
+        - 1.67e-5   * cos(2*l4 - psi - w4)
+        + 1.67e-5   * cos(psi - w4)
+        - 1.55e-5   * cos(2*(l4 - LPEJ - G))
+        + 1.42e-5   * cos(2*(l4 - psi))
+        + 1.05e-5   * cos(l1 - l4)
+        + 9.2e-6    * cos(l2 - l4)
+        - 8.9e-6    * cos(l4 - LPEJ -G)
+        - 6.2e-6    * cos(l4 + p4 - 2*LPEJ - 3*G)
+        + 4.8e-6    * cos(2*(l4 - w4));
+    
     R = 26.36273 * JupiterRadius * (1 + R);
 
     T = (jd - 2433282.423) / 36525.0;
