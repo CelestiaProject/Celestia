@@ -54,63 +54,93 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
     {
         //Take out a Renderer* for readability sake.
         Renderer* renderer = Dlg->appCore->getRenderer();
+        uint32 renderFlags = renderer->getRenderFlags();
+        uint32 labelMode = renderer->getLabelMode();
 
-        if(LOWORD(wParam) == IDC_SHOWATMOSPHERES)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowAtmospheres);
-        else if(LOWORD(wParam) == IDC_SHOWCELESTIALGRID)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowCelestialSphere);
-        else if(LOWORD(wParam) == IDC_SHOWCLOUDS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowCloudMaps);
-        else if(LOWORD(wParam) == IDC_SHOWCONSTELLATIONS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowDiagrams);
-        else if(LOWORD(wParam) == IDC_SHOWECLIPSESHADOWS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowEclipseShadows);
-        else if(LOWORD(wParam) == IDC_SHOWGALAXIES)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowGalaxies);
-        else if(LOWORD(wParam) == IDC_SHOWNIGHTSIDELIGHTS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowNightMaps);
-        else if(LOWORD(wParam) == IDC_SHOWORBITS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowOrbits);
-        else if(LOWORD(wParam) == IDC_SHOWPLANETS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowPlanets);
-        else if(LOWORD(wParam) == IDC_SHOWSTARS)
+        switch (LOWORD(wParam))
         {
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowStars);
+        case IDC_SHOWATMOSPHERES:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowAtmospheres);
+            break;
+        case IDC_SHOWCELESTIALGRID:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCelestialSphere);
+            break;
+        case IDC_SHOWCLOUDS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCloudMaps);
+            break;
+        case IDC_SHOWCONSTELLATIONS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowDiagrams);
+            break;
+        case IDC_SHOWECLIPSESHADOWS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowEclipseShadows);
+            break;
+        case IDC_SHOWGALAXIES:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowGalaxies);
+            break;
+        case IDC_SHOWNIGHTSIDELIGHTS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowNightMaps);
+            break;
+        case IDC_SHOWORBITS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowOrbits);
+            break;
+        case IDC_SHOWPLANETS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanets);
+            break;
+        case IDC_SHOWSTARS:
+            {
+                renderer->setRenderFlags(renderFlags ^ Renderer::ShowStars);
 
-            HWND hAsPoints = GetDlgItem(hDlg, IDC_SHOWSTARSASPOINTS);
-            if(hAsPoints)
-                EnableWindow(hAsPoints, (BOOL)(renderer->getRenderFlags() & renderer->ShowStars));
-        }
-        else if(LOWORD(wParam) == IDC_SHOWSTARSASPOINTS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowStarsAsPoints);
-        else if(LOWORD(wParam) == IDC_SHOWCONSTELLATIONBORDERS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowBoundaries);
-        else if(LOWORD(wParam) == IDC_SHOWRINGSHADOWS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowRingShadows);
-        else if(LOWORD(wParam) == IDC_SHOWCOMETTAILS)
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowCometTails);
-        else if(LOWORD(wParam) == IDC_LABELCONSTELLATIONS)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->ConstellationLabels);
-        else if(LOWORD(wParam) == IDC_LABELGALAXIES)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->GalaxyLabels);
-        else if(LOWORD(wParam) == IDC_LABELPLANETS)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->PlanetLabels);
-        else if(LOWORD(wParam) == IDC_LABELMOONS)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->MoonLabels);
-        else if(LOWORD(wParam) == IDC_LABELSTARS)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->StarLabels);
-        else if(LOWORD(wParam) == IDC_LABELASTEROIDS)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->AsteroidLabels);
-        else if(LOWORD(wParam) == IDC_LABELSPACECRAFT)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->SpacecraftLabels);
-        else if(LOWORD(wParam) == IDC_INFOTEXT0)
+                HWND hAsPoints = GetDlgItem(hDlg, IDC_SHOWSTARSASPOINTS);
+                if (hAsPoints)
+                    EnableWindow(hAsPoints, (BOOL)(renderFlags & Renderer::ShowStars));
+            }
+            break;
+        case IDC_SHOWSTARSASPOINTS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowStarsAsPoints);
+            break;
+        case IDC_SHOWCONSTELLATIONBORDERS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowBoundaries);
+            break;
+        case IDC_SHOWRINGSHADOWS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowRingShadows);
+            break;
+        case IDC_SHOWCOMETTAILS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCometTails);
+            break;
+        case IDC_SHOWMARKERS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowMarkers);
+            break;
+        case IDC_LABELCONSTELLATIONS:
+            renderer->setLabelMode(labelMode ^ Renderer::ConstellationLabels);
+            break;
+        case IDC_LABELGALAXIES:
+            renderer->setLabelMode(labelMode ^ Renderer::GalaxyLabels);
+            break;
+        case IDC_LABELPLANETS:
+            renderer->setLabelMode(labelMode ^ Renderer::PlanetLabels);
+            break;
+        case IDC_LABELMOONS:
+            renderer->setLabelMode(labelMode ^ Renderer::MoonLabels);
+            break;
+        case IDC_LABELSTARS:
+            renderer->setLabelMode(labelMode ^ Renderer::StarLabels);
+            break;
+        case IDC_LABELASTEROIDS:
+            renderer->setLabelMode(labelMode ^ Renderer::AsteroidLabels);
+            break;
+        case IDC_LABELSPACECRAFT:
+            renderer->setLabelMode(labelMode ^ Renderer::SpacecraftLabels);
+            break;
+        case IDC_INFOTEXT0:
             Dlg->appCore->setHudDetail(0);
-        else if(LOWORD(wParam) == IDC_INFOTEXT1)
+            break;
+        case IDC_INFOTEXT1:
             Dlg->appCore->setHudDetail(1);
-        else if(LOWORD(wParam) == IDC_INFOTEXT2)
+            break;
+        case IDC_INFOTEXT2:
             Dlg->appCore->setHudDetail(2);
-        else if (LOWORD(wParam) == IDOK)
-        {
+            break;
+        case IDOK:
             if (Dlg != NULL && Dlg->parent != NULL)
             {
                 SendMessage(Dlg->parent, WM_COMMAND, IDCLOSE,
@@ -118,14 +148,12 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             }
             EndDialog(hDlg, 0);
             return TRUE;
-        }
-        else if (LOWORD(wParam) == IDCANCEL)
-        {
+        case IDCANCEL:
             if (Dlg != NULL && Dlg->parent != NULL)
             {
-                // Reset render flags, label mode, and hud detail to initial values
+                // Reset render flags, label mode, and hud detail to
+                // initial values
                 Dlg->RestoreSettings(hDlg);
-
                 SendMessage(Dlg->parent, WM_COMMAND, IDCLOSE,
                             reinterpret_cast<LPARAM>(Dlg));
             }
