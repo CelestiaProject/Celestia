@@ -297,6 +297,7 @@ class Renderer
                                    bool lit);
 
     void renderLocations(const vector<Location*>& locations,
+                         const Quatf& cameraOrientation,
                          const Point3f& position,
                          const Quatf& orientation,
                          float scale);
