@@ -13,11 +13,13 @@
 #include <celscript/celx.h>
 #include <vector>
 #include <string>
+#include <celscript/value.h>
 
 namespace celx
 {
 
 class Statement;
+class ExecutionContext; 
 
 class Function
 {
@@ -25,6 +27,8 @@ class Function
     Function(std::vector<std::string>*, Statement*);
     Function(const Function&);
     ~Function();
+
+    Value call(ExecutionContext&);
 
  private:
     std::vector<std::string>* arguments;

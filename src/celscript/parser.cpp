@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <celscript/parser.h>
+#include <celscript/function.h>
 
 using namespace std;
 using namespace celx;

@@ -11,11 +11,14 @@
 #define CELSCRIPT_EXECUTION_H_
 
 #include <celscript/celx.h>
+#include <vector>
 #include <celscript/environment.h>
 
 
 namespace celx
 {
+
+typedef std::vector<Value> Stack;
 
 class ExecutionContext
 {
@@ -26,8 +29,12 @@ class ExecutionContext
     Environment* getEnvironment();
     void runtimeError() {};
 
+    void pushReturnValue(const Value&);
+    Value popReturnValue();
+
  private:
     Environment* globalEnv;
+    Stack returnStack;
 };
 
 } // namespace celx
