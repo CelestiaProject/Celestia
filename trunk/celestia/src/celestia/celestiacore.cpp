@@ -52,7 +52,9 @@ static const float KeyRotationAccel = degToRad(120.0f);
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
+static const float stdFOV = 45.0f;
 
+static float oldFOV = stdFOV;
 
 static void warning(string s)
 {
@@ -312,6 +314,16 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
                     contextMenuCallback(x, y, sel);
             }
         }
+        else if (button == MiddleButton)
+	{
+            if (renderer->getFieldOfView() != stdFOV)
+	    { 
+                oldFOV = renderer->getFieldOfView();	    
+                renderer->setFieldOfView(stdFOV);
+            }
+            else
+                renderer->setFieldOfView(oldFOV);
+	}
     }
 }
 
@@ -887,29 +899,29 @@ void CelestiaCore::tick()
 
     av = av * (float) exp(-dt * RotationDecay);
 
-    float fow = renderer->getFieldOfView()/45.0f;
+    float fov = renderer->getFieldOfView()/stdFOV;
 
     if (keysPressed[Key_Left])
         av += Vec3f(0, 0, dt);
     if (keysPressed[Key_Right])
         av += Vec3f(0, 0, -dt);
     if (keysPressed[Key_Down])
-        av += Vec3f(dt * fow, 0, 0);
+        av += Vec3f(dt * fov, 0, 0);
     if (keysPressed[Key_Up])
-        av += Vec3f(-dt * fow, 0, 0);
+        av += Vec3f(-dt * fov, 0, 0);
 
     if (keysPressed[Key_NumPad4])
-        av += Vec3f(0, dt * fow * -KeyRotationAccel, 0);
+        av += Vec3f(0, dt * fov * -KeyRotationAccel, 0);
     if (keysPressed[Key_NumPad6])
-        av += Vec3f(0, dt * fow * KeyRotationAccel, 0);
+        av += Vec3f(0, dt * fov * KeyRotationAccel, 0);
     if (keysPressed[Key_NumPad2])
-        av += Vec3f(dt * fow * -KeyRotationAccel, 0, 0);
+        av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
     if (keysPressed[Key_NumPad8])
-        av += Vec3f(dt * fow * KeyRotationAccel, 0, 0);
+        av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
     if (keysPressed[Key_NumPad7] || joyButtonsPressed[JoyButton7])
-        av += Vec3f(0, 0, dt * fow * -KeyRotationAccel);
+        av += Vec3f(0, 0, dt * -KeyRotationAccel);
     if (keysPressed[Key_NumPad9] || joyButtonsPressed[JoyButton8])
-        av += Vec3f(0, 0, dt * fow *KeyRotationAccel);
+        av += Vec3f(0, 0, dt * KeyRotationAccel);
 
     //Use Boolean to indicate if sim->setTargetSpeed() is called
     bool bSetTargetSpeed = false;
