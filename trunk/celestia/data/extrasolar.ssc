@@ -684,7 +684,7 @@ Planets [
 Planets [
 {
 	Name "b"
-	Texture "gasgiant.jpg"
+	Texture "jupiterlike.jpg"
 	Mass      1280
 	Radius    70000
 
@@ -697,7 +697,431 @@ Planets [
 }
 
 
+# HD 52265 system
+#
+# M sin i = 1.13 Jupiters
+"HD 52265"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      360
+	Radius    74000
+
+	# orbital data
+	Period          0.325606
+	SemiMajorAxis   0.49
+	Eccentricity    0.29
+}
+]
+}
 
 
+# HD 177830 system
+#
+# M sin i = 1.28 Jupiters
+"HD 177830"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      400
+	Radius    76000
 
+	# orbital data
+	Period          1.0705
+	SemiMajorAxis   1.00
+	Eccentricity    0.43
+}
+]
+}
+
+
+# HD 217107 system
+#
+# M sin i = 1.28 Jupiters
+#
+# Possible second planet has yet to be confirmed.
+"HD 217107"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      400
+	Radius    76000
+
+	# orbital data
+	Period          0.019512
+	SemiMajorAxis   0.07
+	Eccentricity    0.14
+}
+]
+}
+
+
+# HD 210277 system
+#
+# M sin i = 1.28 Jupiters
+#
+# Possible second planet has yet to be confirmed.
+"HD 210277"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      400
+	Radius    76000
+
+	# orbital data
+	Period          1.1964
+	SemiMajorAxis   1.097
+	Eccentricity    0.45
+}
+]
+}
+
+
+# HD 27442 system
+#
+# M sin i = 1.43 Jupiters
+#
+# Possible second planet has yet to be confirmed.
+"HD 27442"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      520
+	Radius    78000
+
+	# orbital data
+	Period          1.16
+	SemiMajorAxis   1.18
+	Eccentricity    0.02
+}
+]
+}
+
+
+# 16 Cyg B system
+#
+# M sin i = 1.5 Jupiters
+"16 Cyg B"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      480
+	Radius    80000
+
+	# orbital data
+	Period          2.201
+	SemiMajorAxis   1.72
+	Eccentricity    0.67
+}
+]
+}
+
+
+# HD 134987 system
+#
+# M sin i = 1.58 Jupiters
+"HD 134987"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      500
+	Radius    80000
+
+	# orbital data
+	Period          0.7118
+	SemiMajorAxis   0.78
+	Eccentricity    0.24
+}
+]
+}
+
+
+# HD 160691 system
+#
+# M sin i = 1.97 Jupiters
+"HD 160691"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      625
+	Radius    75000
+
+	# orbital data
+	Period          2.0342
+	SemiMajorAxis   1.65
+	Eccentricity    0.62
+}
+]
+}
+
+
+# HD 19994 system
+#
+# M sin i = 2 Jupiters
+"HD 19994"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      640
+	Radius    75000
+
+	# orbital data
+	Period          1.2430
+	SemiMajorAxis   1.3
+	Eccentricity    0.2
+}
+]
+}
+
+
+# HD 82943 system
+#
+# M sin i = 2.24 Jupiters
+"HD 82943"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      720
+	Radius    72000
+
+	# orbital data
+	Period          1.2118
+	SemiMajorAxis   1.16
+	Eccentricity    0.61
+}
+]
+}
+
+
+# HR 810 system
+#
+# M sin i = 2.26 Jupiters
+"HR 810"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      730
+	Radius    72000
+
+	# orbital data
+	Period          0.8764
+	SemiMajorAxis   0.925
+	Eccentricity    0.161
+}
+]
+}
+
+
+# HD 169830 system
+#
+# M sin i = 2.96 Jupiters
+"HR 810"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      950
+	Radius    70000
+
+	# orbital data
+	Period          0.6308
+	SemiMajorAxis   0.823
+	Eccentricity    0.34
+}
+]
+}
+
+
+# 14 Her system
+#
+# M sin i = 3.3 Jupiters
+"14 Her"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1050
+	Radius    70000
+
+	# orbital data
+	Period          4.5174
+	SemiMajorAxis   2.5
+	Eccentricity    0.326
+}
+]
+}
+
+
+# GJ 3021 (HD 1237) system
+#
+# M sin i = 3.32 Jupiters
+"GJ 3021"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1050
+	Radius    72000
+
+	# orbital data
+	Period          0.3664
+	SemiMajorAxis   0.49
+	Eccentricity    0.505
+}
+]
+}
+
+
+# HD 195019 system
+#
+# M sin i = 3.43 +- 0.4 Jupiters
+"HD 195019"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1100
+	Radius    70000
+
+	# orbital data
+	Period          0.0501
+	SemiMajorAxis   0.14
+	Eccentricity    0.05
+}
+]
+}
+
+
+# HD 190228 system
+#
+# M sin i = 4.99 Jupiters
+"HD 190228"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1600
+	Radius    68000
+
+	# orbital data
+	Period          3.0856
+	SemiMajorAxis   2.31
+	Eccentricity    0.43
+}
+]
+}
+
+
+# HD 222582 system
+#
+# M sin i = 5.4 Jupiters
+"HD 222582"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1750
+	Radius    67000
+
+	# orbital data
+	Period          1.5770
+	SemiMajorAxis   1.35
+	Eccentricity    0.71
+}
+]
+}
+
+
+# HD 10697 system
+#
+# M sin i = 6.59 Jupiters
+"HD 10697"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      2080
+	Radius    66000
+
+	# orbital data
+	Period          2.9651
+	SemiMajorAxis   2.0
+	Eccentricity    0.12
+}
+]
+}
+
+
+# HD 89744 system
+#
+# M sin i = 7.2 Jupiters
+"HD 89744"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      2300
+	Radius    65000
+
+	# orbital data
+	Period          0.7009
+	SemiMajorAxis   0.88
+	Eccentricity    0.70
+}
+]
+}
+
+
+# HD 114762 system
+#
+# M sin i = 11.02 Jupiters
+#
+# There are indications that the inclination is low, so this object is likely
+# a brown dwarf, even though M sin i is below the 13 Jupiter mass limit.
+"HD 114762"
+{
+Planets [
+{
+	Name "b"
+	Texture "browndwarf.jpg"
+	Mass      4800
+	Radius    60000
+
+	# orbital data
+	Period          0.2328
+	SemiMajorAxis   0.3     # ????? Missing data
+	Eccentricity    0.0     # ????? Missing data
+}
+]
+}
 
