@@ -1658,7 +1658,8 @@ bool CelestiaCore::initRenderer()
     if (config->logoTextureFile != "")
     {
         logoTexture = LoadTextureFromFile(string("textures") + "/" + config->logoTextureFile);
-        logoTexture->bindName();
+        if (logoTexture != NULL)
+            logoTexture->bindName();
     }
     
     return true;
