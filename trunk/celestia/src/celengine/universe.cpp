@@ -127,35 +127,65 @@ MarkerList* Universe::getMarkers() const
     return markers;
 }
 
-void Universe::markObject(const Selection& sel, float size, Color color)
-{
-    for (MarkerList::const_iterator iter = markers->begin();
-         iter != markers->end(); iter++)
-    {
-        if (iter->getObject() == sel)
-        {
-            // If the object is already marked, return without doing anything
-            return;
-        }
-    }
 
-    Marker marker(sel);
-    marker.setColor(color);
-    marker.setSize(size);
-    markers->insert(markers->end(), marker);
-}
-
-void Universe::unmarkObject(const Selection& sel)
+void Universe::markObject(const Selection& sel,
+                          float size,
+                          Color color,
+                          int priority)
 {
     for (MarkerList::iterator iter = markers->begin();
          iter != markers->end(); iter++)
     {
         if (iter->getObject() == sel)
         {
-            markers->erase(iter);
+            // Handle the case when the object is already marked.  If the
+            // priority is higher than the existing marker, replace it.
+            // Otherwise, do nothing.
+            if (priority > iter->getPriority())
+            {
+                markers->erase(iter);
+                break;
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
+
+    Marker marker(sel);
+    marker.setColor(color);
+    marker.setSize(size);
+    marker.setPriority(priority);
+    markers->insert(markers->end(), marker);
+}
+
+
+void Universe::unmarkObject(const Selection& sel, int priority)
+{
+    for (MarkerList::iterator iter = markers->begin();
+         iter != markers->end(); iter++)
+    {
+        if (iter->getObject() == sel)
+        {
+            if (priority >= iter->getPriority())
+                markers->erase(iter);
             break;
         }
     }
+}
+
+
+bool Universe::isMarked(const Selection& sel, int priority) const
+{
+    for (MarkerList::iterator iter = markers->begin();
+         iter != markers->end(); iter++)
+    {
+        if (iter->getObject() == sel)
+            return priority >= iter->getPriority();
+    }
+
+    return false;
 }
 
 
