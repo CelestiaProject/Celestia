@@ -44,6 +44,7 @@ CLEAN :
 	-@erase "$(INTDIR)\astro.obj"
 	-@erase "$(INTDIR)\bigfix.obj"
 	-@erase "$(INTDIR)\body.obj"
+	-@erase "$(INTDIR)\catalogxref.obj"
 	-@erase "$(INTDIR)\celestia.res"
 	-@erase "$(INTDIR)\celestiacore.obj"
 	-@erase "$(INTDIR)\cmdparser.obj"
@@ -88,6 +89,8 @@ CLEAN :
 	-@erase "$(INTDIR)\vertexlist.obj"
 	-@erase "$(INTDIR)\visstars.obj"
 	-@erase "$(INTDIR)\winmain.obj"
+	-@erase "$(INTDIR)\winssbrowser.obj"
+	-@erase "$(INTDIR)\winstarbrowser.obj"
 	-@erase "$(INTDIR)\wintimer.obj"
 	-@erase "$(OUTDIR)\celestia.exe"
 
@@ -145,6 +148,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\astro.obj" \
 	"$(INTDIR)\bigfix.obj" \
 	"$(INTDIR)\body.obj" \
+	"$(INTDIR)\catalogxref.obj" \
 	"$(INTDIR)\celestiacore.obj" \
 	"$(INTDIR)\cmdparser.obj" \
 	"$(INTDIR)\color.obj" \
@@ -187,6 +191,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\vertexlist.obj" \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\winmain.obj" \
+	"$(INTDIR)\winssbrowser.obj" \
+	"$(INTDIR)\winstarbrowser.obj" \
 	"$(INTDIR)\wintimer.obj" \
 	"$(INTDIR)\celestia.res"
 
@@ -214,6 +220,7 @@ CLEAN :
 	-@erase "$(INTDIR)\astro.obj"
 	-@erase "$(INTDIR)\bigfix.obj"
 	-@erase "$(INTDIR)\body.obj"
+	-@erase "$(INTDIR)\catalogxref.obj"
 	-@erase "$(INTDIR)\celestia.res"
 	-@erase "$(INTDIR)\celestiacore.obj"
 	-@erase "$(INTDIR)\cmdparser.obj"
@@ -259,6 +266,8 @@ CLEAN :
 	-@erase "$(INTDIR)\visstars.obj"
 	-@erase "$(INTDIR)\vertexlist.obj"
 	-@erase "$(INTDIR)\winmain.obj"
+	-@erase "$(INTDIR)\winssbrowser.obj"
+	-@erase "$(INTDIR)\winstarbrowser.obj"
 	-@erase "$(INTDIR)\wintimer.obj"
 	-@erase "$(OUTDIR)\celestia.exe"
 	-@erase "$(OUTDIR)\celestia.ilk"
@@ -318,6 +327,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\astro.obj" \
 	"$(INTDIR)\bigfix.obj" \
 	"$(INTDIR)\body.obj" \
+	"$(INTDIR)\catalogxref.obj" \
 	"$(INTDIR)\celestiacore.obj" \
 	"$(INTDIR)\cmdparser.obj" \
 	"$(INTDIR)\color.obj" \
@@ -360,6 +370,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\vertexlist.obj" \
 	"$(INTDIR)\winmain.obj" \
+	"$(INTDIR)\winssbrowser.obj" \
+	"$(INTDIR)\winstarbrowser.obj" \
 	"$(INTDIR)\wintimer.obj" \
 	"$(INTDIR)\celestia.res"
 
@@ -420,6 +432,12 @@ SOURCE=.\src\bigfix.cpp
 SOURCE=.\src\body.cpp
 
 "$(INTDIR)\body.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\catalogxref.cpp
+
+"$(INTDIR)\catalogxref.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -672,6 +690,18 @@ SOURCE=.\src\vertexlist.cpp
 SOURCE=.\src\winmain.cpp
 
 "$(INTDIR)\winmain.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\winssbrowser.cpp
+
+"$(INTDIR)\winssbrowser.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\winstarbrowser.cpp
+
+"$(INTDIR)\winstarbrowser.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
