@@ -92,6 +92,11 @@ public:
         return core.getRenderer();
     }
 
+    CelestiaCore* getCelestiaCore() const
+    {
+        return &core;         
+    }
+
     void showText(string s, int horig, int vorig, int hoff, int voff,
                   double duration)
     {
@@ -1461,7 +1466,7 @@ void CelestiaCore::charEntered(char c)
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::StarLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
-        
+
     case 'C':
         addToHistory();
         if (c == 'c')
