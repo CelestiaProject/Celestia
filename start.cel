@@ -204,6 +204,7 @@
 #  renderflags {clear "pointstars"}
 #  renderflags {clear "ringshadows"}
 #  renderflags {clear "stars"}
+#  renderflags {clear "partialtrajectories"}
 
 
 # Items to be displayed (rendered):
@@ -224,6 +225,7 @@
 #  renderflags {set "pointstars"}
 #  renderflags {set "ringshadows"}
 #  renderflags {set "stars"}
+#  renderflags {set "partialtrajectories"}
 
 
 # Text labels:
