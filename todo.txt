@@ -5,8 +5,8 @@ USER INTERFACE
 * More star label models--nearest stars, brightest stars
 * Make picking more intelligent
   * Picking a distant planet is likely to select one of its satellites
-  * Picking currently ignores the radius and proximity of objects
   * Picking stars doesn't work at close range
+  * Make picking work better for non-spherical bodies
 * Tracking mode for camera
 * Views of planet and satellite orbits
   * Add satellite orbits
@@ -15,15 +15,17 @@ USER INTERFACE
 * Next/prev body commands
 * Add preferences for font and text color for labels to config file
 * Context menus for stars and planets
+* Make context menu work properly in full-screen mode
 * Make it possible to set the limiting magnitude for stars
 * Fix camera rotation wackiness when using goto--probably slerp between orientations
+* Dialog box for displaying detailed information about a star or planet
 * Create a help file
 
 VISUALS
 * Shadows from rings on planet
 * Bump maps for planets and satellites
-* Use Phil Stooke's shape data for asteroids and small moons
-* Change the color of the light illuminate planets based on star class;
+* Get a real texture map for Eros
+* Change the color of the light illuminating planets based on star class;
   probably only M and maybe K class stars should have a noticeable hue
 * Better and flashier star rendering: improve corona effects, add limb darkening, change
   convection cell size based on spectral class, etc.
@@ -34,14 +36,17 @@ VISUALS
 * Comets with dust and ion tails
 * Add some deep sky objects--planetary nebula, supernova remnants, etc.
 * Procedural textures for extrasolar planets
+* Atmospheric veils around planets
+* Add clouds to Earth
+* Specularity map for Earth (and other hypothetical ocean bearing worlds)
 
 POLISH
 * Get a real installer working for Windows version
 * Demo mode
 * Tutorial mode
 * Add a flashy intro screen
-* Change starting position to someplace interesting.  Eros?
 * Add screen shot feature
+* Preload some textures to avoid loading delay
 
 SIMULATION ACCURACY
 * Fix apparent magnitude calculation for planets
@@ -62,8 +67,8 @@ BUGS
 
 OPTIMIZATION
 * Add view frustum culling for stars
-* Use compressed textures when available
 * Convert the VisibleStarSet class to use an octree based algorithm
+* Add option to force 16-bit textures
 
 CODE
 * Make parser more robust (and fix that EOF problem)
@@ -71,6 +76,8 @@ CODE
 * Finish assert-ing the code
 
 PORTING
+* Make 3DS loading code byte-order and FP format independent
+* Make stars.dat loading code byte-order and FP format independent
 * Write a version which uses GLUT instead of Win32 API calls
 * Linux port
 * MacOS port

@@ -87,12 +87,14 @@ Time:
 Space : stop time
 L  : Time 10x faster
 K  : Time 10x slower
+J  : Reverse time
 
 Options:
 N  : Toggle planet and moon labels
 O  : Toggle planet orbits
 V  : Toggle HUD Text
-W  : Toggle Wireframe mode
+W  : Toggle wireframe mode
+P  : Toggle per-pixel lighting (if supported)
 
 ESC : Exit
 
@@ -165,6 +167,10 @@ A few of these maps were modified by me, with fictional terrain added
 to fill in gaps.  The model of the Galileo spacecraft is also from
 David Seal's site (though it was converter from Inventor to 3DS format.)
 
+The Mars, Moon, and Pluto textures and bump maps are all from James
+Hastings-Trew's collection.  Some of the prettiest planet maps around
+are at http://apollo.spaceports.com/~jhasting/
+
 The Venus, Saturn, and Saturn's rings textures are from Bjorn Jonsson.
 His site is http://www.mmedia.is/~bjj/ and is an excellent resource
 for solar system rendering.
@@ -173,7 +179,7 @@ for solar system rendering.
 Scott Hudson, Washington State University.  His site is:
 http://www.eecs.wsu.edu/~hudson/Research/Asteroids/4179/index.html
 
-3D models of all other Phobos, Deimos, Amalthea, Proteus, Vesta, Ida,
+3D models of Phobos, Deimos, Amalthea, Proteus, Vesta, Ida,
 Mathilde, and Gaspra are derived from Phil Stooke's Cartography of
 Non-Spherical Worlds:  http://publish.uwo.ca/~pjstooke/plancart.htm
 
