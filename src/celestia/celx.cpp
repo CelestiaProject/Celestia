@@ -1028,6 +1028,37 @@ static int position_vectorto(lua_State* l)
     return 1;
 }
 
+static int position_orientationto(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Two arguments expected for position:orientationto");
+
+    UniversalCoord* src = this_position(l);
+    UniversalCoord* target = to_position(l, 2);
+
+    if (target == NULL)
+    {
+        lua_pushstring(l, "First argument to position:orientationto must be a position");
+        lua_error(l);
+    }
+
+    Vec3d* upd = to_vector(l, 3);
+    if (upd == NULL)
+    {
+        lua_pushstring(l, "Second argument to position:orientationto must be a vector");
+        lua_error(l);
+    }
+
+    Vec3d src2target = *target - *src;
+    src2target.normalize();
+    Vec3d v = src2target ^ *upd;
+    v.normalize();
+    Vec3d u = v ^ src2target;
+    Quatd qd = Quatd(Mat3d(v, u, -src2target));
+    rotation_new(l, qd);
+
+    return 1;
+}
+
 static int position_tostring(lua_State* l)
 {
     // TODO: print out the coordinate as it would appear in a cel:// URL
@@ -1138,6 +1169,7 @@ static void CreatePositionMetaTable(lua_State* l)
     RegisterMethod(l, "__tostring", position_tostring);
     RegisterMethod(l, "distanceto", position_distanceto);
     RegisterMethod(l, "vectorto", position_vectorto);
+    RegisterMethod(l, "orientationto", position_orientationto);
     RegisterMethod(l, "addvector", position_addvector);
     RegisterMethod(l, "__add", position_add);
     RegisterMethod(l, "getx", position_getx);
@@ -2050,6 +2082,27 @@ static int observer_setframe(lua_State* l)
     return 0;
 }
 
+static int observer_setspeed(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for observer:setspeed()");
+
+    Observer* obs = this_observer(l);
+
+    double speed = safeGetNumber(l, 2, AllErrors, "First argument to observer:setspeed must be a number");
+    obs->setTargetSpeed((float)speed);
+    return 0;
+}
+
+static int observer_getspeed(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected for observer:getspeed()");
+
+    Observer* obs = this_observer(l);
+
+    lua_pushnumber(l, (lua_Number)obs->getTargetSpeed());
+    return 1;
+}
+
 static void CreateObserverMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Observer);
@@ -2061,6 +2114,8 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "lookat", observer_lookat);
     RegisterMethod(l, "setorientation", observer_setorientation);
     RegisterMethod(l, "getorientation", observer_getorientation);
+    RegisterMethod(l, "getspeed", observer_getspeed);
+    RegisterMethod(l, "setspeed", observer_setspeed);
     RegisterMethod(l, "rotate", observer_rotate);
     RegisterMethod(l, "center", observer_center);
     RegisterMethod(l, "follow", observer_follow);
@@ -2443,6 +2498,40 @@ static int celestia_getstarcount(lua_State* l)
     return 1;
 }
 
+static int celestia_setambient(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected in celestia:setambient");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    double ambientLightLevel = safeGetNumber(l, 2, AllErrors, "Argument to celestia:setambient must be a number");
+    if (ambientLightLevel > 1.0)
+        ambientLightLevel = 1.0;
+    if (ambientLightLevel < 0.0)
+        ambientLightLevel = 0.0;
+
+    if (renderer != NULL)
+        renderer->setAmbientLightLevel((float)ambientLightLevel);
+    return 0;
+}
+
+static int celestia_getambient(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected in celestia:setambient");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        lua_pushstring(l, "Internal Error: renderer is NULL!");
+        lua_error(l);
+    }
+    else
+    {
+        lua_pushnumber(l, renderer->getAmbientLightLevel());
+    }
+    return 1;
+}
 
 static int celestia_getstar(lua_State* l)
 {
@@ -2593,6 +2682,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "settime", celestia_settime);
     RegisterMethod(l, "gettimescale", celestia_gettimescale);
     RegisterMethod(l, "settimescale", celestia_settimescale);
+    RegisterMethod(l, "getambient", celestia_getambient);
+    RegisterMethod(l, "setambient", celestia_setambient);
     RegisterMethod(l, "tojulianday", celestia_tojulianday);
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
     RegisterMethod(l, "getstar", celestia_getstar);
