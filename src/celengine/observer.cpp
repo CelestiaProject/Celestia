@@ -493,6 +493,8 @@ void Observer::computeGotoParameters(const Selection& destination,
                                      Vec3f up,
                                      astro::CoordinateSystem upFrame)
 {
+    setFrame(FrameOfReference(frame.coordSys, destination));
+
     UniversalCoord targetPosition = destination.getPosition(getTime());
     Vec3d v = targetPosition - getPosition();
     v.normalize();
@@ -525,8 +527,6 @@ void Observer::computeGotoParameters(const Selection& destination,
                                                1e-10);
     jparams.expFactor = sol.first;
 
-    setFrame(FrameOfReference(frame.coordSys, destination));
-
     // Convert to frame coordinates
     RigidTransform from(jparams.from, jparams.initialOrientation);
     from = frame.fromUniversal(from, getTime());
@@ -556,6 +556,8 @@ void Observer::computeGotoParametersGC(const Selection& destination,
                                        astro::CoordinateSystem upFrame,
                                        const Selection& centerObj)
 {
+    setFrame(FrameOfReference(frame.coordSys, destination));
+
     UniversalCoord targetPosition = destination.getPosition(getTime());
     Vec3d v = targetPosition - getPosition();
     v.normalize();
@@ -589,8 +591,6 @@ void Observer::computeGotoParametersGC(const Selection& destination,
                                                0.0001, 100.0,
                                                1e-10);
     jparams.expFactor = sol.first;
-
-    setFrame(FrameOfReference(frame.coordSys, destination));
 
     // Convert to frame coordinates
     RigidTransform from(jparams.from, jparams.initialOrientation);
