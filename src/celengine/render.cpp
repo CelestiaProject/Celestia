@@ -427,7 +427,8 @@ bool Renderer::init(int winWidth, int winHeight)
             buggyVertexProgramEmulation = false;
         }
 
-        if (strstr(glRenderer, "Savage4") != NULL)
+        if (strstr(glRenderer, "Savage4") != NULL ||
+            strstr(glRenderer, "ProSavage") != NULL)
         {
             // S3 Savage4 drivers appear to rescale normals without reporting
             // EXT_rescale_normal.  Lighting will be messed up unless
@@ -2833,7 +2834,8 @@ void Renderer::renderObject(Point3f pos,
         }
     }
 
-    if (obj.eclipseShadows != NULL)
+    if (obj.eclipseShadows != NULL &&
+        (obj.surface->appearanceFlags & Surface::Emissive) == 0)
     {
         renderEclipseShadows(mesh,
                              *obj.eclipseShadows,
@@ -2842,7 +2844,9 @@ void Renderer::renderObject(Point3f pos,
                              vertexShaderEnabled);
     }
 
-    if (obj.rings != NULL && (renderFlags & ShowRingShadows) != 0)
+    if (obj.rings != NULL &&
+        (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
+        (renderFlags & ShowRingShadows) != 0)
     {
         Texture* ringsTex = obj.rings->texture.find(textureResolution);
         if (ringsTex != NULL)
