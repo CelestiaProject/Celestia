@@ -140,6 +140,7 @@ struct AppPreferences
     int hudDetail;
     int fullScreenMode;
     uint32 lastVersion;
+    string altSurfaceName;
 };
 
 void ChangeDisplayMode()
@@ -1974,25 +1975,18 @@ static bool GetRegistryValue(HKEY hKey, LPSTR cpValueName, LPVOID lpBuf, DWORD i
     Key specified by open handle.
 
     hKey        - Handle of open key for which a key value is requested.
-
     cpValueName	- Name of Key Value to obtain value for.
-
     lpBuf      - Buffer to receive value of Key Value.
-
     iBufSize   - Size of buffer pointed to by lpBuf.
 
-    ipDataSize - Optional. Receives size of data returned in lpBuf.
+    RETURN     - true if value was successfully retrieved, false otherwise.
 
-    ipDataType - Optional. Receives type of data.
+    Remarks: If requesting a string value, pass the character buffer to lpBuf.
+             If requesting a DWORD value, pass the DWORD variable's address to lpBuf.
+             If requesting binary data, pass the address of the binary buffer.
 
-    RETURN     - Boolean true if value was successfully retrieved, false otherwise.
-
-    Remarks:        If requesting a string value, pass the character buffer to lpBuf.
-                    If requesting a DWORD value, pass the DWORD variable's address to lpBuf.
-                    If requesting binary data, pass the address of the binary buffer.
-
-                    This function assumes you have an open registry key. Be sure to call
-                    CloseKey() when finished.
+             This function assumes you have an open registry key. Be sure to call
+             CloseKey() when finished.
 */
 	DWORD dwValueType, dwDataSize=0;
 	bool bRC=false;
@@ -2013,6 +2007,18 @@ static bool SetRegistryInt(HKEY key, LPCTSTR value, int intVal)
                              REG_DWORD,
                              reinterpret_cast<CONST BYTE*>(&intVal),
                              sizeof(DWORD));
+    return err == ERROR_SUCCESS;
+}
+
+static bool SetRegistry(HKEY key, LPCTSTR value, const string& strVal)
+{
+    LONG err = RegSetValueEx(key,
+                             value,
+                             0,
+                             REG_SZ,
+                             reinterpret_cast<CONST BYTE*> (strVal.c_str()),
+                             strVal.length() + 1);
+
     return err == ERROR_SUCCESS;
 }
 
@@ -2080,6 +2086,12 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "FullScreenMode", &prefs.fullScreenMode, sizeof(prefs.fullScreenMode));
 
     GetRegistryValue(key, "LastVersion", &prefs.lastVersion, sizeof(prefs.lastVersion));
+
+    char surfaceName[512];
+    surfaceName[0] = '\0';
+    if (GetRegistryValue(key, "AltSurface", surfaceName, sizeof(surfaceName)))
+        prefs.altSurfaceName = string(surfaceName);
+
     if (prefs.lastVersion < 0x01020500)
     {
         prefs.renderFlags |= Renderer::ShowCometTails;
@@ -2124,6 +2136,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "HudDetail", prefs.hudDetail);
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
+    SetRegistry(key, "AltSurface", prefs.altSurfaceName);
 
     RegCloseKey(key);
 
@@ -2152,6 +2165,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.hudDetail = appCore->getHudDetail();
     prefs.fullScreenMode = lastFullScreenMode;
     prefs.lastVersion = 0x01020500;
+    prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
 
     return true;
 }
@@ -2829,6 +2843,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         ShowLocalTime(appCore);
     else
         ShowUniversalTime(appCore);
+    appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
 
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     syncMenusWithRendererState();
