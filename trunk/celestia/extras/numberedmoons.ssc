@@ -24,7 +24,7 @@
 	Albedo 0.04
 }
 
-"2001J1" "Sol/Jupiter"
+"Autonoe" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -46,7 +46,7 @@
 	Albedo 0.04
 }
 
-"2001J2" "Sol/Jupiter"
+"Thyone" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -68,7 +68,7 @@
 	Albedo 0.04
 }
 
-"2001J3" "Sol/Jupiter"
+"Hermippe" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -90,7 +90,7 @@
 	Albedo 0.04
 }
 
-"2001J4" "Sol/Jupiter"
+"Eurydome" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -112,7 +112,7 @@
 	Albedo 0.04
 }
 
-"2001J5" "Sol/Jupiter"
+"Sponde" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -134,7 +134,7 @@
 	Albedo 0.04
 }
 
-"2001J6" "Sol/Jupiter"
+"Pasithee" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -156,7 +156,7 @@
 	Albedo 0.04
 }
 
-"2001J7" "Sol/Jupiter"
+"Euanthe" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -178,7 +178,7 @@
 	Albedo 0.04
 }
 
-"2001J8" "Sol/Jupiter"
+"Kale" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -200,7 +200,7 @@
 	Albedo 0.04
 }
 
-"2001J9" "Sol/Jupiter"
+"Orthosie" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -222,7 +222,7 @@
 	Albedo 0.04
 }
 
-"2001J10" "Sol/Jupiter"
+"Euporie" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -244,7 +244,7 @@
 	Albedo 0.04
 }
 
-"2001J11" "Sol/Jupiter"
+"Aitne" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -751,7 +751,7 @@
 
 # Additional moons of Saturn
 
-"2000S1" "Sol/Saturn"
+"Ymir" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -773,7 +773,7 @@
 	Albedo 0.06
 }
 
-"2000S2" "Sol/Saturn"
+"Paaliaq" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -795,7 +795,7 @@
 	Albedo 0.06
 }
 
-"2000S3" "Sol/Saturn"
+"Siarnaq" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -817,7 +817,7 @@
 	Albedo 0.06
 }
 
-"2000S4" "Sol/Saturn"
+"Tarvos" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -839,7 +839,7 @@
 	Albedo 0.06
 }
 
-"2000S5" "Sol/Saturn"
+"Kiviuq" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -861,7 +861,7 @@
 	Albedo 0.06
 }
 
-"2000S6" "Sol/Saturn"
+"Ijiraq" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -883,7 +883,7 @@
 	Albedo 0.06
 }
 
-"2000S7" "Sol/Saturn"
+"Thrym" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -905,7 +905,7 @@
 	Albedo 0.06
 }
 
-"2000S8" "Sol/Saturn"
+"Skadi" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -927,7 +927,7 @@
 	Albedo 0.06
 }
 
-"2000S9" "Sol/Saturn"
+"Mundilfari" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -949,7 +949,7 @@
 	Albedo 0.06
 }
 
-"2000S10" "Sol/Saturn"
+"Erriapo" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -971,7 +971,7 @@
 	Albedo 0.06
 }
 
-"2000S11" "Sol/Saturn"
+"Albiorix" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -993,7 +993,7 @@
 	Albedo 0.06
 }
 
-"2000S12" "Sol/Saturn"
+"Suttung" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1041,7 +1041,7 @@
 
 # Additional moons of Uranus
 
-"2001U1" "Sol/Uranus"
+"Trinculo" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1131,3 +1131,4 @@
 
 	Albedo 0.155
 }
+
