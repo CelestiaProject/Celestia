@@ -2847,16 +2847,36 @@ static bool parseCommandLine(int argc, char* argv[])
         else if (strcmp(argv[i], "--dir") == 0)
         {
             if (isLastArg)
-                break;
+            {
+                MessageBox(NULL,
+                           "Directory expected after --dir", "Celestia Command Line Error",
+                           MB_OK | MB_ICONERROR);
+                return false;
+            }
             i++;
             startDirectory = string(argv[i]);
         }
-        else if (strcmp(argv[i], "-u") == 0)
+        else if (strcmp(argv[i], "-u") == 0 || strcmp(argv[i], "--url") == 0)
         {
             if (isLastArg)
-                break;
+            {
+                MessageBox(NULL,
+                           "URL expected after --url", "Celestia Command Line Error",
+                           MB_OK | MB_ICONERROR);
+                return false;
+            }
             i++;
             startURL = string(argv[i]);
+        }
+        else
+        {
+            char* buf = new char[strlen(argv[i]) + 256];
+            sprintf(buf, "Invalid command line option '%s'", argv[i]);
+            MessageBox(NULL,
+                       buf, "Celestia Command Line Error",
+                       MB_OK | MB_ICONERROR);
+            delete[] buf;
+            return false;
         }
 
         i++;
@@ -2880,6 +2900,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     char** argv;
     argv = splitCommandLine(lpCmdLine, argc);
     bool cmdLineOK = parseCommandLine(argc, argv);
+    if (!cmdLineOK)
+        return 1;
 
     // If Celestia was invoked with the --once command line parameter,
     // check to see if there's already an instance of Celestia running.
