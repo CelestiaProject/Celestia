@@ -321,6 +321,16 @@ class CommandSetOrientation : public InstantaneousCommand
     float angle;
 };
 
+class CommandLookingBack : public InstantaneousCommand
+{
+ public:
+    CommandLookingBack();
+    void process(ExecutionEnvironment&);
+
+ private:
+    int dummy;   // Keep the class from having zero size
+};
+
 
 class CommandRenderFlags : public InstantaneousCommand
 {
