@@ -840,9 +840,9 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
         Body* body = planets->getBody(i);
             
         // Only show orbits for major bodies or selected objects
-        if ((body->getClassification() & OrbitMask) != 0 || body == sel.body)
+        if ((body->getClassification() & OrbitMask) != 0 || body == sel.body())
         {
-            if (body == sel.body)
+            if (body == sel.body())
                 glColor4f(1, 0, 0, 1);
             else
                 glColor4f(0, 0.4f, 1.0f, 1);

@@ -366,9 +366,9 @@ void Simulation::selectPlanet(int index)
 {
     if (index < 0)
     {
-        if (selection.body != NULL)
+        if (selection.getType() == Selection::Type_Body)
         {
-            PlanetarySystem* system = selection.body->getSystem();
+            PlanetarySystem* system = selection.body()->getSystem();
             if (system != NULL)
                 setSelection(system->getStar());
         }
@@ -376,10 +376,10 @@ void Simulation::selectPlanet(int index)
     else
     {
         const Star* star = NULL;
-        if (selection.star != NULL)
-            star = selection.star;
-        else if (selection.body != NULL)
-            star = getSun(selection.body);
+        if (selection.getType() == Selection::Type_Star)
+            star = selection.star();
+        else if (selection.getType() == Selection::Type_Body)
+            star = getSun(selection.body());
 
         SolarSystem* solarSystem = NULL;
         if (star != NULL)
@@ -407,18 +407,27 @@ Selection Simulation::findObject(string s)
     PlanetarySystem* path[2];
     int nPathEntries = 0;
 
-    if (selection.star != NULL)
+    switch (selection.getType())
     {
-        SolarSystem* sys = universe->getSolarSystem(selection.star);
-        if (sys != NULL)
-            path[nPathEntries++] = sys->getPlanets();
-    }
-    else if (selection.body != NULL)
-    {
-        PlanetarySystem* sys = selection.body->getSystem();
-        while (sys != NULL && sys->getPrimaryBody() != NULL)
-            sys = sys->getPrimaryBody()->getSystem();
-        path[nPathEntries++] = sys;
+    case Selection::Type_Star:
+        {
+            SolarSystem* sys = universe->getSolarSystem(selection.star());
+            if (sys != NULL)
+                path[nPathEntries++] = sys->getPlanets();
+        }
+        break;
+
+    case Selection::Type_Body:
+        {
+            PlanetarySystem* sys = selection.body()->getSystem();
+            while (sys != NULL && sys->getPrimaryBody() != NULL)
+                sys = sys->getPrimaryBody()->getSystem();
+            path[nPathEntries++] = sys;
+        }
+        break;
+        
+    default:
+        break;
     }
 
     if (closestSolarSystem != NULL)
@@ -436,18 +445,27 @@ Selection Simulation::findObjectFromPath(string s)
     PlanetarySystem* path[2];
     int nPathEntries = 0;
 
-    if (selection.star != NULL)
+    switch (selection.getType())
     {
-        SolarSystem* sys = universe->getSolarSystem(selection.star);
-        if (sys != NULL)
-            path[nPathEntries++] = sys->getPlanets();
-    }
-    else if (selection.body != NULL)
-    {
-        PlanetarySystem* sys = selection.body->getSystem();
-        while (sys != NULL && sys->getPrimaryBody() != NULL)
-            sys = sys->getPrimaryBody()->getSystem();
-        path[nPathEntries++] = sys;
+    case Selection::Type_Star:
+        {
+            SolarSystem* sys = universe->getSolarSystem(selection.star());
+            if (sys != NULL)
+                path[nPathEntries++] = sys->getPlanets();
+        }
+        break;
+
+    case Selection::Type_Body:
+        {
+            PlanetarySystem* sys = selection.body()->getSystem();
+            while (sys != NULL && sys->getPrimaryBody() != NULL)
+                sys = sys->getPrimaryBody()->getSystem();
+            path[nPathEntries++] = sys;
+        }
+        break;
+
+    default:
+        break;
     }
 
     if (closestSolarSystem != NULL)
@@ -462,18 +480,27 @@ std::vector<std::string> Simulation::getObjectCompletion(string s)
     int nPathEntries = 0;
     PlanetarySystem* sys = NULL;
 
-    if (selection.star != NULL)
+    switch (selection.getType())
     {
-        SolarSystem* solsys = universe->getSolarSystem(selection.star);
-        if (solsys != NULL)
-            sys =  path[nPathEntries++] = solsys->getPlanets();
-    }
-    else if (selection.body != NULL)
-    {
-        sys = selection.body->getSystem();
-        while (sys != NULL && sys->getPrimaryBody() != NULL)
-            sys = sys->getPrimaryBody()->getSystem();
-        path[nPathEntries++] = sys;
+    case Selection::Type_Star:
+        {
+            SolarSystem* solsys = universe->getSolarSystem(selection.star());
+            if (solsys != NULL)
+                sys = path[nPathEntries++] = solsys->getPlanets();
+        }
+        break;
+
+    case Selection::Type_Body:
+        {
+            sys = selection.body()->getSystem();
+            while (sys != NULL && sys->getPrimaryBody() != NULL)
+                sys = sys->getPrimaryBody()->getSystem();
+            path[nPathEntries++] = sys;
+        }
+        break;
+
+    default:
+        break;
     }
 
     if (closestSolarSystem != NULL && closestSolarSystem->getPlanets() != sys)

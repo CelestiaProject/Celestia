@@ -739,27 +739,35 @@ static int object_type(lua_State* l)
     if (sel != NULL)
     {
         const char* tname = "unknown";
-        if (sel->body != NULL)
+        switch (sel->getType())
         {
-            int cl = sel->body->getClassification();
-            switch (cl)
+        case Selection::Type_Body:
             {
-            case Body::Planet     : tname = "planet"; break;
-            case Body::Moon       : tname = "moon"; break;
-            case Body::Asteroid   : tname = "asteroid"; break;
-            case Body::Comet      : tname = "comet"; break;
-            case Body::Spacecraft : tname = "spacecraft"; break;
-            case Body::Invisible  : tname = "invisible"; break;
+                int cl = sel->body()->getClassification();
+                switch (cl)
+                {
+                case Body::Planet     : tname = "planet"; break;
+                case Body::Moon       : tname = "moon"; break;
+                case Body::Asteroid   : tname = "asteroid"; break;
+                case Body::Comet      : tname = "comet"; break;
+                case Body::Spacecraft : tname = "spacecraft"; break;
+                case Body::Invisible  : tname = "invisible"; break;
+                }
             }
-        }
-        else if (sel->star != NULL)
-        {
+            break;
+
+        case Selection::Type_Star:
             tname = "star";
-        }
-        else if (sel->deepsky != NULL)
-        {
+            break;
+
+        case Selection::Type_DeepSky:
             // TODO: return cluster, galaxy, or nebula as appropriate
             tname = "deepsky";
+            break;
+
+        case Selection::Type_Location:
+            tname = "location";
+            break;
         }
             
         lua_pushstring(l, tname);
@@ -786,18 +794,24 @@ static int object_name(lua_State* l)
     Selection* sel = to_object(l, 1);
     if (sel != NULL)
     {
-        if (sel->body != NULL)
+        switch (sel->getType())
         {
-            lua_pushstring(l, sel->body->getName().c_str());
-        }
-        else if (sel->deepsky != NULL)
-        {
-            lua_pushstring(l, sel->deepsky->getName().c_str());
-        }
-        else
-        {
+        case Selection::Type_Body:
+            lua_pushstring(l, sel->body()->getName().c_str());
+            break;
+        case Selection::Type_DeepSky:
+            lua_pushstring(l, sel->deepsky()->getName().c_str());
+            break;
+        case Selection::Type_Star:
             lua_pushstring(l, getAppCore(l)->getSimulation()->getUniverse()
-                    ->getStarCatalog()->getStarName(*(sel->star)).c_str());
+                           ->getStarCatalog()->getStarName(*(sel->star())).c_str());
+            break;
+        case Selection::Type_Location:
+            lua_pushstring(l, sel->location()->getName().c_str());
+            break;
+        default:
+            lua_pushstring(l, "?");
+            break;
         }
     }
     else
@@ -825,7 +839,7 @@ static int object_spectraltype(lua_State* l)
         if (sel->star != NULL)
         {
             char buf[16];
-            StellarClass sc = sel->star->getStellarClass();
+            StellarClass sc = sel->star()->getStellarClass();
             if (sc.str(buf, sizeof(buf)))
             {
                 lua_pushstring(l, buf);
@@ -867,7 +881,7 @@ static int object_absmag(lua_State* l)
     if (sel != NULL)
     {
         if (sel->star != NULL)
-            lua_pushnumber(l, sel->star->getAbsoluteMagnitude());
+            lua_pushnumber(l, sel->star()->getAbsoluteMagnitude());
         else
             lua_pushnil(l);
     }
@@ -1018,10 +1032,10 @@ static int object_getchildren(lua_State* l)
     Simulation* sim = appCore->getSimulation();
 
     lua_newtable(l);
-    if (sel->star != NULL)
+    if (sel->star() != NULL)
     {
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star->getCatalogNumber());
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
         {
             SolarSystem* solarSys = iter->second;
@@ -1034,9 +1048,9 @@ static int object_getchildren(lua_State* l)
             }
         }
     }
-    else if (sel->body != NULL)
+    else if (sel->body() != NULL)
     {
-        const PlanetarySystem* satellites = sel->body->getSatellites();
+        const PlanetarySystem* satellites = sel->body()->getSatellites();
         if (satellites != NULL && satellites->getSystemSize() != 0)
         {
             for (int i = 0; i < satellites->getSystemSize(); i++)

@@ -398,12 +398,12 @@ const DestinationList* CelestiaCore::getDestinations()
 // Used in the super-secret edit mode
 void showSelectionInfo(const Selection& sel)
 {
-    if (sel.deepsky != NULL)
+    if (sel.deepsky() != NULL)
     {
-        cout << sel.deepsky->getName() << '\n';
+        cout << sel.deepsky()->getName() << '\n';
         Vec3f axis;
         float angle;
-        sel.deepsky->getOrientation().getAxisAngle(axis, angle);
+        sel.deepsky()->getOrientation().getAxisAngle(axis, angle);
         cout << "Orientation: " << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
     }
 }
@@ -718,25 +718,25 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             // Rotate the selected object
             Selection sel = sim->getSelection();
             Quatf q(1);
-            if (sel.deepsky != NULL)
-                q = sel.deepsky->getOrientation();
-            else if (sel.body != NULL)
-                q = sel.body->getOrientation();
+            if (sel.getType() == Selection::Type_DeepSky)
+                q = sel.deepsky()->getOrientation();
+            else if (sel.getType() == Selection::Type_Body)
+                q = sel.body()->getOrientation();
 
             q.yrotate(dx / width);
             q.xrotate(dy / height);
 
-            if (sel.deepsky != NULL)
-                sel.deepsky->setOrientation(q);
-            else if (sel.body != NULL)
-                sel.body->setOrientation(q);
+            if (sel.getType() == Selection::Type_DeepSky)
+                sel.deepsky()->setOrientation(q);
+            else if (sel.getType() == Selection::Type_Body)
+                sel.body()->setOrientation(q);
         }
         else if (editMode && checkMask(modifiers, RightButton | ShiftKey | ControlKey))
         {
             // Rotate the selected object about an axis from its center to the
             // viewer.
             Selection sel = sim->getSelection();
-            if (sel.deepsky != NULL)
+            if (sel.deepsky() != NULL)
             {
                 double t = sim->getTime();
                 Vec3d v = sel.getPosition(t) - sim->getObserver().getPosition();
@@ -746,8 +746,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 Quatf r;
                 r.setAxisAngle(axis, dx / width);
 
-                Quatf q = sel.deepsky->getOrientation();
-                sel.deepsky->setOrientation(r * q);
+                Quatf q = sel.deepsky()->getOrientation();
+                sel.deepsky()->setOrientation(r * q);
             }
         }
         else if (checkMask(modifiers, LeftButton | RightButton) ||
@@ -1271,7 +1271,7 @@ void CelestiaCore::charEntered(char c)
     case '-': 
         addToHistory();
 
-        if (sim->getSelection().body &&
+        if (sim->getSelection().body() &&
             (sim->getTargetSpeed() < 0.99 *
             astro::kilometersToMicroLightYears(astro::speedOfLight)))
         {
@@ -2296,12 +2296,23 @@ static void displaySelectionName(Overlay& overlay,
                                  const Selection& sel,
                                  const Universe& univ)
 {
-    if (sel.body != NULL)
-        overlay << sel.body->getName();
-    else if (sel.deepsky != NULL)
-        overlay << sel.deepsky->getName();
-    else if (sel.star != NULL)
-        displayStarNames(overlay, *sel.star, *univ.getStarCatalog(), 1);
+    switch (sel.getType())
+    {
+    case Selection::Type_Body:
+        overlay << sel.body()->getName();
+        break;
+    case Selection::Type_DeepSky:
+        overlay << sel.deepsky()->getName();
+        break;
+    case Selection::Type_Star:
+        displayStarNames(overlay, *(sel.star()), *univ.getStarCatalog(), 1);
+        break;
+    case Selection::Type_Location:
+        overlay << sel.location()->getName();
+        break;
+    default:
+        break;
+    }
 }
 
 
@@ -2378,7 +2389,7 @@ void CelestiaCore::renderOverlay()
 	bool time_displayed = false;
         double lt = 0.0;
 
-        if (sim->getSelection().body &&
+        if (sim->getSelection().getType() == Selection::Type_Body &&
             (sim->getTargetSpeed() < 0.99 *
              astro::kilometersToMicroLightYears(astro::speedOfLight)))
 	{                   
@@ -2589,46 +2600,58 @@ void CelestiaCore::renderOverlay()
         overlay->beginText();
         Vec3d v = sel.getPosition(sim->getTime()) -
             sim->getObserver().getPosition();
-        if (sel.star != NULL)
+        switch (sel.getType())
         {
-            overlay->setFont(titleFont);
-            displayStarNames(*overlay,
-                             *sel.star,
-                             *(sim->getUniverse()->getStarCatalog()));
-            overlay->setFont(font);
-            *overlay << '\n';
-            displayStarInfo(*overlay,
-                            hudDetail,
-                            *sel.star,
-                            *(sim->getUniverse()),
-                            v.length() * 1e-6);
-        }
-        else if (sel.body != NULL)
-        {
-            overlay->setFont(titleFont);
-            *overlay << sel.body->getName();
-            overlay->setFont(font);
-            *overlay << '\n';
-            displayPlanetInfo(*overlay,
-                              hudDetail,
-                              *sel.body,
-                              sim->getTime(),
-                              v.length() * 1e-6);
-        }
-        else if (sel.deepsky != NULL)
-        {
-            overlay->setFont(titleFont);
-            *overlay << sel.deepsky->getName();
-            overlay->setFont(font);
-            *overlay << '\n';
-            *overlay << "Distance: ";
-            displayDistance(*overlay, v.length() * 1e-6);
-            *overlay << '\n';
+        case Selection::Type_Star:
+            {
+                overlay->setFont(titleFont);
+                displayStarNames(*overlay,
+                                 *(sel.star()),
+                                 *(sim->getUniverse()->getStarCatalog()));
+                overlay->setFont(font);
+                *overlay << '\n';
+                displayStarInfo(*overlay,
+                                hudDetail,
+                                *(sel.star()),
+                                *(sim->getUniverse()),
+                                v.length() * 1e-6);
+            }
+            break;
+
+        case Selection::Type_Body:
+            {
+                overlay->setFont(titleFont);
+                *overlay << sel.body()->getName();
+                overlay->setFont(font);
+                *overlay << '\n';
+                displayPlanetInfo(*overlay,
+                                  hudDetail,
+                                  *(sel.body()),
+                                  sim->getTime(),
+                                  v.length() * 1e-6);
+            }
+            break;
+
+        case Selection::Type_DeepSky:
+            {
+                overlay->setFont(titleFont);
+                *overlay << sel.deepsky()->getName();
+                overlay->setFont(font);
+                *overlay << '\n';
+                *overlay << "Distance: ";
+                displayDistance(*overlay, v.length() * 1e-6);
+                *overlay << '\n';
 #if 0
-            displayGalaxyInfo(*overlay, hudDetail, *sel.galaxy,
-                              v.length() * 1e-6);
+                displayGalaxyInfo(*overlay, hudDetail, *sel.galaxy,
+                                  v.length() * 1e-6);
 #endif
+            }
+            break;
+
+        case Selection::Type_Location:
+            break;
         }
+
         overlay->endText();
 
         glPopMatrix();

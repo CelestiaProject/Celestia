@@ -728,17 +728,17 @@ Selection Universe::findPath(const string& s,
     if (sel.empty())
         return sel;
 
-    if (sel.deepsky != NULL)
+    if (sel.getType() == Selection::Type_DeepSky)
         return Selection();
 
     const PlanetarySystem* worlds = NULL;
-    if (sel.body != NULL)
+    if (sel.getType() == Selection::Type_Body)
     {
-        worlds = sel.body->getSatellites();
+        worlds = sel.body()->getSatellites();
     }
-    else if (sel.star != NULL)
+    else if (sel.getType() == Selection::Type_Star)
     {
-        SolarSystem* ssys = getSolarSystem(sel.star);
+        SolarSystem* ssys = getSolarSystem(sel.star());
         if (ssys != NULL)
             worlds = ssys->getPlanets();
     }
@@ -823,20 +823,20 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
     if (sel.empty())
         return completion;
 
-    if (sel.deepsky != NULL)
+    if (sel.getType() == Selection::Type_DeepSky)
     {
-        completion.push_back(sel.deepsky->getName());
+        completion.push_back(sel.deepsky()->getName());
         return completion;
     }
 
     PlanetarySystem* worlds = NULL;
-    if (sel.body != NULL)
+    if (sel.getType() == Selection::Type_Body)
     {
-        worlds = sel.body->getSatellites();
+        worlds = sel.body()->getSatellites();
     }
-    else if (sel.star != NULL)
+    else if (sel.getType() == Selection::Type_Star)
     {
-        SolarSystem* ssys = getSolarSystem(sel.star);
+        SolarSystem* ssys = getSolarSystem(sel.star());
         if (ssys != NULL)
             worlds = ssys->getPlanets();
     }
