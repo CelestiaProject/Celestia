@@ -226,12 +226,12 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
                                    Color diffuseColor)
 {
     glEnable(GL_REGISTER_COMBINERS_NV);
-
+#if 0
     EXTglActiveTextureARB(GL_TEXTURE1_ARB);
     glEnable(GL_TEXTURE_2D);
     bumpTexture.bind();
     EXTglActiveTextureARB(GL_TEXTURE0_ARB);
-
+#endif
     EXTglCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV, 2);
 
     rc::parameter(GL_CONSTANT_COLOR0_NV, ambientColor);

@@ -162,7 +162,7 @@ static void initTextureLoader()
     autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
     maxLevelSupported = testMaxLevel();
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
- 
+
     initialized = true;
 }
 
