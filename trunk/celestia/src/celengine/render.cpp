@@ -33,6 +33,7 @@
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "meshmanager.h"
+#include "rendcontext.h"
 #include "render.h"
 
 using namespace std;
@@ -2404,6 +2405,9 @@ static void renderModelDefault(Model* model,
                                const RenderInfo& ri,
                                bool lit)
 {
+    RenderContext rc;
+    rc.makeCurrent();
+
     if (lit)
         glEnable(GL_LIGHTING);
     else
@@ -2421,8 +2425,10 @@ static void renderModelDefault(Model* model,
 
     glColor(ri.color);
 
-    //model->render(Mesh::Normals | Mesh::TexCoords0, ri.pixWidth);
-    model->render();
+    if (ri.baseTex != NULL)
+        rc.lock();
+
+    model->render(rc);
 }
 
 
@@ -2900,8 +2906,8 @@ static void renderShadowedModelDefault(Model* model,
     }
     else
     {
-        //model->render(LODSphereMesh::Normals | LODSphereMesh::Multipass, ri.pixWidth);
-        model->render();
+        RenderContext rc;
+        model->render(rc);
     }
     glEnable(GL_LIGHTING);
 
@@ -4906,6 +4912,11 @@ void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
     if (brightness < 0.0f)
         return;
 
+    // Render any line primitives with smooth lines (mostly to make
+    // graticules look good.)
+    if ((renderFlags & ShowSmoothLines) != 0)
+        enableSmoothLines();
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     for (DeepSkyCatalog::const_iterator iter = catalog.begin();
@@ -4967,6 +4978,9 @@ void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
             }
         }
     }
+
+    if ((renderFlags & ShowSmoothLines) != 0)
+        disableSmoothLines();
 }
 
 

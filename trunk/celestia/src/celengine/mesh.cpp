@@ -306,8 +306,6 @@ void Mesh::render(const std::vector<const Material*>& materials,
     if (vertexAttributeMap[Position].format != Float3)
         return;
 
-    assert(0);
-
     // Set up the vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, vertexStride,
