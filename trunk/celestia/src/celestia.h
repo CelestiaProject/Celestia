@@ -15,11 +15,25 @@
 #pragma warning(disable : 4786)
 #endif // _MSC_VER
 
+// Define the DPRINTF macro; g++ supports macros with variable
+// length arguments, so we'll use those when we can.
+#ifdef __GNUC__
+
+#ifndef DEBUG
+#define DPRINTF(fmt, ...)
+#else
+#define DPRINTF(fmt, ...) DebugPrint(fmt, __VA_ARGS__)
+#endif
+
+#else
+
 #ifndef DEBUG
 #define DPRINTF //
 #else
 #define DPRINTF DebugPrint
 extern void DebugPrint(char *format, ...);
+#endif
+
 #endif
 
 #ifdef _MSC_VER
