@@ -514,6 +514,7 @@ static bool processTexmapChunk(ifstream& in,
     if (chunkType == M3DCHUNK_MATERIAL_MAPNAME)
     {
         string name = readString(in);
+        material->setTextureMap(name);
         return true;
     }
     else
