@@ -613,6 +613,7 @@ Code:
    - Added support for relative URLs
    - Improved drag and drop support on Windows
    - Browser integration on Windows: clicking on a cel:// URL launches Celestia
+   - Better time precision
 * Added new keyboard commands for dealing with light time delay
    - ? : show light time delay between current position and selected object
    - - (minus) : compensate for light time : subtract light travel time to
@@ -657,4 +658,5 @@ Code:
   may now be located withing an add-on subdirectory.
 * Added texture for Eros
 * Added separate cloud and surface textures for Venus
-
+* New "invisible" class for solar system objects
+* Fixed crashes that occurred when viewing ringed planets on older hardware
