@@ -5790,13 +5790,20 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         // relative to the observer.
         Vec3d posd = bodyPos - observerPos;
 
-        double distanceFromObserver = posd.length();
-        float appMag = body->getApparentMagnitude(sun,
-                                                  bodyPos - Point3d(0, 0, 0),
-                                                  posd);
+        // Compute the apparent magnitude; instead of summing the reflected
+        // light from all nearby stars, we just consider the one with the
+        // highest apparent brightness.
+        float appMag = 100.0f;
+        for (unsigned int li = 0; li < lightSources.size(); li++)
+        {
+            Vec3d sunPos = bodyPos - lightSources[li].position;
+            appMag = min(appMag, body->getApparentMagnitude(lightSources[li].luminosity, sunPos, posd));
+        }
+
         Vec3f pos((float) posd.x, (float) posd.y, (float) posd.z);
 
         // Compute the size of the planet/moon disc in pixels
+        double distanceFromObserver = posd.length();
         float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
 
         // if (discSize > 1 || appMag < 1.0f / brightnessScale)

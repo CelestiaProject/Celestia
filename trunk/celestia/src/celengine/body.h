@@ -137,10 +137,15 @@ class Body
 
     float getLuminosity(const Star& sun,
                         float distanceFromSun) const;
+    float getLuminosity(float sunLuminosity,
+                        float distanceFromSun) const;
     float getApparentMagnitude(const Star& sun,
                                float distanceFromSun,
                                float distanceFromViewer) const;
     float getApparentMagnitude(const Star& sun,
+                               const Vec3d& sunPosition,
+                               const Vec3d& viewerPosition) const;
+    float getApparentMagnitude(float sunLuminosity,
                                const Vec3d& sunPosition,
                                const Vec3d& viewerPosition) const;
 
