@@ -19,6 +19,8 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CELX=enable
+
 OBJS=\
 	$(INTDIR)\avicapture.obj \
 	$(INTDIR)\celestiacore.obj \
