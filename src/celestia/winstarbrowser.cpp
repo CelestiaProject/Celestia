@@ -456,7 +456,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
             return TRUE;
 
         case IDC_BUTTON_CENTER:
-            browser->appCore->charEntered('C');
+            browser->appCore->charEntered('c');
             break;
 
         case IDC_BUTTON_GOTO:
