@@ -26,6 +26,8 @@
 #include "moviecapture.h"
 
 
+class CelestiaWatcher;
+
 class CelestiaCore
 {
  public:
@@ -150,6 +152,9 @@ class CelestiaCore
 
     void setContextMenuCallback(ContextMenuFunc);
 
+    void addWatcher(CelestiaWatcher*);
+    void removeWatcher(CelestiaWatcher*);
+
     class Alerter
     {
     public:
@@ -164,6 +169,7 @@ class CelestiaCore
     void setFaintest(float);
     void renderOverlay();
     void fatalError(const std::string&);
+    void notifyWatchers(int);
 
  private:
     CelestiaConfig* config;
@@ -229,6 +235,21 @@ class CelestiaCore
     Texture* logoTexture;
 
     Alerter* alerter;
+    std::vector<CelestiaWatcher*> watchers;
+};
+
+
+class CelestiaWatcher
+{
+ public:
+    CelestiaWatcher(CelestiaCore* _appCore);
+    virtual ~CelestiaWatcher();
+
+    virtual void renderFlagsChanged();
+    virtual void labelFlagsChanged();
+
+ private:
+    CelestiaCore* appCore;
 };
 
 #endif // _CELESTIACORE_H_

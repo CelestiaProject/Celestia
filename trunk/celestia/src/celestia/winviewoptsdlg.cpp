@@ -41,9 +41,6 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             //Set dialog controls to reflect current label and render modes
             Dlg->SetControls(hDlg);
 
-            //Start timer to maintain button states
-            SetTimer(hDlg, 1, 500, NULL);
-
             return(TRUE);
         }
         break;
@@ -106,7 +103,6 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         {
             if (Dlg != NULL && Dlg->parent != NULL)
             {
-                KillTimer(hDlg, 1);
                 SendMessage(Dlg->parent, WM_COMMAND, IDCLOSE,
                             reinterpret_cast<LPARAM>(Dlg));
             }
@@ -117,9 +113,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         {
             if (Dlg != NULL && Dlg->parent != NULL)
             {
-                KillTimer(hDlg, 1);
-
-                //Reset render flags, label mode, and hud detail to initial values
+                // Reset render flags, label mode, and hud detail to initial values
                 Dlg->RestoreSettings(hDlg);
 
                 SendMessage(Dlg->parent, WM_COMMAND, IDCLOSE,
@@ -130,10 +124,6 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         }
         break;
     }
-    case WM_TIMER:
-        if((Dlg != NULL) && (Dlg->parent != NULL) && (wParam == 1))
-            Dlg->SetControls(hDlg);
-        break;
 
     case WM_DESTROY:
         if (Dlg != NULL && Dlg->parent != NULL)
@@ -151,6 +141,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
 ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                                    HWND _parent,
                                    CelestiaCore* _appCore) :
+    CelestiaWatcher(_appCore),
     appCore(_appCore),
     parent(_parent)
 {
@@ -214,4 +205,16 @@ void ViewOptionsDialog::RestoreSettings(HWND hDlg)
     appCore->getRenderer()->setRenderFlags(initialRenderFlags);
     appCore->getRenderer()->setLabelMode(initialLabelMode);
     appCore->setHudDetail(initialHudDetail);
+}
+
+void ViewOptionsDialog::renderFlagsChanged()
+{
+    if (parent != NULL)
+        SetControls(hwnd);
+}
+
+void ViewOptionsDialog::labelFlagsChanged()
+{
+    if (parent != NULL)
+        SetControls(hwnd);
 }
