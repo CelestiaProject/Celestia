@@ -154,7 +154,7 @@ void Body::setMesh(ResourceHandle _mesh)
 }
 
 
-const PlanetarySystem* Body::getSatellites() const
+PlanetarySystem* Body::getSatellites() const
 {
     return satellites;
 }
