@@ -63,15 +63,10 @@ static Texture* glareTex = NULL;
 static Texture* galaxyTex = NULL;
 static Texture* shadowTex = NULL;
 
-static Surface starSurfs[StellarClass::Spectral_Unknown+1];
-
-static char *starTextures[]=
-{
-    "bstar.jpg",
-    "astar.jpg",
-    "gstar.jpg",
-    "mstar.jpg"
-};
+static ResourceHandle starTexB = InvalidResource;
+static ResourceHandle starTexA = InvalidResource;
+static ResourceHandle starTexG = InvalidResource;
+static ResourceHandle starTexM = InvalidResource;
 
 static const float CoronaHeight = 0.2f;
 
@@ -227,7 +222,7 @@ bool Renderer::init(int winWidth, int winHeight)
         galaxyTex = CreateProceduralTexture(128, 128, GL_RGBA, GlareTextureEval);
         galaxyTex->bindName();
 
-        glareTex = getJPEGTexture("textures/flare.jpg");
+        glareTex = CreateJPEGTexture("textures/flare.jpg");
         if (glareTex == NULL)
             glareTex = CreateProceduralTexture(64, 64, GL_RGB, GlareTextureEval);
         glareTex->bindName();
@@ -236,23 +231,10 @@ bool Renderer::init(int winWidth, int winHeight)
         shadowTex->setMaxMipMapLevel(3);
         shadowTex->bindName();
 
-        StellarClass sc;
-
-        for (unsigned int spectralClass=StellarClass::Spectral_O;
-             spectralClass<=StellarClass::Spectral_Unknown; spectralClass++)
-        {
-            int off=spectralClass/2;
-            if(off>3)
-                --off; // S & N stars have same textures as M & R stars.
-            if(off>3)
-                off=1; // WC, WN and Unknowns get the A class texture.
-            starSurfs[spectralClass].baseTexture.setTexture(starTextures[off]);
-            starSurfs[spectralClass].appearanceFlags |= Surface::ApplyBaseTexture;
-            starSurfs[spectralClass].appearanceFlags |= Surface::Emissive;
-            starSurfs[spectralClass].color =
-                sc.getApparentColor((StellarClass::SpectralClass)spectralClass);
-        }
-
+        starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg"));
+        starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg"));
+        starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg"));
+        starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg"));
 
         // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
@@ -411,7 +393,7 @@ unsigned int Renderer::getResolution()
 
 void Renderer::setResolution(unsigned int resolution)
 {
-    if(resolution < TEXTURE_RESOLUTION)
+    if (resolution < TEXTURE_RESOLUTION)
         textureResolution = resolution;
 }
 
@@ -2447,18 +2429,46 @@ void Renderer::renderStar(const Star& star,
 
     if (discSizeInPixels > 1)
     {
-        Surface *surface;
+        Surface surface;
         Atmosphere atmosphere;
         RenderProperties rp;
 
-        surface=&(starSurfs[star.getStellarClass().getSpectralClass()]);
+        surface.color = color;
+        ResourceHandle tex;
+        switch (star.getStellarClass().getSpectralClass())
+        {
+        case StellarClass::Spectral_O:
+        case StellarClass::Spectral_B:
+            tex = starTexB;
+            break;
+        case StellarClass::Spectral_A:
+        case StellarClass::Spectral_F:
+            tex = starTexA;
+            break;
+        case StellarClass::Spectral_G:
+        case StellarClass::Spectral_K:
+            tex = starTexG;
+            break;
+        case StellarClass::Spectral_M:
+        case StellarClass::Spectral_R:
+        case StellarClass::Spectral_S:
+        case StellarClass::Spectral_N:
+            tex = starTexM;
+            break;
+        default:
+            tex = starTexA;
+            break;
+        }
+        surface.baseTexture = MultiResTexture(tex, tex, tex);
+        surface.appearanceFlags |= Surface::ApplyBaseTexture;
+        surface.appearanceFlags |= Surface::Emissive;
 
         atmosphere.height = radius * CoronaHeight;
         atmosphere.lowerColor = color;
         atmosphere.upperColor = color;
         atmosphere.skyColor = color;
 
-        rp.surface = surface;
+        rp.surface = &surface;
         rp.atmosphere = &atmosphere;
         rp.rings = NULL;
         rp.radius = star.getRadius();
@@ -2474,6 +2484,8 @@ void Renderer::renderStar(const Star& star,
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
                      Vec3f(1.0f, 0.0f, 0.0f), Color(1.0f, 1.0f, 1.0f), rp);
+
+        glEnable(GL_TEXTURE_2D);
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
