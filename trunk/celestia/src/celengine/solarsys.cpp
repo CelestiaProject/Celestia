@@ -561,6 +561,12 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 if (disposition == OverrideObject)
                 {
                     atmosphere = body->getAtmosphere();
+                    if (atmosphere == NULL)
+                    {
+                        Atmosphere atm;
+                        body->setAtmosphere(atm);
+                        atmosphere = body->getAtmosphere();
+                    }
                 }
                 else
                 {
@@ -584,7 +590,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 }
 
                 body->setAtmosphere(*atmosphere);
-                if (disposition == OverrideObject)
+                if (disposition != OverrideObject)
                     delete atmosphere;
             }
 
