@@ -12,6 +12,8 @@
 
 // Define the DPRINTF macro; g++ supports macros with variable
 // length arguments, so we'll use those when we can.
+#ifndef DPRINTF
+
 #ifdef __GNUC__
 
 #ifndef DEBUG
@@ -30,7 +32,9 @@ extern void DebugPrint(int level, char *format, ...);
 extern void DebugPrint(int level, char *format, ...);
 #endif
 
-#endif
+#endif // __GNUC__
+
+#endif // DPRINTF
 
 extern void SetDebugVerbosity(int);
 extern int GetDebugVerbosity();
