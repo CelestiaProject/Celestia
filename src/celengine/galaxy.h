@@ -15,6 +15,7 @@
 #include <iostream>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
+#include <celengine/deepskyobj.h>
 
 
 struct GalacticForm
@@ -23,7 +24,7 @@ struct GalacticForm
     Vec3f scale;
 };
 
-class Galaxy
+class Galaxy : public DeepSkyObject
 {
  public:
     enum GalaxyType {
@@ -48,35 +49,27 @@ class Galaxy
  public:
     Galaxy();
 
-    std::string getName() const;
-    void setName(const std::string&);
-    Point3d getPosition() const;
-    void setPosition(Point3d);
-    Quatf getOrientation() const;
-    void setOrientation(Quatf);
-    float getRadius() const;
-    void setRadius(float);
     GalaxyType getType() const;
     void setType(GalaxyType);
     float getDetail() const;
     void setDetail(float);
+    //    float getBrightness() const;
+    //    void setBrightness();
+
+    virtual bool load(AssociativeArray*);
+    virtual void render(const Vec3f& offset,
+                        const Quatf& viewerOrientation,
+                        float brightness,
+                        float pixelSize);
 
     GalacticForm* getForm() const;
     
  private:
-    std::string name;
-    Point3d position;
-    Quatf orientation;
-    float radius;
     float detail;
+    //    float brightness;
     GalaxyType type;
     GalacticForm* form;
 };
-
-
-typedef std::vector<Galaxy*> GalaxyList;
-
-GalaxyList* ReadGalaxyList(std::istream& in);
 
 std::ostream& operator<<(std::ostream& s, const Galaxy::GalaxyType& sc);
 

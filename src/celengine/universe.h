@@ -15,7 +15,7 @@
 #include <celengine/univcoord.h>
 #include <celengine/stardb.h>
 #include <celengine/solarsys.h>
-#include <celengine/galaxy.h>
+#include <celengine/deepskyobj.h>
 #include <celengine/asterism.h>
 #include <celengine/boundaries.h>
 #include <celengine/selection.h>
@@ -31,8 +31,8 @@ class Universe
     void setStarCatalog(StarDatabase*);
     SolarSystemCatalog* getSolarSystemCatalog() const;
     void setSolarSystemCatalog(SolarSystemCatalog*);
-    GalaxyList* getGalaxyCatalog() const;
-    void setGalaxyCatalog(GalaxyList*);
+    DeepSkyCatalog* getDeepSkyCatalog() const;
+    void setDeepSkyCatalog(DeepSkyCatalog*);
     AsterismList* getAsterisms() const;
     void setAsterisms(AsterismList*);
     ConstellationBoundaries* getBoundaries() const;
@@ -45,8 +45,9 @@ class Universe
                    float tolerance = 0.0f);
     Selection pickStar(const UniversalCoord&, const Vec3f&, float faintest,
                        float tolerance = 0.0f);
-    Selection pickGalaxy(const UniversalCoord&, const Vec3f&, float faintest,
-                         float tolerance = 0.0f);
+    Selection pickDeepSkyObject(const UniversalCoord&,
+                                const Vec3f&, float faintest,
+                                float tolerance = 0.0f);
     Selection find(const std::string& s,
                    PlanetarySystem** solarSystems = NULL,
                    int nSolarSystems = 0);
@@ -69,7 +70,7 @@ class Universe
  private:
     StarDatabase* starCatalog;
     SolarSystemCatalog* solarSystemCatalog;
-    GalaxyList* galaxyCatalog;
+    DeepSkyCatalog* deepSkyCatalog;
     AsterismList* asterisms;
     ConstellationBoundaries* boundaries;
 };

@@ -29,6 +29,7 @@ OBJS=\
 	$(INTDIR)\constellation.obj \
 	$(INTDIR)\customorbit.obj \
 	$(INTDIR)\dds.obj \
+	$(INTDIR)\deepskyobj.obj \
 	$(INTDIR)\dispmap.obj \
 	$(INTDIR)\execution.obj \
 	$(INTDIR)\galaxy.obj \
@@ -36,6 +37,7 @@ OBJS=\
 	$(INTDIR)\lodspheremesh.obj \
 	$(INTDIR)\meshmanager.obj \
 	$(INTDIR)\multitexture.obj \
+	$(INTDIR)\nebula.obj \
 	$(INTDIR)\observer.obj \
 	$(INTDIR)\octree.obj \
 	$(INTDIR)\orbit.obj \

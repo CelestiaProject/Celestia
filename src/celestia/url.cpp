@@ -368,7 +368,7 @@ std::string Url::getSelectionName(const Selection& selection) const
         return name;
     }
     if (selection.star != 0) return universe->getStarCatalog()->getStarName(*selection.star);
-    if (selection.galaxy != 0) return selection.galaxy->getName();
+    if (selection.deepsky != 0) return selection.deepsky->getName();
     return "";
 }
 
