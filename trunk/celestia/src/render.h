@@ -94,7 +94,7 @@ class Renderer
         Point3f position;
     } Label;
 
-    void addLabel(std::string, Color, Point3f);
+    void addLabel(std::string, Color, Point3f, float depth = -1);
     void clearLabels();
 
     void setFont(TextureFont*);
