@@ -691,7 +691,7 @@ Planets [
 Planets [
 {
 	Name "b"
-	Texture "gasgiant.jpg"
+	Texture "jupiterlike.jpg"
 	Mass      600
 	Radius    80000
 
@@ -702,7 +702,7 @@ Planets [
 }
 {
 	Name "c"
-	Texture "gasgiant.jpg"
+	Texture "jupiterlike.jpg"
 	Mass      180
 	Radius    60000
 
