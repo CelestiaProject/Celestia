@@ -212,7 +212,7 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
 
 
 // Get a matrix which converts from local to heliocentric coordinates
-Mat4d Body::getLocalToHeliocentric(double when)
+Mat4d Body::getLocalToHeliocentric(double when) const
 {
     Point3d pos = orbit->positionAtTime(when);
     Mat4d frame = Mat4d::xrotation(-rotationElements.obliquity) *
@@ -227,7 +227,7 @@ Mat4d Body::getLocalToHeliocentric(double when)
 
 
 // Return the position of the center of the body in heliocentric coordinates
-Point3d Body::getHeliocentricPosition(double when)
+Point3d Body::getHeliocentricPosition(double when) const
 {
     return Point3d(0.0, 0.0, 0.0) * getLocalToHeliocentric(when);
 }
