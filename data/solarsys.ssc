@@ -148,6 +148,8 @@ Planets [
 		Name "Phobos"
 		Mesh "phobos.3ds"
 		Texture "phobos.jpg"
+		# BumpMap "phobosbump.jpg"
+		# BumpHeight 5
 		Radius 11
 
 		# orbital data
@@ -733,6 +735,7 @@ Planets [
 	{
 		Name "Dactyl"
 		Texture "asteroid.jpg"
+		Mesh "roughsphere.cms"
 		Radius   0.7
 
 		# orbital data
