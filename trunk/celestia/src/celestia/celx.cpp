@@ -819,7 +819,7 @@ bool LuaState::tick(double dt)
         return false;
     }
 
-    if (scriptAwakenTime > getTime())
+    if (dt == 0 || scriptAwakenTime > getTime())
         return false;
    
     int nArgs = resume();
@@ -1063,6 +1063,9 @@ static UniversalCoord* to_position(lua_State* l, int index);
 static int position_new(lua_State* l, const UniversalCoord& uc);
 // for frame_getrefobject / gettargetobject
 static int object_new(lua_State* l, const Selection& sel);
+// for vector_mult
+static Quatd* to_rotation(lua_State* l, int index);
+static int rotation_new(lua_State* l, const Quatd& qd);
 
 // ==================== Vector ====================
 static int vector_new(lua_State* l, const Vec3d& v)
@@ -1240,6 +1243,7 @@ static int vector_mult(lua_State* l)
     checkArgs(l, 2, 2, "Need two operands for multiplication");
     Vec3d* v1 = NULL;
     Vec3d* v2 = NULL;
+    Quatd* q = NULL;
     lua_Number s = 0.0;
     if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3))
     {
@@ -1253,6 +1257,13 @@ static int vector_mult(lua_State* l)
         v1 = to_vector(l, 1);
         s = lua_tonumber(l, 2);
         vector_new(l, *v1 * s);
+    }
+    else
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Rotation))
+    {
+        v1 = to_vector(l, 1);
+        q = to_rotation(l, 2);
+        rotation_new(l, *v1 * *q);
     }
     else
     if (lua_isnumber(l, 1) && istype(l, 2, _Vec3))
@@ -1383,13 +1394,6 @@ static int rotation_mult(lua_State* l)
         s = lua_tonumber(l, 1);
         r1 = to_rotation(l, 2);
         rotation_new(l, *r1 * s);
-    }
-    else
-    if (istype(l, 1, _Rotation) && istype(l, 2, _Vec3))
-    {
-        r1 = to_rotation(l, 1);
-        v = to_vector(l, 2);
-        rotation_new(l, *v * *r1);
     }
     else
     {
@@ -2239,6 +2243,13 @@ static int object_getinfo(lua_State* l)
         setTable(l, "rotationPrecessionRate", (double)re.precessionRate);
         Orbit* orbit = body->getOrbit();
         setTable(l, "orbitPeriod", orbit->getPeriod());
+        Atmosphere* atmosphere = body->getAtmosphere();
+        if (atmosphere != NULL)
+        {
+            setTable(l, "atmosphereHeight", (double)atmosphere->height);
+            setTable(l, "atmosphereCloudHeight", (double)atmosphere->cloudHeight);
+            setTable(l, "atmosphereCloudSpeed", (double)atmosphere->cloudSpeed);
+        }
     }
     else if (sel->deepsky() != NULL)
     {
