@@ -1,6 +1,6 @@
-bin_PROGRAMS = celestia
+bin_PROGRAMS = celestia gcelestia
 
-celestia_SOURCES = \
+COMMONSOURCES = \
 	3dsmesh.cpp \
 	3dsmodel.cpp \
 	3dsread.cpp \
@@ -42,11 +42,16 @@ celestia_SOURCES = \
 	texfont.cpp \
 	texmanager.cpp \
 	texture.cpp \
+	texturefont.cpp \
 	tokenizer.cpp \
 	univcoord.cpp \
 	unixtimer.cpp \
 	util.cpp \
 	vertexlist.cpp \
-	visstars.cpp \
-	glutmain.cpp
+	visstars.cpp
+
+celestia_SOURCES = $(COMMONSOURCES) glutmain.cpp
+
+gcelestia_SOURCES = $(COMMONSOURCES) gtkmain.cpp
+
 
