@@ -101,6 +101,12 @@ struct AppPreferences
     int winHeight;
     int winX;
     int winY;
+    int renderFlags;
+    int labelMode;
+    float visualMagnitude;
+    float ambientLight;
+    int pixelShader;
+    int vertexShader;
 };
 
 
@@ -792,6 +798,7 @@ static void syncMenusWithRendererState()
 {
     int renderFlags = appCore->getRenderer()->getRenderFlags();
     int labelMode = appCore->getRenderer()->getLabelMode();
+    float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
 
     setMenuItemCheck(ID_RENDER_SHOWORBITS, (renderFlags & Renderer::ShowOrbits) != 0);
     setMenuItemCheck(ID_RENDER_SHOWCONSTELLATIONS,
@@ -823,6 +830,25 @@ static void syncMenusWithRendererState()
                      appCore->getRenderer()->getFragmentShaderEnabled());
     setMenuItemCheck(ID_RENDER_VERTEX_SHADERS,
                      appCore->getRenderer()->getVertexShaderEnabled());
+
+    if(abs(0.0 - (double)ambientLight) < 1.0e-3)
+    {
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_NONE,   MF_CHECKED);
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_UNCHECKED);
+    }
+    else if(abs(0.1 - (double)ambientLight) < 1.0e-3)
+    {
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_NONE,   MF_UNCHECKED);
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_CHECKED);
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_UNCHECKED);
+    }
+    else if(abs(0.25 - (double)ambientLight) < 1.0e-3)
+    {
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_NONE,   MF_UNCHECKED);
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
+        CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
+    }
 }
 
 
@@ -889,30 +915,43 @@ static void HandleJoystick()
     }
 }
 
-
-static bool GetRegistryInt(HKEY key, LPTSTR value, int& intVal)
+static bool GetRegistryValue(HKEY hKey, LPSTR cpValueName, LPVOID lpBuf, DWORD iBufSize)
 {
-    DWORD type;
-    DWORD data;
-    DWORD count = 4;
-    
-    LONG err = RegQueryValueEx(key,
-                               value,
-                               NULL,
-                               &type,
-                               reinterpret_cast<LPBYTE>(&data),
-                               &count);
-    if (err != ERROR_SUCCESS || type != REG_DWORD)
-    {
-        cout << "Error: " << err << '\n';
-        return false;
-    }
+/*
+    Function retrieves a value from the registry.
+    Key specified by open handle.
 
-    intVal = (int) data;
+    hKey        - Handle of open key for which a key value is requested.
 
-    return true;
+    cpValueName	- Name of Key Value to obtain value for.
+
+    lpBuf      - Buffer to receive value of Key Value.
+
+    iBufSize   - Size of buffer pointed to by lpBuf.
+
+    ipDataSize - Optional. Receives size of data returned in lpBuf.
+
+    ipDataType - Optional. Receives type of data.
+
+    RETURN     - Boolean true if value was successfully retrieved, false otherwise.
+
+    Remarks:        If requesting a string value, pass the character buffer to lpBuf.
+                    If requesting a DWORD value, pass the DWORD variable's address to lpBuf.
+                    If requesting binary data, pass the address of the binary buffer.
+
+                    This function assumes you have an open registry key. Be sure to call
+                    CloseKey() when finished.
+*/
+	DWORD dwValueType, dwDataSize=0;
+	bool bRC=false;
+
+	dwDataSize = iBufSize;
+	if(RegQueryValueEx(hKey, cpValueName, NULL, &dwValueType,
+		(LPBYTE)lpBuf, &dwDataSize) == ERROR_SUCCESS)
+		bRC = true;
+
+	return bRC;
 }
-
 
 static bool SetRegistryInt(HKEY key, LPCTSTR value, int intVal)
 {
@@ -923,6 +962,34 @@ static bool SetRegistryInt(HKEY key, LPCTSTR value, int intVal)
                              reinterpret_cast<CONST BYTE*>(&intVal),
                              sizeof(DWORD));
     return err == ERROR_SUCCESS;
+}
+
+static bool SetRegistryBin(HKEY hKey, LPSTR cpValueName, LPVOID lpData, int iDataSize)
+{
+/*
+    Function sets BINARY data in the registry.
+    Key specified by open handle.
+
+    hKey        - Handle of Key for which a value is to be set.
+
+    cpValueName - Name of Key Value to obtain value for.
+
+    lpData      - Address of binary data to store.
+
+    iDataSize   - Size of binary data contained in lpData.
+
+    RETURN      - Boolean true if value is successfully stored, false otherwise.
+
+    Remarks:        This function assumes you have an open registry key. Be sure to call
+                    CloseKey() when finished.
+*/
+
+	bool bRC=false;
+
+	if(RegSetValueEx(hKey, cpValueName, 0, REG_BINARY, (LPBYTE)lpData, (DWORD)iDataSize) == ERROR_SUCCESS)
+		bRC = true;
+
+	return bRC;
 }
 
 
@@ -948,10 +1015,16 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     }
     cout << "Opened registry key\n";
 
-    GetRegistryInt(key, "Width", prefs.winWidth);
-    GetRegistryInt(key, "Height", prefs.winHeight);
-    GetRegistryInt(key, "XPos", prefs.winX);
-    GetRegistryInt(key, "YPos", prefs.winY);
+    GetRegistryValue(key, "Width", &prefs.winWidth, sizeof(prefs.winWidth));
+    GetRegistryValue(key, "Height", &prefs.winHeight, sizeof(prefs.winHeight));
+    GetRegistryValue(key, "XPos", &prefs.winX, sizeof(prefs.winX));
+    GetRegistryValue(key, "YPos", &prefs.winY, sizeof(prefs.winY));
+    GetRegistryValue(key, "RenderFlags", &prefs.renderFlags, sizeof(prefs.renderFlags));
+    GetRegistryValue(key, "LabelMode", &prefs.labelMode, sizeof(prefs.labelMode));
+    GetRegistryValue(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
+    GetRegistryValue(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
+    GetRegistryValue(key, "PixelShader", &prefs.pixelShader, sizeof(prefs.pixelShader));
+    GetRegistryValue(key, "VertexShader", &prefs.vertexShader, sizeof(prefs.vertexShader));
 
     RegCloseKey(key);
 
@@ -981,6 +1054,12 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "Height", prefs.winHeight);
     SetRegistryInt(key, "XPos", prefs.winX);
     SetRegistryInt(key, "YPos", prefs.winY);
+    SetRegistryInt(key, "RenderFlags", prefs.renderFlags);
+    SetRegistryInt(key, "LabelMode", prefs.labelMode);
+    SetRegistryBin(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
+    SetRegistryBin(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
+    SetRegistryInt(key, "PixelShader", prefs.pixelShader);
+    SetRegistryInt(key, "VertexShader", prefs.vertexShader);
 
     RegCloseKey(key);
 
@@ -1001,6 +1080,12 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.winY = rect.top;
     prefs.winWidth = rect.right - rect.left;
     prefs.winHeight = rect.bottom - rect.top;
+    prefs.renderFlags = appCore->getRenderer()->getRenderFlags();
+    prefs.labelMode = appCore->getRenderer()->getLabelMode();
+    prefs.visualMagnitude = appCore->getSimulation()->getFaintestVisible();
+    prefs.ambientLight = appCore->getRenderer()->getAmbientLightLevel();
+    prefs.pixelShader = appCore->getRenderer()->getFragmentShaderEnabled()?1:0;
+    prefs.vertexShader = appCore->getRenderer()->getVertexShaderEnabled()?1:0;
 
     return true;
 }
@@ -1192,6 +1277,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return 1;
     }
 
+    appCore->getSimulation()->setFaintestVisible(prefs.visualMagnitude);
+
     if (!fullscreen)
     {
         
@@ -1244,6 +1331,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     {
         return 1;
     }
+
+    //Set renderFlags and labelMode
+    appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
+    appCore->getRenderer()->setLabelMode(prefs.labelMode);
+    appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
+    appCore->getRenderer()->setFragmentShaderEnabled(prefs.pixelShader == 1);
+    appCore->getRenderer()->setVertexShaderEnabled(prefs.vertexShader == 1);
 
     timer = CreateTimer();
 
