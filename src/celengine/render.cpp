@@ -852,10 +852,6 @@ public:
         samp.pos = Point3f((float) p.x, (float) p.y, (float) p.z);
         samp.t = t;
         samples->insert(samples->end(), samp);
-#if 0
-        samples->insert(samples->end(),
-                        Point3f((float) p.x, (float) p.y, (float) p.z));
-#endif
     };
 };
 
@@ -954,9 +950,10 @@ void Renderer::renderOrbit(Body* body, double t)
     }
     else
     {
+        vector<OrbitSample>::const_iterator p;
+
         // Show the portion of the trajectory travelled up to this point
-        for (vector<OrbitSample>::const_iterator p = trajectory->begin();
-             p != trajectory->end() && p->t < t; p++)
+        for (p = trajectory->begin(); p != trajectory->end() && p->t < t; p++)
         {
             glVertex3f(astro::kilometersToAU(p->pos.x),
                        astro::kilometersToAU(p->pos.y),
