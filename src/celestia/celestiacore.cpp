@@ -3767,13 +3767,6 @@ bool CelestiaCore::initRenderer()
 
 bool CelestiaCore::readStars(const CelestiaConfig& cfg)
 {
-    ifstream starFile(cfg.starDatabaseFile.c_str(), ios::in | ios::binary);
-    if (!starFile.good())
-    {
-	cerr << "Error opening " << cfg.starDatabaseFile << '\n';
-        return false;
-    }
-
     ifstream starNamesFile(cfg.starNamesFile.c_str(), ios::in);
     if (!starNamesFile.good())
     {
@@ -3788,13 +3781,23 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         return false;
     }
 
-    // StarDatabase* starDB = StarDatabase::read(starFile);
     StarDatabase* starDB = new StarDatabase();
-    if (!starDB->loadBinary(starFile))
+    if (!cfg.starDatabaseFile.empty())
     {
-        delete starDB;
-	cerr << "Error reading stars file\n";
-        return false;
+        ifstream starFile(cfg.starDatabaseFile.c_str(), ios::in | ios::binary);
+        if (!starFile.good())
+        {
+            cerr << "Error opening " << cfg.starDatabaseFile << '\n';
+            delete starDB;
+            return false;
+        }
+
+        if (!starDB->loadBinary(starFile))
+        {
+            delete starDB;
+            cerr << "Error reading stars file\n";
+            return false;
+        }
     }
 
     starDB->setNameDatabase(starNameDB);
