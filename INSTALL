@@ -9,12 +9,7 @@ what you need to do to build and run Celestia:
 
 	configure
 	make
-	cp src/celestia .
-	./celestia
-
-The cp command should really be automatic, but I'm not quite there yet.  It's
-very important run Celestia from the base directory in which it was unpacked;
-otherwise, it won't find the configuration and data files.
+	make install
 
 There are two versions of Celestia which can be built--the default version
 uses GLUT and has no GUI.  The other version uses Gtk+ to provide a basic
@@ -26,6 +21,15 @@ Gtk+ support, run configure with --enable-gtk:
 The GtkGLArea widget is required in order build Celestia with Gtk+.  It can
 be downloaded from http://www.student.oulu.fi/~jlof/gtkglarea/
 
---Chris Laurel
-claurel@www.shatters.net
+Celestia will be installed into /usr/local by default, with data files landing
+in /usr/local/share/Celestia , but you may specify a new location with the
+--prefix option to configure:
+
+	configure --prefix=/home/my_directory
+
+All the other usual configure parameters apply; you may see which options
+are available using 'configure --help'
+
+Chris Laurel
+claurel@.shatters.net
 

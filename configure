@@ -725,7 +725,7 @@ fi
 
 PACKAGE=Celestia
 
-VERSION=1.1.2
+VERSION=1.1.4
 
 if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   { echo "configure: error: source directory already configured; run "make distclean" there first" 1>&2; exit 1; }
@@ -3956,6 +3956,19 @@ EOF
 fi
 
 
+if test "$prefix" = "NONE" ; then
+	prefix=$ac_default_prefix
+fi
+PKGDATADIR=`eval echo "${datadir}/$PACKAGE"`
+cat >> confdefs.h <<EOF
+#define CONFIG_DATA_DIR "$PKGDATADIR"
+EOF
+
+
+
+
+
+
 trap '' 1 2 15
 cat > confcache <<\EOF
 # This file is a shell script that caches the results of configure
@@ -4059,6 +4072,11 @@ ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "Makefile          \
            src/Makefile      \
+	   data/Makefile     \
+	   textures/Makefile \
+	   models/Makefile   \
+	   shaders/Makefile  \
+	   fonts/Makefile    \
            config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
@@ -4188,6 +4206,11 @@ cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile          \
            src/Makefile      \
+	   data/Makefile     \
+	   textures/Makefile \
+	   models/Makefile   \
+	   shaders/Makefile  \
+	   fonts/Makefile    \
           "}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
@@ -4358,8 +4381,10 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 
+
 EOF
 cat >> $CONFIG_STATUS <<\EOF
+test -z "$CONFIG_HEADERS" || echo timestamp > stamp-h
 test -z "$CONFIG_HEADERS" || echo timestamp > stamp-h
 
 exit 0
@@ -4372,7 +4397,8 @@ test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 echo "$ac_t""" 1>&6
 echo "$ac_t""" 1>&6
 echo "$ac_t""********************************************************************" 1>&6
-echo "$ac_t""*** Celestia configuration complete." 1>&6
+echo "$ac_t""*** Celestia configuration complete. Now do a 'make' followed    ***" 1>&6
+echo "$ac_t""*** by 'make install'                                            ***" 1>&6
 echo "$ac_t""********************************************************************" 1>&6
 echo "$ac_t""" 1>&6
 echo "$ac_t""" 1>&6

@@ -123,11 +123,11 @@ CelestiaCore::CelestiaCore() :
     currentTime(0.0),
     timeScale(1.0),
     paused(false),
+    joystickRotation(0.0f, 0.0f, 0.0f),
+    KeyAccel(1.0),
     contextMenuCallback(NULL),
     logoTexture(NULL),
-    alerter(NULL),
-    joystickRotation(0.0f, 0.0f, 0.0f),
-    KeyAccel(1.0)
+    alerter(NULL)
 {
     execEnv = new CoreExecutionEnvironment(*this);
 
@@ -394,6 +394,8 @@ void CelestiaCore::keyDown(int key)
         KeyAccel *= 1.1;
 
     // Only process alphanumeric keys if we're not in text enter mode
+    if (islower(key))
+        key = toupper(key);
     if (!(key >= 'A' && key <= 'Z' && textEnterMode))
         keysPressed[key] = true;
 }
@@ -401,6 +403,8 @@ void CelestiaCore::keyDown(int key)
 void CelestiaCore::keyUp(int key)
 {
     KeyAccel = 1.0;
+    if (islower(key))
+        key = toupper(key);
     keysPressed[key] = false;
 }
 
