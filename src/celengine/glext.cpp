@@ -14,6 +14,7 @@
 // Assume that this is a UNIX/X11 system if it's not Windows or Mac OS X.
 #ifndef MACOSX
 #include "GL/glx.h"
+#include <dlfcn.h>
 #endif /* ! MACOSX */
 #endif /* ! _WIN32 */
 
@@ -221,10 +222,27 @@ glx::PFNGLGETPROGRAMLOCALPARAMETERDVNVPROC glx::glGetProgramLocalParameterdvNV;
 extern "C" {
 extern void (*glXGetProcAddressARB(const GLubyte *procName))();
 }
-#define GET_GL_PROC_ADDRESS(name) glXGetProcAddressARB((GLubyte*) name)
+#define GET_GL_PROC_ADDRESS(name) GetGLProcAddress((GLubyte*) (name))
 #else
-#define GET_GL_PROC_ADDRESS(name) glXGetProcAddressARB((GLubyte*) name)
+#define GET_GL_PROC_ADDRESS(name) GetGLProcAddress((GLubyte*) (name))
 #endif
+
+typedef void (*FUNCS) (void);
+
+// Works around an apparent problem in ATI's libGL.so where glXGetProcAddress
+// returns NULL.
+GetGLProcAddress(const GLubyte* procName)
+{
+    FUNCS func = glXGetProcAddressARB(procName);
+    if (!func)
+    {
+        void* libGL = dlopen(0, RTLD_LAZY);
+        func = (FUNCS) dlsym(libGL, (const char*) procName);
+        dlclose(libGL);
+    }
+
+    return func;
+}
 
 #endif // defined(WIN32)
 #endif /* !MACOSX */
