@@ -11,6 +11,7 @@
 
 #include <celmath/mathlib.h>
 #include <celmath/vecmath.h>
+#include <celmath/intersect.h>
 #include "astro.h"
 #include "universe.h"
 
@@ -140,8 +141,7 @@ struct PlanetPickInfo
     float cosClosestAngle;
     double closestDistance;
     Body* closestBody;
-    Vec3d direction;
-    Point3d origin;
+    Ray3d pickRay;
     double jd;
 };
 
@@ -150,9 +150,9 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
 
     Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
-    Vec3d bodyDir = bpos - pickInfo->origin;
+    Vec3d bodyDir = bpos - pickInfo->pickRay.origin;
     bodyDir.normalize();
-    double cosAngle = bodyDir * pickInfo->direction;
+    double cosAngle = bodyDir * pickInfo->pickRay.direction;
     if (cosAngle > pickInfo->cosClosestAngle)
     {
         pickInfo->cosClosestAngle = cosAngle;
@@ -166,18 +166,41 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 // Perform an intersection test between the pick ray and a body
 static bool ExactPlanetPickTraversal(Body* body, void* info)
 {
-    PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
-
+    PlanetPickInfo* pickInfo = reinterpret_cast<PlanetPickInfo*>(info);
     Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
-    Vec3d bodyDir = bpos - pickInfo->origin;
+    float radius = body->getRadius();
+    double distance = -1.0;
 
-    // This intersection test naively assumes that the body is spherical.
-    double v = bodyDir * pickInfo->direction;
-    double disc = square(body->getRadius()) - ((bodyDir * bodyDir) - square(v));
-
-    if (disc > 0.0)
+    // Test for intersection with the bounding sphere
+    if (testIntersection(pickInfo->pickRay, Sphered(bpos, radius), distance))
     {
-        double distance = v - sqrt(disc);
+        if (body->getMesh() == InvalidResource)
+        {
+            // There's no mesh, so the object is an ellipsoid.  If it's
+            // oblate, do a ray intersection test to see if the object was
+            // picked.  Otherwise, the object is spherical and we've already
+            // done all the work we need to.
+            if (body->getOblateness() != 0.0f)
+            {
+                // Oblate sphere; use ray ellipsoid intersection calculation
+                Vec3d ellipsoidAxes(radius,
+                                    radius * (1.0 - body->getOblateness()),
+                                    radius);
+                // Transform rotate the pick ray into object coordinates
+                Mat3d m = conjugate(body->getEclipticalToEquatorial()).toMatrix3();
+                Ray3d r(Point3d(0, 0, 0) + (pickInfo->pickRay.origin - bpos),
+                        pickInfo->pickRay.direction);
+                r = r * m;
+                if (!testIntersection(r, Ellipsoidd(ellipsoidAxes), distance))
+                    distance = -1.0;
+            }
+        }
+        else
+        {
+            // TODO: Check for intersection with the object mesh.  For now,
+            // we just use the bounding sphere.
+        }
+
         if (distance > 0.0 && distance < pickInfo->closestDistance)
         {
             pickInfo->closestDistance = distance;
@@ -199,9 +222,8 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     PlanetPickInfo pickInfo;
 
     // Transform the pick direction
-    pickInfo.direction = Vec3d(direction.x, direction.y, direction.z);
-    pickInfo.origin    = astro::heliocentricPosition(origin,
-                                                     solarSystem.getCenter());
+    pickInfo.pickRay = Ray3d(astro::heliocentricPosition(origin, solarSystem.getCenter()), Vec3d(direction.x, direction.y, direction.z));
+                             
     pickInfo.cosClosestAngle = -1.0f;
     pickInfo.closestDistance = 1.0e50;
     pickInfo.closestBody = NULL;
