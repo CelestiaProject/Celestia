@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cctype>
+#include <cstdlib>
 #include "util.h"
 #include "filetype.h"
 
@@ -25,6 +26,7 @@ static const string CelestiaTextureExt(".ctx");
 static const string CelestiaMeshExt(".cms");
 static const string CelestiaCatalogExt(".ssc");
 static const string AVIExt(".avi");
+static const string DDSExt(".dds");
 
 
 ContentType DetermineFileType(const string& filename)
@@ -54,6 +56,8 @@ ContentType DetermineFileType(const string& filename)
         return Content_CelestiaCatalog;
     else if (compareIgnoringCase(AVIExt, ext) == 0)
         return Content_AVI;
+    else if (compareIgnoringCase(DDSExt, ext) == 0)
+        return Content_DDS;
     else
         return Content_Unknown;
 }
