@@ -72,6 +72,19 @@ static void warning(string s)
     cout << s;
 }
 
+
+struct OverlayImage
+{
+    Texture* texture;
+    int xSize;
+    int ySize;
+    int left;
+    int bottom;
+};
+
+vector<OverlayImage> overlayImages;
+
+
 // Extremely basic implementation of an ExecutionEnvironment for
 // running scripts.
 class CoreExecutionEnvironment : public ExecutionEnvironment
@@ -775,22 +788,26 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
 /// x and y are the pixel coordinates relative to the widget.
 void CelestiaCore::mouseMove(float x, float y)
 {
-    if (views.size() > 1 && cursorHandler != NULL) {
-        View *v1 = 0, *v2 = 0;
-        for(std::vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+    if (views.size() > 1 && cursorHandler != NULL)
+    {
+        View* v1 = 0;
+        View* v2 = 0;
+
+        for (std::vector<View*>::iterator i = views.begin(); i != views.end(); i++)
         {
             View* v = *i;
             float vx, vy, vxp, vyp;
-            vx = ( x / width - v->x ) / v->width;
-            vy = ( (1 - y / height ) - v->y ) / v->height;
+            vx = (x / width - v->x) / v->width;
+            vy = ((1 - y / height) - v->y ) / v->height;
             vxp = vx * v->width * width;
             vyp = vy * v->height * height;
-            if ( vx >=0 && vx <= 1 && ( abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2) ) 
+
+            if (vx >=0 && vx <= 1 && (abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2))
             {
                 cursorHandler->setCursorShape(CelestiaCore::SizeVerCursor);
                 return;
             } 
-            else if (vy >=0 && vy <= 1 && ( abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)) 
+            else if (vy >=0 && vy <= 1 && (abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)) 
             {
                 cursorHandler->setCursorShape(CelestiaCore::SizeHorCursor);
                 return;
@@ -3143,7 +3160,7 @@ void CelestiaCore::renderOverlay()
     if (textEnterMode & KbAutoComplete)
     {
         overlay->setFont(titleFont);
-//        glPushMatrix();
+        glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 0.2f);
         overlay->rect(0, 0, width, 100);
         glTranslatef(0, fontHeight * 3 + 35, 0);
@@ -3181,8 +3198,8 @@ void CelestiaCore::renderOverlay()
                 glTranslatef( (width/nb_cols), 0, 0);
            }
         }
-//        glPopMatrix();
-//        overlay->setFont(font);
+        glPopMatrix();
+        overlay->setFont(font);
     }
 
     // Text messages
@@ -3203,9 +3220,7 @@ void CelestiaCore::renderOverlay()
             y += height;
         else if (messageVOrigin < 0)
             y -= fontHeight;
-#if 0        
-        cout << '(' << x << ',' << y << ") horig=" << messageHOrigin << ", vorigin=" << messageVOrigin << '\n';
-#endif
+
         overlay->setFont(titleFont);
         glPushMatrix();
 
@@ -3267,6 +3282,38 @@ void CelestiaCore::renderOverlay()
         glPopMatrix();
     }
 
+#if 0
+    // Experimental code for overlaying images
+    {
+        glPushMatrix();
+        glLoadIdentity();
+        glTranslatef(0.375f, 0.375f, 0);
+
+        glEnable(GL_TEXTURE_2D);
+        for (vector<OverlayImage>::iterator iter = overlayImages.begin();
+             iter != overlayImages.end(); iter++)
+        {
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            if (iter->texture != NULL)
+            {
+                iter->texture->bind();
+                glBegin(GL_QUADS);
+                glTexCoord2f(0, 1);
+                glVertex2f(iter->left, iter->bottom);
+                glTexCoord2f(1, 1);
+                glVertex2f(iter->left + iter->xSize, iter->bottom);
+                glTexCoord2f(1, 0);
+                glVertex2f(iter->left + iter->xSize, iter->bottom + iter->ySize);
+                glTexCoord2f(0, 0);
+                glVertex2f(iter->left, iter->bottom + iter->ySize);
+                glEnd();
+            }
+        }
+
+        glPopMatrix();
+    }
+#endif
+
     // Show logo at start
     if (logoTexture != NULL)
     {
@@ -3291,12 +3338,14 @@ void CelestiaCore::renderOverlay()
 
             logoTexture->bind();
             glBegin(GL_QUADS);
-            glColor4f(0.8f, 0.8f, 1.0f, botAlpha);
+            //glColor4f(0.8f, 0.8f, 1.0f, botAlpha);
+            glColor4f(1.0f, 1.0f, 1.0f, botAlpha);
             glTexCoord2f(0, 1);
             glVertex2f(left, bottom);
             glTexCoord2f(1, 1);
             glVertex2f(left + xSize, bottom);
-            glColor4f(0.6f, 0.6f, 1.0f, topAlpha);
+            //glColor4f(0.6f, 0.6f, 1.0f, topAlpha);
+            glColor4f(1.0f, 1.0f, 1.0f, topAlpha);
             glTexCoord2f(1, 0);
             glVertex2f(left + xSize, bottom + ySize);
             glTexCoord2f(0, 0);
@@ -3674,7 +3723,7 @@ bool CelestiaCore::initRenderer()
     {
         logoTexture = LoadTextureFromFile(string("textures") + "/" + config->logoTextureFile);
     }
-    
+
     return true;
 }
 
