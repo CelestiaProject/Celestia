@@ -2336,7 +2336,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
             if ((event->string != NULL) && (*(event->string)))
             {
                 // See if our key accelerators will handle this event.
-	        if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, GDK_MOD1_MASK))
+	        if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, GDK_SHIFT_MASK))
                     return TRUE;
             
                 char* s = event->string;
