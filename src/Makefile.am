@@ -30,6 +30,7 @@ COMMONSOURCES = \
 	frustum.cpp \
 	galaxy.cpp \
 	glext.cpp \
+	imagecapture.cpp \
 	lodspheremesh.cpp \
 	meshmanager.cpp \
 	observer.cpp \
