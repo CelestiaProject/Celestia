@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <wordexp.h>
 #include "directory.h"
 
 using namespace std;
@@ -96,3 +97,28 @@ bool IsDirectory(const std::string& filename)
     return S_ISDIR(buf.st_mode);
 }
 
+std::string WordExp(const std::string& filename) {
+    wordexp_t result;
+    std::string expanded;
+
+    switch(wordexp(filename.c_str(), &result, WRDE_NOCMD)) {
+    case 0: // successful
+        break;
+    case WRDE_NOSPACE:
+            // If the error was `WRDE_NOSPACE',
+            // then perhaps part of the result was allocated.
+        wordfree(&result);
+    default: // some other error
+        return filename;
+    }
+
+    if (result.we_wordc != 1) {
+        wordfree(&result);
+        return filename;
+    }
+
+    expanded = result.we_wordv[0];
+    wordfree(&result);
+
+    return expanded;
+}
