@@ -61,6 +61,7 @@ CLEAN :
 	-@erase "$(INTDIR)\filetype.obj"
 	-@erase "$(INTDIR)\galaxy.obj"
 	-@erase "$(INTDIR)\glext.obj"
+	-@erase "$(INTDIR)\imagecapture.obj"
 	-@erase "$(INTDIR)\lodspheremesh.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
 	-@erase "$(INTDIR)\observer.obj"
@@ -168,6 +169,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\frustum.obj" \
 	"$(INTDIR)\galaxy.obj" \
 	"$(INTDIR)\glext.obj" \
+	"$(INTDIR)\imagecapture.obj" \
 	"$(INTDIR)\lodspheremesh.obj" \
 	"$(INTDIR)\meshmanager.obj" \
 	"$(INTDIR)\observer.obj" \
@@ -245,6 +247,7 @@ CLEAN :
 	-@erase "$(INTDIR)\frustum.obj"
 	-@erase "$(INTDIR)\galaxy.obj"
 	-@erase "$(INTDIR)\glext.obj"
+	-@erase "$(INTDIR)\imagecapture.obj"
 	-@erase "$(INTDIR)\lodspheremesh.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
 	-@erase "$(INTDIR)\observer.obj"
@@ -355,6 +358,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\frustum.obj" \
 	"$(INTDIR)\galaxy.obj" \
 	"$(INTDIR)\glext.obj" \
+	"$(INTDIR)\imagecapture.obj" \
 	"$(INTDIR)\lodspheremesh.obj" \
 	"$(INTDIR)\meshmanager.obj" \
 	"$(INTDIR)\observer.obj" \
@@ -549,6 +553,12 @@ SOURCE=.\src\galaxy.cpp
 SOURCE=.\src\glext.cpp
 
 "$(INTDIR)\glext.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\imagecapture.cpp
+
+"$(INTDIR)\imagecapture.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
