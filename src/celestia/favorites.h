@@ -26,6 +26,8 @@ struct FavoritesEntry
     UniversalCoord position;
     Quatf orientation;
     double jd;
+    bool isFolder;
+    std::string parentFolder;
 
     astro::CoordinateSystem coordSys;
 };
