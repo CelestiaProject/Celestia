@@ -89,7 +89,10 @@ enum ParserState {
     SurfaceState,
     AtmosphereState,
     RingsState,
-    LeafState,
+    BodyLeafState,
+    SurfaceLeafState,
+    AtmosphereLeafState,
+    RingsLeafState,
     ErrorState,
 };
 
@@ -507,14 +510,48 @@ static ResourceHandle createTexture(ParserContext* ctx, const xmlChar** att)
             ctx->body->getRings()->texture = texHandle;
     }
 
-    return false;
+    return true;
 }
 
 
 static ResourceHandle createBumpMap(ParserContext* ctx, const xmlChar** att)
 {
-    cout << "bumpmap\n";
-    return false;
+    const xmlChar* heightmap = NULL;
+    float bumpHeight = 2.5f;
+
+    // Get the type, image, and compress attributes
+    if (att != NULL)
+    {
+        for (int i = 0; att[i] != NULL; i += 2)
+        {
+            if (matchName(att[i], "heightmap"))
+                heightmap = att[i + 1];
+            else if (matchName(att[i], "bump-height"))
+                parseNumber(att[i + 1], bumpHeight);
+        }
+    }
+
+    if (heightmap == NULL)
+    {
+        cout << "Bump map has no height map source.\n";
+        return false;
+    }
+
+    ResourceHandle texHandle = GetTextureManager()->getHandle(TextureInfo(reinterpret_cast<const char*>(heightmap), bumpHeight));
+    if (ctx->state == SurfaceState)
+    {
+        assert(ctx->body != NULL);
+        if (texHandle != InvalidResource)
+        {
+            ctx->body->getSurface().bumpTexture = texHandle;
+            ctx->body->getSurface().appearanceFlags |= Surface::ApplyBumpMap;
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
@@ -543,6 +580,7 @@ static bool createAtmosphere(ParserContext* ctx, const xmlChar** att)
 
     assert(ctx->body != NULL);
     ctx->body->setAtmosphere(*atmosphere);
+    delete atmosphere;
     
     return true;
 }
@@ -579,6 +617,7 @@ static bool createSurface(ParserContext* ctx, const xmlChar** att)
     Color color(1.0f, 1.0f, 1.0f);
     Color specularColor(0.0f, 0.0f, 0.0f);
     float specularPower = 0.0f;
+    float albedo = 0.5f;
     bool blendTexture = false;
 
     if (att != NULL)
@@ -593,10 +632,13 @@ static bool createSurface(ParserContext* ctx, const xmlChar** att)
                 parseNumber(att[i + 1], specularPower);
             if (matchName(att[i], "blend-texture"))
                 parseBoolean(att[i + 1], blendTexture);
+            if (matchName(att[i], "albedo"))
+                parseNumber(att[i + 1], albedo);
         }
     }
 
     assert(ctx->body != NULL);
+    ctx->body->setAlbedo(albedo);
     ctx->body->getSurface().color = color;
     ctx->body->getSurface().specularColor = specularColor;
     ctx->body->getSurface().specularPower = specularPower;
@@ -717,7 +759,46 @@ static bool createEllipticalOrbit(ParserContext* ctx, const xmlChar** att)
                                                  period,
                                                  epoch);
     assert(ctx->body != NULL);
-    ctx->body->setOrbit(orbit);
+
+    // Custom orbits have precedence over elliptical orbits, so don't set
+    // the orbit if the object already has one assigned.
+    if (ctx->body->getOrbit() == NULL)
+        ctx->body->setOrbit(orbit);
+    else
+        delete orbit;
+
+    return true;
+}
+
+
+static bool createCustomOrbit(ParserContext* ctx, const xmlChar** att)
+{
+    const xmlChar* name = NULL;
+
+    // Get the type, image, and compress attributes
+    if (att != NULL)
+    {
+        for (int i = 0; att[i] != NULL; i += 2)
+        {
+            if (matchName(att[i], "name"))
+                name = att[i + 1];
+        }
+    }
+
+    if (name == NULL)
+        return false;
+
+    Orbit* orbit = GetCustomOrbit(reinterpret_cast<const char*>(name));
+    if (orbit == NULL)
+    {
+        DPRINTF(0, "Could not find custom orbit named '%s'\n",
+                reinterpret_cast<const char*>(name));
+    }
+    else
+    {
+        assert(ctx->body != NULL);
+        ctx->body->setOrbit(orbit);
+    }
 
     return true;
 }
@@ -772,6 +853,7 @@ static bool createRotation(ParserContext* ctx, const xmlChar** att)
     re.axisLongitude = (float) degToRad(axisLongitude);
     re.offset = (float) degToRad(offset);
     re.epoch = epoch;
+    ctx->body->setRotationElements(re);
     
     return true;
 }
@@ -888,17 +970,22 @@ static void solarSysStartElement(void* data,
         else if (matchName(name, "geometry"))
         {
             createGeometry(ctx, att);
-            ctx->state = LeafState;
+            ctx->state = BodyLeafState;
         }
         else if (matchName(name, "elliptical"))
         {
             createEllipticalOrbit(ctx, att);
-            ctx->state = LeafState;
+            ctx->state = BodyLeafState;
+        }
+        else if (matchName(name, "customorbit"))
+        {
+            createCustomOrbit(ctx, att);
+            ctx->state = BodyLeafState;
         }
         else if (matchName(name, "rotation"))
         {
             createRotation(ctx, att);
-            ctx->state = LeafState;
+            ctx->state = BodyLeafState;
         }
         else if (matchName(name, "atmosphere"))
         {
@@ -920,17 +1007,17 @@ static void solarSysStartElement(void* data,
         if (matchName(name, "texture"))
         {
             createTexture(ctx, att);
-            ctx->state = LeafState;
+            ctx->state = SurfaceLeafState;
         }
         else if (matchName(name, "bumpmap"))
         {
             createBumpMap(ctx, att);
-            ctx->state = LeafState;
+            ctx->state = SurfaceLeafState;
         }
         else if (matchName(name, "haze"))
         {
             createHaze(ctx, att);
-            ctx->state = LeafState;
+            ctx->state = SurfaceLeafState;
         }
         else
         {
@@ -942,7 +1029,7 @@ static void solarSysStartElement(void* data,
         if (matchName(name, "texture"))
         {
             createTexture(ctx, att);
-            ctx->state = LeafState;
+            ctx->state = RingsLeafState;
         }
         break;
 
@@ -950,11 +1037,14 @@ static void solarSysStartElement(void* data,
         if (matchName(name, "texture"))
         {
             createTexture(ctx, att);
-            ctx->state = LeafState;
+            ctx->state = AtmosphereLeafState;
         }
         break;
 
-    case LeafState:
+    case BodyLeafState:
+    case SurfaceLeafState:
+    case AtmosphereLeafState:
+    case RingsLeafState:
         ctx->state = ErrorState;
         break;
 
@@ -980,9 +1070,21 @@ static void solarSysEndElement(void* data, const xmlChar* name)
 
     case BodyState:
         if (matchName(name, "body"))
+        {
+            assert(ctx->body != NULL);
+            if (ctx->body->getOrbit() == NULL)
+            {
+                DPRINTF(0, "Object %s has no orbit!  Removing . . .\n",
+                        ctx->body->getName().c_str());
+                
+            }
+            ctx->body = NULL;
             ctx->state = StartState;
+        }
         else
+        {
             ctx->state = ErrorState;
+        }
         break;
 
     case SurfaceState:
@@ -1006,17 +1108,33 @@ static void solarSysEndElement(void* data, const xmlChar* name)
             ctx->state = ErrorState;
         break;
 
-    case LeafState:
+    case BodyLeafState:
+        if (matchName(name, "geometry") ||
+            matchName(name, "elliptical") ||
+            matchName(name, "customorbit") ||
+            matchName(name, "rotation"))
+        {
+            ctx->state = BodyState;
+        }
+        break;
+
+    case SurfaceLeafState:
         if (matchName(name, "texture") ||
             matchName(name, "haze") ||
             matchName(name, "bumpmap"))
         {
             ctx->state = SurfaceState;
         }
-        else
-        {
-            ctx->state = BodyState;
-        }
+        break;
+
+    case AtmosphereLeafState:
+        if (matchName(name, "texture"))
+            ctx->state = AtmosphereState;
+        break;
+
+    case RingsLeafState:
+        if (matchName(name, "texture"))
+            ctx->state = RingsState;
         break;
 
     default:
