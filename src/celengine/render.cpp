@@ -2797,7 +2797,9 @@ setEclipseShadowShaderConstants(const LightingState& ls,
                                 const Mat4f& planetMat,
                                 CelestiaGLProgram& prog)
 {
-    for (unsigned int li = 0; li < min(ls.nLights, MaxShaderLights); li++)
+    for (unsigned int li = 0;
+         li < min(ls.nLights, (unsigned int) MaxShaderLights);
+         li++)
     {
         vector<EclipseShadow>* shadows = ls.shadows[li];
 
@@ -4585,7 +4587,7 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
                     const Quatf& objOrientation,
                     LightingState& ls)
 {
-    unsigned int nLights = min(MaxLights, suns.size());
+    unsigned int nLights = min(MaxLights, (unsigned int) suns.size());
     if (nLights == 0)
         return;
 
