@@ -139,7 +139,7 @@ Renderer::Renderer() :
     starVertexBuffer = new StarVertexBuffer(2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
     skyIndices = new uint32[(MaxSkySlices + 1) * 2 * MaxSkyRings];
-    skyContour = new SkyContourPoint[MaxSkySlices];
+    skyContour = new SkyContourPoint[MaxSkySlices + 1];
 }
 
 
@@ -1899,7 +1899,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     Mat3f irot = conjugate(orientation).toMatrix3();
 
     Point3f eyePos(0.0f, 0.0f, 0.0f);
-    float radius = semiAxes.x;
+    float radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
     Vec3f eyeVec = center - eyePos;
     eyeVec = eyeVec * irot;
     double centerDist = eyeVec.length();
@@ -1968,7 +1968,6 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             Vec3f tangentDir = tangentPoint - eyePos;
             tangentDir.normalize();
             cosSunAltitude = sunDirection * tangentDir;
-            //cout << "Sun altitude: " << radToDeg(acos(cosSunAltitude)) << " (" << cosSunAltitude << ")\n";
         }
     }
 
@@ -2010,10 +2009,12 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         skyContour[i].eyeDist = skyContour[i].eyeDir.length();
         skyContour[i].eyeDir.normalize();
         
-        float skyCapDist = (float) sqrt(square(skyContour[i].centerDist) +
-                                        square(horizonHeight));
-        skyContour[i].cosSkyCapAltitude = skyContour[i].centerDist /
+        float skyCapDist = (float) sqrt(square(skyContour[i].eyeDist) +
+                                        square(horizonHeight * radius));
+        skyContour[i].cosSkyCapAltitude = skyContour[i].eyeDist /
             skyCapDist;
+        if (i == 0)
+            cout << "skyCapAltitude: " << radToDeg(acos(skyContour[i].cosSkyCapAltitude)) << '\n';
     }
 
 
@@ -2065,20 +2066,17 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             Vec3f viewDir(p.x, p.y, p.z);
             viewDir.normalize();
             float cosSunAngle = viewDir * sunDirection;
+            float cosAltitude = viewDir * skyContour[j].eyeDir;
             float redness = 0.0f;
             if (sunset > 0.0f && cosSunAngle > 0.7f)
             {
-                Vec3f v0 = p - eyePos;
-                //Vec3f v1 = (center + skyContour[j].v) - eyePos;
-                //float cosAltitude = (v0 * v1) / (v0.length() * v1.length());
-                float cosAltitude = (v0 * skyContour[j].eyeDir) / v0.length();
                 if (cosAltitude > 0.95f)
                 {
                     redness =  (1.0f / 0.30f) * (cosSunAngle - 0.70f);
                     redness *= 20.0f * (cosAltitude - 0.95f);
                     redness *= sunset;
                 }
-            }
+            }   
             
             cosSunAngle = (skyContour[j].v * sunDirection) / skyContour[j].centerDist;
             float brightness = 0.0f;
@@ -2094,6 +2092,18 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             vtx->y = p.y;
             vtx->z = p.z;
 
+#if 0
+            if (!within)
+            {
+                hh = (1.0f - cosAltitude) / (1.0f - skyContour[j].cosSkyCapAltitude);
+            }
+            else
+            {
+                hh = (1.0f - cosAltitude) / (1.0f - skyContour[j].cosSkyCapAltitude);
+            }
+#endif
+
+            atten = 1.0f - hh;
             brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             Vec3f color = (1.0f - hh) * botColor + hh * topColor;
             if (redness != 0.0f)
