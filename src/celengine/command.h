@@ -109,6 +109,21 @@ class CommandGotoLongLat : public InstantaneousCommand
 };
 
 
+class CommandGotoLocation : public InstantaneousCommand
+{
+ public:
+    CommandGotoLocation(double t,
+                        const Point3d& translation, const Quatf& rotation);
+    ~CommandGotoLocation();
+    void process(ExecutionEnvironment&);
+
+ private:
+    double gotoTime;
+    Point3d translation;
+    Quatf rotation;
+};
+
+
 class CommandCenter : public InstantaneousCommand
 {
  public:
@@ -162,6 +177,20 @@ class CommandChase : public InstantaneousCommand
 
  private:
     int dummy;
+};
+
+
+class CommandSetFrame : public InstantaneousCommand
+{
+ public:
+    CommandSetFrame(astro::CoordinateSystem,
+                    const std::string&, const std::string&);
+    void process(ExecutionEnvironment&);
+
+ private:
+    astro::CoordinateSystem coordSys;
+    std::string refObjectName;
+    std::string targetObjectName;
 };
 
 
@@ -330,6 +359,24 @@ class CommandSetAmbientLight : public InstantaneousCommand
 
  private:
     float lightLevel;
+};
+
+
+class Execution;
+
+class RepeatCommand : public Command
+{
+ public:
+    RepeatCommand(CommandSequence* _body, int _repeatCount);
+    ~RepeatCommand();
+    void process(ExecutionEnvironment&, double t, double dt) = 0;
+    double getDuration();
+
+ private:
+    CommandSequence* body;
+    double bodyDuration;
+    int repeatCount;
+    Execution* execution;
 };
 
 
