@@ -3631,6 +3631,9 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer)
     case GDK_Escape:
         appCore->charEntered('\033');
         break;
+	case GDK_BackSpace:
+		appCore->charEntered('\b');
+		break;
 
 	// The next few things are sort of "hacks"
 	// They catch any keypresses that have preferences associeated with them
