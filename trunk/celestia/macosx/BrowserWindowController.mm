@@ -287,7 +287,15 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
 
 - (int) browser: (NSBrowser*) sender numberOfRowsInColumn: (int) column
 {
-    if (browser==nil) browser = sender;
+    if (browser==nil) 
+    {
+        browser = sender;        
+        [browser setMinColumnWidth: 80];
+        [browser setMaxVisibleColumns: 1];
+        [browser setDoubleAction:@selector(doubleClick:)];
+        [browser setAction:@selector(click:)];
+    }
+
     NSDictionary*  colDict = [self dictForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
     NSArray* colKeys = [colDict objectForKey: @"_keys"];
     return [colKeys count];
@@ -329,6 +337,42 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
     Selection sel = [self selFromPathArray: [[browser path] componentsSeparatedByString: [browser pathSeparator] ]];
     appCore->getSimulation()->setSelection(sel);
     if ([sender tag]!=0) appCore->charEntered([sender tag]);
+}
+
+static int firstVisibleColumn = 0;
+
+-(void) adjustColumns: (id) sender
+{
+    // eliminate empty columns
+    int lastColumn = [browser selectedColumn]+1;
+    if ([[browser selectedCell] isLeaf]) lastColumn--;
+    firstVisibleColumn = max(0,lastColumn + 1 - [browser numberOfVisibleColumns]);
+    [browser setMaxVisibleColumns: lastColumn+1];
+    [browser scrollColumnToVisible: firstVisibleColumn];
+    [browser scrollColumnToVisible: lastColumn];
+    firstVisibleColumn = [browser firstVisibleColumn];
+}
+
+- (IBAction) click: (id) sender
+{
+    if ([browser firstVisibleColumn]!=firstVisibleColumn &&
+    ![[browser selectedCell] isLeaf] && ([browser selectedColumn]==([browser firstVisibleColumn]+[browser numberOfVisibleColumns]-2)))
+    {
+        // revert column autoscroll to allow double click
+        [browser scrollColumnsRightBy: 1];
+     }
+     // delay column adjustment to allow double click
+    [self performSelector: @selector(adjustColumns:) withObject: nil afterDelay: 0.3 ];
+}
+
+
+- (IBAction) doubleClick: (id) sender
+{
+    Selection sel = [self selFromPathArray: [[browser path] componentsSeparatedByString: [browser pathSeparator] ]];
+    appCore->getSimulation()->setSelection(sel);
+    appCore->charEntered('g');
+    // adjust columns immediately
+    [self adjustColumns: nil];
 }
 
 
