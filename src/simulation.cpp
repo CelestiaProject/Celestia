@@ -139,6 +139,14 @@ void  Simulation::render(Renderer& renderer)
     console->clear();
     console->home();
 
+    // Temporary hack, just for this version . . .
+    if (realTime < 15.0)
+    {
+        console->printf("Welcome to Celestia 1.05 (Mir Edition)\n");
+        console->printf("Right drag mouse to rotate around Mir\n");
+        console->printf("Hit ESC to stop tracking Mir and explore the rest of the universe\n\n");
+    }
+
     if (hudDetail > 0)
     {
         console->printf("Visible stars = %d\n", visibleStars->getVisibleSet()->size());
@@ -568,12 +576,10 @@ Selection Simulation::pickObject(Vec3f pickRay)
 void Simulation::computeGotoParameters(Selection& destination, JourneyParams& jparams)
 {
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
-
     Vec3d v = targetPosition - observer.getPosition();
     double distanceToTarget = v.length();
     double maxOrbitDistance = (selection.body != NULL) ? astro::kilometersToLightYears(5.0f * selection.body->getRadius()) : 0.5f;
     double orbitDistance = (distanceToTarget > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distanceToTarget * 0.1f;
-
 
     v.normalize();
 
@@ -733,6 +739,11 @@ void Simulation::gotoSelection()
         computeGotoParameters(selection, journey);
         observerMode = Travelling;
     }
+}
+
+void Simulation::cancelMotion()
+{
+    observerMode = Free;
 }
 
 void Simulation::centerSelection()
