@@ -74,6 +74,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "More Stars Visible\t]",       ID_RENDER_MORESTARS
         MENUITEM "Fewer Stars Visible\t[",      ID_RENDER_FEWERSTARS
+	MENUITEM "Auto Magnitude\tCtrl+Y",      ID_RENDER_AUTOMAG
         MENUITEM SEPARATOR
         POPUP "&Ambient Light"
         BEGIN

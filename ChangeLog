@@ -669,4 +669,8 @@ Code:
 * Allow wildcard character * inplace of extension for texture filenames
 * Fix bump mapping (again)
 * Use standard normal maps instead of x-reversed ones
-
+* Compute the radii of stars more accurately by using bolometric magnitudes
+* Permit star names to be defined within .stc files
+* Fixed near clipping of small deep sky objects
+* Windows: added auto magnitude toggle to render menu
+* KDE: added popup error notifications
