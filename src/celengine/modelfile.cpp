@@ -18,6 +18,64 @@
 using namespace std;
 
 
+/*!
+This is an approximate Backus Naur form for the contents of ASCII cmod
+files. For brevity, the categories <unsigned_int> and <float> aren't
+defined here--they have the obvious definitions.
+
+<modelfile>           ::= <header> <model>
+
+<header>              ::= #celmodel__ascii
+
+<model>               ::= { <material_definition> } { <mesh_definition> }
+
+<material_definition> ::= material
+                          { <material_attribute> }
+                          end
+
+<material_attribute>  ::= diffuse <color>   |
+                          specular <color>  |
+                          emissive <color>  |
+                          specpower <float> |
+                          opacity <float>   |
+                          tex0 <string>     |
+                          tex1 <string>
+
+<color>               ::= <float> <float> <float>
+
+<string>              ::= """ { letter } """
+
+<mesh_definition>     ::= <vertex_description>
+                          <vertex_pool>
+                          groups
+                          { <prim_group> }
+                          end
+
+<vertex_description>  ::= vertexdesc
+                          { <vertex_attribute> }
+                          end
+
+<vertex_attribute>    ::= <vertex_semantic> <vertex_format>
+
+<vertex_semantic>     ::= pos | norm | col0 | col1 | tex0 | tex1 | tan
+
+<vertex_format>       ::= f1 | f2 | f3 | f4 | ub4
+
+<vertex_pool>         ::= vertices <count>
+                          { <float> }
+
+<count>               ::= <unsigned_int>
+
+<prim_group>          ::= <prim_group_type> <material_index> <count>
+                          { <unsigned_int> }
+
+<prim_group_type>     ::= trilist | tristrip | trifan |
+                          linelist | linestrip | pointlist
+
+<material_index>      :: <unsigned_int> | -1
+*/
+
+
 class BinaryModelLoader : public ModelLoader
 {
 public:
