@@ -122,7 +122,7 @@ if (test "$enable_profile" = "yes"); then
 	CELESTIA_CFLAGS="$CELESTIA_CFLAGS -pg";
 	CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -pg"
 else
-	if (test "$enable_debug" != "yes" ; then
+	if (test "$enable_debug" != "yes"); then
 		dnl  must be set here instead of above because -pg and
 		dnl -fomit-frame-pointer are incompatible
 		CELESTIA_CFLAGS="$CELESTIA_CFLAGS -fomit-frame-pointer";
