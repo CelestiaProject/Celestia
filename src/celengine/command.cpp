@@ -385,6 +385,20 @@ void CommandSetOrientation::process(ExecutionEnvironment& env)
     env.getSimulation()->setObserverOrientation(q);
 }
 
+////////////////
+// Looking back command: reverse observer orientation
+
+CommandLookingBack::CommandLookingBack() 
+{
+}
+
+void CommandLookingBack::process(ExecutionEnvironment& env)
+{
+  // Quatf q = env.getSimulation()->getObserver().getPosition();
+  //q.xrotate(PI);
+  //env.getSimulation()->setObserverOrientation(q);
+  env.getSimulation()->reverseObserverOrientation();
+}
 
 //////////////////
 // Set render flags command
