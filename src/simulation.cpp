@@ -236,6 +236,11 @@ float getSelectionSize(Selection& sel)
 }
 
 
+StarDatabase* Simulation::getStarDatabase() const
+{
+    return stardb;
+}
+
 void Simulation::setStarDatabase(StarDatabase* db,
                                  SolarSystemCatalog* catalog,
                                  GalaxyList* galaxyList)
