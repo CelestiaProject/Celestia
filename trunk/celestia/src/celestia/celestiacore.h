@@ -314,9 +314,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     Timer* timer;
 
-    CommandSequence* currentScript;
-    CommandSequence* initScript;
-    CommandSequence* demoScript;
     Execution* runningScript;
     ExecutionEnvironment* execEnv;
 

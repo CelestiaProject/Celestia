@@ -293,9 +293,6 @@ CelestiaCore::CelestiaCore() :
     lightTravelFlag(false),
     flashFrameStart(0.0),
     timer(NULL),
-    currentScript(NULL),
-    initScript(NULL),
-    demoScript(NULL),
     runningScript(NULL),
     execEnv(NULL),
 #ifdef CELX
@@ -469,9 +466,8 @@ void CelestiaCore::cancelScript()
         runningScript = NULL;
     }
 #ifdef CELX
-    else if (celxScript != NULL)
+    if (celxScript != NULL)
     {
-        // The script is complete
         celxScript->cleanup();
         if (textEnterMode & KbPassToScript)
             setTextEnterMode(textEnterMode & ~KbPassToScript);
@@ -485,6 +481,7 @@ void CelestiaCore::cancelScript()
 
 void CelestiaCore::runScript(CommandSequence* script)
 {
+    cancelScript();
     if (runningScript == NULL && script != NULL)
         runningScript = new Execution(*script, *execEnv);
 }
@@ -492,8 +489,42 @@ void CelestiaCore::runScript(CommandSequence* script)
 
 void CelestiaCore::runScript(const string& filename)
 {
+    cancelScript();
+    ContentType type = DetermineFileType(filename);
+
+    if (type == Content_CelestiaLegacyScript)
+    {
+        ifstream scriptfile(filename.c_str());
+        if (!scriptfile.good())
+        {
+            if (alerter != NULL)
+                alerter->fatalError("Error opening script file.");
+            else
+                flash("Error opening script file.");
+        }
+        else
+        {
+            CommandParser parser(scriptfile);
+            CommandSequence* script = parser.parse();
+            if (script == NULL)
+            {
+                const vector<string>* errors = parser.getErrors();
+                const char* errorMsg = "";
+                if (errors->size() > 0)
+                    errorMsg = (*errors)[0].c_str();
+                if (alerter != NULL)
+                    alerter->fatalError(errorMsg);
+                else
+                    flash(errorMsg);
+            }
+            else
+            {
+                runningScript = new Execution(*script, *execEnv);
+            }
+        }
+    }
 #ifdef CELX
-    if (runningScript == NULL && celxScript == NULL)
+    else if (type == Content_CelestiaScript)
     {
         ifstream scriptfile(filename.c_str());
         if (!scriptfile.good())
@@ -533,7 +564,7 @@ void CelestiaCore::runScript(const string& filename)
             }
             else
             {
-                char* errMsg = "Script coroutine initialization failed";
+                const char* errMsg = "Script coroutine initialization failed";
                 if (alerter != NULL)
                     alerter->fatalError(errMsg);
                 else
@@ -544,6 +575,13 @@ void CelestiaCore::runScript(const string& filename)
         }
     }
 #endif
+    else
+    {
+        if (alerter != NULL)
+            alerter->fatalError("Invalid filetype");
+        else
+            flash("Invalid filetype");
+    }
 }
 
 
@@ -1553,8 +1591,8 @@ void CelestiaCore::charEntered(const char *c_p)
 
     case 'D':
        addToHistory();
-       if (runningScript == NULL && demoScript != NULL)
-            runningScript = new Execution(*demoScript, *execEnv);
+       if (config->demoScriptFile != "")
+           runScript(config->demoScriptFile);
         break;
 
     case 'E':
@@ -1811,8 +1849,14 @@ void CelestiaCore::setLightTravelDelay(double distance)
 
 void CelestiaCore::start(double t)
 {
-    if (initScript != NULL)
-        runningScript = new Execution(*initScript, *execEnv);
+    if (config->initScriptFile != "")
+    {
+        // using the KdeAlerter in runScript would create an infinite loop, 
+        // break it here by resetting config->initScriptFile:
+        string filename = config->initScriptFile;
+        config->initScriptFile = "";
+        runScript(filename);
+    }
 
     // Set the simulation starting time to the current system time
     sim->setTime(t);
@@ -1829,20 +1873,11 @@ void CelestiaCore::setStartURL(std::string url)
     if (!url.substr(0,4).compare("cel:")) 
     {
         startURL = url;
-        free(initScript);
-        initScript = NULL;
+        config->initScriptFile = "";
     } 
     else 
     {
-        free(initScript);
-        ifstream scriptfile(url.c_str());
-        CommandParser parser(scriptfile);
-        initScript = parser.parse();
-        if (initScript == NULL)
-        {
-            const vector<string>* errors = parser.getErrors();
-            for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
-        }
+        config->initScriptFile = url;
     }
 }
 
@@ -1865,14 +1900,6 @@ void CelestiaCore::tick()
     }
 
     currentTime += dt;
-
-#ifdef CELX
-    if (celxScript != NULL && scriptAwakenTime != 0.0)
-    {
-        if (currentTime >= scriptAwakenTime)
-            resumeScript();
-    }
-#endif // CELX
 
     // Mouse wheel zoom
     if (zoomMotion != 0.0f)
@@ -2034,6 +2061,14 @@ void CelestiaCore::tick()
         if (finished)
             cancelScript();
     }
+
+#ifdef CELX
+    if (celxScript != NULL && scriptAwakenTime != 0.0)
+    {
+        if (currentTime >= scriptAwakenTime)
+            resumeScript();
+    }
+#endif // CELX
 
     sim->update(dt);
 }
@@ -3465,32 +3500,6 @@ bool CelestiaCore::initSimulation()
         {
             ConstellationBoundaries* boundaries = ReadBoundaries(boundariesFile);
             universe->setBoundaries(boundaries);
-        }
-    }
-    
-    // Load initialization script
-    if (config->initScriptFile != "")
-    {
-        ifstream scriptfile(config->initScriptFile.c_str());
-        CommandParser parser(scriptfile);
-        initScript = parser.parse();
-        if (initScript == NULL)
-        {
-            const vector<string>* errors = parser.getErrors();
-            for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
-        }
-    }
-
-    // Load demo script
-    if (config->demoScriptFile != "")
-    {
-        ifstream scriptfile(config->demoScriptFile.c_str());
-        CommandParser parser(scriptfile);
-        demoScript = parser.parse();
-        if (demoScript == NULL)
-        {
-            const vector<string>* errors = parser.getErrors();
-            for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
         }
     }
 
