@@ -41,7 +41,7 @@ public:
     int resume();
     void cleanup();
     bool isAlive() const;
-    bool timesliceExpired() const;
+    bool timesliceExpired();
 
     bool charEntered(const char*);
     double getTime() const;    

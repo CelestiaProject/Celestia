@@ -393,9 +393,18 @@ string LuaState::getErrorMessage()
     return "";
 }
 
-bool LuaState::timesliceExpired() const
+bool LuaState::timesliceExpired()
 {
-    return (timeout < getTime());
+    if (timeout < getTime())
+    {
+        // timeslice expired, make every instruction (including pcall) fail: 
+        lua_sethook(costate, checkTimeslice, LUA_MASKCOUNT, 1);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
@@ -1899,6 +1908,14 @@ static Observer* this_observer(lua_State* l)
 }
 
 
+static int observer_isvalid(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for observer:isvalid()");
+    lua_pushboolean(l, to_observer(l, 1) != NULL);
+    return 1;
+}
+
+
 static int observer_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Observer]");
@@ -2663,6 +2680,7 @@ static void CreateObserverMetaTable(lua_State* l)
     CreateClassMetatable(l, _Observer);
 
     RegisterMethod(l, "__tostring", observer_tostring);
+    RegisterMethod(l, "isvalid", observer_isvalid);
     RegisterMethod(l, "goto", observer_goto);
     RegisterMethod(l, "gotolonglat", observer_gotolonglat);
     RegisterMethod(l, "gotolocation", observer_gotolocation);
@@ -3005,6 +3023,40 @@ static int celestia_getlabelflags(lua_State* l)
     return 1;
 }
 
+static int celestia_setfaintestvisible(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
+    CelestiaCore* appCore = this_celestia(l);
+    float faintest = (float)safeGetNumber(l, 2, AllErrors, "Argument to celestia:setfaintestvisible() must be a number");
+    if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
+    {
+        faintest = min(15.0f, max(1.0f, faintest));
+        appCore->setFaintest(faintest);
+    }
+    else
+    {
+        faintest = min(12.0f, max(6.0f, faintest));
+        appCore->getRenderer()->setFaintestAM45deg(faintest);
+        appCore->setFaintestAutoMag();
+    }
+    return 0;
+}
+
+static int celestia_getfaintestvisible(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getfaintestvisible()");
+    CelestiaCore* appCore = this_celestia(l);
+    if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
+    {
+        lua_pushnumber(l, appCore->getSimulation()->getFaintestVisible());
+    }
+    else
+    {
+        lua_pushnumber(l, appCore->getRenderer()->getFaintestAM45deg());
+    }
+    return 1;
+}
+
 static int celestia_getobserver(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for celestia:getobserver()");
@@ -3261,6 +3313,127 @@ static int celestia_getambient(lua_State* l)
     return 1;
 }
 
+static int celestia_setminorbitsize(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected in celestia:setminorbitsize");
+    CelestiaCore* appCore = this_celestia(l);
+
+    double orbitSize = safeGetNumber(l, 2, AllErrors, "Argument to celestia:setminorbitsize() must be a number");
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        lua_pushstring(l, "Internal Error: renderer is NULL!");
+        lua_error(l);
+    }
+    else
+    {
+        orbitSize = max(0.0, orbitSize);
+        renderer->setMinimumOrbitSize((float)orbitSize);
+    }
+    return 0;
+}
+
+static int celestia_setstardistancelimit(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected in celestia:setstardistancelimit");
+    CelestiaCore* appCore = this_celestia(l);
+
+    double distanceLimit = safeGetNumber(l, 2, AllErrors, "Argument to celestia:setstardistancelimit() must be a number");
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        lua_pushstring(l, "Internal Error: renderer is NULL!");
+        lua_error(l);
+    }
+    else
+    {
+        renderer->setDistanceLimit((float)distanceLimit);
+    }
+    return 0;
+}
+
+static int celestia_getstardistancelimit(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected in celestia:getstardistancelimit");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        lua_pushstring(l, "Internal Error: renderer is NULL!");
+        lua_error(l);
+    }
+    else
+    {
+        lua_pushnumber(l, renderer->getDistanceLimit());
+    }
+    return 1;
+}
+
+static int celestia_getstarstyle(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected in celestia:getstarstyle");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        lua_pushstring(l, "Internal Error: renderer is NULL!");
+        lua_error(l);
+    }
+    else
+    {
+        Renderer::StarStyle starStyle = renderer->getStarStyle();
+        switch (starStyle)
+        {
+        case Renderer::FuzzyPointStars: 
+            lua_pushstring(l, "fuzzy"); break;
+        case Renderer::PointStars: 
+            lua_pushstring(l, "point"); break;
+        case Renderer::ScaledDiscStars: 
+            lua_pushstring(l, "disc"); break;
+        default:
+            lua_pushstring(l, "invalid starstyle");
+        };
+    }
+    return 1;
+}
+
+static int celestia_setstarstyle(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected in celestia:setstarstyle");
+    CelestiaCore* appCore = this_celestia(l);
+
+    string starStyle = safeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        lua_pushstring(l, "Internal Error: renderer is NULL!");
+        lua_error(l);
+    }
+    else
+    {
+        if (starStyle == "fuzzy")
+        {
+            renderer->setStarStyle(Renderer::FuzzyPointStars);
+        }
+        else if (starStyle == "point")
+        {
+            renderer->setStarStyle(Renderer::PointStars);
+        }
+        else if (starStyle == "disc")
+        {
+            renderer->setStarStyle(Renderer::ScaledDiscStars);
+        }
+        else
+        {
+            lua_pushstring(l, "Invalid starstyle");
+            lua_error(l);
+        }
+    }
+    return 0;
+}
+
 static int celestia_getstar(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected to function celestia:getstar");
@@ -3442,6 +3615,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "hidelabel", celestia_hidelabel);
     RegisterMethod(l, "getlabelflags", celestia_getlabelflags);
     RegisterMethod(l, "setlabelflags", celestia_setlabelflags);
+    RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
+    RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
     RegisterMethod(l, "getobserver", celestia_getobserver);
     RegisterMethod(l, "getobservers", celestia_getobservers);
     RegisterMethod(l, "getselection", celestia_getselection);
@@ -3456,6 +3631,11 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "settimescale", celestia_settimescale);
     RegisterMethod(l, "getambient", celestia_getambient);
     RegisterMethod(l, "setambient", celestia_setambient);
+    RegisterMethod(l, "setminorbitsize", celestia_setminorbitsize);
+    RegisterMethod(l, "getstardistancelimit", celestia_getstardistancelimit);
+    RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
+    RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
+    RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
     RegisterMethod(l, "tojulianday", celestia_tojulianday);
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
     RegisterMethod(l, "getstar", celestia_getstar);
