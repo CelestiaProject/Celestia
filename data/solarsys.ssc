@@ -552,6 +552,74 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	}
 }
 
+"Prometheus" "Sol/Saturn"
+{
+	Texture	 	"prometheus.jpg"
+	Mesh		"prometheus.3ds"
+	Radius    74 # maximum semi-axis
+	MeshCenter [ -0.75 -2.68 -1.064 ]
+
+	EllipticalOrbit
+	{
+	Period		0.612986
+	SemiMajorAxis	139350
+	Eccentricity	0.0023
+	Inclination	0.000
+	LongOfPericenter 32.879	# J2000.0 
+	MeanAnomaly     22.695	#
+	}
+
+	RotationOffset  	56
+
+	Albedo 0.6
+}
+
+"Epimetheus" "Sol/Saturn"
+{
+	Texture	 	"epimetheus.jpg"
+	Mesh		"epimetheus.3ds"
+	Radius    72 # maximum semi-axis
+	MeshCenter [ 5.196 -2.241 1.878 ]
+
+	EllipticalOrbit
+	{
+	Period		0.694590
+	SemiMajorAxis	151422
+	Eccentricity	0.0205
+	Inclination	0.337	#
+	AscendingNode	149.880	#
+	ArgOfPericenter	86.905	# J2000.0
+	MeanAnomaly     192.354	#
+	}
+
+	RotationOffset  	69
+
+	Albedo 0.5
+}
+
+"Janus" "Sol/Saturn"
+{
+	Texture	 	"janus.jpg"
+	Mesh		"janus.3ds"
+	Radius    96 # maximum semi-axis
+	MeshCenter [ 1.552 1.358 -2.257 ]
+
+	EllipticalOrbit
+	{
+	Period		0.694590
+	SemiMajorAxis	151472
+	Eccentricity	0.0073
+	Inclination	0.168	#
+	AscendingNode	120.557	#
+	ArgOfPericenter	43.066	# J2000.0
+	MeanAnomaly     79.973	#
+	}
+
+	RotationOffset  	244
+
+	Albedo 0.6
+}
+
 "Mimas" "Sol/Saturn"
 {
 	Texture "mimas.*"
