@@ -128,6 +128,8 @@
     if ([selectionName isEqualToString: @""]) return NULL;
     [[[self menu] itemAtIndex: 0] setTitle: selectionName ];
     [[[self menu] itemAtIndex: 0] setEnabled: YES ];
+    [ appCore addSurfaceMenu: [self menu] ];
+//    [ [self menu] setAutoenablesItems: NO ];
     return [self menu];
 }
 
@@ -179,12 +181,13 @@
         [self rightMouseDown: theEvent];
         return;
     }
-//    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+//     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+    {
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: self];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    NSLog(@"mouseDown: %@",theEvent);
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
-
+    }
 }
 
 - (void) mouseUp: (NSEvent*)theEvent
@@ -194,10 +197,12 @@
         [self rightMouseUp: theEvent];
         return;
     }
+    {
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    NSLog(@"mouseUp: %@", theEvent);
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
+    }
 }
 - (void) mouseDragged: (NSEvent*) theEvent
 {
@@ -206,11 +211,13 @@
         [self rightMouseDragged: theEvent];
         return;
     }
+    {
 //    NSSize delta = [self convertSize:NSMakeSize([theEvent deltaX], [theEvent deltaY]) fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    NSLog(@"mouseDragged: %@",theEvent);
     [appCore mouseMove:NSMakePoint([theEvent deltaX], [theEvent deltaY]) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
 //    [appCore mouseMove:NSMakePoint(delta.width, delta.height) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
+    }
 }
 - (void) rightMouseDown: (NSEvent*)theEvent
 {
@@ -264,10 +271,12 @@
 
 - (void) drawRect: (NSRect) rect
 {
+        NSApplication* theApp = [NSApplication sharedApplication];        
         NSOpenGLContext *oglContext;
         [self lockFocus];
         oglContext = [self openGLContext];
-        if (oglContext != nil) {
+        if (oglContext != nil) 
+        {
             [oglContext makeCurrentContext];
             [controller display];
             glFinish();
@@ -299,9 +308,9 @@
         [NSArray arrayWithObject: NSStringPboardType]];
     if ( type != nil )
     {
+        CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
         value = [ pb stringForType: NSStringPboardType ];
 //        NSLog ( value );
-        CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
         [appCore goToUrl: value ];
         return YES;
     }
