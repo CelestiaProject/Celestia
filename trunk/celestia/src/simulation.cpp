@@ -225,7 +225,7 @@ void Simulation::update(double dt)
         // second half of the trip is a mirror of the first.
         {
             double c = astro::kilometersToLightYears(1.0);
-            double distance = astro::lightYearsToKilometers((journey.from - journey.to).length());
+            double distance = astro::lightYearsToKilometers(journey.from.distanceTo(journey.to));
             double m = 2.0 * log(distance / 2.0 + 1.0);
             Vec3d v = jv;
             v.normalize();
@@ -719,7 +719,6 @@ void Simulation::computeGotoParameters(Selection& destination,
 {
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
     Vec3d v = targetPosition - observer.getPosition();
-    double distance = astro::lightYearsToKilometers(v.length());
     v.normalize();
 
     jparams.duration = gotoTime;
@@ -746,7 +745,8 @@ void Simulation::computeGotoParameters(Selection& destination,
     jparams.finalOrientation = lookAt(Point3f(0, 0, 0), to, jparams.up);
 
     jparams.accelTime = 0.5;
-    pair<double, double> sol = solve_bisection(TravelExpFunc(distance / 2.0, jparams.accelTime),
+    double distance = astro::lightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
+    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
                                                1e-10);
     jparams.expFactor = sol.first;
