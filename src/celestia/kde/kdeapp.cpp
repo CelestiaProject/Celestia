@@ -300,6 +300,7 @@ void KdeApp::initActions()
     new KAction(i18n("Split View Vertically"), "view_left_right", CTRL + Key_U, this, SLOT(slotSplitV()), actionCollection(), "splitV");
     new KAction(i18n("Cycle View"), "rotate_cw", Key_Tab, this, SLOT(slotCycleView()), actionCollection(), "cycleView");
     new KAction(i18n("Single View"), "view_remove", CTRL + Key_D, this, SLOT(slotSingleView()), actionCollection(), "singleView");
+    new KAction(i18n("Delete View"), "view_remove", Key_Delete, this, SLOT(slotDeleteView()), actionCollection(), "deleteView");
 
     new KAction(i18n("Alt-Azimuth Mode"), 0, CTRL + Key_A, this, SLOT(slotAltAzMode()), actionCollection(), "altAzMode");
 
@@ -793,6 +794,10 @@ void KdeApp::slotAltAzMode() {
 
 void KdeApp::slotSingleView() {
     appCore->charEntered('\004');
+}
+
+void KdeApp::slotDeleteView() {
+    appCore->charEntered(127);
 }
 
 void KdeApp::slotAmbientLightLevel(float l) {

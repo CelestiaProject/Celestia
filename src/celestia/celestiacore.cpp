@@ -95,17 +95,21 @@ public:
 };
 
 
-View::View(Observer* _observer,
+View::View(View::Type _type,
+           Observer* _observer,
            float _x, float _y,
            float _width, float _height) :
+    type(_type),
     observer(_observer),
+    parent(0),
+    child1(0),
+    child2(0),
     x(_x),
     y(_y),
     width(_width),
     height(_height)
 {
 }
-
 
 void View::mapWindowToView(float wx, float wy, float& vx, float& vy) const
 {
@@ -114,7 +118,43 @@ void View::mapWindowToView(float wx, float wy, float& vx, float& vy) const
     vx = (vx - 0.5f) * (width / height);
     vy = 0.5f - vy;
 }
-    
+
+void View::walkTreeResize(View* sibling, int sign) {
+   float ratio;
+   switch (parent->type)
+    {
+    case View::HorizontalSplit:
+        ratio = parent->height / (parent->height -  height);
+        sibling->height *= ratio;
+        if (sign == 1)
+        {
+            sibling->y = parent->y + (sibling->y - parent->y) * ratio;
+        }
+        else
+        {
+            sibling->y = parent->y + (sibling->y - (y + height)) * ratio;
+        }
+        break;
+
+    case View::VerticalSplit:
+        ratio = parent->width / (parent->width - width);
+        sibling->width *= ratio;
+        if (sign == 1)
+        {
+            sibling->x = parent->x + (sibling->x - parent->x) * ratio;
+        }
+        else
+        {
+            sibling->x = parent->x + (sibling->x - (x + width) ) * ratio;
+        }
+        break;
+    case View::ViewWindow:
+        break;
+    }
+    if (sibling->child1) walkTreeResize(sibling->child1, sign);
+    if (sibling->child2) walkTreeResize(sibling->child2, sign);
+}
+
 
 CelestiaCore::CelestiaCore() :
     config(NULL),
@@ -668,6 +708,10 @@ void CelestiaCore::charEntered(char c)
         altAzimuthMode = !altAzimuthMode;
         break;
 
+    case 127: // Delete
+        deleteView();
+        break;
+
     case '\011': // TAB
         activeView++;
         if (activeView >= (int) views.size())
@@ -683,12 +727,12 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '\025': // Ctrl+U
-        splitView(true);
+        splitView(View::VerticalSplit);
         flash("Added view");
         break;
 
     case '\022': // Ctrl+R
-        splitView(false);
+        splitView(View::HorizontalSplit);
         flash("Added view");
         break;
 
@@ -1201,7 +1245,7 @@ void CelestiaCore::setStartURL(std::string url)
     } 
     else 
     {
-        free(initScript);   
+        free(initScript);
         ifstream scriptfile(url.c_str());
         CommandParser parser(scriptfile);
         initScript = parser.parse();
@@ -1455,8 +1499,9 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
 }
 
 
-void CelestiaCore::splitView(bool vertical)
+void CelestiaCore::splitView(View::Type type)
 {
+    bool vertical = ( type == View::VerticalSplit );
     Observer* o = sim->addObserver();
 
     // Make the new observer a copy of the old one
@@ -1467,13 +1512,34 @@ void CelestiaCore::splitView(bool vertical)
     float w = views[activeView]->width * (vertical ? 0.5f : 1.0f);
     float h = views[activeView]->height * (vertical ? 1.0f : 0.5f);
 
+    View* split = new View(type,
+                           0,
+                           views[activeView]->x,
+                           views[activeView]->y,
+                           views[activeView]->width,
+                           views[activeView]->height);
+    split->parent = views[activeView]->parent;
+    if (views[activeView]->parent != 0)
+    {
+        if (views[activeView]->parent->child1 == views[activeView])
+            views[activeView]->parent->child1 = split;
+        else
+            views[activeView]->parent->child2 = split;
+    }
+    split->child1 = views[activeView];
+
     views[activeView]->width = w;
     views[activeView]->height = h;
+    views[activeView]->parent = split;
 
-    View* view = new View(o,
+    View* view = new View(View::ViewWindow,
+                          o,
                           views[activeView]->x + (vertical ? w : 0),
                           views[activeView]->y + (vertical ? 0 : h),
                           w, h);
+    split->child2 = view;
+    view->parent = split;
+
     views.insert(views.end(), view);
 }
 
@@ -1487,6 +1553,7 @@ void CelestiaCore::singleView()
         if ((int) i != activeView)
         {
             sim->removeObserver(views[i]->observer);
+            delete views[i]->observer;
             delete views[i];
         }
     }
@@ -1495,10 +1562,56 @@ void CelestiaCore::singleView()
     av->y = 0.0f; 
     av->width = 1.0f;
     av->height = 1.0f;
+    av->parent = 0;
 
     views.clear();
     views.insert(views.end(), av);
     activeView = 0;
+}
+
+void CelestiaCore::deleteView()
+{
+    View *v = views[activeView];
+    if (v->parent == 0) return;
+
+    for(std::vector<View*>::iterator i = views.begin(); i < views.end() ; i++)
+    {
+        if (*i == v)
+        {
+            views.erase(i);
+            break;
+        }
+    }
+
+    int sign;
+    View *sibling;
+    if (v->parent->child1 == v)
+    {
+        sibling = v->parent->child2;
+        sign = -1;
+    }
+    else
+    {
+        sibling = v->parent->child1;
+        sign = 1;
+    }
+    sibling->parent = v->parent->parent;
+    if (v->parent->parent != 0) {
+        if (v->parent->parent->child1 == v->parent)
+            v->parent->parent->child1 = sibling;
+        else
+            v->parent->parent->child2 = sibling;
+    }
+
+    v->walkTreeResize(sibling, sign);
+
+    sim->removeObserver(v->observer);
+    delete(v->observer);
+    activeView = 0;
+    sim->setActiveObserver(views[activeView]->observer);
+
+    delete(v->parent);
+    delete(v);
 }
 
 
@@ -2300,7 +2413,7 @@ bool CelestiaCore::initSimulation()
     if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     sim->setFaintestVisible(config->faintestVisible);
 
-    View* view = new View(sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f);
+    View* view = new View(View::ViewWindow, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f);
     views.insert(views.end(), view);
 
     return true;
