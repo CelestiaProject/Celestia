@@ -161,6 +161,8 @@ class Renderer
     double projMatrix[16];
 
     int nSimultaneousTextures;
+    bool useRegisterCombiners;
+    bool useCubeMaps;
 
  public:
     friend bool operator<(const Renderer::RenderListEntry&,

@@ -1,6 +1,11 @@
 // body.h
 //
 // Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 
 #ifndef _BODY_H_
 #define _BODY_H_
@@ -8,6 +13,7 @@
 #include <string>
 #include <vector>
 #include "color.h"
+#include "surface.h"
 #include "orbit.h"
 #include "star.h"
 
@@ -89,16 +95,10 @@ class Body
     RingSystem* getRings() const;
     void setRings(RingSystem&);
 
-    void setColor(Color);
-    Color getColor() const;
-    void setTexture(std::string);
-    std::string getTexture() const;
     void setMesh(std::string);
     std::string getMesh() const;
-    void setAppearanceFlags(uint32);
-    uint32 getAppearanceFlags() const;
-    void setAppearanceFlag(uint32, bool);
-    bool getAppearanceFlag(uint32) const;
+    void setSurface(const Surface&);
+    const Surface& getSurface() const;
 
     float getLuminosity(const Star& sun,
                         float distanceFromSun) const;
@@ -111,11 +111,6 @@ class Body
 
     Mat4d getLocalToHeliocentric(double when);
     Point3d getHeliocentricPosition(double when);
-
-    // Appearance flags
-    enum {
-        BlendTexture    = 1,
-    };
 
  private:
     std::string name;
@@ -130,10 +125,8 @@ class Body
     float albedo;
     float rotationPeriod;
 
-    Color color;
-    std::string texture;
     std::string mesh;
-    uint32 appearanceFlags;
+    Surface surface;
 
     RingSystem* rings;
 
