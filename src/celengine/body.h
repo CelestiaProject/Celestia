@@ -208,7 +208,7 @@ class Body
 
     std::string infoURL;
 
-    typedef std::map<const std::string, Surface*> AltSurfaceTable;
+    typedef std::map<std::string, Surface*> AltSurfaceTable;
     AltSurfaceTable *altSurfaces;
 
     std::vector<Location*>* locations;
