@@ -1573,6 +1573,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     BuildFavoritesMenu();
     syncMenusWithRendererState();
 
+    //Gray-out Render menu options that hardware does not support.
+    if(!appCore->getRenderer()->fragmentShaderSupported())
+        EnableMenuItem(menuBar, ID_RENDER_PIXEL_SHADERS, MF_BYCOMMAND | MF_GRAYED);
+    if(!appCore->getRenderer()->vertexShaderSupported())
+        EnableMenuItem(menuBar, ID_RENDER_VERTEX_SHADERS, MF_BYCOMMAND | MF_GRAYED);
+
     appCore->setContextMenuCallback(ContextMenu);
 
     bReady = true;
@@ -1655,15 +1661,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
     static HGLRC hRC;
     static HDC hDC;
 
-    switch(uMsg) {
+    switch(uMsg)
+    {
     case WM_CREATE:
-	hDC = GetDC(hWnd);
-	if(fullscreen)
-	    ChangeDisplayMode();
-	SetDCPixelFormat(hDC);
-	hRC = wglCreateContext(hDC);
-	wglMakeCurrent(hDC, hRC);
-	break;
+	    hDC = GetDC(hWnd);
+	    if(fullscreen)
+	        ChangeDisplayMode();
+	    SetDCPixelFormat(hDC);
+	    hRC = wglCreateContext(hDC);
+	    wglMakeCurrent(hDC, hRC);
+	    break;
 
     case WM_MOUSEMOVE:
         {
