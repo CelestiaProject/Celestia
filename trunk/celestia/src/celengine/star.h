@@ -16,6 +16,7 @@
 #include <celmath/vecmath.h>
 #include <celengine/celestia.h>
 #include <celengine/stellarclass.h>
+#include <celengine/multitexture.h>
 
 class Orbit;
 
@@ -28,8 +29,8 @@ class StarDetails
     inline float getTemperature() const;
     inline float getRotationPeriod() const;
     inline Vec3f getSemiAxes() const;
-    inline ResourceHandle getMesh() const;
-    inline ResourceHandle getTexture() const;
+    inline ResourceHandle getModel() const;
+    inline MultiResTexture getTexture() const;
     inline const Orbit* getOrbit() const;
     inline uint32 getKnowledge() const;
     inline bool getKnowledge(uint32) const;
@@ -43,6 +44,8 @@ class StarDetails
     void addKnowledge(uint32);
     void setSpectralType(const std::string&);
     void setBolometricCorrection(float);
+    void setTexture(const MultiResTexture&);
+    void setModel(ResourceHandle);
     
     enum
     {
@@ -58,6 +61,9 @@ class StarDetails
 
     uint32 knowledge;
     char spectralType[8];
+
+    MultiResTexture texture;
+    ResourceHandle model;
 
  public:
     static StarDetails* GetStarDetails(const StellarClass&);
@@ -100,15 +106,15 @@ StarDetails::getSemiAxes() const
 }
 
 ResourceHandle
-StarDetails::getMesh() const
+StarDetails::getModel() const
 {
-    return InvalidResource;
+    return model;
 }
 
-ResourceHandle
+MultiResTexture
 StarDetails::getTexture() const
 {
-    return InvalidResource;
+    return texture;
 }
 
 const Orbit*
@@ -168,6 +174,8 @@ public:
     inline float getRotationPeriod() const;
     inline const char* getSpectralType() const;
     inline float getBolometricMagnitude() const;
+    MultiResTexture getTexture() const;
+    ResourceHandle getModel() const;
 
     enum {
         InvalidCatalogNumber = 0xffffffff

@@ -48,7 +48,7 @@ class StarDatabase
     StarNameDatabase* getNameDatabase() const;
     void setNameDatabase(StarNameDatabase*);
     
-    bool load(std::istream&);
+    bool load(std::istream&, const std::string& resourcePath);
     bool loadBinary(std::istream&);
     bool loadOldFormatBinary(std::istream&);
 

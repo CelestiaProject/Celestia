@@ -4997,8 +4997,16 @@ void Renderer::renderStar(const Star& star,
             break;
         }
 #endif
-        tex = starTexA;
-        surface.baseTexture = MultiResTexture(tex, tex, tex);
+        MultiResTexture mtex = star.getTexture();
+        if (mtex.tex[textureResolution] != InvalidResource)
+        {
+            surface.baseTexture = mtex;
+        }
+        else
+        {
+            tex = starTexA;
+            surface.baseTexture = MultiResTexture(tex, tex, tex);
+        }
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;
 
@@ -5012,7 +5020,7 @@ void Renderer::renderStar(const Star& star,
         rp.rings = NULL;
         rp.radius = star.getRadius();
         rp.oblateness = 0.0f;
-        rp.model = InvalidResource;
+        rp.model = star.getModel();
 
         double rotation = 0.0;
         // Watch out for the precision limits of floats when computing
