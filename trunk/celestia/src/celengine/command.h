@@ -362,6 +362,18 @@ class CommandSetAmbientLight : public InstantaneousCommand
 };
 
 
+class CommandSet : public InstantaneousCommand
+{
+ public:
+    CommandSet(const std::string&, double);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string name;
+    double value;
+};
+
+
 class Execution;
 
 class RepeatCommand : public Command

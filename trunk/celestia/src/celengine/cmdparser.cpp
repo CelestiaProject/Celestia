@@ -157,6 +157,14 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("duration", duration);
         cmd = new CommandWait(duration);
     }
+    else if (commandName == "set")
+    {
+        double value = 0.0;
+        string name;
+        paramList->getString("name", name);
+        paramList->getNumber("value", value);
+        cmd = new CommandSet(name, value);
+    }
     else if (commandName == "select")
     {
         string object;
@@ -420,6 +428,12 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowStars;
 	    else if (compareIgnoringCase(name, "nightmaps") == 0)
 		flags |= Renderer::ShowNightMaps;
+            else if (compareIgnoringCase(name, "eclipseshadows") == 0)
+                flags |= Renderer::ShowEclipseShadows;
+            else if (compareIgnoringCase(name, "ringshadows") == 0)
+                flags |= Renderer::ShowRingShadows;
+            else if (compareIgnoringCase(name, "pointstars") == 0)
+                flags |= Renderer::ShowStarsAsPoints;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)

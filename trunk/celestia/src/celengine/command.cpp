@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
+#include <celutil/util.h>
 #include "astro.h"
 #include "command.h"
 #include "execution.h"
@@ -450,6 +451,29 @@ void CommandSetAmbientLight::process(ExecutionEnvironment& env)
     Renderer* r = env.getRenderer();
     if (r != NULL)
         r->setAmbientLightLevel(lightLevel);
+}
+
+
+////////////////
+// Set command
+
+CommandSet::CommandSet(const std::string& _name, double _value) :
+    name(_name), value(_value)
+{
+}
+
+void CommandSet::process(ExecutionEnvironment& env)
+{
+    if (compareIgnoringCase(name, "MinOrbitSize") == 0)
+    {
+        if (env.getRenderer() != NULL)
+            env.getRenderer()->setMinimumOrbitSize((float) value);
+    }
+    else if (compareIgnoringCase(name, "AmbientLightLevel") == 0)
+    {
+        if (env.getRenderer() != NULL)
+            env.getRenderer()->setAmbientLightLevel((float) value);
+    }
 }
 
 
