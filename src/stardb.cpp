@@ -50,17 +50,6 @@ StarDatabase::~StarDatabase()
         delete [] catalogNumberIndex;
 }
 
-#if 0
-bool operator<(const Star& a, const Star& b)
-{
-    return a.getCatalogNumber() < b.getCatalogNumber();
-}
-
-bool operator<(Star& s, uint32 n)
-{
-    return s.getCatalogNumber() < n;
-}
-#endif
 
 // Less than operator for stars is used to sort and find stars by catalog
 // number
@@ -78,13 +67,6 @@ bool operator<(StarRecord& s, uint32 n)
 
 Star* StarDatabase::find(uint32 catalogNumber) const
 {
-#if 0
-    Star* star = lower_bound(stars, stars + nStars, catalogNumber);
-    if (star != stars + nStars && star->getCatalogNumber() == catalogNumber)
-        return star;
-    else
-        return NULL;
-#endif
     StarRecord* star = lower_bound(catalogNumberIndex, catalogNumberIndex + nStars,
                                    catalogNumber);
     if (star != catalogNumberIndex + nStars &&
@@ -202,12 +184,12 @@ string StarDatabase::getStarName(uint32 catalogNumber) const
 }
 
 
-void StarDatabase::processVisibleStars(StarHandler& starHandler,
-                                       const Point3f& position,
-                                       const Quatf& orientation,
-                                       float fovY,
-                                       float aspectRatio,
-                                       float limitingMag) const
+void StarDatabase::findVisibleStars(StarHandler& starHandler,
+                                    const Point3f& position,
+                                    const Quatf& orientation,
+                                    float fovY,
+                                    float aspectRatio,
+                                    float limitingMag) const
 {
     // Compute the bounding planes of an infinite view frustum
     Planef frustumPlanes[5];
@@ -227,8 +209,16 @@ void StarDatabase::processVisibleStars(StarHandler& starHandler,
         frustumPlanes[i] = Planef(planeNormals[i], position);
     }
     
-    octreeRoot->processVisibleStars(starHandler, position, frustumPlanes,
-                                    limitingMag, OctreeRootSize);
+    octreeRoot->findVisibleStars(starHandler, position, frustumPlanes,
+                                 limitingMag, OctreeRootSize);
+}
+
+
+void StarDatabase::findCloseStars(StarHandler& starHandler,
+                                  const Point3f& position,
+                                  float radius) const
+{
+    octreeRoot->findCloseStars(starHandler, position, radius, OctreeRootSize);
 }
 
 
@@ -364,6 +354,8 @@ void StarDatabase::buildOctree()
     Star* firstStar = sortedStars;
     root->rebuildAndSort(octreeRoot, firstStar);
 
+    // ASSERT((int) (firstStar - sortedStars) == nStars);
+    cout << (int) (firstStar - sortedStars) << " stars total\n";
     cout << "Octree has " << 1 + octreeRoot->countChildren() << " nodes " <<
         " and " << octreeRoot->countStars() << " stars.\n";
 
@@ -382,6 +374,7 @@ void StarDatabase::buildIndexes()
 
     cout << "Building catalog number index . . .\n";
     cout.flush();
+
     catalogNumberIndex = new StarRecord[nStars];
     for (int i = 0; i < nStars; i++)
         catalogNumberIndex[i].star = &stars[i];
