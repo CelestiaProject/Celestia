@@ -49,9 +49,9 @@ public:
     inline Quaternion& operator*=(T);
     Quaternion& operator*=(Quaternion);
 
-    inline Quaternion operator~();    // conjugate
-    inline Quaternion operator-();
-    inline Quaternion operator+();
+    inline Quaternion operator~() const;    // conjugate
+    inline Quaternion operator-() const;
+    inline Quaternion operator+() const;
 
     void setAxisAngle(Vector3<T> axis, T angle);
 
@@ -211,17 +211,17 @@ template<class T> Quaternion<T>& Quaternion<T>::operator*=(T s)
 }
 
 // conjugate operator
-template<class T> Quaternion<T> Quaternion<T>::operator~()
+template<class T> Quaternion<T> Quaternion<T>::operator~() const
 {
     return Quaternion<T>(w, -x, -y, -z);
 }
 
-template<class T> Quaternion<T> Quaternion<T>::operator-()
+template<class T> Quaternion<T> Quaternion<T>::operator-() const
 {
     return Quaternion<T>(-w, -x, -y, -z);
 }
 
-template<class T> Quaternion<T> Quaternion<T>::operator+()
+template<class T> Quaternion<T> Quaternion<T>::operator+() const
 {
     return *this;
 }
