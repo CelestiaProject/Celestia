@@ -15,6 +15,9 @@
 #include <map>
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
+#include <celengine/cmdparser.h>
+#include <celengine/execenv.h>
+#include <celengine/execution.h>
 #include <celmath/vecmath.h>
 #include <celengine/gl.h>
 #include "imagecapture.h"
@@ -45,6 +48,7 @@ static const char* ClassNames[] =
     "class_rotation",
     "class_position",
     "class_frame",
+    "class_celscript",
 };
 
 static const int _Celestia = 0;
@@ -55,6 +59,7 @@ static const int _Matrix   = 4;
 static const int _Rotation = 5;
 static const int _Position = 6;
 static const int _Frame    = 7;
+static const int _CelScript= 8;
 
 #define CLASS(i) ClassNames[(i)]
 
@@ -173,6 +178,90 @@ static void initMaps()
     }
     mapsInitialized = true;
 }
+
+
+// Wrapper for a CEL-script, including the needed Execution Environment
+class CelScriptWrapper : public ExecutionEnvironment
+{
+ public:
+    CelScriptWrapper(CelestiaCore& appCore, istream& scriptfile): 
+        script(NULL),
+        core(appCore),
+        cmdSequence(NULL),
+        tickTime(0.0),
+        errorMessage("")
+    {
+        CommandParser parser(scriptfile);
+        cmdSequence = parser.parse();
+        if (cmdSequence != NULL)
+        {
+            script = new Execution(*cmdSequence, *this);
+        }
+        else
+        {
+            const vector<string>* errors = parser.getErrors();
+            if (errors->size() > 0)
+                errorMessage = "Error while parsing CEL-script: " + (*errors)[0];
+            else
+                errorMessage = "Error while parsing CEL-script.";
+        }
+    }
+    
+    virtual ~CelScriptWrapper()
+    {
+        if (script != NULL)
+            delete script;
+        if (cmdSequence != NULL)
+            delete cmdSequence;
+    }
+    
+    string getErrorMessage() const
+    {
+        return errorMessage;
+    }
+    
+    // tick the CEL-script. t is in seconds and doesn't have to start with zero
+    bool tick(double t)
+    {
+        // use first tick to set the time
+        if (tickTime == 0.0)
+        {
+            tickTime = t;
+            return false;
+        }
+        double dt = t - tickTime;
+        tickTime = t;
+        return script->tick(dt);        
+    }
+
+    Simulation* getSimulation() const
+    {
+        return core.getSimulation();
+    }
+
+    Renderer* getRenderer() const
+    {
+        return core.getRenderer();
+    }
+
+    CelestiaCore* getCelestiaCore() const
+    {
+        return &core;         
+    }
+
+    void showText(string s, int horig, int vorig, int hoff, int voff,
+                  double duration)
+    {
+        core.showText(s, horig, vorig, hoff, voff, duration);
+    }
+
+ private:
+    Execution* script;
+    CelestiaCore& core;
+    CommandSequence* cmdSequence;
+    double tickTime;
+    string errorMessage;
+};
 
 
 // Push a class name onto the Lua stack
@@ -2921,6 +3010,78 @@ static void CreateObserverMetaTable(lua_State* l)
     lua_pop(l, 1); // remove metatable from stack
 }
 
+
+// ==================== Celscript-object ====================
+
+// create a CelScriptWrapper from a string:
+static int celscript_from_string(lua_State* l, const char* script_text)
+{
+    // TODO: check which objects need gc:
+    istrstream scriptfile(script_text, strlen(script_text));
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    CelScriptWrapper* celscript = new CelScriptWrapper(*appCore, scriptfile);
+    if (celscript->getErrorMessage() != "")
+    {
+        string error = celscript->getErrorMessage();
+        delete celscript;
+        doError(l, error.c_str());
+    }
+    else
+    {
+        CelScriptWrapper** ud = reinterpret_cast<CelScriptWrapper**>(lua_newuserdata(l, sizeof(CelScriptWrapper*)));
+        *ud = celscript;
+        SetClass(l, _CelScript);
+    }
+
+    return 1;
+}
+
+static CelScriptWrapper* this_celscript(lua_State* l)
+{
+    CelScriptWrapper** script = static_cast<CelScriptWrapper**>(CheckUserData(l, 1, _CelScript));
+    if (script == NULL)
+    {
+        doError(l, "Bad CEL-script object!");
+    }
+    return *script;
+}
+
+static int celscript_tostring(lua_State* l)
+{
+    lua_pushstring(l, "[Celscript]");
+
+    return 1;
+}
+
+static int celscript_tick(lua_State* l)
+{
+    CelScriptWrapper* script = this_celscript(l);
+    LuaState* stateObject = getLuaStateObject(l);
+    double t = stateObject->getTime();
+    lua_pushboolean(l, !(script->tick(t)) );
+    return 1;
+}
+
+static int celscript_gc(lua_State* l)
+{
+    CelScriptWrapper* script = this_celscript(l);
+    delete script;
+    return 0;
+}
+
+
+static void CreateCelscriptMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _CelScript);
+
+    RegisterMethod(l, "__tostring", celscript_tostring);
+    RegisterMethod(l, "tick", celscript_tick);
+    RegisterMethod(l, "__gc", celscript_gc);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+
+
 // ==================== Celestia-object ====================
 static int celestia_new(lua_State* l, CelestiaCore* appCore)
 {
@@ -3968,6 +4129,13 @@ static int celestia_takescreenshot(lua_State* l)
     return 1;
 }
 
+static int celestia_createcelscript(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need one argument for celestia:createcelscript()");
+    const char* scripttext = safeGetString(l, 2, AllErrors, "Argument to celestia:createcelscript() must be a string");
+    return celscript_from_string(l, scripttext);
+}
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -4024,6 +4192,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "getscripttime", celestia_getscripttime);
     RegisterMethod(l, "requestkeyboard", celestia_requestkeyboard);
     RegisterMethod(l, "takescreenshot", celestia_takescreenshot);
+    RegisterMethod(l, "createcelscript", celestia_createcelscript);
 
     lua_pop(l, 1);
 }
@@ -4059,6 +4228,8 @@ bool LuaState::init(CelestiaCore* appCore)
     CreateVectorMetaTable(state);
     CreateRotationMetaTable(state);
     CreateFrameMetaTable(state);
+    CreateCelscriptMetaTable(state);
+
     // Create the celestia object
     lua_pushstring(state, "celestia");
     celestia_new(state, appCore);
