@@ -1901,9 +1901,10 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
             int pow2 = 1;
 
             vector<Point3f>* points = form->points;
+            int nPoints = (int) (points->size() * clamp(galaxy->getDetail()));
 
             glBegin(GL_QUADS);
-            for (int i = 0; i < points->size(); i++)
+            for (int i = 0; i < nPoints; i++)
             {
                 Point3f p = (*points)[i] * m;
                 Vec3f relPos = p - offset;

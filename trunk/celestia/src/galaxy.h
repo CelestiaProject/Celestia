@@ -58,6 +58,8 @@ class Galaxy
     void setRadius(float);
     GalaxyType getType() const;
     void setType(GalaxyType);
+    float getDetail() const;
+    void setDetail(float);
 
     GalacticForm* getForm() const;
     
@@ -66,6 +68,7 @@ class Galaxy
     Point3d position;
     Quatf orientation;
     float radius;
+    float detail;
     GalaxyType type;
     GalacticForm* form;
 };
