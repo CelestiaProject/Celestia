@@ -10,21 +10,21 @@
 #ifndef _EXECUTION_H_
 #define _EXECUTION_H_
 
+#include "execenv.h"
 #include "command.h"
 
 
 class Execution
 {
  public:
-    Execution(CommandSequence&, Simulation*, Renderer*);
+    Execution(CommandSequence&, ExecutionEnvironment&);
     
     bool tick(double);
 
  private:
     CommandSequence::const_iterator currentCommand;
     CommandSequence::const_iterator finalCommand;
-    Simulation* sim;
-    Renderer* renderer;
+    ExecutionEnvironment& env;
     double commandTime;
 };
 
