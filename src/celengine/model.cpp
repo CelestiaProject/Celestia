@@ -40,6 +40,8 @@ static size_t VertexAttributeFormatSizes[Mesh::FormatMax] =
 
 Model::Model()
 {
+    for (int i = 0; i < Mesh::TextureSemanticMax; i++)
+        textureUsage[i] = false;
 }
 
 
@@ -74,6 +76,17 @@ Model::getMaterial(uint32 index) const
 uint32
 Model::addMaterial(const Mesh::Material* m)
 {
+    // Update the texture map usage information for the model.  Since
+    // the material being added isn't necessarily used by a mesh within
+    // the model, we could potentially end up with false positives--this
+    // won't cause any rendering troubles, but could hurt performance
+    // if it forces multipass rendering when it's not required.
+    for (int i = 0; i < Mesh::TextureSemanticMax; i++)
+    {
+        if (m->maps[i] != InvalidResource)
+            textureUsage[i] = true;
+    }
+
     materials.push_back(m);
     return materials.size();
 }
@@ -160,6 +173,12 @@ Model::normalize(const Vec3f& centerOffset)
 #endif
 }
 
+
+bool
+Model::usesTextureType(Mesh::TextureSemantic t) const
+{
+    return textureUsage[static_cast<int>(t)];
+}
 
 
 class MeshComparatorAdapter : public std::binary_function<const Mesh*, const Mesh*, bool>

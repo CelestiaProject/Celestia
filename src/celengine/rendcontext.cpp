@@ -60,7 +60,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 
 RenderContext::RenderContext() :
     material(&defaultMaterial),
-    locked(false)
+    locked(false),
+    renderPass(PrimaryPass)
 {
 }
 
@@ -87,10 +88,22 @@ RenderContext::setMaterial(const Mesh::Material* newMaterial)
         if (newMaterial == NULL)
             newMaterial = &defaultMaterial;
 
-        if (newMaterial != material)
+        if (renderPass == PrimaryPass)
         {
-            material = newMaterial;
-            makeCurrent(*material);
+            if (newMaterial != material)
+            {
+                material = newMaterial;
+                makeCurrent(*material);
+            }
+        }
+        else if (renderPass == EmissivePass)
+        {
+            if (material->maps[Mesh::EmissiveMap] !=
+                newMaterial->maps[Mesh::EmissiveMap])
+            {
+                material = newMaterial;
+                makeCurrent(*material);
+            }
         }
     }
 }
@@ -99,6 +112,14 @@ RenderContext::setMaterial(const Mesh::Material* newMaterial)
 void
 RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 {
+    // Skip rendering if this is the emissive pass but there's no
+    // emissive texture.
+    if (renderPass == EmissivePass &&
+        material->maps[Mesh::EmissiveMap] == InvalidResource)
+    {
+        return;
+    }
+
     glDrawElements(GLPrimitiveModes[(int) group.prim],
                    group.nIndices,
                    GL_UNSIGNED_INT,
@@ -125,70 +146,89 @@ FixedFunctionRenderContext::FixedFunctionRenderContext(const Mesh::Material* _ma
 void
 FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
 {
-    Texture* t = NULL;
-    if (m.maps[Mesh::DiffuseMap] != InvalidResource)
-        t = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
-
-    if (t == NULL)
+    if (getRenderPass() == PrimaryPass)
     {
-        glDisable(GL_TEXTURE_2D);
-    }
-    else
-    {
-        glEnable(GL_TEXTURE_2D);
-        t->bind();
-    }
+        Texture* t = NULL;
+        if (m.maps[Mesh::DiffuseMap] != InvalidResource)
+            t = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
 
-    bool blendOnNow = false;
-    if (m.opacity != 1.0f || (t != NULL && t->hasAlpha()))
-        blendOnNow = true;
-
-    if (blendOnNow != blendOn)
-    {
-        blendOn = blendOnNow;
-        if (blendOn)
+        if (t == NULL)
         {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glDepthMask(GL_FALSE);
+            glDisable(GL_TEXTURE_2D);
         }
         else
         {
-            glDisable(GL_BLEND);
-            glDepthMask(GL_TRUE);
+            glEnable(GL_TEXTURE_2D);
+            t->bind();
+        }
+
+        glColor4f(m.diffuse.red(),
+                  m.diffuse.green(),
+                  m.diffuse.blue(),
+                  m.opacity);
+
+        bool blendOnNow = false;
+        if (m.opacity != 1.0f || (t != NULL && t->hasAlpha()))
+            blendOnNow = true;
+
+        if (blendOnNow != blendOn)
+        {
+            blendOn = blendOnNow;
+            if (blendOn)
+            {
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glDepthMask(GL_FALSE);
+            }
+            else
+            {
+                glDisable(GL_BLEND);
+                glDepthMask(GL_TRUE);
+            }
+        }
+
+        if (m.specular == Color::Black)
+        {
+            float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            float zero = 0.0f;
+            glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+            glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+            specularOn = false;
+        }
+        else
+        {
+            float matSpecular[4] = { m.specular.red(),
+                                     m.specular.green(),
+                                     m.specular.blue(),
+                                     0.0f };
+            glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+            glMaterialfv(GL_FRONT, GL_SHININESS, &m.specularPower);
+            specularOn = true;
+        }
+
+        {
+            float matEmissive[4] = { m.emissive.red(),
+                                     m.emissive.green(),
+                                     m.emissive.blue(),
+                                     0.0f };
+            glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
         }
     }
-
-    glColor4f(m.diffuse.red(),
-              m.diffuse.green(),
-              m.diffuse.blue(),
-              m.opacity);
-
-    if (m.specular == Color::Black)
+    else if (getRenderPass() == EmissivePass)
     {
-        float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        float zero = 0.0f;
-        glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
-        glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
-        specularOn = false;
-    }
-    else
-    {
-        float matSpecular[4] = { m.specular.red(),
-                                 m.specular.green(),
-                                 m.specular.blue(),
-                                 1.0f };
-        glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
-        glMaterialfv(GL_FRONT, GL_SHININESS, &m.specularPower);
-        specularOn = true;
-    }
+        Texture* t = NULL;
+        if (m.maps[Mesh::EmissiveMap] != InvalidResource)
+            t = GetTextureManager()->find(m.maps[Mesh::EmissiveMap]);
 
-    {
-        float matEmissive[4] = { m.emissive.red(),
-                                 m.emissive.green(),
-                                 m.emissive.blue(),
-                                 1.0f };
-        glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
+        if (t == NULL)
+        {
+            glDisable(GL_TEXTURE_2D);
+        }
+        else
+        {
+            glEnable(GL_TEXTURE_2D);
+            t->bind();
+        }
     }
 }
 
@@ -214,6 +254,7 @@ VP_FP_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc, void* 
     setStandardVertexArrays(desc, vertexData);
     setExtendedVertexArrays(desc, vertexData);
 }
+
 
 
 
@@ -327,8 +368,187 @@ GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls,
 
 
 void
-GLSL_RenderContext::makeCurrent(const Mesh::Material&)
+GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 {
+#if 0
+    ShaderProperties shadprop;
+
+    Texture* textures[4] = { NULL, NULL, NULL, NULL };
+    unsigned int nTextures = 0;
+
+    shadprop.nLights = min(ls.nLights, MaxShaderLights);
+
+    // Set up the textures used by this object
+    Texture* baseTex = NULL;
+    Texture* bumpTex = NULL;
+    Texture* specTex = NULL;
+    Texture* emissiveTex = NULL;
+
+    if (m.maps[Mesh::DiffuseMap] != InvalidResource)
+    {
+        baseTex = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
+        if (baseTex != NULL)
+        {
+            shadprop.texUsage = ShaderProperties::DiffuseTexture;
+            textures[nTextures++] = baseTex;
+        }
+    }
+
+    if (m.maps[Mesh::NormalMap] != InvalidResource)
+    {
+        bumpTex = GetTextureManger()->find(m.maps[Mesh::NormalMap]);
+        if (bumpTex != NULL)
+        {
+            shadprop.texUsage |= ShaderProperties::NormalTexture;
+            textures[nTextures++] = bumpTex;
+        }
+    }
+
+    if (m.specular != Color::Black)
+    {
+        shadprop.lightModel = ShaderProperties::SpecularModel;
+        specTex = GetTextureManager()->find(m.maps[Mesh::SpecularMap]);
+        if (specTex == NULL)
+        {
+            shadprop.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
+        }
+        else
+        {
+            shadprop.texUsage |= ShaderProperties::SpecularTexture;
+            textures[nTextures++] = specTex;
+        }
+    }
+
+    if (m.maps[Mesh::EmissiveMap] != InvalidResource)
+    {
+        emissiveTex = GetTextureManager()->find(m.maps[Mesh::EmissiveMap]);
+        if (emissiveTex != NULL)
+        {
+            shadprop.texUsage |= ShaderProperties::NightTexture;
+            textures[nTextures++] = emissiveTex;
+        }
+    }
+
+#if 0    
+    // Set the shadow information.
+    // Track the total number of shadows; if there are too many, we'll have
+    // to fall back to multipass.
+    unsigned int totalShadows = 0;
+    for (unsigned int li = 0; li < ls.nLights; li++)
+    {
+        if (ls.shadows[li] && !ls.shadows[li]->empty())
+        {
+            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, ls.shadows[li]->size());
+            shadprop.setShadowCountForLight(li, nShadows);
+            totalShadows += nShadows;
+        }
+    }
+#endif
+
+    // Get a shader for the current rendering configuration
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    if (prog == NULL)
+        return;
+
+    prog->use();
+
+    setLightParameters_GLSL(*prog, shadprop, ls,
+                            ri.color, ri.specularColor);
+
+    prog->shininess = m.specularPower;
+    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                               ri.ambientColor.blue());
+    
+    if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        float ringWidth = rings->outerRadius - rings->innerRadius;
+        prog->ringRadius = rings->innerRadius / radius;
+        prog->ringWidth = 1.0f / (ringWidth / radius);
+    }
+
+    if (shadprop.shadowCounts != 0)    
+        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
+
+    glColor(ri.color);
+
+    unsigned int attributes = LODSphereMesh::Normals;
+    if (ri.bumpTex != NULL)
+        attributes |= LODSphereMesh::Tangents;
+    lodSphere->render(context,
+                      attributes,
+                      frustum, ri.pixWidth,
+                      textures[0], textures[1], textures[2], textures[3]);
+
+    glx::glUseProgramObjectARB(0);
+
+#if 0
+    Texture* t = NULL;
+    if (m.maps[Mesh::DiffuseMap] != InvalidResource)
+        t = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
+
+    if (t == NULL)
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+        t->bind();
+    }
+
+    glColor4f(m.diffuse.red(),
+              m.diffuse.green(),
+              m.diffuse.blue(),
+              m.opacity);
+
+    bool blendOnNow = false;
+    if (m.opacity != 1.0f || (t != NULL && t->hasAlpha()))
+        blendOnNow = true;
+
+    if (blendOnNow != blendOn)
+    {
+        blendOn = blendOnNow;
+        if (blendOn)
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDepthMask(GL_FALSE);
+        }
+        else
+        {
+            glDisable(GL_BLEND);
+            glDepthMask(GL_TRUE);
+        }
+    }
+
+    if (m.specular == Color::Black)
+    {
+        float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+        float zero = 0.0f;
+        glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+        specularOn = false;
+    }
+    else
+    {
+        float matSpecular[4] = { m.specular.red(),
+                                 m.specular.green(),
+                                 m.specular.blue(),
+                                 0.0f };
+        glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &m.specularPower);
+        specularOn = true;
+    }
+
+    {
+        float matEmissive[4] = { m.emissive.red(),
+                                 m.emissive.green(),
+                                 m.emissive.blue(),
+                                 0.0f };
+        glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
+    }
+#endif
+#endif
 }
 
 
@@ -337,5 +557,3 @@ GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
 				    void* vertexData)
 {
 }
-
-

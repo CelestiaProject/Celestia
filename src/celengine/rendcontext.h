@@ -68,9 +68,19 @@ class RenderContext
     void unlock() { locked = false; }
     bool isLocked() const { return locked; }
 
+    enum RenderPass
+    {
+        PrimaryPass,
+        EmissivePass,
+    };
+
+    RenderPass getRenderPass() const { return renderPass; }
+    void setRenderPass(RenderPass rp) { renderPass = rp; }
+    
  private:
     const Mesh::Material* material;
     bool locked;
+    RenderPass renderPass;
 };
 
 

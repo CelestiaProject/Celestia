@@ -63,6 +63,12 @@ class Model
      */
     void normalize(const Vec3f& centerOffset);
 
+    /*! Return true if the specified texture map type is used at
+     *  all within a mesh. This information is used to decide
+     *  if multiple rendering passes are required.
+     */
+    bool usesTextureType(Mesh::TextureSemantic) const;
+
     class MeshComparator
     {
     public:
@@ -97,6 +103,8 @@ class Model
  private:
     std::vector<const Mesh::Material*> materials;
     std::vector<Mesh*> meshes;
+
+    bool textureUsage[Mesh::TextureSemanticMax];
 };
 
 #endif // !_CELENGINE_MODEL_H_
