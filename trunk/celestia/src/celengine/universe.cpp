@@ -143,6 +143,7 @@ struct PlanetPickInfo
     Body* closestBody;
     Ray3d pickRay;
     double jd;
+    float atanTolerance;
 };
 
 static bool ApproxPlanetPickTraversal(Body* body, void* info)
@@ -151,6 +152,15 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 
     Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
     Vec3d bodyDir = bpos - pickInfo->pickRay.origin;
+
+    // Check the apparent radius of the orbit against our tolerance factor.
+    // This check exists to make sure than when picking a distant, we select
+    // the planet rather than one of its satellites.
+    float appOrbitRadius = (float) (body->getOrbit()->getBoundingRadius() /
+                                    bodyDir.length());
+    if (pickInfo->atanTolerance > appOrbitRadius)
+        return true;
+
     bodyDir.normalize();
     double cosAngle = bodyDir * pickInfo->pickRay.direction;
     if (cosAngle > pickInfo->cosClosestAngle)
@@ -228,6 +238,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     pickInfo.closestDistance = 1.0e50;
     pickInfo.closestBody = NULL;
     pickInfo.jd = when;
+    pickInfo.atanTolerance = (float) atan(tolerance);
 
     // First see if there's a planet that the pick ray intersects.
     // Select the closest planet intersected.
