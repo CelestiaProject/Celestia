@@ -775,15 +775,17 @@ bool ODMenu::GetItem(UINT id, ODMENUITEM** ppItem)
 
 void ODMenu::SetItemImage(HINSTANCE hInst, UINT wID, UINT idBitmap)
 {
-    //Get iterator to ODMENUITEM
+    // Get iterator to ODMENUITEM
     ODMENUITEMS::iterator it;
     HBITMAP hBitmap;
 
-    //Load the bitmap resource
-    hBitmap = (HBITMAP)LoadImage(hInst, MAKEINTRESOURCE(idBitmap), IMAGE_BITMAP, 0, 0, LR_SHARED);
-    if(hBitmap)
+    // Load the bitmap resource
+    hBitmap = (HBITMAP) LoadImage(hInst,
+                                  MAKEINTRESOURCE(idBitmap),
+                                  IMAGE_BITMAP, 0, 0, LR_SHARED);
+    if (hBitmap)
     {
-        //Find menu item having specified wID.
+        // Find menu item having specified wID.
         it = m_menuItems.begin();
         while(it != m_menuItems.end())
         {

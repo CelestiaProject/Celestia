@@ -709,6 +709,7 @@ BOOL APIENTRY FindObjectProc(HWND hDlg,
     return FALSE;
 }
 
+
 BOOL APIENTRY AddBookmarkFolderProc(HWND hDlg,
                                     UINT message,
                                     UINT wParam,
@@ -718,71 +719,72 @@ BOOL APIENTRY AddBookmarkFolderProc(HWND hDlg,
     {
     case WM_INITDIALOG:
         {
-        //Center dialog directly over parent
-        HWND hParent = GetParent(hDlg);
-        CenterWindow(hParent, hDlg);
+            // Center dialog directly over parent
+            HWND hParent = GetParent(hDlg);
+            CenterWindow(hParent, hDlg);
 
-        //Limit text of folder name to 32 chars
-        HWND hEdit = GetDlgItem(hDlg, IDC_BOOKMARKFOLDER);
-        SendMessage(hEdit, EM_LIMITTEXT, 32, 0);
+            // Limit text of folder name to 32 chars
+            HWND hEdit = GetDlgItem(hDlg, IDC_BOOKMARKFOLDER);
+            SendMessage(hEdit, EM_LIMITTEXT, 32, 0);
 
-        //Set initial button states
-        HWND hOK = GetDlgItem(hDlg, IDOK);
-        HWND hCancel = GetDlgItem(hDlg, IDCANCEL);
-        EnableWindow(hOK, FALSE);
-        RemoveButtonDefaultStyle(hOK);
-        AddButtonDefaultStyle(hCancel);
-
-        return(TRUE);
+            // Set initial button states
+            HWND hOK = GetDlgItem(hDlg, IDOK);
+            HWND hCancel = GetDlgItem(hDlg, IDCANCEL);
+            EnableWindow(hOK, FALSE);
+            RemoveButtonDefaultStyle(hOK);
+            AddButtonDefaultStyle(hCancel);
         }
+        return TRUE;
 
     case WM_COMMAND:
         {
-        if (HIWORD(wParam) == EN_CHANGE)
-        {
-            HWND hOK = GetDlgItem(hDlg, IDOK);
-            HWND hCancel = GetDlgItem(hDlg, IDCANCEL);
-
-            if (hOK && hCancel)
+            if (HIWORD(wParam) == EN_CHANGE)
             {
-                //If edit control contains text, enable OK button
-                char name[33];
-                GetWindowText((HWND)lParam, name, sizeof(name));
-                if (name[0])
+                HWND hOK = GetDlgItem(hDlg, IDOK);
+                HWND hCancel = GetDlgItem(hDlg, IDCANCEL);
+
+                if (hOK && hCancel)
                 {
-                    //Remove Cancel button default style
-                    RemoveButtonDefaultStyle(hCancel);
+                    // If edit control contains text, enable OK button
+                    char name[33];
+                    GetWindowText((HWND)lParam, name, sizeof(name));
+                    if (name[0])
+                    {
+                        // Remove Cancel button default style
+                        RemoveButtonDefaultStyle(hCancel);
 
-                    //Enable OK button
-                    EnableWindow(hOK, TRUE);
+                        // Enable OK button
+                        EnableWindow(hOK, TRUE);
 
-                    //Make OK button default
-                    AddButtonDefaultStyle(hOK);
-                }
-                else
-                {
-                    //Disable OK button
-                    EnableWindow(hOK, FALSE);
+                        // Make OK button default
+                        AddButtonDefaultStyle(hOK);
+                    }
+                    else
+                    {
+                        // Disable OK button
+                        EnableWindow(hOK, FALSE);
 
-                    //Remove OK button default style
-                    RemoveButtonDefaultStyle(hOK);
+                        // Remove OK button default style
+                        RemoveButtonDefaultStyle(hOK);
 
-                    //Make Cancel button default
-                    AddButtonDefaultStyle(hCancel);
+                        // Make Cancel button default
+                        AddButtonDefaultStyle(hCancel);
+                    }
                 }
             }
         }
+
         if (LOWORD(wParam) == IDOK)
         {
-            //Get text entered in Folder Name Edit box
+            // Get text entered in Folder Name Edit box
             char name[33];
             HWND hEdit = GetDlgItem(hDlg, IDC_BOOKMARKFOLDER);
             if (hEdit)
             {
                 if (GetWindowText(hEdit, name, sizeof(name)))
                 {
-                    //Create new folder in parent dialog tree control.
-                    AddNewBookmarkFolderInTree(hBookmarkTree, name);
+                    // Create new folder in parent dialog tree control.
+                    AddNewBookmarkFolderInTree(hBookmarkTree, appCore, name);
                 }
             }
 
@@ -793,7 +795,6 @@ BOOL APIENTRY AddBookmarkFolderProc(HWND hDlg,
         {
             EndDialog(hDlg, 0);
             return FALSE;
-        }
         }
     }
 
@@ -910,7 +911,7 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
 
                     appCore->writeFavoritesFile();
 
-                    //Rebuild bookmarks menu.
+                    // Rebuild bookmarks menu.
                     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
                 }
             }
@@ -1097,8 +1098,10 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
         if (LOWORD(wParam) == IDOK)
         {
             HWND hTree;
+#if 0
             if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                 SyncTreeFoldersWithFavoriteFolders(hTree, appCore);
+#endif
 
             // Write any change to bookmarks
             appCore->writeFavoritesFile();
