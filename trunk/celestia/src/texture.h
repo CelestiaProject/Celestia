@@ -12,7 +12,6 @@
 
 #include <string>
 
-using namespace std;
 
 typedef void (*ProceduralTexEval)(float, float, float, unsigned char*);
 
@@ -54,7 +53,7 @@ extern CTexture* CreateJPEGTexture(const char* filename,
                                    int channels = CTexture::ColorChannel);
 extern CTexture* CreateBMPTexture(const char* filename);
 
-extern CTexture* LoadTextureFromFile(string filename);
+extern CTexture* LoadTextureFromFile(const std::string& filename);
 
 extern CTexture* CreateNormalizationCubeMap(int size);
 
