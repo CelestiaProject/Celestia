@@ -25,7 +25,7 @@ class Observer
 public:
     Observer();
 
-    // The getPosition method returns the observer's position in light
+    // The getPosition method returns the observer's position in micro light
     // years.
     UniversalCoord getPosition() const;
 
@@ -65,6 +65,9 @@ public:
 
     Selection getTrackedObject() const;
     void setTrackedObject(const Selection&);
+
+    const std::string& getDisplayedSurface() const;
+    void setDisplayedSurface(const std::string&);
 
     void gotoSelection(const Selection&,
                        double gotoTime,
@@ -170,6 +173,8 @@ public:
 
     float fov;
     bool reverseFlag;
+
+    std::string displayedSurface;
 };
 
 #endif // _CELENGINE_OBSERVER_H_
