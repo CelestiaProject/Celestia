@@ -33,7 +33,7 @@
 
 # Detected via transit as well as radial velocity methods; from transit,
 # inclination is fixed at 81 degrees, so mass can be determined.
-# Radius is estimated at 1.30 jupiters.
+# Radius is estimated at 1.23 jupiters.
 
 
 # Star not present in Celestia's default stars.dat file.
@@ -42,18 +42,19 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    290     # M.sin(i) = 0.9 jupiters
-	Radius  91000
+	Mass    460     # M.sin(i) = 1.45 jupiters
+	Radius  86100
 
 	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-56.html"
 
 	EllipticalOrbit {
 		Period          0.0033
 		SemiMajorAxis   0.0225
+		Eccentricity    0
 		Inclination     89.4
-		AscendingNode   260.2
+		AscendingNode   260.3
 		ArgOfPericenter 84
-		MeanAnomaly     357
+		MeanAnomaly     213
 	}
 
 	Obliquity             89   # guess, to match inclination
@@ -186,7 +187,7 @@
 	EllipticalOrbit {
 		Period          0.0092
 		SemiMajorAxis   0.043
-		Eccentricity    0.0
+		Eccentricity    0
 		ArgOfPericenter 90
 		MeanAnomaly     46
 	}
@@ -323,7 +324,7 @@
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    380     # M.sin(i) = 1.19 jupiters
+	Mass    600     # M.sin(i) = 1.89 jupiters
 	Radius  70000
 
 	InfoURL "http://www.obspm.fr/encycl/ups-And.html"
@@ -714,11 +715,11 @@
 	InfoURL "http://www.obspm.fr/encycl/rho-Crb.html"
 
 	EllipticalOrbit {
-		Period          0.1091
+		Period          0.1094
 		SemiMajorAxis   0.22
 		Eccentricity    0.04
 		ArgOfPericenter 268
-		MeanAnomaly     223
+		MeanAnomaly     190
 	}
 
 	RotationPeriod 10     # guess
@@ -728,17 +729,17 @@
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    500     # M.sin(i) = 1.56 jupiters
+	Mass    590     # M.sin(i) = 1.86 jupiters
 	Radius  70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD74156.html"
 
 	EllipticalOrbit {
-		Period          0.1413
-		SemiMajorAxis   0.276
-		Eccentricity    0.649
-		ArgOfPericenter 45
-		MeanAnomaly     196
+		Period          0.1414
+		SemiMajorAxis   0.294
+		Eccentricity    0.636
+		ArgOfPericenter 43
+		MeanAnomaly     198
 	}
 
 	RotationPeriod 10     # guess
@@ -748,17 +749,17 @@
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2380     # M.sin(i) = 7.5 jupiters
+	Mass    1960     # M.sin(i) = 6.17 jupiters
 	Radius  70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD74156.html"
 
 	EllipticalOrbit {
-		Period          6.2971
-		SemiMajorAxis   3.47
-		Eccentricity    0.395
-		ArgOfPericenter 102
-		MeanAnomaly     109
+		Period          5.5441
+		SemiMajorAxis   3.4
+		Eccentricity    0.583
+		ArgOfPericenter 104
+		MeanAnomaly     114
 	}
 
 	RotationPeriod 10     # guess
