@@ -589,7 +589,6 @@ void CelestiaCore::charEntered(char c)
         if (renderer->getRenderFlags() & Renderer::ShowCometTails)
 	{
             flash("Comet tails enabled");
-	    setFaintestAutoMag();
 	}
         else
             flash("Comet tails disabled");
