@@ -271,7 +271,7 @@ TextureFont* TextureFont::load(istream& in)
     bool byteSwap;
     if (endiannessTest == 0x78563412)
         byteSwap = true;
-    else if (endiannessTest = 0x12345678)
+    else if (endiannessTest == 0x12345678)
         byteSwap = false;
     else
     {
@@ -389,9 +389,9 @@ TextureFont* TextureFont::load(istream& in)
             return NULL;
         }
 
-        for (int y = 0; y < texHeight; y++)
+        for (unsigned int y = 0; y < texHeight; y++)
         {
-            for (int x = 0; x < texWidth; x++)
+            for (unsigned int x = 0; x < texWidth; x++)
             {
                 if ((fontBits[y * rowBytes + (x >> 3)] & (1 << (x & 0x7))) != 0)
                     fontImage[y * texWidth + x] = 0xff;
