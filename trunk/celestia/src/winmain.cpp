@@ -156,6 +156,14 @@ void RestoreDisplayMode()
 }
 
 
+static void SetFaintest(float magnitude)
+{
+    renderer->setBrightnessBias(0.0f);
+    renderer->setBrightnessScale(1.0f / (magnitude + 1.0f));
+    sim->setFaintestVisible(magnitude);
+}
+
+
 bool LoadItemTextFromFile(HWND hWnd,
                           int item,
                           char* filename)
@@ -510,6 +518,7 @@ void handleKeyPress(int c)
         return;
     }
 
+    c = toupper(c);
     switch (c)
     {
     case 'A':
@@ -518,31 +527,6 @@ void handleKeyPress(int c)
         else
             sim->setTargetSpeed(sim->getTargetSpeed() * 10.0f);
         break;
-
-    case VK_F1:
-        sim->setTargetSpeed(0);
-        break;
-
-    case VK_F2:
-        sim->setTargetSpeed(astro::kilometersToLightYears(1.0));
-        break;
-
-    case VK_F3:
-        sim->setTargetSpeed(astro::kilometersToLightYears(1000.0));
-        break;
-
-    case VK_F4:
-        sim->setTargetSpeed(astro::kilometersToLightYears(1000000.0));
-        break;
-
-    case VK_F5:
-        sim->setTargetSpeed(astro::AUtoLightYears(1));
-        break;
-
-    case VK_F6:
-        sim->setTargetSpeed(1);
-        break;
-
     case 'Z':
         sim->setTargetSpeed(sim->getTargetSpeed() * 0.1f);
         break;
@@ -642,6 +626,16 @@ void handleKeyPress(int c)
     case 'W':
         wireframe = !wireframe;
         renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
+        break;
+
+    case '[':
+        if (sim->getFaintestVisible() > 1.0f)
+            SetFaintest(sim->getFaintestVisible() - 0.5f);
+        break;
+
+    case ']':
+        if (sim->getFaintestVisible() < 8.0f)
+            SetFaintest(sim->getFaintestVisible() + 0.5f);
         break;
 
     case ' ':
@@ -801,6 +795,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     sim = new Simulation();
     sim->setStarDatabase(starDB, solarSystemCatalog);
+    sim->setFaintestVisible(config->faintestVisible);
 
     // Set the simulation starting time to the current system time
     sim->setTime((double) time(NULL) + (double) astro::Date(1970, 1, 1) * 86400.0);
@@ -882,6 +877,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         if (star != NULL)
             renderer->addLabelledStar(star);
     }
+
+    renderer->setBrightnessBias(0.0f);
+    renderer->setBrightnessScale(1.0f / (config->faintestVisible + 1.0f));
 
     // We're now ready.
     bReady = 1;
@@ -1086,10 +1084,31 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
         case VK_END:
             handleKey(wParam, true);
             break;
-        default:
-            handleKeyPress(wParam);
+
+        case VK_F1:
+            sim->setTargetSpeed(0);
+            break;
+        case VK_F2:
+            sim->setTargetSpeed(astro::kilometersToLightYears(1.0));
+            break;
+        case VK_F3:
+            sim->setTargetSpeed(astro::kilometersToLightYears(1000.0));
+            break;
+        case VK_F4:
+            sim->setTargetSpeed(astro::kilometersToLightYears(1000000.0));
+            break;
+        case VK_F5:
+            sim->setTargetSpeed(astro::AUtoLightYears(1));
+            break;
+        case VK_F6:
+            sim->setTargetSpeed(1);
+            break;
         }
 	break;
+
+    case WM_CHAR:
+        handleKeyPress(wParam);
+        break;
 
     case WM_COMMAND:
         switch (LOWORD(wParam))
