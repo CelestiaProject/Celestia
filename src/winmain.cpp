@@ -445,6 +445,16 @@ void handleKeyPress(int c)
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetOrbits);
         break;
 
+    case 'P':
+        if (renderer->perPixelLightingSupported())
+        {
+            bool enabled = !renderer->getPerPixelLighting();
+            CheckMenuItem(menuBar, ID_RENDER_PERPIXEL_LIGHTING,
+                          enabled ? MF_CHECKED : MF_UNCHECKED);
+            renderer->setPerPixelLighting(enabled);
+        }
+        break;
+
     case '1':
     case '2':
     case '3':
@@ -687,6 +697,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		   "Fatal Error",
 		   MB_OK | MB_ICONERROR);
 	return FALSE;
+    }
+
+    if (renderer->perPixelLightingSupported())
+    {
+        renderer->setPerPixelLighting(true);
+        CheckMenuItem(menuBar, ID_RENDER_PERPIXEL_LIGHTING, MF_CHECKED);
     }
 
     // Set up the star labels
@@ -978,6 +994,15 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
             renderer->setAmbientLightLevel(0.25f);
+            break;
+        case ID_RENDER_PERPIXEL_LIGHTING:
+            if (renderer->perPixelLightingSupported())
+            {
+                bool enabled = !renderer->getPerPixelLighting();
+                CheckMenuItem(menuBar, ID_RENDER_PERPIXEL_LIGHTING,
+                              enabled ? MF_CHECKED : MF_UNCHECKED);
+                renderer->setPerPixelLighting(enabled);
+            }
             break;
 
         case ID_TIME_FASTER:
