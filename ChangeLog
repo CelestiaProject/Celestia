@@ -419,3 +419,7 @@ Code:
 * Optimized rendering of planet meshes
 * Switched to high levels of details when camera is near surface of a planet
 * Improved the appearance of the corona around stars
+* Fixed specular lighting for 3DS meshes, but correcting the mapping of 3DS
+  shininess to OpenGL specular exponents.
+
+	
