@@ -4410,52 +4410,45 @@ static int celestia_takescreenshot(lua_State* l)
             fileid[i] = '_';
     }
     // limit length of string
-    if (fileid.length() > 8)
-        fileid = fileid.substr(0, 8);
+    if (fileid.length() > 16)
+        fileid = fileid.substr(0, 16);
     if (fileid.length() > 0)
         fileid.append("-");
 
-    int maxCount = (int) appCore->getConfig()->scriptScreenshotCount;
-    if ((luastate->screenshotCount < maxCount)  || (maxCount == -1))
-    {
-        string path = appCore->getConfig()->scriptScreenshotDirectory;
-        if (path.length() > 0 && 
-            path[path.length()-1] != '/' && 
-            path[path.length()-1] != '\\')
+    string path = appCore->getConfig()->scriptScreenshotDirectory;
+    if (path.length() > 0 && 
+        path[path.length()-1] != '/' && 
+        path[path.length()-1] != '\\')
 
-            path.append("/");
+        path.append("/");
 
-            luastate->screenshotCount++;
-        bool success = false;
-        char filenamestem[32];
-        sprintf(filenamestem, "screenshot-%s%06i", fileid.c_str(), luastate->screenshotCount);
+    luastate->screenshotCount++;
+    bool success = false;
+    char filenamestem[48];
+    sprintf(filenamestem, "screenshot-%s%06i", fileid.c_str(), luastate->screenshotCount);
 
-        // Get the dimensions of the current viewport
-        int viewport[4];
-        glGetIntegerv(GL_VIEWPORT, viewport);
+    // Get the dimensions of the current viewport
+    int viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
 
 #ifndef MACOSX
-        if (strncmp(filetype, "jpg", 3) == 0)
-        {
-            string filepath = path + filenamestem + ".jpg";
-            success = CaptureGLBufferToJPEG(string(filepath),
-                                           viewport[0], viewport[1],
-                                           viewport[2], viewport[3]);
-        }
-        else
-        {
-            string filepath = path + filenamestem + ".png";
-            success = CaptureGLBufferToPNG(string(filepath),
-                                           viewport[0], viewport[1],
-                                           viewport[2], viewport[3]);
-        }
-#endif
-        lua_pushboolean(l, success);
+    if (strncmp(filetype, "jpg", 3) == 0)
+    {
+        string filepath = path + filenamestem + ".jpg";
+        success = CaptureGLBufferToJPEG(string(filepath),
+                                       viewport[0], viewport[1],
+                                       viewport[2], viewport[3]);
     }
     else
     {
-        lua_pushboolean(l, false);
+        string filepath = path + filenamestem + ".png";
+        success = CaptureGLBufferToPNG(string(filepath),
+                                       viewport[0], viewport[1],
+                                       viewport[2], viewport[3]);
     }
+#endif
+    lua_pushboolean(l, success);
+
     // no matter how long it really took, make it look like 0.1s to timeout check:
     luastate->timeout = luastate->getTime() + timeToTimeout - 0.1;
     return 1;
