@@ -52,11 +52,13 @@
     CelestiaSimulation *sim;
     NSString* dateString = [dateField stringValue];
     NSString* timeString = [timeField stringValue];
-    NSString* inputString = [ [  dateString stringByAppendingString: @" " ]  
-                             stringByAppendingString: timeString ];  
+    NSString* inputString;  
     NSString* fmtString = @"%m/%d/%Y %H:%M:%S";
-    NSCalendarDate* cdate = [NSCalendarDate dateWithString: inputString calendarFormat: fmtString ];
-    NSNumber* jd = [ Astro julianDate: cdate];
+    NSCalendarDate* cdate;
+    NSNumber* jd;
+
+
+
 
     sim = [[CelestiaAppCore sharedAppCore] simulation];
     if ( [dateString isEqualToString: @""] && [timeString isEqualToString: @""])
@@ -64,6 +66,7 @@
        NSRunAlertPanel(@"No Date or Time Entered",@"Please enter a date and/or time.",nil,nil,nil);
        return;
     }
+    
     if ( [timeString isEqualToString: @""] )
     {
         NSLog(@"emptyTime");
@@ -81,6 +84,10 @@
         NSLog(timeString);
         
     }
+    inputString = [ [  dateString stringByAppendingString: @" " ]  
+                             stringByAppendingString: timeString ];  
+    cdate = [NSCalendarDate dateWithString: inputString calendarFormat: fmtString ];
+
     if ( cdate == NULL )
        {
 //       NSLog(@"bad date");
@@ -90,6 +97,7 @@
     NSLog( [cdate description] );
 //    float fjd = [jd intValue];
 //    NSLog ( @"jdate = %", fjd);
+    jd = [ Astro julianDate: cdate];
     [sim setDate: jd ];
 }
 
