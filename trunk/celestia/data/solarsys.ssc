@@ -63,7 +63,6 @@
 	Texture "earth.png"
 	# Texture "earth8k.dds"
 	NightTexture "earthnight.jpg"
-	# CompressTexture true
 	Color [ 0.85 0.85 1.0 ]
 	SpecularColor [ 0.5 0.5 0.55 ]
 	SpecularPower 25.0
