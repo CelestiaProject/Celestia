@@ -282,6 +282,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     CelestiaConfig* getConfig() const;
 
+    void notifyWatchers(int);
+
     class Alerter
     {
     public:
@@ -307,7 +309,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool readStars(const CelestiaConfig&);
     void renderOverlay();
     void fatalError(const std::string&);
-    void notifyWatchers(int);
 
  private:
     CelestiaConfig* config;
