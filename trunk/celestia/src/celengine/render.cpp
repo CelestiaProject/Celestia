@@ -3474,6 +3474,8 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
 
 static void renderSphere_GLSL(const RenderInfo& ri,
                               const LightingState& ls,
+                              RingSystem* rings,
+                              float radius,
                               const Frustum& frustum,
                               const GLContext& context)
 {
@@ -3481,8 +3483,6 @@ static void renderSphere_GLSL(const RenderInfo& ri,
     unsigned int nTextures = 0;
     VertexProcessor* vproc = context.getVertexProcessor();
     assert(vproc != NULL);
-
-    bool perFragmentLighting = (ri.bumpTex != NULL);
 
     vproc->disable();
     glDisable(GL_LIGHTING);
@@ -3520,6 +3520,29 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         textures[nTextures++] = ri.nightTex;
     }
 
+    if (rings != NULL)
+#if 0
+        (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
+        (renderFlags & ShowRingShadows) != 0)
+#endif
+    {
+        Texture* ringsTex = rings->texture.find(medres);
+        if (ringsTex != NULL)
+        {
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            ringsTex->bind();
+            // Tweak the texture--set clamp to border and a border color with
+            // a zero alpha.
+            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                            GL_CLAMP_TO_BORDER_ARB);
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+
+            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
+        }
+    }
+
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
     if (prog == NULL)
@@ -3543,7 +3566,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
                                  light.color.blue()) * light.irradiance;
         prog->lights[i].direction = light.direction_obj;
 
-        if (perFragmentLighting)
+        if (shadprop.usesShadows() || shadprop.usesFragmentLighting())
         {
             prog->fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
                                             lightColor.y * diffuseColor.y,
@@ -3569,6 +3592,14 @@ static void renderSphere_GLSL(const RenderInfo& ri,
     prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
                                ri.ambientColor.blue());
     
+    if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        float ringWidth = rings->outerRadius - rings->innerRadius;
+        prog->ringRadius = rings->innerRadius / radius;
+        prog->ringWidth = 1.0f / (ringWidth / radius);
+    }
+
+
     glColor(ri.color);
 
     unsigned int attributes = LODSphereMesh::Normals;
@@ -4736,7 +4767,8 @@ void Renderer::renderObject(Point3f pos,
             switch (context->getRenderPath())
             {
             case GLContext::GLPath_GLSL:
-                renderSphere_GLSL(ri, ls, viewFrustum, *context);
+                renderSphere_GLSL(ri, ls, obj.rings, obj.radius,
+                                  viewFrustum, *context);
                 break;
 
             case GLContext::GLPath_NV30:
@@ -4969,7 +5001,8 @@ void Renderer::renderObject(Point3f pos,
             ringsTex->bind();
 
             if (useClampToBorder &&
-                context->getVertexPath() != GLContext::VPath_Basic)
+                context->getVertexPath() != GLContext::VPath_Basic &&
+                context->getRenderPath() != GLContext::GLPath_GLSL)
             {
                 renderRingShadowsVS(model,
                                     *obj.rings,
