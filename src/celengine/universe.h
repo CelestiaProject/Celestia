@@ -61,6 +61,10 @@ class Universe
     std::vector<std::string> getCompletionPath(const std::string& s,
                        PlanetarySystem** solarSystems = NULL,
                        int nSolarSystems = 0);
+    Selection findChildObject(const Selection& sel,
+                              const string& name) const;
+    Selection findObjectInContext(const Selection& sel,
+                                  const string& name) const;
 
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
     SolarSystem* getSolarSystem(const Star* star) const;
