@@ -54,10 +54,12 @@ static inline uint lodOffset(uint lod)
 VirtualTexture::VirtualTexture(const string& _tilePath,
                                unsigned int _baseSplit,
                                unsigned int _tileSize,
+                               const string& _tilePrefix,
                                const string& _tileType) :
     Texture(_tileSize << (_baseSplit + 1), _tileSize << _baseSplit),
     tilePath(_tilePath),
     baseSplit(_baseSplit),
+    tilePrefix(_tilePrefix),
     tileSize(_tileSize),
     ticks(0),
     nResolutionLevels(0)
@@ -213,7 +215,7 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
     assert(lod < MaxResolutionLevels);
     
     char filename[32];
-    sprintf(filename, "level%d/tx_%d_%d", lod, u, v);
+    sprintf(filename, "level%d/%s%d_%d", lod, tilePrefix.c_str(), u, v);
     
     string pathname = tilePath + filename + tileExt;
     //cout << "Loading virtual texture tile: " << pathname << '\n';
@@ -254,6 +256,12 @@ void VirtualTexture::populateTileTree()
 {
     // Count the number of resolution levels present
     uint maxLevel = 0;
+
+    // Crash potential if the tile prefix contains a %, so disallow it
+    string pattern;
+    if (tilePrefix.find('%') == string::npos)
+        pattern = tilePrefix + "%d_%d.";
+
     for (int i = 0; i < MaxResolutionLevels; i++)
     {
         char filename[32];
@@ -271,7 +279,7 @@ void VirtualTexture::populateTileTree()
                 while (dir->nextFile(filename))
                 {
                     int u = -1, v = -1;
-                    if (sscanf(filename.c_str(), "tx_%d_%d.", &u, &v) == 2)
+                    if (sscanf(filename.c_str(), pattern.c_str(), &u, &v) == 2)
                     {
                         if (u >= 0 && v >= 0 && u < uLimit && v < vLimit)
                         {
@@ -346,9 +354,14 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
 
     string tileType = "dds";
     texParams->getString("TileType", tileType);
+
+    string tilePrefix = "tx_";
+    texParams->getString("TilePrefix", tilePrefix);
+
     return new VirtualTexture(path + "/" + imageDirectory + "/",
                               (unsigned int) baseSplit,
                               (unsigned int) tileSize,
+                              tilePrefix,
                               tileType);
 
     return NULL;
