@@ -743,9 +743,12 @@ void CelestiaCore::tick(double dt)
     if (keysPressed[Key_NumPad9] || joyButtonsPressed[JoyButton8])
         av += Vec3f(0, 0, dt * KeyRotationAccel);
 
-
+    //Use Boolean to indicate if sim->setTargetSpeed() is called
+    bool bSetTargetSpeed = false;
     if (joystickRotation != Vec3f(0.0f, 0.0f, 0.0f))
     {
+        bSetTargetSpeed = true;
+
         av += (float) (dt * KeyRotationAccel) * joystickRotation;
         sim->setTargetSpeed(sim->getTargetSpeed());
     }
@@ -757,6 +760,8 @@ void CelestiaCore::tick(double dt)
 
     if (keysPressed['A'] || joyButtonsPressed[JoyButton2])
     {
+        bSetTargetSpeed = true;
+
         if (sim->getTargetSpeed() == 0.0f)
             sim->setTargetSpeed(astro::kilometersToLightYears(0.1f));
         else
@@ -764,7 +769,15 @@ void CelestiaCore::tick(double dt)
     }
     if (keysPressed['Z'] || joyButtonsPressed[JoyButton1])
     {
+        bSetTargetSpeed = true;
+
         sim->setTargetSpeed(sim->getTargetSpeed() / (float) exp(dt * 3));
+    }
+    if(!bSetTargetSpeed && av.length() > 0.0f)
+    {
+        //Force observer velocity vector to align with observer direction if an observer
+        //angular velocity still exists.
+        sim->setTargetSpeed(sim->getTargetSpeed());
     }
 
     // If there's a script running, tick it
