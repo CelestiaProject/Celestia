@@ -23,11 +23,14 @@ using namespace std;
 
 static string inputFilename;
 static string outputFilename;
+static bool useSphericalCoords = false;
 
 
 void Usage()
 {
-    cerr << "Usage: makestardb <input file> <output star database>\n";
+    cerr << "Usage: makestardb [options] <input file> <output star database>\n";
+    cerr << "  Options:\n";
+    cerr << "    --spherical (or -s) : input file has spherical coords (RA/dec/distance\n";
 }
 
 
@@ -40,6 +43,11 @@ bool parseCommandLine(int argc, char* argv[])
     {
         if (argv[i][0] == '-')
         {
+            if (!strcmp(argv[i], "--spherical") || !strcmp(argv[i], "-s"))
+            {
+                useSphericalCoords = true;
+            }
+            else
             {
                 cerr << "Unknown command line switch: " << argv[i] << '\n';
                 return false;
@@ -98,7 +106,7 @@ static void writeShort(ostream& out, int16 n)
 }
 
 
-bool WriteStarDatabase(istream& in, ostream& out)
+bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
 {
     unsigned int record = 0;
     unsigned int nStarsInFile = 0;
@@ -134,18 +142,49 @@ bool WriteStarDatabase(istream& in, ostream& out)
             return false;
         }
 
-        in >> x >> y >> z;
-        if (!in.good())
+        if (sphericalCoords)
         {
-            cerr << "Error parsing position of star " << catalogNumber << '\n';
-            return false;
-        }
+            float RA, dec, distance;
+            float appMag;
 
-        in >> absMag;
-        if (!in.good())
+            in >> RA >> dec >> distance;
+            if (!in.good())
+            {
+                cerr << "Error parsing position of star " << catalogNumber << '\n';
+                return false;
+            }
+
+            in >> appMag;
+            if (!in.good())
+            {
+                cerr << "Error parsing magnitude of star " << catalogNumber << '\n';
+                return false;
+            }
+
+            Point3d pos =
+                astro::equatorialToCelestialCart((double) RA * 24.0 / 360.0,
+                                                 (double) dec,
+                                                 (double) distance);
+            x = (float) pos.x;
+            y = (float) pos.y;
+            z = (float) pos.z;
+            absMag = (float) (appMag + 5 - 5 * log10(distance / 3.26));
+        }
+        else
         {
-            cerr << "Error parsing magnitude of star " << catalogNumber << '\n';
-            return false;
+            in >> x >> y >> z;
+            if (!in.good())
+            {
+                cerr << "Error parsing position of star " << catalogNumber << '\n';
+                return false;
+            }
+
+            in >> absMag;
+            if (!in.good())
+            {
+                cerr << "Error parsing magnitude of star " << catalogNumber << '\n';
+                return false;
+            }
         }
 
         string scString;
@@ -191,7 +230,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    bool success = WriteStarDatabase(inputFile, stardbFile);
+    bool success = WriteStarDatabase(inputFile, stardbFile, useSphericalCoords);
 
     return success ? 0 : 1;
 }
