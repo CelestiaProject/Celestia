@@ -3111,6 +3111,10 @@ renderEclipseShadows(Model* model,
                      Frustum& viewFrustum,
                      const GLContext& context)
 {
+    // Eclipse shadows on mesh objects aren't working yet.
+    if (model != NULL)
+        return;
+
     for (vector<Renderer::EclipseShadow>::iterator iter = eclipseShadows.begin();
          iter != eclipseShadows.end(); iter++)
     {
@@ -3371,8 +3375,8 @@ renderRingShadowsVS(Model* model,
     // ring plane.  There's some justification for this--the larger the angle
     // between the sun and the ring plane (normal), the more ring material
     // there is to travel through.
-    //float alpha = (1.0f - abs(ri.sunDir_obj.y)) * 0.5f;
-    float alpha = 1.0f;
+    float alpha = (1.0f - abs(ri.sunDir_obj.y)) * 0.5f;
+    //float alpha = 1.0f;
 
     VertexProcessor* vproc = context.getVertexProcessor();
     assert(vproc != NULL);
