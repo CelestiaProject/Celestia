@@ -431,6 +431,10 @@ The txf font format used by Celestia was devised by Mark Kilgard.
 
 The star database (stars.dat) was derived from the ESA's HIPPARCOS data set.
 
+Constellation boundaries are drawn from Davenhall & Leggett's "Catalogue of 
+Constellation Boundary Data": 
+  http://cdsweb.u-strasbg.fr/viz-bin/ftp-index?/ftp/cats/VI/49
+
 This software is based in part on the work of the Independent JPEG Group.
 
 A special thank you goes to all Celestia users who submit bug reports,
