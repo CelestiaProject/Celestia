@@ -24,8 +24,8 @@ class Location
     std::string getName() const;
     void setName(const std::string&);
 
-    Point3f getPosition() const;
-    void setPosition(const Point3f&);
+    Vec3f getPosition() const;
+    void setPosition(const Vec3f&);
 
     float getSize() const;
     void setSize(float);
@@ -76,7 +76,7 @@ class Location
 
  private:
     std::string name;
-    Point3f position;
+    Vec3f position;
     float size;
     float importance;
     uint32 featureType;

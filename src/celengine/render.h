@@ -239,7 +239,7 @@ class Renderer
                       Color sunColor,
                       RenderProperties& obj);
 
-    void renderPlanet(const Body& body,
+    void renderPlanet(Body& body,
                       Point3f pos,
                       Vec3f sunDirection,
                       float distance,

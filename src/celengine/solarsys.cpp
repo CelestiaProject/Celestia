@@ -65,7 +65,7 @@ static Location* CreateLocation(Hash* locationData,
     Vec3f position = body->planetocentricToCartesian((float) longlat.x,
                                                      (float) longlat.y,
                                                      (float) longlat.z);
-    location->setPosition(Point3f(0.0f, 0.0f, 0.0f) + position);
+    location->setPosition(position);
 
     double size = 0.0;
     locationData->getNumber("Size", size);
