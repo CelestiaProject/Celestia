@@ -13,7 +13,6 @@
 // #include "gl.h"
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
-#include <celutil/watchable.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/command.h>
