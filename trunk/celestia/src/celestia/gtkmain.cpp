@@ -346,7 +346,7 @@ static void menuAbout()
 {
     const gchar* authors[] = {
         "Chris Laurel <claurel@shatters.net>",
-	"Deon Ramsey <miavir@furry.de>",
+	"Deon Ramsey <dramsey@sourceforge.net>",
         "Clint Weisbrod <cweisbrod@adelphia.net>",
         NULL
     };

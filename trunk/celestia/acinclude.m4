@@ -154,7 +154,9 @@ main ()
        echo "*** full path to gtk-config. If you are running Linux or some-"
        echo "*** thing similar, you may need to install the gtk-devel package"
        echo "*** (or some other package with a similar name) in order to get"
-       echo "*** a working gtk-config."
+       echo "*** a working gtk-config. If in fact you don't have or want GTK,"
+       echo "*** disregard this message. Note that configuring with"
+       echo "*** '--without-gtk' will turn off this check and message."
      else
        if test -f conf.gtktest ; then
         :

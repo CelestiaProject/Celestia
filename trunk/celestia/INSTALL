@@ -2,9 +2,12 @@ Celestia Install instructions for UNIX
 --------------------------------------
 
 You need to have the following components installed before Celestia
-will build: OpenGL (tested with Mesa 3.4), glut, libjpeg, and libpng.
+will build: OpenGL (tested with Mesa 3.4), glu, glut, libjpeg, and libpng.
+Should you have a package based installation (most Linux distributions these
+days are), you will also need to install the devel packages for your OpenGL,
+glu, glut and glibc packages.
 
-Then, assuming you've collected all the necessary libraries, here's
+OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
 
 	configure
@@ -24,7 +27,7 @@ depending in your Installation Distributions you may also need other packages
 containing various information needed by the build process, for instance, to
 build under SUSE Linux, you will also need to have the gtk-devel package
 installed, and having GNOME's devel packages present also is probably not
-a bad idea.
+a bad idea (in fact, currently absolutely necessary for the GTK version).
 
 Celestia will be installed into /usr/local by default, with data files landing
 in /usr/local/share/Celestia , but you may specify a new location with the
@@ -35,6 +38,6 @@ in /usr/local/share/Celestia , but you may specify a new location with the
 All the other usual configure parameters apply; you may see which options
 are available using 'configure --help'
 
-Chris Laurel
-claurel@.shatters.net
+Chris Laurel                &      Deon Ramsey
+claurel@.shatters.net              dramsey@users.sourceforge.net
 
