@@ -2103,3 +2103,20 @@
 		Eccentricity  0.2  
 	}
 }
+
+
+# HD 73256 system
+"b" "HD 73256"
+{
+	Texture "jupiterlike.jpg"
+	Mass 590
+	Radius 68000
+
+	InfoURL "http://planetquest1.jpl.nasa.gov/atlas/atlas_profile.cfm?Planet=HD_73256_b"
+
+	EllipticalOrbit {
+		Period	      0.006978
+		SemiMajorAxis 0.037
+		Eccentricity  0.038  
+	}
+}
