@@ -229,8 +229,9 @@ void SphereMesh::generateNormals()
     for (i = 0; i <= nSlices; i++)
     {
         int vertex = i;
+        int j;
         faceCounts[vertex] = nSlices;
-        for (int j = 0; j < nSlices; j++)
+        for (j = 0; j < nSlices; j++)
         {
             int face = j;
             normals[vertex * 3]     += faceNormals[face].x;

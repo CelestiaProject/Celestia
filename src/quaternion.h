@@ -17,6 +17,9 @@
 #include "vecmath.h"
 
 
+#if 0
+// Forward declarations needed to make friend templates work . . .
+// Disabled until I can get this to work on every compiler.
 template<class T> class Quaternion;
 
 template<class T> Quaternion<T> operator+(Quaternion<T>, Quaternion<T>);
@@ -28,6 +31,7 @@ template<class T> bool operator==(Quaternion<T>, Quaternion<T>);
 template<class T> bool operator!=(Quaternion<T>, Quaternion<T>);
 template<class T> T real(Quaternion<T>);
 template<class T> Vector3<T> imag(Quaternion<T>);
+#endif
 
 template<class T> class Quaternion
 {
@@ -67,6 +71,8 @@ public:
     bool isReal() const;
     T normalize();
 
+#if 0
+    // This code is disabled until I can 
 #ifndef BROKEN_FRIEND_TEMPLATES
     // This just rocks . . .  MSVC 6.0 doesn't parse this correctly,
     // so template friend functions need to be declared in the standard
@@ -94,8 +100,11 @@ public:
 
     friend T real(Quaternion<T>);
     friend Vector3<T> imag(Quaternion<T>);
+#endif // BROKEN_FRIEND_TEMPLATES
+
 #endif
 
+    // Until friend templates are working . . .
     // private:
     T w, x, y, z;
 };
