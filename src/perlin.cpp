@@ -56,7 +56,7 @@ float turbulence(float v[], float freq)
 }
 
 
-float turbulence(Point2f& p, float freq)
+float turbulence(const Point2f& p, float freq)
 {
     float t;
     float vec[2];
@@ -72,7 +72,7 @@ float turbulence(Point2f& p, float freq)
 }
 
 
-float turbulence(Point3f& p, float freq)
+float turbulence(const Point3f& p, float freq)
 {
     float t;
     float vec[3];
@@ -105,7 +105,7 @@ float fractalsum(float v[], float freq)
 }
 
 
-float fractalsum(Point2f& p, float freq)
+float fractalsum(const Point2f& p, float freq)
 {
     float t;
     float vec[2];
@@ -121,7 +121,7 @@ float fractalsum(Point2f& p, float freq)
 }
 
 
-float fractalsum(Point3f& p, float freq)
+float fractalsum(const Point3f& p, float freq)
 {
     float t;
     float vec[3];
