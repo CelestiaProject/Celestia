@@ -59,6 +59,7 @@ class Simulation
     void gotoSelection(double gotoTime, double distance);
     void centerSelection(double centerTime = 0.5);
     void follow();
+    void geosynchronousFollow();
     void cancelMotion();
 
     SolarSystem* getNearestSolarSystem() const;
@@ -73,10 +74,10 @@ class Simulation
     void setHUDDetail(int);
 
     enum ObserverMode {
-        Free        = 0,
-        Travelling  = 1,
-        Following   = 2,
-        Tracking    = 3,
+        Free                    = 0,
+        Travelling              = 1,
+        Following               = 2,
+        GeosynchronousFollowing = 3,
     };
 
     void setObserverMode(ObserverMode);
@@ -100,6 +101,7 @@ class Simulation
         Body* body;
         Star* sun;
         Vec3d offset;
+        Quatd offsetR;
     } FollowParams;
 
  private:
