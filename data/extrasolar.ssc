@@ -2088,3 +2088,18 @@
 		Eccentricity  0.2  
 	}
 }
+
+# HD 47536 system
+# http://www.edpsciences.org/articles/aa/abs/2003/05/aaek052/aaek052.html
+"b" "HD 47536"
+{
+	Texture "jupiterlike.jpg"
+	Mass 1600
+	Radius 65000
+
+	EllipticalOrbit {
+		Period	      1.95 # 712 days
+		SemiMajorAxis 1.95 # estimated 1.6-2.3 A.U.
+		Eccentricity  0.2  
+	}
+}
