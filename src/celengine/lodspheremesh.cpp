@@ -250,7 +250,7 @@ void LODSphereMesh::render(const GLContext& context,
         glEnable(GL_TEXTURE_2D);
     }
 
-#if 1
+#ifdef VERTEX_BUFFER_OBJECTS_ENABLED
     if (!vertexBuffersInitialized)
     {
         // TODO: assumes that the same context is used every time we
@@ -400,6 +400,10 @@ void LODSphereMesh::render(const GLContext& context,
         }
         // cout << "Rendered " << nPatches << " of " << square(split) << " patches\n";
     }
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    if ((attributes & Normals) != 0)
+        glDisableClientState(GL_NORMAL_ARRAY);
 
     if ((attributes & Tangents) != 0)
     {
