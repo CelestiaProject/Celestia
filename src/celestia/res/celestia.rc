@@ -64,6 +64,9 @@ BEGIN
     END
     POPUP "&Render"
     BEGIN
+	MENUITEM "Select Display Mode...",      ID_RENDER_DISPLAYMODE
+	MENUITEM "Toggle Full Screen\tAlt+Enter", ID_RENDER_FULLSCREEN
+	MENUITEM SEPARATOR
         MENUITEM "Show &Galaxies\tU",           ID_RENDER_SHOWGALAXIES
         MENUITEM "Show A&tmospheres\tCtrl+A",   ID_RENDER_SHOWATMOSPHERES
         MENUITEM "Show C&louds\tI",             ID_RENDER_SHOWCLOUDS
@@ -314,6 +317,20 @@ BEGIN
 END
 
 
+IDD_DISPLAYMODE DIALOG DISCARDABLE  0, 0, 164, 65
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+CAPTION "Select Display Mode"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_RESOLUTION,47,18,110,90,CBS_DROPDOWNLIST | CBS_SORT |
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Resolution",IDC_STATIC,7,21,34,8
+    DEFPUSHBUTTON   "OK",IDOK,27,44,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,87,44,50,14
+END
+
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -389,6 +406,7 @@ BEGIN
     VK_F4,          ID_FILE_EXIT,           VIRTKEY, ALT, NOINVERT
     VK_F10,         ID_FILE_CAPTUREIMAGE,   VIRTKEY, NOINVERT
     VK_F10,         ID_FILE_CAPTUREMOVIE,   VIRTKEY, SHIFT, NOINVERT
+    VK_RETURN,      ID_RENDER_FULLSCREEN,   VIRTKEY, ALT, NOINVERT
 END
 
 
