@@ -25,7 +25,7 @@ class OverlayStreamBuf : public std::streambuf
  public:
     OverlayStreamBuf() : overlay(NULL) { setbuf(0, 0); };
 
-    setOverlay(Overlay*);
+    void setOverlay(Overlay*);
 
     int overflow(int c = EOF);
 

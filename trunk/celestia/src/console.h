@@ -31,7 +31,7 @@ class ConsoleStreamBuf : public std::streambuf
  public:
     ConsoleStreamBuf() : console(NULL) { setbuf(0, 0); };
 
-    setConsole(Console*);
+    void setConsole(Console*);
 
     int overflow(int c = EOF);
 

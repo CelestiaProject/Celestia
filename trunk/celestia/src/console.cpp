@@ -204,7 +204,7 @@ void Console::render()
 }
 
 
-ConsoleStreamBuf::setConsole(Console* c)
+void ConsoleStreamBuf::setConsole(Console* c)
 {
     console = c;
 }
