@@ -1122,15 +1122,15 @@ void CelestiaCore::keyUp(int key, int)
     shiftKeysPressed[key] = false;
 }
 
-void CelestiaCore::charEntered(char c)
+void CelestiaCore::charEntered(char c, int modifiers)
 {
     char C[2];
     C[0] = c;
     C[1] = '\0';
-    charEntered(C);
+    charEntered(C, modifiers);
 }
 
-void CelestiaCore::charEntered(const char *c_p)
+void CelestiaCore::charEntered(const char *c_p, int modifiers)
 {
     Observer* observer = sim->getActiveObserver();
 
@@ -1465,19 +1465,20 @@ void CelestiaCore::charEntered(const char *c_p)
         if (paused)
         {
             sim->setTimeScale(timeScale);
-            // CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_UNCHECKED);
             scriptPaused = false;
         }
         else
         {
             timeScale = sim->getTimeScale();
             sim->setTimeScale(0.0);
-            // Spacebar=pause time and script Spacebar+Shift=Pause time only.
-            if ( ((runningScript != NULL) || (celxScript != NULL)) && (GetKeyState(VK_SHIFT) & 0x8000) )
-                scriptPaused = false;
-            else
+
+            // If there's a script running then pause it.  This has the potentially
+            // confusing side effect of rendering nonfunctional goto, center, and
+            // other movement commands.
+            if ((runningScript != NULL) || (celxScript != NULL))
                 scriptPaused = true;
-            // CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_CHECKED);
+            else
+                scriptPaused = false;
         }
 
         paused = !paused;
@@ -2341,7 +2342,7 @@ void CelestiaCore::setZoomFromFOV()
     for (std::vector<View*>::iterator i = views.begin(); i < views.end(); i++)
         if ((*i)->type == View::ViewWindow)
         {
-            (*i)->zoom = 2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) /  (*i)->observer->getFOV();
+            (*i)->zoom = (float) (2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) /  (*i)->observer->getFOV());
         }
 }
 
@@ -2688,7 +2689,8 @@ static void displayPlanetInfo(Overlay& overlay,
                               int detail,
                               Body& body,
                               double t,
-                              double distance)
+                              double distance,
+                              Vec3d viewVec)
 {
     double kmDistance = astro::lightYearsToKilometers(distance);
 
@@ -2724,6 +2726,17 @@ static void displayPlanetInfo(Overlay& overlay,
                 overlay << "Temperature: " << planetTemp << " K\n";
                 overlay << setprecision(3);
             }
+            
+#if 0
+            // Code to display apparent magnitude.  Disabled because it's not very
+            // accurate.  Too many simplifications are used when computing the amount
+            // of light reflected from a body.
+            Point3d bodyPos = body.getHeliocentricPosition(t);
+            float appMag = body.getApparentMagnitude(*sun,
+                                                     bodyPos - Point3d(0, 0, 0),
+                                                     viewVec);
+            overlay.printf("Apparent mag: %.2f\n", appMag);
+#endif
         }
     }
 }
@@ -2895,8 +2908,8 @@ void CelestiaCore::renderOverlay()
         // Time and date
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(width - (11 + timeZoneName.length() + 3) * emWidth,
-                     height - fontHeight, 0);
+        glTranslatef((float) (width - (11 + timeZoneName.length() + 3) * emWidth),
+                     (float) (height - fontHeight), 0.0f);
         overlay->beginText();
 
 	bool time_displayed = false;
@@ -2993,7 +3006,7 @@ void CelestiaCore::renderOverlay()
 
         // Speed
         glPushMatrix();
-        glTranslatef(0, fontHeight * 2 + 5, 0);
+        glTranslatef(0.0f, fontHeight * 2 + 5, 0.0f);
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
@@ -3134,7 +3147,8 @@ void CelestiaCore::renderOverlay()
                                   hudDetail,
                                   *(sel.body()),
                                   sim->getTime(),
-                                  v.length() * 1e-6);
+                                  v.length() * 1e-6,
+                                  v * astro::microLightYearsToKilometers(1.0));
             }
             break;
 
@@ -3358,14 +3372,14 @@ void CelestiaCore::renderOverlay()
 
             logoTexture->bind();
             glBegin(GL_QUADS);
-            //glColor4f(0.8f, 0.8f, 1.0f, botAlpha);
-            glColor4f(1.0f, 1.0f, 1.0f, botAlpha);
+            glColor4f(0.8f, 0.8f, 1.0f, botAlpha);
+            //glColor4f(1.0f, 1.0f, 1.0f, botAlpha);
             glTexCoord2f(0, 1);
             glVertex2f(left, bottom);
             glTexCoord2f(1, 1);
             glVertex2f(left + xSize, bottom);
-            //glColor4f(0.6f, 0.6f, 1.0f, topAlpha);
-            glColor4f(1.0f, 1.0f, 1.0f, topAlpha);
+            glColor4f(0.6f, 0.6f, 1.0f, topAlpha);
+            //glColor4f(1.0f, 1.0f, 1.0f, topAlpha);
             glTexCoord2f(1, 0);
             glVertex2f(left + xSize, bottom + ySize);
             glTexCoord2f(0, 0);

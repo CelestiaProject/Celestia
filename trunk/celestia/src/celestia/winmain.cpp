@@ -3504,26 +3504,33 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
     case WM_CHAR:
         {
-             // Bits 16-23 of lParam specify the scan code of the key pressed.
-             // Ignore all keypad input, this will be handled by WM_KEYDOWN
-             // messages.
-             char cScanCode = (char) (HIWORD(lParam) & 0xFF);
-             if((cScanCode >= 71 && cScanCode <= 73) ||
-                (cScanCode >= 75 && cScanCode <= 77) ||
-                (cScanCode >= 79 && cScanCode <= 83))
-                 break;
+            // Bits 16-23 of lParam specify the scan code of the key pressed.
 
-             int charCode = (char) wParam;
+            // Ignore all keypad input, this will be handled by WM_KEYDOWN
+            // messages.
+            char cScanCode = (char) (HIWORD(lParam) & 0xFF);
+            if((cScanCode >= 71 && cScanCode <= 73) ||
+               (cScanCode >= 75 && cScanCode <= 77) ||
+               (cScanCode >= 79 && cScanCode <= 83))
+            {
+                break;
+            }
 
-             // Catch backtab (shift+Tab)
-             if (charCode == '\011' && (GetKeyState(VK_SHIFT) & 0x8000) != 0)
-                 charCode = CelestiaCore::Key_BackTab;
+            int charCode = (char) wParam;
+            int modifiers = 0;
+            if (GetKeyState(VK_SHIFT) & 0x8000)
+                modifiers |= CelestiaCore::ShiftKey;
+
+            // Catch backtab (shift+Tab)
+            if (charCode == '\011' && (modifiers & CelestiaCore::ShiftKey))
+                charCode = CelestiaCore::Key_BackTab;
 
             Renderer* r = appCore->getRenderer();
             int oldRenderFlags = r->getRenderFlags();
             int oldLabelMode = r->getLabelMode();
+
             Renderer::StarStyle oldStarStyle = r->getStarStyle();
-            appCore->charEntered(charCode);
+            appCore->charEntered(charCode, modifiers);
             if (r->getRenderFlags() != oldRenderFlags ||
                 r->getLabelMode() != oldLabelMode ||
                 r->getStarStyle() != oldStarStyle)
