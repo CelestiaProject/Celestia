@@ -29,6 +29,8 @@ namespace vp
     extern unsigned int diffuse;
     extern unsigned int diffuseHaze;
     extern unsigned int diffuseBump;
+    extern unsigned int diffuseBumpHaze;
+    extern unsigned int everything;
 };
 
 #endif // _VERTEXPROG_H_
