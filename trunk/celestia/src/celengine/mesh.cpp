@@ -8,11 +8,11 @@
 // of the License, or (at your option) any later version.
 
 #include "mesh.h"
+#include "rendcontext.h"
 #include "gl.h"
 #include "glext.h"
 #include "vecgl.h"
 #include <cassert>
-#include <iostream>
 
 using namespace std;
 
@@ -54,6 +54,18 @@ static size_t VertexAttributeFormatSizes[Mesh::FormatMax] =
      16, // Float4,
      4,  // UByte4
 };
+
+
+Mesh::Material::Material() :
+    diffuse(0.0f, 0.0f, 0.0f),
+    emissive(0.0f, 0.0f, 0.0f),
+    specular(0.0f, 0.0f, 0.0f),
+    specularPower(1.0f),
+    opacity(1.0f),
+    tex0(InvalidResource),
+    tex1(InvalidResource)
+{
+}
 
 
 Mesh::Mesh() :
@@ -287,26 +299,19 @@ Mesh::pick(const Ray3d& ray, double& distance) const
 }
 
 
-void Mesh::render(const std::vector<const Material*>& materials) const
+void Mesh::render(const std::vector<const Material*>& materials,
+                  RenderContext& rc) const
 {
     // Can't render anything unless we have positions
     if (vertexAttributeMap[Position].format != Float3)
         return;
 
-    cout << "Mesh::render\n";
-    cout.flush();
+    assert(0);
 
     // Set up the vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, vertexStride,
                     reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset);
-
-    cout << "VertexPointer: stride=" << vertexStride <<
-        ", offset=" << vertexAttributeMap[Position].offset <<
-        ", vertices=" << vertices << 
-        ", nVertices=" << nVertices << '\n';
-    cout.flush();
-
 
     // Set up the normal array
     switch (vertexAttributeMap[Normal].format)
@@ -316,7 +321,6 @@ void Mesh::render(const std::vector<const Material*>& materials) const
         glNormalPointer(GLComponentTypes[(int) vertexAttributeMap[Normal].format],
                         vertexStride,
                         reinterpret_cast<char*>(vertices) + vertexAttributeMap[Normal].offset);
-        cout << "Normal offset=" << vertexAttributeMap[Normal].offset << '\n';
         break;
     default:
         glDisableClientState(GL_NORMAL_ARRAY);
@@ -334,7 +338,6 @@ void Mesh::render(const std::vector<const Material*>& materials) const
                        GLComponentTypes[(int) vertexAttributeMap[Color0].format],
                        vertexStride,
                        reinterpret_cast<char*>(vertices) + vertexAttributeMap[Color0].offset);
-        cout << "Color0 offset=" << vertexAttributeMap[Color0].offset << '\n';
         break;
     default:
         glDisableClientState(GL_COLOR_ARRAY);
@@ -353,11 +356,14 @@ void Mesh::render(const std::vector<const Material*>& materials) const
                           GLComponentTypes[(int) vertexAttributeMap[Texture0].format],
                           vertexStride,
                           reinterpret_cast<char*>(vertices) + vertexAttributeMap[Texture0].offset);
-        cout << "Texture0 offset=" << vertexAttributeMap[Texture0].offset << '\n';
         break;
     default:
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         break;
+    }
+
+    {
+        float* f = reinterpret_cast<float*>(reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset);
     }
 
     uint32 lastMaterial = ~0;
@@ -367,28 +373,57 @@ void Mesh::render(const std::vector<const Material*>& materials) const
          iter != groups.end(); iter++)
     {
         // Set up the material
+        const Material* mat = NULL;
         uint32 materialIndex = (*iter)->materialIndex;
         if (materialIndex != lastMaterial &&
             materialIndex > 0 &&
             materialIndex <= materials.size())
         {
-            glColor(materials[materialIndex - 1]->diffuse);
+            mat = materials[materialIndex - 1];
         }
-
-        cout << "prim group: type=" << (*iter)->prim <<
-            ", nIndices=" << (*iter)->nIndices <<
-            ", indices=" << (*iter)->indices << '\n';
-        cout.flush();
+        rc.setMaterial(mat);
 
         glDrawElements(GLPrimitiveModes[(int) (*iter)->prim],
                        (*iter)->nIndices,
                        GL_UNSIGNED_INT,
                        (*iter)->indices);
-        cout << "done\n";
-        cout.flush();
     }
 }
 
+
+AxisAlignedBox
+Mesh::getBoundingBox() const
+{
+    AxisAlignedBox bbox;
+
+    // Return an empty box if there's no position info
+    if (vertexAttributeMap[Position].format != Float3)
+        return bbox;
+
+    char* vdata = reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset;
+    
+    for (uint32 i = 0; i < nVertices; i++, vdata += vertexStride)
+        bbox.include(Point3f(reinterpret_cast<float*>(vdata)));
+
+    return bbox;
+}
+
+
+void
+Mesh::transform(Vec3f translation, float scale)
+{
+    if (vertexAttributeMap[Position].format != Float3)
+        return;
+
+    char* vdata = reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset;
+    for (uint32 i = 0; i < nVertices; i++, vdata += vertexStride)
+    {
+        Vec3f tv = (Vec3f(reinterpret_cast<float*>(vdata)) + translation) * scale;
+        reinterpret_cast<float*>(vdata)[0] = tv.x;
+        reinterpret_cast<float*>(vdata)[1] = tv.y;
+        reinterpret_cast<float*>(vdata)[2] = tv.z;
+    }
+}
 
 
 Mesh::PrimitiveGroupType

@@ -8,11 +8,12 @@
 // of the License, or (at your option) any later version.
 
 #include "modelfile.h"
-#include <celengine/tokenizer.h>
-
+#include "tokenizer.h"
+#include "texmanager.h"
 #include <cstring>
 #include <cassert>
 #include <cmath>
+#include <cstdio>
 
 using namespace std;
 
@@ -37,6 +38,7 @@ public:
     ~AsciiModelLoader();
 
     virtual Model* load();
+    virtual void reportError(const string&);
 
     Mesh::Material*          loadMaterial();
     Mesh::VertexDescription* loadVertexDescription();
@@ -74,35 +76,66 @@ ModelLoader::getErrorMessage() const
 }
 
 
+void
+ModelLoader::setTexturePath(const string& _texPath)
+{
+    texPath = _texPath;
+}
+
+
+const string&
+ModelLoader::getTexturePath() const
+{
+    return texPath;
+}
+
 
 Model* LoadModel(istream& in)
 {
-    ModelLoader* loader = NULL;
+    return LoadModel(in, "");
+}
+
+
+Model* LoadModel(istream& in, const string& texPath)
+{
+    ModelLoader* loader = ModelLoader::OpenModel(in);
+    if (loader == NULL)
+        return NULL;
+
+    loader->setTexturePath(texPath);
+
+    Model* model = loader->load();
+    if (model == NULL)
+        cerr << "Error in model file: " << loader->getErrorMessage() << '\n';
+
+    delete loader;
+
+    cout << "Model loaded\n"; cout.flush();
+
+    return model;
+}
+
+
+ModelLoader*
+ModelLoader::OpenModel(istream& in)
+{
     char header[CEL_MODEL_HEADER_LENGTH + 1];
     memset(header, '\0', sizeof(header));
 
     in.read(header, CEL_MODEL_HEADER_LENGTH);
     if (strcmp(header, CEL_MODEL_HEADER_ASCII) == 0)
     {
-        loader = new AsciiModelLoader(in);
+        return new AsciiModelLoader(in);
     }
     else if (strcmp(header, CEL_MODEL_HEADER_BINARY) == 0)
     {
-        loader = new BinaryModelLoader(in);
+        return new BinaryModelLoader(in);
     }
     else
     {
         cerr << "Model file has invalid header.\n";
         return NULL;
     }
-
-    Model* model = loader->load();
-    if (model == NULL)
-        cout << "Loading error: " << loader->getErrorMessage() << '\n';
-
-    delete loader;
-
-    return model;
 }
 
 
@@ -114,6 +147,15 @@ AsciiModelLoader::AsciiModelLoader(istream& _in) :
 
 AsciiModelLoader::~AsciiModelLoader()
 {
+}
+
+
+void
+AsciiModelLoader::reportError(const string& msg)
+{
+    char buf[32];
+    sprintf(buf, " (line %d)", tok.getLineNumber());
+    ModelLoader::reportError(msg + string(buf));
 }
 
 
@@ -139,39 +181,58 @@ AsciiModelLoader::loadMaterial()
            tok.getNameValue() != "end")
     {
         string property = tok.getNameValue();
-        double data[3];
 
-        // All material properties are 3-vectors except specular power and
-        // opacity
-        int nValues = 3;
-        if (property == "specpower" || property == "opacity")
-            nValues = 1;
-
-        for (int i = 0; i < nValues; i++)
+        if (property == "tex0" || property == "tex1")
         {
-            if (tok.nextToken() != Tokenizer::TokenNumber)
+            if (tok.nextToken() != Tokenizer::TokenString)
             {
-                reportError("Bad property value in material");
+                reportError("Texture name expected");
                 delete material;
                 return NULL;
             }
-            data[i] = tok.getNumberValue();
+
+            ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(tok.getStringValue(), getTexturePath(), TextureInfo::WrapTexture));
+            clog << "Model has texture " << tok.getStringValue() << ", id=" << tex << '\n';
+            if (property == "tex0")
+                material->tex0 = tex;
+            else if (property == "tex1")
+                material->tex1 = tex;
         }
+        else
+        {
+            // All non-texture material properties are 3-vectors except
+            // specular power and opacity
+            double data[3];
+            int nValues = 3;
+            if (property == "specpower" || property == "opacity")
+                nValues = 1;
 
-        Color colorVal;
-        if (nValues == 3)
-            colorVal = Color((float) data[0], (float) data[1], (float) data[2]);
+            for (int i = 0; i < nValues; i++)
+            {
+                if (tok.nextToken() != Tokenizer::TokenNumber)
+                {
+                    reportError("Bad property value in material");
+                    delete material;
+                    return NULL;
+                }
+                data[i] = tok.getNumberValue();
+            }
 
-        if (property == "diffuse")
-            material->diffuse = colorVal;
-        else if (property == "specular")
-            material->specular = colorVal;
-        else if (property == "emissive")
-            material->emissive = colorVal;
-        else if (property == "opacity")
-            material->opacity = (float) data[0];
-        else if (property == "specpower")
-            material->specularPower = (float) data[0];
+            Color colorVal;
+            if (nValues == 3)
+                colorVal = Color((float) data[0], (float) data[1], (float) data[2]);
+            
+            if (property == "diffuse")
+                material->diffuse = colorVal;
+            else if (property == "specular")
+                material->specular = colorVal;
+            else if (property == "emissive")
+                material->emissive = colorVal;
+            else if (property == "opacity")
+                material->opacity = (float) data[0];
+            else if (property == "specpower")
+                material->specularPower = (float) data[0];
+        }
     }    
 
     if (tok.getTokenType() != Tokenizer::TokenName)
@@ -449,6 +510,17 @@ AsciiModelLoader::loadMesh()
                 delete mesh;
                 return NULL;
             }
+
+            uint32 index = (uint32) tok.getNumberValue();
+            if (index >= vertexCount)
+            {
+                reportError("Index out of range");
+                delete indices;
+                delete mesh;
+                return NULL;
+            }
+
+            indices[i] = index;
         }
 
         mesh->addGroup(type, materialIndex, indexCount, indices);
