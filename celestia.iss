@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.2.6
+AppVerName=Celestia 1.3.0
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -66,6 +66,7 @@ Source: "textures\medres\dione.jpg"; DestDir: "{app}/textures/medres"; CopyMode:
 Source: "textures\medres\earth.png"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\earth-clouds.png"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\earthnight.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\enceladus.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\europa.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\ganymede.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\gasgiant.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
@@ -116,6 +117,7 @@ Source: "textures\lores\dione.jpg"; DestDir: "{app}/textures/lores"; CopyMode: a
 Source: "textures\lores\earth.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\earth-clouds.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\earthnight.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\enceladus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\europa.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\ganymede.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\gasgiant.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
@@ -151,7 +153,7 @@ Source: "textures\lores\uranus-rings.png"; DestDir: "{app}/textures/lores"; Copy
 Source: "textures\lores\venus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\venuslike.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 
-; shaders
+; NV shaders
 Source: "shaders\bumpdiffuse.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\bumphaze.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\diffuse.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
@@ -163,6 +165,20 @@ Source: "shaders\specular.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwri
 Source: "shaders\rings.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\ringshadow.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\night.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+
+; ARB shaders
+Source: "shaders\bumpdiffuse_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\bumphaze_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\diffuse_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\diffuse_texoff_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\haze_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\shadowtex_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\simple_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\specular_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\rings_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\ringshadow_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\night_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\glossmap_arb.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 
 ; models
 Source: "models\amalthea.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite
@@ -204,6 +220,9 @@ Source: "fonts\helvbold18.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrit
 Source: "fonts\helvbold24.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
 Source: "fonts\sansbold20.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
 
+; standard extras
+Source: "extras\minormoons.ssc"; DestDir: "{app}/extras"; CopyMode: alwaysoverwrite
+
 [INI]
 Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.shatters.net/celestia/"
 
@@ -218,7 +237,7 @@ Root: HKCR; Subkey: "cel"; ValueType: string; ValueData: "URL:cel Protocol"; Tas
 Root: HKCR; Subkey: "cel"; ValueName: "URL Protocol"; ValueType: string; Tasks: urlassoc
 Root: HKCR; Subkey: "cel\Shell"; ValueType: string; Tasks: urlassoc
 Root: HKCR; Subkey: "cel\Shell\open"; ValueType: string; Tasks: urlassoc
-Root: HKCR; Subkey: "cel\Shell\open\Command"; ValueType: string; ValueData: "{app}\celestia.exe --once -dir ""{app}"" -u ""%1"""; Tasks: urlassoc
+Root: HKCR; Subkey: "cel\Shell\open\Command"; ValueType: string; ValueData: "{app}\celestia.exe --once --dir ""{app}"" -u ""%1"""; Tasks: urlassoc
 
 [Run]
 Filename: "{app}\celestia.exe"; Description: "Launch Celestia"; Flags: nowait postinstall skipifsilent
