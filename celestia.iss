@@ -259,13 +259,13 @@ Source: "fonts\clean16.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
 Source: "fonts\cleanbold12.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
 Source: "fonts\cleanbold16.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
 Source: "fonts\default.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
-Source: "fonts\helv10.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
-Source: "fonts\helv12.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
-Source: "fonts\helv18.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
-Source: "fonts\helv24.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
-Source: "fonts\helvbold12.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
-Source: "fonts\helvbold18.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
-Source: "fonts\helvbold24.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
+Source: "fonts\sans10.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
+Source: "fonts\sans12.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
+Source: "fonts\sans14.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
+Source: "fonts\sans20.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
+Source: "fonts\sansbold10.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
+Source: "fonts\sansbold12.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
+Source: "fonts\sansbold14.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
 Source: "fonts\sansbold20.txf"; DestDir: "{app}/fonts"; CopyMode: alwaysoverwrite
 
 ; standard extras
