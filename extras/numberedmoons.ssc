@@ -1108,6 +1108,29 @@
 }
 
 
+"2001U3" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		6
+
+	EllipticalOrbit
+	{
+	Period		266.6
+	SemiMajorAxis	4276000
+	Eccentricity	0.1459
+	Inclination	109.890 #
+	AscendingNode	149.112	#
+	ArgOfPericenter	15.118	# J2000.0
+	MeanAnomaly     20.667	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+
 # Additional moons of Neptune
 
 "2002N1" "Sol/Neptune"
