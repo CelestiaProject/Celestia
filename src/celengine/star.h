@@ -22,7 +22,6 @@ public:
     inline Star();
 
     inline uint32 getCatalogNumber() const;
-    inline uint32 getCatalogNumber(unsigned int) const;
     inline StellarClass getStellarClass() const;
     inline Point3f getPosition() const;
     inline float getAbsoluteMagnitude() const;
@@ -34,7 +33,6 @@ public:
     float getBolometricMagnitude() const;
 
     void setCatalogNumber(uint32);
-    void setCatalogNumber(unsigned int, uint32);
     void setPosition(float, float, float);
     void setPosition(Point3f);
     void setStellarClass(StellarClass);
@@ -45,36 +43,27 @@ public:
         InvalidCatalogNumber = 0xffffffff
     };
 
-    enum {
-        HIPCatalog           = 0,
-        HDCatalog            = 1,
-        CatalogCount         = 2,
-    };
-
 private:
-    uint32 catalogNumbers[CatalogCount];
+    uint32 catalogNumber;
+    void* extendedInfo;
     Point3f position;
     float absMag;
     StellarClass stellarClass;
 };
 
 
-Star::Star() : position(0, 0, 0),
-               absMag(4.83f),
-               stellarClass()
+Star::Star() :
+    catalogNumber(InvalidCatalogNumber),
+    extendedInfo(NULL),
+    position(0, 0, 0),
+    absMag(4.83f),
+    stellarClass()
 {
-    for (int i = 0; i < CatalogCount; i++)
-        catalogNumbers[i] = InvalidCatalogNumber;
 }
 
 uint32 Star::getCatalogNumber() const
 {
-    return catalogNumbers[0];
-}
-
-uint32 Star::getCatalogNumber(unsigned int which) const
-{
-    return catalogNumbers[which];
+    return catalogNumber;
 }
 
 float Star::getAbsoluteMagnitude() const
