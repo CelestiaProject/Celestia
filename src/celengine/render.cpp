@@ -3549,8 +3549,11 @@ static void renderSphere_GLSL(const RenderInfo& ri,
     shadprop.nLights = ls.nLights;
 
     // Set up the textures used by this object
-    shadprop.texUsage = ShaderProperties::DiffuseTexture;
-    textures[nTextures++] = ri.baseTex;
+    if (ri.baseTex != NULL)
+    {
+        shadprop.texUsage = ShaderProperties::DiffuseTexture;
+        textures[nTextures++] = ri.baseTex;
+    }
 
     if (ri.bumpTex != NULL)
     {
@@ -3580,7 +3583,6 @@ static void renderSphere_GLSL(const RenderInfo& ri,
     
     if (rings != NULL)
 #if 0
-        (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
         (renderFlags & ShowRingShadows) != 0)
 #endif
     {
@@ -3589,6 +3591,8 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         {
             glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
+            nTextures++;
+
             // Tweak the texture--set clamp to border and a border color with
             // a zero alpha.
             float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
