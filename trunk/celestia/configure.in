@@ -382,6 +382,8 @@ AC_CONFIG_FILES([ macros/Makefile ])
 AC_CONFIG_FILES([ manual/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/data/Makefile ])
+AC_CONFIG_FILES([ src/celestia/kde/doc/Makefile ])
+AC_CONFIG_FILES([ src/celestia/kde/doc/celestia/Makefile ])
 AC_OUTPUT
 
 AC_MSG_RESULT()
