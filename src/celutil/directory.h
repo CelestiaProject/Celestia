@@ -40,7 +40,7 @@ class Directory
     virtual bool enumFiles(EnumFilesHandler& handler, bool deep);
 };
 
-
+extern std::string WordExp(const std::string&);
 extern Directory* OpenDirectory(const std::string&);
 extern bool IsDirectory(const std::string&);
 

@@ -105,3 +105,7 @@ bool IsDirectory(const std::string& filename)
     else
         return ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0);
 }
+
+std::string WordExp(const std::string& filename) {
+    return filename;
+}

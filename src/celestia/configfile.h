@@ -56,6 +56,6 @@ struct CelestiaConfig
 };
 
 
-CelestiaConfig* ReadCelestiaConfig(std::string filename);
+CelestiaConfig* ReadCelestiaConfig(std::string filename, CelestiaConfig* config = NULL);
 
 #endif // _CONFIGFILE_H_
