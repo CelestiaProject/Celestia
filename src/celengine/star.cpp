@@ -776,9 +776,9 @@ Star::getSystemCenter(double t) const
     else
     {
         Point3f barycenterPosLY = position;
-        Point3f barycenterPos(barycenterPosLY.x * 1.0e6f,
-                              barycenterPosLY.y * 1.0e6f,
-                              barycenterPosLY.z * 1.0e6f);
+        Point3d barycenterPos(barycenterPosLY.x * 1.0e6,
+                              barycenterPosLY.y * 1.0e6,
+                              barycenterPosLY.z * 1.0e6);
 
         if (details->getSystemOrigin() == StarDetails::OriginStar)
         {
