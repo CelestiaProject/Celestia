@@ -125,7 +125,8 @@ Renderer::Renderer() :
     useRescaleNormal(false),
     useMinMaxBlending(false),
     textureResolution(medres),
-    minOrbitSize(MinOrbitSizeForLabel)
+    minOrbitSize(MinOrbitSizeForLabel),
+    distanceLimit(1.0e6f)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
 }
@@ -568,6 +569,18 @@ void Renderer::setAmbientLightLevel(float level)
 void Renderer::setMinimumOrbitSize(float pixels)
 {
     minOrbitSize = pixels;
+}
+
+
+float Renderer::getDistanceLimit() const
+{
+    return distanceLimit;
+}
+
+
+void Renderer::setDistanceLimit(float distanceLimit_)
+{
+    distanceLimit = distanceLimit_;
 }
 
 
@@ -2524,7 +2537,8 @@ void Renderer::renderObject(Point3f pos,
     {
         renderRings(*obj.rings, ri, radius,
                     textureResolution,
-                    nSimultaneousTextures > 1);
+                    nSimultaneousTextures > 1 &&
+                    (renderFlags & ShowRingShadows) != 0);
     }
 
     if (obj.atmosphere != NULL)
@@ -2646,7 +2660,8 @@ void Renderer::renderObject(Point3f pos,
     {
         renderRings(*obj.rings, ri, radius,
                     textureResolution,
-                    nSimultaneousTextures > 1);
+                    nSimultaneousTextures > 1 &&
+                    (renderFlags & ShowRingShadows) != 0);
     }
 
     glPopMatrix();
@@ -3219,8 +3234,9 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.appMag = appMag;
             renderList.insert(renderList.end(), rle);
         }
-#if 1
-        if (body->getClassification() == Body::Comet)
+
+        if (body->getClassification() == Body::Comet &&
+            (renderFlags & ShowCometTails) != 0)
         {
             float radius = 10000000.0f; // body->getRadius() * 1000000.0f;
             discSize = (radius / (float) distanceFromObserver) / pixelSize;
@@ -3240,7 +3256,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                 renderList.insert(renderList.end(), rle);
             }
         }
-#endif
 
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
@@ -3336,6 +3351,7 @@ public:
     float saturationMag;
     float brightnessScale;
     float brightnessBias;
+    float distanceLimit;
 
     int nProcessed;
     int nRendered;
@@ -3350,6 +3366,7 @@ StarRenderer::StarRenderer()
     nBright = 0;
     nProcessed = 0;
     starVertexBuffer = NULL;
+    distanceLimit = 1.0e6f;
 }
 
 void StarRenderer::process(const Star& star, float distance, float appMag)
@@ -3358,6 +3375,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
     Point3f starPos = star.getPosition();
     Vec3f relPos = starPos - position;
+
+    if (distance > distanceLimit)
+        return;
 
     if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f)
     {
@@ -3477,6 +3497,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.brightnessBias = brightnessBias;
     starRenderer.faintestMag = faintestMag;
     starRenderer.saturationMag = saturationMag;
+    starRenderer.distanceLimit = distanceLimit;
 
     glareParticles.clear();
 
@@ -3672,7 +3693,7 @@ void Renderer::labelStars(const vector<Star*>& stars,
         float appMag = (distance > 0.0f) ?
             astro::absToAppMag(star->getAbsoluteMagnitude(), distance) : -100.0f;
         
-        if (appMag < faintestMag)
+        if (appMag < faintestMag && distance <= distanceLimit)
         {
             Vec3f rpos = pos - observerPos_ly;
 
