@@ -250,8 +250,8 @@ void LODSphereMesh::render(const GLContext& context,
     }
 
     // Set up the mesh vertices 
-    int nRings = phiExtent / step;
-    int nSlices = thetaExtent / step;
+    int nRings = phiExtent / ri.step;
+    int nSlices = thetaExtent / ri.step;
 
     int n2 = 0;
     for (i = 0; i < nRings; i++)
