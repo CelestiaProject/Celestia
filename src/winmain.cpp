@@ -29,6 +29,7 @@
 #include "mathlib.h"
 #include "astro.h"
 #include "config.h"
+#include "favorites.h"
 #include "simulation.h"
 #include "execution.h"
 #include "cmdparser.h"
@@ -78,6 +79,8 @@ static CelestiaConfig* config = NULL;
 static StarDatabase* starDB = NULL;
 static StarNameDatabase* starNameDB = NULL;
 static SolarSystemCatalog* solarSystemCatalog = NULL;
+
+static FavoritesList* favorites = NULL;
 
 static Simulation* sim = NULL;
 static Renderer* renderer = NULL;
@@ -568,13 +571,13 @@ void handleKeyPress(int c)
         if (c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
         {
             typedText += c;
-            renderer->getEntryConsole()->print(c);
+            renderer->getInputConsole()->print(c);
         }
         else if (c == '\b')
         {
             if (typedText.size() > 0)
                 typedText = string(typedText, 0, typedText.size() - 1);
-            renderer->getEntryConsole()->backspace();
+            renderer->getInputConsole()->backspace();
         }
         return;
     }
@@ -829,6 +832,17 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return FALSE;
     }
 
+    if (config->favoritesFile != "")
+    {
+        favorites = ReadFavoritesList(config->favoritesFile);
+        if (favorites == NULL)
+        {
+            MessageBox(NULL,
+                       "Error reading favorites file.", "Warning",
+                       MB_OK | MB_ICONERROR);
+        }
+    }
+
     if (!ReadStars(config->starDatabaseFile, config->starNamesFile))
     {
         MessageBox(NULL,
@@ -944,6 +958,38 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     renderer->setBrightnessBias(0.0f);
     renderer->setBrightnessScale(1.0f / (config->faintestVisible + 1.0f));
 
+    // Add favorites to locations menu
+    if (favorites != NULL)
+    {
+        MENUITEMINFO menuInfo;
+        menuInfo.cbSize = sizeof(MENUITEMINFO);
+        menuInfo.fMask = MIIM_SUBMENU;
+        if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
+        {
+            HMENU locationsMenu = menuInfo.hSubMenu;
+
+            menuInfo.cbSize = sizeof MENUITEMINFO;
+            menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
+            menuInfo.fType = MFT_SEPARATOR;
+            menuInfo.fState = MFS_UNHILITE;
+            InsertMenuItem(locationsMenu, 1, TRUE, &menuInfo);
+
+            int index = 0;
+            for (FavoritesList::const_iterator iter = favorites->begin();
+                 iter != favorites->end();
+                 iter++, index++)
+            {
+                menuInfo.cbSize = sizeof MENUITEMINFO;
+                menuInfo.fMask = MIIM_TYPE | MIIM_ID;
+                menuInfo.fType = MFT_STRING;
+                // menuInfo.fState = MFS_DEFAULT;
+                menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + index;
+                menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
+                InsertMenuItem(locationsMenu, index + 2, TRUE, &menuInfo);
+            }
+        }
+    }
+
     // We're now ready.
     bReady = 1;
 
@@ -955,29 +1001,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     sim->setTimeScale(1.0f);
     sim->follow();
 
-#if 0
-    script.insert(script.end(), new CommandSelect("Sirius"));
-    script.insert(script.end(), new CommandCenter(1.0));
-    script.insert(script.end(), new CommandWait(1.0));
-    script.insert(script.end(), new CommandSelect("Rigel"));
-    script.insert(script.end(), new CommandCenter(1.0));
-    script.insert(script.end(), new CommandWait(1.0));
-    script.insert(script.end(), new CommandSelect("Antares"));
-    script.insert(script.end(), new CommandGoto(5.0));
-#endif
-#if 0
-    script.insert(script.end(), new CommandSelect("Sol"));
-    script.insert(script.end(), new CommandSelect("Mir"));
-    script.insert(script.end(), new CommandSetTimeRate(0.0));
-    script.insert(script.end(), new CommandGoto(3.0));
-    script.insert(script.end(), new CommandWait(3.0));
-    script.insert(script.end(), new CommandFollow());
-    script.insert(script.end(), new CommandSetTimeRate(100.0));
-    script.insert(script.end(), new CommandWait(3.0));
-    script.insert(script.end(), new CommandChangeDistance(5.0, 2.5));
-#endif
     {
-        ifstream scriptfile("test.csc");
+        ifstream scriptfile("test.cel");
         CommandParser parser(scriptfile);
         script = parser.parse();
         if (script == NULL)
@@ -1191,13 +1216,13 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                     sim->selectBody(typedText);
                     typedText = "";
                 }
-                renderer->getEntryConsole()->clear();
+                renderer->getInputConsole()->clear();
             }
             else
             {
-                renderer->getEntryConsole()->home();
-                renderer->getEntryConsole()->clear();
-                renderer->getEntryConsole()->printf("Target name: ");
+                renderer->getInputConsole()->home();
+                renderer->getInputConsole()->clear();
+                renderer->getInputConsole()->printf("Target name: ");
             }
             textEnterMode = !textEnterMode;
             break;
@@ -1342,9 +1367,17 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             break;
 
         default:
-            printf("Unhandled command: %d\n", LOWORD(wParam) - MENU_CHOOSE_PLANET);
-            if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
-                LOWORD(wParam) < MENU_CHOOSE_PLANET + 1000)
+            cout << LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION << '\n';
+            if (favorites != NULL &&
+                LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION < favorites->size())
+            {
+                int whichFavorite = LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION;
+                if (runningScript != NULL)
+                    delete runningScript;
+                runningScript = new Execution(*(*favorites)[whichFavorite]->cmdSeq, sim, renderer);
+            }
+            else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
+                     LOWORD(wParam) < MENU_CHOOSE_PLANET + 1000)
             {
                 sim->selectPlanet(LOWORD(wParam) - MENU_CHOOSE_PLANET);
             }
