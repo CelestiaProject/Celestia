@@ -17,7 +17,7 @@ LicenseFile=C:\celestia\celestia\COPYING
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4
 Name: "urlassoc"; Description: "Associate cel:// &URLs"; GroupDescription: "Other tasks:"
-Name: "fileassoc"; Description: "Associate .cel &scripts"; GroupDescription: "Other tasks:"
+Name: "fileassoc"; Description: "Associate .cel and .celx &scripts"; GroupDescription: "Other tasks:"
 
 [Dirs]
 Name: "{app}\extras"
@@ -245,6 +245,8 @@ Root: HKCR; Subkey: "cel\Shell\open"; ValueType: string; Tasks: urlassoc
 Root: HKCR; Subkey: "cel\Shell\open\Command"; ValueType: string; ValueData: "{app}\celestia.exe --once --dir ""{app}"" -u ""%1"""; Tasks: urlassoc
 
 Root: HKCR; Subkey: ".cel"; ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc
+Root: HKCR; Subkey: ".clx"; ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc
+Root: HKCR; Subkey: ".celx"; ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc
 Root: HKCR; Subkey: "celestia_script"; ValueName: "URL Protocol"; ValueType: string; Tasks: fileassoc
 Root: HKCR; Subkey: "celestia_script\Shell"; ValueType: string; Tasks: fileassoc
 Root: HKCR; Subkey: "celestia_script\Shell\open"; ValueType: string; Tasks: fileassoc
