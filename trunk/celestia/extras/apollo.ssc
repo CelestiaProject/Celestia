@@ -6,11 +6,12 @@
 
 	EllipticalOrbit
 	{
-		Period 0.2
-		SemiMajorAxis 2000
-		Eccentricity 0.01
+		Period 0.0873
+		SemiMajorAxis 1922
+		Eccentricity 0.00078
 		Inclination 5
 	}
 
 	Albedo      0.10
 }
+
