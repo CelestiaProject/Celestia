@@ -53,43 +53,71 @@ static StarDetails*  neutronStarDetails = NULL;
 static StarDetails*  blackHoleDetails = NULL;
 static StarDetails*  barycenterDetails = NULL;
 
-static float tempO[10] =
+
+// Temperatures for standard spectral types.  From Lang's Astrophysical Data:
+// Planets and Stars.
+static float tempO[3][10] =
 {
-    50000, 50000, 50000, 50000, 47000,
-    44500, 41000, 38000, 35800, 33000
+    { 52500, 52500, 52500, 52500, 48000, 44500, 41000, 38000, 35800, 33000 },
+    { 50000, 50000, 50000, 50000, 45500, 42500, 39500, 37000, 34700, 32000 },
+    { 47300, 47300, 47300, 47300, 44100, 42500, 39500, 37000, 34700, 32000 },
 };
 
-static float tempB[10] =
+static float tempB[3][10] =
 {
-    30000, 25400, 22000, 18700, 17000,
-    15400, 14000, 13000, 11900, 10500
+    { 30000, 25400, 22000, 18700, 17000, 15400, 14000, 13000, 11900, 10500 },
+    { 29000, 24000, 20300, 17100, 16000, 15000, 14100, 13200, 12400, 11000 },
+    { 26000, 20800, 18500, 16200, 15100, 13600, 13000, 12200, 11200, 10300 },
 };
 
-static float tempA[10] =
+static float tempA[3][10] =
 {
-    9520, 9230, 8970, 8720, 8460, 8200, 8020, 7850, 7580, 7390
+    {  9520, 9230, 8970, 8720, 8460, 8200, 8020, 7850, 7580, 7390 },
+    { 10100, 9480, 9000, 8600, 8300, 8100, 7850, 7650, 7450, 7250 },
+    {  9730, 9230, 9080, 8770, 8610, 8510, 8310, 8150, 7950, 7800 },
 };
 
-static float tempF[10] =
+static float tempF[3][10] =
 {
-    7200, 7050, 6890, 6740, 6590, 6440, 6360, 6280, 6200, 6110
+    { 7200, 7050, 6890, 6740, 6590, 6440, 6360, 6280, 6200, 6110 },
+    { 7150, 7000, 6870, 6720, 6570, 6470, 6350, 6250, 6150, 6080 },
+    { 7700, 7500, 7350, 7150, 7000, 6900, 6500, 6300, 6100, 5800 },
 };
 
-static float tempG[10] =
+static float tempG[3][10] =
 {
-    6030, 5940, 5860, 5830, 5800, 5770, 5700, 5630, 5570, 5410
+    { 6030, 5940, 5860, 5830, 5800, 5770, 5700, 5630, 5570, 5410 },
+    { 5850, 5650, 5450, 5350, 5250, 5150, 5050, 5070, 4900, 4820 },
+    { 5550, 5350, 5200, 5050, 4950, 4850, 4750, 4660, 4600, 4500 },
 };
 
-static float tempK[10] =
+static float tempK[3][10] =
 {
-    5250, 5080, 4900, 4730, 4590, 4350, 4200, 4060, 3990, 3920
+    { 5250, 5080, 4900, 4730, 4590, 4350, 4200, 4060, 3990, 3920 },
+    { 4750, 4600, 4420, 4200, 4000, 3950, 3900, 3850, 3830, 3810 },
+    { 4420, 4330, 4250, 4080, 3950, 3850, 3760, 3700, 3680, 3660 },
 };
 
-static float tempM[10] =
+static float tempM[3][10] =
 {
-    3850, 3720, 3580, 3470, 3370, 3240, 3050, 2940, 2640, 2000
+    { 3850, 3720, 3580, 3470, 3370, 3240, 3050, 2940, 2640, 2000 },
+    { 3800, 3720, 3620, 3530, 3430, 3330, 3240, 3240, 3240, 3240 },
+    { 3650, 3550, 3450, 3200, 2980, 2800, 2600, 2600, 2600, 2600 },
 };
 
+// Wolf-Rayet temperatures.  From Lang's Astrophysical Data: Planets and
+// Stars.
+static float tempWN[10] =
+{
+    50000, 50000, 50000, 50000, 47000, 43000, 39000, 32000, 29000, 29000
+};
+
+static float tempWC[10] =
+{
+    60000, 60000, 60000, 60000, 60000, 60000, 60000, 54000, 46000, 38000
+};
+
+// Brown dwarf temperatures
 static float tempL[10] =
 {
     1960, 1930, 1900, 1850, 1800, 1740, 1680, 1620, 1560, 1500
@@ -406,55 +434,22 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
 
         // Use the same properties for an unknown subclass as for subclass 5
         if (subclass == StellarClass::Subclass_Unknown)
-            subclass = 5;
-
-        float temp = 0.0f;
-        switch (specClass)
         {
-        case StellarClass::Spectral_O:
-            temp = tempO[subclass];
-            break;
-        case StellarClass::Spectral_B:
-            temp = tempB[subclass];
-            break;
-        case StellarClass::Spectral_Unknown:
-        case StellarClass::Spectral_A:
-            temp = tempA[subclass];
-            break;
-        case StellarClass::Spectral_F:
-            temp = tempF[subclass];
-            break;
-        case StellarClass::Spectral_G:
-            temp = tempG[subclass];
-            break;
-        case StellarClass::Spectral_K:
-            temp = tempK[subclass];
-            break;
-        case StellarClass::Spectral_M:
-            temp = tempM[subclass];
-            break;
-        case StellarClass::Spectral_R:
-            temp = tempK[subclass];
-            break;
-        case StellarClass::Spectral_S:
-            temp = tempM[subclass];
-            break;
-        case StellarClass::Spectral_N:
-            temp = tempM[subclass];
-            break;
-        case StellarClass::Spectral_C:
-            temp = tempM[subclass];
-            break;
-        case StellarClass::Spectral_WN:
-        case StellarClass::Spectral_WC:
-            temp = tempO[subclass];
-            break;
-        case StellarClass::Spectral_L:
-            temp = tempL[subclass];
-            break;
-        case StellarClass::Spectral_T:
-            temp = tempT[subclass];
-            break;
+            // Since early O and Wolf-Rayet stars are exceedingly rare,
+            // use temperature of the more common late types when the subclass
+            // is unspecified in the spectral type.  For other stars, default
+            // to subclass 5.
+            switch (specClass)
+            {
+            case StellarClass::Spectral_O:
+            case StellarClass::Spectral_WN:
+            case StellarClass::Spectral_WC:
+                subclass = 9;
+                break;
+            default:
+                subclass = 5;
+                break;
+            }
         }
 
         unsigned int lumIndex = 0;
@@ -474,6 +469,57 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
         case StellarClass::Lum_VI:
         case StellarClass::Lum_Unknown:
             lumIndex = 0;
+            break;
+        }
+
+        float temp = 0.0f;
+        switch (specClass)
+        {
+        case StellarClass::Spectral_O:
+            temp = tempO[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_B:
+            temp = tempB[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_Unknown:
+        case StellarClass::Spectral_A:
+            temp = tempA[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_F:
+            temp = tempF[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_G:
+            temp = tempG[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_K:
+            temp = tempK[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_M:
+            temp = tempM[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_R:
+            temp = tempK[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_S:
+            temp = tempM[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_N:
+            temp = tempM[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_C:
+            temp = tempM[lumIndex][subclass];
+            break;
+        case StellarClass::Spectral_WN:
+            temp = tempWN[subclass];
+            break;
+        case StellarClass::Spectral_WC:
+            temp = tempWC[subclass];
+            break;
+        case StellarClass::Spectral_L:
+            temp = tempL[subclass];
+            break;
+        case StellarClass::Spectral_T:
+            temp = tempT[subclass];
             break;
         }
 
