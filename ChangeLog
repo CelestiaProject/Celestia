@@ -422,4 +422,5 @@ Code:
 * Fixed specular lighting for 3DS meshes, but correcting the mapping of 3DS
   shininess to OpenGL specular exponents.
 * Multi Resolution Texturing. (dramsey)
+* Unix: Much improved recognition of missing packages in configure. (dramsey)
 	
