@@ -43,7 +43,6 @@ string MeshInfo::resolve(const string& baseDir)
     if (!path.empty())
     {
         string filename = path + "/models/" + source;
-        // cout << "Resolve: testing [" << filename << "]\n";
         ifstream in(filename.c_str());
         if (in.good())
         {
@@ -58,6 +57,7 @@ string MeshInfo::resolve(const string& baseDir)
 Mesh* MeshInfo::load(const string& filename)
 {
     clog << "Loading mesh: " << filename << '\n';
+    Mesh* mesh = NULL;
     ContentType fileType = DetermineFileType(filename);
 
     if (fileType == Content_3DStudio)
@@ -72,15 +72,18 @@ Mesh* MeshInfo::load(const string& filename)
                 mesh3 = new Mesh3DS(*scene, "");
             mesh3->normalize(center);
             delete scene;
-            return mesh3;
+            mesh = mesh3;
         }
     }
     else if (fileType == Content_CelestiaMesh)
     {
-        return LoadCelestiaMesh(filename);
+        mesh = LoadCelestiaMesh(filename);
     }
+
+    if (mesh == NULL)
+        cerr << "Error loading mesh '" << filename << "'\n";
  
-    return NULL;
+    return mesh;
 }
 
 
