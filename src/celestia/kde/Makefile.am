@@ -20,9 +20,7 @@ noinst_HEADERS = $(wildcard *.h)
 
 INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
 
-libkdegui_a_SOURCES = $(KDE_SOURCES)
-
-nodist_libkdegui_a_SOURCES = \
+libkdegui_a_SOURCES = $(KDE_SOURCES)\
                  kdeapp.moc.cpp \
                  eclipsefinderdlgbase.uic.h \
                  eclipsefinderdlgbase.uic.cpp \
@@ -57,11 +55,7 @@ messages: rc.cpp
 	if test -n "$$LIST"; then \
 		$(XGETTEXT) $$LIST -j -o $(podir)/celestia-kde.pot; \
 	fi
-
-clean-hook:
-	rm -f $(distdir)/*.uic.*
-	rm -f $(distdir)/*.moc.cpp
-  
+ 
 dist-hook:
 	rm -f $(distdir)/*.uic.*
 	rm -f $(distdir)/*.moc.cpp
