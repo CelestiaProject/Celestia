@@ -187,3 +187,9 @@ SolarSystemBrowser::SolarSystemBrowser(HINSTANCE appInstance,
                              SolarSystemBrowserProc,
                              reinterpret_cast<LONG>(this));
 }
+
+
+SolarSystemBrowser::~SolarSystemBrowser()
+{
+    SetWindowLong(hwnd, DWL_USER, 0);
+}

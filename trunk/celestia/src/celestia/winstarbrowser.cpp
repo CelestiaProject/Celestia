@@ -483,37 +483,43 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
             break;
 
         case IDC_MAXSTARS_EDIT:
-            if(HIWORD(wParam) == EN_KILLFOCUS)
+            // TODO: browser != NULL check should be in a lot more places
+            if (HIWORD(wParam) == EN_KILLFOCUS && browser != NULL)
             {
                 char val[16];
                 int nNewStars;
                 DWORD minRange, maxRange;
-                GetWindowText((HWND)lParam, val, sizeof(val));
+                GetWindowText((HWND) lParam, val, sizeof(val));
                 nNewStars = atoi(val);
 
-                //Check if new value is different from old. Don't want to cause
-                //a refresh to occur if not necessary.
-                if(nNewStars != browser->nStars)
+                // Check if new value is different from old. Don't want to
+                // cause a refresh to occur if not necessary.
+                if (nNewStars != browser->nStars)
                 {
                     minRange = SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_GETRANGEMIN, 0, 0);
                     maxRange = SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_GETRANGEMAX, 0, 0);
-                    if(nNewStars < minRange)
+                    if (nNewStars < minRange)
                         nNewStars = minRange;
-                    else if(nNewStars > maxRange)
+                    else if (nNewStars > maxRange)
                         nNewStars = maxRange;
-                    //If new value has been adjusted from what was entered, reflect
-                    //new value back in edit control.
-                    if(atoi(val) != nNewStars)
+
+                    // If new value has been adjusted from what was entered,
+                    // reflect new value back in edit control.
+                    if (atoi(val) != nNewStars)
                     {
                         sprintf(val, "%d", nNewStars);
                         SetWindowText((HWND)lParam, val);
                     }
-                    //Recheck value if different from original.
-                    if(nNewStars != browser->nStars)
+
+                    // Recheck value if different from original.
+                    if (nNewStars != browser->nStars)
                     {
                         browser->nStars = nNewStars;
-                        SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_SETPOS, (WPARAM)TRUE,
-                            (LPARAM)browser->nStars);
+                        SendDlgItemMessage(hDlg,
+                                           IDC_MAXSTARS_SLIDER,
+                                           TBM_SETPOS,
+                                           (WPARAM) TRUE,
+                                           (LPARAM) browser->nStars);
                         RefreshItems(hDlg, browser);
                     }
                 }
@@ -610,4 +616,10 @@ StarBrowser::StarBrowser(HINSTANCE appInstance,
                              parent,
                              StarBrowserProc,
                              reinterpret_cast<LONG>(this));
+}
+
+
+StarBrowser::~StarBrowser()
+{
+    SetWindowLong(hwnd, DWL_USER, 0);
 }
