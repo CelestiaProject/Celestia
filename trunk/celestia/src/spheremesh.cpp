@@ -145,6 +145,12 @@ void SphereMesh::render(float lod)
 }
 
 
+void SphereMesh::render(unsigned int attributes, const Frustum&, float lod)
+{
+    render(attributes, lod);
+}
+
+
 void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 {
     nRings = _nRings;

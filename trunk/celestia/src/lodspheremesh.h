@@ -22,6 +22,7 @@ public:
 
     void render(float lod);
     void render(unsigned int attributes, float lod);
+    void render(unsigned int attributes, const Frustum&, float lod);
 
  private:
     void renderSection(int phi0, int theta0,

@@ -24,6 +24,7 @@ class Mesh3DS : public Mesh
 
     void render(float lod);
     void render(unsigned int attributes, float lod);
+    void render(unsigned int attributes, const Frustum&, float lod);
     void normalize();
 
  private:

@@ -70,6 +70,11 @@ void Mesh3DS::render(unsigned int attributes, float)
     }
 }
 
+void Mesh3DS::render(unsigned int attributes, const Frustum&, float lod)
+{
+    render(attributes, lod);
+}
+
 
 // Transform and scale the model so that it fits into an axis aligned bounding
 // box with corners at (1, 1, 1) and (-1, -1, -1)
