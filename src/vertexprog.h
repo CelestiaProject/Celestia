@@ -13,15 +13,22 @@
 #include "vecmath.h"
 #include "color.h"
 
-extern void InitVertexPrograms();
-extern void EnableVertexPrograms();
-extern void DisableVertexPrograms();
-extern void UseVertexProgram(unsigned int);
+namespace vp
+{
+    bool init();
+    void enable();
+    void disable();
+    void use(unsigned int);
 
-extern void VertexProgramParameter(unsigned int, const Vec3f&);
-extern void VertexProgramParameter(unsigned int, const Point3f&);
-extern void VertexProgramParameter(unsigned int, const Color&);
+    void parameter(unsigned int, const Vec3f&);
+    void parameter(unsigned int, const Point3f&);
+    void parameter(unsigned int, const Color&);
+    void parameter(unsigned int, float, float, float, float);
 
-extern unsigned int simpleVP;
+    extern unsigned int specular;
+    extern unsigned int diffuse;
+    extern unsigned int diffuseHaze;
+    extern unsigned int diffuseBump;
+};
 
 #endif // _VERTEXPROG_H_
