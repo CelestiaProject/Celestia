@@ -8,6 +8,7 @@
  */
 
 #include <celestia/celestiacore.h>
+#include <celestia/url.h>
 extern CelestiaCore *appCore;
 
 
