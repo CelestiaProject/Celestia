@@ -51,6 +51,8 @@ public:
     bool isPeriodic() const;
     void getValidRange(double& begin, double& end) const;
 
+    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
+
 private:
     vector<Sample> samples;
     double boundingRadius;
@@ -216,6 +218,54 @@ Point3d SampledOrbit::computePosition(double jd) const
     return Point3d(pos.x, pos.z, -pos.y);
 }
 
+
+void SampledOrbit::sample(double start, double t, int nSamples,
+						  OrbitSampleProc& proc) const
+{
+	double dt = 1.0/1440.0;
+	double end = start + t;
+	double current = start;
+	proc.sample(positionAtTime(current));
+
+	while (current < end)
+	{
+		double dt2 = dt;
+
+		Point3d goodpt;
+		double gooddt;
+		Point3d pos0 = positionAtTime(current);
+		goodpt = positionAtTime(current + dt2);
+		while (1)
+		{
+			Point3d pos1 = positionAtTime(current + dt2);
+			Point3d pos2 = positionAtTime(current + dt2*2);
+			Vec3d vec1 = pos1 - pos0;
+			Vec3d vec2 = pos2 - pos0;
+
+			vec1.normalize();
+			vec2.normalize();
+			double dot = vec1 * vec2;
+
+			if (dot > 1.0)
+				dot = 1.0;
+			else if (dot < -1.0)
+				dot = -1.0;
+
+			if (dot > 0.9998 && dt2 < 10.0)
+			{
+				gooddt = dt2;
+				goodpt = pos1;
+				dt2 *= 2.0;
+			}
+			else
+			{
+				proc.sample(goodpt);
+				break;
+			}
+		}
+		current += gooddt;
+	}
+}
 
 Orbit* LoadSampledOrbit(const string& filename)
 {
