@@ -24,10 +24,10 @@ using namespace std;
 //#define SHOW_FRUSTUM
 
 static bool trigArraysInitialized = false;
-static int maxDivisions = 2048;
+static int maxDivisions = 4096;
 static int thetaDivisions = maxDivisions;
 static int phiDivisions = maxDivisions / 2;
-static int minStep = 64;
+static int minStep = 128;
 static float* sinPhi = NULL;
 static float* cosPhi = NULL;
 static float* sinTheta = NULL;
@@ -227,12 +227,14 @@ void LODSphereMesh::render(const GLContext& context,
         if (tex[i]->getVTileCount(ri.texLOD[i]) > minSplit)
             minSplit = tex[i]->getVTileCount(ri.texLOD[i]);
     }
-    
+
     if (split < minSplit)
     {
         thetaExtent /= (minSplit / split);
         phiExtent /= (minSplit / split);
         split = minSplit;
+        if (phiExtent <= ri.step)
+            ri.step /= ri.step / phiExtent;
     }
 
     // Set the current textures
