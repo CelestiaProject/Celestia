@@ -1,0 +1,43 @@
+"Mars Odyssey" "Sol/Mars"
+{
+	Mesh "marsodyssey.3ds"
+	Radius 0.01
+
+	# Orbital elements are only very approximately correct
+	# after completion of aerobraking phase.  These were taken
+	# from the Mars Odyssey PIP, and only reflect the planned,
+	# and not the actual final orbit.  A better source would be
+	# appreciated.
+	EllipticalOrbit
+	{
+	Epoch             2452251.70833
+	Period            0.0822
+	SemiMajorAxis     3797.2
+	Eccentricity      0.0
+	Inclination       93.1
+	AscendingNode     35
+	ArgOfPericenter   0.0
+	MeanAnomaly       0.0
+	}
+}
+
+"MGS" "Sol/Mars"
+{
+	Mesh "marsglobalsurvr.3ds"
+	Radius 0.01
+
+	# The most recent orbital elements I could find for MGS
+	# are from March:
+	# http://mars.jpl.nasa.gov/mgs/status/nav/orbparam-peri2.txt
+	EllipticalOrbit
+	{
+	Epoch             2451973.25864
+	Period            1.950619
+	SemiMajorAxis     3767.968213
+	Eccentricity      0.005809
+	Inclination      93.0092
+	AscendingNode    28.452982
+	ArgOfPericenter 267.202961
+	MeanAnomaly       0.0
+	}
+}
