@@ -355,8 +355,12 @@ void KdeApp::initActions()
     KStdAction::configureToolbars(this, SLOT(slotConfigureToolbars()), actionCollection());
     KStdAction::keyBindings(this, SLOT(slotKeyBindings()), actionCollection());
 
-    new KAction(i18n("Full Screen"), "window_fullscreen", CTRL + Key_F, this, SLOT(slotFullScreen()), actionCollection(), "fullScreen");
-    new KAction(i18n("Copy URL"), "edit_copy", CTRL + Key_C, this, SLOT(slotCopyUrl()), actionCollection(), "copyUrl");
+    KShortcut fullscreen_shortcut(CTRL + Key_F);
+    fullscreen_shortcut.append(QKeySequence(ALT + Key_Return));
+    new KAction(i18n("Full Screen"), "window_fullscreen", fullscreen_shortcut, this, SLOT(slotFullScreen()), actionCollection(), "fullScreen");
+    KShortcut copy_url_shortcut(CTRL + Key_C);
+    copy_url_shortcut.append(QKeySequence(CTRL + Key_Insert));
+    new KAction(i18n("Copy URL"), "edit_copy", copy_url_shortcut, this, SLOT(slotCopyUrl()), actionCollection(), "copyUrl");
 
 
     new KAction(i18n("Set Time..."), "kalarm", ALT + Key_T, this, SLOT(slotSetTime()), actionCollection(), "setTime");
@@ -409,7 +413,7 @@ void KdeApp::initActions()
     }
 
     new KAction(i18n("Alt-Azimuth Mode"), 0, ALT + Key_F, this, SLOT(slotAltAzMode()), actionCollection(), "altAzMode");
-    new KAction(i18n("Go To Surface"), 0, ALT + Key_S, this, SLOT(slotGoToSurface()), actionCollection(), "goToSurface");
+    new KAction(i18n("Go To Surface"), 0, CTRL + Key_G, this, SLOT(slotGoToSurface()), actionCollection(), "goToSurface");
 
     new KAction(i18n("Celestial Browser"), 0, ALT + Key_C, this, SLOT(slotCelestialBrowser()), actionCollection(), "celestialBrowser");
     new KAction(i18n("Eclipse Finder"), 0, ALT + Key_E, this, SLOT(slotEclipseFinder()), actionCollection(), "eclipseFinder");
@@ -588,7 +592,7 @@ void KdeApp::initActions()
     renderPath->setExclusiveGroup("renderPath");
     new KAction(i18n("Cycle OpenGL Render Path"), "reload", CTRL + Key_V, this, SLOT(slotCycleRenderPath()), actionCollection(), "cycleRenderPath");
 
-    new KAction(i18n("Grab Image"), "filesave", CTRL + Key_G, this, SLOT(slotGrabImage()), actionCollection(), "grabImage");
+    new KAction(i18n("Grab Image"), "filesave", Key_F10, this, SLOT(slotGrabImage()), actionCollection(), "grabImage");
 
     new KAction(i18n("OpenGL info"), 0, this, SLOT(slotOpenGLInfo()),
                       actionCollection(), "opengl_info");

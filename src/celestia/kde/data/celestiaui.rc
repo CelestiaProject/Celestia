@@ -1,9 +1,12 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="13">
+<kpartgui name="celestia" version="15">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
     <Action name="copyUrl"/>
+  </Menu>
+  <Menu name="view" noMerge="0">
+    <Action name="fullScreen" />
   </Menu>
   <Menu name="go_web" noMerge="1"><text>&amp;Navigation</text>
     <Action name="go_back" />
@@ -12,6 +15,7 @@
     <Separator />
     <Action name="go_to" />
     <Action name="go_to_long_lat" />
+    <Action name="goToSurface" />
     <Action name="celestialBrowser" />
     <Action name="eclipseFinder" />
   </Menu>
