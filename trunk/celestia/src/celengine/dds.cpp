@@ -136,7 +136,7 @@ Image* LoadDDSImage(const string& filename)
     Image* img = new Image(format,
                            (int) ddsd.width,
                            (int) ddsd.height,
-                           ddsd.mipMapLevels);
+                           max(ddsd.mipMapLevels, 1));
     if (img == NULL)
         return NULL;
 
