@@ -282,7 +282,8 @@ CelestiaCore::CelestiaCore() :
     activeView(0),
     showActiveViewFrame(false),
     showViewFrames(true),
-    resizeSplit(0)
+    resizeSplit(0),
+    typedTextCompletionIdx(-1)
 {
     /* Get a renderer here so it may be queried for capabilities of the
        underlying engine even before rendering is enabled. It's initRenderer()
@@ -889,21 +890,65 @@ void CelestiaCore::charEntered(char c)
 
     if (textEnterMode)
     {
-        if (c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
+        if ( c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
         {
             typedText += c;
+            typedTextCompletion = sim->getObjectCompletion(typedText);
+                if (typedTextCompletion.size() == 1)
+                    typedText = typedTextCompletion[0];
         }
         else if (c == '\b')
         {
+            typedTextCompletionIdx = -1;
             if (typedText.size() > 0)
-                typedText = string(typedText, 0, typedText.size() - 1);
+            {
+                do
+                {
+                    typedText = string(typedText, 0, typedText.size() - 1);
+                    if (typedText.size() > 0)
+                    {
+                        typedTextCompletion = sim->getObjectCompletion(typedText);
+                    } else {
+                        typedTextCompletion.clear();
+                    }
+                } while (typedText.size() > 0 && typedTextCompletion.size() == 1);
+            }
+        }
+        else if (c == '\011') // TAB
+        {
+            if (typedTextCompletionIdx + 1 < typedTextCompletion.size())
+                typedTextCompletionIdx++;
+            else if (typedTextCompletion.size() > 0 && typedTextCompletionIdx + 1 == typedTextCompletion.size())
+                typedTextCompletionIdx = 0;
+            if (typedTextCompletionIdx >= 0) {
+                typedText = typedTextCompletion[typedTextCompletionIdx];
+            }
+        }
+        else if (c == Key_BackTab)
+        {
+            if (typedTextCompletionIdx > 0)
+                typedTextCompletionIdx--;
+            else if (typedTextCompletionIdx == 0)
+                typedTextCompletionIdx = typedTextCompletion.size() - 1;
+            else if (typedTextCompletion.size() > 0)
+                typedTextCompletionIdx = typedTextCompletion.size() - 1;
+            if (typedTextCompletionIdx >= 0) {
+                typedText = typedTextCompletion[typedTextCompletionIdx];
+            }
+        }
+        else if (c == '\033') // ESC
+        {
+            typedText = "";
+            textEnterMode = false;
+            typedTextCompletion.clear();
+            typedTextCompletionIdx = -1;
         }
         else if (c == '\n' || c == '\r')
         {
             if (typedText != "")
             {
                 Selection sel = sim->findObjectFromPath(typedText);
-                if (!sel.empty()) 
+                if (!sel.empty())
                 {
                     addToHistory();
                     sim->setSelection(sel);
@@ -911,6 +956,8 @@ void CelestiaCore::charEntered(char c)
                 typedText = "";
             }
             textEnterMode = false;
+            typedTextCompletion.clear();
+            typedTextCompletionIdx = -1;
         }
         return;
     }
@@ -2484,14 +2531,46 @@ void CelestiaCore::renderOverlay()
     if (textEnterMode)
     {
         overlay->setFont(titleFont);
-        glPushMatrix();
+//        glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 0.2f);
-        overlay->rect(0, 0, width, 70);
-        glTranslatef(0, fontHeight * 3 + 5, 0);
+        overlay->rect(0, 0, width, 100);
+        glTranslatef(0, fontHeight * 3 + 35, 0);
         glColor4f(0.6f, 0.6f, 1.0f, 1);
+        overlay->beginText();
         *overlay << "Target name: " << typedText;
-        glPopMatrix();
+        overlay->endText();
         overlay->setFont(font);
+        if (typedTextCompletion.size() > 1)
+        {
+            int nb_cols = 4;
+            int nb_lines = 3;
+            int start;
+            glTranslatef( 3, - font->getHeight() - 3, 0);
+            std::vector<std::string>::const_iterator iter = typedTextCompletion.begin();
+            if (typedTextCompletionIdx >= nb_cols * nb_lines)
+            {
+               start = (typedTextCompletionIdx / nb_lines + 1 - nb_cols) * nb_lines;
+               iter += start;
+            }
+            for (int i=0; iter < typedTextCompletion.end() && i < nb_cols; i++)
+            {
+                glPushMatrix();
+                overlay->beginText();
+                for (int j = 0; iter < typedTextCompletion.end() && j < nb_lines; iter++, j++)
+                {
+                    if (i * nb_lines + j == typedTextCompletionIdx - start)
+                        glColor4f(1.0f, 0.6f, 0.6f, 1);
+                    else
+                        glColor4f(0.6f, 0.6f, 1.0f, 1);
+                    *overlay << *iter << "\n";
+                }
+                overlay->endText();
+                glPopMatrix();
+                glTranslatef( (width/nb_cols), 0, 0);
+           }
+        }
+//        glPopMatrix();
+//        overlay->setFont(font);
     }
 
     // Text messages

@@ -753,7 +753,7 @@ Selection Universe::findPath(const string& s,
             len = nextPos - pos - 1;
 
         string name = string(s, pos + 1, len);
-        
+
         Body* body = worlds->find(name);
         if (body == NULL)
         {
@@ -771,6 +771,82 @@ Selection Universe::findPath(const string& s,
     }
 
     return Selection();
+}
+
+std::vector<std::string> Universe::getCompletion(const string& s,
+                         PlanetarySystem** solarSystems,
+                         int nSolarSystems)
+{
+    std::vector<std::string> completion;
+
+    // solar bodies first
+    for (int i = 0; i < nSolarSystems; i++)
+    {
+        if (solarSystems[i] != NULL)
+        {
+            std::vector<std::string> bodies = solarSystems[i]->getCompletion(s);
+            completion.insert(completion.end(), bodies.begin(), bodies.end());
+        }
+    }
+
+    // Deep sky object
+    if (deepSkyCatalog != NULL)
+    {
+        for (DeepSkyCatalog::const_iterator iter = deepSkyCatalog->begin();
+             iter != deepSkyCatalog->end(); iter++)
+        {
+            if (compareIgnoringCase((*iter)->getName(), s, s.length()) == 0)
+                completion.push_back(Selection(*iter).getName());
+        }
+    }
+
+    // finaly stars;
+    std::vector<std::string> stars = starCatalog->getCompletion(s);
+    completion.insert(completion.end(), stars.begin(), stars.end());
+
+    return completion;
+}
+
+std::vector<std::string> Universe::getCompletionPath(const string& s,
+                             PlanetarySystem* solarSystems[],
+                             int nSolarSystems)
+{
+    std::vector<std::string> completion;
+    string::size_type pos = s.rfind('/', s.length());
+
+    if (pos == string::npos)
+        return getCompletion(s, solarSystems, nSolarSystems);
+
+    string base(s, 0, pos);
+    Selection sel = find(base, solarSystems, nSolarSystems);
+
+    if (sel.empty())
+        return completion;
+
+    if (sel.deepsky != NULL)
+    {
+        completion.push_back(sel.deepsky->getName());
+        return completion;
+    }
+
+    PlanetarySystem* worlds = NULL;
+    if (sel.body != NULL)
+    {
+        worlds = sel.body->getSatellites();
+    }
+    else if (sel.star != NULL)
+    {
+        SolarSystem* ssys = getSolarSystem(sel.star);
+        if (ssys != NULL)
+            worlds = ssys->getPlanets();
+    }
+
+    if (worlds != NULL)
+    {
+        return worlds->getCompletion(s.substr(pos + 1));
+    }
+
+    return completion;
 }
 
 
