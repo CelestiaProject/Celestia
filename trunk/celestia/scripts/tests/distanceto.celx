@@ -1,0 +1,5 @@
+s = celestia:getselection()
+p0 = s:getposition()
+p1 = celestia:getobserver():getposition()
+km = p0:distanceto(p1)
+celestia:flash("distance to selection = " .. km .. " km")
