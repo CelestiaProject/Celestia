@@ -30,7 +30,8 @@ OBJS=\
 	$(INTDIR)\winmain.obj \
 	$(INTDIR)\winssbrowser.obj \
 	$(INTDIR)\winstarbrowser.obj \
-	$(INTDIR)\wintourguide.obj
+	$(INTDIR)\wintourguide.obj \
+	$(INTDIR)\winviewoptsdlg.obj
 
 RESOURCES=\
 	$(INTDIR)\celestia.res
