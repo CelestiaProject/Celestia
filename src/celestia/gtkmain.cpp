@@ -1429,11 +1429,17 @@ static void addStars()
         const Star *star=(*stars)[i];
         tmp[0] = g_strdup((stardb->getStarName(*star)).c_str());
 
-        sprintf(buf, " %.3f ", ucPos.distanceTo(star->getPosition()));
+        Point3f pStar = star->getPosition();
+        Vec3d v(pStar.x * 1e6 - (float)ucPos.x, 
+                pStar.y * 1e6 - (float)ucPos.y, 
+                pStar.z * 1e6 - (float)ucPos.z);
+        double d = v.length() * 1e-6;
+        
+        sprintf(buf, " %.3f ", d);
         tmp[1] = g_strdup(buf);
 
         Vec3f r = star->getPosition() - ucPos;
-        sprintf(buf, " %.2f ", astro::absToAppMag(star->getAbsoluteMagnitude(),r.length()));
+        sprintf(buf, " %.2f ", astro::absToAppMag(star->getAbsoluteMagnitude(), d));
         tmp[2] = g_strdup(buf);
 
         sprintf(buf, " %.2f ", star->getAbsoluteMagnitude());
