@@ -40,7 +40,7 @@ static const int TycStarRecordLength = 351;
 
 static uint32 NullCCDMIdentifier = 0xffffffff;
 static uint32 NullCatalogNumber = 0xffffffff;
-static int verbose;
+static int verbose, dropstars;
 
 
 class HipparcosStar
@@ -125,6 +125,10 @@ void HipparcosStar::analyze()
 {
     int dubious=0;
     status=0;
+    if ((parallax) <= 0.4 && ((dropstars==0) || (dropstars==1 && appMag<6.0)))
+        parallax=0.4;  /* fix strange paralaxes so the stars aren't *way*
+                          out there. A parallax of 0.4 will put them at
+                          just a touch above 8154 LY away. */
     if (parallax <= 0.0)
         dubious+=400;
     else if (parallax<0.2)
@@ -170,7 +174,7 @@ void HipparcosStar::analyze()
         status=1;
         n_dub++;
     }
-    if (dubious>5)
+    if ((dubious>5) && (dropstars) && (!(dropstars==1 && appMag<6.0)))
     {
         status=2;
         n_drop++;
@@ -1080,12 +1084,13 @@ int main(int argc, char* argv[])
 {
     assert(sizeof(StellarClass) == 2);
     verbose=0;
+    dropstars=1;
     int c;
-    while((c=getopt(argc,argv,"v::q"))>-1)
+    while((c=getopt(argc,argv,"v::qd:"))>-1)
     {
         if (c=='?')
         {
-            cout << "Usage: buildstardb [-v[<verbosity_level>] [-q]\n";
+            cout << "Usage: buildstardb [-v[<verbosity_level>] [-q] [-d <drop-level>\n";
             exit(1);
         }
         else if (c=='v')
@@ -1100,6 +1105,16 @@ int main(int argc, char* argv[])
                 }
             else
                 verbose=1;
+        }
+        else if (c=='d')
+        {   /* Dropstar level. 0 = don't drop stars
+                               1 = drop only non-naked eye visible stars
+                               2 = drop all stars with strange values */
+            dropstars=(int)atol(optarg);
+            if (dropstars<0)
+                dropstars=0;
+            else if (dropstars>2)
+                dropstars=2;
         }
         else if (c=='q')
         {
