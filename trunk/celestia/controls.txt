@@ -1,0 +1,74 @@
+Mouse and Keyboard Controls for Celestia
+
+Mouse Functions:
+
+Left drag to orient camera
+Right drag to orbit the selected object
+Use the mouse wheel to adjust distance to selection
+    (for wheelless mice, dragging while holding left and right
+    buttons or left dragfing while holding control to dolly camera
+    will adjust distance)
+Left drag while holding shift to zoom
+Click the wheel to reset the field of view to 45 degrees
+Left-click to select; double click to center selection
+Right-click to bring up context menu
+
+Keyboard Commands
+
+Navigation:
+H  : Select the sun (Home)
+C  : Center on selected object
+G  : Goto selected object
+F  : Follow selected object
+Y  : Orbit the selected object at a rate synced to its rotation
+T  : Track selected object (keep selected object centered in view)
+HOME : Move closer to object
+END  : Move farther from object
+ESC  : Cancel motion or script
+Left/Right Arrows : Roll Camera
+Up / Down Arrows  : Change Camera Pitch
+
+Time:
+Space : stop time
+L  : Time 10x faster
+K  : Time 10x slower
+J  : Reverse time
+
+Labels:
+N  : Toggle planet and moon labels
+B  : Toggle star labels
+=  : Toggle constellation labels
+V  : Toggle info text
+
+Options:
+U  : Toggle galaxy rendering
+I  : Toggle planet atmospheres (cloud textures)
+O  : Toggle planet orbits
+/  : Toggle constellation diagrams
+;  : Show an earth-based equatorial coordinate sphere
+P  : Toggle per-pixel lighting (if supported)
+[  : Decrease limiting magnitude (fewer stars visible)
+]  : Increase limiting magnitude (more stars visible)
+{  : Decrease ambient illumination
+}  : Increase ambient illumination
+,  : Narrow field of view
+.  : Widen field of view
+W  : Toggle wireframe mode
+
+Spaceflight:
+F1 : Stop 
+F2 : Set velocity to 1 km/s
+F3 : Set velocity to 1,000 km/s
+F4 : Set velocity to speed of light
+F5 : Set velocity to 1,000,000 km/s
+F6 : Set velocity to 1 AU/s
+F7 : Set velocity to 1 ly/s
+A  : Increase velocity by 10x
+Z  : Decrease velocity by 10x
+Q  : Reverse direction
+X  : Set movement direction toward center of screen
+
+Other:
+D  : Run demo
+`  : Show frames rendered per second
+ENTER : Select a star or planet by typing its name
