@@ -542,6 +542,14 @@ void CelestiaCore::charEntered(char c)
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCelestialSphere);
         break;
 
+    case '\014': // Ctrl+L
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
+        break;
+
+    case '\001': // Ctrl+A
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAtmospheres);
+        break;
+
     case '=':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::ConstellationLabels);
         break;
@@ -1347,6 +1355,10 @@ bool CelestiaCore::initSimulation()
 bool CelestiaCore::initRenderer()
 {
     renderer = new Renderer();
+
+    renderer->setRenderFlags(Renderer::ShowStars |
+                             Renderer::ShowPlanets |
+                             Renderer::ShowAtmospheres);
 
     // Prepare the scene for rendering.
     if (!renderer->init((int) width, (int) height))
