@@ -13,6 +13,7 @@
 #include <algorithm>
 #include "celestia.h"
 #include "mathlib.h"
+#include "util.h"
 #include "stardb.h"
 
 using namespace std;
@@ -90,7 +91,7 @@ Star* StarDatabase::find(string name) const
         for (StarNameDatabase::const_iterator iter = names->begin();
              iter != names->end(); iter++)
         {
-            if (iter->second->getName() == name)
+            if (compareIgnoringCase(iter->second->getName(), name) == 0)
             {
                 return find(iter->first);
             }
@@ -99,8 +100,8 @@ Star* StarDatabase::find(string name) const
                 Constellation* con = iter->second->getConstellation();
                 if (con != NULL)
                 {
-                    if (con->getAbbreviation() == conAbbrev &&
-                        iter->second->getDesignation() == designation)
+                    if (compareIgnoringCase(con->getAbbreviation(), conAbbrev) == 0 &&
+                        compareIgnoringCase(iter->second->getDesignation(), designation) == 0)
                     {
                         return find(iter->first);
                     }
