@@ -258,13 +258,6 @@ static void IllumMapEval(float x, float y, float z,
     pixel[2] = 128 + (int) (127 * u.z);
 }
 
-
-static float calcPixelSize(float fovY, float windowHeight)
-{
-    return 2 * (float) tan(degToRad(fovY / 2.0)) / (float) windowHeight;
-}
-
-
 bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 {
     // This comparison functions tries to determine which of two objects is
@@ -526,6 +519,10 @@ float Renderer::getFieldOfView()
     return fov;
 }
 
+float Renderer::calcPixelSize(float fovY, float windowHeight)
+{
+    return 2 * (float) tan(degToRad(fovY / 2.0)) / (float) windowHeight;
+}
 
 void Renderer::setFieldOfView(float _fov)
 {
