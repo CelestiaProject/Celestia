@@ -641,7 +641,7 @@ StarDetails::StarDetails() :
     bolometricCorrection(0.0f),
     rotationPeriod(1.0f),
     knowledge(0u),
-    visible(false),
+    visible(true),
     model(InvalidResource),
     orbit(NULL),
     orbitalRadius(0.0f),

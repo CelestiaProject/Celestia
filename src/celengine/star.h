@@ -219,7 +219,8 @@ public:
     inline uint32 getKnowledge() const;
 
     enum {
-        InvalidCatalogNumber = 0xffffffff
+        MaxTychoCatalogNumber = 0xf0000000,
+        InvalidCatalogNumber = 0xffffffff,
     };
 
 private:
