@@ -57,8 +57,8 @@
 
 "Canis Major"
 [
-[ "Beta CMa" "Sirius" "Gamma CMa" ]
 [ "Sirius" "Omicron CMa" "Delta CMa" "Eta CMa" ]
+[ "Beta CMa" "Sirius" "Gamma CMa" ]
 [ "Delta CMa" "Epsilon Cma" ]
 ]
 
@@ -75,10 +75,10 @@
 
 "Scorpius"
 [
-[ "Beta Sco" "Delta Sco" "Pi Sco" ]
 [ "Delta Sco" "Sigma Sco" "Antares" "Tau Sco"
   "Epsilon Sco" "Mu1 Sco" "Eta Sco" "Theta Sco"
   "Iota1 Sco" "Kappa Sco" "Upsilon Sco" "Lambda Sco" ]
+[ "Beta Sco" "Delta Sco" "Pi Sco" ]
 ]
 
 "Sagittarius"
@@ -139,9 +139,9 @@
 
 "Cetus"
 [
-[ "Alpha Cet" "Gamma Cet" "Delta Cet" "94 Cet" "Alpha Cet" ]
 [ "Delta Cet" "Omicron Cet" "Zeta Cet" "Tau Cet"
   "Beta Cet" "Iota Cet" "Eta Cet" "Theta Cet" "Zeta Cet" ]
+[ "Alpha Cet" "Gamma Cet" "Delta Cet" "94 Cet" "Alpha Cet" ]
 ]
 
 "Aries"
@@ -175,8 +175,8 @@
 
 "Grus"
 [
-[ "Beta Gru" "Delta Gru" "Alpha Gru" ]
-[ "Delta Gru" "Gamma Gru" ]
+[ "Beta Gru" "Delta1 Gru" "Alpha Gru" ]
+[ "Delta1 Gru" "Gamma Gru" ]
 ]
 
 "Aquila"
@@ -210,3 +210,66 @@
   "Beta Vir" "Eta Vir" "Gamma Vir" "Spica" ]
 [ "Vindemiatrix" "Delta Vir" "Gamma Vir" ]
 ]
+
+"Libra"
+[
+[ "Alpha Lib" "Beta Lib" "Gamma Lib" "Iota Lib" "Alpha Lib" ]
+]
+
+"Crater"
+[
+[ "Alpha Crt" "Beta Crt" "Gamma Crt" "Zeta Crt"
+  "Theta Crt" "Epsilon Crt" "Delta Crt" "Alpha Crt" ]
+]
+
+"Triangulum Australe"
+[
+[ "Alpha TrA" "Beta TrA" "Gamma TrA" "Alpha TrA" ]
+]
+
+"Eridanus"
+[
+[ "Achernar" "Chi Eri" "Phi Eri" "Kappa Eri"
+  "Iota Eri" "Theta1 Eri" "43 Eri" "Upsilon2 Eri"
+  "Tau8 Eri" "Tau6 Eri" "Tau5 Eri" "Tau4 Eri" 
+  "Tau3 Eri" "Tau2 Eri" "Eta Eri" "Zeta Eri" "Epsilon Eri"
+  "Delta Eri" "Gamma Eri" "Omicron1 Eri" "Omicron2 Eri"
+  "Nu Eri" "Mu Eri" "Omega Eri" "Beta Eri" ]
+]
+
+"Cancer"
+[
+[ "Alpha Cnc" "Delta Cnc" "Beta Cnc" ]
+[ "Iota Cnc" "Delta Cnc" ]
+]
+
+"Hercules"
+[
+[ "Alpha Her" "Delta Her" "Epsilon Her" "Pi Her"
+  "Eta Her" "Zeta Her" "Beta Her" "Delta Her" ]
+[ "Epsilon Her" "Zeta Her" ]
+[ "Pi Her" "Theta Her" "Iota Her" ]
+[ "Eta Her" "Sigma Her" "Tau Her" ]
+]
+
+"Columba"
+[
+[ "Epsilon Col" "Alpha Col" "Beta Col" "Delta Col" ]
+[ "Beta Col" "Eta Col" ]
+]
+
+"Indus"
+[
+[ "Alpha Ind" "Eta Ind" "Beta Ind" ]
+]
+
+"Capricornus"
+[
+[ "Alpha1 Cap" "Beta Cap" "Psi Cap" "Omega Cap"
+  "Zeta Cap" "Epsilon Cap" "Delta Cap" "Gamma Cap"
+  "Iota Cap" "Theta Cap" "Alpha1 Cap" ]
+]
+
+
+
+
