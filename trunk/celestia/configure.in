@@ -42,7 +42,7 @@ LIBS="$LIBS $CELESTIA_LIBS"
 dnl Check for X11.
 AC_PATH_XTRA
 
-LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 $X_EXTRA_LIBS"
+LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm $X_EXTRA_LIBS"
 CFLAGS="$CFLAGS $X_CFLAGS"
 
 dnl Check for OpenGL. Taken partly from the plib sources.

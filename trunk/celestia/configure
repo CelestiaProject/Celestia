@@ -2209,7 +2209,7 @@ fi
 fi
 
 
-LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 $X_EXTRA_LIBS"
+LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm $X_EXTRA_LIBS"
 CFLAGS="$CFLAGS $X_CFLAGS"
 
 echo $ac_n "checking for glNewList in -lGL""... $ac_c" 1>&6
