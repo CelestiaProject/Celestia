@@ -4540,6 +4540,7 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
     // generate correct shadows in this case.
     if (caster.getRadius() * 100 >= receiver.getRadius() &&
         caster.getClassification() != Body::Invisible &&
+        caster.extant(now) &&
         caster.getModel() == InvalidResource)
     {
         // All of the eclipse related code assumes that both the caster
