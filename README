@@ -21,11 +21,24 @@ USA.
 
 --
 
-Getting started:
+Installing:
 
-Important:  Celestia must be started from the directory in which the EXE
-resides or else it will not find its data files.  A real installer is
-forthcoming.
+WINDOWS:
+Unzip the files into a temporary directory, such as c:\temp\  Then, select
+Run from the Start menu and enter:
+
+TEMPDIR\setup.exe
+
+Where TEMPDIR is the name of your temporary directory (e.g. c:\temp\setup.exe)
+This will launch the setup program that will install Celestia on your
+computer.  After setup is complete, launch Celestia by selecting it from
+the start menu.
+
+UNIX:
+See the file INSTALL for UNIX installation instructions.
+
+
+Running Celestia:
 
 Celestia will start up in a window, and if everything is working
 correctly, you'll see the planet Neptune in front of a field of
@@ -60,7 +73,7 @@ the right mouse button and drag to orbit the planet.
 Tour Guide
 The tour guide is a list of some of the more interesting objects you can visit
 Celestia.  Select the Tour guide option in the navigation menu to bring up the
-dialog box, select a destination from the list, click the Goto button, and
+guide window, choose a destination from the list, click the Goto button, and
 you're off.
 
 That covers the very basics . . .
@@ -87,6 +100,7 @@ C  : Center on selected object
 G  : Goto selected object
 F  : Follow selected object
 Y  : Orbit the selected object at a rate synced to its rotation
+T  : Track selected object (keep selected object centered in view)
 HOME : Move closer to object
 END  : Move farther from object
 ESC  : Cancel motion or script
@@ -124,9 +138,10 @@ Spaceflight:
 F1 : Stop 
 F2 : Set velocity to 1 km/s
 F3 : Set velocity to 1,000 km/s
-F4 : Set velocity to 1,000,000 km/s
-F5 : Set velocity to 1 AU/s
-F6 : Set velocity to 1 ly/s
+F4 : Set velocity to speed of light
+F5 : Set velocity to 1,000,000 km/s
+F6 : Set velocity to 1 AU/s
+F7 : Set velocity to 1 ly/s
 A  : Increase velocity by 10x
 Z  : Decrease velocity by 10x
 Q  : Reverse direction
@@ -176,6 +191,35 @@ this will a number from the HD catalog, but if a star isn't in the HD catalog
 the number from another catalog will be used instead.  Currently, the secondary
 catalog is always the HIPPARCOS data set, for which the prefix "HIP" should be
 used.
+
+
+Known Issues:
+
+Many people have reported problems running Celestia with Matrox G400/G450
+3D accelerator cards.  As I don't have a Matrox card, I haven't made much
+progress on this bug.  If you do have a G400, have Visual C++ installed, and
+would be interested in testing a debug version of Celestia, please contact me.
+
+The maximum texture size supported by the Voodoo 1/2/3 is 256x256, so many
+of the planet textures will look blurry when running Celestia on one of these
+cards.
+
+On 3D accelerator cards with a limited amount of memory, resizing the main
+Celestia window can cause textures to disappear.  This occurs because so
+much memory is required the frame buffer that there's not enough left for
+textures.  There are a several workarounds:
+    - Use a smaller window
+    - Make sure your display is set to 16-bit (high color) mode
+    - Try running Celestia in full screen mode
+
+Celestia only barely works in 256 color mode; if your display is set to
+256 colors, change to 16-bit or 32-bit if at all possible.
+
+If look good at a distance but get to dark when you approach them closely,
+your OpenGL driver does not support a required extension.  Try upgrading to
+the most current version of drivers available for your card.  For some older
+cards, this still won't fix the problem.  The next version of Celestia will
+feature a workaround.
 
 
 Basic Hacking Tips:
