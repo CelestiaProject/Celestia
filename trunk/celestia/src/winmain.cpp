@@ -32,6 +32,7 @@
 #include "celestiacore.h"
 #include "winstarbrowser.h"
 #include "winssbrowser.h"
+#include "wintourguide.h"
 
 #include "../res/resource.h"
 
@@ -56,6 +57,7 @@ HWND mainWindow = 0;
 
 static SolarSystemBrowser* solarSystemBrowser = NULL;
 static StarBrowser* starBrowser = NULL;
+static TourGuide* tourGuide = NULL;
 
 static HMENU menuBar = 0;
 static HACCEL acceleratorTable = 0;
@@ -863,6 +865,22 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.winY = CW_USEDEFAULT;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
+    // Adjust window dimensions for screen dimensions
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    if (prefs.winWidth > screenWidth)
+        prefs.winWidth = screenWidth;
+    if (prefs.winHeight > screenHeight)
+        prefs.winHeight = screenHeight;
+    if (prefs.winX != CW_USEDEFAULT && prefs.winY != CW_USEDEFAULT)
+    {
+        if (prefs.winX + prefs.winWidth > screenWidth)
+            prefs.winX = screenWidth - prefs.winWidth;
+        if (prefs.winY + prefs.winHeight > screenHeight)
+            prefs.winY = screenHeight - prefs.winHeight;
+    }
+    
+
     // Setup the window class.
     WNDCLASS wc;
     HWND hWnd;
@@ -1177,12 +1195,29 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_NAVIGATION_SYNCORBIT:
             appCore->charEntered('Y');
             break;
+        case ID_NAVIGATION_TRACK:
+            appCore->charEntered('T');
+            break;
         case ID_NAVIGATION_HOME:
             appCore->charEntered('H');
             break;
         case ID_NAVIGATION_SELECT:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
             break;
+
+        case ID_NAVIGATION_TOURGUIDE:
+            if (tourGuide == NULL)
+                tourGuide = new TourGuide(appInstance, hWnd, appCore);
+            break;
+        case ID_CLOSE_TOURGUIDE:
+            if (reinterpret_cast<LPARAM>(tourGuide) == lParam &&
+                tourGuide != NULL)
+            {
+                delete tourGuide;
+                tourGuide = NULL;
+            }
+            break;
+
         case ID_NAVIGATION_SSBROWSER:
             if (solarSystemBrowser == NULL)
                 solarSystemBrowser = new SolarSystemBrowser(appInstance, hWnd, appCore);
