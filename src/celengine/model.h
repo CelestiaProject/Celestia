@@ -22,14 +22,16 @@ class Model
     uint32 addMaterial(const Mesh::Material*);
 
     const Mesh* getMesh(uint32) const;
-    uint32 addMesh(const Mesh*);
+    uint32 addMesh(Mesh*);
 
     bool pick(const Ray3d& r, double& distance) const;
     void render();
 
+    void normalize(const Vec3f& centerOffset);
+
  private:
     std::vector<const Mesh::Material*> materials;
-    std::vector<const Mesh*> meshes;
+    std::vector<Mesh*> meshes;
 };
 
 #endif // !_CELENGINE_MODEL_H_
