@@ -681,3 +681,12 @@ Code:
 * Bound Ctrl+P to mark/unmark selection
 * Implemented tab completion of star, planet, and deep sky object names
 * Implemented new, scientifically accurate Pluto-Charon textures
+* Windows: bound Ctrl+C to copy cel:// URL to clipboard
+* Modified the way field of view works: compute the field of view based
+  on distance to screen, monitor resolution, and view size; don't attempt
+  to maintain a constant vertical FOV when splitting views.
+* Implemented alternate surfaces for planets
+* Added overlay textures that are applied on top of other surface maps
+* Bound + to toggle limit of knowledge maps
+* Improved estimates for stellar rotation period; previously all stars
+  were assigned the same rotation rate as the sun.

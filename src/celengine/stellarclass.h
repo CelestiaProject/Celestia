@@ -42,6 +42,8 @@ public:
 	Spectral_WC    = 10,
 	Spectral_WN    = 11,
         Spectral_Unknown = 12,
+        Spectral_L     = 13,
+        Spectral_T     = 14,
     };
 
     enum LuminosityClass
