@@ -25,6 +25,7 @@
 #include <celengine/starbrowser.h>
 #include <kmainwindow.h>
 #include <kconfig.h>
+#include <qcursor.h>
 #include <qpaintdevicemetrics.h>
 
 #ifndef DEBUG
@@ -65,7 +66,12 @@ KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core
     appRenderer=appCore->getRenderer();
     appSim = appCore->getSimulation();
 
-
+    setCursor(QCursor(Qt::CrossCursor));
+    currentCursor = CelestiaCore::CrossCursor;
+    setMouseTracking(true);
+    
+    appCore->setCursorHandler(this);
+    
     lastX = lastY = 0;
 
     if (!appCore->initSimulation())
@@ -214,7 +220,10 @@ void KdeGlWidget::mouseMoveEvent( QMouseEvent* m )
     if (m->state() & ControlButton)
         buttons |= CelestiaCore::ControlKey;
 
-    appCore->mouseMove(x - lastX, y - lastY, buttons);
+    if (buttons != 0) 
+        appCore->mouseMove(x - lastX, y - lastY, buttons);
+    else
+        appCore->mouseMove(x, y);   
 
     lastX = x;
     lastY = y;
@@ -413,4 +422,76 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
 void KdeGlWidget::keyReleaseEvent( QKeyEvent* e )
 {
     handleSpecialKey(e, false);
+}
+
+void KdeGlWidget::setCursorShape(CelestiaCore::CursorShape shape) 
+{
+    int cursor;
+    if (currentCursor != shape) 
+    {
+        switch(shape) 
+        {
+        case CelestiaCore::ArrowCursor:
+            cursor = Qt::ArrowCursor;
+            break;
+        case CelestiaCore::UpArrowCursor:
+            cursor = Qt::UpArrowCursor;
+            break;
+        case CelestiaCore::CrossCursor:
+            cursor = Qt::CrossCursor;
+            break;            
+        case CelestiaCore::InvertedCrossCursor:
+            cursor = Qt::CrossCursor;
+            break;            
+        case CelestiaCore::WaitCursor:
+            cursor = Qt::WaitCursor;
+            break;            
+        case CelestiaCore::BusyCursor:
+            cursor = Qt::WaitCursor;
+            break;            
+        case CelestiaCore::IbeamCursor:
+            cursor = Qt::IbeamCursor;
+            break;            
+        case CelestiaCore::SizeVerCursor:
+            cursor = Qt::SizeVerCursor;
+            break;            
+        case CelestiaCore::SizeHorCursor:
+            cursor = Qt::SizeHorCursor;
+            break;            
+        case CelestiaCore::SizeBDiagCursor:
+            cursor = Qt::SizeBDiagCursor;
+            break;            
+        case CelestiaCore::SizeFDiagCursor:
+            cursor = Qt::SizeFDiagCursor;
+            break;            
+        case CelestiaCore::SizeAllCursor:
+            cursor = Qt::SizeAllCursor;
+            break;            
+        case CelestiaCore::SplitVCursor:
+            cursor = Qt::SplitVCursor;
+            break;            
+        case CelestiaCore::SplitHCursor:
+            cursor = Qt::SplitHCursor;
+            break;            
+        case CelestiaCore::PointingHandCursor:
+            cursor = Qt::PointingHandCursor;
+            break;            
+        case CelestiaCore::ForbiddenCursor:
+            cursor = Qt::ForbiddenCursor;
+            break;            
+        case CelestiaCore::WhatsThisCursor:
+            cursor = Qt::WhatsThisCursor;
+            break;            
+        default:
+            cursor = Qt::CrossCursor;
+            break;            
+        }
+        setCursor(QCursor(cursor));
+        currentCursor = shape;
+    }
+}
+
+CelestiaCore::CursorShape KdeGlWidget::getCursorShape() const
+{
+    return currentCursor;
 }
