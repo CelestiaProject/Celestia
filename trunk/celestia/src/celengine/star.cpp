@@ -752,9 +752,9 @@ Star::getPosition(double t) const
     else
     {
         Point3f barycenterPosLY = position;
-        Point3f barycenterPos(barycenterPosLY.x * 1.0e6f,
-                              barycenterPosLY.y * 1.0e6f,
-                              barycenterPosLY.z * 1.0e6f);
+        Point3d barycenterPos(barycenterPosLY.x * 1.0e6,
+                              barycenterPosLY.y * 1.0e6,
+                              barycenterPosLY.z * 1.0e6);
 
         return UniversalCoord(barycenterPos) +
             ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0f)) *
