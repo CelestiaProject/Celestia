@@ -1095,7 +1095,7 @@ static void displayStarNames(Overlay& overlay,
     {
         if (count != 0)
             overlay << " / ";
-        if (hip >= 1000000000)
+        if (hip >= 1000000)
         {
             uint32 tyc3 = hip / 1000000000;
             hip -= tyc3 * 1000000000;
