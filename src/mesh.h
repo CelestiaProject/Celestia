@@ -14,6 +14,7 @@
 class Mesh
 {
  public:
+    virtual ~Mesh() {};
     virtual void render() = 0;
 };
 

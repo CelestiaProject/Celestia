@@ -30,11 +30,11 @@ class Surface
         ApplyCloudMap        = 0x10,
     };
 
+    uint32 appearanceFlags;
     Color color;
     std::string baseTexture;
     std::string bumpTexture;
     std::string cloudTexture;
-    uint32 appearanceFlags;
     float bumpHeight;
 };
 

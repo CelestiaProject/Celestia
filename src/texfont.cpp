@@ -488,8 +488,6 @@ txfGetStringMetrics(TexFont* txf,
 void txfRenderGlyph(TexFont * txf, int c)
 {
 	TexGlyphVertexInfo *tgvi;
-        float dx = 0.5f / (float) txf->tex_width;
-        float dy = 0.5f / (float) txf->tex_height;
 
 	tgvi = getTCVI(txf, c);
 	glBegin(GL_QUADS);

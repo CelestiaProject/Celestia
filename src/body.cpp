@@ -18,11 +18,11 @@ using namespace std;
 
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
-    satellites(NULL),
-    rings(NULL),
+    oblateness(0),
     rotationPeriod(1),
     surface(Color(1.0f, 1.0f, 1.0f)),
-    oblateness(0)
+    rings(NULL),
+    satellites(NULL)
 {
     system = _system;
 }
@@ -211,7 +211,7 @@ float Body::getLuminosity(const Star& sun,
     double power = SOLAR_POWER * sun.getLuminosity();
 
     // Compute the irradiance at a distance of 1au from the star in W/m^2
-    double irradiance = power / sphereArea(astro::AUtoKilometers(1.0) * 1000);
+    // double irradiance = power / sphereArea(astro::AUtoKilometers(1.0) * 1000);
 
     // Compute the irradiance at the body's distance from the star
     double satIrradiance = power / sphereArea(distanceFromSun * 1000);
@@ -262,22 +262,23 @@ PlanetarySystem::PlanetarySystem(Body* _primary) : primary(_primary)
 }
 
 PlanetarySystem::PlanetarySystem(uint32 _starNumber) :
-    primary(NULL), starNumber(_starNumber)
+    starNumber(_starNumber), primary(NULL)
 {
 }
 
 
 Body* PlanetarySystem::find(string _name, bool deepSearch) const
 {
-    for (int i = 0; i < satellites.size(); i++)
+    for (vector<Body*>::const_iterator iter = satellites.begin();
+         iter != satellites.end(); iter++)
     {
-        if (compareIgnoringCase(satellites[i]->getName(), _name) == 0)
+        if (compareIgnoringCase((*iter)->getName(), _name) == 0)
         {
-            return satellites[i];
+            return *iter;
         }
-        else if (deepSearch && satellites[i]->getSatellites() != NULL)
+        else if (deepSearch && (*iter)->getSatellites() != NULL)
         {
-            Body* body = satellites[i]->getSatellites()->find(_name, deepSearch);
+            Body* body = (*iter)->getSatellites()->find(_name, deepSearch);
             if (body != NULL)
                 return body;
         }
