@@ -85,8 +85,9 @@ BEGIN
 
         END
         MENUITEM "Antialiasing\tCtrl+X",        ID_RENDER_ANTIALIASING
-        MENUITEM "Use Pi&xel Shaders\tCtrl+P",  ID_RENDER_PIXEL_SHADERS
-        MENUITEM "Use &Vertex Shaders\tCtrl+V", ID_RENDER_VERTEX_SHADERS
+	// Obsolete menu items
+	// MENUITEM "Use Pi&xel Shaders\tCtrl+P",  ID_RENDER_PIXEL_SHADERS
+	// MENUITEM "Use &Vertex Shaders\tCtrl+V", ID_RENDER_VERTEX_SHADERS
     END
     POPUP "&View"
     BEGIN
