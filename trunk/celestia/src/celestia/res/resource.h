@@ -85,6 +85,7 @@
 #define IDC_ORGANIZE_LOCATIONS_RENAME   1060
 #define IDC_ORGANIZE_LOCATIONS_DELETE   1061
 #define IDC_NEWLOCATION                 1062
+#define IDC_SHOWSTARSASPOINTS           1063
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -141,7 +142,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         40064
-#define _APS_NEXT_CONTROL_VALUE         1063
+#define _APS_NEXT_CONTROL_VALUE         1064
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

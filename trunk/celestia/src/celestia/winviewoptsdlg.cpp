@@ -33,6 +33,11 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
                 return EndDialog(hDlg, 0);
             SetWindowLong(hDlg, DWL_USER, lParam);
 
+            //Read labelMode, renderFlags and hud detail
+            Dlg->initialRenderFlags = Dlg->appCore->getRenderer()->getRenderFlags();
+            Dlg->initialLabelMode = Dlg->appCore->getRenderer()->getLabelMode();
+            Dlg->initialHudDetail = Dlg->appCore->getHudDetail();
+
             //Set dialog controls to reflect current label and render modes
             Dlg->SetControls(hDlg);
 
@@ -67,7 +72,15 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         else if(LOWORD(wParam) == IDC_SHOWPLANETS)
             renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowPlanets);
         else if(LOWORD(wParam) == IDC_SHOWSTARS)
+        {
             renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowStars);
+
+            HWND hAsPoints = GetDlgItem(hDlg, IDC_SHOWSTARSASPOINTS);
+            if(hAsPoints)
+                EnableWindow(hAsPoints, (BOOL)(renderer->getRenderFlags() & renderer->ShowStars));
+        }
+        else if(LOWORD(wParam) == IDC_SHOWSTARSASPOINTS)
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowStarsAsPoints);
         else if(LOWORD(wParam) == IDC_LABELCONSTELLATIONS)
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->ConstellationLabels);
         else if(LOWORD(wParam) == IDC_LABELGALAXIES)
@@ -146,45 +159,46 @@ ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
 
 void ViewOptionsDialog::SetControls(HWND hDlg)
 {
-    //Read labelMode, renderFlags and hud detail
-    initialRenderFlags = appCore->getRenderer()->getRenderFlags();
-    initialLabelMode = appCore->getRenderer()->getLabelMode();
-    initialHudDetail = appCore->getHudDetail();
+    int renderFlags = appCore->getRenderer()->getRenderFlags();
+    int labelMode = appCore->getRenderer()->getLabelMode();
+    int hudDetail = appCore->getHudDetail();
 
     //Set checkboxes and radiobuttons
     SendDlgItemMessage(hDlg, IDC_SHOWATMOSPHERES, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowAtmospheres) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowAtmospheres) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCELESTIALGRID, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowCelestialSphere) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowCelestialSphere) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCLOUDS, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowCloudMaps) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowCloudMaps) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONS, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowDiagrams) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowDiagrams) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWECLIPSESHADOWS, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowEclipseShadows) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowEclipseShadows) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWGALAXIES, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowGalaxies) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowGalaxies) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowNightMaps) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowNightMaps) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWORBITS, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowOrbits) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowOrbits) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWPLANETS, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowPlanets) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowPlanets) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,
-        ((initialRenderFlags & appCore->getRenderer()->ShowStars) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((renderFlags & appCore->getRenderer()->ShowStars) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWSTARSASPOINTS, BM_SETCHECK,
+        ((renderFlags & appCore->getRenderer()->ShowStarsAsPoints) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
 
     SendDlgItemMessage(hDlg, IDC_LABELCONSTELLATIONS, BM_SETCHECK,
-        ((initialLabelMode & appCore->getRenderer()->ConstellationLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((labelMode & appCore->getRenderer()->ConstellationLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELGALAXIES, BM_SETCHECK,
-        ((initialLabelMode & appCore->getRenderer()->GalaxyLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((labelMode & appCore->getRenderer()->GalaxyLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELMAJORPLANETS, BM_SETCHECK,
-        ((initialLabelMode & appCore->getRenderer()->MajorPlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((labelMode & appCore->getRenderer()->MajorPlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELMINORPLANETS, BM_SETCHECK,
-        ((initialLabelMode & appCore->getRenderer()->MinorPlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((labelMode & appCore->getRenderer()->MinorPlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELSTARS, BM_SETCHECK,
-        ((initialLabelMode & appCore->getRenderer()->StarLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((labelMode & appCore->getRenderer()->StarLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
 
-    CheckRadioButton(hDlg, IDC_INFOTEXT0, IDC_INFOTEXT2, IDC_INFOTEXT0 + initialHudDetail);
+    CheckRadioButton(hDlg, IDC_INFOTEXT0, IDC_INFOTEXT2, IDC_INFOTEXT0 + hudDetail);
 }
 
 void ViewOptionsDialog::RestoreSettings(HWND hDlg)
