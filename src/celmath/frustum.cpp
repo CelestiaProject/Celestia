@@ -41,7 +41,7 @@ void Frustum::init(float fov, float aspectRatio, float n, float f)
     }
 
     planes[Near] = Planef(Vec3f(0, 0, -1), -n);
-    planes[Far] = Planef(Vec3f(0, 0, -1), -f);
+    planes[Far] = Planef(Vec3f(0, 0, 1), f);
 }
 
 
