@@ -1294,7 +1294,6 @@ class IoOrbit : public CachingOrbit
       + 3.29e-5*sin(L - w3) - 3.11e-5*sin(L - psi)
       + 9.3e-6*sin(L - w4) + 7.5e-6*sin(3*L - 4*l2 - 1.9927*sigma + w2)
       + 4.6e-6*sin(L + psi - 2*LPEJ - 2*G);
-    B = degToRad(B);
     B = atan(B);
 
     // Calculate the periodic terms for distance
@@ -1382,7 +1381,6 @@ class EuropaOrbit : public CachingOrbit
       + 2.72e-5*sin(l1 - 2*l3 + 1.0146*sigma + w2) - 1.44e-5*sin(L - w1)
       + 1.43e-5*sin(L + psi - 2*LPEJ - 2*G) + 3.5e-6*sin(L - psi + G)
       - 2.8e-6*sin(l1 - 2*l3 + 1.0146*sigma + w3);
-    B = degToRad(B);
     B = atan(B);
 
     // Calculate the periodic terms for distance
@@ -1476,7 +1474,6 @@ class GanymedeOrbit : public CachingOrbit
       - 4.5e-6*sin(L - psi - G) - 4.5e-6*sin(L + psi - 2*LPEJ)
       + 3.7e-6*sin(L + psi - 2*LPEJ - 3*G) + 3.0e-6*sin(2*l2 - 3*L + 4.03*sigma + w2)
       - 2.1e-6*sin(2*l2 - 3*L + 4.03*sigma + w3);
-    B = degToRad(B);
     B = atan(B);
 
     //Calculate the periodic terms for distance
@@ -1570,7 +1567,6 @@ class CallistoOrbit : public CachingOrbit
       - 5.112e-4*sin(L - w3) + 7.73e-5*sin(L + psi - 2*LPEJ - 2*G)
       + 1.04e-5*sin(L - psi + G) - 1.02e-5*sin(L - psi - G)
       + 8.8e-6*sin(L + psi - 2*LPEJ - 3*G) - 3.8e-6*sin(L + psi - 2*LPEJ - G);
-    B = degToRad(B);
     B = atan(B);
 
     //Calculate the periodic terms for distance
