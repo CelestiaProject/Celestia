@@ -56,12 +56,13 @@ class RingSystem
     float innerRadius;
     float outerRadius;
     Color color;
+    std::string texture;
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer), color(1.0f, 1.0f, 1.0f)
         { }
-    RingSystem(float inner, float outer, Color _color) :
-        innerRadius(inner), outerRadius(outer), color(_color)
+    RingSystem(float inner, float outer, Color _color, std::string _texture = "") :
+        innerRadius(inner), outerRadius(outer), color(_color), texture(_texture)
         { }
 };
 

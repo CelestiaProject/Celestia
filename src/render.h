@@ -47,7 +47,8 @@ class Renderer
     // Convert window coordinates to a ray for picking
     Vec3f getPickRay(int winX, int winY);
 
-    Console* getConsole();
+    Console* getConsole() const;
+    Console* getEntryConsole() const;
 
     enum {
         NoLabels = 0,
@@ -152,6 +153,7 @@ class Renderer
     TextureManager* textureManager;
     MeshManager* meshManager;
     Console* console;
+    Console* entryConsole;
 
     int renderMode;
     int labelMode;
