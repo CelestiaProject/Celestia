@@ -843,7 +843,7 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
 
     if (worlds != NULL)
     {
-        return worlds->getCompletion(s.substr(pos + 1));
+        return worlds->getCompletion(s.substr(pos + 1), false);
     }
 
     return completion;
