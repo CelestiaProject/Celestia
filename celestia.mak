@@ -51,7 +51,6 @@ CLEAN :
 	-@erase "$(INTDIR)\color.obj"
 	-@erase "$(INTDIR)\command.obj"
 	-@erase "$(INTDIR)\configfile.obj"
-	-@erase "$(INTDIR)\console.obj"
 	-@erase "$(INTDIR)\constellation.obj"
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\destination.obj"
@@ -79,7 +78,6 @@ CLEAN :
 	-@erase "$(INTDIR)\stardb.obj"
 	-@erase "$(INTDIR)\starname.obj"
 	-@erase "$(INTDIR)\stellarclass.obj"
-	-@erase "$(INTDIR)\texfont.obj"
 	-@erase "$(INTDIR)\texmanager.obj"
 	-@erase "$(INTDIR)\texture.obj"
 	-@erase "$(INTDIR)\texturefont.obj"
@@ -157,7 +155,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\color.obj" \
 	"$(INTDIR)\command.obj" \
 	"$(INTDIR)\configfile.obj" \
-	"$(INTDIR)\console.obj" \
 	"$(INTDIR)\constellation.obj" \
 	"$(INTDIR)\debug.obj" \
 	"$(INTDIR)\destination.obj" \
@@ -186,7 +183,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\stardb.obj" \
 	"$(INTDIR)\starname.obj" \
 	"$(INTDIR)\stellarclass.obj" \
-	"$(INTDIR)\texfont.obj" \
 	"$(INTDIR)\texmanager.obj" \
 	"$(INTDIR)\texture.obj" \
 	"$(INTDIR)\texturefont.obj" \
@@ -234,7 +230,6 @@ CLEAN :
 	-@erase "$(INTDIR)\color.obj"
 	-@erase "$(INTDIR)\command.obj"
 	-@erase "$(INTDIR)\configfile.obj"
-	-@erase "$(INTDIR)\console.obj"
 	-@erase "$(INTDIR)\constellation.obj"
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\destination.obj"
@@ -263,7 +258,6 @@ CLEAN :
 	-@erase "$(INTDIR)\stardb.obj"
 	-@erase "$(INTDIR)\starname.obj"
 	-@erase "$(INTDIR)\stellarclass.obj"
-	-@erase "$(INTDIR)\texfont.obj"
 	-@erase "$(INTDIR)\texmanager.obj"
 	-@erase "$(INTDIR)\texture.obj"
 	-@erase "$(INTDIR)\texturefont.obj"
@@ -344,7 +338,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\color.obj" \
 	"$(INTDIR)\command.obj" \
 	"$(INTDIR)\configfile.obj" \
-	"$(INTDIR)\console.obj" \
 	"$(INTDIR)\constellation.obj" \
 	"$(INTDIR)\debug.obj" \
 	"$(INTDIR)\destination.obj" \
@@ -373,7 +366,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\stardb.obj" \
 	"$(INTDIR)\starname.obj" \
 	"$(INTDIR)\stellarclass.obj" \
-	"$(INTDIR)\texfont.obj" \
 	"$(INTDIR)\texmanager.obj" \
 	"$(INTDIR)\texture.obj" \
 	"$(INTDIR)\texturefont.obj" \
@@ -483,12 +475,6 @@ SOURCE=.\src\command.cpp
 SOURCE=.\src\configfile.cpp
 
 "$(INTDIR)\configfile.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=.\src\console.cpp
-
-"$(INTDIR)\console.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -657,12 +643,6 @@ SOURCE=.\src\starname.cpp
 SOURCE=.\src\stellarclass.cpp
 
 "$(INTDIR)\stellarclass.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=.\src\texfont.cpp
-
-"$(INTDIR)\texfont.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
