@@ -1891,8 +1891,8 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     glDepthMask(GL_FALSE);
 
-    // Gradually fade in the atmosphere if it's thickness on screen is just over
-    // one pixel.
+    // Gradually fade in the atmosphere if it's thickness on screen is just
+    // over one pixel.
     float fade = clamp(pixSize - 2);
 
     Mat3f rot = orientation.toMatrix3();
@@ -1915,7 +1915,9 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     // planet is spherical.  Computing the true distance requires finding
     // the roots of a sixth degree polynomial, and isn't actually what we
     // want anyhow since the atmosphere region is just the planet ellipsoid
-    // multiplied by a uniform scale factor.
+    // multiplied by a uniform scale factor.  The value that we do compute
+    // is the distance to the surface along a line from the eye position to
+    // the center of the ellipsoid.
     float ellipDist = (float) sqrt((eyeVec * A1) * (eyeVec * A1)) - 1.0f;
     bool within = ellipDist < height;
 
@@ -1939,14 +1941,15 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         if (ellipDist <= 0.0f)
             horizonHeight = 0.0f;
         else
-            horizonHeight *= (float) pow(ellipDist / height, 0.33f);
+            horizonHeight *= max((float) pow(ellipDist / height, 0.33f), 0.001f);
     }
 
     Vec3f e = -eyeVec;
     Vec3f e_(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
     float ee = e_ * e_;
 
-    // Compute the cosine of the altitude of the sun
+    // Compute the cosine of the altitude of the sun.  This is used to compute
+    // the degree of sunset/sunrise coloration.
     float cosSunAltitude = 0.0f;
     {
         // Check for a sun either directly behind or in front of the viewer
@@ -2013,8 +2016,6 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                                         square(horizonHeight * radius));
         skyContour[i].cosSkyCapAltitude = skyContour[i].eyeDist /
             skyCapDist;
-        if (i == 0)
-            cout << "skyCapAltitude: " << radToDeg(acos(skyContour[i].cosSkyCapAltitude)) << '\n';
     }
 
 
@@ -2040,7 +2041,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     Vec3f zenith = (skyContour[0].v + skyContour[nSlices / 2].v);
     zenith.normalize();
-    zenith *= skyContour[0].centerDist * (1.0f + height * 2.0f);
+    zenith *= skyContour[0].centerDist * (1.0f + horizonHeight * 2.0f);
 
     float minOpacity = within ? (1.0f - ellipDist / height) * 0.5f : 0.0f;
 
@@ -2070,15 +2071,12 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             viewDir.normalize();
             float cosSunAngle = viewDir * sunDirection;
             float cosAltitude = viewDir * skyContour[j].eyeDir;
-            float redness = 0.0f;
-            if (sunset > 0.0f && cosSunAngle > 0.7f)
+            float coloration = 0.0f;
+            if (sunset > 0.0f && cosSunAngle > 0.7f && cosAltitude > 0.98f)
             {
-                if (cosAltitude > 0.95f)
-                {
-                    redness =  (1.0f / 0.30f) * (cosSunAngle - 0.70f);
-                    redness *= 20.0f * (cosAltitude - 0.95f);
-                    redness *= sunset;
-                }
+                coloration =  (1.0f / 0.30f) * (cosSunAngle - 0.70f);
+                coloration *= 50.0f * (cosAltitude - 0.98f);
+                coloration *= sunset;
             }   
             
             cosSunAngle = (skyContour[j].v * sunDirection) / skyContour[j].centerDist;
@@ -2096,21 +2094,29 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             vtx->z = p.z;
 
 #if 0
+            // Better way of generating sky color gradients--based on 
+            // altitude angle.
             if (!within)
             {
                 hh = (1.0f - cosAltitude) / (1.0f - skyContour[j].cosSkyCapAltitude);
             }
             else
             {
-                hh = (1.0f - cosAltitude) / (1.0f - skyContour[j].cosSkyCapAltitude);
+                float top = pow((ellipDist / height), 0.125f) * skyContour[j].cosSkyCapAltitude;
+                if (cosAltitude < top)
+                    hh = 1.0f;
+                else
+                    hh = (1.0f - cosAltitude) / (1.0f - top);
             }
+            hh = sqrt(hh);
+            //hh = (float) pow(hh, 0.25f);
 #endif
 
             atten = 1.0f - hh;
             brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             Vec3f color = (1.0f - hh) * botColor + hh * topColor;
-            if (redness != 0.0f)
-                color = (1.0f - redness) * color + redness * sunsetColor;
+            if (coloration != 0.0f)
+                color = (1.0f - coloration) * color + coloration * sunsetColor;
             Color(brightness * color.x,
                   brightness * color.y,
                   brightness * color.z,
