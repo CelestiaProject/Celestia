@@ -1,0 +1,153 @@
+"Mir" "Sol/Earth"
+{
+	Class "spacecraft"
+	Mesh "mir.3ds"
+	Radius 0.0165      # Mir is 33 meters long
+	Beginning	  2446482.0     # Launched 20 Feb 1986
+	Ending            2451989.77083 # Reentered 21 Mar 2001
+
+	# Assuming these elements to be constant isn't accurate . . .
+	# Celestia really needs to support better orbit models.
+	EllipticalOrbit {
+		Period            0.06415338
+		SemiMajorAxis  6769
+		Eccentricity      0.0000831
+		Inclination      51.6461
+		AscendingNode    83.8459
+		ArgOfPericenter 296.4901
+		MeanAnomaly      63.6005
+	}
+
+	Obliquity             51.6461
+	RotationOffset       180
+	EquatorAscendingNode  83.8459
+
+	Albedo 	      0.10
+}
+
+"ISS" "Sol/Earth"
+{
+	Class "spacecraft"
+	Mesh "iss.3ds"
+	Radius 0.040
+	Beginning           2451138    # Zarya module launched 20 Nov 1998
+	# Ending ????
+
+	EllipticalOrbit {
+		Period          0.064176392
+		SemiMajorAxis   6767
+		Eccentricity    0.0016886
+		Inclination      51.5684
+		AscendingNode   343.1518
+		ArgOfPericenter 346.2476
+		MeanAnomaly      13.8216
+		Epoch           2452028.18381755
+	}
+
+	Obliquity 51.5684 	      #
+	RotationOffset 90  	      #orientation corrections by Matt McIrvin
+	EquatorAscendingNode 343.1518 #
+
+	Albedo        0.10
+}
+
+"Hubble" "Sol/Earth"
+{
+	Class "spacecraft"
+	Mesh "hubble.3ds"
+	Radius 0.007                  # 14 meters across
+	Beginning         2448007     # Deployed 25 April 1990
+	# Ending 2010?
+
+	EllipticalOrbit {
+		Period          0.06903
+		SemiMajorAxis   6767
+		Eccentricity    0.0012082
+		Inclination      28.4675
+		AscendingNode    51.0100
+		ArgOfPericenter  27.0378
+		MeanAnomaly     333.0836
+		Epoch           2452028.18381755
+	}
+
+	Albedo       0.10
+}
+
+"Galileo" "Sol"
+{
+	Class "spacecraft"
+	Mesh "galileo.3ds"
+	Radius   0.01
+
+	InfoURL "http://galileo.jpl.nasa.gov"
+
+	Beginning "1989 10 19 02:47"   # Launch
+	Ending    "2003  9 21 10:44"   # Crash into Jupiter
+
+	SampledOrbit "galileo.xyz"
+	EllipticalOrbit
+	{
+	Period        64.4068
+	SemiMajorAxis  4632880
+	Eccentricity   0.831774
+	Inclination    4.213
+	AscendingNode  59.562
+	ArgOfPericenter 97.224
+	TrueAnomaly    -66.619
+	}
+
+	RotationPeriod    1.0e9  # Essentially no rotation . . .
+	Orientation     [ 90 0 1 0 ]
+
+	Albedo         0.50
+}
+
+"Cassini" "Sol" 
+{
+
+	Class "spacecraft"
+	Mesh "cassini.3ds"
+
+	Radius 0.011
+
+	Beginning 2450736.893877314 # 1997 Oct 15 09:27:11
+	SampledOrbit	"cassini.xyz"
+
+	RotationPeriod 1e9
+}
+
+
+"Huygens" "Sol/Cassini" {
+	Class "spacecraft"
+	Mesh "huygens.3ds"
+	Radius 0.00135
+	
+	Beginning 2450736.893877314 # 1997 Oct 15 09:27:11
+	Ending    2453364.5847      # 2004 Dec 25 02:01:58
+
+
+	EllipticalOrbit {
+		SemiMajorAxis 0.0015
+		Period 1e9
+		MeanAnomaly 180
+	}
+}
+
+"Huygens" "Sol" 
+{
+
+	Class "spacecraft"
+	Mesh "huygens.3ds"
+
+	Radius 0.00135
+
+	Beginning 2453364.5847 # 2004 Dec 25 02:01:58
+
+	Ending    2453384.8750 # 2005 Jan 14 09:00:00
+	SampledOrbit "huygens.xyz"
+
+	Orientation [ 90 0 0 1 ]
+	Obliquity 70
+	RotationPeriod 0.01
+}
+

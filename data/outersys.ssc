@@ -1,0 +1,164 @@
+# Kuiper belt objects
+
+"2004 DW" "Sol" { 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius  800 
+
+	InfoURL "http://www.gps.caltech.edu/~chad/2004dw/" 
+
+	EllipticalOrbit {
+		Period           245.976 
+      		SemiMajorAxis     39.258 
+		Eccentricity       0.2258 
+		Inclination       20.539 
+		AscendingNode    268.457 
+		ArgOfPericenter   73.731 
+		MeanAnomaly      150.066 
+   	} 
+
+	Albedo 0.09 # estimate
+
+	RotationPeriod     48.0   # guess
+
+}
+
+# 50000 Quaoar
+"Quaoar" "Sol" 
+{
+
+	Class "asteroid"
+
+	Texture "asteroid.jpg"
+
+	Radius 625
+
+	
+	InfoURL "http://www.gps.caltech.edu/~chad/quaoar/"
+
+
+
+	EllipticalOrbit
+	{
+
+		Period          283.234
+
+		SemiMajorAxis    43.128
+
+		Eccentricity      0.0395
+	
+		Inclination       8.005
+
+		AscendingNode   189.081
+	
+	ArgOfPericenter 163.885
+
+	        MeanAnomaly     258.858
+	}
+
+
+
+	Albedo 0.12
+
+
+
+	RotationPeriod     48.0   # guess
+}
+
+
+# 2001 KX76 
+"Ixion" "Sol" 
+{ 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 600 
+
+	EllipticalOrbit 
+	{ 
+	Epoch        2452400.5       # 2002 May 6 00:00UT
+	Period           246.50564 
+	SemiMajorAxis     39.3138672 
+	Eccentricity       0.2447032 
+	Inclination       19.68326 
+	AscendingNode     71.0155 
+	ArgOfPericenter  300.9234 
+	MeanAnomaly      259.585 
+	} 
+
+	RotationPeriod 30.0 
+
+	Albedo 0.07 
+}
+
+# 20000 Varuna 
+"Varuna" "Sol" 
+{ 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 450 
+
+	EllipticalOrbit 
+	{ 
+	Epoch        2452400.5      # 2002 May 6 00:00UT 
+	Period           284.83446 
+	SemiMajorAxis     43.290196 
+	Eccentricity       0.053794 
+	Inclination       17.12557 
+	AscendingNode     97.2843 
+	ArgOfPericenter  275.5744 
+	MeanAnomaly       82.67171 
+	} 
+
+	RotationPeriod 6.3442 # for a double-peaked light curve 
+
+	Albedo 0.4 
+} 
+
+"2002 AW197" "Sol" 
+{ 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius  450 
+
+	EllipticalOrbit {
+		Period           323.976 
+      		SemiMajorAxis     47.171 
+		Eccentricity       0.1257 
+		Inclination       24.370 
+		AscendingNode    297.463 
+		ArgOfPericenter  296.073 
+		MeanAnomaly      272.766 
+   	} 
+
+	Albedo 0.07 # estimate
+
+	RotationPeriod     48.0   # guess
+
+}
+
+
+# Inner Oort cloud
+"2003 VB12 (Sedna)" "Sol" 
+{ 
+   Class "asteroid" 
+   Texture "asteroid.jpg" 
+   Radius 850 
+
+   InfoURL "http://www.gps.caltech.edu/~mbrown/sedna/"
+
+   EllipticalOrbit # Andrea Pelloni et al
+   { 
+   Epoch        2452178.467091144 
+   Period         12941.01891 
+   SemiMajorAxis    551.2039416  
+   Eccentricity       0.8615909  
+   Inclination       11.92987 
+   AscendingNode    144.48101 
+   ArgOfPericenter  310.84807 
+   MeanAnomaly      357.94906 
+   } 
+
+   Albedo 0.05 
+
+   RotationPeriod 480 # 20 days (or longer)
+} 
