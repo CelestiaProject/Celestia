@@ -9,8 +9,7 @@ PARAM  mvp[4]        = { state.matrix.mvp };
 PARAM  eyePos        = program.env[1];
 PARAM  lightDir      = program.env[0];
 PARAM  diffuse       = program.env[2];
-PARAM  ambient       = state.lightmodel.ambient;
-PARAM  haze          = program.env[6];
+PARAM  ambient       = program.env[5];
 PARAM  zero          = 0;
 PARAM  one           = 1;
 OUTPUT oPos          = result.position;
@@ -48,7 +47,7 @@ MUL   oFog.x, diffuseFactor.x, diffuseFactor.y;
 # Output the texture
 MOV   oTex0, iTex0;
 # Output the primary color
-MAD   oColor, diffuse, diffuseFactor, ambient;
+MAD   oColor, diffuse, diffuseFactor.x, ambient;
 
 END
 
