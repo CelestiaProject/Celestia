@@ -3171,6 +3171,7 @@ bool Renderer::testEclipse(const Body& receiver, const Body& caster,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
     if (caster.getRadius() * 100 >= receiver.getRadius() &&
+        caster.getClassification() != Body::Invisible &&
         caster.getMesh() == InvalidResource)
     {
         // All of the eclipse related code assumes that both the caster
@@ -3327,7 +3328,8 @@ void Renderer::renderPlanet(const Body& body,
         }
 
         // Calculate eclipse circumstances
-        if ((renderFlags & ShowEclipseShadows) != 0)
+        if ((renderFlags & ShowEclipseShadows) != 0 &&
+            body.getClassification() != Body::Invisible)
         {
             PlanetarySystem* system = body.getSystem();
             if (system != NULL)
