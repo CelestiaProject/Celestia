@@ -696,3 +696,10 @@ Code:
 * Added a locations dialog for controlling the display of locations
 * Allow orbit paths to be turned on independently for all object classes
 * Added a 'scaled disc' style for rendering stars
+* Bound shift+arrow keys to orbit reference object
+* Added unmarkall command for scripting
+* Added missing render flags for script commands: automag, atmospheres, grid
+* Added a MeshCenter field for properly position and rotation of 3DS meshes
+* Implemented virtual textures, for ultra-high resolution texture mapping of
+  planets.
+* Added a texture for Hyperion
