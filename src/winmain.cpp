@@ -566,6 +566,9 @@ void handleKey(WPARAM key, bool down)
     case VK_F6:
         k = CelestiaCore::Key_F6;
         break;
+    case VK_F7:
+        k = CelestiaCore::Key_F7;
+        break;
     }
 
     if (k >= 0)
