@@ -9,7 +9,7 @@
 
 #include <algorithm>
 #include <iostream>
-#include <fstream>
+#include <iomanip>
 #include "util.h"
 #include "cmdparser.h"
 #include "favorites.h"
@@ -17,6 +17,91 @@
 using namespace std;
 
 
+FavoritesList* ReadFavoritesList(istream& in)
+{
+    FavoritesList* favorites = new FavoritesList();
+    Tokenizer tokenizer(&in);
+    Parser parser(&tokenizer);
+
+    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    {
+        if (tokenizer.getTokenType() != Tokenizer::TokenString)
+        {
+            DPRINTF("Error parsing favorites file.\n");
+            for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
+            delete favorites;
+            return NULL;
+        }
+
+        FavoritesEntry* fav = new FavoritesEntry();
+        fav->name = tokenizer.getStringValue();
+
+        Value* favParamsValue = parser.readValue();
+        if (favParamsValue == NULL || favParamsValue->getType() != Value::HashType)
+        {
+            DPRINTF("Error parsing favorites entry %s\n", fav->name.c_str());
+            for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
+            delete favorites;
+            return NULL;
+        }
+
+        Hash* favParams = favParamsValue->getHash();
+
+        // Get position
+        Vec3d base(0.0, 0.0, 0.0);
+        Vec3d offset(0.0, 0.0, 0.0);
+        favParams->getVector("base", base);
+        favParams->getVector("offset", offset);
+        fav->position = UniversalCoord(Point3d(base.x, base.y, base.z)) + offset;
+
+        // Get orientation
+        Vec3d axis(1.0, 0.0, 0.0);
+        double angle = 0.0;
+        favParams->getVector("axis", axis);
+        favParams->getNumber("angle", angle);
+        fav->orientation.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
+                                      (float) angle);
+
+        // Get time
+        fav->jd = 0.0;
+        favParams->getNumber("time", fav->jd);
+
+        favorites->insert(favorites->end(), fav);
+    }
+
+    return favorites;
+}
+
+
+void WriteFavoritesList(FavoritesList& favorites, ostream& out)
+{
+    for (FavoritesList::const_iterator iter = favorites.begin();
+         iter != favorites.end(); iter++)
+    {
+        FavoritesEntry* fav = *iter;
+
+        Vec3f axis;
+        float angle = 0;
+        fav->orientation.getAxisAngle(axis, angle);
+
+        Point3d base = (Point3d) fav->position;
+        Vec3d offset = fav->position - base;
+
+        out << '"' << fav->name << "\" {\n";
+        out << setprecision(16);
+        out << "\tbase   [ " << base.x << ' ' << base.y << ' ' << base.z << " ]\n";
+        out << "\toffset [ " << offset.x << ' ' << offset.y << ' ' << offset.z << " ]\n";
+        out << setprecision(6);
+        out << "\taxis   [ " << axis.x << ' ' << axis.y << ' ' << axis.z << " ]\n";
+        out << "\tangle  " << angle << '\n';
+        out << setprecision(16);
+        out << "\ttime   " << fav->jd << '\n';
+        out << "}\n\n";
+    }
+}
+
+
+#if 0
 FavoritesList* ReadFavoritesList(string filename)
 {
     ifstream in(filename.c_str());
@@ -53,3 +138,4 @@ FavoritesList* ReadFavoritesList(string filename)
 
     return favorites;
 }
+#endif
