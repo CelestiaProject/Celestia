@@ -20,6 +20,7 @@
 #include "stardb.h"
 #include "visstars.h"
 #include "solarsys.h"
+#include "galaxy.h"
 #include "texmanager.h"
 #include "render.h"
 
@@ -39,7 +40,8 @@ class Simulation
     Selection pickObject(Vec3f pickRay);
     
     void setStarDatabase(StarDatabase* db,
-                         SolarSystemCatalog* catalog);
+                         SolarSystemCatalog* catalog,
+                         GalaxyList*);
 
     Observer& getObserver();
 
@@ -122,6 +124,7 @@ class Simulation
 
     StarDatabase* stardb;
     SolarSystemCatalog* solarSystemCatalog;
+    GalaxyList* galaxies;
 
     VisibleStarSet* visibleStars;
     SolarSystem* closestSolarSystem;

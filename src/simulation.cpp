@@ -29,6 +29,7 @@ Simulation::Simulation() :
     timeScale(1.0),
     stardb(NULL),
     solarSystemCatalog(NULL),
+    galaxies(NULL),
     visibleStars(NULL),
     closestSolarSystem(NULL),
     selection(),
@@ -110,6 +111,18 @@ static void displayPlanetInfo(Console& console,
 }
 
 
+static void displayGalaxyInfo(Console& console,
+                              Galaxy& galaxy,
+                              double distance)
+{
+    console << galaxy.getName() << '\n';
+    console << "Distance: ";
+    displayDistance(console, distance);
+    console << '\n';
+    console << "Radius: " << galaxy.getRadius() << " ly\n";
+}
+
+
 void Simulation::displaySelectionInfo(Console& console)
 {
     if (selection.empty())
@@ -120,6 +133,8 @@ void Simulation::displaySelectionInfo(Console& console)
         displayStarInfo(console, *selection.star, *stardb, v.length());
     else if (selection.body != NULL)
         displayPlanetInfo(console, *selection.body, v.length());
+    else if (selection.galaxy != NULL)
+        displayGalaxyInfo(console, *selection.galaxy, v.length());
 }
 
 
@@ -139,6 +154,7 @@ void  Simulation::render(Renderer& renderer)
                     *stardb,
                     *visibleStars,
                     closestSolarSystem,
+                    galaxies,
                     selection,
                     simTime);
 }
@@ -193,6 +209,12 @@ UniversalCoord Simulation::getSelectionPosition(Selection& sel, double when)
     {
         return astro::universalPosition(Point3d(0.0, 0.0, 0.0), sel.star->getPosition());
     }
+    else if (sel.galaxy != NULL)
+    {
+        Point3d p = sel.galaxy->getPosition();
+        return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
+                                        Point3f((float) p.x, (float) p.y, (float) p.z));
+    }
     else
     {
         return UniversalCoord(Point3d(0.0, 0.0, 0.0));
@@ -206,16 +228,20 @@ float getSelectionSize(Selection& sel)
         return sel.body->getRadius();
     else if (sel.star != NULL)
         return sel.star->getRadius();
+    else if (sel.galaxy != NULL)
+        return sel.galaxy->getRadius();
     else
         return 0.0f;
 }
 
 
 void Simulation::setStarDatabase(StarDatabase* db,
-                                 SolarSystemCatalog* catalog)
+                                 SolarSystemCatalog* catalog,
+                                 GalaxyList* galaxyList)
 {
     stardb = db;
     solarSystemCatalog = catalog;
+    galaxies = galaxyList;
 
     if (visibleStars != NULL)
     {
@@ -596,7 +622,7 @@ void Simulation::rotate(Quatf q)
 // both the observer's position and orientation.
 void Simulation::orbit(Quatf q)
 {
-    if (selection.body != NULL || selection.star != NULL)
+    if (!selection.empty())
     {
         UniversalCoord focusPosition = getSelectionPosition(selection, simTime);
         Vec3d v = observer.getPosition() - focusPosition;
@@ -641,7 +667,7 @@ void Simulation::orbit(Quatf q)
 // at a rate dependent on the observer's distance from the object.
 void Simulation::changeOrbitDistance(float d)
 {
-    if (selection.body != NULL || selection.star != NULL)
+    if (!selection.empty())
     {
         UniversalCoord focusPosition = getSelectionPosition(selection, simTime);
         double size = getSelectionSize(selection);
@@ -689,7 +715,7 @@ float Simulation::getTargetSpeed()
 
 void Simulation::gotoSelection(double gotoTime)
 {
-    if (selection.body != NULL || selection.star != NULL)
+    if (!selection.empty())
     {
         computeGotoParameters(selection, journey, gotoTime);
         observerMode = Travelling;
@@ -703,7 +729,7 @@ void Simulation::cancelMotion()
 
 void Simulation::centerSelection(double centerTime)
 {
-    if (selection.body != NULL || selection.star != NULL)
+    if (!selection.empty())
     {
         computeCenterParameters(selection, journey, centerTime);
         observerMode = Travelling;
@@ -788,8 +814,22 @@ void Simulation::selectBody(string s)
     if (star != NULL)
     {
         selectStar(star->getCatalogNumber());
+        return;
     }
-    else
+
+    if (galaxies != NULL)
+    {
+        for (GalaxyList::const_iterator iter = galaxies->begin();
+             iter != galaxies->end(); iter++)
+        {
+            if ((*iter)->getName() == s)
+            {
+                selection = Selection(*iter);
+                return;
+            }
+        }
+    }
+        
     {
         const PlanetarySystem* solarSystem = NULL;
 

@@ -52,8 +52,6 @@ static CTexture* veilTex = NULL;
 
 static TexFont* font = NULL;
 
-static GalaxyList galaxies;
-
 
 Renderer::Renderer() :
     windowWidth(0),
@@ -249,6 +247,7 @@ bool Renderer::init(int winWidth, int winHeight)
         commonDataInitialized = true;
     }
 
+#if 0
     {
         Galaxy* g = new Galaxy();
         g->setName("Milky Way");
@@ -281,6 +280,7 @@ bool Renderer::init(int winWidth, int winHeight)
         g->setType(Galaxy::Irr);
         galaxies.insert(galaxies.end(), g);
     }
+#endif
 
     cout << "GL extensions supported:\n";
     cout << glGetString(GL_EXTENSIONS) << '\n';
@@ -485,6 +485,7 @@ void Renderer::render(const Observer& observer,
                       const StarDatabase& starDB,
                       const VisibleStarSet& visset,
                       SolarSystem* solarSystem,
+                      GalaxyList* galaxies,
                       const Selection& sel,
                       double now)
 {
@@ -532,7 +533,8 @@ void Renderer::render(const Observer& observer,
     clearLabels();
     renderList.clear();
 
-    renderGalaxies(galaxies, observer);
+    if (galaxies != NULL)
+        renderGalaxies(*galaxies, observer);
 
     // Translate the camera before rendering the stars
     glPushMatrix();
@@ -1673,7 +1675,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         Mat4d newFrame = Mat4d::xrotation(-body->getObliquity()) * Mat4d::translation(localPos) * frame;
         Point3d bodyPos = Point3d(0, 0, 0) * newFrame;
         bodyPos = body->getHeliocentricPosition(now);
-        double distanceFromSun = bodyPos.distanceTo(Point3d(0, 0, 0));
+        double distanceFromSun = bodyPos.distanceFromOrigin();
         
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the planet
@@ -1868,7 +1870,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
         Point3f offset = Point3f((float) (observerPos.x - pos.x),
                                  (float) (observerPos.y - pos.y),
                                  (float) (observerPos.z - pos.z));
-        float distanceToGalaxy = offset.distanceTo(Point3f(0, 0, 0)) - radius;
+        float distanceToGalaxy = offset.distanceFromOrigin() - radius;
         if (distanceToGalaxy < 0)
             distanceToGalaxy = 0;
         float minimumFeatureSize = pixelSize * distanceToGalaxy;
@@ -1880,14 +1882,17 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
             glTranslate(Point3f(0, 0, 0) - offset);
 
             Mat4f m = (galaxy->getOrientation().toMatrix4() *
+                       Mat4f::scaling(form->scale) *
                        Mat4f::scaling(radius));
             float size = radius;
             int pow2 = 1;
 
+            vector<Point3f>* points = form->points;
+
             glBegin(GL_QUADS);
-            for (int i = 0; i < form->size(); i++)
+            for (int i = 0; i < points->size(); i++)
             {
-                Point3f p = (*form)[i] * m;
+                Point3f p = (*points)[i] * m;
                 Vec3f relPos = p - offset;
 
                 if ((i & pow2) != 0)
@@ -1896,7 +1901,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
                     size /= 1.5f;
                     if (size < minimumFeatureSize)
                     {
-                        cout << galaxy->getName() << ": Quitting after " << i << " particles.\n";
+                        // cout << galaxy->getName() << ": Quitting after " << i << " particles.\n";
                         break;
                     }
                 }
