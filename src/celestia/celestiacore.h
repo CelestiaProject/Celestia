@@ -37,16 +37,28 @@ typedef Watcher<CelestiaCore> CelestiaWatcher;
 class View
 {
  public:
-    View(Observer*, float, float, float, float);
+    enum Type {
+        ViewWindow      = 1,
+        HorizontalSplit = 2,
+        VerticalSplit   = 3
+    };
+
+    View(Type, Observer*, float, float, float, float);
 
     void mapWindowToView(float, float, float&, float&) const;
-    
+
  public:
+    Type type;
+
     Observer* observer;
+    View *parent;
+    View *child1;
+    View *child2;
     float x;
     float y;
     float width;
     float height;
+    void walkTreeResize(View*, int);
 };
 
 
@@ -205,8 +217,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setFaintest(float);
     void setFaintestAutoMag();
 
-    void splitView(bool vertical);
+    void splitView(View::Type);
     void singleView();
+    void deleteView();
 
     void flash(const std::string&, double duration = 1.0);
 
