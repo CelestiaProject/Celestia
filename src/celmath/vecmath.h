@@ -24,6 +24,7 @@ public:
     inline Vector3();
     inline Vector3(const Vector3<T>&);
     inline Vector3(T, T, T);
+    inline Vector3(T*);
 
     inline T& operator[](int) const;
     inline Vector3& operator+=(const Vector3<T>&);
@@ -46,6 +47,7 @@ public:
     inline Point3();
     inline Point3(const Point3&);
     inline Point3(T, T, T);
+    inline Point3(T*);
 
     inline T& operator[](int) const;
     inline Point3& operator+=(const Vector3<T>&);
@@ -191,6 +193,9 @@ template<class T> Vector3<T>::Vector3(T _x, T _y, T _z) : x(_x), y(_y), z(_z)
 {
 }
 
+template<class T> Vector3<T>::Vector3(T* v) : x(v[0]), y(v[1]), z(v[2])
+{
+}
 
 //**** Vector3 operators
 
@@ -323,6 +328,10 @@ template<class T> Point3<T>::Point3(const Point3<T>& p) :
 }
 
 template<class T> Point3<T>::Point3(T _x, T _y, T _z) : x(_x), y(_y), z(_z)
+{
+}
+
+template<class T> Point3<T>::Point3(T* p) : x(p[0]), y(p[1]), z(p[2])
 {
 }
 
