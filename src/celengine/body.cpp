@@ -215,7 +215,9 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
 Mat4d Body::getLocalToHeliocentric(double when) const
 {
     Point3d pos = orbit->positionAtTime(when);
-    Mat4d frame = Mat4d::xrotation(-rotationElements.obliquity) *
+    Mat4d frame = 
+        Mat4d::xrotation(-rotationElements.obliquity) *
+        Mat4d::yrotation(-rotationElements.axisLongitude) *
         Mat4d::translation(pos);
  
     // Recurse up the hierarchy . . .
@@ -235,9 +237,8 @@ Point3d Body::getHeliocentricPosition(double when) const
 
 Quatd Body::getEclipticalToEquatorial() const
 {
-    Quatd q(1);
-    q.xrotate(-rotationElements.obliquity);
-    // TODO: Need to rotate by longitude of rotation axis
+    Quatd q = Quatd::xrotation(-rotationElements.obliquity) *
+              Quatd::yrotation(-rotationElements.axisLongitude);
 
     // Recurse up the hierarchy . . .
     if (system != NULL && system->getPrimaryBody() != NULL)

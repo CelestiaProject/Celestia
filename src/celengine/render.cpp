@@ -37,11 +37,12 @@ using namespace std;
 #define NEAR_DIST      0.5f
 #define FAR_DIST   10000000.0f
 
-#define RENDER_DISTANCE 50.0f
-
-static const float PixelOffset = 0.375f;
 
 static const int StarVertexListSize = 1024;
+
+// Fractional pixel offset used when rendering text as texture mapped
+// quads to assure consistent mapping of texels to pixels.
+static const float PixelOffset = 0.375f;
 
 // These two values constrain the near and far planes of the view frustum
 // when rendering planet and object meshes.  The near plane will never be
@@ -49,6 +50,8 @@ static const int StarVertexListSize = 1024;
 // will not exceed MaxFarNearRatio.
 static const float MinNearPlaneDistance = 0.0001f; // km
 static const float MaxFarNearRatio      = 10000.0f;
+
+static const float RenderDistance       = 50.0f;
 
 // Static meshes and textures used by all instances of Simulation
 
@@ -2596,7 +2599,10 @@ void Renderer::renderPlanetarySystem(const Star& sun,
     {
         Body* body = solSystem.getBody(i);
         Point3d localPos = body->getOrbit()->positionAtTime(now);
-        Mat4d newFrame = Mat4d::xrotation(-body->getRotationElements().obliquity) * Mat4d::translation(localPos) * frame;
+        Mat4d newFrame =
+            Mat4d::xrotation(-body->getRotationElements().obliquity) *
+            Mat4d::yrotation(-body->getRotationElements().axisLongitude) *
+            Mat4d::translation(localPos) * frame;
         Point3d bodyPos = Point3d(0, 0, 0) * newFrame;
         bodyPos = body->getHeliocentricPosition(now);
         
@@ -2741,8 +2747,8 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // Recompute apparent magnitude using new distance computation
             appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
 
-            float f = RENDER_DISTANCE / distance;
-            renderDistance = RENDER_DISTANCE;
+            float f = RenderDistance / distance;
+            renderDistance = RenderDistance;
             starPos = position + relPos * f;
 
             float radius = star.getRadius();
