@@ -2442,6 +2442,8 @@ public:
 
         // Rotate from the J2000 mean equator to the ecliptic
         // 23 deg 26' 21".448
+        double J2000_equator = degToRad(23.4392911);
+        heliocentricPos = heliocentricPos * Mat3d::xrotation(J2000_equator);
 
         return Point3d(heliocentricPos.x,
                        heliocentricPos.z,
