@@ -7,8 +7,7 @@
 	wait { duration 2.0 }
 
 	print { text "Let's start near home . . ." }
-	select { object "Sol" }
-	select { object "Earth" }
+	select { object "Sol/Earth" }
 	cancel {}
 	setorientation { axis [ 1 0 0 ] angle 180 }
 	goto { time 0  distance 3 }
@@ -147,8 +146,7 @@
 	orbit { axis [ 1 0 0 ] rate 30 duration 10.0 }
 	print { text "Time to go home . . ." }
 
-	select { object "Sol" }
-	select { object "Earth" }
+	select { object "Sol/Earth" }
 	goto { time 20 distance 10 }
 	wait { duration 20.0 }
 	print { text "Demo completed." }
