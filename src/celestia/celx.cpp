@@ -2177,7 +2177,7 @@ static int object_getinfo(lua_State* l)
         setTable(l, "luminosity", (lua_Number)star->getLuminosity());
         setTable(l, "radius", (lua_Number)star->getRadius());
         setTable(l, "temperature", (lua_Number)star->getTemperature());
-        setTable(l, "rotationPeriod", (lua_Number)star->getRotationPeriod());
+        setTable(l, "rotationPeriod", (lua_Number)star->getRotationElements().period);
         setTable(l, "bolometricMagnitude", (lua_Number)star->getBolometricMagnitude());
     }
     else if (sel->body() != NULL)

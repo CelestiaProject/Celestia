@@ -2719,7 +2719,7 @@ static void displayStarInfo(Overlay& overlay,
         overlay.printf("Radius: %.2f Rsun\n", star.getRadius() / 696000.0f);
 
         overlay << "Rotation period: ";
-        float period = star.getRotationPeriod();
+        float period = star.getRotationElements().period;
         displayDuration(overlay, period);
         overlay << '\n';
 

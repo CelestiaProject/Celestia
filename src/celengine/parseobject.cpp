@@ -19,7 +19,8 @@
 using namespace std;
 
 
-bool ParseDate(Hash* hash, const string& name, double& jd)
+bool
+ParseDate(Hash* hash, const string& name, double& jd)
 {
     // Check first for a number value representing a Julian date
     if (hash->getNumber(name, jd))
@@ -40,8 +41,9 @@ bool ParseDate(Hash* hash, const string& name, double& jd)
 }
 
 
-static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
-                                              bool usePlanetUnits)
+static EllipticalOrbit*
+CreateEllipticalOrbit(Hash* orbitData,
+                      bool usePlanetUnits)
 {
     // SemiMajorAxis and Period are absolutely required; everything
     // else has a reasonable default.
@@ -116,10 +118,11 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
 }
 
 
-Orbit* CreateOrbit(PlanetarySystem* system,
-                   Hash* planetData,
-                   const string& path,
-                   bool usePlanetUnits)
+Orbit*
+CreateOrbit(PlanetarySystem* system,
+            Hash* planetData,
+            const string& path,
+            bool usePlanetUnits)
 {
     Orbit* orbit = NULL;
 
@@ -185,3 +188,32 @@ Orbit* CreateOrbit(PlanetarySystem* system,
 
     return NULL;
 }
+
+
+void
+FillinRotationElements(Hash* rotationData, RotationElements& re)
+{
+    float period = 0.0f;
+    if (rotationData->getNumber("RotationPeriod", period))
+        re.period = period / 24.0f;
+
+    float offset = 0.0f;
+    if (rotationData->getNumber("RotationOffset", offset))
+        re.offset = degToRad(offset);
+
+    rotationData->getNumber("RotationEpoch", re.epoch);
+
+    float obliquity = 0.0f;
+    if (rotationData->getNumber("Obliquity", obliquity))
+        re.obliquity = degToRad(obliquity);
+
+    float ascendingNode = 0.0f;
+    if (rotationData->getNumber("EquatorAscendingNode", ascendingNode))
+        re.ascendingNode = degToRad(ascendingNode);
+
+    float precessionRate = 0.0f;
+    if (rotationData->getNumber("PrecessionRate", precessionRate))
+        re.precessionRate = degToRad(precessionRate);
+}
+
+
