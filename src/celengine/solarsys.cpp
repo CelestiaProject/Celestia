@@ -753,8 +753,8 @@ bool LoadSolarSystemObjects(istream& in,
                     body->setName(name);
                     if (disposition == ReplaceObject)
                     {
+                        parentSystem->replaceBody(existingBody, body);
                         delete existingBody;
-                        parentSystem->addBody(body);
                     } 
                     else if (disposition == AddObject)
                     {
