@@ -246,12 +246,12 @@ static gint menuShowLocTime(GtkWidget* w, gpointer data)
     if (on)
     {
 	appCore->setTimeZoneBias(-timezone);
-	appCore->setTimeZone(tzname[daylight?0:1]);
+	appCore->setTimeZoneName(tzname[daylight?0:1]);
     }
     else
     {
 	appCore->setTimeZoneBias(0);
-	appCore->setTimeZone("UTC");
+	appCore->setTimeZoneName("UTC");
     }
     return TRUE;
 }
@@ -1232,7 +1232,7 @@ gint initFunc(GtkWidget* widget)
 	localtime(&curtime); /* Only doing this to set timezone as a side
 			       effect*/
 	appCore->setTimeZoneBias(-timezone);
-	appCore->setTimeZone(tzname[daylight?0:1]);
+	appCore->setTimeZoneName(tzname[daylight?0:1]);
     }
         
     return TRUE;
