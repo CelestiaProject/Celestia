@@ -12,7 +12,7 @@
 
 #include <vector>
 #include "mesh.h"
-#include "trilist.h"
+#include "vertexlist.h"
 #include "3dsmodel.h"
 
 
@@ -26,8 +26,8 @@ class Mesh3DS : public Mesh
     void normalize();
 
  private:
-    typedef std::vector<TriangleList*> TriListVec;
-    TriListVec triLists;
+    typedef std::vector<VertexList*> VertexListVec;
+    VertexListVec vertexLists;
 };
 
 #endif // _3DSMESH_H_
