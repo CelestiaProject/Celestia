@@ -7,7 +7,7 @@
 	BumpHeight 2.5
 	Radius 2440
 
-	CustomOrbit "mercury"
+	CustomOrbit "vsop87-mercury"
 	EllipticalOrbit {
 	Period            0.2408
 	SemiMajorAxis     0.3871
@@ -40,7 +40,7 @@
 		Sky [ 0.8 0.8 0.5 ]
 	}
 
-	CustomOrbit "venus"
+	CustomOrbit "vsop87-venus"
 	EllipticalOrbit {
 		Period            0.6152
 		SemiMajorAxis     0.7233
@@ -106,8 +106,9 @@
 "Moon" "Sol/Earth"
 {
 	Texture "moon.jpg"
-	BumpMap "moonbump1k.jpg"
+	# Texture "clem-moon-4k.jpg"
 	# Texture "moon4k.dds"
+	BumpMap "moonbump1k.jpg"
 	BumpHeight 0.7
 	Radius   1737.53
 	Oblateness 0.002
@@ -211,7 +212,7 @@
 		Sky [ 0.83 0.75 0.65 ]
 	}
 
-	CustomOrbit "mars"
+	CustomOrbit "vsop87-mars"
 	EllipticalOrbit
 	{
 	Period            1.8809
@@ -277,7 +278,7 @@
 	Radius 71398
 	Oblateness 0.064
 
-	CustomOrbit "jupiter"
+	CustomOrbit "vsop87-jupiter"
 	EllipticalOrbit
 	{
 	Period           11.8622
@@ -296,6 +297,7 @@
 	                     # old values: 337.68, 157.68
 	Albedo            0.51
 }
+
 
 "Amalthea" "Sol/Jupiter"
 {
@@ -402,26 +404,6 @@
 	Albedo         0.20
 }
 
-"Galileo" "Sol/Jupiter"
-{
-	Class "spacecraft"
-	Mesh "galileo.3ds"
-	Radius   0.01
-
-	EllipticalOrbit
-	{
-	Period        64.4068
-	SemiMajorAxis  4632880
-	Eccentricity   0.831774
-	Inclination    4.213
-	AscendingNode  59.562
-	ArgOfPericenter 97.224
-	TrueAnomaly    -66.619
-	}
-
-	Albedo         0.50
-}
-
 "Saturn" "Sol"
 {
 	Texture "saturn.jpg"
@@ -431,7 +413,7 @@
 	Radius 60330
 	Oblateness 0.1076
 
-	CustomOrbit "saturn"
+	CustomOrbit "vsop87-saturn"
 	EllipticalOrbit
 	{
 	Period           29.4577
@@ -662,7 +644,7 @@
 	Radius 26200
 	Oblateness 0.024
 
-	CustomOrbit "uranus"
+	CustomOrbit "vsop87-uranus"
 	EllipticalOrbit
 	{
 	Period           84.0139
@@ -777,7 +759,7 @@
 	Radius 25225
 	Oblateness 0.027
 
-	CustomOrbit "neptune"
+	CustomOrbit "vsop87-neptune"
 	EllipticalOrbit
 	{
 	Period           164.793
@@ -899,7 +881,35 @@
 }
 
 
-# A few asteroids for fun . . .
+
+"Galileo" "Sol"
+{
+	Class "spacecraft"
+	Mesh "galileo.3ds"
+	Radius   0.01
+
+	InfoURL "http://galileo.jpl.nasa.gov"
+
+	Beginning "1989 10 19 02:47"   # Launch
+	Ending    "2003  9 21 10:44"   # Crash into Jupiter
+
+	SampledOrbit "galileo.xyz"
+	EllipticalOrbit
+	{
+	Period        64.4068
+	SemiMajorAxis  4632880
+	Eccentricity   0.831774
+	Inclination    4.213
+	AscendingNode  59.562
+	ArgOfPericenter 97.224
+	TrueAnomaly    -66.619
+	}
+
+	Albedo         0.50
+}
+
+
+# A few main belt asteroids . . 
 "Ceres" "Sol"
 {
 	Class "asteroid"
@@ -985,6 +995,8 @@
 	RotationPeriod    5.342
 }
 
+
+# Some of the asteroids visited by spacecraft
 "Gaspra" "Sol"
 {
 	Class "asteroid"
@@ -1075,6 +1087,8 @@
 	Albedo            0.16
 }
 
+
+# Radar-imaged asteroids
 "Toutatis" "Sol"
 {
 	Class "asteroid"
