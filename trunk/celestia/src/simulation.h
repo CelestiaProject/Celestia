@@ -100,6 +100,9 @@ class Simulation
                               double distance,
                               float longitude, float latitude,
                               Vec3f up);
+    void getSelectionLongLat(double& distance,
+                             double& longitude,
+                             double& latitude);
     void centerSelection(double centerTime = 0.5);
     void follow();
     void geosynchronousFollow();
