@@ -216,13 +216,13 @@ void KdeWatcher::notifyChange(CelestiaCore * core, int property)
                      CelestiaCore::LabelFlagsChanged|
                      CelestiaCore::TimeZoneChanged)))
         kdeapp->resyncMenus();
-    else if (property & CelestiaCore::AmbientLightChanged)
+    if (property & CelestiaCore::AmbientLightChanged)
         kdeapp->resyncAmbient();
-    else if (property & CelestiaCore::FaintestChanged)
+    if (property & CelestiaCore::FaintestChanged)
         kdeapp->resyncFaintest();
-    else if (property & CelestiaCore::VerbosityLevelChanged)
+    if (property & CelestiaCore::VerbosityLevelChanged)
         kdeapp->resyncVerbosity();
-    else if (property & CelestiaCore::HistoryChanged)
+    if (property & CelestiaCore::HistoryChanged)
         kdeapp->resyncHistory();
 
     if (property == CelestiaCore::TextEnterModeChanged) {

@@ -4199,7 +4199,7 @@ void CelestiaCore::addToHistory()
         }
     }
     history.push_back(url);
-    historyCurrent = history.size();
+    historyCurrent = history.size() - 1;
     notifyWatchers(HistoryChanged);
 }
 
@@ -4207,7 +4207,7 @@ void CelestiaCore::addToHistory()
 void CelestiaCore::back()
 {
     if (historyCurrent == 0) return;
-    if (historyCurrent == history.size())
+    if (historyCurrent == history.size() - 1)
     {
         addToHistory();
         historyCurrent = history.size()-1;
