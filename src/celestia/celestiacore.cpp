@@ -1545,3 +1545,7 @@ void CelestiaCore::setTimeZoneBias(int bias)
     timeZoneBias = bias;
 }
 
+int CelestiaCore::getHudDetail()
+{
+    return hudDetail;
+}
