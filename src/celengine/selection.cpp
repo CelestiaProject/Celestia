@@ -46,7 +46,7 @@ UniversalCoord Selection::getPosition(double t) const
 
             Point3d hpos = body()->getHeliocentricPosition(t);
             if (sun != NULL)
-                return astro::universalPosition(hpos, sun->getPosition(t));
+                return astro::universalPosition(hpos, sun->getSystemCenter(t));
             else
                 return astro::universalPosition(hpos, Point3f(0.0f, 0.0f, 0.0f));
                                                 

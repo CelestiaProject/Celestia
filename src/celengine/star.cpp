@@ -706,6 +706,13 @@ StarDetails::setOrbit(Orbit* o)
 }
 
 
+void
+StarDetails::setSystemOrigin(StarDetails::SystemOrigin o)
+{
+    origin = o;
+}
+
+
 // Return the radius of the star in kilometers
 float Star::getRadius() const
 {
@@ -752,6 +759,37 @@ Star::getPosition(double t) const
         return UniversalCoord(barycenterPos) +
             ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0f)) *
              astro::kilometersToMicroLightYears(1.0));
+    }
+}
+
+
+UniversalCoord
+Star::getSystemCenter(double t) const
+{
+    const Orbit* orbit = getOrbit();
+    if (!orbit)
+    {
+        return UniversalCoord(position.x * 1.0e6f,
+                              position.y * 1.0e6f,
+                              position.z * 1.0e6f);
+    }
+    else
+    {
+        Point3f barycenterPosLY = position;
+        Point3f barycenterPos(barycenterPosLY.x * 1.0e6f,
+                              barycenterPosLY.y * 1.0e6f,
+                              barycenterPosLY.z * 1.0e6f);
+
+        if (details->getSystemOrigin() == StarDetails::OriginStar)
+        {
+            return UniversalCoord(barycenterPos) +
+                ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0f)) *
+                 astro::kilometersToMicroLightYears(1.0));
+        }
+        else
+        {
+            return UniversalCoord(barycenterPos);
+        }
     }
 }
 
