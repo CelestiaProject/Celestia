@@ -25,6 +25,7 @@ unsigned int vp::diffuseBumpHaze = 0;
 unsigned int vp::shadowTexture = 0;
 unsigned int vp::everything = 0;
 unsigned int vp::diffuseTexOffset = 0;
+unsigned int vp::ringIllum = 0;
 
 
 static string* ReadTextFromFile(const string& filename)
@@ -92,6 +93,8 @@ bool vp::init()
     if (!LoadVertexProgram("shaders/shadowtex.vp", shadowTexture))
         return false;
     if (!LoadVertexProgram("shaders/diffuse_texoff.vp", diffuseTexOffset))
+        return false;
+    if (!LoadVertexProgram("shaders/rings.vp", ringIllum))
         return false;
     everything = 0;
 
