@@ -474,6 +474,50 @@ static int object_name(lua_State* l)
 }
 
 
+static int object_spectraltype(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function object:name");
+        lua_error(l);
+    }
+
+    Selection* sel = to_object(l, 1);
+    if (sel != NULL)
+    {
+        if (sel->star != NULL)
+        {
+            char buf[16];
+            StellarClass sc = sel->star->getStellarClass();
+            if (sc.str(buf, sizeof(buf)))
+            {
+                lua_pushstring(l, buf);
+            }
+            else
+            {
+                // This should only happen if the spectral type has > 15 chars
+                // (i.e. never, unless there's a bug)
+                assert(0);
+                lua_pushstring(l, "Bad spectral type (this is a bug!)");
+                lua_error(l);
+            }
+        }
+        else
+        {
+            lua_pushnil(l);
+        }
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
 static void CreateObjectMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Object);
@@ -481,6 +525,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "__tostring", object_tostring);
     RegisterMethod(l, "radius", object_radius);
     RegisterMethod(l, "type", object_type);
+    RegisterMethod(l, "spectraltype", object_spectraltype);
     RegisterMethod(l, "name", object_name);
 
     lua_pop(l, 1); // pop metatable off the stack
