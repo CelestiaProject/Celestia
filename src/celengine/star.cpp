@@ -619,7 +619,10 @@ StarDetails::StarDetails() :
     temperature(0.0f),
     bolometricCorrection(0.0f),
     rotationPeriod(1.0f),
-    knowledge(0u)
+    knowledge(0u),
+    model(InvalidResource),
+    orbit(NULL),
+    orbitalRadius(0.0f)
 {
     spectralType[0] = '\0';
 }
@@ -686,6 +689,13 @@ void
 StarDetails::setModel(ResourceHandle rh)
 {
     model = rh;
+}
+
+
+void
+StarDetails::setOrbit(Orbit* o)
+{
+    orbit = o;
 }
 
 
