@@ -231,6 +231,13 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             Vec3f pickRay = renderer->getPickRay((int) x, (int) y);
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay);
+
+            //If object picked is a satellite but it is not in the render list,
+            //pick the satellites' primary object.
+            if(newSel.body && newSel.body->getSystem()->getPrimaryBody() &&
+               !renderer->isSelectionInRenderList(&newSel))
+                newSel = Selection(newSel.body->getSystem()->getPrimaryBody());
+            
             sim->setSelection(newSel);
             if (!oldSel.empty() && oldSel == newSel)
                 sim->centerSelection();
