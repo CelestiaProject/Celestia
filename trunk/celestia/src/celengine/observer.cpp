@@ -232,7 +232,7 @@ void Observer::update(double dt, double timeScale)
 
     if (observerMode == Travelling)
     {
-        float t = clamp((realTime - journey.startTime) / journey.duration);
+        float t = (float) clamp((realTime - journey.startTime) / journey.duration);
 
         Vec3d jv = journey.to - journey.from;
         UniversalCoord p;
@@ -364,12 +364,12 @@ void Observer::update(double dt, double timeScale)
                 norm(journey.initialOrientation + journey.finalOrientation))
             {
                 orientation = Quatf::slerp(journey.initialOrientation,
-                                           journey.finalOrientation, v);
+                                           journey.finalOrientation, (float)v);
             }
             else
             {
                 orientation = Quatf::slerp(journey.initialOrientation,
-                                           -journey.finalOrientation, v);
+                                           -journey.finalOrientation,(float)v);
             }
         }
         else if (t < journey.startInterpolation)
@@ -929,7 +929,7 @@ void Observer::setTargetSpeed(float s)
 
 float Observer::getTargetSpeed()
 {
-    return targetSpeed;
+    return (float) targetSpeed;
 }
 
 
@@ -964,7 +964,10 @@ static double getPreferredDistance(const Selection& selection)
     case Selection::Type_DeepSky:
         return 5.0 * selection.radius();
     case Selection::Type_Star:
-        return 100.0 * selection.radius();
+        if (selection.star()->getVisibility())
+            return 100.0 * selection.radius();
+        else
+            return astro::AUtoKilometers(1.0);
     case Selection::Type_Location:
         {
             double maxDist = getPreferredDistance(selection.location()->getParentBody());
