@@ -25,16 +25,16 @@ class TextureInfo : public ResourceInfo<Texture>
     bool compressed;
     unsigned int resolution;
 
-    TextureInfo(const std::string _source, bool _compressed = false, unsigned int _resolution=medres) :
+    TextureInfo(const std::string _source, bool _compressed = false, unsigned int _resolution = medres) :
         source(_source), bumpHeight(0.0f), compressed(_compressed), resolution(_resolution) {};
-    TextureInfo(const std::string _source, float _bumpHeight, unsigned int _resolution=medres) :
+    TextureInfo(const std::string _source, float _bumpHeight, unsigned int _resolution = medres) :
         source(_source), bumpHeight(_bumpHeight), compressed(false), resolution(_resolution) {};
     virtual Texture* load(const std::string&);
 };
 
 inline bool operator<(const TextureInfo& ti0, const TextureInfo& ti1)
 {
-    if(ti0.resolution == ti1.resolution)
+    if (ti0.resolution == ti1.resolution)
         return ti0.source < ti1.source;
     return ti0.resolution < ti1.resolution;
 }
