@@ -44,7 +44,7 @@ static void InitTrigArrays()
         cosTheta[i] = (float) cos(theta);
     }
 
-    for (i = 0; i < phiDivisions; i++)
+    for (i = 0; i <= phiDivisions; i++)
     {
         double phi = ((double) i / (double) phiDivisions - 0.5) * PI;
         sinPhi[i] = (float) sin(phi);
@@ -89,26 +89,50 @@ LODSphereMesh::~LODSphereMesh()
 }
 
 
-void LODSphereMesh::render()
+void LODSphereMesh::render(float lod)
 {
-    render(Normals | TexCoords0);
+    render(Normals | TexCoords0, lod);
 }
 
 
-void LODSphereMesh::render(unsigned int attributes)
+void LODSphereMesh::render(unsigned int attributes, float lodBias)
 {
     int lod = 64;
+    if (lodBias < 0.0f)
+    {
+        if (lodBias < -30)
+            lodBias = -30;
+        lod = lod / (1 << (int) (-lodBias));
+        if (lod < 2)
+            lod = 2;
+    }
+    else if (lodBias > 0.0f)
+    {
+        if (lodBias > 30)
+            lodBias = 30;
+        lod = lod * (1 << (int) lodBias);
+        if (lod > maxDivisions)
+            lod = maxDivisions;
+    }
+    
     int step = maxDivisions / lod;
-    int phi0 = 0;
     int thetaExtent = maxDivisions;
     int phiExtent = thetaExtent / 2;
+
+    int split = 1;
+    if (step < minStep)
+    {
+        split = minStep / step;
+        thetaExtent /= split;
+        phiExtent /= split;
+    }
 
     // Set up the mesh vertices 
     int nRings = phiExtent / step;
     int nSlices = thetaExtent / step;
 
     int n2 = 0;
-    for (int i = 0; i < nRings - 1; i++)
+    for (int i = 0; i < nRings; i++)
     {
         for (int j = 0; j <= nSlices; j++)
         {
@@ -121,10 +145,10 @@ void LODSphereMesh::render(unsigned int attributes)
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-    if (normals != NULL && ((attributes & Normals) != 0))
+    if ((attributes & Normals) != 0)
     {
         glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, 0, normals);
+        glNormalPointer(GL_FLOAT, 0, vertices);
     }
     else
     {
@@ -152,7 +176,15 @@ void LODSphereMesh::render(unsigned int attributes)
     }
 
     // Now, render the sphere section by section.
-    renderSection(0, 0, thetaExtent, step, attributes);
+    for (int phi = 0; phi < split; phi++)
+    {
+        for (int theta = 0; theta < split; theta++)
+        {
+            renderSection(phi * phiExtent, theta * thetaExtent,
+                          thetaExtent,
+                          step, attributes);
+        }
+    }
 
     if (tangents != NULL && ((attributes & Tangents) != 0))
     {
@@ -190,6 +222,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             float ctheta = cosTheta[theta];
             float stheta = sinTheta[theta];
 
+#if 0
             float x = cphi * ctheta;
             float y = sphi;
             float z = cphi * stheta;
@@ -199,6 +232,10 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             normals[n3]       = x;
             normals[n3 + 1]   = y;
             normals[n3 + 2]   = z;
+#endif
+            vertices[n3]      = cphi * ctheta;
+            vertices[n3 + 1]  = sphi;
+            vertices[n3 + 2]  = cphi * stheta;
             texCoords[n2]     = 1.0f - theta * du;
             texCoords[n2 + 1] = 1.0f - phi * dv;
 
