@@ -484,6 +484,13 @@ bool LoadSolarSystemObjects(istream& in,
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
+        string itemType("Body");
+        if (tokenizer.getTokenType() == Tokenizer::TokenName)
+        {
+            itemType = tokenizer.getNameValue();
+            tokenizer.nextToken();
+        }
+
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
             cout << "Error parsing solar system file.\n";
@@ -512,54 +519,66 @@ bool LoadSolarSystemObjects(istream& in,
         }
         Hash* objectData = objectDataValue->getHash();
 
-        DPRINTF(2, "Reading planet %s %s\n", parentName.c_str(), name.c_str());
+        DPRINTF(2, "%s %s %s\n", itemType.c_str(), parentName.c_str(), name.c_str());
 
         Selection parent = universe.findPath(parentName, NULL, 0);
         PlanetarySystem* parentSystem = NULL;
-        bool orbitsPlanet = false;
-        if (parent.star != NULL)
-        {
-            SolarSystem* solarSystem = universe.getSolarSystem(parent.star);
-            if (solarSystem == NULL)
-            {
-                // No solar system defined for this star yet, so we need
-                // to create it.
-                solarSystem = universe.createSolarSystem(parent.star);
-            }
-            parentSystem = solarSystem->getPlanets();
-        }
-        else if (parent.body != NULL)
-        {
-            // Parent is a planet or moon
-            parentSystem = parent.body->getSatellites();
-            if (parentSystem == NULL)
-            {
-                // If the planet doesn't already have any satellites, we
-                // have to create a new planetary system for it.
-                parentSystem = new PlanetarySystem(parent.body);
-                parent.body->setSatellites(parentSystem);
-            }
-            orbitsPlanet = true;
-        }
-        else
-        {
-            cout << "Parent body '" << parentName << "' of '" << name << "' not found.\n";
-        }
 
-        if (parentSystem != NULL)
+        if (itemType == "Body")
         {
-            if (parentSystem->find(name))
+            bool orbitsPlanet = false;
+            if (parent.star != NULL)
             {
-                DPRINTF(0, "Warning duplicate definition of %s %s!\n",
-                        parentName.c_str(), name.c_str());
+                SolarSystem* solarSystem = universe.getSolarSystem(parent.star);
+                if (solarSystem == NULL)
+                {
+                    // No solar system defined for this star yet, so we need
+                    // to create it.
+                    solarSystem = universe.createSolarSystem(parent.star);
+                }
+                parentSystem = solarSystem->getPlanets();
+            }
+            else if (parent.body != NULL)
+            {
+                // Parent is a planet or moon
+                parentSystem = parent.body->getSatellites();
+                if (parentSystem == NULL)
+                {
+                    // If the planet doesn't already have any satellites, we
+                    // have to create a new planetary system for it.
+                    parentSystem = new PlanetarySystem(parent.body);
+                    parent.body->setSatellites(parentSystem);
+                }
+                orbitsPlanet = true;
+            }
+            else
+            {
+                cout << "Parent body '" << parentName << "' of '" << name << "' not found.\n";
             }
 
-            Body* body = CreatePlanet(parentSystem, objectData, directory, !orbitsPlanet);
-            if (body != NULL)
+            if (parentSystem != NULL)
             {
-                body->setName(name);
-                parentSystem->addBody(body);
+                if (parentSystem->find(name))
+                {
+                    DPRINTF(0, "Warning duplicate definition of %s %s!\n",
+                            parentName.c_str(), name.c_str());
+                }
+                
+                Body* body = CreatePlanet(parentSystem, objectData, directory, !orbitsPlanet);
+                if (body != NULL)
+                {
+                    body->setName(name);
+                    parentSystem->addBody(body);
+                }
             }
+        }
+        else if (itemType == "AltSurface")
+        {
+            Surface* surface = CreateSurface(objectData, directory);
+            if (surface != NULL && parent.body != NULL)
+                parent.body->addAlternateSurface(name, surface);
+            else
+                DPRINTF(0, "Bad alternate surface\n");
         }
     }
 

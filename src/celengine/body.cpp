@@ -45,7 +45,8 @@ Body::Body(PlanetarySystem* _system) :
     atmosphere(NULL),
     rings(NULL),
     satellites(NULL),
-    classification(Unknown)
+    classification(Unknown),
+    altSurfaces(NULL)
 {
     system = _system;
 }
@@ -416,6 +417,46 @@ void Body::setInfoURL(const string& _infoURL)
 {
     infoURL = _infoURL;
 }
+
+
+Surface* Body::getAlternateSurface(const string& name) const
+{
+    if (altSurfaces == NULL)
+        return NULL;
+
+    AltSurfaceTable::iterator iter = altSurfaces->find(name);
+    if (iter == altSurfaces->end())
+        return NULL;
+    else
+        return iter->second;
+}
+
+
+void Body::addAlternateSurface(const string& name, Surface* surface)
+{
+    if (altSurfaces == NULL)
+        altSurfaces = new AltSurfaceTable();
+
+    //altSurfaces->insert(AltSurfaceTable::value_type(name, surface));
+    (*altSurfaces)[name] = surface;
+}
+
+
+vector<string>* Body::getAlternateSurfaceNames() const
+{
+    vector<string>* names = new vector<string>();
+    if (altSurfaces != NULL)
+    {
+        for (AltSurfaceTable::const_iterator iter = altSurfaces->begin();
+             iter != altSurfaces->end(); iter++)
+        {
+            names->insert(names->end(), iter->first);
+        }
+    }
+
+    return names;
+}
+
 
 
 /**** Implementation of PlanetarySystem ****/

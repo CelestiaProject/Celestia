@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <celmath/quaternion.h>
 #include <celengine/surface.h>
 #include <celengine/atmosphere.h>
@@ -163,6 +164,10 @@ class Body
     bool extant(double) const;
     void setLifespan(double, double);
 
+    Surface* getAlternateSurface(const std::string&) const;
+    void addAlternateSurface(const std::string&, Surface*);
+    std::vector<std::string>* getAlternateSurfaceNames() const;
+
  private:
     std::string name;
 
@@ -191,6 +196,9 @@ class Body
     int classification;
 
     std::string infoURL;
+
+    typedef std::map<const std::string, Surface*> AltSurfaceTable;
+    AltSurfaceTable *altSurfaces;
 };
 
 #endif // _BODY_H_

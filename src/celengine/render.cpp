@@ -900,6 +900,9 @@ void Renderer::render(const Observer& observer,
     // Set the modelview matrix
     glMatrixMode(GL_MODELVIEW);
 
+    // Get the displayed surface texture set to use from the observer
+    displayedSurface = observer.getDisplayedSurface();
+
     // Set up the camera
     Point3f observerPos = (Point3f) observer.getPosition();
     observerPos.x *= 1e-6f;
@@ -1255,7 +1258,7 @@ void Renderer::render(const Observer& observer,
         // The calls to renderSolarSystem/renderStars filled renderList
         // with visible planetary bodies.  Sort it by distance, then
         // render each entry.
-        sort(renderList.begin(), renderList.end());
+        stable_sort(renderList.begin(), renderList.end());
 
         int nEntries = renderList.size();
 
@@ -3694,7 +3697,16 @@ void Renderer::renderPlanet(const Body& body,
     {
         RenderProperties rp;
 
-        rp.surface = const_cast<Surface *>(&body.getSurface());
+        if (displayedSurface.empty())
+        {
+            rp.surface = const_cast<Surface*>(&body.getSurface());
+        }
+        else
+        {
+            rp.surface = body.getAlternateSurface(displayedSurface);
+            if (rp.surface == NULL)
+                rp.surface = const_cast<Surface*>(&body.getSurface());
+        }
         rp.atmosphere = body.getAtmosphere();
         rp.rings = body.getRings();
         rp.radius = body.getRadius();
@@ -4330,7 +4342,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                                       now, showLabels);
             }
         }
-
     }
 }
 

@@ -326,6 +326,7 @@ class Renderer
     float saturationMag;
 
     Color ambientColor;
+    std::string displayedSurface;
 
     StarVertexBuffer* starVertexBuffer;
     std::vector<RenderListEntry> renderList;

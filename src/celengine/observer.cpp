@@ -336,6 +336,18 @@ void Observer::setTrackedObject(const Selection& sel)
 }
 
 
+const string& Observer::getDisplayedSurface() const
+{
+    return displayedSurface;
+}
+
+
+void Observer::setDisplayedSurface(const string& surf)
+{
+    displayedSurface = surf;
+}
+
+
 void Observer::reverseOrientation()
 {
     Quatf q = getOrientation();
