@@ -44,10 +44,10 @@ class ShaderProperties
 static const int MaxShaderLights = 4;
 struct CelestiaGLProgramLight
 {
-    Vec3ShaderProperty direction;
-    Vec3ShaderProperty diffuse;
-    Vec3ShaderProperty specular;
-    Vec3ShaderProperty halfVector;
+    Vec3ShaderParameter direction;
+    Vec3ShaderParameter diffuse;
+    Vec3ShaderParameter specular;
+    Vec3ShaderParameter halfVector;
 };
 
 class CelestiaGLProgram
@@ -60,14 +60,18 @@ class CelestiaGLProgram
     
  public:
     CelestiaGLProgramLight lights[MaxShaderLights];
-    Vec3ShaderProperty eyePosition;
-    FloatShaderProperty shininess;
+    Vec3ShaderParameter fragLightColor[MaxShaderLights];
+    Vec3ShaderParameter eyePosition;
+    FloatShaderParameter shininess;
+    Vec3ShaderParameter ambientColor;
     
  private:
-    void initProperties(const ShaderProperties&);
-    FloatShaderProperty floatProperty(const std::string&);
-    Vec3ShaderProperty vec3Property(const std::string&);
-    Vec4ShaderProperty vec4Property(const std::string&);
+    void initParameters(const ShaderProperties&);
+    void initSamplers(const ShaderProperties&);
+
+    FloatShaderParameter floatParam(const std::string&);
+    Vec3ShaderParameter vec3Param(const std::string&);
+    Vec4ShaderParameter vec4Param(const std::string&);
 
     GLProgram* program;
 };

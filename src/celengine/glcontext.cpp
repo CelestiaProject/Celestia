@@ -131,6 +131,7 @@ bool GLContext::setRenderPath(GLRenderPath path)
     case GLPath_NvCombiner_ARBVP:
     case GLPath_ARBFP_ARBVP:
     case GLPath_NV30:
+    case GLPath_GLSL:
         vertexPath = VPath_ARB;
         break;
     default:
@@ -156,7 +157,13 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
                  extensionSupported("GL_ARB_texture_env_combine")) );
 
     case GLPath_NvCombiner:
+        return false;
+        /*
+        // No longer supported; all recent NVIDIA drivers also support
+        // the vertex_program extension, so the combiners-only path
+        // isn't necessary.
         return extensionSupported("GL_NV_register_combiners");
+        */
 
     case GLPath_DOT3_ARBVP:
         return (extensionSupported("GL_ARB_texture_env_dot3") &&
@@ -188,6 +195,11 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
         return (extensionSupported("GL_ARB_vertex_program") &&
                 extensionSupported("GL_NV_fragment_program"));
 
+    case GLPath_GLSL:
+        return (extensionSupported("GL_ARB_shader_objects") &&
+                extensionSupported("GL_ARB_shading_language_100") &&
+                extensionSupported("GL_ARB_vertex_shader"));
+
     default:
         return false;
     }
@@ -200,7 +212,7 @@ GLContext::GLRenderPath GLContext::nextRenderPath()
 
     do {
         newPath = (GLRenderPath) ((int) newPath + 1);;
-        if (newPath > GLPath_NV30)
+        if (newPath > GLPath_GLSL)
             newPath = GLPath_Basic;
     } while (newPath != renderPath && !renderPathSupported(newPath));
 

@@ -67,10 +67,11 @@ class GLProgram
     GLProgram(int _id);
 
     void attach(const GLShader&);
-    GLShaderStatus link();
 
  public:
     virtual ~GLProgram();
+
+    GLShaderStatus link();
 
     void use() const;
     int getID() const { return id; }
@@ -82,40 +83,40 @@ class GLProgram
 };
 
 
-class FloatShaderProperty
+class FloatShaderParameter
 {
  public:
-    FloatShaderProperty();
-    FloatShaderProperty(int _obj, const char* name);
+    FloatShaderParameter();
+    FloatShaderParameter(int _obj, const char* name);
 
-    FloatShaderProperty& operator=(float);
+    FloatShaderParameter& operator=(float);
     
  private:
     int slot;
 };
 
 
-class Vec3ShaderProperty
+class Vec3ShaderParameter
 {
  public:
-    Vec3ShaderProperty();
-    Vec3ShaderProperty(int _obj, const char* name);
+    Vec3ShaderParameter();
+    Vec3ShaderParameter(int _obj, const char* name);
 
-    Vec3ShaderProperty& operator=(const Vec3f&);
-    Vec3ShaderProperty& operator=(const Point3f&);
+    Vec3ShaderParameter& operator=(const Vec3f&);
+    Vec3ShaderParameter& operator=(const Point3f&);
 
  private:
     int slot;
 };
 
 
-class Vec4ShaderProperty
+class Vec4ShaderParameter
 {
  public:
-    Vec4ShaderProperty();
-    Vec4ShaderProperty(int _obj, const char* name);
+    Vec4ShaderParameter();
+    Vec4ShaderParameter(int _obj, const char* name);
 
-    Vec4ShaderProperty& operator=(const Vec4f&);
+    Vec4ShaderParameter& operator=(const Vec4f&);
 
  private:
     int slot;
