@@ -77,6 +77,7 @@ static ViewOptionsDialog* viewOptionsDlg = NULL;
 
 static HMENU menuBar = 0;
 static HACCEL acceleratorTable = 0;
+static bool hideMenuBar = false;
 
 // Joystick info
 static bool useJoystick = false;
@@ -1005,6 +1006,8 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
 
     if (newMode == 0)
         SetMenu(hwnd, menuBar);
+    else
+        hideMenuBar = true;
 
     return hwnd;
 }
@@ -2078,6 +2081,20 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             if ((wParam & MK_CONTROL) != 0)
                 buttons |= CelestiaCore::ControlKey;
             appCore->mouseMove(x - lastX, y - lastY, buttons);
+
+            if (currentScreenMode != 0)
+            {
+                if (hideMenuBar && y < 10)
+                {
+                    SetMenu(mainWindow, menuBar);
+                    hideMenuBar = false;
+                }
+                else if (!hideMenuBar && y >= 10)
+                {
+                    SetMenu(mainWindow, NULL);
+                    hideMenuBar = true;
+                }
+            }
         }
         break;
 
