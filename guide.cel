@@ -1,0 +1,20 @@
+{
+	Name   "Jupiter"
+	Target "Sol/Jupiter"
+	Description "Jupiter is the largest planet in our solar system and the fifth from the sun.  Like the other large outer planets, Jupiter is a gas giant, with no solid surface.  The Great Red Spot is the biggest and longest-lived of the many storms in Jupiter's turbulent atmosphere; this Earth-sized tempest has been around for at least 300 years."
+}
+{
+	Name "Pluto and Charon"
+	Target "Sol/Pluto"
+	Description "Pluto orbits our sun at a average distance of nearly six billion kilometers.  Its single known moon Charon is so large, that the two are often referred to as a 'double planet'."
+}
+{
+	Name "Eros"
+	Target "Sol/Eros"
+	Description "Eros is a potato-shaped near-Earth asteroid about 33 km long.  Thanks to the NEAR Shoemaker spacecraft, more is known about Eros than any other Asteroid.  On Feb 14, 2001 NEAR descended on Eros and became the first spacecraft ever to land on an asteroid."
+}
+{
+	Name "Alpha Centauri"
+	Target "Rigil Kent"
+	Description "Alpha Centauri A and B are, together with Proxima Centauri, the nearest star system to us.  Alpha Cen A is very similar to our own Sun, though slightly older and brighter.  B is dimmer and redder, and Proxima is so dim that it is can't be seen by the naked eye even though it is the star nearest to the Sun."
+}
