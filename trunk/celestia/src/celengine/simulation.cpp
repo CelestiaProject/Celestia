@@ -615,18 +615,20 @@ void Simulation::rotate(Quatf q)
 // both the observer's position and orientation.
 void Simulation::orbit(Quatf q)
 {
-    if (!selection.empty())
+    Selection center = frame.refObject;
+    if (center.empty() && !selection.empty())
     {
-        // Before orbiting, make sure that the reference object matches the
-        // selection.
-        if (selection != frame.refObject)
-            setFrame(frame.coordSys, selection);
+        center = selection;
+        setFrame(frame.coordSys, center);
+    }
 
+    if (!center.empty())
+    {
         // Get the focus position (center of rotation) in frame
         // coordinates; in order to make this function work in all
         // frames of reference, it's important to work in frame
         // coordinates.
-        UniversalCoord focusPosition = selection.getPosition(simTime);
+        UniversalCoord focusPosition = center.getPosition(simTime);
         focusPosition = fromUniversal(frame, RigidTransform(focusPosition), simTime).translation;
 
         // v = the vector from the observer's position to the focus
@@ -663,16 +665,18 @@ void Simulation::orbit(Quatf q)
 // at a rate dependent on the observer's distance from the object.
 void Simulation::changeOrbitDistance(float d)
 {
-    if (!selection.empty())
+    Selection center = frame.refObject;
+    if (center.empty() && !selection.empty())
     {
-        // Before orbiting, make sure that the reference object matches the
-        // selection.
-        if (selection != frame.refObject)
-            setFrame(frame.coordSys, selection);
+        center = selection;
+        setFrame(frame.coordSys, center);
+    }
 
-        UniversalCoord focusPosition = selection.getPosition(simTime);
+    if (!center.empty())
+    {
+        UniversalCoord focusPosition = center.getPosition(simTime);
         
-        double size = selection.radius();
+        double size = center.radius();
 
         // Somewhat arbitrary parameters to chosen to give the camera movement
         // a nice feel.  They should probably be function parameters.
@@ -843,9 +847,9 @@ void Simulation::centerSelection(double centerTime)
 
 void Simulation::follow()
 {
-    if (selection.body != NULL)
+    if (!selection.empty())
     {
-        frame = FrameOfReference(astro::Ecliptical, selection.body);
+        frame = FrameOfReference(astro::Ecliptical, selection);
 
         transform = fromUniversal(frame,
                                   RigidTransform(observer.getPosition(), observer.getOrientation()),
