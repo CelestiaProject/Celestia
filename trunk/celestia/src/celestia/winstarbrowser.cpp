@@ -14,6 +14,7 @@
 #include <set>
 #include <windows.h>
 #include <commctrl.h>
+#include <cstring>
 #include "winstarbrowser.h"
 
 #include "res/resource.h"
@@ -308,12 +309,7 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
         return (int) sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
 
     case 4:
-        if (star0->getStellarClass() < star1->getStellarClass())
-            return -1;
-        else if (star1->getStellarClass() < star0->getStellarClass())
-            return 1;
-        else
-            return 0;
+        return strcmp(star0->getSpectralType(), star1->getSpectralType());
 
     default:
         return 0;
@@ -362,7 +358,9 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
         break;
 
     case 4:
-        star->getStellarClass().str(callbackScratch, sizeof(callbackScratch));
+        strncpy(callbackScratch, star->getSpectralType(),
+                sizeof(callbackScratch));
+        callbackScratch[sizeof(callbackScratch) - 1] = '\0';
         nm->item.pszText = callbackScratch;
         break;
     }

@@ -1464,6 +1464,25 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         break;
 
+    case '%':
+        {
+            const ColorTemperatureTable* current =
+                renderer->getStarColorTable();
+            if (current == GetStarColorTable(ColorTable_Enhanced))
+            {
+                renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+            }
+            else if (current == GetStarColorTable(ColorTable_Blackbody_D65))
+            {
+                renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+            }
+            else
+            {
+                // Unknown color table
+            }
+        }
+        break;
+
     case '&':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::LocationLabels);
         notifyWatchers(LabelFlagsChanged);
@@ -2679,7 +2698,7 @@ static void displayStarInfo(Overlay& overlay,
                    star.getAbsoluteMagnitude(),
                    astro::absToAppMag(star.getAbsoluteMagnitude(), (float) distance));
     overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
-    overlay << "Class: " << star.getStellarClass() << '\n';
+    overlay << "Class: " << star.getSpectralType() << '\n';
 
     displayApparentDiameter(overlay, star.getRadius(),
                             astro::lightYearsToKilometers(distance));
