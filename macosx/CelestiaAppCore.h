@@ -60,5 +60,6 @@
 -(void)runScript:(NSString *)fileName;
 - (BOOL) testSetting: (int) tag;
 - (void) handleSetting: (int) tag;
+- (void) showInfoUrl;
 
 @end
