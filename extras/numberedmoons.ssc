@@ -266,7 +266,7 @@
 	Albedo 0.04
 }
 
-"2002J1" "Sol/Jupiter"
+"Arche" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -288,7 +288,7 @@
 	Albedo 0.04
 }
 
-"2003J1" "Sol/Jupiter"
+"Eukelade" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -403,7 +403,7 @@
 	Albedo 0.04
 }
 
-"2003J6" "Sol/Jupiter"
+"Helike" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -426,7 +426,7 @@
 	Albedo 0.04
 }
 
-"2003J7" "Sol/Jupiter"
+"Aoede" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -449,7 +449,7 @@
 	Albedo 0.04
 }
 
-"2003J8" "Sol/Jupiter"
+"Hegemone" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -518,7 +518,7 @@
 	Albedo 0.04
 }
 
-"2003J11" "Sol/Jupiter"
+"Kallichore" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -564,7 +564,7 @@
 	Albedo 0.04
 }
 
-"2003J13" "Sol/Jupiter"
+"Cyllene" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -725,7 +725,7 @@
 	Albedo 0.04
 }
 
-"2003J20" "Sol/Jupiter"
+"Carpo" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -748,7 +748,7 @@
 	Albedo 0.04
 }
 
-"2003J21" "Sol/Jupiter"
+"Mneme" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -771,7 +771,7 @@
 	Albedo 0.04
 }
 
-"2003J22" "Sol/Jupiter"
+"Thelxinoe" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
