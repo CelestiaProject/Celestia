@@ -309,7 +309,7 @@ PlanetarySystem::PlanetarySystem(Body* _primary) : primary(_primary)
     if (primary != NULL && primary->getSystem() != NULL)
         starNumber = primary->getSystem()->getStarNumber();
     else
-        starNumber = Star::InvalidStar;
+        starNumber = Star::InvalidCatalogNumber;
 }
 
 PlanetarySystem::PlanetarySystem(uint32 _starNumber) :
