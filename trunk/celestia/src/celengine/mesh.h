@@ -140,6 +140,9 @@ class Mesh
     class PrimitiveGroup
     {
     public:
+        PrimitiveGroup();
+        ~PrimitiveGroup();
+        
         PrimitiveGroupType prim;
         uint32 materialIndex;
         uint32* indices;
@@ -154,11 +157,13 @@ class Mesh
     const VertexDescription& getVertexDescription() const;
 
     const PrimitiveGroup* getGroup(uint32) const;
+    uint32 addGroup(PrimitiveGroup* group);
     uint32 addGroup(PrimitiveGroupType prim,
                     uint32 materialIndex,
                     uint32 nIndices,
                     uint32* indices);
     void remapIndices(const std::vector<uint32>& indexMap);
+    void clearGroups();
 
     bool pick(const Ray3d& r, double& distance) const;
     void render(const std::vector<const Material*>& materials,
