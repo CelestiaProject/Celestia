@@ -2640,25 +2640,28 @@ static string starNameList(Star& star,
     uint32 hip = star.getCatalogNumber();
     if (hip != Star::InvalidCatalogNumber && hip != 0 && count < maxNames)
     {
-        if (count != 0)
-            starNames += " / ";
-        if (hip >= 1000000)
+        if (hip <= Star::MaxTychoCatalogNumber)
         {
-            uint32 tyc3 = hip / 1000000000;
-            hip -= tyc3 * 1000000000;
-            uint32 tyc2 = hip / 10000;
-            hip -= tyc2 * 10000;
-            uint32 tyc1 = hip;
-            sprintf(numString, "TYC %u-%u-%u", tyc1, tyc2, tyc3);
-            starNames += numString;
-        }
-        else
-        {
-            sprintf(numString, "HIP %u", hip);
-            starNames += numString;
-        }
+            if (count != 0)
+                starNames += " / ";
+            if (hip >= 1000000)
+            {
+                uint32 tyc3 = hip / 1000000000;
+                hip -= tyc3 * 1000000000;
+                uint32 tyc2 = hip / 10000;
+                hip -= tyc2 * 10000;
+                uint32 tyc1 = hip;
+                sprintf(numString, "TYC %u-%u-%u", tyc1, tyc2, tyc3);
+                starNames += numString;
+            }
+            else
+            {
+                sprintf(numString, "HIP %u", hip);
+                starNames += numString;
+            }
 
-        count++;
+            count++;
+        }
     }
 
     uint32 hd = starDB.crossIndex(StarDatabase::HenryDraper, hip);
@@ -2693,10 +2696,17 @@ static void displayStarInfo(Overlay& overlay,
     overlay << "Distance: ";
     displayDistance(overlay, distance);
     overlay << '\n';
-    
+
+    if (!star.getVisibility())
+    {
+        overlay << "Star system barycenter\n";
+        return;
+    }
+
     overlay.printf("Abs (app) mag: %.2f (%.2f)\n",
                    star.getAbsoluteMagnitude(),
-                   astro::absToAppMag(star.getAbsoluteMagnitude(), (float) distance));
+                   astro::absToAppMag(star.getAbsoluteMagnitude(),
+                                      (float) distance));
     overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
     overlay << "Class: " << star.getSpectralType() << '\n';
 
