@@ -139,7 +139,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
         }
         else if (LOWORD(wParam) == IDC_BUTTON_CENTER)
         {
-            browser->appCore->charEntered('C');
+            browser->appCore->charEntered('c');
         }
         else if (LOWORD(wParam) == IDC_BUTTON_GOTO)
         {
