@@ -57,6 +57,8 @@ void Mesh3DS::render()
 }
 
 
+// Transform and scale the model so that it fits into an axis aligned bounding
+// box with corners at (1, 1, 1) and (-1, -1, -1)
 void Mesh3DS::normalize()
 {
     AxisAlignedBox bbox;
@@ -75,7 +77,7 @@ void Mesh3DS::normalize()
     printf("Normalize: %f\n", maxExtent);
 
     for (i = vertexLists.begin(); i != vertexLists.end(); i++)
-        (*i)->transform(Point3f(0, 0, 0) - center, 1.0f / maxExtent);
+        (*i)->transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
 }
 
 
