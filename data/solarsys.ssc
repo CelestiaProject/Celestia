@@ -1012,6 +1012,110 @@ Planets [
 
 }
 
+{
+	Name   "1998 KY26"
+	Mesh   "ky26.3ds"
+	Texture "asteroid.jpg"
+	# We'll just use the same color as Eros
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+	Radius  0.015
+
+	EllipticalOrbit
+	{
+	Period            1.3752
+	SemiMajorAxis     1.2320798
+	Eccentricity      0.20151423
+	Inclination       1.48127
+	AscendingNode    84.45490
+	ArgOfPericenter 209.14766
+        MeanAnomaly     356.6879717
+	Epoch       2452000.5 
+	}
+
+	RotationPeriod    0.178
+	Albedo            0.15
+
+}
+
+{
+	Name   "Bacchus"
+	Mesh   "bacchus.3ds"
+	Texture "asteroid.jpg"
+	# We'll just use the same color as Eros
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+	Radius  1.1
+
+	EllipticalOrbit
+	{
+	Period            1.1223
+	SemiMajorAxis     1.0781035
+	Eccentricity      0.34951251
+	Inclination       9.43160
+	AscendingNode    33.23590
+	ArgOfPericenter  55.18040
+        MeanAnomaly     229.8627955
+	Epoch       2452000.5 
+	}
+
+	RotationPeriod   14.9
+	Albedo            0.15
+
+}
+
+{
+	Name   "Golevka"
+	Mesh   "golevka.3ds"
+	Texture "asteroid.jpg"
+	# We'll just use the same color as Eros
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+	Radius  0.53
+
+	EllipticalOrbit
+	{
+	Period            3.982
+	SemiMajorAxis     2.5120500
+	Eccentricity      0.60117380
+	Inclination       2.28701
+	AscendingNode   212.16560
+	ArgOfPericenter  65.25133
+        MeanAnomaly     159.8983670
+	Epoch       2452000.5 
+	}
+
+	RotationPeriod    6.026
+	Albedo            0.15
+
+}
+
+{ 
+	Name   "Castalia"
+	Mesh   "castalia.3ds"
+	Texture "asteroid.jpg"
+	# We'll just use the same color as Eros
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+	Radius  2.0
+
+	EllipticalOrbit
+	{
+	Period            4.67
+	SemiMajorAxis     1.0632007
+	Eccentricity      0.48324394
+	Inclination       8.88806
+	AscendingNode   325.71246
+	ArgOfPericenter 121.26355
+        MeanAnomaly     152.5186007
+	Epoch       2452000.5 
+	}
+
+	RotationPeriod  130.0
+	Albedo            0.15
+
+}
+
 
 # Comets
 {
