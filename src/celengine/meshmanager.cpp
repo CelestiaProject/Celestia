@@ -456,7 +456,7 @@ static Model*
 Convert3DSModel(const M3DScene& scene, const string& texPath)
 {
     Model* model = new Model();
-    uint32 materialIndex = 1;
+    uint32 materialIndex = 0;
 
     for (unsigned int i = 0; i < scene.getModelCount(); i++)
     {

@@ -110,8 +110,6 @@ Model* LoadModel(istream& in, const string& texPath)
 
     delete loader;
 
-    cout << "Model loaded\n"; cout.flush();
-
     return model;
 }
 
@@ -483,7 +481,12 @@ AsciiModelLoader::loadMesh()
             delete mesh;
             return NULL;
         }
-        uint32 materialIndex = (uint32) tok.getNumberValue();
+
+        uint32 materialIndex;
+        if (tok.getNumberValue() == -1.0)
+            materialIndex = ~0;
+        else
+            materialIndex = (uint32) tok.getNumberValue();
 
         if (tok.nextToken() != Tokenizer::TokenNumber)
         {
@@ -491,6 +494,7 @@ AsciiModelLoader::loadMesh()
             delete mesh;
             return NULL;
         }
+
         uint32 indexCount = (uint32) tok.getNumberValue();
         
         uint32* indices = new uint32[indexCount];
@@ -555,8 +559,6 @@ AsciiModelLoader::load()
         {
             string name = tok.getNameValue();
             tok.pushBack();
-
-            cout << "token " << name << '\n';
 
             if (name == "material")
             {
