@@ -45,6 +45,7 @@ CLEAN :
 	-@erase "$(INTDIR)\bigfix.obj"
 	-@erase "$(INTDIR)\body.obj"
 	-@erase "$(INTDIR)\celestia.res"
+	-@erase "$(INTDIR)\celestiacore.obj"
 	-@erase "$(INTDIR)\cmdparser.obj"
 	-@erase "$(INTDIR)\color.obj"
 	-@erase "$(INTDIR)\command.obj"
@@ -58,7 +59,6 @@ CLEAN :
 	-@erase "$(INTDIR)\filetype.obj"
 	-@erase "$(INTDIR)\galaxy.obj"
 	-@erase "$(INTDIR)\glext.obj"
-	-@erase "$(INTDIR)\gui.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
 	-@erase "$(INTDIR)\observer.obj"
 	-@erase "$(INTDIR)\octree.obj"
@@ -145,6 +145,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\astro.obj" \
 	"$(INTDIR)\bigfix.obj" \
 	"$(INTDIR)\body.obj" \
+	"$(INTDIR)\celestiacore.obj" \
 	"$(INTDIR)\cmdparser.obj" \
 	"$(INTDIR)\color.obj" \
 	"$(INTDIR)\command.obj" \
@@ -158,7 +159,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\filetype.obj" \
 	"$(INTDIR)\galaxy.obj" \
 	"$(INTDIR)\glext.obj" \
-	"$(INTDIR)\gui.obj" \
 	"$(INTDIR)\meshmanager.obj" \
 	"$(INTDIR)\observer.obj" \
 	"$(INTDIR)\octree.obj" \
@@ -215,6 +215,7 @@ CLEAN :
 	-@erase "$(INTDIR)\bigfix.obj"
 	-@erase "$(INTDIR)\body.obj"
 	-@erase "$(INTDIR)\celestia.res"
+	-@erase "$(INTDIR)\celestiacore.obj"
 	-@erase "$(INTDIR)\cmdparser.obj"
 	-@erase "$(INTDIR)\color.obj"
 	-@erase "$(INTDIR)\command.obj"
@@ -228,7 +229,6 @@ CLEAN :
 	-@erase "$(INTDIR)\filetype.obj"
 	-@erase "$(INTDIR)\galaxy.obj"
 	-@erase "$(INTDIR)\glext.obj"
-	-@erase "$(INTDIR)\gui.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
 	-@erase "$(INTDIR)\observer.obj"
 	-@erase "$(INTDIR)\octree.obj"
@@ -318,6 +318,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\astro.obj" \
 	"$(INTDIR)\bigfix.obj" \
 	"$(INTDIR)\body.obj" \
+	"$(INTDIR)\celestiacore.obj" \
 	"$(INTDIR)\cmdparser.obj" \
 	"$(INTDIR)\color.obj" \
 	"$(INTDIR)\command.obj" \
@@ -331,7 +332,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\filetype.obj" \
 	"$(INTDIR)\galaxy.obj" \
 	"$(INTDIR)\glext.obj" \
-	"$(INTDIR)\gui.obj" \
 	"$(INTDIR)\meshmanager.obj" \
 	"$(INTDIR)\observer.obj" \
 	"$(INTDIR)\octree.obj" \
@@ -429,6 +429,12 @@ SOURCE=.\src\color.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+SOURCE=.\src\celestiacore.cpp
+
+"$(INTDIR)\celestiacore.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
 SOURCE=.\src\cmdparser.cpp
 
 "$(INTDIR)\cmdparser.obj" : $(SOURCE) "$(INTDIR)"
@@ -498,12 +504,6 @@ SOURCE=.\src\galaxy.cpp
 SOURCE=.\src\glext.cpp
 
 "$(INTDIR)\glext.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=.\src\gui.cpp
-
-"$(INTDIR)\gui.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
