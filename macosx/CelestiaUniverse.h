@@ -6,6 +6,7 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
+#define __AIFF__
 #import <Foundation/Foundation.h>
 #import "CelestiaSelection.h"
 #import "CelestiaUniversalCoord.h"
