@@ -2441,24 +2441,24 @@ class GtkWatcher : public CelestiaWatcher
 {
 public:
     GtkWatcher(CelestiaCore*);
-    virtual void notifyChange(int);
+    virtual void notifyChange(CelestiaCore*, int);
 };
 
 
 GtkWatcher::GtkWatcher(CelestiaCore* _appCore) :
-    CelestiaWatcher(_appCore)
+    CelestiaWatcher(*_appCore)
 {
 }
 
-void GtkWatcher::notifyChange(int property)
+void GtkWatcher::notifyChange(CelestiaCore*, int property)
 {
-    if ((property & (RenderFlags|LabelFlags|TimeZone)))
+    if ((property & (CelestiaCore::RenderFlagsChanged|CelestiaCore::LabelFlagsChanged|CelestiaCore::TimeZoneChanged)))
         resyncMenus();
-    else if (property & AmbientLight)
+    else if (property & CelestiaCore::AmbientLightChanged)
         resyncAmbient();
-    else if (property & Faintest)
+    else if (property & CelestiaCore::FaintestChanged)
         resyncFaintest();
-    else if (property & VerbosityLevel)
+    else if (property & CelestiaCore::VerbosityLevelChanged)
         resyncVerbosity();
 }
 
