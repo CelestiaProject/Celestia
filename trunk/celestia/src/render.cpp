@@ -32,8 +32,6 @@ using namespace std;
 
 #define RENDER_DISTANCE 50.0f
 
-#define FAINTEST_MAGNITUDE  5.5f
-
 static const float PixelOffset = 0.375f;
 
 static const int StarVertexListSize = 1024;
@@ -561,11 +559,6 @@ void Renderer::render(const Observer& observer,
                       const Selection& sel,
                       double now)
 {
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
     // Compute the size of a pixel
     pixelSize = calcPixelSize(fov, windowHeight);
 
@@ -579,32 +572,101 @@ void Renderer::render(const Observer& observer,
     // Set the modelview matrix
     glMatrixMode(GL_MODELVIEW);
 
-    // Create the ambient light source.  For realistic space rendering
-    // this should be black.
-    {
-        float ambientColor[4];
-        ambientColor[0] = ambientColor[1] = ambientColor[2] = ambientLightLevel;
-        ambientColor[3] = 1.0f;
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
-    }
-
     // Set up the camera
     Point3f observerPos = (Point3f) observer.getPosition();
     glPushMatrix();
     glRotate(observer.getOrientation());
 
-    // Get the model matrix *before* translation.  We'll use this for positioning
-    // star and planet labels.
+    // Get the model matrix *before* translation.  We'll use this for
+    // positioning star and planet labels.
     glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
     glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
+    
+    clearLabels();
+
+    // Put all solar system bodies into the render list.  Stars close and
+    // large enough to have discernible surface detail are also placed in
+    // renderList.
+    renderList.clear();
+
+    const Star* sun = NULL;
+    if (solarSystem != NULL)
+        sun = solarSystem->getStar();
+
+    if (sun != NULL)
+    {
+        renderPlanetarySystem(*sun,
+                              *solarSystem->getPlanets(),
+                              observer,
+                              Mat4d::identity(), now,
+                              (labelMode & (MinorPlanetLabels | MajorPlanetLabels)) != 0);
+        starTex->bind();
+    }
+
+    Color skyColor(0.0f, 0.0f, 0.0f);
+
+    // Scan through the render list to see if we're inside a planetary
+    // atmosphere.  If so, we need to adjust the sky color as well as the
+    // limiting magnitude of stars (so stars aren't visible in the daytime
+    // on planets with thick atmospheres.)
+    {
+        vector<RenderListEntry>::iterator notCulled = renderList.begin();
+        for (vector<RenderListEntry>::iterator iter = renderList.begin();
+             iter != renderList.end(); iter++)
+        {
+            if (iter->body != NULL && iter->body->getAtmosphere() != NULL)
+            {
+                const Atmosphere* atmosphere = iter->body->getAtmosphere();
+                float radius = iter->body->getRadius();
+                if (iter->distance < radius + atmosphere->height &&
+                    atmosphere->height > 0.0f)
+                {
+                    float density = 1.0f - (iter->distance - radius) /
+                        atmosphere->height;
+                    if (density > 1.0f)
+                        density = 1.0f;
+
+                    Vec3f sunDir = iter->sun;
+                    Vec3f normal = Point3f(0.0f, 0.0f, 0.0f) - iter->position;
+                    sunDir.normalize();
+                    normal.normalize();
+                    float illumination = Math<float>::clamp((sunDir * normal) + 0.2f);
+
+                    float lightness = illumination * density;
+
+                    skyColor = Color(atmosphere->skyColor.red() * lightness,
+                                     atmosphere->skyColor.green() * lightness,
+                                     atmosphere->skyColor.blue() * lightness);
+
+                    faintestVisible = faintestVisible - 10.0f * lightness;
+                    // brightnessScale = 1.0f / (magnitude + 1.0f)
+                }
+            }
+        }
+    }
+
+#if 0
+    // Adjust the ambient color based on the sky color.  This simulates an
+    // effect you see when looking at the moon in daylight: the shadowed areas
+    // of the moon are not black, but are instead the same color as the sky.
+    ambientColor = Color(max(ambientLightLevel, skyColor.red()),
+                         max(ambientLightLevel, skyColor.green()),
+                         max(ambientLightLevel, skyColor.blue()));
+#endif
+    ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
+    // Create the ambient light source.  For realistic scenes in space, this
+    // should be black.
+    glAmbientLightColor(ambientColor);
+
+    glClearColor(skyColor.red(), skyColor.green(), skyColor.blue(), 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
-
-    clearLabels();
-    renderList.clear();
 
     if ((renderFlags & ShowCelestialSphere) != 0)
     {
@@ -658,22 +720,6 @@ void Renderer::render(const Observer& observer,
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
     glPolygonMode(GL_BACK, (GLenum) renderMode);
 
-    // Render planets, moons, asteroids, etc.  Stars close and large enough
-    // to have discernible surface detail are also placed in renderList.
-    const Star* sun = NULL;
-    if (solarSystem != NULL)
-        sun = solarSystem->getStar();
-
-    if (sun != NULL)
-    {
-        renderPlanetarySystem(*sun,
-                              *solarSystem->getPlanets(),
-                              observer,
-                              Mat4d::identity(), now,
-                              (labelMode & (MinorPlanetLabels | MajorPlanetLabels)) != 0);
-        starTex->bind();
-    }
-
     {
         Frustum frustum(degToRad(fov),
                         (float) windowWidth / (float) windowHeight,
@@ -690,6 +736,7 @@ void Renderer::render(const Observer& observer,
 
             bool convex = true;
             float radius = 1.0f;
+            float cullRadius = 1.0f;
             if (iter->body != NULL)
             {
                 radius = iter->body->getRadius();
@@ -698,14 +745,19 @@ void Renderer::render(const Observer& observer,
                     radius = iter->body->getRings()->outerRadius;
                     convex = false;
                 }
+
+                cullRadius = radius;
+                if (iter->body->getAtmosphere() != NULL)
+                    cullRadius += iter->body->getAtmosphere()->height;
             }
             else if (iter->star != NULL)
             {
                 radius = iter->star->getRadius();
+                cullRadius = radius;
             }
 
             // Test the object's bounding sphere against the view frustum
-            if (frustum.testSphere(center, radius) != Frustum::Outside)
+            if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
             {
                 float nearZ = center.distanceFromOrigin() - radius;
                 float maxSpan = (float) sqrt(square((float) windowWidth) +
@@ -1760,7 +1812,7 @@ void Renderer::renderPlanet(const Body& body,
             }
         }
             
-        ri.ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel) * ri.sunColor;
+        ri.ambientColor = ambientColor * ri.sunColor;
         ri.hazeColor = surface.hazeColor;
         ri.specularColor = surface.specularColor;
         ri.specularPower = surface.specularPower;
@@ -2537,9 +2589,9 @@ void Renderer::renderLabels()
         return;
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, font->getTextureName());
+    font->bind();
     glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
