@@ -328,7 +328,7 @@ bool StarDatabase::loadBinary(istream& in)
 	in.read((char *) &stellarClass, sizeof stellarClass);
         LE_TO_CPU_INT16(stellarClass, stellarClass);
 	in.read((char *) &parallaxError, sizeof parallaxError);
-	if (!in.good())
+        if ( in.bad() )
 	    break;
 
 	Star* star = &stars[nStars];
