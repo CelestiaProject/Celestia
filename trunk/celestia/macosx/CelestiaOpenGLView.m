@@ -145,14 +145,18 @@
 //        if ( [theEvent modifierFlags] && NSFunctionKeyMask ) NSLog( @"isFunctionKey");
     if ( (key<128) && ((key < '0') || (key>'9') || !([theEvent modifierFlags] && NSNumericPadKeyMask)) )
        [ appCore charEntered: key ];
-    [ appCore keyDown: [appCore toCelestiaKey: theEvent ] ];
+//    [ appCore keyDown: [appCore toCelestiaKey: theEvent ] ];
+        [ appCore keyDown: [appCore toCelestiaKey: theEvent] 
+            withModifiers: [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0]  ];
 }
 
 - (void) keyUp: (NSEvent*)theEvent
 {
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    if ( [[theEvent characters] characterAtIndex: 0] >= 128 )
-        [ appCore keyUp: [appCore toCelestiaKey: theEvent] ];
+//        [ appCore keyUp: [appCore toCelestiaKey: theEvent] ];
+        [ appCore keyUp: [appCore toCelestiaKey: theEvent] 
+            withModifiers: [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0]  ];
 //    NSLog(@"keyUp: %@",theEvent);
 }
 
