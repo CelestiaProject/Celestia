@@ -13,6 +13,8 @@
 #include <celmath/vecmath.h>
 #include <celmath/intersect.h>
 #include "astro.h"
+#include "3dsmesh.h"
+#include "meshmanager.h"
 #include "universe.h"
 
 using namespace std;
@@ -296,8 +298,29 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         }
         else
         {
-            // TODO: Check for intersection with the object mesh.  For now,
-            // we just use the bounding sphere.
+            // Transform rotate the pick ray into object coordinates
+            Quatf qf = body->getOrientation();
+            Quatd qd(qf.w, qf.x, qf.y, qf.z);
+            Mat3d m = conjugate(qd * body->getEclipticalToGeographic(pickInfo->jd)).toMatrix3();
+            Ray3d r(Point3d(0, 0, 0) + (pickInfo->pickRay.origin - bpos),
+                    pickInfo->pickRay.direction);
+            r = r * m;
+
+            // The mesh vertices are normalized, then multiplied by a scale
+            // factor.  Thus, the ray needs to be multiplied by the inverse of
+            // the mesh scale factor.
+            double s = 1.0 / radius;
+            r.origin.x *= s;
+            r.origin.y *= s;
+            r.origin.z *= s;
+            r.direction *= s;
+
+            Mesh* mesh = GetMeshManager()->find(body->getMesh());
+            if (mesh != NULL)
+            {
+                if (!mesh->pick(r, distance))
+                    distance = -1.0;
+            }
         }
         // Make also sure that the pickRay does not intersect the body in the
         // opposite hemisphere! Hence, need again the "bodyMiss" angle

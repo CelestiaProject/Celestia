@@ -157,6 +157,31 @@ void Mesh3DS::render(unsigned int attributes, const Frustum&, float lod)
 }
 
 
+bool Mesh3DS::pick(const Ray3d& r, double& distance)
+{
+    double maxDistance = 1.0e30;
+    double closest = maxDistance;
+
+    for (VertexListVec::const_iterator iter = vertexLists.begin();
+         iter != vertexLists.end(); iter++)
+    {
+        double d = maxDistance;
+        if ((*iter)->pick(r, d) && d < closest)
+            closest = d;
+    }    
+
+    if (closest != maxDistance)
+    {
+        distance = closest;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
 // Transform and scale the model so that it fits into an axis aligned bounding
 // box with corners at (1, 1, 1) and (-1, -1, -1)
 void Mesh3DS::normalize()

@@ -11,6 +11,7 @@
 #define _MESH_H_
 
 #include <celmath/frustum.h>
+#include <celmath/ray.h>
 
 
 class Mesh
@@ -20,6 +21,7 @@ class Mesh
     virtual void render(float lod) = 0;
     virtual void render(unsigned int attributes, float lod) = 0;
     virtual void render(unsigned int attributes, const Frustum&, float lod) = 0;
+    virtual bool pick(const Ray3d&, double&) { return false; };
 
     enum {
         Normals    = 0x01,
