@@ -703,7 +703,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.usesFragmentLighting() || props.usesShadows())
     {
         source += "uniform vec3 ambientColor;\n";
-        source += "vec4 diff = vec4(ambientColor, 1);\n";
+        source += "vec4 diff = vec4(ambientColor, 1.0);\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
@@ -806,7 +806,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        source += "vec3 n = texture2D(normTex, normTexCoord.st).xyz * 2.0 - vec3(1.0, 1.0, 1.0);\n";
+        source += "vec3 n = texture2D(normTex, normTexCoord.st).xyz * vec3(2.0, 2.0, 2.0) - vec3(1.0, 1.0, 1.0);\n";
         source += "float l;\n";
         for (unsigned i = 0; i < props.nLights; i++)
         {
@@ -975,7 +975,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     string source;
 
     source += "uniform vec3 ambientColor;\n";
-    source += "vec4 diff = vec4(ambientColor, 1);\n";
+    source += "vec4 diff = vec4(ambientColor, 1.0);\n";
     for (unsigned int i = 0; i < props.nLights; i++)
         source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
 
