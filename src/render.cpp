@@ -1968,14 +1968,14 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
-            if (body->getRadius() >= 500.0 && (labelMode & MajorPlanetLabels) != 0)
+            if (body->getRadius() >= 1000.0 && (labelMode & MajorPlanetLabels) != 0)
 
             {
                 addLabel(body->getName(),
                          Color(0.0f, 1.0f, 0.0f),
                          Point3f(pos.x, pos.y, pos.z));
             }
-            else if (body->getRadius() < 500.0 && (labelMode & MinorPlanetLabels) != 0)
+            else if (body->getRadius() < 1000.0 && (labelMode & MinorPlanetLabels) != 0)
             {
                 addLabel(body->getName(),
                          Color(0.0f, 0.6f, 0.0f),
