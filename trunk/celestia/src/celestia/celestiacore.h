@@ -246,6 +246,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     };
 
     void setAlerter(Alerter*);
+    Alerter* getAlerter() const;
 
  private:
     bool readStars(const CelestiaConfig&);
