@@ -30,8 +30,8 @@ public:
     inline Vector3& operator-=(const Vector3<T>&);
     inline Vector3& operator*=(T);
 
-    inline Vector3 operator-();
-    inline Vector3 operator+();
+    inline Vector3 operator-() const;
+    inline Vector3 operator+() const;
 
     inline T length() const;
     inline T lengthSquared() const;
@@ -93,8 +93,8 @@ template<class T> class Vector4
     inline Vector4& operator-=(const Vector4&);
     inline Vector4& operator*=(T);
 
-    inline Vector4 operator-();
-    inline Vector4 operator+();
+    inline Vector4 operator-() const;
+    inline Vector4 operator+() const;
 
     T x, y, z, w;
 };
@@ -219,12 +219,12 @@ template<class T> Vector3<T>& Vector3<T>::operator*=(T s)
     return *this;
 }
 
-template<class T> Vector3<T> Vector3<T>::operator-()
+template<class T> Vector3<T> Vector3<T>::operator-() const
 {
     return Vector3<T>(-x, -y, -z);
 }
 
-template<class T> Vector3<T> Vector3<T>::operator+()
+template<class T> Vector3<T> Vector3<T>::operator+() const
 {
     return *this;
 }
@@ -516,12 +516,12 @@ template<class T> Vector4<T>& Vector4<T>::operator*=(T s)
     return *this;
 }
 
-template<class T> Vector4<T> Vector4<T>::operator-()
+template<class T> Vector4<T> Vector4<T>::operator-() const
 {
     return Vector4<T>(-x, -y, -z, -w);
 }
 
-template<class T> Vector4<T> Vector4<T>::operator+()
+template<class T> Vector4<T> Vector4<T>::operator+() const
 {
     return *this;
 }
