@@ -505,6 +505,7 @@ void MouseDrag(int x, int y)
         sim->changeOrbitDistance(amount * 5);
     }
 
+    mouseMotion += abs(x - lastX) + abs(y - lastY);
     lastX = x;
     lastY = y;
 }

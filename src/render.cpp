@@ -42,7 +42,6 @@ static SphereMesh* sphereMesh[SPHERE_LODS];
 static SphereMesh* asteroidMesh = NULL;
 
 static CTexture* normalizationTex = NULL;
-static CTexture* diffuseLightTex = NULL;
 
 static CTexture* starTex = NULL;
 static CTexture* glareTex = NULL;
@@ -57,15 +56,15 @@ Renderer::Renderer() :
     windowWidth(0),
     windowHeight(0),
     fov(FOV),
-    renderMode(GL_FILL),
-    asterisms(NULL),
-    renderFlags(ShowStars | ShowPlanets),
-    labelMode(NoLabels),
-    ambientLightLevel(0.1f),
-    brightnessScale(1.0f / 6.0f),
-    brightnessBias(0.0f),
-    perPixelLightingEnabled(false),
     console(NULL),
+    renderMode(GL_FILL),
+    labelMode(NoLabels),
+    renderFlags(ShowStars | ShowPlanets),
+    ambientLightLevel(0.1f),
+    perPixelLightingEnabled(false),
+    brightnessBias(0.0f),
+    brightnessScale(1.0f / 6.0f),
+    asterisms(NULL),
     nSimultaneousTextures(1),
     useRegisterCombiners(false),
     useCubeMaps(false)
@@ -872,7 +871,6 @@ void Renderer::renderBodyAsParticle(Point3f position,
 {
     if (discSizeInPixels < 4 || useHaloes)
     {
-        float r = 1, g = 1, b = 1;
         float a = 1;
 
         if (discSizeInPixels > 1)
@@ -1688,7 +1686,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         Mat4d newFrame = Mat4d::xrotation(-body->getObliquity()) * Mat4d::translation(localPos) * frame;
         Point3d bodyPos = Point3d(0, 0, 0) * newFrame;
         bodyPos = body->getHeliocentricPosition(now);
-        double distanceFromSun = bodyPos.distanceFromOrigin();
         
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the planet
@@ -1705,8 +1702,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         if (distanceFromObserver > 0.0)
             posd *= (RENDER_DISTANCE / distanceFromObserver);
         Vec3f pos((float) posd.x, (float) posd.y, (float) posd.z);
-
-        float s = (float) RENDER_DISTANCE * size;
 
         // Compute the size of the planet/moon disc in pixels
         float discSize = (body->getRadius() / (float) distanceFromObserver) / (pixelSize / NEAR_DIST);
@@ -2045,7 +2040,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
 void Renderer::renderGalaxies(const GalaxyList& galaxies,
                               const Observer& observer)
 {
-    Vec3f viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    // Vec3f viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
     Point3d observerPos = (Point3d) observer.getPosition();
     Mat3f viewMat = observer.getOrientation().toMatrix3();
     Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
@@ -2227,9 +2222,6 @@ void Renderer::renderParticles(const vector<Particle>& particles,
 
 void Renderer::renderLabels()
 {
-    float xscale = 2.0f / (float) windowWidth;
-    float yscale = 2.0f / (float) windowHeight;
-
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, font->texobj);
 
@@ -2242,7 +2234,7 @@ void Renderer::renderLabels()
     glLoadIdentity();
     glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), 0);
 
-    for (int i = 0; i < labels.size(); i++)
+    for (int i = 0; i < (int) labels.size(); i++)
     {
         glColor(labels[i].color);
         glPushMatrix();
