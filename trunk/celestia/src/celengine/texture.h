@@ -62,6 +62,9 @@ class Texture
         AlphaChannel = 2
     };
 
+ private:
+    void loadCompressedTexture(unsigned char*, int, int);
+
  public:
     int width;
     int height;
@@ -76,7 +79,8 @@ class Texture
     int cmapFormat;
     unsigned char* cmap;
 
-    int split;
+    int uSplit;
+    int vSplit;
     unsigned int* glNames;
 };
 
@@ -93,6 +97,7 @@ extern Texture* CreateJPEGTexture(const char* filename,
                                   int channels = Texture::ColorChannel);
 extern Texture* CreateBMPTexture(const char* filename);
 extern Texture* CreatePNGTexture(const std::string& filename);
+extern Texture* CreateDDSTexture(const std::string& filename);
 
 extern Texture* LoadTextureFromFile(const std::string& filename);
 

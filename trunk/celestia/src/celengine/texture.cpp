@@ -105,6 +105,9 @@ static GLint maxTextureSize = 0;
 static void initTextureLoader()
 {
     compressionSupported = ExtensionSupported("GL_ARB_texture_compression");
+    if (compressionSupported)
+        InitExtTextureCompression();
+
 #ifdef GL_VERSION_1_2
     clampToEdgeSupported = true;
 #else
@@ -123,6 +126,7 @@ Texture::Texture(int w, int h, int fmt, bool _cubeMap) :
     format(fmt),
     maxMipMapLevel(-1),
     cubeMap(_cubeMap),
+    pixels(NULL),
     glNames(NULL)
 {
     cmap = NULL;
@@ -133,6 +137,8 @@ Texture::Texture(int w, int h, int fmt, bool _cubeMap) :
     // Yuck . . .
     if (!initialized)
         initTextureLoader();
+
+    bool compressedFormat = false;
 
     switch (format)
     {
@@ -155,6 +161,15 @@ Texture::Texture(int w, int h, int fmt, bool _cubeMap) :
     case GL_DSDT_NV:
         components = 2;
         break;
+    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        components = 3;
+        compressedFormat = true;
+        break;
+    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+        components = 4;
+        compressedFormat = true;
+        break;
     default:
         break;
     }
@@ -162,25 +177,19 @@ Texture::Texture(int w, int h, int fmt, bool _cubeMap) :
     int faces = cubeMap ? 6 : 1;
 
     // Determine the amount of texture splitting required.
-    int uSplit = width / maxTextureSize;
-    int vSplit = height / maxTextureSize;
-    if (uSplit <= 1 && vSplit <= 1)
-    {
-        // The texture is less than or equal to the maximum texture size,
-        // so no splitting is necessary.
-        split = 1;
-    }
-    else
-    {
-        // We require the level of horizontal and vertical splitting to
-        // be identical for now.  This is not ideal.
-        split = width / maxTextureSize;
-    }
-    glNames = new unsigned int[split * split];
-    for (int i = 0; i < split * split; i++)
+    uSplit = width / maxTextureSize;
+    vSplit = height / maxTextureSize;
+    if (uSplit < 1)
+        uSplit = 1;
+    if (vSplit < 1)
+        vSplit = 1;
+
+    glNames = new unsigned int[uSplit * vSplit];
+    for (int i = 0; i < uSplit * vSplit; i++)
         glNames[i] = 0;
 
-    pixels = new unsigned char[width * height * components * faces];
+    if (!compressedFormat)
+        pixels = new unsigned char[width * height * components * faces];
 }
 
 
@@ -192,7 +201,7 @@ Texture::~Texture()
         delete[] cmap;
     if (glNames != NULL)
     {
-        for (int i = 0; i < split * split; i++)
+        for (int i = 0; i < uSplit * vSplit; i++)
         {
             if (glNames[i] != 0)
                 glDeleteTextures(1, &glNames[i]);
@@ -202,22 +211,74 @@ Texture::~Texture()
 }
 
 
+static int log2(unsigned int x)
+{
+    int n = -1;
+
+    while (x != 0)
+    {
+        x >>= 1;
+        n++;
+    }
+
+    return n;
+}
+
+
+static int compressedBlockSize(int format)
+{
+    if (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT)
+        return 8;
+    else
+        return 16;
+}
+
+
+// static int compressedTextureAddress(int );
+static int compressedTextureSize(int w, int h, int mipMapLevels,
+                                 int format)
+{
+
+    int totalSize = 0;
+    for (int i = 0; i <= mipMapLevels; i++)
+    {
+        // Compute the size in bytes of this mip map level.
+        // For S3TC, each block is 4x4 pixels.
+        totalSize += ((w + 3) / 4) * ((h + 3) / 4);
+
+        w >>= 1;
+        if (w < 1)
+            w = 1;
+        h >>= 1;
+        if (h < 1)
+            h = 1;
+    }
+
+    return totalSize * compressedBlockSize(format);
+}
+
+
 void Texture::bindName(uint32 flags)
 {
     bool wrap = ((flags & WrapTexture) != 0);
     bool compress = ((flags & CompressTexture) != 0) && compressionSupported;
     bool mipmap = ((flags & NoMipMaps) == 0);
     bool automipmap = ((flags & AutoMipMaps) != 0) && autoMipMapSupported && mipmap;
+    if (maxMipMapLevel == 0)
+        mipmap = false;
+
     if (pixels == NULL)
         return;
-
     GLenum textureType = GL_TEXTURE_2D;
 
     if ((flags & AllowSplitting) == 0)
-        split = 1;
+    {
+        uSplit = 1;
+        vSplit = 1;
+    }
 
     // Disable wrapping if the texture is split
-    if (split > 1)
+    if (uSplit > 1 || vSplit > 1)
         wrap = false;
 
     // If we're not wrapping, use GL_CLAMP_TO_EDGE if it's available; we want
@@ -230,7 +291,7 @@ void Texture::bindName(uint32 flags)
         wrapMode = clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP;
     }
 
-    // compress = true;
+    bool compressedFormat = false;
     int internalFormat = 0;
     if (compress)
     {
@@ -265,6 +326,12 @@ void Texture::bindName(uint32 flags)
         case GL_DSDT_NV:
             internalFormat = format;
             break;
+        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+            compressedFormat = true;
+            internalFormat = format;
+            break;
         default:
             internalFormat = components;
             break;
@@ -279,14 +346,33 @@ void Texture::bindName(uint32 flags)
         textureTarget = (unsigned int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT;
     }
 
-    int subtexWidth = width / split;
-    int subtexHeight = height / split;
+    bool isSplit = (uSplit > 1 || vSplit > 1);
+    int subtexWidth = width / uSplit;
+    int subtexHeight = height / vSplit;
+
+    // Determine how many mip map levels are required for a compressed
+    // subtexture.
+    int compMipMaps = maxMipMapLevel;
+    int compSubtexSize = 1;
+    if (compressedFormat)
+    {
+        int log2Dim = log2((unsigned int) ((subtexWidth > subtexHeight) ? subtexWidth : subtexHeight));
+        if (compMipMaps < 0 || compMipMaps >= log2Dim)
+            compMipMaps = log2Dim;
+        compSubtexSize = compressedTextureSize(subtexWidth, subtexHeight,
+                                               compMipMaps, format);
+    }
 
     unsigned char* subtexPixelBuffer = NULL;
     unsigned char* pixelSource = NULL;
-    if (split > 1)
+    if (isSplit)
     {
-        subtexPixelBuffer = new unsigned char[subtexWidth * subtexHeight * components];
+        int subtexSize;
+        if (compressedFormat)
+            subtexSize = compSubtexSize;
+        else
+            subtexSize = subtexWidth * subtexHeight * components;
+        subtexPixelBuffer = new unsigned char[subtexSize];
         pixelSource = subtexPixelBuffer;
     }
     else
@@ -294,26 +380,65 @@ void Texture::bindName(uint32 flags)
         pixelSource = pixels;
     }
 
-    for (int i = 0; i < split; i++)
+    for (int i = 0; i < vSplit; i++)
     {
-        for (int j = 0; j < split; j++)
+        for (int j = 0; j < uSplit; j++)
         {
-            if (split > 1)
+            // If the texture is split, copy texels from the subtexture
+            // area to the pixel buffer.  This is straightforward for normal
+            // textures, but an immense headache for compressed textures with
+            // prebuilt mipmaps.
+            if (isSplit)
             {
-                unsigned char* subtexPixels = pixels +
-                    (i * subtexHeight * width + j * subtexWidth) * components;
-                for (int y = 0; y < subtexHeight; y++)
+                if (compressedFormat)
                 {
-                    memcpy(subtexPixelBuffer + y * subtexWidth * components,
-                           subtexPixels + y * width * components,
-                           subtexWidth * components);
+                    int srcMipMapOffset = 0;
+                    int destMipMapOffset = 0;
+                    for (int mipMapLevel = 0; mipMapLevel < compMipMaps;
+                         mipMapLevel++)
+                    {
+                        int mipWidth = max(width >> mipMapLevel, 1);
+                        int mipHeight = max(height >> mipMapLevel, 1);
+                        int subMipWidth = max(subtexWidth >> mipMapLevel, 1);
+                        int subMipHeight = max(subtexHeight >> mipMapLevel, 1);
+                        int xBlocks = max(subMipWidth / 4, 1);
+                        int yBlocks = max(subMipHeight / 4, 1);
+                        int blockSize = compressedBlockSize(format);
+                        int destBytesPerRow = xBlocks * blockSize;
+                        int srcBytesPerRow = max(mipWidth / 4, 1) * blockSize;
+                        int srcX = j * subMipWidth / 4;
+                        int srcY = i * subMipHeight / 4;
+                        int subtexOffset = srcY * srcBytesPerRow +
+                            srcX * blockSize;
+
+                        for (int y = 0; y < yBlocks; y++)
+                        {
+                            memcpy(subtexPixelBuffer + destMipMapOffset + y * destBytesPerRow,
+                                   pixels + srcMipMapOffset + subtexOffset + y * srcBytesPerRow,
+                                   destBytesPerRow);
+                        }
+
+                        srcMipMapOffset += max(mipHeight / 4, 1) * srcBytesPerRow;
+                        destMipMapOffset += yBlocks * destBytesPerRow;
+                    }
+                }
+                else
+                {
+                    unsigned char* subtexPixels = pixels +
+                        (i * subtexHeight * width + j * subtexWidth) * components;
+                    for (int y = 0; y < subtexHeight; y++)
+                    {
+                        memcpy(subtexPixelBuffer + y * subtexWidth * components,
+                               subtexPixels + y * width * components,
+                               subtexWidth * components);
+                    }
                 }
             }
 
             GLuint tn;
             glGenTextures(1, &tn);
             glBindTexture(textureType, tn);
-            glNames[i * split + j] = tn;
+            glNames[i * uSplit + j] = tn;
 
             glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapMode);
             glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapMode);
@@ -326,7 +451,12 @@ void Texture::bindName(uint32 flags)
 
             for (int face = 0; face < nFaces; face++)
             {
-                if (mipmap && !automipmap)
+                if (compressedFormat)
+                {
+                    loadCompressedTexture(pixelSource,
+                                          subtexWidth, subtexHeight);
+                }
+                else if (mipmap && !automipmap)
                 {
                     if (maxMipMapLevel > 0)
                     {
@@ -362,6 +492,47 @@ void Texture::bindName(uint32 flags)
 }
 
 
+void Texture::loadCompressedTexture(unsigned char* texels,
+                                    int w, int h)
+{
+    // Determine how many mip map levels to use
+    int numMipMaps = maxMipMapLevel;
+    int largestDimension = (w > h) ? w : h;
+    int log2Dim = log2((unsigned int) largestDimension);
+
+    if (numMipMaps < 0 || numMipMaps >= log2Dim)
+        numMipMaps = log2Dim;
+
+    int mmOffset = 0;
+    for (int mipMapLevel = 0; mipMapLevel <= numMipMaps;
+         mipMapLevel++)
+    {
+        unsigned int mmWidth =
+            (unsigned int) w >> mipMapLevel;
+        unsigned int mmHeight =
+            (unsigned int) h >> mipMapLevel;
+        if (mmWidth < 1)
+            mmWidth = 1;
+        if (mmHeight < 1)
+            mmHeight = 1;
+        
+        // Compute the size in bytes of this mip map level.
+        // For S3TC, each block is 4x4 pixels.
+        int mmSize = compressedBlockSize(format) *
+            ((mmWidth + 3) / 4) * ((mmHeight + 3) / 4);
+                        
+        glCompressedTexImage2DARB(GL_TEXTURE_2D,
+                                  mipMapLevel,
+                                  format,
+                                  mmWidth, mmHeight,
+                                  0,
+                                  mmSize,
+                                  texels + mmOffset);
+        mmOffset += mmSize;
+    }
+}
+
+
 unsigned int Texture::getName()
 {
     assert(glNames != NULL);
@@ -371,8 +542,8 @@ unsigned int Texture::getName()
 unsigned int Texture::getName(int u, int v)
 {
     assert(glNames != NULL);
-    assert(u < split && v < split);
-    return glNames[v * split + u];
+    assert(u < uSplit && v < vSplit);
+    return glNames[v * uSplit + u];
 }
 
 
@@ -386,9 +557,9 @@ void Texture::bind() const
 void Texture::bind(int u, int v) const
 {
     assert(glNames != NULL);
-    assert(u < split && v < split);
+    assert(u < uSplit && v < vSplit);
     glBindTexture(cubeMap ? GL_TEXTURE_CUBE_MAP_EXT : GL_TEXTURE_2D,
-                  glNames[v * split + u]);
+                  glNames[v * uSplit + u]);
 }
 
 
@@ -423,12 +594,12 @@ bool Texture::hasAlpha() const
 
 int Texture::getUSubtextures() const
 {
-    return split;
+    return uSplit;
 }
 
 int Texture::getVSubtextures() const
 {
-    return split;
+    return vSplit;
 }
 
 
@@ -575,6 +746,8 @@ Texture* LoadTextureFromFile(const string& filename)
         return CreateBMPTexture(filename.c_str());
     case Content_PNG:
         return CreatePNGTexture(filename);
+    case Content_DDS:
+        return CreateDDSTexture(filename);
     default:
         DPRINTF(0, "Unrecognized or unsupported image file type.\n");
         return NULL;
@@ -1103,41 +1276,6 @@ static Vec3f cubeVector(int face, float s, float t)
         // assert(false);
         break;
     }
-
-#if 0
-    // Silly test here . . . this produces a normal map with (0, 0, 1) on
-    // on the half of the cube on the positive size of the z=0 plane and
-    // (0, 0, -1) on the other half.
-    //
-    // TODO: Experiment with other normal maps as a way to approximate various
-    // illumination functions that may be more accurate for planetary rendering
-    // than the standard Lambertian model.
-    v = Vec3f(0, 0, 1);
-    switch (face)
-    {
-    case 0:
-        if (s > 0)
-            v = -v;
-        break;
-    case 1:
-        if (s < 0)
-            v = -v;
-        break;
-    case 2:
-        if (t < 0)
-            v = -v;
-        break;
-    case 3:
-        if (t > 0)
-            v = -v;
-        break;
-    case 4:
-        break;
-    case 5:
-        v = -v;
-        break;
-    }
-#endif
 
     v.normalize();
 
