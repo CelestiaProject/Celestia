@@ -35,18 +35,71 @@ TextureManager* GetTextureManager()
 }
 
 
+static string resolveWildcard(const string& filename)
+{
+    string base(filename, 0, filename.length() - 1);
+
+    string pngfile = base + "png";
+    {
+        ifstream in(pngfile.c_str());
+        if (in.good())
+            return pngfile;
+    }
+    string jpgfile = base + "jpg";
+    {
+        ifstream in(jpgfile.c_str());
+        if (in.good())
+            return jpgfile;
+    }
+    string ddsfile = base + "dds";
+    {
+        cout << "Trying DDS: " << ddsfile << '\n';
+        ifstream in(ddsfile.c_str());
+        if (in.good())
+            return ddsfile;
+    }
+
+    return "";
+}
+
+
 string TextureInfo::resolve(const string& baseDir)
 {
+    bool wildcard = false;
+    if (!source.empty() && source.at(source.length() - 1) == '*')
+        wildcard = true;
+
     if (!path.empty())
     {
         string filename = path + "/textures" + directories[resolution] + source;
         // cout << "Resolve: testing [" << filename << "]\n";
-        ifstream in(filename.c_str());
-        if (in.good())
-            return filename;
+        if (wildcard)
+        {
+            filename = resolveWildcard(filename);
+            if (!filename.empty())
+                return filename;
+        }
+        else
+        {
+            ifstream in(filename.c_str());
+            if (in.good())
+                return filename;
+        }
     }
 
-    return baseDir + directories[resolution] + source;
+    string filename = baseDir + directories[resolution] + source;
+    if (wildcard)
+    {
+        string matched = resolveWildcard(filename);
+        if (matched.empty())
+            return filename; // . . . for lack of any better way to handle it.
+        else
+            return matched;
+    }
+    else
+    {
+        return filename;
+    }
 }
 
 
