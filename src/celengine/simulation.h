@@ -74,6 +74,7 @@ class Simulation
                              double& latitude);
     void gotoSurface(double duration);
     void centerSelection(double centerTime = 0.5);
+    void centerSelectionCO(double centerTime = 0.5);
     void follow();
     void geosynchronousFollow();
     void phaseLock();
