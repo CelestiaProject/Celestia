@@ -95,6 +95,7 @@ class Simulation
     void setTimeScale(double);
     bool getSyncTime() const;
     void setSyncTime(bool);
+    void synchronizeTime();
 
     float getFaintestVisible() const;
     void setFaintestVisible(float);
