@@ -18,6 +18,7 @@ struct CelestiaConfig
     std::string starDatabaseFile;
     std::string starNamesFile;
     std::vector<std::string> solarSystemFiles;
+    std::string galaxyCatalog;
     std::vector<std::string> labelledStars;
     std::string asterismsFile;
     float faintestVisible;
