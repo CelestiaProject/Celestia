@@ -90,5 +90,12 @@ inline void glLightColor(GLenum light, GLenum which, const Color& color)
               &(Vec4f(color.red(), color.green(), color.blue(), color.alpha()).x));
 }
 
+inline void glAmbientLightColor(const Color& color)
+{
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT,
+                   &(Vec4f(color.red(), color.green(), color.blue(),
+                           color.alpha()).x));
+}
+
 #endif // _VECGL_H_
 
