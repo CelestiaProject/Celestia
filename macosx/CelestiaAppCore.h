@@ -17,6 +17,7 @@
 @interface CelestiaAppCore : NSObject {
     CelestiaDestinations* _destinations;
 }
+-(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
 -(void)archive;
 +(CelestiaAppCore *)sharedAppCore;
 -(BOOL)initSimulation;
@@ -26,8 +27,8 @@
 -(void)keyDown:(int)c;
 -(void)keyUp:(int)c;
 -(void)mouseWheel:(float)motion modifiers:(int)modifiers;
--(void)mouseButtonDown:(NSPoint)coord button:(int)button;
--(void)mouseButtonUp:(NSPoint)coord button:(int)button;
+-(void)mouseButtonDown:(NSPoint)coord modifiers:(int)modifiers;
+-(void)mouseButtonUp:(NSPoint)coord modifiers:(int)modifiers;
 -(void)mouseMove:(NSPoint)delta modifiers:(int)modifiers;
 -(void)joystickAxis:(int)axis value:(float)value;
 -(void)joystickButton:(int)button state:(BOOL)state;
