@@ -159,17 +159,42 @@ Tokenizer::TokenType Tokenizer::nextToken()
             break;
 
         case StringState:
-            if (nextChar != '"')
-            {
-                state = StringState;
-                textToken += (char) nextChar;
-            }
-            else
+            if (nextChar == '"')
             {
                 newToken = TokenString;
                 haveValidString = true;
                 nextChar = readChar();
             }
+            else if (nextChar == '\\')
+            {
+                state = StringEscapeState;
+            }
+            else
+            {
+                state = StringState;
+                textToken += (char) nextChar;
+            }
+            break;
+
+        case StringEscapeState:
+            if (nextChar == '\\')
+            {
+                textToken += '\\';
+            }
+            else if (nextChar == 'n')
+            {
+                textToken += '\n';
+            }
+            else if (nextChar == '"')
+            {
+                textToken += '"';
+            }
+            else
+            {
+                newToken = TokenError;
+                syntaxError("Unknown escape code in string");
+            }
+            state = StringState;
             break;
 
         case NumberState:
