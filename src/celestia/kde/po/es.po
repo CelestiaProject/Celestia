@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-06-09 14:05+0200\n"
-"PO-Revision-Date: 2003-06-09 20:02+0200\n"
-"Last-Translator: Javier Martinez <jamarsa01@yahoo.es>\n"
-"Language-Team: Castellano <es@li.org>\n"
+"POT-Creation-Date: 2003-06-09 21:17+0200\n"
+"PO-Revision-Date: 2003-06-13 13:59+0200\n"
+"Last-Translator: Javier Martinez <tengwar@terra.es>\n"
+"Language-Team:  <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -29,7 +29,7 @@ msgstr "Etiquetas"
 
 #: rc.cpp:5
 msgid "OpenGL Render Path"
-msgstr "Directorio del Motor OpenGL"
+msgstr "Método Representación OpenGL"
 
 #: rc.cpp:6
 msgid "Time"
@@ -77,7 +77,7 @@ msgstr "Crear una nueva carpeta de marcadores en este menú"
 
 #: kcelbookmarkmenu.cpp:307 kcelbookmarkmenu.cpp:354 kcelbookmarkmenu.cpp:401
 msgid "Can't add bookmark with empty URL"
-msgstr "No puedo añadir un marcador con una URL vacía!!"
+msgstr "¡¡No puedo añadir un marcador con una URL vacía!!"
 
 #: kdeapp.cpp:294
 msgid "Go to &URL..."
@@ -129,7 +129,7 @@ msgstr "Congelar Tiempo"
 
 #: kdeapp.cpp:332
 msgid "Reverse Time"
-msgstr "Retroceder Tiempo"
+msgstr "Invertir Tiempo"
 
 #: kdeapp.cpp:334
 msgid "Split View Vertically"
@@ -173,7 +173,7 @@ msgstr "Ir a la Superficie"
 
 #: kdeapp.cpp:379 celestialbrowser.cpp:27 rc.cpp:1
 msgid "Celestial Browser"
-msgstr "Catálogo Celestial"
+msgstr "Catálogo Celeste"
 
 #: kdeapp.cpp:380 eclipsefinderdlg.cpp:20 rc.cpp:15
 msgid "Eclipse Finder"
@@ -205,7 +205,7 @@ msgstr "Mostrar Orbitas"
 
 #: kdeapp.cpp:413
 msgid "Show Celestial Grid"
-msgstr "Mostrar Rejilla Celestial"
+msgstr "Mostrar Rejilla Celeste"
 
 #: kdeapp.cpp:416
 msgid "Show Night Side Lights"
@@ -289,7 +289,7 @@ msgstr "Básico"
 
 #: kdeapp.cpp:475 kdepreferencesdialog.cpp:317
 msgid "Multitexture"
-msgstr "Multitexture"
+msgstr "Multitextura"
 
 #: kdeapp.cpp:477 kdepreferencesdialog.cpp:319
 msgid "NvCombiners"
@@ -317,7 +317,7 @@ msgstr "NV30"
 
 #: kdeapp.cpp:489
 msgid "Cycle OpenGL Render Path"
-msgstr "Intercambiar Directorio Motor OpenGL"
+msgstr "Intercambiar Método Representación OpenGL"
 
 #: kdeapp.cpp:491
 msgid "Grab Image"
@@ -389,7 +389,7 @@ msgstr "Celestia"
 
 #: kdemain.cpp:30
 msgid "Start and go to url"
-msgstr "Arrancar e ir a una direccion"
+msgstr "Arrancar e ir a una dirección"
 
 #: kdepreferencesdialog.cpp:45
 msgid "Celestia Preferences"
@@ -408,7 +408,7 @@ msgid "Stars"
 msgstr "Estrellas"
 
 #: kdepreferencesdialog.cpp:65 kdepreferencesdialog.cpp:139
-#: selectionpopup.cpp:356
+#: selectionpopup.cpp:385
 msgid "Planets"
 msgstr "Planetas"
 
@@ -430,7 +430,7 @@ msgstr "Orbitas"
 
 #: kdepreferencesdialog.cpp:85
 msgid "Celestial Grid"
-msgstr "Rejilla Celestial"
+msgstr "Rejilla Celeste"
 
 #: kdepreferencesdialog.cpp:89
 msgid "Night Side Lights"
@@ -591,9 +591,10 @@ msgid ""
 "graphics card, though NvCombiner ARBVP is a slightly better option for "
 "Geforce users"
 msgstr ""
-"<b>Los combinadores NVIDIA y la extensión  NV_vertex_program</b><br> proporcionan mapas de relieve, sombras anulares y brillos especulares en cualquier tarjeta gráfica Geforce or ATI Radeon "
-", aunque NvCombiner ARBVP es una opción ligeramente mejor para los usuarios de "
-"Geforce"
+"<b>Los combinadores NVIDIA y la extensión  NV_vertex_program</b><br> "
+"proporcionan mapas de relieve, sombras anulares y brillos especulares en "
+"cualquier tarjeta gráfica Geforce o ATI Radeon , aunque NvCombiner ARBVP es "
+"una opción ligeramente mejor para los usuarios de Geforce"
 
 #: kdepreferencesdialog.cpp:574
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
@@ -604,8 +605,8 @@ msgid ""
 "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
 "advanced effects on Geforce FX and Radeon 9700 cards"
 msgstr ""
-"<b>Las extensiones ARB_fragment_program y ARB_vertex_program</b><br>proporcionan "
-"efectos avanzados en las tarjetas Geforce FX y Radeon 9700"
+"<b>Las extensiones ARB_fragment_program y ARB_vertex_program</"
+"b><br>proporcionan efectos avanzados en las tarjetas Geforce FX y Radeon 9700"
 
 #: kdepreferencesdialog.cpp:581
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
@@ -635,7 +636,7 @@ msgstr "Nave Espacial"
 msgid "-"
 msgstr "-"
 
-#: eclipsefinderdlg.cpp:117 selectionpopup.cpp:299
+#: eclipsefinderdlg.cpp:117 selectionpopup.cpp:310
 msgid "&Goto"
 msgstr "&Ir"
 
@@ -703,59 +704,67 @@ msgstr "Radio: "
 msgid "Marked objects"
 msgstr "Objetos Marcados: "
 
-#: selectionpopup.cpp:297
+#: selectionpopup.cpp:308
 msgid "&Select"
 msgstr "&Seleccionar"
 
-#: selectionpopup.cpp:298
+#: selectionpopup.cpp:309
 msgid "&Center"
 msgstr "&Centrar"
 
-#: selectionpopup.cpp:300
+#: selectionpopup.cpp:311
 msgid "&Follow"
 msgstr "Se&guir"
 
-#: selectionpopup.cpp:301
+#: selectionpopup.cpp:312
 msgid "S&ynch Orbit"
 msgstr "Sincronizar &Orbita"
 
-#: selectionpopup.cpp:302
+#: selectionpopup.cpp:313
 msgid "&Info"
 msgstr "&Información"
 
-#: selectionpopup.cpp:303
+#: selectionpopup.cpp:314
 msgid "Unmark &All"
 msgstr "Desmarcar &Todo"
 
-#: selectionpopup.cpp:306
+#: selectionpopup.cpp:317
 msgid "&Unmark"
 msgstr "&Desmarcar"
 
-#: selectionpopup.cpp:311
+#: selectionpopup.cpp:322
 msgid "Diamond"
 msgstr "Diamante"
 
-#: selectionpopup.cpp:312
+#: selectionpopup.cpp:323
 msgid "Triangle"
 msgstr "Triángulo"
 
-#: selectionpopup.cpp:313
+#: selectionpopup.cpp:324
 msgid "Square"
 msgstr "Cuadrado"
 
-#: selectionpopup.cpp:314
+#: selectionpopup.cpp:325
 msgid "Plus"
 msgstr "Suma"
 
-#: selectionpopup.cpp:315
+#: selectionpopup.cpp:326
 msgid "X"
 msgstr "X"
 
-#: selectionpopup.cpp:316
+#: selectionpopup.cpp:327
 msgid "&Mark"
 msgstr "&Marca"
 
-#: selectionpopup.cpp:334
+#: selectionpopup.cpp:338
+msgid "Normal"
+msgstr "Normal"
+
+#: selectionpopup.cpp:345
+msgid "&Alternate Surfaces"
+msgstr "Superficies &Alternas"
+
+#: selectionpopup.cpp:363
 msgid "Satellites"
 msgstr "Satélites"
 
@@ -875,13 +884,10 @@ msgstr "<p align=\"right\">De:</p>"
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr "Javier Martinez"
+msgstr "Javier Martinez Santamarta"
 
 #: _translatorinfo.cpp:3
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr ""
-"_:CORREO DE LOS TRADUCTORES\n"
-"Vuestros Correos"
-
+msgstr "Correo del traductor:tengwar@terra.es"
