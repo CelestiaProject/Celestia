@@ -19,6 +19,15 @@ static const int FeatureSizeSliderRange = 1000;
 static const float MinFeatureSize = 1.0f;
 static const float MaxFeatureSize = 100.0f;
 
+static const uint32 FilterOther = ~(Location::City |
+                                    Location::Observatory |
+                                    Location::LandingSite |
+                                    Location::Crater |
+                                    Location::Mons |
+                                    Location::Terra |
+                                    Location::Vallis |
+                                    Location::Mare);
+
 static BOOL APIENTRY LocationsProc(HWND hDlg,
                                    UINT message,
                                    UINT wParam,
@@ -49,23 +58,37 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
 
     case WM_COMMAND:
     {
-        Renderer* renderer = dlg->appCore->getRenderer();
-        //uint32 locationFlags = renderer->getRenderFlags();
-        uint32 locationsFlags = 0;
+        Observer* obs = dlg->appCore->getSimulation()->getActiveObserver();
+        uint32 locationFilter = obs->getLocationFilter();
         
         switch (LOWORD(wParam))
         {
         case IDC_SHOW_CITIES:
+            obs->setLocationFilter(locationFilter ^ Location::City);
             break;
         case IDC_SHOW_OBSERVATORIES:
+            obs->setLocationFilter(locationFilter ^ Location::Observatory);
             break;
         case IDC_SHOW_LANDING_SITES:
+            obs->setLocationFilter(locationFilter ^ Location::LandingSite);
             break;
         case IDC_SHOW_MONTES:
+            obs->setLocationFilter(locationFilter ^ Location::Mons);
             break;
         case IDC_SHOW_MARIA:
+            obs->setLocationFilter(locationFilter ^ Location::Mare);
             break;
         case IDC_SHOW_CRATERS:
+            obs->setLocationFilter(locationFilter ^ Location::Crater);
+            break;
+        case IDC_SHOW_VALLES:
+            obs->setLocationFilter(locationFilter ^ Location::Vallis);
+            break;
+        case IDC_SHOW_TERRAE:
+            obs->setLocationFilter(locationFilter ^ Location::Terra);
+            break;
+        case IDC_SHOW_OTHERS:
+            obs->setLocationFilter(locationFilter ^ FilterOther);
             break;
         case IDOK:
             if (dlg != NULL && dlg->parent != NULL)
@@ -141,13 +164,27 @@ LocationsDialog::LocationsDialog(HINSTANCE appInstance,
 }
 
 
+static void dlgCheck(HWND hDlg, WORD item, uint32 flags, uint32 f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+
 void LocationsDialog::SetControls(HWND hDlg)
 {
-#if 0
-    // Set checkboxes and radiobuttons
-    SendDlgItemMessage(hDlg, IDC_SHOWATMOSPHERES, BM_SETCHECK,
-        ((renderFlags & appCore->getRenderer()->ShowAtmospheres) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
-#endif
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    uint32 locFilter = obs->getLocationFilter();
+
+    dlgCheck(hDlg, IDC_SHOW_CITIES,        locFilter, Location::City);
+    dlgCheck(hDlg, IDC_SHOW_OBSERVATORIES, locFilter, Location::Observatory);
+    dlgCheck(hDlg, IDC_SHOW_LANDING_SITES, locFilter, Location::LandingSite);
+    dlgCheck(hDlg, IDC_SHOW_MONTES,        locFilter, Location::Mons);
+    dlgCheck(hDlg, IDC_SHOW_MARIA,         locFilter, Location::Mare);
+    dlgCheck(hDlg, IDC_SHOW_CRATERS,       locFilter, Location::Crater);
+    dlgCheck(hDlg, IDC_SHOW_VALLES,        locFilter, Location::Vallis);
+    dlgCheck(hDlg, IDC_SHOW_TERRAE,        locFilter, Location::Terra);
+    dlgCheck(hDlg, IDC_SHOW_OTHERS,        locFilter, Location::Other);
 
     // Set up feature size slider
     SendDlgItemMessage(hDlg,
@@ -156,7 +193,9 @@ void LocationsDialog::SetControls(HWND hDlg)
                        (WPARAM)TRUE,
                        (LPARAM) MAKELONG(0, FeatureSizeSliderRange));
     float featureSize = appCore->getRenderer()->getMinimumFeatureSize();
-    int sliderPos = (int) (FeatureSizeSliderRange * (featureSize - MinFeatureSize) / (MaxFeatureSize - MinFeatureSize));
+    int sliderPos = (int) (FeatureSizeSliderRange *
+                           (featureSize - MinFeatureSize) /
+                           (MaxFeatureSize - MinFeatureSize));
     SendDlgItemMessage(hDlg,
                        IDC_SLIDER_FEATURE_SIZE,
                        TBM_SETPOS,
