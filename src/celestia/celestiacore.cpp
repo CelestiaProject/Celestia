@@ -1163,19 +1163,7 @@ void CelestiaCore::charEntered(const char *c_p)
         break;
 
     case '\b':
-        switch(sim->getSelection().getType()) {
-        case Selection::Type_Body:
-            system = sim->getSelection().body()->getSystem();
-            if (system->getPrimaryBody() != NULL) sim->setSelection(Selection(system->getPrimaryBody()));
-            else sim->setSelection(Selection(system->getStar()));
-            break;
-        case Selection::Type_Location:
-            sim->setSelection(Selection(sim->getSelection().location()->getParentBody()));
-            break;
-        default:
-            sim->setSelection(Selection());
-            break;
-        }
+        sim->setSelection(sim->getSelection().parent());
         break;
 
     case '\014': // Ctrl+L
