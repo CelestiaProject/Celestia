@@ -11,6 +11,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <celengine/astro.h>
 #include <celengine/celestia.h>
 #include <celmath/vecmath.h>
 
@@ -761,6 +762,15 @@ static int vector_normalize(lua_State* l)
     return 1;
 }
 
+static int vector_length(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for vector:length");
+    Vec3d* v = this_vector(l);
+    double length = v->length();
+    lua_pushnumber(l, (lua_Number)length);
+    return 1;
+}
+
 // need these to be declared here for vector_add -- ugly
 static UniversalCoord* to_position(lua_State* l, int index);
 static int position_new(lua_State* l, const UniversalCoord& uc);
@@ -867,6 +877,7 @@ static void CreateVectorMetaTable(lua_State* l)
     RegisterMethod(l, "gety", vector_gety);
     RegisterMethod(l, "getz", vector_getz);
     RegisterMethod(l, "normalize", vector_normalize);
+    RegisterMethod(l, "length", vector_length);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -1887,6 +1898,42 @@ static int observer_goto(lua_State* l)
     return 0;
 }
 
+static int observer_gotolonglat(lua_State* l)
+{
+    checkArgs(l, 2, 7, "One to five arguments expected to observer:gotolonglat");
+
+    Observer* o = this_observer(l);
+
+    Selection* sel = to_object(l, 2);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First arg to observer:gotolonglat must be an object");
+        lua_error(l);
+    }
+    double defaultDistance = sel->radius() * 5.0;
+
+    double longitude  = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotolonglat must be a number", 0.0);
+    double latitude   = safeGetNumber(l, 4, WrongType, "Third arg to observer:gotolonglat must be a number", 0.0);
+    double distance   = safeGetNumber(l, 5, WrongType, "Fourth arg to observer:gotolonglat must be a number", defaultDistance);
+    double travelTime = safeGetNumber(l, 6, WrongType, "Fifth arg to observer:gotolonglat must be a number", 5.0);
+
+    distance = distance / KM_PER_LY;
+
+    Vec3f up(0.0f, 1.0f, 0.0f);
+    if (lua_gettop(l) >= 7)
+    {
+        Vec3d* uparg = to_vector(l, 7);
+        if (uparg == NULL)
+        {
+            lua_pushstring(l, "Sixth argument to observer:gotolonglat must be a vector");
+            lua_error(l);
+        }
+        up = Vec3f((float)uparg->x, (float)uparg->y, (float)uparg->z);
+    }
+    o->gotoSelectionLongLat(*sel, travelTime, distance, (float)longitude, (float)latitude, up);
+
+    return 0;
+}
 
 // First argument is the target object or position; optional second argument
 // is the travel time
@@ -2177,6 +2224,7 @@ static void CreateObserverMetaTable(lua_State* l)
 
     RegisterMethod(l, "__tostring", observer_tostring);
     RegisterMethod(l, "goto", observer_goto);
+    RegisterMethod(l, "gotolonglat", observer_gotolonglat);
     RegisterMethod(l, "gotolocation", observer_gotolocation);
     RegisterMethod(l, "setposition", observer_setposition);
     RegisterMethod(l, "lookat", observer_lookat);
@@ -2818,6 +2866,10 @@ bool LuaState::init(CelestiaCore* appCore)
     if (loadScript("wait = function(x) coroutine.yield(x) end") != 0)
         return false;
     lua_pcall(state, 0, 0, 0); // execute it
+
+    lua_pushstring(state, "KM_PER_MICROLY");
+    lua_pushnumber(state, (lua_Number)KM_PER_LY/1e6);
+    lua_settable(state, LUA_GLOBALSINDEX);
 
     CreateObjectMetaTable(state);
     CreateObserverMetaTable(state);
