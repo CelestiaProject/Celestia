@@ -13,6 +13,7 @@ KDE_SOURCES = \
 
 EXTRA_DIST = celestialbrowserbase.ui eclipsefinderdlgbase.ui $(KDE_SOURCES)
 
+
 if ENABLE_KDE
 
 noinst_LIBRARIES = libkdegui.a
@@ -20,7 +21,7 @@ noinst_HEADERS = $(wildcard *.h)
 
 INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
 
-libkdegui_a_SOURCES = $(KDE_SOURCES)\
+libkdegui_a_SOURCES = $(KDE_SOURCES) \
                  kdeapp.moc.cpp \
                  eclipsefinderdlgbase.uic.h \
                  eclipsefinderdlgbase.uic.cpp \
@@ -36,6 +37,10 @@ libkdegui_a_SOURCES = $(KDE_SOURCES)\
                  kcelbookmarkmenu.moc.cpp \
                  kcelbookmarkmanager.moc.cpp \
                  selectionpopup.moc.cpp
+                          
+SUBDIRS = data doc po
+
+endif
 
 %.uic.h: %.ui
 	$(UIC) $< -o $@
@@ -45,10 +50,6 @@ libkdegui_a_SOURCES = $(KDE_SOURCES)\
         
 %.moc.cpp: %.h
 	$(MOC) $< -o $@
-                          
-SUBDIRS = data doc po
-
-endif
                  
 messages: rc.cpp
 	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
