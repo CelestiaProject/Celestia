@@ -9,12 +9,16 @@
 
 #define JPEG_SUPPORT
 
+#include <cmath>
 #include <fstream>
 #include "gl.h"
+#include "glext.h"
 #ifdef JPEG_SUPPORT
 #include "ijl.h"
 #endif
 
+#include "celestia.h"
+#include "vecmath.h"
 #include "texture.h"
 
 using namespace std;
@@ -88,10 +92,12 @@ CTexture::~CTexture()
         delete[] pixels;
     if (cmap != NULL)
         delete[] cmap;
+    if (glName != 0)
+        glDeleteTextures(1, &glName);
 }
 
 
-void CTexture::bindName()
+void CTexture::bindName(bool wrap)
 {
     if (pixels == NULL)
         return;
@@ -100,8 +106,8 @@ void CTexture::bindName()
 
     glGenTextures(1, &tn);
     glBindTexture(GL_TEXTURE_2D, tn);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap ? GL_REPEAT : GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap ? GL_REPEAT : GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     gluBuild2DMipmaps(GL_TEXTURE_2D,
@@ -120,6 +126,85 @@ void CTexture::bindName()
 unsigned int CTexture::getName()
 {
     return glName;
+}
+
+
+// Convert the texture to a normal map
+void CTexture::normalMap(float scale, bool wrap)
+{
+    // Make sure that we get the texture after it's been loaded with
+    // data, but before bindName was called and texel data deleted.
+    if (pixels == NULL)
+    {
+        DPRINTF("Texture::normalMap: no texel data!\n");
+        return;
+    }
+
+    unsigned char* npixels = new unsigned char[width * height * 4];
+
+    // Compute normals using differences between adjacent texels.  Only
+    // the value of the first channel is considered with computing
+    // differences--this produces the expected results with greyscale
+    // textures.
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            int i0 = i;
+            int j0 = j;
+            int i1 = i - 1;
+            int j1 = j - 1;
+            if (i1 < 0)
+            {
+                if (wrap)
+                {
+                    i1 = height - 1;
+                }
+                else
+                {
+                    i0++;
+                    i1++;
+                }   
+            }
+            if (j1 < 0)
+            {
+                if (wrap)
+                {
+                    j1 = width - 1;
+                }
+                else
+                {
+                    j0++;
+                    j1++;
+                }
+            }
+
+            int h00 = (int) pixels[(i0 * width + j0) * components];
+            int h10 = (int) pixels[(i0 * width + j1) * components];
+            int h01 = (int) pixels[(i1 * width + j0) * components];
+            
+            float dx = (float) (h00 - h10) * (1.0f / 255.0f) * scale;
+            float dy = (float) (h00 - h01) * (1.0f / 255.0f) * scale;
+
+            float mag = (float) sqrt(dx * dx + dy * dy + 1.0f);
+            float rmag = 1.0f / mag;
+
+            int n = (i * width + j) * 4;
+            // npixels[n]     = (unsigned char) (128 + 127 * dy * rmag);
+            // npixels[n + 1] = (unsigned char) (128 - 127 * dx * rmag);
+            npixels[n]     = (unsigned char) (128 - 127 * dx * rmag);
+            npixels[n + 1] = (unsigned char) (128 + 127 * dy * rmag);
+            npixels[n + 2] = (unsigned char) (128 + 127 * rmag);
+            npixels[n + 3] = 255;
+        }
+    }
+
+    delete[] pixels;
+    pixels = npixels;
+
+    format = GL_RGBA;
+    components = 4;
+    isNormalMap = true;
 }
 
 
@@ -440,3 +525,84 @@ CTexture* CreateBMPTexture(const char* filename)
     }
 }
 
+
+// Helper function for CreateNormalizationCubeMap
+static Vec3f cubeVector(int face, float s, float t)
+{
+    Vec3f v;
+    switch (face)
+    {
+    case 0:
+        v = Vec3f(1.0f, -t, -s);
+        break;
+    case 1:
+        v = Vec3f(-1.0f, -t, s);
+        break;
+    case 2:
+        v = Vec3f(s, 1.0f, t);
+        break;
+    case 3:
+        v = Vec3f(s, -1.0f, -t);
+        break;
+    case 4:
+        v = Vec3f(s, -t, 1.0f);
+        break;
+    case 5:
+        v = Vec3f(-s, -t, -1.0f);
+        break;
+    default:
+        // assert(false);
+        break;
+    }
+
+    v.normalize();
+
+    return v;
+}
+
+
+// Build a normalization cube map.  This is used when bump mapping to keep
+// the light vector unit length when interpolating.  bindName() need not
+// (and must not) be called for a texture created with this method, as the
+// name binding stuff all handled right here.
+CTexture* CreateNormalizationCubeMap(int size)
+{
+    // assert(ExtensionSupported("GL_EXT_texture_cube_map"));
+    
+    CTexture* tex = new CTexture(size, size, GL_RGB);
+    if (tex == NULL)
+        return NULL;
+
+    GLuint tn;
+    glGenTextures(1, &tn);
+    glBindTexture(GL_TEXTURE_2D, tn);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    for (int face = 0; face < 6; face++)
+    {
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float s = (float) x / (float) size * 2 - 1;
+                float t = (float) y / (float) size * 2 - 1;
+                Vec3f v = cubeVector(face, s, t);
+                tex->pixels[(y * size + x) * 3]     = 128 + (int) (127 * v.x);
+                tex->pixels[(y * size + x) * 3 + 1] = 128 + (int) (127 * v.y);
+                tex->pixels[(y * size + x) * 3 + 2] = 128 + (int) (127 * v.z);
+            }
+        }
+
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT + face,
+                     0, GL_RGB8,
+                     size, size,
+                     0, GL_RGB,
+                     GL_UNSIGNED_BYTE,
+                     tex->pixels);
+    }
+
+    return tex;
+}
