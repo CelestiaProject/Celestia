@@ -442,7 +442,20 @@ void CommandSetVisibilityLimit::process(ExecutionEnvironment& env)
     }
     env.getSimulation()->setFaintestVisible(magnitude);
 }
+////////////////
+// Set FaintestAutoMag45deg command
 
+CommandSetFaintestAutoMag45deg::CommandSetFaintestAutoMag45deg(double mag) :
+    magnitude(mag)
+{
+}
+
+void CommandSetFaintestAutoMag45deg::process(ExecutionEnvironment& env)
+{
+    Renderer* r = env.getRenderer();
+    if (r != NULL)
+        r->setFaintestAM45deg(magnitude);
+}
 
 ////////////////
 // Set ambient light command
