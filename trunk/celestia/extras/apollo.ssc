@@ -1,0 +1,16 @@
+"Apollo 11" "Sol/Earth/Moon"
+{
+	Class "spacecraft"
+	Mesh "apollo.3ds"
+	Radius 0.010
+
+	EllipticalOrbit
+	{
+		Period 0.2
+		SemiMajorAxis 2000
+		Eccentricity 0.01
+		Inclination 5
+	}
+
+	Albedo      0.10
+}
