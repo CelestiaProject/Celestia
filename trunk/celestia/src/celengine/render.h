@@ -108,6 +108,8 @@ class Renderer
     void setVertexShaderEnabled(bool);
     bool vertexShaderSupported() const;
 
+    GLContext* getGLContext() { return context; }
+
     float getSaturationMagnitude() const;
     void setSaturationMagnitude(float);
     float getBrightnessBias() const;
@@ -272,7 +274,8 @@ class Renderer
     void renderOrbit(Body*, double);
     void renderOrbits(PlanetarySystem*, const Selection&, double,
                       const Point3d&, const Point3d&);
-    
+
+
  private:
     GLContext* context;
 
