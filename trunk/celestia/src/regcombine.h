@@ -19,9 +19,14 @@
 extern void SetupCombinersBumpMap(Texture& bumpTexture,
                                   Texture& normalizationTexture,
                                   Color ambientColor);
-void SetupCombinersSmooth(Texture& baseTexture,
-                          Texture& normalizationTexture,
-                          Color ambientColor);
+extern void SetupCombinersSmooth(Texture& baseTexture,
+                                 Texture& normalizationTexture,
+                                 Color ambientColor,
+                                 bool invert);
+extern void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
+                                          Color ambientColor);
+extern void SetupCombinersGlossMap();
+extern void SetupCombinersGlossMapWithFog();
 extern void DisableCombiners();
 
 #endif // _REGCOMBINE_H_
