@@ -110,6 +110,27 @@ void CommandParser::error(const string errMsg)
 }
 
 
+static astro::CoordinateSystem parseCoordinateSystem(const string& name)
+{
+    if (compareIgnoringCase(name, "observer") == 0)
+        return astro::ObserverLocal;
+    else if (compareIgnoringCase(name, "geographic") == 0)
+        return astro::Geographic;
+    else if (compareIgnoringCase(name, "equatorial") == 0)
+        return astro::Equatorial;
+    else if (compareIgnoringCase(name, "ecliptical") == 0)
+        return astro::Ecliptical;
+    else if (compareIgnoringCase(name, "universal") == 0)
+        return astro::Universal;
+    else if (compareIgnoringCase(name, "lock") == 0)
+        return astro::PhaseLock;
+    else if (compareIgnoringCase(name, "chase") == 0)
+        return astro::Chase;
+    else
+        return astro::ObserverLocal;
+}
+
+
 Command* CommandParser::parseCommand()
 {
     if (tokenizer->nextToken() != Tokenizer::TokenName)
@@ -142,6 +163,19 @@ Command* CommandParser::parseCommand()
         paramList->getString("object", object);
         cmd = new CommandSelect(object);
     }
+    else if (commandName == "setframe")
+    {
+        string refName;
+        paramList->getString("ref", refName);
+        string targetName;
+        paramList->getString("target", targetName);
+        string coordSysName;
+        astro::CoordinateSystem coordSys = astro::Universal;
+        if (paramList->getString("coordsys", coordSysName))
+            coordSys = parseCoordinateSystem(coordSysName);
+
+        cmd = new CommandSetFrame(coordSys, refName, targetName);
+    }
     else if (commandName == "goto")
     {
         double t = 1.0;
@@ -152,18 +186,7 @@ Command* CommandParser::parseCommand()
         astro::CoordinateSystem upFrame = astro::ObserverLocal;
         string frameString;
         if (paramList->getString("upframe", frameString))
-        {
-            if (compareIgnoringCase(frameString, "observer") == 0)
-                upFrame = astro::ObserverLocal;
-            else if (compareIgnoringCase(frameString, "geographic") == 0)
-                upFrame = astro::Geographic;
-            else if (compareIgnoringCase(frameString, "equatorial") == 0)
-                upFrame = astro::Equatorial;
-            else if (compareIgnoringCase(frameString, "ecliptical") == 0)
-                upFrame = astro::Ecliptical;
-            else if (compareIgnoringCase(frameString, "universal") == 0)
-                upFrame = astro::Universal;
-        }
+            upFrame = parseCoordinateSystem(frameString);
 
         Vec3d up(0, 1, 0);
         paramList->getVector("up", up);
@@ -192,6 +215,26 @@ Command* CommandParser::parseCommand()
                                      (float) degToRad(latitude),
                                      Vec3f((float) up.x, (float) up.y, (float) up.z));
     }
+    else if (commandName == "gotoloc")
+    {
+        double t = 1.0;
+        paramList->getNumber("time", t);
+        Vec3d pos(0, 1, 0);
+        paramList->getVector("position", pos);
+        pos = pos * astro::kilometersToMicroLightYears(1.0);
+        double xrot = 0.0;
+        paramList->getNumber("xrot", xrot);
+        double yrot = 0.0;
+        paramList->getNumber("yrot", yrot);
+        double zrot = 0.0;
+        paramList->getNumber("zrot", zrot);
+        zrot = degToRad(zrot);
+        Quatf rotation = Quatf::xrotation((float) degToRad(xrot)) *
+            Quatf::yrotation((float) degToRad(yrot)) *
+            Quatf::zrotation((float) degToRad(zrot));
+        cmd = new CommandGotoLocation(t, Point3d(0.0, 0.0, 0.0) + pos,
+                                      rotation);
+    }
     else if (commandName == "center")
     {
         double t = 1.0;
@@ -205,6 +248,14 @@ Command* CommandParser::parseCommand()
     else if (commandName == "synchronous")
     {
         cmd = new CommandSynchronous();
+    }
+    else if (commandName == "lock")
+    {
+        cmd = new CommandLock();
+    }
+    else if (commandName == "chase")
+    {
+        cmd = new CommandChase();
     }
     else if (commandName == "cancel")
     {
