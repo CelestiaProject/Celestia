@@ -88,7 +88,6 @@
 
 "b" "51 Peg"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass   160
 	Radius 60000
@@ -111,7 +110,6 @@
 
 "b" "47 UMa"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass     920
 	Radius   90000
@@ -128,7 +126,6 @@
 
 "c" "47 UMa"
 {
-	Name "c"
 	Texture "gasgiant.jpg"
 	Mass     240     # Msin i is approx. 0.75 Jupiters
 	Radius   66000
@@ -146,7 +143,6 @@
 
 "b" "70 Vir"
 {
-	Name "b"
 	Texture "browndwarf.jpg"
 	Mass     8100
 	Radius   130000
@@ -164,7 +160,6 @@
 
 "b" "Tau Boo"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass     1200
 	Radius   75000
@@ -183,7 +178,6 @@
 
 "b" "HD 168443"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      2300       # 7.2 +- 0.4 Mj
 	Radius    70000
@@ -198,7 +192,6 @@
 
 "c" "HD 168443"
 {
-	Name "c"
 	Texture "browndwarf.jpg"
 	Mass      5400       # 17.1 Mj - brown dwarf?
 	Radius    70000
@@ -222,7 +215,6 @@
 # So, we'll call this one a brown dwarf . . .
 "b" "HD 12661"
 {
-	Name "b"
 	Texture "browndwarf.jpg"
 	Mass      18000
 	Radius    150000
@@ -244,7 +236,6 @@
 # Han et al (2000) claim a mass of 54 Jupiters and inclination of 176 degrees
 "b" "HD 92788"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      1200
 	Radius    70000
@@ -265,7 +256,6 @@
 # M sin i = 1.08 Jupiters
 "b" "HD 130322"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      320
 	Radius    72000
@@ -284,7 +274,6 @@
 # M sin i = 0.42 Jupiters
 "b" "HD 75289"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      135
 	Radius    60000
@@ -307,7 +296,6 @@
 
 "b" "HD 83443"
 {
-	Name "b"
 	Texture   "gasgiant.jpg"
 	Mass      110
 	Radius    58000
@@ -322,7 +310,6 @@
 
 "c" "HD 83443"
 {
-	Name "c"
 	Texture   "gasgiant.jpg"
 	Mass      55
 	Radius    46000
@@ -341,7 +328,6 @@
 # M sin i = 0.24 Jupiters
 "b" "HD 168746"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      75
 	Radius    48000
@@ -363,7 +349,6 @@
 # evidence, I'll just go with the minimum mass instead.
 "b" "79 Cet"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      80
 	Radius    49000
@@ -384,7 +369,6 @@
 # M sin i = 0.249 Jupiters
 "b" "HD 46375"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      80
 	Radius    49000
@@ -403,7 +387,6 @@
 # M sin i = 0.34 Jupiters
 "b" "HD 108147"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      110
 	Radius    52000
@@ -422,7 +405,6 @@
 # M sin i = 0.48 Jupiters
 "b" "BD -10 3166"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      150
 	Radius    58000
@@ -441,7 +423,6 @@
 # M sin i = 0.48 Jupiters
 "b" "HD 6434"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      150
 	Radius    58000
@@ -462,7 +443,6 @@
 # unconfirmed second problem with period of approx 3 years
 "b" "HD 187123"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      155
 	Radius    58000
@@ -486,7 +466,6 @@
 
 "b" "HD 209458"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      220
 	Radius    101000
@@ -505,7 +484,6 @@
 # M sin i = 0.76 Jupiters
 "b" "HD 192263"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      225
 	Radius    65000
@@ -530,7 +508,6 @@
 
 "b" "Epsilon Eri"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      380
 	Radius    73000
@@ -551,7 +528,6 @@
 # M sin i = 0.77 Jupiters
 "b" "HD 38529"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      245
 	Radius    65000
@@ -570,7 +546,6 @@
 # M sin i = 0.84 Jupiters
 "b" "HD 179949"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      270
 	Radius    66000
@@ -589,7 +564,6 @@
 # M sin i = 0.89 Jupiters
 "b" "HD 121504"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      285
 	Radius    67000
@@ -610,7 +584,6 @@
 # M sin i = 1.04 Jupiters
 "b" "HD 37124"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      325
 	Radius    72000
@@ -631,7 +604,6 @@
 # M sin i = 1.1 Jupiters
 "b" "Rho CrB"
 {
-	Name "b"
 	Texture "gasgiant.jpg"
 	Mass      350
 	Radius    73000
@@ -654,7 +626,6 @@
 
 "b" "Gliese 876"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      600
 	Radius    80000
@@ -669,7 +640,6 @@
 
 "c" "Gliese 876"
 {
-	Name "c"
 	Texture "jupiterlike.jpg"
 	Mass      180
 	Radius    60000
@@ -688,7 +658,6 @@
 # M sin i = 4 Jupiters
 "b" "Gliese 86"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1280
 	Radius    70000
@@ -707,7 +676,6 @@
 # M sin i = 1.13 Jupiters
 "b" "HD 52265"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      360
 	Radius    74000
@@ -728,7 +696,6 @@
 # M sin i = 1.28 Jupiters
 "b" "HD 177830"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      400
 	Radius    76000
@@ -751,7 +718,6 @@
 # Possible second planet has yet to be confirmed.
 "b" "HD 217107"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      400
 	Radius    76000
@@ -772,7 +738,6 @@
 # Possible second planet has yet to be confirmed.
 "b" "HD 210277"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      400
 	Radius    76000
@@ -795,7 +760,6 @@
 # Possible second planet has yet to be confirmed.
 "b" "HD 27442"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      520
 	Radius    78000
@@ -816,7 +780,6 @@
 # M sin i = 1.5 Jupiters
 "b" "HD 186427"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      480
 	Radius    80000
@@ -837,7 +800,6 @@
 # M sin i = 1.58 Jupiters
 "b" "HD 134987"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      500
 	Radius    80000
@@ -858,7 +820,6 @@
 # M sin i = 1.97 Jupiters
 "b" "HD 160691"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      625
 	Radius    75000
@@ -879,7 +840,6 @@
 # M sin i = 2 Jupiters
 "b" "HD 19994"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      640
 	Radius    75000
@@ -901,7 +861,6 @@
 # c: M sin i = 0.88 Jupiters
 "b" "HD 82943"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      520
 	Radius    72000
@@ -918,7 +877,6 @@
 
 "c" "HD 82943"
 {
-	Name "c"
 	Texture "jupiterlike.jpg"
 	Mass      290
 	Radius    70000
@@ -939,7 +897,6 @@
 # M sin i = 2.26 Jupiters
 "b" "HR 810"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      730
 	Radius    72000
@@ -960,7 +917,6 @@
 # M sin i = 2.96 Jupiters
 "b" "HD 169830"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      950
 	Radius    70000
@@ -981,7 +937,6 @@
 # M sin i = 3.3 Jupiters
 "b" "14 Her"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1050
 	Radius    70000
@@ -1002,7 +957,6 @@
 # M sin i = 3.32 Jupiters
 "b" "HD 1237"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1050
 	Radius    72000
@@ -1023,7 +977,6 @@
 # M sin i = 3.43 +- 0.4 Jupiters
 "b" "HD 195019"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1100
 	Radius    70000
@@ -1042,7 +995,6 @@
 # M sin i = 4.99 Jupiters
 "b" "HD 190228"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1600
 	Radius    68000
@@ -1063,7 +1015,6 @@
 # M sin i = 5.4 Jupiters
 "b" "HD 222582"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1750
 	Radius    67000
@@ -1084,7 +1035,6 @@
 # M sin i = 6.59 Jupiters
 "b" "HD 10697"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      2080
 	Radius    66000
@@ -1105,7 +1055,6 @@
 # M sin i = 7.2 Jupiters
 "b" "HD 89744"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      2300
 	Radius    65000
@@ -1129,7 +1078,6 @@
 # a brown dwarf, even though M sin i is below the 13 Jupiter mass limit.
 "b" "HD 114762"
 {
-	Name "b"
 	Texture "browndwarf.jpg"
 	Mass      4800
 	Radius    60000
@@ -1148,7 +1096,6 @@
 # M sin i = 947 Earths
 "b" "Iota Hor"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      950
 	Radius    75000
@@ -1172,7 +1119,6 @@
 # Planet c as yet unconfirmed
 "b" "HD 75732"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      300
 	Radius    70000
@@ -1187,7 +1133,6 @@
 
 "c" "HD 75732"
 {
-	Name "c"
 	Texture "jupiterlike.jpg"
 	Mass      1600
 	Radius    70000
@@ -1210,7 +1155,6 @@
 # M sin i = 5.6 Jupiters
 "b" "HD 28185"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1750
 	Radius    70000
@@ -1231,7 +1175,6 @@
 # M sin i = 9.7 Jupiters
 "b" "HD 141937"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      3000
 	Radius    65000
@@ -1252,7 +1195,6 @@
 # M sin i = 3.7 Jupiters
 "b" "HD 213240"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1200
 	Radius    70000
@@ -1273,7 +1215,6 @@
 # M sin i = 2.23 Jupiters
 "b" "HD 8574"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      710
 	Radius    78000
@@ -1294,7 +1235,6 @@
 # M sin i = 4.9 Jupiters
 "b" "HD 50554"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1550
 	Radius    68000
@@ -1316,7 +1256,6 @@
 # c: M sin i > 7.5 Jupiters
 "b" "HD 74156"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      490
 	Radius    74000
@@ -1331,7 +1270,6 @@
 
 "c" "HD 74156"
 {
-	Name "c"
 	Texture "jupiterlike.jpg"
 	Mass      2000
 	Radius    65000
@@ -1353,7 +1291,6 @@
 # M sin i = 6.81 Jupiters
 "b" "HD 106252"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      2200
 	Radius    65000
@@ -1375,7 +1312,6 @@
 # M sin i = 3.41 Jupiters
 "b" "HD 80606"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      1250
 	Radius    70000
@@ -1397,7 +1333,6 @@
 # M sin i = 6.47 Jupiters
 "b" "HD 178911"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      2100
 	Radius    65000
@@ -1414,7 +1349,6 @@
 
 "b" "HD 68988"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      600
 	Radius    75000
@@ -1431,7 +1365,6 @@
 
 "b" "HD 142"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      430
 	Radius    73000
@@ -1448,7 +1381,6 @@
 
 "b" "HD 4203"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      520
 	Radius    75000
@@ -1465,7 +1397,6 @@
 
 "b" "HD 114783"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      320
 	Radius    71500
@@ -1482,7 +1413,6 @@
 
 "b" "HD 23079"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      877
 	Radius    70000
@@ -1499,7 +1429,6 @@
 
 "b" "HD 4208"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      290
 	Radius    69000
@@ -1516,7 +1445,6 @@
 
 "b" "HD 33636"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      2500
 	Radius    65000
@@ -1533,7 +1461,6 @@
 
 "b" "HD 39091"
 {
-	Name "b"
 	Texture "jupiterlike.jpg"
 	Mass      3160
 	Radius    65000
@@ -1547,5 +1474,17 @@
 }
 
 
+# Iota Draconis is a K2 giant star.  Its planetary companion was discovered
+# while examining references stars for the Space Interferometry Mission.
+"b" "Iota Dra"
+{
+	Texture "jupiterlike.jpg"
+	Mass    2750
+	Radius  65000
 
-
+	EllipticalOrbit {
+		Period         1.508
+		SemiMajorAxis  1.34
+		Eccentricity   0.71
+	}
+}
