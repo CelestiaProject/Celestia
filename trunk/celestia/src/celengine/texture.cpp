@@ -519,8 +519,11 @@ TiledTexture::TiledTexture(Image& img,
 
     // Require a complete set of mipmaps
     int mipLevelCount = img.getMipLevelCount();
-    if (mipmap &&
-        mipLevelCount == CalcMipLevelCount(img.getWidth(), img.getHeight()))
+    int completeMipCount = CalcMipLevelCount(img.getWidth(), img.getHeight());
+    // Allow a bit of slack here--it turns out that some tools don't want to
+    // calculate the 1x1 mip level.  Rather than turn off mipmaps, we'll just
+    // point the 1x1 mip to the 2x1.
+    if (mipmap && mipLevelCount >= completeMipCount - 1)
         precomputedMipMaps = true;
 
     // We can't automatically generate mipmaps for compressed textures.
@@ -566,7 +569,8 @@ TiledTexture::TiledTexture(Image& img,
                     for (int mip = 0; mip < tileMipLevelCount; mip++)
                     {
                         int blockSize = getCompressedBlockSize(img.getFormat());
-                        unsigned char* imgMip = img.getMipLevel(mip);
+                        unsigned char* imgMip =
+                            img.getMipLevel(min(mip, mipLevelCount));
                         uint mipWidth  = max((uint) img.getWidth() >> mip, 1u);
                         unsigned char* tileMip = tile->getMipLevel(mip);
                         uint tileMipWidth  = max((uint) tile->getWidth() >> mip, 1u);
