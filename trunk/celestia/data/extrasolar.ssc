@@ -62,6 +62,72 @@
 
 }
 
+"b" "OGLE-TR-113"
+
+# Detected via transit as well as radial velocity methods; from transit,
+# inclination is fixed close to 90 degrees, so mass can be determined.
+# Radius is estimated at 1.08 jupiters.
+
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "gasgiant.jpg"
+	NightTexture "gasgiantnight.jpg"
+
+	Mass    430     # M.sin(i) = 1.35 jupiters
+	Radius  75600
+
+	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-113.html"
+
+	EllipticalOrbit {
+		Period          0.0039
+		SemiMajorAxis   0.0228
+		Eccentricity    0
+		Inclination     112
+		AscendingNode   162
+		ArgOfPericenter 21
+		MeanAnomaly     339
+	}
+
+	Obliquity            112   # guess, to match inclination
+	EquatorAscendingNode 162   # guess, to match ascending node
+
+}
+
+"b" "OGLE-TR-132"
+
+# Detected via transit as well as radial velocity methods; from transit,
+# inclination is fixed close to 90 degrees, so mass can be determined.
+# Radius is estimated at 1.15 jupiters.
+
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "gasgiant.jpg"
+	NightTexture "gasgiantnight.jpg"
+
+	Mass    320     # M.sin(i) = 1.01 jupiters
+	Radius  80500
+
+	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-132.html"
+
+	EllipticalOrbit {
+		Period          0.0046
+		SemiMajorAxis   0.0306
+		Eccentricity    0
+		Inclination     112
+		AscendingNode   161
+		ArgOfPericenter 21
+		MeanAnomaly     79
+	}
+
+	Obliquity            112   # guess, to match inclination
+	EquatorAscendingNode 161   # guess, to match ascending node
+
+}
+
 "b" "HD 73256"
 {
 	Texture "gasgiant.jpg"
@@ -132,7 +198,7 @@
 	EllipticalOrbit {
 		Period          0.0085
 		SemiMajorAxis   0.045
-		Eccentricity    0.05
+		Eccentricity    0
 		MeanAnomaly     357
 	}
 }
@@ -287,17 +353,17 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    150     # M.sin(i) = 0.46 jupiters
+	Mass    150     # M.sin(i) = 0.468 jupiters
 	Radius  98000
 
 	InfoURL "http://www.obspm.fr/encycl/51Peg.html"
 
 	EllipticalOrbit {
 		Period          0.0116
-		SemiMajorAxis   0.0512
-		Eccentricity    0.013
-		ArgOfPericenter 115
-		MeanAnomaly     346
+		SemiMajorAxis   0.052
+		Eccentricity    0
+		ArgOfPericenter 84
+		MeanAnomaly     353
 	}
 }
 
@@ -1169,17 +1235,17 @@
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    960     # M.sin(i) = 3.03 jupiters
+	Mass    920     # M.sin(i) = 2.88 jupiters
 	Radius  70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD169830.html"
 
 	EllipticalOrbit {
-		Period          0.6227
-		SemiMajorAxis   0.82
-		Eccentricity    0.327
-		ArgOfPericenter 162
-		MeanAnomaly     115
+		Period          0.6177
+		SemiMajorAxis   0.81
+		Eccentricity    0.31
+		ArgOfPericenter 154
+		MeanAnomaly     117
 	}
 
 	RotationPeriod 10     # guess
@@ -1189,17 +1255,17 @@
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    800     # M.sin(i) = 2.51 jupiters
+	Mass    1280     # M.sin(i) = 4.04 jupiters
 	Radius  70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD169830.html"
 
 	EllipticalOrbit {
-		Period          4.0712
-		SemiMajorAxis   2.85
-		Eccentricity    0
-		ArgOfPericenter 50
-		MeanAnomaly     350
+		Period          5.755
+		SemiMajorAxis   3.6
+		Eccentricity    0.33
+		ArgOfPericenter 258
+		MeanAnomaly     194
 	}
 
 	RotationPeriod 10     # guess
@@ -2240,17 +2306,17 @@
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1550     # M.sin(i) = 4.89 jupiters
+	Mass    1510     # M.sin(i) = 4.74 jupiters
 	Radius  70000
 
 	InfoURL "http://www.obspm.fr/encycl/Gl614.html"
 
 	EllipticalOrbit {
-		Period          4.7997
-		SemiMajorAxis   2.85
-		Eccentricity    0.38
-		ArgOfPericenter 328
-		MeanAnomaly     39
+		Period          4.9183
+		SemiMajorAxis   2.8
+		Eccentricity    0.338
+		ArgOfPericenter 336
+		MeanAnomaly     111
 	}
 
 	RotationPeriod 10     # guess
