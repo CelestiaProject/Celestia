@@ -36,9 +36,9 @@ DX_INCLUDEDIRS=/I c:\dx90sdk\include
 CEL_INCLUDEDIRS=\
 	/I ../..
 
-INCLUDEDIRS=$(DX_INCLUDEDIRS) $(CEL_INCLUDEDIRS)
+INCLUDEDIRS=$(DX_INCLUDEDIRS) $(CEL_INCLUDEDIRS) /I .\include
 
-LIBDIRS=/LIBPATH:c:\dx90sdk\lib /LIBPATH:..\..\..\lib
+LIBDIRS=/LIBPATH:c:\dx90sdk\lib /LIBPATH:..\..\..\lib /LIBPATH:.\lib\Release
 
 CEL_LIBS=\
 	..\..\celutil\$(CFG)\cel_utils.lib \
@@ -62,6 +62,11 @@ WIN_LIBS=\
 	odbccp32.lib \
 	comctl32.lib \
 	winmm.lib	
+
+!IF "$(TRISTRIP)" == "1"
+STRIPLIBS = NvTriStrip.lib
+EXTRADEFS = $(EXTRADEFS) /D "TRISTRIP"
+!ENDIF
 
 !IF "$(CFG)" == "Release"
 
@@ -125,7 +130,7 @@ $(OUTDIR)\3dstocmod.exe : $(OUTDIR) $(TDSTOCMOD_OBJS) $(CEL_LIBS) $(RESOURCES)
 
 
 $(OUTDIR)\cmodfix.exe : $(OUTDIR) $(CMODFIX_OBJS) $(CEL_LIBS) $(RESOURCES)
-	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\cmodfix.exe $(CMODFIX_OBJS) $(RESOURCES) $(OGLLIBS) $(IMGLIBS) $(CEL_LIBS)
+	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\cmodfix.exe $(CMODFIX_OBJS) $(RESOURCES) $(OGLLIBS) $(IMGLIBS) $(CEL_LIBS) $(STRIPLIBS)
 
 
 $(OUTDIR)\cmodtangents.exe : $(OUTDIR) $(CMODTANGENT_OBJS) $(CEL_LIBS) $(RESOURCES)
