@@ -3733,6 +3733,102 @@ static void renderSphere_GLSL(const RenderInfo& ri,
 }
 
 
+static void renderClouds_GLSL(const RenderInfo& ri,
+                              const LightingState& ls,
+                              Texture* cloudTex,
+                              float texOffset,
+                              RingSystem* rings,
+                              float radius,
+                              const Mat4f& planetMat,
+                              const Frustum& frustum,
+                              const GLContext& context)
+{
+    unsigned int nTextures = 0;
+
+    glDisable(GL_LIGHTING);
+
+    ShaderProperties shadprop;
+    shadprop.nLights = ls.nLights;
+
+    // Set up the textures used by this object
+    if (cloudTex != NULL)
+    {
+        shadprop.texUsage = ShaderProperties::DiffuseTexture;
+        nTextures++;
+    }
+
+    if (rings != NULL)
+        //(renderFlags & ShowRingShadows) != 0)
+    {
+        Texture* ringsTex = rings->texture.find(medres);
+        if (ringsTex != NULL)
+        {
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            ringsTex->bind();
+            nTextures++;
+
+            // Tweak the texture--set clamp to border and a border color with
+            // a zero alpha.
+            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                            GL_CLAMP_TO_BORDER_ARB);
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+
+            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
+        }
+    }
+
+    // Set the shadow information.
+    // Track the total number of shadows; if there are too many, we'll have
+    // to fall back to multipass.
+    unsigned int totalShadows = 0;
+    for (unsigned int li = 0; li < ls.nLights; li++)
+    {
+        if (ls.shadows[li] && !ls.shadows[li]->empty())
+        {
+            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, ls.shadows[li]->size());
+            shadprop.setShadowCountForLight(li, nShadows);
+            totalShadows += nShadows;
+        }
+    }
+
+    // Get a shader for the current rendering configuration
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    if (prog == NULL)
+        return;
+
+    prog->use();
+
+    setLightParameters_GLSL(*prog, shadprop, ls,
+                            ri.color, ri.specularColor);
+
+    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                               ri.ambientColor.blue());
+    prog->textureOffset = texOffset;
+    
+    if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        float ringWidth = rings->outerRadius - rings->innerRadius;
+        prog->ringRadius = rings->innerRadius / radius;
+        prog->ringWidth = 1.0f / (ringWidth / radius);
+    }
+
+    if (shadprop.shadowCounts != 0)    
+        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
+
+    unsigned int attributes = LODSphereMesh::Normals;
+    lodSphere->render(context,
+                      LODSphereMesh::Normals,
+                      frustum, ri.pixWidth,
+                      cloudTex);
+
+    prog->textureOffset = 0.0f;
+
+    glx::glUseProgramObjectARB(0);
+}
+
+
 static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
 {
     float f[4];
@@ -5095,28 +5191,42 @@ void Renderer::renderObject(Point3f pos,
 
             if (lit)
             {
-                VertexProcessor* vproc = context->getVertexProcessor();
-                if (vproc != NULL)
+                if (context->getRenderPath() == GLContext::GLPath_GLSL)
                 {
-                    vproc->enable();
-                    vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
-                    vproc->parameter(vp::TextureTranslation,
-                                     texOffset, 0.0f, 0.0f, 0.0f);
-                    if (ls.nLights > 1)
-                        vproc->use(vp::diffuseTexOffset_2light);
-                    else
-                        vproc->use(vp::diffuseTexOffset);
-                    setLightParameters_VP(*vproc, ls, ri.color, Color::Black);
+                    renderClouds_GLSL(ri, ls,
+                                      cloudTex,
+                                      texOffset,
+                                      obj.rings,
+                                      radius * cloudScale,
+                                      planetMat,
+                                      viewFrustum,
+                                      *context);
                 }
+                else
+                {
+                    VertexProcessor* vproc = context->getVertexProcessor();
+                    if (vproc != NULL)
+                    {
+                        vproc->enable();
+                        vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
+                        vproc->parameter(vp::TextureTranslation,
+                                         texOffset, 0.0f, 0.0f, 0.0f);
+                        if (ls.nLights > 1)
+                            vproc->use(vp::diffuseTexOffset_2light);
+                        else
+                            vproc->use(vp::diffuseTexOffset);
+                        setLightParameters_VP(*vproc, ls, ri.color, Color::Black);
+                    }
 
-                lodSphere->render(*context,
-                                  LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                                  viewFrustum,
-                                  ri.pixWidth,
-                                  cloudTex);
+                    lodSphere->render(*context,
+                                      LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                                      viewFrustum,
+                                      ri.pixWidth,
+                                      cloudTex);
 
-                if (vproc != NULL)
-                    vproc->disable();
+                    if (vproc != NULL)
+                        vproc->disable();
+                }
             }
             else
             {

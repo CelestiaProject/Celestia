@@ -88,6 +88,8 @@ class CelestiaGLProgram
     FloatShaderParameter ringWidth;
     FloatShaderParameter ringRadius;
 
+    FloatShaderParameter textureOffset;
+
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderShadows];
     
  private:
