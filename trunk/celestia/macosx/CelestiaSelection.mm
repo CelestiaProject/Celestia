@@ -64,8 +64,8 @@
 }
 -(CelestiaBody *)body
 {
-    if ([self selection].body == NULL) return nil;
-    return [[[CelestiaBody alloc] initWithBody:[self selection].body] autorelease];
+    if ([self selection].getType() != Selection::Type_Body) return nil;
+    return [[[CelestiaBody alloc] initWithBody:[self selection].body()] autorelease];
 }
 -(BOOL)isEmpty
 {
@@ -79,27 +79,16 @@
 {
     return (BOOL)([self selection]==[csel selection]);
 }
--(void)select:(id)inst
-{
-        if ([inst isKindOfClass:[CelestiaBody class]]) {
-            [self selection].select((Body*)[(CelestiaBody*)inst body]);
-        }
-        else if ([inst isKindOfClass:[CelestiaStar class]]) {
-            [self selection].select((Star *)[(CelestiaStar*)inst star]);
-	}
-        else if ([inst isKindOfClass:[CelestiaGalaxy class]]) {
-            [self selection].select((Galaxy*)[(CelestiaGalaxy*)inst galaxy]);
-	}
-}
+
 -(CelestiaStar*)star
 {
-    if ([self selection].star==NULL) return nil;
-    return [[[CelestiaStar alloc] initWithStar:[self selection].star] autorelease];
+    if ([self selection].getType() != Selection::Type_Star) return nil;
+    return [[[CelestiaStar alloc] initWithStar:[self selection].star()] autorelease];
 }
 -(CelestiaGalaxy*)galaxy
 {
-    if ([self selection].deepsky==NULL) return nil;
-    return [[[CelestiaGalaxy alloc] initWithGalaxy:[self selection].deepsky] autorelease];
+    if ([self selection].getType() != Selection::Type_DeepSky) return nil;
+    return [[[CelestiaGalaxy alloc] initWithGalaxy:[self selection].deepsky()] autorelease];
 }
 -(NSString *)name
 {
