@@ -1389,17 +1389,6 @@ void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkTreeIter *parent)
 
 
 static const Star *nearestStar;
-static Selection browserSel;
-
-static gint selectBrowsed()
-{
-    if (!browserSel.empty())
-    {
-        appSim->setSelection(browserSel);
-        return TRUE;
-    }
-    return FALSE;
-}
 
 static gint centerBrowsed()
 {
@@ -1430,8 +1419,7 @@ static gint listStarSelect(GtkTreeSelection* sel, gpointer)
 
     if (selStar)
     {
-        browserSel.select(selStar);
-		selectBrowsed();
+		appSim->setSelection(Selection(selStar));
 		return TRUE;
     }
     return FALSE;
@@ -1451,10 +1439,9 @@ static gint treeSolarSelect(GtkTreeSelection* sel, gpointer)
     if ((body = (Body *)g_value_get_pointer(&value)))
     {
         if (body == (Body *) nearestStar)
-            browserSel.select((Star *) nearestStar);
+			appSim->setSelection(Selection((Star *) nearestStar));
         else
-            browserSel.select(body);
-			selectBrowsed();
+			appSim->setSelection(Selection(body));
 			return TRUE;
     }
     DPRINTF(0, "Unable to find body for this node.\n");
@@ -1491,7 +1478,7 @@ static void addStars()
     sbrowser.refresh();
     vector<const Star*> *stars = sbrowser.listStars(numListStars);
     currentLength=(*stars).size();
-    browserSel.select((Star *)(*stars)[0]);
+	appSim->setSelection(Selection((Star *)(*stars)[0]));
     UniversalCoord ucPos = appSim->getObserver().getPosition();
 
 	GtkTreeIter iter;
@@ -1591,8 +1578,6 @@ static void loadNearestStarSystem()
 }
 
 
-static const Star *tmpSel=NULL;
-
 // MENU: Navigation -> Solar System Browser...
 static void menuSolarBrowser()
 {
@@ -1603,7 +1588,7 @@ static void menuSolarBrowser()
 													GTK_RESPONSE_OK,
 				                                    NULL);
 	gtk_window_set_modal(GTK_WINDOW(browser), FALSE);
-    browserSel.select((Star *)NULL);
+	appSim->setSelection(Selection((Star *) NULL));
  
     // Solar System Browser
 	GtkWidget *mainbox = gtk_vbox_new(FALSE, CELSPACING);
@@ -1709,7 +1694,7 @@ static void menuStarBrowser()
 													GTK_RESPONSE_OK,
 				                                    NULL);
 	gtk_window_set_modal(GTK_WINDOW(browser), FALSE);
-    browserSel.select((Star *)NULL);
+	appSim->setSelection(Selection((Star *) NULL));
  
     // Star System Browser
 	GtkWidget *mainbox = gtk_vbox_new(FALSE, CELSPACING);
@@ -1753,7 +1738,6 @@ static void menuStarBrowser()
 
 	// Initialize the star browser
 	sbrowser.setSimulation(appSim);
-    tmpSel = browserSel.star;
 
 	// Set up callback for when a star is selected
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(starList));
@@ -1815,7 +1799,7 @@ static void menuStarBrowser()
 	gtk_dialog_run(GTK_DIALOG(browser));
 	gtk_widget_destroy(browser);
 
-    browserSel.select((Star *)NULL);
+	appSim->setSelection(Selection((Star *) NULL));
 }
 
 static gint intAdjChanged(GtkAdjustment* adj, int *val)
