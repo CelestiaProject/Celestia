@@ -120,6 +120,7 @@ class Renderer
         Point3f position;
         Vec3f sun;
         float distance;
+        float radius;
         float nearZ;
         float farZ;
         float discSizeInPixels;
@@ -127,7 +128,7 @@ class Renderer
 
         bool operator<(const _RenderListEntry& r) const
         {
-            return distance < r.distance;
+            return distance - radius < r.distance - r.radius;
             // return z > r.z;
         }
     } RenderListEntry;
