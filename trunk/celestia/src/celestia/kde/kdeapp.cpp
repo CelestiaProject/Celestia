@@ -486,7 +486,7 @@ void KdeApp::slotNewToolbarConfig() // This is called when OK or Apply is clicke
 
 void KdeApp::slotKeyBindings()
 {
-    KKeyDialog dlg(true, this);
+    KKeyDialog dlg(false, this);
     dlg.insert(actionCollection());
     if (dlg.exec()) {
         dlg.commitChanges();

@@ -263,7 +263,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QVBox* keyBindings = addVBoxPage(i18n("Key Bindings"), i18n("Key Bindings"),
         KGlobal::iconLoader()->loadIcon("key_bindings", KIcon::NoGroup));
 
-    keyChooser = new KKeyChooser(((KMainWindow*)parent)->actionCollection(), keyBindings, true);
+    keyChooser = new KKeyChooser(((KMainWindow*)parent)->actionCollection(), keyBindings, false);
 
     resize(550,400);
 }
