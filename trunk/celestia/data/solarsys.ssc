@@ -28,6 +28,8 @@ Planets [
 	Name   "Venus"
 	Texture "venus.jpg"
 	# BumpMap "venusbump.jpg"
+	HazeColor [ 0.5 0.35 0.2 ]
+	HazeDensity 0.35
 	Radius 6052
 
 	# orbital data
@@ -46,10 +48,16 @@ Planets [
 
 {
 	Name   "Earth"
-	Texture "earth.jpg"
+	# Texture "earth.jpg"
+	Texture "earth2k.png"
 	CloudMap "earth-clouds.png"
-	CompressTexture false    # looks bad up close with this enabled
+	NightTexture "earthnight.jpg"
+	# CompressTexture true    # looks bad up close with this enabled
 	Color [ 0.85 0.85 1.0 ]
+	SpecularColor [ 0.5 0.5 0.55 ]
+	SpecularPower 25.0
+	HazeColor [ 1 1 1 ]
+	HazeDensity 0.3
 	Radius 6378
 	Oblateness 0.003
 
@@ -72,7 +80,7 @@ Planets [
 		Name "Moon"
 		Texture "moon.jpg"
 		BumpMap "moonbump1k.jpg"
-		BumpHeight 2.5
+		BumpHeight 0.7
 		Radius   1737.53
 		Oblateness 0.002
 
@@ -127,6 +135,8 @@ Planets [
 	BumpMap "marsbump1k.jpg"
 	BumpHeight 2.5
 	Color   [ 1 0.75 0.7 ]
+	HazeColor [ 1 1 1 ]
+	HazeDensity 0.45
 	Radius 3394
 	Oblateness 0.006
 
@@ -182,6 +192,8 @@ Planets [
 {
 	Name   "Jupiter"
 	Texture "jupiter.jpg"
+	HazeColor [ 0.4 0.45 0.5 ]
+	HazeDensity 0.3
 
 	Radius 71398
 	Oblateness 0.064
@@ -294,6 +306,9 @@ Planets [
 {
 	Name   "Saturn"
 	Texture "saturn.jpg"
+	Color [ 1.0 1.0 0.85 ]
+	HazeColor [ 0.0 0.0 1 ]
+	HazeDensity 0.25
 	Radius 60330
 	Oblateness 0.1076
 
@@ -324,7 +339,12 @@ Planets [
 	Moons [
 	{
 		Name "Mimas"
-		Texture "mimas.jpg"
+		# Texture "mimas.jpg"
+		Texture "white.jpg"
+		BumpMap "mimasbump.jpg"
+		BumpHeight 10.0
+		Color [ 0.75 0.63 0.58 ]
+		BlendTexture true
 		Radius    199
 
 		# orbital data
@@ -396,6 +416,8 @@ Planets [
 		Name "Titan"
 		Texture "titan.jpg"
 		Color [ 1.0 0.9 0.75 ]
+		HazeColor [ 0.2 0.5 1 ]
+		HazeDensity 1
 		Radius   2575
 
 		# orbital data
@@ -458,6 +480,8 @@ Planets [
 	Name   "Uranus"
 	Texture "uranus.jpg"
 	Color [ 0.75 0.85 1.0 ]
+	HazeColor [ 0.5 0.8 1.0 ]
+	HazeDensity 0.2
 	Radius 26200
 	Oblateness 0.024
 
@@ -542,6 +566,8 @@ Planets [
 	Name   "Neptune"
 	Texture "neptune.jpg"
 	Color [ 0.75 0.75 1.0 ]
+	HazeColor [ 0.6 1 0.75 ]
+	HazeDensity 0.35
 	Radius 25225
 	Oblateness 0.027
 
@@ -900,5 +926,26 @@ Planets [
 
 	RotationPeriod     48.0   # Just a guess . . .
 }
+
+# 2001 KX76
+{
+	Name "2001 KX76"
+	Texture "asteroid.jpg"
+	Radius 600
+
+	Period           245.797
+	SemiMajorAxis     39.293
+	Eccentricity      0.246
+	Inclination      19.7
+	AscendingNode    71.0
+	ArgOfPericenter 301.0
+        MeanAnomaly     258.8
+	Epoch       2452003.0
+
+	Albedo 0.07
+
+	RotationPeriod     48.0   # Just a guess . . .
+}
+
 ]
 }
