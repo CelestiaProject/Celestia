@@ -177,6 +177,9 @@ Url::Url(const std::string& str, CelestiaCore *core)
     if (params["track"] != "") {
         trackedStr = params["track"];
     }
+    if (params["ltd"] != "") {
+        lightTimeDelay = (strcmp(params["ltd"].c_str(), "1") == 0);
+    }
 
     evalName();
 }
@@ -185,7 +188,7 @@ Url::Url(CelestiaCore* core, UrlType type) {
     appCore = core;
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
-    
+
     this->type = type;
 
     modeStr = getCoordSysName(sim->getFrame().coordSys);
@@ -203,9 +206,9 @@ Url::Url(CelestiaCore* core, UrlType type) {
     char date_str[30];
     date = astro::Date(sim->getTime());
     char buff[255];
-    
+
     switch (type) {
-    case Absolute:    
+    case Absolute:
         sprintf(date_str, "%04d-%02d-%02dT%02d:%02d:%08.5f",
             date.year, date.month, date.day, date.hour, date.minute, date.seconds);
 
@@ -213,18 +216,18 @@ Url::Url(CelestiaCore* core, UrlType type) {
         urlStr += std::string("/") + date_str + "?x=" + coord.x.toString();
         urlStr += "&y=" +  coord.y.toString();
         urlStr += "&z=" +  coord.z.toString();
-        
+
         orientation = sim->getObserver().getOrientation();
         sprintf(buff, "&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w, orientation.x, orientation.y, orientation.z);
         urlStr += buff;
         break;
-    case Relative:   
+    case Relative:
         sim->getSelectionLongLat(distance, longitude, latitude);
         sprintf(buff, "dist=%f&long=%f&lat=%f", distance, longitude, latitude);
         urlStr += std::string("/?") + buff;
         break;
     }
-        
+
 
     tracked = sim->getTrackedObject();
     trackedStr = getSelectionName(tracked);
@@ -238,9 +241,10 @@ Url::Url(CelestiaCore* core, UrlType type) {
     timeScale = sim->getTimeScale();
     renderFlags = renderer->getRenderFlags();
     labelMode = renderer->getLabelMode();
-    sprintf(buff, "&fov=%f&ts=%f&rf=%d&lm=%d", fieldOfView,
-        timeScale, renderFlags, labelMode);
-    urlStr += buff; 
+    lightTimeDelay = appCore->getLightDelayActive();
+    sprintf(buff, "&fov=%f&ts=%f&rf=%d&lm=%d&ltd=%c", fieldOfView,
+        timeScale, renderFlags, labelMode, lightTimeDelay?'1':'0');
+    urlStr += buff;
 
     evalName();
 }
@@ -270,7 +274,7 @@ void Url::evalName() {
         char las = 'N';
         if (lo < 0) { lo = -lo; los = 'W'; }
         if (la < 0) { la = -la; las = 'S'; }
-        sprintf(buff, "(%.1lf°%c, %.1lf°%c)", lo, los, la, las);
+        sprintf(buff, "(%.1lf%c, %.1lf%c)", lo, los, la, las);
         name += buff;
         break;
     }
@@ -370,6 +374,7 @@ void Url::goTo()
     sim->setTimeScale(timeScale);
     renderer->setRenderFlags(renderFlags);
     renderer->setLabelMode(labelMode);
+    appCore->setLightDelayActive(lightTimeDelay);
 
     pos = 0;
     while(pos != std::string::npos)
@@ -409,13 +414,13 @@ std::string Url::decode_string(const std::string& str)
 {
     std::string::size_type a=0, b;
     std::string out = "";
-                      
+
     b = str.find("%");
     while (b != std::string::npos)
     {
         unsigned int c;
         out += str.substr(a, b-a);
-        std::string c_code = str.substr(b+1, 2); 
+        std::string c_code = str.substr(b+1, 2);
         sscanf(c_code.c_str(), "%02x", &c);
         out += c;
         a = b + 3;
