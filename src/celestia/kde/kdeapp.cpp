@@ -327,6 +327,23 @@ void KdeApp::initActions()
     new KAction(i18n("Cycle View"), "rotate_cw", Key_Tab, this, SLOT(slotCycleView()), actionCollection(), "cycleView");
     new KAction(i18n("Single View"), "view_remove", CTRL + Key_D, this, SLOT(slotSingleView()), actionCollection(), "singleView");
     new KAction(i18n("Delete View"), "view_remove", Key_Delete, this, SLOT(slotDeleteView()), actionCollection(), "deleteView");
+    KToggleAction* framesVisible = new KToggleAction(i18n("Frames Visible"), 0, 0, this, SLOT(slotToggleFramesVisible()), actionCollection(), "framesVisible");
+    KGlobal::config()->setGroup("Preferences");
+    if (KGlobal::config()->hasKey("FramesVisible"))
+    {
+        bool visible = KGlobal::config()->readBoolEntry("FramesVisible");
+        framesVisible->setChecked(visible);
+        appCore->setFramesVisible(visible);
+    }
+
+    KToggleAction* activeFrameVisible = new KToggleAction(i18n("Active Frame Visible"), 0, 0, this, SLOT(slotToggleActiveFrameVisible()), actionCollection(), "activeFrameVisible");
+    if (KGlobal::config()->hasKey("ActiveFrameVisible"))
+    {
+        bool visible = KGlobal::config()->readBoolEntry("ActiveFrameVisible");
+        activeFrameVisible->setChecked(visible);
+        appCore->setActiveFrameVisible(visible);
+    }
+
 
     new KAction(i18n("Alt-Azimuth Mode"), 0, ALT + Key_F, this, SLOT(slotAltAzMode()), actionCollection(), "altAzMode");
     new KAction(i18n("Go To Surface"), 0, ALT + Key_S, this, SLOT(slotGoToSurface()), actionCollection(), "goToSurface");
@@ -335,8 +352,7 @@ void KdeApp::initActions()
     new KAction(i18n("Eclipse Finder"), 0, ALT + Key_E, this, SLOT(slotEclipseFinder()), actionCollection(), "eclipseFinder");
 
     int rFlags, lMode;
-    bool isLocal = true;                   
-    KGlobal::config()->setGroup("Preferences");
+    bool isLocal = true;
     if (KGlobal::config()->hasKey("RendererFlags"))
         rFlags = KGlobal::config()->readNumEntry("RendererFlags");
     else rFlags = appCore->getRenderer()->getRenderFlags();
@@ -476,7 +492,8 @@ bool KdeApp::queryExit() {
     conf->writeEntry("HudDetail", appCore->getHudDetail());
     conf->writeEntry("TimeZoneBias", appCore->getTimeZoneBias());
     conf->writeEntry("RenderPath", appCore->getRenderer()->getGLContext()->getRenderPath());
-    conf->writeEntry("PixelShader", appCore->getRenderer()->getFragmentShaderEnabled());
+    conf->writeEntry("FramesVisible", appCore->getFramesVisible());
+    conf->writeEntry("ActiveFrameVisible", appCore->getActiveFrameVisible());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
     openRecent->saveEntries(KGlobal::config());
@@ -537,6 +554,14 @@ void KdeApp::slotToggleToolbar() {
 void KdeApp::slotToggleMenubar() {
     if (menuBar()->isVisible()) menuBar()->hide();
     else menuBar()->show();
+}
+
+void KdeApp::slotToggleFramesVisible() {
+    appCore->setFramesVisible(!appCore->getFramesVisible());
+}
+
+void KdeApp::slotToggleActiveFrameVisible() {
+    appCore->setActiveFrameVisible(!appCore->getActiveFrameVisible());
 }
 
 void KdeApp::slotConfigureToolbars()

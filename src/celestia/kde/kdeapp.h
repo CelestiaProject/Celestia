@@ -124,6 +124,8 @@ public slots:
     void slotSplitH();
     void slotSplitV();
     void slotCycleView();
+    void slotToggleFramesVisible();
+    void slotToggleActiveFrameVisible();
     void slotAltAzMode();
     void slotSingleView();
     void slotDeleteView();
