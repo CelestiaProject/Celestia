@@ -24,7 +24,7 @@ class Surface
     // Appearance flags
     enum {
         BlendTexture      = 0x1,
-        ApplyDecalTexture = 0x2,
+        ApplyBaseTexture  = 0x2,
         ApplyBumpMap      = 0x4,
     };
 
