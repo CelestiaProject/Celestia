@@ -365,6 +365,16 @@ void Body::setClassification(int _classification)
 }
 
 
+string Body::getInfoURL() const
+{
+    return infoURL;
+}
+
+void Body::setInfoURL(const string& _infoURL)
+{
+    infoURL = _infoURL;
+}
+
 
 /**** Implementation of PlanetarySystem ****/
 
