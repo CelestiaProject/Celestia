@@ -33,6 +33,7 @@ using namespace std;
 
 static int parseRenderFlags(string);
 static int parseLabelFlags(string);
+static int parseOrbitFlags(string);
 
 CommandParser::CommandParser(istream& in)
 {
@@ -524,6 +525,19 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandLabels(setFlags, clearFlags);
     }
+    else if (commandName == "orbitflags")
+    {
+        int setFlags = 0;
+        int clearFlags = 0;
+        string s;
+
+        if (paramList->getString("set", s))
+            setFlags = parseOrbitFlags(s);
+        if (paramList->getString("clear", s))
+            clearFlags = parseOrbitFlags(s);
+
+        cmd = new CommandOrbitFlags(setFlags, clearFlags);
+    }
     else if (commandName == "setvisibilitylimit")
     {
         double mag = 6.0;
@@ -702,6 +716,48 @@ int parseLabelFlags(string s)
         else
         {
             DPRINTF(0, "Command Parser: error parsing label flags\n");
+            return 0;
+        }
+    }
+
+    return flags;
+}
+
+
+int parseOrbitFlags(string s)
+{
+#ifdef HAVE_SSTREAM    
+    istringstream in(s);
+#else
+    istrstream in(s.c_str());
+#endif
+    Tokenizer tokenizer(&in);
+    int flags = 0;
+
+    Tokenizer::TokenType ttype = tokenizer.nextToken();
+    while (ttype != Tokenizer::TokenEnd)
+    {
+        if (ttype == Tokenizer::TokenName)
+        {
+            string name = tokenizer.getNameValue();
+            if (compareIgnoringCase(name, "planet") == 0)
+                flags |= Body::Planet;
+            else if (compareIgnoringCase(name, "moon") == 0)
+                flags |= Body::Moon;
+            else if (compareIgnoringCase(name, "asteroid") == 0)
+                flags |= Body::Asteroid;
+            else if (compareIgnoringCase(name, "comet") == 0)
+                flags |= Body::Comet;
+            else if (compareIgnoringCase(name, "spacecraft") == 0)
+                flags |= Body::Spacecraft;
+
+            ttype = tokenizer.nextToken();
+            if (ttype == Tokenizer::TokenBar)
+                ttype = tokenizer.nextToken();
+        }
+        else
+        {
+            DPRINTF(0, "Command Parser: error parsing orbit flags\n");
             return 0;
         }
     }
