@@ -17,6 +17,7 @@
 
 using namespace std;
 
+#define ANGULAR_RES 3.5e-6
 
 Universe::Universe() :
     starCatalog(NULL),
@@ -148,8 +149,9 @@ void ClosestStarFinder::process(const Star& star, float distance, float appMag)
 
 struct PlanetPickInfo
 {
-    float cosClosestAngle;
+    double sinAngle2Closest;
     double closestDistance;
+    double closestApproxDistance;
     Body* closestBody;
     Ray3d pickRay;
     double jd;
@@ -162,21 +164,28 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 
     Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
     Vec3d bodyDir = bpos - pickInfo->pickRay.origin;
+    double distance = bodyDir.length();
 
     // Check the apparent radius of the orbit against our tolerance factor.
     // This check exists to make sure than when picking a distant, we select
     // the planet rather than one of its satellites.
     float appOrbitRadius = (float) (body->getOrbit()->getBoundingRadius() /
-                                    bodyDir.length());
-    if (pickInfo->atanTolerance > appOrbitRadius)
+                                    distance);
+    
+    if ((pickInfo->atanTolerance > ANGULAR_RES ? pickInfo->atanTolerance: 
+        ANGULAR_RES) > appOrbitRadius)
         return true;
 
     bodyDir.normalize();
-    double cosAngle = bodyDir * pickInfo->pickRay.direction;
-    if (cosAngle > pickInfo->cosClosestAngle)
+    Vec3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
+    double sinAngle2 = sqrt(bodyMiss * bodyMiss)/2.0;
+
+    if (sinAngle2 <= pickInfo->sinAngle2Closest)
     {
-        pickInfo->cosClosestAngle = (float) cosAngle;
+        pickInfo->sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 : 
+	                                         ANGULAR_RES;
         pickInfo->closestBody = body;
+        pickInfo->closestApproxDistance = distance;
     }
 
     return true;
@@ -220,8 +229,17 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             // TODO: Check for intersection with the object mesh.  For now,
             // we just use the bounding sphere.
         }
+        // Make also sure that the pickRay does not intersect the body in the
+        // opposite hemisphere! Hence, need again the "bodyMiss" angle
 
-        if (distance > 0.0 && distance < pickInfo->closestDistance)
+        Vec3d bodyDir = bpos - pickInfo->pickRay.origin;
+        bodyDir.normalize();
+        Vec3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
+        double sinAngle2 = sqrt(bodyMiss * bodyMiss)/2.0;
+
+
+        if (sinAngle2 < sin(PI/4.0) && distance > 0.0 && 
+            distance  <= pickInfo->closestDistance)
         {
             pickInfo->closestDistance = distance;
             pickInfo->closestBody = body;
@@ -239,33 +257,61 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
                                float faintestMag,
                                float tolerance)
 {
+    double sinTol2 = (sin(tolerance/2.0) >  ANGULAR_RES ? 
+	              sin(tolerance/2.0) : ANGULAR_RES);
     PlanetPickInfo pickInfo;
 
     // Transform the pick direction
-    pickInfo.pickRay = Ray3d(astro::heliocentricPosition(origin, solarSystem.getCenter()), Vec3d(direction.x, direction.y, direction.z));
+    pickInfo.pickRay = Ray3d(astro::heliocentricPosition(origin, 
+    solarSystem.getCenter()), Vec3d(direction.x, direction.y, direction.z));
                              
-    pickInfo.cosClosestAngle = -1.0f;
+    pickInfo.sinAngle2Closest = 1.0;
     pickInfo.closestDistance = 1.0e50;
+    pickInfo.closestApproxDistance = 1.0e50;
     pickInfo.closestBody = NULL;
     pickInfo.jd = when;
     pickInfo.atanTolerance = (float) atan(tolerance);
 
-    // First see if there's a planet that the pick ray intersects.
-    // Select the closest planet intersected.
+    // First see if there's a planet|moon that the pick ray intersects.
+    // Select the closest planet|moon intersected.
+
     solarSystem.getPlanets()->traverse(ExactPlanetPickTraversal,
                                        (void*) &pickInfo);
-    if (pickInfo.closestBody != NULL)
-        return Selection(pickInfo.closestBody);
 
-    // If no planet was intersected by the pick ray, choose the planet
+    if (pickInfo.closestBody != NULL)
+    {
+        // Retain that body
+        Body* closestBody = pickInfo.closestBody;
+
+	// Check if there is a satellite in front of the primary body that is
+	// sufficiently close to the pickRay 
+
+	solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
+					 (void*) &pickInfo);
+        if (pickInfo.closestBody == closestBody)
+	  return  Selection(closestBody); 
+        // Nothing else around, select the body and return
+
+        // Are we close enough to the satellite and is it in front of the body?
+	if ((pickInfo.sinAngle2Closest <= sinTol2) && 
+            (pickInfo.closestDistance > pickInfo.closestApproxDistance)) 
+        return Selection(pickInfo.closestBody);
+            // Yes, select the satellite
+	else
+	    return  Selection(closestBody); 
+           //  No, select the primary body 
+    }
+
+    // If no planet was intersected by the pick ray, choose the planet|moon
     // with the smallest angular separation from the pick ray.  Very distant
     // planets are likley to fail the intersection test even if the user
     // clicks on a pixel where the planet's disc has been rendered--in order
     // to make distant planets visible on the screen at all, their apparent
     // size has to be greater than their actual disc size.
+
     solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
                                        (void*) &pickInfo);
-    if (pickInfo.cosClosestAngle > cos(tolerance))
+    if (pickInfo.sinAngle2Closest <= sinTol2)
         return Selection(pickInfo.closestBody);
     else
         return Selection();
@@ -285,7 +331,7 @@ public:
     const Star* pickedStar;
     Point3f pickOrigin;
     Vec3f pickRay;
-    float cosAngleClosest;
+    double sinAngle2Closest;
 };
 
 StarPicker::StarPicker(const Point3f& _pickOrigin, const Vec3f& _pickRay,
@@ -293,7 +339,8 @@ StarPicker::StarPicker(const Point3f& _pickOrigin, const Vec3f& _pickRay,
     pickedStar(NULL),
     pickOrigin(_pickOrigin),
     pickRay(_pickRay),
-    cosAngleClosest((float) cos(angle))
+    sinAngle2Closest(sin(angle/2.0) > ANGULAR_RES ? sin(angle/2.0) : 
+                                      ANGULAR_RES )
 {
 }
 
@@ -302,10 +349,14 @@ void StarPicker::process(const Star& star, float distance, float appMag)
     Vec3f starDir = star.getPosition() - pickOrigin;
     starDir.normalize();
 
-    float cosAngle = starDir * pickRay;
-    if (cosAngle > cosAngleClosest)
+    Vec3f starMiss = starDir - pickRay;
+    Vec3d sMd = Vec3d(starMiss.x, starMiss.y, starMiss.z); 
+    
+    double sinAngle2 = sqrt(sMd * sMd)/2.0;
+
+    if (sinAngle2 <= sinAngle2Closest)
     {
-        cosAngleClosest = cosAngle;
+        sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 : ANGULAR_RES;
         pickedStar = &star;
     }
 }
@@ -327,7 +378,7 @@ public:
     float maxDistance;
     const Star* closestStar;
     float closestDistance;
-    float cosAngleClosest;
+    double sinAngle2Closest;
 };
 
 
@@ -340,7 +391,8 @@ CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
     maxDistance(_maxDistance),
     closestStar(NULL),
     closestDistance(0.0f),
-    cosAngleClosest((float) cos(angle))
+    sinAngle2Closest(sin(angle/2.0) > ANGULAR_RES ? sin(angle/2.0) : 
+                                      ANGULAR_RES )
 {
 }
 
@@ -365,7 +417,8 @@ void CloseStarPicker::process(const Star& star,
             {
                 closestStar = &star;
                 closestDistance = starDir.length();
-                cosAngleClosest = 1.0f; // An exact hit--set the angle to zero
+                sinAngle2Closest = ANGULAR_RES; 
+                // An exact hit--set the angle to "zero"
             }
         }
     }
@@ -373,14 +426,18 @@ void CloseStarPicker::process(const Star& star,
     {
         // We don't have an exact hit; check to see if we're close enough
         float distance = starDir.length();
-        starDir *= (1.0f / distance);
-        float cosAngle = starDir * pickDir;
-        if (cosAngle > cosAngleClosest &&
+        starDir.normalize();
+        Vec3f starMiss = starDir - pickDir;
+        Vec3d sMd = Vec3d(starMiss.x, starMiss.y, starMiss.z ); 
+    
+        double sinAngle2 = sqrt(sMd * sMd)/2.0;
+
+        if (sinAngle2 <= sinAngle2Closest &&
             (closestStar == NULL || distance < closestDistance))
         {
             closestStar = &star;
             closestDistance = distance;
-            cosAngleClosest = cosAngle;
+            sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 : ANGULAR_RES;
         }
     }
 }
@@ -412,13 +469,15 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     // the rotation required to map (0, 0, -1) to the direction.
     Quatf rotation;
     Vec3f n(0, 0, -1);
-    float epsilon = 1.0e-6f;
-    float cosAngle = n * direction;
-    if (cosAngle > 1.0f - epsilon)
+    Vec3f Missf = n - direction;
+    Vec3d Miss = Vec3d(Missf.x, Missf.y, Missf.z); 
+    double sinAngle2 = sqrt(Miss * Miss)/2.0;
+
+    if (sinAngle2 <= ANGULAR_RES)
     {
         rotation.setAxisAngle(Vec3f(1, 0, 0), 0);
     }
-    else if (cosAngle < epsilon - 1.0f)
+    else if (sinAngle2 >= 1.0 - 0.5 * ANGULAR_RES * ANGULAR_RES)
     {
         rotation.setAxisAngle(Vec3f(1, 0, 0), (float) PI);
     }
@@ -426,9 +485,8 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     {
         Vec3f axis = direction ^ n;
         axis.normalize();
-        rotation.setAxisAngle(axis, (float) acos(cosAngle));
+        rotation.setAxisAngle(axis, (float) 2.0 * asin(sinAngle2));
     }
-
     StarPicker picker(o, direction, tolerance);
     starCatalog->findVisibleStars(picker,
                                   o,
