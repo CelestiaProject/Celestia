@@ -151,7 +151,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     if (toolBar()->isHidden()) toggleToolbar->setChecked(false);
     if (menuBar()->isHidden()) toggleMenubar->setChecked(false);
 
-#if KDE_VERSION >= 0x0302000 
+#if KDE_VERSION >= 0x030200
     splash->finish(this);
     delete splash;
 #endif
