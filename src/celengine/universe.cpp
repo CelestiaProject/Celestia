@@ -809,8 +809,8 @@ Selection Universe::findObjectInContext(const Selection& sel,
 //      about which solar systems are relevant, and let the caller pass them
 //      to us to search.
 Selection Universe::find(const string& s,
-                         PlanetarySystem** solarSystems,
-                         int nSolarSystems)
+                         Selection* contexts,
+                         int nContexts)
 {
     if (deepSkyCatalog != NULL)
     {
@@ -826,14 +826,11 @@ Selection Universe::find(const string& s,
     if (star != NULL)
         return Selection(star);
 
-    for (int i = 0; i < nSolarSystems; i++)
+    for (int i = 0; i < nContexts; i++)
     {
-        if (solarSystems[i] != NULL)
-        {
-            Body* body = solarSystems[i]->find(s, true);
-            if (body != NULL)
-                return Selection(body);
-        }
+        Selection sel = findObjectInContext(contexts[i], s);
+        if (!sel.empty())
+            return sel;
     }
 
     return Selection();
@@ -847,18 +844,18 @@ Selection Universe::find(const string& s,
 // variable in Unix and Windows.  Typically, the solar system will be one
 // in which the user is currently located.
 Selection Universe::findPath(const string& s,
-                             PlanetarySystem* solarSystems[],
-                             int nSolarSystems)
+                             Selection contexts[],
+                             int nContexts)
 {
     string::size_type pos = s.find('/', 0);
 
     // No delimiter found--just do a normal find.
     if (pos == string::npos)
-        return find(s, solarSystems, nSolarSystems);
+        return find(s, contexts, nContexts);
 
     // Find the base object
     string base(s, 0, pos);
-    Selection sel = find(base, solarSystems, nSolarSystems);
+    Selection sel = find(base, contexts, nContexts);
 
     while (!sel.empty() && pos != string::npos)
     {
@@ -880,18 +877,24 @@ Selection Universe::findPath(const string& s,
 
 
 std::vector<std::string> Universe::getCompletion(const string& s,
-                         PlanetarySystem** solarSystems,
-                         int nSolarSystems)
+                                                 Selection* contexts,
+                                                 int nContexts)
 {
     std::vector<std::string> completion;
 
     // solar bodies first
-    for (int i = 0; i < nSolarSystems; i++)
+    for (int i = 0; i < nContexts; i++)
     {
-        if (solarSystems[i] != NULL)
+        SolarSystem* sys = getSolarSystem(contexts[i]);
+        if (sys != NULL)
         {
-            std::vector<std::string> bodies = solarSystems[i]->getCompletion(s);
-            completion.insert(completion.end(), bodies.begin(), bodies.end());
+            PlanetarySystem* planets = sys->getPlanets();
+            if (planets != NULL)
+            {
+                std::vector<std::string> bodies = planets->getCompletion(s);
+                completion.insert(completion.end(),
+                                  bodies.begin(), bodies.end());
+            }
         }
     }
 
@@ -906,7 +909,7 @@ std::vector<std::string> Universe::getCompletion(const string& s,
         }
     }
 
-    // finaly stars;
+    // finally stars;
     std::vector<std::string> stars = starCatalog->getCompletion(s);
     completion.insert(completion.end(), stars.begin(), stars.end());
 
@@ -914,17 +917,17 @@ std::vector<std::string> Universe::getCompletion(const string& s,
 }
 
 std::vector<std::string> Universe::getCompletionPath(const string& s,
-                             PlanetarySystem* solarSystems[],
-                             int nSolarSystems)
+                                                     Selection* contexts,
+                                                     int nContexts)
 {
     std::vector<std::string> completion;
     string::size_type pos = s.rfind('/', s.length());
 
     if (pos == string::npos)
-        return getCompletion(s, solarSystems, nSolarSystems);
+        return getCompletion(s, contexts, nContexts);
 
     string base(s, 0, pos);
-    Selection sel = findPath(base, solarSystems, nSolarSystems);
+    Selection sel = findPath(base, contexts, nContexts);
 
     if (sel.empty())
         return completion;
