@@ -314,7 +314,7 @@ BOOL APIENTRY AboutProc(HWND hDlg,
         return(TRUE);
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK)
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             EndDialog(hDlg, 0);
             return TRUE;
@@ -362,7 +362,7 @@ BOOL APIENTRY LicenseProc(HWND hDlg,
         return(TRUE);
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK)
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             EndDialog(hDlg, 0);
             return TRUE;
@@ -435,7 +435,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
         return(TRUE);
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK)
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             EndDialog(hDlg, 0);
             return TRUE;
