@@ -1,0 +1,66 @@
+!!VP1.0
+
+# Compute the surface space light vectors for diffuse bump mapping as well
+# as a fog factor for an atmospheric haze effect.
+
+# c[0]..c[3] contains the concatenation of the modelview and projection matrices.
+# c[4]..c[7] contains the inverse transpose of the modelview
+# c[15] contains the eye position in object space
+# c[16] contains the light direction in object space
+# c[17] contains H, the normalized sum of the eye and light direction
+# c[20] contains the light color * object color
+# c[32] contains the ambient light color * object color
+# c[33] contains the haze color
+# c[40] contains (0, 1, 0.5, specPower)
+# v[6] contains the tangent vector
+
+# Transform the vertex by the modelview matrix
+DP4   o[HPOS].x, c[0], v[OPOS];
+DP4   o[HPOS].y, c[1], v[OPOS];
+DP4   o[HPOS].z, c[2], v[OPOS];
+DP4   o[HPOS].w, c[3], v[OPOS];
+
+# Compute the diffuse light component and clamp it to zero
+DP3   R2, v[NRML], c[16];
+MAX   R2.x, R2, c[40].xxxx;
+
+# Get the normalized vector from the eye to the vertex
+ADD   R4, c[15], -v[OPOS];
+DP3   R0.w, R4, R4;
+RSQ   R0.w, R0.w;
+MUL   R4.xyz, R4, R0.w;
+
+# Output the fog factor
+DP3   R2.y, v[NRML], R4;
+ADD   R2.y, c[40].y, -R2.y;
+MUL   o[FOGC].x, R2.x, R2.y;
+
+# We're done with the haze/fog stuff; now compute the surface space
+# light direction.
+MOV   R1, v[NRML];
+MOV   R2, v[6];
+
+# Compute the binormal--cross product of tangent and normal
+MUL   R3, R2.zxyw, R1.yzxw;
+MAD   R3, R2.yzxw, R1.zxyw, -R3;
+
+# Assume that the tangent and normal are orthonormal; otherwise
+# we need to normalize R2
+DP3   R0.w, R3, R3;
+RSQ   R0.w, R0.w;
+MUL   R3.xyz, R3, R0.w;
+
+# Transform the light direction from object space into surface space
+DP3   R0.x, R3, c[16];
+DP3   R0.y, R2, c[16];
+DP3   R0.z, R1, c[16];
+# Compress the light direction to fit in the primary color and output it
+MOV   R5, c[40];
+MAD   o[COL0], R0, R5.z, R5.z;
+
+# Output the texture coordinates.  Use the same coordinates for
+# the decal (texture 0) and the bump map (texture 1)
+MOV   o[TEX0], v[TEX0];
+MOV   o[TEX1], v[TEX0];
+
+END
