@@ -5,7 +5,7 @@ AUTOCONF="autoconf"
 AUTOHEADER="autoheader"
 AUTOM4TE="autom4te"
 AUTOMAKE="automake"
-ACLOCAL="aclocal -I macros"
+ACLOCAL="aclocal"
 
 
 # We don't use variable here for remembering the type ... strings.
