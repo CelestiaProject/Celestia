@@ -157,14 +157,25 @@ void View::walkTreeResize(View* sibling, int sign) {
     if (sibling->child2) walkTreeResize(sibling->child2, sign);
 }
 
-void View::walkTreeResizeDelta(View* v, float delta )
+bool View::walkTreeResizeDelta(View* v, float delta, bool check)
 {
    View *p=v;
    int sign = -1;
    float ratio;
+   bool resizePossible;
+   double newSize;
 
-   if (v->child1) walkTreeResizeDelta(v->child1, delta);
-   if (v->child2) walkTreeResizeDelta(v->child2, delta);
+   if (v->child1)
+   {
+       if (!walkTreeResizeDelta(v->child1, delta, check))
+           return false;
+   }
+
+   if (v->child2)
+   {
+       if (!walkTreeResizeDelta(v->child2, delta, check))
+           return false;
+   }
 
    while ( p != child1 && p != child2 && (p = p->parent) ) ;
    if (p == child1) sign = 1;
@@ -173,7 +184,10 @@ void View::walkTreeResizeDelta(View* v, float delta )
     case View::HorizontalSplit:
         delta = -delta;
         ratio = (p->height  + sign * delta) / p->height;
-        v->height *= ratio;
+        newSize = v->height * ratio;
+        if (newSize <= .1) return false;
+        if (check) return true;
+        v->height = newSize;
         if (sign == 1)
         {
             v->y = p->y + (v->y - p->y) * ratio;
@@ -186,7 +200,10 @@ void View::walkTreeResizeDelta(View* v, float delta )
 
     case View::VerticalSplit:
         ratio = (p->width + sign * delta) / p->width;
-        v->width *= ratio;
+        newSize = v->width * ratio;
+        if (newSize <= .1) return false;
+        if (check) return true;
+        v->width = newSize;
         if (sign == 1)
         {
             v->x = p->x + (v->x - p->x) * ratio;
@@ -199,6 +216,8 @@ void View::walkTreeResizeDelta(View* v, float delta )
     case View::ViewWindow:
         break;
     }
+
+    return true;
 }
 
 CelestiaCore::CelestiaCore() :
@@ -562,12 +581,21 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
     {
         switch(resizeSplit->type) {
         case View::HorizontalSplit:
-            resizeSplit->walkTreeResizeDelta(resizeSplit->child1, dy / height);
-            resizeSplit->walkTreeResizeDelta(resizeSplit->child2, dy / height);
+            if (   resizeSplit->walkTreeResizeDelta(resizeSplit->child1, dy / height, true)
+                && resizeSplit->walkTreeResizeDelta(resizeSplit->child2, dy / height, true))
+            {
+                resizeSplit->walkTreeResizeDelta(resizeSplit->child1, dy / height, false);
+                resizeSplit->walkTreeResizeDelta(resizeSplit->child2, dy / height, false);
+            }
             break;
         case View::VerticalSplit:
-            resizeSplit->walkTreeResizeDelta(resizeSplit->child1, dx / width);
-            resizeSplit->walkTreeResizeDelta(resizeSplit->child2, dx / width);
+            if (   resizeSplit->walkTreeResizeDelta(resizeSplit->child1, dx / width, true)
+                && resizeSplit->walkTreeResizeDelta(resizeSplit->child2, dx / width, true)
+            )
+            {
+                resizeSplit->walkTreeResizeDelta(resizeSplit->child1, dx / width, false);
+                resizeSplit->walkTreeResizeDelta(resizeSplit->child2, dx / width, false);
+            }
             break;
         case View::ViewWindow:
             break;
@@ -845,12 +873,10 @@ void CelestiaCore::charEntered(char c)
 
     case '\025': // Ctrl+U
         splitView(View::VerticalSplit);
-        flash("Added view");
         break;
 
     case '\022': // Ctrl+R
         splitView(View::HorizontalSplit);
-        flash("Added view");
         break;
 
     case '\004': // Ctrl+D
@@ -1644,6 +1670,27 @@ void CelestiaCore::splitView(View::Type type)
 {
     bool vertical = ( type == View::VerticalSplit );
     Observer* o = sim->addObserver();
+    bool tooSmall = false;
+
+    switch (type) // If active view is too small, don't split it.
+    {
+    case View::HorizontalSplit:
+        if (views[activeView]->height < 0.2f) tooSmall = true;
+        break;
+    case View::VerticalSplit:
+        if (views[activeView]->width < 0.2f) tooSmall = true;
+        break;
+    case View::ViewWindow:
+        return;
+        break;
+    }
+
+    if (tooSmall)
+    {
+        flash("View too small to be split");
+        return;
+    }
+    flash("Added view");
 
     // Make the new observer a copy of the old one
     // TODO: This works, but an assignment operator for Observer
@@ -2218,7 +2265,7 @@ void CelestiaCore::renderOverlay()
         astro::decimalToDegMinSec((double) fov, degrees, minutes, seconds);
 
         if (degrees > 0)
-            overlay->printf("FOV: %d° %02d' %.1f\"\n", degrees, minutes, seconds);
+            overlay->printf("FOV: %d %02d' %.1f\"\n", degrees, minutes, seconds);
         else if (minutes > 0)
             overlay->printf("FOV: %02d' %.1f\"\n", minutes, seconds);
         else
