@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.3.2 pre1
+AppVerName=Celestia 1.3.2 pre4
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -43,10 +43,10 @@ Source: "guide.cel";    DestDir: "{app}"; Flags: ignoreversion
 Source: "libpng1.dll";  DestDir: "{app}"; Flags: ignoreversion
 Source: "zlib.dll";     DestDir: "{app}"; Flags: ignoreversion
 Source: "controls.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "COPYING";      DestDir: "{app}"; Flags: ignoreversion
 Source: "README";       DestDir: "{app}"; Flags: ignoreversion isreadme;   DestName: "README.txt"
 Source: "AUTHORS";      DestDir: "{app}"; Flags: ignoreversion;            DestName: "AUTHORS.txt"
 Source: "TRANSLATORS";  DestDir: "{app}"; Flags: ignoreversion;            DestName: "TRANSLATORS.txt"
-Source: "COPYING";      DestDir: "{app}"; Flags: ignoreversion;            DestName: "COPYING.txt"
 Source: "ChangeLog";    DestDir: "{app}"; Flags: ignoreversion;            DestName: "ChangeLog.txt"
 Source: "KbdMouseJoyControls.txt"; DestDir: "{app}"; Flags: ignoreversion; DestName: "KbdMouseJoyControls.txt"
 
