@@ -13,6 +13,8 @@
 #include <string>
 #include "orbit.h"
 
+#define TWOPI 6.28318530717958647692
+
 Orbit* GetCustomOrbit(const std::string& name);
 
 #endif // _CUSTOMORBIT_H_

@@ -97,29 +97,26 @@ double gElements[8][23] = {
 	}
 };
 
-static double Obliquity(double jd)
+static double Obliquity(double t)
 {
-    double t, jd19;
-
-    jd19 = jd - 2415020.0;
-    t = jd19/36525.0;
+    // Parameter t represents the Julian centuries elapsed since 1900.
+    // In other words, t = (jd - 2415020.0) / 36525.0
 
     return degToRad(2.345229444E1 - ((((-1.81E-3*t)+5.9E-3)*t+4.6845E1)*t)/3600.0);
 }
 
-static void Nutation(double jd, double &deps, double& dpsi)
+static void Nutation(double t, double &deps, double& dpsi)
 {
-    double jd19;
+    // Parameter t represents the Julian centuries elapsed since 1900.
+    // In other words, t = (jd - 2415020.0) / 36525.0
+
     double ls, ld;	// sun's mean longitude, moon's mean longitude
     double ms, md;	// sun's mean anomaly, moon's mean anomaly
     double nm;	    // longitude of moon's ascending node
-    double t, t2;	// number of Julian centuries of 36525 days since Jan 0.5 1900.
+    double t2;
     double tls, tnm, tld;	// twice above
     double a, b;
 
-    jd19 = jd - 2415020.0;
-	    
-    t = jd19/36525.;
     t2 = t*t;
 
     a = 100.0021358*t;
@@ -166,19 +163,19 @@ static void Nutation(double jd, double &deps, double& dpsi)
     deps = degToRad(deps/3600);
 }
 
-static void EclipticToEquatorial(double jd, double fEclLat, double fEclLon,
+static void EclipticToEquatorial(double t, double fEclLat, double fEclLon,
                                  double& RA, double& dec)
 {
+    // Parameter t represents the Julian centuries elapsed since 1900.
+    // In other words, t = (jd - 2415020.0) / 36525.0
+
     double seps, ceps;	// sin and cos of mean obliquity
-    double jd19;
     double sx, cx, sy, cy, ty;
     double eps;
     double deps, dpsi;
 
-    jd19 = jd - 2415020.0;
-
-    eps = Obliquity(jd);		// mean obliquity for date
-    Nutation(jd19, deps, dpsi);
+    eps = Obliquity(t);		// mean obliquity for date
+    Nutation(t, deps, dpsi);
     eps += deps;
     seps = sin(eps);
     ceps = cos(eps);
@@ -194,7 +191,7 @@ static void EclipticToEquatorial(double jd, double fEclLat, double fEclLon,
     RA = atan(((sx*ceps)-(ty*seps))/cx);
     if (cx<0)
         RA += PI;		// account for atan quad ambiguity
-    RA = pfmod(RA, 2*PI);
+    RA = pfmod(RA, TWOPI);
 }
 
 double meanAnomalySun(double t)
@@ -212,20 +209,21 @@ void auxJSun(double t, double* x1, double* x2, double* x3, double* x4,
              double* x5, double* x6)
 {
     *x1 = t/5+0.1;
-    *x2 = pfmod(4.14473+5.29691e1*t, 2*PI);
-    *x3 = pfmod(4.641118+2.132991e1*t, 2*PI);
-    *x4 = pfmod(4.250177+7.478172*t, 2*PI);
+    *x2 = pfmod(4.14473+5.29691e1*t, TWOPI);
+    *x3 = pfmod(4.641118+2.132991e1*t, TWOPI);
+    *x4 = pfmod(4.250177+7.478172*t, TWOPI);
     *x5 = 5 * *x3 - 2 * *x2;
     *x6 = 2 * *x2 - 6 * *x3 + 3 * *x4;
 }
 
-void computePlanetElements(double mjd, vector<int> pList)
+void computePlanetElements(double t, vector<int> pList)
 {
-	double *ep, *pp;
-	double aa, t;
-	int i, j, planet;
+    // Parameter t represents the Julian centuries elapsed since 1900.
+    // In other words, t = (jd - 2415020.0) / 36525.0
 
-	t = mjd/36525.0;
+	double *ep, *pp;
+	double aa;
+	int i, j, planet;
 
     for(i=0; i < pList.size(); i++)
     {
@@ -271,7 +269,7 @@ void computePlanetCoords(int p, double map, double da, double dhl, double dl,
     eclLong = atan(y/clo) + om + degToRad(dl);
     if (clo < 0)
         eclLong += PI;
-    eclLong = pfmod(eclLong, 2*PI);
+    eclLong = pfmod(eclLong, TWOPI);
     distance *= KM_PER_AU;
 }
 
@@ -313,21 +311,21 @@ class MercuryOrbit : public CachingOrbit
     {
     const int p = 0;  //Planet 0
     vector<int> pList;
-    double t, jd19;
+    double t;
     double map[4];
     double dl, dr, dml, ds, dm, da, dhl;
     double eclLong, eclLat, distance;    //heliocentric longitude, latitude, distance
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
 
     //Specify which planets we must compute elements for
     pList.push_back(0);
     pList.push_back(1);
     pList.push_back(3);
-    computePlanetElements(jd19, pList);
+    computePlanetElements(t, pList);
 
     //Compute necessary planet mean anomalies
     map[0] = degToRad(gPlanetElements[0][0] - gPlanetElements[0][2]);
@@ -370,22 +368,22 @@ class VenusOrbit : public CachingOrbit
     {
     const int p = 1;  //Planet 1
     vector<int> pList;
-    double t, jd19;
+    double t;
     double map[4], mas;
     double dl, dr, dml, ds, dm, da, dhl;
     double eclLong, eclLat, distance;    //heliocentric longitude, latitude, distance
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
 
     mas = meanAnomalySun(t);
 
     //Specify which planets we must compute elements for
     pList.push_back(1);
     pList.push_back(3);
-    computePlanetElements(jd19, pList);
+    computePlanetElements(t, pList);
 
     //Compute necessary planet mean anomalies
     map[0] = 0.0;
@@ -433,15 +431,15 @@ class EarthOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    double jd19;
    	double t, t2;
 	double ls, ms;    /* mean longitude and mean anomoay */
 	double s, nu, ea; /* eccentricity, true anomaly, eccentric anomaly */
 	double a, b, a1, b1, c1, d1, e1, h1, dl, dr;
     double eclLong, distance;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
+
 	t2 = t*t;
 	a = 100.0021359*t;
 	b = 360.*(a-(int)a);
@@ -471,7 +469,7 @@ class EarthOrbit : public CachingOrbit
             3.076e-05*cos(d1)+9.27e-06*sin(h1);
 
     eclLong = nu+degToRad(ls-ms+dl) + PI;
-    eclLong = pfmod(eclLong, 2*PI);
+    eclLong = pfmod(eclLong, TWOPI);
     distance = KM_PER_AU * (1.0000002*(1-s*cos(ea))+dr);
 
     //Correction for internal coordinate system
@@ -501,7 +499,7 @@ class LunarOrbit : public CachingOrbit
 
     //Computation requires an abbreviated Julian day: epoch January 0.5, 1900.
     jd19 = jd - 2415020.0;
-	t = jd19/36525.;
+	t = jd19/36525;
 	t2 = t*t;
 
 	m1 = jd19/27.32158213;
@@ -569,7 +567,7 @@ class LunarOrbit : public CachingOrbit
         e*.000521*sin(4*de-ms)+.000486*sin(2*md-de);
 	l = l+e2*.000717*sin(md-2*ms);
     eclLon = ld+degToRad(l);
-    eclLon = pfmod(eclLon, 2*PI);
+    eclLon = pfmod(eclLon, TWOPI);
 
 	g = 5.12819*sin(f)+.280606*sin(md+f)+.277693*sin(md-f)+
 	    .173238*sin(2*de-f)+.055413*sin(2*de+f-md)+.046272*sin(2*de-f-md)+
@@ -617,7 +615,7 @@ class LunarOrbit : public CachingOrbit
     distance = 6378.14/sin(horzPar);
 
     //Finally convert eclLat, eclLon to RA, Dec.
-    EclipticToEquatorial(jd, eclLat, eclLon, RA, dec);
+    EclipticToEquatorial(t, eclLat, eclLon, RA, dec);
 
     //Corrections for internal coordinate system
     dec -= PI / 2;
@@ -643,15 +641,15 @@ class MarsOrbit : public CachingOrbit
     {
     const int p = 2;  //Planet 2
     vector<int> pList;
-    double t, jd19;
+    double t;
     double map[4], mas, a;
     double dl, dr, dml, ds, dm, da, dhl;
     double eclLong, eclLat, distance;    //heliocentric longitude, latitude, distance
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
 
     mas = meanAnomalySun(t);
 
@@ -659,7 +657,7 @@ class MarsOrbit : public CachingOrbit
     pList.push_back(1);
     pList.push_back(2);
     pList.push_back(3);
-    computePlanetElements(jd19, pList);
+    computePlanetElements(t, pList);
 
     //Compute necessary planet mean anomalies
     map[0] = 0.0;
@@ -719,7 +717,7 @@ class JupiterOrbit : public CachingOrbit
     {
     const int p = 3;  //Planet 3
     vector<int> pList(1, p);
-    double t, jd19, map;
+    double t, map;
     double dl, dr, dml, ds, dm, da, dhl, s;
     double dp;
     double x1, x2, x3, x4, x5, x6, x7;
@@ -731,10 +729,10 @@ class JupiterOrbit : public CachingOrbit
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
 
-    computePlanetElements(jd19, pList);
+    computePlanetElements(t, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -822,7 +820,7 @@ class SaturnOrbit : public CachingOrbit
     {
     const int p = 4;  //Planet 4
     vector<int> pList(1, p);
-    double t, jd19, map;
+    double t, map;
     double dl, dr, dml, ds, dm, da, dhl, s;
     double dp;
     double x1, x2, x3, x4, x5, x6, x7, x8;
@@ -835,10 +833,10 @@ class SaturnOrbit : public CachingOrbit
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
 
-    computePlanetElements(jd19, pList);
+    computePlanetElements(t, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -952,7 +950,7 @@ class UranusOrbit : public CachingOrbit
     {
     const int p = 5;  //Planet 5
     vector<int> pList(1, p);
-    double t, jd19, map;
+    double t, map;
     double dl, dr, dml, ds, dm, da, dhl, s;
     double dp;
     double x1, x2, x3, x4, x5, x6;
@@ -964,17 +962,17 @@ class UranusOrbit : public CachingOrbit
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
 
-    computePlanetElements(jd19, pList);
+    computePlanetElements(t, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
     //Compute perturbations
     s = gPlanetElements[p][3];
     auxJSun(t, &x1, &x2, &x3, &x4, &x5, &x6);
-    x8 = pfmod(1.46205+3.81337*t, 2*PI);
+    x8 = pfmod(1.46205+3.81337*t, TWOPI);
     x9 = 2*x8-x4;
     sx9 = sin(x9);
     cx9 = cos(x9);
@@ -1037,7 +1035,7 @@ class NeptuneOrbit : public CachingOrbit
     {
     const int p = 6;  //Planet 6
     vector<int> pList(1, p);
-    double t, jd19, map;
+    double t, map;
     double dl, dr, dml, ds, dm, da, dhl, s;
     double dp;
     double x1, x2, x3, x4, x5, x6;
@@ -1049,17 +1047,17 @@ class NeptuneOrbit : public CachingOrbit
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
 
-    computePlanetElements(jd19, pList);
+    computePlanetElements(t, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
     //Compute perturbations
     s = gPlanetElements[p][3];
 	auxJSun(t, &x1, &x2, &x3, &x4, &x5, &x6);
-    x8 = pfmod(1.46205+3.81337*t, 2*PI);
+    x8 = pfmod(1.46205+3.81337*t, TWOPI);
     x9 = 2*x8-x4;
 	sx9 = sin(x9);
 	cx9 = cos(x9);
@@ -1112,16 +1110,16 @@ class PlutoOrbit : public CachingOrbit
     {
     const int p = 7;  //Planet 7
     vector<int> pList(1, p);
-    double t, jd19, map;
+    double t, map;
     double dl, dr, dml, ds, dm, da, dhl;
     double eclLong, eclLat, distance;    //heliocentric longitude, latitude, distance
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    //Calculate the Julian centuries elapsed since 1900
+	t = (jd - 2415020.0)/36525.0;
 
-    computePlanetElements(jd19, pList);
+    computePlanetElements(t, pList);
 
     map = degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -1155,7 +1153,7 @@ Orbit* GetCustomOrbit(const std::string& name)
         return new LunarOrbit();
     if (name == "mars")
         return new MarsOrbit();
-    if (name == "Jupiter")
+    if (name == "jupiter")
         return new JupiterOrbit();
     if (name == "saturn")
         return new SaturnOrbit();
