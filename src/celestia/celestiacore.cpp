@@ -1106,7 +1106,6 @@ void CelestiaCore::charEntered(char c)
     case '*':
         addToHistory();
 	sim->reverseObserverOrientation();
-        sim->setTargetSpeed(-sim->getTargetSpeed());
         break;
 
     case '?':
@@ -1144,16 +1143,28 @@ void CelestiaCore::charEntered(char c)
     case '-': 
         addToHistory();
 
-        if (sim->getSelection().body)
+        if (sim->getSelection().body &&
+            (sim->getTargetSpeed() < 0.99 *
+            astro::kilometersToMicroLightYears(astro::speedOfLight)))
         {
+	    Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
+                      sim->getObserver().getPosition();
 	    lightTravelFlag = !lightTravelFlag;
 	    if (lightTravelFlag)
-	        flash("Light travel delay included");
+	    {
+	        flash("Light travel delay included",2.0);
+                setLightTravelDelay(v.length());
+	    }
                 else
-                flash("Light travel delay neglected");
+	    {
+                flash("Light travel delay switched off",2.0);
+                setLightTravelDelay(-v.length());
+	    }
 	}
         else
-            flash("Light travel delay neglected");
+	{
+            flash("Light travel delay ignored");
+	}
         break;
 
     case ',':
@@ -2186,7 +2197,10 @@ void CelestiaCore::renderOverlay()
 
 	bool time_displayed = false;
         double lt = 0.0;
-        if (sim->getSelection().body)
+
+        if (sim->getSelection().body &&
+            (sim->getTargetSpeed() < 0.99 *
+             astro::kilometersToMicroLightYears(astro::speedOfLight)))
 	{                   
 	    if (lightTravelFlag) 
 	    {
@@ -2196,12 +2210,19 @@ void CelestiaCore::renderOverlay()
 		lt = astro::microLightYearsToKilometers(v.length())/
 	             (86400.0 * astro::speedOfLight);
 	    } 
+            
 	}
+        else
+	{
+	    lt = 0.0;
+	}
+
+
 	if (timeZoneBias != 0 && sim->getTime() < 2465442 && sim->getTime() 
                                                 > 2415733) 
         {
 
-	   time_t time = (int)astro::julianDateToSeconds(sim->getTime() - 2440587.5 - lt);
+	   time_t time = (int)astro::julianDateToSeconds(sim->getTime() - 2440587.5 + lt);
 	        struct tm *localt = localtime(&time);
 		if (localt != NULL) {
 		        astro::Date d;
@@ -2213,7 +2234,7 @@ void CelestiaCore::renderOverlay()
 		        d.seconds = (int)localt->tm_sec;
 		        *overlay << d << " " << tzname[localt->tm_isdst>0?1:0];
 			time_displayed = true;
-                        if (lightTravelFlag)
+                        if (lightTravelFlag && lt > 0.0)
 	                {
                             glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
                             *overlay <<"  LT" << '\n';
@@ -2226,9 +2247,9 @@ void CelestiaCore::renderOverlay()
 	} 
 	
 	if (!time_displayed) {
-	        *overlay << astro::Date(sim->getTime() - lt);
+	        *overlay << astro::Date(sim->getTime() + lt);
 	        *overlay << " UTC";
-                if (lightTravelFlag)
+                if (lightTravelFlag && lt > 0.0)
 	        {
                     glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
                     *overlay <<"  LT" << '\n';
@@ -3054,6 +3075,15 @@ int CelestiaCore::getTimeZoneBias() const
     return timeZoneBias;
 }
 
+bool CelestiaCore::getLightDelayActive() const
+{
+  return  lightTravelFlag;
+}
+
+void CelestiaCore::setLightDelayActive(bool lightDelayActive ) 
+{
+  lightTravelFlag = lightDelayActive ;
+}
 
 int CelestiaCore::getTextEnterMode() const
 {
