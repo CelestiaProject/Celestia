@@ -341,39 +341,22 @@ NSString* fatalErrorMessage;
     // check for time to release simulated key held down
     [self keyTick];
 
-    // adjust timer if necessary to avoid saturating the runloop
-    // otherwise appkit events may be delayed
+    // adjust timer if necessary to receive waiting appkit events
     static NSEvent* lastEvent = nil;
-     NSEvent* nextEvent = nil;
-
-    nextEvent = nil;
-    // make sure we get some events (so we don't block checking the event queue)
-    [NSEvent startPeriodicEventsAfterDelay: 0.0 withPeriod: 0.001 ]; 
-    // check for waiting events
-    nextEvent = [NSApp nextEventMatchingMask: ( NSPeriodicMask|NSAppKitDefined ) untilDate: nil inMode: NSDefaultRunLoopMode dequeue: NO];
-    // stop generating periodic events
-    [NSEvent stopPeriodicEvents]; 
-    if ( [nextEvent type] == NSPeriodic )
+    NSEvent* nextEvent = [NSApp nextEventMatchingMask: ( NSAppKitDefined ) untilDate: [NSDate date] inMode: NSDefaultRunLoopMode dequeue: NO];
+    if ( nextEvent && nextEvent == lastEvent )
     {   
-        // ignore periodic events
-        [NSApp discardEventsMatchingMask: NSPeriodicMask beforeEvent: nil ];
+        // event is still waiting, so delay firing timer to allow event to process
+        [timer setFireDate: [[NSDate date] addTimeInterval: 0.01 ] ];
     }
     else
     {
-        if ( nextEvent == lastEvent )
-        {   
-            // event is still waiting, so delay firing timer to allow event to process
-            [timer setFireDate: [[NSDate date] addTimeInterval: 0.01 ] ];
-        }
-        else
-        {
-            lastEvent = nextEvent;
-            return;
-        }
+        lastEvent = nextEvent;
     }
+
     // force display update
     [self forceDisplay];
- }
+}
 
 // Application Action Methods ----------------------------------------------------------
 
