@@ -147,7 +147,15 @@ void LODSphereMesh::render(unsigned int attributes,
 
     // If the texture is split into subtextures, we may have to extra
     // patches, since there can be at most one subtexture per per patch.
-    int minSplit = (tex == NULL) ? 1 : tex->getUSubtextures();
+    int minSplit = 1;
+    if (tex != NULL)
+    {
+        if (tex->getUSubtextures() > minSplit)
+            minSplit = tex->getUSubtextures();
+        if (tex->getVSubtextures() > minSplit)
+            minSplit = tex->getVSubtextures();
+    }
+    
     if (split < minSplit)
     {
         thetaExtent /= (minSplit / split);
@@ -414,26 +422,28 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
     // may be split into subtextures.
     if (texture0 != NULL)
     {
-        int texSplit = texture0->getUSubtextures();
+        int uTexSplit = texture0->getUSubtextures();
+        int vTexSplit = texture0->getVSubtextures();
         int patchSplit = maxDivisions / extent;
         assert(patchSplit >= texSplit);
 
         int u = theta0 / thetaExtent;
         int v = phi0 / phiExtent;
-        int patchesPerSubtex = patchSplit / texSplit;
+        int patchesPerUSubtex = patchSplit / uTexSplit;
+        int patchesPerVSubtex = patchSplit / vTexSplit;
 
-        du *= texSplit;
-        dv *= texSplit;
-        u0 = 1.0f - (float) (u % patchesPerSubtex) / (float) patchesPerSubtex;
-        v0 = 1.0f - (float) (v % patchesPerSubtex) / (float) patchesPerSubtex;
+        du *= uTexSplit;
+        dv *= vTexSplit;
+        u0 = 1.0f - (float) (u % patchesPerUSubtex) / (float)patchesPerUSubtex;
+        v0 = 1.0f - (float) (v % patchesPerVSubtex) / (float)patchesPerVSubtex;
         u0 += theta0 * du;
         v0 += phi0 * dv;
 
-        u /= patchesPerSubtex;
-        v /= patchesPerSubtex;
+        u /= patchesPerUSubtex;
+        v /= patchesPerVSubtex;
 
-        unsigned int tn = texture0->getName(texSplit - u - 1,
-                                            texSplit - v - 1);
+        unsigned int tn = texture0->getName(uTexSplit - u - 1,
+                                            vTexSplit - v - 1);
         if (tn != subtexture0)
         {
             // We track the current texture to avoid unnecessary and costly
