@@ -43,9 +43,9 @@
 
 "b" "OGLE-TR-56"
 
-# Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed at 81 degrees, so mass can be determined.
-# Radius is estimated at 1.23 jupiters.
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 81 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.23 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -65,7 +65,6 @@
 		Eccentricity    0
 		Inclination     89.4
 		AscendingNode   260.3
-		ArgOfPericenter 84
 		MeanAnomaly     213
 	}
 
@@ -83,9 +82,9 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 
 "b" "OGLE-TR-113"
 
-# Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed close to 90 degrees, so mass can be determined.
-# Radius is estimated at 1.08 jupiters.
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at ~90 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.08 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -104,7 +103,6 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 		Eccentricity    0
 		Inclination     112.4
 		AscendingNode   161.7
-		ArgOfPericenter 21
 		MeanAnomaly     335
 	}
 
@@ -122,9 +120,9 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 
 "b" "OGLE-TR-132"
 
-# Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed at 85 degrees, so mass can be determined.
-# Radius is estimated at 1.13 jupiters.
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.13 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -143,7 +141,6 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 		Eccentricity    0
 		Inclination     107.6
 		AscendingNode   159.3
-		ArgOfPericenter 20
 		MeanAnomaly     216
 	}
 
@@ -191,7 +188,7 @@ AltSurface "limit of knowledge" "HD 73256/b"
 	Texture "venuslike.*"
 
 	Mass      21     # M.sin(i) = 21 earths
-	Radius     17700
+	Radius     17500
 
 	InfoURL "http://www.obspm.fr/encycl/GJ436.html"
 
@@ -218,7 +215,7 @@ AltSurface "limit of knowledge" "HIP 57087/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      14     # M.sin(i) = 14 earths
-	Radius     15500
+	Radius     15400
 
 	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
@@ -243,17 +240,17 @@ AltSurface "limit of knowledge" "HD 75732/e"
 {
 	Texture "gasgiant.*"
 
-	Mass       270     # M.sin(i) = 0.84 jupiters
+	Mass       250     # M.sin(i) = 0.784 jupiters
 	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
 	EllipticalOrbit {
-		Period          0.0401
+		Period          0.0402
 		SemiMajorAxis   0.115
-		Eccentricity    0.02
-		ArgOfPericenter 317
-		MeanAnomaly     122
+		Eccentricity    0.0197
+		ArgOfPericenter 349
+		MeanAnomaly     137
 	}
 
 	# likely to be in captured synchronous rotation
@@ -269,17 +266,17 @@ AltSurface "limit of knowledge" "HD 75732/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       70     # M.sin(i) = 0.21 jupiters
+	Mass       70     # M.sin(i) = 0.217 jupiters
 	Radius     56000
 
 	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
 	EllipticalOrbit {
-		Period          0.1212
-		SemiMajorAxis   0.241
-		Eccentricity    0.339
-		ArgOfPericenter 279
-		MeanAnomaly     67
+		Period          0.1203
+		SemiMajorAxis   0.24
+		Eccentricity    0.44
+		ArgOfPericenter 102
+		MeanAnomaly     82
 	}
 
 	# likely to be in captured synchronous rotation
@@ -295,24 +292,51 @@ AltSurface "limit of knowledge" "HD 75732/c"
 {
 	Texture "jupiterlike.*"
 
-	Mass       1290     # M.sin(i) = 4.05 jupiters
+	Mass       1250     # M.sin(i) = 3.92 jupiters
 	Radius     70000
 	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
 	EllipticalOrbit {
-		Period          14.6749
-		SemiMajorAxis   5.9
-		Eccentricity    0.16
-		ArgOfPericenter 59
-		MeanAnomaly     277
+		Period          12.368
+		SemiMajorAxis   5.257
+		Eccentricity    0.327
+		ArgOfPericenter 92
+		MeanAnomaly     257
 	}
 
 	RotationPeriod  10 # plausible guess
 }
 
 AltSurface "limit of knowledge" "HD 75732/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 63454"
+{
+	Texture "gasgiant.*"
+
+	Mass       120     # M.sin(i) = 0.38 jupiters
+	Radius     98000
+	Oblateness 0.01
+
+	InfoURL "http://www.obspm.fr/encycl/HD63454.html"
+
+	EllipticalOrbit {
+		Period          0.0077
+		SemiMajorAxis   0.036
+		Eccentricity    0
+		ArgOfPericenter 339
+		MeanAnomaly     74
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 63454/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -376,9 +400,9 @@ AltSurface "limit of knowledge" "HD 46375/b"
 
 "b" "TrES-1"
 
-# Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed at 88.5 degrees, so mass can be determined.
-# Radius is estimated at 1.08 jupiters.
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.2 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.08 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -397,7 +421,6 @@ AltSurface "limit of knowledge" "HD 46375/b"
 		Eccentricity    0
 		Inclination     85.2
 		AscendingNode   283.9
-		ArgOfPericenter 149
 		MeanAnomaly     58
 	}
 
@@ -469,9 +492,9 @@ AltSurface "limit of knowledge" "HD 187123/b"
 
 "b" "OGLE-TR-10"
 
-# Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed at 89.2 degrees, so mass can be determined.
-# Radius is estimated at 1.24 jupiter.
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 89.2 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.24 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -489,7 +512,6 @@ AltSurface "limit of knowledge" "HD 187123/b"
 		SemiMajorAxis   0.04162
 		Inclination     90.8
 		AscendingNode   267.3
-		ArgOfPericenter 84
 		MeanAnomaly     234
 	}
 
@@ -586,6 +608,32 @@ AltSurface "limit of knowledge" "HD 88133/b"
 }
 
 
+"b" "HD 2638"
+{
+	Texture "gasgiant.*"
+
+	Mass       150     # M.sin(i) = 0.48 jupiters
+	Radius     98000
+
+	InfoURL "http://www.obspm.fr/encycl/HD2638.html"
+
+	EllipticalOrbit {
+		Period          0.0094
+		SemiMajorAxis   0.044
+		Eccentricity    0
+		ArgOfPericenter 90
+		MeanAnomaly     256
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 2638/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "TYC 5503-946-1"   # BD-10 3166
 # Star not present in Celestia's default stars.dat file.
 
@@ -645,16 +693,16 @@ AltSurface "limit of knowledge" "HD 75289/b"
 
 "b" "HD 209458"   # V376 Peg
 
-# Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed at 86.1 degrees, so mass can be determined.
-# Radius is estimated at 1.43 jupiters.
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 86.1 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.32 jupiters.
 
 {
 	Texture "gasgiant.*"
 	NightTexture "gasgiantnight.*"
 
 	Mass       220     # M.sin(i) = 0.69 jupiters
-	Radius     100100
+	Radius     92400
 
 	InfoURL "http://www.obspm.fr/encycl/HD209458.html"
 
@@ -709,9 +757,11 @@ AltSurface "limit of knowledge" "HD 76700/b"
 
 "b" "OGLE-TR-111"
 
-# Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed at 86.5-90 degrees, so mass can be determined.
-# Radius is estimated at 1 jupiter.
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 86.5-90 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.0 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
 
 {
 	Texture "gasgiant.*"
@@ -728,7 +778,6 @@ AltSurface "limit of knowledge" "HD 76700/b"
 		Eccentricity    0
 		Inclination     110.5
 		AscendingNode   161.1
-		ArgOfPericenter 21
 		MeanAnomaly     153
 	}
 
@@ -1204,21 +1253,49 @@ AltSurface "limit of knowledge" "HD 13445/b"
 {
 	Texture "gasgiant.*"
 
-	Mass       40     # M.sin(i) = 0.12 jupiters
+	Mass       40     # M.sin(i) = 0.122 jupiters
 	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/HD99492.html"
 
 	EllipticalOrbit {
-		Period          0.0465
-		SemiMajorAxis   0.12
+		Period          0.0466
+		SemiMajorAxis   0.119
 		Eccentricity    0.05
+		ArgOfPericenter 351
+		MeanAnomaly     182
 	}
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "HD 99492/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 27894"
+{
+	Texture "gasgiant.*"
+
+	Mass       200     # M.sin(i) = 0.62 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD27894.html"
+
+	EllipticalOrbit {
+		Period          0.0493
+		SemiMajorAxis   0.122
+		Eccentricity    0.049
+		ArgOfPericenter 244
+		MeanAnomaly     293
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 27894/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1245,6 +1322,32 @@ AltSurface "limit of knowledge" "HD 99492/b"
 }
 
 AltSurface "limit of knowledge" "HD 195019/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 102117"
+{
+	Texture "gasgiant.*"
+
+	Mass       50     # M.sin(i) = 0.14 jupiters
+	Radius     84000
+
+	InfoURL "http://www.obspm.fr/encycl/HD102117.html"
+
+	EllipticalOrbit {
+		Period          0.0566
+		SemiMajorAxis   0.149
+		Eccentricity    0
+		ArgOfPericenter 104
+		MeanAnomaly     276
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 102117/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1349,30 +1452,6 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 }
 
 AltSurface "limit of knowledge" "Gliese 876/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 102117"
-{
-	Texture "gasgiant.*"
-
-	Mass       60     # M.sin(i) = 0.18 jupiters
-	Radius     84000
-
-	InfoURL "http://www.obspm.fr/encycl/HD102117.html"
-
-	EllipticalOrbit {
-		Period          0.0849
-		SemiMajorAxis   0.15
-		Eccentricity    0.08
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 102117/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1537,18 +1616,18 @@ AltSurface "limit of knowledge" "HD 117618/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       900     # M.sin(i) = 2.84 jupiters
+	Mass       760     # M.sin(i) = 2.4 jupiters
 	Radius     70000
 	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD37605.html"
 
 	EllipticalOrbit {
-		Period          0.1485
+		Period          0.1479
 		SemiMajorAxis   0.26
-		Eccentricity    0.737
-		ArgOfPericenter 26
-		MeanAnomaly     99
+		Eccentricity    0.677
+		ArgOfPericenter 33
+		MeanAnomaly     62
 	}
 
 	RotationPeriod  11 # tidal slowing significant
@@ -1664,6 +1743,33 @@ AltSurface "limit of knowledge" "HD 3651/b"
 }
 
 AltSurface "limit of knowledge" "HD 121504/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 101930"
+{
+	Texture "jupiterlike.*"
+
+	Mass       100     # M.sin(i) = 0.3 jupiters
+	Radius     56000
+	Oblateness 0.08
+
+	InfoURL "http://www.obspm.fr/encycl/HD101930.html"
+
+	EllipticalOrbit {
+		Period          0.1929
+		SemiMajorAxis   0.302
+		Eccentricity    0.11
+		ArgOfPericenter 191
+		MeanAnomaly     105
+	}
+
+	RotationPeriod  11 # tidal slowing significant
+}
+
+AltSurface "limit of knowledge" "HD 101930/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1931,6 +2037,33 @@ AltSurface "limit of knowledge" "HD 208487/b"
 }
 
 AltSurface "limit of knowledge" "HD 1237/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 93083"
+{
+	Texture "jupiterlike.*"
+
+	Mass       120     # M.sin(i) = 0.37 jupiters
+	Radius     56000
+	Oblateness 0.08
+
+	InfoURL "http://www.obspm.fr/encycl/HD93083.html"
+
+	EllipticalOrbit {
+		Period          0.3931
+		SemiMajorAxis   0.477
+		Eccentricity    0.14
+		ArgOfPericenter 241
+		MeanAnomaly     216
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 93083/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2844,16 +2977,18 @@ AltSurface "limit of knowledge" "HD 19994/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       520     # M.sin(i) = 1.64 jupiters
+	Mass       400     # M.sin(i) = 1.26 jupiters
 	Radius     70000
-	Oblateness 0.04
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD188015.html"
 
 	EllipticalOrbit {
-		Period          1.2891
-		SemiMajorAxis   1.22
-		Eccentricity    0.26
+		Period          1.2497
+		SemiMajorAxis   1.19
+		Eccentricity    0.15
+		ArgOfPericenter 331
+		MeanAnomaly     93
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -3029,16 +3164,18 @@ AltSurface "limit of knowledge" "HD 65216/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       1200     # M.sin(i) = 3.77 jupiters
+	Mass       1170     # M.sin(i) = 3.69 jupiters
 	Radius     70000
 	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD183263.html"
 
 	EllipticalOrbit {
-		Period          1.7288
+		Period          1.7364
 		SemiMajorAxis   1.52
-		Eccentricity    0.37
+		Eccentricity    0.38
+		ArgOfPericenter 267
+		MeanAnomaly     33
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -3243,16 +3380,18 @@ AltSurface "limit of knowledge" "HD 114386/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       330     # M.sin(i) = 1.03 jupiters
+	Mass       310     # M.sin(i) = 0.98 jupiters
 	Radius     70000
 	Oblateness 0.06
 
 	InfoURL "http://www.obspm.fr/encycl/HD45350.html"
 
 	EllipticalOrbit {
-		Period          2.4367
-		SemiMajorAxis   1.86
+		Period          2.4388
+		SemiMajorAxis   1.77
 		Eccentricity    0.78
+		ArgOfPericenter 150
+		MeanAnomaly     238
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -3750,6 +3889,33 @@ AltSurface "limit of knowledge" "HD 145675/b"
 }
 
 
+"b" "HD 142022"
+{
+	Texture "jupiterlike.*"
+
+	Mass       1400     # M.sin(i) = 4.4 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://www.obspm.fr/encycl/HD142022.html"
+
+	EllipticalOrbit {
+		Period          5.2649
+		SemiMajorAxis   2.8
+		Eccentricity    0.57
+		ArgOfPericenter 166
+		MeanAnomaly     111
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 142022/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 39091"   # Pi Men
 {
 	Texture "jupiterlike.*"
@@ -3891,7 +4057,7 @@ AltSurface "limit of knowledge" "HD 22049/b"
 
 	Mass       30     # M.sin(i) = 0.1 jupiters
 	Radius     56000
-	Oblateness 0.1
+	Oblateness 0.10
 
 	InfoURL "http://www.obspm.fr/encycl/eps-Eri.html"
 
@@ -3905,6 +4071,33 @@ AltSurface "limit of knowledge" "HD 22049/b"
 }
 
 AltSurface "limit of knowledge" "HD 22049/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 117207"
+{
+	Texture "jupiterlike.*"
+
+	Mass       660     # M.sin(i) = 2.06 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://www.obspm.fr/encycl/HD117207.html"
+
+	EllipticalOrbit {
+		Period          7.1926
+		SemiMajorAxis   3.78
+		Eccentricity    0.16
+		ArgOfPericenter 26
+		MeanAnomaly     120
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 117207/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -3949,7 +4142,7 @@ AltSurface "limit of knowledge" "HD 30177/b"
 
 	EllipticalOrbit {
 		Period          8.1862
-		SemiMajorAxis   4.4
+		SemiMajorAxis   4.403
 		Eccentricity    0.32
 	}
 
@@ -4021,17 +4214,18 @@ AltSurface "limit of knowledge" "HD 190360/b"
 	Texture "asteroid.*"
 
 	Mass      0.02     # M.sin(i) = 0.02 earths
-	Radius     1700
+	Radius     1400
 
 	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
 
 	EllipticalOrbit {
 		Period          0.0692
 		SemiMajorAxis   0.19
+		Eccentricity    0
 		Inclination     119.2 # approx. plane of other planets
 		AscendingNode   152.2
 		ArgOfPericenter 89
-		MeanAnomaly     165
+		MeanAnomaly     158
 	}
 
 	Obliquity             119 # guess, to match inclination
@@ -4053,7 +4247,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/a"
 	Texture "asteroid.*"
 
 	Mass      4.3     # M.sin(i) = 4.3 earths
-	Radius     10400
+	Radius     10500
 
 	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
 
@@ -4063,8 +4257,8 @@ AltSurface "limit of knowledge" "PSR 1257+12/a"
 		Eccentricity    0.0186
 		Inclination     119.3
 		AscendingNode   155.6
-		ArgOfPericenter 91
-		MeanAnomaly     253
+		ArgOfPericenter 341
+		MeanAnomaly     251
 	}
 
 	Obliquity             119 # guess, to match inclination
@@ -4086,7 +4280,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/b"
 	Texture "asteroid.*"
 
 	Mass      3.9     # M.sin(i) = 3.9 earths
-	Radius     10000
+	Radius     9800
 
 	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
 
@@ -4096,8 +4290,8 @@ AltSurface "limit of knowledge" "PSR 1257+12/b"
 		Eccentricity    0.0252
 		Inclination     119.1
 		AscendingNode   148.7
-		ArgOfPericenter 87
-		MeanAnomaly     39
+		ArgOfPericenter 196
+		MeanAnomaly     37
 	}
 
 	Obliquity             119 # guess, to match inclination
@@ -4118,38 +4312,29 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 {
 	Texture "asteroid.*"
 
-	Mass      0.0004     # M.sin(i) = 0.0004 earths (1/5 Pluto's mass)
-	Radius       600     # This gives a density of about 2.5--reasonable
-                             # and object that's a mix of ice and rock
+	Mass      0.0004     # M.sin(i) = 0.0004 earths
+	Radius     500
+	Oblateness 0.05
 
-
-	Class "planet"
-
-	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
+	InfoURL "http://live.psu.edu/story/10180"
 
 	EllipticalOrbit {
-		Period          3.824
-		SemiMajorAxis   2.7
-		Eccentricity    0
-
-		# Same ascending node and inclination as c; still unable to
-	        # locate source with orbital parameters other than period
-                # and SMA for d
-		Inclination     119.1
-		AscendingNode   148.7
+		Period          3.95
+		SemiMajorAxis   2.8
+		Inclination     119.2 # approx. plane of other planets
+		AscendingNode   152.2
 	}
 
 	Obliquity             119 # guess, to match inclination
-	EquatorAscendingNode  149 # guess, to match ascending node
+	EquatorAscendingNode  152 # guess, to match ascending node
 
-        RotationPeriod	      20 # plausible guess
+	RotationPeriod  5 # plausible guess
 }
 
-AltSurface "limit of knowledge" "PSR 1257+12/c"
+AltSurface "limit of knowledge" "PSR 1257+12/d"
 {
 	Texture "extrasolar-lok.*"
 }
-
 
 
 "b" "PSR 1620-26"   # PSR J1623-2631
@@ -4158,7 +4343,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 {
 	Texture "jupiterlike.*"
 
-	Mass       790     # M.sin(i) = 2.5 jupiters
+	Mass       800     # M.sin(i) = 2.5 jupiters
 	Radius     70000
 	Oblateness 0.02
 
@@ -4169,8 +4354,6 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 		SemiMajorAxis   23
 		Inclination     94.8
 		AscendingNode   212.7
-		ArgOfPericenter 81
-		MeanAnomaly     15
 	}
 
 	Obliquity             95 # guess, to match inclination
@@ -4183,164 +4366,3 @@ AltSurface "limit of knowledge" "PSR 1620-26/b"
 {
 	Texture "extrasolar-lok.*"
 }
-
-
-"b" "HD 2638"
-{
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
-
-	Mass       150     # M.sin(i) = 0.48 jupiters
-	Radius     84000
-
-	InfoURL "http://obswww.unige.ch/exoplanets/hd2638.html"
-
-	EllipticalOrbit {
-		Period          0.0094297
-		SemiMajorAxis   0.044
-		Eccentricity    0
-		ArgOfPericenter 0     # T0 = 53323.206, Omega = 0
-		MeanAnomaly     0
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 2683/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 27894"
-{
-	Texture "gasgiant.*"
-
-	Mass       200     # M.sin(i) = 0.62 jupiters
-	Radius     84000
-
-	InfoURL "http://obswww.unige.ch/exoplanets/hd27894.html"
-
-	EllipticalOrbit {
-		Period          0.049257
-		SemiMajorAxis   0.122
-		Eccentricity    0.049
-		ArgOfPericenter 0     # T0 = 53275.46, Omega = 132.9
-		MeanAnomaly     0
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 27894/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 63454"
-{
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
-
-	Mass       120     # M.sin(i) = 0.38 jupiters
-	Radius     84000
-
-	InfoURL "http://obswww.unige.ch/exoplanets/hd63454.html"
-
-	EllipticalOrbit {
-		Period          0.0077148
-		SemiMajorAxis   0.036
-		Eccentricity    0
-		ArgOfPericenter 0     # T0 = 53111.129, Omega = 0
-		MeanAnomaly     0
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 63454/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 93083"
-{
-	Texture "jupiterlike.*"
-
-	Mass       120     # M.sin(i) = 0.37 jupiters
-	Radius     56000
-	Oblateness 0.02
-
-	InfoURL "http://obswww.unige.ch/exoplanets/hd93083.html"
-
-	EllipticalOrbit {
-		Period          0.393
-		SemiMajorAxis   0.477
-		Eccentricity    0.14
-		ArgOfPericenter 0     # T0 = 53181.7, Omega = 333.5
-		MeanAnomaly     0
-	}
-
-	RotationPeriod      10          # plausible guess (possible tidal slowing?)
-}
-
-AltSurface "limit of knowledge" "HD 93083/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 101930"
-{
-	Texture "jupiterlike.*"
-
-	Mass       95       # M.sin(i) = 0.30 jupiters
-	Radius     84000
-
-	InfoURL "http://obswww.unige.ch/exoplanets/hd101930.html"
-
-	EllipticalOrbit {
-		Period          0.1929
-		SemiMajorAxis   0.302
-		Eccentricity    0.11
-		ArgOfPericenter 0     # T0 = 53145.0, Omega = 251
-		MeanAnomaly     0
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 101930/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 142022"    # HD 142022 A
-{
-	Texture "jupiterlike.*"
-
-	Mass       1400       # M.sin(i) = 4.4 jupiters
-	Radius     70000
-	Oblateness 0.02
-
-	InfoURL "http://obswww.unige.ch/exoplanets/hd142022.html"
-
-	EllipticalOrbit {
-		Period          5.26
-		SemiMajorAxis   2.8
-		Eccentricity    0.57
-		ArgOfPericenter 0     # T0 = 50951.0, Omega = 172
-		MeanAnomaly     0
-	}
-
-	RotationPeriod      10          # plausible guess
-}
-
-AltSurface "limit of knowledge" "HD 101930/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
