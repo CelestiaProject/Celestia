@@ -1,0 +1,33 @@
+[MainWindow]
+Height 1024=625
+MenuBar=Enabled
+Width 1280=814
+
+[MainWindow Toolbar bookmarkBar]
+Hidden=false
+IconSize=22
+IconText=IconTextRight
+Index=1
+NewLine=true
+Offset=85
+Position=Top
+
+[MainWindow Toolbar mainToolBar]
+Hidden=false
+IconSize=22
+IconText=IconOnly
+Index=0
+NewLine=true
+Offset=-7
+Position=Top
+
+[Preferences]
+AmbientLightLevel=0.1
+FaintestVisible=6
+HudDetail=1
+LabelMode=0
+PixelShader=false
+RendererFlags=6035
+TimeZoneBias=7200
+VertexShader=false
+
