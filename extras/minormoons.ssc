@@ -1,0 +1,325 @@
+# Minor moons of Jupiter
+
+"Metis" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		20
+
+	EllipticalOrbit
+	{
+	Period		0.294780
+	SemiMajorAxis	127979
+	Eccentricity	0.004
+	Inclination	0
+	MeanAnomaly	120
+	}
+}
+
+"Adrastea" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		10
+
+	EllipticalOrbit
+	{
+	Period		0.29826
+	SemiMajorAxis	128980
+	Eccentricity	0
+	Inclination	0
+	MeanAnomaly	230
+	}
+}
+
+"Thebe" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		50
+
+	EllipticalOrbit
+	{
+	Period		0.6745
+	SemiMajorAxis	221900
+	Eccentricity	0.015
+	Inclination	0.8
+	MeanAnomaly	45
+	}
+}
+
+"Leda" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		5
+
+	EllipticalOrbit
+	{
+	Period		238.72
+	SemiMajorAxis	11094000
+	Eccentricity	0.148
+	Inclination	27
+	MeanAnomaly     310
+	}
+}
+
+"Himalia" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		85
+
+	EllipticalOrbit
+	{
+	Period		250.5662
+	SemiMajorAxis	11480000
+	Eccentricity	0.163
+	Inclination	25
+	}
+	MeanAnomaly	324
+}
+
+"Lysithea" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		12
+
+	EllipticalOrbit
+	{
+	Period		259.22
+	SemiMajorAxis	11720000
+	Eccentricity	0.107
+	Inclination	29
+	MeanAnomaly     85
+	}
+}
+
+"Elara" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		40
+
+	EllipticalOrbit
+	{
+	Period		259.6528
+	SemiMajorAxis	11737000
+	Eccentricity	0.207
+	Inclination	28
+	MeanAnomaly     133
+	}
+}
+
+"Ananke" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		10
+
+	EllipticalOrbit
+	{
+	Period		631
+	SemiMajorAxis	21200000
+	Eccentricity	0.169
+	Inclination	147
+	MeanAnomaly     220
+	}
+}
+
+"Carme" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		15
+
+	EllipticalOrbit
+	{
+	Period		692
+	SemiMajorAxis	22600000
+	Eccentricity	0.207
+	Inclination	163
+	MeanAnomaly     47
+	}
+}
+
+"Pasiphae" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		18
+
+	EllipticalOrbit
+	{
+	Period		735
+	SemiMajorAxis	23500000
+	Eccentricity	0.378
+	Inclination	148
+	MeanAnomaly     88
+	}
+}
+
+"Sinope" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		14
+
+	EllipticalOrbit
+	{
+	Period		758
+	SemiMajorAxis	23700000
+	Eccentricity	0.275
+	Inclination	153
+	MeanAnomaly     165
+	}
+}
+
+
+# Minor moons of Saturn
+
+"Pan" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		10
+
+	EllipticalOrbit
+	{
+	Period		0.5750
+	SemiMajorAxis	133583
+	Eccentricity	0
+	Inclination	0
+	MeanAnomaly     165
+	}
+}
+
+"Atlas" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		16
+
+	EllipticalOrbit
+	{
+	Period		0.6019
+	SemiMajorAxis	137640
+	Eccentricity	0
+	Inclination	0
+	MeanAnomaly     5
+	}
+}
+
+"Prometheus" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		50
+
+	EllipticalOrbit
+	{
+	Period		0.612986
+	SemiMajorAxis	139350
+	Eccentricity	0.0024
+	Inclination	0
+	MeanAnomaly     97
+	}
+}
+
+"Pandora" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		42
+
+	EllipticalOrbit
+	{
+	Period		0.628804
+	SemiMajorAxis	141700
+	Eccentricity	0.0042
+	Inclination	0
+	MeanAnomaly     308
+	}
+}
+
+"Epimetheus" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		59
+
+	EllipticalOrbit
+	{
+	Period		0.694590
+	SemiMajorAxis	151422
+	Eccentricity	0.009
+	Inclination	0.34
+	MeanAnomaly     140
+	}
+}
+
+"Janus" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		89
+
+	EllipticalOrbit
+	{
+	Period		0.694590
+	SemiMajorAxis	151427
+	Eccentricity	0.007
+	Inclination	0.14
+	MeanAnomaly     136
+	}
+}
+
+"Telesto" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		11
+
+	EllipticalOrbit
+	{
+	Period		1.887802
+	SemiMajorAxis	294660
+	Eccentricity	0
+	Inclination	0
+	MeanAnomaly     158     # Leading Lagrange point of Tethys
+	}
+}
+
+"Calypso" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		10
+
+	EllipticalOrbit
+	{
+	Period		1.887802
+	SemiMajorAxis	294660
+	Eccentricity	0
+	Inclination	0
+	MeanAnomaly     38      # Trailing Lagrange point of Tethys
+	}
+}
+
+"Helene" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		16
+
+	EllipticalOrbit
+	{
+	Period		2.736915
+	SemiMajorAxis	377400
+	Eccentricity	0.005
+	Inclination	0.2
+	MeanAnomaly     10    # Trailing Lagrange point of Dione
+	}
+}
+
