@@ -98,7 +98,8 @@ Renderer::Renderer() :
     useTexEnvCombine(false),
     useRegisterCombiners(false),
     useCubeMaps(false),
-    useVertexPrograms(false)
+    useVertexPrograms(false),
+    useRescaleNormal(false)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
 }
@@ -356,6 +357,14 @@ bool Renderer::init(int winWidth, int winHeight)
         DPRINTF("Renderer: cube texture maps supported.\n");
         useCubeMaps = true;
     }
+    if (ExtensionSupported("GL_EXT_rescale_normal"))
+    {
+        // We need this enabled because we use glScale, but only
+        // with uniform scale factors.
+        DPRINTF("Renderer: EXT_rescale_normal supported.\n");
+        useRescaleNormal = true;
+        glEnable(GL_RESCALE_NORMAL_EXT);
+    }
 
     cout << "Simultaneous textures supported: " << nSimultaneousTextures << '\n';
 
@@ -369,11 +378,6 @@ bool Renderer::init(int winWidth, int winHeight)
 
     // LEQUAL rather than LESS required for multipass rendering
     glDepthFunc(GL_LEQUAL);
-
-    // We need this enabled because we use glScale, but only
-    // with uniform scale factors
-    // TODO: Do a proper check for this extension before enabling
-    glEnable(GL_RESCALE_NORMAL_EXT);
 
     resize(winWidth, winHeight);
 
@@ -652,9 +656,10 @@ void Renderer::render(const Observer& observer,
 
     // Render planets, moons, asteroids, etc.  Stars close and large enough
     // to have discernible surface detail are also placed in renderList.
-    Star* sun = NULL;
+    const Star* sun = NULL;
     if (solarSystem != NULL)
-        sun = starDB.find(solarSystem->getStarNumber());
+        sun = solarSystem->getStar();
+
     if (sun != NULL)
     {
         renderPlanetarySystem(*sun,
@@ -776,17 +781,7 @@ void Renderer::render(const Observer& observer,
                     radius = renderList[i].body->getRadius();
                 else if (renderList[i].star != NULL)
                     radius = renderList[i].star->getRadius();
-#if 0
-                float distanceToSurface = distance - radius;
-                nearPlaneDistance = distance - 1.1f * radius;
-                farPlaneDistance = distance + 1.1f * radius;
-                if (distanceToSurface < radius * 2.0f)
-                    nearPlaneDistance = distanceToSurface / 2.0f;
-                if (nearPlaneDistance < MinNearPlaneDistance)
-                    nearPlaneDistance = MinNearPlaneDistance;
-                if (farPlaneDistance / nearPlaneDistance > MaxFarNearRatio)
-                    farPlaneDistance = nearPlaneDistance * MaxFarNearRatio;
-#endif
+
                 nearPlaneDistance = renderList[i].nearZ * -0.9f;
                 farPlaneDistance = renderList[i].farZ * -1.1f;
                 if (nearPlaneDistance < MinNearPlaneDistance)
@@ -799,14 +794,6 @@ void Renderer::render(const Observer& observer,
                 gluPerspective(fov, (float) windowWidth / (float) windowHeight,
                                nearPlaneDistance, farPlaneDistance);
                 glMatrixMode(GL_MODELVIEW);
-#if 0
-                if (renderList[i].body != NULL)
-                {
-                    cout << renderList[i].body->getName() << " : ";
-                    cout << "near: " << nearPlaneDistance << "     far: " << farPlaneDistance << "  ";
-                    cout << "z: " << renderList[i].nearZ << "   r: " << radius << '\n';
-                }
-#endif
             }
 
             if (renderList[i].body != NULL)
@@ -859,7 +846,7 @@ void Renderer::render(const Observer& observer,
             // Set the modelview matrix
             glMatrixMode(GL_MODELVIEW);
 
-            Star* sun = starDB.find(solarSystem->getStarNumber());
+            const Star* sun = solarSystem->getStar();
             Point3f starPos = sun->getPosition();
             // Compute the position of the observer relative to the star
             Vec3d opos = observer.getPosition() - Point3d((double) starPos.x,
@@ -1282,12 +1269,40 @@ struct RenderInfo
 };
 
 
-static void renderMeshDefault(const RenderInfo& ri)
+static void renderMeshDefault(const RenderInfo& ri, float scale,
+                              bool rescaleNormalSupported)
 {
     // Set up the light source for the sun
     glEnable(GL_LIGHTING);
     glLightDirection(GL_LIGHT0, ri.sunDir_obj);
-    glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
+
+    // RANT ALERT!
+    // This sucks, but it's necessary.  glScale is used to scale a unit sphere
+    // up to planet size.  Since normals are transformed by the inverse
+    // transpose of the model matrix, this means they end up getting scaled
+    // by a factor of 1.0 / planet radius (in km).  This has terrible effects
+    // on lighting: the planet appears almost completely dark.  To get around
+    // this, the GL_rescale_normal extension was introduced and eventually
+    // incorporated into into the OpenGL 1.2 standard.  Of course, not everyone
+    // implemented this incredibly simple and useful little extension.
+    // Microsoft is notorious for half-assed support of OpenGL, but 3dfx
+    // should have known better: no Voodoo 1/2/3 drivers seem to support this
+    // extension.  The following is an attempt to get around the problem by
+    // scaling the light brightness by the planet radius.  According to the
+    // OpenGL spec, this should work fine, as clamping of colors to [0, 1]
+    // occurs *after* lighting.  It works fine on my GeForce3 when I disable
+    // EXT_rescale_normal, but I'm not certain whether other drivers
+    // are as well behaved as nVidia's.
+    if (rescaleNormalSupported)
+    {
+        glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
+    }
+    else
+    {
+        glLightColor(GL_LIGHT0, GL_DIFFUSE,
+                     Vec3f(ri.sunColor.red(), ri.sunColor.green(), ri.sunColor.blue()) * scale);
+    }
+
     glEnable(GL_LIGHT0);
 
     if (ri.baseTex == NULL)
@@ -1608,8 +1623,35 @@ void Renderer::renderPlanet(const Body& body,
         {
             ri.color = surface.color;
         }
+
         ri.sunColor = Color(1.0f, 1.0f, 1.0f);
-        ri.ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
+        {
+            // If the star is sufficiently cool, change the light color
+            // from white.  Though our sun appears yellow, we still make
+            // it and all hotter stars emit white light, as this is the
+            // 'natural' light to which our eyes are accustomed.  It may
+            // make sense to give a slight bluish tint to light from
+            // O and B type stars though.
+            PlanetarySystem* system = body.getSystem();
+            if (system != NULL)
+            {
+                const Star* sun = system->getStar();
+                switch (sun->getStellarClass().getSpectralClass())
+                {
+                case StellarClass::Spectral_K:
+                    ri.sunColor = Color(1.0f, 0.9f, 0.8f);
+                    break;
+                case StellarClass::Spectral_M:
+                case StellarClass::Spectral_R:
+                case StellarClass::Spectral_S:
+                case StellarClass::Spectral_N:
+                    ri.sunColor = Color(1.0f, 0.7f, 0.7f);
+                    break;
+                }
+            }
+        }
+            
+        ri.ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel) * ri.sunColor;
         ri.hazeColor = surface.hazeColor;
         ri.specularColor = surface.specularColor;
         ri.specularPower = surface.specularPower;
@@ -1628,7 +1670,7 @@ void Renderer::renderPlanet(const Body& body,
             else if (fragmentShaderEnabled && !vertexShaderEnabled)
                 renderMeshFragmentShader(ri);
             else
-                renderMeshDefault(ri);
+                renderMeshDefault(ri, radius, useRescaleNormal);
         }
 
         // If the planet has a ring system, render it.
