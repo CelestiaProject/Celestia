@@ -69,8 +69,8 @@
 //104
 		1058C7A0FEA54F0111CA2CBB = {
 			children = (
-				E5D4465E0777288400A1577D,
-				E5D446580777278200A1577D,
+				E5F8C9E30795235E00D1DAF2,
+				E5F8C9E40795235E00D1DAF2,
 				E5D471260778E33C007731C3,
 				1058C7A1FEA54F0111CA2CBB,
 				F5040AF602A46404014901DC,
@@ -133,7 +133,7 @@
 			};
 			buildStyles = (
 				4A9504CCFFE6A4B311CA0CBA,
-				4A9504CDFFE6A4B311CA0CBA,
+				E55E8C0C078FD40200E0A11C,
 			);
 			hasScannedForEncodings = 0;
 			isa = PBXProject;
@@ -182,6 +182,12 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				E53C2FBE079433D300C76766,
+				E57283AD0793FC7300C1F239,
+				E572839E0793F91300C1F239,
+				E57283980793F82A00C1F239,
+				E57283990793F82A00C1F239,
+				E572839A0793F82A00C1F239,
 				E5B615060777307F001BB2BF,
 				F578B7AE02B3E35F0100020A,
 				29B97318FDCFA39411CA2CEA,
@@ -253,7 +259,7 @@
 		4A9504CCFFE6A4B311CA0CBA = {
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX DEBUG=1";
@@ -262,22 +268,6 @@
 			};
 			isa = PBXBuildStyle;
 			name = Development;
-		};
-		4A9504CDFFE6A4B311CA0CBA = {
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = "WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				PREBINDING = NO;
-				UNSTRIPPED_PRODUCT = NO;
-				ZERO_LINK = NO;
-			};
-			isa = PBXBuildStyle;
-			name = Deployment;
 		};
 //4A0
 //4A1
@@ -289,6 +279,21 @@
 //E52
 //E53
 //E54
+		E53C2FBE079433D300C76766 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = KbdMouseJoyControls.txt;
+			path = ../KbdMouseJoyControls.txt;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E53C2FBF079433D300C76766 = {
+			fileRef = E53C2FBE079433D300C76766;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E54343100783C3F200053094 = {
 			children = (
 				E54343110783C3F200053094,
@@ -341,6 +346,26 @@
 			settings = {
 			};
 		};
+		E55E8C0C078FD40200E0A11C = {
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = "WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				PREBINDING = YES;
+				UNSTRIPPED_PRODUCT = NO;
+				ZERO_LINK = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
 		E564302B07769C9000E2C4A3 = {
 			buildPhases = (
 				E564302C07769C9000E2C4A3,
@@ -348,6 +373,9 @@
 				E56430C007769C9000E2C4A3,
 				E564312907769C9000E2C4A3,
 				E56917DA0778217300F0F0AF,
+				E57283A00793F93500C1F239,
+				E572837407939F2500C1F239,
+				E572837307939E0200C1F239,
 			);
 			buildRules = (
 			);
@@ -362,8 +390,7 @@
 				HEADER_SEARCH_PATHS = ../src;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "lib Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				LIBRARY_SEARCH_PATHS = Frameworks;
 				PRODUCT_NAME = Celestia;
 				WRAPPER_EXTENSION = app;
 			};
@@ -532,6 +559,8 @@
 				E5B61B32077737A6001BB2BF,
 				E5B61B33077737A6001BB2BF,
 				E54343160783C42500053094,
+				E589B6DE078AC511005B8DD9,
+				E589B6E0078AC511005B8DD9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1371,6 +1400,7 @@
 				E56430BC07769C9000E2C4A3,
 				E5B615070777307F001BB2BF,
 				E54343120783C3F200053094,
+				E53C2FBF079433D300C76766,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1504,6 +1534,8 @@
 				E5D4467607772B6C00A1577D,
 				E5D4467807772BA000A1577D,
 				E54343170783C42500053094,
+				E589B6DD078AC511005B8DD9,
+				E589B6DF078AC511005B8DD9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2127,9 +2159,10 @@
 			files = (
 				E564312B07769C9000E2C4A3,
 				E564312C07769C9000E2C4A3,
-				E5D4465F0777288400A1577D,
-				E5D4467207772B2C00A1577D,
 				E5D471270778E33C007731C3,
+				E5F8C9690795232900D1DAF2,
+				E5F8C9E50795235E00D1DAF2,
+				E5F8C9E60795235E00D1DAF2,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2406,10 +2439,209 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E5D471280778E362007731C3,
+				E5F8C9E70795239600D1DAF2,
+				E5F8C9E80795239600D1DAF2,
+				E5F8C9E90795239600D1DAF2,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E572837307939E0200C1F239 = {
+			buildActionMask = 8;
+			comments = "1. Removes extraneous Makefiles from CelestiaResources\n2. Creates writable disk image containing Celestia.app, CelestiaResources, and readme files.";
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/Celestia/$(PRODUCT_NAME).app",
+			);
+			isa = PBXShellScriptBuildPhase;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PRODUCT_NAME).dmg",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "find $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
+		};
+		E572837407939F2500C1F239 = {
+			buildActionMask = 8;
+			dstPath = Celestia/CelestiaResources;
+			dstSubfolderSpec = 16;
+			files = (
+				E572837D0793A03800C1F239,
+				E572837E0793A03800C1F239,
+				E572837F0793A03800C1F239,
+				E57283800793A03800C1F239,
+				E57283810793A03800C1F239,
+				E57283820793A03800C1F239,
+				E57283830793A03800C1F239,
+				E57283840793A03800C1F239,
+				E57283850793A03800C1F239,
+				E572837C0793A02800C1F239,
+				E572837B0793A01B00C1F239,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E572837B0793A01B00C1F239 = {
+			fileRef = E5874AB507771D8E009630D8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E572837C0793A02800C1F239 = {
+			fileRef = F5626A0002A49B8B014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E572837D0793A03800C1F239 = {
+			fileRef = F5626A0202A49B8B014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E572837E0793A03800C1F239 = {
+			fileRef = E5874AB607771D8E009630D8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E572837F0793A03800C1F239 = {
+			fileRef = F5626A0402A49B8B014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57283800793A03800C1F239 = {
+			fileRef = F5626A0502A49B8B014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57283810793A03800C1F239 = {
+			fileRef = E5874AB707771D8E009630D8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57283820793A03800C1F239 = {
+			fileRef = E5818E43077902950064934D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57283830793A03800C1F239 = {
+			fileRef = F5626A0702A49B8B014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57283840793A03800C1F239 = {
+			fileRef = F5626A0802A49B8B014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57283850793A03800C1F239 = {
+			fileRef = E5874AB807771D8E009630D8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E572838D0793DBB500C1F239 = {
+			fileRef = E564312E07769C9000E2C4A3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57283980793F82A00C1F239 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = AUTHORS;
+			path = ../AUTHORS;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E57283990793F82A00C1F239 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = ChangeLog;
+			path = ../ChangeLog;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E572839A0793F82A00C1F239 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = COPYING;
+			path = ../COPYING;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E572839B0793F84000C1F239 = {
+			fileRef = E57283980793F82A00C1F239;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E572839C0793F84000C1F239 = {
+			fileRef = E57283990793F82A00C1F239;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E572839D0793F84000C1F239 = {
+			fileRef = E572839A0793F82A00C1F239;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E572839E0793F91300C1F239 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = "README for Mac OS X.txt";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E572839F0793F91D00C1F239 = {
+			fileRef = E572839E0793F91300C1F239;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57283A00793F93500C1F239 = {
+			buildActionMask = 8;
+			dstPath = Celestia;
+			dstSubfolderSpec = 16;
+			files = (
+				E57283AE0793FC7E00C1F239,
+				E572839B0793F84000C1F239,
+				E572838D0793DBB500C1F239,
+				E572839C0793F84000C1F239,
+				E572839D0793F84000C1F239,
+				E572839F0793F91D00C1F239,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E57283AD0793FC7300C1F239 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = README;
+			path = ../README;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E57283AE0793FC7E00C1F239 = {
+			fileRef = E57283AD0793FC7300C1F239;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		E5818E43077902950064934D = {
 			isa = PBXFileReference;
@@ -2450,6 +2682,66 @@
 			path = ../textures;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
+		};
+		E589B6D9078AC511005B8DD9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = glshader.cpp;
+			path = ../src/celengine/glshader.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E589B6DA078AC511005B8DD9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = glshader.h;
+			path = ../src/celengine/glshader.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E589B6DB078AC511005B8DD9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = shadermanager.cpp;
+			path = ../src/celengine/shadermanager.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E589B6DC078AC511005B8DD9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = shadermanager.h;
+			path = ../src/celengine/shadermanager.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E589B6DD078AC511005B8DD9 = {
+			fileRef = E589B6D9078AC511005B8DD9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E589B6DE078AC511005B8DD9 = {
+			fileRef = E589B6DA078AC511005B8DD9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E589B6DF078AC511005B8DD9 = {
+			fileRef = E589B6DB078AC511005B8DD9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E589B6E0078AC511005B8DD9 = {
+			fileRef = E589B6DC078AC511005B8DD9;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		E5B615060777307F001BB2BF = {
 			isa = PBXFileReference;
@@ -2520,28 +2812,6 @@
 			settings = {
 			};
 		};
-		E5D446580777278200A1577D = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = liblua.a;
-			path = lib/liblua.a;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		E5D4465E0777288400A1577D = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = liblualib.a;
-			path = lib/liblualib.a;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		E5D4465F0777288400A1577D = {
-			fileRef = E5D4465E0777288400A1577D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		E5D446640777291700A1577D = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -2568,12 +2838,6 @@
 		};
 		E5D446670777291700A1577D = {
 			fileRef = E5D446650777291700A1577D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		E5D4467207772B2C00A1577D = {
-			fileRef = E5D446580777278200A1577D;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2626,7 +2890,53 @@
 			settings = {
 			};
 		};
-		E5D471280778E362007731C3 = {
+		E5F8C9690795232900D1DAF2 = {
+			fileRef = E5D471260778E33C007731C3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5F8C9E30795235E00D1DAF2 = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = liblua.dylib;
+			path = Frameworks/liblua.dylib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5F8C9E40795235E00D1DAF2 = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = liblualib.dylib;
+			path = Frameworks/liblualib.dylib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5F8C9E50795235E00D1DAF2 = {
+			fileRef = E5F8C9E30795235E00D1DAF2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5F8C9E60795235E00D1DAF2 = {
+			fileRef = E5F8C9E40795235E00D1DAF2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5F8C9E70795239600D1DAF2 = {
+			fileRef = E5F8C9E30795235E00D1DAF2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5F8C9E80795239600D1DAF2 = {
+			fileRef = E5F8C9E40795235E00D1DAF2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5F8C9E90795239600D1DAF2 = {
 			fileRef = E5D471260778E33C007731C3;
 			isa = PBXBuildFile;
 			settings = {
@@ -2877,6 +3187,10 @@
 		};
 		F51C6D52029596B4014901DC = {
 			children = (
+				E589B6D9078AC511005B8DD9,
+				E589B6DA078AC511005B8DD9,
+				E589B6DB078AC511005B8DD9,
+				E589B6DC078AC511005B8DD9,
 				E56431490776D5C800E2C4A3,
 				E564314A0776D5C800E2C4A3,
 				E564314B0776D5C800E2C4A3,
