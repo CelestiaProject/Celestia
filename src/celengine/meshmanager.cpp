@@ -131,8 +131,6 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
 
 Model* LoadCelestiaMesh(const string& filename)
 {
-    return NULL;
-#if 0
     ifstream meshFile(filename.c_str(), ios::in);
     if (!meshFile.good())
     {
@@ -191,13 +189,19 @@ Model* LoadCelestiaMesh(const string& filename)
 
     delete meshDefValue;
 
-    // cout << "Read Celestia mesh " << filename << " successfully!\n";
+    Model* model = new Model();
+    SphereMesh* sphereMesh = new SphereMesh(params.size,
+                                            (int) params.rings, (int) params.slices,
+                                            NoiseDisplacementFunc,
+                                            (void*) &params);
+    if (sphereMesh != NULL)
+    {
+        Mesh* mesh = sphereMesh->convertToMesh();
+        model->addMesh(mesh);
+        delete sphereMesh;
+    }
 
-    return new SphereMesh(params.size,
-                          (int) params.rings, (int) params.slices,
-                          NoiseDisplacementFunc,
-                          (void*) &params);
-#endif
+    return model;
 }
 
 
