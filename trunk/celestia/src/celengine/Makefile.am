@@ -33,6 +33,7 @@ libcelengine_a_SOURCES = \
 	parser.cpp \
 	regcombine.cpp \
 	render.cpp \
+        samporbit.cpp \
 	selection.cpp \
 	simulation.cpp \
 	solarsys.cpp \
