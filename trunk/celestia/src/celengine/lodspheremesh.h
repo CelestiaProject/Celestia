@@ -50,8 +50,14 @@ public:
  private:
     struct RenderInfo
     {
-        RenderInfo(int _step, unsigned int _attr, const Frustum& _frustum) :
-            step(_step), attributes(_attr), frustum(_frustum)
+        RenderInfo(int _step,
+                   unsigned int _attr,
+                   const Frustum& _frustum,
+                   const GLContext& _context) :
+            step(_step),
+            attributes(_attr),
+            frustum(_frustum),
+            context(_context)
         {};
 
         int step;                 
@@ -59,6 +65,7 @@ public:
         const Frustum& frustum;   // frustum, for culling
         Point3f fp[8];            // frustum points, for culling
         int texLOD[MAX_SPHERE_MESH_TEXTURES];
+        const GLContext& context;
     };
 
     int renderPatches(int phi0, int theta0, 
@@ -69,9 +76,6 @@ public:
     void renderSection(int phi0, int theta0, int extent, const RenderInfo&);
 
     float* vertices;
-    float* normals;
-    float* texCoords[MAX_SPHERE_MESH_TEXTURES];
-    float* tangents;
 
     int maxVertices;
     int vertexSize;
