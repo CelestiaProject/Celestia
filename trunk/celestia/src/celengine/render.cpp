@@ -1460,6 +1460,8 @@ static void renderBumpMappedMesh(Texture& bumpTexture,
                                  const Frustum& frustum,
                                  float lod)
 {
+    Texture* textures[4];
+
     // We're doing our own per-pixel lighting, so disable GL's lighting
     glDisable(GL_LIGHTING);
 
@@ -1467,7 +1469,7 @@ static void renderBumpMappedMesh(Texture& bumpTexture,
     // texture and color should have been set up already by the
     // caller.
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
-                      NULL);
+                      NULL, 0);
 
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
@@ -1530,8 +1532,9 @@ static void renderBumpMappedMesh(Texture& bumpTexture,
     glMatrixMode(GL_MODELVIEW);
     EXTglActiveTextureARB(GL_TEXTURE0_ARB);
 
+    textures[0] = &bumpTexture;
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
-                      &bumpTexture);
+                      textures, 1);
 
     // Reset the second texture unit
     EXTglActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1555,6 +1558,8 @@ static void renderSmoothMesh(Texture& baseTexture,
                              const Frustum& frustum,
                              bool invert = false)
 {
+    Texture* textures[4];
+
     // We're doing our own per-pixel lighting, so disable GL's lighting
     glDisable(GL_LIGHTING);
 
@@ -1615,8 +1620,9 @@ static void renderSmoothMesh(Texture& baseTexture,
     glMatrixMode(GL_MODELVIEW);
     EXTglActiveTextureARB(GL_TEXTURE0_ARB);
 
+    textures[0] = &baseTexture;
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
-                      &baseTexture);
+                      textures, 1);
 
     // Reset the second texture unit
     EXTglActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1891,7 +1897,7 @@ static void renderSphereFragmentShader(const RenderInfo& ri,
     else
     {
         glEnable(GL_LIGHTING);
-        lodSphere->render(frustum, ri.lod, NULL);
+        lodSphere->render(frustum, ri.lod, NULL, 0);
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -1901,6 +1907,8 @@ static void renderSphereFragmentShader(const RenderInfo& ri,
 static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
                                                 const Frustum& frustum)
 {
+    Texture* textures[4];
+
     if (ri.baseTex == NULL)
     {
         glDisable(GL_TEXTURE_2D);
@@ -1960,7 +1968,7 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
                                       ri.sunColor * ri.color);
         lodSphere->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
                           Mesh::VertexProgParams, frustum, ri.lod,
-                          ri.baseTex);
+                          ri.baseTex, ri.bumpTex);
         DisableCombiners();
 
         // Render a specular pass
@@ -1974,9 +1982,11 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
             vp::parameter(20, Color::Black);
             vp::parameter(32, Color::Black);
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
+            
+            textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
             lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
                               frustum, ri.lod,
-                              ri.glossTex != NULL ? ri.glossTex : ri.baseTex);
+                              textures, 1);
             DisableCombiners();
             glDisable(GL_BLEND);
         }
@@ -1988,9 +1998,12 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
         SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
         unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
             Mesh::VertexProgParams;
+#if 0
         if (ri.glossTex != NULL)
             attributes |= Mesh::TexCoords1;
-        lodSphere->render(attributes, frustum, ri.lod, ri.baseTex);
+#endif
+        lodSphere->render(attributes, frustum, ri.lod,
+                          ri.baseTex, ri.glossTex);
         DisableCombiners();
     }
     else
