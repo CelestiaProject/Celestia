@@ -14,10 +14,19 @@
 # same objects are assigned radii of 1.2 and 1 jupiters, respectively. Cold objects have a radius
 # of 1 jupiter unless M.sin(i)<0.7, at which point radius is reduced to 0.8 jupiters.
 #
-# Spin-down times to synchronous rotation have been estimated using the formula by Guillot et al
-# in 'Giant Planets at Small Orbital Distances' The Astrophysical Journal 1996; 459: L35-L38.
-# Planets with spin-down times less than a billion years have been assigned sun-synchronous
-# rotations. Others have been assigned a 10-hour rotation period, analogous to Jupiter.
+# Planetary rotation periods have been estimated from the tidal spin-down formulae in 'Solar
+# System Dynamics' by CD Murray & SF Dermott, Cambridge University Press 1999, ISBN 0521 57597 4.
+# The results are highly approximate - spin-down time is fixed at 4 billion years, and initial
+# rotation rate has been set to 10 hours for objects with M.sin(i) > 0.3 jupiters (by analogy
+# with Jupiter and Saturn), and 17 hours for lower-mass objects (by analogy with Uranus and
+# Neptune). The various bulk planetary parameters necessary for the calculation have been set
+# equal to those of Jupiter. Bodies in close orbits are generally in captured synchronous
+# rotation, while outer-system bodies retain their primordial rotation periods. Objects with
+# intermediate orbits are tidally slowed to various extents.
+#
+# Oblateness is consistent with the estimated mass, radius and rotation period, if the bulk
+# parameters are assumed to be similar to those of Jupiter. An oblateness value is assigned
+# if the calculated value exceeds 0.01.
 #
 # Planets with an estimated temperature greater than 1000K have been assigned a glowing nightside
 # texture.
@@ -42,8 +51,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    460     # M.sin(i) = 1.45 jupiters
-	Radius  86100
+	Mass       460     # M.sin(i) = 1.45 jupiters
+	Radius     86100
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-56.html"
 
@@ -60,6 +70,7 @@
 	Obliquity             89   # guess, to match inclination
 	EquatorAscendingNode 260   # guess, to match ascending node
 
+	# likely to be in captured synchronous rotation
 }
 
 "b" "OGLE-TR-113"
@@ -75,8 +86,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    430     # M.sin(i) = 1.35 jupiters
-	Radius  75600
+	Mass       430     # M.sin(i) = 1.35 jupiters
+	Radius     75600
 
 	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-113.html"
 
@@ -87,12 +98,13 @@
 		Inclination     112
 		AscendingNode   162
 		ArgOfPericenter 21
-		MeanAnomaly     339
+		MeanAnomaly     335
 	}
 
 	Obliquity            112   # guess, to match inclination
 	EquatorAscendingNode 162   # guess, to match ascending node
 
+	# likely to be in captured synchronous rotation
 }
 
 "b" "OGLE-TR-132"
@@ -108,8 +120,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    320     # M.sin(i) = 1.01 jupiters
-	Radius  80500
+	Mass       320     # M.sin(i) = 1.01 jupiters
+	Radius     80500
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-132.html"
 
@@ -120,12 +133,13 @@
 		Inclination     112
 		AscendingNode   161
 		ArgOfPericenter 21
-		MeanAnomaly     79
+		MeanAnomaly     196
 	}
 
 	Obliquity            112   # guess, to match inclination
 	EquatorAscendingNode 161   # guess, to match ascending node
 
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 73256"
@@ -133,8 +147,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    590     # M.sin(i) = 1.85 jupiters
-	Radius  84000
+	Mass       590     # M.sin(i) = 1.85 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/HD73256.html"
 
@@ -145,6 +159,8 @@
 		ArgOfPericenter 207
 		MeanAnomaly     83
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 83443"
@@ -152,8 +168,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    130     # M.sin(i) = 0.41 jupiters
-	Radius  98000
+	Mass       130     # M.sin(i) = 0.41 jupiters
+	Radius     98000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD83443.html"
 
@@ -164,6 +181,8 @@
 		ArgOfPericenter 303
 		MeanAnomaly     286
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 46375"
@@ -171,8 +190,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    80     # M.sin(i) = 0.249 jupiters
-	Radius  98000
+	Mass       80     # M.sin(i) = 0.249 jupiters
+	Radius     98000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD83443.html"
 
@@ -183,6 +203,8 @@
 		ArgOfPericenter 241
 		MeanAnomaly     273
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 179949"
@@ -190,8 +212,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    310     # M.sin(i) = 0.98 jupiters
-	Radius  98000
+	Mass       310     # M.sin(i) = 0.98 jupiters
+	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/HD179949.html"
 
@@ -201,6 +223,8 @@
 		Eccentricity    0
 		MeanAnomaly     357
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 187123"
@@ -208,8 +232,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    170     # M.sin(i) = 0.52 jupiters
-	Radius  98000
+	Mass       170     # M.sin(i) = 0.52 jupiters
+	Radius     98000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD187123.html"
 
@@ -220,6 +245,8 @@
 		ArgOfPericenter 59
 		MeanAnomaly     136
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 120136"   # Tau Boo
@@ -227,8 +254,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    1310     # M.sin(i) = 4.13 jupiters
-	Radius  84000
+	Mass       1310     # M.sin(i) = 4.13 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/tau-Boo.html"
 
@@ -239,14 +266,16 @@
 		ArgOfPericenter 353
 		MeanAnomaly     26
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 330075"
 {
 	Texture "gasgiant.jpg"
 
-	Mass    240     # M.sin(i) = 0.76 jupiters
-	Radius  98000
+	Mass       240     # M.sin(i) = 0.76 jupiters
+	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/HD330075.html"
 
@@ -257,6 +286,8 @@
 		ArgOfPericenter 90
 		MeanAnomaly     46
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "TYC 5503-946-1"   # BD-10 3166
@@ -267,8 +298,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    150     # M.sin(i) = 0.48 jupiters
-	Radius  98000
+	Mass       150     # M.sin(i) = 0.48 jupiters
+	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/BD-10_3166.html"
 
@@ -279,6 +310,8 @@
 		ArgOfPericenter 288
 		MeanAnomaly     8
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 75289"
@@ -286,8 +319,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    130     # M.sin(i) = 0.42 jupiters
-	Radius  98000
+	Mass       130     # M.sin(i) = 0.42 jupiters
+	Radius     98000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD75289.html"
 
@@ -298,6 +332,8 @@
 		ArgOfPericenter 100
 		MeanAnomaly     145
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 209458"   # V376 Peg
@@ -310,8 +346,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    220     # M.sin(i) = 0.69 jupiters
-	Radius  100100
+	Mass       220     # M.sin(i) = 0.69 jupiters
+	Radius     100100
 
 	InfoURL "http://www.obspm.fr/encycl/HD209458.html"
 
@@ -328,6 +364,7 @@
 	Obliquity             72   # guess, to match inclination
 	EquatorAscendingNode 325   # guess, to match ascending node
 
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 76700"
@@ -335,8 +372,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    60     # M.sin(i) = 0.197 jupiters
-	Radius  98000
+	Mass       60     # M.sin(i) = 0.197 jupiters
+	Radius     98000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD76700.html"
 
@@ -346,6 +384,8 @@
 		Eccentricity    0
 		MeanAnomaly     227
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 217014"   # 51 Peg
@@ -353,8 +393,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    150     # M.sin(i) = 0.468 jupiters
-	Radius  98000
+	Mass       150     # M.sin(i) = 0.468 jupiters
+	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/51Peg.html"
 
@@ -365,6 +405,8 @@
 		ArgOfPericenter 84
 		MeanAnomaly     353
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 9826"   # Ups And
@@ -372,8 +414,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    220     # M.sin(i) = 0.69 jupiters
-	Radius  98000
+	Mass       220     # M.sin(i) = 0.69 jupiters
+	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/ups-And.html"
 
@@ -384,14 +426,17 @@
 		ArgOfPericenter 202
 		MeanAnomaly     65
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "c" "HD 9826"   # Ups And
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    600     # M.sin(i) = 1.89 jupiters
-	Radius  70000
+	Mass       600     # M.sin(i) = 1.89 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/ups-And.html"
 
@@ -403,15 +448,16 @@
 		MeanAnomaly     264
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "d" "HD 9826"   # Ups And
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1190     # M.sin(i) = 3.75 jupiters
-	Radius  70000
+	Mass       1190     # M.sin(i) = 3.75 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/ups-And.html"
 
@@ -423,7 +469,7 @@
 		MeanAnomaly     55
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 49674"
@@ -431,8 +477,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    40     # M.sin(i) = 0.12 jupiters
-	Radius  98000
+	Mass       40     # M.sin(i) = 0.12 jupiters
+	Radius     98000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD49674.html"
 
@@ -443,6 +490,8 @@
 		ArgOfPericenter 190
 		MeanAnomaly     97
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 68988"
@@ -450,8 +499,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    600     # M.sin(i) = 1.9 jupiters
-	Radius  84000
+	Mass       600     # M.sin(i) = 1.9 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/HD68988.html"
 
@@ -460,6 +509,8 @@
 		SemiMajorAxis   0.071
 		Eccentricity    0.14
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 168746"
@@ -467,8 +518,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    70     # M.sin(i) = 0.23 jupiters
-	Radius  98000
+	Mass       70     # M.sin(i) = 0.23 jupiters
+	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/HD168746.html"
 
@@ -479,6 +530,8 @@
 		ArgOfPericenter 22
 		MeanAnomaly     276
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 217107"
@@ -486,8 +539,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    410     # M.sin(i) = 1.28 jupiters
-	Radius  84000
+	Mass       410     # M.sin(i) = 1.28 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/HD217107.html"
 
@@ -498,6 +551,8 @@
 		ArgOfPericenter 100
 		MeanAnomaly     356
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 162020"
@@ -505,8 +560,8 @@
 	Texture "browndwarf.jpg"
 	Emissive true
 
-	Mass    4370     # M.sin(i) = 13.75 jupiters
-	Radius  70000
+	Mass       4370     # M.sin(i) = 13.75 jupiters
+	Radius     70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD162020.html"
 
@@ -517,14 +572,16 @@
 		ArgOfPericenter 331
 		MeanAnomaly     43
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 130322"
 {
 	Texture "gasgiant.jpg"
 
-	Mass    340     # M.sin(i) = 1.08 jupiters
-	Radius  84000
+	Mass       340     # M.sin(i) = 1.08 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/HD130322.html"
 
@@ -535,14 +592,16 @@
 		ArgOfPericenter 155
 		MeanAnomaly     7
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 108147"
 {
 	Texture "gasgiant.jpg"
 
-	Mass    130     # M.sin(i) = 0.41 jupiters
-	Radius  98000
+	Mass       130     # M.sin(i) = 0.41 jupiters
+	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/HD108147.html"
 
@@ -553,6 +612,8 @@
 		ArgOfPericenter 271
 		MeanAnomaly     261
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 38529"
@@ -560,8 +621,8 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    250     # M.sin(i) = 0.78 jupiters
-	Radius  98000
+	Mass       250     # M.sin(i) = 0.78 jupiters
+	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/HD38529.html"
 
@@ -572,6 +633,8 @@
 		ArgOfPericenter 264
 		MeanAnomaly     205
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "c" "HD 38529"
@@ -580,8 +643,8 @@
 	Emissive true
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
-	Mass    4040     # M.sin(i) = 12.7 jupiters
-	Radius  70000
+	Mass       4040     # M.sin(i) = 12.7 jupiters
+	Radius     70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD38529.html"
 
@@ -593,15 +656,15 @@
 		MeanAnomaly     244
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 75732"   # Rho Cnc
 {
 	Texture "gasgiant.jpg"
 
-	Mass    270     # M.sin(i) = 0.84 jupiters
-	Radius  84000
+	Mass       270     # M.sin(i) = 0.84 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
@@ -612,14 +675,16 @@
 		ArgOfPericenter 317
 		MeanAnomaly     122
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "c" "HD 75732"   # Rho Cnc
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    70     # M.sin(i) = 0.21 jupiters
-	Radius  56000
+	Mass       70     # M.sin(i) = 0.21 jupiters
+	Radius     56000
 
 	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
@@ -631,15 +696,16 @@
 		MeanAnomaly     67
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  1063 # tidal slowing significant
 }
 
 "d" "HD 75732"   # Rho Cnc
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1290     # M.sin(i) = 4.05 jupiters
-	Radius  70000
+	Mass       1290     # M.sin(i) = 4.05 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
@@ -651,15 +717,15 @@
 		MeanAnomaly     277
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 13445"   # Gliese 86
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1280     # M.sin(i) = 4.01 jupiters
-	Radius  70000
+	Mass       1280     # M.sin(i) = 4.01 jupiters
+	Radius     70000
 
 	InfoURL "http://www.obspm.fr/encycl/Gl86.html"
 
@@ -671,15 +737,15 @@
 		MeanAnomaly     98
 	}
 
-	RotationPeriod 10     # guess
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 195019"
 {
 	Texture "gasgiant.jpg"
 
-	Mass    1090     # M.sin(i) = 3.43 jupiters
-	Radius  84000
+	Mass       1090     # M.sin(i) = 3.43 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/HD195019.html"
 
@@ -691,15 +757,15 @@
 		MeanAnomaly     183
 	}
 
-	RotationPeriod 10     # guess
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 6434"
 {
 	Texture "gasgiant.jpg"
 
-	Mass    150     # M.sin(i) = 0.48 jupiters
-	Radius  84000
+	Mass       150     # M.sin(i) = 0.48 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/HD6434.html"
 
@@ -710,14 +776,16 @@
 		ArgOfPericenter 230
 		MeanAnomaly     175
 	}
+
+	# likely to be in captured synchronous rotation
 }
 
 "b" "HD 192263"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    230     # M.sin(i) = 0.72 jupiters
-	Radius  70000
+	Mass       230     # M.sin(i) = 0.72 jupiters
+	Radius     70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD192263.html"
 
@@ -728,15 +796,15 @@
 		MeanAnomaly     59
 	}
 
-	RotationPeriod 10     # guess
+	# likely to be in captured synchronous rotation
 }
 
 "c" "Gliese 876"   # IL Aqr
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    180     # M.sin(i) = 0.56 jupiters
-	Radius  56000
+	Mass       180     # M.sin(i) = 0.56 jupiters
+	Radius     56000
 
 	InfoURL "http://www.obspm.fr/encycl/Gl876.html"
 
@@ -748,15 +816,16 @@
 		MeanAnomaly     91
 	}
 
-	RotationPeriod 10     # guess
+	# likely to be in captured synchronous rotation
 }
 
 "b" "Gliese 876"   # IL Aqr
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    600     # M.sin(i) = 1.89 jupiters
-	Radius  70000
+	Mass       600     # M.sin(i) = 1.89 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/Gl876.html"
 
@@ -768,15 +837,15 @@
 		MeanAnomaly     208
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  11 # tidal slowing significant
 }
 
 "b" "HD 143761"   # Rho CrB
 {
 	Texture "gasgiant.jpg"
 
-	Mass    330     # M.sin(i) = 1.04 jupiters
-	Radius  84000
+	Mass       330     # M.sin(i) = 1.04 jupiters
+	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/rho-Crb.html"
 
@@ -788,15 +857,16 @@
 		MeanAnomaly     190
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  959 # tidal slowing significant
 }
 
 "b" "HD 74156"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    590     # M.sin(i) = 1.86 jupiters
-	Radius  70000
+	Mass       590     # M.sin(i) = 1.86 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD74156.html"
 
@@ -808,15 +878,16 @@
 		MeanAnomaly     198
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  11 # tidal slowing significant
 }
 
 "c" "HD 74156"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1960     # M.sin(i) = 6.17 jupiters
-	Radius  70000
+	Mass       1960     # M.sin(i) = 6.17 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD74156.html"
 
@@ -828,15 +899,37 @@
 		MeanAnomaly     114
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
+}
+
+"b" "HD 37605"
+{
+	Texture "jupiterlike.jpg"
+
+	Mass       900     # M.sin(i) = 2.84 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://www.obspm.fr/encycl/HD37605.html"
+
+	EllipticalOrbit {
+		Period          0.1485
+		SemiMajorAxis   0.26
+		Eccentricity    0.737
+		ArgOfPericenter 26
+		MeanAnomaly     99
+	}
+
+	RotationPeriod  11 # tidal slowing significant
 }
 
 "b" "HD 168443"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2290     # M.sin(i) = 7.2 jupiters
-	Radius  70000
+	Mass       2290     # M.sin(i) = 7.2 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD168443.html"
 
@@ -848,7 +941,7 @@
 		MeanAnomaly     278
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "c" "HD 168443"
@@ -856,8 +949,8 @@
 	Texture "browndwarf.jpg"
 	Emissive true
 
-	Mass    5440     # M.sin(i) = 17.1 jupiters
-	Radius  70000
+	Mass       5440     # M.sin(i) = 17.1 jupiters
+	Radius     70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD168443.html"
 
@@ -869,15 +962,16 @@
 		MeanAnomaly     263
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 3651"   # 54 Psc
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    60     # M.sin(i) = 0.2 jupiters
-	Radius  56000
+	Mass       60     # M.sin(i) = 0.2 jupiters
+	Radius     56000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD3651.html"
 
@@ -889,15 +983,16 @@
 		MeanAnomaly     225
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  31 # tidal slowing significant
 }
 
 "b" "HD 121504"
 {
 	Texture "gasgiant.jpg"
 
-	Mass    280     # M.sin(i) = 0.89 jupiters
-	Radius  84000
+	Mass       280     # M.sin(i) = 0.89 jupiters
+	Radius     84000
+	Oblateness 0.08
 
 	InfoURL "http://www.obspm.fr/encycl/HD121504.html"
 
@@ -909,15 +1004,16 @@
 		MeanAnomaly     260
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  12 # tidal slowing significant
 }
 
 "b" "HIP 94075"   # HD 178911 B
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2000     # M.sin(i) = 6.292 jupiters
-	Radius  70000
+	Mass       2000     # M.sin(i) = 6.292 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD178911B.html"
 
@@ -929,15 +1025,16 @@
 		MeanAnomaly     117
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 16141"   # 79 Cet
 {
 	Texture "gasgiant.jpg"
 
-	Mass    70     # M.sin(i) = 0.23 jupiters
-	Radius  84000
+	Mass       70     # M.sin(i) = 0.23 jupiters
+	Radius     84000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD16141.html"
 
@@ -949,7 +1046,7 @@
 		MeanAnomaly     3
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  42 # tidal slowing significant
 }
 
 "b" "HD 114762"
@@ -958,8 +1055,9 @@
 	Emissive true
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
-	Mass    3500     # M.sin(i) = 11.02 jupiters
-	Radius  70000
+	Mass       3500     # M.sin(i) = 11.02 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD114762.html"
 
@@ -969,15 +1067,16 @@
 		Eccentricity    0.334
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 80606"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1080     # M.sin(i) = 3.41 jupiters
-	Radius  70000
+	Mass       1080     # M.sin(i) = 3.41 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD80606.html"
 
@@ -989,16 +1088,16 @@
 		MeanAnomaly     59
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
-
 
 "b" "HD 117176"   # 70 Vir
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2370     # M.sin(i) = 7.44 jupiters
-	Radius  70000
+	Mass       2370     # M.sin(i) = 7.44 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/70Vir.html"
 
@@ -1010,15 +1109,16 @@
 		MeanAnomaly     322
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 216770"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    210     # M.sin(i) = 0.65 jupiters
-	Radius  56000
+	Mass       210     # M.sin(i) = 0.65 jupiters
+	Radius     56000
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD216770.html"
 
@@ -1030,15 +1130,16 @@
 		MeanAnomaly     175
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 52265"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    360     # M.sin(i) = 1.13 jupiters
-	Radius  70000
+	Mass       360     # M.sin(i) = 1.13 jupiters
+	Radius     70000
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD52265.html"
 
@@ -1050,15 +1151,16 @@
 		MeanAnomaly     356
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 1237"   # GJ 3021
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1020     # M.sin(i) = 3.21 jupiters
-	Radius  70000
+	Mass       1020     # M.sin(i) = 3.21 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/GJ3021.html"
 
@@ -1070,15 +1172,16 @@
 		MeanAnomaly     59
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 37124"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    240     # M.sin(i) = 0.75 jupiters
-	Radius  70000
+	Mass       240     # M.sin(i) = 0.75 jupiters
+	Radius     70000
+	Oblateness 0.08
 
 	InfoURL "http://www.obspm.fr/encycl/HD37124.html"
 
@@ -1090,15 +1193,16 @@
 		MeanAnomaly     68
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "c" "HD 37124"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    380     # M.sin(i) = 1.2 jupiters
-	Radius  70000
+	Mass       380     # M.sin(i) = 1.2 jupiters
+	Radius     70000
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD37124.html"
 
@@ -1110,7 +1214,7 @@
 		MeanAnomaly     282
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 219449"   # Psi1 Aqr
@@ -1118,8 +1222,9 @@
 	Texture "gasgiant.jpg"
 	NightTexture "gasgiantnight.jpg"
 
-	Mass    920     # M.sin(i) = 2.9 jupiters
-	Radius  84000
+	Mass       920     # M.sin(i) = 2.9 jupiters
+	Radius     84000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD219449.html"
 
@@ -1128,15 +1233,16 @@
 		SemiMajorAxis   0.3
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  11 # tidal slowing significant
 }
 
 "b" "HD 73526"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    950     # M.sin(i) = 3 jupiters
-	Radius  70000
+	Mass       950     # M.sin(i) = 3 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD73526.html"
 
@@ -1148,15 +1254,16 @@
 		MeanAnomaly     43
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 104985"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2000     # M.sin(i) = 6.3 jupiters
-	Radius  70000
+	Mass       2000     # M.sin(i) = 6.3 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD104985.html"
 
@@ -1168,15 +1275,16 @@
 		MeanAnomaly     75
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 82943"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    520     # M.sin(i) = 1.63 jupiters
-	Radius  70000
+	Mass       520     # M.sin(i) = 1.63 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/HD82943.html"
 
@@ -1188,15 +1296,16 @@
 		MeanAnomaly     294
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "c" "HD 82943"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    280     # M.sin(i) = 0.88 jupiters
-	Radius  70000
+	Mass       280     # M.sin(i) = 0.88 jupiters
+	Radius     70000
+	Oblateness 0.07
 
 	InfoURL "http://www.obspm.fr/encycl/HD82943.html"
 
@@ -1206,15 +1315,16 @@
 		Eccentricity    0.54
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 169830"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    920     # M.sin(i) = 2.88 jupiters
-	Radius  70000
+	Mass       920     # M.sin(i) = 2.88 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD169830.html"
 
@@ -1226,15 +1336,16 @@
 		MeanAnomaly     117
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "c" "HD 169830"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1280     # M.sin(i) = 4.04 jupiters
-	Radius  70000
+	Mass       1280     # M.sin(i) = 4.04 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD169830.html"
 
@@ -1246,15 +1357,16 @@
 		MeanAnomaly     194
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 8574"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    710     # M.sin(i) = 2.23 jupiters
-	Radius  70000
+	Mass       710     # M.sin(i) = 2.23 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD8574.html"
 
@@ -1264,15 +1376,16 @@
 		Eccentricity    0.4
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 89744"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2290     # M.sin(i) = 7.2 jupiters
-	Radius  70000
+	Mass       2290     # M.sin(i) = 7.2 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD89744.html"
 
@@ -1284,15 +1397,16 @@
 		MeanAnomaly     56
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 134987"   # 23 Lib
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    500     # M.sin(i) = 1.58 jupiters
-	Radius  70000
+	Mass       500     # M.sin(i) = 1.58 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/HD134987.html"
 
@@ -1304,15 +1418,16 @@
 		MeanAnomaly     242
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 40979"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1060     # M.sin(i) = 3.32 jupiters
-	Radius  70000
+	Mass       1060     # M.sin(i) = 3.32 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD40979.html"
 
@@ -1324,15 +1439,16 @@
 		MeanAnomaly     21
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 12661"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    730     # M.sin(i) = 2.3 jupiters
-	Radius  70000
+	Mass       730     # M.sin(i) = 2.3 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD12661.html"
 
@@ -1344,15 +1460,16 @@
 		MeanAnomaly     29
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "c" "HD 12661"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    500     # M.sin(i) = 1.57 jupiters
-	Radius  70000
+	Mass       500     # M.sin(i) = 1.57 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/HD12661.html"
 
@@ -1364,15 +1481,16 @@
 		MeanAnomaly     91
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 150706"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    320     # M.sin(i) = 1 jupiters
-	Radius  70000
+	Mass       320     # M.sin(i) = 1 jupiters
+	Radius     70000
+	Oblateness 0.06
 
 	InfoURL "http://www.obspm.fr/encycl/HD150706.html"
 
@@ -1384,15 +1502,16 @@
 		MeanAnomaly     312
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 59686"
 {
 	Texture "gasgiant.jpg"
 
-	Mass    2070     # M.sin(i) = 6.5 jupiters
-	Radius  84000
+	Mass       2070     # M.sin(i) = 6.5 jupiters
+	Radius     84000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD59686.html"
 
@@ -1401,15 +1520,16 @@
 		SemiMajorAxis   0.8
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 17051"   # Iot Hor / HR 810
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    620     # M.sin(i) = 1.94 jupiters
-	Radius  70000
+	Mass       620     # M.sin(i) = 1.94 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HR810.html"
 
@@ -1421,15 +1541,16 @@
 		MeanAnomaly     32
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 142"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    320     # M.sin(i) = 1 jupiters
-	Radius  70000
+	Mass       320     # M.sin(i) = 1 jupiters
+	Radius     70000
+	Oblateness 0.06
 
 	InfoURL "http://www.obspm.fr/encycl/HD142.html"
 
@@ -1439,15 +1560,16 @@
 		Eccentricity    0.38
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 92788"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1230     # M.sin(i) = 3.86 jupiters
-	Radius  70000
+	Mass       1230     # M.sin(i) = 3.86 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD92788.html"
 
@@ -1459,15 +1581,16 @@
 		MeanAnomaly     272
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 28185"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1780     # M.sin(i) = 5.6 jupiters
-	Radius  70000
+	Mass       1780     # M.sin(i) = 5.6 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD28185.html"
 
@@ -1479,15 +1602,16 @@
 		MeanAnomaly     70
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 142415"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    520     # M.sin(i) = 1.62 jupiters
-	Radius  70000
+	Mass       520     # M.sin(i) = 1.62 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/HD142415.html"
 
@@ -1499,15 +1623,16 @@
 		MeanAnomaly     24
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 177830"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    410     # M.sin(i) = 1.28 jupiters
-	Radius  70000
+	Mass       410     # M.sin(i) = 1.28 jupiters
+	Radius     70000
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD177830.html"
 
@@ -1519,15 +1644,16 @@
 		MeanAnomaly     143
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 108874"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    530     # M.sin(i) = 1.65 jupiters
-	Radius  70000
+	Mass       530     # M.sin(i) = 1.65 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/HD108874.html"
 
@@ -1539,15 +1665,16 @@
 		MeanAnomaly     237
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 4203"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    530     # M.sin(i) = 1.65 jupiters
-	Radius  70000
+	Mass       530     # M.sin(i) = 1.65 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/HD4203.html"
 
@@ -1559,15 +1686,16 @@
 		MeanAnomaly     49
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 128311"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    840     # M.sin(i) = 2.63 jupiters
-	Radius  70000
+	Mass       840     # M.sin(i) = 2.63 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD128311.html"
 
@@ -1579,15 +1707,16 @@
 		MeanAnomaly     232
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 27442"   # Eps Ret
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    410     # M.sin(i) = 1.28 jupiters
-	Radius  70000
+	Mass       410     # M.sin(i) = 1.28 jupiters
+	Radius     70000
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD27442.html"
 
@@ -1599,15 +1728,16 @@
 		MeanAnomaly     82
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 210277"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    390     # M.sin(i) = 1.24 jupiters
-	Radius  70000
+	Mass       390     # M.sin(i) = 1.24 jupiters
+	Radius     70000
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD210277.html"
 
@@ -1619,15 +1749,16 @@
 		MeanAnomaly     98
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 19994"   # 94 Cet
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    640     # M.sin(i) = 2 jupiters
-	Radius  70000
+	Mass       640     # M.sin(i) = 2 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD19994.html"
 
@@ -1639,15 +1770,16 @@
 		MeanAnomaly     167
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 20367"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    340     # M.sin(i) = 1.07 jupiters
-	Radius  70000
+	Mass       340     # M.sin(i) = 1.07 jupiters
+	Radius     70000
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD20367.html"
 
@@ -1659,15 +1791,16 @@
 		MeanAnomaly     186
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 114783"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    290     # M.sin(i) = 0.9 jupiters
-	Radius  70000
+	Mass       290     # M.sin(i) = 0.9 jupiters
+	Radius     70000
+	Oblateness 0.07
 
 	InfoURL "http://www.obspm.fr/encycl/HD114783.html"
 
@@ -1677,15 +1810,16 @@
 		Eccentricity    0.1
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 147513"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    320     # M.sin(i) = 1 jupiters
-	Radius  70000
+	Mass       320     # M.sin(i) = 1 jupiters
+	Radius     70000
+	Oblateness 0.06
 
 	InfoURL "http://www.obspm.fr/encycl/HD147513.html"
 
@@ -1697,15 +1831,16 @@
 		MeanAnomaly     275
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 137759"   # Iot Dra
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2750     # M.sin(i) = 8.64 jupiters
-	Radius  70000
+	Mass       2750     # M.sin(i) = 8.64 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HIP75458.html"
 
@@ -1717,15 +1852,16 @@
 		MeanAnomaly     52
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 222582"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1620     # M.sin(i) = 5.11 jupiters
-	Radius  70000
+	Mass       1620     # M.sin(i) = 5.11 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD222582.html"
 
@@ -1737,15 +1873,16 @@
 		MeanAnomaly     142
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 65216"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    390     # M.sin(i) = 1.21 jupiters
-	Radius  70000
+	Mass       390     # M.sin(i) = 1.21 jupiters
+	Radius     70000
+	Oblateness 0.05
 
 	InfoURL "http://www.obspm.fr/encycl/HD65216.html"
 
@@ -1757,15 +1894,16 @@
 		MeanAnomaly     100
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 160691"   # Mu Ara
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    540     # M.sin(i) = 1.7 jupiters
-	Radius  70000
+	Mass       540     # M.sin(i) = 1.7 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD160691.html"
 
@@ -1777,15 +1915,16 @@
 		MeanAnomaly     331
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "c" "HD 160691"   # Mu Ara
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    320     # M.sin(i) = 1 jupiters
-	Radius  70000
+	Mass       320     # M.sin(i) = 1 jupiters
+	Radius     70000
+	Oblateness 0.06
 
 	InfoURL "http://www.obspm.fr/encycl/HD160691.html"
 
@@ -1797,15 +1936,16 @@
 		MeanAnomaly     341
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 141937"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    3080     # M.sin(i) = 9.7 jupiters
-	Radius  70000
+	Mass       3080     # M.sin(i) = 9.7 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD141937.html"
 
@@ -1817,15 +1957,16 @@
 		MeanAnomaly     193
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 41004"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    730     # M.sin(i) = 2.3 jupiters
-	Radius  70000
+	Mass       730     # M.sin(i) = 2.3 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD41004A.html"
 
@@ -1837,15 +1978,16 @@
 		MeanAnomaly     157
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 47536"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1580     # M.sin(i) = 4.96 jupiters
-	Radius  70000
+	Mass       1580     # M.sin(i) = 4.96 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD47536.html"
 
@@ -1857,15 +1999,16 @@
 		MeanAnomaly     333
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 23079"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    830     # M.sin(i) = 2.61 jupiters
-	Radius  70000
+	Mass       830     # M.sin(i) = 2.61 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD23079.html"
 
@@ -1877,15 +2020,16 @@
 		MeanAnomaly     174
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 186427"   # 16 Cyg B
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    540     # M.sin(i) = 1.69 jupiters
-	Radius  70000
+	Mass       540     # M.sin(i) = 1.69 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/16CygB.html"
 
@@ -1897,15 +2041,16 @@
 		MeanAnomaly     93
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 4208"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    250     # M.sin(i) = 0.8 jupiters
-	Radius  70000
+	Mass       250     # M.sin(i) = 0.8 jupiters
+	Radius     70000
+	Oblateness 0.07
 
 	InfoURL "http://www.obspm.fr/encycl/HD4208.html"
 
@@ -1917,15 +2062,16 @@
 		MeanAnomaly     313
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 114386"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    320     # M.sin(i) = 0.99 jupiters
-	Radius  70000
+	Mass       320     # M.sin(i) = 0.99 jupiters
+	Radius     70000
+	Oblateness 0.06
 
 	InfoURL "http://www.obspm.fr/encycl/HD114386.html"
 
@@ -1937,15 +2083,16 @@
 		MeanAnomaly     348
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 222404"   # Gam Cep
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    510     # M.sin(i) = 1.59 jupiters
-	Radius  70000
+	Mass       510     # M.sin(i) = 1.59 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/gamma-Ceph.html"
 
@@ -1957,15 +2104,16 @@
 		MeanAnomaly     77
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 213240"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1430     # M.sin(i) = 4.5 jupiters
-	Radius  70000
+	Mass       1430     # M.sin(i) = 4.5 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD213240.html"
 
@@ -1977,15 +2125,16 @@
 		MeanAnomaly     9
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 10647"   # q1 Eri
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    290     # M.sin(i) = 0.91 jupiters
-	Radius  70000
+	Mass       290     # M.sin(i) = 0.91 jupiters
+	Radius     70000
+	Oblateness 0.06
 
 	InfoURL "http://www.obspm.fr/encycl/HD10647.html"
 
@@ -1997,15 +2146,16 @@
 		MeanAnomaly     112
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 10697"   # 109 Psc
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1950     # M.sin(i) = 6.12 jupiters
-	Radius  70000
+	Mass       1950     # M.sin(i) = 6.12 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD10697.html"
 
@@ -2017,15 +2167,16 @@
 		MeanAnomaly     36
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 95128"   # 47 UMa
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    810     # M.sin(i) = 2.54 jupiters
-	Radius  70000
+	Mass       810     # M.sin(i) = 2.54 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/47Uma.html"
 
@@ -2037,15 +2188,16 @@
 		MeanAnomaly     33
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "c" "HD 95128"   # 47 UMa
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    240     # M.sin(i) = 0.76 jupiters
-	Radius  70000
+	Mass       240     # M.sin(i) = 0.76 jupiters
+	Radius     70000
+	Oblateness 0.08
 
 	InfoURL "http://www.obspm.fr/encycl/47Uma.html"
 
@@ -2057,15 +2209,16 @@
 		MeanAnomaly     25
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 190228"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1590     # M.sin(i) = 4.99 jupiters
-	Radius  70000
+	Mass       1590     # M.sin(i) = 4.99 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD190228.html"
 
@@ -2077,15 +2230,16 @@
 		MeanAnomaly     99
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 114729"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    260     # M.sin(i) = 0.82 jupiters
-	Radius  70000
+	Mass       260     # M.sin(i) = 0.82 jupiters
+	Radius     70000
+	Oblateness 0.07
 
 	InfoURL "http://www.obspm.fr/encycl/HD114729.html"
 
@@ -2097,15 +2251,16 @@
 		MeanAnomaly     341
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 111232"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2160     # M.sin(i) = 6.8 jupiters
-	Radius  70000
+	Mass       2160     # M.sin(i) = 6.8 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD111232.html"
 
@@ -2117,15 +2272,16 @@
 		MeanAnomaly     99
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 2039"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1540     # M.sin(i) = 4.85 jupiters
-	Radius  70000
+	Mass       1540     # M.sin(i) = 4.85 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD2039.html"
 
@@ -2137,7 +2293,7 @@
 		MeanAnomaly     213
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 136118"
@@ -2146,8 +2302,8 @@
 	Emissive true
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
-	Mass    3780     # M.sin(i) = 11.9 jupiters
-	Radius  70000
+	Mass       3780     # M.sin(i) = 11.9 jupiters
+	Radius     70000
 
 	InfoURL "http://www.obspm.fr/encycl/HD136118.html"
 
@@ -2159,15 +2315,16 @@
 		MeanAnomaly     284
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 50554"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1560     # M.sin(i) = 4.9 jupiters
-	Radius  70000
+	Mass       1560     # M.sin(i) = 4.9 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD50554.html"
 
@@ -2178,15 +2335,16 @@
 		ArgOfPericenter 192
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 196050"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    950     # M.sin(i) = 3 jupiters
-	Radius  70000
+	Mass       950     # M.sin(i) = 3 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD196050.html"
 
@@ -2198,15 +2356,16 @@
 		MeanAnomaly     143
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 216437"   # Rho Ind
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    670     # M.sin(i) = 2.1 jupiters
-	Radius  70000
+	Mass       670     # M.sin(i) = 2.1 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD216437.html"
 
@@ -2218,15 +2377,16 @@
 		MeanAnomaly     240
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 216435"   # Tau1 Gru
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    470     # M.sin(i) = 1.49 jupiters
-	Radius  70000
+	Mass       470     # M.sin(i) = 1.49 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/HD216435.html"
 
@@ -2238,15 +2398,16 @@
 		MeanAnomaly     214
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 106252"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2170     # M.sin(i) = 6.81 jupiters
-	Radius  70000
+	Mass       2170     # M.sin(i) = 6.81 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD106252.html"
 
@@ -2257,15 +2418,16 @@
 		ArgOfPericenter 199
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 23596"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2290     # M.sin(i) = 7.19 jupiters
-	Radius  70000
+	Mass       2290     # M.sin(i) = 7.19 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD23596.html"
 
@@ -2277,15 +2439,16 @@
 		MeanAnomaly     350
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 145675"   # 14 Her
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    1510     # M.sin(i) = 4.74 jupiters
-	Radius  70000
+	Mass       1510     # M.sin(i) = 4.74 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/Gl614.html"
 
@@ -2297,15 +2460,16 @@
 		MeanAnomaly     111
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 39091"   # Pi Men
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    3290     # M.sin(i) = 10.35 jupiters
-	Radius  70000
+	Mass       3290     # M.sin(i) = 10.35 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD39091.html"
 
@@ -2317,15 +2481,16 @@
 		MeanAnomaly     259
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 72659"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    810     # M.sin(i) = 2.55 jupiters
-	Radius  70000
+	Mass       810     # M.sin(i) = 2.55 jupiters
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://www.obspm.fr/encycl/HD72659.html"
 
@@ -2337,15 +2502,16 @@
 		MeanAnomaly     262
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 70642"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    640     # M.sin(i) = 2 jupiters
-	Radius  70000
+	Mass       640     # M.sin(i) = 2 jupiters
+	Radius     70000
+	Oblateness 0.03
 
 	InfoURL "http://www.obspm.fr/encycl/HD70642.html"
 
@@ -2357,15 +2523,16 @@
 		MeanAnomaly     327
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 33636"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2950     # M.sin(i) = 9.28 jupiters
-	Radius  70000
+	Mass       2950     # M.sin(i) = 9.28 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD33636.html"
 
@@ -2377,15 +2544,16 @@
 		MeanAnomaly     49
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 22049"   # Eps Eri
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    270     # M.sin(i) = 0.86 jupiters
-	Radius  70000
+	Mass       270     # M.sin(i) = 0.86 jupiters
+	Radius     70000
+	Oblateness 0.07
 
 	InfoURL "http://www.obspm.fr/encycl/eps-Eri.html"
 
@@ -2397,15 +2565,16 @@
 		MeanAnomaly     347
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "c" "HD 22049"   # Eps Eri
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    30     # M.sin(i) = 0.1 jupiters
-	Radius  56000
+	Mass       30     # M.sin(i) = 0.1 jupiters
+	Radius     56000
+	Oblateness 0.1
 
 	InfoURL "http://www.obspm.fr/encycl/eps-Eri.html"
 
@@ -2415,15 +2584,16 @@
 		Eccentricity    0.3
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  17 # plausible guess
 }
 
 "b" "HD 30177"
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    2920     # M.sin(i) = 9.17 jupiters
-	Radius  70000
+	Mass       2920     # M.sin(i) = 9.17 jupiters
+	Radius     70000
+	Oblateness 0.01
 
 	InfoURL "http://www.obspm.fr/encycl/HD30177.html"
 
@@ -2435,15 +2605,16 @@
 		MeanAnomaly     8
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
 "b" "HD 190360"   # Gliese 777
 {
 	Texture "jupiterlike.jpg"
 
-	Mass    420     # M.sin(i) = 1.33 jupiters
-	Radius  70000
+	Mass       420     # M.sin(i) = 1.33 jupiters
+	Radius     70000
+	Oblateness 0.04
 
 	InfoURL "http://www.obspm.fr/encycl/Gl777A.html"
 
@@ -2455,6 +2626,6 @@
 		MeanAnomaly     91
 	}
 
-	RotationPeriod 10     # guess
+	RotationPeriod  10 # plausible guess
 }
 
