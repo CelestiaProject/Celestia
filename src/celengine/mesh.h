@@ -88,13 +88,28 @@ class Mesh
 
         bool validate() const;
 
+        VertexDescription& operator=(const VertexDescription&);
+
         uint32 stride;
         uint32 nAttributes;
         VertexAttribute* attributes;
 
     private:
+        void clearSemanticMap();
+        void buildSemanticMap();
+        
         // Vertex attributes indexed by semantic
         VertexAttribute semanticMap[SemanticMax];
+    };
+
+    enum TextureSemantic
+    {
+        DiffuseMap             =  0,
+        NormalMap              =  1,
+        SpecularMap            =  2,
+        EmissiveMap            =  3,
+        TextureSemanticMax     =  4,
+        InvalidTextureSemantic = -1,
     };
 
     class Material
@@ -107,8 +122,7 @@ class Mesh
         Color specular;
         float specularPower;
         float opacity;
-        ResourceHandle tex0;
-        ResourceHandle tex1;
+        ResourceHandle maps[TextureSemanticMax];
     };
 
     enum PrimitiveGroupType
@@ -160,6 +174,7 @@ class Mesh
     static PrimitiveGroupType      parsePrimitiveGroupType(const std::string&);
     static VertexAttributeSemantic parseVertexAttributeSemantic(const std::string&);
     static VertexAttributeFormat   parseVertexAttributeFormat(const std::string&);
+    static TextureSemantic         parseTextureSemantic(const std::string&);
     static uint32                  getVertexAttributeSize(VertexAttributeFormat);
 
  private:

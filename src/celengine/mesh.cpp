@@ -29,10 +29,11 @@ Mesh::Material::Material() :
     emissive(0.0f, 0.0f, 0.0f),
     specular(0.0f, 0.0f, 0.0f),
     specularPower(1.0f),
-    opacity(1.0f),
-    tex0(InvalidResource),
-    tex1(InvalidResource)
+    opacity(1.0f)
 {
+    for (int i = 0; i < TextureSemanticMax; i++)
+        maps[i] = InvalidResource;
+        
 }
 
 
@@ -46,12 +47,9 @@ Mesh::VertexDescription::VertexDescription(uint32 _stride,
     if (nAttributes != 0)
     {
         attributes = new VertexAttribute[nAttributes];
-
-        uint32 i;
-        for (i = 0; i < nAttributes; i++)
+        for (uint32 i = 0; i < nAttributes; i++)
             attributes[i] = _attributes[i];
-        for (i = 0; i < nAttributes; i++)
-            semanticMap[attributes[i].semantic] = attributes[i];
+        buildSemanticMap();
     }
 }
 
@@ -64,13 +62,31 @@ Mesh::VertexDescription::VertexDescription(const VertexDescription& desc) :
     if (nAttributes != 0)
     {
         attributes = new VertexAttribute[nAttributes];
-
-        uint32 i;
-        for (i = 0; i < nAttributes; i++)
+        for (uint32 i = 0; i < nAttributes; i++)
             attributes[i] = desc.attributes[i];
-        for (i = 0; i < nAttributes; i++)
-            semanticMap[attributes[i].semantic] = attributes[i];
+        buildSemanticMap();
     }
+}
+
+
+Mesh::VertexDescription&
+Mesh::VertexDescription::operator=(const Mesh::VertexDescription& desc)
+{
+    if (nAttributes < desc.nAttributes)
+    {
+        if (attributes != NULL)
+            delete[] attributes;
+        attributes = new VertexAttribute[desc.nAttributes];
+    }
+
+    nAttributes = desc.nAttributes;
+    stride = desc.stride;
+    for (uint32 i = 0; i < nAttributes; i++)
+        attributes[i] = desc.attributes[i];
+    clearSemanticMap();
+    buildSemanticMap();
+
+    return *this;
 }
 
 
@@ -102,6 +118,22 @@ Mesh::VertexDescription::validate() const
 Mesh::VertexDescription::~VertexDescription()
 {
     delete[] attributes;
+}
+
+
+void
+Mesh::VertexDescription::buildSemanticMap()
+{
+    for (uint32 i = 0; i < nAttributes; i++)
+        semanticMap[attributes[i].semantic] = attributes[i];
+}
+
+
+void
+Mesh::VertexDescription::clearSemanticMap()
+{
+    for (uint32 i = 0; i < SemanticMax; i++)
+        semanticMap[i] = VertexAttribute();
 }
 
 
@@ -420,11 +452,11 @@ Mesh::parseVertexAttributeSemantic(const string& name)
     else if (name == "texcoord0")
         return Texture0;
     else if (name == "texcoord1")
-        return Texture0;
+        return Texture1;
     else if (name == "texcoord2")
-        return Texture0;
+        return Texture2;
     else if (name == "texcoord3")
-        return Texture0;
+        return Texture3;
     else
         return InvalidSemantic;
 }
@@ -445,6 +477,22 @@ Mesh::parseVertexAttributeFormat(const string& name)
         return UByte4;
     else
         return InvalidFormat;
+}
+
+
+Mesh::TextureSemantic
+Mesh::parseTextureSemantic(const string& name)
+{
+    if (name == "texture0")
+        return DiffuseMap;
+    else if (name == "normalmap")
+        return NormalMap;
+    else if (name == "specularmap")
+        return SpecularMap;
+    else if (name == "emissivemap")
+        return EmissiveMap;
+    else
+        return InvalidTextureSemantic;
 }
 
 
