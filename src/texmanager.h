@@ -20,13 +20,13 @@ class TextureManager : public ResourceManager
 {
  public:
     TextureManager() : ResourceManager() {};
-    TextureManager(string _baseDir) : ResourceManager(_baseDir) {};
+    TextureManager(std::string _baseDir) : ResourceManager(_baseDir) {};
     TextureManager(char* _baseDir) : ResourceManager(_baseDir) {};
     ~TextureManager();
 
-    bool find(string name, CTexture**);
-    CTexture* load(std::string name);
-    CTexture* loadBumpMap(std::string name);
+    bool find(const std::string& name, CTexture**);
+    CTexture* load(const std::string& name);
+    CTexture* loadBumpMap(const std::string& name);
 };
 
 #endif // _TEXMANAGER_H_
