@@ -1,6 +1,6 @@
 Celestia:  A real-time visual space simulation
 
-Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+Copyright (C) 2001-2002, Chris Laurel <claurel@shatters.net>
 
 --
 
@@ -130,6 +130,8 @@ O  : Toggle planet orbits
 Ctrl+A : Toggle atmospheres
 I  : Toggle cloud textures
 Ctrl+L : Toggle night side planet maps (light pollution)
+Ctrl+S : Toggle between textured and point stars
+Ctrl+E : Toggle rendering of eclipse shadows
 ;  : Show an earth-based equatorial coordinate sphere
 [  : Decrease limiting magnitude (fewer stars visible)
 ]  : Increase limiting magnitude (more stars visible)
@@ -310,13 +312,20 @@ with fictional terrain added to fill in gaps.  The model of the Galileo
 spacecraft is also from David Seal's site (though it was converter from
 Inventor to 3DS format.)
 
-The Earth, Mars, Moon, and Pluto textures and bump maps are all from
+The Mars, Moon, and Pluto textures and bump maps are all from
 James Hastings-Trew's collection.  Some of the prettiest planet maps
 around are at http://apollo.spaceports.com/~jhasting/
 
 The Venus, Saturn, and Saturn's rings textures are from Bjorn Jonsson.
 His site is http://www.mmedia.is/~bjj/ and is an excellent resource
 for solar system rendering.
+
+The Earth texture was created by NASA using data from the MODIS instrument
+aboard the Terra satellite.  Further information is available from
+http://earthobservatory.nasa.gov/Newsroom/BlueMarble/
+
+The textures for the Uranian satellites were created by Ivan Rivera from
+JPL data.  His Celestia page is http://bruckner.homelinux.net/celestia.html
 
 The lower resolution textures were all converted from their higher resolution
 Versions using Gimp.
