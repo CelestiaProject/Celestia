@@ -56,16 +56,17 @@ class Renderer
                 const Selection& sel);
     
     enum {
-        NoLabels            = 0x00,
-        StarLabels          = 0x01,
-        PlanetLabels        = 0x02,
-        MoonLabels          = 0x04,
-        ConstellationLabels = 0x08,
-        GalaxyLabels        = 0x10,
-        AsteroidLabels      = 0x20,
-        SpacecraftLabels    = 0x40,
-        LocationLabels      = 0x80,
-        BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels),
+        NoLabels            = 0x000,
+        StarLabels          = 0x001,
+        PlanetLabels        = 0x002,
+        MoonLabels          = 0x004,
+        ConstellationLabels = 0x008,
+        GalaxyLabels        = 0x010,
+        AsteroidLabels      = 0x020,
+        SpacecraftLabels    = 0x040,
+        LocationLabels      = 0x080,
+        CometLabels         = 0x100,
+        BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
 
     enum {
@@ -75,7 +76,7 @@ class Renderer
         ShowGalaxies        = 0x0004,
         ShowDiagrams        = 0x0008,
         ShowCloudMaps       = 0x0010,
-        ShowOrbits          = 0x0020,
+        ShowPlanetOrbits    = 0x0020,
         ShowCelestialSphere = 0x0040,
         ShowNightMaps       = 0x0080,
         ShowAtmospheres     = 0x0100,
@@ -87,6 +88,15 @@ class Renderer
         ShowAutoMag         = 0x4000,
         ShowCometTails      = 0x8000,
         ShowMarkers         = 0x10000,
+        ShowMoonOrbits      = 0x20000,
+        ShowAsteroidOrbits  = 0x40000,
+        ShowCometOrbits     = 0x80000,
+        ShowSpacecraftOrbits= 0x100000,
+        ShowOrbitMask       = (ShowPlanetOrbits | ShowMoonOrbits | ShowAsteroidOrbits | ShowCometOrbits | ShowSpacecraftOrbits),
+
+        // Used for compatibility with older versions of Celestia that
+        // rendered only planet and moon orbits.
+        ShowOrbits          = (ShowPlanetOrbits | ShowMoonOrbits),
     };
 
     int getRenderFlags() const;
