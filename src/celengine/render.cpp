@@ -2067,26 +2067,34 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                 v = (skyContour[j].v * (1.0f - u) + zenith * u) * r;
             Point3f p = center + v;
 
+
             Vec3f viewDir(p.x, p.y, p.z);
             viewDir.normalize();
             float cosSunAngle = viewDir * sunDirection;
             float cosAltitude = viewDir * skyContour[j].eyeDir;
+            float brightness = 1.0f;
             float coloration = 0.0f;
-            if (sunset > 0.0f && cosSunAngle > 0.7f && cosAltitude > 0.98f)
+            if (lit)
             {
-                coloration =  (1.0f / 0.30f) * (cosSunAngle - 0.70f);
-                coloration *= 50.0f * (cosAltitude - 0.98f);
-                coloration *= sunset;
-            }   
+                if (sunset > 0.0f && cosSunAngle > 0.7f && cosAltitude > 0.98f)
+                {
+                    coloration =  (1.0f / 0.30f) * (cosSunAngle - 0.70f);
+                    coloration *= 50.0f * (cosAltitude - 0.98f);
+                    coloration *= sunset;
+                }   
             
-            cosSunAngle = (skyContour[j].v * sunDirection) / skyContour[j].centerDist;
-            float brightness = 0.0f;
-            if (cosSunAngle > -0.2f)
-            {
-                if (cosSunAngle < 0.3f)
-                    brightness = (cosSunAngle + 0.2f) * 2.0f;
+                cosSunAngle = (skyContour[j].v * sunDirection) / skyContour[j].centerDist;
+                if (cosSunAngle > -0.2f)
+                {
+                    if (cosSunAngle < 0.3f)
+                        brightness = (cosSunAngle + 0.2f) * 2.0f;
+                    else
+                        brightness = 1.0f;
+                }
                 else
-                    brightness = 1.0f;
+                {
+                    brightness = 0.0f;
+                }
             }
 
             vtx->x = p.x;
@@ -2113,10 +2121,11 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 #endif
 
             atten = 1.0f - hh;
-            brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             Vec3f color = (1.0f - hh) * botColor + hh * topColor;
+            brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             if (coloration != 0.0f)
                 color = (1.0f - coloration) * color + coloration * sunsetColor;
+
             Color(brightness * color.x,
                   brightness * color.y,
                   brightness * color.z,
