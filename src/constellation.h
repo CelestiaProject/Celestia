@@ -15,6 +15,7 @@ class Constellation
 {
 public:
     static Constellation *getConstellation(unsigned int);
+    static Constellation *getConstellation(const std::string&);
 
     std::string getName();
     std::string getGenitive();
