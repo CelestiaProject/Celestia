@@ -26,7 +26,8 @@ using namespace std;
 
 struct Sample
 {
-    float t, x, y, z;
+    double t;
+    float x, y, z;
 };
 
 bool operator<(const Sample& a, const Sample& b)
@@ -76,7 +77,7 @@ void SampledOrbit::addSample(double t, double x, double y, double z)
     samp.x = (float) x;
     samp.y = (float) y;
     samp.z = (float) z;
-    samp.t = (float) t;
+    samp.t = t;
     samples.insert(samples.end(), samp);
 }
 
@@ -107,7 +108,7 @@ Point3d SampledOrbit::computePosition(double jd) const
     else
     {
         Sample samp;
-        samp.t = (float) jd;
+        samp.t = jd;
         vector<Sample>::const_iterator iter = lower_bound(samples.begin(),
                                                           samples.end(),
                                                           samp);
@@ -126,6 +127,8 @@ Point3d SampledOrbit::computePosition(double jd) const
             pos = Point3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
                           Mathd::lerp(t, (double) s0.y, (double) s1.y),
                           Mathd::lerp(t, (double) s0.z, (double) s1.z));
+            // printf("%d %lf %lf %lf\n", astro::Date(jd).hour, pos.x, pos.y, pos.z);
+            // printf("%d %lf %lf %lf\n", astro::Date(jd).hour, t, s0.t, s1.t);
         }
         else
         {
