@@ -517,6 +517,47 @@ void CommandSet::process(ExecutionEnvironment& env)
 }
 
 
+////////////////
+// Mark object command
+
+CommandMark::CommandMark(const string& _target, Color _color, float _size) :
+    target(_target),
+    color(_color),
+    size(_size)
+{
+}
+
+void CommandMark::process(ExecutionEnvironment& env)
+{
+    Selection sel = env.getSimulation()->findObjectFromPath(target);
+    if (sel.empty())
+        return;
+
+    if (env.getSimulation()->getUniverse() != NULL)
+        env.getSimulation()->getUniverse()->markObject(sel, size, color, 1);
+}
+
+
+
+////////////////
+// Unmark object command
+
+CommandUnmark::CommandUnmark(const string& _target) :
+    target(_target)
+{
+}
+
+void CommandUnmark::process(ExecutionEnvironment& env)
+{
+    Selection sel = env.getSimulation()->findObjectFromPath(target);
+    if (sel.empty())
+        return;
+
+    if (env.getSimulation()->getUniverse() != NULL)
+        env.getSimulation()->getUniverse()->unmarkObject(sel, 1);
+}
+
+
 
 ////////////////
 // Preload textures command
