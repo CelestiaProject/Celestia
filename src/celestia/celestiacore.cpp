@@ -1226,6 +1226,11 @@ void CelestiaCore::charEntered(char c)
         }
         break;
 
+    case '&':
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::LocationLabels);
+        notifyWatchers(LabelFlagsChanged);
+        break;
+
     case '*':
         addToHistory();
 	sim->reverseObserverOrientation();
