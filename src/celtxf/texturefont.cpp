@@ -158,7 +158,7 @@ bool TextureFont::buildTexture()
 
     if (texName != 0)
         glDeleteTextures(1, (const GLuint*) &texName);
-    glGenTextures(1, (const GLuint*) &texName);
+    glGenTextures(1, (GLuint*) &texName);
     if (texName == 0)
     {
         DPRINTF(0, "Failed to allocate texture object for font.\n");
