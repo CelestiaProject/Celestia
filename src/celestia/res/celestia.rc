@@ -92,8 +92,8 @@ BEGIN
             MENUITEM "&Medium",                     ID_RENDER_AMBIENTLIGHT_MEDIUM
 
         END
-        MENUITEM "Use Pixel Shaders\tCtrl+P",   ID_RENDER_PIXEL_SHADERS
-        MENUITEM "Use Vertex Shaders\tCtrl+V",  ID_RENDER_VERTEX_SHADERS
+        MENUITEM "Use Pi&xel Shaders\tCtrl+P",   ID_RENDER_PIXEL_SHADERS
+        MENUITEM "Use &Vertex Shaders\tCtrl+V",  ID_RENDER_VERTEX_SHADERS
     END
     POPUP "&Locations"
     BEGIN
