@@ -160,6 +160,10 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showSpacecraftLabels")->connect(showSpacecraftLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showSpacecraftLabelsCheck->setChecked(labelMode & Renderer::SpacecraftLabels);
 
+    QCheckBox* showLocationLabelsCheck = new QCheckBox(i18n("Locations"), labelGroup);
+    actionColl->action("showLocationLabels")->connect(showLocationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showLocationLabelsCheck->setChecked(labelMode & Renderer::LocationLabels);
+
     savedAmbientLightLevel = int(appCore->getRenderer()->getAmbientLightLevel() * 100);
     QGroupBox* ambientLightGroup = new QGroupBox(1, Qt::Vertical, i18n("Ambient Light"), vbox1);
     QSlider* ambientLightSlider = new QSlider(0, 25, 1, savedAmbientLightLevel, Qt::Horizontal, ambientLightGroup);

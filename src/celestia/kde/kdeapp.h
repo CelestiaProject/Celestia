@@ -129,6 +129,7 @@ public slots:
     void slotShowGalaxyLabels();
     void slotShowAsteroidLabels();
     void slotShowSpacecraftLabels();
+    void slotShowLocationLabels();
     void slotAmbientLightLevel(float l);
     void slotFaintestVisible(float m);
     void slotHudDetail(int l);
