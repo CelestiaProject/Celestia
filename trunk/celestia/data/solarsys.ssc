@@ -84,9 +84,9 @@
 
 	Atmosphere {
 		Height 60
-		Lower [ 0.5 0.5 0.65 ]
-		Upper [ 0.3 0.3 0.6 ]
-		Sky [ 0.3 0.6 0.9 ]
+		Lower [ 0.30 0.52 0.65 ]
+		Upper [ 0.26 0.47 0.84 ]
+		Sky [ 0.30 0.48 0.82 ]
 		CloudHeight 7
 		CloudSpeed 65
 		CloudMap "earth-clouds.png"
