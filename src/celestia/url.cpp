@@ -250,7 +250,7 @@ Url::Url(CelestiaCore* core, UrlType type) {
     selectedStr = getSelectionName(selected);
     if (selectedStr != "") urlStr += "&select=" + selectedStr;
 
-    fieldOfView = renderer->getFieldOfView();
+    fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
     timeScale = sim->getTimeScale();
     renderFlags = renderer->getRenderFlags();
     labelMode = renderer->getLabelMode();
@@ -382,7 +382,7 @@ void Url::goTo()
 
     sim->update(0.0);
     sim->setFrame(ref);
-    renderer->setFieldOfView(fieldOfView);
+    sim->getActiveObserver()->setFOV(degToRad(fieldOfView));
     sim->setTimeScale(timeScale);
     renderer->setRenderFlags(renderFlags);
     renderer->setLabelMode(labelMode);
