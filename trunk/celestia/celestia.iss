@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.3.2 pre10
+AppVerName=Celestia 1.3.2
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -106,6 +106,7 @@ Source: "textures\lores\epimetheus-lok.jpg";    DestDir: "{app}/textures/lores";
 Source: "textures\lores\eros.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\europa.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\europa-lok-mask.png";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\extrasolar-lok.jpg";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\ganymede.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\ganymede-lok-mask.png"; DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\gasgiant.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
