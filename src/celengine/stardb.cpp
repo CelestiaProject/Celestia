@@ -71,11 +71,38 @@ StarDatabase::~StarDatabase()
 
 
 // Used to sort stars by catalog number
-struct CatalogNumberPredicate
+struct CatalogNumberOrderingPredicate
 {
     int unused;
 
-    CatalogNumberPredicate() {};
+    CatalogNumberOrderingPredicate() {};
+
+    bool operator()(const Star& star0, const Star& star1) const
+    {
+        return (star0.getCatalogNumber() < star1.getCatalogNumber());
+    }
+};
+
+
+struct CatalogNumberEquivalencePredicate
+{
+    int unused;
+
+    CatalogNumberEquivalencePredicate() {};
+
+    bool operator()(const Star& star0, const Star& star1) const
+    {
+        return (star0.getCatalogNumber() == star1.getCatalogNumber());
+    }
+};
+
+
+// Used to sort star pointers by catalog number
+struct PtrCatalogNumberOrderingPredicate
+{
+    int unused;
+
+    PtrCatalogNumberOrderingPredicate() {};
 
     bool operator()(const Star* const & star0, const Star* const & star1) const
     {
@@ -92,7 +119,7 @@ Star* StarDatabase::find(uint32 catalogNumber) const
     Star** star = lower_bound(catalogNumberIndex,
                               catalogNumberIndex + nStars,
                               &refStar,
-                              CatalogNumberPredicate());
+                              PtrCatalogNumberOrderingPredicate());
 
     if (star != catalogNumberIndex + nStars &&
         (*star)->getCatalogNumber() == catalogNumber)
@@ -684,7 +711,7 @@ bool StarDatabase::loadBinary(istream& in)
         return false;
 
     DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
-    clog << nStars << " stars in database\n";
+    clog << nStars << " stars in binary database\n";
 
     return true;
 }
@@ -692,6 +719,19 @@ bool StarDatabase::loadBinary(istream& in)
 
 void StarDatabase::finish()
 {
+    // Eliminate duplicate stars; reverse the list so that for stars with
+    // identical catalog numbers, the most recently added one is kept.
+    reverse(stars, stars + nStars);
+    stable_sort(stars, stars + nStars, CatalogNumberOrderingPredicate());
+    Star* lastStar = unique(stars, stars + nStars,
+                            CatalogNumberEquivalencePredicate());
+
+    int nUniqueStars = lastStar - stars;
+    clog << "Total star count: " << nUniqueStars <<
+        " (" << (nStars - nUniqueStars) <<
+        " star(s) with duplicate catalog numbers deleted.)\n";
+    nStars = nUniqueStars;
+
     buildOctree();
     buildIndexes();
 }
@@ -742,7 +782,7 @@ void StarDatabase::buildIndexes()
         catalogNumberIndex[i] = &stars[i];
 
     sort(catalogNumberIndex, catalogNumberIndex + nStars,
-         CatalogNumberPredicate());
+         PtrCatalogNumberOrderingPredicate());
 }
 
 
