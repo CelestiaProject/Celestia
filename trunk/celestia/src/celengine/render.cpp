@@ -1858,6 +1858,7 @@ void Renderer::renderPlanet(const Body& body,
         if (useRescaleNormal)
         {
             glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
+            glLightColor(GL_LIGHT0, GL_SPECULAR, ri.sunColor);
         }
         else
         {
