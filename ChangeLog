@@ -335,5 +335,29 @@ Code:
 * Rewrote texture font code; texfont.cpp is gone, everything now in
   texturefont.cpp
 
+
 1.1.5
-* fixed problems with '--enable-debug' under Unix automake (dramsey)
+* Fixed problem with image capture function that saved skewed images for some
+  windows widths.
+* Changed field of view display to use minutes and seconds
+* Fixed display of time scale when time is reversed
+* Fixed jittering labels for stars distant from the sun
+* Fixed depth ordering problem that caused satellites to appear in front of
+  the horizon when viewed from the surface of Earth
+* Made the correct hemisphere of the Moon face Earth
+* Fixed Earth's rotation so that sunrise and sunset times are correct
+* Fixed picking so that clicking on a distance planet will never select one of
+  its satellites.
+* Improved orbit calculation code to properly compute eccentric anomaly
+* Render orbit outlines behind planets instead of in front of them
+* Made it possible for clouds to move relative to the ground
+* Eliminated star haloes that were visible in daylight
+* Added Uranus's ring system
+* Added Shrox's Mars Global Surveyor and Mars Odyssey models
+* Windows: save rendering and label settings
+* Windows: added movie capture feature
+* Windows: fixed disappearing mouse cursor bug
+* Windows: added slider for controlling number of stars displayed by
+  star browser.
+* Windows: vastly improved full screen support
+* Unix: fixed problems with '--enable-debug' under Unix automake (dramsey)
