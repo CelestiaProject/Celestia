@@ -136,7 +136,7 @@ File Overview
   The program used to munge the HIPPARCOS data set into the star database.
   If you wish to munge your own database, you will need to download a copy
   of the HIPPARCOS database, it may be found at the URL:
-  ftp://cdsarc.u-strabg.fr/cats/I/239
+  ftp://cdsarc.u-strasbg.fr/cats/I/239
   You will need the files hip_main.dat h_dm_com.dat hip_dm_o.da & tyc_main.dat
 
 
