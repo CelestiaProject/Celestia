@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include "mathlib.h"
+#include "util.h"
 #include "astro.h"
 #include "body.h"
 
@@ -270,7 +271,7 @@ Body* PlanetarySystem::find(string _name, bool deepSearch) const
 {
     for (int i = 0; i < satellites.size(); i++)
     {
-        if (satellites[i]->getName() == _name)
+        if (compareIgnoringCase(satellites[i]->getName(), _name) == 0)
         {
             return satellites[i];
         }
