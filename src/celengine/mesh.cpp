@@ -9,8 +9,10 @@
 
 #include "mesh.h"
 #include "rendcontext.h"
+#include "gl.h"
+#include "glext.h"
 #include <cassert>
-
+#include <iostream>
 using namespace std;
 
 
@@ -22,6 +24,25 @@ static size_t VertexAttributeFormatSizes[Mesh::FormatMax] =
      16, // Float4,
      4,  // UByte4
 };
+
+
+// Vertex buffer object support
+
+// VBO optimization is only worthwhile for large enough vertex lists
+static const unsigned int MinVBOSize = 4096;
+static bool VBOSupportTested = false;
+static bool VBOSupported = false;
+
+static bool isVBOSupported()
+{
+    if (!VBOSupportTested)
+    {
+        VBOSupportTested = true;
+        VBOSupported = ExtensionSupported("GL_ARB_vertex_buffer_object");
+    }
+
+    return VBOSupported;
+}
 
 
 Mesh::Material::Material() :
@@ -152,7 +173,9 @@ Mesh::PrimitiveGroup::~PrimitiveGroup()
 Mesh::Mesh() :
     vertexDesc(0, 0, NULL),
     nVertices(0),
-    vertices(NULL)
+    vertices(NULL),
+    vbObject(0),
+    vbInitialized(false)
 {
 }
 
@@ -167,6 +190,11 @@ Mesh::~Mesh()
 
     if (vertices != NULL)
         delete vertices;
+
+    if (vbObject != 0)
+    {
+        glx::glDeleteBuffersARB(1, &vbObject);
+    }
 }
 
 
@@ -407,7 +435,40 @@ void
 Mesh::render(const std::vector<const Material*>& materials,
              RenderContext& rc) const
 {
-    rc.setVertexArrays(vertexDesc, vertices);
+    // The first time the mesh is rendered, we will try and place the
+    // vertex data in a vertex buffer object and potentially get a huge
+    // rendering performance boost.  This can consume a great deal of
+    // memory, since we're duplicating the vertex data.  TODO: investigate
+    // the possibility of deleting the original data.  We can always map
+    // read-only later on for things like picking, but this could be a low
+    // performance path.
+    if (!vbInitialized && isVBOSupported())
+    {
+        vbInitialized = true;
+
+        if (nVertices * vertexDesc.stride > MinVBOSize)
+        {
+            glx::glGenBuffersARB(1, &vbObject);
+            if (vbObject != 0)
+            {
+                glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
+                glx::glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                                     nVertices * vertexDesc.stride,
+                                     vertices,
+                                     GL_STATIC_DRAW_ARB);
+            }
+        }
+    }
+
+    if (vbObject != 0)
+    {
+        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
+        rc.setVertexArrays(vertexDesc, NULL);
+    }
+    else
+    {
+        rc.setVertexArrays(vertexDesc, vertices);
+    }
 
     uint32 lastMaterial = ~0;
 
@@ -424,6 +485,9 @@ Mesh::render(const std::vector<const Material*>& materials,
         rc.setMaterial(mat);
         rc.drawGroup(**iter);
     }
+
+    if (vbObject != 0)
+        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 }
 
 
