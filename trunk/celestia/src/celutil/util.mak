@@ -24,7 +24,8 @@ OBJS=\
 	$(INTDIR)\filetype.obj \
 	$(INTDIR)\util.obj \
 	$(INTDIR)\windirectory.obj \
-	$(INTDIR)\wintimer.obj
+	$(INTDIR)\wintimer.obj \
+	$(INTDIR)\winutil.obj
 
 TARGETLIB = cel_utils.lib
 
