@@ -123,7 +123,7 @@ struct AppPreferences
     float ambientLight;
     int pixelShader;
     int vertexShader;
-    int timezoneBias;
+    int showLocalTime;
 };
 
 void SetMouseCursor(LPCTSTR lpCursor)
@@ -153,6 +153,70 @@ void ChangeDisplayMode()
 void RestoreDisplayMode()
 {
     ChangeDisplaySettings(0, 0);
+}
+
+
+static void acronymify(char* words, int length)
+{
+    int n = 0;
+    char lastChar = ' ';
+
+    for (int i = 0; i < length; i++)
+    {
+        if (lastChar == ' ')
+            words[n++] = words[i];
+        lastChar = words[i];
+    }
+    words[n] = '\0';
+}
+
+
+static void ShowUniversalTime(CelestiaCore* appCore)
+{
+    appCore->setTimeZoneBias(0);
+    appCore->setTimeZoneName("UTC");
+}
+
+
+static void ShowLocalTime(CelestiaCore* appCore)
+{
+    TIME_ZONE_INFORMATION tzi;
+    DWORD dst = GetTimeZoneInformation(&tzi);
+    if (dst != TIME_ZONE_ID_INVALID)
+    {
+        LONG dstBias = 0;
+        WCHAR* tzName = NULL;
+
+        if (dst == TIME_ZONE_ID_STANDARD)
+        {
+            dstBias = tzi.StandardBias;
+            tzName = tzi.StandardName;
+        }
+        else if (dst == TIME_ZONE_ID_DAYLIGHT)
+        {
+            dstBias = tzi.DaylightBias;
+            tzName = tzi.DaylightName;
+        }
+
+        // Convert from wide chars to a normal C string
+        char timeZoneName[64];
+        WideCharToMultiByte(CP_ACP, 0,
+                            tzName, -1,
+                            timeZoneName, 64,
+                            NULL, NULL);
+
+        // Not sure what GetTimeZoneInformation can return for the
+        // time zone name.  On my XP system, it returns the string
+        // "Pacific Standard Time", when we want PST . . .  So, we
+        // call acronymify to do the conversion.  If the time zone
+        // name doesn't contain any spaces, we assume that it's
+        // already in acronym form.
+        if (strchr(timeZoneName, ' ') != NULL)
+            acronymify(timeZoneName, strlen(timeZoneName));
+
+        appCore->setTimeZoneBias((tzi.Bias + dstBias) * -60);
+        appCore->setTimeZoneName(timeZoneName);
+    }
 }
 
 
@@ -1356,7 +1420,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
     GetRegistryValue(key, "PixelShader", &prefs.pixelShader, sizeof(prefs.pixelShader));
     GetRegistryValue(key, "VertexShader", &prefs.vertexShader, sizeof(prefs.vertexShader));
-    GetRegistryValue(key, "TimezoneBias", &prefs.timezoneBias, sizeof(prefs.timezoneBias));
+    GetRegistryValue(key, "ShowLocalTime", &prefs.showLocalTime, sizeof(prefs.showLocalTime));
 
     RegCloseKey(key);
 
@@ -1392,7 +1456,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryBin(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
     SetRegistryInt(key, "PixelShader", prefs.pixelShader);
     SetRegistryInt(key, "VertexShader", prefs.vertexShader);
-    SetRegistryInt(key, "TimezoneBias", prefs.timezoneBias);
+    SetRegistryInt(key, "ShowLocalTime", prefs.showLocalTime);
 
     RegCloseKey(key);
 
@@ -1419,7 +1483,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.ambientLight = appCore->getRenderer()->getAmbientLightLevel();
     prefs.pixelShader = appCore->getRenderer()->getFragmentShaderEnabled()?1:0;
     prefs.vertexShader = appCore->getRenderer()->getVertexShaderEnabled()?1:0;
-    prefs.timezoneBias = appCore->getTimeZoneBias();
+    prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
 
     return true;
 }
@@ -1731,7 +1795,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars | Renderer::ShowPlanets;
     prefs.vertexShader = 0;
     prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
-    prefs.timezoneBias = 0;
+    prefs.showLocalTime = 0;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Adjust window dimensions for screen dimensions
@@ -1823,7 +1887,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
     appCore->getRenderer()->setFragmentShaderEnabled(prefs.pixelShader == 1);
     appCore->getRenderer()->setVertexShaderEnabled(prefs.vertexShader == 1);
-    appCore->setTimeZoneBias(prefs.timezoneBias);
+    if (prefs.showLocalTime == 1)
+        ShowLocalTime(appCore);
+    else
+        ShowUniversalTime(appCore);
 
     BuildFavoritesMenu();
     syncMenusWithRendererState();
@@ -2298,23 +2365,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
         case ID_TIME_SHOWLOCAL:
             if (ToggleMenuItem(menuBar, ID_TIME_SHOWLOCAL))
-            {
-                TIME_ZONE_INFORMATION tzi;
-                DWORD dst = GetTimeZoneInformation(&tzi);
-                if (dst != TIME_ZONE_ID_INVALID)
-                {
-                    LONG dstBias = 0;
-                    if (dst == TIME_ZONE_ID_STANDARD)
-                        dstBias = tzi.StandardBias;
-                    else if (dst == TIME_ZONE_ID_DAYLIGHT)
-                        dstBias = tzi.DaylightBias;
-                    appCore->setTimeZoneBias((tzi.Bias + dstBias) * -60);
-                }
-            }
+                ShowLocalTime(appCore);
             else
-            {
-                appCore->setTimeZoneBias(0);
-            }
+                ShowUniversalTime(appCore);
             break;
 
         case ID_LOCATIONS_ADDLOCATION:
