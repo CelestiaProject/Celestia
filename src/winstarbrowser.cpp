@@ -336,7 +336,6 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
     {
     case WM_INITDIALOG:
         {
-            cout << "StarBrowserProc: WM_INITDIALOG\n";
             StarBrowser* browser = reinterpret_cast<StarBrowser*>(lParam);
             if (browser == NULL)
                 return EndDialog(hDlg, 0);
