@@ -45,10 +45,12 @@ class Renderer
     enum {
         NoLabels            = 0x00,
         StarLabels          = 0x01,
-        MajorPlanetLabels   = 0x02,
-        MinorPlanetLabels   = 0x04,
+        PlanetLabels        = 0x02,
+        MoonLabels          = 0x04,
         ConstellationLabels = 0x08,
         GalaxyLabels        = 0x10,
+        AsteroidLabels      = 0x20,
+        SpacecraftLabels    = 0x40,
     };
 
     enum {

@@ -78,6 +78,27 @@ static RigidTransform toUniversal(const FrameOfReference& frame,
         return RigidTransform(origin + Vec3d(p.x, p.y, p.z),
                               xform.rotation * rotation);
     }
+    else if (frame.coordSys == astro::PhaseLock)
+    {
+        Mat3d m;
+        if (frame.refObject.body != NULL)
+        {
+            Body* body = frame.refObject.body;
+            Vec3d lookDir = frame.refObject.getPosition(t) -
+                frame.targetObject.getPosition(t);
+            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
+            lookDir.normalize();
+            Vec3d v = lookDir ^ axisDir;
+            v.normalize();
+            Vec3d u = v ^ lookDir;
+            m = Mat3d(v, u, -lookDir);
+        }
+
+        Point3d p = (Point3d) xform.translation * m;
+
+        return RigidTransform(origin + Vec3d(p.x, p.y, p.z),
+                              xform.rotation * Quatd(m));
+    }
     else
     {
         return RigidTransform(origin + xform.translation, xform.rotation);
@@ -105,6 +126,27 @@ static RigidTransform fromUniversal(const FrameOfReference& frame,
         
         return RigidTransform(UniversalCoord(v.x, v.y, v.z),
                               xform.rotation * ~rotation);
+    }
+    else if (frame.coordSys == astro::PhaseLock)
+    {
+        Mat3d m;
+        if (frame.refObject.body != NULL)
+        {
+            Body* body = frame.refObject.body;
+            Vec3d lookDir = frame.refObject.getPosition(t) -
+                frame.targetObject.getPosition(t);
+            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
+            lookDir.normalize();
+            Vec3d v = lookDir ^ axisDir;
+            v.normalize();
+            Vec3d u = v ^ lookDir;
+            m = Mat3d(v, u, -lookDir);
+        }
+
+        Vec3d v = (xform.translation - origin) * m.transpose();
+
+        return RigidTransform(UniversalCoord(v.x, v.y, v.z),
+                              xform.rotation * ~Quatd(m));
     }
     else
     {
@@ -206,9 +248,9 @@ void Simulation::update(double dt)
             Vec3d v = jv;
             v.normalize();
             if (t < 0.5)
-                p = journey.from + v * astro::kilometersToLightYears(x);
+                p = journey.from + v * astro::kilometersToMicroLightYears(x);
             else
-                p = journey.to - v * astro::kilometersToLightYears(x);
+                p = journey.to - v * astro::kilometersToMicroLightYears(x);
         }
 
         // Spherically interpolate the orientation over the first half
@@ -411,7 +453,7 @@ void Simulation::computeGotoParameters(Selection& destination,
     jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, jparams.up);
 
     jparams.accelTime = 0.5;
-    double distance = astro::lightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
+    double distance = astro::microLightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
                                                1e-10);
@@ -592,8 +634,8 @@ void Simulation::changeOrbitDistance(float d)
 
         // Somewhat arbitrary parameters to chosen to give the camera movement
         // a nice feel.  They should probably be function parameters.
-        double minOrbitDistance = astro::kilometersToLightYears(size);
-        double naturalOrbitDistance = astro::kilometersToLightYears(4.0 * size);
+        double minOrbitDistance = astro::kilometersToMicroLightYears(size);
+        double naturalOrbitDistance = astro::kilometersToMicroLightYears(4.0 * size);
 
         // Determine distance and direction to the selected object
         Vec3d v = observer.getPosition() - focusPosition;
@@ -656,18 +698,19 @@ void Simulation::gotoSelection(double gotoTime,
         UniversalCoord pos = selection.getPosition(simTime);
         Vec3d v = pos - observer.getPosition();
         double distance = v.length();
+        printf("Distance: %f km\n", astro::microLightYearsToKilometers(distance));
         double maxOrbitDistance;
         if (selection.body != NULL)
-            maxOrbitDistance = astro::kilometersToLightYears(5.0f * selection.body->getRadius());
+            maxOrbitDistance = astro::kilometersToMicroLightYears(5.0f * selection.body->getRadius());
         else if (selection.galaxy != NULL)
-            maxOrbitDistance = 5.0f * selection.galaxy->getRadius();
+            maxOrbitDistance = 5.0f * selection.galaxy->getRadius() * 1e6f;
         else if (selection.star != NULL)
-            maxOrbitDistance = astro::kilometersToLightYears(100.0f * selection.star->getRadius());
+            maxOrbitDistance = astro::kilometersToMicroLightYears(100.0f * selection.star->getRadius());
         else
             maxOrbitDistance = 0.5f;
 
         double radius = selection.radius();
-        double minOrbitDistance = astro::kilometersToLightYears(1.01 * radius);
+        double minOrbitDistance = astro::kilometersToMicroLightYears(1.01 * radius);
 
         double orbitDistance = (distance > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distance * 0.1f;
         if (orbitDistance < minOrbitDistance)
@@ -692,7 +735,7 @@ void Simulation::gotoSelection(double gotoTime,
         v.normalize();
 
         computeGotoParameters(selection, journey, gotoTime,
-                              v * -distance, astro::Universal,
+                              v * -distance * 1e6, astro::Universal,
                               up, upFrame);
         observerMode = Travelling;
     }
@@ -731,14 +774,14 @@ void Simulation::getSelectionLongLat(double& distance,
                                              RigidTransform(observer.getPosition(), observer.getOrientation()),
                                              simTime);
 
-        Point3d pos = (Point3d)xform.translation;
+        Point3d pos = (Point3d) xform.translation;
 
-        distance = sqrt(pos.x*pos.x + pos.y*pos.y + pos.z*pos.z);
+        distance = pos.distanceFromOrigin();
         longitude = -radToDeg(atan2(-pos.z, -pos.x));
         latitude = radToDeg(PI/2 - acos(pos.y / distance));
 
         // Convert distance from light years to kilometers.
-        distance = astro::lightYearsToKilometers(distance);
+        distance = astro::microLightYearsToKilometers(distance);
     }
 }
 
@@ -773,6 +816,26 @@ void Simulation::geosynchronousFollow()
     if (selection.body != NULL)
     {
         frame = FrameOfReference(astro::Geographic, selection.body);
+        transform = fromUniversal(frame,
+                                  RigidTransform(observer.getPosition(), observer.getOrientation()),
+                                  simTime);
+    }
+}
+
+void Simulation::phaseLock()
+{
+    
+    if (frame.refObject.body != NULL)
+    {
+        if (selection == frame.refObject)
+        {
+            frame = FrameOfReference(astro::PhaseLock, selection,
+                                     Selection(selection.body->getSystem()->getStar()));
+        }
+        else
+        {
+            frame = FrameOfReference(astro::PhaseLock, frame.refObject, selection);
+        }
         transform = fromUniversal(frame,
                                   RigidTransform(observer.getPosition(), observer.getOrientation()),
                                   simTime);

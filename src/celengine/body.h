@@ -25,9 +25,9 @@ class PlanetarySystem
 {
  public:
     PlanetarySystem(Body* _primary);
-    PlanetarySystem(const Star* _star);
+    PlanetarySystem(Star* _star);
     
-    const Star* getStar() const { return star; };
+    Star* getStar() const { return star; };
     Body* getPrimaryBody() const { return primary; };
     int getSystemSize() const { return satellites.size(); };
     Body* getBody(int i) const { return satellites[i]; };
@@ -46,7 +46,7 @@ class PlanetarySystem
     Body* find(std::string, bool deepSearch = false) const;
 
  private:
-    const Star* star;
+    Star* star;
     Body* primary;
     std::vector<Body*> satellites;
 };
@@ -91,6 +91,16 @@ class Body
     Body(PlanetarySystem*);
     ~Body();
 
+    enum
+    {
+        Planet     = 1,
+        Moon       = 2,
+        Asteroid   = 3,
+        Comet      = 4,
+        Spacecraft = 5,
+        Unknown    = 0,
+    };
+
     PlanetarySystem* getSystem() const;
     std::string getName() const;
     void setName(const std::string);
@@ -106,6 +116,8 @@ class Body
     void setOblateness(float);
     float getAlbedo() const;
     void setAlbedo(float);
+    int getClassification() const;
+    void setClassification(int);
 
     PlanetarySystem* getSatellites() const;
     void setSatellites(PlanetarySystem*);
@@ -157,7 +169,8 @@ class Body
     RingSystem* rings;
 
     PlanetarySystem* satellites;
+
+    int classification;
 };
 
 #endif // _BODY_H_
-

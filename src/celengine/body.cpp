@@ -33,7 +33,8 @@ Body::Body(PlanetarySystem* _system) :
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
     rings(NULL),
-    satellites(NULL)
+    satellites(NULL),
+    classification(Unknown)
 {
     system = _system;
 }
@@ -333,6 +334,17 @@ float Body::getApparentMagnitude(const Star& sun,
 }
 
 
+int Body::getClassification() const
+{
+    return classification;
+}
+
+void Body::setClassification(int _classification)
+{
+    classification = _classification;
+}
+
+
 
 /**** Implementation of PlanetarySystem ****/
 
@@ -344,7 +356,7 @@ PlanetarySystem::PlanetarySystem(Body* _primary) : primary(_primary)
         star = NULL;
 }
 
-PlanetarySystem::PlanetarySystem(const Star* _star) :
+PlanetarySystem::PlanetarySystem(Star* _star) :
     star(_star), primary(NULL)
 {
 }

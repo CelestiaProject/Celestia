@@ -634,6 +634,9 @@ void Renderer::render(const Observer& observer,
 
     // Set up the camera
     Point3f observerPos = (Point3f) observer.getPosition();
+    observerPos.x *= 1e-6f;
+    observerPos.y *= 1e-6f;
+    observerPos.z *= 1e-6f;
     glPushMatrix();
     glRotate(observer.getOrientation());
 
@@ -664,7 +667,7 @@ void Renderer::render(const Observer& observer,
                               *solarSystem->getPlanets(),
                               observer,
                               Mat4d::identity(), now,
-                              (labelMode & (MinorPlanetLabels | MajorPlanetLabels)) != 0);
+                              (labelMode & (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels)) != 0);
         starTex->bind();
     }
 
@@ -821,15 +824,15 @@ void Renderer::render(const Observer& observer,
         const Star* sun = solarSystem->getStar();
         Point3f starPos = sun->getPosition();
         // Compute the position of the observer relative to the star
-        Vec3d opos = observer.getPosition() - Point3d((double) starPos.x,
-                                                      (double) starPos.y,
-                                                      (double) starPos.z);
+        Vec3d opos = observer.getPosition() - Point3d((double) starPos.x * 1e6,
+                                                      (double) starPos.y * 1e6,
+                                                      (double) starPos.z * 1e6);
 
         // At the solar system scale, we'll handle all calculations in
         // AU instead of light years.
-        opos = Vec3d(astro::lightYearsToAU(opos.x) * 100,
-                     astro::lightYearsToAU(opos.y) * 100,
-                     astro::lightYearsToAU(opos.z) * 100);
+        opos = Vec3d(astro::microLightYearsToAU(opos.x) * 100,
+                     astro::microLightYearsToAU(opos.y) * 100,
+                     astro::microLightYearsToAU(opos.z) * 100);
         glPushMatrix();
         glTranslated(-opos.x, -opos.y, -opos.z);
         
@@ -1618,8 +1621,10 @@ static void renderSphereDefault(const RenderInfo& ri,
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
+        glAmbientLightColor(Color::Black); // Disable ambient light
         lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
                           ri.nightTex);
+        glAmbientLightColor(ri.ambientColor);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 }
@@ -1667,7 +1672,7 @@ static void renderSphereFragmentShader(const RenderInfo& ri,
             renderSmoothMesh(*(ri.nightTex),
                              ri.sunDir_eye, 
                              ri.orientation,
-                             ri.ambientColor,
+                             Color::Black,
                              ri.lod,
                              frustum,
                              true);
@@ -1750,7 +1755,7 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
                           ri.baseTex);
         DisableCombiners();
     }
-    else if (ri.specularColor != Color(0.0f, 0.0f, 0.0f))
+    else if (ri.specularColor != Color::Black)
     {
         vp::parameter(34, ri.sunColor * ri.specularColor);
         vp::use(vp::specular);
@@ -1781,6 +1786,7 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         vp::use(vp::diffuse);
+        vp::parameter(32, Color::Black); // Disable ambient color
         lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
                           ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -2771,7 +2777,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                 {
                     isMajorPlanet = body->getRadius() >= 1000.0f;
                 }
-
+#if 0
                 if (isMajorPlanet && (labelMode & MajorPlanetLabels) != 0)
                 {
                     addLabel(body->getName(),
@@ -2785,6 +2791,54 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                              Color(0.0f, 0.6f, 0.0f),
                              Point3f(pos.x, pos.y, pos.z),
                              1.0f);
+                }
+#endif
+                Color labelColor;
+                bool showLabel = false;
+
+                switch (body->getClassification())
+                {
+                case Body::Planet:
+                    if ((labelMode & PlanetLabels) != 0)
+                    {
+                        labelColor = Color(0.0f, 1.0f, 0.0f);
+                        showLabel = true;
+                    }
+                    break;
+                case Body::Moon:
+                    if ((labelMode & MoonLabels) != 0)
+                    {
+                        labelColor = Color(0.0f, 0.65f, 0.0f);
+                        showLabel = true;
+                    }
+                    break;
+                case Body::Asteroid:
+                    if ((labelMode & AsteroidLabels) != 0)
+                    {
+                        labelColor = Color(0.7f, 0.4f, 0.0f);
+                        showLabel = true;
+                    }
+                    break;
+                case Body::Comet:
+                    if ((labelMode & AsteroidLabels) != 0)
+                    {
+                        labelColor = Color(0.0f, 1.0f, 1.0f);
+                        showLabel = true;
+                    }
+                    break;
+                case Body::Spacecraft:
+                    if ((labelMode & SpacecraftLabels) != 0)
+                    {
+                        labelColor = Color(0.6f, 0.6f, 0.6f);
+                        showLabel = true;
+                    }
+                    break;
+                }
+
+                if (showLabel)
+                {
+                    addLabel(body->getName(), labelColor,
+                             Point3f(pos.x, pos.y, pos.z), 1.0f);
                 }
             }
         }
@@ -2873,11 +2927,14 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // This is a much more accurate (and expensive) distance
             // calculation than the previous one which used the observer's
             // position rounded off to floats.
-            relPos = starPos - observer->getPosition();
+            Point3d hPos = astro::heliocentricPosition(observer->getPosition(), starPos);
+            relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) *
+                -astro::kilometersToLightYears(1.0f),
             distance = relPos.length();
 
             // Recompute apparent magnitude using new distance computation
-            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
+            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(),
+                                        distance);
 
             float f = RenderDistance / distance;
             renderDistance = RenderDistance;
@@ -2946,9 +3003,13 @@ void Renderer::renderStars(const StarDatabase& starDB,
                            const Observer& observer)
 {
     StarRenderer starRenderer;
+    Point3f observerPos = (Point3f) observer.getPosition();
+    observerPos.x *= 1e-6f;
+    observerPos.y *= 1e-6f;
+    observerPos.z *= 1e-6f;
 
     starRenderer.observer = &observer;
-    starRenderer.position = (Point3f) observer.getPosition();
+    starRenderer.position = observerPos;
     starRenderer.viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
     starRenderer.glareParticles = &glareParticles;
     starRenderer.renderList = &renderList;
@@ -2968,7 +3029,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starTex->bind();
     starRenderer.starVertexBuffer->start((renderFlags & ShowStarsAsPoints) != 0);
     starDB.findVisibleStars(starRenderer,
-                            (Point3f) observer.getPosition(),
+                            observerPos,
                             observer.getOrientation(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
@@ -2985,6 +3046,10 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
 {
     // Vec3f viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
     Point3d observerPos = (Point3d) observer.getPosition();
+    observerPos.x *= 1e-6;
+    observerPos.y *= 1e-6;
+    observerPos.z *= 1e-6;
+
     Mat3f viewMat = observer.getOrientation().toMatrix3();
     Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
     Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
