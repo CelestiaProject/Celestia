@@ -26,19 +26,6 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Menu
 //
 
-IDR_MENU1 MENU DISCARDABLE 
-BEGIN
-    MENUITEM "Select Sol",                  ID_SELECTSOL
-    MENUITEM "Go To Selection",             ID_GOTOSELECTION
-    MENUITEM "Follow Selection",            ID_FOLLOWSELECTION
-    MENUITEM SEPARATOR
-    MENUITEM "Speed Time",                  ID_SPEEDTIME
-    MENUITEM "Slow Time",                   ID_SLOWTIME
-    MENUITEM "Stop Time",                   ID_STOPTIME
-    MENUITEM SEPARATOR
-    MENUITEM "Quit",                        ID_QUIT
-END
-
 IDR_MAIN_MENU MENU DISCARDABLE 
 BEGIN
     POPUP "&File"
@@ -47,43 +34,45 @@ BEGIN
     END
     POPUP "&Navigation"
     BEGIN
-        MENUITEM "Select &Sol",                 ID_NAVIGATION_HOME
+        MENUITEM "Select &Sol\tH",              ID_NAVIGATION_HOME
+	MENUITEM "Tour G&uide...",              ID_NAVIGATION_TOURGUIDE
         MENUITEM "Select &Object...",           ID_NAVIGATION_SELECT
         MENUITEM SEPARATOR
-        MENUITEM "&Center Selection",           ID_NAVIGATION_CENTER
-        MENUITEM "&Go to Selection",            ID_NAVIGATION_GOTO
-        MENUITEM "&Follow Selection",           ID_NAVIGATION_FOLLOW
-	MENUITEM "S&ync Orbit Selection",       ID_NAVIGATION_SYNCORBIT
+        MENUITEM "&Center Selection\tC",        ID_NAVIGATION_CENTER
+        MENUITEM "&Go to Selection\tG",         ID_NAVIGATION_GOTO
+        MENUITEM "&Follow Selection\tF",        ID_NAVIGATION_FOLLOW
+	MENUITEM "S&ync Orbit Selection\tY",    ID_NAVIGATION_SYNCORBIT
+	MENUITEM "&Track Selection\tT",         ID_NAVIGATION_TRACK
 	MENUITEM SEPARATOR
 	MENUITEM "Solar System &Browser...",    ID_NAVIGATION_SSBROWSER
 	MENUITEM "Star B&rowser...",            ID_NAVIGATION_STARBROWSER
     END
     POPUP "&Time"
     BEGIN
-        MENUITEM "10x &Faster",                 ID_TIME_FASTER
-        MENUITEM "10x &Slower",                 ID_TIME_SLOWER
-        MENUITEM "Free&ze",                     ID_TIME_FREEZE
-        MENUITEM "&Real Time",                  ID_TIME_REALTIME
-	MENUITEM "Re&verse Time",               ID_TIME_REVERSE
+        MENUITEM "10x &Faster\tL",              ID_TIME_FASTER
+        MENUITEM "10x &Slower\tK",              ID_TIME_SLOWER
+        MENUITEM "Free&ze\tSpace",              ID_TIME_FREEZE
+        MENUITEM "&Real Time\t\\",              ID_TIME_REALTIME
+	MENUITEM "Re&verse Time\tJ",            ID_TIME_REVERSE
         MENUITEM "Set &Time...",                ID_TIME_SETTIME
 	MENUITEM SEPARATOR
 	MENUITEM "Show Local Time",             ID_TIME_SHOWLOCAL
     END
     POPUP "&Render"
     BEGIN
-	MENUITEM "Show &Galaxies",              ID_RENDER_SHOWGALAXIES
-	MENUITEM "Show A&tmospheres",           ID_RENDER_SHOWATMOSPHERES
-        MENUITEM "Show &Orbits",                ID_RENDER_SHOWORBITS
-	MENUITEM "Show &Constellations",        ID_RENDER_SHOWCONSTELLATIONS
-	MENUITEM "Show Celestial &Grid",        ID_RENDER_SHOWCELESTIALSPHERE
+	MENUITEM "Show &Galaxies\tU",           ID_RENDER_SHOWGALAXIES
+	MENUITEM "Show A&tmospheres\tI",        ID_RENDER_SHOWATMOSPHERES
+        MENUITEM "Show &Orbits\tO",             ID_RENDER_SHOWORBITS
+	MENUITEM "Show &Constellations\t/",     ID_RENDER_SHOWCONSTELLATIONS
+	MENUITEM "Show Celestial &Grid\t;",     ID_RENDER_SHOWCELESTIALSPHERE
 	MENUITEM SEPARATOR
-	MENUITEM "More Stars Visible",          ID_RENDER_MORESTARS
-	MENUITEM "Fewer Stars Visible",         ID_RENDER_FEWERSTARS
+	MENUITEM "More Stars Visible\t]",       ID_RENDER_MORESTARS
+	MENUITEM "Fewer Stars Visible\t[",      ID_RENDER_FEWERSTARS
 	MENUITEM SEPARATOR
-        MENUITEM "Label Major &Planets",        ID_RENDER_SHOWPLANETLABELS
-	MENUITEM "Label &Minor Planets",        ID_RENDER_SHOWMINORPLANETLABELS
-        MENUITEM "Label &Stars",                ID_RENDER_SHOWSTARLABELS
-	MENUITEM "Label Co&nstellations",       ID_RENDER_SHOWCONSTLABELS
+        MENUITEM "Label Major &Planets\tN",     ID_RENDER_SHOWPLANETLABELS
+	MENUITEM "Label &Minor Planets\tM",     ID_RENDER_SHOWMINORPLANETLABELS
+        MENUITEM "Label &Stars\tB",             ID_RENDER_SHOWSTARLABELS
+	MENUITEM "Label Co&nstellations\t=",    ID_RENDER_SHOWCONSTLABELS
         MENUITEM "Show &Info Text",             ID_RENDER_SHOWHUDTEXT
         , CHECKED
 	MENUITEM SEPARATOR
@@ -151,7 +140,7 @@ CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
-    CTEXT           "Celestia 1.1.1",IDC_STATIC,6,7,297,9
+    CTEXT           "Celestia 1.1.2",IDC_STATIC,6,7,297,9
     CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
                     IDC_STATIC,6,53,297,9
@@ -245,6 +234,20 @@ BEGIN
                     WS_GROUP,7,160,41,10
     CONTROL         "Brightest",IDC_RADIO_BRIGHTEST,"Button",BS_AUTORADIOBUTTON,                       84,160,43,10
 END
+
+IDD_TOURGUIDE DIALOG DISCARDABLE  0, 0, 240, 145
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+CAPTION "Tour Guide"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,183,124,50,14
+    PUSHBUTTON      "Go To",IDC_BUTTON_GOTO,183,23,50,14
+    COMBOBOX        IDC_COMBO_TOURGUIDE,7,24,131,90,CBS_DROPDOWN | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Select your destination:",IDC_STATIC,7,9,77,8
+    LTEXT           "",IDC_TEXT_DESCRIPTION,7,47,167,91
+END
+
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -369,7 +372,6 @@ STRINGTABLE DISCARDABLE
 BEGIN
     ID_NAVIGATION_FOLLOW    "Ctrl+F"
     ID_FILE_EXIT            "Alt+F4"
-    ID_NAVIGATION_BLAH      "baghgggagag"
 END
 
 #endif    // English (U.S.) resources
