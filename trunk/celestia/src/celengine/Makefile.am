@@ -13,6 +13,7 @@ libcelengine_a_SOURCES = \
 	asterism.cpp \
 	astro.cpp \
 	body.cpp \
+	boundaries.cpp \
 	catalogxref.cpp \
 	cmdparser.cpp \
 	command.cpp \
