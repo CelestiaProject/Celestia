@@ -716,6 +716,23 @@ static lua_Number safeGetNumber(lua_State* l, int index, FatalErrors fatalErrors
 }
 
 
+// Add a field to the table on top of the stack
+static void setTable(lua_State* l, const char* field, lua_Number value)
+{
+    lua_pushstring(l, field);
+    lua_pushnumber(l, value);
+    lua_settable(l, -3);
+}
+
+
+static void setTable(lua_State* l, const char* field, const char* value)
+{
+    lua_pushstring(l, field);
+    lua_pushstring(l, value);
+    lua_settable(l, -3);
+}
+
+
 static int vector_new(lua_State* l, const Vec3d& v)
 {
     Vec3d* v3 = reinterpret_cast<Vec3d*>(lua_newuserdata(l, sizeof(Vec3d)));
@@ -1576,6 +1593,118 @@ static int object_spectraltype(lua_State* l)
 }
 
 
+static int object_getinfo(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to function object:getinfo");
+
+    lua_newtable(l);
+
+    Selection* sel = this_object(l);
+    if (sel->star() != NULL)
+    {
+        Star* star = sel->star();
+        setTable(l, "type", "star");
+        setTable(l, "catalogNumber", star->getCatalogNumber());
+        setTable(l, "stellarClass", star->getStellarClass().str().c_str());
+        setTable(l, "absoluteMagnitude", (lua_Number)star->getAbsoluteMagnitude());
+        setTable(l, "luminosity", (lua_Number)star->getLuminosity());
+        setTable(l, "radius", (lua_Number)star->getRadius());
+        setTable(l, "temperature", (lua_Number)star->getTemperature());
+        setTable(l, "rotationPeriod", (lua_Number)star->getRotationPeriod());
+        setTable(l, "bolometricMagnitude", (lua_Number)star->getBolometricMagnitude());
+    }
+    else if (sel->body() != NULL)
+    {
+        Body* body = sel->body();
+        const char* tname = "unknown";
+        switch (body->getClassification())
+        {
+        case Body::Planet     : tname = "planet"; break;
+        case Body::Moon       : tname = "moon"; break;
+        case Body::Asteroid   : tname = "asteroid"; break;
+        case Body::Comet      : tname = "comet"; break;
+        case Body::Spacecraft : tname = "spacecraft"; break;
+        case Body::Invisible  : tname = "invisible"; break;
+        }
+        setTable(l, "type", tname);
+        setTable(l, "name", body->getName().c_str());
+        setTable(l, "mass", (lua_Number)body->getMass());
+        setTable(l, "oblateness", (lua_Number)body->getOblateness());
+        setTable(l, "albedo", (lua_Number)body->getAlbedo());
+        setTable(l, "infoURL", body->getInfoURL().c_str());
+        setTable(l, "radius", (lua_Number)body->getRadius());
+
+        double lifespanStart, lifespanEnd;
+        body->getLifespan(lifespanStart, lifespanEnd);
+        setTable(l, "lifespan_start", (lua_Number)lifespanStart);
+        setTable(l, "lifespan_end", (lua_Number)lifespanEnd);
+        // TODO: atmosphere, surfaces ?
+
+        PlanetarySystem* system = body->getSystem();
+        if (system->getPrimaryBody() != NULL)
+        {
+            Selection parent(system->getPrimaryBody());
+            lua_pushstring(l, "parent");
+            object_new(l, parent);
+            lua_settable(l, -3);
+        }
+        else
+        {
+            Selection parent(system->getStar());
+            lua_pushstring(l, "parent");
+            object_new(l, parent);
+            lua_settable(l, -3);
+        }
+
+        lua_pushstring(l, "hasrings");
+        lua_pushboolean(l, body->getRings() != NULL);
+        lua_settable(l, -3);
+    }
+    else if (sel->deepsky() != NULL)
+    {
+        setTable(l, "type", "deepsky");
+        DeepSkyObject* deepsky = sel->deepsky();
+        setTable(l, "name", deepsky->getName().c_str());
+        setTable(l, "radius", (lua_Number)deepsky->getRadius());
+    }
+    else if (sel->location() != NULL)
+    {
+        setTable(l, "type", "location");
+        Location* location = sel->location();
+        setTable(l, "name", location->getName().c_str());
+        setTable(l, "size", (lua_Number)location->getSize());
+        setTable(l, "importance", (lua_Number)location->getImportance());
+        setTable(l, "infoURL", location->getInfoURL().c_str());
+
+        uint32 featureType = location->getFeatureType();
+        string featureName("Unknown");
+        for (FlagMap::const_iterator it = LocationFlagMap.begin(); it != LocationFlagMap.end(); it++)
+        {
+            if (it->second == featureType)
+            {
+                featureName = it->first;
+                break;
+            }
+        }
+        setTable(l, "featureType", featureName.c_str());
+
+        Body* parent = location->getParentBody();
+        if (parent != NULL)
+        {
+            Selection selection(parent);
+            lua_pushstring(l, "parent");
+            object_new(l, selection);
+            lua_settable(l, -3);
+        }
+    }
+    else
+    {
+        setTable(l, "type", "null");
+    }
+    return 1;
+}
+
+
 static int object_absmag(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function object:absmag");
@@ -1635,7 +1764,7 @@ static int object_unmark(lua_State* l)
 }
 
 
-// Return the observer's current position.  A time argument is optional;
+// Return the object's current position.  A time argument is optional;
 // if not provided, the current master simulation time is used.
 static int object_getposition(lua_State* l)
 {
@@ -1718,6 +1847,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "radius", object_radius);
     RegisterMethod(l, "type", object_type);
     RegisterMethod(l, "spectraltype", object_spectraltype);
+    RegisterMethod(l, "getinfo", object_getinfo);
     RegisterMethod(l, "absmag", object_absmag);
     RegisterMethod(l, "name", object_name);
     RegisterMethod(l, "mark", object_mark);
