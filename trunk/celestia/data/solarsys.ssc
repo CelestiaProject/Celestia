@@ -468,7 +468,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 "Prometheus" "Sol/Saturn"
 {
 	Texture	 	"prometheus.*"
-	Mesh		"prometheus.3ds"
+	Mesh		"prometheus.cmod"
 	Radius    74 # maximum semi-axis
 	MeshCenter [ 0.75 -2.68 1.064 ]
 
@@ -490,7 +490,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 "Pandora" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"pandora.3ds"
+	Mesh		"pandora.cmod"
 	Radius		57 # maximum semi-axis
 	MeshCenter [ 0.692 -1.454 -0.422 ]
 
@@ -512,7 +512,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 "Epimetheus" "Sol/Saturn"
 {
 	Texture	 	"epimetheus.*"
-	Mesh		"epimetheus.3ds"
+	Mesh		"epimetheus.cmod"
 	Radius    72 # maximum semi-axis
 	MeshCenter [ -5.196 -2.241 -1.878 ]
 
@@ -540,7 +540,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 "Janus" "Sol/Saturn"
 {
 	Texture	 	"janus.*"
-	Mesh		"janus.3ds"
+	Mesh		"janus.cmod"
 	Radius    96 # maximum semi-axis
 	MeshCenter [ -1.552 1.358 2.257 ]
 
@@ -1026,7 +1026,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 "Larissa" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"larissa.3ds"
+	Mesh		"larissa.cmod"
 	Radius		100 # maximum semi-axis
 	MeshCenter [ 4.564 -0.126 0.302 ]
 
@@ -1050,7 +1050,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 
 "Proteus" "Sol/Neptune"
 {
-	Mesh "proteus.3ds"
+	Mesh "proteus.cmod"
 	Texture "proteus.*" # Phil Stooke
 	Radius    219 # maximum semi-axis
 	MeshCenter [ -4.146 -0.022 5.153 ]
