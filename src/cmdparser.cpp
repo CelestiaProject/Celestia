@@ -178,6 +178,18 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("duration", duration);
         cmd = new CommandChangeDistance(duration, rate);
     }
+    else if (commandName == "orbit")
+    {
+        double rate = 0.0;
+        double duration = 1.0;
+        Vec3d axis;
+        paramList->getNumber("duration", duration);
+        paramList->getNumber("rate", rate);
+        paramList->getVector("axis", axis);
+        cmd = new CommandOrbit(duration,
+                               Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
+                               (float) rate);
+    }
     else if (commandName == "setposition")
     {
         Vec3d base, offset;
