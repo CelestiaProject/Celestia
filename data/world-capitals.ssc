@@ -3,7 +3,7 @@
 # http://www.odci.gov/cia/publications/factbook/appendix/appendix-f.html
 # and numerous corrections & additions, using GETTY THESAURUS online,
 # http://www.getty.edu/research/conducting_research/vocabularies/tgn/index.html
-# Processed 2003-12-13 23:43:35 UTC
+# Processed 2003-12-14 19:42:19 UTC
 # by Dr. Fridger Schrempp, fridger.schrempp@desy.de
 # ------------------------------------------------------ 
 
@@ -1848,7 +1848,7 @@ Type "City"
 }
 
 
-Location "Washington" "Sol/Earth"
+Location "Washington D.C." "Sol/Earth"
 {
 LongLat [ -77.0333 38.8833 0 ]
 Importance 194.76
