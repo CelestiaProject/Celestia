@@ -328,7 +328,8 @@ void KdeApp::initActions()
     new KAction(i18n("Single View"), "view_remove", CTRL + Key_D, this, SLOT(slotSingleView()), actionCollection(), "singleView");
     new KAction(i18n("Delete View"), "view_remove", Key_Delete, this, SLOT(slotDeleteView()), actionCollection(), "deleteView");
 
-    new KAction(i18n("Alt-Azimuth Mode"), 0, CTRL + Key_A, this, SLOT(slotAltAzMode()), actionCollection(), "altAzMode");
+    new KAction(i18n("Alt-Azimuth Mode"), 0, ALT + Key_F, this, SLOT(slotAltAzMode()), actionCollection(), "altAzMode");
+    new KAction(i18n("Go To Surface"), 0, ALT + Key_S, this, SLOT(slotGoToSurface()), actionCollection(), "goToSurface");
 
     new KAction(i18n("Celestial Browser"), 0, ALT + Key_C, this, SLOT(slotCelestialBrowser()), actionCollection(), "celestialBrowser");
     new KAction(i18n("Eclipse Finder"), 0, ALT + Key_E, this, SLOT(slotEclipseFinder()), actionCollection(), "eclipseFinder");
@@ -833,6 +834,10 @@ void KdeApp::slotCycleView() {
 
 void KdeApp::slotAltAzMode() {
     appCore->charEntered('\006');
+}
+
+void KdeApp::slotGoToSurface() {
+    appCore->charEntered('\007');
 }
 
 void KdeApp::slotSingleView() {
