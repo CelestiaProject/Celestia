@@ -2084,8 +2084,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     zenith.normalize();
     zenith *= skyContour[0].centerDist * (1.0f + horizonHeight * 2.0f);
 
-    float minOpacity = within ? (1.0f - ellipDist / height) * 0.5f : 0.0f;
-
+    float minOpacity = within ? (1.0f - ellipDist / height) * 0.75f : 0.0f;
     float sunset = cosSunAltitude < 0.9f ? 0.0f : (cosSunAltitude - 0.9f) * 10.0f;
 
     // Build the list of vertices
@@ -2170,7 +2169,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             Color(brightness * color.x,
                   brightness * color.y,
                   brightness * color.z,
-                  fade * atten).get(vtx->color);
+                  fade * (minOpacity + (1.0f - minOpacity)) * atten).get(vtx->color);
             vtx++;
         }
     }
