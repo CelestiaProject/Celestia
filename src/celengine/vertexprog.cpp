@@ -53,8 +53,8 @@ static bool LoadVertexProgram(const string& filename, unsigned int& id)
         return false;
     }
 
-    glGenProgramsNV(1, (GLuint*) &id);
-    glLoadProgramNV(GL_VERTEX_PROGRAM_NV,
+    EXTglGenProgramsNV(1, (GLuint*) &id);
+    EXTglLoadProgramNV(GL_VERTEX_PROGRAM_NV,
                     id,
                     source->length(),
                     reinterpret_cast<const GLubyte*>(source->c_str()));
@@ -92,9 +92,9 @@ bool vp::init()
         return false;
     everything = 0;
 
-    glTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
+    EXTglTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
                     0, GL_MODELVIEW_PROJECTION_NV, GL_IDENTITY_NV);
-    glTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
+    EXTglTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
                     4, GL_MODELVIEW_PROJECTION_NV, GL_INVERSE_TRANSPOSE_NV);
 
     return true;
@@ -115,30 +115,30 @@ void vp::enable()
 
 void vp::use(unsigned int prog)
 {
-    glBindProgramNV(GL_VERTEX_PROGRAM_NV, prog);
+    EXTglBindProgramNV(GL_VERTEX_PROGRAM_NV, prog);
 }
 
 
 void vp::parameter(unsigned int param, const Vec3f& v)
 {
-    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, v.x, v.y, v.z, 0.0f);
+    EXTglProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, v.x, v.y, v.z, 0.0f);
 }
                             
 
 void vp::parameter(unsigned int param, const Point3f& p)
 {
-    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, p.x, p.y, p.z, 0.0f);
+    EXTglProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, p.x, p.y, p.z, 0.0f);
 }
 
 
 void vp::parameter(unsigned int param, const Color& c)
 {
-    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param,
+    EXTglProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param,
                            c.red(), c.green(), c.blue(), c.alpha());
 }
 
 
 void vp::parameter(unsigned int param, float x, float y, float z, float w)
 {
-    glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, x, y, z, w);
+    EXTglProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, x, y, z, w);
 }

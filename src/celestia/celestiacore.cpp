@@ -1635,7 +1635,7 @@ bool CelestiaCore::initSimulation()
             universe->setAsterisms(asterisms);
         }
     }
-
+    /*
     if (config->boundariesFile != "")
     {
         ifstream boundariesFile(config->boundariesFile.c_str(), ios::in);
@@ -1649,7 +1649,7 @@ bool CelestiaCore::initSimulation()
             universe->setBoundaries(boundaries);
         }
     }
-
+    */
     // Load initialization script
     if (config->initScriptFile != "")
     {

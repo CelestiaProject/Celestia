@@ -16,6 +16,10 @@
 #include "stardb.h"
 #include "simulation.h"
 
+#ifndef MIN
+#define MIN(a,b) ((a<b)?a:b)
+#endif
+
 class StarBrowser
 {
  public:

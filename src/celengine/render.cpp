@@ -13,7 +13,9 @@
 #include <cassert>
 
 #ifndef _WIN32
+#ifndef MACOSX_PB
 #include <config.h>
+#endif
 #endif /* _WIN32 */
 
 #include <celutil/debug.h>
@@ -386,7 +388,7 @@ bool Renderer::init(int winWidth, int winHeight)
         DPRINTF(1, "Renderer: nVidia register combiners supported.\n");
         useRegisterCombiners = true;
     }
-    if (ExtensionSupported("GL_NV_vertex_program") && glGenProgramsNV)
+    if (ExtensionSupported("GL_NV_vertex_program") && EXTglGenProgramsNV)
     {
         DPRINTF(1, "Renderer: nVidia vertex programs supported.\n");
         useVertexPrograms = vp::init();
@@ -1002,8 +1004,10 @@ void Renderer::render(const Observer& observer,
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
+        /*
         if (universe.getBoundaries() != NULL)
             universe.getBoundaries()->render();
+        */
         if ((renderFlags & ShowSmoothLines) != 0)
             disableSmoothLines();
     }

@@ -10,8 +10,10 @@
 #include <string>
 
 #ifndef _WIN32
+#ifndef MACOSX
 #include <config.h>
-#endif /* _WIN32 */
+#endif /* ! MACOSX */
+#endif /* !_WIN32 */
 
 #include <celutil/util.h>
 #include <celutil/debug.h>

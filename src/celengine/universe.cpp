@@ -22,8 +22,8 @@ Universe::Universe() :
     starCatalog(NULL),
     solarSystemCatalog(NULL),
     galaxyCatalog(NULL),
-    asterisms(NULL),
-    boundaries(NULL)
+    asterisms(NULL)/*,
+    boundaries(NULL)*/
 {
 }
 
@@ -76,7 +76,7 @@ void Universe::setAsterisms(AsterismList* _asterisms)
     asterisms = _asterisms;
 }
 
-
+/*
 ConstellationBoundaries* Universe::getBoundaries() const
 {
     return boundaries;
@@ -86,7 +86,7 @@ void Universe::setBoundaries(ConstellationBoundaries* _boundaries)
 {
     boundaries = _boundaries;
 }
-
+*/
 
 // Return the planetary system of a star, or NULL if it has no planets.
 SolarSystem* Universe::getSolarSystem(const Star* star) const
