@@ -714,12 +714,16 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             Quatf q(1);
             if (sel.deepsky != NULL)
                 q = sel.deepsky->getOrientation();
+            else if (sel.body != NULL)
+                q = sel.body->getOrientation();
 
             q.yrotate(dx / width);
             q.xrotate(dy / height);
 
             if (sel.deepsky != NULL)
                 sel.deepsky->setOrientation(q);
+            else if (sel.body != NULL)
+                sel.body->setOrientation(q);
         }
         else if (editMode && checkMask(modifiers, RightButton | ShiftKey | ControlKey))
         {
@@ -1048,6 +1052,22 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '\020':  // Ctrl+P
+        if (!sim->getSelection().empty())
+        {
+            Selection sel = sim->getSelection();
+            if (sim->getUniverse()->isMarked(sel, 1))
+            {
+                sim->getUniverse()->unmarkObject(sel, 1);
+            }
+            else
+            {
+                sim->getUniverse()->markObject(sel,
+                                               10.0f,
+                                               Color(0.0f, 1.0f, 0.0f, 0.9f),
+                                               Marker::Diamond,
+                                               1);
+            }
+        }
         break;
 
     case '\025': // Ctrl+U
