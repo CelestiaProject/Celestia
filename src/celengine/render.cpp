@@ -5524,22 +5524,56 @@ StarRenderer::StarRenderer() :
 {
 }
 
+
+static Point3d heliocentricPosition(UniversalCoord& pos,
+                                    const Star& star,
+                                    double t)
+{
+    const Orbit* orbit = star.getOrbit();
+    if (!orbit)
+    {
+        return astro::heliocentricPosition(pos, star.getPosition());
+    }
+    else
+    {
+        Point3f barycenterPosLY = star.getPosition();
+        Point3f barycenterPos(barycenterPosLY.x * 1.0e6f,
+                              barycenterPosLY.y * 1.0e6f,
+                              barycenterPosLY.z * 1.0e6f);
+
+        UniversalCoord starPos = UniversalCoord(barycenterPos) +
+            ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0f)) *
+             astro::kilometersToMicroLightYears(1.0));
+        Vec3d v = pos - starPos;
+        return Point3d(astro::microLightYearsToKilometers(v.x),
+                       astro::microLightYearsToKilometers(v.y),
+                       astro::microLightYearsToKilometers(v.z));
+    }
+}
+
+
 void StarRenderer::process(const Star& star, float distance, float appMag)
 {
     nProcessed++;
 
     Point3f starPos = star.getPosition();
     Vec3f relPos = starPos - position;
+    float orbitalRadius = star.getOrbitalRadius();
+    bool hasOrbit = orbitalRadius > 0.0f;
 
     if (distance > distanceLimit)
         return;
 
-    if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f)
+    if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f || hasOrbit)
     {
         Color starColor = colorTemp->lookupColor(star.getTemperature());
         float renderDistance = distance;
         float s = renderDistance * size;
         float discSizeInPixels = 0.0f;
+        float orbitSizeInPixels = 0.0f;
+
+        if (hasOrbit)
+            orbitSizeInPixels = orbitalRadius / (distance * pixelSize);
 
         // Special handling for stars less than one light year away . . .
         // We can't just go ahead and render a nearby star in the usual way
@@ -5551,13 +5585,16 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         // further than one light year away if the star is huge, the fov is
         // very small and the resolution is high.  We'll ignore this for now
         // and use the most inexpensive test possible . . .
-        if (distance < 1.0f)
+        if (distance < 1.0f || orbitSizeInPixels > 1.0f)
         {
             // Compute the position of the observer relative to the star.
             // This is a much more accurate (and expensive) distance
             // calculation than the previous one which used the observer's
             // position rounded off to floats.
-            Point3d hPos = astro::heliocentricPosition(observer->getPosition(), starPos);
+            //Point3d hPos = astro::heliocentricPosition(observer->getPosition(), starPos);
+            Point3d hPos = heliocentricPosition(observer->getPosition(),
+                                                star,
+                                                observer->getTime());
             relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) *
                 -astro::kilometersToLightYears(1.0f),
             distance = relPos.length();
@@ -5571,7 +5608,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             starPos = position + relPos * f;
 
             float radius = star.getRadius();
-            discSizeInPixels = radius / astro::lightYearsToKilometers(distance) /pixelSize;
+            discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
             nClose++;
         }
 

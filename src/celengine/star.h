@@ -14,6 +14,7 @@
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
 #include <celmath/vecmath.h>
+#include <celengine/univcoord.h>
 #include <celengine/celestia.h>
 #include <celengine/stellarclass.h>
 #include <celengine/multitexture.h>
@@ -170,6 +171,9 @@ public:
     inline float getAbsoluteMagnitude() const;
     float getApparentMagnitude(float) const;
     float getLuminosity() const;
+
+    // Return the exact position of the star, accounting for its orbit
+    UniversalCoord getPosition(double t) const;
 
     void setCatalogNumber(uint32);
     void setPosition(float, float, float);

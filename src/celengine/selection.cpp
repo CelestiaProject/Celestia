@@ -53,8 +53,7 @@ UniversalCoord Selection::getPosition(double t) const
         }
         
     case Type_Star:
-        return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
-                                        star()->getPosition());
+        return star()->getPosition(t);
 
     case Type_DeepSky:
         {
