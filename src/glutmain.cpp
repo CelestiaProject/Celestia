@@ -16,6 +16,7 @@
 #include <cctype>
 #include <cstring>
 #include <time.h>
+#include <unistd.h>
 #include "gl.h"
 #include <GL/glut.h>
 #include "celestia.h"
@@ -110,11 +111,11 @@ void MouseButton(int button, int state, int x, int y)
     // mouse button 4 and 5 down events.
     if (button == MOUSE_WHEEL_UP)
     {
-        appCore->mouseWheel(-1.0f);
+        appCore->mouseWheel(-1.0f, 0);
     }
     else if (button == MOUSE_WHEEL_DOWN)
     {
-        appCore->mouseWheel(1.0f);
+        appCore->mouseWheel(1.0f, 0);
     }
     else if (button == GLUT_LEFT_BUTTON)
     {
@@ -153,6 +154,12 @@ void KeyPress(unsigned char c, int x, int y)
         exit(0);
 
     appCore->charEntered((char) c);
+    appCore->keyDown((int) c);
+}
+
+void KeyUp(unsigned char c, int x, int y)
+{
+    appCore->keyUp((int) c);
 }
 
 
@@ -226,6 +233,12 @@ int main(int argc, char* argv[])
     // Not ready to render yet
     ready = false;
 
+    if (chdir(CONFIG_DATA_DIR) == -1)
+    {
+        cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
+            "', probably due to improper installation\n";
+    }
+
     appCore = new CelestiaCore();
     if (appCore == NULL)
     {
@@ -251,6 +264,7 @@ int main(int argc, char* argv[])
     glutMouseFunc(MouseButton);
     glutMotionFunc(MouseDrag);
     glutKeyboardFunc(KeyPress);
+    glutKeyboardUpFunc(KeyUp);
     glutSpecialFunc(SpecialKeyPress);
     glutSpecialUpFunc(SpecialKeyUp);
 

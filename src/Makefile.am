@@ -59,3 +59,10 @@ COMMONSOURCES = \
 	vertexprog.cpp
 
 celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
+
+noinst_DATA= ../celestia
+CLEANFILES= ../celestia
+
+../celestia: celestia
+	(cd ..; ln -s src/celestia)
+

@@ -35,7 +35,11 @@ computer.  After setup is complete, launch Celestia by selecting it from
 the start menu.
 
 UNIX:
-See the file INSTALL for UNIX installation instructions.
+See the file INSTALL for detailed UNIX installation instructions.  Briefly,
+though:
+	./configure
+	make
+	make install
 
 
 Running Celestia:

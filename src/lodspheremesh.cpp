@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 #include "gl.h"
 #include "glext.h"
 #include "mathlib.h"
@@ -362,7 +363,6 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
     // assert(phi0 + extent <= maxDivisions);
     // assert(theta0 + extent / 2 < maxDivisions);
     // assert(isPow2(extent));
-    int count = 0;
     int thetaExtent = extent;
     int phiExtent = extent / 2;
     int theta1 = theta0 + thetaExtent;

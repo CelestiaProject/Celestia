@@ -16,12 +16,14 @@
 #include <cctype>
 #include <cstring>
 #include <time.h>
+#include <unistd.h>
 #include "gl.h"
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtkgl/gtkglarea.h>
 #include <gnome.h>
+#include "../config.h"
 #include "celestia.h"
 #include "vecmath.h"
 #include "quaternion.h"
@@ -211,7 +213,7 @@ static void menuAbout()
     };
     GtkWidget* about;
     about = gnome_about_new("Celestia",
-                            "1.1.2",
+                            VERSION,
                             "(c) 2001 Chris Laurel",
                             authors,
                             "3D Space Simulation",
@@ -613,11 +615,11 @@ gint glarea_button_press(GtkWidget* widget, GdkEventButton* event)
 {
     if (event->button == 4)
     {
-        appCore->mouseWheel(-1.0f);
+        appCore->mouseWheel(-1.0f, 0);
     }
     else if (event->button == 5)
     {
-        appCore->mouseWheel(1.0f);
+        appCore->mouseWheel(1.0f, 0);
     }
     else if (event->button <= 3)
     {
@@ -747,6 +749,12 @@ int main(int argc, char* argv[])
 {
     // Say we're not ready to render yet.
     bReady = false;
+
+    if (chdir(CONFIG_DATA_DIR) == -1)
+    {
+        cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
+            "', probably due to improper installation\n";
+    }
 
     appCore = new CelestiaCore();
     if (appCore == NULL)
