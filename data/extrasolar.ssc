@@ -892,10 +892,10 @@
 }
 
 
-# HR 810 system
+# Iota Horologii (HR 810/HD 17051) system
 #
 # M sin i = 2.26 Jupiters
-"b" "HR 810"
+"b" "Iota Hor"
 {
 	Texture "jupiterlike.jpg"
 	Mass      730
@@ -1088,26 +1088,6 @@
 		SemiMajorAxis   0.3     # ????? Missing data
 		Eccentricity    0.0     # ????? Missing data
 	}
-}
-
-
-# Iota Horologii (HD 17051) system
-#
-# M sin i = 947 Earths
-"b" "Iota Hor"
-{
-	Texture "jupiterlike.jpg"
-	Mass      950
-	Radius    75000
-
-	# orbital data
-	EllipticalOrbit {
-		Period          0.8761
-		SemiMajorAxis   0.970
-		Eccentricity    0.16
-	}
-
-	RotationPeriod   10.0
 }
 
 
