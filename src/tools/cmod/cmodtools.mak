@@ -28,6 +28,9 @@ CMODTANGENT_OBJS=\
 TDSTOCMOD_OBJS=\
 	$(INTDIR)\3dstocmod.obj
 
+CMODFIX_OBJS=\
+	$(INTDIR)\cmodfix.obj
+
 DX_INCLUDEDIRS=/I c:\dx90sdk\include
 
 CEL_INCLUDEDIRS=\
@@ -107,6 +110,8 @@ RSC_FLAGS=/l 0x409 /d "_DEBUG"
 
 3dstocmod.exe : $(OUTDIR)\3dstocmod.exe
 
+cmodfix.exe : $(OUTDIR)\cmodfix.exe
+
 $(OUTDIR)\xtocmod.exe : $(OUTDIR) $(XTOCMOD_OBJS) $(LIBS) $(RESOURCES)
 	$(LINK32) @<<
         $(WIN_LINK32_FLAGS) /out:$(OUTDIR)\xtocmod.exe $(XTOCMOD_OBJS) $(RESOURCES) $(DXLIBS)
@@ -115,6 +120,10 @@ $(OUTDIR)\xtocmod.exe : $(OUTDIR) $(XTOCMOD_OBJS) $(LIBS) $(RESOURCES)
 
 $(OUTDIR)\3dstocmod.exe : $(OUTDIR) $(TDSTOCMOD_OBJS) $(CEL_LIBS) $(RESOURCES)
 	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\3dstocmod.exe $(TDSTOCMOD_OBJS) $(RESOURCES) $(OGLLIBS) $(IMGLIBS) $(CEL_LIBS)
+
+
+$(OUTDIR)\cmodfix.exe : $(OUTDIR) $(CMODFIX_OBJS) $(CEL_LIBS) $(RESOURCES)
+	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\cmodfix.exe $(CMODFIX_OBJS) $(RESOURCES) $(OGLLIBS) $(IMGLIBS) $(CEL_LIBS)
 
 
 $(OUTDIR)\cmodtangents.exe : $(OUTDIR) $(CMODTANGENT_OBJS) $(CEL_LIBS) $(RESOURCES)
