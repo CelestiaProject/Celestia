@@ -150,7 +150,6 @@ fi
 
 dnl if gtk is explicitly enabled, disable kde
 if test "$enable_gtk" != "no" -a "$gtk_by_default" = "no"; then
-	kde_by_default = "no"
 	enable_kde="no"
 fi
 
@@ -400,6 +399,8 @@ AC_CONFIG_FILES([ src/celestia/kde/po/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/data/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/doc/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/doc/celestia/Makefile ])
+AC_CONFIG_FILES([ src/celestia/gtk/Makefile ])
+AC_CONFIG_FILES([ src/celestia/gtk/data/Makefile ])
 AC_OUTPUT
 
 AC_MSG_RESULT()
