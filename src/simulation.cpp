@@ -190,7 +190,10 @@ ClosestStarFinder::ClosestStarFinder(float _maxDistance) :
 void ClosestStarFinder::process(const Star& star, float distance, float appMag)
 {
     if (distance < closestDistance)
+    {
         closestStar = const_cast<Star*>(&star);
+        closestDistance = distance;
+    }
 }
 
 
