@@ -13,6 +13,7 @@ AppUpdatesURL=http://www.shatters.net/celestia/
 DefaultDirName={pf}\Celestia
 DefaultGroupName=Celestia
 LicenseFile=C:\celestia\celestia\COPYING
+Compression=lzma/max
 
 ; Tell Explorer to refresh its file associations information at the
 ; end of the installation, and Uninstall will do the same at the end
@@ -231,6 +232,14 @@ Source: "shaders\rings_arb.vp";          DestDir: "{app}/shaders"; Flags: ignore
 Source: "shaders\ringshadow_arb.vp";     DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\night_arb.vp";          DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\glossmap_arb.vp";       DestDir: "{app}/shaders"; Flags: ignoreversion
+
+Source: "shaders\multishadow_arb.vp";    DestDir: "{app}/shaders"; Flags: ignoreversion
+
+; NV pixel shaders
+Source: "shaders\eclipse1_nv.fp";        DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\eclipse2_nv.fp";        DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\shadow_on_rings_nv.fp"; DestDir: "{app}/shaders"; Flags: ignoreversion
+
 
 ; Models
 ;Source: "models\amalthea.3ds";     DestDir: "{app}/models"; Flags: ignoreversion
