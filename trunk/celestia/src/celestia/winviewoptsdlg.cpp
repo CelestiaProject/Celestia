@@ -85,12 +85,16 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->ConstellationLabels);
         else if(LOWORD(wParam) == IDC_LABELGALAXIES)
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->GalaxyLabels);
-        else if(LOWORD(wParam) == IDC_LABELMAJORPLANETS)
+        else if(LOWORD(wParam) == IDC_LABELPLANETS)
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->PlanetLabels);
-        else if(LOWORD(wParam) == IDC_LABELMINORPLANETS)
+        else if(LOWORD(wParam) == IDC_LABELMOONS)
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->MoonLabels);
         else if(LOWORD(wParam) == IDC_LABELSTARS)
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->StarLabels);
+        else if(LOWORD(wParam) == IDC_LABELASTEROIDS)
+            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->AsteroidLabels);
+        else if(LOWORD(wParam) == IDC_LABELSPACECRAFT)
+            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->SpacecraftLabels);
         else if(LOWORD(wParam) == IDC_INFOTEXT0)
             Dlg->appCore->setHudDetail(0);
         else if(LOWORD(wParam) == IDC_INFOTEXT1)
@@ -191,12 +195,16 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         ((labelMode & appCore->getRenderer()->ConstellationLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELGALAXIES, BM_SETCHECK,
         ((labelMode & appCore->getRenderer()->GalaxyLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_LABELMAJORPLANETS, BM_SETCHECK,
+    SendDlgItemMessage(hDlg, IDC_LABELPLANETS, BM_SETCHECK,
         ((labelMode & appCore->getRenderer()->PlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_LABELMINORPLANETS, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->PlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_LABELMOONS, BM_SETCHECK,
+        ((labelMode & appCore->getRenderer()->MoonLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELSTARS, BM_SETCHECK,
         ((labelMode & appCore->getRenderer()->StarLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_LABELASTEROIDS, BM_SETCHECK,
+        ((labelMode & appCore->getRenderer()->AsteroidLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_LABELSPACECRAFT, BM_SETCHECK,
+        ((labelMode & appCore->getRenderer()->SpacecraftLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
 
     CheckRadioButton(hDlg, IDC_INFOTEXT0, IDC_INFOTEXT2, IDC_INFOTEXT0 + hudDetail);
 }
