@@ -1,5 +1,4 @@
 
-if ENABLE_KDE
 
 rcdir = $(kde_datadir)/celestia
 rc_DATA = celestiaui.rc bookmarks.xml
@@ -15,4 +14,4 @@ kdelnk_DATA = celestia.protocol
 confdir = $(kde_confdir)
 conf_DATA = celestiarc
 
-endif
+EXTRA_DIST = $(rc_DATA) $(favicons_DATA) $(favicons_DATA) $(kdelnk_DATA) $(conf_DATA)
