@@ -2271,3 +2271,21 @@
 }
 
 
+# HD 70642 (G5V)
+"b" "HD 70642"
+{
+	Texture "jupiterlike.jpg"
+	Mass 640
+	Radius 69000
+
+	InfoURL "http://www.obspm.fr/encycl/HD70642.html"
+
+	EllipticalOrbit {
+		Period	      6.108
+		SemiMajorAxis 3.3
+		Eccentricity  0.1
+		# Omega 277
+		# T_peri 2451749
+	}
+}
+
