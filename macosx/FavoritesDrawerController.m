@@ -107,8 +107,15 @@
     MyTree* node = nil;
     //NSLog(@"[FavoritesDrawerController addNewFavorite:%@]",sender);
     node = [favs addNewFavorite:nil];
+
+    // kludge to fix name
+    CelestiaAppCore* appCore = [CelestiaAppCore sharedAppCore];
+    NSString* selName = [((CelestiaFavorite*)[node nodeValue]) selectionName];
+    NSString* newName  = [ [ [appCore simulation] findObjectFromPath: selName ] briefName]; 
+    [((CelestiaFavorite*)[node nodeValue]) setName: newName];
+
     [[CelestiaFavorites sharedFavorites] synchronize];
-    [self outlineView:outlineView editItem:node];
+//    [self outlineView:outlineView editItem:node];
 }
 -(IBAction)addNewFolder:(id)sender
 {
