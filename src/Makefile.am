@@ -22,6 +22,7 @@ COMMONSOURCES = \
 	console.cpp \
 	constellation.cpp \
 	debug.cpp \
+	destination.cpp \
 	dispmap.cpp \
 	execution.cpp \
 	favorites.cpp \
