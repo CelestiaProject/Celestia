@@ -106,7 +106,7 @@ static    NSMenu* savedMainMenu;
 }
 */
 
-static char* fatalErrorMessage;
+NSString* fatalErrorMessage;
 
 - (void) fatalError: (NSString *) msg
 {
@@ -114,7 +114,7 @@ static char* fatalErrorMessage;
     {
         if (fatalErrorMessage == nil) return;
         [loadingPanel orderOut: nil ];
-        NSRunAlertPanel(@"Fatal Error",fatalErrorMessage,nil,nil,nil);
+        NSRunAlertPanel(@"Fatal Error", fatalErrorMessage, nil, nil, nil);
         [NSApp terminate:self];
         return;
     }
@@ -189,8 +189,10 @@ static CelestiaController* firstInstance;
     ready = NO;
     isDirty = YES;
     appCore = nil;
+	fatalErrorMessage = nil;
+	
     [ self setupResourceDirectory ];
-NSLog(@"about to createAppCore\n");
+	NSLog(@"about to createAppCore\n");
     appCore = [CelestiaAppCore sharedAppCore];
     if (appCore == nil)
     {
@@ -229,7 +231,7 @@ NSLog(@"about to createAppCore\n");
 - (void)startInitialization
 {
     //NSLog(@"[CelestiaController startInitialization]");
-    if (![ appCore initSimulation])
+    if (![appCore initSimulation])
     {
         NSLog(@"Could not initSimulation!");
     [startupCondition lock];
@@ -247,7 +249,6 @@ NSLog(@"done with initSimulation\n");
 
 - (void)finishInitialization
 {
-    int i;
     NSInvocation *menuCallback;
     //NSLog(@"finishInitialization");
     // GL should be all set up, now initialize the renderer.
@@ -354,10 +355,11 @@ NSLog(@"done with initSimulation\n");
     int tag = [item tag];
     if ( tag != 0 )
     {
-        CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-        if ( tag < 0 )
+        if ( tag < 0 ) {
             [self keyPress: -tag hold: 2];
-        else [ appCore actionForItem: item ];
+		} else {
+			[appCore actionForItem: item ];
+		}
         [appCore validateItemForTag: tag];
     }
 }
@@ -367,8 +369,9 @@ NSLog(@"done with initSimulation\n");
     int tag = [item tag];
     if ( tag != 0 )
     {
-        [ appCore actionForItem: item ];
-        [ appCore tick]; [glView setNeedsDisplay:YES];
+        [appCore actionForItem: item];
+        [appCore tick]; 
+		[glView setNeedsDisplay:YES];
     }
 }
 
@@ -378,7 +381,7 @@ NSLog(@"done with initSimulation\n");
     int tag = [item tag];
     if ( tag != 0 )
     {
-        [ appCore actionForItem: item ];
+        [appCore actionForItem: item];
     }
 }
 

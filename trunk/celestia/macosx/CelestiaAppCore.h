@@ -58,8 +58,16 @@
 -(unsigned int) getLocationFilter;
 -(void) setLocationFilter: (unsigned int) filter;
 -(void)runScript:(NSString *)fileName;
-- (BOOL) testSetting: (int) tag;
-- (void) handleSetting: (int) tag;
-- (void) showInfoUrl;
+//- (BOOL) testSetting: (int) tag;
+//- (void) handleSetting: (int) tag;
+-(void)validateItems;
+-(BOOL)validateItem:(id)item;
+-(void)showInfoURL;
+-(void)actionForItem:(id)item;
+-(void)validateItemForTag:(int)tag;
+-(void)defineKeyForItem:(id)item;
+-(void)addSurfaceMenu:(NSMenu*)contextMenu;
+-(void)keyDown:(int)c withModifiers:(int)m;
+-(void)keyUp:(int)c withModifiers:(int)m;
 
 @end

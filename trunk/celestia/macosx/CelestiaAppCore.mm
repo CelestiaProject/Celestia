@@ -243,7 +243,7 @@ static NSMutableDictionary* tagDict;
     self = [super init];
     appCore = new CelestiaCore();
     appCore->setAlerter(new MacOSXAlerter());
-    MacOSXWatcher* theWatcher = new MacOSXWatcher(appCore,self);
+//    MacOSXWatcher* theWatcher = new MacOSXWatcher(appCore,self);
 //    appCore->setWatcher(theWatcher);
     contextMenuCallbackInvocation = NULL;
     _destinations = nil;
@@ -535,7 +535,7 @@ static NSMutableDictionary* tagDict;
             [newItem setTarget:  [firstItem target] ];
             [newItem setAction:  [firstItem action] ];
             [ surfaceMenu addItem: newItem ];
-        for (int i = 0; i < surfaces->size(); i++)
+        for (int i = 0; i < (int)surfaces->size(); i++)
         {
             NSMenuItem* newItem = [ [NSMenuItem alloc] init ]; 
             [newItem setTitle: [ NSString stringWithCString: (*surfaces)[i].c_str() ] ];
@@ -569,7 +569,7 @@ static NSMutableDictionary* tagDict;
         if (surfNames != NULL)
         {
             string surfName, displayedSurfName;
-            if (index >= 0 && index < surfNames->size())
+            if (index >= 0 && index < (int)surfNames->size())
                 surfName = surfNames->at(index);
             displayedSurfName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
             if (surfName  == displayedSurfName )
@@ -598,7 +598,7 @@ static NSMutableDictionary* tagDict;
         {
             string surfName;
             index--;
-            if (index >= 0 && index < surfNames->size())
+            if (index >= 0 && index < (int)surfNames->size())
                 surfName = surfNames->at(index);
             appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(surfName);
             delete surfNames;
@@ -619,7 +619,7 @@ static NSMutableDictionary* tagDict;
             if (url.empty())
             {
                 string name = sel.body()->getName();
-                for (int i = 0; i < name.size(); i++)
+                for (int i = 0; i < (int)name.size(); i++)
                     name[i] = tolower(name[i]);
 
                 url = string("http://www.nineplanets.org/") + name + ".html";
@@ -856,14 +856,14 @@ static NSMutableDictionary* tagDict;
     if ( tag >= 620 && tag < 630 )
     {
         int index = tag-620;
-        appCore->getRenderer()->setStarStyle(index);
+        appCore->getRenderer()->setStarStyle((Renderer::StarStyle)index);
         [self selectPopUpButtonItem: item withIndex: index];
         return;            
     }    
     if ( tag >= 630 && tag < 640 )
     {
         int index = tag-630;
-        appCore->getRenderer()->getGLContext()->setRenderPath(index);
+        appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)index);
         [self selectPopUpButtonItem: item withIndex: index];
         return;            
     }    
@@ -950,13 +950,11 @@ static NSMutableDictionary* tagDict;
 
 - (void) validateItems
 {
-    NSArray* tags = [ tagDict allKeys ];
-    int tag;
-    for ( int i = 0; i < [tags count]; i++ )
-    {
-        tag = [[ tags objectAtIndex: i] intValue ];
-        [self validateItemForTag: tag];
-   }
+	id obj;
+    NSEnumerator* enumerator = [[tagDict allKeys] objectEnumerator];
+	while ((obj = [enumerator nextObject]) != nil) {
+		[self validateItemForTag: [obj intValue]];
+	}
 }
 
 @end

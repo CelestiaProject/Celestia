@@ -28,24 +28,28 @@
     int keyCode, keyTime;
 }
 -(BOOL)applicationShouldTerminate:(id)sender;
-- (BOOL)windowShouldClose:(id)sender;
-- (IBAction)showGotoObject:(id)sender;
-- (IBAction)gotoObject:(id)sender;
-- (IBAction)back:(id)sender;
-- (IBAction)forward:(id)sender;
-- (IBAction)showInfoURL:(id)sender;
-- (IBAction) openScript: (id) sender;
-- (void)setDirty;
-- (void)resize;
-- (void)startInitialization;
-- (void)finishInitialization;
-- (void)display;
-- (void)idle;
-- (void)awakeFromNib;
--(void) keyPress:(int)code hold:(int)time;
+-(BOOL)windowShouldClose:(id)sender;
+-(IBAction)showGotoObject:(id)sender;
+-(IBAction)gotoObject:(id)sender;
+-(IBAction)back:(id)sender;
+-(IBAction)forward:(id)sender;
+-(IBAction)showInfoURL:(id)sender;
+-(IBAction)openScript:(id)sender;
+-(void)setDirty;
+-(void)resize;
+-(void)startInitialization;
+-(void)finishInitialization;
+-(void)display;
+-(void)idle;
+-(void)awakeFromNib;
+-(void)keyPress:(int)code hold:(int)time;
+-(void)setupResourceDirectory;
+-(void)scanForKeys:(id)item;
++(CelestiaController*) shared;
+- (void) fatalError: (NSString *) msg;
 
-- (BOOL)     validateMenuItem: (id) item;
-- (IBAction) activateMenuItem: (id) item;
-- (IBAction) activateSwitchButon: (id) item;
 
+-(BOOL)validateMenuItem:(id)item;
+-(IBAction)activateMenuItem:(id)item;
+-(IBAction)activateSwitchButton:(id)item;
 @end
