@@ -2237,6 +2237,8 @@ void CelestiaCore::renderOverlay()
         else
         {
             double timeScale = sim->getTimeScale();
+
+            *overlay << setprecision(0);
             if (abs(abs(timeScale) - 1) < 1e-6)
             {
                 if (sign(timeScale) == 1)
@@ -2250,6 +2252,7 @@ void CelestiaCore::renderOverlay()
                 *overlay << timeScale << "x faster";
             else
                 *overlay << 1.0 / timeScale << "x slower";
+            *overlay << setprecision(3);
         }
         overlay->endText();
         glPopMatrix();
