@@ -12,12 +12,23 @@
 #include "astro.h"
 #include "customorbit.h"
 
+using namespace std;
+
+
 #define TWOPI 6.28318530717958647692
 #define LPEJ 0.23509484  // Longitude of perihelion of Jupiter
-#define RADIUS_JUPITER 71398.0
-#define RADIUS_SATURN  60330.0
 
-using namespace std;
+// These are required because the orbits of the Jovian and Saturnian
+// satellites are computed in units of their parent planets' radii.
+static const double JupiterRadius = 71398.0;
+static const double SaturnRadius = 60330.0;
+
+// The expressions for custom orbits are complex, so the bounding radii are
+// generally must computed from mean orbital elements.  It's important that
+// a sphere with the bounding radius completely enclose the orbit, so we
+// multiply by this factor to make the bounding radius a bit larger than
+// the apocenter distance computed from the mean elements.
+static const double BoundingRadiusSlack = 1.2;
 
 double gPlanetElements[8][9];
 double gElements[8][23] = {
@@ -322,6 +333,7 @@ public:
 
     virtual Point3d computePosition(double jd) const = 0;
     virtual double getPeriod() const = 0;
+    virtual double getBoundingRadius() const = 0;
 
     Point3d positionAtTime(double jd) const
     {
@@ -353,22 +365,22 @@ class MercuryOrbit : public CachingOrbit
 
     dl = dr = dml = ds = dm = da = dhl = 0.0;
 
-    //Calculate the Julian centuries elapsed since 1900
-	t = (jd - 2415020.0)/36525.0;
+    // Calculate the Julian centuries elapsed since 1900
+    t = (jd - 2415020.0)/36525.0;
 
-    //Specify which planets we must compute elements for
+    // Specify which planets we must compute elements for
     pList.push_back(0);
     pList.push_back(1);
     pList.push_back(3);
     computePlanetElements(t, pList);
 
-    //Compute necessary planet mean anomalies
+    // Compute necessary planet mean anomalies
     map[0] = degToRad(gPlanetElements[0][0] - gPlanetElements[0][2]);
     map[1] = degToRad(gPlanetElements[1][0] - gPlanetElements[1][2]);
     map[2] = 0.0;
     map[3] = degToRad(gPlanetElements[3][0] - gPlanetElements[3][2]);
 
-    //Compute perturbations
+    // Compute perturbations
     dl = 2.04e-3*cos(5*map[1]-2*map[0]+2.1328e-1)+
          1.03e-3*cos(2*map[1]-map[0]-2.8046)+
          9.1e-4*cos(2*map[3]-map[0]-6.4582e-1)+
@@ -382,7 +394,7 @@ class MercuryOrbit : public CachingOrbit
     computePlanetCoords(p, map[p], da, dhl, dl, dm, dml, dr, ds,
                         eclLong, eclLat, distance);
 
-    //Corrections for internal coordinate system
+    // Corrections for internal coordinate system
     eclLat -= (PI/2);
     eclLong += PI;
 
@@ -394,6 +406,11 @@ class MercuryOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 87.9522;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 6.98e+7 * BoundingRadiusSlack;
     };
 };
 
@@ -460,6 +477,11 @@ class VenusOrbit : public CachingOrbit
     {
         return 224.7018;
     };
+
+    double getBoundingRadius() const
+    {
+        return 1.089e+7 * BoundingRadiusSlack;
+    };
 };
 
 class EarthOrbit : public CachingOrbit
@@ -518,6 +540,11 @@ class EarthOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 365.25;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 1.52e+8 * BoundingRadiusSlack;
     };
 };
 
@@ -665,6 +692,11 @@ class LunarOrbit : public CachingOrbit
     {
         return 27.321661;
     };
+
+    double getBoundingRadius() const
+    {
+        return 405504 * BoundingRadiusSlack;
+    };
 };
 
 class MarsOrbit : public CachingOrbit
@@ -740,6 +772,11 @@ class MarsOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 689.998725;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 2.49e+8 * BoundingRadiusSlack;
     };
 };
 
@@ -843,6 +880,11 @@ class JupiterOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 4332.66855;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 8.16e+8 * BoundingRadiusSlack;
     };
 };
 
@@ -974,6 +1016,11 @@ class SaturnOrbit : public CachingOrbit
     {
         return 10759.42493;
     };
+
+    double getBoundingRadius() const
+    {
+        return 1.50e+9 * BoundingRadiusSlack;
+    };
 };
 
 class UranusOrbit : public CachingOrbit
@@ -1059,6 +1106,11 @@ class UranusOrbit : public CachingOrbit
     {
         return 30686.07698;
     };
+
+    double getBoundingRadius() const
+    {
+        return 3.01e+9 * BoundingRadiusSlack;
+    };
 };
 
 class NeptuneOrbit : public CachingOrbit
@@ -1134,6 +1186,11 @@ class NeptuneOrbit : public CachingOrbit
     {
         return 60190.64325;
     };
+
+    double getBoundingRadius() const
+    {
+        return 4.54e+9 * BoundingRadiusSlack;
+    };
 };
 
 class PlutoOrbit : public CachingOrbit
@@ -1170,6 +1227,11 @@ class PlutoOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 90779.235;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 7.38e+9 * BoundingRadiusSlack;
     };
 };
 
@@ -1224,7 +1286,7 @@ class IoOrbit : public CachingOrbit
       - 2.14e-5*cos(l1 - p4) + 1.7e-5*cos(l1 - l2)
       - 1.31e-5*cos(4*(l1 - l2)) + 1.06e-5*cos(l1 - l3)
       - 6.6e-6*cos(l1 + p3 - 2*LPEJ - 2*G);
-    R = 5.90569 * RADIUS_JUPITER * (1 + R);
+    R = 5.90569 * JupiterRadius * (1 + R);
 
     T = (jd - 2433282.423) / 36525.0;
     P = 1.3966626*T + 3.088e-4*T*T;
@@ -1242,6 +1304,11 @@ class IoOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 1.769138;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 423329 * BoundingRadiusSlack;
     };
 };
 
@@ -1307,7 +1374,7 @@ class EuropaOrbit : public CachingOrbit
       - 2.9e-5*cos(2*(l1 - l2)) + 1.64e-5*cos(2*(l2 - w2))
       + 1.07e-5*cos(l1 - 2*l3 + p3) - 1.02e-5*cos(l2 - p1)
       - 9.1e-6*cos(2*(l1 - l3));
-    R = 9.39657 * RADIUS_JUPITER * (1 + R);
+    R = 9.39657 * JupiterRadius * (1 + R);
 
     T = (jd - 2433282.423) / 36525.0;
     P = 1.3966626*T + 3.088e-4*T*T;
@@ -1325,6 +1392,11 @@ class EuropaOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 3.551810;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 678000 * BoundingRadiusSlack;
     };
 };
 
@@ -1393,7 +1465,7 @@ class GanymedeOrbit : public CachingOrbit
       + 2.94e-5*cos(l3 - l4) - 1.56e-5*cos(3*(l3 - l4))
       + 1.56e-5*cos(l1 - l3) - 1.53e-5*cos(l1 - l2)
       + 7.0e-6*cos(2*l2 - 3*l3 + p3) - 5.1e-6*cos(l3 + p3 - 2*LPEJ - 2*G);
-    R = 14.98832 * RADIUS_JUPITER * (1 + R);
+    R = 14.98832 * JupiterRadius * (1 + R);
 
     T = (jd - 2433282.423) / 36525.0;
     P = 1.3966626*T + 3.088e-4*T*T;
@@ -1411,6 +1483,11 @@ class GanymedeOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 7.154553;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 1070000 * BoundingRadiusSlack;
     };
 };
 
@@ -1481,7 +1558,7 @@ class CallistoOrbit : public CachingOrbit
       + 1.77e-3*cos(2*(l3 - l4)) - 1.67e-3*cos(2*l4 - psi - w4)
       + 1.67e-3*cos(psi - w4) - 1.55e-3*cos(2*(l4 - LPEJ - G))
       + 1.42e-3*cos(2*(l4 - psi));
-    R = 26.36273 * RADIUS_JUPITER * (1 + R);
+    R = 26.36273 * JupiterRadius * (1 + R);
 
     T = (jd - 2433282.423) / 36525.0;
     P = 1.3966626*T + 3.088e-4*T*T;
@@ -1499,6 +1576,11 @@ class CallistoOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 16.689018;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 1890000 * BoundingRadiusSlack;
     };
 };
 
@@ -1559,7 +1641,7 @@ static Point3d SaturnMoonPosition(double lam, double gam, double Om, double r)
     u = degToRad(u);
     w = degToRad(w);
     gam = degToRad(gam);
-    r = r * RADIUS_SATURN;
+    r = r * SaturnRadius;
 
     // Corrections for Celestia's coordinate system
     u = -u;
@@ -1634,6 +1716,11 @@ class MimasOrbit : public CachingOrbit
     {
 	return 0.9424218;
     };
+
+    double getBoundingRadius() const
+    {
+        return 189000 * BoundingRadiusSlack;
+    };
 };
 
 
@@ -1667,6 +1754,11 @@ class EnceladusOrbit : public CachingOrbit
     {
 	return 1.370218;
     };
+
+    double getBoundingRadius() const
+    {
+        return 239000 * BoundingRadiusSlack;
+    };
 };
 
 
@@ -1695,6 +1787,11 @@ class TethysOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 1.887802;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 295000 * BoundingRadiusSlack;
     };
 };
 
@@ -1729,6 +1826,11 @@ class DioneOrbit : public CachingOrbit
     double getPeriod() const
     {
 	return 2.736915;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 378000 * BoundingRadiusSlack;
     };
 };
 
@@ -1770,6 +1872,11 @@ class RheaOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 4.517500;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 528000 * BoundingRadiusSlack;
     };
 };
 
@@ -1830,6 +1937,11 @@ class TitanOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 15.9669028;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 1260000 * BoundingRadiusSlack;
     };
 };
 
@@ -1905,6 +2017,11 @@ class HyperionOrbit : public CachingOrbit
     double getPeriod() const
     {
         return 21.276609;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 1640000 * BoundingRadiusSlack;
     };
 };
 
@@ -1990,6 +2107,51 @@ class IapetusOrbit : public CachingOrbit
     {
         return 21.276609;
     };
+
+    double getBoundingRadius() const
+    {
+        return 3660000 * BoundingRadiusSlack;
+    };
+};
+
+
+class PhoebeOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        double t_d = jd - 2433282.5;
+        double t = t_d / 365.25;
+        double t_cen = t / 100.0;
+        double t_cen_2 = square(t_cen);
+
+        double gam_ = 173.949 - 0.020 * t;
+        double i = 28.0817 + gam_;
+        // double a = 18720552.0 / SaturnRadius;
+        double a = 12952000.0 / SaturnRadius;
+        double lam_ = 277.8720 - 0.6541068 * t_d;
+        double Om = 245.998 - 0.41353 * t;
+        double om = 280.165 - 0.19586 * t;
+        double ecc = 0.16326;
+
+        // lam_ = 2 * Om - lam_;
+        // om = 2 * Om - om;
+
+        double lam, gam, r, w;
+        OuterSaturnMoonParams(a, ecc, i, Om, lam_ - om, lam_,
+                              lam, gam, r, w);
+
+        return SaturnMoonPosition(lam, gam, w, r);
+    };
+
+    double getPeriod() const
+    {
+        return 548.2122790;
+    };
+
+    double getBoundingRadius() const
+    {
+        return 15100000 * BoundingRadiusSlack;
+    };
 };
 
 
@@ -2039,6 +2201,8 @@ Orbit* GetCustomOrbit(const std::string& name)
         return new HyperionOrbit();
     if (name == "iapetus")
         return new IapetusOrbit();
+    if (name == "phoebe")
+        return new PhoebeOrbit();
     else
         return NULL;
 }
