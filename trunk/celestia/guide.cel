@@ -21,7 +21,7 @@
 {
 	Name "Alpha Centauri"
 	Target "Rigil Kent"
-	Distance 40
+	Distance 90
 	DistanceUnits "au"
 	Description "Alpha Centauri A and B are together with Proxima Centauri, the nearest star system to us.  Alpha Cen A is very similar to our own Sun, though slightly older and brighter.  B is dimmer and redder, and Proxima is so dim that it is can't be seen by the naked eye even though it is the star nearest to the Sun."
 }
