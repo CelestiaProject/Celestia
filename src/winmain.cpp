@@ -714,6 +714,8 @@ static void syncMenusWithRendererState()
                      (renderFlags & Renderer::ShowDiagrams) != 0);
     setMenuItemCheck(ID_RENDER_SHOWATMOSPHERES,
                      (renderFlags & Renderer::ShowCloudMaps) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWNIGHTLIGHTS,
+                     (renderFlags & Renderer::ShowNightMaps) != 0);
     setMenuItemCheck(ID_RENDER_SHOWGALAXIES,
                      (renderFlags & Renderer::ShowGalaxies) != 0);
     setMenuItemCheck(ID_RENDER_SHOWCELESTIALSPHERE,
@@ -729,6 +731,11 @@ static void syncMenusWithRendererState()
                      (labelMode & Renderer::ConstellationLabels) != 0);
     setMenuItemCheck(ID_RENDER_SHOWMINORPLANETLABELS,
                      (labelMode & Renderer::MinorPlanetLabels) != 0);
+
+    setMenuItemCheck(ID_RENDER_PIXEL_SHADERS,
+                     appCore->getRenderer()->getFragmentShaderEnabled());
+    setMenuItemCheck(ID_RENDER_VERTEX_SHADERS,
+                     appCore->getRenderer()->getVertexShaderEnabled());
 }
 
 
@@ -1175,11 +1182,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
     case WM_CHAR:
         {
-            int oldRenderFlags = appCore->getRenderer()->getRenderFlags();
-            int oldLabelMode = appCore->getRenderer()->getLabelMode();
+            Renderer* r = appCore->getRenderer();
+            int oldRenderFlags = r->getRenderFlags();
+            int oldLabelMode = r->getLabelMode();
+            bool oldFragmentShaderState = r->getFragmentShaderEnabled();
+            bool oldVertexShaderState = r->getVertexShaderEnabled();
             appCore->charEntered((char) wParam);
-            if (appCore->getRenderer()->getRenderFlags() != oldRenderFlags ||
-                appCore->getRenderer()->getLabelMode() != oldLabelMode)
+            if (r->getRenderFlags() != oldRenderFlags ||
+                r->getLabelMode() != oldLabelMode ||
+                r->getFragmentShaderEnabled() != oldFragmentShaderState ||
+                r->getVertexShaderEnabled() != oldVertexShaderState)
             {
                 syncMenusWithRendererState();
             }
@@ -1282,6 +1294,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('I');
             syncMenusWithRendererState();
             break;
+        case ID_RENDER_SHOWNIGHTLIGHTS:
+            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowNightMaps);
+            syncMenusWithRendererState();
+            break;
         case ID_RENDER_SHOWGALAXIES:
             appCore->charEntered('U');
             syncMenusWithRendererState();
@@ -1317,17 +1333,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
             appCore->getRenderer()->setAmbientLightLevel(0.25f);
             break;
-#if 0
-        case ID_RENDER_PERPIXEL_LIGHTING:
-            if (renderer->perPixelLightingSupported())
-            {
-                bool enabled = !renderer->getPerPixelLighting();
-                CheckMenuItem(menuBar, ID_RENDER_PERPIXEL_LIGHTING,
-                              enabled ? MF_CHECKED : MF_UNCHECKED);
-                renderer->setPerPixelLighting(enabled);
-            }
+
+        case ID_RENDER_PIXEL_SHADERS:
+            appCore->charEntered('\020');
+            syncMenusWithRendererState();
             break;
-#endif
+        case ID_RENDER_VERTEX_SHADERS:
+            appCore->charEntered('\026');
+            syncMenusWithRendererState();
+            break;
+
         case ID_TIME_FASTER:
             appCore->charEntered('L');
             break;
