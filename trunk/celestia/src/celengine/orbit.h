@@ -18,6 +18,7 @@ class Orbit
 public:
     virtual Point3d positionAtTime(double) const = 0;
     virtual double getPeriod() const = 0;
+    virtual double getBoundingRadius() const = 0;
 };
 
 
@@ -30,6 +31,7 @@ public:
     // Compute the orbit for a specified Julian date
     Point3d positionAtTime(double) const;
     double getPeriod() const;
+    double getBoundingRadius() const;
 
 private:
     double pericenterDistance;
