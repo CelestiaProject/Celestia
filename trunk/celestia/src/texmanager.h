@@ -15,34 +15,6 @@
 #include "resmanager.h"
 #include "texture.h"
 
-#if 0
-typedef ResourceHandle TextureHandle;
-
-class TextureManager : public ResourceManager
-{
- public:
-    TextureManager() : ResourceManager() {};
-    TextureManager(std::string _baseDir) : ResourceManager(_baseDir) {};
-    ~TextureManager();
-
-    bool find(TextureHandle, Texture**);
-    Texture* load(const std::string& name, bool compress = false);
-    Texture* loadBumpMap(const std::string& name, float bumpHeight);
-
- private:
-    class TextureInfo : public ResourceInfo
-    {
-    public:
-        TextureInfo();
-
-        virtual bool operator<(const TextureInfo&);
-
-        std::string source;
-        float bumpHeight;
-        bool compress;
-    };
-};
-#endif
 
 class TextureInfo : public ResourceInfo<Texture>
 {

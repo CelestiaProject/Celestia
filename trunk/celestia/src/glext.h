@@ -3,6 +3,10 @@
 #ifndef _GLEXT_H_
 #define _GLEXT_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef _WIN32
 #define APIENTRY
 #endif
@@ -670,5 +674,9 @@ extern void InitExtSwapControl();
 extern void InitExtTextureCompression();
 extern void InitExtBlendMinmax();
 extern void InitExtVertexProgram();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _GLEXT_H_

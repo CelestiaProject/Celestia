@@ -348,7 +348,7 @@ string Tokenizer::getStringValue()
 
 int Tokenizer::readChar()
 {
-    return (char) in->get();
+    return (int) in->get();
 }
 
 void Tokenizer::syntaxError(char* message)

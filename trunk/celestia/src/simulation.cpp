@@ -693,7 +693,6 @@ Selection Simulation::pickStar(Vec3f pickRay)
 
 Selection Simulation::pickObject(Vec3f pickRay)
 {
-    Point3f observerPos = (Point3f) observer.getPosition();
     Selection sel;
 
     if (closestSolarSystem != NULL)

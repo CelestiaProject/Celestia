@@ -14,6 +14,7 @@
 #include "celestia.h"
 #include "mathlib.h"
 #include "util.h"
+#include "bytes.h"
 #include "astro.h"
 #include "plane.h"
 #include "stardb.h"
@@ -299,6 +300,7 @@ StarDatabase *StarDatabase::read(istream& in)
 
     uint32 nStars = 0;
     in.read((char *) &nStars, sizeof nStars);
+    LE_TO_CPU_INT32(nStars, nStars);
     if (!in.good())
     {
         delete db;
@@ -325,12 +327,19 @@ StarDatabase *StarDatabase::read(istream& in)
 	uint8 parallaxError;
 
 	in.read((char *) &catNo, sizeof catNo);
+        LE_TO_CPU_INT32(catNo, catNo);
         in.read((char *) &hdCatNo, sizeof hdCatNo);
+        LE_TO_CPU_INT32(hdCatNo, hdCatNo);
 	in.read((char *) &RA, sizeof RA);
+        LE_TO_CPU_FLOAT(RA, RA);
 	in.read((char *) &dec, sizeof dec);
+        LE_TO_CPU_FLOAT(dec, dec);
 	in.read((char *) &parallax, sizeof parallax);
+        LE_TO_CPU_FLOAT(parallax, parallax);
 	in.read((char *) &appMag, sizeof appMag);
+        LE_TO_CPU_INT16(appMag, appMag);
 	in.read((char *) &stellarClass, sizeof stellarClass);
+        LE_TO_CPU_INT32(stellarClass, stellarClass);
 	in.read((char *) &parallaxError, sizeof parallaxError);
 	if (!in.good())
 	    break;

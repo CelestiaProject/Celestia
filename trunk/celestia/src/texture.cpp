@@ -10,7 +10,6 @@
 #ifdef _WIN32
 #define IJL_JPEG_SUPPORT
 #define PNG_SUPPORT
-#define DPRINTF //
 #else
 #define IJG_JPEG_SUPPORT
 #define PNG_SUPPORT
@@ -23,6 +22,7 @@
 #include <cstdio>
 #include "gl.h"
 #include "glext.h"
+#include "celestia.h"
 #ifdef IJL_JPEG_SUPPORT
 #include "ijl.h"
 #endif
@@ -709,7 +709,6 @@ Texture* CreatePNGTexture(const string& filename)
     char header[8];
     png_structp png_ptr;
     png_infop info_ptr;
-    unsigned int sig_read = 0;
     png_uint_32 width, height;
     int bit_depth, color_type, interlace_type;
     FILE* fp = NULL;
@@ -821,7 +820,7 @@ Texture* CreatePNGTexture(const string& filename)
         png_set_packing(png_ptr);
 
     row_pointers = new png_bytep[height];
-    for (int i = 0; i < height; i++)
+    for (unsigned int i = 0; i < height; i++)
         row_pointers[i] = (png_bytep) &tex->pixels[tex->components * width * i];
 
     png_read_image(png_ptr, row_pointers);
@@ -836,6 +835,24 @@ Texture* CreatePNGTexture(const string& filename)
 }
 
 
+#ifdef WORDS_BIGENDIAN
+
+static int readInt(ifstream& in)
+{
+    unsigned char b[4];
+    in.read(reinterpret_cast<char*>(b), 4);
+    return reinterpret_cast<int>(b);
+}
+
+static short readShort(ifstream& in)
+{
+    unsigned char b[2];
+    in.read(reinterpret_cast<char*>(b), 2);
+    return reinterpret_cast<short>(b);
+}
+
+#else
+
 static int readInt(ifstream& in)
 {
     unsigned char b[4];
@@ -844,7 +861,6 @@ static int readInt(ifstream& in)
         + ((int) b[1] << 8) + (int) b[0];
 }
 
-
 static short readShort(ifstream& in)
 {
     unsigned char b[2];
@@ -852,6 +868,7 @@ static short readShort(ifstream& in)
     return ((short) b[1] << 8) + (short) b[0];
 }
 
+#endif
 
 static Texture* CreateBMPTexture(ifstream& in)
 {
@@ -859,20 +876,14 @@ static Texture* CreateBMPTexture(ifstream& in)
     BMPImageHeader imageHeader;
     unsigned char* pixels;
 
-    printf("*** CreateBMPTexture\n");
     in >> fileHeader.b;
     in >> fileHeader.m;
     fileHeader.size = readInt(in);
     fileHeader.reserved = readInt(in);
     fileHeader.offset = readInt(in);
 
-    printf("Checking header . . .\n");
     if (fileHeader.b != 'B' || fileHeader.m != 'M')
         return NULL;
-    printf("Header is correct.\n");
-
-    printf("File size: %d\n", fileHeader.size);
-    printf("Bytes read: %d\n", in.tellg());
 
     imageHeader.size = readInt(in);
     imageHeader.width = readInt(in);
@@ -886,9 +897,11 @@ static Texture* CreateBMPTexture(ifstream& in)
     imageHeader.colorsUsed = readInt(in);
     imageHeader.colorsImportant = readInt(in);
 
+#if 0
     printf("%d Planes @ %d BPP\n", imageHeader.planes, imageHeader.bpp);
     printf("Size: %d\n", imageHeader.size);
     printf("Dimensions: %d x %d\n", imageHeader.width, imageHeader.height);
+#endif
 
     if (imageHeader.width <= 0 || imageHeader.height <= 0)
         return NULL;
@@ -900,9 +913,11 @@ static Texture* CreateBMPTexture(ifstream& in)
     if (imageHeader.bpp != 8 && imageHeader.bpp != 24 && imageHeader.bpp != 32)
         return NULL;
 
+#if 0
     printf("Image size: %d\n", imageHeader.imageSize);
     printf("Compression: %d\n", imageHeader.compression);
     printf("WidthPPM x HeightPPM: %d x %d\n", imageHeader.widthPPM, imageHeader.heightPPM);
+#endif
 
     unsigned char* palette = NULL;
     if (imageHeader.bpp == 8)

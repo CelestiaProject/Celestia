@@ -44,10 +44,10 @@ class DynamicStarOctree
     void split(float);
     void sortStarsIntoChildNodes();
 
-    Point3f center;
-    float absMag;
     std::vector<const Star*>* stars;
     DynamicStarOctree** children;
+    Point3f center;
+    float absMag;
 };
 
 
