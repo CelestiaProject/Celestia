@@ -557,7 +557,7 @@ static int infoChanged(GtkButton *button, int info)
 extern void resyncAll();
 
 GtkWidget *showFrame=NULL, *labelFrame=NULL, *showBox=NULL, *labelBox=NULL;
-GtkWidget *optionDialog=NULL, *spinner = NULL;
+GtkWidget *optionDialog=NULL, *spinner=NULL;
 
 static void menuOptions()
 {
@@ -604,9 +604,9 @@ static void menuOptions()
     gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (optionDialog)->vbox), hbox, TRUE,
                        TRUE, 0);
 
-    GtkAdjustment *adj = (GtkAdjustment *)
-                         gtk_adjustment_new((float)appSim->getFaintestVisible(),
-                                            1.001, 11.999, 0.5, 2.0, 0.0);
+    GtkAdjustment *adj= (GtkAdjustment *)
+                        gtk_adjustment_new((gfloat)appSim->getFaintestVisible(),
+                                           1.001, 11.999, 0.5, 2.0, 0.0);
     spinner = gtk_spin_button_new (adj, 0.5, 0);
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spinner), TRUE);
     gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), FALSE);
@@ -1931,21 +1931,13 @@ GtkCheckButton *makeCheckButton(char *label, GtkWidget *vbox, bool set, GtkSigna
 
 int checkRenderFlag(int flag, char *path)
 {
-	bool set=(appRenderer->getRenderFlags() & flag) == flag;
-        /*char *optName=rindex(path,'/');
-        if(optName)
-            makeCheckButton(++optName, showBox, set);*/
-	return set;
+	return ((appRenderer->getRenderFlags() & flag) == flag);
 }
 
 
 int checkLabelFlag(int flag, char *path)
 {
-        bool set=(appRenderer->getLabelMode() & flag) == flag;
-        /*char *optName=rindex(path,'/');
-        if(optName)
-            makeCheckButton(++optName, labelBox, set);*/
-	return set;
+        return ((appRenderer->getLabelMode() & flag) == flag);
 }
 
 
@@ -2382,6 +2374,7 @@ void resyncMenus()
     }
 }
 
+
 void resyncAmbient()
 {
     if(optionDialog) // Only  modify if optionsDialog is setup
@@ -2407,7 +2400,7 @@ void resyncFaintest()
 }
 
 
-void resyncHudDet()
+void resyncVerbosity()
 {
     if(optionDialog) // Only  modify if optionsDialog is setup
     {
@@ -2422,7 +2415,7 @@ void resyncAll()
 {
     resyncMenus();
     resyncAmbient();
-    resyncHudDet();
+    resyncVerbosity();
     resyncFaintest();
 }
 
@@ -2435,13 +2428,6 @@ class GtkWatcher : public CelestiaWatcher
 public:
     GtkWatcher(CelestiaCore*);
     virtual void notifyChange(int);
-    void renderFlagsChanged();
-    void labelFlagsChanged();
-    void timeZoneChanged();
-    void ambientLightChanged();
-    void faintestChanged();
-    void hudDetailChanged();
-
 };
 
 
@@ -2452,53 +2438,14 @@ GtkWatcher::GtkWatcher(CelestiaCore* _appCore) :
 
 void GtkWatcher::notifyChange(int property)
 {
-    if (property == RenderFlags)
-        renderFlagsChanged();
-    else if (property == LabelFlags)
-        labelFlagsChanged();
-    else if (property == TimeZone)
-        timeZoneChanged();
-    else if (property == AmbientLight)
-        ambientLightChanged();
-    else if (property == Faintest)
-        faintestChanged();
-    else if (property == VerbosityLevel)
-        hudDetailChanged();
-}
-
-void GtkWatcher::renderFlagsChanged()
-{
-    resyncMenus();
-}
-
-
-void GtkWatcher::labelFlagsChanged()
-{
-    resyncMenus();
-}
-
-
-void GtkWatcher::timeZoneChanged()
-{
-    resyncMenus();
-}
-
-
-void GtkWatcher::ambientLightChanged()
-{
-    resyncAmbient();
-}
-
-
-void GtkWatcher::faintestChanged()
-{
-    resyncFaintest();
-}
-
-
-void GtkWatcher::hudDetailChanged()
-{
-    resyncHudDet();
+    if ((property & (RenderFlags|LabelFlags|TimeZone)))
+        resyncMenus();
+    else if (property & AmbientLight)
+        resyncAmbient();
+    else if (property & Faintest)
+        resyncFaintest();
+    else if (property & VerbosityLevel)
+        resyncVerbosity();
 }
 
 
