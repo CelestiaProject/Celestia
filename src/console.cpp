@@ -47,18 +47,6 @@ Console::~Console()
 }
 
 
-#if 0
-Console& Console::operator<<(string s)
-{
-    int len = s.length();
-    for (int i = 0; i < len; i++)
-        print(s[i]);
-
-    return *this;
-}
-#endif
-
-
 void Console::setFont(TexFont* _font)
 {
     font = _font;
