@@ -127,6 +127,7 @@ struct AppPreferences
     int vertexShader;
     int showLocalTime;
     int hudDetail;
+    int fullScreenMode;
 };
 
 void SetMouseCursor(LPCTSTR lpCursor)
@@ -1399,6 +1400,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "VertexShader", &prefs.vertexShader, sizeof(prefs.vertexShader));
     GetRegistryValue(key, "ShowLocalTime", &prefs.showLocalTime, sizeof(prefs.showLocalTime));
     GetRegistryValue(key, "HudDetail", &prefs.hudDetail, sizeof(prefs.hudDetail));
+    GetRegistryValue(key, "FullScreenMode", &prefs.fullScreenMode, sizeof(prefs.fullScreenMode));
 
     RegCloseKey(key);
 
@@ -1436,6 +1438,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "VertexShader", prefs.vertexShader);
     SetRegistryInt(key, "ShowLocalTime", prefs.showLocalTime);
     SetRegistryInt(key, "HudDetail", prefs.hudDetail);
+    SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
 
     RegCloseKey(key);
 
@@ -1464,6 +1467,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.vertexShader = appCore->getRenderer()->getVertexShaderEnabled()?1:0;
     prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
     prefs.hudDetail = appCore->getHudDetail();
+    prefs.fullScreenMode = lastFullScreenMode;
 
     return true;
 }
@@ -1777,6 +1781,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
     prefs.hudDetail = 1;
+    prefs.fullScreenMode = -1;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Adjust window dimensions for screen dimensions
@@ -1803,6 +1808,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     joystickAvailable = InitJoystick(joystickCaps);
 
     displayModes = EnumerateDisplayModes(16);
+
+    //If full screen mode was found in registry, override default with it.
+    if(prefs.fullScreenMode != -1)
+        lastFullScreenMode = prefs.fullScreenMode;
 
     appCore = new CelestiaCore();
     if (appCore == NULL)
