@@ -26,6 +26,7 @@ OBJS=\
 	$(INTDIR)\destination.obj \
 	$(INTDIR)\favorites.obj \
 	$(INTDIR)\imagecapture.obj \
+	$(INTDIR)\ODMenu.obj \
 	$(INTDIR)\wingotodlg.obj \
 	$(INTDIR)\winlocations.obj \
 	$(INTDIR)\winmain.obj \
