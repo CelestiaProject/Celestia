@@ -1248,6 +1248,9 @@ class PlutoOrbit : public CachingOrbit
     };
 };
 
+// static const double JupAscendingNode = degToRad(20.453422);
+static const double JupAscendingNode = degToRad(22.203);
+
 class IoOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
@@ -1261,7 +1264,7 @@ class IoOrbit : public CachingOrbit
     double sigma, L, B, R;
     double T, P;
 
-    //Epoch for Galilean satellites is 1976.0 Aug 10
+    // Epoch for Galilean satellites is 1976.0 Aug 10
     t = jd - 2443000.5;
 
     ComputeGalileanElements(t,
@@ -1270,7 +1273,7 @@ class IoOrbit : public CachingOrbit
                             w1, w2, w3, w4,
                             gamma, phi, psi, G, Gp);
 
-    //Calculate periodic terms for longitude
+    // Calculate periodic terms for longitude
     sigma = 0.47259*sin(2*(l1 - l2)) - 0.03478*sin(p3 - p4)
           + 0.01081*sin(l2 - 2*l3 + p3) + 7.38e-3*sin(phi)
           + 7.13e-3*sin(l2 - 2*l3 + p2) - 6.74e-3*sin(p1 + p3 - 2*LPEJ - 2*G)
@@ -1286,15 +1289,15 @@ class IoOrbit : public CachingOrbit
     sigma = degToRad(sigma);
     L = l1 + sigma;
 
-    //Calculate periodic terms for the tangent of the latitude
+    // Calculate periodic terms for the tangent of the latitude
     B = 6.393e-4*sin(L - w1) + 1.825e-4*sin(L - w2)
       + 3.29e-5*sin(L - w3) - 3.11e-5*sin(L - psi)
       + 9.3e-6*sin(L - w4) + 7.5e-6*sin(3*L - 4*l2 - 1.9927*sigma + w2)
       + 4.6e-6*sin(L + psi - 2*LPEJ - 2*G);
     B = degToRad(B);
-    B = atan(B);    //Not sure this is necessary.
+    B = atan(B);
 
-    //Calculate the periodic terms for distance
+    // Calculate the periodic terms for distance
     R = -4.1339e-3*cos(2*(l1 - l2)) - 3.87e-5*cos(l1 - p3)
       - 2.14e-5*cos(l1 - p4) + 1.7e-5*cos(l1 - l2)
       - 1.31e-5*cos(4*(l1 - l2)) + 1.06e-5*cos(l1 - l3)
@@ -1305,7 +1308,9 @@ class IoOrbit : public CachingOrbit
     P = 1.3966626*T + 3.088e-4*T*T;
     L += degToRad(P);
 
-    //Corrections for internal coordinate system
+    L += JupAscendingNode;
+
+    // Corrections for internal coordinate system
     B -= (PI/2);
     L += PI;
 
@@ -1329,7 +1334,7 @@ class EuropaOrbit : public CachingOrbit
 {
     Point3d computePosition(double jd) const
     {
-    //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
+    // Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
     double l1, l2, l3, l4;
     double p1, p2, p3, p4;
@@ -1338,7 +1343,7 @@ class EuropaOrbit : public CachingOrbit
     double sigma, L, B, R;
     double T, P;
 
-    //Epoch for Galilean satellites is 1976 Aug 10
+    // Epoch for Galilean satellites is 1976 Aug 10
     t = jd - 2443000.5;
 
     ComputeGalileanElements(t,
@@ -1347,7 +1352,7 @@ class EuropaOrbit : public CachingOrbit
                             w1, w2, w3, w4,
                             gamma, phi, psi, G, Gp);
 
-    //Calculate periodic terms for longitude
+    // Calculate periodic terms for longitude
     sigma = 1.06476*sin(2*(l2 - l3)) + 0.04256*sin(l1 - 2*l2 + p3)
           + 0.03581*sin(l2 - p3) + 0.02395*sin(l1 - 2*l2 + p4)
           + 0.01984*sin(l2 - p4) - 0.01778*sin(phi)
@@ -1371,16 +1376,16 @@ class EuropaOrbit : public CachingOrbit
     sigma = degToRad(sigma);
     L = l2 + sigma;
 
-    //Calculate periodic terms for the tangent of the latitude
+    // Calculate periodic terms for the tangent of the latitude
     B = 8.1004e-3*sin(L - w2) + 4.512e-4*sin(L - w3)
       - 3.284e-4*sin(L - psi) + 1.160e-4*sin(L - w4)
       + 2.72e-5*sin(l1 - 2*l3 + 1.0146*sigma + w2) - 1.44e-5*sin(L - w1)
       + 1.43e-5*sin(L + psi - 2*LPEJ - 2*G) + 3.5e-6*sin(L - psi + G)
       - 2.8e-6*sin(l1 - 2*l3 + 1.0146*sigma + w3);
     B = degToRad(B);
-    B = atan(B);    //Not sure this is necessary.
+    B = atan(B);
 
-    //Calculate the periodic terms for distance
+    // Calculate the periodic terms for distance
     R = 9.3848e-3*cos(l1 - l2) - 3.116e-4*cos(l2 - p3)
       - 1.744e-4*cos(l2 - p4) - 1.442e-4*cos(l2 - p2)
       + 5.53e-5*cos(l2 - l3) + 5.23e-5*cos(l1 - l3)
@@ -1393,7 +1398,9 @@ class EuropaOrbit : public CachingOrbit
     P = 1.3966626*T + 3.088e-4*T*T;
     L += degToRad(P);
 
-    //Corrections for internal coordinate system
+    L += JupAscendingNode;
+
+    // Corrections for internal coordinate system
     B -= (PI/2);
     L += PI;
 
@@ -1404,7 +1411,7 @@ class EuropaOrbit : public CachingOrbit
 
     double getPeriod() const
     {
-        return 3.551810;
+        return 3.5511810791;
     };
 
     double getBoundingRadius() const
@@ -1470,7 +1477,7 @@ class GanymedeOrbit : public CachingOrbit
       + 3.7e-6*sin(L + psi - 2*LPEJ - 3*G) + 3.0e-6*sin(2*l2 - 3*L + 4.03*sigma + w2)
       - 2.1e-6*sin(2*l2 - 3*L + 4.03*sigma + w3);
     B = degToRad(B);
-    B = atan(B);    //Not sure this is necessary.
+    B = atan(B);
 
     //Calculate the periodic terms for distance
     R = -1.4388e-3*cos(l3 - p3) - 7.919e-4*cos(l3 - p4)
@@ -1483,6 +1490,8 @@ class GanymedeOrbit : public CachingOrbit
     T = (jd - 2433282.423) / 36525.0;
     P = 1.3966626*T + 3.088e-4*T*T;
     L += degToRad(P);
+
+    L += JupAscendingNode;
 
     //Corrections for internal coordinate system
     B -= (PI/2);
@@ -1562,7 +1571,7 @@ class CallistoOrbit : public CachingOrbit
       + 1.04e-5*sin(L - psi + G) - 1.02e-5*sin(L - psi - G)
       + 8.8e-6*sin(L + psi - 2*LPEJ - 3*G) - 3.8e-6*sin(L + psi - 2*LPEJ - G);
     B = degToRad(B);
-    B = atan(B);    //Not sure this is necessary.
+    B = atan(B);
 
     //Calculate the periodic terms for distance
     R = -7.3546e-3*cos(l4 - p4) + 1.621e-4*cos(l4 - p3)
@@ -1576,6 +1585,8 @@ class CallistoOrbit : public CachingOrbit
     T = (jd - 2433282.423) / 36525.0;
     P = 1.3966626*T + 3.088e-4*T*T;
     L += degToRad(P);
+
+    L += JupAscendingNode;
 
     //Corrections for internal coordinate system
     B -= (PI/2);
@@ -1949,7 +1960,7 @@ class TitanOrbit : public CachingOrbit
 
     double getPeriod() const
     {
-        return 15.9669028;
+        return 15.94544758;
     };
 
     double getBoundingRadius() const
@@ -2257,7 +2268,7 @@ public:
 
 
 static double uran_n[5] =
-{ -4.44352267, 2.49254257, 1.51595490, 0.72166316, 0.46658054 };
+{ 4.44352267, 2.49254257, 1.51595490, 0.72166316, 0.46658054 };
 static double uran_a[5] =
 { 129800, 191200, 266000, 435800, 583600 };
 static double uran_L0[5] =
