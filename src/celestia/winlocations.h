@@ -26,9 +26,11 @@ void InsertLocationInFavorites(HWND, char*, CelestiaCore*);
 void DeleteLocationFromFavorites(HWND, CelestiaCore*);
 void RenameLocationInFavorites(HWND, char*, CelestiaCore*);
 void MoveLocationInFavorites(HWND, CelestiaCore*);
+bool isOrganizeLocationsDragDropActive();
 void OrganizeLocationsOnBeginDrag(HWND, LPNMTREEVIEW);
 void OrganizeLocationsOnMouseMove(HWND, LONG, LONG);
 void OrganizeLocationsOnLButtonUp(HWND);
+void DragDropAutoScroll(HWND);
 //HTREEITEM GetTreeViewItemHandle(HWND, char*, HTREEITEM);
 
 #endif
