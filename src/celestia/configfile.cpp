@@ -200,6 +200,30 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
         }
     }
 
+    Value* ignoreExtVal = configParams->getValue("IgnoreGLExtensions");
+    if (ignoreExtVal != NULL)
+    {
+        if (ignoreExtVal->getType() != Value::ArrayType)
+        {
+            DPRINTF(0, "%s: IgnoreGLExtensions must be an array.\n",
+                    filename.c_str());
+        }
+        else
+        {
+            Array* ignoreExt = ignoreExtVal->getArray();
+
+            for (Array::iterator iter = ignoreExt->begin();
+                 iter != ignoreExt->end(); iter++)
+            {
+                Value* extVal = *iter;
+                if (extVal->getType() == Value::StringType)
+                    config->ignoreGLExtensions.push_back(extVal->getString());
+                else
+                    DPRINTF(0, "%s: extension name must be a string.\n", filename.c_str());
+            }
+        }
+    }
+
     delete configParamsValue;
 
     return config;
