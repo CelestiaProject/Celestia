@@ -2752,16 +2752,29 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             float boundingRadiusSize = (float) (body->getOrbit()->getBoundingRadius() / distanceFromObserver) / pixelSize;
             if (boundingRadiusSize > MinOrbitSizeForLabel)
             {
-                if (body->getRadius() >= 1000.0 &&
-                    (labelMode & MajorPlanetLabels) != 0)
+                // Arbitrary definitions of 'major' and 'minor' planet.  The
+                // limiting radii were chose so the labels of all nine
+                // recognized planets and their major moons are displayed
+                // when 'major planet labels' are enabled.
+                bool isMajorPlanet = false;
+                if (body->getSystem() != NULL &&
+                    body->getSystem()->getPrimaryBody() != NULL)
+                {
+                    isMajorPlanet = body->getRadius() >= 200.0f;
+                }
+                else
+                {
+                    isMajorPlanet = body->getRadius() >= 1000.0f;
+                }
+
+                if (isMajorPlanet && (labelMode & MajorPlanetLabels) != 0)
                 {
                     addLabel(body->getName(),
                              Color(0.0f, 1.0f, 0.0f),
                              Point3f(pos.x, pos.y, pos.z),
                              1.0f);
                 }
-                else if (body->getRadius() < 1000.0 &&
-                         (labelMode & MinorPlanetLabels) != 0)
+                else if (!isMajorPlanet && (labelMode & MinorPlanetLabels) != 0)
                 {
                     addLabel(body->getName(),
                              Color(0.0f, 0.6f, 0.0f),
