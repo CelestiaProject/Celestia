@@ -61,6 +61,7 @@ private:
         StringState         = 8,
         ErrorState          = 9,
         StringEscapeState   = 10,
+        UnicodeEscapeState  = 11,
     };
 
     istream* in;
@@ -70,6 +71,9 @@ private:
     bool haveValidNumber;
     bool haveValidName;
     bool haveValidString;
+
+    unsigned int unicodeValue;
+    unsigned int unicodeEscapeDigits;
 
     bool pushedBack;
 
