@@ -34,6 +34,7 @@ public:
     inline Vector3 operator+();
 
     inline T length() const;
+    inline T lengthSquared() const;
     inline void normalize();
 
     T x, y, z;
@@ -290,6 +291,11 @@ template<class T> Vector3<T> cross(const Vector3<T>& a, const Vector3<T>& b)
 template<class T> T Vector3<T>::length() const
 {
     return (T) sqrt(x * x + y * y + z * z);
+}
+
+template<class T> T Vector3<T>::lengthSquared() const
+{
+    return x * x + y * y + z * z;
 }
 
 template<class T> void Vector3<T>::normalize()
