@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <stdio.h>
+#include <cassert>
 #include "celestia.h"
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
@@ -18,6 +19,7 @@
 #include <celutil/debug.h>
 #include "gl.h"
 #include "vecgl.h"
+#include "texture.h"
 
 using namespace std;
 
@@ -29,6 +31,8 @@ static GalacticForm* spiralForm = NULL;
 static GalacticForm* irregularForm = NULL;
 static GalacticForm** ellipticalForms = NULL;
 static void InitializeForms();
+
+static Texture* galaxyTex = NULL;
 
 struct GalaxyTypeName 
 {
@@ -55,6 +59,21 @@ static GalaxyTypeName GalaxyTypeNames[] =
     { "E7", Galaxy::E7 },
     { "Irr", Galaxy::Irr },
 };
+
+
+static void GalaxyTextureEval(float u, float v, float w,
+                              unsigned char *pixel)
+{
+    float r = 0.9f - (float) sqrt(u * u + v * v);
+    if (r < 0)
+        r = 0;
+
+    int pixVal = (int) (r * 255.99f);
+    pixel[0] = 65;
+    pixel[1] = 64;
+    pixel[2] = 65;
+    pixel[3] = pixVal;
+}
 
 
 Galaxy::Galaxy() :
@@ -150,6 +169,16 @@ void Galaxy::render(const Vec3f& offset,
 {
     if (form == NULL)
         return;
+
+    if (galaxyTex == NULL)
+    {
+        galaxyTex = CreateProceduralTexture(128, 128, GL_RGBA,
+                                            GalaxyTextureEval);
+        galaxyTex->bindName();
+    }
+    assert(galaxyTex != NULL);
+
+    galaxyTex->bind();
 
     Mat3f viewMat = viewerOrientation.toMatrix3();
     Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
