@@ -57,9 +57,25 @@
 @end
 
 @implementation FavoritesDrawerController
+-(void)close
+{
+    [drawer close];
+}
+-(IBAction)close:(id)sender
+{
+    [self close];
+}
+-(void)activateFavorite:(CelestiaFavorite*)fav
+{
+    [[CelestiaAppCore sharedAppCore] activateFavorite:fav];
+    [outlineView deselectAll:self];
+    [drawer close];
+}
 -(void)awakeFromNib
 {
     [outlineView setVerticalMotionCanBeginDrag: YES];
+    [outlineView setTarget:self];
+    [outlineView setDoubleAction:@selector(doubleClick:)];
     [favoritesMenu setAutoenablesItems:NO];
 }
 -(IBAction)addNewFavorite:(id)sender
@@ -75,6 +91,12 @@
     //NSLog(@"[FavoritesDrawerController addNewFavorite:%@]",sender);
     [favs addNewFolder:@"untitled folder" withParentFolder:nil];
     [self outlineView:outlineView editItem:[favs lastObject]];
+}
+-(IBAction)doubleClick:(id)sender
+{
+    NSLog(@"[FavoritesDrawerController doubleClick:%@]",sender);
+    if ([outlineView numberOfSelectedRows]==1)
+        [self activateFavorite:[outlineView itemAtRow:[outlineView selectedRow]]];
 }
 -(void)synchronizeFavoritesMenu:(CelestiaFavorites*)favs
 {
@@ -122,7 +144,7 @@
     if([[tableColumn identifier] isEqualToString: @"NAME"]) {
 	[(CelestiaFavorite*)item setName: object];
         [[[CelestiaAppCore sharedAppCore] favorites] synchronize];
-        [favoriteInfoWindowController updateFavorite:(CelestiaFavorite*)item];
+        [(FavoriteInfoWindowController*)favoriteInfoWindowController updateFavorite:(CelestiaFavorite*)item];
 
     }
 }
@@ -173,6 +195,7 @@ contextMenuForItem:(id)item
         [showItem setTarget:favoriteInfoWindowController];
         [showItem setAction:@selector(showWindow:)];
         [fav setupMenuItem:navItem];
+        [navItem setTarget:self];
         [navItem setTitle:title];
     }
     if (multipleItems) {
@@ -211,16 +234,16 @@ contextMenuForItem:(id)item
     else
         [favs removeObjectsInArray:(NSArray*)item];
     [olv deselectAll:self];
-    [favoriteInfoWindowController updateFavorite:nil];
+    [(FavoriteInfoWindowController*)favoriteInfoWindowController updateFavorite:nil];
 }
 
 -(void)outlineViewSelectionDidChange:(NSNotification*)notification
 {
     NSOutlineView* olv = [notification object];
     if ([olv numberOfSelectedRows]==1) {
-        [favoriteInfoWindowController updateFavorite:[olv itemAtRow:[olv selectedRow]]];
+        [(FavoriteInfoWindowController*)favoriteInfoWindowController updateFavorite:[olv itemAtRow:[olv selectedRow]]];
     } else {
-        [favoriteInfoWindowController updateFavorite:nil];
+        [(FavoriteInfoWindowController*)favoriteInfoWindowController updateFavorite:nil];
     }
 }
 /*
