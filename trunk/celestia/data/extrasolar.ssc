@@ -35,11 +35,8 @@
 # Masses are all M sin i, though Han et al claim a preliminary
 # mass of 10Mj for Ups And d based on astrometric data.
 
-"Upsilon And"
+"b" "Upsilon And"
 {
-Planets [
-{
-	Name   "b"
 	Texture "gasgiant.jpg"
 	Mass   0
 	Radius 70000
@@ -52,8 +49,8 @@ Planets [
 	}
 }
 
+"c" "Upsilon And"
 {
-	Name   "c"
 	Texture "gasgiant.jpg"
 	Mass   0
 	Radius 70000
@@ -68,8 +65,8 @@ Planets [
 	RotationPeriod   10.0
 }
 
+"d" "Upsilon And"
 {
-	Name   "d"
 	Texture "jupiterlike.jpg"
 	Mass   0
 	Radius 70000
@@ -83,17 +80,13 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # 51 Peg system
 # Mayor and Queloz, 1995
 # This was the first extrasolar planet discovered around a normal star.
 
-"51 Peg"
-{
-Planets [
+"b" "51 Peg"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -107,8 +100,7 @@ Planets [
 		Eccentricity     0
 	}
 }
-]
-}
+
 
 
 # 47 UMa system
@@ -117,9 +109,7 @@ Planets [
 # M sin i of the planet is 2.4 Mj
 # From astrometry Han et al (2000) give a mass of 2.9 Mj
 
-"47 UMa"
-{
-Planets [
+"b" "47 UMa"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -135,6 +125,8 @@ Planets [
 
 	RotationPeriod   10.0
 }
+
+"c" "47 UMa"
 {
 	Name "c"
 	Texture "gasgiant.jpg"
@@ -150,13 +142,9 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
-"70 Vir"
-{
-Planets [
+"b" "70 Vir"
 {
 	Name "b"
 	Texture "browndwarf.jpg"
@@ -172,13 +160,9 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
-"Tau Boo"
-{
-Planets [
+"b" "Tau Boo"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -192,15 +176,12 @@ Planets [
 		Eccentricity    0.010
 	}
 }
-]
-}
+
 
 
 # HD 168443 system
 
-"HD 168443"
-{
-Planets [
+"b" "HD 168443"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -214,6 +195,8 @@ Planets [
 		Eccentricity    0.55
 	}
 }
+
+"c" "HD 168443"
 {
 	Name "c"
 	Texture "browndwarf.jpg"
@@ -229,8 +212,7 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
+
 
 
 # HD 12661 system
@@ -238,9 +220,7 @@ Planets [
 # M sin i = 2.80 Jupiters
 # Han et al (2000) claim a mass of 56 Jupiters and inclination of 2.9 degrees
 # So, we'll call this one a brown dwarf . . .
-"HD 12661"
-{
-Planets [
+"b" "HD 12661"
 {
 	Name "b"
 	Texture "browndwarf.jpg"
@@ -256,17 +236,13 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 92788 system
 #
 # M sin i = 3.86 Jupiters (Fischer et al)
 # Han et al (2000) claim a mass of 54 Jupiters and inclination of 176 degrees
-"HD 92788"
-{
-Planets [
+"b" "HD 92788"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -282,16 +258,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 130322 system, Mayor, Udry et al
 #
 # M sin i = 1.08 Jupiters
-"HD 130322"
-{
-Planets [
+"b" "HD 130322"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -305,16 +277,12 @@ Planets [
 		Eccentricity    0.048
 	}
 }
-]
-}
 
 
 # HD 75289 system, Mayor et al
 #
 # M sin i = 0.42 Jupiters
-"HD 75289"
-{
-Planets [
+"b" "HD 75289"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -328,8 +296,6 @@ Planets [
 		Eccentricity    0.053
 	}
 }
-]
-}
 
 
 # HD 83443 system, Mayor et al
@@ -339,9 +305,7 @@ Planets [
 # b: M sin i = 0.35 Jupiters
 # c: M sin i = 0.17 Jupiters
 
-"HD 83443"
-{
-Planets [
+"b" "HD 83443"
 {
 	Name "b"
 	Texture   "gasgiant.jpg"
@@ -355,6 +319,8 @@ Planets [
 		Eccentricity    0.08
 	}
 }
+
+"c" "HD 83443"
 {
 	Name "c"
 	Texture   "gasgiant.jpg"
@@ -368,16 +334,12 @@ Planets [
 		Eccentricity    0.42
 	}
 }
-]
-}
 
 
 # HD 168746 system
 #
 # M sin i = 0.24 Jupiters
-"HD 168746"
-{
-Planets [
+"b" "HD 168746"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -391,8 +353,6 @@ Planets [
 		Eccentricity    0.0
 	}
 }
-]
-}
 
 
 # 79 Cet (HD 16141) system
@@ -401,9 +361,7 @@ Planets [
 # Han et al claim a mass of 111 Jupiters and an inclination of only 0.1 deg,
 # making the companion an M dwarf instead of planet.  Until there's more
 # evidence, I'll just go with the minimum mass instead.
-"79 Cet"
-{
-Planets [
+"b" "79 Cet"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -419,16 +377,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 46375 system
 #
 # M sin i = 0.249 Jupiters
-"HD 46375"
-{
-Planets [
+"b" "HD 46375"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -442,16 +396,12 @@ Planets [
 		Eccentricity    0.04
 	}
 }
-]
-}
 
 
 # HD 108147 system
 #
 # M sin i = 0.34 Jupiters
-"HD 108147"
-{
-Planets [
+"b" "HD 108147"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -465,16 +415,12 @@ Planets [
 		Eccentricity    0.558
 	}
 }
-]
-}
 
 
 # BD -10 3166 system
 #
 # M sin i = 0.48 Jupiters
-"BD -10 3166"
-{
-Planets [
+"b" "BD -10 3166"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -488,16 +434,12 @@ Planets [
 		Eccentricity    0.05
 	}
 }
-]
-}
 
 
 # HD 6434 system
 #
 # M sin i = 0.48 Jupiters
-"HD 6434"
-{
-Planets [
+"b" "HD 6434"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -511,8 +453,6 @@ Planets [
 		Eccentricity    0.30
 	}
 }
-]
-}
 
 
 # HD 187123 system
@@ -520,9 +460,7 @@ Planets [
 # M sin i = 0.52 Jupiters
 #
 # unconfirmed second problem with period of approx 3 years
-"HD 187123"
-{
-Planets [
+"b" "HD 187123"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -536,8 +474,6 @@ Planets [
 		Eccentricity    0.03
 	}
 }
-]
-}
 
 
 # HD 209458 system
@@ -548,9 +484,7 @@ Planets [
 # is fixed at 85.2 degrees, so mass can be determined.  Radius is
 # estimated at 1.42 jupiters.
 
-"HD 209458"
-{
-Planets [
+"b" "HD 209458"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -564,16 +498,12 @@ Planets [
 		Eccentricity    0.0
 	}
 }
-]
-}
 
 
 # HD 192263 system
 #
 # M sin i = 0.76 Jupiters
-"HD 192263"
-{
-Planets [
+"b" "HD 192263"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -587,8 +517,6 @@ Planets [
 		Eccentricity    0.03
 	}
 }
-]
-}
 
 
 # Epsilon Eridani system
@@ -600,9 +528,7 @@ Planets [
 # The existence of a planet around Epsilon Eridani is still somewhat
 # controversial.
 
-"Epsilon Eri"
-{
-Planets [
+"b" "Epsilon Eri"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -618,16 +544,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 38529 system
 #
 # M sin i = 0.77 Jupiters
-"HD 38529"
-{
-Planets [
+"b" "HD 38529"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -641,16 +563,12 @@ Planets [
 		Eccentricity    0.27
 	}
 }
-]
-}
 
 
 # HD 179949 system
 #
 # M sin i = 0.84 Jupiters
-"HD 179949"
-{
-Planets [
+"b" "HD 179949"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -664,16 +582,12 @@ Planets [
 		Eccentricity    0.05
 	}
 }
-]
-}
 
 
 # 121504 system
 #
 # M sin i = 0.89 Jupiters
-"HD 121504"
-{
-Planets [
+"b" "HD 121504"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -689,16 +603,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 37124 system
 #
 # M sin i = 1.04 Jupiters
-"HD 37124"
-{
-Planets [
+"b" "HD 37124"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -714,16 +624,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # Rho CrB system
 #
 # M sin i = 1.1 Jupiters
-"Rho CrB"
-{
-Planets [
+"b" "Rho CrB"
 {
 	Name "b"
 	Texture "gasgiant.jpg"
@@ -737,8 +643,6 @@ Planets [
 		Eccentricity    0.028
 	}
 }
-]
-}
 
 
 # Gliese 876 system
@@ -748,9 +652,7 @@ Planets [
 #
 # Planets b and c are in a 1:2 resonance
 
-"Gliese 876"
-{
-Planets [
+"b" "Gliese 876"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -764,6 +666,8 @@ Planets [
 		Eccentricity    0.10
 	}
 }
+
+"c" "Gliese 876"
 {
 	Name "c"
 	Texture "jupiterlike.jpg"
@@ -777,16 +681,12 @@ Planets [
 		Eccentricity    0.27
 	}
 }
-]
-}
 
 
 # Gliese 86 system
 #
 # M sin i = 4 Jupiters
-"Gliese 86"
-{
-Planets [
+"b" "Gliese 86"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -800,16 +700,12 @@ Planets [
 		Eccentricity    0.046
 	}
 }
-]
-}
 
 
 # HD 52265 system
 #
 # M sin i = 1.13 Jupiters
-"HD 52265"
-{
-Planets [
+"b" "HD 52265"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -825,16 +721,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 177830 system
 #
 # M sin i = 1.28 Jupiters
-"HD 177830"
-{
-Planets [
+"b" "HD 177830"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -850,8 +742,6 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 217107 system
@@ -859,9 +749,7 @@ Planets [
 # M sin i = 1.28 Jupiters
 #
 # Possible second planet has yet to be confirmed.
-"HD 217107"
-{
-Planets [
+"b" "HD 217107"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -875,8 +763,6 @@ Planets [
 		Eccentricity    0.14
 	}
 }
-]
-}
 
 
 # HD 210277 system
@@ -884,9 +770,7 @@ Planets [
 # M sin i = 1.28 Jupiters
 #
 # Possible second planet has yet to be confirmed.
-"HD 210277"
-{
-Planets [
+"b" "HD 210277"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -902,8 +786,6 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 27442 system
@@ -911,9 +793,7 @@ Planets [
 # M sin i = 1.43 Jupiters
 #
 # Possible second planet has yet to be confirmed.
-"HD 27442"
-{
-Planets [
+"b" "HD 27442"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -929,16 +809,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # 16 Cyg B system
 #
 # M sin i = 1.5 Jupiters
-"HD 186427"
-{
-Planets [
+"b" "HD 186427"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -954,16 +830,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 134987 system
 #
 # M sin i = 1.58 Jupiters
-"HD 134987"
-{
-Planets [
+"b" "HD 134987"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -979,16 +851,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 160691 system
 #
 # M sin i = 1.97 Jupiters
-"HD 160691"
-{
-Planets [
+"b" "HD 160691"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1004,16 +872,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 19994 system
 #
 # M sin i = 2 Jupiters
-"HD 19994"
-{
-Planets [
+"b" "HD 19994"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1029,17 +893,13 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 82943 system
 #
 # b: M sin i = 1.63 Jupiters
 # c: M sin i = 0.88 Jupiters
-"HD 82943"
-{
-Planets [
+"b" "HD 82943"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1055,6 +915,8 @@ Planets [
 
 	RotationPeriod   10.0
 }
+
+"c" "HD 82943"
 {
 	Name "c"
 	Texture "jupiterlike.jpg"
@@ -1070,16 +932,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HR 810 system
 #
 # M sin i = 2.26 Jupiters
-"HR 810"
-{
-Planets [
+"b" "HR 810"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1095,16 +953,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 169830 system
 #
 # M sin i = 2.96 Jupiters
-"HD 169830"
-{
-Planets [
+"b" "HD 169830"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1120,16 +974,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # 14 Her system
 #
 # M sin i = 3.3 Jupiters
-"14 Her"
-{
-Planets [
+"b" "14 Her"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1145,16 +995,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # GJ 3021 (HD 1237) system
 #
 # M sin i = 3.32 Jupiters
-"HD 1237"
-{
-Planets [
+"b" "HD 1237"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1170,16 +1016,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 195019 system
 #
 # M sin i = 3.43 +- 0.4 Jupiters
-"HD 195019"
-{
-Planets [
+"b" "HD 195019"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1193,16 +1035,12 @@ Planets [
 		Eccentricity    0.05
 	}
 }
-]
-}
 
 
 # HD 190228 system
 #
 # M sin i = 4.99 Jupiters
-"HD 190228"
-{
-Planets [
+"b" "HD 190228"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1218,16 +1056,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 222582 system
 #
 # M sin i = 5.4 Jupiters
-"HD 222582"
-{
-Planets [
+"b" "HD 222582"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1243,16 +1077,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 10697 system
 #
 # M sin i = 6.59 Jupiters
-"HD 10697"
-{
-Planets [
+"b" "HD 10697"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1268,16 +1098,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 89744 system
 #
 # M sin i = 7.2 Jupiters
-"HD 89744"
-{
-Planets [
+"b" "HD 89744"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1293,8 +1119,6 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 114762 system
@@ -1303,9 +1127,7 @@ Planets [
 #
 # There are indications that the inclination is low, so this object is likely
 # a brown dwarf, even though M sin i is below the 13 Jupiter mass limit.
-"HD 114762"
-{
-Planets [
+"b" "HD 114762"
 {
 	Name "b"
 	Texture "browndwarf.jpg"
@@ -1319,16 +1141,12 @@ Planets [
 		Eccentricity    0.0     # ????? Missing data
 	}
 }
-]
-}
 
 
 # Iota Horologii (HD 17051) system
 #
 # M sin i = 947 Earths
-"Iota Hor"
-{
-Planets [
+"b" "Iota Hor"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1344,8 +1162,6 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # 55 Rho1 Cancri A (HD 75732) system
@@ -1354,9 +1170,7 @@ Planets [
 # c: M sin i > 5 Jupiters
 #
 # Planet c as yet unconfirmed
-"HD 75732"
-{
-Planets [
+"b" "HD 75732"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1370,6 +1184,8 @@ Planets [
 		Eccentricity    0.03
 	}
 }
+
+"c" "HD 75732"
 {
 	Name "c"
 	Texture "jupiterlike.jpg"
@@ -1385,8 +1201,6 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # New planets announced April 4th, 2001 by Geneva Team
@@ -1394,9 +1208,7 @@ Planets [
 # HD 28185 system
 #
 # M sin i = 5.6 Jupiters
-"HD 28185"
-{
-Planets [
+"b" "HD 28185"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1412,16 +1224,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 141937 system
 #
 # M sin i = 9.7 Jupiters
-"HD 141937"
-{
-Planets [
+"b" "HD 141937"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1437,16 +1245,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 213240 system
 #
 # M sin i = 3.7 Jupiters
-"HD 213240"
-{
-Planets [
+"b" "HD 213240"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1462,16 +1266,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 8574 system
 #
 # M sin i = 2.23 Jupiters
-"HD 8574"
-{
-Planets [
+"b" "HD 8574"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1487,16 +1287,12 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 50554 system
 #
 # M sin i = 4.9 Jupiters
-"HD 50554"
-{
-Planets [
+"b" "HD 50554"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1512,17 +1308,13 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
 
 
 # HD 74156 system
 #
 # b: M sin i = 1.56 Jupiters
 # c: M sin i > 7.5 Jupiters
-"HD 74156"
-{
-Planets [
+"b" "HD 74156"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1536,6 +1328,8 @@ Planets [
 		Eccentricity    0.649
 	}
 }
+
+"c" "HD 74156"
 {
 	Name "c"
 	Texture "jupiterlike.jpg"
@@ -1551,16 +1345,13 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
+
 
 
 # HD 106252 system
 #
 # M sin i = 6.81 Jupiters
-"HD 106252"
-{
-Planets [
+"b" "HD 106252"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1576,16 +1367,13 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
+
 
 
 # HD 80606 system
 #
 # M sin i = 3.41 Jupiters
-"HD 80606"
-{
-Planets [
+"b" "HD 80606"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1601,16 +1389,13 @@ Planets [
 
 	RotationPeriod   10.0
 }
-]
-}
+
 
 
 # HD 178911 B system
 #
 # M sin i = 6.47 Jupiters
-"HD 178911"
-{
-Planets [
+"b" "HD 178911"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1624,12 +1409,10 @@ Planets [
 		Eccentricity    0.145
 	}
 }
-]
-}
 
-"HD 68988"
-{
-Planets [
+
+
+"b" "HD 68988"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1643,12 +1426,10 @@ Planets [
 		Eccentricity    0.14
 	}
 }
-]
-}
 
-"HD 142"
-{
-Planets [
+
+
+"b" "HD 142"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1662,12 +1443,10 @@ Planets [
 		Eccentricity    0.37
 	}
 }
-]
-}
 
-"HD 4203"
-{
-Planets [
+
+
+"b" "HD 4203"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1681,12 +1460,10 @@ Planets [
 		Eccentricity    0.53
 	}
 }
-]
-}
 
-"HD 114783"
-{
-Planets [
+
+
+"b" "HD 114783"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1700,12 +1477,10 @@ Planets [
 		Eccentricity    0.10
 	}
 }
-]
-}
 
-"HD 23079"
-{
-Planets [
+
+
+"b" "HD 23079"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1719,12 +1494,10 @@ Planets [
 		Eccentricity    0.03
 	}
 }
-]
-}
 
-"HD 4208"
-{
-Planets [
+
+
+"b" "HD 4208"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1738,12 +1511,10 @@ Planets [
 		Eccentricity    0.04
 	}
 }
-]
-}
 
-"HD 33636"
-{
-Planets [
+
+
+"b" "HD 33636"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1757,12 +1528,10 @@ Planets [
 		Eccentricity    0.39
 	}
 }
-]
-}
 
-"HD 39091"
-{
-Planets [
+
+
+"b" "HD 39091"
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
@@ -1776,11 +1545,6 @@ Planets [
 		Eccentricity    0.67
 	}
 }
-]
-}
-
-
-
 
 
 
