@@ -2464,7 +2464,7 @@ public:
             ifstream deepSkyFile(fullname.c_str(), ios::in);
             if (deepSkyFile.good())
             {
-                LoadDeepSkyObjects(*catalog, deepSkyFile);
+                LoadDeepSkyObjects(*catalog, deepSkyFile, getPath());
             }
             else
             {
@@ -2601,7 +2601,7 @@ bool CelestiaCore::initSimulation()
         }
         else
         {
-            LoadDeepSkyObjects(*deepSkyCatalog, deepSkyFile);
+            LoadDeepSkyObjects(*deepSkyCatalog, deepSkyFile, "");
         }
     }
 
