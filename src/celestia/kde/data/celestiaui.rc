@@ -11,6 +11,7 @@
     <Action name="go_home" />
     <Separator />
     <Action name="go_to" />
+    <Action name="celestialBrowser" />
   </Menu>
   <Action name="bookmarks" />
   <Menu name="settings">
@@ -72,8 +73,8 @@
   <Action name="slowDownTime" />
   <Action name="pauseTime" />
   <Action name="accelerateTime" />
-  <Action name="setTimeNow" />
+  <Action name="setTimeNow"><text>Now</text></Action>
   <Separator name="separator_2" />
-  <Action name="file_close" />
+  <Action name="file_quit" />
 </ToolBar>
 </kpartgui>
