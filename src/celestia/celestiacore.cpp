@@ -23,7 +23,6 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
-#include <locale>
 #include <celengine/gl.h>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
@@ -248,6 +247,7 @@ CelestiaCore::CelestiaCore() :
     messageStart(0.0),
     messageDuration(0.0),
     typedText(""),
+    typedTextCompletionIdx(-1),
     textEnterMode(false),
     hudDetail(1),
     wireframe(false),
@@ -293,7 +293,6 @@ CelestiaCore::CelestiaCore() :
     showActiveViewFrame(false),
     showViewFrames(true),
     resizeSplit(0),
-    typedTextCompletionIdx(-1),
     screenDpi(96),
     distanceToScreen(400)
 {
@@ -952,7 +951,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
     }
 }
 
-void CelestiaCore::keyUp(int key, int modifiers)
+void CelestiaCore::keyUp(int key, int)
 {
     KeyAccel = 1.0;
     if (islower(key))
@@ -1006,9 +1005,9 @@ void CelestiaCore::charEntered(char c)
         }
         else if (c == '\011') // TAB
         {
-            if (typedTextCompletionIdx + 1 < typedTextCompletion.size())
+            if (typedTextCompletionIdx + 1 < (int) typedTextCompletion.size())
                 typedTextCompletionIdx++;
-            else if (typedTextCompletion.size() > 0 && typedTextCompletionIdx + 1 == typedTextCompletion.size())
+            else if ((int) typedTextCompletion.size() > 0 && typedTextCompletionIdx + 1 == (int) typedTextCompletion.size())
                 typedTextCompletionIdx = 0;
             if (typedTextCompletionIdx >= 0) {
                 std::string::size_type pos = typedText.rfind('/', typedText.length());
@@ -2429,18 +2428,20 @@ static void displayPlanetInfo(Overlay& overlay,
     }
 }
 
+#if 0
+// TODO: Need to display some sort of information for galaxies and other
+// deep sky objects.
 static void displayGalaxyInfo(Overlay& overlay,
-                              int detail,
                               Galaxy& galaxy,
                               double distance)
 {
     overlay << "Type: " << galaxy.getType() << '\n';
     overlay << "Radius: " << galaxy.getRadius() << " ly\n";
 }
+#endif
 
 
 static void displayLocationInfo(Overlay& overlay,
-                                int detail,
                                 Location& location,
                                 double distance)
 {
@@ -2854,7 +2855,7 @@ void CelestiaCore::renderOverlay()
                 displayDistance(*overlay, v.length() * 1e-6);
                 *overlay << '\n';
 #if 0
-                displayGalaxyInfo(*overlay, hudDetail, *sel.galaxy,
+                displayGalaxyInfo(*overlay, *sel.galaxy,
                                   v.length() * 1e-6);
 #endif
             }
@@ -2866,10 +2867,12 @@ void CelestiaCore::renderOverlay()
             overlay->setFont(font);
             *overlay << '\n';
             displayLocationInfo(*overlay,
-                                hudDetail, 
                                 *(sel.location()),
                                 v.length() * 1e-6);
             break;
+
+	default:
+	    break;
         }
 
         overlay->endText();
