@@ -17,8 +17,8 @@
 #include <cstring>
 #include <time.h>
 #include <unistd.h>
-#include "celengine/gl.h"
-#include "celengine/celestia.h"
+#include <celengine/gl.h>
+#include <celengine/celestia.h>
 
 #ifndef DEBUG
 #  define G_DISABLE_ASSERT

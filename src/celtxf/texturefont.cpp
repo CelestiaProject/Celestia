@@ -12,12 +12,12 @@
 #include <fstream>
 
 #ifndef _WIN32
-#include "config.h"
-#endif
+#include <config.h>
+#endif /* _WIN32 */
 
-#include "celutil/debug.h"
-#include "celutil/bytes.h"
-#include "celengine/gl.h"
+#include <celutil/debug.h>
+#include <celutil/bytes.h>
+#include <celengine/gl.h>
 #include "texturefont.h"
 
 using namespace std;

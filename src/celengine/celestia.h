@@ -26,8 +26,8 @@
 #endif // __GNUC__
 
 #ifndef _WIN32
-#include "config.h"
-#endif
+#include <config.h>
+#endif /* _WIN32 */
 
 #endif // _CELESTIA_H_
 
