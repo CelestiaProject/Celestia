@@ -7,10 +7,8 @@
 	Dec -28.93
 	Distance 28000
 	Radius 50000
-#	Axis [ 0.640 0.749 -0.173 ]
-#	Angle -117
-	Axis [ -0.440 -0.721 -0.536 ]
-	Angle 270
+	Axis [ 0.712 0.533 0.456 ]
+	Angle 149
 }
 
 # Large Magellanic Cloud / 
@@ -45,8 +43,8 @@
 	Dec      41.27
 	Distance  2.9e6
 	Radius   95000
-	Axis [ -0.411 -0.665 -0.624 ]
-	Angle 272.9
+	Axis [ -0.596 -0.191 0.780 ]
+	Angle 320
 }
 
 # Triangulum spiral / NGC 598
