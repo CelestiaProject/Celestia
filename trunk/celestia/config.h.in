@@ -30,6 +30,9 @@
 /* Define if you have the jpeg library (-ljpeg).  */
 #undef HAVE_LIBJPEG
 
+/* Define if you have the png library (-lpng).  */
+#undef HAVE_LIBPNG
+
 /* Name of package */
 #undef PACKAGE
 
