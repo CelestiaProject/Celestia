@@ -398,7 +398,7 @@ AltSurface "limit of knowledge" "HD 46375/b"
 }
 
 
-"b" "TrES-1"
+"TrES-1" "TYC 2652-1324-1"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.2 degrees, so mass can be determined.
@@ -430,7 +430,7 @@ AltSurface "limit of knowledge" "HD 46375/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "TrES-1/b"
+AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 {
 	Texture "extrasolar-lok.*"
 }
