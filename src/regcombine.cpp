@@ -235,7 +235,7 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
     // In the second combiner, sum the ambient color and product of the
     // diffuse and self-shadowing terms.
     
-#if 1
+#if 0
     // A = SPARE0_alpha = per-pixel self-shadowing term
     glFinalCombinerInputNV(GL_VARIABLE_A_NV,
                            GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA);
