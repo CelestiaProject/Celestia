@@ -11,6 +11,7 @@ FRONTENDSOURCE =
 celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) $(LIBSOCKET) \
 	kde/libkdegui.a
 
+celestia_DEPENDENCIES = kde/libkdegui.a
 celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 endif
 endif
