@@ -202,7 +202,13 @@ void LODSphereMesh::render(const GLContext& context,
     if (tex == NULL)
         nTextures = 0;
 
-    RenderInfo ri(step, attributes, frustum);
+
+    // Need to have vertex programs enabled in order to make
+    // use of surface tangents.
+    if (!context.getVertexProcessor())
+        attributes &= ~Tangents;
+
+    RenderInfo ri(step, attributes, frustum, context);
 
     // If one of the textures is split into subtextures, we may have to
     // use extra patches, since there can be at most one subtexture per patch.
@@ -242,7 +248,7 @@ void LODSphereMesh::render(const GLContext& context,
         glEnable(GL_TEXTURE_2D);
     }
 
-#if 0
+#if 1
     if (!vertexBuffersInitialized)
     {
         // TODO: assumes that the same context is used every time we
@@ -252,23 +258,16 @@ void LODSphereMesh::render(const GLContext& context,
         vertexBuffersInitialized = true;
         if (context.extensionSupported("GL_ARB_vertex_buffer_object"))
         {
-            cout << "GL_ARB_vertex_buffer_object supported\n";
-            cout.flush();
             for (int i = 0; i < NUM_SPHERE_VERTEX_BUFFERS; i++)
             {
                 GLuint vbname = 0;
                 glx::glGenBuffersARB(1, &vbname);
                 vertexBuffers[i] = (unsigned int) vbname;
-                cout << "Binding buffer: " << vertexBuffers[i] << '\n';
-                cout.flush();
                 glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffers[i]);
-                cout << "glBufferDataARB()\n";
-                cout.flush();
                 glx::glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                                     maxVertices * vertexSize, NULL,
+                                     maxVertices * MaxVertexSize * sizeof(float),
+                                     NULL,
                                      GL_STREAM_DRAW_ARB);
-                cout << "So far so good...\n";
-                cout.flush();
             }
             glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
             
@@ -287,13 +286,6 @@ void LODSphereMesh::render(const GLContext& context,
         glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffers[currentVB]);
     }
 
-    // Compute the size of a vertex
-    vertexSize = 3;
-    if ((attributes & Tangents) != 0)
-        vertexSize += 3;
-    for (i = 0; i < nTextures; i++)
-        vertexSize += 2;
-
     // Set up the mesh vertices 
     int nRings = phiExtent / ri.step;
     int nSlices = thetaExtent / ri.step;
@@ -309,29 +301,21 @@ void LODSphereMesh::render(const GLContext& context,
         }
     }
 
-    GLsizei stride = (GLsizei) (vertexSize * sizeof(float));
-    int tangentOffset = 3;
-    int texCoordOffset = ((attributes & Tangents) != 0) ? 6 : 3;
-    float* vertexBase = useVertexBuffers ? (float*) NULL : vertices;
+    // Compute the size of a vertex
+    vertexSize = 3;
+    if ((attributes & Tangents) != 0)
+        vertexSize += 3;
+    for (i = 0; i < nTextures; i++)
+        vertexSize += 2;
 
-    glVertexPointer(3, GL_FLOAT, stride, vertexBase + 0);
     glEnableClientState(GL_VERTEX_ARRAY);
-
     if ((attributes & Normals) != 0)
-    {
-        glNormalPointer(GL_FLOAT, stride, vertexBase);
         glEnableClientState(GL_NORMAL_ARRAY);
-    }
-    else
-    {
-        glDisableClientState(GL_NORMAL_ARRAY);
-    }
 
     for (i = 0; i < nTextures; i++)
     {
         if (nTextures > 1)
             glx::glClientActiveTextureARB(GL_TEXTURE0_ARB + i);
-        glTexCoordPointer(2, GL_FLOAT, stride,  vertexBase + (i * 2) + texCoordOffset);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
@@ -339,14 +323,8 @@ void LODSphereMesh::render(const GLContext& context,
 
     if ((attributes & Tangents) != 0)
     {
-        // Need to have vertex programs enabled in order to make
-        // use of surface tangents.
         VertexProcessor* vproc = context.getVertexProcessor();
-        if (vproc != NULL)
-        {
-            vproc->attribArray(6, 3, GL_FLOAT, stride, vertexBase + tangentOffset);
-            vproc->enableAttribArray(6);
-        }
+        vproc->enableAttribArray(6);
     }
 
     if (split == 1)
@@ -413,8 +391,7 @@ void LODSphereMesh::render(const GLContext& context,
     if ((attributes & Tangents) != 0)
     {
         VertexProcessor* vproc = context.getVertexProcessor();
-        if (vproc != NULL)
-            vproc->disableAttribArray(6);
+        vproc->disableAttribArray(6);
     }
 
     for (i = 0; i < nTextures; i++)
@@ -643,6 +620,29 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
             visiblePatches[y * width + x] = 1;
     }
 #endif // SHOW_PATCH_VISIBILITY
+
+    GLsizei stride = (GLsizei) (vertexSize * sizeof(float));
+    int tangentOffset = 3;
+    int texCoordOffset = ((ri.attributes & Tangents) != 0) ? 6 : 3;
+    float* vertexBase = useVertexBuffers ? (float*) NULL : vertices;
+
+    glVertexPointer(3, GL_FLOAT, stride, vertexBase + 0);
+    if ((ri.attributes & Normals) != 0)
+        glNormalPointer(GL_FLOAT, stride, vertexBase);
+
+    for (int tc = 0; tc < nTexturesUsed; tc++)
+    {
+        if (nTexturesUsed > 1)
+            glx::glClientActiveTextureARB(GL_TEXTURE0_ARB + tc);
+        glTexCoordPointer(2, GL_FLOAT, stride,  vertexBase + (tc * 2) + texCoordOffset);
+    }
+
+    if ((ri.attributes & Tangents) != 0)
+    {
+        VertexProcessor* vproc = ri.context.getVertexProcessor();
+        vproc->attribArray(6, 3, GL_FLOAT, stride, vertexBase + tangentOffset);
+    }
+
     // assert(ri.step >= minStep);
     // assert(phi0 + extent <= maxDivisions);
     // assert(theta0 + extent / 2 < maxDivisions);
@@ -658,6 +658,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     float dv[MAX_SPHERE_MESH_TEXTURES];
     float u0[MAX_SPHERE_MESH_TEXTURES];
     float v0[MAX_SPHERE_MESH_TEXTURES];
+
 
     if (useVertexBuffers)
     {
@@ -776,6 +777,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     if (useVertexBuffers)
     {
+        vertices = NULL;
         if (!glx::glUnmapBufferARB(GL_ARRAY_BUFFER_ARB))
             return;
     }
