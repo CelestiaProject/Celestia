@@ -426,6 +426,12 @@ Selection Simulation::pickObject(Vec3f pickRay, float tolerance)
                           tolerance);
 }
 
+void Simulation::reverseObserverOrientation()
+{
+    Quatf q = observer.getOrientation();
+    q.xrotate(PI);
+    setObserverOrientation(q);
+}
 
 Vec3d toUniversal(const Vec3d& v,
                   const Observer& observer,
