@@ -178,6 +178,10 @@ void logChunk(uint16 chunkType, int chunkSize)
         name = "M3DCHUNK_MATERIAL_XPFALL"; break;
     case M3DCHUNK_MATERIAL_REFBLUR:
         name = "M3DCHUNK_MATERIAL_REFBLUR"; break;
+    case M3DCHUNK_MATERIAL_TEXMAP:
+        name = "M3DCHUNK_MATERIAL_TEXMAP"; break;
+    case M3DCHUNK_MATERIAL_MAPNAME:
+        name = "M3DCHUNK_MATERIAL_MAPNAME"; break;
     case M3DCHUNK_MATERIAL_ENTRY:
         name = "M3DCHUNK_MATERIAL_ENTRY"; break;
     case M3DCHUNK_KFDATA:
@@ -500,6 +504,25 @@ static bool processPercentageChunk(ifstream& in,
 }
 
 
+static bool processTexmapChunk(ifstream& in,
+                               unsigned short chunkType,
+                               int contentSize,
+                               void* obj)
+{
+    M3DMaterial* material = (M3DMaterial*) obj;
+
+    if (chunkType == M3DCHUNK_MATERIAL_MAPNAME)
+    {
+        string name = readString(in);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
 bool processMaterialChunk(ifstream& in,
                           unsigned short chunkType,
                           int contentSize,
@@ -540,6 +563,11 @@ bool processMaterialChunk(ifstream& in,
         read3DSChunks(in, contentSize, processPercentageChunk,
                       (void*) &shininess);
         material->setShininess(shininess);
+        return true;
+    }
+    else if (chunkType == M3DCHUNK_MATERIAL_TEXMAP)
+    {
+        read3DSChunks(in, contentSize, processTexmapChunk, (void*) material);
         return true;
     }
     else
