@@ -195,6 +195,10 @@ static RotationElements CreateRotationElements(Hash* rotationData,
     rotationData->getNumber("LongOfRotationAxis", axisLongitude);
     re.axisLongitude = degToRad(axisLongitude);
 
+    float precessionRate = 0.0f;
+    rotationData->getNumber("PrecessionRate", precessionRate);
+    re.precessionRate = degToRad(precessionRate);
+
     return re;
 }
 

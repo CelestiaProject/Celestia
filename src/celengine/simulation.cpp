@@ -86,7 +86,7 @@ static RigidTransform toUniversal(const FrameOfReference& frame,
             Body* body = frame.refObject.body;
             Vec3d lookDir = frame.refObject.getPosition(t) -
                 frame.targetObject.getPosition(t);
-            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
+            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
             lookDir.normalize();
             Vec3d v = axisDir ^ lookDir;
             v.normalize();
@@ -107,7 +107,7 @@ static RigidTransform toUniversal(const FrameOfReference& frame,
             Body* body = frame.refObject.body;
             Vec3d lookDir = body->getOrbit()->positionAtTime(t) -
                 body->getOrbit()->positionAtTime(t - 1.0 / 1440.0);
-            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
+            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
             lookDir.normalize();
             Vec3d v = lookDir ^ axisDir;
             v.normalize();
@@ -156,7 +156,7 @@ static RigidTransform fromUniversal(const FrameOfReference& frame,
             Body* body = frame.refObject.body;
             Vec3d lookDir = frame.refObject.getPosition(t) -
                 frame.targetObject.getPosition(t);
-            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
+            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
             lookDir.normalize();
             Vec3d v = axisDir ^ lookDir;
             v.normalize();
@@ -177,7 +177,7 @@ static RigidTransform fromUniversal(const FrameOfReference& frame,
             Body* body = frame.refObject.body;
             Vec3d lookDir = body->getOrbit()->positionAtTime(t) -
                 body->getOrbit()->positionAtTime(t - 1.0 / 1440.0);
-            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
+            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
             lookDir.normalize();
             Vec3d v = lookDir ^ axisDir;
             v.normalize();
@@ -1054,6 +1054,7 @@ float Simulation::getFaintestVisible() const
 
 void Simulation::setFaintestVisible(float magnitude)
 {
+    cout << "fv: " << magnitude << '\n';
     faintestVisible = magnitude;
 }
 
