@@ -3392,7 +3392,7 @@ AltSurface "limit of knowledge" "HD 190360/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "PSR 1257+12/b"
+AltSurface "limit of knowledge" "PSR 1257+12/a"
 {
 	Texture "extrasolar-lok.jpg"
 }
@@ -3425,7 +3425,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "PSR 1257+12/c"
+AltSurface "limit of knowledge" "PSR 1257+12/b"
 {
 	Texture "extrasolar-lok.jpg"
 }
@@ -3458,7 +3458,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "PSR 1257+12/d"
+AltSurface "limit of knowledge" "PSR 1257+12/c"
 {
 	Texture "extrasolar-lok.jpg"
 }
