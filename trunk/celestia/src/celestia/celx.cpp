@@ -816,12 +816,12 @@ static int celestia_select(lua_State* l)
     return 0;
 }
 
-static int celestia_getchilds(lua_State* l)
+static int celestia_getchildren(lua_State* l)
 {
     int argc = lua_gettop(l);
     if (argc != 2)
     {
-        lua_pushstring(l, "One argument expected to function celestia:getchilds");
+        lua_pushstring(l, "One argument expected to function celestia:getchildren");
         lua_error(l);
     }
 
@@ -898,7 +898,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "getobserver", celestia_getobserver);
     RegisterMethod(l, "find", celestia_find);
     RegisterMethod(l, "select", celestia_select);
-    RegisterMethod(l, "getchilds", celestia_getchilds);
+    RegisterMethod(l, "getchildren", celestia_getchildren);
 
     lua_pop(l, 1);
 }
