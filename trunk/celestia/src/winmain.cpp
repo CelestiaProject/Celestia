@@ -151,7 +151,8 @@ bool LoadItemTextFromFile(HWND hWnd,
                           int item,
                           char* filename)
 {
-    ifstream textFile(filename, ios::in | ios::binary);
+    // ifstream textFile(filename, ios::in | ios::binary);
+    ifstream textFile(filename, ios::in);
     string s;
 
     if (!textFile.good())
@@ -163,7 +164,8 @@ bool LoadItemTextFromFile(HWND hWnd,
     char c;
     while (textFile.get(c))
     {
-        if (c == '\012' || c == '\014')
+        // if (c == '\012' || c == '\014')
+        if (c == '\n')
             s += "\r\r\n";
         else
             s += c;
@@ -183,6 +185,30 @@ BOOL APIENTRY AboutProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
+        return(TRUE);
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK)
+        {
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        break;
+    }
+
+    return FALSE;
+}
+
+
+BOOL APIENTRY ControlsHelpProc(HWND hDlg,
+                              UINT message,
+                              UINT wParam,
+                              LONG lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        LoadItemTextFromFile(hDlg, IDC_TEXT_CONTROLSHELP, "controls.txt");
         return(TRUE);
 
     case WM_COMMAND:
@@ -766,13 +792,6 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     LONG err;
     HKEY key;
 
-#if 0    
-    err = RegOpenKeyEx(HKEY_CURRENT_USER,
-                       regkey,
-                       0,
-                       KEY_ALL_ACCESS,
-                       &key);
-#endif
     DWORD disposition;
     err = RegCreateKeyEx(HKEY_CURRENT_USER,
                          regkey,
@@ -1130,19 +1149,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             ShowCursor(TRUE);
             cursorVisible = true;
         }
-#if 0
-        if (mouseMotion < 3)
-        {
-            POINT pt;
-            pt.x = LOWORD(lParam);
-            pt.y = HIWORD(lParam);
-            Vec3f pickRay = renderer->getPickRay(LOWORD(lParam),
-                                                 HIWORD(lParam));
-            Selection sel = sim->pickObject(pickRay);
-            if (!sel.empty())
-                handlePopupMenu(hWnd, pt, sel);
-        }
-#endif
         appCore->mouseButtonUp(LOWORD(lParam), HIWORD(lParam),
                                CelestiaCore::RightButton);
         break;
@@ -1370,6 +1376,14 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('D');
             break;
             
+        case ID_HELP_CONTROLS:
+            CreateDialogParam(appInstance,
+                              MAKEINTRESOURCE(IDD_CONTROLSHELP),
+                              hWnd,
+                              ControlsHelpProc,
+                              NULL);
+            break;
+
         case ID_HELP_ABOUT:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_ABOUT), hWnd, AboutProc);
             break;
