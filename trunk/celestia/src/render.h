@@ -81,8 +81,8 @@ class Renderer
     void setVertexShaderEnabled(bool);
     bool vertexShaderSupported() const;
 
-    float getBrightnessScale() const;
-    void setBrightnessScale(float);
+    float getSaturationMagnitude() const;
+    void setSaturationMagnitude(float);
     float getBrightnessBias() const;
     void setBrightnessBias(float);
 
@@ -208,8 +208,11 @@ class Renderer
     float ambientLightLevel;
     bool fragmentShaderEnabled;
     bool vertexShaderEnabled;
+    float saturationMag;
     float brightnessBias;
+
     float brightnessScale;
+    float faintestMag;
 
     Color ambientColor;
 
