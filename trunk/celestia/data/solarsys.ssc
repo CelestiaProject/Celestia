@@ -260,7 +260,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 "Phobos" "Sol/Mars"
 {
-	Mesh "phobos.3ds"
+	Mesh "phobos.cmod"
 	Texture "phobos.*"
 	# BumpMap "phobosbump.jpg"
 	# BumpHeight 5
@@ -286,7 +286,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 "Deimos" "Sol/Mars"
 {
-	Mesh "deimos.3ds"
+	Mesh "deimos.cmod"
 	Texture "deimos.*"
 	Radius 7.9 # maximum semi-axis
 	MeshCenter [ -0.299 -0.284 0.369 ]
@@ -355,7 +355,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Texture "amalthea.*"
 	BlendTexture true
 	Color   [ 0.5 0.12 0.16 ]
-	Mesh "amalthea.3ds"
+	Mesh "amalthea.cmod"
 	Radius    134 # maximum semi-axis
 	MeshCenter [ -13.616 -0.448 -4.436 ]
 
@@ -794,7 +794,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 "Hyperion" "Sol/Saturn"
 {
-	Mesh "hyperion.3ds"
+	Mesh "hyperion.cmod"
 	Texture "hyperion.*" # Phil Stooke
 	Radius    171 # maximum semi-axis
 	MeshCenter [ -3.424 10.938 4.498 ]
