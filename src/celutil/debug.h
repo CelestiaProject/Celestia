@@ -15,12 +15,10 @@
 #ifdef __GNUC__
 
 #ifndef DEBUG
-#define DPRINTF(args...)
-#define DVPRINTF(args...)
+#define DPRINTF(int level, args...)
 #else
-#define DPRINTF(args...) DebugPrint(args)
-#define DVPRINTF(args...) if(verbose) DebugPrint(args)
-extern void DebugPrint(char *format, ...);
+#define DPRINTF(int level, args...) DebugPrint(level, args)
+extern void DebugPrint(int level, char *format, ...);
 #endif
 
 #else
@@ -29,13 +27,13 @@ extern void DebugPrint(char *format, ...);
 #define DPRINTF //
 #else
 #define DPRINTF DebugPrint
-extern void DebugPrint(char *format, ...);
+extern void DebugPrint(int level, char *format, ...);
 #endif
 
 #endif
 
-extern void Log(char *format, ...);
-extern int verbose;
+extern void SetDebugVerbosity(int);
+extern int GetDebugVerbosity();
 
 #endif // _DEBUG_H_
 

@@ -17,39 +17,44 @@
 #include <config.h>
 #endif /* _WIN32 */
 
-int verbose=0;
+static int debugVerbosity = 0;
 
 #if defined(DEBUG) || defined(_DEBUG)
-void DebugPrint(char *format, ...)
+void DebugPrint(int level, char *format, ...)
 {
     va_list args;
     va_start(args, format);
 
+    if (level >= debugVerbosity)
+    {
 #ifdef _MSC_VER
-    if (IsDebuggerPresent())
-    {
-        char buf[1024];
-        vsprintf(buf, format, args);
-        OutputDebugString(buf);
-    }
-    else
-    {
-        vfprintf(stdout, format, args);
-    }
+        if (IsDebuggerPresent())
+        {
+            char buf[1024];
+            vsprintf(buf, format, args);
+            OutputDebugString(buf);
+        }
+        else
+        {
+            vfprintf(stdout, format, args);
+        }
 #else
-    vfprintf(stderr, format, args);
+        vfprintf(stderr, format, args);
 #endif
+    }
 
     va_end(args);
 }
 #endif /* DEBUG */
 
-void Log(char *format, ...)
+
+void SetDebugVerbosity(int dv)
 {
-    va_list args;
-    va_start(args, format);
+    debugVerbosity = dv;
+}
 
-    vfprintf(stdout, format, args);
 
-    va_end(args);
+int GetDebugVerbosity()
+{
+    return debugVerbosity;
 }
