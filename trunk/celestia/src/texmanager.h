@@ -25,7 +25,8 @@ class TextureManager : public ResourceManager
     ~TextureManager();
 
     bool find(string name, CTexture**);
-    CTexture* load(string name);
+    CTexture* load(std::string name);
+    CTexture* loadBumpMap(std::string name);
 };
 
 #endif // _TEXMANAGER_H_

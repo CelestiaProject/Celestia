@@ -14,10 +14,11 @@
 #define _REGCOMBINE_H_
 
 #include "texture.h"
+#include "color.h"
 
 extern void SetupCombinersBumpMap(CTexture& bumpTexture,
                                   CTexture& normalizationTexture,
-                                  float* ambientColor);
+                                  Color ambientColor);
 extern void DisableCombiners();
 
 #endif // _REGCOMBINE_H_

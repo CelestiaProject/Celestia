@@ -34,3 +34,17 @@ CTexture* TextureManager::load(string name)
     return tex;
 }
 
+
+CTexture* TextureManager::loadBumpMap(string name)
+{
+    DPRINTF("Loading bump map: %s\n", name.c_str());
+    CTexture* tex = LoadTextureFromFile(baseDir + "\\" + name);
+    if (tex != NULL)
+    {
+        tex->normalMap(5.0f, true);
+        tex->bindName();
+    }
+    addResource(name, static_cast<void*>(tex));
+
+    return tex;
+}

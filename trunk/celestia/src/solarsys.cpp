@@ -170,12 +170,16 @@ static Body* CreatePlanet(PlanetarySystem* system,
     Surface surface;
     surface.color = Color(1.0f, 1.0f, 1.0f);
     planetData->getColor("Color", surface.color);
-    planetData->getString("Texture", surface.baseTexture);
-    planetData->getString("BumpMap", surface.bumpTexture);
+    bool applyBaseTexture = planetData->getString("Texture", surface.baseTexture);
+    bool applyBumpMap = planetData->getString("BumpMap", surface.bumpTexture);
     bool blendTexture = false;
     planetData->getBoolean("BlendTexture", blendTexture);
     if (blendTexture)
         surface.appearanceFlags |= Surface::BlendTexture;
+    if (applyBaseTexture)
+        surface.appearanceFlags |= Surface::ApplyBaseTexture;
+    if (applyBumpMap)
+        surface.appearanceFlags |= Surface::ApplyBumpMap;
     body->setSurface(surface);
     
     string mesh("");
