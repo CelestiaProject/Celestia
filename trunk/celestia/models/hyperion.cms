@@ -1,0 +1,11 @@
+# Hyperion.cms
+# Irregular body with approximate dimensions of Saturn's
+# moon Hyperion (410km x 260km x 220km)
+
+SphereDisplacementMesh
+{
+	Size [ 1.0 0.55 0.60 ]
+	NoiseOffset [ 25 19 20 ]
+	FeatureHeight  0.4
+	Octaves 2
+}

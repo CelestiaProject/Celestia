@@ -1,0 +1,11 @@
+# asteriod.cms
+# Random chunk of rock used to represent various small moons and asteroids
+# throughout the solar system
+
+SphereDisplacementMesh
+{
+	Size [ 0.6 1.0 0.75 ]
+	NoiseOffset [ 15 12 60 ]
+	FeatureHeight  0.7
+	Octaves 1
+}

@@ -1,0 +1,11 @@
+# Proteus.cms
+# Irregular body with approximate dimensions of Neptune's
+# moon Proteus (436km x 416km x 402km)
+
+SphereDisplacementMesh
+{
+	Size [ 0.92 1.0 0.95 ]
+	NoiseOffset [ 45 13 26 ]
+	FeatureHeight  0.3
+	Octaves 1
+}
