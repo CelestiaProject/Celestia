@@ -538,7 +538,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case ']':
-        if (sim->getFaintestVisible() < 8.0f)
+        if (sim->getFaintestVisible() < 12.0f)
             setFaintest(sim->getFaintestVisible() + 0.5f);
         break;
 
