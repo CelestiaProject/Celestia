@@ -25,13 +25,11 @@ using namespace std;
 #define VELOCITY_CHANGE_TIME      0.25f
 
 
-Simulation::Simulation() :
+Simulation::Simulation(Universe* _universe) :
     realTime(0.0),
     simTime(0.0),
     timeScale(1.0),
-    stardb(NULL),
-    solarSystemCatalog(NULL),
-    galaxies(NULL),
+    universe(_universe),
     closestSolarSystem(NULL),
     selection(),
     targetSpeed(0.0),
@@ -164,10 +162,8 @@ static RigidTransform fromUniversal(const FrameOfReference& frame,
 void Simulation::render(Renderer& renderer)
 {
     renderer.render(observer,
-                    *stardb,
+                    *universe,
                     faintestVisible,
-                    closestSolarSystem,
-                    galaxies,
                     selection,
                     simTime);
 }
@@ -181,20 +177,6 @@ static Quatf lookAt(Point3f from, Point3f to, Vec3f up)
     v.normalize();
     Vec3f u = v ^ n;
     return Quatf(Mat3f(v, u, -n));
-}
-
-
-SolarSystem* Simulation::getSolarSystem(const Star* star)
-{
-    if (star == NULL)
-        return NULL;
-
-    uint32 starNum = star->getCatalogNumber();
-    SolarSystemCatalog::iterator iter = solarSystemCatalog->find(starNum);
-    if (iter == solarSystemCatalog->end())
-        return NULL;
-    else
-        return iter->second;
 }
 
 
@@ -239,23 +221,9 @@ float getSelectionSize(Selection& sel)
 }
 
 
-StarDatabase* Simulation::getStarDatabase() const
+Universe* Simulation::getUniverse() const
 {
-    return stardb;
-}
-
-SolarSystemCatalog* Simulation::getSolarSystemCatalog() const
-{
-    return solarSystemCatalog;
-}
-
-void Simulation::setStarDatabase(StarDatabase* db,
-                                 SolarSystemCatalog* catalog,
-                                 GalaxyList* galaxyList)
-{
-    stardb = db;
-    solarSystemCatalog = catalog;
-    galaxies = galaxyList;
+    return universe;
 }
 
 
@@ -269,34 +237,6 @@ double Simulation::getTime() const
 void Simulation::setTime(double jd)
 {
     simTime = jd;
-}
-
-
-class ClosestStarFinder : public StarHandler
-{
-public:
-    ClosestStarFinder(float _maxDistance);
-    ~ClosestStarFinder() {};
-    void process(const Star& star, float distance, float appMag);
-
-public:
-    float maxDistance;
-    float closestDistance;
-    Star* closestStar;
-};
-
-ClosestStarFinder::ClosestStarFinder(float _maxDistance) :
-    maxDistance(_maxDistance), closestDistance(_maxDistance), closestStar(NULL)
-{
-}
-
-void ClosestStarFinder::process(const Star& star, float distance, float appMag)
-{
-    if (distance < closestDistance)
-    {
-        closestStar = const_cast<Star*>(&star);
-        closestDistance = distance;
-    }
 }
 
 
@@ -426,10 +366,7 @@ void Simulation::update(double dt)
     }
 
     // Find the closest solar system
-    Point3f observerPos = (Point3f) observer.getPosition();
-    ClosestStarFinder closestFinder(1.0f);
-    stardb->findCloseStars(closestFinder, observerPos, 1.0f);
-    closestSolarSystem = getSolarSystem(closestFinder.closestStar);
+    closestSolarSystem = universe->getNearestSolarSystem(observer.getPosition());
 }
 
 
@@ -445,264 +382,12 @@ void Simulation::setSelection(const Selection& sel)
 }
 
 
-struct PlanetPickInfo
-{
-    double cosClosestAngle;
-    double closestDistance;
-    Body* closestBody;
-    Vec3d direction;
-    Point3d origin;
-    double jd;
-};
-
-bool ApproxPlanetPickTraversal(Body* body, void* info)
-{
-    PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
-
-    Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
-    Vec3d bodyDir = bpos - pickInfo->origin;
-    bodyDir.normalize();
-    double cosAngle = bodyDir * pickInfo->direction;
-    if (cosAngle > pickInfo->cosClosestAngle)
-    {
-        pickInfo->cosClosestAngle = cosAngle;
-        pickInfo->closestBody = body;
-    }
-
-    return true;
-}
-
-
-// Perform an intersection test between the pick ray and a body
-bool ExactPlanetPickTraversal(Body* body, void* info)
-{
-    PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
-
-    Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
-    Vec3d bodyDir = bpos - pickInfo->origin;
-
-    // This intersection test naively assumes that the body is spherical.
-    double v = bodyDir * pickInfo->direction;
-    double disc = square(body->getRadius()) - ((bodyDir * bodyDir) - square(v));
-
-    if (disc > 0.0)
-    {
-        double distance = v - sqrt(disc);
-        if (distance > 0.0 && distance < pickInfo->closestDistance)
-        {
-            pickInfo->closestDistance = distance;
-            pickInfo->closestBody = body;
-        }
-    }
-
-    return true;
-}
-
-
-Selection Simulation::pickPlanet(Observer& observer,
-                                 const Star& sun,
-                                 SolarSystem& solarSystem,
-                                 Vec3f pickRay)
-{
-    PlanetPickInfo pickInfo;
-
-    // Transform the pick direction
-    pickRay = pickRay * observer.getOrientation().toMatrix4();
-    pickInfo.direction = Vec3d((double) pickRay.x,
-                               (double) pickRay.y,
-                               (double) pickRay.z);
-    pickInfo.origin    = astro::heliocentricPosition(observer.getPosition(),
-                                                     sun.getPosition());
-    pickInfo.cosClosestAngle = -1.0;
-    pickInfo.closestDistance = 1.0e50;
-    pickInfo.closestBody = NULL;
-    pickInfo.jd = simTime;
-
-    // First see if there's a planet that the pick ray intersects.
-    // Select the closest planet intersected.
-    solarSystem.getPlanets()->traverse(ExactPlanetPickTraversal,
-                                       (void*) &pickInfo);
-    if (pickInfo.closestBody != NULL)
-        return Selection(pickInfo.closestBody);
-
-    // If no planet was intersected by the pick ray, choose the planet
-    // with the smallest angular separation from the pick ray.  Very distant
-    // planets are likley to fail the intersection test even if the user
-    // clicks on a pixel where the planet's disc has been rendered--in order
-    // to make distant planets visible on the screen at all, their apparent size
-    // has to be greater than their actual disc size.
-    solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
-                                       (void*) &pickInfo);
-    if (pickInfo.cosClosestAngle > cos(degToRad(0.5)))
-        return Selection(pickInfo.closestBody);
-    else
-        return Selection();
-}
-
-
-/*
- * StarPicker is a callback class for StarDatabase::findVisibleStars
- */
-class StarPicker : public StarHandler
-{
-public:
-    StarPicker(const Point3f&, const Vec3f&, float);
-    ~StarPicker() {};
-
-    void process(const Star&, float, float);
-
-public:
-    const Star* pickedStar;
-    Point3f pickOrigin;
-    Vec3f pickRay;
-    float cosAngleClosest;
-};
-
-StarPicker::StarPicker(const Point3f& _pickOrigin, const Vec3f& _pickRay,
-                       float angle) :
-    pickedStar(NULL),
-    pickOrigin(_pickOrigin),
-    pickRay(_pickRay),
-    cosAngleClosest((float) cos(angle))
-{
-}
-
-void StarPicker::process(const Star& star, float distance, float appMag)
-{
-    Vec3f starDir = star.getPosition() - pickOrigin;
-    starDir.normalize();
-
-    float cosAngle = starDir * pickRay;
-    if (cosAngle > cosAngleClosest)
-    {
-        cosAngleClosest = cosAngle;
-        pickedStar = &star;
-    }
-}
-
-
-class CloseStarPicker : public StarHandler
-{
-public:
-    CloseStarPicker(const UniversalCoord& pos,
-                    const Vec3f& dir,
-                    float _maxDistance,
-                    float angle);
-    ~CloseStarPicker() {};
-    void process(const Star& star, float distance, float appMag);
-
-public:
-    UniversalCoord pickOrigin;
-    Vec3f pickDir;
-    float maxDistance;
-    const Star* closestStar;
-    float closestDistance;
-    float cosAngleClosest;
-};
-
-
-CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
-                                 const Vec3f& dir,
-                                 float _maxDistance,
-                                 float angle) :
-    pickOrigin(pos),
-    pickDir(dir),
-    maxDistance(_maxDistance),
-    closestStar(NULL),
-    closestDistance(0.0f),
-    cosAngleClosest((float) cos(angle))
-{
-}
-
-void CloseStarPicker::process(const Star& star,
-                              float lowPrecDistance,
-                              float appMag)
-{
-    if (lowPrecDistance > maxDistance)
-        return;
-
-    // Ray-sphere intersection
-    Vec3f starDir = (star.getPosition() - pickOrigin) *
-        astro::lightYearsToKilometers(1.0f);
-    float v = starDir * pickDir;
-    float disc = square(star.getRadius()) - ((starDir * starDir) - square(v));
-
-    if (disc > 0.0f)
-    {
-        float distance = v - (float) sqrt(disc);
-        if (distance > 0.0)
-        {
-            if (closestStar == NULL || distance < closestDistance)
-            {
-                closestStar = &star;
-                closestDistance = starDir.length();
-                cosAngleClosest = 1.0f; // An exact hit--set the angle to zero
-            }
-        }
-    }
-    else
-    {
-        // We don't have an exact hit; check to see if we're close enough
-        float distance = starDir.length();
-        starDir *= (1.0f / distance);
-        float cosAngle = starDir * pickDir;
-        if (cosAngle > cosAngleClosest &&
-            (closestStar == NULL || distance < closestDistance))
-        {
-            closestStar = &star;
-            closestDistance = distance;
-            cosAngleClosest = cosAngle;
-        }
-    }
-}
-
-
-Selection Simulation::pickStar(Vec3f pickRay)
-{
-    float angle = degToRad(0.5f);
-
-    // Transform the pick direction
-    pickRay = pickRay * observer.getOrientation().toMatrix4();
-
-    // Use a high precision pick test for any stars that are close to the
-    // observer.  If this test fails, use a low precision pick test for stars
-    // which are further away.  All this work is necessary because the low
-    // precision pick test isn't reliable close to a star and the high
-    // precision test isn't nearly fast enough to use on our database of
-    // over 100k stars.
-    CloseStarPicker closePicker(observer.getPosition(), pickRay, 1.0f, angle);
-    stardb->findCloseStars(closePicker, (Point3f) observer.getPosition(),1.0f);
-    if (closePicker.closestStar != NULL)
-        return Selection(const_cast<Star*>(closePicker.closestStar));
-    
-    StarPicker picker((Point3f) observer.getPosition(), pickRay, angle);
-    stardb->findVisibleStars(picker,
-                             (Point3f) observer.getPosition(),
-                             observer.getOrientation(),
-                             angle, 1.0f,
-                             faintestVisible);
-    if (picker.pickedStar != NULL)
-        return Selection(const_cast<Star*>(picker.pickedStar));
-    else
-        return Selection();
-}
-
-
 Selection Simulation::pickObject(Vec3f pickRay)
 {
-    Selection sel;
-
-    if (closestSolarSystem != NULL)
-    {
-        const Star* sun = closestSolarSystem->getPlanets()->getStar();
-        if (sun != NULL)
-            sel = pickPlanet(observer, *sun, *closestSolarSystem, pickRay);
-    }
-
-    if (sel.empty())
-        sel = pickStar(pickRay);
-
-    return sel;
+    return universe->pick(observer.getPosition(),
+                          pickRay * observer.getOrientation().toMatrix4(),
+                          simTime,
+                          faintestVisible);
 }
 
 
@@ -1180,10 +865,16 @@ void Simulation::track()
 
 void Simulation::selectStar(uint32 catalogNo)
 {
-    selection = Selection(stardb->find(catalogNo));
+    StarDatabase* stardb = universe->getStarCatalog();
+    if (stardb != NULL)
+        selection = Selection(stardb->find(catalogNo));
 }
 
 
+// Choose a planet around a star given it's index in the planetary system.
+// The planetary system is either the system of the selected object, or the
+// nearest planetary system if no object is selected.  If index is less than
+// zero, pick the star.  This function should probably be in celestiacore.cpp.
 void Simulation::selectPlanet(int index)
 {
     if (index < 0)
@@ -1199,22 +890,21 @@ void Simulation::selectPlanet(int index)
     {
         const Star* star = NULL;
         if (selection.star != NULL)
-        {
             star = selection.star;
-        }
         else if (selection.body != NULL)
-        {
             star = getSun(selection.body);
-        }
 
         SolarSystem* solarSystem = NULL;
         if (star != NULL)
-            solarSystem = getSolarSystem(star);
+            solarSystem = universe->getSolarSystem(star);
         else
             solarSystem = closestSolarSystem;
 
-        if (solarSystem != NULL && index < solarSystem->getPlanets()->getSystemSize())
+        if (solarSystem != NULL &&
+            index < solarSystem->getPlanets()->getSystemSize())
+        {
             selection = Selection(solarSystem->getPlanets()->getBody(index));
+        }
     }
 }
 
@@ -1227,52 +917,27 @@ void Simulation::selectPlanet(int index)
 //   4. Search the planets and moons in any 'nearby' (< 0.1 ly) planetary systems
 Selection Simulation::findObject(string s)
 {
-    Star* star = stardb->find(s);
-    if (star != NULL)
-        return Selection(star);
+    PlanetarySystem* path[2];
+    int nPathEntries = 0;
 
-    if (galaxies != NULL)
+    if (selection.star != NULL)
     {
-        for (GalaxyList::const_iterator iter = galaxies->begin();
-             iter != galaxies->end(); iter++)
-        {
-            if ((*iter)->getName() == s)
-                return Selection(*iter);
-        }
+        SolarSystem* sys = universe->getSolarSystem(selection.star);
+        if (sys != NULL)
+            path[nPathEntries++] = sys->getPlanets();
     }
-        
+    else if (selection.body != NULL)
     {
-        const PlanetarySystem* solarSystem = NULL;
-
-        if (selection.star != NULL)
-        {
-            SolarSystem* sys = getSolarSystem(selection.star);
-            if (sys != NULL)
-                solarSystem = sys->getPlanets();
-        }
-        else if (selection.body != NULL)
-        {
-            solarSystem = selection.body->getSystem();
-            while (solarSystem != NULL && solarSystem->getPrimaryBody() != NULL)
-                solarSystem = solarSystem->getPrimaryBody()->getSystem();
-        }
-        
-        if (solarSystem != NULL)
-        {
-            Body* body = solarSystem->find(s, true);
-            if (body != NULL)
-                return Selection(body);
-        }
-
-        if (closestSolarSystem != NULL)
-        {
-            Body* body = closestSolarSystem->getPlanets()->find(s, true);
-            if (body != NULL)
-                return Selection(body);
-        }
+        PlanetarySystem* sys = selection.body->getSystem();
+        while (sys != NULL && sys->getPrimaryBody() != NULL)
+            sys = sys->getPrimaryBody()->getSystem();
+        path[nPathEntries++] = sys;
     }
 
-    return Selection();
+    if (closestSolarSystem != NULL)
+        path[nPathEntries++] = closestSolarSystem->getPlanets();
+
+    return universe->find(s, path, nPathEntries);
 }
 
 
@@ -1281,60 +946,27 @@ Selection Simulation::findObject(string s)
 // paths that contain galaxies.
 Selection Simulation::findObjectFromPath(string s)
 {
-    string::size_type pos = s.find('/', 0);
+    PlanetarySystem* path[2];
+    int nPathEntries = 0;
 
-    if (pos == string::npos)
-        return findObject(s);
-
-    string base(s, 0, pos);
-    Selection sel = findObject(base);
-    if (sel.empty())
-        return sel;
-
-    // Don't support paths relative to a galaxy . . . for now.
-    if (sel.galaxy != NULL)
-        return Selection();
-
-    const PlanetarySystem* worlds = NULL;
-    if (sel.body != NULL)
+    if (selection.star != NULL)
     {
-        worlds = sel.body->getSatellites();
+        SolarSystem* sys = universe->getSolarSystem(selection.star);
+        if (sys != NULL)
+            path[nPathEntries++] = sys->getPlanets();
     }
-    else if (sel.star != NULL)
+    else if (selection.body != NULL)
     {
-        SolarSystem* ssys = getSolarSystem(sel.star);
-        if (ssys != NULL)
-            worlds = ssys->getPlanets();
+        PlanetarySystem* sys = selection.body->getSystem();
+        while (sys != NULL && sys->getPrimaryBody() != NULL)
+            sys = sys->getPrimaryBody()->getSystem();
+        path[nPathEntries++] = sys;
     }
 
-    while (worlds != NULL)
-    {
-        string::size_type nextPos = s.find('/', pos + 1);
-        string::size_type len;
-        if (nextPos == string::npos)
-            len = s.size() - pos - 1;
-        else
-            len = nextPos - pos - 1;
+    if (closestSolarSystem != NULL)
+        path[nPathEntries++] = closestSolarSystem->getPlanets();
 
-        string name = string(s, pos + 1, len);
-        
-        Body* body = worlds->find(name);
-        if (body == NULL)
-        {
-            return Selection();
-        }
-        else if (nextPos == string::npos)
-        {
-            return Selection(body);
-        }
-        else
-        {
-            worlds = body->getSatellites();
-            pos = nextPos;
-        }
-    }
-
-    return Selection();
+    return universe->findPath(s, path, nPathEntries);
 }
 
 

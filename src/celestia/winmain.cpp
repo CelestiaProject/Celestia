@@ -785,13 +785,13 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     else if (sel.star != NULL)
     {
         Simulation* sim = appCore->getSimulation();
-        name = sim->getStarDatabase()->getStarName(*sel.star);
+        name = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star);
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
         AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
         AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
 
-        SolarSystemCatalog* solarSystemCatalog = sim->getSolarSystemCatalog();
+        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
         {

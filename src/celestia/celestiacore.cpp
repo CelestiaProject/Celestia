@@ -25,9 +25,6 @@
 #include <celmath/quaternion.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
-#include <celengine/stardb.h>
-#include <celengine/solarsys.h>
-#include <celengine/asterism.h>
 #include <celengine/astro.h>
 #include <celengine/overlay.h>
 #include <celengine/execution.h>
@@ -86,10 +83,7 @@ public:
 
 CelestiaCore::CelestiaCore() :
     config(NULL),
-    starDB(NULL),
-    solarSystemCatalog(NULL),
-    galaxies(NULL),
-    asterisms(NULL),
+    universe(NULL),
     favorites(NULL),
     destinations(NULL),
     sim(NULL),
@@ -962,7 +956,7 @@ static void displayStarNames(Overlay& overlay,
 static void displayStarInfo(Overlay& overlay,
                             int detail,
                             Star& star,
-                            SolarSystemCatalog& solarSystems,
+                            const Universe& universe,
                             double distance)
 {
     overlay << "Distance: ";
@@ -978,9 +972,13 @@ static void displayStarInfo(Overlay& overlay,
         overlay << "Surface Temp: " << star.getTemperature() << " K\n";
         overlay.printf("Radius: %.2f Rsun\n", star.getRadius() / 696000.0f);
 
-        SolarSystemCatalog::iterator iter = solarSystems.find(star.getCatalogNumber());
-        if (iter != solarSystems.end())
-            overlay << "Planetary companions present\n";
+        SolarSystemCatalog* solarSystems = universe.getSolarSystemCatalog();
+        if (solarSystems != NULL)
+        {
+            SolarSystemCatalog::iterator iter = solarSystems->find(star.getCatalogNumber());
+            if (iter != solarSystems->end())
+                overlay << "Planetary companions present\n";
+        }
     }
 }
 
@@ -1188,13 +1186,13 @@ void CelestiaCore::renderOverlay()
             overlay->setFont(titleFont);
             displayStarNames(*overlay,
                              *sel.star,
-                             *(sim->getStarDatabase()));
+                             *(sim->getUniverse()->getStarCatalog()));
             overlay->setFont(font);
             *overlay << '\n';
             displayStarInfo(*overlay,
                             hudDetail,
                             *sel.star,
-                            *(sim->getSolarSystemCatalog()),
+                            *(sim->getUniverse()),
                             v.length());
         }
         else if (sel.body != NULL)
@@ -1374,14 +1372,16 @@ bool CelestiaCore::initSimulation()
     if (favorites == NULL)
         favorites = new FavoritesList();
 
+    universe = new Universe();
+
     if (!readStars(*config))
     {
         fatalError("Cannot read star database.");
         return false;
     }
 
-    solarSystemCatalog = new SolarSystemCatalog();
     {
+        SolarSystemCatalog* solarSystemCatalog = new SolarSystemCatalog();
         for (vector<string>::const_iterator iter = config->solarSystemFiles.begin();
              iter != config->solarSystemFiles.end();
              iter++)
@@ -1393,9 +1393,12 @@ bool CelestiaCore::initSimulation()
             }
             else
             {
-                ReadSolarSystems(solarSysFile, *starDB, *solarSystemCatalog);
+                ReadSolarSystems(solarSysFile,
+                                 *(universe->getStarCatalog()),
+                                 *solarSystemCatalog);
             }
         }
+        universe->setSolarSystemCatalog(solarSystemCatalog);
     }
 
     if (config->galaxyCatalog != "")
@@ -1407,7 +1410,8 @@ bool CelestiaCore::initSimulation()
         }
         else
         {
-            galaxies = ReadGalaxyList(galaxiesFile);
+            GalaxyList* galaxies = ReadGalaxyList(galaxiesFile);
+            universe->setGalaxyCatalog(galaxies);
         }
     }
 
@@ -1420,7 +1424,9 @@ bool CelestiaCore::initSimulation()
         }
         else
         {
-            asterisms = ReadAsterismList(asterismsFile, *starDB);
+            AsterismList* asterisms = ReadAsterismList(asterismsFile,
+                                                       *universe->getStarCatalog());
+            universe->setAsterisms(asterisms);
         }
     }
 
@@ -1460,8 +1466,7 @@ bool CelestiaCore::initSimulation()
         }
     }
 
-    sim = new Simulation();
-    sim->setStarDatabase(starDB, solarSystemCatalog, galaxies);
+    sim = new Simulation(universe);
     sim->setFaintestVisible(config->faintestVisible);
 
     return true;
@@ -1493,15 +1498,13 @@ bool CelestiaCore::initRenderer()
          iter != config->labelledStars.end();
          iter++)
     {
-        Star* star = starDB->find(*iter);
+        Star* star = universe->getStarCatalog()->find(*iter);
         if (star != NULL)
             renderer->addLabelledStar(star);
     }
 
     renderer->setBrightnessBias(0.1f);
     renderer->setSaturationMagnitude(1.0f);
-
-    renderer->showAsterisms(asterisms);
 
     if (config->mainFont == "")
         font = LoadTextureFont("fonts/default.txf");
@@ -1568,7 +1571,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         return false;
     }
 
-    starDB = StarDatabase::read(starFile);
+    StarDatabase* starDB = StarDatabase::read(starFile);
     if (starDB == NULL)
     {
 	cerr << "Error reading stars file\n";
@@ -1583,6 +1586,8 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
     }
 
     starDB->setNameDatabase(starNameDB);
+
+    universe->setStarCatalog(starDB);
 
     return true;
 }

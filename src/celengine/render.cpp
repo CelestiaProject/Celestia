@@ -100,7 +100,6 @@ Renderer::Renderer() :
     saturationMagNight(1.0f),
     saturationMag(1.0f),
     starVertexBuffer(NULL),
-    asterisms(NULL),
     nSimultaneousTextures(1),
     useTexEnvCombine(false),
     useRegisterCombiners(false),
@@ -254,7 +253,7 @@ bool Renderer::init(int winWidth, int winHeight)
             InitExtMultiTexture();
         if (ExtensionSupported("GL_NV_register_combiners"))
             InitExtRegisterCombiners();
-        if (ExtensionSupported("GL_NV_vertex_program") && glGenProgramsNV)
+        if (ExtensionSupported("GL_NV_vertex_program"))
             InitExtVertexProgram();
         if (ExtensionSupported("GL_EXT_texture_cube_map"))
         {
@@ -478,12 +477,6 @@ void Renderer::clearLabelledStars()
 }
 
 
-void Renderer::showAsterisms(AsterismList* a)
-{
-    asterisms = a;
-}
-
-
 float Renderer::getAmbientLightLevel() const
 {
     return ambientLightLevel;
@@ -558,10 +551,8 @@ void Renderer::clearLabels()
 
 
 void Renderer::render(const Observer& observer,
-                      const StarDatabase& starDB,
+                      const Universe& universe,
                       float faintestMagNight,
-                      SolarSystem* solarSystem,
-                      GalaxyList* galaxies,
                       const Selection& sel,
                       double now)
 {
@@ -595,6 +586,8 @@ void Renderer::render(const Observer& observer,
     // renderList.
     renderList.clear();
 
+    // See if there's a solar system nearby that we need to render.
+    SolarSystem* solarSystem = universe.getNearestSolarSystem(observer.getPosition());
     const Star* sun = NULL;
     if (solarSystem != NULL)
         sun = solarSystem->getStar();
@@ -690,22 +683,25 @@ void Renderer::render(const Observer& observer,
         glEnable(GL_TEXTURE_2D);
     }
 
-    if ((renderFlags & ShowGalaxies) != 0 && galaxies != NULL)
-        renderGalaxies(*galaxies, observer);
+    if ((renderFlags & ShowGalaxies) != 0 &&
+        universe.getGalaxyCatalog() != NULL)
+        renderGalaxies(*universe.getGalaxyCatalog(), observer);
 
     // Translate the camera before rendering the stars
     glPushMatrix();
     glTranslatef(-observerPos.x, -observerPos.y, -observerPos.z);
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    if ((renderFlags & ShowStars) != 0)
-        renderStars(starDB, faintestMag, observer);
+    if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != NULL)
+        renderStars(*universe.getStarCatalog(), faintestMag, observer);
 
     // Render asterisms
-    if ((renderFlags & ShowDiagrams) != 0 && asterisms != NULL)
+    if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != NULL)
     {
         glColor4f(0.5f, 0.0, 1.0f, 0.5f);
         glDisable(GL_TEXTURE_2D);
+
+        AsterismList* asterisms = universe.getAsterisms();
         for (AsterismList::const_iterator iter = asterisms->begin();
              iter != asterisms->end(); iter++)
         {
@@ -724,12 +720,13 @@ void Renderer::render(const Observer& observer,
         }
     }
 
-    if ((labelMode & GalaxyLabels) != 0)
-        labelGalaxies(*galaxies, observer);
-    if ((labelMode & StarLabels) != 0)
-        labelStars(labelledStars, starDB, observer);
-    if ((labelMode & ConstellationLabels) != 0 && asterisms != NULL)
-        labelConstellations(*asterisms, observer);
+    if ((labelMode & GalaxyLabels) != 0 && universe.getGalaxyCatalog() != NULL)
+        labelGalaxies(*universe.getGalaxyCatalog(), observer);
+    if ((labelMode & StarLabels) != 0 && universe.getStarCatalog() != NULL)
+        labelStars(labelledStars, *universe.getStarCatalog(), observer);
+    if ((labelMode & ConstellationLabels) != 0 &&
+        universe.getAsterisms() != NULL)
+        labelConstellations(*universe.getAsterisms(), observer);
 
     glPopMatrix();
 

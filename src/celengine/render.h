@@ -12,11 +12,8 @@
 
 #include <vector>
 #include <string>
-#include <celengine/stardb.h>
 #include <celengine/observer.h>
-#include <celengine/solarsys.h>
-#include <celengine/galaxy.h>
-#include <celengine/asterism.h>
+#include <celengine/universe.h>
 #include <celengine/selection.h>
 #include <celtxf/texturefont.h>
 
@@ -37,10 +34,8 @@ class Renderer
     void setRenderMode(int);
 
     void render(const Observer&,
-                const StarDatabase&,
+                const Universe&,
                 float faintestVisible,
-                SolarSystem*,
-                GalaxyList*,
                 const Selection& sel,
                 double now);
     
@@ -87,8 +82,6 @@ class Renderer
     void setSaturationMagnitude(float);
     float getBrightnessBias() const;
     void setBrightnessBias(float);
-
-    void showAsterisms(AsterismList*);
 
     typedef struct {
         std::string text;
@@ -230,8 +223,6 @@ class Renderer
     std::vector<Label> labels;
 
     std::vector<Star*> labelledStars;
-
-    AsterismList* asterisms;
 
     double modelMatrix[16];
     double projMatrix[16];
