@@ -1007,9 +1007,9 @@
 
 "Pluto" "Sol"
 {
-	Texture "pluto.jpg"
-	BumpMap "plutobump1k.jpg"
-	BumpHeight 2.5
+	Texture "pluto.png"
+	#BumpMap "plutobump1k.jpg"
+	#BumpHeight 2.5
         SpecularTexture "pluto-spec.jpg"
         SpecularColor            [ 0.135 0.12 0.08 ]
         SpecularPower             9.5
