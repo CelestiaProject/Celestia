@@ -67,6 +67,7 @@ typedef map<string, uint32> FlagMap;
 static FlagMap RenderFlagMap;
 static FlagMap LabelFlagMap;
 static FlagMap LocationFlagMap;
+static FlagMap BodyTypeMap;
 static bool mapsInitialized = false;
 
 // select which type of error will be fatal (call lua_error) and
@@ -112,6 +113,17 @@ static void initLabelFlagMap()
     LabelFlagMap["locations"] = Renderer::LocationLabels;
 }
 
+static void initBodyTypeMap()
+{
+    BodyTypeMap["Planet"] = Body::Planet;
+    BodyTypeMap["Moon"] = Body::Moon;
+    BodyTypeMap["Asteroid"] = Body::Asteroid;
+    BodyTypeMap["Comet"] = Body::Comet;
+    BodyTypeMap["Spacecraft"] = Body::Spacecraft;
+    BodyTypeMap["Invisible"] = Body::Invisible;
+    BodyTypeMap["Unknown"] = Body::Unknown;
+}
+
 static void initLocationFlagMap()
 {
     LocationFlagMap["city"] = Location::City;
@@ -151,6 +163,7 @@ static void initMaps()
     {
         initRenderFlagMap();
         initLabelFlagMap();
+        initBodyTypeMap();
         initLocationFlagMap();
     }
     mapsInitialized = true;
@@ -786,6 +799,56 @@ static int vector_sub(lua_State* l)
     return 1;
 }
 
+static int vector_get(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Invalid access of vector-component");
+    Vec3d* v3 = this_vector(l);
+    string key = safeGetString(l, 2, AllErrors, "Invalid key in vector-access");
+    double value = 0.0;
+    if (key == "x")
+        value = v3->x;
+    else if (key == "y")
+        value = v3->y;
+    else if (key == "z")
+        value = v3->z;
+    else
+    {
+        if (lua_getmetatable(l, 1))
+        {
+            lua_pushvalue(l, 2);
+            lua_rawget(l, -2);
+            return 1;
+        }
+        else
+        {
+            lua_pushstring(l, "Internal error: couldn't get metatable");
+            lua_error(l);
+        }
+    }
+    lua_pushnumber(l, (lua_Number)value);
+    return 1;
+}
+
+static int vector_set(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Invalid access of vector-component");
+    Vec3d* v3 = this_vector(l);
+    string key = safeGetString(l, 2, AllErrors, "Invalid key in vector-access");
+    double value = safeGetNumber(l, 3, AllErrors, "Vector components must be numbers");
+    if (key == "x")
+        v3->x = value;
+    else if (key == "y")
+        v3->y = value;
+    else if (key == "z")
+        v3->z = value;
+    else
+    {
+        lua_pushstring(l, "Invalid key in vector-access");
+        lua_error(l);
+    }
+    return 0;
+}
+
 static int vector_getx(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for vector:getx");
@@ -940,6 +1003,8 @@ static void CreateVectorMetaTable(lua_State* l)
     RegisterMethod(l, "__sub", vector_sub);
     RegisterMethod(l, "__mul", vector_mult);
     RegisterMethod(l, "__pow", vector_cross);
+    RegisterMethod(l, "__index", vector_get);
+    RegisterMethod(l, "__newindex", vector_set);
     RegisterMethod(l, "getx", vector_getx);
     RegisterMethod(l, "gety", vector_gety);
     RegisterMethod(l, "getz", vector_getz);
@@ -1051,6 +1116,63 @@ static int rotation_real(lua_State* l)
     return 1;
 }
 
+static int rotation_get(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Invalid access of rotation-component");
+    Quatd* q3 = this_rotation(l);
+    string key = safeGetString(l, 2, AllErrors, "Invalid key in rotation-access");
+    double value = 0.0;
+    if (key == "x")
+        value = imag(*q3).x;
+    else if (key == "y")
+        value = imag(*q3).y;
+    else if (key == "z")
+        value = imag(*q3).z;
+    else if (key == "w")
+        value = real(*q3);
+    else
+    {
+        if (lua_getmetatable(l, 1))
+        {
+            lua_pushvalue(l, 2);
+            lua_rawget(l, -2);
+            return 1;
+        }
+        else
+        {
+            lua_pushstring(l, "Internal error: couldn't get metatable");
+            lua_error(l);
+        }
+    }
+    lua_pushnumber(l, (lua_Number)value);
+    return 1;
+}
+
+static int rotation_set(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Invalid access of rotation-component");
+    Quatd* q3 = this_rotation(l);
+    string key = safeGetString(l, 2, AllErrors, "Invalid key in rotation-access");
+    double value = safeGetNumber(l, 3, AllErrors, "Rotation components must be numbers");
+    Vec3d v = imag(*q3);
+    double w = real(*q3);
+    if (key == "x")
+        v.x = value;
+    else if (key == "y")
+        v.y = value;
+    else if (key == "z")
+        v.z = value;
+    else if (key == "w")
+        w = value;
+    else
+    {
+        lua_pushstring(l, "Invalid key in rotation-access");
+        lua_error(l);
+    }
+    *q3 = Quatd(w, v);
+    return 0;
+}
+
 static int rotation_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Rotation]");
@@ -1066,6 +1188,8 @@ static void CreateRotationMetaTable(lua_State* l)
     RegisterMethod(l, "__tostring", rotation_tostring);
     RegisterMethod(l, "__add", rotation_add);
     RegisterMethod(l, "__mul", rotation_mult);
+    RegisterMethod(l, "__index", rotation_get);
+    RegisterMethod(l, "__newindex", rotation_set);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -1097,6 +1221,56 @@ static UniversalCoord* this_position(lua_State* l)
     }
 
     return uc;
+}
+
+static int position_get(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Invalid access of position-component");
+    UniversalCoord* uc = this_position(l);
+    string key = safeGetString(l, 2, AllErrors, "Invalid key in position-access");
+    double value = 0.0;
+    if (key == "x")
+        value = uc->x;
+    else if (key == "y")
+        value = uc->y;
+    else if (key == "z")
+        value = uc->z;
+    else
+    {
+        if (lua_getmetatable(l, 1))
+        {
+            lua_pushvalue(l, 2);
+            lua_rawget(l, -2);
+            return 1;
+        }
+        else
+        {
+            lua_pushstring(l, "Internal error: couldn't get metatable");
+            lua_error(l);
+        }
+    }
+    lua_pushnumber(l, (lua_Number)value);
+    return 1;
+}
+
+static int position_set(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Invalid access of position-component");
+    UniversalCoord* uc = this_position(l);
+    string key = safeGetString(l, 2, AllErrors, "Invalid key in position-access");
+    double value = safeGetNumber(l, 3, AllErrors, "Position components must be numbers");
+    if (key == "x")
+        uc->x = value;
+    else if (key == "y")
+        uc->y = value;
+    else if (key == "z")
+        uc->z = value;
+    else
+    {
+        lua_pushstring(l, "Invalid key in position-access");
+        lua_error(l);
+    }
+    return 0;
 }
 
 static int position_getx(lua_State* l)
@@ -1297,6 +1471,8 @@ static void CreatePositionMetaTable(lua_State* l)
     RegisterMethod(l, "addvector", position_addvector);
     RegisterMethod(l, "__add", position_add);
     RegisterMethod(l, "__sub", position_sub);
+    RegisterMethod(l, "__index", position_get);
+    RegisterMethod(l, "__newindex", position_set);
     RegisterMethod(l, "getx", position_getx);
     RegisterMethod(l, "gety", position_gety);
     RegisterMethod(l, "getz", position_getz);
@@ -2868,11 +3044,11 @@ static int celestia_setrenderflags(lua_State* l)
             lua_pushstring(l, "Values in table-argument to celestia:setrenderflags() must be boolean");
             lua_error(l);
         }
-        if (RenderFlagMap.count(key) == 0)
+        if (key == "lightdelay")
         {
-            cerr << "Unknown key: " << key << "\n";
+            appCore->setLightDelayActive(value);
         }
-        else
+        else if (RenderFlagMap.count(key) > 0)
         {
             int flag = RenderFlagMap[key];
             if (value)
@@ -2883,6 +3059,10 @@ static int celestia_setrenderflags(lua_State* l)
             {
                 renderFlags &= ~flag;
             }
+        }
+        else
+        {
+            cerr << "Unknown key: " << key << "\n";
         }
         lua_pop(l,1);
     }
@@ -2905,6 +3085,9 @@ static int celestia_getrenderflags(lua_State* l)
         lua_settable(l,-3);
         it++;
     }
+    lua_pushstring(l, "lightdelay");
+    lua_pushboolean(l, appCore->getLightDelayActive());
+    lua_settable(l, -3);
     return 1;
 }
 
@@ -3017,6 +3200,80 @@ static int celestia_getlabelflags(lua_State* l)
         string key = it->first;
         lua_pushstring(l, key.c_str());
         lua_pushboolean(l, (it->second & labelFlags) != 0);
+        lua_settable(l,-3);
+        it++;
+    }
+    return 1;
+}
+
+static int celestia_setorbitflags(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for celestia:setorbitflags()");
+    CelestiaCore* appCore = this_celestia(l);
+    if (!lua_istable(l, 2))
+    {
+        lua_pushstring(l, "Argument to celestia:setorbitflags() must be a table");
+        lua_error(l);
+    }
+
+    int orbitFlags = appCore->getRenderer()->getOrbitMask();
+    lua_pushnil(l);
+    while (lua_next(l, -2) != 0)
+    {
+        string key;
+        bool value = false;
+        if (lua_isstring(l, -2))
+        {
+            key = lua_tostring(l, -2);
+        }
+        else
+        {
+            lua_pushstring(l, "Keys in table-argument to celestia:setorbitflags() must be strings");
+            lua_error(l);
+        }
+        if (lua_isboolean(l, -1))
+        {
+            value = lua_toboolean(l, -1);
+        }
+        else
+        {
+            lua_pushstring(l, "Values in table-argument to celestia:setorbitflags() must be boolean");
+            lua_error(l);
+        }
+        if (BodyTypeMap.count(key) == 0)
+        {
+            cerr << "Unknown key: " << key << "\n";
+        }
+        else
+        {
+            int flag = BodyTypeMap[key];
+            if (value)
+            {
+                orbitFlags |= flag;
+            }
+            else
+            {
+                orbitFlags &= ~flag;
+            }
+        }
+        lua_pop(l,1);
+    }
+    appCore->getRenderer()->setOrbitMask(orbitFlags);
+    return 0;
+}
+
+static int celestia_getorbitflags(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getorbitflags()");
+    CelestiaCore* appCore = this_celestia(l);
+    lua_newtable(l);
+    FlagMap::const_iterator it = BodyTypeMap.begin();
+    const int orbitFlags = appCore->getRenderer()->getOrbitMask();
+    while (it != BodyTypeMap.end())
+    {
+        string key = it->first;
+        lua_pushstring(l, key.c_str());
+        lua_pushboolean(l, (it->second & orbitFlags) != 0);
         lua_settable(l,-3);
         it++;
     }
@@ -3464,23 +3721,64 @@ static int celestia_newvector(lua_State* l)
     return 1;
 }
 
+static int celestia_newposition(lua_State* l)
+{
+    checkArgs(l, 4, 4, "Expected 3 arguments for celestia:newposition");
+    // for error checking only:
+    this_celestia(l);
+    BigFix components[3];
+    for (int i = 0; i < 3; i++)
+    {
+        if (lua_isnumber(l, i+2))
+        {
+            double v = lua_tonumber(l, i+2);
+            components[i] = BigFix(v);
+        }
+        else if (lua_isstring(l, i+2))
+        {
+            components[i] = BigFix(string(lua_tostring(l, i+2)));
+        }
+        else
+        {
+            lua_pushstring(l, "Arguments to celestia:newposition must be either numbers or strings");
+            lua_error(l);
+        }
+    }
+
+    position_new(l, UniversalCoord(components[0], components[1], components[2]));
+
+    return 1;
+}
+
 static int celestia_newrotation(lua_State* l)
 {
-    checkArgs(l, 3, 3, "Need 2 arguments for celestia:newrotation");
+    checkArgs(l, 3, 5, "Need 2 or 4 arguments for celestia:newrotation");
     // for error checking only:
     this_celestia(l);
 
-    Vec3d* v = to_vector(l, 2);
-    if (v == NULL)
+    if (lua_gettop(l) > 3)
     {
-        lua_pushstring(l, "newrotation: first argument must be a vector");
-        lua_error(l);
+        // if (lua_gettop == 4), safeGetNumber will catch the error
+        double w = safeGetNumber(l, 2, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+        double x = safeGetNumber(l, 3, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+        double y = safeGetNumber(l, 4, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+        double z = safeGetNumber(l, 5, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+        Quatd q(w, x, y, z);
+        rotation_new(l, q);
     }
-    double angle = safeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
-    Quatd q;
-    q.setAxisAngle(*v, angle);
-    rotation_new(l, q);
-
+    else
+    {
+        Vec3d* v = to_vector(l, 2);
+        if (v == NULL)
+        {
+            lua_pushstring(l, "newrotation: first argument must be a vector");
+            lua_error(l);
+        }
+        double angle = safeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
+        Quatd q;
+        q.setAxisAngle(*v, angle);
+        rotation_new(l, q);
+    }
     return 1;
 }
 
@@ -3615,6 +3913,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "hidelabel", celestia_hidelabel);
     RegisterMethod(l, "getlabelflags", celestia_getlabelflags);
     RegisterMethod(l, "setlabelflags", celestia_setlabelflags);
+    RegisterMethod(l, "getorbitflags", celestia_getorbitflags);
+    RegisterMethod(l, "setorbitflags", celestia_setorbitflags);
     RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
     RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
     RegisterMethod(l, "getobserver", celestia_getobserver);
@@ -3641,6 +3941,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "getstar", celestia_getstar);
     RegisterMethod(l, "newframe", celestia_newframe);
     RegisterMethod(l, "newvector", celestia_newvector);
+    RegisterMethod(l, "newposition", celestia_newposition);
     RegisterMethod(l, "newrotation", celestia_newrotation);
     RegisterMethod(l, "getscripttime", celestia_getscripttime);
     RegisterMethod(l, "requestkeyboard", celestia_requestkeyboard);
