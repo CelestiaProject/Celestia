@@ -94,8 +94,8 @@
 }
 -(CelestiaGalaxy*)galaxy
 {
-    if ([self selection].galaxy==NULL) return nil;
-    return [[[CelestiaGalaxy alloc] initWithGalaxy:[self selection].galaxy] autorelease];
+    if ([self selection].deepsky==NULL) return nil;
+    return [[[CelestiaGalaxy alloc] initWithGalaxy:[self selection].deepsky] autorelease];
 }
 -(NSString *)name
 {
