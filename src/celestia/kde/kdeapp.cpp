@@ -952,7 +952,7 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         sprintf(buff, "%.2f Rsun", sel.star->getRadius() / 696000.0f);
         o << buff;
 
-        QLabel *starDetails = new QLabel(QString(o.str()), &popup);
+        QLabel *starDetails = new QLabel(QString(o.str().c_str()), &popup);
         starDetails->setPalette(pal);
         starDetails->setFont(rsFont);
         
