@@ -824,6 +824,18 @@ void CelestiaCore::charEntered(char c)
             renderer->setResolution(renderer->getResolution() - 1);
         else
             renderer->setResolution(renderer->getResolution() + 1);
+        switch (renderer->getResolution())
+        {
+        case 0:
+            flash("Low res textures");
+            break;
+        case 1:
+            flash("Medium res textures");
+            break;
+        case 2:
+            flash("High res textures");
+            break;
+        }
         break;
 
     case 'S':
