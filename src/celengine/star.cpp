@@ -699,7 +699,10 @@ void
 StarDetails::setOrbit(Orbit* o)
 {
     orbit = o;
-    orbitalRadius = (float) astro::kilometersToLightYears(o->getBoundingRadius());
+    if (o != NULL)
+        orbitalRadius = (float) astro::kilometersToLightYears(o->getBoundingRadius());
+    else
+        orbitalRadius = 0.0f;
 }
 
 

@@ -507,6 +507,7 @@ class CloseStarPicker : public StarHandler
 public:
     CloseStarPicker(const UniversalCoord& pos,
                     const Vec3f& dir,
+                    double t,
                     float _maxDistance,
                     float angle);
     ~CloseStarPicker() {};
@@ -515,6 +516,7 @@ public:
 public:
     UniversalCoord pickOrigin;
     Vec3f pickDir;
+    double now;
     float maxDistance;
     const Star* closestStar;
     float closestDistance;
@@ -524,10 +526,12 @@ public:
 
 CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
                                  const Vec3f& dir,
+                                 double t,
                                  float _maxDistance,
                                  float angle) :
     pickOrigin(pos),
     pickDir(dir),
+    now(t),
     maxDistance(_maxDistance),
     closestStar(NULL),
     closestDistance(0.0f),
@@ -543,8 +547,9 @@ void CloseStarPicker::process(const Star& star,
     if (lowPrecDistance > maxDistance)
         return;
 
-    Point3d hPos = astro::heliocentricPosition(pickOrigin, star.getPosition());
-    Vec3f starDir((float) -hPos.x, (float) -hPos.y, (float) -hPos.z);
+    Vec3d hPos = (star.getPosition(now) - pickOrigin) * 
+        astro::microLightYearsToKilometers(1.0);
+    Vec3f starDir((float) hPos.x, (float) hPos.y, (float) hPos.z);
     float distance = 0.0f;
 
      if (testIntersection(Ray3f(Point3f(0, 0, 0), pickDir),
@@ -585,6 +590,7 @@ void CloseStarPicker::process(const Star& star,
 
 Selection Universe::pickStar(const UniversalCoord& origin,
                              const Vec3f& direction,
+                             double when,
                              float faintestMag,
                              float tolerance)
 {
@@ -599,7 +605,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     // precision pick test isn't reliable close to a star and the high
     // precision test isn't nearly fast enough to use on our database of
     // over 100k stars.
-    CloseStarPicker closePicker(origin, direction, 1.0f, tolerance);
+    CloseStarPicker closePicker(origin, direction, when, 1.0f, tolerance);
     starCatalog->findCloseStars(closePicker, o, 1.0f);
     if (closePicker.closestStar != NULL)
         return Selection(const_cast<Star*>(closePicker.closestStar));
@@ -695,7 +701,7 @@ Selection Universe::pick(const UniversalCoord& origin,
     }
 
     if (sel.empty())
-        sel = pickStar(origin, direction, faintestMag, tolerance);
+        sel = pickStar(origin, direction, when, faintestMag, tolerance);
 
     if (sel.empty())
         sel = pickDeepSkyObject(origin, direction, faintestMag, tolerance);

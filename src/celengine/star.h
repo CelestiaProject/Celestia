@@ -132,7 +132,7 @@ StarDetails::getOrbit() const
 float
 StarDetails::getOrbitalRadius() const
 {
-    return 0.0f;
+    return orbitalRadius;
 }
 
 uint32
@@ -227,6 +227,11 @@ Star::getAbsoluteMagnitude() const
     return absMag;
 }
 
+
+// This getPosition() method returns the approximate star position; that is,
+// star position without any orbital motion taken into account.  For a
+// star in an orbit, the position should be set to the 'root' barycenter
+// of the system.
 Point3f
 Star::getPosition() const
 {

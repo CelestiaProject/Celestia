@@ -44,7 +44,9 @@ class Universe
                    double when,
                    float faintestMag,
                    float tolerance = 0.0f);
-    Selection pickStar(const UniversalCoord&, const Vec3f&, float faintest,
+    Selection pickStar(const UniversalCoord&, const Vec3f&,
+                       double when,
+                       float faintest,
                        float tolerance = 0.0f);
     Selection pickDeepSkyObject(const UniversalCoord&,
                                 const Vec3f&, float faintest,
