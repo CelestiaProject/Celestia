@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cmath>
 
 #include "../celengine/gl.h"
 #include "../celengine/glext.h"
@@ -77,7 +78,7 @@ bool AVICapture::start(const string& filename,
     info.fccType = streamtypeVIDEO;
     info.fccHandler = 0;
     info.dwScale = 1;
-    info.dwRate = (DWORD) frameRate;
+    info.dwRate = (DWORD) floor(frameRate + 0.5f);
     info.dwSuggestedBufferSize = rowBytes * height;
     SetRect(&info.rcFrame, 0, 0, width, height);
     hr = AVIFileCreateStream(aviFile, &aviStream, &info);
