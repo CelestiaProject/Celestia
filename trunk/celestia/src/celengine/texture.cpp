@@ -427,6 +427,28 @@ Texture* CreateProceduralTexture(int width, int height,
 }
 
 
+Texture* CreateProceduralTexture(int width, int height,
+                                 int format,
+                                 TexelFunctionObject& func)
+{
+    Texture* tex = new Texture(width, height, format);
+    if (tex == NULL)
+        return NULL;
+
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            float u = (float) x / (float) width * 2 - 1;
+            float v = (float) y / (float) height * 2 - 1;
+            func(u, v, 0, tex->pixels + (y * width + x) * tex->components);
+        }
+    }
+
+    return tex;
+}
+
+
 Texture* LoadTextureFromFile(const string& filename)
 {
     ContentType type = DetermineFileType(filename);
