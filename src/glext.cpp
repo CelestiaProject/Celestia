@@ -141,58 +141,6 @@ void Alert(const char *szFormat, ...)
 {
 }
 
-#if 0
-// Check for required extensions and initialize them if present
-bool InitGLExtensions(void)
-{
-#if 0
-    if (!extensionSupported("GL_EXT_bgra")) {
-        Alert("Required OpenGL extension GL_EXT_bgra not supported");
-        return false;
-    }
-#endif
-
-    if (!extensionSupported("GL_ARB_multitexture")) {
-        Alert("Required OpenGL extension GL_ARB_multitexture not supported");
-        return false;
-    }
-
-#if 0
-    if (!extensionSupported("GL_EXT_texture_env_combine")) {
-	Alert("Required OpenGL extension GL_EXT_texture_env_combine not supported");
-	return false;
-    }
-
-    if (!extensionSupported("GL_NV_register_combiners")) {
-        Alert("Required OpenGL extension GL_NV_register_combiners not supported");
-        return false;
-    }
-
-    if (!extensionSupported("GL_EXT_texture_cube_map")) {
-        Alert("Required OpenGL extension GL_EXT_texture_cube_map not supported");
-        return false;
-    }
-
-    if (!extensionSupported("GL_EXT_separate_specular_color")) {
-        Alert("Required OpenGL extension GL_EXT_separate_specular_color not supported");
-        return false;
-    }
-
-    if (!extensionSupported("WGL_EXT_swap_control")) {
-        Alert("Required OpenGL extension WGL_EXT_swap_control not supported");
-        return false;
-    }
-#endif
-
-    initMultiTexture();
-#if 0
-    initRegisterCombiners();
-    initSwapControl();
-#endif
-
-    return true;
-}
-#endif
 
 // ARB_multitexture
 void InitExtMultiTexture()

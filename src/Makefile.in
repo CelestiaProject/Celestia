@@ -94,7 +94,7 @@ bin_PROGRAMS = celestia
 @ENABLE_GTK_TRUE@FRONTENDSOURCE = gtkmain.cpp
 @ENABLE_GTK_FALSE@FRONTENDSOURCE = glutmain.cpp
 
-COMMONSOURCES =  	3dsmesh.cpp 	3dsmodel.cpp 	3dsread.cpp 	asterism.cpp 	astro.cpp 	bigfix.cpp 	body.cpp 	celestiacore.cpp 	cmdparser.cpp 	color.cpp 	command.cpp 	config.cpp 	constellation.cpp 	debug.cpp 	destination.cpp 	dispmap.cpp 	execution.cpp 	favorites.cpp 	filetype.cpp 	galaxy.cpp 	glext.cpp 	meshmanager.cpp 	observer.cpp 	octree.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	perlin.cpp 	regcombine.cpp 	render.cpp 	resmanager.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texfont.cpp 	texmanager.cpp 	texture.cpp 	texturefont.cpp 	tokenizer.cpp 	univcoord.cpp 	unixtimer.cpp 	util.cpp 	vertexlist.cpp
+COMMONSOURCES =  	3dsmesh.cpp 	3dsmodel.cpp 	3dsread.cpp 	asterism.cpp 	astro.cpp 	bigfix.cpp 	body.cpp 	celestiacore.cpp 	cmdparser.cpp 	color.cpp 	command.cpp 	configfile.cpp 	constellation.cpp 	debug.cpp 	destination.cpp 	dispmap.cpp 	execution.cpp 	favorites.cpp 	filetype.cpp 	frustum.cpp 	galaxy.cpp 	glext.cpp 	meshmanager.cpp 	observer.cpp 	octree.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	perlin.cpp 	regcombine.cpp 	render.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texfont.cpp 	texmanager.cpp 	texture.cpp 	texturefont.cpp 	tokenizer.cpp 	univcoord.cpp 	unixtimer.cpp 	util.cpp 	vertexlist.cpp 	vertexprog.cpp
 
 
 celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
@@ -114,27 +114,28 @@ X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
 @ENABLE_GTK_TRUE@celestia_OBJECTS =  3dsmesh.o 3dsmodel.o 3dsread.o \
 @ENABLE_GTK_TRUE@asterism.o astro.o bigfix.o body.o celestiacore.o \
-@ENABLE_GTK_TRUE@cmdparser.o color.o command.o config.o constellation.o \
-@ENABLE_GTK_TRUE@debug.o destination.o dispmap.o execution.o \
-@ENABLE_GTK_TRUE@favorites.o filetype.o galaxy.o glext.o meshmanager.o \
-@ENABLE_GTK_TRUE@observer.o octree.o orbit.o overlay.o parser.o \
-@ENABLE_GTK_TRUE@perlin.o regcombine.o render.o resmanager.o \
+@ENABLE_GTK_TRUE@cmdparser.o color.o command.o configfile.o \
+@ENABLE_GTK_TRUE@constellation.o debug.o destination.o dispmap.o \
+@ENABLE_GTK_TRUE@execution.o favorites.o filetype.o frustum.o galaxy.o \
+@ENABLE_GTK_TRUE@glext.o meshmanager.o observer.o octree.o orbit.o \
+@ENABLE_GTK_TRUE@overlay.o parser.o perlin.o regcombine.o render.o \
 @ENABLE_GTK_TRUE@selection.o simulation.o solarsys.o spheremesh.o \
 @ENABLE_GTK_TRUE@star.o stardb.o starname.o stellarclass.o texfont.o \
 @ENABLE_GTK_TRUE@texmanager.o texture.o texturefont.o tokenizer.o \
-@ENABLE_GTK_TRUE@univcoord.o unixtimer.o util.o vertexlist.o gtkmain.o
+@ENABLE_GTK_TRUE@univcoord.o unixtimer.o util.o vertexlist.o \
+@ENABLE_GTK_TRUE@vertexprog.o gtkmain.o
 @ENABLE_GTK_FALSE@celestia_OBJECTS =  3dsmesh.o 3dsmodel.o 3dsread.o \
 @ENABLE_GTK_FALSE@asterism.o astro.o bigfix.o body.o celestiacore.o \
-@ENABLE_GTK_FALSE@cmdparser.o color.o command.o config.o \
+@ENABLE_GTK_FALSE@cmdparser.o color.o command.o configfile.o \
 @ENABLE_GTK_FALSE@constellation.o debug.o destination.o dispmap.o \
-@ENABLE_GTK_FALSE@execution.o favorites.o filetype.o galaxy.o glext.o \
-@ENABLE_GTK_FALSE@meshmanager.o observer.o octree.o orbit.o overlay.o \
-@ENABLE_GTK_FALSE@parser.o perlin.o regcombine.o render.o resmanager.o \
+@ENABLE_GTK_FALSE@execution.o favorites.o filetype.o frustum.o galaxy.o \
+@ENABLE_GTK_FALSE@glext.o meshmanager.o observer.o octree.o orbit.o \
+@ENABLE_GTK_FALSE@overlay.o parser.o perlin.o regcombine.o render.o \
 @ENABLE_GTK_FALSE@selection.o simulation.o solarsys.o spheremesh.o \
 @ENABLE_GTK_FALSE@star.o stardb.o starname.o stellarclass.o texfont.o \
 @ENABLE_GTK_FALSE@texmanager.o texture.o texturefont.o tokenizer.o \
 @ENABLE_GTK_FALSE@univcoord.o unixtimer.o util.o vertexlist.o \
-@ENABLE_GTK_FALSE@glutmain.o
+@ENABLE_GTK_FALSE@vertexprog.o glutmain.o
 celestia_LDADD = $(LDADD)
 celestia_DEPENDENCIES = 
 celestia_LDFLAGS = 
@@ -152,17 +153,17 @@ GZIP_ENV = --best
 DEP_FILES =  .deps/3dsmesh.P .deps/3dsmodel.P .deps/3dsread.P \
 .deps/asterism.P .deps/astro.P .deps/bigfix.P .deps/body.P \
 .deps/celestiacore.P .deps/cmdparser.P .deps/color.P .deps/command.P \
-.deps/config.P .deps/constellation.P .deps/debug.P .deps/destination.P \
-.deps/dispmap.P .deps/execution.P .deps/favorites.P .deps/filetype.P \
-.deps/galaxy.P .deps/glext.P .deps/glutmain.P .deps/gtkmain.P \
-.deps/meshmanager.P .deps/observer.P .deps/octree.P .deps/orbit.P \
-.deps/overlay.P .deps/parser.P .deps/perlin.P .deps/regcombine.P \
-.deps/render.P .deps/resmanager.P .deps/selection.P .deps/simulation.P \
-.deps/solarsys.P .deps/spheremesh.P .deps/star.P .deps/stardb.P \
-.deps/starname.P .deps/stellarclass.P .deps/texfont.P \
+.deps/configfile.P .deps/constellation.P .deps/debug.P \
+.deps/destination.P .deps/dispmap.P .deps/execution.P .deps/favorites.P \
+.deps/filetype.P .deps/frustum.P .deps/galaxy.P .deps/glext.P \
+.deps/glutmain.P .deps/gtkmain.P .deps/meshmanager.P .deps/observer.P \
+.deps/octree.P .deps/orbit.P .deps/overlay.P .deps/parser.P \
+.deps/perlin.P .deps/regcombine.P .deps/render.P .deps/selection.P \
+.deps/simulation.P .deps/solarsys.P .deps/spheremesh.P .deps/star.P \
+.deps/stardb.P .deps/starname.P .deps/stellarclass.P .deps/texfont.P \
 .deps/texmanager.P .deps/texture.P .deps/texturefont.P \
 .deps/tokenizer.P .deps/univcoord.P .deps/unixtimer.P .deps/util.P \
-.deps/vertexlist.P
+.deps/vertexlist.P .deps/vertexprog.P
 SOURCES = $(celestia_SOURCES)
 OBJECTS = $(celestia_OBJECTS)
 

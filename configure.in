@@ -149,6 +149,8 @@ AC_CHECK_HEADERS(GL/gl.h GL/glut.h)
 # AC_DEFINE(FONT_DIR,"fonts")
 # AC_DEFINE(MODEL_DIR,"models")
 # AC_DEFINE(DATA_DIR,"data")
+AC_CHECK_HEADERS(byteswap.h)
+AC_C_BIGENDIAN
 
 AC_OUTPUT( Makefile          \
            src/Makefile      \

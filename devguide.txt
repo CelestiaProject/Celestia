@@ -25,9 +25,9 @@ File Overview
   This class is a package for position, orientation, and velocity.  The
   position of the observer is a UniversalCoord.
 
-* visstars.cpp
-  VisibleStarSet is a class that maintains a list of stars from a database
-  which visible to an Observer.
+* octree.cpp
+  Octree is a class used to determine which stars from are visible to an
+  Observer
 
 * stellarclass.cpp
 * starname.cpp

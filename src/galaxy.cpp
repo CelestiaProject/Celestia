@@ -283,7 +283,8 @@ GalaxyList* ReadGalaxyList(istream& in)
             galaxyParams->getNumber("Dec", dec);
             Point3f p = astro::equatorialToCelestialCart(RA, dec, distance);
             galaxy->setPosition(Point3d(p.x, p.y, p.z));
-            cout << galaxy->getName() << ": " << p.x << ", " << p.y << ", " << p.z << '\n';
+            DPRINTF("%s: %f, %f, %f\n", galaxy->getName().c_str(),
+                    p.x, p.y, p.z);
         }
 
         // Get orientation

@@ -13,7 +13,7 @@
 #include "3dschunk.h"
 #include "3dsmodel.h"
 #include "3dsread.h"
-
+#include "bytes.h"
 
 using namespace std;
 
@@ -30,27 +30,36 @@ static int read3DSChunk(ifstream& in,
 static int logIndent = 0;
 
 
-static int readInt(ifstream& in)
+static int32 readInt(ifstream& in)
 {
-    unsigned char b[4];
-    in.read(reinterpret_cast<char*>(b), 4);
-    return ((int) b[3] << 24) + ((int) b[2] << 16)
-        + ((int) b[1] << 8) + (int) b[0];
+    int32 ret;
+    in.read((char *) &ret, sizeof(int32));
+    BE_TO_CPU_INT32(ret, ret);
+    return ret;
+}
+ 
+static int16 readShort(ifstream& in)
+{
+    int16 ret;
+    in.read((char *) &ret, sizeof(int16));
+    BE_TO_CPU_INT16(ret, ret);
+    return ret;
+}
+ 
+static uint16 readUshort(ifstream& in)
+{
+    uint16 ret;
+    in.read((char *) &ret, sizeof(uint16));
+    BE_TO_CPU_INT16(ret, ret);
+    return ret;
+}
+ 
+static float readFloat(ifstream& in)
+{
+    int i = readInt(in);
+    return *((float*) &i);
 }
 
-static short readShort(ifstream& in)
-{
-    unsigned char b[2];
-    in.read(reinterpret_cast<char*>(b), 2);
-    return ((short) b[1] << 8) + (short) b[0];
-}
-
-static unsigned short readUshort(ifstream& in)
-{
-    unsigned char b[2];
-    in.read(reinterpret_cast<char*>(b), 2);
-    return ((unsigned short) b[1] << 8) + (unsigned short) b[0];
-}
 
 static char readChar(ifstream& in)
 {
@@ -86,13 +95,6 @@ static string readString(ifstream& in)
     }
 
     return string(s);
-}
-
-
-static float readFloat(ifstream& in)
-{
-    int i = readInt(in);
-    return *((float*) &i);
 }
 
 
@@ -206,7 +208,7 @@ int read3DSChunk(ifstream& in,
                  void* obj)
 {
     unsigned short chunkType = readUshort(in);
-    int chunkSize = readInt(in);
+    int32 chunkSize = readInt(in);
     int contentSize = chunkSize - 6;
         
     logChunk(chunkType, chunkSize);
@@ -590,7 +592,7 @@ M3DScene* Read3DSFile(ifstream& in)
         return NULL;
     }
 
-    int chunkSize = readInt(in);
+    int32 chunkSize = readInt(in);
     if (in.bad())
     {
         cerr << "Error reading 3DS file.\n";

@@ -25,12 +25,12 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
 
 Mesh3DS::Mesh3DS(const M3DScene& scene)
 {
-    for (int i = 0; i < scene.getModelCount(); i++)
+    for (unsigned int i = 0; i < scene.getModelCount(); i++)
     {
         M3DModel* model = scene.getModel(i);
         if (model != NULL)
         {
-            for (int j = 0; j < model->getTriMeshCount(); j++)
+            for (unsigned int j = 0; j < model->getTriMeshCount(); j++)
             {
                 M3DTriangleMesh* mesh = model->getTriMesh(j);
                 if (mesh != NULL)
@@ -163,24 +163,12 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
             vertexFaces[v2][faceCounts[v2]--] = i;
         }
 
-#if 0
-        for (i = 0; i < nVertices; i++)
-        {
-            printf("%d: ", i);
-            for (int j = 1; j < vertexFaces[i][0]; j++)
-            {
-                printf("%d ", vertexFaces[i][j]);
-            }
-            printf("\n");
-        }
-#endif
-
         // average face normals to compute the vertex normals
         for (i = 0; i < nFaces; i++)
         {
             uint16 v0, v1, v2;
             mesh.getFace(i, v0, v1, v2);
-            uint32 smoothingGroups = mesh.getSmoothingGroups(i);
+            // uint32 smoothingGroups = mesh.getSmoothingGroups(i);
 
             int j;
             Vec3f v = Vec3f(0, 0, 0);

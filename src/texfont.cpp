@@ -509,7 +509,7 @@ void txfRenderGlyph(TexFont * txf, int c)
 
 void txfRenderString(TexFont * txf, char *s, int len)
 {
-    for (unsigned int i = 0; i < len; i++)
+    for (int i = 0; i < len; i++)
         txfRenderGlyph(txf, s[i]);
 }
 
