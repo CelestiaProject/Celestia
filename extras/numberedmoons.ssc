@@ -1116,13 +1116,35 @@
 
 	EllipticalOrbit
 	{
-	Period		266.6
+	Period		266.56
 	SemiMajorAxis	4276000
 	Eccentricity	0.1459
 	Inclination	109.890 #
 	AscendingNode	149.112	#
 	ArgOfPericenter	15.118	# J2000.0
 	MeanAnomaly     20.667	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.07
+}
+
+"2003U3" "Sol/Uranus"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		5.5
+
+	EllipticalOrbit
+	{
+	Period		1687.01
+	SemiMajorAxis	14345000
+	Eccentricity	0.6608
+	Inclination	42.718  #
+	AscendingNode	37.574	#
+	ArgOfPericenter	308.558	# J2000.0
+	MeanAnomaly     325.270	#
 	}
 
 	RotationPeriod  10   # Guess
