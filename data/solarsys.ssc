@@ -276,8 +276,9 @@
 
 	RotationPeriod    9.92425
 	Obliquity         3.08
-	LongOfRotationAxis 157.68
-
+	LongOfRotationAxis 0 # Not correct, but necessary with current 
+                             # calculations of satellite positions
+	                     # old values: 337.68, 157.68
 	Albedo            0.51
 }
 
@@ -425,9 +426,9 @@
         MeanLongitude    49.944
 	}
 
-	RotationPeriod   10.65622
-	Obliquity         26.73
-	LongOfRotationAxis 349.394
+	RotationPeriod      10.65622
+	Obliquity           28.052 # old value: 26.73
+	LongOfRotationAxis  159.528 # old value: 169.394
 
 	Albedo            0.50
 
@@ -453,6 +454,7 @@
 	BlendTexture true
 	Radius    199
 
+	CustomOrbit "mimas"
 	EllipticalOrbit
 	{
 	Period         0.9424218
@@ -470,6 +472,7 @@
 	Texture "asteroid.jpg"
 	Radius     249
 
+	CustomOrbit "enceladus"
 	EllipticalOrbit
 	{
 	Period         1.370218
@@ -487,6 +490,7 @@
 	Texture "tethys.jpg"
 	Radius     530
 
+	CustomOrbit "tethys"
 	EllipticalOrbit
 	{
 	Period         1.887802
@@ -504,6 +508,7 @@
 	Texture "dione.jpg"
 	Radius     560
 
+	CustomOrbit "dione"
 	EllipticalOrbit
 	{
 	Period         2.736915
