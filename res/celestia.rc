@@ -70,11 +70,14 @@ BEGIN
         MENUITEM "Show &Orbits",                ID_RENDER_SHOWORBITS
 	MENUITEM "Show &Constellations",        ID_RENDER_SHOWCONSTELLATIONS
 	MENUITEM SEPARATOR
+	MENUITEM "More Stars Visible",          ID_RENDER_MORESTARS
+	MENUITEM "Fewer Stars Visible",         ID_RENDER_FEWERSTARS
+	MENUITEM SEPARATOR
         MENUITEM "Label Major &Planets",        ID_RENDER_SHOWPLANETLABELS
 	MENUITEM "Label &Minor Planets",        ID_RENDER_SHOWMINORPLANETLABELS
         MENUITEM "Label &Stars",                ID_RENDER_SHOWSTARLABELS
 	MENUITEM "Label Co&nstellations",       ID_RENDER_SHOWCONSTLABELS
-        MENUITEM "Show &HUD Text",              ID_RENDER_SHOWHUDTEXT
+        MENUITEM "Show &Info Text",             ID_RENDER_SHOWHUDTEXT
         , CHECKED
 	MENUITEM SEPARATOR
         POPUP "&Ambient Light"
@@ -141,7 +144,7 @@ CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
-    CTEXT           "Celestia 1.07",IDC_STATIC,6,7,297,9
+    CTEXT           "Celestia 1.0.10",IDC_STATIC,6,7,297,9
     CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
                     IDC_STATIC,6,53,297,9
