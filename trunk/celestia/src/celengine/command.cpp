@@ -690,6 +690,7 @@ CommandCapture::CommandCapture(const std::string& _type,
 void CommandCapture::process(ExecutionEnvironment& env)
 {
     bool success = false;
+#ifndef MACOSX
 
     // Get the dimensions of the current viewport
     int viewport[4];
@@ -707,6 +708,7 @@ void CommandCapture::process(ExecutionEnvironment& env)
                                        viewport[0], viewport[1],
                                        viewport[2], viewport[3]);
     }
+#endif
 }
 
 
