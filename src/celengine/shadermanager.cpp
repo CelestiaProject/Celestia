@@ -267,6 +267,8 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
         ringWidth            = floatParam("ringWidth");
         ringRadius           = floatParam("ringRadius");
     }
+
+    textureOffset = floatParam("textureOffset");
 }
 
 
@@ -423,7 +425,7 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
     else
     {
         // Sum the diffuse contribution from all lights
-        source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 1.0);\n";
+        source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 0.0);\n";
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
@@ -562,6 +564,8 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         }
     }
 
+    source += "uniform float textureOffset;\n";
+
     if (props.shadowCounts != 0)
     {
         for (unsigned int i = 0; i < props.nLights; i++)
@@ -590,7 +594,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (!props.usesShadows() && !props.usesFragmentLighting())
     {
-        source += "diff = vec4(ambientColor, 1);\n";
+        source += "diff = vec4(ambientColor, 1.0);\n";
     }
 
     for (unsigned int i = 0; i < props.nLights; i++)
@@ -620,6 +624,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
         source += "diffTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+        source += "diffTexCoord.x += textureOffset;\n";
         nTexCoords++;
     }
 
