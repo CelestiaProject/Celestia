@@ -60,6 +60,8 @@ static const float MaxFarNearRatio      = 10000.0f;
 
 static const float RenderDistance       = 50.0f;
 
+static const float MaxScaledDiscStarSize = 8.0f;
+
 
 // The minimum apparent size of an objects orbit in pixels before we display
 // a label for it.  This minimizes label clutter.
@@ -91,8 +93,6 @@ static ResourceHandle starTexM = InvalidResource;
 static ResourceHandle starTexL = InvalidResource;
 
 static const float CoronaHeight = 0.2f;
-
-static const int OrbitMask = Body::Planet | Body::Moon;
 
 static bool buggyVertexProgramEmulation = true;
 
@@ -126,12 +126,14 @@ Renderer::Renderer() :
     renderMode(GL_FILL),
     labelMode(NoLabels),
     renderFlags(ShowStars | ShowPlanets),
+    orbitMask(Body::Planet | Body::Moon),
     ambientLightLevel(0.1f),
     fragmentShaderEnabled(false),
     vertexShaderEnabled(false),
     brightnessBias(0.0f),
     saturationMagNight(1.0f),
     saturationMag(1.0f),
+    starStyle(FuzzyPointStars),
     starVertexBuffer(NULL),
     useVertexPrograms(false),
     useRescaleNormal(false),
@@ -164,17 +166,11 @@ static void StarTextureEval(float u, float v, float w,
 {
     float r = 1 - (float) sqrt(u * u + v * v);
     if (r < 0)
-    {
         r = 0;
-    }
-    else if (r < 0.25f)
-    {
-        r = 4.0f * r;
-    }
+    else if (r < 0.5f)
+        r = 2.0f * r;
     else 
-    {
         r = 1;
-    }
 
     int pixVal = (int) (r * 255.99f);
     pixel[0] = pixVal;
@@ -588,6 +584,15 @@ void Renderer::setLabelMode(int _labelMode)
     labelMode = _labelMode;
 }
 
+int Renderer::getOrbitMask() const
+{
+    return orbitMask;
+}
+
+void Renderer::setOrbitMask(int mask)
+{
+    orbitMask = mask;
+}
 
 void Renderer::addLabelledStar(Star* star)
 {
@@ -853,13 +858,6 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
     if (planets == NULL)
         return;
 
-    int orbitMask = 0;
-    if (renderFlags & ShowPlanetOrbits)     orbitMask |= Body::Planet;
-    if (renderFlags & ShowMoonOrbits)       orbitMask |= Body::Moon;
-    if (renderFlags & ShowAsteroidOrbits)   orbitMask |= Body::Asteroid;
-    if (renderFlags & ShowCometOrbits)      orbitMask |= Body::Comet;
-    if (renderFlags & ShowSpacecraftOrbits) orbitMask |= Body::Spacecraft;
-
     double distance = (center - observerPos).length();
 
     // At the solar system scale, we'll handle all calculations in AU
@@ -875,9 +873,32 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
         if ((body->getClassification() & orbitMask) != 0 || body == sel.body())
         {
             if (body == sel.body())
+            {
+                // Highlight the orbit of the selected object in red
                 glColor4f(1, 0, 0, 1);
+            }
             else
-                glColor4f(0, 0.4f, 1.0f, 1);
+            {
+                switch (body->getClassification())
+                {
+                case Body::Moon:
+                    glColor4f(0.0f, 0.2f, 0.5f, 1.0f);
+                    break;
+                case Body::Asteroid:
+                    glColor4f(0.35f, 0.2f, 0.0f, 1.0f);
+                    break;
+                case Body::Comet:
+                    glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
+                    break;
+                case Body::Spacecraft:
+                    glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
+                    break;
+                case Body::Planet:
+                default:
+                    glColor4f(0.0f, 0.4f, 1.0f, 1.0f);
+                    break;
+                }
+            }
             
             float orbitRadiusInPixels =
                 (float) (body->getOrbit()->getBoundingRadius() /
@@ -1161,7 +1182,7 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
-    if ((renderFlags & ShowOrbitMask) != 0 && solarSystem != NULL)
+    if ((renderFlags & ShowOrbits) != 0 && orbitMask != 0 && solarSystem != NULL)
     {
         vector<CachedOrbit*>::const_iterator iter;
 
@@ -1483,8 +1504,8 @@ static void renderRingSystem(float innerRadius,
 // render its mesh at all and just display a starlike point instead.
 // Switching between the particle and mesh renderings of an object is
 // jarring, however . . . so we'll blend in the particle view of the
-// object to smooth things out, making it dimmer as the disc size approaches
-// 4 pixels.
+// object to smooth things out, making it dimmer as the disc size exceeds the
+// max disc size.
 void Renderer::renderBodyAsParticle(Point3f position,
                                     float appMag,
                                     float _faintestMag,
@@ -1494,20 +1515,27 @@ void Renderer::renderBodyAsParticle(Point3f position,
                                     float renderZ,
                                     bool useHaloes)
 {
-    if (discSizeInPixels < 4 || useHaloes)
+    float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
+    float maxBlendDiscSize = maxDiscSize + 3.0f;
+    float discSize = 1.0f;
+
+    if (discSizeInPixels < maxBlendDiscSize || useHaloes)
     {
         float a = 1;
+        float fade = 1.0f;
 
-        if (discSizeInPixels > 1)
+        if (discSizeInPixels > maxDiscSize)
         {
-            a = 0.5f * (4 - discSizeInPixels);
-            if (a > 1)
-                a = 1;
+            fade = (maxBlendDiscSize - discSizeInPixels) /
+                (maxBlendDiscSize - maxDiscSize - 1.0f);
+            if (fade > 1)
+                fade = 1;
         }
-        else
-        {
-            a = clamp((_faintestMag - appMag) * brightnessScale + brightnessBias);
-        }
+
+        a = (_faintestMag - appMag) * brightnessScale + brightnessBias;
+        if (starStyle == ScaledDiscStars && a > 1.0f)
+            discSize = min(discSize * (2.0f * a - 1.0f), maxDiscSize);
+        a = clamp(a) * fade;
 
         // We scale up the particle by a factor of 1.5 (at fov = 45deg) 
         // so that it's more
@@ -1520,7 +1548,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // just hack to accomplish this.  There are cases where it will fail
         // and a more robust method should be implemented.
 
-        float size = pixelSize * 1.6f * renderZ / corrFac;
+        float size = discSize * pixelSize * 1.6f * renderZ / corrFac;
         float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
 
         Point3f center(position.x * posScale,
@@ -3977,6 +4005,8 @@ void Renderer::renderPlanet(Body& body,
     }
 
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     renderBodyAsParticle(pos,
                          appMag,
                          faintestPlanetMag,
@@ -4528,20 +4558,25 @@ public:
     float brightnessBias;
     float distanceLimit;
 
-    int nProcessed;
     int nRendered;
     int nClose;
     int nBright;
+    int nProcessed;
+
+    bool useDiscs;
+    float maxDiscSize;
 };
 
-StarRenderer::StarRenderer()
+StarRenderer::StarRenderer() :
+    starVertexBuffer(0),
+    distanceLimit(1.0e6f),
+    nRendered(0),
+    nClose(0),
+    nBright(0),
+    nProcessed(0),
+    useDiscs(false),
+    maxDiscSize(1.0f)
 {
-    nRendered = 0;
-    nClose = 0;
-    nBright = 0;
-    nProcessed = 0;
-    starVertexBuffer = NULL;
-    distanceLimit = 1.0e6f;
 }
 
 void StarRenderer::process(const Star& star, float distance, float appMag)
@@ -4597,12 +4632,33 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
         if (discSizeInPixels <= 1)
         {
-            float alpha = clamp((faintestMag - appMag) * brightnessScale + brightnessBias);
+            float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
+
+            if (useDiscs)
+            {
+                float discSize = size;
+                if (alpha < 0.0f)
+                {
+                    alpha = 0.0f;
+                }
+                else if (alpha > 1.0f)
+                {
+                    discSize = min(discSize * (2.0f * alpha - 1.0f), maxDiscSize);
+                    alpha = 1.0f;
+                }
+                starVertexBuffer->addStar(starPos,
+                                          Color(starColor, alpha),
+                                          renderDistance * discSize);
+            }
+            else
+            {
+                alpha = clamp(alpha);
+                starVertexBuffer->addStar(starPos,
+                                          Color(starColor, alpha),
+                                          renderDistance * size);
+            }
 
             nRendered++;
-            starVertexBuffer->addStar(starPos,
-                                      Color(starColor, alpha),
-                                      renderDistance * size);
 
             // If the star is brighter than the saturation magnitude, add a
             // halo around it to make it appear more brilliant.  This is a
@@ -4646,6 +4702,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
     }
 }
 
+
 void Renderer::renderStars(const StarDatabase& starDB,
                            float faintestMagNight,
                            const Observer& observer)
@@ -4672,13 +4729,19 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.faintestMag = faintestMag;
     starRenderer.saturationMag = saturationMag;
     starRenderer.distanceLimit = distanceLimit;
+    if (starStyle == ScaledDiscStars)
+    {
+        starRenderer.useDiscs = true;
+        starRenderer.brightnessScale *= 2.0f;
+        starRenderer.maxDiscSize = starRenderer.size * MaxScaledDiscStarSize;
+    }
 
     glareParticles.clear();
 
     starVertexBuffer->setBillboardOrientation(observer.getOrientation());
 
     starTex->bind();
-    starRenderer.starVertexBuffer->start((renderFlags & ShowStarsAsPoints) != 0);
+    starRenderer.starVertexBuffer->start(starStyle == PointStars);
     starDB.findVisibleStars(starRenderer,
                             observerPos,
                             observer.getOrientation(),
@@ -5069,19 +5132,34 @@ float Renderer::getSaturationMagnitude() const
     return saturationMag;
 }
 
+
 void Renderer::setSaturationMagnitude(float mag)
 {
     saturationMag = mag;
 }
+
 
 float Renderer::getBrightnessBias() const
 {
     return brightnessBias;
 }
 
+
 void Renderer::setBrightnessBias(float bias)
 {
     brightnessBias = bias;
+}
+
+
+void Renderer::setStarStyle(StarStyle style)
+{
+    starStyle = style;
+}
+
+
+Renderer::StarStyle Renderer::getStarStyle() const
+{
+    return starStyle;
 }
 
 
