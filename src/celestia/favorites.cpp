@@ -115,8 +115,8 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
         fav->orientation.getAxisAngle(axis, angle);
 
         Point3d base = (Point3d) fav->position;
-        base.x *= 1e-6; base.y *= 1e-6; base.z *= 1e-6;
         Vec3d offset = fav->position - base;
+        base.x *= 1e-6; base.y *= 1e-6; base.z *= 1e-6;
 
         out << '"' << fav->name << "\" {\n";
         if(fav->isFolder)
