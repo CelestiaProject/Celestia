@@ -30,6 +30,7 @@
 - (IBAction)gotoObject:(id)sender;
 - (IBAction)back:(id)sender;
 - (IBAction)forward:(id)sender;
+- (IBAction) openScript: (id) sender;
 - (void)setDirty;
 - (void)resize;
 - (void)startInitialization;
@@ -41,5 +42,6 @@
 
 - (BOOL)     validateMenuItem: (id) item;
 - (IBAction) activateMenuItem: (id) item;
+- (IBAction) activateSwitchButon: (id) item;
 
 @end

@@ -51,8 +51,8 @@
 //    else
     {
         if (isDirty) [self resize];
-        [appCore tick];
-        [appCore draw];
+            [appCore tick];
+            [appCore draw];
     }
 //else {
  //       [self finishInitialization];
@@ -87,6 +87,7 @@
     }
 }
 
+
 - (void)awakeFromNib
 {
     if ([[self superclass] instancesRespondToSelector:@selector(awakeFromNib)]) {
@@ -94,6 +95,7 @@
     }
     //NSLog(@"[CelestiaController awakeFromNib]");
     [self startInitialization];
+
 
 }
 
@@ -117,6 +119,7 @@
     appCore = nil;
     timer = nil;
     [ self setupResourceDirectory ];
+NSLog(@"about to createAppCore\n");
     appCore = [CelestiaAppCore sharedAppCore];
     if (appCore == nil)
     {
@@ -124,12 +127,14 @@
         [NSApp terminate:self];
         return;
     }
+NSLog(@"about to initSimulation\n");
     if (![ appCore initSimulation])
     {
         NSLog(@"Could not initSimulation!");
         [NSApp terminate:self];
         return;
     }
+NSLog(@"done with initSimulation\n");
     timer = [[NSTimer scheduledTimerWithTimeInterval: 0.001 target: self selector:@selector(idle) userInfo:nil repeats:true] retain];
     [[glView window] setAutodisplay:YES];
     [glView setNeedsDisplay:YES];
@@ -138,6 +143,7 @@
     [[glView window] makeFirstResponder: glView ];
     [glView registerForDraggedTypes:
             [NSArray arrayWithObject: NSStringPboardType]];
+    [self scanForKeys: [renderPanelController window]];
 }
 
 - (void)finishInitialization
@@ -158,6 +164,7 @@
     //NSLog(@"%@",[CGLInfo displayDescriptions]);
 
     [renderPanelController finishSetup];
+    [appCore validateItems];
 }
 
 - (void)dealloc
@@ -187,6 +194,33 @@
     [gotoWindow makeKeyAndOrderFront:self];
 }
 
+- (void) openPanelDidEnd:(NSOpenPanel*)openPanel returnCode: (int) rc contextInfo: (void *) ci
+{
+    if (rc == NSOKButton )
+    {
+        NSString *path;
+        path = [openPanel filename];
+        [openPanel close];
+        [appCore runScript: path];
+        
+//       NSRunAlertPanel(@"Not yet implemented",@"Stay tuned.",nil,nil,nil);
+    }
+}
+
+- (IBAction) openScript: (id) sender
+{
+    NSOpenPanel* panel = [NSOpenPanel openPanel];
+    [ panel beginSheetForDirectory: nil
+        file: nil
+            types: nil // @".cel"
+            modalForWindow: [glView window]
+            modalDelegate: self
+            didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
+            contextInfo: nil
+    ];
+}
+
+
 - (IBAction)back:(id)sender
 {
     [appCore back];
@@ -197,58 +231,6 @@
     [appCore forward];
 }
 
-- (BOOL) itemFlag: (id) item
-{
-    CelestiaRenderer *renderer;
-    int tag = [item tag];
-    BOOL label = NO;
-    NSDictionary *flags;
-    NSString *key = NULL;
-    NSNumber* state;
-    if (tag == 32 )
-    {
-       if(  fabs([[[ appCore simulation] getTimeScale] doubleValue]) == 0.0 ) 
-            return YES;
-        else
-            return NO;
-    }
-    switch ( tag)
-    {
-        case 112: key = @"Planets"; label = YES; break;
-        case 109: key = @"Moons"; label = YES; break;
-        case 119: key = @"Asteroids"; label = YES; break;
-        case  98: key = @"Stars"; label = YES; break;
-        case 101: key = @"Galaxies"; label = YES; break;
-        case 110: key = @"Spacecraft"; label = YES; break;
-        case  61: key = @"Constellations"; label = YES; break;
-        case 105: key = @"CloudMaps"; label = NO; break;
-        case   1: key = @"Atmospheres"; label = NO; break;
-        case  12: key = @"NightMaps"; label = NO; break;
-        case   5: key = @"EclipseShadows"; label = NO; break;
-        case 111: key = @"Orbits"; label = NO; break;
-        case 117: key = @"Galaxies"; label = NO; break;
-        case  47: key = @"Diagrams"; label = NO; break;
-        case   2: key = @"Boundaries"; label = NO; break;
-        case  59: key = @"CelestialSphere"; label = NO; break;
-        case  25: key = @"AutoMag"; label = NO; break;
-        case  20: key = @"CometTails"; label = NO; break;
-        case  11: key = @"Markers"; label = NO; break;
-        case  19: key = @"StarsAsPoints"; label = NO; break;
-        case  24: key = @"SmoothLines"; label = NO; break;
-        default : break;
-    }
-    if ( key == NULL ) return NO;
-    renderer = [[CelestiaAppCore sharedAppCore] renderer];
-    if ( label )
-       flags = [renderer labelFlags];
-    else
-       flags = [renderer renderFlags];
-    state = (NSNumber*) [ flags objectForKey: key ];
-    if ( state == NULL ) return NO;
-    return [state boolValue];    
-}
-
-
 - (BOOL)     validateMenuItem: (id) item
 {
     if ( [item tag] == 0 )
@@ -257,26 +239,135 @@
     }
     else
     {
-      if ( [self itemFlag: item] )
-        [item setState: NSOnState ];
-      else
-        [item setState: NSOffState ];      
+        return [appCore validateItem: item ];
     }
-    return YES;
 }
 
 - (IBAction) activateMenuItem: (id) item
 {
-    if ( [item tag] != 0 )
+    int tag = [item tag];
+    if ( tag != 0 )
     {
-    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    if ( [item tag] < 0 )
-        [self keyPress: -[item tag] hold: 2];
-    else if ( [item tag] < 128 )
-       [ appCore charEntered: [item tag] ];
-    
+        CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+        if ( tag < 0 )
+            [self keyPress: -tag hold: 2];
+        else [ appCore actionForItem: item ];
+        [appCore validateItemForTag: tag];
     }
 }
 
+- (IBAction) activateSwitchButton: (id) item
+{
+    int tag = [item tag];
+    if ( tag != 0 )
+    {
+        [ appCore actionForItem: item ];
+        [ appCore tick]; [glView setNeedsDisplay:YES];
+    }
+}
+
+- (IBAction) activateMatrixButton: (id) item
+{
+    item = [item selectedCell];
+    int tag = [item tag];
+    if ( tag != 0 )
+    {
+        [ appCore actionForItem: item ];
+    }
+}
+
+- (void) scanForKeys: (id) item
+{
+//    NSLog(@"scanning item %@\n", [item description]);
+
+    if ( [item isKindOfClass: [NSTabViewItem class]] )
+    {
+//	 NSLog(@"scanning viewitem\n");
+        item = [item view];
+        [ self scanForKeys: item ];
+        return;
+    }
+
+
+    if ([item isKindOfClass: [NSMenuItem class]] && [item tag] != 0)
+        {
+//	 NSLog(@"scanning menuItem\n");
+            [appCore defineKeyForItem: item];
+            [item setTarget: self];
+            [item setAction: @selector(activateMenuItem:)];
+            return; 
+        }
+    else if ([item isKindOfClass: [NSSlider class]] && [item tag] != 0)
+        {
+//            NSLog(@"scanning cell\n");
+            [appCore defineKeyForItem: item];
+            [item setTarget: self];
+            [item setAction: @selector(activateSwitchButton:)];
+            return; 
+        }
+
+    if ( [item isKindOfClass: [NSTabView class]] )
+    {
+//	 NSLog(@"scanning tabview\n");
+        item = [ [item tabViewItems] objectEnumerator ];
+    }
+    else if ( [item isKindOfClass: [NSPopUpButton class]] )
+    {
+        [appCore defineKeyForItem: item];
+//	 NSLog(@"scanning popupbutton\n");
+        item = [ [item itemArray] objectEnumerator ];
+    }
+    else if ([item isKindOfClass: [NSControl class]] && [item tag] != 0)
+        {
+//	 NSLog(@"scanning control\n");
+            [appCore defineKeyForItem: item];
+            [item setTarget: self];
+            [item setAction: @selector(activateSwitchButton:)];
+            return; 
+        }
+    else if ( [item isKindOfClass: [NSMatrix class]] )
+    {
+//	 NSLog(@"scanning matrix\n");
+        item = [ [item cells] objectEnumerator ];
+    }
+    else if ( [item isKindOfClass: [NSView class]] )
+    {
+//	 NSLog(@"scanning view\n");
+//        NSLog(@"subviews items = %@\n", [item subviews]);
+        item = [ [item subviews] objectEnumerator ];
+//        NSLog(@"view items = %@\n", item);
+    };
+
+    if ( [item isKindOfClass: [NSEnumerator class] ] )
+    {
+//	 NSLog(@"scanning array\n");
+        id subitem;
+        while(subitem = [item nextObject])
+        {
+//            NSLog(@"scanning array  item\n");
+            [ self scanForKeys: subitem ];
+        }
+        return;
+    }
+
+    if ([item isKindOfClass: [NSCell class]] && [item tag] != 0)
+        {
+//	 NSLog(@"scanning cell\n");
+            [appCore defineKeyForItem: item];
+            [item setTarget: self];
+            [item setAction: @selector(activateMatrixButton:)];
+            return; 
+        }
+
+    if ( [item isKindOfClass: [NSWindow class]] )
+    {
+//        NSLog(@"scanning window\n");
+        item = [item contentView ];
+        [ self scanForKeys: item ];
+        return;
+    }
+    
+        
+}
 
 @end
