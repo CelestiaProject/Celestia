@@ -260,6 +260,10 @@ SOURCE=.\winviewoptsdlg.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
+SOURCE=.\res\about.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\camcorder.bmp
 # End Source File
 # Begin Source File
@@ -276,6 +280,10 @@ SOURCE=.\res\Celestia.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\clock2.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\Clsdfold.ico
 # End Source File
 # Begin Source File
@@ -284,7 +292,15 @@ SOURCE=.\res\Clsdfolder.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\config.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\crosshair.cur
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\exit.bmp
 # End Source File
 # Begin Source File
 
@@ -301,6 +317,14 @@ SOURCE=.\res\FolderOpened.bmp
 # Begin Source File
 
 SOURCE=.\res\FolderRoot.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\globe.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\lightbulb.bmp
 # End Source File
 # Begin Source File
 
@@ -325,6 +349,18 @@ SOURCE=.\res\Rootfold.ico
 # Begin Source File
 
 SOURCE=.\res\Rootfolder.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\script2.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\stop.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\sunglasses.bmp
 # End Source File
 # End Group
 # End Target
