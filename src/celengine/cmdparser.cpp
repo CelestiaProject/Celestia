@@ -443,6 +443,12 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("magnitude", mag);
         cmd = new CommandSetVisibilityLimit(mag);
     }
+    else if (commandName == "setfaintestautomag45deg")
+    {
+        double mag = 8.5;
+        paramList->getNumber("magnitude", mag);
+        cmd = new CommandSetFaintestAutoMag45deg(mag);
+    }
     else if (commandName == "setambientlight")
     {
         double brightness = 0.0;
