@@ -57,12 +57,12 @@ class RingSystem
     float innerRadius;
     float outerRadius;
     Color color;
-    std::string texture;
+    int texture;
 
     RingSystem(float inner, float outer) :
-        innerRadius(inner), outerRadius(outer), color(1.0f, 1.0f, 1.0f)
+        innerRadius(inner), outerRadius(outer), color(1.0f, 1.0f, 1.0f), texture(-1)
         { }
-    RingSystem(float inner, float outer, Color _color, std::string _texture = "") :
+    RingSystem(float inner, float outer, Color _color, int _texture = -1) :
         innerRadius(inner), outerRadius(outer), color(_color), texture(_texture)
         { }
 };
@@ -99,8 +99,8 @@ class Body
     RingSystem* getRings() const;
     void setRings(const RingSystem&);
 
-    void setMesh(std::string);
-    std::string getMesh() const;
+    void setMesh(int);
+    int getMesh() const;
     void setSurface(const Surface&);
     const Surface& getSurface() const;
 
@@ -134,7 +134,7 @@ class Body
     float rotationPeriod;
     float rotationPhase;
 
-    std::string mesh;
+    ResourceHandle mesh;
     Surface surface;
 
     RingSystem* rings;
