@@ -1943,6 +1943,19 @@ void Renderer::renderPlanet(const Body& body,
                 if (distance - radius < atmosphere->cloudHeight)
                     glFrontFace(GL_CW);
 
+                if (atmosphere->cloudSpeed != 0.0f)
+                {
+                    // Make the clouds appear to rotate above the surface of
+                    // the planet.  This is easier to do with the texture
+                    // matrix than the model matrix because changing the
+                    // texture matrix doesn't require us to compute a second
+                    // set of model space rendering parameters.
+                    glMatrixMode(GL_TEXTURE);
+                    glTranslatef(-pfmod(now * atmosphere->cloudSpeed / 2 * PI,
+                                        1.0), 0, 0);
+                    glMatrixMode(GL_MODELVIEW);
+                }
+
                 glEnable(GL_LIGHTING);
                 glDepthMask(GL_FALSE);
                 cloudTex->bind();
@@ -1952,6 +1965,12 @@ void Renderer::renderPlanet(const Body& body,
                 ri.mesh->render(Mesh::Normals | Mesh::TexCoords0,
                                 viewFrustum,
                                 ri.lod);
+
+                // Reset the texture matrix
+                glMatrixMode(GL_TEXTURE);
+                glLoadIdentity();
+                glMatrixMode(GL_MODELVIEW);
+
                 glDepthMask(GL_TRUE);
                 glFrontFace(GL_CCW);
                 glPopMatrix();
