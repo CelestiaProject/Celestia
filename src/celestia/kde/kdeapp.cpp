@@ -64,6 +64,7 @@
 #include <kcelbookmarkmenu.h>
 #include <kbookmarkbar.h>
 #include <kcelbookmarkmanager.h>
+#include <kdeversion.h>
 
 #include "kdeglwidget.h"
 #include "kdeapp.h"
@@ -93,11 +94,12 @@ static uint32 FilterOtherLocations = ~(Location::City |
 
 KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 {
+#if KDE_VERSION >= 0x030200 
     QPixmap splash_pixmap(locate("appdata", "celestia-splash.jpg"));
     KSplashScreen *splash = new KSplashScreen(splash_pixmap);
     splash->show();
-    
     splash->message( i18n("Loading..."), Qt::AlignBottom | Qt::AlignAuto, QColor(255,255,255) );
+#endif
     
     appCore=new CelestiaCore();
     if (appCore == NULL)
@@ -146,8 +148,10 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     if (toolBar()->isHidden()) toggleToolbar->setChecked(false);
     if (menuBar()->isHidden()) toggleMenubar->setChecked(false);
 
+#if KDE_VERSION >= 0x0302000 
     splash->finish(this);
     delete splash;
+#endif
     
     // We use a timer with a null timeout value
     // to add appCore->tick to Qt's event loop
