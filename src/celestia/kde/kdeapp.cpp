@@ -141,7 +141,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 }
 
 void KdeApp::setStartURL(KURL url) {
-    if (url.protocol() == "cel") { 
+    if (url.protocol() == "cel") {
         appCore->setStartURL(url.url().latin1());
     }
     if (url.protocol() == "file") { 
@@ -238,7 +238,6 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showAtmospheres"))->setChecked(rFlags & Renderer::ShowAtmospheres);
     ((KToggleAction*)action("showSmoothLines"))->setChecked(rFlags & Renderer::ShowSmoothLines);
     ((KToggleAction*)action("showEclipseShadows"))->setChecked(rFlags & Renderer::ShowEclipseShadows);
-    ((KToggleAction*)action("showStarsAsPoints"))->setChecked(rFlags & Renderer::ShowStarsAsPoints);
     ((KToggleAction*)action("showRingShadows"))->setChecked(rFlags & Renderer::ShowRingShadows);
     ((KToggleAction*)action("showBoundaries"))->setChecked(rFlags & Renderer::ShowBoundaries);
     ((KToggleAction*)action("showAutoMag"))->setChecked(rFlags & Renderer::ShowAutoMag);
@@ -453,8 +452,7 @@ void KdeApp::initActions()
     KToggleAction* showEclipseShadows = new KToggleAction(i18n("Show Eclipse Shadows"), CTRL + Key_E, this, SLOT(slotShowEclipseShadows()), actionCollection(), "showEclipseShadows");
     showEclipseShadows->setChecked(rFlags & Renderer::ShowEclipseShadows);
 
-    KToggleAction* showStarsAsPoints = new KToggleAction(i18n("Show Stars as Points"), CTRL + Key_S, this, SLOT(slotShowStarsAsPoints()), actionCollection(), "showStarsAsPoints");
-    showStarsAsPoints->setChecked(rFlags & Renderer::ShowStarsAsPoints);
+    new KAction(i18n("Cycle Star Mode"), CTRL + Key_S, this, SLOT(slotCycleStarMode()), actionCollection(), "cycleStarMode");
 
     KToggleAction* showRingShadows = new KToggleAction(i18n("Show Ring Shadows"), 0, this, SLOT(slotShowRingShadows()), actionCollection(), "showRingShadows");
     showRingShadows->setChecked(rFlags & Renderer::ShowRingShadows);
@@ -500,6 +498,9 @@ void KdeApp::initActions()
     displayLocalTime->setChecked(isLocal);
 
     new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
+
+    new KAction(i18n("Center on Orbit"), SHIFT + Key_C, this, SLOT(slotCenterCO()), actionCollection(), "centerCO");
+
 
     KToggleAction *renderPath = 0;
     renderPath = new KToggleAction(i18n("Basic"), 0, this, SLOT(slotSetRenderPathBasic()), actionCollection(), "renderPathBasic");
@@ -836,27 +837,27 @@ void KdeApp::slotShowOrbits() {
 }
 
 void KdeApp::slotShowAsteroidOrbits() {
-     appCore->getRenderer()->setRenderFlags(
+     appCore->getRenderer()->setOrbitMask(
             appCore->getRenderer()->getOrbitMask() ^ Body::Asteroid);
 }
 
 void KdeApp::slotShowCometOrbits() {
-     appCore->getRenderer()->setRenderFlags(
+     appCore->getRenderer()->setOrbitMask(
             appCore->getRenderer()->getOrbitMask() ^ Body::Comet);
 }
 
 void KdeApp::slotShowMoonOrbits() {
-     appCore->getRenderer()->setRenderFlags(
+     appCore->getRenderer()->setOrbitMask(
             appCore->getRenderer()->getOrbitMask() ^ Body::Moon);
 }
 
 void KdeApp::slotShowPlanetOrbits() {
-     appCore->getRenderer()->setRenderFlags(
+     appCore->getRenderer()->setOrbitMask(
             appCore->getRenderer()->getOrbitMask() ^ Body::Planet);
 }
 
 void KdeApp::slotShowSpacecraftOrbits() {
-     appCore->getRenderer()->setRenderFlags(
+     appCore->getRenderer()->setOrbitMask(
             appCore->getRenderer()->getOrbitMask() ^ Body::Spacecraft);
 }
 
@@ -889,9 +890,8 @@ void KdeApp::slotShowEclipseShadows() {
             appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowEclipseShadows);
 }
 
-void KdeApp::slotShowStarsAsPoints() {
-     appCore->getRenderer()->setRenderFlags(
-            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowStarsAsPoints);
+void KdeApp::slotCycleStarMode() {
+    appCore->charEntered('\023');
 }
 
 void KdeApp::slotShowRingShadows() {
@@ -1013,6 +1013,10 @@ void KdeApp::slotWireframeMode() {
 	static bool mode = false;
 	mode = !mode;
 	renderer->setRenderMode(mode ? GL_LINE : GL_FILL);
+}
+
+void KdeApp::slotCenterCO() {
+	appCore->charEntered('\003');
 }
 
 void KdeApp::slotSetRenderPathBasic() {
@@ -1147,9 +1151,8 @@ void KdeApp::slotCelestialBrowser() {
     static CelestialBrowser *cb = new CelestialBrowser(this, appCore);
 
     cb->show();
-    cb->setActiveWindow();
-    cb->setFocus();
     cb->showNormal();
+    cb->setActiveWindow();
     cb->raise();
 }
 
@@ -1157,9 +1160,8 @@ void KdeApp::slotEclipseFinder() {
     static EclipseFinderDlg *ef = new EclipseFinderDlg(this, appCore);
 
     ef->show();
-    ef->setActiveWindow();
-    ef->setFocus();
     ef->showNormal();
+    ef->setActiveWindow();
     ef->raise();
 }
 
