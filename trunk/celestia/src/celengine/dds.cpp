@@ -18,6 +18,7 @@
 using namespace std;
 
 
+
 struct DDPixelFormat
 {
     uint32 size;
@@ -78,13 +79,12 @@ static uint32 FourCC(const char* s)
 }
 
 
+#define DDPF_RGB    0x40
+#define DDPF_FOURCC 0x04
+
+
 Image* LoadDDSImage(const string& filename)
 {
-    // We only load compressed DDS textures, so if S3 texture compression
-    // isn't supported by the driver, give up now.
-    if (!ExtensionSupported("GL_EXT_texture_compression_s3tc"))
-        return NULL;
-
     ifstream in(filename.c_str(), ios::in | ios::binary);
     if (!in.good())
     {
@@ -103,31 +103,95 @@ Image* LoadDDSImage(const string& filename)
 
     DDSurfaceDesc ddsd;
     in.read(reinterpret_cast<char*>(&ddsd), sizeof ddsd);
-        LE_TO_CPU_INT32(ddsd.size, ddsd.size);
-        LE_TO_CPU_INT32(ddsd.pitch, ddsd.pitch);
-        LE_TO_CPU_INT32(ddsd.width, ddsd.width);
-        LE_TO_CPU_INT32(ddsd.height, ddsd.height);
-        LE_TO_CPU_INT32(ddsd.mipMapLevels, ddsd.mipMapLevels);
-        LE_TO_CPU_INT32(ddsd.format.fourCC, ddsd.format.fourCC);
+    LE_TO_CPU_INT32(ddsd.size, ddsd.size);
+    LE_TO_CPU_INT32(ddsd.pitch, ddsd.pitch);
+    LE_TO_CPU_INT32(ddsd.width, ddsd.width);
+    LE_TO_CPU_INT32(ddsd.height, ddsd.height);
+    LE_TO_CPU_INT32(ddsd.mipMapLevels, ddsd.mipMapLevels);
+    LE_TO_CPU_INT32(ddsd.format.flags, ddsd.format.flags);
+    LE_TO_CPU_INT32(ddsd.format.redMask, ddsd.format.redMask);
+    LE_TO_CPU_INT32(ddsd.format.greenMask, ddsd.format.greenMask);
+    LE_TO_CPU_INT32(ddsd.format.blueMask, ddsd.format.blueMask);
+    LE_TO_CPU_INT32(ddsd.format.alphaMask, ddsd.format.alphaMask);
+    LE_TO_CPU_INT32(ddsd.format.bpp, ddsd.format.bpp);
+    LE_TO_CPU_INT32(ddsd.format.fourCC, ddsd.format.fourCC);
 
-    int format = 0;
-    if (ddsd.format.fourCC == FourCC("DXT1"))
+    int format = -1;
+
+    if (ddsd.flags & DDPF_FOURCC && ddsd.format.fourCC != 0)
     {
-        format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-    }
-    else if (ddsd.format.fourCC == FourCC("DXT3"))
-    {
-        format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-    }
-    else if (ddsd.format.fourCC == FourCC("DXT5"))
-    {
-        format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+        if (ddsd.format.fourCC == FourCC("DXT1"))
+        {
+            format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+        }
+        else if (ddsd.format.fourCC == FourCC("DXT3"))
+        {
+            format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+        }
+        else if (ddsd.format.fourCC == FourCC("DXT5"))
+        {
+            format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+        }
+        else
+        {
+            DPRINTF(0, "Unknown FourCC in DDS file: %08x\n", ddsd.format.fourCC);
+        }
     }
     else
+    {
+        printf("bpp=%d\n", ddsd.format.bpp);
+        printf("a=%08x r=%08x g=%08x b=%08x\n",
+               ddsd.format.alphaMask, ddsd.format.redMask,
+               ddsd.format.greenMask, ddsd.format.blueMask);
+        if (ddsd.format.bpp == 32)
+        {
+            if (ddsd.format.redMask   == 0x00ff0000 &&
+                ddsd.format.greenMask == 0x0000ff00 &&
+                ddsd.format.blueMask  == 0x000000ff &&
+                ddsd.format.alphaMask == 0xff000000)
+            {
+                format = GL_BGRA_EXT;
+            }
+            else if (ddsd.format.redMask   == 0x000000ff &&
+                     ddsd.format.greenMask == 0x0000ff00 &&
+                     ddsd.format.blueMask  == 0x00ff0000 &&
+                     ddsd.format.alphaMask == 0xff000000)
+            {
+                format = GL_RGBA;
+            }
+        }
+        else if (ddsd.format.bpp == 24)
+        {
+            if (ddsd.format.redMask   == 0x00ff0000 &&
+                ddsd.format.greenMask == 0x0000ff00 &&
+                ddsd.format.blueMask  == 0x000000ff)
+            {
+                format = GL_BGR_EXT;
+            }
+            else if (ddsd.format.redMask   == 0x000000ff &&
+                     ddsd.format.greenMask == 0x0000ff00 &&
+                     ddsd.format.blueMask  == 0x00ff0000)
+            {
+                format = GL_RGB;
+            }
+        }
+    }
+
+    if (format == -1)
     {
         DPRINTF(0, "Unsupported format for DDS texture file %s.\n",
                 filename.c_str());
         return NULL;
+    }
+
+    // If we have a compressed format, give up if S3 texture compression
+    // isn't supported
+    if (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ||
+        format == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT ||
+        format == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+    {
+        if (!ExtensionSupported("GL_EXT_texture_compression_s3tc"))
+            return NULL;
     }
 
     // TODO: Verify that the reported texture size matches the amount of
@@ -151,14 +215,10 @@ Image* LoadDDSImage(const string& filename)
 
 #if 0
     cout << "sizeof(ddsd) = " << sizeof(ddsd) << '\n';
-    cout << "ddsd.size = " << ddsd.size << '\n';
-    cout << "size = " << size << '\n';
     cout << "dimensions: " << ddsd.width << 'x' << ddsd.height << '\n';
     cout << "mipmap levels: " << ddsd.mipMapLevels << '\n';
-    cout << "format: " << ddsd.format.fourCC << '\n';
-    cout << "DXT1: " << FourCC("DXT1") << '\n';
-    cout << "DXT3: " << FourCC("DXT3") << '\n';
-    cout << "DXT5: " << FourCC("DXT5") << '\n';
+    cout << "fourCC: " << ddsd.format.fourCC << '\n';
+    cout << "bpp: " << ddsd.format.bpp << '\n';
 #endif
 
     return img;
