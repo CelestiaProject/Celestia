@@ -203,9 +203,39 @@ numberWithInt:Renderer::ShowPlanets],@"Planets",[NSNumber numberWithInt:Renderer
     [self renderer]->setResolution([res unsignedIntValue]);
 }
 
+- (int) getOrbitmask
+{
+    return [self renderer]->getOrbitMask();
+    }
+
+- (void) setOrbitMask: (int) mask
+{
+    [self renderer]->setOrbitMask(mask);
+}
+
+-(void)unarchive
+{
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"]!=nil) {
+        NSDictionary *prefs;
+//        NSLog(@"deserializing render preferences from user defaults");
+        prefs = [[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"];
+        [self setLabelFlags:[prefs objectForKey:@"labelFlags"]];
+        [self setRenderFlags:[prefs objectForKey:@"renderFlags"]];
+        [self setBrightnessBias:[prefs objectForKey:@"brightnessBias"]];
+        [self setSaturationMagnitude:[prefs objectForKey:@"saturationMagnitude"]];
+        [self setVertexShaderEnabled:[prefs objectForKey:@"vertexShaderEnabled"]];
+        [self setFragmentShaderEnabled:[prefs objectForKey:@"fragmentShaderEnabled"]];
+        [self setResolution:[prefs objectForKey:@"resolution"]];
+        [self setOrbitMask:[[prefs objectForKey:@"orbitMask"]  intValue]];
+    }
+}
+
 -(void)archive
 {
-    [[NSUserDefaults standardUserDefaults] setObject:[NSDictionary dictionaryWithObjectsAndKeys:[self labelFlags],@"labelFlags",[self renderFlags],@"renderFlags",[self brightnessBias],@"brightnessBias",[self resolution],@"resolution",[self saturationMagnitude],@"saturationMagnitude",[self vertexShaderEnabled],@"vertexShaderEnabled",[self fragmentShaderEnabled],@"fragmentShaderEnabled",nil,nil] forKey:@"renderPreferences"];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSDictionary dictionaryWithObjectsAndKeys:[self labelFlags],@"labelFlags",[self renderFlags],@"renderFlags",[self brightnessBias],@"brightnessBias",[self resolution],@"resolution",[self saturationMagnitude],@"saturationMagnitude",[self vertexShaderEnabled],@"vertexShaderEnabled",[self fragmentShaderEnabled],@"fragmentShaderEnabled",
+    [NSNumber numberWithInt: [self getOrbitmask]], @"orbitMask",
+    
+    nil,nil] forKey:@"renderPreferences"];
 }
 
 @end
