@@ -8,10 +8,12 @@
 // of the License, or (at your option) any later version.
 
 #include <cmath>
+#include <cassert>
 #include <iostream>
 #include <algorithm>
 #include "gl.h"
 #include "glext.h"
+#include "vecgl.h"
 #include "mathlib.h"
 #include "vecmath.h"
 #include "lodspheremesh.h"
@@ -206,6 +208,8 @@ void LODSphereMesh::render(unsigned int attributes,
                            const Frustum& frustum,
                            float lodBias)
 {
+    Point3f fp[8];
+
     int lod = 64;
     if (lodBias < 0.0f)
     {
@@ -290,37 +294,80 @@ void LODSphereMesh::render(unsigned int attributes,
     }
     else
     {
-        int reject = 0;
         // Render the sphere section by section.
+        int reject = 0;
+
+        // Compute the vertices of the view frustum.  These will be used for
+        // culling patches.
+        fp[0] = Planef::intersection(frustum.getPlane(Frustum::Near),
+                                     frustum.getPlane(Frustum::Top),
+                                     frustum.getPlane(Frustum::Left));
+        fp[1] = Planef::intersection(frustum.getPlane(Frustum::Near),
+                                     frustum.getPlane(Frustum::Top),
+                                     frustum.getPlane(Frustum::Right));
+        fp[2] = Planef::intersection(frustum.getPlane(Frustum::Near),
+                                     frustum.getPlane(Frustum::Bottom),
+                                     frustum.getPlane(Frustum::Left));
+        fp[3] = Planef::intersection(frustum.getPlane(Frustum::Near),
+                                     frustum.getPlane(Frustum::Bottom),
+                                     frustum.getPlane(Frustum::Right));
+        fp[4] = Planef::intersection(frustum.getPlane(Frustum::Far),
+                                     frustum.getPlane(Frustum::Top),
+                                     frustum.getPlane(Frustum::Left));
+        fp[5] = Planef::intersection(frustum.getPlane(Frustum::Far),
+                                     frustum.getPlane(Frustum::Top),
+                                     frustum.getPlane(Frustum::Right));
+        fp[6] = Planef::intersection(frustum.getPlane(Frustum::Far),
+                                     frustum.getPlane(Frustum::Bottom),
+                                     frustum.getPlane(Frustum::Left));
+        fp[7] = Planef::intersection(frustum.getPlane(Frustum::Far),
+                                     frustum.getPlane(Frustum::Bottom),
+                                     frustum.getPlane(Frustum::Right));
+#if 0
+        for (int foo = 0; foo < 8; foo++)
+            cout << "x: " << fp[foo].x << "  y: " << fp[foo].y << "  z: " << fp[foo].z << '\n';
+#endif
+        
         for (int phi = 0; phi < split; phi++)
         {
             for (int theta = 0; theta < split; theta++)
             {
-                // For each section, compute a bounding sphere; only
-                // render the section if the bounding sphere lies within
-                // the view frustum.  This is far from optimal.  A much
-                // better choice would be to test for an intersection between
-                // the view frustum and the halfspace defined by the supporting
-                // plane of the sphere patch.
                 int phi0 = phi * phiExtent;
                 int theta0 = theta * thetaExtent;
+
+                // Compute the plane separating this section of the sphere from
+                // the rest of the sphere.  If the view frustum lies entirely
+                // on the side of the plane that does not contain the sphere
+                // patch, we cull the patch.
                 Point3f p0 = spherePoint(theta0, phi0);
                 Point3f p1 = spherePoint(theta0 + thetaExtent, phi0);
                 Point3f p2 = spherePoint(theta0 + thetaExtent,
                                          phi0 + phiExtent);
                 Point3f p3 = spherePoint(theta0, phi0 + phiExtent);
-                Point3f center = Point3f((p0.x + p1.x + p2.x + p3.x) * 0.25f,
-                                         (p0.y + p1.y + p2.y + p3.y) * 0.25f,
-                                         (p0.z + p1.z + p2.z + p3.z) * 0.25f);
+                Vec3f v0 = p1 - p0;
+                Vec3f v2 = p3 - p2;
+                Vec3f normal;
+                if (v0.lengthSquared() > v2.lengthSquared())
+                    normal = (p0 - p3) ^ v0;
+                else
+                    normal = (p2 - p1) ^ v2;
 
-                float radius = 0.0f;
-                radius = max(radius, p0.distanceToSquared(center));
-                radius = max(radius, p1.distanceToSquared(center));
-                radius = max(radius, p2.distanceToSquared(center));
-                radius = max(radius, p3.distanceToSquared(center));
-                radius = (float) sqrt(radius);
+                // If the normal is near zero length, something's going wrong
+                assert(normal.length() > 1.0e-6);
+                normal.normalize();
+                Planef sepPlane(normal, p0);
 
-                if (frustum.testSphere(center, radius) != Frustum::Outside)
+                bool outside = true;
+                for (int i = 0; i < 8; i++)
+                {
+                    if (sepPlane.distanceTo(fp[i]) > 0.0f)
+                    {
+                        outside = false;
+                        break;
+                    }
+                }
+
+                if (!outside)
                 {
                     renderSection(phi0, theta0,
                                   thetaExtent,
@@ -333,13 +380,54 @@ void LODSphereMesh::render(unsigned int attributes,
             }
         }
 
-        cout << "Rejected " << reject << " of " << square(split) << " sphere sections\n";
+        // cout << "Rejected " << reject << " of " << square(split) << " sphere sections\n";
     }
 
     if (tangents != NULL && ((attributes & Tangents) != 0))
     {
         glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
     }
+
+#if 0
+    // Debugging code for visualizing the frustum.
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluPerspective(45.0, 1.3333f, 1.0f, 100.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glColor4f(1, 0, 0, 1);
+    glTranslatef(0, 0, -20);
+    glBegin(GL_LINES);
+    glVertex(fp[0]); glVertex(fp[1]);
+    glVertex(fp[0]); glVertex(fp[2]);
+    glVertex(fp[3]); glVertex(fp[1]);
+    glVertex(fp[3]); glVertex(fp[2]);
+    glVertex(fp[4]); glVertex(fp[5]);
+    glVertex(fp[4]); glVertex(fp[6]);
+    glVertex(fp[7]); glVertex(fp[5]);
+    glVertex(fp[7]); glVertex(fp[6]);
+    glVertex(fp[0]); glVertex(fp[4]);
+    glVertex(fp[1]); glVertex(fp[5]);
+    glVertex(fp[2]); glVertex(fp[6]);
+    glVertex(fp[3]); glVertex(fp[7]);
+    glEnd();
+
+    // Render axes representing the unit sphere.
+    glColor4f(0, 1, 0, 1);
+    glBegin(GL_LINES);
+    glVertex3f(-1, 0, 0); glVertex3f(1, 0, 0);
+    glVertex3f(0, -1, 0); glVertex3f(0, 1, 0);
+    glVertex3f(0, 0, -1); glVertex3f(1, 0, 1);
+    glEnd();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+#endif
 }
 
 
@@ -361,32 +449,52 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
     int n3 = 0;
     int n2 = 0;
 
+    
     for (int phi = phi0; phi <= phi1; phi += step)
     {
         float cphi = cosPhi[phi];
         float sphi = sinPhi[phi];
 
-        for (int theta = theta0; theta <= theta1; theta += step)
+        if ((attributes & Tangents) != 0)
         {
-            float ctheta = cosTheta[theta];
-            float stheta = sinTheta[theta];
+            for (int theta = theta0; theta <= theta1; theta += step)
+            {
+                float ctheta = cosTheta[theta];
+                float stheta = sinTheta[theta];
 
-            vertices[n3]      = cphi * ctheta;
-            vertices[n3 + 1]  = sphi;
-            vertices[n3 + 2]  = cphi * stheta;
-            texCoords[n2]     = 1.0f - theta * du;
-            texCoords[n2 + 1] = 1.0f - phi * dv;
+                vertices[n3]      = cphi * ctheta;
+                vertices[n3 + 1]  = sphi;
+                vertices[n3 + 2]  = cphi * stheta;
+                texCoords[n2]     = 1.0f - theta * du;
+                texCoords[n2 + 1] = 1.0f - phi * dv;
 
-            // Compute the tangent--required for bump mapping
-            float tx = sphi * stheta;
-            float ty = -cphi;
-            float tz = sphi * ctheta;
-            tangents[n3]      = tx;
-            tangents[n3 + 1]  = ty;
-            tangents[n3 + 2]  = tz;
+                // Compute the tangent--required for bump mapping
+                float tx = sphi * stheta;
+                float ty = -cphi;
+                float tz = sphi * ctheta;
+                tangents[n3]      = tx;
+                tangents[n3 + 1]  = ty;
+                tangents[n3 + 2]  = tz;
+                
+                n2 += 2;
+                n3 += 3;
+            }
+        }
+        else
+        {
+            for (int theta = theta0; theta <= theta1; theta += step)
+            {
+                float ctheta = cosTheta[theta];
+                float stheta = sinTheta[theta];
 
-            n2 += 2;
-            n3 += 3;
+                vertices[n3]      = cphi * ctheta;
+                vertices[n3 + 1]  = sphi;
+                vertices[n3 + 2]  = cphi * stheta;
+                texCoords[n2]     = 1.0f - theta * du;
+                texCoords[n2 + 1] = 1.0f - phi * dv;
+                n2 += 2;
+                n3 += 3;
+            }
         }
     }
 
