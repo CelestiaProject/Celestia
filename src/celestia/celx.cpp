@@ -738,7 +738,7 @@ static int object_type(lua_State* l)
     Selection* sel = to_object(l, 1);
     if (sel != NULL)
     {
-        char* tname = "unknown";
+        const char* tname = "unknown";
         if (sel->body != NULL)
         {
             int cl = sel->body->getClassification();
@@ -796,8 +796,8 @@ static int object_name(lua_State* l)
         }
         else
         {
-            // TODO: look up the real star name
-            lua_pushstring(l, "[fix to handle stars]");
+            lua_pushstring(l, getAppCore(l)->getSimulation()->getUniverse()
+                    ->getStarCatalog()->getStarName(*(sel->star)).c_str());
         }
     }
     else
@@ -1003,7 +1003,6 @@ static int object_getposition(lua_State* l)
     return 1;
 }
 
-
 static int object_getchildren(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for object:getchildren()");
@@ -1119,10 +1118,18 @@ static int observer_goto(lua_State* l)
     }
 
     double travelTime = 5.0;
+    double startInter = 0.25;
+    double endInter = 0.75;
     if (argc >= 3)
     {
         if (lua_isnumber(l, 3))
             travelTime = lua_tonumber(l, 3);
+        if (lua_isnumber(l, 4))
+            startInter = lua_tonumber(l, 4);
+        if (lua_isnumber(l, 5))
+            endInter = lua_tonumber(l, 5);
+        if (startInter < 0 || startInter > 1) startInter = 0.25;
+        if (endInter < 0 || endInter > 1) startInter = 0.75;
     }
 
     Observer* o = to_observer(l, 1);
@@ -1132,10 +1139,9 @@ static int observer_goto(lua_State* l)
         Selection* sel = to_object(l, 2);
         if (sel != NULL)
         {
-            o->gotoSelection(*sel, travelTime, Vec3f(0, 1, 0),
-                             astro::ObserverLocal);
+            o->gotoSelection(*sel, travelTime, startInter, endInter, Vec3f(0, 1, 0), astro::ObserverLocal);
         }
-        else 
+        else
         {
             // TODO: would it be better to have a separate gotolocation
             // command?  Probably.
@@ -1591,7 +1597,6 @@ static int celestia_select(lua_State* l)
 
     return 0;
 }
-
 
 static int celestia_mark(lua_State* l)
 {
