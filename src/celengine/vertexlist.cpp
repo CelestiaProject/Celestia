@@ -22,6 +22,9 @@ VertexList::VertexList(uint32 _parts, uint32 initialVertexPoolSize) :
     maxVertices(0),
     vertices(NULL),
     diffuseColor(1.0f, 1.0f, 1.0f),
+    specularColor(0.0f, 0.0f, 0.0f),
+    shininess(0.0f),
+    texture(InvalidResource),
     bbox()
 {
     if (initialVertexPoolSize > 0)
@@ -177,6 +180,36 @@ Color VertexList::getDiffuseColor() const
 void VertexList::setDiffuseColor(Color color)
 {
     diffuseColor = color;
+}
+
+Color VertexList::getSpecularColor() const
+{
+    return specularColor;
+}
+
+void VertexList::setSpecularColor(Color color)
+{
+    specularColor = color;
+}
+
+float VertexList::getShininess() const
+{
+    return shininess;
+}
+
+void VertexList::setShininess(float _shininess)
+{
+    shininess = _shininess;
+}
+
+ResourceHandle VertexList::getTexture() const
+{
+    return texture;
+}
+
+void VertexList::setTexture(ResourceHandle _texture)
+{
+    texture = _texture;
 }
 
 
