@@ -1092,17 +1092,17 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		17.5
+	Radius		24
 
 	EllipticalOrbit
 	{
-	Period		2856.30
-	SemiMajorAxis	21930000
-	Eccentricity	0.4305
-	Inclination	148.462	#
-	AscendingNode	179.361	#
-	ArgOfPericenter	178.265	# J2000.0
-	MeanAnomaly     266.887	#
+	Period		1874.83
+	SemiMajorAxis	15686000
+	Eccentricity	0.5720
+	Inclination	138.937	#
+	AscendingNode	162.954	#
+	ArgOfPericenter	148.033	# J2000.0
+	MeanAnomaly     229.825	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1114,17 +1114,17 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		17.5
+	Radius		24
 
 	EllipticalOrbit
 	{
-	Period		2405.21
-	SemiMajorAxis	19556000
-	Eccentricity	0.2000
-	Inclination	31.829	#
-	AscendingNode	19.214	#
-	ArgOfPericenter	8.416	# J2000.0
-	MeanAnomaly     44.870	#
+	Period		2405.98
+	SemiMajorAxis	19345000
+	Eccentricity	0.4686
+	Inclination	32.341	#
+	AscendingNode	19.826	#
+	ArgOfPericenter	8.087	# J2000.0
+	MeanAnomaly     44.422	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1136,17 +1136,17 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		17.5
+	Radius		24
 
 	EllipticalOrbit
 	{
-	Period		2649.22
-	SemiMajorAxis	20857000
-	Eccentricity	0.5000
-	Inclination	16.295	#
-	AscendingNode	11.165	#
-	ArgOfPericenter	140.013	# J2000.0
-	MeanAnomaly     124.620	#
+	Period		2674.87
+	SemiMajorAxis	20723000
+	Eccentricity	0.6005
+	Inclination	15.996	#
+	AscendingNode	10.850	#
+	ArgOfPericenter	140.223	# J2000.0
+	MeanAnomaly     124.409	#
 	}
 
 	RotationPeriod  10   # Guess
@@ -1154,4 +1154,26 @@
 	Albedo 0.155
 }
 
+
+"2003N1" "Sol/Neptune"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		14
+
+	EllipticalOrbit
+	{
+	Period		9136.11
+	SemiMajorAxis	46738000
+	Eccentricity	0.4503
+	Inclination	118.728	#
+	AscendingNode	288.166	#
+	ArgOfPericenter	161.337	# J2000.0
+	MeanAnomaly     182.124	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.155
+}
 
