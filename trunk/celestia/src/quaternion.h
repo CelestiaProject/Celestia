@@ -12,6 +12,7 @@
 #ifndef _QUATERNION_H_
 #define _QUATERNION_H_
 
+#include "celestia.h"
 #include "mathlib.h"
 #include "vecmath.h"
 
@@ -66,6 +67,22 @@ public:
     bool isReal() const;
     T normalize();
 
+#ifndef BROKEN_FRIEND_TEMPLATES
+    // This just rocks . . .  MSVC 6.0 doesn't parse this correctly,
+    // so template friend functions need to be declared in the standard
+    // conforming way for GNU C and a non-conforming way for MSVC.
+    friend Quaternion<T> operator+ <>(Quaternion<T>, Quaternion<T>);
+    friend Quaternion<T> operator- <>(Quaternion<T>, Quaternion<T>);
+    friend Quaternion<T> operator* <>(Quaternion<T>, Quaternion<T>);
+    friend Quaternion<T> operator* <>(T, Quaternion<T>);
+    friend Quaternion<T> operator* <>(Vector3<T>, Quaternion<T>);
+
+    friend bool operator== <>(Quaternion<T>, Quaternion<T>);
+    friend bool operator!= <>(Quaternion<T>, Quaternion<T>);
+
+    friend T real<>(Quaternion<T>);
+    friend Vector3<T> imag<>(Quaternion<T>);
+#else
     friend Quaternion<T> operator+(Quaternion<T>, Quaternion<T>);
     friend Quaternion<T> operator-(Quaternion<T>, Quaternion<T>);
     friend Quaternion<T> operator*(Quaternion<T>, Quaternion<T>);
@@ -77,6 +94,7 @@ public:
 
     friend T real(Quaternion<T>);
     friend Vector3<T> imag(Quaternion<T>);
+#endif
 
     // private:
     T w, x, y, z;
