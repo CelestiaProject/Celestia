@@ -87,6 +87,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         {
             if (Dlg != NULL && Dlg->parent != NULL)
             {
+                KillTimer(hDlg, 1);
                 SendMessage(Dlg->parent, WM_COMMAND, IDCLOSE,
                             reinterpret_cast<LPARAM>(Dlg));
             }
@@ -97,6 +98,8 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         {
             if (Dlg != NULL && Dlg->parent != NULL)
             {
+                KillTimer(hDlg, 1);
+
                 //Reset render flags, label mode, and hud detail to initial values
                 Dlg->RestoreSettings(hDlg);
 
@@ -109,7 +112,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         break;
     }
     case WM_TIMER:
-        if(wParam == 1)
+        if((Dlg != NULL) && (Dlg->parent != NULL) && (wParam == 1))
             Dlg->SetControls(hDlg);
         break;
 
@@ -119,8 +122,6 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             SendMessage(Dlg->parent, WM_COMMAND, IDCLOSE,
                         reinterpret_cast<LPARAM>(Dlg));
         }
-        KillTimer(hDlg, 1);
-        EndDialog(hDlg, 0);
         return TRUE;
     }
 
