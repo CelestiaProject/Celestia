@@ -31,6 +31,8 @@ class TextureFont
 
     int getTextureName();
 
+    void bind();
+
  private:
     TexFont* txf;
 };
