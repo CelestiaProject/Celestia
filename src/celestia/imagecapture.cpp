@@ -17,11 +17,19 @@ extern "C" {
 #ifdef _WIN32
 #include "jpeglib.h"
 #else
+#ifdef MACOSX
+#include "../celestia/Celestia.app.skel/Contents/Frameworks/Headers/jpeglib.h"
+#else
 #include <jpeglib.h>
+#endif
 #endif
 }
 
+#ifdef MACOSX
+#include "../celestia/Celestia.app.skel/Contents/Frameworks/Headers/png.h"
+#else
 #include "png.h"
+#endif
 
 // Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
 #ifndef png_jmpbuf
