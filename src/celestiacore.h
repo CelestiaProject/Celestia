@@ -88,13 +88,26 @@ class CelestiaCore
     void addFavorite(std::string);
     const FavoritesList* getFavorites();
 
+    int getTimeZoneBias() const;
+    void setTimeZoneBias(int);
+
     void setContextMenuCallback(ContextMenuFunc);
+
+    class Alerter
+    {
+    public:
+        virtual ~Alerter() {};
+        virtual void fatalError(const std::string&) = 0;
+    };
+
+    void setAlerter(Alerter*);
 
  private:
     void cancelScript();
     bool readStars(const CelestiaConfig&);
     void setFaintest(float);
     void renderOverlay();
+    void fatalError(const std::string&);
 
  private:
     CelestiaConfig* config;
@@ -125,6 +138,8 @@ class CelestiaCore
     Execution* runningScript;
     ExecutionEnvironment* execEnv;
 
+    int timeZoneBias;      // diff in seconds between local time and GMT
+
     // Frame rate counter variables
     bool showFPSCounter;
     int nFrames;
@@ -144,6 +159,8 @@ class CelestiaCore
     ContextMenuFunc contextMenuCallback;
 
     CTexture* logoTexture;
+
+    Alerter* alerter;
 };
 
 #endif // _CELESTIACORE_H_
