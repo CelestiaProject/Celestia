@@ -142,13 +142,6 @@ Location "ANTARCTICA" "Sol/Earth"
     Type "TA"
 }
 
-Location "NORTH AMERICA" "Sol/Earth"
-{
-    LongLat [ -105 40 0 ]
-    Size 5000
-    Type "TA"
-}
-
 Location "NORTH ATLANTIC OCEAN" "Sol/Earth"
 {
     LongLat [ -45 40 0 ]
