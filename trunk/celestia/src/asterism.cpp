@@ -75,7 +75,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
 
         Array* chains = chainsValue->getArray();
 
-        for (int i = 0; i < chains->size(); i++)
+        for (int i = 0; i < (int) chains->size(); i++)
         {
             if ((*chains)[i]->getType() == Value::ArrayType)
             {
