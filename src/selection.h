@@ -10,6 +10,11 @@
 #ifndef _SELECTION_H_
 #define _SELECTION_H_
 
+#include "star.h"
+#include "body.h"
+#include "galaxy.h"
+
+
 class Selection
 {
  public:
@@ -20,11 +25,13 @@ class Selection
     ~Selection() {};
 
     bool empty() { return star == NULL && body == NULL && galaxy == NULL; };
+    double radius() const;
         
     Star* star;
     Body* body;
     Galaxy* galaxy;
 };
+
 
 inline bool operator==(const Selection& s0, const Selection& s1)
 {
