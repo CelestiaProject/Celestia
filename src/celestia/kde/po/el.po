@@ -1,344 +1,344 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# translation of celestia-kde.po to Hellenic
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# ironhell3 <ironhell3@hotmail.com>, 2003
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: celestia-kde\n"
 "POT-Creation-Date: 2003-07-02 22:57+0200\n"
-"PO-Revision-Date: 2003-06-18 12:12+0200\n"
-"Last-Translator: Javier Martinez <tengwar@terra.es>\n"
-"Language-Team:  <es@li.org>\n"
+"PO-Revision-Date: 2003-06-19 14:08+0300\n"
+"Last-Translator: ironhell3 <ironhell3@hotmail.com>\n"
+"Language-Team: Hellenic <el@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.9.6\n"
+"X-Generator: KBabel 1.0.2\n"
 
 #: rc.cpp:1
 msgid "&Navigation"
-msgstr "&Navegador"
+msgstr "&Πλοήγηση"
 
 #: rc.cpp:3
 msgid "Objects"
-msgstr "Obxectos"
+msgstr "Αντικείμενα"
 
 #: rc.cpp:4 kdepreferencesdialog.cpp:134
 msgid "Labels"
-msgstr "Etiquetas"
+msgstr "Ετικέτες"
 
 #: rc.cpp:5
 msgid "OpenGL Render Path"
-msgstr "Método Interpretado OpenGL"
+msgstr ""
 
 #: rc.cpp:6
 msgid "Time"
-msgstr "Hora"
+msgstr "Ώρα"
 
 #: rc.cpp:7
 msgid "MultiView"
-msgstr "Vista Múltiple"
+msgstr ""
 
 #: rc.cpp:9 kdepreferencesdialog.cpp:276
 msgid "Now"
-msgstr "Agora"
+msgstr "Τώρα"
 
 #: kcelbookmarkmenu.cpp:171
 msgid "Add a bookmark for the current document"
-msgstr "Engadir unha marcaxe para o documento actual"
+msgstr "Προσθήκη σελιδοδείκτη για το τρέχον κείμενο"
 
 #: kcelbookmarkmenu.cpp:181
 msgid "Add &Relative Bookmark"
-msgstr "Engadir &Marcaxe Relativa"
+msgstr ""
 
 #: kcelbookmarkmenu.cpp:188
 msgid "Add a relative bookmark for the current document"
-msgstr "Engadir unha marcaxe relativa ó documento actual"
+msgstr ""
 
 #: kcelbookmarkmenu.cpp:196
 msgid "Add &Settings Bookmark"
-msgstr "Engadir unha marcaxe de &Configuración"
+msgstr ""
 
 #: kcelbookmarkmenu.cpp:203
 msgid "Add a settings bookmark for the current document"
-msgstr "Engadir unha marcaxe de configuración do documento actual"
+msgstr ""
 
 #: kcelbookmarkmenu.cpp:214
 msgid "Edit your bookmark collection in a separate window"
-msgstr "Editar á tua lista de marcadores nunha nova fiestra"
+msgstr ""
 
 #: kcelbookmarkmenu.cpp:220
 msgid "&New Folder..."
-msgstr "&Nova Carpeta"
+msgstr "&Νέος Κατάλογος..."
 
 #: kcelbookmarkmenu.cpp:227
 msgid "Create a new bookmark folder in this menu"
-msgstr "Crear unha nova carpeta de marcaxes neste menú"
+msgstr ""
 
 #: kcelbookmarkmenu.cpp:307 kcelbookmarkmenu.cpp:354 kcelbookmarkmenu.cpp:401
 msgid "Can't add bookmark with empty URL"
-msgstr "¡¡Non podo engadir unha marcaxe cunha URL vacía!!"
+msgstr ""
 
 #: kdeapp.cpp:295
 msgid "Go to &URL..."
-msgstr "Ir a &URL..."
+msgstr ""
 
 #: kdeapp.cpp:296
 msgid "Go to &Long/Lat..."
-msgstr "&Ir a Lonxitude/Latitude..."
+msgstr ""
 
 #: kdeapp.cpp:298
 msgid "&Back"
-msgstr "&Atrás"
+msgstr "&Πίσω"
 
 #: kdeapp.cpp:301
 msgid "&Forward"
-msgstr "A&diante"
+msgstr "&Εμπρός"
 
 #: kdeapp.cpp:315
 msgid "Bookmarks"
-msgstr "Marcaxes"
+msgstr "Σελιδοδείκτες"
 
 #: kdeapp.cpp:324
 msgid "Full Screen"
-msgstr "Pantalla Enteira"
+msgstr "Πλήρης Οθόνη"
 
 #: kdeapp.cpp:325
 msgid "Copy URL"
-msgstr "Copiar URL"
+msgstr "Αντιγραφή URL"
 
 #: kdeapp.cpp:328
 msgid "Set Time..."
-msgstr "Poñer Data..."
+msgstr "Καθορισμός Ώρας..."
 
 #: kdeapp.cpp:329
 msgid "Set Time to Now"
-msgstr "Voltar ó Presente"
+msgstr ""
 
 #: kdeapp.cpp:330
 msgid "Accelerate Time"
-msgstr "Acelera-lo Tempo"
+msgstr "Επιτάχυνση Χρόνου"
 
 #: kdeapp.cpp:331
 msgid "Decelerate Time"
-msgstr "Decelera-lo Tempo"
+msgstr "Επιβράδυνση Χρόνου"
 
 #: kdeapp.cpp:332
 msgid "Pause Time"
-msgstr "Conxela-lo Tempo"
+msgstr "Πάγωμα Χονου"
 
 #: kdeapp.cpp:333
 msgid "Reverse Time"
-msgstr "Troca-lo Fluxo do Tempo"
+msgstr "Αντιστροφή Χρόνου"
 
 #: kdeapp.cpp:335
 msgid "Split View Vertically"
-msgstr "Dividir Vista Verticalmente"
+msgstr ""
 
 #: kdeapp.cpp:336
 msgid "Split View Horizontally"
-msgstr "Dividir Vista Horizontalmente"
+msgstr ""
 
 #: kdeapp.cpp:337
 msgid "Cycle View"
-msgstr "Trocar Vistas"
+msgstr ""
 
 #: kdeapp.cpp:338
 msgid "Single View"
-msgstr "Vista Unica"
+msgstr ""
 
 #: kdeapp.cpp:339
 msgid "Delete View"
-msgstr "Borrar Vista"
+msgstr ""
 
 #: kdeapp.cpp:340
 msgid "Frames Visible"
-msgstr "Marcos Visíbeis"
+msgstr ""
 
 #: kdeapp.cpp:353
 msgid "Active Frame Visible"
-msgstr "Marco Activo Visíbel"
+msgstr ""
 
 #: kdeapp.cpp:365
 msgid "Synchronize Time"
-msgstr "Sincronizar Hora"
+msgstr "Συγχρονισμός Χρόνου"
 
 #: kdeapp.cpp:377
 msgid "Alt-Azimuth Mode"
-msgstr "Modo Alt-Azimut"
+msgstr ""
 
 #: kdeapp.cpp:378
 msgid "Go To Surface"
-msgstr "Ir á Superficie"
+msgstr ""
 
 #: kdeapp.cpp:380 celestialbrowser.cpp:27 rc.cpp:1
 msgid "Celestial Browser"
-msgstr "Catálogo Celeste"
+msgstr ""
 
 #: kdeapp.cpp:381 eclipsefinderdlg.cpp:20 rc.cpp:15
 msgid "Eclipse Finder"
-msgstr "Buscador de Eclipses"
+msgstr ""
 
 #: kdeapp.cpp:396
 msgid "Show Stars"
-msgstr "Amosar Estrelas"
+msgstr "Εμφάνιση Αστέρων"
 
 #: kdeapp.cpp:399
 msgid "Show Planets"
-msgstr "Amosar Planetas"
+msgstr "Εμφάνιση Πλανητών"
 
 #: kdeapp.cpp:402
 msgid "Show Galaxies"
-msgstr "Amosar Galaxias"
+msgstr "Εμφάνιση Γαλαξιών"
 
 #: kdeapp.cpp:405
 msgid "Show Constellations"
-msgstr "Amosar Constelacións"
+msgstr "Εμφάνιση Αστερισμών"
 
 #: kdeapp.cpp:408
 msgid "Show CloudMaps"
-msgstr "Amosar Cobertura de Nubes"
+msgstr "Εμφάνιση CloudMaps"
 
 #: kdeapp.cpp:411
 msgid "Show Orbits"
-msgstr "Amosar Orbitas"
+msgstr "Εμφάνιση Τροχιών"
 
 #: kdeapp.cpp:414
 msgid "Show Celestial Grid"
-msgstr "Amosar Reixa Celeste"
+msgstr "Εμφάνιση Πλέγματος"
 
 #: kdeapp.cpp:417
 msgid "Show Night Side Lights"
-msgstr "Amosar Iluminación Nocturna"
+msgstr ""
 
 #: kdeapp.cpp:420
 msgid "Show Markers"
-msgstr "Amosar Marcas"
+msgstr ""
 
 #: kdeapp.cpp:423
 msgid "Show Atmospheres"
-msgstr "Amosar Atmósferas"
+msgstr "Εμφάνιση Ατμοσφερών"
 
 #: kdeapp.cpp:426
 msgid "Show Smooth Orbit Lines"
-msgstr "Suavizar Líneas Orbitáis"
+msgstr ""
 
 #: kdeapp.cpp:429
 msgid "Show Eclipse Shadows"
-msgstr "Amosar Sombras de Eclipses"
+msgstr ""
 
 #: kdeapp.cpp:432
 msgid "Show Stars as Points"
-msgstr "Amosar Estrelas coma puntos"
+msgstr "Εμφάνιση Αστέρων ως Σημεία"
 
 #: kdeapp.cpp:435
 msgid "Show Ring Shadows"
-msgstr "Amosar Sombras de Aneis"
+msgstr ""
 
 #: kdeapp.cpp:438
 msgid "Show Boundaries"
-msgstr "Amosar Límites"
+msgstr "Εμφάνιση Ορίων"
 
 #: kdeapp.cpp:441 kdepreferencesdialog.cpp:121
 msgid "Auto Magnitudes"
-msgstr "Magnitudes Automáticas"
+msgstr ""
 
 #: kdeapp.cpp:444
 msgid "Show Comet Tails"
-msgstr "Amosar Colas Cometarias"
+msgstr "Εμφάνιση Ουρών Κομητών"
 
 #: kdeapp.cpp:447
 msgid "Show Star Labels"
-msgstr "Amosar Nomes Estrelas"
+msgstr "Εμφάνιση Ετικετών Αστέρων"
 
 #: kdeapp.cpp:450
 msgid "Show Planet Labels"
-msgstr "Amosar Nomes Planetas"
+msgstr "Εμφάνιση Ετικετών Πλανητών"
 
 #: kdeapp.cpp:453
 msgid "Show Moon Labels"
-msgstr "Amosar Nomes Lúas"
+msgstr "Εμφάνιση Ετικετών Φεγγαριών"
 
 #: kdeapp.cpp:456
 msgid "Show Constellation Labels"
-msgstr "Amosar Nomes Constelacións"
+msgstr "Εμφάνιση Ετικετών Αστερισμών"
 
 #: kdeapp.cpp:459
 msgid "Show Galaxy Labels"
-msgstr "Amosar Nomes Galaxias"
+msgstr "Εμφάνιση Ετικετών Γαλαξιών"
 
 #: kdeapp.cpp:462
 msgid "Show Asteroid Labels"
-msgstr "Amosar Nomes Asteroides"
+msgstr "Εμφάνιση Ετικετών Αστεροιδών"
 
 #: kdeapp.cpp:465
 msgid "Show Spacecraft Labels"
-msgstr "Amosar Nomes Naves"
+msgstr "Εμφάνιση Ετικετών Διαστημοπλοίων"
 
 #: kdeapp.cpp:468
 #, fuzzy
 msgid "Show Location Labels"
-msgstr "Amosar Nomes Lúas"
+msgstr "Εμφάνιση Ετικετών Φεγγαριών"
 
 #: kdeapp.cpp:471
 msgid "Display Local Time"
-msgstr "Amosar Hora Local"
+msgstr "Εμφάνιση Τρέχουσας Ώρας"
 
 #: kdeapp.cpp:474
 msgid "Wireframe Mode"
-msgstr "Modo Esqueleto"
+msgstr ""
 
 #: kdeapp.cpp:477 kdepreferencesdialog.cpp:319
 msgid "Basic"
-msgstr "Básico"
+msgstr "Βασικό"
 
 #: kdeapp.cpp:479 kdepreferencesdialog.cpp:321
 msgid "Multitexture"
-msgstr "Multitextura"
+msgstr ""
 
 #: kdeapp.cpp:481 kdepreferencesdialog.cpp:323
 msgid "NvCombiners"
-msgstr "NvCombiners"
+msgstr ""
 
 #: kdeapp.cpp:483 kdepreferencesdialog.cpp:325
 msgid "DOT3 ARBVP"
-msgstr "DOT3 ARBVP"
+msgstr ""
 
 #: kdeapp.cpp:485 kdepreferencesdialog.cpp:327
 msgid "NvCombiner NvVP"
-msgstr "NvCombiner NvVP"
+msgstr ""
 
 #: kdeapp.cpp:487 kdepreferencesdialog.cpp:329
 msgid "NvCombiner ARBVP"
-msgstr "NvCombiner ARBVP"
+msgstr ""
 
 #: kdeapp.cpp:489 kdepreferencesdialog.cpp:331
 msgid "ARBFP ARBVP"
-msgstr "ARBFP ARBVP"
+msgstr ""
 
 #: kdeapp.cpp:491 kdepreferencesdialog.cpp:333
 msgid "NV30"
-msgstr "NV30"
+msgstr ""
 
 #: kdeapp.cpp:493
 msgid "Cycle OpenGL Render Path"
-msgstr "Trocar Método Interpretado OpenGL"
+msgstr ""
 
 #: kdeapp.cpp:495
 msgid "Grab Image"
-msgstr "Sacar Foto"
+msgstr ""
 
 #: kdeapp.cpp:497
 msgid "OpenGL info"
-msgstr "Información OpenGL"
+msgstr "πληροφορίες OpenGL"
 
 #: kdeapp.cpp:503
 msgid "Show Bookmark Toolbar"
-msgstr "Amosar Barra de Marcaxes"
+msgstr ""
 
 #: kdeapp.cpp:729
 msgid "OpenGL Info"
-msgstr "Información OpenGL"
+msgstr "Πληροφορίες OpenGL"
 
 #: kdeapp.cpp:947 kdepreferencesdialog.cpp:216 kdepreferencesdialog.cpp:227
 msgid "UTC"
@@ -346,47 +346,47 @@ msgstr "UTC"
 
 #: kdeapp.cpp:1027
 msgid "Enter URL"
-msgstr "Introduzca URL"
+msgstr "Εισαγωγή URL"
 
 #: kdeapp.cpp:1121
 msgid "Object: "
-msgstr "Obxecto: "
+msgstr "Αντικείμενο: "
 
 #: kdeapp.cpp:1126
 msgid "Longitude: "
-msgstr "Lonxitude: "
+msgstr ""
 
 #: kdeapp.cpp:1132
 msgid "East"
-msgstr "Leste"
+msgstr "Ανατολικά"
 
 #: kdeapp.cpp:1133
 msgid "West"
-msgstr "Oeste"
+msgstr "Δυτικά"
 
 #: kdeapp.cpp:1135
 msgid "Latitude: "
-msgstr "Latitude: "
+msgstr ""
 
 #: kdeapp.cpp:1141
 msgid "North"
-msgstr "Norte"
+msgstr "Βόρεια"
 
 #: kdeapp.cpp:1142
 msgid "South"
-msgstr "Sur"
+msgstr "Νότια"
 
 #: kdeapp.cpp:1144
 msgid "Altitude: "
-msgstr "Altitude: "
+msgstr "Υψόμετρο: "
 
 #: kdeapp.cpp:1149
 msgid "km"
-msgstr "km"
+msgstr "χιλ"
 
 #: kdeapp.cpp:1219
 msgid "Celestia encountered an error while processing your script"
-msgstr "Celestia atopou un erro ó procesa-la túa lista de comandos"
+msgstr ""
 
 #: kdemain.cpp:25 kdemain.cpp:37
 msgid "Celestia"
@@ -394,165 +394,166 @@ msgstr "Celestia"
 
 #: kdemain.cpp:30
 msgid "Start and go to url"
-msgstr "Arrancar e ir a unha dirección"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:45
 msgid "Celestia Preferences"
-msgstr "Preferencias de Celestia"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:51
 msgid "Rendering"
-msgstr "Visualización"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:59
 msgid "Show"
-msgstr "Amosar"
+msgstr "Εμφάνιση"
 
 #: kdepreferencesdialog.cpp:61 kdepreferencesdialog.cpp:135
 msgid "Stars"
-msgstr "Estrelas"
+msgstr "Αστέρες"
 
 #: kdepreferencesdialog.cpp:65 kdepreferencesdialog.cpp:139
 #: selectionpopup.cpp:385
 msgid "Planets"
-msgstr "Planetas"
+msgstr "Πλανήτες"
 
 #: kdepreferencesdialog.cpp:69 kdepreferencesdialog.cpp:151
 msgid "Galaxies"
-msgstr "Galaxias"
+msgstr "Γαλαξίες"
 
 #: kdepreferencesdialog.cpp:73 kdepreferencesdialog.cpp:147
 msgid "Constellations"
-msgstr "Constelacións"
+msgstr "Αστερισμοί"
 
 #: kdepreferencesdialog.cpp:77
 msgid "Clouds"
-msgstr "Nubes"
+msgstr "Σύννεφα"
 
 #: kdepreferencesdialog.cpp:81
 msgid "Orbits"
-msgstr "Orbitas"
+msgstr "Τροχιές"
 
 #: kdepreferencesdialog.cpp:85
 msgid "Celestial Grid"
-msgstr "Reixa Celeste"
+msgstr "Πλέγμα"
 
 #: kdepreferencesdialog.cpp:89
 msgid "Night Side Lights"
-msgstr "Luces Nocturnas"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:93
 msgid "Markers"
-msgstr "Marcas"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:97
 msgid "Atmospheres"
-msgstr "Atmósferas"
+msgstr "Ατμόσφερες"
 
 #: kdepreferencesdialog.cpp:101
 msgid "Smooth Orbit Lines"
-msgstr "Suavizado de Liñas Orbitáis"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:105
 msgid "Eclipse Shadows"
-msgstr "Sombras de Eclipses"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:109
 msgid "Stars As Points"
-msgstr "Estrelas como puntos"
+msgstr "Άστρα Ως Σημεία"
 
 #: kdepreferencesdialog.cpp:113
 msgid "Ring Shadows"
-msgstr "Sombras de Aneis"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:117
 msgid "Constellation Boundaries"
-msgstr "Límites de Constelacións"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:125
 msgid "Comet Tails"
-msgstr "Colas Cometarias"
+msgstr "Ουρές Κομμητών"
 
 #: kdepreferencesdialog.cpp:143
 msgid "Moons"
-msgstr "Lúas"
+msgstr "Φεγγάρια"
 
 #: kdepreferencesdialog.cpp:155
 msgid "Asteroids"
-msgstr "Asteroides"
+msgstr "Αστεροιδείς"
 
 #: kdepreferencesdialog.cpp:159
 msgid "Spacecrafts"
-msgstr "Naves Espaciais"
+msgstr "Διαστημόπλοια"
 
 #: kdepreferencesdialog.cpp:163
 #, fuzzy
 msgid "Locations"
-msgstr "Constelacións"
+msgstr "Αστερισμοί"
 
 #: kdepreferencesdialog.cpp:168
 msgid "Ambient Light"
-msgstr "Luz Ambiental"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:179
 msgid "Limiting Magnitude"
-msgstr "Límite de Magnitude"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:188
 msgid "Info Text"
-msgstr "Información"
+msgstr "Βοηθητικό Κείμενο"
 
 #: kdepreferencesdialog.cpp:189
 msgid "Level: "
-msgstr "Nivel: "
+msgstr "Επίπεδο: "
 
 #: kdepreferencesdialog.cpp:191
 msgid "None"
-msgstr "Ningunha"
+msgstr "Κανένα"
 
 #: kdepreferencesdialog.cpp:192
 msgid "Terse"
-msgstr "Sucinta"
+msgstr "Μέτριο"
 
 #: kdepreferencesdialog.cpp:193
 msgid "Verbose"
-msgstr "Compreta"
+msgstr "Έντονο"
 
 #: kdepreferencesdialog.cpp:198
 msgid "Automatic FOV"
-msgstr "Angulo de Visión Automático"
+msgstr "Αυτόματο FOV"
 
 #: kdepreferencesdialog.cpp:199
 msgid "Screen DPI: "
-msgstr "Puntos/Pulgada Monitor: "
+msgstr "Ανάλυση Οθόνης: "
 
 #: kdepreferencesdialog.cpp:201
 msgid "Viewing Distance (cm): "
-msgstr "Distancia ó Monitor (cm): "
+msgstr "Απόσταση Θέασης (εκ): "
 
 #: kdepreferencesdialog.cpp:209
 msgid "Date/Time"
-msgstr "Data/Hora"
+msgstr "Ημερομηνία/Ώρα"
 
 #: kdepreferencesdialog.cpp:213
 msgid "Display"
-msgstr "Monitor"
+msgstr "Εμφάνιση"
 
 #: kdepreferencesdialog.cpp:214 kdepreferencesdialog.cpp:225
 msgid "Timezone: "
-msgstr "Zona Horaria: "
+msgstr ""
 
 #: kdepreferencesdialog.cpp:217 kdepreferencesdialog.cpp:228
 msgid "Local Time"
-msgstr "Hora Local"
+msgstr "Τοπική Ώρα"
 
 #: kdepreferencesdialog.cpp:222
 msgid "Set"
-msgstr "Establecer"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:223
 msgid "Local Time is only supported for dates between 1902 and 2037.\n"
-msgstr "A Hora local só é posible para datas entre 1902 e 2037.\n"
+msgstr ""
+"Η Τοπική Ώρα υποστηρίζεται μόνο για ημερομηνίες μεταξύ 1902 και 2037.\n"
 
 #: kdepreferencesdialog.cpp:297
 msgid ""
@@ -560,15 +561,15 @@ msgid ""
 "Selection: "
 msgstr ""
 "\n"
-"Selección: "
+"Επιλογή: "
 
 #: kdepreferencesdialog.cpp:304
 msgid "Include Light Travel Time"
-msgstr "Ter en conta Demora Temporal da Luz"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:306
 msgid "Ignore Light Travel Time "
-msgstr "Ignorar Demora Temporal"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:313
 msgid "OpenGL"
@@ -576,23 +577,23 @@ msgstr "OpenGL"
 
 #: kdepreferencesdialog.cpp:358
 msgid "Key Bindings"
-msgstr "Asignacións de Teclado"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:560
 msgid "<b>Unextended OpenGL 1.1</b>"
-msgstr "<b>OpenGL 1.1 sen extensións</b>"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:563
 msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
-msgstr "<b>Texturas Múltiples e a extensión ARB_texenv_combine</b>"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:566
 msgid "<b>NVIDIA combiners, no vertex programs</b>"
-msgstr "<b>Combinadores NVIDIA, sen programas vertex</b>"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:569
 msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
-msgstr "<b>Extensión ARB_texenv_DOT3, extensión ARB_vertex_program</b>"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:572
 msgid ""
@@ -601,46 +602,40 @@ msgid ""
 "graphics card, though NvCombiner ARBVP is a slightly better option for "
 "Geforce users"
 msgstr ""
-"<b>Os combinadores NVIDIA e a extensión  NV_vertex_program</b><br> "
-"proporcionan mapas de relieve, sombras anulares e brillos especulares en "
-"calqueira tarxeta gráfica Geforce o ATI Radeon , aínda que NvCombiner ARBVP "
-"é una opción lixeiramente mellor para os usuarios Geforce"
 
 #: kdepreferencesdialog.cpp:578
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
-msgstr "<b>Combinadores NVIDIA, extensión ARB_vertex_program</b>"
+msgstr ""
 
 #: kdepreferencesdialog.cpp:581
 msgid ""
 "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
 "advanced effects on Geforce FX and Radeon 9700 cards"
 msgstr ""
-"<b>As extensións ARB_fragment_program e ARB_vertex_program</"
-"b><br>proporcionan efectos avanzados nas tarxetas Geforce FX e Radeon 9700"
 
 #: kdepreferencesdialog.cpp:585
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
-msgstr "<b>Extensións NV_fragment_program e ARB_vertex_program</b>"
+msgstr ""
 
 #: celestialbrowser.cpp:191 rc.cpp:16
 msgid "Planet"
-msgstr "Planeta"
+msgstr "Πλανήτης"
 
 #: celestialbrowser.cpp:194 rc.cpp:17
 msgid "Moon"
-msgstr "Lúa"
+msgstr "Φεγγάρι"
 
 #: celestialbrowser.cpp:197
 msgid "Asteroid"
-msgstr "Asteroide"
+msgstr "Αστεροιδής"
 
 #: celestialbrowser.cpp:200
 msgid "Comet"
-msgstr "Cometa"
+msgstr "Κομήτης"
 
 #: celestialbrowser.cpp:203
 msgid "Spacecraft"
-msgstr "Nave Espacial"
+msgstr "Διαστημόπλοιο"
 
 #: celestialbrowser.cpp:207
 msgid "-"
@@ -648,115 +643,115 @@ msgstr "-"
 
 #: eclipsefinderdlg.cpp:117 selectionpopup.cpp:310
 msgid "&Goto"
-msgstr "&Ir"
+msgstr "&Πήγαινε"
 
 #: eclipsefinderdlgbase.uic.moc.cpp:34 eclipsefinderdlgbase.uic.moc.cpp:42
 msgid "EclipseFinderDlgBase"
-msgstr "EclipseFinderDlgBase"
+msgstr ""
 
 #: eclipsefinderdlg.moc.cpp:34 eclipsefinderdlg.moc.cpp:42
 msgid "EclipseFinderDlg"
-msgstr "EclipseFinderDlg"
+msgstr ""
 
 #: celestialbrowserbase.uic.moc.cpp:34 celestialbrowserbase.uic.moc.cpp:42
 msgid "CelestialBrowserBase"
-msgstr "CelestialBrowserBase"
+msgstr ""
 
 #: celestialbrowser.moc.cpp:34 celestialbrowser.moc.cpp:42
 msgid "CelestialBrowser"
-msgstr "CelestialBrowser"
+msgstr ""
 
 #: kdeapp.moc.cpp:34 kdeapp.moc.cpp:42
 msgid "KdeApp"
-msgstr "KdeApp"
+msgstr ""
 
 #: kdeapp.moc.cpp:391 kdeapp.moc.cpp:399
 msgid "LongLatDialog"
-msgstr "LongLatDialog"
+msgstr ""
 
 #: kdeglwidget.moc.cpp:34 kdeglwidget.moc.cpp:42
 msgid "KdeGlWidget"
-msgstr "KdeGlWidget"
+msgstr ""
 
 #: kdepreferencesdialog.moc.cpp:34 kdepreferencesdialog.moc.cpp:42
 msgid "KdePreferencesDialog"
-msgstr "KdePreferencesDialog"
+msgstr ""
 
 #: kdeuniquecelestia.moc.cpp:34 kdeuniquecelestia.moc.cpp:42
 msgid "KdeUniqueCelestia"
-msgstr "KdeUniqueCelestia"
+msgstr ""
 
 #: kcelbookmarkmenu.moc.cpp:34 kcelbookmarkmenu.moc.cpp:42
 msgid "KCelBookmarkMenu"
-msgstr "KCelBookmarkMenu"
+msgstr ""
 
 #: selectionpopup.cpp:74
 msgid "Distance: "
-msgstr "Distancia: "
+msgstr "Απόσταση: "
 
 #: selectionpopup.cpp:76
 msgid "Abs (app) mag: "
-msgstr "Mag. Abs.(Aparente): "
+msgstr ""
 
 #: selectionpopup.cpp:84
 msgid "Class: "
-msgstr "Clase: "
+msgstr "Κλάση: "
 
 #: selectionpopup.cpp:88
 msgid "Surface Temp: "
-msgstr "Temp.Superficial: "
+msgstr "Θερμοκρασία Επιφάνειας: "
 
 #: selectionpopup.cpp:92
 msgid "Radius: "
-msgstr "Radio: "
+msgstr ""
 
 #: selectionpopup.cpp:125
 msgid "Marked objects"
-msgstr "Obxectos Marcados: "
+msgstr ""
 
 #: selectionpopup.cpp:308
 msgid "&Select"
-msgstr "&Escoller"
+msgstr "&Επιλογή"
 
 #: selectionpopup.cpp:309
 msgid "&Center"
-msgstr "&Centrar"
+msgstr "&Κεντράρισμα"
 
 #: selectionpopup.cpp:311
 msgid "&Follow"
-msgstr "Se&guir"
+msgstr ""
 
 #: selectionpopup.cpp:312
 msgid "S&ynch Orbit"
-msgstr "Sincronizar &Orbita"
+msgstr "Σ&υγχρονισμός Τροχιάς"
 
 #: selectionpopup.cpp:313
 msgid "&Info"
-msgstr "&Información"
+msgstr "&Πληροφορίες"
 
 #: selectionpopup.cpp:314
 msgid "Unmark &All"
-msgstr "Desmarcar &Todo"
+msgstr "Αποεπιλογή &Όλων"
 
 #: selectionpopup.cpp:317
 msgid "&Unmark"
-msgstr "&Desmarcar"
+msgstr "&Αποεπιλογή"
 
 #: selectionpopup.cpp:322
 msgid "Diamond"
-msgstr "Diamante"
+msgstr "Διαμάντι"
 
 #: selectionpopup.cpp:323
 msgid "Triangle"
-msgstr "Triángulo"
+msgstr "Τρίγωνο"
 
 #: selectionpopup.cpp:324
 msgid "Square"
-msgstr "Cuadrado"
+msgstr "Τετράγωνο"
 
 #: selectionpopup.cpp:325
 msgid "Plus"
-msgstr "Suma"
+msgstr "Συν"
 
 #: selectionpopup.cpp:326
 msgid "X"
@@ -764,59 +759,59 @@ msgstr "X"
 
 #: selectionpopup.cpp:327
 msgid "&Mark"
-msgstr "&Marca"
+msgstr ""
 
 #: selectionpopup.cpp:338
 msgid "Normal"
-msgstr "Normal"
+msgstr "Κανονικό"
 
 #: selectionpopup.cpp:345
 msgid "&Alternate Surfaces"
-msgstr "Superficies &Alternativas"
+msgstr ""
 
 #: selectionpopup.cpp:363
 msgid "Satellites"
-msgstr "Satélites"
+msgstr "Δορυφόροι"
 
 #: selectionpopup.moc.cpp:34 selectionpopup.moc.cpp:42
 msgid "SelectionPopup"
-msgstr "SelectionPopup"
+msgstr ""
 
 #: rc.cpp:3
 msgid "Name"
-msgstr "Nome"
+msgstr "Όνομα"
 
 #: rc.cpp:4
 msgid "Dist."
-msgstr "Dist."
+msgstr "Απόστ."
 
 #: rc.cpp:5
 msgid "App. Mag."
-msgstr "Mag.Aparente"
+msgstr ""
 
 #: rc.cpp:6
 msgid "Abs. Mag."
-msgstr "Mag.Abs."
+msgstr ""
 
 #: rc.cpp:7
 msgid "Type"
-msgstr "Tipo"
+msgstr "Τύπος"
 
 #: rc.cpp:8
 msgid "With Planets"
-msgstr "Con Planetas"
+msgstr "Με Πλανήτες"
 
 #: rc.cpp:9
 msgid "Brightest (Abs.)"
-msgstr "Brillo (Abs.)"
+msgstr ""
 
 #: rc.cpp:10
 msgid "Brightest (App.)"
-msgstr "Brillo (Aparente)"
+msgstr ""
 
 #: rc.cpp:11
 msgid "Nearest"
-msgstr "Máis Cercana"
+msgstr "Κοντινότερο"
 
 #: rc.cpp:13
 msgid "Alt+C"
@@ -824,80 +819,80 @@ msgstr "Alt+C"
 
 #: rc.cpp:14
 msgid "Refresh"
-msgstr "Refrescar"
+msgstr ""
 
 #: rc.cpp:18
 msgid "Date"
-msgstr "Data"
+msgstr "Ημερομηνία"
 
 #: rc.cpp:19
 msgid "Start"
-msgstr "Comezar"
+msgstr "Έναρξη"
 
 #: rc.cpp:20
 msgid "End"
-msgstr "Rematar"
+msgstr "Τερματισμός"
 
 #: rc.cpp:21
 msgid "buttonGroup1"
-msgstr "buttonGroup1"
+msgstr ""
 
 #: rc.cpp:22
 msgid "Solar Eclipses"
-msgstr "Eclipses Solares"
+msgstr "Ηλιακές Εκλίπσεις"
 
 #: rc.cpp:23
 msgid "<p align=\"right\">On:</p>"
-msgstr "<p align=\"right\">Sí:</p>"
+msgstr ""
 
 #: rc.cpp:24
 msgid "Earth"
-msgstr "Terra"
+msgstr "Γη"
 
 #: rc.cpp:25
 msgid "Jupiter"
-msgstr "Xúpiter"
+msgstr ""
 
 #: rc.cpp:26
 msgid "Saturn"
-msgstr "Saturno"
+msgstr ""
 
 #: rc.cpp:27
 msgid "Uranus"
-msgstr "Urano"
+msgstr "Ουρανός"
 
 #: rc.cpp:28
 msgid "Neptune"
-msgstr "Neptuno"
+msgstr "Ποσειδώνας"
 
 #: rc.cpp:29
 msgid "Pluto"
-msgstr "Plutón"
+msgstr "Πλούτονας"
 
 #: rc.cpp:30
 msgid "Moon Eclipses"
-msgstr "Eclipses de Lúa"
+msgstr ""
 
 #: rc.cpp:31
 msgid "Search"
-msgstr "Buscar"
+msgstr "Αναζήτηση"
 
 #: rc.cpp:32
 msgid "<p align=\"right\">To:</p>"
-msgstr "<p align=\"right\">A:</p>"
+msgstr ""
 
 #: rc.cpp:33
 msgid "<p align=\"right\">From:</p>"
-msgstr "<p align=\"right\">De:</p>"
+msgstr ""
 
 #: _translatorinfo.cpp:1
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr "Javier Martinez Fernanda Montero"
+msgstr "Ironhell3"
 
 #: _translatorinfo.cpp:3
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr "tengwar@terra.es"
+msgstr "ironhell3@hotmail.com"
