@@ -127,8 +127,6 @@ Point3d SampledOrbit::computePosition(double jd) const
             pos = Point3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
                           Mathd::lerp(t, (double) s0.y, (double) s1.y),
                           Mathd::lerp(t, (double) s0.z, (double) s1.z));
-            // printf("%d %lf %lf %lf\n", astro::Date(jd).hour, pos.x, pos.y, pos.z);
-            // printf("%d %lf %lf %lf\n", astro::Date(jd).hour, t, s0.t, s1.t);
         }
         else
         {
@@ -155,11 +153,20 @@ Orbit* LoadSampledOrbit(const string& filename)
         in >> x;
         in >> y;
         in >> z;
-        
-        int year = (int) t;
-        double frac = t - year;
-        // Not quite correct--doesn't account for leap years
-        double jd = (double) astro::Date(year, 1, 1) + 365.0 * frac;
+
+        double jd = t;
+
+        // A bit of a hack . . .  assume that a time >= 1000000 is a Julian
+        // Day, and anything else is a year + fraction.  This is just here
+        // for backward compatibility.
+        if (jd < 1000000.0)
+        {
+            int year = (int) t;
+            double frac = t - year;
+            // Not quite correct--doesn't account for leap years
+            jd = (double) astro::Date(year, 1, 1) + 365.0 * frac;
+        }
+
         orbit->addSample(jd, x, y, z);
         nSamples++;
     }

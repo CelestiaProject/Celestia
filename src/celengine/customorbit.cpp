@@ -192,6 +192,8 @@ static void EclipticToEquatorial(double t, double fEclLat, double fEclLon,
     double eps;
     double deps, dpsi;
 
+    t = (astro::J2000 - 2415020.0) / 36525.0;
+    t = 0;
     eps = Obliquity(t);		// mean obliquity for date
     Nutation(t, deps, dpsi);
     eps += deps;
@@ -211,6 +213,37 @@ static void EclipticToEquatorial(double t, double fEclLat, double fEclLon,
         RA += PI;		// account for atan quad ambiguity
     RA = pfmod(RA, TWOPI);
 }
+
+
+// Convert equatorial coordinates from one epoch to another.  Method is from
+// Chapter 21 of Meeus's _Astronomical Algorithms_
+void EpochConvert(double jdFrom, double jdTo,
+                  double a0, double d0,
+                  double& a, double& d)
+{
+    double T = (jdFrom - astro::J2000) / 36525.0;
+    double t = (jdTo - jdFrom) / 36525.0;
+            
+    double zeta = (2306.2181 + 1.39656 * T - 0.000139 * T * T) * t +
+        (0.30188 - 0.000344 * T) * t * t + 0.017998 * t * t * t;
+    double z = (2306.2181 + 1.39656 * T - 0.000139 * T * T) * t +
+        (1.09468 + 0.000066 * T) * t * t + 0.018203 * t * t * t;
+    double theta = (2004.3109 - 0.85330 * T - 0.000217 * T * T) * t -
+        (0.42665 + 0.000217 * T) * t * t - 0.041833 * t * t * t;
+    zeta  = degToRad(zeta / 3600.0);
+    z     = degToRad(z / 3600.0);
+    theta = degToRad(theta / 3600.0);
+
+    double A = cos(d0) * sin(a0 + zeta);
+    double B = cos(theta) * cos(d0) * cos(a0 + zeta) -
+        sin(theta) * sin(d0);
+    double C = sin(theta) * cos(d0) * cos(a0 + zeta) +
+        cos(theta) * sin(d0);
+
+    a = atan2(A, B) + z;
+    d = asin(C);
+}
+
 
 double meanAnomalySun(double t)
 {
@@ -529,11 +562,12 @@ class LunarOrbit : public CachingOrbit
 	double ld, ms, md, de, f, n, hp;
 	double a, sa, sn, b, sb, c, sc, e, e2, l, g, w1, w2;
 	double m1, m2, m3, m4, m5, m6;
-    double eclLon, eclLat, horzPar, distance;
-    double RA, dec;
+        double eclLon, eclLat, horzPar, distance;
+        double RA, dec;
 
-    //Computation requires an abbreviated Julian day: epoch January 0.5, 1900.
-    jd19 = jd - 2415020.0;
+        // Computation requires an abbreviated Julian day:
+        // epoch January 0.5, 1900.
+        jd19 = jd - 2415020.0;
 	t = jd19/36525;
 	t2 = t*t;
 
@@ -597,12 +631,12 @@ class LunarOrbit : public CachingOrbit
 	    .001773*sin(md+2*(de-f))-.001595*sin(2*(f+de))+
 	    e*.00122*sin(4*de-ms-md)-.00111*sin(2*(md+f))+.000892*sin(md-3*de);
 	l = l-e*.000811*sin(ms+md+2*de)+e*.000761*sin(4*de-ms-2*md)+
-        e2*.000704*sin(md-2*(ms+de))+e*.000693*sin(ms-2*(md-de))+
-        e*.000598*sin(2*(de-f)-ms)+.00055*sin(md+4*de)+.000538*sin(4*md)+
-        e*.000521*sin(4*de-ms)+.000486*sin(2*md-de);
+            e2*.000704*sin(md-2*(ms+de))+e*.000693*sin(ms-2*(md-de))+
+            e*.000598*sin(2*(de-f)-ms)+.00055*sin(md+4*de)+.000538*sin(4*md)+
+            e*.000521*sin(4*de-ms)+.000486*sin(2*md-de);
 	l = l+e2*.000717*sin(md-2*ms);
-    eclLon = ld+degToRad(l);
-    eclLon = pfmod(eclLon, TWOPI);
+        eclLon = ld+degToRad(l);
+        eclLon = pfmod(eclLon, TWOPI);
 
 	g = 5.12819*sin(f)+.280606*sin(md+f)+.277693*sin(md-f)+
 	    .173238*sin(2*de-f)+.055413*sin(2*de+f-md)+.046272*sin(2*de-f-md)+
@@ -614,9 +648,9 @@ class LunarOrbit : public CachingOrbit
 	    e*.001877*sin(f-ms+md)+.001828*sin(4*de-f-md)-e*.001803*sin(f+ms)-
 	    .00175*sin(3*f);
 	g = g+e*.00157*sin(md-ms-f)-.001487*sin(f+de)-e*.001481*sin(f+ms+md)+
-        e*.001417*sin(f-ms-md)+e*.00135*sin(f-ms)+.00133*sin(f-de)+
-        .001106*sin(f+3*md)+.00102*sin(4*de-f)+.000833*sin(f+4*de-md)+
-        .000781*sin(md-3*f)+.00067*sin(f+4*de-2*md);
+            e*.001417*sin(f-ms-md)+e*.00135*sin(f-ms)+.00133*sin(f-de)+
+            .001106*sin(f+3*md)+.00102*sin(4*de-f)+.000833*sin(f+4*de-md)+
+            .000781*sin(md-3*f)+.00067*sin(f+4*de-2*md);
 	g = g+.000606*sin(2*de-3*f)+.000597*sin(2*(de+md)-f)+
 	    e*.000492*sin(2*de+md-ms-f)+.00045*sin(2*(md-de)-f)+
 	    .000439*sin(3*md-f)+.000423*sin(f+2*(de+md))+
@@ -643,22 +677,28 @@ class LunarOrbit : public CachingOrbit
          e*.000019*cos(4*de-ms-md);
 	horzPar = degToRad(hp);
 
-    //At this point we have values of ecliptic longitude, latitude and horizontal
-    //parallax (eclLong, eclLat, horzPar) in radians.
+        // At this point we have values of ecliptic longitude, latitude and
+        // horizontal parallax (eclLong, eclLat, horzPar) in radians.
 
-    //Now compute distance using horizontal parallax.
-    distance = 6378.14/sin(horzPar);
+        // Now compute distance using horizontal parallax.
+        distance = 6378.14 / sin(horzPar);
 
-    //Finally convert eclLat, eclLon to RA, Dec.
-    EclipticToEquatorial(t, eclLat, eclLon, RA, dec);
+        // Finally convert eclLat, eclLon to RA, Dec.
+        EclipticToEquatorial(t, eclLat, eclLon, RA, dec);
 
-    //Corrections for internal coordinate system
-    dec -= (PI/2);
-    RA += PI;
+        // RA and Dec are referred to the equinox of date; we want to use
+        // the J2000 equinox instead.  A better idea would be to directly 
+        // compute the position of the Moon in this coordinate system, but
+        // this was easier.
+        EpochConvert(jd, astro::J2000, RA, dec, RA, dec);
 
-    return Point3d(cos(RA) * sin(dec) * distance,
-                   cos(dec) * distance,
-                   -sin(RA) * sin(dec) * distance);
+        // Corrections for internal coordinate system
+        dec -= (PI/2);
+        RA += PI;
+
+        return Point3d(cos(RA) * sin(dec) * distance,
+                       cos(dec) * distance,
+                       -sin(RA) * sin(dec) * distance);
     };
 
     double getPeriod() const
