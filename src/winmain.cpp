@@ -553,12 +553,16 @@ struct StarBrowserInstance
     // updated.
     Point3f pos;
     UniversalCoord ucPos;
+    int predicate;
+    int nStars;
 };
 
 StarBrowserInstance::StarBrowserInstance(Simulation* sim)
 {
     ucPos = sim->getObserver().getPosition();
     pos = (Point3f) ucPos;
+    predicate = NearestStars;
+    nStars = 100;
 }
 
 static StarBrowserInstance* starBrowser = NULL;
@@ -850,7 +854,8 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
         {
             HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
             InitStarBrowserColumns(hwnd);
-            InitStarBrowserItems(hwnd, BrightestStars, 100);
+            InitStarBrowserItems(hwnd, starBrowser->predicate, starBrowser->nStars);
+            CheckRadioButton(hDlg, IDC_RADIO_NEAREST, IDC_RADIO_BRIGHTEST, IDC_RADIO_NEAREST);
             return(TRUE);
         }
 
@@ -873,11 +878,11 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
             break;
 
         case IDC_RADIO_BRIGHTEST:
-            cout << "Brightest\n";
+            starBrowser->predicate = BrightestStars;
             break;
 
         case IDC_RADIO_NEAREST:
-            cout << "Nearest\n";
+            starBrowser->predicate = NearestStars;
             break;
 
         case IDC_BUTTON_REFRESH:
@@ -888,7 +893,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
                 if (hwnd != 0)
                 {
                     ListView_DeleteAllItems(hwnd);
-                    InitStarBrowserItems(hwnd, BrightestStars, 100);
+                    InitStarBrowserItems(hwnd, starBrowser->predicate, starBrowser->nStars);
                 }
             }
             break;
