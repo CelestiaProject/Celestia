@@ -1085,23 +1085,6 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
 }
 
 
-// Convert a position in the universal coordinate system to solar system
-// coordinates.  The solar system position is the same as the astrocentric
-// position for the same star except when the star is part of a multiple
-// star system in which planets orbit the barycenter.
-static Point3d solarSystemPosition(UniversalCoord& pos,
-                                   const Star& star,
-                                   double t)
-{
-    UniversalCoord starPos = star.getSystemCenter(t);
-        
-    Vec3d v = pos - starPos;
-    return Point3d(astro::microLightYearsToKilometers(v.x),
-                   astro::microLightYearsToKilometers(v.y),
-                   astro::microLightYearsToKilometers(v.z));
-}
-
-
 // Convert a position in the universal coordinate system to astrocentric
 // coordinates, taking into account possible orbital motion of the star.
 static Point3d astrocentricPosition(UniversalCoord& pos,
@@ -1172,12 +1155,6 @@ void Renderer::render(const Observer& observer,
     // renderList.
     renderList.clear();
 
-    // See if there's a solar system nearby that we need to render.
-    SolarSystem* solarSystem = universe.getNearestSolarSystem(observer.getPosition());
-    const Star* sun = NULL;
-    if (solarSystem != NULL)
-        sun = solarSystem->getStar();
-
     // See if we want to use AutoMag.
     if ((renderFlags & ShowAutoMag) != 0)
     {
@@ -1195,6 +1172,14 @@ void Renderer::render(const Observer& observer,
     // faintestPlanetMag = faintestMag + (2.5f * (float) log10((double) square(45.0f / fov)));
     faintestPlanetMag = faintestMag;
 
+
+#if 0
+    // See if there's a solar system nearby that we need to render.
+    SolarSystem* solarSystem = universe.getNearestSolarSystem(observer.getPosition());
+    const Star* sun = NULL;
+    if (solarSystem != NULL)
+        sun = solarSystem->getStar();
+
     if ((sun != NULL) && ((renderFlags & ShowPlanets) != 0))
     {
         renderPlanetarySystem(*sun,
@@ -1204,6 +1189,28 @@ void Renderer::render(const Observer& observer,
                               (labelMode & (BodyLabelMask)) != 0);
         starTex->bind();
     }
+#else
+    if (renderFlags & ShowPlanets)
+    {
+        nearStars.clear();
+        universe.getNearStars(observer.getPosition(), 1.0f, nearStars);
+        for (vector<const Star*>::const_iterator iter = nearStars.begin();
+             iter != nearStars.end(); iter++)
+        {
+            const Star* sun = *iter;
+            SolarSystem* solarSystem = universe.getSolarSystem(sun);
+            if (solarSystem != NULL)
+            {
+                renderPlanetarySystem(*sun,
+                                      *solarSystem->getPlanets(),
+                                      observer,
+                                      now,
+                                      (labelMode & (BodyLabelMask)) != 0);
+            }
+        }
+    }
+#endif
+    
 
     Color skyColor(0.0f, 0.0f, 0.0f);
 
@@ -1366,6 +1373,7 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
+#if 0
     if ((renderFlags & ShowOrbits) != 0 && orbitMask != 0 && solarSystem != NULL)
     {
         vector<CachedOrbit*>::const_iterator iter;
@@ -1381,8 +1389,8 @@ void Renderer::render(const Observer& observer,
             enableSmoothLines();
         
         const Star* sun = solarSystem->getStar();
-        Point3d obsPos = solarSystemPosition(observer.getPosition(),
-                                             *sun, observer.getTime());
+        Point3d obsPos = astrocentricPosition(observer.getPosition(),
+                                              *sun, observer.getTime());
         glPushMatrix();
         glTranslatef((float) astro::kilometersToAU(-obsPos.x),
                      (float) astro::kilometersToAU(-obsPos.y),
@@ -1402,6 +1410,7 @@ void Renderer::render(const Observer& observer,
         }
 
     }
+#endif
 
     renderLabels();
 
@@ -5369,9 +5378,10 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                                      bool showLabels)
 {
     Point3f starPos = sun.getPosition();
-    Point3d observerPos = solarSystemPosition(observer.getPosition(),
-                                              sun, now);
+    Point3d observerPos = astrocentricPosition(observer.getPosition(),
+                                               sun, now);
 
+    clog << "renderPlanetarySystem: " << sun.getSpectralType() << '\n';
     int nBodies = solSystem.getSystemSize();
     for (int i = 0; i < nBodies; i++)
     {

@@ -20,6 +20,7 @@
 #include <celengine/multitexture.h>
 
 class Orbit;
+class Star;
 
 class StarDetails
 {
@@ -36,6 +37,8 @@ class StarDetails
     inline float getOrbitalRadius() const;
     inline const char* getSpectralType() const;
     inline float getBolometricCorrection() const;
+    inline const Star* getOrbitBarycenter() const;
+    inline bool getVisibility() const;
 
     void setRadius(float);
     void setTemperature(float);
@@ -45,6 +48,8 @@ class StarDetails
     void setTexture(const MultiResTexture&);
     void setModel(ResourceHandle);
     void setOrbit(Orbit*);
+    void setOrbitBarycenter(Star*);
+    void setVisibility(bool);
     
     enum
     {
@@ -56,14 +61,6 @@ class StarDetails
     void setKnowledge(uint32);
     void addKnowledge(uint32);
 
-    enum SystemOrigin
-    {
-        OriginStar       = 0,
-        OriginBarycenter = 1,
-    };
-    inline SystemOrigin getSystemOrigin() const;
-    void setSystemOrigin(SystemOrigin);
-
  private:
     float radius;
     float temperature;
@@ -71,6 +68,7 @@ class StarDetails
     float rotationPeriod;
 
     uint32 knowledge;
+    bool visible;
     char spectralType[8];
 
     MultiResTexture texture;
@@ -78,7 +76,7 @@ class StarDetails
 
     Orbit* orbit;
     float orbitalRadius;
-    SystemOrigin origin;
+    Star* barycenter;
 
  public:
     static StarDetails* GetStarDetails(const StellarClass&);
@@ -93,6 +91,7 @@ class StarDetails
                                              unsigned int subclass);
     static StarDetails* GetNeutronStarDetails();
     static StarDetails* GetBlackHoleDetails();
+    static StarDetails* GetBarycenterDetails();
 };
 
 
@@ -168,10 +167,16 @@ StarDetails::getBolometricCorrection() const
     return bolometricCorrection;
 }
 
-StarDetails::SystemOrigin
-StarDetails::getSystemOrigin() const
+const Star*
+StarDetails::getOrbitBarycenter() const
 {
-    return origin;
+    return barycenter;
+}
+
+bool
+StarDetails::getVisibility() const
+{
+    return visible;
 }
 
 
@@ -189,8 +194,6 @@ public:
 
     // Return the exact position of the star, accounting for its orbit
     UniversalCoord getPosition(double t) const;
-    // Get the center of the system, about which planets and stars orbit
-    UniversalCoord getSystemCenter(double t) const;
 
     void setCatalogNumber(uint32);
     void setPosition(float, float, float);
@@ -199,6 +202,7 @@ public:
     void setLuminosity(float);
 
     void setDetails(StarDetails*);
+    void setOrbitBarycenter(Star*);
 
     // Accessor methods that delegate to StarDetails
     float getRadius() const;
@@ -210,6 +214,8 @@ public:
     ResourceHandle getModel() const;
     inline Orbit* getOrbit() const;
     inline float getOrbitalRadius() const;
+    inline const Star* getOrbitBarycenter() const;
+    inline bool getVisibility() const;
     inline uint32 getKnowledge() const;
 
     enum {
@@ -289,6 +295,18 @@ float
 Star::getOrbitalRadius() const
 {
     return details->getOrbitalRadius();
+}
+
+const Star*
+Star::getOrbitBarycenter() const
+{
+    return details->getOrbitBarycenter();
+}
+
+bool
+Star::getVisibility() const
+{
+    return details->getVisibility();
 }
 
 #endif // _STAR_H_
