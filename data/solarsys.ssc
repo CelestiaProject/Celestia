@@ -229,7 +229,9 @@
 		Lower [ 0.8 0.6 0.6 ]
 		Upper [ 0.7 0.3 0.3 ]
 		Sky [ 0.83 0.75 0.65 ]
-
+                Sunset [ 0.7 0.7 0.8 ] 
+                # Slightly bluish sunset, as seen in true color pictures
+                 # from Pathfinder
 		# Slightly bluish sunset, as seen in true color pictures
 		# from Pathfinder
 		Sunset [ 0.7 0.7 0.8 ]
@@ -330,6 +332,7 @@
 		Lower [ 0.7 0.6 0.5 ]
 		Upper [ 0.5 0.45 0.4 ]
 		Sky [ 0.8 0.8 0.5 ]
+                Sunset [ 1.0 0.6 0.2 ]
 	}
 
 	RotationPeriod         9.927953 # System II (for GRS)
@@ -759,6 +762,7 @@
 		Lower [ 0.75 0.85 1.0 ]
 		Upper [ 0.5 0.8 0.9 ]
 		Sky [ 0.6 0.7 0.7 ]
+
 	}
 
 	RotationPeriod        17.24 # System III (magnetic field)
@@ -1001,12 +1005,14 @@
 	Albedo          0.155
 }
 
-
 "Pluto" "Sol"
 {
 	Texture "pluto.jpg"
 	BumpMap "plutobump1k.jpg"
 	BumpHeight 2.5
+        SpecularTexture "pluto-spec.jpg"
+        SpecularColor            [ 0.135 0.12 0.08 ]
+        SpecularPower             9.5
 	Radius 1137
 
 	CustomOrbit "pluto"
@@ -1032,6 +1038,9 @@
 "Charon" "Sol/Pluto"
 {
 	Texture "charon.jpg"
+        SpecularTexture "charon-spec.jpg"
+        SpecularColor            [ 0.135 0.12 0.08 ]
+        SpecularPower             9.5
 	Radius   586
 
 	InfoURL "http://www.nineplanets.org/pluto.html#Charon"
@@ -1053,6 +1062,7 @@
 	
 	Albedo          0.35
 }
+
 
 
 
