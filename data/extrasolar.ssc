@@ -526,14 +526,14 @@
 # M = 0.69 Jupiters
 #
 # Detected via transit as well as radial velocity methods; from transit, i 
-# is fixed at 85.2 degrees, so mass can be determined.  Radius is
-# estimated at 1.42 jupiters.
+# is fixed at 86.1 degrees, so mass can be determined.  Radius is
+# estimated at 1.43 jupiters.
 
 "b" "HD 209458"
 {
 	Texture "gasgiant.jpg"
 	Mass      220
-	Radius    101000
+	Radius    102000
 
 	InfoURL "http://www.obspm.fr/encycl/HD209458.html"
 
@@ -542,9 +542,12 @@
 		Period          0.0096502
 		SemiMajorAxis   0.045
 		Eccentricity    0.0
+		Inclination     71.7
+		AscendingNode   325	#true plane-of-sky node unknown
+		ArgOfPericenter 205
+		MeanAnomaly     148
 	}
 }
-
 
 # HD 192263 system
 #
