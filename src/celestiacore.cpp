@@ -84,6 +84,7 @@ CelestiaCore::CelestiaCore() :
     galaxies(NULL),
     asterisms(NULL),
     favorites(NULL),
+    destinations(NULL),
     sim(NULL),
     renderer(NULL),
     overlay(NULL),
@@ -159,6 +160,12 @@ void CelestiaCore::addFavorite(string name)
 const FavoritesList* CelestiaCore::getFavorites()
 {
     return favorites;
+}
+
+
+const DestinationList* CelestiaCore::getDestinations()
+{
+    return destinations;
 }
 
 
@@ -1078,6 +1085,16 @@ bool CelestiaCore::initSimulation()
         {
             const vector<string>* errors = parser.getErrors();
             for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
+        }
+    }
+
+    // Load destinations list
+    if (config->destinationsFile != "")
+    {
+        ifstream destfile(config->destinationsFile.c_str());
+        if (destfile.good())
+        {
+            destinations = ReadDestinationList(destfile);
         }
     }
 
