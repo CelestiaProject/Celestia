@@ -2,8 +2,8 @@
 
 "Mercury" "Sol"
 {
-	Texture "mercury.jpg"
-	BumpMap "mercurybump.jpg"
+	Texture "mercury.*"
+	BumpMap "mercurybump.*"
 	BumpHeight 2.5
 	Radius 2440
 
@@ -28,16 +28,16 @@
 
 AltSurface "limit of knowledge" "Sol/Mercury"
 {
-	Texture "mercury.jpg"
+	Texture "mercury.*"
 	OverlayTexture "mercury-lok-mask.png"
-	BumpMap "mercurybump.jpg"
+	BumpMap "mercurybump.*"
 	BumpHeight 2.5
 }
 
 "Venus" "Sol"
 {
-	Texture "venussurface.jpg"
-	# BumpMap "venusbump.jpg"
+	Texture "venussurface.*"
+	# BumpMap "venusbump.*"
 	HazeColor [ 0.5 0.35 0.2 ]
 	HazeDensity 0.35
 	Radius 6052
@@ -75,7 +75,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 {
 	Texture "earth.*"
 	# Texture "earth8k.dds"
-	NightTexture "earthnight.jpg"
+	NightTexture "earthnight.*"
 	
 	# SpecularTexture "earthspec2k.jpg"
 	Color [ 0.85 0.85 1.0 ]
@@ -83,8 +83,8 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	SpecularPower 25.0
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.3
-	Radius 6378
-	# Oblateness 0.003
+	Radius 6378.140  # equatorial
+	Oblateness 0.0034
 
 	# NormalMap "earthbump4k.jpg"
 	# BumpMap "earthbump.*"
@@ -122,10 +122,10 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 "Moon" "Sol/Earth"
 {
-	Texture "moon.jpg"
+	Texture "moon.*"
 	# Texture "clem-moon-4k.jpg"
 	# Texture "moon4k.dds"
-	BumpMap "moonbump1k.jpg"
+	BumpMap "moonbump1k.*"
 	BumpHeight 0.7
 	Radius   1737.53
 	Oblateness 0.002
@@ -229,8 +229,8 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Color   [ 1 0.75 0.7 ]
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.45
-	Radius 3394
-	# Oblateness 0.006
+	Radius 3396 # equatorial
+	Oblateness 0.0069
 
 	Atmosphere {
 		Height 30
@@ -265,10 +265,11 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 "Phobos" "Sol/Mars"
 {
 	Mesh "phobos.3ds"
-	Texture "phobos.jpg"
+	Texture "phobos.*"
 	# BumpMap "phobosbump.jpg"
 	# BumpHeight 5
-	Radius 11
+	Radius 13.0 # maximum semi-axis
+	MeshCenter [ 0.233 -0.156 0.168 ]
 
 	EllipticalOrbit
 	{
@@ -291,8 +292,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 "Deimos" "Sol/Mars"
 {
 	Mesh "deimos.3ds"
-	Texture "deimos.jpg"
-	Radius 6
+	Texture "deimos.*"
+	Radius 7.9 # maximum semi-axis
+	MeshCenter [ 0.299 -0.284 -0.369 ]
 
 	EllipticalOrbit
 	{
@@ -315,12 +317,12 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 "Jupiter" "Sol"
 {
-	Texture "jupiter.jpg"
+	Texture "jupiter.*"
 	HazeColor [ 0.4 0.45 0.5 ]
 	HazeDensity 0.3
 
-	Radius 71398
-	Oblateness 0.064
+	Radius 71492 # equatorial
+	Oblateness 0.0649
 
 	CustomOrbit "vsop87-jupiter"
 	EllipticalOrbit
@@ -359,7 +361,8 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	BlendTexture true
 	Color   [ 0.5 0.12 0.16 ]
 	Mesh "amalthea.3ds"
-	Radius    124
+	Radius    134 # maximum semi-axis
+	MeshCenter [ 13.616 -0.448 4.436 ]
 
 	EllipticalOrbit
 	{
@@ -382,9 +385,8 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 "Io" "Sol/Jupiter"
 {
-	Texture "io.jpg"
-	# Texture "io2k.dds"
-	Radius   1821
+	Texture "io.*"
+	Radius   1821.6
 
 	CustomOrbit "io"
 	EllipticalOrbit
@@ -407,14 +409,14 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 AltSurface "limit of knowledge" "Sol/Jupiter/Io"
 {
-	Texture "io.jpg"
+	Texture "io.*"
 	OverlayTexture "io-lok-mask.png"
 }
 
 "Europa" "Sol/Jupiter"
 {
-	Texture "europa.jpg"
-	Radius   1565
+	Texture "europa.*"
+	Radius   1560.8
 
 	CustomOrbit "europa"
 	EllipticalOrbit
@@ -437,14 +439,14 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Io"
 
 AltSurface "limit of knowledge" "Sol/Jupiter/Europa"
 {
-	Texture "europa.jpg"
+	Texture "europa.*"
 	OverlayTexture "europa-lok-mask.png"
 }
 
 "Ganymede" "Sol/Jupiter"
 {
-	Texture "ganymede.jpg"
-	Radius   2634
+	Texture "ganymede.*"
+	Radius   2631.2
 
 	CustomOrbit "ganymede"
 	EllipticalOrbit
@@ -468,14 +470,14 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Europa"
 
 AltSurface "limit of knowledge" "Sol/Jupiter/Ganymede"
 {
-	Texture "ganymede.jpg"
+	Texture "ganymede.*"
 	OverlayTexture "ganymede-lok-mask.png"
 }
 
 "Callisto" "Sol/Jupiter"
 {
-	Texture "callisto.jpg"
-	Radius   2403
+	Texture "callisto.*"
+	Radius   2410.3
 
 	CustomOrbit "callisto"
 	EllipticalOrbit
@@ -499,18 +501,18 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Ganymede"
 
 AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 {
-	Texture "callisto.jpg"
+	Texture "callisto.*"
 	OverlayTexture "callisto-lok-mask.png"
 }
 
 "Saturn" "Sol"
 {
-	Texture "saturn.jpg"
+	Texture "saturn.*"
 	Color [ 1.0 1.0 0.85 ]
 	HazeColor [ 0.0 0.0 1 ]
 	HazeDensity 0.25
-	Radius 60330
-	Oblateness 0.1076
+	Radius 60268 # equatorial
+	Oblateness 0.0980
 
 	CustomOrbit "vsop87-saturn"
 	EllipticalOrbit
@@ -552,13 +554,13 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 "Mimas" "Sol/Saturn"
 {
-	Texture "mimas.jpg"
+	Texture "mimas.*"
 	# Texture "white.jpg"
 	# BumpMap "mimasbump.jpg"
 	# BumpHeight 10.0
 	Color [ 0.75 0.63 0.58 ]
 	BlendTexture true
-	Radius    199
+	Radius    198.6
 
 	CustomOrbit "mimas"
 	EllipticalOrbit
@@ -579,7 +581,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 {
-	Texture "mimas.jpg"
+	Texture "mimas.*"
 	OverlayTexture "mimas-lok-mask.png"
 	Color [ 0.75 0.63 0.58 ]
 	BlendTexture true
@@ -587,8 +589,8 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 "Enceladus" "Sol/Saturn"
 {
-	Texture "enceladus.jpg"
-	Radius     249
+	Texture "enceladus.*"
+	Radius     249.4
 
 	CustomOrbit "enceladus"
 	EllipticalOrbit
@@ -608,8 +610,8 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 "Tethys" "Sol/Saturn"
 {
-	Texture "tethys.jpg"
-	Radius     530
+	Texture "tethys.*"
+	Radius     529.9
 
 	CustomOrbit "tethys"
 	EllipticalOrbit
@@ -629,8 +631,8 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 "Dione" "Sol/Saturn"
 {
-	Texture "dione.jpg"
-	Radius     560
+	Texture "dione.*"
+	Radius     559
 
 	CustomOrbit "dione"
 	EllipticalOrbit
@@ -650,7 +652,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 "Rhea" "Sol/Saturn"
 {
-	Texture "rhea.jpg"
+	Texture "rhea.*"
 	Radius     764
 
 	CustomOrbit "rhea"
@@ -671,7 +673,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 "Titan" "Sol/Saturn"
 {
-	Texture "titan.jpg"
+	Texture "titan.*"
 	Color [ 1.0 0.9 0.75 ]
 	HazeColor [ 0.2 0.5 1 ]
 	HazeDensity 1
@@ -705,7 +707,8 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 {
 	Mesh "hyperion.3ds"
 	Texture "asteroid.jpg"
-	Radius   205
+	Radius    171 # maximum semi-axis
+	MeshCenter [ 3.424 10.938 -4.498 ]
 
 	CustomOrbit "hyperion"
 	EllipticalOrbit
@@ -720,16 +723,17 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	# The rotation of Hyperion is chaotic; we don't attempt to model
 	# the rotation exactly, but instead use non-zero precession rate to
 	# make the rotation appear somewhat irregular.
-	Obliquity       	 25
-	RotationPeriod  	336    # 13 days
-	PrecessionRate  	 15.65 # 23 days
+	Obliquity       	 61    # pole at time of 
+	EquatorAscendingNode	145    # Voyager 2 encounter
+	RotationPeriod  	120    # 5-day best-fit rotation
+	PrecessionRate  	 51.43 # 7-day wobble in light curve
 
 	Albedo         0.3
 }
 
 "Iapetus" "Sol/Saturn"
 {
-	Texture "iapetus.jpg"
+	Texture "iapetus.*"
 	Radius     718
 
 	CustomOrbit "iapetus"
@@ -778,12 +782,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 "Uranus" "Sol"
 {
-	Texture "uranus.jpg"
+	Texture "uranus.*"
 	Color [ 0.75 0.85 1.0 ]
 	HazeColor [ 0.5 0.8 1.0 ]
 	HazeDensity 0.2
-	Radius 26200
-	Oblateness 0.024
+	Radius 25559 # equatorial
+	Oblateness 0.0229
 
 	CustomOrbit "vsop87-uranus"
 	EllipticalOrbit
@@ -821,8 +825,8 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 "Miranda" "Sol/Uranus"
 {
-	Texture "miranda.jpg"
-	Radius   235
+	Texture "miranda.*"
+	Radius   235.8
 
 	CustomOrbit "miranda"
 	EllipticalOrbit
@@ -843,14 +847,14 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 
 AltSurface "limit of knowledge" "Sol/Uranus/Miranda"
 {
-	Texture "miranda.jpg"
+	Texture "miranda.*"
 	OverlayTexture "miranda-lok-mask.png"
 }
 
 "Ariel" "Sol/Uranus"
 {
-	Texture "ariel.jpg"
-	Radius   576
+	Texture "ariel.*"
+	Radius   578.9
 
 	CustomOrbit "ariel"
 	EllipticalOrbit
@@ -871,14 +875,14 @@ AltSurface "limit of knowledge" "Sol/Uranus/Miranda"
 
 AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 {
-	Texture "ariel.jpg"
+	Texture "ariel.*"
 	OverlayTexture "ariel-lok-mask.png"
 }
 
 "Umbriel" "Sol/Uranus"
 {
-	Texture "umbriel.jpg"
-	Radius   585
+	Texture "umbriel.*"
+	Radius   584.7
 
 	CustomOrbit "umbriel"
 	EllipticalOrbit
@@ -899,14 +903,14 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 
 AltSurface "limit of knowledge" "Sol/Uranus/Umbriel"
 {
-	Texture "umbriel.jpg"
+	Texture "umbriel.*"
 	OverlayTexture "umbriel-lok-mask.png"
 }
 
 "Titania" "Sol/Uranus"
 {
-	Texture "titania.jpg"
-	Radius   789
+	Texture "titania.*"
+	Radius   788.9
 
 	CustomOrbit "titania"
 	EllipticalOrbit
@@ -927,14 +931,14 @@ AltSurface "limit of knowledge" "Sol/Uranus/Umbriel"
 
 AltSurface "limit of knowledge" "Sol/Uranus/Titania"
 {
-	Texture "titania.jpg"
+	Texture "titania.*"
 	OverlayTexture "titania-lok-mask.png"
 }
 
 "Oberon" "Sol/Uranus"
 {
-	Texture "oberon.jpg"
-	Radius   761
+	Texture "oberon.*"
+	Radius   761.4
 
 	CustomOrbit "oberon"
 	EllipticalOrbit
@@ -955,19 +959,19 @@ AltSurface "limit of knowledge" "Sol/Uranus/Titania"
 
 AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
-	Texture "oberon.jpg"
+	Texture "oberon.*"
 	OverlayTexture "oberon-lok-mask.png"
 }
 
 
 "Neptune" "Sol"
 {
-	Texture "neptune.jpg"
+	Texture "neptune.*"
 	Color [ 0.75 0.75 1.0 ]
 	HazeColor [ 0.6 1 0.75 ]
 	HazeDensity 0.35
-	Radius 25225
-	Oblateness 0.027
+	Radius 24766 # equatorial
+	Oblateness 0.017
 
 	CustomOrbit "vsop87-neptune"
 	EllipticalOrbit
@@ -1000,7 +1004,8 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 {
 	Mesh "proteus.3ds"
 	Texture "asteroid.jpg"
-	Radius   218
+	Radius    219 # maximum semi-axis
+	MeshCenter [ 4.146 -0.022 -5.153 ]
 
 	EllipticalOrbit
 	{
@@ -1024,8 +1029,8 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 
 "Triton" "Sol/Neptune"
 {
-	Texture "triton.jpg"
-	Radius   1353
+	Texture "triton.*"
+	Radius   1353.4
 
 	Atmosphere {
 		Height 1
@@ -1057,7 +1062,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 
 AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 {
-	Texture "triton.jpg"
+	Texture "triton.*"
 	OverlayTexture "triton-lok-mask.png"
 }
 
@@ -1084,12 +1089,12 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 
 "Pluto" "Sol"
 {
-	Texture "pluto-lok.jpg"
-        SpecularTexture "pluto-lok-spec.jpg"
+	Texture "pluto-lok.*"
+        SpecularTexture "pluto-lok-spec.*"
         SpecularColor            [ 0.135 0.12 0.08 ]
         SpecularPower             9.5
 
-	Radius 1137
+	Radius 1151
 
 	CustomOrbit "pluto"
 	EllipticalOrbit
@@ -1113,19 +1118,19 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 
 AltSurface "limit of knowledge" "Sol/Pluto"
 {
-	Texture "pluto-lok.jpg"
-        SpecularTexture "pluto-lok-spec.jpg"
+	Texture "pluto-lok.*"
+        SpecularTexture "pluto-lok-spec.*"
         SpecularColor            [ 0.135 0.12 0.08 ]
         SpecularPower             9.5
 }
 
 "Charon" "Sol/Pluto"
 {
-	Texture "charon-lok.jpg"
-        SpecularTexture "charon-lok-spec.jpg"
+	Texture "charon-lok.*"
+        SpecularTexture "charon-lok-spec.*"
         SpecularColor            [ 0.135 0.12 0.08 ]
         SpecularPower             9.5
-	Radius   586
+	Radius   593
 
 	InfoURL "http://www.nineplanets.org/pluto.html#Charon"
 
@@ -1149,8 +1154,8 @@ AltSurface "limit of knowledge" "Sol/Pluto"
 
 AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 {
-	Texture "charon-lok.jpg"
-        SpecularTexture "charon-lok-spec.jpg"
+	Texture "charon-lok.*"
+        SpecularTexture "charon-lok-spec.*"
         SpecularColor            [ 0.135 0.12 0.08 ]
         SpecularPower             9.5
 }
@@ -1193,7 +1198,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius 456 
+	Radius 467 
 
 	EllipticalOrbit 
 	{ 
@@ -1220,7 +1225,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius 260 
+	Radius 263 
 
 	EllipticalOrbit 
 	{ 
@@ -1246,7 +1251,7 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius 120 
+	Radius 130 
 
 	EllipticalOrbit 
 	{ 
@@ -1272,7 +1277,8 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	Class "asteroid" 
 	Mesh   "vesta.3ds" 
 	Texture "asteroid.jpg" 
-	Radius 265 
+	Radius    279 # maximum semi-axis
+	MeshCenter [ -0.77 3.424 0.554 ]
 
 	EllipticalOrbit 
 	{ 
@@ -1303,10 +1309,11 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 {
 	Class "asteroid"
 	Mesh "gaspra.3ds"
-	Texture "gaspramosaic.jpg" # Phil Stooke
+	Texture "gaspramosaic.*" # Phil Stooke
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius 9.5
+	Radius    9.1 # maximum semi-axis
+	MeshCenter [ -1.540 -0.064 0.118 ]
 
 	EllipticalOrbit
 	{
@@ -1334,8 +1341,9 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	Class "asteroid"
 	Mesh "ida.3ds"
 	#Texture "asteroid.jpg"
-	Texture "idamosaic.jpg" # Phil Stooke
-	Radius 45
+	Texture "idamosaic.*" # Phil Stooke
+	Radius    28.9 # maximum semi-axis
+	MeshCenter [ 1.424 0.417 -0.115 ]
 
 	EllipticalOrbit
 	{
@@ -1393,12 +1401,13 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 {
 	Class "asteroid"
 	Mesh   "eros.3ds"
-	Texture "eros.jpg"
+	Texture "eros.*"
 	# NormalMap "erosbump2k.jpg"
 	# Color sampled from true color photo taken by NEAR
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
-	Radius 16.5
+	Radius 16.3 # maximum semi-axis
+	MeshCenter [ 1.262 0.168 0.164 ]
 
 	EllipticalOrbit
 	{
