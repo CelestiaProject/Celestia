@@ -71,6 +71,14 @@ static Location* CreateLocation(Hash* locationData,
     position = position * (body->getRadius() + (float) longlat.z);
     location->setPosition(Point3f(0.0f, 0.0f, 0.0f) + position);
 
+    double size = 0.0;
+    locationData->getNumber("Size", size);
+    location->setSize((float) size);
+
+    double importance = -1.0;
+    locationData->getNumber("Importance", importance);
+    location->setImportance((float) importance);
+
     return location;
 }
 
