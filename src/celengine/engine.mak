@@ -22,6 +22,7 @@ OBJS=\
 	$(INTDIR)\asterism.obj \
 	$(INTDIR)\astro.obj \
 	$(INTDIR)\body.obj \
+	$(INTDIR)\boundaries.obj \
 	$(INTDIR)\catalogxref.obj \
 	$(INTDIR)\cmdparser.obj \
 	$(INTDIR)\command.obj \
