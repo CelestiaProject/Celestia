@@ -58,8 +58,8 @@ class Simulation
     void selectStar(uint32);
     void selectPlanet(int);
     void selectBody(string s);
-    void gotoSelection();
-    void centerSelection();
+    void gotoSelection(double gotoTime = 5.0);
+    void centerSelection(double centerTime = 0.5);
     void follow();
     void cancelMotion();
 
@@ -113,8 +113,8 @@ class Simulation
                          SolarSystem& solarSystem,
                          Vec3f pickRay);
     Selection pickStar(Vec3f pickRay);
-    void computeGotoParameters(Selection& sel, JourneyParams& jparams);
-    void computeCenterParameters(Selection& sel, JourneyParams& jparams);
+    void computeGotoParameters(Selection& sel, JourneyParams& jparams, double gotoTime);
+    void computeCenterParameters(Selection& sel, JourneyParams& jparams, double centerTime);
     void displaySelectionInfo(Console&);
 
  private:
