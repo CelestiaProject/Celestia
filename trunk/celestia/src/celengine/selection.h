@@ -23,6 +23,8 @@ class Selection
     Selection(Star* _star) : star(_star), body(NULL), galaxy(NULL) {};
     Selection(Body* _body) : star(NULL), body(_body), galaxy(NULL) {};
     Selection(Galaxy* _galaxy) : star(NULL), body(NULL), galaxy(_galaxy) {};
+    Selection(const Selection& sel) :
+        star(sel.star), body(sel.body), galaxy(sel.galaxy) {};
     ~Selection() {};
 
     bool empty() { return star == NULL && body == NULL && galaxy == NULL; };
@@ -39,6 +41,11 @@ class Selection
 inline bool operator==(const Selection& s0, const Selection& s1)
 {
     return s0.star == s1.star && s0.body == s1.body && s0.galaxy == s1.galaxy;
+}
+
+inline bool operator!=(const Selection& s0, const Selection& s1)
+{
+    return s0.star != s1.star || s0.body != s1.body || s0.galaxy != s1.galaxy;
 }
 
 #endif // _CELENGINE_SELECTION_H_
