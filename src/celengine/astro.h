@@ -48,6 +48,7 @@ namespace astro
         Geographic      = 3,
         ObserverLocal   = 4,
         PhaseLock       = 5,
+        Chase           = 6,
     };
 
     float lumToAbsMag(float lum);
