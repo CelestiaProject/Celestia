@@ -133,7 +133,7 @@ void Console::newline()
     column = 0;
 
     if (autoScroll)
-        windowRow = -(windowHeight - 1);
+        windowRow = -windowHeight;
 }
 
 
