@@ -80,7 +80,7 @@ static Location* CreateLocation(Hash* locationData,
                                                      (float) longlat.z);
     location->setPosition(position);
 
-    double size = 0.0;
+    double size = 1.0;
     locationData->getNumber("Size", size);
     location->setSize((float) size);
 
