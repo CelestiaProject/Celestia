@@ -36,6 +36,37 @@ struct RenderListEntry
     int depthBucket;
 };
 
+static const unsigned int MaxLights = 8;
+
+struct DirectionalLight
+{
+    Color color;
+    float irradiance;
+    Vec3f direction_eye;
+    Vec3f direction_obj;
+
+    // Required for eclipse shadows only--may be able to use
+    // distance instead of position.
+    Point3d position;
+    float apparentSize;
+};
+
+struct EclipseShadow
+{
+    Point3f origin;
+    Vec3f direction;
+    float penumbraRadius;
+    float umbraRadius;
+};
+
+struct LightingState
+{
+    LightingState() : nLights(0) { shadows[0] = NULL; };
+    unsigned int nLights;
+    DirectionalLight lights[MaxLights];
+    vector<EclipseShadow>* shadows[MaxLights];
+};
+
 class Renderer
 {
  public:
@@ -174,14 +205,6 @@ class Renderer
         float pad0, pad1, pad2;
     };
 
-    struct EclipseShadow
-    {
-        Point3f origin;
-        Vec3f direction;
-        float penumbraRadius;
-        float umbraRadius;
-    };
-
     struct RenderProperties
     {
         RenderProperties() :
@@ -192,7 +215,6 @@ class Renderer
             semiAxes(1.0f, 1.0f, 1.0f),
             model(InvalidResource),
             orientation(1.0f),
-            eclipseShadows(NULL),
             locations(NULL)
         {};
 
@@ -233,6 +255,7 @@ class Renderer
         Point3d position;
         Color color;
         float luminosity;
+        float radius;
     };
 
  private:
@@ -293,7 +316,6 @@ class Renderer
 
     void renderPlanet(Body& body,
                       Point3f pos,
-                      Vec3f sunDirection,
                       float distance,
                       float appMag,
                       double now,
@@ -310,7 +332,6 @@ class Renderer
 
     void renderCometTail(const Body& body,
                          Point3f pos,
-                         Vec3f sunDirection,
                          float distance,
                          float appMag,
                          double now,
@@ -341,7 +362,11 @@ class Renderer
                          const Quatf& orientation,
                          float scale);
 
-    bool testEclipse(const Body&, const Body&, double now);
+    bool testEclipse(const Body& receiver,
+                     const Body& caster,
+                     const DirectionalLight& light,
+                     double now,
+                     vector<EclipseShadow>& shadows);
 
     void labelGalaxies(const DeepSkyCatalog& catalog,
                        const Observer& observer);
@@ -400,7 +425,7 @@ class Renderer
     std::vector<Particle> glareParticles;
     std::vector<Label> labels;
     std::vector<Label> depthSortedLabels;
-    std::vector<EclipseShadow> eclipseShadows;
+    std::vector<EclipseShadow> eclipseShadows[MaxLights];
     std::vector<const Star*> nearStars;
 
     std::vector<LightSource> lightSources;

@@ -20,6 +20,8 @@ class ShaderProperties
     ShaderProperties();
     bool usesShadows() const;
     bool usesFragmentLighting() const;
+    unsigned int getShadowCountForLight(unsigned int) const;
+    void setShadowCountForLight(unsigned int, unsigned int);
 
  enum
  {
@@ -41,16 +43,28 @@ class ShaderProperties
     unsigned short nLights;
     unsigned short texUsage;
     unsigned short lightModel;
+
+    // Two bits per light, up to eight lights + three shadows per light
+    unsigned short shadowCounts;
 };
 
 
 static const int MaxShaderLights = 4;
+static const int MaxShaderShadows = 3;
 struct CelestiaGLProgramLight
 {
     Vec3ShaderParameter direction;
     Vec3ShaderParameter diffuse;
     Vec3ShaderParameter specular;
     Vec3ShaderParameter halfVector;
+};
+
+struct CelestiaGLProgramShadow
+{
+    Vec4ShaderParameter texGenS;
+    Vec4ShaderParameter texGenT;
+    FloatShaderParameter scale;
+    FloatShaderParameter bias;
 };
 
 class CelestiaGLProgram
@@ -70,6 +84,8 @@ class CelestiaGLProgram
 
     FloatShaderParameter ringWidth;
     FloatShaderParameter ringRadius;
+
+    CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderShadows];
     
  private:
     void initParameters(const ShaderProperties&);
