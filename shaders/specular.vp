@@ -44,9 +44,16 @@ DP3   R2.y, v[NRML], R4;
 ADD   R2.y, c[40].y, -R2.y;
 MUL   o[FOGC].x, R2.x, R2.y;
 
+# Compute the half angle vector for specular lighting
+ADD   R7, R4, c[16];
+DP3   R0.w, R7, R7;
+RSQ   R0.w, R0.w;
+MUL   R7, R0.w, R7;
+
 # Calculate the specular reflection
 MOV   R6.x, R2.x;
-DP3   R6.y, c[17], v[NRML];
+# DP3   R6.y, c[17], v[NRML];
+DP3   R6.y, R7, v[NRML];
 MAX   R6.y, R6, c[40].x;
 MOV   R6.w, c[40].w;
 
