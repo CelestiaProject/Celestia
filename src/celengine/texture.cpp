@@ -1060,28 +1060,28 @@ Texture* CreateJPEGTexture(const char* filename,
         delete cgJpegImage;
         return NULL;
     }
-#ifndef MACOSX_ALPHA_JPEGS
-    if (img_d == 1) {
-#endif /* !MACOSX_ALPHA_JPEGS */
-        memcpy((void*)tex->pixels,(void*)cgJpegImage->buffer->data,(unsigned int)(img_w * img_h * img_d));
-        delete cgJpegImage;
-        return tex;
-#ifndef MACOSX_ALPHA_JPEGS
-    }
-    // this could probably use a duffs, but it's probably not a bottleneck
+    // following code flips image and skips alpha byte if no alpha support
     unsigned char* bout = (unsigned char*)tex->pixels;
     unsigned char* bin  = (unsigned char*)cgJpegImage->buffer->data;
     unsigned int bcount = img_w * img_h * img_d;
     unsigned int i = 0;
-    for (i=0; i<bcount; ++i) {
-        if ((i&3)^3) {
-            *bout++ = *bin++;
-        } else {
+    bin += bcount+(img_w*img_d); // start one row past end
+    for (i=0; i<bcount; ++i)
+    {
+         // at end of row, move back two rows
+        if ( (i % (img_w * img_d)) == 0 ) bin -= 2*(img_w * img_d);
+
+#ifndef MACOSX_ALPHA_JPEGS
+        if (( (img_d != 1) && !((i&3)^3) )) // skip extra byte 
+        {
             ++bin;
-        }
-    }
+        } else 
+#endif // !MACOSX_ALPHA_JPEGS         
+
+        *bout++ = *bin++;
+    }    
+    delete cgJpegImage;
     return tex;
-#endif /* !MACOSX_ALPHA_JPEGS */
     
 #else
     return NULL;
