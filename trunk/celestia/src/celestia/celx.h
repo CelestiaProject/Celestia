@@ -43,17 +43,27 @@ public:
     void cleanup();
     bool isAlive() const;
     bool timesliceExpired();
+    void requestIO();
 
     bool charEntered(const char*);
     double getTime() const;
     int screenshotCount;
     double timeout;
+    
+    enum IOMode {
+        NoIO = 1,
+        Asking = 2,
+        IOAllowed = 4,
+        IODenied = 8
+    };
+
 private:
     lua_State* state;
     lua_State* costate; // coroutine stack
     bool alive;
     Timer* timer;
     double scriptAwakenTime;
+    IOMode ioMode;
 };
 
 View* getViewByObserver(CelestiaCore*, Observer*);

@@ -346,13 +346,37 @@ static void* CheckUserData(lua_State* l, int index, int id)
 }
 
 
+// Return the CelestiaCore object stored in the globals table
+static CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors = NoErrors)
+{
+    lua_pushstring(l, "celestia-appcore");
+    lua_gettable(l, LUA_REGISTRYINDEX);
+
+    if (!lua_islightuserdata(l, -1))
+    {
+        if (fatalErrors == NoErrors)
+            return NULL;
+        else
+        {
+            lua_pushstring(l, "internal error: invalid appCore");
+            lua_error(l);
+        }
+    }
+
+    CelestiaCore* appCore = static_cast<CelestiaCore*>(lua_touserdata(l, -1));
+    lua_pop(l, 1);
+    return appCore;
+}
+
+
 LuaState::LuaState() :
     timeout(MaxTimeslice),
     state(NULL),
     costate(NULL),
     alive(false),
     timer(NULL),
-    scriptAwakenTime(0.1)
+    scriptAwakenTime(0.1),
+    ioMode(NoIO)
 {
     state = lua_open();
     timer = CreateTimer();
@@ -381,32 +405,6 @@ double LuaState::getTime() const
     return timer->getTime();
 }
 
-// Callback for CelestiaCore::charEntered.
-// Returns true if keypress has been consumed 
-bool LuaState::charEntered(const char* c_p)
-{
-    int stack_top = lua_gettop(costate);
-    bool result = true;
-    lua_pushstring(costate, KbdCallback);
-    lua_gettable(costate, LUA_GLOBALSINDEX);
-    lua_pushstring(costate, c_p);
-    timeout = getTime() + 1.0;
-    if (lua_pcall(costate, 1, 1, 0) != 0)
-    {
-        cerr << "Error while executing keyboard-callback: " << lua_tostring(costate, -1) << "\n";
-        result = false;
-    }
-    else
-    {
-        if (lua_isboolean(costate, -1))
-        {
-            result = static_cast<bool>(lua_toboolean(costate, -1));
-        }
-    }
-    // cleanup stack - is this necessary?
-    lua_settop(costate, stack_top);
-    return result;
-}
 
 // Check if the running script has exceeded its allowed timeslice
 // and terminate it if it has:
@@ -440,6 +438,26 @@ static void checkTimeslice(lua_State *l, lua_Debug *ar)
 // allow the script to perform cleanup
 void LuaState::cleanup()
 {
+    if (ioMode == Asking)
+    {
+        // Restore renderflags:
+        CelestiaCore* appCore = getAppCore(costate, NoErrors);
+        if (appCore != NULL)
+        {
+            lua_pushstring(state, "celestia-savedrenderflags");
+            lua_gettable(state, LUA_REGISTRYINDEX);
+            if (lua_isuserdata(state, -1))
+            {
+                int* savedrenderflags = static_cast<int*>(lua_touserdata(state, -1));
+                appCore->getRenderer()->setRenderFlags(*savedrenderflags);
+                // now delete entry:
+                lua_pushstring(state, "celestia-savedrenderflags");
+                lua_pushnil(state);
+                lua_settable(state, LUA_REGISTRYINDEX);
+            }
+            lua_pop(state,1);
+        }
+    }
     lua_pushstring(costate, CleanupCallback);
     lua_gettable(costate, LUA_GLOBALSINDEX);
     if (lua_isnil(costate, -1))
@@ -571,26 +589,69 @@ static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
 }
 
 
-// Return the CelestiaCore object stored in the globals table
-static CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors = NoErrors)
+// Callback for CelestiaCore::charEntered.
+// Returns true if keypress has been consumed 
+bool LuaState::charEntered(const char* c_p)
 {
-    lua_pushstring(l, "celestia-appcore");
-    lua_gettable(l, LUA_REGISTRYINDEX);
-
-    if (!lua_islightuserdata(l, -1))
+    if (ioMode == Asking && getTime() > timeout)
     {
-        if (fatalErrors == NoErrors)
-            return NULL;
+        if (strcmp(c_p, "y") == 0)
+        {
+            luaopen_io(costate);
+            ioMode = IOAllowed;
+        }
         else
         {
-            lua_pushstring(l, "internal error: invalid appCore");
-            lua_error(l);
+            ioMode = IODenied;
+        }
+        CelestiaCore* appCore = getAppCore(costate, NoErrors);
+        if (appCore == NULL)
+        {
+            cerr << "ERROR: appCore not found\n";
+            return true;
+        }
+        appCore->setTextEnterMode(appCore->getTextEnterMode() & ~CelestiaCore::KbPassToScript);
+        appCore->showText("", 0, 0, 0, 0);
+        // Restore renderflags:
+        lua_pushstring(state, "celestia-savedrenderflags");
+        lua_gettable(state, LUA_REGISTRYINDEX);
+        if (lua_isuserdata(state, -1))
+        {
+            int* savedrenderflags = static_cast<int*>(lua_touserdata(state, -1));
+            appCore->getRenderer()->setRenderFlags(*savedrenderflags);
+            // now delete entry:
+            lua_pushstring(state, "celestia-savedrenderflags");
+            lua_pushnil(state);
+            lua_settable(state, LUA_REGISTRYINDEX);
+        }
+        else
+        {
+            cerr << "Oops, expected savedrenderflags to be userdata\n";
+        }
+        lua_pop(state,1);
+        return true;
+    }
+    int stack_top = lua_gettop(costate);
+    bool result = true;
+    lua_pushstring(costate, KbdCallback);
+    lua_gettable(costate, LUA_GLOBALSINDEX);
+    lua_pushstring(costate, c_p);
+    timeout = getTime() + 1.0;
+    if (lua_pcall(costate, 1, 1, 0) != 0)
+    {
+        cerr << "Error while executing keyboard-callback: " << lua_tostring(costate, -1) << "\n";
+        result = false;
+    }
+    else
+    {
+        if (lua_isboolean(costate, -1))
+        {
+            result = static_cast<bool>(lua_toboolean(costate, -1));
         }
     }
-
-    CelestiaCore* appCore = static_cast<CelestiaCore*>(lua_touserdata(l, -1));
-    lua_pop(l, 1);
-    return appCore;
+    // cleanup stack - is this necessary?
+    lua_settop(costate, stack_top);
+    return result;
 }
 
 
@@ -696,6 +757,53 @@ bool LuaState::tick(double dt)
     // getErrorMessage()
     if (!isAlive())
         return false;
+    
+    if (ioMode == Asking)
+    {
+        CelestiaCore* appCore = getAppCore(costate, NoErrors);
+        if (appCore == NULL)
+        {
+            cerr << "ERROR: appCore not found\n";
+            return true;
+        }
+        lua_pushstring(state, "celestia-savedrenderflags");
+        lua_gettable(state, LUA_REGISTRYINDEX);
+        if (lua_isnil(state, -1))
+        {
+            cerr << "renderflags not found, saving\n";
+            lua_pushstring(state, "celestia-savedrenderflags");
+            int* savedrenderflags = static_cast<int*>(lua_newuserdata(state, sizeof(int)));
+            *savedrenderflags = appCore->getRenderer()->getRenderFlags();
+            lua_settable(state, LUA_REGISTRYINDEX);
+            appCore->getRenderer()->setRenderFlags(0);
+        }
+        // now pop result of gettable
+        lua_pop(state, 1);
+
+        if (getTime() > timeout)
+        {
+            appCore->showText("WARNING:\n\nThis script requests permission to read/write files\n"
+                              "and execute external programs. Allowing this can be\n"
+                              "dangerous.\n"
+                              "Do you trust the script and want to allow this?\n\n"
+                              "y = yes, ESC = cancel script, any other key = no",
+                              0, 0,
+                              -15, 5, 5);
+            appCore->setTextEnterMode(appCore->getTextEnterMode() | CelestiaCore::KbPassToScript);
+        }
+        else
+        {
+            appCore->showText("WARNING:\n\nThis script requests permission to read/write files\n"
+                              "and execute external programs. Allowing this can be\n"
+                              "dangerous.\n"
+                              "Do you trust the script and want to allow this?",
+                              0, 0,
+                              -15, 5, 5);
+            appCore->setTextEnterMode(appCore->getTextEnterMode() & ~CelestiaCore::KbPassToScript);
+        }
+
+        return false;
+    }
 
     if (scriptAwakenTime > getTime())
         return false;
@@ -726,6 +834,23 @@ bool LuaState::tick(double dt)
     }
 }
 
+
+void LuaState::requestIO()
+{
+    // the script requested IO, set the mode
+    // so we display the warning during tick
+    // and can request keyboard. We can't do this now
+    // because the script is still active and could
+    // disable keyboard again.
+    if (ioMode == NoIO)
+    {
+        ioMode = Asking;
+    
+        // timeout now is used to first only display warning, and 1s
+        // later allow response to avoid accidental activation
+        timeout = getTime() + 1.0;
+    }
+}
 
 // Check if the number of arguments on the stack matches
 // the allowed range [minArgs, maxArgs]. Cause an error if not. 
@@ -2244,10 +2369,16 @@ static int object_preloadtexture(lua_State* l)
 
     Renderer* renderer = appCore->getRenderer();
     Selection* sel = this_object(l);
-    if (sel->body() != NULL)
+    if (sel->body() != NULL && renderer != NULL)
     {
-        if (renderer != NULL)
-            renderer->loadTextures(sel->body());
+        LuaState* luastate = getLuaStateObject(l);
+        // make sure we don't timeout because of texture-loading:
+        double timeToTimeout = luastate->timeout - luastate->getTime();
+
+        renderer->loadTextures(sel->body());
+
+        // no matter how long it really took, make it look like 0.1s:
+        luastate->timeout = luastate->getTime() + timeToTimeout - 0.1;
     }
     return 0;
 }
@@ -4294,6 +4425,15 @@ static int celestia_createcelscript(lua_State* l)
     return celscript_from_string(l, scripttext);
 }
 
+static int celestia_requestsystemaccess(lua_State* l)
+{
+    checkArgs(l, 1, 1, "Need one argument for celestia:createcelscript()");
+    this_celestia(l);
+    LuaState* luastate = getLuaStateObject(l);
+    luastate->requestIO();
+    return 0;
+}
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -4355,6 +4495,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "requestkeyboard", celestia_requestkeyboard);
     RegisterMethod(l, "takescreenshot", celestia_takescreenshot);
     RegisterMethod(l, "createcelscript", celestia_createcelscript);
+    RegisterMethod(l, "requestsystemaccess", celestia_requestsystemaccess);
 
     lua_pop(l, 1);
 }
