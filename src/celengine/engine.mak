@@ -52,6 +52,7 @@ OBJS=\
 	$(INTDIR)\texture.obj \
 	$(INTDIR)\tokenizer.obj \
 	$(INTDIR)\univcoord.obj \
+	$(INTDIR)\universe.obj \
 	$(INTDIR)\vertexlist.obj \
 	$(INTDIR)\vertexprog.obj
 
