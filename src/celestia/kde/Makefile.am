@@ -21,7 +21,7 @@ noinst_HEADERS = $(wildcard *.h)
 
 INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
 
-libkdegui_a_SOURCES = $(KDE_SOURCES) \
+libkdegui_a_SOURCES = \
                  kdeapp.moc.cpp \
                  eclipsefinderdlgbase.uic.h \
                  eclipsefinderdlgbase.uic.cpp \
@@ -36,7 +36,8 @@ libkdegui_a_SOURCES = $(KDE_SOURCES) \
                  kdeuniquecelestia.moc.cpp \
                  kcelbookmarkmenu.moc.cpp \
                  kcelbookmarkmanager.moc.cpp \
-                 selectionpopup.moc.cpp
+                 selectionpopup.moc.cpp \
+                 $(KDE_SOURCES)
                           
 SUBDIRS = data doc po
 
