@@ -63,10 +63,12 @@ static Texture* glareTex = NULL;
 static Texture* galaxyTex = NULL;
 static Texture* shadowTex = NULL;
 
-static Texture* starTexB = NULL;
-static Texture* starTexA = NULL;
-static Texture* starTexG = NULL;
-static Texture* starTexM = NULL;
+static ResourceHandle starTexB = InvalidResource;
+static ResourceHandle starTexA = InvalidResource;
+static ResourceHandle starTexG = InvalidResource;
+static ResourceHandle starTexM = InvalidResource;
+
+static const float CoronaHeight = 0.2f;
 
 static bool isGF3 = false;
 
@@ -173,6 +175,9 @@ static void IllumMapEval(float x, float y, float z,
     Vec3f v(x, y, z);
     Vec3f n(0, 0, 1);
     Vec3f u(0, 0, 1);
+
+#if 0
+    // Experimental illumination function
     float c = v * n;
     if (c < 0.0f)
     {
@@ -184,6 +189,9 @@ static void IllumMapEval(float x, float y, float z,
         u = v + (c * n);
         u.normalize();
     }
+#else
+    u = v;
+#endif
 
     pixel[0] = 128 + (int) (127 * u.x);
     pixel[1] = 128 + (int) (127 * u.y);
@@ -235,18 +243,10 @@ bool Renderer::init(int winWidth, int winHeight)
         shadowTex = CreateProceduralTexture(256, 256, GL_RGB, ShadowTextureEval);
         shadowTex->bindName();
 
-        starTexB = CreateJPEGTexture("textures/bstar.jpg");
-        if (starTexB != NULL)
-            starTexB->bindName();
-        starTexA = CreateJPEGTexture("textures/astar.jpg");
-        if (starTexA != NULL)
-            starTexA->bindName();
-        starTexG = CreateJPEGTexture("textures/gstar.jpg");
-        if (starTexG != NULL)
-            starTexG->bindName();
-        starTexM = CreateJPEGTexture("textures/mstar.jpg");
-        if (starTexM != NULL)
-            starTexM->bindName();
+        starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg"));
+        starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg"));
+        starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg"));
+        starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg"));
 
         // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
@@ -887,7 +887,7 @@ void Renderer::render(const Observer& observer,
             else if (iter->star != NULL)
             {
                 radius = iter->star->getRadius();
-                cullRadius = radius;
+                cullRadius = radius * (1.0f + CoronaHeight);
             }
 
             // Test the object's bounding sphere against the view frustum
@@ -1193,8 +1193,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
 }
 
 
-static void renderBumpMappedMesh(Mesh& mesh,
-                                 Texture& bumpTexture,
+static void renderBumpMappedMesh(Texture& bumpTexture,
                                  Vec3f lightDirection,
                                  Quatf orientation,
                                  Color ambientColor,
@@ -1207,7 +1206,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
     // Render the base texture on the first pass . . .  The base
     // texture and color should have been set up already by the
     // caller.
-    mesh.render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
+    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
 
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
@@ -1270,7 +1269,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    mesh.render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
+    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
 
     // Reset the second texture unit
     glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1286,8 +1285,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
 }
 
 
-static void renderSmoothMesh(Mesh& mesh,
-                             Texture& baseTexture,
+static void renderSmoothMesh(Texture& baseTexture,
                              Vec3f lightDirection,
                              Quatf orientation,
                              Color ambientColor,
@@ -1355,7 +1353,7 @@ static void renderSmoothMesh(Mesh& mesh,
     glMatrixMode(GL_MODELVIEW);
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    mesh.render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
+    lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod);
 
     // Reset the second texture unit
     glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1414,7 +1412,8 @@ void renderAtmosphere(const Atmosphere& atmosphere,
                       float radius,
                       const Vec3f& sunDirection,
                       Color ambientColor,
-                      float fade)
+                      float fade,
+                      bool lit)
 {
     if (atmosphere.height == 0.0f)
         return;
@@ -1473,7 +1472,7 @@ void renderAtmosphere(const Atmosphere& atmosphere,
         topColor[1] = atmosphere.upperColor.green();
         topColor[2] = atmosphere.upperColor.blue();
 
-        if (cosSunAngle < 0.2f)
+        if (cosSunAngle < 0.2f && lit)
         {
             if (cosSunAngle < -0.2f)
             {
@@ -1514,9 +1513,13 @@ static void setupNightTextureCombine()
 
 
 static void renderMeshDefault(Mesh* mesh,
-                              const RenderInfo& ri)
+                              const RenderInfo& ri,
+                              bool lit)
 {
-    glEnable(GL_LIGHTING);
+    if (lit)
+        glEnable(GL_LIGHTING);
+    else
+        glDisable(GL_LIGHTING);
 
     if (ri.baseTex == NULL)
     {
@@ -1535,9 +1538,13 @@ static void renderMeshDefault(Mesh* mesh,
 
 
 static void renderPlanetDefault(const RenderInfo& ri,
-                                const Frustum& frustum)
+                                const Frustum& frustum,
+                                bool lit)
 {
-    glEnable(GL_LIGHTING);
+    if (lit)
+        glEnable(GL_LIGHTING);
+    else
+        glDisable(GL_LIGHTING);
 
     if (ri.baseTex == NULL)
     {
@@ -1583,8 +1590,7 @@ static void renderPlanetFragmentShader(const RenderInfo& ri,
 
     if (ri.bumpTex != NULL)
     {
-        renderBumpMappedMesh(*lodSphere,
-                             *(ri.bumpTex),
+        renderBumpMappedMesh(*(ri.bumpTex),
                              ri.sunDir_eye,
                              ri.orientation,
                              ri.ambientColor,
@@ -1593,8 +1599,7 @@ static void renderPlanetFragmentShader(const RenderInfo& ri,
     }
     else if (ri.baseTex != NULL)
     {
-        renderSmoothMesh(*lodSphere,
-                         *(ri.baseTex),
+        renderSmoothMesh(*(ri.baseTex),
                          ri.sunDir_eye,
                          ri.orientation,
                          ri.ambientColor,
@@ -1605,8 +1610,7 @@ static void renderPlanetFragmentShader(const RenderInfo& ri,
             ri.nightTex->bind();
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE);
-            renderSmoothMesh(*lodSphere,
-                             *(ri.nightTex),
+            renderSmoothMesh(*(ri.nightTex),
                              ri.sunDir_eye, 
                              ri.orientation,
                              ri.ambientColor,
@@ -1618,7 +1622,7 @@ static void renderPlanetFragmentShader(const RenderInfo& ri,
     else
     {
         glEnable(GL_LIGHTING);
-        lodSphere->render(ri.lod);
+        lodSphere->render(frustum, ri.lod);
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -1749,6 +1753,436 @@ static float getSphereLOD(float discSizeInPixels)
 }
 
 
+struct RenderProperties
+{
+    RenderProperties() : surface(NULL),
+                         atmosphere(NULL),
+                         rings(NULL),
+                         radius(1.0f),
+                         oblateness(0.0f),
+                         mesh(InvalidResource),
+                         orientation(1.0f)
+    {};
+
+    Surface* surface;
+    Atmosphere* atmosphere;
+    RingSystem* rings;
+    RotationElements re;
+    float radius;
+    float oblateness;
+    ResourceHandle mesh;
+    Quatf orientation;
+};
+
+
+void Renderer::renderObject(Point3f pos,
+                            float distance,
+                            double now,
+                            Quatf cameraOrientation,
+                            float nearPlaneDistance,
+                            float farPlaneDistance,
+                            Vec3f sunDirection,
+                            Color sunColor,
+                            RenderProperties& obj)
+{
+    RenderInfo ri;
+
+    float altitude = distance - obj.radius;
+    float discSizeInPixels = obj.radius /
+        (max(nearPlaneDistance, altitude) * pixelSize);
+
+    // Enable depth buffering
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+
+    glDisable(GL_BLEND);
+
+    // Get the textures . . .
+    TextureManager* textureManager = GetTextureManager();
+    if (obj.surface->baseTexture != InvalidResource)
+        ri.baseTex = textureManager->find(obj.surface->baseTexture);
+    if ((obj.surface->appearanceFlags & Surface::ApplyBumpMap) != 0 &&
+        (fragmentShaderEnabled && useRegisterCombiners && useCubeMaps) &&
+        obj.surface->bumpTexture != InvalidResource)
+        ri.bumpTex = textureManager->find(obj.surface->bumpTexture);
+    if ((obj.surface->appearanceFlags & Surface::ApplyNightMap) != 0 &&
+        (renderFlags & ShowNightMaps) != 0)
+        ri.nightTex = textureManager->find(obj.surface->nightTexture);
+
+    // Apply the modelview transform for the object
+    glPushMatrix();
+    glTranslate(pos);
+    glRotate(~obj.orientation);
+
+    double rotation = 0.0;
+    // Watch out for the precision limits of floats when computing
+    // rotation . . .
+    {
+        double rotations = (now - obj.re.epoch) / (double) obj.re.period;
+        double wholeRotations = floor(rotations);
+        double remainder = rotations - wholeRotations;
+
+        // Add an extra half rotation because of the convention in all
+        // planet texture maps where zero deg long. is in the middle of
+        // the texture.
+        remainder += 0.5;
+
+        rotation = remainder * 2 * PI + obj.re.offset;
+        glRotatef((float) (remainder * 360.0 + radToDeg(obj.re.offset)),
+                  0, 1, 0);
+    }
+
+    // Apply a scale factor which depends on the size of the planet and
+    // its oblateness.  Since the oblateness is usually quite
+    // small, the potentially nonuniform scale factor shouldn't mess up
+    // the lighting calculations enough to be noticeable.
+    // TODO:  Figure out a better way to render ellipsoids than applying
+    // a nonunifom scale factor to a sphere . . . it makes me nervous.
+    float radius = obj.radius;
+    glScalef(radius, radius * (1.0f - obj.oblateness), radius);
+
+    // Compute the direction to the eye and light source in object space
+    Mat4f planetMat = ((~obj.orientation).toMatrix4() *
+                       Mat4f::yrotation((float) rotation));
+    ri.sunDir_eye = sunDirection;
+    ri.sunDir_eye.normalize();
+    ri.sunDir_obj = ri.sunDir_eye * planetMat;
+    ri.eyeDir_obj = (Point3f(0, 0, 0) - pos) * planetMat;
+    ri.eyeDir_obj.normalize();
+    ri.eyePos_obj = Point3f(-pos.x, -pos.y, -pos.z) * planetMat;
+    ri.orientation = cameraOrientation;
+
+    ri.lod = getSphereLOD(discSizeInPixels);
+
+    // Set up the colors
+    if (ri.baseTex == NULL ||
+        (obj.surface->appearanceFlags & Surface::BlendTexture) != 0)
+    {
+        ri.color = obj.surface->color;
+    }
+
+    ri.sunColor = sunColor;
+    ri.ambientColor = ambientColor * ri.sunColor;
+    ri.hazeColor = obj.surface->hazeColor;
+    ri.specularColor = obj.surface->specularColor;
+    ri.specularPower = obj.surface->specularPower;
+    ri.useTexEnvCombine = useTexEnvCombine;
+
+    // See if the surface should be lit
+    bool lit = (obj.surface->appearanceFlags & Surface::Emissive) == 0;
+
+    // Set up the light source for the sun
+    glLightDirection(GL_LIGHT0, ri.sunDir_obj);
+
+    // RANT ALERT!
+    // This sucks, but it's necessary.  glScale is used to scale a unit
+    // sphere up to planet size.  Since normals are transformed by the
+    // inverse transpose of the model matrix, this means they end up
+    // getting scaled by a factor of 1.0 / planet radius (in km).  This
+    // has terrible effects on lighting: the planet appears almost
+    // completely dark.  To get around this, the GL_rescale_normal
+    // extension was introduced and eventually incorporated into into the
+    // OpenGL 1.2 standard.  Of course, not everyone implemented this
+    // incredibly simple and essential little extension.  Microsoft is
+    // notorious for half-assed support of OpenGL, but 3dfx should have
+    // known better: no Voodoo 1/2/3 drivers seem to support this
+    // extension.  The following is an attempt to get around the problem by
+    // scaling the light brightness by the planet radius.  According to the
+    // OpenGL spec, this should work fine, as clamping of colors to [0, 1]
+    // occurs *after* lighting.  It works fine on my GeForce3 when I
+    // disable EXT_rescale_normal, but I'm not certain whether other
+    // drivers are as well behaved as nVidia's.
+    //
+    // Addendum: Unsurprisingly, using color values outside [0, 1] produces
+    // problems on Savage4 cards.
+    //
+    if (useRescaleNormal)
+    {
+        glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
+        glLightColor(GL_LIGHT0, GL_SPECULAR, ri.sunColor);
+    }
+    else
+    {
+        glLightColor(GL_LIGHT0, GL_DIFFUSE,
+                     Vec3f(ri.sunColor.red(), ri.sunColor.green(), ri.sunColor.blue()) * radius);
+    }
+    glEnable(GL_LIGHT0);
+
+    // Compute the inverse model/view matrix
+    Mat4f invMV = (cameraOrientation.toMatrix4() *
+                   Mat4f::translation(Point3f(-pos.x, -pos.y, -pos.z)) *
+                   planetMat *
+                   Mat4f::scaling(1.0f / radius));
+
+    // Transform the frustum into object coordinates using the
+    // inverse model/view matrix.
+    Frustum viewFrustum(degToRad(fov),
+                        (float) windowWidth / (float) windowHeight,
+                        nearPlaneDistance, farPlaneDistance);
+    viewFrustum.transform(invMV);
+
+    if (obj.mesh == InvalidResource)
+    {
+        // This is a spherical mesh
+        // Currently, there are three different rendering paths:
+        //   1. Generic OpenGL 1.1
+        //   2. OpenGL 1.2 + nVidia register combiners
+        //   3. OpenGL 1.2 + nVidia register combiners + vertex programs
+        // Unfortunately, this means that unless you've got a GeForce card,
+        // you'll miss out on a lot of the eye candy . . .
+        if (lit)
+        {
+            if (fragmentShaderEnabled && vertexShaderEnabled)
+                renderPlanetVertexAndFragmentShader(ri, viewFrustum);
+            else if (fragmentShaderEnabled && !vertexShaderEnabled)
+                renderPlanetFragmentShader(ri, viewFrustum);
+            else
+                renderPlanetDefault(ri, viewFrustum, true);
+        }
+        else
+        {
+            renderPlanetDefault(ri, viewFrustum, false);
+        }
+    }
+    else
+    {
+        // This is a mesh loaded from a file
+        Mesh* mesh = GetMeshManager()->find(obj.mesh);
+        if (mesh != NULL)
+            renderMeshDefault(mesh, ri, lit);
+    }
+
+    if (obj.atmosphere != NULL)
+    {
+        const Atmosphere* atmosphere = obj.atmosphere;
+
+        // Compute the apparent thickness in pixels of the atmosphere.
+        // If it's only one pixel thick, it can look quite unsightly
+        // due to aliasing.  To avoid popping, we gradually fade in the
+        // atmosphere as it grows from two to three pixels thick.
+        float fade;
+        if (distance - radius > 0.0f)
+        {
+            float thicknessInPixels = atmosphere->height /
+                ((distance - radius) * pixelSize);
+            fade = clamp(thicknessInPixels - 2);
+        }
+        else
+        {
+            fade = 1.0f;
+        }
+
+        if (fade > 0 && (renderFlags & ShowAtmospheres) != 0)
+        {
+            glPushMatrix();
+            glLoadIdentity();
+            glDisable(GL_LIGHTING);
+            glDisable(GL_TEXTURE_2D);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            renderAtmosphere(*atmosphere,
+                             pos * (~cameraOrientation).toMatrix3(),
+                             radius,
+                             ri.sunDir_eye * (~cameraOrientation).toMatrix3(),
+                             ri.ambientColor,
+                             fade,
+                             lit);
+            glEnable(GL_TEXTURE_2D);
+            glPopMatrix();
+        }
+
+        // If there's a cloud layer, we'll render it now.
+        Texture* cloudTex = NULL;
+        if ((renderFlags & ShowCloudMaps) != 0 &&
+            atmosphere->cloudTex != InvalidResource)
+            cloudTex = textureManager->find(atmosphere->cloudTex);
+
+        if (cloudTex != NULL)
+        {
+            glPushMatrix();
+            float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
+            glScalef(cloudScale, cloudScale, cloudScale);
+
+            // If we're beneath the cloud level, render the interior of
+            // the cloud sphere.
+            if (distance - radius < atmosphere->cloudHeight)
+                glFrontFace(GL_CW);
+
+            if (atmosphere->cloudSpeed != 0.0f)
+            {
+                // Make the clouds appear to rotate above the surface of
+                // the planet.  This is easier to do with the texture
+                // matrix than the model matrix because changing the
+                // texture matrix doesn't require us to compute a second
+                // set of model space rendering parameters.
+                glMatrixMode(GL_TEXTURE);
+                glTranslatef(-pfmod(now * atmosphere->cloudSpeed / (2*PI),
+                                    1.0), 0, 0);
+                glMatrixMode(GL_MODELVIEW);
+            }
+
+            glEnable(GL_LIGHTING);
+            glDepthMask(GL_FALSE);
+            cloudTex->bind();
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glColor4f(1, 1, 1, 1);
+            lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+                              viewFrustum,
+                              ri.lod);
+
+            // Reset the texture matrix
+            glMatrixMode(GL_TEXTURE);
+            glLoadIdentity();
+            glMatrixMode(GL_MODELVIEW);
+
+            glDepthMask(GL_TRUE);
+            glFrontFace(GL_CCW);
+            glPopMatrix();
+        }
+    }
+
+    // If the planet has a ring system, render it.
+    if (obj.rings != NULL)
+    {
+        RingSystem* rings = obj.rings;
+        float inner = rings->innerRadius / radius;
+        float outer = rings->outerRadius / radius;
+        int nSections = 100;
+
+        // Ring Illumination:
+        // Since a ring system is composed of millions of individual
+        // particles, it's not at all realistic to model it as a flat
+        // Lambertian surface.  We'll approximate the llumination
+        // function by assuming that the ring system contains Lambertian
+        // particles, and that the brightness at some point in the ring
+        // system is proportional to the illuminated fraction of a
+        // particle there.  In fact, we'll simplify things further and
+        // set the illumination of the entire ring system to the same
+        // value, computing the illuminated fraction of a hypothetical
+        // particle located at the center of the planet.  This
+        // approximation breaks down when you get close to the planet.
+        float ringIllumination = 0.0f;
+        {
+            float illumFraction = (1.0f + ri.eyeDir_obj * ri.sunDir_obj) / 2.0f;
+            // Just use the illuminated fraction for now . . .
+            ringIllumination = illumFraction;
+        }
+
+        // If we have multi-texture support, we'll use the second texture unit
+        // to render the shadow of the planet on the rings.  This is a bit of
+        // a hack, and assumes that the planet is nearly spherical in shape,
+        // and only works for a planet illuminated by a single sun where the
+        // distance to the sun is very large relative to its diameter.
+        if (nSimultaneousTextures > 1)
+        {
+            glActiveTextureARB(GL_TEXTURE1_ARB);
+            glEnable(GL_TEXTURE_2D);
+            shadowTex->bind();
+
+            float sPlane[4] = { 0, 0, 0, 0.5f };
+            float tPlane[4] = { 0, 0, 0, 0.5f };
+
+            // Compute the projection vectors based on the sun direction.
+            // I'm being a little careless here--if the sun direction lies
+            // along the y-axis, this will fail.  It's unlikely that a
+            // planet would ever orbit underneath its sun (an orbital
+            // inclination of 90 degrees), but this should be made
+            // more robust anyway.
+            float scale = rings->innerRadius / radius;
+            Vec3f axis = Vec3f(0, 1, 0) ^ ri.sunDir_obj;
+            float angle = (float) acos(Vec3f(0, 1, 0) * ri.sunDir_obj);
+            Mat4f mat = Mat4f::rotation(axis, -angle);
+            Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+            Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+            sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
+            tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
+
+            glEnable(GL_TEXTURE_GEN_S);
+            glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+            glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
+            glEnable(GL_TEXTURE_GEN_T);
+            glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+            glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
+
+            glActiveTextureARB(GL_TEXTURE0_ARB);
+        }
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        Texture* ringsTex = GetTextureManager()->find(rings->texture);
+
+        if (ringsTex != NULL)
+            ringsTex->bind();
+        else
+            glDisable(GL_TEXTURE_2D);
+        
+        // Perform our own lighting for the rings.
+        // TODO: Don't forget about light source color (required when we
+        // paying attention to star color.)
+        glDisable(GL_LIGHTING);
+        {
+            Vec3f litColor(rings->color.red(), rings->color.green(), rings->color.blue());
+            litColor = litColor * ringIllumination + Vec3f(1, 1, 1) * ambientLightLevel;
+            glColor4f(litColor.x, litColor.y, litColor.z, 1.0f);
+        }
+
+        // This gets tricky . . .  we render the rings in two parts.  One
+        // part is potentially shadowed by the planet, and we need to
+        // render that part with the projected shadow texture enabled.
+        // The other part isn't shadowed, but will appear so if we don't
+        // first disable the shadow texture.  The problem is that the
+        // shadow texture will affect anything along the line between the
+        // sun and the planet, regardless of whether it's in front or
+        // behind the planet.
+
+        // Compute the angle of the sun projected on the ring plane
+        float sunAngle = (float) atan2(ri.sunDir_obj.z, ri.sunDir_obj.x);
+
+        renderRingSystem(inner, outer,
+                         (float) (sunAngle + PI / 2),
+                         (float) (sunAngle + 3 * PI / 2),
+                         nSections / 2);
+        // glNormal3f(0, -1, 0);
+        renderRingSystem(inner, outer,
+                         (float) (sunAngle +  3 * PI / 2),
+                         (float) (sunAngle + PI / 2),
+                         nSections / 2);
+
+        // Disable the second texture unit if it was used
+        if (nSimultaneousTextures > 1)
+        {
+            glActiveTextureARB(GL_TEXTURE1_ARB);
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_TEXTURE_GEN_S);
+            glDisable(GL_TEXTURE_GEN_T);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
+        }
+
+        // Render the unshadowed side
+        // glNormal3f(0, 1, 0);
+        renderRingSystem(inner, outer,
+                         (float) (sunAngle - PI / 2),
+                         (float) (sunAngle + PI / 2),
+                         nSections / 2);
+        // glNormal3f(0, -1, 0);
+        renderRingSystem(inner, outer,
+                         (float) (sunAngle + PI / 2),
+                         (float) (sunAngle - PI / 2),
+                         nSections / 2);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    }
+
+    glPopMatrix();
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glDisable(GL_LIGHTING);
+    glEnable(GL_BLEND);
+}
+
+
 void Renderer::renderPlanet(const Body& body,
                             Point3f pos,
                             Vec3f sunDirection,
@@ -1765,90 +2199,22 @@ void Renderer::renderPlanet(const Body& body,
 
     if (discSizeInPixels > 1)
     {
-        RenderInfo ri;
+        RenderProperties rp;
 
-        // Enable depth buffering
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-
-        glDisable(GL_BLEND);
-
-        const Surface& surface = body.getSurface();
-
-        // Get the textures . . .
-        TextureManager* textureManager = GetTextureManager();
-        if (surface.baseTexture != InvalidResource)
-            ri.baseTex = textureManager->find(surface.baseTexture);
-        if ((surface.appearanceFlags & Surface::ApplyBumpMap) != 0 &&
-            (fragmentShaderEnabled && useRegisterCombiners && useCubeMaps) &&
-            surface.bumpTexture != InvalidResource)
-            ri.bumpTex = textureManager->find(surface.bumpTexture);
-        if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0 &&
-            (renderFlags & ShowNightMaps) != 0)
-            ri.nightTex = textureManager->find(surface.nightTexture);
+        rp.surface = &body.getSurface();
+        rp.atmosphere = body.getAtmosphere();
+        rp.rings = body.getRings();
+        rp.radius = body.getRadius();
+        rp.oblateness = body.getOblateness();
+        rp.mesh = body.getMesh();
+        rp.re = body.getRotationElements();
 
         // Compute the orientation of the planet before axial rotation
-        Quatf planetOrientation(1);
-        {
-            Quatd q = body.getEclipticalToEquatorial();
-            planetOrientation = Quatf((float) q.w, (float) q.x, (float) q.y,
-                                      (float) q.z);
-        }
-        
-        // Apply the modelview transform for the body
-        glPushMatrix();
-        glTranslate(pos);
-        glRotate(~planetOrientation);
+        Quatd q = body.getEclipticalToEquatorial();
+        rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y,
+                               (float) q.z);
 
-        double planetRotation = 0.0;
-        // Watch out for the precision limits of floats when computing planet
-        // rotation . . .
-        {
-            RotationElements re = body.getRotationElements();
-            double rotations = (now - re.epoch) / (double) re.period;
-            double wholeRotations = floor(rotations);
-            double remainder = rotations - wholeRotations;
-
-            // Add an extra half rotation because of the convention in all
-            // planet texture maps where zero deg long. is in the middle of
-            // the texture.
-            remainder += 0.5;
-
-            planetRotation = remainder * 2 * PI + re.offset;
-            glRotatef((float) (remainder * 360.0 + radToDeg(re.offset)),
-                      0, 1, 0);
-        }
-
-        // Apply a scale factor which depends on the size of the planet and
-        // its oblateness.  Since the oblateness is usually quite
-        // small, the potentially nonuniform scale factor shouldn't mess up
-        // the lighting calculations enough to be noticeable.
-        // TODO:  Figure out a better way to render ellipsoids than applying
-        // a nonunifom scale factor to a sphere . . . it makes me nervous.
-        float radius = body.getRadius();
-        glScalef(radius, radius * (1.0f - body.getOblateness()), radius);
-
-        // Compute the direction to the eye and light source in object space
-        Mat4f planetMat = ((~planetOrientation).toMatrix4() *
-                           Mat4f::yrotation((float) planetRotation));
-        ri.sunDir_eye = sunDirection;
-        ri.sunDir_eye.normalize();
-        ri.sunDir_obj = ri.sunDir_eye * planetMat;
-        ri.eyeDir_obj = (Point3f(0, 0, 0) - pos) * planetMat;
-        ri.eyeDir_obj.normalize();
-        ri.eyePos_obj = Point3f(-pos.x, -pos.y, -pos.z) * planetMat;
-        ri.orientation = orientation;
-
-        ri.lod = getSphereLOD(discSizeInPixels);
-
-        // Set up the colors
-        if (ri.baseTex == NULL ||
-            (surface.appearanceFlags & Surface::BlendTexture) != 0)
-        {
-            ri.color = surface.color;
-        }
-
-        ri.sunColor = Color(1.0f, 1.0f, 1.0f);
+        Color sunColor(1.0f, 1.0f, 1.0f);
         {
             // If the star is sufficiently cool, change the light color
             // from white.  Though our sun appears yellow, we still make
@@ -1864,335 +2230,31 @@ void Renderer::renderPlanet(const Body& body,
                 switch (sun->getStellarClass().getSpectralClass())
                 {
                 case StellarClass::Spectral_O:
-                    ri.sunColor = Color(0.8f, 0.8f, 1.0f);
+                    sunColor = Color(0.8f, 0.8f, 1.0f);
                     break;
                 case StellarClass::Spectral_B:
-                    ri.sunColor = Color(0.9f, 0.9f, 1.0f);
+                    sunColor = Color(0.9f, 0.9f, 1.0f);
                     break;
                 case StellarClass::Spectral_K:
-                    ri.sunColor = Color(1.0f, 0.9f, 0.8f);
+                    sunColor = Color(1.0f, 0.9f, 0.8f);
                     break;
                 case StellarClass::Spectral_M:
                 case StellarClass::Spectral_R:
                 case StellarClass::Spectral_S:
                 case StellarClass::Spectral_N:
-                    ri.sunColor = Color(1.0f, 0.7f, 0.7f);
+                    sunColor = Color(1.0f, 0.7f, 0.7f);
                     break;
-		default:
-		    // Default case to keep gcc from compaining about unhandled
-		    // switch values.
-		    break;
+                default:
+                    // Default case to keep gcc from compaining about unhandled
+                    // switch values.
+                    break;
                 }
             }
         }
-            
-        ri.ambientColor = ambientColor * ri.sunColor;
-        ri.hazeColor = surface.hazeColor;
-        ri.specularColor = surface.specularColor;
-        ri.specularPower = surface.specularPower;
-        ri.useTexEnvCombine = useTexEnvCombine;
 
-        // Set up the light source for the sun
-        glLightDirection(GL_LIGHT0, ri.sunDir_obj);
-
-        // RANT ALERT!
-        // This sucks, but it's necessary.  glScale is used to scale a unit
-        // sphere up to planet size.  Since normals are transformed by the
-        // inverse transpose of the model matrix, this means they end up
-        // getting scaled by a factor of 1.0 / planet radius (in km).  This
-        // has terrible effects on lighting: the planet appears almost
-        // completely dark.  To get around this, the GL_rescale_normal
-        // extension was introduced and eventually incorporated into into the
-        // OpenGL 1.2 standard.  Of course, not everyone implemented this
-        // incredibly simple and essential little extension.  Microsoft is
-        // notorious for half-assed support of OpenGL, but 3dfx should have
-        // known better: no Voodoo 1/2/3 drivers seem to support this
-        // extension.  The following is an attempt to get around the problem by
-        // scaling the light brightness by the planet radius.  According to the
-        // OpenGL spec, this should work fine, as clamping of colors to [0, 1]
-        // occurs *after* lighting.  It works fine on my GeForce3 when I
-        // disable EXT_rescale_normal, but I'm not certain whether other
-        // drivers are as well behaved as nVidia's.
-        //
-        // Addendum: Unsurprisingly, using color values outside [0, 1] produces
-        // problems on Savage4 cards.
-        //
-        if (useRescaleNormal)
-        {
-            glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
-            glLightColor(GL_LIGHT0, GL_SPECULAR, ri.sunColor);
-        }
-        else
-        {
-            glLightColor(GL_LIGHT0, GL_DIFFUSE,
-                         Vec3f(ri.sunColor.red(), ri.sunColor.green(), ri.sunColor.blue()) * radius);
-        }
-        glEnable(GL_LIGHT0);
-
-        // Compute the inverse model/view matrix
-        Mat4f invMV = (orientation.toMatrix4() *
-                       Mat4f::translation(Point3f(-pos.x, -pos.y, -pos.z)) *
-                       planetMat *
-                       Mat4f::scaling(1.0f / radius));
-
-        // Transform the frustum into object coordinates using the
-        // inverse model/view matrix.
-        Frustum viewFrustum(degToRad(fov),
-                            (float) windowWidth / (float) windowHeight,
-                            nearPlaneDistance, farPlaneDistance);
-        viewFrustum.transform(invMV);
-
-        if (body.getMesh() == InvalidResource)
-        {
-            // This is a spherical mesh
-            // Currently, there are three different rendering paths:
-            //   1. Generic OpenGL 1.1
-            //   2. OpenGL 1.2 + nVidia register combiners
-            //   3. OpenGL 1.2 + nVidia register combiners + vertex programs
-            // Unfortunately, this means that unless you've got a GeForce card,
-            // you'll miss out on a lot of the eye candy . . .
-            if (fragmentShaderEnabled && vertexShaderEnabled)
-                renderPlanetVertexAndFragmentShader(ri, viewFrustum);
-            else if (fragmentShaderEnabled && !vertexShaderEnabled)
-                renderPlanetFragmentShader(ri, viewFrustum);
-            else
-                renderPlanetDefault(ri, viewFrustum);
-        }
-        else
-        {
-            // This is a mesh loaded from a file
-            Mesh* mesh = GetMeshManager()->find(body.getMesh());
-            if (mesh != NULL)
-                renderMeshDefault(mesh, ri);
-        }
-
-        if (body.getAtmosphere() != NULL)
-        {
-            const Atmosphere* atmosphere = body.getAtmosphere();
-
-            // Compute the apparent thickness in pixels of the atmosphere.
-            // If it's only one pixel thick, it can look quite unsightly
-            // due to aliasing.  To avoid popping, we gradually fade in the
-            // atmosphere as it grows from two to three pixels thick.
-            float fade;
-            if (distance - radius > 0.0f)
-            {
-                float thicknessInPixels = atmosphere->height /
-                    ((distance - radius) * pixelSize);
-                fade = clamp(thicknessInPixels - 2);
-            }
-            else
-            {
-                fade = 1.0f;
-            }
-
-            if (fade > 0 && (renderFlags & ShowAtmospheres) != 0)
-            {
-                glPushMatrix();
-                glLoadIdentity();
-                glDisable(GL_LIGHTING);
-                glDisable(GL_TEXTURE_2D);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                renderAtmosphere(*atmosphere,
-                                 pos * (~orientation).toMatrix3(),
-                                 radius,
-                                 ri.sunDir_eye * (~orientation).toMatrix3(),
-                                 ri.ambientColor,
-                                 fade);
-                glEnable(GL_TEXTURE_2D);
-                glPopMatrix();
-            }
-
-            // If there's a cloud layer, we'll render it now.
-            Texture* cloudTex = NULL;
-            if ((renderFlags & ShowCloudMaps) != 0 &&
-                atmosphere->cloudTex != InvalidResource)
-                cloudTex = textureManager->find(atmosphere->cloudTex);
-
-            if (cloudTex != NULL)
-            {
-                glPushMatrix();
-                float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
-                glScalef(cloudScale, cloudScale, cloudScale);
-
-                // If we're beneath the cloud level, render the interior of
-                // the cloud sphere.
-                if (distance - radius < atmosphere->cloudHeight)
-                    glFrontFace(GL_CW);
-
-                if (atmosphere->cloudSpeed != 0.0f)
-                {
-                    // Make the clouds appear to rotate above the surface of
-                    // the planet.  This is easier to do with the texture
-                    // matrix than the model matrix because changing the
-                    // texture matrix doesn't require us to compute a second
-                    // set of model space rendering parameters.
-                    glMatrixMode(GL_TEXTURE);
-                    glTranslatef(-pfmod(now * atmosphere->cloudSpeed / (2*PI),
-                                        1.0), 0, 0);
-                    glMatrixMode(GL_MODELVIEW);
-                }
-
-                glEnable(GL_LIGHTING);
-                glDepthMask(GL_FALSE);
-                cloudTex->bind();
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                glColor4f(1, 1, 1, 1);
-                lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
-                                  viewFrustum,
-                                  ri.lod);
-
-                // Reset the texture matrix
-                glMatrixMode(GL_TEXTURE);
-                glLoadIdentity();
-                glMatrixMode(GL_MODELVIEW);
-
-                glDepthMask(GL_TRUE);
-                glFrontFace(GL_CCW);
-                glPopMatrix();
-            }
-        }
-
-        // If the planet has a ring system, render it.
-        if (body.getRings() != NULL)
-        {
-            RingSystem* rings = body.getRings();
-            float inner = rings->innerRadius / body.getRadius();
-            float outer = rings->outerRadius / body.getRadius();
-            int nSections = 100;
-
-            // Ring Illumination:
-            // Since a ring system is composed of millions of individual
-            // particles, it's not at all realistic to model it as a flat
-            // Lambertian surface.  We'll approximate the llumination
-            // function by assuming that the ring system contains Lambertian
-            // particles, and that the brightness at some point in the ring
-            // system is proportional to the illuminated fraction of a
-            // particle there.  In fact, we'll simplify things further and
-            // set the illumination of the entire ring system to the same
-            // value, computing the illuminated fraction of a hypothetical
-            // particle located at the center of the planet.  This
-            // approximation breaks down when you get close to the planet.
-            float ringIllumination = 0.0f;
-            {
-                float illumFraction = (1.0f + ri.eyeDir_obj * ri.sunDir_obj) / 2.0f;
-                // Just use the illuminated fraction for now . . .
-                ringIllumination = illumFraction;
-            }
-
-            // If we have multi-texture support, we'll use the second texture unit
-            // to render the shadow of the planet on the rings.  This is a bit of
-            // a hack, and assumes that the planet is nearly spherical in shape, and
-            // only works for a planet illuminated by a single sun where the distance
-            // to the sun is very large relative to its diameter.
-            if (nSimultaneousTextures > 1)
-            {
-                glActiveTextureARB(GL_TEXTURE1_ARB);
-                glEnable(GL_TEXTURE_2D);
-                shadowTex->bind();
-
-                float sPlane[4] = { 0, 0, 0, 0.5f };
-                float tPlane[4] = { 0, 0, 0, 0.5f };
-
-                // Compute the projection vectors based on the sun direction.
-                // I'm being a little careless here--if the sun direction lies
-                // along the y-axis, this will fail.  It's unlikely that a
-                // planet would ever orbit underneath its sun (an orbital
-                // inclination of 90 degrees), but this should be made
-                // more robust anyway.
-                float scale = rings->innerRadius / body.getRadius();
-                Vec3f axis = Vec3f(0, 1, 0) ^ ri.sunDir_obj;
-                float angle = (float) acos(Vec3f(0, 1, 0) * ri.sunDir_obj);
-                Mat4f mat = Mat4f::rotation(axis, -angle);
-                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
-
-                sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
-                tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
-
-                glEnable(GL_TEXTURE_GEN_S);
-                glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-                glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
-                glEnable(GL_TEXTURE_GEN_T);
-                glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-                glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
-
-                glActiveTextureARB(GL_TEXTURE0_ARB);
-            }
-
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-            Texture* ringsTex = GetTextureManager()->find(rings->texture);
-
-            if (ringsTex != NULL)
-                ringsTex->bind();
-            else
-                glDisable(GL_TEXTURE_2D);
-        
-            // Perform our own lighting for the rings.
-            // TODO: Don't forget about light source color (required when we start paying
-            // attention to star color.)
-            glDisable(GL_LIGHTING);
-            {
-                Vec3f litColor(rings->color.red(), rings->color.green(), rings->color.blue());
-                litColor = litColor * ringIllumination + Vec3f(1, 1, 1) * ambientLightLevel;
-                glColor4f(litColor.x, litColor.y, litColor.z, 1.0f);
-            }
-
-            // This gets tricky . . .  we render the rings in two parts.  One
-            // part is potentially shadowed by the planet, and we need to
-            // render that part with the projected shadow texture enabled.
-            // The other part isn't shadowed, but will appear so if we don't
-            // first disable the shadow texture.  The problem is that the
-            // shadow texture will affect anything along the line between the
-            // sun and the planet, regardless of whether it's in front or
-            // behind the planet.
-
-            // Compute the angle of the sun projected on the ring plane
-            float sunAngle = (float) atan2(ri.sunDir_obj.z, ri.sunDir_obj.x);
-
-            renderRingSystem(inner, outer,
-                             (float) (sunAngle + PI / 2),
-                             (float) (sunAngle + 3 * PI / 2),
-                             nSections / 2);
-            // glNormal3f(0, -1, 0);
-            renderRingSystem(inner, outer,
-                             (float) (sunAngle +  3 * PI / 2),
-                             (float) (sunAngle + PI / 2),
-                             nSections / 2);
-
-            // Disable the second texture unit if it was used
-            if (nSimultaneousTextures > 1)
-            {
-                glActiveTextureARB(GL_TEXTURE1_ARB);
-                glDisable(GL_TEXTURE_2D);
-                glDisable(GL_TEXTURE_GEN_S);
-                glDisable(GL_TEXTURE_GEN_T);
-                glActiveTextureARB(GL_TEXTURE0_ARB);
-            }
-
-            // Render the unshadowed side
-            // glNormal3f(0, 1, 0);
-            renderRingSystem(inner, outer,
-                             (float) (sunAngle - PI / 2),
-                             (float) (sunAngle + PI / 2),
-                             nSections / 2);
-            // glNormal3f(0, -1, 0);
-            renderRingSystem(inner, outer,
-                             (float) (sunAngle + PI / 2),
-                             (float) (sunAngle - PI / 2),
-                             nSections / 2);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        }
-
-        glPopMatrix();
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-        glDisable(GL_LIGHTING);
-        glEnable(GL_BLEND);
+        renderObject(pos, distance, now,
+                     orientation, nearPlaneDistance, farPlaneDistance,
+                     sunDirection, sunColor, rp);
     }
 
     renderBodyAsParticle(pos,
@@ -2221,72 +2283,62 @@ void Renderer::renderStar(const Star& star,
 
     if (discSizeInPixels > 1)
     {
-        // Enable depth buffering
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
+        Surface surface;
+        Atmosphere atmosphere;
+        RenderProperties rp;
 
-        glDisable(GL_BLEND);
-
-        glPushMatrix();
-        glTranslate(pos);
-        glScalef(radius, radius, radius);
-
-        glColor(color);
-
-        Texture* tex = NULL;
+        surface.color = color;
         switch (star.getStellarClass().getSpectralClass())
         {
         case StellarClass::Spectral_O:
         case StellarClass::Spectral_B:
-            tex = starTexB;
+            surface.baseTexture = starTexB;
             break;
         case StellarClass::Spectral_A:
         case StellarClass::Spectral_F:
-            tex = starTexA;
+            surface.baseTexture = starTexA;
             break;
         case StellarClass::Spectral_G:
         case StellarClass::Spectral_K:
-            tex = starTexG;
+            surface.baseTexture = starTexG;
             break;
         case StellarClass::Spectral_M:
         case StellarClass::Spectral_R:
         case StellarClass::Spectral_S:
         case StellarClass::Spectral_N:
-            tex = starTexM;
+            surface.baseTexture = starTexM;
             break;
         default:
-            tex = starTexA;
+            surface.baseTexture = starTexA;
             break;
         }
+        surface.appearanceFlags |= Surface::ApplyBaseTexture;
+        surface.appearanceFlags |= Surface::Emissive;
 
-        if (tex == NULL)
-        {
-            glDisable(GL_TEXTURE_2D);
-        }
-        else
-        {
-            glEnable(GL_TEXTURE_2D);
-            tex->bind();
-        }
+        atmosphere.height = radius * CoronaHeight;
+        atmosphere.lowerColor = color;
+        atmosphere.upperColor = color;
+        atmosphere.skyColor = color;
 
-        // Rotate the star
-        {
-            // Use doubles to avoid precision problems here . . .
-            double rotations = now / (double) star.getRotationPeriod();
-            int wholeRotations = (int) rotations;
-            double remainder = rotations - wholeRotations;
-            glRotatef((float) (-remainder * 360.0), 0, 1, 0);
-        }
+        rp.surface = &surface;
+        rp.atmosphere = &atmosphere;
+        rp.rings = NULL;
+        rp.radius = star.getRadius();
+        rp.oblateness = 0.0f;
+        rp.mesh = InvalidResource;
 
-        lodSphere->render(getSphereLOD(discSizeInPixels));
+        rp.re.period = star.getRotationPeriod();
 
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glPopMatrix();
+        // Compute the orientation of the star before axial rotation.
+        // For now, this is the same value for every star.
+        rp.orientation = Quatf(1.0f);
+
+        renderObject(pos, distance, now,
+                     orientation, nearPlaneDistance, farPlaneDistance,
+                     Vec3f(1.0f, 0.0f, 0.0f), Color(1.0f, 1.0f, 1.0f), rp);
     }
 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     renderBodyAsParticle(pos,
                          appMag,
                          faintestMag,
