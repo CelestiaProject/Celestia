@@ -744,7 +744,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     point.x = (int) x;
     point.y = (int) y;
     
-    if (currentScreenMode != 0)
+    if (currentScreenMode == 0)
         ClientToScreen(hwnd, (LPPOINT) &point);
 
     appCore->getSimulation()->setSelection(sel);
@@ -2248,7 +2248,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_RENDER_FEWERSTARS:
-            appCore->charEntered(']');
+            appCore->charEntered('[');
             break;
 
         case ID_RENDER_AMBIENTLIGHT_NONE:
