@@ -53,6 +53,7 @@ libcelengine_a_SOURCES = \
 	texmanager.cpp \
 	texture.cpp \
 	tokenizer.cpp \
+	trajmanager.cpp \
 	univcoord.cpp \
 	universe.cpp \
 	vertexlist.cpp \
