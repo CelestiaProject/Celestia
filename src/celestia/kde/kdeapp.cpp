@@ -97,6 +97,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 
     app=this;
     appCore->setContextMenuCallback(&KdeApp::popupMenu);
+    appCore->setAlerter(new KdeAlerter(this));
 
     setAcceptDrops(true);
 
@@ -1160,7 +1161,8 @@ void LongLatDialog::slotCancel() {
 void LongLatDialog::slotOk() {
     slotApply();
     accept();
-}
+}KdeAlerter alerter;
+
 
 void LongLatDialog::slotApply() {
     Simulation* appSim = appCore->getSimulation();
@@ -1191,5 +1193,13 @@ void LongLatDialog::slotApply() {
                                 degToRad(latitude),
                                 Vec3f(0, 1, 0));
     }
+}
+
+KdeAlerter::KdeAlerter(QWidget* _parent) : parent(_parent)
+{}
+
+void KdeAlerter::fatalError(const std::string& err)
+{
+    KMessageBox::detailedError(parent, i18n("Celestia encountered an error while processing your script"), err);
 }
 
