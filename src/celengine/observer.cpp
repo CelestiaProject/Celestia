@@ -794,7 +794,11 @@ static double getPreferredDistance(const Selection& selection)
     case Selection::Type_Star:
         return 100.0 * selection.radius();
     case Selection::Type_Location:
-        return max(selection.location()->getSize() * 10.0, 1.0);
+        {
+            double maxDist = getPreferredDistance(selection.location()->getParentBody());
+            return max(min(selection.location()->getSize() * 50.0, maxDist),
+                       1.0);
+        }
     default:
         return 1.0;
     }
@@ -862,9 +866,23 @@ void Observer::gotoSelectionGC(const Selection& selection,
         Vec3d viewVec = pos - getPosition();
         double orbitDistance = getOrbitDistance(selection,
                                                 viewVec.length());
+        if (selection.location() != NULL)
+        {
+            Selection parent = selection.parent();
+            double maintainDist = astro::kilometersToMicroLightYears(getPreferredDistance(parent));
+            Vec3d parentPos = parent.getPosition(getTime()) - getPosition();
+            double parentDist = parentPos.length() -
+                astro::kilometersToMicroLightYears(parent.radius());
+
+            if (parentDist <= maintainDist && parentDist > orbitDistance)
+            {
+                orbitDistance = parentDist;
+            }
+        }
 
         computeGotoParametersGC(selection, journey, gotoTime,
-                                startInter, endInter,
+                                //startInter, endInter,
+                                0.25, 0.75,
                                 v * (orbitDistance / distanceToCenter),
                                 astro::Universal,
                                 up, upFrame,
