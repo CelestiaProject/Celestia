@@ -6055,6 +6055,9 @@ void Renderer::loadTextures(Body* body)
     if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0 &&
         (renderFlags & ShowNightMaps) != 0)
         surface.nightTexture.find(textureResolution);
+    if ((surface.appearanceFlags & Surface::SeparateSpecularMap) != 0 &&
+        surface.specularTexture.tex[textureResolution] != InvalidResource)
+        surface.specularTexture.find(textureResolution);
 
     if ((renderFlags & ShowCloudMaps) != 0 &&
         body->getAtmosphere() != NULL &&
