@@ -367,6 +367,53 @@ astro::Date::operator double() const
 }
 
 
+bool astro::parseDate(const string& s, astro::Date& date)
+{
+    int year = 0;
+    unsigned int month = 1;
+    unsigned int day = 1;
+    unsigned int hour = 0;
+    unsigned int minute = 0;
+    unsigned int second = 0;
+
+    if (sscanf(s.c_str(), " %d %u %u %u:%u:%u ",
+               &year, &month, &day, &hour, &minute, &second) == 6 ||
+        sscanf(s.c_str(), " %d %u %u %u:%u ",
+               &year, &month, &day, &hour, &minute, &second) == 5 ||
+        sscanf(s.c_str(), " %d %u %u ", &year, &month, &day) == 3)
+    {
+        if (month < 1 || month > 12)
+            return false;
+        if (hour > 23 || minute > 59 || second > 59)
+            return false;
+
+        // Cheesy days/month calculation . . .
+        int maxDay = 31 - ((0xa50 >> month) & 0x1);
+        if (month == 2)
+        {
+            // Check for a leap year
+            if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
+                maxDay = 29;
+            else
+                maxDay = 28;
+        }
+        if (day > maxDay || day < 1)
+            return false;
+
+        date.year = year;
+        date.month = month;
+        date.day = day;
+        date.hour = hour;
+        date.minute = minute;
+        date.seconds = second;
+
+        return true;
+    }
+
+    return false;
+}
+
+
 ostream& operator<<(ostream& s, const astro::Date d)
 {
     s << d.year << ' ' << setw(2) << setfill('0') << d.month << ' ';
