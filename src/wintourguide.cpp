@@ -93,6 +93,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                 Selection sel = sim->findObjectFromPath(tourGuide->selectedDest->target);
                 if (!sel.empty())
                 {
+                    sim->follow();
                     sim->setSelection(sel);
                     if (tourGuide->selectedDest->distance <= 0)
                     {
