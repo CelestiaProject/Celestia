@@ -582,6 +582,12 @@ void CelestiaCore::charEntered(char c)
 
     case '\013': // Ctrl+K
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowMarkers);
+        if (renderer->getRenderFlags() & Renderer::ShowMarkers)
+	{
+            flash("Markers enabled");
+	}
+        else
+            flash("Markers disabled");
         notifyWatchers(RenderFlagsChanged);
         break;
 
