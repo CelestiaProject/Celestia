@@ -27,6 +27,8 @@ using namespace std;
 
 #define RENDER_DISTANCE 10.0f
 
+#define FAINTEST_MAGNITUDE  5.5f
+
 // Static meshes and textures used by all instances of Simulation
 
 static bool commonDataInitialized = false;
@@ -35,6 +37,8 @@ static bool commonDataInitialized = false;
 
 static SphereMesh* sphereMesh[SPHERE_LODS];
 static SphereMesh* asteroidMesh = NULL;
+
+static CTexture* normalizationTex = NULL;
 
 static CTexture* starTex = NULL;
 static CTexture* glareTex = NULL;
@@ -52,7 +56,9 @@ Renderer::Renderer() :
     labelMode(NoLabels),
     ambientLightLevel(0.1f),
     console(NULL),
-    nSimultaneousTextures(1)
+    nSimultaneousTextures(1),
+    useRegisterCombiners(false),
+    useCubeMaps(false)
 {
     textureManager = new TextureManager("textures");
     meshManager = new MeshManager("models");
@@ -180,9 +186,13 @@ bool Renderer::init(int winWidth, int winHeight)
         if (font != NULL)
             txfEstablishTexture(font, 0, GL_TRUE);
 
+        // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
             InitExtMultiTexture();
-
+        if (ExtensionSupported("GL_NV_register_combiners"))
+            InitExtRegisterCombiners();
+        if (ExtensionSupported("GL_EXT_texture_cube_map"))
+            normalizationTex = CreateNormalizationCubeMap(64);
 
         commonDataInitialized = true;
     }
@@ -192,7 +202,20 @@ bool Renderer::init(int winWidth, int winHeight)
 
     // Get GL extension information
     if (ExtensionSupported("GL_ARB_multitexture"))
+    {
+        DPRINTF("Renderer: multi-texture supported.\n");
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &nSimultaneousTextures);
+    }
+    if (ExtensionSupported("GL_NV_register_combiners"))
+    {
+        DPRINTF("Renderer: nVidia register combiners supported.\n");
+        useRegisterCombiners = true;
+    }
+    if (ExtensionSupported("GL_EXT_texture_cube_map"))
+    {
+        DPRINTF("Renderer: cube texture maps supported.\n");
+        useCubeMaps = true;
+    }
 
     cout << "Simultaneous textures supported: " << nSimultaneousTextures << '\n';
 
@@ -714,12 +737,13 @@ void Renderer::renderPlanet(const Body& body,
         glLightColor(GL_LIGHT0, GL_DIFFUSE, Vec3f(1.0f, 1.0f, 1.0f));
         glEnable(GL_LIGHT0);
 
+        const Surface& surface = body.getSurface();
         // Get the texture . . .
         CTexture* tex = NULL;
-        if (body.getTexture() != "")
+        if (surface.baseTexture != "")
         {
-            if (!textureManager->find(body.getTexture(), &tex))
-                tex = textureManager->load(body.getTexture());
+            if (!textureManager->find(surface.baseTexture, &tex))
+                tex = textureManager->load(surface.baseTexture);
         }
 
         if (tex == NULL)
@@ -732,8 +756,8 @@ void Renderer::renderPlanet(const Body& body,
             glBindTexture(GL_TEXTURE_2D, tex->getName());
         }
 
-        if (tex == NULL || body.getAppearanceFlag(Body::BlendTexture))
-            glColor(body.getColor());
+        if (tex == NULL || (surface.appearanceFlags & Surface::BlendTexture) != 0)
+            glColor(surface.color);
         else
             glColor4f(1, 1, 1, 1);
 
@@ -935,7 +959,7 @@ void Renderer::renderPlanet(const Body& body,
     renderBodyAsParticle(pos,
                          appMag,
                          discSizeInPixels,
-                         body.getColor(),
+                         body.getSurface().color,
                          orientation,
                          false);
 #if 0
