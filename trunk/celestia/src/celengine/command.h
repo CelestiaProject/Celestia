@@ -11,6 +11,7 @@
 #define _COMMAND_H_
 
 #include <iostream>
+#include <celutil/color.h>
 #include <celengine/execenv.h>
 #include <celengine/astro.h>
 
@@ -407,6 +408,30 @@ class CommandPreloadTextures : public InstantaneousCommand
 
  private:
     std::string name;
+};
+
+
+class CommandMark : public InstantaneousCommand
+{
+ public:
+    CommandMark(const std::string&, Color, float);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string target;
+    Color color;
+    float size;
+};
+
+
+class CommandUnmark : public InstantaneousCommand
+{
+ public:
+    CommandUnmark(const std::string&);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string target;
 };
 
 

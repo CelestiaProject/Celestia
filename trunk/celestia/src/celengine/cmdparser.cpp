@@ -465,6 +465,23 @@ Command* CommandParser::parseCommand()
         paramList->getString("object", object);
         cmd = new CommandPreloadTextures(object);
     }
+    else if (commandName == "mark")
+    {
+        string object;
+        paramList->getString("object", object);
+        double size = 10.0f;
+        paramList->getNumber("size", size);
+        Vec3d colorv(1.0f, 0.0f, 0.0f);
+        paramList->getVector("color", colorv);
+        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z, 0.9f);
+        cmd = new CommandMark(object, color, (float) size);
+    }
+    else if (commandName == "unmark")
+    {
+        string object;
+        paramList->getString("object", object);
+        cmd = new CommandUnmark(object);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");
