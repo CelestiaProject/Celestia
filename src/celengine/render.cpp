@@ -2977,6 +2977,7 @@ static void renderRings(RingSystem& rings,
 
     GLContext::VertexPath vpath = context.getVertexPath();
     VertexProcessor* vproc = context.getVertexProcessor();
+    FragmentProcessor* fproc = context.getFragmentProcessor();
 
     if (vproc != NULL)
     {
@@ -2987,7 +2988,6 @@ static void renderRings(RingSystem& rings,
         vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
         vproc->parameter(vp::Constant0, Vec3f(0, 0.5, 1.0));
     }
-    
 
     // If we have multi-texture support, we'll use the second texture unit
     // to render the shadow of the planet on the rings.  This is a bit of
@@ -3036,6 +3036,19 @@ static void renderRings(RingSystem& rings,
         }
 
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+
+        if (fproc != NULL)
+        {
+            float r0 = 0.24f;
+            float r1 = 0.25f;
+            float bias = 1.0f / (1.0f - r1 / r0);
+            float scale = -bias / r0;
+
+            fproc->enable();
+            fproc->use(fp::sphereShadowOnRings);
+            fproc->parameter(fp::ShadowParams0, scale, bias, 0.0f, 0.0f);
+            fproc->parameter(fp::AmbientColor, ri.ambientColor * ri.color);
+        }
     }
 
     glEnable(GL_BLEND);
@@ -3073,6 +3086,11 @@ static void renderRings(RingSystem& rings,
     // Compute the angle of the sun projected on the ring plane
     float sunAngle = (float) atan2(ri.sunDir_obj.z, ri.sunDir_obj.x);
 
+    // If there's a fragment program, it will handle the ambient term--make
+    // sure that we don't add it both in the fragment and vertex programs.
+    if (vproc != NULL && fproc != NULL)
+        glAmbientLightColor(Color::Black);
+
     renderRingSystem(inner, outer,
                      (float) (sunAngle + PI / 2),
                      (float) (sunAngle + 3 * PI / 2),
@@ -3082,6 +3100,9 @@ static void renderRings(RingSystem& rings,
                      (float) (sunAngle + PI / 2),
                      nSections / 2);
 
+    if (vproc != NULL && fproc != NULL)
+        glAmbientLightColor(ri.ambientColor * ri.color);
+
     // Disable the second texture unit if it was used
     if (renderShadow)
     {
@@ -3090,6 +3111,9 @@ static void renderRings(RingSystem& rings,
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+
+        if (fproc != NULL)
+            fproc->disable();
     }
 
     // Render the unshadowed side
@@ -3666,6 +3690,7 @@ void Renderer::renderObject(Point3f pos,
             {
             case GLContext::GLPath_NvCombiner_ARBVP:
             case GLContext::GLPath_NvCombiner_NvVP:
+            case GLContext::GLPath_NV30:
                 renderSphere_Combiners_VP(ri, viewFrustum, *context);
                 break;
 
