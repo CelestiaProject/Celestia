@@ -112,10 +112,9 @@ bool DeepSkyObject::load(AssociativeArray* params)
 }
 
 
-DeepSkyCatalog* ReadDeepSkyCatalog(istream& in)
+int LoadDeepSkyObjects(DeepSkyCatalog& catalog, istream& in)
 {
-    DeepSkyCatalog* catalog = new DeepSkyCatalog();
-
+    int count = 0;
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
@@ -127,20 +126,14 @@ DeepSkyCatalog* ReadDeepSkyCatalog(istream& in)
         if (tokenizer.getTokenType() != Tokenizer::TokenName)
         {
             DPRINTF(0, "Error parsing deep sky catalog file.\n");
-            for_each(catalog->begin(), catalog->end(),
-                     deleteFunc<DeepSkyObject*>());
-            delete catalog;
-            return NULL;
+            break;
         }
         objType = tokenizer.getNameValue();
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
             DPRINTF(0, "Error parsing deep sky catalog file: bad name.\n");
-            for_each(catalog->begin(), catalog->end(),
-                     deleteFunc<DeepSkyObject*>());
-            delete catalog;
-            return NULL;
+            break;
         }
         objName = tokenizer.getStringValue();
 
@@ -150,10 +143,7 @@ DeepSkyCatalog* ReadDeepSkyCatalog(istream& in)
         {
             DPRINTF(0, "Error parsing deep sky catalog entry %s\n",
                     objName.c_str());
-            for_each(catalog->begin(), catalog->end(),
-                     deleteFunc<DeepSkyObject*>());
-            delete catalog;
-            return NULL;
+            break;
         }
 
         Hash* objParams = objParamsValue->getHash();
@@ -169,13 +159,18 @@ DeepSkyCatalog* ReadDeepSkyCatalog(istream& in)
         {
             obj->setName(objName);
             if (obj->load(objParams))
-                catalog->insert(catalog->end(), obj);
+            {
+                catalog.insert(catalog.end(), obj);
+                count++;
+            }
             else
+            {
                 delete obj;
+            }
             delete objParamsValue;
         }
     }
 
-    return catalog;
+    return count;
 }
 
