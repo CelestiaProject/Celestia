@@ -167,6 +167,12 @@ void Star::setAbsoluteMagnitude(float mag)
 }
 
 
+float Star::getApparentMagnitude(float ly) const
+{
+    return astro::absToAppMag(absMag, ly);
+}
+
+
 float Star::getLuminosity() const
 {
     return astro::absMagToLum(absMag);
