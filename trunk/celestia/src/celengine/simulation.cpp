@@ -239,6 +239,23 @@ void Simulation::setTime(double jd)
 }
 
 
+// Get the 'real' time
+double Simulation::getRealTime() const
+{
+    return realTime;
+}
+
+
+double Simulation::getArrivalTime() const
+{
+    if (observerMode != Travelling)
+        return realTime;
+    else
+        return journey.startTime + journey.duration;
+}
+
+
+
 // Set the observer position and orientation based on the frame of reference
 void Simulation::updateObserver()
 {
