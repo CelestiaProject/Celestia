@@ -1,5 +1,5 @@
 // celx.cpp
-// 
+//
 // Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
 //
 // Lua script extensions for Celestia
@@ -52,6 +52,16 @@ static const int _Position = 6;
 static const int _Frame    = 7;
 
 #define CLASS(i) ClassNames[(i)]
+
+
+// select which type of error will be fatal (call lua_error) and
+// which will return a default value instead
+enum FatalErrors {
+    NoErrors = 0,
+    WrongType = 1,
+    WrongArgc = 2,
+    AllErrors = WrongType | WrongArgc,
+};
 
 
 // Push a class name onto the Lua stack
@@ -279,7 +289,7 @@ static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
 
     info->in->read(info->buf, info->bufSize);
     streamsize nread = info->in->gcount();
-    
+
     *size = (size_t) nread;
     if (nread == 0)
         return NULL;
@@ -413,18 +423,24 @@ static Color to_color(lua_State* l, int index)
 
 
 // Return the CelestiaCore object stored in the globals table
-static CelestiaCore* getAppCore(lua_State* l)
+static CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors = NoErrors)
 {
     lua_pushstring(l, "celestia");
     lua_gettable(l, LUA_GLOBALSINDEX);
     CelestiaCore** appCore =
         static_cast<CelestiaCore**>(CheckUserData(l, -1, _Celestia));
     lua_pop(l, 1);
-    
+
     if (appCore == NULL)
     {
-        return NULL;
-    }       
+        if (fatalErrors == NoErrors)
+            return NULL;
+        else
+        {
+            lua_pushstring(l, "internal error: invalid appCore");
+            lua_error(l);
+        }
+    }
 
     return *appCore;
 }
@@ -441,13 +457,13 @@ int LuaState::loadScript(istream& in, const string& streamname)
     int status = lua_load(state, readStreamChunk, &info, streamname.c_str());
     if (status != 0)
         cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
-    
+
     return status;
 }
 
 int LuaState::loadScript(const string& s)
 {
-#ifdef HAVE_SSTREAM    
+#ifdef HAVE_SSTREAM
     istringstream in(s);
 #else
     istrstream in(s.c_str());
@@ -498,15 +514,88 @@ int LuaState::resume()
     }
 }
 
+
+// safe wrapper for lua_tostring: fatal errors will terminate script by calling
+// lua_error with errorMsg.
+static const char* safeGetString(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
+                                 const char* errorMsg = "String argument expected")
+{
+    if (l == NULL)
+    {
+        cerr << "Error: LuaState invalid in safeGetString\n";
+        cout << "Error: LuaState invalid in safeGetString\n";
+        return NULL;
+    }
+    int argc = lua_gettop(l);
+    if (index < 1 || index > argc)
+    {
+        if (fatalErrors & WrongArgc)
+        {
+            lua_pushstring(l, errorMsg);
+            lua_error(l);
+        }
+        else
+            return NULL;
+    }
+    if (!lua_isstring(l, index))
+    {
+        if (fatalErrors & WrongType)
+        {
+            lua_pushstring(l, errorMsg);
+            lua_error(l);
+        }
+        else
+            return NULL;
+    }
+    return lua_tostring(l, index);
+}
+
+// safe wrapper for lua_tonumber, c.f. safeGetString
+// Non-fatal errors will return  defaultValue.
+static lua_Number safeGetNumber(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
+                                 const char* errorMsg = "Numeric argument expected",
+                                 lua_Number defaultValue = 0.0)
+{
+    if (l == NULL)
+    {
+        cerr << "Error: LuaState invalid in safeGetNumber\n";
+        cout << "Error: LuaState invalid in safeGetNumber\n";
+        return 0.0;
+    }
+    int argc = lua_gettop(l);
+    if (index < 1 || index > argc)
+    {
+        if (fatalErrors & WrongArgc)
+        {
+            lua_pushstring(l, errorMsg);
+            lua_error(l);
+        }
+        else
+            return defaultValue;
+    }
+    if (!lua_isnumber(l, index))
+    {
+        if (fatalErrors & WrongType)
+        {
+            lua_pushstring(l, errorMsg);
+            lua_error(l);
+        }
+        else
+            return defaultValue;
+    }
+    return lua_tonumber(l, index);
+}
+
+
 static int vector_new(lua_State* l, const Vec3d& v)
 {
     Vec3d* v3 = reinterpret_cast<Vec3d*>(lua_newuserdata(l, sizeof(Vec3d)));
     *v3 = v;
     SetClass(l, _Vec3);
-    
+
     return 1;
 }
-    
+
 static Vec3d* to_vector(lua_State* l, int index)
 {
     return static_cast<Vec3d*>(CheckUserData(l, index, _Vec3));
@@ -520,8 +609,8 @@ static Vec3d* this_vector(lua_State* l)
         lua_pushstring(l, "Bad vector object!");
         lua_error(l);
     }
-    
-    return v3;       
+
+    return v3;
 }
 
 static int vector_sub(lua_State* l)
@@ -539,77 +628,49 @@ static int vector_sub(lua_State* l)
         Vec3d result = *op1 - *op2;
         vector_new(l, result);
     }
-    return 1;    
+    return 1;
 }
 
 static int vector_getx(lua_State* l)
 {
-    Vec3d* v3 = to_vector(l, 1);
-    if (v3 == NULL)
-    {
-        lua_pushstring(l, "Bad vector object!");
-        lua_error(l);
-    }
-    else 
-    {
-        lua_Number x;
-        x = static_cast<lua_Number>(v3->x);
-        lua_pushnumber(l, x);
-    }
+    checkArgs(l, 1, 1, "No arguments expected for vector:getx");
+    Vec3d* v3 = this_vector(l);
+    lua_Number x;
+    x = static_cast<lua_Number>(v3->x);
+    lua_pushnumber(l, x);
 
     return 1;
 }
 
 static int vector_gety(lua_State* l)
 {
-    Vec3d* v3 = to_vector(l, 1);
-    if (v3 == NULL)
-    {
-        lua_pushstring(l, "Bad vector object!");
-        lua_error(l);
-    }
-    else 
-    {
-        lua_Number y;
-        y = static_cast<lua_Number>(v3->y);
-        lua_pushnumber(l, y);
-    }
+    checkArgs(l, 1, 1, "No arguments expected for vector:gety");
+    Vec3d* v3 = this_vector(l);
+    lua_Number y;
+    y = static_cast<lua_Number>(v3->y);
+    lua_pushnumber(l, y);
 
     return 1;
 }
 
 static int vector_getz(lua_State* l)
 {
-    Vec3d* v3 = to_vector(l, 1);
-    if (v3 == NULL)
-    {
-        lua_pushstring(l, "Bad vector object!");
-        lua_error(l);
-    }
-    else 
-    {
-        lua_Number z;
-        z = static_cast<lua_Number>(v3->z);
-        lua_pushnumber(l, z);
-    }
+    checkArgs(l, 1, 1, "No arguments expected for vector:getz");
+    Vec3d* v3 = this_vector(l);
+    lua_Number z;
+    z = static_cast<lua_Number>(v3->z);
+    lua_pushnumber(l, z);
 
     return 1;
 }
 
 static int vector_normalize(lua_State* l)
 {
-    Vec3d* v = to_vector(l, 1);
-    if (v == NULL)
-    {
-        lua_pushstring(l, "Bad vector object!");
-        lua_error(l);
-    }
-    else
-    {
-        Vec3d vn(*v);
-        vn.normalize();
-        vector_new(l, vn);
-    }
+    checkArgs(l, 1, 1, "No arguments expected for vector:normalize");
+    Vec3d* v = this_vector(l);
+    Vec3d vn(*v);
+    vn.normalize();
+    vector_new(l, vn);
     return 1;
 }
 
@@ -620,18 +681,18 @@ static int position_new(lua_State* l, const UniversalCoord& uc);
 static int vector_add(lua_State* l)
 {
     checkArgs(l, 2, 2, "Need two operands for addition");
-    Vec3d* v1 = NULL;    
+    Vec3d* v1 = NULL;
     Vec3d* v2 = NULL;
     UniversalCoord* p = NULL;
-    
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3)) 
+
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3))
     {
         v1 = to_vector(l, 1);
         v2 = to_vector(l, 2);
         vector_new(l, *v1 + *v2);
     }
     else
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Position))        
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Position))
     {
         v1 = to_vector(l, 1);
         p = to_position(l, 2);
@@ -642,7 +703,7 @@ static int vector_add(lua_State* l)
         lua_pushstring(l, "Bad vector addition!");
         lua_error(l);
     }
-    return 1;    
+    return 1;
 }
 
 static int vector_mult(lua_State* l)
@@ -651,14 +712,14 @@ static int vector_mult(lua_State* l)
     Vec3d* v1 = NULL;
     Vec3d* v2 = NULL;
     lua_Number s = 0.0;
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3)) 
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3))
     {
         v1 = to_vector(l, 1);
         v2 = to_vector(l, 2);
         lua_pushnumber(l, *v1 * *v2);
     }
     else
-    if (istype(l, 1, _Vec3) && lua_isnumber(l, 2))        
+    if (istype(l, 1, _Vec3) && lua_isnumber(l, 2))
     {
         v1 = to_vector(l, 1);
         s = lua_tonumber(l, 2);
@@ -684,7 +745,7 @@ static int vector_cross(lua_State* l)
     checkArgs(l, 2, 2, "Need two operands for multiplication");
     Vec3d* v1 = NULL;
     Vec3d* v2 = NULL;
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3)) 
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3))
     {
         v1 = to_vector(l, 1);
         v2 = to_vector(l, 2);
@@ -709,7 +770,7 @@ static int vector_tostring(lua_State* l)
 static void CreateVectorMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Vec3);
-    
+
     RegisterMethod(l, "__tostring", vector_tostring);
     RegisterMethod(l, "__add", vector_add);
     RegisterMethod(l, "__sub", vector_sub);
@@ -728,7 +789,7 @@ static int rotation_new(lua_State* l, const Quatd& qd)
     Quatd* q = reinterpret_cast<Quatd*>(lua_newuserdata(l, sizeof(Quatd)));
     *q = qd;
     SetClass(l, _Rotation);
-    
+
     return 1;
 }
 
@@ -745,8 +806,8 @@ static Quatd* this_rotation(lua_State* l)
         lua_pushstring(l, "Bad rotation object!");
         lua_error(l);
     }
-    
-    return q;       
+
+    return q;
 }
 
 static int rotation_add(lua_State* l)
@@ -764,7 +825,7 @@ static int rotation_add(lua_State* l)
         Quatd result = *q1 + *q2;
         rotation_new(l, result);
     }
-    return 1;    
+    return 1;
 }
 
 static int rotation_mult(lua_State* l)
@@ -774,14 +835,14 @@ static int rotation_mult(lua_State* l)
     Quatd* r2 = NULL;
     Vec3d* v = NULL;
     lua_Number s = 0.0;
-    if (istype(l, 1, _Rotation) && istype(l, 2, _Rotation)) 
+    if (istype(l, 1, _Rotation) && istype(l, 2, _Rotation))
     {
         r1 = to_rotation(l, 1);
         r2 = to_rotation(l, 2);
         rotation_new(l, *r1 * *r2);
     }
     else
-    if (istype(l, 1, _Rotation) && lua_isnumber(l, 2))        
+    if (istype(l, 1, _Rotation) && lua_isnumber(l, 2))
     {
         r1 = to_rotation(l, 1);
         s = lua_tonumber(l, 2);
@@ -807,7 +868,7 @@ static int rotation_mult(lua_State* l)
         lua_error(l);
     }
     return 1;
-}       
+}
 
 static int rotation_tostring(lua_State* l)
 {
@@ -818,7 +879,7 @@ static int rotation_tostring(lua_State* l)
 static void CreateRotationMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Rotation);
-    
+
     RegisterMethod(l, "__tostring", rotation_tostring);
     RegisterMethod(l, "__add", rotation_add);
     RegisterMethod(l, "__mul", rotation_mult);
@@ -857,80 +918,55 @@ static UniversalCoord* this_position(lua_State* l)
 
 static int position_getx(lua_State* l)
 {
-    UniversalCoord* uc = this_position(l);
-    if (uc != NULL) 
-    {
-        lua_Number x;
-        x = uc->x;
-        lua_pushnumber(l, x);
-    }
-    else
-    {
-        lua_pushstring(l, "Bad position object!");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected for position:getx()");
 
-    return 1;        
-    
+    UniversalCoord* uc = this_position(l);
+    lua_Number x;
+    x = uc->x;
+    lua_pushnumber(l, x);
+
+    return 1;
 }
 
 static int position_gety(lua_State* l)
 {
-    UniversalCoord* uc = this_position(l);
-    if (uc != NULL) 
-    {
-        lua_Number y;
-        y = uc->y;
-        lua_pushnumber(l, y);
-    }
-    else
-    {
-        lua_pushstring(l, "Bad position object!");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected for position:gety()");
 
-    return 1;        
-    
+    UniversalCoord* uc = this_position(l);
+    lua_Number y;
+    y = uc->y;
+    lua_pushnumber(l, y);
+
+    return 1;
 }
 
 static int position_getz(lua_State* l)
 {
-    UniversalCoord* uc = this_position(l);
-    if (uc != NULL) 
-    {
-        lua_Number z;
-        z = uc->z;
-        lua_pushnumber(l, z);
-    }
-    else
-    {
-        lua_pushstring(l, "Bad position object!");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected for position:getz()");
 
-    return 1;        
-    
+    UniversalCoord* uc = this_position(l);
+    lua_Number z;
+    z = uc->z;
+    lua_pushnumber(l, z);
+
+    return 1;
 }
 
 static int position_vectorto(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected to position:vectorto");
+
     UniversalCoord* uc = this_position(l);
     UniversalCoord* uc2 = to_position(l, 2);
-    
-    if (uc == NULL)
-    {
-        lua_pushstring(l, "Bad position object!");
-        lua_error(l);
-    }
-    if (uc2 == NULL) 
+
+    if (uc2 == NULL)
     {
         lua_pushstring(l, "Argument to position:vectorto must be a position");
         lua_error(l);
     }
     Vec3d diff = *uc2 - *uc;
-    vector_new(l, diff);    
-    return 1;            
+    vector_new(l, diff);
+    return 1;
 }
 
 static int position_tostring(lua_State* l)
@@ -955,7 +991,7 @@ static int position_distanceto(lua_State* l)
 
     Vec3d v = *uc2 - *uc;
     lua_pushnumber(l, astro::microLightYearsToKilometers(v.length()));
-        
+
     return 1;
 }
 
@@ -965,8 +1001,8 @@ static int position_add(lua_State* l)
     UniversalCoord* p1 = NULL;
     UniversalCoord* p2 = NULL;
     Vec3d* v2 = NULL;
-    
-    if (istype(l, 1, _Position) && istype(l, 2, _Position)) 
+
+    if (istype(l, 1, _Position) && istype(l, 2, _Position))
     {
         p1 = to_position(l, 1);
         p2 = to_position(l, 2);
@@ -974,7 +1010,7 @@ static int position_add(lua_State* l)
         position_new(l, *p1 + *p2);
     }
     else
-    if (istype(l, 1, _Position) && istype(l, 2, _Vec3))        
+    if (istype(l, 1, _Position) && istype(l, 2, _Vec3))
     {
         p1 = to_position(l, 1);
         v2 = to_vector(l, 2);
@@ -985,7 +1021,7 @@ static int position_add(lua_State* l)
         lua_pushstring(l, "Bad position addition!");
         lua_error(l);
     }
-    return 1;    
+    return 1;
 }
 
 static int position_sub(lua_State* l)
@@ -994,15 +1030,15 @@ static int position_sub(lua_State* l)
     UniversalCoord* p1 = NULL;
     UniversalCoord* p2 = NULL;
     Vec3d* v2 = NULL;
-    
-    if (istype(l, 1, _Position) && istype(l, 2, _Position)) 
+
+    if (istype(l, 1, _Position) && istype(l, 2, _Position))
     {
         p1 = to_position(l, 1);
         p2 = to_position(l, 2);
         vector_new(l, *p1 - *p2);
     }
     else
-    if (istype(l, 1, _Position) && istype(l, 2, _Vec3))        
+    if (istype(l, 1, _Position) && istype(l, 2, _Vec3))
     {
         p1 = to_position(l, 1);
         v2 = to_vector(l, 2);
@@ -1013,7 +1049,7 @@ static int position_sub(lua_State* l)
         lua_pushstring(l, "Bad position subtraction!");
         lua_error(l);
     }
-    return 1;    
+    return 1;
 }
 
 static int position_addvector(lua_State* l)
@@ -1030,16 +1066,16 @@ static int position_addvector(lua_State* l)
     if (uc != NULL && v3d != NULL)
     {
         UniversalCoord ucnew = *uc + *v3d;
-        position_new(l, ucnew);        
+        position_new(l, ucnew);
     }
     return 1;
 }
-    
+
 
 static void CreatePositionMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Position);
-    
+
     RegisterMethod(l, "__tostring", position_tostring);
     RegisterMethod(l, "distanceto", position_distanceto);
     RegisterMethod(l, "vectorto", position_vectorto);
@@ -1069,148 +1105,109 @@ static FrameOfReference* to_frame(lua_State* l, int index)
     return static_cast<FrameOfReference*>(CheckUserData(l, index, _Frame));
 }
 
-// Convert from frame coordinates to universal.  The arguments are a time
-// (Julian day number), position, and optionally an orientation.  If just
-// a position is passed, the function returns just the converted position.
-// Otherwise, the transformed position and orientation are both pushed onto
-// the stack.
+static FrameOfReference* this_frame(lua_State* l)
+{
+    FrameOfReference* f = to_frame(l, 1);
+    if (f == NULL)
+    {
+        lua_pushstring(l, "Bad frame object!");
+        lua_error(l);
+    }
+
+    return f;
+}
+
+
+// Convert from frame coordinates to universal.
 static int frame_from(lua_State* l)
 {
     checkArgs(l, 2, 3, "Two or three arguments required for frame:from");
 
-    FrameOfReference* frame = to_frame(l, 1);
-    if (frame != NULL)
-    {
-        RigidTransform rt;
-        UniversalCoord* uc = NULL;
-        Quatd* q = NULL;
-        double jd = 0.0;
-        if (istype(l, 2, _Position))
-        {
-            uc = to_position(l, 2);
-        }
-        else
-        if (istype(l, 2, _Rotation))
-        {
-            q = to_rotation(l, 2);
-        }
-        
-        if (lua_isnumber(l, 3))
-        {
-             jd = lua_tonumber(l, 3);
-        }
-        else
-        {
-            CelestiaCore* appCore = getAppCore(l);
-            if (appCore != NULL)
-            {
-                Simulation* sim = appCore->getSimulation();
-                jd = sim->getTime();
-            }
-            else
-            {
-                lua_pushstring(l, "Internal error: couldn't get CelestiaCore in frame:from");
-                lua_error(l);
-            }
-        }
-        if (uc != NULL)
-        {
-            rt.translation = *uc;
-            rt = frame->toUniversal(rt, jd);
-            position_new(l, rt.translation);
-        }
-        else
-        if (q != NULL)
-        {
-            rt.rotation = *q;
-            rt = frame->toUniversal(rt, jd);
-            rotation_new(l, rt.rotation);
-        }
-        else
-        {
-            lua_pushstring(l, "Position expected as second argument to frame:from()");
-            lua_error(l);
-        }
+    FrameOfReference* frame = this_frame(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
 
+    RigidTransform rt;
+
+    UniversalCoord* uc = NULL;
+    Quatd* q = NULL;
+    double jd = 0.0;
+
+    if (istype(l, 2, _Position))
+    {
+        uc = to_position(l, 2);
+    }
+    else if (istype(l, 2, _Rotation))
+    {
+        q = to_rotation(l, 2);
+    }
+    if (uc == NULL && q == NULL)
+    {
+        lua_pushstring(l, "Position or rotation expected as second argument to frame:from()");
+        lua_error(l);
+    }
+
+    jd = safeGetNumber(l, 3, WrongType, "Second arg to frame:from must be a number", appCore->getSimulation()->getTime());
+
+    if (uc != NULL)
+    {
+        rt.translation = *uc;
+        rt = frame->toUniversal(rt, jd);
+        position_new(l, rt.translation);
     }
     else
     {
-        lua_pushstring(l, "Bad method call");
-        lua_error(l);
+        rt.rotation = *q;
+        rt = frame->toUniversal(rt, jd);
+        rotation_new(l, rt.rotation);
     }
 
     return 1;
 }
 
 
-// Convert from universal to frame coordinates.  The arguments are a time
-// (Julian day number), position, and optionally an orientation.  If just
-// a position is passed, the function returns just the converted position.
-// Otherwise, the transformed position and orientation are both pushed onto
-// the stack.
+// Convert from universal to frame coordinates.
 static int frame_to(lua_State* l)
 {
     checkArgs(l, 2, 3, "Two or three arguments required for frame:to");
 
-    FrameOfReference* frame = to_frame(l, 1);
-    if (frame != NULL)
-    {
-        RigidTransform rt;
-        UniversalCoord* uc = NULL;
-        Quatd* q = NULL;
-        double jd = 0.0;
-        if (istype(l, 2, _Position))
-        {
-            uc = to_position(l, 2);
-        }
-        else
-        if (istype(l, 2, _Rotation))
-        {
-            q = to_rotation(l, 2);
-        }
-        
-        if (lua_isnumber(l, 3))
-        {
-             jd = lua_tonumber(l, 3);
-        }
-        else
-        {
-            CelestiaCore* appCore = getAppCore(l);
-            if (appCore != NULL)
-            {
-                Simulation* sim = appCore->getSimulation();
-                jd = sim->getTime();
-            }
-            else
-            {
-                lua_pushstring(l, "Internal error: couldn't get CelestiaCore in frame:to");
-                lua_error(l);
-            }
-        }
-        if (uc != NULL)
-        {
-            rt.translation = *uc;
-            rt = frame->fromUniversal(rt, jd);
-            position_new(l, rt.translation);
-        }
-        else
-        if (q != NULL)
-        {
-            rt.rotation = *q;
-            rt = frame->fromUniversal(rt, jd);
-            rotation_new(l, rt.rotation);
-        }
-        else
-        {
-            lua_pushstring(l, "Position expected as second argument to frame:to()");
-            lua_error(l);
-        }
+    FrameOfReference* frame = this_frame(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
 
+    RigidTransform rt;
+
+    UniversalCoord* uc = NULL;
+    Quatd* q = NULL;
+    double jd = 0.0;
+
+    if (istype(l, 2, _Position))
+    {
+        uc = to_position(l, 2);
+    }
+    else
+    if (istype(l, 2, _Rotation))
+    {
+        q = to_rotation(l, 2);
+    }
+
+    if (uc == NULL && q == NULL)
+    {
+        lua_pushstring(l, "Position or rotation expected as second argument to frame:to()");
+        lua_error(l);
+    }
+
+    jd = safeGetNumber(l, 3, WrongType, "Second arg to frame:to must be a number", appCore->getSimulation()->getTime());
+
+    if (uc != NULL)
+    {
+        rt.translation = *uc;
+        rt = frame->fromUniversal(rt, jd);
+        position_new(l, rt.translation);
     }
     else
     {
-        lua_pushstring(l, "Bad method call");
-        lua_error(l);
+        rt.rotation = *q;
+        rt = frame->fromUniversal(rt, jd);
+        rotation_new(l, rt.rotation);
     }
 
     return 1;
@@ -1228,7 +1225,7 @@ static int frame_tostring(lua_State* l)
 static void CreateFrameMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Frame);
-    
+
     RegisterMethod(l, "__tostring", frame_tostring);
     RegisterMethod(l, "to", frame_to);
     RegisterMethod(l, "from", frame_from);
@@ -1274,82 +1271,56 @@ static int object_tostring(lua_State* l)
 
 static int object_radius(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function object:radius");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to function object:radius");
 
-    Selection* sel = to_object(l, 1);
-    if (sel != NULL)
-    {
-        lua_pushnumber(l, sel->radius());
-    }
-    else
-    {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
-    }
+    Selection* sel = this_object(l);
+    lua_pushnumber(l, sel->radius());
 
     return 1;
 }
 
 static int object_type(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function object:type");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to function object:type");
 
-    Selection* sel = to_object(l, 1);
-    if (sel != NULL)
+    Selection* sel = this_object(l);
+    const char* tname = "unknown";
+    switch (sel->getType())
     {
-        const char* tname = "unknown";
-        switch (sel->getType())
+    case Selection::Type_Body:
         {
-        case Selection::Type_Body:
+            int cl = sel->body()->getClassification();
+            switch (cl)
             {
-                int cl = sel->body()->getClassification();
-                switch (cl)
-                {
-                case Body::Planet     : tname = "planet"; break;
-                case Body::Moon       : tname = "moon"; break;
-                case Body::Asteroid   : tname = "asteroid"; break;
-                case Body::Comet      : tname = "comet"; break;
-                case Body::Spacecraft : tname = "spacecraft"; break;
-                case Body::Invisible  : tname = "invisible"; break;
-                }
+            case Body::Planet     : tname = "planet"; break;
+            case Body::Moon       : tname = "moon"; break;
+            case Body::Asteroid   : tname = "asteroid"; break;
+            case Body::Comet      : tname = "comet"; break;
+            case Body::Spacecraft : tname = "spacecraft"; break;
+            case Body::Invisible  : tname = "invisible"; break;
             }
-            break;
-
-        case Selection::Type_Star:
-            tname = "star";
-            break;
-
-        case Selection::Type_DeepSky:
-            // TODO: return cluster, galaxy, or nebula as appropriate
-            tname = "deepsky";
-            break;
-
-        case Selection::Type_Location:
-            tname = "location";
-            break;
-
-        case Selection::Type_Nil:
-            tname = "null";
-            break;
         }
+        break;
 
-        lua_pushstring(l, tname);
+    case Selection::Type_Star:
+        tname = "star";
+        break;
+
+    case Selection::Type_DeepSky:
+        // TODO: return cluster, galaxy, or nebula as appropriate
+        tname = "deepsky";
+        break;
+
+    case Selection::Type_Location:
+        tname = "location";
+        break;
+
+    case Selection::Type_Nil:
+        tname = "null";
+        break;
     }
-    else
-    {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
-    }
+
+    lua_pushstring(l, tname);
 
     return 1;
 }
@@ -1357,40 +1328,27 @@ static int object_type(lua_State* l)
 
 static int object_name(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function object:name");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to function object:name");
 
-    Selection* sel = to_object(l, 1);
-    if (sel != NULL)
+    Selection* sel = this_object(l);
+    switch (sel->getType())
     {
-        switch (sel->getType())
-        {
-        case Selection::Type_Body:
-            lua_pushstring(l, sel->body()->getName().c_str());
-            break;
-        case Selection::Type_DeepSky:
-            lua_pushstring(l, sel->deepsky()->getName().c_str());
-            break;
-        case Selection::Type_Star:
-            lua_pushstring(l, getAppCore(l)->getSimulation()->getUniverse()
-                           ->getStarCatalog()->getStarName(*(sel->star())).c_str());
-            break;
-        case Selection::Type_Location:
-            lua_pushstring(l, sel->location()->getName().c_str());
-            break;
-        default:
-            lua_pushstring(l, "?");
-            break;
-        }
-    }
-    else
-    {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
+    case Selection::Type_Body:
+        lua_pushstring(l, sel->body()->getName().c_str());
+        break;
+    case Selection::Type_DeepSky:
+        lua_pushstring(l, sel->deepsky()->getName().c_str());
+        break;
+    case Selection::Type_Star:
+        lua_pushstring(l, getAppCore(l, AllErrors)->getSimulation()->getUniverse()
+                       ->getStarCatalog()->getStarName(*(sel->star())).c_str());
+        break;
+    case Selection::Type_Location:
+        lua_pushstring(l, sel->location()->getName().c_str());
+        break;
+    default:
+        lua_pushstring(l, "?");
+        break;
     }
 
     return 1;
@@ -1399,43 +1357,37 @@ static int object_name(lua_State* l)
 
 static int object_spectraltype(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function object:spectraltype");
-        lua_error(l);
-    }
+    cout << "spectraltype enter\n"; cout.flush();
+    checkArgs(l, 1, 1, "No arguments expected to function object:spectraltype");
 
-    Selection* sel = to_object(l, 1);
-    if (sel != NULL)
+    cout << "spectraltype this_object\n"; cout.flush();
+    Selection* sel = this_object(l);
+    if (sel->star() != NULL)
     {
-        if (sel->star() != NULL)
+        char buf[16];
+        cout << "spectraltype x1\n"; cout.flush();
+        StellarClass sc = sel->star()->getStellarClass();
+        cout << "spectraltype x2\n"; cout.flush();
+        if (sc.str(buf, sizeof(buf)))
         {
-            char buf[16];
-            StellarClass sc = sel->star()->getStellarClass();
-            if (sc.str(buf, sizeof(buf)))
-            {
-                lua_pushstring(l, buf);
-            }
-            else
-            {
-                // This should only happen if the spectral type has > 15 chars
-                // (i.e. never, unless there's a bug)
-                assert(0);
-                lua_pushstring(l, "Bad spectral type (this is a bug!)");
-                lua_error(l);
-            }
+            lua_pushstring(l, buf);
         }
         else
         {
-            lua_pushnil(l);
+            cout << "spectraltype x3\n"; cout.flush();
+            // This should only happen if the spectral type has > 15 chars
+            // (i.e. never, unless there's a bug)
+            assert(0);
+            lua_pushstring(l, "Bad spectral type (this is a bug!)");
+            lua_error(l);
         }
+        cout << "spectraltype x4\n"; cout.flush();
     }
     else
     {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
+        lua_pushnil(l);
     }
+    cout << "spectraltype x5\n"; cout.flush();
 
     return 1;
 }
@@ -1443,26 +1395,13 @@ static int object_spectraltype(lua_State* l)
 
 static int object_absmag(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function object:absmag");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to function object:absmag");
 
-    Selection* sel = to_object(l, 1);
-    if (sel != NULL)
-    {
-        if (sel->star() != NULL)
-            lua_pushnumber(l, sel->star()->getAbsoluteMagnitude());
-        else
-            lua_pushnil(l);
-    }
+    Selection* sel = this_object(l);
+    if (sel->star() != NULL)
+        lua_pushnumber(l, sel->star()->getAbsoluteMagnitude());
     else
-    {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
-    }
+        lua_pushnil(l);
 
     return 1;
 }
@@ -1470,47 +1409,30 @@ static int object_absmag(lua_State* l)
 
 static int object_mark(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc < 1)
-    {
-        lua_pushstring(l, "Bad call to object:mark");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 4, "No arguments expected to function object:mark");
 
-    Selection* sel = to_object(l, 1);
-    if (sel != NULL)
-    {
-        Color markColor(0.0f, 1.0f, 0.0f);
-        if (argc > 1)
-            markColor = to_color(l, 2);
-        
-        Marker::Symbol markSymbol = Marker::Diamond;
-        if (argc > 2 && lua_isstring(l, 3))
-            markSymbol = parseMarkerSymbol(lua_tostring(l, 3));
+    Selection* sel = this_object(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
 
-        float markSize = 10.0f;
-        if (argc > 3 && lua_isnumber(l, 4))
-        {
-            markSize = (float) lua_tonumber(l, 4);
-            if (markSize < 1.0f)
-                markSize = 1.0f;
-            else if (markSize > 100.0f)
-                markSize = 100.0f;
-        }
+    Color markColor(0.0f, 1.0f, 0.0f);
+    const char* colorString = safeGetString(l, 2, WrongType, "First argument to object:mark must be a string");
+    if (colorString != NULL)
+        Color::parse(colorString, markColor);
 
-        CelestiaCore* appCore = getAppCore(l);
-        if (appCore != NULL)
-        {
-            Simulation* sim = appCore->getSimulation();
-            sim->getUniverse()->markObject(*sel, markSize,
-                                           markColor, markSymbol, 1);
-        }
-    }
-    else
-    {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
-    }
+    Marker::Symbol markSymbol = Marker::Diamond;
+    const char* markerString = safeGetString(l, 3, WrongType, "Second argument to object:mark must be a string");
+    if (markerString != NULL)
+        markSymbol = parseMarkerSymbol(markerString);
+
+    float markSize = (float)safeGetNumber(l, 4, WrongType, "Third arg to object:mark must be a number", 10.0);
+    if (markSize < 1.0f)
+        markSize = 1.0f;
+    else if (markSize > 100.0f)
+        markSize = 100.0f;
+
+    Simulation* sim = appCore->getSimulation();
+    sim->getUniverse()->markObject(*sel, markSize,
+                                   markColor, markSymbol, 1);
 
     return 0;
 }
@@ -1518,28 +1440,13 @@ static int object_mark(lua_State* l)
 
 static int object_unmark(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function object:unmark");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to function object:unmark");
 
-    Selection* sel = to_object(l, 1);
-    if (sel != NULL)
-    {
-        CelestiaCore* appCore = getAppCore(l);
-        if (appCore != NULL)
-        {
-            Simulation* sim = appCore->getSimulation();
-            sim->getUniverse()->unmarkObject(*sel, 1);
-        }
-    }
-    else
-    {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
-    }
+    Selection* sel = this_object(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    Simulation* sim = appCore->getSimulation();
+    sim->getUniverse()->unmarkObject(*sel, 1);
 
     return 0;
 }
@@ -1549,43 +1456,14 @@ static int object_unmark(lua_State* l)
 // if not provided, the current master simulation time is used.
 static int object_getposition(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1 && argc != 2)
-    {
-        lua_pushstring(l, "Bad number of arguments to observer:getposition");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 2, "Expected no or one argument to object:getposition");
 
-    Selection* sel = to_object(l, 1);
-    if (sel != NULL)
-    {
-        double t = 0.0;
-        if (argc == 2)
-        {
-            if (lua_isnumber(l, 2))
-            {
-                t = lua_tonumber(l, 2);
-            }
-            else
-            {
-                lua_pushstring(l, "Time expected as argument to object:getposition");
-                lua_error(l);
-            }
-        }
-        else
-        {
-            CelestiaCore* appCore = getAppCore(l);
-            if (appCore != NULL)
-                t = appCore->getSimulation()->getTime();
-        }
+    Selection* sel = this_object(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
 
-        position_new(l, sel->getPosition(t));
-    }
-    else
-    {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
-    }
+    double t = safeGetNumber(l, 2, WrongType, "Time expected as argument to object:getposition",
+                              appCore->getSimulation()->getTime());
+    position_new(l, sel->getPosition(t));
 
     return 1;
 }
@@ -1593,14 +1471,9 @@ static int object_getposition(lua_State* l)
 static int object_getchildren(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for object:getchildren()");
-    Selection* sel = this_object(l);
 
-    CelestiaCore* appCore = getAppCore(l);
-    if (appCore == NULL)
-    {
-        lua_pushstring(l, "Celestia instance missing!");
-        lua_error(l);
-    }
+    Selection* sel = this_object(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
 
     Simulation* sim = appCore->getSimulation();
 
@@ -1706,11 +1579,9 @@ static int observer_tostring(lua_State* l)
 static int observer_setposition(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument required for setpos");
-    Observer* o = to_observer(l,1);
-    if (o == NULL) {
-        lua_pushstring(l, "Invalid object");
-        lua_error(l);
-    }
+
+    Observer* o = this_observer(l);
+
     UniversalCoord* uc = to_position(l,2);
     if (uc == NULL)
     {
@@ -1724,11 +1595,9 @@ static int observer_setposition(lua_State* l)
 static int observer_setorientation(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument required for setorientation");
-    Observer* o = to_observer(l,1);
-    if (o == NULL) {
-        lua_pushstring(l, "Invalid object");
-        lua_error(l);
-    }
+
+    Observer* o = this_observer(l);
+
     Quatd* q = to_rotation(l,2);
     if (q == NULL)
     {
@@ -1742,11 +1611,9 @@ static int observer_setorientation(lua_State* l)
 static int observer_rotate(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument required for rotate");
-    Observer* o = to_observer(l,1);
-    if (o == NULL) {
-        lua_pushstring(l, "Invalid object");
-        lua_error(l);
-    }
+
+    Observer* o = this_observer(l);
+
     Quatd* q = to_rotation(l,2);
     if (q == NULL)
     {
@@ -1763,12 +1630,8 @@ static int observer_lookat(lua_State* l)
     checkArgs(l, 3, 4, "Two or three arguments required for lookat");
     int argc = lua_gettop(l);
 
-    Observer* o = to_observer(l,1);
-    if (o == NULL)
-    {
-        lua_pushstring(l, "Invalid object");
-        lua_error(l);
-    }
+    Observer* o = this_observer(l);
+
     UniversalCoord* from = NULL;
     UniversalCoord* to = NULL;
     Vec3d* upd = NULL;
@@ -1812,7 +1675,7 @@ static int observer_lookat(lua_State* l)
     // need Vec3f instead:
     Vec3f up = Vec3f(upd->x, upd->y, upd->z);
     Vec3f n = Vec3f(nd.x, nd.y, nd.z);
-    
+
     n.normalize();
     Vec3f v = n ^ up;
     v.normalize();
@@ -1826,49 +1689,36 @@ static int observer_lookat(lua_State* l)
 // is the travel time
 static int observer_goto(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc < 2)
+    checkArgs(l, 1, 5, "One to four arguments expected to observer:goto");
+
+    Observer* o = this_observer(l);
+
+    Selection* sel = to_object(l, 2);
+    UniversalCoord* uc = to_position(l, 2);
+    if (sel == NULL && uc == NULL)
     {
-        lua_pushstring(l, "At least one argument expected to function observer:goto");
+        lua_pushstring(l, "First arg to observer:goto must be object or position");
         lua_error(l);
     }
 
-    double travelTime = 5.0;
-    double startInter = 0.25;
-    double endInter = 0.75;
-    if (argc >= 3)
-    {
-        if (lua_isnumber(l, 3))
-            travelTime = lua_tonumber(l, 3);
-        if (lua_isnumber(l, 4))
-            startInter = lua_tonumber(l, 4);
-        if (lua_isnumber(l, 5))
-            endInter = lua_tonumber(l, 5);
-        if (startInter < 0 || startInter > 1) startInter = 0.25;
-        if (endInter < 0 || endInter > 1) startInter = 0.75;
-    }
+    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:goto must be a number", 5.0);
+    double startInter = safeGetNumber(l, 4, WrongType, "Third arg to observer:goto must be a number", 0.25);
+    double endInter = safeGetNumber(l, 5, WrongType, "Fourth arg to observer:goto must be a number", 0.75);
+    if (startInter < 0 || startInter > 1) startInter = 0.25;
+    if (endInter < 0 || endInter > 1) startInter = 0.75;
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
+    // The first argument may be either an object or a position
+    if (sel != NULL)
     {
-        // The first argument may be either an object or a position
-        Selection* sel = to_object(l, 2);
-        if (sel != NULL)
-        {
-            o->gotoSelection(*sel, travelTime, startInter, endInter, Vec3f(0, 1, 0), astro::ObserverLocal);
-        }
-        else
-        {
-            // TODO: would it be better to have a separate gotolocation
-            // command?  Probably.
-            UniversalCoord* uc = to_position(l, 2);
-            if (uc != NULL)
-            {
-                RigidTransform rt = o->getSituation();
-                rt.translation = *uc;
-                o->gotoLocation(rt, travelTime);
-            }
-        }
+        o->gotoSelection(*sel, travelTime, startInter, endInter, Vec3f(0, 1, 0), astro::ObserverLocal);
+    }
+    else
+    {
+        // TODO: would it be better to have a separate gotolocation
+        // command?  Probably.
+        RigidTransform rt = o->getSituation();
+        rt.translation = *uc;
+        o->gotoLocation(rt, travelTime);
     }
 
     return 0;
@@ -1879,52 +1729,45 @@ static int observer_goto(lua_State* l)
 // is the travel time
 static int observer_gotolocation(lua_State* l)
 {
-    checkArgs(l, 2,3,"Need at least 2 or 3 arguments to gotolocation");
-    int argc = lua_gettop(l);
-    
-    double travelTime = 5.0;
-    if (argc == 3)
-    {
-        if (lua_isnumber(l, 3))
-            travelTime = lua_tonumber(l, 3);
-    }
+    checkArgs(l, 2, 3,"Expected one or two arguments to observer:gotolocation");
 
     Observer* o = this_observer(l);
-    if (o != NULL)
-    {
-        UniversalCoord* uc = to_position(l, 2);
-        if (uc != NULL)
-        {
-            RigidTransform rt = o->getSituation();
-            rt.translation = *uc;
-            o->gotoLocation(rt, travelTime);
-        }
 
-        return 0;
+    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotolocation must be a number", 5.0);
+    if (travelTime < 0)
+        travelTime = 0.0;
+
+    UniversalCoord* uc = to_position(l, 2);
+    if (uc != NULL)
+    {
+        RigidTransform rt = o->getSituation();
+        rt.translation = *uc;
+        o->gotoLocation(rt, travelTime);
     }
     else
     {
-        return 1;
+        lua_pushstring(l, "First arg to observer:gotolocation must be a position");
+        lua_error(l);
     }
+
+    return 0;
 }
 
 
 static int observer_center(lua_State* l)
 {
-    checkArgs(l, 2, 3, "At least one argument expected to observer:center");
-    int argc = lua_gettop(l);
-
-    double travelTime = 5.0;
-    if (argc >= 3)
-    {
-        if (lua_isnumber(l, 3))
-            travelTime = lua_tonumber(l, 3);
-    }
+    checkArgs(l, 2, 3, "Expected one or two arguments for to observer:center");
 
     Observer* o = this_observer(l);
     Selection* sel = to_object(l, 2);
-    if (sel != NULL)
-        o->centerSelection(*sel, travelTime);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First argument to observer:center must be an object");
+        lua_error(l);
+    }
+    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:center must be a number", 5.0);
+
+    o->centerSelection(*sel, travelTime);
 
     return 0;
 }
@@ -1936,8 +1779,12 @@ static int observer_follow(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = to_object(l, 2);
-    if (sel != NULL)
-        o->follow(*sel);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First argument to observer:follow must be an object");
+        lua_error(l);
+    }
+    o->follow(*sel);
 
     return 0;
 }
@@ -1949,8 +1796,12 @@ static int observer_synchronous(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = to_object(l, 2);
-    if (sel != NULL)
-        o->geosynchronousFollow(*sel);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First argument to observer:synchronous must be an object");
+        lua_error(l);
+    }
+    o->geosynchronousFollow(*sel);
 
     return 0;
 }
@@ -1962,8 +1813,12 @@ static int observer_lock(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = to_object(l, 2);
-    if (sel != NULL)
-        o->phaseLock(*sel);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First argument to observer:phaseLock must be an object");
+        lua_error(l);
+    }
+    o->phaseLock(*sel);
 
     return 0;
 }
@@ -1975,8 +1830,12 @@ static int observer_chase(lua_State* l)
 
     Observer* o = this_observer(l);
     Selection* sel = to_object(l, 2);
-    if (sel != NULL)
-        o->chase(*sel);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "First argument to observer:chase must be an object");
+        lua_error(l);
+    }
+    o->chase(*sel);
 
     return 0;
 }
@@ -1997,8 +1856,12 @@ static int observer_track(lua_State* l)
     {
         // Otherwise, turn on tracking and set the tracked object
         Selection* sel = to_object(l, 2);
-        if (sel != NULL)
-            o->setTrackedObject(*sel);
+        if (sel == NULL)
+        {
+            lua_pushstring(l, "First argument to observer:center must be an object");
+            lua_error(l);
+        }
+        o->setTrackedObject(*sel);
     }
 
     return 0;
@@ -2074,50 +1937,38 @@ static int observer_setsurface(lua_State* l)
 static int observer_getframe(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for observer:getframe()");
+
     Observer* obs = this_observer(l);
-    if (obs != NULL) 
-    {
-        FrameOfReference frame = obs->getFrame();
-        frame_new(l, frame);
-    }
-    else
-    {
-        lua_pushstring(l, "Bad object!");
-        lua_error(l);
-    }        
+
+    FrameOfReference frame = obs->getFrame();
+    frame_new(l, frame);
     return 1;
 }
 
 static int observer_setframe(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument required for observer:setframe()");
+
     Observer* obs = this_observer(l);
-    if (obs != NULL) 
+
+    FrameOfReference* frame;
+    frame = to_frame(l, 2);
+    if (frame != NULL)
     {
-        FrameOfReference* frame;
-        frame = to_frame(l, 2);
-        if (frame != NULL)
-        {
-            obs->setFrame(*frame);
-        }
-        else
-        {
-            lua_pushstring(l, "Argument to observer:setframe must be a frame");
-            lua_error(l);
-        }
+        obs->setFrame(*frame);
     }
     else
     {
-        lua_pushstring(l, "Bad object!");
+        lua_pushstring(l, "Argument to observer:setframe must be a frame");
         lua_error(l);
-    }        
+    }
     return 0;
-}            
+}
 
 static void CreateObserverMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Observer);
-    
+
     RegisterMethod(l, "__tostring", observer_tostring);
     RegisterMethod(l, "goto", observer_goto);
     RegisterMethod(l, "gotolocation", observer_gotolocation);
@@ -2180,21 +2031,16 @@ static CelestiaCore* this_celestia(lua_State* l)
 static int celestia_flash(lua_State* l)
 {
     checkArgs(l, 2, 3, "One or two arguments expected to function celestia:flash");
+
     CelestiaCore* appCore = this_celestia(l);
-    int argc = lua_gettop(l);
-    const char* s = lua_tostring(l, 2);
-    double duration = 1.5;
-    if (argc > 2) 
+    const char* s = safeGetString(l, 2, AllErrors, "First argument to celestia:flash must be a string");
+    double duration = safeGetNumber(l, 3, WrongType, "Second argument to celestia:flash must be a number", 1.5);
+    if (duration < 0.0)
     {
-        duration = lua_tonumber(l, 3);
-        if (duration < 0.0) 
-        {
-            duration = 1.5;
-        }
+        duration = 1.5;
     }
 
-    if (appCore != NULL && s != NULL)
-        appCore->flash(s, duration);
+    appCore->flash(s, duration);
 
     return 0;
 }
@@ -2202,51 +2048,21 @@ static int celestia_flash(lua_State* l)
 static int celestia_print(lua_State* l)
 {
     checkArgs(l, 2, 7, "One to six arguments expected to function celestia:print");
+
     CelestiaCore* appCore = this_celestia(l);
-    int argc = lua_gettop(l);
-    const char* s = lua_tostring(l, 2);
-    if (s == NULL)
+    const char* s = safeGetString(l, 2, AllErrors, "First argument to celestia:print must be a string");
+    double duration = safeGetNumber(l, 3, WrongType, "Second argument to celestia:print must be a number", 1.5);
+    int horig = (int)safeGetNumber(l, 4, WrongType, "Third argument to celestia:print must be a number", -1.0);
+    int vorig = (int)safeGetNumber(l, 5, WrongType, "Fourth argument to celestia:print must be a number", -1.0);
+    int hoff = (int)safeGetNumber(l, 6, WrongType, "Fifth argument to celestia:print must be a number", 0.0);
+    int voff = (int)safeGetNumber(l, 7, WrongType, "Sixth argument to celestia:print must be a number", 5.0);
+
+    if (duration < 0.0)
     {
-        lua_pushstring(l, "First argument to celestia:print must be a string");
-        lua_error(l);
-    }
-    double duration = 1.5;    
-    int horig = -1;
-    int vorig = -1;
-    int hoff = 0;
-    int voff = 5;
-    
-    if (argc > 2) 
-    {
-        duration = lua_tonumber(l, 3);
-        if (duration < 0.0) 
-        {
-            duration = 1.5;
-        }
+        duration = 1.5;
     }
 
-    if (argc > 3) 
-    {
-        horig = static_cast<int>(lua_tonumber(l, 4));
-    }
-
-    if (argc > 4) 
-    {
-        vorig = static_cast<int>(lua_tonumber(l, 5));
-    }
-
-    if (argc > 5) 
-    {
-        hoff = static_cast<int>(lua_tonumber(l, 6));
-    }
-
-    if (argc > 6) 
-    {
-        voff = static_cast<int>(lua_tonumber(l, 7));
-    }
-
-    if (appCore != NULL && s != NULL)
-        appCore->showText(s, horig, vorig, hoff, voff, duration);
+    appCore->showText(s, horig, vorig, hoff, voff, duration);
 
     return 0;
 }
@@ -2254,7 +2070,7 @@ static int celestia_print(lua_State* l)
 
 static int celestia_show(lua_State* l)
 {
-    checkArgs(l, 1, 1000, "Bad method call!");
+    checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:show");
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
@@ -2275,7 +2091,7 @@ static int celestia_show(lua_State* l)
 
 static int celestia_hide(lua_State* l)
 {
-    checkArgs(l, 1, 1000, "Bad method call!");
+    checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:show");
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
@@ -2317,7 +2133,7 @@ static int celestia_showlabel(lua_State* l)
 
 static int celestia_hidelabel(lua_State* l)
 {
-    checkArgs(l, 1, 1000, "Bad method call!");
+    checkArgs(l, 1, 1000, "Invalid number of arguments in celestia:hidelabel");
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
@@ -2364,21 +2180,18 @@ static int celestia_getselection(lua_State* l)
 
 static int celestia_find(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2 || !lua_isstring(l, 2))
+    checkArgs(l, 2, 2, "One argument expected for function celestia:find()");
+    if (!lua_isstring(l, 2))
     {
-        lua_pushstring(l, "One string argument expected for function celestia:find()");
+        lua_pushstring(l, "Argument to find must be a string");
         lua_error(l);
     }
 
     CelestiaCore* appCore = this_celestia(l);
-    if (appCore != NULL)
-    {
-        Simulation* sim = appCore->getSimulation();
-        // Should use universe not simulation for finding objects
-        Selection sel = sim->findObjectFromPath(lua_tostring(l, 2));
-        object_new(l, sel);
-    }
+    Simulation* sim = appCore->getSimulation();
+    // Should use universe not simulation for finding objects
+    Selection sel = sim->findObjectFromPath(lua_tostring(l, 2));
+    object_new(l, sel);
 
     return 1;
 }
@@ -2404,24 +2217,21 @@ static int celestia_select(lua_State* l)
 
 static int celestia_mark(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
+    checkArgs(l, 2, 2, "One argument expected to function celestia:mark");
+
+    CelestiaCore* appCore = this_celestia(l);
+    Simulation* sim = appCore->getSimulation();
+    Selection* sel = to_object(l, 2);
+
+    if (sel != NULL)
     {
-        lua_pushstring(l, "One argument expected to function celestia:mark");
-        lua_error(l);
+        sim->getUniverse()->markObject(*sel, 10.0f,
+                                       Color(0.0f, 1.0f, 0.0f), Marker::Diamond, 1);
     }
-
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
+    else
     {
-        Simulation* sim = appCore->getSimulation();
-        Selection* sel = to_object(l, 2);
-
-        if (sel != NULL)
-        {
-            sim->getUniverse()->markObject(*sel, 10.0f,
-                                           Color(0.0f, 1.0f, 0.0f), Marker::Diamond, 1);
-        }
+        lua_pushstring(l, "Argument to celestia:mark must be an object");
+        lua_error(l);
     }
 
     return 0;
@@ -2430,21 +2240,20 @@ static int celestia_mark(lua_State* l)
 
 static int celestia_unmark(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
+    checkArgs(l, 2, 2, "One argument expected to function celestia:unmark");
+
+    CelestiaCore* appCore = this_celestia(l);
+    Simulation* sim = appCore->getSimulation();
+    Selection* sel = to_object(l, 2);
+
+    if (sel != NULL)
     {
-        lua_pushstring(l, "One argument expected to function celestia:unmark");
-        lua_error(l);
+        sim->getUniverse()->unmarkObject(*sel, 1);
     }
-
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
+    else
     {
-        Simulation* sim = appCore->getSimulation();
-        Selection* sel = to_object(l, 2);
-
-        if (sel != NULL)
-            sim->getUniverse()->unmarkObject(*sel, 1);
+        lua_pushstring(l, "Argument to celestia:unmark must be an object");
+        lua_error(l);
     }
 
     return 0;
@@ -2453,19 +2262,11 @@ static int celestia_unmark(lua_State* l)
 
 static int celestia_gettime(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No argument expected to function celestia:gettime");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No argument expected to function celestia:gettime");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        Simulation* sim = appCore->getSimulation();
-        lua_pushnumber(l, sim->getTime());
-    }
+    CelestiaCore* appCore = this_celestia(l);
+    Simulation* sim = appCore->getSimulation();
+    lua_pushnumber(l, sim->getTime());
 
     return 1;
 }
@@ -2473,16 +2274,10 @@ static int celestia_gettime(lua_State* l)
 
 static int celestia_gettimescale(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No argument expected to function celestia:gettimescale");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No argument expected to function celestia:gettimescale");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-        lua_pushnumber(l, appCore->getSimulation()->getTimeScale());
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushnumber(l, appCore->getSimulation()->getTimeScale());
 
     return 1;
 }
@@ -2490,19 +2285,11 @@ static int celestia_gettimescale(lua_State* l)
 
 static int celestia_settime(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function celestia:settime");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected to function celestia:settime");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        if (lua_isnumber(l, 2))
-            appCore->getSimulation()->setTime(lua_tonumber(l, 2));
-    }
+    CelestiaCore* appCore = this_celestia(l);
+    double t = safeGetNumber(l, 2, AllErrors, "Second arg to celestia:settime must be a number");
+    appCore->getSimulation()->setTime(t);
 
     return 0;
 }
@@ -2510,19 +2297,11 @@ static int celestia_settime(lua_State* l)
 
 static int celestia_settimescale(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function celestia:settimescale");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected to function celestia:settimescale");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        if (lua_isnumber(l, 2))
-            appCore->getSimulation()->setTimeScale(lua_tonumber(l, 2));
-    }
+    CelestiaCore* appCore = this_celestia(l);
+    double t = safeGetNumber(l, 2, AllErrors, "Second arg to celestia:settimescale must be a number");
+    appCore->getSimulation()->setTimeScale(t);
 
     return 0;
 }
@@ -2530,54 +2309,26 @@ static int celestia_settimescale(lua_State* l)
 
 static int celestia_tojulianday(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc < 2 || argc > 7)
-    {
-        lua_pushstring(l, "Wrong number of arguments to function celestia:tojulianday");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 7, "Wrong number of arguments to function celestia:tojulianday");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        int year = 0;
-        int month = 1;
-        int day = 1;
-        int hour = 0;
-        int minute = 0;
-        double seconds = 0.0;
+    // for error checking only:
+    this_celestia(l);
 
-        // Require that all arguments are numeric
-        for (int i = 2; i < argc; i++)
-        {
-            if (!lua_isnumber(l, i))
-            {
-                lua_pushstring(l, "Arguments of celestia:tojulianday must be numberic");
-                lua_error(l);
-            }
-        }
+    int year = (int)safeGetNumber(l, 2, AllErrors, "First arg to celestia:tojulianday must be a number", 0.0);
+    int month = (int)safeGetNumber(l, 3, WrongType, "Second arg to celestia:tojulianday must be a number", 1.0);
+    int day = (int)safeGetNumber(l, 4, WrongType, "Third arg to celestia:tojulianday must be a number", 1.0);
+    int hour = (int)safeGetNumber(l, 5, WrongType, "Fourth arg to celestia:tojulianday must be a number", 0.0);
+    int minute = (int)safeGetNumber(l, 6, WrongType, "Fifth arg to celestia:tojulianday must be a number", 0.0);
+    double seconds = safeGetNumber(l, 7, WrongType, "Sixth arg to celestia:tojulianday must be a number", 0.0);
 
-        year = (int) lua_tonumber(l, 2);
-        if (argc > 2)
-            month = (int) lua_tonumber(l, 3);
-        if (argc > 3)
-            day = (int) lua_tonumber(l, 4);
-        if (argc > 4)
-            hour = (int) lua_tonumber(l, 5);
-        if (argc > 5)
-            minute = (int) lua_tonumber(l, 6);
-        if (argc > 6)
-            seconds = lua_tonumber(l, 7);
+    astro::Date date(year, month, day);
+    date.hour = hour;
+    date.minute = minute;
+    date.seconds = seconds;
 
-        astro::Date date(year, month, day);
-        date.hour = hour;
-        date.minute = minute;
-        date.seconds = seconds;
+    double jd = (double) date;
 
-        double jd = (double) date;
-
-        lua_pushnumber(l, jd);
-    }
+    lua_pushnumber(l, jd);
 
     return 1;
 }
@@ -2587,12 +2338,9 @@ static int celestia_unmarkall(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function celestia:unmarkall");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        Simulation* sim = appCore->getSimulation();
-        sim->getUniverse()->unmarkAll();
-    }
+    CelestiaCore* appCore = this_celestia(l);
+    Simulation* sim = appCore->getSimulation();
+    sim->getUniverse()->unmarkAll();
 
     return 0;
 }
@@ -2602,17 +2350,9 @@ static int celestia_getstarcount(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function celestia:getstarcount");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        Universe* u = appCore->getSimulation()->getUniverse();
-        lua_pushnumber(l, u->getStarCatalog()->size());
-    }
-    else
-    {
-        lua_pushstring(l, "Bad celestia object");
-        lua_error(l);
-    }
+    CelestiaCore* appCore = this_celestia(l);
+    Universe* u = appCore->getSimulation()->getUniverse();
+    lua_pushnumber(l, u->getStarCatalog()->size());
 
     return 1;
 }
@@ -2620,65 +2360,30 @@ static int celestia_getstarcount(lua_State* l)
 
 static int celestia_getstar(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function celestia:getstar");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected to function celestia:getstar");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        if (lua_isnumber(l, 2))
-        {
-            double starIndex = lua_tonumber(l, 2);
-            Universe* u = appCore->getSimulation()->getUniverse();
-            Star* star = u->getStarCatalog()->getStar((uint32) starIndex);
-            if (star == NULL)
-                lua_pushnil(l);
-            else
-                object_new(l, Selection(star));
-        }
-        else
-        {
-            lua_pushnil(l);
-        }
-    }
+    CelestiaCore* appCore = this_celestia(l);
+    double starIndex = safeGetNumber(l, 2, AllErrors, "First arg to celestia:getstar must be a number");
+    Universe* u = appCore->getSimulation()->getUniverse();
+    Star* star = u->getStarCatalog()->getStar((uint32) starIndex);
+    if (star == NULL)
+        lua_pushnil(l);
     else
-    {
-        lua_pushstring(l, "Bad celestia object");
-        lua_error(l);
-    }
+        object_new(l, Selection(star));
 
     return 1;
 }
 
 static int celestia_newvector(lua_State* l)
 {
-    checkArgs(l, 4, 4, "Need 3 arguments for celestia:newvector");
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        for (int i = 2; i < 5; i++) 
-        {
-            if (!lua_isnumber(l, i))
-            {
-                lua_pushstring(l, "newvector: argument must be a number");
-                lua_error(l);
-            }
-        }
-        double x, y, z;
-        x = lua_tonumber(l, 2);
-        y = lua_tonumber(l, 3);
-        z = lua_tonumber(l, 4);
-        vector_new(l, Vec3d(x,y,z));
-    }
-    else
-    {
-        lua_pushstring(l, "Bad celestia object");
-        lua_error(l);
-    }
+    checkArgs(l, 4, 4, "Expected 3 arguments for celestia:newvector");
+    // for error checking only:
+    this_celestia(l);
+    double x = safeGetNumber(l, 2, AllErrors, "First arg to celestia:newvector must be a number");
+    double y = safeGetNumber(l, 3, AllErrors, "Second arg to celestia:newvector must be a number");
+    double z = safeGetNumber(l, 4, AllErrors, "Third arg to celestia:newvector must be a number");
+
+    vector_new(l, Vec3d(x,y,z));
 
     return 1;
 }
@@ -2686,37 +2391,29 @@ static int celestia_newvector(lua_State* l)
 static int celestia_newrotation(lua_State* l)
 {
     checkArgs(l, 3, 3, "Need 2 arguments for celestia:newrotation");
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
+    // for error checking only:
+    this_celestia(l);
+
+    Vec3d* v = to_vector(l, 2);
+    if (v == NULL)
     {
-        Vec3d* v = to_vector(l, 2);
-        if (v == NULL)
-        {
-            lua_pushstring(l, "newrotation: first argument must be a vector");
-            lua_error(l);
-        }
-        double angle = 0.0;
-        if (!lua_isnumber(l, 3))
-        {
-            lua_pushstring(l, "newrotation: second argument must be a number");
-            lua_error(l);
-        }
-        angle = static_cast<double>(lua_tonumber(l, 3));
-        Quatd q;
-        q.setAxisAngle(*v, angle); 
-        rotation_new(l, q);
-    }
-    else
-    {
-        lua_pushstring(l, "Bad celestia object");
+        lua_pushstring(l, "newrotation: first argument must be a vector");
         lua_error(l);
     }
+    double angle = safeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
+    Quatd q;
+    q.setAxisAngle(*v, angle);
+    rotation_new(l, q);
 
     return 1;
 }
 
 static int celestia_getscripttime(lua_State* l)
 {
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getscripttime");
+    // for error checking only:
+    this_celestia(l);
+
     lua_pushstring(l, "celestia-luastate");
     lua_gettable(l, LUA_REGISTRYINDEX);
     if (!lua_islightuserdata(l, -1))
@@ -2730,68 +2427,50 @@ static int celestia_getscripttime(lua_State* l)
         lua_pushstring(l, "Invalid value in celestia:getscripttime (internal error)");
         lua_error(l);
     }
-    lua_pushnumber(l, luastate_ptr->getTime()); 
-    return 1;        
+    lua_pushnumber(l, luastate_ptr->getTime());
+    return 1;
 }
 
 static int celestia_newframe(lua_State* l)
 {
+    checkArgs(l, 2, 4, "At least argument expected to function celestia:newframe");
     int argc = lua_gettop(l);
-    if (argc < 2)
-    {
-        lua_pushstring(l, "At least argument expected to function celestia:newframe");
-        lua_error(l);
-    }
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
+    // for error checking only:
+    this_celestia(l);
+
+    const char* coordsysName = safeGetString(l, 2, AllErrors, "newframe: first argument must be a string");
+    astro::CoordinateSystem coordSys = parseCoordSys(coordsysName);
+    Selection* ref = NULL;
+    Selection* target = NULL;
+
+    if (coordSys == astro::PhaseLock)
     {
-        if (!lua_isstring(l, 2))
+        if (argc >= 4)
         {
-            lua_pushstring(l, "newframe: first argument must be a string");
+            ref = to_object(l, 3);
+            target = to_object(l, 4);
+        }
+
+        if (ref == NULL || target == NULL)
+        {
+            lua_pushstring(l, "newframe: two objects required for lock frame");
             lua_error(l);
         }
-        else
-        {
-            const char* coordsysName = lua_tostring(l, 2);
-            astro::CoordinateSystem coordSys = parseCoordSys(coordsysName);
-            Selection* ref = NULL;
-            Selection* target = NULL;
-
-            if (coordSys == astro::PhaseLock)
-            {
-                if (argc >= 4)
-                {
-                    ref = to_object(l, 3);
-                    target = to_object(l, 4);
-                }
-
-                if (ref == NULL || target == NULL)
-                {
-                    lua_pushstring(l, "newframe: two objects required for lock frame");
-                    lua_error(l);
-                } else {
-                    frame_new(l, FrameOfReference(coordSys, *ref, *target));
-                }
-            }
-            else
-            {
-                if (argc >= 3)
-                    ref = to_object(l, 3);
-                if (ref == NULL)
-                {
-                    lua_pushstring(l, "newframe: one object argument required for frame");
-                    lua_error(l);
-                } else {
-                    frame_new(l, FrameOfReference(coordSys, *ref));
-                }
-            }   
-        }
+        
+        frame_new(l, FrameOfReference(coordSys, *ref, *target));
     }
     else
     {
-        lua_pushstring(l, "Bad celestia object");
-        lua_error(l);
+        if (argc >= 3)
+            ref = to_object(l, 3);
+        if (ref == NULL)
+        {
+            lua_pushstring(l, "newframe: one object argument required for frame");
+            lua_error(l);
+        }
+        
+        frame_new(l, FrameOfReference(coordSys, *ref));
     }
 
     return 1;
@@ -2868,26 +2547,25 @@ bool LuaState::init(CelestiaCore* appCore)
     lua_pushstring(state, "celestia");
     celestia_new(state, appCore);
     lua_settable(state, LUA_GLOBALSINDEX);
-    // add a reference to the LuaState-object in the registry    
+    // add a reference to the LuaState-object in the registry
     lua_pushstring(state, "celestia-luastate");
     lua_pushlightuserdata(state, static_cast<void*>(this));
     lua_settable(state, LUA_REGISTRYINDEX);
 
-#if 0    
+#if 0
     lua_pushstring(state, "dofile");
     lua_gettable(state, LUA_GLOBALSINDEX); // function "dofile" on stack
-    lua_pushstring(state, "luainit.celx"); // parameter    
+    lua_pushstring(state, "luainit.celx"); // parameter
     if (lua_pcall(state, 1, 0, 0) != 0) // execute it
     {
         CelestiaCore::Alerter* alerter = appCore->getAlerter();
         // copy string?!
         const char* errorMessage = lua_tostring(state, -1);
-        cout << errorMessage << '\n'; cout.flush();        
+        cout << errorMessage << '\n'; cout.flush();
         alerter->fatalError(errorMessage);
         return false;
     }
 #endif
-    
 
     return true;
 }
