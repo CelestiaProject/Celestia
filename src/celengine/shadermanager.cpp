@@ -14,6 +14,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstdio>
+#include <cassert>
 
 using namespace std;
 
@@ -57,7 +58,8 @@ GetShaderManager()
 ShaderProperties::ShaderProperties() :
     nLights(0),
     texUsage(0),
-    lightModel(DiffuseModel)
+    lightModel(DiffuseModel),
+    shadowCounts(0)
 {
 }
 
@@ -65,7 +67,7 @@ ShaderProperties::ShaderProperties() :
 bool
 ShaderProperties::usesShadows() const
 {
-    if ((texUsage & RingShadowTexture) != 0)
+    if ((texUsage & RingShadowTexture) != 0 || shadowCounts != 0)
         return true;
     else
         return false;
@@ -82,6 +84,25 @@ ShaderProperties::usesFragmentLighting() const
 }
 
 
+unsigned int
+ShaderProperties::getShadowCountForLight(unsigned int i) const
+{
+    return (shadowCounts >> i * 2) & 3;
+}
+
+
+void
+ShaderProperties::setShadowCountForLight(unsigned int light, unsigned int n)
+{
+    assert(n < MaxShaderShadows);
+    assert(light < MaxShaderLights);
+    if (n < MaxShaderShadows && light < MaxShaderLights)
+    {
+        shadowCounts &= ~(3 << light * 2);
+        shadowCounts |= n << light * 2;
+    }
+}
+
 bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
     if (p0.texUsage < p1.texUsage)
@@ -92,6 +113,11 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
     if (p0.nLights < p1.nLights)
         return true;
     else if (p1.nLights < p0.nLights)
+        return false;
+
+    if (p0.shadowCounts < p1.shadowCounts)
+        return true;
+    else if (p1.shadowCounts < p0.shadowCounts)
         return false;
 
     return (p0.lightModel < p1.lightModel);
@@ -184,6 +210,24 @@ FragLightProperty(unsigned int i, char* property)
 }
 
 
+static string
+IndexedParameter(const char* name, unsigned int index)
+{
+    char buf[64];
+    sprintf(buf, "%s%d", name, index);
+    return string(buf);
+}
+
+
+static string
+IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
+{
+    char buf[64];
+    sprintf(buf, "%s%d_%d", name, index0, index1);
+    return string(buf);
+}
+
+
 void
 CelestiaGLProgram::initParameters(const ShaderProperties& props)
 {
@@ -195,6 +239,18 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
         lights[i].halfVector = vec3Param(LightProperty(i, "halfVector"));
 
         fragLightColor[i] = vec3Param(FragLightProperty(i, "color"));
+
+        for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+        {
+            shadows[i][j].texGenS =
+                vec4Param(IndexedParameter("shadowTexGenS", i, j));
+            shadows[i][j].texGenT =
+                vec4Param(IndexedParameter("shadowTexGenT", i, j));
+            shadows[i][j].scale =
+                floatParam(IndexedParameter("shadowScale", i, j));
+            shadows[i][j].bias =
+                floatParam(IndexedParameter("shadowBias", i, j));
+        }
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
@@ -225,16 +281,16 @@ CelestiaGLProgram::initSamplers(const ShaderProperties& props)
             glx::glUniform1iARB(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::SpecularTexture)
+    if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "specTex");
+        int slot = glx::glGetUniformLocationARB(program->getID(), "normTex");
         if (slot != -1)
             glx::glUniform1iARB(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::NormalTexture)
+    if (props.texUsage & ShaderProperties::SpecularTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "normTex");
+        int slot = glx::glGetUniformLocationARB(program->getID(), "specTex");
         if (slot != -1)
             glx::glUniform1iARB(slot, nSamplers++);
     }
@@ -374,15 +430,6 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
 }
 
 
-static string
-IndexedParameter(const char* name, unsigned int index)
-{
-    char buf[64];
-    sprintf(buf, "%s%d", name, index);
-    return string(buf);
-}
-
-
 GLVertexShader*
 ShaderManager::buildVertexShader(const ShaderProperties& props)
 {
@@ -406,14 +453,14 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "varying vec2 diffTexCoord;\n";
-    if (props.texUsage & ShaderProperties::SpecularTexture)
-        source += "varying vec2 specTexCoord;\n";
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
         source += "varying vec2 normTexCoord;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
             source += "varying vec3 " + LightDir(i) + ";\n";
     }
+    if (props.texUsage & ShaderProperties::SpecularTexture)
+        source += "varying vec2 specTexCoord;\n";
     if (props.texUsage & ShaderProperties::NightTexture)
     {
         source += "varying vec2 nightTexCoord;\n";
@@ -428,6 +475,22 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         {
             source += "varying float " + 
                 IndexedParameter("ringShadowTexCoord", i) + ";\n";
+        }
+    }
+
+    if (props.shadowCounts != 0)
+    {
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            {
+                source += "varying vec2 " +
+                    IndexedParameter("shadowTexCoord", i, j) + ";\n";
+                source += "uniform vec4 " +
+                    IndexedParameter("shadowTexGenS", i, j) + ";\n";
+                source += "uniform vec4 " +
+                    IndexedParameter("shadowTexGenT", i, j) + ";\n";
+            }
         }
     }
 
@@ -505,6 +568,22 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
                 LightProperty(j, "direction") + ".y);\n";
             source += IndexedParameter("ringShadowTexCoord", j) +
                 " = length(ringShadowProj) * ringWidth - ringRadius;\n";
+        }
+    }
+
+    if (props.shadowCounts != 0)
+    {
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            {
+                source += IndexedParameter("shadowTexCoord", i, j) +
+                    ".s = dot(gl_Vertex, " +
+                    IndexedParameter("shadowTexGenS", i, j) + ");\n";
+                source += IndexedParameter("shadowTexCoord", i, j) +
+                    ".t = dot(gl_Vertex, " +
+                    IndexedParameter("shadowTexGenT", i, j) + ");\n";
+            }
         }
     }
 
@@ -586,6 +665,22 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         }
     }
 
+    if (props.shadowCounts != 0)
+    {
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            {
+                source += "varying vec2 " +
+                    IndexedParameter("shadowTexCoord", i, j) + ";\n";
+                source += "uniform float " +
+                    IndexedParameter("shadowScale", i, j) + ";\n";
+                source += "uniform float " +
+                    IndexedParameter("shadowBias", i, j) + ";\n";
+            }
+        }
+    }
+
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
 
@@ -602,12 +697,40 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
     else if (props.usesShadows())
     {
+        source += "float shadow;\n";
+        if (props.shadowCounts != 0)
+        {
+            source += "vec2 shadowCenter;\n";
+            source += "float shadowR;\n";
+        }
+
         for (unsigned i = 0; i < props.nLights; i++)
         {
+            source += "shadow = " + SeparateDiffuse(i) + ";\n";
+            if (props.texUsage & ShaderProperties::RingShadowTexture)
+            {
+                source += "shadow *= (1.0 - texture2D(ringTex, vec2(" +
+                    IndexedParameter("ringShadowTexCoord", i) + ", 0)).a);\n";
+            }
+            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            {
+                source += "shadowCenter = " +
+                    IndexedParameter("shadowTexCoord", i, j) +
+                    " - vec2(0.5, 0.5);\n";
+                source += "shadowR = min(dot(shadowCenter, shadowCenter) * " +
+                    IndexedParameter("shadowScale", i, j) + " + " +
+                    IndexedParameter("shadowBias", i, j) + ", 1);\n";
+                source += "shadow *= sqrt(shadowR);\n";
+            }
+
+            source += "diff += shadow * vec4(" +
+                FragLightProperty(i, "color") + ", 0);\n";
+#if 0
             source += "diff += ((1.0 - texture2D(ringTex, vec2(" +
                 IndexedParameter("ringShadowTexCoord", i) + ", 0)).a) * " +
                 SeparateDiffuse(i) + ") * vec4(" +
                 FragLightProperty(i, "color") + ", 0);\n";
+#endif
         }
     }
 
@@ -620,6 +743,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         if (props.texUsage & ShaderProperties::SpecularInDiffuseAlpha)
             source += "gl_FragColor = color * diff + color.a * spec;\n";
+        else if (props.texUsage & ShaderProperties::SpecularTexture)
+            source += "gl_FragColor = color * diff + texture2D(specTex, specTexCoord.st) * spec;\n";
         else
             source += "gl_FragColor = color * diff + spec;\n";
     }
