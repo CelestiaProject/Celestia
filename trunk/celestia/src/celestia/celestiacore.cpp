@@ -514,6 +514,9 @@ void CelestiaCore::resumeScript()
     if (celxScript != NULL)
     {
         int nArgs = celxScript->resume();
+        if (celxScript == NULL) {
+            return;
+        }
         if (!celxScript->isAlive())
         {
             // The script is complete
