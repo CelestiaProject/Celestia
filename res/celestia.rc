@@ -60,6 +60,7 @@ BEGIN
         MENUITEM "10x &Slower",                 ID_TIME_SLOWER
         MENUITEM "Free&ze",                     ID_TIME_FREEZE
         MENUITEM "&Real Time",                  ID_TIME_REALTIME
+	MENUITEM "Re&verse Time",               ID_TIME_REVERSE
         MENUITEM "Set &Time...",                ID_TIME_SETTIME
     END
     POPUP "&Render"
@@ -83,6 +84,7 @@ BEGIN
     POPUP "&Help"
     BEGIN
         MENUITEM "&About",                      ID_HELP_ABOUT
+	MENUITEM "&OpenGL Info",                ID_HELP_GLINFO
         MENUITEM "&License",                    ID_HELP_LICENSE
     END
 END
@@ -151,6 +153,16 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
     EDITTEXT        IDC_LICENSE_TEXT,7,7,272,213,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+IDD_GLINFO DIALOG DISCARDABLE  0, 0, 286, 249
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "OpenGL Driver Info"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
+    EDITTEXT        IDC_GLINFO_TEXT,7,7,272,213,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
 END
 
