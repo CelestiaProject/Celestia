@@ -25,4 +25,11 @@ template <class T> struct printlineFunc : public std::unary_function<T, void>
     std::ostream& out;
 };
 
+template <class T> struct deleteFunc : public std::unary_function<T, void>
+{
+    deleteFunc() {};
+    void operator() (T x) { delete x; };
+    int dummy;
+};
+
 #endif // _UTIL_H_
