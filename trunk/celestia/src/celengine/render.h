@@ -236,6 +236,15 @@ class Renderer
                     double now,
                     float, float);
 
+    void renderCometTail(const Body& body,
+                         Point3f pos,
+                         Vec3f sunDirection,
+                         float distance,
+                         float appMag,
+                         double now,
+                         Quatf orientation,
+                         float, float);
+
     void renderBodyAsParticle(Point3f center,
                               float appMag,
                               float _faintestMag,
