@@ -18,76 +18,76 @@ static double Obliquity(double jd)
     double t, jd19;
 
     jd19 = jd - 2415020.0;
-	t = jd19/36525.0;
+    t = jd19/36525.0;
 
-	return degToRad(2.345229444E1 - ((((-1.81E-3*t)+5.9E-3)*t+4.6845E1)*t)/3600.0);
+    return degToRad(2.345229444E1 - ((((-1.81E-3*t)+5.9E-3)*t+4.6845E1)*t)/3600.0);
 }
 
 static void Nutation(double jd, double &deps, double& dpsi)
 {
     double jd19;
-	double ls, ld;	// sun's mean longitude, moon's mean longitude
-	double ms, md;	// sun's mean anomaly, moon's mean anomaly
-	double nm;	    // longitude of moon's ascending node
-	double t, t2;	// number of Julian centuries of 36525 days since Jan 0.5 1900.
-	double tls, tnm, tld;	// twice above
-	double a, b;
+    double ls, ld;	// sun's mean longitude, moon's mean longitude
+    double ms, md;	// sun's mean anomaly, moon's mean anomaly
+    double nm;	    // longitude of moon's ascending node
+    double t, t2;	// number of Julian centuries of 36525 days since Jan 0.5 1900.
+    double tls, tnm, tld;	// twice above
+    double a, b;
 
     jd19 = jd - 2415020.0;
 	    
-	t = jd19/36525.;
-	t2 = t*t;
+    t = jd19/36525.;
+    t2 = t*t;
 
-	a = 100.0021358*t;
-	b = 360.*(a-(long)a);
-	ls = 279.697+.000303*t2+b;
+    a = 100.0021358*t;
+    b = 360.*(a-(long)a);
+    ls = 279.697+.000303*t2+b;
 
-	a = 1336.855231*t;
-	b = 360.*(a-(long)a);
-	ld = 270.434-.001133*t2+b;
+    a = 1336.855231*t;
+    b = 360.*(a-(long)a);
+    ld = 270.434-.001133*t2+b;
 
-	a = 99.99736056000026*t;
-	b = 360.*(a-(long)a);
-	ms = 358.476-.00015*t2+b;
+    a = 99.99736056000026*t;
+    b = 360.*(a-(long)a);
+    ms = 358.476-.00015*t2+b;
 
-	a = 13255523.59*t;
-	b = 360.*(a-(long)a);
-	md = 296.105+.009192*t2+b;
+    a = 13255523.59*t;
+    b = 360.*(a-(long)a);
+    md = 296.105+.009192*t2+b;
 
-	a = 5.372616667*t;
-	b = 360.*(a-(long)a);
-	nm = 259.183+.002078*t2-b;
+    a = 5.372616667*t;
+    b = 360.*(a-(long)a);
+    nm = 259.183+.002078*t2-b;
 
-	//convert to radian forms for use with trig functions.
-	tls = 2*degToRad(ls);
-	nm = degToRad(nm);
-	tnm = 2*degToRad(nm);
-	ms = degToRad(ms);
-	tld = 2*degToRad(ld);
-	md = degToRad(md);
+    //convert to radian forms for use with trig functions.
+    tls = 2*degToRad(ls);
+    nm = degToRad(nm);
+    tnm = 2*degToRad(nm);
+    ms = degToRad(ms);
+    tld = 2*degToRad(ld);
+    md = degToRad(md);
 
-	// find delta psi and eps, in arcseconds.
-	dpsi = (-17.2327-.01737*t)*sin(nm)+(-1.2729-.00013*t)*sin(tls)
-		   +.2088*sin(tnm)-.2037*sin(tld)+(.1261-.00031*t)*sin(ms)
-		   +.0675*sin(md)-(.0497-.00012*t)*sin(tls+ms)
-		   -.0342*sin(tld-nm)-.0261*sin(tld+md)+.0214*sin(tls-ms)
-		   -.0149*sin(tls-tld+md)+.0124*sin(tls-nm)+.0114*sin(tld-md);
-	deps = (9.21+.00091*t)*cos(nm)+(.5522-.00029*t)*cos(tls)
-		   -.0904*cos(tnm)+.0884*cos(tld)+.0216*cos(tls+ms)
-		   +.0183*cos(tld-nm)+.0113*cos(tld+md)-.0093*cos(tls-ms)
-		   -.0066*cos(tls-nm);
+    // find delta psi and eps, in arcseconds.
+    dpsi = (-17.2327-.01737*t)*sin(nm)+(-1.2729-.00013*t)*sin(tls)
+        +.2088*sin(tnm)-.2037*sin(tld)+(.1261-.00031*t)*sin(ms)
+        +.0675*sin(md)-(.0497-.00012*t)*sin(tls+ms)
+        -.0342*sin(tld-nm)-.0261*sin(tld+md)+.0214*sin(tls-ms)
+        -.0149*sin(tls-tld+md)+.0124*sin(tls-nm)+.0114*sin(tld-md);
+    deps = (9.21+.00091*t)*cos(nm)+(.5522-.00029*t)*cos(tls)
+        -.0904*cos(tnm)+.0884*cos(tld)+.0216*cos(tls+ms)
+        +.0183*cos(tld-nm)+.0113*cos(tld+md)-.0093*cos(tls-ms)
+        -.0066*cos(tls-nm);
 
-	// convert to radians.
-	dpsi = degToRad(dpsi/3600);
-	deps = degToRad(deps/3600);
+    // convert to radians.
+    dpsi = degToRad(dpsi/3600);
+    deps = degToRad(deps/3600);
 }
 
 static void EclipticToEquatorial(double jd, double fEclLat, double fEclLon,
                                  double& RA, double& dec)
 {
-	double seps, ceps;	// sin and cos of mean obliquity
+    double seps, ceps;	// sin and cos of mean obliquity
     double jd19;
-	double sx, cx, sy, cy, ty;
+    double sx, cx, sy, cy, ty;
     double eps;
     double deps, dpsi;
 
@@ -99,33 +99,64 @@ static void EclipticToEquatorial(double jd, double fEclLat, double fEclLon,
     seps = sin(eps);
     ceps = cos(eps);
 
-	sy = sin(fEclLat);
-	cy = cos(fEclLat);				// always non-negative
+    sy = sin(fEclLat);
+    cy = cos(fEclLat);				// always non-negative
     if (fabs(cy)<1e-20)
         cy = 1e-20;		// insure > 0
     ty = sy/cy;
-	cx = cos(fEclLon);
-	sx = sin(fEclLon);
+    cx = cos(fEclLon);
+    sx = sin(fEclLon);
     dec = asin((sy*ceps)+(cy*seps*sx));
     RA = atan(((sx*ceps)-(ty*seps))/cx);
     if (cx<0)
         RA += PI;		// account for atan quad ambiguity
-	RA = pfmod(RA, 2*PI);
+    RA = pfmod(RA, 2*PI);
 }
 
-class LunarOrbit : public Orbit
+
+// Custom orbit classes are derived from CachingOrbit.  The custom orbital
+// calculations can be expensive to compute, with more than 50 periodic terms.
+// Celestia may need require position of a planet more than once per frame; in
+// order to avoid redundant calculation, the CachingOrbit class saves the
+// result of the last calculation and uses it if the time matches the cached
+// time.
+class CachingOrbit : public Orbit
 {
+public:
+    CachingOrbit() : lastTime(1.0e-30) {};
+
+    virtual Point3d computePosition(double jd) const = 0;
+    virtual double getPeriod() const = 0;
+
     Point3d positionAtTime(double jd) const
+    {
+        if (jd != lastTime)
+        {
+            lastTime = jd;
+            lastPosition = computePosition(jd);
+        }
+        return lastPosition;
+    };
+
+private:
+    mutable Point3d lastPosition;
+    mutable double lastTime;
+};
+
+
+class LunarOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
     {
 	double jd19, t, t2;
 	double ld, ms, md, de, f, n, hp;
 	double a, sa, sn, b, sb, c, sc, e, e2, l, g, w1, w2;
 	double m1, m2, m3, m4, m5, m6;
-    double eclLon, eclLat, horzPar, distance;
-    double RA, dec;
+        double eclLon, eclLat, horzPar, distance;
+        double RA, dec;
 
-    //Computation requires an abbreviated Julian day: epoch January 0.5, 1900.
-    jd19 = jd - 2415020.0;
+        //Computation requires an abbreviated Julian day: epoch January 0.5, 1900.
+        jd19 = jd - 2415020.0;
 	t = jd19/36525.;
 	t2 = t*t;
 
@@ -189,12 +220,12 @@ class LunarOrbit : public Orbit
 	    .001773*sin(md+2*(de-f))-.001595*sin(2*(f+de))+
 	    e*.00122*sin(4*de-ms-md)-.00111*sin(2*(md+f))+.000892*sin(md-3*de);
 	l = l-e*.000811*sin(ms+md+2*de)+e*.000761*sin(4*de-ms-2*md)+
-	     e2*.000704*sin(md-2*(ms+de))+e*.000693*sin(ms-2*(md-de))+
-	     e*.000598*sin(2*(de-f)-ms)+.00055*sin(md+4*de)+.000538*sin(4*md)+
-	     e*.000521*sin(4*de-ms)+.000486*sin(2*md-de);
+            e2*.000704*sin(md-2*(ms+de))+e*.000693*sin(ms-2*(md-de))+
+            e*.000598*sin(2*(de-f)-ms)+.00055*sin(md+4*de)+.000538*sin(4*md)+
+            e*.000521*sin(4*de-ms)+.000486*sin(2*md-de);
 	l = l+e2*.000717*sin(md-2*ms);
-    eclLon = ld+degToRad(l);
-    eclLon = pfmod(eclLon, 2*PI);
+        eclLon = ld+degToRad(l);
+        eclLon = pfmod(eclLon, 2*PI);
 
 	g = 5.12819*sin(f)+.280606*sin(md+f)+.277693*sin(md-f)+
 	    .173238*sin(2*de-f)+.055413*sin(2*de+f-md)+.046272*sin(2*de-f-md)+
@@ -206,9 +237,9 @@ class LunarOrbit : public Orbit
 	    e*.001877*sin(f-ms+md)+.001828*sin(4*de-f-md)-e*.001803*sin(f+ms)-
 	    .00175*sin(3*f);
 	g = g+e*.00157*sin(md-ms-f)-.001487*sin(f+de)-e*.001481*sin(f+ms+md)+
-	     e*.001417*sin(f-ms-md)+e*.00135*sin(f-ms)+.00133*sin(f-de)+
-	     .001106*sin(f+3*md)+.00102*sin(4*de-f)+.000833*sin(f+4*de-md)+
-	     .000781*sin(md-3*f)+.00067*sin(f+4*de-2*md);
+            e*.001417*sin(f-ms-md)+e*.00135*sin(f-ms)+.00133*sin(f-de)+
+            .001106*sin(f+3*md)+.00102*sin(4*de-f)+.000833*sin(f+4*de-md)+
+            .000781*sin(md-3*f)+.00067*sin(f+4*de-2*md);
 	g = g+.000606*sin(2*de-3*f)+.000597*sin(2*(de+md)-f)+
 	    e*.000492*sin(2*de+md-ms-f)+.00045*sin(2*(md-de)-f)+
 	    .000439*sin(3*md-f)+.000423*sin(f+2*(de+md))+
@@ -221,36 +252,36 @@ class LunarOrbit : public Orbit
 	eclLat = degToRad(g)*(1-w1-w2);
 
 	hp = .950724+.051818*cos(md)+.009531*cos(2*de-md)+.007843*cos(2*de)+
-	      .002824*cos(2*md)+.000857*cos(2*de+md)+e*.000533*cos(2*de-ms)+
-	      e*.000401*cos(2*de-md-ms)+e*.00032*cos(md-ms)-.000271*cos(de)-
-	      e*.000264*cos(ms+md)-.000198*cos(2*f-md);
+            .002824*cos(2*md)+.000857*cos(2*de+md)+e*.000533*cos(2*de-ms)+
+            e*.000401*cos(2*de-md-ms)+e*.00032*cos(md-ms)-.000271*cos(de)-
+            e*.000264*cos(ms+md)-.000198*cos(2*f-md);
 	hp = hp+.000173*cos(3*md)+.000167*cos(4*de-md)-e*.000111*cos(ms)+
-	     .000103*cos(4*de-2*md)-.000084*cos(2*md-2*de)-
-	     e*.000083*cos(2*de+ms)+.000079*cos(2*de+2*md)+.000072*cos(4*de)+
-	     e*.000064*cos(2*de-ms+md)-e*.000063*cos(2*de+ms-md)+
-	     e*.000041*cos(ms+de);
+            .000103*cos(4*de-2*md)-.000084*cos(2*md-2*de)-
+            e*.000083*cos(2*de+ms)+.000079*cos(2*de+2*md)+.000072*cos(4*de)+
+            e*.000064*cos(2*de-ms+md)-e*.000063*cos(2*de+ms-md)+
+            e*.000041*cos(ms+de);
 	hp = hp+e*.000035*cos(2*md-ms)-.000033*cos(3*md-2*de)-
-	     .00003*cos(md+de)-.000029*cos(2*(f-de))-e*.000029*cos(2*md+ms)+
-	     e2*.000026*cos(2*(de-ms))-.000023*cos(2*(f-de)+md)+
-	     e*.000019*cos(4*de-ms-md);
+            .00003*cos(md+de)-.000029*cos(2*(f-de))-e*.000029*cos(2*md+ms)+
+            e2*.000026*cos(2*(de-ms))-.000023*cos(2*(f-de)+md)+
+            e*.000019*cos(4*de-ms-md);
 	horzPar = degToRad(hp);
 
-    //At this point we have values of ecliptic longitude, latitude and horizontal
-    //parallax (eclLong, eclLat, horzPar) in radians.
+        //At this point we have values of ecliptic longitude, latitude and horizontal
+        //parallax (eclLong, eclLat, horzPar) in radians.
 
-    //Now compute distance using horizontal parallax.
-    distance = 6378.14/sin(horzPar);
+        //Now compute distance using horizontal parallax.
+        distance = 6378.14/sin(horzPar);
 
-    //Finally convert eclLat, eclLon to RA, Dec.
-    EclipticToEquatorial(jd, eclLat, eclLon, RA, dec);
+        //Finally convert eclLat, eclLon to RA, Dec.
+        EclipticToEquatorial(jd, eclLat, eclLon, RA, dec);
 
-    //Corrections for internal coordinate system
-    dec -= PI / 2;
-    RA += PI;
+        //Corrections for internal coordinate system
+        dec -= PI / 2;
+        RA += PI;
 
-    return Point3d(cos(RA) * sin(dec) * distance,
-                   cos(dec) * distance,
-                   -sin(RA) * sin(dec) * distance);
+        return Point3d(cos(RA) * sin(dec) * distance,
+                       cos(dec) * distance,
+                       -sin(RA) * sin(dec) * distance);
     };
 
     double getPeriod() const
@@ -262,18 +293,19 @@ private:
     int nonZeroSize;
 };
 
-class EarthOrbit : public Orbit
+
+class EarthOrbit : public CachingOrbit
 {
-    Point3d positionAtTime(double jd) const
+    Point3d computePosition(double jd) const
     {
-    double jd19;
+        double jd19;
    	double t, t2;
 	double ls, ms;    /* mean longitude and mean anomoay */
 	double s, nu, ea; /* eccentricity, true anomaly, eccentric anomaly */
 	double a, b, a1, b1, c1, d1, e1, h1, dl, dr;
-    double eclLong, distance;
+        double eclLong, distance;
 
-    jd19 = jd - 2415020.0;
+        jd19 = jd - 2415020.0;
 	t = jd19/36525.0;
 	t2 = t*t;
 	a = 100.0021359*t;
@@ -283,7 +315,7 @@ class EarthOrbit : public Orbit
 	b = 360*(a-(long)a);
 	ms = 358.47583-(.00015+.0000033*t)*t2+b;
 	s = .016751-.0000418*t-1.26e-07*t2;
-    astro::Anomaly(degToRad(ms), s, nu, ea);
+        astro::Anomaly(degToRad(ms), s, nu, ea);
 	a = 62.55209472000015*t;
 	b = 360*(a-(long)a);
 	a1 = degToRad(153.23+b);
@@ -301,23 +333,23 @@ class EarthOrbit : public Orbit
 	b = 360*(a-(long)a);
 	h1 = degToRad(353.4+b);
 	dl = .00134*cos(a1)+.00154*cos(b1)+.002*cos(c1)+.00179*sin(d1)+
-								.00178*sin(e1);
+            .00178*sin(e1);
 	dr = 5.43e-06*sin(a1)+1.575e-05*sin(b1)+1.627e-05*sin(c1)+
-					    3.076e-05*cos(d1)+9.27e-06*sin(h1);
+            3.076e-05*cos(d1)+9.27e-06*sin(h1);
 
-    eclLong = nu+degToRad(ls-ms+dl) + PI;
-    eclLong = pfmod(eclLong, 2*PI);
-    distance = KM_PER_AU * (1.0000002*(1-s*cos(ea))+dr);
+        eclLong = nu+degToRad(ls-ms+dl) + PI;
+        eclLong = pfmod(eclLong, 2*PI);
+        distance = KM_PER_AU * (1.0000002*(1-s*cos(ea))+dr);
 
-    //Correction for internal coordinate system
-    eclLong += PI;
+        //Correction for internal coordinate system
+        eclLong += PI;
 
-    return Point3d(-cos(eclLong) * distance,
-                   0,
-                   sin(eclLong) * distance);
+        return Point3d(-cos(eclLong) * distance,
+                       0,
+                       sin(eclLong) * distance);
     };
 
-	double getPeriod() const
+    double getPeriod() const
     {
         return 365.25;
     };
@@ -328,7 +360,7 @@ Orbit* GetCustomOrbit(const std::string& name)
 {
     if (name == "moon")
         return new LunarOrbit();
-	 if (name == "earth")
+    if (name == "earth")
         return new EarthOrbit();
     else
         return NULL;
