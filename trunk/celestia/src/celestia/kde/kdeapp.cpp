@@ -212,6 +212,9 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showEclipseShadows"))->setChecked(rFlags & Renderer::ShowEclipseShadows);
     ((KToggleAction*)action("showStarsAsPoints"))->setChecked(rFlags & Renderer::ShowStarsAsPoints);
     ((KToggleAction*)action("showRingShadows"))->setChecked(rFlags & Renderer::ShowRingShadows);
+    ((KToggleAction*)action("showBoundaries"))->setChecked(rFlags & Renderer::ShowBoundaries);
+    ((KToggleAction*)action("showAutoMag"))->setChecked(rFlags & Renderer::ShowAutoMag);
+    ((KToggleAction*)action("showCometTails"))->setChecked(rFlags & Renderer::ShowCometTails);
 
     int lMode = renderer->getLabelMode();
     ((KToggleAction*)action("showStarLabels"))->setChecked(lMode & Renderer::StarLabels);
@@ -329,6 +332,15 @@ void KdeApp::initActions()
 
     KToggleAction* showRingShadows = new KToggleAction(i18n("Show Ring Shadows"), 0, this, SLOT(slotShowRingShadows()), actionCollection(), "showRingShadows");
     showRingShadows->setChecked(rFlags & Renderer::ShowRingShadows);
+
+    KToggleAction* showBoundaries = new KToggleAction(i18n("Show Boundaries"), 0, this, SLOT(slotShowBoundaries()), actionCollection(), "showBoundaries");
+    showBoundaries->setChecked(rFlags & Renderer::ShowBoundaries);
+
+    KToggleAction* showAutoMag = new KToggleAction(i18n("Auto Magnitudes"), 0, this, SLOT(slotShowAutoMag()), actionCollection(), "showAutoMag");
+    showBoundaries->setChecked(rFlags & Renderer::ShowAutoMag);
+
+    KToggleAction* showCometTails = new KToggleAction(i18n("Show Comet Tails"), 0, this, SLOT(slotShowCometTails()), actionCollection(), "showCometTails");
+    showCometTails->setChecked(rFlags & Renderer::ShowCometTails);
 
     KToggleAction* showStarLabels = new KToggleAction(i18n("Show Star Labels"), 0, this, SLOT(slotShowStarLabels()), actionCollection(), "showStarLabels");
     showStarLabels->setChecked(lMode & Renderer::StarLabels);
@@ -686,7 +698,22 @@ void KdeApp::slotShowRingShadows() {
             appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowRingShadows);
 }
 
-  void KdeApp::slotShowStarLabels() {
+void KdeApp::slotShowBoundaries() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowBoundaries);
+}
+
+void KdeApp::slotShowAutoMag() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowAutoMag);
+}
+
+void KdeApp::slotShowCometTails() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowCometTails);
+}
+
+void KdeApp::slotShowStarLabels() {
      appCore->getRenderer()->setLabelMode(
             appCore->getRenderer()->getLabelMode() ^ Renderer::StarLabels);
 }
