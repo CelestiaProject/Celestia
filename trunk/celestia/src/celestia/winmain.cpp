@@ -1097,8 +1097,8 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
         {
         if (LOWORD(wParam) == IDOK)
         {
-            HWND hTree;
 #if 0
+            HWND hTree;
             if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                 SyncTreeFoldersWithFavoriteFolders(hTree, appCore);
 #endif
@@ -2602,7 +2602,13 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
     // Display File Open dialog to allow user to specify name and location of
     // of captured screen image.
     OPENFILENAME Ofn;
-    char szFile[_MAX_PATH+1], szFileTitle[_MAX_PATH+1];
+    char szFile[_MAX_PATH + 1];
+    char szFileTitle[_MAX_PATH + 1];
+
+    // Save the current directory
+    char currentDir[_MAX_PATH + 1];
+    currentDir[0] = '\0';
+    GetCurrentDirectory(sizeof(currentDir), currentDir);
 
     szFile[0] = '\0';
     szFileTitle[0] = '\0';
@@ -2662,6 +2668,9 @@ static void HandleOpenScript(HWND hWnd, CelestiaCore* appCore)
             }
         }
     }
+
+    if (strlen(currentDir) != 0)
+        SetCurrentDirectory(currentDir);
 }
 
 
