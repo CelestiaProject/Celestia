@@ -28,17 +28,18 @@ bool Execution::tick(double dt)
     {
         Command* cmd = *currentCommand;
 
-        if (dt >= cmd->getDuration() - commandTime)
+        double timeLeft = cmd->getDuration() - commandTime;
+        if (dt >= timeLeft)
         {
-            cmd->process(sim, renderer, cmd->getDuration());
-            dt -= cmd->getDuration() - commandTime;
+            cmd->process(sim, renderer, cmd->getDuration(), timeLeft);
+            dt -= timeLeft;
             commandTime = 0.0;
             currentCommand++;
         }
         else
         {
             commandTime += dt;
-            cmd->process(sim, renderer, commandTime);
+            cmd->process(sim, renderer, commandTime, dt);
             dt = 0.0;
         }
     }
