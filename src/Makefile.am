@@ -20,6 +20,7 @@ COMMONSOURCES = \
 	command.cpp \
 	configfile.cpp \
 	constellation.cpp \
+	customorbit.cpp \
 	debug.cpp \
 	destination.cpp \
 	dispmap.cpp \
@@ -29,6 +30,7 @@ COMMONSOURCES = \
 	frustum.cpp \
 	galaxy.cpp \
 	glext.cpp \
+	lodspheremesh.cpp \
 	meshmanager.cpp \
 	observer.cpp \
 	octree.cpp \
@@ -46,7 +48,6 @@ COMMONSOURCES = \
 	stardb.cpp \
 	starname.cpp \
 	stellarclass.cpp \
-	texfont.cpp \
 	texmanager.cpp \
 	texture.cpp \
 	texturefont.cpp \
