@@ -818,12 +818,24 @@ void Simulation::selectBody(string s)
     {
         selectStar(star->getCatalogNumber());
     }
+    else if (selection.star != NULL)
+    {
+        SolarSystem* solarSystem = getSolarSystem(selection.star);
+        if (solarSystem != NULL)
+        {
+            Body* body = solarSystem->getPlanets()->find(s, true);
+            if (body != NULL)
+                selection = Selection(body);
+        }
+    }
+#if 0
     else if (closestSolarSystem != NULL)
     {
         Body* body = closestSolarSystem->getPlanets()->find(s, true);
         if (body != NULL)
             selection = Selection(body);
     }
+#endif
 }
 
 
