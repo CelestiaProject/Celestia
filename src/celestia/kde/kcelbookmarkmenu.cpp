@@ -195,7 +195,7 @@ void KCelBookmarkMenu::addAddSettingsBookmark()
 {
   KAction * paAddBookmarks = new KAction( i18n( "Add &Settings Bookmark" ),
                                           "bookmark_add",
-                                          m_bIsRoot ? ALT + Key_S : 0, //m_bIsRoot ? KStdAccel::addBookmark() : KShortcut(),
+                                          m_bIsRoot ? CTRL + ALT + Key_S : 0, //m_bIsRoot ? KStdAccel::addBookmark() : KShortcut(),
                                           this,
                                           SLOT( slotAddSettingsBookmark() ),
                                           m_actionCollection, m_bIsRoot ? "add_settings_bookmark" : 0 );
