@@ -119,7 +119,7 @@ class Body
     Mat4d getLocalToHeliocentric(double when);
     Point3d getHeliocentricPosition(double when);
     Quatd getEquatorialToGeographic(double when);
-    Quatd getEclipticalToEquatorial();
+    Quatd getEclipticalToEquatorial() const;
     Quatd getEclipticalToGeographic(double when);
     Mat4d getGeographicToHeliocentric(double when);
 
