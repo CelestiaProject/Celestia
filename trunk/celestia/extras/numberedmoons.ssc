@@ -1083,7 +1083,7 @@
 	Albedo 0.06
 }
 
-"2003S1" "Sol/Saturn"
+"Narvi" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
