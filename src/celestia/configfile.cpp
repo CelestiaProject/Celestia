@@ -72,6 +72,9 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     // configParams->getNumber("LogoWidth", config->logoWidth);
     // configParams->getNumber("LogoHeight", config->logoHeight);
 
+    config->rotateAcceleration = 120.0f;
+    configParams->getNumber("RotateAcceleration", config->rotateAcceleration);
+
     Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
     if (solarSystemsVal != NULL)
     {
