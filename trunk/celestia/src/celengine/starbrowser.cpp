@@ -25,9 +25,12 @@ struct CloserStarPredicate
     Point3f pos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        return ((pos - star0->getPosition()).lengthSquared() <
-                (pos - star1->getPosition()).lengthSquared());
-                               
+        Point3f p0 = star0->getPosition();
+        Point3f p1 = star1->getPosition();
+        Vec3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
+        Vec3f v1(p1.x * 1e6 - pos.x, p1.y * 1e6 - pos.y, p1.z * 1e6 - pos.z);
+        
+        return (v0.lengthSquared() < v1.lengthSquared());                               
     }
 };
 
@@ -38,15 +41,12 @@ struct BrighterStarPredicate
     UniversalCoord ucPos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        float d0 = pos.distanceTo(star0->getPosition());
-        float d1 = pos.distanceTo(star1->getPosition());
-
-        // If the stars are closer than one light year, use
-        // a more precise distance estimate.
-        if (d0 < 1.0f)
-            d0 = (star0->getPosition() - ucPos).length();
-        if (d1 < 1.0f)
-            d1 = (star1->getPosition() - ucPos).length();
+        Point3f p0 = star0->getPosition();
+        Point3f p1 = star1->getPosition();
+        Vec3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
+        Vec3f v1(p1.x * 1e6 - pos.x, p1.y * 1e6 - pos.y, p1.z * 1e6 - pos.z);
+        float d0 = v0.length();
+        float d1 = v1.length();
 
         return (star0->getApparentMagnitude(d0) <
                 star1->getApparentMagnitude(d1));
@@ -79,8 +79,11 @@ struct SolarSystemPredicate
         bool hasPlanets1 = (iter != solarSystems->end());
         if (hasPlanets1 == hasPlanets0)
         {
-            return ((pos - star0->getPosition()).lengthSquared() <
-                    (pos - star1->getPosition()).lengthSquared());
+            Point3f p0 = star0->getPosition();
+            Point3f p1 = star1->getPosition();
+            Vec3f v0(p0.x * 1e6 - pos.x, p0.y * 1e6 - pos.y, p0.z * 1e6 - pos.z);
+            Vec3f v1(p1.x * 1e6 - pos.x, p1.y * 1e6 - pos.y, p1.z * 1e6 - pos.z);
+            return (v0.lengthSquared() < v1.lengthSquared());
         }
         else
         {
