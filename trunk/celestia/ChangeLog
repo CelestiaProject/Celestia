@@ -566,5 +566,7 @@ Code:
   Backspace : clear selection
 * Reversed more/fewer stars keys ([ and ]) to be consistent with more/less
   ambient light keys
+* Added support for multiple extras directories
+* Reduced minimum field of view down to 3 arcsec
 
 
