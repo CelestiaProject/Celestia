@@ -568,7 +568,7 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1
+	Radius		1.0
 
 	EllipticalOrbit
 	{
@@ -591,7 +591,7 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1
+	Radius		1.0
 
 	EllipticalOrbit
 	{
@@ -614,7 +614,7 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1
+	Radius		1.0
 
 	EllipticalOrbit
 	{
@@ -637,7 +637,7 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1
+	Radius		1.0
 
 	EllipticalOrbit
 	{
@@ -660,7 +660,7 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1
+	Radius		1.0
 
 	EllipticalOrbit
 	{
@@ -683,7 +683,7 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1
+	Radius		1.0
 
 	EllipticalOrbit
 	{
@@ -706,18 +706,41 @@
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1
+	Radius		1.0
 
 	EllipticalOrbit
 	{
 	Epoch		2452644.5	# 2003 Jan 5
-	Period		701.3		# mean
-	SemiMajorAxis	22800000	# mean
-	Eccentricity	0.334		# mean
+	Period		728.84		# mean
+	SemiMajorAxis	23348000	# mean
+	Eccentricity	0.3108		# mean
 	Inclination	161.966
 	AscendingNode	53.230
 	ArgOfPericenter	178.522
 	MeanAnomaly     35.719
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"2003J20" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.5
+
+	EllipticalOrbit
+	{
+	Epoch		2452644.5	# 2003 Jan 5
+	Period		454.13		# mean
+	SemiMajorAxis	17033000	# mean
+	Eccentricity	0.2886		# mean
+	Inclination	54.548
+	AscendingNode	71.342
+	ArgOfPericenter	78.116
+	MeanAnomaly     141.864
 	}
 
 	RotationPeriod  10   # Guess
