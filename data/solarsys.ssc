@@ -21,8 +21,10 @@ Planets [
         MeanLongitude   252.251
 	}
 
-	RotationPeriod 1047.51
-	Obliquity         7.0
+	RotationPeriod 1047.509
+	Obliquity         7.01
+	LongOfRotationAxis 228.31
+
 	Albedo            0.06
 }
 
@@ -54,6 +56,8 @@ Planets [
 
 	RotationPeriod  5832.444
 	Obliquity       177.4
+	LongOfRotationAxis 302.07
+
 	Albedo            0.77
 }
 
@@ -90,8 +94,8 @@ Planets [
 	        MeanLongitude   100.464
 	}
 
-	RotationPeriod   23.93419
-	RotationPhase    120.0
+	RotationPeriod   23.9344694 # 23.93419
+	RotationOffset   280.5    # offset at default epoch J2000
 	Obliquity        -23.45
 	Albedo            0.30
 
@@ -112,7 +116,7 @@ Planets [
 			Inclination      5.15
 		}
 
-		RotationPhase 225
+		RotationOffset 		43
 
 		Albedo           0.12
 	}
@@ -207,6 +211,8 @@ Planets [
 
 	RotationPeriod    24.622962
 	Obliquity         23.98
+	LongOfRotationAxis 262.78
+
 	Albedo            0.150
 
 	Moons [
@@ -273,6 +279,8 @@ Planets [
 
 	RotationPeriod    9.92425
 	Obliquity         3.08
+	LongOfRotationAxis 157.68
+
 	Albedo            0.51
 
 	Moons [
@@ -402,6 +410,8 @@ Planets [
 
 	RotationPeriod   10.65622
 	Obliquity         26.73
+	LongOfRotationAxis 349.394
+
 	Albedo            0.50
 
 	Rings {
@@ -603,6 +613,8 @@ Planets [
 
 	RotationPeriod   17.24
 	Obliquity        97.92
+	LongOfRotationAxis 167.62
+
 	Albedo            0.66
 
 	Rings {
@@ -708,6 +720,8 @@ Planets [
 
 	RotationPeriod   16.11
 	Obliquity        28.8
+	LongOfRotationAxis 221.13
+
 	Albedo            0.62
 
 	Moons [
