@@ -10,6 +10,7 @@
 #ifndef _COMMAND_H_
 #define _COMMAND_H_
 
+#include <iostream>
 #include "simulation.h"
 #include "render.h"
 
@@ -170,6 +171,29 @@ class CommandChangeDistance : public TimedCommand
 
  private:
     double rate;
+};
+
+
+class CommandSetPosition : public InstantaneousCommand
+{
+ public:
+    CommandSetPosition(const UniversalCoord&);
+    void process(Simulation*, Renderer*);
+
+ private:
+    UniversalCoord pos;
+};
+
+
+class CommandSetOrientation : public InstantaneousCommand
+{
+ public:
+    CommandSetOrientation(const Vec3f&, float);
+    void process(Simulation*, Renderer*);
+
+ private:
+    Vec3f axis;
+    float angle;
 };
 
 
