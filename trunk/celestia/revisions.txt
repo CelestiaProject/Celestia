@@ -155,3 +155,29 @@ Code revisions:
 * Initial UNIX port
 * Created GLUT based front-end
 * Created abstract Timer class with Windows and UNIX implementations
+
+
+1.09
+* UNIX port fixes: eliminated friend templates in Quaternion, added -lm to
+  configure.in, added missing return type for methods in Console and Overlay
+
+
+1.10
+* Fixed problem with ring shadow texture by setting wrap mode to GL_CLAMP_TO_EDGE
+* Corrected scale of ring shadow to match size of planet
+* Switched to octree based visibility determinination algorithm for
+  stars.  The result is better rendering performance, especially when
+  many stars are displayed.  The octree algorithm is also lag free, meaning
+  that all star "popping" is eliminated.
+* Added setvisibilitylimit command for scripting.
+* Fonts now selectable in celestia.cfg
+* Added more and fewer visible stars options to render menu
+* Fixed BigFix precision bug that appeared only with certain compiler versions.
+* UNIX version: Enabled arrow keys and home/end in UNIX version
+* UNIX version: Implemented frame rate counter
+* UNIX version: Added mouse wheel support
+* UNIX version: Fixed bug that caused picking to happen while dragging mouse
+* UNIX version: Added more compiler optimization flags to Makefile
+* UNIX version: Ctrl-Q now exits program
+* UNIX version: Fixed vertically flipped textures
+* UNIX version: Initial Gtk+ version, with rudimentary GUI
