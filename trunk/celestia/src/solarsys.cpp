@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include "mathlib.h"
 #include "astro.h"
 #include "parser.h"
@@ -185,6 +186,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
     Surface* surface = CreateSurface(planetData);
     body->setSurface(*surface);
     delete surface;
+
+    
     
     {
         string mesh("");
@@ -192,6 +195,30 @@ static Body* CreatePlanet(PlanetarySystem* system,
         {
             ResourceHandle meshHandle = GetMeshManager()->getHandle(MeshInfo(mesh));
             body->setMesh(meshHandle);
+        }
+    }
+
+    // Read the atmosphere
+    {
+        Value* atmosDataValue = planetData->getValue("Atmosphere");
+        if (atmosDataValue != NULL)
+        {
+            if (atmosDataValue->getType() != Value::HashType)
+            {
+                cout << "ReadSolarSystem: Atmosphere must be an assoc array.\n";
+            }
+            else
+            {
+                Hash* atmosData = atmosDataValue->getHash();
+                assert(atmosData != NULL);
+                
+                Atmosphere* atmosphere = new Atmosphere();
+                atmosData->getNumber("Height", atmosphere->height);
+                atmosData->getColor("Lower", atmosphere->lowerColor);
+                atmosData->getColor("Upper", atmosphere->upperColor);
+
+                body->setAtmosphere(*atmosphere);
+            }
         }
     }
 
