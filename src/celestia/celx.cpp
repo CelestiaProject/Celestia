@@ -1096,6 +1096,18 @@ static Observer* to_observer(lua_State* l, int index)
         return *o;
 }
 
+static Observer* this_observer(lua_State* l)
+{
+    Observer* obs = to_observer(l, 1);
+    if (obs == NULL)
+    {
+        lua_pushstring(l, "Bad observer object!");
+        lua_error(l);
+    }
+
+    return obs;
+}
+
 
 static int observer_tostring(lua_State* l)
 {
@@ -1161,12 +1173,8 @@ static int observer_goto(lua_State* l)
 
 static int observer_center(lua_State* l)
 {
+    checkArgs(l, 2, 3, "At least one argument expected to observer:center");
     int argc = lua_gettop(l);
-    if (argc < 2)
-    {
-        lua_pushstring(l, "At least one argument expected to function observer:center");
-        lua_error(l);
-    }
 
     double travelTime = 5.0;
     if (argc >= 3)
@@ -1175,13 +1183,10 @@ static int observer_center(lua_State* l)
             travelTime = lua_tonumber(l, 3);
     }
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
-    {
-        Selection* sel = to_object(l, 2);
-        if (sel != NULL)
-            o->centerSelection(*sel, travelTime);
-    }
+    Observer* o = this_observer(l);
+    Selection* sel = to_object(l, 2);
+    if (sel != NULL)
+        o->centerSelection(*sel, travelTime);
 
     return 0;
 }
@@ -1189,20 +1194,12 @@ static int observer_center(lua_State* l)
 
 static int observer_follow(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function observer:follow");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected for observer:follow");
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
-    {
-        Selection* sel = to_object(l, 2);
-        if (sel != NULL)
-            o->follow(*sel);
-    }
+    Observer* o = this_observer(l);
+    Selection* sel = to_object(l, 2);
+    if (sel != NULL)
+        o->follow(*sel);
 
     return 0;
 }
@@ -1210,20 +1207,12 @@ static int observer_follow(lua_State* l)
 
 static int observer_synchronous(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function observer:synchronous");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected for observer:synchronous");
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
-    {
-        Selection* sel = to_object(l, 2);
-        if (sel != NULL)
-            o->geosynchronousFollow(*sel);
-    }
+    Observer* o = this_observer(l);
+    Selection* sel = to_object(l, 2);
+    if (sel != NULL)
+        o->geosynchronousFollow(*sel);
 
     return 0;
 }
@@ -1231,20 +1220,12 @@ static int observer_synchronous(lua_State* l)
 
 static int observer_lock(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function observer:lock");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected for observer:lock");
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
-    {
-        Selection* sel = to_object(l, 2);
-        if (sel != NULL)
-            o->phaseLock(*sel);
-    }
+    Observer* o = this_observer(l);
+    Selection* sel = to_object(l, 2);
+    if (sel != NULL)
+        o->phaseLock(*sel);
 
     return 0;
 }
@@ -1252,20 +1233,12 @@ static int observer_lock(lua_State* l)
 
 static int observer_chase(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function observer:chase");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected for observer:chase");
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
-    {
-        Selection* sel = to_object(l, 2);
-        if (sel != NULL)
-            o->chase(*sel);
-    }
+    Observer* o = this_observer(l);
+    Selection* sel = to_object(l, 2);
+    if (sel != NULL)
+        o->chase(*sel);
 
     return 0;
 }
@@ -1273,28 +1246,21 @@ static int observer_chase(lua_State* l)
 
 static int observer_track(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function observer:chase");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected for observer:track");
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
+    Observer* o = this_observer(l);
+
+    // If the argument is nil, clear the tracked object
+    if (lua_isnil(l, 2))
     {
-        // If the argument is nil, clear the tracked object
-        if (lua_isnil(l, 2))
-        {
-            o->setTrackedObject(Selection());
-        }
-        else
-        {
-            // Otherwise, turn on tracking and set the tracked object
-            Selection* sel = to_object(l, 2);
-            if (sel != NULL)
-                o->setTrackedObject(*sel);
-        }
+        o->setTrackedObject(Selection());
+    }
+    else
+    {
+        // Otherwise, turn on tracking and set the tracked object
+        Selection* sel = to_object(l, 2);
+        if (sel != NULL)
+            o->setTrackedObject(*sel);
     }
 
     return 0;
@@ -1305,26 +1271,13 @@ static int observer_track(lua_State* l)
 // or similar command.
 static int observer_travelling(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function observer:travelling");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to observer:travelling");
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
-    {
-        if (o->getMode() == Observer::Travelling)
-            lua_pushboolean(l, 1);
-        else
-            lua_pushboolean(l, 0);
-    }
+    Observer* o = this_observer(l);
+    if (o->getMode() == Observer::Travelling)
+        lua_pushboolean(l, 1);
     else
-    {
-        lua_pushstring(l, "Bad method call");
-        lua_error(l);
-    }
+        lua_pushboolean(l, 0);
 
     return 1;
 }
@@ -1333,23 +1286,10 @@ static int observer_travelling(lua_State* l)
 // Return the observer's current time as a Julian day number
 static int observer_gettime(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function observer:time");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to observer:gettime");
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
-    {
-        lua_pushnumber(l, o->getTime());
-    }
-    else
-    {
-        lua_pushstring(l, "Bad method call");
-        lua_error(l);
-    }
+    Observer* o = this_observer(l);
+    lua_pushnumber(l, o->getTime());
 
     return 1;
 }
@@ -1358,25 +1298,39 @@ static int observer_gettime(lua_State* l)
 // Return the observer's current position
 static int observer_getposition(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function observer:getposition");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to observer:getposition");
 
-    Observer* o = to_observer(l, 1);
-    if (o != NULL)
-    {
-        position_new(l, o->getPosition());
-    }
-    else
-    {
-        lua_pushstring(l, "Bad method call");
-        lua_error(l);
-    }
+    Observer* o = this_observer(l);
+    position_new(l, o->getPosition());
 
     return 1;
+}
+
+
+static int observer_getsurface(lua_State* l)
+{
+    checkArgs(l, 1, 1, "One argument expected to observer:getsurface()");
+
+    Observer* obs = this_observer(l);
+    lua_pushstring(l, obs->getDisplayedSurface().c_str());
+
+    return 1;
+}
+
+
+static int observer_setsurface(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to observer:setsurface()");
+
+    Observer* obs = this_observer(l);
+    const char* s = lua_tostring(l, 2);
+
+    if (s == NULL)
+        obs->setDisplayedSurface("");
+    else
+        obs->setDisplayedSurface(s);
+
+    return 0;
 }
 
 
@@ -1395,6 +1349,8 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "travelling", observer_travelling);
     RegisterMethod(l, "gettime", observer_gettime);
     RegisterMethod(l, "getposition", observer_getposition);
+    RegisterMethod(l, "getsurface", observer_getsurface);
+    RegisterMethod(l, "setsurface", observer_setsurface);
 
     lua_pop(l, 1); // remove metatable from stack
 }
