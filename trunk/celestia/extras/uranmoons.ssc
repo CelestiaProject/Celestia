@@ -1,0 +1,603 @@
+# 0 records, 8269 lines read.
+# 0 records, 8269 lines read.
+Location "Alberich" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -42.2 33.6 0 ]
+    Size 52
+    Type "AA"
+}
+
+Location "Fin" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -44.3 37.4 0 ]
+    Size 43
+    Type "AA"
+}
+
+Location "Gob" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -27.8 12.7 0 ]
+    Size 88
+    Type "AA"
+}
+
+Location "Kanaloa" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -345.7 10.8 0 ]
+    Size 86
+    Type "AA"
+}
+
+Location "Malingee" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -13.9 22.9 0 ]
+    Size 164
+    Type "AA"
+}
+
+Location "Minepa" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -8.2 42.7 0 ]
+    Size 58
+    Type "AA"
+}
+
+Location "Peri" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -4.3 9.2 0 ]
+    Size 61
+    Type "AA"
+}
+
+Location "Setibos" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -346.3 30.8 0 ]
+    Size 50
+    Type "AA"
+}
+
+Location "Skynd" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -331.7 1.8 0 ]
+    Size 72
+    Type "AA"
+}
+
+Location "Vuver" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -311.6 4.7 0 ]
+    Size 98
+    Type "AA"
+}
+
+Location "Wokolo" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -1.8 30 0 ]
+    Size 208
+    Type "AA"
+}
+
+Location "Wunda" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -273.6 7.9 0 ]
+    Size 131
+    Type "AA"
+}
+
+Location "Zlyden" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -326.2 23.3 0 ]
+    Size 44
+    Type "AA"
+}
+
+# 13 records, 8269 lines read.
+Location "Adriana" "Sol/Uranus/Titania"
+{
+    LongLat [ -3.9 20.1 0 ]
+    Size 50
+    Type "AA"
+}
+
+Location "Belmont Chasma" "Sol/Uranus/Titania"
+{
+    LongLat [ -32.6 8.5 0 ]
+    Size 258
+    Type "CM"
+}
+
+Location "Bona" "Sol/Uranus/Titania"
+{
+    LongLat [ -351.2 55.8 0 ]
+    Size 51
+    Type "AA"
+}
+
+Location "Calphurnia" "Sol/Uranus/Titania"
+{
+    LongLat [ -291.4 42.4 0 ]
+    Size 100
+    Type "AA"
+}
+
+Location "Elinor" "Sol/Uranus/Titania"
+{
+    LongLat [ -333.6 44.8 0 ]
+    Size 74
+    Type "AA"
+}
+
+Location "Gertrude" "Sol/Uranus/Titania"
+{
+    LongLat [ -287.1 15.8 0 ]
+    Size 326
+    Type "AA"
+}
+
+Location "Imogen" "Sol/Uranus/Titania"
+{
+    LongLat [ -321.2 23.8 0 ]
+    Size 28
+    Type "AA"
+}
+
+Location "Iras" "Sol/Uranus/Titania"
+{
+    LongLat [ -338.8 19.2 0 ]
+    Size 33
+    Type "AA"
+}
+
+Location "Jessica" "Sol/Uranus/Titania"
+{
+    LongLat [ -285.9 55.3 0 ]
+    Size 64
+    Type "AA"
+}
+
+Location "Katherine" "Sol/Uranus/Titania"
+{
+    LongLat [ -331.9 51.2 0 ]
+    Size 75
+    Type "AA"
+}
+
+Location "Lucetta" "Sol/Uranus/Titania"
+{
+    LongLat [ -277.1 14.7 0 ]
+    Size 58
+    Type "AA"
+}
+
+Location "Marina" "Sol/Uranus/Titania"
+{
+    LongLat [ -316 15.5 0 ]
+    Size 40
+    Type "AA"
+}
+
+Location "Messina Chasmata" "Sol/Uranus/Titania"
+{
+    LongLat [ -335 33.3 0 ]
+    Size 1492
+    Type "CM"
+}
+
+Location "Mopsa" "Sol/Uranus/Titania"
+{
+    LongLat [ -302.2 11.9 0 ]
+    Size 101
+    Type "AA"
+}
+
+Location "Phrynia" "Sol/Uranus/Titania"
+{
+    LongLat [ -309.2 24.3 0 ]
+    Size 35
+    Type "AA"
+}
+
+Location "Rousillon Rupes" "Sol/Uranus/Titania"
+{
+    LongLat [ -26.5 14.7 0 ]
+    Size 402
+    Type "RU"
+}
+
+Location "Ursula" "Sol/Uranus/Titania"
+{
+    LongLat [ -45.2 12.4 0 ]
+    Size 135
+    Type "AA"
+}
+
+Location "Valeria" "Sol/Uranus/Titania"
+{
+    LongLat [ -4.2 34.5 0 ]
+    Size 59
+    Type "AA"
+}
+
+# 18 records, 8269 lines read.
+Location "Antony" "Sol/Uranus/Oberon"
+{
+    LongLat [ -65.4 27.5 0 ]
+    Size 47
+    Type "AA"
+}
+
+Location "Caesar" "Sol/Uranus/Oberon"
+{
+    LongLat [ -61.1 26.6 0 ]
+    Size 76
+    Type "AA"
+}
+
+Location "Coriolanus" "Sol/Uranus/Oberon"
+{
+    LongLat [ -345.2 11.4 0 ]
+    Size 120
+    Type "AA"
+}
+
+Location "Falstaff" "Sol/Uranus/Oberon"
+{
+    LongLat [ -19 22.1 0 ]
+    Size 124
+    Type "AA"
+}
+
+Location "Hamlet" "Sol/Uranus/Oberon"
+{
+    LongLat [ -44.4 46.1 0 ]
+    Size 206
+    Type "AA"
+}
+
+Location "Lear" "Sol/Uranus/Oberon"
+{
+    LongLat [ -31.5 5.4 0 ]
+    Size 126
+    Type "AA"
+}
+
+Location "MacBeth" "Sol/Uranus/Oberon"
+{
+    LongLat [ -112.5 58.4 0 ]
+    Size 203
+    Type "AA"
+}
+
+Location "Mommur Chasma" "Sol/Uranus/Oberon"
+{
+    LongLat [ -323.5 16.3 0 ]
+    Size 537
+    Type "CM"
+}
+
+Location "Othello" "Sol/Uranus/Oberon"
+{
+    LongLat [ -42.9 66 0 ]
+    Size 114
+    Type "AA"
+}
+
+Location "Romeo" "Sol/Uranus/Oberon"
+{
+    LongLat [ -89.4 28.7 0 ]
+    Size 159
+    Type "AA"
+}
+
+# 10 records, 8269 lines read.
+Location "Abans" "Sol/Uranus/Ariel"
+{
+    LongLat [ -251.3 15.5 0 ]
+    Size 20
+    Type "AA"
+}
+
+Location "Agape" "Sol/Uranus/Ariel"
+{
+    LongLat [ -336.5 46.9 0 ]
+    Size 34
+    Type "AA"
+}
+
+Location "Ataksak" "Sol/Uranus/Ariel"
+{
+    LongLat [ -224.3 53.1 0 ]
+    Size 22
+    Type "AA"
+}
+
+Location "Befana" "Sol/Uranus/Ariel"
+{
+    LongLat [ -31.9 17 0 ]
+    Size 21
+    Type "AA"
+}
+
+Location "Berylune" "Sol/Uranus/Ariel"
+{
+    LongLat [ -327.9 22.5 0 ]
+    Size 29
+    Type "AA"
+}
+
+Location "Brownie Chasma" "Sol/Uranus/Ariel"
+{
+    LongLat [ -337.6 16 0 ]
+    Size 343
+    Type "CM"
+}
+
+Location "Deive" "Sol/Uranus/Ariel"
+{
+    LongLat [ -23 22.3 0 ]
+    Size 20
+    Type "AA"
+}
+
+Location "Djadek" "Sol/Uranus/Ariel"
+{
+    LongLat [ -251.1 12 0 ]
+    Size 22
+    Type "AA"
+}
+
+Location "Domovoy" "Sol/Uranus/Ariel"
+{
+    LongLat [ -339.7 71.5 0 ]
+    Size 71
+    Type "AA"
+}
+
+Location "Finvara" "Sol/Uranus/Ariel"
+{
+    LongLat [ -19 15.8 0 ]
+    Size 31
+    Type "AA"
+}
+
+Location "Gwyn" "Sol/Uranus/Ariel"
+{
+    LongLat [ -22.5 77.5 0 ]
+    Size 34
+    Type "AA"
+}
+
+Location "Huon" "Sol/Uranus/Ariel"
+{
+    LongLat [ -33.7 37.8 0 ]
+    Size 40
+    Type "AA"
+}
+
+Location "Kachina Chasmata" "Sol/Uranus/Ariel"
+{
+    LongLat [ -246 33.7 0 ]
+    Size 622
+    Type "CM"
+}
+
+Location "Kewpie Chasma" "Sol/Uranus/Ariel"
+{
+    LongLat [ -326.9 28.3 0 ]
+    Size 467
+    Type "CM"
+}
+
+Location "Korrigan Chasma" "Sol/Uranus/Ariel"
+{
+    LongLat [ -347.5 27.6 0 ]
+    Size 365
+    Type "CM"
+}
+
+Location "Kra Chasma" "Sol/Uranus/Ariel"
+{
+    LongLat [ -354.2 32.1 0 ]
+    Size 142
+    Type "CM"
+}
+
+Location "Laica" "Sol/Uranus/Ariel"
+{
+    LongLat [ -44.4 21.3 0 ]
+    Size 30
+    Type "AA"
+}
+
+Location "Leprechaun Vallis" "Sol/Uranus/Ariel"
+{
+    LongLat [ -10.2 10.4 0 ]
+    Size 328
+    Type "VA"
+}
+
+Location "Mab" "Sol/Uranus/Ariel"
+{
+    LongLat [ -352.2 38.8 0 ]
+    Size 34
+    Type "AA"
+}
+
+Location "Melusine" "Sol/Uranus/Ariel"
+{
+    LongLat [ -8.9 52.9 0 ]
+    Size 50
+    Type "AA"
+}
+
+Location "Oonagh" "Sol/Uranus/Ariel"
+{
+    LongLat [ -244.4 21.9 0 ]
+    Size 39
+    Type "AA"
+}
+
+Location "Pixie Chasma" "Sol/Uranus/Ariel"
+{
+    LongLat [ -5.1 20.4 0 ]
+    Size 278
+    Type "CM"
+}
+
+Location "Rima" "Sol/Uranus/Ariel"
+{
+    LongLat [ -260.8 18.3 0 ]
+    Size 41
+    Type "AA"
+}
+
+Location "Sprite Vallis" "Sol/Uranus/Ariel"
+{
+    LongLat [ -340 14.9 0 ]
+    Size 305
+    Type "VA"
+}
+
+Location "Sylph Chasma" "Sol/Uranus/Ariel"
+{
+    LongLat [ -353 48.6 0 ]
+    Size 349
+    Type "CM"
+}
+
+Location "Yangoor" "Sol/Uranus/Ariel"
+{
+    LongLat [ -279.7 68.7 0 ]
+    Size 78
+    Type "AA"
+}
+
+# 26 records, 8269 lines read.
+Location "Alonso" "Sol/Uranus/Miranda"
+{
+    LongLat [ -352.6 44 0 ]
+    Size 25
+    Type "AA"
+}
+
+Location "Arden Corona" "Sol/Uranus/Miranda"
+{
+    LongLat [ -73.7 29.1 0 ]
+    Size 318
+    Type "CR"
+}
+
+Location "Argier Rupes" "Sol/Uranus/Miranda"
+{
+    LongLat [ -322.8 43.2 0 ]
+    Size 141
+    Type "RU"
+}
+
+Location "DUNSINANE REGIO" "Sol/Uranus/Miranda"
+{
+    LongLat [ -11.9 31.5 0 ]
+    Size 244
+    Type "RE"
+}
+
+Location "Elsinore Corona" "Sol/Uranus/Miranda"
+{
+    LongLat [ -257.1 24.8 0 ]
+    Size 323
+    Type "CR"
+}
+
+Location "EPHESUS REGIO" "Sol/Uranus/Miranda"
+{
+    LongLat [ -250 15 0 ]
+    Size 225
+    Type "RE"
+}
+
+Location "Ferdinand" "Sol/Uranus/Miranda"
+{
+    LongLat [ -202.1 34.8 0 ]
+    Size 17
+    Type "AA"
+}
+
+Location "Francisco" "Sol/Uranus/Miranda"
+{
+    LongLat [ -236 73.2 0 ]
+    Size 14
+    Type "AA"
+}
+
+Location "Gonzalo" "Sol/Uranus/Miranda"
+{
+    LongLat [ -77 11.4 0 ]
+    Size 11
+    Type "AA"
+}
+
+Location "Inverness Corona" "Sol/Uranus/Miranda"
+{
+    LongLat [ -325.7 66.9 0 ]
+    Size 234
+    Type "CR"
+}
+
+Location "MANTUA REGIO" "Sol/Uranus/Miranda"
+{
+    LongLat [ -180.2 39.6 0 ]
+    Size 399
+    Type "RE"
+}
+
+Location "Naples Sulcus" "Sol/Uranus/Miranda"
+{
+    LongLat [ -260 32 0 ]
+    Size 260
+    Type "SU"
+}
+
+Location "Prospero" "Sol/Uranus/Miranda"
+{
+    LongLat [ -329.9 32.9 0 ]
+    Size 21
+    Type "AA"
+}
+
+Location "SICILIA REGIO" "Sol/Uranus/Miranda"
+{
+    LongLat [ -317.2 30 0 ]
+    Size 174
+    Type "RE"
+}
+
+Location "Stephano" "Sol/Uranus/Miranda"
+{
+    LongLat [ -234.1 41.1 0 ]
+    Size 16
+    Type "AA"
+}
+
+Location "Syracusa Sulcus" "Sol/Uranus/Miranda"
+{
+    LongLat [ -293 15 0 ]
+    Size 40
+    Type "SU"
+}
+
+Location "Trinculo" "Sol/Uranus/Miranda"
+{
+    LongLat [ -163.4 63.7 0 ]
+    Size 11
+    Type "AA"
+}
+
+Location "Verona Rupes" "Sol/Uranus/Miranda"
+{
+    LongLat [ -347.8 18.3 0 ]
+    Size 116
+    Type "RU"
+}
+
+# 18 records, 8269 lines read.
+
