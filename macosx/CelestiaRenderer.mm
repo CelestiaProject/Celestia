@@ -49,7 +49,7 @@ NSDictionary* _renderFlags;
     NSEnumerator* enumerator = [_renderFlags keyEnumerator];
     id obj = nil;
     while ((obj = [enumerator nextObject]) != nil) {
-        [flags setObject:[NSNumber numberWithBool:(BOOL)(iflags & [[_renderFlags objectForKey:obj] intValue])] forKey:obj];
+        [flags setObject:[NSNumber numberWithBool:(0!=(iflags & [[_renderFlags objectForKey:obj] intValue]))] forKey:obj];
     }
     return flags;
 }
