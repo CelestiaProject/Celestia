@@ -4143,3 +4143,165 @@ AltSurface "limit of knowledge" "PSR 1620-26/b"
 {
 	Texture "extrasolar-lok.*"
 }
+
+
+"b" "HD 2638"
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       150     # M.sin(i) = 0.48 jupiters
+	Radius     84000
+
+	InfoURL "http://obswww.unige.ch/exoplanets/hd2638.html"
+
+	EllipticalOrbit {
+		Period          0.0094297
+		SemiMajorAxis   0.044
+		Eccentricity    0
+		ArgOfPericenter 0     # T0 = 53323.206, Omega = 0
+		MeanAnomaly     0
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 2683/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 27894"
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       200     # M.sin(i) = 0.62 jupiters
+	Radius     84000
+
+	InfoURL "http://obswww.unige.ch/exoplanets/hd27894.html"
+
+	EllipticalOrbit {
+		Period          0.049257
+		SemiMajorAxis   0.122
+		Eccentricity    0.049
+		ArgOfPericenter 0     # T0 = 53275.46, Omega = 132.9
+		MeanAnomaly     0
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 27894/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 63454"
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       120     # M.sin(i) = 0.38 jupiters
+	Radius     84000
+
+	InfoURL "http://obswww.unige.ch/exoplanets/hd63454.html"
+
+	EllipticalOrbit {
+		Period          0.0077148
+		SemiMajorAxis   0.036
+		Eccentricity    0
+		ArgOfPericenter 0     # T0 = 53111.129, Omega = 0
+		MeanAnomaly     0
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 63454/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 93083"
+{
+	Texture "jupiterlike.*"
+
+	Mass       120     # M.sin(i) = 0.37 jupiters
+	Radius     84000
+	Oblateness 0.02
+
+	InfoURL "http://obswww.unige.ch/exoplanets/hd93083.html"
+
+	EllipticalOrbit {
+		Period          0.393
+		SemiMajorAxis   0.477
+		Eccentricity    0.14
+		ArgOfPericenter 0     # T0 = 53181.7, Omega = 333.5
+		MeanAnomaly     0
+	}
+
+	RotationPeriod      10          # plausible guess (possible tidal slowing?)
+}
+
+AltSurface "limit of knowledge" "HD 93083/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 101930"
+{
+	Texture "jupiterlike.*"
+
+	Mass       95       # M.sin(i) = 0.30 jupiters
+	Radius     84000
+
+	InfoURL "http://obswww.unige.ch/exoplanets/hd101930.html"
+
+	EllipticalOrbit {
+		Period          0.1929
+		SemiMajorAxis   0.302
+		Eccentricity    0.11
+		ArgOfPericenter 0     # T0 = 53145.0, Omega = 251
+		MeanAnomaly     0
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 101930/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 142022"    # HD 142022 A
+{
+	Texture "jupiterlike.*"
+
+	Mass       1400       # M.sin(i) = 4.4 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://obswww.unige.ch/exoplanets/hd142022.html"
+
+	EllipticalOrbit {
+		Period          5.26
+		SemiMajorAxis   2.8
+		Eccentricity    0.57
+		ArgOfPericenter 0     # T0 = 50951.0, Omega = 172
+		MeanAnomaly     0
+	}
+
+	RotationPeriod      10          # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 101930/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
