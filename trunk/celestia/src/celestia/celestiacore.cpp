@@ -210,7 +210,6 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     fav->coordSys = sim->getFrame().coordSys;
     
     favorites->insert(pos, fav);
-    writeFavoritesFile();
 }
 
 void CelestiaCore::addFavoriteFolder(string name, FavoritesList::const_iterator* iter)
@@ -225,7 +224,6 @@ void CelestiaCore::addFavoriteFolder(string name, FavoritesList::const_iterator*
     fav->isFolder = true;
     
     favorites->insert(pos, fav);
-    writeFavoritesFile();
 }
 
 const FavoritesList* CelestiaCore::getFavorites()
