@@ -85,4 +85,26 @@ private:
 };
 
 
+
+class MixedOrbit : public Orbit
+{
+ public:
+    MixedOrbit(Orbit* orbit, double t0, double t1, double mass);
+    virtual ~MixedOrbit();
+
+    Point3d positionAtTime(double jd) const;
+    virtual double getPeriod() const;
+    virtual double getBoundingRadius() const;
+    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
+
+ private:
+    Orbit* primary;
+    EllipticalOrbit* afterApprox;
+    EllipticalOrbit* beforeApprox;
+    double begin;
+    double end;
+    double boundingRadius;
+};
+
+
 #endif // _ORBIT_H_

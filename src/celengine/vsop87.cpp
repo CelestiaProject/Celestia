@@ -642,15 +642,23 @@ public:
 };
 
 
+static double yearToJD(int year)
+{
+    return (double) astro::Date(year, 1, 1);
+}
+
+
 Orbit* CreateVSOP87Orbit(const string& name)
 {
     if (name == "vsop87-earth")
     {
-        return new VSOP87Orbit(earth_L, 6,
-                               earth_B, 3,
-                               earth_R, 6,
-                               365.25,
-                               160000000.0);
+        Orbit* o = new VSOP87Orbit(earth_L, 6,
+                                   earth_B, 3,
+                                   earth_R, 6,
+                                   365.25,
+                                   160000000.0);
+        return new MixedOrbit(o, yearToJD(2000), yearToJD(4000),
+                              astro::SolarMass);
     }
 
     return NULL;
