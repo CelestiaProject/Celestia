@@ -703,3 +703,5 @@ Code:
 * Implemented virtual textures, for ultra-high resolution texture mapping of
   planets.
 * Added a texture for Hyperion
+* Added locations-labels of all world-capitals (240) with importance
+  weights calculated from their numbers of inhabitants
