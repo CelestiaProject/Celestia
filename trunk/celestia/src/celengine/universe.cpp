@@ -330,16 +330,15 @@ void CloseStarPicker::process(const Star& star,
     if (lowPrecDistance > maxDistance)
         return;
 
-    // Ray-sphere intersection
     Vec3f starDir = (star.getPosition() - pickOrigin) *
         astro::lightYearsToKilometers(1.0f);
-    float v = starDir * pickDir;
-    float disc = square(star.getRadius()) - ((starDir * starDir) - square(v));
+    float distance = 0.0f;
 
-    if (disc > 0.0f)
+    if (testIntersection(Ray3f(Point3f(0, 0, 0), pickDir),
+                         Spheref(Point3f(starDir.x, starDir.y, starDir.z),
+                                 star.getRadius()), distance))
     {
-        float distance = v - (float) sqrt(disc);
-        if (distance > 0.0)
+        if (distance > 0.0f)
         {
             if (closestStar == NULL || distance < closestDistance)
             {
