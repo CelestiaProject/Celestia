@@ -78,7 +78,8 @@ Url::Url(const std::string& str, CelestiaCore *core)
 
     endPrevious = pos;
     int nb = nbBodies, i=1;
-    while (nb != 0 && endPrevious != std::string::npos) {
+    while (nb != 0 && endPrevious != std::string::npos)
+    {
         std::string bodyName="";
         pos = urlStr.find("/", endPrevious + 1);
         if (pos == std::string::npos) pos = urlStr.find("?", endPrevious + 1);
@@ -101,14 +102,18 @@ Url::Url(const std::string& str, CelestiaCore *core)
         i++;
     }
 
-    if (nb != 0) {
+    if (nb != 0)
+    {
         urlStr = "";
         return; // Number of bodies in Url doesn't match Mode
     }
 
-    if (nbBodies == 0) ref = FrameOfReference();
-    if (nbBodies == 1) ref = FrameOfReference(mode, bodies[0]);
-    if (nbBodies == 2) ref = FrameOfReference(mode, bodies[0], bodies[1]);
+    if (nbBodies == 0)
+        ref = FrameOfReference();
+    else if (nbBodies == 1)
+        ref = FrameOfReference(mode, bodies[0]);
+    else if (nbBodies == 2)
+        ref = FrameOfReference(mode, bodies[0], bodies[1]);
     fromString = true;
 
     std::string time="";
@@ -169,7 +174,9 @@ Url::Url(const std::string& str, CelestiaCore *core)
     if (selectedStr != "") name += " [" + getBodyShortName(selectedStr) + "]";
 }
 
-Url::Url(CelestiaCore* core) {
+
+Url::Url(CelestiaCore* core)
+{
     appCore = core;
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
@@ -225,15 +232,18 @@ Url::Url(CelestiaCore* core) {
 
 }
 
-std::string Url::getAsString() const {
+std::string Url::getAsString() const
+{
     return urlStr;
 }
 
-std::string Url::getName() const {
+std::string Url::getName() const
+{
     return name;
 }
 
-std::string Url::getBodyShortName(const std::string& body) const {
+std::string Url::getBodyShortName(const std::string& body) const
+{
     std::string::size_type pos;
     if (body != "") {
         pos = body.rfind(":");
