@@ -542,6 +542,10 @@ void Body::computeLocations()
     if (m == NULL)
         return;
 
+    // TODO: Implement separate radius and bounding radius so that this hack is
+    // not necessary.
+    double boundingRadius = 2.0;
+
     for (vector<Location*>::const_iterator iter = locations->begin();
          iter != locations->end(); iter++)
     {
@@ -549,12 +553,13 @@ void Body::computeLocations()
         float alt = v.length() - radius;
         if (alt != -radius)
             v.normalize();
+        v *= boundingRadius;
 
         Ray3d ray(Point3d(v.x, v.y, v.z), Vec3d(-v.x, -v.y, -v.z));
         double t = 0.0;
         if (m->pick(ray, t))
         {
-            v *= (1.0f - t) * radius + alt;
+            v *= ((1.0 - t) * radius + alt);
             (*iter)->setPosition(v);
         }
     }
