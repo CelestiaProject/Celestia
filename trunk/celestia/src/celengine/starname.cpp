@@ -38,9 +38,18 @@ void StarNameDatabase::add(uint32 catalogNumber, const string& name)
             DPRINTF(2,"Duplicated name '%s' on HIP %d and %d\n", name.c_str(),
                     tmp, catalogNumber);
 #endif
-        nameIndex.insert(NameIndex::value_type(name, catalogNumber));
+        // Add the new name
+        //nameIndex.insert(NameIndex::value_type(name, catalogNumber));
+
+        nameIndex[name] = catalogNumber;
         numberIndex.insert(NumberIndex::value_type(catalogNumber, name));
     }
+}
+
+
+void StarNameDatabase::erase(uint32 catalogNumber)
+{
+    numberIndex.erase(catalogNumber);
 }
 
 

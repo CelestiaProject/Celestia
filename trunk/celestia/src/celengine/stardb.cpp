@@ -1073,6 +1073,10 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
 
             if (names != NULL && !name.empty())
             {
+                // List of names will replace any that already exist for
+                // this star.
+                names->erase(catalogNumber);
+
                 // Iterate through the string for names delimited
                 // by ':', and insert them into the star database.
                 // Note that db->add() will skip empty names.
@@ -1099,3 +1103,4 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
 
     return true;
 }
+

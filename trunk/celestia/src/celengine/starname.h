@@ -28,6 +28,10 @@ class StarNameDatabase
     typedef std::multimap<uint32, std::string> NumberIndex;
 
     void add(uint32, const std::string&);
+
+    // Delete all names associated with the specified catalog number
+    void erase(uint32);
+
     uint32 findCatalogNumber(const std::string& name) const;
     uint32 findName(std::string name) const;
     std::vector<std::string> getCompletion(const std::string& name) const;
