@@ -96,15 +96,15 @@ ConstellationBoundaries* ReadBoundaries(istream& in)
         string pt;
         string con;
 
-        in >> pt;
         in >> con;
+        in >> pt;
         if (!in.good())
             break;
 
         if (con != lastCon)
         {
             boundaries->moveto(ra, dec);
-            con = lastCon;
+            lastCon = con;
             conCount++;
         }
         else
@@ -113,9 +113,6 @@ ConstellationBoundaries* ReadBoundaries(istream& in)
         }
         ptCount++;
     }
-
-    cout << "const boundaries: " << conCount << '\n';
-    cout << "boundary points: " << ptCount << '\n';
 
     return boundaries;
 }
