@@ -24,7 +24,8 @@ class ShaderProperties
      DiffuseTexture   = 0x1,
      SpecularTexture  = 0x2,
      NormalTexture    = 0x4,
-     NightTexture     = 0x8
+     NightTexture     = 0x8,
+     SpecularInDiffuseAlpha = 0x10,
  };
 
  enum
@@ -40,20 +41,52 @@ class ShaderProperties
 };
 
 
+static const int MaxShaderLights = 4;
+struct CelestiaGLProgramLight
+{
+    Vec3ShaderProperty direction;
+    Vec3ShaderProperty diffuse;
+    Vec3ShaderProperty specular;
+    Vec3ShaderProperty halfVector;
+};
+
+class CelestiaGLProgram
+{
+ public:
+    CelestiaGLProgram(GLProgram& _program, const ShaderProperties&);
+    ~CelestiaGLProgram();
+
+    void use() const { program->use(); }
+    
+ public:
+    CelestiaGLProgramLight lights[MaxShaderLights];
+    Vec3ShaderProperty eyePosition;
+    FloatShaderProperty shininess;
+    
+ private:
+    void initProperties(const ShaderProperties&);
+    FloatShaderProperty floatProperty(const std::string&);
+    Vec3ShaderProperty vec3Property(const std::string&);
+    Vec4ShaderProperty vec4Property(const std::string&);
+
+    GLProgram* program;
+};
+
+
 class ShaderManager
 {
  public:
     ShaderManager();
     ~ShaderManager();
 
-    GLProgram* getShader(const ShaderProperties&);
+    CelestiaGLProgram* getShader(const ShaderProperties&);
 
  private:
-    GLProgram* buildProgram(const ShaderProperties&);
+    CelestiaGLProgram* buildProgram(const ShaderProperties&);
     GLVertexShader* buildVertexShader(const ShaderProperties&);
     GLFragmentShader* buildFragmentShader(const ShaderProperties&);
 
-    std::map<ShaderProperties, GLProgram*> shaders;
+    std::map<ShaderProperties, CelestiaGLProgram*> shaders;
 
     std::ostream* logFile;
 };
