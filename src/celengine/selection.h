@@ -27,6 +27,9 @@ class Selection
         star(sel.star), body(sel.body), galaxy(sel.galaxy) {};
     ~Selection() {};
 
+    void select(Star* _star)     {star=_star; body=NULL;  galaxy=NULL;}
+    void select(Body* _body)     {star=NULL;  body=_body; galaxy=NULL;}
+    void select(Galaxy* _galaxy) {star=NULL;  body=NULL;  galaxy=_galaxy;}
     bool empty() { return star == NULL && body == NULL && galaxy == NULL; };
     double radius() const;
     UniversalCoord getPosition(double t) const;
