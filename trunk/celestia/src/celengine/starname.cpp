@@ -53,6 +53,34 @@ static const char *greekAlphabet[] =
     "Omega"
 };
 
+static const char* greekAlphabetUTF8[] =
+{
+    "\316\261",
+    "\316\262",
+    "\316\263",
+    "\316\264",
+    "\316\265",
+    "\316\266",
+    "\316\267",
+    "\316\270",
+    "\316\271",
+    "\316\272",
+    "\316\273",
+    "\316\274",
+    "\316\275",
+    "\316\276",
+    "\316\277",
+    "\317\200",
+    "\317\201",
+    "\317\203",
+    "\317\204",
+    "\317\205",
+    "\317\206",
+    "\317\207",
+    "\317\210",
+    "\317\211",
+};
+
 static const char* canonicalAbbrevs[] =
 {
     "ALF", "BET", "GAM", "DEL", "EPS", "ZET", "ETA", "TET",
@@ -305,6 +333,18 @@ const string& Greek::canonicalAbbreviation(const std::string& letter)
     {
         if (compareIgnoringCase(letter, instance->abbrevs[i]) == 0)
             return instance->abbrevs[i];
+    }
+
+    if (letter.length() == 2)
+    {
+        for (i = 0; i < Greek::instance->nLetters; i++)
+        {
+            if (letter[0] == greekAlphabetUTF8[i][0] &&
+                letter[1] == greekAlphabetUTF8[i][1])
+            {
+                return instance->abbrevs[i];
+            }
+        }
     }
 
     return noAbbrev;

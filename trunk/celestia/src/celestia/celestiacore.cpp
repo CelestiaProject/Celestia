@@ -2595,7 +2595,43 @@ static void displayStarNames(Overlay& overlay,
     {
         if (count != 0)
             overlay << " / ";
-        overlay << iter->second;
+
+        // Ugly hack to translate Greek letter abbreviations into UTF-8
+        // encodings.
+        bool isBayerDesignation = false;
+        if (iter->second.length() > 3)
+        {
+            // All greek letter abbreviations begin with two capital
+            // letters.  Use this fact to quickly filter out most names.
+            if (iter->second[0] >= 'A' && iter->second[0] <= 'Z' &&
+                iter->second[1] >= 'A' && iter->second[1] <= 'Z')
+            {
+                // Linear search through all letter abbreviations
+                for (int i = 0; i < Greek::instance->nLetters; i++)
+                {
+                    const string& abbr = Greek::instance->abbrevs[i];
+                    if (iter->second.compare(0, abbr.length(), abbr) == 0)
+                    {
+                        // The star name begins with a Greek letter
+                        // abbreviation.
+                        wchar_t utf8Letter = wchar_t(0x03b1 + i);
+                        // Final sigma is in the middle of the UTF-8 range
+                        // for lowercase Greek letters.
+                        if (i + 1 >= (int) Greek::Sigma)
+                            utf8Letter++;
+
+                        overlay.print(utf8Letter);
+                        overlay << (iter->second.c_str() + abbr.length());
+
+                        isBayerDesignation = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!isBayerDesignation)
+            overlay << iter->second;
         iter++;
         count++;
     }
@@ -3242,7 +3278,8 @@ void CelestiaCore::renderOverlay()
         int movieHeight = movieCapture->getHeight();
         glPushMatrix();
         glColor4f(1, 0, 0, 1);
-        overlay->rect((width - movieWidth) / 2 - 1, (height - movieHeight) / 2 - 1,
+        overlay->rect((float) ((width - movieWidth) / 2 - 1),
+                      (float) ((height - movieHeight) / 2 - 1),
                       movieWidth + 1, movieHeight + 1, false);
         glTranslatef((width - movieWidth) / 2, (height + movieHeight) / 2 + 2, 0);
         *overlay << movieWidth << 'x' << movieHeight << " at " <<
@@ -3666,7 +3703,7 @@ bool CelestiaCore::initRenderer()
     {
         Star* star = universe->getStarCatalog()->find(*iter);
         if (star != NULL)
-            renderer->addLabelledStar(star);
+            renderer->addLabelledStar(star, *iter);
     }
 
     if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
