@@ -10,46 +10,11 @@
 #include "mathlib.h"
 #include "astro.h"
 #include "parser.h"
+#include "texmanager.h"
+#include "meshmanager.h"
 #include "solarsys.h"
 
-
-typedef struct
-{
-    char *name;
-    float radius;
-    float obliquity;
-    float albedo;
-    double period;
-    double semiMajorAxis;
-    double eccentricity;
-    double inclination;
-    double ascendingNode;
-    double argOfPeriapsis;
-    double trueAnomaly;
-} Planet;
-
-
-Planet SolSystem[] =
-{
-    { "Mercury", 2440, 7.0f, 0.06f,
-      0.2408, 0.3871, 0.2056, 7.0049, 77.456, 48.331, 252.251 },
-    { "Venus", 6052, 177.4f, 0.77f,
-      0.6152, 0.7233, 0.0068, 3.3947, 131.533, 76.681, 181.979 },
-    { "Earth", 6378, 23.45f, 0.30f,
-      1.0000, 1.0000, 0.0167, 0.0001, 102.947, 348.739, 100.464 },
-    { "Mars", 3394, 23.98f, 0.15f,
-      1.8809, 1.5237, 0.0934, 1.8506, 336.041, 49.579, 355.453 },
-    { "Jupiter", 71398, 3.08f, 0.51f,
-      11.8622, 5.2034, 0.0484, 1.3053, 14.7539, 100.556, 34.404 },
-    { "Saturn", 60330, 26.73f, 0.50f,
-      29.4577, 9.5371, 0.0542, 2.4845, 92.432, 113.715, 49.944 },
-    { "Uranus", 26200, 97.92f, 0.66f,
-      84.0139, 19.1913, 0.0472, 0.7699, 170.964, 74.230, 313.232 },
-    { "Neptune", 25225, 28.8f, 0.62f,
-      164.793, 30.0690, 0.0086, 1.7692, 44.971, 131.722, 304.880 },
-    { "Pluto", 1137, 122.46f, 0.6f,
-      248.54, 39.4817, 0.2488, 17.142, 224.067, 110.303, 238.928 },
-};
+using namespace std;
 
 
 static Surface* CreateSurface(Hash* surfaceData)
@@ -58,15 +23,25 @@ static Surface* CreateSurface(Hash* surfaceData)
 
     surface->color = Color(1.0f, 1.0f, 1.0f);
     surfaceData->getColor("Color", surface->color);
-    bool applyBaseTexture = surfaceData->getString("Texture", surface->baseTexture);
-    bool applyBumpMap = surfaceData->getString("BumpMap", surface->bumpTexture);
-    bool applyCloudMap = surfaceData->getString("CloudMap", surface->cloudTexture);
-    surface->bumpHeight = 2.5f;
-    surfaceData->getNumber("BumpHeight", surface->bumpHeight);
+
+    string baseTexture;
+    string bumpTexture;
+    string cloudTexture;
+    string nightTexture;
+    bool applyBaseTexture = surfaceData->getString("Texture", baseTexture);
+    bool applyBumpMap = surfaceData->getString("BumpMap", bumpTexture);
+    bool applyCloudMap = surfaceData->getString("CloudMap", cloudTexture);
+    bool applyNightMap = surfaceData->getString("NightTexture", nightTexture);
+
+    float bumpHeight = 2.5f;
+    surfaceData->getNumber("BumpHeight", bumpHeight);
+
     bool blendTexture = false;
     surfaceData->getBoolean("BlendTexture", blendTexture);
+
     bool compressTexture = false;
     surfaceData->getBoolean("CompressTexture", compressTexture);
+
     if (blendTexture)
         surface->appearanceFlags |= Surface::BlendTexture;
     if (applyBaseTexture)
@@ -75,44 +50,22 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->appearanceFlags |= Surface::ApplyBumpMap;
     if (applyCloudMap)
         surface->appearanceFlags |= Surface::ApplyCloudMap;
-    if (compressTexture)
-        surface->appearanceFlags |= Surface::CompressBaseTexture;
+    if (applyNightMap)
+        surface->appearanceFlags |= Surface::ApplyNightMap;
+
+    TextureManager* texMan = GetTextureManager();
+    if (applyBaseTexture)
+        surface->baseTexture = texMan->getHandle(TextureInfo(baseTexture,
+                                                             compressTexture));
+    if (applyBumpMap)
+        surface->bumpTexture = texMan->getHandle(TextureInfo(bumpTexture,
+                                                             bumpHeight));
+    if (applyCloudMap)
+        surface->cloudTexture = texMan->getHandle(TextureInfo(cloudTexture));
+    if (applyNightMap)
+        surface->nightTexture = texMan->getHandle(TextureInfo(nightTexture));
 
     return surface;
-}
-
-
-static Body* createSatellite(Planet* p)
-{
-    EllipticalOrbit* orbit = new EllipticalOrbit(astro::AUtoKilometers(p->semiMajorAxis),
-                                                 p->eccentricity,
-                                                 degToRad(p->inclination),
-                                                 degToRad(p->ascendingNode),
-                                                 degToRad(p->argOfPeriapsis),
-                                                 degToRad(p->trueAnomaly),
-                                                 p->period * 365.25f);
-    Body* body = new Body(NULL);
-    body->setName(string(p->name));
-    body->setOrbit(orbit);
-    body->setRadius(p->radius);
-    body->setObliquity(degToRad(p->obliquity));
-    body->setAlbedo(p->albedo);
-
-    return body;
-}
-
-
-// Create a solar system with our nine familiar planets
-SolarSystem* CreateOurSolarSystem()
-{
-    SolarSystem* solarSystem = new SolarSystem(0);
-
-    for (int i = 0; i < sizeof(SolSystem) / sizeof(SolSystem[0]); i++)
-    {
-        solarSystem->getPlanets()->addBody(createSatellite(&SolSystem[i]));
-    }
-
-    return solarSystem;
 }
 
 
@@ -221,9 +174,14 @@ static Body* CreatePlanet(PlanetarySystem* system,
     body->setSurface(*surface);
     delete surface;
     
-    string mesh("");
-    planetData->getString("Mesh", mesh);
-    body->setMesh(mesh);
+    {
+        string mesh("");
+        if (planetData->getString("Mesh", mesh))
+        {
+            ResourceHandle meshHandle = GetMeshManager()->getHandle(MeshInfo(mesh));
+            body->setMesh(meshHandle);
+        }
+    }
 
     // Read the ring system
     {
@@ -246,8 +204,9 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 Color color(1.0f, 1.0f, 1.0f);
                 ringsData->getColor("Color", color);
 
-                string texture;
-                ringsData->getString("Texture", texture);
+                string textureName;
+                ringsData->getString("Texture", textureName);
+                ResourceHandle texture = GetTextureManager()->getHandle(TextureInfo(textureName));
 
                 body->setRings(RingSystem((float) inner, (float) outer,
                                           color, texture));

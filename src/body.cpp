@@ -21,6 +21,7 @@ Body::Body(PlanetarySystem* _system) :
     oblateness(0),
     rotationPeriod(1),
     rotationPhase(0.0f),
+    mesh(-1),
     surface(Color(1.0f, 1.0f, 1.0f)),
     rings(NULL),
     satellites(NULL)
@@ -157,12 +158,12 @@ void Body::setSurface(const Surface& surf)
 }
 
 
-string Body::getMesh() const
+int Body::getMesh() const
 {
     return mesh;
 }
 
-void Body::setMesh(const string _mesh)
+void Body::setMesh(int _mesh)
 {
     mesh = _mesh;
 }

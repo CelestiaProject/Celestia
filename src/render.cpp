@@ -39,13 +39,18 @@ static bool commonDataInitialized = false;
 static SphereMesh* sphereMesh[SPHERE_LODS];
 static SphereMesh* asteroidMesh = NULL;
 
-static CTexture* normalizationTex = NULL;
+static Texture* normalizationTex = NULL;
 
-static CTexture* starTex = NULL;
-static CTexture* glareTex = NULL;
-static CTexture* galaxyTex = NULL;
-static CTexture* shadowTex = NULL;
-static CTexture* veilTex = NULL;
+static Texture* starTex = NULL;
+static Texture* glareTex = NULL;
+static Texture* galaxyTex = NULL;
+static Texture* shadowTex = NULL;
+static Texture* veilTex = NULL;
+
+static Texture* starTexB = NULL;
+static Texture* starTexA = NULL;
+static Texture* starTexG = NULL;
+static Texture* starTexM = NULL;
 
 struct SphericalCoordLabel
 {
@@ -76,6 +81,7 @@ Renderer::Renderer() :
     brightnessScale(1.0f / 6.0f),
     asterisms(NULL),
     nSimultaneousTextures(1),
+    useTexEnvCombine(false),
     useRegisterCombiners(false),
     useCubeMaps(false)
 {
@@ -230,6 +236,19 @@ bool Renderer::init(int winWidth, int winHeight)
         shadowTex = CreateProceduralTexture(256, 256, GL_RGB, ShadowTextureEval);
         shadowTex->bindName();
 
+        starTexB = CreateJPEGTexture("textures/bstar.jpg");
+        if (starTexB != NULL)
+            starTexB->bindName();
+        starTexA = CreateJPEGTexture("textures/astar.jpg");
+        if (starTexA != NULL)
+            starTexA->bindName();
+        starTexG = CreateJPEGTexture("textures/gstar.jpg");
+        if (starTexG != NULL)
+            starTexG->bindName();
+        starTexM = CreateJPEGTexture("textures/mstar.jpg");
+        if (starTexM != NULL)
+            starTexM->bindName();
+
         // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
             InitExtMultiTexture();
@@ -290,6 +309,11 @@ bool Renderer::init(int winWidth, int winHeight)
     {
         DPRINTF("Renderer: multi-texture supported.\n");
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &nSimultaneousTextures);
+    }
+    if (ExtensionSupported("GL_EXT_texture_env_combine"))
+    {
+        useTexEnvCombine = true;
+        DPRINTF("Renderer: texture env combine supported.\n");
     }
     if (ExtensionSupported("GL_NV_register_combiners"))
     {
@@ -924,7 +948,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
 
 
 static void renderBumpMappedMesh(Mesh& mesh,
-                                 CTexture& bumpTexture,
+                                 Texture& bumpTexture,
                                  Vec3f lightDirection,
                                  Quatf orientation,
                                  Color ambientColor)
@@ -1015,7 +1039,7 @@ static void renderBumpMappedMesh(Mesh& mesh,
 
 
 static void renderSmoothMesh(Mesh& mesh,
-                             CTexture& baseTexture,
+                             Texture& baseTexture,
                              Vec3f lightDirection,
                              Quatf orientation,
                              Color ambientColor)
@@ -1121,34 +1145,27 @@ void Renderer::renderPlanet(const Body& body,
 
         const Surface& surface = body.getSurface();
         // Get the texture . . .
-        CTexture* tex = NULL;
-        CTexture* bumpTex = NULL;
-        CTexture* cloudTex = NULL;
-        if (surface.baseTexture != "")
-        {
-            if (!textureManager->find(surface.baseTexture, &tex))
-            {
-                bool compress = ((surface.appearanceFlags & Surface::CompressBaseTexture) != 0);
-                tex = textureManager->load(surface.baseTexture, compress);
-            }
-        }
+        Texture* tex = NULL;
+        Texture* bumpTex = NULL;
+        Texture* cloudTex = NULL;
+        Texture* nightTex = NULL;
+        TextureManager* textureManager = GetTextureManager();
+
+        if (surface.baseTexture != InvalidResource)
+            tex = textureManager->find(surface.baseTexture);
 
         // If this renderer can support bump mapping then get the bump texture
         if ((surface.appearanceFlags & Surface::ApplyBumpMap) != 0 &&
             (perPixelLightingEnabled && useRegisterCombiners && useCubeMaps) &&
-            surface.bumpTexture != "")
-        {
-            if (!textureManager->find(surface.bumpTexture, &bumpTex))
-                bumpTex = textureManager->loadBumpMap(surface.bumpTexture,
-                                                      surface.bumpHeight);
-        }
+            surface.bumpTexture != InvalidResource)
+            bumpTex = textureManager->find(surface.bumpTexture);
 
         if ((surface.appearanceFlags & Surface::ApplyCloudMap) != 0 &&
             (renderFlags & ShowCloudMaps) != 0)
-        {
-            if (!textureManager->find(surface.cloudTexture, &cloudTex))
-                cloudTex = textureManager->load(surface.cloudTexture, false);
-        }
+            cloudTex = textureManager->find(surface.cloudTexture);
+
+        if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0)
+            nightTex = textureManager->find(surface.nightTexture);
 
         if (tex == NULL)
         {
@@ -1194,7 +1211,7 @@ void Renderer::renderPlanet(const Body& body,
         glScalef(discSize, discSize * (1.0f - body.getOblateness()), discSize);
 
         Mesh* mesh = NULL;
-        if (body.getMesh() == "")
+        if (body.getMesh() == -1)
         {
             int lod = 0;
             if (discSizeInPixels < 10)
@@ -1215,8 +1232,7 @@ void Renderer::renderPlanet(const Body& body,
         }
         else
         {
-            if (!meshManager->find(body.getMesh(), &mesh))
-                mesh = meshManager->load(body.getMesh());
+            mesh = GetMeshManager()->find(body.getMesh());
         }
 
         if (mesh != NULL)
@@ -1315,6 +1331,21 @@ void Renderer::renderPlanet(const Body& body,
             else
             {
                 mesh->render();
+                if (nightTex != NULL && useTexEnvCombine)
+                {
+                    glBindTexture(GL_TEXTURE_2D, nightTex->getName());
+                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+                    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+                    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_ONE_MINUS_SRC_COLOR);
+                    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+                    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+                    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+                    glEnable(GL_BLEND);
+                    glBlendFunc(GL_ONE, GL_ONE);
+                    mesh->render();
+                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+                }
+
                 if (cloudTex != NULL)
                 {
                     glBindTexture(GL_TEXTURE_2D, cloudTex->getName());
@@ -1403,12 +1434,7 @@ void Renderer::renderPlanet(const Body& body,
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            CTexture* ringsTex = NULL;
-            if (rings->texture != "")
-            {
-                if (!textureManager->find(rings->texture, &ringsTex))
-                    ringsTex = textureManager->load(rings->texture);
-            }
+            Texture* ringsTex = GetTextureManager()->find(rings->texture);
 
             if (ringsTex != NULL)
                 glBindTexture(GL_TEXTURE_2D, ringsTex->getName());
@@ -1508,35 +1534,32 @@ void Renderer::renderStar(const Star& star,
         glColor(color);
         glScalef(discSize, discSize, discSize);
 
-        char* textureName = NULL;
+        Texture* tex = NULL;
         switch (star.getStellarClass().getSpectralClass())
         {
         case StellarClass::Spectral_O:
         case StellarClass::Spectral_B:
-            textureName = "bstar.jpg";
+            tex = starTexB;
             break;
         case StellarClass::Spectral_A:
         case StellarClass::Spectral_F:
-            textureName = "astar.jpg";
+            tex = starTexA;
             break;
         case StellarClass::Spectral_G:
         case StellarClass::Spectral_K:
-            textureName = "gstar.jpg";
+            tex = starTexG;
             break;
         case StellarClass::Spectral_M:
         case StellarClass::Spectral_R:
         case StellarClass::Spectral_S:
         case StellarClass::Spectral_N:
-            textureName = "mstar.jpg";
+            tex = starTexM;
             break;
         default:
-            textureName = "astar.jpg";
+            tex = starTexA;
             break;
         }
 
-        CTexture* tex = NULL;
-        if (!textureManager->find(textureName, &tex))
-            tex = textureManager->load(textureName);
         if (tex == NULL)
         {
             glDisable(GL_TEXTURE_2D);
