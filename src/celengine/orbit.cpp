@@ -154,3 +154,10 @@ double EllipticalOrbit::getPeriod() const
 {
     return period;
 }
+
+
+double EllipticalOrbit::getBoundingRadius() const
+{
+    // TODO: watch out for unbounded parabolic and hyperbolic orbits
+    return pericenterDistance * ((1.0 + eccentricity) / (1.0 - eccentricity));
+}
