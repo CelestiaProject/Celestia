@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Celestia
+Comment=Celestia
+Exec=celestia %f
+Terminal=false
+Icon=celestia.png
+MimeType=application/x-celestia-script
+Type=Application
