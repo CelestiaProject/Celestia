@@ -123,6 +123,7 @@ enum
     Menu_ShowEclipseShadows  = 2017,
     Menu_ShowStarsAsPoints   = 2018,
     Menu_CraftLabels         = 2019,
+    Menu_ShowBoundaries      = 2020,
 };
 
 static void menuSelectSol()
@@ -211,7 +212,13 @@ static gint menuShowAtmospheres(GtkWidget* w, gpointer data)
     appCore->charEntered('\001'); //Ctrl+A
     return TRUE;
 }
-
+static gint menuShowBoundaries(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowBoundaries, on);
+    appCore->charEntered('\002'); //Ctrl+B
+    return TRUE;
+}
 static gint menuPixelShaders(GtkWidget* w, gpointer data)
 {
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
@@ -1950,6 +1957,7 @@ static CheckFunc checks[] =
     { NULL, NULL, "/Render/Show Atmospheres",	checkRenderFlag,	1, Renderer::ShowAtmospheres, Menu_ShowAtmospheres, GTK_SIGNAL_FUNC(menuShowAtmospheres) },
     { NULL, NULL, "/Render/Show Clouds",		checkRenderFlag,	1, Renderer::ShowCloudMaps, Menu_ShowClouds, GTK_SIGNAL_FUNC(menuShowClouds) },
     { NULL, NULL, "/Render/Show Orbits",		checkRenderFlag,	1, Renderer::ShowOrbits, Menu_ShowOrbits, GTK_SIGNAL_FUNC(menuShowOrbits) },
+    { NULL, NULL, "/Render/Show Boundaries",	checkRenderFlag,	1, Renderer::ShowBoundaries, Menu_ShowBoundaries, GTK_SIGNAL_FUNC(menuShowBoundaries) },
     { NULL, NULL, "/Render/Show Constellations",	checkRenderFlag,	1, Renderer::ShowDiagrams, Menu_ShowConstellations, GTK_SIGNAL_FUNC(menuShowConstellations) },
     { NULL, NULL, "/Render/Show Coordinate Sphere",checkRenderFlag,	1, Renderer::ShowCelestialSphere, Menu_ShowCelestialSphere, GTK_SIGNAL_FUNC(menuShowCelestialSphere) },
     { NULL, NULL, "/Render/Show Night Side Lights",checkRenderFlag,	1, Renderer::ShowNightMaps, Menu_ShowNightSideMaps, GTK_SIGNAL_FUNC(menuShowNightSideMaps) },
