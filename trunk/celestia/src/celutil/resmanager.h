@@ -7,8 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _RESMANAGER_H_
-#define _RESMANAGER_H_
+#ifndef _CELUTIL_RESMANAGER_H_
+#define _CELUTIL_RESMANAGER_H_
 
 #include <string>
 #include <vector>
@@ -29,10 +29,12 @@ template<class T> class ResourceInfo
     ResourceInfo() : state(ResourceNotLoaded), resource(NULL) {};
     virtual ~ResourceInfo() {};
 
+    virtual std::string resolve(const std::string&) = 0;
     virtual T* load(const std::string&) = 0;
 
     typedef T ResourceType;
     ResourceState state;
+    std::string resolvedName;
     T* resource;
 };
 
@@ -52,9 +54,11 @@ template<class T> class ResourceManager
  private:
     typedef std::vector<T> ResourceTable;
     typedef std::map<T, ResourceHandle> ResourceHandleMap;
+    typedef std::map<std::string, ResourceType*> NameMap;
 
     ResourceTable resources;
     ResourceHandleMap handles;
+    NameMap loadedResources;
 
  public:
     ResourceHandle getHandle(const T& info)
@@ -83,11 +87,27 @@ template<class T> class ResourceManager
         {
             if (resources[h].state == ResourceNotLoaded)
             {
-                resources[h].resource = resources[h].load(baseDir);
-                if (resources[h].resource == NULL)
-                    resources[h].state = ResourceLoadingFailed;
-                else
+                resources[h].resolvedName = resources[h].resolve(baseDir);
+                typename NameMap::iterator iter =
+                    loadedResources.find(resources[h].resolvedName);
+                if (iter != loadedResources.end())
+                {
+                    resources[h].resource = iter->second;
                     resources[h].state = ResourceLoaded;
+                }
+                else
+                {
+                    resources[h].resource = resources[h].load(resources[h].resolvedName);
+                    if (resources[h].resource == NULL)
+                    {
+                        resources[h].state = ResourceLoadingFailed;
+                    }
+                    else
+                    {
+                        resources[h].state = ResourceLoaded;
+                        loadedResources.insert(NameMap::value_type(resources[h].resolvedName, resources[h].resource));
+                    }
+                }
             }
 
             if (resources[h].state == ResourceLoaded)
@@ -96,8 +116,7 @@ template<class T> class ResourceManager
                 return NULL;
         }
     }
-
 };
 
-#endif // _RESMANAGER_H_
+#endif // _CELUTIL_RESMANAGER_H_
 

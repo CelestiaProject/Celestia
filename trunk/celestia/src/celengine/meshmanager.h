@@ -23,6 +23,7 @@ class MeshInfo : public ResourceInfo<Mesh>
 
     MeshInfo(const std::string _source) : source(_source) {};
 
+    virtual std::string resolve(const std::string&);
     virtual Mesh* load(const std::string&);
 };
 
