@@ -19,6 +19,23 @@ using namespace std;
 #define VELOCITY_CHANGE_TIME      0.25f
 
 
+static Vec3d slerp(double t, const Vec3d& v0, const Vec3d& v1)
+{
+    double r0 = v0.length();
+    double r1 = v1.length();
+    Vec3d u = v0 / r0;
+    Vec3d n = u ^ (v1 / r1);
+    n.normalize();
+    Vec3d v = n ^ u;
+    if (v * v1 < 0.0)
+        v = -v;
+
+    double cosTheta = u * (v1 / r1);
+    double theta = acos(cosTheta);
+
+    return (cos(theta * t) * u + sin(theta * t) * v) * Mathd::lerp(t, r0, r1);
+}
+
 
 Observer::Observer() :
     simTime(0.0),
@@ -135,6 +152,7 @@ RigidTransform Observer::getSituation() const
 {
     return frame.toUniversal(situation, getTime());
 }
+                        
 
 
 void Observer::setSituation(const RigidTransform& xform)
@@ -156,7 +174,8 @@ Vec3d toUniversal(const Vec3d& v,
             Quatf q = observer.getOrientation();
             Quatd qd(q.w, q.x, q.y, q.z);
             return v * qd.toMatrix3();
-        }
+        }                        
+
         
     case astro::Geographic:
         if (sel.getType() != Selection::Type_Body)
@@ -237,18 +256,60 @@ void Observer::update(double dt, double timeScale)
                     (journey.expFactor * (u - journey.accelTime) + 1) - 1;
             }
 
-            Vec3d v = jv;
-            if (v.length() == 0.0)
+            if (journey.traj == Linear)
             {
-                p = journey.from;
+                Vec3d v = jv;
+                if (v.length() == 0.0)
+                {
+                    p = journey.from;
+                }
+                else
+                {
+                    v.normalize();
+                    if (t < 0.5)
+                        p = journey.from + v * astro::kilometersToMicroLightYears(x);
+                    else
+                        p = journey.to - v * astro::kilometersToMicroLightYears(x);
+                }
             }
             else
             {
-                v.normalize();
-                if (t < 0.5)
-                    p = journey.from + v * astro::kilometersToMicroLightYears(x);
+                Selection centerObj = frame.refObject;
+                if (centerObj.body() != NULL)
+                {
+                    Body* body = centerObj.body();
+                    if (body->getSystem())
+                    {
+                        if (body->getSystem()->getPrimaryBody() != NULL)
+                            centerObj = Selection(body->getSystem()->getPrimaryBody());
+                        else
+                            centerObj = Selection(body->getSystem()->getStar());
+                    }
+                }
+
+                UniversalCoord ufrom  = frame.toUniversal(RigidTransform(journey.from, Quatf(1.0f)), simTime).translation;
+                UniversalCoord uto    = frame.toUniversal(RigidTransform(journey.to, Quatf(1.0f)), simTime).translation;
+                UniversalCoord origin = centerObj.getPosition(simTime);
+                Vec3d v0 = ufrom - origin;
+                Vec3d v1 = uto - origin;
+
+                if (jv.length() == 0.0)
+                {
+                    p = journey.from;
+                }
                 else
-                    p = journey.to - v * astro::kilometersToMicroLightYears(x);
+                {
+                    x = astro::kilometersToMicroLightYears(x / jv.length());
+                    Vec3d v;
+
+                    if (t < 0.5)
+                        v = slerp(x, v0, v1);
+                    else
+                        v = slerp(x, v1, v0);
+
+                    p = origin + v;
+                    p = frame.fromUniversal(RigidTransform(p, Quatf(1.0f)), simTime).translation;
+                }
             }
         }
 
@@ -399,14 +460,78 @@ void Observer::computeGotoParameters(const Selection& destination,
     Vec3d v = targetPosition - getPosition();
     v.normalize();
 
+    jparams.traj = Linear;
     jparams.duration = gotoTime;
     jparams.startTime = realTime;
 
     // Right where we are now . . .
     jparams.from = getPosition();
 
-    // The destination position lies along the line between the current
-    // position and the star
+    offset = toUniversal(offset, *this, destination, getTime(), offsetFrame);
+    jparams.to = targetPosition + offset;
+
+    Vec3d upd(up.x, up.y, up.z);
+    upd = toUniversal(upd, *this, destination, getTime(), upFrame);
+    Vec3f upf = Vec3f((float) upd.x, (float) upd.y, (float) upd.z);
+
+    jparams.initialOrientation = getOrientation();
+    Vec3d vn = targetPosition - jparams.to;
+    Point3f focus((float) vn.x, (float) vn.y, (float) vn.z);
+    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, upf);
+    jparams.startInterpolation = min(startInter, endInter);
+    jparams.endInterpolation   = max(startInter, endInter);
+
+    jparams.accelTime = 0.5;
+    double distance = astro::microLightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
+    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
+                                               0.0001, 100.0,
+                                               1e-10);
+    jparams.expFactor = sol.first;
+
+    setFrame(FrameOfReference(frame.coordSys, destination));
+
+    // Convert to frame coordinates
+    RigidTransform from(jparams.from, jparams.initialOrientation);
+    from = frame.fromUniversal(from, getTime());
+    jparams.from = from.translation;
+    jparams.initialOrientation= Quatf((float) from.rotation.w,
+                                      (float) from.rotation.x,
+                                      (float) from.rotation.y,
+                                      (float) from.rotation.z);
+    RigidTransform to(jparams.to, jparams.finalOrientation);
+    to = frame.fromUniversal(to, getTime());
+    jparams.to = to.translation;
+    jparams.finalOrientation= Quatf((float) to.rotation.w,
+                                    (float) to.rotation.x,
+                                    (float) to.rotation.y,
+                                    (float) to.rotation.z);
+}
+
+
+void Observer::computeGotoParametersGC(const Selection& destination,
+                                       JourneyParams& jparams,
+                                       double gotoTime,
+                                       double startInter,
+                                       double endInter,
+                                       Vec3d offset,
+                                       astro::CoordinateSystem offsetFrame,
+                                       Vec3f up,
+                                       astro::CoordinateSystem upFrame,
+                                       const Selection& centerObj)
+{
+    UniversalCoord targetPosition = destination.getPosition(getTime());
+    Vec3d v = targetPosition - getPosition();
+    v.normalize();
+
+    jparams.traj = GreatCircle;
+    jparams.duration = gotoTime;
+    jparams.startTime = realTime;
+
+    jparams.centerObject = centerObj;
+
+    // Right where we are now . . .
+    jparams.from = getPosition();
+
     offset = toUniversal(offset, *this, destination, getTime(), offsetFrame);
     jparams.to = targetPosition + offset;
 
@@ -647,6 +772,7 @@ float Observer::getTargetSpeed()
     return targetSpeed;
 }
 
+
 void Observer::gotoSelection(const Selection& selection,
                              double gotoTime,
                              Vec3f up,
@@ -654,6 +780,42 @@ void Observer::gotoSelection(const Selection& selection,
 {
     gotoSelection(selection, gotoTime, 0.0, 0.5, up, upFrame);
 }
+
+
+// Return the preferred distance for viewing an object
+static double getPreferredDistance(const Selection& selection)
+{
+    switch (selection.getType())
+    {
+    case Selection::Type_Body:
+        return 5.0 * selection.radius();
+    case Selection::Type_DeepSky:
+        return 5.0 * selection.radius();
+    case Selection::Type_Star:
+        return 100.0 * selection.radius();
+    case Selection::Type_Location:
+        return max(selection.location()->getSize() * 10.0, 1.0);
+    default:
+        return 1.0;
+    }
+}
+
+
+// Given an object and its current distance from the camera, determine how
+// close we should go on the next goto.
+static double getOrbitDistance(const Selection& selection,
+                               double currentDistance)
+{
+    // If further than 10 times the preferrred distance, goto the
+    // preferred distance.  If closer, zoom in 10 times closer or to the
+    // minimum distance.
+    double maxDist = astro::kilometersToMicroLightYears(getPreferredDistance(selection));
+    double minDist = astro::kilometersToMicroLightYears(1.01 * selection.radius());
+    double dist = (currentDistance > maxDist * 10.0) ? maxDist : currentDistance * 0.1;
+
+    return max(dist, minDist);
+}
+
 
 void Observer::gotoSelection(const Selection& selection,
                              double gotoTime,
@@ -668,38 +830,45 @@ void Observer::gotoSelection(const Selection& selection,
         Vec3d v = pos - getPosition();
         double distance = v.length();
 
-        double maxOrbitDistance;
-        switch (selection.getType())
-        {
-        case Selection::Type_Body:
-            maxOrbitDistance = astro::kilometersToMicroLightYears(5.0f * selection.body()->getRadius());
-            break;
-        case Selection::Type_DeepSky:
-            maxOrbitDistance = 5.0f * selection.deepsky()->getRadius() * 1e6f;
-            break;
-        case Selection::Type_Star:
-            maxOrbitDistance = astro::kilometersToMicroLightYears(100.0f * selection.star()->getRadius());
-            break;
-        case Selection::Type_Location:
-            maxOrbitDistance = selection.location()->getSize() / 2.0f;
-            if (maxOrbitDistance == 0.0f)
-                maxOrbitDistance = 1.0f;
-            break;
-        default:
-            maxOrbitDistance = 0.5f;
-            break;
-        }
+        double orbitDistance = getOrbitDistance(selection, distance);
 
-        double radius = selection.radius();
-        double minOrbitDistance = astro::kilometersToMicroLightYears(1.01 * radius);
-
-        double orbitDistance = (distance > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distance * 0.1f;
-        if (orbitDistance < minOrbitDistance)
-            orbitDistance = minOrbitDistance;
-
-        computeGotoParameters(selection, journey, gotoTime, startInter, endInter,
-                              v * -(orbitDistance / distance), astro::Universal,
+        computeGotoParameters(selection, journey, gotoTime,
+                              startInter, endInter,
+                              v * -(orbitDistance / distance),
+                              astro::Universal,
                               up, upFrame);
+        observerMode = Travelling;
+    }
+}
+
+
+// Like normal goto, except we'll follow a great circle trajectory.  Useful
+// for travelling between surface locations, where we'd rather not go straight
+// through the middle of a planet.
+void Observer::gotoSelectionGC(const Selection& selection,
+                               double gotoTime,
+                               double startInter,
+                               double endInter,
+                               Vec3f up,
+                               astro::CoordinateSystem upFrame)
+{
+    if (!selection.empty())
+    {
+        Selection centerObj = selection.parent();
+
+        UniversalCoord pos = selection.getPosition(getTime());
+        Vec3d v = pos - centerObj.getPosition(getTime());
+        double distanceToCenter = v.length();
+        Vec3d viewVec = pos - getPosition();
+        double orbitDistance = getOrbitDistance(selection,
+                                                viewVec.length());
+
+        computeGotoParametersGC(selection, journey, gotoTime,
+                                startInter, endInter,
+                                v * (orbitDistance / distanceToCenter),
+                                astro::Universal,
+                                up, upFrame,
+                                centerObj);
         observerMode = Travelling;
     }
 }
@@ -714,12 +883,39 @@ void Observer::gotoSelection(const Selection& selection,
     if (!selection.empty())
     {
         UniversalCoord pos = selection.getPosition(getTime());
+        // The destination position lies along the line between the current
+        // position and the star
         Vec3d v = pos - getPosition();
         v.normalize();
 
         computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
                               v * -distance * 1e6, astro::Universal,
                               up, upFrame);
+        observerMode = Travelling;
+    }
+}
+
+
+void Observer::gotoSelectionGC(const Selection& selection,
+                               double gotoTime,
+                               double distance,
+                               Vec3f up,
+                               astro::CoordinateSystem upFrame)
+{
+    if (!selection.empty())
+    {
+        Selection centerObj = selection.parent();
+
+        UniversalCoord pos = selection.getPosition(getTime());
+        Vec3d v = pos - centerObj.getPosition(getTime());
+        v.normalize();
+
+        // The destination position lies along a line extended from the center
+        // object to the target object
+        computeGotoParametersGC(selection, journey, gotoTime, 0.25, 0.75,
+                                v * -distance * 1e6, astro::Universal,
+                                up, upFrame,
+                                centerObj);
         observerMode = Travelling;
     }
 }
@@ -861,7 +1057,8 @@ void Observer::follow(const Selection& selection)
 
 void Observer::geosynchronousFollow(const Selection& selection)
 {
-    if (selection.body() != NULL)
+    if (selection.body() != NULL ||
+        selection.location() != NULL)
     {
         setFrame(FrameOfReference(astro::Geographic, selection));
     }
