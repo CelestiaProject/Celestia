@@ -95,6 +95,8 @@ class Renderer
     void setResolution(unsigned int resolution);
     unsigned int getResolution();
 
+    void loadTextures(Body*);
+
     typedef struct {
         std::string text;
         Color color;

@@ -477,6 +477,27 @@ void CommandSet::process(ExecutionEnvironment& env)
 }
 
 
+
+////////////////
+// Preload textures command
+
+CommandPreloadTextures::CommandPreloadTextures(const string& _name) :
+    name(_name)
+{
+}
+
+void CommandPreloadTextures::process(ExecutionEnvironment& env)
+{
+    Selection target = env.getSimulation()->findObjectFromPath(name);
+    if (target.body == NULL)
+        return;
+
+    if (env.getRenderer() != NULL)
+        env.getRenderer()->loadTextures(target.body);
+}
+
+
+
 ///////////////
 // Repeat command
 

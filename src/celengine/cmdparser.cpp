@@ -386,6 +386,12 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("brightness", brightness);
         cmd = new CommandSetAmbientLight((float) brightness);
     }
+    else if (commandName == "preloadtex")
+    {
+        string object;
+        paramList->getString("object", object);
+        cmd = new CommandPreloadTextures(object);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");
