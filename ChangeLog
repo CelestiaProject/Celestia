@@ -769,3 +769,10 @@ Code:
 * Added disposition modifier for ssc objects to control what happens when
   an object with the same name and parent already exists.  The three possible
   behaviors are Add (the default), Replace, and Modify.
+* WINDOWS: Limited CPU usage when main window is minimized
+* WINDOWS: Changed preferred z-buffer depth from 16 to 24 bits to reduce
+  z-fight artifacts.
+* Fixed labels and info text so it looks crisp when multisample antialiasing
+  is enabled.
+* Eliminated flickering of location labels
+* WINDOWS: Save texture resolution setting between sessions
