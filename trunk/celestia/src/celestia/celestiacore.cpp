@@ -1757,9 +1757,9 @@ bool CelestiaCore::initSimulation()
         return false;
     }    
 
+    // First read the solar system files listed individually in the
+    // config file.
     {
-        // First read the solar system files listed individually in the
-        // config file.
         SolarSystemCatalog* solarSystemCatalog = new SolarSystemCatalog();
         universe->setSolarSystemCatalog(solarSystemCatalog);
         for (vector<string>::const_iterator iter = config->solarSystemFiles.begin();
@@ -1776,6 +1776,7 @@ bool CelestiaCore::initSimulation()
                 LoadSolarSystemObjects(solarSysFile, *universe);
             }
         }
+    }
 
 #if 0
         {
@@ -1786,21 +1787,28 @@ bool CelestiaCore::initSimulation()
         }
 #endif
 
-        // Next, read all the solar system files in the extras directory
-        if (config->extrasDir != "")
+    // Next, read all the solar system files in the extras directories
+    {
+        for (vector<string>::const_iterator iter = config->extrasDirs.begin();
+             iter != config->extrasDirs.end(); iter++)
         {
-            Directory* dir = OpenDirectory(config->extrasDir);
-
-            string filename;
-            while (dir->nextFile(filename))
+            if (*iter != "")
             {
-                if (DetermineFileType(filename) == Content_CelestiaCatalog)
+                Directory* dir = OpenDirectory(*iter);
+                
+                string filename;
+                while (dir->nextFile(filename))
                 {
-                    string fullname = config->extrasDir + '/' + filename;
-                    ifstream solarSysFile(fullname.c_str(), ios::in);
-                    if (solarSysFile.good())
-                        LoadSolarSystemObjects(solarSysFile, *universe);
+                    if (DetermineFileType(filename) == Content_CelestiaCatalog)
+                    {
+                        string fullname = *iter + '/' + filename;
+                        ifstream solarSysFile(fullname.c_str(), ios::in);
+                        if (solarSysFile.good())
+                            LoadSolarSystemObjects(solarSysFile, *universe);
+                    }
                 }
+
+                delete dir;
             }
         }
     }
@@ -2013,25 +2021,29 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         return false;
     }
 
-    // Now, read supplemental star files from the extras directory
-    if (config->extrasDir != "")
+    // Now, read supplemental star files from the extras directories
+    for (vector<string>::const_iterator iter = config->extrasDirs.begin();
+         iter != config->extrasDirs.end(); iter++)
     {
-        Directory* dir = OpenDirectory(config->extrasDir);
-
-        string filename;
-        while (dir->nextFile(filename))
+        if (*iter != "")
         {
-            if (DetermineFileType(filename) == Content_CelestiaStarCatalog)
+            Directory* dir = OpenDirectory(*iter);
+
+            string filename;
+            while (dir->nextFile(filename))
             {
-                string fullname = config->extrasDir + '/' + filename;
-                ifstream starFile(fullname.c_str(), ios::in);
-                if (starFile.good())
+                if (DetermineFileType(filename) == Content_CelestiaStarCatalog)
                 {
-                    bool success = starDB->load(starFile);
-                    if (!success)
+                    string fullname = *iter + '/' + filename;
+                    ifstream starFile(fullname.c_str(), ios::in);
+                    if (starFile.good())
                     {
-                        DPRINTF(0, "Error reading star file: %s\n",
-                                fullname.c_str());
+                        bool success = starDB->load(starFile);
+                        if (!success)
+                        {
+                            DPRINTF(0, "Error reading star file: %s\n",
+                                    fullname.c_str());
+                        }
                     }
                 }
             }
@@ -2211,7 +2223,7 @@ void CelestiaCore::addToHistory()
     if (!history.empty() && historyCurrent < history.size() - 1)
     {
         // truncating history to current position
-        while (historyCurrent != history.size()-1)
+        while (historyCurrent != history.size() - 1)
         {
             history.pop_back();
         }
