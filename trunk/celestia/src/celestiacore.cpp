@@ -160,6 +160,11 @@ void CelestiaCore::addFavorite(string name)
     writeFavoritesFile();
 }
 
+const FavoritesList* CelestiaCore::getFavorites()
+{
+    return favorites;
+}
+
 
 // Used in the super-secret edit mode
 void showSelectionInfo(const Selection& sel)
@@ -198,12 +203,12 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
-    if (button == LeftButton)
+    // If the mouse hasn't moved much since it was pressed, treat this
+    // as a selection or context menu event.  Otherwise, assume that the
+    // mouse was dragged and ignore the event.
+    if (mouseMotion < DragThreshold)
     {
-        // If the mouse hasn't moved much since it was pressed, treat this
-        // as a selection event.  Otherwise, assume that the mouse was dragged
-        // and ignore the event.
-        if (mouseMotion < DragThreshold)
+        if (button == LeftButton)
         {
             Vec3f pickRay = renderer->getPickRay((int) x, (int) y);
             Selection oldSel = sim->getSelection();
@@ -211,6 +216,15 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             sim->setSelection(newSel);
             if (!oldSel.empty() && oldSel == newSel)
                 sim->centerSelection();
+        }
+        else if (button == RightButton)
+        {
+            Vec3f pickRay = renderer->getPickRay((int) x, (int) y);
+            Selection sel = sim->pickObject(pickRay);
+            if (!sel.empty())
+            {
+                // Context menu
+            }
         }
     }
 }
@@ -330,6 +344,17 @@ void CelestiaCore::charEntered(char c)
         {
             if (typedText.size() > 0)
                 typedText = string(typedText, 0, typedText.size() - 1);
+        }
+        else if (c == '\n' || c == '\r')
+        {
+            if (typedText != "")
+            {
+                Selection sel = sim->findObject(typedText);
+                if (!sel.empty())
+                    sim->setSelection(sel);
+                typedText = "";
+            }
+            textEnterMode = false;
         }
         return;
     }
@@ -483,6 +508,16 @@ void CelestiaCore::charEntered(char c)
     case ']':
         if (sim->getFaintestVisible() < 8.0f)
             setFaintest(sim->getFaintestVisible() + 0.5f);
+        break;
+
+    case '\n':
+    case '\r':
+        textEnterMode = true;
+        break;
+
+    case '\033':
+        cancelScript();
+        textEnterMode = false;
         break;
 
     case ' ':
