@@ -319,6 +319,7 @@ class Renderer
     bool useVertexPrograms;
     bool useRescaleNormal;
     bool useMinMaxBlending;
+    bool useClampToBorder;
     unsigned int textureResolution;
 
     struct CachedOrbit
