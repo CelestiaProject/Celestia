@@ -835,6 +835,7 @@ void Renderer::render(const Observer& observer,
             bool convex = true;
             float radius = 1.0f;
             float cullRadius = 1.0f;
+            float cloudHeight = 0.0f;
             if (iter->body != NULL)
             {
                 radius = iter->body->getRadius();
@@ -849,7 +850,10 @@ void Renderer::render(const Observer& observer,
 
                 cullRadius = radius;
                 if (iter->body->getAtmosphere() != NULL)
+                {
                     cullRadius += iter->body->getAtmosphere()->height;
+                    cloudHeight = iter->body->getAtmosphere()->cloudHeight;
+                }
             }
             else if (iter->star != NULL)
             {
@@ -900,6 +904,15 @@ void Renderer::render(const Observer& observer,
                         // We're inside the bounding sphere (and, if the planet
                         // is spherical, inside the planet.)
                         iter->farZ = iter->nearZ * 2.0f;
+                    }
+
+                    if (cloudHeight > 0.0f && d < eradius + cloudHeight)
+                    {
+                        // If there's a cloud layer, we need to move the 
+                        // far plane out so that the clouds aren't clipped
+                        float cloudLayerRadius = eradius + cloudHeight;
+                        iter->farZ -= (float) sqrt(square(cloudLayerRadius) -
+                                                   square(eradius));
                     }
                 }
 
