@@ -402,14 +402,17 @@ void Simulation::update(double dt)
             observer.setVelocity(observer.getVelocity() * (1.0 - t) +
                                  targetVelocity * t);
         }
-
-        // This no longer has any effect . . .  the velocity is instead applied
-        // to the transform, and the observer is updated from that.  The new
-        // method has the advantage that it works in any coordinate system.
-        // observer.update(dt);
-
+        
+        // Update the observer's position
         transform.translation = transform.translation +
             observer.getVelocity() * dt;
+
+        // Update the observer's orientation
+        Vec3f fAV = observer.getAngularVelocity();
+        Vec3d AV(fAV.x, fAV.y, fAV.z);
+        Quatd dr = 0.5 * (AV * transform.rotation);
+        transform.rotation += dt * dr;
+        transform.rotation.normalize();
     }
 
     updateObserver();
