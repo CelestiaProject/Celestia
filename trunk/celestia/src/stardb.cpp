@@ -56,7 +56,7 @@ struct CatalogNumberPredicate
 {
     int which;
 
-    CatalogNumberPredicate(int _which) : which(0) {};
+    CatalogNumberPredicate(int _which) : which(_which) {};
 
     bool operator()(const Star* const & star0, const Star* const & star1) const
     {
@@ -69,13 +69,12 @@ Star* StarDatabase::find(uint32 catalogNumber, unsigned int whichCatalog) const
 {
     // assert(whichCatalog < Star::CatalogCount);
     Star refStar;
-    refStar.setCatalogNumber(catalogNumber);
+    refStar.setCatalogNumber(whichCatalog, catalogNumber);
 
     CatalogNumberPredicate pred(whichCatalog);
     Star** star = lower_bound(catalogNumberIndexes[whichCatalog],
                               catalogNumberIndexes[whichCatalog] + nStars,
                               &refStar, pred);
-
     if (star != catalogNumberIndexes[whichCatalog] + nStars &&
         (*star)->getCatalogNumber(whichCatalog) == catalogNumber)
         return *star;
@@ -84,17 +83,6 @@ Star* StarDatabase::find(uint32 catalogNumber, unsigned int whichCatalog) const
 }
 
 
-#if 0
-bool startsWith(const string& s, const string& prefix)
-{
-#ifndef NONSTANDARD_STRING_COMPARE
-    return s.compare(0, prefix.length(), prefix) == 0;
-#else
-    return s.compare(prefix, 0, prefix.length());
-#endif // NONSTANDARD_STRING_COMPARE
-}
-#endif
-
 Star* StarDatabase::find(string name) const
 {
     if (compareIgnoringCase(name, HDCatalogPrefix, HDCatalogPrefix.length()) == 0)
@@ -102,11 +90,11 @@ Star* StarDatabase::find(string name) const
         // Search by catalog number
         uint32 catalogNumber = (uint32) atoi(string(name, HDCatalogPrefix.length(),
                                                     string::npos).c_str());
-        return find(catalogNumber, 1);
+        return find(catalogNumber, Star::HDCatalog);
     } else if (compareIgnoringCase(name, HIPPARCOSCatalogPrefix, HIPPARCOSCatalogPrefix.length()) == 0)
     {
         uint32 catalogNumber = (uint32) atoi(string(name, HIPPARCOSCatalogPrefix.length(), string::npos).c_str());
-        return find(catalogNumber, 0);
+        return find(catalogNumber, Star::HIPCatalog);
     }
     else
     {
@@ -123,38 +111,6 @@ Star* StarDatabase::find(string name) const
         }
 #endif
 
-#if 0
-        string conAbbrev;
-        string designation;
-
-        if (name.length() > 3)
-        {
-            conAbbrev = string(name, name.length() - 3, 3);
-            designation = string(name, 0, name.length() - 4);
-        }
-
-        // Search the list of star proper names and designations
-        for (StarNameDatabase::const_iterator iter = names->begin();
-             iter != names->end(); iter++)
-        {
-            if (compareIgnoringCase(iter->second->getName(), name) == 0)
-            {
-                return find(iter->first);
-            }
-            else
-            {
-                Constellation* con = iter->second->getConstellation();
-                if (con != NULL)
-                {
-                    if (compareIgnoringCase(con->getAbbreviation(), conAbbrev) == 0 &&
-                        compareIgnoringCase(iter->second->getDesignation(), designation) == 0)
-                    {
-                        return find(iter->first);
-                    }
-                }
-            }
-        }
-#endif
         if (names != NULL)
         {
             // See if the name is a Bayer or Flamsteed designation
@@ -367,7 +323,7 @@ StarDatabase *StarDatabase::read(istream& in)
 	star->setCatalogNumber(Star::HIPCatalog, catNo);
         star->setCatalogNumber(Star::HDCatalog, hdCatNo);
 
-	// Use a photometric estimate of distance if parallaxError is
+	// TODO: Use a photometric estimate of distance if parallaxError is
 	// greater than 25%.
 	if (parallaxError > 50)
         {
@@ -440,6 +396,7 @@ void StarDatabase::buildIndexes()
          whichCatalog < sizeof(catalogNumberIndexes) / sizeof(catalogNumberIndexes[0]);
          whichCatalog++)
     {
+        cout << "Sorting catalog number index #" << whichCatalog << '\n';
         catalogNumberIndexes[whichCatalog] = new Star*[nStars];
         for (int i = 0; i < nStars; i++)
             catalogNumberIndexes[whichCatalog][i] = &stars[i];
