@@ -49,7 +49,10 @@ static Surface* CreateSurface(Hash* surfaceData)
     bool applyBaseTexture = surfaceData->getString("Texture", baseTexture);
     bool applyBumpMap = surfaceData->getString("BumpMap", bumpTexture);
     bool applyNightMap = surfaceData->getString("NightTexture", nightTexture);
-
+    unsigned int baseFlags = Texture::WrapTexture | Texture::AllowSplitting;
+    unsigned int bumpFlags = Texture::WrapTexture | Texture::AllowSplitting;
+    unsigned int nightFlags = Texture::WrapTexture | Texture::AllowSplitting;
+    
     float bumpHeight = 2.5f;
     surfaceData->getNumber("BumpHeight", bumpHeight);
 
@@ -61,6 +64,8 @@ static Surface* CreateSurface(Hash* surfaceData)
 
     bool compressTexture = false;
     surfaceData->getBoolean("CompressTexture", compressTexture);
+    if (compressTexture)
+        baseFlags |= Texture::CompressTexture;
 
     if (blendTexture)
         surface->appearanceFlags |= Surface::BlendTexture;
@@ -76,11 +81,11 @@ static Surface* CreateSurface(Hash* surfaceData)
         surface->appearanceFlags |= Surface::SpecularReflection;
 
     if (applyBaseTexture)
-        surface->baseTexture.setTexture(baseTexture,compressTexture);
+        surface->baseTexture.setTexture(baseTexture, baseFlags);
     if (applyBumpMap)
-        surface->bumpTexture.setTexture(bumpTexture,bumpHeight);
+        surface->bumpTexture.setTexture(bumpTexture, bumpHeight, bumpFlags);
     if (applyNightMap)
-        surface->nightTexture.setTexture(nightTexture);
+        surface->nightTexture.setTexture(nightTexture, nightFlags);
 
     return surface;
 }
@@ -293,7 +298,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 string cloudTexture;
                 if (atmosData->getString("CloudMap", cloudTexture))
                 {
-                    atmosphere->cloudTexture.setTexture(cloudTexture);
+                    atmosphere->cloudTexture.setTexture(cloudTexture,
+                                                        Texture::WrapTexture);
                 }
 
                 body->setAtmosphere(*atmosphere);
