@@ -16,12 +16,17 @@ USER INTERFACE
   * Orbits should be occluded by planets
 * Next/prev body commands
 * Add preferences for text color to config file
-* Make context menus work properly in full-screen mode
 * Fix camera rotation wackiness when using goto--probably slerp between orientations
 * Dialog box for displaying detailed information about a star or planet
-* Create a help file
+* Create a manual
 * Improve web info feature
 * Added accelerator key labels to Windows menus
+* Star browser: show spectral type and whether the star has planets
+* Star browser: allow user to select how many stars to show
+* Solar system browser: add icons
+* Make a Gnome UI for UNIX version
+* Popup H-R diagram window
+* Use a slider widget for controlling ambient light level
 
 VISUALS
 * Shadows from rings on planet
@@ -83,7 +88,10 @@ PORTING
 * Make 3DS loading code byte-order and FP format independent
 * Make stars.dat loading code byte-order and FP format independent
 * Bring UNIX UI up to level of Windows UI
+  * Implement solar system and star browsers
+  * Context menus for both GLUT and Gtk versions
 * MacOS port
+* Make bump mapping and other GL extension stuff work under UNIX
 
 MISC
 * Create more powerful scripting system
@@ -91,5 +99,3 @@ MISC
   a Celestia universe
 * Allow lists of bodies from different .ssc files to be incorporated into
   the same planetary system
-
-
