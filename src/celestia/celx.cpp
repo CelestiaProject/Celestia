@@ -2103,6 +2103,28 @@ static int observer_getspeed(lua_State* l)
     return 1;
 }
 
+static int observer_setfov(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to observer:setfov()");
+
+    Observer* obs = this_observer(l);
+    double fov = safeGetNumber(l, 2, AllErrors, "Argument to observer:setfov() must be a number");
+    if ((fov >= degToRad(0.001f)) && (fov <= degToRad(120.0f)))
+    {
+        obs->setFOV(fov);
+    }
+    return 0;
+}
+
+static int observer_getfov(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected to observer:getfov()");
+
+    Observer* obs = this_observer(l);
+    lua_pushnumber(l, obs->getFOV());
+    return 1;
+}
+
 static void CreateObserverMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Observer);
@@ -2116,6 +2138,8 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "getorientation", observer_getorientation);
     RegisterMethod(l, "getspeed", observer_getspeed);
     RegisterMethod(l, "setspeed", observer_setspeed);
+    RegisterMethod(l, "getfov", observer_getfov);
+    RegisterMethod(l, "setfov", observer_setfov);
     RegisterMethod(l, "rotate", observer_rotate);
     RegisterMethod(l, "center", observer_center);
     RegisterMethod(l, "follow", observer_follow);
