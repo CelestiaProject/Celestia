@@ -30,7 +30,7 @@ IDR_MAIN_MENU MENU DISCARDABLE
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "Screen Capture",              ID_FILE_SCREENCAPTURE
+        MENUITEM "Screen &Capture...\tF10",     ID_FILE_SCREENCAPTURE
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_FILE_EXIT
     END
@@ -149,7 +149,7 @@ CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
-    CTEXT           "Celestia 1.1.4pre1",IDC_STATIC,6,7,297,9
+    CTEXT           "Celestia 1.1.4",IDC_STATIC,6,7,297,9
     CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
                     IDC_STATIC,6,53,297,9
@@ -362,6 +362,7 @@ BEGIN
     "H",            ID_NAVIGATION_HOME,     VIRTKEY, CONTROL, NOINVERT
     "O",            ID_NAVIGATION_SELECT,   VIRTKEY, CONTROL, NOINVERT
     VK_F4,          ID_FILE_EXIT,           VIRTKEY, ALT, NOINVERT
+    VK_F10,         ID_FILE_SCREENCAPTURE,  VIRTKEY, NOINVERT
 END
 
 
