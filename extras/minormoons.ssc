@@ -20,6 +20,8 @@
 	Inclination	0
 	MeanAnomaly	120
 	}
+
+	Albedo 0.1
 }
 
 "Adrastea" "Sol/Jupiter"
@@ -36,6 +38,8 @@
 	Inclination	0
 	MeanAnomaly	230
 	}
+
+	Albedo 0.1
 }
 
 "Thebe" "Sol/Jupiter"
@@ -52,6 +56,8 @@
 	Inclination	0.8
 	MeanAnomaly	45
 	}
+
+	Albedo 0.1
 }
 
 "Leda" "Sol/Jupiter"
@@ -70,6 +76,8 @@
 	}
 
 	RotationPeriod  10   # Guess
+
+	Albedo 0.1
 }
 
 "Himalia" "Sol/Jupiter"
@@ -88,6 +96,8 @@
 	}
 
 	RotationPeriod  9.6
+
+	Albedo 0.1
 }
 
 "Lysithea" "Sol/Jupiter"
@@ -106,6 +116,8 @@
 	}
 
 	RotationPeriod  10   # Guess
+
+	Albedo 0.1
 }
 
 "Elara" "Sol/Jupiter"
@@ -124,6 +136,8 @@
 	}
 
 	RotationPeriod  12
+
+	Albedo 0.1
 }
 
 "Ananke" "Sol/Jupiter"
@@ -142,6 +156,8 @@
 	}
 
 	RotationPeriod  10   # Guess
+
+	Albedo 0.1
 }
 
 "Carme" "Sol/Jupiter"
@@ -160,6 +176,8 @@
 	}
 
 	RotationPeriod  10   # Guess
+
+	Albedo 0.1
 }
 
 "Pasiphae" "Sol/Jupiter"
@@ -178,6 +196,8 @@
 	}
 
 	RotationPeriod  10   # Guess
+
+	Albedo 0.1
 }
 
 "Sinope" "Sol/Jupiter"
@@ -196,6 +216,8 @@
 	}
 
 	RotationPeriod  10   # Guess
+
+	Albedo 0.1
 }
 
 
@@ -215,6 +237,8 @@
 	Inclination	0
 	MeanAnomaly     165
 	}
+
+	Albedo 0.1
 }
 
 "Atlas" "Sol/Saturn"
@@ -231,6 +255,8 @@
 	Inclination	0
 	MeanAnomaly     5
 	}
+
+	Albedo 0.1
 }
 
 "Prometheus" "Sol/Saturn"
@@ -247,6 +273,8 @@
 	Inclination	0
 	MeanAnomaly     97
 	}
+
+	Albedo 0.1
 }
 
 "Pandora" "Sol/Saturn"
@@ -263,6 +291,8 @@
 	Inclination	0
 	MeanAnomaly     308
 	}
+
+	Albedo 0.1
 }
 
 "Epimetheus" "Sol/Saturn"
@@ -279,6 +309,8 @@
 	Inclination	0.34
 	MeanAnomaly     140
 	}
+
+	Albedo 0.1
 }
 
 "Janus" "Sol/Saturn"
@@ -295,6 +327,8 @@
 	Inclination	0.14
 	MeanAnomaly     136
 	}
+
+	Albedo 0.1
 }
 
 "Telesto" "Sol/Saturn"
@@ -311,6 +345,8 @@
 	Inclination	0
 	MeanAnomaly     158     # Leading Lagrange point of Tethys
 	}
+
+	Albedo 0.1
 }
 
 "Calypso" "Sol/Saturn"
@@ -327,6 +363,8 @@
 	Inclination	0
 	MeanAnomaly     38      # Trailing Lagrange point of Tethys
 	}
+
+	Albedo 0.1
 }
 
 "Helene" "Sol/Saturn"
@@ -343,6 +381,8 @@
 	Inclination	0.2
 	MeanAnomaly     10    # Trailing Lagrange point of Dione
 	}
+
+	Albedo 0.1
 }
 
 
@@ -362,6 +402,8 @@
 	Inclination	0.1
 	MeanAnomaly     215
 	}
+
+	Albedo 0.1
 }
 
 "Ophelia" "Sol/Uranus"
@@ -378,6 +420,8 @@
 	Inclination	0.1
 	MeanAnomaly     32
 	}
+
+	Albedo 0.1
 }
 
 "Bianca" "Sol/Uranus"
@@ -394,6 +438,8 @@
 	Inclination	0.2
 	MeanAnomaly     108
 	}
+
+	Albedo 0.1
 }
 
 "Cressida" "Sol/Uranus"
@@ -410,6 +456,8 @@
 	Inclination	0.0
 	MeanAnomaly     217
 	}
+
+	Albedo 0.1
 }
 
 "Desdemona" "Sol/Uranus"
@@ -426,6 +474,8 @@
 	Inclination	0.2
 	MeanAnomaly     345
 	}
+
+	Albedo 0.1
 }
 
 "Juliet" "Sol/Uranus"
@@ -442,6 +492,8 @@
 	Inclination	0.1
 	MeanAnomaly     84
 	}
+
+	Albedo 0.1
 }
 
 "Portia" "Sol/Uranus"
@@ -458,6 +510,8 @@
 	Inclination	0.1
 	MeanAnomaly     71
 	}
+
+	Albedo 0.1
 }
 
 "Rosalind" "Sol/Uranus"
@@ -474,6 +528,8 @@
 	Inclination	0.3
 	MeanAnomaly     25
 	}
+
+	Albedo 0.1
 }
 
 "Belinda" "Sol/Uranus"
@@ -490,6 +546,8 @@
 	Inclination	0.0
 	MeanAnomaly     176
 	}
+
+	Albedo 0.1
 }
 
 "Puck" "Sol/Uranus"
@@ -506,6 +564,8 @@
 	Inclination	0.3
 	MeanAnomaly     255
 	}
+
+	Albedo 0.1
 }
 
 "Caliban" "Sol/Uranus"
@@ -524,6 +584,8 @@
 	}
 
 	RotationPeriod  10   # Guess
+
+	Albedo 0.1
 }
 
 "Sycorax" "Sol/Uranus"
@@ -542,6 +604,8 @@
 	}
 
 	RotationPeriod  10   # Guess
+
+	Albedo 0.1
 }
 
 
@@ -562,6 +626,8 @@
 	Inclination	4.74
 	MeanAnomaly     132
 	}
+
+	Albedo 0.1
 }
 
 "Thalassa" "Sol/Neptune"
@@ -578,6 +644,8 @@
 	Inclination	0.21
 	MeanAnomaly     63
 	}
+
+	Albedo 0.1
 }
 
 "Despina" "Sol/Neptune"
@@ -594,6 +662,8 @@
 	Inclination	0.07
 	MeanAnomaly     318
 	}
+
+	Albedo 0.1
 }
 
 "Galatea" "Sol/Neptune"
@@ -610,6 +680,8 @@
 	Inclination	0.05
 	MeanAnomaly     99
 	}
+
+	Albedo 0.1
 }
 
 "Larissa" "Sol/Neptune"
@@ -626,4 +698,6 @@
 	Inclination	0.20
 	MeanAnomaly     229
 	}
+
+	Albedo 0.1
 }
