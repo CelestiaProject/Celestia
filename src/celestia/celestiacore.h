@@ -155,6 +155,7 @@ class CelestiaCore
 
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
+    void setFaintest(float);
 
     class Alerter
     {
@@ -167,7 +168,6 @@ class CelestiaCore
 
  private:
     bool readStars(const CelestiaConfig&);
-    void setFaintest(float);
     void renderOverlay();
     void fatalError(const std::string&);
     void notifyWatchers(int);

@@ -489,3 +489,4 @@ Code:
 * Fixed appearance of galaxies when viewed from inside an atmosphere
 * Removed duplicate entry for Iota Horologii (HR 810) in exoplanet catalog
 * Unix Gtk: removed problem preventing ShowClouds from working. (dramsey)
+* Unix Gtk: Options Dialog. (dramsey)

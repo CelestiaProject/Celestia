@@ -55,15 +55,18 @@ static int lastX = 0;
 static int lastY = 0;
 
 typedef struct _checkFunc CheckFunc;
-typedef int (*Callback)(int);
+typedef int (*Callback)(int, char *);
 
 struct _checkFunc
 {
-  GtkCheckMenuItem *widget;
+  GtkCheckMenuItem *widget;  /* These two will be filled in by init */
+  GtkCheckButton *optWidget;
   char *path;
   Callback func;
   int active;
   int funcdata;
+  int action;
+  GtkSignalFunc sigFunc;
 };
 
 static GtkWidget* mainWindow = NULL;
@@ -267,16 +270,16 @@ static gint menuShowConstellations(GtkWidget* w, gpointer data)
 
 static gint menuShowLocTime(GtkWidget* w, gpointer data)
 {
-    bool on = (GTK_CHECK_MENU_ITEM(w)->active != FALSE);
+    bool on = (appCore->getTimeZoneBias()==0);
     if (on)
     {
-	appCore->setTimeZoneBias(-timezone);
-	appCore->setTimeZoneName(tzname[daylight?0:1]);
+        appCore->setTimeZoneBias(-timezone);
+        appCore->setTimeZoneName(tzname[daylight?0:1]);
     }
     else
     {
-	appCore->setTimeZoneBias(0);
-	appCore->setTimeZoneName("UTC");
+        appCore->setTimeZoneBias(0);
+        appCore->setTimeZoneName("UTC");
     }
     return TRUE;
 }
@@ -347,26 +350,6 @@ static void menuLessStars()
     appCore->charEntered('[');
 }
 
-static void menuNoAmbient()
-{
-    appCore->getRenderer()->setAmbientLightLevel(0.0f);
-}
-
-static void menuLowAmbient()
-{
-    appCore->getRenderer()->setAmbientLightLevel(0.02f);
-}
-
-static void menuMedAmbient()
-{
-    appCore->getRenderer()->setAmbientLightLevel(0.1f);
-}
-
-static void menuHiAmbient()
-{
-    appCore->getRenderer()->setAmbientLightLevel(0.25f);
-}
-
 static void menuShowInfo()
 {
     appCore->charEntered('V');
@@ -381,7 +364,7 @@ static void menuAbout()
 {
     const gchar* authors[] = {
         "Chris Laurel <claurel@shatters.net>",
-	"Deon Ramsey <dramsey@sourceforge.net>",
+        "Deon Ramsey <dramsey@sourceforge.net>",
         "Clint Weisbrod <cweisbrod@adelphia.net>",
         NULL
     };
@@ -389,15 +372,15 @@ static void menuAbout()
     static GtkWidget* about;
     if (about != NULL) 
     {
-	// Try to de-iconify and raise the dialog. 
+        // Try to de-iconify and raise the dialog. 
 
-	gdk_window_show(about->window);
-	gdk_window_raise(about->window);
+        gdk_window_show(about->window);
+        gdk_window_raise(about->window);
     }
     else
     {
-	about = gnome_about_new("Celestia",
-				VERSION,
+        about = gnome_about_new("Celestia",
+        			VERSION,
 				"(c) 2001-2002 Chris Laurel",
 				authors,
 				"3D Space Simulation",
@@ -494,6 +477,182 @@ static void menuCaptureImage()
 }
 
 
+static char *ambientLabels[]=
+{
+    "None",
+    "Low",
+    "Medium",
+    "High",
+    NULL
+};
+
+static char *infoLabels[]=
+{
+    "None",
+    "Terse",
+    "Verbose",
+    NULL
+};
+
+static GtkToggleButton *ambientGads[4]; // Store the Gadgets here for later mods
+static GtkToggleButton *infoGads[3];
+
+void makeRadioItems(char **labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkToggleButton **gads)
+{
+    GSList *group=NULL;
+    for(int i=0;labels[i];i++)
+    {
+        GtkWidget *button=gtk_radio_button_new_with_label(group, labels[i]);
+        if(gads)
+            gads[i]=GTK_TOGGLE_BUTTON(button);
+        if (button==NULL)
+        {
+            DPRINTF(0, "Unable to get GTK Elements.\n");
+            return;
+        }
+        group=gtk_radio_button_group (GTK_RADIO_BUTTON (button));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),(i==0)?1:0);
+        gtk_box_pack_start (GTK_BOX (box), button, TRUE, TRUE, 0);
+        gtk_widget_show (button);
+        gtk_signal_connect(GTK_OBJECT(button), "pressed", sigFunc, (gpointer)i);
+    }
+}
+
+
+static gint changeLMag(GtkSpinButton *spinner, void *dummy)
+{
+    float tmp= gtk_spin_button_get_value_as_float(spinner);
+    if(tmp>1.0 && tmp < 12.0)
+        appCore->setFaintest(tmp);
+    return TRUE;
+}
+
+
+static float amLevels[]=
+{
+    0.0,
+    0.01,
+    0.1,
+    0.25
+};
+
+static int ambientChanged(GtkButton *button, int lev)
+{
+    if (lev>=0 && lev<4)
+    {
+        appCore->getRenderer()->setAmbientLightLevel(amLevels[lev]);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+
+static int infoChanged(GtkButton *button, int info)
+{
+    appCore->setHudDetail(info);
+    return TRUE;
+}
+
+
+extern void resyncMenus();
+
+GtkWidget *showFrame=NULL, *labelFrame=NULL, *showBox=NULL, *labelBox=NULL;
+GtkWidget *optionDialog=NULL;
+
+static void menuOptions()
+{
+    if (optionDialog != NULL) 
+    {
+	// Try to de-iconify and raise the dialog. 
+	gdk_window_show((optionDialog)->window);
+	gdk_window_raise((optionDialog)->window);
+	gnome_dialog_run_and_close(GNOME_DIALOG(optionDialog));
+        return;
+    }
+    optionDialog = gnome_dialog_new("Options", GNOME_STOCK_BUTTON_OK, NULL);
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 3);
+    GtkWidget *midBox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *miscBox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *limitFrame = gtk_frame_new("Limiting Magnitude");
+    GtkWidget *ambientFrame = gtk_frame_new("Ambient Light");
+    GtkWidget *ambientBox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *infoFrame = gtk_frame_new("Info Text");
+    GtkWidget *infoBox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *limitBox = gtk_hbox_new(FALSE, 3);
+    GtkWidget *label = gtk_label_new(" Mag ");
+    GtkWidget *label2 = gtk_label_new(" Stars visible ");
+    if ((optionDialog == NULL) || (hbox == NULL) || (midBox==NULL) ||
+        (limitFrame == NULL) || (limitBox == NULL) || (ambientFrame == NULL) ||
+        (infoFrame == NULL) || (miscBox == NULL) || (ambientBox == NULL) ||
+        (infoBox == NULL) || (label == NULL) || (label2 == NULL))
+    {
+        optionDialog=NULL;
+        DPRINTF(0,"Unable to get some Elements of the Options Dialog!\n");
+        return;
+    }
+    gtk_container_add(GTK_CONTAINER(limitFrame),GTK_WIDGET(limitBox));
+    gtk_container_add(GTK_CONTAINER(ambientFrame),GTK_WIDGET(ambientBox));
+    gtk_container_add(GTK_CONTAINER(infoFrame),GTK_WIDGET(infoBox));
+
+    gtk_box_pack_start(GTK_BOX(hbox), showFrame, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(midBox), labelFrame, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(midBox), limitFrame, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(miscBox), ambientFrame, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(miscBox), infoFrame, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), midBox, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), miscBox, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (optionDialog)->vbox), hbox, TRUE,
+                       TRUE, 0);
+
+    GtkAdjustment *adj = (GtkAdjustment *)
+                         gtk_adjustment_new((float)appSim->getFaintestVisible(),
+                                            1.001, 11.999, 0.5, 2.0, 0.0);
+    GtkWidget *spinner = gtk_spin_button_new (adj, 0.5, 0);
+    gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spinner), TRUE);
+    gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), FALSE);
+    gtk_spin_button_set_shadow_type (GTK_SPIN_BUTTON (spinner), GTK_SHADOW_IN);
+    gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON (spinner),FALSE);
+    gtk_entry_set_max_length(GTK_ENTRY (spinner), 6 );
+    gtk_spin_button_set_digits(GTK_SPIN_BUTTON (spinner), 3);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
+    gtk_box_pack_start (GTK_BOX (limitBox), label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(limitBox), spinner, TRUE, TRUE, 0);
+    gtk_misc_set_alignment (GTK_MISC (label2), 0.5, 0.5);
+    gtk_box_pack_start (GTK_BOX (limitBox), label2, FALSE, FALSE, 0);
+    gtk_signal_connect(GTK_OBJECT(spinner), "changed",
+                       GTK_SIGNAL_FUNC(changeLMag), NULL);
+
+
+    makeRadioItems(ambientLabels,ambientBox,GTK_SIGNAL_FUNC(ambientChanged),ambientGads);
+    makeRadioItems(infoLabels,infoBox,GTK_SIGNAL_FUNC(infoChanged),infoGads);
+
+    gtk_widget_show(showFrame);
+    gtk_widget_show(showBox);
+    gtk_widget_show(labelFrame);
+    gtk_widget_show(labelBox);
+    gtk_widget_show(limitFrame);
+    gtk_widget_show(limitBox);
+    gtk_widget_show(midBox);
+    gtk_widget_show(miscBox);
+    gtk_widget_show(ambientFrame);
+    gtk_widget_show(infoFrame);
+    gtk_widget_show(ambientBox);
+    gtk_widget_show(infoBox);
+    gtk_widget_show(spinner);
+    gtk_widget_show(label);
+    gtk_widget_show(label2);
+    gtk_widget_show(hbox);
+
+    resyncMenus();
+
+    gnome_dialog_close_hides(GNOME_DIALOG(optionDialog), true);
+    gtk_window_set_modal(GTK_WINDOW(optionDialog), TRUE);
+    gnome_dialog_set_parent((GnomeDialog*) optionDialog, GTK_WINDOW(mainWindow));
+    gnome_dialog_set_default((GnomeDialog*) optionDialog, GNOME_YES);
+    gnome_dialog_run_and_close(GNOME_DIALOG(optionDialog));
+}
+
+
 static void menuSelectObject()
 {
     GtkWidget* dialog = gnome_dialog_new("Find Object",
@@ -506,19 +665,13 @@ static void menuSelectObject()
     GtkWidget* label = gtk_label_new("Enter object name:");
     if (label == NULL)
         return;
-    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (dialog)->vbox),
-                       label,
-                       TRUE,
-                       TRUE,
+    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (dialog)->vbox), label, TRUE, TRUE,
                        0);
 
     GtkWidget* entry = gtk_entry_new();
     if (entry == NULL)
         return;
-    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (dialog)->vbox),
-                       entry,
-                       TRUE,
-                       TRUE,
+    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (dialog)->vbox), entry, TRUE, TRUE,
                        0);
 
     gtk_widget_show(label);
@@ -1079,7 +1232,8 @@ static char *radioLabels[]=
     "Nearest",
     "Brightest(App)",
     "Brightest(Abs)",
-    "With Planets"
+    "With Planets",
+    NULL
 };
 
 static const char *tmp[5];
@@ -1391,23 +1545,8 @@ static void menuBrowser()
 		       GTK_SIGNAL_FUNC(listSelect), NULL);
     gtk_clist_select_row(GTK_CLIST(clist), 0, 0);
     
-    GSList *group=NULL;
     gtk_box_pack_start (GTK_BOX (vbox), align, FALSE, TRUE, 5);
-    for(unsigned int i=0;i<4;i++)
-    {
-        GtkWidget *button=gtk_radio_button_new_with_label(group, radioLabels[i]);
-        if (button==NULL)
-        {
-            DPRINTF(0, "Unable to get GTK Elements.\n");
-            return;
-        }
-        group=gtk_radio_button_group (GTK_RADIO_BUTTON (button));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),(i==0)?1:0);
-        gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
-        gtk_widget_show (button);
-        gtk_signal_connect(GTK_OBJECT(button), "pressed",
-                           GTK_SIGNAL_FUNC(radioClicked), (gpointer)i );
-    }
+    makeRadioItems(radioLabels, hbox, GTK_SIGNAL_FUNC(radioClicked),NULL);
     if (buttonMake(hbox, "   Refresh   ", (GtkSignalFunc)refreshBrowser, NULL))
         return;
     
@@ -1706,11 +1845,11 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Navigation/Select Object...", NULL, menuSelectObject, 0, NULL },
     { "/Navigation/Goto Object...", NULL,   menuGotoObject,0, NULL },
     { "/Navigation/sep1", NULL,             NULL,          0, "<Separator>" },
-    { "/Navigation/_Center Selection", "C",  menuCenter,    0, NULL },
-    { "/Navigation/_Goto Selection", "G",    menuGoto,      0, NULL },
-    { "/Navigation/_Follow Selection", "F",  menuFollow,    0, NULL },
+    { "/Navigation/_Center Selection", "C", menuCenter,    0, NULL },
+    { "/Navigation/_Goto Selection", "G",   menuGoto,      0, NULL },
+    { "/Navigation/_Follow Selection", "F", menuFollow,    0, NULL },
     { "/Navigation/Sync Orbit", "Y",        menuSync,      0, NULL },
-    { "/Navigation/_Track Selection", "T",   menuTrack,     0, NULL },
+    { "/Navigation/_Track Selection", "T",  menuTrack,     0, NULL },
     { "/Navigation/sep2", NULL,             NULL,          0, "<Separator>" },
     { "/Navigation/Celestial Browser", NULL,menuBrowser,   0, NULL },
     { "/Time", NULL,                        NULL,          0, "<Branch>" },
@@ -1721,35 +1860,13 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
     { "/Time/Set Time", NULL,               menuSetTime,   0, NULL },
     { "/Time/sep1", NULL,                   NULL,          0, "<Separator>" },
-    { "/Time/Show Local T_ime", "I",         NULL,          Menu_ShowLocTime, "<ToggleItem>" },
+    { "/Time/Show Local T_ime", "I",        NULL,          Menu_ShowLocTime, "<ToggleItem>" },
     { "/Render", NULL,                      NULL,          0, "<Branch>" },
-    { "/Render/Show Galaxies", "U",         NULL,          Menu_ShowGalaxies, "<ToggleItem>" },
-    { "/Render/Show Atmospheres", "<control>A",NULL,       Menu_ShowAtmospheres, "<ToggleItem>" },
-    { "/Render/Show Clouds", "I",           NULL,          Menu_ShowClouds, "<ToggleItem>" },
-    { "/Render/Show _Orbits", "O",           NULL,          Menu_ShowOrbits, "<ToggleItem>" },
-    { "/Render/Show Constellations", "slash",NULL,         Menu_ShowConstellations, "<ToggleItem>" },
-    { "/Render/Show Coordinate Sphere", "semicolon",NULL,  Menu_ShowCelestialSphere, "<ToggleItem>" },
-    { "/Render/Show Night Side Lights", "<control>L",NULL, Menu_ShowNightSideMaps, "<ToggleItem>" },
-    { "/Render/Show Eclipse Shadows", "<control>E",NULL,   Menu_ShowEclipseShadows, "<ToggleItem>" },
-    { "/Render/Show Stars as Points", "<control>S",NULL,   Menu_ShowStarsAsPoints, "<ToggleItem>" },
+    { "/Render/Options", NULL,              menuOptions,   0, NULL },
+    { "/Render/Show Info Text", "V",        menuShowInfo,  0, NULL },
     { "/Render/sep1", NULL,                 NULL,          0, "<Separator>" },
     { "/Render/More Stars Visible", "bracketleft",  menuMoreStars, 0, NULL },
     { "/Render/Fewer Stars Visible", "bracketright", menuLessStars, 0, NULL },
-    { "/Render/sep2", NULL,                 NULL,          0, "<Separator>" },
-    { "/Render/Label _Planets", "P",         NULL,          Menu_PlanetLabels, "<ToggleItem>" },
-    { "/Render/Label _Moons", "M",           NULL,          Menu_MoonLabels, "<ToggleItem>" },
-    { "/Render/Label Asteroids&Comets", "W",NULL,          Menu_AsteroidLabels, "<ToggleItem>" },
-    { "/Render/Label Spacecraft", "N",      NULL,          Menu_CraftLabels, "<ToggleItem>" },
-    { "/Render/Label Stars", "B",           NULL,          Menu_StarLabels, "<ToggleItem>" },
-    { "/Render/Label Galaxi_es", "E",        NULL,          Menu_GalaxyLabels, "<ToggleItem>" },
-    { "/Render/Label Constellations", "equal",NULL,        Menu_ConstellationLabels, "<ToggleItem>" },
-    { "/Render/Show Info Text", "V",        menuShowInfo,  0, NULL },
-    { "/Render/sep3", NULL,                 NULL,          0, "<Separator>" },
-    { "/Render/_Ambient", NULL,             NULL,          0, "<Branch>" },
-    { "/Render/Ambient/None", NULL,         menuNoAmbient, 0, NULL },
-    { "/Render/Ambient/Low", NULL,          menuLowAmbient,0, NULL },
-    { "/Render/Ambient/Medium", NULL,       menuMedAmbient,0, NULL },
-    { "/Render/Ambient/High", NULL,         menuHiAmbient, 0, NULL },
     { "/Help", NULL,                        NULL,          0, "<LastBranch>" },
     { "/Help/Run _Demo", "D",               menuRunDemo,   0, NULL },  
     { "/Help/sep1", NULL,                   NULL,          0, "<Separator>" },
@@ -1768,79 +1885,113 @@ static GtkItemFactoryEntry optMenuItems[] =
 };
 
 
-int checkLocalTime(int dummy)
+int checkLocalTime(int dummy, char *dummy2)
 {
 	return(appCore->getTimeZoneBias()!=0);
 }
 
 
-int checkPixelShaders(int dummy)
+int checkPixelShaders(int dummy, char *dummy2)
 {
 	return(appRenderer->getFragmentShaderEnabled());
 }
 
 
-int checkVertexShaders(int dummy)
+int checkVertexShaders(int dummy, char *dummy2)
 {
 	return(appRenderer->getVertexShaderEnabled());
 }
 
 
-int checkShowGalaxies(int dummy)
+int checkShowGalaxies(int dummy, char *dummy2)
 {
 	return((appRenderer->getRenderFlags() & Renderer::ShowGalaxies) == Renderer::ShowGalaxies);
 }
 
 
-int checkRenderFlag(int flag)
+GtkCheckButton *makeCheckButton(char *label, GtkWidget *vbox, bool set, GtkSignalFunc sigFunc)
 {
-	return((appRenderer->getRenderFlags() & flag) == flag);
+    g_assert(vbox);
+    GtkCheckButton* button = GTK_CHECK_BUTTON(gtk_check_button_new_with_label(label));
+    if (button)
+    {
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), set);
+        gtk_widget_show(GTK_WIDGET(button));
+        gtk_box_pack_start(GTK_BOX (vbox),
+                           GTK_WIDGET(button), FALSE, TRUE, 0);
+
+        gtk_signal_connect(GTK_OBJECT(button),
+                           "toggled",
+                           GTK_SIGNAL_FUNC(sigFunc),
+                           NULL);
+    }
+    return button;
 }
 
 
-int checkLabelFlag(int flag)
+int checkRenderFlag(int flag, char *path)
 {
-	return((appRenderer->getLabelMode() & flag) == flag);
+	bool set=(appRenderer->getRenderFlags() & flag) == flag;
+        /*char *optName=rindex(path,'/');
+        if(optName)
+            makeCheckButton(++optName, showBox, set);*/
+	return set;
+}
+
+
+int checkLabelFlag(int flag, char *path)
+{
+        bool set=(appRenderer->getLabelMode() & flag) == flag;
+        /*char *optName=rindex(path,'/');
+        if(optName)
+            makeCheckButton(++optName, labelBox, set);*/
+	return set;
 }
 
 
 static CheckFunc checks[] =
 {
-    { NULL,	"/Time/Show Local Time",	checkLocalTime,		1, 0 },
-    { NULL,	"/Render/Use Pixel Shaders",	checkPixelShaders,	0, 0 },
-    { NULL,	"/Render/Use Vertex Shaders",	checkVertexShaders,	0, 0 },
-    { NULL,	"/Render/Show Galaxies",	checkRenderFlag,	1, Renderer::ShowGalaxies },
-    { NULL,	"/Render/Show Atmospheres",	checkRenderFlag,	1, Renderer::ShowAtmospheres },
-    { NULL,	"/Render/Show Clouds",		checkRenderFlag,	1, Renderer::ShowCloudMaps },
-    { NULL,	"/Render/Show Orbits",		checkRenderFlag,	1, Renderer::ShowOrbits },
-    { NULL,	"/Render/Show Constellations",	checkRenderFlag,	1, Renderer::ShowDiagrams },
-    { NULL,	"/Render/Show Coordinate Sphere",checkRenderFlag,	1, Renderer::ShowCelestialSphere },
-    { NULL,	"/Render/Show Night Side Lights",checkRenderFlag,	1, Renderer::ShowNightMaps },
-    { NULL,	"/Render/Show Eclipse Shadows", checkRenderFlag,	1, Renderer::ShowEclipseShadows },
-    { NULL,	"/Render/Show Stars as Points", checkRenderFlag,	1, Renderer::ShowStarsAsPoints },
-    { NULL,	"/Render/Label Planets",	checkLabelFlag,		1, Renderer::PlanetLabels },
-    { NULL,	"/Render/Label Moons",  	checkLabelFlag,		1, Renderer::MoonLabels },
-    { NULL,	"/Render/Label Asteroids&Comets",checkLabelFlag,	1, Renderer::AsteroidLabels },
-    { NULL,	"/Render/Label Spacecraft",	checkLabelFlag,		1, Renderer::SpacecraftLabels },
-    { NULL,	"/Render/Label Stars",		checkLabelFlag,		1, Renderer::StarLabels },
-    { NULL,	"/Render/Label Galaxies",	checkLabelFlag,		1, Renderer::GalaxyLabels },
-    { NULL,	"/Render/Label Constellations",	checkRenderFlag,	1, Renderer::ConstellationLabels },
+    { NULL, NULL, "/Time/Show Local Time",	checkLocalTime,		3, 0, Menu_ShowLocTime, GTK_SIGNAL_FUNC(menuShowLocTime) },
+    { NULL, NULL, "/Render/Use Pixel Shaders",	checkPixelShaders,	0, 0, Menu_PixelShaders, GTK_SIGNAL_FUNC(menuPixelShaders) },
+    { NULL, NULL, "/Render/Use Vertex Shaders",	checkVertexShaders,	0, 0, Menu_VertexShaders, GTK_SIGNAL_FUNC(menuVertexShaders) },
+    { NULL, NULL, "/Render/Show Galaxies",	checkRenderFlag,	1, Renderer::ShowGalaxies, Menu_ShowGalaxies, GTK_SIGNAL_FUNC(menuShowGalaxies) },
+    { NULL, NULL, "/Render/Show Atmospheres",	checkRenderFlag,	1, Renderer::ShowAtmospheres, Menu_ShowAtmospheres, GTK_SIGNAL_FUNC(menuShowAtmospheres) },
+    { NULL, NULL, "/Render/Show Clouds",		checkRenderFlag,	1, Renderer::ShowCloudMaps, Menu_ShowClouds, GTK_SIGNAL_FUNC(menuShowClouds) },
+    { NULL, NULL, "/Render/Show Orbits",		checkRenderFlag,	1, Renderer::ShowOrbits, Menu_ShowOrbits, GTK_SIGNAL_FUNC(menuShowOrbits) },
+    { NULL, NULL, "/Render/Show Constellations",	checkRenderFlag,	1, Renderer::ShowDiagrams, Menu_ShowConstellations, GTK_SIGNAL_FUNC(menuShowConstellations) },
+    { NULL, NULL, "/Render/Show Coordinate Sphere",checkRenderFlag,	1, Renderer::ShowCelestialSphere, Menu_ShowCelestialSphere, GTK_SIGNAL_FUNC(menuShowCelestialSphere) },
+    { NULL, NULL, "/Render/Show Night Side Lights",checkRenderFlag,	1, Renderer::ShowNightMaps, Menu_ShowNightSideMaps, GTK_SIGNAL_FUNC(menuShowNightSideMaps) },
+    { NULL, NULL, "/Render/Show Eclipse Shadows", checkRenderFlag,	1, Renderer::ShowEclipseShadows, Menu_ShowEclipseShadows, GTK_SIGNAL_FUNC(menuShowEclipseShadows) },
+    { NULL, NULL, "/Render/Show Stars as Points", checkRenderFlag,	1, Renderer::ShowStarsAsPoints, Menu_ShowStarsAsPoints, GTK_SIGNAL_FUNC(menuShowStarsAsPoints) },
+    { NULL, NULL, "/Render/Label Planets",	checkLabelFlag,		1, Renderer::PlanetLabels, Menu_PlanetLabels, GTK_SIGNAL_FUNC(menuPlanetLabels) },
+    { NULL, NULL, "/Render/Label Moons",  	checkLabelFlag,		1, Renderer::MoonLabels, Menu_MoonLabels, GTK_SIGNAL_FUNC(menuMoonLabels) },
+    { NULL, NULL, "/Render/Label Asteroids&Comets",checkLabelFlag,	1, Renderer::AsteroidLabels, Menu_AsteroidLabels, GTK_SIGNAL_FUNC(menuAsteroidLabels) },
+    { NULL, NULL, "/Render/Label Spacecraft",	checkLabelFlag,		1, Renderer::SpacecraftLabels, Menu_CraftLabels, GTK_SIGNAL_FUNC(menuCraftLabels) },
+    { NULL, NULL, "/Render/Label Stars",		checkLabelFlag,		1, Renderer::StarLabels, Menu_StarLabels, GTK_SIGNAL_FUNC(menuStarLabels) },
+    { NULL, NULL, "/Render/Label Galaxies",	checkLabelFlag,		1, Renderer::GalaxyLabels, Menu_GalaxyLabels, GTK_SIGNAL_FUNC(menuGalaxyLabels) },
+    { NULL, NULL, "/Render/Label Constellations",	checkLabelFlag,	1, Renderer::ConstellationLabels, Menu_ConstellationLabels, GTK_SIGNAL_FUNC(menuConstellationLabels) },
 };
 
 
-void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func)
+void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func, CheckFunc *cfunc)
 {
-    GtkWidget* w = gtk_item_factory_get_widget_by_action(factory, action);
-    if (w != NULL)
-    {
-        gtk_signal_connect(GTK_OBJECT(w), "toggled",
-                           GTK_SIGNAL_FUNC(func),
-                           NULL);
-    }
+    if(cfunc->active & 2)
+        {
+        GtkWidget* w = gtk_item_factory_get_widget_by_action(factory, action);
+        if (w != NULL)
+        {
+            gtk_signal_connect(GTK_OBJECT(w), "toggled",
+                               GTK_SIGNAL_FUNC(func),
+                               NULL);
+        }
 #ifdef DEBUG
-    else
-        DPRINTF(0,"Unable to attach signal to action %d!\n",action);
+        else
+            DPRINTF(0,"Unable to attach signal to action %d!\n",action);
 #endif
+        }
+    char *optName=rindex(cfunc->path,'/');
+    if(optName)
+        cfunc->optWidget=makeCheckButton(++optName, ((cfunc->func==checkLabelFlag)?labelBox:showBox), 0, cfunc->sigFunc);
 }
 
 
@@ -1873,46 +2024,11 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
     if (menubar != NULL)
         *menubar = gtk_item_factory_get_widget(menuItemFactory, "<main>");
 
-    setupCheckItem(menuItemFactory, Menu_ShowGalaxies,
-                   GTK_SIGNAL_FUNC(menuShowGalaxies));
-    setupCheckItem(menuItemFactory, Menu_ShowConstellations,
-                   GTK_SIGNAL_FUNC(menuShowConstellations));
-    setupCheckItem(menuItemFactory, Menu_ShowAtmospheres,
-                   GTK_SIGNAL_FUNC(menuShowAtmospheres));
-    setupCheckItem(menuItemFactory, Menu_ShowClouds,
-                   GTK_SIGNAL_FUNC(menuShowClouds));
-    setupCheckItem(menuItemFactory, Menu_ShowNightSideMaps,
-                   GTK_SIGNAL_FUNC(menuShowNightSideMaps));
-    setupCheckItem(menuItemFactory, Menu_ShowEclipseShadows,
-                   GTK_SIGNAL_FUNC(menuShowEclipseShadows));
-    setupCheckItem(menuItemFactory, Menu_ShowStarsAsPoints,
-                   GTK_SIGNAL_FUNC(menuShowStarsAsPoints));
-    setupCheckItem(menuItemFactory, Menu_ShowOrbits,
-                   GTK_SIGNAL_FUNC(menuShowOrbits));
-    setupCheckItem(menuItemFactory, Menu_PlanetLabels,
-                   GTK_SIGNAL_FUNC(menuPlanetLabels));
-    setupCheckItem(menuItemFactory, Menu_MoonLabels,
-                   GTK_SIGNAL_FUNC(menuMoonLabels));
-    setupCheckItem(menuItemFactory, Menu_AsteroidLabels,
-                   GTK_SIGNAL_FUNC(menuAsteroidLabels));
-    setupCheckItem(menuItemFactory, Menu_CraftLabels,
-                   GTK_SIGNAL_FUNC(menuCraftLabels));
-    setupCheckItem(menuItemFactory, Menu_StarLabels,
-                   GTK_SIGNAL_FUNC(menuStarLabels));
-    setupCheckItem(menuItemFactory, Menu_GalaxyLabels,
-                   GTK_SIGNAL_FUNC(menuGalaxyLabels));
-    setupCheckItem(menuItemFactory, Menu_ConstellationLabels,
-                   GTK_SIGNAL_FUNC(menuConstellationLabels));
-    setupCheckItem(menuItemFactory, Menu_ShowCelestialSphere,
-                   GTK_SIGNAL_FUNC(menuShowCelestialSphere));
-    setupCheckItem(menuItemFactory, Menu_ShowLocTime,
-                   GTK_SIGNAL_FUNC(menuShowLocTime));
-    if (appRenderer->fragmentShaderSupported())
-	setupCheckItem(menuItemFactory, Menu_PixelShaders,
-		       GTK_SIGNAL_FUNC(menuPixelShaders));
-    if (appRenderer->vertexShaderSupported())
-	setupCheckItem(menuItemFactory, Menu_VertexShaders,
-		       GTK_SIGNAL_FUNC(menuVertexShaders));
+    for(int i=sizeof(checks) / sizeof(checks[0])-1;i>=0;--i)
+    {
+        if(checks[i].active)
+            setupCheckItem(menuItemFactory, checks[i].action, checks[i].sigFunc, &checks[i]);
+    }
 }
 
 
@@ -2225,6 +2341,100 @@ struct poptOption options[] =
   }
 };
 
+
+void resyncMenus()
+{
+    // Check all the toggle items that they are set on/off correctly
+    int i = sizeof(checks) / sizeof(checks[0]);
+    for(CheckFunc *cfunc=&checks[--i];i>=0;cfunc=&checks[--i])
+    {
+	if (!cfunc->active)
+	    continue;
+        unsigned int res=((*cfunc->func)(cfunc->funcdata, cfunc->path))?1:0;
+        if (cfunc->active & 2)
+        {
+            g_assert(cfunc->path);
+            cfunc->widget=GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(menuItemFactory, cfunc->path));
+            if (!cfunc->widget)
+            {
+                cfunc->active=0;
+                DPRINTF(0, "Menu item %s status checking deactivated due to being unable to find it!", cfunc->path);
+                continue;
+            }
+            g_assert(cfunc->func);
+            if (cfunc->widget->active != res)
+            {
+                // Change state of widget *without* causing a message to be
+                // sent (which would change the state again).
+                gtk_widget_hide(GTK_WIDGET(cfunc->widget));
+                cfunc->widget->active=res;
+                gtk_widget_show(GTK_WIDGET(cfunc->widget));
+            }
+        }
+        if ((((unsigned int)(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cfunc->optWidget))?1:0)) != res) && (optionDialog))
+        {
+            // Change state of OptionButton *without* causing a message to be
+            // sent (which would change the state again).
+            gtk_widget_hide(GTK_WIDGET(cfunc->optWidget));
+            (GTK_TOGGLE_BUTTON(cfunc->optWidget))->active=res;
+            gtk_widget_show(GTK_WIDGET(cfunc->optWidget));
+        }
+    }
+    if(optionDialog) // Only  modify these if optionsDialog is setup
+    {
+        int index=appCore->getHudDetail();
+        if(!(infoGads[index])->active)
+            gtk_toggle_button_set_active(infoGads[index],1);
+        float ambient=appRenderer->getAmbientLightLevel();
+        index=3;
+        for(int i=3;(ambient<=amLevels[i]) && (i>=0);i--)
+            index=i;
+        if(!(ambientGads[index])->active)
+            gtk_toggle_button_set_active(ambientGads[index],1);
+    }
+}
+
+
+/* Our own watcher. Celestiacore will call notifyChange()
+   to tell us we need to recheck the check menu items. */
+
+class GtkWatcher : public CelestiaWatcher
+{
+public:
+    GtkWatcher(CelestiaCore*);
+    virtual void notifyChange(int);
+    void renderFlagsChanged();
+    void labelFlagsChanged();
+};
+
+
+GtkWatcher::GtkWatcher(CelestiaCore* _appCore) :
+    CelestiaWatcher(_appCore)
+{
+}
+
+void GtkWatcher::notifyChange(int property)
+{
+    if (property == RenderFlags)
+        renderFlagsChanged();
+    else if (property == LabelFlags)
+        labelFlagsChanged();
+}
+
+void GtkWatcher::renderFlagsChanged()
+{
+    resyncMenus();
+}
+
+
+void GtkWatcher::labelFlagsChanged()
+{
+    resyncMenus();
+}
+
+
+GtkWatcher *gtkWatcher=NULL;
+
 int main(int argc, char* argv[])
 {
     // Say we're not ready to render yet.
@@ -2309,6 +2519,18 @@ int main(int argc, char* argv[])
     // Set the default size
     gtk_gl_area_size(GTK_GL_AREA(oglArea), 640, 480);
 
+    //Frames and boxes for the Options Dialog
+    showFrame = gtk_frame_new("Show");
+    g_assert(showFrame);
+    showBox = gtk_vbox_new(FALSE, 3);
+    g_assert(showBox);
+    gtk_container_add(GTK_CONTAINER(showFrame),GTK_WIDGET(showBox));
+    labelFrame = gtk_frame_new("Label");
+    g_assert(labelFrame);
+    labelBox = gtk_vbox_new(FALSE, 3);
+    g_assert(labelBox);
+    gtk_container_add(GTK_CONTAINER(labelFrame),GTK_WIDGET(labelBox));
+
     createMainMenu(mainWindow, &mainMenu);
 
     // gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(oglArea));
@@ -2329,34 +2551,8 @@ int main(int argc, char* argv[])
     bReady = true;
 
     g_assert(menuItemFactory);
-    // Check all the toggle items that they are set on/off correctly
-    int i = sizeof(checks) / sizeof(checks[0]);
-    for(CheckFunc *cfunc=&checks[--i];i>=0;cfunc=&checks[--i])
-    {
-	if (!cfunc->active)
-	    continue;
-	g_assert(cfunc->path);
-	cfunc->widget=GTK_CHECK_MENU_ITEM(gtk_item_factory_get_widget(menuItemFactory, cfunc->path));
-	if (!cfunc->widget)
-	{
-	    cfunc->active=0;
-	    DPRINTF(0, "Menu item %s status checking deactivated due to being unable to find it!", cfunc->path);
-	    continue;
-	}
-	g_assert(cfunc->func);
-	int res=(*cfunc->func)(cfunc->funcdata);
-	if (res)
-	{
-    	    if (cfunc->widget->active == FALSE)
-		{
-		// Change state of widget *without* causing a message to be
-		// sent (which would change the state again).
-		gtk_widget_hide(GTK_WIDGET(cfunc->widget));
-		cfunc->widget->active=TRUE;
-		gtk_widget_show(GTK_WIDGET(cfunc->widget));
-		}
-	}
-    }
+    gtkWatcher = new GtkWatcher(appCore);
+    resyncMenus();
     gtk_main();
     delete captureFilename;
 
