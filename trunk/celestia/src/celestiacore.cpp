@@ -457,6 +457,10 @@ void CelestiaCore::charEntered(char c)
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowDiagrams);
         break;
 
+    case ';':
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCelestialSphere);
+        break;
+
     case '=':
         renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::ConstellationLabels);
         break;
