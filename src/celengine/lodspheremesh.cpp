@@ -217,7 +217,11 @@ void LODSphereMesh::render(const GLContext& context,
     int minSplit = 1;
     for (i = 0; i < nTextures; i++)
     {
-        ri.texLOD[i] = tex[i]->getLODCount() - 1;
+        float pixelsPerTexel = pixWidth * 2.0f / 
+            ((float) tex[i]->getWidth() / 2.0f);
+        double l = log(pixelsPerTexel) / log(2.0);
+        
+        ri.texLOD[i] = max(min(tex[i]->getLODCount() - 1, (int) l), 0);
         if (tex[i]->getUTileCount(0) > minSplit)
             minSplit = tex[i]->getUTileCount(ri.texLOD[i]);
         if (tex[i]->getVTileCount(0) > minSplit)
