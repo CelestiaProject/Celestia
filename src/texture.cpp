@@ -10,12 +10,14 @@
 #ifdef _WIN32
 #define IJL_JPEG_SUPPORT
 #define PNG_SUPPORT
+#define DPRINTF //
 #else
 #define IJG_JPEG_SUPPORT
 #define PNG_SUPPORT
 #endif // _WIN32
 
 #include <cmath>
+#include <iostream>
 #include <fstream>
 #include <cstdlib>
 #include <cstdio>
@@ -50,7 +52,6 @@ extern "C" {
 
 #endif // PNG_SUPPORT
 
-#include "celestia.h"
 #include "vecmath.h"
 #include "filetype.h"
 #include "texture.h"
@@ -85,6 +86,7 @@ typedef struct
 static bool initialized = false;
 static bool compressionSupported = false;
 static bool clampToEdgeSupported = false;
+static bool autoMipMapSupported = false;
 
 
 static void initTextureLoader()
@@ -95,12 +97,13 @@ static void initTextureLoader()
 #else
     clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
 #endif // GL_VERSION_1_2
+    autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
 
     initialized = true;
 }
 
 
-CTexture::CTexture(int w, int h, int fmt, bool _cubeMap) :
+Texture::Texture(int w, int h, int fmt, bool _cubeMap) :
     width(w),
     height(h),
     format(fmt),
@@ -133,6 +136,9 @@ CTexture::CTexture(int w, int h, int fmt, bool _cubeMap) :
     case GL_LUMINANCE_ALPHA:
         components = 2;
         break;
+    case GL_DSDT_NV:
+        components = 2;
+        break;
     default:
         break;
     }
@@ -144,7 +150,7 @@ CTexture::CTexture(int w, int h, int fmt, bool _cubeMap) :
 }
 
 
-CTexture::~CTexture()
+Texture::~Texture()
 {
     if (pixels != NULL)
         delete[] pixels;
@@ -155,10 +161,12 @@ CTexture::~CTexture()
 }
 
 
-void CTexture::bindName(uint32 flags)
+void Texture::bindName(uint32 flags)
 {
     bool wrap = ((flags & WrapTexture) != 0);
     bool compress = ((flags & CompressTexture) != 0) && compressionSupported;
+    bool mipmap = ((flags & NoMipMaps) == 0);
+    bool automipmap = ((flags & AutoMipMaps) != 0) && autoMipMapSupported && mipmap;
 
     if (pixels == NULL)
         return;
@@ -182,10 +190,14 @@ void CTexture::bindName(uint32 flags)
     glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapMode);
     glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapMode);
     glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER,
+                    mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    int internalFormat = components;
+    if (automipmap)
+        glTexParameteri(textureType, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+
     // compress = true;
+    int internalFormat = 0;
     if (compress)
     {
         switch (format)
@@ -212,6 +224,18 @@ void CTexture::bindName(uint32 flags)
         }
 	glHint((GLenum) GL_TEXTURE_COMPRESSION_HINT_ARB, GL_NICEST);
     }
+    else
+    {
+        switch (format)
+        {
+        case GL_DSDT_NV:
+            internalFormat = format;
+            break;
+        default:
+            internalFormat = components;
+            break;
+        }
+    }
 
     int nFaces = 1;
     unsigned int textureTarget = GL_TEXTURE_2D;
@@ -223,12 +247,26 @@ void CTexture::bindName(uint32 flags)
 
     for (int face = 0; face < nFaces; face++)
     {
-        gluBuild2DMipmaps((GLenum) (textureTarget + face),
-                          internalFormat,
-                          width, height,
-                          (GLenum) format,
-                          GL_UNSIGNED_BYTE,
-                          pixels + face * width * height * components);
+        if (mipmap && !automipmap)
+        {
+            gluBuild2DMipmaps((GLenum) (textureTarget + face),
+                              internalFormat,
+                              width, height,
+                              (GLenum) format,
+                              GL_UNSIGNED_BYTE,
+                              pixels + face * width * height * components);
+        }
+        else
+        {
+            glTexImage2D(GL_TEXTURE_2D,
+                         0,
+                         internalFormat,
+                         width, height,
+                         0,
+                         (GLenum) format,
+                         GL_UNSIGNED_BYTE,
+                         pixels + face * width * height * components);
+        }
     }
     
     glName = tn;
@@ -238,25 +276,25 @@ void CTexture::bindName(uint32 flags)
 }
 
 
-unsigned int CTexture::getName()
+unsigned int Texture::getName()
 {
     return glName;
 }
 
 
-int CTexture::getWidth() const
+int Texture::getWidth() const
 {
     return width;
 }
 
-int CTexture::getHeight() const
+int Texture::getHeight() const
 {
     return height;
 }
 
 
 // Convert the texture to a normal map
-void CTexture::normalMap(float scale, bool wrap)
+void Texture::normalMap(float scale, bool wrap)
 {
     // Make sure that we get the texture after it's been loaded with
     // data, but before bindName was called and texel data deleted.
@@ -316,8 +354,10 @@ void CTexture::normalMap(float scale, bool wrap)
             float rmag = 1.0f / mag;
 
             int n = (i * width + j) * 4;
-            npixels[n]     = (unsigned char) (128 + 127 * dy * rmag);
-            npixels[n + 1] = (unsigned char) (128 - 127 * dx * rmag);
+            // npixels[n]     = (unsigned char) (128 + 127 * dy * rmag);
+            // npixels[n + 1] = (unsigned char) (128 - 127 * dx * rmag);
+            npixels[n]     = (unsigned char) (128 - 127 * dx * rmag);
+            npixels[n + 1] = (unsigned char) (128 + 127 * dy * rmag);
             npixels[n + 2] = (unsigned char) (128 + 127 * rmag);
             npixels[n + 3] = 255;
         }
@@ -332,11 +372,11 @@ void CTexture::normalMap(float scale, bool wrap)
 }
 
 
-CTexture* CreateProceduralTexture(int width, int height,
+Texture* CreateProceduralTexture(int width, int height,
                                   int format,
                                   ProceduralTexEval func)
 {
-    CTexture* tex = new CTexture(width, height, format);
+    Texture* tex = new Texture(width, height, format);
     if (tex == NULL)
         return NULL;
 
@@ -354,7 +394,7 @@ CTexture* CreateProceduralTexture(int width, int height,
 }
 
 
-CTexture* LoadTextureFromFile(const string& filename)
+Texture* LoadTextureFromFile(const string& filename)
 {
     ContentType type = DetermineFileType(filename);
 
@@ -401,7 +441,7 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 
 
 
-CTexture* CreateJPEGTexture(const char* filename,
+Texture* CreateJPEGTexture(const char* filename,
                             int channels)
 {
 #if defined(IJL_JPEG_SUPPORT)
@@ -443,7 +483,7 @@ CTexture* CreateJPEGTexture(const char* filename,
     int format;
     if (jpegProps.JPGColor == IJL_YCBCR)
     {
-        if ((channels & CTexture::AlphaChannel) != 0)
+        if ((channels & Texture::AlphaChannel) != 0)
             format = GL_RGBA;
         else
             format = GL_RGB;
@@ -452,7 +492,7 @@ CTexture* CreateJPEGTexture(const char* filename,
     }
     else if (jpegProps.JPGColor == IJL_G)
     {
-        if ((channels & CTexture::AlphaChannel) != 0)
+        if ((channels & Texture::AlphaChannel) != 0)
             format = GL_LUMINANCE_ALPHA;
         else
             format = GL_LUMINANCE;
@@ -466,7 +506,7 @@ CTexture* CreateJPEGTexture(const char* filename,
     }
 
     // Create the texture
-    CTexture* tex = new CTexture(jpegProps.JPGWidth, jpegProps.JPGHeight,
+    Texture* tex = new Texture(jpegProps.JPGWidth, jpegProps.JPGHeight,
                                  format);
     if (tex == NULL)
     {
@@ -490,7 +530,7 @@ CTexture* CreateJPEGTexture(const char* filename,
     ijlFree(&jpegProps);
 
     // If necessary, synthesize an alpha channel from color information
-    if ((channels & CTexture::AlphaChannel) != 0)
+    if ((channels & Texture::AlphaChannel) != 0)
     {
         if (format == GL_LUMINANCE_ALPHA)
         {
@@ -507,7 +547,7 @@ CTexture* CreateJPEGTexture(const char* filename,
     
     return tex;
 #elif defined(IJG_JPEG_SUPPORT)
-    CTexture* tex = NULL;
+    Texture* tex = NULL;
 
     // This struct contains the JPEG decompression parameters and pointers to
     // working space (which is allocated as needed by the JPEG library).
@@ -597,7 +637,7 @@ CTexture* CreateJPEGTexture(const char* filename,
     if (cinfo.output_components == 1)
         format = GL_LUMINANCE;
 
-    tex = new CTexture(cinfo.image_width, cinfo.image_height, format);
+    tex = new Texture(cinfo.image_width, cinfo.image_height, format);
 
     // cont = cinfo.output_height - 1;
     cont = 0;
@@ -652,7 +692,7 @@ void PNGReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 }
 #endif
 
-CTexture* CreatePNGTexture(const string& filename)
+Texture* CreatePNGTexture(const string& filename)
 {
 #ifndef PNG_SUPPORT
     return NULL;
@@ -664,7 +704,7 @@ CTexture* CreatePNGTexture(const string& filename)
     png_uint_32 width, height;
     int bit_depth, color_type, interlace_type;
     FILE* fp = NULL;
-    CTexture* tex = NULL;
+    Texture* tex = NULL;
     png_bytep* row_pointers = NULL;
 
     fp = fopen(filename.c_str(), "rb");
@@ -740,7 +780,7 @@ CTexture* CreatePNGTexture(const string& filename)
         break;
     }
 
-    tex = new CTexture(width, height, glformat);
+    tex = new Texture(width, height, glformat);
     if (tex == NULL)
     {
         fclose(fp);
@@ -804,7 +844,7 @@ static short readShort(ifstream& in)
 }
 
 
-static CTexture* CreateBMPTexture(ifstream& in)
+static Texture* CreateBMPTexture(ifstream& in)
 {
     BMPFileHeader fileHeader;
     BMPImageHeader imageHeader;
@@ -875,7 +915,7 @@ static CTexture* CreateBMPTexture(ifstream& in)
 
     // check for truncated file
 
-    CTexture* tex = new CTexture(imageHeader.width, imageHeader.height,
+    Texture* tex = new Texture(imageHeader.width, imageHeader.height,
                                  GL_RGB);
     if (tex == NULL)
     {
@@ -939,13 +979,13 @@ static CTexture* CreateBMPTexture(ifstream& in)
 }
 
 
-CTexture* CreateBMPTexture(const char* filename)
+Texture* CreateBMPTexture(const char* filename)
 {
     ifstream bmpFile(filename, ios::in | ios::binary);
 
     if (bmpFile.good())
     {
-        CTexture* tex = CreateBMPTexture(bmpFile);
+        Texture* tex = CreateBMPTexture(bmpFile);
         bmpFile.close();
         return tex;
     }
@@ -1030,11 +1070,11 @@ static Vec3f cubeVector(int face, float s, float t)
 // the light vector unit length when interpolating.  bindName() need not
 // (and must not) be called for a texture created with this method, as the
 // name binding stuff all handled right here.
-CTexture* CreateNormalizationCubeMap(int size)
+Texture* CreateNormalizationCubeMap(int size)
 {
     // assert(ExtensionSupported("GL_EXT_texture_cube_map"));
     
-    CTexture* tex = new CTexture(size, size, GL_RGB);
+    Texture* tex = new Texture(size, size, GL_RGB);
     if (tex == NULL)
         return NULL;
 
@@ -1073,11 +1113,11 @@ CTexture* CreateNormalizationCubeMap(int size)
 }
 
 
-CTexture* CreateDiffuseLightCubeMap(int size)
+Texture* CreateDiffuseLightCubeMap(int size)
 {
     // assert(ExtensionSupported("GL_EXT_texture_cube_map"));
     
-    CTexture* tex = new CTexture(size, size, GL_RGB);
+    Texture* tex = new Texture(size, size, GL_RGB);
     if (tex == NULL)
         return NULL;
 
@@ -1117,10 +1157,10 @@ CTexture* CreateDiffuseLightCubeMap(int size)
 }
 
 
-CTexture* CreateProceduralCubeMap(int size, int format,
+Texture* CreateProceduralCubeMap(int size, int format,
                                   ProceduralTexEval func)
 {
-    CTexture* tex = new CTexture(size, size, format, true);
+    Texture* tex = new Texture(size, size, format, true);
     if (tex == NULL)
         return NULL;
 

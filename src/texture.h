@@ -16,15 +16,17 @@
 
 typedef void (*ProceduralTexEval)(float, float, float, unsigned char*);
 
-class CTexture
+class Texture
 {
  public:
-    CTexture(int w, int h, int fmt, bool _cubeMap = false);
-    ~CTexture();
+    Texture(int w, int h, int fmt, bool _cubeMap = false);
+    ~Texture();
 
     enum {
         WrapTexture      = 0x1,
         CompressTexture  = 0x2,
+        NoMipMaps        = 0x4,
+        AutoMipMaps      = 0x8
     };
 
     void bindName(uint32 flags = 0);
@@ -56,19 +58,19 @@ class CTexture
 };
 
 
-extern CTexture* CreateProceduralTexture(int width, int height,
-                                         int format,
-                                         ProceduralTexEval func);
-extern CTexture* CreateProceduralCubeMap(int size, int format,
-                                         ProceduralTexEval func);
-extern CTexture* CreateJPEGTexture(const char* filename,
-                                   int channels = CTexture::ColorChannel);
-extern CTexture* CreateBMPTexture(const char* filename);
-extern CTexture* CreatePNGTexture(const std::string& filename);
+extern Texture* CreateProceduralTexture(int width, int height,
+                                        int format,
+                                        ProceduralTexEval func);
+extern Texture* CreateProceduralCubeMap(int size, int format,
+                                        ProceduralTexEval func);
+extern Texture* CreateJPEGTexture(const char* filename,
+                                  int channels = Texture::ColorChannel);
+extern Texture* CreateBMPTexture(const char* filename);
+extern Texture* CreatePNGTexture(const std::string& filename);
 
-extern CTexture* LoadTextureFromFile(const std::string& filename);
+extern Texture* LoadTextureFromFile(const std::string& filename);
 
-extern CTexture* CreateNormalizationCubeMap(int size);
-extern CTexture* CreateDiffuseLightCubeMap(int size);
+extern Texture* CreateNormalizationCubeMap(int size);
+extern Texture* CreateDiffuseLightCubeMap(int size);
 
 #endif // _TEXTURE_H_
