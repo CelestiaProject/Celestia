@@ -544,10 +544,10 @@ void Renderer::render(const Observer& observer,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     if ((renderFlags & ShowStars) != 0)
     {
-        // if ((renderFlags & ShowCloudMaps) != 0)
-        renderStars(starDB, visTree, faintestVisible, observer);
-        //        else
-        // renderStars(starDB, visset, faintestVisible, observer);
+        if ((renderFlags & ShowCloudMaps) != 0)
+            renderStars(starDB, visTree, faintestVisible, observer);
+        else
+            renderStars(starDB, visset, faintestVisible, observer);
     }
 
     // Render asterisms
