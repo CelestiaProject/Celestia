@@ -1,4 +1,4 @@
-# Minor moons of the giant planets.
+# Named minor moons of the giant planets.
 
 # Minor moons of Jupiter
 
@@ -60,6 +60,28 @@
 	}
 
 	Albedo 0.047
+}
+
+"Themisto" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		4.0
+
+	EllipticalOrbit
+	{
+	Period		130.02
+	SemiMajorAxis	7507000
+	Eccentricity	0.2420
+	Inclination	47.584	#
+	AscendingNode	223.444	#
+	ArgOfPericenter	238.413	# J2000.0
+	MeanAnomaly     289.151	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
 }
 
 "Leda" "Sol/Jupiter"
@@ -150,6 +172,72 @@
 	Albedo 0.04
 }
 
+"Iocaste" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.6
+
+	EllipticalOrbit
+	{
+	Period		631.49
+	SemiMajorAxis	21269000
+	Eccentricity	0.2156
+	Inclination	148.117	#
+	AscendingNode	294.484	#
+	ArgOfPericenter	95.230	# J2000.0
+	MeanAnomaly     182.064	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Praxidike" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.4
+
+	EllipticalOrbit
+	{
+	Period		625.30
+	SemiMajorAxis	21147000
+	Eccentricity	0.2296
+	Inclination	141.869	#
+	AscendingNode	305.912	#
+	ArgOfPericenter	185.546	# J2000.0
+	MeanAnomaly     127.898	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Harpalyke" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.2
+
+	EllipticalOrbit
+	{
+	Period		623.34
+	SemiMajorAxis	21105000
+	Eccentricity	0.2259
+	Inclination	148.725	#
+	AscendingNode	54.669	#
+	ArgOfPericenter	100.638	# J2000.0
+	MeanAnomaly     255.488	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
 "Ananke" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
@@ -168,6 +256,94 @@
 	}
 
 	RotationPeriod  10	# Guess
+
+	Albedo 0.04
+}
+
+"Isonoe" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.9
+
+	EllipticalOrbit
+	{
+	Period		725.52
+	SemiMajorAxis	23217000
+	Eccentricity	0.2461
+	Inclination	168.026	#
+	AscendingNode	152.118	#
+	ArgOfPericenter	126.560	# J2000.0
+	MeanAnomaly     116.296	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Erinome" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.6
+
+	EllipticalOrbit
+	{
+	Period		728.26
+	SemiMajorAxis	23279000
+	Eccentricity	0.2659
+	Inclination	159.212	#
+	AscendingNode	336.042	#
+	ArgOfPericenter	2.668	# J2000.0
+	MeanAnomaly     273.099	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Taygete" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Period		732.24
+	SemiMajorAxis	23360000
+	Eccentricity	0.2516
+	Inclination	160.215	#
+	AscendingNode	326.765	#
+	ArgOfPericenter	211.713	# J2000.0
+	MeanAnomaly     116.364	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Chaldene" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.9
+
+	EllipticalOrbit
+	{
+	Period		723.78
+	SemiMajorAxis	23179000
+	Eccentricity	0.2512
+	Inclination	167.733	#
+	AscendingNode	152.657	#
+	ArgOfPericenter	227.365	# J2000.0
+	MeanAnomaly     275.502	#
+	}
+
+	RotationPeriod  10   # Guess
 
 	Albedo 0.04
 }
@@ -216,6 +392,50 @@
 	Albedo 0.04
 }
 
+"Kalyke" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.6
+
+	EllipticalOrbit
+	{
+	Period		742.98
+	SemiMajorAxis	23583000
+	Eccentricity	0.2453
+	Inclination	165.215	#
+	AscendingNode	52.607	#
+	ArgOfPericenter	232.978	# J2000.0
+	MeanAnomaly     225.334	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
+"Megaclite" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.7
+
+	EllipticalOrbit
+	{
+	Period		752.82
+	SemiMajorAxis	23806000
+	Eccentricity	0.4210
+	Inclination	150.370	#
+	AscendingNode	317.211	#
+	ArgOfPericenter	313.167	# J2000.0
+	MeanAnomaly     116.082	#
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.04
+}
+
 "Sinope" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
@@ -234,6 +454,28 @@
 	}
 
 	RotationPeriod  10   	# Guess
+
+	Albedo 0.04
+}
+
+"Callirrhoe" "Sol/Jupiter"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		4.3
+
+	EllipticalOrbit
+	{
+	Period		758.77
+	SemiMajorAxis	24102000
+	Eccentricity	0.2827
+	Inclination	138.004 #
+	AscendingNode	302.562	#
+	ArgOfPericenter	16.381	# J2000.0
+	MeanAnomaly     117.900	#
+	}
+
+	RotationPeriod  10   # Guess
 
 	Albedo 0.04
 }
