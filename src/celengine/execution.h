@@ -20,6 +20,7 @@ class Execution
     Execution(CommandSequence&, ExecutionEnvironment&);
     
     bool tick(double);
+    void reset(CommandSequence&);
 
  private:
     CommandSequence::const_iterator currentCommand;
