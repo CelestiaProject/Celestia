@@ -590,6 +590,13 @@
 	MeanAnomaly    350
 	}
 
+	# The rotation of Hyperion is chaotic; we don't attempt to model
+	# the rotation exactly, but instead use non-zero precession rate to
+	# make the rotation appear somewhat irregular.
+	Obliquity       25
+	RotationPeriod  336 # 13 days
+	PrecessionRate  15.65 # 23 days
+
 	Albedo         0.3
 }
 
@@ -1078,7 +1085,10 @@
 	Epoch        2452200.5
 	}
 
-	RotationPeriod  180
+	Obliquity       35
+	RotationPeriod  129.6 # 5.41 days
+	PrecessionRate  48.98 # 7.35 day period
+
 	Albedo            0.16
 }
 
