@@ -1130,7 +1130,28 @@ setupLightSources(const vector<const Star*>& nearStars,
             Renderer::LightSource ls;
             ls.position = Point3d(v.x, v.y, v.z);
             ls.luminosity = (*iter)->getLuminosity();
-            ls.color = Color::White;
+
+            // If the star is sufficiently cool, change the light color
+            // from white.  Though our sun appears yellow, we still make
+            // it and all hotter stars emit white light, as this is the
+            // 'natural' light to which our eyes are accustomed.  We also
+            // assign a slight bluish tint to light from O and B type stars,
+            // though these will almost never have planets for their light
+            // to shine upon.
+            float temp = (*iter)->getTemperature();
+            if (temp > 30000.0f)
+                ls.color = Color(0.8f, 0.8f, 1.0f);
+            else if (temp > 10000.0f)
+                ls.color = Color(0.9f, 0.9f, 1.0f);
+            else if (temp > 5400.0f)
+                ls.color = Color(1.0f, 1.0f, 1.0f);
+            else if (temp > 3900.0f)
+                ls.color = Color(1.0f, 0.9f, 0.8f);
+            else if (temp > 2000.0f)
+                ls.color = Color(1.0f, 0.7f, 0.7f);
+            else
+                ls.color = Color(1.0f, 0.4f, 0.4f);
+
             lightSources.push_back(ls);
         }
     }
@@ -2130,17 +2151,17 @@ struct RenderInfo
 };
 
 
-// Used to sort light sources in order of decreasing intensity
-struct LightIntensityPredicate
+// Used to sort light sources in order of decreasing irradiance
+struct LightIrradiancePredicate
 {
     int unused;
 
-    LightIntensityPredicate() {};
+    LightIrradiancePredicate() {};
 
     bool operator()(const DirectionalLight& l0,
                     const DirectionalLight& l1) const
     {
-        return (l0.intensity > l1.intensity);
+        return (l0.irradiance > l1.irradiance);
     }
 };
 
@@ -4367,7 +4388,7 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
         float distance = ls.lights[i].direction_eye.length();
         ls.lights[i].direction_eye *= 1.0f / distance;
         distance = astro::kilometersToAU((float) dir.length());
-        ls.lights[i].intensity = suns[i].luminosity / (distance * distance);
+        ls.lights[i].irradiance = suns[i].luminosity / (distance * distance);
         ls.lights[i].color = suns[i].color;
     }
 
@@ -4375,31 +4396,66 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
     // brightest.  Optimize common cases of one and two lights.
     if (nLights == 2)
     {
-        if (ls.lights[0].intensity < ls.lights[1].intensity)
+        if (ls.lights[0].irradiance < ls.lights[1].irradiance)
             swap(ls.lights[0], ls.lights[1]);
     }
     else if (nLights > 2)
     {
-        sort(ls.lights, ls.lights + nLights, LightIntensityPredicate());
+        sort(ls.lights, ls.lights + nLights, LightIrradiancePredicate());
     }
 
-    // After sorting, the first light is always the brightest
-    float maxIntensity = ls.lights[0].intensity;
-    Mat3f m = (~objOrientation).toMatrix3();
+    // Compute the total irradiance
+    float totalIrradiance = 0.0f;
+    for (i = 0; i < nLights; i++)
+        totalIrradiance += ls.lights[i].irradiance;
 
-    // Normalize the brightnesses of the light sources.
+    // Compute a gamma factor to make dim light sources visible.  This is
+    // intended to approximate what we see with our eyes--for example,
+    // Earth-shine is visible on the night side of the Moon, even though
+    // the amount of reflected light from the Earth is 1/10000 of what
+    // the Moon receives directly from the Sun.
+    //
     // TODO: Skip this step when high dynamic range rendering to floating point
     //   buffers is enabled.
+    float minVisibleFraction = 1.0f / 10000.0f;
+    float minDisplayableValue = 1.0f / 255.0f;
+    double gamma = log(minDisplayableValue) / log(minVisibleFraction);
+    float minVisibleIrradiance = minVisibleFraction * totalIrradiance;
+
+    Mat3f m = (~objOrientation).toMatrix3();
+
+    // Gamma scale and normalize the light sources; cull light sources that
+    // aren't bright enough to contribute the final pixels rendered into the
+    // frame buffer.
+    ls.nLights = 0;
+    for (i = 0; i < nLights && ls.lights[i].irradiance > minVisibleIrradiance; i++)
+    {
+        ls.lights[i].irradiance =
+            (float) pow(ls.lights[i].irradiance / totalIrradiance, gamma);
+
+        // Compute the direction of the light in object space
+        ls.lights[i].direction_obj = ls.lights[i].direction_eye * m;
+
+        ls.nLights++;
+    }
+
+#if 0
+    // Old code: linear scaling approach
+
+    // After sorting, the first light is always the brightest
+    float maxIrradiance = ls.lights[0].irradiance;
+
+    // Normalize the brightnesses of the light sources.
     // TODO: Investigate logarithmic functions for scaling light brightness, to
     //   better simulate what the human eye would see.
     ls.nLights = 0;
     for (i = 0; i < nLights; i++)
     {
-        ls.lights[i].intensity /= maxIntensity;
+        ls.lights[i].irradiance /= maxIrradiance;
         
         // Cull light sources that don't contribute significantly (less than
         // the resolution of an 8-bit color channel.)
-        if (ls.lights[i].intensity < 1.0f / 255.0f)
+        if (ls.lights[i].irradiance < 1.0f / 255.0f)
             break;
 
         // Compute the direction of the light in object space
@@ -4407,6 +4463,7 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
 
         ls.nLights++;
     }
+#endif
 }
               
 
@@ -4530,7 +4587,7 @@ void Renderer::renderObject(Point3f pos,
 
         Vec3f lightColor = Vec3f(light.color.red(),
                                  light.color.green(),
-                                 light.color.blue()) * light.intensity;
+                                 light.color.blue()) * light.irradiance;
         if (useRescaleNormal)
         {
             glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
@@ -4988,63 +5045,6 @@ void Renderer::renderPlanet(Body& body,
         q.yrotate(-rotation);
         rp.orientation = body.getOrientation() *
             Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
-
-        Color sunColor(1.0f, 1.0f, 1.0f);
-        {
-            // If the star is sufficiently cool, change the light color
-            // from white.  Though our sun appears yellow, we still make
-            // it and all hotter stars emit white light, as this is the
-            // 'natural' light to which our eyes are accustomed.  We also
-            // assign a slight bluish tint to light from O and B type stars,
-            // though these will almost never have planets for their light
-            // to shine upon.
-            PlanetarySystem* system = body.getSystem();
-            if (system != NULL)
-            {
-                const Star* sun = system->getStar();
-                float temp = sun->getTemperature();
-                if (temp > 30000.0f)
-                    sunColor = Color(0.8f, 0.8f, 1.0f);
-                else if (temp > 10000.0f)
-                    sunColor = Color(0.9f, 0.9f, 1.0f);
-                else if (temp > 5400.0f)
-                    sunColor = Color(1.0f, 1.0f, 1.0f);
-                else if (temp > 3900.0f)
-                    sunColor = Color(1.0f, 0.9f, 0.8f);
-                else if (temp > 2000.0f)
-                    sunColor = Color(1.0f, 0.7f, 0.7f);
-                else
-                    sunColor = Color(1.0f, 0.4f, 0.4f);
-
-#if 0
-                switch (sun->getStellarClass().getSpectralClass())
-                {
-                case StellarClass::Spectral_O:
-                    sunColor = Color(0.8f, 0.8f, 1.0f);
-                    break;
-                case StellarClass::Spectral_B:
-                    sunColor = Color(0.9f, 0.9f, 1.0f);
-                    break;
-                case StellarClass::Spectral_K:
-                    sunColor = Color(1.0f, 0.9f, 0.8f);
-                    break;
-                case StellarClass::Spectral_M:
-                    sunColor = Color(1.0f, 0.7f, 0.7f);
-                    break;
-                case StellarClass::Spectral_R:
-                case StellarClass::Spectral_S:
-                case StellarClass::Spectral_N:
-                case StellarClass::Spectral_C:
-                    sunColor = Color(1.0f, 0.4f, 0.4f);
-                    break;
-                default:
-                    // Default case to keep gcc from compaining about unhandled
-                    // switch values.
-                    break;
-                }
-#endif
-            }
-        }
 
         rp.locations = body.getLocations();
         if (rp.locations != NULL && (labelMode & LocationLabels) != 0)

@@ -74,7 +74,7 @@ static const unsigned int MaxLights = 8;
 struct DirectionalLight
 {
     Color color;
-    float intensity;
+    float irradiance;
     Vec3f direction_eye;
     Vec3f direction_obj;
 };
