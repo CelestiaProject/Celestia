@@ -23,6 +23,7 @@ struct CelestiaConfig
     std::string galaxyCatalog;
     std::vector<std::string> labelledStars;
     std::string asterismsFile;
+    std::string boundariesFile;
     float faintestVisible;
     std::string favoritesFile;
     std::string initScriptFile;

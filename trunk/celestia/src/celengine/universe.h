@@ -17,6 +17,7 @@
 #include <celengine/solarsys.h>
 #include <celengine/galaxy.h>
 #include <celengine/asterism.h>
+#include <celengine/boundaries.h>
 #include <celengine/selection.h>
 
 
@@ -34,6 +35,8 @@ class Universe
     void setGalaxyCatalog(GalaxyList*);
     AsterismList* getAsterisms() const;
     void setAsterisms(AsterismList*);
+    ConstellationBoundaries* getBoundaries() const;
+    void setBoundaries(ConstellationBoundaries*);
 
     Selection pick(const UniversalCoord& origin,
                    const Vec3f& direction,
@@ -66,6 +69,7 @@ class Universe
     SolarSystemCatalog* solarSystemCatalog;
     GalaxyList* galaxyCatalog;
     AsterismList* asterisms;
+    ConstellationBoundaries* boundaries;
 };
 
 #endif // UNIVERSE_H_

@@ -996,6 +996,18 @@ void Renderer::render(const Observer& observer,
             disableSmoothLines();
     }
 
+    if ((renderFlags & ShowBoundaries) != 0)
+    {
+        glColor4f(0.33f, 0.0, 0.66f, 1.0f);
+        glDisable(GL_TEXTURE_2D);
+        if ((renderFlags & ShowSmoothLines) != 0)
+            enableSmoothLines();
+        if (universe.getBoundaries() != NULL)
+            universe.getBoundaries()->render();
+        if ((renderFlags & ShowSmoothLines) != 0)
+            disableSmoothLines();
+    }
+
     if ((labelMode & GalaxyLabels) != 0 && universe.getGalaxyCatalog() != NULL)
         labelGalaxies(*universe.getGalaxyCatalog(), observer);
     if ((labelMode & StarLabels) != 0 && universe.getStarCatalog() != NULL)
