@@ -28,6 +28,7 @@ libcelengine_a_SOURCES = \
 	galaxy.cpp \
 	glcontext.cpp \
 	glext.cpp \
+	glshader.cpp \
 	image.cpp \
 	jpleph.cpp \
 	location.cpp \
@@ -51,6 +52,7 @@ libcelengine_a_SOURCES = \
 	render.cpp \
         samporbit.cpp \
 	selection.cpp \
+	shadermanager.cpp \
 	simulation.cpp \
 	solarsys.cpp \
 	spheremesh.cpp \
