@@ -7,6 +7,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
 #include <string>
 #include <vector>
 
@@ -17,8 +20,10 @@ struct CelestiaConfig
     std::vector<std::string> solarSystemFiles;
     std::vector<std::string> labelledStars;
     float faintestVisible;
+    std::string favoritesFile;
 };
 
 
 CelestiaConfig* ReadCelestiaConfig(string filename);
 
+#endif // _CONFIG_H_
