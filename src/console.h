@@ -67,8 +67,6 @@ class Console : public std::ostream
     void print(char*);
     void printf(char*, ...);
 
-    //    Console& operator<<(string);
-
  private:
     int nRows;
     int nColumns;
