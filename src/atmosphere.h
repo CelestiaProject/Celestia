@@ -11,18 +11,25 @@
 #define _ATMOSPHERE_H_
 
 #include "basictypes.h"
+#include "reshandle.h"
 #include "color.h"
 
 
 class Atmosphere
 {
  public:
-    Atmosphere() : height(0.0f) {};
+    Atmosphere() :
+        height(0.0f),
+        cloudHeight(0.0f),
+        cloudTex(InvalidResource) {};
+
  public:
     float height;
     Color lowerColor;
     Color upperColor;
     Color skyColor;
+    float cloudHeight;
+    ResourceHandle cloudTex;
 };
 
 #endif // _ATMOSPHERE_H_
