@@ -1297,8 +1297,8 @@ static void displayPlanetInfo(Overlay& overlay,
             {
                 double distFromSun = body.getHeliocentricPosition(t).distanceFromOrigin();
                 float planetTemp = sun->getTemperature() * 
-                    (float) (pow(1 - body.getAlbedo(), 0.25) *
-                             sqrt(sun->getRadius() / (2 * distFromSun)));
+                    (float) (::pow(1.0 - body.getAlbedo(), 0.25) *
+                             sqrt(sun->getRadius() / (2.0 * distFromSun)));
                 overlay << setprecision(0);
                 overlay << "Temperature: " << planetTemp << " K\n";
                 overlay << setprecision(3);
