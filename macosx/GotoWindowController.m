@@ -76,6 +76,7 @@
                 break;
             case UNITS_KM:
                 //NSLog(@"don't have to convert from km");
+                distance = [distanceField doubleValue];
                 break;
             default:
                 //NSLog(@"I don't know what the fuck the button has selected?");
@@ -90,8 +91,8 @@
         [sim 
             gotoSelection:[NSNumber numberWithFloat:5.0]
             distance:[NSNumber numberWithDouble:distance]
-            longitude:[NSNumber numberWithDouble:[longitudeField doubleValue]*(180.0/M_PI)]
-            latitude:[NSNumber numberWithDouble:[latitudeField doubleValue]*(180.0/M_PI)]
+            longitude:[NSNumber numberWithDouble:[longitudeField doubleValue]*(M_PI/180.0)]
+            latitude:[NSNumber numberWithDouble:[latitudeField doubleValue]*(M_PI/180.0)]
             up:up
         ];
     } else {
