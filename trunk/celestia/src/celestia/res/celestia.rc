@@ -709,6 +709,12 @@ IDB_CAMERA              BITMAP  DISCARDABLE     "camera2.bmp"
 IDB_CAMCORDER           BITMAP  DISCARDABLE     "camcorder2.bmp"
 IDB_SCRIPT              BITMAP  DISCARDABLE     "script2.bmp"
 IDB_CLOCK               BITMAP  DISCARDABLE     "clock2.bmp"
+IDB_STOP                BITMAP  DISCARDABLE     "stop.bmp"
+IDB_EXIT                BITMAP  DISCARDABLE     "exit.bmp"
+IDB_ABOUT               BITMAP  DISCARDABLE     "about.bmp"
+IDB_CONFIG              BITMAP  DISCARDABLE     "config.bmp"
+IDB_SUNGLASSES          BITMAP  DISCARDABLE     "sunglasses.bmp"
+IDB_GLOBE               BITMAP  DISCARDABLE     "globe.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
