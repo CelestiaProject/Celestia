@@ -1783,7 +1783,7 @@
 	RotationPeriod 10     # guess
 }
 
-"b" "HD 186408"   # 16 Cyg
+"b" "HD 186427"   # 16 Cyg B
 {
 	Texture "jupiterlike.jpg"
 
