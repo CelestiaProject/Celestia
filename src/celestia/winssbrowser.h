@@ -19,6 +19,7 @@ class SolarSystemBrowser
 {
  public:
     SolarSystemBrowser(HINSTANCE, HWND, CelestiaCore*);
+    ~SolarSystemBrowser();
 
  public:
     CelestiaCore* appCore;
