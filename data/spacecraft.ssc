@@ -118,7 +118,7 @@
 }
 
 
-"Huygens" "Sol/Cassini" 
+"Huygens (with Cassini)" "Sol/Cassini" 
 {
 	Class "spacecraft"
 	Mesh "huygens.3ds"
@@ -138,7 +138,7 @@
 	}
 }
 
-"Huygens" "Sol" 
+"Huygens (free flight)" "Sol" 
 {
 	Class "spacecraft"
 	Mesh "huygens.3ds"
