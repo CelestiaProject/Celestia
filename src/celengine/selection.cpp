@@ -20,8 +20,8 @@ double Selection::radius() const
         return star->getRadius();
     else if (body != NULL)
         return body->getRadius();
-    else if (galaxy != NULL)
-        return astro::lightYearsToKilometers(galaxy->getRadius());
+    else if (deepsky != NULL)
+        return astro::lightYearsToKilometers(deepsky->getRadius());
     else
         return 0.0;
 }
@@ -48,9 +48,9 @@ UniversalCoord Selection::getPosition(double t) const
         return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
                                         star->getPosition());
     }
-    else if (galaxy != NULL)
+    else if (deepsky != NULL)
     {
-        Point3d p = galaxy->getPosition();
+        Point3d p = deepsky->getPosition();
         return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
                                         Point3f((float) p.x, (float) p.y, (float) p.z));
     }
@@ -69,9 +69,9 @@ string Selection::getName() const
         sprintf(buf, "#%d", star->getCatalogNumber());
         return string(buf);
     }
-    else if (galaxy != NULL)
+    else if (deepsky != NULL)
     {
-        return galaxy->getName();
+        return deepsky->getName();
     }
     else if (body != NULL)
     {

@@ -258,12 +258,12 @@ const DestinationList* CelestiaCore::getDestinations()
 // Used in the super-secret edit mode
 void showSelectionInfo(const Selection& sel)
 {
-    if (sel.galaxy != NULL)
+    if (sel.deepsky != NULL)
     {
-        cout << sel.galaxy->getName() << '\n';
+        cout << sel.deepsky->getName() << '\n';
         Vec3f axis;
         float angle;
-        sel.galaxy->getOrientation().getAxisAngle(axis, angle);
+        sel.deepsky->getOrientation().getAxisAngle(axis, angle);
         cout << "Orientation: " << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
     }
 }
@@ -370,14 +370,14 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             // Rotate the selected object
             Selection sel = sim->getSelection();
             Quatf q(1);
-            if (sel.galaxy != NULL)
-                q = sel.galaxy->getOrientation();
+            if (sel.deepsky != NULL)
+                q = sel.deepsky->getOrientation();
 
             q.yrotate(dx / width);
             q.xrotate(dy / height);
 
-            if (sel.galaxy != NULL)
-                sel.galaxy->setOrientation(q);
+            if (sel.deepsky != NULL)
+                sel.deepsky->setOrientation(q);
         }
         else if (checkMask(modifiers, LeftButton | RightButton) ||
                  checkMask(modifiers, LeftButton | ControlKey))
@@ -1458,9 +1458,6 @@ static void displayGalaxyInfo(Overlay& overlay,
                               Galaxy& galaxy,
                               double distance)
 {
-    overlay << "Distance: ";
-    displayDistance(overlay, distance);
-    overlay << '\n';
     overlay << "Type: " << galaxy.getType() << '\n';
     overlay << "Radius: " << galaxy.getRadius() << " ly\n";
 }
@@ -1471,8 +1468,8 @@ static void displaySelectionName(Overlay& overlay,
 {
     if (sel.body != NULL)
         overlay << sel.body->getName();
-    else if (sel.galaxy != NULL)
-        overlay << sel.galaxy->getName();
+    else if (sel.deepsky != NULL)
+        overlay << sel.deepsky->getName();
     else if (sel.star != NULL)
         displayStarNames(overlay, *sel.star, *univ.getStarCatalog(), 1);
 }
@@ -1693,14 +1690,19 @@ void CelestiaCore::renderOverlay()
                               sim->getTime(),
                               v.length() * 1e-6);
         }
-        else if (sel.galaxy != NULL)
+        else if (sel.deepsky != NULL)
         {
             overlay->setFont(titleFont);
-            *overlay << sel.galaxy->getName();
+            *overlay << sel.deepsky->getName();
             overlay->setFont(font);
             *overlay << '\n';
+            *overlay << "Distance: ";
+            displayDistance(*overlay, v.length() * 1e-6);
+            *overlay << '\n';
+#if 0
             displayGalaxyInfo(*overlay, hudDetail, *sel.galaxy,
                               v.length() * 1e-6);
+#endif
         }
         overlay->endText();
 
@@ -1946,17 +1948,17 @@ bool CelestiaCore::initSimulation()
         }
     }
 
-    if (config->galaxyCatalog != "")
+    if (config->deepSkyCatalog != "")
     {
-        ifstream galaxiesFile(config->galaxyCatalog.c_str(), ios::in);
-        if (!galaxiesFile.good())
+        ifstream deepSkyFile(config->deepSkyCatalog.c_str(), ios::in);
+        if (!deepSkyFile.good())
         {
-            warning("Error opening galaxies file.");
+            warning("Error opening deep sky file.\n");
         }
         else
         {
-            GalaxyList* galaxies = ReadGalaxyList(galaxiesFile);
-            universe->setGalaxyCatalog(galaxies);
+            DeepSkyCatalog* catalog = ReadDeepSkyCatalog(deepSkyFile);
+            universe->setDeepSkyCatalog(catalog);
         }
     }
 
