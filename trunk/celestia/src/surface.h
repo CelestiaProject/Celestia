@@ -33,6 +33,7 @@ class Surface
     std::string baseTexture;
     std::string bumpTexture;
     uint32 appearanceFlags;
+    float bumpHeight;
 };
 
 #endif // _SURFACE_H_
