@@ -312,6 +312,7 @@ static gint TourGuideGoto(GtkWidget* w, gpointer data)
         Selection sel = sim->findObjectFromPath(selectedDest->target);
         if (!sel.empty())
         {
+            sim->follow();
             sim->setSelection(sel);
             if (selectedDest->distance <= 0)
             {
