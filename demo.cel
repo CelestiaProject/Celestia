@@ -9,8 +9,8 @@
 	print { text "Let's start near home . . ." }
 	select { object "Sol/Earth" }
 	cancel {}
-	setorientation { axis [ 1 0 0 ] angle 180 }
-	goto { time 0  distance 3 }
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
 	wait { duration 1.5 }
 
 	print { text "We're now orbiting about 20,000km above the Earth" }
@@ -22,14 +22,14 @@
 
 	print { text "Next stop: the Moon." }
 	select { object "Moon" }
-	goto { time 5 distance 4 }
+	goto { time 5 distance 4 upframe "equatorial" }
 	wait { duration 5.5 }
 	print { text "Watch for the Earth and Sun as we orbit the Moon" }
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
 	
 	print { text "Off toward the Sun." }
 	select { object "Sol" }
-	goto { time 8 distance 12 }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
 	wait { duration 8.5 }
 	print { text "At this distance, dark sunspots are visible on the Sun's surface." }
 	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
@@ -55,7 +55,7 @@
 	select { object "Saturn" }
 	center { time 2 }
 	wait { duration 2 }
-	goto { time 8 distance 6 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
 	wait { duration 6.5 }
 	renderflags { clear "orbits" }
 	labels { clear "planets" }
@@ -65,7 +65,7 @@
 	orbit { axis [ 0 1 0 ] rate 30 duration 9 }
 	
 	select { object "Mimas" }
-	goto { time 5 distance 4 }
+	goto { time 5 distance 4 upframe "equatorial" }
 	print { text "The most prominent feature on Saturn's moon Mimas is the huge impact crater Herschel." }
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	print { text "" }
@@ -147,7 +147,7 @@
 	print { text "Time to go home . . ." }
 
 	select { object "Sol/Earth" }
-	goto { time 20 distance 10 }
+	goto { time 20 distance 10 upframe "equatorial" }
 	wait { duration 20.0 }
 	print { text "Demo completed." }
 	wait { duration 3.0 }
