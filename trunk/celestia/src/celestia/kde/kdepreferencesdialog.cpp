@@ -108,10 +108,6 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showEclipseShadows")->connect(showEclipseShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
     showEclipseShadowsCheck->setChecked(renderFlags & Renderer::ShowEclipseShadows);
 
-    QCheckBox* showStarsAsPointsCheck = new QCheckBox(i18n("Stars As Points"), showGroup);
-    actionColl->action("showStarsAsPoints")->connect(showStarsAsPointsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showStarsAsPointsCheck->setChecked(renderFlags & Renderer::ShowStarsAsPoints);
-
     QCheckBox* showRingShadowsCheck = new QCheckBox(i18n("Ring Shadows"), showGroup);
     actionColl->action("showRingShadows")->connect(showRingShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
     showRingShadowsCheck->setChecked(renderFlags & Renderer::ShowRingShadows);
