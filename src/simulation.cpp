@@ -17,6 +17,7 @@
 #include "perlin.h"
 #include "astro.h"
 #include "simulation.h"
+#include "solve.h"
 
 using namespace std;
 
@@ -207,10 +208,59 @@ void Simulation::update(double dt)
     {
         float t = clamp((realTime - journey.startTime) / journey.duration);
 
-        // Smooth out the linear interpolation of position
-        float u = (float) sin(sin(t * PI / 2) * PI / 2);
         Vec3d jv = journey.to - journey.from;
-        UniversalCoord p = journey.from + jv * (double) u;
+        UniversalCoord p;
+#if 0
+        {
+            // Smooth out the linear interpolation of position with sin(sin())
+            float u = (float) sin(sin(t * PI / 2) * PI / 2);
+            p = journey.from + jv * (double) u;
+        }
+#endif
+
+#if 0
+        // Another interpolation technique . . . the first half of the
+        // trip we accelerate, with x = e^(mt), where m is a value constant
+        // for a single trip that is computed from the trip distance.  The
+        // second half of the trip is a mirror of the first.
+        {
+            double c = astro::kilometersToLightYears(1.0);
+            double distance = astro::lightYearsToKilometers((journey.from - journey.to).length());
+            double m = 2.0 * log(distance / 2.0 + 1.0);
+            Vec3d v = jv;
+            v.normalize();
+            if (t < 0.5)
+                p = journey.from + v * astro::kilometersToLightYears(exp(m * t) - 1.0);
+            else
+                p = journey.to - v * astro::kilometersToLightYears(exp(m * (1.0 - t)) - 1.0);
+        }
+#endif
+        // Another interpolation method . . . accelerate exponentially,
+        // maintain a constant velocity for a period of time, then
+        // decelerate.  The portion of the trip spent accelerating is
+        // controlled by the parameter journey.accelTime; a value of 1 means
+        // that the entire first half of the trip will be spent accelerating
+        // and there will be no coasting at constant velocity.
+        {
+            double u = t < 0.5 ? t * 2 : (1 - t) * 2;
+            double x;
+            if (u < journey.accelTime)
+            {
+                x = exp(journey.expFactor * u) - 1.0;
+            }
+            else
+            {
+                x = exp(journey.expFactor * journey.accelTime) *
+                    (journey.expFactor * (u - journey.accelTime) + 1) - 1;
+            }
+
+            Vec3d v = jv;
+            v.normalize();
+            if (t < 0.5)
+                p = journey.from + v * astro::kilometersToLightYears(x);
+            else
+                p = journey.to - v * astro::kilometersToLightYears(x);
+        }
 
         // Interpolate the orientation using lookAt()
         // We gradually change the focus point for lookAt() from the initial 
@@ -223,8 +273,8 @@ void Simulation::update(double dt)
         Quatf orientation;
         if (t < 0.5f)
         {
-            // Smooth out the interpolation of the focus point to avoid
-            // jarring changes in orientation
+            // Smooth out the interpolation to avoid jarring changes in
+            // orientation
             double v = sin(t * PI);
 
             double c = lookDir0 * lookDir1;
@@ -643,6 +693,21 @@ Vec3d toUniversal(const Vec3d& v,
     }
 }
 
+#if 1
+struct TravelExpFunc : public unary_function<double, double>
+{
+    double dist, s;
+
+    TravelExpFunc(double d, double _s) : dist(d), s(_s) {};
+
+    double operator()(double x) const
+    {
+        // return (1.0 / x) * (exp(x / 2.0) - 1.0) - 0.5 - dist / 2.0;
+        return exp(x * s) * (x * (1 - s) + 1) - 1 - dist;
+    }
+};
+#endif
+
 
 void Simulation::computeGotoParameters(Selection& destination,
                                        JourneyParams& jparams,
@@ -654,6 +719,7 @@ void Simulation::computeGotoParameters(Selection& destination,
 {
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
     Vec3d v = targetPosition - observer.getPosition();
+    double distance = astro::lightYearsToKilometers(v.length());
     v.normalize();
 
     jparams.duration = gotoTime;
@@ -678,10 +744,17 @@ void Simulation::computeGotoParameters(Selection& destination,
     Vec3d vn = targetPosition - jparams.to;
     Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
     jparams.finalOrientation = lookAt(Point3f(0, 0, 0), to, jparams.up);
+
+    jparams.accelTime = 0.5;
+    pair<double, double> sol = solve_bisection(TravelExpFunc(distance / 2.0, jparams.accelTime),
+                                               0.0001, 100.0,
+                                               1e-10);
+    jparams.expFactor = sol.first;
 }
 
 
-void Simulation::computeCenterParameters(Selection& destination, JourneyParams& jparams,
+void Simulation::computeCenterParameters(Selection& destination,
+                                         JourneyParams& jparams,
                                          double centerTime)
 {
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
@@ -702,6 +775,9 @@ void Simulation::computeCenterParameters(Selection& destination, JourneyParams& 
     Vec3d vn = targetPosition - jparams.to;
     Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
     jparams.finalOrientation = lookAt(Point3f(0, 0, 0), to, jparams.up);
+
+    jparams.accelTime = 0.5;
+    jparams.expFactor = 0;
 }
 
 Observer& Simulation::getObserver()
@@ -858,6 +934,8 @@ void Simulation::gotoSelection(double gotoTime,
             maxOrbitDistance = astro::kilometersToLightYears(5.0f * selection.body->getRadius());
         else if (selection.galaxy != NULL)
             maxOrbitDistance = 5.0f * selection.galaxy->getRadius();
+        else if (selection.star != NULL)
+            maxOrbitDistance = astro::kilometersToLightYears(100.0f * selection.star->getRadius());
         else
             maxOrbitDistance = 0.5f;
         double orbitDistance = (distance > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distance * 0.1f;
