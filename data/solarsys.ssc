@@ -361,13 +361,13 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	EllipticalOrbit
 	{
 	Epoch      2452583.763194445 # 2002 Nov 5 06:19UT (Galileo encounter)
-	Period          0.49817905
-	SemiMajorAxis   181994.98
-	Eccentricity    0.0046637841
-	Inclination     0.39217201
-	AscendingNode   224.4139186
-	ArgOfPericenter 293.4707817
-	MeanAnomaly     319.3794140
+	Period          0.498179     # mean
+	SemiMajorAxis   181994.78    # at epoch
+	Eccentricity    0.0045045    # at epoch 
+	Inclination     0.384285     # at epoch
+	AscendingNode   220.288958   # at epoch
+	ArgOfPericenter 301.622765   # at epoch
+	MeanAnomaly     315.352094   # at epoch
 	}
 
 	Obliquity		  0.0
@@ -855,14 +855,14 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 
 	EllipticalOrbit
 	{
-	Epoch           2453168.0  # 2004 June 11 (Cassini encounter)
-	Period          548.21     # mean
-	SemiMajorAxis   12916143   # at epoch
-	Eccentricity      0.152920 # at epoch
-	Inclination     151.659503 # at epoch
-	AscendingNode    14.379445 # at epoch
-	ArgOfPericenter 281.133384 # at epoch
-	MeanAnomaly      31.543967 # at epoch
+	Epoch           2453168.0      # 2004 June 11 (Cassini encounter)
+	Period          548.21         # mean
+	SemiMajorAxis   12916142.654   # at epoch
+	Eccentricity      0.15292058   # at epoch
+	Inclination     151.66950297   # at epoch
+	AscendingNode    14.37944510   # at epoch
+	ArgOfPericenter 281.13338408   # at epoch
+	MeanAnomaly      31.54396743   # at epoch
 	}
 
 	RotationPeriod		  9.282
