@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.4.0pre2
+AppVerName=Celestia 1.4.0pre6
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -58,6 +58,9 @@ Source: "data\asterisms.dat";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\boundaries.dat";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\starnames.dat";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\stars.dat";          DestDir: "{app}/data"; Flags: ignoreversion
+
+Source: "data\hdxindex.dat";       DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\saoxindex.dat";      DestDir: "{app}/data"; Flags: ignoreversion
 
 Source: "data\extrasolar.stc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\nearstars.stc";      DestDir: "{app}/data"; Flags: ignoreversion
