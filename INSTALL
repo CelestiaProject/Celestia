@@ -18,8 +18,13 @@ even though you have Gtk+ and GtkGLArea, run configure with --without-gtk:
 
 	configure --without-gtk
 
-The GtkGLArea widget thats is required in order to build Celestia with Gtk+ may
-be downloaded from http://www.student.oulu.fi/~jlof/gtkglarea/
+The GtkGLArea widget that is required in order to build Celestia with Gtk+ may
+be downloaded from http://www.student.oulu.fi/~jlof/gtkglarea/ . Note that
+depending in your Installation Distributions you may also need other packages
+containing various information needed by the build process, for instance, to
+build under SUSE Linux, you will also need to have the gtk-devel package
+installed, and having GNOME's devel packages present also is probably not
+a bad idea.
 
 Celestia will be installed into /usr/local by default, with data files landing
 in /usr/local/share/Celestia , but you may specify a new location with the
