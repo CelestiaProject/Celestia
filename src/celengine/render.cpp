@@ -3103,7 +3103,10 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     if (ri.nightTex != NULL)
     {
         ri.nightTex->bind();
-        vproc->use(vp::nightLights);
+        if (ls.nLights > 1)
+            vproc->use(vp::nightLights_2light);
+        else
+            vproc->use(vp::nightLights);
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
@@ -3277,7 +3280,10 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
     if (ri.nightTex != NULL)
     {
         ri.nightTex->bind();
-        vproc->use(vp::nightLights);
+        if (ls.nLights > 1)
+            vproc->use(vp::nightLights_2light);
+        else
+            vproc->use(vp::nightLights);
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
@@ -5167,8 +5173,9 @@ void Renderer::renderStar(const Star& star,
         RenderProperties rp;
 
         surface.color = color;
-        ResourceHandle tex;
 #if 0
+        ResourceHandle tex;
+
         switch (star.getStellarClass().getSpectralClass())
         {
         case StellarClass::Spectral_O:
@@ -5206,8 +5213,7 @@ void Renderer::renderStar(const Star& star,
         }
         else
         {
-            tex = starTexA;
-            surface.baseTexture = MultiResTexture(tex, tex, tex);
+            surface.baseTexture = InvalidResource;
         }
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;

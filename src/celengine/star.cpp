@@ -13,6 +13,7 @@
 #include "astro.h"
 #include "orbit.h"
 #include "star.h"
+#include "texmanager.h"
 
 
 // The value of the temperature of the sun is actually 5780, but the
@@ -39,6 +40,12 @@ struct SpectralTypeInfo
     float temperature;
     float rotationPeriod;
 };
+
+ResourceHandle StarDetails::starTexB = InvalidResource;
+ResourceHandle StarDetails::starTexA = InvalidResource;
+ResourceHandle StarDetails::starTexG = InvalidResource;
+ResourceHandle StarDetails::starTexM = InvalidResource;
+ResourceHandle StarDetails::starTexL = InvalidResource;
 
 static StarDetails** normalStarDetails = NULL;
 static StarDetails** whiteDwarfDetails = NULL;
@@ -533,6 +540,16 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
 
         normalStarDetails[index] = CreateStandardStarType(name, temp, period);
         normalStarDetails[index]->setBolometricCorrection(bmagCorrection);
+        
+        if (specClass == StellarClass::Spectral_L ||
+            specClass == StellarClass::Spectral_T)
+        {
+            normalStarDetails[index]->setTexture(MultiResTexture(starTexL, starTexL, starTexL));
+        }
+        else
+        {
+            normalStarDetails[index]->setTexture(MultiResTexture(starTexA, starTexA, starTexA));
+        }
     }
 
     return normalStarDetails[index];
@@ -580,6 +597,7 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
         float period = 1.0f / 48.0f;
         
         whiteDwarfDetails[index] = CreateStandardStarType(name, temp, period);
+        whiteDwarfDetails[index]->setTexture(MultiResTexture(starTexA, starTexA, starTexA));
     }
 
     return whiteDwarfDetails[index];
@@ -597,6 +615,7 @@ StarDetails::GetNeutronStarDetails()
                                                     1.0f / 86400.0f);
         neutronStarDetails->setRadius(10.0f);
         neutronStarDetails->addKnowledge(KnowRadius);
+        neutronStarDetails->setTexture(MultiResTexture(starTexA, starTexA, starTexA));
     }
 
     return neutronStarDetails;
@@ -635,6 +654,17 @@ StarDetails::GetBarycenterDetails()
     }
 
     return barycenterDetails;
+}
+
+
+void
+StarDetails::InitializeStarTextures()
+{
+    starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg", 0));
+    starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg", 0));
+    starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg", 0));
+    starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg", 0));
+    starTexL = GetTextureManager()->getHandle(TextureInfo("browndwarf.jpg", 0));
 }
 
 
@@ -724,6 +754,14 @@ StarDetails::setOrbitBarycenter(Star* bc)
 {
     barycenter = bc;
     computeOrbitalRadius();
+}
+
+
+void
+StarDetails::setOrbitalRadius(float r)
+{
+    if (orbit != NULL)
+        orbitalRadius = r;
 }
 
 
