@@ -30,7 +30,6 @@ Simulation::Simulation() :
     stardb(NULL),
     solarSystemCatalog(NULL),
     galaxies(NULL),
-    visibleStars(NULL),
     closestSolarSystem(NULL),
     selection(),
     targetSpeed(0.0),
@@ -147,13 +146,11 @@ void  Simulation::render(Renderer& renderer)
 
     if (hudDetail > 0)
     {
-        // console->printf("Visible stars = %d\n", visibleStars->getVisibleSet()->size());
         displaySelectionInfo(*console);
     }
 
     renderer.render(observer,
                     *stardb,
-                    *visibleStars,
                     faintestVisible,
                     closestSolarSystem,
                     galaxies,
@@ -176,8 +173,10 @@ static Quatf lookAt(Point3f from, Point3f to, Vec3f up)
 
 SolarSystem* Simulation::getSolarSystem(Star* star)
 {
+    if (star == NULL)
+        return NULL;
+
     uint32 starNum = star->getCatalogNumber();
-    
     SolarSystemCatalog::iterator iter = solarSystemCatalog->find(starNum);
     if (iter == solarSystemCatalog->end())
         return NULL;
@@ -244,28 +243,6 @@ void Simulation::setStarDatabase(StarDatabase* db,
     stardb = db;
     solarSystemCatalog = catalog;
     galaxies = galaxyList;
-
-    if (visibleStars != NULL)
-    {
-        delete visibleStars;
-        visibleStars = NULL;
-    }
-    if (db != NULL)
-    {
-        visibleStars = new VisibleStarSet(stardb);
-        visibleStars->setLimitingMagnitude(faintestVisible);
-        visibleStars->setCloseDistance(10.0f);
-        visibleStars->updateAll(observer);
-
-#if 0
-        visTree = new StarOctree(Point3f(1000, 1000, 1000), 5000.0f, 6.0f);
-        for (int i = 0; i < (int) db->size(); i++)
-            visTree->insertStar(*db->getStar(i));
-
-        cout << "Node count: " << visTree->countNodes() << "\n";
-        cout << "Total stars: " << visTree->countStars() << "\n";
-#endif
-    }
 }
 
 
@@ -279,6 +256,31 @@ double Simulation::getTime() const
 void Simulation::setTime(double jd)
 {
     simTime = jd;
+}
+
+
+class ClosestStarFinder : public StarHandler
+{
+public:
+    ClosestStarFinder(float _maxDistance);
+    ~ClosestStarFinder() {};
+    void process(const Star& star, float distance, float appMag);
+
+public:
+    float maxDistance;
+    float closestDistance;
+    Star* closestStar;
+};
+
+ClosestStarFinder::ClosestStarFinder(float _maxDistance) :
+    maxDistance(_maxDistance), closestDistance(_maxDistance), closestStar(NULL)
+{
+}
+
+void ClosestStarFinder::process(const Star& star, float distance, float appMag)
+{
+    if (distance < closestDistance)
+        closestStar = const_cast<Star*>(&star);
 }
 
 
@@ -370,26 +372,11 @@ void Simulation::update(double dt)
         observer.update(dt);
     }
 
-#if 0
-    if (visibleStars != NULL)
-        visibleStars->update(observer, 0.05f);
-#endif
-
     // Find the closest solar system
     Point3f observerPos = (Point3f) observer.getPosition();
-    vector<uint32>* closeStars = visibleStars->getCloseSet();
-    for (int i = 0; i < (int) closeStars->size(); i++)
-    {
-        uint32 starIndex = (*closeStars)[i];
-        Star* star = stardb->getStar(starIndex);
-        if (observerPos.distanceTo(star->getPosition()) < 1.0f)
-        {
-            SolarSystem* solarSystem = getSolarSystem(star);
-            if (solarSystem != NULL)
-                closestSolarSystem = solarSystem;
-        }
-    }
-
+    ClosestStarFinder closestFinder(1.0f);
+    stardb->findCloseStars(closestFinder, observerPos, 1.0f);
+    closestSolarSystem = getSolarSystem(closestFinder.closestStar);
 }
 
 
@@ -502,36 +489,62 @@ Selection Simulation::pickPlanet(Observer& observer,
 }
 
 
+/*
+ * StarPicker is a callback class for StarDatabase::findVisibleStars
+ */
+class StarPicker : public StarHandler
+{
+public:
+    StarPicker(const Point3f&, const Vec3f&, float);
+    ~StarPicker() {};
+
+    void process(const Star&, float, float);
+
+public:
+    const Star* pickedStar;
+    Point3f pickOrigin;
+    Vec3f pickRay;
+    float cosAngleClosest;
+};
+
+StarPicker::StarPicker(const Point3f& _pickOrigin, const Vec3f& _pickRay,
+                       float angle) :
+    pickedStar(NULL),
+    pickOrigin(_pickOrigin),
+    pickRay(_pickRay),
+    cosAngleClosest((float) cos(angle))
+{
+}
+
+void StarPicker::process(const Star& star, float distance, float appMag)
+{
+    Vec3f starDir = star.getPosition() - pickOrigin;
+    starDir.normalize();
+
+    float cosAngle = starDir * pickRay;
+    if (cosAngle > cosAngleClosest)
+    {
+        cosAngleClosest = cosAngle;
+        pickedStar = &star;
+    }
+}
+
+
 Selection Simulation::pickStar(Vec3f pickRay)
 {
+    float angle = degToRad(0.5f);
+
     // Transform the pick direction
     pickRay = pickRay * observer.getOrientation().toMatrix4();
 
-    Point3f observerPos = (Point3f) observer.getPosition();
-    vector<uint32>* vis = visibleStars->getVisibleSet();
-    int nStars = vis->size();
-
-
-    float cosAngleClosest = -1.0f;
-    int closest = -1;
-
-    for (int i = 0; i < nStars; i++)
-    {
-        int starIndex = (*vis)[i];
-        Star* star = stardb->getStar(starIndex);
-        Vec3f starDir = star->getPosition() - observerPos;
-        starDir.normalize();
-        
-        float cosAngle = starDir * pickRay;
-        if (cosAngle > cosAngleClosest)
-        {
-            cosAngleClosest = cosAngle;
-            closest = starIndex;
-        }
-    }
-
-    if (cosAngleClosest > cos(degToRad(0.5f)))
-        return Selection(stardb->getStar(closest));
+    StarPicker picker((Point3f) observer.getPosition(), pickRay, angle);
+    stardb->findVisibleStars(picker,
+                             (Point3f) observer.getPosition(),
+                             observer.getOrientation(),
+                             angle, 1.0f,
+                             faintestVisible);
+    if (picker.pickedStar != NULL)
+        return Selection(const_cast<Star*>(picker.pickedStar));
     else
         return Selection();
 }
@@ -540,22 +553,13 @@ Selection Simulation::pickStar(Vec3f pickRay)
 Selection Simulation::pickObject(Vec3f pickRay)
 {
     Point3f observerPos = (Point3f) observer.getPosition();
-    vector<uint32>* closeStars = visibleStars->getCloseSet();
     Selection sel;
 
-    for (int i = 0; i < (int) closeStars->size(); i++)
+    if (closestSolarSystem != NULL)
     {
-        uint32 starIndex = (*closeStars)[i];
-        Star* star = stardb->getStar(starIndex);
-
-        // Only attempt to pick planets if the star is less
-        // than one light year away.  Seems like a reasonable limit . . .
-        if (observerPos.distanceTo(star->getPosition()) < 1.0f)
-        {
-            SolarSystem* solarSystem = getSolarSystem(star);
-            if (solarSystem != NULL)
-                sel = pickPlanet(observer, *star, *solarSystem, pickRay);
-        }
+        Star* sun = stardb->find(closestSolarSystem->getPlanets()->getStarNumber());
+        if (sun != NULL)
+            sel = pickPlanet(observer, *sun, *closestSolarSystem, pickRay);
     }
 
     if (sel.empty())
@@ -911,7 +915,6 @@ float Simulation::getFaintestVisible() const
 void Simulation::setFaintestVisible(float magnitude)
 {
     faintestVisible = magnitude;
-    visibleStars->setLimitingMagnitude(faintestVisible);
 }
 
 
