@@ -1,0 +1,215 @@
+Celestia Mouse, Keyboard and Joystick Controls
+----------------------------------------------
+
+The controls listed here are sorted by Mouse, Keyboard, and Joystick. Within
+each section and sub-section, the controls are sorted by description.
+
+This list of controls was current as of Celestia version 1.3.2 pre-1 (Feb,
+2004). If you notice that a command is missing or incorrect, please write a
+message in the Celestia Bugs forum, located at ...
+(http://ennui.shatters.net/forum/viewforum.php?f=3). Thank you.
+
+Enjoy your Celestial travels ...
+
+
+MOUSE CONTROLS                                          DESCRIPTION
+--------------                        -------------------------------------------------
+Left Drag ........................... Camera orientation--Up/Down/Left/Right (also Up &
+                                        Down arrows, and 2/8/4/6 on Number Pad with
+                                        NumLock on)
+Shift+Left Dbl Click on an object ... Deselect and Center selected object
+Left Click on no object ............. Deselect currently selected object
+Right Click on an object ............ Display object's context menu if one is available
+Scroll Wheel ........................ Distance to selection adjustment (also Home / End)
+Ctrl+Left Drag ...................... Distance to selection adjustment (also Home / End)
+Left+Right Drag up/down ............. Distance to selection adjustment (also Home / End)
+Shift+Left Drag ..................... Field of View (FOV) adjustment (also "." / ",")
+Middle Button ....................... Field of View (FOV) toggle--between 45 degrees and
+                                        the previous setting (ie. telescopic view)
+Right Drag .......................... Orbit the selected object (also Shift+Arrow keys)
+Left+Right Drag left/right .......... Roll the view left/right (also Left/Right arrows)
+Left Double Click on an object ...... Select and Center object
+Left Click on an object ............. Select object (also, Enter key -- by object name)
+
+
+KEYBOARD CONTROLS                            DESCRIPTION
+------------------ ---------------------------------------------------------------------
+
+Navigation
+----------
+1 ................ Select planet #1 around nearest star
+2 ................ Select planet #2 around nearest star
+3 ................ Select planet #3 around nearest star
+4 ................ Select planet #4 around nearest star
+5 ................ Select planet #5 around nearest star
+6 ................ Select planet #6 around nearest star
+7 ................ Select planet #7 around nearest star
+8 ................ Select planet #8 around nearest star
+9 ................ Select planet #9 around nearest star
+0 (zero) ......... Select parent star of current planet or system
+
+Esc .............. Cancel: scripts, Goto, Follow, Track, Lock, Sync Orbit
+C ................ Center the selected object on the display
+Shift+C .......... Center/orbit--center the selected object without changing the
+                     position of the reference object.
+" ................ Chase selected object (orientation is based on selection's velocity)
+Backspace ........ Select parent of current object or clear the selection:
+                   - If the selection is a location, selects the parent object
+                   - If the selection is an object, selects the parent object or star
+                   - If the selection is a star, clears the selection.
+F ................ Follow selected object
+G ................ Goto selected object
+Ctrl+G ........... Goto surface of selected object
+: ................ Lock two objects together as one (select object #1, press "f", select
+                     object #2, press ":")
+Home ............. Move closer to object
+End .............. Move further away from object
+* ................ Reverse view 180 degrees (look back)
+H ................ Select Sol, our sun (Home system)
+Y ................ Sync Orbit the selected object, at a rate synced to its rotation
+T ................ Track selected object (keep selected object centered on the display)
+
+
+(Navigation via Arrow Keys)
+---------------------------
+Up Arrow ......... Pitch down (moves object Up)
+Down Arrow ....... Pitch up   (moves object Down)
+Left Arrow ....... Roll left  (rolls object Right)
+Right Arrow ...... Roll right (rolls object Left)
+
+Shift+Left Arrow . Orbit object: right (rotates object Left)
+Shift+Right Arrow  Orbit object: left  (rotates object Right)
+Shift+Up Arrow ... Orbit object: down  (rotates object Up)
+Shift+Down Arrow . Orbit object: up    (rotates object Down)
+
+
+(Navigation via number Pad Keys -- with NumLock active)
+-------------------------------------------------------
+8 ................ Pitch down (moves object Up,    also Down arrow)
+2 ................ Pitch up   (moves object Down,  also Up arrow)
+7 ................ Roll left  (rolls object Right, also Left arrow)
+9 ................ Roll right (rolls object Left,  also Right arrow)
+5 ................ Stop rotation
+4 ................ Yaw left
+6 ................ Yaw right
+
+
+Motion (Spaceflight)
+--------------------
+Z ................ Decrease velocity
+A ................ Increase velocity
+Q ................ Reverse direction
+X ................ Set direction toward center of screen
+F2 ............... Set velocity to 1 km/second
+F3 ............... Set velocity to 1,000 km/second
+F4 ............... Set velocity to speed of light (1 c/second)
+F5 ............... Set velocity to 10x the speed of light (c)
+F6 ............... Set velocity to 1 AU/second
+F7 ............... Set velocity to 1 light year/second
+F1 ............... Stop motion
+S ................ Stop motion
+
+
+Time Control
+------------
+Spacebar ......... Pause/Resume the flow of time (toggle)
+J ................ Reverse/Forward time (toggle)
+\ ................ Set time: 1x forward (real time), cancels faster/slower x factors
+L ................ Set time: 10x faster
+K ................ Set time: 10x slower
+! ................ Set time: to current date and time
+
+? ................ Display light-travel delay between observer and selected object
+- (hyphen)........ Subtract light-travel delay from current simulation time
+
+
+What to Label with Text (on/off toggles)
+----------------------------------------
+w ................ Asteroids (lower case w)
+W ................ Comets (Shift+W)
+= ................ Constellations
+E ................ Galaxies
+& ................ Locations
+M ................ Moons
+P ................ Planets
+N ................ Spacecraft
+B ................ Stars
+
+
+What Items to Render/Display (on/off Toggles)
+------------------------------------------------
+Ctrl+A ........... Atmospheres (use Ctrl+Shift+A)
+I ................ Clouds
+Ctrl+T ........... Comet tails
+Ctrl+B ........... Constellation boundaries
+/ ................ Constellation diagrams
+; ................ Earth-based equatorial coordinate sphere
+Ctrl+E ........... Eclipse shadows
+U ................ Galaxies (gray "space-clouds")
+Ctrl+K ........... Markers (placed on objects)
+Ctrl+L ........... Night side planet lights (light pollution)
+O ................ Orbits (displays ALL selected orbits -- menu Render/View Options)
+
+
+Render/Display Options
+----------------------
+{ ................ Ambient Light (Decrease)
+} ................ Ambient Light (Increase)
+Ctrl+X ........... Antialias displayed lines (ie. orbits)
+Ctrl+Y ........... Auto Magnitude toggle (auto adaptation of star visibility to FOV
+Alt+Enter......... Display mode toggle (Full-Screen / Windowed)
+, ................ Field Of View [FOV] (Narrow, also Shift+Left Drag)
+. ................ Field Of View [FOV] (Widen,  also Shift+Left Drag)
+[ ................ Magnitude Limit (decrease):
+                   - If autoMag OFF: Decrease limiting magnitude (fewer stars visible)
+                   - If autoMag ON : Decrease limiting magnitude at 45 deg field of view 
+] ................ Magnitude Limit (increase):
+                   - If autoMag OFF: Increase limiting magnitude (more stars visible)
+                   - If autoMag ON : Increase limiting magnitude at 45 deg field of view 
+Ctrl+P ........... Mark selected object (Marker display must be active -- Ctrl+K)
+r ................ Object file resolution (decrease) -- use texture images in next
+                     lower resolution directory (/celestia/lores-medres-hires)
+R (Shift+R)....... Object file resolution (increase) -- use texture images in next
+                     higher resolution directory (/celestia/lores-medres-hires)
+Ctrl+V ........... OpenGl Render Paths -- Cycle paths supported on your graphics card
++ ................ Planet Texture Type toggle (Artistic / Limit of Knowledge)
+Ctrl+S ........... Star Styles -- Cycle fuzzy discs, points, and scaled discs
+V ................ Informational text verbosity control (None / Terse / Verbose)
+Ctrl+W ........... Wireframe mode toggle
+
+
+Multiview Options
+-----------------
+Tab .............. Cycle through all active views
+Delete ........... Delete active view
+Ctrl+D ........... Delete all views except active one (reset to Single view)
+Ctrl+U ........... Split view horizontally
+Ctrl+R ........... Split view vertically
+
+
+Other Functions
+---------------
+Ctrl+F ........... Alt-azimuth mode toggle. Used with Ctrl-G (Goto surface) Changes
+                     the Left and Right Arrow keys to Yaw Left / Yaw Right
+F10 .............. Capture Image to file (screenshot)
+Shift+F10 ........ Capture Movie to file (video)
+Ctrl+C ........... Copy location URL to clipboard (Cel:// URL)
+Ctrl+Insert ...... Copy location URL to clipboard (Cel:// URL)
+~ ................ Display "file loading" information (toggle)
+` ................ Display "frames per second" (FPS) being rendered (toggle)
+Ctrl+O ........... Display "Select Object" dialog box
+@ ................ Edit Mode toggle (to assist in the placements of objects)
+F8 ............... Joystick Enable/Disable (toggle)
+D ................ Run demo script (/celestia/demo.cel)
+Enter ............ Select any object by entering its name
+
+
+
+JOYSTICK CONTROLS   DESCRIPTION
+------------------ --------------
+X axis ........... Yaw Left/Right
+Y axis ........... Pitch Up/Down
+L trigger ........ Roll Left
+R trigger ........ Roll Right
+Button 1 ......... Move slower
+Button 2 ......... Move faster
