@@ -51,8 +51,8 @@ class ShaderProperties
 };
 
 
-static const int MaxShaderLights = 4;
-static const int MaxShaderShadows = 3;
+static const unsigned int MaxShaderLights = 4;
+static const unsigned int MaxShaderShadows = 3;
 struct CelestiaGLProgramLight
 {
     Vec3ShaderParameter direction;
@@ -118,8 +118,6 @@ class ShaderManager
     GLFragmentShader* buildRingsFragmentShader(const ShaderProperties&);
 
     std::map<ShaderProperties, CelestiaGLProgram*> shaders;
-
-    std::ostream* logFile;
 };
 
 extern ShaderManager& GetShaderManager();

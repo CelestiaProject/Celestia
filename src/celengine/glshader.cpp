@@ -18,6 +18,9 @@ using namespace std;
 static const string GetInfoLog(int obj);
 
 
+ostream* g_shaderLogFile = NULL;
+
+
 GLShader::GLShader(int _id) :
     id(_id)
 {
@@ -171,8 +174,11 @@ GLProgram::link()
                                    &linkSuccess);
     if (linkSuccess == GL_FALSE)
     {
-        cout << "Error linking shader program:\n";
-        cout << GetInfoLog(getID());
+        if (g_shaderLogFile != NULL)
+        {
+            *g_shaderLogFile << "Error linking shader program:\n";
+            *g_shaderLogFile << GetInfoLog(getID());
+        }
         return ShaderStatus_LinkError;
     }
 
@@ -195,8 +201,11 @@ GLShaderLoader::CreateVertexShader(const vector<string>& source,
     GLShaderStatus status = shader->compile(source);
     if (status != ShaderStatus_OK)
     {
-        cout << "Error compiling vertex shader:\n";
-        cout << GetInfoLog(shader->getID());
+        if (g_shaderLogFile != NULL)
+        {
+            *g_shaderLogFile << "Error compiling vertex shader:\n";
+            *g_shaderLogFile << GetInfoLog(shader->getID());
+        }
         return status;
     }
 
@@ -219,9 +228,11 @@ GLShaderLoader::CreateFragmentShader(const vector<string>& source,
     GLShaderStatus status = shader->compile(source);
     if (status != ShaderStatus_OK)
     {
-        cout << "Error compiling fragment shader:\n";
-        cout << source[0] << '\n';
-        cout << GetInfoLog(shader->getID());
+        if (g_shaderLogFile != NULL)
+        {
+            *g_shaderLogFile << "Error compiling fragment shader:\n";
+            *g_shaderLogFile << GetInfoLog(shader->getID());
+        }
         return status;
     }
 
