@@ -24,15 +24,16 @@
     }
     [nameField setStringValue:[fav name]];
     [selectionField setStringValue:[fav selectionName]];
-    [jdField setDoubleValue:[[fav jd] doubleValue]];
+    [jdField setStringValue:[[NSDate dateWithJulian:[fav jd]] description]];
     [coordinateField setStringValue:[fav coordinateSystem]];
     [orientationField setStringValue:[[fav orientation] description]];
 }
 - (IBAction)navigateTo:(id)sender
 {
+    [[self window] performClose:self];
     if (_fav == nil)
         return;
-    [[CelestiaAppCore sharedAppCore] activateFavorite:_fav];
+    [(FavoritesDrawerController*)favoritesDrawerController activateFavorite:_fav];
 }
 
 @end

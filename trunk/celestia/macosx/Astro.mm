@@ -12,6 +12,14 @@
 #import "CelestiaVector_PrivateAPI.h"
 
 NSDictionary* coordinateDict;
+
+@implementation NSDate(AstroAPI)
++(NSDate*)dateWithJulian:(NSNumber*)jd
+{
+    return [NSDate dateWithTimeIntervalSince1970:[[Astro julianDateToSeconds:jd] doubleValue]-[[Astro julianDateToSeconds:[NSNumber numberWithDouble:astro::Date(1970,1,1)]] doubleValue]];
+}
+@end
+
 @implementation Astro(PrivateAPI)
 @end
 
@@ -58,6 +66,7 @@ NSDictionary* coordinateDict;
 {
     return [NSNumber numberWithDouble:([[Astro secondsToJulianDate:[NSNumber numberWithDouble:(double)[date timeIntervalSince1970]]] doubleValue]+(double)astro::Date(1970,1,1))];
 }
+
 +(NSNumber*)speedOfLight
 {
     return [NSNumber numberWithDouble:astro::speedOfLight];
