@@ -243,6 +243,17 @@ unsigned int CTexture::getName()
 }
 
 
+int CTexture::getWidth() const
+{
+    return width;
+}
+
+int CTexture::getHeight() const
+{
+    return height;
+}
+
+
 // Convert the texture to a normal map
 void CTexture::normalMap(float scale, bool wrap)
 {

@@ -31,6 +31,9 @@ class CTexture
     unsigned int getName();
     void normalMap(float scale, bool wrap);
 
+    int getWidth() const;
+    int getHeight() const;
+
     enum {
         ColorChannel = 1,
         AlphaChannel = 2
