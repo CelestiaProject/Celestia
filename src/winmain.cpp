@@ -1198,7 +1198,13 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         break;
 
     case WM_MOUSEWHEEL:
-        appCore->mouseWheel((short) HIWORD(wParam) > 0 ? -1.0f : 1.0f);
+        {
+            int modifiers = 0;
+            if ((wParam & MK_SHIFT) != 0)
+                modifiers |= CelestiaCore::ShiftKey;
+            appCore->mouseWheel((short) HIWORD(wParam) > 0 ? -1.0f : 1.0f,
+                                modifiers);
+        }
         break;
 
     case WM_KEYDOWN:

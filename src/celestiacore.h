@@ -83,7 +83,7 @@ class CelestiaCore
     void charEntered(char);
     void keyDown(int);
     void keyUp(int);
-    void mouseWheel(float);
+    void mouseWheel(float, int);
     void mouseButtonDown(float, float, int);
     void mouseButtonUp(float, float, int);
     void mouseMove(float, float, int);
@@ -163,8 +163,10 @@ class CelestiaCore
     double fpsCounterStartTime;
 
     float mouseMotion;
-    double mouseWheelMotion;
-    double mouseWheelTime;
+    double dollyMotion;
+    double dollyTime;
+    double zoomMotion;
+    double zoomTime;
 
     double currentTime;
     double timeScale;
