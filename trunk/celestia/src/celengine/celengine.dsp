@@ -85,10 +85,6 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\3dsmesh.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\asterism.cpp
 # End Source File
 # Begin Source File
@@ -145,6 +141,10 @@ SOURCE=.\execution.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\fragmentprog.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\frame.cpp
 # End Source File
 # Begin Source File
@@ -165,6 +165,10 @@ SOURCE=.\image.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\jpleph.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\location.cpp
 # End Source File
 # Begin Source File
@@ -177,7 +181,19 @@ SOURCE=.\marker.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\mesh.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\meshmanager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\model.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\modelfile.cpp
 # End Source File
 # Begin Source File
 
@@ -214,6 +230,10 @@ SOURCE=.\parser.cpp
 # Begin Source File
 
 SOURCE=.\regcombine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\rendcontext.cpp
 # End Source File
 # Begin Source File
 
@@ -301,10 +321,6 @@ SOURCE=.\vsop87.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\3dsmesh.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\asterism.h
 # End Source File
 # Begin Source File
@@ -369,6 +385,10 @@ SOURCE=.\execution.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\fragmentprog.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\frame.h
 # End Source File
 # Begin Source File
@@ -393,6 +413,10 @@ SOURCE=.\image.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\jpleph.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\location.h
 # End Source File
 # Begin Source File
@@ -410,6 +434,14 @@ SOURCE=.\mesh.h
 # Begin Source File
 
 SOURCE=.\meshmanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\model.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\modelfile.h
 # End Source File
 # Begin Source File
 
@@ -446,6 +478,10 @@ SOURCE=.\parser.h
 # Begin Source File
 
 SOURCE=.\regcombine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\rendcontext.h
 # End Source File
 # Begin Source File
 
