@@ -538,6 +538,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                     break;
                 }
             }
+            break;
         case IDC_ECLIPSETARGET:
             if(HIWORD(wParam) == CBN_SELCHANGE)
             {
@@ -564,7 +565,6 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 }
             }
         }
-
         return TRUE;
 
     case WM_NOTIFY:
