@@ -139,4 +139,13 @@ Code revisions:
 1.07
 * More corrections to planetary orbital calculations
 * Accept LongOfPericenter as well ArgOfPericenter in solar system catalog files
+* Updated parser to accept C-style string escapes
 * Render the Milky Way and other galaxies
+* Added more constellations
+* Display constellation names
+* Cleaned up render menu
+* Added FPS counter
+* Implemented basic WWW info feature for planets and stars
+* New script commands: renderflags, labels, orbit
+* Implemented a scripted demo mode
+* Placed ISS in Earth orbit
