@@ -982,7 +982,7 @@ static void scrollConsole(Console& con, int lines)
         if (topRow + lines <= -ConsolePageRows)
             console.setWindowRow(topRow + lines);
         else
-            console.setWindowRow(-(ConsolePageRows - 1));
+            console.setWindowRow(-ConsolePageRows);
     }
 }
 
