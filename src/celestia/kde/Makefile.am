@@ -1,12 +1,5 @@
 
-if ENABLE_KDE
-
-noinst_LIBRARIES = libkdegui.a
-noinst_HEADERS = $(wildcard *.h)
-
-INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
-
-libkdegui_a_SOURCES = \
+KDE_SOURCES = \
                  eclipsefinderdlg.cpp \
                  celestialbrowser.cpp \
                  kdemain.cpp \
@@ -17,6 +10,17 @@ libkdegui_a_SOURCES = \
                  kcelbookmarkmenu.cpp \
                  kcelbookmarkmanager.cpp \
                  selectionpopup.cpp
+
+EXTRA_DIST = celestialbrowserbase.ui eclipsefinderdlgbase.ui $(KDE_SOURCES)
+
+if ENABLE_KDE
+
+noinst_LIBRARIES = libkdegui.a
+noinst_HEADERS = $(wildcard *.h)
+
+INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
+
+libkdegui_a_SOURCES = $(KDE_SOURCES)
 
 nodist_libkdegui_a_SOURCES = \
                  kdeapp.moc.cpp \
@@ -47,9 +51,6 @@ nodist_libkdegui_a_SOURCES = \
 SUBDIRS = data doc po
 
 endif
-
-EXTRA_DIST = celestialbrowserbase.ui eclipsefinderdlgbase.ui
-
                  
 messages: rc.cpp
 	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
@@ -57,6 +58,10 @@ messages: rc.cpp
 		$(XGETTEXT) $$LIST -j -o $(podir)/celestia-kde.pot; \
 	fi
 
+clean-hook:
+	rm -f $(distdir)/*.uic.*
+	rm -f $(distdir)/*.moc.cpp
+  
 dist-hook:
 	rm -f $(distdir)/*.uic.*
 	rm -f $(distdir)/*.moc.cpp
