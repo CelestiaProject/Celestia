@@ -107,6 +107,10 @@ struct SphericalCoordLabel
 static int nCoordLabels = 32;
 static SphericalCoordLabel* coordLabels = NULL;
 
+static const int MaxSkyRings = 32;
+static const int MaxSkySlices = 180;
+static const int MinSkySlices = 30;
+
 
 Renderer::Renderer() :
     context(0),
@@ -133,6 +137,9 @@ Renderer::Renderer() :
     distanceLimit(1.0e6f)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
+    skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
+    skyIndices = new uint32[(MaxSkySlices + 1) * 2 * MaxSkyRings];
+    skyContour = new SkyContourPoint[MaxSkySlices];
 }
 
 
@@ -140,6 +147,9 @@ Renderer::~Renderer()
 {
     if (starVertexBuffer != NULL)
         delete starVertexBuffer;
+    delete[] skyVertices;
+    delete[] skyIndices;
+    delete[] skyContour;
 }
 
 
@@ -964,10 +974,11 @@ void Renderer::render(const Observer& observer,
                     float illumination = Math<float>::clamp((sunDir * normal) + 0.2f);
 
                     float lightness = illumination * density;
-
+#if 0
                     skyColor = Color(atmosphere->skyColor.red() * lightness,
                                      atmosphere->skyColor.green() * lightness,
                                      atmosphere->skyColor.blue() * lightness);
+#endif
                     faintestMag = faintestMag  - 10.0f * lightness;
                     saturationMag = saturationMag - 10.0f * lightness;
                 }
@@ -1819,27 +1830,147 @@ void renderAtmosphere(const Atmosphere& atmosphere,
 }
 
 
-void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
-                               Point3f center,
-                               const Quatf& orientation,
-                               Vec3f semiAxes,
-                               const Vec3f& sunDirection,
-                               Color ambientColor,
-                               float fade,
-                               bool lit)
+static Vec3f ellipsoidTangent(const Vec3f& recipSemiAxes,
+                              const Vec3f& w,
+                              const Vec3f& e,
+                              const Vec3f& e_,
+                              float ee)
+{
+    // We want to find t such that -E(1-t) + Wt is the direction of a ray
+    // tangent to the ellipsoid.  A tangent ray will intersect the ellipsoid
+    // at exactly one point.  Finding the intersection between a ray and an
+    // ellipsoid ultimately requires using the quadratic formula, which has
+    // one solution when the discriminant (b^2 - 4ac) is zero.  The code below
+    // computes the value of t that results in a discriminant of zero.
+    Vec3f w_(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
+    float ww = w_ * w_;
+    float ew = w_ * e_;
+
+    // Before elimination of terms:
+    // float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
+    // float b = -8 * ee * (ee + ew)  - 4 * (-2 * (ee + ew) * (ee - 1.0f));
+    // float c =  4 * ee * ee         - 4 * (ee * (ee - 1.0f));
+
+    float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
+    float b = -8 * (ee + ew);
+    float c =  4 * ee;
+
+    float t = 0.0f;
+    float discriminant = b * b - 4 * a * c;
+
+    if (discriminant < 0.0f)
+        t = (-b + (float) sqrt(-discriminant)) / (2 * a); // Bad!
+    else
+        t = (-b + (float) sqrt(discriminant)) / (2 * a);
+
+    // V is the direction vector.  We now need the point of intersection,
+    // which we obtain by solving the quadratic equation for the ray-ellipse
+    // intersection.  Since we already know that the discriminant is zero,
+    // the solution is just -b/2a
+    Vec3f v = -e * (1 - t) + w * t;
+    Vec3f v_(v.x * recipSemiAxes.x, v.y * recipSemiAxes.y, v.z * recipSemiAxes.z);
+    float a1 = v_ * v_;
+    float b1 = 2.0f * v_ * e_;
+    float t1 = -b1 / (2 * a1);
+
+    return e + v * t1;
+}
+
+
+void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
+                                         Point3f center,
+                                         const Quatf& orientation,
+                                         Vec3f semiAxes,
+                                         const Vec3f& sunDirection,
+                                         Color ambientColor,
+                                         float pixSize,
+                                         bool lit)
 {
     if (atmosphere.height == 0.0f)
         return;
 
     glDepthMask(GL_FALSE);
 
+    // Gradually fade in the atmosphere if it's thickness on screen is just over
+    // one pixel.
+    float fade = clamp(pixSize - 2);
+
     Mat3f rot = orientation.toMatrix3();
     Mat3f irot = conjugate(orientation).toMatrix3();
 
+    Point3f eyePos(0.0f, 0.0f, 0.0f);
     float radius = semiAxes.x;
-    Vec3f eyeVec = center - Point3f(0.0f, 0.0f, 0.0f);
+    Vec3f eyeVec = center - eyePos;
     eyeVec = eyeVec * irot;
     double centerDist = eyeVec.length();
+
+    float height = atmosphere.height / radius;
+    Vec3f recipSemiAxes(1.0f / semiAxes.x, 1.0f / semiAxes.y, 1.0f / semiAxes.z);
+
+    Vec3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
+    Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
+    Mat3f A1 = Mat3f::scaling(recipSemiAxes);
+
+    // ellipDist is not the true distance from the surface unless the
+    // planet is spherical.  Computing the true distance requires finding
+    // the roots of a sixth degree polynomial, and isn't actually what we
+    // want anyhow since the atmosphere region is just the planet ellipsoid
+    // multiplied by a uniform scale factor.
+    float ellipDist = (float) sqrt((eyeVec * A1) * (eyeVec * A1)) - 1.0f;
+    bool within = ellipDist < height;
+
+    // Adjust the tesselation of the sky dome/ring based on distance from the
+    // planet surface.
+    int nSlices = MaxSkySlices;
+    if (ellipDist < 0.25f)
+    {
+        nSlices = MinSkySlices + max(0, (int) ((ellipDist / 0.25f) * (MaxSkySlices - MinSkySlices)));
+        nSlices &= ~1;
+    }
+
+    int nRings = min(1 + (int) pixSize / 5, 6);
+    int nHorizonRings = nRings;
+    if (within)
+        nRings += 12;
+
+    float horizonHeight = height;
+    if (within)
+    {
+        if (ellipDist <= 0.0f)
+            horizonHeight = 0.0f;
+        else
+            horizonHeight *= (float) pow(ellipDist / height, 0.33f);
+    }
+
+    Vec3f e = -eyeVec;
+    Vec3f e_(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
+    float ee = e_ * e_;
+
+    // Compute the cosine of the altitude of the sun
+    float cosSunAltitude = 0.0f;
+    {
+        // Check for a sun either directly behind or in front of the viewer
+        float cosSunAngle = (sunDirection * e) / centerDist;
+        if (cosSunAngle < -1.0f + 1.0e-6f)
+        {
+            cosSunAltitude = 0.0f;
+        }
+        else if (cosSunAngle > 1.0f - 1.0e-6f)
+        {
+            cosSunAltitude = 0.0f;
+        }
+        else
+        {
+            Point3f tangentPoint = center +
+                ellipsoidTangent(recipSemiAxes,
+                                 (-sunDirection * irot) * (float) centerDist,
+                                 e, e_, ee) * rot;
+            Vec3f tangentDir = tangentPoint - eyePos;
+            tangentDir.normalize();
+            cosSunAltitude = sunDirection * tangentDir;
+            //cout << "Sun altitude: " << radToDeg(acos(cosSunAltitude)) << " (" << cosSunAltitude << ")\n";
+        }
+    }
 
     Vec3f normal = eyeVec;
     normal = normal / (float) centerDist;
@@ -1862,97 +1993,148 @@ void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     }
     vAxis = uAxis ^ normal;
 
-    float height = atmosphere.height / radius;
-    Vec3f recipSemiAxes(1.0f / semiAxes.x, 1.0f / semiAxes.y, 1.0f / semiAxes.z);
-    Vec3f e = -eyeVec;
-    Vec3f e_(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
-    float ee = e_ * e_;
-
-    glBegin(GL_QUAD_STRIP);
-    int divisions = 180;
-    for (int i = 0; i <= divisions; i++)
+    // Compute the contour of the ellipsoid
+    int i;
+    for (i = 0; i <= nSlices; i++)
     {
         // We want rays with an origin at the eye point and tangent to the the
         // ellipsoid.
-        float theta = (float) i / (float) divisions * 2 * (float) PI;
+        float theta = (float) i / (float) nSlices * 2 * (float) PI;
         Vec3f w = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
         w = w * (float) centerDist;
 
-        // We want to find t such that -E(1-t) + Wt is the direction of a ray
-        // tangent to the ellipsoid.  A tangent ray will intersect the ellipsoid
-        // at exactly one point.  Finding the intersection between a ray and an
-        // ellipsoid ultimately requires using the quadratic formula, which has
-        // one solution when the discriminant (b^2 - 4ac) is zero.  The code below
-        // computes the value of t that results in a discriminant of zero.
-        Vec3f w_(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
-        float ww = w_ * w_;
-        float ew = w_ * e_;
-
-        // Before elimination of terms:
-        // float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
-        // float b = -8 * ee * (ee + ew)  - 4 * (-2 * (ee + ew) * (ee - 1.0f));
-        // float c =  4 * ee * ee         - 4 * (ee * (ee - 1.0f));
-
-        float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
-        float b = -8 * (ee + ew);
-        float c =  4 * ee;
-
-        float t = 0.0f;
-        float discriminant = b * b - 4 * a * c;
-
-        if (discriminant < 0.0f)
-            t = (-b + (float) sqrt(-discriminant)) / (2 * a); // Bad!
-        else
-            t = (-b + (float) sqrt(discriminant)) / (2 * a);
-
-        // V is the direction vector.  We now need the point of intersection.
-        Vec3f v = -e * (1 - t) + w * t;
-        Vec3f v_(v.x * recipSemiAxes.x, v.y * recipSemiAxes.y, v.z * recipSemiAxes.z);
-        float a1 = v_ * v_;
-        float b1 = 2.0f * v_ * e_;
-        float t1 = -b1 / (2 * a1);
-
-        Vec3f toCenter = e + v * t1;
-        toCenter = toCenter * rot;
-        Point3f base = center + toCenter;
-
-        float cosSunAngle = (toCenter * sunDirection) / radius;
-        float brightness = 1.0f;
-        float botColor[3];
-        float topColor[3];
-        botColor[0] = atmosphere.lowerColor.red();
-        botColor[1] = atmosphere.lowerColor.green();
-        botColor[2] = atmosphere.lowerColor.blue();
-        topColor[0] = atmosphere.upperColor.red();
-        topColor[1] = atmosphere.upperColor.green();
-        topColor[2] = atmosphere.upperColor.blue();
-
-        if (cosSunAngle < 0.2f && lit)
-        {
-            if (cosSunAngle < -0.2f)
-            {
-                brightness = 0;
-            }
-            else
-            {
-                float t = (0.2f + cosSunAngle) * 2.5f;
-                brightness = t;
-                botColor[0] = Mathf::lerp(t, 1.0f, botColor[0]);
-                botColor[1] = Mathf::lerp(t, 0.3f, botColor[1]);
-                botColor[2] = Mathf::lerp(t, 0.0f, botColor[2]);
-                topColor[0] = Mathf::lerp(t, 1.0f, topColor[0]);
-                topColor[1] = Mathf::lerp(t, 0.3f, topColor[1]);
-                topColor[2] = Mathf::lerp(t, 0.0f, topColor[2]);
-            }
-        }
-
-        glColor4f(botColor[0], botColor[1], botColor[2],
-                  0.85f * fade * brightness + ambientColor.red());
-        glVertex(base - toCenter * height * 0.05f);
-        glColor4f(topColor[0], topColor[1], topColor[2], 0.0f);
-        glVertex(base + toCenter * height);
+        Vec3f toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
+        skyContour[i].v = toCenter * rot;
+        skyContour[i].centerDist = skyContour[i].v.length();
+        skyContour[i].eyeDir = skyContour[i].v + (center - eyePos);
+        skyContour[i].eyeDist = skyContour[i].eyeDir.length();
+        skyContour[i].eyeDir.normalize();
+        
+        float skyCapDist = (float) sqrt(square(skyContour[i].centerDist) +
+                                        square(horizonHeight));
+        skyContour[i].cosSkyCapAltitude = skyContour[i].centerDist /
+            skyCapDist;
     }
-    glEnd();
+
+
+    Vec3f botColor(atmosphere.lowerColor.red(),
+                   atmosphere.lowerColor.green(),
+                   atmosphere.lowerColor.blue());
+    Vec3f topColor(atmosphere.upperColor.red(),
+                   atmosphere.upperColor.green(),
+                   atmosphere.upperColor.blue());
+    if (within)
+    {
+        Vec3f skyColor(atmosphere.skyColor.red(),
+                       atmosphere.skyColor.green(),
+                       atmosphere.skyColor.blue());
+        if (ellipDist < 0.0f)
+            topColor = skyColor;
+        else
+            topColor = skyColor + (topColor - skyColor) * (ellipDist / height);
+    }
+    
+    Vec3f zenith = (skyContour[0].v + skyContour[nSlices / 2].v);
+    zenith.normalize();
+    zenith *= skyContour[0].centerDist * (1.0f + height * 2.0f);
+
+    float minOpacity = within ? (1.0f - ellipDist / height) * 0.5f : 0.0f;
+
+    float sunset = cosSunAltitude < 0.9f ? 0.0f : (cosSunAltitude - 0.9f) * 10.0f;
+
+    // Build the list of vertices
+    SkyVertex* vtx = skyVertices;
+    for (i = 0; i <= nRings; i++)
+    {
+        float h = min(1.0f, (float) i / (float) nHorizonRings);
+        float hh = (float) sqrt(h);
+        float u = i <= nHorizonRings ? 0.0f :
+            (float) (i - nHorizonRings) / (float) (nRings - nHorizonRings);
+        float r = Mathf::lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
+        float atten = 1.0f - hh;
+
+        for (int j = 0; j < nSlices; j++)
+        {
+            Vec3f v;
+            if (i <= nHorizonRings)
+                v = skyContour[j].v * r;
+            else
+                v = (skyContour[j].v * (1.0f - u) + zenith * u) * r;
+            Point3f p = center + v;
+
+            Vec3f viewDir(p.x, p.y, p.z);
+            viewDir.normalize();
+            float cosSunAngle = viewDir * sunDirection;
+            float redness = 0.0f;
+            if (sunset > 0.0f && cosSunAngle > 0.7f)
+            {
+                Vec3f v0 = p - eyePos;
+                //Vec3f v1 = (center + skyContour[j].v) - eyePos;
+                //float cosAltitude = (v0 * v1) / (v0.length() * v1.length());
+                float cosAltitude = (v0 * skyContour[j].eyeDir) / v0.length();
+                if (cosAltitude > 0.95f)
+                {
+                    redness =  (1.0f / 0.30f) * (cosSunAngle - 0.70f);
+                    redness *= 20.0f * (cosAltitude - 0.95f);
+                    redness *= sunset;
+                }
+            }
+            
+            cosSunAngle = (skyContour[j].v * sunDirection) / skyContour[j].centerDist;
+            float brightness = 0.0f;
+            if (cosSunAngle > -0.2f)
+            {
+                if (cosSunAngle < 0.3f)
+                    brightness = (cosSunAngle + 0.2f) * 2.0f;
+                else
+                    brightness = 1.0f;
+            }
+
+            vtx->x = p.x;
+            vtx->y = p.y;
+            vtx->z = p.z;
+
+            brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
+            Vec3f color = (1.0f - hh) * botColor + hh * topColor;
+            if (redness != 0.0f)
+                color = (1.0f - redness) * color + redness * Vec3f(1.0f, 0.6f, 0.5f);
+            Color(brightness * color.x,
+                  brightness * color.y,
+                  brightness * color.z,
+                  fade * atten).get(vtx->color);
+            vtx++;
+        }
+    }
+
+    // Create the index list
+    int index = 0;
+    for (i = 0; i < nRings; i++)
+    {
+        int baseVertex = i * nSlices;
+        for (int j = 0; j < nSlices; j++)
+        {
+            skyIndices[index++] = baseVertex + j;
+            skyIndices[index++] = baseVertex + nSlices + j;
+        }
+        skyIndices[index++] = baseVertex;
+        skyIndices[index++] = baseVertex + nSlices;
+    }
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, sizeof(SkyVertex), &skyVertices[0].x);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SkyVertex),
+                   static_cast<void*>(&skyVertices[0].color));
+
+    for (i = 0; i < nRings; i++)
+    {
+        glDrawElements(GL_QUAD_STRIP,
+                       (nSlices + 1) * 2,
+                       GL_UNSIGNED_INT,
+                       &skyIndices[(nSlices + 1) * 2 * i]);
+    }
+
+    glDisableClientState(GL_COLOR_ARRAY);
 }
 
 
@@ -2977,7 +3159,8 @@ void Renderer::renderObject(Point3f pos,
     // TODO:  Figure out a better way to render ellipsoids than applying
     // a nonunifom scale factor to a sphere . . . it makes me nervous.
     float radius = obj.radius;
-    glScalef(radius, radius * (1.0f - obj.oblateness), radius);
+    Vec3f semiMajorAxes(radius, radius * (1.0f - obj.oblateness), radius);
+    glScale(semiMajorAxes);
 
     Mat4f planetMat = (~obj.orientation).toMatrix4();
     ri.sunDir_eye = sunDirection;
@@ -3123,9 +3306,10 @@ void Renderer::renderObject(Point3f pos,
         // due to aliasing.  To avoid popping, we gradually fade in the
         // atmosphere as it grows from two to three pixels thick.
         float fade;
+        float thicknessInPixels = 0.0f;
         if (distance - radius > 0.0f)
         {
-            float thicknessInPixels = atmosphere->height /
+            thicknessInPixels = atmosphere->height /
                 ((distance - radius) * pixelSize);
             fade = clamp(thicknessInPixels - 2);
         }
@@ -3141,32 +3325,27 @@ void Renderer::renderObject(Point3f pos,
             glDisable(GL_LIGHTING);
             glDisable(GL_TEXTURE_2D);
             glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-            if (obj.oblateness == 0.0f)
-            {
-                renderAtmosphere(*atmosphere,
-                                 pos * (~cameraOrientation).toMatrix3(),
-                                 radius,
-                                 ri.sunDir_eye * (~cameraOrientation).toMatrix3(),
-                                 ri.ambientColor,
-                                 fade,
-                                 lit);
-            }
-            else
-            {
-                glRotate(cameraOrientation);
-                renderEllipsoidAtmosphere(*atmosphere,
-                             pos,
-                             obj.orientation,
-                             Vec3f(radius, radius * (1.0f - obj.oblateness), radius),
-                             //ri.sunDir_eye * (~cameraOrientation).toMatrix3(),
-                             ri.sunDir_eye,
+#ifdef OLD_ATMOSPHERE
+            renderAtmosphere(*atmosphere,
+                             pos * (~cameraOrientation).toMatrix3(),
+                             radius,
+                             ri.sunDir_eye * (~cameraOrientation).toMatrix3(),
                              ri.ambientColor,
                              fade,
                              lit);
-            }
-
+#else
+            glRotate(cameraOrientation);
+            renderEllipsoidAtmosphere(*atmosphere,
+                                      pos,
+                                      obj.orientation,
+                                      semiMajorAxes,
+                                      ri.sunDir_eye,
+                                      ri.ambientColor,
+                                      thicknessInPixels,
+                                      lit);
+#endif // OLD_ATMOSPHERE
             glEnable(GL_TEXTURE_2D);
             glPopMatrix();
         }
