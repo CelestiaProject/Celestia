@@ -477,6 +477,16 @@ void Simulation::setSyncTime(bool sync)
     syncTime = sync;
 }
 
+// Synchronize all observers to active observer time
+void Simulation::synchronizeTime()
+{
+    for (vector<Observer*>::iterator iter = observers.begin();
+         iter != observers.end(); iter++)
+    {
+        (*iter)->setTime(activeObserver->getTime());
+    }
+}
+
 
 float Simulation::getFaintestVisible() const
 {
