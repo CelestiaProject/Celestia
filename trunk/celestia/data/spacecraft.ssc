@@ -104,50 +104,54 @@
 
 "Cassini" "Sol" 
 {
-
 	Class "spacecraft"
 	Mesh "cassini.3ds"
-
 	Radius 0.011
 
+	InfoURL "http://saturn.jpl.nasa.gov/home/index.cfm"
+
 	Beginning 2450736.893877314 # 1997 Oct 15 09:27:11
+
 	SampledOrbit	"cassini.xyz"
 
 	RotationPeriod 1e9
 }
 
 
-"Huygens" "Sol/Cassini" {
+"Huygens" "Sol/Cassini" 
+{
 	Class "spacecraft"
 	Mesh "huygens.3ds"
 	Radius 0.00135
 	
+	InfoURL "http://saturn.jpl.nasa.gov/home/index.cfm"
+
 	Beginning 2450736.893877314 # 1997 Oct 15 09:27:11
 	Ending    2453364.5847      # 2004 Dec 25 02:01:58
 
-
 	EllipticalOrbit {
-		SemiMajorAxis 0.0015
+		SemiMajorAxis 0.0013
 		Period 1e9
-		MeanAnomaly 180
+		Inclination 5
+		AscendingNode 270
+		MeanAnomaly 270
 	}
 }
 
 "Huygens" "Sol" 
 {
-
 	Class "spacecraft"
 	Mesh "huygens.3ds"
-
 	Radius 0.00135
 
-	Beginning 2453364.5847 # 2004 Dec 25 02:01:58
+	InfoURL "http://saturn.jpl.nasa.gov/home/index.cfm"
 
+	Beginning 2453364.5847 # 2004 Dec 25 02:01:58
 	Ending    2453384.8750 # 2005 Jan 14 09:00:00
+
 	SampledOrbit "huygens.xyz"
 
 	Orientation [ 90 0 0 1 ]
 	Obliquity 70
 	RotationPeriod 0.01
 }
-
