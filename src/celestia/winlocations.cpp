@@ -15,6 +15,9 @@
 
 using namespace std;
 
+bool dragging;
+HTREEITEM hDragItem;
+HTREEITEM hDropTargetItem;
 
 HTREEITEM PopulateLocationsTree(HWND hTree, CelestiaCore* appCore, HINSTANCE appInstance)
 {
@@ -113,6 +116,8 @@ HTREEITEM PopulateLocationsTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
         }
     }
 
+    dragging = false;
+
     return hParent;
 }
 
@@ -147,6 +152,7 @@ HTREEITEM PopulateLocationFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
         tvis.hInsertAfter = TVI_LAST;
         tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
         tvis.item.pszText = "Locations";
+        tvis.item.lParam = 1;
         tvis.item.iImage = 2;
         tvis.item.iSelectedImage = 2;
         if (hParent = TreeView_InsertItem(hTree, &tvis))
@@ -162,8 +168,9 @@ HTREEITEM PopulateLocationFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
                     //Create a subtree item for the folder
                     tvis.hParent = hParent;
                     tvis.hInsertAfter = TVI_LAST;
-                    tvis.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+                    tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
                     tvis.item.pszText = const_cast<char*>((*iter)->name.c_str());
+                    tvis.item.lParam = 1;
                     tvis.item.iImage = 0;
                     tvis.item.iSelectedImage = 1;
                     TreeView_InsertItem(hTree, &tvis);
@@ -290,32 +297,35 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore)
     }
 }
 
-void InsertLocationInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
+void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
 {
     const FavoritesList* favorites = appCore->getFavorites();
     FavoritesList::const_iterator iter;
     TVITEM tvItem;
     HTREEITEM hItem, hParent;
     char itemName[33];
-    string newLocation(name);
     bool found;
 
     if (favorites != NULL)
     {
         //Scan through tree control folders and add any folder that does
         //not exist in Favorites.
-        if (hParent = (HTREEITEM)TreeView_GetChild(hTree, TVI_ROOT))
+        if (hParent = TreeView_GetChild(hTree, TVI_ROOT))
         {
-            hItem = (HTREEITEM)TreeView_GetChild(hTree, hParent);
+            hItem = TreeView_GetChild(hTree, hParent);
             do
             {
                 //Get information on item
                 tvItem.hItem = hItem;
-                tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+                tvItem.mask = TVIF_TEXT | TVIF_PARAM | TVIF_HANDLE;
                 tvItem.pszText = itemName;
                 tvItem.cchTextMax = sizeof(itemName);
                 if (TreeView_GetItem(hTree, &tvItem))
                 {
+                    //Skip non-folders.
+                    if(tvItem.lParam == 0)
+                        continue;
+
                     string name(itemName);
                     if (favorites->size() == 0)
                     {
@@ -354,7 +364,7 @@ void InsertLocationInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
                         }
                         //Now iterate through items until end of folder found
                         folderIter++;
-                        while ((*folderIter)->parentFolder != "")
+                        while (folderIter != favorites->end() && (*folderIter)->parentFolder != "")
                             folderIter++;
                         
                         //Insert item
@@ -364,6 +374,18 @@ void InsertLocationInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
             } while (hItem = TreeView_GetNextSibling(hTree, hItem));
         }
     }
+}
+
+void InsertLocationInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
+{
+    const FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList::const_iterator iter;
+    TVITEM tvItem;
+    HTREEITEM hItem;
+    char itemName[33];
+    string newLocation(name);
+
+    SyncTreeFoldersWithFavoriteFolders(hTree, appCore);
 
     //Determine which tree item (folder) is selected (if any)
     hItem = TreeView_GetSelection(hTree);
@@ -372,25 +394,32 @@ void InsertLocationInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
 
     if (hItem)
     {
-        //Iterate through Favorites to locate folder = selected tree item
-        iter = favorites->begin();
-        while (iter != favorites->end())
+        tvItem.hItem = hItem;
+        tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+        tvItem.pszText = itemName;
+        tvItem.cchTextMax = sizeof(itemName);
+        if (TreeView_GetItem(hTree, &tvItem))
         {
-            if ((*iter)->isFolder && (*iter)->name == itemName)
+            //Iterate through Favorites to locate folder = selected tree item
+            iter = favorites->begin();
+            while (iter != favorites->end())
             {
-                //To insert new item at end of folder menu, we have to iterate
-                //to the one item past the last item in the folder.
-                //vector::insert() inserts item before specified iterator.
-                iter++;
-                while (iter != favorites->end() && !((*iter)->isFolder) && (*iter)->parentFolder != "")
+                if ((*iter)->isFolder && (*iter)->name == itemName)
+                {
+                    //To insert new item at end of folder menu, we have to iterate
+                    //to the one item past the last item in the folder.
+                    //vector::insert() inserts item before specified iterator.
                     iter++;
+                    while (iter != favorites->end() && !((*iter)->isFolder) && (*iter)->parentFolder != "")
+                        iter++;
 
-                //Insert new location at position in iteration.
-                string parentFolder(itemName);
-                appCore->addFavorite(newLocation, parentFolder, &iter);
-                break;
+                    //Insert new location at position in iteration.
+                    string parentFolder(itemName);
+                    appCore->addFavorite(newLocation, parentFolder, &iter);
+                    break;
+                }
+                iter++;
             }
-            iter++;
         }
     }
     else
@@ -554,6 +583,240 @@ void RenameLocationInFavorites(HWND hTree, char* newName, CelestiaCore* appCore)
                 }
             }
         }
+    }
+}
+
+void MoveLocationInFavorites(HWND hTree, CelestiaCore* appCore)
+{
+    const FavoritesList* favorites = appCore->getFavorites();
+    FavoritesList::const_iterator iter;
+    TVITEM tvItem;
+    TVINSERTSTRUCT tvis;
+    HTREEITEM hDragItemFolder, hDropItem;
+    char dragItemName[33], dragItemFolderName[33];
+    char dropFolderName[33];
+    bool bMovedInTree = false;
+
+    //First get the target folder name
+    tvItem.hItem = hDropTargetItem;
+    tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+    tvItem.pszText = dropFolderName;
+    tvItem.cchTextMax = sizeof(dropFolderName);
+    if (TreeView_GetItem(hTree, &tvItem))
+    {
+        if (!TreeView_GetParent(hTree, hDropTargetItem))
+            dropFolderName[0] = '\0';
+
+        //First get the dragged item text
+        tvItem.hItem = hDragItem;
+        tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+        tvItem.pszText = dragItemName;
+        tvItem.cchTextMax = sizeof(dragItemName);
+        if (TreeView_GetItem(hTree, &tvItem))
+        {
+            //Get the dragged item folder
+            if (hDragItemFolder = TreeView_GetParent(hTree, hDragItem))
+            {
+                tvItem.hItem = hDragItemFolder;
+                tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+                tvItem.pszText = dragItemFolderName;
+                tvItem.cchTextMax = sizeof(dragItemFolderName);
+                if (TreeView_GetItem(hTree, &tvItem))
+                {
+                    if (!TreeView_GetParent(hTree, hDragItemFolder))
+                        dragItemFolderName[0] = '\0';
+
+                    //Make sure drag and target folders are different
+                    if (strcmp(dragItemFolderName, dropFolderName))
+                    {
+                        //Delete tree item from src location
+                        if (TreeView_DeleteItem(hTree, hDragItem))
+                        {
+                            //Add item to dest location
+                            tvis.hParent = hDropTargetItem;
+                            tvis.hInsertAfter = TVI_LAST;
+                            tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+                            tvis.item.pszText = dragItemName;
+                            tvis.item.lParam = 0; //1 for folders, 0 for items.
+                            tvis.item.iImage = 3;
+                            tvis.item.iSelectedImage = 3;
+                            if (hDropItem = TreeView_InsertItem(hTree, &tvis))
+                            {
+                                TreeView_Expand(hTree, hDropTargetItem, TVE_EXPAND);
+                                
+                                //Make the dropped item selected
+                                TreeView_SelectItem(hTree, hDropItem);
+
+                                bMovedInTree = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //Now perform the move in Favorites
+    if(bMovedInTree)
+    {
+        //Locate item with name == dragItemName and parentFolder == dragItemFolderName
+        iter = favorites->begin();
+        while (iter != favorites->end())
+        {
+            if ((*iter)->name == dragItemName && (*iter)->parentFolder == dragItemFolderName)
+            {
+                FavoritesList::const_iterator subIter;
+
+                FavoritesEntry* fav = new FavoritesEntry();
+                fav->name = dragItemName;
+                fav->parentFolder = dropFolderName;
+                fav->jd = (*iter)->jd;
+                fav->position = (*iter)->position;
+                fav->orientation = (*iter)->orientation;
+                fav->isFolder = false;
+                fav->selectionName = (*iter)->selectionName;
+                fav->coordSys = (*iter)->coordSys;
+
+                //Locate position to insert moved item
+                if (dropFolderName[0] != '\0')
+                {
+                    subIter = favorites->begin();
+                    while (subIter != favorites->end())
+                    {
+                        if ((*subIter)->isFolder && (*subIter)->name == dropFolderName)
+                        {
+                            //To insert new item at end of folder menu, we have to iterate
+                            //to the one item past the last item in the folder.
+                            //vector::insert() inserts item before specified iterator.
+                            subIter++;
+                            while (subIter != favorites->end() && !((*subIter)->isFolder) &&
+                                  (*subIter)->parentFolder != "")
+                                  subIter++;
+
+                            //Insert new location at position in iteration.
+                            ((FavoritesList*)favorites)->insert((FavoritesList::iterator)subIter, fav);
+                            break;
+                        }
+
+                        subIter++;
+                    }
+
+                    //vector::insert() likely has moved item iter was pointing at
+                    iter = favorites->begin();
+                    while (iter != favorites->end())
+                    {
+                        if ((*iter)->name == dragItemName && (*iter)->parentFolder == dragItemFolderName)
+                        {
+                            //Delete item from favorites.
+                            ((FavoritesList*)favorites)->erase((FavoritesList::iterator)iter);
+                            break;
+                        }
+
+                        iter++;
+                    }
+                }
+                else
+                {
+                    //Just append item to end for root folders
+                    ((FavoritesList*)favorites)->insert((FavoritesList::iterator)favorites->end(), fav);
+
+                    //Delete item from favorites.
+                    ((FavoritesList*)favorites)->erase((FavoritesList::iterator)iter);
+                }
+
+                break;
+            }
+
+            iter++;
+        }
+    }
+}
+
+void OrganizeLocationsOnBeginDrag(HWND hTree, LPNMTREEVIEW lpnmtv)
+{
+    HIMAGELIST himl;    // handle to image list
+    RECT rcItem;        // bounding rectangle of item
+    DWORD dwLevel;      // heading level of item
+    DWORD dwIndent;     // amount that child items are indented
+
+    //Clear any selected item
+    TreeView_SelectItem(hTree, NULL);
+
+    // Tell the tree-view control to create an image to use
+    // for dragging.
+    hDragItem = lpnmtv->itemNew.hItem;
+    himl = TreeView_CreateDragImage(hTree, hDragItem);
+
+    // Get the bounding rectangle of the item being dragged.
+    TreeView_GetItemRect(hTree, hDragItem, &rcItem, TRUE);
+
+    // Get the heading level and the amount that the child items are
+    // indented.
+    dwLevel = lpnmtv->itemNew.lParam;
+    dwIndent = (DWORD) SendMessage(hTree, TVM_GETINDENT, 0, 0);
+
+    ImageList_DragShowNolock(TRUE);
+
+    // Start the drag operation.
+    ImageList_BeginDrag(himl, 0, 7, 7);
+
+    // Hide the mouse pointer, and direct mouse input to the
+    // parent window.
+    ShowCursor(FALSE);
+    SetCapture(GetParent(hTree));
+    dragging = true;
+}
+
+void OrganizeLocationsOnMouseMove(HWND hTree, LONG xCur, LONG yCur)
+{
+    TVHITTESTINFO tvht;  // hit test information
+    TVITEM tvItem;
+    HTREEITEM hItem;
+
+    if (dragging)
+    {
+        // Drag the item to the current position of the mouse pointer.
+        ImageList_DragMove(xCur, yCur);
+        ImageList_DragLeave(hTree);
+
+        // Find out if the pointer is on the item. If it is,
+		// highlight the item as a drop target.
+        tvht.pt.x = xCur;
+        tvht.pt.y = yCur;
+        if(hItem = TreeView_HitTest(hTree, &tvht))
+        {
+            //Only select folder items for drop targets
+            tvItem.hItem = hItem;
+            tvItem.mask = TVIF_PARAM | TVIF_HANDLE;
+            if (TreeView_GetItem(hTree, &tvItem))
+            {
+                if(tvItem.lParam == 1)
+                {
+                    hDropTargetItem = hItem;
+                    TreeView_SelectDropTarget(hTree, hDropTargetItem);
+                }
+            }
+        }
+
+        ImageList_DragEnter(hTree, xCur, yCur);
+    }
+}
+
+void OrganizeLocationsOnLButtonUp(HWND hTree)
+{
+    if (dragging)
+    {
+        ImageList_EndDrag();
+        ImageList_DragLeave(hTree);
+        ReleaseCapture();
+        ShowCursor(TRUE);
+        dragging = false;
+
+        //hDragItem is handle to dragged item
+        //hDropTargetItem is handle to target folder
+
+        //First, remove TVIS_DROPHILITED state from drop target item
+        TreeView_SelectDropTarget(hTree, NULL);
     }
 }
 
