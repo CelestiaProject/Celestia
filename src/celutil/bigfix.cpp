@@ -190,10 +190,10 @@ void BigFix::dump()
 
 static unsigned char alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-BigFix::BigFix(const char* val)
+BigFix::BigFix(const std::string& val)
 {
     static char inalphabet[256], decoder[256];
-    int i, bits, c, char_count, errors = 0, j;
+    int i, bits, c, char_count, errors = 0;
 
     for (i = (sizeof alphabet) - 1; i >= 0 ; i--)
     {
@@ -206,14 +206,15 @@ BigFix::BigFix(const char* val)
 
     char_count = 0;
     bits = 0;
-    j = 0;
+
     i = 0;
-    while ((c = val[j]) != '\0')
+
+    for (int j = 0; j < val.length(); j++)
     {
-        j++;
+        c = val[j];
         if (c == '=')
             break;
-        if (c > 255 || ! inalphabet[c])
+        if (c > 255 || !inalphabet[c])
             continue;
         bits += decoder[c];
         char_count++;

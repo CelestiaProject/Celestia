@@ -24,7 +24,7 @@ public:
 	BigFix();
 	BigFix(int);
 	BigFix(double);
-	BigFix(const char*);
+	BigFix(const std::string&);
 
 	operator double() const;
 	operator float() const;
