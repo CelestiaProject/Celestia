@@ -41,6 +41,7 @@
 #include "favorites.h"
 #include "celestiacore.h"
 #include <celutil/debug.h>
+#include <celutil/utf8.h>
 #include "url.h"
 
 
@@ -2762,9 +2763,9 @@ void CelestiaCore::renderOverlay()
             else if (abs(timeScale) == 0.0f)
                 *overlay << "Time stopped";
             else if (abs(timeScale) > 1.0)
-                *overlay << timeScale << "x faster";
+                *overlay << timeScale << UTF8_MULTIPLICATION_SIGN << " faster";
             else
-                *overlay << 1.0 / timeScale << "x slower";
+                *overlay << 1.0 / timeScale << UTF8_MULTIPLICATION_SIGN << " slower";
             *overlay << setprecision(3);
         }
         overlay->endText();
@@ -2871,12 +2872,20 @@ void CelestiaCore::renderOverlay()
         astro::decimalToDegMinSec((double) fov, degrees, minutes, seconds);
 
         if (degrees > 0)
-            overlay->printf("FOV: %d %02d' %.1f\"", degrees, minutes, seconds);
+        {
+            overlay->printf("FOV: %d%s %02d' %.1f\"",
+                            degrees, UTF8_DEGREE_SIGN, minutes, seconds);
+        }
         else if (minutes > 0)
+        {
             overlay->printf("FOV: %02d' %.1f\"", minutes, seconds);
+        }
         else
+        {
             overlay->printf("FOV: %.1f\"", seconds);
-        overlay->printf(" (%.2f x)\n", views[activeView]->zoom);
+        }
+        overlay->printf(" (%.2f%s)\n", views[activeView]->zoom,
+                        UTF8_MULTIPLICATION_SIGN);
         overlay->endText();
         glPopMatrix();
     }
