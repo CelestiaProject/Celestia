@@ -16,6 +16,7 @@
 #include "visstars.h"
 #include "observer.h"
 #include "solarsys.h"
+#include "galaxy.h"
 #include "asterism.h"
 #include "texmanager.h"
 #include "meshmanager.h"
@@ -116,6 +117,8 @@ class Renderer
     void renderStars(const StarDatabase& starDB,
                      const VisibleStarSet& visset,
                      const Observer& observer);
+    void renderGalaxies(const GalaxyList& galaxies,
+                        const Observer& observer);
     void renderPlanetarySystem(const Star& sun,
                                const PlanetarySystem& solSystem,
                                const Observer& observer,
