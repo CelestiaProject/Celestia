@@ -159,6 +159,14 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
                 {
                     browser->appCore->getSimulation()->setSelection(Selection(body));
                 }
+                else
+                {
+                    // If the body is NULL, assume that this is the tree item for
+                    // the sun.
+                    const SolarSystem* solarSys = browser->appCore->getSimulation()->getNearestSolarSystem();
+                    if (solarSys != NULL && solarSys->getStar() != NULL)
+                        browser->appCore->getSimulation()->setSelection(Selection(const_cast<Star*>(solarSys->getStar())));
+                }
             }
         }
     }
