@@ -121,6 +121,7 @@ Renderer::Renderer() :
     useCubeMaps(false),
     useVertexPrograms(false),
     useRescaleNormal(false),
+    useMinMaxBlending(false),
     textureResolution(medres),
     minOrbitSize(MinOrbitSizeForLabel)
 {
@@ -318,6 +319,8 @@ bool Renderer::init(int winWidth, int winHeight)
             InitExtRegisterCombiners();
         if (ExtensionSupported("GL_NV_vertex_program"))
             InitExtVertexProgram();
+        if (ExtensionSupported("GL_EXT_blend_minmax"))
+            InitExtBlendMinmax();
         if (ExtensionSupported("GL_EXT_texture_cube_map"))
         {
             // normalizationTex = CreateNormalizationCubeMap(64);
@@ -400,6 +403,11 @@ bool Renderer::init(int winWidth, int winHeight)
         DPRINTF(1, "Renderer: EXT_rescale_normal supported.\n");
         useRescaleNormal = true;
         glEnable(GL_RESCALE_NORMAL_EXT);
+    }
+    if (ExtensionSupported("GL_EXT_blend_minmax"))
+    {
+        DPRINTF(1, "Renderer: minmax blending supported.\n");
+        useMinMaxBlending = true;
     }
 
     // Ugly renderer-specific bug workarounds follow . . .
@@ -2299,24 +2307,6 @@ void Renderer::renderObject(Point3f pos,
     glTranslate(pos);
     glRotate(~obj.orientation);
 
-    double rotation = 0.0;
-    // Watch out for the precision limits of floats when computing
-    // rotation . . .
-    {
-        double rotations = (now - obj.re.epoch) / (double) obj.re.period;
-        double wholeRotations = floor(rotations);
-        double remainder = rotations - wholeRotations;
-
-        // Add an extra half rotation because of the convention in all
-        // planet texture maps where zero deg long. is in the middle of
-        // the texture.
-        remainder += 0.5;
-
-        rotation = remainder * 2 * PI + obj.re.offset;
-        glRotatef((float) (remainder * 360.0 + radToDeg(obj.re.offset)),
-                  0, 1, 0);
-    }
-
     // Apply a scale factor which depends on the size of the planet and
     // its oblateness.  Since the oblateness is usually quite
     // small, the potentially nonuniform scale factor shouldn't mess up
@@ -2326,9 +2316,7 @@ void Renderer::renderObject(Point3f pos,
     float radius = obj.radius;
     glScalef(radius, radius * (1.0f - obj.oblateness), radius);
 
-    // Compute the direction to the eye and light source in object space
-    Mat4f planetMat = ((~obj.orientation).toMatrix4() *
-                       Mat4f::yrotation((float) rotation));
+    Mat4f planetMat = (~obj.orientation).toMatrix4();
     ri.sunDir_eye = sunDirection;
     ri.sunDir_eye.normalize();
     ri.sunDir_obj = ri.sunDir_eye * planetMat;
@@ -2665,12 +2653,30 @@ void Renderer::renderPlanet(const Body& body,
         rp.radius = body.getRadius();
         rp.oblateness = body.getOblateness();
         rp.mesh = body.getMesh();
-        rp.re = body.getRotationElements();
 
         // Compute the orientation of the planet before axial rotation
         Quatd q = body.getEclipticalToEquatorial(now);
         rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y,
                                (float) q.z);
+
+        double rotation = 0.0;
+        // Watch out for the precision limits of floats when computing
+        // rotation . . .
+        {
+            RotationElements re = body.getRotationElements();
+            double rotations = (now - re.epoch) / (double) re.period;
+            double wholeRotations = floor(rotations);
+            double remainder = rotations - wholeRotations;
+
+            // Add an extra half rotation because of the convention in all
+            // planet texture maps where zero deg long. is in the middle of
+            // the texture.
+            remainder += 0.5;
+
+            rotation = remainder * 2 * PI + re.offset;
+        }
+        rp.orientation.yrotate(-rotation);
+        rp.orientation = body.getOrientation() * rp.orientation;
 
         Color sunColor(1.0f, 1.0f, 1.0f);
         {
@@ -2829,7 +2835,7 @@ void Renderer::renderStar(const Star& star,
         rp.oblateness = 0.0f;
         rp.mesh = InvalidResource;
 
-        rp.re.period = star.getRotationPeriod();
+        // rp.re.period = star.getRotationPeriod();
 
         // Compute the orientation of the star before axial rotation.
         // For now, this is the same value for every star.
