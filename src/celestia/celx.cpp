@@ -862,7 +862,8 @@ void LuaState::requestIO()
         string policy = appCore->getConfig()->scriptSystemAccessPolicy;
         if (policy == "allow")
         {
-            lua_iolibopen(costate);
+            //lua_iolibopen(costate);
+            luaopen_io(costate);
             ioMode = IOAllowed;
         }
         else if (policy == "deny")
@@ -2145,18 +2146,9 @@ static int object_spectraltype(lua_State* l)
     if (sel->star() != NULL)
     {
         char buf[16];
-        StellarClass sc = sel->star()->getStellarClass();
-        if (sc.str(buf, sizeof(buf)))
-        {
-            lua_pushstring(l, buf);
-        }
-        else
-        {
-            // This should only happen if the spectral type has > 15 chars
-            // (i.e. never, unless there's a bug)
-            assert(0);
-            doError(l, "Bad spectral type (this is a bug!)");
-        }
+        strncpy(buf, sel->star()->getSpectralType(), sizeof buf);
+        buf[sizeof(buf) - 1] = '\0'; // make sure it's zero terminate
+        lua_pushstring(l, buf);
     }
     else
     {
@@ -2180,7 +2172,7 @@ static int object_getinfo(lua_State* l)
         setTable(l, "name", getAppCore(l, AllErrors)->getSimulation()->getUniverse()
                        ->getStarCatalog()->getStarName(*(sel->star())).c_str());
         setTable(l, "catalogNumber", star->getCatalogNumber());
-        setTable(l, "stellarClass", star->getStellarClass().str().c_str());
+        setTable(l, "stellarClass", star->getSpectralType());
         setTable(l, "absoluteMagnitude", (lua_Number)star->getAbsoluteMagnitude());
         setTable(l, "luminosity", (lua_Number)star->getLuminosity());
         setTable(l, "radius", (lua_Number)star->getRadius());
