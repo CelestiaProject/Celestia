@@ -13,6 +13,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <cctype>
+#include <cstring>
 #include <time.h>
 #include <windows.h>
 #include <commctrl.h>
@@ -212,6 +213,65 @@ BOOL APIENTRY LicenseProc(HWND hDlg,
     {
     case WM_INITDIALOG:
         LoadItemTextFromFile(hDlg, IDC_LICENSE_TEXT, "License.txt");
+        return(TRUE);
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK)
+        {
+            EndDialog(hDlg, 0);
+            return TRUE;
+        }
+        break;
+    }
+
+    return FALSE;
+}
+
+
+BOOL APIENTRY GLInfoProc(HWND hDlg,
+                         UINT message,
+                         UINT wParam,
+                         LONG lParam)
+{
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        {
+            char* vendor = (char*) glGetString(GL_VENDOR);
+            char* render = (char*) glGetString(GL_RENDERER);
+            char* version = (char*) glGetString(GL_VERSION);
+            char* ext = (char*) glGetString(GL_EXTENSIONS);
+            string s;
+            s += "Vendor: ";
+            if (vendor != NULL)
+                s += vendor;
+            s += "\r\r\n";
+            
+            s += "Renderer: ";
+            if (render != NULL)
+                s += render;
+            s += "\r\r\n";
+
+            s += "Version: ";
+            if (version != NULL)
+                s += version;
+            s += "\r\r\n";
+
+            s += "\r\r\nSupported Extensions:\r\r\n";
+            if (ext != NULL)
+            {
+                string extString(ext);
+                int pos = extString.find(' ', 0);
+                while (pos != string::npos)
+                {
+                    extString.replace(pos, 1, "\r\r\n");
+                    pos = extString.find(' ', pos);
+                }
+                s += extString;
+            }
+
+            SetDlgItemText(hDlg, IDC_GLINFO_TEXT, s.c_str());
+        }
         return(TRUE);
 
     case WM_COMMAND:
@@ -535,6 +595,10 @@ void handleKeyPress(int c)
 
     case 'L':
         sim->setTimeScale(10.0 * sim->getTimeScale());
+        break;
+
+    case 'J':
+        sim->setTimeScale(-sim->getTimeScale());
         break;
 
     case 'B':
@@ -1110,12 +1174,19 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             }
             paused = !paused;
             break;
+        case ID_TIME_REVERSE:
+            sim->setTimeScale(-sim->getTimeScale());
+            break;
         case ID_TIME_SETTIME:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_SETTIME), hWnd, SetTimeProc);
             break;
 
         case ID_HELP_ABOUT:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_ABOUT), hWnd, AboutProc);
+            break;
+
+        case ID_HELP_GLINFO:
+            DialogBox(appInstance, MAKEINTRESOURCE(IDD_GLINFO), hWnd, GLInfoProc);
             break;
 
         case ID_HELP_LICENSE:
