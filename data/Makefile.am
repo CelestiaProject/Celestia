@@ -9,7 +9,7 @@ endif
 
 BUILT_SOURCES = $(HIP_DAT)
 
-pkgdata_DATA = $(wildcard *.ssc) $(wildcard *.dat) stars.dat
+pkgdata_DATA = $(wildcard *.ssc) $(wildcard *.dat) $(wildcard *.xyz) stars.dat
 
 EXTRA_DIST = $(pkgdata_DATA)
 
