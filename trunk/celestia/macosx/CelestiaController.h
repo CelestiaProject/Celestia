@@ -27,6 +27,8 @@
 - (BOOL)windowShouldClose:(id)sender;
 - (IBAction)showGotoObject:(id)sender;
 - (IBAction)gotoObject:(id)sender;
+- (IBAction)back:(id)sender;
+- (IBAction)forward:(id)sender;
 - (void)setDirty;
 - (void)resize;
 - (void)startInitialization;
