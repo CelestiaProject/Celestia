@@ -557,6 +557,8 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowCometTails;
             else if (compareIgnoringCase(name, "boundaries") == 0)
                 flags |= Renderer::ShowBoundaries;
+            else if (compareIgnoringCase(name, "markers") == 0)
+                flags |= Renderer::ShowMarkers;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
