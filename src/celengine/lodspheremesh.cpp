@@ -574,7 +574,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
                 // Compute the tangent--required for bump mapping
                 tangents[n3]      = stheta;
                 tangents[n3 + 1]  = 0.0f;
-                tangents[n3 + 2]  = ctheta;
+                tangents[n3 + 2]  = -ctheta;
                 
                 n2 += 2;
                 n3 += 3;

@@ -1572,6 +1572,7 @@ static void renderBumpMappedMesh(const GLContext& context,
     // Set up the texture transformation--the light direction and the
     // viewer orientation both need to be considered.
     glMatrixMode(GL_TEXTURE);
+    glScalef(-1.0f, 1.0f, 1.0f);
     glRotate(lightOrientation * ~orientation);
     glMatrixMode(GL_MODELVIEW);
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);

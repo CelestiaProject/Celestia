@@ -34,7 +34,7 @@ MAD   R3, R1.yzxw, R2.zxyw, -R3;
 
 # Transform the light direction from object space into surface space
 DP3   R0.x, R2, c[16];
-DP3   R0.y, R3, c[16];
+DP3   R0.y, -R3, c[16];
 DP3   R0.z, R1, c[16];
 # Compress the light direction to fit in the primary color and output it
 MOV   R5, c[40];
