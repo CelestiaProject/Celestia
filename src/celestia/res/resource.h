@@ -29,7 +29,6 @@
 #define IDD_RENAME_LOCATION             130
 #define IDD_COMPUTEECLIPSES             131
 #define IDD_ECLIPSEFINDER               132
-
 #define IDB_FOLDERCLOSED                532
 #define IDB_FOLDEROPENED                534
 #define IDB_LOCATION                    536
@@ -98,28 +97,20 @@
 #define IDC_SHOWSTARSASPOINTS           1063
 #define IDC_LABELASTEROIDS              1064
 #define IDC_LABELSPACECRAFT             1065
-// Eclipse finder controls
 #define IDC_ECLIPSES_LIST               1071
-#define IDC_EARTH                       1072
-#define IDC_SATURN                      1073
-#define IDC_JUPITER                     1074
-#define IDC_URANUS                      1075
-#define IDC_NEPTUNE                     1076
-#define IDC_PLUTO                       1077
 #define IDCOMPUTE                       1078
 #define IDC_DATEFROM                    1079
+#define IDC_ECLIPSEFROM                 1079
 #define IDC_DATETO                      1080
+#define IDC_ECLIPSETO                   1080
 #define IDSETDATEANDGO                  1081
-#define IDC_SOLAR                       1082
-#define IDC_MOON                        1083
-
 #define IDC_EDIT_FILTER_DISTANCE        1084
 #define IDC_SLIDER_FILTER_DISTANCE      1085
-
 #define IDC_SHOWCOMETTAILS              1086
 #define IDC_SHOWCONSTELLATIONBORDERS    1087
 #define IDC_SHOWRINGSHADOWS             1088
-
+#define IDC_ECLIPSETYPE                 1089
+#define IDC_ECLIPSETARGET               1090
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -175,9 +166,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        133
+#define _APS_NEXT_RESOURCE_VALUE        134
 #define _APS_NEXT_COMMAND_VALUE         40065
-#define _APS_NEXT_CONTROL_VALUE         1089
+#define _APS_NEXT_CONTROL_VALUE         1091
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
