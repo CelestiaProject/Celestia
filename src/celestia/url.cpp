@@ -127,8 +127,10 @@ Url::Url(const std::string& str, CelestiaCore *core)
       
     switch (type) {
     case Absolute:
-        int t;
         date = astro::Date(0.0);
+#if 0
+        int t;
+
         sscanf(time.substr(0, 4).c_str(), "%04d", &t);
         date.year=t;
         sscanf(time.substr(5, 2).c_str(), "%02d", &t);
@@ -142,6 +144,10 @@ Url::Url(const std::string& str, CelestiaCore *core)
         float s;
         sscanf(time.substr(17, 5).c_str(), "%f", &s);
         date.seconds=s;
+#endif
+        sscanf(time.c_str(), "%d-%d-%dT%d:%d:%lf",
+               &date.year, &date.month, &date.day,
+               &date.hour, &date.minute, &date.seconds);
     
         BigFix *x, *y, *z;
         x = new BigFix(params["x"].c_str());
