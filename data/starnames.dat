@@ -106,7 +106,7 @@
 3801:NU Cas:25 Cas
 3810:64 Psc
 3821:Achird:ETA Cas:24 Cas
-3829::Van Maanen's Star:Van Maanen 2:Wolf 28:Gliese 35
+3829:Van Maanen's Star:Van Maanen 2:Wolf 28:Gliese 35
 3881:NU And:35 And
 3885:65 Psc
 3909:PHI2 Cet:19 Cet
@@ -1472,7 +1472,7 @@
 49593:21 LMi
 49637:31 Leo
 49641:ALF Sex:15 Sex
-49669:Regulus:Kabeleced:Cor Leonis:Kalb::ALF Leo:32 Leo
+49669:Regulus:Kabeleced:Cor Leonis:Kalb:ALF Leo:32 Leo
 49712:Q Vel
 49812:17 Sex
 49841:LAM Hya:41 Hya
@@ -3359,4 +3359,5 @@
 118243:SIG Cas:8 Cas
 118268:OME Psc:28 Psc
 118322:EPS Tuc
+
 
