@@ -34,6 +34,9 @@ int KdeUniqueCelestia::newInstance() {
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     if (args->count() != 0) {
         app->goToURL(args->url(0));
+        app->showNormal();
+        app->setActiveWindow();
+        app->raise();
     }
     return 0;
 }
