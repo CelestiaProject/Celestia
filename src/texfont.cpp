@@ -263,7 +263,7 @@ TexFont *txfLoadFont(char *filename)
 	switch (format) {
 	case TXF_FORMAT_BYTE:
             printf("TXT_FORMAT_BYTE\n");
-		if (useLuminanceAlpha) {
+		if (useLuminanceAlpha && 0) {
 			unsigned char *orig;
 
 			orig =
@@ -310,7 +310,7 @@ TexFont *txfLoadFont(char *filename)
 		}
 		got = fread(texbitmap, 1, stride * height, file);
 		EXPECT(stride * height);
-		if (useLuminanceAlpha) {
+		if (useLuminanceAlpha && 0) {
 			txf->teximage =
 				(unsigned char *) calloc(width * height * 2, 1);
 			if (txf->teximage == NULL) {
@@ -384,6 +384,7 @@ txfEstablishTexture(TexFont * txf, GLuint texobj, GLboolean setupMipmaps)
 	glNewList(txf->texobj, GL_COMPILE);
 #endif
 
+#if 0
 	if (useLuminanceAlpha) {
 		if (setupMipmaps) {
 			gluBuild2DMipmaps(GL_TEXTURE_2D, GL_LUMINANCE_ALPHA,
@@ -418,7 +419,22 @@ txfEstablishTexture(TexFont * txf, GLuint texobj, GLboolean setupMipmaps)
 		abort();				/* Should not get here without EXT_texture or OpenGL
 								   1.1. */
 #endif
-	}
+        }
+#endif
+        if (setupMipmaps) {
+            gluBuild2DMipmaps(GL_TEXTURE_2D, GL_ALPHA,
+                              txf->tex_width, txf->tex_height,
+                              GL_ALPHA, GL_UNSIGNED_BYTE,
+                              txf->teximage);
+        } else {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA,
+                         txf->tex_width, txf->tex_height, 0,
+                         GL_ALPHA, GL_UNSIGNED_BYTE,
+                         txf->teximage);
+        }
+
 
 #if defined(USE_DISPLAY_LISTS)
 	glEndList();
