@@ -18,6 +18,7 @@
 #define IDD_CONTROLSHELP                115
 #define IDD_GOTO_OBJECT                 116
 #define IDD_MOVIE_PARAMS_CHOOSER        117
+#define IDD_DISPLAYMODE                 118
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
 #define IDC_GLINFO_TEXT                 1005
@@ -48,6 +49,7 @@
 #define IDC_COMBO_MOVIE_FRAMERATE       1030
 #define IDC_MAXSTARS_SLIDER             1031
 #define IDC_MAXSTARS_EDIT               1032
+#define IDC_COMBO_RESOLUTION            1033
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -103,15 +105,17 @@
 #define ID_NAVIGATION_GOTO_OBJECT       40056
 #define ID_FILE_CAPTUREIMAGE            40057
 #define ID_FILE_CAPTUREMOVIE            40058
+#define ID_RENDER_DISPLAYMODE           40059
+#define ID_RENDER_FULLSCREEN            40060
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        118
-#define _APS_NEXT_COMMAND_VALUE         40059
-#define _APS_NEXT_CONTROL_VALUE         1033
+#define _APS_NEXT_RESOURCE_VALUE        119
+#define _APS_NEXT_COMMAND_VALUE         40061
+#define _APS_NEXT_CONTROL_VALUE         1034
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
