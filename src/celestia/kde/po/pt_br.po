@@ -6,7 +6,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: celestia-kde_br_pt\n"
+"Project-Id-Version: celestia-kde_pt_br\n"
 "POT-Creation-Date: 2003-07-05 13:56+0200\n"
 "PO-Revision-Date: 2003-07-06 18:59-0300\n"
 "Last-Translator: Luis Gabriel <lgabriel@brazilmail.com>\n"
