@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2003-07-05 13:56+0200\n"
 "PO-Revision-Date: 2003-07-04 13:10-0100\n"
-"Last-Translator: Andre Schoordijk <Andre.Schoordijk@eu.sony.com>\n"
+"Last-Translator: Andre Schoordijk\n"
 "Language-Team: Dutch <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -203,29 +203,24 @@ msgid "Show Orbits"
 msgstr "Toon Omloopbanen"
 
 #: kdeapp.cpp:420
-#, fuzzy
 msgid "Show Asteroid Orbits"
-msgstr "Toon Planetoiden Namen"
+msgstr "Toon Planetoiden Omloopbanen"
 
 #: kdeapp.cpp:423
-#, fuzzy
 msgid "Show Comet Orbits"
-msgstr "Toon Komeetstaarten"
+msgstr "Toon Komeet Omloopbanen"
 
 #: kdeapp.cpp:426
-#, fuzzy
 msgid "Show Moon Orbits"
-msgstr "Toon Omloopbanen"
+msgstr "Toon Maan Omloopbanen"
 
 #: kdeapp.cpp:429
-#, fuzzy
 msgid "Show Planet Orbits"
-msgstr "Toon Planeten"
+msgstr "Toon Planeten Omloopbanen"
 
 #: kdeapp.cpp:432
-#, fuzzy
 msgid "Show Spacecraft Orbits"
-msgstr "Toon Ruimtevaartuig Namen"
+msgstr "Toon Ruimtevaartuig Omloopbanen"
 
 #: kdeapp.cpp:435
 msgid "Show Celestial Grid"
@@ -284,9 +279,8 @@ msgid "Show Moon Labels"
 msgstr "Toon Maan Namen"
 
 #: kdeapp.cpp:477
-#, fuzzy
 msgid "Show Comet Labels"
-msgstr "Toon Komeetstaarten"
+msgstr "Toon Komeet Namen"
 
 #: kdeapp.cpp:481
 msgid "Show Constellation Labels"
@@ -503,20 +497,19 @@ msgstr "Komeetstaarten"
 
 #: kdepreferencesdialog.cpp:136
 msgid "Orbits / Labels"
-msgstr ""
+msgstr "Omloopbanen / Labels"
 
 #: kdepreferencesdialog.cpp:163
 msgid "Moons"
 msgstr "Manen"
 
 #: kdepreferencesdialog.cpp:172
-#, fuzzy
 msgid "Comets"
-msgstr "Komeet"
+msgstr "Kometen"
 
 #: kdepreferencesdialog.cpp:191
 msgid "Asteroids"
-msgstr "Planetoden"
+msgstr "Planetoiden"
 
 #: kdepreferencesdialog.cpp:200
 msgid "Spacecrafts"
@@ -937,3 +930,5 @@ msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
 msgstr "Nee... Geen Meel Adres"
+
+
