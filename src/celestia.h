@@ -27,7 +27,7 @@
 
 #else
 
-#ifndef DEBUG
+#ifndef _DEBUG
 #define DPRINTF //
 #else
 #define DPRINTF DebugPrint
