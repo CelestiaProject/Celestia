@@ -221,17 +221,13 @@ void SetupCombinersSmooth(Texture& baseTexture,
 }
 
 
+// Normal map should be bound as texture 1 and the base map should be bound
+// as texture 0.
 void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
                                    Color ambientColor,
                                    Color diffuseColor)
 {
     glEnable(GL_REGISTER_COMBINERS_NV);
-#if 0
-    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
-    glEnable(GL_TEXTURE_2D);
-    bumpTexture.bind();
-    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-#endif
     glx::glCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV, 2);
 
     rc::parameter(GL_CONSTANT_COLOR0_NV, ambientColor);
@@ -246,7 +242,7 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
     // Load register B with the primary color, which contains the surface
     // space light direction L.  Because the color is linearly interpolated
     // across triangles, the direction may become denormalized; however, in
-    // Celestia, planet surfaces are tessellated to the point where this
+    // Celestia, planet surfaces are tessellated finely enough that this
     // is not a problem.
     glx::glCombinerInputNV(GL_COMBINER0_NV, GL_RGB,
                            GL_VARIABLE_B_NV, GL_PRIMARY_COLOR_NV,
