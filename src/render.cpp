@@ -93,14 +93,6 @@ Renderer::~Renderer()
 }
 
 
-static void BlueTextureEval(float u, float v, float w,
-                            unsigned char *pixel)
-{
-    pixel[0] = 128;
-    pixel[1] = 128;
-    pixel[2] = 255;
-}
-
 static void StarTextureEval(float u, float v, float w,
                             unsigned char *pixel)
 {
@@ -165,6 +157,7 @@ static void VeilTextureEval(float u, float v, float w,
     // pixel[3] = (int) (128.99f * (1 - (float) pow(abs(w), 0.5f)));
 }
 
+#if 0
 static void BoxTextureEval(float u, float v, float w,
                             unsigned char* pixel)
 {
@@ -189,6 +182,7 @@ static void BoxTextureEval(float u, float v, float w,
     pixel[2] = b;
     pixel[3] = 80;
 }
+#endif
 
 
 
@@ -601,8 +595,8 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
-    glPolygonMode(GL_FRONT, renderMode);
-    glPolygonMode(GL_BACK, renderMode);
+    glPolygonMode(GL_FRONT, (GLenum) renderMode);
+    glPolygonMode(GL_BACK, (GLenum) renderMode);
 
     // Render planets, moons, asteroids, etc.  Stars close and large enough
     // to have discernible surface detail are also placed in renderList.
@@ -783,28 +777,6 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
-    // #define DISPLAY_AXES
-#ifdef DISPLAY_AXES
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    {
-        Point3f orig(-0.5f, -0.5f, -2);
-        Mat3f m = conjugate(observer.getOrientation()).toMatrix3();
-
-        glBegin(GL_LINES);
-        glColor4f(1, 0, 0, 1);
-        glVertex(orig);
-        glVertex(orig + Vec3f(0.2f, 0, 0) * m);
-        glColor4f(0, 1, 0, 1);
-        glVertex(orig);
-        glVertex(orig + Vec3f(0, 0.2f, 0) * m);
-        glColor4f(0, 0, 1, 1);
-        glVertex(orig);
-        glVertex(orig + Vec3f(0, 0, 0.2f) * m);
-        glEnd();
-    }
-#endif
-
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -837,6 +809,7 @@ void Renderer::render(const Observer& observer,
 }
 
 
+#if 0
 static void renderParticle(Point3f& center,
                            Vec3f& v0,
                            Vec3f& v1,
@@ -853,6 +826,7 @@ static void renderParticle(Point3f& center,
     glTexCoord2f(0, 1);
     glVertex(center + (v3 * size));
 }
+#endif
 
 
 static void renderRingSystem(float innerRadius,
@@ -1231,8 +1205,8 @@ void Renderer::renderPlanet(const Body& body,
             double rotations = now / (double) body.getRotationPeriod();
             int wholeRotations = (int) rotations;
             double remainder = rotations - wholeRotations;
-            planetRotation = -remainder * 2 * PI - body.getRotationPhase();
-            glRotatef((float) (-remainder * 360.0 - radToDeg(body.getRotationPhase())),
+            planetRotation = remainder * 2 * PI + body.getRotationPhase();
+            glRotatef((float) (remainder * 360.0 + radToDeg(body.getRotationPhase())),
                       0, 1, 0);
         }
 
@@ -1644,8 +1618,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                                      double now,
                                      bool showLabels)
 {
-    float size = pixelSize * 3.0f;
-
     Point3f starPos = sun.getPosition();
     Point3d observerPos = astro::heliocentricPosition(observer.getPosition(), starPos);
 
