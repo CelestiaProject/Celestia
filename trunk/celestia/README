@@ -177,6 +177,13 @@ Ctrl+Y : Toggle autoMag = auto adaptation of star visibility to field
          of view   
 r R: lower or raise texture resolution
 
+Multiview:
+Ctrl+R : Split view vertically
+Ctrl+U : Split view horizontally
+TAB    : Cycle active view
+DEL    : Delete active view
+Ctrl+D : Delete all views except active one
+
 Spaceflight:
 F1 : Stop 
 F2 : Set velocity to 1 km/s
