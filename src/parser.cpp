@@ -148,45 +148,6 @@ Array* Parser::readArray()
 }
 
 
-#if 0
-Hash* Parser::readHash()
-{
-    Tokenizer::TokenType tok = tokenizer->nextToken();
-    if (tok != Tokenizer::TokenBeginGroup)
-    {
-        tokenizer->pushBack();
-        return NULL;
-    }
-
-    Hash* hash = new Hash();
-
-    tok = tokenizer->nextToken();
-    while (tok != Tokenizer::TokenEndGroup)
-    {
-        if (tok != Tokenizer::TokenName)
-        {
-            tokenizer->pushBack();
-            delete hash;
-            return NULL;
-        }
-        string name = tokenizer->getNameValue();
-
-        Value* value = readValue();
-        if (value == NULL)
-        {
-            delete hash;
-            return NULL;
-        }
-        
-        hash->insert(Hash::value_type(name, value));
-
-        tok = tokenizer->nextToken();
-    }
-
-    return hash;
-}
-#endif
-
 Hash* Parser::readHash()
 {
     Tokenizer::TokenType tok = tokenizer->nextToken();
