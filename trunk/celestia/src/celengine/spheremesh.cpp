@@ -65,77 +65,6 @@ SphereMesh::~SphereMesh()
 }
 
 
-void SphereMesh::render(unsigned int attributes, float)
-{
-#if 0
-    if (vertices != NULL)
-    {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, vertices);
-    }
-
-    if (normals != NULL && ((attributes & Normals) != 0))
-    {
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, 0, normals);
-    }
-    else
-    {
-        glDisableClientState(GL_NORMAL_ARRAY);
-    }
-
-    if (texCoords != NULL && ((attributes & TexCoords0) != 0))
-    {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-    }
-    else
-    {
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    }
-    glDisableClientState(GL_COLOR_ARRAY);
-
-    // Use nVidia's vertex program extension . . .  right now, we
-    // just assume that we only send down tangents if we're using this
-    // extension.  Need to come up with a better solution . . .
-    if (tangents != NULL && ((attributes & Tangents) != 0))
-    {
-        glEnableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
-        glx::glVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
-    }
-
-    for (int i = 0; i < nRings - 1; i++)
-    {
-        glDrawElements(GL_QUAD_STRIP,
-                       (nSlices + 1) * 2,
-                       GL_UNSIGNED_SHORT,
-                       indices + (nSlices + 1) * 2 * i);
-    }
-
-    if (tangents != NULL && ((attributes & Tangents) != 0))
-    {
-        glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
-    }
-#endif
-}
-
-
-void SphereMesh::render(float lod)
-{
-#if 0
-    render(Normals | TexCoords0, lod);
-#endif
-}
-
-
-void SphereMesh::render(unsigned int attributes, const Frustum&, float lod)
-{
-#if 0
-    render(attributes, lod);
-#endif
-}
-
-
 void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 {
     nRings = _nRings;
@@ -411,4 +340,52 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
             vertices[n + 2] += vert.z;
         }
     }
+}
+
+
+Mesh* SphereMesh::convertToMesh() const
+{
+    uint32 stride = 32;
+    Mesh::VertexAttribute attributes[3];
+    attributes[0] = Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, 0);
+    attributes[1] = Mesh::VertexAttribute(Mesh::Normal, Mesh::Float3, 12);
+    attributes[2] = Mesh::VertexAttribute(Mesh::Texture0, Mesh::Float2, 24);
+
+    Mesh* mesh = new Mesh();
+
+    mesh->setVertexDescription(Mesh::VertexDescription(stride, 3, attributes));
+
+    // Copy the vertex data from the separate position, normal, and texture coordinate
+    // arrays into a single array.
+    char* vertexData = new char[stride * nVertices];
+
+    int i;
+    for (i = 0; i < nVertices; i++)
+    {
+        float* vertex = reinterpret_cast<float*>(vertexData + stride * i);
+        vertex[0] = vertices[i * 3];
+        vertex[1] = vertices[i * 3 + 1];
+        vertex[2] = vertices[i * 3 + 2];
+        vertex[3] = normals[i * 3];
+        vertex[4] = normals[i * 3 + 1];
+        vertex[5] = normals[i * 3 + 2];
+        vertex[6] = texCoords[i * 2];
+        vertex[7] = texCoords[i * 2 + 1];
+    }
+
+    mesh->setVertices(nVertices, vertexData);
+
+    for (i = 0; i < nRings - 1; i++)
+    {
+        uint32* indexData = new uint32[(nSlices + 1) * 2];
+        for (int j = 0; j <= nSlices; j++)
+        {
+            indexData[j * 2 + 0] = i * (nSlices + 1) + j;
+            indexData[j * 2 + 1] = (i + 1) * (nSlices + 1) + j;
+        }
+
+        mesh->addGroup(Mesh::TriStrip, 0, (nSlices + 1) * 2, indexData);
+    }
+    
+    return mesh;
 }
