@@ -861,7 +861,7 @@ void Observer::follow(const Selection& selection)
 
 void Observer::geosynchronousFollow(const Selection& selection)
 {
-    if (selection.body != NULL)
+    if (selection.body() != NULL)
     {
         setFrame(FrameOfReference(astro::Geographic, selection));
     }
@@ -869,7 +869,7 @@ void Observer::geosynchronousFollow(const Selection& selection)
 
 void Observer::phaseLock(const Selection& selection)
 {
-    if (frame.refObject.body != NULL)
+    if (frame.refObject.body() != NULL)
     {
         if (selection == frame.refObject)
         {
@@ -885,7 +885,7 @@ void Observer::phaseLock(const Selection& selection)
 
 void Observer::chase(const Selection& selection)
 {
-    if (selection.body != NULL)
+    if (selection.body() != NULL)
     {
         setFrame(FrameOfReference(astro::Chase, selection));
     }
