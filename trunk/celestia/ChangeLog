@@ -757,3 +757,8 @@ Code:
 * Changed default start location to Earth
 * Revised some erroneous spectral classes in star catalog
 * Made solar system objects occlude labels of more distant objects
+* Implemented an algorithm for importance weights to avoid overlapping or
+  too crowded location labels for Mars, Venus and the Moon
+* Added new textures for Titan based on recent imaging from the Cassini
+  mission 
+	
