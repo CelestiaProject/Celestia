@@ -272,8 +272,71 @@ Command* CommandParser::parseCommand()
     else if (commandName == "print")
     {
         string text;
+        string origin;
+        int horig = -1;
+        int vorig = -1;
+        double hoff = 0;
+        double voff = 0;
+        double duration = 1.0e9;
         paramList->getString("text", text);
-        cmd = new CommandPrint(text);
+        paramList->getString("origin", origin);
+        paramList->getNumber("duration", duration);
+        paramList->getNumber("row", voff);
+        paramList->getNumber("column", hoff);
+        if (compareIgnoringCase(origin, "left") == 0)
+        {
+            horig = -1;
+            vorig = 0;
+        }
+        else if (compareIgnoringCase(origin, "right") == 0)
+        {
+            horig = 1;
+            vorig = 0;
+        }
+        else if (compareIgnoringCase(origin, "center") == 0)
+        {
+            horig = 0;
+            vorig = 0;
+        }
+        else if (compareIgnoringCase(origin, "left") == 0)
+        {
+            horig = -1;
+            vorig = 0;
+        }
+        else if (compareIgnoringCase(origin, "top") == 0)
+        {
+            horig = 0;
+            vorig = 1;
+        }
+        else if (compareIgnoringCase(origin, "bottom") == 0)
+        {
+            horig = 0;
+            vorig = -1;
+        }
+        else if (compareIgnoringCase(origin, "topright") == 0)
+        {
+            horig = 1;
+            vorig = 1;
+        }
+        else if (compareIgnoringCase(origin, "topleft") == 0)
+        {
+            horig = -1;
+            vorig = 1;
+        }
+        else if (compareIgnoringCase(origin, "bottomleft") == 0)
+        {
+            horig = -1;
+            vorig = -1;
+        }
+        else if (compareIgnoringCase(origin, "bottomright") == 0)
+        {
+            horig = 1;
+            vorig = -1;
+        }
+
+        cmd = new CommandPrint(text,
+                               horig, vorig, (int) hoff, (int) -voff,
+                               duration);
     }
     else if (commandName == "cls")
     {
