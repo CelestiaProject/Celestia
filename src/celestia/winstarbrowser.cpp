@@ -37,6 +37,16 @@ enum {
     StarsWithPlanets = 2,
 };
 
+static Point3f toMicroLY(const Point3f& p)
+{
+    return Point3f(p.x * 1e6f, p.y * 1e6f, p.z * 1e6f);
+}
+
+static Point3f fromMicroLY(const Point3f& p)
+{
+    return Point3f(p.x * 1e-6f, p.y * 1e-6f, p.z * 1e-6f);
+}
+
 
 bool InitStarBrowserColumns(HWND listView)
 {
@@ -99,9 +109,9 @@ struct BrighterStarPredicate
         // If the stars are closer than one light year, use
         // a more precise distance estimate.
         if (d0 < 1.0f)
-            d0 = (star0->getPosition() - ucPos).length();
+            d0 = (toMicroLY(star0->getPosition()) - ucPos).length() * 1e-6f;
         if (d1 < 1.0f)
-            d1 = (star1->getPosition() - ucPos).length();
+            d1 = (toMicroLY(star1->getPosition()) - ucPos).length() * 1e-6f;
 
         return (star0->getApparentMagnitude(d0) <
                 star1->getApparentMagnitude(d1));
@@ -289,9 +299,9 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
             float d0 = sortInfo->pos.distanceTo(star0->getPosition());
             float d1 = sortInfo->pos.distanceTo(star1->getPosition());
             if (d0 < 1.0f)
-                d0 = (star0->getPosition() - sortInfo->ucPos).length();
+                d0 = (toMicroLY(star0->getPosition()) - sortInfo->ucPos).length() * 1e-6f;
             if (d1 < 1.0f)
-                d1 = (star1->getPosition() - sortInfo->ucPos).length();
+                d1 = (toMicroLY(star1->getPosition()) - sortInfo->ucPos).length() * 1e-6f;
             return sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
                         astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
         }
@@ -342,9 +352,9 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
 
     case 2:
         {
-            Vec3f r = star->getPosition() - browser->ucPos;
+            Vec3f r = toMicroLY(star->getPosition()) - browser->ucPos;
             float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(),
-                                              r.length());
+                                              r.length() * 1e-6f);
             sprintf(callbackScratch, "%.2f", appMag);
             nm->item.pszText = callbackScratch;
         }
@@ -376,7 +386,7 @@ void RefreshItems(HWND hDlg, StarBrowser* browser)
 
     Simulation* sim = browser->appCore->getSimulation();
     browser->ucPos = sim->getObserver().getPosition();
-    browser->pos = (Point3f) browser->ucPos;
+    browser->pos = fromMicroLY((Point3f) browser->ucPos);
     HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
     if (hwnd != 0)
     {
@@ -590,7 +600,7 @@ StarBrowser::StarBrowser(HINSTANCE appInstance,
     parent(_parent)
 {
     ucPos = appCore->getSimulation()->getObserver().getPosition();
-    pos = (Point3f) ucPos;
+    pos = fromMicroLY((Point3f) ucPos);
 
     predicate = NearestStars;
     nStars = DefaultListStars;
