@@ -372,10 +372,13 @@ http://earthobservatory.nasa.gov/Newsroom/BlueMarble/
 The textures for the Uranian satellites were created by Ivan Rivera from
 JPL data.  His Celestia page is http://bruckner.homelinux.net/celestia.html
 
+The Enceladus map is a mosaic of Voyager images assembled by Phil Stooke,
+then modified slightly to cover a gap in the south polar region.
+
 The asteroid.jpg texture was created by Paul Roberts.
 
 The lower resolution textures were all converted from their higher resolution
-Versions using Gimp.
+versions using Gimp.
 
 3D asteroid models of Toutatis, Kleopatra, and Geographos are courtesy of
 Scott Hudson, Washington State University.  His site is:
@@ -385,8 +388,8 @@ http://www.eecs.wsu.edu/~hudson/Research/Asteroids/4179/index.html
 Mathilde, and Gaspra are derived from Phil Stooke's Cartography of
 Non-Spherical Worlds:  http://publish.uwo.ca/~pjstooke/plancart.htm
 
-Grant Hutchinson supplied the correct orientations for the major planets
-and their moons.
+Grant Hutchinson supplied the correct orientations for the major planets,
+their moons, and a number of asteroids.
 
 The Mac OS X icon was designed by Chris Alford (http://www.chrisalford.com/)
 
