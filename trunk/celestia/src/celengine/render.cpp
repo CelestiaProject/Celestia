@@ -962,7 +962,7 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowCelestialSphere) != 0)
     {
-        glColor4f(0.3f, 0.7, 0.7f, 0.55f);
+        glColor4f(0.3f, 0.7f, 0.7f, 0.55f);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -1018,7 +1018,7 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowBoundaries) != 0)
     {
-        glColor4f(0.8f,0.33, 0.63f, 0.35f);
+        glColor4f(0.8f, 0.33f, 0.63f, 0.35f);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -1099,7 +1099,8 @@ void Renderer::render(const Observer& observer,
             float cloudHeight = 0.0f;
             if (iter->body != NULL)
             {
-                radius = iter->body->getRadius();
+                // radius = iter->body->getRadius();
+                radius = iter->radius;
                 if (iter->body->getRings() != NULL)
                 {
                     radius = iter->body->getRings()->outerRadius;
@@ -1254,17 +1255,18 @@ void Renderer::render(const Observer& observer,
             {
                 if (renderList[i].isCometTail)
                 {
-                    renderPlanet(*renderList[i].body,
-                                 renderList[i].position,
-                                 renderList[i].sun,
-                                 renderList[i].distance,
-                                 renderList[i].appMag,
-                                 now,
-                                 observer.getOrientation(),
-                                 nearPlaneDistance, farPlaneDistance);
+                    renderCometTail(*renderList[i].body,
+                                    renderList[i].position,
+                                    renderList[i].sun,
+                                    renderList[i].distance,
+                                    renderList[i].appMag,
+                                    now,
+                                    observer.getOrientation(),
+                                    nearPlaneDistance, farPlaneDistance);
                 }
                 else
                 {
+#if 1
                     renderPlanet(*renderList[i].body,
                                  renderList[i].position,
                                  renderList[i].sun,
@@ -1273,6 +1275,7 @@ void Renderer::render(const Observer& observer,
                                  now,
                                  observer.getOrientation(),
                                  nearPlaneDistance, farPlaneDistance);
+#endif
                 }
             }
             else if (renderList[i].star != NULL)
@@ -1634,6 +1637,7 @@ struct RenderInfo
     Texture* baseTex;
     Texture* bumpTex;
     Texture* nightTex;
+    Texture* glossTex;
     Color hazeColor;
     Color specularColor;
     float specularPower;
@@ -1651,6 +1655,7 @@ struct RenderInfo
                    baseTex(NULL),
                    bumpTex(NULL),
                    nightTex(NULL),
+                   glossTex(NULL),
                    hazeColor(0.0f, 0.0f, 0.0f),
                    specularColor(0.0f, 0.0f, 0.0f),
                    specularPower(0.0f),
@@ -1943,8 +1948,6 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
     vp::parameter(33, ri.hazeColor);
     vp::parameter(40, 0.0f, 1.0f, 0.5f, ri.specularPower);
 
-    // Currently, we don't support bump maps and specular reflection
-    // simultaneously . . .
     if (ri.bumpTex != NULL)
     {
         vp::enable();
@@ -1959,15 +1962,35 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
                           Mesh::VertexProgParams, frustum, ri.lod,
                           ri.baseTex);
         DisableCombiners();
+
+        // Render a specular pass
+        if (ri.specularColor != Color::Black)
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+            vp::parameter(34, ri.sunColor * ri.specularColor);
+            vp::use(vp::specular);
+            // Disable ambient and diffuse
+            vp::parameter(20, Color::Black);
+            vp::parameter(32, Color::Black);
+            SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
+            lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+                              frustum, ri.lod,
+                              ri.glossTex != NULL ? ri.glossTex : ri.baseTex);
+            DisableCombiners();
+            glDisable(GL_BLEND);
+        }
     }
     else if (ri.specularColor != Color::Black)
     {
         vp::parameter(34, ri.sunColor * ri.specularColor);
         vp::use(vp::specular);
-        SetupCombinersGlossMapWithFog();
-        lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.lod,
-                          ri.baseTex);
+        SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
+        unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
+            Mesh::VertexProgParams;
+        if (ri.glossTex != NULL)
+            attributes |= Mesh::TexCoords1;
+        lodSphere->render(attributes, frustum, ri.lod, ri.baseTex);
         DisableCombiners();
     }
     else
@@ -2351,6 +2374,8 @@ void Renderer::renderObject(Point3f pos,
     if ((obj.surface->appearanceFlags & Surface::ApplyNightMap) != 0 &&
         (renderFlags & ShowNightMaps) != 0)
         ri.nightTex = obj.surface->nightTexture.find(textureResolution);
+    if ((obj.surface->appearanceFlags & Surface::SeparateSpecularMap) != 0)
+        ri.glossTex = obj.surface->specularTexture.find(textureResolution);
 
     // Apply the modelview transform for the object
     glPushMatrix();
@@ -2913,6 +2938,8 @@ void Renderer::renderStar(const Star& star,
 }
 
 
+static const int MaxCometTailPoints = 20;
+
 void Renderer::renderCometTail(const Body& body,
                                Point3f pos,
                                Vec3f sunDirection,
@@ -2923,6 +2950,161 @@ void Renderer::renderCometTail(const Body& body,
                                float nearPlaneDistance,
                                float farPlaneDistance)
 {
+    Point3f cometPoints[MaxCometTailPoints];
+    Point3d pos0 = body.getOrbit()->positionAtTime(now);
+    Point3d pos1 = body.getOrbit()->positionAtTime(now - 0.01);
+    Vec3d vd = pos1 - pos0;
+    double t = now;
+    float f = 1.0e15f;
+    int nSteps = MaxCometTailPoints;
+    float dt = 10000000.0f / (nSteps * (float) vd.length() * 100.0f);
+    // float dt = 0.1f;
+
+    for (int i = 0; i < MaxCometTailPoints; i++)
+    {
+        Vec3d pd = body.getOrbit()->positionAtTime(t) - pos0;
+        Point3f p = Point3f((float) pd.x, (float) pd.y, (float) pd.z);
+        Vec3f r(p.x + (float) pos0.x,
+                p.y + (float) pos0.y,
+                p.z + (float) pos0.z);
+        float distance = r.length();
+            
+        Vec3f a = r * ((1 / square(distance)) * f * dt);
+        Vec3f dx = a * square(i * dt);
+
+        cometPoints[i] = p + dx;
+
+        t -= dt;
+    }
+
+    // We need three axes to define the coordinate system for rendering the
+    // comet.  The first axis is the velocity.  We choose the second one
+    // based on the orientation of the comet.  And the third is just the cross
+    // product of the first and second axes.
+    Quatd qd = body.getEclipticalToEquatorial(t);
+    Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
+    Vec3f v = cometPoints[1] - cometPoints[0];
+    v.normalize();
+    Vec3f u0 = Vec3f(0, 1, 0) * q.toMatrix3();
+    Vec3f u1 = Vec3f(1, 0, 0) * q.toMatrix3();
+    Vec3f u;
+    if (abs(u0 * v) < abs(u1 * v))
+        u = v ^ u0;
+    else
+        u = v ^ u1;
+    u.normalize();
+    Vec3f w = u ^ v;
+
+    // EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_BLEND);
+
+    glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+    glPushMatrix();
+    glTranslate(pos);
+
+    for (i = 0; i < MaxCometTailPoints; i++)
+    {
+#if 1
+        if (i != 0 && i != MaxCometTailPoints - 1)
+        {
+            Vec3f v0 = cometPoints[i] - cometPoints[i - 1];
+            Vec3f v1 = cometPoints[i + 1] - cometPoints[i];
+            v0.normalize();
+            v1.normalize();
+            Vec3f axis = v1 ^ v0;
+            float axisLength = axis.length();
+            if (axisLength > 1e-5f)
+            {
+                axis *= 1.0f / axisLength;
+                q.setAxisAngle(axis, asin(axisLength));
+                Mat3f m = q.toMatrix3();
+                u = u * m;
+                v = v * m;
+                w = w * m;
+            }
+        }
+#endif
+        glBegin(GL_LINE_LOOP);
+        for (int j = 0; j < 16; j++)
+        {
+            float theta = 2 * PI * (float) j / 16.0f;
+            float s = (float) sin(theta) * i * 20000.0;
+            float c = (float) cos(theta) * i * 20000.0;
+            glVertex3f(cometPoints[i].x + u.x * s + w.x * c,
+                       cometPoints[i].y + u.y * s + w.y * c,
+                       cometPoints[i].z + u.z * s + w.z * c);
+        }
+        glEnd();
+    }
+
+    glBegin(GL_LINE_STRIP);
+    for (i = 0; i < MaxCometTailPoints; i++)
+    {
+        glVertex(cometPoints[i]);
+    }
+    glEnd();
+
+#if 0
+    int nSteps = 20;
+    float dt = 5000000.0f / (nSteps * speed);
+    {
+    t = now;
+    for (int i = 0; i < nSteps; i++)
+    {
+        Point3d p = body.getOrbit()->positionAtTime(t);
+        Vec3d v = p - pos0;
+        glBegin(GL_LINE_LOOP);
+        for (int j = 0; j < 16; j++)
+        {
+            float theta = 2 * PI * (float) j / 16.0f;
+            float s = (float) sin(theta) * i * 20000.0;
+            float c = (float) cos(theta) * i * 20000.0;
+            glVertex3f((float) v.x + u.x * s + w.x * c,
+                       (float) v.y + u.y * s + w.y * c,
+                       (float) v.z + u.z * s + w.z * c);
+        }
+        glEnd();
+        t -= dt;
+    }
+    }
+#endif
+    
+#if 0
+    for (int k = 0; k < 16; k++)
+    {
+        float theta = 2 * PI * (float) k / 16.0f;
+        float s = (float) sin(theta);
+        float c = (float) cos(theta);
+
+        float f = 1.0e15f;
+        Point3f p(0.0f, 0.0f, 0.0f);
+        Vec3f pv((float) (u.x * s + w.x * c),
+                 (float) (u.y * s + w.y * c),
+                 (float) (u.z * s + w.z * c));
+        pv = pv * 500000.0f;
+        pv = pv - Vec3f((float) v.x, (float) v.y, (float) v.z) * speed;
+        t = now;
+
+        glBegin(GL_LINE_STRIP);
+        for (int i = 0; i < nSteps; i++)
+        {
+            glVertex(p);
+            Vec3f r(p.x + (float) pos0.x, p.y + (float) pos0.y, p.z + (float) pos0.z);
+            float distance = r.length();
+            
+            p = p + pv * dt;
+            pv = pv + r * ((1 / square(distance)) * f * dt);
+            if (k == 0)
+                cout << pv.x << ", " << pv.y << ", " << pv.z << '\n';
+            t -= dt;
+        }
+        glEnd();
+    }
+#endif
+
+    glPopMatrix();
 }
 
 
@@ -2977,10 +3159,10 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.appMag = appMag;
             renderList.insert(renderList.end(), rle);
         }
-#if 1
+#if 0
         if (body->getClassification() == Body::Comet)
         {
-            float radius = body->getRadius() * 100000.0f;
+            float radius = 10000000.0f; // body->getRadius() * 1000000.0f;
             discSize = (radius / (float) distanceFromObserver) / pixelSize;
             if (discSize > 1)
             {
@@ -2988,7 +3170,8 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                 rle.body = body;
                 rle.star = NULL;
                 rle.isCometTail = true;
-                rle.radius = radius;;
+                rle.position = Point3f(pos.x, pos.y, pos.z);
+                rle.radius = radius;
                 rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
                 rle.distance = distanceFromObserver;
                 rle.radius = radius;
@@ -3387,7 +3570,7 @@ void Renderer::renderCelestialSphere(const Observer& observer)
                                                        radius);
         if ((pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
-            addLabel(coordLabels[i].label, Color(0.3f, 0.7, 0.7f, 0.85f), pos);
+            addLabel(coordLabels[i].label, Color(0.3f, 0.7f, 0.7f, 0.85f), pos);
         }
     }
 }
