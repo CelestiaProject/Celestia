@@ -31,6 +31,7 @@
 #include <celengine/overlay.h>
 #include <celengine/execution.h>
 #include <celengine/cmdparser.h>
+// #include <celengine/solarsysxml.h>
 #include <celengine/multitexture.h>
 #include "favorites.h"
 #include "celestiacore.h"
@@ -489,6 +490,10 @@ void CelestiaCore::charEntered(char c)
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
         break;
 
+    case '\005':  // Ctrl+E
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowEclipseShadows);
+        break;
+
     case '\020':  // Ctrl+P
         if (renderer->fragmentShaderSupported())
             renderer->setFragmentShaderEnabled(!renderer->getFragmentShaderEnabled());
@@ -644,10 +649,10 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'R':
-        if(c=='r') // Doing no rangechecking as setResolution does it allready
-            renderer->setResolution(renderer->getResolution()-1);
+        if (c == 'r') // Skip rangechecking as setResolution does it already
+            renderer->setResolution(renderer->getResolution() - 1);
         else
-            renderer->setResolution(renderer->getResolution()+1);
+            renderer->setResolution(renderer->getResolution() + 1);
         break;
 
     case 'S':
@@ -1445,6 +1450,15 @@ bool CelestiaCore::initSimulation()
                 LoadSolarSystemObjects(solarSysFile, *universe);
             }
         }
+
+#if 0
+        {
+            bool success = LoadSolarSystemObjectsXML("data/test.xml",
+                                                     *universe);
+            if (!success)
+                warning("Error opening test.xml\n");
+        }
+#endif
 
         // Next, read all the solar system files in the extras directory
         if (config->extrasDir != "")
