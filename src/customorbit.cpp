@@ -319,7 +319,7 @@ class EarthOrbit : public Orbit
 
 	double getPeriod() const
     {
-        return 1.0;
+        return 365.25;
     };
 };
 
