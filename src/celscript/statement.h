@@ -10,6 +10,7 @@
 #ifndef CELSCRIPT_STATEMENT_H_
 #define CELSCRIPT_STATEMENT_H_
 
+#include <celscript/celx.h>
 #include <vector>
 #include <celscript/expression.h>
 #include <celscript/execution.h>

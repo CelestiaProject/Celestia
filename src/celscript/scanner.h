@@ -10,6 +10,7 @@
 #ifndef CELSCRIPT_SCANNER_H_
 #define CELSCRIPT_SCANNER_H_
 
+#include <celscript/celx.h>
 #include <string>
 #include <iostream>
 

@@ -10,6 +10,7 @@
 #ifndef CELSCRIPT_ENVIRONMENT_H_
 #define CELSCRIPT_ENVIRONMENT_H_
 
+#include <celscript/celx.h>
 #include <string>
 #include <map>
 #include <celscript/value.h>

@@ -110,6 +110,8 @@ bool Value::operator==(const Value& v) const
         return v.val.numVal == val.numVal;
     case StringType:
         return v.val.strVal == val.strVal;
+    case NilType:
+        return true;
     default:
         return false;
     }
@@ -173,6 +175,9 @@ string Value::toString() const
     case StringType:
         return *val.strVal;
 
+    case NilType:
+        return string("null");
+
     default:
         return string("");
     }
@@ -181,11 +186,10 @@ string Value::toString() const
 
 void Value::output(ostream& out) const
 {
-    // cout << type << ':';
     switch (type)
     {
     case NilType:
-        out << "nil";
+        out << "null";
         break;
     case BooleanType:
         if (val.boolVal)

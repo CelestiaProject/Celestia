@@ -10,6 +10,7 @@
 #ifndef CELSCRIPT_EXECUTION_H_
 #define CELSCRIPT_EXECUTION_H_
 
+#include <celscript/celx.h>
 #include <celscript/environment.h>
 
 
@@ -23,6 +24,7 @@ class ExecutionContext
     ~ExecutionContext();
 
     Environment* getEnvironment();
+    void runtimeError() {};
 
  private:
     Environment* globalEnv;

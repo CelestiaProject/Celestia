@@ -10,6 +10,7 @@
 #ifndef CELSCRIPT_EXPRESSION_H_
 #define CELSCRIPT_EXPRESSION_H_
 
+#include <celscript/celx.h>
 #include <celscript/value.h>
 #include <celscript/execution.h>
 
@@ -20,9 +21,12 @@ namespace celx
 class Expression
 {
  public:
-    Expression() {};
-    virtual ~Expression() {};
+    Expression();
+    virtual ~Expression();
+    virtual bool isLValue() const;
+
     virtual Value eval(ExecutionContext&) = 0;
+    virtual Value* leval(ExecutionContext&);
 };
 
 
@@ -93,12 +97,30 @@ class IdentifierExpression : public Expression
  public:
     IdentifierExpression(const std::string&);
     virtual ~IdentifierExpression();
+    virtual bool isLValue() const;
     virtual Value eval(ExecutionContext&);
+    virtual Value* leval(ExecutionContext&);
 
  private:
     const std::string name;
     int stackDepth;
 };
+
+
+class AssignmentExpression : public Expression
+{
+ public:
+    AssignmentExpression(Expression*, Expression*);
+    virtual ~AssignmentExpression();
+    virtual bool isLValue() const;
+    virtual Value eval(ExecutionContext&);
+    virtual Value* leval(ExecutionContext&);
+
+ private:
+    Expression* left;
+    Expression* right;
+};
+
 
 } // namespace celx
 

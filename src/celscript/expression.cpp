@@ -56,6 +56,25 @@ static UnaryOperatorFunc* UnaryOperatorFunctions[UnaryExpression::OperatorCount]
 };
 
 
+Expression::Expression()
+{
+}
+
+Expression::~Expression()
+{
+}
+
+bool Expression::isLValue() const
+{
+    return false;
+}
+
+Value* Expression::leval(ExecutionContext&)
+{
+    return NULL;
+}
+
+
 BinaryExpression::BinaryExpression(Operator _op,
                                    Expression* _left,
                                    Expression* _right) :
@@ -125,6 +144,11 @@ IdentifierExpression::~IdentifierExpression()
 {
 }
 
+bool IdentifierExpression::isLValue() const
+{
+    return true;
+}
+
 Value IdentifierExpression::eval(ExecutionContext& context)
 {
     Value* val = context.getEnvironment()->lookup(name);
@@ -132,6 +156,58 @@ Value IdentifierExpression::eval(ExecutionContext& context)
         return Value();
     else
         return *val;
+}
+
+Value* IdentifierExpression::leval(ExecutionContext& context)
+{
+    return context.getEnvironment()->lookup(name);
+}
+
+
+
+AssignmentExpression::AssignmentExpression(Expression* _left,
+                                           Expression* _right) :
+    left(_left), right(_right)
+{
+}
+
+AssignmentExpression::~AssignmentExpression()
+{
+    delete left;
+    delete right;
+}
+
+bool AssignmentExpression::isLValue() const
+{
+    return true;
+}
+
+Value AssignmentExpression::eval(ExecutionContext& context)
+{
+    Value* v = left->leval(context);
+    if (v == NULL)
+    {
+        context.runtimeError();
+        return Value();
+    }
+
+    *v = right->eval(context);
+
+    return *v;
+}
+
+Value* AssignmentExpression::leval(ExecutionContext& context)
+{
+    Value* v = left->leval(context);
+    if (v == NULL)
+    {
+        context.runtimeError();
+        return NULL;
+    }
+
+    *v = right->eval(context);
+
+    return v;
 }
 
 
