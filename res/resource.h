@@ -89,6 +89,7 @@
 #define ID_NAVIGATION_SYNCORBIT         40045
 #define ID_NAVIGATION_SSBROWSER         40046
 #define ID_NAVIGATION_STARBROWSER       40047
+#define ID_RENDER_SHOWCLOUDS            40048
 #define ID_TIME_SHOWLOCAL               40050
 #define ID_NAVIGATION_TRACK             40051
 #define ID_HELP_CONTROLS                40053
