@@ -11,14 +11,14 @@
 
 #include <algorithm>
 
+#include "celestia.h"
 // Ugh . . . the C++ standard says that stringstream should be in
 // sstream, but the GNU C++ compiler uses strstream instead.
 #ifdef HAVE_SSTREAM
 #include <sstream>
 #else
 #include <strstream>
-#define istringstream strstream
-#endif
+#endif // HAVE_SSTREAM
 
 #include "util.h"
 #include "mathlib.h"
