@@ -21,6 +21,7 @@ class VirtualTexture : public Texture
     VirtualTexture(const std::string& _tilePath,
                    unsigned int _baseSplit,
                    unsigned int _tileSize,
+                   const std::string& tilePrefix,
                    const std::string& tileType);
     ~VirtualTexture();
 
@@ -67,6 +68,7 @@ class VirtualTexture : public Texture
  private:
     std::string tilePath;
     std::string tileExt;
+    std::string tilePrefix;
     unsigned int baseSplit;
     unsigned int tileSize;
     unsigned int ticks;
