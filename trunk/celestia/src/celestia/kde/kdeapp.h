@@ -40,7 +40,7 @@ class KdeApp;
 
 class KdeWatcher : public CelestiaWatcher {
 public:
-    KdeWatcher(CelestiaCore* core, KdeApp* app) : kdeapp(app),CelestiaWatcher(*core) {};
+    KdeWatcher(CelestiaCore* core, KdeApp* app) : CelestiaWatcher(*core),kdeapp(app) {};
     virtual void notifyChange(CelestiaCore*, int);
 protected:
     KdeApp *kdeapp;

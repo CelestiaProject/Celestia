@@ -349,7 +349,7 @@ void KdePreferencesDialog::slotApply() {
     savedRendererFlags = appCore->getRenderer()->getRenderFlags();
     savedLabelMode = appCore->getRenderer()->getLabelMode();
     savedAmbientLightLevel = int(appCore->getRenderer()->getAmbientLightLevel() * 100);
-    savedFaintestVisible = appCore->getSimulation()->getFaintestVisible() * 100;
+    savedFaintestVisible = int(appCore->getSimulation()->getFaintestVisible() * 100);
     savedHudDetail = appCore->getHudDetail();
     savedDisplayLocalTime = appCore->getTimeZoneBias();
     savedVertexShader = appCore->getRenderer()->getVertexShaderEnabled();
