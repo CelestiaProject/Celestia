@@ -1,0 +1,56 @@
+!!ARBvp1.0
+
+# Compute ring illumination.  Assumes rings made of spherical particles,
+# and no occlusion or shadowing between ring particles.  We also compute the
+# texture coordinates for the projected shadow of a planet.
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iTex0         = vertex.texcoord[0];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  eyePos        = program.env[1];
+PARAM  lightDir      = program.env[0];
+PARAM  diffuse       = program.env[2];
+PARAM  ambient       = state.lightmodel.ambient;
+PARAM  texgen_s      = program.env[10];
+PARAM  texgen_t      = program.env[11];
+PARAM  half          = 0.5;
+PARAM  one           = 1;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oTex0         = result.texcoord[0];
+OUTPUT oTex1         = result.texcoord[1];
+
+TEMP   illum;
+TEMP   eyeVec;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Get the vector from the eye to the vertex
+SUB   eyeVec, eyePos, iPos;
+
+# Normalize it
+DP3   eyeVec.w, eyeVec, eyeVec;
+RSQ   eyeVec.w, eyeVec.w;
+MUL   eyeVec, eyeVec, eyeVec.w;
+
+# Compute the illumination
+DP3   illum.x, eyeVec, lightDir;
+ADD   illum.x, illum.x, one;
+MUL   illum.x, illum.x, half;
+
+# Output the texture
+MOV   oTex0, iTex0;
+
+# The second texture is the shadow; we need to compute the
+# it from the vertex coordinate.
+DP4   oTex1.x, texgen_s, iPos;
+DP4   oTex1.y, texgen_t, iPos;
+
+# Output the primary color
+MAD   oColor, diffuse, illum.x, ambient;
+
+END
