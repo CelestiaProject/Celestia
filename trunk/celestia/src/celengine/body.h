@@ -71,17 +71,17 @@ class RingSystem
     float innerRadius;
     float outerRadius;
     Color color;
-    MultiTexture texture;
+    MultiResTexture texture;
 
     RingSystem(float inner, float outer) :
         innerRadius(inner), outerRadius(outer), color(1.0f, 1.0f, 1.0f), texture()
-        { }
-    RingSystem(float inner, float outer, Color _color, int _loTexture=-1, int _texture = -1) :
+        { };
+    RingSystem(float inner, float outer, Color _color, int _loTexture = -1, int _texture = -1) :
         innerRadius(inner), outerRadius(outer), color(_color), texture(_loTexture, _texture)
-        { }
-    RingSystem(float inner, float outer, Color _color, string textureName) :
+        { };
+    RingSystem(float inner, float outer, Color _color, const std::string& textureName) :
         innerRadius(inner), outerRadius(outer), color(_color), texture(textureName)
-        { }
+        { };
 };
 
 
@@ -131,8 +131,8 @@ class Body
                                const Vec3d& sunPosition,
                                const Vec3d& viewerPosition) const;
 
-    Mat4d getLocalToHeliocentric(double when);
-    Point3d getHeliocentricPosition(double when);
+    Mat4d getLocalToHeliocentric(double when) const;
+    Point3d getHeliocentricPosition(double when) const;
     Quatd getEquatorialToGeographic(double when);
     Quatd getEclipticalToEquatorial() const;
     Quatd getEclipticalToGeographic(double when);

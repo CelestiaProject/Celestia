@@ -30,7 +30,7 @@ class Atmosphere
     Color skyColor;
     float cloudHeight;
     float cloudSpeed;
-    MultiTexture cloudTexture;
+    MultiResTexture cloudTexture;
 };
 
 #endif // _ATMOSPHERE_H_

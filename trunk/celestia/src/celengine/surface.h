@@ -44,9 +44,9 @@ class Surface
     Color hazeColor;
     Color specularColor;
     float specularPower;
-    MultiTexture baseTexture;       // surface colors
-    MultiTexture bumpTexture;       // normal map based on terrain relief
-    MultiTexture nightTexture;      // artificial lights to show on night side
+    MultiResTexture baseTexture;    // surface colors
+    MultiResTexture bumpTexture;    // normal map based on terrain relief
+    MultiResTexture nightTexture;   // artificial lights to show on night side
     float bumpHeight;               // scale of bump map relief
 };
 
