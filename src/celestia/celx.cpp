@@ -130,6 +130,7 @@ static void* CheckUserData(lua_State* l, int index, int id)
     }
 }
 
+// Only check for type: similar to CheckUserData, but don't report errors
 static bool istype(lua_State* l, int index, int id)
 {
     // get registry[metatable]
@@ -157,13 +158,16 @@ static bool istype(lua_State* l, int index, int id)
 LuaState::LuaState() :
     state(NULL),
     costate(NULL),
-    alive(false)
+    alive(false),
+    timer(NULL)
 {
     state = lua_open();
+    timer = CreateTimer();
 }
 
 LuaState::~LuaState()
 {
+    delete timer;
     if (state != NULL)
         lua_close(state);
 #if 0
@@ -177,6 +181,11 @@ lua_State* LuaState::getState() const
     return state;
 }
 
+
+double LuaState::getTime() const
+{
+    return timer->getTime();
+}
 
 bool LuaState::createThread()
 {
@@ -411,6 +420,11 @@ static CelestiaCore* getAppCore(lua_State* l)
     CelestiaCore** appCore =
         static_cast<CelestiaCore**>(CheckUserData(l, -1, _Celestia));
     lua_pop(l, 1);
+    
+    if (appCore == NULL)
+    {
+        return NULL;
+    }       
 
     return *appCore;
 }
@@ -510,6 +524,24 @@ static Vec3d* this_vector(lua_State* l)
     return v3;       
 }
 
+static int vector_sub(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need two operands for sub");
+    Vec3d* op1 = to_vector(l, 1);
+    Vec3d* op2 = to_vector(l, 2);
+    if (op1 == NULL || op2 == NULL)
+    {
+        lua_pushstring(l, "Subtraction only defined for two vectors");
+        lua_error(l);
+    }
+    else
+    {
+        Vec3d result = *op1 - *op2;
+        vector_new(l, result);
+    }
+    return 1;    
+}
+
 static int vector_getx(lua_State* l)
 {
     Vec3d* v3 = to_vector(l, 1);
@@ -564,6 +596,108 @@ static int vector_getz(lua_State* l)
     return 1;
 }
 
+static int vector_normalize(lua_State* l)
+{
+    Vec3d* v = to_vector(l, 1);
+    if (v == NULL)
+    {
+        lua_pushstring(l, "Bad vector object!");
+        lua_error(l);
+    }
+    else
+    {
+        Vec3d vn(*v);
+        vn.normalize();
+        vector_new(l, vn);
+    }
+    return 1;
+}
+
+// need these to be declared here for vector_add -- ugly
+static UniversalCoord* to_position(lua_State* l, int index);
+static int position_new(lua_State* l, const UniversalCoord& uc);
+
+static int vector_add(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need two operands for addition");
+    Vec3d* v1 = NULL;    
+    Vec3d* v2 = NULL;
+    UniversalCoord* p = NULL;
+    
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3)) 
+    {
+        v1 = to_vector(l, 1);
+        v2 = to_vector(l, 2);
+        vector_new(l, *v1 + *v2);
+    }
+    else
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Position))        
+    {
+        v1 = to_vector(l, 1);
+        p = to_position(l, 2);
+        position_new(l, *p + *v1);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad vector addition!");
+        lua_error(l);
+    }
+    return 1;    
+}
+
+static int vector_mult(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need two operands for multiplication");
+    Vec3d* v1 = NULL;
+    Vec3d* v2 = NULL;
+    lua_Number s = 0.0;
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3)) 
+    {
+        v1 = to_vector(l, 1);
+        v2 = to_vector(l, 2);
+        lua_pushnumber(l, *v1 * *v2);
+    }
+    else
+    if (istype(l, 1, _Vec3) && lua_isnumber(l, 2))        
+    {
+        v1 = to_vector(l, 1);
+        s = lua_tonumber(l, 2);
+        vector_new(l, *v1 * s);
+    }
+    else
+    if (lua_isnumber(l, 1) && istype(l, 2, _Vec3))
+    {
+        s = lua_tonumber(l, 1);
+        v1 = to_vector(l, 2);
+        vector_new(l, *v1 * s);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad vector multiplication!");
+        lua_error(l);
+    }
+    return 1;
+}
+
+static int vector_cross(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need two operands for multiplication");
+    Vec3d* v1 = NULL;
+    Vec3d* v2 = NULL;
+    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3)) 
+    {
+        v1 = to_vector(l, 1);
+        v2 = to_vector(l, 2);
+        vector_new(l, *v1 ^ *v2);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad vector multiplication!");
+        lua_error(l);
+    }
+    return 1;
+
+}
 
 static int vector_tostring(lua_State* l)
 {
@@ -571,14 +705,20 @@ static int vector_tostring(lua_State* l)
     return 1;
 }
 
+
 static void CreateVectorMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Vec3);
     
     RegisterMethod(l, "__tostring", vector_tostring);
+    RegisterMethod(l, "__add", vector_add);
+    RegisterMethod(l, "__sub", vector_sub);
+    RegisterMethod(l, "__mul", vector_mult);
+    RegisterMethod(l, "__pow", vector_cross);
     RegisterMethod(l, "getx", vector_getx);
     RegisterMethod(l, "gety", vector_gety);
     RegisterMethod(l, "getz", vector_getz);
+    RegisterMethod(l, "normalize", vector_normalize);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -591,7 +731,7 @@ static int rotation_new(lua_State* l, const Quatd& qd)
     
     return 1;
 }
-    
+
 static Quatd* to_rotation(lua_State* l, int index)
 {
     return static_cast<Quatd*>(CheckUserData(l, index, _Rotation));
@@ -609,6 +749,66 @@ static Quatd* this_rotation(lua_State* l)
     return q;       
 }
 
+static int rotation_add(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need two operands for add");
+    Quatd* q1 = to_rotation(l, 1);
+    Quatd* q2 = to_rotation(l, 2);
+    if (q1 == NULL || q2 == NULL)
+    {
+        lua_pushstring(l, "Addition only defined for two rotations");
+        lua_error(l);
+    }
+    else
+    {
+        Quatd result = *q1 + *q2;
+        rotation_new(l, result);
+    }
+    return 1;    
+}
+
+static int rotation_mult(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need two operands for multiplication");
+    Quatd* r1 = NULL;
+    Quatd* r2 = NULL;
+    Vec3d* v = NULL;
+    lua_Number s = 0.0;
+    if (istype(l, 1, _Rotation) && istype(l, 2, _Rotation)) 
+    {
+        r1 = to_rotation(l, 1);
+        r2 = to_rotation(l, 2);
+        rotation_new(l, *r1 * *r2);
+    }
+    else
+    if (istype(l, 1, _Rotation) && lua_isnumber(l, 2))        
+    {
+        r1 = to_rotation(l, 1);
+        s = lua_tonumber(l, 2);
+        rotation_new(l, *r1 * s);
+    }
+    else
+    if (lua_isnumber(l, 1) && istype(l, 2, _Rotation))
+    {
+        s = lua_tonumber(l, 1);
+        r1 = to_rotation(l, 2);
+        rotation_new(l, *r1 * s);
+    }
+    else
+    if (istype(l, 1, _Rotation) && istype(l, 2, _Vec3))
+    {
+        v = to_vector(l, 1);
+        r1 = to_rotation(l, 2);
+        rotation_new(l, *v * *r1);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad rotation multiplication!");
+        lua_error(l);
+    }
+    return 1;
+}       
+
 static int rotation_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Rotation]");
@@ -620,6 +820,8 @@ static void CreateRotationMetaTable(lua_State* l)
     CreateClassMetatable(l, _Rotation);
     
     RegisterMethod(l, "__tostring", rotation_tostring);
+    RegisterMethod(l, "__add", rotation_add);
+    RegisterMethod(l, "__mul", rotation_mult);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -757,6 +959,63 @@ static int position_distanceto(lua_State* l)
     return 1;
 }
 
+static int position_add(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need two operands for addition");
+    UniversalCoord* p1 = NULL;
+    UniversalCoord* p2 = NULL;
+    Vec3d* v2 = NULL;
+    
+    if (istype(l, 1, _Position) && istype(l, 2, _Position)) 
+    {
+        p1 = to_position(l, 1);
+        p2 = to_position(l, 2);
+        // this is not very intuitive, as p1-p2 is a vector
+        position_new(l, *p1 + *p2);
+    }
+    else
+    if (istype(l, 1, _Position) && istype(l, 2, _Vec3))        
+    {
+        p1 = to_position(l, 1);
+        v2 = to_vector(l, 2);
+        position_new(l, *p1 + *v2);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad position addition!");
+        lua_error(l);
+    }
+    return 1;    
+}
+
+static int position_sub(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need two operands for subtraction");
+    UniversalCoord* p1 = NULL;
+    UniversalCoord* p2 = NULL;
+    Vec3d* v2 = NULL;
+    
+    if (istype(l, 1, _Position) && istype(l, 2, _Position)) 
+    {
+        p1 = to_position(l, 1);
+        p2 = to_position(l, 2);
+        vector_new(l, *p1 - *p2);
+    }
+    else
+    if (istype(l, 1, _Position) && istype(l, 2, _Vec3))        
+    {
+        p1 = to_position(l, 1);
+        v2 = to_vector(l, 2);
+        position_new(l, *p1 - *v2);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad position subtraction!");
+        lua_error(l);
+    }
+    return 1;    
+}
+
 static int position_addvector(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected to position:addvector()");
@@ -770,8 +1029,6 @@ static int position_addvector(lua_State* l)
     else
     if (uc != NULL && v3d != NULL)
     {
-        // Is this ok? I assume we can directly manipulate memory of uc, hoping 
-        // it is legal within lua.
         UniversalCoord ucnew = *uc + *v3d;
         position_new(l, ucnew);        
     }
@@ -787,6 +1044,7 @@ static void CreatePositionMetaTable(lua_State* l)
     RegisterMethod(l, "distanceto", position_distanceto);
     RegisterMethod(l, "vectorto", position_vectorto);
     RegisterMethod(l, "addvector", position_addvector);
+    RegisterMethod(l, "__add", position_add);
     RegisterMethod(l, "getx", position_getx);
     RegisterMethod(l, "gety", position_gety);
     RegisterMethod(l, "getz", position_getz);
@@ -819,7 +1077,6 @@ static FrameOfReference* to_frame(lua_State* l, int index)
 static int frame_from(lua_State* l)
 {
     checkArgs(l, 2, 3, "Two or three arguments required for frame:from");
-    int argc = lua_gettop(l);
 
     FrameOfReference* frame = to_frame(l, 1);
     if (frame != NULL)
@@ -827,7 +1084,7 @@ static int frame_from(lua_State* l)
         RigidTransform rt;
         UniversalCoord* uc = NULL;
         Quatd* q = NULL;
-        double jd;
+        double jd = 0.0;
         if (istype(l, 2, _Position))
         {
             uc = to_position(l, 2);
@@ -894,7 +1151,6 @@ static int frame_from(lua_State* l)
 static int frame_to(lua_State* l)
 {
     checkArgs(l, 2, 3, "Two or three arguments required for frame:to");
-    int argc = lua_gettop(l);
 
     FrameOfReference* frame = to_frame(l, 1);
     if (frame != NULL)
@@ -902,7 +1158,7 @@ static int frame_to(lua_State* l)
         RigidTransform rt;
         UniversalCoord* uc = NULL;
         Quatd* q = NULL;
-        double jd;
+        double jd = 0.0;
         if (istype(l, 2, _Position))
         {
             uc = to_position(l, 2);
@@ -1504,26 +1760,55 @@ static int observer_rotate(lua_State* l)
 
 static int observer_lookat(lua_State* l)
 {
-    checkArgs(l, 4, 4, "Three arguments required for lookat");
+    checkArgs(l, 3, 4, "Two or three arguments required for lookat");
+    int argc = lua_gettop(l);
+
     Observer* o = to_observer(l,1);
-    if (o == NULL) {
+    if (o == NULL)
+    {
         lua_pushstring(l, "Invalid object");
         lua_error(l);
     }
-    UniversalCoord* from = to_position(l, 2);
-    UniversalCoord* to = to_position(l, 3);
-    if (to == NULL || from == NULL)
+    UniversalCoord* from = NULL;
+    UniversalCoord* to = NULL;
+    Vec3d* upd = NULL;
+    if (argc == 3)
     {
-        lua_pushstring(l, "Arguments 2 and 3 to observer:lookat must be of type position");
-        lua_error(l);
+        to = to_position(l, 2);
+        upd = to_vector(l, 3);
+        if (to == NULL)
+        {
+            lua_pushstring(l, "Argument 1 (of 2) to observer:lookat must be of type position");
+            lua_error(l);
+        }
     }
-    Vec3d* upd = to_vector(l, 4);
+    else
+    if (argc == 4)
+    {
+        from = to_position(l, 2);
+        to = to_position(l, 3);
+        upd = to_vector(l, 4);
+
+        if (to == NULL || from == NULL)
+        {
+            lua_pushstring(l, "Argument 1 and 2 (of 3) to observer:lookat must be of type position");
+            lua_error(l);
+        }
+    }
     if (upd == NULL)
     {
-        lua_pushstring(l, "Arguments 4 to observer:lookat must be of type vector");
+        lua_pushstring(l, "Last argument to observer:lookat must be of type vector");
         lua_error(l);
-    }        
-    Vec3d nd = (*to) - (*from);
+    }
+    Vec3d nd;
+    if (from == NULL)
+    {
+        nd = (*to) - o->getPosition();
+    }
+    else
+    {
+        nd = (*to) - (*from);
+    }
     // need Vec3f instead:
     Vec3f up = Vec3f(upd->x, upd->y, upd->z);
     Vec3f n = Vec3f(nd.x, nd.y, nd.z);
@@ -1898,18 +2183,70 @@ static int celestia_flash(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
     int argc = lua_gettop(l);
     const char* s = lua_tostring(l, 2);
-    double time = 1.5;
+    double duration = 1.5;
     if (argc > 2) 
     {
-        time = lua_tonumber(l, 3);
-        if (time < 0.0) 
+        duration = lua_tonumber(l, 3);
+        if (duration < 0.0) 
         {
-            time = 1.5;
+            duration = 1.5;
         }
     }
 
     if (appCore != NULL && s != NULL)
-        appCore->flash(s, time);
+        appCore->flash(s, duration);
+
+    return 0;
+}
+
+static int celestia_print(lua_State* l)
+{
+    checkArgs(l, 2, 7, "One to six arguments expected to function celestia:print");
+    CelestiaCore* appCore = this_celestia(l);
+    int argc = lua_gettop(l);
+    const char* s = lua_tostring(l, 2);
+    if (s == NULL)
+    {
+        lua_pushstring(l, "First argument to celestia:print must be a string");
+        lua_error(l);
+    }
+    double duration = 1.5;    
+    int horig = -1;
+    int vorig = -1;
+    int hoff = 0;
+    int voff = 5;
+    
+    if (argc > 2) 
+    {
+        duration = lua_tonumber(l, 3);
+        if (duration < 0.0) 
+        {
+            duration = 1.5;
+        }
+    }
+
+    if (argc > 3) 
+    {
+        horig = static_cast<int>(lua_tonumber(l, 4));
+    }
+
+    if (argc > 4) 
+    {
+        vorig = static_cast<int>(lua_tonumber(l, 5));
+    }
+
+    if (argc > 5) 
+    {
+        hoff = static_cast<int>(lua_tonumber(l, 6));
+    }
+
+    if (argc > 6) 
+    {
+        voff = static_cast<int>(lua_tonumber(l, 7));
+    }
+
+    if (appCore != NULL && s != NULL)
+        appCore->showText(s, horig, vorig, hoff, voff, duration);
 
     return 0;
 }
@@ -2378,6 +2715,24 @@ static int celestia_newrotation(lua_State* l)
     return 1;
 }
 
+static int celestia_getscripttime(lua_State* l)
+{
+    lua_pushstring(l, "celestia-luastate");
+    lua_gettable(l, LUA_REGISTRYINDEX);
+    if (!lua_islightuserdata(l, -1))
+    {
+        lua_pushstring(l, "Invalid table entry in celestia:getscripttime (internal error)");
+        lua_error(l);
+    }
+    LuaState* luastate_ptr = static_cast<LuaState*>(lua_touserdata(l, -1));
+    if (luastate_ptr == NULL)
+    {
+        lua_pushstring(l, "Invalid value in celestia:getscripttime (internal error)");
+        lua_error(l);
+    }
+    lua_pushnumber(l, luastate_ptr->getTime()); 
+    return 1;        
+}
 
 static int celestia_newframe(lua_State* l)
 {
@@ -2457,6 +2812,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
 
     RegisterMethod(l, "__tostring", celestia_tostring);
     RegisterMethod(l, "flash", celestia_flash);
+    RegisterMethod(l, "print", celestia_print);
     RegisterMethod(l, "show", celestia_show);
     RegisterMethod(l, "hide", celestia_hide);
     RegisterMethod(l, "showlabel", celestia_showlabel);
@@ -2478,6 +2834,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "newframe", celestia_newframe);
     RegisterMethod(l, "newvector", celestia_newvector);
     RegisterMethod(l, "newrotation", celestia_newrotation);
+    RegisterMethod(l, "getscripttime", celestia_getscripttime);
 
     lua_pop(l, 1);
 }
@@ -2511,6 +2868,26 @@ bool LuaState::init(CelestiaCore* appCore)
     lua_pushstring(state, "celestia");
     celestia_new(state, appCore);
     lua_settable(state, LUA_GLOBALSINDEX);
+    // add a reference to the LuaState-object in the registry    
+    lua_pushstring(state, "celestia-luastate");
+    lua_pushlightuserdata(state, static_cast<void*>(this));
+    lua_settable(state, LUA_REGISTRYINDEX);
+
+#if 0    
+    lua_pushstring(state, "dofile");
+    lua_gettable(state, LUA_GLOBALSINDEX); // function "dofile" on stack
+    lua_pushstring(state, "luainit.celx"); // parameter    
+    if (lua_pcall(state, 1, 0, 0) != 0) // execute it
+    {
+        CelestiaCore::Alerter* alerter = appCore->getAlerter();
+        // copy string?!
+        const char* errorMessage = lua_tostring(state, -1);
+        cout << errorMessage << '\n'; cout.flush();        
+        alerter->fatalError(errorMessage);
+        return false;
+    }
+#endif
+    
 
     return true;
 }
