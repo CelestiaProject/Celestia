@@ -15,6 +15,7 @@
 
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
+#include <celutil/util.h>
 #include "astro.h"
 #include "parser.h"
 #include "customorbit.h"
@@ -259,6 +260,27 @@ static Body* CreatePlanet(PlanetarySystem* system,
         return NULL;
     }
     body->setOrbit(orbit);
+
+    int classification = Body::Planet;
+    if (system->getPrimaryBody() != NULL)
+        classification = Body::Moon;
+    string classificationName;
+    if (planetData->getString("Class", classificationName))
+    {
+        if (compareIgnoringCase(classificationName, "planet") == 0)
+            classification = Body::Planet;
+        else if (compareIgnoringCase(classificationName, "moon") == 0)
+            classification = Body::Moon;
+        else if (compareIgnoringCase(classificationName, "comet") == 0)
+            classification = Body::Comet;
+        else if (compareIgnoringCase(classificationName, "asteroid") == 0)
+            classification = Body::Asteroid;
+        else if (compareIgnoringCase(classificationName, "spacecraft") == 0)
+            classification = Body::Spacecraft;
+        else
+            classification = Body::Unknown;
+    }
+    body->setClassification(classification);
     
     double albedo = 0.5;
     planetData->getNumber("Albedo", albedo);
@@ -461,9 +483,9 @@ bool LoadSolarSystemObjects(istream& in, Universe& universe)
 }
 
 
-SolarSystem::SolarSystem(const Star* _star) : star(_star)
+SolarSystem::SolarSystem(Star* _star) : star(_star)
 {
-    planets = new PlanetarySystem(star);
+    planets = new PlanetarySystem(_star);
 }
 
 

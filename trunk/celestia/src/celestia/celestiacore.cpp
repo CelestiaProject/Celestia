@@ -420,22 +420,22 @@ void CelestiaCore::keyDown(int key)
         sim->setTargetSpeed(0);
         break;
     case Key_F2:
-        sim->setTargetSpeed(astro::kilometersToLightYears(1.0));
+        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1.0));
         break;
     case Key_F3:
-        sim->setTargetSpeed(astro::kilometersToLightYears(1000.0));
+        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1000.0));
         break;
     case Key_F4:
-        sim->setTargetSpeed(astro::kilometersToLightYears(astro::speedOfLight));
+        sim->setTargetSpeed(astro::kilometersToMicroLightYears(astro::speedOfLight));
         break;
     case Key_F5:
-        sim->setTargetSpeed(astro::kilometersToLightYears(astro::speedOfLight * 10.0));
+        sim->setTargetSpeed(astro::kilometersToMicroLightYears(astro::speedOfLight * 10.0));
         break;
     case Key_F6:
-        sim->setTargetSpeed(astro::AUtoLightYears(1));
+        sim->setTargetSpeed(astro::AUtoMicroLightYears(1.0));
         break;
     case Key_F7:
-        sim->setTargetSpeed(1);
+        sim->setTargetSpeed(1e6);
         break;
     case Key_F11:
         if (movieCapture != NULL)
@@ -537,6 +537,11 @@ void CelestiaCore::charEntered(char c)
     case '\026':  // Ctrl+V
         if (renderer->vertexShaderSupported())
             renderer->setVertexShaderEnabled(!renderer->getVertexShaderEnabled());
+        break;
+
+    case '\027':  // Ctrl+W
+        wireframe = !wireframe;
+        renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
         break;
 
     case '\030':  // Ctrl+X
@@ -668,15 +673,19 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'M':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MinorPlanetLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MoonLabels);
         break;
 
     case 'N':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MajorPlanetLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::SpacecraftLabels);
         break;
 
     case 'O':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
+        break;
+
+    case 'P':
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetLabels);
         break;
 
     case 'Q':
@@ -710,8 +719,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'W':
-        wireframe = !wireframe;
-        renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
+        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::AsteroidLabels);
         break;
 
     case 'X':
@@ -720,6 +728,10 @@ void CelestiaCore::charEntered(char c)
 
     case 'Y':
         sim->geosynchronousFollow();
+        break;
+
+    case ':':
+        sim->phaseLock();
         break;
 
     case '[':
@@ -876,7 +888,7 @@ void CelestiaCore::tick()
         bSetTargetSpeed = true;
 
         if (sim->getTargetSpeed() == 0.0f)
-            sim->setTargetSpeed(astro::kilometersToLightYears(0.1f));
+            sim->setTargetSpeed(astro::kilometersToMicroLightYears(0.1f));
         else
             sim->setTargetSpeed(sim->getTargetSpeed() * (float) exp(dt * 3));
     }
@@ -1182,16 +1194,16 @@ void CelestiaCore::renderOverlay()
         *overlay << "\nSpeed: " << setprecision(3);
 
         double speed = sim->getObserver().getVelocity().length();
-        if (speed < astro::kilometersToLightYears(1.0f))
-            *overlay << astro::lightYearsToKilometers(speed) * 1000.0f << " m/s";
-        else if (speed < astro::kilometersToLightYears(10000.0f))
-            *overlay << astro::lightYearsToKilometers(speed) << " km/s";
-        else if (speed < astro::kilometersToLightYears((float) astro::speedOfLight * 100.0f))
-            *overlay << astro::lightYearsToKilometers(speed) / astro::speedOfLight << 'c';
-        else if (speed < astro::AUtoLightYears(1000.0f))
-            *overlay << astro::lightYearsToAU(speed) << " AU/s";
+        if (speed < astro::kilometersToMicroLightYears(1.0f))
+            *overlay << astro::microLightYearsToKilometers(speed) * 1000.0f << " m/s";
+        else if (speed < astro::kilometersToMicroLightYears(10000.0f))
+            *overlay << astro::microLightYearsToKilometers(speed) << " km/s";
+        else if (speed < astro::kilometersToMicroLightYears((float) astro::speedOfLight * 100.0f))
+            *overlay << astro::microLightYearsToKilometers(speed) / astro::speedOfLight << 'c';
+        else if (speed < astro::AUtoMicroLightYears(1000.0f))
+            *overlay << astro::microLightYearsToAU(speed) << " AU/s";
         else
-            *overlay << speed << " ly/s";
+            *overlay << speed * 1e-6 << " ly/s";
         *overlay << setprecision(3);
 
         overlay->endText();
@@ -1279,7 +1291,7 @@ void CelestiaCore::renderOverlay()
                             hudDetail,
                             *sel.star,
                             *(sim->getUniverse()),
-                            v.length());
+                            v.length() * 1e-6);
         }
         else if (sel.body != NULL)
         {
@@ -1291,7 +1303,7 @@ void CelestiaCore::renderOverlay()
                               hudDetail,
                               *sel.body,
                               sim->getTime(),
-                              v.length());
+                              v.length() * 1e-6);
         }
         else if (sel.galaxy != NULL)
         {
@@ -1299,7 +1311,8 @@ void CelestiaCore::renderOverlay()
             *overlay << sel.galaxy->getName();
             overlay->setFont(font);
             *overlay << '\n';
-            displayGalaxyInfo(*overlay, hudDetail, *sel.galaxy, v.length());
+            displayGalaxyInfo(*overlay, hudDetail, *sel.galaxy,
+                              v.length() * 1e-6);
         }
         overlay->endText();
 
