@@ -159,6 +159,10 @@ Command* CommandParser::parseCommand()
     {
         cmd = new CommandFollow();
     }
+    else if (commandName == "synchronous")
+    {
+        cmd = new CommandSynchronous();
+    }
     else if (commandName == "cancel")
     {
         cmd = new CommandCancel();
