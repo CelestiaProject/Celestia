@@ -31,9 +31,8 @@
 - (IBAction)navigateTo:(id)sender
 {
     [[self window] performClose:self];
-    if (_fav == nil)
-        return;
-    [(FavoritesDrawerController*)favoritesDrawerController activateFavorite:_fav];
+    if (_fav != nil)
+        [(FavoritesDrawerController*)favoritesDrawerController activateFavorite:_fav];
 }
 
 @end

@@ -29,6 +29,7 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 coordinateField = NSTextField; 
+                favoritesDrawerController = id; 
                 jdField = NSTextField; 
                 nameField = NSTextField; 
                 orientationField = NSTextField; 
@@ -42,7 +43,7 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 drawer = NSDrawer; 
-                favoriteInfoWindowController = FavoriteInfoWindowController; 
+                favoriteInfoWindowController = id; 
                 favoritesContextMenu = NSMenu; 
                 favoritesMenu = NSMenu; 
                 outlineView = ContextOutlineView; 

@@ -13,10 +13,3 @@
 -(CelestiaFavorite*)initWithFavorite:(FavoritesEntry*)fav;
 -(FavoritesEntry*)favorite;
 @end
-
-
-@interface CelestiaFavorites(PrivateAPI)
--(CelestiaFavorites*)initWithFavorites:(const FavoritesList*)favs;
--(FavoritesList*)favorites;
-@end
-
