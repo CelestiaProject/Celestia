@@ -32,23 +32,33 @@ resides or else it will not find its data files.  A real installer is
 forthcoming.
 
 Celestia will start up in a window, and if everything is working
-correctly, you'll see a few stars and some text showing your velocity
-and the current time (Universal Time, so it'll probably be a few hours
-off from your computer's clock.)  Drag the mouse around to change your
-orientation and you should see some familiar constellations.  Click on
-a star to select it.  Some information about the star will be
-displayed in the top left corner of the window.  Press G (or use the
-navigation menu), and you'll zoom through space toward the selected
-star.  If you press G again, you'll approach the star even closer.
+correctly, you'll see the Mir space station in front of a field of
+stars.  In the left corner is a welcome message and some information
+about your target (Mir), your speed, and the current time (Universal
+Time, so it'll probably be a few hours off from your computer's clock.)
+Right drag the mouse to orbit Mir and you should see the Earth and some
+familiar constellations.  Left dragging the mouse changes your
+orientation too, but the camera rotates about its center instead of
+rotating around Mir.  Rolling the mouse wheel will change your distance
+to the space station--you can move light years away, then roll the wheel
+in the opposite direction to get back to low Earth orbit.
+In Celestia, you'll generally have an object
+selected; currently, it's the Mir space station, but it could also be
+a star, planet, asteroid, or comet.  The simplest way to select an
+object is to click on it.  Try clicking on a star to select it.  The
+information about Mir is replaced with some details about the star.
+Press G (or use the navigation menu), and you'll zoom through space
+toward the selected star.  If you press G again, you'll approach
+the star even closer.
 
 Press H to select our Sun, and then G to go back to our solar system.
 You'll find yourself half a light year away from the sun, which looks
 merely like a bright star at this range.  Press G three more times to
 get within about 30 AU of the sun and you will be to see a few become
-visible near the sun.  Right click to bring up a menu of planets and
-other objects in the solar system.  After selecting a planet from the
-menu, hit G again to travel toward it.  Once there, hold down the right
-moust button and drag to orbit the planet.
+visible near the sun.  Right click on the sun to bring up a menu of
+planets and other objects in the solar system.  After selecting a planet
+from the menu, hit G again to travel toward it.  Once there, hold down
+the right mouse button and drag to orbit the planet.
 
 That covers the very basics . . .
 
@@ -57,11 +67,14 @@ MOUSE FUNCTIONS:
 
 Left drag to orient camera
 Right drag to orbit the selected object
-Drag while holding left and right buttons to dolly camera
+Use the mouse wheel to adjust distance to selection
+    (for wheelless mice, dragging while holding left and right
+    buttons or left dragfing while holding control to dolly camera
+    will adjust distance)
+Left drag while holding shift to zoom
+Click the wheel to reset the field of view to 45 degrees
 Left-click to select; double click to center selection
 Right-click to bring up planets menu
-Roll the mouse wheel to zoom in and out
-Click the wheel to reset the field of view to 45 degrees
 
 KEYBOARD COMMANDS
 
@@ -70,6 +83,7 @@ H  : Select the sun (Home)
 C  : Center on selected object
 G  : Goto selected object
 F  : Follow selected object
+ESC: Cancel motion
 
 Free movement:
 F1 : Stop 
@@ -95,16 +109,16 @@ O  : Toggle planet orbits
 V  : Toggle HUD Text
 W  : Toggle wireframe mode
 P  : Toggle per-pixel lighting (if supported)
+[  : Decrease limiting magnitude (fewer stars visible)
+]  : Increase limiting magnitude (more stars visible)
 
-ESC : Exit
 
 It's possible to choose a star or planet by name.  There are two ways to
 enter a star name: choose 'Select Object' from the Navigation menu to
 bring up a dialog box, or by hitting Enter, typing in the name, and
 pressing Enter again.  You can use common names, or Bayer designations
-and HD catalog numbers for stars.  Celestia is really picky about how
-you enter names.  Planet and star names need to have the first letter
-capitalized.  Bayer and Flamsteed designations need to be entered like this:
+and HD catalog numbers for stars.  Bayer and Flamsteed designations need
+to be entered like this:
       Upsilon And
       51 Peg 
 The constellation must be given as a three letter abbreviation and the

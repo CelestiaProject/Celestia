@@ -75,3 +75,33 @@ Celestia Revision History
   on a per texture basis in .ssc files.
 * Added a reverse time option
 * Added an OpenGL Driver Info item to the help menu
+
+
+1.05
+* Made per-pixel lighting work for planets without bump maps too
+* Allow user control of magnitude of faintest visible stars
+* Added support for PNG textures
+* Improved console: enabled backspace, relocated text entry, code cleanup, ...
+* Corrected star positions by converting them from equatorial to ecliptical
+  coordinates.
+* Eliminated case sensitivity when selecting objects by name
+* New ring texture for Saturn with separate reflectance and opacity
+* Ring textures now specified in .ssc files instead of hardcoded
+* Implemented date/time selector dialog box
+* Changed the mouse wheel function from zoom to dolly.  Zoom is now controlled by
+  shift left-dragging the mouse.  For mice without wheels, control left-dragging
+  will dolly.
+* Fixed orbit and dolly functions to work in follow mode
+* Improved rendering of objects at close range: less clipping, extra sphere LOD.
+* Fixed bug that caused irregular objects to be displayed at half their actual size
+* ESC now cancels goto and follow instead of exiting app.
+* Fixed orbital calculations for planets so their positions are now closer to
+  reality.
+* Completed extrasolar planets database; it now contains all known planets
+  around normal stars
+* Mir!
+* MeanAnomaly field in .ssc files was incorrectly called TrueAnomaly; this
+  is fixed, and solar system parser now also accepts MeanLongitude in orbital
+  elements section.
+* Epoch can now be specified for orbital elements.  Default is J2000.
+
