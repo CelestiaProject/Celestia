@@ -37,11 +37,6 @@ class Selection
     Selection(const Selection& sel) : type(sel.type), obj(sel.obj) {};
     ~Selection() {};
 
-#if 0
-    void select(Star* _star)     {star=_star; body=NULL;  deepsky=NULL;}
-    void select(Body* _body)     {star=NULL;  body=_body; deepsky=NULL;}
-    void select(DeepSkyObject* _deepsky) {star=NULL;  body=NULL;  deepsky=_deepsky;}
-#endif
     bool empty() const { return type == Type_Nil; }
     double radius() const;
     UniversalCoord getPosition(double t) const;
