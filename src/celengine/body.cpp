@@ -30,6 +30,7 @@ RotationElements::RotationElements() :
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     oblateness(0),
+    orientation(1.0f),
     mesh(InvalidResource),
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
@@ -126,6 +127,18 @@ float Body::getAlbedo() const
 void Body::setAlbedo(float _albedo)
 {
     albedo = _albedo;
+}
+
+
+Quatf Body::getOrientation() const
+{
+    return orientation;
+}
+
+
+void Body::setOrientation(const Quatf& q)
+{
+    orientation = q;
 }
 
 
