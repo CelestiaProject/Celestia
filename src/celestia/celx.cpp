@@ -416,6 +416,43 @@ static int object_type(lua_State* l)
     return 1;
 }
 
+
+static int object_name(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function object:name");
+        lua_error(l);
+    }
+
+    Selection* sel = to_object(l, 1);
+    if (sel != NULL)
+    {
+        if (sel->body != NULL)
+        {
+            lua_pushstring(l, sel->body->getName().c_str());
+        }
+        else if (sel->deepsky != NULL)
+        {
+            lua_pushstring(l, sel->deepsky->getName().c_str());
+        }
+        else
+        {
+            // TODO: look up the real star name
+            lua_pushstring(l, "[fix to handle stars]");
+        }
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
 static void CreateObjectMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Object);
@@ -423,6 +460,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "__tostring", object_tostring);
     RegisterMethod(l, "radius", object_radius);
     RegisterMethod(l, "type", object_type);
+    RegisterMethod(l, "name", object_name);
 
     lua_pop(l, 1); // pop metatable off the stack
 }
