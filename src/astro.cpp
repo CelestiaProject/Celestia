@@ -22,7 +22,7 @@ using namespace std;
 #define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
 
 // epoch J2000: 12 UT on 1 Jan 2000
-#define J2000         2451545.0
+const double astro::J2000 = 2451545.0;
 
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423

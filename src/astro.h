@@ -62,6 +62,8 @@ namespace astro
                                  Point3f starPosition);
     UniversalCoord universalPosition(Point3d heliocentric,
                                      Point3f starPosition);
+
+    extern const double J2000;
 };
 
 // Convert a date structure to a Julian date
