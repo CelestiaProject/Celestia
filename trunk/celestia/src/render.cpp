@@ -599,7 +599,7 @@ void Renderer::render(const Observer& observer,
                               *solarSystem->getPlanets(),
                               observer,
                               Mat4d::identity(), now,
-                              (labelMode & PlanetLabels) != 0);
+                              (labelMode & (MinorPlanetLabels | MajorPlanetLabels)) != 0);
         glBindTexture(GL_TEXTURE_2D, starTex->getName());
         // renderParticles(planetParticles, observer.getOrientation());
 
@@ -727,7 +727,8 @@ void Renderer::render(const Observer& observer,
                     glEnd();
                 }
             }
-
+#if 0
+            // Render axes in orbital plane for debugging
             glBegin(GL_LINES);
             glColor4f(1, 0, 0, 1);
             glVertex3f(3000, 0, 0);
@@ -744,6 +745,7 @@ void Renderer::render(const Observer& observer,
             glVertex3f(-200, 0, 2800);
             glVertex3f(0, 0, 3000);
             glEnd();
+#endif
 
             glPopMatrix();
         }
@@ -1715,9 +1717,19 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
-            addLabel(body->getName(),
-                     Color(0.0f, 1.0f, 0.0f),
-                     Point3f(pos.x, pos.y, pos.z));
+            if (body->getRadius() >= 500.0 && (labelMode & MajorPlanetLabels) != 0)
+
+            {
+                addLabel(body->getName(),
+                         Color(0.0f, 1.0f, 0.0f),
+                         Point3f(pos.x, pos.y, pos.z));
+            }
+            else if (body->getRadius() < 500.0 && (labelMode & MinorPlanetLabels) != 0)
+            {
+                addLabel(body->getName(),
+                         Color(0.0f, 0.6f, 0.0f),
+                         Point3f(pos.x, pos.y, pos.z));
+            }
         }
 
         if (appMag < 5.0f)

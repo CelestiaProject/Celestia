@@ -55,8 +55,9 @@ class Renderer
     enum {
         NoLabels = 0,
         StarLabels = 1,
-        PlanetLabels = 2,
-        ConstellationLabels = 4,
+        MajorPlanetLabels = 2,
+        MinorPlanetLabels = 4,
+        ConstellationLabels = 8,
     };
     enum {
         ShowNothing     =  0,
