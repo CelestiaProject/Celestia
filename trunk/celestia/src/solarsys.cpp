@@ -156,8 +156,13 @@ static Body* CreatePlanet(PlanetarySystem* system,
     double ascendingNode = 0.0;
     planetData->getNumber("AscendingNode", ascendingNode);
 
-    double longOfPericenter = 0.0;
-    planetData->getNumber("ArgOfPeriapsis", longOfPericenter);
+    double argOfPericenter = 0.0;
+    if (!planetData->getNumber("ArgOfPericenter", argOfPericenter))
+    {
+        double longOfPericenter = 0.0;
+        if (planetData->getNumber("LongOfPericenter", longOfPericenter))
+            argOfPericenter = longOfPericenter - ascendingNode;
+    }
 
     double epoch = astro::J2000;
     planetData->getNumber("Epoch", epoch);
@@ -169,7 +174,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     {
         double longAtEpoch = 0.0;
         if (planetData->getNumber("MeanLongitude", longAtEpoch))
-            anomalyAtEpoch = longAtEpoch - longOfPericenter;
+            anomalyAtEpoch = longAtEpoch - (argOfPericenter + ascendingNode);
     }
 
     if (usePlanetUnits)
@@ -182,7 +187,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                                        eccentricity,
                                        degToRad(inclination),
                                        degToRad(ascendingNode),
-                                       degToRad(longOfPericenter),
+                                       degToRad(argOfPericenter),
                                        degToRad(anomalyAtEpoch),
                                        period,
                                        epoch));
