@@ -823,6 +823,12 @@
 	Albedo         0.39
 }
 
+AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
+{
+	Texture "ariel.jpg"
+	OverlayTexture "ariel-lok-mask.png"
+}
+
 "Umbriel" "Sol/Uranus"
 {
 	Texture "umbriel.jpg"
