@@ -1100,6 +1100,23 @@
 	RotationPeriod   10.0
 }
 
+"c" "HD 169830"
+{
+	Texture "jupiterlike.jpg"
+	Mass 750
+	Radius 72000
+
+	InfoURL "http://www.obspm.fr/encycl/HD169830.html"
+
+	EllipticalOrbit {
+		Period	      4.071
+		SemiMajorAxis 2.75
+		Eccentricity  0
+		# Omega 43.6
+		# T_peri 2451483.6
+	}
+}
+
 
 # 14 Her system
 #
@@ -2120,3 +2137,137 @@
 		Eccentricity  0.038  
 	}
 }
+
+
+# HD 104985
+# First planet discovered by Japanese team of Sato, Ando, et al
+"b" "HD 41004"
+{
+	Texture "jupiterlike.jpg"
+	Mass 2000
+	Radius 67000
+
+	InfoURL "http://www.obspm.fr/encycl/HD104985.html"
+
+	EllipticalOrbit {
+		Period	      0.5426
+		SemiMajorAxis 0.78
+		Eccentricity  0.03
+	}
+}
+
+
+# HD 41004 A
+# Planet in a hierarchic quadruple system: planet orbits a K2V star, and this
+# system is bound to a M4V star and brown dwarf pair
+"b" "HD 41004"
+{
+	Texture "jupiterlike.jpg"
+	Mass 730
+	Radius 67000
+
+	InfoURL "http://www.obspm.fr/encycl/HD41004A.html"
+
+	EllipticalOrbit {
+		Period	      1.793
+		SemiMajorAxis 1.31
+		Eccentricity  0.39
+	}
+}
+
+
+# HD 65216
+"b" "HD 65216"
+{
+	Texture "jupiterlike.jpg"
+	Mass 425
+	Radius 72000
+
+	InfoURL "http://www.obspm.fr/encycl/HD65216.html"
+
+	EllipticalOrbit {
+		Period	      1.582
+		SemiMajorAxis 1.31
+		Eccentricity  0.29
+		# Omega 184.7
+		# T_peri 2450833
+	}
+}
+
+
+# HD 111232 system (G8V)
+"b" "HD 111232"
+{
+	Texture "jupiterlike.jpg"
+	Mass 2500
+	Radius 63000
+
+	InfoURL "http://www.obspm.fr/encycl/HD111232.html"
+
+	EllipticalOrbit {
+		Period	      3.110
+		SemiMajorAxis 2.07
+		Eccentricity  0.25
+		# Omega 96.6
+		# T_peri 2451228
+	}
+}
+
+
+# HD 142415 system (G1V)
+"b" "HD 142415"
+{
+	Texture "jupiterlike.jpg"
+	Mass 550
+	Radius 71000
+
+	InfoURL "http://www.obspm.fr/encycl/HD142415.html"
+
+	EllipticalOrbit {
+		Period	      1.061
+		SemiMajorAxis 1.07
+		Eccentricity  0.5
+		# Omega 254
+		# T_peri 2451516.1
+	}
+}
+
+
+# HD 216770 system (K1V)
+"b" "HD 216770"
+{
+	Texture "jupiterlike.jpg"
+	Mass 225
+	Radius 65000
+
+	InfoURL "http://www.obspm.fr/encycl/HD216770.html"
+
+	EllipticalOrbit {
+		Period	      0.3231
+		SemiMajorAxis 0.46
+		Eccentricity  0.32
+		# Omega 270
+		# T_peri 2452667.9
+	}
+}
+
+
+# HD 10647 system (F9V)
+"b" "HD 10647"
+{
+	Texture "jupiterlike.jpg"
+	Mass 375
+	Radius 72000
+
+	InfoURL "http://www.obspm.fr/encycl/HD10647.html"
+
+	EllipticalOrbit {
+		Period	      2.891
+		SemiMajorAxis 2.10
+		Eccentricity  0.32
+		# Omega 44.4
+		# T_peri 2452162
+	}
+}
+
+
