@@ -32,6 +32,7 @@ unsigned int vp::cometTail = 0;
 unsigned int vp::nightLights = 0;
 unsigned int vp::glossMap = 0;
 unsigned int vp::perFragmentSpecular = 0;
+unsigned int vp::perFragmentSpecularAlpha = 0;
 
 
 class VertexProcessorNV : public VertexProcessor
@@ -257,6 +258,8 @@ VertexProcessor* vp::initARB()
         if (!LoadARBVertexProgram("shaders/multishadow_arb.vp", multiShadow))
             return NULL;
         if (!LoadARBVertexProgram("shaders/texphong_arb.vp", perFragmentSpecular))
+            return NULL;
+        if (!LoadARBVertexProgram("shaders/texphong_alpha_arb.vp", perFragmentSpecularAlpha))
             return NULL;
     }
 

@@ -3172,9 +3172,17 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
     }
     else if (ri.specularColor != Color::Black)
     {
-        vproc->use(vp::perFragmentSpecular);
         fproc->enable();
-        fproc->use(fp::texSpecular);
+        if (ri.glossTex == NULL)
+        {
+            vproc->use(vp::perFragmentSpecularAlpha);
+            fproc->use(fp::texSpecularAlpha);
+        }
+        else
+        {
+            vproc->use(vp::perFragmentSpecular);
+            fproc->use(fp::texSpecular);
+        }
         fproc->parameter(fp::DiffuseColor, ri.sunColor * ri.color);
         fproc->parameter(fp::SunDirection, ri.sunDir_obj);
         fproc->parameter(fp::SpecularColor, ri.specularColor);
