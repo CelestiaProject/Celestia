@@ -1221,6 +1221,19 @@ static int rotation_real(lua_State* l)
     return 1;
 }
 
+static int rotation_transform(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for rotation:transform()");
+    Quatd* q = this_rotation(l);
+    Vec3d* v = to_vector(l, 2);
+    if (v == NULL)
+    {
+        doError(l, "Argument to rotation:transform() must be a vector");
+    }
+    vector_new(l, *v * q->toMatrix3());
+    return 1;
+}
+
 static int rotation_get(lua_State* l)
 {
     checkArgs(l, 2, 2, "Invalid access of rotation-component");
@@ -1288,6 +1301,7 @@ static void CreateRotationMetaTable(lua_State* l)
 
     RegisterMethod(l, "real", rotation_real);
     RegisterMethod(l, "imag", rotation_imag);
+    RegisterMethod(l, "transform", rotation_transform);
     RegisterMethod(l, "__tostring", rotation_tostring);
     RegisterMethod(l, "__add", rotation_add);
     RegisterMethod(l, "__mul", rotation_mult);
