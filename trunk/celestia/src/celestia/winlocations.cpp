@@ -90,6 +90,13 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
         case IDC_SHOW_OTHERS:
             obs->setLocationFilter(locationFilter ^ FilterOther);
             break;
+        case IDC_LABELFEATURES:
+            {
+                Renderer* renderer = dlg->appCore->getRenderer();
+                uint32 labelMode = renderer->getLabelMode();
+                renderer->setLabelMode(labelMode ^ Renderer::LocationLabels);
+                break;
+            }
         case IDOK:
             if (dlg != NULL && dlg->parent != NULL)
             {
@@ -185,6 +192,9 @@ void LocationsDialog::SetControls(HWND hDlg)
     dlgCheck(hDlg, IDC_SHOW_VALLES,        locFilter, Location::Vallis);
     dlgCheck(hDlg, IDC_SHOW_TERRAE,        locFilter, Location::Terra);
     dlgCheck(hDlg, IDC_SHOW_OTHERS,        locFilter, Location::Other);
+
+    uint32 labelMode = appCore->getRenderer()->getLabelMode();
+    dlgCheck(hDlg, IDC_LABELFEATURES,     labelMode, Renderer::LocationLabels);
 
     // Set up feature size slider
     SendDlgItemMessage(hDlg,
