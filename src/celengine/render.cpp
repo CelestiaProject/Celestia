@@ -91,8 +91,9 @@ Renderer::Renderer() :
     ambientLightLevel(0.1f),
     fragmentShaderEnabled(false),
     vertexShaderEnabled(false),
-    saturationMag(1.0f),
     brightnessBias(0.0f),
+    saturationMagNight(1.0f),
+    saturationMag(1.0f),
     starVertexBuffer(NULL),
     asterisms(NULL),
     nSimultaneousTextures(1),
@@ -553,7 +554,7 @@ void Renderer::clearLabels()
 
 void Renderer::render(const Observer& observer,
                       const StarDatabase& starDB,
-                      float faintestVisible,
+                      float faintestMagNight,
                       SolarSystem* solarSystem,
                       GalaxyList* galaxies,
                       const Selection& sel,
@@ -603,7 +604,8 @@ void Renderer::render(const Observer& observer,
         starTex->bind();
     }
 
-    faintestMag = faintestVisible;
+    faintestMag = faintestMagNight;
+    saturationMag = saturationMagNight;
 
     Color skyColor(0.0f, 0.0f, 0.0f);
 
@@ -640,7 +642,8 @@ void Renderer::render(const Observer& observer,
                                      atmosphere->skyColor.green() * lightness,
                                      atmosphere->skyColor.blue() * lightness);
 
-                    faintestMag = faintestVisible - 10.0f * lightness;
+                    faintestMag = faintestMagNight - 10.0f * lightness;
+                    saturationMag = saturationMagNight - 10.0f * lightness;
                 }
             }
         }
@@ -691,7 +694,7 @@ void Renderer::render(const Observer& observer,
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     if ((renderFlags & ShowStars) != 0)
-        renderStars(starDB, faintestVisible, observer);
+        renderStars(starDB, faintestMag, observer);
 
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && asterisms != NULL)
@@ -2297,7 +2300,7 @@ public:
     vector<Renderer::RenderListEntry>* renderList;
     Renderer::StarVertexBuffer* starVertexBuffer;
 
-    float faintestVisible;
+    float faintestMagNight;
     float size;
     float pixelSize;
     float faintestMag;
@@ -2419,7 +2422,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 }
 
 void Renderer::renderStars(const StarDatabase& starDB,
-                           float faintestVisible,
+                           float faintestMagNight,
                            const Observer& observer)
 {
     StarRenderer starRenderer;
@@ -2430,7 +2433,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.glareParticles = &glareParticles;
     starRenderer.renderList = &renderList;
     starRenderer.starVertexBuffer = starVertexBuffer;
-    starRenderer.faintestVisible = faintestVisible;
+    starRenderer.faintestMagNight = faintestMagNight;
     starRenderer.size = pixelSize * 1.5f;
     starRenderer.pixelSize = pixelSize;
     starRenderer.brightnessScale = brightnessScale;
@@ -2448,7 +2451,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
                             observer.getOrientation(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
-                            faintestVisible);
+                            faintestMagNight);
 
     starRenderer.starVertexBuffer->render();
     glareTex->bind();
