@@ -17,6 +17,7 @@
 #include <cstring>
 #include <time.h>
 #include "gl.h"
+#include <GL/glut.h>
 #include "celestia.h"
 #include "vecmath.h"
 #include "quaternion.h"
@@ -60,6 +61,9 @@ static bool fullscreen;
 // Mouse motion tracking
 static int lastX = 0;
 static int lastY = 0;
+static bool leftButton = false;
+static bool middleButton = false;
+static bool rightButton = false;
 static int mouseMotion = 0;
 static double mouseWheelTime = -1000.0;
 static float mouseWheelMotion = 0.0f;
@@ -103,6 +107,9 @@ static CommandSequence* demoScript = NULL;
 static Execution* runningScript = NULL;
 
 bool cursorVisible = true;
+
+static int mainWindow = 1;
+static GLsizei g_w, g_h;
 
 astro::Date newTime(0.0);
 
@@ -233,6 +240,8 @@ void ChangeSize(GLsizei w, GLsizei h)
     if (h == 0)
 	h = 1;
 
+    g_w = w;
+    g_h = h;
     glViewport(0, 0, w, h);
     if (renderer != NULL)
         renderer->resize(w, h);
@@ -241,7 +250,6 @@ void ChangeSize(GLsizei w, GLsizei h)
 }
 
 
-GLsizei g_w, g_h;
 bool bReady = false;
 
 
@@ -402,6 +410,265 @@ void RenderOverlay()
 }
 
 
+void Display(void)
+{
+    if (bReady)
+    {
+        sim->render(*renderer);
+        RenderOverlay();
+        glutSwapBuffers();
+    }
+}
+
+void Idle(void)
+{
+    if (glutGetWindow() != mainWindow)
+        glutSetWindow(mainWindow);
+    sim->update(0.1f);
+    Display();
+}
+
+void MouseDrag(int x, int y)
+{
+    cout << leftButton << ',' << middleButton << ',' << rightButton << '\n';
+    if (leftButton ^ rightButton)
+    {
+        Quatf q(1);
+        float coarseness = renderer->getFieldOfView() / 30.0f;
+        q.yrotate((float) (x - lastX) / g_w * coarseness);
+        q.xrotate((float) (y - lastY) / g_h * coarseness);
+        if (rightButton)
+            sim->orbit(~q);
+        else
+            sim->rotate(q);
+        Vec3f axis;
+        float angle = 0;
+        sim->getObserver().getOrientation().getAxisAngle(axis, angle);
+        cout << "[" << axis.x << "," << axis.y << "," << axis.z << "] " << angle << "\n";
+    }
+    else if (rightButton && !leftButton)
+    {
+        
+    }
+    else if (middleButton || (rightButton && leftButton))
+    {
+        float amount = (float) (lastY - y) / g_h;
+        sim->changeOrbitDistance(amount * 5);
+    }
+
+    lastX = x;
+    lastY = y;
+}
+
+void MouseButton(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON)
+        leftButton = (state == GLUT_DOWN);
+    if (button == GLUT_RIGHT_BUTTON)
+        rightButton = (state == GLUT_DOWN);
+    if (button == GLUT_MIDDLE_BUTTON)
+        middleButton = (state == GLUT_DOWN);
+    lastX = x;
+    lastY = y;
+}
+
+
+static void ToggleLabelState(int labelState)
+{
+    renderer->setLabelMode(renderer->getLabelMode() ^ labelState);
+}
+
+static void ToggleRenderFlag(int renderFlag)
+{
+    renderer->setRenderFlags(renderer->getRenderFlags() ^ renderFlag);
+}
+
+
+void HandleKeyPress(unsigned char c, int x, int y)
+{
+    if (textEnterMode)
+    {
+        if (c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
+        {
+            typedText += c;
+        }
+        else if (c == '\b')
+        {
+            if (typedText.size() > 0)
+                typedText = string(typedText, 0, typedText.size() - 1);
+        }
+        return;
+    }
+
+    c = toupper(c);
+    switch (c)
+    {
+    case 'A':
+        if (sim->getTargetSpeed() == 0)
+            sim->setTargetSpeed(0.000001f);
+        else
+            sim->setTargetSpeed(sim->getTargetSpeed() * 10.0f);
+        break;
+    case 'Z':
+        sim->setTargetSpeed(sim->getTargetSpeed() * 0.1f);
+        break;
+
+    case 'S':
+        sim->setTargetSpeed(0);
+        break;
+
+    case 'Q':
+        sim->setTargetSpeed(-sim->getTargetSpeed());
+        break;
+
+    case 'X':
+        sim->setTargetSpeed(sim->getTargetSpeed());
+        break;
+
+    case 'G':
+        sim->gotoSelection(5.0);
+        break;
+
+    case 'C':
+        sim->centerSelection();
+        break;
+
+    case 'F':
+        sim->follow();
+        break;
+
+    case 'H':
+        sim->selectStar(0);
+        break;
+
+    case 'V':
+        sim->setHUDDetail((sim->getHUDDetail() + 1) % 2);
+        hudDetail = 1 - hudDetail;
+        break;
+
+    case ',':
+        if (renderer->getFieldOfView() > 1.0f)
+            renderer->setFieldOfView(renderer->getFieldOfView() / 1.1f);
+        break;
+
+    case '.':
+        if (renderer->getFieldOfView() < 120.0f)
+            renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
+        break;
+
+    case 'K':
+        sim->setTimeScale(0.1 * sim->getTimeScale());
+        break;
+
+    case 'L':
+        sim->setTimeScale(10.0 * sim->getTimeScale());
+        break;
+
+    case 'J':
+        sim->setTimeScale(-sim->getTimeScale());
+        break;
+
+    case 'B':
+        ToggleLabelState(Renderer::StarLabels);
+        break;
+
+    case 'N':
+        ToggleLabelState(Renderer::MajorPlanetLabels);
+        break;
+
+    case 'O':
+        ToggleRenderFlag(Renderer::ShowOrbits);
+        break;
+
+    case 'P':
+        if (renderer->perPixelLightingSupported())
+        {
+            bool enabled = !renderer->getPerPixelLighting();
+            renderer->setPerPixelLighting(enabled);
+        }
+        break;
+
+    case 'I':
+        ToggleRenderFlag(Renderer::ShowCloudMaps);
+        break;
+
+    case 'U':
+        ToggleRenderFlag(Renderer::ShowGalaxies);
+        break;
+
+    case '/':
+        ToggleRenderFlag(Renderer::ShowDiagrams);
+        break;
+
+    case '=':
+        ToggleLabelState(Renderer::ConstellationLabels);
+        break;
+
+    case '~':
+        editMode = !editMode;
+        break;
+
+    case '!':
+        //        if (editMode)
+        // ShowSelectionInfo(sim->getSelection());
+        break;
+
+    case '`':
+        showFPSCounter = !showFPSCounter;
+        break;
+
+    case 'D':
+        if (runningScript == NULL && demoScript != NULL)
+            runningScript = new Execution(*demoScript, execEnv);
+        break;
+
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+        sim->selectPlanet(c - '1');
+        break;
+
+    case '0':
+        sim->selectPlanet(-1);
+        break;
+
+    case 'W':
+        wireframe = !wireframe;
+        renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
+        break;
+
+    case '[':
+        if (sim->getFaintestVisible() > 1.0f)
+            SetFaintest(sim->getFaintestVisible() - 0.5f);
+        break;
+
+    case ']':
+        if (sim->getFaintestVisible() < 8.0f)
+            SetFaintest(sim->getFaintestVisible() + 0.5f);
+        break;
+
+    case ' ':
+        if (paused)
+        {
+            sim->setTimeScale(timeScale);
+        }
+        else
+        {
+            timeScale = sim->getTimeScale();
+            sim->setTimeScale(0.0);
+        }
+        paused = !paused;
+        break;
+    }
+}
+
+
 int main(int argc, char* argv[])
 {
     // Say we're not ready to render yet.
@@ -502,6 +769,20 @@ int main(int argc, char* argv[])
     sim->setTime((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
     sim->update(0.0);
 
+    glutInitWindowSize(400, 300);
+    glutInitWindowPosition(0, 0);
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    mainWindow = glutCreateWindow("Celestia");
+    ChangeSize(400, 300);
+
+    glutReshapeFunc(ChangeSize);
+    glutDisplayFunc(Display);
+    glutIdleFunc(Idle);
+    glutMouseFunc(MouseButton);
+    glutMotionFunc(MouseDrag);
+    glutKeyboardFunc(HandleKeyPress);
+
     renderer = new Renderer();
 
     // Prepare the scene for rendering.
@@ -529,7 +810,7 @@ int main(int argc, char* argv[])
     // Set up the overlay
     overlay = new Overlay();
     overlay->setWindowSize(g_w, g_h);
-    font = txfLoadFont("fonts\\default.txf");
+    font = txfLoadFont("fonts/default.txf");
     if (font != NULL)
     {
         txfEstablishTexture(font, 0, GL_FALSE);
@@ -565,6 +846,7 @@ int main(int argc, char* argv[])
     }
 
     bReady = true;
+    glutMainLoop();
 
     // Nuke all applicable scene stuff.
     renderer->shutdown();
