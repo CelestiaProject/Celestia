@@ -78,7 +78,7 @@
 
 	print { text "Let's look around at the stars in the sky." }
 	wait { duration 1 }
-	select { object "Phecda" }
+	select { object "Alpha UMa" }
 	center { time 2 }
 	print { text "Northern Hemisphere residents should recognize the Big Dipper in the constellation Ursa Major." }
 	wait { duration 4 }
