@@ -1538,7 +1538,7 @@ bool CelestiaCore::initSimulation()
     {
         fatalError("Cannot read star database.");
         return false;
-    }
+    }    
 
     {
         // First read the solar system files listed individually in the
@@ -1759,19 +1759,48 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         return false;
     }
 
-    StarDatabase* starDB = StarDatabase::read(starFile);
-    if (starDB == NULL)
-    {
-	cerr << "Error reading stars file\n";
-        return false;
-    }
-
     StarNameDatabase* starNameDB = StarNameDatabase::readNames(starNamesFile);
     if (starNameDB == NULL)
     {
         cerr << "Error reading star names file\n";
         return false;
     }
+
+    // StarDatabase* starDB = StarDatabase::read(starFile);
+    StarDatabase* starDB = new StarDatabase();
+    if (!starDB->loadBinary(starFile))
+    {
+        delete starDB;
+	cerr << "Error reading stars file\n";
+        return false;
+    }
+
+    // Now, read supplemental star files from the extras directory
+    if (config->extrasDir != "")
+    {
+        Directory* dir = OpenDirectory(config->extrasDir);
+
+        string filename;
+        while (dir->nextFile(filename))
+        {
+            if (DetermineFileType(filename) == Content_CelestiaStarCatalog)
+            {
+                string fullname = config->extrasDir + '/' + filename;
+                ifstream starFile(fullname.c_str(), ios::in);
+                if (starFile.good())
+                {
+                    bool success = starDB->load(starFile);
+                    if (!success)
+                    {
+                        DPRINTF(0, "Error reading star file: %s\n",
+                                fullname.c_str());
+                    }
+                }
+            }
+        }
+    }
+
+    starDB->finish();
 
     starDB->setNameDatabase(starNameDB);
 
