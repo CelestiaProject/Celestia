@@ -37,7 +37,7 @@ private:
     double inclination;
     double ascendingNode;
     double argOfPeriapsis;
-    double trueAnomaly;
+    double meanAnomalyAtEpoch;
     double period;
     double epoch;
 };
