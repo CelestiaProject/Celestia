@@ -5,7 +5,7 @@ pkgdatadir = @datadir@/@PACKAGE@
 
 EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA) admin
 
-SUBDIRS = src data extras textures models shaders fonts macros manual
+SUBDIRS = src data extras textures models shaders fonts manual
 
 
 # From KDE app template

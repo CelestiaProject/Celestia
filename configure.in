@@ -11,7 +11,7 @@ AC_CONFIG_AUX_DIR(admin)
 dnl This ksh/zsh feature conflicts with `cd blah ; pwd`
 unset CDPATH
 
-AM_ACLOCAL_INCLUDE(macros)
+dnl AM_ACLOCAL_INCLUDE(macros)
 
 dnl Check system type
 AC_CANONICAL_HOST
@@ -127,6 +127,9 @@ GTK_CFLAGS=""
 AC_ARG_WITH(gtk, [  --with-gtk              Use Gtk for an enhanced GUI],
 	    enable_gtk="$withval";gtk_by_default="no", enable_gtk="no";gtk_by_default="yes")
 
+AC_ARG_WITH(gnome, [  --with-gnome            Use Gnome for an enhanced GUI],
+	    enable_gnome="$withval";enable_gtk="$withval";gtk_by_default="no")
+
 AC_ARG_WITH(kde, [  --with-kde              Use KDE for an enhanced GUI],
 	    enable_kde="$withval";kde_by_default="no", enable_kde="yes";kde_by_default="yes")
 
@@ -146,7 +149,8 @@ if test "$enable_gtk" != "no" -a "$gtk_by_default" = "no" -a  "$enable_kde" != "
 fi
 
 dnl if gtk is explicitly enabled, disable kde
-if test "$enable_gtk" != "no" -a "$gtk_by_default" = "no" -a "$kde_by_default" = "yes" ; then
+if test "$enable_gtk" != "no" -a "$gtk_by_default" = "no"; then
+	kde_by_default = "no"
 	enable_kde="no"
 fi
 
@@ -172,22 +176,25 @@ dnl
 dnl GTK
 dnl
 
-AC_MSG_CHECKING([whether to disable GTK.])
-if test "$enable_gtk" = "yes" ; then
-	AC_MSG_RESULT(no, so try to find GTK)
-	AM_PATH_GTK(1.2.0,enable_gtk="yes",enable_gtk="no")
+dnl THE FOLLOWING SHOULD BE REDONE
+dnl CURRENTLY, THERE IS NO FALLBACK FROM GTK
+dnl So to build glut, need --without-kde --without-gtk
 
-	dnl Complain only if the user insisted we do GTK
-	if test "$enable_gtk_by_default" = "no" -a "$enable_gtk" = "no"; then
-		AC_MSG_RESULT(Unable to find GTK, building GLUT only version)
-                enable_glut="yes"
-	fi
-else
-	AC_MSG_RESULT(yes)
-fi
+dnl AC_MSG_CHECKING([whether to disable GTK.])
+dnl if test "$enable_gtk" = "yes" ; then
+dnl     AC_MSG_RESULT(no, so try to find GTK)
+dnl     AM_PATH_GTK(1.2.0,enable_gtk="yes",enable_gtk="no")
+dnl
+dnl dnl Complain only if the user insisted we do GTK
+dnl	if test "$enable_gtk_by_default" = "no" -a "$enable_gtk" = "no"; then
+dnl     AC_MSG_RESULT(Unable to find GTK, building GLUT only version)
+dnl                enable_glut="yes"
+dnl	fi
+dnl else
+dnl     AC_MSG_RESULT(yes)
+dnl fi
 
 AC_CHECK_COMPILERS
-
 
 AC_PATH_XTRA
 CFLAGS="$CFLAGS $X_CFLAGS"
@@ -231,26 +238,27 @@ fi
 AM_CONDITIONAL(ENABLE_GLUT, test "$enable_glut" = "yes")
 
 if test "$enable_gtk" != "no" ; then
-	OLD_LIBS="$LIBS"
-	LIBS="$LIBS $GTK_LIBS"
-	AC_CHECK_LIB(gtkgl,gdk_gl_query,,enable_gtk="no")
+	dnl GNOME is an extension to the GTK options
+	if test "$enable_gnome" = "yes" ; then
+		PKG_CHECK_MODULES(GTK, libgnomeui-2.0 gtk+-2.0 gtkglext-1.0)
+		AC_DEFINE(GNOME, 1, [Use Gnome Flag])
+
+	dnl Otherwise, vanilla GTK
+	else
+		PKG_CHECK_MODULES(GTK, gtk+-2.0 gtkglext-1.0)
+	fi
+	
+	AC_SUBST(GTK_CFLAGS)
+	AC_SUBST(GTK_LIBS)
 
 	dnl Complain only if the user insisted we do GTK
 	if test "$enable_gtk_by_default" = "no" -a "$enable_gtk" = "no"; then
 		AC_MSG_ERROR(Unable to find gtkglarea)
 	fi
 
-        LIBS="$OLD_LIBS"
-	GNOME_INIT
-	GNOME_COMPILE_WARNINGS
-	GNOME_X_CHECKS
-
-	GTKGL_LIBS=-lgtkgl
-
-	CFLAGS="$CFLAGS $GTK_CFLAGS $GNOME_CFLAGS"
-	CXXFLAGS="$CXXFLAGS $GTK_CFLAGS $GNOME_CFLAGS $GNOME_INCLUDEDIR"
-	LIBS="$LIBS $GTK_LIBS $GNOME_LIBS $GNOMEUI_LIBS $GTKGL_LIBS"
-	LDFLAGS="$LDFLAGS $GNOME_LIBDIR"
+	CFLAGS="$CFLAGS $GTK_CFLAGS"
+	CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
+	LIBS="$LIBS $GTK_LIBS"
 else
 	if test "$enable_gtk_by_default" = "yes" ; then
 		AC_MSG_WARN(Disabled GTK GUI because of missing necessary packages)
@@ -378,7 +386,7 @@ AC_CONFIG_FILES([ models/Makefile ])
 AC_CONFIG_FILES([ shaders/Makefile ])
 AC_CONFIG_FILES([ fonts/Makefile ])
 AC_CONFIG_FILES([ src/celestia/res/Makefile ])
-AC_CONFIG_FILES([ macros/Makefile ])
+dnl AC_CONFIG_FILES([ macros/Makefile ])
 AC_CONFIG_FILES([ manual/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/po/Makefile ])
