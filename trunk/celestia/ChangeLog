@@ -533,10 +533,38 @@ Code:
 * Fixed Windows Solar System Browser to allow arbitrary depth tree
 * Added shadows cast by rings onto planets
 * Fixed lots of bugs with sampled orbits (.xyz files)
-* Bound ! key to use current time
 * Added RotateAcceleration field to config file; allows adjustment of
   navigation control sensitivity
 * Improved accuracy of orbital calculations; VSOP87 series for all planets
 * Added beginning/ending fields to definitions in .ssc files; allows
   setting finite lifespans for objects
+* Made galaxies pickable
+* Added view frustum culling of galaxies, for much improved performance
+* Allow date strings Beginning, Ending, and Epoch fields of .ssc files
+* Fixed incorrect occlusion of small satellites orbiting close to planets
+* New set of constellation figures
+* Sync'd mouse functions in Windows and Linux versions of Celestia
+* Linux: fixed dialing ranges in set time dialog
+* Fixed texture lookup to use higher res textures if a low res one isn't
+  available
+* Made steering keys on keypad turn the camera at a rate proportional to the
+  field of view
+* Added 'automag' option to automatically adjust the limiting magnitude based
+  on the field of view (i.e. fainter stars become visible when the fov is
+  decreased)
+* Fixed haloes around bright stars so they're fixed in size regardless of
+  field of view
+* New colors for celestial grid and constellation figures
+* Tuning of Gnome GUI: underlined key accelerators, enabled operation of all
+  dialogs and menus with ALT <key>, arrow keys, and Tab
+* Linux: GUI now synced with current state of pixel/vertex shaders 
+* New keyboard bindings:
+  Ctrl+Y    : automag toggle
+  Ctrl+T    : toggle display of comet tails
+  Ctrl+B    : constellation boundaries toggle
+  !         : use current time
+  Backspace : clear selection
+* Reversed more/fewer stars keys ([ and ]) to be consistent with more/less
+  ambient light keys
+
 
