@@ -667,7 +667,7 @@ void Renderer::render(const Observer& observer,
                               *solarSystem->getPlanets(),
                               observer,
                               Mat4d::identity(), now,
-                              (labelMode & (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels)) != 0);
+                              (labelMode & (BodyLabelMask)) != 0);
         starTex->bind();
     }
 
