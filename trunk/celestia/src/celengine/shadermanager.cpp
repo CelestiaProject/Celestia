@@ -31,22 +31,6 @@ static const char* errorFragmentShaderSource =
     "   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
     "}\n";
 
-static const char* defaultVertexShaderSource = 
-    "varying vec4 diff;\n"
-    "varying vec2 tex0;\n"
-    "void main(void) {\n"
-    "   diff = max(0.0, dot(gl_Normal, gl_LightSource[0].position));\n"
-    "   tex0 = gl_MultiTexCoord0;\n"
-    "   gl_Position = ftransform();\n"
-    "}\n";
-static const char* defaultFragmentShaderSource =
-    "uniform sampler2D diffTex;\n"
-    "varying vec4 diff;\n"
-    "varying vec2 tex0;\n"
-    "void main(void) {\n"
-    "   gl_FragColor = diff * texture2D(diffTex, tex0.st);\n"
-    "}\n";
-
 
 ShaderManager&
 GetShaderManager()
@@ -134,10 +118,10 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 }
 
 
-ShaderManager::ShaderManager() :
-    logFile(NULL)
+ShaderManager::ShaderManager()
 {
-    logFile = new ofstream("shaders.log");
+    if (g_shaderLogFile == NULL)
+        g_shaderLogFile = new ofstream("shaders.log");
 }
 
 
@@ -690,9 +674,12 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    *logFile << "Vertex shader source:\n";
-    DumpShaderSource(*logFile, source);
-    *logFile << '\n';
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Vertex shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
 
     GLVertexShader* vs = NULL;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
@@ -814,7 +801,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        source += "vec3 n = texture2D(normTex, normTexCoord.st).xyz * 2 - vec3(1, 1, 1);\n";
+        source += "vec3 n = texture2D(normTex, normTexCoord.st).xyz * 2.0 - vec3(1.0, 1.0, 1.0);\n";
         source += "float l;\n";
         for (unsigned i = 0; i < props.nLights; i++)
         {
@@ -831,7 +818,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += ShadowsForLightSource(props, i);
 
             source += "diff += vec4(" + illum + " * " +
-                FragLightProperty(i, "color") + ", 0);\n";
+                FragLightProperty(i, "color") + ", 0.0);\n";
 
             if (props.lightModel == ShaderProperties::SpecularModel &&
                 props.usesShadows())
@@ -885,9 +872,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     source += "}\n";
 
-    *logFile << "Fragment shader source:\n";
-    DumpShaderSource(*logFile, source);
-    *logFile << '\n';
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Fragment shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
     
     GLFragmentShader* fs = NULL;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
@@ -958,9 +948,12 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
-    *logFile << "Vertex shader source:\n";
-    DumpShaderSource(*logFile, source);
-    *logFile << '\n';
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Vertex shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
 
     GLVertexShader* vs = NULL;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
@@ -1041,9 +1034,12 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 
     source += "}\n";
 
-    *logFile << "Fragment shader source:\n";
-    DumpShaderSource(*logFile, source);
-    *logFile << '\n';
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Fragment shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
     
     GLFragmentShader* fs = NULL;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
@@ -1101,10 +1097,18 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     {
         // If the shader creation failed for some reason, substitute the
         // error shader.
-        *logFile << "Error creating shader.\n";
-        GLShaderLoader::CreateProgram(errorVertexShaderSource,
-                                      errorFragmentShaderSource,
-                                      &prog);
+        status = GLShaderLoader::CreateProgram(errorVertexShaderSource,
+                                               errorFragmentShaderSource,
+                                               &prog);
+        if (status != ShaderStatus_OK)
+        {
+            if (g_shaderLogFile != NULL)
+                *g_shaderLogFile << "Failed to create error shader!\n";
+        }
+        else
+        {
+            status = prog->link();
+        }
     }
 
     if (prog == NULL)
