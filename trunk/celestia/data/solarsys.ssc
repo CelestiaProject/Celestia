@@ -512,7 +512,7 @@
 
 "Enceladus" "Sol/Saturn"
 {
-	Texture "asteroid.jpg"
+	Texture "enceladus.jpg"
 	Radius     249
 
 	CustomOrbit "enceladus"
