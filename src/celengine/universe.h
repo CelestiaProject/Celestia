@@ -62,10 +62,12 @@ class Universe
 
     std::vector<std::string> getCompletion(const std::string& s,
                                            Selection* contexts = NULL,
-                                           int nContexts = 0);
+                                           int nContexts = 0,
+                                           bool withLocations = false);
     std::vector<std::string> getCompletionPath(const std::string& s,
                                                Selection* contexts = NULL,
-                                               int nContexts = 0);
+                                               int nContexts = 0,
+                                               bool withLocations = false);
 
 
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;

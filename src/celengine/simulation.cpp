@@ -449,13 +449,21 @@ Selection Simulation::findObjectFromPath(string s)
 }
 
 
-std::vector<std::string> Simulation::getObjectCompletion(string s)
+std::vector<std::string> Simulation::getObjectCompletion(string s, bool withLocations)
 {
     Selection path[2];
     int nPathEntries = 0;
 
-    if (!selection.empty())
-        path[nPathEntries++] = selection;
+    if (!selection.empty()) {
+        if (selection.getType() == Selection::Type_Location)
+        {
+            path[nPathEntries++] = Selection(selection.location()->getParentBody());
+        }
+        else
+        {
+            path[nPathEntries++] = selection;
+        }
+    }
 
     if (closestSolarSystem != NULL &&
         closestSolarSystem != universe->getSolarSystem(selection))
@@ -463,7 +471,7 @@ std::vector<std::string> Simulation::getObjectCompletion(string s)
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
     }
 
-    return universe->getCompletionPath(s, path, nPathEntries);
+    return universe->getCompletionPath(s, path, nPathEntries, withLocations);
 }
 
 

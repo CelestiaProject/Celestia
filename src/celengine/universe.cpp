@@ -12,6 +12,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/vecmath.h>
 #include <celmath/intersect.h>
+#include <celutil/utf8.h>
 #include "astro.h"
 #include "3dsmesh.h"
 #include "meshmanager.h"
@@ -818,7 +819,7 @@ Selection Universe::find(const string& s,
         for (DeepSkyCatalog::const_iterator iter = deepSkyCatalog->begin();
              iter != deepSkyCatalog->end(); iter++)
         {
-            if (compareIgnoringCase((*iter)->getName(), s) == 0)
+            if (UTF8StringCompare((*iter)->getName(), s) == 0)
                 return Selection(*iter);
         }
     }
@@ -879,13 +880,24 @@ Selection Universe::findPath(const string& s,
 
 std::vector<std::string> Universe::getCompletion(const string& s,
                                                  Selection* contexts,
-                                                 int nContexts)
+                                                 int nContexts,
+                                                 bool withLocations)
 {
     std::vector<std::string> completion;
 
     // solar bodies first
     for (int i = 0; i < nContexts; i++)
     {
+        if (withLocations && contexts[i].getType() == Selection::Type_Body) {
+            std::vector<Location*>* locations = contexts[i].body()->getLocations();
+            for (vector<Location*>::const_iterator iter = locations->begin();
+                 iter != locations->end(); iter++)
+            {
+                if (!UTF8StringCompare(s, (*iter)->getName(), s.length()))
+                    completion.push_back((*iter)->getName());
+            }
+        }
+
         SolarSystem* sys = getSolarSystem(contexts[i]);
         if (sys != NULL)
         {
@@ -905,7 +917,7 @@ std::vector<std::string> Universe::getCompletion(const string& s,
         for (DeepSkyCatalog::const_iterator iter = deepSkyCatalog->begin();
              iter != deepSkyCatalog->end(); iter++)
         {
-            if (compareIgnoringCase((*iter)->getName(), s, s.length()) == 0)
+            if (UTF8StringCompare((*iter)->getName(), s, s.length()) == 0)
                 completion.push_back(Selection(*iter).getName());
         }
     }
@@ -919,13 +931,16 @@ std::vector<std::string> Universe::getCompletion(const string& s,
 
 std::vector<std::string> Universe::getCompletionPath(const string& s,
                                                      Selection* contexts,
-                                                     int nContexts)
+                                                     int nContexts,
+                                                     bool withLocations)
 {
     std::vector<std::string> completion;
+    std::vector<std::string> locationCompletion;
+    
     string::size_type pos = s.rfind('/', s.length());
 
     if (pos == string::npos)
-        return getCompletion(s, contexts, nContexts);
+        return getCompletion(s, contexts, nContexts, withLocations);
 
     string base(s, 0, pos);
     Selection sel = findPath(base, contexts, nContexts);
@@ -943,6 +958,16 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
     if (sel.getType() == Selection::Type_Body)
     {
         worlds = sel.body()->getSatellites();
+        if (withLocations) {
+            std::vector<Location*>* locations = sel.body()->getLocations();
+            string search = s.substr(pos + 1);
+            for (vector<Location*>::const_iterator iter = locations->begin();
+                 iter != locations->end(); iter++)
+            {
+                if (!UTF8StringCompare(search, (*iter)->getName(), search.length()))
+                    locationCompletion.push_back((*iter)->getName());
+            }
+        }
     }
     else if (sel.getType() == Selection::Type_Star)
     {
@@ -953,7 +978,8 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
 
     if (worlds != NULL)
     {
-        return worlds->getCompletion(s.substr(pos + 1), false);
+        completion = worlds->getCompletion(s.substr(pos + 1), false);
+        completion.insert(completion.end(), locationCompletion.begin(), locationCompletion.end());
     }
 
     return completion;

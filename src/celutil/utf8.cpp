@@ -552,6 +552,47 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1)
         return 0;
 }
 
+int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
+{
+    int len0 = s0.length();
+    int len1 = s1.length();
+    int i0 = 0;
+    int i1 = 0;
+    while (i0 < len0 && i1 < len1 && n > 0)
+    {
+        wchar_t ch0 = 0;
+        wchar_t ch1 = 0;
+        if (!UTF8Decode(s0, i0, ch0))
+            return 1;
+        if (!UTF8Decode(s1, i1, ch1))
+            return -1;
+
+        i0 += UTF8EncodedSize(ch0);
+        i1 += UTF8EncodedSize(ch1);
+        ch0 = UTF8Normalize(ch0);
+        ch1 = UTF8Normalize(ch1);
+
+        if (ch0 < ch1)
+            return -1;
+        else if (ch0 > ch1)
+            return 1;
+
+        n--;
+    }
+
+    if (n == 0)
+        return 0;
+
+    len0 = UTF8Length(s0);
+    len1 = UTF8Length(s1);
+    if (len0 > len1)
+        return 1;
+    else if (len0 < len1)
+        return -1;
+    else
+        return 0;
+}
+
 
 // Currently incomplete, but could be a helpful class for dealing with
 // UTF-8 streams

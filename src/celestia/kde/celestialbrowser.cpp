@@ -116,7 +116,7 @@ void CelestialBrowser::slotRefresh()
     {
         char buf[20];
         const Star *star=(Star *)(*i);
-        QString name((stardb->getStarName(*star)).c_str());
+        QString name = QString::fromUtf8((stardb->getStarName(*star)).c_str());
 
         Point3f starPos = star->getPosition();
         Vec3d v(starPos.x - obsPos.x, 
@@ -154,7 +154,7 @@ void CelestialBrowser::slotRefresh()
                 sprintf(buf, " %.2f au", starBodyDist / KM_PER_AU);
                 QString distStarBody(buf);
                                                                              
-                CelListViewItem *planetItem = new CelListViewItem(starItem, QString(body->getName().c_str()),
+                CelListViewItem *planetItem = new CelListViewItem(starItem, QString::fromUtf8(body->getName().c_str()),
                                             distStarBody, "", "", getClassification(body->getClassification()));
                 
                 const PlanetarySystem* satellites = body->getSatellites();
@@ -171,7 +171,7 @@ void CelestialBrowser::slotRefresh()
                                 QString distBodySat(buf);
                                 
                                 new CelListViewItem(planetItem, 
-                                    QString(sat->getName().c_str()),
+                                    QString::fromUtf8(sat->getName().c_str()),
                                     distBodySat, "", "", getClassification(sat->getClassification()));
 
                         }

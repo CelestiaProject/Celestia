@@ -82,6 +82,7 @@ public:
     void openBookmarkURL(const QString& _url);
     Url currentUrl(Url::UrlType type = Url::Absolute) const ;
     QString currentIcon() const;
+    const KActionCollection* getActionCollection() { return actionCollection(); }
 
 public slots:
     void celestia_tick() { appCore->tick(); glWidget->updateGL(); }

@@ -208,6 +208,25 @@ void KdeWatcher::notifyChange(CelestiaCore * core, int property)
         kdeapp->resyncVerbosity();
     else if (property & CelestiaCore::HistoryChanged)
         kdeapp->resyncHistory();
+
+    if (property == CelestiaCore::TextEnterModeChanged) {
+        static std::vector<KAction*> actions;
+        if (kdeapp->appCore->getTextEnterMode() != CelestiaCore::KbNormal) {
+            for (unsigned int n=0; n < kdeapp->getActionCollection()->count(); n++) {
+                if (kdeapp->getActionCollection()->action(n)->shortcut().count() > 0
+                    && (kdeapp->getActionCollection()->action(n)->shortcut().seq(0).key(0).modFlags()
+                    & (KKey::CTRL | KKey::ALT | KKey::WIN )) == 0 ) {
+                    actions.push_back(kdeapp->getActionCollection()->action(n));
+                    kdeapp->getActionCollection()->action(n)->setEnabled(false);
+                }
+            }
+        } else {
+            for (std::vector<KAction*>::iterator n=actions.begin(); n<actions.end(); n++) {
+                 (*n)->setEnabled(true);
+            }
+            actions.clear();
+        }
+    }
 }
 
 void KdeApp::resyncHistory() {
@@ -841,7 +860,7 @@ void KdeApp::slotPreferences() {
 void KdeApp::slotSetTime() {
     KdePreferencesDialog dlg(this, appCore);
 
-    dlg.showPage(1);
+    dlg.showPage(2);
     dlg.exec();
 }
 
