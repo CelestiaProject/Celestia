@@ -222,5 +222,5 @@ GLContext::VertexPath GLContext::getVertexPath() const
 
 VertexProcessor* GLContext::getVertexProcessor() const
 {
-    return vertexProc;
+    return vertexPath == VPath_Basic ? NULL : vertexProc;
 }
