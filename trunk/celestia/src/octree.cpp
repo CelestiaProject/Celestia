@@ -46,14 +46,41 @@ void StarOctree::insertStar(const Star& star)
 
 void StarOctree::processVisibleStars(StarHandler& starHandler,
                                      const Point3f& position,
+                                     const Quatf& orientation,
+                                     float fovY,
+                                     float aspectRatio,
                                      float limitingMag) const
 {
-    root->processVisibleStars(starHandler, position, limitingMag, scale);
+    // Compute the bounding planes of an infinite view frustum
+    Planef frustumPlanes[5];
+    Vec3f planeNormals[5];
+    Mat3f rot = orientation.toMatrix3();
+    float h = (float) tan(fovY / 2);
+    float w = h * aspectRatio;
+    planeNormals[0] = Vec3f(0, 1, -h);
+    planeNormals[1] = Vec3f(0, -1, -h);
+    planeNormals[2] = Vec3f(1, 0, -w);
+    planeNormals[3] = Vec3f(-1, 0, -w);
+    planeNormals[4] = Vec3f(0, 0, -1);
+    for (int i = 0; i < 5; i++)
+    {
+        planeNormals[i].normalize();
+        planeNormals[i] = planeNormals[i] * rot;
+        frustumPlanes[i] = Planef(planeNormals[i], position);
+    }
+    
+    root->processVisibleStars(starHandler, position, frustumPlanes,
+                              limitingMag, scale);
 }
 
 int StarOctree::countNodes() const
 {
     return 1 + root->countChildren();
+}
+
+int StarOctree::countStars() const
+{
+    return root->countStars();
 }
 
 
@@ -68,8 +95,7 @@ StarOctreeNode::~StarOctreeNode()
     {
         for (int i = 0; i < 8; i++)
         {
-            if (children[i] != NULL)
-                delete children[i];
+            delete children[i];
         }
     }
 }
@@ -129,30 +155,51 @@ void StarOctreeNode::insertStar(const Star& star, float scale)
 
 void StarOctreeNode::processVisibleStars(StarHandler& starHandler,
                                          const Point3f& position,
+                                         const Planef* frustumPlanes,
                                          float limitingMag,
                                          float scale) const
 {
+    // See if this node lies within the view frustum
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            const Planef* plane = frustumPlanes + i;
+            float r = scale * (abs(plane->normal.x) +
+                               abs(plane->normal.y) +
+                               abs(plane->normal.z));
+            if (plane->normal * Vec3f(center.x, center.y, center.z) - plane->d < -r)
+                return;
+        }
+    }
+
+    // Process the stars in this node
+    if (stars != NULL)
+    {
+        for (vector<const Star*>::const_iterator iter = stars->begin();
+             iter != stars->end(); iter++)
+        {
+            float distance = (position - (*iter)->getPosition()).length();
+            float appMag = astro::lumToAppMag((*iter)->getLuminosity(), distance);
+            if (appMag < limitingMag)
+                starHandler.process(**iter, distance, appMag);
+        }
+    }
+
     // Compute the distance to node; this is equal to the distance to
     // the center of the node minus the radius of the node, scale * sqrt3.
     float distance = (position - center).length() - scale * sqrt3;
     if (distance <= 0 || astro::lumToAppMag(luminosity, distance) <= limitingMag)
     {
-        // Process the stars in this node
-        if (stars != NULL)
-        {
-            for (vector<const Star*>::const_iterator iter = stars->begin();
-                 iter != stars->end(); iter++)
-                starHandler.process(**iter);
-        }
-
         // Recurse into the child nodes
         if (children != NULL)
         {
             for (int i = 0; i < 8; i++)
             {
-                if (children[i] != NULL)
-                    children[i]->processVisibleStars(starHandler, position, limitingMag,
-                                                     scale * 0.5f);
+                children[i]->processVisibleStars(starHandler,
+                                                 position,
+                                                 frustumPlanes,
+                                                 limitingMag,
+                                                 scale * 0.5f);
             }
         }
     }
@@ -202,6 +249,8 @@ void StarOctreeNode::sortStarsIntoChildNodes()
             children[childIndex(*star, center)]->addStar(*star);
         }
     }
+
+    stars->resize(nBrightStars);
 }
 
 
@@ -215,9 +264,24 @@ int StarOctreeNode::countChildren() const
     {
         int nChildren = 0;
         for (int i = 0; i < 8; i++)
-            if (children[i] != NULL)
-                nChildren += 1 + children[i]->countChildren();
+            nChildren += 1 + children[i]->countChildren();
 
         return nChildren;
     }
+}
+
+int StarOctreeNode::countStars() const
+{
+    int nStars = stars == NULL ? 0 : stars->size();
+
+    if (children != NULL)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            nStars += children[i]->countStars();
+        }
+
+    }
+
+    return nStars;
 }
