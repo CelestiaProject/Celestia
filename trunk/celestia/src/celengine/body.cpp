@@ -121,6 +121,18 @@ void Body::setRadius(float _radius)
 }
 
 
+// For an irregular object, the radius is defined to be the largest semi-axis
+// of the axis-aligned bounding box.  The radius of the smallest sphere containing
+// the object is potentially larger by a factor of sqrt(3)
+float Body::getBoundingRadius() const
+{
+    if (model == InvalidResource)
+        return radius;
+    else
+        return radius * 1.7320508; // sqrt(3)
+}
+
+
 float Body::getMass() const
 {
     return mass;

@@ -1308,7 +1308,7 @@ void Renderer::render(const Observer& observer,
             if (iter->body != NULL)
             {
                 // radius = iter->body->getRadius();
-                radius = iter->radius;
+                radius = iter->body->getBoundingRadius();
                 if (iter->body->getRings() != NULL)
                 {
                     radius = iter->body->getRings()->outerRadius;
@@ -1439,12 +1439,6 @@ void Renderer::render(const Observer& observer,
         {
             if (renderList[i].discSizeInPixels > 1)
             {
-                float radius = 1.0f;
-                if (renderList[i].body != NULL)
-                    radius = renderList[i].body->getRadius();
-                else if (renderList[i].star != NULL)
-                    radius = renderList[i].star->getRadius();
-
                 nearPlaneDistance = renderList[i].nearZ * -0.9f;
                 farPlaneDistance = renderList[i].farZ * -1.5f;
                 if (nearPlaneDistance < MinNearPlaneDistance)
@@ -2926,6 +2920,169 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
 }
 
 
+// Render a planet sphere using both fragment and vertex programs
+static void renderSphere_FP_VP(const RenderInfo& ri,
+                               const Frustum& frustum,
+                               const GLContext& context)
+{
+    Texture* textures[4];
+    VertexProcessor* vproc = context.getVertexProcessor();
+    FragmentProcessor* fproc = context.getFragmentProcessor();
+    assert(vproc != NULL && fproc != NULL);
+
+    if (ri.baseTex == NULL)
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+        ri.baseTex->bind();
+    }
+
+    // Compute the half angle vector required for specular lighting
+    Vec3f halfAngle_obj = ri.eyeDir_obj + ri.sunDir_obj;
+    if (halfAngle_obj.length() != 0.0f)
+        halfAngle_obj.normalize();
+
+    // Set up the fog parameters if the haze density is non-zero
+    float hazeDensity = ri.hazeColor.alpha();
+
+    if (hazeDensity > 0.0f)
+    {
+        glEnable(GL_FOG);
+        float fogColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        fogColor[0] = ri.hazeColor.red();
+        fogColor[1] = ri.hazeColor.green();
+        fogColor[2] = ri.hazeColor.blue();
+        glFogfv(GL_FOG_COLOR, fogColor);
+        glFogi(GL_FOG_MODE, GL_LINEAR);
+        glFogf(GL_FOG_START, 0.0);
+        glFogf(GL_FOG_END, 1.0f / hazeDensity);
+    }
+
+    vproc->enable();
+
+    vproc->parameter(vp::EyePosition, ri.eyePos_obj);
+    vproc->parameter(vp::SunDirection, ri.sunDir_obj);
+    vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+    vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
+    vproc->parameter(vp::SpecularColor, ri.sunColor * ri.specularColor);
+    vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
+    vproc->parameter(vp::HazeColor, ri.hazeColor);
+
+    if (ri.bumpTex != NULL)
+    {
+        fproc->enable();
+        
+        if (hazeDensity > 0.0f)
+            vproc->use(vp::diffuseBumpHaze);
+        else
+            vproc->use(vp::diffuseBump);
+        fproc->use(fp::texDiffuseBump);
+        lodSphere->render(context,
+                          LODSphereMesh::Normals | LODSphereMesh::Tangents |
+                          LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
+                          frustum, ri.pixWidth,
+                          ri.baseTex, ri.bumpTex);
+        fproc->disable();
+
+        // Render a specular pass
+        if (ri.specularColor != Color::Black)
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+            glEnable(GL_COLOR_SUM_EXT);
+            vproc->use(vp::specular);
+
+            // Disable ambient and diffuse
+            vproc->parameter(vp::AmbientColor, Color::Black);
+            vproc->parameter(vp::DiffuseColor, Color::Black);
+            SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
+
+            textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
+            lodSphere->render(context,
+                              LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                              frustum, ri.pixWidth,
+                              textures, 1);
+
+            // re-enable diffuse
+            vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+
+            DisableCombiners();
+            glDisable(GL_COLOR_SUM_EXT);
+            glDisable(GL_BLEND);
+        }
+    }
+    else if (ri.specularColor != Color::Black)
+    {
+        vproc->use(vp::perFragmentSpecular);
+        fproc->enable();
+        fproc->use(fp::texSpecular);
+        fproc->parameter(fp::DiffuseColor, ri.sunColor * ri.color);
+        fproc->parameter(fp::SunDirection, ri.sunDir_obj);
+        fproc->parameter(fp::SpecularColor, ri.specularColor);
+        fproc->parameter(fp::SpecularExponent, ri.specularPower, 0.0f, 0.0f, 0.0f);
+        fproc->parameter(fp::AmbientColor, ri.ambientColor);
+
+        unsigned int attributes = LODSphereMesh::Normals |
+                                  LODSphereMesh::TexCoords0 |
+                                  LODSphereMesh::VertexProgParams;
+        lodSphere->render(context,
+                          attributes, frustum, ri.pixWidth,
+                          ri.baseTex, ri.glossTex);
+        fproc->disable();
+    }
+    else
+    {
+        fproc->enable();
+        if (hazeDensity > 0.0f)
+            vproc->use(vp::diffuseHaze);
+        else
+            vproc->use(vp::diffuse);
+        fproc->use(fp::texDiffuse);
+        lodSphere->render(context,
+                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
+                          LODSphereMesh::VertexProgParams,
+                          frustum, ri.pixWidth,
+                          ri.baseTex);
+        fproc->disable();
+    }
+
+    if (hazeDensity > 0.0f)
+        glDisable(GL_FOG);
+
+    if (ri.nightTex != NULL)
+    {
+        ri.nightTex->bind();
+        vproc->use(vp::nightLights);
+        setupNightTextureCombine();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        lodSphere->render(context,
+                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                          frustum, ri.pixWidth,
+                          ri.nightTex);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
+
+    if (ri.overlayTex != NULL)
+    {
+        ri.overlayTex->bind();
+        vproc->use(vp::diffuse);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        lodSphere->render(context,
+                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                          frustum, ri.pixWidth,
+                          ri.overlayTex);
+        glBlendFunc(GL_ONE, GL_ONE);
+    }
+
+    vproc->disable();
+}
+
+
 static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
 {
     float f[4];
@@ -3952,9 +4109,12 @@ void Renderer::renderObject(Point3f pos,
         {
             switch (context->getRenderPath())
             {
+            case GLContext::GLPath_NV30:
+                renderSphere_FP_VP(ri, viewFrustum, *context);
+                break;
+
             case GLContext::GLPath_NvCombiner_ARBVP:
             case GLContext::GLPath_NvCombiner_NvVP:
-            case GLContext::GLPath_NV30:
                 renderSphere_Combiners_VP(ri, viewFrustum, *context);
                 break;
 
@@ -4131,7 +4291,7 @@ void Renderer::renderObject(Point3f pos,
     if (obj.eclipseShadows != NULL &&
         (obj.surface->appearanceFlags & Surface::Emissive) == 0)
     {
-#if 0
+#if 1
         // renderEclipseShadows_Shaders() still needs some more work.
         if (context->getVertexProcessor() != NULL &&
             context->getFragmentProcessor() != NULL)
