@@ -2078,7 +2078,7 @@ class IapetusOrbit : public CachingOrbit
 
     double getPeriod() const
     {
-        return 21.276609;
+        return 79.330183;
     };
 
     double getBoundingRadius() const
