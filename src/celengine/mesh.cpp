@@ -69,7 +69,7 @@ Mesh::Material::Material() :
 
 
 Mesh::Mesh() :
-    vertexStride(0),
+    vertexDesc(0, 0, NULL),
     nVertices(0),
     vertices(NULL)
 {
@@ -107,14 +107,21 @@ Mesh::setVertexDescription(const VertexDescription& desc)
     if (desc.stride == 0 || desc.stride % 4 != 0)
         return false;
 
-    // Clear the existing vertex description
+    // Update the vertex description
+    if (vertexDesc.attributes != NULL)
+        delete[] vertexDesc.attributes;
+    vertexDesc.attributes = new VertexAttribute[desc.nAttributes];
+    copy(desc.attributes, desc.attributes + desc.nAttributes,
+         vertexDesc.attributes);
+    vertexDesc.nAttributes = desc.nAttributes;
+    vertexDesc.stride = desc.stride;
+
+    // Clear the existing attribute map
     for (i = 0; i < (uint32) SemanticMax; i++)
     {
         vertexAttributeMap[i] = VertexAttribute(InvalidSemantic,
                                                 InvalidFormat, 0);
     }
-    
-    vertexStride = desc.stride;
 
     // Build a vertex attribute table that's indexed by semnatic; this is the
     // desired structure for setting up GL.
@@ -128,7 +135,7 @@ Mesh::setVertexDescription(const VertexDescription& desc)
             return false;
         if (attr->offset % 4 != 0)
             return false;
-        if (attr->offset + VertexAttributeFormatSizes[attr->format] > vertexStride)
+        if (attr->offset + VertexAttributeFormatSizes[attr->format] > vertexDesc.stride)
             return false;
         if (vertexAttributeMap[attr->semantic].format != InvalidFormat)
             return false;
@@ -144,9 +151,9 @@ Mesh::setVertexDescription(const VertexDescription& desc)
 }
 
 
-const Mesh::VertexDescription* Mesh::getVertexDescription() const
+const Mesh::VertexDescription& Mesh::getVertexDescription() const
 {
-    return NULL;
+    return vertexDesc;
 }
 
 
@@ -216,9 +223,9 @@ Mesh::pick(const Ray3d& ray, double& distance) const
             do
             {
                 // Get the triangle vertices v0, v1, and v2
-                float* f0 = reinterpret_cast<float*>(vdata + i0 * vertexStride + posOffset);
-                float* f1 = reinterpret_cast<float*>(vdata + i1 * vertexStride + posOffset);
-                float* f2 = reinterpret_cast<float*>(vdata + i2 * vertexStride + posOffset);
+                float* f0 = reinterpret_cast<float*>(vdata + i0 * vertexDesc.stride + posOffset);
+                float* f1 = reinterpret_cast<float*>(vdata + i1 * vertexDesc.stride + posOffset);
+                float* f2 = reinterpret_cast<float*>(vdata + i2 * vertexDesc.stride + posOffset);
                 Point3d v0(f0[0], f0[1], f0[2]);
                 Point3d v1(f1[0], f1[1], f1[2]);
                 Point3d v2(f2[0], f2[1], f2[2]);
@@ -317,7 +324,7 @@ void Mesh::render(const std::vector<const Material*>& materials,
 
     // Set up the vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, vertexStride,
+    glVertexPointer(3, GL_FLOAT, vertexDesc.stride,
                     reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset);
 
     // Set up the normal array
@@ -326,7 +333,7 @@ void Mesh::render(const std::vector<const Material*>& materials,
     case Float3:
         glEnableClientState(GL_NORMAL_ARRAY);
         glNormalPointer(GLComponentTypes[(int) vertexAttributeMap[Normal].format],
-                        vertexStride,
+                        vertexDesc.stride,
                         reinterpret_cast<char*>(vertices) + vertexAttributeMap[Normal].offset);
         break;
     default:
@@ -343,7 +350,7 @@ void Mesh::render(const std::vector<const Material*>& materials,
         glEnableClientState(GL_COLOR_ARRAY);
         glColorPointer(GLComponentCounts[(int) vertexAttributeMap[Color0].format],
                        GLComponentTypes[(int) vertexAttributeMap[Color0].format],
-                       vertexStride,
+                       vertexDesc.stride,
                        reinterpret_cast<char*>(vertices) + vertexAttributeMap[Color0].offset);
         break;
     default:
@@ -361,7 +368,7 @@ void Mesh::render(const std::vector<const Material*>& materials,
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(GLComponentCounts[(int) vertexAttributeMap[Texture0].format],
                           GLComponentTypes[(int) vertexAttributeMap[Texture0].format],
-                          vertexStride,
+                          vertexDesc.stride,
                           reinterpret_cast<char*>(vertices) + vertexAttributeMap[Texture0].offset);
         break;
     default:
@@ -408,7 +415,7 @@ Mesh::getBoundingBox() const
 
     char* vdata = reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset;
     
-    for (uint32 i = 0; i < nVertices; i++, vdata += vertexStride)
+    for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
         bbox.include(Point3f(reinterpret_cast<float*>(vdata)));
 
     return bbox;
@@ -422,7 +429,7 @@ Mesh::transform(Vec3f translation, float scale)
         return;
 
     char* vdata = reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset;
-    for (uint32 i = 0; i < nVertices; i++, vdata += vertexStride)
+    for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
     {
         Vec3f tv = (Vec3f(reinterpret_cast<float*>(vdata)) + translation) * scale;
         reinterpret_cast<float*>(vdata)[0] = tv.x;
