@@ -74,7 +74,7 @@ bin_PROGRAMS = celestia
 @ENABLE_GTK_TRUE@FRONTENDSOURCE = gtkmain.cpp
 @ENABLE_GTK_FALSE@FRONTENDSOURCE = glutmain.cpp
 
-COMMONSOURCES =  	3dsmesh.cpp 	3dsmodel.cpp 	3dsread.cpp 	asterism.cpp 	astro.cpp 	bigfix.cpp 	body.cpp 	cmdparser.cpp 	color.cpp 	command.cpp 	config.cpp 	console.cpp 	constellation.cpp 	debug.cpp 	dispmap.cpp 	execution.cpp 	favorites.cpp 	filetype.cpp 	galaxy.cpp 	glext.cpp 	meshmanager.cpp 	observer.cpp 	octree.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	perlin.cpp 	regcombine.cpp 	render.cpp 	resmanager.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texfont.cpp 	texmanager.cpp 	texture.cpp 	texturefont.cpp 	tokenizer.cpp 	univcoord.cpp 	unixtimer.cpp 	util.cpp 	vertexlist.cpp 	visstars.cpp
+COMMONSOURCES =  	3dsmesh.cpp 	3dsmodel.cpp 	3dsread.cpp 	asterism.cpp 	astro.cpp 	bigfix.cpp 	body.cpp 	cmdparser.cpp 	color.cpp 	command.cpp 	config.cpp 	console.cpp 	constellation.cpp 	debug.cpp 	dispmap.cpp 	execution.cpp 	favorites.cpp 	filetype.cpp 	galaxy.cpp 	glext.cpp 	meshmanager.cpp 	observer.cpp 	octree.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	perlin.cpp 	regcombine.cpp 	render.cpp 	resmanager.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texfont.cpp 	texmanager.cpp 	texture.cpp 	texturefont.cpp 	tokenizer.cpp 	univcoord.cpp 	unixtimer.cpp 	util.cpp 	vertexlist.cpp
 
 
 celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
@@ -102,7 +102,7 @@ X_PRE_LIBS = @X_PRE_LIBS@
 @ENABLE_GTK_TRUE@spheremesh.o star.o stardb.o starname.o stellarclass.o \
 @ENABLE_GTK_TRUE@texfont.o texmanager.o texture.o texturefont.o \
 @ENABLE_GTK_TRUE@tokenizer.o univcoord.o unixtimer.o util.o \
-@ENABLE_GTK_TRUE@vertexlist.o visstars.o gtkmain.o
+@ENABLE_GTK_TRUE@vertexlist.o gtkmain.o
 @ENABLE_GTK_FALSE@celestia_OBJECTS =  3dsmesh.o 3dsmodel.o 3dsread.o \
 @ENABLE_GTK_FALSE@asterism.o astro.o bigfix.o body.o cmdparser.o \
 @ENABLE_GTK_FALSE@color.o command.o config.o console.o constellation.o \
@@ -113,7 +113,7 @@ X_PRE_LIBS = @X_PRE_LIBS@
 @ENABLE_GTK_FALSE@solarsys.o spheremesh.o star.o stardb.o starname.o \
 @ENABLE_GTK_FALSE@stellarclass.o texfont.o texmanager.o texture.o \
 @ENABLE_GTK_FALSE@texturefont.o tokenizer.o univcoord.o unixtimer.o \
-@ENABLE_GTK_FALSE@util.o vertexlist.o visstars.o glutmain.o
+@ENABLE_GTK_FALSE@util.o vertexlist.o glutmain.o
 celestia_LDADD = $(LDADD)
 celestia_DEPENDENCIES = 
 celestia_LDFLAGS = 
@@ -141,7 +141,7 @@ DEP_FILES =  .deps/3dsmesh.P .deps/3dsmodel.P .deps/3dsread.P \
 .deps/starname.P .deps/stellarclass.P .deps/texfont.P \
 .deps/texmanager.P .deps/texture.P .deps/texturefont.P \
 .deps/tokenizer.P .deps/univcoord.P .deps/unixtimer.P .deps/util.P \
-.deps/vertexlist.P .deps/visstars.P
+.deps/vertexlist.P
 SOURCES = $(celestia_SOURCES)
 OBJECTS = $(celestia_OBJECTS)
 
