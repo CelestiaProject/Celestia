@@ -145,6 +145,7 @@ M  : Toggle moon labels
 W  : Toggle asteroid & comet labels
 N  : Toggle spacecraft labels
 P  : Toggle planet labels
+&  : Toggle location labels
 
 V  : Toggle verbosity of info text
 
@@ -169,7 +170,7 @@ Ctrl+E : Toggle eclipse shadow rendering
 Ctrl+K : Toggle display of markers
 Ctrl+L : Toggle night side planet maps (light pollution)
 Ctrl+P : Mark selected object
-Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
+Ctrl+S : Cycle the star style between fuzzy discs, points, and scaled discs
 Ctrl+T : Toggle rendering of comet tails
 Ctrl+V : Cycle between supported OpenGL render paths
 Ctrl+W : Toggle wireframe mode
@@ -340,11 +341,16 @@ Chris Laurel
 Clint Weisbrod
 Fridger Schrempp
 Christophe Teyssier
-Deon Ramsey (UNIX installer, Gtk interface)
 Bob Ippolito (Mac OS X version)
+Hank Ramsey (Mac OS X version)
+Grant Hutchison
+
+Contributors:
+
+Deon Ramsey (UNIX installer, Gtk interface)
 Christopher ANDRE (Eclipse finder)
 Colin Walters (endianness fixes)
-Grant Hutchison (solarsys.ssc guru)
+Peter Chapman (orbit path rendering changes)
 James Holmes
 
 

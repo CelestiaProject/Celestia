@@ -50,6 +50,7 @@ M  : Toggle moon labels
 W  : Toggle asteroid & comet labels
 N  : Toggle spacecraft labels
 P  : Toggle planet labels
+&  : Toggle location labels
 
 V  : Toggle verbosity of info text
 
@@ -74,7 +75,7 @@ Ctrl+E : Toggle eclipse shadow rendering
 Ctrl+K : Toggle display of markers
 Ctrl+L : Toggle night side planet maps (light pollution)
 Ctrl+P : Mark selected object
-Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
+Ctrl+S : Cycle the star style between fuzzy discs, points, and scaled discs
 Ctrl+T : Toggle rendering of comet tails
 Ctrl+V : Cycle between supported OpenGL render paths
 Ctrl+W : Toggle wireframe mode
