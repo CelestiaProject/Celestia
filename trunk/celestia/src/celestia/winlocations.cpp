@@ -18,6 +18,7 @@ using namespace std;
 bool dragging;
 HTREEITEM hDragItem;
 HTREEITEM hDropTargetItem;
+POINT dragPos;
 
 HTREEITEM PopulateLocationsTree(HWND hTree, CelestiaCore* appCore, HINSTANCE appInstance)
 {
@@ -732,6 +733,11 @@ void MoveLocationInFavorites(HWND hTree, CelestiaCore* appCore)
     }
 }
 
+bool isOrganizeLocationsDragDropActive()
+{
+    return dragging;
+}
+
 void OrganizeLocationsOnBeginDrag(HWND hTree, LPNMTREEVIEW lpnmtv)
 {
     HIMAGELIST himl;    // handle to image list
@@ -773,6 +779,10 @@ void OrganizeLocationsOnMouseMove(HWND hTree, LONG xCur, LONG yCur)
     TVITEM tvItem;
     HTREEITEM hItem;
 
+    //Store away last drag position so timer can perform auto-scrolling.
+    dragPos.x = xCur;
+    dragPos.y = yCur;
+
     if (dragging)
     {
         // Drag the item to the current position of the mouse pointer.
@@ -781,8 +791,8 @@ void OrganizeLocationsOnMouseMove(HWND hTree, LONG xCur, LONG yCur)
 
         // Find out if the pointer is on the item. If it is,
 		// highlight the item as a drop target.
-        tvht.pt.x = xCur;
-        tvht.pt.y = yCur;
+        tvht.pt.x = dragPos.x;
+        tvht.pt.y = dragPos.y;
         if(hItem = TreeView_HitTest(hTree, &tvht))
         {
             //Only select folder items for drop targets
@@ -812,12 +822,57 @@ void OrganizeLocationsOnLButtonUp(HWND hTree)
         ShowCursor(TRUE);
         dragging = false;
 
-        //hDragItem is handle to dragged item
-        //hDropTargetItem is handle to target folder
-
-        //First, remove TVIS_DROPHILITED state from drop target item
+        //Remove TVIS_DROPHILITED state from drop target item
         TreeView_SelectDropTarget(hTree, NULL);
     }
+}
+
+void DragDropAutoScroll(HWND hTree)
+{
+    RECT rect;
+    int i, count;
+    HTREEITEM hItem;
+
+    GetClientRect(hTree, &rect);
+
+    ImageList_DragLeave(hTree);
+
+    //See if we need to scroll.
+    if(dragPos.y > rect.bottom - 10)
+    {
+        //If we are down towards the bottom but have not scrolled to the last
+        //item, we need to scroll down.
+        if(dragPos.x > rect.left && dragPos.x < rect.right)
+        {
+            SendMessage(hTree, WM_VSCROLL, SB_LINEDOWN, 0);
+            count = TreeView_GetVisibleCount(hTree);
+            hItem = TreeView_GetFirstVisible(hTree);
+            for (i=0; i<count-1; i++)
+                hItem = TreeView_GetNextVisible(hTree, hItem);
+            if(hItem)
+            {
+                hDropTargetItem = hItem;
+                TreeView_SelectDropTarget(hTree, hDropTargetItem);
+            }
+        }
+    }
+    else if(dragPos.y < rect.top + 10)
+    {
+        //If we are up towards the top but have not scrolled to the first
+        //item, we need to scroll up.
+        if(dragPos.x > rect.left && dragPos.x < rect.right)
+        {
+            SendMessage(hTree, WM_VSCROLL, SB_LINEUP, 0);
+            hItem = TreeView_GetFirstVisible(hTree);
+            if(hItem)
+            {
+                hDropTargetItem = hItem;
+                TreeView_SelectDropTarget(hTree, hDropTargetItem);
+            }
+        }
+    }
+
+    ImageList_DragEnter(hTree, dragPos.x, dragPos.y);
 }
 
 /*
