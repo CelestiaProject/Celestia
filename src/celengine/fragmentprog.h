@@ -50,6 +50,7 @@ namespace fp
     extern unsigned int texDiffuse;
     extern unsigned int texDiffuseBump;
     extern unsigned int texSpecular;
+    extern unsigned int texSpecularAlpha;
 };
 
 

@@ -64,6 +64,7 @@ namespace vp
     extern unsigned int nightLights;
     extern unsigned int glossMap;
     extern unsigned int perFragmentSpecular;
+    extern unsigned int perFragmentSpecularAlpha;
 };
 
 

@@ -255,6 +255,7 @@ Source: "shaders\shadowtex_arb.vp";      DestDir: "{app}/shaders"; Flags: ignore
 Source: "shaders\simple_arb.vp";         DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\specular_arb.vp";       DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\texphong_arb.vp";       DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\texphong_alpha_arb.vp"; DestDir: "{app}/shaders"; Flags: ignoreversion
 
 
 ; Shaders (NV pixel)
@@ -264,6 +265,7 @@ Source: "shaders\eclipse1_nv.fp";        DestDir: "{app}/shaders"; Flags: ignore
 Source: "shaders\eclipse2_nv.fp";        DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\shadow_on_rings_nv.fp"; DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\texphong_nv.fp";        DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\texphong_alpha_nv.fp";  DestDir: "{app}/shaders"; Flags: ignoreversion
 
 
 ; Models
