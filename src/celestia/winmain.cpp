@@ -894,6 +894,7 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
                                     UINT wParam,
                                     LONG lParam)
 {
+    static UINT_PTR dragDropTimer;
     switch (message)
     {
     case WM_INITDIALOG:
@@ -986,7 +987,7 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
                     HTREEITEM hItem;
                     if (hItem = TreeView_GetSelection(hTree))
                     {
-                        HWND hDelete, hRename, hMove;
+                        HWND hDelete, hRename;
                         hDelete = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATIONS_DELETE);
                         hRename = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATIONS_RENAME);
                         if (hDelete && hRename)
@@ -1020,7 +1021,11 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
                     if (TreeView_GetItem(hTree, &tvItem))
                     {
                         if(tvItem.lParam != 1)
+                        {
+                            //Start a timer to handle auto-scrolling
+                            dragDropTimer = SetTimer(hDlg, 1, 100, NULL);
                             OrganizeLocationsOnBeginDrag(hTree, (LPNMTREEVIEW)lParam);
+                        }
                     }
                 }
             }
@@ -1028,21 +1033,46 @@ BOOL APIENTRY OrganizeLocationsProc(HWND hDlg,
         break;
     case WM_MOUSEMOVE:
         {
-            HWND hTree;
-            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+            if(isOrganizeLocationsDragDropActive())
             {
-                OrganizeLocationsOnMouseMove(hTree, GET_X_LPARAM(lParam),
-                    GET_Y_LPARAM(lParam));
+                HWND hTree;
+                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                {
+                    OrganizeLocationsOnMouseMove(hTree, GET_X_LPARAM(lParam),
+                        GET_Y_LPARAM(lParam));
+                }
             }
         }
         break;
     case WM_LBUTTONUP:
         {
-            HWND hTree;
-            if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+            if(isOrganizeLocationsDragDropActive())
             {
-                OrganizeLocationsOnLButtonUp(hTree);
-                MoveLocationInFavorites(hTree, appCore);
+                HWND hTree;
+                if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                {
+                    //Kill the auto-scroll timer
+                    KillTimer(hDlg, dragDropTimer);
+
+                    OrganizeLocationsOnLButtonUp(hTree);
+                    MoveLocationInFavorites(hTree, appCore);
+                }
+            }
+        }
+        break;
+    case WM_TIMER:
+        {
+            if(isOrganizeLocationsDragDropActive())
+            {
+                if(wParam == 1)
+                {
+                    //Handle 
+                    HWND hTree;
+                    if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_LOCATION_TREE))
+                    {
+                        DragDropAutoScroll(hTree);
+                    }
+                }
             }
         }
         break;
