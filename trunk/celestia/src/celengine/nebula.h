@@ -30,11 +30,11 @@ class Nebula : public DeepSkyObject
                         float brightness,
                         float pixelSize);
 
-    void setMesh(ResourceHandle);
-    ResourceHandle getMesh() const;
+    void setModel(ResourceHandle);
+    ResourceHandle getModel() const;
 
  private:
-    ResourceHandle mesh;
+    ResourceHandle model;
 };
 
 #endif // CELENGINE_NEBULA_H_

@@ -436,18 +436,18 @@ static Body* CreatePlanet(PlanetarySystem* system,
     delete surface;
 
     {
-        string mesh("");
-        if (planetData->getString("Mesh", mesh))
+        string model("");
+        if (planetData->getString("Mesh", model))
         {
-            Vec3f meshCenter(0.0f, 0.0f, 0.0f);
-            if (planetData->getVector("MeshCenter", meshCenter))
+            Vec3f modelCenter(0.0f, 0.0f, 0.0f);
+            if (planetData->getVector("MeshCenter", modelCenter))
             {
-                // TODO: Adjust bounding radius if mesh center isn't
+                // TODO: Adjust bounding radius if model center isn't
                 // (0.0f, 0.0f, 0.0f)
             }
 
-            ResourceHandle meshHandle = GetMeshManager()->getHandle(MeshInfo(mesh, path, meshCenter));
-            body->setMesh(meshHandle);
+            ResourceHandle modelHandle = GetModelManager()->getHandle(ModelInfo(model, path, modelCenter));
+            body->setModel(modelHandle);
 
         }
     }

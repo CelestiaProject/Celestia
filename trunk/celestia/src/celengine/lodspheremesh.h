@@ -11,6 +11,7 @@
 #define CELENGINE_LODSPHEREMESH_H_
 
 #include <celmath/vecmath.h>
+#include <celmath/frustum.h>
 #include <celengine/mesh.h>
 #include <celengine/texture.h>
 #include <celengine/glcontext.h>
@@ -35,6 +36,16 @@ public:
     void render(const GLContext&,
                 const Frustum&, float pixWidth,
                 Texture** tex, int nTextures);
+
+    enum {
+        Normals    = 0x01,
+        Tangents   = 0x02,
+        Colors     = 0x04,
+        TexCoords0 = 0x08,
+        TexCoords1 = 0x10,
+        VertexProgParams = 0x1000,
+        Multipass  = 0x10000000,
+    };
 
  private:
     struct RenderInfo

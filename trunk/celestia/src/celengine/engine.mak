@@ -18,7 +18,6 @@ NULL=nul
 !ENDIF 
 
 OBJS=\
-	$(INTDIR)\3dsmesh.obj \
 	$(INTDIR)\asterism.obj \
 	$(INTDIR)\astro.obj \
 	$(INTDIR)\body.obj \
@@ -42,7 +41,10 @@ OBJS=\
 	$(INTDIR)\location.obj \
 	$(INTDIR)\lodspheremesh.obj \
 	$(INTDIR)\marker.obj \
+	$(INTDIR)\mesh.obj \
 	$(INTDIR)\meshmanager.obj \
+	$(INTDIR)\model.obj \
+	$(INTDIR)\modelfile.obj \
 	$(INTDIR)\multitexture.obj \
 	$(INTDIR)\nebula.obj \
 	$(INTDIR)\observer.obj \
@@ -53,6 +55,7 @@ OBJS=\
 	$(INTDIR)\parser.obj \
 	$(INTDIR)\regcombine.obj \
 	$(INTDIR)\render.obj \
+	$(INTDIR)\rendcontext.obj \
 	$(INTDIR)\samporbit.obj \
 	$(INTDIR)\selection.obj \
 	$(INTDIR)\simulation.obj \

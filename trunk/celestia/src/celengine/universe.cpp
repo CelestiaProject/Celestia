@@ -322,7 +322,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         body->extant(pickInfo->jd) &&
         testIntersection(pickInfo->pickRay, Sphered(bpos, radius), distance))
     {
-        if (body->getMesh() == InvalidResource)
+        if (body->getModel() == InvalidResource)
         {
             // There's no mesh, so the object is an ellipsoid.  If it's
             // oblate, do a ray intersection test to see if the object was
@@ -362,10 +362,10 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             r.origin.z *= s;
             r.direction *= s;
 
-            Mesh* mesh = GetMeshManager()->find(body->getMesh());
-            if (mesh != NULL)
+            Model* model = GetModelManager()->find(body->getModel());
+            if (model != NULL)
             {
-                if (!mesh->pick(r, distance))
+                if (!model->pick(r, distance))
                     distance = -1.0;
             }
         }

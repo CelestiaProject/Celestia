@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <string>
+#include <celmath/frustum.h>
 #include <celengine/mesh.h>
 #include <celengine/vertexlist.h>
 #include <cel3ds/3dsmodel.h>

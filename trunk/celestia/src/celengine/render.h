@@ -174,7 +174,7 @@ class Renderer
             rings(NULL),
             radius(1.0f),
             oblateness(0.0f),
-            mesh(InvalidResource),
+            model(InvalidResource),
             orientation(1.0f),
             eclipseShadows(NULL),
             locations(NULL)
@@ -185,7 +185,7 @@ class Renderer
         RingSystem* rings;
         float radius;
         float oblateness;
-        ResourceHandle mesh;
+        ResourceHandle model;
         Quatf orientation;
         std::vector<EclipseShadow>* eclipseShadows;
         std::vector<Location*>* locations;
