@@ -82,7 +82,7 @@ Model* ModelInfo::load(const string& filename)
     }
     else if (fileType == Content_CelestiaModel)
     {
-        ifstream in(filename.c_str());
+        ifstream in(filename.c_str(), ios::binary);
         if (in.good())
         {
             model = LoadModel(in, path);
