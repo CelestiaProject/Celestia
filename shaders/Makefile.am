@@ -1,4 +1,4 @@
-pkgdatadir = $(datadir)/@PACKAGE@/shaders
+pkgdatadir = @datadir@/@PACKAGE@/shaders
 
 pkgdata_DATA = $(wildcard *.vp)
 
