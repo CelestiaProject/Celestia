@@ -35,7 +35,10 @@ RotationElements::RotationElements() :
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     orbitRefPlane(astro::BodyEquator),
+    radius(10000.0f),
+    mass(0.0f),
     oblateness(0),
+    albedo(0.5),
     orientation(1.0f),
     // Ugh.  Numeric_limits class is missing from g++
     // protos(-numeric_limits<double>::infinity()),
