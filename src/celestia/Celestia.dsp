@@ -128,6 +128,10 @@ SOURCE=.\odmenu.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\url.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\wineclipses.cpp
 # End Source File
 # Begin Source File
@@ -193,6 +197,10 @@ SOURCE=.\ODMenu.h
 # Begin Source File
 
 SOURCE=.\res\resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\url.h
 # End Source File
 # Begin Source File
 
