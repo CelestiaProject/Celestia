@@ -361,7 +361,7 @@ TextureFont* TextureFont::load(istream& in)
         DPRINTF(1, "Reading %d x %d 8-bit font image.\n", texWidth, texHeight);
 
         in.read(reinterpret_cast<char*>(fontImage), texWidth * texHeight);
-        if (in.fail())
+        if (in.gcount() != (signed)(texWidth * texHeight))
         {
             DPRINTF(0, "Missing bitmap data in font stream.\n");
             delete font;
@@ -390,7 +390,7 @@ TextureFont* TextureFont::load(istream& in)
         DPRINTF(1, "Reading %d x %d 1-bit font image.\n", texWidth, texHeight);
 
         in.read(reinterpret_cast<char*>(fontBits), rowBytes * texHeight);
-        if (in.fail())
+        if (in.gcount() != (signed)(rowBytes * texHeight))
         {
             DPRINTF(0, "Missing bitmap data in font stream.\n");
             delete font;
