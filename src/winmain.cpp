@@ -941,9 +941,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // We're now ready.
     bReady = 1;
 
-    // Start out at the moon
-    sim->selectBody("Moon");
+    // Start out at Mir
+    sim->selectBody("Mir");
     sim->gotoSelection();
+    sim->setTimeScale(0.0f);
+    sim->update(5.0);
+    sim->setTimeScale(1.0f);
+    sim->follow();
 
     // Usual running around in circles bit...
     int bGotMsg;
@@ -1116,24 +1120,6 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
         }
         break;
 
-#if 0
-    case WM_MOUSEWHEEL:
-        // The mouse wheel controls the zoom
-        {
-            short wheelMove = (short) HIWORD(wParam);
-            if (wheelMove > 0)
-            {
-                if (renderer->getFieldOfView() > 0.1f)
-                    renderer->setFieldOfView(renderer->getFieldOfView() / 1.1f);
-            }
-            else if (wheelMove < 0)
-            {
-                if (renderer->getFieldOfView() < 120.0f)
-                    renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
-            }
-        }
-        break;
-#endif
     case WM_MOUSEWHEEL:
         // The mouse wheel controls the range to target
         {
@@ -1152,7 +1138,7 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
         switch (wParam)
         {
         case VK_ESCAPE:
-	    DestroyWindow(hWnd);
+            sim->cancelMotion();
             break;
         case VK_RETURN:
             if (textEnterMode)
