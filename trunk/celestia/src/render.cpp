@@ -1274,6 +1274,96 @@ struct RenderInfo
 };
 
 
+void renderAtmosphere(const Atmosphere& atmosphere,
+                      Point3f center,
+                      float radius,
+                      const Vec3f& sunDirection,
+                      Color ambientColor)
+{
+    if (atmosphere.height == 0.0f)
+        return;
+
+    Vec3f eyeVec = center - Point3f(0.0f, 0.0f, 0.0f);
+    double centerDist = eyeVec.length();
+    // double surfaceDist = (double) centerDist - (double) radius;
+
+    Vec3f normal = eyeVec;
+    normal = normal / (float) centerDist;
+
+    float tangentLength = (float) sqrt(square(centerDist) - square(radius));
+    float atmRadius = tangentLength * radius / (float) centerDist;
+    float atmOffsetFromCenter = square(radius) / (float) centerDist;
+    Point3f atmCenter = center - atmOffsetFromCenter * normal;
+
+    Vec3f uAxis, vAxis;
+    if (abs(normal.x) < abs(normal.y) && abs(normal.x) < abs(normal.z))
+    {
+        uAxis = Vec3f(1, 0, 0) ^ normal;
+        uAxis.normalize();
+    }
+    else if (abs(eyeVec.y) < abs(normal.z))
+    {
+        uAxis = Vec3f(0, 1, 0) ^ normal;
+        uAxis.normalize();
+    }
+    else
+    {
+        uAxis = Vec3f(0, 0, 1) ^ normal;
+        uAxis.normalize();
+    }
+    vAxis = uAxis ^ normal;
+
+    float height = atmosphere.height / radius;
+
+    glBegin(GL_QUAD_STRIP);
+    int divisions = 180;
+    for (int i = 0; i <= divisions; i++)
+    {
+        float theta = (float) i / (float) divisions * 2 * (float) PI;
+        Vec3f v = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
+        Point3f base = atmCenter + v * atmRadius;
+        Vec3f toCenter = base - center;
+
+        float cosSunAngle = (toCenter * sunDirection) / radius;
+        float brightness = 1.0f;
+        float botColor[3];
+        float topColor[3];
+        botColor[0] = atmosphere.lowerColor.red();
+        botColor[1] = atmosphere.lowerColor.green();
+        botColor[2] = atmosphere.lowerColor.blue();
+        topColor[0] = atmosphere.upperColor.red();
+        topColor[1] = atmosphere.upperColor.green();
+        topColor[2] = atmosphere.upperColor.blue();
+
+        if (cosSunAngle < 0.2f)
+        {
+            if (cosSunAngle < -0.2f)
+            {
+                brightness = 0;
+            }
+            else
+            {
+                float t = (0.2f + cosSunAngle) * 2.5f;
+                brightness = t;
+                botColor[0] = Mathf::lerp(t, 1.0f, botColor[0]);
+                botColor[1] = Mathf::lerp(t, 0.3f, botColor[1]);
+                botColor[2] = Mathf::lerp(t, 0.0f, botColor[2]);
+                topColor[0] = Mathf::lerp(t, 1.0f, topColor[0]);
+                topColor[1] = Mathf::lerp(t, 0.3f, topColor[1]);
+                topColor[2] = Mathf::lerp(t, 0.0f, topColor[2]);
+            }
+        }
+
+        glColor4f(botColor[0], botColor[1], botColor[2],
+                  0.85f * brightness + ambientColor.red());
+        glVertex(base - toCenter * height * 0.05f);
+        glColor4f(topColor[0], topColor[1], topColor[2], 0.0f);
+        glVertex(base + toCenter * height);
+    }
+    glEnd();
+}
+
+
 static void renderMeshDefault(const RenderInfo& ri, float scale,
                               bool rescaleNormalSupported)
 {
@@ -1623,9 +1713,9 @@ void Renderer::renderPlanet(const Body& body,
         // Determine the appropriate level of detail
         if (discSizeInPixels < 10)
             ri.lod = -3.0f;
-        else if (discSizeInPixels < 50)
+        else if (discSizeInPixels < 20)
             ri.lod = -2.0f;
-        else if (discSizeInPixels < 100)
+        else if (discSizeInPixels < 50)
             ri.lod = -1.0f;
         else if (discSizeInPixels < 200)
             ri.lod = 0.0f;
@@ -1690,6 +1780,23 @@ void Renderer::renderPlanet(const Body& body,
                 renderMeshFragmentShader(ri);
             else
                 renderMeshDefault(ri, radius, useRescaleNormal);
+        }
+
+        if (body.getAtmosphere() != NULL)
+        {
+            glPushMatrix();
+            glLoadIdentity();
+            glDisable(GL_LIGHTING);
+            glDisable(GL_TEXTURE_2D);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            renderAtmosphere(*body.getAtmosphere(),
+                             pos * conjugate(orientation).toMatrix3(),
+                             radius,
+                             ri.sunDir_eye * (~orientation).toMatrix3(),
+                             ri.ambientColor);
+            glEnable(GL_TEXTURE_2D);
+            glPopMatrix();
         }
 
         // If the planet has a ring system, render it.
@@ -2431,6 +2538,8 @@ void Renderer::renderLabels()
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, font->getTextureName());
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
