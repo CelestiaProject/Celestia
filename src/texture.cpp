@@ -7,13 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifdef _WIN32
-#define IJL_JPEG_SUPPORT
-#define PNG_SUPPORT
-#else
 #define IJG_JPEG_SUPPORT
 #define PNG_SUPPORT
-#endif // _WIN32
 
 #include <cmath>
 #include <iostream>
@@ -23,15 +18,20 @@
 #include "gl.h"
 #include "glext.h"
 #include "celestia.h"
-#ifdef IJL_JPEG_SUPPORT
-#include "ijl.h"
-#endif
+
+
 #ifdef IJG_JPEG_SUPPORT
+
 #ifndef PNG_SUPPORT
 #include "setjmp.h"
 #endif // PNG_SUPPORT
+
 extern "C" {
+#ifdef _WIN32
+#include "jpeglib.h"
+#else
 #include <jpeglib.h>
+#endif
 }
 #endif
 
@@ -453,109 +453,7 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 Texture* CreateJPEGTexture(const char* filename,
                             int channels)
 {
-#if defined(IJL_JPEG_SUPPORT)
-    JPEG_CORE_PROPERTIES jpegProps;
-
-    printf("Reading texture: %s\n", filename);
-
-    // Must specify at least one of color or alpha
-    if (channels == 0)
-        return NULL;
-
-    ZeroMemory(&jpegProps, sizeof(JPEG_CORE_PROPERTIES));
-    if (ijlInit(&jpegProps) != IJL_OK)
-        return NULL;
-
-    jpegProps.JPGFile = (char*) filename;
-    if (ijlRead(&jpegProps, IJL_JFILE_READPARAMS) != IJL_OK)
-    {
-        ijlFree(&jpegProps);
-        return NULL;
-    }
-
-    // Set up the JPG color space, guessing based on the number of
-    // color channels.
-    switch (jpegProps.JPGChannels)
-    {
-    case 1:
-        jpegProps.JPGColor = IJL_G;
-        break;
-    case 3:
-        jpegProps.JPGColor = IJL_YCBCR;
-        break;
-    default:
-        jpegProps.JPGColor = (IJL_COLOR) IJL_OTHER;
-        break;
-    }
-
-    // Set up the target color space
-    int format;
-    if (jpegProps.JPGColor == IJL_YCBCR)
-    {
-        if ((channels & Texture::AlphaChannel) != 0)
-            format = GL_RGBA;
-        else
-            format = GL_RGB;
-        jpegProps.DIBChannels = 3;
-        jpegProps.DIBColor = IJL_RGB;
-    }
-    else if (jpegProps.JPGColor == IJL_G)
-    {
-        if ((channels & Texture::AlphaChannel) != 0)
-            format = GL_LUMINANCE_ALPHA;
-        else
-            format = GL_LUMINANCE;
-        jpegProps.DIBChannels = 1;
-        jpegProps.DIBColor = IJL_G;
-    }
-    else
-    {
-        ijlFree(&jpegProps);
-        return NULL;
-    }
-
-    // Create the texture
-    Texture* tex = new Texture(jpegProps.JPGWidth, jpegProps.JPGHeight,
-                                 format);
-    if (tex == NULL)
-    {
-        ijlFree(&jpegProps);
-        return NULL;
-    }
-
-    jpegProps.DIBBytes = tex->pixels;
-    jpegProps.DIBWidth = tex->width;
-    jpegProps.DIBHeight = tex->height;
-
-    // Slurp the body of the image
-    if (ijlRead(&jpegProps, IJL_JFILE_READWHOLEIMAGE) != IJL_OK)
-    {
-        printf("Failed to read texture\n");
-        ijlFree(&jpegProps);
-        delete tex;
-        return NULL;
-    }
-
-    ijlFree(&jpegProps);
-
-    // If necessary, synthesize an alpha channel from color information
-    if ((channels & Texture::AlphaChannel) != 0)
-    {
-        if (format == GL_LUMINANCE_ALPHA)
-        {
-            int nPixels = tex->width * tex->height;
-            unsigned char *newPixels = new unsigned char[nPixels * 2];
-            for (int i = 0; i < nPixels; i++)
-            {
-                newPixels[i * 2] = newPixels[i * 2 + 1] = tex->pixels[i];
-            }
-            delete[] tex->pixels;
-            tex->pixels = newPixels;
-        }
-    }
-    
-    return tex;
-#elif defined(IJG_JPEG_SUPPORT)
+#ifdef IJG_JPEG_SUPPORT
     Texture* tex = NULL;
 
     // This struct contains the JPEG decompression parameters and pointers to
@@ -689,7 +587,7 @@ Texture* CreateJPEGTexture(const char* filename,
     return tex;
 #else
     return NULL;
-#endif // JPEG_SUPPORT
+#endif // IJG_JPEG_SUPPORT
 }
 
 
