@@ -67,6 +67,7 @@ SphereMesh::~SphereMesh()
 
 void SphereMesh::render(unsigned int attributes, float)
 {
+#if 0
     if (vertices != NULL)
     {
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -115,18 +116,23 @@ void SphereMesh::render(unsigned int attributes, float)
     {
         glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
     }
+#endif
 }
 
 
 void SphereMesh::render(float lod)
 {
+#if 0
     render(Normals | TexCoords0, lod);
+#endif
 }
 
 
 void SphereMesh::render(unsigned int attributes, const Frustum&, float lod)
 {
+#if 0
     render(attributes, lod);
+#endif
 }
 
 
