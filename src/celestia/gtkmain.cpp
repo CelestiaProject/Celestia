@@ -170,6 +170,7 @@ enum
 	Menu_MoonOrbits          = 2038,
 	Menu_PlanetOrbits        = 2039,
 	Menu_SpacecraftOrbits    = 2040,
+	Menu_FullScreen          = 2041,
 };
 
 static void menuSelectSol()
@@ -2784,7 +2785,7 @@ static GtkItemFactoryEntry menuItems[] =
     { (gchar *)"/Time/Show _Local Time",               NULL,                    NULL,             Menu_ShowLocTime, (gchar *)"<ToggleItem>", NULL },
     { (gchar *)"/_Render",                             NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
     { (gchar *)"/Render/Set Viewer Size...",           NULL,                    menuViewerSize,   0,                (gchar *)"<StockItem>",  GTK_STOCK_ZOOM_FIT },
-    { (gchar *)"/Render/Toggle Full Screen",           (gchar *)"<alt>Return",  menuFullScreen,   0,                NULL,                    NULL },
+    { (gchar *)"/Render/Full Screen",                  (gchar *)"<alt>Return",  NULL,             Menu_FullScreen,  (gchar *)"<ToggleItem>", NULL },
     { (gchar *)"/Render/-",                            NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Render/View _Options...",             NULL,                    menuOptions,      0,                (gchar *)"<StockItem>",  GTK_STOCK_PREFERENCES },
     { (gchar *)"/Render/Show _Info Text",              (gchar *)"V",            menuShowInfo,     0,                NULL,                    NULL },
@@ -2900,6 +2901,11 @@ int radioStarStyle(int flag, char*)
 	return (appCore->getRenderer()->getStarStyle() == flag);
 }
 
+int checkFullScreen(int, char*)
+{
+	return prefs->fullScreen;
+}
+
 int radioAmbientLight(int flag, char*)
 {
 	return (appCore->getRenderer()->getAmbientLightLevel() == amLevels[flag]);
@@ -2918,6 +2924,7 @@ int radioAmbientLight(int flag, char*)
 static CheckFunc checks[] =
 {
     { NULL, NULL, "/Time/Show Local Time",         checkLocalTime,     3, 0, Menu_ShowLocTime, GTK_SIGNAL_FUNC(menuShowLocTime) },
+	{ NULL, NULL, "/Render/Full Screen",           checkFullScreen,    2, 0, Menu_FullScreen, GTK_SIGNAL_FUNC(menuFullScreen) },
 //  { NULL, NULL, "/Render/Use Vertex Shaders",    checkVertexShaders, 3, 0, Menu_VertexShaders, GTK_SIGNAL_FUNC(menuVertexShaders) },
     { NULL, NULL, "/Render/Antialiasing",          checkRenderFlag,    3, Renderer::ShowSmoothLines, Menu_AntiAlias, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/Render/AutoMag for Stars",     checkRenderFlag,    3, Renderer::ShowAutoMag, Menu_AutoMag, GTK_SIGNAL_FUNC(menuRenderer) },
