@@ -34,11 +34,26 @@ class Marker
     int getPriority() const;
     void setPriority(int);
 
+    enum Symbol
+    {
+        Diamond  = 0,
+        Triangle = 1,
+        Square   = 2,
+        Plus     = 3,
+        X        = 4
+    };
+
+    Symbol getSymbol() const;
+    void setSymbol(Symbol);
+
+    void render() const;
+
  private:
     Selection obj;
     float size;
     Color color;
     int priority;
+    Symbol symbol;
 };
 
 typedef std::vector<Marker> MarkerList;

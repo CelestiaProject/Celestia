@@ -4395,15 +4395,8 @@ void Renderer::renderMarkers(const MarkerList& markers,
                 glTranslatef(winX, winY, 0.0f);
 
                 glColor(iter->getColor());
-                glBegin(GL_LINE_LOOP);
+                iter->render();
 
-                float s = iter->getSize() / 2.0f;
-                glVertex3f(0.0f, s, 0.0f);
-                glVertex3f(s, 0.0f, 0.0f);
-                glVertex3f(0.0f, -s, 0.0f);
-                glVertex3f(-s, 0.0f, 0.0f);
-                glEnd();
-                
                 glPopMatrix();
             }
         }

@@ -133,6 +133,7 @@ MarkerList* Universe::getMarkers() const
 void Universe::markObject(const Selection& sel,
                           float size,
                           Color color,
+                          Marker::Symbol symbol,
                           int priority)
 {
     for (MarkerList::iterator iter = markers->begin();
@@ -157,6 +158,7 @@ void Universe::markObject(const Selection& sel,
 
     Marker marker(sel);
     marker.setColor(color);
+    marker.setSymbol(symbol);
     marker.setSize(size);
     marker.setPriority(priority);
     markers->insert(markers->end(), marker);
