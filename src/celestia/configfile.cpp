@@ -100,8 +100,6 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     configParams->getNumber("RotateAcceleration", config->rotateAcceleration);
     config->mouseRotationSensitivity = 1.0f;
     configParams->getNumber("MouseRotationSensitivity", config->mouseRotationSensitivity);
-    config->scriptScreenshotCount = 0.0f;
-    configParams->getNumber("ScriptScreenshotCount", config->scriptScreenshotCount);    
     configParams->getString("ScriptScreenshotDirectory", config->scriptScreenshotDirectory);
     config->scriptSystemAccessPolicy = "ask";
     configParams->getString("ScriptSystemAccessPolicy", config->scriptSystemAccessPolicy);
