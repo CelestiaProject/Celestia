@@ -2384,6 +2384,19 @@ static void displayDistance(Overlay& overlay, double distance)
 }
 
 
+static void displayDuration(Overlay& overlay, double days)
+{
+    if (days > 1.0)
+        overlay << days << " days";
+    else if (days > 1.0 / 24.0)
+        overlay << days * 24.0 << " hours";
+    else if (days > 1.0 / (24.0 * 60.0))
+        overlay << days * 24.0 * 60.0 << " minutes";
+    else
+        overlay << days * 24.0 * 60.0 * 60.0 << " seconds";
+}
+
+
 static void displayAngle(Overlay& overlay, double angle)
 {
     int degrees, minutes;
@@ -2419,7 +2432,30 @@ static void displayApparentSize(Overlay& overlay,
         {
             overlay << "Apparent size: ";
             displayAngle(overlay, arcSize);
+            overlay << '\n';
         }
+    }
+}
+
+
+static void displayAcronym(Overlay& overlay, char* s)
+{
+    if (strchr(s, ' ') != NULL)
+    {
+        int length = strlen(s);
+        int n = 0;
+        char lastChar = ' ';
+
+        for (int i = 0; i < length; i++)
+        {
+            if (lastChar == ' ' && s[i] != ' ')
+                overlay << s[i];
+            lastChar = s[i];
+        }
+    }
+    else
+    {
+        overlay << s;
     }
 }
 
@@ -2483,7 +2519,7 @@ static void displayStarInfo(Overlay& overlay,
     displayDistance(overlay, distance);
     overlay << '\n';
     
-    overlay.printf("Abs (app) mag = %.2f (%.2f)\n",
+    overlay.printf("Abs (app) mag: %.2f (%.2f)\n",
                    star.getAbsoluteMagnitude(),
                    astro::absToAppMag(star.getAbsoluteMagnitude(), (float) distance));
     overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
@@ -2494,25 +2530,20 @@ static void displayStarInfo(Overlay& overlay,
 
     if (detail > 1)
     {
-        overlay << "Surface Temp: " << star.getTemperature() << " K\n";
+        overlay << "Surface temp: " << SigDigitNum(star.getTemperature(), 3) << " K\n";
         overlay.printf("Radius: %.2f Rsun\n", star.getRadius() / 696000.0f);
 
-        overlay << "Rotation Period: ";
+        overlay << "Rotation period: ";
         float period = star.getRotationPeriod();
-        if (period > 1.0f)
-            overlay << period << " days\n";
-        else if (period > 1.0f / 24.0f)
-            overlay << period * 24 << " hours\n";
-        else if (period > 1.0f / (24.0f * 60.0f))
-            overlay << period * 24 * 60 << " minutes\n";
-        else
-            overlay << period * 24 * 60 * 60 << " seconds\n";
+        displayDuration(overlay, period);
+        overlay << '\n';
 
         SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
             overlay << "Planetary companions present\n";
     }
 }
+
 
 static void displayPlanetInfo(Overlay& overlay,
                               int detail,
@@ -2536,7 +2567,9 @@ static void displayPlanetInfo(Overlay& overlay,
 
     if (detail > 1)
     {
-        overlay << "Day length: " << body.getRotationElements().period * 24.0 << " hours\n";
+        overlay << "Day length: ";
+        displayDuration(overlay, body.getRotationElements().period);
+        overlay << '\n';
         
         PlanetarySystem* system = body.getSystem();
         if (system != NULL)
@@ -2750,45 +2783,45 @@ void CelestiaCore::renderOverlay()
 	}
 
 
-	if (timeZoneBias != 0 && sim->getTime() < 2465442 && sim->getTime() 
-                                                > 2415733) 
+	if (timeZoneBias != 0 &&
+            sim->getTime() < 2465442 &&
+            sim->getTime() > 2415733) 
         {
-
-	   time_t time = (int)astro::julianDateToSeconds(sim->getTime() - 2440587.5 + lt);
-	        struct tm *localt = localtime(&time);
-		if (localt != NULL) {
-		        astro::Date d;
-		        d.year = localt->tm_year + 1900;
-		        d.month = localt->tm_mon + 1;
-		        d.day = localt->tm_mday;
-		        d.hour = localt->tm_hour;
-		        d.minute = localt->tm_min;
-		        d.seconds = (int)localt->tm_sec;
-		        *overlay << d << " " << tzname[localt->tm_isdst>0?1:0];
-			time_displayed = true;
-                        if (lightTravelFlag && lt > 0.0)
-	                {
-                            glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
-                            *overlay <<"  LT" << '\n';
-                            glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-	                }
-	                else
-                            *overlay << '\n';
-
-		}
+            time_t time = (int) astro::julianDateToSeconds(sim->getTime() - 2440587.5 + lt);
+            struct tm *localt = localtime(&time);
+            if (localt != NULL)
+            {
+                astro::Date d;
+                d.year = localt->tm_year + 1900;
+                d.month = localt->tm_mon + 1;
+                d.day = localt->tm_mday;
+                d.hour = localt->tm_hour;
+                d.minute = localt->tm_min;
+                d.seconds = (int)localt->tm_sec;
+                *overlay << d << " ";
+                displayAcronym(*overlay, tzname[localt->tm_isdst > 0 ? 1 : 0]);
+                time_displayed = true;
+                if (lightTravelFlag && lt > 0.0)
+                {
+                    glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
+                    *overlay <<"  LT";
+                    glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+                }
+                *overlay << '\n';
+            }
 	} 
 	
-	if (!time_displayed) {
-	        *overlay << astro::Date(sim->getTime() + lt);
-	        *overlay << " UTC";
-                if (lightTravelFlag && lt > 0.0)
-	        {
-                    glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
-                    *overlay <<"  LT" << '\n';
-                    glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-	         }
-	         else
-                    *overlay << '\n';
+	if (!time_displayed)
+        {
+            *overlay << astro::Date(sim->getTime() + lt);
+            *overlay << " UTC";
+            if (lightTravelFlag && lt > 0.0)
+            {
+                glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
+                *overlay << "  LT";
+                glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+            }
+            *overlay << '\n';
 	}
 
         if (paused)
@@ -3658,12 +3691,12 @@ int CelestiaCore::getTimeZoneBias() const
 
 bool CelestiaCore::getLightDelayActive() const
 {
-  return  lightTravelFlag;
+    return lightTravelFlag;
 }
 
-void CelestiaCore::setLightDelayActive(bool lightDelayActive )
+void CelestiaCore::setLightDelayActive(bool lightDelayActive)
 {
-  lightTravelFlag = lightDelayActive ;
+    lightTravelFlag = lightDelayActive;
 }
 
 int CelestiaCore::getTextEnterMode() const
