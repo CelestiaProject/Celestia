@@ -25,7 +25,7 @@ static bool trigArraysInitialized = false;
 static int maxDivisions = 2048;
 static int thetaDivisions = maxDivisions;
 static int phiDivisions = maxDivisions / 2;
-static int minStep = 32;
+static int minStep = 64;
 static float* sinPhi = NULL;
 static float* cosPhi = NULL;
 static float* sinTheta = NULL;
@@ -327,7 +327,8 @@ void LODSphereMesh::render(unsigned int attributes,
         for (int foo = 0; foo < 8; foo++)
             cout << "x: " << fp[foo].x << "  y: " << fp[foo].y << "  z: " << fp[foo].z << '\n';
 #endif
-        
+
+#if 0
         for (int phi = 0; phi < split; phi++)
         {
             for (int theta = 0; theta < split; theta++)
@@ -355,12 +356,12 @@ void LODSphereMesh::render(unsigned int attributes,
                 // If the normal is near zero length, something's going wrong
                 assert(normal.length() > 1.0e-6);
                 normal.normalize();
-                Planef sepPlane(normal, p0);
+                Planef separatingPlane(normal, p0);
 
                 bool outside = true;
                 for (int i = 0; i < 8; i++)
                 {
-                    if (sepPlane.distanceTo(fp[i]) > 0.0f)
+                    if (separatingPlane.distanceTo(fp[i]) > 0.0f)
                     {
                         outside = false;
                         break;
@@ -372,6 +373,7 @@ void LODSphereMesh::render(unsigned int attributes,
                     renderSection(phi0, theta0,
                                   thetaExtent,
                                   step, attributes);
+                    nQuads += (thetaExtent / step) * (thetaExtent / step) / 2;
                 }
                 else
                 {
@@ -379,8 +381,27 @@ void LODSphereMesh::render(unsigned int attributes,
                 }
             }
         }
+#endif
 
-        // cout << "Rejected " << reject << " of " << square(split) << " sphere sections\n";
+        int nPatches = 0;
+        {
+            int extent = maxDivisions / 2;
+
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    nPatches += renderPatches(i * extent / 2, j * extent,
+                                              extent,
+                                              split / 2,
+                                              step,
+                                              attributes,
+                                              fp);
+                }
+            }
+        }
+
+        // cout << "Rendered " << nPatches << " of " << square(split) << " patches\n";
     }
 
     if (tangents != NULL && ((attributes & Tangents) != 0))
@@ -428,6 +449,81 @@ void LODSphereMesh::render(unsigned int attributes,
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 #endif
+}
+
+
+int LODSphereMesh::renderPatches(int phi0, int theta0, 
+                                 int extent,
+                                 int level,
+                                 int step,
+                                 unsigned int attributes,
+                                 Point3f* fp)
+{
+    int thetaExtent = extent;
+    int phiExtent = extent / 2;
+
+    // Compute the plane separating this section of the sphere from
+    // the rest of the sphere.  If the view frustum lies entirely
+    // on the side of the plane that does not contain the sphere
+    // patch, we cull the patch.
+    Point3f p0 = spherePoint(theta0, phi0);
+    Point3f p1 = spherePoint(theta0 + thetaExtent, phi0);
+    Point3f p2 = spherePoint(theta0 + thetaExtent,
+                             phi0 + phiExtent);
+    Point3f p3 = spherePoint(theta0, phi0 + phiExtent);
+    Vec3f v0 = p1 - p0;
+    Vec3f v2 = p3 - p2;
+    Vec3f normal;
+    if (v0.lengthSquared() > v2.lengthSquared())
+        normal = (p0 - p3) ^ v0;
+    else
+        normal = (p2 - p1) ^ v2;
+
+    // If the normal is near zero length, something's going wrong
+    assert(normal.length() > 1.0e-6);
+    normal.normalize();
+    Planef separatingPlane(normal, p0);
+
+    bool outside = true;
+    for (int k = 0; k < 8; k++)
+    {
+        if (separatingPlane.distanceTo(fp[k]) > 0.0f)
+        {
+            outside = false;
+            break;
+        }
+    }
+
+    // If this patch is outside the view frustum, so are all of its subpatches
+    if (outside)
+    {
+        return 0;
+    }
+    else if (level == 1)
+    {
+        renderSection(phi0, theta0,
+                      thetaExtent,
+                      step, attributes);
+        return 1;
+    }
+    else
+    {
+        int nRendered = 0;
+        for (int i = 0; i < 2; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                nRendered += renderPatches(phi0 + phiExtent / 2 * i,
+                                           theta0 + thetaExtent / 2 * j,
+                                           extent / 2,
+                                           level / 2,
+                                           step,
+                                           attributes,
+                                           fp);
+            }
+        }
+        return nRendered;
+    }
 }
 
 
