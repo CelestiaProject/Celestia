@@ -230,7 +230,7 @@ CTexture* CreateProceduralTexture(int width, int height,
 }
 
 
-CTexture* LoadTextureFromFile(string filename)
+CTexture* LoadTextureFromFile(const string& filename)
 {
     int extPos = filename.length() - 3;
     if (extPos < 0)
@@ -554,6 +554,41 @@ static Vec3f cubeVector(int face, float s, float t)
         // assert(false);
         break;
     }
+
+#if 0
+    // Silly test here . . . this produces a normal map with (0, 0, 1) on
+    // on the half of the cube on the positive size of the z=0 plane and
+    // (0, 0, -1) on the other half.
+    //
+    // TODO: Experiment with other normal maps as a way to approximate various
+    // illumination functions that may be more accurate for planetary rendering
+    // than the standard Lambertian model.
+    v = Vec3f(0, 0, 1);
+    switch (face)
+    {
+    case 0:
+        if (s > 0)
+            v = -v;
+        break;
+    case 1:
+        if (s < 0)
+            v = -v;
+        break;
+    case 2:
+        if (t < 0)
+            v = -v;
+        break;
+    case 3:
+        if (t > 0)
+            v = -v;
+        break;
+    case 4:
+        break;
+    case 5:
+        v = -v;
+        break;
+    }
+#endif
 
     v.normalize();
 

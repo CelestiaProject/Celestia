@@ -10,6 +10,8 @@
 #include "celestia.h"
 #include "texmanager.h"
 
+using namespace std;
+
 
 TextureManager::~TextureManager()
 {
@@ -17,25 +19,25 @@ TextureManager::~TextureManager()
 }
 
 
-bool TextureManager::find(string name, CTexture** tex)
+bool TextureManager::find(const string& name, CTexture** tex)
 {
     return findResource(name, (void**) tex);
 }
 
 
-CTexture* TextureManager::load(string name)
+CTexture* TextureManager::load(const string& name)
 {
     DPRINTF("Loading texture: %s\n", name.c_str());
     CTexture* tex = LoadTextureFromFile(baseDir + "\\" + name);
     if (tex != NULL)
-        tex->bindName();
+        tex->bindName(true);
     addResource(name, (void*) tex);
  
     return tex;
 }
 
 
-CTexture* TextureManager::loadBumpMap(string name)
+CTexture* TextureManager::loadBumpMap(const string& name)
 {
     DPRINTF("Loading bump map: %s\n", name.c_str());
     CTexture* tex = LoadTextureFromFile(baseDir + "\\" + name);
