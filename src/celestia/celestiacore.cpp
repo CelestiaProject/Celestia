@@ -1107,7 +1107,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     {
         wchar_t wc = NULL;
         UTF8Decode(c_p, 0, strlen(c_p), wc);
+#ifdef MACOSX
+        if ( wc && (isalpha(wc) || isdigit(wc) || ispunct(c) || c == ' ') )
+#else
         if ( wc && (iswalpha(wc) || iswdigit(wc) || iswpunct(c) || c == ' ') )
+#endif
         {
             typedText += std::string(c_p);
             typedTextCompletion = sim->getObjectCompletion(typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
