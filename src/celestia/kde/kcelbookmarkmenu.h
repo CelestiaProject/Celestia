@@ -112,6 +112,7 @@ protected slots:
   void slotBookmarkSelected();
   void slotAddBookmark();
   void slotAddRelativeBookmark();
+  void slotAddSettingsBookmark();
   void slotNewFolder();
 
 protected:
@@ -119,6 +120,7 @@ protected:
   void refill();
   void addAddBookmark();
   void addAddRelativeBookmark();
+  void addAddSettingsBookmark();
   void addEditBookmarks();
   void addNewFolder();
 

@@ -46,12 +46,12 @@ Url::Url(const std::string& str, CelestiaCore *core)
     else modeStr = decode_string(urlStr.substr(6, pos - 6));
 
 
-    if (modeStr == "Freeflight") 
+    if (modeStr == "Freeflight")
     {
         mode = astro::Universal;
         nbBodies = 0;
     }
-    else if (modeStr == "Follow") 
+    else if (modeStr == "Follow")
     {
         mode = astro::Ecliptical;
         nbBodies = 1;
@@ -70,6 +70,11 @@ Url::Url(const std::string& str, CelestiaCore *core)
     {
         mode = astro::PhaseLock;
         nbBodies = 2;
+    }
+    else if (modeStr == "Settings")
+    {
+        type = Settings;
+        nbBodies = 0;
     }
 
     if (nbBodies == -1)
@@ -119,12 +124,14 @@ Url::Url(const std::string& str, CelestiaCore *core)
     else time = urlStr.substr(endPrevious + 1, pos - endPrevious -1);
     time = decode_string(time);
 
-    if (params["dist"] != "") {
-        type = Relative;
-    } else {
-        type = Absolute;
+    if (type != Settings)
+    {
+        if (params["dist"] != "")
+            type = Relative;
+        else
+            type = Absolute;
     }
-      
+
     switch (type) {
     case Absolute:
         date = astro::Date(0.0);
@@ -135,7 +142,7 @@ Url::Url(const std::string& str, CelestiaCore *core)
         coord = UniversalCoord(BigFix(params["x"]),
                                BigFix(params["y"]),
                                BigFix(params["z"]));
-        
+
         float ow, ox, oy, oz;
         sscanf(params["ow"].c_str(), "%f", &ow);
         sscanf(params["ox"].c_str(), "%f", &ox);
@@ -143,8 +150,8 @@ Url::Url(const std::string& str, CelestiaCore *core)
         sscanf(params["oz"].c_str(), "%f", &oz);
 
         orientation = Quatf(ow, ox, oy, oz);
-        
-        break;
+
+        // Intentional Fall-Through
     case Relative:
         if (params["dist"] != "") {
             sscanf(params["dist"].c_str(), "%lf", &distance);
@@ -155,32 +162,33 @@ Url::Url(const std::string& str, CelestiaCore *core)
         if (params["lat"] != "") {
             sscanf(params["lat"].c_str(), "%lf", &latitude);
         }
+        if (params["select"] != "") {
+                selectedStr = params["select"];
+        }
+        if (params["track"] != "") {
+            trackedStr = params["track"];
+        }
+        if (params["ltd"] != "") {
+            lightTimeDelay = (strcmp(params["ltd"].c_str(), "1") == 0);
+        } else {
+            lightTimeDelay = false;
+        }
+        if (params["fov"] != "") {
+            sscanf(params["fov"].c_str(), "%f", &fieldOfView);
+        }
+        if (params["ts"] != "") {
+            sscanf(params["ts"].c_str(), "%f", &timeScale);
+        }
+        break;
+    case Settings:
         break;
     }
 
-
-    if (params["fov"] != "") {
-        sscanf(params["fov"].c_str(), "%f", &fieldOfView);
-    }
-    if (params["ts"] != "") {
-        sscanf(params["ts"].c_str(), "%f", &timeScale);
-    }
     if (params["rf"] != "") {
         sscanf(params["rf"].c_str(), "%d", &renderFlags);
     }
     if (params["lm"] != "") {
         sscanf(params["lm"].c_str(), "%d", &labelMode);
-    }
-    if (params["select"] != "") {
-        selectedStr = params["select"];
-    }
-    if (params["track"] != "") {
-        trackedStr = params["track"];
-    }
-    if (params["ltd"] != "") {
-        lightTimeDelay = (strcmp(params["ltd"].c_str(), "1") == 0);
-    } else {
-    	lightTimeDelay = false;
     }
 
     evalName();
@@ -194,9 +202,10 @@ Url::Url(CelestiaCore* core, UrlType type) {
     this->type = type;
 
     modeStr = getCoordSysName(sim->getFrame().coordSys);
+    if (type == Settings) modeStr = "Settings";
     ref = sim->getFrame();
     urlStr += "cel://" + modeStr;
-    if (sim->getFrame().coordSys != astro::Universal) {
+    if (type != Settings && sim->getFrame().coordSys != astro::Universal) {
         body1 = getSelectionName(sim->getFrame().refObject);
         urlStr += "/" + body1;
         if (sim->getFrame().coordSys == astro::PhaseLock) {
@@ -228,25 +237,36 @@ Url::Url(CelestiaCore* core, UrlType type) {
         sprintf(buff, "dist=%f&long=%f&lat=%f", distance, longitude, latitude);
         urlStr += std::string("/?") + buff;
         break;
+    case Settings:
+        urlStr += std::string("/?");
+        break;
     }
 
+    switch (type) {
+    case Absolute: // Intentional Fall-Through
+    case Relative:
+        tracked = sim->getTrackedObject();
+        trackedStr = getSelectionName(tracked);
+        if (trackedStr != "") urlStr += "&track=" + trackedStr;
 
-    tracked = sim->getTrackedObject();
-    trackedStr = getSelectionName(tracked);
-    if (trackedStr != "") urlStr += "&track=" + trackedStr;
+        selected = sim->getSelection();
+        selectedStr = getSelectionName(selected);
+        if (selectedStr != "") urlStr += "&select=" + selectedStr;
 
-    selected = sim->getSelection();
-    selectedStr = getSelectionName(selected);
-    if (selectedStr != "") urlStr += "&select=" + selectedStr;
-
-    fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
-    timeScale = sim->getTimeScale();
-    renderFlags = renderer->getRenderFlags();
-    labelMode = renderer->getLabelMode();
-    lightTimeDelay = appCore->getLightDelayActive();
-    sprintf(buff, "&fov=%f&ts=%f&rf=%d&lm=%d&ltd=%c", fieldOfView,
-        timeScale, renderFlags, labelMode, lightTimeDelay?'1':'0');
-    urlStr += buff;
+        fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
+        timeScale = sim->getTimeScale();
+        lightTimeDelay = appCore->getLightDelayActive();
+        sprintf(buff, "&fov=%f&ts=%f&rf=%d&lm=%d&ltd=%c", fieldOfView,
+            timeScale, renderFlags, labelMode, lightTimeDelay?'1':'0');
+        urlStr += buff;
+        break;
+    case Settings:
+        renderFlags = renderer->getRenderFlags();
+        labelMode = renderer->getLabelMode();
+        sprintf(buff, "rf=%d&lm=%d", renderFlags, labelMode);
+        urlStr += buff;
+        break;
+    }
 
     evalName();
 }
@@ -260,6 +280,10 @@ std::string Url::getName() const {
 }
 
 void Url::evalName() {
+    char buff[50];
+    double lo = longitude, la = latitude;
+    char los = 'E';
+    char las = 'N';
     switch(type) {
     case Absolute:
         name = modeStr;
@@ -270,14 +294,13 @@ void Url::evalName() {
         break;
     case Relative:
         if (selectedStr != "") name = getBodyShortName(selectedStr) + " ";
-        char buff[50];
-        double lo = longitude, la = latitude;
-        char los = 'E';
-        char las = 'N';
         if (lo < 0) { lo = -lo; los = 'W'; }
         if (la < 0) { la = -la; las = 'S'; }
         sprintf(buff, "(%.1lf%c, %.1lf%c)", lo, los, la, las);
         name += buff;
+        break;
+    case Settings:
+        name = "Settings";
         break;
     }
 }
@@ -364,6 +387,8 @@ std::string Url::getSelectionName(const Selection& selection) const
 
 void Url::goTo()
 {
+    Selection sel;
+
     if (urlStr == "")
         return;
     Simulation *sim = appCore->getSimulation();
@@ -371,29 +396,37 @@ void Url::goTo()
     std::string::size_type pos;
 
     sim->update(0.0);
-    sim->setFrame(ref);
-    sim->getActiveObserver()->setFOV(degToRad(fieldOfView));
-    sim->setTimeScale(timeScale);
-    renderer->setRenderFlags(renderFlags);
-    renderer->setLabelMode(labelMode);
-    appCore->setLightDelayActive(lightTimeDelay);
 
-    pos = 0;
-    while(pos != std::string::npos)
-    {
-        pos = selectedStr.find(":", pos + 1);
-        if (pos != std::string::npos) selectedStr[pos]='/';
-        Selection sel = sim->findObjectFromPath(selectedStr);
+    switch(type) {
+    case Absolute:// Intentional Fall-Through
+    case Relative:
+        sim->setFrame(ref);
+        sim->getActiveObserver()->setFOV(degToRad(fieldOfView));
+        sim->setTimeScale(timeScale);
+        appCore->setLightDelayActive(lightTimeDelay);
+
+        pos = 0;
+        while(pos != std::string::npos)
+        {
+            pos = selectedStr.find(":", pos + 1);
+            if (pos != std::string::npos) selectedStr[pos]='/';
+        }
+        sel = sim->findObjectFromPath(selectedStr);
         sim->setSelection(sel);
-    }
 
-    pos = 0;
-    while(pos != std::string::npos)
-    {
-        pos = trackedStr.find(":", pos + 1);
-        if (pos != std::string::npos) trackedStr[pos]='/';
-        Selection sel = sim->findObjectFromPath(trackedStr);
+        pos = 0;
+        while(pos != std::string::npos)
+        {
+            pos = trackedStr.find(":", pos + 1);
+            if (pos != std::string::npos) trackedStr[pos]='/';
+        }
+        sel = sim->findObjectFromPath(trackedStr);
         sim->setTrackedObject(sel);
+        // Intentional Fall-Through
+    case Settings:
+        renderer->setRenderFlags(renderFlags);
+        renderer->setLabelMode(labelMode);
+        break;
     }
 
     switch(type) {
@@ -404,6 +437,8 @@ void Url::goTo()
         break;
     case Relative:
         sim->gotoSelectionLongLat(0, astro::kilometersToLightYears(distance), longitude * PI / 180, latitude * PI / 180, Vec3f(0, 1, 0));
+        break;
+    case Settings:
         break;
     }
 }
