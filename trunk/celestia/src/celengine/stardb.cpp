@@ -184,7 +184,7 @@ string StarDatabase::getStarName(const Star& star) const
         sprintf(buf, "HD %d", star.getCatalogNumber(Star::HDCatalog));
     else
     {
-        if (catalogNumber < 1000000000)
+        if (catalogNumber < 1000000)
         {
             sprintf(buf, "HIP %d", catalogNumber);
         }
