@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "model.h"
+#include "rendcontext.h"
 #include <cassert>
 
 using namespace std;
@@ -43,7 +44,7 @@ Model::Model()
 Model::~Model()
 {
     {
-        for (vector<const Mesh*>::iterator iter = meshes.begin();
+        for (vector<Mesh*>::iterator iter = meshes.begin();
              iter != meshes.end(); iter++)
             delete *iter;
     }
@@ -81,7 +82,7 @@ Model::getMesh(uint32 index) const
 
 
 uint32
-Model::addMesh(const Mesh* m)
+Model::addMesh(Mesh* m)
 {
     meshes.push_back(m);
     return meshes.size();
@@ -117,11 +118,38 @@ Model::pick(const Ray3d& r, double& distance) const
 void
 Model::render()
 {
+    RenderContext rc;
+
     for (vector<const Mesh*>::const_iterator iter = meshes.begin();
          iter != meshes.end(); iter++)
     {
-        (*iter)->render(materials);
+        (*iter)->render(materials, rc);
     }
-
 }
 
+
+void
+Model::normalize(const Vec3f& centerOffset)
+{
+    AxisAlignedBox bbox;
+
+    vector<Mesh*>::const_iterator iter;
+    for (iter = meshes.begin(); iter != meshes.end(); iter++)
+        bbox.include((*iter)->getBoundingBox());
+
+    Point3f center = bbox.getCenter() + centerOffset;
+    Vec3f extents = bbox.getExtents();
+    float maxExtent = extents.x;
+    if (extents.y > maxExtent)
+        maxExtent = extents.y;
+    if (extents.z > maxExtent)
+        maxExtent = extents.z;
+
+    for (iter = meshes.begin(); iter != meshes.end(); iter++)
+        (*iter)->transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
+
+#if 0
+    for (i = vertexLists.begin(); i != vertexLists.end(); i++)
+        (*i)->transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
+#endif
+}

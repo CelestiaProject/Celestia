@@ -27,16 +27,22 @@ class ModelLoader
     virtual Model* load() = 0;
 
     const std::string& getErrorMessage() const;
+    void setTexturePath(const std::string&);
+    const std::string& getTexturePath() const;
+    
+    static ModelLoader* OpenModel(std::istream& in);
 
  protected:
-    void reportError(const std::string&);
+    virtual void reportError(const std::string&);
 
  private:
     std::string errorMessage;
+    std::string texPath;
 };
 
 
 
 Model* LoadModel(std::istream&);
+Model* LoadModel(std::istream& in, const std::string& texPath);
 
 #endif // !_CELMESH_MODEL_H_
