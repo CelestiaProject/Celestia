@@ -44,27 +44,23 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
             const DestinationList* destinations = guide->appCore->getDestinations();
             if (hwnd != NULL && destinations != NULL)
             {
-                int count = 0;
                 for (DestinationList::const_iterator iter = destinations->begin();
                      iter != destinations->end(); iter++)
                 {
                     Destination* dest = *iter;
                     if (dest != NULL)
                     {
-                        cout << "Adding item: " << dest->name << '\n';
-                        COMBOBOXEXITEM item;
-
-                        item.iItem = -1;
-                        item.mask = CBEIF_TEXT;
-                        item.pszText = const_cast<char*>(dest->name.c_str());
-                        item.cchTextMax = dest->name.length();
-#if 0
-                        SendMessage(hwnd, CBEM_INSERTITEM, 0,
-                                    reinterpret_cast<LPARAM>(&item));
-#endif
                         SendMessage(hwnd, CB_INSERTSTRING, -1,
                                     reinterpret_cast<LPARAM>(dest->name.c_str()));
                     }
+                }
+
+                if (destinations->size() > 0)
+                {
+                    SendMessage(hwnd, CB_SETCURSEL, 0, 0);
+                    SetDlgItemText(hDlg,
+                                   IDC_TEXT_DESCRIPTION,
+                                   (*destinations)[0]->description.c_str());
                 }
             }
         }
