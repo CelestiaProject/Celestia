@@ -135,6 +135,103 @@ static void render()
 }
 
 
+template<class T> int checkForFan(DWORD nTris, T* indices)
+{
+    // Even number of triangles required; pairs of triangles can always
+    // be just as efficiently represented as strips, so skip them.
+    if (nTris % 2 == 1 || nTris <= 2)
+        return -1;
+
+    DWORD i;
+    T anchor = indices[0];
+    bool isFan = true;
+    for (i = 1; i < nTris / 2 && isFan; i++)
+    {
+        if (indices[i * 2] != anchor)
+            isFan = false;
+    }
+
+    if (isFan)
+        return 0;
+
+    isFan = true;
+    anchor = indices[1];
+    for (i = 1; i < nTris / 2 && isFan; i++)
+    {
+        if (indices[i * 2 + 1] != anchor)
+            isFan = false;
+    }
+
+    if (isFan)
+        cout << "fan: nTris=" << nTris << ", anchor=" << anchor << '\n';
+
+    return isFan ? 1 : -1;
+}
+
+
+template<class T> int DumpTriStrip(DWORD nTris,
+                                   T* indices,
+                                   int materialIndex,
+                                   ostream& meshfile)
+{
+    meshfile << "tristrip ";
+    meshfile << materialIndex << ' ' << (nTris + 2) << '\n';
+            
+    DWORD indexCount = nTris + 2;
+
+    for (DWORD j = 0; j < indexCount; j++)
+    {
+        meshfile << indices[j] << ' ';
+        if (j == indexCount - 1 || j % 12 == 11)
+            meshfile << '\n';
+    }
+}
+
+
+
+// The D3DX tristrip converter only produces strips, not fans.  It dumps
+// fans as strips where every other triangle is degenerate.  We detect such
+// strips and output them as fans instead, thus eliminating a bunch of
+// degenerate triangles.
+template<class T> void DumpTriStripAsFan(DWORD nTris,
+                                         T* indices,
+                                         int materialIndex,
+                                         DWORD anchorOffset,
+                                         ostream& meshfile)
+{
+    meshfile << "trifan ";
+    meshfile << materialIndex << ' ' << (nTris / 2 + 3) << '\n';
+            
+    DWORD indexCount = nTris + 2;
+
+    T anchor = indices[anchorOffset];
+    meshfile << anchor << ' ';
+
+    if (anchorOffset == 1)
+    {
+        for (int j = (int) indexCount - 1; j >= 0; j--)
+        {
+            if (indices[j] != anchor)
+                meshfile << indices[j] << ' ';
+            if (j == 0 || j % 12 == 11)
+                meshfile << '\n';
+        }
+    }
+    else if (anchorOffset == 0)
+    {
+        // D3DX never seems to produce strips where the first vertex is
+        // the anchor, but we'll handle it just in case.
+        for (int j = 1; j < (int) indexCount; j++)
+        {
+            if (indices[j] != anchor)
+                meshfile << indices[j] << ' ';
+            if (j == indexCount - 1 || j % 12 == 11)
+                meshfile << '\n';
+        }
+    }
+}
+
+
 bool StripifyMeshSubset(ID3DXMesh* mesh,
                         DWORD attribId,
                         ostream& meshfile)
@@ -207,19 +304,38 @@ bool StripifyMeshSubset(ID3DXMesh* mesh,
                 return false;
             }
 
-            meshfile << "tristrip " << attribId << ' ' << (stripLengths[i] + 2) << '\n';
-            
-            DWORD indexCount = stripLengths[i] + 2;
-            for (DWORD j = 0; j < indexCount; j++)
+            if (index32)
             {
-                if (index32)
-                    meshfile << reinterpret_cast<DWORD*>(indexData)[k] << ' ';
+                DWORD* indices = reinterpret_cast<DWORD*>(indexData) + k;
+                int fanStart = checkForFan(stripLengths[i], indices);
+                if (fanStart != 1)
+                {
+                    DumpTriStrip(stripLengths[i], indices, (int) attribId,
+                                 meshfile);
+                }
                 else
-                    meshfile << reinterpret_cast<WORD*>(indexData)[k] << ' ';
-                k++;
-                if (j == indexCount - 1 || j % 12 == 11)
-                    meshfile << '\n';
+                {
+                    DumpTriStripAsFan(stripLengths[i], indices, (int) attribId,
+                                      fanStart, meshfile);
+                }
             }
+            else
+            {
+                WORD* indices = reinterpret_cast<WORD*>(indexData) + k;
+                int fanStart = checkForFan(stripLengths[i], indices);
+                if (fanStart != 1)
+                {
+                    DumpTriStrip(stripLengths[i], indices, (int) attribId,
+                                 meshfile);
+                }
+                else
+                {
+                    DumpTriStripAsFan(stripLengths[i], indices, (int) attribId,
+                                      fanStart, meshfile);
+                }
+            }
+
+            k += stripLengths[i] + 2;
         }
 
         cout << "k=" << k << ", numIndices=" << numIndices;
@@ -576,7 +692,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     {
         meshfile << "material\n";
         meshfile << "diffuse " << materials[mat].MatD3D.Diffuse << '\n';
-        meshfile << "emissive " << materials[mat].MatD3D.Emissive << '\n';
+        //meshfile << "emissive " << materials[mat].MatD3D.Emissive << '\n';
         meshfile << "specular " << materials[mat].MatD3D.Specular << '\n';
         meshfile << "specpower " << materials[mat].MatD3D.Power << '\n';
         meshfile << "opacity " << materials[mat].MatD3D.Diffuse.a << '\n';
