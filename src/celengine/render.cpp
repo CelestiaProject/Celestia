@@ -2917,6 +2917,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             RenderListEntry rle;
             rle.body = body;
             rle.star = NULL;
+            rle.isCometTail = false;
             rle.position = Point3f(pos.x, pos.y, pos.z);
             rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
             rle.distance = distanceFromObserver;
@@ -2925,6 +2926,27 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.appMag = appMag;
             renderList.insert(renderList.end(), rle);
         }
+#if 0
+        if (body->getClassification() == Body::Comet)
+        {
+            float radius = body->getRadius() * 100000.0f;
+            discSize = (radius / (float) distanceFromObserver) / pixelSize;
+            if (discSize > 1)
+            {
+                RenderListEntry rle;
+                rle.body = body;
+                rle.star = NULL;
+                rle.isCometTail = true;
+                rle.radius = radius;;
+                rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
+                rle.distance = distanceFromObserver;
+                rle.radius = radius;
+                rle.discSizeInPixels = discSize;
+                rle.appMag = appMag;
+                renderList.insert(renderList.end(), rle);
+            }
+        }
+#endif
 
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
@@ -3121,6 +3143,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             Renderer::RenderListEntry rle;
             rle.star = &star;
             rle.body = NULL;
+            rle.isCometTail = false;
             
             // Objects in the render list are always rendered relative to
             // a viewer at the origin--this is different than for distant
