@@ -219,9 +219,16 @@ void VertexList::transform(Vec3f translation, float scale)
     for (uint32 i = 0; i < nVertices; i++)
     {
         uint32 n = i * vertexSize;
-        Vec3f tv = (Vec3f(vertices[n].f, vertices[n + 1].f, vertices[n + 2].f) - translation) * scale;
+        Vec3f tv = (Vec3f(vertices[n].f, vertices[n + 1].f, vertices[n + 2].f) + translation) * scale;
         vertices[n    ].f = tv.x;
         vertices[n + 1].f = tv.y;
         vertices[n + 2].f = tv.z;
     }
+
+    // Transform the bounding box
+    Point3f mn = bbox.getMinimum();
+    Point3f mx = bbox.getMaximum();
+    Point3f tr(-translation.x, -translation.y, -translation.z);
+    bbox = AxisAlignedBox(Point3f(0, 0, 0) + ((mn - tr) * scale),
+                          Point3f(0, 0, 0) + ((mx - tr) * scale));
 }
