@@ -626,6 +626,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     // Set the simulation starting time to the current system time
     sim->setTime((double) time(NULL) + (double) astro::Date(1970, 1, 1) * 86400.0);
+    sim->update(0.0);
 
     if (!fullscreen)
     {
@@ -683,7 +684,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (!renderer->init((int) g_w, (int) g_h)) {
 	MessageBox(hWnd,
 		   "Failed to initialize",
-		   "Fatal Blow",
+		   "Fatal Error",
 		   MB_OK | MB_ICONERROR);
 	return FALSE;
     }
@@ -701,6 +702,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // We're now ready.
     bReady = 1;
 
+    // Start out at the moon
+    sim->selectBody("Moon");
+    sim->gotoSelection();
+
     // Usual running around in circles bit...
     int bGotMsg;
     MSG  msg;
@@ -708,8 +713,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     while (msg.message != WM_QUIT)
     {
 	// Use PeekMessage() if the app is active, so we can use idle time to
-	// render the scene. Else, use GetMessage() to avoid eating CPU time.
-	bGotMsg = PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE );
+	// render the scene.  Else, use GetMessage() to avoid eating CPU time.
+	bGotMsg = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
 
 	if (bGotMsg)
         {
