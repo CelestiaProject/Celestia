@@ -69,7 +69,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
     case WM_DESTROY:
         if (tourGuide != NULL && tourGuide->parent != NULL)
         {
-            SendMessage(tourGuide->parent, WM_COMMAND, ID_CLOSE_TOURGUIDE,
+            SendMessage(tourGuide->parent, WM_COMMAND, IDCLOSE,
                         reinterpret_cast<LPARAM>(tourGuide));
         }
         break;
@@ -79,7 +79,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
         {
             if (tourGuide != NULL && tourGuide->parent != NULL)
             {
-                SendMessage(tourGuide->parent, WM_COMMAND, ID_CLOSE_TOURGUIDE,
+                SendMessage(tourGuide->parent, WM_COMMAND, IDCLOSE,
                             reinterpret_cast<LPARAM>(tourGuide));
             }
             EndDialog(hDlg, 0);
