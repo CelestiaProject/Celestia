@@ -2159,7 +2159,7 @@ gint glarea_motion_notify(GtkWidget* widget, GdkEventMotion* event)
     return TRUE;
 }
 
-gint glarea_button_press(GtkWidget* widget, GdkEventButton* event)
+gint glarea_button_press(GtkWidget* widget, GdkEventButton* event, gpointer data) 
 {
     if (event->button == 4)
     {
@@ -2184,7 +2184,7 @@ gint glarea_button_press(GtkWidget* widget, GdkEventButton* event)
     return TRUE;
 }
 
-gint glarea_button_release(GtkWidget* widget, GdkEventButton* event)
+gint glarea_button_release(GtkWidget* widget, GdkEventButton* event, gpointer data)
 {
     lastX = (int) event->x;
     lastY = (int) event->y;
@@ -2312,7 +2312,7 @@ static bool handleSpecialKey(int key, bool down)
 }
 
 
-gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
+gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer data)
 {
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_press_event");
     switch (event->keyval)
@@ -2348,13 +2348,15 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
                 }
             }
         }
+        if (event->state & GDK_MOD1_MASK)
+	    return FALSE;
     }
 
     return TRUE;
 }
 
 
-gint glarea_key_release(GtkWidget* widget, GdkEventKey* event)
+gint glarea_key_release(GtkWidget* widget, GdkEventKey* event, gpointer data)
 {
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_release_event");
     return handleSpecialKey(event->keyval, false);
