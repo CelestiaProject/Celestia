@@ -151,6 +151,8 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
     if (semiMajorAxis != 0.0)
         pericenterDistance = semiMajorAxis * (1.0 - eccentricity);
 
+    // cout << " bounding radius: " << semiMajorAxis * (1.0 + eccentricity) << "km\n";
+
     return new EllipticalOrbit(pericenterDistance,
                                eccentricity,
                                degToRad(inclination),
@@ -199,14 +201,9 @@ static Body* CreatePlanet(PlanetarySystem* system,
 {
     Body* body = new Body(system);
 
-#if 0
-    string name("Unnamed");
-    planetData->getString("Name", name);
-    body->setName(name);
-#endif
-    
     Orbit* orbit = NULL;
     string customOrbitName;
+
     if (planetData->getString("CustomOrbit", customOrbitName))
     {
         orbit = GetCustomOrbit(customOrbitName);
@@ -214,6 +211,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
             DPRINTF(0, "Could not find custom orbit named '%s'\n",
                     customOrbitName.c_str());
     }
+
     if (orbit == NULL)
     {
         Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
