@@ -1501,7 +1501,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri,
         ri.baseTex->bind();
     }
 
-    glColor(ri.color);
+    glColor(ri.color * ri.sunColor);
 
     if (ri.bumpTex != NULL)
     {
