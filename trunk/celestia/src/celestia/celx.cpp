@@ -189,43 +189,17 @@ static int auxresume(lua_State *L, lua_State *co, int narg)
     if (status == 0)
     {
         int nres = lua_gettop(co);
-        //printf("args: %d\n", nres);
 #if 0
         if (!lua_checkstack(L, narg))
               luaL_error(L, "too many results to resume");
 #endif
-        lua_xmove(co, L, nres);  /* move yielded values */
+        lua_xmove(co, L, nres);  // move yielded values
         return nres;
     }
     else
     {
-        lua_xmove(co, L, 1);  /* move error message */
-        return -1;  /* error flag */
-    }
-}
-
-
-int LuaState::resume()
-{
-    assert(costate != NULL);
-    if (costate == NULL)
-        return false;
-
-    lua_State* co = lua_tothread(state, -1);
-    assert(co == costate);
-    if (co != costate)
-        return false;
-
-    int nArgs = auxresume(state, co, 0);
-    if (nArgs < 0)
-    {
-        alive = false;
-        cout << "Error: " << lua_tostring(state, -1) << '\n';
-        return 1; // just the error string
-    }
-    else
-    {
-        return nArgs; // arguments from yield
+        lua_xmove(co, L, 1);  // move error message
+        return -1;            // error flag
     }
 }
 
@@ -268,32 +242,6 @@ static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
     else
         return info->buf;
 }
-
-int LuaState::loadScript(istream& in)
-{
-    char buf[4096];
-    ReadChunkInfo info;
-    info.buf = buf;
-    info.bufSize = sizeof(buf);
-    info.in = &in;
-
-    int status = lua_load(state, readStreamChunk, &info, "stream");
-    if (status != 0)
-        cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
-    
-    return status;
-}
-
-int LuaState::loadScript(const string& s)
-{
-#ifdef HAVE_SSTREAM    
-    istringstream in(s);
-#else
-    istrstream in(s.c_str());
-#endif
-    return loadScript(in);
-}
-
 
 static int parseRenderFlag(const string& name)
 {
@@ -367,6 +315,119 @@ static astro::CoordinateSystem parseCoordSys(const string& name)
         return astro::Chase;
     else
         return astro::Universal;
+}
+
+
+static Marker::Symbol parseMarkerSymbol(const string& name)
+{
+    if (compareIgnoringCase(name, "diamond") == 0)
+        return Marker::Diamond;
+    else if (compareIgnoringCase(name, "triangle") == 0)
+        return Marker::Triangle;
+    else if (compareIgnoringCase(name, "square") == 0)
+        return Marker::Square;
+    else if (compareIgnoringCase(name, "plus") == 0)
+        return Marker::Plus;
+    else if (compareIgnoringCase(name, "x") == 0)
+        return Marker::X;
+    else
+        return Marker::Diamond;
+}
+
+
+static Color to_color(lua_State* l, int index)
+{
+    Color c(0.0f, 0.0f, 0.0f);
+
+    if (lua_isstring(l, index))
+    {
+        const char* s = lua_tostring(l, index);
+        Color::parse(s, c);
+    }
+
+    return c;
+}
+
+
+// Return the CelestiaCore object stored in the globals table
+static CelestiaCore* getAppCore(lua_State* l)
+{
+    lua_pushstring(l, "celestia");
+    lua_gettable(l, LUA_GLOBALSINDEX);
+    CelestiaCore** appCore =
+        static_cast<CelestiaCore**>(CheckUserData(l, -1, _Celestia));
+    lua_pop(l, 1);
+
+    return *appCore;
+}
+
+
+int LuaState::loadScript(istream& in)
+{
+    char buf[4096];
+    ReadChunkInfo info;
+    info.buf = buf;
+    info.bufSize = sizeof(buf);
+    info.in = &in;
+
+    int status = lua_load(state, readStreamChunk, &info, "stream");
+    if (status != 0)
+        cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
+    
+    return status;
+}
+
+int LuaState::loadScript(const string& s)
+{
+#ifdef HAVE_SSTREAM    
+    istringstream in(s);
+#else
+    istrstream in(s.c_str());
+#endif
+    return loadScript(in);
+}
+
+int LuaState::resume()
+{
+    assert(costate != NULL);
+    if (costate == NULL)
+        return false;
+
+    lua_State* co = lua_tothread(state, -1);
+    assert(co == costate);
+    if (co != costate)
+        return false;
+
+    int nArgs = auxresume(state, co, 0);
+    if (nArgs < 0)
+    {
+        alive = false;
+
+        const char* errorMessage = lua_tostring(state, -1);
+
+        // This is a nasty and hopefully temporary hack . . .  We continue
+        // to resume the script until we get an error.  The
+        // 'cannot resume dead coroutine' error appears when there were
+        // no other errors, and execution terminates normally.  There
+        // should be a better way to figure out whether the script ended
+        // normally . . .
+        if (strcmp(errorMessage, "cannot resume dead coroutine") != 0)
+        {
+            cout << "Error: " << errorMessage << '\n';
+            CelestiaCore* appCore = getAppCore(co);
+            if (appCore != NULL)
+            {
+                CelestiaCore::Alerter* alerter = appCore->getAlerter();
+                alerter->fatalError(errorMessage);
+            }
+        }
+
+        return 1; // just the error string
+    }
+    else
+    {
+        return nArgs; // arguments from yield
+    }
 }
 
 
@@ -684,7 +745,7 @@ static int object_spectraltype(lua_State* l)
     int argc = lua_gettop(l);
     if (argc != 1)
     {
-        lua_pushstring(l, "No arguments expected to function object:name");
+        lua_pushstring(l, "No arguments expected to function object:spectraltype");
         lua_error(l);
     }
 
@@ -723,6 +784,110 @@ static int object_spectraltype(lua_State* l)
 }
 
 
+static int object_absmag(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function object:absmag");
+        lua_error(l);
+    }
+
+    Selection* sel = to_object(l, 1);
+    if (sel != NULL)
+    {
+        if (sel->star != NULL)
+            lua_pushnumber(l, sel->star->getAbsoluteMagnitude());
+        else
+            lua_pushnil(l);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
+static int object_mark(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc < 1)
+    {
+        lua_pushstring(l, "Bad call to object:mark");
+        lua_error(l);
+    }
+
+    Selection* sel = to_object(l, 1);
+    if (sel != NULL)
+    {
+        Color markColor(0.0f, 1.0f, 0.0f);
+        if (argc > 1)
+            markColor = to_color(l, 2);
+        
+        Marker::Symbol markSymbol = Marker::Diamond;
+        if (argc > 2 && lua_isstring(l, 3))
+            markSymbol = parseMarkerSymbol(lua_tostring(l, 3));
+
+        float markSize = 10.0f;
+        if (argc > 3 && lua_isnumber(l, 4))
+        {
+            markSize = (float) lua_tonumber(l, 4);
+            if (markSize < 1.0f)
+                markSize = 1.0f;
+            else if (markSize > 100.0f)
+                markSize = 100.0f;
+        }
+
+        CelestiaCore* appCore = getAppCore(l);
+        if (appCore != NULL)
+        {
+            Simulation* sim = appCore->getSimulation();
+            sim->getUniverse()->markObject(*sel, markSize,
+                                           markColor, markSymbol, 1);
+        }
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }
+
+    return 0;
+}
+
+
+static int object_unmark(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function object:unmark");
+        lua_error(l);
+    }
+
+    Selection* sel = to_object(l, 1);
+    if (sel != NULL)
+    {
+        CelestiaCore* appCore = getAppCore(l);
+        if (appCore != NULL)
+        {
+            Simulation* sim = appCore->getSimulation();
+            sim->getUniverse()->unmarkObject(*sel, 1);
+        }
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }
+
+    return 0;
+}
+
+
 static void CreateObjectMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Object);
@@ -731,7 +896,10 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "radius", object_radius);
     RegisterMethod(l, "type", object_type);
     RegisterMethod(l, "spectraltype", object_spectraltype);
+    RegisterMethod(l, "absmag", object_absmag);
     RegisterMethod(l, "name", object_name);
+    RegisterMethod(l, "mark", object_mark);
+    RegisterMethod(l, "unmark", object_unmark);
 
     lua_pop(l, 1); // pop metatable off the stack
 }
@@ -1203,12 +1371,37 @@ static int celestia_getobserver(lua_State* l)
 
     if (appCore != NULL)
     {
-        cout << "celestia_getobserver\n"; cout.flush();
         Observer* o = appCore->getSimulation()->getActiveObserver();
         if (o == NULL)
             lua_pushnil(l);
         else
             observer_new(l, o);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad celestia object!\n");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
+static int celestia_getselection(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected for function celestia:getselection()");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+
+    if (appCore != NULL)
+    {
+        Selection sel = appCore->getSimulation()->getSelection();
+        object_new(l, sel);
     }
     else
     {
@@ -1698,6 +1891,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "showlabel", celestia_showlabel);
     RegisterMethod(l, "hidelabel", celestia_hidelabel);
     RegisterMethod(l, "getobserver", celestia_getobserver);
+    RegisterMethod(l, "getselection", celestia_getselection);
     RegisterMethod(l, "find", celestia_find);
     RegisterMethod(l, "select", celestia_select);
     RegisterMethod(l, "getchildren", celestia_getchildren);
