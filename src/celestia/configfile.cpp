@@ -93,6 +93,8 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     config->scriptScreenshotCount = 0.0f;
     configParams->getNumber("ScriptScreenshotCount", config->scriptScreenshotCount);    
     configParams->getString("ScriptScreenshotDirectory", config->scriptScreenshotDirectory);
+    config->scriptSystemAccessPolicy = "ask";
+    configParams->getString("ScriptSystemAccessPolicy", config->scriptSystemAccessPolicy);
 
     config->ringSystemSections = getUint(configParams, "RingSystemSections", 100);
     config->orbitPathSamplePoints = getUint(configParams, "OrbitPathSamplePoints", 100);
