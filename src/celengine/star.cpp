@@ -128,6 +128,10 @@ float Star::getTemperature() const
     {
         return 10000;
     }
+    else if (stellarClass.getStarType() == StellarClass::BlackHole)
+    {
+        return 0;
+    }
     else
     {
         // TODO: Bad star type

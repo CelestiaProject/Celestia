@@ -18,6 +18,7 @@
 #include "celestia.h"
 #include "astro.h"
 #include "stardb.h"
+#include "parser.h"
 #include <celutil/debug.h>
 
 using namespace std;
@@ -31,14 +32,17 @@ static string LacailleCatalogPrefix("Lacaille ");
 
 static const float OctreeRootSize = 15000.0f;
 static const float OctreeMagnitude = 6.0f;
+static const float ExtraRoom = 0.01f; // Reserve 1% capacity for extra stars
 
 
 StarDatabase::StarDatabase() : nStars(0),
+                               capacity(0),
                                stars(NULL),
                                names(NULL),
                                octreeRoot(NULL)
 {
 }
+
 
 StarDatabase::~StarDatabase()
 {
@@ -242,33 +246,37 @@ void StarDatabase::addCrossReference(const CatalogCrossReference* xref)
 }
 
 
-StarDatabase *StarDatabase::read(istream& in)
+bool StarDatabase::loadBinary(istream& in)
 {
-    StarDatabase *db = new StarDatabase();
-
-    if (db == NULL)
-	return NULL;
-
-    uint32 nStars = 0;
-    in.read((char *) &nStars, sizeof nStars);
-    LE_TO_CPU_INT32(nStars, nStars);
+    uint32 nStarsInFile = 0;
+    in.read((char *) &nStarsInFile, sizeof nStarsInFile);
+    LE_TO_CPU_INT32(nStarsInFile, nStarsInFile);
     if (!in.good())
-    {
-        delete db;
-        return NULL;
-    };
+        return false;
 
-    db->stars = new Star[nStars];
-    if (db->stars == NULL)
+    int requiredCapacity = (int) ((nStars + nStarsInFile) * (1.0 + ExtraRoom));
+    if (capacity < requiredCapacity)
     {
-	delete db;
-	return NULL;
+        Star* newStars = new Star[requiredCapacity];
+        if (newStars == NULL)
+            return false;
+        
+        if (stars != NULL)
+        {
+            copy(stars, stars + nStars, newStars);
+            delete[] stars;
+        }
+
+        stars = newStars;
+
+        capacity = requiredCapacity;
     }
-
+    
     uint32 throwOut = 0;
     uint32 fixUp = 0;
+    unsigned int totalStars = nStars + nStarsInFile;
 
-    while (((unsigned int)db->nStars) < nStars)
+    while (((unsigned int) nStars) < totalStars)
     {
 	uint32 catNo = 0;
         uint32 hdCatNo = 0;
@@ -295,7 +303,7 @@ StarDatabase *StarDatabase::read(istream& in)
 	if (!in.good())
 	    break;
 
-	Star *star = &db->stars[db->nStars];
+	Star* star = &stars[nStars];
 
 	// Compute distance based on parallax
 	double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
@@ -331,21 +339,23 @@ StarDatabase *StarDatabase::read(istream& in)
 		fixUp++;
 	}
 
-	db->nStars++;
+	nStars++;
     }
 
     if (in.bad())
-    {
-	delete db;
-	db = NULL;
-    }
+        return false;
 
-    DPRINTF(0, "StarDatabase::read: nStars = %d\n", db->nStars);
+    DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
+    cout << "nStars: " << nStars << '\n';
 
-    db->buildOctree();
-    db->buildIndexes();
+    return true;
+}
 
-    return db;
+
+void StarDatabase::finish()
+{
+    buildOctree();
+    buildIndexes();
 }
 
 
@@ -404,13 +414,61 @@ void StarDatabase::buildIndexes()
     }
 }
 
-#if 0
-static Star* CreateStar(Hash* starData)
+
+static Star* CreateStar(uint32 catalogNumber, Hash* starData)
 {
+    double ra = 0.0;
+    double dec = 0.0;
+    double distance = 0.0;
+    string spectralType;
+
+    if (!starData->getNumber("RA", ra))
+    {
+        DPRINTF(1, "Invalid star: missing right ascension\n");
+        return NULL;
+    }
+
+    if (!starData->getNumber("Dec", dec))
+    {
+        DPRINTF(1, "Invalid star: missing declination.\n");
+        return NULL;
+    }
+
+    if (!starData->getNumber("Distance", distance))
+    {
+        DPRINTF(1, "Invalid star: missing distance.\n");
+        return NULL;
+    }
+
+    if (!starData->getString("SpectralType", spectralType))
+    {
+        DPRINTF(1, "Invalid star: missing spectral type.\n");
+        return NULL;
+    }
+    StellarClass sc = StellarClass::parse(spectralType);
+
+    double absMag = 0.0;
+    if (!starData->getNumber("AbsMag", absMag))
+    {
+        double appMag;
+        if (starData->getNumber("AppMag", appMag))
+            absMag = astro::appToAbsMag((float) appMag, (float) distance);
+    }
+
+    Star* star = new Star();
+    star->setCatalogNumber(catalogNumber);
+    star->setStellarClass(sc);
+    star->setAbsoluteMagnitude((float) absMag);
+
+    // Convert ra from degrees to hours for eqToCelCart function
+    ra /= 15.0;
+    star->setPosition(astro::equatorialToCelestialCart((float) ra, (float) dec, (float) distance));
+
+    return star;
 }
 
 
-bool LoadStars(istream& in, StarDatabase& stardb)
+bool StarDatabase::load(istream& in)
 {
     Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
@@ -419,7 +477,7 @@ bool LoadStars(istream& in, StarDatabase& stardb)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenNumber)
         {
-            cout << "Error parsing star file.\n";
+            DPRINTF(0, "Error parsing star file.\n");
             return false;
         }
         uint32 catalogNumber = (uint32) tokenizer.getNumberValue();
@@ -427,21 +485,42 @@ bool LoadStars(istream& in, StarDatabase& stardb)
         Value* starDataValue = parser.readValue();
         if (starDataValue == NULL)
         {
-            cout << "Error reading star.\n";
+            DPRINTF(0, "Error reading star.\n");
             return false;
         }
 
-        if (starDataValue->getType() != Value::Hash)
+        if (starDataValue->getType() != Value::HashType)
         {
-            cout << "Bad star definition.\n";
+            DPRINTF(0, "Bad star definition.\n");
             return false;
         }
         Hash* starData = starDataValue->getHash();
 
-        Star* star = CreateStar(starData);
+        Star* star = CreateStar(catalogNumber, starData);
         if (star != NULL)
         {
+            // Ensure that the star array is large enough
+            if (nStars == capacity)
+            {
+                capacity = (int) (capacity * 1.05);
+                Star* newStars = new Star[capacity];
+                if (newStars == NULL)
+                {
+                    DPRINTF(0, "Out of memory!");
+                    return false;
+                }
+
+                copy(stars, stars + nStars, newStars);
+                delete[] stars;
+                stars = newStars;
+            }
+            stars[nStars++] = *star;
+        }
+        else
+        {
+            DPRINTF(1, "Bad star definition--will continue parsing file.\n");
         }
     }
+
+    return true;
 }
-#endif
