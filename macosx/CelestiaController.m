@@ -466,6 +466,15 @@ NSString* fatalErrorMessage;
     }
 }
 
+- (void) showHelp: (id) sender
+{
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"KbdMouseJoyControls"
+                                                     ofType:@"txt"];
+    
+    if (path)
+        [[NSWorkspace sharedWorkspace] openFile:path];
+}
+
 // Dealloc Method ----------------------------------------------------------
 
 - (void)dealloc
