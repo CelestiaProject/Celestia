@@ -1399,7 +1399,7 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
     }
     if (actionId == 8)
     {
-        MarkerList* markers = sim->getUniverse()->getMarkers();fprintf(stderr, "toto\n");
+        MarkerList* markers = sim->getUniverse()->getMarkers();
         if (markers != 0)
         {
             for (vector<Marker>::const_iterator iter = markers->begin();
