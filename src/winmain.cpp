@@ -83,6 +83,7 @@ static double timeScale = 0.0;
 
 static bool textEnterMode = false;
 static string typedText = "";
+static string messageText = "";
 static bool editMode = false;
 
 static int hudDetail = 1;
@@ -103,6 +104,7 @@ static Overlay* overlay = NULL;
 static TexFont* font = NULL;
 
 static CommandSequence* script = NULL;
+static CommandSequence* demoScript = NULL;
 static Execution* runningScript = NULL;
 
 HINSTANCE appInstance;
@@ -121,6 +123,30 @@ astro::Date newTime(0.0);
 
 
 #define MENU_CHOOSE_PLANET   32000
+
+
+// Extremely basic implementation of an ExecutionEnvironment for
+// running scripts.
+class MainExecutionEnvironment : public ExecutionEnvironment
+{
+public:
+    Simulation* getSimulation() const
+    {
+        return sim;
+    }
+
+    Renderer* getRenderer() const
+    {
+        return renderer;
+    }
+
+    void showText(string s)
+    {
+        messageText = s;
+    }
+};
+
+static MainExecutionEnvironment execEnv;
 
 
 // Good 'ol generic drawing stuff.
@@ -707,6 +733,17 @@ void ShowWWWInfo(const Selection& sel)
 }
 
 
+void CancelScript()
+{
+    if (runningScript != NULL)
+    {
+        delete runningScript;
+        runningScript = NULL;
+    }
+    messageText = "";
+}
+
+
 void handleKey(WPARAM key, bool down)
 {
     switch (key) {
@@ -773,7 +810,7 @@ void handleKeyPress(int c)
         break;
 
     case 'G':
-        sim->gotoSelection();
+        sim->gotoSelection(5.0);
         break;
 
     case 'C':
@@ -866,12 +903,10 @@ void handleKeyPress(int c)
         showFPSCounter = !showFPSCounter;
         break;
 
-#if 0
-    case 'Y':
-        if (runningScript == NULL)
-            runningScript = new Execution(*script, sim, renderer);
+    case 'D':
+        if (runningScript == NULL && demoScript != NULL)
+            runningScript = new Execution(*demoScript, execEnv);
         break;
-#endif
 
     case '1':
     case '2':
@@ -1075,6 +1110,18 @@ void RenderOverlay()
         glTranslatef(0, 50, 0);
         glColor4f(0.6f, 0.6f, 1.0f, 1);
         *overlay << "Target name: " << typedText;
+        glPopMatrix();
+    }
+
+    // Text messages
+    if (messageText != "")
+    {
+        glPushMatrix();
+        glColor4f(1, 1, 1, 1);
+        glTranslatef(0, 80, 0);
+        overlay->beginText();
+        *overlay << messageText;
+        overlay->endText();
         glPopMatrix();
     }
 
@@ -1387,7 +1434,19 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         }
         else
         {
-            runningScript = new Execution(*script, sim, renderer);
+            runningScript = new Execution(*script, execEnv);
+        }
+    }
+
+    if (config->demoScriptFile != "")
+    {
+        ifstream scriptfile(config->demoScriptFile.c_str());
+        CommandParser parser(scriptfile);
+        demoScript = parser.parse();
+        if (demoScript == NULL)
+        {
+            const vector<string>* errors = parser.getErrors();
+            for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
         }
     }
 
@@ -1602,10 +1661,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         {
         case VK_ESCAPE:
             if (runningScript != NULL)
-            {
-                delete runningScript;
-                runningScript = NULL;
-            }
+                CancelScript();
             sim->cancelMotion();
             break;
         case VK_RETURN:
@@ -1662,7 +1718,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             sim->centerSelection();
             break;
         case ID_NAVIGATION_GOTO:
-            sim->gotoSelection();
+            sim->gotoSelection(5.0);
             break;
         case ID_NAVIGATION_FOLLOW:
             sim->follow();
@@ -1795,9 +1851,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION < favorites->size())
             {
                 int whichFavorite = LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION;
-                // if (runningScript != NULL)
-                // delete runningScript;
-                // runningScript = new Execution(*(*favorites)[whichFavorite]->cmdSeq, sim, renderer);
                 ActivateFavorite(*(*favorites)[whichFavorite]);
             }
             else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
@@ -1884,10 +1937,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             {
                 bool finished = runningScript->tick(deltaTime);
                 if (finished)
-                {
-                    delete runningScript;
-                    runningScript = NULL;
-                }
+                    CancelScript();
             }
             sim->update(deltaTime);
 	    sim->render(*renderer);
