@@ -32,6 +32,7 @@ static int compareVertexLists(VertexList* vl0, VertexList* vl1)
     float a0 = vl0->getDiffuseColor().alpha();
     float a1 = vl1->getDiffuseColor().alpha();
 
+#if _MSC_VER <= 1200
     // In some cases, sorting with this comparison function hangs on Celestia
     // executables built with MSVC.  For some reason, adding the following crud
     // fixes the problem, but I haven't looked at the generated assembly
@@ -39,6 +40,8 @@ static int compareVertexLists(VertexList* vl0, VertexList* vl1)
     // should never be printed because alpha is always >= 0.  Blah.
     if (a0 == -50.0f)
         cout << "Stupid MSVC compiler bug workaround!  (This line will never be printed)\n";
+#endif
+
     if (a0 == a1)
     {
         return vl0->getTexture() < vl1->getTexture();
