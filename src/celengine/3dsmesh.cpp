@@ -291,10 +291,14 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
                     vl->setDiffuseColor(Color(diffuse.red, diffuse.green, diffuse.blue));
                     M3DColor specular = material->getSpecularColor();
                     vl->setSpecularColor(Color(specular.red, specular.green, specular.blue));
-                    // 3DS files record shininess as a percentage; assume
-                    // that OpenGL uses a range of 0-127 for shininess
                     float shininess = material->getShininess();
-                    vl->setShininess(shininess * 1.27f);
+                    
+                    // Map the shininess from the 3DS file into the 0-128
+                    // range that OpenGL uses for the specular exponent.
+                    shininess = (float) pow(2, 10.0 * shininess);
+                    if (shininess > 128.0f)
+                        shininess = 128.0f;
+                    vl->setShininess(128.0f);
 
                     if (material->getTextureMap() != "")
                     {
