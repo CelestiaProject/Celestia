@@ -96,20 +96,19 @@ static Location* CreateLocation(Hash* locationData,
 }
 
 
-static Surface* CreateSurface(Hash* surfaceData,
-                              const std::string& path)
+static void FillinSurface(Hash* surfaceData,
+                          Surface* surface,
+                          const std::string& path)
 {
-    Surface* surface = new Surface();
-
-    surface->color = Color(1.0f, 1.0f, 1.0f);
     surfaceData->getColor("Color", surface->color);
 
-    Color hazeColor;
-    float hazeDensity = 0.0f;
-    surfaceData->getColor("HazeColor", hazeColor);
-    surfaceData->getNumber("HazeDensity", hazeDensity);
-    surface->hazeColor = Color(hazeColor.red(), hazeColor.green(),
-                               hazeColor.blue(), hazeDensity);
+    Color hazeColor = surface->hazeColor;
+    float hazeDensity = hazeColor.alpha();
+    if (surfaceData->getColor("HazeColor", hazeColor) | surfaceData->getNumber("HazeDensity", hazeDensity))
+    {
+        surface->hazeColor = Color(hazeColor.red(), hazeColor.green(),
+                                   hazeColor.blue(), hazeDensity);
+    }
 
     surfaceData->getColor("SpecularColor", surface->specularColor);
     surfaceData->getNumber("SpecularPower", surface->specularPower);
@@ -180,8 +179,6 @@ static Surface* CreateSurface(Hash* surfaceData,
 
     if (applyOverlay)
         surface->overlayTexture.setTexture(overlayTexture, path, baseFlags);
-
-    return surface;
 }
 
 
@@ -263,128 +260,147 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
 }
 
 
-static RotationElements CreateRotationElements(Hash* rotationData,
-                                               float orbitalPeriod)
+static void FillinRotationElements(Hash* rotationData,
+                                   RotationElements& re,
+                                   float orbitalPeriod)
 {
-    RotationElements re;
-
     // The default is synchronous rotation (rotation period == orbital period)
     float period = orbitalPeriod * 24.0f;
-    rotationData->getNumber("RotationPeriod", period);
-    re.period = period / 24.0f;
+    if (rotationData->getNumber("RotationPeriod", period))
+        re.period = period / 24.0f;
 
     float offset = 0.0f;
-    rotationData->getNumber("RotationOffset", offset);
-    re.offset = degToRad(offset);
+    if (rotationData->getNumber("RotationOffset", offset))
+        re.offset = degToRad(offset);
 
     rotationData->getNumber("RotationEpoch", re.epoch);
 
     float obliquity = 0.0f;
-    rotationData->getNumber("Obliquity", obliquity);
-    re.obliquity = degToRad(obliquity);
+    if (rotationData->getNumber("Obliquity", obliquity))
+        re.obliquity = degToRad(obliquity);
 
     float ascendingNode = 0.0f;
-    rotationData->getNumber("EquatorAscendingNode", ascendingNode);
-    re.ascendingNode = degToRad(ascendingNode);
+    if (rotationData->getNumber("EquatorAscendingNode", ascendingNode))
+        re.ascendingNode = degToRad(ascendingNode);
 
     float precessionRate = 0.0f;
-    rotationData->getNumber("PrecessionRate", precessionRate);
-    re.precessionRate = degToRad(precessionRate);
-
-    return re;
+    if (rotationData->getNumber("PrecessionRate", precessionRate))
+        re.precessionRate = degToRad(precessionRate);
 }
 
+static Orbit* CreateOrbit(PlanetarySystem* system,
+                          Hash* planetData,
+                          const string& path,
+                          bool usePlanetUnits)
+{
+    Orbit* orbit = NULL;
+
+    string customOrbitName;
+    if (planetData->getString("CustomOrbit", customOrbitName))
+    {
+        orbit = GetCustomOrbit(customOrbitName);
+        if (orbit == NULL)
+        {
+            DPRINTF(0, "Could not find custom orbit named '%s'\n",
+                    customOrbitName.c_str());
+        }
+        return orbit;
+    }
+
+    string sampOrbitFile;
+    if (planetData->getString("SampledOrbit", sampOrbitFile))
+    {
+        DPRINTF(1, "Attempting to load sampled orbit file '%s'\n",
+                sampOrbitFile.c_str());
+        ResourceHandle orbitHandle =
+            GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile, path));
+        orbit = GetTrajectoryManager()->find(orbitHandle);
+        if (orbit == NULL)
+        {
+            DPRINTF(0, "Could not load sampled orbit file '%s'\n",
+                    sampOrbitFile.c_str());
+        }
+        return orbit;
+    }
+
+    Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
+    if (orbitDataValue != NULL)
+    {
+        if (orbitDataValue->getType() != Value::HashType)
+        {
+            DPRINTF(0, "Object has incorrect elliptical orbit syntax.\n");
+            return NULL;
+        }
+        else
+        {
+            return CreateEllipticalOrbit(orbitDataValue->getHash(),
+                                         usePlanetUnits);
+        }
+    }
+
+    Vec3d longlat(0.0, 0.0, 0.0);
+    if (planetData->getVector("LongLat", longlat))
+    {
+        Body* parent = system->getPrimaryBody();
+        if (parent != NULL)
+        {
+            Vec3f pos = parent->planetocentricToCartesian((float) longlat.x, (float) longlat.y, (float) longlat.z);
+            Point3d posd(pos.x, pos.y, pos.z);
+            return new SynchronousOrbit(*parent, posd);
+        }
+        else
+        {
+            // TODO: Allow fixing objects to the surface of stars.
+        }
+        return NULL;
+    }
+
+    return NULL;
+}
 
 // Create a body (planet or moon) using the values from a hash
 // The usePlanetsUnits flags specifies whether period and semi-major axis
 // are in years and AU rather than days and kilometers
 static Body* CreatePlanet(PlanetarySystem* system,
+                          Body* existingBody,
                           Hash* planetData,
                           const string& path,
                           bool usePlanetUnits = true)
 {
-    Body* body = new Body(system);
-
-    Orbit* orbit = NULL;
-    string customOrbitName;
-
-    if (planetData->getString("CustomOrbit", customOrbitName))
+    Body* body = NULL;
+    bool override = false;
+    string mode = "Add";
+    planetData->getString("Mode", mode);
+    if (mode == "Override")
     {
-        orbit = GetCustomOrbit(customOrbitName);
-        if (orbit == NULL)
-            DPRINTF(0, "Could not find custom orbit named '%s'\n",
-                    customOrbitName.c_str());
+        override = true;
+        body = existingBody;
+    }
+    if (body == NULL)
+    {
+        body = new Body(system);
     }
 
-    if (orbit == NULL)
+    Orbit* orbit = CreateOrbit(system, planetData, path, usePlanetUnits);
+
+    if (orbit != NULL)
     {
-        string sampOrbitFile;
-        if (planetData->getString("SampledOrbit", sampOrbitFile))
-        {
-            DPRINTF(1, "Attempting to load sampled orbit file '%s'\n",
-                    sampOrbitFile.c_str());
-            ResourceHandle orbitHandle =
-                GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile, path));
-            orbit = GetTrajectoryManager()->find(orbitHandle);
-            if (orbit == NULL)
-            {
-                DPRINTF(0, "Could not load sampled orbit file '%s'\n",
-                        sampOrbitFile.c_str());
-            }
-        }
+        body->setOrbit(orbit);
     }
 
-    if (orbit == NULL)
-    {
-        Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
-        if (orbitDataValue != NULL)
-        {
-            if (orbitDataValue->getType() != Value::HashType)
-            {
-                DPRINTF(0, "Object '%s' has incorrect elliptical orbit syntax.\n",
-                        body->getName().c_str());
-            }
-            else
-            {
-                orbit = CreateEllipticalOrbit(orbitDataValue->getHash(),
-                                              usePlanetUnits);
-            }
-        }
-    }
-
-    if (orbit == NULL)
-    {
-        Vec3d longlat(0.0, 0.0, 0.0);
-        if (planetData->getVector("LongLat", longlat))
-        {
-            Body* parent = system->getPrimaryBody();
-            if (parent != NULL)
-            {
-                Vec3f pos = parent->planetocentricToCartesian((float) longlat.x, (float) longlat.y, (float) longlat.z);
-                Point3d posd(pos.x, pos.y, pos.z);
-                orbit = new SynchronousOrbit(*parent, posd);
-            }
-            else
-            {
-                // TODO: Allow fixing objects to the surface of stars.
-            }
-        }
-    }
-
-    if (orbit == NULL)
+    if (body->getOrbit() == NULL)
     {
         DPRINTF(0, "No valid orbit specified for object '%s'; skipping . . .\n",
                 body->getName().c_str());
         delete body;
         return NULL;
     }
-    body->setOrbit(orbit);
 
-    double radius = 10000.0;
+    double radius = (double)body->getRadius();
     planetData->getNumber("Radius", radius);
     body->setRadius((float) radius);
 
-    int classification = Body::Unknown;
+    int classification = body->getClassification();
     string classificationName;
     if (planetData->getString("Class", classificationName))
     {
@@ -400,8 +416,6 @@ static Body* CreatePlanet(PlanetarySystem* system,
             classification = Body::Spacecraft;
         else if (compareIgnoringCase(classificationName, "invisible") == 0)
             classification = Body::Invisible;
-        else
-            classification = Body::Unknown;
     }
 
     if (classification == Body::Unknown)
@@ -429,6 +443,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     // double ending      =  numeric_limits<double>::infinity();
     double beginning   = -1.0e+50;
     double ending      =  1.0e+50;
+    body->getLifespan(beginning, ending);
     getDate(planetData, "Beginning", beginning);
     getDate(planetData, "Ending", ending);
     body->setLifespan(beginning, ending);
@@ -438,22 +453,38 @@ static Body* CreatePlanet(PlanetarySystem* system,
         body->setInfoURL(infoURL);
     
     double albedo = 0.5;
-    planetData->getNumber("Albedo", albedo);
-    body->setAlbedo((float) albedo);
+    if (planetData->getNumber("Albedo", albedo))
+        body->setAlbedo((float) albedo);
 
     double oblateness = 0.0;
-    planetData->getNumber("Oblateness", oblateness);
-    body->setOblateness((float) oblateness);
+    if (planetData->getNumber("Oblateness", oblateness))
+        body->setOblateness((float) oblateness);
+    
+    double mass = 0.0;
+    if (planetData->getNumber("Mass", mass))
+        body->setOblateness((float) mass);
 
     Quatf orientation;
     if (planetData->getRotation("Orientation", orientation))
         body->setOrientation(orientation);
 
-    body->setRotationElements(CreateRotationElements(planetData, (float) orbit->getPeriod()));
+    RotationElements re = body->getRotationElements();
+    re.period = (float) body->getOrbit()->getPeriod() / 24.0f;
+    FillinRotationElements(planetData, re, (float) body->getOrbit()->getPeriod());
+    body->setRotationElements(re);
 
-    Surface* surface = CreateSurface(planetData, path);
-    body->setSurface(*surface);
-    delete surface;
+    Surface surface;
+    if (override)
+    {
+        surface = body->getSurface();
+    }
+    else
+    {
+        surface.color = Color(1.0f, 1.0f, 1.0f);
+        surface.hazeColor = Color(0.0f, 0.0f, 0.0f, 0.0f);
+    }
+    FillinSurface(planetData, &surface, path);
+    body->setSurface(surface);
 
     {
         string model("");
@@ -486,15 +517,23 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 Hash* atmosData = atmosDataValue->getHash();
                 assert(atmosData != NULL);
                 
-                Atmosphere* atmosphere = new Atmosphere();
+                Atmosphere* atmosphere = NULL;
+                if (override)
+                {
+                    atmosphere = body->getAtmosphere();
+                }
+                else
+                {
+                    atmosphere = new Atmosphere();
+                }
                 atmosData->getNumber("Height", atmosphere->height);
                 atmosData->getColor("Lower", atmosphere->lowerColor);
                 atmosData->getColor("Upper", atmosphere->upperColor);
                 atmosData->getColor("Sky", atmosphere->skyColor);
                 atmosData->getColor("Sunset", atmosphere->sunsetColor);
                 atmosData->getNumber("CloudHeight", atmosphere->cloudHeight);
-                atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed);
-                atmosphere->cloudSpeed = degToRad(atmosphere->cloudSpeed);
+                if (atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed))
+                    atmosphere->cloudSpeed = degToRad(atmosphere->cloudSpeed);
 
                 string cloudTexture;
                 if (atmosData->getString("CloudMap", cloudTexture))
@@ -505,7 +544,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 }
 
                 body->setAtmosphere(*atmosphere);
-                delete atmosphere;
+                if (!override)
+                    delete atmosphere;
             }
 
             delete atmosDataValue;
@@ -631,24 +671,36 @@ bool LoadSolarSystemObjects(istream& in,
 
             if (parentSystem != NULL)
             {
-                if (parentSystem->find(name))
+                string mode = "Add";
+                objectData->getString("Mode", mode);
+                Body* existingBody = parentSystem->find(name);
+                if (existingBody && mode == "Add")
                 {
                     errorMessagePrelude(tokenizer);
                     cerr << "warning duplicate definition of " <<
                         parentName << " " <<  name << '\n';
                 }
                 
-                Body* body = CreatePlanet(parentSystem, objectData, directory, !orbitsPlanet);
+                Body* body = CreatePlanet(parentSystem, existingBody, objectData, directory, !orbitsPlanet);
                 if (body != NULL)
                 {
                     body->setName(name);
-                    parentSystem->addBody(body);
+                    if (mode == "Replace")
+                    {
+                        delete existingBody;
+                        parentSystem->addBody(body);
+                    } 
+                    else if (mode == "Add")
+                    {
+                        parentSystem->addBody(body);
+                    }
                 }
             }
         }
         else if (itemType == "AltSurface")
         {
-            Surface* surface = CreateSurface(objectData, directory);
+            Surface* surface = new Surface();
+            FillinSurface(objectData, surface, directory);
             if (surface != NULL && parent.body() != NULL)
                 parent.body()->addAlternateSurface(name, surface);
             else
