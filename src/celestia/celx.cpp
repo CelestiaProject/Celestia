@@ -844,8 +844,11 @@ static void CreateCelestiaMetaTable(lua_State* l)
 
 bool LuaState::init(CelestiaCore* appCore)
 {
-    // Import the base library
+    // Import the base and math libraries
     lua_baselibopen(state);
+    lua_mathlibopen(state);
+    lua_tablibopen(state);
+    lua_strlibopen(state);
 
     // Add an easy to use wait function, so that script writers can
     // live in ignorance of coroutines.  There will probably be a significant
