@@ -19,6 +19,7 @@
 
 #include <celutil/debug.h>
 #include <celutil/bytes.h>
+#include <celutil/utf8.h>
 #include <celengine/gl.h>
 #include "texturefont.h"
 
@@ -50,9 +51,9 @@ TextureFont::~TextureFont()
 }
 
 
-void TextureFont::render(int c) const
+void TextureFont::render(wchar_t ch) const
 {
-    const Glyph* glyph = getGlyph(c);
+    const Glyph* glyph = getGlyph(ch);
     if (glyph != NULL)
     {
         glBegin(GL_QUADS);
@@ -73,8 +74,16 @@ void TextureFont::render(int c) const
 void TextureFont::render(const string& s) const
 {
     int len = s.length();
-    for (int i = 0; i < len; i++)
-        render(s[i]);
+    bool validChar = true;
+    
+    for (int i = 0; i < len && validChar; i)
+    {
+        wchar_t ch = 0;
+        validChar = UTF8Decode(s, i, ch);
+        i += UTF8EncodedSize(ch);
+        
+        render(ch);
+    }
 }
 
 
@@ -82,9 +91,15 @@ int TextureFont::getWidth(const string& s) const
 {
     int width = 0;
     int len = s.length();
-    for (int i = 0; i < len; i++)
+    bool validChar = true;
+
+    for (int i = 0; i < len && validChar; i)
     {
-        const Glyph* g = getGlyph(s[i]);
+        wchar_t ch = 0;
+        validChar = UTF8Decode(s, i, ch);
+        i += UTF8EncodedSize(ch);
+
+        const Glyph* g = getGlyph(ch);
         if (g != NULL)
             width += g->advance;
     }
@@ -145,12 +160,12 @@ void TextureFont::addGlyph(const TextureFont::Glyph& g)
 }
 
 
-const TextureFont::Glyph* TextureFont::getGlyph(int c) const
+const TextureFont::Glyph* TextureFont::getGlyph(wchar_t ch) const
 {
-    if (c < 0 || c >= glyphLookupTableSize)
+    if (ch >= glyphLookupTableSize)
         return NULL;
     else
-        return glyphLookup[c];
+        return glyphLookup[ch];
 }
 
 
@@ -200,6 +215,7 @@ void TextureFont::rebuildGlyphLookupTable()
     if (glyphLookup != NULL)
         delete[] glyphLookup;
 
+    printf("texturefont: glyph table size %d\n", maxID + 1);
     DPRINTF(1, "texturefont: allocating glyph lookup table with %d entries.\n",
             maxID + 1);
     glyphLookup = new const Glyph*[maxID + 1];
@@ -209,7 +225,7 @@ void TextureFont::rebuildGlyphLookupTable()
     // Fill the table with glyph pointers
     for (iter = glyphs.begin(); iter != glyphs.end(); iter++)
         glyphLookup[iter->__id] = &(*iter);
-    glyphLookupTableSize = maxID + 1;
+    glyphLookupTableSize = (unsigned int) maxID + 1;
 }
 
 
