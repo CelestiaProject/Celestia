@@ -10,7 +10,7 @@
 #import "CelestiaVector.h"
 #import "CelestiaUniversalCoord.h"
 
-@interface CelestiaUniversalCoord : NSObject <NSCoding> {
+@interface CelestiaUniversalCoord : NSObject /*<NSCoding>*/ {
     NSData* _data;
 }
 -(void)encodeWithCoder:(NSCoder*)coder;

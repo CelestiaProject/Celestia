@@ -20,6 +20,7 @@
 #define MIN(a,b) ((a<b)?a:b)
 #endif
 
+
 class StarBrowser
 {
  public:
@@ -32,8 +33,8 @@ class StarBrowser
 
     StarBrowser();
     StarBrowser(Simulation *_appSim, int pred = NearestStars);
+    std::vector<const Star*>* listStars(unsigned int);
     void setSimulation(Simulation *_appSim);
-    vector<const Star*>* listStars(unsigned int);
     const Star *nearestStar(void);
     bool setPredicate(int pred);
     void refresh();
