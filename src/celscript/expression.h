@@ -29,17 +29,18 @@ class BinaryExpression : public Expression
  public:
     enum Operator
     {
-        Add,
-        Subtract,
-        Multiply,
-        Divide,
-        Equal,
-        NotEqual,
-        Lesser,
-        Greater,
-        LesserEqual,
-        GreaterEqual,
-        InvalidOp,
+        Add           =  0,
+        Subtract      =  1,
+        Multiply      =  2,
+        Divide        =  3,
+        Equal         =  4,
+        NotEqual      =  5,
+        Lesser        =  6,
+        Greater       =  7,
+        LesserEqual   =  8,
+        GreaterEqual  =  9,
+        InvalidOp     = 10,
+        OperatorCount = 11,
     };
 
     BinaryExpression(Operator, Expression*, Expression*);
