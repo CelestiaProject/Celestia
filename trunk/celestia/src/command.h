@@ -174,6 +174,17 @@ class CommandChangeDistance : public TimedCommand
 };
 
 
+class CommandOrbit : public TimedCommand
+{
+ public:
+    CommandOrbit(double _duration, const Vec3f& axis, float rate);
+    void process(Simulation*, Renderer*, double t, double dt);
+
+ private:
+    Vec3f spin;
+};
+
+
 class CommandSetPosition : public InstantaneousCommand
 {
  public:
