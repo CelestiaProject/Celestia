@@ -1,0 +1,156 @@
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "Beginning demo . . .  Press ESC to end." }
+	wait { duration 2.0 }
+
+	print { text "Let's start someplace\nfamiliar . . ." }
+	select { object "Sol" }
+	select { object "Earth" }
+	cancel {}
+	setorientation { axis [ 1 0 0 ] angle 180 }
+	goto { time 0  distance 3 }
+	wait { duration 1.5 }
+
+	print { text "We're now orbiting about 20,000km above the Earth" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "Earth looks much more familiar with clouds." }
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "Next stop: the Moon." }
+	select { object "Moon" }
+	goto { time 5 distance 4 }
+	wait { duration 5.5 }
+	print { text "Watch for the Earth and Sun as we orbit the Moon" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Off toward the Sun." }
+	select { object "Sol" }
+	goto { time 8 distance 12 }
+	wait { duration 8.5 }
+	print { text "At this distance, dark sunspots are visible on the Sun's surface." }
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Let's zoom out for an overview of the inner solar system." }
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Turning on planet labels . . ." }
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "We can speed up time to watch the planets orbit the sun." }
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "For each second, a month of time elapses in the simulation." }
+	wait { duration 12.0 }
+	timerate { rate 0 }
+	print { text "Now, time has been stopped completely." }
+
+	wait { duration 1.0 }
+	print { text "Our next destination is Saturn." }
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Several of the moons of Saturn are visible as bright dots" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 3 }
+	print { text "" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 9 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 }
+	print { text "The most prominent feature on Saturn's moon Mimas is the huge impact crater Herschel." }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	print { text "" }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Note how faint the Sun appears at this distance." }
+	wait { duration 2 }
+
+	print { text "Let's look around at the stars in the sky." }
+	wait { duration 1 }
+	select { object "Phecda" }
+	center { time 2 }
+	print { text "Northern Hemisphere residents should recognize the Big Dipper in the constellation Ursa Major." }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "We're now centered on Polaris, the North Star." }
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Polaris is part of the asterism commonly called the Little Dipper." }
+	wait { duration 2 }
+	print { text "To help us get oriented in the sky, Celestia can draw constellation diagrams for us . . ." }
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text ". . . and constellation names" }
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Orion is the sky's most prominent constellation." }
+	wait { duration 4 }
+	print { text "" }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "The Southern Cross is a familiar sight in Southern Hemisphere skies." }
+	wait { duration 4 }
+	print { text "" }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Let's enable galaxy rendering so that we can see the Milky Way" }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 4 }
+	print { text "" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "We'll now travel to the Antares, a red giant star in Scorpius." }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	print { text "" }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "Even though we are now 10 times farther from Antares than\nEarth is from the Sun, the massive red giant star still looms huge in the sky." }
+	wait { duration 4.0 }
+
+	print { text "Let's zoom out and get the big picture . . ." }
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "We're viewing the entire Milky Way galaxy." }
+	orbit { axis [ 1 0 0 ] rate 30 duration 6.0 }
+	print { text "" }
+	orbit { axis [ 1 0 0 ] rate 30 duration 10.0 }
+	print { text "Time to go home . . ." }
+
+	select { object "Sol" }
+	select { object "Earth" }
+	goto { time 20 distance 10 }
+
+	print { text "The End" }
+	wait { duration 2.0 }
+}
