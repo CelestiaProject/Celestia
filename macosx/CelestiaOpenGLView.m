@@ -18,6 +18,7 @@
 
 @implementation CelestiaOpenGLView
 
+/*
 - (id) initWithCoder: (NSCoder *) coder
 {   
     NSOpenGLPixelFormatAttribute attrs[] = 
@@ -42,7 +43,7 @@
         
     return self;
 }
-
+*/
 
 - (BOOL) isFlipped {return YES;}
 
