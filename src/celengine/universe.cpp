@@ -625,7 +625,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     {
         Vec3f axis = direction ^ n;
         axis.normalize();
-        rotation.setAxisAngle(axis, (float) 2.0 * asin(sinAngle2));
+        rotation.setAxisAngle(axis, (float) (2.0 * asin(sinAngle2)));
     }
     StarPicker picker(o, direction, tolerance);
     starCatalog->findVisibleStars(picker,
@@ -962,14 +962,18 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
     if (sel.getType() == Selection::Type_Body)
     {
         worlds = sel.body()->getSatellites();
-        if (withLocations) {
-            std::vector<Location*>* locations = sel.body()->getLocations();
+        std::vector<Location*>* locations = sel.body()->getLocations();
+        if (locations != NULL && withLocations)
+        {
             string search = s.substr(pos + 1);
             for (vector<Location*>::const_iterator iter = locations->begin();
                  iter != locations->end(); iter++)
             {
-                if (!UTF8StringCompare(search, (*iter)->getName(), search.length()))
+                if (!UTF8StringCompare(search, (*iter)->getName(),
+                                       search.length()))
+                {
                     locationCompletion.push_back((*iter)->getName());
+                }
             }
         }
     }
