@@ -23,6 +23,7 @@ enum ContentType {
     Content_CelestiaMesh   = 8,
     Content_AVI            = 9,
     Content_CelestiaCatalog = 10,
+    Content_DDS             = 11,
     Content_Unknown         = -1,
 };
 
