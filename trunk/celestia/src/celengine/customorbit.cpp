@@ -2304,7 +2304,7 @@ static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
 };
 
 
-Orbit* GetCustomOrbit(const std::string& name)
+Orbit* GetCustomOrbit(const string& name)
 {
     if (name == "mercury")
         return new MercuryOrbit();
