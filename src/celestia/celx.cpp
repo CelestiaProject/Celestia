@@ -297,6 +297,12 @@ static int parseRenderFlag(const string& name)
         return Renderer::ShowBoundaries;
     else if (compareIgnoringCase(name, "markers") == 0)
         return Renderer::ShowMarkers;
+    else if (compareIgnoringCase(name, "automag") == 0)
+        return Renderer::ShowAutoMag;
+    else if (compareIgnoringCase(name, "atmospheres") == 0)
+        return Renderer::ShowAtmospheres;
+    else if (compareIgnoringCase(name, "grid") == 0)
+        return Renderer::ShowCelestialSphere;
     else
         return 0;
 }
