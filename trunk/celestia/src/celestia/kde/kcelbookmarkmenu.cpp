@@ -173,6 +173,7 @@ void KCelBookmarkMenu::addAddBookmark()
   paAddBookmarks->plug( m_parentMenu );
   m_actions.append( paAddBookmarks );
   addAddRelativeBookmark();
+  addAddSettingsBookmark();
 }
 
 void KCelBookmarkMenu::addAddRelativeBookmark()
@@ -190,6 +191,20 @@ void KCelBookmarkMenu::addAddRelativeBookmark()
   m_actions.append( paAddBookmarks );
 }
 
+void KCelBookmarkMenu::addAddSettingsBookmark()
+{
+  KAction * paAddBookmarks = new KAction( i18n( "Add &Settings Bookmark" ),
+                                          "bookmark_add",
+                                          m_bIsRoot ? ALT + Key_S : 0, //m_bIsRoot ? KStdAccel::addBookmark() : KShortcut(),
+                                          this,
+                                          SLOT( slotAddSettingsBookmark() ),
+                                          m_actionCollection, m_bIsRoot ? "add_settings_bookmark" : 0 );
+
+  paAddBookmarks->setStatusText( i18n( "Add a settings bookmark for the current document" ) );
+
+  paAddBookmarks->plug( m_parentMenu );
+  m_actions.append( paAddBookmarks );
+}
 
 void KCelBookmarkMenu::addEditBookmarks()
 {
@@ -330,6 +345,52 @@ void KCelBookmarkMenu::slotAddRelativeBookmark()
   m_pManager->emitChanged( parentBookmark );
 }
 
+void KCelBookmarkMenu::slotAddSettingsBookmark()
+{
+  Url Url = m_pOwner->currentUrl(Url::Settings);
+  QString url = QString(Url.getAsString().c_str());;
+  if (url.isEmpty())
+  {
+    KMessageBox::error( 0L, i18n("Can't add bookmark with empty URL"));
+    return;
+  }
+  QString title = QString(Url.getName().c_str());
+  if (title.isEmpty())
+    title = url;
+
+  KBookmarkGroup parentBookmark = m_pManager->findByAddress( m_parentAddress ).toGroup();
+  Q_ASSERT(!parentBookmark.isNull());
+  // If this title is already used, we'll try to find something unused.
+  KBookmark ch = parentBookmark.first();
+  int count = 1;
+  QString uniqueTitle = title;
+  do
+  {
+    while ( !ch.isNull() )
+    {
+      if ( uniqueTitle == ch.text() )
+      {
+        // Title already used !
+        if ( url != ch.url().url() )
+        {
+          uniqueTitle = title + QString(" (%1)").arg(++count);
+          // New title -> restart search from the beginning
+          ch = parentBookmark.first();
+          break;
+        }
+        else
+        {
+          // this exact URL already exists
+          return;
+        }
+      }
+      ch = parentBookmark.next( ch );
+    }
+  } while ( !ch.isNull() );
+
+  parentBookmark.addBookmark( m_pManager, uniqueTitle, url, m_pOwner->currentIcon() );
+  m_pManager->emitChanged( parentBookmark );
+}
 
 void KCelBookmarkMenu::slotAddBookmark()
 {

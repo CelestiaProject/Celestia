@@ -28,7 +28,8 @@ class Url
 public:
     enum UrlType {
         Absolute = 0,
-        Relative = 1
+        Relative = 1,
+        Settings = 2,
     };
     
     Url();
