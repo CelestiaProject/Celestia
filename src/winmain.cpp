@@ -1016,7 +1016,6 @@ static void HandleScreenCapture(HWND hWnd)
     Ofn.lStructSize = sizeof(OPENFILENAME);
     Ofn.hwndOwner = hWnd;
     Ofn.lpstrFilter = "JPEG - JFIF Compliant\0*.jpg;*.jif;*.jpeg\0Portable Network Graphics\0*.png\0";
-    Ofn.lpstrDefExt = "jpg";
     Ofn.lpstrFile= szFile;
     Ofn.nMaxFile = sizeof(szFile);
     Ofn.lpstrFileTitle = szFileTitle;
@@ -1043,13 +1042,42 @@ static void HandleScreenCapture(HWND hWnd)
 
         bool success = false;
 
-        if (Ofn.nFilterIndex == 1)
+        DWORD nFileType=0;
+        char defaultExtensions[][4] = {"jpg", "png"};
+        if(Ofn.nFileExtension == 0)
+        {
+            //If no extension was specified, use the selection of filter to determine
+            //which type of file should be created, instead of just defaulting to JPEG.
+            nFileType = Ofn.nFilterIndex;
+            strcat(Ofn.lpstrFile, ".");
+            strcat(Ofn.lpstrFile, defaultExtensions[nFileType-1]);
+        }
+        else if(*(Ofn.lpstrFile + Ofn.nFileExtension) == '\0')
+        {
+            //If just a period was specified for the extension, use the selection of
+            //filter to determine which type of file should be created, instead of
+            //just defaulting to JPEG.
+            nFileType = Ofn.nFilterIndex;
+            strcat(Ofn.lpstrFile, defaultExtensions[nFileType-1]);
+        }
+        else
+        {
+            //Select file type based on user-supplied extension.
+            char* pExtension = Ofn.lpstrFile + Ofn.nFileExtension;
+            if(!stricmp(pExtension, "jpg") ||
+               !stricmp(pExtension, "jif") ||
+               !stricmp(pExtension, "jpeg"))
+                nFileType = 1;
+            else if(!stricmp(pExtension, "png"))
+                nFileType = 2;
+        }
+        if (nFileType == 1)
         {
             success = CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
                                             viewport[0], viewport[1],
                                             viewport[2], viewport[3]);
         }
-        else if (Ofn.nFilterIndex == 2)
+        else if (nFileType == 2)
         {
             success = CaptureGLBufferToPNG(string(Ofn.lpstrFile),
                                            viewport[0], viewport[1],
@@ -1057,14 +1085,20 @@ static void HandleScreenCapture(HWND hWnd)
         }
         else
         {
-            DPRINTF("WTF? Unknown filter index for screen capture.\n");
+            //Invalid file extension specified.
+            DPRINTF("WTF? Unknown file extension specified for screen capture.\n");
         }
 
         if (!success)
         {
-            MessageBox(NULL,
-                       "Could not save image file.", "Error",
-                       MB_OK | MB_ICONERROR);
+            char errorMsg[64];
+
+            if(nFileType == 0)
+                sprintf(errorMsg, "Specified file extension is not recognized.");
+            else
+                sprintf(errorMsg, "Could not save image file.");
+
+            MessageBox(hWnd, errorMsg, "Error", MB_OK | MB_ICONERROR);
         }
     }
 }
