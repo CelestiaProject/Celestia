@@ -89,7 +89,8 @@ bool ODMenu::Init(HWND hOwnerWnd, HMENU hMenu)
     //Traverse through all menu items to allocate a map of ODMENUITEM which
     //will be subsequently used to measure and draw menu items.
 
-    EnumMenuItems(hMenu);
+    if(m_seqNumber == 0)
+        EnumMenuItems(hMenu);
 
     return true;
 }
