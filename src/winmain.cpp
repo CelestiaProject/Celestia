@@ -453,7 +453,7 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
             EndDialog(hDlg, 0);
             return TRUE;
         }
-        if (LOWORD(wParam) == IDC_SETCURTIME)
+        if (LOWORD(wParam) == IDC_SETCURRENTTIME)
         {
             //Set newTime = current system time;
             newTime = astro::Date((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
