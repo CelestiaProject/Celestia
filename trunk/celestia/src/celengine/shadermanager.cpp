@@ -377,6 +377,16 @@ SeparateDiffuse(unsigned int i)
 
 
 static string
+SeparateSpecular(unsigned int i)
+{
+    // Used for packing multiple specular factors into the specular color.
+    char buf[32];
+    sprintf(buf, "specFactors.%c", "xyzw"[i & 3]);
+    return string(buf);
+}
+
+
+static string
 TexCoord2D(unsigned int i)
 {
     char buf[64];
@@ -426,8 +436,16 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
 
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
-        source += "spec += vec4(" + LightProperty(i, "specular") +
-            " * (pow(nDotHV, shininess) * nDotVP), 1);\n";
+        if (props.usesShadows())
+        {
+            source += SeparateSpecular(i) +
+                " = pow(nDotHV, shininess);\n";
+        }
+        else
+        {
+            source += "spec += vec4(" + LightProperty(i, "specular") +
+                " * (pow(nDotHV, shininess) * nDotVP), 1.0);\n";
+        }
     }
 
     if (props.texUsage & ShaderProperties::NightTexture)
@@ -518,7 +536,12 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
-        source += "varying vec4 spec;\n";
+    {
+        if (!props.usesShadows())
+            source += "varying vec4 spec;\n";
+        else
+            source += "varying vec4 specFactors;\n";
+    }
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "varying vec2 diffTexCoord;\n";
@@ -695,7 +718,17 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
-        source += "varying vec4 spec;\n";
+    {
+        if (props.usesShadows())
+        {
+            source += "varying vec4 specFactors;\n";
+            source += "vec4 spec;\n";
+        }
+        else
+        {
+            source += "varying vec4 spec;\n";
+        }
+    }
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
@@ -773,14 +806,23 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             // Bump mapping with self shadowing
             source += "l = max(0.0, dot(" + LightDir(i) + ", n)) * clamp(" + LightDir(i) + ".z * 8.0, 0.0, 1.0);\n";
 
+            string illum;
             if (props.hasShadowsForLight(i))
-            {
-                source += ShadowsForLightSource(props, i);
-                source += "diff += vec4(l * " + FragLightProperty(i, "color") + ", 0) * shadow;\n";
-            }
+                illum = string("l * shadow");
             else
+                illum = string("l");
+
+            if (props.hasShadowsForLight(i))
+                source += ShadowsForLightSource(props, i);
+
+            source += "diff += vec4(" + illum + " * " +
+                FragLightProperty(i, "color") + ", 0);\n";
+
+            if (props.lightModel == ShaderProperties::SpecularModel &&
+                props.usesShadows())
             {
-                source += "diff += vec4(l * " + FragLightProperty(i, "color") + ", 0);\n";
+                source += "spec += " + illum + " * " + SeparateSpecular(i) +
+                    " * vec4(" + FragLightProperty(i, "color") + ", 0.0);\n";
             }
         }
     }
@@ -792,6 +834,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             source += ShadowsForLightSource(props, i);
             source += "diff += shadow * vec4(" +
                 FragLightProperty(i, "color") + ", 0.0);\n";
+            if (props.lightModel == ShaderProperties::SpecularModel)
+            {
+                source += "spec += shadow * " + SeparateSpecular(i) +
+                    " * vec4(" +
+                    FragLightProperty(i, "color") + ", 0.0);\n";
+            }
         }
     }
 
