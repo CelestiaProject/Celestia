@@ -40,6 +40,43 @@ Statement::Control ExpressionStatement::execute()
 }
 
 
+CompoundStatement::CompoundStatement()
+{
+}
+
+CompoundStatement::~CompoundStatement()
+{
+    for (vector<Statement*>::iterator iter = statements.begin();
+         iter != statements.end(); iter++)
+    {
+        delete *iter;
+    }
+}
+
+Statement::Control CompoundStatement::execute()
+{
+    for (vector<Statement*>::iterator iter = statements.begin();
+         iter != statements.end(); iter++)
+    {
+        Control control = (*iter)->execute();
+        switch (control)
+        {
+        case ControlReturn:
+        case ControlBreak:
+        case ControlContinue:
+            return control;
+        default:
+            break;
+        }
+    }
+}
+
+void CompoundStatement::addStatement(Statement* st)
+{
+    statements.insert(statements.end(), st);
+}
+
+
 
 IfStatement::IfStatement(Expression* _cond, Statement* _ifClause,
                          Statement* _elseClause) :
@@ -50,6 +87,7 @@ IfStatement::IfStatement(Expression* _cond, Statement* _ifClause,
 IfStatement::~IfStatement()
 {
 }
+
 
 Statement::Control IfStatement::execute()
 {
