@@ -106,6 +106,7 @@ template<class T> class Matrix4
     Matrix4();
     Matrix4(const Vector4<T>&, const Vector4<T>&,
             const Vector4<T>&, const Vector4<T>&);
+    Matrix4(const Matrix4<T>& m);
 
     inline const Vector4<T>& operator[](int) const;
     inline Vector4<T> row(int) const;
@@ -124,6 +125,7 @@ template<class T> class Matrix4
     void translate(const Point3<T>&);
 
     Matrix4<T> transpose() const;
+    Matrix4<T> inverse() const;
 
     Vector4<T> r[4];
 };
@@ -785,6 +787,15 @@ template<class T> Matrix4<T>::Matrix4(const Vector4<T>& v0,
 }
 
 
+template<class T> Matrix4<T>::Matrix4(const Matrix4<T>& m)
+{
+    r[0] = m.r[0];
+    r[1] = m.r[1];
+    r[2] = m.r[2];
+    r[3] = m.r[3];
+}
+
+
 template<class T> const Vector4<T>& Matrix4<T>::operator[](int n) const
 {
     return r[n];
@@ -944,7 +955,7 @@ template<class T> Point3<T> operator*(const Point3<T>& p, const Matrix4<T>& m)
 }
 
 // multiply column vector by a 4x4 matrix
-template<class T> Vector4<T> operator*(Matrix4<T>& m, const Vector4<T>& v)
+template<class T> Vector4<T> operator*(const Matrix4<T>& m, const Vector4<T>& v)
 {
     return Vector4<T>(m.r[0].x * v.x + m.r[0].y * v.y + m.r[0].z * v.z + m.r[0].w * v.w,
 		      m.r[1].x * v.x + m.r[1].y * v.y + m.r[1].z * v.z + m.r[1].w * v.w,
@@ -987,6 +998,52 @@ template<class T> Matrix4<T> operator*(const Matrix4<T>& a,
 template<class T> Matrix4<T> operator+(const Matrix4<T>& a, const Matrix4<T>& b)
 {
     return Matrix4<T>(a[0] + b[0], a[1] + b[1], a[2] + b[2], a[3] + b[3]);
+}
+
+
+// Compute inverse using Gauss-Jordan elimination; caller is responsible
+// for ensuring that the matrix isn't singular.
+template<class T> Matrix4<T> Matrix4<T>::inverse() const
+{
+    Matrix4<T> a(*this);
+    Matrix4<T> b(Matrix4<T>::identity());
+    int i, j;
+    int p;
+
+    for (j = 0; j < 4; j++)
+    {
+        p = j;
+        for (i = j + 1; i < 4; i++)
+        {
+            if (fabs(a.r[i][j]) > fabs(a.r[p][j]))
+                p = i;
+        }
+
+        // Swap rows p and j
+        Vector4<T> t = a.r[p];
+        a.r[p] = a.r[j];
+        a.r[j] = t;
+
+        t = b.r[p];
+        b.r[p] = b.r[j];
+        b.r[j] = t;
+
+        T s = a.r[j][j];  // if s == 0, the matrix is singular
+        a.r[j] *= (1.0f / s);
+        b.r[j] *= (1.0f / s);
+
+        // Eliminate off-diagonal elements
+        for (i = 0; i < 4; i++)
+        {
+            if (i != j)
+            {
+                b.r[i] -= a.r[i][j] * b.r[j];
+                a.r[i] -= a.r[i][j] * a.r[j];
+            }
+        }
+    }
+
+    return b;
 }
 
 
