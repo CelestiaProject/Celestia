@@ -340,12 +340,12 @@ static Orbit* CreateOrbit(PlanetarySystem* system,
     if (planetData->getString("CustomOrbit", customOrbitName))
     {
         orbit = GetCustomOrbit(customOrbitName);
-        if (orbit == NULL)
+        if (orbit != NULL)
         {
-            DPRINTF(0, "Could not find custom orbit named '%s'\n",
-                    customOrbitName.c_str());
+            return orbit;
         }
-        return orbit;
+        DPRINTF(0, "Could not find custom orbit named '%s'\n",
+                customOrbitName.c_str());
     }
 
     string sampOrbitFile;
@@ -356,12 +356,12 @@ static Orbit* CreateOrbit(PlanetarySystem* system,
         ResourceHandle orbitHandle =
             GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile, path));
         orbit = GetTrajectoryManager()->find(orbitHandle);
-        if (orbit == NULL)
+        if (orbit != NULL)
         {
-            DPRINTF(0, "Could not load sampled orbit file '%s'\n",
-                    sampOrbitFile.c_str());
+            return orbit;
         }
-        return orbit;
+        DPRINTF(0, "Could not load sampled orbit file '%s'\n",
+                sampOrbitFile.c_str());
     }
 
     Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
