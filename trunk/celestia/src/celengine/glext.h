@@ -23,6 +23,12 @@ extern "C" {
 #define GL_CLAMP_TO_EDGE_EXT                ((GLenum) 0x812F)
 #endif
 
+/* EXT_texture_edge_clamp defines from <GL/gl.h> */
+#ifndef GL_ARB_texture_border_clamp
+#define GL_ARB_texture_border_clamp 1
+#define GL_CLAMP_TO_BORDER_ARB              ((GLenum) 0x812D)
+#endif
+
 /* EXT_bgra defines from <GL/gl.h> */
 #ifndef GL_EXT_bgra
 #define GL_EXT_bgra 1
