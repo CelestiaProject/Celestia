@@ -448,7 +448,7 @@ void Simulation::setSelection(const Selection& sel)
 
 struct PlanetPickInfo
 {
-    float cosClosestAngle;
+    double cosClosestAngle;
     double closestDistance;
     Body* closestBody;
     Vec3d direction;
@@ -514,7 +514,7 @@ Selection Simulation::pickPlanet(Observer& observer,
                                (double) pickRay.z);
     pickInfo.origin    = astro::heliocentricPosition(observer.getPosition(),
                                                      sun.getPosition());
-    pickInfo.cosClosestAngle = -1.0f;
+    pickInfo.cosClosestAngle = -1.0;
     pickInfo.closestDistance = 1.0e50;
     pickInfo.closestBody = NULL;
     pickInfo.jd = simTime;
@@ -524,9 +524,7 @@ Selection Simulation::pickPlanet(Observer& observer,
     solarSystem.getPlanets()->traverse(ExactPlanetPickTraversal,
                                        (void*) &pickInfo);
     if (pickInfo.closestBody != NULL)
-    {
         return Selection(pickInfo.closestBody);
-    }
 
     // If no planet was intersected by the pick ray, choose the planet
     // with the smallest angular separation from the pick ray.  Very distant
@@ -536,7 +534,7 @@ Selection Simulation::pickPlanet(Observer& observer,
     // has to be greater than their actual disc size.
     solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
                                        (void*) &pickInfo);
-    if (pickInfo.cosClosestAngle > cos(degToRad(0.5f)))
+    if (pickInfo.cosClosestAngle > cos(degToRad(0.5)))
         return Selection(pickInfo.closestBody);
     else
         return Selection();
