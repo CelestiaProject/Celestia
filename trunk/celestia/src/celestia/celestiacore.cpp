@@ -1008,9 +1008,26 @@ void CelestiaCore::start(double t)
 }
 
 
-void CelestiaCore::setStartURL(std::string url) {
-    startURL = url;
-    initScript =NULL;
+void CelestiaCore::setStartURL(std::string url) 
+{
+    if (!url.substr(0,4).compare("cel:")) 
+    {
+        startURL = url;
+        free(initScript);
+        initScript = NULL;
+    } 
+    else 
+    {
+        free(initScript);   
+        ifstream scriptfile(url.c_str());
+        CommandParser parser(scriptfile);
+        initScript = parser.parse();
+        if (initScript == NULL)
+        {
+            const vector<string>* errors = parser.getErrors();
+            for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
+        }
+    }
 }
 
 
