@@ -112,6 +112,8 @@ Planets [
 			Inclination      5.15
 		}
 
+		RotationPhase 225
+
 		Albedo           0.12
 	}
 	{
