@@ -23,7 +23,7 @@ template<class T> class Plane
     inline Plane(const Vector3<T>&, T);
     inline Plane(const Vector3<T>&, const Point3<T>&);
 
-    T distanceTo(const Point3<T>&);
+    T distanceTo(const Point3<T>&) const;
 
  public:
     Vector3<T> normal;
@@ -55,9 +55,21 @@ template<class T> Plane<T>::Plane(const Vector3<T>& _normal, const Point3<T>& _p
     d = _normal.x * _point.x + _normal.y * _point.y + _normal.z * _point.z;
 }
 
-template<class T> T Plane<T>::distanceTo(const Point3<T>& p)
+template<class T> T Plane<T>::distanceTo(const Point3<T>& p) const
 {
-    return normal.x * p.x + normal.y * p.y + normal.z * p.z - d;
+    return normal.x * p.x + normal.y * p.y + normal.z * p.z + d;
+}
+
+template<class T> Plane<T> operator*(const Matrix4<T>& m, const Plane<T>& p)
+{
+    Vector4<T> v = m * Vector4<T>(p.normal.x, p.normal.y, p.normal.z, p.d);
+    return Plane<T>(Vector3<T>(v.x, v.y, v.z), v.w);
+}
+
+template<class T> Plane<T> operator*(const Plane<T>& p, const Matrix4<T>& m)
+{
+    Vector4<T> v = Vector4<T>(p.normal.x, p.normal.y, p.normal.z, p.d) * m;
+    return Plane<T>(Vector3<T>(v.x, v.y, v.z), v.w);
 }
 
 #endif // _PLANE_H_
