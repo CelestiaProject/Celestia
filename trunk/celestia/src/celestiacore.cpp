@@ -113,8 +113,10 @@ CelestiaCore::CelestiaCore() :
     fps(0.0),
     fpsCounterStartTime(0.0),
     mouseMotion(0.0f),
-    mouseWheelMotion(0.0),
-    mouseWheelTime(0.0),
+    dollyMotion(0.0),
+    dollyTime(0.0),
+    zoomMotion(0.0),
+    zoomTime(0.0),
     currentTime(0.0),
     timeScale(1.0),
     paused(false),
@@ -239,12 +241,20 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     }
 }
 
-void CelestiaCore::mouseWheel(float motion)
+void CelestiaCore::mouseWheel(float motion, int modifiers)
 {
     if (motion != 0.0)
     {
-        mouseWheelTime = currentTime;
-        mouseWheelMotion = 0.25f * motion;
+        if ((modifiers & ShiftKey) != 0)
+        {
+            zoomTime = currentTime;
+            zoomMotion = 0.25f * motion;
+        }
+        else
+        {
+            dollyTime = currentTime;
+            dollyMotion = 0.25f * motion;
+        }
     }
 }
 
@@ -625,22 +635,38 @@ void CelestiaCore::tick(double dt)
     }
 
     // Mouse wheel zoom
-    if (mouseWheelMotion != 0.0f)
+    if (zoomMotion != 0.0f)
     {
-        double mouseWheelSpan = 0.1;
+        double span = 0.1;
         double fraction;
                 
-        if (currentTime - mouseWheelTime >= mouseWheelSpan)
-            fraction = (mouseWheelTime + mouseWheelSpan) - lastTime;
+        if (currentTime - zoomTime >= span)
+            fraction = (zoomTime + span) - lastTime;
         else
-            fraction = dt / mouseWheelSpan;
+            fraction = dt / span;
 
-        sim->changeOrbitDistance(mouseWheelMotion * (float) fraction);
-        if (currentTime - mouseWheelTime >= mouseWheelSpan)
-            mouseWheelMotion = 0.0f;
+        // sim->changeOrbitDistance(zoomMotion * (float) fraction);
+        if (currentTime - zoomTime >= span)
+            zoomMotion = 0.0f;
     }
 
-    // Keyboard zoom
+    // Mouse wheel dolly
+    if (dollyMotion != 0.0f)
+    {
+        double span = 0.1;
+        double fraction;
+                
+        if (currentTime - dollyTime >= span)
+            fraction = (dollyTime + span) - lastTime;
+        else
+            fraction = dt / span;
+
+        sim->changeOrbitDistance(dollyMotion * (float) fraction);
+        if (currentTime - dollyTime >= span)
+            dollyMotion = 0.0f;
+    }
+
+    // Keyboard dolly
     if (keysPressed[Key_Home])
         sim->changeOrbitDistance(-dt * 2);
     if (keysPressed[Key_End])
