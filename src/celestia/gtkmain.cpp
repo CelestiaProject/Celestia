@@ -126,6 +126,7 @@ enum
     Menu_ShowBoundaries      = 2020,
     Menu_AntiAlias           = 2021,
     Menu_AutoMag             = 2022,
+    Menu_ShowCometTails      = 2023,
 };
 
 static void menuSelectSol()
@@ -212,6 +213,13 @@ static gint menuShowAtmospheres(GtkWidget* w, gpointer data)
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetRenderFlag(Renderer::ShowAtmospheres, on);
     appCore->charEntered('\001'); //Ctrl+A
+    return TRUE;
+}
+static gint menuShowCometTails(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetRenderFlag(Renderer::ShowCometTails, on);
+    appCore->charEntered('\024'); //Ctrl+T
     return TRUE;
 }
 static gint menuShowBoundaries(GtkWidget* w, gpointer data)
@@ -545,7 +553,7 @@ void makeRadioItems(char **labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkTog
 static gint changeLMag(GtkSpinButton *spinner, void *dummy)
 {
     float tmp= gtk_spin_button_get_value_as_float(spinner);
-    if(tmp>0.001f && tmp < 12.5f)
+    if(tmp>0.001f && tmp < 15.5f)
         appCore->setFaintest(tmp);
     return TRUE;
 }
@@ -596,14 +604,14 @@ static void menuOptions()
     GtkWidget *hbox = gtk_hbox_new(FALSE, 3);
     GtkWidget *midBox = gtk_vbox_new(FALSE, 3);
     GtkWidget *miscBox = gtk_vbox_new(FALSE, 3);
-    GtkWidget *limitFrame = gtk_frame_new("Limiting Magnitude");
+    GtkWidget *limitFrame = gtk_frame_new("Limiting Star Magnitude");
     GtkWidget *ambientFrame = gtk_frame_new("Ambient Light");
     GtkWidget *ambientBox = gtk_vbox_new(FALSE, 3);
     GtkWidget *infoFrame = gtk_frame_new("Info Text");
     GtkWidget *infoBox = gtk_vbox_new(FALSE, 3);
     GtkWidget *limitBox = gtk_hbox_new(FALSE, 3);
-    GtkWidget *label = gtk_label_new(" Mag ");
-    GtkWidget *label2 = gtk_label_new(" Stars visible ");
+    GtkWidget *label = gtk_label_new("           ");
+    GtkWidget *label2 = gtk_label_new("   m      ");
     if ((optionDialog == NULL) || (hbox == NULL) || (midBox==NULL) ||
         (limitFrame == NULL) || (limitBox == NULL) || (ambientFrame == NULL) ||
         (infoFrame == NULL) || (miscBox == NULL) || (ambientBox == NULL) ||
@@ -635,14 +643,14 @@ static void menuOptions()
 
     GtkAdjustment *adj= (GtkAdjustment *)
                         gtk_adjustment_new((gfloat)appSim->getFaintestVisible(),
-                                           0.001, 12.5, 0.5, 2.0, 0.0);
+                                          0.001, 15.5, 0.5, 2.0, 0.0);
     spinner = gtk_spin_button_new (adj, 0.5, 0);
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spinner), TRUE);
     gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), FALSE);
-    gtk_spin_button_set_shadow_type (GTK_SPIN_BUTTON (spinner), GTK_SHADOW_IN);
+    gtk_spin_button_set_shadow_type (GTK_SPIN_BUTTON (spinner), GTK_SHADOW_ETCHED_IN);
     gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON (spinner),FALSE);
-    gtk_entry_set_max_length(GTK_ENTRY (spinner), 4 );
-    gtk_spin_button_set_digits(GTK_SPIN_BUTTON (spinner), 1);
+    gtk_entry_set_max_length(GTK_ENTRY (spinner), 6 );
+    gtk_spin_button_set_digits(GTK_SPIN_BUTTON (spinner), 2);
     gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
     gtk_box_pack_start (GTK_BOX (limitBox), label, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(limitBox), spinner, TRUE, TRUE, 0);
@@ -1992,6 +2000,7 @@ static CheckFunc checks[] =
     { NULL, NULL, "/Render/Night Side Lights",   checkRenderFlag,   1, Renderer::ShowNightMaps, Menu_ShowNightSideMaps, GTK_SIGNAL_FUNC(menuShowNightSideMaps) },
     { NULL, NULL, "/Render/Galaxies",            checkRenderFlag,   1, Renderer::ShowGalaxies, Menu_ShowGalaxies, GTK_SIGNAL_FUNC(menuShowGalaxies) },
     { NULL, NULL, "/Render/Eclipse Shadows",     checkRenderFlag,   1, Renderer::ShowEclipseShadows, Menu_ShowEclipseShadows, GTK_SIGNAL_FUNC(menuShowEclipseShadows) },
+    { NULL, NULL, "/Render/Comet Tails", checkRenderFlag, 1, Renderer::ShowCometTails, Menu_ShowCometTails, GTK_SIGNAL_FUNC(menuShowCometTails) },
     { NULL, NULL, "/Render/Constellation Boundaries", checkRenderFlag, 1, Renderer::ShowBoundaries, Menu_ShowBoundaries, GTK_SIGNAL_FUNC(menuShowBoundaries) },
     { NULL, NULL, "/Render/Constellations",	 checkRenderFlag,   1, Renderer::ShowDiagrams, Menu_ShowConstellations, GTK_SIGNAL_FUNC(menuShowConstellations) },
     { NULL, NULL, "/Render/Clouds",		 checkRenderFlag,   1, Renderer::ShowCloudMaps, Menu_ShowClouds, GTK_SIGNAL_FUNC(menuShowClouds) },
@@ -2616,6 +2625,8 @@ int main(int argc, char* argv[])
     gtk_widget_show(GTK_WIDGET(mainBox));
     gtk_widget_show(GTK_WIDGET(mainMenu));
     gtk_widget_show(GTK_WIDGET(mainWindow));
+    gtk_signal_connect(GTK_OBJECT(mainBox), "event",
+                       GTK_SIGNAL_FUNC(resyncAll), NULL);
 
     // Set focus to oglArea widget
     GTK_WIDGET_SET_FLAGS(oglArea, GTK_CAN_FOCUS);
