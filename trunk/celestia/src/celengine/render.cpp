@@ -3529,6 +3529,52 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
 }
 
 
+static void setLightParameters_GLSL(CelestiaGLProgram& prog,
+                                    const ShaderProperties& shadprop,
+                                    const LightingState& ls,
+                                    Color materialDiffuse,
+                                    Color materialSpecular)
+{
+    Vec3f diffuseColor(materialDiffuse.red(),
+                       materialDiffuse.green(),
+                       materialDiffuse.blue());
+    Vec3f specularColor(materialSpecular.red(),
+                        materialSpecular.green(),
+                        materialSpecular.blue());
+    
+    for (unsigned int i = 0; i < ls.nLights; i++)
+    {
+        const DirectionalLight& light = ls.lights[i];
+
+        Vec3f lightColor = Vec3f(light.color.red(),
+                                 light.color.green(),
+                                 light.color.blue()) * light.irradiance;
+        prog.lights[i].direction = light.direction_obj;
+
+        if (shadprop.usesShadows() || shadprop.usesFragmentLighting())
+        {
+            prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
+                                           lightColor.y * diffuseColor.y,
+                                           lightColor.z * diffuseColor.z);
+        }
+        else
+        {
+            prog.lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
+                                           lightColor.y * diffuseColor.y,
+                                           lightColor.z * diffuseColor.z);
+        }
+        prog.lights[i].specular = Vec3f(lightColor.x * specularColor.x,
+                                        lightColor.y * specularColor.y,
+                                        lightColor.z * specularColor.z);
+
+        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
+        if (halfAngle_obj.length() != 0.0f)
+            halfAngle_obj.normalize();
+        prog.lights[i].halfVector = halfAngle_obj;
+    }
+}
+
+
 static void renderSphere_GLSL(const RenderInfo& ri,
                               const LightingState& ls,
                               RingSystem* rings,
@@ -3539,10 +3585,10 @@ static void renderSphere_GLSL(const RenderInfo& ri,
 {
     Texture* textures[4] = { NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
-    VertexProcessor* vproc = context.getVertexProcessor();
-    assert(vproc != NULL);
+    //VertexProcessor* vproc = context.getVertexProcessor();
+    //assert(vproc != NULL);
 
-    vproc->disable();
+    //vproc->disable();
     glDisable(GL_LIGHTING);
 
     ShaderProperties shadprop;
@@ -3658,7 +3704,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
                                          lightColor.y * specularColor.y,
                                          lightColor.z * specularColor.z);
 
-        Vec3f halfAngle_obj = ri.eyeDir_obj + light.direction_obj;
+        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
         if (halfAngle_obj.length() != 0.0f)
             halfAngle_obj.normalize();
         prog->lights[i].halfVector = halfAngle_obj;
@@ -3995,6 +4041,124 @@ static void renderRings(RingSystem& rings,
 }
 
 
+static void renderRings_GLSL(RingSystem& rings,
+                             RenderInfo& ri,
+                             const LightingState& ls,
+                             float planetRadius,
+                             float planetOblateness,
+                             unsigned int textureResolution,
+                             bool renderShadow,
+                             unsigned int nSections)
+{
+    float inner = rings.innerRadius / planetRadius;
+    float outer = rings.outerRadius / planetRadius;
+    Texture* ringsTex = rings.texture.find(textureResolution);
+
+    ShaderProperties shadprop;
+    // Set up the shader properties for ring rendering
+    {
+        shadprop.lightModel = ShaderProperties::RingIllumModel;
+        shadprop.nLights = min(ls.nLights, MaxShaderLights);
+
+        if (renderShadow)
+        {
+            // Set one shadow (the planet's) per light
+            for (unsigned int li = 0; li < ls.nLights; li++)
+                shadprop.setShadowCountForLight(li, 1);
+        }
+
+        if (ringsTex)
+            shadprop.texUsage = ShaderProperties::DiffuseTexture;
+    }
+            
+
+    // Get a shader for the current rendering configuration
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    if (prog == NULL)
+        return;
+
+    prog->use();
+
+    prog->eyePosition = ls.eyePos_obj;
+
+#if 0
+        vproc->parameter(vp::LightDirection0, ri.sunDir_obj);
+        vproc->parameter(vp::DiffuseColor0, ri.sunColor * rings.color);
+        vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
+        vproc->parameter(vp::Constant0, Vec3f(0, 0.5, 1.0));
+#endif
+    setLightParameters_GLSL(*prog, shadprop, ls,
+                            ri.color, ri.specularColor);
+        
+    for (unsigned int li = 0; li < ls.nLights; li++)
+    {
+        const DirectionalLight& light = ls.lights[li];
+
+        // Compute the projection vectors based on the sun direction.
+        // I'm being a little careless here--if the sun direction lies
+        // along the y-axis, this will fail.  It's unlikely that a
+        // planet would ever orbit underneath its sun (an orbital
+        // inclination of 90 degrees), but this should be made
+        // more robust anyway.
+        Vec3f axis = Vec3f(0, 1, 0) ^ light.direction_obj;
+        float cosAngle = Vec3f(0.0f, 1.0f, 0.0f) * light.direction_obj;
+        float angle = (float) acos(cosAngle);
+        axis.normalize();
+
+        float tScale = 1.0f;
+        if (planetOblateness != 0.0f)
+        {
+            // For oblate planets, the size of the shadow volume will vary
+            // based on the light direction.
+
+            // A vertical slice of the planet is an ellipse
+            float a = 1.0f;                          // semimajor axis
+            float b = a * (1.0f - planetOblateness); // semiminor axis
+            float ecc2 = 1.0f - (b * b) / (a * a);   // square of eccentricity
+
+            // Calculate the radius of the ellipse at the incident angle of the
+            // light on the ring plane + 90 degrees.
+            float r = a * (float) sqrt((1.0f - ecc2) /
+                                       (1.0f - ecc2 * square(cosAngle)));
+            
+            tScale *= a / r;
+        }
+
+        // The s axis is perpendicular to the shadow axis in the plane of the
+        // of the rings, and the t axis completes the orthonormal basis.
+        Vec3f sAxis = axis * 0.5f;
+        Vec3f tAxis = (axis ^ light.direction_obj) * 0.5f * tScale;
+        Vec4f texGenS(sAxis.x, sAxis.y, sAxis.z, 0.5f);
+        Vec4f texGenT(tAxis.x, tAxis.y, tAxis.z, 0.5f);
+
+        float r0 = 0.24f;
+        float r1 = 0.25f;
+        float bias = 1.0f / (1.0f - r1 / r0);
+        float scale = -bias / r0;
+
+        prog->shadows[li][0].texGenS = texGenS;
+        prog->shadows[li][0].texGenT = texGenT;
+        prog->shadows[li][0].bias = bias;
+        prog->shadows[li][0].scale = -bias / r0;
+    }
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    if (ringsTex != NULL)
+        ringsTex->bind();
+    else
+        glDisable(GL_TEXTURE_2D);
+        
+    renderRingSystem(inner, outer, 0, (float) PI * 2.0f, nSections);
+    renderRingSystem(inner, outer, (float) PI * 2.0f, 0, nSections);
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    glx::glUseProgramObjectARB(0);
+}
+
+
 static void
 renderEclipseShadows(Model* model,
                      vector<EclipseShadow>& eclipseShadows,
@@ -4307,78 +4471,6 @@ renderEclipseShadows_Shaders(Model* model,
 }
 
 
-// Approximate ring shadows using texture coordinate generation.  Vertex
-// shaders are required for the real thing.
-static void
-renderRingShadows(Model* model,
-                  const RingSystem& rings,
-                  const Vec3f& sunDir,
-                  RenderInfo& ri,
-                  float planetRadius,
-                  Mat4f& planetMat,
-                  Frustum& viewFrustum,
-                  const GLContext& context)
-{
-    // Compute the transformation to use for generating texture
-    // coordinates from the object vertices.
-    float ringWidth = rings.outerRadius - rings.innerRadius;
-    Vec3f v = ri.sunDir_obj ^ Vec3f(0, 1, 0);
-    v.normalize();
-    Vec3f dir = v ^ ri.sunDir_obj;
-    dir.normalize();
-    Vec3f u = v ^ Vec3f(0, 1, 0);
-    u.normalize();
-    Vec3f origin = u * (rings.innerRadius / planetRadius);
-    float s = ri.sunDir_obj.y;
-    float scale = (abs(s) < 0.001f) ? 1000.0f : 1.0f / s;
-    scale *= planetRadius / ringWidth;
-    Vec3f sAxis = -(dir * scale);
-
-    float sPlane[4] = { 0, 0, 0, 0 };
-    float tPlane[4] = { 0, 0, 0, 0.5f };
-    sPlane[0] = sAxis.x;
-    sPlane[1] = sAxis.y;
-    sPlane[2] = sAxis.z;
-    sPlane[3] = (origin * sAxis);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
-
-    // If the ambient light level is greater than zero, reduce the
-    // darkness of the shadows.
-    if (ri.useTexEnvCombine)
-    {
-        float color[4] = { ri.ambientColor.red(), ri.ambientColor.green(),
-                           ri.ambientColor.blue(), 1.0f };
-        glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_CONSTANT_EXT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
-    }
-
-    float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
-
-    renderShadowedModelDefault(model, ri, viewFrustum,
-                               sPlane, tPlane, Vec3f(0.0f, 0.0f, 0.0f), false,
-                               context);
-
-    if (ri.useTexEnvCombine)
-    {
-        float color[4] = { 0, 0, 0, 0 };
-        glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    }
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    glDisable(GL_BLEND);
-}
-
-
 static void
 renderRingShadowsVS(Model* model,
                     const RingSystem& rings,
@@ -4589,6 +4681,8 @@ static void
 setupObjectLighting(const vector<Renderer::LightSource>& suns,
                     const Point3d& objPosition,
                     const Quatf& objOrientation,
+                    const Vec3f& objScale,
+                    const Point3f& objPosition_eye,
                     LightingState& ls)
 {
     unsigned int nLights = min(MaxLights, (unsigned int) suns.size());
@@ -4659,6 +4753,15 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
 
         ls.nLights++;
     }
+
+    Point3f pos((float) objPosition.x,
+                (float) objPosition.y,
+                (float) objPosition.z);
+    ls.eyePos_obj = Point3f(-objPosition_eye.x / objScale.x,
+                            -objPosition_eye.y / objScale.y,
+                            -objPosition_eye.z / objScale.z) * m;
+    ls.eyeDir_obj = (Point3f(0.0f, 0.0f, 0.0f) - objPosition_eye) * m;
+    ls.eyeDir_obj.normalize();
 
 #if 0
     // Old code: linear scaling approach
@@ -4890,12 +4993,23 @@ void Renderer::renderObject(Point3f pos,
 
     if (obj.rings != NULL && distance <= obj.rings->innerRadius)
     {
-        renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y,
-                    textureResolution,
-                    context->getMaxTextures() > 1 &&
-                    (renderFlags & ShowRingShadows) != 0 && lit,
-                    *context,
-                    detailOptions.ringSystemSections);
+        if (context->getRenderPath() == GLContext::GLPath_GLSL)
+        {
+            renderRings_GLSL(*obj.rings, ri, ls,
+                             radius, 1.0f - obj.semiAxes.y,
+                             textureResolution,
+                             (renderFlags & ShowRingShadows) != 0 && lit,
+                             detailOptions.ringSystemSections);
+        }
+        else
+        {
+            renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y,
+                        textureResolution,
+                        context->getMaxTextures() > 1 &&
+                        (renderFlags & ShowRingShadows) != 0 && lit,
+                        *context,
+                        detailOptions.ringSystemSections);
+        }
     }
 
     if (obj.atmosphere != NULL)
@@ -5098,31 +5212,29 @@ void Renderer::renderObject(Point3f pos,
                                     planetMat, viewFrustum,
                                     *context);
             }
-            else if (useClampToBorder)
-            {
-                // Approximate ring shadow rendering . . . turned off
-                // for now.  Vertex shaders give you the real thing.
-#if 0
-                renderRingShadows(model,
-                                  *obj.rings,
-                                  sunDir,
-                                  ri,
-                                  radius, planetMat, viewFrustum,
-                                  context);
-#endif
-            }
         }
     }
 
     if (obj.rings != NULL && distance > obj.rings->innerRadius)
     {
         glDepthMask(GL_FALSE);
-        renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y,
-                    textureResolution,
-                    (context->hasMultitexture() &&
-                     (renderFlags & ShowRingShadows) != 0 && lit),
-                    *context,
-                    detailOptions.ringSystemSections);
+        if (context->getRenderPath() == GLContext::GLPath_GLSL)
+        {
+            renderRings_GLSL(*obj.rings, ri, ls,
+                             radius, 1.0f - obj.semiAxes.y,
+                             textureResolution,
+                             (renderFlags & ShowRingShadows) != 0 && lit,
+                             detailOptions.ringSystemSections);
+        }
+        else
+        {
+            renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y,
+                        textureResolution,
+                        (context->hasMultitexture() &&
+                         (renderFlags & ShowRingShadows) != 0 && lit),
+                        *context,
+                        detailOptions.ringSystemSections);
+        }
     }
 
     // Disable all light sources other than the first
@@ -5288,6 +5400,8 @@ void Renderer::renderPlanet(Body& body,
         setupObjectLighting(lightSources,
                             body.getHeliocentricPosition(now),
                             rp.orientation,
+                            rp.semiAxes,
+                            pos,
                             lights);
         assert(lights.nLights < MaxLights);
 

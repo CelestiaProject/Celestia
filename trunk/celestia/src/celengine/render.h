@@ -61,10 +61,17 @@ struct EclipseShadow
 
 struct LightingState
 {
-    LightingState() : nLights(0) { shadows[0] = NULL; };
+    LightingState() : nLights(0),
+                      eyeDir_obj(0.0f, 0.0f, -1.0f),
+                      eyePos_obj(0.0f, 0.0f, -1.0f)
+    { shadows[0] = NULL; };
+
     unsigned int nLights;
     DirectionalLight lights[MaxLights];
     vector<EclipseShadow>* shadows[MaxLights];
+
+    Vec3f eyeDir_obj;
+    Point3f eyePos_obj;
 };
 
 class Renderer

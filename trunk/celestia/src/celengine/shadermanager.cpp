@@ -268,6 +268,13 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
         shininess            = floatParam("shininess");
     }
 
+    if (props.lightModel == ShaderProperties::RingIllumModel)
+    {
+        // TODO: Eye position also required for specular lighting with
+        // local viewer.
+        eyePosition          = vec3Param("eyePosition");
+    }
+
     ambientColor = vec3Param("ambientColor");
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
@@ -882,14 +889,174 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 }
 
 
+GLVertexShader*
+ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
+{
+    string source;
+
+    source += DeclareLights(props);
+    source += "uniform vec3 eyePosition;\n";
+
+    source += "varying vec4 diffFactors;\n";
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+        source += "varying vec2 diffTexCoord;\n";
+
+    if (props.shadowCounts != 0)
+    {
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            source += "uniform vec4 " +
+                IndexedParameter("shadowTexGenS", i, 0) + ";\n";
+            source += "uniform vec4 " +
+                IndexedParameter("shadowTexGenT", i, 0) + ";\n";
+            source += "varying vec3 " +
+                IndexedParameter("shadowTexCoord", i, 0) + ";\n";
+        }
+    }
+
+    source += "\nvoid main(void)\n{\n";
+    source += "float nDotVP;\n";
+
+    // Get the normalized direction from the eye to the vertex
+    source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
+
+    for (unsigned int i = 0; i < props.nLights; i++)
+    {
+        source += SeparateDiffuse(i) + " = (dot(" +
+            LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
+    }
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+        source += "diffTexCoord = " + TexCoord2D(0) + ";\n";
+
+    if (props.shadowCounts != 0)
+    {
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            source += IndexedParameter("shadowTexCoord", i, 0) +
+                ".x = dot(gl_Vertex, " +
+                IndexedParameter("shadowTexGenS", i, 0) + ");\n";
+            source += IndexedParameter("shadowTexCoord", i, 0) +
+                ".y = dot(gl_Vertex, " +
+                IndexedParameter("shadowTexGenT", i, 0) + ");\n";
+            source += IndexedParameter("shadowTexCoord", i, 0) +
+                ".z = dot(gl_Vertex.xyz, " +
+                LightProperty(i, "direction") + ");\n";
+        }
+    }
+
+    source += "gl_Position = ftransform();\n";
+    source += "}\n";
+
+    *logFile << "Vertex shader source:\n";
+    DumpShaderSource(*logFile, source);
+    *logFile << '\n';
+
+    GLVertexShader* vs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return vs;
+}
+
+
+GLFragmentShader*
+ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
+{
+    string source;
+
+    source += "uniform vec3 ambientColor;\n";
+    source += "vec4 diff = vec4(ambientColor, 1);\n";
+    for (unsigned int i = 0; i < props.nLights; i++)
+        source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
+
+    source += "varying vec4 diffFactors;\n";
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    {
+        source += "varying vec2 diffTexCoord;\n";
+        source += "uniform sampler2D diffTex;\n";
+    }
+
+    if (props.shadowCounts != 0)
+    {
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            source += "varying vec3 " +
+                IndexedParameter("shadowTexCoord", i, 0) + ";\n";
+            source += "uniform float " +
+                IndexedParameter("shadowScale", i, 0) + ";\n";
+            source += "uniform float " +
+                IndexedParameter("shadowBias", i, 0) + ";\n";
+        }
+    }
+
+    source += "\nvoid main(void)\n{\n";
+    source += "vec4 color;\n";
+
+    if (props.usesShadows())
+    {
+        // Temporaries required for shadows
+        source += "float shadow;\n";
+        source += "vec2 shadowCenter;\n";
+        source += "float shadowR;\n";
+    }
+
+    // Sum the contributions from each light source
+    for (unsigned i = 0; i < props.nLights; i++)
+    {
+        source += "shadow = 1.0;\n";
+        source += Shadow(i, 0);
+        source += "shadow = min(1.0, shadow + step(0.0, " +
+            IndexedParameter("shadowTexCoord", i, 0) + ".z));\n";
+        source += "diff += (shadow * " + SeparateDiffuse(i) + ") * vec4(" +
+            FragLightProperty(i, "color") + ", 0.0);\n";
+    }
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+        source += "color = texture2D(diffTex, diffTexCoord.st);\n";
+    else
+        source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
+
+    source += "gl_FragColor = color * diff;\n";
+
+    source += "}\n";
+
+    *logFile << "Fragment shader source:\n";
+    DumpShaderSource(*logFile, source);
+    *logFile << '\n';
+    
+    GLFragmentShader* fs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return fs;
+}
+
+
 CelestiaGLProgram*
 ShaderManager::buildProgram(const ShaderProperties& props)
 {
     GLProgram* prog = NULL;
     GLShaderStatus status;
 
-    GLVertexShader* vs = buildVertexShader(props);
-    GLFragmentShader* fs = buildFragmentShader(props);
+    GLVertexShader* vs = NULL;
+    GLFragmentShader* fs = NULL;
+
+    if (props.lightModel == ShaderProperties::RingIllumModel)
+    {
+        vs = buildRingsVertexShader(props);
+        fs = buildRingsFragmentShader(props);
+    }
+    else
+    {
+        vs = buildVertexShader(props);
+        fs = buildFragmentShader(props);
+    }
+
     if (vs != NULL && fs != NULL)
     {
         status = GLShaderLoader::CreateProgram(*vs, *fs, &prog);
