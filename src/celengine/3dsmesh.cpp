@@ -108,6 +108,14 @@ void Mesh3DS::render(unsigned int attributes, float)
         
         (*i)->render();
     }
+
+    if (specularOn)
+    {
+        float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        float zero = 0.0f;
+        glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+    }
 }
 
 void Mesh3DS::render(unsigned int attributes, const Frustum&, float lod)
