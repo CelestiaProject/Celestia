@@ -67,6 +67,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         Vec3d offset(0.0, 0.0, 0.0);
         favParams->getVector("base", base);
         favParams->getVector("offset", offset);
+        base *= 1e6;
         fav->position = UniversalCoord(Point3d(base.x, base.y, base.z)) + offset;
 
         // Get orientation
@@ -114,6 +115,7 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
         fav->orientation.getAxisAngle(axis, angle);
 
         Point3d base = (Point3d) fav->position;
+        base.x *= 1e-6; base.y *= 1e-6; base.z *= 1e-6;
         Vec3d offset = fav->position - base;
 
         out << '"' << fav->name << "\" {\n";
