@@ -122,7 +122,8 @@ class CelestiaCore
 
     void writeFavoritesFile();
     void activateFavorite(FavoritesEntry&);
-    void addFavorite(std::string);
+    void addFavorite(std::string, std::string, FavoritesList::const_iterator* iter=NULL);
+    void addFavoriteFolder(std::string, FavoritesList::const_iterator* iter=NULL);
     const FavoritesList* getFavorites();
 
     const DestinationList* getDestinations();

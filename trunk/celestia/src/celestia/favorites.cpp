@@ -50,6 +50,18 @@ FavoritesList* ReadFavoritesList(istream& in)
 
         Hash* favParams = favParamsValue->getHash();
 
+        //If this is a folder, don't get any other params.
+        if(!favParams->getBoolean("isFolder", fav->isFolder))
+            fav->isFolder = false;
+        if(fav->isFolder)
+        {
+            favorites->insert(favorites->end(), fav);
+            continue;
+        }
+
+        // Get parentFolder
+        favParams->getString("parentFolder", fav->parentFolder);
+
         // Get position
         Vec3d base(0.0, 0.0, 0.0);
         Vec3d offset(0.0, 0.0, 0.0);
@@ -105,30 +117,37 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
         Vec3d offset = fav->position - base;
 
         out << '"' << fav->name << "\" {\n";
-        out << setprecision(16);
-        out << "\tbase   [ " << base.x << ' ' << base.y << ' ' << base.z << " ]\n";
-        out << "\toffset [ " << offset.x << ' ' << offset.y << ' ' << offset.z << " ]\n";
-        out << setprecision(6);
-        out << "\taxis   [ " << axis.x << ' ' << axis.y << ' ' << axis.z << " ]\n";
-        out << "\tangle  " << angle << '\n';
-        out << setprecision(16);
-        out << "\ttime   " << fav->jd << '\n';
-        out << "\tselection \"" << fav->selectionName << "\"\n";
-        out << "\tcoordsys \"";
-        switch (fav->coordSys)
+        if(fav->isFolder)
+            out << "\tisFolder " << "true\n";
+        else
         {
-        case astro::Universal:
-            out << "universal"; break;
-        case astro::Ecliptical:
-            out << "ecliptical"; break;
-        case astro::Equatorial:
-            out << "equatorial"; break;
-        case astro::Geographic:
-            out << "geographic"; break;
-        case astro::ObserverLocal:
-            out << "local"; break;
+            out << "\tisFolder " << "false\n";
+            out << "\tparentFolder \"" << fav->parentFolder << "\"\n";
+            out << setprecision(16);
+            out << "\tbase   [ " << base.x << ' ' << base.y << ' ' << base.z << " ]\n";
+            out << "\toffset [ " << offset.x << ' ' << offset.y << ' ' << offset.z << " ]\n";
+            out << setprecision(6);
+            out << "\taxis   [ " << axis.x << ' ' << axis.y << ' ' << axis.z << " ]\n";
+            out << "\tangle  " << angle << '\n';
+            out << setprecision(16);
+            out << "\ttime   " << fav->jd << '\n';
+            out << "\tselection \"" << fav->selectionName << "\"\n";
+            out << "\tcoordsys \"";
+            switch (fav->coordSys)
+            {
+            case astro::Universal:
+                out << "universal"; break;
+            case astro::Ecliptical:
+                out << "ecliptical"; break;
+            case astro::Equatorial:
+                out << "equatorial"; break;
+            case astro::Geographic:
+                out << "geographic"; break;
+            case astro::ObserverLocal:
+                out << "local"; break;
+            }
+            out << "\"\n";
         }
-        out << "\"\n";
 
         out << "}\n\n";
     }

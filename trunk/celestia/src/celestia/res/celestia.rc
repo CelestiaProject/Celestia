@@ -87,7 +87,8 @@ BEGIN
     END
     POPUP "&Locations"
     BEGIN
-        MENUITEM "&Add Location...",            ID_LOCATIONS_ADDLOCATION
+        MENUITEM "&Add To Locations...",        ID_LOCATIONS_ADDLOCATION
+        MENUITEM "Organize Locations...",       ID_LOCATIONS_ORGANIZE
     END
     POPUP "&Help"
     BEGIN
@@ -203,15 +204,20 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,70,67,50,14
 END
 
-IDD_ADDLOCATION DIALOG DISCARDABLE  100, 50, 220, 45
+IDD_ADDLOCATION DIALOGEX 100, 50, 178, 134
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Add Location"
 FONT 8, "MS Sans Serif"
 BEGIN
-    EDITTEXT        IDC_LOCATION_EDIT,45,5,100,14,ES_AUTOHSCROLL
-    LTEXT           "Name",IDC_STATIC,10,8,30,8
-    DEFPUSHBUTTON   "OK",IDOK,160,5,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,160,23,50,14
+    EDITTEXT        IDC_LOCATION_EDIT,6,21,104,12,ES_AUTOHSCROLL
+    RTEXT           "Name",IDC_STATIC,2,11,22,8
+    DEFPUSHBUTTON   "OK",IDOK,121,6,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,121,24,50,14
+    PUSHBUTTON      "Create in >>",IDC_LOCATION_CREATEIN,121,42,50,14
+    CONTROL         "Tree1",IDC_LOCATION_FOLDERTREE,"SysTreeView32",
+                    TVS_HASLINES | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | 
+                    WS_BORDER | WS_TABSTOP,5,64,106,64,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "New Folder...",IDC_LOCATION_NEWFOLDER,121,65,50,14
 END
 
 IDD_SSBROWSER DIALOG DISCARDABLE  0, 0, 226, 194
@@ -363,6 +369,17 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,70,70,10
 END
 
+IDD_ADDLOCATION_FOLDER DIALOG DISCARDABLE  0, 0, 148, 61
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add New Location Folder"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_LOCATIONFOLDER,55,13,84,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,21,38,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,77,38,50,14
+    RTEXT           "Folder Name",IDC_STATIC,3,15,44,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -403,6 +420,11 @@ BEGIN
         BOTTOMMARGIN, 66
     END
 
+    IDD_ADDLOCATION, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 44
+    END
+
     IDD_STARBROWSER, DIALOG
     BEGIN
         BOTTOMMARGIN, 177
@@ -420,6 +442,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 171
     END
+
+    IDD_ADDLOCATION_FOLDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 141
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 54
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -431,7 +461,11 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_CELESTIA_ICON       ICON    DISCARDABLE     "icon1.ico"
+IDI_CELESTIA_ICON       ICON    DISCARDABLE     "Celestia.ico"
+IDI_LOCATION            ICON    DISCARDABLE     "Location.ico"
+IDI_CLOSEDFOLDER        ICON    DISCARDABLE     "Clsdfolder.ico"
+IDI_OPENFOLDER          ICON    DISCARDABLE     "Openfolder.ico"
+IDI_ROOTFOLDER          ICON    DISCARDABLE     "Rootfolder.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

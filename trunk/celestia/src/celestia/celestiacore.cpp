@@ -175,17 +175,39 @@ void CelestiaCore::activateFavorite(FavoritesEntry& fav)
     sim->setFrame(fav.coordSys, sim->getSelection());
 }
 
-void CelestiaCore::addFavorite(string name)
+void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::const_iterator* iter)
 {
+    FavoritesList::iterator pos;
+    if(!iter)
+        pos = favorites->end();
+    else
+        pos = (FavoritesList::iterator)*iter;
     FavoritesEntry* fav = new FavoritesEntry();
     fav->jd = sim->getTime();
     fav->position = sim->getObserver().getPosition();
     fav->orientation = sim->getObserver().getOrientation();
     fav->name = name;
+    fav->isFolder = false;
+    fav->parentFolder = parentFolder;
     fav->selectionName = sim->getSelection().getName();
     fav->coordSys = sim->getFrame().coordSys;
     
-    favorites->insert(favorites->end(), fav);
+    favorites->insert(pos, fav);
+    writeFavoritesFile();
+}
+
+void CelestiaCore::addFavoriteFolder(string name, FavoritesList::const_iterator* iter)
+{
+    FavoritesList::iterator pos;
+    if(!iter)
+        pos = favorites->end();
+    else
+        pos = (FavoritesList::iterator)*iter;
+    FavoritesEntry* fav = new FavoritesEntry();
+    fav->name = name;
+    fav->isFolder = true;
+    
+    favorites->insert(pos, fav);
     writeFavoritesFile();
 }
 
