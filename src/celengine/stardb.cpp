@@ -543,6 +543,32 @@ bool StarDatabase::load(istream& in)
                 stars = newStars;
             }
             stars[nStars++] = *star;
+
+            string name;
+            if (starData->getString("Name", name))
+            {
+                if (names != NULL)
+                {
+                    // Iterate through the string for names delimited
+                    // by ':', and insert them into the star database.
+                    // Note that db->add() will skip empty names.
+                    string::size_type startPos = 0; 
+                    while (startPos != string::npos)
+                    {
+                        string::size_type next = name.find(':', startPos);
+                        string::size_type length = string::npos;
+                        if (next != string::npos)
+                        {
+                            length = next - startPos;
+                            next++;
+                        }
+                        names->add(catalogNumber,
+                                   name.substr(startPos, length));
+                        cout << "Star name: " << name.substr(startPos, length) << '\n';
+                        startPos = next;
+                    }
+                }
+            }
         }
         else
         {

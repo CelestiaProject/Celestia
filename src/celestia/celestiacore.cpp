@@ -3009,6 +3009,8 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         return false;
     }
 
+    starDB->setNameDatabase(starNameDB);
+
     // Now, read supplemental star files from the extras directories
     for (vector<string>::const_iterator iter = config->extrasDirs.begin();
          iter != config->extrasDirs.end(); iter++)
@@ -3026,8 +3028,6 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
     }
 
     starDB->finish();
-
-    starDB->setNameDatabase(starNameDB);
 
     universe->setStarCatalog(starDB);
 
