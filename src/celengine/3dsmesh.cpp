@@ -7,7 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <iostream.h>
+#include <algorithm>
+#include <iostream>
 #include "gl.h"
 #include "glext.h"
 #include "vertexprog.h"
@@ -19,6 +20,7 @@ using namespace std;
 
 static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
                                        const M3DScene& scene);
+static int compareVertexLists(VertexList*, VertexList*);
 
 Mesh3DS::Mesh3DS(const M3DScene& scene)
 {
@@ -38,6 +40,10 @@ Mesh3DS::Mesh3DS(const M3DScene& scene)
             }
         }
     }
+
+    // Sort the vertex lists to make sure that the transparent ones are
+    // rendered after the opaque ones and material state changes are minimized.
+    sort(vertexLists.begin(), vertexLists.end(), compareVertexLists);
 }
 
 
@@ -60,6 +66,7 @@ void Mesh3DS::render(unsigned int attributes, float)
     TextureManager* textureManager = GetTextureManager();
     ResourceHandle currentTexture = InvalidResource;
     bool specularOn = false;
+    bool blendOn = false;
     Color black(0.0f, 0.0f, 0.0f);
 
     for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
@@ -68,6 +75,20 @@ void Mesh3DS::render(unsigned int attributes, float)
         // are enabled.
         if (attributes & VertexProgParams)
             vp::parameter(20, (*i)->getDiffuseColor());
+
+        // All the vertex lists should have been sorted so that the
+        // transparent ones are after the opaque ones.  Thus we can assume
+        // that once we find a transparent vertext list, it's ok to leave
+        // blending on.
+        // TODO: Playing around with the blend mode could potentially
+        // interfere with multipass rendering.  There should be an attribute
+        // that is set to tell us to not mess with the blend mode.
+        if (!blendOn && (*i)->getDiffuseColor().alpha() != 1.0f)
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
         Color specular = (*i)->getSpecularColor();
         float shininess = (*i)->getShininess();
         ResourceHandle texture = (*i)->getTexture();
@@ -115,6 +136,12 @@ void Mesh3DS::render(unsigned int attributes, float)
         float zero = 0.0f;
         glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
         glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+    }
+
+    if (blendOn)
+    {
+        glDisable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     }
 }
 
@@ -288,7 +315,7 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
                 if (materialName == material->getName())
                 {
                     M3DColor diffuse = material->getDiffuseColor();
-                    vl->setDiffuseColor(Color(diffuse.red, diffuse.green, diffuse.blue));
+                    vl->setDiffuseColor(Color(diffuse.red, diffuse.green, diffuse.blue, material->getOpacity()));
                     M3DColor specular = material->getSpecularColor();
                     vl->setSpecularColor(Color(specular.red, specular.green, specular.blue));
                     float shininess = material->getShininess();
@@ -330,4 +357,23 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
     }
 
     return vl;
+}
+
+
+// Function to sort vertex lists so that transparent ones are rendered
+// after the opaque ones, and vertex lists with the same material properties
+// are grouped together.
+static int compareVertexLists(VertexList* vl0, VertexList* vl1)
+{
+    float a0 = vl0->getDiffuseColor().alpha();
+    float a1 = vl1->getDiffuseColor().alpha();
+
+    if (a0 == a1)
+    {
+        return vl0->getTexture() < vl1->getTexture();
+    }
+    else
+    {
+        return (a0 > a1);
+    }
 }
