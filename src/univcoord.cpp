@@ -116,3 +116,13 @@ UniversalCoord operator-(const UniversalCoord& uc, const Vec3f& v)
                           uc.y - BigFix((double) v.y),
                           uc.z - BigFix((double) v.z));
 }
+
+UniversalCoord operator+(const UniversalCoord& uc0, const UniversalCoord& uc1)
+{
+    return UniversalCoord(uc0.x + uc1.x, uc0.y + uc1.y, uc0.z + uc1.z);
+}
+
+UniversalCoord UniversalCoord::difference(const UniversalCoord& uc) const
+{
+    return UniversalCoord(x - uc.x, y - uc.y, z - uc.z);
+}
