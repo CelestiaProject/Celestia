@@ -376,10 +376,9 @@ void Mesh::render(const std::vector<const Material*>& materials,
         const Material* mat = NULL;
         uint32 materialIndex = (*iter)->materialIndex;
         if (materialIndex != lastMaterial &&
-            materialIndex > 0 &&
-            materialIndex <= materials.size())
+            materialIndex < materials.size())
         {
-            mat = materials[materialIndex - 1];
+            mat = materials[materialIndex];
         }
         rc.setMaterial(mat);
 
