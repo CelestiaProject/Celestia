@@ -499,7 +499,7 @@ static ResourceHandle createTexture(ParserContext* ctx, const xmlChar** att)
         assert(atmosphere != NULL);
 
         if (matchName(type, "base"))
-            atmosphere->cloudTex = texHandle;
+            atmosphere->cloudTexture = texHandle;
     }
     else if (ctx->state == RingsState)
     {
