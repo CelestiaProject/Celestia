@@ -6,3 +6,8 @@
 /* Are we debugging ? */
 #undef DEBUG
 
+/* Log Domain for Gnome */
+#undef G_LOG_DOMAIN
+
+/* Locale Directory for Gnome (Currently unused) */
+#undef GNOMELOCALEDIR

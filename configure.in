@@ -192,6 +192,8 @@ if test "$prefix" = "NONE" ; then
 fi
 PKGDATADIR=`eval echo "${datadir}/$PACKAGE"`
 AC_DEFINE_UNQUOTED(CONFIG_DATA_DIR, "$PKGDATADIR")
+AC_DEFINE_UNQUOTED(G_LOG_DOMAIN,"Celestia")
+AC_DEFINE_UNQUOTED(GNOMELOCALEDIR,"$PKGDATADIR/locale")
 
 AC_OUTPUT( Makefile               \
            src/Makefile           \

@@ -263,7 +263,11 @@ int main(int argc, char* argv[])
     appCore->initRenderer();
 
     // Set the simulation starting time to the current system time
-    appCore->start((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
+    time_t curtime=time(NULL);
+    appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
+    localtime(&curtime); // Only doing this to set timezone as a side effect
+    appCore->setTimeZoneBias(-timezone);
+    appCore->setTimeZone(tzname[daylight?0:1]);
 
     ready = true;
     glutMainLoop();
