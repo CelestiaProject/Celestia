@@ -1726,7 +1726,7 @@ static Observer* to_observer(lua_State* l, int index)
     CelestiaCore* appCore = getAppCore(l, AllErrors);
 
     // Check if pointer is still valid, i.e. is used by a view:
-    if (getViewByObserver(appCore, *o) != NULL)
+    if (o != NULL && getViewByObserver(appCore, *o) != NULL)
     {
             return *o;
     }
