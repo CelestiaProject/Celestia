@@ -8,7 +8,13 @@
 // of the License, or (at your option) any later version.
 
 #include <string>
+
+#ifndef _WIN32
+#include <config.h>
+#endif /* _WIN32 */
+
 #include <celutil/util.h>
+#include <celutil/debug.h>
 #include "celestia.h"
 #include "star.h"
 #include "starname.h"
@@ -62,6 +68,12 @@ void StarNameDatabase::add(uint32 catalogNumber, const string& name)
 {
     if(name.length() != 0)
     {
+#ifdef DEBUG
+        uint32 tmp;
+        if((tmp=findName(name))!=Star::InvalidCatalogNumber)
+            DPRINTF(2,"Duplicated name '%s' on HIP %d and %d\n", name.c_str(),
+                    tmp, catalogNumber);
+#endif
         nameIndex.insert(NameIndex::value_type(name, catalogNumber));
         numberIndex.insert(NumberIndex::value_type(catalogNumber, name));
     }

@@ -27,7 +27,7 @@
 3546::Epsilon And
 3627::Delta And
 3712:Schedar:Alpha Cas
-3919::Omicron Phe
+3919::Mu Phe
 4150::Eta Phe
 4128:Diphda:Beta Cet
 4211::Lambda2 Scl
@@ -39,7 +39,7 @@
 4656::Delta Psc
 4676::64 Psc
 4727::Nu And
-4813::Pi2 Cet
+4813::Phi2 Cet
 5112::20 Cet
 5457::Lambda2 Tuc
 5394::Gamma Cas
@@ -663,7 +663,7 @@
 130109::109 Vir
 130259::56 Hya
 129078::Alpha Aps
-130819::AlphaA1 Lib
+130819::Alpha1 Lib
 131873:Kochab:Beta UMi
 130841:Zubenelgenubi:Alpha Lib
 131918::Xi2 Lib
