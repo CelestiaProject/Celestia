@@ -1414,11 +1414,11 @@ AltSurface "limit of knowledge" "HD 192263/b"
 	InfoURL "http://www.obspm.fr/encycl/Gl876.html"
 
 	EllipticalOrbit {
-		Period          0.0825
+		Period          0.0824
 		SemiMajorAxis   0.13
 		Eccentricity    0.27
 		ArgOfPericenter 39
-		MeanAnomaly     91
+		MeanAnomaly     103
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1442,7 +1442,7 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 
 	EllipticalOrbit {
 		Period          0.1671
-		SemiMajorAxis   0.208
+		SemiMajorAxis   0.21
 		Eccentricity    0.1
 		ArgOfPericenter 42
 		MeanAnomaly     208
@@ -2854,8 +2854,8 @@ AltSurface "limit of knowledge" "HD 4203/b"
 		Period          1.1499
 		SemiMajorAxis   1.02
 		Eccentricity    0.3
-		ArgOfPericenter 143
-		MeanAnomaly     224
+		ArgOfPericenter 166
+		MeanAnomaly     221
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -3000,6 +3000,35 @@ AltSurface "limit of knowledge" "HD 188015/b"
 }
 
 
+"b" "HD 13189"
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+
+	Mass       4450     # M.sin(i) = 14 jupiters
+	Radius     84000
+	Oblateness 0.01
+
+	InfoURL "http://www.obspm.fr/encycl/HD13189.html"
+
+	EllipticalOrbit {
+		Period          1.2912
+		SemiMajorAxis   1.85
+		Eccentricity    0.28
+		ArgOfPericenter 292
+		MeanAnomaly     122
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 13189/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 20367"
 {
 	Texture "jupiterlike.*"
@@ -3031,9 +3060,9 @@ AltSurface "limit of knowledge" "HD 20367/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       290     # M.sin(i) = 0.9 jupiters
+	Mass       320     # M.sin(i) = 0.99 jupiters
 	Radius     70000
-	Oblateness 0.07
+	Oblateness 0.06
 
 	InfoURL "http://www.obspm.fr/encycl/HD114783.html"
 
@@ -3403,7 +3432,7 @@ AltSurface "limit of knowledge" "HD 45350/b"
 }
 
 
-"b" "HD 222404"   # Gam Cep
+"b" "HD 222404"   # Gam Cep A
 {
 	Texture "jupiterlike.*"
 
