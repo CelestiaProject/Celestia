@@ -29,3 +29,9 @@ package-messages:
 dist-hook:
 	cd $(top_distdir) && perl admin/am_edit -padmin
 	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
+
+install-schemas:
+	if [ -n "$(GCONF_SCHEMA_CONFIG_SOURCE)" ]; then \
+		GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) \
+		gconftool --makefile-install-rule my.schemas; \
+	fi
