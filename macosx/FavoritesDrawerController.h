@@ -5,18 +5,23 @@
 #import "ContextOutlineView.h";
 #import "FavoriteInfoWindowController.h"
 
+
 @interface FavoritesDrawerController : NSObject
 {
     IBOutlet NSDrawer *drawer;
     IBOutlet ContextOutlineView *outlineView;
     IBOutlet NSMenu *favoritesMenu;
     IBOutlet NSMenu *favoritesContextMenu;
-    IBOutlet FavoriteInfoWindowController *favoriteInfoWindowController;
+    IBOutlet id favoriteInfoWindowController;
 }
+-(void)activateFavorite:(CelestiaFavorite*)fav;
+-(void)close;
+-(IBAction)close:(id)sender;
 - (NSMenu *)outlineView:(NSOutlineView *)outlineView 
 contextMenuForItem:(id)item;
 -(IBAction)addNewFavorite:(id)sender;
 -(IBAction)addNewFolder:(id)sender;
+-(IBAction)doubleClick:(id)sender;
 -(void)synchronizeFavoritesMenu:(CelestiaFavorites*)favs;
 -(id)outlineView:(NSOutlineView*)olv child:(int)index ofItem:(id)item;
 -(BOOL)outlineView:(NSOutlineView*)olv isItemExpandable:(id)item;

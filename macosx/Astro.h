@@ -16,6 +16,9 @@
 #define KM_PER_LY     9466411842000.000
 #define KM_PER_AU     149597870.7
 #define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
+@interface NSDate(AstroAPI)
++(NSDate*)dateWithJulian:(NSNumber*)jd;
+@end
 
 @interface Astro : NSObject
 +(NSString*)stringWithCoordinateSystem:(NSNumber*)n;
