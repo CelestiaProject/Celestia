@@ -112,7 +112,7 @@ astro::Date newTime(0.0);
 static int lastX = 0;
 static int lastY = 0;
 
-static char* installPath = NULL;
+static const WPARAM ID_GOTO_URL = 62000;
 
 HWND hLocationTree;
 char locationName[33];
@@ -2466,6 +2466,127 @@ vector<DEVMODE>* EnumerateDisplayModes(int minBPP)
 }
 
 
+static char* skipSpace(char* s)
+{
+    while (*s == ' ')
+        s++;
+    return s;
+}
+
+static char* skipUntilQuote(char* s)
+{
+    while (*s != '"' && s != '\0')
+        s++;
+    return s;
+}
+
+static char* nextWord(char* s)
+{
+    while (*s != ' ' && *s != '\0')
+        s++;
+    return s;
+}
+
+static char** splitCommandLine(LPSTR cmdLine,
+                               int& argc)
+{
+    int nArgs = 0;
+    int maxArgs = 50;
+    char** argv = new char*[maxArgs];
+
+    cmdLine = skipSpace(cmdLine);
+    while (*cmdLine != '\0')
+    {
+        char* startOfWord = cmdLine;
+        char* endOfWord = cmdLine;
+        int wordLength = 0;
+
+        if (*cmdLine == '"')
+        {
+            // Handle quoted strings
+            startOfWord = cmdLine + 1;
+            endOfWord = skipUntilQuote(startOfWord);
+            wordLength = endOfWord - startOfWord;
+            if (*endOfWord != '\0')
+                endOfWord++;
+        }
+        else
+        {
+            endOfWord = nextWord(cmdLine);
+            wordLength = endOfWord - startOfWord;
+            assert(wordLength != 0);
+        }
+
+        char* newWord = new char[wordLength + 1];
+        strncpy(newWord, startOfWord, wordLength);
+        newWord[wordLength] = '\0';
+
+        if (nArgs == maxArgs)
+        {
+            char** newArgv = new char*[maxArgs * 2];
+            copy(argv, argv + nArgs, newArgv);
+            delete argv;
+            argv = newArgv;
+            maxArgs *= 2;
+        }
+
+        argv[nArgs] = newWord;
+        nArgs++;
+
+        cmdLine = endOfWord;
+        cmdLine = skipSpace(cmdLine);
+    }
+
+    argc = nArgs;
+
+    return argv;
+}
+
+
+static bool startFullscreen = false;
+static bool runOnce = false;
+static string startURL;
+static string startDirectory;
+
+static bool parseCommandLine(int argc, char* argv[])
+{
+    int i = 0;
+
+    while (i < argc)
+    {
+        bool isLastArg = (i == argc - 1);
+        if (strcmp(argv[i], "--verbose") == 0)
+        {
+            SetDebugVerbosity(1);
+        }
+        else if (strcmp(argv[i], "--fullscreen") == 0)
+        {
+            startFullscreen = true;
+        }
+        else if (strcmp(argv[i], "--once") == 0)
+        {
+            runOnce = true;
+        }
+        else if (strcmp(argv[i], "--dir") == 0)
+        {
+            if (isLastArg)
+                break;
+            i++;
+            startDirectory = string(argv[i]);
+        }
+        else if (strcmp(argv[i], "-u") == 0)
+        {
+            if (isLastArg)
+                break;
+            i++;
+            startURL = string(argv[i]);
+        }
+        i++;
+    }
+
+    return true;
+}
+
 
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -2476,6 +2597,38 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     bReady = false;
 
     appInstance = hInstance;
+
+    int argc;
+    char** argv;
+    argv = splitCommandLine(lpCmdLine, argc);
+    bool cmdLineOK = parseCommandLine(argc, argv);
+
+    // If Celestia was invoked with the --once command line parameter,
+    // check to see if there's already an instance of Celestia running.
+    if (runOnce)
+    {
+        // The FindWindow method of checking for another running instance
+        // is broken, and we should be using CreateMutex instead.  But we'll
+        // sort that out later . . .
+        HWND existingWnd = FindWindow(AppName, AppName);
+        if (existingWnd)
+        {
+            // If there's an existing instance and we've been given a
+            // URL on the command line, send the URL to the running instance
+            // of Celestia before terminating.
+            if (startURL != "")
+            {
+                COPYDATASTRUCT cd;
+                cd.dwData = 0;
+                cd.cbData = startURL.length();
+                cd.lpData = reinterpret_cast<void*>(const_cast<char*>(startURL.c_str()));
+                SendMessage(existingWnd, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cd));
+            }
+            SetForegroundWindow(existingWnd);
+            Sleep(1000);
+            exit(0);
+        }
+    }
 
     OleInitialize(NULL);
     dropTarget = new CelestiaDropTarget();
@@ -2524,30 +2677,21 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             prefs.winY = screenHeight - prefs.winHeight;
     }
 
-    //Make sure windowRect contains default window size in case Celestia is
-    //launched in fullscreen mode. Without this code, CreateOpenGLWindow() will
-    //be called with windowRect = {0, 0, 0, 0} when the user switches to
-    //windowed mode.
+    // Make sure windowRect contains default window size in case Celestia is
+    // launched in fullscreen mode. Without this code, CreateOpenGLWindow()
+    // will be called with windowRect = {0, 0, 0, 0} when the user switches to
+    // windowed mode.
     windowRect.left = prefs.winX;
     windowRect.top = prefs.winY;
     windowRect.right = windowRect.left + prefs.winWidth;
     windowRect.bottom = windowRect.top + prefs.winHeight;
 
-    bool startFullscreen;
-    if (strstr(lpCmdLine, "-fullscreen"))
-        startFullscreen = true;
-    else
-        startFullscreen = false;
-
-    if (strstr(lpCmdLine, "-verbose"))
-        SetDebugVerbosity(1);
-
     joystickAvailable = InitJoystick(joystickCaps);
 
     displayModes = EnumerateDisplayModes(16);
 
-    //If full screen mode was found in registry, override default with it.
-    if(prefs.fullScreenMode != -1)
+    // If full screen mode was found in registry, override default with it.
+    if (prefs.fullScreenMode != -1)
         lastFullScreenMode = prefs.fullScreenMode;
 
     appCore = new CelestiaCore();
@@ -2561,23 +2705,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     appCore->setAlerter(new WinAlerter());
 
-#if 0
-    // See if we can find celestia.cfg in the current directory; if not, try 
-    // switching to the install directory and looking there.
-    {
-        ifstream test("celestia.cfg");
-        if (test.good())
-        {
-            test.close();
-        }
-        else
-        {
-            installPath = "c:\\celestia\\celestia";
-            if (installPath != NULL)
-                SetCurrentDirectory(installPath);
-        }
-    }
-#endif
+    // If a start directory was given on the command line, switch to it
+    // now.
+    if (startDirectory != "")
+        SetCurrentDirectory(startDirectory.c_str());
 
     if (!appCore->initSimulation())
     {
@@ -2594,8 +2725,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         hWnd = CreateOpenGLWindow(0, 0, 800, 600,
                                   lastFullScreenMode, currentScreenMode);
 
-        //Prevent unnecessary destruction and recreation of OpenGLWindow in
-        //while() loop below.
+        // Prevent unnecessary destruction and recreation of OpenGLWindow in
+        // while() loop below.
         newScreenMode = currentScreenMode;
     }
     else
@@ -2665,6 +2796,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     bReady = true;
     appCore->start((double) time(NULL) / 86400.0 +
                    (double) astro::Date(1970, 1, 1));
+
+    if (startURL != "")
+    {
+        COPYDATASTRUCT cd;
+        cd.dwData = 0;
+        cd.cbData = startURL.length();
+        cd.lpData = reinterpret_cast<void*>(const_cast<char*>(startURL.c_str()));
+        SendMessage(mainWindow, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cd));
+    }
 
     MSG msg;
     PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
@@ -2791,7 +2931,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         break;
 
     case WM_DROPFILES:
-        cout << "Dropped files!\n";
         break;
 
     case WM_MEASUREITEM:
@@ -2990,6 +3129,25 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         }
         break;
 
+    case WM_COPYDATA:
+        // The copy data message is used to send URL strings between
+        // processes.
+        {
+            COPYDATASTRUCT* cd = reinterpret_cast<COPYDATASTRUCT*>(lParam);
+            if (cd != NULL && cd->lpData != NULL)
+            {
+                char* urlChars = reinterpret_cast<char*>(cd->lpData);
+                if (cd->cbData > 3) // minimum of "cel:"
+                {
+                    string urlString(urlChars, cd->cbData);
+                    appCore->flash(string("UUURL: ") + urlString);
+                    Url url(string(urlString), appCore);
+                    url.goTo();
+                }
+            }
+        }
+        break;
+        
     case WM_COMMAND:
         switch (LOWORD(wParam))
         {
@@ -3222,6 +3380,20 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_FILE_EXIT:
             SendMessage(hWnd, WM_CLOSE, 0, 0);
+            break;
+
+        case ID_GOTO_URL:
+            {
+                // Relies on a pointer in lparam, do this does not
+                // work cross-process.
+                char* urlString = reinterpret_cast<char*>(lParam);
+                if (urlString != NULL)
+                {
+                    appCore->flash(string("URL: ") + string(urlString));
+                    Url url(string(urlString), appCore);
+                    url.goTo();
+                }
+            }
             break;
 
         default:
