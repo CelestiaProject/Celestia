@@ -2623,6 +2623,16 @@ static int observer_centerorbit(lua_State* l)
     return 0;
 }
 
+static int observer_cancelgoto(lua_State* l)
+{
+    checkArgs(l, 1, 1, "Expected no arguments to observer:cancelgoto");
+
+    Observer* o = this_observer(l);
+    o->cancelMotion();
+
+    return 0;
+}
+
 static int observer_follow(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for observer:follow");
@@ -2977,6 +2987,7 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "gotolocation", observer_gotolocation);
     RegisterMethod(l, "gotodistance", observer_gotodistance);
     RegisterMethod(l, "gotosurface", observer_gotosurface);
+    RegisterMethod(l, "cancelgoto", observer_cancelgoto);
     RegisterMethod(l, "setposition", observer_setposition);
     RegisterMethod(l, "lookat", observer_lookat);
     RegisterMethod(l, "setorientation", observer_setorientation);
@@ -3496,6 +3507,24 @@ static int celestia_getfaintestvisible(lua_State* l)
     return 1;
 }
 
+static int celestia_setminfeaturesize(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for celestia:setminfeaturesize()");
+    CelestiaCore* appCore = this_celestia(l);
+    float minFeatureSize = (float)safeGetNumber(l, 2, AllErrors, "Argument to celestia:setminfeaturesize() must be a number");
+    minFeatureSize = max(0.0f, minFeatureSize);
+    appCore->getRenderer()->setMinimumFeatureSize(minFeatureSize);
+    return 0;
+}
+
+static int celestia_getminfeaturesize(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getminfeaturesize()");
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushnumber(l, appCore->getRenderer()->getMinimumFeatureSize());
+    return 1;
+}
+
 static int celestia_getobserver(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for celestia:getobserver()");
@@ -3776,6 +3805,23 @@ static int celestia_setminorbitsize(lua_State* l)
         renderer->setMinimumOrbitSize((float)orbitSize);
     }
     return 0;
+}
+
+static int celestia_getminorbitsize(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected in celestia:getminorbitsize");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        doError(l, "Internal Error: renderer is NULL!");
+    }
+    else
+    {
+        lua_pushnumber(l, renderer->getMinimumOrbitSize());
+    }
+    return 1;
 }
 
 static int celestia_setstardistancelimit(lua_State* l)
@@ -4165,6 +4211,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "setorbitflags", celestia_setorbitflags);
     RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
     RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
+    RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);
+    RegisterMethod(l, "getminfeaturesize", celestia_getminfeaturesize);
     RegisterMethod(l, "getobserver", celestia_getobserver);
     RegisterMethod(l, "getobservers", celestia_getobservers);
     RegisterMethod(l, "getselection", celestia_getselection);
@@ -4179,6 +4227,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "settimescale", celestia_settimescale);
     RegisterMethod(l, "getambient", celestia_getambient);
     RegisterMethod(l, "setambient", celestia_setambient);
+    RegisterMethod(l, "getminorbitsize", celestia_getminorbitsize);
     RegisterMethod(l, "setminorbitsize", celestia_setminorbitsize);
     RegisterMethod(l, "getstardistancelimit", celestia_getstardistancelimit);
     RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
