@@ -130,6 +130,28 @@ class Renderer
         }
     } RenderListEntry;
 
+    struct RenderProperties
+    {
+        RenderProperties() :
+            surface(NULL),
+            atmosphere(NULL),
+            rings(NULL),
+            radius(1.0f),
+            oblateness(0.0f),
+            mesh(InvalidResource),
+            orientation(1.0f)
+        {};
+
+        const Surface* surface;
+        const Atmosphere* atmosphere;
+        RingSystem* rings;
+        RotationElements re;
+        float radius;
+        float oblateness;
+        ResourceHandle mesh;
+        Quatf orientation;
+    };
+
     class StarVertexBuffer
     {
     public:
@@ -161,6 +183,17 @@ class Renderer
                                const Mat4d& frame,
                                double now,
                                bool showLabels = false);
+
+    void renderObject(Point3f pos,
+                      float distance,
+                      double now,
+                      Quatf cameraOrientation,
+                      float nearPlaneDistance,
+                      float farPlaneDistance,
+                      Vec3f sunDirection,
+                      Color sunColor,
+                      RenderProperties& obj);
+
     void renderPlanet(const Body& body,
                       Point3f pos,
                       Vec3f sunDirection,
@@ -169,6 +202,7 @@ class Renderer
                       double now,
                       Quatf orientation,
                       float, float);
+
     void renderStar(const Star& star,
                     Point3f pos,
                     float distance,
@@ -176,6 +210,7 @@ class Renderer
                     Quatf orientation,
                     double now,
                     float, float);
+
     void renderBodyAsParticle(Point3f center,
                               float appMag,
                               float _faintestMag,
