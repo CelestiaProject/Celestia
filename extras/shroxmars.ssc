@@ -1,5 +1,6 @@
 "Mars Odyssey" "Sol/Mars"
 {
+	Class "spacecraft"
 	Mesh "marsodyssey.3ds"
 	Radius 0.01
 
@@ -23,6 +24,7 @@
 
 "MGS" "Sol/Mars"
 {
+	Class "spacecraft"
 	Mesh "marsglobalsurvr.3ds"
 	Radius 0.01
 

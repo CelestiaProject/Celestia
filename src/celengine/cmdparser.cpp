@@ -396,9 +396,13 @@ int parseLabelFlags(string s)
         {
             string name = tokenizer.getNameValue();
             if (compareIgnoringCase(name, "planets") == 0)
-                flags |= Renderer::MajorPlanetLabels;
-            else if (compareIgnoringCase(name, "minorplanets") == 0)
-                flags |= Renderer::MinorPlanetLabels;
+                flags |= Renderer::PlanetLabels;
+            else if (compareIgnoringCase(name, "moons") == 0)
+                flags |= Renderer::MoonLabels;
+            else if (compareIgnoringCase(name, "spacecraft") == 0)
+                flags |= Renderer::SpacecraftLabels;
+            else if (compareIgnoringCase(name, "asteroids") == 0)
+                flags |= Renderer::AsteroidLabels;
             else if (compareIgnoringCase(name, "constellations") == 0)
                 flags |= Renderer::ConstellationLabels;
             else if (compareIgnoringCase(name, "stars") == 0)

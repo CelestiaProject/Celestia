@@ -2,6 +2,7 @@
 
 "Gemini" "Sol/Earth"
 {
+	Class "spacecraft"
 	Mesh "gemini.3ds"
 	Radius 0.0075
 
@@ -23,6 +24,7 @@
 
 "Friendship 7" "Sol/Earth"
 {
+	Class "spacecraft"
 	Mesh "mercury7.3ds"
 	Radius 0.003
 
