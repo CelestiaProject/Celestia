@@ -52,10 +52,10 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
 
     case WM_COMMAND:
     {
-        //Take out a Renderer* for readability sake.
         Renderer* renderer = Dlg->appCore->getRenderer();
         uint32 renderFlags = renderer->getRenderFlags();
         uint32 labelMode = renderer->getLabelMode();
+        uint32 orbitMask = renderer->getOrbitMask();
 
         switch (LOWORD(wParam))
         {
@@ -84,19 +84,19 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowOrbits);
             break;
         case IDC_PLANETORBITS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanetOrbits);
+            renderer->setOrbitMask(orbitMask ^ Body::Planet);
             break;
         case IDC_MOONORBITS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowMoonOrbits);
+            renderer->setOrbitMask(orbitMask ^ Body::Moon);
             break;
         case IDC_ASTEROIDORBITS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowAsteroidOrbits);
+            renderer->setOrbitMask(orbitMask ^ Body::Asteroid);
             break;
         case IDC_COMETORBITS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCometOrbits);
+            renderer->setOrbitMask(orbitMask ^ Body::Comet);
             break;
         case IDC_SPACECRAFTORBITS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowSpacecraftOrbits);
+            renderer->setOrbitMask(orbitMask ^ Body::Spacecraft);
             break;
         case IDC_SHOWPLANETS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanets);
@@ -254,6 +254,7 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     int renderFlags = appCore->getRenderer()->getRenderFlags();
     int labelMode = appCore->getRenderer()->getLabelMode();
     int hudDetail = appCore->getHudDetail();
+    int orbitMask = appCore->getRenderer()->getOrbitMask();
 
     //Set checkboxes and radiobuttons
     SendDlgItemMessage(hDlg, IDC_SHOWATMOSPHERES, BM_SETCHECK,
@@ -270,13 +271,16 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowGalaxies)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
+#if 0
     SendDlgItemMessage(hDlg, IDC_SHOWORBITS, BM_SETCHECK,
         (renderFlags & Renderer::ShowOrbits)? BST_CHECKED:BST_UNCHECKED, 0);
-    dlgCheck(hDlg, IDC_PLANETORBITS,     renderFlags, Renderer::ShowPlanetOrbits);
-    dlgCheck(hDlg, IDC_MOONORBITS,       renderFlags, Renderer::ShowMoonOrbits);
-    dlgCheck(hDlg, IDC_ASTEROIDORBITS,   renderFlags, Renderer::ShowAsteroidOrbits);
-    dlgCheck(hDlg, IDC_COMETORBITS,      renderFlags, Renderer::ShowCometOrbits);
-    dlgCheck(hDlg, IDC_SPACECRAFTORBITS, renderFlags, Renderer::ShowSpacecraftOrbits);
+#endif
+    dlgCheck(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
+    dlgCheck(hDlg, IDC_PLANETORBITS,     orbitMask,   Body::Planet);
+    dlgCheck(hDlg, IDC_MOONORBITS,       orbitMask,   Body::Moon);
+    dlgCheck(hDlg, IDC_ASTEROIDORBITS,   orbitMask,   Body::Asteroid);
+    dlgCheck(hDlg, IDC_COMETORBITS,      orbitMask,   Body::Comet);
+    dlgCheck(hDlg, IDC_SPACECRAFTORBITS, orbitMask,   Body::Spacecraft);
     SendDlgItemMessage(hDlg, IDC_SHOWPLANETS, BM_SETCHECK,
         (renderFlags & Renderer::ShowPlanets)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,
