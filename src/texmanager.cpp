@@ -28,7 +28,7 @@ bool TextureManager::find(const string& name, CTexture** tex)
 CTexture* TextureManager::load(const string& name, bool compress)
 {
     DPRINTF("Loading texture: %s\n", name.c_str());
-    CTexture* tex = LoadTextureFromFile(baseDir + "\\" + name);
+    CTexture* tex = LoadTextureFromFile(baseDir + "/" + name);
 
     if (tex != NULL)
     {
@@ -46,7 +46,7 @@ CTexture* TextureManager::load(const string& name, bool compress)
 CTexture* TextureManager::loadBumpMap(const string& name, float bumpHeight)
 {
     DPRINTF("Loading bump map: %s\n", name.c_str());
-    CTexture* tex = LoadTextureFromFile(baseDir + "\\" + name);
+    CTexture* tex = LoadTextureFromFile(baseDir + "/" + name);
     if (tex != NULL)
     {
         tex->normalMap(bumpHeight, true);

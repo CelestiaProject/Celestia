@@ -47,7 +47,7 @@ Mesh* MeshManager::load(const string& name)
     if (fileType == Content_3DStudio)
     {
         Mesh3DS* mesh3 = NULL;
-        M3DScene* scene = Read3DSFile(baseDir + '\\' + name);
+        M3DScene* scene = Read3DSFile(baseDir + '/' + name);
         if (scene != NULL)
         {
             mesh3 = new Mesh3DS(*scene);
@@ -58,7 +58,7 @@ Mesh* MeshManager::load(const string& name)
     }
     else if (fileType == Content_CelestiaMesh)
     {
-        mesh = LoadCelestiaMesh(baseDir + '\\' + name);
+        mesh = LoadCelestiaMesh(baseDir + '/' + name);
     }
 
     addResource(name, (void*) mesh);
