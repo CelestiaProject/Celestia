@@ -49,6 +49,7 @@ class Universe
 
     SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
     SolarSystem* getSolarSystem(const Star* star) const;
+    SolarSystem* createSolarSystem(const Star* star) const;
 
  private:
     Selection pickPlanet(SolarSystem& solarSystem,
