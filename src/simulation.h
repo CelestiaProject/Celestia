@@ -55,6 +55,7 @@ class Simulation
     void selectStar(uint32);
     void selectPlanet(int);
     Selection findObject(string s);
+    Selection findObjectFromPath(string s);
     void gotoSelection(double gotoTime);
     void gotoSelection(double gotoTime, double distance);
     void centerSelection(double centerTime = 0.5);
