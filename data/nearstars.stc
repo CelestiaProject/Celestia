@@ -1,0 +1,2644 @@
+# Nearby stars and star orbits out to 25 light years, supplementary
+# to Celestia's stars.dat.
+
+# Data are mainly derived from the RECONS survey tabulation at
+# http://joy.chara.gsu.edu/RECONS/TOP100.htm. In particular, the distances
+# given are derived from RECONS's weighted average parallaxes, rather than
+# pure Hipparcos data.
+
+# For binary orbits, the direction of an orbit's node on the plane of the 
+# sky is often unknown - the orbits given below will appear correct when
+# viewed from Earth, but the true orbit may be tilted either towards 
+# or away from the Earth.
+# For a few orbits the nature of the node is known - these are
+# marked with the phrase "fully specified orientation".
+# Barycenters positions are mainly based on mass estimates from RECONS:
+# the figures used are added as comments belows.
+
+0 "Sol:Sun"
+{
+	RA 0
+	Dec 0
+	Distance 0 #0.00326167 
+	SpectralType "G2V"
+	AbsMag 4.83
+
+	RotationPeriod      609.12  # 25.38 days
+	Obliquity             7.25  # correct orientation relative to ecliptic
+	EquatorAscendingNode 75.77  # 
+	RotationOffset       23.00  # standard meridian
+}
+
+70890 # Proxima Cen
+{
+	RA 217.429167
+	Dec -62.679444
+	Distance 4.225
+	SpectralType "M5.5V"
+	AppMag 11.09
+}
+
+Barycenter "Rigel Kentaurus:Toliman:ALF Cen:Gliese 559"
+{
+	RA 219.917516  # mass ratio 1.09:0.92
+	Dec -60.837128 #
+	Distance 4.365
+}
+
+71683 # ALF Cen A
+{
+	OrbitBarycenter "ALF Cen"
+	SpectralType "G2V"
+	AppMag 0.01
+
+	EllipticalOrbit {
+		Period          79.914
+		SemiMajorAxis   10.765   # mass ratio 1.09:0.92
+		Eccentricity    0.5179
+		Inclination	82.980
+		AscendingNode   67.708
+		ArgOfPericenter 3.774
+		MeanAnomaly     200.119
+	}
+}
+
+71681 # ALF cen B
+{
+	OrbitBarycenter "ALF Cen"
+	SpectralType "K0V"
+	AppMag 1.34
+
+	EllipticalOrbit {
+		Period          79.914
+		SemiMajorAxis   12.755   # mass ratio 1.09:0.92
+		Eccentricity    0.5179
+		Inclination	82.980
+		AscendingNode   67.708
+		ArgOfPericenter 183.774
+		MeanAnomaly     200.119
+	}
+}
+
+87937 # Barnard's Star
+{
+	RA 269.452083
+	Dec 4.693333
+	Distance 5.963
+	SpectralType "M4.0V"
+	AppMag 9.53
+}
+
+"Wolf 359:CN Leo:Gliese 406"
+{	
+	RA 164.121783
+	Dec 7.014722
+	Distance 7.782
+	SpectralType "M6.0V"
+	AppMag 13.44
+}
+
+54035 # Lalande 21185
+{
+	RA 165.834167
+	Dec 35.970000
+	Distance 8.290
+	SpectralType "M2.0V"
+	AppMag 7.47
+}
+
+Barycenter "Sirius:Alhabor:ALF CMa:9 CMa:Gliese 244"
+{
+	RA 101.287083
+	Dec -16.716111
+	Distance 8.583
+}
+
+32349 "Sirius A:Alhabor A:ALF CMa A:9 CMa A:Gliese 244 A"
+{
+	OrbitBarycenter "Sirius"
+	SpectralType "A1V"
+	AppMag -1.43
+
+	EllipticalOrbit {              # fully specified orientation
+		Period          50.09
+		SemiMajorAxis   6.73   # mass ratio 1.99:1.03
+		Eccentricity    0.5923
+		Inclination	97.51
+		AscendingNode   161.33
+		ArgOfPericenter 4.56
+		MeanAnomaly     40.89
+	}
+}
+
+"Sirius B:Alhabor B:ALF CMa B:9 CMa B:Gliese 244 B"
+{
+	OrbitBarycenter "Sirius"
+	SpectralType "DA2"
+	AppMag 8.44
+
+	EllipticalOrbit {              # fully specified orientation
+		Period          50.09
+		SemiMajorAxis   13.00  # mass ratio 1.99:1.03
+		Eccentricity    0.592
+		Inclination	97.51
+		AscendingNode   161.33
+		ArgOfPericenter 184.56
+		MeanAnomaly     40.89
+	}
+}
+
+Barycenter "Luyten 726-8:Gliese 65"
+{
+	RA 24.755529
+	Dec -17.950278
+	Distance 8.728
+}
+
+"Luyten 726-8 A:Gliese 65 A:BL Cet"
+{
+	OrbitBarycenter "Luyten 726-8"
+	SpectralType "M5.5V"
+	AppMag 12.54
+
+	EllipticalOrbit {
+		Period          26.52
+		SemiMajorAxis   2.61    # mass ratio 0.1:0.1
+		Eccentricity    0.62
+		Inclination	101.3
+		AscendingNode   159.5
+		ArgOfPericenter 39.7
+		MeanAnomaly     21.3
+	}
+}
+
+"Luyten 726-8 B:Gliese 65 B:UV Cet"
+{
+	OrbitBarycenter "Luyten 726-8"
+	SpectralType "M6.0V"
+	AppMag 12.99
+
+	EllipticalOrbit {
+		Period          26.52
+		SemiMajorAxis   2.61   # mass ratio 0.1:0.1
+		Eccentricity    0.62
+		Inclination	101.3
+		AscendingNode   159.5
+		ArgOfPericenter 219.7
+		MeanAnomaly     21.3
+	}
+}
+
+92403 # Ross 154
+{
+	RA 282.455833
+	Dec -23.836111
+	Distance 9.681
+	SpectralType "M3.5V"
+	AppMag 10.43
+}
+
+"Ross 248:HH And:Gliese 905"
+{
+	RA 355.479875
+	Dec 44.177222
+	Distance 10.322
+	SpectralType "M5.5V"
+	AppMag 12.29
+}
+
+16537 # Eps Eri
+{
+	RA 53.232500
+	Dec -9.458333
+	Distance 10.522
+	SpectralType "K2V"
+	AppMag 3.73
+}
+
+114046 # Lacaille 9352
+{
+	RA 346.466667
+	Dec -35.853056
+	Distance 10.742
+	SpectralType "M1.5V"
+	AppMag 7.34
+}
+
+57548 # Ross 128
+{
+	RA 176.935000
+	Dec 0.804444
+	Distance 10.919
+	SpectralType "M4.0V"
+	AppMag 11.13
+}
+
+Barycenter "Luyten 789-6:Gliese 866"
+{
+	RA 339.640833
+	Dec -15.300806
+	Distance 11.266
+}
+
+Barycenter "Luyten 789-6 A:Gliese 866 A"
+{
+	OrbitBarycenter "Luyten 789-6"
+
+	EllipticalOrbit {
+		Period          2.2506
+		SemiMajorAxis   0.42   # mass ratio 0.106:(0.105+0.095)
+		Eccentricity    0.437
+		Inclination	96.2
+		AscendingNode   133.5
+		ArgOfPericenter 76.4
+		MeanAnomaly     241.7
+	}
+}
+
+"Luyten 789-6 Aa:Gliese 866 Aa:EZ Aqr"
+{
+	OrbitBarycenter "Luyten 789-6 A"
+	SpectralType "M5.0V"
+	AppMag 13.33
+
+	EllipticalOrbit {
+		Period          0.010	# 3.8dys
+		SemiMajorAxis   0.013	# to match period and mass ratio 0.105:0.095
+		Inclination	96	# guess - to match plane of B
+		AscendingNode   133	# guess - to match plane of B
+	}
+}
+
+"Luyten 789-6 Ab:Gliese 866 Ab"
+{
+	OrbitBarycenter "Luyten 789-6 A"
+	SpectralType "M6V" # from apparent magnitude
+	AppMag 14.03
+
+	EllipticalOrbit {
+		Period          0.010	# 3.8dys
+		SemiMajorAxis   0.014	# to match period and mass ratio 0.105:0.095
+		Inclination	96	# guess - to match plane of B
+		AscendingNode   133	# guess - to match plane of B
+		ArgOfPericenter 180
+	}
+}
+
+"Luyten 789-6 B:Gliese 866 B"
+{
+	OrbitBarycenter "Luyten 789-6"
+	SpectralType "M5V" # from apparent magnitude
+	AppMag 13.27
+
+	EllipticalOrbit {
+		Period          2.2506
+		SemiMajorAxis   0.78   # mass ratio 0.106:(0.105+0.095)
+		Eccentricity    0.437
+		Inclination	96.2
+		AscendingNode   133.5
+		ArgOfPericenter 256.4
+		MeanAnomaly     241.7
+	}
+}
+
+Barycenter "Procyon:Elgomaisa:ALF CMi:10 CMi:Gliese 280"
+{
+	RA 114.82724
+	Dec 5.2275076
+	Distance 11.402
+}
+
+37279 "Procyon A:Elgomaisa A:ALF CMi A:10 CMi A:Gliese 280 A"
+{
+	OrbitBarycenter "Procyon"
+	SpectralType "F5IV"
+	AppMag 0.38
+
+	EllipticalOrbit {
+		Period          40.82
+		SemiMajorAxis   4.13   # mass ratio 1.57:0.6
+		Eccentricity    0.407
+		Inclination	42.9
+		AscendingNode   27.8
+		ArgOfPericenter 88.4
+		MeanAnomaly     282.5
+	}
+}
+
+"Procyon B:Elgomaisa B:ALF CMi B:10 CMi B:Gliese 280 B"
+{
+	OrbitBarycenter "Procyon"
+	SpectralType "DA"
+	AppMag 10.70
+
+	EllipticalOrbit {
+		Period          40.82
+		SemiMajorAxis   10.80  # mass ratio 1.57:0.6
+		Eccentricity    0.407
+		Inclination	42.9
+		AscendingNode   27.8
+		ArgOfPericenter 268.4
+		MeanAnomaly     282.5
+	}
+}
+
+Barycenter "61 Cyg:Gliese 820"
+{
+	RA 316.714507   # mass ratio 0.7:0.63
+	Dec 38.738139   #
+	Distance 11.403
+}
+
+104214 # 61 Cyg A
+{
+	OrbitBarycenter "61 Cyg"
+	SpectralType "K5V"
+	AppMag 5.21
+
+	EllipticalOrbit {
+		Period          659
+		SemiMajorAxis   40.40 # mass ratio 0.7:0.63
+		Eccentricity	0.48
+		Inclination	132
+		AscendingNode   165
+		ArgOfPericenter 195
+		MeanAnomaly     165
+	}
+}
+
+104217 # 61 Cyg B
+{
+	OrbitBarycenter "61 Cyg"
+	SpectralType "K7V"
+	AppMag 6.03
+
+	EllipticalOrbit {
+		Period          659
+		SemiMajorAxis   44.90 # mass ratio 0.7:0.63
+		Eccentricity	0.48
+		Inclination	132
+		AscendingNode   165
+		ArgOfPericenter 15
+		MeanAnomaly     165
+	}
+}
+
+Barycenter "Struve 2398:Gliese 725"
+{
+	RA 280.701371   # mass ratio 0.35:0.26
+	Dec 59.624455   #
+	Distance 11.525
+}
+
+91768 # Struve 2398 A
+{
+	OrbitBarycenter "Struve 2398"
+	SpectralType "M3.0V"
+	AppMag 8.90
+
+	EllipticalOrbit {
+		Period          408
+		SemiMajorAxis   20.91 # mass ratio 0.35:0.26
+		Eccentricity	0.53
+		Inclination	112
+		AscendingNode   146.1
+		ArgOfPericenter 243.5
+		MeanAnomaly     198.5
+	}
+}
+
+91772 # Struve 2398 B
+{
+	OrbitBarycenter "Struve 2398"
+	SpectralType "M3.5V"
+	AppMag 9.69
+
+	EllipticalOrbit {
+		Period          408
+		SemiMajorAxis   28.14 # mass ratio 0.35:0.26
+		Eccentricity	0.53
+		Inclination	112
+		AscendingNode   146.1
+		ArgOfPericenter 63.5
+		MeanAnomaly     198.5
+	}
+}
+
+Barycenter "Groombridge 34:Gliese 15"
+{
+	RA 4.595417
+	Dec 44.023056
+	Distance 11.624
+}
+
+1475 "Groombridge 34 A:Gliese 15 A:GX And"
+{
+	OrbitBarycenter "Groombridge 34"
+	SpectralType "M1.5V"
+	AppMag 8.08
+
+	EllipticalOrbit {
+		Period          2600
+		SemiMajorAxis   36.1   # mass ratio 0.49:0.16
+		Eccentricity	0
+		Inclination	67.9
+		AscendingNode   308.4
+		MeanLongitude   23.0
+	}
+}
+
+"Groombridge 34 B:Gliese 15 B:GQ And"
+{
+	OrbitBarycenter "Groombridge 34"
+	SpectralType "M3.5V"
+	AppMag 11.06
+
+	EllipticalOrbit {
+		Period          2600
+		SemiMajorAxis   110.7  # mass ratio 0.49:0.16
+		Eccentricity	0
+		Inclination	67.9
+		AscendingNode   308.4
+		MeanLongitude   203.0
+	}
+}
+
+Barycenter "EPS Ind:Gliese 845" # orbit of A & B components unknown
+{
+	RA 330.841091   # mass ratio 0.77:(0.04+0.03)
+	Dec -56.780045
+	Distance 11.824
+}
+
+108870 "EPS Ind A:Gliese 845 A"
+{
+	RA 330.82266
+	Dec -56.779804
+	Distance 11.824
+	SpectralType "K5V"
+	AppMag 4.69
+}
+
+Barycenter "EPS Ind B:Gliese 845 B"
+{
+	RA 331.043833
+	Dec -56.782694
+	Distance 11.824
+}
+
+"EPS Ind Ba:Gliese 845 Ba"
+{
+	OrbitBarycenter "EPS Ind B"
+	SpectralType "T1V"
+	AbsMag 25.8 # for approximate radius in Celestia
+
+	EllipticalOrbit {
+		Period 		15.5 # approximate orbit
+		SemiMajorAxis	0.99 # mass ratio 47:28J
+	}
+}
+
+"EPS Ind Bb:Gliese 845 Bb"
+{
+	OrbitBarycenter "EPS Ind B"
+	SpectralType "T6V"
+	AbsMag 33.5 # for approximate radius in Celestia
+
+	EllipticalOrbit {
+		Period 		15.5 # approximate orbit
+		SemiMajorAxis	1.66 # mass ratio 47:28J
+		ArgOfPericenter 180
+	}
+}
+
+"DX Cnc:Giclas 51-15:GJ 1111"
+{
+	RA 127.456125
+	Dec 26.775611
+	Distance 11.826
+	SpectralType "M6.5V"
+	AppMag 14.78
+}
+
+8102 # Tau Cet
+{
+	RA 26.017083
+	Dec -15.937500
+	Distance 11.887
+	SpectralType "G8V"
+	AppMag 3.49
+}
+
+"Luyten 372-58:RECONS 1:GJ 1061"
+{
+	RA 54.000000
+	Dec -44.512778
+	Distance 12.049
+	SpectralType "M5.5V"
+	AppMag 13.03
+}
+
+5643 # Luyten 725-032
+{
+	RA 18.127500
+	Dec -16.999167
+	Distance 12.132
+	SpectralType "M4.5V"
+	AppMag 12.02
+}
+
+36208 # Luyten's Star
+{
+	RA 111.852083
+	Dec 5.225833
+	Distance 12.366
+	SpectralType "M3.5V"
+	AppMag 9.86
+}
+
+"Teegarden's Star:SO0253+1652:SO025300.5+165258"
+{
+	RA 43.253500
+	Dec 16.881389
+	Distance 12.541
+	SpectralType "M7.0V"
+	AppMag 15.40
+}
+
+24186 # Kapteyn's Star
+{
+	RA 77.919167
+	Dec -45.018333
+	Distance 12.777
+	SpectralType "M1.5VI"
+	AppMag 8.84
+}
+
+"SCR 1845-6357"
+{
+	RA 281.260833
+	Dec -63.964444
+	Distance 12.844
+	SpectralType "M8.5V"
+	AppMag 17.39
+}
+
+105090 # Lacaille 8760
+{
+	RA 319.313750
+	Dec -38.867500
+	Distance 12.870
+	SpectralType "M0.0V"
+	AppMag 6.67
+}
+
+Barycenter "Kruger 60:Gliese 860"
+{
+	RA 336.997917
+	Dec 57.695833
+	Distance 13.149
+}
+
+110893 "Kruger 60 A:Gliese 860 A"
+{
+	OrbitBarycenter "Kruger 60"
+	SpectralType "M3.0V"
+	AppMag 9.79
+
+	EllipticalOrbit {
+		Period          44.67
+		SemiMajorAxis   3.49 # mass ratio 0.28:0.16
+		Eccentricity	0.41
+		Inclination	37.0
+		AscendingNode   126.6
+		ArgOfPericenter 264.1
+		MeanAnomaly     240.0
+	}
+}
+
+"Kruger 60 B:DO Cep:Gliese 860 B"
+{
+	OrbitBarycenter "Kruger 60"
+	SpectralType "M4.0V"
+	AppMag 11.41
+
+	EllipticalOrbit {
+		Period          44.67
+		SemiMajorAxis   6.12 # mass ratio 0.28:0.16
+		Eccentricity	0.41
+		Inclination	37.0
+		AscendingNode   126.6
+		ArgOfPericenter 84.1
+		MeanAnomaly     240.0
+	}
+}
+
+"DENIS 1048-3956:RECONS 2"
+{
+	RA 162.061250
+	Dec -39.935000
+	Distance 13.167
+	SpectralType "M8.5V"
+	AppMag 17.29
+}
+
+Barycenter "Ross 614:Gliese 234"
+{
+	RA 97.347500
+	Dec -2.813889
+	Distance 13.349
+}
+
+30920 "Ross 614 A:V577 Mon:Gliese 234 A"
+{
+	OrbitBarycenter "Ross 614"
+	SpectralType "M4.5V"
+	AppMag 11.15
+
+	EllipticalOrbit {
+		Period          16.5
+		SemiMajorAxis   1.67 # mass ratio 0.17:0.10
+		Eccentricity	0.38
+		Inclination	37
+		AscendingNode   71
+		ArgOfPericenter 131
+		MeanAnomaly     0
+	}
+}
+
+"Ross 614 B:Gliese 234 B"
+{
+	OrbitBarycenter "Ross 614"
+	SpectralType "M7V"
+	AppMag 14.23
+
+	EllipticalOrbit {
+		Period          16.5
+		SemiMajorAxis   2.83 # mass ratio 0.17:0.10
+		Eccentricity	0.38
+		Inclination	37
+		AscendingNode   71
+		ArgOfPericenter 311
+		MeanAnomaly     0
+	}
+}
+
+80824 # Wolf 1061
+{
+	RA 247.575417
+	Dec -12.662500
+	Distance 13.820
+	SpectralType "M3.0V"
+	AppMag 10.07
+}
+
+3829 # van Maanen's Star
+{
+	RA 12.291250
+	Dec 5.388611
+	Distance 14.066
+	SpectralType "DZ7"
+	AppMag 12.38
+}
+
+439 # Cordoba 32416
+
+{
+	RA 1.351667
+	Dec -37.357500
+	Distance 14.231
+	SpectralType "M3.0V"
+	AppMag 8.55
+}
+
+Barycenter "Wolf 424:Gliese 473"
+{
+	RA 188.321667
+	Dec 9.020833
+	Distance 14.312
+}
+
+"Wolf 424 A:Gliese 473 A"
+{
+	OrbitBarycenter "Wolf 424"
+	SpectralType "M5.5V"
+	AppMag 13.18
+
+	EllipticalOrbit {
+		Period          15.9
+		SemiMajorAxis   1.92 # mass ratio 0.14:0.13
+		Eccentricity	0.3
+		Inclination	28.7
+		AscendingNode   359.5
+		ArgOfPericenter 81.1
+		MeanAnomaly     169.8
+	}
+}
+
+"Wolf 424 B:FL Vir:Gliese 473 B"
+{
+	OrbitBarycenter "Wolf 424"
+	SpectralType "M5.5V"
+	AppMag 13.17
+
+	EllipticalOrbit {
+		Period          15.9
+		SemiMajorAxis   2.06 # mass ratio 0.14:0.13
+		Eccentricity	0.3
+		Inclination	28.7
+		AscendingNode   359.5
+		ArgOfPericenter 261.1
+		MeanAnomaly     169.8
+	}
+}
+
+"Luyten 1159-16:TZ Ari:Gliese 83.1"
+{
+	RA 30.055000
+	Dec 13.052222
+	Distance 14.509
+	SpectralType "M4.5V"
+	AppMag 12.27
+}
+
+"Luyten 143-23:GJ 3618"
+{
+	RA 161.132500
+	Dec -61.193889
+	Distance 14.659
+	SpectralType "M5.5V"
+	AppMag 13.92
+}
+
+86162 # Gliese 687
+{
+	RA 264.107917
+	Dec 68.339167
+	Distance 14.793
+	SpectralType "M3.0V"
+	AppMag 9.17
+}
+
+"LP 731-58:GJ 3622"
+{
+	RA 162.052500
+	Dec -11.337222
+	Distance 14.805
+	SpectralType "M6.5V"
+	AppMag 15.60
+}
+
+85523 # Gliese 674
+{
+	RA 262.166250
+	Dec -46.895278
+	Distance 14.809
+	SpectralType "M3.0V"
+	AppMag 9.38
+}
+
+Barycenter "GJ 1245" # orbit of A & B components unknown
+{
+	RA 298.477317   # mass ratio (0.11+0.07):0.10
+	Dec 44.415377   #
+	Distance 14.812
+}
+
+Barycenter "GJ 1245 A"
+{
+	RA 298.475833
+	Dec 44.415278
+	Distance 14.812
+}
+
+
+"GJ 1245 Aa:V1581 Cyg"
+{
+	OrbitBarycenter "GJ 1245 A"
+	SpectralType "M5.5V"
+	AppMag 13.46
+
+	EllipticalOrbit {
+		Period          15.22
+		SemiMajorAxis   0.49 # mass ratio 0.11:0.07
+		Eccentricity	0.32
+		Inclination	20
+		AscendingNode   197
+		ArgOfPericenter 58
+		MeanAnomaly     40
+	}
+}
+
+"GJ 1245 Ab"
+{
+	OrbitBarycenter "GJ 1245 A"
+	SpectralType "M7.5V" # from low luminosity
+	AppMag 16.75
+
+	EllipticalOrbit {
+		Period          15.22
+		SemiMajorAxis   0.78 # mass ratio 0.11:0.07
+		Eccentricity	0.32
+		Inclination	20
+		AscendingNode   197
+		ArgOfPericenter 238
+		MeanAnomaly     40
+	}
+}
+
+"GJ 1245 B"
+{
+	RA 298.480000
+	Dec 44.415556
+	Distance 14.812
+	SpectralType "M6.0V"
+	AppMag 14.01
+}
+
+57367 # Luyten 145-141
+{
+	RA 176.428750
+	Dec -64.841389
+	Distance 15.060
+	SpectralType "DQ6"
+	AppMag 11.50
+}
+
+"GJ 1002"
+{
+	RA 1.682500
+	Dec -7.539444
+	Distance 15.313
+	SpectralType "M5.5V"
+	AppMag 13.76
+}
+
+113020 # Ross 780
+{
+	RA 343.319583
+	Dec -14.263611
+	Distance 15.342
+	SpectralType "M3.5V"
+	AppMag 10.17
+}
+
+Barycenter "Lalande 21258:Gliese 412" # orbits of A & B unknown
+{
+	RA 166.370443   # mass ratio 0.48:0.10
+	Dec 43.525816   #
+	Distance 15.832
+}
+
+54211 "Lalande 21258 A:Gliese 412 A"
+{
+	RA 166.369167
+	Dec 43.526667
+	Distance 15.832
+	SpectralType "M1.0V"
+	AppMag 8.77
+}
+
+"Lalande 21258 B:WX UMa:Gliese 412 B"
+{
+	RA 166.376667
+	Dec 43.521667
+	Distance 15.832
+	SpectralType "M5.5V"
+	AppMag 14.48
+}
+
+49908 # Groombridge 1618
+{
+	RA 152.842083
+	Dec 49.454167
+	Distance 15.848
+	SpectralType "K7.0V"
+	AppMag 6.59
+}
+
+"AD Leo:Gliese 388"
+{
+	RA 154.901667
+	Dec 19.869444
+	Distance 15.942
+	SpectralType "M3.0V"
+	AppMag 9.32
+}
+
+106440 # Luyten 354-89
+{
+	RA 323.391667
+	Dec -49.008889
+	Distance 16.085
+	SpectralType "M3.0V"
+	AppMag 8.66
+}
+
+"LP 944-20"
+{
+	RA 54.896667
+	Dec -35.428056
+	Distance 16.195
+	SpectralType "M9.0V"
+	AppMag 18.50
+}
+
+86214 # Gliese 682
+{
+	RA 264.265417
+	Dec -44.319167
+	Distance 16.337
+	SpectralType "M4.5V"
+	AppMag 10.95
+}
+
+Barycenter "Keid:OMI2 Eri:40 Eri:Gliese 166" # Orbits of A & (BC) unknown
+{
+	RA 63.828351    # mass ratio 0.89:(0.5+0.20)
+	Dec -7.655829   #
+	Distance 16.390
+}
+
+19849 "Keid A:OMI2 Eri A:40 Eri A:Gliese 166 A"
+{
+	RA 63.817917
+	Dec -7.652778
+	Distance 16.390
+	SpectralType "K1V"
+	AppMag 4.43
+}
+
+Barycenter "Keid BC: OMI2 Eri BC:40 Eri BC:Gliese 166 BC"
+{
+	RA 63.841667
+	Dec -7.659722
+	Distance 16.390
+}
+
+"Keid B:OMI2 Eri B:40 Eri B:Gliese 166 B"
+{
+	OrbitBarycenter "Keid BC"
+	SpectralType "DA4"
+	AppMag 9.52
+
+	EllipticalOrbit {
+		Period          252.1
+		SemiMajorAxis   9.97   # mass ratio 0.5:0.2
+		Eccentricity	0.41
+		Inclination	84.4
+		AscendingNode   215.2
+		ArgOfPericenter 90.4
+		MeanAnomaly     214.77
+	}
+}
+
+"Keid C:OMI2 Eri C:40 Eri C:DY Eri:Gliese 166 C"
+{
+	OrbitBarycenter "Keid BC"
+	SpectralType "M4.5V"
+	AppMag 11.19
+
+	EllipticalOrbit {
+		Period          252.1
+		SemiMajorAxis   24.92  # mass ratio 0.5:0.2
+		Eccentricity	0.41
+		Inclination	84.4
+		AscendingNode   215.2
+		ArgOfPericenter 270.4
+		MeanAnomaly     214.77
+	}
+}
+
+112460 # EV Lac
+{
+	RA 341.702083
+	Dec 44.330833
+	Distance 16.470
+	SpectralType "M3.5V"
+	AppMag 10.06
+}
+
+Barycenter "70 Oph:Struve 2272:Gliese 702"
+{
+	RA 271.363750 
+	Dec 2.500000
+	Distance 16.644
+}
+
+88601 "70 Oph A:Struve 2272 A:Gliese 702 A"
+{
+	OrbitBarycenter "70 Oph"
+	SpectralType "K0V"
+	AppMag 4.20
+
+	EllipticalOrbit {
+		Period          88.38
+		SemiMajorAxis   10.04  # mass ratio 0.92:0.70
+		Eccentricity	0.4992
+		Inclination	114.9
+		AscendingNode   330.8
+		ArgOfPericenter 341.6
+		MeanAnomaly     63.9
+	}
+}
+
+"70 Oph B:Struve 2272 B:Gliese 702 B"
+{
+	OrbitBarycenter "70 Oph"
+	SpectralType "K5V"
+	AppMag 6.05
+
+	EllipticalOrbit {
+		Period          88.38
+		SemiMajorAxis   13.20  # mass ratio 0.92:0.70
+		Eccentricity	0.4992
+		Inclination	114.9
+		AscendingNode   330.8
+		ArgOfPericenter 161.6
+		MeanAnomaly     63.9
+	}
+}
+
+97649 # Altair
+{
+	RA 297.695833
+	Dec 8.868333
+	Distance 16.729
+	SpectralType "A7IV"
+	AppMag 0.77
+
+	RotationPeriod 10.4
+	SemiAxes [ 1 0.88 1 ] # equatorial radius 14% greater than polar
+}
+
+Barycenter "GJ 1116"  # orbit of A & B unknown
+{
+	RA 134.562083   # mass ratio 0.11:0.10
+	Dec 19.762724   #
+	Distance 17.059
+}
+
+"GJ 1116 A:EI Cnc"
+{
+	RA 134.562083
+	Dec 19.761944
+	Distance 17.059
+	SpectralType "M5.5V"
+	AppMag 14.06
+}
+
+"GJ 1116 B:LP 426-40"
+{
+	RA 134.562083
+	Dec 19.763611
+	Distance 17.059
+	SpectralType "M5.5V"
+	AppMag 14.92
+}
+
+"Giclas 099-49:GJ 3379"
+{
+	RA 90.015000
+	Dec 2.705556
+	Distance 17.517
+	SpectralType "M3.5V"
+	AppMag 11.33
+}
+
+57544 # Gliese 445
+{
+	RA 176.922500
+	Dec 78.691111
+	Distance 17.551
+	SpectralType "M3.5V"
+	AppMag 10.79
+}
+
+Barycenter "Luyten 722-22:GJ 1005"
+{
+	RA 3.867083
+	Dec -16.133889
+	Distance 17.553
+}
+
+1242 "Luyten 722-22 A:GJ 1005 A"
+{
+	OrbitBarycenter "Luyten 722-22"
+	SpectralType "M4.0V"
+	AppMag 11.58
+
+	EllipticalOrbit {
+		Period          4.566
+		SemiMajorAxis   0.62  # mass ratio 0.18:0.11
+		Eccentricity	0.364
+		Inclination	72.3
+		AscendingNode   85.2
+		ArgOfPericenter 169.4
+		MeanAnomaly     5.4
+	}
+}
+
+"Luyten 722-22 B:GJ 1005 B"
+{
+	OrbitBarycenter "Luyten 722-22"
+	SpectralType "M7V"
+	AppMag 14.33
+
+	EllipticalOrbit {
+		Period          4.566
+		SemiMajorAxis   1.01  # mass ratio 0.18:0.11
+		Eccentricity	0.364
+		Inclination	72.3
+		AscendingNode   85.2
+		ArgOfPericenter 349.4
+		MeanAnomaly     5.4
+	}
+}
+
+67155 # Lalande 25372
+{
+	RA 206.432500
+	Dec 14.891389
+	Distance 17.706
+	SpectralType "M1.5V"
+	AppMag 8.46
+}
+
+"LP 656-38:RECONS 3:GJ 3323"
+{
+	RA 75.487500
+	Dec -6.946389
+	Distance 17.706
+	SpectralType "M3.5V"
+	AppMag 12.15
+}
+
+103039 # LP 816-60
+{
+	RA 313.137500
+	Dec -16.974722
+	Distance 17.906
+	SpectralType "M"
+	AppMag 11.41
+}
+
+Barycenter "Stein 2051:Gliese 169.1" # orbit of A & B unknown
+{
+	RA 67.796397    # mass ratio 0.224:0.50
+	Dec 58.977167   # 
+	Distance 18.057
+}
+
+21088 "Stein 2051 A:Gliese 169.1 A"
+{
+	RA 67.799375
+	Dec 58.977167
+	Distance 18.057
+	SpectralType "M4V"
+	AppMag 11.04
+}
+
+"Stein 2051 B:Gliese 169.1 B"
+{
+	RA 67.795063
+	Dec 58.977167
+	Distance 18.057
+	SpectralType "DC5"
+	AppMag 12.44
+}
+
+33226 # Wolf 294
+{
+	RA 103.704167
+	Dec 33.268056
+	Distance 18.163
+	SpectralType "M3.0V"
+	AppMag 10.02
+}
+
+"2MASS 1835+3259"
+{
+	RA 278.907917
+	Dec 32.998333
+	Distance 18.480
+	SpectralType "M8.5V"
+	AppMag 18.27
+}
+
+"Luyten 347-14:Gliese 754"
+{
+	RA 290.200833
+	Dec -45.558889
+	Distance 18.617
+	SpectralType "M4.5V"
+	AppMag 12.23
+}
+
+25878 # Wolf 1453
+{
+	RA 82.864167
+	Dec -3.677222
+	Distance 18.620
+	SpectralType "M1.5V"
+	AppMag 7.95
+}
+
+"2MASS 0415-0935"
+{
+	RA 63.83125
+	Dec -9.585
+	Distance 18.709
+	SpectralType "T8.5V"
+	AbsMag 38  # estimate
+}
+
+96100 # Sig Dra
+{
+	RA 293.090000
+	Dec 69.661111
+	Distance 18.789
+	SpectralType "K0V"
+	AppMag 4.68
+}
+
+Barycenter "Luyten 668-21:LPM 230:Gliese 229" # orbit of A & B unknown
+{
+	RA 92.644342    # mass ratio 0.556:0.05
+	Dec -21.863920  #
+	Distance 18.835
+}
+
+29295 "Luyten 668-21 A:LPM 230 A:Gliese 229 A"
+{
+	RA 92.644167
+	Dec -21.864722
+	Distance 18.835
+	SpectralType "M1.0V"
+	AppMag 8.12
+}
+
+"Luyten 668-21 B:LPM 230 B:Gliese 229 B"
+{
+	RA 92.646292
+	Dec -21.855000
+	Distance 18.835
+	SpectralType "T6.5V"
+	AbsMag 33 # very approx
+}
+
+86990 # Luyten 205-128
+{
+	RA 266.642500
+	Dec -57.319167
+	Distance 18.997
+	SpectralType "M4.0V"
+	AppMag 10.75
+}
+
+Barycenter "Ross 652:Wolf 1055:Gliese 752" # orbit of A & B unknown
+{
+	RA 289.232026   # mass ratio 0.494:0.073
+	Dec 5.166493    #
+	Distance 19.073
+}
+
+94761 "Ross 652 A:Wolf 1055 A:V1428 Aql:Gliese 752 A"
+{
+	RA 289.230417
+	Dec 5.1688889
+	Distance 19.073
+	SpectralType "M3.5V"
+	AppMag 9.11
+}
+
+"Ross 652 B:Wolf 1055 B:Van Biesbroek's Star:VB 10:V1298 Aql:Gliese 752 B"
+{
+	RA 289.242917
+	Dec 5.150278
+	Distance 19.073
+	SpectralType "M8.0V"
+	AppMag 17.50
+}
+
+26857 # Ross 47
+{
+	RA 85.538750
+	Dec 12.489444
+	Distance 19.144
+	SpectralType "M4.0V"
+	AppMag 11.51
+}
+
+"Luyten 674-15:Gliese 300"
+{
+	RA 123.170000
+	Dec -21.552778
+	Distance 19.197
+	SpectralType "M3.5V"
+	AppMag 12.07
+}
+
+Barycenter "33 Lib:Gliese 570"
+{
+	RA 224.363278   # mass ratio 0.76:(0.55+0.35)
+	Dec -21.413296  #
+	Distance 19.203
+}
+
+73184 "33 Lib A:Gliese 570 A"		# fully specified orientation
+{	
+	OrbitBarycenter "33 Lib"
+	SpectralType "K5V"
+	AppMag 5.75
+
+	EllipticalOrbit {
+		Period          2130
+		SemiMajorAxis   103.23  # mass ratio 0.76:(0.55+0.35)
+		Eccentricity	0.2
+		Inclination	142.62
+		AscendingNode   191.56
+		ArgOfPericenter 129.2
+		MeanAnomaly     52.6
+	}
+}
+
+Barycenter "33 Lib BC:Gliese 570 BC"         # fully specified orientation
+{
+	OrbitBarycenter "33 Lib"
+
+	EllipticalOrbit {
+		Period          2130
+		SemiMajorAxis   87.17  # mass ratio 0.76:(0.55+0.35)
+		Eccentricity	0.2
+		Inclination	142.62
+		AscendingNode   191.56
+		ArgOfPericenter 309.2
+		MeanAnomaly     52.6
+	}
+}
+
+73182 "33 Lib B:Gliese 570 B"
+{
+	OrbitBarycenter "33 Lib BC"
+	SpectralType "M1V"
+	AppMag 8.28
+
+	EllipticalOrbit {
+		Period          0.84570
+		SemiMajorAxis   0.35   # mass ratio 0.55:0.35
+		Eccentricity	0.7559
+		Inclination     90.7
+		AscendingNode   30.5
+		ArgOfPericenter 221.92
+		MeanAnomaly     45.19
+	}
+}
+
+"33 Lib C:Gliese 570 C"
+{
+	OrbitBarycenter "33 Lib BC"
+	SpectralType "M3V"
+	AppMag 10.05
+
+	EllipticalOrbit {
+		Period          0.84570
+		SemiMajorAxis   0.54   # mass ratio 0.55:0.35
+		Eccentricity	0.7559
+		Inclination     90.7
+		AscendingNode   30.5
+		ArgOfPericenter 41.92
+		MeanAnomaly     45.19
+	}
+}
+
+"33 Lib D:Gliese 570 D"
+{
+	RA 224.312500
+	Dec -21.363889
+	Distance 19.203
+	SpectralType "T8V"
+	AbsMag 38 # very approx
+}
+
+117473 # Gliese 908
+{
+	RA 357.302083
+	Dec 2.401111
+	Distance 19.356
+	SpectralType "M1.0V"
+	AppMag 8.99
+}
+
+Barycenter "Achird:ETA Cas:24 Cas:Gliese 34"
+{
+	RA 12.27625
+	Dec 57.815278
+	Distance 19.371
+}
+
+3821 "Achird A:ETA Cas A:24 Cas A:Gliese 34 A"
+{
+	OrbitBarycenter "Achird"
+	SpectralType "G3V"
+	AppMag 3.45
+
+	EllipticalOrbit {
+		Period          480
+		SemiMajorAxis   24.99  # mass ratio 1.11:0.60
+		Eccentricity    0.497
+		Inclination	152.19
+		AscendingNode   6.96
+		ArgOfPericenter 179.63
+		MeanAnomaly     82.80
+	}
+}
+
+"Achird B:ETA Cas B:24 Cas B:Gliese 34 B"
+{
+	OrbitBarycenter "Achird"
+	SpectralType "K7.0V"
+	AppMag 7.51
+
+	EllipticalOrbit {
+		Period          480
+		SemiMajorAxis   46.24  # mass ratio 1.11:0.60
+		Eccentricity    0.497
+		Inclination	152.19
+		AscendingNode   6.96
+		ArgOfPericenter 359.63
+		MeanAnomaly     82.80
+	}
+}
+
+76074 # Gliese 588
+{
+	RA 233.053750
+	Dec -41.275556
+	Distance 19.373
+	SpectralType "M3.0V"
+	AppMag 9.31
+}
+
+37766 # Ross 882 
+{
+	RA 116.167500
+	Dec 3.552500
+	Distance 19.468
+	SpectralType "M4.0V"
+	AppMag 11.19
+}
+
+Barycenter "36 Oph:Gliese 663" # orbit of (AB) & C unknown
+{
+	RA 258.901180   # mass ratio (0.85+0.85):0.7
+	Dec -26.586250  #
+	Distance 19.471
+}
+
+Barycenter "36 Oph AB:Gliese 663 AB"
+{
+	RA 258.837500
+	Dec -26.602778
+	Distance 19.471
+}
+
+84405 "36 Oph A:Gliese 663 A"
+{
+	OrbitBarycenter "36 Oph AB"
+	SpectralType "K1V"
+	AppMag 5.07
+
+	EllipticalOrbit {
+		Period          470.9
+		SemiMajorAxis   38.8  # mass ratio 0.85:0.85
+		Eccentricity    0.916
+		Inclination	13.35
+		AscendingNode   348.86
+		ArgOfPericenter 271.0
+		MeanAnomaly     246.3
+	}
+}
+
+"36 Oph B:Gliese 663 B"
+{
+	OrbitBarycenter "36 Oph AB"
+	SpectralType "K1V"
+	AppMag 5.08
+
+	EllipticalOrbit {
+		Period          470.9
+		SemiMajorAxis   38.8  # mass ratio 0.85:0.85
+		Eccentricity    0.916
+		Inclination	13.35
+		AscendingNode   348.86
+		ArgOfPericenter 91.0
+		MeanAnomaly     246.3
+	}
+}
+
+84478 # 36 Oph C
+{
+	RA 259.055833
+	Dec -26.546111
+	Distance 19.471
+	SpectralType "K5V"
+	AppMag 6.33
+}
+
+Barycenter "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A & B unknown
+{
+	RA 302.798770   # mass ratio 0.82:0.20
+	Dec -36.097603  #
+	Distance 19.728
+}
+
+99461 "Gliese 783 A:CD-36 13940 A:J Herschel 5173 A:HJ 5173 A"
+{
+	RA 302.79837
+	Dec -36.097385
+	Distance 19.728
+	SpectralType "K3V"
+	AppMag 5.32
+}
+
+"Gliese 783 B:CD-36 13940 B:J Herschel 5173 B:HJ 5173 B"
+{
+	RA 302.8004
+	Dec -36.09849
+	Distance 19.728
+	SpectralType "M4.0V"
+	AppMag 11.50
+}
+
+15510 # 82 Eri
+{
+	RA 49.981667
+	Dec -43.069722
+	Distance 19.766
+	SpectralType "G5V"
+	AppMag 4.26
+}
+
+"LP 44-113:GJ 1221"
+{
+	RA 267.027917
+	Dec 70.874722
+	Distance 19.804
+	SpectralType "DXP9"
+	AppMag 14.12
+}
+
+99240 # Del Pav
+{
+	RA 302.181667
+	Dec -66.181944
+	Distance 19.915
+	SpectralType "G8IV"
+	AppMag 3.56
+}
+
+Barycenter "Ross 986:Gliese 268"
+{
+	RA 107.5075
+	Dec 38.529444
+	Distance 20.019
+}
+
+34603 "Ross 986 A:QY Aur:Gliese 268 A"
+{
+	OrbitBarycenter "Ross 986"
+	SpectralType "M5V"
+	AppMag 12.05
+
+	EllipticalOrbit {
+		Period          0.02856 # 10.43dy
+		SemiMajorAxis   0.03    # mass ratio 0.17:0.16
+		ArgOfPericenter 180
+	}
+}
+
+"Ross 986 B:Gliese 268 B"
+{
+	OrbitBarycenter "Ross 986"
+	SpectralType "M6V"
+	AppMag 12.45
+
+	EllipticalOrbit {
+		Period          0.02856 # 10.43dy
+		SemiMajorAxis   0.03    # mass ratio 0.17:0.16
+	}
+}
+
+71253 # Gliese 555
+{
+	RA 218.570000
+	Dec -12.519444
+	Distance 20.027
+	SpectralType "M3.5V"
+	AppMag 11.31
+}
+
+"2MASS 0937+2931"
+{
+	RA 144.391667
+	Dec 29.516667
+	Distance 20.030
+	SpectralType "T6.0V"
+	AbsMag 33  # estimate
+}
+
+Barycenter "Struve 1321:Gliese 338"
+{
+	RA 138.598959
+	Dec 52.775278
+	Distance 20.117
+}
+
+45343 "Struve 1321 A:Gliese 338 A"
+{
+	OrbitBarycenter "Struve 1321"
+	SpectralType "K7V"
+	AppMag 7.62
+
+	EllipticalOrbit {
+		Period          975
+		SemiMajorAxis   51.58  # mass ratio 06:0.6
+		Eccentricity    0.28
+		Inclination	113
+		AscendingNode   13
+		ArgOfPericenter 276
+		MeanAnomaly     264
+	}
+}
+
+120005 "Struve 1321 B:Gliese 338 B"
+{
+	OrbitBarycenter "Struve 1321"
+	SpectralType "K7V"
+	AppMag 7.71
+
+	EllipticalOrbit {
+		Period          975
+		SemiMajorAxis   51.58  # mass ratio 06:0.6
+		Eccentricity    0.28
+		Inclination	113
+		AscendingNode   13
+		ArgOfPericenter 96
+		MeanAnomaly     264
+	}
+}
+
+Barycenter "GJ 2130" # orbit of A & B unknown
+{
+	RA 266.556484   # mass ratio 0.3:(0.19+0.15)
+	Dec -32.102873  #
+	Distance 20.162
+}
+
+86961 # GJ 2130 A
+{
+	RA 266.552500
+	Dec -32.103611
+	Distance 20.162
+	SpectralType "M2V"
+	AppMag 10.49
+}
+
+86963 "GJ 2130 Ba:CD-32 13298 A"
+{
+	RA 266.560000
+	Dec -32.102222
+	Distance 20.162
+	SpectralType "M5.5V" # from apparent magnitude
+	AppMag 11.75
+}
+
+"GJ 2130 Bb:CD-32 13298 B"        #true separation of Bab not known
+{
+	RA 266.5603
+	Dec -32.102222
+	Distance 20.162
+	SpectralType "M6.5V" # from apparent magnitude
+	AppMag 12.75
+}
+
+99701 # Gliese 784
+{
+	RA 303.472500
+	Dec -45.163889
+	Distance 20.236
+	SpectralType "M0.0V"
+	AppMag 7.96
+}
+
+74995 # Wolf 562
+{
+	RA 229.861667
+	Dec -7.722222
+	Distance 20.476
+	SpectralType "M2.5V"
+	AppMag 10.56
+}
+
+"LHS 2090:LP 368-128"
+{
+	RA 135.098333
+	Dec 21.834722
+	Distance 20.511
+	SpectralType "M6.0V"
+	AbsMag 13.5 # for spectral class
+}
+
+Barycenter "Gliese 896"
+{
+	RA 352.967500
+	Dec 19.937222
+	Distance 20.680
+}
+
+Barycenter "Gliese 896 A"
+{
+	OrbitBarycenter "Gliese 896"
+
+	EllipticalOrbit {
+		Period          359
+		SemiMajorAxis   15.12  # mass ratio (0.34+0.13):(0.16+0.09)
+		Eccentricity    0.2
+		Inclination	19.6
+		AscendingNode   138.8
+		ArgOfPericenter 119.1
+		MeanAnomaly     352.0
+	}
+}
+ 
+Barycenter "Gliese 896 B"
+{
+	OrbitBarycenter "Gliese 896"
+
+	EllipticalOrbit {
+		Period          359
+		SemiMajorAxis   28.44  # mass ratio (0.34+0.13):(0.16+0.09)
+		Eccentricity    0.2
+		Inclination	19.6
+		AscendingNode   138.8
+		ArgOfPericenter 299.1
+		MeanAnomaly     352.0
+	}
+}
+
+116132 "Gliese 896 Aa:EQ Peg"
+{
+	OrbitBarycenter "Gliese 896 A"
+	SpectralType "M3.5V"
+	AppMag 10.26
+
+	EllipticalOrbit {
+		Period          3.5	# "of the order of a few years"
+		SemiMajorAxis   0.5	# mass ratio 0.34:0.13
+		ArgOfPericenter 180
+		Inclination	20	# to match orbital plane
+		AscendingNode   140     # of system
+	}
+
+}
+
+"Gliese 896 Ab"
+{
+	OrbitBarycenter "Gliese 896 A"
+	SpectralType "M7V"              # from apparent magnitude
+	AppMag 13.26
+
+	EllipticalOrbit {
+		Period          3.5	# "of the order of a few years"
+		SemiMajorAxis   1.2	# mass ratio 0.34:0.13
+		Inclination	20	# to match orbital plane
+		AscendingNode   140     # of system
+	}
+}
+
+"Gliese 896 Ba"
+{
+	OrbitBarycenter "Gliese 896 B"
+	SpectralType "M4.5V"
+	AppMag 12.40
+
+	EllipticalOrbit {
+		Period          4.1	# "of the order of a few years"
+		SemiMajorAxis   0.6	# mass ratio 0.16:0.09
+		ArgOfPericenter 180
+		Inclination	20	# to match orbital plane
+		AscendingNode   140     # of system
+	}
+}
+
+"Gliese 896 Bb"
+{
+	OrbitBarycenter "Gliese 896 B"
+	SpectralType "M9V"              # from apparent magnitude
+	AppMag 15.40
+
+	EllipticalOrbit {
+		Period          4.1	# "of the order of a few years"
+		SemiMajorAxis   1.0	# mass ratio 0.16:0.09
+		Inclination	20	# to match orbital plane
+		AscendingNode   140     # of system
+	}
+}
+
+Barycenter "Gliese 661:BD+45 2505"
+{
+	RA 258.032917
+	Dec 45.665833
+	Distance 20.865
+}
+
+84140 "Gliese 661 A:BD+45 2505 A"
+{
+	OrbitBarycenter "Gliese 661"
+	SpectralType "M3V"
+	AppMag 9.93
+
+	EllipticalOrbit {
+		Period          12.9512
+		SemiMajorAxis   2.23  # mass ratio 0.39:0.33
+		Eccentricity    0.743
+		Inclination	25.8
+		AscendingNode   59.0
+		ArgOfPericenter 144.9
+		MeanAnomaly     249.3
+	}
+}
+
+"Gliese 661 B:BD+45 2505 B"
+{
+	OrbitBarycenter "Gliese 661"
+	SpectralType "M4V"
+	AppMag 10.35
+
+	EllipticalOrbit {
+		Period          12.9512
+		SemiMajorAxis   2.64  # mass ratio 0.39:0.33
+		Eccentricity    0.743
+		Inclination	25.8
+		AscendingNode   59.0
+		ArgOfPericenter 324.9
+		MeanAnomaly     249.3
+	}
+}
+
+"LP 914-54:GJ 3877"
+{
+	RA 224.160417
+	Dec -28.164167
+	Distance 20.868
+	SpectralType "M7.0V"
+	AppMag 17.05
+}
+
+"Giclas 180-60:GJ 3959"
+{
+	RA 247.826667
+	Dec 40.865000
+	Distance 20.908
+	SpectralType "M"
+	AppMag 14.79
+}
+
+"LP 658-2:Gliese 223.2"
+{
+	RA 88.790417
+	Dec -4.171389
+	Distance 21.043
+	SpectralType "DZ9"
+	AppMag 14.45
+}
+
+Barycenter "Wolf 630:Gliese 644" # orbit of (AB) & C unknown
+{
+	RA 253.872065   # mass ratio (0.41+0.34+0.30):0.08
+	Dec -8.340499   #
+	Distance 21.047
+}
+
+Barycenter "Wolf 630 AB:Gliese 644 AB"
+{
+	RA 253.870000
+	Dec -8.336389
+	Distance 21.047
+}
+
+82817 "Wolf 630 A:Gliese 644 A:V1054 Oph"
+{
+	OrbitBarycenter "Wolf 630 AB"
+	SpectralType "M2.5V"
+	AppMag 9.72
+
+	EllipticalOrbit {                # fully specified orientation
+		Period          1.71727
+		SemiMajorAxis   0.86     # mass ratio 0.45:(0.34+0.30)
+		Eccentricity    0.043
+		Inclination	69.7
+		AscendingNode   0.1
+		ArgOfPericenter 224.0
+		MeanAnomaly     325.6
+	}
+}
+
+Barycenter "Wolf 630 B:Gliese 644 B"
+{
+	OrbitBarycenter "Wolf 630 AB"
+
+	EllipticalOrbit {                # fully specified orientation
+		Period          1.71727
+		SemiMajorAxis   0.60     # mass ratio 0.45:(0.34+0.30)
+		Eccentricity    0.0433
+		Inclination	69.7
+		AscendingNode   0.1
+		ArgOfPericenter 44.0
+		MeanAnomaly     325.6
+	}
+}
+
+"Wolf 630 Ba:Gliese 644 Ba"
+{
+	OrbitBarycenter "Wolf 630 B"
+	SpectralType "M3V"
+	AppMag 10.54
+
+	EllipticalOrbit {
+		Period          0.008119 # 2.965522 dy
+		SemiMajorAxis   0.017	 # mass ratio 0.34:0.30
+		Eccentricity    0.026
+		Inclination	70       # orbit of Bab said to be
+		AscendingNode   0        # in same plane as AB
+	}
+}
+
+"Wolf 630 Bb:Gliese 644 Bb"
+{
+	OrbitBarycenter "Wolf 630 B"
+	SpectralType "M4V"
+	AppMag 10.63
+
+	EllipticalOrbit {
+		Period          0.008119 # 2.965522 dy
+		SemiMajorAxis   0.018    # mass ratio 0.34:0.30
+		Eccentricity    0.026
+		Inclination	70       # orbit of Bab said to be
+		AscendingNode   0        # in same plane as AB
+		ArgOfPericenter	180
+	}
+}
+
+"Wolf 630 C:Gliese 644 C:VB 8"
+{
+	RA 253.899167
+	Dec -8.394444
+	Distance 21.047
+	SpectralType "M7V"
+	AppMag 16.80
+}
+
+82809 "Wolf 629:Wolf 630 D:Gliese 643"
+{
+	RA 253.855000
+	Dec -8.322500
+	Distance 21.047
+	SpectralType "M3.5V"
+	AppMag 11.74
+}
+
+114622 # Gliese 892
+{
+	RA 348.320833
+	Dec 57.168333
+	Distance 21.261
+	SpectralType "K3V"
+	AppMag 5.56
+}
+
+"Luyten 1190-34:GL Vir:GJ 1156"
+{
+	RA 184.751250
+	Dec 11.125278
+	Distance 21.332
+	SpectralType "M5.0V"
+	AppMag 13.80
+}
+
+"LHS 337:Luyten 471-42:GJ 3737"
+{
+	RA 189.704583
+	Dec -38.381667
+	Distance 21.468
+	SpectralType "M4.0V"
+	AppMag 12.74
+}
+
+80459 # Gliese 625
+{
+	RA 246.352500
+	Dec 54.304167
+	Distance 21.488
+	SpectralType "M1.5V"
+	AppMag 10.10
+}
+
+"LHS 271:Luyten 100-115:GJ 1128"
+{
+	RA 145.693333
+	Dec -68.885000
+	Distance 21.642
+	SpectralType "M4.5V"
+	AppMag 12.78
+}
+
+53767 # Ross 104
+{
+	RA 165.017917
+	Dec 22.833056
+	Distance 21.721
+	SpectralType "M2.5V"
+	AppMag 10.02
+}
+
+Barycenter "Ross 775:Gliese 829"
+{
+	RA 322.403333
+	Dec 17.643333
+	Distance 22.001
+}
+
+106106 "Ross 775 A:Gliese 829 A"
+{
+	OrbitBarycenter "Ross 775"
+	SpectralType "M3.5V"
+	AppMag 11.06
+
+	EllipticalOrbit {
+		Period          0.146	# 53.2dys
+		SemiMajorAxis   0.11	# estimated from mass ratio 0.26:0.26
+		ArgOfPericenter 180
+	}
+}
+
+"Ross 775 B:Gliese 829 B"
+{
+	OrbitBarycenter "Ross 775"
+	SpectralType "M3.5V"
+	AppMag 11.06
+
+	EllipticalOrbit {
+		Period          0.146	# 53.2dys
+		SemiMajorAxis   0.11	# estimated from mass ratio 0.26:0.26
+	}
+}
+
+Barycenter "XI Boo:37 Boo:Gliese 566"
+{
+	RA 222.847500
+	Dec 19.100556
+	Distance 22.102
+}
+
+72659 "XI Boo A:37 Boo A:Gliese 566 A"
+{
+	OrbitBarycenter "XI Boo"
+	SpectralType "G8V"
+	AppMag 4.70
+
+	EllipticalOrbit {
+		Period          151.505
+		SemiMajorAxis   13.93   # mass ratio 0.94:0.67
+		Eccentricity    0.512
+		Inclination	82
+		AscendingNode   270
+		ArgOfPericenter 159
+		MeanAnomaly     215
+	}
+}
+
+"XI Boo B:37 Boo B:Gliese 566 B"
+{
+	OrbitBarycenter "XI Boo"
+	SpectralType "K4V"
+	AppMag 6.97
+
+	EllipticalOrbit {
+		Period          151.505
+		SemiMajorAxis   19.55   # mass ratio 0.94:0.67
+		Eccentricity    0.512
+		Inclination	82
+		AscendingNode   270
+		ArgOfPericenter 339
+		MeanAnomaly     215
+	}
+}
+
+53020 # Wolf 358
+{
+	RA 162.717083
+	Dec 6.808056
+	Distance 22.187
+	SpectralType "M4.0V"
+	AppMag 11.67
+}
+
+"Ross 619:Gliese 299"
+{
+	RA 122.989583
+	Dec 8.774444
+	Distance 22.294
+	SpectralType "M4.0V"
+	AppMag 12.82
+}
+
+14101 "LP 771-95 A:Luyten 730-18:GJ 3192 A:RECONS 4"
+{
+	RA 45.46411209
+	Dec -16.593372777
+	Distance 22.371
+	SpectralType "M3V"
+	AppMag 11.93
+}
+
+"LP 771-96:LP 771-95 B:GJ 3193"
+{
+	RA 45.46547306
+	Dec -16.59479288
+	Distance 22.371
+	SpectralType "M3V"
+	AppMag 11.3
+}
+
+"LP 771-95 C"
+{
+	RA 45.46432292
+	Dec -16.59359277
+	Distance 22.371
+	SpectralType "M5V"
+	AppMag 13.1
+}
+
+113296 # Ross 671
+{
+	RA 344.145000
+	Dec 16.553333
+	Distance 22.372
+	SpectralType "M1.5V"
+	AppMag 8.66
+}
+
+103096 # Gliese 809
+{
+	RA 313.332500
+	Dec 62.154444
+	Distance 23.037
+	SpectralType "M0.0V"
+	AppMag 8.56
+}
+
+"Luyten 97-12:Gliese 293"
+{
+	RA 118.311250
+	Dec -67.791944
+	Distance 23.099
+	SpectralType "DQ9"
+	AppMag 14.08
+}
+
+"GJ 1286"
+{
+	RA 353.794583
+	Dec -2.390278
+	Distance 23.584
+	SpectralType "M5.5V"
+	AppMag 14.67
+}
+
+Barycenter "Gliese 667:CD-34 11626" # orbit of (AB) & C unknown
+{
+	RA 259.742645   # mass ratio (0.75+0.65):0.35
+	Dec -34.991008  #
+	Distance 23.597
+}
+
+Barycenter "Gliese 667 AB:CD-34 11626 AB"
+{
+	RA 259.741667
+	Dec -34.990000
+	Distance 23.597
+}
+
+84709 "Gliese 667 A:CD-34 11626 A"
+{
+	OrbitBarycenter "Gliese 667 AB"
+	SpectralType "K4V"
+	AppMag 5.90
+
+	EllipticalOrbit {
+		Period          42.15
+		SemiMajorAxis   6.08   # mass ratio 0.75:0.65
+		Eccentricity    0.58
+		Inclination	137
+		AscendingNode   305
+		ArgOfPericenter 184
+		MeanAnomaly     206
+	}
+}
+
+"Gliese 667 B:CD-34 11626 B"
+{
+	OrbitBarycenter "Gliese 667 AB"
+	SpectralType "K5V"
+	AppMag 5.90
+
+	EllipticalOrbit {
+		Period          42.15
+		SemiMajorAxis   7.01   # mass ratio 0.75:0.65
+		Eccentricity    0.58
+		Inclination	137
+		AscendingNode   305
+		ArgOfPericenter 4
+		MeanAnomaly     206
+	}
+}
+
+"Gliese 667 C:CD-34 11626 C"
+{
+	RA 259.746250
+	Dec -34.994722
+	Distance 23.597
+	SpectralType "M1.5V"
+	AppMag 10.26
+}
+
+51317 # Ross 446
+{
+	RA 157.231667
+	Dec 0.840833
+	Distance 23.700
+	SpectralType "M2.0V"
+	AppMag 9.63
+}
+
+"LP 71-165:GJ 4083"
+{
+	RA 274.740417
+	Dec 66.192222
+	Distance 23.721
+	SpectralType "M4.5V"
+	AppMag 13.49
+}
+
+Barycenter "268 Cet:Gliese 105" # orbit of A & B unknown
+{
+	RA 39.028451    # mass ratio (0.81+0.08):0.21
+	Dec 6.883803    #
+	Distance 23.811
+}
+
+Barycenter "268 Cet A:Gliese 105 A"
+{
+	RA 39.020417
+	Dec 6.886667
+	Distance 23.811
+}
+
+12114 "268 Cet Aa:Gliese 105 Aa"
+{
+	OrbitBarycenter "268 Cet A"
+	SpectralType "K3V"
+	AppMag 5.81
+
+	EllipticalOrbit {
+		Period          60
+		SemiMajorAxis   1.3     # mass ratio 0.81:0.08
+		Eccentricity    0.75
+		Inclination	82	# "nearly face-on orbit"
+		AscendingNode   310	#
+	}
+}
+
+"268 Cet Ab:Gliese 105 Ab"
+{
+	OrbitBarycenter "268 Cet A"
+	SpectralType "M7.5V"
+	AppMag 16.90
+
+	EllipticalOrbit {
+		Period          60
+		SemiMajorAxis   13.7    # mass ratio 0.81:0.08
+		Eccentricity    0.75
+		Inclination	82	# "nearly face-on orbit"
+		AscendingNode   310	#
+		ArgOfPericenter 180
+	}
+}
+
+"268 Cet B:Gliese 105 B:BX Cet"
+{
+	RA 39.062500
+	Dec 6.871667
+	Distance 23.811
+	SpectralType "M3.5V"
+	AppMag 11.66
+}
+
+"Luyten 788-34:GJ 4274"
+{
+	RA 335.777500
+	Dec -17.606944
+	Distance 24.268
+	SpectralType "M4.5V"
+	AppMag 13.26
+}
+
+3765 # 96 Psc
+{
+	RA 12.095833
+	Dec 5.280556
+	Distance 24.275
+	SpectralType "K1V"
+	AppMag 5.72
+}
+
+2021 # Bet Hyi
+{
+	RA 6.437917
+	Dec -77.254167
+	Distance 24.366
+	SpectralType "G1IV"
+	AppMag 2.80
+}
+
+7981 # 107 Psc
+{
+	RA 25.624167
+	Dec 20.268333
+	Distance 24.390
+	SpectralType "K1V"
+	AppMag 5.24
+}
+
+
+Barycenter "Giclas 203-47:GJ 3991"
+{
+	RA 257.381250
+	Dec 43.681111
+	Distance 24.478
+}
+
+83945 "Giclas 203-47 A:GJ 3991 A"
+{
+	OrbitBarycenter "Giclas 203-47"
+	SpectralType "M3.5V"
+	AppMag 11.80
+
+	EllipticalOrbit {
+		Period          0.04	# 15 days
+		SemiMajorAxis   0.6	# estimated from mass ratio 0.3:0.5
+		Eccentricity    0.07
+		ArgOfPericenter 180
+	}
+}
+
+"Giclas 203-47 B:GJ 3991 B"
+{
+
+	OrbitBarycenter "Giclas 203-47"
+	SpectralType "D"
+	AbsMag 13.7 # for a 0.5-solar-mass white dwarf
+
+	EllipticalOrbit {
+		Period          0.04	# 15 days
+		SemiMajorAxis   0.4	# estimated from mass ratio 0.3:0.5
+		Eccentricity    0.07
+	}
+}
+
+"GJ 1224"
+{
+	RA 271.887083
+	Dec -15.964167
+	Distance 24.598
+	SpectralType "M4.5V"
+	AppMag 13.61
+}
+
+Barycenter "MU Cas:30 Cas:Gliese 53"
+{
+	RA 17.068333
+	Dec 54.920278
+	Distance 24.603
+}
+
+5336 "MU Cas A:30 Cas A:Gliese 53 A"
+{
+	OrbitBarycenter "MU Cas"
+	SpectralType "G5VI"
+	AppMag 5.17
+
+	EllipticalOrbit {		# fully specified orientation
+		Period          21.43
+		SemiMajorAxis   0.28    # mass ratio 0.6:0.15
+		Eccentricity    0.61
+		Inclination	25.4
+		AscendingNode   336.4
+		ArgOfPericenter 316.6
+		MeanAnomaly     47.0
+	}
+}
+
+"MU Cas B:30 Cas B:Gliese 53 B"
+{
+	OrbitBarycenter "MU Cas"
+	SpectralType "MVI"
+	AppMag 11.00
+
+	EllipticalOrbit {		# fully specified orientation
+		Period          21.43
+		SemiMajorAxis   1.12    # mass ratio 0.6:0.15
+		Eccentricity    0.61
+		Inclination	25.4
+		AscendingNode   336.4
+		ArgOfPericenter 136.6
+		MeanAnomaly     47.0
+	}
+}
+
+65859 # Ross 490
+{
+	RA 202.499167
+	Dec 10.376944
+	Distance 24.603
+	SpectralType "M1.0V"
+	AppMag 9.05
+}
+
+"Luyten 1813-21:GJ 3378"
+{
+	RA 90.290417
+	Dec 59.598333
+	Distance 24.691
+	SpectralType "M3.5V"
+	AppMag 11.71
+}
+
+12781 # Ross 556
+{
+	RA 41.064583
+	Dec 25.523333
+	Distance 24.879
+	SpectralType "M3.0V"
+	AppMag 10.55
+}
+
+113368 # Fomalhaut A
+{
+	RA 344.412917
+	Dec -29.622222
+	Distance 24.978
+	SpectralType "A3V"
+	AppMag 1.15
+}
+
+113283 # Fomalhaut B
+{
+	RA 344.100417
+	Dec -31.565556
+	Distance 24.978
+	SpectralType "K4V"
+	AppMag 6.46
+}
+
+
+61874 # Luyten 399-68
+{
+	RA 190.192917
+	Dec -43.566667
+	Distance 24.990
+	SpectralType "M3.5V"
+	AppMag 12.24
+}
+
+85295 # Gliese 673 
+{
+	RA 261.438333
+	Dec 2.111389
+	Distance 25.173
+	SpectralType "K7.0V"
+	AppMag 7.53
+}
+
+91262 # Vega 
+{
+	RA 279.234583
+	Dec 38.783611
+	Distance 25.282
+	SpectralType "A0V"
+	AppMag 0.03
+
+	Obliquity            28 # rotation pole points
+	EquatorAscendingNode 15 # towards solar system
+}
+
+Barycenter "Alula Australis:XI UMa:53 UMa:Gliese 423"
+{
+	RA 169.54545
+	Dec 31.529134
+	Distance 27.294
+}
+
+Barycenter "Alula Australis A"
+{
+	OrbitBarycenter "Alula Australis"
+
+	EllipticalOrbit {               # fully specified orientation
+		Period          59.878
+		SemiMajorAxis   9.30    # mass ratio (1.05+0.4):(1.05+0.08)
+		Eccentricity    0.398
+		Inclination	14.09
+		AscendingNode   192.13
+		ArgOfPericenter 9.69
+		MeanAnomaly     29.62
+	}
+}
+
+Barycenter "Alula Australis B"
+{
+	OrbitBarycenter "Alula Australis"
+
+	EllipticalOrbit {               # fully specified orientation
+		Period          59.878
+		SemiMajorAxis   11.93    # mass ratio (1.05+0.4):(1.05+0.08)
+		Eccentricity    0.398
+		Inclination	14.09
+		AscendingNode   192.13
+		ArgOfPericenter 189.69
+		MeanAnomaly     29.62
+	}
+}
+
+55203 "Alula Australis Aa:XI UMa Aa:53 UMa Aa:Gliese 423 Aa"
+{
+	OrbitBarycenter "Alula Australis A"
+	SpectralType "G0V"
+	AppMag 4.33
+
+	EllipticalOrbit {               # fully specified orientation
+		Period          1.832
+		SemiMajorAxis   0.13    # mass ratio 1.05:0.4
+		Eccentricity    0.53
+		Inclination	137.0
+		AscendingNode   298.1
+		ArgOfPericenter 187.9
+		MeanAnomaly     133.8
+	}
+}
+
+"Alula Australis Ab:XI UMa Ab:53 UMa Ab:Gliese 423 Ab"
+{
+	OrbitBarycenter "Alula Australis A"
+	SpectralType "M2V" # from estimated mass of 0.4
+	AbsMag 9.3         # for estimated spectral class
+
+	EllipticalOrbit {               # fully specified orientation
+		Period          1.832
+		SemiMajorAxis   0.35    # mass ratio 1.05:0.4
+		Eccentricity    0.53
+		Inclination	137.0
+		AscendingNode   298.1
+		ArgOfPericenter 7.9
+		MeanAnomaly     133.8
+	}
+}
+
+"Alula Australis Ba:XI UMa Ba:53 UMa Ba:Gliese 423 Ba"
+{
+	OrbitBarycenter "Alula Australis B"
+	SpectralType "G0V"
+	AppMag 4.8
+
+	EllipticalOrbit {
+		Period          0.0109 # 3.98dy
+		SemiMajorAxis   0.004  # mass ratio 1.05:0.08
+		Eccentricity    0
+		ArgOfPericenter 180
+	}
+}
+
+
+
+"Alula Australis Bb::XI UMa Bb:53 UMa Bb:Gliese 423 Bb"
+{
+	OrbitBarycenter "Alula Australis B"
+	SpectralType "L"  # brown dwarf
+	AbsMag 21         # for approximate radius in Celestia
+
+	EllipticalOrbit {
+		Period          0.0109 # 3.98dy
+		SemiMajorAxis   0.056  # mass ratio 1.05:0.08
+		Eccentricity    0
+	}
+}
