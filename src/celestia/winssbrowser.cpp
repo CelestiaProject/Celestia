@@ -22,13 +22,12 @@
 using namespace std;
 
 
-HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data)
+HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
+                        HTREEITEM parent)
 { 
     TVITEM tvi; 
     TVINSERTSTRUCT tvins; 
     static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST; 
-    static HTREEITEM hPrevRootItem = NULL; 
-    static HTREEITEM hPrevLev2Item = NULL; 
 
 #if 0 
     tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM; 
@@ -39,36 +38,18 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data)
     tvi.pszText = lpszItem; 
     tvi.cchTextMax = lstrlen(lpszItem); 
  
-    // Assume the item is not a parent item, so give it a 
-    // document image. 
-    // tvi.iImage = g_nDocument; 
-    // tvi.iSelectedImage = g_nDocument; 
- 
     // Save the heading level in the item's application-defined 
     // data area. 
     tvi.lParam = (LPARAM) data; 
  
     tvins.item = tvi; 
     tvins.hInsertAfter = hPrev; 
- 
-    // Set the parent item based on the specified level. 
-    if (nLevel == 1) 
-        tvins.hParent = TVI_ROOT; 
-    else if (nLevel == 2) 
-        tvins.hParent = hPrevRootItem; 
-    else 
-        tvins.hParent = hPrevLev2Item; 
+    tvins.hParent = parent;
  
     // Add the item to the tree view control. 
     hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEM, 0, 
                                     (LPARAM) (LPTVINSERTSTRUCT) &tvins); 
  
-    // Save the handle to the item. 
-    if (nLevel == 1) 
-        hPrevRootItem = hPrev; 
-    else if (nLevel == 2) 
-        hPrevLev2Item = hPrev; 
-
 #if 0 
     // The new item is a child item. Give the parent item a 
     // closed folder bitmap to indicate it now has child items. 
@@ -87,19 +68,21 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data)
 }
 
 
-void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level)
+void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level, HTREEITEM parent)
 {
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
         Body* world = sys->getBody(i);
-        (void) AddItemToTree(treeView, 
+        HTREEITEM item;
+        item = AddItemToTree(treeView, 
                              const_cast<char*>(world->getName().c_str()),
                              level,
-                             static_cast<void*>(world));
+                             static_cast<void*>(world),
+                             parent);
 
         const PlanetarySystem* satellites = world->getSatellites();
         if (satellites != NULL)
-            AddPlanetarySystemToTree(satellites, treeView, level + 1);
+            AddPlanetarySystemToTree(satellites, treeView, level + 1, item);
     }
 }
 
@@ -124,10 +107,11 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
             const SolarSystem* solarSys = browser->appCore->getSimulation()->getNearestSolarSystem();
             if (solarSys != NULL)
             {
-                HTREEITEM rootItem = AddItemToTree(hwnd, "Sun", 1, NULL);
+                HTREEITEM rootItem = AddItemToTree(hwnd, "Sun", 1, NULL,
+                                                   (HTREEITEM) TVI_ROOT);
                 const PlanetarySystem* planets = solarSys->getPlanets();
                 if (planets != NULL)
-                    AddPlanetarySystemToTree(planets, hwnd, 2);
+                    AddPlanetarySystemToTree(planets, hwnd, 2, rootItem);
 
                 SendMessage(hwnd, TVM_EXPAND, TVE_EXPAND, (LPARAM) rootItem); 
             }
