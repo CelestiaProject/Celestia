@@ -15,11 +15,13 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
+#include <sstream>
 #include <time.h>
 #include <unistd.h>
 #include <celengine/gl.h>
 #include <celengine/glext.h>
 #include <celengine/celestia.h>
+#include <celengine/starbrowser.h>
 
 #ifndef DEBUG
 #  define G_DISABLE_ASSERT
@@ -918,7 +920,7 @@ static void textInfoDialog(GtkWidget** dialog, const char *txt, const char *titl
 	
 	gtk_widget_show (text);
 
-	gtk_widget_set_usize(*dialog, 500, 400);
+	gtk_widget_set_usize(*dialog, 500, 400); //Absolute Size, urghhh
 
 	gnome_dialog_set_parent((GnomeDialog*) *dialog, GTK_WINDOW(mainWindow));
 	gnome_dialog_set_default((GnomeDialog*) *dialog, GNOME_YES);
@@ -1005,6 +1007,426 @@ static void menuOpenGL()
 
 
 
+static char *sstitles[]=
+{
+    "Name",
+    "Type"
+};
+
+static char *cstitles[]=
+{
+    " Name ",
+    " Distance(LY) ",
+    " App. Mag ",
+    " Abs. Mag ",
+    " Type "
+};
+
+static char *radioLabels[]=
+{
+    "Nearest",
+    "Brightest(App)",
+    "Brightest(Abs)",
+    "With Planets"
+};
+
+static const char *tmp[5];
+
+static GtkWidget *ctree=NULL;
+static GtkWidget *clist=NULL;
+
+void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkCTreeNode *parent, int lev)
+{
+    GtkCTreeNode *child;
+    for (int i = 0; i < sys->getSystemSize(); i++)
+    {
+	Body* world = sys->getBody(i);
+	tmp[0]=g_strdup(world->getName().c_str());
+        if(lev == 2)
+            {
+            if(world->getRadius() >= 1000.0)
+                tmp[1]="Planet";
+            else
+                tmp[1]="Planetoid";
+            }
+        else
+            {
+            if(world->getRadius() > 0.1)
+                tmp[1]="Moon";
+            else
+                tmp[1]="Satellite";
+            }
+	const PlanetarySystem* satellites = world->getSatellites();
+	child=gtk_ctree_insert_node (GTK_CTREE(ctree), parent, NULL,
+                                     (char **)tmp , 0 , NULL, NULL, NULL, NULL,
+                                     (satellites ? FALSE : TRUE), TRUE);
+        gtk_ctree_node_set_row_data(GTK_CTREE(ctree), child, world);
+	gtk_ctree_collapse (GTK_CTREE(ctree), child);
+	g_free((char *)tmp[0]);
+	if (satellites != NULL)
+		addPlanetarySystemToTree(satellites, child, lev + 1);
+    }
+}
+
+
+static const Star *nearestStar;
+static Selection browserSel;
+
+static gint listSelect(GtkCList *list, gint row, gint column, gpointer dummy, gpointer dumm2)
+{
+    Star *selStar =(Star *)gtk_clist_get_row_data(list,row);
+    if(selStar)
+    {
+        browserSel.select(selStar);
+	return TRUE;
+    }
+    return FALSE;
+}
+
+
+static gint treeSelect(GtkCTree *tree, GtkCTreeNode *node, gint column, gpointer dummy)
+{
+    Body *body;
+    if(column <0)
+    {
+        /* This will happen when the tree attempts to autoselect a node
+           as it is just being switched to, but is still empty */
+        return FALSE;
+    }
+    if ((body=(Body *)gtk_ctree_node_get_row_data(tree,node)))
+	{
+        if(body ==(Body *) nearestStar)
+            browserSel.select((Star *)nearestStar);
+        else
+            browserSel.select(body);
+	return TRUE;
+	}
+    DPRINTF("Unable to find body for this node.\n");
+    return FALSE;
+}
+
+
+static gint selectBrowsed()
+{
+    if (!browserSel.empty())
+    {
+        appSim->setSelection(browserSel);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+
+static gint centerBrowsed()
+{
+    if(!selectBrowsed())
+        return FALSE;
+    appCore->charEntered('C');
+    return TRUE;
+}
+
+
+static gint gotoBrowsed()
+{
+    if(!selectBrowsed())
+        return FALSE;
+    appCore->charEntered('G');
+    return TRUE;
+}
+
+
+static gint buttonMake(GtkWidget *hbox, char *txt, GtkSignalFunc func, gpointer data)
+{
+    GtkWidget* button = gtk_button_new_with_label(txt);
+    if (button == NULL)
+    {
+	DPRINTF("Unable to get GTK Elements.\n");
+	return 1;
+    }
+    gtk_widget_show(button);
+    gtk_box_pack_start(GTK_BOX (hbox),
+                       button, TRUE, TRUE, 0);
+
+    gtk_signal_connect(GTK_OBJECT(button),
+                       "pressed",
+                       func,
+                       data);
+    return 0;
+}
+
+
+static StarBrowser sbrowser;
+unsigned int currentLength=0;
+
+static void addStars()
+{
+    StarDatabase* stardb = appSim->getUniverse()->getStarCatalog();
+    sbrowser.refresh();
+    vector<const Star*> *stars = sbrowser.listStars(100);
+    gtk_clist_freeze(GTK_CLIST(clist));
+    for (unsigned int i = 0; i < currentLength; i++)
+        gtk_clist_remove(GTK_CLIST(clist), 0);
+    currentLength=(*stars).size();
+    browserSel.select((Star *)(*stars)[0]);
+    UniversalCoord ucPos = appSim->getObserver().getPosition();
+    for (unsigned int i = 0; i < currentLength; i++)
+    {
+        const Star *star=(*stars)[i];
+        tmp[0]=g_strdup((stardb->getStarName(*star)).c_str());
+        ostringstream dstr("", ios::ate);
+        dstr.precision(3);
+        dstr.setf(ios::fixed, ios::floatfield);
+        dstr << ' ' << (ucPos.distanceTo(star->getPosition())) << ' ';
+        tmp[1]=g_strdup(dstr.str().c_str());
+        dstr.seekp(0);
+        dstr.precision(2);
+        Vec3f r = star->getPosition() - ucPos;
+        dstr << " " << astro::absToAppMag(star->getAbsoluteMagnitude(),r.length()) << " \0";
+        tmp[2]=g_strdup(dstr.str().c_str());
+        dstr.seekp(0);
+        dstr.precision(2);
+        dstr << ' ' <<  star->getAbsoluteMagnitude() << " \0";
+        tmp[3]=g_strdup(dstr.str().c_str());
+        dstr.seekp(0);
+        dstr << ' ' << star->getStellarClass();
+        tmp[4]=g_strdup(dstr.str().c_str());
+        gint row=gtk_clist_append(GTK_CLIST(clist), (char **)tmp);
+        gtk_clist_set_row_data(GTK_CLIST(clist), row, (gpointer)star);
+        for(unsigned int j=0; j<5; j++)
+            g_free((void *)tmp[j]);
+    }
+    gtk_clist_thaw(GTK_CLIST(clist));
+    delete stars;
+}
+
+
+static int radioClicked(GtkButton *button, int pred)
+{
+    if(!sbrowser.setPred(pred))
+        return FALSE;
+    addStars();
+    return TRUE;
+}
+
+
+static int refreshBrowser()
+{
+    addStars();
+    return TRUE;
+}
+
+
+static void loadNearestStarSystem()
+{
+    const SolarSystem* solarSys = appSim->getNearestSolarSystem();
+    StarDatabase *stardb=appSim->getUniverse()->getStarCatalog();
+    g_assert(stardb);
+    gtk_clist_freeze(GTK_CLIST(ctree));
+    gtk_ctree_post_recursive(GTK_CTREE(ctree),NULL,(GtkCTreeFunc)gtk_ctree_remove_node,NULL);
+    if (solarSys != NULL)
+	nearestStar=solarSys->getStar();
+    else
+        nearestStar=sbrowser.nearestStar();
+    tmp[0]=g_strdup((stardb->getStarName(*nearestStar)).c_str());
+    ostringstream ostr("", ios::ate);
+    ostr << nearestStar->getStellarClass() << " Class Star";
+    tmp[1]=(char *)(ostr.str()).c_str();
+    GtkCTreeNode *top=gtk_ctree_insert_node (GTK_CTREE(ctree), NULL, NULL,
+                                             (char **)tmp , 0 , NULL, NULL,
+                                             NULL, NULL, FALSE, TRUE);
+    gtk_ctree_node_set_row_data(GTK_CTREE(ctree), top, (gpointer)nearestStar);
+    g_free((gpointer)tmp[0]);
+    if (solarSys != NULL)
+    {
+	const PlanetarySystem* planets = solarSys->getPlanets();
+	if (planets != NULL)
+	    addPlanetarySystemToTree(planets, top, 2);
+    }
+    gtk_clist_thaw((GTK_CLIST(ctree)));
+}
+
+
+static const Star *tmpSel=NULL;
+
+int nbookSwitch(GtkNotebook *nbook, gpointer dummy, gint page, gpointer dummy2)
+{
+    if(page==1) // Page switch to the Solar System Browser 
+    {
+        sbrowser.refresh();
+        loadNearestStarSystem();
+        tmpSel=browserSel.star;
+        browserSel.star=(Star *)nearestStar;
+        browserSel.body=NULL;
+    }
+    else
+        browserSel.select((Star *)tmpSel);
+    return(TRUE);
+}
+
+
+static void menuBrowser()
+{
+    GtkWidget *browser= gnome_dialog_new("Celestial Browser",
+				         GNOME_STOCK_BUTTON_OK,
+				         NULL);
+    browserSel.select((Star *)NULL);
+    if (browser == NULL)
+    {
+	DPRINTF("Unable to open celestial browser dialog!\n");
+	return;
+    }
+    
+    GtkWidget *nbook = gtk_notebook_new();
+    GtkWidget *label = gtk_label_new("Stars");
+    GtkWidget  *vbox = gtk_vbox_new(FALSE, 3);
+    GtkWidget  *hbox = gtk_hbox_new(FALSE, 3);
+    GtkWidget *scrolled_win;
+    if ((nbook==NULL) || (label==NULL) || (vbox==NULL) || (hbox==NULL))
+    {
+	DPRINTF("Unable to get GTK Elements.\n");
+	return;
+    }
+
+    // Star System Browser
+    gtk_notebook_append_page(GTK_NOTEBOOK(nbook), vbox, label);
+    gtk_notebook_set_tab_label_packing (GTK_NOTEBOOK (nbook), vbox,
+					TRUE, FALSE, GTK_PACK_START);
+    gtk_widget_show (label);
+    scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+    clist = gtk_clist_new_with_titles(5, cstitles);
+    gtk_clist_column_titles_passive (GTK_CLIST(clist));
+    gtk_clist_set_auto_sort (GTK_CLIST(clist), FALSE);
+    gtk_clist_set_reorderable (GTK_CLIST(clist), FALSE);
+    GtkWidget *align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
+    if ((align==NULL) || (clist==NULL) || (scrolled_win==NULL))
+    {
+	DPRINTF("Unable to get GTK Elements.\n");
+	return;
+    }
+    gtk_clist_set_column_justification(GTK_CLIST(clist), 0, GTK_JUSTIFY_LEFT);
+    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 0, TRUE);
+    gtk_clist_set_column_justification(GTK_CLIST(clist), 1, GTK_JUSTIFY_RIGHT);
+    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 1, TRUE);
+    gtk_clist_set_column_justification(GTK_CLIST(clist), 2, GTK_JUSTIFY_RIGHT);
+    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 2, TRUE);
+    gtk_clist_set_column_justification(GTK_CLIST(clist), 3, GTK_JUSTIFY_RIGHT);
+    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 3, TRUE);
+    gtk_clist_set_column_justification(GTK_CLIST(clist), 4, GTK_JUSTIFY_LEFT);
+    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 4, FALSE);
+    gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 5);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
+				    GTK_POLICY_AUTOMATIC,
+				    GTK_POLICY_ALWAYS);
+    gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (clist));
+    gtk_box_pack_start (GTK_BOX (vbox), scrolled_win, TRUE, TRUE, 0);
+    gtk_clist_set_selection_mode(GTK_CLIST(clist), GTK_SELECTION_BROWSE);
+    gtk_clist_set_shadow_type (GTK_CLIST(clist), GTK_SHADOW_IN);
+    gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
+    sbrowser.setSimulation(appSim);
+    addStars();
+    tmpSel=browserSel.star;
+    gtk_signal_connect(GTK_OBJECT(clist), "select-row",
+		       GTK_SIGNAL_FUNC(listSelect), NULL);
+    gtk_clist_select_row(GTK_CLIST(clist), 0, 0);
+    
+    GSList *group=NULL;
+    gtk_box_pack_start (GTK_BOX (vbox), align, FALSE, TRUE, 5);
+    for(unsigned int i=0;i<4;i++)
+    {
+        GtkWidget *button=gtk_radio_button_new_with_label(group, radioLabels[i]);
+        if (button==NULL)
+        {
+            DPRINTF("Unable to get GTK Elements.\n");
+            return;
+        }
+        group=gtk_radio_button_group (GTK_RADIO_BUTTON (button));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),(i==0)?1:0);
+        gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
+        gtk_widget_show (button);
+        gtk_signal_connect(GTK_OBJECT(button), "pressed",
+                           GTK_SIGNAL_FUNC(radioClicked), (gpointer)i );
+    }
+    if(buttonMake(hbox, "   Refresh   ", (GtkSignalFunc)refreshBrowser, NULL))
+        return;
+    
+    gtk_widget_show (clist);
+    gtk_widget_show (align);
+    gtk_widget_show (hbox);
+    gtk_widget_show (scrolled_win);
+
+    gtk_widget_show (label);
+    gtk_widget_show (vbox);
+
+    // Solar System Browser
+    label = gtk_label_new("Solar System");
+    vbox = gtk_vbox_new(TRUE, 3);
+    scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+    if ((label==NULL) || (vbox==NULL) || (scrolled_win==NULL))
+    {
+	DPRINTF("Unable to get GTK Elements.\n");
+	return;
+    }
+    gtk_notebook_append_page(GTK_NOTEBOOK(nbook), vbox, label);
+    gtk_notebook_set_tab_label_packing (GTK_NOTEBOOK (nbook), vbox,
+					TRUE, FALSE, GTK_PACK_START);
+    gtk_notebook_set_show_tabs(GTK_NOTEBOOK(nbook), TRUE);
+    gtk_notebook_set_scrollable(GTK_NOTEBOOK(nbook), FALSE);
+    gtk_notebook_set_tab_pos (GTK_NOTEBOOK (nbook), GTK_POS_TOP);
+    gtk_container_set_border_width (GTK_CONTAINER (nbook), 10);
+    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (browser)->vbox), nbook, TRUE, TRUE, 0);
+
+    gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 5);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
+				    GTK_POLICY_AUTOMATIC,
+				    GTK_POLICY_ALWAYS);
+    gtk_box_pack_start (GTK_BOX (vbox), scrolled_win, TRUE, TRUE, 0);
+    gtk_widget_show (scrolled_win);
+
+    ctree = GTK_WIDGET (gtk_ctree_new_with_titles (2, 0, sstitles));
+    gtk_clist_column_titles_passive (GTK_CLIST(ctree));
+    gtk_clist_set_auto_sort (GTK_CLIST(ctree), FALSE);
+    gtk_clist_set_reorderable (GTK_CLIST(ctree), FALSE);
+    gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (ctree));
+    gtk_clist_set_column_auto_resize (GTK_CLIST (ctree), 0, TRUE);
+    gtk_clist_set_column_width (GTK_CLIST (ctree), 1, 200);
+    gtk_clist_set_selection_mode (GTK_CLIST (ctree), GTK_SELECTION_BROWSE);
+    gtk_ctree_set_line_style (GTK_CTREE(ctree), GTK_CTREE_LINES_SOLID);
+    gtk_ctree_set_expander_style (GTK_CTREE(ctree), GTK_CTREE_EXPANDER_SQUARE);
+    gtk_widget_show (vbox);
+    loadNearestStarSystem();
+    gtk_signal_connect(GTK_OBJECT(ctree), "tree-select-row",
+		       GTK_SIGNAL_FUNC(treeSelect), NULL);
+    gtk_signal_connect(GTK_OBJECT(nbook), "switch-page",
+		       GTK_SIGNAL_FUNC(nbookSwitch), NULL);
+    gtk_widget_show (ctree);
+    gtk_widget_show (nbook);
+
+    // Common Buttons
+    hbox = gtk_hbox_new(FALSE, 3);
+    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (browser)->vbox), hbox, FALSE, FALSE, 0);
+    if(buttonMake(hbox, "   Select   ", (GtkSignalFunc)selectBrowsed, NULL))
+        return;
+    if(buttonMake(hbox, "   Center   ", (GtkSignalFunc)centerBrowsed, NULL))
+        return;
+    if(buttonMake(hbox, "   Go To   ", (GtkSignalFunc)gotoBrowsed, NULL))
+        return;
+
+    gtk_widget_show (hbox);
+
+    gtk_widget_set_usize(browser, 500, 400); //Absolute Size, urghhh
+
+    gnome_dialog_set_parent((GnomeDialog*) browser, GTK_WINDOW(mainWindow));
+    gnome_dialog_set_default((GnomeDialog*) browser, GNOME_YES);
+    gnome_dialog_close_hides((GnomeDialog*) browser, FALSE);
+    gtk_window_set_modal(GTK_WINDOW(browser), FALSE);
+    gnome_dialog_run_and_close(GNOME_DIALOG(browser));
+    clist=NULL;
+    ctree=NULL;
+    browserSel.select((Star *)NULL);
+}
+
+
+
 static gint intAdjChanged(GtkAdjustment* adj, int *val)
 {
     if (val)
@@ -1059,7 +1481,7 @@ static gint monthchosen(GtkMenuItem *item, int month)
 
 static void chooseOption(GtkWidget *hbox, char *str, char *choices[], int *val, char *sep, GtkSignalFunc chosen)
 {
-    GtkWidget *vbox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     GtkWidget *label = gtk_label_new(str);
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
     GtkWidget *optmenu = gtk_option_menu_new ();
@@ -1078,8 +1500,8 @@ static void chooseOption(GtkWidget *hbox, char *str, char *choices[], int *val, 
     gtk_option_menu_set_menu (GTK_OPTION_MENU (optmenu), menu);
     gtk_option_menu_set_history (GTK_OPTION_MENU (optmenu), (*val-1));
     gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, TRUE, 0);
-    gtk_box_pack_start (GTK_BOX (vbox), optmenu, FALSE, TRUE, 0);
-    gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox), optmenu, FALSE, TRUE, 7);
+    gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 2);
     gtk_widget_show (label);
     gtk_widget_show (optmenu);
     gtk_widget_show (vbox);
@@ -1088,7 +1510,7 @@ static void chooseOption(GtkWidget *hbox, char *str, char *choices[], int *val, 
 
 static void intSpin(GtkWidget *hbox, char *str, int min, int max, int *val, char *sep)
 {
-    GtkWidget *vbox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     GtkWidget *label = gtk_label_new(str);
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
     GtkAdjustment *adj = (GtkAdjustment *) gtk_adjustment_new ((float)*val, (float) min, (float) max,
@@ -1111,13 +1533,13 @@ static void intSpin(GtkWidget *hbox, char *str, int min, int max, int *val, char
 	gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
 	gtk_box_pack_start (GTK_BOX (hbox2), spinner, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (vbox), hbox2, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), hbox2, TRUE, TRUE, 7);
 	gtk_widget_show (label);
 	gtk_widget_show (hbox2);
     }
     else
     {
-	gtk_box_pack_start (GTK_BOX (vbox), spinner, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), spinner, TRUE, TRUE, 7);
     }
     gtk_widget_show (label);
     gtk_widget_show (spinner);
@@ -1146,8 +1568,10 @@ static void menuSetTime()
 	}
 
     GtkWidget *hbox = gtk_hbox_new(FALSE, 6);
+    GtkWidget *frame = gtk_frame_new("Time");
+    GtkWidget *align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
     
-    if (hbox == NULL)
+    if ((hbox == NULL) || (frame == NULL) || (align == NULL))
 	{
 	DPRINTF("Unable to get GTK Elements.\n");
 	return;
@@ -1155,32 +1579,38 @@ static void menuSetTime()
     astro::Date date(appSim->getTime() +
 			    astro::secondsToJulianDate(appCore->getTimeZoneBias()));
     monthLoc=&date.month;
-    GtkWidget *align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
     gtk_widget_show(align);
+    gtk_widget_show(frame);
     gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
-    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), align, FALSE, FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(frame),GTK_WIDGET(align));
+    gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
+    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), frame, FALSE, FALSE, 0);
     intSpin(hbox,"Hour", 1, 24, &date.hour, ":");
     intSpin(hbox,"Minute", 1, 60, &date.minute, ":");
     second=(int)date.seconds;
     intSpin(hbox,"Second", 1, 60, &second, "  ");
     chooseOption(hbox,"Timzone", timeOptions, &tzone, NULL, GTK_SIGNAL_FUNC(zonechosen));
-    gtk_widget_show(hbox);
+    gtk_widget_show_all(hbox);
     hbox = gtk_hbox_new(FALSE, 6);
+    frame = gtk_frame_new("Date");
+    align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
+    gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
     
-    if (hbox == NULL)
+    if ((hbox == NULL) || (frame == NULL) || (align == NULL))
 	{
 	DPRINTF("Unable to get GTK Elements.\n");
 	return;
 	}
     chooseOption(hbox,"Month", monthOptions, &date.month, " ", GTK_SIGNAL_FUNC(monthchosen));
     intSpin(hbox,"Day", 1, 31, &date.day, ",");
-    intSpin(hbox,"Year", -9999, 9999, &date.year, " "); /* Hopefully,
+    intSpin(hbox,"Year", -9999, 9999, &date.year, " "); /* (Hopefully,
 			    noone will need to go beyond these :-) */
-    align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
-    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), align, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), frame, FALSE, FALSE, 0);
     gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
+    gtk_container_add(GTK_CONTAINER(frame),GTK_WIDGET(align));
     gtk_widget_show(align);
-    gtk_widget_show(hbox);
+    gtk_widget_show(frame);
+    gtk_widget_show_all(hbox);
 
     gnome_dialog_set_parent((GnomeDialog*) stimedialog, GTK_WINDOW(mainWindow));
     gnome_dialog_set_default((GnomeDialog*) stimedialog, GNOME_YES);
@@ -1219,6 +1649,8 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Navigation/Follow Selection", "F",  menuFollow,    0, NULL },
     { "/Navigation/Sync Orbit", "Y",        menuSync,      0, NULL },
     { "/Navigation/Track Selection", "T",   menuTrack,     0, NULL },
+    { "/Navigation/sep2", NULL,             NULL,          0, "<Separator>" },
+    { "/Navigation/Celestial Browser", NULL,menuBrowser,   0, NULL },
     { "/_Time", NULL,                       NULL,          0, "<Branch>" },
     { "/Time/10x Faster", "L",              menuFaster,    0, NULL },
     { "/Time/10x Slower", "K",              menuSlower,    0, NULL },
