@@ -22,7 +22,7 @@ class Frustum
     void transform(const Mat3f&);
     void transform(const Mat4f&);
 
-    inline Planef getPlane(int);
+    inline Planef getPlane(int) const;
 
     enum {
         Bottom    = 0,
@@ -39,8 +39,8 @@ class Frustum
         Intersect = 2,
     };
 
-    Aspect test(const Point3f&);
-    Aspect testSphere(const Point3f& center, float radius);
+    Aspect test(const Point3f&) const;
+    Aspect testSphere(const Point3f& center, float radius) const;
 
  private:
     void init(float, float, float, float);
@@ -49,7 +49,7 @@ class Frustum
     bool infinite;
 };
 
-Planef Frustum::getPlane(int which)
+Planef Frustum::getPlane(int which) const
 {
     return planes[which];
 }
