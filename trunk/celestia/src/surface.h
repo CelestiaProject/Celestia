@@ -10,31 +10,38 @@
 #ifndef _SURFACE_H_
 #define _SURFACE_H_
 
-#include <string>
 #include "basictypes.h"
 #include "color.h"
+#include "reshandle.h"
 
 
 class Surface
 {
  public:
-    Surface() : appearanceFlags(0), color(0.0f, 0.0f, 0.0f) {};
-    Surface(Color c) : appearanceFlags(0), color(c) {};
+    Surface(Color c = Color(0.0f, 0.0f, 0.0f)) :
+        appearanceFlags(0),
+        color(c),
+        baseTexture(InvalidResource),
+        bumpTexture(InvalidResource),
+        cloudTexture(InvalidResource),
+        nightTexture(InvalidResource)
+    {};
 
     // Appearance flags
     enum {
         BlendTexture         = 0x1,
         ApplyBaseTexture     = 0x2,
         ApplyBumpMap         = 0x4,
-        CompressBaseTexture  = 0x8,
         ApplyCloudMap        = 0x10,
+        ApplyNightMap        = 0x20,
     };
 
     uint32 appearanceFlags;
     Color color;
-    std::string baseTexture;
-    std::string bumpTexture;
-    std::string cloudTexture;
+    ResourceHandle baseTexture;
+    ResourceHandle bumpTexture;
+    ResourceHandle cloudTexture;
+    ResourceHandle nightTexture;
     float bumpHeight;
 };
 

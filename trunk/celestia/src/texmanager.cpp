@@ -13,46 +13,46 @@
 using namespace std;
 
 
-TextureManager::~TextureManager()
+static TextureManager* textureManager = NULL;
+
+
+TextureManager* GetTextureManager()
 {
-    // TODO: Clean up
+    if (textureManager == NULL)
+        textureManager = new TextureManager("textures");
+    return textureManager;
 }
 
 
-bool TextureManager::find(const string& name, CTexture** tex)
+Texture* TextureInfo::load(const string& baseDir)
 {
-    return findResource(name, (void**) tex);
-}
-
-
-CTexture* TextureManager::load(const string& name, bool compress)
-{
-    DPRINTF("Loading texture: %s\n", name.c_str());
-    CTexture* tex = LoadTextureFromFile(baseDir + "/" + name);
-
-    if (tex != NULL)
+    if (bumpHeight == 0.0f)
     {
-        uint32 texFlags = CTexture::WrapTexture;
-        if (compress)
-            texFlags |= CTexture::CompressTexture;
-        tex->bindName(texFlags);
+        DPRINTF("Loading texture: %s\n", source.c_str());
+        Texture* tex = LoadTextureFromFile(baseDir + "/" + source);
+
+        if (tex != NULL)
+        {
+            uint32 texFlags = Texture::WrapTexture;
+            if (compressed)
+                texFlags |= Texture::CompressTexture;
+            tex->bindName(texFlags);
+            return tex;
+        }
     }
-    addResource(name, (void*) tex);
- 
-    return tex;
-}
-
-
-CTexture* TextureManager::loadBumpMap(const string& name, float bumpHeight)
-{
-    DPRINTF("Loading bump map: %s\n", name.c_str());
-    CTexture* tex = LoadTextureFromFile(baseDir + "/" + name);
-    if (tex != NULL)
+    else
     {
-        tex->normalMap(bumpHeight, true);
-        tex->bindName(CTexture::WrapTexture);
-    }
-    addResource(name, static_cast<void*>(tex));
+        DPRINTF("Loading bump map: %s\n", source.c_str());
+        Texture* tex = LoadTextureFromFile(baseDir + "/" + source);
 
-    return tex;
+        if (tex != NULL)
+        {
+            tex->normalMap(bumpHeight, true);
+            tex->bindName(Texture::WrapTexture);
+            return tex;
+        }
+    }
+
+    return NULL;
 }
+
