@@ -35,6 +35,24 @@ class CelestiaCore
     };
 
     enum {
+        Joy_XAxis           = 0,
+        Joy_YAxis           = 1,
+        Joy_ZAxis           = 2,
+    };
+
+    enum {
+        JoyButton1          = 0,
+        JoyButton2          = 1,
+        JoyButton3          = 2,
+        JoyButton4          = 3,
+        JoyButton5          = 4,
+        JoyButton6          = 5,
+        JoyButton7          = 6,
+        JoyButton8          = 7,
+        JoyButtonCount      = 8,
+    };
+
+    enum {
         Key_Left            =  1,
         Key_Right           =  2,
         Key_Up              =  3,
@@ -87,6 +105,8 @@ class CelestiaCore
     void mouseButtonDown(float, float, int);
     void mouseButtonUp(float, float, int);
     void mouseMove(float, float, int);
+    void joystickAxis(int axis, float amount);
+    void joystickButton(int button, bool down);
     void resize(int w, int h);
     void draw();
     void tick(double dt);
@@ -172,6 +192,8 @@ class CelestiaCore
     double timeScale;
     bool paused;
 
+    Vec3f joystickRotation;
+    bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
     double KeyAccel;
 

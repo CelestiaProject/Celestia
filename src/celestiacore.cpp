@@ -41,7 +41,7 @@ using namespace std;
 
 static const int DragThreshold = 3;
 
-//Perhaps you'll want to put this stuff in configuration file.
+// Perhaps you'll want to put this stuff in configuration file.
 static const float fIncrementFactor = 10.0f;
 static const double fMinSlewRate = 3.0;
 static const double fMaxKeyAccel = 20.0;
@@ -126,11 +126,16 @@ CelestiaCore::CelestiaCore() :
     contextMenuCallback(NULL),
     logoTexture(NULL),
     alerter(NULL),
+    joystickRotation(0.0f, 0.0f, 0.0f),
     KeyAccel(1.0)
 {
     execEnv = new CoreExecutionEnvironment(*this);
-    for (int i = 0; i < KeyCount; i++)
+
+    int i;
+    for (i = 0; i < KeyCount; i++)
         keysPressed[i] = false;
+    for (i = 0; i < JoyButtonCount; i++)
+        joyButtonsPressed[i] = false;
 }
 
 CelestiaCore::~CelestiaCore()
@@ -322,6 +327,29 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 
         mouseMotion += abs(dy) + abs(dx);
     }
+}
+
+
+void CelestiaCore::joystickAxis(int axis, float amount)
+{
+    float deadZone = 0.25f;
+
+    if (abs(amount) < deadZone)
+        amount = 0.0f;
+    else
+        amount = (amount - deadZone) * (1.0f / (1.0f - deadZone));
+
+    if (axis == Joy_XAxis)
+        joystickRotation.y = amount;
+    else if (axis == Joy_YAxis)
+        joystickRotation.x = -amount;
+}
+
+
+void CelestiaCore::joystickButton(int button, bool down)
+{
+    if (button >= 0 && button < JoyButtonCount)
+        joyButtonsPressed[button] = down;
 }
 
 
@@ -685,13 +713,6 @@ void CelestiaCore::tick(double dt)
         sim->changeOrbitDistance(dt * 2);
 
     // Keyboard rotate
-    Quatf q(1);
-#if 0
-    if (keysPressed[Key_Left])
-        q.zrotate((float) dt * 2);
-    if (keysPressed[Key_Right])
-        q.zrotate((float) dt * -2);
-#endif
     Vec3f av = sim->getObserver().getAngularVelocity();
 
     av = av * (float) exp(-dt * RotationDecay);
@@ -704,56 +725,40 @@ void CelestiaCore::tick(double dt)
         av += Vec3f(dt, 0, 0);
     if (keysPressed[Key_Up])
         av += Vec3f(-dt, 0, 0);
-#if 0    
-    if (keysPressed[Key_Down])
-        q.xrotate((float) dt * 2);
-    if (keysPressed[Key_Up])
-        q.xrotate((float) dt * -2);
-#endif
 
-#if 0
-    // Leaving this in until the new rotation code is fine tuned
-    if(keysPressed[Key_NumPad4])
-      q.yrotate((float)degToRad(dt * -fMinSlewRate * KeyAccel));
-    if(keysPressed[Key_NumPad6])
-      q.yrotate((float)degToRad(dt * fMinSlewRate * KeyAccel));
-    if(keysPressed[Key_NumPad2])
-      q.xrotate((float)degToRad(dt * -fMinSlewRate * KeyAccel));
-    if(keysPressed[Key_NumPad8])
-      q.xrotate((float)degToRad(dt * fMinSlewRate * KeyAccel));
-    if(keysPressed[Key_NumPad7])
-      q.zrotate((float)degToRad(dt * -fMinSlewRate * KeyAccel));
-    if(keysPressed[Key_NumPad9])
-      q.zrotate((float)degToRad(dt * fMinSlewRate * KeyAccel));
-#endif
-    if(keysPressed[Key_NumPad4])
+    if (keysPressed[Key_NumPad4])
         av += Vec3f(0, dt * -KeyRotationAccel, 0);
-    if(keysPressed[Key_NumPad6])
+    if (keysPressed[Key_NumPad6])
         av += Vec3f(0, dt * KeyRotationAccel, 0);
-    if(keysPressed[Key_NumPad2])
+    if (keysPressed[Key_NumPad2])
         av += Vec3f(dt * -KeyRotationAccel, 0, 0);
-    if(keysPressed[Key_NumPad8])
+    if (keysPressed[Key_NumPad8])
         av += Vec3f(dt * KeyRotationAccel, 0, 0);
-    if(keysPressed[Key_NumPad7])
+    if (keysPressed[Key_NumPad7] || joyButtonsPressed[JoyButton7])
         av += Vec3f(0, 0, dt * -KeyRotationAccel);
-    if(keysPressed[Key_NumPad9])
+    if (keysPressed[Key_NumPad9] || joyButtonsPressed[JoyButton8])
         av += Vec3f(0, 0, dt * KeyRotationAccel);
+
+
+    if (joystickRotation != Vec3f(0.0f, 0.0f, 0.0f))
+    {
+        av += (float) (dt * KeyRotationAccel) * joystickRotation;
+        sim->setTargetSpeed(sim->getTargetSpeed());
+    }
 
     if (keysPressed[Key_NumPad5])
         av = av * (float) exp(-dt * RotationBraking);
 
     sim->getObserver().setAngularVelocity(av);
 
-    sim->rotate(q);
-
-    if (keysPressed['A'])
+    if (keysPressed['A'] || joyButtonsPressed[JoyButton2])
     {
         if (sim->getTargetSpeed() == 0.0f)
             sim->setTargetSpeed(astro::kilometersToLightYears(0.1f));
         else
             sim->setTargetSpeed(sim->getTargetSpeed() * (float) exp(dt * 3));
     }
-    if (keysPressed['Z'])
+    if (keysPressed['Z'] || joyButtonsPressed[JoyButton1])
     {
         sim->setTargetSpeed(sim->getTargetSpeed() / (float) exp(dt * 3));
     }
@@ -822,11 +827,11 @@ void CelestiaCore::showText(string s)
 
 static void displayDistance(Overlay& overlay, double distance)
 {
-    if (distance >= astro::AUtoLightYears(1000.0f))
+    if (abs(distance) >= astro::AUtoLightYears(1000.0f))
         overlay.printf("%.3f ly", distance);
-    else if (distance >= astro::kilometersToLightYears(10000000.0))
+    else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
         overlay.printf("%.3f au", astro::lightYearsToAU(distance));
-    else if (distance > astro::kilometersToLightYears(1.0f))
+    else if (abs(distance) > astro::kilometersToLightYears(1.0f))
         overlay.printf("%.3f km", astro::lightYearsToKilometers(distance));
     else
         overlay.printf("%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
