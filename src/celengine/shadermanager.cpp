@@ -343,12 +343,12 @@ DeclareLights(const ShaderProperties& props)
 
     char lightSourceBuf[128];
     sprintf(lightSourceBuf,
-            "struct {\n"
+            "uniform struct {\n"
             "   vec3 direction;\n"
             "   vec3 diffuse;\n"
             "   vec3 specular;\n"
             "   vec3 halfVector;\n"
-            "} uniform lights[%d];\n",
+            "} lights[%d];\n",
             props.nLights);
 
     return string(lightSourceBuf);
