@@ -92,10 +92,13 @@ void SphereMesh::render()
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
-    glDrawElements(GL_QUADS,
-                   nIndices,
-                   GL_UNSIGNED_SHORT,
-                   indices);
+    for (int i = 0; i < nRings - 1; i++)
+    {
+        glDrawElements(GL_QUAD_STRIP,
+                       (nSlices + 1) * 2,
+                       GL_UNSIGNED_SHORT,
+                       indices + (nSlices + 1) * 2 * i);
+    }
 }
 
 
@@ -107,7 +110,7 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
     vertices = new float[nVertices * 3];
     normals = new float[nVertices * 3];
     texCoords = new float[nVertices * 2];
-    nIndices = (nRings - 1) * nSlices * 4;
+    nIndices = (nRings - 1) * (nSlices + 1) * 2;
     indices = new unsigned short[nIndices];
     
     int i;
@@ -134,13 +137,11 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 
     for (i = 0; i < nRings - 1; i++)
     {
-        for (int j = 0; j < nSlices; j++)
+        for (int j = 0; j <= nSlices; j++)
         {
-            int n = i * nSlices + j;
-            indices[n * 4 + 0] = i * (nSlices + 1) + j;
-            indices[n * 4 + 1] = (i + 1) * (nSlices + 1) + j;
-            indices[n * 4 + 2] = (i + 1) * (nSlices + 1) + j + 1;
-            indices[n * 4 + 3] = i * (nSlices + 1) + j + 1;
+            int n = i * (nSlices + 1) + j;
+            indices[n * 2 + 0] = i * (nSlices + 1) + j;
+            indices[n * 2 + 1] = (i + 1) * (nSlices + 1) + j;
         }
     }
 }
@@ -150,40 +151,43 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 void SphereMesh::generateNormals()
 {
     Vec3f zero(0, 0, 0);
-    int nQuads = nIndices / 4;
+    int nQuads = nSlices * (nRings - 1);
     Vec3f* faceNormals = new Vec3f[nQuads];
     int i;
 
     // Compute face normals for the mesh
-    for (i = 0; i < nQuads; i++)
+    for (i = 0; i < nRings - 1; i++)
     {
-        float* p0 = vertices + indices[i * 4] * 3;
-        float* p1 = vertices + indices[i * 4 + 1] * 3;
-        float* p2 = vertices + indices[i * 4 + 2] * 3;
-        float* p3 = vertices + indices[i * 4 + 3] * 3;
-
-        // Compute the face normal.  Watch out for degenerate (zero-length)
-        // edges.  If there are two degenerate edges, the entire face must
-        // be degenerate and we'll handle that later
-        Vec3f v0(p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]);
-        Vec3f v1(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
-        if (v0.length() < 1e-6f)
+        for (int j = 0; j < nSlices; j++)
         {
-            v0 = Vec3f(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
-            v1 = Vec3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
-        }
-        else if (v1.length() < 1e-6f)
-        {
-            v0 = Vec3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
-            v1 = Vec3f(p0[0] - p3[0], p0[1] - p3[1], p0[2] - p3[2]);
-        }
+            float* p0 = vertices + (i * (nSlices + 1) + j) * 3;
+            float* p1 = vertices + ((i + 1) * (nSlices + 1) + j) * 3;
+            float* p2 = vertices + ((i + 1) * (nSlices + 1) + j + 1) * 3;
+            float* p3 = vertices + (i * (nSlices + 1) + j + 1) * 3;
 
-        Vec3f faceNormal = cross(v0, v1);
-        float length = faceNormal.length();
-        if (length != 0)
-            faceNormal *= (1 / length);
+            // Compute the face normal.  Watch out for degenerate (zero-length)
+            // edges.  If there are two degenerate edges, the entire face must
+            // be degenerate and we'll handle that later
+            Vec3f v0(p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]);
+            Vec3f v1(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
+            if (v0.length() < 1e-6f)
+            {
+                v0 = Vec3f(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
+                v1 = Vec3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
+            }
+            else if (v1.length() < 1e-6f)
+            {
+                v0 = Vec3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
+                v1 = Vec3f(p0[0] - p3[0], p0[1] - p3[1], p0[2] - p3[2]);
+            }
 
-        faceNormals[i] = faceNormal;
+            Vec3f faceNormal = cross(v0, v1);
+            float length = faceNormal.length();
+            if (length != 0)
+                faceNormal *= (1 / length);
+
+            faceNormals[i * nSlices + j] = faceNormal;
+        }
     }
 
     int* faceCounts = new int[nVertices];
@@ -195,15 +199,54 @@ void SphereMesh::generateNormals()
         normals[i * 3 + 2] = 0;
     }
 
-    for (i = 0; i < nIndices; i++)
+    for (i = 1; i < nRings - 1; i++)
     {
-        int face = i / 4;
-        int vertex = indices[i];
+        for (int j = 0; j <= nSlices; j++)
+        {
+            int vertex = i * (nSlices + 1) + j;
+            faceCounts[vertex] = 4;
 
-        faceCounts[vertex]++;
-        normals[vertex * 3]     += faceNormals[face].x;
-        normals[vertex * 3 + 1] += faceNormals[face].y;
-        normals[vertex * 3 + 2] += faceNormals[face].z;
+            int face = (i - 1) * nSlices + j % nSlices;
+            normals[vertex * 3]     += faceNormals[face].x;
+            normals[vertex * 3 + 1] += faceNormals[face].y;
+            normals[vertex * 3 + 2] += faceNormals[face].z;
+            face = (i - 1) * nSlices + (j + nSlices - 1) % nSlices;
+            normals[vertex * 3]     += faceNormals[face].x;
+            normals[vertex * 3 + 1] += faceNormals[face].y;
+            normals[vertex * 3 + 2] += faceNormals[face].z;
+            face = i * nSlices + (j + nSlices - 1) % nSlices;
+            normals[vertex * 3]     += faceNormals[face].x;
+            normals[vertex * 3 + 1] += faceNormals[face].y;
+            normals[vertex * 3 + 2] += faceNormals[face].z;
+            face = i * nSlices + j % nSlices;
+            normals[vertex * 3]     += faceNormals[face].x;
+            normals[vertex * 3 + 1] += faceNormals[face].y;
+            normals[vertex * 3 + 2] += faceNormals[face].z;
+        }
+    }
+
+    // Compute normals at the poles
+    for (i = 0; i <= nSlices; i++)
+    {
+        int vertex = i;
+        faceCounts[vertex] = nSlices;
+        for (int j = 0; j < nSlices; j++)
+        {
+            int face = j;
+            normals[vertex * 3]     += faceNormals[face].x;
+            normals[vertex * 3 + 1] += faceNormals[face].y;
+            normals[vertex * 3 + 2] += faceNormals[face].z;
+        }
+
+        vertex = (nRings - 1) * (nSlices + 1) + i;
+        faceCounts[vertex] = nSlices;
+        for (j = 0; j < nSlices; j++)
+        {
+            int face = nQuads - j - 1;
+            normals[vertex * 3]     += faceNormals[face].x;
+            normals[vertex * 3 + 1] += faceNormals[face].y;
+            normals[vertex * 3 + 2] += faceNormals[face].z;
+        }
     }
 
     for (i = 0; i < nVertices; i++)
