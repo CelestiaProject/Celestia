@@ -27,18 +27,18 @@
 	</array>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>383</integer>
-		<integer>1310</integer>
-		<integer>242</integer>
-		<integer>352</integer>
-		<integer>29</integer>
-		<integer>296</integer>
-		<integer>687</integer>
-		<integer>342</integer>
-		<integer>716</integer>
 		<integer>335</integer>
-		<integer>792</integer>
+		<integer>29</integer>
 		<integer>21</integer>
+		<integer>342</integer>
+		<integer>687</integer>
+		<integer>352</integer>
+		<integer>296</integer>
+		<integer>716</integer>
+		<integer>242</integer>
+		<integer>1310</integer>
+		<integer>792</integer>
+		<integer>383</integer>
 	</array>
 	<key>IBSystem Version</key>
 	<string>6L60</string>
