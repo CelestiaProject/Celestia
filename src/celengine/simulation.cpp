@@ -180,34 +180,6 @@ static Quatf lookAt(Point3f from, Point3f to, Vec3f up)
 }
 
 
-UniversalCoord Simulation::getSelectionPosition(Selection& sel, double when)
-{
-    if (sel.body != NULL)
-    {
-        Point3f sunPos(0.0f, 0.0f, 0.0f);
-        const Star* sun = getSun(sel.body);
-        if (sun != NULL)
-            sunPos = sun->getPosition();
-        return astro::universalPosition(sel.body->getHeliocentricPosition(when),
-                                        sunPos);
-    }
-    else if (sel.star != NULL)
-    {
-        return astro::universalPosition(Point3d(0.0, 0.0, 0.0), sel.star->getPosition());
-    }
-    else if (sel.galaxy != NULL)
-    {
-        Point3d p = sel.galaxy->getPosition();
-        return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
-                                        Point3f((float) p.x, (float) p.y, (float) p.z));
-    }
-    else
-    {
-        return UniversalCoord(Point3d(0.0, 0.0, 0.0));
-    }
-}
-
-
 float getSelectionSize(Selection& sel)
 {
     if (sel.body != NULL)
@@ -548,6 +520,22 @@ Observer& Simulation::getObserver()
 {
     return observer;
 }
+
+
+void Simulation::setObserverPosition(const UniversalCoord& pos)
+{
+    RigidTransform rt(pos, observer.getOrientation());
+    transform = fromUniversal(frame, rt, simTime);
+    observer.setPosition(pos);
+}
+
+void Simulation::setObserverOrientation(const Quatf& orientation)
+{
+    RigidTransform rt(observer.getPosition(), orientation);
+    transform = fromUniversal(frame, rt, simTime);
+    observer.setOrientation(orientation);
+}
+
 
 Simulation::ObserverMode Simulation::getObserverMode() const
 {
