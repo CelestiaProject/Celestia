@@ -4112,6 +4112,46 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 }
 
 
+"d" "PSR 1257+12"   # PSR J1300+1240
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.*"
+
+	Mass      0.0004     # M.sin(i) = 0.0004 earths (1/5 Pluto's mass)
+	Radius       600     # This gives a density of about 2.5--reasonable
+                             # and object that's a mix of ice and rock
+
+
+	Class "planet"
+
+	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
+
+	EllipticalOrbit {
+		Period          3.824
+		SemiMajorAxis   2.7
+		Eccentricity    0
+
+		# Same ascending node and inclination as c; still unable to
+	        # locate source with orbital parameters other than period
+                # and SMA for d
+		Inclination     119.1
+		AscendingNode   148.7
+	}
+
+	Obliquity             119 # guess, to match inclination
+	EquatorAscendingNode  149 # guess, to match ascending node
+
+        RotationPeriod	      20 # plausible guess
+}
+
+AltSurface "limit of knowledge" "PSR 1257+12/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+
 "b" "PSR 1620-26"   # PSR J1623-2631
 # Star not present in Celestia's default stars.dat file.
 
@@ -4175,7 +4215,6 @@ AltSurface "limit of knowledge" "HD 2683/b"
 "b" "HD 27894"
 {
 	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
 
 	Mass       200     # M.sin(i) = 0.62 jupiters
 	Radius     84000
@@ -4231,7 +4270,7 @@ AltSurface "limit of knowledge" "HD 63454/b"
 	Texture "jupiterlike.*"
 
 	Mass       120     # M.sin(i) = 0.37 jupiters
-	Radius     84000
+	Radius     56000
 	Oblateness 0.02
 
 	InfoURL "http://obswww.unige.ch/exoplanets/hd93083.html"
