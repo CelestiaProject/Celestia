@@ -104,6 +104,7 @@ public slots:
     void slotSlowDownTime();
     void slotPauseTime();
     void slotReverseTime();
+    void slotCenterCO();
 
     void slotShowStars();
     void slotShowPlanets();
@@ -124,7 +125,7 @@ public slots:
     void slotShowAtmospheres();
     void slotShowSmoothLines();
     void slotShowEclipseShadows();
-    void slotShowStarsAsPoints();
+    void slotCycleStarMode();
     void slotShowRingShadows();
     void slotShowBoundaries();
     void slotShowAutoMag();
