@@ -55,6 +55,7 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kurl.h>
+#include <krun.h>
 #include <kurldrag.h>
 #include <kstdaccel.h>
 #include <kpopupmenu.h>
@@ -899,24 +900,25 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
     if (sel.body != NULL)
     {
         popup.insertTitle(sel.body->getName().c_str(), 0, 0);
-        popup.insertItem(i18n("&Select"), 1, 1);
-        popup.insertItem(i18n("&Center"), 2, 2);
-        popup.insertItem(i18n("&Goto"), 3, 3);
-        popup.insertItem(i18n("&Follow"), 4, 4);
-        popup.insertItem(i18n("S&ynch Orbit"), 5, 5);
+        popup.insertItem(i18n("&Select"), 1);
+        popup.insertItem(i18n("&Center"), 2);
+        popup.insertItem(i18n("&Goto"), 3);
+        popup.insertItem(i18n("&Follow"), 4);
+        popup.insertItem(i18n("S&ynch Orbit"), 5);
+        popup.insertItem(i18n("&Info"), 6);
 
         const PlanetarySystem* satellites = sel.body->getSatellites();
         planets = satellites;
         if (satellites != NULL && satellites->getSystemSize() != 0)
         {
-            popup.insertSeparator(4);
+            popup.insertSeparator();
             KPopupMenu *planetaryMenu = new KPopupMenu(app);
             for (int i = 0; i < satellites->getSystemSize(); i++)
             {
                 Body* body = satellites->getBody(i);
                 planetaryMenu->insertItem(body->getName().c_str(), 10+i);
             }
-            popup.insertItem(i18n("Satellites"), planetaryMenu, 5, 5);
+            popup.insertItem(i18n("Satellites"), planetaryMenu);
         }
     }
     else if (sel.star != NULL)
@@ -969,7 +971,8 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         popup.insertItem(i18n("&Select"), 1);
         popup.insertItem(i18n("&Center"), 2);
         popup.insertItem(i18n("&Goto"), 3);
-                                       
+        popup.insertItem(i18n("&Info"), 6);
+                                      
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
@@ -983,15 +986,16 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
                 Body* body = solarSys->getPlanets()->getBody(i);
                 planetsMenu->insertItem(body->getName().c_str(), 10+i);
             }
-            popup.insertItem(i18n("Planets"), planetsMenu, 5);
+            popup.insertItem(i18n("Planets"), planetsMenu);
         }               
     }
     else if (sel.galaxy != NULL)
     {
-        popup.insertTitle(sel.galaxy->getName().c_str(), 0, 0);
-        popup.insertItem(i18n("&Select"), 1, 1);
-        popup.insertItem(i18n("&Center"), 2, 2);
-        popup.insertItem(i18n("&Goto"), 3, 3);
+        popup.insertTitle(sel.galaxy->getName().c_str(), 0);
+        popup.insertItem(i18n("&Select"), 1);
+        popup.insertItem(i18n("&Center"), 2);
+        popup.insertItem(i18n("&Goto"), 3);
+        popup.insertItem(i18n("&Info"), 6);
     }
 
     int id=popup.exec(app->glWidget->mapToGlobal(QPoint(int(x),int(y))));
@@ -1020,6 +1024,28 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         app->appCore->charEntered('y');
         return;
     }
+    if (id == 6) {
+        QString url;
+        if (sel.body != NULL) {
+            url = QString(sel.body->getInfoURL().c_str());
+            if (url == "") {
+                QString name = QString(sel.body->getName().c_str()).lower();
+                url = QString("http://www.nineplanets.org/") + name + ".html";
+            }
+        } else if (sel.star != NULL) {
+            if (sel.star->getCatalogNumber() != 0) {
+                url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=HIP %1")
+                      .arg(sel.star->getCatalogNumber() & ~0xf0000000);
+            } else {
+                url = QString("http://www.nineplanets.org/sun.html");           
+            }
+        } else if (sel.galaxy != NULL) {
+                url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=%1")
+                      .arg(sel.galaxy->getName().c_str());            
+        }
+        KRun::runURL(url, "text/html");
+        return;
+    }
 
     if (id >= 10 && planets != 0) { // Planet or Satellite.
         Selection new_sel(planets->getBody(id - 10));
@@ -1028,4 +1054,5 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         return;
     }
 }
+
 
