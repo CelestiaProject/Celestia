@@ -601,7 +601,7 @@ Code:
 1.2.6
 * Integrated more of Grant Hutchinson's corrections for the orientations of
   solar system bodies
-* Updates for asteroids Ida and Gaspra from Grant Hutchinson:
+* Updates for asteroids and comets from Grant Hutchinson:
    - Added Phil Stooke's textures for the asteroids Ida and Gaspra
    - Fixed mirror-reversal of Ida and Gaspra meshes (Grant Hutchinson)
    - Use orbital elements valid for the Galileo encounters
@@ -613,7 +613,7 @@ Code:
    - Improved drag and drop support on Windows
    - Browser integration on Windows: clicking on a cel:// URL launches Celestia
 * Added new keyboard commands for dealing with light time delay
-   - ? : show light time delay between curre* Improved drag and drop of cel:// URLs on Windowsnt position and selected object
+   - ? : show light time delay between current position and selected object
    - - (minus) : compensate for light time : subtract light travel time to
      selected object from the current time
 * KDE interface: add subtract light time button to Set Time dialog
@@ -624,4 +624,11 @@ Code:
    - Eclipse finder code separated into UI and platform-independent parts
 * Added basic support for rendering nebula as 3ds meshes.
 * Modified format of galaxies file to handle other deep sky objects as well
+* Added OpenCluster objects
+* Implemented 'markers'
+   - Selection is highlighted with a marker
+   - Markers may also be set on objects using the right-click context menu
+   - Added mark/unmark commands for scripts
+   - Bound Ctrl+K to toggle display of markers
+* Added triangle-accurate picking of mesh objects
 
