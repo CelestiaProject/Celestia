@@ -20,6 +20,12 @@ static BinaryOperatorFunc AddFunc;
 static BinaryOperatorFunc SubtractFunc;
 static BinaryOperatorFunc MultiplyFunc;
 static BinaryOperatorFunc DivideFunc;
+static BinaryOperatorFunc EqualFunc;
+static BinaryOperatorFunc NotEqualFunc;
+static BinaryOperatorFunc LesserFunc;
+static BinaryOperatorFunc GreaterFunc;
+static BinaryOperatorFunc LesserEqualFunc;
+static BinaryOperatorFunc GreaterEqualFunc;
 
 static Value ErrorValue = Value();
 
@@ -30,12 +36,22 @@ static BinaryOperatorFunc* BinaryOperatorFunctions[BinaryExpression::OperatorCou
     SubtractFunc,
     MultiplyFunc,
     DivideFunc,
+    EqualFunc,
+    NotEqualFunc,
+    LesserFunc,
+    GreaterFunc,
+    LesserEqualFunc,
+    GreaterEqualFunc,
     NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
+};
+
+
+static UnaryOperatorFunc NegateFunc;
+static UnaryOperatorFunc LogicalNotFunc;
+static UnaryOperatorFunc* UnaryOperatorFunctions[UnaryExpression::OperatorCount] =
+{
+    NegateFunc,
+    LogicalNotFunc,
     NULL,
 };
 
@@ -80,7 +96,8 @@ UnaryExpression::~UnaryExpression()
 
 Value UnaryExpression::eval()
 {
-    return Value();
+    Value v = expr->eval();
+    return UnaryOperatorFunctions[op](v);
 }
 
 
@@ -176,4 +193,52 @@ Value DivideFunc(const Value& a, const Value& b)
     {
         return ErrorValue;
     }
+}
+
+
+Value EqualFunc(const Value& a, const Value& b)
+{
+    return Value(a == b);
+}
+
+
+Value NotEqualFunc(const Value& a, const Value& b)
+{
+    return Value(a != b);
+}
+
+
+Value LesserFunc(const Value& a, const Value& b)
+{
+    return Value(a.toNumber() < b.toNumber());
+}
+
+
+Value GreaterFunc(const Value& a, const Value& b)
+{
+    return Value(a.toNumber() > b.toNumber());
+}
+
+
+Value LesserEqualFunc(const Value& a, const Value& b)
+{
+    return Value(a.toNumber() <= b.toNumber());
+}
+
+
+Value GreaterEqualFunc(const Value& a, const Value& b)
+{
+    return Value(a.toNumber() >= b.toNumber());
+}
+
+
+
+Value NegateFunc(const Value& v)
+{
+    return Value(-v.toNumber());
+}
+
+Value LogicalNotFunc(const Value& v)
+{
+    return Value(!v.toBoolean());
 }

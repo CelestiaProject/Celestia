@@ -157,6 +157,10 @@ Scanner::TokenType Scanner::nextToken()
             {
                 state = GreaterState;
             }
+            else if (nextChar == '!')
+            {
+                state = BangState;
+            }
             else if (nextChar == '|')
             {
                 newToken = TokenBar;
@@ -189,6 +193,10 @@ Scanner::TokenType Scanner::nextToken()
                     newToken = KeywordIf;
                 else if (textToken == "else")
                     newToken = KeywordElse;
+                else if (textToken == "true")
+                    newToken = KeywordTrue;
+                else if (textToken == "false")
+                    newToken = KeywordFalse;
                 else
                 {
                     newToken = TokenName;
@@ -299,6 +307,20 @@ Scanner::TokenType Scanner::nextToken()
             else
             {
                 newToken = TokenGreater;
+                state = StartState;
+            }
+            break;
+
+        case BangState:
+            if (nextChar == '=')
+            {
+                newToken = TokenNotEqual;
+                nextChar = readChar();
+                state = StartState;
+            }
+            else
+            {
+                newToken = TokenNot;
                 state = StartState;
             }
             break;

@@ -26,14 +26,17 @@ public:
     Expression* parseExpression();
     Expression* parseFinalExpression();
     Expression* parseSubexpression();
+    Expression* parseUnaryExpression();
     Expression* parseMultiplyExpression();
     Expression* parseAddExpression();
+    Expression* parseEqualityExpression();
     Expression* parseRelationalExpression();
 
     Statement* parseStatement();
     Statement* parseCompoundStatement();
     Statement* parseExpressionStatement();
     Statement* parseIfStatement();
+    Statement* parseWhileStatement();
 
 private:
     void syntaxError(const std::string&);

@@ -46,10 +46,13 @@ public:
         TokenLesser         = 22,
         TokenGreaterEqual   = 23,
         TokenLesserEqual    = 24,
+        TokenNot            = 25,
         KeywordIf           = 50,
         KeywordElse         = 51,
         KeywordFor          = 52,
         KeywordWhile        = 53,
+        KeywordTrue         = 54,
+        KeywordFalse        = 55,
         TokenError          = 255,
     };
 
@@ -85,6 +88,7 @@ private:
         SlashState          = 15,
         LessState           = 16,
         GreaterState        = 17,
+        BangState           = 18,
     };
 
     std::istream* in;
