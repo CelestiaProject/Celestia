@@ -30,6 +30,7 @@ struct CloserStarPredicate
     }
 };
 
+
 struct BrighterStarPredicate
 {
     Point3f pos;
@@ -51,6 +52,7 @@ struct BrighterStarPredicate
     }
 };
 
+
 struct BrightestStarPredicate
 {
     bool operator()(const Star* star0, const Star* star1) const
@@ -59,6 +61,7 @@ struct BrightestStarPredicate
                 star1->getAbsoluteMagnitude());
     }
 };
+
 
 struct SolarSystemPredicate
 {
@@ -94,8 +97,8 @@ findStars(const StarDatabase& stardb, Pred pred, int nStars)
     vector<const Star*>* finalStars = new vector<const Star*>();
     if (nStars == 0)
         return finalStars;
-    if(nStars>500)
-        nStars=500;
+    if(nStars > 500)
+        nStars = 500;
 
     typedef multiset<const Star*, Pred> StarSet;
     StarSet firstStars(pred);
@@ -136,16 +139,18 @@ findStars(const StarDatabase& stardb, Pred pred, int nStars)
     return finalStars;
 }
 
-const Star * StarBrowser::nearestStar()
+
+const Star* StarBrowser::nearestStar()
 {
     Universe* univ = appSim->getUniverse();
     CloserStarPredicate closerPred;
     closerPred.pos = pos;
-    vector<const Star*>*stars= findStars(*(univ->getStarCatalog()), closerPred, 1);
-    const Star *star=(*stars)[0];
+    vector<const Star*>* stars = findStars(*(univ->getStarCatalog()), closerPred, 1);
+    const Star *star = (*stars)[0];
     delete stars;
     return star;
 }
+
 
 vector<const Star*>*
 StarBrowser::listStars(unsigned int nStars)
@@ -161,12 +166,14 @@ StarBrowser::listStars(unsigned int nStars)
             return findStars(*(univ->getStarCatalog()), brighterPred, nStars);
         }
         break;
+
     case BrightestStars:
         {
             BrightestStarPredicate brightestPred;
             return findStars(*(univ->getStarCatalog()), brightestPred, nStars);
         }
         break;
+
     case StarsWithPlanets:
         {
             SolarSystemCatalog* solarSystems = univ->getSolarSystemCatalog();
@@ -179,6 +186,7 @@ StarBrowser::listStars(unsigned int nStars)
                                   min(nStars, solarSystems->size()));
         }
         break;
+
     case NearestStars:
     default:
         {
@@ -188,16 +196,19 @@ StarBrowser::listStars(unsigned int nStars)
         }
         break;
     }
+
     return NULL;  // keep compiler happy
 }
 
-bool StarBrowser::setPred(int pred)
+
+bool StarBrowser::setPredicate(int pred)
 {
-    if((pred < NearestStars) || (pred > StarsWithPlanets))
+    if ((pred < NearestStars) || (pred > StarsWithPlanets))
         return false;
-    predicate=pred;
+    predicate = pred;
     return true;
 }
+
 
 void StarBrowser::refresh()
 {
@@ -205,11 +216,13 @@ void StarBrowser::refresh()
     pos = (Point3f) ucPos;
 }
 
+
 void StarBrowser::setSimulation(Simulation *_appSim)
 {
-    appSim=_appSim;
+    appSim = _appSim;
     refresh();
 }
+
 
 StarBrowser::StarBrowser(Simulation* _appSim, int pred) :
     appSim(_appSim)
@@ -219,6 +232,7 @@ StarBrowser::StarBrowser(Simulation* _appSim, int pred) :
 
     predicate = pred;
 }
+
 
 StarBrowser::StarBrowser() :
     pos(0.0, 0.0, 0.0),
