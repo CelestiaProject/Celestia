@@ -1007,6 +1007,7 @@ void Renderer::render(const Observer& observer,
             if (!(*iter)->keep)
                 (*iter)->body = NULL;
         }
+
     }
 
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
@@ -3286,26 +3287,31 @@ void Renderer::labelStars(const vector<Star*>& stars,
                           const Observer& observer)
 {
     Point3f observerPos = (Point3f) observer.getPosition();
+    Point3f observerPos_ly(observerPos.x * 1e-6,
+                           observerPos.y * 1e-6,
+                           observerPos.z * 1e-6);
 
     for (vector<Star*>::const_iterator iter = stars.begin(); iter != stars.end(); iter++)
     {
         Star* star = *iter;
         Point3f pos = star->getPosition();
-        float distance = pos.distanceTo(observerPos);
+        float distance = pos.distanceTo(observerPos_ly);
         float appMag = (distance > 0.0f) ?
             astro::absToAppMag(star->getAbsoluteMagnitude(), distance) : -100.0f;
         
         if (appMag < faintestMag)
         {
-            Point3f pos_mly(pos.x * 1e6f, pos.y * 1e6f, pos.z * 1e6f);
-            Vec3f rpos = pos_mly - observerPos;
+            Vec3f rpos = pos - observerPos_ly;
 
             // Use a more accurate and expensive calculation if the
             // distance to the star is less than a light year.  Single
             // precision arithmetic isn't good enough when we're very close
             // to the star.
             if (distance < 1.0f)
-                rpos = pos_mly - observer.getPosition();
+            {
+                Point3d hpos = astro::heliocentricPosition(observer.getPosition(), pos);
+                rpos = Vec3f((float) -hpos.x, (float) -hpos.y, (float) -hpos.z);
+            }
 
             if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
             {
