@@ -116,6 +116,7 @@ class Simulation
     Observer& getObserver();
     void setObserverPosition(const UniversalCoord&);
     void setObserverOrientation(const Quatf&);
+    void reverseObserverOrientation();
 
     SolarSystem* getNearestSolarSystem() const;
 
