@@ -132,6 +132,7 @@
 #define IDC_MARKFEATURES                1110
 #define IDC_SLIDER_FEATURE_SIZE         1150
 #define IDC_EDIT_FEATURE_SIZE           1151
+#define IDC_CELESTIALINK                1152
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -203,7 +204,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         40083
-#define _APS_NEXT_CONTROL_VALUE         1152
+#define _APS_NEXT_CONTROL_VALUE         1153
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

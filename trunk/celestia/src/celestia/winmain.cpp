@@ -1,5 +1,5 @@
 // winmain.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Windows front end for Celestia.
@@ -49,6 +49,7 @@
 #include "winlocations.h"
 #include "winbookmarks.h"
 #include "wineclipses.h"
+#include "winhyperlinks.h"
 #include "odmenu.h"
 
 #include "res/resource.h"
@@ -152,7 +153,7 @@ struct AppPreferences
 void ChangeDisplayMode()
 {
     DEVMODE device_mode;
-  
+
     memset(&device_mode, 0, sizeof(DEVMODE));
 
     device_mode.dmSize = sizeof(DEVMODE);
@@ -163,12 +164,11 @@ void ChangeDisplayMode()
 
     ChangeDisplaySettings(&device_mode, CDS_FULLSCREEN);
 }
-  
+
 void RestoreDisplayMode()
 {
     ChangeDisplaySettings(0, 0);
 }
-
 
 //
 // A very minimal IDropTarget interface implementation
@@ -188,7 +188,7 @@ public:
     STDMETHOD (DragEnter)(LPDATAOBJECT pDataObj, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect);
     STDMETHOD (DragOver) (DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect);
     STDMETHOD (DragLeave)(void);
-    STDMETHOD (Drop)     (LPDATAOBJECT pDataObj, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect); 
+    STDMETHOD (Drop)     (LPDATAOBJECT pDataObj, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect);
 
 private:
     ULONG refCount;
@@ -266,7 +266,7 @@ CelestiaDropTarget::Drop(IDataObject* pDataObject,
                          POINTL pt,
                          DWORD* pdwEffect)
 {
-    
+
     IEnumFORMATETC* enumFormat = NULL;
     HRESULT hr = pDataObject->EnumFormatEtc(DATADIR_GET, &enumFormat);
     if (FAILED(hr) || enumFormat == NULL)
@@ -376,7 +376,7 @@ static bool BeginMovieCapture(const std::string& filename,
         appCore->initMovieCapture(movieCapture);
     else
         delete movieCapture;
-    
+
     return success;
 }
 
@@ -462,6 +462,7 @@ BOOL APIENTRY AboutProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
+        MakeHyperlinkFromStaticCtrl(hDlg, IDC_CELESTIALINK);
         return(TRUE);
 
     case WM_COMMAND:
@@ -469,6 +470,19 @@ BOOL APIENTRY AboutProc(HWND hDlg,
         {
             EndDialog(hDlg, 0);
             return TRUE;
+        }
+        else if (LOWORD(wParam) == IDC_CELESTIALINK)
+        {
+            char urlBuf[256];
+            HWND hCtrl = GetDlgItem(hDlg, IDC_CELESTIALINK);
+            if (hCtrl)
+            {
+                if (GetWindowText(hCtrl, urlBuf, sizeof(urlBuf)) > 0)
+                {
+                    ShellExecute(hDlg, "open", urlBuf, NULL, NULL, SW_SHOWNORMAL);
+                    return TRUE;
+                }
+            }
         }
         break;
     }
@@ -543,7 +557,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
             if (vendor != NULL)
                 s += vendor;
             s += "\r\r\n";
-            
+
             s += "Renderer: ";
             if (render != NULL)
                 s += render;
@@ -831,7 +845,7 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
             //If this is a body, set the text.
             Selection sel = appCore->getSimulation()->getSelection();
             switch (sel.getType())
-            {                
+            {
             case Selection::Type_Body:
                 {
                     string name = sel.body()->getName();
@@ -843,7 +857,7 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
                 break;
             }
         }
-        
+
         return(TRUE);
         }
 
@@ -1229,7 +1243,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
             {
                 if(wParam == 1)
                 {
-                    //Handle 
+                    //Handle
                     HWND hTree;
                     if (hTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
                     {
@@ -1483,8 +1497,8 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
     menuNames.push_back("Planets");
     objects.push_back(spacecraft);
     menuNames.push_back("Spacecraft");
-    
-    // Now sort each vector and generate submenus 
+
+    // Now sort each vector and generate submenus
     IntStrPairComparePredicate pred;
     vector<IntStrPairVec>::iterator obj;
     vector<IntStrPair>::iterator it;
@@ -1565,7 +1579,6 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     string name;
 
     hMenu = CreatePopupMenu();
-
     switch (sel.getType())
     {
     case Selection::Type_Body:
@@ -1649,7 +1662,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     POINT point;
     point.x = (int) x;
     point.y = (int) y;
-    
+
     if (currentScreenMode == 0)
         ClientToScreen(hwnd, (LPPOINT) &point);
 
@@ -1732,7 +1745,7 @@ bool EnableFullScreen(const DEVMODE& dm)
     devMode.dmPelsHeight = dm.dmPelsHeight;
     devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
 
-    if (ChangeDisplaySettings(&devMode, CDS_FULLSCREEN) != 
+    if (ChangeDisplaySettings(&devMode, CDS_FULLSCREEN) !=
         DISP_CHANGE_SUCCESSFUL)
     {
 	MessageBox(NULL,
@@ -1762,7 +1775,7 @@ bool SetDCPixelFormat(HDC hDC)
 	PFD_SUPPORT_OPENGL |		// Support OpenGL calls in window
 	PFD_DOUBLEBUFFER,		// Double buffered mode
 	PFD_TYPE_RGBA,			// RGBA Color mode
-	GetDeviceCaps(hDC, BITSPIXEL),	// Want the display bit depth		
+	GetDeviceCaps(hDC, BITSPIXEL),	// Want the display bit depth
 	0,0,0,0,0,0,			// Not used to select mode
 	0,0,				// Not used to select mode
 	0,0,0,0,0,			// Not used to select mode
@@ -3351,7 +3364,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             {
                 CopyStateURLToClipboard();
                 appCore->flash("Copied URL");
-            }            
+            }
             break;
 
         default:
@@ -3407,7 +3420,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 {
                     string urlString(urlChars, cd->cbData);
 
-                    if (!urlString.substr(0,4).compare("cel:")) 
+                    if (!urlString.substr(0,4).compare("cel:"))
                     {
                         appCore->flash("Loading URL");
                         Url url(string(urlString), appCore);
@@ -3455,12 +3468,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             }
         }
         break;
-        
+
     case WM_COMMAND:
         switch (LOWORD(wParam))
         {
         case ID_NAVIGATION_CENTER:
-            appCore->charEntered('c');
+            appCore->charEntered('C');
             break;
         case ID_NAVIGATION_GOTO:
             appCore->charEntered('G');
@@ -3695,7 +3708,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_HELP_RUNDEMO:
             appCore->charEntered('D');
             break;
-            
+
         case ID_HELP_CONTROLS:
             CreateDialogParam(appInstance,
                               MAKEINTRESOURCE(IDD_CONTROLSHELP),
@@ -3781,7 +3794,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     int whichFavorite = LOWORD(wParam) - ID_BOOKMARKS_FIRSTBOOKMARK;
                     appCore->activateFavorite(*(*favorites)[whichFavorite]);
                 }
-                else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
+                else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET &&
                          LOWORD(wParam) < MENU_CHOOSE_PLANET + 1000)
                 {
                     // Handle the satellite/child object submenu
