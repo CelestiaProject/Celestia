@@ -1094,20 +1094,29 @@ void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkCTreeNode *parent, 
     {
 	Body* world = sys->getBody(i);
 	tmp[0] = g_strdup(world->getName().c_str());
-        if (lev == 2)
+        switch(world->getClassification())
         {
-            if (world->getRadius() >= 1000.0)
-                tmp[1]="Planet";
-            else
-                tmp[1]="Planetoid";
+        case Body::Planet:
+            tmp[1]="Planet";
+            break;
+        case Body::Moon:
+            tmp[1]="Moon";
+            break;
+        case Body::Asteroid:
+            tmp[1]="Asteroid";
+            break;
+        case Body::Comet:
+            tmp[1]="Comet";
+            break;
+        case Body::Spacecraft:
+            tmp[1]="Spacecraft";
+            break;
+        case Body::Unknown:
+        default:
+            tmp[1]="-";
+            break;
         }
-        else
-        {
-            if (world->getRadius() > 0.1)
-                tmp[1]="Moon";
-            else
-                tmp[1]="Satellite";
-        }
+
 	const PlanetarySystem* satellites = world->getSatellites();
 	child=gtk_ctree_insert_node(GTK_CTREE(ctree), parent, NULL,
                                     (char**) tmp , 0 , NULL, NULL, NULL, NULL,
@@ -1688,23 +1697,23 @@ static void menuSetTime()
 
 static GtkItemFactoryEntry menuItems[] =
 {
-    { "/_File",  NULL,                      NULL,          0, "<Branch>" },
+    { "/File",  NULL,                       NULL,          0, "<Branch>" },
     { "/File/Capture Image...", "F10",      menuCaptureImage,0, NULL },
     { "/File/Quit", "<control>Q",           gtk_main_quit, 0, NULL },
-    { "/_Navigation", NULL,                 NULL,          0, "<Branch>" },
+    { "/Navigation", NULL,                  NULL,          0, "<Branch>" },
     { "/Navigation/Select Sol", "H",        menuSelectSol, 0, NULL },
     { "/Navigation/Tour Guide", NULL,       menuTourGuide, 0, NULL },
     { "/Navigation/Select Object...", NULL, menuSelectObject, 0, NULL },
     { "/Navigation/Goto Object...", NULL,   menuGotoObject,0, NULL },
     { "/Navigation/sep1", NULL,             NULL,          0, "<Separator>" },
-    { "/Navigation/Center Selection", "C",  menuCenter,    0, NULL },
-    { "/Navigation/Goto Selection", "G",    menuGoto,      0, NULL },
-    { "/Navigation/Follow Selection", "F",  menuFollow,    0, NULL },
+    { "/Navigation/_Center Selection", "C",  menuCenter,    0, NULL },
+    { "/Navigation/_Goto Selection", "G",    menuGoto,      0, NULL },
+    { "/Navigation/_Follow Selection", "F",  menuFollow,    0, NULL },
     { "/Navigation/Sync Orbit", "Y",        menuSync,      0, NULL },
-    { "/Navigation/Track Selection", "T",   menuTrack,     0, NULL },
+    { "/Navigation/_Track Selection", "T",   menuTrack,     0, NULL },
     { "/Navigation/sep2", NULL,             NULL,          0, "<Separator>" },
     { "/Navigation/Celestial Browser", NULL,menuBrowser,   0, NULL },
-    { "/_Time", NULL,                       NULL,          0, "<Branch>" },
+    { "/Time", NULL,                        NULL,          0, "<Branch>" },
     { "/Time/10x Faster", "L",              menuFaster,    0, NULL },
     { "/Time/10x Slower", "K",              menuSlower,    0, NULL },
     { "/Time/Pause", "space",               menuPause,     0, NULL },
@@ -1712,12 +1721,12 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
     { "/Time/Set Time", NULL,               menuSetTime,   0, NULL },
     { "/Time/sep1", NULL,                   NULL,          0, "<Separator>" },
-    { "/Time/Show Local Time", "I",         NULL,          Menu_ShowLocTime, "<ToggleItem>" },
-    { "/_Render", NULL,                     NULL,          0, "<Branch>" },
+    { "/Time/Show Local T_ime", "I",         NULL,          Menu_ShowLocTime, "<ToggleItem>" },
+    { "/Render", NULL,                      NULL,          0, "<Branch>" },
     { "/Render/Show Galaxies", "U",         NULL,          Menu_ShowGalaxies, "<ToggleItem>" },
     { "/Render/Show Atmospheres", "<control>A",NULL,       Menu_ShowAtmospheres, "<ToggleItem>" },
     { "/Render/Show Clouds", "I",           NULL,          Menu_ShowClouds, "<ToggleItem>" },
-    { "/Render/Show Orbits", "O",           NULL,          Menu_ShowOrbits, "<ToggleItem>" },
+    { "/Render/Show _Orbits", "O",           NULL,          Menu_ShowOrbits, "<ToggleItem>" },
     { "/Render/Show Constellations", "slash",NULL,         Menu_ShowConstellations, "<ToggleItem>" },
     { "/Render/Show Coordinate Sphere", "semicolon",NULL,  Menu_ShowCelestialSphere, "<ToggleItem>" },
     { "/Render/Show Night Side Lights", "<control>L",NULL, Menu_ShowNightSideMaps, "<ToggleItem>" },
@@ -1727,12 +1736,12 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Render/More Stars Visible", "bracketleft",  menuMoreStars, 0, NULL },
     { "/Render/Fewer Stars Visible", "bracketright", menuLessStars, 0, NULL },
     { "/Render/sep2", NULL,                 NULL,          0, "<Separator>" },
-    { "/Render/Label Planets", "P",         NULL,          Menu_PlanetLabels, "<ToggleItem>" },
-    { "/Render/Label Moons", "M",           NULL,          Menu_MoonLabels, "<ToggleItem>" },
+    { "/Render/Label _Planets", "P",         NULL,          Menu_PlanetLabels, "<ToggleItem>" },
+    { "/Render/Label _Moons", "M",           NULL,          Menu_MoonLabels, "<ToggleItem>" },
     { "/Render/Label Asteroids&Comets", "W",NULL,          Menu_AsteroidLabels, "<ToggleItem>" },
     { "/Render/Label Spacecraft", "N",      NULL,          Menu_CraftLabels, "<ToggleItem>" },
     { "/Render/Label Stars", "B",           NULL,          Menu_StarLabels, "<ToggleItem>" },
-    { "/Render/Label Galaxies", "E",        NULL,          Menu_GalaxyLabels, "<ToggleItem>" },
+    { "/Render/Label Galaxi_es", "E",        NULL,          Menu_GalaxyLabels, "<ToggleItem>" },
     { "/Render/Label Constellations", "equal",NULL,        Menu_ConstellationLabels, "<ToggleItem>" },
     { "/Render/Show Info Text", "V",        menuShowInfo,  0, NULL },
     { "/Render/sep3", NULL,                 NULL,          0, "<Separator>" },
@@ -1741,8 +1750,8 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Render/Ambient/Low", NULL,          menuLowAmbient,0, NULL },
     { "/Render/Ambient/Medium", NULL,       menuMedAmbient,0, NULL },
     { "/Render/Ambient/High", NULL,         menuHiAmbient, 0, NULL },
-    { "/_Help", NULL,                       NULL,          0, "<LastBranch>" },
-    { "/Help/Run Demo", "D",                menuRunDemo,   0, NULL },  
+    { "/Help", NULL,                        NULL,          0, "<LastBranch>" },
+    { "/Help/Run _Demo", "D",               menuRunDemo,   0, NULL },  
     { "/Help/sep1", NULL,                   NULL,          0, "<Separator>" },
     { "/Help/Controls", NULL,       	    menuControls,  0, NULL },
     { "/Help/OpenGL Info", NULL,            menuOpenGL,    0, NULL },

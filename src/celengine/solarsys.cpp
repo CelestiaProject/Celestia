@@ -261,9 +261,11 @@ static Body* CreatePlanet(PlanetarySystem* system,
     }
     body->setOrbit(orbit);
 
-    int classification = Body::Planet;
-    if (system->getPrimaryBody() != NULL)
-        classification = Body::Moon;
+    double radius = 10000.0;
+    planetData->getNumber("Radius", radius);
+    body->setRadius(radius);
+
+    int classification = Body::Unknown;
     string classificationName;
     if (planetData->getString("Class", classificationName))
     {
@@ -280,15 +282,29 @@ static Body* CreatePlanet(PlanetarySystem* system,
         else
             classification = Body::Unknown;
     }
+    if(classification == Body::Unknown)
+    {
+        //Try to guess the type
+        if (system->getPrimaryBody() != NULL)
+        {
+            if(radius > 0.1)
+                classification = Body::Moon;
+            else
+                classification = Body::Spacecraft;
+        }
+        else
+        {
+            if(radius < 1000.0)
+                classification = Body::Asteroid;
+            else
+                classification = Body::Planet;
+        }
+    }
     body->setClassification(classification);
     
     double albedo = 0.5;
     planetData->getNumber("Albedo", albedo);
     body->setAlbedo(albedo);
-
-    double radius = 10000.0;
-    planetData->getNumber("Radius", radius);
-    body->setRadius(radius);
 
     double oblateness = 0.0;
     planetData->getNumber("Oblateness", oblateness);
