@@ -54,10 +54,17 @@
     //NSLog(@"-[GotoWindowController gotoObject:%@]",sender);
     sim = [[CelestiaAppCore sharedAppCore] simulation];
     //NSLog(@"[objectField stringValue] = '%@'",[objectField stringValue]);
-    if ([[objectField stringValue] length])
-        csel = [sim findObjectFromPath:[objectField stringValue]];
-    if ((csel == nil) || [csel isEmpty])
+    if (![[objectField stringValue] length])
+    {
+	NSRunAlertPanel(@"No Object Name Entered", @"Please enter an object name.",nil,nil,nil);
         return;
+    }
+    csel = [sim findObjectFromPath:[objectField stringValue]];
+    if ((csel == nil) || [csel isEmpty])
+    {
+       NSRunAlertPanel(@"Object Not Found",@"Please check that the object name is correct.",nil,nil,nil);
+        return;
+    }
     [sim setSelection:csel];
     [sim geosynchronousFollow];
     distance = [[csel radius] doubleValue]*5.0;
@@ -79,7 +86,7 @@
                 distance = [distanceField doubleValue];
                 break;
             default:
-                //NSLog(@"I don't know what the fuck the button has selected?");
+                //NSLog(@"I don't know what button has been selected?");
                 break;
         }
     }
