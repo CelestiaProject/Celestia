@@ -34,6 +34,18 @@ class CelestiaCore;
 
 typedef Watcher<CelestiaCore> CelestiaWatcher;
 
+class View
+{
+ public:
+    View(Observer*, float, float, float, float);
+
+    Observer* observer;
+    float x;
+    float y;
+    float width;
+    float height;
+};
+
 
 class CelestiaCore // : public Watchable<CelestiaCore>
 {
@@ -190,6 +202,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setFaintest(float);
     void setFaintestAutoMag();
 
+    void splitView(bool vertical);
+
     void flash(const std::string&, double duration = 1.0);
 
     class Alerter
@@ -236,6 +250,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int hudDetail;
     bool wireframe;
     bool editMode;
+    bool altAzimuthMode;
 
     Timer* timer;
 
@@ -284,6 +299,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::vector<Url> history;
     std::vector<Url>::size_type historyCurrent;
     std::string startURL;
+
+    std::vector<View*> views;
+    int activeView;
 };
 
 #endif // _CELESTIACORE_H_
