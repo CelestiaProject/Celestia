@@ -39,7 +39,7 @@ using namespace std;
 #define NEAR_DIST      0.5f
 #define FAR_DIST   10000000.0f
 
-static const float faintestAutoMag45deg = 12.5f;
+static const float faintestAutoMag45deg = 10.5f;
 static const int StarVertexListSize = 1024;
 
 // Fractional pixel offset used when rendering text as texture mapped
@@ -107,6 +107,7 @@ Renderer::Renderer() :
     windowWidth(0),
     windowHeight(0),
     fov(FOV),
+    corrFac(1.12f),
     renderMode(GL_FILL),
     labelMode(NoLabels),
     renderFlags(ShowStars | ShowPlanets),
@@ -472,6 +473,7 @@ float Renderer::getFieldOfView()
 void Renderer::setFieldOfView(float _fov)
 {
     fov = _fov;
+    corrFac = (0.12f * fov/FOV * fov/FOV + 1.0f);
 }
 
 
@@ -828,18 +830,11 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
     }
 }
 
-void Renderer::autoMag(float faintestMagNight, float& faintestMag, 
-                       float& saturationMag)
+void Renderer::autoMag(float& faintestMag)
 {
-  if ((renderFlags & ShowAutoMag) != 0)
-  {
-      float autoMag = 2 * FOV/(fov + FOV);
-      faintestMag = faintestAutoMag45deg * autoMag;
-      saturationMag = saturationMagNight * (1.0f + autoMag * autoMag);
-  } else {
-      faintestMag = faintestMagNight;
-      saturationMag = saturationMagNight;
-  }
+      float fieldCorr = 2.0 * FOV/(fov + FOV);
+      faintestMag = faintestAutoMag45deg * sqrt(fieldCorr);
+      saturationMag = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
 #if 0
     cout <<"faintestMag, satMag: "<<faintestMag<<'\t'<< saturationMag<<endl;  
 #endif
@@ -890,7 +885,15 @@ void Renderer::render(const Observer& observer,
     const Star* sun = NULL;
     if (solarSystem != NULL)
         sun = solarSystem->getStar();
-    autoMag(faintestMagNight, faintestMag, saturationMag);
+
+    // See if we want to use AutoMag.
+    if ((renderFlags & ShowAutoMag) != 0)
+        autoMag(faintestMag);
+    else 
+    {
+        faintestMag = faintestMagNight;
+        saturationMag = saturationMagNight;
+    }
     faintestPlanetMag = faintestMag + (2.5f * (float)log10((double)square(45.0f / fov)));
     if ((sun != NULL) && ((renderFlags & ShowPlanets) != 0))
     {
@@ -935,11 +938,8 @@ void Renderer::render(const Observer& observer,
                     skyColor = Color(atmosphere->skyColor.red() * lightness,
                                      atmosphere->skyColor.green() * lightness,
                                      atmosphere->skyColor.blue() * lightness);
-
-                    autoMag(faintestMagNight, faintestMag, saturationMag);
                     faintestMag = faintestMag  - 10.0f * lightness;
                     saturationMag = saturationMag - 10.0f * lightness;
-
                 }
             }
         }
@@ -1404,7 +1404,6 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // just hack to accomplish this.  There are cases where it will fail
         // and a more robust method should be implemented.
 
-        float corrFac = (0.05f * fov/FOV * fov/FOV + 1.0f);
         float size = pixelSize * 1.6f * renderZ/corrFac;
         float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
 
@@ -3544,8 +3543,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.starVertexBuffer = starVertexBuffer;
     starRenderer.faintestMagNight = faintestMagNight;
     starRenderer.fov              = fov;
-    // size/pixelSize =1.2 at 120deg, 1.5 at 45deg and 1.6 at 0deg.
-    float corrFac = (0.05f * fov/FOV * fov/FOV + 1.0f);
+    // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     starRenderer.size = pixelSize * 1.6f/corrFac;
     starRenderer.pixelSize = pixelSize;
     starRenderer.brightnessScale = brightnessScale * corrFac;
@@ -3581,6 +3579,10 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
     observerPos.y *= 1e-6;
     observerPos.z *= 1e-6;
 
+    Frustum frustum(degToRad(fov),
+		    (float) windowWidth / (float) windowHeight,
+		    MinNearPlaneDistance);
+
     Mat3f viewMat = observer.getOrientation().toMatrix3();
     Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
     Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
@@ -3602,6 +3604,12 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
         Galaxy* galaxy = *iter;
         Point3d pos = galaxy->getPosition();
         float radius = galaxy->getRadius();
+        Point3f center = Point3f((float)pos.x,(float)pos.y,(float)pos.z) * 
+                         conjugate(observer.getOrientation()).toMatrix3(); 
+
+        // Test the galaxy's bounding sphere against the view frustum
+	if (frustum.testSphere(center, radius) != Frustum::Outside)
+        {
         Point3f offset = Point3f((float) (observerPos.x - pos.x),
                                  (float) (observerPos.y - pos.y),
                                  (float) (observerPos.z - pos.z));
@@ -3662,6 +3670,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
 
             glPopMatrix();
         }
+	}
     }
 }
 
