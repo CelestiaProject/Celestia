@@ -1,0 +1,37 @@
+!!ARBvp1.0
+
+# Vertex program use for applying shadow textures.  2D texture coordinates
+# are generated from vertex coordinates using the s and t texture planes.
+# A second texture is used as a mask to keep shadows from showing on the
+# wrong side of the object.
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iTex0         = vertex.texcoord[0];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir      = program.env[0];
+PARAM  texgen_s      = program.env[10];
+PARAM  texgen_t      = program.env[11];
+PARAM  halfW         = { 0, 0, 0, 0.5 };
+OUTPUT oPos          = result.position;
+OUTPUT oTex0         = result.texcoord[0];
+OUTPUT oTex1         = result.texcoord[1];
+
+TEMP   t;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Generate texture coordinates
+DP4   oTex0.x, texgen_s, iPos;
+DP4   oTex0.y, texgen_t, iPos;
+
+# Generate 1D coordinates for the 'mask' texture
+ADD   t, lightDir, halfW;
+DP4   oTex1.x, t, iPos;
+MOV   oTex1.y, halfW.x;
+
+END
+
