@@ -613,6 +613,24 @@ static void disableSmoothLines()
 }
 
 
+class OrbitRenderer : public OrbitSampleProc
+{
+public:
+    OrbitRenderer() {};
+    
+    void sample(const Point3d& p)
+    {
+        glVertex3f(astro::kilometersToAU((float) p.x * 100),
+                   astro::kilometersToAU((float) p.y * 100),
+                   astro::kilometersToAU((float) p.z * 100));
+        
+    };
+
+private:
+    int dummy;
+};
+
+
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
                       float faintestMagNight,
@@ -857,15 +875,8 @@ void Renderer::render(const Observer& observer,
                 else
                     glColor4f(0, 0, 1, 1);
                 glBegin(GL_LINE_LOOP);
-                int nSteps = 100;
-                double dt = body->getOrbit()->getPeriod() / (double) nSteps;
-                for (int j = 0; j < nSteps; j++)
-                {
-                    Point3d p = body->getOrbit()->positionAtTime(j * dt + now);
-                    glVertex3f(astro::kilometersToAU((float) p.x * 100),
-                               astro::kilometersToAU((float) p.y * 100),
-                               astro::kilometersToAU((float) p.z * 100));
-                }
+                body->getOrbit()->sample(now, body->getOrbit()->getPeriod(),
+                                         100, OrbitRenderer());
                 glEnd();
             }
         }
@@ -3214,14 +3225,15 @@ void Renderer::labelStars(const vector<Star*>& stars,
         
         if (appMag < faintestMag)
         {
-            Vec3f rpos = pos - observerPos;
+            Point3f pos_mly(pos.x * 1e6f, pos.y * 1e6f, pos.z * 1e6f);
+            Vec3f rpos = pos_mly - observerPos;
 
             // Use a more accurate and expensive calculation if the
             // distance to the star is less than a light year.  Single
             // precision arithmetic isn't good enough when we're very close
             // to the star.
             if (distance < 1.0f)
-                rpos = pos - observer.getPosition();
+                rpos = pos_mly - observer.getPosition();
 
             if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
             {
@@ -3258,6 +3270,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                     avg += (*iter - Point3f(0, 0, 0));
 
                 avg = avg / (float) chain.size();
+                avg = avg * 1e6f;
                 Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
                 if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0) {
                     addLabel(ast->getName(),
