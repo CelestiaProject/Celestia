@@ -420,7 +420,7 @@
 # BD -10 3166 system
 #
 # M sin i = 0.48 Jupiters
-"b" "BD -10 3166"
+"b" "TYC 5503-946-1"
 {
 	Texture "gasgiant.jpg"
 	Mass      150
@@ -1869,5 +1869,34 @@
 		Period        0.01087
 		SemiMajorAxis 0.049
 	        Eccentricity  0.0
+	}
+}
+
+
+"b" "HD 216435"
+{
+	Texture "jupiterlike.jpg"
+	Mass 400
+	Radius 72000
+
+	EllipticalOrbit {
+		Period        3.63
+		SemiMajorAxis 2.6
+		Eccentricity  0.14
+	}
+}
+
+
+# Gamma Cephei system
+"b" "Gam Cep"
+{
+	Texture "jupiterlike.jpg"
+	Mass 565
+	Radius 65000
+
+	EllipticalOrbit {
+		Period	      2.47
+		SemiMajorAxis 2.1
+		Eccentricity  0.2  
 	}
 }
