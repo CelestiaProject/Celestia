@@ -374,6 +374,13 @@ void Texture::bindName(uint32 flags)
         case GL_INTENSITY:
             internalFormat = GL_COMPRESSED_INTENSITY_ARB;
             break;
+        case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+        case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+            compressedFormat = true;
+            internalFormat = format;
+            // compress = false; // Don't recompress DXT textures
+            break;
         }
 	glHint((GLenum) GL_TEXTURE_COMPRESSION_HINT_ARB, GL_NICEST);
     }
