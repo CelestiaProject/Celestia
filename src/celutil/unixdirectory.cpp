@@ -8,6 +8,8 @@
 // of the License, or (at your option) any later version.
 
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <dirent.h>
 #include "directory.h"
 
@@ -89,7 +91,8 @@ Directory* OpenDirectory(const std::string& dirname)
 
 bool IsDirectory(const std::string& filename)
 {
-    // TODO: implement this!
-    return false;
+    struct stat buf;
+    stat(filename.c_str(), &buf);
+    return S_ISDIR(buf.st_mode);
 }
 
