@@ -1476,21 +1476,71 @@ void Renderer::render(const Observer& observer,
 
         int nEntries = renderList.size();
 
-        // Determine how to split up the depth buffer.  Each body with an
-        // apparent size greater than one pixel is allocated its own
-        // depth buffer range.  This means that overlapping objects
-        // may not be handled correctly, but such an occurrence would be
-        // extremely rare, unless we expand the simulation to include
-        // docking spaceships etc.  In that case, this technique would have
-        // to be modified to let overlapping objects share a depth buffer
-        // range.
+        // Determine how to split up the depth buffer.  Typically, each body 
+        // with an apparent size greater than one pixel is allocated its own
+        // depth buffer range.  However, this will not correctly handle
+        // overlapping objects.  If two objects overlap in depth, we attempt
+        // to coalesce their depth buckets.  Coalescing will succeed as long
+        // as the far / near plane ratio is not too large.  If it does exceed
+        // the limit, coaslescing fails and the objects may not be rendered
+        // correctly, though the result should be superior to throwing away
+        // depth buffer precision by allowing the far / near ratio to get too
+        // large.
         int nDepthBuckets = 1;
         int i;
-        for (i = 0; i < nEntries; i++)
         {
-            if (renderList[i].discSizeInPixels > 1)
-                nDepthBuckets++;
+            float lastNear = 0.0f;
+            float lastFar = 0.0f;
+            int firstCoalesced = 0;
+
+            for (i = 0; i < nEntries; i++)
+            {
+                // Don't worry about objects that are smaller than a pixel,
+                // as they'll just be rendered as points.
+                if (renderList[i].discSizeInPixels > 1)
+                {
+                    if (nDepthBuckets == 1 || renderList[i].nearZ <= lastFar)
+                    {
+                        // This object doesn't overlap any others in depth,
+                        // no need to coaslesce.
+                        nDepthBuckets++;
+                        firstCoalesced = i;
+                        lastNear = renderList[i].nearZ;
+                        lastFar = renderList[i].farZ;
+                    }
+                    else
+                    {
+                        // Consider coalescing this object with the previous
+                        // one.
+                        float farthest = min(lastFar, renderList[i].farZ);
+                        float nearest = max(lastNear, renderList[i].nearZ);
+
+                        if (farthest / nearest < MaxFarNearRatio)
+                        {
+                            // Far/near ratio is acceptable, so coalesce
+                            // this object's depth bucket with the previous
+                            // one.
+                            for (int j = firstCoalesced; j <= i; j++)
+                            {
+                                renderList[j].farZ  = farthest;
+                                renderList[j].nearZ = nearest;
+                            }
+                        }
+                        else
+                        {
+                            // Coalesce failed, so create a new depth bucket
+                            // for this object.
+                            nDepthBuckets++;
+                            firstCoalesced = i;
+                            lastNear = renderList[i].nearZ;
+                            lastFar = renderList[i].farZ;
+                        }
+                    }
+                    renderList[i].depthBucket = nDepthBuckets - 1;
+                }
+            }
         }
+        
         float depthRange = 1.0f / (float) nDepthBuckets;
 
         int depthBucket = nDepthBuckets - 1;
@@ -1519,6 +1569,9 @@ void Renderer::render(const Observer& observer,
 
             if (renderList[i].discSizeInPixels > 1)
             {
+                depthBucket = renderList[i].depthBucket;
+                glDepthRange(depthBucket * depthRange, (depthBucket + 1) * depthRange);
+                
                 nearPlaneDistance = renderList[i].nearZ * -0.9f;
                 farPlaneDistance = renderList[i].farZ * -1.5f;
                 if (nearPlaneDistance < MinNearPlaneDistance)

@@ -32,6 +32,7 @@ struct RenderListEntry
     float discSizeInPixels;
     float appMag;
     bool isCometTail;
+    int depthBucket;
 };
 
 class Renderer
