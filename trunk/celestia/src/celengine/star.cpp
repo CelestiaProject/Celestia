@@ -13,7 +13,13 @@
 #include "star.h"
 
 
-#define SOLAR_TEMPERATURE    5780.0f
+// The value of the temperature of the sun is actually 5780, but the
+// stellar class tables list the temperature of a G2V star as 5860.  We
+// use the latter value so that the radius of the sun is computed correctly
+// as one times SOLAR_RADIUS . . .  the high metallicity of the Sun is
+// probably what accounts for the discrepancy in temperature.
+// #define SOLAR_TEMPERATURE    5780.0f
+#define SOLAR_TEMPERATURE    5860.0f
 #define SOLAR_RADIUS         696000
 
 // Star temperature data from Carroll and Ostlie's
@@ -68,8 +74,8 @@ float Star::getRadius() const
 {
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
-    return SOLAR_RADIUS * (float) sqrt(getLuminosity()) /
-        square(getTemperature() / SOLAR_TEMPERATURE);
+    return SOLAR_RADIUS * (float) sqrt(getLuminosity()) *
+        square(SOLAR_TEMPERATURE / getTemperature());
 }
 
 
