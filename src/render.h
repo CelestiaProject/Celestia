@@ -119,12 +119,15 @@ class Renderer
         Point3f position;
         Vec3f sun;
         float distance;
+        float nearZ;
+        float farZ;
         float discSizeInPixels;
         float appMag;
 
         bool operator<(const _RenderListEntry& r) const
         {
             return distance < r.distance;
+            // return z > r.z;
         }
     } RenderListEntry;
 
