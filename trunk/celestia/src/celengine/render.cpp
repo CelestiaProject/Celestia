@@ -4075,13 +4075,8 @@ static void renderRings_GLSL(RingSystem& rings,
     prog->use();
 
     prog->eyePosition = ls.eyePos_obj;
-
-#if 0
-        vproc->parameter(vp::LightDirection0, ri.sunDir_obj);
-        vproc->parameter(vp::DiffuseColor0, ri.sunColor * rings.color);
-        vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
-        vproc->parameter(vp::Constant0, Vec3f(0, 0.5, 1.0));
-#endif
+    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                               ri.ambientColor.blue());
     setLightParameters_GLSL(*prog, shadprop, ls,
                             ri.color, ri.specularColor);
         
@@ -5104,23 +5099,14 @@ void Renderer::renderObject(Point3f pos,
                 if (vproc != NULL)
                 {
                     vproc->enable();
-                    vproc->parameter(vp::LightDirection0, ls.lights[0].direction_obj);
-                    vproc->parameter(vp::DiffuseColor0, ls.lights[0].color * ri.color);
                     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
                     vproc->parameter(vp::TextureTranslation,
                                      texOffset, 0.0f, 0.0f, 0.0f);
                     if (ls.nLights > 1)
-                    {
                         vproc->use(vp::diffuseTexOffset_2light);
-                        vproc->parameter(vp::LightDirection1,
-                                         ls.lights[1].direction_obj);
-                        vproc->parameter(vp::DiffuseColor1,
-                                         ls.lights[1].color * ri.color);
-                    }
                     else
-                    {
                         vproc->use(vp::diffuseTexOffset);
-                    }
+                    setLightParameters_VP(*vproc, ls, ri.color, Color::Black);
                 }
 
                 lodSphere->render(*context,
