@@ -593,6 +593,11 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	Albedo 0.5
 }
 
+AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
+{
+	Texture "epimetheus-lok.*"
+}
+
 "Janus" "Sol/Saturn"
 {
 	Texture	 	"janus.jpg"
