@@ -24,6 +24,8 @@
 #                                                                           *
 #****************************************************************************
 
+  preloadtex { object "Sol/Earth" }
+  preloadtex { object "Sol/Earth/Moon" }
 
   select {object "Sol"}
   goto   {time 3.0 distance 30}
@@ -42,6 +44,10 @@
 #  description of what each command does. We go to Sol first, so that when  *
 #  we go to Earth, it will be displaying it's sunny side, regardless of     *
 #  what your local time might be...                                         *
+#                                                                           *
+#  preloadtex: Tells Celestia to load the textures for the named object.    *
+#          Otherwise Celestia would load the texture when the object        *
+#          comes into view, which would be noticeable as a small delay.     *
 #                                                                           *
 #  select: Tells Celestia what object (planet, moon, spacecraft, etc.) to   *
 #          define as the currently selected object. Sol defines our solar   *
