@@ -305,11 +305,18 @@ void Simulation::update(double dt)
             }
 
             Vec3d v = jv;
-            v.normalize();
-            if (t < 0.5)
-                p = journey.from + v * astro::kilometersToMicroLightYears(x);
+            if (v.length() == 0.0)
+            {
+                p = journey.from;
+            }
             else
-                p = journey.to - v * astro::kilometersToMicroLightYears(x);
+            {
+                v.normalize();
+                if (t < 0.5)
+                    p = journey.from + v * astro::kilometersToMicroLightYears(x);
+                else
+                    p = journey.to - v * astro::kilometersToMicroLightYears(x);
+            }
         }
 
         // Spherically interpolate the orientation over the first half
