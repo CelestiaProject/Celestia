@@ -424,3 +424,12 @@ Code:
 * Multi Resolution Texturing. (dramsey)
 * Unix: Much improved recognition of missing packages in configure. (dramsey)
 * Added rendering of eclipse shadows
+* Implemented longitude of axis for planet rotation elements
+* Corrected inclination of Saturn (now rings appear at proper tilt when viewed
+  from Earth)
+* Added accurate orbital calculations for the eight largest moons of Saturn
+* Textures for Ariel, Umbriel, Titania, and Umbriel from Bruckner.
+* Improved planet labeling: less clutter, plus labels are displayed for distant
+  objects at high zoom levels.
+
+
