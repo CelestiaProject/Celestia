@@ -31,6 +31,9 @@ using namespace std;
 
 static const float PixelOffset = 0.375f;
 
+static const int StarVertexListSize = 1024;
+
+
 // Static meshes and textures used by all instances of Simulation
 
 static bool commonDataInitialized = false;
@@ -81,6 +84,7 @@ Renderer::Renderer() :
     vertexShaderEnabled(false),
     brightnessBias(0.0f),
     brightnessScale(1.0f / 6.0f),
+    starVertexBuffer(NULL),
     asterisms(NULL),
     nSimultaneousTextures(1),
     useTexEnvCombine(false),
@@ -90,11 +94,14 @@ Renderer::Renderer() :
 {
     textureManager = new TextureManager("textures");
     meshManager = new MeshManager("models");
+    starVertexBuffer = new StarVertexBuffer(2048);
 }
 
 
 Renderer::~Renderer()
 {
+    if (starVertexBuffer != NULL)
+        delete starVertexBuffer;
 }
 
 
@@ -1341,25 +1348,18 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
     vp::parameter(33, ri.hazeColor);
     vp::parameter(40, 0.0f, 1.0f, 0.5f, ri.specularPower);
 
+    // Currently, we don't support bump maps and specular reflection
+    // simultaneously . . .
     if (ri.bumpTex != NULL)
     {
-#if 0
-        vp::use(vp::diffuseBump);
-        glDisable(GL_TEXTURE_2D);
-        ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0);
-#else
-        glDisable(GL_LIGHTING);
-        vp::disable();
-        ri.mesh->render();
         vp::enable();
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_DST_COLOR, GL_ZERO);
-        vp::use(vp::diffuseBump);
+        if (hazeDensity > 0.0f)
+            vp::use(vp::diffuseBumpHaze);
+        else
+            vp::use(vp::diffuseBump);
         SetupCombinersDecalAndBumpMap(*(ri.bumpTex), ri.ambientColor);
         ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0);
         DisableCombiners();
-        glDisable(GL_BLEND);
-#endif
     }
     else if (ri.specularColor != Color(0.0f, 0.0f, 0.0f))
     {
@@ -1559,12 +1559,7 @@ void Renderer::renderPlanet(const Body& body,
             // planet . . .
             float ringIllumination = 0.0f;
             {
-                // Compute the direction from the viewer to the planet in the
-                // planet's coordinate system
-                Vec3f viewVec = (Point3f(0, 0, 0) - pos) * planetMat;
-                viewVec.normalize();
-                float illumFraction = (1.0f + viewVec * localSunDir) / 2.0f;
-
+                float illumFraction = (1.0f + ri.eyeDir_obj * ri.sunDir_obj) / 2.0f;
                 // Just use the illuminated fraction for now . . .
                 ringIllumination = illumFraction;
             }
@@ -1585,12 +1580,13 @@ void Renderer::renderPlanet(const Body& body,
 
                 // Compute the projection vectors based on the sun direction.
                 // I'm being a little careless here--if the sun direction lies
-                // along the y-axis, this will fail.  It's unlikely that a planet
-                // would ever orbit underneath its sun (an orbital inclination of
-                // 90 degrees), but this should be made more robust anyway.
+                // along the y-axis, this will fail.  It's unlikely that a
+                // planet would ever orbit underneath its sun (an orbital
+                // inclination of 90 degrees), but this should be made
+                // more robust anyway.
                 float scale = rings->innerRadius / body.getRadius();
-                Vec3f axis = Vec3f(0, 1, 0) ^ localSunDir;
-                float angle = (float) acos(Vec3f(0, 1, 0) * localSunDir);
+                Vec3f axis = Vec3f(0, 1, 0) ^ ri.sunDir_obj;
+                float angle = (float) acos(Vec3f(0, 1, 0) * ri.sunDir_obj);
                 Mat4f mat = Mat4f::rotation(axis, -angle);
                 Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
                 Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
@@ -1638,8 +1634,17 @@ void Renderer::renderPlanet(const Body& body,
             // Compute the angle of the sun projected on the ring plane
             float sunAngle = (float) atan2(localSunDir.z, localSunDir.x);
 
+#if 0
             // Render the potentially shadowed side
             // glNormal3f(0, 1, 0);
+            renderRingSystem(inner, outer,
+                             0.0f, (float) (2 * PI),
+                             nSections);
+            // glNormal3f(0, -1, 0);
+            renderRingSystem(inner, outer,
+                             0.0f, (float) (-2 * PI),
+                             nSections);
+#endif
             renderRingSystem(inner, outer,
                              (float) (sunAngle + PI / 2), (float) (sunAngle + 3 * PI / 2),
                              nSections / 2);
@@ -1647,7 +1652,6 @@ void Renderer::renderPlanet(const Body& body,
             renderRingSystem(inner, outer,
                              (float) (sunAngle +  3 * PI / 2), (float) (sunAngle + PI / 2),
                              nSections / 2);
-
             // Disable the second texture unit if it was used
             if (nSimultaneousTextures > 1)
             {
@@ -1881,9 +1885,9 @@ public:
     Point3f position;
     Vec3f viewNormal;
 
-    vector<Renderer::Particle>* starParticles;
     vector<Renderer::Particle>* glareParticles;
     vector<Renderer::RenderListEntry>* renderList;
+    Renderer::StarVertexBuffer* starVertexBuffer;
 
     float faintestVisible;
     float size;
@@ -1903,6 +1907,7 @@ StarRenderer::StarRenderer()
     nClose = 0;
     nBright = 0;
     nProcessed = 0;
+    starVertexBuffer = NULL;
 }
 
 void StarRenderer::process(const Star& star, float distance, float appMag)
@@ -1923,12 +1928,12 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         // We can't just go ahead and render a nearby star in the usual way
         // for two reasons:
         //   * It may be clipped by the near plane
-        //   * It may be large enough that we should render it as a mesh instead
-        //     of a particle
-        // It's possible that the second condition might apply for stars further
-        // than one light year away if the star is huge, the fov is very small,
-        // and the resolution is high.  We'll ignore this for now and use the
-        // most inexpensive test possible . . .
+        //   * It may be large enough that we should render it as a mesh
+        //     instead of a particle
+        // It's possible that the second condition might apply for stars
+        // further than one light year away if the star is huge, the fov is
+        // very small and the resolution is high.  We'll ignore this for now
+        // and use the most inexpensive test possible . . .
         if (distance < 1.0f)
         {
             // Compute the position of the observer relative to the star.
@@ -1956,18 +1961,21 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         {
             float alpha = clamp(1.0f - appMag * brightnessScale + brightnessBias);
 
-            Renderer::Particle p;
-            p.center = starPos;
-            p.size = renderDistance * size;
-            p.color = Color(starColor, alpha);
-            starParticles->insert(starParticles->end(), p);
             nRendered++;
+            starVertexBuffer->addStar(starPos,
+                                      Color(starColor, alpha),
+                                      renderDistance * size);
 
-            // If the star is brighter than magnitude 1, add a halo around it to
-            // make it appear more brilliant.  This is a hack to compensate for the
-            // limited dynamic range of monitors.
+            // If the star is brighter than magnitude 1, add a halo around it
+            // to make it appear more brilliant.  This is a hack to compensate
+            // for the limited dynamic range of monitors.
             if (appMag < 1.0f)
             {
+                Renderer::Particle p;
+                p.center = starPos;
+                p.size = renderDistance * size;
+                p.color = Color(starColor, alpha);
+
                 alpha = 0.4f * clamp((appMag - 1) * -0.8f);
                 s = renderDistance * 0.001f * (3 - (appMag - 1)) * 2;
 
@@ -1986,8 +1994,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             rle.star = &star;
             rle.body = NULL;
             
-            // Objects in the render list are always rendered relative to a viewer
-            // at the origin--this is different than for distant stars.
+            // Objects in the render list are always rendered relative to
+            // a viewer at the origin--this is different than for distant
+            // stars.
             float scale = RENDER_DISTANCE / distance;
             rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
 
@@ -2008,18 +2017,20 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.observer = &observer;
     starRenderer.position = (Point3f) observer.getPosition();
     starRenderer.viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
-    starRenderer.starParticles = &starParticles;
     starRenderer.glareParticles = &glareParticles;
     starRenderer.renderList = &renderList;
+    starRenderer.starVertexBuffer = starVertexBuffer;
     starRenderer.faintestVisible = faintestVisible;
     starRenderer.size = pixelSize * 3.0f;
     starRenderer.pixelSize = pixelSize;
     starRenderer.brightnessScale = brightnessScale;
     starRenderer.brightnessBias = brightnessBias;
 
-    starParticles.clear();
     glareParticles.clear();
 
+    starVertexBuffer->setBillboardOrientation(observer.getOrientation());
+
+    starTex->bind();
     starDB.findVisibleStars(starRenderer,
                             (Point3f) observer.getPosition(),
                             observer.getOrientation(),
@@ -2027,8 +2038,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
                             (float) windowWidth / (float) windowHeight,
                             faintestVisible);
 
-    starTex->bind();
-    renderParticles(starParticles, observer.getOrientation());
+    starRenderer.starVertexBuffer->render();
     glareTex->bind();
     renderParticles(glareParticles, observer.getOrientation());
 }
@@ -2088,10 +2098,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
                     pow2 <<= 1;
                     size /= 1.5f;
                     if (size < minimumFeatureSize)
-                    {
-                        // cout << galaxy->getName() << ": Quitting after " << i << " particles.\n";
                         break;
-                    }
                 }
 
                 // if (relPos * viewNormal > 0)
@@ -2316,3 +2323,97 @@ void Renderer::setBrightnessBias(float bias)
 {
     brightnessBias = bias;
 }
+
+
+Renderer::StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
+    capacity(_capacity),
+    vertices(NULL),
+    texCoords(NULL),
+    colors(NULL)
+{
+    nStars = 0;
+    vertices = new float[capacity * 12];
+    texCoords = new float[capacity * 8];
+    colors = new unsigned char[capacity * 16];
+
+    // Fill the texture coordinate array now, since it will always have
+    // the same contents.
+    for (int i = 0; i < capacity; i++)
+    {
+        int n = i * 8;
+        texCoords[n    ] = 0; texCoords[n + 1] = 0;
+        texCoords[n + 2] = 1; texCoords[n + 3] = 0;
+        texCoords[n + 4] = 1; texCoords[n + 5] = 1;
+        texCoords[n + 6] = 0; texCoords[n + 7] = 1;
+    }
+}
+
+Renderer::StarVertexBuffer::~StarVertexBuffer()
+{
+    if (vertices != NULL)
+        delete vertices;
+    if (colors != NULL)
+        delete colors;
+    if (texCoords != NULL)
+        delete texCoords;
+}
+
+void Renderer::StarVertexBuffer::render()
+{
+    if (nStars != 0)
+    {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(3, GL_FLOAT, 0, vertices);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDrawArrays(GL_QUADS, 0, nStars * 4);
+        nStars = 0;
+    }
+}
+
+void Renderer::StarVertexBuffer::addStar(const Point3f& pos,
+                                         const Color& color,
+                                         float size)
+{
+    if (nStars < capacity)
+    {
+        int n = nStars * 12;
+        vertices[n + 0]  = pos.x + v0.x * size;
+        vertices[n + 1]  = pos.y + v0.y * size;
+        vertices[n + 2]  = pos.z + v0.z * size;
+        vertices[n + 3]  = pos.x + v1.x * size;
+        vertices[n + 4]  = pos.y + v1.y * size;
+        vertices[n + 5]  = pos.z + v1.z * size;
+        vertices[n + 6]  = pos.x + v2.x * size;
+        vertices[n + 7]  = pos.y + v2.y * size;
+        vertices[n + 8]  = pos.z + v2.z * size;
+        vertices[n + 9]  = pos.x + v3.x * size;
+        vertices[n + 10] = pos.y + v3.y * size;
+        vertices[n + 11] = pos.z + v3.z * size;
+        n = nStars * 16;
+        color.get(colors + n);
+        color.get(colors + n + 4);
+        color.get(colors + n + 8);
+        color.get(colors + n + 12);
+        nStars++;
+    }
+
+    if (nStars == capacity)
+    {
+        render();
+        nStars = 0;
+    }
+}
+
+void Renderer::StarVertexBuffer::setBillboardOrientation(const Quatf& q)
+{
+    Mat3f m = q.toMatrix3();
+    v0 = Vec3f(-1, -1, 0) * m;
+    v1 = Vec3f( 1, -1, 0) * m;
+    v2 = Vec3f( 1,  1, 0) * m;
+    v3 = Vec3f(-1,  1, 0) * m;
+}
+                               
