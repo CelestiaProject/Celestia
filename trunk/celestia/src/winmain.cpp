@@ -25,7 +25,7 @@
 #include "util.h"
 #include "stardb.h"
 #include "solarsys.h"
-#include "visstars.h"
+#include "asterism.h"
 #include "mathlib.h"
 #include "astro.h"
 #include "overlay.h"
@@ -85,6 +85,8 @@ static CelestiaConfig* config = NULL;
 static StarDatabase* starDB = NULL;
 static StarNameDatabase* starNameDB = NULL;
 static SolarSystemCatalog* solarSystemCatalog = NULL;
+static AsterismList* asterisms = NULL;
+static bool showAsterisms = false;
 
 static FavoritesList* favorites = NULL;
 
@@ -764,6 +766,17 @@ void handleKeyPress(int c)
         }
         break;
 
+    case 'I':
+        renderer->setCloudMapping(!renderer->getCloudMapping());
+        break;
+
+    case '/':
+        showAsterisms = !showAsterisms;
+        CheckMenuItem(menuBar, ID_RENDER_SHOWCONSTELLATIONS,
+                      showAsterisms ? MF_CHECKED : MF_UNCHECKED);
+        renderer->showAsterisms(showAsterisms ? asterisms : NULL);
+        break;
+
 #if 0
     case 'Y':
         if (runningScript == NULL)
@@ -1098,6 +1111,19 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             {
                 ReadSolarSystems(solarSysFile, *starDB, *solarSystemCatalog);
             }
+        }
+    }
+
+    if (config->asterismsFile != "")
+    {
+        ifstream asterismsFile(config->asterismsFile.c_str(), ios::in);
+        if (!asterismsFile.good())
+        {
+            cout << "Error opening asterisms file " << asterismsFile << '\n';
+        }
+        else
+        {
+            asterisms = ReadAsterismList(asterismsFile, *starDB);
         }
     }
 
@@ -1532,6 +1558,12 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
         case ID_RENDER_SHOWORBITS:
             ToggleLabelState(ID_RENDER_SHOWORBITS, Renderer::PlanetOrbits);
             break;
+        case ID_RENDER_SHOWCONSTELLATIONS:
+            showAsterisms = !showAsterisms;
+            CheckMenuItem(menuBar, ID_RENDER_SHOWCONSTELLATIONS,
+                          showAsterisms ? MF_CHECKED : MF_UNCHECKED);
+            renderer->showAsterisms(showAsterisms ? asterisms : NULL);
+            break;
 
         case ID_RENDER_AMBIENTLIGHT_NONE:
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_NONE,   MF_CHECKED);
@@ -1657,6 +1689,7 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
 	    currentTime = (double) (TimeCur.QuadPart - TimeStart.QuadPart) / (double) TimerFreq.QuadPart;
 	    double deltaTime = currentTime - lastTime;
 
+            // Mouse wheel zoom
             if (mouseWheelMotion != 0.0f)
             {
                 double mouseWheelSpan = 0.1;
@@ -1673,6 +1706,13 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                     mouseWheelMotion = 0.0f;
             }
 
+            // Keyboard zoom
+            if (pgupPress)
+                sim->changeOrbitDistance(-deltaTime * 2);
+            else if (pgdnPress)
+                sim->changeOrbitDistance(deltaTime * 2);
+
+            // Keyboard rotate
             Quatf q(1);
 	    if (leftPress)
 		q.zrotate((float) deltaTime * 2);
