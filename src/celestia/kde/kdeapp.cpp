@@ -96,7 +96,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     sim = appCore->getSimulation();
 
     app=this;
-    appCore->setContextMenuCallback(KdeApp::popupMenu);
+    appCore->setContextMenuCallback(&KdeApp::popupMenu);
 
     setAcceptDrops(true);
 
@@ -1186,6 +1186,24 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
     popupMenu(app, app->glWidget->mapToGlobal(QPoint(int(x),int(y))), sel);
 }
 
+const char* KdeApp::getSelectionName(const Selection& sel) {
+    if (sel.body != NULL)
+    {
+        return sel.body->getName().c_str();
+    }
+    else if (sel.star != NULL)
+    {
+        Simulation *sim = app->appCore->getSimulation();
+        return sim->getUniverse()->getStarCatalog()->getStarName(*sel.star).c_str();
+    }
+    else if (sel.deepsky != NULL)
+    {
+        return sel.deepsky->getName().c_str();
+    }
+
+    return "";
+}
+
 void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
     KPopupMenu popup(parent);
     const PlanetarySystem* planets = 0;
@@ -1205,7 +1223,7 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
     if (sel.body != NULL)
     {
         popup.insertTitle(sel.body->getName().c_str(), 0, 0);
-        app->popupInsert(popup, sel, 0);
+        app->popupInsert(popup, sel, MENUMAXSIZE);
     }
     else if (sel.star != NULL)
     {
@@ -1254,46 +1272,93 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
         popup.insertTitle(name.c_str(), 0, 0);
         popup.insertItem(starDetails);
         popup.insertSeparator();
-        app->popupInsert(popup, sel, 0);
+        app->popupInsert(popup, sel, MENUMAXSIZE);
     }
     else if (sel.deepsky != NULL)
     {
         popup.insertTitle(sel.deepsky->getName().c_str(), 0);
-        app->popupInsert(popup, sel, 0);
+        app->popupInsert(popup, sel, MENUMAXSIZE);
     }
+
+    if (sim->getUniverse() != NULL)
+    {
+        MarkerList* markers = sim->getUniverse()->getMarkers();
+        if (markers->size() > 0)
+        {
+            KPopupMenu *markMenu = new KPopupMenu(app);
+            int j=0;
+            for (std::vector<Marker>::iterator i = markers->begin(); i < markers->end(); i++)
+            {
+                KPopupMenu *objMenu = new KPopupMenu(app);
+                app->popupInsert(*objMenu, (*i).getObject(), (2 * MENUMAXSIZE + j) * MENUMAXSIZE);
+                markMenu->insertItem(getSelectionName((*i).getObject()), objMenu);
+                j++;
+            }
+            popup.insertItem(i18n("Marked objects"), markMenu);
+        }
+    }
+
 
     int id = popup.exec(p);
 
-    int selId = id / MENUMAXSIZE;
-    id = id - selId * MENUMAXSIZE;
+    int actionId = id;
+    actionId = id - (id / MENUMAXSIZE) * MENUMAXSIZE;
 
-    sel = app->getSelectionFromId(sel, selId);
 
-    if (id == 1) {
+    int subId = id;
+    int level = 1;
+    while (id > MENUMAXSIZE) {
+        id /= MENUMAXSIZE;
+        level *= MENUMAXSIZE;
+    }
+    subId -= id * level;
+
+
+    if (id == 1)
+    {
+        int selId = subId / MENUMAXSIZE;
+        sel = app->getSelectionFromId(sel, selId);
+    }
+    else if (id == 2) // marked objects sub-menu
+    {
+        int subsubId = subId;
+        int level = 1;
+        while (subId > MENUMAXSIZE) {
+            subId /= MENUMAXSIZE;
+            level *= MENUMAXSIZE;
+        }
+        subsubId -= subId * level;
+        MarkerList* markers = sim->getUniverse()->getMarkers();
+        sel = (*markers)[subId].getObject();
+        int selId = subsubId / MENUMAXSIZE;
+        sel = app->getSelectionFromId(sel, selId);
+    }
+
+    if (actionId == 1) {
         app->appCore->getSimulation()->setSelection(sel);
         return;
     }
-    if (id == 2) {
+    if (actionId == 2) {
         app->appCore->getSimulation()->setSelection(sel);
         app->appCore->charEntered('c');
         return;
     }
-    if (id == 3) {
+    if (actionId == 3) {
         app->appCore->getSimulation()->setSelection(sel);
         app->appCore->charEntered('g');
         return;
     }
-    if (id == 4) {
+    if (actionId == 4) {
         app->appCore->getSimulation()->setSelection(sel);
         app->appCore->charEntered('f');
         return;
     }
-    if (id == 5) {
+    if (actionId == 5) {
         app->appCore->getSimulation()->setSelection(sel);
         app->appCore->charEntered('y');
         return;
     }
-    if (id == 6) {
+    if (actionId == 6) {
         QString url;
         if (sel.body != NULL) {
             url = QString(sel.body->getInfoURL().c_str());
@@ -1315,22 +1380,20 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
         KRun::runURL(url, "text/html");
         return;
     }
-    if (id == 7)
+    if (actionId == 7)
     {
-        Simulation* sim = app->appCore->getSimulation();
         if (sim->getUniverse() != NULL)
             sim->getUniverse()->unmarkObject(sel, 1);
         return;
     }
-    if (id >= 10 && id <= 14)
+    if (actionId >= 10 && actionId <= 14)
     {
-        Simulation* sim = app->appCore->getSimulation();
         if (sim->getUniverse() != NULL)
         {
             sim->getUniverse()->markObject(sel,
                                            10.0f,
                                            Color(0.0f, 1.0f, 0.0f, 0.9f),
-                                           (Marker::Symbol)(id - 10),
+                                           (Marker::Symbol)(actionId - 10),
                                            1);
         }
         return;

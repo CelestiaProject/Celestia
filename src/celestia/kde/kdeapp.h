@@ -165,6 +165,7 @@ public slots:
 
     static void popupMenu(float x, float y, Selection sel);
     static void popupMenu(QWidget* parent, const QPoint& p, Selection sel);
+    static const char* getSelectionName(const Selection& sel);
 
 protected:
     CelestiaCore* appCore;
