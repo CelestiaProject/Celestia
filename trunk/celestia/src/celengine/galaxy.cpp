@@ -31,7 +31,7 @@ static void InitializeForms();
 
 struct GalaxyTypeName 
 {
-    char* name;
+    const char* name;
     Galaxy::GalaxyType type;
 };
 

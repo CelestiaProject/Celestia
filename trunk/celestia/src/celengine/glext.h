@@ -944,7 +944,7 @@ namespace glx
 
 
 extern void InitExtension(const char* ext);
-extern bool ExtensionSupported(char *ext);
+extern bool ExtensionSupported(const char *ext);
 
 
 

@@ -115,7 +115,7 @@ void indent()
 
 void logChunk(uint16 chunkType, int chunkSize)
 {
-    char* name = NULL;
+    const char* name = NULL;
 
     switch (chunkType)
     {

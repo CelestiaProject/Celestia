@@ -64,7 +64,7 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
     StellarClass::StarType st = getStarType();
     char s0[3];
     char s1[2];
-    char* s2 = "";
+    const char* s2 = "";
     s0[0] = '\0';
     s1[0] = '\0';
 

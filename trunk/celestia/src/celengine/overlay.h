@@ -52,7 +52,7 @@ class Overlay : public std::ostream
     void endText();
     void print(char);
     void print(char*);
-    void printf(char*, ...);
+    void printf(const char*, ...);
     
 
  private:
