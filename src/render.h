@@ -211,6 +211,8 @@ class Renderer
     float brightnessBias;
     float brightnessScale;
 
+    Color ambientColor;
+
     StarVertexBuffer* starVertexBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<Particle> glareParticles;
