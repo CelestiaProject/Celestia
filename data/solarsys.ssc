@@ -743,7 +743,7 @@
 	}
 
 	RotationPeriod 33.92350159 # enforce sync rotation
-	RotationOffset 330
+	RotationOffset 140
 }
 
 "Ariel" "Sol/Uranus"
@@ -762,7 +762,7 @@
 	}
 
 	RotationPeriod 60.48909292 # enforce sync rotation
-	RotationOffset 200
+	RotationOffset 20
 }
 
 "Umbriel" "Sol/Uranus"
@@ -781,7 +781,7 @@
 	}
 
 	RotationPeriod 99.46022991 # enforce sync rotation
-	RotationOffset 250
+	RotationOffset 70
 }
 
 "Titania" "Sol/Uranus"
@@ -800,7 +800,7 @@
 	}
 
 	RotationPeriod 208.94077099 # enforce sync rotation
-	RotationOffset 280
+	RotationOffset 100
 }
 
 "Oberon" "Sol/Uranus"
@@ -819,7 +819,7 @@
 	}
 
 	RotationPeriod 323.117567539 # enforce sync rotation
-	RotationOffset 350
+	RotationOffset 170
 }
 
 
