@@ -129,6 +129,7 @@ class Mesh
 
     void setVertices(uint32 _nVertices, void* vertexData);
     bool setVertexDescription(const VertexDescription& desc);
+    const VertexDescription* getVertexDescription() const;
 
     const PrimitiveGroup* getGroup(uint32) const;
     uint32 addGroup(PrimitiveGroupType prim,

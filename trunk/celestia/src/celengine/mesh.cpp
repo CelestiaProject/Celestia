@@ -144,10 +144,19 @@ Mesh::setVertexDescription(const VertexDescription& desc)
 }
 
 
+const Mesh::VertexDescription* Mesh::getVertexDescription() const
+{
+    return NULL;
+}
+
+
 const Mesh::PrimitiveGroup*
 Mesh::getGroup(uint32 index) const
 {
-    return groups[index];
+    if (index >= groups.size())
+        return NULL;
+    else
+        return groups[index];
 }
 
 
@@ -504,5 +513,4 @@ Mesh::getVertexAttributeSize(VertexAttributeFormat fmt)
     default:
         return 0;
     }
-
 }
