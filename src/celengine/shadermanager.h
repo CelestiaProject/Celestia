@@ -80,6 +80,7 @@ class CelestiaGLProgram
  public:
     CelestiaGLProgramLight lights[MaxShaderLights];
     Vec3ShaderParameter fragLightColor[MaxShaderLights];
+    Vec3ShaderParameter fragLightSpecColor[MaxShaderLights];
     Vec3ShaderParameter eyePosition;
     FloatShaderParameter shininess;
     Vec3ShaderParameter ambientColor;
