@@ -1,0 +1,288 @@
+Location "Abelard" "Sol/Eros"
+{
+    LongLat [ -12.2 -3.5 0 ]
+    Size 1.1
+    Type "AA"
+}
+
+Location "Aida" "Sol/Eros"
+{
+    LongLat [ -130.5 7.9 0 ]
+    Size 1.6
+    Type "AA"
+}
+
+Location "Avtandil" "Sol/Eros"
+{
+    LongLat [ -233.1 -22.5 0 ]
+    Size 1.2
+    Type "AA"
+}
+
+Location "Bovary" "Sol/Eros"
+{
+    LongLat [ -27.3 -61.0 0 ]
+    Size 0.8
+    Type "AA"
+}
+
+Location "Casanova" "Sol/Eros"
+{
+    LongLat [ -236.0 46.6 0 ]
+    Size 0.9
+    Type "AA"
+}
+
+Location "Catherine" "Sol/Eros"
+{
+    LongLat [ -171.1 9.1 0 ]
+    Size 1.1
+    Type "AA"
+}
+
+Location "Cupid" "Sol/Eros"
+{
+    LongLat [ -230.2 8.1 0 ]
+    Size 1.8
+    Type "AA"
+}
+
+Location "Don Juan" "Sol/Eros"
+{
+    LongLat [ -356.7 29.5 0 ]
+    Size 1.1
+    Type "AA"
+}
+
+Location "Don Quixote" "Sol/Eros"
+{
+    LongLat [ -250.8 -57.7 0 ]
+    Size 0.9
+    Type "AA"
+}
+
+Location "Dulcinea" "Sol/Eros"
+{
+    LongLat [ -272.9 -76.1 0 ]
+    Size 1.4
+    Type "AA"
+}
+
+Location "Eurydice" "Sol/Eros"
+{
+    LongLat [ -170.0 13.5 0 ]
+    Size 2.2
+    Type "AA"
+}
+
+Location "Fujitsubo" "Sol/Eros"
+{
+    LongLat [ -62.7 -3.7 0 ]
+    Size 1.7
+    Type "AA"
+}
+
+Location "Galatea" "Sol/Eros"
+{
+    LongLat [ -183.1 -10.2 0 ]
+    Size 1.4
+    Type "AA"
+}
+
+Location "Gamba" "Sol/Eros"
+{
+    LongLat [ -54.1 -20.6 0 ]
+    Size 1.3
+    Type "AA"
+}
+
+Location "Genji" "Sol/Eros"
+{
+    LongLat [ -88.6 -19.5 0 ]
+    Size 1.5
+    Type "AA"
+}
+
+Location "Heathcliff" "Sol/Eros"
+{
+    LongLat [ -167.9 7.4 0 ]
+    Size 1.1
+    Type "AA"
+}
+
+Location "Himeros" "Sol/Eros"
+{
+    LongLat [ -282.3 21.2 0 ]
+    Size 10.0
+    Type "AA"
+}
+
+Location "Hios" "Sol/Eros"
+{
+    LongLat [ -130.9 -9.4 0 ]
+    Size 1.3
+    Type "AA"
+}
+
+Location "Jahan" "Sol/Eros"
+{
+    LongLat [ -293.5 74.2 0 ]
+    Size 2.1
+    Type "AA"
+}
+
+Location "Kastytis" "Sol/Eros"
+{
+    LongLat [ -161.3 6.8 0 ]
+    Size 1.7
+    Type "AA"
+}
+
+Location "Leander" "Sol/Eros"
+{
+    LongLat [ -210.3 25.6 0 ]
+    Size 1.4
+    Type "AA"
+}
+
+Location "Leylie" "Sol/Eros"
+{
+    LongLat [ -23.5 -3.0 0 ]
+    Size 1.9
+    Type "AA"
+}
+
+Location "Lolita" "Sol/Eros"
+{
+    LongLat [ -197.7 -35.2 0 ]
+    Size 1.8
+    Type "AA"
+}
+
+Location "Mahal" "Sol/Eros"
+{
+    LongLat [ -170.0 79.4 0 ]
+    Size 1.2
+    Type "AA"
+}
+
+Location "Majnoon" "Sol/Eros"
+{
+    LongLat [ -28.8 3.8 0 ]
+    Size 2.1
+    Type "AA"
+}
+
+Location "Mélisande" "Sol/Eros"
+{
+    LongLat [ -185.6 67.1 0 ]
+    Size 1.0
+    Type "AA"
+}
+
+Location "Narcissus" "Sol/Eros"
+{
+    LongLat [ -7.1 18.2 0 ]
+    Size 2.9
+    Type "AA"
+}
+
+Location "Orpheus" "Sol/Eros"
+{
+    LongLat [ -176.7 25.6 0 ]
+    Size 1.1
+    Type "AA"
+}
+
+Location "Pao-yü" "Sol/Eros"
+{
+    LongLat [ -105.6 -73.2 0 ]
+    Size 0.8
+    Type "AA"
+}
+
+Location "Pelléas" "Sol/Eros"
+{
+    LongLat [ -221.3 63.1 0 ]
+    Size 1.2
+    Type "AA"
+}
+
+Location "Psyche" "Sol/Eros"
+{
+    LongLat [ -94.6 31.6 0 ]
+    Size 4.8
+    Type "AA"
+}
+
+Location "Pygmalion" "Sol/Eros"
+{
+    LongLat [ -191.1 -1.8 0 ]
+    Size 1.7
+    Type "AA"
+}
+
+Location "Radames" "Sol/Eros"
+{
+    LongLat [ -115.1 -5.2 0 ]
+    Size 1.6
+    Type "AA"
+}
+
+Location "Selene" "Sol/Eros"
+{
+    LongLat [ -12.5 -14.2 0 ]
+    Size 3.6
+    Type "AA"
+}
+
+Location "Tai-yü" "Sol/Eros"
+{
+    LongLat [ -126.1 -47.0 0 ]
+    Size 1.4
+    Type "AA"
+}
+
+Location "Tutanekai" "Sol/Eros"
+{
+    LongLat [ -3.3 56.4 0 ]
+    Size 2.1
+    Type "AA"
+}
+
+Location "Valentine" "Sol/Eros"
+{
+    LongLat [ -208.4 14.6 0 ]
+    Size 2.2
+    Type "AA"
+}
+
+Location "CHARLOIS REGIO" "Sol/Eros"
+{
+    LongLat [ -330 -16 0 ]
+    Size 10
+    Type "RE"
+}
+
+Location "WITT REGIO" "Sol/Eros"
+{
+    LongLat [ -348 18 0 ]
+    Size 10
+    Type "RE"
+}
+
+Location "Finsen Dorsum" "Sol/Eros"
+{
+    LongLat [ -350 -48 0 ]
+    Size 10
+    Type "DO"
+}
+
+Location "Hinks Dorsum" "Sol/Eros"
+{
+    LongLat [ -318 42 0 ]
+    Size 10
+    Type "DO"
+}
+
+
