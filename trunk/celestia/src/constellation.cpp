@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include "celestia.h"
+#include "util.h"
 #include "constellation.h"
 
 using namespace std;
@@ -121,7 +122,7 @@ Constellation::Constellation(char *_name, char *_genitive, char *_abbrev)
     abbrev = string(_abbrev);
 }
 
-Constellation *Constellation::getConstellation(unsigned int n)
+Constellation* Constellation::getConstellation(unsigned int n)
 {
     if (constellations == NULL)
 	initialize();
@@ -131,6 +132,26 @@ Constellation *Constellation::getConstellation(unsigned int n)
 	return NULL;
     else
 	return constellations[n];
+}
+
+Constellation* Constellation::getConstellation(const string& name)
+{
+    if (constellations == NULL)
+	initialize();
+
+    for (unsigned int i = 0;
+         i < sizeof(constellationInfo) / sizeof(constellationInfo[0]);
+         i++)
+    {
+        if (compareIgnoringCase(name, constellationInfo[i].abbr) == 0 ||
+            compareIgnoringCase(name, constellationInfo[i].gen) == 0 ||
+            compareIgnoringCase(name, constellationInfo[i].name) == 0)
+        {
+            return constellations[i];
+        }
+    }
+
+    return NULL;
 }
 
 string Constellation::getName()
