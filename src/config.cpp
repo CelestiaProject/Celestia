@@ -58,6 +58,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     configParams->getString("FavoritesFile", config->favoritesFile);
     configParams->getString("InitScript", config->initScriptFile);
     configParams->getString("AsterismsFile", config->asterismsFile);
+    configParams->getString("GalaxyCatalog", config->galaxyCatalog);
     configParams->getString("StarDatabase", config->starDatabaseFile);
     configParams->getString("StarNameDatabase", config->starNamesFile);
 
