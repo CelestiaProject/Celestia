@@ -526,6 +526,7 @@
 	Texture "rhea.jpg"
 	Radius     764
 
+	CustomOrbit "rhea"
 	EllipticalOrbit
 	{
 	Period         4.517500
@@ -553,6 +554,7 @@
 		Sky [ 0.8 0.4 0.1 ]
 	}
 
+	CustomOrbit "titan"
 	EllipticalOrbit
 	{
 	Period        15.945421
@@ -571,6 +573,7 @@
 	Texture "asteroid.jpg"
 	Radius   205
 
+	CustomOrbit "hyperion"
 	EllipticalOrbit
 	{
 	Period        21.276609
@@ -588,6 +591,7 @@
 	Texture "iapetus.jpg"
 	Radius     718
 
+	CustomOrbit "iapetus"
 	EllipticalOrbit
 	{
 	Period         79.330183
