@@ -466,6 +466,45 @@ AltSurface "limit of knowledge" "HD 187123/b"
 }
 
 
+"b" "OGLE-TR-10"
+
+# Detected via transit as well as radial velocity methods; from transit,
+# inclination is fixed at 87-90 degrees, so mass can be determined.
+# Radius is estimated at 1.52 jupiter.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       200     # M.sin(i) = 0.63 jupiters
+	Radius     106400
+	Oblateness 0.01
+
+	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-10.html"
+
+	EllipticalOrbit {
+		Period          0.0085
+		SemiMajorAxis   0.04
+		Inclination     90.7
+		AscendingNode   266.6
+		ArgOfPericenter 84
+		MeanAnomaly     234
+	}
+
+	Obliquity             91 # guess, to match inclination
+	EquatorAscendingNode  267 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "OGLE-TR-10/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 120136"   # Tau Boo
 {
 	Texture "gasgiant.*"
