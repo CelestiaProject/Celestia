@@ -9,6 +9,8 @@
 
 #include <iostream.h>
 #include "gl.h"
+#include "glext.h"
+#include "vertexprog.h"
 #include "3dsmesh.h"
 
 using namespace std;
@@ -52,14 +54,20 @@ Mesh3DS::~Mesh3DS()
 
 void Mesh3DS::render()
 {
-    for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
-        (*i)->render();
+    render(Normals | Colors);
 }
 
 
 void Mesh3DS::render(unsigned int attributes)
 {
-    render();
+    for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
+    {
+        // Ugly hack to set the diffuse color parameters when vertex programs
+        // are enabled.
+        if (attributes & VertexProgParams)
+            vp::parameter(20, (*i)->getDiffuseColor());
+        (*i)->render();
+    }
 }
 
 
