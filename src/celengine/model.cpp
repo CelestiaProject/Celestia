@@ -95,7 +95,7 @@ Model::pick(const Ray3d& r, double& distance) const
     double maxDistance = 1.0e30;
     double closest = maxDistance;
 
-    for (vector<const Mesh*>::const_iterator iter = meshes.begin();
+    for (vector<Mesh*>::const_iterator iter = meshes.begin();
          iter != meshes.end(); iter++)
     {
         double d = maxDistance;
@@ -120,7 +120,7 @@ Model::render()
 {
     RenderContext rc;
 
-    for (vector<const Mesh*>::const_iterator iter = meshes.begin();
+    for (vector<Mesh*>::const_iterator iter = meshes.begin();
          iter != meshes.end(); iter++)
     {
         (*iter)->render(materials, rc);
