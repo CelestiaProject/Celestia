@@ -2323,7 +2323,7 @@ Orbit* GetCustomOrbit(const string& name)
     if (name == "mars")
         return new MixedOrbit(new MarsOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "jupiter")
-        return new MixedOrbit(new JupiterOrbit(), yearToJD(2000), yearToJD(4000), astro::SolarMass);
+        return new MixedOrbit(new JupiterOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "saturn")
         return new MixedOrbit(new SaturnOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "uranus")
