@@ -853,7 +853,7 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
                 {
                     Point3d localPos = body->getOrbit()->positionAtTime(t);
                     Quatd rotation =
-                        Quatd::yrotation(body->getRotationElements().axisLongitude) *
+                        Quatd::yrotation(body->getRotationElements().ascendingNode) *
                         Quatd::xrotation(body->getRotationElements().obliquity);
                     double scale = astro::kilometersToAU(1.0);
                     glPushMatrix();
@@ -3547,10 +3547,9 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         Point3d localPos = body->getOrbit()->positionAtTime(now);
         Mat4d newFrame =
             Mat4d::xrotation(-body->getRotationElements().obliquity) *
-            Mat4d::yrotation(-body->getRotationElements().axisLongitude) *
+            Mat4d::yrotation(-body->getRotationElements().ascendingNode) *
             Mat4d::translation(localPos) * frame;
-        Point3d bodyPos = Point3d(0, 0, 0) * newFrame;
-        bodyPos = body->getHeliocentricPosition(now);
+        Point3d bodyPos = body->getHeliocentricPosition(now);
         
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the planet
