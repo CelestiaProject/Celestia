@@ -10,17 +10,7 @@ celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) \
 celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 endif
 
-if ENABLE_CELX
-COMMONSOURCES = \
-	celestiacore.cpp \
-	configfile.cpp \
-	destination.cpp \
-	eclipsefinder.cpp\
-	favorites.cpp \
-	imagecapture.cpp \
-	url.cpp \
-	celx.cpp
-else !ENABLE_CELX
+
 COMMONSOURCES = \
 	celestiacore.cpp \
 	configfile.cpp \
@@ -29,12 +19,10 @@ COMMONSOURCES = \
 	favorites.cpp \
 	imagecapture.cpp \
 	url.cpp
-endif !ENABLE_CELX
-
 
 WINSOURCES = \
 	wingotodlg.cpp \
-        winlocations.cpp \
+	winlocations.cpp \
 	winmain.cpp \
 	winssbrowser.cpp \
 	winstarbrowser.cpp \
@@ -42,19 +30,22 @@ WINSOURCES = \
 	winviewoptsdlg.cpp \
 	avicapture.cpp \
 	ODMenu.cpp \
-        wineclipses.cpp
+	wineclipses.cpp
 
-if     ENABLE_GTK
-celestia_SOURCES = $(COMMONSOURCES) gtkmain.cpp
-else  !ENABLE_GTK
 
-if     ENABLE_GLUT
-celestia_SOURCES = $(COMMONSOURCES) glutmain.cpp
-else  !ENABLE_GLUT
-celestia_SOURCES = $(COMMONSOURCES) 
-endif !ENABLE_GLUT
-endif !ENABLE_GTK
+if ENABLE_CELX
+CELXSOURCES = celx.cpp
+endif
 
+if ENABLE_GTK
+GTKSOURCES = gtkmain.cpp
+endif
+
+if ENABLE_GLUT
+GLUTSOURCES = glutmain.cpp
+endif
+
+celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GTKSOURCES) $(GLUTSOURCES)
 
 EXTRA_celestia_SOURCES = gtkmain.cpp glutmain.cpp $(WINSOURCES)
 EXTRA_DIST =  Celestia.dsp celestia.mak
