@@ -571,6 +571,10 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowMarkers;
             else if (compareIgnoringCase(name, "automag") == 0)
                 flags |= Renderer::ShowAutoMag;
+            else if (compareIgnoringCase(name, "atmospheres") == 0)
+                flags |= Renderer::ShowAtmospheres;
+            else if (compareIgnoringCase(name, "grid") == 0)
+                flags |= Renderer::ShowCelestialSphere;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
