@@ -54,6 +54,7 @@ bool CaptureGLBufferToJPEG(const string& filename,
     int imageSize = height * rowStride;
     unsigned char* pixels = new unsigned char[imageSize];
 
+    glReadBuffer(GL_BACK);
     glReadPixels(x, y, width, height,
                  GL_RGB, GL_UNSIGNED_BYTE,
                  pixels);
@@ -121,6 +122,7 @@ bool CaptureGLBufferToPNG(const string& filename,
     int imageSize = height * rowStride;
     unsigned char* pixels = new unsigned char[imageSize];
 
+    glReadBuffer(GL_BACK);
     glReadPixels(x, y, width, height,
                  GL_RGB, GL_UNSIGNED_BYTE,
                  pixels);
