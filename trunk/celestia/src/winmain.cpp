@@ -1,4 +1,4 @@
-// main.cpp
+// winmain.cpp
 // 
 // Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
 //
@@ -41,9 +41,9 @@
 //----------------------------------
 // Skeleton functions and variables.
 //-----------------
-char szAppName[] = "Celestia";
+char AppName[] = "Celestia";
 
-static string welcomeMessage("Welcome to Celestia 1.06");
+static string welcomeMessage("Welcome to Celestia 1.07");
 
 
 //----------------------------------
@@ -77,6 +77,7 @@ static double timeScale = 0.0;
 
 static bool textEnterMode = false;
 static string typedText = "";
+static bool editMode = false;
 
 static int hudDetail = 1;
 
@@ -85,6 +86,7 @@ static CelestiaConfig* config = NULL;
 static StarDatabase* starDB = NULL;
 static StarNameDatabase* starNameDB = NULL;
 static SolarSystemCatalog* solarSystemCatalog = NULL;
+static GalaxyList* galaxies = NULL;
 static AsterismList* asterisms = NULL;
 static bool showAsterisms = false;
 
@@ -117,7 +119,7 @@ astro::Date newTime(0.0);
 
 
 // Good 'ol generic drawing stuff.
-LRESULT CALLBACK SkeletonProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
+LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
 
@@ -636,6 +638,19 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
 }
 
 
+// Used in the super-secret edit mode
+void ShowSelectionInfo(const Selection& sel)
+{
+    if (sel.galaxy != NULL)
+    {
+        cout << sel.galaxy->getName() << '\n';
+        Vec3f axis;
+        float angle;
+        sel.galaxy->getOrientation().getAxisAngle(axis, angle);
+        cout << "Orientation: " << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
+    }
+}
+
 void handleKey(WPARAM key, bool down)
 {
     switch (key) {
@@ -780,6 +795,15 @@ void handleKeyPress(int c)
         CheckMenuItem(menuBar, ID_RENDER_SHOWCONSTELLATIONS,
                       showAsterisms ? MF_CHECKED : MF_UNCHECKED);
         renderer->showAsterisms(showAsterisms ? asterisms : NULL);
+        break;
+
+    case '~':
+        editMode = !editMode;
+        break;
+
+    case '!':
+        if (editMode)
+            ShowSelectionInfo(sim->getSelection());
         break;
 
 #if 0
@@ -1007,6 +1031,17 @@ void RenderOverlay()
         glPopMatrix();
     }
 
+    if (editMode)
+    {
+        int width = 0, maxAscent = 0, maxDescent = 0;
+        txfGetStringMetrics(font, "Edit Mode", width, maxAscent, maxDescent);
+        glPushMatrix();
+        glTranslatef((g_w - width) / 2, g_h - 15, 0);
+        glColor4f(1, 0, 1, 1);
+        *overlay << "Edit Mode";
+        glPopMatrix();
+    }
+
     overlay->end();
 }
 
@@ -1025,7 +1060,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     WNDCLASS wc;
     HWND hWnd;
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wc.lpfnWndProc	= (WNDPROC)SkeletonProc;
+    wc.lpfnWndProc = (WNDPROC) MainWindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = hInstance;
@@ -1034,7 +1069,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     wc.hbrBackground = NULL;
     wc.lpszMenuName = NULL;
-    wc.lpszClassName = szAppName;
+    wc.lpszClassName = AppName;
 
     if (strstr(lpCmdLine, "-fullscreen"))
 	fullscreen = true;
@@ -1119,12 +1154,25 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         }
     }
 
+    if (config->galaxyCatalog != "")
+    {
+        ifstream galaxiesFile(config->galaxyCatalog.c_str(), ios::in);
+        if (!galaxiesFile.good())
+        {
+            cout << "Error opening galaxies file " << config->galaxyCatalog << '\n';
+        }
+        else
+        {
+            galaxies = ReadGalaxyList(galaxiesFile);
+        }
+    }
+
     if (config->asterismsFile != "")
     {
         ifstream asterismsFile(config->asterismsFile.c_str(), ios::in);
         if (!asterismsFile.good())
         {
-            cout << "Error opening asterisms file " << asterismsFile << '\n';
+            cout << "Error opening asterisms file " << config->asterismsFile << '\n';
         }
         else
         {
@@ -1133,7 +1181,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     sim = new Simulation();
-    sim->setStarDatabase(starDB, solarSystemCatalog);
+    sim->setStarDatabase(starDB, solarSystemCatalog, galaxies);
     sim->setFaintestVisible(config->faintestVisible);
 
     // Set the simulation starting time to the current system time
@@ -1146,8 +1194,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         menuBar = CreateMenuBar();
         acceleratorTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATORS));
 
-	hWnd = CreateWindow(szAppName,
-			    szAppName,
+	hWnd = CreateWindow(AppName,
+			    AppName,
 			    WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN|WS_CLIPSIBLINGS,
 			    CW_USEDEFAULT, CW_USEDEFAULT,
 			    800, 600,
@@ -1158,8 +1206,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
     else
     {
-	hWnd = CreateWindow(szAppName,
-			    szAppName,
+	hWnd = CreateWindow(AppName,
+			    AppName,
 			    WS_POPUP,
 			    0, 0,
 			    800, 600,
@@ -1313,9 +1361,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 }
 
 
-LRESULT CALLBACK SkeletonProc(HWND hWnd,
-			      UINT uMsg,
-			      WPARAM wParam, LPARAM lParam)
+bool modifiers(WPARAM wParam, WPARAM mods)
+{
+    return (wParam & mods) == mods;
+}
+
+LRESULT CALLBACK MainWindowProc(HWND hWnd,
+                                UINT uMsg,
+                                WPARAM wParam, LPARAM lParam)
 {
 
     static HGLRC hRC;
@@ -1338,13 +1391,27 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
 	    x = LOWORD(lParam);
 	    y = HIWORD(lParam);
 
-            if ((wParam & (MK_LBUTTON | MK_RBUTTON)) == (MK_LBUTTON | MK_RBUTTON) ||
-                (wParam & (MK_LBUTTON | MK_CONTROL)) == (MK_LBUTTON | MK_CONTROL))
+            if (editMode && modifiers(wParam, MK_LBUTTON | MK_SHIFT | MK_CONTROL))
+            {
+                // Rotate the selected object
+                Selection sel = sim->getSelection();
+                Quatf q(1);
+                if (sel.galaxy != NULL)
+                    q = sel.galaxy->getOrientation();
+
+                q.yrotate((float) (x - lastX) / g_w);
+                q.xrotate((float) (y - lastY) / g_h);
+
+                if (sel.galaxy != NULL)
+                    sel.galaxy->setOrientation(q);
+            }
+            else if (modifiers(wParam, MK_LBUTTON | MK_RBUTTON) ||
+                     modifiers(wParam, MK_LBUTTON | MK_CONTROL))
             {
                 float amount = (float) (lastY - y) / g_h;
                 sim->changeOrbitDistance(amount * 5);
             }
-            else if ((wParam & (MK_LBUTTON | MK_SHIFT)) == (MK_LBUTTON | MK_SHIFT))
+            else if (modifiers(wParam, MK_LBUTTON | MK_SHIFT))
             {
                 // Zoom control
                 float amount = (float) (lastY - y) / g_h;
@@ -1707,7 +1774,6 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                     fraction = deltaTime / mouseWheelSpan;
 
                 sim->changeOrbitDistance(mouseWheelMotion * (float) fraction);
-                cout << "Mouse wheel: " << fraction << '\n';
                 if (currentTime - mouseWheelTime >= mouseWheelSpan)
                     mouseWheelMotion = 0.0f;
             }
