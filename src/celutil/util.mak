@@ -23,6 +23,7 @@ OBJS=\
 	$(INTDIR)\debug.obj \
 	$(INTDIR)\filetype.obj \
 	$(INTDIR)\util.obj \
+	$(INTDIR)\windirectory.obj \
 	$(INTDIR)\wintimer.obj
 
 TARGETLIB = cel_utils.lib
