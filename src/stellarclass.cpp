@@ -49,7 +49,7 @@ ostream& operator<<(ostream& s, const StellarClass& sc)
 
     if (st == StellarClass::WhiteDwarf)
     {
-	s << 'D';
+	s << "WD";
     }
     else if (st == StellarClass::NeutronStar)
     {
@@ -90,4 +90,10 @@ ostream& operator<<(ostream& s, const StellarClass& sc)
     }
 
     return s;
+}
+
+
+bool operator<(const StellarClass& sc0, const StellarClass& sc1)
+{
+    return sc0.data < sc1.data;
 }
