@@ -537,8 +537,8 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	Albedo            0.50
 
 	Rings {
-		Inner   74658
-		Outer  140000
+		Inner   74000
+		Outer  141000
 		Texture "saturn-rings.png"
 
 		# Bjorn Jonsson <http://www.mmedia.is/~bjj> recommends this
