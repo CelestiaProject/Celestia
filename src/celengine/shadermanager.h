@@ -18,14 +18,17 @@ class ShaderProperties
 {
  public:
     ShaderProperties();
+    bool usesShadows() const;
+    bool usesFragmentLighting() const;
 
  enum
  {
-     DiffuseTexture   = 0x1,
-     SpecularTexture  = 0x2,
-     NormalTexture    = 0x4,
-     NightTexture     = 0x8,
+     DiffuseTexture         = 0x01,
+     SpecularTexture        = 0x02,
+     NormalTexture          = 0x04,
+     NightTexture           = 0x08,
      SpecularInDiffuseAlpha = 0x10,
+     RingShadowTexture      = 0x20,
  };
 
  enum
@@ -64,6 +67,9 @@ class CelestiaGLProgram
     Vec3ShaderParameter eyePosition;
     FloatShaderParameter shininess;
     Vec3ShaderParameter ambientColor;
+
+    FloatShaderParameter ringWidth;
+    FloatShaderParameter ringRadius;
     
  private:
     void initParameters(const ShaderProperties&);

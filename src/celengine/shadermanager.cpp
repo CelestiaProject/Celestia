@@ -12,6 +12,7 @@
 #include "shadermanager.h"
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <cstdio>
 
 using namespace std;
@@ -58,6 +59,26 @@ ShaderProperties::ShaderProperties() :
     texUsage(0),
     lightModel(DiffuseModel)
 {
+}
+
+
+bool
+ShaderProperties::usesShadows() const
+{
+    if ((texUsage & RingShadowTexture) != 0)
+        return true;
+    else
+        return false;
+}
+
+
+bool
+ShaderProperties::usesFragmentLighting() const
+{
+    if ((texUsage & NormalTexture) != 0)
+        return true;
+    else
+        return false;
 }
 
 
@@ -182,6 +203,12 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
     }
 
     ambientColor = vec3Param("ambientColor");
+
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        ringWidth            = floatParam("ringWidth");
+        ringRadius           = floatParam("ringRadius");
+    }
 }
 
 
@@ -218,6 +245,35 @@ CelestiaGLProgram::initSamplers(const ShaderProperties& props)
         if (slot != -1)
             glx::glUniform1iARB(slot, nSamplers++);
     }
+
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "ringTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+}
+
+
+static void
+DumpShaderSource(ostream& out, const std::string& source)
+{
+    bool newline = true;
+    unsigned int lineNumber = 0;
+
+    for (unsigned int i = 0; i < source.length(); i++)
+    {
+        if (newline)
+        {
+            lineNumber++;
+            out << setw(3) << lineNumber << ": ";
+            newline = false;
+        }
+
+        out << source[i];
+        if (source[i] == '\n')
+            newline = true;
+    }
 }
 
 
@@ -238,6 +294,19 @@ DeclareLights(const ShaderProperties& props)
             props.nLights);
 
     return string(lightSourceBuf);
+}
+
+
+static string
+SeparateDiffuse(unsigned int i)
+{
+    // Used for packing multiple diffuse factors into the diffuse color.
+    // It's probably better to use separate float interpolants.  I'll switch
+    // to this once I verify that shader compilers are smart enough to pack
+    // multiple scalars into a single vector interpolant.
+    char buf[32];
+    sprintf(buf, "diffFactors.%c", "xyzw"[i & 3]);
+    return string(buf);
 }
 
 
@@ -271,8 +340,24 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
         source += "nDotHV = max(0.0, dot(gl_Normal, " +
             LightProperty(i, "halfVector") + "));\n";
     }
-    
-    source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 1);\n";
+
+    if (props.usesFragmentLighting())
+    {
+        // Diffuse is computed in the fragment shader when fragment lighting
+        // is enabled.
+    }
+    else if (props.usesShadows())
+    {
+        // When there are shadows, we need to track the diffuse contributions
+        // separately for each light.
+        source += SeparateDiffuse(i) + " = nDotVP;\n";
+    }
+    else
+    {
+        // Sum the diffuse contribution from all lights
+        source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 1);\n";
+    }
+
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
         source += "spec += vec4(" + LightProperty(i, "specular") +
@@ -290,20 +375,11 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
 
 
 static string
-DirectionalLightSpecular(unsigned int i)
+IndexedParameter(const char* name, unsigned int index)
 {
-    string source;
-
-    source += "nDotVP = max(0.0, dot(gl_Normal, vec3(" +
-        LightProperty(i, "direction") + ")));\n";
-    source += "nDotHV = max(0.0, dot(gl_Normal, vec3(" +
-        LightProperty(i, "halfVector") + ")));\n";
-
-    source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 1);\n";
-    source += "spec += vec4(" + LightProperty(i, "specular") +
-        " * (pow(nDotHV, shininess) * nDotVP), 1);\n";
-
-    return source;
+    char buf[64];
+    sprintf(buf, "%s%d", name, index);
+    return string(buf);
 }
 
 
@@ -315,9 +391,16 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     source += DeclareLights(props);
     if (props.lightModel == ShaderProperties::SpecularModel)
         source += "uniform float shininess;\n";
-    source += "uniform vec3 ambientColor;\n";
+    if (!props.usesShadows() && !props.usesFragmentLighting())
+    {
+        source += "uniform vec3 ambientColor;\n";
+        source += "varying vec4 diff;\n";
+    }
+    else
+    {
+        source += "varying vec4 diffFactors;\n";
+    }
 
-    source += "varying vec4 diff;\n";
     if (props.lightModel == ShaderProperties::SpecularModel)
         source += "varying vec4 spec;\n";
 
@@ -337,6 +420,17 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += "varying float totalLight;\n";
     }
 
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        source += "uniform float ringWidth;\n";
+        source += "uniform float ringRadius;\n";
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            source += "varying float " + 
+                IndexedParameter("ringShadowTexCoord", i) + ";\n";
+        }
+    }
+
     if (props.texUsage & ShaderProperties::NormalTexture)
         source += "attribute vec3 tangent;\n";
 
@@ -347,7 +441,11 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += "float nDotHV;\n";
     }
 
-    source += "diff = vec4(ambientColor, 1);\n";
+    if (!props.usesShadows() && !props.usesFragmentLighting())
+    {
+        source += "diff = vec4(ambientColor, 1);\n";
+    }
+
     for (unsigned int i = 0; i < props.nLights; i++)
     {
         source += DirectionalLight(i, props);
@@ -396,11 +494,26 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         nTexCoords++;
     }
 
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        source += "vec3 ringShadowProj;\n";
+        for (unsigned int j = 0; j < props.nLights; j++)
+        {
+            source += "ringShadowProj = gl_Vertex.xyz + " +
+                LightProperty(j, "direction") +
+                " * max(0, gl_Vertex.y / -" +
+                LightProperty(j, "direction") + ".y);\n";
+            source += IndexedParameter("ringShadowTexCoord", j) +
+                " = length(ringShadowProj) * ringWidth - ringRadius;\n";
+        }
+    }
+
     source += "gl_Position = ftransform();\n";
     source += "}\n";
 
     *logFile << "Vertex shader source:\n";
-    *logFile << source << '\n';
+    DumpShaderSource(*logFile, source);
+    *logFile << '\n';
 
     GLVertexShader* vs = NULL;
     GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
@@ -415,17 +528,22 @@ GLFragmentShader*
 ShaderManager::buildFragmentShader(const ShaderProperties& props)
 {
     string source;
-    bool perFragmentLighting = ((props.texUsage & ShaderProperties::NormalTexture) != 0);
 
-    if (perFragmentLighting)
+    if (props.usesFragmentLighting() || props.usesShadows())
     {
-        source += "vec4 diff = vec4(0, 0, 0, 1);\n";
+        source += "uniform vec3 ambientColor;\n";
+        source += "vec4 diff = vec4(ambientColor, 1);\n";
         for (unsigned int i = 0; i < props.nLights; i++)
             source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
     }
     else
     {
         source += "varying vec4 diff;\n";
+    }
+
+    if (props.usesShadows())
+    {
+        source += "varying vec4 diffFactors;\n";
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
@@ -458,6 +576,16 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "varying float totalLight;\n";
     }
 
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        source += "uniform sampler2D ringTex;\n";
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            source += "varying float " + 
+                IndexedParameter("ringShadowTexCoord", i) + ";\n";
+        }
+    }
+
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
 
@@ -470,6 +598,16 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             // Bump mapping with self shadowing
             source += "l = max(0, dot(" + LightDir(i) + ", n)) * clamp(" + LightDir(i) + ".z * 8, 0, 1);\n";
             source += "diff += vec4(l * " + FragLightProperty(i, "color") + ", 0);\n";
+        }
+    }
+    else if (props.usesShadows())
+    {
+        for (unsigned i = 0; i < props.nLights; i++)
+        {
+            source += "diff += ((1.0 - texture2D(ringTex, vec2(" +
+                IndexedParameter("ringShadowTexCoord", i) + ", 0)).a) * " +
+                SeparateDiffuse(i) + ") * vec4(" +
+                FragLightProperty(i, "color") + ", 0);\n";
         }
     }
 
@@ -495,12 +633,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "gl_FragColor += texture2D(nightTex, nightTexCoord.st) * totalLight;\n";
     }
 
-    //source += "gl_FragColor = vec4(lightcolor0, 1);\n";
-
     source += "}\n";
 
     *logFile << "Fragment shader source:\n";
-    *logFile << source << '\n';
+    DumpShaderSource(*logFile, source);
+    *logFile << '\n';
     
     GLFragmentShader* fs = NULL;
     GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
