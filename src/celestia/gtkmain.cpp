@@ -120,7 +120,7 @@ enum
 //  Menu_VertexShaders       = 2014,
     Menu_ShowLocTime         = 2015,
     Menu_ShowEclipseShadows  = 2016,
-    Menu_ShowStarsAsPoints   = 2017,
+//  Menu_ShowStarsAsPoints   = 2017,
     Menu_CraftLabels         = 2018,
     Menu_ShowBoundaries      = 2019,
     Menu_AntiAlias           = 2020,
@@ -131,6 +131,12 @@ enum
     Menu_ShowStars           = 2025,
 	Menu_ShowFrames          = 2026,
 	Menu_SyncTime            = 2027,
+	Menu_StarFuzzy           = 2028,
+	Menu_StarPoints          = 2029,
+	Menu_StarDiscs           = 2030,
+	Menu_AmbientNone         = 2031,
+	Menu_AmbientLow          = 2032,
+	Menu_AmbientMed          = 2033,
 };
 
 static void menuSelectSol()
@@ -140,7 +146,7 @@ static void menuSelectSol()
 
 static void menuCenter()
 {
-    appCore->charEntered('C');
+    appCore->charEntered('c');
 }
 
 static void menuGoto()
@@ -278,6 +284,28 @@ static gint menuLabeler(GtkWidget* w, gpointer flag)
 
     appRenderer->setLabelMode((appRenderer->getLabelMode() & ~(int)flag) |
                            (state ? (int)flag : 0));
+	return TRUE;
+}
+
+// Star Style radio group control superfunction!
+static gint menuStarStyle(GtkWidget*, gpointer flag)
+{
+	Renderer::StarStyle style = appCore->getRenderer()->getStarStyle();
+
+	// Set up the desired style
+	switch ((int)flag)
+	{
+		case Renderer::FuzzyPointStars:
+			style = Renderer::FuzzyPointStars;
+			break;
+		case Renderer::PointStars:
+			style = Renderer::PointStars;
+			break;
+		case Renderer::ScaledDiscStars:
+			style = Renderer::ScaledDiscStars;
+	}
+
+    appRenderer->setStarStyle(style);
 	return TRUE;
 }
 
@@ -711,7 +739,7 @@ static float amLevels[] =
     0.25
 };
 
-static int ambientChanged(GtkButton*, int lev)
+static int ambientChanged(GtkWidget*, int lev)
 {
     if (lev>=0 && lev<3)
     {
@@ -1426,7 +1454,7 @@ static const Star *nearestStar;
 
 static gint centerBrowsed()
 {
-    appCore->charEntered('C');
+    appCore->charEntered('c');
     return TRUE;
 }
 
@@ -2542,10 +2570,10 @@ static GtkItemFactoryEntry menuItems[] =
     { (gchar *)"/_Navigation",                         NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
     { (gchar *)"/Navigation/Select _Sol",              (gchar *)"H",            menuSelectSol,    0,                (gchar *)"<StockItem>",  GTK_STOCK_HOME },
     { (gchar *)"/Navigation/Tour G_uide...",           NULL,                    menuTourGuide,    0,                NULL,                    NULL },
-    { (gchar *)"/Navigation/Select _Object...",        NULL,                    menuSelectObject, 0,                NULL,                    NULL },
-    { (gchar *)"/Navigation/Goto Object...",           NULL,                    menuGotoObject,   0,                (gchar *)"<StockItem>",  GTK_STOCK_FIND },
+    { (gchar *)"/Navigation/Select _Object...",        NULL,                    menuSelectObject, 0,                (gchar *)"<StockItem>",  GTK_STOCK_FIND },
+    { (gchar *)"/Navigation/Goto Object...",           NULL,                    menuGotoObject,   0,                NULL,                    NULL },
     { (gchar *)"/Navigation/-",                        NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
-    { (gchar *)"/Navigation/_Center Selection",        (gchar *)"C",            menuCenter,       0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/_Center Selection",        (gchar *)"c",            menuCenter,       0,                NULL,                    NULL },
     { (gchar *)"/Navigation/_Goto Selection",          (gchar *)"G",            menuGoto,         0,                (gchar *)"<StockItem>",  GTK_STOCK_JUMP_TO },
     { (gchar *)"/Navigation/_Follow Selection",        (gchar *)"F",            menuFollow,       0,                NULL,                    NULL },
     { (gchar *)"/Navigation/S_ync Orbit Selection",    (gchar *)"Y",            menuSync,         0,                NULL,                    NULL },
@@ -2572,8 +2600,16 @@ static GtkItemFactoryEntry menuItems[] =
     { (gchar *)"/Render/_More Stars Visible",          (gchar *)"bracketright", menuMoreStars,    0,                NULL,                    NULL },
     { (gchar *)"/Render/_Fewer Stars Visible",         (gchar *)"bracketleft",  menuLessStars,    0,                NULL,                    NULL },
     { (gchar *)"/Render/Auto Magnitude",               (gchar *)"<control>Y",   NULL,             Menu_AutoMag,     (gchar *)"<ToggleItem>", NULL },
+    { (gchar *)"/Render/Star St_yle",                  NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
+    { (gchar *)"/Render/Star St_yle/_Fuzzy Points",    NULL,                    NULL,             Menu_StarFuzzy,   (gchar *)"<RadioItem>",  NULL },
+    { (gchar *)"/Render/Star St_yle/_Points",          NULL,                    NULL,             Menu_StarPoints,  (gchar *)"<RadioItem>",  NULL },
+    { (gchar *)"/Render/Star St_yle/Scaled _Discs",    NULL,                    NULL,             Menu_StarDiscs,   (gchar *)"<RadioItem>",  NULL },
     { (gchar *)"/Render/-",                            NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
-    { (gchar *)"/Render/_Antialiasing",                (gchar *)"<control>X",   NULL,             Menu_AntiAlias,   (gchar *)"<ToggleItem>", NULL },
+	{ (gchar *)"/Render/_Ambient Light",               NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
+    { (gchar *)"/Render/_Ambient Light/_None",         NULL,                    NULL,             Menu_AmbientNone, (gchar *)"<RadioItem>",  NULL },
+    { (gchar *)"/Render/_Ambient Light/_Low",          NULL,                    NULL,             Menu_AmbientLow,  (gchar *)"<RadioItem>",  NULL },
+    { (gchar *)"/Render/_Ambient Light/_Medium",       NULL,                    NULL,             Menu_AmbientMed,  (gchar *)"<RadioItem>",  NULL },
+    { (gchar *)"/Render/Antialiasing",                 (gchar *)"<control>X",   NULL,             Menu_AntiAlias,   (gchar *)"<ToggleItem>", NULL },
 	{ (gchar *)"/_View",                               NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
     { (gchar *)"/View/Split _Horizontally",            (gchar *)"<control>R",   menuViewSplitH,   0,                NULL,                    NULL },
     { (gchar *)"/View/Split _Vertically",              (gchar *)"<control>U",   menuViewSplitV,   0,                NULL,                    NULL },
@@ -2662,6 +2698,16 @@ int checkLabelFlag(int flag, char*)
 	return ((appRenderer->getLabelMode() & flag) == flag);
 }
 
+int radioStarStyle(int flag, char*)
+{
+	return (appCore->getRenderer()->getStarStyle() == flag);
+}
+
+int radioAmbientLight(int flag, char*)
+{
+	return (appCore->getRenderer()->getAmbientLightLevel() == amLevels[flag]);
+}
+
 
 /*
 	Reverse alphabetical order!
@@ -2685,7 +2731,6 @@ static CheckFunc checks[] =
     { NULL, NULL, "/Render/Galaxies",              checkLabelFlag,     1, Renderer::GalaxyLabels, Menu_GalaxyLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Constellations",        checkLabelFlag,     1, Renderer::ConstellationLabels, Menu_ConstellationLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Asteroids",             checkLabelFlag,     1, Renderer::AsteroidLabels, Menu_AsteroidLabels, GTK_SIGNAL_FUNC(menuLabeler) },
-    { NULL, NULL, "/Render/Stars as Points",       checkRenderFlag,    1, Renderer::ShowStarsAsPoints, Menu_ShowStarsAsPoints, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/Render/Stars",                 checkRenderFlag,    1, Renderer::ShowStars, Menu_ShowStars, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/Render/Ring Shadows",          checkRenderFlag,    1, Renderer::ShowRingShadows, Menu_ShowRingShadows, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/Render/Planets",               checkRenderFlag,    1, Renderer::ShowPlanets, Menu_ShowPlanets, GTK_SIGNAL_FUNC(menuRenderer) },
@@ -2701,6 +2746,12 @@ static CheckFunc checks[] =
     { NULL, NULL, "/Render/Atmospheres",           checkRenderFlag,    1, Renderer::ShowAtmospheres, Menu_ShowAtmospheres, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/View/Synchronize Time",        checkSyncTime,      2, 0, Menu_SyncTime, GTK_SIGNAL_FUNC(menuViewSyncTime) },
     { NULL, NULL, "/View/Show Frames",             checkShowFrames,    2, 0, Menu_ShowFrames, GTK_SIGNAL_FUNC(menuViewShowFrames) },
+	{ NULL, NULL, "/Render/Star Style/Fuzzy Points", radioStarStyle,   2, Renderer::FuzzyPointStars, Menu_StarFuzzy, GTK_SIGNAL_FUNC(menuStarStyle) },
+	{ NULL, NULL, "/Render/Star Style/Points",       radioStarStyle,   2, Renderer::PointStars, Menu_StarPoints, GTK_SIGNAL_FUNC(menuStarStyle) },
+	{ NULL, NULL, "/Render/Star Style/Scaled Discs", radioStarStyle,   2, Renderer::ScaledDiscStars, Menu_StarDiscs, GTK_SIGNAL_FUNC(menuStarStyle) },
+	{ NULL, NULL, "/Render/Ambient Light/None",    radioAmbientLight,  2, 0, Menu_AmbientNone, GTK_SIGNAL_FUNC(ambientChanged) },
+	{ NULL, NULL, "/Render/Ambient Light/Low",     radioAmbientLight,  2, 1, Menu_AmbientLow, GTK_SIGNAL_FUNC(ambientChanged) },
+	{ NULL, NULL, "/Render/Ambient Light/Medium",  radioAmbientLight,  2, 2, Menu_AmbientMed, GTK_SIGNAL_FUNC(ambientChanged) },
 };
 
 
