@@ -20,7 +20,7 @@
 
 	RotationPeriod 1047.509
 	Obliquity         7.01
-	LongOfRotationAxis 228.31
+	EquatorAscendingNode 228.31
 
 	Albedo            0.06
 }
@@ -53,7 +53,7 @@
 
 	RotationPeriod  5832.444
 	Obliquity       177.4
-	LongOfRotationAxis 302.07
+	EquatorAscendingNode 302.07
 
 	Albedo            0.77
 }
@@ -226,7 +226,7 @@
 
 	RotationPeriod    24.622962
 	Obliquity         23.98
-	LongOfRotationAxis 262.78
+	EquatorAscendingNode 262.78
 
 	Albedo            0.150
 }
@@ -291,10 +291,8 @@
 	}
 
 	RotationPeriod    9.92425
-	Obliquity         3.08
-	LongOfRotationAxis 0 # Not correct, but necessary with current 
-                             # calculations of satellite positions
-	                     # old values: 337.68, 157.68
+	Obliquity           1.82246
+	EquatorAscendingNode -1.87785 # -22.203
 	Albedo            0.51
 }
 
@@ -309,11 +307,14 @@
 
 	EllipticalOrbit
 	{
-	Period          0.498179
-	SemiMajorAxis   181300
-	Eccentricity    0.003
-	Inclination     0.40
-	MeanAnomaly     210
+	Epoch      2452583.763194445
+	Period          0.501637511
+	SemiMajorAxis   181994.98
+	Eccentricity    0.0046637841
+	Inclination     0.39217201
+	AscendingNode  203.9604966
+	ArgOfPericenter 293.4707817
+	MeanAnomaly     319.3794140
 	}
 
 	Albedo          0.06
@@ -427,7 +428,7 @@
 
 	RotationPeriod      10.65622
 	Obliquity           28.052 # old value: 26.73
-	LongOfRotationAxis  168
+	EquatorAscendingNode  168
 
 	Albedo            0.50
 
@@ -658,7 +659,7 @@
 
 	RotationPeriod   17.24
 	Obliquity        97.92
-	LongOfRotationAxis 167.76
+	EquatorAscendingNode 167.76
 
 	Albedo            0.66
 
@@ -773,7 +774,7 @@
 
 	RotationPeriod   16.11
 	Obliquity        28.03
-	LongOfRotationAxis 49.235
+	EquatorAscendingNode 0 # 49.235
 
 	Albedo            0.62
 }
@@ -810,11 +811,14 @@
 
 	EllipticalOrbit
 	{
-	Period         5.876854
-	SemiMajorAxis  354760
-	Eccentricity   0.00004
-	Inclination    156.834
-	MeanAnomaly    120
+	Epoch          2452583.763194445
+	Period         5.877099455
+	SemiMajorAxis  354767.045
+	Eccentricity   0.000036128
+	Inclination    156.825624
+	AscendingNode   179.3321840
+	ArgOfPericenter 340.33983157
+	MeanAnomaly     351.5204821
 	}
 
 	Albedo         0.7
@@ -904,6 +908,9 @@
 	ArgOfPericenter 97.224
 	TrueAnomaly    -66.619
 	}
+
+	RotationPeriod    1.0e9  # Essentially no rotation . . .
+	Orientation     [ 90 0 1 0 ]
 
 	Albedo         0.50
 }
