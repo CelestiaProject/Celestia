@@ -1117,6 +1117,7 @@ setupLightSources(const vector<const Star*>& nearStars,
         {
             Vec3d v = ((*iter)->getPosition(t) - center) *
                 astro::microLightYearsToKilometers(1.0);
+
             Renderer::LightSource ls;
             ls.position = Point3d(v.x, v.y, v.z);
             ls.luminosity = (*iter)->getLuminosity();
@@ -1217,6 +1218,8 @@ void Renderer::render(const Observer& observer,
     {
         nearStars.clear();
         universe.getNearStars(observer.getPosition(), 1.0f, nearStars);
+
+        unsigned int solarSysIndex = 0;
         for (vector<const Star*>::const_iterator iter = nearStars.begin();
              iter != nearStars.end(); iter++)
         {
@@ -1224,12 +1227,15 @@ void Renderer::render(const Observer& observer,
             SolarSystem* solarSystem = universe.getSolarSystem(sun);
             if (solarSystem != NULL)
             {
-                setupLightSources(nearStars, *sun, now, lightSources);
+                setupLightSources(nearStars, *sun, now,
+                                  lightSourceLists[solarSysIndex]);
                 renderPlanetarySystem(*sun,
                                       *solarSystem->getPlanets(),
                                       observer,
                                       now,
+                                      solarSysIndex,
                                       (labelMode & (BodyLabelMask)) != 0);
+                solarSysIndex++;
             }
         }
         starTex->bind();
@@ -1707,6 +1713,7 @@ void Renderer::render(const Observer& observer,
                                  renderList[i].appMag,
                                  now,
                                  observer.getOrientation(),
+                                 lightSourceLists[renderList[i].solarSysIndex],
                                  nearPlaneDistance, farPlaneDistance);
                 }
             }
@@ -5387,6 +5394,7 @@ void Renderer::renderPlanet(Body& body,
                             float appMag,
                             double now,
                             Quatf orientation,
+                            const vector<LightSource>& lightSources,
                             float nearPlaneDistance,
                             float farPlaneDistance)
 {
@@ -5928,6 +5936,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                                      const PlanetarySystem& solSystem,
                                      const Observer& observer,
                                      double now,
+                                     unsigned int solarSysIndex,
                                      bool showLabels)
 {
     Point3f starPos = sun.getPosition();
@@ -5948,6 +5957,8 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         // to the sun.  From these, compute the position of the planet
         // relative to the observer.
         Vec3d posd = bodyPos - observerPos;
+
+        vector<LightSource>& lightSources = lightSourceLists[solarSysIndex];
 
         // Compute the apparent magnitude; instead of summing the reflected
         // light from all nearby stars, we just consider the one with the
@@ -5979,6 +5990,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.radius = body->getRadius();
             rle.discSizeInPixels = discSize;
             rle.appMag = appMag;
+            rle.solarSysIndex = solarSysIndex;
             renderList.insert(renderList.end(), rle);
         }
 
@@ -6000,6 +6012,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                 rle.radius = radius;
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
+                rle.solarSysIndex = solarSysIndex;
                 renderList.insert(renderList.end(), rle);
             }
         }
@@ -6065,7 +6078,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             if (satellites != NULL)
             {
                 renderPlanetarySystem(sun, *satellites, observer,
-                                      now, showLabels);
+                                      now, solarSysIndex, showLabels);
             }
         }
     }
