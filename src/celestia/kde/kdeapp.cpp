@@ -246,6 +246,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showGalaxyLabels"))->setChecked(lMode & Renderer::GalaxyLabels);
     ((KToggleAction*)action("showAsteroidLabels"))->setChecked(lMode & Renderer::AsteroidLabels);
     ((KToggleAction*)action("showSpacecraftLabels"))->setChecked(lMode & Renderer::SpacecraftLabels);
+    ((KToggleAction*)action("showLocationLabels"))->setChecked(lMode & Renderer::LocationLabels);
 
     switch (renderer->getGLContext()->getRenderPath()) {
     case GLContext::GLPath_Basic:
@@ -463,6 +464,9 @@ void KdeApp::initActions()
 
     KToggleAction* showSpacecraftLabels = new KToggleAction(i18n("Show Spacecraft Labels"), Key_N, this, SLOT(slotShowSpacecraftLabels()), actionCollection(), "showSpacecraftLabels");
     showSpacecraftLabels->setChecked(lMode & Renderer::SpacecraftLabels);
+
+    KToggleAction* showLocationLabels = new KToggleAction(i18n("Show Location Labels"), Key_Ampersand, this, SLOT(slotShowLocationLabels()), actionCollection(), "showLocationLabels");
+    showLocationLabels->setChecked(lMode & Renderer::LocationLabels);
 
     KToggleAction* displayLocalTime = new KToggleAction(i18n("Display Local Time"), ALT + Key_U, this, SLOT(slotDisplayLocalTime()), actionCollection(), "displayLocalTime");
     displayLocalTime->setChecked(isLocal);
@@ -890,6 +894,11 @@ void KdeApp::slotShowAsteroidLabels() {
 void KdeApp::slotShowSpacecraftLabels() {
      appCore->getRenderer()->setLabelMode(
             appCore->getRenderer()->getLabelMode() ^ Renderer::SpacecraftLabels);
+}
+
+void KdeApp::slotShowLocationLabels() {
+     appCore->getRenderer()->setLabelMode(
+            appCore->getRenderer()->getLabelMode() ^ Renderer::LocationLabels);
 }
 
 void KdeApp::slotSplitH() {
