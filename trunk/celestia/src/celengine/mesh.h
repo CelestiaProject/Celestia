@@ -129,7 +129,7 @@ class Mesh
 
     void setVertices(uint32 _nVertices, void* vertexData);
     bool setVertexDescription(const VertexDescription& desc);
-    const VertexDescription* getVertexDescription() const;
+    const VertexDescription& getVertexDescription() const;
 
     const PrimitiveGroup* getGroup(uint32) const;
     uint32 addGroup(PrimitiveGroupType prim,
@@ -144,6 +144,10 @@ class Mesh
     AxisAlignedBox getBoundingBox() const;
     void transform(Vec3f translation, float scale);
 
+    const void* getVertexData() const { return vertices; }
+    uint32 getVertexCount() const { return nVertices; }
+    uint32 getVertexStride() const { return vertexDesc.stride; }
+
     static PrimitiveGroupType      parsePrimitiveGroupType(const std::string&);
     static VertexAttributeSemantic parseVertexAttributeSemantic(const std::string&);
     static VertexAttributeFormat   parseVertexAttributeFormat(const std::string&);
@@ -153,10 +157,12 @@ class Mesh
     void recomputeBoundingBox();
 
  private:
-    // Vertex attribute table indexed by semantic
+    VertexDescription vertexDesc;
+
+    // Vertex attribute table indexed by semantic--sort of an inverse
+    // vertex description
     VertexAttribute vertexAttributeMap[SemanticMax];
 
-    uint32 vertexStride;
     uint32 nVertices;
     void* vertices;
 
