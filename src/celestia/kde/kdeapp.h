@@ -28,13 +28,14 @@
 #include <kaction.h>
 #include <qvaluestack.h>
 #include <kurl.h>
+#include <kdialogbase.h>
 
 #include <kbookmarkmanager.h>
 #include "kcelbookmarkowner.h"
 #include "celestiacore.h"
 #include "kdeglwidget.h"
 #include "celengine/render.h"
-
+#include "url.h"
 
 class KdeApp;
 
@@ -66,8 +67,7 @@ public:
     void goToURL(const KURL& url);
 
     void openBookmarkURL(const QString& _url);
-    QString currentTitle() const ;
-    QString currentURL() const ;
+    Url currentUrl(Url::UrlType type = Url::Absolute) const ;
     QString currentIcon() const;
 
 public slots:
@@ -132,6 +132,7 @@ public slots:
     void slotForward();
     void slotCopyUrl();
     void slotGoTo();
+    void slotGoToLongLat();
 
     void slotShowBookmarkBar();
 
@@ -170,5 +171,22 @@ protected:
     static KdeApp* app;
 };
 
+class LongLatDialog : public KDialogBase {
+Q_OBJECT
+
+public:
+    LongLatDialog(QWidget* parent, CelestiaCore* appCore);
+
+private slots:
+    void slotOk();
+    void slotApply();
+    void slotCancel();
+    
+private:
+    CelestiaCore* appCore;
+    QLineEdit *altEdit, *longEdit, *latEdit, *objEdit;
+    QComboBox *longSign, *latSign;
+    
+};
 
 #endif

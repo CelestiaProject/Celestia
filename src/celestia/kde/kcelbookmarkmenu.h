@@ -111,12 +111,14 @@ protected slots:
   void slotAboutToShow();
   void slotBookmarkSelected();
   void slotAddBookmark();
+  void slotAddRelativeBookmark();
   void slotNewFolder();
 
 protected:
 
   void refill();
   void addAddBookmark();
+  void addAddRelativeBookmark();
   void addEditBookmarks();
   void addNewFolder();
 

@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>CelestialBrowserBase</class>
-<widget class="QDialog">
+<widget class="QMainWindow">
     <property name="name">
         <cstring>CelestialBrowserBase</cstring>
     </property>

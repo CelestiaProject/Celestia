@@ -85,8 +85,9 @@ KCelBookmarkMenu::KCelBookmarkMenu( KBookmarkManager* mgr,
   // add entries that possibly have a shortcut, so they are available _before_ first popup
   if ( m_bIsRoot )
   {
-    if ( m_bAddBookmark )
-      addAddBookmark();
+    if ( m_bAddBookmark ) {
+          addAddBookmark();
+    }
 
     addEditBookmarks();
   }
@@ -171,7 +172,24 @@ void KCelBookmarkMenu::addAddBookmark()
 
   paAddBookmarks->plug( m_parentMenu );
   m_actions.append( paAddBookmarks );
+  addAddRelativeBookmark();
 }
+
+void KCelBookmarkMenu::addAddRelativeBookmark()
+{
+  KAction * paAddBookmarks = new KAction( i18n( "Add &Relative Bookmark" ),
+                                          "bookmark_add",
+                                          m_bIsRoot ? ALT + Key_R : 0, //m_bIsRoot ? KStdAccel::addBookmark() : KShortcut(),
+                                          this,
+                                          SLOT( slotAddRelativeBookmark() ),
+                                          m_actionCollection, m_bIsRoot ? "add_relative_bookmark" : 0 );
+
+  paAddBookmarks->setStatusText( i18n( "Add a relative bookmark for the current document" ) );
+
+  paAddBookmarks->plug( m_parentMenu );
+  m_actions.append( paAddBookmarks );
+}
+
 
 void KCelBookmarkMenu::addEditBookmarks()
 {
@@ -265,15 +283,64 @@ void KCelBookmarkMenu::fillBookmarkMenu()
   }
 }
 
-void KCelBookmarkMenu::slotAddBookmark()
+void KCelBookmarkMenu::slotAddRelativeBookmark()
 {
-  QString url = m_pOwner->currentURL();
+  Url Url = m_pOwner->currentUrl(Url::Relative);
+  QString url = QString(Url.getAsString().c_str());;
   if (url.isEmpty())
   {
     KMessageBox::error( 0L, i18n("Can't add bookmark with empty URL"));
     return;
   }
-  QString title = m_pOwner->currentTitle();
+  QString title = QString(Url.getName().c_str());
+  if (title.isEmpty())
+    title = url;
+
+  KBookmarkGroup parentBookmark = m_pManager->findByAddress( m_parentAddress ).toGroup();
+  Q_ASSERT(!parentBookmark.isNull());
+  // If this title is already used, we'll try to find something unused.
+  KBookmark ch = parentBookmark.first();
+  int count = 1;
+  QString uniqueTitle = title;
+  do
+  {
+    while ( !ch.isNull() )
+    {
+      if ( uniqueTitle == ch.text() )
+      {
+        // Title already used !
+        if ( url != ch.url().url() )
+        {
+          uniqueTitle = title + QString(" (%1)").arg(++count);
+          // New title -> restart search from the beginning
+          ch = parentBookmark.first();
+          break;
+        }
+        else
+        {
+          // this exact URL already exists
+          return;
+        }
+      }
+      ch = parentBookmark.next( ch );
+    }
+  } while ( !ch.isNull() );
+
+  parentBookmark.addBookmark( m_pManager, uniqueTitle, url, m_pOwner->currentIcon() );
+  m_pManager->emitChanged( parentBookmark );
+}
+
+
+void KCelBookmarkMenu::slotAddBookmark()
+{
+  Url Url = m_pOwner->currentUrl(Url::Absolute);
+  QString url = QString(Url.getAsString().c_str());;
+  if (url.isEmpty())
+  {
+    KMessageBox::error( 0L, i18n("Can't add bookmark with empty URL"));
+    return;
+  }
+  QString title = QString(Url.getName().c_str());
   if (title.isEmpty())
     title = url;
 
