@@ -2649,6 +2649,10 @@ void CelestiaCore::renderOverlay()
             break;
 
         case Selection::Type_Location:
+            overlay->setFont(titleFont);
+            *overlay << sel.location()->getName();
+            overlay->setFont(font);
+            *overlay << '\n';
             break;
         }
 

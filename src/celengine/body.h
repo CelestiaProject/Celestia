@@ -174,6 +174,7 @@ class Body
 
     std::vector<Location*>* getLocations() const;
     void addLocation(Location*);
+    Location* findLocation(const std::string&) const;
     void computeLocations();
 
  private:
