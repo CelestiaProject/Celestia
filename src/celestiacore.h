@@ -83,6 +83,7 @@ class CelestiaCore
     void writeFavoritesFile();
     void activateFavorite(FavoritesEntry&);
     void addFavorite(string);
+    const FavoritesList* getFavorites();
 
  private:
     void cancelScript();
