@@ -19,7 +19,6 @@
 #include "asterism.h"
 #include "texmanager.h"
 #include "meshmanager.h"
-#include "console.h"
 #include "selection.h"
 #include "texturefont.h"
 
@@ -49,8 +48,6 @@ class Renderer
     
     // Convert window coordinates to a ray for picking
     Vec3f getPickRay(int winX, int winY);
-
-    Console* getConsole() const;
 
     enum {
         NoLabels = 0,
@@ -160,12 +157,12 @@ class Renderer
                               Color color,
                               const Quatf& orientation,
                               bool useHaloes);
-    void labelStars(const vector<Star*>& stars,
+    void labelStars(const std::vector<Star*>& stars,
                     const StarDatabase& starDB,
                     const Observer& observer);
     void labelConstellations(const AsterismList& asterisms,
                              const Observer& observer);
-    void renderParticles(const vector<Particle>& particles,
+    void renderParticles(const std::vector<Particle>& particles,
                          Quatf orientation);
     void renderLabels();
 
@@ -178,7 +175,6 @@ class Renderer
 
     TextureManager* textureManager;
     MeshManager* meshManager;
-    Console* console;
     TextureFont* font;
 
     int renderMode;
@@ -189,13 +185,13 @@ class Renderer
     float brightnessBias;
     float brightnessScale;
 
-    vector<RenderListEntry> renderList;
-    vector<Particle> starParticles;
-    vector<Particle> glareParticles;
-    vector<Particle> planetParticles;
-    vector<Label> labels;
+    std::vector<RenderListEntry> renderList;
+    std::vector<Particle> starParticles;
+    std::vector<Particle> glareParticles;
+    std::vector<Particle> planetParticles;
+    std::vector<Label> labels;
 
-    vector<Star*> labelledStars;
+    std::vector<Star*> labelledStars;
 
     AsterismList* asterisms;
 
@@ -207,36 +203,5 @@ class Renderer
     bool useCubeMaps;
     bool useCompressedTextures;
 };
-
-
-#if 0
-class Renderer::ParticleList
-{
-private:
-    vector<Particle> particles;
-
-public:
-    ParticleList() {};
-    void clear() { particles.clear(); };
-    void addParticle(Particle& p) { particles.insert(particles.end(), p); };
-    void render(Quatf orientation);
-};
-
-
-class Renderer::RenderList
-{
-private:
-    vector<RenderListEntry> renderables;
-
-public:
-    RenderList() {};
-    void clear() { renderables.clear(); };
-    void add(Body*, Point3f, Vec3f, float);
-    void render(double, Quatf, float, TextureManager*);
-
-    friend bool operator<(RenderListEntry&, RenderListEntry&);
-};
-#endif
-
 
 #endif // _RENDER_H_

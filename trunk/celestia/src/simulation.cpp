@@ -42,113 +42,14 @@ Simulation::Simulation() :
 {
 }
 
-
 Simulation::~Simulation()
 {
     // TODO: Clean up!
 }
 
 
-static void displayDistance(Console& console, double distance)
+void Simulation::render(Renderer& renderer)
 {
-    if (distance >= astro::AUtoLightYears(1000.0f))
-        console.printf("%.3f ly", distance);
-    else if (distance >= astro::kilometersToLightYears(10000000.0))
-        console.printf("%.3f au", astro::lightYearsToAU(distance));
-    else
-        console.printf("%.3f km", astro::lightYearsToKilometers(distance));
-}
-
-
-static void displayStarInfo(Console& console,
-                            Star& star,
-                            StarDatabase& starDB,
-                            double distance)
-{
-    StarNameDatabase* starNameDB = starDB.getNameDatabase();
-
-    // Print the star name and designations
-    StarNameDatabase::iterator iter = starNameDB->find(star.getCatalogNumber());
-    if (iter != starNameDB->end())
-    {
-        StarName* starName = iter->second;
-
-        if (starName->getName() != "")
-            console << starName->getName() << "  /  ";
-
-        Constellation* constellation = starName->getConstellation();
-        if (constellation != NULL)
-            console << starName->getDesignation() << ' ' <<  constellation->getGenitive() << "  /  ";
-    }
-    if ((star.getCatalogNumber() & 0xf0000000) == 0)
-        console << "HD " << star.getCatalogNumber() << '\n';
-    else
-        console << "HIP " << (star.getCatalogNumber() & 0x0fffffff) << '\n';
-
-    console << "Distance: ";
-    displayDistance(console, distance);
-    console << '\n';
-    
-    console.printf("Abs (app) mag = %.2f (%.2f)\n",
-                   star.getAbsoluteMagnitude(),
-                   astro::absToAppMag(star.getAbsoluteMagnitude(), (float) distance));
-    console << "Class: " << star.getStellarClass() << '\n';
-    console.printf("Radius: %.2f Rsun\n", star.getRadius() / 696000.0f);
-}
-
-
-static void displayPlanetInfo(Console& console,
-                              Body& body,
-                              double distance)
-{
-    console << body.getName() << '\n';
-    console << "Distance: ";
-    displayDistance(console, distance);
-    console << '\n';
-    console << "Radius: " << body.getRadius() << " km\n";
-    console << "Day length: " << body.getRotationPeriod() << " hours\n";
-}
-
-
-static void displayGalaxyInfo(Console& console,
-                              Galaxy& galaxy,
-                              double distance)
-{
-    console << galaxy.getName() << '\n';
-    console << "Distance: ";
-    displayDistance(console, distance);
-    console << '\n';
-    console << "Type: " << galaxy.getType() << '\n';
-    console << "Radius: " << galaxy.getRadius() << " ly\n";
-}
-
-
-void Simulation::displaySelectionInfo(Console& console)
-{
-    if (selection.empty())
-        return;
-
-    Vec3d v = getSelectionPosition(selection, simTime) - observer.getPosition();
-    if (selection.star != NULL)
-        displayStarInfo(console, *selection.star, *stardb, v.length());
-    else if (selection.body != NULL)
-        displayPlanetInfo(console, *selection.body, v.length());
-    else if (selection.galaxy != NULL)
-        displayGalaxyInfo(console, *selection.galaxy, v.length());
-}
-
-
-void  Simulation::render(Renderer& renderer)
-{
-    Console* console = renderer.getConsole();
-    console->clear();
-    console->home();
-
-    if (hudDetail > 0)
-    {
-        displaySelectionInfo(*console);
-    }
-
     renderer.render(observer,
                     *stardb,
                     faintestVisible,
