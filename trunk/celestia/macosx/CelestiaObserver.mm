@@ -73,8 +73,8 @@
 {
     [self observer].setPosition([p point3d]);
 }
--(void)update:(NSNumber*)dt
+-(void)update:(NSNumber*)dt timeScale: (NSNumber*)ts
 {
-    [self observer].update([dt doubleValue]);
+    [self observer].update([dt doubleValue], [ts doubleValue]);
 }
 @end
