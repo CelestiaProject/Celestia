@@ -206,7 +206,7 @@ AC_OUTPUT( Makefile               \
 	   models/Makefile        \
 	   shaders/Makefile       \
 	   fonts/Makefile         \
-	   res/Makefile           \
+	   src/celestia/res/Makefile \
 	   macros/Makefile        \
 	   manual/Makefile        \
           )
