@@ -258,7 +258,7 @@ StarDatabase *StarDatabase::read(istream& in)
     uint32 throwOut = 0;
     uint32 fixUp = 0;
 
-    while (db->nStars < MAX_STARS)
+    while (db->nStars < nStars)
     {
 	uint32 catNo = 0;
 	float RA = 0, dec = 0, parallax = 0;
