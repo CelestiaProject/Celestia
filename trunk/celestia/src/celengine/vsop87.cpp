@@ -555,24 +555,24 @@ static double SumSeries(const VSOPSeries& series, double t)
 class VSOP87Orbit : public CachingOrbit
 {
 private:
-    VSOPSeries* L;
+    VSOPSeries* vsL;
     int nL;
-    VSOPSeries* B;
+    VSOPSeries* vsB;
     int nB;
-    VSOPSeries* R;
+    VSOPSeries* vsR;
     int nR;
     double period;
     double boundingRadius;
 
 public:
-    VSOP87Orbit(VSOPSeries* _L, int _nL,
-                VSOPSeries* _B, int _nB,
-                VSOPSeries* _R, int _nR,
+    VSOP87Orbit(VSOPSeries* _vsL, int _nL,
+                VSOPSeries* _vsB, int _nB,
+                VSOPSeries* _vsR, int _nR,
                 double _period,
                 double _boundingRadius) :
-        L(_L), nL(_nL),
-        B(_B), nB(_nB),
-        R(_R), nR(_nR),
+        vsL(_vsL), nL(_nL),
+        vsB(_vsB), nB(_nB),
+        vsR(_vsR), nR(_nR),
         period(_period),
         boundingRadius(_boundingRadius)
     {
@@ -605,7 +605,7 @@ public:
         T = 1;
         for (i = 0; i < nL; i++)
         {
-            l += SumSeries(L[i], t) * T;
+            l += SumSeries(vsL[i], t) * T;
             T = t * T;
         }
 
@@ -613,7 +613,7 @@ public:
         T = 1;
         for (i = 0; i < nB; i++)
         {
-            b += SumSeries(B[i], t) * T;
+            b += SumSeries(vsB[i], t) * T;
             T = t * T;
         }
 
@@ -621,7 +621,7 @@ public:
         T = 1;
         for (i = 0; i < nR; i++)
         {
-            r += SumSeries(R[i], t) * T;
+            r += SumSeries(vsR[i], t) * T;
             T = t * T;
         }
         

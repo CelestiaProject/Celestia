@@ -53,7 +53,7 @@ static bool LoadVertexProgram(const string& filename, unsigned int& id)
         return false;
     }
 
-    glGenProgramsNV(1, &id);
+    glGenProgramsNV(1, (GLuint*) &id);
     glLoadProgramNV(GL_VERTEX_PROGRAM_NV,
                     id,
                     source->length(),

@@ -304,7 +304,7 @@ StarDatabase *StarDatabase::read(istream& in)
 	{
 	    DPRINTF(0, "Warning, distance of star # %ld of %12.2f ly seems excessive (parallax: %2.5f)!\n", catNo, distance, parallax);
 	}
-#endif DEBUG
+#endif // DEBUG
         star->setPosition(astro::equatorialToCelestialCart(RA, dec, (float) distance));
 
 	// Use apparent magnitude and distance to determine the absolute
