@@ -313,6 +313,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
+
     // Four pixel tolerance for picking
     float pickTolerance = degToRad(renderer->getFieldOfView()) / height * 4.0f;
 
@@ -323,8 +324,23 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     {
         if (button == LeftButton)
         {
+            if (x < views[activeView]->x * width || x > (views[activeView]->x + views[activeView]->width) * width
+             || (height - y) < views[activeView]->y * height ||  (height - y) > (views[activeView]->y + views[activeView]->height) * height)
+            {
+                std::vector<View*>::iterator i = views.begin();
+                int n = 0;
+                while (i < views.end() && (x < (*i)->x * width || x > ((*i)->x + (*i)->width) * width
+                                            || (height - y) < (*i)->y * height ||  (height - y) > ((*i)->y + (*i)->height) * height))
+                {
+                     i++; n++;
+                }
+                activeView = n;
+                sim->setActiveObserver(views[activeView]->observer);
+                return;
+            }
+
             int pickX = x - (int) (views[activeView]->x * width);
-            int pickY = y - (int) (views[activeView]->y * height);
+            int pickY = y + (int) ((views[activeView]->y + views[activeView]->height - 1) * height);
             Vec3f pickRay = renderer->getPickRay(pickX, pickY);
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, pickTolerance);
@@ -336,7 +352,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         else if (button == RightButton)
         {
             int pickX = x - (int) (views[activeView]->x * width);
-            int pickY = y - (int) (views[activeView]->y * height);
+            int pickY = y + (int) ((views[activeView]->y + views[activeView]->height - 1) * height);
             Vec3f pickRay = renderer->getPickRay(pickX, pickY);
             Selection sel = sim->pickObject(pickRay, pickTolerance);
             if (!sel.empty())
