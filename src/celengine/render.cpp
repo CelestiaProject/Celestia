@@ -1951,7 +1951,7 @@ void Renderer::renderPlanet(const Body& body,
                     // texture matrix doesn't require us to compute a second
                     // set of model space rendering parameters.
                     glMatrixMode(GL_TEXTURE);
-                    glTranslatef(-pfmod(now * atmosphere->cloudSpeed / 2 * PI,
+                    glTranslatef(-pfmod(now * atmosphere->cloudSpeed / (2*PI),
                                         1.0), 0, 0);
                     glMatrixMode(GL_MODELVIEW);
                 }
@@ -2286,7 +2286,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         }
 #endif
 
-        if (appMag < 5.0f)
+        if (appMag < faintestMag)
         {
             const PlanetarySystem* satellites = body->getSatellites();
             if (satellites != NULL)
