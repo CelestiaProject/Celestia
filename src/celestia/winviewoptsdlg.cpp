@@ -83,6 +83,21 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWORBITS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowOrbits);
             break;
+        case IDC_PLANETORBITS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanetOrbits);
+            break;
+        case IDC_MOONORBITS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowMoonOrbits);
+            break;
+        case IDC_ASTEROIDORBITS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowAsteroidOrbits);
+            break;
+        case IDC_COMETORBITS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCometOrbits);
+            break;
+        case IDC_SPACECRAFTORBITS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowSpacecraftOrbits);
+            break;
         case IDC_SHOWPLANETS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanets);
             break;
@@ -127,6 +142,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             break;
         case IDC_LABELASTEROIDS:
             renderer->setLabelMode(labelMode ^ Renderer::AsteroidLabels);
+            break;
+        case IDC_LABELCOMETS:
+            renderer->setLabelMode(labelMode ^ Renderer::CometLabels);
             break;
         case IDC_LABELSPACECRAFT:
             renderer->setLabelMode(labelMode ^ Renderer::SpacecraftLabels);
@@ -224,6 +242,13 @@ ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                              reinterpret_cast<LONG>(this));
 }
 
+
+static void dlgCheck(HWND hDlg, WORD item, uint32 flags, uint32 f)
+{
+    SendDlgItemMessage(hDlg, item, BM_SETCHECK,
+                       ((flags & f) != 0) ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
 void ViewOptionsDialog::SetControls(HWND hDlg)
 {
     int renderFlags = appCore->getRenderer()->getRenderFlags();
@@ -247,6 +272,11 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWORBITS, BM_SETCHECK,
         (renderFlags & Renderer::ShowOrbits)? BST_CHECKED:BST_UNCHECKED, 0);
+    dlgCheck(hDlg, IDC_PLANETORBITS,     renderFlags, Renderer::ShowPlanetOrbits);
+    dlgCheck(hDlg, IDC_MOONORBITS,       renderFlags, Renderer::ShowMoonOrbits);
+    dlgCheck(hDlg, IDC_ASTEROIDORBITS,   renderFlags, Renderer::ShowAsteroidOrbits);
+    dlgCheck(hDlg, IDC_COMETORBITS,      renderFlags, Renderer::ShowCometOrbits);
+    dlgCheck(hDlg, IDC_SPACECRAFTORBITS, renderFlags, Renderer::ShowSpacecraftOrbits);
     SendDlgItemMessage(hDlg, IDC_SHOWPLANETS, BM_SETCHECK,
         (renderFlags & Renderer::ShowPlanets)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,

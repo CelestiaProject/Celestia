@@ -342,6 +342,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,87,44,50,14
 END
 
+#if 0
 IDD_VIEWOPTIONS DIALOG DISCARDABLE  0, 0, 252, 226
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "View Options"
@@ -407,6 +408,88 @@ BEGIN
     GROUPBOX        "Label",IDC_STATIC,6,90,162,68
     GROUPBOX        "Information Text",IDC_STATIC,174,90,71,57
     GROUPBOX        "Filter Stars",IDC_STATIC,6,162,162,32
+END
+#endif
+
+IDD_VIEWOPTIONS DIALOG DISCARDABLE  0, 0, 252, 226
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "View Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Atmospheres",IDC_SHOWATMOSPHERES,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,18,57,10
+    CONTROL         "Celestial Grid",IDC_SHOWCELESTIALGRID,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,31,57,10
+    CONTROL         "Clouds",IDC_SHOWCLOUDS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,15,44,37,10
+    CONTROL         "Comet Tails",IDC_SHOWCOMETTAILS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,57,54,10
+    CONTROL         "Constellation Borders",IDC_SHOWCONSTELLATIONBORDERS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,70,82,10
+    CONTROL         "Constellations",IDC_SHOWCONSTELLATIONS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,101,18,59,10
+    CONTROL         "Eclipse Shadows",IDC_SHOWECLIPSESHADOWS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,101,31,70,10
+    CONTROL         "Galaxies",IDC_SHOWGALAXIES,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,101,44,43,10
+    CONTROL         "Night Side Lights",IDC_SHOWNIGHTSIDELIGHTS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,101,57,69,10
+    CONTROL         "Orbits",IDC_SHOWORBITS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,101,70,34,10
+    CONTROL         "Planets",IDC_SHOWPLANETS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,175,18,39,10
+    CONTROL         "Ring Shadows",IDC_SHOWRINGSHADOWS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,175,31,63,10
+    CONTROL         "Stars",IDC_SHOWSTARS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,175,44,32,10
+    CONTROL         "Stars as Points",IDC_SHOWSTARSASPOINTS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,175,57,63,10
+    CONTROL         "Markers",IDC_SHOWMARKERS,"Button",
+		    BS_AUTOCHECKBOX | WS_TABSTOP,175,70,63,10
+    CONTROL         "Asteroids",IDC_LABELASTEROIDS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,33,111,45,10
+    CONTROL         "Constellations",IDC_LABELCONSTELLATIONS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,33,137,59,10
+    CONTROL         "Galaxies",IDC_LABELGALAXIES,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,33,150,43,10
+    CONTROL         "Moons",IDC_LABELMOONS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,114,111,37,10
+    CONTROL         "Planets",IDC_LABELPLANETS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,114,124,39,10
+    CONTROL         "Spacecraft",IDC_LABELSPACECRAFT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,114,137,51,10
+    CONTROL         "Stars",IDC_LABELSTARS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,114,150,32,10
+    CONTROL         "None",IDC_INFOTEXT0,"Button",BS_AUTORADIOBUTTON,183,103,
+                    33,10
+    CONTROL         "Terse",IDC_INFOTEXT1,"Button",BS_AUTORADIOBUTTON,183,
+                    116,34,10
+    CONTROL         "Verbose",IDC_INFOTEXT2,"Button",BS_AUTORADIOBUTTON,183,
+                    129,42,10
+    CONTROL         "Slider1",IDC_SLIDER_FILTER_DISTANCE,"msctls_trackbar32",
+                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,49,180,60,14
+    EDITTEXT        IDC_EDIT_FILTER_DISTANCE,117,182,44,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,74,206,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,128,206,50,14
+    LTEXT           "Distance",IDC_STATIC,15,183,30,8
+    GROUPBOX        "Show",IDC_STATIC,6,5,239,82
+    GROUPBOX        "Orbits / Labels",IDC_STATIC,6,90,162,75
+    GROUPBOX        "Information Text",IDC_STATIC,174,90,71,57
+    GROUPBOX        "Filter Stars",IDC_STATIC,6,169,162,32
+    LTEXT           "Orbit / Label",IDC_STATIC,12,101,40,8
+    LTEXT           "Orbit / Label",IDC_STATIC,92,101,40,8
+    CONTROL         " ",IDC_ASTEROIDORBITS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,16,111,18,10
+    CONTROL         " ",IDC_MOONORBITS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    96,111,18,10
+    CONTROL         " ",IDC_PLANETORBITS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,96,124,18,10
+    CONTROL         " ",IDC_SPACECRAFTORBITS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,96,137,18,10
+    CONTROL         "Comets",IDC_LABELCOMETS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,33,124,39,10
+    CONTROL         " ",IDC_COMETORBITS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,16,124,18,10
 END
 
 IDD_LOCATIONS DIALOG DISCARDABLE  0, 0, 252, 226

@@ -1513,7 +1513,10 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'W':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::AsteroidLabels);
+        if (c == 'w')
+            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::AsteroidLabels);
+        else
+            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::CometLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
