@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib Winmm.lib libjpeg.lib libpng1.lib zlib.lib cel_3ds.lib cel_engine.lib cel_math.lib cel_txf.lib cel_util.lib /nologo /subsystem:windows /machine:I386 /libpath:"." /libpath:"..\..\lib" /libpath:"..\cel3ds\Release" /libpath:"..\celengine\Release" /libpath:"..\celmath\Release" /libpath:"..\celtxf\Release" /libpath:"..\celutil\Release"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib Winmm.lib libjpeg.lib libpng1.lib zlib.lib cel_3ds.lib cel_engine.lib cel_math.lib cel_txf.lib cel_util.lib vfw32.lib /nologo /subsystem:windows /machine:I386 /libpath:"." /libpath:"..\..\lib" /libpath:"..\cel3ds\Release" /libpath:"..\celengine\Release" /libpath:"..\celmath\Release" /libpath:"..\celtxf\Release" /libpath:"..\celutil\Release"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=copy Release\Celestia.exe ..\..
@@ -94,6 +94,10 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Source File
+
+SOURCE=.\avicapture.cpp
+# End Source File
 # Begin Source File
 
 SOURCE=.\res\celestia.rc
@@ -142,6 +146,10 @@ SOURCE=.\wintourguide.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\avicapture.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\celestiacore.h
