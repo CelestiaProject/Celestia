@@ -240,7 +240,8 @@ void KdeApp::initActions()
     openRecent->loadEntries(KGlobal::config());
     connect(openRecent, SIGNAL(urlSelected(const KURL&)), SLOT(slotOpenFileURL(const KURL&)));
 
-    KStdAction::close(this, SLOT(slotClose()), actionCollection());
+    KAction *c = KStdAction::close(this, SLOT(slotClose()), actionCollection());
+    c->setAccel( CTRL + Key_Q );
 
     new KAction(i18n("Go to..."), 0, 0, this, SLOT(slotGoTo()), actionCollection(), "go_to");
 
@@ -315,31 +316,31 @@ void KdeApp::initActions()
     KToggleAction* showCelestialSphere = new KToggleAction(i18n("Show Celestial Grid"), 0, this, SLOT(slotShowCelestialSphere()), actionCollection(), "showCelestialSphere");
     showCelestialSphere->setChecked(rFlags & Renderer::ShowCelestialSphere);
 
-    KToggleAction* showNightMaps = new KToggleAction(i18n("Show Night Side Lights"), 0, this, SLOT(slotShowNightMaps()), actionCollection(), "showNightMaps");
+    KToggleAction* showNightMaps = new KToggleAction(i18n("Show Night Side Lights"), CTRL + Key_L, this, SLOT(slotShowNightMaps()), actionCollection(), "showNightMaps");
     showNightMaps->setChecked(rFlags & Renderer::ShowNightMaps);
 
-    KToggleAction* showAtmospheres = new KToggleAction(i18n("Show Atmospheres"), 0, this, SLOT(slotShowAtmospheres()), actionCollection(), "showAtmospheres");
+    KToggleAction* showAtmospheres = new KToggleAction(i18n("Show Atmospheres"), CTRL + Key_A, this, SLOT(slotShowAtmospheres()), actionCollection(), "showAtmospheres");
     showAtmospheres->setChecked(rFlags & Renderer::ShowAtmospheres);
 
-    KToggleAction* showSmoothLines = new KToggleAction(i18n("Show Smooth Orbit Lines"), 0, this, SLOT(slotShowSmoothLines()), actionCollection(), "showSmoothLines");
+    KToggleAction* showSmoothLines = new KToggleAction(i18n("Show Smooth Orbit Lines"), CTRL + Key_X, this, SLOT(slotShowSmoothLines()), actionCollection(), "showSmoothLines");
     showSmoothLines->setChecked(rFlags & Renderer::ShowSmoothLines);
 
-    KToggleAction* showEclipseShadows = new KToggleAction(i18n("Show Eclipse Shadows"), 0, this, SLOT(slotShowEclipseShadows()), actionCollection(), "showEclipseShadows");
+    KToggleAction* showEclipseShadows = new KToggleAction(i18n("Show Eclipse Shadows"), CTRL + Key_E, this, SLOT(slotShowEclipseShadows()), actionCollection(), "showEclipseShadows");
     showEclipseShadows->setChecked(rFlags & Renderer::ShowEclipseShadows);
 
-    KToggleAction* showStarsAsPoints = new KToggleAction(i18n("Show Stars as Points"), 0, this, SLOT(slotShowStarsAsPoints()), actionCollection(), "showStarsAsPoints");
+    KToggleAction* showStarsAsPoints = new KToggleAction(i18n("Show Stars as Points"), CTRL + Key_S, this, SLOT(slotShowStarsAsPoints()), actionCollection(), "showStarsAsPoints");
     showStarsAsPoints->setChecked(rFlags & Renderer::ShowStarsAsPoints);
 
     KToggleAction* showRingShadows = new KToggleAction(i18n("Show Ring Shadows"), 0, this, SLOT(slotShowRingShadows()), actionCollection(), "showRingShadows");
     showRingShadows->setChecked(rFlags & Renderer::ShowRingShadows);
 
-    KToggleAction* showBoundaries = new KToggleAction(i18n("Show Boundaries"), 0, this, SLOT(slotShowBoundaries()), actionCollection(), "showBoundaries");
+    KToggleAction* showBoundaries = new KToggleAction(i18n("Show Boundaries"), CTRL + Key_B, this, SLOT(slotShowBoundaries()), actionCollection(), "showBoundaries");
     showBoundaries->setChecked(rFlags & Renderer::ShowBoundaries);
 
-    KToggleAction* showAutoMag = new KToggleAction(i18n("Auto Magnitudes"), 0, this, SLOT(slotShowAutoMag()), actionCollection(), "showAutoMag");
+    KToggleAction* showAutoMag = new KToggleAction(i18n("Auto Magnitudes"), CTRL + Key_Y, this, SLOT(slotShowAutoMag()), actionCollection(), "showAutoMag");
     showBoundaries->setChecked(rFlags & Renderer::ShowAutoMag);
 
-    KToggleAction* showCometTails = new KToggleAction(i18n("Show Comet Tails"), 0, this, SLOT(slotShowCometTails()), actionCollection(), "showCometTails");
+    KToggleAction* showCometTails = new KToggleAction(i18n("Show Comet Tails"), CTRL + Key_T, this, SLOT(slotShowCometTails()), actionCollection(), "showCometTails");
     showCometTails->setChecked(rFlags & Renderer::ShowCometTails);
 
     KToggleAction* showStarLabels = new KToggleAction(i18n("Show Star Labels"), 0, this, SLOT(slotShowStarLabels()), actionCollection(), "showStarLabels");
@@ -365,6 +366,8 @@ void KdeApp::initActions()
 
     KToggleAction* displayLocalTime = new KToggleAction(i18n("Display Local Time"), 0, this, SLOT(slotDisplayLocalTime()), actionCollection(), "displayLocalTime");
     displayLocalTime->setChecked(isLocal);
+
+    KToggleAction* wireframeMode = new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
 
     new KToggleAction(i18n("Enable Vertex Shader"), 0, this, SLOT(slotVertexShader()), actionCollection(), "vertexShader");
     new KToggleAction(i18n("Enable Pixel Shader"), 0, this, SLOT(slotPixelShader()), actionCollection(), "pixelShader");
@@ -768,6 +771,12 @@ void KdeApp::slotDisplayLocalTime() {
         appCore->setTimeZoneBias(-timezone+3600*daylight);
         appCore->setTimeZoneName(tzname[daylight?0:1]);
     }
+}
+
+void KdeApp::slotWireframeMode() {
+	static bool mode = true;
+	mode = !mode;
+	renderer->setRenderMode(mode ? GL_LINE : GL_FILL);
 }
 
 void KdeApp::slotVertexShader() {
