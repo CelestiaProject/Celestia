@@ -85,8 +85,14 @@ static Texture* starTex = NULL;
 static Texture* glareTex = NULL;
 static Texture* shadowTex = NULL;
 
+// Shadow textures are scaled down slightly to leave some extra blank pixels
+// near the border.  This keeps axis aligned streaks from appearing on hardware
+// that doesn't support clamp to border color.
+static const float ShadowTextureScale = 15.0f / 16.0f;
+
 static Texture* eclipseShadowTextures[4];
 static Texture* shadowMaskTexture = NULL;
+static Texture* penumbraFunctionTexture = NULL;
 
 static ResourceHandle starTexB = InvalidResource;
 static ResourceHandle starTexA = InvalidResource;
@@ -206,6 +212,21 @@ static void ShadowTextureEval(float u, float v, float w,
     pixel[0] = pixVal;
     pixel[1] = pixVal;
     pixel[2] = pixVal;
+}
+
+
+//! Lookup function for eclipse penumbras--the input is the amount of overlap
+//  between the occluder and sun disc, and the output is the fraction of
+//  full brightness.
+static void PenumbraFunctionEval(float u, float v, float w,
+                                 unsigned char *pixel)
+{
+    u = (u + 1.0f) * 0.5f;
+
+    // Using the cube root produces a good visual result
+    unsigned char pixVal = (unsigned char) (pow(u, 0.33) * 255.99);
+
+    pixel[0] = pixVal;
 }
 
 
@@ -387,9 +408,15 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
         // Create the shadow mask texture
         {
             ShadowMaskTextureFunction func;
-            shadowMaskTexture = CreateProceduralTexture(128, 1, GL_RGBA, func);
+            shadowMaskTexture = CreateProceduralTexture(128, 2, GL_RGBA, func);
             //shadowMaskTexture->bindName();
         }
+
+        // Create a function lookup table in a texture for use with
+        // fragment program eclipse shadows.
+        penumbraFunctionTexture = CreateProceduralTexture(512, 1, GL_LUMINANCE,
+                                                          PenumbraFunctionEval,
+                                                          Texture::EdgeClamp);
 
         starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg", 0));
         starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg", 0));
@@ -1012,13 +1039,21 @@ void Renderer::render(const Observer& observer,
 
     // See if we want to use AutoMag.
     if ((renderFlags & ShowAutoMag) != 0)
+    {
         autoMag(faintestMag);
+    }
     else 
     {
         faintestMag = faintestMagNight;
         saturationMag = saturationMagNight;
     }
-    faintestPlanetMag = faintestMag + (2.5f * (float)log10((double)square(45.0f / fov)));
+
+    // Automatic FOV-based adjustment of limiting magnitude for solar system
+    // objects.  Now that we have the automag feature, this hack should no
+    // longer be required.
+    // faintestPlanetMag = faintestMag + (2.5f * (float) log10((double) square(45.0f / fov)));
+    faintestPlanetMag = faintestMag;
+
     if ((sun != NULL) && ((renderFlags & ShowPlanets) != 0))
     {
         renderPlanetarySystem(*sun,
@@ -2429,6 +2464,14 @@ static void renderModelDefault(Model* model,
         rc.lock();
 
     model->render(rc);
+
+    // Reset the material
+    float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float zero = 0.0f;
+    glColor4fv(black);
+    glMaterialfv(GL_FRONT, GL_EMISSION, black);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+    glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
 }
 
 
@@ -2948,6 +2991,7 @@ static void renderShadowedModelVertexShader(const RenderInfo& ri,
 static void renderRings(RingSystem& rings,
                         RenderInfo& ri,
                         float planetRadius,
+                        float planetOblateness,
                         unsigned int textureResolution,
                         bool renderShadow,
                         const GLContext& context)
@@ -2991,7 +3035,7 @@ static void renderRings(RingSystem& rings,
 
     // If we have multi-texture support, we'll use the second texture unit
     // to render the shadow of the planet on the rings.  This is a bit of
-    // a hack, and assumes that the planet is nearly spherical in shape,
+    // a hack, and assumes that the planet is ellipsoidal in shape,
     // and only works for a planet illuminated by a single sun where the
     // distance to the sun is very large relative to its diameter.
     if (renderShadow)
@@ -3009,13 +3053,44 @@ static void renderRings(RingSystem& rings,
         // planet would ever orbit underneath its sun (an orbital
         // inclination of 90 degrees), but this should be made
         // more robust anyway.
-        float scale = 1.0f;
         Vec3f axis = Vec3f(0, 1, 0) ^ ri.sunDir_obj;
-        float angle = (float) acos(Vec3f(0, 1, 0) * ri.sunDir_obj);
+        float cosAngle = Vec3f(0.0f, 1.0f, 0.0f) * ri.sunDir_obj;
+        float angle = (float) acos(cosAngle);
         axis.normalize();
-        Mat4f mat = Mat4f::rotation(axis, -angle);
-        Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-        Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+        float sScale = 1.0f;
+        float tScale = 1.0f;
+        if (fproc == NULL)
+        {
+            // When fragment programs aren't used, we render shadows with circular
+            // textures.  We scale up the texture slightly to account for the
+            // padding pixels near the texture borders.
+            sScale *= ShadowTextureScale;
+            tScale *= ShadowTextureScale;
+        }
+
+        if (planetOblateness != 0.0f)
+        {
+            // For oblate planets, the size of the shadow volume will vary based
+            // on the light direction.
+
+            // A vertical slice of the planet is an ellipse
+            float a = 1.0f;                          // semimajor axis
+            float b = a * (1.0f - planetOblateness); // semiminor axis
+            float ecc2 = 1.0f - (b * b) / (a * a);   // square of eccentricity
+
+            // Calculate the radius of the ellipse at the incident angle of the
+            // light on the ring plane + 90 degrees.
+            float r = a * (float) sqrt((1.0f - ecc2) /
+                                       (1.0f - ecc2 * square(cosAngle)));
+            
+            tScale *= a / r;
+        }
+
+        // The s axis is perpendicular to the shadow axis in the plane of the
+        // of the rings, and the t axis completes the orthonormal basis.
+        Vec3f sAxis = axis * 0.5f;
+        Vec3f tAxis = (axis ^ ri.sunDir_obj) * 0.5f * tScale;
 
         sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
         tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
@@ -3279,6 +3354,171 @@ renderEclipseShadows(Model* model,
 }
 
 
+static void
+renderEclipseShadows_Shaders(Model* model,
+                             vector<Renderer::EclipseShadow>& eclipseShadows,
+                             RenderInfo& ri,
+                             float planetRadius,
+                             Mat4f& planetMat,
+                             Frustum& viewFrustum,
+                             const GLContext& context)
+{
+    // Eclipse shadows on mesh objects aren't working yet.
+    if (model != NULL)
+        return;
+
+    glEnable(GL_TEXTURE_2D);
+    penumbraFunctionTexture->bind();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+
+    float sPlanes[4][4];
+    float tPlanes[4][4];
+    float shadowParams[4][4];
+
+    int n = 0;
+    for (vector<Renderer::EclipseShadow>::iterator iter = eclipseShadows.begin();
+         iter != eclipseShadows.end() && n < 4; iter++, n++)
+    {
+        Renderer::EclipseShadow shadow = *iter;
+
+        float R2 = 0.25f;
+        float umbra = shadow.umbraRadius / shadow.penumbraRadius;
+        umbra = umbra * umbra;
+        if (umbra < 0.0001f)
+            umbra = 0.0001f;
+        else if (umbra > 0.99f)
+            umbra = 0.99f;
+
+        float umbraRadius = R2 * umbra;
+        float penumbraRadius = R2;
+        float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
+        float shadowScale = -shadowBias / umbraRadius;
+
+        shadowParams[n][0] = shadowScale;
+        shadowParams[n][1] = shadowBias;
+        shadowParams[n][2] = 0.0f;
+        shadowParams[n][3] = 0.0f;
+
+        // Compute the transformation to use for generating texture
+        // coordinates from the object vertices.
+        Point3f origin = shadow.origin * planetMat;
+        Vec3f dir = shadow.direction * planetMat;
+        float scale = planetRadius / shadow.penumbraRadius;
+        Vec3f axis = Vec3f(0, 1, 0) ^ dir;
+        float angle = (float) acos(Vec3f(0, 1, 0) * dir);
+        axis.normalize();
+        Mat4f mat = Mat4f::rotation(axis, -angle);
+        Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+        Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+        sPlanes[n][0] = sAxis.x;
+        sPlanes[n][1] = sAxis.y;
+        sPlanes[n][2] = sAxis.z;
+        sPlanes[n][3] = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
+        tPlanes[n][0] = tAxis.x;
+        tPlanes[n][1] = tAxis.y;
+        tPlanes[n][2] = tAxis.z;
+        tPlanes[n][3] = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
+    }
+
+
+    VertexProcessor* vproc = context.getVertexProcessor();
+    FragmentProcessor* fproc = context.getFragmentProcessor();
+
+    vproc->enable();
+    vproc->use(vp::multiShadow);
+
+    fproc->enable();
+    if (n == 1)
+        fproc->use(fp::eclipseShadow1);
+    else
+        fproc->use(fp::eclipseShadow2);
+
+    fproc->parameter(fp::ShadowParams0, shadowParams[0]);
+    vproc->parameter(vp::TexGen_S, sPlanes[0]);
+    vproc->parameter(vp::TexGen_T, tPlanes[0]);
+    if (n >= 2)
+    {
+        fproc->parameter(fp::ShadowParams1, shadowParams[1]);
+        vproc->parameter(vp::TexGen_S2, sPlanes[1]);
+        vproc->parameter(vp::TexGen_T2, tPlanes[1]);
+    }
+    if (n >= 3)
+    {
+        //fproc->parameter(fp::ShadowParams2, shadowParams[2]);
+        vproc->parameter(vp::TexGen_S3, sPlanes[2]);
+        vproc->parameter(vp::TexGen_T3, tPlanes[2]);
+    }
+    if (n >= 4)
+    {
+        //fproc->parameter(fp::ShadowParams3, shadowParams[3]);
+        vproc->parameter(vp::TexGen_S4, sPlanes[3]);
+        vproc->parameter(vp::TexGen_T4, tPlanes[3]);
+    }
+
+    //vproc->parameter(vp::SunDirection, lightDir);
+
+    lodSphere->render(context,
+                      LODSphereMesh::Normals | LODSphereMesh::Multipass,
+                      viewFrustum,
+                      ri.pixWidth, NULL);
+
+    vproc->disable();
+    
+#if 0
+        float R2 = 0.25f;
+        float umbra = shadow.umbraRadius / shadow.penumbraRadius;
+        umbra = umbra * umbra;
+        if (umbra < 0.0001f)
+            umbra = 0.0001f;
+        else if (umbra > 0.99f)
+            umbra = 0.99f;
+
+        float umbraRadius = R2 * umbra;
+        float penumbraRadius = R2;
+        float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
+        float shadowScale = -shadowBias / umbraRadius;
+        
+        fproc->parameter(fp::ShadowParams0,
+                         shadowScale, shadowBias, 0.0f, 0.0f);
+        fproc->parameter(fp::AmbientColor, ri.ambientColor * ri.color);
+
+        // Compute the transformation to use for generating texture
+        // coordinates from the object vertices.
+        Point3f origin = shadow.origin * planetMat;
+        Vec3f dir = shadow.direction * planetMat;
+        float scale = planetRadius / shadow.penumbraRadius;
+        Vec3f axis = Vec3f(0, 1, 0) ^ dir;
+        float angle = (float) acos(Vec3f(0, 1, 0) * dir);
+        axis.normalize();
+        Mat4f mat = Mat4f::rotation(axis, -angle);
+        Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+        Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+        float sPlane[4] = { 0, 0, 0, 0 };
+        float tPlane[4] = { 0, 0, 0, 0 };
+        sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
+        tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
+        sPlane[3] = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
+        tPlane[3] = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
+
+        renderShadowedModelVertexShader(ri, viewFrustum,
+                                        sPlane, tPlane,
+                                        dir,
+                                        context);
+
+    }
+#endif
+
+    fproc->disable();
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glDisable(GL_BLEND);
+}
+
+
 // Approximate ring shadows using texture coordinate generation.  Vertex
 // shaders are required for the real thing.
 static void
@@ -3405,8 +3645,10 @@ renderRingShadowsVS(Model* model,
     // ring plane.  There's some justification for this--the larger the angle
     // between the sun and the ring plane (normal), the more ring material
     // there is to travel through.
-    float alpha = (1.0f - abs(ri.sunDir_obj.y)) * 0.5f;
-    //float alpha = 1.0f;
+    //float alpha = (1.0f - abs(ri.sunDir_obj.y)) * 1.0f;
+    // ...but, images from Cassini are showing very dark ring shadows, so we'll
+    // go with that.
+    float alpha = 1.0f;
 
     VertexProcessor* vproc = context.getVertexProcessor();
     assert(vproc != NULL);
@@ -3721,7 +3963,7 @@ void Renderer::renderObject(Point3f pos,
 
     if (obj.rings != NULL && distance <= obj.rings->innerRadius)
     {
-        renderRings(*obj.rings, ri, radius,
+        renderRings(*obj.rings, ri, radius, obj.oblateness,
                     textureResolution,
                     context->getMaxTextures() > 1 &&
                     (renderFlags & ShowRingShadows) != 0 && lit,
@@ -3866,11 +4108,26 @@ void Renderer::renderObject(Point3f pos,
     if (obj.eclipseShadows != NULL &&
         (obj.surface->appearanceFlags & Surface::Emissive) == 0)
     {
-        renderEclipseShadows(model,
-                             *obj.eclipseShadows,
-                             ri,
-                             radius, planetMat, viewFrustum,
-                             *context);
+#if 0
+        // renderEclipseShadows_Shaders() still needs some more work.
+        if (context->getVertexProcessor() != NULL &&
+            context->getFragmentProcessor() != NULL)
+        {
+            renderEclipseShadows_Shaders(model,
+                                         *obj.eclipseShadows,
+                                         ri,
+                                         radius, planetMat, viewFrustum,
+                                         *context);
+        }
+        else
+#endif
+        {
+            renderEclipseShadows(model,
+                                 *obj.eclipseShadows,
+                                 ri,
+                                 radius, planetMat, viewFrustum,
+                                 *context);
+        }
     }
 
     if (obj.rings != NULL &&
@@ -3914,7 +4171,7 @@ void Renderer::renderObject(Point3f pos,
 
     if (obj.rings != NULL && distance > obj.rings->innerRadius)
     {
-        renderRings(*obj.rings, ri, radius,
+        renderRings(*obj.rings, ri, radius, obj.oblateness,
                     textureResolution,
                     (context->hasMultitexture() &&
                      (renderFlags & ShowRingShadows) != 0 && lit),
