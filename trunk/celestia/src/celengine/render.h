@@ -45,6 +45,8 @@ class Renderer
 
     float getFieldOfView();
     void setFieldOfView(float);
+    void setFaintestAM45deg(float);
+    float getFaintestAM45deg();
 
     void setRenderMode(int);
     void autoMag(float& faintestMag);
@@ -274,7 +276,7 @@ class Renderer
     float fov;
     float corrFac;
     float pixelSize;
-
+    float faintestAutoMag45deg;
     TextureFont* font;
 
     int renderMode;
