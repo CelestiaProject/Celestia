@@ -97,7 +97,15 @@ SOURCE=.\debug.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\directory.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\filetype.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\formatnum.cpp
 # End Source File
 # Begin Source File
 
@@ -146,6 +154,10 @@ SOURCE=.\directory.h
 # Begin Source File
 
 SOURCE=.\filetype.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\formatnum.h
 # End Source File
 # Begin Source File
 
