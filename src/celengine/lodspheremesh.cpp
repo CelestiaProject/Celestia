@@ -202,7 +202,7 @@ void LODSphereMesh::render(unsigned int attributes,
     {
         textures[i] = tex[i];
         subtextures[i] = 0;
-        EXTglActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
         glEnable(GL_TEXTURE_2D);
     }
 
@@ -248,7 +248,7 @@ void LODSphereMesh::render(unsigned int attributes,
 
     for (i = 0; i < nTextures; i++)
     {
-        EXTglClientActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glx::glClientActiveTextureARB(GL_TEXTURE0_ARB + i);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_FLOAT, 0, texCoords[i]);
     }
@@ -261,7 +261,7 @@ void LODSphereMesh::render(unsigned int attributes,
     if (tangents != NULL && ((attributes & Mesh::Tangents) != 0))
     {
         glEnableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
-        EXTglVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
+        glx::glVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
     }
 
     if (split == 1)
@@ -331,12 +331,12 @@ void LODSphereMesh::render(unsigned int attributes,
 
     for (i = 0; i < nTextures; i++)
     {
-        EXTglClientActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glx::glClientActiveTextureARB(GL_TEXTURE0_ARB + i);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
-    EXTglClientActiveTextureARB(GL_TEXTURE0_ARB);
+    glx::glClientActiveTextureARB(GL_TEXTURE0_ARB);
 
-    EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
 #if SHOW_FRUSTUM
     // Debugging code for visualizing the frustum.
@@ -516,7 +516,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             // texture state changes.
             if (tn != subtextures[tex])
             {
-                EXTglActiveTextureARB(GL_TEXTURE0_ARB + tex);
+                glx::glActiveTextureARB(GL_TEXTURE0_ARB + tex);
                 glBindTexture(GL_TEXTURE_2D, tn);
                 subtextures[tex] = tn;
             }

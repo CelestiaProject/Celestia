@@ -357,13 +357,13 @@ bool Renderer::init(int winWidth, int winHeight)
 
         // Initialize GL extensions
         if (ExtensionSupported("GL_ARB_multitexture"))
-            InitExtMultiTexture();
+            InitExtension("GL_ARB_multitexture");
         if (ExtensionSupported("GL_NV_register_combiners"))
-            InitExtRegisterCombiners();
+            InitExtension("GL_NV_register_combiners");
         if (ExtensionSupported("GL_NV_vertex_program"))
-            InitExtVertexProgram();
+            InitExtension("GL_NV_vertex_program");
         if (ExtensionSupported("GL_EXT_blend_minmax"))
-            InitExtBlendMinmax();
+            InitExtension("GL_EXT_blend_minmax");
         if (ExtensionSupported("GL_EXT_texture_cube_map"))
         {
             // normalizationTex = CreateNormalizationCubeMap(64);
@@ -414,7 +414,7 @@ bool Renderer::init(int winWidth, int winHeight)
 
     // Get GL extension information
     if (ExtensionSupported("GL_ARB_multitexture") &&
-        EXTglActiveTextureARB != NULL)
+        glx::glActiveTextureARB != NULL)
     {
         DPRINTF(1, "Renderer: multi-texture supported.\n");
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
@@ -430,7 +430,7 @@ bool Renderer::init(int winWidth, int winHeight)
         DPRINTF(1, "Renderer: nVidia register combiners supported.\n");
         useRegisterCombiners = true;
     }
-    if (ExtensionSupported("GL_NV_vertex_program") && EXTglGenProgramsNV)
+    if (ExtensionSupported("GL_NV_vertex_program") && glx::glGenProgramsNV)
     {
         DPRINTF(1, "Renderer: nVidia vertex programs supported.\n");
         useVertexPrograms = vp::init();
@@ -474,6 +474,22 @@ bool Renderer::init(int winWidth, int winHeight)
             // EXT_rescale_normal.  Lighting will be messed up unless
             // we set the useRescaleNormal flag.
             useRescaleNormal = true;
+        }
+    }
+
+    // More ugly hacks; according to Matt Craighead at NVIDIA, an NVIDIA
+    // OpenGL driver that reports version 1.3.1 or greater will have working
+    // fog in emulated vertex programs.
+    char* glVersion = (char*) glGetString(GL_VERSION);
+    if (glVersion != NULL)
+    {
+        int major = 0, minor = 0, extra = 0;
+        int nScanned = sscanf(glVersion, "%d.%d.%d", &major, &minor, &extra);
+
+        if (nScanned >= 2)
+        {
+            if (major > 1 || minor > 3 || extra >= 1)
+                buggyVertexProgramEmulation = false;
         }
     }
 
@@ -1561,7 +1577,7 @@ static void renderBumpMappedMesh(Texture& baseTexture,
     // isn't as general as transforming the light direction by an
     // orthonormal basis for each mesh vertex, but it works well enough
     // for spheres illuminated by directional light sources.
-    EXTglActiveTextureARB(GL_TEXTURE1_ARB);
+    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
 
     // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
     // mode is part of the cube map extension.
@@ -1577,13 +1593,13 @@ static void renderBumpMappedMesh(Texture& baseTexture,
     glMatrixMode(GL_TEXTURE);
     glRotate(lightOrientation * ~orientation);
     glMatrixMode(GL_MODELVIEW);
-    EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
                       &bumpTexture);
 
     // Reset the second texture unit
-    EXTglActiveTextureARB(GL_TEXTURE1_ARB);
+    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -1648,7 +1664,7 @@ static void renderSmoothMesh(Texture& baseTexture,
     // isn't as general as transforming the light direction by an
     // orthonormal basis for each mesh vertex, but it works well enough
     // for spheres illuminated by directional light sources.
-    EXTglActiveTextureARB(GL_TEXTURE1_ARB);
+    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
 
     // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
     // mode is part of the cube map extension.
@@ -1664,14 +1680,14 @@ static void renderSmoothMesh(Texture& baseTexture,
     glMatrixMode(GL_TEXTURE);
     glRotate(lightOrientation * ~orientation);
     glMatrixMode(GL_MODELVIEW);
-    EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
     textures[0] = &baseTexture;
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
                       textures, 1);
 
     // Reset the second texture unit
-    EXTglActiveTextureARB(GL_TEXTURE1_ARB);
+    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -2179,7 +2195,7 @@ static void renderRings(RingSystem& rings,
     // distance to the sun is very large relative to its diameter.
     if (renderShadow)
     {
-        EXTglActiveTextureARB(GL_TEXTURE1_ARB);
+        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
         glEnable(GL_TEXTURE_2D);
         shadowTex->bind();
 
@@ -2218,13 +2234,13 @@ static void renderRings(RingSystem& rings,
             glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
         }
 
-        EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     }
     else
     {
-        EXTglActiveTextureARB(GL_TEXTURE1_ARB);
+        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
         glDisable(GL_TEXTURE_2D);
-        EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     }
 
     glEnable(GL_BLEND);
@@ -2277,11 +2293,11 @@ static void renderRings(RingSystem& rings,
     // Disable the second texture unit if it was used
     if (renderShadow)
     {
-        EXTglActiveTextureARB(GL_TEXTURE1_ARB);
+        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
-        EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     }
 
     // Render the unshadowed side
@@ -3422,7 +3438,7 @@ void Renderer::renderCometTail(const Body& body,
     glPushMatrix();
     glTranslate(pos);
 
-    // EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+    // glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
