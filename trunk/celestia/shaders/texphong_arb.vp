@@ -1,0 +1,68 @@
+!!ARBvp1.0
+
+# Set up for phong shading fragment program.
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iNormal       = vertex.normal;
+ATTRIB iTex0         = vertex.texcoord[0];
+ATTRIB iTex1         = vertex.texcoord[1];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir      = program.env[0];
+PARAM  eyePos        = program.env[1];
+PARAM  diffuse       = program.env[2];
+PARAM  specExp       = program.env[4];
+PARAM  specular      = program.env[3];
+PARAM  ambient       = program.env[5];
+PARAM  zero          = 0;
+PARAM  one           = 1;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oSpecColor    = result.color.secondary;
+OUTPUT oTex0         = result.texcoord[0];
+OUTPUT oTex1         = result.texcoord[1];
+OUTPUT oNormal       = result.texcoord[2];
+OUTPUT oHalfAngle    = result.texcoord[3];
+OUTPUT oFog          = result.fogcoord;
+
+TEMP   diffuseFactor;
+TEMP   eyeVec;
+TEMP   halfAngle;
+TEMP   dotProds;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Compute the diffuse light component
+DP3   diffuseFactor, iNormal, lightDir;
+# Clamp the diffuse component to zero
+MAX   diffuseFactor, diffuseFactor, zero;
+
+# Get the vector from the eye to the vertex
+SUB   eyeVec, eyePos, iPos;
+
+# Normalize it
+DP3   eyeVec.w, eyeVec, eyeVec;
+RSQ   eyeVec.w, eyeVec.w;
+MUL   eyeVec, eyeVec, eyeVec.w;
+
+# Haze
+DP3   diffuseFactor.y, iNormal, eyeVec;
+SUB   diffuseFactor.y, one, diffuseFactor.y;
+MUL   oFog.x, diffuseFactor.x, diffuseFactor.y;
+
+# Compute the half angle vector for specular lighting
+ADD   halfAngle, eyeVec, lightDir;
+DP3   halfAngle.w, halfAngle, halfAngle;
+RSQ   halfAngle.w, halfAngle.w;
+MUL   halfAngle, halfAngle, halfAngle.w;
+
+# Output the texture
+MOV   oTex0, iTex0;
+MOV   oTex1, iTex1;
+MOV   oNormal, iNormal;
+MOV   oHalfAngle, halfAngle;
+
+END
