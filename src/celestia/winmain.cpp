@@ -3185,11 +3185,18 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         //Instruct menu class to enumerate menu structure
         odAppMenu.Init(hWnd, menuBar);
 
-        //Associate a menu item with a bitmap resource
+        //Associate some menu items with bitmap resources
         odAppMenu.SetItemImage(appInstance, ID_FILE_OPENSCRIPT, IDB_SCRIPT);
         odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREIMAGE, IDB_CAMERA);
         odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREMOVIE, IDB_CAMCORDER);
+        odAppMenu.SetItemImage(appInstance, ID_FILE_EXIT, IDB_EXIT);
         odAppMenu.SetItemImage(appInstance, ID_TIME_SETTIME, IDB_CLOCK);
+        odAppMenu.SetItemImage(appInstance, ID_TIME_FREEZE, IDB_STOP);
+        odAppMenu.SetItemImage(appInstance, ID_RENDER_VIEWOPTIONS, IDB_SUNGLASSES);
+        odAppMenu.SetItemImage(appInstance, ID_RENDER_LOCATIONS, IDB_GLOBE);
+        odAppMenu.SetItemImage(appInstance, ID_HELP_RUNDEMO, IDB_SCRIPT);
+        odAppMenu.SetItemImage(appInstance, ID_HELP_CONTROLS, IDB_CONFIG);
+        odAppMenu.SetItemImage(appInstance, ID_HELP_ABOUT, IDB_ABOUT);
 
         DragAcceptFiles(hWnd, TRUE);
         break;
