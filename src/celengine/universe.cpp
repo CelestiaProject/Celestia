@@ -90,6 +90,23 @@ SolarSystem* Universe::getSolarSystem(const Star* star) const
 }
 
 
+// Create a new solar system for a star and return a pointer to it; if it
+// already has a solar system, just return a pointer to the existing one.
+SolarSystem* Universe::createSolarSystem(const Star* star) const
+{
+    SolarSystem* solarSystem = getSolarSystem(star);
+    if (solarSystem != NULL)
+        return solarSystem;
+
+    solarSystem = new SolarSystem(star);
+    solarSystemCatalog->insert(SolarSystemCatalog::
+                               value_type(star->getCatalogNumber(),
+                                          solarSystem));
+
+    return solarSystem;
+}
+
+
 class ClosestStarFinder : public StarHandler
 {
 public:
