@@ -1031,6 +1031,7 @@ void CelestiaCore::charEntered(char c)
 
 void CelestiaCore::charEntered(const char *c_p)
 {
+    PlanetarySystem* system;
     Observer* observer = sim->getActiveObserver();
 
     char c = *c_p;
@@ -1162,7 +1163,19 @@ void CelestiaCore::charEntered(const char *c_p)
         break;
 
     case '\b':
-        sim->setSelection(Selection());
+        switch(sim->getSelection().getType()) {
+        case Selection::Type_Body:
+            system = sim->getSelection().body()->getSystem();
+            if (system->getPrimaryBody() != NULL) sim->setSelection(Selection(system->getPrimaryBody()));
+            else sim->setSelection(Selection(system->getStar()));
+            break;
+        case Selection::Type_Location:
+            sim->setSelection(Selection(sim->getSelection().location()->getParentBody()));
+            break;
+        default:
+            sim->setSelection(Selection());
+            break;
+        }
         break;
 
     case '\014': // Ctrl+L
