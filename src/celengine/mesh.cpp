@@ -9,42 +9,10 @@
 
 #include "mesh.h"
 #include "rendcontext.h"
-#include "gl.h"
-#include "glext.h"
-#include "vecgl.h"
 #include <cassert>
 
 using namespace std;
 
-
-
-static GLenum GLPrimitiveModes[Mesh::PrimitiveTypeMax] = 
-{
-    GL_TRIANGLES,
-    GL_TRIANGLE_STRIP,
-    GL_TRIANGLE_FAN,
-    GL_LINES,
-    GL_LINE_STRIP,
-    GL_POINTS
-};
-
-static GLenum GLComponentTypes[Mesh::FormatMax] = 
-{
-     GL_FLOAT,          // Float1
-     GL_FLOAT,          // Float2
-     GL_FLOAT,          // Float3
-     GL_FLOAT,          // Float4,
-     GL_UNSIGNED_BYTE,  // UByte4
-};
-
-static int GLComponentCounts[Mesh::FormatMax] =
-{
-     1,  // Float1
-     2,  // Float2
-     3,  // Float3
-     4,  // Float4,
-     4,  // UByte4
-};
 
 static size_t VertexAttributeFormatSizes[Mesh::FormatMax] = 
 {
@@ -68,13 +36,80 @@ Mesh::Material::Material() :
 }
 
 
+Mesh::VertexDescription::VertexDescription(uint32 _stride,
+                                           uint32 _nAttributes,
+                                           VertexAttribute* _attributes) :
+            stride(_stride),
+            nAttributes(_nAttributes),
+            attributes(NULL)
+{
+    if (nAttributes != 0)
+    {
+        attributes = new VertexAttribute[nAttributes];
+
+        uint32 i;
+        for (i = 0; i < nAttributes; i++)
+            attributes[i] = _attributes[i];
+        for (i = 0; i < nAttributes; i++)
+            semanticMap[attributes[i].semantic] = attributes[i];
+    }
+}
+
+
+Mesh::VertexDescription::VertexDescription(const VertexDescription& desc) :
+    stride(desc.stride),
+    nAttributes(desc.nAttributes),
+    attributes(NULL)
+{
+    if (nAttributes != 0)
+    {
+        attributes = new VertexAttribute[nAttributes];
+
+        uint32 i;
+        for (i = 0; i < nAttributes; i++)
+            attributes[i] = desc.attributes[i];
+        for (i = 0; i < nAttributes; i++)
+            semanticMap[attributes[i].semantic] = attributes[i];
+    }
+}
+
+
+// TODO: This should be called in the constructor; we should start using
+// exceptions in Celestia.
+bool
+Mesh::VertexDescription::validate() const
+{
+    for (uint32 i = 0; i < nAttributes; i++)
+    {
+        VertexAttribute& attr = attributes[i];
+
+        // Validate the attribute
+        if (attr.semantic >= SemanticMax || attr.format >= FormatMax)
+            return false;
+        if (attr.offset % 4 != 0)
+            return false;
+        if (attr.offset + VertexAttributeFormatSizes[attr.format] > stride)
+            return false;
+        // TODO: check for repetition of attributes
+        // if (vertexAttributeMap[attr->semantic].format != InvalidFormat)
+        //   return false;
+    }
+
+    return true;
+}
+
+
+Mesh::VertexDescription::~VertexDescription()
+{
+    delete[] attributes;
+}
+
+
 Mesh::Mesh() :
     vertexDesc(0, 0, NULL),
     nVertices(0),
     vertices(NULL)
 {
-    for (int i = 0; i < (int) SemanticMax; i++)
-        vertexAttributeMap[i].format = InvalidFormat;
 }
 
 
@@ -102,50 +137,10 @@ Mesh::setVertices(uint32 _nVertices, void* vertexData)
 bool
 Mesh::setVertexDescription(const VertexDescription& desc)
 {
-    uint32 i;
-
-    if (desc.stride == 0 || desc.stride % 4 != 0)
+    if (!desc.validate())
         return false;
 
-    // Update the vertex description
-    if (vertexDesc.attributes != NULL)
-        delete[] vertexDesc.attributes;
-    vertexDesc.attributes = new VertexAttribute[desc.nAttributes];
-    copy(desc.attributes, desc.attributes + desc.nAttributes,
-         vertexDesc.attributes);
-    vertexDesc.nAttributes = desc.nAttributes;
-    vertexDesc.stride = desc.stride;
-
-    // Clear the existing attribute map
-    for (i = 0; i < (uint32) SemanticMax; i++)
-    {
-        vertexAttributeMap[i] = VertexAttribute(InvalidSemantic,
-                                                InvalidFormat, 0);
-    }
-
-    // Build a vertex attribute table that's indexed by semnatic; this is the
-    // desired structure for setting up GL.
-    // TODO: Modify this so that we don't have to just use predefined semantics
-    for (i = 0; i < desc.nAttributes; i++)
-    {
-        VertexAttribute* attr = &desc.attributes[i];
-
-        // Validate the attribute
-        if (attr->semantic >= SemanticMax || attr->format >= FormatMax)
-            return false;
-        if (attr->offset % 4 != 0)
-            return false;
-        if (attr->offset + VertexAttributeFormatSizes[attr->format] > vertexDesc.stride)
-            return false;
-        if (vertexAttributeMap[attr->semantic].format != InvalidFormat)
-            return false;
-        
-        vertexAttributeMap[attr->semantic] = *attr;
-    }
-
-    // Require that we at least have position defined.
-    if (vertexAttributeMap[Position].format == InvalidFormat)
-        return false;
+    vertexDesc = desc;
 
     return true;
 }
@@ -207,13 +202,13 @@ Mesh::pick(const Ray3d& ray, double& distance) const
 
     // Pick will automatically fail without vertex positions--no reasonable
     // mesh should lack these.
-    if (vertexAttributeMap[Position].semantic != Position ||
-        vertexAttributeMap[Position].format != Float3)
+    if (vertexDesc.getAttribute(Position).semantic != Position ||
+        vertexDesc.getAttribute(Position).format != Float3)
     {
         return false;
     }
 
-    uint posOffset = vertexAttributeMap[Position].offset;
+    uint posOffset = vertexDesc.getAttribute(Position).offset;
     char* vdata = reinterpret_cast<char*>(vertices);
 
     // Iterate over all primitive groups in the mesh
@@ -330,70 +325,11 @@ Mesh::pick(const Ray3d& ray, double& distance) const
 }
 
 
-void Mesh::render(const std::vector<const Material*>& materials,
-                  RenderContext& rc) const
+void
+Mesh::render(const std::vector<const Material*>& materials,
+             RenderContext& rc) const
 {
-    // Can't render anything unless we have positions
-    if (vertexAttributeMap[Position].format != Float3)
-        return;
-
-    // Set up the vertex arrays
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, vertexDesc.stride,
-                    reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset);
-
-    // Set up the normal array
-    switch (vertexAttributeMap[Normal].format)
-    {
-    case Float3:
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GLComponentTypes[(int) vertexAttributeMap[Normal].format],
-                        vertexDesc.stride,
-                        reinterpret_cast<char*>(vertices) + vertexAttributeMap[Normal].offset);
-        break;
-    default:
-        glDisableClientState(GL_NORMAL_ARRAY);
-        break;
-    }
-
-    // Set up the color array
-    switch (vertexAttributeMap[Color0].format)
-    {
-    case Float3:
-    case Float4:
-    case UByte4:
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(GLComponentCounts[(int) vertexAttributeMap[Color0].format],
-                       GLComponentTypes[(int) vertexAttributeMap[Color0].format],
-                       vertexDesc.stride,
-                       reinterpret_cast<char*>(vertices) + vertexAttributeMap[Color0].offset);
-        break;
-    default:
-        glDisableClientState(GL_COLOR_ARRAY);
-        break;
-    }
-
-    // Set up the texture coordinate array
-    switch (vertexAttributeMap[Texture0].format)
-    {
-    case Float1:
-    case Float2:
-    case Float3:
-    case Float4:
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(GLComponentCounts[(int) vertexAttributeMap[Texture0].format],
-                          GLComponentTypes[(int) vertexAttributeMap[Texture0].format],
-                          vertexDesc.stride,
-                          reinterpret_cast<char*>(vertices) + vertexAttributeMap[Texture0].offset);
-        break;
-    default:
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        break;
-    }
-
-    {
-        float* f = reinterpret_cast<float*>(reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset);
-    }
+    rc.setVertexArrays(vertexDesc, vertices);
 
     uint32 lastMaterial = ~0;
 
@@ -404,17 +340,11 @@ void Mesh::render(const std::vector<const Material*>& materials,
         // Set up the material
         const Material* mat = NULL;
         uint32 materialIndex = (*iter)->materialIndex;
-        if (materialIndex != lastMaterial &&
-            materialIndex < materials.size())
-        {
+        if (materialIndex != lastMaterial && materialIndex < materials.size())
             mat = materials[materialIndex];
-        }
-        rc.setMaterial(mat);
 
-        glDrawElements(GLPrimitiveModes[(int) (*iter)->prim],
-                       (*iter)->nIndices,
-                       GL_UNSIGNED_INT,
-                       (*iter)->indices);
+        rc.setMaterial(mat);
+        rc.drawGroup(**iter);
     }
 }
 
@@ -425,10 +355,10 @@ Mesh::getBoundingBox() const
     AxisAlignedBox bbox;
 
     // Return an empty box if there's no position info
-    if (vertexAttributeMap[Position].format != Float3)
+    if (vertexDesc.getAttribute(Position).format != Float3)
         return bbox;
 
-    char* vdata = reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset;
+    char* vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(Position).offset;
     
     for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
         bbox.include(Point3f(reinterpret_cast<float*>(vdata)));
@@ -440,10 +370,10 @@ Mesh::getBoundingBox() const
 void
 Mesh::transform(Vec3f translation, float scale)
 {
-    if (vertexAttributeMap[Position].format != Float3)
+    if (vertexDesc.getAttribute(Position).format != Float3)
         return;
 
-    char* vdata = reinterpret_cast<char*>(vertices) + vertexAttributeMap[Position].offset;
+    char* vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(Position).offset;
     for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
     {
         Vec3f tv = (Vec3f(reinterpret_cast<float*>(vdata)) + translation) * scale;
