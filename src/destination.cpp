@@ -32,8 +32,6 @@ DestinationList* ReadDestinationList(istream& in)
     Parser parser(&tokenizer);
     DestinationList* destinations = new DestinationList();
 
-    cout << "ReadDestinationList\n";
-
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenBeginGroup)
@@ -66,7 +64,6 @@ DestinationList* ReadDestinationList(istream& in)
         }
         else
         {
-            cout << "Reading destination: " << dest->name << '\n';
             destParams->getString("Target", dest->target);
             destParams->getString("Description", dest->description);
             destParams->getNumber("Distance", dest->distance);
