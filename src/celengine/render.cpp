@@ -2024,6 +2024,9 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     Vec3f topColor(atmosphere.upperColor.red(),
                    atmosphere.upperColor.green(),
                    atmosphere.upperColor.blue());
+    Vec3f sunsetColor(atmosphere.sunsetColor.red(),
+                      atmosphere.sunsetColor.green(),
+                      atmosphere.sunsetColor.blue());
     if (within)
     {
         Vec3f skyColor(atmosphere.skyColor.red(),
@@ -2034,7 +2037,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         else
             topColor = skyColor + (topColor - skyColor) * (ellipDist / height);
     }
-    
+
     Vec3f zenith = (skyContour[0].v + skyContour[nSlices / 2].v);
     zenith.normalize();
     zenith *= skyContour[0].centerDist * (1.0f + height * 2.0f);
@@ -2107,7 +2110,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             Vec3f color = (1.0f - hh) * botColor + hh * topColor;
             if (redness != 0.0f)
-                color = (1.0f - redness) * color + redness * Vec3f(1.0f, 0.6f, 0.5f);
+                color = (1.0f - redness) * color + redness * sunsetColor;
             Color(brightness * color.x,
                   brightness * color.y,
                   brightness * color.z,

@@ -413,6 +413,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 atmosData->getColor("Lower", atmosphere->lowerColor);
                 atmosData->getColor("Upper", atmosphere->upperColor);
                 atmosData->getColor("Sky", atmosphere->skyColor);
+                atmosData->getColor("Sunset", atmosphere->sunsetColor);
                 atmosData->getNumber("CloudHeight", atmosphere->cloudHeight);
                 atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed);
                 atmosphere->cloudSpeed = degToRad(atmosphere->cloudSpeed);
