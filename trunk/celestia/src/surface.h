@@ -27,11 +27,13 @@ class Surface
         ApplyBaseTexture     = 0x2,
         ApplyBumpMap         = 0x4,
         CompressBaseTexture  = 0x8,
+        ApplyCloudMap        = 0x10,
     };
 
     Color color;
     std::string baseTexture;
     std::string bumpTexture;
+    std::string cloudTexture;
     uint32 appearanceFlags;
     float bumpHeight;
 };
