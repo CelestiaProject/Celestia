@@ -27,12 +27,14 @@ OBJS=\
 	$(INTDIR)\command.obj \
 	$(INTDIR)\constellation.obj \
 	$(INTDIR)\customorbit.obj \
+	$(INTDIR)\dds.obj \
 	$(INTDIR)\dispmap.obj \
 	$(INTDIR)\execution.obj \
 	$(INTDIR)\galaxy.obj \
 	$(INTDIR)\glext.obj \
 	$(INTDIR)\lodspheremesh.obj \
 	$(INTDIR)\meshmanager.obj \
+	$(INTDIR)\multitexture.obj \
 	$(INTDIR)\observer.obj \
 	$(INTDIR)\octree.obj \
 	$(INTDIR)\orbit.obj \
@@ -54,11 +56,12 @@ OBJS=\
 	$(INTDIR)\univcoord.obj \
 	$(INTDIR)\universe.obj \
 	$(INTDIR)\vertexlist.obj \
-	$(INTDIR)\vertexprog.obj
+	$(INTDIR)\vertexprog.obj \
+	$(INTDIR)\vsop87.obj
 
 TARGETLIB = cel_engine.lib
 
-INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz
+INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc
 
 !IF "$(CFG)" == "Release"
 CPP=cl.exe
