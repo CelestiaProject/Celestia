@@ -21,7 +21,8 @@ class TexelFunctionObject
  public:
     TexelFunctionObject() {};
     virtual ~TexelFunctionObject() {};
-    virtual void operator ()(float, float, float, unsigned char*) = 0;
+    virtual void operator()(float u, float v, float w,
+                            unsigned char* pixel) = 0;
 };
 
 
