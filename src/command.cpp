@@ -297,3 +297,23 @@ void CommandLabels::process(ExecutionEnvironment& env)
         r->setLabelMode(r->getLabelMode() & ~clearFlags);
     }
 }
+
+
+////////////////
+// Set limiting magnitude command
+
+CommandSetVisibilityLimit::CommandSetVisibilityLimit(double mag) :
+    magnitude(mag)
+{
+}
+
+void CommandSetVisibilityLimit::process(ExecutionEnvironment& env)
+{
+    Renderer* r = env.getRenderer();
+    if (r != NULL)
+    {
+        r->setBrightnessBias(0.0f);
+        r->setBrightnessScale(1.0f / (magnitude + 1.0f));
+    }
+    env.getSimulation()->setFaintestVisible(magnitude);
+}

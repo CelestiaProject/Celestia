@@ -255,4 +255,16 @@ class CommandLabels : public InstantaneousCommand
 };
 
 
+class CommandSetVisibilityLimit : public InstantaneousCommand
+{
+ public:
+    CommandSetVisibilityLimit(double);
+    void process(ExecutionEnvironment&);
+
+ private:
+    double magnitude;
+};
+
+
+
 #endif // _COMMAND_H_

@@ -268,6 +268,12 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandLabels(setFlags, clearFlags);
     }
+    else if (commandName == "setvisibilitylimit")
+    {
+        double mag = 6.0;
+        paramList->getNumber("magnitude", mag);
+        cmd = new CommandSetVisibilityLimit(mag);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");
