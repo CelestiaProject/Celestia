@@ -132,7 +132,7 @@ float Body::getBoundingRadius() const
     if (model == InvalidResource)
         return radius;
     else
-        return radius * 1.7320508; // sqrt(3)
+        return radius * 1.7320508f; // sqrt(3)
 }
 
 
