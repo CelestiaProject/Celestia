@@ -325,7 +325,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         {
             int pickX = x - (int) (views[activeView]->x * width);
             int pickY = y - (int) (views[activeView]->y * height);
-            Vec3f pickRay = renderer->getPickRay((int) pickX, (int) pickY);
+            Vec3f pickRay = renderer->getPickRay(pickX, pickY);
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, pickTolerance);
             addToHistory();
@@ -335,7 +335,9 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == RightButton)
         {
-            Vec3f pickRay = renderer->getPickRay((int) x, (int) y);
+            int pickX = x - (int) (views[activeView]->x * width);
+            int pickY = y - (int) (views[activeView]->y * height);
+            Vec3f pickRay = renderer->getPickRay(pickX, pickY);
             Selection sel = sim->pickObject(pickRay, pickTolerance);
             if (!sel.empty())
             {
@@ -1145,7 +1147,6 @@ void CelestiaCore::start(double t)
     if (startURL != "")
         goToUrl(startURL);
 }
-
 
 void CelestiaCore::setStartURL(std::string url) 
 {
