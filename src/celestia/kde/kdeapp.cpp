@@ -881,7 +881,11 @@ void KdeApp::slotForwardActivated(int i) {
 void KdeApp::slotCelestialBrowser() {
     static CelestialBrowser *cb = new CelestialBrowser(this, appCore);
 
-    cb->show(); 
+    cb->show();
+    cb->setActiveWindow();
+    cb->setFocus();
+    cb->showNormal();
+    cb->raise();
 }
 
 void KdeApp::popupMenu(float x, float y, Selection sel) {
