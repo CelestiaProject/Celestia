@@ -1701,6 +1701,11 @@ int CelestiaCore::getHudDetail()
     return hudDetail;
 }
 
+void CelestiaCore::setHudDetail(int newHudDetail)
+{
+    hudDetail = newHudDetail;
+}
+
 
 void CelestiaCore::initMovieCapture(MovieCapture* mc)
 {
