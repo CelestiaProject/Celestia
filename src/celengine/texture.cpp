@@ -11,6 +11,7 @@
 #define PNG_SUPPORT
 
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -25,6 +26,7 @@
 #include <celutil/filetype.h>
 #include <celutil/debug.h>
 
+#define GL_GLEXT_PROTOTYPES
 #include "gl.h"
 #include "glext.h"
 #include "celestia.h"
