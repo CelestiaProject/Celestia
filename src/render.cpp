@@ -63,7 +63,6 @@ Renderer::Renderer() :
     brightnessBias(0.0f),
     perPixelLightingEnabled(false),
     console(NULL),
-    inputConsole(NULL),
     nSimultaneousTextures(1),
     useRegisterCombiners(false),
     useCubeMaps(false)
@@ -71,7 +70,6 @@ Renderer::Renderer() :
     textureManager = new TextureManager("textures");
     meshManager = new MeshManager("models");
     console = new Console(30, 100);
-    inputConsole = new Console(2, 100);
 }
 
 
@@ -243,7 +241,6 @@ bool Renderer::init(int winWidth, int winHeight)
     glEnable(GL_RESCALE_NORMAL_EXT);
 
     console->setFont(font);
-    inputConsole->setFont(font);
 
     resize(winWidth, winHeight);
 
@@ -295,11 +292,6 @@ Vec3f Renderer::getPickRay(int winX, int winY)
 Console* Renderer::getConsole() const
 {
     return console;
-}
-
-Console* Renderer::getInputConsole() const
-{
-    return inputConsole;
 }
 
 
@@ -633,13 +625,6 @@ void Renderer::render(const Observer& observer,
     glLoadIdentity();
     glTranslatef(0, windowHeight - 20 + PixelOffset, 0);
     console->render();
-    glPopMatrix();
-
-    glColor4f(0.7f, 0.7f, 1.0f, 1);
-    glPushMatrix();
-    glLoadIdentity();
-    glTranslatef(0, 50 + PixelOffset, 0);
-    inputConsole->render();
     glPopMatrix();
 
     glMatrixMode(GL_PROJECTION);
@@ -1034,7 +1019,7 @@ void Renderer::renderPlanet(const Body& body,
         // Watch out for the precision limits of floats when computing planet
         // rotation . . .
         {
-            double hours = now / 3600.0;
+            double hours = now * 24.0;
             double rotations = hours / (double) body.getRotationPeriod();
             int wholeRotations = (int) rotations;
             double remainder = rotations - wholeRotations;
