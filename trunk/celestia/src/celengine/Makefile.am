@@ -20,6 +20,7 @@ libcelengine_a_SOURCES = \
 	constellation.cpp \
 	customorbit.cpp \
 	dds.cpp \
+	deepskyobj.cpp \
 	dispmap.cpp \
 	execution.cpp \
 	galaxy.cpp \
@@ -27,6 +28,7 @@ libcelengine_a_SOURCES = \
 	lodspheremesh.cpp \
 	meshmanager.cpp \
 	multitexture.cpp \
+	nebula.cpp \
 	observer.cpp \
 	octree.cpp \
 	orbit.cpp \
