@@ -1846,7 +1846,7 @@ bool SetDCPixelFormat(HDC hDC)
 	0,0,0,0,0,0,			// Not used to select mode
 	0,0,				// Not used to select mode
 	0,0,0,0,0,			// Not used to select mode
-	16,				// Size of depth buffer
+	24,				// Size of depth buffer
 	0,				// Not used to select mode
 	0,				// Not used to select mode
 	PFD_MAIN_PLANE,			// Draw in main plane
@@ -3186,13 +3186,22 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
     while (msg.message != WM_QUIT)
     {
+        bool isVisible = !IsIconic(mainWindow);
+
         // Tick the simulation
         appCore->tick();
 
-        // If Celestia is in an inactive state, we should use GetMessage
-        // to avoid sucking CPU cycles--if time is paused, we can probably
-        // avoid constantly rendering.
-        if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+        // If Celestia is in an inactive state, use GetMessage to avoid
+        // sucking CPU cycles.  If time is paused and the camera isn't
+        // moving in any view, we can probably also avoid constantly
+        // rendering.
+        BOOL haveMessage;
+        if (isVisible)
+            haveMessage = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
+        else
+            haveMessage = GetMessage(&msg, NULL, 0U, 0U);
+
+        if (haveMessage)
         {
             bool dialogMessage = false;
 
