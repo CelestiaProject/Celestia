@@ -54,6 +54,11 @@ static LARGE_INTEGER TimeCur;	// Current time.
 static double currentTime=0.0;
 static double deltaTime=0.0;
 
+static int nFrames = 0;
+static double fps = 0.0;
+static double fpsCounterStartTime = 0.0;
+static bool showFPSCounter = false;
+
 static bool fullscreen;
 
 // Mouse motion tracking
@@ -384,7 +389,11 @@ BOOL APIENTRY FindObjectProc(HWND hDlg,
             char buf[1024];
             int len = GetDlgItemText(hDlg, IDC_FINDOBJECT_EDIT, buf, 1024);
             if (len > 0)
-                sim->selectBody(string(buf));
+            {
+                Selection sel = sim->findObject(string(buf));
+                if (!sel.empty())
+                    sim->setSelection(sel);
+            }
             EndDialog(hDlg, 0);
             return TRUE;
         }
@@ -818,6 +827,10 @@ void handleKeyPress(int c)
             ShowSelectionInfo(sim->getSelection());
         break;
 
+    case '`':
+        showFPSCounter = !showFPSCounter;
+        break;
+
 #if 0
     case 'Y':
         if (runningScript == NULL)
@@ -961,7 +974,7 @@ void RenderOverlay()
     if (hudDetail > 0)
     {
         glPushMatrix();
-        glTranslatef(0, 20, 0);
+        glTranslatef(0, 35, 0);
         overlay->beginText();
 
         double speed = sim->getObserver().getVelocity().length();
@@ -985,6 +998,10 @@ void RenderOverlay()
         }
 
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+
+        *overlay << '\n';
+        if (showFPSCounter)
+            *overlay << "FPS: " << fps;
         *overlay << "\nSpeed: " << speed << ' ' << units;
 
         overlay->endText();
@@ -1562,7 +1579,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             {
                 if (typedText != "")
                 {
-                    sim->selectBody(typedText);
+                    Selection sel = sim->findObject(typedText);
+                    if (!sel.empty())
+                        sim->setSelection(sel);
                     typedText = "";
                 }
             }
@@ -1774,6 +1793,13 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 	    double lastTime = currentTime;
 	    currentTime = (double) (TimeCur.QuadPart - TimeStart.QuadPart) / (double) TimerFreq.QuadPart;
 	    double deltaTime = currentTime - lastTime;
+            nFrames++;
+            if (nFrames == 100)
+            {
+                fps = (double) nFrames / (currentTime - fpsCounterStartTime);
+                nFrames = 0;
+                fpsCounterStartTime = currentTime;
+            }
 
             // Mouse wheel zoom
             if (mouseWheelMotion != 0.0f)
