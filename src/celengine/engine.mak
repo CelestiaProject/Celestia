@@ -38,6 +38,7 @@ OBJS=\
 	$(INTDIR)\glcontext.obj \
 	$(INTDIR)\glext.obj \
 	$(INTDIR)\image.obj \
+	$(INTDIR)\jpleph.obj \
 	$(INTDIR)\location.obj \
 	$(INTDIR)\lodspheremesh.obj \
 	$(INTDIR)\marker.obj \

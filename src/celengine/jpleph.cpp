@@ -41,6 +41,8 @@ static int32 readUint(istream& in)
     return (uint32) ret;
 }
 
+// TODO: This assumes that we've got to reverse endianness--won't work on
+// platforms that actually are big-endian.
 // Read a big-endian 64-bit IEEE double--if the native double format isn't
 // IEEE 754, there will be troubles.
 static double readDouble(istream& in)
@@ -76,6 +78,21 @@ JPLEphemeris::~JPLEphemeris()
 }
 
 
+unsigned int JPLEphemeris::getDENumber() const
+{
+    return DENum;
+}
+
+double JPLEphemeris::getStartDate() const
+{
+    return startDate;
+}
+
+double JPLEphemeris::getEndDate() const
+{
+    return endDate;
+}
+
 Point3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double t) const
 {
     // Clamp time to [ startDate, endDate ]
@@ -83,8 +100,11 @@ Point3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double t) const
 	t = startDate;
     else if (t > endDate)
 	t = endDate;
-
+    
     int recNo = (int) ((t - startDate) / daysPerInterval);
+    // Make sure we don't go past the end of the array if t == endDate
+    if (recNo >= records.size())
+        recNo = records.size() - 1;
     const JPLEphRecord* rec = &records[recNo];
 
     assert(coeffInfo[planet].nGranules >= 1);

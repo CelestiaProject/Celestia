@@ -67,6 +67,10 @@ public:
 
     static JPLEphemeris* load(std::istream&);
 
+    unsigned int getDENumber() const;
+    double getStartDate() const;
+    double getEndDate() const;
+
 private:
     JPLEphCoeffInfo coeffInfo[JPLEph_NItems];
     JPLEphCoeffInfo librationCoeffInfo;
