@@ -40,7 +40,6 @@ using namespace std;
 #define NEAR_DIST      0.5f
 #define FAR_DIST   10000000.0f
 
-static const float faintestAutoMag45deg = 10.5f;
 static const int StarVertexListSize = 1024;
 
 // Fractional pixel offset used when rendering text as texture mapped
@@ -109,6 +108,7 @@ Renderer::Renderer() :
     windowHeight(0),
     fov(FOV),
     corrFac(1.12f),
+    faintestAutoMag45deg(8.5f),
     renderMode(GL_FILL),
     labelMode(NoLabels),
     renderFlags(ShowStars | ShowPlanets),
@@ -533,6 +533,15 @@ void Renderer::setFieldOfView(float _fov)
     corrFac = (0.12f * fov/FOV * fov/FOV + 1.0f);
 }
 
+void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
+{
+    faintestAutoMag45deg = _faintestAutoMag45deg;
+}
+
+float Renderer::getFaintestAM45deg()
+{
+    return faintestAutoMag45deg;
+}
 
 unsigned int Renderer::getResolution()
 {
