@@ -403,9 +403,12 @@ void Simulation::setSelection(const Selection& sel)
 {
     if (sel != selection)
     {
-        universe->unmarkObject(selection);
+        universe->unmarkObject(selection, 0);
         selection = sel;
-        universe->markObject(selection, 10.0f, Color(1.0f, 0.0f, 0.0f, 0.9f));
+        universe->markObject(selection,
+                             10.0f,
+                             Color(1.0f, 0.0f, 0.0f, 0.9f),
+                             0);
     }
 }
 

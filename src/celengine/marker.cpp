@@ -16,7 +16,8 @@ using namespace std;
 Marker::Marker(const Selection& s) :
     obj(s),
     size(10.0f),
-    color(Color::White)
+    color(Color::White),
+    priority(0)
 {
 }
 
@@ -58,4 +59,16 @@ float Marker::getSize() const
 void Marker::setSize(float _size)
 {
     size = _size;
+}
+
+
+int Marker::getPriority() const
+{
+    return priority;
+}
+
+
+void Marker::setPriority(int _priority)
+{
+    priority = _priority;
 }
