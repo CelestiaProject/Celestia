@@ -913,10 +913,10 @@ static bool SetRegistryInt(HKEY key, LPCTSTR value, int intVal)
 {
     LONG err = RegSetValueEx(key,
                              value,
-                             NULL,
+                             0,
                              REG_DWORD,
                              reinterpret_cast<CONST BYTE*>(&intVal),
-                             4);
+                             sizeof(int));
     return err == ERROR_SUCCESS;
 }
 
@@ -1697,14 +1697,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_FILE_EXIT:
-            {
-                AppPreferences prefs;
-                if (GetCurrentPreferences(prefs))
-                {
-                    SavePreferencesToRegistry(CelestiaRegKey, prefs);
-                }
-            }
-	    DestroyWindow(hWnd);
+	        DestroyWindow(hWnd);
             break;
 
         default:
@@ -1740,12 +1733,19 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         break;
 
     case WM_DESTROY:
-	wglMakeCurrent(hDC, NULL);
-	wglDeleteContext(hRC);
-	if (fullscreen)
-	    RestoreDisplayMode();
-	PostQuitMessage(0);
-	break;
+    {
+        AppPreferences prefs;
+        if (GetCurrentPreferences(prefs))
+        {
+            SavePreferencesToRegistry(CelestiaRegKey, prefs);
+        }
+	    wglMakeCurrent(hDC, NULL);
+	    wglDeleteContext(hRC);
+	    if (fullscreen)
+	        RestoreDisplayMode();
+	    PostQuitMessage(0);
+        break;
+    }
 
     case WM_SIZE:
         appCore->resize(LOWORD(lParam), HIWORD(lParam));
