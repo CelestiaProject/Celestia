@@ -333,7 +333,7 @@ void LODSphereMesh::render(unsigned int attributes,
             }
         }
 
-        // cout << "Rejected " << reject << " of " << square(split) << " sphere sections\n";
+        cout << "Rejected " << reject << " of " << square(split) << " sphere sections\n";
     }
 
     if (tangents != NULL && ((attributes & Tangents) != 0))
