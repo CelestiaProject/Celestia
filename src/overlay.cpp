@@ -150,7 +150,7 @@ void Overlay::rect(float x, float y, float w, float h)
 //
 // OverlayStreamBuf implementation
 //
-OverlayStreamBuf::setOverlay(Overlay* o)
+void OverlayStreamBuf::setOverlay(Overlay* o)
 {
     overlay = o;
 }
