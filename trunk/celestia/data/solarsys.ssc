@@ -388,11 +388,13 @@
 
 	EllipticalOrbit
 	{
-	Period        18
-	SemiMajorAxis  1883000
-	Eccentricity   0.2
-	Inclination    0.281
-	MeanAnomaly    215
+	Period        64.4068
+	SemiMajorAxis  4632880
+	Eccentricity   0.831774
+	Inclination    4.213
+	AscendingNode  59.562
+	ArgOfPericenter 97.224
+	TrueAnomaly    -66.619
 	}
 
 	Albedo         0.50
