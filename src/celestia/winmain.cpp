@@ -2720,6 +2720,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return 1;
     }
 
+    if (startURL != "")
+        appCore->setStartURL(startURL);
+
     menuBar = CreateMenuBar();
     acceleratorTable = LoadAccelerators(hInstance,
                                         MAKEINTRESOURCE(IDR_ACCELERATORS));
