@@ -291,7 +291,7 @@ Convert3DSMesh(Model& model,
                 material->opacity = material3ds->getOpacity();
                 if (material3ds->getTextureMap() != "")
                 {
-                    material->tex0 = GetTextureManager()->getHandle(TextureInfo(material3ds->getTextureMap(), ".", TextureInfo::WrapTexture));
+                    material->maps[Mesh::DiffuseMap] = GetTextureManager()->getHandle(TextureInfo(material3ds->getTextureMap(), ".", TextureInfo::WrapTexture));
                 }
             }
         }
