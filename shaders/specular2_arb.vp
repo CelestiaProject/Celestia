@@ -1,0 +1,122 @@
+!!ARBvp1.0
+
+# Compute specular and diffuse light from a single source, as well
+# as a haze effect.
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iNormal       = vertex.normal;
+ATTRIB iTex0         = vertex.texcoord[0];
+ATTRIB iTex1         = vertex.texcoord[1];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir0     = program.env[0];
+PARAM  diffuse0      = program.env[2];
+PARAM  specular0     = program.env[3];
+PARAM  lightDir1     = program.env[18];
+PARAM  diffuse1      = program.env[19];
+PARAM  specular1     = program.env[20];
+PARAM  eyePos        = program.env[1];
+PARAM  specExp       = program.env[4];
+PARAM  ambient       = program.env[5];
+PARAM  zero          = 0;
+PARAM  one           = 1;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oSpecColor    = result.color.secondary;
+OUTPUT oTex0         = result.texcoord[0];
+OUTPUT oTex1         = result.texcoord[1];
+OUTPUT oFog          = result.fogcoord;
+
+TEMP   diffuseFactor;
+TEMP   diffuseColor;
+TEMP   specularColor;
+TEMP   hazeFactor;
+TEMP   eyeVec;
+TEMP   halfAngle;
+TEMP   dotProds;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Get the vector from the eye to the vertex
+SUB   eyeVec, eyePos, iPos;
+
+# Normalize it
+DP3   eyeVec.w, eyeVec, eyeVec;
+RSQ   eyeVec.w, eyeVec.w;
+MUL   eyeVec, eyeVec, eyeVec.w;
+
+
+### Light source 0
+
+# Diffuse factor
+DP3   diffuseFactor, iNormal, lightDir0;
+MAX   diffuseFactor, diffuseFactor, zero;
+MAD   diffuseColor, diffuse0, diffuseFactor, ambient;
+
+# Haze factor
+DP3   diffuseFactor.y, iNormal, eyeVec;
+SUB   diffuseFactor.y, one, diffuseFactor.y;
+MUL   hazeFactor.x, diffuseFactor.x, diffuseFactor.y;
+
+# Compute the half angle vector for specular lighting
+ADD   halfAngle, eyeVec, lightDir0;
+DP3   halfAngle.w, halfAngle, halfAngle;
+RSQ   halfAngle.w, halfAngle.w;
+MUL   halfAngle, halfAngle, halfAngle.w;
+
+# Set up the specular dot product vectors:
+#    dotProds = { diffuse factor, spec factor, 0, spec exponent }
+MOV   dotProds.x, diffuseFactor.x;
+DP3   dotProds.y, halfAngle, iNormal;
+MAX   dotProds.y, dotProds.y, zero;
+MOV   dotProds.w, specExp.w;
+
+# Compute and output the secondary color
+LIT   dotProds, dotProds;
+MUL   dotProds.z, dotProds.z, diffuseFactor.x;
+MUL   specularColor, specular0, dotProds.z;
+
+
+### Light source 1
+
+# Diffuse
+DP3   diffuseFactor, iNormal, lightDir1;
+MAX   diffuseFactor, diffuseFactor, zero;
+MAD   diffuseColor, diffuse1, diffuseFactor, diffuseColor;
+
+# Haze
+DP3   diffuseFactor.y, iNormal, eyeVec;
+SUB   diffuseFactor.y, one, diffuseFactor.y;
+MAD   hazeFactor.x, diffuseFactor.x, diffuseFactor.y, hazeFactor.x;
+
+# Compute the half angle vector for specular lighting
+ADD   halfAngle, eyeVec, lightDir1;
+DP3   halfAngle.w, halfAngle, halfAngle;
+RSQ   halfAngle.w, halfAngle.w;
+MUL   halfAngle, halfAngle, halfAngle.w;
+
+# Set up the specular dot product vectors:
+#    dotProds = { diffuse factor, spec factor, 0, spec exponent }
+MOV   dotProds.x, diffuseFactor.x;
+DP3   dotProds.y, halfAngle, iNormal;
+MAX   dotProds.y, dotProds.y, zero;
+MOV   dotProds.w, specExp.w;
+
+# Compute and output the secondary color
+LIT   dotProds, dotProds;
+MUL   dotProds.z, dotProds.z, diffuseFactor.x;
+MAD   specularColor, specular1, dotProds.z, specularColor;
+
+
+### Outputs
+MOV   oTex0, iTex0;
+MOV   oTex1, iTex1;
+MOV   oColor, diffuseColor;
+MOV   oSpecColor, specularColor;
+MOV   oFog.x, hazeFactor;
+
+END
+
