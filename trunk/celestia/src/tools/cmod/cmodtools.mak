@@ -108,6 +108,8 @@ RSC_FLAGS=/l 0x409 /d "_DEBUG"
 <<
 
 
+all : $(OUTDIR)\3dstocmod.exe $(OUTDIR)\cmodfix.exe
+
 3dstocmod.exe : $(OUTDIR)\3dstocmod.exe
 
 cmodfix.exe : $(OUTDIR)\cmodfix.exe
