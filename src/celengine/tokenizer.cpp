@@ -86,7 +86,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 sign = -1;
                 integerValue = 0;
             }
-            else if (isalpha(nextChar))
+            else if (isalpha(nextChar) || nextChar == '_')
             {
                 state = NameState;
                 textToken += (char) nextChar;
@@ -141,7 +141,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             break;
 
         case NameState:
-            if (isalpha(nextChar) || isdigit(nextChar))
+            if (isalpha(nextChar) || isdigit(nextChar) || nextChar == '_')
             {
                 state = NameState;
                 textToken += (char) nextChar;
