@@ -794,10 +794,32 @@ void Renderer::renderOrbit(Body* body, double t)
             reuse = false;
         }
 
+        double startTime = t;
+        int nSamples = 100;
+
+        // Adjust the number of samples used for aperiodic orbits--these aren't
+        // true orbits, but are sampled trajectories, generally of spacecraft.
+        // Better control is really needed--some sort of adaptive sampling would
+        // be ideal.
+        if (!body->getOrbit()->isPeriodic())
+        {
+            double begin = 0.0, end = 0.0;
+            body->getOrbit()->getValidRange(begin, end);
+
+            if (begin != end)
+            {
+                startTime = begin;
+                nSamples = (int) (body->getOrbit()->getPeriod() * 100.0);
+                nSamples = max(min(nSamples, 1000), 100);
+            }
+        }
+
         orbit->body = body;
         orbit->keep = true;
         OrbitSampler sampler(&orbit->trajectory);
-        body->getOrbit()->sample(t, body->getOrbit()->getPeriod(), 100,
+        body->getOrbit()->sample(startTime,
+                                 body->getOrbit()->getPeriod(),
+                                 nSamples,
                                  sampler);
         trajectory = &orbit->trajectory;
 
@@ -807,7 +829,10 @@ void Renderer::renderOrbit(Body* body, double t)
     }
 
     // Actually render the orbit
-    glBegin(GL_LINE_LOOP);
+    if (body->getOrbit()->isPeriodic())
+        glBegin(GL_LINE_LOOP);
+    else
+        glBegin(GL_LINE_STRIP);
     for (vector<Point3f>::const_iterator p = trajectory->begin();
          p != trajectory->end(); p++)
     {
@@ -828,6 +853,13 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
     if (planets == NULL)
         return;
 
+    int orbitMask = 0;
+    if (renderFlags & ShowPlanetOrbits)     orbitMask |= Body::Planet;
+    if (renderFlags & ShowMoonOrbits)       orbitMask |= Body::Moon;
+    if (renderFlags & ShowAsteroidOrbits)   orbitMask |= Body::Asteroid;
+    if (renderFlags & ShowCometOrbits)      orbitMask |= Body::Comet;
+    if (renderFlags & ShowSpacecraftOrbits) orbitMask |= Body::Spacecraft;
+
     double distance = (center - observerPos).length();
 
     // At the solar system scale, we'll handle all calculations in AU
@@ -840,7 +872,7 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
         Body* body = planets->getBody(i);
             
         // Only show orbits for major bodies or selected objects
-        if ((body->getClassification() & OrbitMask) != 0 || body == sel.body())
+        if ((body->getClassification() & orbitMask) != 0 || body == sel.body())
         {
             if (body == sel.body())
                 glColor4f(1, 0, 0, 1);
@@ -1129,7 +1161,7 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
-    if ((renderFlags & ShowOrbits) != 0 && solarSystem != NULL)
+    if ((renderFlags & ShowOrbitMask) != 0 && solarSystem != NULL)
     {
         vector<CachedOrbit*>::const_iterator iter;
 
@@ -4433,7 +4465,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                     }
                     break;
                 case Body::Comet:
-                    if ((labelMode & AsteroidLabels) != 0)
+                    if ((labelMode & CometLabels) != 0)
                     {
                         labelColor = Color(0.0f, 1.0f, 1.0f);
                         showLabel = true;
