@@ -134,6 +134,8 @@ class Body
     PlanetarySystem* getSatellites() const;
     void setSatellites(PlanetarySystem*);
 
+    float getBoundingRadius() const;
+
     RingSystem* getRings() const;
     void setRings(const RingSystem&);
     const Atmosphere* getAtmosphere() const;
