@@ -1,7 +1,11 @@
 // body.cpp
 //
 // Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
-
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 
 #include <stdlib.h>
 #include "mathlib.h"
@@ -16,9 +20,8 @@ Body::Body(PlanetarySystem* _system) :
     satellites(NULL),
     rings(NULL),
     rotationPeriod(1),
-    color(1.0f, 1.0f, 1.0f),
-    oblateness(0),
-    appearanceFlags(0)
+    surface(Color(1.0f, 1.0f, 1.0f)),
+    oblateness(0)
 {
     system = _system;
 }
@@ -128,27 +131,15 @@ void Body::setRotationPeriod(float _rotationPeriod)
 }
 
 
-Color Body::getColor() const
+const Surface& Body::getSurface() const
 {
-    return color;
+    return surface;
 }
 
 
-void Body::setColor(Color _color)
+void Body::setSurface(const Surface& surf)
 {
-    color = _color;
-}
-
-
-string Body::getTexture() const
-{
-    return texture;
-}
-
-
-void Body::setTexture(const string _texture)
-{
-    texture = _texture;
+    surface = surf;
 }
 
 
@@ -157,35 +148,9 @@ string Body::getMesh() const
     return mesh;
 }
 
-
 void Body::setMesh(const string _mesh)
 {
     mesh = _mesh;
-}
-
-
-uint32 Body::getAppearanceFlags() const
-{
-    return appearanceFlags;
-}
-
-
-void Body::setAppearanceFlags(uint32 flags)
-{
-    appearanceFlags = flags;
-}
-
-
-bool Body::getAppearanceFlag(uint32 flag) const
-{
-    return (appearanceFlags & flag) != 0;
-}
-
-
-void Body::setAppearanceFlag(uint32 flag, bool on)
-{
-    appearanceFlags &= ~flag;
-    appearanceFlags |= on ? flag : 0;
 }
 
 
