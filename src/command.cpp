@@ -42,7 +42,8 @@ CommandSelect::~CommandSelect()
 
 void CommandSelect::process(Simulation* sim, Renderer* renderer)
 {
-    sim->selectBody(target);
+    Selection sel = sim->findObject(target);
+    sim->setSelection(sel);
 }
 
 
@@ -160,7 +161,7 @@ void CommandSetTimeRate::process(Simulation* sim, Renderer* renderer)
 
 
 ////////////////
-// Change distance command change the distance from the selected object
+// Change distance command: change the distance from the selected object
 
 CommandChangeDistance::CommandChangeDistance(double _duration, double _rate) :
     TimedCommand(_duration),
@@ -171,6 +172,27 @@ CommandChangeDistance::CommandChangeDistance(double _duration, double _rate) :
 void CommandChangeDistance::process(Simulation* sim, Renderer* renderer, double t, double dt)
 {
     sim->changeOrbitDistance((float) (rate * dt));
+}
+
+
+////////////////
+// Oribt command: rotate about the selected object
+
+CommandOrbit::CommandOrbit(double _duration, const Vec3f& axis, float rate) :
+    TimedCommand(_duration),
+    spin(axis * rate)
+{
+}
+
+void CommandOrbit::process(Simulation* sim, Renderer* rend, double t, double dt)
+{
+    float v = spin.length();
+    if (v != 0.0f)
+    {
+        Quatf q;
+        q.setAxisAngle(spin / v, (float) (v * dt));
+        sim->orbit(q);
+    }
 }
 
 
@@ -188,7 +210,7 @@ void CommandSetPosition::process(Simulation* sim, Renderer* renderer)
 
 
 ////////////////
-// Set position command: set the position of the camera
+// Set orientation command: set the orientation of the camera
 
 CommandSetOrientation::CommandSetOrientation(const Vec3f& _axis, float _angle) :
     axis(_axis), angle(_angle)
