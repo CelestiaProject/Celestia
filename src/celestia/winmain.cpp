@@ -95,10 +95,11 @@ static JOYCAPS joystickCaps;
 bool cursorVisible = true;
 static POINT saveCursorPos;
 
-static int MovieSizes[4][2] = { { 160, 120 },
+static int MovieSizes[5][2] = { { 160, 120 },
                                 { 320, 240 },
                                 { 640, 480 },
-                                { 720, 480 } };
+                                { 720, 480 },
+                                { 720, 576 } };
 static float MovieFramerates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
 
 static int movieSize = 1;
