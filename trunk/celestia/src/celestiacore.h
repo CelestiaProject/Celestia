@@ -85,14 +85,14 @@ class CelestiaCore
 
     void writeFavoritesFile();
     void activateFavorite(FavoritesEntry&);
-    void addFavorite(string);
+    void addFavorite(std::string);
     const FavoritesList* getFavorites();
 
     void setContextMenuCallback(ContextMenuFunc);
 
  private:
     void cancelScript();
-    bool readStars(std::string, std::string);
+    bool readStars(const CelestiaConfig&);
     void setFaintest(float);
     void renderOverlay();
 

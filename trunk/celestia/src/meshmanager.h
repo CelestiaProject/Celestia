@@ -20,12 +20,12 @@ class MeshManager : public ResourceManager
 {
  public:
     MeshManager() : ResourceManager() {};
-    MeshManager(string _baseDir) : ResourceManager(_baseDir) {};
+    MeshManager(std::string _baseDir) : ResourceManager(_baseDir) {};
     MeshManager(char* _baseDir) : ResourceManager(_baseDir) {};
     ~MeshManager();
 
-    bool find(const string& name, Mesh**);
-    Mesh* load(const string& name);
+    bool find(const std::string& name, Mesh**);
+    Mesh* load(const std::string& name);
 };
 
 #endif // _MESHMANAGER_H_
