@@ -1,0 +1,68 @@
+{
+    IBClasses = (
+        {
+            CLASS = CelestiaApplication; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {celestiaApplication = CelestiaApplication; }; 
+            SUPERCLASS = NSApplication; 
+        }, 
+        {
+            ACTIONS = {gotoObject = id; showGotoObject = id; }; 
+            CLASS = CelestiaController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                favoritesDrawerController = FavoritesDrawerController; 
+                glView = NSOpenGLView; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {
+            CLASS = CelestiaOpenGLView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {controller = CelestiaController; }; 
+            SUPERCLASS = NSOpenGLView; 
+        }, 
+        {CLASS = ContextOutlineView; LANGUAGE = ObjC; SUPERCLASS = NSOutlineView; }, 
+        {
+            ACTIONS = {navigateTo = id; }; 
+            CLASS = FavoriteInfoWindowController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                coordinateField = NSTextField; 
+                jdField = NSTextField; 
+                nameField = NSTextField; 
+                orientationField = NSTextField; 
+                selectionField = NSTextField; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {
+            ACTIONS = {addNewFavorite = id; addNewFolder = id; }; 
+            CLASS = FavoritesDrawerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                drawer = NSDrawer; 
+                favoriteInfoWindowController = FavoriteInfoWindowController; 
+                favoritesContextMenu = NSMenu; 
+                favoritesMenu = NSMenu; 
+                outlineView = ContextOutlineView; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {gotoObject = id; }; 
+            CLASS = GotoWindowController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                distanceField = NSTextField; 
+                latitudeField = NSTextField; 
+                longitudeField = NSTextField; 
+                objectField = NSTextField; 
+                unitsButton = NSPopUpButton; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}
