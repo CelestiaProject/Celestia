@@ -65,7 +65,7 @@
 		Eccentricity    0
 		Inclination     89.4
 		AscendingNode   260.3
-		MeanAnomaly     213
+		MeanLongitude   297
 	}
 
 	Obliquity             89 # guess, to match inclination
@@ -103,7 +103,7 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 		Eccentricity    0
 		Inclination     112.4
 		AscendingNode   161.7
-		MeanAnomaly     335
+		MeanLongitude   357
 	}
 
 	Obliquity             112 # guess, to match inclination
@@ -141,7 +141,7 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 		Eccentricity    0
 		Inclination     107.6
 		AscendingNode   159.3
-		MeanAnomaly     216
+		MeanLongitude   236
 	}
 
 	Obliquity             108 # guess, to match inclination
@@ -421,7 +421,7 @@ AltSurface "limit of knowledge" "HD 46375/b"
 		Eccentricity    0
 		Inclination     85.2
 		AscendingNode   283.9
-		MeanAnomaly     58
+		MeanLongitude   207
 	}
 
 	Obliquity             85 # guess, to match inclination
@@ -450,7 +450,7 @@ AltSurface "limit of knowledge" "TrES-1/b"
 		Period          0.0085
 		SemiMajorAxis   0.04
 		Eccentricity    0
-		MeanAnomaly     357
+		MeanLongitude   14
 	}
 
 	# likely to be in captured synchronous rotation
@@ -512,7 +512,7 @@ AltSurface "limit of knowledge" "HD 187123/b"
 		SemiMajorAxis   0.04162
 		Inclination     90.8
 		AscendingNode   267.3
-		MeanAnomaly     234
+		MeanLongitude   318
 	}
 
 	Obliquity             91 # guess, to match inclination
@@ -743,7 +743,7 @@ AltSurface "limit of knowledge" "HD 209458/b"
 		Period          0.0109
 		SemiMajorAxis   0.049
 		Eccentricity    0
-		MeanAnomaly     227
+		MeanLongitude   158
 	}
 
 	# likely to be in captured synchronous rotation
@@ -778,7 +778,7 @@ AltSurface "limit of knowledge" "HD 76700/b"
 		Eccentricity    0
 		Inclination     110.5
 		AscendingNode   161.1
-		MeanAnomaly     153
+		MeanLongitude   174
 	}
 
 	Obliquity             111 # guess, to match inclination
@@ -1049,7 +1049,7 @@ AltSurface "limit of knowledge" "HD 162020/b"
 		Period          0.0261
 		SemiMajorAxis   0.09
 		Eccentricity    0
-		MeanAnomaly     348
+		MeanLongitude   346
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1392,7 +1392,7 @@ AltSurface "limit of knowledge" "HD 6434/b"
 		Period          0.0667
 		SemiMajorAxis   0.15
 		Eccentricity    0
-		MeanAnomaly     59
+		MeanLongitude   94
 	}
 
 	# likely to be in captured synchronous rotation
