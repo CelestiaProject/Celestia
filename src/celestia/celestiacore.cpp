@@ -497,6 +497,10 @@ void CelestiaCore::charEntered(char c)
             renderer->setVertexShaderEnabled(!renderer->getVertexShaderEnabled());
         break;
 
+    case '\030':  // Ctrl+X
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowSmoothLines);
+        break;
+
     case '\033': // Escape
         cancelScript();
         if (textEnterMode == true)

@@ -551,6 +551,22 @@ void Renderer::clearLabels()
 }
 
 
+static void enableSmoothLines()
+{
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);
+    glLineWidth(1.5f);
+}
+
+static void disableSmoothLines()
+{
+    // glDisable(GL_BLEND);
+    glDisable(GL_LINE_SMOOTH);
+    glLineWidth(1.0f);
+}
+
+
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
                       float faintestMagNight,
@@ -680,7 +696,12 @@ void Renderer::render(const Observer& observer,
     {
         glColor4f(0.5f, 0.0, 0.7f, 0.5f);
         glDisable(GL_TEXTURE_2D);
+        if ((renderFlags & ShowSmoothLines) != 0)
+            enableSmoothLines();
         renderCelestialSphere(observer);
+        if ((renderFlags & ShowSmoothLines) != 0)
+            disableSmoothLines();
+        glEnable(GL_BLEND);
         glEnable(GL_TEXTURE_2D);
     }
 
@@ -701,6 +722,8 @@ void Renderer::render(const Observer& observer,
     {
         glColor4f(0.5f, 0.0, 1.0f, 0.5f);
         glDisable(GL_TEXTURE_2D);
+        if ((renderFlags & ShowSmoothLines) != 0)
+            enableSmoothLines();
 
         AsterismList* asterisms = universe.getAsterisms();
         for (AsterismList::const_iterator iter = asterisms->begin();
@@ -719,6 +742,9 @@ void Renderer::render(const Observer& observer,
                 glEnd();
             }
         }
+        
+        if ((renderFlags & ShowSmoothLines) != 0)
+            disableSmoothLines();
     }
 
     if ((labelMode & GalaxyLabels) != 0 && universe.getGalaxyCatalog() != NULL)
@@ -765,6 +791,9 @@ void Renderer::render(const Observer& observer,
         glDisable(GL_TEXTURE_2D);
 
         // Render orbits
+        if ((renderFlags & ShowSmoothLines) != 0)
+            enableSmoothLines();
+
         PlanetarySystem* planets = solarSystem->getPlanets();
         int nBodies = planets->getSystemSize();
         for (int i = 0; i < nBodies; i++)
@@ -791,6 +820,9 @@ void Renderer::render(const Observer& observer,
                 glEnd();
             }
         }
+
+        if ((renderFlags & ShowSmoothLines) != 0)
+            disableSmoothLines();
 
 #ifdef ECLIPTIC_AXES
         // Render axes in plane of the ecliptic for debugging
