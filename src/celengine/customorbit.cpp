@@ -1558,12 +1558,12 @@ class CallistoOrbit : public CachingOrbit
 };
 
 
-static double sind(double theta)
+static double sinD(double theta)
 {
     return sin(degToRad(theta));
 }
 
-static double cosd(double theta)
+static double cosD(double theta)
 {
     return cos(degToRad(theta));
 }
@@ -1633,27 +1633,27 @@ static void OuterSaturnMoonParams(double a, double e, double i,
                                   double& lam, double& gam,
                                   double& r, double& w)
 {
-    double s1 = sind(28.0817);
-    double c1 = cosd(28.0817);
+    double s1 = sinD(28.0817);
+    double c1 = cosD(28.0817);
     double e_2 = e * e;
     double e_3 = e_2 * e;
     double e_4 = e_3 * e;
     double e_5 = e_4 * e;
-    double C = (2 * e - 0.25 * e_3 + 0.0520833333 * e_5) * sind(M) +
-        (1.25 * e_2 - 0.458333333 * e_4) * sind(2 * M) +
-        (1.083333333 * e_3 - 0.671875 * e_5) * sind(3 * M) +
-        1.072917 * e_4 * sind(4 * M) + 1.142708 * e_5 * sind(5 * M);
+    double C = (2 * e - 0.25 * e_3 + 0.0520833333 * e_5) * sinD(M) +
+        (1.25 * e_2 - 0.458333333 * e_4) * sinD(2 * M) +
+        (1.083333333 * e_3 - 0.671875 * e_5) * sinD(3 * M) +
+        1.072917 * e_4 * sinD(4 * M) + 1.142708 * e_5 * sinD(5 * M);
     double g = Om_ - 168.8112;
-    double a1 = sind(i) * sind(g);
-    double a2 = c1 * sind(i) * cosd(g) - s1 * cosd(i);
+    double a1 = sinD(i) * sinD(g);
+    double a2 = c1 * sinD(i) * cosD(g) - s1 * cosD(i);
     double u = radToDeg(atan2(a1, a2));
-    double h = c1 * sind(i) - s1 * cosd(i) * cosd(g);
-    double psi = radToDeg(atan2(s1 * sind(g), h));
+    double h = c1 * sinD(i) - s1 * cosD(i) * cosD(g);
+    double psi = radToDeg(atan2(s1 * sinD(g), h));
 
     C = radToDeg(C);
     lam = lam_ + C + u - g - psi;
     gam = radToDeg(asin(sqrt(square(a1) + square(a2))));
-    r = a * (1 - e * e) / (1 + e * cosd(M + C));
+    r = a * (1 - e * e) / (1 + e * cosD(M + C));
     w = 168.8112 + u;
 }
 
@@ -1671,14 +1671,14 @@ class MimasOrbit : public CachingOrbit
                                  t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
                                  W0, W1, W2, W3, W4, W5, W6, W7, W8);
 
-        double L = 127.64 + 381.994497 * t1 - 43.57 * sind(W0) -
-            0.720 * sind( 3 * W0) - 0.02144 * sind(5 * W0);
+        double L = 127.64 + 381.994497 * t1 - 43.57 * sinD(W0) -
+            0.720 * sinD( 3 * W0) - 0.02144 * sinD(5 * W0);
         double p = 106.1 + 365.549 * t2;
         double M = L - p;
-        double C = 2.18287 * sind(M) + 0.025988 * sind(2 * M) +
-            0.00043 * sind(3 * M);
+        double C = 2.18287 * sinD(M) + 0.025988 * sinD(2 * M) +
+            0.00043 * sinD(3 * M);
         double lam = L + C;
-        double r = 3.06879 / (1 + 0.01905 * cosd(M + C));
+        double r = 3.06879 / (1 + 0.01905 * cosD(M + C));
         double gam = 1.563;
         double Om = 54.5 - 365.072 * t2;
 
@@ -1710,13 +1710,13 @@ class EnceladusOrbit : public CachingOrbit
                                  t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
                                  W0, W1, W2, W3, W4, W5, W6, W7, W8);
 
-        double L = 200.317 + 262.7319002 * t1 + 0.25667 * sind(W1) +
-            0.20883 * sind(W2);
+        double L = 200.317 + 262.7319002 * t1 + 0.25667 * sinD(W1) +
+            0.20883 * sinD(W2);
         double p = 309.107 + 123.44121 * t2;
         double M = L - p;
-        double C = 0.55577 * sind(M) + 0.00168 * sind(2 * M);
+        double C = 0.55577 * sinD(M) + 0.00168 * sinD(2 * M);
         double lam = L + C;
-        double r = 3.94118 / (1 + 0.00485 * cosd(M + C));
+        double r = 3.94118 / (1 + 0.00485 * cosD(M + C));
         double gam = 0.0262;
         double Om = 348 - 151.95 * t2;
 
@@ -1748,8 +1748,8 @@ class TethysOrbit : public CachingOrbit
                                  t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
                                  W0, W1, W2, W3, W4, W5, W6, W7, W8);
 
-        double lam = 285.306 + 190.69791226 * t1 + 2.063 * sind(W0) +
-            0.03409 * sind(3 * W0) + 0.001015 * sind(5 * W0);
+        double lam = 285.306 + 190.69791226 * t1 + 2.063 * sinD(W0) +
+            0.03409 * sinD(3 * W0) + 0.001015 * sinD(5 * W0);
         double r = 4.880998;
         double gam = 1.0976;
         double Om = 111.33 - 72.2441 * t2;
@@ -1782,13 +1782,13 @@ class DioneOrbit : public CachingOrbit
                                  t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
                                  W0, W1, W2, W3, W4, W5, W6, W7, W8);
 
-        double L = 254.712 + 131.53493193 * t1 - 0.0215 * sind(W1) -
-            0.01733 * sind(W2);
+        double L = 254.712 + 131.53493193 * t1 - 0.0215 * sinD(W1) -
+            0.01733 * sinD(W2);
         double p = 174.8 + 30.820 * t2;
         double M = L - p;
-        double C = 0.24717 * sind(M) + 0.00033 * sind(2 * M);
+        double C = 0.24717 * sinD(M) + 0.00033 * sinD(2 * M);
         double lam = L + C;
-        double r = 6.24871 / (1 + 0.002157 * cosd(M + C));
+        double r = 6.24871 / (1 + 0.002157 * cosD(M + C));
         double gam = 0.0139;
         double Om = 232 - 30.27 * t2;
         // cout << "Dione: " << pfmod(lam, 360.0) << ',' << gam << ',' << pfmod(Om, 360.0) << ',' << r << '\n';
@@ -1823,14 +1823,14 @@ class RheaOrbit : public CachingOrbit
         double e1 = 0.05589 - 0.000346 * t7;
 
         double p_ = 342.7 + 10.057 * t2;
-        double a1 = 0.000265 * sind(p_) + 0.01 * sind(W4);
-        double a2 = 0.000265 * cosd(p_) + 0.01 * cosd(W4);
+        double a1 = 0.000265 * sinD(p_) + 0.01 * sinD(W4);
+        double a2 = 0.000265 * cosD(p_) + 0.01 * cosD(W4);
         double e = sqrt(square(a1) + square(a2));
         double p = radToDeg(atan2(a1, a2));
         double N = 345 - 10.057 * t2;
-        double lam_ = 359.244 + 79.69004720 * t1 + 0.086754 * sind(N);
-        double i = 28.0362 + 0.346898 * cosd(N) + 0.01930 * cosd(W3);
-        double Om = 168.8034 + 0.736936 * sind(N) + 0.041 * sind(W3);
+        double lam_ = 359.244 + 79.69004720 * t1 + 0.086754 * sinD(N);
+        double i = 28.0362 + 0.346898 * cosD(N) + 0.01930 * cosD(W3);
+        double Om = 168.8034 + 0.736936 * sinD(N) + 0.041 * sinD(W3);
         double a = 8.725924;
 
         double lam, gam, r, w;
@@ -1868,11 +1868,11 @@ class TitanOrbit : public CachingOrbit
                                  W0, W1, W2, W3, W4, W5, W6, W7, W8);
         double e1 = 0.05589 - 0.000346 * t7;
 
-        double L = 261.1582 + 22.57697855 * t4 + 0.074025 * sind(W3);
-        double i_ = 27.45141 + 0.295999 * cosd(W3);
-        double Om_ = 168.66925 + 0.628808 * sind(W3);
-        double a1 = sind(W7) * sind(Om_ - W8);
-        double a2 = cosd(W7) * sind(i_) - sind(W7) * cosd(i_) * cosd(Om_ - W8);
+        double L = 261.1582 + 22.57697855 * t4 + 0.074025 * sinD(W3);
+        double i_ = 27.45141 + 0.295999 * cosD(W3);
+        double Om_ = 168.66925 + 0.628808 * sinD(W3);
+        double a1 = sinD(W7) * sinD(Om_ - W8);
+        double a2 = cosD(W7) * sinD(i_) - sinD(W7) * cosD(i_) * cosD(Om_ - W8);
         double g0 = 102.8623;
         double psi = radToDeg(atan2(a1, a2));
         double s = sqrt(square(a1) + square(a2));
@@ -1882,22 +1882,22 @@ class TitanOrbit : public CachingOrbit
         double om;
         for (int n = 0; n < 3; n++)
         {
-            om = W4 + 0.37515 * (sind(2 * g) - sind(2 * g0));
+            om = W4 + 0.37515 * (sinD(2 * g) - sinD(2 * g0));
             g = om - Om_ - psi;
         }
 
-        double e_ = 0.029092 + 0.00019048 * (cosd(2 * g) - cosd(2 * g0));
+        double e_ = 0.029092 + 0.00019048 * (cosD(2 * g) - cosD(2 * g0));
         double q = 2 * (W5 - om);
-        double b1 = sind(i_) * sind(Om_ - W8);
-        double b2 = cosd(W7) * sind(i_) * cosd(Om_ - W8) - sind(W7) * cosd(i_);
+        double b1 = sinD(i_) * sinD(Om_ - W8);
+        double b2 = cosD(W7) * sinD(i_) * cosD(Om_ - W8) - sinD(W7) * cosD(i_);
         double theta = radToDeg(atan2(b1, b2)) + W8;
-        double e = e_ + 0.002778797 * e_ * cosd(q);
-        double p = om + 0.159215 * sind(q);
+        double e = e_ + 0.002778797 * e_ * cosD(q);
+        double p = om + 0.159215 * sinD(q);
         double u = 2 * W5 - 2 * theta + psi;
-        double h = 0.9375 * square(e_) * sind(q) + 0.1875 * square(s) * sind(2 * (W5 - theta));
-        double lam_ = L - 0.254744 * (e1 * sind(W6) + 0.75 * square(e1) * sind(2 * W6) + h);
-        double i = i_ + 0.031843 * s * cosd(u);
-        double Om = Om_ + (0.031843 * s * sind(u)) / sind(i_);
+        double h = 0.9375 * square(e_) * sinD(q) + 0.1875 * square(s) * sinD(2 * (W5 - theta));
+        double lam_ = L - 0.254744 * (e1 * sinD(W6) + 0.75 * square(e1) * sinD(2 * W6) + h);
+        double i = i_ + 0.031843 * s * cosD(u);
+        double Om = Om_ + (0.031843 * s * sinD(u)) / sinD(i_);
         double a = 20.216193;
 
         double lam, gam, r, w;
@@ -1942,43 +1942,43 @@ class HyperionOrbit : public CachingOrbit
         double phi = 2 * (om - W5);
         double chi = 94.9 - 2.292 * t8;
         double a = 24.50601 -
-            0.08686 * cosd(eta) -
-            0.00166 * cosd(zeta + eta) +
-            0.00175 * cosd(zeta - eta);
+            0.08686 * cosD(eta) -
+            0.00166 * cosD(zeta + eta) +
+            0.00175 * cosD(zeta - eta);
         double e = 0.103458 -
-            0.004099 * cosd(eta) -
-            0.000167 * cosd(zeta + eta) +
-            0.000235 * cosd(zeta - eta) +
-            0.02303 * cosd(zeta) -
-            0.00212 * cosd(2 * zeta) +
-            0.000151 * cosd(3 * zeta) +
-            0.00013 * sind(phi);
+            0.004099 * cosD(eta) -
+            0.000167 * cosD(zeta + eta) +
+            0.000235 * cosD(zeta - eta) +
+            0.02303 * cosD(zeta) -
+            0.00212 * cosD(2 * zeta) +
+            0.000151 * cosD(3 * zeta) +
+            0.00013 * sinD(phi);
         double p = om +
-            0.15648 * sind(chi) -
-            0.4457 * sind(eta) -
-            0.2657 * sind(zeta + eta) -
-            0.3573 * sind(zeta - eta) -
-            12.872 * sind(zeta) +
-            1.668 * sind(2 * zeta) -
-            0.2419 * sind(3 * zeta) - 
-            0.07 * sind(phi);
+            0.15648 * sinD(chi) -
+            0.4457 * sinD(eta) -
+            0.2657 * sinD(zeta + eta) -
+            0.3573 * sinD(zeta - eta) -
+            12.872 * sinD(zeta) +
+            1.668 * sinD(2 * zeta) -
+            0.2419 * sinD(3 * zeta) - 
+            0.07 * sinD(phi);
         double lam_ = 177.047 +
             16.91993829 * t6 +
-            0.15648 * sind(chi) +
-            9.142 * sind(eta) +
-            0.007 * sind(2 * eta) -
-            0.014 * sind(3 * eta) +
-            0.2275 * sind(zeta + eta) +
-            0.2112 * sind(zeta - eta) -
-            0.26 * sind(zeta) -
-            0.0098 * sind(2 * zeta) -
-            0.013 * sind(as) +
-            0.017 * sind(bs) -
-            0.0303 * sind(phi);
-        double i = 27.3347 + 0.643486 * cosd(chi) + 0.315 * cosd(W3) +
-            0.018 * cosd(theta) - 0.018 * cosd(cs);
-        double Om = 168.6812 + 1.40136 * cosd(chi) + 0.68599 * sind(W3) -
-            0.0392 * sind(cs) + 0.0366 * sind(theta_);
+            0.15648 * sinD(chi) +
+            9.142 * sinD(eta) +
+            0.007 * sinD(2 * eta) -
+            0.014 * sinD(3 * eta) +
+            0.2275 * sinD(zeta + eta) +
+            0.2112 * sinD(zeta - eta) -
+            0.26 * sinD(zeta) -
+            0.0098 * sinD(2 * zeta) -
+            0.013 * sinD(as) +
+            0.017 * sinD(bs) -
+            0.0303 * sinD(phi);
+        double i = 27.3347 + 0.643486 * cosD(chi) + 0.315 * cosD(W3) +
+            0.018 * cosD(theta) - 0.018 * cosD(cs);
+        double Om = 168.6812 + 1.40136 * cosD(chi) + 0.68599 * sinD(W3) -
+            0.0392 * sinD(cs) + 0.0366 * sinD(theta_);
 
         double lam, gam, r, w;
         OuterSaturnMoonParams(a, e, i, Om, lam_ - p, lam_,
@@ -2037,37 +2037,37 @@ class IapetusOrbit : public CachingOrbit
         double u4 = lT + gT - g1;
         double u5 = 2 * (ls + gs);
 
-        double a = 58.935028 + 0.004638 * cosd(u1) + 0.058222 * cosd(u2);
+        double a = 58.935028 + 0.004638 * cosD(u1) + 0.058222 * cosD(u2);
         double e = e_ -
-            0.0014097 * cosd(g1 - gT) +
-            0.0003733 * cosd(u5 - 2 * g) +
-            0.0001180 * cosd(u3) +
-            0.0002408 * cosd(l) +
-            0.0002849 * cosd(l + u2) +
-            0.0006190 * cosd(u4);
-        double W = 0.08077 * sind(g1 - gT) +
-            0.02139 * sind(u5 - 2 * g) -
-            0.00676 * sind(u3) +
-            0.01380 * sind(l) +
-            0.01632 * sind(l + u2) +
-            0.03547 * sind(u4);
+            0.0014097 * cosD(g1 - gT) +
+            0.0003733 * cosD(u5 - 2 * g) +
+            0.0001180 * cosD(u3) +
+            0.0002408 * cosD(l) +
+            0.0002849 * cosD(l + u2) +
+            0.0006190 * cosD(u4);
+        double W = 0.08077 * sinD(g1 - gT) +
+            0.02139 * sinD(u5 - 2 * g) -
+            0.00676 * sinD(u3) +
+            0.01380 * sinD(l) +
+            0.01632 * sinD(l + u2) +
+            0.03547 * sinD(u4);
         double p = om0 + W / e_;
         double lam_ = mu - 
-            0.04299 * sind(u2) -
-            0.00789 * sind(u1) -
-            0.06312 * sind(ls) -
-            0.00295 * sind(2 * ls) -
-            0.02231 * sind(u5) +
-            0.00650 * sind(u5 + psi);
+            0.04299 * sinD(u2) -
+            0.00789 * sinD(u1) -
+            0.06312 * sinD(ls) -
+            0.00295 * sinD(2 * ls) -
+            0.02231 * sinD(u5) +
+            0.00650 * sinD(u5 + psi);
         double sum = l + g1 + lT + gT + phi;
         double i = i_ +
-            0.04204 * cosd(u5 + psi) +
-            0.00235 * cosd(sum) +
-            0.00360 * cosd(u2 + phi);
-        double w_ = 0.04204 * sind(u5 + psi) +
-            0.00235 * sind(sum) +
-            0.00358 * sind(u2 + phi);
-        double Om = Om_ + w_ / sind(i_);
+            0.04204 * cosD(u5 + psi) +
+            0.00235 * cosD(sum) +
+            0.00360 * cosD(u2 + phi);
+        double w_ = 0.04204 * sinD(u5 + psi) +
+            0.00235 * sinD(sum) +
+            0.00358 * sinD(u2 + phi);
+        double Om = Om_ + w_ / sinD(i_);
 
         double lam, gam, r, w;
         OuterSaturnMoonParams(a, e, i, Om, lam_ - p, lam_,
