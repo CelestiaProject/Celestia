@@ -7,8 +7,13 @@
 *                    Copyright (c)2001-2004, Chris Laurel                 *
 *                           <claurel@shatters.net>                        *
 *                                                                         *
+*-------------------------------------------------------------------------*
 *  Celestia web site: http://www.shatters.net/celestia/                   *
-*  Celestia forums:   http://www.shatters.net/forum/                      *
+*                                                                         *
+*  Celestia documentation:                                                *
+*    http://www.shatters.net/celestia/documentation.html                  *
+*                                                                         *
+*  Celestia forums: http://www.shatters.net/forum/                        *
 ***************************************************************************
 
 CONTENTS
@@ -292,15 +297,7 @@ CREDITS
 
 Authors
 -------
-  Chris Laurel .......... Creator, Lead Developer
-  Clint Weisbrod ........
-  Fridger Schrempp ......
-  Christophe Teyssier ... Linux KDE UI
-  Bob Ippolito .......... MacOS X UI
-  Hank Ramsey ........... MacOS X UI
-  Grant Hutchison .......
-  Harald Schmidt ........ Celx/Lua scripting enhancements, bug fixes
-  Pat Suwalski .......... GTK Overhaul
+  See the AUTHORS file
 
 Contributors
 ------------
