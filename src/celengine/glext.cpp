@@ -686,7 +686,7 @@ void InitExtension(const char* ext)
 }
 
 
-bool ExtensionSupported(char *ext)
+bool ExtensionSupported(const char *ext)
 {
     char *extensions = (char *) glGetString(GL_EXTENSIONS);
 

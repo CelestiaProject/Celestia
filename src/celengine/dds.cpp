@@ -69,7 +69,7 @@ struct DDSurfaceDesc
 };
 
 
-static uint32 FourCC(char* s)
+static uint32 FourCC(const char* s)
 {
     return (((uint32) s[3] << 24) |
             ((uint32) s[2] << 16) |

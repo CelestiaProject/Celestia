@@ -351,7 +351,7 @@ int Tokenizer::readChar()
     return (int) in->get();
 }
 
-void Tokenizer::syntaxError(char* message)
+void Tokenizer::syntaxError(const char* message)
 {
     cerr << message << '\n';
 }
