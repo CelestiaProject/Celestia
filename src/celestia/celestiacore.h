@@ -239,9 +239,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setFaintest(float);
     void setFaintestAutoMag();
 
-    void splitView(View::Type);
-    void singleView();
-    void deleteView();
+    void splitView(View::Type type, View* av = NULL, float splitPos = 0.5f);
+    void singleView(View* av = NULL);
+    void deleteView(View* v = NULL);
     bool getFramesVisible() const;
     void setFramesVisible(bool);
     bool getActiveFrameVisible() const;
@@ -374,6 +374,11 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     int screenDpi;
     int distanceToScreen;
+
+#ifdef CELX
+    friend View* getViewByObserver(CelestiaCore*, Observer*);
+    friend void getObservers(CelestiaCore*, std::vector<Observer*>&);
+#endif
 };
 
 #endif // _CELESTIACORE_H_
