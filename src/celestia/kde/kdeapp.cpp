@@ -324,8 +324,8 @@ void KdeApp::initActions()
     new KAction(i18n("Pause Time"), "player_pause", Key_Space, this, SLOT(slotPauseTime()), actionCollection(), "pauseTime");
     new KAction(i18n("Reverse Time"), "reload", Key_J, this, SLOT(slotReverseTime()), actionCollection(), "reverseTime");
 
-    new KAction(i18n("Split View Horizontally"), "view_top_bottom", CTRL + Key_R, this, SLOT(slotSplitH()), actionCollection(), "splitH");
-    new KAction(i18n("Split View Vertically"), "view_left_right", CTRL + Key_U, this, SLOT(slotSplitV()), actionCollection(), "splitV");
+    new KAction(i18n("Split View Vertically"), "view_top_bottom", CTRL + Key_R, this, SLOT(slotSplitH()), actionCollection(), "splitH");
+    new KAction(i18n("Split View Horizontally"), "view_left_right", CTRL + Key_U, this, SLOT(slotSplitV()), actionCollection(), "splitV");
     new KAction(i18n("Cycle View"), "rotate_cw", Key_Tab, this, SLOT(slotCycleView()), actionCollection(), "cycleView");
     new KAction(i18n("Single View"), "view_remove", CTRL + Key_D, this, SLOT(slotSingleView()), actionCollection(), "singleView");
     new KAction(i18n("Delete View"), "view_remove", Key_Delete, this, SLOT(slotDeleteView()), actionCollection(), "deleteView");
@@ -457,7 +457,7 @@ void KdeApp::initActions()
     KToggleAction* showSpacecraftLabels = new KToggleAction(i18n("Show Spacecraft Labels"), Key_N, this, SLOT(slotShowSpacecraftLabels()), actionCollection(), "showSpacecraftLabels");
     showSpacecraftLabels->setChecked(lMode & Renderer::SpacecraftLabels);
 
-    KToggleAction* displayLocalTime = new KToggleAction(i18n("Display Local Time"), CTRL + Key_U, this, SLOT(slotDisplayLocalTime()), actionCollection(), "displayLocalTime");
+    KToggleAction* displayLocalTime = new KToggleAction(i18n("Display Local Time"), ALT + Key_U, this, SLOT(slotDisplayLocalTime()), actionCollection(), "displayLocalTime");
     displayLocalTime->setChecked(isLocal);
 
     new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
@@ -1023,7 +1023,7 @@ void KdeApp::dropEvent(QDropEvent* event) {
 
 void KdeApp::slotBackAboutToShow() {
     int i; 
-    KPopupMenu* menu = backAction->popupMenu(); 
+    KPopupMenu* menu = backAction->popupMenu();
     std::vector<Url>::size_type current = appCore->getHistoryCurrent();
     int pos;
     std::vector<Url> history = appCore->getHistory(); 
@@ -1183,7 +1183,11 @@ Selection KdeApp::getSelectionFromId(Selection sel, int id) {
 }
 
 void KdeApp::popupMenu(float x, float y, Selection sel) {
-    KPopupMenu popup(app);
+    popupMenu(app, app->glWidget->mapToGlobal(QPoint(int(x),int(y))), sel);
+}
+
+void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
+    KPopupMenu popup(parent);
     const PlanetarySystem* planets = 0;
 
     QLabel *lab = new QLabel("", &popup);
@@ -1258,7 +1262,7 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
         app->popupInsert(popup, sel, 0);
     }
 
-    int id = popup.exec(app->glWidget->mapToGlobal(QPoint(int(x),int(y))));
+    int id = popup.exec(p);
 
     int selId = id / MENUMAXSIZE;
     id = id - selId * MENUMAXSIZE;
