@@ -23,7 +23,31 @@ using namespace std;
 static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
                                        const M3DScene& scene,
                                        const string& texturePath);
-static int compareVertexLists(VertexList*, VertexList*);
+
+// Function to sort vertex lists so that transparent ones are rendered
+// after the opaque ones, and vertex lists with the same material properties
+// are grouped together.
+static int compareVertexLists(VertexList* vl0, VertexList* vl1)
+{
+    float a0 = vl0->getDiffuseColor().alpha();
+    float a1 = vl1->getDiffuseColor().alpha();
+
+    // In some cases, sorting with this comparison function hangs on Celestia
+    // executables built with MSVC.  For some reason, adding the following crud
+    // fixes the problem, but I haven't looked at the generated assembly
+    // instructions to figure out what's going on.  In any case, the output
+    // should never be printed because alpha is always >= 0.  Blah.
+    if (a0 == -50.0f)
+        cout << "Stupid MSVC compiler bug workaround!  (This line will never be printed)\n";
+    if (a0 == a1)
+    {
+        return vl0->getTexture() < vl1->getTexture();
+    }
+    else
+    {
+        return (a0 > a1);
+    }
+}
 
 Mesh3DS::Mesh3DS(const M3DScene& scene, const string& texturePath)
 {
@@ -72,6 +96,7 @@ void Mesh3DS::render(unsigned int attributes, float)
     bool blendOn = false;
     Color black(0.0f, 0.0f, 0.0f);
 
+    int count = 0;
     for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
     {
         // Don't mess with the material, texture, blend function, etc. if the
@@ -390,23 +415,4 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
     }
 
     return vl;
-}
-
-
-// Function to sort vertex lists so that transparent ones are rendered
-// after the opaque ones, and vertex lists with the same material properties
-// are grouped together.
-static int compareVertexLists(VertexList* vl0, VertexList* vl1)
-{
-    float a0 = vl0->getDiffuseColor().alpha();
-    float a1 = vl1->getDiffuseColor().alpha();
-
-    if (a0 == a1)
-    {
-        return vl0->getTexture() < vl1->getTexture();
-    }
-    else
-    {
-        return (a0 > a1);
-    }
 }
