@@ -13,12 +13,15 @@
 #include <celmath/vecmath.h>
 
 
+class OrbitSampleProc;
+
 class Orbit
 {
 public:
     virtual Point3d positionAtTime(double) const = 0;
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
+    virtual void sample(double, double, int, OrbitSampleProc&) const = 0;
 };
 
 
@@ -32,8 +35,12 @@ public:
     Point3d positionAtTime(double) const;
     double getPeriod() const;
     double getBoundingRadius() const;
+    virtual void sample(double, double, int, OrbitSampleProc&) const;
 
 private:
+    double eccentricAnomaly(double) const;
+    Point3d positionAtE(double) const;
+
     double pericenterDistance;
     double eccentricity;
     double inclination;
@@ -42,6 +49,13 @@ private:
     double meanAnomalyAtEpoch;
     double period;
     double epoch;
+};
+
+
+class OrbitSampleProc
+{
+ public:
+    virtual void sample(const Point3d&) = 0;
 };
 
 
@@ -61,15 +75,9 @@ public:
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
 
-    Point3d positionAtTime(double jd) const
-    {
-        if (jd != lastTime)
-        {
-            lastTime = jd;
-            lastPosition = computePosition(jd);
-        }
-        return lastPosition;
-    };
+    Point3d positionAtTime(double jd) const;
+
+    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
 
 private:
     mutable Point3d lastPosition;
