@@ -314,6 +314,10 @@ static Body* CreatePlanet(PlanetarySystem* system,
     planetData->getNumber("Oblateness", oblateness);
     body->setOblateness(oblateness);
 
+    Quatf orientation;
+    if (planetData->getRotation("Orientation", orientation))
+        body->setOrientation(orientation);
+
     body->setRotationElements(CreateRotationElements(planetData, orbit->getPeriod()));
 
     Surface* surface = CreateSurface(planetData);
