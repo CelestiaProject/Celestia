@@ -129,6 +129,7 @@ enum ParseState
     LumClassIdashState,
     LumClassIaState,
     WDTypeState,
+    WDExtendedTypeState,
     WDSubclassState,
     SubdwarfPrefixState,
 };
@@ -451,7 +452,28 @@ parseSpectralType(const string& st)
                 specClass = StellarClass::Spectral_D;
                 break;
             }
-            state = WDSubclassState;
+            state = WDExtendedTypeState;
+            break;
+
+        case WDExtendedTypeState:
+            switch (c)
+            {
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'O':
+            case 'Q':
+            case 'Z':
+            case 'V': // variable
+            case 'P': // magnetic stars with polarized light
+            case 'H': // magnetic stars without polarized light
+            case 'E': // emission lines
+                i++;
+                break;
+            default:
+                state = WDSubclassState;
+                break;
+            }
             break;
 
         case WDSubclassState:
