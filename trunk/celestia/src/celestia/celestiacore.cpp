@@ -2382,6 +2382,46 @@ static void displayDistance(Overlay& overlay, double distance)
 }
 
 
+static void displayAngle(Overlay& overlay, double angle)
+{
+    int degrees, minutes;
+    double seconds;
+    astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
+
+    if (degrees > 0)
+    {
+        overlay.printf("%d%s %02d' %.1f\"",
+                        degrees, UTF8_DEGREE_SIGN, minutes, seconds);
+    }
+    else if (minutes > 0)
+    {
+        overlay.printf("%02d' %.1f\"", minutes, seconds);
+    }
+    else
+    {
+        overlay.printf("%.1f\"", seconds);
+    }
+}
+
+
+static void displayApparentSize(Overlay& overlay,
+                                double radius, double distance)
+{
+    if (distance > radius)
+    {
+        double arcSize = radToDeg(atan(radius / distance) * 2.0);
+
+        // Only display the arc size if it's less than 90 degrees and greater
+        // than one second--otherwise, it's probably not interesting data.
+        if (arcSize < 90.0 && arcSize > 1.0 / 3600.0)
+        {
+            overlay << "Apparent size: ";
+            displayAngle(overlay, arcSize);
+        }
+    }
+}
+
+
 static void displayStarNames(Overlay& overlay,
                              Star& star,
                              StarDatabase& starDB,
@@ -2446,6 +2486,10 @@ static void displayStarInfo(Overlay& overlay,
                    astro::absToAppMag(star.getAbsoluteMagnitude(), (float) distance));
     overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
     overlay << "Class: " << star.getStellarClass() << '\n';
+
+    displayApparentSize(overlay, star.getRadius(),
+                        astro::lightYearsToKilometers(distance));
+
     if (detail > 1)
     {
         overlay << "Surface Temp: " << star.getTemperature() << " K\n";
@@ -2476,9 +2520,8 @@ static void displayPlanetInfo(Overlay& overlay,
 {
     double kmDistance = astro::lightYearsToKilometers(distance);
 
-    kmDistance -= body.getRadius();
     overlay << "Distance: ";
-    distance = astro::kilometersToLightYears(kmDistance);
+    distance = astro::kilometersToLightYears(kmDistance - body.getRadius());
     displayDistance(overlay, distance);
     overlay << '\n';
 
@@ -2486,6 +2529,8 @@ static void displayPlanetInfo(Overlay& overlay,
     distance = astro::kilometersToLightYears(body.getRadius());
     displayDistance(overlay, distance);
     overlay << '\n';
+
+    displayApparentSize(overlay, body.getRadius(), kmDistance);
 
     if (detail > 1)
     {
@@ -2868,23 +2913,8 @@ void CelestiaCore::renderOverlay()
 
         // Field of view
         float fov = radToDeg(sim->getActiveObserver()->getFOV());
-        int degrees, minutes;
-        double seconds;
-        astro::decimalToDegMinSec((double) fov, degrees, minutes, seconds);
-
-        if (degrees > 0)
-        {
-            overlay->printf("FOV: %d%s %02d' %.1f\"",
-                            degrees, UTF8_DEGREE_SIGN, minutes, seconds);
-        }
-        else if (minutes > 0)
-        {
-            overlay->printf("FOV: %02d' %.1f\"", minutes, seconds);
-        }
-        else
-        {
-            overlay->printf("FOV: %.1f\"", seconds);
-        }
+        overlay->printf("FOV: ");
+        displayAngle(*overlay, fov);
         overlay->printf(" (%.2f%s)\n", views[activeView]->zoom,
                         UTF8_MULTIPLICATION_SIGN);
         overlay->endText();
@@ -2943,6 +2973,8 @@ void CelestiaCore::renderOverlay()
                 *overlay << "Distance: ";
                 displayDistance(*overlay, v.length() * 1e-6);
                 *overlay << '\n';
+                displayApparentSize(*overlay, sel.deepsky()->getRadius(),
+                                    v.length() * 1e-6);
 #if 0
                 displayGalaxyInfo(*overlay, *sel.galaxy,
                                   v.length() * 1e-6);
