@@ -411,7 +411,7 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
             coordLabels = new SphericalCoordLabel[nCoordLabels];
             for (i = 0; i < 12; i++)
             {
-                coordLabels[i].ra = i * 2;
+                coordLabels[i].ra = float(i * 2);
                 coordLabels[i].dec = 0;
                 sprintf(buf, "%dh", i * 2);
                 coordLabels[i].label = string(buf);
@@ -601,9 +601,9 @@ void Renderer::setOrbitMask(int mask)
     orbitMask = mask;
 }
 
-void Renderer::addLabelledStar(Star* star)
+void Renderer::addLabelledStar(Star* star, const string& label)
 {
-    labelledStars.insert(labelledStars.end(), star);
+    labelledStars.insert(labelledStars.end(), StarLabel(star, label));
 }
 
 
@@ -951,8 +951,8 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
 
 void Renderer::autoMag(float& faintestMag)
 {
-      float fieldCorr = 2.0 * FOV/(fov + FOV);
-      faintestMag = faintestAutoMag45deg * sqrt(fieldCorr);
+      float fieldCorr = 2.0f * FOV/(fov + FOV);
+      faintestMag = (float) (faintestAutoMag45deg * sqrt(fieldCorr));
       saturationMag = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
 }
 
@@ -967,7 +967,7 @@ void Renderer::render(const Observer& observer,
 
     // Compute the size of a pixel
     setFieldOfView(radToDeg(observer.getFOV()));
-    pixelSize = calcPixelSize(fov, windowHeight);
+    pixelSize = calcPixelSize(fov, (float) windowHeight);
 
     // Set up the projection we'll use for rendering stars.
     glMatrixMode(GL_PROJECTION);
@@ -2065,7 +2065,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     float cosSunAltitude = 0.0f;
     {
         // Check for a sun either directly behind or in front of the viewer
-        float cosSunAngle = (sunDirection * e) / centerDist;
+        float cosSunAngle = (float) ((sunDirection * e) / centerDist);
         if (cosSunAngle < -1.0f + 1.0e-6f)
         {
             cosSunAltitude = 0.0f;
@@ -3455,7 +3455,8 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     // Render the labels very close to the near plane with z=-0.999f.  In fact,
     // z=-1.0f should work, but I'm concerned that some OpenGL implementations
     // might clip things placed right on the near plane.
-    glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), -0.999f);
+    glTranslatef(GLfloat((int) (windowWidth / 2)),
+                 GLfloat((int) (windowHeight / 2)), -0.999f);
 
     Ellipsoidf ellipsoid(position, Vec3f(scale, scale, scale));
 
@@ -3772,7 +3773,7 @@ void Renderer::renderObject(Point3f pos,
             if (distance - radius < atmosphere->cloudHeight)
                 glFrontFace(GL_CW);
 
-            float texOffset = -pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0);
+            float texOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0));
 
             if (atmosphere->cloudSpeed != 0.0f)
             {
@@ -4038,7 +4039,7 @@ void Renderer::renderPlanet(Body& body,
 
             rotation = remainder * 2 * PI + re.offset;
         }
-        rp.orientation.yrotate(-rotation);
+        rp.orientation.yrotate((float) -rotation);
         rp.orientation = body.getOrientation() * rp.orientation;
 
         Color sunColor(1.0f, 1.0f, 1.0f);
@@ -4224,7 +4225,7 @@ void Renderer::renderStar(const Star& star,
             rotation = remainder * 2 * PI;
         }
         rp.orientation = Quatf(1.0f);
-        rp.orientation.yrotate(-rotation);
+        rp.orientation.yrotate((float) -rotation);
 
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
@@ -4365,7 +4366,7 @@ void Renderer::renderCometTail(const Body& body,
 #endif
     // Compute a rough estimate of the visible length of the dust tail
     float dustTailLength = (1.0e8f / (float) pos0.distanceFromOrigin()) *
-        (body.getRadius() / 5.0f) * 1.0e7;
+        (body.getRadius() / 5.0f) * 1.0e7f;
     float dustTailRadius = dustTailLength * 0.1f;
     float comaRadius = dustTailRadius * 0.5f;
 
@@ -4437,7 +4438,7 @@ void Renderer::renderCometTail(const Body& body,
             if (axisLength > 1e-5f)
             {
                 axis *= 1.0f / axisLength;
-                q.setAxisAngle(axis, asin(axisLength));
+                q.setAxisAngle(axis, (float) asin(axisLength));
                 Mat3f m = q.toMatrix3();
 
                 u = u * m;
@@ -4469,7 +4470,7 @@ void Renderer::renderCometTail(const Body& body,
 
         for (int j = 0; j < CometTailSlices; j++)
         {
-            float theta = 2 * PI * (float) j / CometTailSlices;
+            float theta = (float) (2 * PI * (float) j / CometTailSlices);
             float s = (float) sin(theta);
             float c = (float) cos(theta);
             CometTailVertex* vtx = &cometTailVertices[i * CometTailSlices + j];
@@ -4565,7 +4566,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.isCometTail = false;
             rle.position = Point3f(pos.x, pos.y, pos.z);
             rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
-            rle.distance = distanceFromObserver;
+            rle.distance = (float) distanceFromObserver;
             rle.radius = body->getRadius();
             rle.discSizeInPixels = discSize;
             rle.appMag = appMag;
@@ -4586,7 +4587,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                 rle.position = Point3f(pos.x, pos.y, pos.z);
                 rle.radius = radius;
                 rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
-                rle.distance = distanceFromObserver;
+                rle.distance = (float) distanceFromObserver;
                 rle.radius = radius;
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
@@ -5040,7 +5041,7 @@ void Renderer::labelGalaxies(const DeepSkyCatalog& catalog,
     {
         DeepSkyObject* obj = *iter;
         Point3d posd = obj->getPosition();
-        Point3f pos(posd.x,posd.y,posd.z);
+        Point3f pos((float) posd.x, (float) posd.y, (float) posd.z);
 
         Vec3f rpos = pos - observerPos_ly;
         if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
@@ -5052,15 +5053,15 @@ void Renderer::labelGalaxies(const DeepSkyCatalog& catalog,
 }
 
 
-void Renderer::labelStars(const vector<Star*>& stars,
+void Renderer::labelStars(const vector<StarLabel>& stars,
                           const StarDatabase& starDB,
                           const Observer& observer)
 {
     Point3f observerPos_ly = (Point3f) observer.getPosition() * ((float)1e-6);
 
-    for (vector<Star*>::const_iterator iter = stars.begin(); iter != stars.end(); iter++)
+    for (vector<StarLabel>::const_iterator iter = stars.begin(); iter != stars.end(); iter++)
     {
-        Star* star = *iter;
+        Star* star = iter->star;
         Point3f pos = star->getPosition();
         float distance = pos.distanceTo(observerPos_ly);
         float appMag = (distance > 0.0f) ?
@@ -5082,7 +5083,7 @@ void Renderer::labelStars(const vector<Star*>& stars,
 
             if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
             {
-                addLabel(starDB.getStarName(*star),
+                addLabel(iter->label,
                          Color(0.3f, 0.3f, 1.0f),
                          Point3f(rpos.x, rpos.y, rpos.z));
             }
@@ -5177,13 +5178,14 @@ void Renderer::renderLabels()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), 0);
+    glTranslatef(GLfloat((int) (windowWidth / 2)),
+                 GLfloat((int) (windowHeight / 2)), 0);
 
     for (int i = 0; i < (int) labels.size(); i++)
     {
         glColor(labels[i].color);
         glPushMatrix();
-        glTranslatef((int) labels[i].position.x + PixelOffset,
+        glTranslatef((int) labels[i].position.x + PixelOffset + 2.0f,
                      (int) labels[i].position.y + PixelOffset,
                      labels[i].position.z);
         font->render(labels[i].text);
@@ -5227,7 +5229,8 @@ void Renderer::renderMarkers(const MarkerList& markers,
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), 0);
+    glTranslatef(GLfloat((int) (windowWidth / 2)),
+                 GLfloat((int) (windowHeight / 2)), 0);
 
     Mat3f rot = conjugate(orientation).toMatrix3();
 
@@ -5236,7 +5239,7 @@ void Renderer::renderMarkers(const MarkerList& markers,
     {
         UniversalCoord uc = iter->getPosition(jd);
         Vec3d offset = uc - position;
-        Vec3f eyepos = Vec3f(offset.x, offset.y, offset.z) * rot;
+        Vec3f eyepos = Vec3f((float) offset.x, (float) offset.y, (float) offset.z) * rot;
         eyepos.normalize();
         eyepos *= 1000.0f;
 
@@ -5250,7 +5253,7 @@ void Renderer::renderMarkers(const MarkerList& markers,
             if (eyepos.z < 0.0f)
             {
                 glPushMatrix();
-                glTranslatef(winX, winY, 0.0f);
+                glTranslatef((GLfloat) winX, (GLfloat) winY, 0.0f);
 
                 glColor(iter->getColor());
                 iter->render();
