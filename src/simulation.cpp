@@ -357,13 +357,8 @@ void Simulation::update(double dt)
     else if (observerMode == Following)
     {
         Point3d posRelToSun = followInfo.body->getHeliocentricPosition(simTime) + followInfo.offset;
-        double x1 = (double) observer.getPosition().x;
         observer.setPosition(astro::universalPosition(posRelToSun,
                                                       followInfo.sun->getPosition()));
-        Point3d blah = astro::heliocentricPosition(observer.getPosition(),
-                                               followInfo.sun->getPosition());
-        double x2 = (double) observer.getPosition().x;
-        cout << "Follow: " << (blah.x - posRelToSun.x) << '\n';
     }
     else
     {
