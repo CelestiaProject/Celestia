@@ -302,7 +302,7 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
 
                     if (material->getTextureMap() != "")
                     {
-                        ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap()));
+                        ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), Texture::WrapTexture));
                         vl->setTexture(tex);
                     }
 
