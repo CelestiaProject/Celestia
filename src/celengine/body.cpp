@@ -372,6 +372,13 @@ void Body::setLifespan(double begin, double end)
 }
 
 
+void Body::getLifespan(double& begin, double& end) const
+{
+    begin = protos;
+    end = eschatos;
+}
+
+
 #define SOLAR_IRRADIANCE   1367.6
 #define SOLAR_POWER           3.8462e26
 
