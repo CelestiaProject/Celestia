@@ -25,6 +25,7 @@ public:
     inline StellarClass getStellarClass() const;
     inline Point3f getPosition() const;
     inline float getAbsoluteMagnitude() const;
+    float getApparentMagnitude(float) const;
     float getLuminosity() const;
     float getRadius() const;
     float getTemperature() const;
