@@ -71,6 +71,7 @@
 #include "url.h"
 #include "celestialbrowser.h"
 #include "eclipsefinderdlg.h"
+#include "selectionpopup.h"
 
 #include "celengine/glext.h"
 
@@ -88,7 +89,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
         cerr << "Out of memory.\n";
         exit(1);
     }
-    
+
     kdewatcher = new KdeWatcher(appCore, this);
 
     renderer = appCore->getRenderer();
@@ -1087,341 +1088,11 @@ void KdeApp::slotEclipseFinder() {
     ef->raise();
 }
 
-void KdeApp::popupInsert(KPopupMenu &popup, Selection sel, int baseId) {
-    popup.insertItem(i18n("&Select"), baseId + 1);
-    popup.insertItem(i18n("&Center"), baseId + 2);
-    popup.insertItem(i18n("&Goto"), baseId + 3);
-    popup.insertItem(i18n("&Follow"), baseId + 4);
-    popup.insertItem(i18n("S&ynch Orbit"), baseId + 5);
-    popup.insertItem(i18n("&Info"), baseId + 6);
-    popup.insertItem(i18n("Unmark &All"), baseId + 8);
-    if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
-    {
-        popup.insertItem(i18n("&Unmark"), baseId + 7);
-    }
-    else
-    {
-        KPopupMenu *markMenu = new KPopupMenu(app);
-        markMenu->insertItem(i18n("Diamond"), baseId + 10);
-        markMenu->insertItem(i18n("Triangle"), baseId + 11);
-        markMenu->insertItem(i18n("Square"), baseId + 12);
-        markMenu->insertItem(i18n("Plus"), baseId + 13);
-        markMenu->insertItem(i18n("X"), baseId + 14);
-        popup.insertItem(i18n("&Mark"), markMenu);
-    }
-
-    if (sel.body != NULL)
-    {
-        const PlanetarySystem* satellites = sel.body->getSatellites();
-        if (satellites != NULL && satellites->getSystemSize() != 0)
-        {
-            popup.insertSeparator();
-            KPopupMenu *planetaryMenu = new KPopupMenu(app);
-            for (int i = 0; i < satellites->getSystemSize() && i < MENUMAXSIZE; i++)
-            {
-                Body* body = satellites->getBody(i);
-                Selection satSel(body);
-                KPopupMenu *satMenu = new KPopupMenu(app);
-                popupInsert(*satMenu, satSel, baseId * MENUMAXSIZE + (i + 1) * MENUMAXSIZE);
-                planetaryMenu->insertItem(body->getName().c_str(), satMenu);
-            }
-            popup.insertItem(i18n("Satellites"), planetaryMenu);
-        }
-    }
-    else if (sel.star != NULL)
-    {
-        popup.setItemEnabled(baseId + 5, false);
-        Simulation *sim = appCore->getSimulation();
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
-        if (iter != solarSystemCatalog->end())
-        {
-            popup.insertSeparator();
-            SolarSystem* solarSys = iter->second;
-            KPopupMenu* planetsMenu = new KPopupMenu(app);
-            for (int i = 0; i < solarSys->getPlanets()->getSystemSize() && i < MENUMAXSIZE; i++)
-            {
-                Body* body = solarSys->getPlanets()->getBody(i);
-                Selection satSel(body);
-                KPopupMenu *satMenu = new KPopupMenu(app);
-                popupInsert(*satMenu, satSel, baseId * MENUMAXSIZE + (i + 1) * MENUMAXSIZE);
-                planetsMenu->insertItem(body->getName().c_str(), satMenu);
-            }
-            popup.insertItem(i18n("Planets"), planetsMenu);
-        }
-    }
-    else if (sel.deepsky != NULL)
-    {
-        popup.setItemEnabled(baseId + 5, false);
-    }
-}
-
-Selection KdeApp::getSelectionFromId(Selection sel, int id) {
-    if (id == 0) return sel;
-
-    int subId = id;
-    int level = 1;
-    while (id > MENUMAXSIZE) {
-        id /= MENUMAXSIZE;
-        level *= MENUMAXSIZE;
-    }
-    subId -= id * level;
-    if (subId < 0) subId = 0;
-
-    if (sel.body != NULL)
-    {
-        const PlanetarySystem* satellites = sel.body->getSatellites();
-        if (satellites != NULL && satellites->getSystemSize() != 0)
-        {
-            Body* body = satellites->getBody(id - 1);
-            Selection satSel(body);
-            return getSelectionFromId(satSel, subId);
-        }
-    }
-    else if (sel.star != NULL)
-    {
-        Simulation *sim = appCore->getSimulation();
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
-        if (iter != solarSystemCatalog->end())
-        {
-            SolarSystem* solarSys = iter->second;
-            Body* body = solarSys->getPlanets()->getBody(id - 1);
-            Selection satSel(body);
-            return getSelectionFromId(satSel, subId);
-        }
-    }
-
-    return sel;
-}
-
 void KdeApp::popupMenu(float x, float y, Selection sel) {
-    popupMenu(app, app->glWidget->mapToGlobal(QPoint(int(x),int(y))), sel);
-}
-
-const char* KdeApp::getSelectionName(const Selection& sel) {
-    if (sel.body != NULL)
-    {
-        return sel.body->getName().c_str();
-    }
-    else if (sel.star != NULL)
-    {
-        Simulation *sim = app->appCore->getSimulation();
-        return sim->getUniverse()->getStarCatalog()->getStarName(*sel.star).c_str();
-    }
-    else if (sel.deepsky != NULL)
-    {
-        return sel.deepsky->getName().c_str();
-    }
-
-    return "";
-}
-
-void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
-    KPopupMenu popup(parent);
-    const PlanetarySystem* planets = 0;
-
-    QLabel *lab = new QLabel("", &popup);
-    QPalette pal( lab->palette() );
-    pal.setColor( QPalette::Normal, QColorGroup::Background, QColor( "White" ) );
-    pal.setColor( QPalette::Normal, QColorGroup::Foreground, QColor( "Black" ) );
-    pal.setColor( QPalette::Inactive, QColorGroup::Foreground, QColor( "Black" ) );
-
-    QFont rsFont = lab->font();
-    rsFont.setPointSize( rsFont.pointSize() - 2 );
-
-    Simulation *sim = app->appCore->getSimulation();
-    Vec3d v = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
-
-    if (sel.body != NULL)
-    {
-        popup.insertTitle(sel.body->getName().c_str(), 0, 0);
-        app->popupInsert(popup, sel, MENUMAXSIZE);
-    }
-    else if (sel.star != NULL)
-    {
-        std::string name = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star);
-
-        double distance = v.length() * 1e-6;
-        char buff[50];
-
-        ostringstream o;
-
-        if (abs(distance) >= astro::AUtoLightYears(1000.0f))
-            sprintf(buff, "%.3f ly", distance);
-        else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
-            sprintf(buff, "%.3f au", astro::lightYearsToAU(distance));
-        else if (abs(distance) > astro::kilometersToLightYears(1.0f))
-            sprintf(buff, "%.3f km", astro::lightYearsToKilometers(distance));
-        else
-            sprintf(buff, "%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
-
-        o << i18n("Distance: ") << buff << "\n";
-
-        o << i18n("Abs (app) mag: ");
-
-        sprintf(buff, "%.2f (%.2f)",
-                   sel.star->getAbsoluteMagnitude(),
-                   astro::absToAppMag(sel.star->getAbsoluteMagnitude(),
-                                      (float) distance));
-        o << buff << "\n";
-
-        o << i18n("Class: ");
-        sprintf(buff, "%s", sel.star->getStellarClass().str().c_str());
-        o << buff << "\n";
-
-        o << i18n("Surface Temp: ");
-        sprintf(buff, "%.0f K", sel.star->getTemperature());
-        o << buff << "\n";
-
-        o << i18n("Radius: ");
-        sprintf(buff, "%.2f Rsun", sel.star->getRadius() / 696000.0f);
-        o << buff;
-
-        QLabel *starDetails = new QLabel(QString(o.str().c_str()), &popup);
-        starDetails->setPalette(pal);
-        starDetails->setFont(rsFont);
-
-        popup.insertTitle(name.c_str(), 0, 0);
-        popup.insertItem(starDetails);
-        popup.insertSeparator();
-        app->popupInsert(popup, sel, MENUMAXSIZE);
-    }
-    else if (sel.deepsky != NULL)
-    {
-        popup.insertTitle(sel.deepsky->getName().c_str(), 0);
-        app->popupInsert(popup, sel, MENUMAXSIZE);
-    }
-
-    if (sim->getUniverse() != NULL)
-    {
-        MarkerList* markers = sim->getUniverse()->getMarkers();
-        if (markers->size() > 0)
-        {
-            KPopupMenu *markMenu = new KPopupMenu(app);
-            int j=1;
-            for (std::vector<Marker>::iterator i = markers->begin(); i < markers->end() && j < MENUMAXSIZE; i++)
-            {
-                KPopupMenu *objMenu = new KPopupMenu(app);
-                app->popupInsert(*objMenu, (*i).getObject(), (2 * MENUMAXSIZE + j) * MENUMAXSIZE);
-                markMenu->insertItem(getSelectionName((*i).getObject()), objMenu);
-                j++;
-            }
-            popup.insertItem(i18n("Marked objects"), markMenu);
-        }
-    }
-
-
-    int id = popup.exec(p);
-
-    int actionId = id;
-    actionId = id - (id / MENUMAXSIZE) * MENUMAXSIZE;
-
-    int subId = id;
-    int level = 1;
-    while (id > MENUMAXSIZE) {
-        id /= MENUMAXSIZE;
-        level *= MENUMAXSIZE;
-    }
-    subId -= id * level;
-
-    if (id == 1)
-    {
-        int selId = subId / MENUMAXSIZE;
-        sel = app->getSelectionFromId(sel, selId);
-    }
-    else if (id == 2) // marked objects sub-menu
-    {
-        int subsubId = subId;
-        int level = 1;
-        while (subId > MENUMAXSIZE) {
-            subId /= MENUMAXSIZE;
-            level *= MENUMAXSIZE;
-        }
-        subsubId -= subId * level;
-        MarkerList* markers = sim->getUniverse()->getMarkers();
-        sel = (*markers)[subId-1].getObject();
-        int selId = subsubId / MENUMAXSIZE;
-        sel = app->getSelectionFromId(sel, selId);
-    }
-
-    if (actionId == 1) {
-        app->appCore->getSimulation()->setSelection(sel);
-        return;
-    }
-    if (actionId == 2) {
-        app->appCore->getSimulation()->setSelection(sel);
-        app->appCore->charEntered('c');
-        return;
-    }
-    if (actionId == 3) {
-        app->appCore->getSimulation()->setSelection(sel);
-        app->appCore->charEntered('g');
-        return;
-    }
-    if (actionId == 4) {
-        app->appCore->getSimulation()->setSelection(sel);
-        app->appCore->charEntered('f');
-        return;
-    }
-    if (actionId == 5) {
-        app->appCore->getSimulation()->setSelection(sel);
-        app->appCore->charEntered('y');
-        return;
-    }
-    if (actionId == 6) {
-        QString url;
-        if (sel.body != NULL) {
-            url = QString(sel.body->getInfoURL().c_str());
-            if (url == "") {
-                QString name = QString(sel.body->getName().c_str()).lower();
-                url = QString("http://www.nineplanets.org/") + name + ".html";
-            }
-        } else if (sel.star != NULL) {
-            if (sel.star->getCatalogNumber() != 0) {
-                url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=HIP %1")
-                      .arg(sel.star->getCatalogNumber() & ~0xf0000000);
-            } else {
-                url = QString("http://www.nineplanets.org/sun.html");
-            }
-        } else if (sel.deepsky != NULL) {
-                url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=%1")
-                      .arg(sel.deepsky->getName().c_str());
-        }
-        KRun::runURL(url, "text/html");
-        return;
-    }
-    if (actionId == 7)
-    {
-        if (sim->getUniverse() != NULL)
-            sim->getUniverse()->unmarkObject(sel, 1);
-        return;
-    }
-    if (actionId == 8)
-    {
-        MarkerList* markers = sim->getUniverse()->getMarkers();
-        if (markers != 0)
-        {
-            for (vector<Marker>::const_iterator iter = markers->begin();
-                 iter < markers->end(); iter++)
-            {
-                sim->getUniverse()->unmarkObject((*iter).getObject(), 1);
-            }
-        }
-        return;
-    }
-    if (actionId >= 10 && actionId <= 14)
-    {
-        if (sim->getUniverse() != NULL)
-        {
-            sim->getUniverse()->markObject(sel,
-                                           10.0f,
-                                           Color(0.0f, 1.0f, 0.0f, 0.9f),
-                                           (Marker::Symbol)(actionId - 10),
-                                           1);
-        }
-        return;
-    }
+    SelectionPopup popup(app, app->appCore, sel);
+    popup.init();
+    int id = popup.exec(app->glWidget->mapToGlobal(QPoint(int(x),int(y))));
+    popup.process(id);
 }
 
 LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
@@ -1434,7 +1105,7 @@ LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
     objLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     objEdit = new QLineEdit(grid);
     new QLabel("", grid);
-    
+
     QLabel* longLab = new QLabel(i18n("Longitude: "), grid);
     longLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     longEdit = new QLineEdit(grid);
@@ -1443,7 +1114,7 @@ LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
     longSign = new QComboBox( grid );
     longSign->insertItem(i18n("East", "E"));
     longSign->insertItem(i18n("West", "W"));
-    
+
     QLabel* latLab = new QLabel(i18n("Latitude: "), grid);
     latLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     latEdit = new QLineEdit(grid);
