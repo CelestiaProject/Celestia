@@ -75,7 +75,8 @@ struct DirectionalLight
 {
     Color color;
     float intensity;
-    Vec3f direction;
+    Vec3f direction_eye;
+    Vec3f direction_obj;
 };
 
 
