@@ -18,6 +18,7 @@ libcelengine_a_SOURCES = \
 	command.cpp \
 	constellation.cpp \
 	customorbit.cpp \
+	dds.cpp \
 	dispmap.cpp \
 	execution.cpp \
 	galaxy.cpp \
