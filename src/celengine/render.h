@@ -57,9 +57,6 @@ class Renderer
                 const Selection& sel,
                 double now);
     
-    // Convert window coordinates to a ray for picking
-    Vec3f getPickRay(int winX, int winY);
-
     enum {
         NoLabels            = 0x00,
         StarLabels          = 0x01,
