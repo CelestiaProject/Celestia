@@ -29,7 +29,7 @@ static string GlieseCatalogPrefix("Gliese ");
 static string RossCatalogPrefix("Ross ");
 static string LacailleCatalogPrefix("Lacaille ");
 
-static const float OctreeRootSize = 5000.0f;
+static const float OctreeRootSize = 15000.0f;
 static const float OctreeMagnitude = 6.0f;
 
 
