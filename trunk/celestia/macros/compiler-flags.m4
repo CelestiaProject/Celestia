@@ -21,7 +21,7 @@ AC_DEFUN([GNOME_COMPILE_WARNINGS],[
       ## -W is not all that useful.  And it cannot be controlled
       ## with individual -Wno-xxx flags, unlike -Wall
       if test "x$enable_compile_warnings" = "xyes"; then
-	warnCFLAGS="$warnCFLAGS -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith"
+	warnCFLAGS="$warnCFLAGS -Wmissing-prototypes -Wmissing-declarations"
       fi
     fi
   fi
@@ -75,7 +75,7 @@ AC_DEFUN([GNOME_CXX_WARNINGS],[
       ## -W is not all that useful.  And it cannot be controlled
       ## with individual -Wno-xxx flags, unlike -Wall
       if test "x$enable_cxx_warnings" = "xyes"; then
-	warnCXXFLAGS="$warnCXXFLAGS -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith -Wshadow -Woverloaded-virtual"
+	warnCXXFLAGS="$warnCXXFLAGS -Wmissing-prototypes -Wmissing-declarations -Wshadow -Woverloaded-virtual"
       fi
     fi
   fi

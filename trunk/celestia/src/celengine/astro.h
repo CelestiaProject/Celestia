@@ -16,7 +16,7 @@
 
 #define SOLAR_ABSMAG  4.83f
 #define LN_MAG        1.085736
-#define LY_PER_PARSEC 3.26
+#define LY_PER_PARSEC 3.26167
 #define KM_PER_LY     9466411842000.000
 #define KM_PER_AU     149597870.7
 #define AU_PER_LY     (KM_PER_LY / KM_PER_AU)

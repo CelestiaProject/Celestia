@@ -43,7 +43,7 @@ enum
 // efficient.  In testing, changing splitThreshold from 100 to 50 nearly
 // doubled the number of nodes in the tree, but provided only between a
 // 0 to 5 percent frame rate improvement.
-static const int splitThreshold = 100;
+static const unsigned int splitThreshold = 100;
 
 static const float sqrt3 = 1.732050808f;
 
@@ -142,7 +142,7 @@ void DynamicStarOctree::sortStarsIntoChildNodes()
 {
     int nBrightStars = 0;
 
-    for (int i = 0; i < stars->size(); i++)
+    for (unsigned int i = 0; i < stars->size(); i++)
     {
         const Star* star = (*stars)[i];
         if (star->getAbsoluteMagnitude() <= absMag)
@@ -243,7 +243,7 @@ void StarOctree::findVisibleStars(StarHandler& starHandler,
 
     // Process the stars in this node
     float dimmest = minDistance > 0 ? astro::appToAbsMag(limitingMag, minDistance) : 1000;
-    for (int i = 0; i < nStars; i++)
+    for (unsigned int i = 0; i < nStars; i++)
     {
         Star& star = firstStar[i];
         if (star.getAbsoluteMagnitude() < dimmest)
@@ -294,7 +294,7 @@ void StarOctree::findCloseStars(StarHandler& starHandler,
     float radiusSquared = radius * radius;
 
     // Check all the stars in the node.
-    for (int i = 0; i < nStars; i++)
+    for (unsigned int i = 0; i < nStars; i++)
     {
         Star& star = firstStar[i];
         if (position.distanceToSquared(star.getPosition()) < radiusSquared)

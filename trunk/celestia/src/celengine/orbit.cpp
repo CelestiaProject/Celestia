@@ -39,6 +39,7 @@ EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
 // First four terms of a series solution to Kepler's equation
 // for orbital motion.  This only works for small eccentricities,
 // and in fact the series diverges for e > 0.6627434
+/* currently not used anymore
 static double solveKeplerSeries(double M, double e)
 {
     return (M +
@@ -47,7 +48,7 @@ static double solveKeplerSeries(double M, double e)
             e * e * e * (0.325 * sin(3 * M) - 0.125 * sin(M)) +
             e * e * e * e * (1.0 / 3.0 * sin(4 * M) - 1.0 / 6.0 * sin(2 * M)));
 
-}
+}*/
 
 
 // Standard iteration for solving Kepler's Equation

@@ -52,7 +52,7 @@ Value::~Value()
     {
         if (data.a != NULL)
         {
-            for (int i = 0; i < data.a->size(); i++)
+            for (unsigned int i = 0; i < data.a->size(); i++)
                 delete (*data.a)[i];
             delete data.a;
         }

@@ -8,14 +8,15 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <celutil/util.h>
-#include <celutil/debug.h>
-#include <celmath/mathlib.h>
-#include <celmath/perlin.h>
+#include <stdio.h>
 #include "celestia.h"
+#include "celmath/mathlib.h"
+#include "celmath/perlin.h"
 #include "astro.h"
 #include "galaxy.h"
 #include "parser.h"
+#include "celutil/util.h"
+#include "celutil/debug.h"
 
 using namespace std;
 
@@ -128,6 +129,7 @@ void Galaxy::setType(Galaxy::GalaxyType _type)
         InitializeForms();
     switch (type)
     {
+    case S0:
     case Sa:
     case Sb:
     case Sc:

@@ -16,9 +16,13 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include <celmath/vecmath.h>
-#include <celutil/filetype.h>
-#include <celutil/debug.h>
+#ifndef _WIN32
+#include "config.h"
+#endif
+
+#include "celmath/vecmath.h"
+#include "celutil/filetype.h"
+#include "celutil/debug.h"
 
 #include "gl.h"
 #include "glext.h"

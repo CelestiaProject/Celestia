@@ -317,7 +317,7 @@ StarDatabase *StarDatabase::read(istream& in)
     uint32 throwOut = 0;
     uint32 fixUp = 0;
 
-    while (db->nStars < nStars)
+    while (((unsigned int)db->nStars) < nStars)
     {
 	uint32 catNo = 0;
         uint32 hdCatNo = 0;
@@ -347,7 +347,7 @@ StarDatabase *StarDatabase::read(istream& in)
 	Star *star = &db->stars[db->nStars];
 
 	// Compute distance based on parallax
-	double distance = 3.26 / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
+	double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
         star->setPosition(astro::equatorialToCelestialCart(RA, dec, (float) distance));
 
 	// Use apparent magnitude and distance to determine the absolute
@@ -433,7 +433,7 @@ void StarDatabase::buildIndexes()
     cout << "Building catalog number indexes . . .\n";
     cout.flush();
 
-    for (int whichCatalog = 0;
+    for (unsigned int whichCatalog = 0;
          whichCatalog < sizeof(catalogNumberIndexes) / sizeof(catalogNumberIndexes[0]);
          whichCatalog++)
     {
