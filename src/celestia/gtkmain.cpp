@@ -26,22 +26,27 @@
 #  define G_DISABLE_ASSERT
 #endif
 
+#include <gnome.h>
+#include <libgnomeui/libgnomeui.h>
+
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#include <gtkgl/gtkglarea.h>
-#include <gnome.h>
+#include <gtk/gtkgl.h>
 #include "celmath/vecmath.h"
 #include "celmath/quaternion.h"
 #include "celmath/mathlib.h"
 #include "celengine/astro.h"
+#include "celengine/cmdparser.h"
 #include "celutil/util.h"
 #include "celutil/filetype.h"
 #include "celutil/debug.h"
 #include "imagecapture.h"
 #include "celestiacore.h"
 #include "celengine/simulation.h"
-#include <libgnomeui/gnome-init.h>
+#include "eclipsefinder.h"
+
+#define CELSPACING 8
 
 using namespace std;
 
@@ -50,6 +55,11 @@ char AppName[] = "Celestia";
 static CelestiaCore* appCore = NULL;
 static Renderer* appRenderer = NULL;
 static Simulation* appSim = NULL;
+
+// Variables used throughout
+static const int MinListStars = 10;
+static const int MaxListStars = 500;
+static int numListStars = 100;
 
 // Mouse motion tracking
 static int lastX = 0;
@@ -62,7 +72,7 @@ struct _checkFunc
 {
   GtkCheckMenuItem *widget;  /* These two will be filled in by init */
   GtkCheckButton *optWidget;
-  char *path;
+  const char *path;
   Callback func;
   int active;
   int funcdata;
@@ -89,20 +99,7 @@ static GtkItemFactory* menuItemFactory = NULL;
 
 static int verbose;
 
-#if 0
-static void SetRenderFlag(int flag, bool state)
-{
-    appRenderer->setRenderFlags((appRenderer->getRenderFlags() & ~flag) |
-                             (state ? flag : 0));
-}
-
-static void SetLabelFlag(int flag, bool state)
-{
-    appRenderer->setLabelMode((appRenderer->getLabelMode() & ~flag) |
-                           (state ? flag : 0));
-}
-#endif
-
+// enums for distinguising between check items
 enum
 {
     Menu_ShowGalaxies        = 2001,
@@ -118,16 +115,18 @@ enum
     Menu_StarLabels          = 2011,
     Menu_GalaxyLabels        = 2012,
     Menu_ConstellationLabels = 2013,
-    Menu_PixelShaders        = 2014,
-    Menu_VertexShaders       = 2015,
-    Menu_ShowLocTime         = 2016,
-    Menu_ShowEclipseShadows  = 2017,
-    Menu_ShowStarsAsPoints   = 2018,
-    Menu_CraftLabels         = 2019,
-    Menu_ShowBoundaries      = 2020,
-    Menu_AntiAlias           = 2021,
-    Menu_AutoMag             = 2022,
-    Menu_ShowCometTails      = 2023,
+//  Menu_VertexShaders       = 2014,
+    Menu_ShowLocTime         = 2015,
+    Menu_ShowEclipseShadows  = 2016,
+    Menu_ShowStarsAsPoints   = 2017,
+    Menu_CraftLabels         = 2018,
+    Menu_ShowBoundaries      = 2019,
+    Menu_AntiAlias           = 2020,
+    Menu_AutoMag             = 2021,
+    Menu_ShowCometTails      = 2022,
+    Menu_ShowPlanets         = 2023,
+    Menu_ShowRingShadows     = 2024,
+    Menu_ShowStars           = 2025,
 };
 
 static void menuSelectSol()
@@ -185,122 +184,17 @@ static void menuReverse()
     appCore->charEntered('J');
 }
 
-static gint menuShowGalaxies(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowGalaxies, on);
-    appCore->charEntered('U');
-    return TRUE;
-}
-
-static gint menuShowOrbits(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowOrbits, on);
-    appCore->charEntered('O');
-    return TRUE;
-}
-
-static gint menuShowClouds(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowCloudMaps, on);
-    appCore->charEntered('I');
-    return TRUE;
-}
-
-static gint menuShowAtmospheres(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowAtmospheres, on);
-    appCore->charEntered('\001'); //Ctrl+A
-    return TRUE;
-}
-static gint menuShowCometTails(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowCometTails, on);
-    appCore->charEntered('\024'); //Ctrl+T
-    return TRUE;
-}
-static gint menuShowBoundaries(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowBoundaries, on);
-    appCore->charEntered('\002'); //Ctrl+B
-    return TRUE;
-}
-static gint menuAntiAlias(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowSmoothLines, on);
-    appCore->charEntered('\030'); //Ctrl+X
-    return TRUE;
-}
-static gint menuAutoMag(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowAutoMag, on);
-    appCore->charEntered('\031'); //Ctrl+Y
-    return TRUE;
-}
-static gint menuPixelShaders(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowNightSideMaps, on);
-    appCore->charEntered('\020'); //Ctrl+P
-    return TRUE;
-}
-
-static gint menuVertexShaders(GtkWidget* w, gpointer data)
+/*
+static gint menuVertexShaders(GtkWidget*, gpointer)
 {
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
     // SetRenderFlag(Renderer::ShowNightSideMaps, on);
     appCore->charEntered('\026'); //Ctrl+V
     return TRUE;
 }
+*/
 
-static gint menuShowNightSideMaps(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowNightMaps, on);
-    appCore->charEntered('\014'); //Ctrl+L
-    return TRUE;
-}
-
-static gint menuShowStarsAsPoints(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowStarsAsPoints, on);
-    appCore->charEntered('\023'); //Ctrl+S
-    return TRUE;
-}
-
-static gint menuShowEclipseShadows(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowEclipseShadows, on);
-    appCore->charEntered('\005'); //Ctrl+E
-    return TRUE;
-}
-
-static gint menuShowCelestialSphere(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowCelestialSphere, on);
-    appCore->charEntered(';');
-    return TRUE;
-}
-
-static gint menuShowConstellations(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetRenderFlag(Renderer::ShowDiagrams, on);
-    appCore->charEntered('/');
-    return TRUE;
-}
-
-static gint menuShowLocTime(GtkWidget* w, gpointer data)
+static gint menuShowLocTime(GtkWidget*, gpointer)
 {
     bool on = (appCore->getTimeZoneBias()==0);
     if (on)
@@ -316,60 +210,39 @@ static gint menuShowLocTime(GtkWidget* w, gpointer data)
     return TRUE;
 }
 
-static gint menuStarLabels(GtkWidget* w, gpointer data)
+
+// Function to return "active" flag of any toggle widget we use
+static bool getActiveState(GtkWidget* w)
 {
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::StarLabels, on);
-    appCore->charEntered('B');
-    return TRUE;
+	if (GTK_IS_TOGGLE_BUTTON(w))
+		return GTK_TOGGLE_BUTTON(w)->active;
+	else if (GTK_IS_CHECK_MENU_ITEM(w))
+		return GTK_CHECK_MENU_ITEM(w)->active;
+
+	return FALSE;
+}
+	
+
+// Render Checkbox control superfunction!
+// Renderer::Show* passed as (gpointer)
+static gint menuRenderer(GtkWidget* w, gpointer flag)
+{
+	bool state = getActiveState(w);
+
+    appRenderer->setRenderFlags((appRenderer->getRenderFlags() & ~(int)flag) |
+                             (state ? (int)flag : 0));
+	return TRUE;
 }
 
-static gint menuGalaxyLabels(GtkWidget* w, gpointer data)
+// Label Checkbox control superfunction!
+// Rendered::*Labels passed as (gpointer)
+static gint menuLabeler(GtkWidget* w, gpointer flag)
 {
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::StarLabels, on);
-    appCore->charEntered('E');
-    return TRUE;
-}
+	bool state = getActiveState(w);
 
-static gint menuConstellationLabels(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::ConstellationLabels, on);
-    appCore->charEntered('=');
-    return TRUE;
-}
-
-static gint menuPlanetLabels(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::PlanetLabels, on);
-    appCore->charEntered('P');
-    return TRUE;
-}
-
-static gint menuMoonLabels(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::MoonLabels, on);
-    appCore->charEntered('M');
-    return TRUE;
-}
-
-static gint menuAsteroidLabels(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::AsteroidLabels, on);
-    appCore->charEntered('W');
-    return TRUE;
-}
-
-static gint menuCraftLabels(GtkWidget* w, gpointer data)
-{
-    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::SpacecraftLabels, on);
-    appCore->charEntered('N');
-    return TRUE;
+    appRenderer->setLabelMode((appRenderer->getLabelMode() & ~(int)flag) |
+                           (state ? (int)flag : 0));
+	return TRUE;
 }
 
 static void menuMoreStars()
@@ -398,41 +271,224 @@ static void menuAbout()
         "Chris Laurel <claurel@shatters.net>",
         "Deon Ramsey <dramsey@sourceforge.net>",
         "Clint Weisbrod <cweisbrod@adelphia.net>",
+		"Pat Suwalski <pat@suwalski.net>",
         NULL
     };
-    const gchar* logo = gnome_pixmap_file("gnome-hello-logo.png");
-    static GtkWidget* about;
+
+	static GtkWidget* about = NULL;
     if (about != NULL) 
     {
         // Try to de-iconify and raise the dialog. 
-
         gdk_window_show(about->window);
         gdk_window_raise(about->window);
     }
     else
     {
         about = gnome_about_new("Celestia",
-        			VERSION,
-				"(c) 2001-2002 Chris Laurel",
-				authors,
+       			VERSION,
+				"(c) 2001-2003 Chris Laurel",
 				"3D Space Simulation",
-				logo);
-	if (about == NULL)
-	    return;
+				authors,
+				NULL,
+				NULL,
+				NULL);
+		if (about == NULL)
+		    return;
 
-	gtk_window_set_modal(GTK_WINDOW(about), TRUE);
-	gnome_dialog_set_parent((GnomeDialog*) about, GTK_WINDOW(mainWindow));
-	gtk_widget_show(about);
+		g_signal_connect(G_OBJECT(about), "destroy", G_CALLBACK(gtk_widget_destroyed), &about);
+		gtk_window_present(GTK_WINDOW(about));
     }
 }
 
+static int glResX = 640;
+static const int resolutions[] = { 640, 800, 1024, 1152, 1280 };
 
-static GtkWidget* fileSelector = NULL;
+// CALLBACK: Set Resolution Value.
+void viewerSizeSelect(GtkWidget* w, gpointer)
+{
+	GtkMenu* menu = GTK_MENU(w);
+	GtkWidget* item = gtk_menu_get_active(GTK_MENU(menu));
+
+	GList* list = gtk_container_children(GTK_CONTAINER(menu));
+    int itemIndex = g_list_index(list, item);
+
+	if (itemIndex == 0)
+	{
+		// No resolution change
+		glResX = 0;
+	}
+	else
+	{
+		// Get resolution according to resolutions[]
+		itemIndex = itemIndex - 2;
+
+		glResX = resolutions[itemIndex];
+	}		
+}
+
+void menuViewerSize()
+{
+	int currentX, currentY;
+//	gtk_widget_get_size_request(oglArea, &currentX, &currentY);
+	gtk_window_get_size(GTK_WINDOW(mainWindow), &currentX, &currentY);
+
+    GtkWidget* dialog = gtk_dialog_new_with_buttons("Set Viewer Size...",
+	                                                GTK_WINDOW(mainWindow),
+													GTK_DIALOG_DESTROY_WITH_PARENT,
+													GTK_STOCK_CANCEL,
+													GTK_RESPONSE_CANCEL,
+                                                    GTK_STOCK_OK,
+	                                                GTK_RESPONSE_OK,
+                                                    NULL);
+    if (dialog == NULL)
+        return;
+
+    GtkWidget* vbox = gtk_vbox_new(FALSE, CELSPACING); 
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), CELSPACING);
+
+    GtkWidget* label = gtk_label_new("Dimensions for Main Window:");
+    gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+
+    GtkWidget* menubox = gtk_option_menu_new();
+    gtk_box_pack_start(GTK_BOX(vbox), menubox, FALSE, FALSE, 0);
+
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox, TRUE, TRUE, 0);
+
+    GtkWidget* menu = gtk_menu_new();
+
+	char res[15];
+	sprintf(res, "Current: %d x %d", currentX, currentY);
+
+	GtkWidget *item = gtk_menu_item_new_with_label(res);
+    gtk_menu_append(GTK_MENU(menu), item);
+
+	gtk_menu_append(GTK_MENU(menu), GTK_WIDGET(gtk_separator_menu_item_new()));
+
+    for (int i = 0; i < int(sizeof(resolutions) / sizeof(i)); i++)
+    {
+		sprintf(res, "%d x %d", resolutions[i], int(0.75 * resolutions[i]));
+	
+        item = gtk_menu_item_new_with_label(res);
+        gtk_menu_append(GTK_MENU(menu), item);
+        gtk_widget_show(item);
+    }
+
+    g_signal_connect(GTK_OBJECT(menu),
+                     "selection-done",
+                     G_CALLBACK(viewerSizeSelect),
+                     NULL);
+
+    gtk_option_menu_set_menu(GTK_OPTION_MENU(menubox), menu);
+
+	gtk_widget_show_all(vbox);
+
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+	gint whichButton = gtk_dialog_run(GTK_DIALOG(dialog));
+
+	if (whichButton == GTK_RESPONSE_OK) {
+		// Set resolution accordingly
+		if (glResX > 0)
+			gtk_window_resize(GTK_WINDOW(mainWindow), glResX, int(0.75 * glResX));
+	}
+	
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
+
+void handleOpenScript(GtkWidget*, gpointer fileSelector)
+{
+	const gchar *filename;
+	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(fileSelector));
+
+	// Modified From Win32 HandleOpenScript
+	if (filename)
+	{
+		// If you got here, a path and file has been specified.
+		// filename contains full path to specified file
+		ContentType type = DetermineFileType(filename);
+
+		if (type == Content_CelestiaScript)
+		{
+			appCore->runScript(filename);
+		}
+		else if (type == Content_CelestiaLegacyScript)
+		{
+			ifstream scriptfile(filename);
+			if (!scriptfile.good())
+			{
+        		GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
+		                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+						        						   GTK_MESSAGE_ERROR,
+								        				   GTK_BUTTONS_OK,
+		                                                   "Error opening script file.");
+				gtk_dialog_run(GTK_DIALOG(errBox));
+				gtk_widget_destroy(errBox);
+			}
+			else
+			{
+				CommandParser parser(scriptfile);
+				CommandSequence* script = parser.parse();
+				if (script == NULL)
+				{
+					const vector<string>* errors = parser.getErrors();
+					const char* errorMsg = "";
+					if (errors->size() > 0)
+						errorMsg = (*errors)[0].c_str();
+        			GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
+		    	                                               GTK_DIALOG_DESTROY_WITH_PARENT,
+							        						   GTK_MESSAGE_ERROR,
+									        				   GTK_BUTTONS_OK,
+		   		                                               errorMsg);
+					gtk_dialog_run(GTK_DIALOG(errBox));
+					gtk_widget_destroy(errBox);
+				}
+				else
+				{
+					appCore->cancelScript(); // cancel any running script
+					appCore->runScript(script);
+				}
+			}
+		}
+		else
+		{
+			GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
+							GTK_DIALOG_DESTROY_WITH_PARENT,
+							GTK_MESSAGE_ERROR,
+							GTK_BUTTONS_OK,
+							"Bad File Type. Use *.(cel|celx|clx).");
+			gtk_dialog_run(GTK_DIALOG(errBox));
+			gtk_widget_destroy(errBox);
+		}
+	}
+}
+
+
+void menuOpenScript()
+{
+	GtkWidget* fileSelector = gtk_file_selection_new("Open Script.");
+	
+    g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
+                       "clicked",
+                       G_CALLBACK(handleOpenScript),
+                       (gpointer)fileSelector);
+    g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
+                              "clicked",
+                              G_CALLBACK(gtk_widget_destroy),
+                              (gpointer)fileSelector);
+    g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->cancel_button),
+                              "clicked",
+                              G_CALLBACK(gtk_widget_destroy),
+                              (gpointer)fileSelector);
+    gtk_file_selection_show_fileop_buttons(GTK_FILE_SELECTION(fileSelector));
+    gtk_widget_show(fileSelector);
+}
+
+
 static string* captureFilename = NULL;
 
-void storeCaptureFilename(GtkFileSelection* selector, gpointer)
+void storeCaptureFilename(GtkWidget*, gpointer fileSelector)
 {
-    char *tmp;
+    const gchar *tmp;
     tmp=gtk_file_selection_get_filename(GTK_FILE_SELECTION(fileSelector));
     if(!tmp || !(*tmp))  // Don't change the captureFilename and exit if empty
         return;
@@ -446,11 +502,13 @@ void storeCaptureFilename(GtkFileSelection* selector, gpointer)
     ContentType type = DetermineFileType(*captureFilename);
     if (type == Content_Unknown)
     {
-        GtkWidget* errBox = gnome_message_box_new("Unable to determine image file type from name, please use a name ending in '.jpg' or '.png'.",
-                                                  GNOME_MESSAGE_BOX_ERROR,
-                                                  GNOME_STOCK_BUTTON_OK,
-                                                  NULL);
-        gtk_widget_show(errBox);
+        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
+		                                           GTK_DIALOG_DESTROY_WITH_PARENT,
+												   GTK_MESSAGE_ERROR,
+												   GTK_BUTTONS_OK,
+		                                           "Unable to determine image file type from name, please use a name ending in '.jpg' or '.png'.");
+		gtk_dialog_run(GTK_DIALOG(errBox));
+		gtk_widget_destroy(errBox);
         return;
     }
     else if (type == Content_JPEG)
@@ -467,21 +525,25 @@ void storeCaptureFilename(GtkFileSelection* selector, gpointer)
     }
     else
     {
-        GtkWidget* errBox = gnome_message_box_new("Sorry, currently screen capturing to JPEG or PNG files only is supported, please use a name ending in '.jpg' or '.png'.",
-                                                  GNOME_MESSAGE_BOX_ERROR,
-                                                  GNOME_STOCK_BUTTON_OK,
-                                                  NULL);
-        gtk_widget_show(errBox);
+        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
+		                                           GTK_DIALOG_DESTROY_WITH_PARENT,
+												   GTK_MESSAGE_ERROR,
+												   GTK_BUTTONS_OK,
+		                                           "Sorry, currently screen capturing to JPEG or PNG files only is supported.");
+		gtk_dialog_run(GTK_DIALOG(errBox));
+		gtk_widget_destroy(errBox);
         return;
     }
 
     if (!success)
     {
-        GtkWidget* errBox = gnome_message_box_new("Error writing captured image.",
-                                                  GNOME_MESSAGE_BOX_ERROR,
-                                                  GNOME_STOCK_BUTTON_OK,
-                                                  NULL);
-        gtk_widget_show(errBox);
+        GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(mainWindow),
+		                                           GTK_DIALOG_DESTROY_WITH_PARENT,
+												   GTK_MESSAGE_ERROR,
+												   GTK_BUTTONS_OK,
+		                                           "Error writing captured image.");
+		gtk_dialog_run(GTK_DIALOG(errBox));
+		gtk_widget_destroy(errBox);
     }
 }
 
@@ -489,36 +551,27 @@ void storeCaptureFilename(GtkFileSelection* selector, gpointer)
 
 static void menuCaptureImage()
 {
-    fileSelector = gtk_file_selection_new("Select capture file.");
+	GtkWidget* fileSelector = gtk_file_selection_new("Select capture file.");
 
-    gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
+    g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
                        "clicked",
-                       GTK_SIGNAL_FUNC(storeCaptureFilename),
-                       NULL);
-    gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
+                       G_CALLBACK(storeCaptureFilename),
+                       (gpointer)fileSelector);
+    g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
                               "clicked",
-                              GTK_SIGNAL_FUNC(gtk_widget_destroy),
-                              GTK_OBJECT(fileSelector));
-    gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->cancel_button),
+                              G_CALLBACK(gtk_widget_destroy),
+                              (gpointer)fileSelector);
+    g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->cancel_button),
                               "clicked",
-                              GTK_SIGNAL_FUNC(gtk_widget_destroy),
-                              GTK_OBJECT(fileSelector));
+                              G_CALLBACK(gtk_widget_destroy),
+                              (gpointer)fileSelector);
     gtk_file_selection_set_filename(GTK_FILE_SELECTION(fileSelector), captureFilename->c_str());
     gtk_file_selection_show_fileop_buttons(GTK_FILE_SELECTION(fileSelector));
     gtk_widget_show(fileSelector);
 }
 
 
-static char *ambientLabels[]=
-{
-    "None",
-    "Low",
-    "Medium",
-    "High",
-    NULL
-};
-
-static char *infoLabels[]=
+static const char * const infoLabels[]=
 {
     "None",
     "Terse",
@@ -529,48 +582,80 @@ static char *infoLabels[]=
 static GtkToggleButton *ambientGads[4]; // Store the Gadgets here for later mods
 static GtkToggleButton *infoGads[3];
 
-void makeRadioItems(char **labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkToggleButton **gads)
+void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkToggleButton **gads)
 {
-    GSList *group=NULL;
-    for(int i=0;labels[i];i++)
+    GSList *group = NULL;
+    for(int i=0; labels[i]; i++)
     {
-        GtkWidget *button=gtk_radio_button_new_with_label(group, labels[i]);
+        GtkWidget *button = gtk_radio_button_new_with_label(group, labels[i]);
         if(gads)
-            gads[i]=GTK_TOGGLE_BUTTON(button);
-        if (button==NULL)
+            gads[i] = GTK_TOGGLE_BUTTON(button);
+        if (button == NULL)
         {
             DPRINTF(0, "Unable to get GTK Elements.\n");
-            return;
+           // return;
         }
-        group=gtk_radio_button_group (GTK_RADIO_BUTTON (button));
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),(i==0)?1:0);
-        gtk_box_pack_start (GTK_BOX (box), button, TRUE, TRUE, 0);
+        group = gtk_radio_button_group(GTK_RADIO_BUTTON(button));
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), (i == 0)?1:0);
+        gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
         gtk_widget_show (button);
-        gtk_signal_connect(GTK_OBJECT(button), "pressed", sigFunc, (gpointer)i);
+        g_signal_connect(GTK_OBJECT(button), "pressed", sigFunc, (gpointer)i);
     }
 }
 
 
-static gint changeLMag(GtkSpinButton *spinner, void *dummy)
+/*
+static gint changeLMag(GtkSpinButton *spinner, gpointer)
 {
-    float tmp= gtk_spin_button_get_value_as_float(spinner);
-    if(tmp>0.001f && tmp < 15.5f)
+    float tmp = gtk_spin_button_get_value_as_float(spinner);
+
+    if(tmp > 0.001f && tmp < 15.5f)
         appCore->setFaintest(tmp);
+		appCore->getRenderer()->setDistanceLimit(tmp*1000);
     return TRUE;
 }
+*/
 
+static const int DistanceSliderRange = 10000;
+static const float MaxDistanceLimit = 1.0e6f;
+GtkWidget* maglabel = NULL;
 
-static float amLevels[]=
+static float makeDistanceLimit(float value)
+{
+	float logDistanceLimit = value / DistanceSliderRange;
+	return (float) pow(MaxDistanceLimit, logDistanceLimit);
+}	
+
+static gint changeDistanceLimit(GtkRange *slider, gpointer)
+{
+	float limit = makeDistanceLimit(gtk_range_get_value(slider));
+	appCore->getRenderer()->setDistanceLimit(limit);
+
+	char labeltext[10] = "100000 ly";
+	sprintf(labeltext, "%d ly", (int)limit);
+	gtk_label_set_text(GTK_LABEL(maglabel), labeltext);
+
+	return TRUE;
+}
+
+static const char * const ambientLabels[]=
+{
+    "None",
+    "Low",
+    "Medium",
+    NULL
+};
+
+static float amLevels[] =
 {
     0.0,
-    0.01,
     0.1,
     0.25
 };
 
-static int ambientChanged(GtkButton *button, int lev)
+static int ambientChanged(GtkButton*, int lev)
 {
-    if (lev>=0 && lev<4)
+    if (lev>=0 && lev<3)
     {
         appCore->getRenderer()->setAmbientLightLevel(amLevels[lev]);
         return TRUE;
@@ -579,7 +664,7 @@ static int ambientChanged(GtkButton *button, int lev)
 }
 
 
-static int infoChanged(GtkButton *button, int info)
+static int infoChanged(GtkButton*, int info)
 {
     appCore->setHudDetail(info);
     return TRUE;
@@ -589,45 +674,46 @@ static int infoChanged(GtkButton *button, int info)
 extern void resyncAll();
 
 GtkWidget *showFrame=NULL, *labelFrame=NULL, *showBox=NULL, *labelBox=NULL;
-GtkWidget *optionDialog=NULL, *spinner=NULL;
+GtkWidget *optionDialog=NULL, *slider=NULL;
 
 static void menuOptions()
 {
-    if (optionDialog != NULL) 
-    {
-	// Try to de-iconify and raise the dialog. 
-	gdk_window_show((optionDialog)->window);
-	gdk_window_raise((optionDialog)->window);
-	gnome_dialog_run_and_close(GNOME_DIALOG(optionDialog));
-        return;
-    }
-    optionDialog = gnome_dialog_new("Options", GNOME_STOCK_BUTTON_OK, NULL);
-    GtkWidget *hbox = gtk_hbox_new(FALSE, 3);
-    GtkWidget *midBox = gtk_vbox_new(FALSE, 3);
-    GtkWidget *miscBox = gtk_vbox_new(FALSE, 3);
-    GtkWidget *limitFrame = gtk_frame_new("Limiting Star Magnitude");
+	if (optionDialog != NULL)
+	{
+		gtk_dialog_run(GTK_DIALOG(optionDialog));
+		gtk_widget_hide(optionDialog);
+		return;
+	}
+    optionDialog = gtk_dialog_new_with_buttons("View Options",
+                                               GTK_WINDOW(mainWindow),
+	                                           GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                           GTK_STOCK_OK,
+	                                           GTK_RESPONSE_OK,
+	                                           NULL);
+    GtkWidget *hbox = gtk_hbox_new(FALSE, CELSPACING);
+    GtkWidget *midBox = gtk_vbox_new(FALSE, CELSPACING);
+    GtkWidget *miscBox = gtk_vbox_new(FALSE, CELSPACING);
+    GtkWidget *limitFrame = gtk_frame_new("Filter Stars");
     GtkWidget *ambientFrame = gtk_frame_new("Ambient Light");
-    GtkWidget *ambientBox = gtk_vbox_new(FALSE, 3);
+    GtkWidget *ambientBox = gtk_vbox_new(FALSE, 0);
     GtkWidget *infoFrame = gtk_frame_new("Info Text");
-    GtkWidget *infoBox = gtk_vbox_new(FALSE, 3);
-    GtkWidget *limitBox = gtk_hbox_new(FALSE, 3);
-    GtkWidget *label = gtk_label_new("           ");
-    GtkWidget *label2 = gtk_label_new("   m      ");
+    GtkWidget *infoBox = gtk_vbox_new(FALSE, 0);
+    GtkWidget *limitBox = gtk_vbox_new(FALSE, 0);
     if ((optionDialog == NULL) || (hbox == NULL) || (midBox==NULL) ||
         (limitFrame == NULL) || (limitBox == NULL) || (ambientFrame == NULL) ||
         (infoFrame == NULL) || (miscBox == NULL) || (ambientBox == NULL) ||
-        (infoBox == NULL) || (label == NULL) || (label2 == NULL))
+        (infoBox == NULL))
     {
         optionDialog=NULL;
         DPRINTF(0,"Unable to get some Elements of the Options Dialog!\n");
         return;
     }
-    gtk_container_border_width(GTK_CONTAINER(limitBox), 10);
-    gtk_container_border_width(GTK_CONTAINER(ambientBox), 10);
-    gtk_container_border_width(GTK_CONTAINER(infoBox), 10);
-    gtk_container_border_width(GTK_CONTAINER(limitFrame), 2);
-    gtk_container_border_width(GTK_CONTAINER(ambientFrame), 2);
-    gtk_container_border_width(GTK_CONTAINER(infoFrame), 2);
+    gtk_container_border_width(GTK_CONTAINER(limitBox), CELSPACING);
+    gtk_container_border_width(GTK_CONTAINER(ambientBox), CELSPACING);
+    gtk_container_border_width(GTK_CONTAINER(infoBox), CELSPACING);
+    gtk_container_border_width(GTK_CONTAINER(limitFrame), 0);
+    gtk_container_border_width(GTK_CONTAINER(ambientFrame), 0);
+    gtk_container_border_width(GTK_CONTAINER(infoFrame), 0);
     gtk_container_add(GTK_CONTAINER(limitFrame),GTK_WIDGET(limitBox));
     gtk_container_add(GTK_CONTAINER(ambientFrame),GTK_WIDGET(ambientBox));
     gtk_container_add(GTK_CONTAINER(infoFrame),GTK_WIDGET(infoBox));
@@ -639,27 +725,23 @@ static void menuOptions()
     gtk_box_pack_start(GTK_BOX(miscBox), infoFrame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), midBox, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), miscBox, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (optionDialog)->vbox), hbox, TRUE,
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG (optionDialog)->vbox), hbox, TRUE,
                        TRUE, 0);
 
-    GtkAdjustment *adj= (GtkAdjustment *)
-                        gtk_adjustment_new((gfloat)appSim->getFaintestVisible(),
-                                          0.001, 15.5, 0.5, 2.0, 0.0);
-    spinner = gtk_spin_button_new (adj, 0.5, 0);
-    gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spinner), TRUE);
-    gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), FALSE);
-    gtk_spin_button_set_shadow_type (GTK_SPIN_BUTTON (spinner), GTK_SHADOW_ETCHED_IN);
-    gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON (spinner),FALSE);
-    gtk_entry_set_max_length(GTK_ENTRY (spinner), 6 );
-    gtk_spin_button_set_digits(GTK_SPIN_BUTTON (spinner), 2);
-    gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.5);
-    gtk_box_pack_start (GTK_BOX (limitBox), label, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(limitBox), spinner, TRUE, TRUE, 0);
-    gtk_misc_set_alignment (GTK_MISC (label2), 0.5, 0.5);
-    gtk_box_pack_start (GTK_BOX (limitBox), label2, FALSE, FALSE, 0);
-    gtk_signal_connect(GTK_OBJECT(spinner), "changed",
-                       GTK_SIGNAL_FUNC(changeLMag), NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
 
+	float logDistanceLimit = log(appCore->getRenderer()->getDistanceLimit()) / log((float)MaxDistanceLimit);
+    GtkAdjustment *adj= (GtkAdjustment *)
+							gtk_adjustment_new((gfloat)(logDistanceLimit * DistanceSliderRange),
+                                               0.0, DistanceSliderRange, 1.0, 2.0, 0.0);
+
+	maglabel = gtk_label_new(NULL);
+	slider = gtk_hscale_new(adj);
+	gtk_scale_set_draw_value(GTK_SCALE(slider), 0);
+	gtk_box_pack_start(GTK_BOX(limitBox), slider, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(limitBox), maglabel, TRUE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(slider), "value-changed", G_CALLBACK(changeDistanceLimit), NULL);
+	changeDistanceLimit(GTK_RANGE(GTK_HSCALE(slider)), NULL);
 
     makeRadioItems(ambientLabels,ambientBox,GTK_SIGNAL_FUNC(ambientChanged),ambientGads);
     makeRadioItems(infoLabels,infoBox,GTK_SIGNAL_FUNC(infoChanged),infoGads);
@@ -676,53 +758,50 @@ static void menuOptions()
     gtk_widget_show(infoFrame);
     gtk_widget_show(ambientBox);
     gtk_widget_show(infoBox);
-    gtk_widget_show(spinner);
-    gtk_widget_show(label);
-    gtk_widget_show(label2);
+	gtk_widget_show(slider);
+	gtk_widget_show(maglabel);
     gtk_widget_show(hbox);
 
     resyncAll();
 
-    gnome_dialog_close_hides(GNOME_DIALOG(optionDialog), true);
-    gtk_window_set_modal(GTK_WINDOW(optionDialog), TRUE);
-    gnome_dialog_set_parent((GnomeDialog*) optionDialog, GTK_WINDOW(mainWindow));
-    gnome_dialog_set_default((GnomeDialog*) optionDialog, GNOME_YES);
-    gnome_dialog_run_and_close(GNOME_DIALOG(optionDialog));
+	gtk_dialog_set_default_response(GTK_DIALOG(optionDialog), GTK_RESPONSE_OK);
+	gtk_dialog_run(GTK_DIALOG(optionDialog));
+	gtk_widget_hide(optionDialog);
 }
 
 
 static void menuSelectObject()
 {
-    GtkWidget* dialog = gnome_dialog_new("Find Object",
-                                         GNOME_STOCK_BUTTON_OK,
-                                         GNOME_STOCK_BUTTON_CANCEL,
-                                         NULL);
+    GtkWidget* dialog = gtk_dialog_new_with_buttons("Select Object",
+	                                                GTK_WINDOW(mainWindow),
+	                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_STOCK_OK,
+													GTK_RESPONSE_OK,
+                                                    GTK_STOCK_CANCEL,
+													GTK_RESPONSE_CANCEL,
+                                                    NULL);
+
     if (dialog == NULL)
         return;
 
-    GtkWidget* label = gtk_label_new("Enter object name:");
-    if (label == NULL)
-        return;
-    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (dialog)->vbox), label, TRUE, TRUE,
-                       0);
+	GtkWidget* box = gtk_hbox_new(FALSE, CELSPACING);
+	gtk_container_set_border_width(GTK_CONTAINER(box), CELSPACING);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), box, TRUE, TRUE, 0);
+
+    GtkWidget* label = gtk_label_new("Object name");
+    gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0);
 
     GtkWidget* entry = gtk_entry_new();
-    if (entry == NULL)
-        return;
-    gtk_box_pack_start(GTK_BOX(GNOME_DIALOG (dialog)->vbox), entry, TRUE, TRUE,
-                       0);
+    gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
 
-    gtk_widget_show(label);
-    gtk_widget_show(entry);
+	gtk_widget_show_all(GTK_WIDGET(box));
 
-    gnome_dialog_close_hides(GNOME_DIALOG(dialog), true);
-    // gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-    gnome_dialog_set_parent((GnomeDialog*) dialog, GTK_WINDOW(mainWindow));
-    gnome_dialog_set_default((GnomeDialog*) dialog, GNOME_YES);
-    gint whichButton = gnome_dialog_run(GNOME_DIALOG(dialog));
-    if (whichButton == 0)
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+
+    gint whichButton = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (whichButton == GTK_RESPONSE_OK)
     {
-        gchar* name = gtk_entry_get_text(GTK_ENTRY(entry));
+        const gchar* name = gtk_entry_get_text(GTK_ENTRY(entry));
         if (name != NULL)
         {
             Selection sel = appCore->getSimulation()->findObject(name);
@@ -731,9 +810,17 @@ static void menuSelectObject()
         }
     }
 
-    gnome_dialog_close(GNOME_DIALOG(dialog));
+	gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
+
+static const char * const unitLabels[]=
+{
+	"km",
+	"radii",
+	"au",
+	NULL
+};
 
 class GotoObjectDialog
 {
@@ -747,6 +834,8 @@ public:
     GtkWidget* latEntry;
     GtkWidget* longEntry;
     GtkWidget* distEntry;
+
+	int units;
 };
 
 
@@ -768,13 +857,14 @@ static bool GetEntryFloat(GtkWidget* w, float& f)
 }
 
 
-static gint GotoObject(GtkWidget* w, gpointer data)
+//static gint GotoObject(GtkWidget*, gpointer data)
+static void GotoObject(const gpointer data)
 {
     GotoObjectDialog* gotoObjectDlg = reinterpret_cast<GotoObjectDialog*>(data);
     if (gotoObjectDlg == NULL)
-        return FALSE;
+		return;
 
-    gchar* objectName = gtk_entry_get_text(GTK_ENTRY(gotoObjectDlg->nameEntry));
+    const gchar* objectName = gtk_entry_get_text(GTK_ENTRY(gotoObjectDlg->nameEntry));
     if (objectName != NULL)
     {
         Selection sel = appSim->findObjectFromPath(objectName);
@@ -809,8 +899,13 @@ static gint GotoObject(GtkWidget* w, gpointer data)
             }
         }
     }
+}
 
-    return TRUE;
+
+int changeGotoUnits(GtkButton*, int selection)
+{
+	cout << selection << endl;
+	return TRUE;
 }
 
 
@@ -827,12 +922,18 @@ GotoObjectDialog::~GotoObjectDialog()
 {
 }
 
-
 bool GotoObjectDialog::init()
 {
-    dialog = gnome_dialog_new("Goto Object",
-			      GNOME_STOCK_BUTTON_CANCEL,
-                              NULL);
+	gint go;
+
+    dialog = gtk_dialog_new_with_buttons("Goto Object",
+	                                     GTK_WINDOW(mainWindow),
+										 GTK_DIALOG_DESTROY_WITH_PARENT,
+										 "Go To",
+										 GTK_RESPONSE_OK,
+	                                     GTK_STOCK_CANCEL,
+										 GTK_RESPONSE_CANCEL,
+	                                     NULL);
     nameEntry = gtk_entry_new();
     latEntry = gtk_entry_new();
     longEntry = gtk_entry_new();
@@ -848,78 +949,84 @@ bool GotoObjectDialog::init()
         return false;
     }
 
+	// Set up the values (from windows cpp file)
+	double distance, longitude, latitude;
+	appSim->getSelectionLongLat(distance, longitude, latitude);
+
+/*
+UNCOMMENT WHEN SYNCED WITH CVS
+	//Display information in format appropriate for object
+	if (appSim->getSelection().body() != NULL)
+	{
+		char temp[20];
+		distance = distance - (double) appSim->getSelection().body()->getRadius();
+		sprintf(temp, "%.1f", (float)distance);
+		gtk_entry_set_text(GTK_ENTRY(distEntry), temp);
+		sprintf(temp, "%.5f", (float)longitude);
+		gtk_entry_set_text(GTK_ENTRY(longEntry), temp);
+		sprintf(temp, "%.5f", (float)latitude);
+		gtk_entry_set_text(GTK_ENTRY(latEntry), temp);
+		gtk_entry_set_text(GTK_ENTRY(nameEntry), (char*) appSim->getSelection().body()->getName().c_str());
+	}
+*/
+
+	GtkWidget* vbox = gtk_vbox_new(TRUE, CELSPACING);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), CELSPACING);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox, TRUE, TRUE, 0);
+
+	GtkWidget* align = NULL;
     GtkWidget* hbox = NULL;
     GtkWidget* label = NULL;
 
     // Object name label and entry
-    hbox = gtk_hbox_new(FALSE, 6);
-    if (hbox == NULL)
-        return false;
+	align = gtk_alignment_new(1, 0, 0, 0);
+    hbox = gtk_hbox_new(FALSE, CELSPACING);
     label = gtk_label_new("Object name:");
-    if (label == NULL)
-        return false;
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), nameEntry, FALSE, TRUE, 0);
-    gtk_widget_show(label);
-    gtk_widget_show(nameEntry);
-    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
-                       hbox, FALSE, TRUE, 0);
-    gtk_widget_show(hbox);
+    gtk_container_add(GTK_CONTAINER(align), hbox);
+    gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, TRUE, 0);
 
     // Latitude and longitude
-    hbox = gtk_hbox_new(FALSE, 6);
-    if (hbox == NULL)
-        return false;
+	align = gtk_alignment_new(1, 0, 0, 0);
+    hbox = gtk_hbox_new(FALSE, CELSPACING);
     label = gtk_label_new("Latitude:");
-    if (label == NULL)
-        return false;
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), latEntry, FALSE, TRUE, 0);
-    gtk_widget_show(label);
-    gtk_widget_show(latEntry);
+    gtk_container_add(GTK_CONTAINER(align), hbox);
+    gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, TRUE, 0);
 
+	align = gtk_alignment_new(1, 0, 0, 0);
+    hbox = gtk_hbox_new(FALSE, CELSPACING);
     label = gtk_label_new("Longitude:");
-    if (label == NULL)
-        return false;
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), longEntry, FALSE, TRUE, 0);
-    gtk_widget_show(label);
-    gtk_widget_show(longEntry);
-    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
-                       hbox, FALSE, TRUE, 0);
-    gtk_widget_show(hbox);
+    gtk_container_add(GTK_CONTAINER(align), hbox);
+    gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, TRUE, 0);
 
     // Distance
-    hbox = gtk_hbox_new(FALSE, 6);
-    if (hbox == NULL)
-        return false;
+	align = gtk_alignment_new(1, 0, 0, 0);
+    hbox = gtk_hbox_new(FALSE, CELSPACING);
     label = gtk_label_new("Distance:");
-    if (label == NULL)
-        return false;
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), distEntry, FALSE, TRUE, 0);
-    gtk_widget_show(label);
-    gtk_widget_show(distEntry);
-    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
-                       hbox, FALSE, TRUE, 0);
-    gtk_widget_show(hbox);
+    gtk_container_add(GTK_CONTAINER(align), hbox);
+    gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, TRUE, 0);
 
-    // Goto button
-    GtkWidget* gotoButton = gtk_button_new_with_label("   Go To   ");
-    if (gotoButton == NULL)
-        return false;
-    gtk_widget_show(gotoButton);
-    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
-                       gotoButton, FALSE, TRUE, 0);
+	// Distance Options
+	units = 0;
+    hbox = gtk_hbox_new(FALSE, CELSPACING);
+	makeRadioItems(unitLabels, hbox, GTK_SIGNAL_FUNC(changeGotoUnits), NULL);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
+	
+	gtk_widget_show_all(vbox);
 
-    gtk_signal_connect(GTK_OBJECT(gotoButton),
-                       "pressed",
-                       GTK_SIGNAL_FUNC(GotoObject),
-                       this);
+	go = gtk_dialog_run(GTK_DIALOG(dialog));
 
-    gnome_dialog_set_parent((GnomeDialog*) dialog, GTK_WINDOW(mainWindow));
-    gnome_dialog_set_default((GnomeDialog*) dialog, GNOME_NO);
-    gnome_dialog_run_and_close(GNOME_DIALOG(dialog));
+	if (go == GTK_RESPONSE_OK)
+		GotoObject(this);
+	
+	gtk_widget_destroy(dialog);
 
     return true;
 }
@@ -966,7 +1073,7 @@ static gint TourGuideSelect(GtkWidget* w, gpointer data)
     return TRUE;
 }
 
-static gint TourGuideGoto(GtkWidget* w, gpointer data)
+static gint TourGuideGoto(GtkWidget*, gpointer)
 {
     if (selectedDest != NULL && appSim != NULL)
     {
@@ -998,62 +1105,35 @@ static gint TourGuideGoto(GtkWidget* w, gpointer data)
 
 static void menuTourGuide()
 {
-    GtkWidget* dialog = gnome_dialog_new("Tour Guide...",
-                                         GNOME_STOCK_BUTTON_OK,
-                                         NULL);
+    GtkWidget* dialog = gtk_dialog_new_with_buttons("Tour Guide...",
+	                                                GTK_WINDOW(mainWindow),
+													GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_STOCK_OK,
+	                                                GTK_RESPONSE_OK,
+                                                    NULL);
     if (dialog == NULL)
         return;
 
-    GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
-    if (hbox == NULL)
-        return;
+    GtkWidget* hbox = gtk_hbox_new(FALSE, CELSPACING); 
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
 
     GtkWidget* label = gtk_label_new("Select your destination:");
-    if (label == NULL)
-        return;
-    gtk_box_pack_start(GTK_BOX(hbox),
-                       label,
-                       FALSE,
-                       TRUE,
-                       0);
+    gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
     GtkWidget* menubox = gtk_option_menu_new();
-    if (menubox == NULL)
-        return;
-    gtk_box_pack_start(GTK_BOX(hbox),
-                       menubox,
-                       FALSE,
-                       TRUE,
-                       0);
+    gtk_box_pack_start(GTK_BOX(hbox), menubox, TRUE, TRUE, 0);
 
-    GtkWidget* gotoButton = gtk_button_new_with_label("   Go To   ");
-    if (gotoButton == NULL)
-        return;
-    gtk_box_pack_start(GTK_BOX(hbox),
-                       gotoButton,
-                       TRUE,
-                       FALSE,
-                       0);
+    GtkWidget* gotoButton = gtk_button_new_with_label("Go To");
+    gtk_box_pack_start(GTK_BOX(hbox), gotoButton, TRUE, TRUE, 0);
 
-    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
-                       hbox,
-                       FALSE,
-                       TRUE,
-                       0);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 0);
 
     gtk_widget_show(hbox);
-    
 
     GtkWidget* descLabel = gtk_label_new("");
-    if (descLabel == NULL)
-        return;
     gtk_label_set_line_wrap(GTK_LABEL(descLabel), TRUE);
     gtk_label_set_justify(GTK_LABEL(descLabel), GTK_JUSTIFY_FILL);
-    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
-                       descLabel,
-                       TRUE,
-                       TRUE,
-                       0);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), descLabel, TRUE, TRUE, 0);
 
     GtkWidget* menu = gtk_menu_new();
     const DestinationList* destinations = appCore->getDestinations();
@@ -1072,14 +1152,14 @@ static void menuTourGuide()
         }
     }
 
-    gtk_signal_connect(GTK_OBJECT(menu),
-                       "selection-done",
-                       GTK_SIGNAL_FUNC(TourGuideSelect),
-                       GTK_OBJECT(descLabel));
-    gtk_signal_connect(GTK_OBJECT(gotoButton),
-                       "pressed",
-                       GTK_SIGNAL_FUNC(TourGuideGoto),
-                       NULL);
+    g_signal_connect(GTK_OBJECT(menu),
+                     "selection-done",
+                     G_CALLBACK(TourGuideSelect),
+                     GTK_OBJECT(descLabel));
+    g_signal_connect(GTK_OBJECT(gotoButton),
+                     "pressed",
+                     G_CALLBACK(TourGuideGoto),
+                     NULL);
 
     gtk_option_menu_set_menu(GTK_OPTION_MENU(menubox), menu);
 
@@ -1088,18 +1168,14 @@ static void menuTourGuide()
     gtk_widget_show(menubox);
     gtk_widget_show(descLabel);
     gtk_widget_show(gotoButton);
-    // gtk_widget_set_usize(descLabel, 250, 150);
 
-    gnome_dialog_set_parent((GnomeDialog*) dialog, GTK_WINDOW(mainWindow));
-    gnome_dialog_set_default((GnomeDialog*) dialog, GNOME_YES);
-    gnome_dialog_run_and_close(GNOME_DIALOG(dialog));
-
-    // gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-    // gtk_widget_show(dialog);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 
-char *readFromFile(char *fname)
+char *readFromFile(const char *fname)
 {
     ifstream textFile(fname, ios::in);
     string s("");
@@ -1128,49 +1204,35 @@ static void textInfoDialog(GtkWidget** dialog, const char *txt, const char *titl
     /* I would use a gnome_message_box dialog for this, except they don't seem
        to notice that the texts are so big that they create huge windows, and
        would work better with a scrolled window. Deon */
-    if (*dialog != NULL) 
-    {
-	// Try to de-iconify and raise the dialog. 
-	gdk_window_show((*dialog)->window);
-	gdk_window_raise((*dialog)->window);
-	gnome_dialog_run_and_close(GNOME_DIALOG(*dialog));
-    }
-    else
-    {
-	*dialog = gnome_dialog_new(title,
-				   GNOME_STOCK_BUTTON_OK,
-				   NULL);
+	*dialog = gtk_dialog_new_with_buttons(title,
+	                                      GTK_WINDOW(mainWindow),
+										  GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                      GTK_STOCK_OK,
+										  GTK_RESPONSE_OK,
+	                                      NULL);
+
 	if (*dialog == NULL)
-        {
+	{
 	    DPRINTF(0, "Unable to open '%s' dialog!\n",title);
-	    return;
-        }
+		return;
+	}
 
 	GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-	gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (*dialog)->vbox), scrolled_window, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG (*dialog)->vbox), scrolled_window, TRUE, TRUE, 0);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_window),
 					GTK_POLICY_AUTOMATIC,
 					GTK_POLICY_AUTOMATIC);
-	gtk_widget_show (scrolled_window);
+	gtk_widget_show(scrolled_window);
 
-	GtkWidget *text = gtk_text_new (NULL, NULL);
-	gtk_text_set_editable (GTK_TEXT (text), FALSE);
-	gtk_text_set_word_wrap (GTK_TEXT (text), FALSE);
-	gtk_text_set_line_wrap (GTK_TEXT (text), FALSE);
-	gtk_container_add (GTK_CONTAINER (scrolled_window), text);
-
-	gtk_text_insert (GTK_TEXT (text), NULL, NULL, NULL, txt, -1);
-	
+	GtkWidget *text = gtk_label_new (txt);
+	gtk_widget_modify_font(text, pango_font_description_from_string("mono"));
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_window), GTK_WIDGET (text));
 	gtk_widget_show (text);
 
-	gtk_widget_set_usize(*dialog, 500, 400); //Absolute Size, urghhh
+	gtk_window_set_default_size(GTK_WINDOW(*dialog), 500, 400); //Absolute Size, urghhh
 
-	gnome_dialog_set_parent((GnomeDialog*) *dialog, GTK_WINDOW(mainWindow));
-	gnome_dialog_set_default((GnomeDialog*) *dialog, GNOME_YES);
-	gnome_dialog_close_hides((GnomeDialog*) *dialog, TRUE);
-	gtk_window_set_modal(GTK_WINDOW(*dialog), FALSE);
-	gnome_dialog_run_and_close(GNOME_DIALOG(*dialog));
-    }
+	gtk_dialog_run(GTK_DIALOG(*dialog));
+	gtk_widget_destroy(*dialog);
 }
 
 
@@ -1250,38 +1312,39 @@ static void menuOpenGL()
 
 
 
-static char *sstitles[]=
+static const char * const sstitles[]=
 {
     "Name",
     "Type"
 };
 
-static char *cstitles[]=
+static const char * const cstitles[]=
 {
-    " Name ",
-    " Distance(LY) ",
-    " App. Mag ",
-    " Abs. Mag ",
-    " Type "
+    "Name",
+    "Distance(LY)",
+    "App. Mag",
+    "Abs. Mag",
+    "Type"
 };
 
-static char *radioLabels[]=
+static const char * const radioLabels[]=
 {
     "Nearest",
-    "Brightest(App)",
-    "Brightest(Abs)",
+    "Brightest",
     "With Planets",
     NULL
 };
 
 static const char *tmp[5];
 
-static GtkWidget *ctree=NULL;
-static GtkWidget *clist=NULL;
+// Solar Browser and Star Browser Widgets/Lists
+static GtkWidget *solarTree = NULL;
+static GtkTreeStore *solarTreeStore = NULL;
+static GtkWidget *starList = NULL;
+static GtkListStore *starListStore = NULL;
 
-void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkCTreeNode *parent, int lev)
+void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkTreeIter *parent)
 {
-    GtkCTreeNode *child;
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
 	Body* world = sys->getBody(i);
@@ -1310,54 +1373,23 @@ void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkCTreeNode *parent, 
         }
 
 	const PlanetarySystem* satellites = world->getSatellites();
-	child=gtk_ctree_insert_node(GTK_CTREE(ctree), parent, NULL,
-                                    (char**) tmp , 0 , NULL, NULL, NULL, NULL,
-                                    (satellites ? FALSE : TRUE), TRUE);
-        gtk_ctree_node_set_row_data(GTK_CTREE(ctree), child, world);
-	gtk_ctree_collapse (GTK_CTREE(ctree), child);
+
+	// Add child
+	// tmp[0] == Name, tmp[1] == Type, world == pointer to object
+	GtkTreeIter child;
+	gtk_tree_store_append(solarTreeStore, &child, parent);
+	gtk_tree_store_set(solarTreeStore, &child, 0, tmp[0], 1, tmp[1], 2, (gpointer)world, -1);
+
+	// Recurse
 	g_free((char*) tmp[0]);
 	if (satellites != NULL)
-            addPlanetarySystemToTree(satellites, child, lev + 1);
+            addPlanetarySystemToTree(satellites, &child);
     }
 }
 
 
 static const Star *nearestStar;
 static Selection browserSel;
-
-static gint listSelect(GtkCList *list, gint row, gint column, gpointer dummy, gpointer dumm2)
-{
-    Star *selStar =(Star *)gtk_clist_get_row_data(list,row);
-    if (selStar)
-    {
-        browserSel.select(selStar);
-	return TRUE;
-    }
-    return FALSE;
-}
-
-
-static gint treeSelect(GtkCTree *tree, GtkCTreeNode *node, gint column, gpointer dummy)
-{
-    Body *body;
-    if (column < 0)
-    {
-        /* This will happen when the tree attempts to autoselect a node
-           as it is just being switched to, but is still empty */
-        return FALSE;
-    }
-    if ((body=(Body *)gtk_ctree_node_get_row_data(tree,node)))
-    {
-        if (body == (Body *) nearestStar)
-            browserSel.select((Star *) nearestStar);
-        else
-            browserSel.select(body);
-	return TRUE;
-    }
-    DPRINTF(0, "Unable to find body for this node.\n");
-    return FALSE;
-}
-
 
 static gint selectBrowsed()
 {
@@ -1369,26 +1401,68 @@ static gint selectBrowsed()
     return FALSE;
 }
 
-
 static gint centerBrowsed()
 {
-    if (!selectBrowsed())
-        return FALSE;
     appCore->charEntered('C');
     return TRUE;
 }
 
-
 static gint gotoBrowsed()
 {
-    if (!selectBrowsed())
-        return FALSE;
     appCore->charEntered('G');
     return TRUE;
 }
 
 
-static gint buttonMake(GtkWidget *hbox, char *txt, GtkSignalFunc func, gpointer data)
+// CALLBACK: When Star is selected in Star Browser
+static gint listStarSelect(GtkTreeSelection* sel, gpointer)
+{
+	GValue value = { 0, 0 }; // Very strange, warning-free declaration!
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+
+	// IF prevents selection while list is being updated
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
+		return FALSE;
+
+	gtk_tree_model_get_value(model, &iter, 5, &value);
+	Star *selStar = (Star *)g_value_get_pointer(&value);
+
+    if (selStar)
+    {
+        browserSel.select(selStar);
+		selectBrowsed();
+		return TRUE;
+    }
+    return FALSE;
+}
+
+// CALLBACK: When Object is selected in Solar System Browser
+static gint treeSolarSelect(GtkTreeSelection* sel, gpointer)
+{
+    Body *body;
+	GValue value = { 0, 0 }; // Very strange, warning-free declaration!
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+
+	gtk_tree_selection_get_selected(sel, &model, &iter);
+	gtk_tree_model_get_value(model, &iter, 2, &value);
+
+    if ((body = (Body *)g_value_get_pointer(&value)))
+    {
+        if (body == (Body *) nearestStar)
+            browserSel.select((Star *) nearestStar);
+        else
+            browserSel.select(body);
+			selectBrowsed();
+			return TRUE;
+    }
+    DPRINTF(0, "Unable to find body for this node.\n");
+    return FALSE;
+}
+
+
+static gint buttonMake(GtkWidget *hbox, const char *txt, GtkSignalFunc func, gpointer data)
 {
     GtkWidget* button = gtk_button_new_with_label(txt);
     if (button == NULL)
@@ -1400,10 +1474,10 @@ static gint buttonMake(GtkWidget *hbox, char *txt, GtkSignalFunc func, gpointer 
     gtk_box_pack_start(GTK_BOX (hbox),
                        button, TRUE, TRUE, 0);
 
-    gtk_signal_connect(GTK_OBJECT(button),
-                       "pressed",
-                       func,
-                       data);
+    g_signal_connect(GTK_OBJECT(button),
+                     "pressed",
+                     func,
+                     data);
     return 0;
 }
 
@@ -1415,14 +1489,14 @@ static void addStars()
 {
     StarDatabase* stardb = appSim->getUniverse()->getStarCatalog();
     sbrowser.refresh();
-    vector<const Star*> *stars = sbrowser.listStars(100);
-    gtk_clist_freeze(GTK_CLIST(clist));
-    for (unsigned int i = 0; i < currentLength; i++)
-        gtk_clist_remove(GTK_CLIST(clist), 0);
+    vector<const Star*> *stars = sbrowser.listStars(numListStars);
     currentLength=(*stars).size();
     browserSel.select((Star *)(*stars)[0]);
     UniversalCoord ucPos = appSim->getObserver().getPosition();
-    
+
+	GtkTreeIter iter;
+	gtk_list_store_clear(starListStore);
+
     for (unsigned int i = 0; i < currentLength; i++)
     {
         char buf[20];
@@ -1448,20 +1522,27 @@ static void addStars()
         star->getStellarClass().str(buf, sizeof buf);
         tmp[4] = g_strdup(buf);
 
-        gint row = gtk_clist_append(GTK_CLIST(clist), (char**) tmp);
-        gtk_clist_set_row_data(GTK_CLIST(clist), row, (gpointer) star);
+		gtk_list_store_append(starListStore, &iter);
+		gtk_list_store_set(starListStore, &iter,
+		                   0, tmp[0],
+						   1, tmp[1],
+						   2, tmp[2],
+						   3, tmp[3],
+						   4, tmp[4],
+						   5, (gpointer)star, -1);
+
         for (unsigned int j = 0; j < 5; j++)
             g_free((void*) tmp[j]);
-    }
-    gtk_clist_thaw(GTK_CLIST(clist));
+	}
+
     delete stars;
 }
 
 
-static int radioClicked(GtkButton *button, int pred)
+static int radioClicked(GtkButton*, int pred)
 {
     if (!sbrowser.setPredicate(pred))
-        return FALSE;
+		return FALSE;
     addStars();
     return TRUE;
 }
@@ -1477,200 +1558,265 @@ static int refreshBrowser()
 static void loadNearestStarSystem()
 {
     const SolarSystem* solarSys = appSim->getNearestSolarSystem();
-    StarDatabase *stardb=appSim->getUniverse()->getStarCatalog();
+    StarDatabase *stardb = appSim->getUniverse()->getStarCatalog();
     g_assert(stardb);
-    gtk_clist_freeze(GTK_CLIST(ctree));
-    gtk_ctree_post_recursive(GTK_CTREE(ctree),NULL,(GtkCTreeFunc)gtk_ctree_remove_node,NULL);
-    if (solarSys != NULL)
-	nearestStar=solarSys->getStar();
-    else
-        nearestStar=sbrowser.nearestStar();
-    tmp[0] = const_cast<char*>(stardb->getStarName(*nearestStar).c_str());
 
-    char buf[30];
-    sprintf(buf, "%s Star", (nearestStar->getStellarClass().str().c_str()));
-    tmp[1] = buf;
-
-    GtkCTreeNode *top = gtk_ctree_insert_node (GTK_CTREE(ctree), NULL, NULL,
-                                               (char**) tmp , 0 , NULL, NULL,
-                                               NULL, NULL, FALSE, TRUE);
-    gtk_ctree_node_set_row_data(GTK_CTREE(ctree), top, (gpointer)nearestStar);
+	GtkTreeIter top;
+	gtk_tree_store_clear(solarTreeStore);
+	gtk_tree_store_append(solarTreeStore, &top, NULL);
 
     if (solarSys != NULL)
     {
-	const PlanetarySystem* planets = solarSys->getPlanets();
-	if (planets != NULL)
-	    addPlanetarySystemToTree(planets, top, 2);
-    }
-    gtk_clist_thaw((GTK_CLIST(ctree)));
+		nearestStar = solarSys->getStar();
+
+		tmp[0] = const_cast<char*>(stardb->getStarName(*nearestStar).c_str());
+
+		char buf[30];
+		sprintf(buf, "%s Star", (nearestStar->getStellarClass().str().c_str()));
+		tmp[1] = buf;
+	
+		// Set up the top-level node
+		gtk_tree_store_set(solarTreeStore, &top, 0, tmp[0], 1, tmp[1], 2, (gpointer)nearestStar, -1);
+
+		const PlanetarySystem* planets = solarSys->getPlanets();
+		if (planets != NULL)
+		    addPlanetarySystemToTree(planets, &top);
+
+		// Open up the top node
+		GtkTreePath* path = gtk_tree_model_get_path(GTK_TREE_MODEL(solarTreeStore), &top);
+		gtk_tree_view_expand_row(GTK_TREE_VIEW(solarTree), path, FALSE);
+	}
+	else
+		gtk_tree_store_set(solarTreeStore, &top, 0, "No Planetary Bodies", -1);
 }
 
 
 static const Star *tmpSel=NULL;
 
-int nbookSwitch(GtkNotebook *nbook, gpointer dummy, gint page, gpointer dummy2)
+// MENU: Navigation -> Solar System Browser...
+static void menuSolarBrowser()
 {
-    if (page == 1) // Page switch to the Solar System Browser 
-    {
-        sbrowser.refresh();
-        loadNearestStarSystem();
-        tmpSel=browserSel.star;
-        browserSel.star=(Star *)nearestStar;
-        browserSel.body=NULL;
-    }
-    else
-        browserSel.select((Star *)tmpSel);
-    return(TRUE);
-}
-
-
-static void menuBrowser()
-{
-    GtkWidget *browser= gnome_dialog_new("Celestial Browser",
-				         GNOME_STOCK_BUTTON_OK,
-				         NULL);
+    GtkWidget *browser = gtk_dialog_new_with_buttons("Solar System Browser",
+	                                                GTK_WINDOW(mainWindow),
+													GTK_DIALOG_DESTROY_WITH_PARENT,
+				                                    GTK_STOCK_OK,
+													GTK_RESPONSE_OK,
+				                                    NULL);
+	gtk_window_set_modal(GTK_WINDOW(browser), FALSE);
     browserSel.select((Star *)NULL);
-    if (browser == NULL)
-    {
-	DPRINTF(0, "Unable to open celestial browser dialog!\n");
-	return;
-    }
-    
-    GtkWidget *nbook = gtk_notebook_new();
-    GtkWidget *label = gtk_label_new("Stars");
-    GtkWidget  *vbox = gtk_vbox_new(FALSE, 3);
-    GtkWidget  *hbox = gtk_hbox_new(FALSE, 3);
-    GtkWidget *scrolled_win;
-    if ((nbook==NULL) || (label==NULL) || (vbox==NULL) || (hbox==NULL))
-    {
-	DPRINTF(0, "Unable to get GTK Elements.\n");
-	return;
-    }
-
-    // Star System Browser
-    gtk_notebook_append_page(GTK_NOTEBOOK(nbook), vbox, label);
-    gtk_notebook_set_tab_label_packing (GTK_NOTEBOOK (nbook), vbox,
-					TRUE, FALSE, GTK_PACK_START);
-    gtk_widget_show (label);
-    scrolled_win = gtk_scrolled_window_new (NULL, NULL);
-    clist = gtk_clist_new_with_titles(5, cstitles);
-    gtk_clist_column_titles_passive (GTK_CLIST(clist));
-    gtk_clist_set_auto_sort (GTK_CLIST(clist), FALSE);
-    gtk_clist_set_reorderable (GTK_CLIST(clist), FALSE);
-    GtkWidget *align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
-    if ((align==NULL) || (clist==NULL) || (scrolled_win==NULL))
-    {
-	DPRINTF(0, "Unable to get GTK Elements.\n");
-	return;
-    }
-    gtk_clist_set_column_justification(GTK_CLIST(clist), 0, GTK_JUSTIFY_LEFT);
-    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 0, TRUE);
-    gtk_clist_set_column_justification(GTK_CLIST(clist), 1, GTK_JUSTIFY_RIGHT);
-    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 1, TRUE);
-    gtk_clist_set_column_justification(GTK_CLIST(clist), 2, GTK_JUSTIFY_RIGHT);
-    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 2, TRUE);
-    gtk_clist_set_column_justification(GTK_CLIST(clist), 3, GTK_JUSTIFY_RIGHT);
-    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 3, TRUE);
-    gtk_clist_set_column_justification(GTK_CLIST(clist), 4, GTK_JUSTIFY_LEFT);
-    gtk_clist_set_column_auto_resize(GTK_CLIST(clist), 4, FALSE);
-    gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 5);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
-				    GTK_POLICY_AUTOMATIC,
-				    GTK_POLICY_ALWAYS);
-    gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (clist));
-    gtk_box_pack_start (GTK_BOX (vbox), scrolled_win, TRUE, TRUE, 0);
-    gtk_clist_set_selection_mode(GTK_CLIST(clist), GTK_SELECTION_BROWSE);
-    gtk_clist_set_shadow_type (GTK_CLIST(clist), GTK_SHADOW_IN);
-    gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
-    sbrowser.setSimulation(appSim);
-    addStars();
-    tmpSel=browserSel.star;
-    gtk_signal_connect(GTK_OBJECT(clist), "select-row",
-		       GTK_SIGNAL_FUNC(listSelect), NULL);
-    gtk_clist_select_row(GTK_CLIST(clist), 0, 0);
-    
-    gtk_box_pack_start (GTK_BOX (vbox), align, FALSE, TRUE, 5);
-    makeRadioItems(radioLabels, hbox, GTK_SIGNAL_FUNC(radioClicked),NULL);
-    if (buttonMake(hbox, "   Refresh   ", (GtkSignalFunc)refreshBrowser, NULL))
-        return;
-    
-    gtk_widget_show (clist);
-    gtk_widget_show (align);
-    gtk_widget_show (hbox);
-    gtk_widget_show (scrolled_win);
-
-    gtk_widget_show (label);
-    gtk_widget_show (vbox);
-
+ 
     // Solar System Browser
-    label = gtk_label_new("Solar System");
-    vbox = gtk_vbox_new(TRUE, 3);
-    scrolled_win = gtk_scrolled_window_new (NULL, NULL);
-    if ((label==NULL) || (vbox==NULL) || (scrolled_win==NULL))
-    {
-	DPRINTF(0, "Unable to get GTK Elements.\n");
-	return;
-    }
-    gtk_notebook_append_page(GTK_NOTEBOOK(nbook), vbox, label);
-    gtk_notebook_set_tab_label_packing (GTK_NOTEBOOK (nbook), vbox,
-					TRUE, FALSE, GTK_PACK_START);
-    gtk_notebook_set_show_tabs(GTK_NOTEBOOK(nbook), TRUE);
-    gtk_notebook_set_scrollable(GTK_NOTEBOOK(nbook), FALSE);
-    gtk_notebook_set_tab_pos (GTK_NOTEBOOK (nbook), GTK_POS_TOP);
-    gtk_container_set_border_width (GTK_CONTAINER (nbook), 10);
-    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (browser)->vbox), nbook, TRUE, TRUE, 0);
+	GtkWidget *mainbox = gtk_vbox_new(FALSE, CELSPACING);
+	gtk_container_set_border_width(GTK_CONTAINER(mainbox), CELSPACING);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(browser)->vbox), mainbox, TRUE, TRUE, 0);
+	
+    GtkWidget *scrolled_win = gtk_scrolled_window_new (NULL, NULL);
 
-    gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 5);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
 				    GTK_POLICY_AUTOMATIC,
 				    GTK_POLICY_ALWAYS);
-    gtk_box_pack_start (GTK_BOX (vbox), scrolled_win, TRUE, TRUE, 0);
-    gtk_widget_show (scrolled_win);
+    gtk_box_pack_start(GTK_BOX(mainbox), scrolled_win, TRUE, TRUE, 0);
 
-    ctree = GTK_WIDGET (gtk_ctree_new_with_titles (2, 0, sstitles));
-    gtk_clist_column_titles_passive (GTK_CLIST(ctree));
-    gtk_clist_set_auto_sort (GTK_CLIST(ctree), FALSE);
-    gtk_clist_set_reorderable (GTK_CLIST(ctree), FALSE);
-    gtk_container_add (GTK_CONTAINER (scrolled_win), GTK_WIDGET (ctree));
-    gtk_clist_set_column_auto_resize (GTK_CLIST (ctree), 0, TRUE);
-    gtk_clist_set_column_width (GTK_CLIST (ctree), 1, 200);
-    gtk_clist_set_selection_mode (GTK_CLIST (ctree), GTK_SELECTION_BROWSE);
-    gtk_ctree_set_line_style (GTK_CTREE(ctree), GTK_CTREE_LINES_SOLID);
-    gtk_ctree_set_expander_style (GTK_CTREE(ctree), GTK_CTREE_EXPANDER_SQUARE);
-    gtk_widget_show (vbox);
-    loadNearestStarSystem();
-    gtk_signal_connect(GTK_OBJECT(ctree), "tree-select-row",
-		       GTK_SIGNAL_FUNC(treeSelect), NULL);
-    gtk_signal_connect(GTK_OBJECT(nbook), "switch-page",
-		       GTK_SIGNAL_FUNC(nbookSwitch), NULL);
-    gtk_widget_show (ctree);
-    gtk_widget_show (nbook);
+	// Set the tree store to have 2 visible cols, one hidden
+	// The hidden one stores pointer to the row's object
+	solarTreeStore = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	solarTree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(solarTreeStore));
+
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(solarTree), TRUE);
+	gtk_container_add(GTK_CONTAINER(scrolled_win), solarTree);
+
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	for (int i=0; i<2; i++) {
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes (sstitles[i], renderer, "text", i, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(solarTree), column);
+		gtk_tree_view_column_set_min_width(column, 200);
+	}
+																							 
+	loadNearestStarSystem();
+
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(solarTree));
+	g_signal_connect(selection, "changed", G_CALLBACK(treeSolarSelect), NULL);
 
     // Common Buttons
-    hbox = gtk_hbox_new(FALSE, 3);
-    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (browser)->vbox), hbox, FALSE, FALSE, 0);
-    if (buttonMake(hbox, "   Select   ", (GtkSignalFunc)selectBrowsed, NULL))
+    GtkWidget *hbox = gtk_hbox_new(TRUE, CELSPACING);
+    if (buttonMake(hbox, "Center", (GtkSignalFunc)centerBrowsed, NULL))
         return;
-    if (buttonMake(hbox, "   Center   ", (GtkSignalFunc)centerBrowsed, NULL))
+    if (buttonMake(hbox, "Go To", (GtkSignalFunc)gotoBrowsed, NULL))
         return;
-    if (buttonMake(hbox, "   Go To   ", (GtkSignalFunc)gotoBrowsed, NULL))
-        return;
+    gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
 
-    gtk_widget_show (hbox);
+    gtk_widget_set_usize(browser, 500, 400); // Absolute Size, urghhh
+	gtk_widget_show_all(browser);
+
+	gtk_dialog_run(GTK_DIALOG(browser));
+	gtk_widget_destroy(browser);
+	solarTree = NULL;
+}
+
+static gboolean listStarEntryChange(GtkEntry *entry, GdkEventFocus *event, gpointer scale)
+{
+	// If not called by the slider, but rather by user
+	// Prevents infinite recursion
+	if (event != NULL)
+	{
+		numListStars = atoi(gtk_entry_get_text(entry));
+		
+		// Sanity Check
+		if (numListStars < MinListStars)
+		{
+			numListStars = MinListStars;
+			// Call self to set text (NULL event = no recursion)
+			listStarEntryChange(entry, NULL, NULL);
+		}
+		if (numListStars > MaxListStars)
+		{
+			numListStars = MaxListStars;
+			// Call self to set text
+			listStarEntryChange(entry, NULL, NULL);
+		}
+
+		gtk_range_set_value(GTK_RANGE(scale), (gdouble)numListStars);
+		return FALSE;
+	}
+
+	// Update value of this box
+	char stars[3];
+	sprintf(stars, "%d", numListStars);
+	gtk_entry_set_text(entry, stars);
+	return TRUE;
+}
+
+static void listStarSliderChange(GtkRange *range, gpointer entry)
+{
+	// Update the value of the text entry box
+	numListStars = (int)gtk_range_get_value(GTK_RANGE(range));
+	listStarEntryChange(GTK_ENTRY(entry), NULL, NULL);
+
+	// Refresh the browser listbox
+	refreshBrowser();
+}
+
+// MENU: Navigation -> Star Browser...
+static void menuStarBrowser()
+{
+    GtkWidget *browser = gtk_dialog_new_with_buttons("Star System Browser",
+	                                                GTK_WINDOW(mainWindow),
+													GTK_DIALOG_DESTROY_WITH_PARENT,
+				                                    GTK_STOCK_OK,
+													GTK_RESPONSE_OK,
+				                                    NULL);
+	gtk_window_set_modal(GTK_WINDOW(browser), FALSE);
+    browserSel.select((Star *)NULL);
+ 
+    // Star System Browser
+	GtkWidget *mainbox = gtk_vbox_new(FALSE, CELSPACING);
+	gtk_container_set_border_width(GTK_CONTAINER(mainbox), CELSPACING);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(browser)->vbox), mainbox, TRUE, TRUE, 0);
+	
+    GtkWidget *scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_win),
+	                               GTK_POLICY_AUTOMATIC,
+	                               GTK_POLICY_ALWAYS);
+    gtk_box_pack_start(GTK_BOX(mainbox), scrolled_win, TRUE, TRUE, 0);
+
+	// Create listbox list
+	starListStore = gtk_list_store_new(6,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_POINTER);
+	starList = gtk_tree_view_new_with_model(GTK_TREE_MODEL(starListStore));
+
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(starList), TRUE);
+	gtk_container_add(GTK_CONTAINER(scrolled_win), starList);
+
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	// Add the columns
+	for (int i=0; i<5; i++) {
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes (cstitles[i], renderer, "text", i, NULL);
+		if (i > 0 && i < 4) {
+			// Right align
+			gtk_tree_view_column_set_alignment(column, 1.0);
+			g_object_set(G_OBJECT(renderer), "xalign", 1.0, NULL);
+		}
+		gtk_tree_view_append_column(GTK_TREE_VIEW(starList), column);
+	}
+
+	// Initialize the star browser
+	sbrowser.setSimulation(appSim);
+    tmpSel = browserSel.star;
+
+	// Set up callback for when a star is selected
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(starList));
+	g_signal_connect(selection, "changed", G_CALLBACK(listStarSelect), NULL);
+
+	// From now on, it's the bottom-of-the-window controls
+	GtkWidget *frame = gtk_frame_new("Star Search Criteria");
+    gtk_box_pack_start(GTK_BOX(mainbox), frame, FALSE, FALSE, 0);
+	
+    GtkWidget *hbox = gtk_hbox_new(FALSE, CELSPACING);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
+    gtk_container_add(GTK_CONTAINER(frame), hbox);
+
+	// List viewing preference settings
+	GtkWidget *vbox = gtk_vbox_new(FALSE, CELSPACING);
+    GtkWidget *hbox2 = gtk_hbox_new(FALSE, CELSPACING);
+	GtkWidget *label = gtk_label_new("Maximum Stars Displayed in List");
+    gtk_box_pack_start(GTK_BOX(hbox2), label, TRUE, FALSE, 0);
+	GtkWidget *entry = gtk_entry_new_with_max_length(3);
+	gtk_entry_set_width_chars(GTK_ENTRY(entry), 5);
+    gtk_box_pack_start(GTK_BOX(hbox2), entry, TRUE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox2, TRUE, FALSE, 0);
+	GtkWidget *scale = gtk_hscale_new_with_range(MinListStars, MaxListStars, 1);
+	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
+	gtk_range_set_update_policy(GTK_RANGE(scale), GTK_UPDATE_DISCONTINUOUS);
+	g_signal_connect(scale, "value-changed", G_CALLBACK(listStarSliderChange), (gpointer)entry);
+	g_signal_connect(entry, "focus-out-event", G_CALLBACK(listStarEntryChange), (gpointer)scale);
+    gtk_box_pack_start(GTK_BOX(vbox), scale, TRUE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, FALSE, 0);
+
+	// Set initial Star Value
+	gtk_range_set_value(GTK_RANGE(scale), numListStars);
+	if (numListStars == MinListStars)
+	{
+		// Force update manually (scale won't trigger event)
+		listStarEntryChange(GTK_ENTRY(entry), NULL, NULL);
+		refreshBrowser();
+	}
+
+	// Radio Buttons
+	vbox = gtk_vbox_new(TRUE, CELSPACING);
+    makeRadioItems(radioLabels, vbox, GTK_SIGNAL_FUNC(radioClicked), NULL);
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
+
+    // Common Buttons
+    hbox = gtk_hbox_new(TRUE, CELSPACING);
+    if (buttonMake(hbox, "Center", (GtkSignalFunc)centerBrowsed, NULL))
+        return;
+    if (buttonMake(hbox, "Go To", (GtkSignalFunc)gotoBrowsed, NULL))
+        return;
+    if (buttonMake(hbox, "Refresh", (GtkSignalFunc)refreshBrowser, NULL))
+        return;
+    gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
+
+	gtk_widget_show_all(mainbox);
 
     gtk_widget_set_usize(browser, 500, 400); // Absolute Size, urghhh
 
-    gnome_dialog_set_parent((GnomeDialog*) browser, GTK_WINDOW(mainWindow));
-    gnome_dialog_set_default((GnomeDialog*) browser, GNOME_YES);
-    gnome_dialog_close_hides((GnomeDialog*) browser, FALSE);
-    gtk_window_set_modal(GTK_WINDOW(browser), FALSE);
-    gnome_dialog_run_and_close(GNOME_DIALOG(browser));
-    clist=NULL;
-    ctree=NULL;
+	gtk_dialog_run(GTK_DIALOG(browser));
+	gtk_widget_destroy(browser);
+
     browserSel.select((Star *)NULL);
 }
-
-
 
 static gint intAdjChanged(GtkAdjustment* adj, int *val)
 {
@@ -1683,14 +1829,14 @@ static gint intAdjChanged(GtkAdjustment* adj, int *val)
 }
 
 
-char *timeOptions[]=
+const char * timeOptions[]=
 {
     "UTC",
     NULL,
     NULL
 };
 
-char *monthOptions[]=
+const char * const monthOptions[]=
 {
     "January",
     "February",
@@ -1710,37 +1856,32 @@ char *monthOptions[]=
 static int tzone;
 static int *monthLoc=NULL;
 
-static gint zonechosen(GtkMenuItem *item, int zone)
+static gint zonechosen(GtkOptionMenu *menu)
 {
-    tzone=zone;
+	tzone = gtk_option_menu_get_history(menu) + 1;
     return TRUE;
 }
 
-static gint monthchosen(GtkMenuItem *item, int month)
+static gint monthchosen(GtkOptionMenu *menu)
 {
     if (monthLoc)
-	*monthLoc=month;
-    return TRUE;
+		*monthLoc = gtk_option_menu_get_history(menu) + 1;
+	return TRUE;
 }
 
 
-static void chooseOption(GtkWidget *hbox, char *str, char *choices[], int *val, char *sep, GtkSignalFunc chosen)
+static void chooseOption(GtkWidget *hbox, const char *str, char *choices[], int *val, gpointer, GtkSignalFunc chosen)
 {
     GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     GtkWidget *label = gtk_label_new(str);
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
     GtkWidget *optmenu = gtk_option_menu_new ();
     GtkWidget *menu = gtk_menu_new ();
-    GSList *group=NULL;
-    for(unsigned int i=0; choices[i]; i++)
+	for(unsigned int i=0; choices[i]; i++)
 	{
-	GtkWidget *menu_item = gtk_radio_menu_item_new_with_label (group, choices[i]);
-	gtk_signal_connect (GTK_OBJECT (menu_item), "activate", chosen, (gpointer) (i+1));
-	group = gtk_radio_menu_item_group (GTK_RADIO_MENU_ITEM (menu_item));
-	gtk_menu_append (GTK_MENU (menu), menu_item);
-	if ((((int)i+1))==*val)
-	    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), TRUE);
-	gtk_widget_show (menu_item);
+		GtkWidget *menu_item = gtk_menu_item_new_with_label (choices[i]);
+		gtk_menu_append (GTK_MENU (menu), menu_item);
+		gtk_widget_show (menu_item);
 	}
     gtk_option_menu_set_menu (GTK_OPTION_MENU (optmenu), menu);
     gtk_option_menu_set_history (GTK_OPTION_MENU (optmenu), (*val-1));
@@ -1750,10 +1891,12 @@ static void chooseOption(GtkWidget *hbox, char *str, char *choices[], int *val, 
     gtk_widget_show (label);
     gtk_widget_show (optmenu);
     gtk_widget_show (vbox);
+
+	g_signal_connect(GTK_OBJECT(optmenu), "changed", G_CALLBACK(chosen), NULL);
 }
 
 
-static void intSpin(GtkWidget *hbox, char *str, int min, int max, int *val, char *sep)
+static void intSpin(GtkWidget *hbox, const char *str, int min, int max, int *val, const char *sep)
 {
     GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     GtkWidget *label = gtk_label_new(str);
@@ -1763,8 +1906,6 @@ static void intSpin(GtkWidget *hbox, char *str, int min, int max, int *val, char
     GtkWidget *spinner = gtk_spin_button_new (adj, 1.0, 0);
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spinner), TRUE);
     gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), TRUE);
-    gtk_spin_button_set_shadow_type (GTK_SPIN_BUTTON (spinner),
-                                     GTK_SHADOW_IN);
     gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON (spinner),TRUE);
     gtk_entry_set_max_length(GTK_ENTRY (spinner), ((max<99)?2:4) );
 
@@ -1789,27 +1930,32 @@ static void intSpin(GtkWidget *hbox, char *str, int min, int max, int *val, char
     gtk_widget_show (label);
     gtk_widget_show (spinner);
     gtk_widget_show (vbox);
-    gtk_signal_connect(GTK_OBJECT(adj), "value-changed",
-		       GTK_SIGNAL_FUNC(intAdjChanged), val);
+    g_signal_connect(GTK_OBJECT(adj), "value-changed",
+		       G_CALLBACK(intAdjChanged), val);
 }
 
 
 static void menuSetTime()
 {
     int second;
-    GtkWidget *stimedialog = gnome_dialog_new("Set Time",
-			                      GNOME_STOCK_BUTTON_OK,
-					      "Set Current Time",
-			                      GNOME_STOCK_BUTTON_CANCEL,
-			                      NULL);
-    tzone=1;
+    GtkWidget *stimedialog = gtk_dialog_new_with_buttons("Set Time",
+	                                                     GTK_WINDOW(mainWindow),
+														 GTK_DIALOG_DESTROY_WITH_PARENT,
+														 GTK_STOCK_OK,
+														 GTK_RESPONSE_OK,
+														 "Set Current Time",
+														 GTK_RESPONSE_ACCEPT,
+														 GTK_STOCK_CANCEL,
+														 GTK_RESPONSE_CANCEL,
+														 NULL);
+    tzone = 1;
     if (appCore->getTimeZoneBias())
-	tzone=2;
+		tzone = 2;
 	
     if (stimedialog == NULL)
     {
-	DPRINTF(0, "Unable to open 'Set Time' dialog!\n");
-	return;
+		DPRINTF(0, "Unable to open 'Set Time' dialog!\n");
+		return;
     }
 
     GtkWidget *hbox = gtk_hbox_new(FALSE, 6);
@@ -1818,8 +1964,8 @@ static void menuSetTime()
     
     if ((hbox == NULL) || (frame == NULL) || (align == NULL))
     {
-	DPRINTF(0, "Unable to get GTK Elements.\n");
-	return;
+		DPRINTF(0, "Unable to get GTK Elements.\n");
+		return;
     }
     astro::Date date(appSim->getTime() +
                      astro::secondsToJulianDate(appCore->getTimeZoneBias()));
@@ -1829,12 +1975,12 @@ static void menuSetTime()
     gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
     gtk_container_add(GTK_CONTAINER(frame),GTK_WIDGET(align));
     gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
-    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), frame, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(stimedialog)->vbox), frame, FALSE, FALSE, 0);
     intSpin(hbox, "Hour", 0, 23, &date.hour, ":");
     intSpin(hbox, "Minute", 0, 59, &date.minute, ":");
     second=(int)date.seconds;
     intSpin(hbox, "Second", 0, 59, &second, "  ");
-    chooseOption(hbox, "Timzone", timeOptions, &tzone, NULL, GTK_SIGNAL_FUNC(zonechosen));
+    chooseOption(hbox, "Timezone", (char **)timeOptions, &tzone, NULL, GTK_SIGNAL_FUNC(zonechosen));
     gtk_widget_show_all(hbox);
     hbox = gtk_hbox_new(FALSE, 6);
     frame = gtk_frame_new("Date");
@@ -1843,120 +1989,609 @@ static void menuSetTime()
     
     if ((hbox == NULL) || (frame == NULL) || (align == NULL))
     {
-	DPRINTF(0, "Unable to get GTK Elements.\n");
-	return;
+		DPRINTF(0, "Unable to get GTK Elements.\n");
+		return;
     }
-    chooseOption(hbox,"Month", monthOptions, &date.month, " ", GTK_SIGNAL_FUNC(monthchosen));
-    intSpin(hbox,"Day", 1, 31, &date.day, ",");
+    chooseOption(hbox,"Month", (char **)monthOptions, &date.month, NULL, GTK_SIGNAL_FUNC(monthchosen));
+    intSpin(hbox, "Day", 1, 31, &date.day, ",");
     intSpin(hbox,"Year", -9999, 9999, &date.year, " "); /* (Hopefully,
 			    noone will need to go beyond these :-) */
-    gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), frame, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(stimedialog)->vbox), frame, FALSE, FALSE, 0);
     gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
     gtk_container_add(GTK_CONTAINER(frame),GTK_WIDGET(align));
     gtk_widget_show(align);
     gtk_widget_show(frame);
     gtk_widget_show_all(hbox);
 
-    gnome_dialog_set_parent((GnomeDialog*) stimedialog, GTK_WINDOW(mainWindow));
-    gnome_dialog_set_default((GnomeDialog*) stimedialog, GNOME_YES);
-    gnome_dialog_close_hides((GnomeDialog*) stimedialog, FALSE);
-    gtk_window_set_modal(GTK_WINDOW(stimedialog), FALSE);
-    gint button=gnome_dialog_run_and_close(GNOME_DIALOG(stimedialog));
-    monthLoc=NULL;
-    if (button==1)  // Set current time and exit.
+	gtk_dialog_set_default_response(GTK_DIALOG(stimedialog), GTK_RESPONSE_OK);
+    gint button = gtk_dialog_run(GTK_DIALOG(stimedialog));
+    
+	monthLoc = NULL;
+    if (button == GTK_RESPONSE_ACCEPT)  // Set current time and exit.
     {
-	time_t curtime=time(NULL);
-	appSim->setTime((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
-	appSim->update(0.0);
+		time_t curtime = time(NULL);
+		appSim->setTime((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
+		appSim->update(0.0);
     }
-    else if (button==0)  // Set entered time and exit
+    else if (button == GTK_RESPONSE_OK)  // Set entered time and exit
     {
-	appSim->setTime((double) date - ((tzone==1) ? 0 : astro::secondsToJulianDate(appCore->getTimeZoneBias())));
-	appSim->update(0.0);
+		appSim->setTime((double) date - ((tzone==1) ? 0 : astro::secondsToJulianDate(appCore->getTimeZoneBias())));
+		appSim->update(0.0);
     }
+
+	gtk_widget_destroy(stimedialog);
 }
 
+typedef struct _selDate selDate;
+
+struct _selDate {
+	int year;
+	int month;
+	int day;
+};
+
+//selDate *d1, *d2;
+
+typedef struct _EclipseData EclipseData;
+
+struct _EclipseData {
+	// Start Time
+	selDate* d1;
+
+	// End Time
+	selDate* d2;
+
+	bool bSolar;
+	char body[7];
+	GtkTreeSelection* sel;
+
+	GtkWidget *eclipseList;
+	GtkListStore *eclipseListStore;
+
+	GtkDialog* window;
+};
+
+static void setButtonDateString(GtkToggleButton *button, int year, int month, int day)
+{
+	char date[50];
+	sprintf(date, "%d %s %d", day, monthOptions[month - 1], year);
+
+	gtk_button_set_label(GTK_BUTTON(button), date);
+}
+
+static void calDateSelect(GtkCalendar *calendar, GtkToggleButton *button)
+{
+	// Set the selected date
+	guint year, month, day; 
+	gtk_calendar_get_date(calendar, &year, &month, &day);
+
+//	g_object_set_data(G_OBJECT(button), "year", (gpointer)year);
+//	g_object_set_data(G_OBJECT(button), "month", (gpointer)(month + 1));
+//	g_object_set_data(G_OBJECT(button), "day", (gpointer)day);
+
+	selDate* date = (selDate *)g_object_get_data(G_OBJECT(button), "eclipsedata");
+	date->year = year;
+	date->month = month + 1;
+	date->day = day;
+
+	// Update the button
+	setButtonDateString(button, year, month + 1, day);
+
+	// Close the calendar window
+	gtk_toggle_button_set_active(button, !gtk_toggle_button_get_active(button));
+}
+
+static void showCalPopup(GtkToggleButton *button, EclipseData *ed) //GtkWindow *parentwindow)
+{
+	GtkWidget* calwindow = GTK_WIDGET(g_object_get_data(G_OBJECT(button), "calendar"));
+
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+	{
+		// Pushed in
+		if (!calwindow)
+		{
+			calwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+			// Temporary: should be a transient, but then there are focus issues
+			gtk_window_set_modal(GTK_WINDOW(calwindow), TRUE);
+			gtk_window_set_type_hint(GTK_WINDOW(calwindow), GDK_WINDOW_TYPE_HINT_DOCK);
+			gtk_window_set_decorated(GTK_WINDOW(calwindow), FALSE);
+			gtk_window_set_resizable(GTK_WINDOW(calwindow), FALSE);
+			gtk_window_stick(GTK_WINDOW(calwindow));
+
+			GtkWidget* calendar = gtk_calendar_new();
+
+//			int year = (int)g_object_get_data(G_OBJECT(button),  "year");
+//			int month = (int)g_object_get_data(G_OBJECT(button),  "month");
+//			int day = (int)g_object_get_data(G_OBJECT(button),  "day");
+//			gtk_calendar_select_month(GTK_CALENDAR(calendar), month - 1, year);
+//			gtk_calendar_select_day(GTK_CALENDAR(calendar), day);
+		
+			selDate* date = (selDate *)g_object_get_data(G_OBJECT(button), "eclipsedata");
+		
+			gtk_calendar_select_month(GTK_CALENDAR(calendar), date->month - 1, date->year);
+			gtk_calendar_select_day(GTK_CALENDAR(calendar), date->day);
+	
+			gtk_container_add(GTK_CONTAINER(calwindow), calendar);
+			gtk_widget_show(calendar);
+
+			int x, y, i, j;
+			gdk_window_get_origin(GDK_WINDOW(GTK_WIDGET(button)->window), &x, &y);
+			gtk_widget_translate_coordinates(GTK_WIDGET(button), GTK_WIDGET(ed->window), 10, 10, &i, &j);
+
+			gtk_window_move(GTK_WINDOW(calwindow), x + i, y + j);
+
+			g_signal_connect(calendar, "day-selected-double-click", G_CALLBACK(calDateSelect), button);
+
+			gtk_window_present(GTK_WINDOW(calwindow));
+
+			g_object_set_data_full(
+							G_OBJECT (button), "calendar",
+							calwindow, (GDestroyNotify)gtk_widget_destroy);
+		}
+	}
+	else
+	{
+		// Pushed out
+		if (calwindow)
+		{
+			/* Destroys the calendar */
+			g_object_set_data(G_OBJECT (button), "calendar", NULL);
+			calwindow = NULL;
+		}
+	}
+}
+
+static const char * const eclipsetitles[] =
+{
+	"Planet",
+	"Satellite",
+	"Date",
+	"Start",
+	"End",
+	NULL
+};
+
+static const char * const eclipsetypetitles[] =
+{
+	"solar",
+	"moon",
+	NULL
+};
+
+static const char * const eclipseplanettitles[] =
+{
+	"Earth",
+	"Jupiter",
+	"Saturn",
+	"Uranus",
+	"Neptune",
+	"Pluto",
+	NULL
+};
+
+
+// CALLBACK: "SetTime/Goto" in Eclipse Finder
+static gint eclipseGoto(GtkButton*, EclipseData* ed)
+{
+	GValue value = { 0, 0 }; // Very strange, warning-free declaration!
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	int time[6];
+
+	// Nothing selected
+	if (ed->sel == NULL)
+		return FALSE;
+
+	// IF prevents selection while list is being updated
+	if (!gtk_tree_selection_get_selected(ed->sel, &model, &iter))
+		return FALSE;
+
+	// Tedious method of extracting the desired time
+	// However, still better than parsing a string.
+	for (int i=0; i<6; i++)
+	{
+		gtk_tree_model_get_value(model, &iter, i+5, &value);
+		time[i] = g_value_get_int(&value);
+		g_value_unset(&value);
+	}	
+
+	// Retrieve the selected body
+	gtk_tree_model_get_value(model, &iter, 11, &value);
+	Body* body  = (Body *)g_value_get_pointer(&value);
+	g_value_unset(&value);
+			
+	Simulation* sim = appCore->getSimulation();
+
+	// Set time based on retrieved values
+	astro::Date d(time[0], time[1], time[2]);
+	d.hour = time[3];
+	d.minute = time[4];
+	d.seconds = (double)time[5];
+	appCore->getSimulation()->setTime((double)d);
+
+	// The rest is directly from the Windows eclipse code
+	Selection target(body);
+	Selection ref(body->getSystem()->getStar());
+	// Use the phase lock coordinate system to set a position
+	// on the line between the sun and the body where the eclipse
+	// is occurring.
+	sim->setFrame(FrameOfReference(astro::PhaseLock, target, ref));
+	sim->update(0.0);
+
+	double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
+	RigidTransform to;
+	to.rotation = Quatd::yrotation(PI);
+	to.translation = Point3d(0, 0, -distance);
+	sim->gotoLocation(to, 2.5);
+
+	return TRUE;
+}
+
+// CALLBACK: Double-click on the Eclipse Finder Listbox
+static gint eclipse2Click(GtkWidget*, GdkEventButton* event, EclipseData* ed)
+{
+	if (event->type == GDK_2BUTTON_PRESS) {
+		// Double-click, same as hitting the select and go button
+		return eclipseGoto(NULL, ed);
+	}
+
+	return FALSE;
+}
+
+// CALLBACK: Compute button in Eclipse Finder
+static gint eclipseCompute(GtkButton* button, EclipseData* ed)
+{
+	GtkTreeIter iter;
+
+	// Set the cursor to a watch and force redraw
+	gdk_window_set_cursor(GTK_WIDGET(button)->window, gdk_cursor_new(GDK_WATCH));
+	gtk_main_iteration();
+
+	// Clear the listbox
+	gtk_list_store_clear(ed->eclipseListStore);
+
+	// Create the dates in a more suitable format
+	astro::Date from(ed->d1->year, ed->d1->month, ed->d1->day);
+	astro::Date to(ed->d2->year, ed->d2->month, ed->d2->day);
+
+	// Initialize the eclipse finder
+	EclipseFinder ef(appCore, ed->body, ed->bSolar ? Eclipse::Solar : Eclipse::Moon, (double)from, (double)to);
+	vector<Eclipse> eclipseListRaw = ef.getEclipses();
+
+	for (std::vector<Eclipse>::iterator i = eclipseListRaw.begin();
+		i != eclipseListRaw.end();
+		i++) {
+
+		// Handle 0 case
+		if ((*i).planete == "None") {
+			gtk_list_store_append(ed->eclipseListStore, &iter);
+			gtk_list_store_set(ed->eclipseListStore, &iter, 0, (*i).planete.c_str(), -1);
+			continue;
+		}
+
+		char d[12], strStart[10], strEnd[10];
+		astro::Date start((*i).startTime);
+		astro::Date end((*i).endTime);
+
+		sprintf(d, "%d-%02d-%02d", (*i).date->year, (*i).date->month, (*i).date->day);
+		sprintf(strStart, "%02d:%02d:%02d", start.hour, start.minute, (int)start.seconds);
+		sprintf(strEnd, "%02d:%02d:%02d", end.hour, end.minute, (int)end.seconds);
+
+		// Set time to middle time so that eclipse it right on earth
+		astro::Date timeToSet = (start + end) / 2.0f;
+
+		// Add item
+		// Entries 5->11 are not displayed and store data
+		gtk_list_store_append(ed->eclipseListStore, &iter);
+		gtk_list_store_set(ed->eclipseListStore, &iter,
+						   0, (*i).planete.c_str(),
+						   1, (*i).sattelite.c_str(),
+						   2, d,
+						   3, strStart,
+						   4, strEnd,
+		                   5, timeToSet.year,
+						   6, timeToSet.month,
+						   7, timeToSet.day,
+						   8, timeToSet.hour,
+						   9, timeToSet.minute,
+						   10, (int)timeToSet.seconds,
+						   11, (*i).body,
+						   -1);
+	}
+
+	// Set the cursor back
+	gdk_window_set_cursor(GTK_WIDGET(button)->window, gdk_cursor_new(GDK_LEFT_PTR));
+	return TRUE;
+}
+
+// CALLBACK: When Eclipse Body is selected
+void eclipseBodySelect(GtkMenuShell* menu, EclipseData* ed)
+{
+	GtkWidget* item = gtk_menu_get_active(GTK_MENU(menu));
+
+	GList* list = gtk_container_children(GTK_CONTAINER(menu));
+	int itemIndex = g_list_index(list, item);
+
+	// Set string according to body array
+	sprintf(ed->body, "%s", eclipseplanettitles[itemIndex]);
+}
+
+// CALLBACK: When Eclipse Type (Solar:Moon) is selected
+void eclipseTypeSelect(GtkMenuShell* menu, EclipseData* ed)
+{
+	GtkWidget* item = gtk_menu_get_active(GTK_MENU(menu));
+
+	GList* list = gtk_container_children(GTK_CONTAINER(menu));
+	int itemIndex = g_list_index(list, item);
+
+	// Solar eclipse
+	if (itemIndex == 0)
+		ed->bSolar = 1;
+	// Moon eclipse
+	else
+		ed->bSolar = 0;
+}
+
+// CALLBACK: When Eclipse is selected in Eclipse Finder
+static gint listEclipseSelect(GtkTreeSelection* sel, EclipseData* ed)
+{
+	// Simply set the selection pointer to this data item
+	ed->sel = sel;
+
+	return TRUE;
+}
+
+
+// MENU: Navigation -> Eclipse Finder
+static void menuEclipseFinder()
+{
+	EclipseData* ed = g_new0(EclipseData, 1);
+	selDate* d1 = g_new0(selDate, 1);
+	selDate* d2 = g_new0(selDate, 1);
+	ed->d1 = d1;
+	ed->d2 = d2;
+	ed->eclipseList = NULL;
+	ed->eclipseListStore = NULL;
+	ed->bSolar = TRUE;
+	sprintf(ed->body, "%s", eclipseplanettitles[0]);
+	ed->sel = NULL;
+
+    ed->window = GTK_DIALOG(gtk_dialog_new_with_buttons("Eclipse Finder",
+	                                                GTK_WINDOW(mainWindow),
+													GTK_DIALOG_DESTROY_WITH_PARENT,
+				                                    GTK_STOCK_OK,
+													GTK_RESPONSE_OK,
+				                                    NULL));
+	gtk_window_set_modal(GTK_WINDOW(ed->window), FALSE);
+ 
+	GtkWidget *mainbox = gtk_vbox_new(FALSE, CELSPACING);
+	gtk_container_set_border_width(GTK_CONTAINER(mainbox), CELSPACING);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ed->window)->vbox), mainbox, TRUE, TRUE, 0);
+	
+    GtkWidget *scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_win),
+	                               GTK_POLICY_AUTOMATIC,
+	                               GTK_POLICY_ALWAYS);
+    gtk_box_pack_start(GTK_BOX(mainbox), scrolled_win, TRUE, TRUE, 0);
+
+	// Create listbox list
+	// Six invisible ints at the end to hold actual time
+	// This will save string parsing like in KDE version
+	// Last field holds pointer to selected Body
+	ed->eclipseListStore = gtk_list_store_new(12,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_STRING,
+	                                   G_TYPE_STRING,
+									   G_TYPE_INT,
+									   G_TYPE_INT,
+									   G_TYPE_INT,
+									   G_TYPE_INT,
+									   G_TYPE_INT,
+									   G_TYPE_INT,
+	                                   G_TYPE_POINTER);
+	ed->eclipseList = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ed->eclipseListStore));
+
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(ed->eclipseList), TRUE);
+	gtk_container_add(GTK_CONTAINER(scrolled_win), ed->eclipseList);
+
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	// Add the columns
+	for (int i=0; i<5; i++) {
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes (eclipsetitles[i], renderer, "text", i, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(ed->eclipseList), column);
+	}
+
+	// Set up callback for when an eclipse is selected
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ed->eclipseList));
+	g_signal_connect(selection, "changed", G_CALLBACK(listEclipseSelect), ed);
+
+	// From now on, it's the bottom-of-the-window controls
+	GtkWidget *label;
+    GtkWidget *hbox;
+
+	// --------------------------------
+	hbox = gtk_hbox_new(FALSE, CELSPACING);
+	
+	label = gtk_label_new("Find");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	
+    GtkWidget* menuTypeBox = gtk_option_menu_new();
+    gtk_box_pack_start(GTK_BOX(hbox), menuTypeBox, FALSE, FALSE, 0);
+
+	label = gtk_label_new("eclipse on");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	
+    GtkWidget* menuBodyBox = gtk_option_menu_new();
+    gtk_box_pack_start(GTK_BOX(hbox), menuBodyBox, FALSE, FALSE, 0);
+
+    gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
+	// --------------------------------
+	hbox = gtk_hbox_new(FALSE, CELSPACING);
+
+	label = gtk_label_new("From");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	// Get current date
+	astro::Date datenow(appCore->getSimulation()->getTime());
+
+	// Set current time
+	ed->d1->year = datenow.year - 1;
+	ed->d1->month = datenow.month;
+	ed->d1->day = datenow.day;
+
+	// Set time a year from now
+	ed->d2->year = ed->d1->year + 2;
+	ed->d2->month = ed->d1->month;
+	ed->d2->day = ed->d1->day;
+
+	GtkWidget* date1Button = gtk_toggle_button_new();
+	setButtonDateString(GTK_TOGGLE_BUTTON(date1Button), ed->d1->year, ed->d1->month, ed->d1->day);
+	g_object_set_data(G_OBJECT(date1Button), "eclipsedata", ed->d1);
+	gtk_box_pack_start(GTK_BOX(hbox), date1Button, FALSE, FALSE, 0);
+
+	label = gtk_label_new("to");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	GtkWidget* date2Button = gtk_toggle_button_new();
+	setButtonDateString(GTK_TOGGLE_BUTTON(date2Button), ed->d2->year, ed->d2->month, ed->d2->day);
+	g_object_set_data(G_OBJECT(date2Button), "eclipsedata", ed->d2);
+	gtk_box_pack_start(GTK_BOX(hbox), date2Button, FALSE, FALSE, 0);
+
+    gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
+	// --------------------------------
+
+    // Common Buttons
+    hbox = gtk_hbox_new(TRUE, CELSPACING);
+    if (buttonMake(hbox, "Compute", (GtkSignalFunc)eclipseCompute, ed))
+        return;
+    if (buttonMake(hbox, "Set Date and Go to Planet", (GtkSignalFunc)eclipseGoto, ed))
+        return;
+    gtk_box_pack_start(GTK_BOX(mainbox), hbox, FALSE, FALSE, 0);
+
+	// Set up the drop-down boxes
+	GtkWidget *item;
+
+    GtkWidget* menuType = gtk_menu_new();
+    for (int i = 0; eclipsetypetitles[i] != NULL; i++)
+    {
+        item = gtk_menu_item_new_with_label(eclipsetypetitles[i]);
+        gtk_menu_append(GTK_MENU(menuType), item);
+		gtk_widget_show(item);
+    }
+    gtk_option_menu_set_menu(GTK_OPTION_MENU(menuTypeBox), menuType);
+
+    GtkWidget* menuBody = gtk_menu_new();
+    for (int i = 0; eclipseplanettitles[i] != NULL; i++)
+    {
+        item = gtk_menu_item_new_with_label(eclipseplanettitles[i]);
+        gtk_menu_append(GTK_MENU(menuBody), item);
+		gtk_widget_show(item);
+    }
+    gtk_option_menu_set_menu(GTK_OPTION_MENU(menuBodyBox), menuBody);
+
+	// Hook up all the signals
+	g_signal_connect(GTK_OBJECT(menuType), "selection-done", G_CALLBACK(eclipseTypeSelect), ed);
+    g_signal_connect(GTK_OBJECT(menuBody), "selection-done", G_CALLBACK(eclipseBodySelect), ed);
+
+	// Double-click handler
+	g_signal_connect(GTK_OBJECT(ed->eclipseList), "button-press-event", G_CALLBACK(eclipse2Click), ed);
+
+	g_signal_connect(GTK_OBJECT(date1Button), "toggled", G_CALLBACK(showCalPopup), ed);
+	g_signal_connect(GTK_OBJECT(date2Button), "toggled", G_CALLBACK(showCalPopup), ed);
+
+    gtk_widget_set_usize(GTK_WIDGET(ed->window), 400, 400); // Absolute Size, urghhh
+	gtk_widget_show_all(mainbox);
+
+	gtk_dialog_run(GTK_DIALOG(ed->window));
+	gtk_widget_destroy(GTK_WIDGET(ed->window));
+}
 
 
 static GtkItemFactoryEntry menuItems[] =
 {
-    { "/_File",  NULL,                       NULL,            0, "<Branch>" },
-    { "/File/_Capture Image...", "F10",      menuCaptureImage,0, NULL },
-    { "/File/_Quit", "<control>Q",           gtk_main_quit,   0, NULL },
-    { "/_Navigation", NULL,                  NULL,            0, "<Branch>" },
-    { "/Navigation/Select _Sol", "H",        menuSelectSol,   0, NULL },
-    { "/Navigation/_Tour Guide...", NULL,    menuTourGuide,   0, NULL },
-    { "/Navigation/Select _Object...", NULL, menuSelectObject,0, NULL },
-    { "/Navigation/_Goto Object...", NULL,   menuGotoObject,  0, NULL },
-    { "/Navigation/sep1", NULL,             NULL,          0, "<Separator>" },
-    { "/Navigation/_Center Selection", "C", menuCenter,    0, NULL },
-    { "/Navigation/_Goto Selection", "G",   menuGoto,      0, NULL },
-    { "/Navigation/_Follow Selection", "F", menuFollow,    0, NULL },
-    { "/Navigation/_Sync Orbit", "Y",        menuSync,        0, NULL },
-    { "/Navigation/_Track Selection", "T",  menuTrack,     0, NULL },
-    { "/Navigation/sep2", NULL,             NULL,          0, "<Separator>" },
-    { "/Navigation/Celestial _Browser...", NULL, menuBrowser, 0, NULL },
-    { "/_Time", NULL,                        NULL,            0, "<Branch>" },
-    { "/Time/10x _Faster", "L",              menuFaster,      0, NULL },
-    { "/Time/10x _Slower", "K",              menuSlower,      0, NULL },
-    { "/Time/_Pause", "space",               menuPause,       0, NULL },
-    { "/Time/Real _Time", "backslash",       menuRealTime,    0, NULL },
-    { "/Time/_Reverse Time", "J",            menuReverse,     0, NULL },
-    { "/Time/_Set Time...", NULL,            menuSetTime,     0, NULL },
-    { "/Time/sep3", NULL,                    NULL,            0, "<Separator>" },
-    { "/Time/Show _Local Time", NULL,        NULL,            Menu_ShowLocTime, "<ToggleItem>" },
-    { "/_Render", NULL,                      NULL,            0, "<Branch>" },
-    { "/Render/_Options...", NULL,           menuOptions,     0, NULL },
-    { "/Render/Show _Info Text", "V",        menuShowInfo,    0, NULL },
-    { "/Render/sep4", NULL,                  NULL,            0, "<Separator>" },
-    { "/Render/_Fewer Stars Visible", "bracketleft",  menuLessStars, 0, NULL },
-    { "/Render/_More Stars Visible", "bracketright",  menuMoreStars, 0, NULL },
-    { "/Render/AutoMag for _Stars","<control>Y", NULL, Menu_AutoMag, "<ToggleItem>"},
-    { "/Render/sep5", NULL,                  NULL,            0, "<Separator>"},
-    { "/Render/_Antialias for Lines", "<control>X", NULL, Menu_AntiAlias, "<ToggleItem>"},
-    { "/_Help", NULL,                       NULL,          0, "<LastBranch>" },
-    { "/Help/Run _Demo", "D",               menuRunDemo,   0, NULL },  
-    { "/Help/sep6", NULL,                   NULL,          0, "<Separator>" },
-    { "/Help/_Controls", NULL,       	    menuControls,  0, NULL },
-    { "/Help/OpenGL _Info", NULL,           menuOpenGL,    0, NULL },
-    { "/Help/_License", NULL,       	    menuLicense,   0, NULL },
-    { "/Help/sep7", NULL,                   NULL,          0, "<Separator>" },
-    { "/Help/_About", NULL,                 menuAbout,     0, NULL },
+    { (gchar *)"/_File",                               NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
+    { (gchar *)"/File/_Open Script...",                NULL,                    menuOpenScript  , 0,                (gchar *)"<StockItem>",  GTK_STOCK_OPEN },
+    { (gchar *)"/File/_Capture Image...",              (gchar *)"F10",          menuCaptureImage, 0,                (gchar *)"<StockItem>",  GTK_STOCK_SAVE_AS },
+    { (gchar *)"/File/sep0",                           NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/File/_Quit",                          (gchar *)"<control>Q",   gtk_main_quit,    0,                (gchar *)"<StockItem>",  GTK_STOCK_QUIT },
+    { (gchar *)"/_Navigation",                         NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
+    { (gchar *)"/Navigation/Select _Sol",              (gchar *)"H",            menuSelectSol,    0,                (gchar *)"<StockItem>",  GTK_STOCK_HOME },
+    { (gchar *)"/Navigation/Tour G_uide...",           NULL,                    menuTourGuide,    0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/Select _Object...",        NULL,                    menuSelectObject, 0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/Goto Object...",           NULL,                    menuGotoObject,   0,                (gchar *)"<StockItem>",  GTK_STOCK_FIND },
+    { (gchar *)"/Navigation/sep1",                     NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Navigation/_Center Selection",        (gchar *)"C",            menuCenter,       0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/_Goto Selection",          (gchar *)"G",            menuGoto,         0,                (gchar *)"<StockItem>",  GTK_STOCK_JUMP_TO },
+    { (gchar *)"/Navigation/_Follow Selection",        (gchar *)"F",            menuFollow,       0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/S_ync Orbit Selection",    (gchar *)"Y",            menuSync,         0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/_Track Selection",         (gchar *)"T",            menuTrack,        0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/sep2",                     NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Navigation/Solar System _Browser...", NULL,                    menuSolarBrowser, 0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/Star B_rowser...",         NULL,                    menuStarBrowser,  0,                NULL,                    NULL },
+    { (gchar *)"/Navigation/_Eclipse Finder",          NULL,                    menuEclipseFinder,0,                NULL,                    NULL },
+    { (gchar *)"/_Time",                               NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
+    { (gchar *)"/Time/10x _Faster",                    (gchar *)"L",            menuFaster,       0,                NULL,                    NULL },
+    { (gchar *)"/Time/10x _Slower",                    (gchar *)"K",            menuSlower,       0,                NULL,                    NULL },
+    { (gchar *)"/Time/Free_ze",                        (gchar *)"space",        menuPause,        0,                NULL,                    NULL },
+    { (gchar *)"/Time/_Real Time",                     (gchar *)"backslash",    menuRealTime,     0,                NULL,                    NULL },
+    { (gchar *)"/Time/Re_verse Time",                  (gchar *)"J",            menuReverse,      0,                NULL,                    NULL },
+    { (gchar *)"/Time/Set _Time...",                   NULL,                    menuSetTime,      0,                NULL,                    NULL },
+    { (gchar *)"/Time/sep3",                           NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Time/Show _Local Time",               NULL,                    NULL,             Menu_ShowLocTime, (gchar *)"<ToggleItem>", NULL },
+    { (gchar *)"/_Render",                             NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
+    { (gchar *)"/Render/Set Viewer Size...",           NULL,                    menuViewerSize,   0,                (gchar *)"<StockItem>",  GTK_STOCK_ZOOM_FIT },
+    { (gchar *)"/Render/sep4",                         NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Render/View _Options...",             NULL,                    menuOptions,      0,                (gchar *)"<StockItem>",  GTK_STOCK_PREFERENCES },
+    { (gchar *)"/Render/Show _Info Text",              (gchar *)"V",            menuShowInfo,     0,                NULL,                    NULL },
+    { (gchar *)"/Render/sep5",                         NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Render/_More Stars Visible",          (gchar *)"bracketright", menuMoreStars,    0,                NULL,                    NULL },
+    { (gchar *)"/Render/_Fewer Stars Visible",         (gchar *)"bracketleft",  menuLessStars,    0,                NULL,                    NULL },
+    { (gchar *)"/Render/Auto Magnitude",               (gchar *)"<control>Y",   NULL,             Menu_AutoMag,     (gchar *)"<ToggleItem>", NULL },
+    { (gchar *)"/Render/sep6",                         NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Render/_Antialiasing",                (gchar *)"<control>X",   NULL,             Menu_AntiAlias,   (gchar *)"<ToggleItem>", NULL },
+    { (gchar *)"/_Help",                               NULL,                    NULL,             0,                (gchar *)"<LastBranch>", NULL },
+    { (gchar *)"/Help/Run _Demo",                      (gchar *)"D",            menuRunDemo,      0,                (gchar *)"<StockItem>",  GTK_STOCK_EXECUTE },  
+    { (gchar *)"/Help/sep7",                           NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Help/_Controls",                      NULL,                    menuControls,     0,                (gchar *)"<StockItem>",  GTK_STOCK_HELP },
+    { (gchar *)"/Help/OpenGL _Info",                   NULL,                    menuOpenGL,       0,                NULL,                    NULL },
+    { (gchar *)"/Help/_License",                       NULL,                    menuLicense,      0,                NULL,                    NULL },
+    { (gchar *)"/Help/sep8",                           NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Help/_About",                         NULL,                    menuAbout,        0,                (gchar *)"<StockItem>",  GNOME_STOCK_ABOUT },
 };
 
-
+/*
 static GtkItemFactoryEntry optMenuItems[] =
 {
-    { "/Render/Use _Pixel Shaders", "<control>P",  NULL,    Menu_PixelShaders, "<ToggleItem>" },
-    { "/Render/Use _Vertex Shaders", "<control>V", NULL,    Menu_VertexShaders, "<ToggleItem>" },
+//  { (gchar *)"/Render/Use _Vertex Shaders", (gchar *)"<control>V", NULL,    Menu_VertexShaders, (gchar *)"<ToggleItem>", NULL },
 };
+*/
 
-
-int checkLocalTime(int dummy, char *dummy2)
+int checkLocalTime(int, char*)
 {
 	return(appCore->getTimeZoneBias()!=0);
 }
 
-
-int checkPixelShaders(int dummy, char *dummy2)
-{
-	return(appRenderer->getFragmentShaderEnabled());
-}
-
-
-int checkVertexShaders(int dummy, char *dummy2)
+/*
+int checkVertexShaders(int, char*)
 {
 	return(appRenderer->getVertexShaderEnabled());
 }
+*/
 
-
-int checkShowGalaxies(int dummy, char *dummy2)
+int checkShowGalaxies(int, char*)
 {
 	return((appRenderer->getRenderFlags() & Renderer::ShowGalaxies) == Renderer::ShowGalaxies);
 }
 
 
-GtkCheckButton *makeCheckButton(char *label, GtkWidget *vbox, bool set, GtkSignalFunc sigFunc)
+GtkCheckButton *makeCheckButton(char *label, GtkWidget *vbox, bool set, GtkSignalFunc sigFunc, gpointer data)
 {
     g_assert(vbox);
     GtkCheckButton* button = GTK_CHECK_BUTTON(gtk_check_button_new_with_label(label));
@@ -1967,52 +2602,55 @@ GtkCheckButton *makeCheckButton(char *label, GtkWidget *vbox, bool set, GtkSigna
         gtk_box_pack_start(GTK_BOX (vbox),
                            GTK_WIDGET(button), FALSE, TRUE, 0);
 
-        gtk_signal_connect(GTK_OBJECT(button),
-                           "toggled",
-                           GTK_SIGNAL_FUNC(sigFunc),
-                           NULL);
+        g_signal_connect(GTK_OBJECT(button),
+                         "toggled",
+                         G_CALLBACK(sigFunc),
+                         data);
     }
     return button;
 }
 
 
-int checkRenderFlag(int flag, char *path)
+int checkRenderFlag(int flag, char*)
 {
 	return ((appRenderer->getRenderFlags() & flag) == flag);
 }
 
 
-int checkLabelFlag(int flag, char *path)
+int checkLabelFlag(int flag, char*)
 {
-        return ((appRenderer->getLabelMode() & flag) == flag);
+	return ((appRenderer->getLabelMode() & flag) == flag);
 }
 
 
+// Reverse alphabetical order!
 static CheckFunc checks[] =
 {
-    { NULL, NULL, "/Time/Show Local Time",	checkLocalTime,		3, 0, Menu_ShowLocTime, GTK_SIGNAL_FUNC(menuShowLocTime) },
-    { NULL, NULL, "/Render/Use Pixel Shaders",   checkPixelShaders, 3, 0, Menu_PixelShaders, GTK_SIGNAL_FUNC(menuPixelShaders) },
-    { NULL, NULL, "/Render/Use Vertex Shaders",  checkVertexShaders,3, 0, Menu_VertexShaders, GTK_SIGNAL_FUNC(menuVertexShaders) },
-    { NULL, NULL, "/Render/Antialias for Lines", checkRenderFlag,   3, Renderer::ShowSmoothLines, Menu_AntiAlias, GTK_SIGNAL_FUNC(menuAntiAlias) },
-    { NULL, NULL, "/Render/AutoMag for Stars",   checkRenderFlag,   3, Renderer::ShowAutoMag, Menu_AutoMag, GTK_SIGNAL_FUNC(menuAutoMag) },
-    { NULL, NULL, "/Render/Stars",		 checkLabelFlag,    1, Renderer::StarLabels, Menu_StarLabels, GTK_SIGNAL_FUNC(menuStarLabels) },
-    { NULL, NULL, "/Render/Spacecraft",	         checkLabelFlag,    1, Renderer::SpacecraftLabels, Menu_CraftLabels, GTK_SIGNAL_FUNC(menuCraftLabels) },
-    { NULL, NULL, "/Render/Planets",	         checkLabelFlag,    1, Renderer::PlanetLabels, Menu_PlanetLabels, GTK_SIGNAL_FUNC(menuPlanetLabels) },
-    { NULL, NULL, "/Render/Moons",  	         checkLabelFlag,    1, Renderer::MoonLabels, Menu_MoonLabels, GTK_SIGNAL_FUNC(menuMoonLabels) },
-    { NULL, NULL, "/Render/Galaxies",	         checkLabelFlag,    1, Renderer::GalaxyLabels, Menu_GalaxyLabels, GTK_SIGNAL_FUNC(menuGalaxyLabels) },
-    { NULL, NULL, "/Render/Constellations",	 checkLabelFlag,    1, Renderer::ConstellationLabels, Menu_ConstellationLabels, GTK_SIGNAL_FUNC(menuConstellationLabels) },
-    { NULL, NULL, "/Render/Asteroids & Comets",  checkLabelFlag,    1, Renderer::AsteroidLabels, Menu_AsteroidLabels, GTK_SIGNAL_FUNC(menuAsteroidLabels) },
-    { NULL, NULL, "/Render/Stars as Points",     checkRenderFlag,   1, Renderer::ShowStarsAsPoints, Menu_ShowStarsAsPoints, GTK_SIGNAL_FUNC(menuShowStarsAsPoints) },
-    { NULL, NULL, "/Render/Orbits",		 checkRenderFlag,   1, Renderer::ShowOrbits, Menu_ShowOrbits, GTK_SIGNAL_FUNC(menuShowOrbits) },
-    { NULL, NULL, "/Render/Night Side Lights",   checkRenderFlag,   1, Renderer::ShowNightMaps, Menu_ShowNightSideMaps, GTK_SIGNAL_FUNC(menuShowNightSideMaps) },
-    { NULL, NULL, "/Render/Galaxies",            checkRenderFlag,   1, Renderer::ShowGalaxies, Menu_ShowGalaxies, GTK_SIGNAL_FUNC(menuShowGalaxies) },
-    { NULL, NULL, "/Render/Eclipse Shadows",     checkRenderFlag,   1, Renderer::ShowEclipseShadows, Menu_ShowEclipseShadows, GTK_SIGNAL_FUNC(menuShowEclipseShadows) },
-    { NULL, NULL, "/Render/Comet Tails", checkRenderFlag, 1, Renderer::ShowCometTails, Menu_ShowCometTails, GTK_SIGNAL_FUNC(menuShowCometTails) },
-    { NULL, NULL, "/Render/Constellation Boundaries", checkRenderFlag, 1, Renderer::ShowBoundaries, Menu_ShowBoundaries, GTK_SIGNAL_FUNC(menuShowBoundaries) },
-    { NULL, NULL, "/Render/Constellations",	 checkRenderFlag,   1, Renderer::ShowDiagrams, Menu_ShowConstellations, GTK_SIGNAL_FUNC(menuShowConstellations) },
-    { NULL, NULL, "/Render/Clouds",		 checkRenderFlag,   1, Renderer::ShowCloudMaps, Menu_ShowClouds, GTK_SIGNAL_FUNC(menuShowClouds) },
-    { NULL, NULL, "/Render/Celestial Grid",      checkRenderFlag,   1, Renderer::ShowCelestialSphere, Menu_ShowCelestialSphere, GTK_SIGNAL_FUNC(menuShowCelestialSphere) },
-    { NULL, NULL, "/Render/Atmospheres",         checkRenderFlag,   1, Renderer::ShowAtmospheres, Menu_ShowAtmospheres, GTK_SIGNAL_FUNC(menuShowAtmospheres) },
+    { NULL, NULL, "/Time/Show Local Time",         checkLocalTime,     3, 0, Menu_ShowLocTime, GTK_SIGNAL_FUNC(menuShowLocTime) },
+//  { NULL, NULL, "/Render/Use Vertex Shaders",    checkVertexShaders, 3, 0, Menu_VertexShaders, GTK_SIGNAL_FUNC(menuVertexShaders) },
+    { NULL, NULL, "/Render/Antialiasing",          checkRenderFlag,    3, Renderer::ShowSmoothLines, Menu_AntiAlias, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/AutoMag for Stars",     checkRenderFlag,    3, Renderer::ShowAutoMag, Menu_AutoMag, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Stars",                 checkLabelFlag,     1, Renderer::StarLabels, Menu_StarLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Spacecraft",            checkLabelFlag,     1, Renderer::SpacecraftLabels, Menu_CraftLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Planets",               checkLabelFlag,     1, Renderer::PlanetLabels, Menu_PlanetLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Moons",                 checkLabelFlag,     1, Renderer::MoonLabels, Menu_MoonLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Galaxies",              checkLabelFlag,     1, Renderer::GalaxyLabels, Menu_GalaxyLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Constellations",        checkLabelFlag,     1, Renderer::ConstellationLabels, Menu_ConstellationLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Asteroids",             checkLabelFlag,     1, Renderer::AsteroidLabels, Menu_AsteroidLabels, GTK_SIGNAL_FUNC(menuLabeler) },
+    { NULL, NULL, "/Render/Stars as Points",       checkRenderFlag,    1, Renderer::ShowStarsAsPoints, Menu_ShowStarsAsPoints, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Stars",                 checkRenderFlag,    1, Renderer::ShowStars, Menu_ShowStars, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Ring Shadows",          checkRenderFlag,    1, Renderer::ShowRingShadows, Menu_ShowRingShadows, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Planets",               checkRenderFlag,    1, Renderer::ShowPlanets, Menu_ShowPlanets, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Orbits",                checkRenderFlag,    1, Renderer::ShowOrbits, Menu_ShowOrbits, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Night Side Lights",     checkRenderFlag,    1, Renderer::ShowNightMaps, Menu_ShowNightSideMaps, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Galaxies",              checkRenderFlag,    1, Renderer::ShowGalaxies, Menu_ShowGalaxies, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Eclipse Shadows",       checkRenderFlag,    1, Renderer::ShowEclipseShadows, Menu_ShowEclipseShadows, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Constellations",        checkRenderFlag,    1, Renderer::ShowDiagrams, Menu_ShowConstellations, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Constellation Borders", checkRenderFlag,    1, Renderer::ShowBoundaries, Menu_ShowBoundaries, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Comet Tails",           checkRenderFlag,    1, Renderer::ShowCometTails, Menu_ShowCometTails, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Clouds",                checkRenderFlag,    1, Renderer::ShowCloudMaps, Menu_ShowClouds, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Celestial Grid",        checkRenderFlag,    1, Renderer::ShowCelestialSphere, Menu_ShowCelestialSphere, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/Render/Atmospheres",           checkRenderFlag,    1, Renderer::ShowAtmospheres, Menu_ShowAtmospheres, GTK_SIGNAL_FUNC(menuRenderer) },
 };
 
 
@@ -2023,22 +2661,24 @@ void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func, Che
         GtkWidget* w = gtk_item_factory_get_widget_by_action(factory, action);
         if (w != NULL)
         {
-            gtk_signal_connect(GTK_OBJECT(w), "toggled",
-                               GTK_SIGNAL_FUNC(func),
-                               NULL);
+			// Add signal handler and pass Renderer::whatever as gpointer data
+            g_signal_connect(GTK_OBJECT(w), "toggled",
+                             G_CALLBACK(func),
+                             (gpointer)cfunc->funcdata);
         }
 #ifdef DEBUG
         else
             DPRINTF(0,"Unable to attach signal to action %d!\n",action);
 #endif
         } else {
-    char *optName=rindex(cfunc->path,'/');
-    if(optName)
-        cfunc->optWidget=makeCheckButton(++optName, ((cfunc->func==checkLabelFlag)?labelBox:showBox), 0, cfunc->sigFunc);
+		char *optName=rindex(cfunc->path,'/');
+		if (optName)
+			cfunc->optWidget=makeCheckButton(++optName, ((cfunc->func==checkLabelFlag)?labelBox:showBox), 0, cfunc->sigFunc, (gpointer)cfunc->funcdata);
 	}
 }
 
 
+// Function to create main menu bar
 void createMainMenu(GtkWidget* window, GtkWidget** menubar)
 {
     gint nItems = sizeof(menuItems) / sizeof(menuItems[0]);
@@ -2047,28 +2687,25 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
     menuItemFactory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
                                            "<main>",
                                            accelGroup);
-    gtk_accel_group_attach (accelGroup, GTK_OBJECT (window));
+	gtk_window_add_accel_group(GTK_WINDOW (window), accelGroup);
     gtk_item_factory_create_items(menuItemFactory, nItems, menuItems, NULL);
     appRenderer=appCore->getRenderer();
     g_assert(appRenderer);
     appSim = appCore->getSimulation();
     g_assert(appSim);
 
-    //if (appRenderer->fragmentShaderSupported())
+	/*
+    //if (appRenderer->vertexShaderSupported())
 	{
 	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[0], NULL, 1);
 	checks[1].active = 3;
 	}
-    //if (appRenderer->vertexShaderSupported())
-	{
-	gtk_item_factory_create_item(menuItemFactory, &optMenuItems[1], NULL, 1);
-	checks[2].active = 3;
-	}
+	*/
 
     if (menubar != NULL)
         *menubar = gtk_item_factory_get_widget(menuItemFactory, "<main>");
 
-    for(int i=sizeof(checks) / sizeof(checks[0])-1;i>=0;--i)
+    for(int i=sizeof(checks) / sizeof(checks[0])-1; i>=0; --i)
     {
         if(checks[i].active)
             setupCheckItem(menuItemFactory, checks[i].action, checks[i].sigFunc, &checks[i]);
@@ -2076,81 +2713,99 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
 }
 
 
-gint reshapeFunc(GtkWidget* widget, GdkEventConfigure* event)
-{
-    if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
-    {
-        int w = widget->allocation.width;
-        int h = widget->allocation.height;
-        appCore->resize(w, h);
-    }
+// GL CALLBACKS ---------------------------------------------------------------
 
+// Keeps track of whether GL area is initialized
+bool bReady = false;
+
+// CALLBACK: GL Function for event "configure_event"
+gint reshapeFunc(GtkWidget* widget, GdkEventConfigure*, gpointer)
+{
+	GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
+	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+
+	if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
+		return FALSE;
+
+	int w = widget->allocation.width;
+	int h = widget->allocation.height;
+	appCore->resize(w, h);
+
+	gdk_gl_drawable_gl_end (gldrawable);
     return TRUE;
 }
 
-
-bool bReady = false;
-
-
-/*
- * Definition of Gtk callback functions
- */
-
-gint initFunc(GtkWidget* widget)
+// CALLBACK: GL Function for event "realize"
+gint initFunc(GtkWidget* widget, gpointer)
 {
-    if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
-    {
-        if (!appCore->initRenderer())
-        {
-            cerr << "Failed to initialize renderer.\n";
-            return TRUE;
-        }
+	GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
+	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+
+	if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
+		return FALSE;
+
+	if (!appCore->initRenderer())
+	{
+		cerr << "Failed to initialize renderer.\n";
+		return TRUE;
+	}
 
 	time_t curtime=time(NULL);
-        appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
+	appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
 	localtime(&curtime); /* Only doing this to set timezone as a side
-			       effect*/
+							effect*/
 	appCore->setTimeZoneBias(-timezone + 3600 * daylight);
 	appCore->setTimeZoneName(tzname[daylight]);
 	timeOptions[1]=tzname[daylight];
-    }
-        
-    return TRUE;
+
+	gdk_gl_drawable_gl_end (gldrawable);
+
+	// Set the cursor to a crosshair
+	gdk_window_set_cursor(widget->window, gdk_cursor_new(GDK_CROSSHAIR));
+
+	return TRUE;
 }
 
-void Display(GtkWidget* widget)
+// GL Common Draw function.
+// If everything checks out, call appCore->draw()
+gint Display(GtkWidget* widget)
 {
+	GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
+	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+
+	if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
+		return FALSE;
+
     if (bReady)
     {
         appCore->draw();
-        gtk_gl_area_swapbuffers(GTK_GL_AREA(widget));
+        gdk_gl_drawable_swap_buffers(GDK_GL_DRAWABLE(gldrawable));
     }
+
+	gdk_gl_drawable_gl_end (gldrawable);
+	return TRUE;
 }
 
-
+// CALLBACK: GL Function for main update (in GTK idle loop)
 gint glarea_idle(void*)
 {
     appCore->tick();
-    Display(GTK_WIDGET(oglArea));
-
-    return TRUE;
+    return Display(oglArea);
 }
 
-
-gint glarea_draw(GtkWidget* widget, GdkEventExpose* event)
+// CALLBACK: GL Function for event "expose_event"
+gint gldrawFunc(GtkWidget* widget, GdkEventExpose* event, gpointer)
 {
     // Draw only the last expose
     if (event->count > 0)
         return TRUE;
 
-    if (gtk_gl_area_make_current(GTK_GL_AREA(widget)))
-        Display(widget);
-
-    return TRUE;
+	// Redraw -- draw checks are made in function
+	return Display(widget);
 }
 
 
-gint glarea_motion_notify(GtkWidget* widget, GdkEventMotion* event)
+gint glarea_motion_notify(GtkWidget*, GdkEventMotion* event)
 {
     int x = (int) event->x;
     int y = (int) event->y;
@@ -2175,32 +2830,31 @@ gint glarea_motion_notify(GtkWidget* widget, GdkEventMotion* event)
     return TRUE;
 }
 
-gint glarea_button_press(GtkWidget* widget, GdkEventButton* event, gpointer data) 
+gint glarea_mouse_scroll(GtkWidget*, GdkEventScroll* event, gpointer)
 {
-    if (event->button == 4)
-    {
+	if (event->direction == GDK_SCROLL_UP)
         appCore->mouseWheel(-1.0f, 0);
-    }
-    else if (event->button == 5)
-    {
+	else 
         appCore->mouseWheel(1.0f, 0);
-    }
-    else if (event->button <= 3)
-    {
-        lastX = (int) event->x;
-        lastY = (int) event->y;
-        if (event->button == 1)
-            appCore->mouseButtonDown(event->x, event->y, CelestiaCore::LeftButton);
-        else if (event->button == 2)
-            appCore->mouseButtonDown(event->x, event->y, CelestiaCore::MiddleButton);
-        else if (event->button == 3)
-            appCore->mouseButtonDown(event->x, event->y, CelestiaCore::RightButton);
-    }
+	
+	return TRUE;
+}
+
+gint glarea_button_press(GtkWidget*, GdkEventButton* event, gpointer) 
+{
+    lastX = (int) event->x;
+    lastY = (int) event->y;
+    if (event->button == 1)
+        appCore->mouseButtonDown(event->x, event->y, CelestiaCore::LeftButton);
+    else if (event->button == 2)
+        appCore->mouseButtonDown(event->x, event->y, CelestiaCore::MiddleButton);
+    else if (event->button == 3)
+        appCore->mouseButtonDown(event->x, event->y, CelestiaCore::RightButton);
 
     return TRUE;
 }
 
-gint glarea_button_release(GtkWidget* widget, GdkEventButton* event, gpointer data)
+gint glarea_button_release(GtkWidget*, GdkEventButton* event, gpointer)
 {
     lastX = (int) event->x;
     lastY = (int) event->y;
@@ -2328,7 +2982,7 @@ static bool handleSpecialKey(int key, bool down)
 }
 
 
-gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer data)
+gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer)
 {
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_press_event");
     switch (event->keyval)
@@ -2342,7 +2996,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer data)
         if(event->state & GDK_CONTROL_MASK)
             {  /* Why isn't Ctrl-Q sending char 21 ? I have no idea, but as
                   long as it isn't, this will work. */
-            gtk_main_quit();
+            	//gtk_main_quit();
             }
         // Intentional fallthrough if *not* Ctrl-Q
 
@@ -2352,7 +3006,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer data)
             if ((event->string != NULL) && (*(event->string)))
             {
                 // See if our key accelerators will handle this event.
-	        if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, GDK_SHIFT_MASK))
+	        if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (G_OBJECT (mainWindow), event->keyval, GDK_SHIFT_MASK))
                     return TRUE;
             
                 char* s = event->string;
@@ -2372,32 +3026,34 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer data)
 }
 
 
-gint glarea_key_release(GtkWidget* widget, GdkEventKey* event, gpointer data)
+gint glarea_key_release(GtkWidget* widget, GdkEventKey* event, gpointer)
 {
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_release_event");
     return handleSpecialKey(event->keyval, false);
 }
 
+
+// GTK initializing function options struct
 struct poptOption options[] =
 {
     {
-    "verbose",
-    'v',
-    POPT_ARG_INT,
-    &verbose,
-    0,
-    "Lots of additional Messages",
-    NULL
-    },
+		"verbose",
+		'v',
+		POPT_ARG_INT,
+		&verbose,
+		0,
+		"Lots of additional Messages",
+		NULL
+	},
 
     {
-    NULL,
-    '\0',
-    0,
-    NULL,
-    0,
-    NULL,
-    NULL
+		NULL,
+		'\0',
+		0,
+		NULL,
+		0,
+		NULL,
+		NULL
   }
 };
 
@@ -2410,7 +3066,7 @@ void resyncMenus()
     {
 	if (!cfunc->active)
 	    continue;
-        unsigned int res=((*cfunc->func)(cfunc->funcdata, cfunc->path))?1:0;
+        unsigned int res=((*cfunc->func)(cfunc->funcdata, (char *)cfunc->path))?1:0;
 #if 0
         cout <<"res  "<<res<<'\t'<<i<<'\t'<<cfunc->path<<endl;
 #endif
@@ -2451,16 +3107,17 @@ void resyncAmbient()
 {
     if(optionDialog) // Only  modify if optionsDialog is setup
     {
-        float ambient=appRenderer->getAmbientLightLevel();
-        int index=3;
-        for(int i=3;(ambient<=amLevels[i]) && (i>=0);i--)
-            index=i;
+        float ambient = appRenderer->getAmbientLightLevel();
+        int index = 2;
+        for(int i=2; (ambient<=amLevels[i]) && (i>=0); i--)
+            index = i;
         if(!(ambientGads[index])->active)
             gtk_toggle_button_set_active(ambientGads[index],1);
     }
 }
 
 
+/*
 void resyncFaintest()
 {
     if(optionDialog) // Only  modify if optionsDialog is setup
@@ -2470,6 +3127,7 @@ void resyncFaintest()
             gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner), (gfloat)val);
     }
 }
+*/
 
 
 void resyncVerbosity()
@@ -2488,7 +3146,8 @@ void resyncAll()
     resyncMenus();
     resyncAmbient();
     resyncVerbosity();
-    resyncFaintest();
+	// There is no longer a way to set faintest.
+    // resyncFaintest();
 }
 
 
@@ -2514,8 +3173,9 @@ void GtkWatcher::notifyChange(CelestiaCore*, int property)
         resyncMenus();
     else if (property & CelestiaCore::AmbientLightChanged)
         resyncAmbient();
-    else if (property & CelestiaCore::FaintestChanged)
-        resyncFaintest();
+	// There is no longer a way to change faintest level.
+    // else if (property & CelestiaCore::FaintestChanged)
+    //     resyncFaintest();
     else if (property & CelestiaCore::VerbosityLevelChanged)
         resyncVerbosity();
 }
@@ -2538,9 +3198,16 @@ int main(int argc, char* argv[])
             "', probably due to improper installation\n";
     }
 
-    // Now initialize OpenGL and Gnome
-    gnome_init_with_popt_table("Celestia", VERSION, argc, argv, options, 0,
-                               NULL);
+	// GNOME Initialization
+	GnomeProgram *program;
+	program = gnome_program_init("Celestia", VERSION, LIBGNOMEUI_MODULE,
+	                             argc, argv, GNOME_PARAM_POPT_TABLE, options,
+								 GNOME_PARAM_NONE);
+	
+	// GTK-Only Initialization
+	//gtk_init(&argc, &argv);
+
+	
     SetDebugVerbosity(verbose);
 
     appCore = new CelestiaCore();
@@ -2555,27 +3222,50 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-
-    // Check if OpenGL is supported
-    if (gdk_gl_query() == FALSE)
-    {
-        g_print("OpenGL not supported\n");
-        return 0;
-    }
-
     // Create the main window
-    mainWindow=gnome_app_new("Celestia",AppName);
+    mainWindow = gnome_app_new("Celestia", AppName);
+	//mainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_container_set_border_width(GTK_CONTAINER(mainWindow), 1);
 
     mainBox = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
     gtk_container_set_border_width(GTK_CONTAINER(mainBox), 0);
 
-    gtk_signal_connect(GTK_OBJECT(mainWindow), "delete_event",
-                       GTK_SIGNAL_FUNC(gtk_main_quit), NULL);
-    gtk_quit_add_destroy(1, GTK_OBJECT(mainWindow));
+    g_signal_connect(GTK_OBJECT(mainWindow), "delete_event",
+                       G_CALLBACK(gtk_main_quit), NULL);
 
     // Create the OpenGL widget
-    oglArea = GTK_WIDGET(gtk_gl_area_new(oglAttributeList));
+	gtk_gl_init (&argc, &argv);
+
+	// Configure OpenGL
+	// Try double-buffered visual
+	GdkGLConfig* glconfig = gdk_gl_config_new_by_mode(static_cast<GdkGLConfigMode>
+	                                                  (GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_DOUBLE));
+
+	if (glconfig == NULL)
+	{
+		g_print ("*** Cannot find the double-buffered visual.\n");
+		g_print ("*** Trying single-buffered visual.\n");
+
+		// Try single-buffered visual
+		glconfig = gdk_gl_config_new_by_mode(static_cast<GdkGLConfigMode>
+		                                     (GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH));
+		if (glconfig == NULL)
+		{
+			g_print ("*** No appropriate OpenGL-capable visual found.\n");
+			exit (1);
+		}
+	}
+
+	// Create area to be used for OpenGL display
+	oglArea = gtk_drawing_area_new();
+	
+	// Set OpenGL-capability to the widget.
+	gtk_widget_set_gl_capability(oglArea,
+					glconfig,
+					NULL,
+					TRUE,
+					GDK_GL_RGBA_TYPE);
+	
     gtk_widget_set_events(GTK_WIDGET(oglArea),
                           GDK_EXPOSURE_MASK |
                           GDK_KEY_PRESS_MASK |
@@ -2584,70 +3274,78 @@ int main(int argc, char* argv[])
                           GDK_BUTTON_RELEASE_MASK |
                           GDK_POINTER_MOTION_MASK);
 
-    // Connect signal handlers
-    gtk_signal_connect(GTK_OBJECT(oglArea), "expose_event",
-                       GTK_SIGNAL_FUNC(glarea_draw), NULL);
-    gtk_signal_connect(GTK_OBJECT(oglArea), "configure_event",
-                       GTK_SIGNAL_FUNC(reshapeFunc), NULL);
-    gtk_signal_connect(GTK_OBJECT(oglArea), "realize",
-                       GTK_SIGNAL_FUNC(initFunc), NULL);
-    gtk_signal_connect(GTK_OBJECT(oglArea), "button_press_event",
-                       GTK_SIGNAL_FUNC(glarea_button_press), NULL);
-    gtk_signal_connect(GTK_OBJECT(oglArea), "button_release_event",
-                       GTK_SIGNAL_FUNC(glarea_button_release), NULL);
-    gtk_signal_connect(GTK_OBJECT(oglArea), "motion_notify_event",
-                       GTK_SIGNAL_FUNC(glarea_motion_notify), NULL);
-    gtk_signal_connect(GTK_OBJECT(oglArea), "key_press_event",
-                       GTK_SIGNAL_FUNC(glarea_key_press), NULL);
-    gtk_signal_connect(GTK_OBJECT(oglArea), "key_release_event",
-                       GTK_SIGNAL_FUNC(glarea_key_release), NULL);
-
-    // Set the minimum size
-    // gtk_widget_set_usize(GTK_WIDGET(oglArea), 200, 150);
     // Set the default size
-    gtk_gl_area_size(GTK_GL_AREA(oglArea), 640, 480);
+	gtk_widget_set_size_request(oglArea, 640, 480);
 
-    //Frames and boxes for the Options Dialog
+    // Connect signal handlers
+    g_signal_connect(GTK_OBJECT(oglArea), "expose_event",
+                       G_CALLBACK(gldrawFunc), NULL);
+    g_signal_connect(GTK_OBJECT(oglArea), "configure_event",
+                       G_CALLBACK(reshapeFunc), NULL);
+    g_signal_connect(GTK_OBJECT(oglArea), "realize",
+                       G_CALLBACK(initFunc), NULL);
+    g_signal_connect(GTK_OBJECT(oglArea), "button_press_event",
+                       G_CALLBACK(glarea_button_press), NULL);
+    g_signal_connect(GTK_OBJECT(oglArea), "button_release_event",
+                       G_CALLBACK(glarea_button_release), NULL);
+    g_signal_connect(GTK_OBJECT(oglArea), "scroll_event",
+                       G_CALLBACK(glarea_mouse_scroll), NULL);
+    g_signal_connect(GTK_OBJECT(oglArea), "motion_notify_event",
+                       G_CALLBACK(glarea_motion_notify), NULL);
+    g_signal_connect(GTK_OBJECT(oglArea), "key_press_event",
+                       G_CALLBACK(glarea_key_press), NULL);
+    g_signal_connect(GTK_OBJECT(oglArea), "key_release_event",
+                       G_CALLBACK(glarea_key_release), NULL);
+
+    // Frames and boxes for the Options Dialog
     showFrame = gtk_frame_new("Show");
     g_assert(showFrame);
-    showBox = gtk_vbox_new(FALSE, 3);
-    gtk_container_border_width(GTK_CONTAINER(showBox), 10);
+    showBox = gtk_vbox_new(FALSE, 0);
+    gtk_container_border_width(GTK_CONTAINER(showBox), CELSPACING);
     g_assert(showBox);
     gtk_container_add(GTK_CONTAINER(showFrame),GTK_WIDGET(showBox));
-    gtk_container_border_width(GTK_CONTAINER(showFrame), 2);
+    gtk_container_border_width(GTK_CONTAINER(showFrame), 0);
     labelFrame = gtk_frame_new("Label");
     g_assert(labelFrame);
-    labelBox = gtk_vbox_new(FALSE, 3);
-    gtk_container_border_width(GTK_CONTAINER(labelBox), 10);
+    labelBox = gtk_vbox_new(FALSE, 0);
+    gtk_container_border_width(GTK_CONTAINER(labelBox), CELSPACING);
     g_assert(labelBox);
     gtk_container_add(GTK_CONTAINER(labelFrame),GTK_WIDGET(labelBox));
-    gtk_container_border_width(GTK_CONTAINER(labelFrame), 2);
-    createMainMenu(mainWindow, &mainMenu);
+    gtk_container_border_width(GTK_CONTAINER(labelFrame), 0);
 
-    // gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(oglArea));
+	// Create the main menu bar
+	createMainMenu(mainWindow, &mainMenu);
+
     gnome_app_set_contents((GnomeApp *)mainWindow, GTK_WIDGET(mainBox));
+    //gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(mainBox));
+
     gtk_box_pack_start(GTK_BOX(mainBox), mainMenu, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(mainBox), oglArea, TRUE, TRUE, 0);
     gtk_widget_show(GTK_WIDGET(oglArea));
     gtk_widget_show(GTK_WIDGET(mainBox));
     gtk_widget_show(GTK_WIDGET(mainMenu));
     gtk_widget_show(GTK_WIDGET(mainWindow));
-    gtk_signal_connect(GTK_OBJECT(mainBox), "event",
-                       GTK_SIGNAL_FUNC(resyncAll), NULL);
+    g_signal_connect(GTK_OBJECT(mainBox), "event",
+                       G_CALLBACK(resyncAll), NULL);
 
     // Set focus to oglArea widget
     GTK_WIDGET_SET_FLAGS(oglArea, GTK_CAN_FOCUS);
     gtk_widget_grab_focus(GTK_WIDGET(oglArea));
 
-    gtk_idle_add(glarea_idle, NULL);
+	// Main call to execute redraw
+	gtk_idle_add(glarea_idle, NULL);
 
     bReady = true;
+    gtkWatcher = new GtkWatcher(appCore);
 
     g_assert(menuItemFactory);
-    gtkWatcher = new GtkWatcher(appCore);
     resyncAll();
-    gtk_main();
-    delete captureFilename;
+
+	// Call Main GTK Loop
+	gtk_main();
+    
+	// Clean up
+	delete captureFilename;
 
     return 0;
 }
