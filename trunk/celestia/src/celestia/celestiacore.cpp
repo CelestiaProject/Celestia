@@ -25,7 +25,6 @@
 #include <celmath/quaternion.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
-#include <celutil/timer.h>
 #include <celengine/stardb.h>
 #include <celengine/solarsys.h>
 #include <celengine/asterism.h>
@@ -106,6 +105,7 @@ CelestiaCore::CelestiaCore() :
     hudDetail(1),
     wireframe(false),
     editMode(false),
+    timer(NULL),
     currentScript(NULL),
     initScript(NULL),
     demoScript(NULL),
@@ -121,6 +121,7 @@ CelestiaCore::CelestiaCore() :
     dollyTime(0.0),
     zoomMotion(0.0),
     zoomTime(0.0),
+    sysTime(0.0),
     currentTime(0.0),
     timeScale(1.0),
     paused(false),
@@ -132,6 +133,8 @@ CelestiaCore::CelestiaCore() :
     logoTexture(NULL),
     alerter(NULL)
 {
+    timer = CreateTimer();
+
     execEnv = new CoreExecutionEnvironment(*this);
 
     int i;
@@ -394,7 +397,12 @@ void CelestiaCore::keyDown(int key)
         break;
     case Key_F11:
         if (movieCapture != NULL)
-            recording = !recording;
+        {
+            if (isRecording())
+                recordPause();
+            else
+                recordBegin();
+        }
         break;
     case Key_F12:
         if (movieCapture != NULL)
@@ -694,9 +702,23 @@ void CelestiaCore::start(double t)
 }
 
 
-void CelestiaCore::tick(double dt)
+void CelestiaCore::tick()
 {
-    double lastTime = currentTime;
+    double lastTime = sysTime;
+    sysTime = timer->getTime();
+
+    // The time step is normally driven by the system clock; however, when
+    // recording a movie, we fix the time step the frame rate of the movie.
+    double dt = 0.0;
+    if (movieCapture != NULL && recording)
+    {
+        dt = 1.0 / movieCapture->getFrameRate();
+    }
+    else
+    {
+        dt = sysTime - lastTime;
+    }
+
     currentTime += dt;
 
     // Mouse wheel zoom
@@ -706,7 +728,7 @@ void CelestiaCore::tick(double dt)
         double fraction;
                 
         if (currentTime - zoomTime >= span)
-            fraction = (zoomTime + span) - lastTime;
+            fraction = (zoomTime + span) - (currentTime - dt);
         else
             fraction = dt / span;
 
@@ -722,7 +744,7 @@ void CelestiaCore::tick(double dt)
         double fraction;
                 
         if (currentTime - dollyTime >= span)
-            fraction = (dollyTime + span) - lastTime;
+            fraction = (dollyTime + span) - (currentTime - dt);
         else
             fraction = dt / span;
 
@@ -825,10 +847,11 @@ void CelestiaCore::draw()
     nFrames++;
     if (nFrames == 100)
     {
-        fps = (double) nFrames / (currentTime - fpsCounterStartTime);
+        fps = (double) nFrames / (sysTime - fpsCounterStartTime);
         nFrames = 0;
-        fpsCounterStartTime = currentTime;
+        fpsCounterStartTime = sysTime;
     }
+
 #if 0
     GLenum err = glGetError();
     if (err != GL_NO_ERROR)
@@ -1616,11 +1639,11 @@ void CelestiaCore::recordEnd()
 {
     if (movieCapture != NULL)
     {
+        recordPause();
         movieCapture->end();
         delete movieCapture;
         movieCapture = NULL;
     }
-    recording = false;
 }
 
 bool CelestiaCore::isCaptureActive()

@@ -11,6 +11,7 @@
 #define _CELESTIACORE_H_
 
 // #include "gl.h"
+#include <celutil/timer.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/command.h>
@@ -112,7 +113,7 @@ class CelestiaCore
     void joystickButton(int button, bool down);
     void resize(int w, int h);
     void draw();
-    void tick(double dt);
+    void tick();
 
     Simulation* getSimulation() const;
     Renderer* getRenderer() const;
@@ -180,6 +181,8 @@ class CelestiaCore
     bool wireframe;
     bool editMode;
 
+    Timer* timer;
+
     CommandSequence* currentScript;
     CommandSequence* initScript;
     CommandSequence* demoScript;
@@ -200,6 +203,7 @@ class CelestiaCore
     double zoomMotion;
     double zoomTime;
 
+    double sysTime;
     double currentTime;
     double timeScale;
     bool paused;

@@ -28,7 +28,6 @@
 #include <celmath/mathlib.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
-#include <celutil/timer.h>
 #include <celutil/filetype.h>
 #include <celengine/celestia.h>
 #include <celengine/astro.h>
@@ -51,10 +50,6 @@ using namespace std;
 char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
-
-// Timer info.
-static double currentTime = 0.0;
-static Timer* timer = NULL;
 
 static bool fullscreen = false;
 static bool bReady = false;
@@ -1569,8 +1564,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->getRenderer()->setVertexShaderEnabled(prefs.vertexShader == 1);
     appCore->setTimeZoneBias(prefs.timezoneBias);
 
-    timer = CreateTimer();
-
     BuildFavoritesMenu();
     syncMenusWithRendererState();
 
@@ -1584,13 +1577,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
     while (msg.message != WM_QUIT)
     {
-        // Get the current time, and update the time controller.
-        double lastTime = currentTime;
-        currentTime = timer->getTime();
-        double dt = currentTime - lastTime;
-        
         // Tick the simulation
-        appCore->tick(dt);
+        appCore->tick();
 
         // If Celestia is in an inactive state, we should use GetMessage
         // to avoid sucking CPU cycles--if time is paused, we can probably
