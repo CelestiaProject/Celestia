@@ -51,7 +51,7 @@ static const int _Rotation = 5;
 static void lua_pushclass(lua_State* l, int id)
 {
     
-    lua_pushlstring(l, ClassNames[id], strlen(ClassNames[id]) - 1);
+    lua_pushlstring(l, ClassNames[id], strlen(ClassNames[id]));
 }
 
 static void lua_setclass(lua_State* l, int id)
@@ -62,6 +62,37 @@ static void lua_setclass(lua_State* l, int id)
         cout << "Metatable for " << ClassNames[id] << " not found!\n";
     if (lua_setmetatable(l, -2) == 0)
         cout << "Error setting metatable for " << ClassNames[id] << '\n';
+}
+
+
+// Verify that an object at location index on the stack is of the
+// specified class
+static void* CheckUserData(lua_State* l, int index, int id)
+{
+    // get registry[metatable]
+    if (!lua_getmetatable(l, index))
+        return NULL;
+    lua_rawget(l, LUA_REGISTRYINDEX);
+
+    if (lua_type(l, -1) != LUA_TSTRING)
+    {
+        cout << "CheckUserData failed!  Unregistered class.\n";
+        lua_pop(l, 1);
+        return NULL;
+    }
+
+    const char* classname = lua_tostring(l, -1);
+    if (classname != NULL && strcmp(classname, ClassNames[id]) == 0)
+    {
+        lua_pop(l, 1);
+        return lua_touserdata(l, index);
+    }
+    else
+    {
+        cout << "CheckUserData failed!  Expected " << ClassNames[id] << " but got " << classname << '\n';
+        lua_pop(l, 1);
+        return NULL;
+    }
 }
 
 
@@ -274,9 +305,11 @@ static int object_new(lua_State* l, const Selection& sel)
 
 static Selection* to_object(lua_State* l, int index)
 {
+    cout << "to_object\n"; cout.flush();
     // TODO: need to verify that this is actually an object, not some
     // other userdata
-    return static_cast<Selection*>(lua_touserdata(l, index));
+    // return static_cast<Selection*>(lua_touserdata(l, index));
+    return static_cast<Selection*>(CheckUserData(l, index, _Object));
 }
 
 static int object_tostring(lua_State* l)
@@ -316,7 +349,10 @@ static void CreateObjectMetaTable(lua_State* l)
     lua_newtable(l);
     lua_pushclass(l, _Object);
     lua_pushvalue(l, -2);
-    lua_rawset(l, LUA_REGISTRYINDEX);
+    lua_rawset(l, LUA_REGISTRYINDEX); // registry.name = metatable
+    lua_pushvalue(l, -1);
+    lua_pushclass(l, _Object);
+    lua_rawset(l, LUA_REGISTRYINDEX); // registry.metatable = name
 
     lua_pushliteral(l, "__tostring");
     lua_pushvalue(l, -2);
