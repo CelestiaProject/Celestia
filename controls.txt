@@ -21,12 +21,15 @@ C  : Center on selected object
 G  : Goto selected object
 F  : Follow selected object
 Y  : Orbit the selected object at a rate synced to its rotation
+:  : Lock on selected object
+"  : Chase selected object (orientation is based on selection's velocity)
 T  : Track selected object (keep selected object centered in view)
 HOME : Move closer to object
 END  : Move farther from object
 ESC  : Cancel motion or script
 Left/Right Arrows : Roll Camera
 Up / Down Arrows  : Change Camera Pitch
+1-9 : Select planets around nearby sun
 
 Time:
 Space : stop time
