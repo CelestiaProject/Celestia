@@ -64,36 +64,14 @@ static RigidTransform toUniversal(const FrameOfReference& frame,
     // Handle the easy case . . .
     if (frame.coordSys == astro::Universal)
         return xform;
-
-    Point3f base(0.0f, 0.0f, 0.0f);
-    Point3d offset(0.0, 0.0, 0.0);
-    if (frame.body != NULL)
-    {
-        const Star* sun = getSun(frame.body);
-        if (sun != NULL)
-            base = sun->getPosition();
-        if (frame.coordSys == astro::Ecliptical ||
-            frame.coordSys == astro::Equatorial ||
-            frame.coordSys == astro::Geographic)
-            offset = frame.body->getHeliocentricPosition(t);
-    }
-    else if (frame.star != NULL)
-    {
-        base = frame.star->getPosition();
-    }
-    else if (frame.galaxy != NULL)
-    {
-        Point3d p = frame.galaxy->getPosition();
-        base = Point3f((float) p.x, (float) p.y, (float) p.z);
-    }
-    UniversalCoord origin = astro::universalPosition(offset, base);
+    UniversalCoord origin = frame.refObject.getPosition(t);
 
     if (frame.coordSys == astro::Geographic)
     {
         Quatd rotation(1, 0, 0, 0);
-        if (frame.body != NULL)
-            rotation = frame.body->getEclipticalToGeographic(t);
-        else if (frame.star != NULL)
+        if (frame.refObject.body != NULL)
+            rotation = frame.refObject.body->getEclipticalToGeographic(t);
+        else if (frame.refObject.star != NULL)
             rotation = Quatd(1, 0, 0, 0);
         Point3d p = (Point3d) xform.translation * rotation.toMatrix4();
 
@@ -114,36 +92,14 @@ static RigidTransform fromUniversal(const FrameOfReference& frame,
     // Handle the easy case . . .
     if (frame.coordSys == astro::Universal)
         return xform;
-
-    Point3f base(0.0f, 0.0f, 0.0f);
-    Point3d offset(0.0, 0.0, 0.0);
-    if (frame.body != NULL)
-    {
-        const Star* sun = getSun(frame.body);
-        if (sun != NULL)
-            base = sun->getPosition();
-        if (frame.coordSys == astro::Ecliptical ||
-            frame.coordSys == astro::Equatorial ||
-            frame.coordSys == astro::Geographic)
-            offset = frame.body->getHeliocentricPosition(t);
-    }
-    else if (frame.star != NULL)
-    {
-        base = frame.star->getPosition();
-    }
-    else if (frame.galaxy != NULL)
-    {
-        Point3d p = frame.galaxy->getPosition();
-        base = Point3f((float) p.x, (float) p.y, (float) p.z);
-    }
-    UniversalCoord origin = astro::universalPosition(offset, base);
+    UniversalCoord origin = frame.refObject.getPosition(t);
 
     if (frame.coordSys == astro::Geographic)
     {
         Quatd rotation(1, 0, 0, 0);
-        if (frame.body != NULL)
-            rotation = frame.body->getEclipticalToGeographic(t);
-        else if (frame.star != NULL)
+        if (frame.refObject.body != NULL)
+            rotation = frame.refObject.body->getEclipticalToGeographic(t);
+        else if (frame.refObject.star != NULL)
             rotation = Quatd(1, 0, 0, 0);
         Vec3d v = (xform.translation - origin) * (~rotation).toMatrix4();
         
@@ -177,19 +133,6 @@ static Quatf lookAt(Point3f from, Point3f to, Vec3f up)
     v.normalize();
     Vec3f u = v ^ n;
     return Quatf(Mat3f(v, u, -n));
-}
-
-
-float getSelectionSize(Selection& sel)
-{
-    if (sel.body != NULL)
-        return sel.body->getRadius();
-    else if (sel.star != NULL)
-        return sel.star->getRadius();
-    else if (sel.galaxy != NULL)
-        return astro::lightYearsToKilometers(sel.galaxy->getRadius());
-    else
-        return 0.0f;
 }
 
 
@@ -351,6 +294,18 @@ Selection Simulation::getSelection() const
 void Simulation::setSelection(const Selection& sel)
 {
     selection = sel;
+}
+
+
+Selection Simulation::getTrackedObject() const
+{
+    return trackObject;
+}
+
+
+void Simulation::setTrackedObject(const Selection& sel)
+{
+    trackObject = sel;
 }
 
 
@@ -550,14 +505,7 @@ void Simulation::setObserverMode(Simulation::ObserverMode mode)
 void Simulation::setFrame(astro::CoordinateSystem coordSys,
                           const Selection& sel)
 {
-    if (sel.body != NULL)
-        frame = FrameOfReference(coordSys, sel.body);
-    else if (sel.star != NULL)
-        frame = FrameOfReference(coordSys, sel.star);
-    else if (sel.galaxy != NULL)
-        frame = FrameOfReference(coordSys, sel.galaxy);
-    else
-        frame = FrameOfReference();
+    frame = FrameOfReference(coordSys, sel);
 
     // Set the orientation and position in frame coordinates
     transform = fromUniversal(frame,
@@ -586,11 +534,8 @@ void Simulation::orbit(Quatf q)
     {
         // Before orbiting, make sure that the reference object matches the
         // selection.
-        if (selection.body != frame.body || selection.star != frame.star ||
-            selection.galaxy != frame.galaxy)
-        {
+        if (selection != frame.refObject)
             setFrame(frame.coordSys, selection);
-        }
 
         // Get the focus position (center of rotation) in frame
         // coordinates; in order to make this function work in all
@@ -637,15 +582,12 @@ void Simulation::changeOrbitDistance(float d)
     {
         // Before orbiting, make sure that the reference object matches the
         // selection.
-        if (selection.body != frame.body || selection.star != frame.star ||
-            selection.galaxy != frame.galaxy)
-        {
+        if (selection != frame.refObject)
             setFrame(frame.coordSys, selection);
-        }
 
         UniversalCoord focusPosition = selection.getPosition(simTime);
         
-        double size = getSelectionSize(selection);
+        double size = selection.radius();
 
         // Somewhat arbitrary parameters to chosen to give the camera movement
         // a nice feel.  They should probably be function parameters.
@@ -681,16 +623,16 @@ void Simulation::setTargetSpeed(float s)
     targetSpeed = s;
     Vec3f v;
 
-    if(observerMode != Tracking)
+    if (trackObject.empty())
     {
         trackingOrientation = observer.getOrientation();
-
-        //Generate vector for velocity using current orientation and specified speed.
+        // Generate vector for velocity using current orientation
+        // and specified speed.
         v = Vec3f(0, 0, -s) * observer.getOrientation().toMatrix4();
     }
     else
     {
-        //Use tracking orientation vector to generate target velocity
+        // Use tracking orientation vector to generate target velocity
         v = Vec3f(0, 0, -s) * trackingOrientation.toMatrix4();
     }
 
@@ -723,7 +665,7 @@ void Simulation::gotoSelection(double gotoTime,
         else
             maxOrbitDistance = 0.5f;
 
-        double radius = getSelectionSize(selection);
+        double radius = selection.radius();
         double minOrbitDistance = astro::kilometersToLightYears(1.01 * radius);
 
         double orbitDistance = (distance > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distance * 0.1f;
@@ -779,8 +721,8 @@ void Simulation::getSelectionLongLat(double& distance,
                                      double& longitude,
                                      double& latitude)
 {
-    //Compute distance (km) and lat/long (degrees) of observer with respect to currently
-    //selected object.
+    // Compute distance (km) and lat/long (degrees) of observer with
+    // respect to currently selected object.
     if (!selection.empty())
     {
         FrameOfReference refFrame(astro::Geographic, selection.body);
@@ -794,7 +736,7 @@ void Simulation::getSelectionLongLat(double& distance,
         longitude = -radToDeg(atan2(-pos.z, -pos.x));
         latitude = radToDeg(PI/2 - acos(pos.y / distance));
 
-        //Convert distance from light years to kilometers.
+        // Convert distance from light years to kilometers.
         distance = astro::lightYearsToKilometers(distance);
     }
 }
@@ -833,20 +775,6 @@ void Simulation::geosynchronousFollow()
         transform = fromUniversal(frame,
                                   RigidTransform(observer.getPosition(), observer.getOrientation()),
                                   simTime);
-    }
-}
-
-void Simulation::track()
-{
-    if (observerMode == Tracking)
-    {
-        trackObject = Selection();
-        observerMode = Free;
-    }
-    else
-    {
-        trackObject = selection;
-        observerMode = Tracking;
     }
 }
 
