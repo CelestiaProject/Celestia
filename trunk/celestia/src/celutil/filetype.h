@@ -13,16 +13,17 @@
 #include <string>
 
 enum ContentType {
-    Content_JPEG,
-    Content_BMP,
-    Content_GIF,
-    Content_PNG,
-    Content_Targa,
-    Content_CelestiaTexture,
-    Content_3DStudio,
-    Content_CelestiaMesh,
-    Content_AVI,
-    Content_Unknown
+    Content_JPEG           = 1,
+    Content_BMP            = 2,
+    Content_GIF            = 3,
+    Content_PNG            = 4,
+    Content_Targa          = 5,
+    Content_CelestiaTexture = 6,
+    Content_3DStudio       = 7,
+    Content_CelestiaMesh   = 8,
+    Content_AVI            = 9,
+    Content_CelestiaCatalog = 10,
+    Content_Unknown         = -1,
 };
 
 ContentType DetermineFileType(const std::string& filename);
