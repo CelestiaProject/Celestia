@@ -28,18 +28,18 @@
 struct FrameOfReference
 {
     FrameOfReference() :
-        coordSys(astro::Universal), body(NULL), star(NULL), galaxy(NULL) {};
+        coordSys(astro::Universal) {};
     FrameOfReference(astro::CoordinateSystem _coordSys, Body* _body) :
-        coordSys(_coordSys), body(_body), star(NULL), galaxy(NULL) {};
+        coordSys(_coordSys), refObject(_body) {};
     FrameOfReference(astro::CoordinateSystem _coordSys, Star* _star) :
-        coordSys(_coordSys), body(NULL), star(_star), galaxy(NULL) {};
+        coordSys(_coordSys), refObject(_star) {};
     FrameOfReference(astro::CoordinateSystem _coordSys, Galaxy* _galaxy) :
-        coordSys(_coordSys), body(NULL), star(NULL), galaxy(_galaxy) {};
+        coordSys(_coordSys), refObject(_galaxy) {};
+    FrameOfReference(astro::CoordinateSystem _coordSys, const Selection& sel) :
+        coordSys(_coordSys), refObject(sel) {};
 
     astro::CoordinateSystem coordSys;
-    Body* body;
-    Star* star;
-    Galaxy* galaxy;
+    Selection refObject;
 };
 
 struct RigidTransform
@@ -80,6 +80,9 @@ class Simulation
 
     Selection getSelection() const;
     void setSelection(const Selection&);
+    Selection getTrackedObject() const;
+    void setTrackedObject(const Selection&);
+
     void selectStar(uint32);
     void selectPlanet(int);
     Selection findObject(std::string s);
@@ -98,7 +101,6 @@ class Simulation
     void centerSelection(double centerTime = 0.5);
     void follow();
     void geosynchronousFollow();
-    void track();
     void cancelMotion();
 
     Observer& getObserver();
@@ -116,7 +118,6 @@ class Simulation
     enum ObserverMode {
         Free                    = 0,
         Travelling              = 1,
-        Tracking                = 4,
     };
 
     void setObserverMode(ObserverMode);
