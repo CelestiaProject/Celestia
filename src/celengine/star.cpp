@@ -347,6 +347,8 @@ float Star::getTemperature() const
             return tempM[specSubClass];
         case StellarClass::Spectral_N:
             return tempM[specSubClass];
+        case StellarClass::Spectral_C:
+            return tempM[specSubClass];
         case StellarClass::Spectral_WN:
         case StellarClass::Spectral_WC:
             return tempO[specSubClass];
@@ -435,10 +437,11 @@ float Star::getBolometricMagnitude() const
         case StellarClass::Spectral_M:
             bolometricCorrection = bmag_correctionM[lumIndex][specSubClass];
             break;
-
+            
         case StellarClass::Spectral_R:
         case StellarClass::Spectral_S:
         case StellarClass::Spectral_N:
+        case StellarClass::Spectral_C:
             bolometricCorrection = bmag_correctionM[lumIndex][8];
             break;
 
@@ -527,6 +530,7 @@ float Star::getRotationPeriod() const
         case StellarClass::Spectral_R:
         case StellarClass::Spectral_S:
         case StellarClass::Spectral_N:
+        case StellarClass::Spectral_C:
             period = rotperiod_M[lumIndex][specSubClass];
             break;
 

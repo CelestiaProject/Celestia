@@ -43,6 +43,7 @@ Color StellarClass::getApparentColor(StellarClass::SpectralClass sc) const
     case StellarClass::Spectral_R:
     case StellarClass::Spectral_S:
     case StellarClass::Spectral_N:
+    case StellarClass::Spectral_C:
         return Color(1.0f, 0.4f, 0.4f);
     case StellarClass::Spectral_L:
     case StellarClass::Spectral_T:
@@ -85,7 +86,7 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
     }
     else if (st == StellarClass::NormalStar)
     {
-	s0[0] = "OBAFGKMRSNWW?LT"[(unsigned int) getSpectralClass()];
+	s0[0] = "OBAFGKMRSNWW?LTC"[(unsigned int) getSpectralClass()];
         s0[1] = '\0';
 	s1[0] = "0123456789"[getSpectralSubclass()];
         s1[1] = '\0';
@@ -207,6 +208,9 @@ StellarClass StellarClass::parse(const std::string& s)
         break;
     case 'S':
         specClass = StellarClass::Spectral_N;
+        break;
+    case 'C':
+        specClass = StellarClass::Spectral_C;
         break;
     case 'W':
         i++;
