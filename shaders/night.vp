@@ -1,0 +1,39 @@
+!!VP1.0
+
+# Compute the diffuse light from a single source
+
+# c[0]..c[3] contains the concatenation of the modelview and projection matrices.
+# c[4]..c[7] contains the inverse transpose of the modelview
+# c[15] contains the eye position in object space
+# c[16] contains the light direction in object space
+# c[17] contains H, the normalized sum of the eye and light direction
+# c[20] contains the light color * object color
+# c[32] contains the ambient light color * object color
+# c[33] contains the haze color
+# c[40] contains (0, 1, 0, specPower)
+
+# Transform the vertex by the modelview matrix
+DP4   o[HPOS].x, c[0], v[OPOS];
+DP4   o[HPOS].y, c[1], v[OPOS];
+DP4   o[HPOS].z, c[2], v[OPOS];
+DP4   o[HPOS].w, c[3], v[OPOS];
+
+# Compute the diffuse light component
+DP3   R2, v[NRML], c[16];
+# Clamp the diffuse component to zero
+MAX   R2, R2, c[40].xxxx;
+
+# Use the fourth power of L dot N to create a sharper division between
+# the lit and unlit sides of the planet.
+ADD   R2, c[40].y, -R2;
+MUL   R2, R2, R2;
+MAD   R2, R2, -R2, c[40].y;
+
+# Output the texture
+MOV   o[TEX0], v[TEX0];
+# Output the primary color
+MOV   R0, c[32];
+MAD   o[COL0], c[20], R2, R0;
+
+END
+
