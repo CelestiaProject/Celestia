@@ -9,10 +9,13 @@
         {
             ACTIONS = {
                 activateMenuItem = id; 
+                activateSwitchButon = id; 
                 back = id; 
                 forward = id; 
                 gotoObject = id; 
+                openScript = id; 
                 showGotoObject = id; 
+                showInfoURL = id; 
             }; 
             CLASS = CelestiaController; 
             LANGUAGE = ObjC; 
@@ -20,6 +23,8 @@
                 favoritesDrawerController = FavoritesDrawerController; 
                 glView = NSOpenGLView; 
                 gotoWindow = NSWindow; 
+                loadingIndicator = NSProgressIndicator; 
+                loadingPanel = NSPanel; 
                 mainWindow = NSWindow; 
                 renderPanelController = RenderPanelController; 
             }; 
