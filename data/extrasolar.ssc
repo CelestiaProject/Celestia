@@ -174,6 +174,24 @@
 	}
 }
 
+"b" "HD 330075"
+{
+	Texture "gasgiant.jpg"
+
+	Mass    240     # M.sin(i) = 0.76 jupiters
+	Radius  98000
+
+	InfoURL "http://www.obspm.fr/encycl/HD330075.html"
+
+	EllipticalOrbit {
+		Period          0.0092
+		SemiMajorAxis   0.043
+		Eccentricity    0.0
+		ArgOfPericenter 90
+		MeanAnomaly     46
+	}
+}
+
 "b" "TYC 5503-946-1"   # BD-10 3166
 
 # Star not present in Celestia's default stars.dat file.
