@@ -2275,7 +2275,7 @@ renderEclipseShadows(Mesh* mesh,
     {
         Renderer::EclipseShadow shadow = *iter;
 
-#if 0
+#ifdef DEBUG_ECLIPSE_SHADOWS
         // Eclipse debugging: render the central axis of the eclipse
         // shadow volume.
         glDisable(GL_TEXTURE_2D);
@@ -2353,7 +2353,7 @@ renderEclipseShadows(Mesh* mesh,
         }
 
         // Since invariance between nVidia's vertex programs and the
-        // standard transformation pipeline is guaranteed, we have to
+        // standard transformation pipeline isn't guaranteed, we have to
         // make sure to use the same transformation engine on subsequent
         // rendering passes as we did on the initial one.
         if (useVertexShader && mesh == NULL)
@@ -2992,11 +2992,17 @@ void Renderer::renderStar(const Star& star,
         rp.oblateness = 0.0f;
         rp.mesh = InvalidResource;
 
-        // rp.re.period = star.getRotationPeriod();
-
-        // Compute the orientation of the star before axial rotation.
-        // For now, this is the same value for every star.
+        double rotation = 0.0;
+        // Watch out for the precision limits of floats when computing
+        // rotation . . .
+        {
+            double period = star.getRotationPeriod();
+            double rotations = now / period;
+            double remainder = rotations - floor(rotations);
+            rotation = remainder * 2 * PI;
+        }
         rp.orientation = Quatf(1.0f);
+        rp.orientation.yrotate(-rotation);
 
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
