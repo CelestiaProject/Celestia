@@ -405,13 +405,14 @@ void Simulation::setSelection(const Selection& sel)
 struct PlanetPickInfo
 {
     float cosClosestAngle;
+    double closestDistance;
     Body* closestBody;
     Vec3d direction;
     Point3d origin;
     double jd;
 };
 
-bool PlanetPickTraversal(Body* body, void* info)
+bool ApproxPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
 
@@ -423,6 +424,32 @@ bool PlanetPickTraversal(Body* body, void* info)
     {
         pickInfo->cosClosestAngle = cosAngle;
         pickInfo->closestBody = body;
+    }
+
+    return true;
+}
+
+
+// Perform an intersection test between the pick ray and a body
+bool ExactPlanetPickTraversal(Body* body, void* info)
+{
+    PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
+
+    Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
+    Vec3d bodyDir = bpos - pickInfo->origin;
+
+    // This intersection test naively assumes that the body is spherical.
+    double v = bodyDir * pickInfo->direction;
+    double disc = square(body->getRadius()) - ((bodyDir * bodyDir) - square(v));
+
+    if (disc > 0.0)
+    {
+        double distance = v - sqrt(disc);
+        if (distance > 0.0 && distance < pickInfo->closestDistance)
+        {
+            pickInfo->closestDistance = distance;
+            pickInfo->closestBody = body;
+        }
     }
 
     return true;
@@ -444,10 +471,28 @@ Selection Simulation::pickPlanet(Observer& observer,
     pickInfo.origin    = astro::heliocentricPosition(observer.getPosition(),
                                                      sun.getPosition());
     pickInfo.cosClosestAngle = -1.0f;
+    pickInfo.closestDistance = 1.0e50;
     pickInfo.closestBody = NULL;
     pickInfo.jd = simTime / 86400.0f;
 
-    solarSystem.getPlanets()->traverse(PlanetPickTraversal, (void*) &pickInfo);
+    // First see if there's a planet that the pick ray intersects.
+    // Select the closest planet intersected.
+    solarSystem.getPlanets()->traverse(ExactPlanetPickTraversal,
+                                       (void*) &pickInfo);
+    if (pickInfo.closestBody != NULL)
+    {
+        selection = Selection(pickInfo.closestBody);
+        return selection;
+    }
+
+    // If no planet was intersected by the pick ray, choose the planet
+    // with the smallest angular separation from the pick ray.  Very distant
+    // planets are likley to fail the intersection test even if the user
+    // clicks on a pixel where the planet's disc has been rendered--in order
+    // to make distant planets visible on the screen at all, their apparent size
+    // has to be greater than their actual disc size.
+    solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
+                                       (void*) &pickInfo);
     if (pickInfo.cosClosestAngle > cos(degToRad(0.5f)))
         selection = Selection(pickInfo.closestBody);
     else
