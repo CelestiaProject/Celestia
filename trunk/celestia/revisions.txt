@@ -54,4 +54,24 @@ Celestia Revision History
 * Added labels for stars; the list of labelled stars is read from celestia.cfg
 * Cleaned up vecmath.h, added consts and reference parameters where appropriate
 * Cleaned up StarNameDatabase
-  
+
+
+1.04
+* Start out at the moon instead of in deep space
+* Made picking of planets work properly for planets with disc sizes greater than one
+  pixel.
+* Added call to glDeleteTextures to Texture class destructor
+* Added bump mapping.  Uses DOT3 bump mapping and only works on GeForce cards
+  right now.
+* Enabled user control of per-pixel lighting.
+* Menu checked state for label options synced with renderer state.
+* Added a context menu that appears when an object is right clicked.
+* Celestia now uses texture coordinates from 3DS files
+* Added 3DS model of Eros based on NEAR laser rangefinder data
+* Added 3DS models of Deimos, Phobos, and numerous other asteroids and
+  small moons based on Phil Stooke's models
+* Replaced TriangleList class with much more flexible VertexList
+* Introduced support for compressed textures; texture compression is specified
+  on a per texture basis in .ssc files.
+* Added a reverse time option
+* Added an OpenGL Driver Info item to the help menu
