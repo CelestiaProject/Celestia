@@ -1,3 +1,7 @@
+2003-05-01  root  <root@fschrempp>
+
+	* 
+
 Celestia Revision History
 -------------------------
 
@@ -662,5 +666,5 @@ Code:
 * Fixed crashes that occurred when viewing ringed planets on older hardware
 * Got rid of three zeros after decimal point when displaying time rate
 * Updated configuration files for new versions of autoconf
-
-
+* Improved inclusion of light travel delay, also in KDE time setting dialog 
+* Fixed lookback command for subsequent changes of target speed
