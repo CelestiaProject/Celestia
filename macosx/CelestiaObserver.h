@@ -24,5 +24,5 @@
 -(void)setAngularVelocity:(CelestiaVector*)v;
 -(void)setPosition:(CelestiaUniversalCoord*)p;
 -(void)setPositionWithPoint:(CelestiaVector*)p;
--(void)update:(NSNumber*)dt;
+-(void)update:(NSNumber*)dt timeScale: (NSNumber*)ts;
 @end
