@@ -77,6 +77,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "OGLE-TR-56/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "OGLE-TR-113"
 
 # Detected via transit as well as radial velocity methods; from transit,
@@ -110,6 +116,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "OGLE-TR-113/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "OGLE-TR-132"
 
@@ -146,6 +158,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "OGLE-TR-132/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 73256"
 {
 	Texture "gasgiant.jpg"
@@ -166,6 +184,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 73256/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 83443"
 {
@@ -189,6 +213,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 83443/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 46375"
 {
 	Texture "gasgiant.jpg"
@@ -211,6 +241,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 46375/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 179949"
 {
 	Texture "gasgiant.jpg"
@@ -230,6 +266,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 179949/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 187123"
 {
@@ -253,6 +295,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 187123/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 120136"   # Tau Boo
 {
 	Texture "gasgiant.jpg"
@@ -274,6 +322,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 120136/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 330075"
 {
 	Texture "gasgiant.jpg"
@@ -293,6 +347,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 330075/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "TYC 5503-946-1"   # BD-10 3166
 
@@ -318,6 +378,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "TYC 5503-946-1/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 75289"
 {
 	Texture "gasgiant.jpg"
@@ -339,6 +405,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 75289/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 209458"   # V376 Peg
 
@@ -372,6 +444,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 209458/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 76700"
 {
 	Texture "gasgiant.jpg"
@@ -392,6 +470,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 76700/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 217014"   # 51 Peg
 {
@@ -414,6 +498,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 217014/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 9826"   # Ups And
 {
 	Texture "gasgiant.jpg"
@@ -434,6 +524,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 9826/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "c" "HD 9826"   # Ups And
 {
@@ -456,6 +552,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 9826/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "d" "HD 9826"   # Ups And
 {
 	Texture "jupiterlike.jpg"
@@ -476,6 +578,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 9826/d"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 49674"
 {
@@ -499,6 +607,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 49674/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 68988"
 {
 	Texture "gasgiant.jpg"
@@ -517,6 +631,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 68988/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 168746"
 {
@@ -539,6 +659,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 168746/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 217107"
 {
 	Texture "gasgiant.jpg"
@@ -559,6 +685,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 217107/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 162020"
 {
@@ -581,6 +713,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 162020/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 130322"
 {
 	Texture "gasgiant.jpg"
@@ -600,6 +738,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 130322/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 108147"
 {
@@ -621,6 +765,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 108147/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 38529"
 {
 	Texture "gasgiant.jpg"
@@ -641,6 +791,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 38529/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "c" "HD 38529"
 {
@@ -664,6 +820,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 38529/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 75732"   # Rho Cnc
 {
 	Texture "gasgiant.jpg"
@@ -684,6 +846,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 75732/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "c" "HD 75732"   # Rho Cnc
 {
 	Texture "jupiterlike.jpg"
@@ -703,6 +871,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 75732/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "d" "HD 75732"   # Rho Cnc
 {
@@ -725,6 +899,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 75732/d"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 13445"   # Gliese 86
 {
 	Texture "jupiterlike.jpg"
@@ -744,6 +924,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 13445/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 195019"
 {
@@ -765,6 +951,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 195019/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 6434"
 {
 	Texture "gasgiant.jpg"
@@ -785,6 +977,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "HD 6434/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 192263"
 {
 	Texture "jupiterlike.jpg"
@@ -803,6 +1001,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 192263/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "c" "Gliese 876"   # IL Aqr
 {
@@ -823,6 +1027,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "Gliese 876/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "Gliese 876"   # IL Aqr
 {
@@ -845,6 +1055,12 @@
 	RotationPeriod  11 # tidal slowing significant
 }
 
+AltSurface "limit of knowledge" "Gliese 876/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 143761"   # Rho CrB
 {
 	Texture "gasgiant.jpg"
@@ -864,6 +1080,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "HD 143761/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 74156"
 {
@@ -886,6 +1108,12 @@
 	RotationPeriod  11 # tidal slowing significant
 }
 
+AltSurface "limit of knowledge" "HD 74156/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "c" "HD 74156"
 {
 	Texture "jupiterlike.jpg"
@@ -906,6 +1134,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 74156/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 37605"
 {
@@ -928,6 +1162,12 @@
 	RotationPeriod  11 # tidal slowing significant
 }
 
+AltSurface "limit of knowledge" "HD 37605/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 168443"
 {
 	Texture "jupiterlike.jpg"
@@ -948,6 +1188,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 168443/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "c" "HD 168443"
 {
@@ -970,6 +1216,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 168443/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 3651"   # 54 Psc
 {
 	Texture "jupiterlike.jpg"
@@ -990,6 +1242,12 @@
 
 	RotationPeriod  31 # tidal slowing significant
 }
+
+AltSurface "limit of knowledge" "HD 3651/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 121504"
 {
@@ -1012,6 +1270,12 @@
 	RotationPeriod  12 # tidal slowing significant
 }
 
+AltSurface "limit of knowledge" "HD 121504/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HIP 94075"   # HD 178911 B
 {
 	Texture "jupiterlike.jpg"
@@ -1032,6 +1296,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HIP 94075/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 16141"   # 79 Cet
 {
@@ -1054,6 +1324,12 @@
 	RotationPeriod  42 # tidal slowing significant
 }
 
+AltSurface "limit of knowledge" "HD 16141/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 114762"
 {
 	Texture "browndwarf.jpg"
@@ -1074,6 +1350,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 114762/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 80606"
 {
@@ -1096,6 +1378,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 80606/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 117176"   # 70 Vir
 {
 	Texture "jupiterlike.jpg"
@@ -1116,6 +1404,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 117176/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 216770"
 {
@@ -1138,6 +1432,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 216770/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 52265"
 {
 	Texture "jupiterlike.jpg"
@@ -1158,6 +1458,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 52265/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 1237"   # GJ 3021
 {
@@ -1180,6 +1486,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 1237/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 37124"
 {
 	Texture "jupiterlike.jpg"
@@ -1200,6 +1512,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 37124/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "c" "HD 37124"
 {
@@ -1222,6 +1540,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 37124/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 219449"   # Psi1 Aqr
 {
 	Texture "gasgiant.jpg"
@@ -1240,6 +1564,12 @@
 
 	RotationPeriod  11 # tidal slowing significant
 }
+
+AltSurface "limit of knowledge" "HD 219449/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 73526"
 {
@@ -1262,6 +1592,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 73526/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 104985"
 {
 	Texture "jupiterlike.jpg"
@@ -1282,6 +1618,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 104985/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 82943"
 {
@@ -1304,6 +1646,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 82943/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "c" "HD 82943"
 {
 	Texture "jupiterlike.jpg"
@@ -1322,6 +1670,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 82943/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 169830"
 {
@@ -1344,6 +1698,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 169830/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "c" "HD 169830"
 {
 	Texture "jupiterlike.jpg"
@@ -1365,6 +1725,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 169830/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 8574"
 {
 	Texture "jupiterlike.jpg"
@@ -1383,6 +1749,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 8574/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 89744"
 {
@@ -1405,6 +1777,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 89744/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 134987"   # 23 Lib
 {
 	Texture "jupiterlike.jpg"
@@ -1425,6 +1803,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 134987/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 40979"
 {
@@ -1447,6 +1831,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 40979/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 12661"
 {
 	Texture "jupiterlike.jpg"
@@ -1467,6 +1857,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 12661/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "c" "HD 12661"
 {
@@ -1489,6 +1885,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 12661/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 150706"
 {
 	Texture "jupiterlike.jpg"
@@ -1510,6 +1912,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 150706/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 59686"
 {
 	Texture "gasgiant.jpg"
@@ -1527,6 +1935,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 59686/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 17051"   # Iot Hor / HR 810
 {
@@ -1549,6 +1963,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 17051/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 142"
 {
 	Texture "jupiterlike.jpg"
@@ -1567,6 +1987,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 142/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 92788"
 {
@@ -1589,6 +2015,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 92788/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 28185"
 {
 	Texture "jupiterlike.jpg"
@@ -1609,6 +2041,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 28185/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 142415"
 {
@@ -1631,6 +2069,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 142415/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 177830"
 {
 	Texture "jupiterlike.jpg"
@@ -1651,6 +2095,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 177830/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 108874"
 {
@@ -1673,6 +2123,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 108874/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 4203"
 {
 	Texture "jupiterlike.jpg"
@@ -1693,6 +2149,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 4203/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 128311"
 {
@@ -1715,6 +2177,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 128311/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 27442"   # Eps Ret
 {
 	Texture "jupiterlike.jpg"
@@ -1735,6 +2203,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 27442/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 210277"
 {
@@ -1757,6 +2231,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 210277/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 19994"   # 94 Cet
 {
 	Texture "jupiterlike.jpg"
@@ -1777,6 +2257,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 19994/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 20367"
 {
@@ -1799,6 +2285,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 20367/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 114783"
 {
 	Texture "jupiterlike.jpg"
@@ -1817,6 +2309,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 114783/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 147513"
 {
@@ -1839,6 +2337,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 147513/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 137759"   # Iot Dra
 {
 	Texture "jupiterlike.jpg"
@@ -1859,6 +2363,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 137759/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 222582"
 {
@@ -1881,6 +2391,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 222582/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 65216"
 {
 	Texture "jupiterlike.jpg"
@@ -1901,6 +2417,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 65216/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 160691"   # Mu Ara
 {
@@ -1923,6 +2445,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 160691/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "c" "HD 160691"   # Mu Ara
 {
 	Texture "jupiterlike.jpg"
@@ -1943,6 +2471,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 160691/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 141937"
 {
@@ -1965,6 +2499,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 141937/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 41004"
 {
 	Texture "jupiterlike.jpg"
@@ -1985,6 +2525,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 41004/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 47536"
 {
@@ -2007,6 +2553,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 47536/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 23079"
 {
 	Texture "jupiterlike.jpg"
@@ -2027,6 +2579,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 23079/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 186427"   # 16 Cyg B
 {
@@ -2049,6 +2607,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 186427/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 4208"
 {
 	Texture "jupiterlike.jpg"
@@ -2069,6 +2633,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 4208/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 114386"
 {
@@ -2091,6 +2661,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 114386/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 222404"   # Gam Cep
 {
 	Texture "jupiterlike.jpg"
@@ -2111,6 +2687,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 222404/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 213240"
 {
@@ -2133,6 +2715,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 213240/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 10647"   # q1 Eri
 {
 	Texture "jupiterlike.jpg"
@@ -2153,6 +2741,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 10647/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 10697"   # 109 Psc
 {
@@ -2175,6 +2769,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 10697/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 95128"   # 47 UMa
 {
 	Texture "jupiterlike.jpg"
@@ -2195,6 +2795,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 95128/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "c" "HD 95128"   # 47 UMa
 {
@@ -2217,6 +2823,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 95128/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 190228"
 {
 	Texture "jupiterlike.jpg"
@@ -2237,6 +2849,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 190228/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 114729"
 {
@@ -2259,6 +2877,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 114729/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 111232"
 {
 	Texture "jupiterlike.jpg"
@@ -2280,6 +2904,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 111232/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 2039"
 {
 	Texture "jupiterlike.jpg"
@@ -2300,6 +2930,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 2039/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 136118"
 {
@@ -2323,6 +2959,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 136118/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 50554"
 {
 	Texture "jupiterlike.jpg"
@@ -2342,6 +2984,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 50554/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 196050"
 {
@@ -2364,6 +3012,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 196050/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 216437"   # Rho Ind
 {
 	Texture "jupiterlike.jpg"
@@ -2384,6 +3038,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 216437/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 216435"   # Tau1 Gru
 {
@@ -2406,6 +3066,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 216435/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 106252"
 {
 	Texture "jupiterlike.jpg"
@@ -2425,6 +3091,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 106252/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 23596"
 {
@@ -2447,6 +3119,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 23596/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 145675"   # 14 Her
 {
 	Texture "jupiterlike.jpg"
@@ -2467,6 +3145,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 145675/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 39091"   # Pi Men
 {
@@ -2489,6 +3173,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 39091/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 72659"
 {
 	Texture "jupiterlike.jpg"
@@ -2509,6 +3199,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 72659/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 70642"
 {
@@ -2531,6 +3227,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 70642/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 33636"
 {
 	Texture "jupiterlike.jpg"
@@ -2551,6 +3253,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 33636/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 22049"   # Eps Eri
 {
@@ -2573,6 +3281,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 22049/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "c" "HD 22049"   # Eps Eri
 {
 	Texture "jupiterlike.jpg"
@@ -2591,6 +3305,12 @@
 
 	RotationPeriod  17 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 22049/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "HD 30177"
 {
@@ -2613,6 +3333,12 @@
 	RotationPeriod  10 # plausible guess
 }
 
+AltSurface "limit of knowledge" "HD 30177/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "HD 190360"   # Gliese 777
 {
 	Texture "jupiterlike.jpg"
@@ -2633,6 +3359,12 @@
 
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "HD 190360/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "b" "PSR 1257+12"   # PSR J1300+1240
 
@@ -2660,6 +3392,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "PSR 1257+12/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "c" "PSR 1257+12"   # PSR J1300+1240
 
 # Star not present in Celestia's default stars.dat file.
@@ -2667,7 +3405,7 @@
 {
 	Texture "asteroid.jpg"
 	Mass      4.3     # M.sin(i) = 4.3 earths
-	Radius     10500
+	Radius     9800
 
 	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
 
@@ -2686,6 +3424,12 @@
 
 	# likely to be in captured synchronous rotation
 }
+
+AltSurface "limit of knowledge" "PSR 1257+12/c"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
 "d" "PSR 1257+12"   # PSR J1300+1240
 
@@ -2714,6 +3458,12 @@
 	# likely to be in captured synchronous rotation
 }
 
+AltSurface "limit of knowledge" "PSR 1257+12/d"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
+
 "b" "PSR 1620-26"   # PSR J1623-2631
 
 # Star not present in Celestia's default stars.dat file.
@@ -2741,4 +3491,10 @@
 	EquatorAscendingNode  95   # guess, to match ascending node
 	RotationPeriod  10 # plausible guess
 }
+
+AltSurface "limit of knowledge" "PSR 1620-26/b"
+{
+	Texture "extrasolar-lok.jpg"
+}
+
 
