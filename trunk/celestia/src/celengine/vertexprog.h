@@ -41,6 +41,12 @@ namespace vp
         Constant0          = 8,
         TexGen_S           = 10,
         TexGen_T           = 11,
+        TexGen_S2          = 12,
+        TexGen_T2          = 13,
+        TexGen_S3          = 14,
+        TexGen_T3          = 15,
+        TexGen_S4          = 16,
+        TexGen_T4          = 17,
     };
 
     extern unsigned int specular;
@@ -50,6 +56,7 @@ namespace vp
     extern unsigned int diffuseBumpHaze;
     extern unsigned int everything;
     extern unsigned int shadowTexture;
+    extern unsigned int multiShadow;
     extern unsigned int diffuseTexOffset;
     extern unsigned int ringIllum;
     extern unsigned int ringShadow;

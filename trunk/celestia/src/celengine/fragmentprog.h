@@ -41,9 +41,12 @@ namespace fp
         TexGen_S           = 8,
         TexGen_T           = 9,
         ShadowParams0      = 20,
+        ShadowParams1      = 21,
     };
 
     extern unsigned int sphereShadowOnRings;
+    extern unsigned int eclipseShadow1;
+    extern unsigned int eclipseShadow2;
 };
 
 
