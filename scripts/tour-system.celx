@@ -13,7 +13,7 @@ function visit(o)
     celestia:flash(o:type() .. " - " .. o:name())
     goto(o, 3)
     wait(0.5)
-    local children = celestia:getchildren(o)
+    local children = o:getchildren()
     for i, v in ipairs(children) do
         visit(v)
     end
