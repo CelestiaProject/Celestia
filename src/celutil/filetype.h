@@ -25,6 +25,7 @@ enum ContentType {
     Content_CelestiaCatalog = 10,
     Content_DDS             = 11,
     Content_CelestiaStarCatalog = 12,
+    Content_CelestiaDeepSkyCatalog = 13,
     Content_Unknown         = -1,
 };
 
