@@ -309,12 +309,13 @@ void Simulation::setTrackedObject(const Selection& sel)
 }
 
 
-Selection Simulation::pickObject(Vec3f pickRay)
+Selection Simulation::pickObject(Vec3f pickRay, float tolerance)
 {
     return universe->pick(observer.getPosition(),
                           pickRay * observer.getOrientation().toMatrix4(),
                           simTime,
-                          faintestVisible);
+                          faintestVisible,
+                          tolerance);
 }
 
 
