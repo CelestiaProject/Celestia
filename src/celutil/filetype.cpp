@@ -29,6 +29,8 @@ static const string CelestiaStarCatalogExt(".stc");
 static const string CelestiaDeepSkyCatalogExt(".dsc");
 static const string AVIExt(".avi");
 static const string DDSExt(".dds");
+static const string CelestiaLegacyScriptExt(".cel");
+static const string CelestiaScriptExt(".clx");
 
 
 ContentType DetermineFileType(const string& filename)
@@ -64,6 +66,10 @@ ContentType DetermineFileType(const string& filename)
         return Content_AVI;
     else if (compareIgnoringCase(DDSExt, ext) == 0)
         return Content_DDS;
+    else if (compareIgnoringCase(CelestiaLegacyScriptExt, ext) == 0)
+        return Content_CelestiaLegacyScript;
+    else if (compareIgnoringCase(CelestiaScriptExt, ext) == 0)
+        return Content_CelestiaScript;
     else
         return Content_Unknown;
 }
