@@ -27,7 +27,7 @@
 #include "favorites.h"
 #include "destination.h"
 #include "moviecapture.h"
-
+#include "url.h"
 
 // class CelestiaWatcher;
 class CelestiaCore;
@@ -109,6 +109,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         TimeZoneChanged       = 8,
         AmbientLightChanged   = 16,
         FaintestChanged       = 32,
+        HistoryChanged        = 64,
     };
 
     typedef void (*ContextMenuFunc)(float, float, Selection);
@@ -120,6 +121,16 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool initSimulation();
     bool initRenderer();
     void start(double t);
+
+    // URLs and history navigation
+    void setStartURL(std::string url);
+    void goToUrl(const std::string& url);
+    void addToHistory();
+    void back();
+    void forward();
+    const std::vector<Url>& getHistory() const;
+    std::vector<Url>::size_type getHistoryCurrent() const;
+    void setHistoryCurrent(std::vector<Url>::size_type curr);
 
     // event processing methods
     void charEntered(char);
@@ -267,6 +278,10 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     Alerter* alerter;
     std::vector<CelestiaWatcher*> watchers;
+    
+    std::vector<Url> history;
+    std::vector<Url>::size_type historyCurrent;
+    std::string startURL;
 };
 
 #endif // _CELESTIACORE_H_
