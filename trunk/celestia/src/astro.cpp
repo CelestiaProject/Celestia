@@ -15,13 +15,6 @@
 
 using namespace std;
 
-#define SOLAR_ABSMAG  4.83f
-#define LN_MAG        1.085736
-#define LY_PER_PARSEC 3.26
-#define KM_PER_LY     9466411842000.000
-#define KM_PER_AU     149597870.7
-#define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
-
 const double astro::speedOfLight = 299792.458; // km/s
 
 // epoch J2000: 12 UT on 1 Jan 2000
@@ -196,23 +189,25 @@ Point3d astro::equatorialToCelestialCart(double ra, double dec, double distance)
 }
 
 
-double astro::eccentricAnomaly(double meanAnomaly)
+void astro::Anomaly(double meanAnomaly, double eccentricity,
+                    double& trueAnomaly, double& eccentricAnomaly)
 {
     double e, delta, err;
     double tol = 0.00000001745;
     int iterations = 20;	//limit while() to maximum of 20 iterations.
 
-    e = meanAnomaly;
+    e = meanAnomaly - 2*PI * (int)(meanAnomaly/(2*PI));
     err = 1;
     while(abs(err) > tol && iterations > 0)
     {
-        err = e - 0.016713 * sin(e) - meanAnomaly;
-        delta = err / (1 - 0.016713 * sin(e));
+        err = e - eccentricity*sin(e) - meanAnomaly;
+        delta = err / (1 - eccentricity * sin(e));
         e -= delta;
         iterations--;
     }
 
-    return e;
+	trueAnomaly = 2*atan(sqrt((1+eccentricity)/(1-eccentricity))*tan(e/2));
+	eccentricAnomaly = e;
 }
 
 
