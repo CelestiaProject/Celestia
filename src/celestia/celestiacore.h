@@ -27,7 +27,6 @@
 #include "favorites.h"
 #include "destination.h"
 #include "moviecapture.h"
-//#define CELX
 #ifdef CELX
 #include "celx.h"
 #endif
