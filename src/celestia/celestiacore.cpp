@@ -31,6 +31,7 @@
 #include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <celutil/directory.h>
+#include <celutil/formatnum.h>
 #include <celengine/astro.h>
 #include <celengine/overlay.h>
 #include <celengine/execution.h>
@@ -41,6 +42,7 @@
 #include "celestiacore.h"
 #include <celutil/debug.h>
 #include "url.h"
+
 
 using namespace std;
 
@@ -222,6 +224,7 @@ bool View::walkTreeResizeDelta(View* v, float delta, bool check)
     return true;
 }
 
+
 CelestiaCore::CelestiaCore() :
     config(NULL),
     universe(NULL),
@@ -402,14 +405,16 @@ const DestinationList* CelestiaCore::getDestinations()
 // Used in the super-secret edit mode
 void showSelectionInfo(const Selection& sel)
 {
+    Vec3f axis(0.0f, 1.0, 0.0f);
+    float angle = 0.0f;
+
     if (sel.deepsky() != NULL)
-    {
-        cout << sel.deepsky()->getName() << '\n';
-        Vec3f axis;
-        float angle;
         sel.deepsky()->getOrientation().getAxisAngle(axis, angle);
-        cout << "Orientation: " << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
-    }
+    else if (sel.body() != NULL)
+        sel.body()->getOrientation().getAxisAngle(axis, angle);
+
+    cout << sel.getName() << '\n';
+    cout << "Orientation: " << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
 }
 
 
@@ -2180,8 +2185,41 @@ void CelestiaCore::showText(string s,
 }
 
 
+static FormattedNumber SigDigitNum(double v, int digits)
+{
+    return FormattedNumber(v, digits,
+                           FormattedNumber::GroupThousands |
+                           FormattedNumber::SignificantDigits);
+}
+
+
 static void displayDistance(Overlay& overlay, double distance)
 {
+    char* units = "";
+
+    if (abs(distance) >= astro::AUtoLightYears(1000.0f))
+    {
+        units = "ly";
+    }
+    else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
+    {
+        units = "au";
+        distance = astro::lightYearsToAU(distance);
+    }
+    else if (abs(distance) > astro::kilometersToLightYears(1.0f))
+    {
+        units = "km";
+        distance = astro::lightYearsToKilometers(distance);
+    }
+    else
+    {
+        units = "m";
+        distance = astro::lightYearsToKilometers(distance) * 1000.0f;
+    }
+
+    overlay << SigDigitNum(distance, 5) << ' ' << units;
+
+#if 0
     if (abs(distance) >= astro::AUtoLightYears(1000.0f))
         overlay.printf("%.3f ly", distance);
     else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
@@ -2190,6 +2228,7 @@ static void displayDistance(Overlay& overlay, double distance)
         overlay.printf("%.3f km", astro::lightYearsToKilometers(distance));
     else
         overlay.printf("%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
+#endif
 }
 
 
@@ -2255,6 +2294,7 @@ static void displayStarInfo(Overlay& overlay,
     overlay.printf("Abs (app) mag = %.2f (%.2f)\n",
                    star.getAbsoluteMagnitude(),
                    astro::absToAppMag(star.getAbsoluteMagnitude(), (float) distance));
+    overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
     overlay << "Class: " << star.getStellarClass() << '\n';
     if (detail > 1)
     {
@@ -2284,22 +2324,13 @@ static void displayPlanetInfo(Overlay& overlay,
                               double t,
                               double distance)
 {
-    // If within fAltitudeThreshold radii of planet, show altitude instead of distance
     double kmDistance = astro::lightYearsToKilometers(distance);
-    if (kmDistance < fAltitudeThreshold * body.getRadius())
-    {
-        kmDistance -= body.getRadius();
-        overlay << "Altitude: ";
-        distance = astro::kilometersToLightYears(kmDistance);
-        displayDistance(overlay, distance);
-        overlay << '\n';
-    }
-    else
-    {
-        overlay << "Distance: ";
-        displayDistance(overlay, distance);
-        overlay << '\n';
-    }
+
+    kmDistance -= body.getRadius();
+    overlay << "Distance: ";
+    distance = astro::kilometersToLightYears(kmDistance);
+    displayDistance(overlay, distance);
+    overlay << '\n';
 
     overlay << "Radius: ";
     distance = astro::kilometersToLightYears(body.getRadius());
@@ -2336,6 +2367,72 @@ static void displayGalaxyInfo(Overlay& overlay,
     overlay << "Type: " << galaxy.getType() << '\n';
     overlay << "Radius: " << galaxy.getRadius() << " ly\n";
 }
+
+
+static void displayLocationInfo(Overlay& overlay,
+                                int detail,
+                                Location& location,
+                                double distance)
+{
+    overlay << "Distance: ";
+    displayDistance(overlay, distance);
+    overlay << '\n';
+
+    Body* body = location.getParentBody();
+    if (body != NULL)
+    {
+        Vec3f lonLatAlt = body->cartesianToPlanetocentric(location.getPosition());
+        char ewHemi = ' ';
+        char nsHemi = ' ';
+        float lon = 0.0f;
+        float lat = 0.0f;
+
+        // Terrible hack for Earth and Moon longitude conventions.  Fix by
+        // adding a field to specify the longitude convention in .ssc files.
+        if (body->getName() == "Earth" || body->getName() == "Moon")
+        {
+            if (lonLatAlt.y < 0.0f)
+                nsHemi = 'S';
+            else if (lonLatAlt.y > 0.0f)
+                nsHemi = 'N';
+
+            if (lonLatAlt.x < 0.0f)
+                ewHemi = 'W';
+            else if (lonLatAlt.x > 0.0f)
+                ewHemi = 'E';
+
+            lon = abs(radToDeg(lonLatAlt.x));
+            lat = abs(radToDeg(lonLatAlt.y));
+        }
+        else
+        {
+            // Swap hemispheres if the object is a retrograde rotator
+            Quatd q = ~body->getEclipticalToEquatorial(astro::J2000);
+            bool retrograde = (Vec3d(0.0, 1.0, 0.0) * q.toMatrix3()).y < 0.0;
+
+            if ((lonLatAlt.y < 0.0f) ^ retrograde)
+                nsHemi = 'S';
+            else if ((lonLatAlt.y > 0.0f) ^ retrograde)
+                nsHemi = 'N';
+
+            if (retrograde)
+                ewHemi = 'E';
+            else
+                ewHemi = 'W';
+
+            lon = -radToDeg(lonLatAlt.x);
+            if (lon < 0.0f)
+                lon += 360.0f;
+            lat = abs(radToDeg(lonLatAlt.y));
+        }
+
+        overlay << body->getName() << " ";
+        overlay.unsetf(ios::fixed);
+        overlay << setprecision(6);
+        overlay << lat << nsHemi << ' ' << lon << ewHemi << '\n';
+    }
+}
+
 
 static void displaySelectionName(Overlay& overlay,
                                  const Selection& sel,
@@ -2698,6 +2795,10 @@ void CelestiaCore::renderOverlay()
             *overlay << sel.location()->getName();
             overlay->setFont(font);
             *overlay << '\n';
+            displayLocationInfo(*overlay,
+                                hudDetail, 
+                                *(sel.location()),
+                                v.length() * 1e-6);
             break;
         }
 
