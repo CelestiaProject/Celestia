@@ -14,13 +14,16 @@
 
 #include "celestiacore.h"
 
-class ViewOptionsDialog
+class ViewOptionsDialog : public CelestiaWatcher
 {
  public:
     ViewOptionsDialog(HINSTANCE, HWND, CelestiaCore*);
 
     void SetControls(HWND);
     void RestoreSettings(HWND);
+
+    virtual void renderFlagsChanged();
+    virtual void labelFlagsChanged();
 
  public:
     CelestiaCore* appCore;
