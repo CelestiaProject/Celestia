@@ -1,6 +1,9 @@
 # Stars which are not included in the Hipparcos catalog, but are
 # orbited by extrasolar planets. (The planets are defined in the file
 # "extrasolar.ssc".)
+#
+# Additionally, some companion stars and orbits for named binary stars
+# with extrasolar planets.
 
 "OGLE-TR-56"
 {
@@ -9,15 +12,6 @@
 	Distance 8900      # to give known apparent magnitude
 	SpectralType "G0V" # from estimated mass and radius
 	AbsMag 4.4         # from spectral class
-}
-
-"TrES-1"
-{
-	RA 286.04083
-	Dec 36.6325
-	Distance 490      # From spectral class and visual magnitude
-	SpectralType "K0V"
-	AppMag 11.79
 }
 
 "OGLE-TR-113"
@@ -38,6 +32,65 @@
 	AbsMag 3.6         # from spectral class
 }
 
+"TrES-1"
+{
+	RA 286.04083
+	Dec 36.6325
+	Distance 490      # From spectral class and visual magnitude
+	SpectralType "K0V"
+	AppMag 11.79
+}
+
+"OGLE-TR-10"
+{
+	RA 267.867708
+	Dec -29.876361
+	Distance 4900
+	SpectralType "G2V" # from Simbad: mass and luminosity seem too high, however
+	AppMag 14.93
+}
+
+Barycenter "TAU Boo:4 Boo"
+{
+	RA 206.815676
+	Dec 17.456869
+	Distance 50.868
+}
+
+67275 "TAU Boo A:4 Boo A"
+{
+	OrbitBarycenter "TAU Boo"
+	SpectralType "F7V"
+	AppMag 4.50
+
+	EllipticalOrbit {
+		Period          2000
+		SemiMajorAxis   45.4   # est. mass ratio 1.3:0.33
+		Eccentricity    0.91
+		Inclination	102.8
+		AscendingNode   160.2
+		ArgOfPericenter 33.2
+		MeanAnomaly     356.9
+	}
+}
+
+"TAU Boo B:4 Boo B"
+{
+	OrbitBarycenter "TAU Boo"
+	SpectralType "M2V"
+	AppMag 11.1
+
+	EllipticalOrbit {
+		Period          2000
+		SemiMajorAxis   179.0   # est. mass ratio 1.3:0.33
+		Eccentricity    0.91
+		Inclination	102.8
+		AscendingNode   160.2
+		ArgOfPericenter 213.2
+		MeanAnomaly     356.9
+	}
+}
+
 1009465503 "BD-10 3166"
 {
 	RA 164.61993
@@ -45,24 +98,6 @@
 	Distance 378.39
 	SpectralType "G4V"
 	AppMag 10.0
-}
-
-"PSR 1257+12:PSR B1257+12:PSR J1300+1240"
-{
-	RA 195.0125
-	Dec 12.6825
-	Distance 2000
-	SpectralType "Q"
-	AbsMag 27         # for approximate radius in Celestia
-}
-
-"PSR 1620-26:PSR B1620-26:PSR J1623-2631"
-{
-	RA 245.90917
-	Dec -26.53167
-	Distance 12000
-	SpectralType "Q"
-	AbsMag 27         # for approximate radius in Celestia
 }
 
 "OGLE-TR-111"
@@ -74,11 +109,243 @@
 	AppMag 15.55
 }
 
-"OGLE-TR-10"
+Barycenter "UPS And:50 And"
 {
-	RA 267.867708
-	Dec -29.876361
-	Distance 4900
-	SpectralType "G2V" # from Simbad: mass and luminosity seem too high, however
-	AppMag 14.93
+	RA 24.198715     # mass ratio 1.2:0.2
+	Dec 41.404487    #
+	Distance 43.928
+}
+
+7513 "UPS And A:50 And A"
+{
+	RA 24.199904
+	Dec 41.406384
+	Distance 43.928
+	SpectralType "F8V"
+	AppMag 4.10
+}
+
+"UPS And B:50 And B:2MASS J0136504+412332"
+{
+	RA 24.19158317
+	Dec 41.39310511
+	Distance 43.928
+	SpectralType "M4.5V"
+	AbsMag 11.8   # from spectral class
+}
+
+10138 "Gliese 86 A"
+{
+	RA 32.600005
+	Dec -50.825314
+	Distance 35.596
+	SpectralType "K0V"
+	AppMag 6.12
+}
+
+"Gliese 86 B"
+{
+	RA 32.599773
+	Dec -50.825732
+	Distance 35.596
+	SpectralType "T0" # "early T-dwarf"
+	AbsMag 25         # for approximate radius in Celestia
+}
+
+Barycenter "83 Leo"
+{
+	RA 171.692540
+	Dec 3.009373
+	Distance 57.637
+}
+
+55846 "83 Leo A"
+{
+	OrbitBarycenter "83 Leo"
+	SpectralType "K0IV"
+	AppMag 6.49
+
+	EllipticalOrbit {
+		Period          32000
+		SemiMajorAxis   348.4   # est. mass ratio 0.79:0.74
+		Eccentricity    0.46
+		Inclination	60.1
+		AscendingNode   307.3
+		ArgOfPericenter 229.0
+		MeanAnomaly     324.0
+	}
+}
+
+55848 "83 Leo B"
+{
+	OrbitBarycenter "83 Leo"
+	SpectralType "K2V"
+	AppMag 7.58
+
+	EllipticalOrbit {
+		Period          32000
+		SemiMajorAxis   371.9   # est. mass ratio 0.79:0.74
+		Eccentricity    0.46
+		Inclination	60.1
+		AscendingNode   307.3
+		ArgOfPericenter 49.0
+		MeanAnomaly     324.0
+	}
+}
+
+Barycenter "94 Cet"
+{
+	RA 48.193016
+	Dec -1.195933
+	Distance 72.984
+}
+
+14954 "94 Cet A"
+{
+	OrbitBarycenter "94 Cet"
+	SpectralType "F8V"
+	AppMag 5.06
+
+	EllipticalOrbit {
+		Period          1420
+		SemiMajorAxis   50.2   # est. mass ratio 1.15:0.57
+		Eccentricity    0.26
+		Inclination	43.7
+		AscendingNode   149.1
+		ArgOfPericenter 53.4
+		MeanAnomaly     4.6
+	}
+}
+
+"94 Cet B"
+{
+	OrbitBarycenter "94 Cet"
+	SpectralType "M"          # guess from est. mass and AppMag
+	AppMag 11.5
+
+	EllipticalOrbit {
+		Period          1420
+		SemiMajorAxis   101.3   # est. mass ratio 1.15:0.57
+		Eccentricity    0.26
+		Inclination	43.7
+		AscendingNode   149.1
+		ArgOfPericenter 233.4
+		MeanAnomaly     4.6
+	}
+}
+
+Barycenter "16 Cyg"
+{
+	RA 295.460800
+	Dec 50.521685
+	Distance 70.522595
+}
+
+96895 # 16 Cyg A
+{
+	OrbitBarycenter "16 Cyg"
+	SpectralType "G2V"
+	AppMag 5.99
+
+	EllipticalOrbit {
+		Period          18212.2        
+		SemiMajorAxis   440.94   # est. mass ratio 1:1
+		Eccentricity    0.862
+		Inclination     53.57
+                AscendingNode   354.87
+                ArgOfPericenter 7.15
+                MeanAnomaly     38.67
+	}
+}
+
+96901 # 16 Cyg B
+{
+	OrbitBarycenter "16 Cyg"
+	SpectralType "G5V"
+	AppMag 6.25
+
+	EllipticalOrbit {
+		Period          18212.2        
+		SemiMajorAxis   440.94   # est. mass ratio 1:1
+		Eccentricity    0.862
+		Inclination     53.57
+                AscendingNode   354.87
+                ArgOfPericenter 187.15
+                MeanAnomaly     38.67
+	}
+}
+
+98767 "Gliese 777 A"
+{
+	RA 300.90394
+	Dec 29.866333
+	Distance 51.838
+	SpectralType "G6IV"
+	AppMag 5.73
+}
+
+"Gliese 777 B"
+{
+	RA 300.861458
+	Dec 29.898079
+	Distance 51.838
+	SpectralType "M4.5V"
+	AppMag 14.40
+}
+
+"PSR 1257+12:PSR B1257+12:PSR J1300+1240"
+{
+	RA 195.0125
+	Dec 12.6825
+	Distance 2000
+	SpectralType "Q"
+	AbsMag 27         # for approximate radius in Celestia
+
+	RotationPeriod 0.000001727  # 0.006218 sec
+}
+
+Barycenter "PSR 1620-26:PSR B1620-26:PSR J1623-2631"
+{
+	RA 245.90917
+	Dec -26.53167
+	Distance 12000
+}
+	
+"PSR 1620-26 A:PSR B1620-26 A:PSR J1623-2631 A"
+{
+	OrbitBarycenter "PSR 1620-26"
+	SpectralType "Q"
+	AbsMag 27         # for approximate radius in Celestia
+
+	EllipticalOrbit {
+		Period          0.5241 # 191.443 days
+		SemiMajorAxis   0.13   # est. mass ratio 1.35:0.3
+		Eccentricity    0.0253
+		Inclination     95     # approx. 55 degree tilt
+		AscendingNode   213    # to plane of sky
+	}
+
+	Obliquity             95  # guess, to match inclination
+	EquatorAscendingNode  213 # guess, to match ascending node
+
+	RotationPeriod 0.000003076  # 0.011076 sec
+}
+
+"PSR 1620-26 B:PSR B1620-26 B:PSR J1623-2631 B"
+{
+	OrbitBarycenter "PSR 1620-26"
+	SpectralType "D"  # white dwarf
+	AbsMag 15         # approximate
+
+	EllipticalOrbit {
+		Period          0.5241 # 191.443 days
+		SemiMajorAxis   0.65   # est. mass ratio 1.35:0.3
+		Eccentricity    0.0253
+		Inclination     95     # approx. 55 degree tilt
+		AscendingNode   213    # to plane of sky
+		ArgOfPericenter 180
+	}
+
+	Obliquity             95  # guess, to match inclination
+	EquatorAscendingNode  213 # guess, to match ascending node
 }
