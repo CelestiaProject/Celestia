@@ -120,7 +120,7 @@ FrameOfReference getFrame() const;
 
 -(void)selectStar:(NSNumber*)catalogNo
 {
-    [self simulation]->selectStar([catalogNo unsignedIntValue]);
+//    [self simulation]->selectStar([catalogNo unsignedIntValue]);
 }
 
 -(void)selectPlanet:(NSNumber*)planetNo
@@ -215,11 +215,11 @@ FrameOfReference getFrame() const;
 }
 -(void)setObserverMode:(NSString*)m
 {
-    [self simulation]->setObserverMode([m isEqualToString:@"Free"] ? Simulation::Free : Simulation::Travelling);
+    [self simulation]->setObserverMode([m isEqualToString:@"Free"] ? Observer::Free : Observer::Travelling);
 }
 -(NSString*)observerMode
 {
-    return ([self simulation]->getObserverMode() == Simulation::Free) ? @"Free" : @"Travelling";
+    return ([self simulation]->getObserverMode() == Observer::Free) ? @"Free" : @"Travelling";
 }
 
 -(void)setFrame:(NSString*)cs selection:(CelestiaSelection*)sel
