@@ -619,6 +619,7 @@ static bool createSurface(ParserContext* ctx, const xmlChar** att)
     float specularPower = 0.0f;
     float albedo = 0.5f;
     bool blendTexture = false;
+    bool emissive = false;
 
     if (att != NULL)
     {
@@ -632,6 +633,8 @@ static bool createSurface(ParserContext* ctx, const xmlChar** att)
                 parseNumber(att[i + 1], specularPower);
             if (matchName(att[i], "blend-texture"))
                 parseBoolean(att[i + 1], blendTexture);
+            if (matchName(att[i], "emissive"))
+                parseBoolean(att[i + 1], emissive);
             if (matchName(att[i], "albedo"))
                 parseNumber(att[i + 1], albedo);
         }
@@ -644,6 +647,8 @@ static bool createSurface(ParserContext* ctx, const xmlChar** att)
     ctx->body->getSurface().specularPower = specularPower;
     if (blendTexture)
         ctx->body->getSurface().appearanceFlags |= Surface::BlendTexture;
+    if (emissive)
+        ctx->body->getSurface().appearanceFlags |= Surface::Emissive;
 
     return true;
 }

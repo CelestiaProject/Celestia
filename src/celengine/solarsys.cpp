@@ -55,11 +55,16 @@ static Surface* CreateSurface(Hash* surfaceData)
     bool blendTexture = false;
     surfaceData->getBoolean("BlendTexture", blendTexture);
 
+    bool emissive = false;
+    surfaceData->getBoolean("Emissive", emissive);
+
     bool compressTexture = false;
     surfaceData->getBoolean("CompressTexture", compressTexture);
 
     if (blendTexture)
         surface->appearanceFlags |= Surface::BlendTexture;
+    if (emissive)
+        surface->appearanceFlags |= Surface::Emissive;
     if (applyBaseTexture)
         surface->appearanceFlags |= Surface::ApplyBaseTexture;
     if (applyBumpMap)
