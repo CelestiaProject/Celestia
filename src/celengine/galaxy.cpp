@@ -84,7 +84,6 @@ void Galaxy::setType(Galaxy::GalaxyType _type)
 {
     type = _type;
 
-    cout << "setType: " << type << "\n";
     if (!formsInitialized)
         InitializeForms();
     switch (type)
@@ -133,8 +132,7 @@ bool Galaxy::load(AssociativeArray* params)
     for (int i = 0; i < (int) (sizeof(GalaxyTypeNames) / sizeof(GalaxyTypeNames[0])); i++)
     {
         if (GalaxyTypeNames[i].name == typeName)
-        {    cout << type << '\n';
-
+        {
             type = GalaxyTypeNames[i].type;
             break;
         }
