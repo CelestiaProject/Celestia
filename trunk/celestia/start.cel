@@ -1,9 +1,7 @@
 {
-	select { object "Sol" }
-	select { object "Mercury" }
+	select { object "Sol/Neptune" }
 	timerate { rate 0 }
 	goto { time 0 }
 	wait { duration 0.1 }
 	timerate { rate 1 }
 }
-
