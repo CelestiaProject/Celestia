@@ -761,8 +761,32 @@ void Observer::setMode(Observer::ObserverMode mode)
 void Observer::setFrame(const FrameOfReference& _frame)
 {
     RigidTransform transform = frame.toUniversal(situation, getTime());
-    frame = _frame;
-    situation = frame.fromUniversal(transform, getTime());
+    if (observerMode == Travelling)
+    {
+        RigidTransform from = frame.toUniversal(RigidTransform(journey.from, journey.initialOrientation), getTime());
+        RigidTransform to = frame.toUniversal(RigidTransform(journey.to, journey.finalOrientation), getTime());
+
+        frame = _frame;
+        situation = frame.fromUniversal(transform, getTime());
+
+        from = frame.fromUniversal(from, getTime());
+        journey.from = from.translation;
+        journey.initialOrientation = Quatf((float) from.rotation.w,
+                                           (float) from.rotation.x,
+                                           (float) from.rotation.y,
+                                           (float) from.rotation.z);
+        to = frame.fromUniversal(to, getTime());
+        journey.to = to.translation;
+        journey.finalOrientation = Quatf((float) to.rotation.w,
+                                         (float) to.rotation.x,
+                                         (float) to.rotation.y,
+                                         (float) to.rotation.z);
+    }
+    else
+    {
+        frame = _frame;
+        situation = frame.fromUniversal(transform, getTime());
+    }
 }
 
 
