@@ -1,0 +1,724 @@
+# Catalog of known extrasolar planetary systems.
+#
+# Most of the data in here was compiled from the Extrasolar Planets Catalog
+# at http://www.obspm.fr/encycl/catalog.html.
+#
+# In most places, I've just used M sin i as the mass for the planets, though in a few
+# cases I've used used astrometric estimates from [1].  The only orbital elements I've
+# included are period, semi-major axis, and eccentricity.  Something else such as a time
+# and longitude of periastron would be nice to bring the orbital motions of these planets
+# closer in touch with reality, but I can't find any data.  The radii of the planets are
+# very rough guesses based on mass, and in most cases are land quite close to
+# Jupiter's radius.  I know that models exist for the radius of a gas giant as a function
+# of mass, and I'd like to find and use one so there's at least slightly more rigor
+# in this area.
+#
+# Here's how I classify 'planets' by mass:
+#     0.1 - 11 Jupiter masses: gas giant
+#     11 - 80 Jupiter masses: brown dwarf
+#     > 80 Jupiter masses:    M class star
+#
+#
+# [1] HAN I., BLACK D. & GATEWOOD G., 2000
+#     Preliminary astrometric masses for proposed exrasolar planetary companions.
+#     ApJ. Letters, accepted
+
+
+
+# Ups Andromeda system detected by Marcy, Butler et al using
+# radial velocity method.
+#
+# Masses are all M sin i, though Han et al claim a preliminary
+# mass of 10Mj for Ups And d based on astrometric data.
+
+"Upsilon And"
+{
+Planets [
+{
+	Name   "b"
+	Texture "gasgiant.jpg"
+	Mass   0
+	Radius 70000
+
+	# orbital data
+	Period            0.01264
+	SemiMajorAxis     0.059
+	Eccentricity      0.034
+}
+
+{
+	Name   "c"
+	Texture "gasgiant.jpg"
+	Mass   0
+	Radius 70000
+
+	# orbital data
+	Period            0.6604
+	SemiMajorAxis     0.83
+	Eccentricity      0.18
+}
+
+{
+	Name   "d"
+	Texture "jupiterlike.jpg"
+	Mass   0
+	Radius 70000
+
+	# orbital data
+	Period            3.48
+	SemiMajorAxis     2.50
+	Eccentricity      0.41
+}
+]
+}
+
+
+# 51 Peg system
+# Mayor and Queloz, 1995
+# This was the first extrasolar planet discovered around a normal star.
+
+"51 Peg"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass   160
+	Radius 60000
+
+	# orbital data
+	Period           0.11579
+	SemiMajorAxis    0.05
+	Eccentricity     0
+}
+]
+}
+
+
+# 47 UMa system
+# Marcy, Butler et al, 1996
+#
+# M sin i of the planet is 2.4 Mj
+# From astrometry Han et al (2000) give a mass of 2.9 Mj
+
+"47 UMa"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass     920
+	Radius   90000
+
+	# orbital data
+	Period          2.962
+	SemiMajorAxis   2.11
+	Eccentricity    0.096
+}
+]
+}
+
+
+"70 Vir"
+{
+Planets [
+{
+	Name "b"
+	Texture "browndwarf.jpg"
+	Mass     8100
+	Radius   130000
+
+	# orbital data
+	Period          0.3176
+	SemiMajorAxis   0.43
+	Eccentricity    0.4
+}
+]
+}
+
+
+"Tau Boo"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass     1200
+	Radius   75000
+
+	# orbital data
+	Period          0.009069
+	SemiMajorAxis   0.046
+	Eccentricity    0.010
+}
+]
+}
+
+
+# HD 168443 system
+
+"HD 168443"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      2300       # 7.2 +- 0.4 Mj
+	Radius    70000
+
+	# orbital data
+	Period          0.1585
+	SemiMajorAxis   0.29
+	Eccentricity    0.55
+}
+{
+	Name "c"
+	Texture "browndwarf.jpg"
+	Mass      5400       # 17.1 Mj - brown dwarf?
+	Radius    70000
+
+	# orbital data
+	Period          5.85
+	SemiMajorAxis   2.87
+	Eccentricity    0.2
+}
+]
+}
+
+
+# HD 12661 system
+#
+# M sin i = 2.80 Jupiters
+# Han et al (2000) claim a mass of 56 Jupiters and inclination of 2.9 degrees
+# So, we'll call this one a brown dwarf . . .
+"HD 12661"
+{
+Planets [
+{
+	Name "b"
+	Texture "browndwarf.jpg"
+	Mass      18000
+	Radius    150000
+
+	# orbital data
+	Period          0.72668
+	SemiMajorAxis   0.8267
+	Eccentricity    0.328
+}
+]
+}
+
+
+# HD 92788 system
+#
+# M sin i = 3.86 Jupiters (Fischer et al)
+# Han et al (2000) claim a mass of 54 Jupiters and inclination of 176 degrees
+"HD 92788"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      1200
+	Radius    70000
+
+	# orbital data
+	Period          0.9246
+	SemiMajorAxis   0.97
+	Eccentricity    0.27
+}
+]
+}
+
+
+# HD 130322 system, Mayor, Udry et al
+#
+# M sin i = 1.08 Jupiters
+"HD 130322"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      320
+	Radius    72000
+
+	# orbital data
+	Period          0.02936
+	SemiMajorAxis   0.088
+	Eccentricity    0.048
+}
+]
+}
+
+
+# HD 75289 system, Mayor et al
+#
+# M sin i = 0.42 Jupiters
+"HD 75289"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      135
+	Radius    60000
+
+	# orbital data
+	Period          0.009610
+	SemiMajorAxis   0.046
+	Eccentricity    0.053
+}
+]
+}
+
+
+# HD 83443 system, Mayor et al
+#
+# This system has two Saturn mass planets.
+#
+# b: M sin i = 0.35 Jupiters
+# c: M sin i = 0.17 Jupiters
+
+"HD 83443"
+{
+Planets [
+{
+	Name "b"
+	Texture   "gasgiant.jpg"
+	Mass      110
+	Radius    58000
+
+	# orbital data
+	Period          0.008173
+	SemiMajorAxis   0.038
+	Eccentricity    0.08
+}
+{
+	Name "c"
+	Texture   "gasgiant.jpg"
+	Mass      55
+	Radius    46000
+
+	# orbital data
+	Period          0.08167
+	SemiMajorAxis   0.174
+	Eccentricity    0.42
+}
+]
+}
+
+
+# HD 168746 system
+#
+# M sin i = 0.24 Jupiters
+"HD 168746"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      75
+	Radius    48000
+
+	# orbital data
+	Period          0.004390
+	SemiMajorAxis   0.066
+	Eccentricity    0.0
+}
+]
+}
+
+
+# HD 16141 system
+#
+# M sin i = 0.215 Jupiters
+# Han et al claim a mass of 111 Jupiters and an inclination of only 0.1 deg,
+# making the companion an M dwarf instead of planet.  Until there's more
+# evidence, I'll just go with the minimum mass instead.
+"HD 168746"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      80
+	Radius    49000
+
+	# orbital data
+	Period          0.2076
+	SemiMajorAxis   0.35
+	Eccentricity    0.28
+}
+]
+}
+
+
+# HD 46735 system
+#
+# M sin i = 0.249 Jupiters
+"HD 46735"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      80
+	Radius    49000
+
+	# orbital data
+	Period          0.00828
+	SemiMajorAxis   0.041
+	Eccentricity    0.04
+}
+]
+}
+
+
+# HD 108147 system
+#
+# M sin i = 0.34 Jupiters
+"HD 108147"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      110
+	Radius    52000
+
+	# orbital data
+	Period          0.0298
+	SemiMajorAxis   0.098
+	Eccentricity    0.558
+}
+]
+}
+
+
+# HD 46735 system
+#
+# M sin i = 0.249 Jupiters
+"HD 46735"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      80
+	Radius    49000
+
+	# orbital data
+	Period          0.00828
+	SemiMajorAxis   0.041
+	Eccentricity    0.04
+}
+]
+}
+
+
+# BD -10 3166 system
+#
+# M sin i = 0.48 Jupiters
+"BD -10 3166"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      150
+	Radius    58000
+
+	# orbital data
+	Period          0.00955
+	SemiMajorAxis   0.046
+	Eccentricity    0.05
+}
+]
+}
+
+
+# HD 6434 system
+#
+# M sin i = 0.48 Jupiters
+"HD 6434"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      150
+	Radius    58000
+
+	# orbital data
+	Period          0.0605
+	SemiMajorAxis   0.15
+	Eccentricity    0.30
+}
+]
+}
+
+
+# HD 187123 system
+#
+# M sin i = 0.52 Jupiters
+#
+# unconfirmed second problem with period of approx 3 years
+"HD 187123"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      155
+	Radius    58000
+
+	# orbital data
+	Period          0.00846
+	SemiMajorAxis   0.042
+	Eccentricity    0.03
+}
+]
+}
+
+
+# HD 209458 system
+#
+# M = 0.69 Jupiters
+#
+# Detected via transit as well as radial velocity methods; from transit, i 
+# is fixed at 85.2 degrees, so mass can be determined.  Radius is
+# estimated at 1.42 jupiters.
+
+"HD 209458"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      220
+	Radius    101000
+
+	# orbital data
+	Period          0.0096502
+	SemiMajorAxis   0.045
+	Eccentricity    0.0
+}
+]
+}
+
+
+# HD 192263 system
+#
+# M sin i = 0.75 Jupiters
+"HD 192263"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      225
+	Radius    65000
+
+	# orbital data
+	Period          0.06535
+	SemiMajorAxis   0.15
+	Eccentricity    0.03
+}
+]
+}
+
+
+# Epsilon Eridani system
+#
+# M sin i = 0.86 Jupiters
+#
+# Gatewood reports M = 1.2 +/- 0.33 Jupters from astrometric observations
+# 
+# The existence of a planet around Epsilon Eridani is still somewhat
+# controversial.
+
+"Epsilon Eri"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      380
+	Radius    73000
+
+	# orbital data
+	Period          6.850
+	SemiMajorAxis   3.3
+	Eccentricity    0.608
+}
+]
+}
+
+
+# HD 38529 system
+#
+# M sin i = 0.77 Jupiters
+"HD 38529"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      245
+	Radius    65000
+
+	# orbital data
+	Period          0.03921
+	SemiMajorAxis   0.1293
+	Eccentricity    0.27
+}
+]
+}
+
+
+# HD 179949 system
+#
+# M sin i = 0.84 Jupiters
+"HD 179949"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      270
+	Radius    66000
+
+	# orbital data
+	Period          0.00847
+	SemiMajorAxis   0.045
+	Eccentricity    0.05
+}
+]
+}
+
+
+# 121504 system
+#
+# M sin i = 0.89 Jupiters
+"HD 121504"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      285
+	Radius    67000
+
+	# orbital data
+	Period          0.177
+	SemiMajorAxis   0.32
+	Eccentricity    0.13
+}
+]
+}
+
+
+# HD 37124 system
+#
+# M sin i = 1.04 Jupiters
+"HD 37124"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      325
+	Radius    72000
+
+	# orbital data
+	Period          0.424
+	SemiMajorAxis   0.585
+	Eccentricity    0.19
+}
+]
+}
+
+
+# Rho CrB system
+#
+# M sin i = 1.1 Jupiters
+"Rho CrB"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      350
+	Radius    73000
+
+	# orbital data
+	Period          0.10854
+	SemiMajorAxis   0.23
+	Eccentricity    0.028
+}
+]
+}
+
+
+# Gliese 876 system
+#
+# b: M sin i = 1.89 Jupiters
+# c: M sin i = 0.56 Jupiters
+#
+# Planets b and c are in a 1:2 resonance
+
+"Gliese 876"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      600
+	Radius    80000
+
+	# orbital data
+	Period          0.1671
+	SemiMajorAxis   0.21
+	Eccentricity    0.10
+}
+{
+	Name "c"
+	Texture "gasgiant.jpg"
+	Mass      180
+	Radius    60000
+
+	# orbital data
+	Period          0.083535
+	SemiMajorAxis   0.13
+	Eccentricity    0.27
+}
+]
+}
+
+
+# Gliese 86 system
+#
+# M sin i = 4 Jupiters
+"Gliese 86"
+{
+Planets [
+{
+	Name "b"
+	Texture "gasgiant.jpg"
+	Mass      1280
+	Radius    70000
+
+	# orbital data
+	Period          0.04320
+	SemiMajorAxis   0.11
+	Eccentricity    0.046
+}
+]
+}
+
+
+
+
+
+
