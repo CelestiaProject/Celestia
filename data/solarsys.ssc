@@ -6,6 +6,8 @@ Planets [
 {
 	Name   "Mercury"
 	Texture "mercury.jpg"
+	BumpMap "mercurybump.jpg"
+	BumpHeight 2.5
 	Radius 2440
 
 	# orbital data
@@ -15,7 +17,7 @@ Planets [
 	Inclination       7.0049
 	AscendingNode    77.456
 	ArgOfPeriapsis   48.331
-        TrueAnomaly     252.251
+        MeanLongitude   252.251
 
 	RotationPeriod 1047.51
 	Obliquity         7.0
@@ -34,7 +36,7 @@ Planets [
 	Inclination       3.3947
 	AscendingNode   131.533
 	ArgOfPeriapsis   76.681
-        TrueAnomaly     181.979
+        MeanLongitude   181.979
 
 	RotationPeriod  5832.444
 	Obliquity       177.4
@@ -44,6 +46,7 @@ Planets [
 {
 	Name   "Earth"
 	Texture "earth.jpg"
+#	Texture "earthcloudmaptrans.jpg"
 	CompressTexture false    # looks bad up close with this enabled
 	Color [ 0.85 0.85 1.0 ]
 	Radius 6378
@@ -56,7 +59,7 @@ Planets [
 	Inclination       0.0001
 	AscendingNode   102.947
 	ArgOfPeriapsis  348.739
-        TrueAnomaly     100.464
+        MeanLongitude   100.464
 
 	RotationPeriod   23.93419
 	Obliquity        23.45
@@ -67,6 +70,7 @@ Planets [
 		Name "Moon"
 		Texture "moon.jpg"
 		BumpMap "moonbump1k.jpg"
+		BumpHeight 2.5
 		Radius   1737.53
 		Oblateness 0.002
 
@@ -78,6 +82,23 @@ Planets [
 
 		Albedo           0.12
 	}
+	{
+		Name "Mir"
+		Mesh "mir.3ds"
+		Radius 0.015      # Mir is about 30 meters long
+
+		# Assuming these elements to be constant isn't accurate . . .
+		# Celestia really needs to support better orbit models.
+		Period            0.06415338
+		SemiMajorAxis  6769
+		Eccentricity      0.0000831
+		Inclination      51.6461
+		AscendingNode    83.8459
+		ArgOfPeriapsis  296.4901
+		MeanAnomaly      63.6005
+
+		Albedo 	      0.10
+	}
 	]	
 }
 
@@ -86,6 +107,7 @@ Planets [
 	Texture "mars.jpg"
 	CompressTexture true
 	BumpMap "marsbump1k.jpg"
+	BumpHeight 2.5
 	Color   [ 1 0.75 0.7 ]
 	Radius 3394
 	Oblateness 0.006
@@ -97,7 +119,7 @@ Planets [
 	Inclination       1.8506
 	AscendingNode   336.041
 	ArgOfPeriapsis   49.479
-        TrueAnomaly     355.453
+        MeanLongitude   355.453
 
 	RotationPeriod    24.622962
 	Obliquity         23.98
@@ -115,7 +137,7 @@ Planets [
 		SemiMajorAxis  9377.2
 		Eccentricity   0.0151
 		Inclination    1.082
-		TrueAnomaly    50
+		MeanAnomaly    50
 
 		Albedo         0.07
 	}
@@ -130,7 +152,7 @@ Planets [
 		SemiMajorAxis  23463.2
 		Eccentricity   0.00033
 		Inclination    1.791
-		TrueAnomaly    150
+		MeanAnomaly    150
 
 		Albedo         0.08
 	}
@@ -150,7 +172,7 @@ Planets [
 	Inclination       1.3053
 	AscendingNode    14.7539
 	ArgOfPeriapsis  100.556
-        TrueAnomaly      34.404
+        MeanLongitude    34.404
 
 	RotationPeriod    9.92425
 	Obliquity         3.08
@@ -167,7 +189,7 @@ Planets [
 		SemiMajorAxis  421600
 		Eccentricity   0.0041
 		Inclination    0.040
-		TrueAnomaly    50
+		MeanAnomaly    50
 
 		Albedo         0.61
 	}
@@ -181,7 +203,7 @@ Planets [
 		SemiMajorAxis  670900
 		Eccentricity   0.0101
 		Inclination    0.470
-		TrueAnomaly    310
+		MeanAnomaly    310
 
 		Albedo         0.64
 	}
@@ -195,7 +217,7 @@ Planets [
 		SemiMajorAxis  1070000
 		Eccentricity   0.0015
 		Inclination    0.195
-		TrueAnomaly    243
+		MeanAnomaly    243
 
 		Albedo         0.42
 	}
@@ -209,7 +231,7 @@ Planets [
 		SemiMajorAxis  1883000
 		Eccentricity   0.007
 		Inclination    0.281
-		TrueAnomaly    120
+		MeanAnomaly    120
 
 		Albedo         0.20
 	}
@@ -223,7 +245,7 @@ Planets [
 		SemiMajorAxis  1883000
 		Eccentricity   0.2
 		Inclination    0.281
-		TrueAnomaly    215
+		MeanAnomaly    215
 
 		Albedo         0.50
 	}
@@ -243,7 +265,7 @@ Planets [
 	Inclination       2.4845
 	AscendingNode    92.432
 	ArgOfPeriapsis  113.715
-        TrueAnomaly      49.944
+        MeanLongitude    49.944
 
 	RotationPeriod   10.65622
 	Obliquity         26.73
@@ -252,6 +274,7 @@ Planets [
 	Rings {
 		Inner   74658
 		Outer  140000
+		Texture "saturn-rings.png"
 
 		# Bjorn Jonsson <http://www.mmedia.is/~bjj> recommends this
 		# color for rendering Saturn's rings.  No idea if it's right,
@@ -270,7 +293,7 @@ Planets [
 		SemiMajorAxis  185520
 		Eccentricity   0.0202
 		Inclination    1.53
-		TrueAnomaly    23
+		MeanAnomaly    23
 
 		Albedo         0.5
 	}
@@ -284,7 +307,7 @@ Planets [
 		SemiMajorAxis  238020
 		Eccentricity   0.0045
 		Inclination    0.02
-		TrueAnomaly    215
+		MeanAnomaly    215
 
 		Albedo         0.99
 	}
@@ -298,7 +321,7 @@ Planets [
 		SemiMajorAxis  294660
 		Eccentricity   0.0
 		Inclination    1.09
-		TrueAnomaly    98
+		MeanAnomaly    98
 
 		Albedo         0.9
 	}
@@ -312,7 +335,7 @@ Planets [
 		SemiMajorAxis  377400
 		Eccentricity   0.0022
 		Inclination    0.02
-		TrueAnomaly    310
+		MeanAnomaly    310
 
 		Albedo         0.7
 	}
@@ -326,7 +349,7 @@ Planets [
 		SemiMajorAxis  527040
 		Eccentricity   0.0010
 		Inclination    0.35
-		TrueAnomaly    190
+		MeanAnomaly    190
 
 		Albedo         0.7
 	}
@@ -341,7 +364,7 @@ Planets [
 		SemiMajorAxis  1221850
 		Eccentricity   0.0292
 		Inclination    0.33
-		TrueAnomaly    120
+		MeanAnomaly    120
 
 		Albedo         0.21
 	}
@@ -356,7 +379,7 @@ Planets [
 		SemiMajorAxis  1481100
 		Eccentricity   0.1042
 		Inclination    0.43
-		TrueAnomaly    350
+		MeanAnomaly    350
 
 		Albedo         0.3
 	}
@@ -370,7 +393,7 @@ Planets [
 		SemiMajorAxis  3561300
 		Eccentricity   0.0283
 		Inclination    7.52
-		TrueAnomaly    245
+		MeanAnomaly    245
 
 		Albedo         0.2
 	}
@@ -385,7 +408,7 @@ Planets [
 		SemiMajorAxis  12952000
 		Eccentricity   0.163
 		Inclination    175.3
-		TrueAnomaly    52
+		MeanAnomaly    52
 
 		Albedo         0.05
 	}
@@ -406,7 +429,7 @@ Planets [
 	Inclination       0.7699
 	AscendingNode   170.964
 	ArgOfPeriapsis   74.230
-        TrueAnomaly     313.232
+        MeanLongitude   313.232
 
 	RotationPeriod   17.24
 	Obliquity        97.92
@@ -423,7 +446,7 @@ Planets [
 		SemiMajorAxis  129800
 		Eccentricity   0.0027
 		Inclination    4.22
-		TrueAnomaly    120
+		MeanAnomaly    120
 	}
 	{
 		Name "Ariel"
@@ -435,7 +458,7 @@ Planets [
 		SemiMajorAxis  191200
 		Eccentricity   0.0034
 		Inclination    0.31
-		TrueAnomaly    56
+		MeanAnomaly    56
 	}
 	{
 		Name "Umbriel"
@@ -447,7 +470,7 @@ Planets [
 		SemiMajorAxis  266000
 		Eccentricity   0.0050
 		Inclination    0.36
-		TrueAnomaly    280
+		MeanAnomaly    280
 	}
 	{
 		Name "Titania"
@@ -459,7 +482,7 @@ Planets [
 		SemiMajorAxis  435800
 		Eccentricity   0.0022
 		Inclination    0.10
-		TrueAnomaly    30
+		MeanAnomaly    30
 	}
 	{
 		Name "Oberon"
@@ -471,7 +494,7 @@ Planets [
 		SemiMajorAxis  583600
 		Eccentricity   0.0008
 		Inclination    0.10
-		TrueAnomaly    150
+		MeanAnomaly    150
 	}
 	]
 }
@@ -490,7 +513,7 @@ Planets [
 	Inclination       1.7692
 	AscendingNode    44.971
 	ArgOfPeriapsis  131.722
-        TrueAnomaly     304.880
+        MeanLongitude   304.880
 
 	RotationPeriod   16.11
 	Obliquity        28.8
@@ -508,7 +531,7 @@ Planets [
 		SemiMajorAxis  117647
 		Eccentricity   0.000
 		Inclination    0.55
-		TrueAnomaly    310
+		MeanAnomaly    310
 
 		Albedo         0.2
 	}
@@ -522,7 +545,7 @@ Planets [
 		SemiMajorAxis  354760
 		Eccentricity   0.00004
 		Inclination    156.834
-		TrueAnomaly    120
+		MeanAnomaly    120
 
 		Albedo         0.7
 	}
@@ -537,7 +560,7 @@ Planets [
 		SemiMajorAxis  5513400
 		Eccentricity   0.7512
 		Inclination    7.23
-		TrueAnomaly    185
+		MeanAnomaly    185
 	}
 	]
 }
@@ -546,6 +569,7 @@ Planets [
 	Name   "Pluto"
 	Texture "pluto.jpg"
 	BumpMap "plutobump1k.jpg"
+	BumpHeight 2.5
 	Radius 1137
 
 	# orbital data
@@ -555,7 +579,7 @@ Planets [
 	Inclination      17.14175
 	AscendingNode   224.06776
 	ArgOfPeriapsis  110.30347
-        TrueAnomaly     238.92881
+        MeanLongitude   238.92881
 
 	RotationPeriod  153.29
 	Obliquity        28.8
@@ -572,7 +596,7 @@ Planets [
 		SemiMajorAxis  19636
 		Eccentricity   0.0076
 		Inclination    96.163
-		TrueAnomaly    120
+		MeanAnomaly    120
 
 		Albedo         0.3
 	}
@@ -592,7 +616,7 @@ Planets [
 	Inclination      10.581
 	AscendingNode    80.530
 	ArgOfPeriapsis   73.460
-        TrueAnomaly     207.082
+        MeanAnomaly     207.082
 
 	RotationPeriod    9.075
 }
@@ -609,7 +633,7 @@ Planets [
 	Inclination      34.823
 	AscendingNode   173.237
 	ArgOfPeriapsis  309.824
-        TrueAnomaly     194.832
+        MeanAnomaly     194.832
 
 	RotationPeriod    7.811
 }
@@ -626,7 +650,7 @@ Planets [
 	Inclination      12.97
 	AscendingNode    90.0
 	ArgOfPeriapsis  180.0
-        TrueAnomaly     270.0
+        MeanAnomaly     270.0
 
 	RotationPeriod    7.811
 }
@@ -644,7 +668,7 @@ Planets [
 	Inclination       7.135
 	AscendingNode   103.962
 	ArgOfPeriapsis  149.854
-        TrueAnomaly     138.500
+        MeanAnomaly     138.500
 
 	RotationPeriod    5.342
 }
@@ -662,7 +686,7 @@ Planets [
 	Inclination       1.14
 	AscendingNode   324.419
 	ArgOfPeriapsis  112.419
-        TrueAnomaly      92.511
+        MeanAnomaly      92.511
 
 	RotationPeriod    4.633
 
@@ -698,7 +722,7 @@ Planets [
 	Inclination      10.831
 	AscendingNode   304.435
 	ArgOfPeriapsis    0.987
-        TrueAnomaly     310.0
+        MeanAnomaly     310.0
 
 	RotationPeriod    5.270
 	Albedo            0.16
@@ -720,7 +744,7 @@ Planets [
 	Inclination       0.5
 	AscendingNode   128.2
 	ArgOfPeriapsis  274.8
-        TrueAnomaly      36.7
+        MeanAnomaly      36.7
 	# Epoch        20010401
 
 	RotationPeriod  180
@@ -743,7 +767,7 @@ Planets [
 	Inclination      13.34
 	AscendingNode   337.352
 	ArgOfPeriapsis  276.756
-        TrueAnomaly     180.595
+        MeanAnomaly     180.595
 	Epoch      2450800.5
 
 	RotationPeriod    5.222
@@ -766,7 +790,7 @@ Planets [
 	Inclination      13.14
 	AscendingNode   337.352
 	ArgOfPeriapsis  276.756
-        TrueAnomaly     180.595
+        MeanAnomaly     180.595
 	Epoch      2450800.5
 
 	RotationPeriod    5.385
@@ -775,6 +799,26 @@ Planets [
 
 }
 
+
+# Comets
+{
+	Name   "Halley"
+	Texture "asteroid.jpg"
+	Radius 7.5
+
+	# orbital data
+	Period            76
+	SemiMajorAxis    17.9541
+	Eccentricity      0.9673
+	Inclination       162.24
+	AscendingNode    58.86
+	ArgOfPeriapsis  111.87
+        MeanAnomaly       0.0
+	Epoch       2446480.5
+
+	RotationPeriod  170     # Guess; see http://www.lpi.usra.edu/meetings/dps97/html/H2918/H2918.html
+	Albedo            0.04
+}
 
 # Centaurs
 {
@@ -789,7 +833,7 @@ Planets [
 	Inclination       6.937
 	AscendingNode   209.381
 	ArgOfPeriapsis  339.483
-        TrueAnomaly      13.177
+        MeanAnomaly      13.177
 	Epoch       2450800.5
 
 	RotationPeriod    5.9
