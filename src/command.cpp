@@ -361,8 +361,8 @@ void CommandSetVisibilityLimit::process(ExecutionEnvironment& env)
     Renderer* r = env.getRenderer();
     if (r != NULL)
     {
-        r->setBrightnessBias(0.0f);
-        r->setBrightnessScale(1.0f / (magnitude + 1.0f));
+        r->setBrightnessBias(0.05f);
+        r->setSaturationMagnitude(1.0f);
     }
     env.getSimulation()->setFaintestVisible(magnitude);
 }
