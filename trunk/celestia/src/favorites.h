@@ -13,6 +13,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "vecmath.h"
+#include "quaternion.h"
+#include "univcoord.h"
 
 
 struct FavoritesEntry
