@@ -77,4 +77,15 @@
 {
     [self observer].update([dt doubleValue], [ts doubleValue]);
 }
+
+-(unsigned int) getLocationFilter
+{
+    return [self observer].getLocationFilter();
+}
+
+-(void) setLocationFilter: (unsigned int) filter
+{
+    [self observer].setLocationFilter(filter);
+}
+
 @end
