@@ -463,9 +463,14 @@ void CelestiaCore::charEntered(char c)
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
         break;
 
-    case 'P':
-        if (renderer->perPixelLightingSupported())
-            renderer->setPerPixelLighting(!renderer->getPerPixelLighting());
+    case '\020':  // Ctrl+P
+        if (renderer->fragmentShaderSupported())
+            renderer->setFragmentShaderEnabled(!renderer->getFragmentShaderEnabled());
+        break;
+
+    case '\026':  // Ctrl+V
+        if (renderer->vertexShaderSupported())
+            renderer->setVertexShaderEnabled(!renderer->getVertexShaderEnabled());
         break;
 
     case 'I':
@@ -1118,11 +1123,10 @@ bool CelestiaCore::initRenderer()
     }
 
 #ifdef _WIN32
-    if (renderer->perPixelLightingSupported())
-    {
-        renderer->setPerPixelLighting(true);
-        // CheckMenuItem(menuBar, ID_RENDER_PERPIXEL_LIGHTING, MF_CHECKED);
-    }
+    if (renderer->fragmentShaderSupported())
+        renderer->setFragmentShaderEnabled(true);
+    if (renderer->vertexShaderSupported())
+        renderer->setVertexShaderEnabled(true);
 #endif
 
     // Set up the star labels
