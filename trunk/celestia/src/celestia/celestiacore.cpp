@@ -411,6 +411,15 @@ void CelestiaCore::cancelScript()
         delete runningScript;
         runningScript = NULL;
     }
+#ifdef CELX
+    else if (celxScript != NULL)
+    {
+        // The script is complete
+        delete celxScript;
+        celxScript = NULL;
+        scriptAwakenTime = 0.0;
+    }
+#endif
     messageText = "";
 }
 
