@@ -985,10 +985,9 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
     }
 
     if (worlds != NULL)
-    {
         completion = worlds->getCompletion(s.substr(pos + 1), false);
-        completion.insert(completion.end(), locationCompletion.begin(), locationCompletion.end());
-    }
+
+    completion.insert(completion.end(), locationCompletion.begin(), locationCompletion.end());
 
     return completion;
 }
