@@ -692,20 +692,19 @@
 	Texture "asteroid.jpg"
 	Radius     110
 
-	CustomOrbit "phoebe"
 	EllipticalOrbit
 	{
-	Epoch          2447892.5
-	Period         548.2122790
-	SemiMajorAxis  12944346
-	Eccentricity   0.16435
-	Inclination    174.751
-	LongOfPericenter 203.958
-	MeanLongitude  390.742
-	AscendingNode  233.037
+	Epoch           2453168.0  # 2004 June 11 (Cassini encounter)
+	Period          548.21     # mean
+	SemiMajorAxis   12916143   # at epoch
+	Eccentricity      0.152920 # at epoch
+	Inclination     151.659503 # at epoch
+	AscendingNode    14.379445 # at epoch
+	ArgOfPericenter 281.133384 # at epoch
+	MeanAnomaly      31.543967 # at epoch
 	}
 
-	RotationPeriod		  9.282  # 9.6
+	RotationPeriod		  9.282
 	Obliquity		 17.4
 	EquatorAscendingNode	259.9
 	RotationOffset		320.3
