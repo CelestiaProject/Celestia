@@ -70,6 +70,9 @@ namespace astro
     double secondsToJulianDate(double);
     double julianDateToSeconds(double);
 
+    void decimalToDegMinSec(double angle, int& hours, int& minutes, double& seconds);
+    double degMinSecToDecimal(int hours, int minutes, double seconds);
+
     float sphereIlluminationFraction(Point3d spherePos,
                                      Point3d viewerPos);
 
