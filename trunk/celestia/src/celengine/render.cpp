@@ -2982,6 +2982,17 @@ static void renderModelDefault(Model* model,
 
     model->render(rc);
 
+    if (model->usesTextureType(Mesh::EmissiveMap))
+    {
+        glDisable(GL_LIGHTING);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        rc.setRenderPass(RenderContext::EmissivePass);
+        rc.setMaterial(NULL);
+
+        model->render(rc);
+    }
+
     // Reset the material
     float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     float zero = 0.0f;
