@@ -1,0 +1,84 @@
+# Stars which are not included in the Hipparcos catalog, but are
+# orbited by extrasolar planets. (The planets are defined in the file
+# "extrasolar.ssc".)
+
+"OGLE-TR-56"
+{
+	RA 269.148070
+	Dec -29.539412
+	Distance 8900      # to give known apparent magnitude
+	SpectralType "G0V" # from estimated mass and radius
+	AbsMag 4.4         # from spectral class
+}
+
+"TrES-1"
+{
+	RA 286.04083
+	Dec 36.6325
+	Distance 490      # From spectral class and visual magnitude
+	SpectralType "K0V"
+	AppMag 11.79
+}
+
+"OGLE-TR-113"
+{
+	RA 163.101667
+	Dec -61.446667
+	Distance 1400      # from radius, temperature and app mag
+	SpectralType "K3V" # from estimated mass and temperature
+	AbsMag 6.5         # from spectral class
+}
+
+"OGLE-TR-132"
+{
+	RA 162.640417
+	Dec -61.957222
+	Distance 8800      # from radius, temperature and app mag
+	SpectralType "F5V" # from estimated mass and temperature
+	AbsMag 3.6         # from spectral class
+}
+
+1009465503 "BD-10 3166"
+{
+	RA 164.61993
+	Dec -10.77038
+	Distance 378.39
+	SpectralType "G4V"
+	AppMag 10.0
+}
+
+"PSR 1257+12:PSR B1257+12:PSR J1300+1240"
+{
+	RA 195.0125
+	Dec 12.6825
+	Distance 2000
+	SpectralType "Q"
+	AbsMag 27         # for approximate radius in Celestia
+}
+
+"PSR 1620-26:PSR B1620-26:PSR J1623-2631"
+{
+	RA 245.90917
+	Dec -26.53167
+	Distance 12000
+	SpectralType "Q"
+	AbsMag 27         # for approximate radius in Celestia
+}
+
+"OGLE-TR-111"
+{
+	RA 163.324625
+	Dec -60.405639
+	Distance 3300        # estimate from mass and app. mag.
+	SpectralType "G8V"   # estimated from mass
+	AppMag 15.55
+}
+
+"OGLE-TR-10"
+{
+	RA 267.867708
+	Dec -29.876361
+	Distance 4900
+	SpectralType "G2V" # from Simbad: mass and luminosity seem too high, however
+	AppMag 14.93
+}
