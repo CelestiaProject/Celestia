@@ -22,6 +22,7 @@ class ShaderProperties
     bool usesFragmentLighting() const;
     unsigned int getShadowCountForLight(unsigned int) const;
     void setShadowCountForLight(unsigned int, unsigned int);
+    bool hasShadowsForLight(unsigned int) const;
 
  enum
  {

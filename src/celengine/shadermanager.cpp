@@ -103,6 +103,16 @@ ShaderProperties::setShadowCountForLight(unsigned int light, unsigned int n)
     }
 }
 
+
+bool
+ShaderProperties::hasShadowsForLight(unsigned int light) const
+{
+    assert(light < MaxShaderLights);
+    return ((getShadowCountForLight(light) != 0) ||
+            (texUsage & RingShadowTexture));
+}
+
+
 bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
     if (p0.texUsage < p1.texUsage)
@@ -430,6 +440,61 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
 }
 
 
+static string
+BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
+{
+    string source;
+
+    if (props.usesFragmentLighting())
+    {
+        if (props.hasShadowsForLight(light))
+            source += "shadow = 1.0;\n";
+    }
+    else
+    {
+        source += "shadow = " + SeparateDiffuse(light) + ";\n";
+    }
+
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        source += "shadow *= (1.0 - texture2D(ringTex, vec2(" +
+            IndexedParameter("ringShadowTexCoord", light) + ", 0.0)).a);\n";
+    }
+
+    return source;
+}
+
+
+static string
+Shadow(unsigned int light, unsigned int shadow)
+{
+    string source;
+
+    source += "shadowCenter = " +
+        IndexedParameter("shadowTexCoord", light, shadow) +
+        " - vec2(0.5, 0.5);\n";
+    source += "shadowR = clamp(dot(shadowCenter, shadowCenter) * " +
+        IndexedParameter("shadowScale", light, shadow) + " + " +
+        IndexedParameter("shadowBias", light, shadow) + ", 0.0, 1.0);\n";
+    source += "shadow *= sqrt(shadowR);\n";
+
+    return source;
+}
+
+
+static string
+ShadowsForLightSource(const ShaderProperties& props, unsigned int light)
+{
+    string source = BeginLightSourceShadows(props, light);
+
+    for (unsigned int i = 0; i < props.getShadowCountForLight(light); i++)
+        source += Shadow(light, i);
+
+    return source;
+}
+
+
+
 GLVertexShader*
 ShaderManager::buildVertexShader(const ShaderProperties& props)
 {
@@ -438,14 +503,18 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     source += DeclareLights(props);
     if (props.lightModel == ShaderProperties::SpecularModel)
         source += "uniform float shininess;\n";
-    if (!props.usesShadows() && !props.usesFragmentLighting())
+
+    if (!props.usesFragmentLighting())
     {
-        source += "uniform vec3 ambientColor;\n";
-        source += "varying vec4 diff;\n";
-    }
-    else
-    {
-        source += "varying vec4 diffFactors;\n";
+        if (!props.usesShadows())
+        {
+            source += "uniform vec3 ambientColor;\n";
+            source += "varying vec4 diff;\n";
+        }
+        else 
+        {
+            source += "varying vec4 diffFactors;\n";
+        }
     }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
@@ -620,7 +689,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "varying vec4 diff;\n";
     }
 
-    if (props.usesShadows())
+    if (props.usesShadows() && !props.usesFragmentLighting())
     {
         source += "varying vec4 diffFactors;\n";
     }
@@ -684,6 +753,17 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
 
+    if (props.usesShadows())
+    {
+        // Temporaries required for shadows
+        source += "float shadow;\n";
+        if (props.shadowCounts != 0)
+        {
+            source += "vec2 shadowCenter;\n";
+            source += "float shadowR;\n";
+        }
+    }
+
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
         source += "vec3 n = texture2D(normTex, normTexCoord.st).xyz * 2 - vec3(1, 1, 1);\n";
@@ -691,53 +771,34 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         for (unsigned i = 0; i < props.nLights; i++)
         {
             // Bump mapping with self shadowing
-            source += "l = max(0, dot(" + LightDir(i) + ", n)) * clamp(" + LightDir(i) + ".z * 8, 0, 1);\n";
-            source += "diff += vec4(l * " + FragLightProperty(i, "color") + ", 0);\n";
+            source += "l = max(0.0, dot(" + LightDir(i) + ", n)) * clamp(" + LightDir(i) + ".z * 8.0, 0.0, 1.0);\n";
+
+            if (props.hasShadowsForLight(i))
+            {
+                source += ShadowsForLightSource(props, i);
+                source += "diff += vec4(l * " + FragLightProperty(i, "color") + ", 0) * shadow;\n";
+            }
+            else
+            {
+                source += "diff += vec4(l * " + FragLightProperty(i, "color") + ", 0);\n";
+            }
         }
     }
     else if (props.usesShadows())
     {
-        source += "float shadow;\n";
-        if (props.shadowCounts != 0)
-        {
-            source += "vec2 shadowCenter;\n";
-            source += "float shadowR;\n";
-        }
-
+        // Sum the contributions from each light source
         for (unsigned i = 0; i < props.nLights; i++)
         {
-            source += "shadow = " + SeparateDiffuse(i) + ";\n";
-            if (props.texUsage & ShaderProperties::RingShadowTexture)
-            {
-                source += "shadow *= (1.0 - texture2D(ringTex, vec2(" +
-                    IndexedParameter("ringShadowTexCoord", i) + ", 0)).a);\n";
-            }
-            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
-            {
-                source += "shadowCenter = " +
-                    IndexedParameter("shadowTexCoord", i, j) +
-                    " - vec2(0.5, 0.5);\n";
-                source += "shadowR =clamp(dot(shadowCenter, shadowCenter) * " +
-                    IndexedParameter("shadowScale", i, j) + " + " +
-                    IndexedParameter("shadowBias", i, j) + ", 0, 1);\n";
-                source += "shadow *= sqrt(shadowR);\n";
-            }
-
+            source += ShadowsForLightSource(props, i);
             source += "diff += shadow * vec4(" +
-                FragLightProperty(i, "color") + ", 0);\n";
-#if 0
-            source += "diff += ((1.0 - texture2D(ringTex, vec2(" +
-                IndexedParameter("ringShadowTexCoord", i) + ", 0)).a) * " +
-                SeparateDiffuse(i) + ") * vec4(" +
-                FragLightProperty(i, "color") + ", 0);\n";
-#endif
+                FragLightProperty(i, "color") + ", 0.0);\n";
         }
     }
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "color = texture2D(diffTex, diffTexCoord.st);\n";
     else
-        source += "color = diff;\n";
+        source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
 
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
