@@ -22,6 +22,7 @@
 #include <cctype>
 #include <cstring>
 #include <cassert>
+#include <ctime>
 #include <celengine/gl.h>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
@@ -563,6 +564,10 @@ void CelestiaCore::charEntered(char c)
         textEnterMode = true;
         break;
 
+    case '\b':
+        sim->setSelection(Selection());
+        break;
+
     case '\014': // Ctrl+L
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
         notifyWatchers(RenderFlagsChanged);
@@ -664,6 +669,12 @@ void CelestiaCore::charEntered(char c)
     case '!':
         if (editMode)
             showSelectionInfo(sim->getSelection());
+        else
+        {
+            double t = (double) time(NULL) / 86400.0 +
+                (double) astro::Date(1970, 1, 1);
+            sim->setTime(t);
+        }
         break;
 
     case '*':
