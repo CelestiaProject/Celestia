@@ -199,6 +199,7 @@ class Renderer
     double projMatrix[16];
 
     int nSimultaneousTextures;
+    bool useTexEnvCombine;
     bool useRegisterCombiners;
     bool useCubeMaps;
     bool useCompressedTextures;
