@@ -416,9 +416,7 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'V':
-        sim->setHUDDetail((sim->getHUDDetail() + 1) % 2);
         hudDetail = 1 - hudDetail;
-        hudDetail = 1;
         break;
 
     case ',':
@@ -567,7 +565,10 @@ void CelestiaCore::charEntered(char c)
 
     case '\033':
         cancelScript();
-        textEnterMode = false;
+        if (textEnterMode == true)
+            textEnterMode = false;
+        else
+            sim->setFrame(astro::Universal, Selection());
         break;
 
     case ' ':
@@ -712,14 +713,14 @@ void CelestiaCore::showText(string s)
 
 static void displayDistance(Overlay& overlay, double distance)
 {
-    if (distance < astro::kilometersToLightYears(1.0f))
-        overlay.printf("%.3f m", distance);
-    else if (distance >= astro::AUtoLightYears(1000.0f))
+    if (distance >= astro::AUtoLightYears(1000.0f))
         overlay.printf("%.3f ly", distance);
     else if (distance >= astro::kilometersToLightYears(10000000.0))
         overlay.printf("%.3f au", astro::lightYearsToAU(distance));
-    else
+    else if (distance > astro::kilometersToLightYears(1.0f))
         overlay.printf("%.3f km", astro::lightYearsToKilometers(distance));
+    else
+        overlay.printf("%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
 }
 
 static void displayStarInfo(Overlay& overlay,
@@ -830,7 +831,7 @@ void CelestiaCore::renderOverlay()
         *overlay << '\n';
         if (showFPSCounter)
             *overlay << "FPS: " << fps;
-        *overlay << "\nSpeed: " << setprecision(3) << ios::fixed;
+        *overlay << "\nSpeed: " << setprecision(3) << fixed;
 
         double speed = sim->getObserver().getVelocity().length();
         if (speed < astro::kilometersToLightYears(1.0f))
@@ -855,11 +856,21 @@ void CelestiaCore::renderOverlay()
         Simulation::ObserverMode mode = sim->getObserverMode();
         char* modeName = "";
         if (mode == Simulation::Travelling)
+        {
             modeName = "Travelling";
-        else if (mode == Simulation::Following)
-            modeName = "Following";
-        else if (mode == Simulation::GeosynchronousFollowing)
-            modeName = "Sync Orbiting";
+        }
+        else
+        {
+            switch (sim->getFrame().coordSys)
+            {
+            case astro::Ecliptical:
+                modeName = "Following";
+                break;
+            case astro::Geographic:
+                modeName = "Sync Orbiting";
+                break;
+            }
+        }
 
         glPushMatrix();
         glTranslatef(width - emWidth * 11, fontHeight + 5, 0);
@@ -874,7 +885,7 @@ void CelestiaCore::renderOverlay()
 
     // Selection info
     Selection sel = sim->getSelection();
-    if (!sel.empty())
+    if (!sel.empty() && hudDetail > 0)
     {
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
@@ -931,6 +942,7 @@ void CelestiaCore::renderOverlay()
     // Show logo at start
     if (logoTexture != NULL)
     {
+        glEnable(GL_TEXTURE_2D);
         if (currentTime < 5.0)
         {
             int xSize = (int) (logoTexture->getWidth() * 0.8f);
