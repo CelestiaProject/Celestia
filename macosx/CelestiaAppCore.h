@@ -17,10 +17,12 @@
 #import "CelestiaRenderer.h"
 
 
+@class CelestiaCore;
+
 @interface CelestiaAppCore : NSObject {
     CelestiaDestinations* _destinations;
 }
--(void*) appCore;
+-(CelestiaCore*) appCore;
 -(int)toCelestiaKey:(NSEvent*)theEvent;
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
 -(void)archive;
