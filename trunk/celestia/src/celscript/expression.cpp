@@ -13,6 +13,33 @@ using namespace std;
 using namespace celx;
 
 
+typedef Value (BinaryOperatorFunc)(const Value&, const Value&);
+typedef Value (UnaryOperatorFunc)(const Value&);
+
+static BinaryOperatorFunc AddFunc;
+static BinaryOperatorFunc SubtractFunc;
+static BinaryOperatorFunc MultiplyFunc;
+static BinaryOperatorFunc DivideFunc;
+
+static Value ErrorValue = Value();
+
+
+static BinaryOperatorFunc* BinaryOperatorFunctions[BinaryExpression::OperatorCount] =
+{
+    AddFunc,
+    SubtractFunc,
+    MultiplyFunc,
+    DivideFunc,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+
+
 BinaryExpression::BinaryExpression(Operator _op,
                                    Expression* _left,
                                    Expression* _right) :
@@ -32,7 +59,9 @@ BinaryExpression::~BinaryExpression()
 
 Value BinaryExpression::eval()
 {
-    return Value();
+    Value a = left->eval();
+    Value b = right->eval();
+    return BinaryOperatorFunctions[op](a, b);
 }
 
 
@@ -82,4 +111,69 @@ NameExpression::~NameExpression()
 Value NameExpression::eval()
 {
     return Value();
+}
+
+
+Value AddFunc(const Value& a, const Value& b)
+{
+    if (a.getType() == NumberType && b.getType() == NumberType)
+    {
+        double x0 = 0.0;
+        double x1 = 0.0;
+        a.numberValue(x0);
+        b.numberValue(x1);
+        return Value(x0 + x1);
+    }
+    else
+    {
+        return ErrorValue;
+    }
+}
+
+Value SubtractFunc(const Value& a, const Value& b)
+{
+    if (a.getType() == NumberType && b.getType() == NumberType)
+    {
+        double x0 = 0.0;
+        double x1 = 0.0;
+        a.numberValue(x0);
+        b.numberValue(x1);
+        return Value(x0 - x1);
+    }
+    else
+    {
+        return ErrorValue;
+    }
+}
+
+Value MultiplyFunc(const Value& a, const Value& b)
+{
+    if (a.getType() == NumberType && b.getType() == NumberType)
+    {
+        double x0 = 0.0;
+        double x1 = 0.0;
+        a.numberValue(x0);
+        b.numberValue(x1);
+        return Value(x0 * x1);
+    }
+    else
+    {
+        return ErrorValue;
+    }
+}
+
+Value DivideFunc(const Value& a, const Value& b)
+{
+    if (a.getType() == NumberType && b.getType() == NumberType)
+    {
+        double x0 = 0.0;
+        double x1 = 0.0;
+        a.numberValue(x0);
+        b.numberValue(x1);
+        return Value(x0 / x1);
+    }
+    else
+    {
+        return ErrorValue;
+    }
 }

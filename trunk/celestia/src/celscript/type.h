@@ -19,6 +19,7 @@ enum Type
     NumberType  = 1,
     StringType  = 2,
     VectorType  = 3,
+    BooleanType = 4,
     InvalidType = -1,
 };
 
