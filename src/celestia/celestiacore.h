@@ -408,6 +408,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int screenDpi;
     int distanceToScreen;
 
+    Selection lastSelection;
+    string selectionNames;
+
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);
     friend void getObservers(CelestiaCore*, std::vector<Observer*>&);

@@ -17,7 +17,6 @@ struct CelestiaConfig
 {
     std::string starDatabaseFile;
     std::string starNamesFile;
-    std::vector<std::string> catalogXrefFiles;
     std::vector<std::string> solarSystemFiles;
     std::vector<std::string> extrasDirs;
     std::string deepSkyCatalog;
@@ -40,6 +39,10 @@ struct CelestiaConfig
     float scriptScreenshotCount;
     std::string scriptScreenshotDirectory;
     std::string scriptSystemAccessPolicy;
+
+    std::string HDCrossIndexFile;
+    std::string SAOCrossIndexFile;
+    std::string GlieseCrossIndexFile;
 
     // Renderer detail options
     unsigned int shadowTextureSize;
