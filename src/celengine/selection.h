@@ -14,7 +14,7 @@
 #include <celengine/star.h>
 #include <celengine/body.h>
 #include <celengine/deepskyobj.h>
-
+#include <celengine/univcoord.h>
 
 class Selection
 {
