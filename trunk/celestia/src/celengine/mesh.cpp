@@ -184,6 +184,21 @@ Mesh::addGroup(PrimitiveGroupType prim,
 }
 
 
+void
+Mesh::remapIndices(const vector<uint32>& indexMap)
+{
+    for (vector<PrimitiveGroup*>::iterator iter = groups.begin();
+         iter != groups.end(); iter++)
+    {
+        PrimitiveGroup* group = *iter;
+        for (uint32 i = 0; i < group->nIndices; i++)
+        {
+            group->indices[i] = indexMap[group->indices[i]];
+        }
+    }
+}
+
+
 bool
 Mesh::pick(const Ray3d& ray, double& distance) const
 {

@@ -136,6 +136,7 @@ class Mesh
                     uint32 materialIndex,
                     uint32 nIndices,
                     uint32* indices);
+    void remapIndices(const std::vector<uint32>& indexMap);
 
     bool pick(const Ray3d& r, double& distance) const;
     void render(const std::vector<const Material*>& materials,
