@@ -65,7 +65,7 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
     if (p0.texUsage < p1.texUsage)
         return true;
-    else if (p0.texUsage < p1.texUsage)
+    else if (p1.texUsage < p0.texUsage)
         return false;
 
     if (p0.nLights < p1.nLights)
@@ -89,11 +89,10 @@ ShaderManager::~ShaderManager()
 }
 
 
-GLProgram*
+CelestiaGLProgram*
 ShaderManager::getShader(const ShaderProperties& props)
 {
-    //map<ShaderProperties*, GLProgram*>::
-    map<ShaderProperties, GLProgram*>::iterator iter = shaders.find(props);
+    map<ShaderProperties, CelestiaGLProgram*>::iterator iter = shaders.find(props);
     if (iter != shaders.end())
     {
         // Shader already exists
@@ -102,7 +101,7 @@ ShaderManager::getShader(const ShaderProperties& props)
     else
     {
         // Create a new shader and add it to the table of created shaders
-        GLProgram* prog = buildProgram(props);
+        CelestiaGLProgram* prog = buildProgram(props);
         shaders[props] = prog;
 
         return prog;
@@ -110,13 +109,85 @@ ShaderManager::getShader(const ShaderProperties& props)
 }
 
 
+CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
+                                     const ShaderProperties& props) :
+    program(&_program)
+{
+    initProperties(props);
+};
+
+
+CelestiaGLProgram::~CelestiaGLProgram()
+{
+    delete program;
+}
+
+
+FloatShaderProperty
+CelestiaGLProgram::floatProperty(const string& propertyName)
+{
+    return FloatShaderProperty(program->getID(), propertyName.c_str());
+}
+
+
+Vec3ShaderProperty
+CelestiaGLProgram::vec3Property(const string& propertyName)
+{
+    return Vec3ShaderProperty(program->getID(), propertyName.c_str());
+}
+
+
+Vec4ShaderProperty
+CelestiaGLProgram::vec4Property(const string& propertyName)
+{
+    return Vec4ShaderProperty(program->getID(), propertyName.c_str());
+}
+
 
 static string
 LightProperty(unsigned int i, char* property)
 {
     char buf[64];
-    sprintf(buf, "gl_LightSource[%d].%s", i, property);
+    sprintf(buf, "lights[%d].%s", i, property);
     return string(buf);
+}
+
+
+void
+CelestiaGLProgram::initProperties(const ShaderProperties& props)
+{
+    for (unsigned int i = 0; i < props.nLights; i++)
+    {
+        lights[i].direction  = vec3Property(LightProperty(i, "direction"));
+        lights[i].diffuse    = vec3Property(LightProperty(i, "diffuse"));
+        lights[i].specular   = vec3Property(LightProperty(i, "specular"));
+        lights[i].halfVector = vec3Property(LightProperty(i, "halfVector"));
+    }
+
+    if (props.lightModel == ShaderProperties::SpecularModel)
+    {
+        shininess            = floatProperty("shininess");
+    }
+}
+
+
+static string
+DeclareLights(const ShaderProperties& props)
+{
+    if (props.nLights == 0)
+        return string("");
+
+    char lightSourceBuf[128];
+    sprintf(lightSourceBuf,
+            "struct {\n"
+            "   vec3 direction;\n"
+            "   vec3 diffuse;\n"
+            "   vec3 specular;\n"
+            "   vec3 halfVector;\n"
+            "} uniform lights[%d];\n",
+            props.nLights);
+
+    return string(lightSourceBuf);
 }
 
 
@@ -126,9 +197,9 @@ DirectionalLight(unsigned int i)
     string source;
 
     source += "nDotVP = max(0.0, dot(gl_Normal, vec3(" +
-        LightProperty(i, "position") + ")));\n";
+        LightProperty(i, "direction") + ")));\n";
     
-    source += "diff += " + LightProperty(i, "diffuse") + " * nDotVP;\n";
+    source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 1);\n";
 
     return source;
 }
@@ -140,37 +211,26 @@ DirectionalLightSpecular(unsigned int i)
     string source;
 
     source += "nDotVP = max(0.0, dot(gl_Normal, vec3(" +
-        LightProperty(i, "position") + ")));\n";
+        LightProperty(i, "direction") + ")));\n";
     source += "nDotHV = max(0.0, dot(gl_Normal, vec3(" +
         LightProperty(i, "halfVector") + ")));\n";
 
-    source += "diff += " + LightProperty(i, "diffuse") + " * nDotVP;\n";
-    source += "spec += " + LightProperty(i, "diffuse") +
-        " * (pow(nDotHV, gl_FrontMaterial.shininess) * nDotVP);\n";
+    source += "diff += vec4(" + LightProperty(i, "diffuse") + " * nDotVP, 1);\n";
+    source += "spec += vec4(" + LightProperty(i, "specular") +
+        " * (pow(nDotHV, shininess) * nDotVP), 1);\n";
 
     return source;
 }
 
 
-#if 0
-static char* dirLightSource = 
-    "void DirectionalLightSpecular(in vec3 lightDir,\n"
-    "                              in vec3 halfVec,\n"
-    "                              in vec3 normal,\n"
-    "                              in float specExp,\n"
-    "                              inout vec4 diffuse,\n"
-    "                              inout vec4 specular)\n"
-    "{\n";
-    "    float nDotVP = max(0.0, dot(normal, lightDir));\n"
-    "    float nDotHV = max(0.0, dot(normal, halfVec));\n"
-    "    float pf = pow(nDotHV, specExp"
-#endif
-    
-
 GLVertexShader*
 ShaderManager::buildVertexShader(const ShaderProperties& props)
 {
     string source;
+
+    source += DeclareLights(props);
+    if (props.lightModel == ShaderProperties::SpecularModel)
+        source += "uniform float shininess;\n";
 
     source += "varying vec4 diff;\n";
     if (props.lightModel == ShaderProperties::SpecularModel)
@@ -196,7 +256,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "diffTexCoord = gl_MultiTexCoord0;\n";
+        source += "diffTexCoord = vec2(gl_MultiTexCoord0);\n";
     }
 
     source += "gl_Position = ftransform();\n";
@@ -238,9 +298,16 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "color = diff;\n";
 
     if (props.lightModel == ShaderProperties::SpecularModel)
-        source += "gl_FragColor = color * diff + spec;\n";
+    {
+        if (props.texUsage & ShaderProperties::SpecularInDiffuseAlpha)
+            source += "gl_FragColor = color * diff + color.a * spec;\n";
+        else
+            source += "gl_FragColor = color * diff + spec;\n";
+    }
     else
+    {
         source += "gl_FragColor = color * diff;\n";
+    }
     source += "}\n";
 
     *logFile << "Fragment shader source:\n";
@@ -255,7 +322,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 }
 
 
-GLProgram*
+CelestiaGLProgram*
 ShaderManager::buildProgram(const ShaderProperties& props)
 {
     GLProgram* prog = NULL;
@@ -276,12 +343,6 @@ ShaderManager::buildProgram(const ShaderProperties& props)
             delete fs;
     }
 
-#if 0    
-    status = GLShaderLoader::CreateProgram(defaultVertexShaderSource,
-                                           defaultFragmentShaderSource,
-                                           &prog);
-#endif
-
     if (status != ShaderStatus_OK)
     {
         // If the shader creation failed for some reason, substitute the
@@ -292,5 +353,8 @@ ShaderManager::buildProgram(const ShaderProperties& props)
                                       &prog);
     }
 
-    return prog;
+    if (prog == NULL)
+        return NULL;
+    else
+        return new CelestiaGLProgram(*prog, props);
 }

@@ -12,7 +12,7 @@
 
 #include <string>
 #include <vector>
-
+#include <celmath/vecmath.h>
 
 class GLShaderLoader;
 
@@ -65,19 +65,62 @@ class GLProgram
 {
  private:
     GLProgram(int _id);
-    virtual ~GLProgram();
 
     void attach(const GLShader&);
     GLShaderStatus link();
 
  public:
+    virtual ~GLProgram();
+
     void use() const;
+    int getID() const { return id; }
 
  private:
     int id;
 
  friend GLShaderLoader;
 };
+
+
+class FloatShaderProperty
+{
+ public:
+    FloatShaderProperty();
+    FloatShaderProperty(int _obj, const char* name);
+
+    FloatShaderProperty& operator=(float);
+    
+ private:
+    int slot;
+};
+
+
+class Vec3ShaderProperty
+{
+ public:
+    Vec3ShaderProperty();
+    Vec3ShaderProperty(int _obj, const char* name);
+
+    Vec3ShaderProperty& operator=(const Vec3f&);
+    Vec3ShaderProperty& operator=(const Point3f&);
+
+ private:
+    int slot;
+};
+
+
+class Vec4ShaderProperty
+{
+ public:
+    Vec4ShaderProperty();
+    Vec4ShaderProperty(int _obj, const char* name);
+
+    Vec4ShaderProperty& operator=(const Vec4f&);
+
+ private:
+    int slot;
+};
+
 
 
 class GLShaderLoader
