@@ -25,4 +25,6 @@ Orbit* CreateOrbit(PlanetarySystem* system,
                    const std::string& path,
                    bool usePlanetUnits);
 
+void FillinRotationElements(Hash* rotationData, RotationElements& re);
+
 #endif // _CELENGINE_PARSEOBJECT_H_

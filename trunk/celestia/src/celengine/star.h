@@ -17,6 +17,7 @@
 #include <celengine/univcoord.h>
 #include <celengine/celestia.h>
 #include <celengine/stellarclass.h>
+#include <celengine/rotation.h>
 #include <celengine/multitexture.h>
 
 class Orbit;
@@ -24,13 +25,15 @@ class Star;
 
 class StarDetails
 {
+    // TODO: This class really needs an assignment operator and
+    // copy constructor.  We need to do some management tracking of
+    // orbits and StarDetails objects.  Currently, it's assumed that they
+    // have lifetimes that continue until program termination.
  public:
     StarDetails::StarDetails();
 
     inline float getRadius() const;
     inline float getTemperature() const;
-    inline float getRotationPeriod() const;
-    inline Vec3f getSemiAxes() const;
     inline ResourceHandle getModel() const;
     inline MultiResTexture getTexture() const;
     inline Orbit* getOrbit() const;
@@ -39,10 +42,11 @@ class StarDetails
     inline float getBolometricCorrection() const;
     inline const Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
+    inline const RotationElements& getRotationElements() const;
+    inline Vec3f getEllipsoidSemiAxes() const;
 
     void setRadius(float);
     void setTemperature(float);
-    void setRotationPeriod(float);
     void setSpectralType(const std::string&);
     void setBolometricCorrection(float);
     void setTexture(const MultiResTexture&);
@@ -51,6 +55,8 @@ class StarDetails
     void setOrbitBarycenter(Star*);
     void computeOrbitalRadius();
     void setVisibility(bool);
+    void setRotationElements(const RotationElements&);
+    void setEllipsoidSemiAxes(const Vec3f&);
     
     enum
     {
@@ -66,7 +72,6 @@ class StarDetails
     float radius;
     float temperature;
     float bolometricCorrection;
-    float rotationPeriod;
 
     uint32 knowledge;
     bool visible;
@@ -78,6 +83,10 @@ class StarDetails
     Orbit* orbit;
     float orbitalRadius;
     Star* barycenter;
+
+    RotationElements rotationElements;
+
+    Vec3f semiAxes;
 
  public:
     static StarDetails* GetStarDetails(const StellarClass&);
@@ -106,18 +115,6 @@ float
 StarDetails::getTemperature() const
 {
     return temperature;
-}
-
-float
-StarDetails::getRotationPeriod() const
-{
-    return rotationPeriod;
-}
-
-Vec3f
-StarDetails::getSemiAxes() const
-{
-    return Vec3f(radius, radius, radius);
 }
 
 ResourceHandle
@@ -180,6 +177,18 @@ StarDetails::getVisibility() const
     return visible;
 }
 
+const RotationElements&
+StarDetails::getRotationElements() const
+{
+    return rotationElements;
+}
+
+Vec3f
+StarDetails::getEllipsoidSemiAxes() const
+{
+    return semiAxes;
+}
+
 
 class Star
 {
@@ -206,10 +215,11 @@ public:
     void setOrbitBarycenter(Star*);
     void computeOrbitalRadius();
 
+    void setRotationElements(const RotationElements&);
+
     // Accessor methods that delegate to StarDetails
     float getRadius() const;
     inline float getTemperature() const;
-    inline float getRotationPeriod() const;
     inline const char* getSpectralType() const;
     inline float getBolometricMagnitude() const;
     MultiResTexture getTexture() const;
@@ -219,6 +229,8 @@ public:
     inline const Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
     inline uint32 getKnowledge() const;
+    inline const RotationElements& getRotationElements() const;
+    inline Vec3f getEllipsoidSemiAxes() const;
 
     enum {
         MaxTychoCatalogNumber = 0xf0000000,
@@ -270,12 +282,6 @@ Star::getTemperature() const
     return details->getTemperature();
 }
 
-float
-Star::getRotationPeriod() const
-{
-    return details->getRotationPeriod();
-}
-
 const char*
 Star::getSpectralType() const
 {
@@ -310,6 +316,18 @@ bool
 Star::getVisibility() const
 {
     return details->getVisibility();
+}
+
+const RotationElements&
+Star::getRotationElements() const
+{
+    return details->getRotationElements();
+}
+
+Vec3f
+Star::getEllipsoidSemiAxes() const
+{
+    return details->getEllipsoidSemiAxes();
 }
 
 #endif // _STAR_H_
