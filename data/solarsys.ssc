@@ -1035,10 +1035,10 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	Period		0.554654
 	SemiMajorAxis	73548
 	Eccentricity	0.0014
-	Inclination	0.748	#
-	AscendingNode	321.000	#
-	ArgOfPericenter	227.893	# J2000.0
-	MeanAnomaly     146.131	#
+	Inclination	0.744	#
+	AscendingNode	324.857	#
+	ArgOfPericenter	215.004	# J2000.0
+	MeanAnomaly     157.543	#
 	}
 
 	Obliquity              	  0.1
@@ -1059,12 +1059,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	{
 	Epoch		2450085.5 # 1996 Jan 3 00:00UT
 	Period		1.122315  # mean
-	SemiMajorAxis	117600    # mean
-	Eccentricity	0.0004    # mean
-	Inclination	1.101     # at epoch
-	AscendingNode	327.378   # at epoch
-	ArgOfPericenter	277.888   # at epoch 
-	MeanAnomaly	206.367   # at epoch 
+	SemiMajorAxis	117647    # mean
+	Eccentricity	0.0005    # mean
+	Inclination	1.090     # at epoch
+	AscendingNode	330.943   # at epoch
+	ArgOfPericenter	267.246   # at epoch 
+	MeanAnomaly	213.916   # at epoch 
 	}
 
 	Obliquity              	  0.6
