@@ -17,7 +17,7 @@
 
 void SetupCombinersBumpMap(CTexture& bumpTexture,
                            CTexture& normalizationTexture,
-                           float* ambientColor)
+                           Color ambientColor)
 {
     glEnable(GL_REGISTER_COMBINERS_NV);
 
@@ -33,7 +33,11 @@ void SetupCombinersBumpMap(CTexture& bumpTexture,
     // Just a single combiner stage required . . .
     glCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV, 1);
 
-    glCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV, ambientColor);
+    float ambient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    ambient[0] = ambientColor.red();
+    ambient[1] = ambientColor.green();
+    ambient[2] = ambientColor.blue();
+    glCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV, ambient);
 
     // Compute N dot L in the RGB portion of combiner 0
     // Load register A with a normal N from the normal map
