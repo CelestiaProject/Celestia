@@ -30,26 +30,27 @@
 #define ID_RENDER_AMBIENTLIGHT_NONE     40014
 #define ID_RENDER_AMBIENTLIGHT_LOW      40015
 #define ID_RENDER_AMBIENTLIGHT_MEDIUM   40016
-#define ID_NAVIGATION_HOME              40017
-#define ID_NAVIGATION_SELECT            40018
-#define ID_NAVIGATION_GOTO              40019
-#define ID_NAVIGATION_FOLLOW            40020
-#define ID_NAVIGATION_BLAH              40021
-#define ID_TIME_FASTER                  40023
-#define ID_TIME_SLOWER                  40024
-#define ID_TIME_FREEZE                  40025
-#define ID_HELP_LICENSE                 40026
-#define ID_NAVIGATION_CENTER            40027
-#define ID_TIME_REALTIME                40028
-#define ID_RENDER_SHOWSTARLABELS        40029
-#define ID_TIME_SETTIME                 40030
+#define ID_RENDER_PERPIXEL_LIGHTING     40017
+#define ID_NAVIGATION_HOME              40018
+#define ID_NAVIGATION_SELECT            40019
+#define ID_NAVIGATION_GOTO              40020
+#define ID_NAVIGATION_FOLLOW            40021
+#define ID_NAVIGATION_BLAH              40023
+#define ID_TIME_FASTER                  40024
+#define ID_TIME_SLOWER                  40025
+#define ID_TIME_FREEZE                  40026
+#define ID_HELP_LICENSE                 40027
+#define ID_NAVIGATION_CENTER            40028
+#define ID_TIME_REALTIME                40029
+#define ID_RENDER_SHOWSTARLABELS        40030
+#define ID_TIME_SETTIME                 40031
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        110
-#define _APS_NEXT_COMMAND_VALUE         40031
+#define _APS_NEXT_COMMAND_VALUE         40032
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
