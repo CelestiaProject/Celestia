@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="4">
+<kpartgui name="celestia" version="5">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -81,6 +81,9 @@
   <Action name="accelerateTime" />
   <Action name="setTimeNow"><text>Now</text></Action>
   <Separator name="separator_2" />
+  <Action name="splitH" />
+  <Action name="splitV" />
+  <Action name="cycleView" />
   <Action name="file_quit" />
 </ToolBar>
 </kpartgui>

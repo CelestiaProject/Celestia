@@ -120,6 +120,9 @@ public slots:
     void slotAmbientLightLevel(float l);
     void slotFaintestVisible(float m);
     void slotHudDetail(int l);
+    void slotSplitH();
+    void slotSplitV();
+    void slotCycleView();
 
     void slotCelestialBrowser();
     void slotEclipseFinder();
