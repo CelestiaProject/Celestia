@@ -21,17 +21,6 @@
 using namespace std;
 
 
-RotationElements::RotationElements() :
-    period(1.0f),
-    offset(0.0f),
-    epoch(astro::J2000),
-    obliquity(0.0f),
-    ascendingNode(0.0f),
-    precessionRate(0.0f)
-{
-}
-
-
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     orbitRefPlane(astro::BodyEquator),

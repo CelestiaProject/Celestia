@@ -1,14 +1,14 @@
 // body.h
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2004 Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _BODY_H_
-#define _BODY_H_
+#ifndef _CELENGINE_BODY_H_
+#define _CELENGINE_BODY_H_
 
 #include <string>
 #include <vector>
@@ -19,7 +19,7 @@
 #include <celengine/orbit.h>
 #include <celengine/star.h>
 #include <celengine/location.h>
-#include <celengine/astro.h>
+#include <celengine/rotation.h>
 
 
 class Body;
@@ -54,20 +54,6 @@ class PlanetarySystem
     Star* star;
     Body* primary;
     std::vector<Body*> satellites;
-};
-
-
-class RotationElements
-{
- public:
-    RotationElements();
-
-    float period;        // sidereal rotation period
-    float offset;        // rotation at epoch
-    double epoch;
-    float obliquity;     // tilt of rotation axis w.r.t. ecliptic
-    float ascendingNode; // long. of ascending node of equator on the ecliptic
-    float precessionRate; // rate of precession of rotation axis in rads/day
 };
 
 
@@ -218,4 +204,4 @@ class Body
     mutable bool locationsComputed;
 };
 
-#endif // _BODY_H_
+#endif // _CELENGINE_BODY_H_
