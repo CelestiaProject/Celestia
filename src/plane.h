@@ -23,6 +23,8 @@ template<class T> class Plane
     inline Plane(const Vector3<T>&, T);
     inline Plane(const Vector3<T>&, const Point3<T>&);
 
+    T distanceTo(const Point3<T>&);
+
  public:
     Vector3<T> normal;
     T d;
@@ -51,6 +53,11 @@ template<class T> Plane<T>::Plane(const Vector3<T>& _normal, const Point3<T>& _p
     normal(_normal)
 {
     d = _normal.x * _point.x + _normal.y * _point.y + _normal.z * _point.z;
+}
+
+template<class T> T Plane<T>::distanceTo(const Point3<T>& p)
+{
+    return normal.x * p.x + normal.y * p.y + normal.z * p.z - d;
 }
 
 #endif // _PLANE_H_
