@@ -60,7 +60,7 @@ static int mainWindow = 1;
 
 
 
-void Resize(int w, int h)
+static void Resize(int w, int h)
 {
     appCore->resize(w, h);
 }
@@ -70,7 +70,7 @@ void Resize(int w, int h)
  * Definition of GLUT callback functions
  */
 
-void Display(void)
+static void Display(void)
 {
     if (ready)
     {
@@ -79,7 +79,7 @@ void Display(void)
     }
 }
 
-void Idle(void)
+static void Idle(void)
 {
     if (glutGetWindow() != mainWindow)
         glutSetWindow(mainWindow);
@@ -89,7 +89,7 @@ void Idle(void)
     Display();
 }
 
-void MouseDrag(int x, int y)
+static void MouseDrag(int x, int y)
 {
     int buttons = 0;
     if (leftButton)
@@ -105,7 +105,7 @@ void MouseDrag(int x, int y)
     lastY = y;
 }
 
-void MouseButton(int button, int state, int x, int y)
+static void MouseButton(int button, int state, int x, int y)
 {
 #ifdef MACOSX
     if (button == GLUT_LEFT_BUTTON) {
@@ -154,23 +154,24 @@ void MouseButton(int button, int state, int x, int y)
 }
 
 
-void KeyPress(unsigned char c, int x, int y)
+static void KeyPress(unsigned char c, int x, int y)
 {
     // Ctrl-Q exits
     if (c == '\021')
         exit(0);
 
     appCore->charEntered((char) c);
-    appCore->keyDown((int) c);
+    //appCore->keyDown((int) c);
 }
 
-void KeyUp(unsigned char c, int x, int y)
+
+static void KeyUp(unsigned char c, int x, int y)
 {
     appCore->keyUp((int) c);
 }
 
 
-void HandleSpecialKey(int key, bool down)
+static void HandleSpecialKey(int key, bool down)
 {
     int k = -1;
     switch (key)
@@ -211,7 +212,18 @@ void HandleSpecialKey(int key, bool down)
     case GLUT_KEY_F6:
         k = CelestiaCore::Key_F6;
         break;
+    case GLUT_KEY_F7:
+        k = CelestiaCore::Key_F7;
+        break;
+    case GLUT_KEY_F11:
+        k = CelestiaCore::Key_F11;
+        break;
+    case GLUT_KEY_F12:
+        k = CelestiaCore::Key_F12;
+        break;
     }
+    /* Glut doesn't seem to handle Keypad Keys, so we can't pass them on.
+       They will be passed as the appropriate Special keys instead */
 
     if (k >= 0)
     {
@@ -223,20 +235,20 @@ void HandleSpecialKey(int key, bool down)
 }
 
 
-void SpecialKeyPress(int key, int x, int y)
+static void SpecialKeyPress(int key, int x, int y)
 {
     HandleSpecialKey(key, true);
 }
 
 
-void SpecialKeyUp(int key, int x, int y)
+static void SpecialKeyUp(int key, int x, int y)
 {
     HandleSpecialKey(key, false);
 }
 
 #ifdef MACOSX
-void menuCallback (int which);
-void initMenus(void) {
+static void menuCallback (int which);
+static void initMenus(void) {
     int gMain,gNavigation,gTime,gLabels,gRendering;
     int gViews,gSpaceflight,gNumber,gJoystick,gMouse;
     gMain=gNavigation=gTime=gLabels=gRendering=0;
@@ -336,7 +348,7 @@ void initMenus(void) {
         appCore->keyUp(CelestiaCore::Key_##WHICH); \
         break
 
-void menuCallback (int which) {
+static void menuCallback (int which) {
     switch(which) {
         // main menu
         caseKey(1,'h');
@@ -396,12 +408,12 @@ void menuCallback (int which) {
 #endif
 
 #ifdef MACOSX
-void killLastSlash(char *buf) {
+static void killLastSlash(char *buf) {
   int i=strlen(buf);
   while (--i && buf[i]!='/') {}
   if (buf[i]=='/') buf[i]=0;
 }
-void dirFixup(char *argv0) {
+static void dirFixup(char *argv0) {
     char *myPath;
     assert(myPath=(char *)malloc(strlen(argv0)+128));
     strcpy(myPath,argv0);
