@@ -221,7 +221,7 @@ void InitExtRegisterCombiners()
 void InitExtPalettedTexture()
 {
 #ifdef GET_GL_PROC_ADDRESS
-    glColorTableEXT = (void *) GET_GL_PROC_ADDRESS("glColorTableEXT");
+    glColorTableEXT = (PFNGLCOLORTABLEEXTPROC) GET_GL_PROC_ADDRESS("glColorTableEXT");
 #endif // _GET_GL_PROC_ADDRESS
 }
 
