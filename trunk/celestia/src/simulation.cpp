@@ -291,7 +291,19 @@ void Simulation::update(double dt)
         Quatd q = followInfo.offsetR * followInfo.body->getEclipticalToGeographic(simTime);
         observer.setOrientation(Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z));
     }
-    else
+    else if (observerMode == Tracking)
+    {
+        if (!selection.empty())
+        {
+            Vec3f up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
+            Vec3d vn = getSelectionPosition(selection, simTime) -
+                observer.getPosition();
+            Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
+            observer.setOrientation(lookAt(Point3f(0, 0, 0), to, up));
+        }
+    }
+
+    if (observerMode == Free || observerMode == Tracking)
     {
         if (observer.getVelocity() != targetVelocity)
         {
@@ -873,6 +885,14 @@ void Simulation::geosynchronousFollow()
             }
         }
     }
+}
+
+void Simulation::track()
+{
+    if (observerMode == Tracking)
+        observerMode = Free;
+    else
+        observerMode = Tracking;
 }
 
 
