@@ -1958,10 +1958,10 @@ static void HandleCaptureImage(HWND hWnd)
 
     // OFN_HIDEREADONLY - Do not display read-only JPEG or PNG files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
-    Ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+    Ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;
 
     // Display the Save dialog box.
-    if(GetSaveFileName(&Ofn))
+    if (GetSaveFileName(&Ofn))
     {
         // If you got here, a path and file has been specified.
         // Ofn.lpstrFile contains full path to specified file
@@ -1975,19 +1975,20 @@ static void HandleCaptureImage(HWND hWnd)
 
         DWORD nFileType=0;
         char defaultExtensions[][4] = {"jpg", "png"};
-        if(Ofn.nFileExtension == 0)
+        if (Ofn.nFileExtension == 0)
         {
-            //If no extension was specified, use the selection of filter to determine
-            //which type of file should be created, instead of just defaulting to JPEG.
+            // If no extension was specified, use the selection of filter to
+            // determine which type of file should be created, instead of
+            // just defaulting to JPEG.
             nFileType = Ofn.nFilterIndex;
             strcat(Ofn.lpstrFile, ".");
             strcat(Ofn.lpstrFile, defaultExtensions[nFileType-1]);
         }
-        else if(*(Ofn.lpstrFile + Ofn.nFileExtension) == '\0')
+        else if (*(Ofn.lpstrFile + Ofn.nFileExtension) == '\0')
         {
-            //If just a period was specified for the extension, use the selection of
-            //filter to determine which type of file should be created, instead of
-            //just defaulting to JPEG.
+            // If just a period was specified for the extension, use the
+            // selection of filter to determine which type of file should be
+            // created instead of just defaulting to JPEG.
             nFileType = Ofn.nFilterIndex;
             strcat(Ofn.lpstrFile, defaultExtensions[nFileType-1]);
         }
