@@ -14,6 +14,7 @@
 #include <vector>
 #include "color.h"
 #include "surface.h"
+#include "atmosphere.h"
 #include "orbit.h"
 #include "star.h"
 #include "quaternion.h"
@@ -98,6 +99,8 @@ class Body
 
     RingSystem* getRings() const;
     void setRings(const RingSystem&);
+    const Atmosphere* getAtmosphere() const;
+    void setAtmosphere(const Atmosphere&);
 
     void setMesh(int);
     int getMesh() const;
@@ -137,6 +140,7 @@ class Body
     ResourceHandle mesh;
     Surface surface;
 
+    Atmosphere* atmosphere;
     RingSystem* rings;
 
     PlanetarySystem* satellites;

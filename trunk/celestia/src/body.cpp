@@ -194,6 +194,19 @@ void Body::setRings(const RingSystem& _rings)
 }
 
 
+const Atmosphere* Body::getAtmosphere() const
+{
+    return atmosphere;
+}
+
+void Body::setAtmosphere(const Atmosphere& _atmosphere)
+{
+    if (atmosphere == NULL)
+        atmosphere = new Atmosphere();
+    *atmosphere = _atmosphere;
+}
+
+
 // Get a matrix which converts from local to heliocentric coordinates
 Mat4d Body::getLocalToHeliocentric(double when)
 {
