@@ -32,6 +32,46 @@
 
 using namespace std;
 
+enum Disposition
+{
+    AddObject,
+    ReplaceObject,
+    OverrideObject,
+};
+
+
+/*!
+  Solar system catalog (.ssc) files contain items of three different types:
+  bodies, locations, and alternate surfaces.  Bodies planets, moons, asteroids,
+  comets, and spacecraft.  Locations are points on the surfaces of bodies which
+  may be labelled but aren't rendered.  Alternate surfaces are additional
+  surface definitions for bodies.
+
+  An ssc file contains zero or more definitions of this form:
+
+  \code
+  [disposition] [item type] "name" "parent name"
+  {
+     ...object info fields...
+  }
+  \endcode
+
+  The disposition of the object determines what happens if an item with the
+  same parent and same name already exists.  It may be one of the following:
+  - Add - Default if none is specified.  Add the item even if one of the
+    same name already exists.
+  - Replace - Replace an existing item with the new one
+  - Override - Modify the existing item, changing the fields that appear
+    in the new definition.
+
+  All dispositions are equivalent to add if no item of the same name
+  already exists.
+
+  The item type is one of Body, Location, or AltSurface, defaulting to
+  Body when no type is given.
+
+  The name and parent name are both mandatory.
+*/
 
 static void errorMessagePrelude(const Tokenizer& tok)
 {
@@ -265,7 +305,7 @@ static void FillinRotationElements(Hash* rotationData,
                                    float orbitalPeriod)
 {
     // The default is synchronous rotation (rotation period == orbital period)
-    float period = orbitalPeriod * 24.0f;
+    float period = orbitalPeriod;
     if (rotationData->getNumber("RotationPeriod", period))
         re.period = period / 24.0f;
 
@@ -287,6 +327,7 @@ static void FillinRotationElements(Hash* rotationData,
     if (rotationData->getNumber("PrecessionRate", precessionRate))
         re.precessionRate = degToRad(precessionRate);
 }
+
 
 static Orbit* CreateOrbit(PlanetarySystem* system,
                           Hash* planetData,
@@ -365,17 +406,16 @@ static Body* CreatePlanet(PlanetarySystem* system,
                           Body* existingBody,
                           Hash* planetData,
                           const string& path,
+                          Disposition disposition,
                           bool usePlanetUnits = true)
 {
     Body* body = NULL;
-    bool override = false;
-    string mode = "Add";
-    planetData->getString("Mode", mode);
-    if (mode == "Override")
+  
+    if (disposition == OverrideObject)
     {
-        override = true;
         body = existingBody;
     }
+
     if (body == NULL)
     {
         body = new Body(system);
@@ -469,12 +509,12 @@ static Body* CreatePlanet(PlanetarySystem* system,
         body->setOrientation(orientation);
 
     RotationElements re = body->getRotationElements();
-    re.period = (float) body->getOrbit()->getPeriod() / 24.0f;
+    re.period = (float) body->getOrbit()->getPeriod();
     FillinRotationElements(planetData, re, (float) body->getOrbit()->getPeriod());
     body->setRotationElements(re);
 
     Surface surface;
-    if (override)
+    if (disposition == OverrideObject)
     {
         surface = body->getSurface();
     }
@@ -518,7 +558,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 assert(atmosData != NULL);
                 
                 Atmosphere* atmosphere = NULL;
-                if (override)
+                if (disposition == OverrideObject)
                 {
                     atmosphere = body->getAtmosphere();
                 }
@@ -544,7 +584,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 }
 
                 body->setAtmosphere(*atmosphere);
-                if (!override)
+                if (disposition == OverrideObject)
                     delete atmosphere;
             }
 
@@ -598,6 +638,28 @@ bool LoadSolarSystemObjects(istream& in,
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
+        // Read the disposition; if none is specified, the default is Add.
+        Disposition disposition = AddObject;
+        if (tokenizer.getTokenType() == Tokenizer::TokenName)
+        {
+            if (tokenizer.getNameValue() == "Add")
+            {
+                disposition = AddObject;
+                tokenizer.nextToken();
+            }
+            else if (tokenizer.getNameValue() == "Replace")
+            {
+                disposition = ReplaceObject;
+                tokenizer.nextToken();
+            }
+            else if (tokenizer.getNameValue() == "Override")
+            {
+                disposition = OverrideObject;
+                tokenizer.nextToken();
+            }
+        }
+
+        // Read the item type; if none is specified the default is Body
         string itemType("Body");
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
@@ -671,26 +733,24 @@ bool LoadSolarSystemObjects(istream& in,
 
             if (parentSystem != NULL)
             {
-                string mode = "Add";
-                objectData->getString("Mode", mode);
                 Body* existingBody = parentSystem->find(name);
-                if (existingBody && mode == "Add")
+                if (existingBody && disposition == AddObject)
                 {
                     errorMessagePrelude(tokenizer);
                     cerr << "warning duplicate definition of " <<
                         parentName << " " <<  name << '\n';
                 }
                 
-                Body* body = CreatePlanet(parentSystem, existingBody, objectData, directory, !orbitsPlanet);
+                Body* body = CreatePlanet(parentSystem, existingBody, objectData, directory, disposition, !orbitsPlanet);
                 if (body != NULL)
                 {
                     body->setName(name);
-                    if (mode == "Replace")
+                    if (disposition == ReplaceObject)
                     {
                         delete existingBody;
                         parentSystem->addBody(body);
                     } 
-                    else if (mode == "Add")
+                    else if (disposition == AddObject)
                     {
                         parentSystem->addBody(body);
                     }
