@@ -253,6 +253,9 @@ class CelestiaWatcher
         LabelFlags = 1,
         RenderFlags = 2,
         VerbosityLevel = 4,
+        TimeZone = 8,
+        AmbientLight = 16,
+        Faintest = 32,
     };
 
  private:

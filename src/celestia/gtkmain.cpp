@@ -554,10 +554,10 @@ static int infoChanged(GtkButton *button, int info)
 }
 
 
-extern void resyncMenus();
+extern void resyncAll();
 
 GtkWidget *showFrame=NULL, *labelFrame=NULL, *showBox=NULL, *labelBox=NULL;
-GtkWidget *optionDialog=NULL;
+GtkWidget *optionDialog=NULL, *spinner = NULL;
 
 static void menuOptions()
 {
@@ -607,7 +607,7 @@ static void menuOptions()
     GtkAdjustment *adj = (GtkAdjustment *)
                          gtk_adjustment_new((float)appSim->getFaintestVisible(),
                                             1.001, 11.999, 0.5, 2.0, 0.0);
-    GtkWidget *spinner = gtk_spin_button_new (adj, 0.5, 0);
+    spinner = gtk_spin_button_new (adj, 0.5, 0);
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON (spinner), TRUE);
     gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spinner), FALSE);
     gtk_spin_button_set_shadow_type (GTK_SPIN_BUTTON (spinner), GTK_SHADOW_IN);
@@ -643,7 +643,7 @@ static void menuOptions()
     gtk_widget_show(label2);
     gtk_widget_show(hbox);
 
-    resyncMenus();
+    resyncAll();
 
     gnome_dialog_close_hides(GNOME_DIALOG(optionDialog), true);
     gtk_window_set_modal(GTK_WINDOW(optionDialog), TRUE);
@@ -2380,13 +2380,14 @@ void resyncMenus()
             gtk_widget_show(GTK_WIDGET(cfunc->optWidget));
         }
     }
-    if(optionDialog) // Only  modify these if optionsDialog is setup
+}
+
+void resyncAmbient()
+{
+    if(optionDialog) // Only  modify if optionsDialog is setup
     {
-        int index=appCore->getHudDetail();
-        if(!(infoGads[index])->active)
-            gtk_toggle_button_set_active(infoGads[index],1);
         float ambient=appRenderer->getAmbientLightLevel();
-        index=3;
+        int index=3;
         for(int i=3;(ambient<=amLevels[i]) && (i>=0);i--)
             index=i;
         if(!(ambientGads[index])->active)
@@ -2395,8 +2396,39 @@ void resyncMenus()
 }
 
 
-/* Our own watcher. Celestiacore will call notifyChange()
-   to tell us we need to recheck the check menu items. */
+void resyncFaintest()
+{
+    if(optionDialog) // Only  modify if optionsDialog is setup
+    {
+        float val=appSim->getFaintestVisible();
+        if(val != gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(spinner)))
+            gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinner), (gfloat)val);
+    }
+}
+
+
+void resyncHudDet()
+{
+    if(optionDialog) // Only  modify if optionsDialog is setup
+    {
+        int index=appCore->getHudDetail();
+        if(!(infoGads[index])->active)
+            gtk_toggle_button_set_active(infoGads[index],1);
+    }
+}
+
+
+void resyncAll()
+{
+    resyncMenus();
+    resyncAmbient();
+    resyncHudDet();
+    resyncFaintest();
+}
+
+
+/* Our own watcher. Celestiacore will call notifyChange() to tell us
+   we need to recheck the check menu items and option buttons. */
 
 class GtkWatcher : public CelestiaWatcher
 {
@@ -2405,6 +2437,11 @@ public:
     virtual void notifyChange(int);
     void renderFlagsChanged();
     void labelFlagsChanged();
+    void timeZoneChanged();
+    void ambientLightChanged();
+    void faintestChanged();
+    void hudDetailChanged();
+
 };
 
 
@@ -2419,6 +2456,14 @@ void GtkWatcher::notifyChange(int property)
         renderFlagsChanged();
     else if (property == LabelFlags)
         labelFlagsChanged();
+    else if (property == TimeZone)
+        timeZoneChanged();
+    else if (property == AmbientLight)
+        ambientLightChanged();
+    else if (property == Faintest)
+        faintestChanged();
+    else if (property == VerbosityLevel)
+        hudDetailChanged();
 }
 
 void GtkWatcher::renderFlagsChanged()
@@ -2430,6 +2475,30 @@ void GtkWatcher::renderFlagsChanged()
 void GtkWatcher::labelFlagsChanged()
 {
     resyncMenus();
+}
+
+
+void GtkWatcher::timeZoneChanged()
+{
+    resyncMenus();
+}
+
+
+void GtkWatcher::ambientLightChanged()
+{
+    resyncAmbient();
+}
+
+
+void GtkWatcher::faintestChanged()
+{
+    resyncFaintest();
+}
+
+
+void GtkWatcher::hudDetailChanged()
+{
+    resyncHudDet();
 }
 
 
@@ -2552,7 +2621,7 @@ int main(int argc, char* argv[])
 
     g_assert(menuItemFactory);
     gtkWatcher = new GtkWatcher(appCore);
-    resyncMenus();
+    resyncAll();
     gtk_main();
     delete captureFilename;
 
