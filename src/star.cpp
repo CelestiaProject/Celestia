@@ -154,10 +154,6 @@ void Star::setPosition(Point3f p)
     position = p;
 }
 
-void Star::setLuminosity(float lum)
-{
-    luminosity = lum;
-}
 
 void Star::setStellarClass(StellarClass sc)
 {
@@ -165,12 +161,18 @@ void Star::setStellarClass(StellarClass sc)
 }
 
 
-float Star::getAbsoluteMagnitude() const
-{
-    return astro::lumToAbsMag(luminosity);
-}
-
 void Star::setAbsoluteMagnitude(float mag)
 {
-    luminosity = astro::absMagToLum(mag);
+    absMag = mag;
+}
+
+
+float Star::getLuminosity() const
+{
+    return astro::absMagToLum(absMag);
+}
+
+void Star::setLuminosity(float lum)
+{
+    absMag = astro::lumToAbsMag(lum);
 }

@@ -24,7 +24,8 @@ public:
     inline uint32 getCatalogNumber() const;
     inline StellarClass getStellarClass() const;
     inline Point3f getPosition() const;
-    inline float getLuminosity() const;
+    inline float getAbsoluteMagnitude() const;
+    float getLuminosity() const;
     float getRadius() const;
     float getTemperature() const;
     float getRotationPeriod() const;
@@ -33,10 +34,8 @@ public:
     void setPosition(float, float, float);
     void setPosition(Point3f);
     void setStellarClass(StellarClass);
-    void setLuminosity(float);
-
-    float getAbsoluteMagnitude() const;
     void setAbsoluteMagnitude(float);
+    void setLuminosity(float);
 
     enum {
         InvalidStar = 0xffffffff
@@ -45,14 +44,14 @@ public:
 private:
     uint32 catalogNumber;
     Point3f position;
-    float luminosity;           // in units of solar luminosity
+    float absMag;
     StellarClass stellarClass;
 };
 
 
 Star::Star() : catalogNumber(0),
                position(0, 0, 0),
-               luminosity(1),
+               absMag(4.83f),
                stellarClass()
 {
 }
@@ -62,9 +61,9 @@ uint32 Star::getCatalogNumber() const
     return catalogNumber;
 }
 
-float Star::getLuminosity() const
+float Star::getAbsoluteMagnitude() const
 {
-    return luminosity;
+    return absMag;
 }
 
 StellarClass Star::getStellarClass() const

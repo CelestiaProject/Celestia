@@ -29,7 +29,7 @@ class StarHandler
 class StarOctreeNode
 {
  public:
-    StarOctreeNode(const Point3f& _center, float _luminosity);
+    StarOctreeNode(const Point3f& _center, float _absMag);
     ~StarOctreeNode();
 
     void insertStar(const Star&, float);
@@ -48,7 +48,7 @@ class StarOctreeNode
 
     int nFaintStars;
     Point3f center;
-    float luminosity;
+    float absMag;
     std::vector<const Star*>* stars;
     StarOctreeNode** children;
 };
@@ -73,7 +73,7 @@ class StarOctree
  private:
     StarOctreeNode* root;
     float scale;
-    float luminosity;
+    float absMag;
 };
 
 #endif // _OCTREE_H_
