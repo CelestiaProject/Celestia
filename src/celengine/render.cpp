@@ -680,6 +680,12 @@ void Renderer::setMinimumFeatureSize(float pixels)
 }
 
 
+float Renderer::getMinimumOrbitSize() const
+{
+    return minOrbitSize;
+}
+
+
 // Orbits and labels are only rendered when the orbit of the object
 // occupies some minimum number of pixels on screen.
 void Renderer::setMinimumOrbitSize(float pixels)
