@@ -59,12 +59,12 @@ Renderer::Renderer() :
     fov(FOV),
     renderMode(GL_FILL),
     asterisms(NULL),
+    renderFlags(ShowStars | ShowPlanets),
     labelMode(NoLabels),
     ambientLightLevel(0.1f),
     brightnessScale(1.0f / 6.0f),
     brightnessBias(0.0f),
     perPixelLightingEnabled(false),
-    cloudMappingEnabled(false),
     console(NULL),
     nSimultaneousTextures(1),
     useRegisterCombiners(false),
@@ -383,11 +383,20 @@ Console* Renderer::getConsole() const
 }
 
 
+int Renderer::getRenderFlags() const
+{
+    return renderFlags;
+}
+
+void Renderer::setRenderFlags(int _renderFlags)
+{
+    renderFlags = _renderFlags;
+}
+
 int Renderer::getLabelMode() const
 {
     return labelMode;
 }
-
 
 void Renderer::setLabelMode(int _labelMode)
 {
@@ -438,17 +447,6 @@ void Renderer::setPerPixelLighting(bool enable)
 bool Renderer::perPixelLightingSupported() const
 {
     return useCubeMaps && useRegisterCombiners;
-}
-
-
-bool Renderer::getCloudMapping() const
-{
-    return cloudMappingEnabled;
-}
-
-void Renderer::setCloudMapping(bool enable)
-{
-    cloudMappingEnabled = enable;
 }
 
 
@@ -529,11 +527,12 @@ void Renderer::render(const Observer& observer,
     glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
 
     clearLabels();
     renderList.clear();
 
-    if (galaxies != NULL)
+    if ((renderFlags & ShowGalaxies) != 0 && galaxies != NULL)
         renderGalaxies(*galaxies, observer);
 
     // Translate the camera before rendering the stars
@@ -541,10 +540,11 @@ void Renderer::render(const Observer& observer,
     glTranslatef(-observerPos.x, -observerPos.y, -observerPos.z);
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    renderStars(starDB, visset, observer);
+    if ((renderFlags & ShowStars) != 0)
+        renderStars(starDB, visset, observer);
 
     // Render asterisms
-    if (asterisms != NULL)
+    if ((renderFlags & ShowDiagrams) != 0 && asterisms != NULL)
     {
         glColor4f(0.5f, 0.0, 1.0f, 0.5f);
         glDisable(GL_TEXTURE_2D);
@@ -1162,7 +1162,7 @@ void Renderer::renderPlanet(const Body& body,
         }
 
         if ((surface.appearanceFlags & Surface::ApplyCloudMap) != 0 &&
-            cloudMappingEnabled)
+            (renderFlags & ShowCloudMaps) != 0)
         {
             if (!textureManager->find(surface.cloudTexture, &cloudTex))
                 cloudTex = textureManager->load(surface.cloudTexture, false);
@@ -1839,7 +1839,6 @@ void Renderer::renderStars(const StarDatabase& starDB,
         }
     }
 
-    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, starTex->getName());
     renderParticles(starParticles, observer.getOrientation());
     glBindTexture(GL_TEXTURE_2D, glareTex->getName());

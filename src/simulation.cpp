@@ -119,6 +119,7 @@ static void displayGalaxyInfo(Console& console,
     console << "Distance: ";
     displayDistance(console, distance);
     console << '\n';
+    console << "Type: " << galaxy.getType() << '\n';
     console << "Radius: " << galaxy.getRadius() << " ly\n";
 }
 
@@ -558,7 +559,13 @@ void Simulation::computeGotoParameters(Selection& destination, JourneyParams& jp
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
     Vec3d v = targetPosition - observer.getPosition();
     double distanceToTarget = v.length();
-    double maxOrbitDistance = (selection.body != NULL) ? astro::kilometersToLightYears(5.0f * selection.body->getRadius()) : 0.5f;
+    double maxOrbitDistance;
+    if (selection.body != NULL)
+        maxOrbitDistance = astro::kilometersToLightYears(5.0f * selection.body->getRadius());
+    else if (selection.galaxy != NULL)
+        maxOrbitDistance = 5.0f * selection.galaxy->getRadius();
+    else
+        maxOrbitDistance = 0.5f;
     double orbitDistance = (distanceToTarget > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distanceToTarget * 0.1f;
 
     v.normalize();

@@ -58,6 +58,16 @@ class Renderer
         PlanetLabels = 2,
         PlanetOrbits = 4,
     };
+    enum {
+        ShowNothing     =  0,
+        ShowStars       =  1,
+        ShowPlanets     =  2,
+        ShowGalaxies    =  4,
+        ShowDiagrams    =  8,
+        ShowCloudMaps   = 16,
+    };
+    int getRenderFlags() const;
+    void setRenderFlags(int);
     int getLabelMode() const;
     void setLabelMode(int);
     void addLabelledStar(Star*);
@@ -66,8 +76,6 @@ class Renderer
     void setAmbientLightLevel(float);
     bool getPerPixelLighting() const;
     void setPerPixelLighting(bool);
-    bool getCloudMapping() const;
-    void setCloudMapping(bool);
     bool perPixelLightingSupported() const;
 
     float getBrightnessScale() const;
@@ -165,9 +173,9 @@ class Renderer
 
     int renderMode;
     int labelMode;
+    int renderFlags;
     float ambientLightLevel;
     bool perPixelLightingEnabled;
-    bool cloudMappingEnabled;
     float brightnessBias;
     float brightnessScale;
 
