@@ -321,10 +321,10 @@ class CommandSetOrientation : public InstantaneousCommand
     float angle;
 };
 
-class CommandLookingBack : public InstantaneousCommand
+class CommandLookBack : public InstantaneousCommand
 {
  public:
-    CommandLookingBack();
+    CommandLookBack();
     void process(ExecutionEnvironment&);
 
  private:

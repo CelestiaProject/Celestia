@@ -26,7 +26,7 @@ Y    : Orbit the selected object at a rate synced to its rotation
 "    : Chase selected object (orientation is based on selection's velocity)
 T    : Track selected object (keep selected object centered in view)
 HOME : Move closer to object
-*    : Looking back
+*    : Look back
 END  : Move farther from object
 ESC  : Cancel motion or script
 Left/Right Arrows : Roll Camera
