@@ -409,7 +409,7 @@ static void menuAbout()
     }
 }
 
-static int glResX = 640;
+static int glResX = 0;
 static const int resolutions[] = { 640, 800, 1024, 1152, 1280 };
 
 // CALLBACK: Set Resolution Value.
@@ -430,16 +430,14 @@ void viewerSizeSelect(GtkWidget* w, gpointer)
 	{
 		// Get resolution according to resolutions[]
 		itemIndex = itemIndex - 2;
-
 		glResX = resolutions[itemIndex];
 	}		
 }
 
 void menuViewerSize()
 {
-	int currentX, currentY;
-//	gtk_widget_get_size_request(oglArea, &currentX, &currentY);
-	gtk_window_get_size(GTK_WINDOW(mainWindow), &currentX, &currentY);
+	int currentX, currentY, winX, winY;
+	glResX = 0;
 
     GtkWidget* dialog = gtk_dialog_new_with_buttons("Set Viewer Size...",
 	                                                GTK_WINDOW(mainWindow),
@@ -466,7 +464,7 @@ void menuViewerSize()
     GtkWidget* menu = gtk_menu_new();
 
 	char res[15];
-	sprintf(res, "Current: %d x %d", currentX, currentY);
+	sprintf(res, "Current: %d x %d", oglArea->allocation.width, oglArea->allocation.height);
 
 	GtkWidget *item = gtk_menu_item_new_with_label(res);
     gtk_menu_append(GTK_MENU(menu), item);
@@ -496,8 +494,13 @@ void menuViewerSize()
 
 	if (whichButton == GTK_RESPONSE_OK) {
 		// Set resolution accordingly
-		if (glResX > 0)
-			gtk_window_resize(GTK_WINDOW(mainWindow), glResX, int(0.75 * glResX));
+		if (glResX > 0) {
+			currentX = oglArea->allocation.width;
+			currentY = oglArea->allocation.height;
+			gtk_window_get_size(GTK_WINDOW(mainWindow), &winX, &winY);
+
+			gtk_window_resize(GTK_WINDOW(mainWindow), glResX + winX - currentX, int(0.75 * glResX) + winY - currentY);
+		}
 	}
 	
 	gtk_widget_destroy(GTK_WIDGET(dialog));
