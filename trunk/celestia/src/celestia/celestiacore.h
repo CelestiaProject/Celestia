@@ -27,7 +27,7 @@
 #include "favorites.h"
 #include "destination.h"
 #include "moviecapture.h"
-#include "url.h"
+class Url;
 
 // class CelestiaWatcher;
 class CelestiaCore;

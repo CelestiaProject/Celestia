@@ -39,7 +39,7 @@
 #include "favorites.h"
 #include "celestiacore.h"
 #include <celutil/debug.h>
-
+#include "url.h"
 
 using namespace std;
 
