@@ -56,6 +56,7 @@ BEGIN
 	MENUITEM "S&ync Orbit Selection",       ID_NAVIGATION_SYNCORBIT
 	MENUITEM SEPARATOR
 	MENUITEM "Solar System &Browser...",    ID_NAVIGATION_SSBROWSER
+	MENUITEM "Star B&rowser...",            ID_NAVIGATION_STARBROWSER
     END
     POPUP "&Time"
     BEGIN
@@ -148,7 +149,7 @@ CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
-    CTEXT           "Celestia 1.0.10",IDC_STATIC,6,7,297,9
+    CTEXT           "Celestia 1.1.0",IDC_STATIC,6,7,297,9
     CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
                     IDC_STATIC,6,53,297,9
@@ -221,11 +222,27 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,169,154,50,14
     CONTROL         "Solar System",IDC_SSBROWSER_TREE,"SysTreeView32",WS_BORDER | WS_TABSTOP | TVS_HASLINES | TVS_HASBUTTONS,
                     7,26,153,161
-    PUSHBUTTON      "Center",IDC_BUTTON_CENTER,169,26,50,14
-    PUSHBUTTON      "Go To",IDC_BUTTON_GOTO,169,44,50,14
+    PUSHBUTTON      "&Center",IDC_BUTTON_CENTER,169,26,50,14
+    PUSHBUTTON      "&Go To",IDC_BUTTON_GOTO,169,44,50,14
     LTEXT           "Solar System Objects",IDC_STATIC,7,13,74,8
 END
 
+
+IDD_STARBROWSER DIALOG DISCARDABLE  0, 0, 328, 177
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+CAPTION "Star Browser"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,271,141,50,14
+    PUSHBUTTON      "&Center",IDC_BUTTON_CENTER,271,7,50,14
+    PUSHBUTTON      "&Go To",IDC_BUTTON_GOTO,271,26,50,14
+    PUSHBUTTON      "&Refresh",IDC_BUTTON_REFRESH,271,55,50,14
+    CONTROL         "List3",IDC_STARBROWSER_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | WS_BORDER | 
+                    WS_TABSTOP,7,7,253,148
+    CONTROL         "Nearest",IDC_RADIO_NEAREST,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,7,160,41,10
+    CONTROL         "Brightest",IDC_RADIO_BRIGHTEST,"Button",BS_AUTORADIOBUTTON,                       84,160,43,10
+END
 
 
 /////////////////////////////////////////////////////////////////////////////
