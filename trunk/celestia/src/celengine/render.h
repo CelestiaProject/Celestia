@@ -79,6 +79,7 @@ class Renderer
     void clearLabelledStars();
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
+    void setMinimumOrbitSize(float);
 
     bool getFragmentShaderEnabled() const;
     void setFragmentShaderEnabled(bool);
@@ -309,6 +310,8 @@ class Renderer
         bool keep;
     };
     std::vector<CachedOrbit*> orbitCache;
+
+    float minOrbitSize;
 };
 
 #endif // _RENDER_H_

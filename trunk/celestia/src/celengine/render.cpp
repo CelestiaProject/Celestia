@@ -121,7 +121,8 @@ Renderer::Renderer() :
     useCubeMaps(false),
     useVertexPrograms(false),
     useRescaleNormal(false),
-    textureResolution(medres)
+    textureResolution(medres),
+    minOrbitSize(MinOrbitSizeForLabel)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
 }
@@ -552,6 +553,14 @@ void Renderer::setAmbientLightLevel(float level)
 }
 
 
+// Orbits and labels are only rendered when the orbit of the object
+// occupies some minimum number of pixels on screen.
+void Renderer::setMinimumOrbitSize(float pixels)
+{
+    minOrbitSize = pixels;
+}
+
+
 bool Renderer::getFragmentShaderEnabled() const
 {
     return fragmentShaderEnabled;
@@ -758,7 +767,7 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
             float orbitRadiusInPixels =
                 (float) (body->getOrbit()->getBoundingRadius() /
                          (distance * pixelSize));
-            if (orbitRadiusInPixels > MinOrbitSizeForLabel)
+            if (orbitRadiusInPixels > minOrbitSize)
             {
                 float farDistance = 
                     (float) (body->getOrbit()->getBoundingRadius() + distance);
@@ -1250,6 +1259,14 @@ void Renderer::render(const Observer& observer,
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
     glEnable(GL_LIGHTING);
+
+#if 0
+    int errCode = glGetError();
+    if (errCode != GL_NO_ERROR)
+    {
+        cout << "glError: " << (char*) gluErrorString(errCode) << '\n';
+    }
+#endif
 }
 
 
@@ -2891,7 +2908,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
             float boundingRadiusSize = (float) (body->getOrbit()->getBoundingRadius() / distanceFromObserver) / pixelSize;
-            if (boundingRadiusSize > MinOrbitSizeForLabel)
+            if (boundingRadiusSize > minOrbitSize)
             {
                 Color labelColor;
                 bool showLabel = false;
@@ -3523,6 +3540,7 @@ void Renderer::StarVertexBuffer::start(bool _usePoints)
         // type of display device.
         // glPointSize(2.0f);
         // glEnable(GL_POINT_SMOOTH);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisable(GL_TEXTURE_2D);
     }
     glDisableClientState(GL_NORMAL_ARRAY);
