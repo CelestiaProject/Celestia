@@ -1,4 +1,4 @@
-pkgdatadir = $(datadir)/@PACKAGE@/extras
+pkgdatadir = @datadir@/@PACKAGE@/extras
 
 pkgdata_DATA = $(wildcard *.ssc)
 

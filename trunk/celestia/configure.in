@@ -8,7 +8,7 @@ AC_INIT(configure.in)
 dnl For KDE interface
 AC_CONFIG_AUX_DIR(admin)
 
-AM_INIT_AUTOMAKE(celestia, 1.2.4)
+AM_INIT_AUTOMAKE(celestia, 1.2.5)
 AM_CONFIG_HEADER(config.h)
 
 AM_ACLOCAL_INCLUDE(macros)
@@ -35,6 +35,7 @@ dnl Checks for programs.
 AC_PROG_CPP
 AC_PROG_CXXCPP
 AC_PROG_INSTALL
+AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 dnl AC_PROG_RANLIB
 
@@ -267,7 +268,7 @@ if test "$prefix" = "NONE" ; then
 fi
 
 if test "$enable_kde" == "yes" ; then
-    PKGDATADIR=`eval echo "${kde_datadir}"`
+    PKGDATADIR=`eval echo "${kde_datadir}/$PACKAGE"`
     datadir=${kde_datadir}
 else
     PKGDATADIR=`eval echo "${datadir}/$PACKAGE"`

@@ -1,4 +1,4 @@
-pkgdatadir = $(datadir)/@PACKAGE@/fonts
+pkgdatadir = @datadir@/@PACKAGE@/fonts
 
 pkgdata_DATA = $(wildcard *.txf)
 

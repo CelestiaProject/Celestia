@@ -1,8 +1,9 @@
 dosstuff = celestia.mak $(wildcard *.bat)
 noinst_DATA = devguide.txt $(dosstuff)
 pkgdata_DATA = celestia.cfg $(wildcard *.cel) controls.txt COPYING
+pkgdatadir = @datadir@/@PACKAGE@
 
-EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA)
+EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA) admin
 
 SUBDIRS = src data extras textures models shaders fonts macros manual
 

@@ -1,4 +1,4 @@
-pkgdatadir = $(datadir)/@PACKAGE@/data
+pkgdatadir = @datadir@/@PACKAGE@/data
 
 ## Only attempt to remake the Star Database if we have the HIPPARCOS sources
 if ENABLE_HIPPARCOS
