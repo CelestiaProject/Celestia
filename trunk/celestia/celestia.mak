@@ -70,7 +70,6 @@ CLEAN :
 	-@erase "$(INTDIR)\perlin.obj"
 	-@erase "$(INTDIR)\regcombine.obj"
 	-@erase "$(INTDIR)\render.obj"
-	-@erase "$(INTDIR)\resmanager.obj"
 	-@erase "$(INTDIR)\selection.obj"
 	-@erase "$(INTDIR)\simulation.obj"
 	-@erase "$(INTDIR)\solarsys.obj"
@@ -175,7 +174,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\perlin.obj" \
 	"$(INTDIR)\regcombine.obj" \
 	"$(INTDIR)\render.obj" \
-	"$(INTDIR)\resmanager.obj" \
 	"$(INTDIR)\selection.obj" \
 	"$(INTDIR)\simulation.obj" \
 	"$(INTDIR)\solarsys.obj" \
@@ -250,7 +248,6 @@ CLEAN :
 	-@erase "$(INTDIR)\perlin.obj"
 	-@erase "$(INTDIR)\regcombine.obj"
 	-@erase "$(INTDIR)\render.obj"
-	-@erase "$(INTDIR)\resmanager.obj"
 	-@erase "$(INTDIR)\selection.obj"
 	-@erase "$(INTDIR)\simulation.obj"
 	-@erase "$(INTDIR)\solarsys.obj"
@@ -358,7 +355,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\perlin.obj" \
 	"$(INTDIR)\regcombine.obj" \
 	"$(INTDIR)\render.obj" \
-	"$(INTDIR)\resmanager.obj" \
 	"$(INTDIR)\selection.obj" \
 	"$(INTDIR)\simulation.obj" \
 	"$(INTDIR)\solarsys.obj" \
@@ -590,12 +586,6 @@ SOURCE=.\src\regcombine.cpp
 SOURCE=.\src\render.cpp
 
 "$(INTDIR)\render.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=.\src\resmanager.cpp
-
-"$(INTDIR)\resmanager.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
