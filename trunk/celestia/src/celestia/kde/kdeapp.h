@@ -125,6 +125,7 @@ public slots:
     void slotCycleView();
     void slotAltAzMode();
     void slotSingleView();
+    void slotDeleteView();
 
     void slotCelestialBrowser();
     void slotEclipseFinder();
