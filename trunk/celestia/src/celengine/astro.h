@@ -47,6 +47,7 @@ namespace astro
         Equatorial      = 2,
         Geographic      = 3,
         ObserverLocal   = 4,
+        PhaseLock       = 5,
     };
 
     float lumToAbsMag(float lum);
@@ -66,6 +67,15 @@ namespace astro
     float AUtoLightYears(float);
     float AUtoKilometers(float);
     float kilometersToAU(float);
+
+    float microLightYearsToKilometers(float);
+    double microLightYearsToKilometers(double);
+    float kilometersToMicroLightYears(float);
+    double kilometersToMicroLightYears(double);
+    float microLightYearsToAU(float);
+    double microLightYearsToAU(double);
+    float AUtoMicroLightYears(float);
+    double AUtoMicroLightYears(double);
 
     double secondsToJulianDate(double);
     double julianDateToSeconds(double);
