@@ -1616,6 +1616,11 @@ static double cosD(double theta)
 }
 
 
+// static const double SatAscendingNode = 168.8112;
+// static const double SatTilt = 28.0817;
+static const double SatAscendingNode = 169.530;
+static const double SatTilt = 28.049;
+
 // Calculations for the orbits of Mimas, Enceladus, Tethys, Dione, Rhea,
 // Titan, Hyperion, and Iapetus are from Jean Meeus's Astronomical Algorithms,
 // and were originally derived by Gerard Dourneau.
@@ -1656,7 +1661,7 @@ void ComputeSaturnianElements(double t,
 static Point3d SaturnMoonPosition(double lam, double gam, double Om, double r)
 {
     double u = lam - Om;
-    double w = Om - 168.8112;
+    double w = Om - SatAscendingNode;
 
     u = degToRad(u);
     w = degToRad(w);
@@ -1680,8 +1685,8 @@ static void OuterSaturnMoonParams(double a, double e, double i,
                                   double& lam, double& gam,
                                   double& r, double& w)
 {
-    double s1 = sinD(28.0817);
-    double c1 = cosD(28.0817);
+    double s1 = sinD(SatTilt);
+    double c1 = cosD(SatTilt);
     double e_2 = e * e;
     double e_3 = e_2 * e;
     double e_4 = e_3 * e;
@@ -1690,7 +1695,7 @@ static void OuterSaturnMoonParams(double a, double e, double i,
         (1.25 * e_2 - 0.458333333 * e_4) * sinD(2 * M) +
         (1.083333333 * e_3 - 0.671875 * e_5) * sinD(3 * M) +
         1.072917 * e_4 * sinD(4 * M) + 1.142708 * e_5 * sinD(5 * M);
-    double g = Om_ - 168.8112;
+    double g = Om_ - SatAscendingNode;
     double a1 = sinD(i) * sinD(g);
     double a2 = c1 * sinD(i) * cosD(g) - s1 * cosD(i);
     double u = radToDeg(atan2(a1, a2));
@@ -1701,7 +1706,7 @@ static void OuterSaturnMoonParams(double a, double e, double i,
     lam = lam_ + C + u - g - psi;
     gam = radToDeg(asin(sqrt(square(a1) + square(a2))));
     r = a * (1 - e * e) / (1 + e * cosD(M + C));
-    w = 168.8112 + u;
+    w = SatAscendingNode + u;
 }
 
 

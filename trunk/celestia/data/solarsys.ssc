@@ -466,8 +466,10 @@
 	}
 
 	RotationPeriod      10.65622 # System III - magnetic field
-	Obliquity           28.052 # old value: 26.73
-	EquatorAscendingNode  168.8112 # 169.53
+	# Obliquity           28.052 # old value: 26.73
+	# EquatorAscendingNode  168.8112 # 169.53
+	Obliquity             28.049
+	EquatorAscendingNode 169.530 
 
 	Albedo            0.50
 
