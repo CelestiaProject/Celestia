@@ -239,10 +239,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 		Sky [ 0.83 0.75 0.65 ]
                 Sunset [ 0.7 0.7 0.8 ] 
                 # Slightly bluish sunset, as seen in true color pictures
-                 # from Pathfinder
-		# Slightly bluish sunset, as seen in true color pictures
-		# from Pathfinder
-		Sunset [ 0.7 0.7 0.8 ]
+                # from Pathfinder
 	}
 
 	CustomOrbit "vsop87-mars"
@@ -284,8 +281,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly    191.771   # J2000
 	}
 
+	Orientation	[ 180 0 1 0 ]
 	Obliquity		  0.0
-	RotationOffset	      	174.2
+	RotationOffset	      	354.2
 
 	Albedo         0.07
 }
@@ -307,9 +305,10 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly     344.128
 	}
 
+	Orientation	[ 180 0 1 0 ]
 	Obliquity		  0.9
 	EquatorAscendingNode	183.0
-	RotationOffset		 34.7
+	RotationOffset		214.7
 
 	Albedo         0.08
 }
@@ -374,8 +373,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly     319.3794140
 	}
 
+	Orientation	[ 180 0 1 0 ]
 	Obliquity		  0.0
-	RotationOffset		 72.1
+	RotationOffset		252.1
 
 	Albedo          0.06
 }
@@ -405,6 +405,12 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Albedo         0.61
 }
 
+AltSurface "limit of knowledge" "Sol/Jupiter/Io"
+{
+	Texture "io.jpg"
+	OverlayTexture "io-lok-mask.png"
+}
+
 "Europa" "Sol/Jupiter"
 {
 	Texture "europa.jpg"
@@ -427,6 +433,12 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	RotationOffset 		 56.2
 
 	Albedo         0.64
+}
+
+AltSurface "limit of knowledge" "Sol/Jupiter/Europa"
+{
+	Texture "europa.jpg"
+	OverlayTexture "europa-lok-mask.png"
 }
 
 "Ganymede" "Sol/Jupiter"
@@ -454,6 +466,12 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Albedo         0.42
 }
 
+AltSurface "limit of knowledge" "Sol/Jupiter/Ganymede"
+{
+	Texture "ganymede.jpg"
+	OverlayTexture "ganymede-lok-mask.png"
+}
+
 "Callisto" "Sol/Jupiter"
 {
 	Texture "callisto.jpg"
@@ -477,6 +495,12 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	RotationOffset		120.1
 
 	Albedo         0.20
+}
+
+AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
+{
+	Texture "callisto.jpg"
+	OverlayTexture "callisto-lok-mask.png"
 }
 
 "Saturn" "Sol"
@@ -557,6 +581,8 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 {
 	Texture "mimas.jpg"
 	OverlayTexture "mimas-lok-mask.png"
+	Color [ 0.75 0.63 0.58 ]
+	BlendTexture true
 }
 
 "Enceladus" "Sol/Saturn"
@@ -988,9 +1014,10 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	MeanAnomaly	206.367   # at epoch 
 	}
 
+	Orientation	[ 180 0 1 0 ]
 	Obliquity              	  0.6
 	EquatorAscendingNode 	331.0
-	RotationOffset       	277.8
+	RotationOffset       	 97.8
 
 	Albedo         0.061
 }
@@ -1259,11 +1286,12 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	MeanAnomaly     104.980 
 	} 
 
+	Orientation          [ 180 0 1 0 ]
 	RotationPeriod         5.342 
 	RotationEpoch    2450124.90833 # 1996 May 11 09:48UT 
 	Obliquity             40 
 	EquatorAscendingNode  91 
-	RotationOffset       145.77 
+	RotationOffset       325.77 
 
 	Albedo 0.423 
 } 
@@ -1292,10 +1320,11 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	MeanAnomaly     280.769206 # at epoch
 	}
 
+	Orientation          [ 180 0 1 0 ]
 	RotationPeriod         7.042073
 	Obliquity             69.28
 	EquatorAscendingNode 109.59
-	RotationOffset       238.865
+	RotationOffset        58.865
 
 	Albedo 0.1
 }
@@ -1320,11 +1349,11 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         MeanAnomaly     131.594945 # at epoch
 	}
 
-	Orientation          [ 180 1 0 0 ] # retrograde rotation
+	Orientation          [ 180 0 0 1 ] # retrograde rotation
 	RotationPeriod         4.633632
 	Obliquity	     156.96
 	EquatorAscendingNode 352.77
-	RotationOffset       179.46
+	RotationOffset       359.46
 
 	Albedo 0.24
 }
@@ -1383,10 +1412,11 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
 	MeanAnomaly     208.403434 # at epoch
 	}
 
+	Orientation          [ 180 0 1 0 ]
 	RotationPeriod         5.270
 	Obliquity             78.70
 	EquatorAscendingNode 107.23
-	RotationOffset       158.165
+	RotationOffset       338.165
 
 	Albedo 0.16
 }
