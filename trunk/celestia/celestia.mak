@@ -61,6 +61,7 @@ CLEAN :
 	-@erase "$(INTDIR)\gui.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
 	-@erase "$(INTDIR)\observer.obj"
+	-@erase "$(INTDIR)\octree.obj"
 	-@erase "$(INTDIR)\orbit.obj"
 	-@erase "$(INTDIR)\overlay.obj"
 	-@erase "$(INTDIR)\parser.obj"
@@ -79,6 +80,7 @@ CLEAN :
 	-@erase "$(INTDIR)\texfont.obj"
 	-@erase "$(INTDIR)\texmanager.obj"
 	-@erase "$(INTDIR)\texture.obj"
+	-@erase "$(INTDIR)\texturefont.obj"
 	-@erase "$(INTDIR)\tokenizer.obj"
 	-@erase "$(INTDIR)\univcoord.obj"
 	-@erase "$(INTDIR)\util.obj"
@@ -86,6 +88,7 @@ CLEAN :
 	-@erase "$(INTDIR)\vertexlist.obj"
 	-@erase "$(INTDIR)\visstars.obj"
 	-@erase "$(INTDIR)\winmain.obj"
+	-@erase "$(INTDIR)\wintimer.obj"
 	-@erase "$(OUTDIR)\celestia.exe"
 
 "$(OUTDIR)" :
@@ -158,6 +161,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\gui.obj" \
 	"$(INTDIR)\meshmanager.obj" \
 	"$(INTDIR)\observer.obj" \
+	"$(INTDIR)\octree.obj" \
 	"$(INTDIR)\orbit.obj" \
 	"$(INTDIR)\overlay.obj" \
 	"$(INTDIR)\parser.obj" \
@@ -176,12 +180,14 @@ LINK32_OBJS= \
 	"$(INTDIR)\texfont.obj" \
 	"$(INTDIR)\texmanager.obj" \
 	"$(INTDIR)\texture.obj" \
+	"$(INTDIR)\texturefont.obj" \
 	"$(INTDIR)\tokenizer.obj" \
 	"$(INTDIR)\univcoord.obj" \
 	"$(INTDIR)\util.obj" \
 	"$(INTDIR)\vertexlist.obj" \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\winmain.obj" \
+	"$(INTDIR)\wintimer.obj" \
 	"$(INTDIR)\celestia.res"
 
 "$(OUTDIR)\celestia.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
@@ -225,6 +231,7 @@ CLEAN :
 	-@erase "$(INTDIR)\gui.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
 	-@erase "$(INTDIR)\observer.obj"
+	-@erase "$(INTDIR)\octree.obj"
 	-@erase "$(INTDIR)\orbit.obj"
 	-@erase "$(INTDIR)\overlay.obj"
 	-@erase "$(INTDIR)\parser.obj"
@@ -243,6 +250,7 @@ CLEAN :
 	-@erase "$(INTDIR)\texfont.obj"
 	-@erase "$(INTDIR)\texmanager.obj"
 	-@erase "$(INTDIR)\texture.obj"
+	-@erase "$(INTDIR)\texturefont.obj"
 	-@erase "$(INTDIR)\tokenizer.obj"
 	-@erase "$(INTDIR)\univcoord.obj"
 	-@erase "$(INTDIR)\util.obj"
@@ -251,6 +259,7 @@ CLEAN :
 	-@erase "$(INTDIR)\visstars.obj"
 	-@erase "$(INTDIR)\vertexlist.obj"
 	-@erase "$(INTDIR)\winmain.obj"
+	-@erase "$(INTDIR)\wintimer.obj"
 	-@erase "$(OUTDIR)\celestia.exe"
 	-@erase "$(OUTDIR)\celestia.ilk"
 	-@erase "$(OUTDIR)\celestia.pdb"
@@ -325,6 +334,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\gui.obj" \
 	"$(INTDIR)\meshmanager.obj" \
 	"$(INTDIR)\observer.obj" \
+	"$(INTDIR)\octree.obj" \
 	"$(INTDIR)\orbit.obj" \
 	"$(INTDIR)\overlay.obj" \
 	"$(INTDIR)\parser.obj" \
@@ -343,12 +353,14 @@ LINK32_OBJS= \
 	"$(INTDIR)\texfont.obj" \
 	"$(INTDIR)\texmanager.obj" \
 	"$(INTDIR)\texture.obj" \
+	"$(INTDIR)\texturefont.obj" \
 	"$(INTDIR)\tokenizer.obj" \
 	"$(INTDIR)\univcoord.obj" \
 	"$(INTDIR)\util.obj" \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\vertexlist.obj" \
 	"$(INTDIR)\winmain.obj" \
+	"$(INTDIR)\wintimer.obj" \
 	"$(INTDIR)\celestia.res"
 
 "$(OUTDIR)\celestia.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
@@ -507,6 +519,12 @@ SOURCE=.\src\observer.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+SOURCE=.\src\octree.cpp
+
+"$(INTDIR)\octree.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
 SOURCE=.\src\orbit.cpp
 
 "$(INTDIR)\orbit.obj" : $(SOURCE) "$(INTDIR)"
@@ -615,6 +633,12 @@ SOURCE=.\src\texture.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+SOURCE=.\src\texturefont.cpp
+
+"$(INTDIR)\texturefont.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
 SOURCE=.\src\tokenizer.cpp
 
 "$(INTDIR)\tokenizer.obj" : $(SOURCE) "$(INTDIR)"
@@ -648,6 +672,12 @@ SOURCE=.\src\vertexlist.cpp
 SOURCE=.\src\winmain.cpp
 
 "$(INTDIR)\winmain.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\wintimer.cpp
+
+"$(INTDIR)\wintimer.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
