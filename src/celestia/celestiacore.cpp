@@ -399,8 +399,13 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             else if (newFOV > maxFOV)
                 newFOV = maxFOV;
             renderer->setFieldOfView(newFOV);
-	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
+	    {
 	        setFaintestAutoMag();
+		char buf[128];
+		sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
+		flash(buf);
+	    }
         }
         else
         {
@@ -670,8 +675,13 @@ void CelestiaCore::charEntered(char c)
         if (renderer->getFieldOfView() > 0.01f)
 	{
 	    renderer->setFieldOfView(renderer->getFieldOfView() / 1.05f);
-	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
+	    {
 	        setFaintestAutoMag();
+		char buf[128];
+		sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
+		flash(buf);
+	    }
 	}
         break;
 
@@ -680,7 +690,12 @@ void CelestiaCore::charEntered(char c)
 	{
 	    renderer->setFieldOfView(renderer->getFieldOfView() * 1.05f);
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+	    {
 	        setFaintestAutoMag();   
+		char buf[128];
+		sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
+		flash(buf);
+	    }
 	}
         break;
 
@@ -1537,8 +1552,9 @@ void CelestiaCore::renderOverlay()
             y += height;
         else if (messageVOrigin < 0)
             y -= fontHeight;
-        
+#if 0        
         cout << '(' << x << ',' << y << ") horig=" << messageHOrigin << ", vorigin=" << messageVOrigin << '\n';
+#endif
         overlay->setFont(titleFont);
         glPushMatrix();
 
