@@ -24,14 +24,11 @@ public:
     void render(unsigned int attributes);
 
  private:
-    void SphereMesh::renderSection(int phi0, int theta0,
-                                   int phi1, int theta1,
-                                   int phiStep, int thetaStep,
-                                   unsigned int attributes);
+    void renderSection(int phi0, int theta0,
+                       int extent,
+                       int step,
+                       unsigned int attributes);
 
-    int nRings;
-    int nSlices;
-    int nVertices;
     float* vertices;
     float* normals;
     float* texCoords;
@@ -40,4 +37,4 @@ public:
     unsigned short* indices;
 };
 
-#endif // _SPHEREMESH_H_
+#endif // _LODSPHEREMESH_H_
