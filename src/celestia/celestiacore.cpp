@@ -1024,15 +1024,15 @@ void CelestiaCore::charEntered(char c)
 {
     Observer* observer = sim->getActiveObserver();
 
+#ifdef CELX
     if (celxScript != NULL && (textEnterMode & KbPassToScript))
     {
         if (c != '\033' && celxScript->charEntered(c))
         {
             return;
         }
-        // TODO: What to do with AutoComplete-activation while
-        // in PassToScript-mode?
     }
+#endif
 
     if (textEnterMode & KbAutoComplete)
     {
@@ -3707,7 +3707,6 @@ void CelestiaCore::setLightDelayActive(bool lightDelayActive)
 
 void CelestiaCore::setTextEnterMode(int mode)
 {
-    cout << "setTextEnterMode("<<mode<<")\n";
     if (mode != textEnterMode)
     {
         if ((mode & KbAutoComplete) != (textEnterMode & KbAutoComplete))
