@@ -191,6 +191,15 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     infoTextCombo->setCurrentItem(savedHudDetail);
     ((KdeApp*)parent)->connect(infoTextCombo, SIGNAL(activated(int)), SLOT(slotHudDetail(int)));
 
+    QGroupBox* fovGroup = new QGroupBox(2, Qt::Horizontal, i18n("Automatic FOV"), vbox1);
+    new QLabel(i18n("Screen DPI: "), fovGroup);
+    new QLabel(QString::number(appCore->getScreenDpi(), 10), fovGroup);
+    new QLabel(i18n("Viewing Distance (cm): "), fovGroup);
+    dtsSpin = new QSpinBox(10, 300, 1, fovGroup);
+    savedDistanceToScreen = appCore->getDistanceToScreen();
+    dtsSpin->setValue(savedDistanceToScreen / 10);
+    connect(dtsSpin, SIGNAL(valueChanged(int)), SLOT(slotDistanceToScreen(int)));
+
     // Time page
     timeHasChanged = false;
     QVBox* timeFrame = addVBoxPage(i18n("Date/Time"), i18n("Date/Time"),
@@ -458,6 +467,7 @@ void KdePreferencesDialog::slotCancel() {
     appCore->getSimulation()->setFaintestVisible(savedFaintestVisible/100.);
     appCore->setHudDetail(savedHudDetail);
     appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)savedRenderPath);
+    appCore->setDistanceToScreen(savedDistanceToScreen);
 
     reject();
 }
@@ -470,6 +480,7 @@ void KdePreferencesDialog::slotApply() {
     savedHudDetail = appCore->getHudDetail();
     savedDisplayLocalTime = appCore->getTimeZoneBias();
     savedRenderPath = (int)appCore->getRenderer()->getGLContext()->getRenderPath();
+    savedDistanceToScreen = appCore->getDistanceToScreen();
 
     keyChooser->commitChanges();
 
@@ -533,6 +544,10 @@ void KdePreferencesDialog::slotRenderPath(int pathIdx) {
 
     appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)path);
     setRenderPathLabel();
+}
+
+void KdePreferencesDialog::slotDistanceToScreen(int dts) {
+    appCore->setDistanceToScreen(dts * 10);
 }
 
 void KdePreferencesDialog::setRenderPathLabel() {
