@@ -119,10 +119,11 @@ void EclipseFinderDlg::gotoEclipse(QListViewItem* item, const QPoint& p, int col
     int id=menu.exec(p);
     
     if (id == 1) {
-        Selection sel = appCore->getSimulation()->findObjectFromPath(std::string(item->text(col == 1).latin1()));
-        appCore->getSimulation()->setSelection(sel);
-        QString date = item->text(2);
-        int yearEnd = date.find('-', 1); 
+        Selection target = appCore->getSimulation()->findObjectFromPath(std::string(item->text(col == 1).latin1()));
+	Selection ref = target.body()->getSystem()->getStar();
+	appCore->getSimulation()->setFrame(FrameOfReference(astro::PhaseLock, target, ref));
+	QString date = item->text(2);
+        int yearEnd = date.find('-', 1);
         astro::Date d(date.left(yearEnd).toInt(), 
                       date.mid(yearEnd + 1, 2).toInt(),
                       date.mid(yearEnd + 4, 2).toInt());
@@ -130,8 +131,14 @@ void EclipseFinderDlg::gotoEclipse(QListViewItem* item, const QPoint& p, int col
         d.minute = item->text(3).mid(3, 2).toInt();
         d.seconds = item->text(3).mid(6, 2).toDouble();
         appCore->getSimulation()->setTime((double)d);
-        appCore->charEntered('g');    
-    }    
+        appCore->getSimulation()->update(0.0);
+
+	double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
+        RigidTransform to;
+        to.rotation = Quatd::yrotation(PI);
+        to.translation = Point3d(0, 0, -distance);
+        appCore->getSimulation()->gotoLocation(to, 2.5);
+    }
 }
 
 
