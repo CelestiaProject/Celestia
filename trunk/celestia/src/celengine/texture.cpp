@@ -151,7 +151,7 @@ static void initTextureLoader()
 {
     compressionSupported = ExtensionSupported("GL_ARB_texture_compression");
     if (compressionSupported)
-        InitExtTextureCompression();
+        InitExtension("GL_ARB_texture_compression");
 
 #ifdef GL_VERSION_1_2
     clampToEdgeSupported = true;
@@ -585,13 +585,13 @@ void Texture::loadCompressedTexture(unsigned char* texels,
         int mmSize = compressedBlockSize(format) *
             ((mmWidth + 3) / 4) * ((mmHeight + 3) / 4);
                         
-        EXTglCompressedTexImage2DARB(GL_TEXTURE_2D,
-                                     mipMapLevel,
-                                     format,
-                                     mmWidth, mmHeight,
-                                     0,
-                                     mmSize,
-                                     texels + mmOffset);
+        glx::glCompressedTexImage2DARB(GL_TEXTURE_2D,
+                                       mipMapLevel,
+                                       format,
+                                       mmWidth, mmHeight,
+                                       0,
+                                       mmSize,
+                                       texels + mmOffset);
         mmOffset += mmSize;
     }
 }

@@ -100,7 +100,7 @@ void SphereMesh::render(unsigned int attributes, float)
     if (tangents != NULL && ((attributes & Tangents) != 0))
     {
         glEnableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
-        EXTglVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
+        glx::glVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
     }
 
     for (int i = 0; i < nRings - 1; i++)
