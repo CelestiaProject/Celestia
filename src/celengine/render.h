@@ -72,6 +72,7 @@ class Renderer
         ShowRingShadows     = 0x1000,
         ShowBoundaries      = 0x2000,
         ShowAutoMag         = 0x4000,
+        ShowCometTails      = 0x8000,
     };
 
     int getRenderFlags() const;
@@ -83,6 +84,8 @@ class Renderer
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
     void setMinimumOrbitSize(float);
+    float getDistanceLimit() const;
+    void setDistanceLimit(float);
 
     bool getFragmentShaderEnabled() const;
     void setFragmentShaderEnabled(bool);
@@ -327,6 +330,7 @@ class Renderer
     std::vector<CachedOrbit*> orbitCache;
 
     float minOrbitSize;
+    float distanceLimit;
 };
 
 #endif // _RENDER_H_
