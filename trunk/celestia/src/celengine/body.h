@@ -93,12 +93,12 @@ class Body
 
     enum
     {
-        Planet     = 1,
-        Moon       = 2,
-        Asteroid   = 3,
-        Comet      = 4,
-        Spacecraft = 5,
-        Unknown    = 0,
+        Planet     = 0x01,
+        Moon       = 0x02,
+        Asteroid   = 0x04,
+        Comet      = 0x08,
+        Spacecraft = 0x10,
+        Unknown    = 0x10000,
     };
 
     PlanetarySystem* getSystem() const;
