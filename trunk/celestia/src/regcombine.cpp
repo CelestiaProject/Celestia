@@ -16,8 +16,8 @@
 #include "regcombine.h"
 
 
-void SetupCombinersBumpMap(CTexture& bumpTexture,
-                           CTexture& normalizationTexture,
+void SetupCombinersBumpMap(Texture& bumpTexture,
+                           Texture& normalizationTexture,
                            Color ambientColor)
 {
     glEnable(GL_REGISTER_COMBINERS_NV);
@@ -94,8 +94,8 @@ void SetupCombinersBumpMap(CTexture& bumpTexture,
 // ambient color, material color, and normal cube map.  We could use just a plain
 // old color cube map, but we use a normal map instead for consistency with bump
 // mapped surfaces.  Only one pass with a single combiner is required.
-void SetupCombinersSmooth(CTexture& baseTexture,
-                          CTexture& normalizationTexture,
+void SetupCombinersSmooth(Texture& baseTexture,
+                          Texture& normalizationTexture,
                           Color ambientColor)
 {
     glEnable(GL_REGISTER_COMBINERS_NV);

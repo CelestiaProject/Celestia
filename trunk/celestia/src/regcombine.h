@@ -16,11 +16,11 @@
 #include "texture.h"
 #include "color.h"
 
-extern void SetupCombinersBumpMap(CTexture& bumpTexture,
-                                  CTexture& normalizationTexture,
+extern void SetupCombinersBumpMap(Texture& bumpTexture,
+                                  Texture& normalizationTexture,
                                   Color ambientColor);
-void SetupCombinersSmooth(CTexture& baseTexture,
-                          CTexture& normalizationTexture,
+void SetupCombinersSmooth(Texture& baseTexture,
+                          Texture& normalizationTexture,
                           Color ambientColor);
 extern void DisableCombiners();
 
