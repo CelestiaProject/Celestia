@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <set>
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
@@ -523,27 +524,416 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
                     appCore->getSimulation()->setSelection(Selection(body));
                 }
             }
-#if 0
-            if (hdr->code == DTN_DATETIMECHANGE)
-            {
-                LPNMDATETIMECHANGE change = (LPNMDATETIMECHANGE) lParam;
-                if (change->dwFlags == GDT_VALID)
-                {
-                    astro::Date date(change->st.wYear, change->st.wMonth, change->st.wDay);
-                    newTime.year = change->st.wYear;
-                    newTime.month = change->st.wMonth;
-                    newTime.day = change->st.wDay;
-                    newTime.hour = change->st.wHour;
-                    newTime.minute = change->st.wMinute;
-                    newTime.seconds = change->st.wSecond + (double) change->st.wMilliseconds / 1000.0;
-                }
-            }
-#endif
         }
     }
 
     return FALSE;
 }
+
+
+/*
+ * A whole ton of code to implement the star browser tool.  Support
+ * displaying, selecting, sorting of information from the star
+ * database.  This should all probably be moved into a separate module.
+ */
+
+enum {
+    BrightestStars = 0,
+    NearestStars = 1,
+};
+
+struct StarBrowserInstance
+{
+    StarBrowserInstance(Simulation*);
+
+    HWND hwnd;
+
+    // The star browser data is valid for a particular point
+    // in space, and for performance issues is not continuously
+    // updated.
+    Point3f pos;
+    UniversalCoord ucPos;
+};
+
+StarBrowserInstance::StarBrowserInstance(Simulation* sim)
+{
+    ucPos = sim->getObserver().getPosition();
+    pos = (Point3f) ucPos;
+}
+
+static StarBrowserInstance* starBrowser = NULL;
+
+
+bool InitStarBrowserColumns(HWND listView)
+{
+    LVCOLUMN lvc;
+    LVCOLUMN columns[4];
+
+    lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+    lvc.fmt = LVCFMT_LEFT;
+    lvc.cx = 75;
+    lvc.pszText = "";
+
+    int nColumns = sizeof(columns) / sizeof(columns[0]);
+    int i;
+
+    for (i = 0; i < nColumns; i++)
+        columns[i] = lvc;
+
+    columns[0].pszText = "Name";
+    columns[0].cx = 100;
+    columns[1].pszText = "Distance";
+    columns[1].fmt = LVCFMT_RIGHT;
+    columns[2].pszText = "App. mag";
+    columns[2].fmt = LVCFMT_RIGHT;
+    columns[3].pszText = "Abs. mag";
+    columns[3].fmt = LVCFMT_RIGHT;
+
+    for (i = 0; i < nColumns; i++)
+    {
+        columns[i].iSubItem = i;
+        if (ListView_InsertColumn(listView, i, &columns[i]) == -1)
+            return false;
+    }
+
+    return true;
+}
+
+
+struct CloserStarPredicate
+{
+    Point3f pos;
+    bool operator()(const Star* star0, const Star* star1) const
+    {
+        return ((pos - star0->getPosition()).lengthSquared() <
+                (pos - star1->getPosition()).lengthSquared());
+                               
+    }
+};
+
+struct BrighterStarPredicate
+{
+    Point3f pos;
+    UniversalCoord ucPos;
+    bool operator()(const Star* star0, const Star* star1) const
+    {
+        float d0 = pos.distanceTo(star0->getPosition());
+        float d1 = pos.distanceTo(star1->getPosition());
+
+        // If the stars are closer than one light year, use
+        // a more precise distance estimate.
+        if (d0 < 1.0f)
+            d0 = (star0->getPosition() - ucPos).length();
+        if (d1 < 1.0f)
+            d1 = (star1->getPosition() - ucPos).length();
+
+        return (star0->getApparentMagnitude(d0) <
+                star1->getApparentMagnitude(d1));
+    }
+};
+
+
+// Find the nearest/brightest/whatever N stars in a database.  The
+// supplied predicate determines which of two stars is a better match.
+template<class Pred> vector<const Star*>*
+FindStars(const StarDatabase& stardb, Pred pred, int nStars)
+{
+    vector<const Star*>* finalStars = new vector<const Star*>();
+    if (nStars == 0)
+        return finalStars;
+
+    typedef multiset<const Star*, Pred> StarSet;
+    StarSet firstStars(pred);
+
+    int totalStars = stardb.size();
+    if (totalStars < nStars)
+        nStars = totalStars;
+
+    // We'll need at least nStars in the set, so first fill
+    // up the list indiscriminately.
+    int i = 0;
+    for (i = 0; i < nStars; i++)
+        firstStars.insert(stardb.getStar(i));
+
+    // From here on, only add a star to the set if it's
+    // a better match than the worst matching star already
+    // in the set.
+    const Star* lastStar = *--firstStars.end();
+    for (; i < totalStars; i++)
+    {
+        Star* star = stardb.getStar(i);
+        if (pred(star, lastStar))
+        {
+            firstStars.insert(star);
+            firstStars.erase(--firstStars.end());
+            lastStar = *--firstStars.end();
+        }
+    }
+
+    // Move the best matching stars into the vector
+    finalStars->reserve(nStars);
+    for (StarSet::const_iterator iter = firstStars.begin();
+         iter != firstStars.end(); iter++)
+    {
+        finalStars->insert(finalStars->end(), *iter);
+    }
+
+    return finalStars;
+}
+
+
+bool InitStarBrowserLVItems(HWND listView, vector<const Star*>& stars)
+{
+    LVITEM lvi;
+
+    lvi.mask = LVIF_TEXT | LVIF_PARAM | LVIF_STATE;
+    lvi.state = 0;
+    lvi.stateMask = 0;
+    lvi.pszText = LPSTR_TEXTCALLBACK;
+
+    for (int i = 0; i < stars.size(); i++)
+    {
+        lvi.iItem = i;
+        lvi.iSubItem = 0;
+        lvi.lParam = (LPARAM) stars[i];
+        ListView_InsertItem(listView, &lvi);
+    }
+
+    return true;
+}
+
+bool InitStarBrowserItems(HWND listView, int pred, int nItems)
+{
+    Simulation* sim = appCore->getSimulation();
+    StarDatabase* stardb = sim->getStarDatabase();
+    if (starBrowser == NULL)
+        return false;
+
+    vector<const Star*>* stars = NULL;
+    switch (pred)
+    {
+    case BrightestStars:
+        {
+            BrighterStarPredicate brighterPred;
+            brighterPred.pos = starBrowser->pos;
+            brighterPred.ucPos = starBrowser->ucPos;
+            stars = FindStars(*stardb, brighterPred, nItems);
+        }
+        break;
+
+    case NearestStars:
+        {
+            CloserStarPredicate closerPred;
+            closerPred.pos = starBrowser->pos;
+            stars = FindStars(*stardb, closerPred, nItems);
+        }
+        break;
+
+    default:
+        return false;
+    }
+            
+    bool succeeded = InitStarBrowserLVItems(listView, *stars);
+    delete stars;
+
+    return succeeded;
+}
+
+
+// Crud used for the list item display callbacks
+static string starNameString("");
+static char callbackScratch[256];
+
+struct StarBrowserSortInfo
+{
+    int subItem;
+    Point3f pos;
+    UniversalCoord ucPos;
+};
+
+int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
+                                    LPARAM lParamSort)
+{
+    StarBrowserSortInfo* sortInfo = reinterpret_cast<StarBrowserSortInfo*>(lParamSort);
+    Star* star0 = reinterpret_cast<Star*>(lParam0);
+    Star* star1 = reinterpret_cast<Star*>(lParam1);
+
+    switch (sortInfo->subItem)
+    {
+    case 0:
+        return 0;
+
+    case 1:
+        {
+            float d0 = sortInfo->pos.distanceTo(star0->getPosition());
+            float d1 = sortInfo->pos.distanceTo(star1->getPosition());
+            return sign(d0 - d1);
+        }
+
+    case 2:
+        {
+            float d0 = sortInfo->pos.distanceTo(star0->getPosition());
+            float d1 = sortInfo->pos.distanceTo(star1->getPosition());
+            if (d0 < 1.0f)
+                d0 = (star0->getPosition() - sortInfo->ucPos).length();
+            if (d1 < 1.0f)
+                d1 = (star1->getPosition() - sortInfo->ucPos).length();
+            return sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
+                        astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
+        }
+
+    case 3:
+        return sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
+
+    default:
+        return 0;
+    }
+}
+
+
+void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, Simulation* sim)
+{
+    Star* star = reinterpret_cast<Star*>(nm->item.lParam);
+    if (star == NULL)
+    {
+        nm->item.pszText = "";
+        return;
+    }
+
+    switch (nm->item.iSubItem)
+    {
+    case 0:
+        {
+            starNameString = sim->getStarDatabase()->getStarName(star->getCatalogNumber());
+            nm->item.pszText = const_cast<char*>(starNameString.c_str());
+        }
+        break;
+            
+    case 1:
+        {
+            sprintf(callbackScratch, "%.3f",
+                    starBrowser->pos.distanceTo(star->getPosition()));
+            nm->item.pszText = callbackScratch;
+        }
+        break;
+
+    case 2:
+        {
+            Vec3f r = star->getPosition() - starBrowser->ucPos;
+            float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(),
+                                              r.length());
+            sprintf(callbackScratch, "%.2f", appMag);
+            nm->item.pszText = callbackScratch;
+        }
+        break;
+            
+    case 3:
+        {
+            sprintf(callbackScratch, "%.2f", star->getAbsoluteMagnitude());
+            nm->item.pszText = callbackScratch;
+        }
+        break;
+    }
+}
+
+
+BOOL APIENTRY StarBrowserProc(HWND hDlg,
+                              UINT message,
+                              UINT wParam,
+                              LONG lParam)
+{
+    Simulation* sim = appCore->getSimulation();
+
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        {
+            HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
+            InitStarBrowserColumns(hwnd);
+            InitStarBrowserItems(hwnd, BrightestStars, 100);
+            return(TRUE);
+        }
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+        case IDOK:
+        case IDCANCEL:
+            delete starBrowser;
+            starBrowser = NULL;
+            EndDialog(hDlg, 0);
+            return TRUE;
+
+        case IDC_BUTTON_CENTER:
+            appCore->charEntered('C');
+            break;
+
+        case IDC_BUTTON_GOTO:
+            appCore->charEntered('G');
+            break;
+
+        case IDC_RADIO_BRIGHTEST:
+            cout << "Brightest\n";
+            break;
+
+        case IDC_RADIO_NEAREST:
+            cout << "Nearest\n";
+            break;
+
+        case IDC_BUTTON_REFRESH:
+            {
+                starBrowser->ucPos = sim->getObserver().getPosition();
+                starBrowser->pos = (Point3f) starBrowser->ucPos;
+                HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
+                if (hwnd != 0)
+                {
+                    ListView_DeleteAllItems(hwnd);
+                    InitStarBrowserItems(hwnd, BrightestStars, 100);
+                }
+            }
+            break;
+        }
+        break;
+
+    case WM_NOTIFY:
+        {
+            LPNMHDR hdr = (LPNMHDR) lParam;
+            
+            if (hdr->code == LVN_GETDISPINFO)
+            {
+                StarBrowserDisplayItem((LPNMLVDISPINFOA) lParam, sim);
+            }
+            else if (hdr->code == LVN_ITEMCHANGED)
+            {
+                LPNMLISTVIEW nm = (LPNMLISTVIEW) lParam;
+                if ((nm->uNewState & LVIS_SELECTED) != 0)
+                {
+                    Star* star = reinterpret_cast<Star*>(nm->lParam);
+                    if (star != NULL)
+                        sim->setSelection(Selection(star));
+                }
+            }
+            else if (hdr->code == LVN_COLUMNCLICK)
+            {
+                HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
+                if (hwnd != 0)
+                {
+                    LPNMLISTVIEW nm = (LPNMLISTVIEW) lParam;
+                    StarBrowserSortInfo sortInfo;
+                    sortInfo.subItem = nm->iSubItem;
+                    sortInfo.ucPos = starBrowser->ucPos;
+                    sortInfo.pos = starBrowser->pos;
+                    ListView_SortItems(hwnd, StarBrowserCompareFunc,
+                                       reinterpret_cast<LPARAM>(&sortInfo));
+                }
+            }
+        }
+        break;
+    }
+
+    return FALSE;
+}
+
 
 
 HMENU CreateMenuBar()
@@ -1205,6 +1595,19 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_NAVIGATION_SSBROWSER:
             if (ssBrowserWindow == 0)
                 ssBrowserWindow = CreateDialog(appInstance, MAKEINTRESOURCE(IDD_SSBROWSER), hWnd, SolarSystemBrowserProc);
+            break;
+
+        case ID_NAVIGATION_STARBROWSER:
+            if (starBrowser == NULL)
+            {
+                starBrowser = new StarBrowserInstance(appCore->getSimulation());
+                HWND w = CreateDialog(appInstance, MAKEINTRESOURCE(IDD_STARBROWSER), hWnd, StarBrowserProc);
+                if (w == 0)
+                {
+                    delete starBrowser;
+                    starBrowser = NULL;
+                }
+            }
             break;
 
         case ID_RENDER_SHOWHUDTEXT:
