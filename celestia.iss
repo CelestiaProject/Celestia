@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.2.5
+AppVerName=Celestia 1.2.6
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -69,7 +69,9 @@ Source: "textures\medres\earthnight.jpg"; DestDir: "{app}/textures/medres"; Copy
 Source: "textures\medres\europa.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\ganymede.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\gasgiant.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\gaspramosaic.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\iapetus.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\idamosaic.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\io.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\iss-cap1.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\iss-mc1.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
@@ -117,7 +119,9 @@ Source: "textures\lores\earthnight.jpg"; DestDir: "{app}/textures/lores"; CopyMo
 Source: "textures\lores\europa.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\ganymede.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\gasgiant.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\gaspramosaic.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\iapetus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\idamosaic.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\io.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\jupiter.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\jupiterlike.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
