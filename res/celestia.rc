@@ -1,0 +1,311 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU DISCARDABLE 
+BEGIN
+    MENUITEM "Select Sol",                  ID_SELECTSOL
+    MENUITEM "Go To Selection",             ID_GOTOSELECTION
+    MENUITEM "Follow Selection",            ID_FOLLOWSELECTION
+    MENUITEM SEPARATOR
+    MENUITEM "Speed Time",                  ID_SPEEDTIME
+    MENUITEM "Slow Time",                   ID_SLOWTIME
+    MENUITEM "Stop Time",                   ID_STOPTIME
+    MENUITEM SEPARATOR
+    MENUITEM "Quit",                        ID_QUIT
+END
+
+IDR_MAIN_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Exit",                       ID_FILE_EXIT
+    END
+    POPUP "&Navigation"
+    BEGIN
+        MENUITEM "Select &Sol",                 ID_NAVIGATION_HOME
+        MENUITEM "Select &Object...",           ID_NAVIGATION_SELECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Center Selection",           ID_NAVIGATION_CENTER
+        MENUITEM "&Go to Selection",            ID_NAVIGATION_GOTO
+        MENUITEM "&Follow Selection",           ID_NAVIGATION_FOLLOW
+    END
+    POPUP "&Time"
+    BEGIN
+        MENUITEM "10x &Faster",                 ID_TIME_FASTER
+        MENUITEM "10x &Slower",                 ID_TIME_SLOWER
+        MENUITEM "Free&ze",                     ID_TIME_FREEZE
+        MENUITEM "&Real Time",                  ID_TIME_REALTIME
+        MENUITEM "Set &Time...",                ID_TIME_SETTIME
+    END
+    POPUP "&Render"
+    BEGIN
+        MENUITEM "Show &Orbits",                ID_RENDER_SHOWORBITS
+        MENUITEM "Show &Planet Labels",         ID_RENDER_SHOWPLANETLABELS
+        MENUITEM "Show &Star Labels",           ID_RENDER_SHOWSTARLABELS
+        MENUITEM "Show &HUD Text",              ID_RENDER_SHOWHUDTEXT
+        , CHECKED
+        POPUP "&Ambient Light"
+        BEGIN
+            MENUITEM "&None",                       ID_RENDER_AMBIENTLIGHT_NONE
+
+            MENUITEM "&Low",                        ID_RENDER_AMBIENTLIGHT_LOW
+            , CHECKED
+            MENUITEM "&Medium",                     ID_RENDER_AMBIENTLIGHT_MEDIUM
+
+        END
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About",                      ID_HELP_ABOUT
+        MENUITEM "&License",                    ID_HELP_LICENSE
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOG DISCARDABLE  100, 50, 310, 97
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Celestia"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
+    CTEXT           "Celestia 1.0",IDC_STATIC,6,7,297,9
+    CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
+    CTEXT           "Visit http://www.shatters.net/celestia for more info.",
+                    IDC_STATIC,6,53,297,9
+    CTEXT           "Celestia is free software and comes with absolutely no warranty.",
+                    IDC_STATIC,6,36,297,9
+END
+
+IDD_FINDOBJECT DIALOG DISCARDABLE  100, 50, 186, 79
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Find Object"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,38,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,95,44,50,14
+    EDITTEXT        IDC_FINDOBJECT_EDIT,92,18,78,14,ES_AUTOHSCROLL
+    LTEXT           "Object Name",IDC_STATIC,21,20,62,8
+END
+
+IDD_LICENSE DIALOG DISCARDABLE  0, 0, 286, 249
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "License"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
+    EDITTEXT        IDC_LICENSE_TEXT,7,7,272,213,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+IDD_SETTIME DIALOG DISCARDABLE  0, 0, 201, 146
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Set Simulation Time"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,141,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,141,24,50,14
+    CONTROL         "MonthCalendar1",IDC_CALENDAR,"SysMonthCal32",
+                    MCS_NOTODAY | WS_TABSTOP | 0x8,7,7,120,90
+    CONTROL         "DateTimePicker2",IDC_TIMEPICKER,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | DTS_UPDOWN | DTS_APPCANPARSE | 
+                    WS_TABSTOP | 0x8,7,123,121,15
+    CONTROL         "DateTimePicker3",IDC_DATEPICKER,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | WS_TABSTOP,7,103,121,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 90
+    END
+
+    IDD_FINDOBJECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 72
+    END
+
+    IDD_LICENSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 279
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 242
+    END
+
+    IDD_SETTIME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 191
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 139
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_CELESTIA_ICON       ICON    DISCARDABLE     "icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATORS ACCELERATORS DISCARDABLE 
+BEGIN
+    "F",            ID_NAVIGATION_FOLLOW,   VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_NAVIGATION_GOTO,     VIRTKEY, CONTROL, NOINVERT
+    "H",            ID_NAVIGATION_HOME,     VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_NAVIGATION_SELECT,   VIRTKEY, CONTROL, NOINVERT
+    VK_F4,          ID_FILE_EXIT,           VIRTKEY, ALT, NOINVERT
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", " \0"
+            VALUE "FileDescription", "celestia\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "celestia\0"
+            VALUE "LegalCopyright", "Copyright © 2001, Chris Laurel\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "celestia.exe\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "  celestia\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NAVIGATION_FOLLOW    "Ctrl+F"
+    ID_NAVIGATION_BLAH      "baghgggagag"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,83 @@
+Celestia To Do List
+-------------------
+
+USER INTERFACE
+* More star label models--nearest stars, brightest stars
+* Make picking more intelligent
+  * Picking a distant planet is likely to select one of its satellites
+  * Picking currently ignores the radius and proximity of objects
+  * Picking stars doesn't work at close range
+* Tracking mode for camera
+* Views of planet and satellite orbits
+  * Add satellite orbits
+  * User control over which orbits should be displayed
+  * Orbits should be occluded by planets
+* Next/prev body commands
+* Add preferences for font and text color for labels to config file
+* Context menus for stars and planets
+* Make it possible to set the limiting magnitude for stars
+* Fix camera rotation wackiness when using goto--probably slerp between orientations
+* Create a help file
+
+VISUALS
+* Shadows from rings on planet
+* Bump maps for planets and satellites
+* Use Phil Stooke's shape data for asteroids and small moons
+* Change the color of the light illuminate planets based on star class;
+  probably only M and maybe K class stars should have a noticeable hue
+* Better and flashier star rendering: improve corona effects, add limb darkening, change
+  convection cell size based on spectral class, etc.
+* Non-Lambertian illumination functions for planets
+* Add haloes around bright planets similar to the ones around stars
+* Separate luminance (reflectivity) and opacity information for rings
+* Render the Milky Way
+* Comets with dust and ion tails
+* Add some deep sky objects--planetary nebula, supernova remnants, etc.
+* Procedural textures for extrasolar planets
+
+POLISH
+* Get a real installer working for Windows version
+* Demo mode
+* Tutorial mode
+* Add a flashy intro screen
+* Change starting position to someplace interesting.  Eros?
+* Add screen shot feature
+
+SIMULATION ACCURACY
+* Fix apparent magnitude calculation for planets
+* Figure out a way to estimate gas giant's radius given its mass
+* Calculate the eccentric anomaly for orbits instead of just using the mean anomaly
+* Obtain and read spacecraft ephemerii, so Galileo, Cassini, etc. appear in the proper	places
+* Use a better estimate for star radius
+* Model the irregular rotations of objects like Toutatis and Hyperion
+* Double star systems
+* Correct star positions for Earth's obliquity
+
+BUGS
+* Find out why picking sometimes stops working, apparently after orbiting
+* Fix wobbling of planet shadow on rings when time is accelerated
+* Problem stars: HIP 114110 has no spectral class!  Search the database for other problem
+  stars and fix them.
+* Find out about texture problems on Matrox G450
+
+OPTIMIZATION
+* Add view frustum culling for stars
+* Use compressed textures when available
+* Convert the VisibleStarSet class to use an octree based algorithm
+
+CODE
+* Make parser more robust (and fix that EOF problem)
+* Change random printfs to DPRINTFs and Logs
+* Finish assert-ing the code
+
+PORTING
+* Write a version which uses GLUT instead of Win32 API calls
+* Linux port
+* MacOS port
+
+MISC
+* Make solar system creation applet, for adding hypothetical systems to a Celestia universe
+
+
+
+
