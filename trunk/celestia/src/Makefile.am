@@ -53,7 +53,6 @@ COMMONSOURCES = \
 	univcoord.cpp \
 	unixtimer.cpp \
 	util.cpp \
-	vertexlist.cpp \
-	visstars.cpp
+	vertexlist.cpp
 
 celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)

@@ -286,7 +286,6 @@ extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC glGetFinalCombinerInputParame
 #define GL_COLOR_INDEX12_EXT              0x80E6
 #define GL_COLOR_INDEX16_EXT              0x80E7
 typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid * table);
-PFNGLCOLORTABLEEXTPROC glColorTableEXT;
 
 /* EXT_paletted_texture command function pointers */
 extern PFNGLCOLORTABLEEXTPROC glColorTableEXT;

@@ -120,6 +120,10 @@ astro::Date newTime(0.0);
 #define ROTATION_SPEED  6
 #define ACCELERATION    20.0f
 
+// Mouse wheel button assignments
+#define MOUSE_WHEEL_UP   3
+#define MOUSE_WHEEL_DOWN 4
+
 
 #define MENU_CHOOSE_PLANET   32000
 
@@ -448,6 +452,22 @@ void Idle(void)
             CancelScript();
     }
 
+    // Mouse wheel zoom
+    if (mouseWheelMotion != 0.0f)
+    {
+        double mouseWheelSpan = 0.1;
+        double fraction = 0.0;
+                
+        if (currentTime - mouseWheelTime >= mouseWheelSpan)
+            fraction = (mouseWheelTime + mouseWheelSpan) - lastTime;
+        else
+            fraction = dt / mouseWheelSpan;
+
+        sim->changeOrbitDistance(mouseWheelMotion * (float) fraction);
+        if (currentTime - mouseWheelTime >= mouseWheelSpan)
+            mouseWheelMotion = 0.0f;
+    }
+
     if (homePress)
         sim->changeOrbitDistance(-dt * 2);
     else if (endPress)
@@ -483,7 +503,10 @@ void MouseDrag(int x, int y)
     if (leftButton ^ rightButton)
     {
         Quatf q(1);
-        float coarseness = renderer->getFieldOfView() / 30.0f;
+
+        float coarseness = degToRad(360.0f);
+        if (leftButton)
+            coarseness = degToRad(renderer->getFieldOfView() * 1.5f);
         q.yrotate((float) (x - lastX) / g_w * coarseness);
         q.xrotate((float) (y - lastY) / g_h * coarseness);
         if (rightButton)
@@ -511,12 +534,28 @@ void MouseDrag(int x, int y)
 
 void MouseButton(int button, int state, int x, int y)
 {
+    // On Linux, mouse wheel up and down are usually translated into
+    // mouse button 4 and 5 down events.
+    if (button == MOUSE_WHEEL_UP)
+    {
+        mouseWheelTime = currentTime;
+        mouseWheelMotion = -0.25f;
+        return;
+    }
+    else if (button == MOUSE_WHEEL_DOWN)
+    {
+        mouseWheelTime = currentTime;
+        mouseWheelMotion = 0.25f;
+        return;
+    }
+
     if (button == GLUT_LEFT_BUTTON)
         leftButton = (state == GLUT_DOWN);
     if (button == GLUT_RIGHT_BUTTON)
         rightButton = (state == GLUT_DOWN);
     if (button == GLUT_MIDDLE_BUTTON)
         middleButton = (state == GLUT_DOWN);
+
     lastX = x;
     lastY = y;
 
@@ -944,6 +983,13 @@ int main(int argc, char* argv[])
         cerr << "Failed to initialize renderer.\n";
         return 1;
     }
+
+#if 0
+    // GL extensions which require glXGetProcAddressARB still not working,
+    // so leave this disabled.
+    if (renderer->perPixelLightingSupported())
+        renderer->setPerPixelLighting(true);
+#endif
 
     // Set up the star labels
     for (vector<string>::const_iterator iter = config->labelledStars.begin();

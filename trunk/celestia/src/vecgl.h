@@ -64,22 +64,22 @@ inline void glTranslate(const Point3f& p)
     glTranslatef(p.x, p.y, p.z);
 }
 
-inline void glLightDirection(int light, const Vec3f& dir)
+inline void glLightDirection(GLenum light, const Vec3f& dir)
 {
     glLightfv(light, GL_POSITION, &(Vec4f(dir.x, dir.y, dir.z, 0.0f).x));
 }
 
-inline void glLightPosition(int light, const Point3f& pos)
+inline void glLightPosition(GLenum light, const Point3f& pos)
 {
     glLightfv(light, GL_POSITION, &(Vec4f(pos.x, pos.y, pos.z, 1.0f).x));
 }
 
-inline void glLightColor(int light, int which, const Vec3f& color)
+inline void glLightColor(GLenum light, int which, const Vec3f& color)
 {
     glLightfv(light, which, &(Vec4f(color.x, color.y, color.z, 1.0f).x));
 }
 
-inline void glLightColor(int light, int which, const Vec4f& color)
+inline void glLightColor(GLenum light, int which, const Vec4f& color)
 {
     glLightfv(light, which, &color.x);
 }
