@@ -315,10 +315,10 @@
 	}
 
 	RotationPeriod      9.927953 # System II (for GRS)
-	# RotationPeriod    9.92425 # System III (radio emissions)
+	# RotationPeriod    9.92425  # System III (radio emissions)
 	Obliquity           2.222461 # 1.82246 # 2.22246
 	EquatorAscendingNode -22.203 # -1.87785 # -22.203
-	RotationOffset      305.40
+	RotationOffset     16        # 305.40
 
 	Albedo 0.51
 }
@@ -370,7 +370,7 @@
 	MeanLongitude    106.724
 	}
 
-	RotationOffset 198
+	RotationOffset 219
 
 	Albedo         0.61
 }
@@ -393,7 +393,7 @@
 	MeanLongitude    176.377
 	}
 
-	RotationOffset 32
+	RotationOffset 53
 
 	Albedo         0.64
 }
@@ -416,7 +416,7 @@
 	MeanLongitude    121.206
 	}
 
-	RotationOffset 40
+	RotationOffset 60
 
 	Albedo         0.42
 }
@@ -439,7 +439,7 @@
 	MeanLongitude     85.091
 	}
 
-	RotationOffset 260
+	RotationOffset 282
 
 	Albedo         0.20
 }
@@ -465,11 +465,10 @@
         MeanLongitude    49.944
 	}
 
-	RotationPeriod      10.65622 # System III - magnetic field
-	# Obliquity           28.052 # old value: 26.73
-	# EquatorAscendingNode  168.8112 # 169.53
-	Obliquity             28.049
-	EquatorAscendingNode 169.530 
+	RotationPeriod        10.65622 # System III - magnetic field
+	Obliquity             28.049   # 28.052   # old value: 26.73
+	EquatorAscendingNode 169.530   # 168.8112 # 169.53
+        RotationOffset       358.922   # correct System III prime meridian
 
 	Albedo            0.50
 
