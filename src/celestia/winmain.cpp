@@ -452,8 +452,9 @@ static bool CopyStateURLToClipboard()
         return false;
 
     Url url(appCore);
-    char* s = const_cast<char*>(url.getAsString().c_str());
+    string urlString = url.getAsString();
 
+    char* s = const_cast<char*>(urlString.c_str());
     HGLOBAL clipboardDataHandle = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE,
                                               strlen(s) + 1);
     char* clipboardData = (char*) GlobalLock(clipboardDataHandle);
