@@ -248,6 +248,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void flash(const std::string&, double duration = 1.0);
 
+    CelestiaConfig* getConfig() const;
+
     class Alerter
     {
     public:
