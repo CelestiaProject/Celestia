@@ -19,6 +19,7 @@
 #include "astro.h"
 #include "stardb.h"
 #include "parser.h"
+#include "parseobject.h"
 #include "multitexture.h"
 #include "meshmanager.h"
 #include <celutil/debug.h>
@@ -798,8 +799,9 @@ static Star* CreateStar(uint32 catalogNumber,
     string textureName;
     bool hasTexture = starData->getString("Texture", textureName);
     bool hasModel = starData->getString("Mesh", modelName);
+    Orbit* orbit = CreateOrbit(NULL, starData, path, true);
 
-    if (hasTexture || hasModel)
+    if (hasTexture || hasModel || orbit != NULL)
     {
         // If the star definition has extended information, clone the
         // star details so we can customize it without affecting other
@@ -809,15 +811,18 @@ static Star* CreateStar(uint32 catalogNumber,
         // probably be destroyed in the star destructor.  Reference counting
         // is probably the best strategy.
         details = new StarDetails(*details);
-    }
 
-    if (hasTexture)
-        details->setTexture(MultiResTexture(textureName, path));
+        if (hasTexture)
+            details->setTexture(MultiResTexture(textureName, path));
 
-    if (hasModel)
-    {
-        ResourceHandle modelHandle = GetModelManager()->getHandle(ModelInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f)));
-        details->setModel(modelHandle);
+        if (hasModel)
+        {
+            ResourceHandle modelHandle = GetModelManager()->getHandle(ModelInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f)));
+            details->setModel(modelHandle);
+        }
+
+        if (orbit != NULL)
+            details->setOrbit(orbit);
     }
 
     Star* star = new Star();

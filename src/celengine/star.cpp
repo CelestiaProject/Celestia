@@ -11,6 +11,7 @@
 #include <cstring>
 #include "celestia.h"
 #include "astro.h"
+#include "orbit.h"
 #include "star.h"
 
 
@@ -590,6 +591,7 @@ StarDetails::GetNeutronStarDetails()
         neutronStarDetails = CreateStandardStarType("Q", 5000000.0f,
                                                     1.0f / 86400.0f);
         neutronStarDetails->setRadius(10.0f);
+        neutronStarDetails->addKnowledge(KnowRadius);
     }
 
     return neutronStarDetails;
@@ -608,6 +610,7 @@ StarDetails::GetBlackHoleDetails()
         blackHoleDetails = CreateStandardStarType("X", 6.15e-8f,
                                                   1.0f / 86400.0f);
         blackHoleDetails->setRadius(2.9f);
+        blackHoleDetails->addKnowledge(KnowRadius);
     }
 
     return blackHoleDetails;
@@ -696,12 +699,16 @@ void
 StarDetails::setOrbit(Orbit* o)
 {
     orbit = o;
+    orbitalRadius = (float) astro::kilometersToLightYears(o->getBoundingRadius());
 }
 
 
 // Return the radius of the star in kilometers
 float Star::getRadius() const
 {
+    if (details->getKnowledge(StarDetails::KnowRadius))
+        return details->getRadius();
+        
 #ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
@@ -719,6 +726,30 @@ float Star::getRadius() const
     return SOLAR_RADIUS * (float) sqrt(boloLum) *
         square(SOLAR_TEMPERATURE / getTemperature());
 #endif
+}
+
+
+UniversalCoord
+Star::getPosition(double t) const
+{
+    const Orbit* orbit = getOrbit();
+    if (!orbit)
+    {
+        return UniversalCoord(position.x * 1.0e6f,
+                              position.y * 1.0e6f,
+                              position.z * 1.0e6f);
+    }
+    else
+    {
+        Point3f barycenterPosLY = position;
+        Point3f barycenterPos(barycenterPosLY.x * 1.0e6f,
+                              barycenterPosLY.y * 1.0e6f,
+                              barycenterPosLY.z * 1.0e6f);
+
+        return UniversalCoord(barycenterPos) +
+            ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0f)) *
+             astro::kilometersToMicroLightYears(1.0));
+    }
 }
 
 
