@@ -127,7 +127,10 @@ void KdeGlWidget::initializeGL()
         appCore->setHudDetail(KGlobal::config()->readNumEntry("HudDetail"));
     if (KGlobal::config()->hasKey("TimeZoneBias"))
         appCore->setTimeZoneBias(KGlobal::config()->readNumEntry("TimeZoneBias"));
+    if (KGlobal::config()->hasKey("MinFeatureSize"))
+        appRenderer->setMinimumFeatureSize(KGlobal::config()->readNumEntry("MinFeatureSize"));
 
+        
     if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Basic))
         ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathBasic")))->setEnabled(false);
     if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Multitexture))

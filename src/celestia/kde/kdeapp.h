@@ -112,14 +112,13 @@ public slots:
     void slotShowGalaxies();
     void slotShowDiagrams();
     void slotShowCloudMaps();
-    void slotShowOrbits();
 
+    void slotShowOrbits();
     void slotShowAsteroidOrbits();
     void slotShowCometOrbits();
     void slotShowMoonOrbits();
     void slotShowPlanetOrbits();
     void slotShowSpacecraftOrbits();
-
     void slotShowCelestialSphere();
     void slotShowNightMaps();
     void slotShowMarkers();
@@ -131,6 +130,7 @@ public slots:
     void slotShowBoundaries();
     void slotShowAutoMag();
     void slotShowCometTails();
+
     void slotShowStarLabels();
     void slotShowPlanetLabels();
     void slotShowMoonLabels();
@@ -140,6 +140,18 @@ public slots:
     void slotShowAsteroidLabels();
     void slotShowSpacecraftLabels();
     void slotShowLocationLabels();
+
+    void slotShowCityLocations();
+    void slotShowObservatoryLocations();
+    void slotShowLandingSiteLocations();
+    void slotShowCraterLocations();
+    void slotShowMonsLocations();
+    void slotShowTerraLocations();
+    void slotShowVallisLocations();
+    void slotShowMareLocations();
+    void slotShowOtherLocations();
+    void slotMinFeatureSize(int size);
+
     void slotAmbientLightLevel(float l);
     void slotFaintestVisible(float m);
     void slotHudDetail(int l);
