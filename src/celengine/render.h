@@ -212,11 +212,12 @@ class Renderer
     float ambientLightLevel;
     bool fragmentShaderEnabled;
     bool vertexShaderEnabled;
-    float saturationMag;
     float brightnessBias;
 
     float brightnessScale;
     float faintestMag;
+    float saturationMagNight;
+    float saturationMag;
 
     Color ambientColor;
 
