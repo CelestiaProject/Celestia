@@ -95,6 +95,7 @@ NSString* fatalErrorMessage;
             {
                 url = CFURLCreateFromFSRef(nil, &folder);
                 path = [(NSURL *)url path];
+                CFRelease(url);
 
                 if (path)
                 {
@@ -105,7 +106,6 @@ NSString* fatalErrorMessage;
                 }
 
                 path = nil;
-                CFRelease(url);
             }
         }
 
