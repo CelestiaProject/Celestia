@@ -32,6 +32,7 @@ static const string DDSExt(".dds");
 static const string CelestiaLegacyScriptExt(".cel");
 static const string CelestiaScriptExt(".clx");
 static const string CelestiaScriptExt2(".celx");
+static const string CelestiaModelExt(".cmod");
 
 
 ContentType DetermineFileType(const string& filename)
@@ -72,6 +73,8 @@ ContentType DetermineFileType(const string& filename)
     else if (compareIgnoringCase(CelestiaScriptExt, ext) == 0 ||
              compareIgnoringCase(CelestiaScriptExt2, ext) == 0)
         return Content_CelestiaScript;
+    else if (compareIgnoringCase(CelestiaModelExt, ext) == 0)
+        return Content_CelestiaModel;
     else
         return Content_Unknown;
 }
