@@ -345,7 +345,7 @@ Code:
   the horizon when viewed from the surface of Earth
 * Made the correct hemisphere of the Moon face Earth
 * Fixed Earth's rotation so that sunrise and sunset times are correct
-* Fixed picking so that clicking on a distance planet will never select one of
+* Fixed picking so that clicking on a distant planet will never select one of
   its satellites.
 * Improved orbit calculation code to properly compute eccentric anomaly
 * Render orbit outlines behind planets instead of in front of them
@@ -375,3 +375,6 @@ Code:
 * Unix Gtk : Fixed problem where giving keyboard commands wasn't updating
 	     the toggle menu gadgets. (dramsey)
 * Unix : Handle timezones correctly. (dramsey)
+* Much better Data analysis and Correction for the buildstardb program
+  leading to better data in stars.dat . Verbosity of the buildstardb program
+  may now be controlled by commandline argument. (dramsey)

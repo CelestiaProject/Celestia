@@ -133,22 +133,23 @@ File Overview
   Mark J. Kilgard's texture font package
 
 * buildstardb.cpp
-  The program used to munge the HIPPARCOS data set into x the star database.
-
-* starcat.c
-  A utility program to show some stuff about some of the HIPPARCOS stars.
+  The program used to munge the HIPPARCOS data set into the star database.
+  If you wish to munge your own database, you will need to download a copy
+  of the HIPPARCOS database, it may be found at the URL:
+  ftp://cdsarc.u-strabg.fr/cats/I/239
+  You will need the files hip_main.dat h_dm_com.dat hip_dm_o.da & tyc_main.dat
 
 
 The Star Database
 -----------------
-The main star database is data/stars.dat.  This contains about 120,000 stars,
-including everything from the HIPPARCOS catalog, plus one addition: Sol, our
+The main star database is data/stars.dat.  This contains about 112,000 stars,
+including most of the HIPPARCOS catalog, plus one addition: Sol, our
 sun.  The file starnames.dat contains proper names and Bayer and Flamsteed
 designations for about 1000 stars.  Every star in stars.dat has a unique
 identifier called its catalog number, and the name entries are linked with
 stars from the database via this number.
 
-The ReadStars function in winmain.cpp is responsible for loading the star
+The readStars function in celestiacore.cpp is responsible for loading the star
 database for Celestia.  Once initialized, the StarDatabase may be queried in
 one of three ways:  by star index, by catalog number, or by star name.  The
 star index is just the order of the star within the database, so lookup by
