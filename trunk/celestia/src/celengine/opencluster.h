@@ -30,6 +30,9 @@ class OpenCluster : public DeepSkyObject
                         float brightness,
                         float pixelSize);
 
+    virtual unsigned int getRenderMask();
+    virtual unsigned int getLabelMask();
+
  private:
     // TODO: It could be very useful to have a list of stars that are members
     // of the cluster.

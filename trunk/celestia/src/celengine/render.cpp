@@ -35,7 +35,6 @@
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "meshmanager.h"
-#include "rendcontext.h"
 #include "render.h"
 
 using namespace std;
@@ -1339,8 +1338,7 @@ void Renderer::render(const Observer& observer,
         glEnable(GL_TEXTURE_2D);
     }
 
-    if ((renderFlags & ShowGalaxies) != 0 &&
-        universe.getDeepSkyCatalog() != NULL)
+    if (universe.getDeepSkyCatalog() != NULL)
         renderDeepSkyObjects(*universe.getDeepSkyCatalog(), observer);
 
     // Translate the camera before rendering the stars
@@ -1392,8 +1390,8 @@ void Renderer::render(const Observer& observer,
             disableSmoothLines();
     }
 
-    if ((labelMode & GalaxyLabels) != 0 && universe.getDeepSkyCatalog() != NULL)
-        labelGalaxies(*universe.getDeepSkyCatalog(), observer);
+    if (universe.getDeepSkyCatalog() != NULL)
+        labelDeepSkyObjects(*universe.getDeepSkyCatalog(), observer);
     if ((labelMode & StarLabels) != 0 && universe.getStarCatalog() != NULL)
         labelStars(labelledStars, *universe.getStarCatalog(), observer);
     if ((labelMode & ConstellationLabels) != 0 &&
@@ -2991,6 +2989,16 @@ static void renderModelDefault(Model* model,
     glMaterialfv(GL_FRONT, GL_EMISSION, black);
     glMaterialfv(GL_FRONT, GL_SPECULAR, black);
     glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+}
+
+
+static void renderModel_GLSL(Model* Model,
+			     const LightingState& ls,
+			     float radius,
+			     const Mat4f& planetMat)
+{
+    glDisable(GL_LIGHTING);
+
 }
 
 
@@ -6361,6 +6369,10 @@ void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
          iter != catalog.end(); iter++)
     {
         DeepSkyObject* obj = *iter;
+
+	if ((renderFlags & obj->getRenderMask()) == 0)
+	    continue;
+
         Point3d pos = obj->getPosition();
         float radius = obj->getRadius();
         Vec3f offset = Vec3f((float) (pos.x - observerPos.x),
@@ -6468,8 +6480,8 @@ void Renderer::renderCelestialSphere(const Observer& observer)
 }
 
 
-void Renderer::labelGalaxies(const DeepSkyCatalog& catalog,
-                             const Observer& observer)
+void Renderer::labelDeepSkyObjects(const DeepSkyCatalog& catalog,
+				   const Observer& observer)
 {
     Point3f observerPos_ly = (Point3f) observer.getPosition() * ((float)1e-6);
 
@@ -6477,14 +6489,17 @@ void Renderer::labelGalaxies(const DeepSkyCatalog& catalog,
          iter != catalog.end(); iter++)
     {
         DeepSkyObject* obj = *iter;
-        Point3d posd = obj->getPosition();
-        Point3f pos((float) posd.x, (float) posd.y, (float) posd.z);
-
-        Vec3f rpos = pos - observerPos_ly;
-        if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
+        if ((obj->getLabelMask() & labelMode) != 0)
         {
-            addLabel(obj->getName(), Color(0.7f, 0.7f, 0.0f),
-                     Point3f(rpos.x, rpos.y, rpos.z));
+            Point3d posd = obj->getPosition();
+            Point3f pos((float) posd.x, (float) posd.y, (float) posd.z);
+
+            Vec3f rpos = pos - observerPos_ly;
+            if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
+            {
+                addLabel(obj->getName(), Color(0.7f, 0.7f, 0.0f),
+                         Point3f(rpos.x, rpos.y, rpos.z));
+            }
         }
     }
 }
@@ -6501,7 +6516,7 @@ void Renderer::labelStars(const vector<StarLabel>& stars,
         Star* star = iter->star;
         Point3f pos = star->getPosition();
         float distance = pos.distanceTo(observerPos_ly);
-        float appMag = (distance > 0.0f) ?
+	float appMag = (distance > 0.0f) ?
             astro::absToAppMag(star->getAbsoluteMagnitude(), distance) : -100.0f;
         
         if (appMag < faintestMag && distance <= distanceLimit)
