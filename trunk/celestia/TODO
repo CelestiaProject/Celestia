@@ -5,10 +5,8 @@ USER INTERFACE
 * More star label modes--nearest stars, brightest stars
 * Make picking more intelligent
   * Picking a distant planet is likely to select one of its satellites
-  * Picking stars doesn't work at close range
   * Make picking more accurate for non-spherical bodies
   * Make galaxies pickable
-* Tracking mode for camera
 * Add more intuitive free flight controls
 * Views of planet and satellite orbits
   * Add satellite orbits
@@ -19,17 +17,14 @@ USER INTERFACE
 * Dialog box for displaying detailed information about a star or planet
 * Create a manual
 * Improve web info feature
-* Added accelerator key labels to Windows menus
 * Star browser: flag stars with planetary systems
 * Star browser: allow user to select how many stars to show
 * Solar system browser: add icons
-* Make a Gnome UI for UNIX version
 * Popup H-R diagram window
 * Use a slider widget for controlling ambient light level
 
 VISUALS
 * Shadows from rings on planet
-* Make bump maps work for irregular objects
 * Get a real texture map for Eros
 * Change the color of the light illuminating planets based on star class;
   probably only M and maybe K class stars should have a noticeable hue
@@ -54,6 +49,7 @@ POLISH
 * Add screen shot feature
 * Preload some textures to avoid loading delay
 * Use antialiased fonts
+* Use Greek letters in Bayer designations
 * Make the demo loop
 * Add a demo mode that visits random targets
 
