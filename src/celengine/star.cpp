@@ -64,7 +64,17 @@ static float tempK[10] =
 
 static float tempM[10] =
 {
-    3850, 3720, 3580, 3470, 3370, 3240, 3050, 2940, 2640, 2600
+    3850, 3720, 3580, 3470, 3370, 3240, 3050, 2940, 2640, 2000
+};
+
+static float tempL[10] =
+{
+    1960, 1930, 1900, 1850, 1800, 1740, 1680, 1620, 1560, 1500
+};
+
+static float tempT[10] =
+{
+    1425, 1350, 1275, 1200, 1140, 1080, 1020, 900, 800, 750
 };
 
 
@@ -340,6 +350,10 @@ float Star::getTemperature() const
         case StellarClass::Spectral_WN:
         case StellarClass::Spectral_WC:
             return tempO[specSubClass];
+        case StellarClass::Spectral_L:
+            return tempL[specSubClass];
+        case StellarClass::Spectral_T:
+            return tempT[specSubClass];
         default:
             // TODO: Bad spectral class
             return -1;
@@ -438,8 +452,8 @@ float Star::getBolometricMagnitude() const
         case StellarClass::Spectral_L:
             bolometricCorrection = bmag_correctionL[specSubClass];
             break;
-        case StellarClass::Spectral_L:
-            bolometricCorrection = bmag_correctionL[specSubClass];
+        case StellarClass::Spectral_T:
+            bolometricCorrection = bmag_correctionT[specSubClass];
             break;
         }
     }

@@ -85,6 +85,7 @@ static ResourceHandle starTexB = InvalidResource;
 static ResourceHandle starTexA = InvalidResource;
 static ResourceHandle starTexG = InvalidResource;
 static ResourceHandle starTexM = InvalidResource;
+static ResourceHandle starTexL = InvalidResource;
 
 static const float CoronaHeight = 0.2f;
 
@@ -385,6 +386,7 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
         starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg", 0));
         starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg", 0));
         starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg", 0));
+        starTexL = GetTextureManager()->getHandle(TextureInfo("browndwarf.jpg", 0));
 
         if (context->extensionSupported("GL_EXT_texture_cube_map"))
         {
@@ -3877,6 +3879,10 @@ void Renderer::renderStar(const Star& star,
         case StellarClass::Spectral_S:
         case StellarClass::Spectral_N:
             tex = starTexM;
+            break;
+        case StellarClass::Spectral_L:
+        case StellarClass::Spectral_T:
+            tex = starTexL;
             break;
         default:
             tex = starTexA;
