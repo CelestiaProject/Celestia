@@ -2134,7 +2134,7 @@ static int observer_rotate(lua_State* l)
     {
         doError(l, "Argument to observer:setpos must be a rotation");
     }
-    Quatf qf(q->w, q->x, q->y, q->z);
+    Quatf qf((float) q->w, (float) q->x, (float) q->y, (float) q->z);
     o->rotate(qf);
     return 0;
 }
@@ -2184,8 +2184,8 @@ static int observer_lookat(lua_State* l)
         nd = (*to) - (*from);
     }
     // need Vec3f instead:
-    Vec3f up = Vec3f(upd->x, upd->y, upd->z);
-    Vec3f n = Vec3f(nd.x, nd.y, nd.z);
+    Vec3f up = Vec3f((float) upd->x, (float) upd->y, (float) upd->z);
+    Vec3f n = Vec3f((float) nd.x, (float) nd.y, (float) nd.z);
 
     n.normalize();
     Vec3f v = n ^ up;
@@ -2240,14 +2240,14 @@ static int observer_gototable(lua_State* l)
     lua_gettable(l, 2);
     Quatd* rot1 = to_rotation(l, 3);
     if (rot1 != NULL)
-        jparams.initialOrientation = Quatf(rot1->w, rot1->x, rot1->y, rot1->z);
+        jparams.initialOrientation = Quatf((float) rot1->w, (float) rot1->x, (float) rot1->y, (float) rot1->z);
     lua_settop(l, 2);
 
     lua_pushstring(l, "finalOrientation");
     lua_gettable(l, 2);
     Quatd* rot2 = to_rotation(l, 3);
     if (rot2 != NULL)
-        jparams.finalOrientation = Quatf(rot2->w, rot2->x, rot2->y, rot2->z);
+        jparams.finalOrientation = Quatf((float) rot2->w, (float) rot2->x, (float) rot2->y, (float) rot2->z);
     lua_settop(l, 2);
 
     lua_pushstring(l, "startInterpolation");
@@ -2673,7 +2673,7 @@ static int observer_setfov(lua_State* l)
     double fov = safeGetNumber(l, 2, AllErrors, "Argument to observer:setfov() must be a number");
     if ((fov >= degToRad(0.001f)) && (fov <= degToRad(120.0f)))
     {
-        obs->setFOV(fov);
+        obs->setFOV((float) fov);
     }
     return 0;
 }
