@@ -55,6 +55,8 @@
 
 using namespace std;
 
+typedef pair<int,string> IntStrPair;
+typedef vector<IntStrPair> IntStrPairVec;
 
 char AppName[] = "Celestia";
 
@@ -1406,16 +1408,134 @@ static void setMenuItemCheck(int menuItem, bool checked)
     CheckMenuItem(menuBar, menuItem, checked ? MF_CHECKED : MF_UNCHECKED);
 }
 
-
-static HMENU CreatePlanetarySystemMenu(const PlanetarySystem* planets)
+struct IntStrPairComparePredicate
 {
-    HMENU menu = CreatePopupMenu();
-    
-    for (int i = 0; i < planets->getSystemSize(); i++)
+    IntStrPairComparePredicate() : dummy(0)
     {
-        Body* body = planets->getBody(i);
-        AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + i,
-                   body->getName().c_str());
+    }
+
+    bool operator()(const IntStrPair pair1, const IntStrPair pair2) const
+    {
+        return (pair1.second.compare(pair2.second) < 0);
+    }
+
+    int dummy;
+};
+
+static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem* psys)
+{
+    // Use some vectors to categorize and sort the bodies within this PlanetarySystem.
+    // In order to generate sorted menus, we must carry the name and menu index as a
+    // single unit in the sort. One obvous way is to create a vector<pair<int,string>>
+    // and then use a comparison predicate to sort.the vector based on the string in
+    // each pair.
+
+    // Declare vector<pair<int,string>> objects for each classification of body
+    vector<IntStrPair> asteroids;
+    vector<IntStrPair> comets;
+    vector<IntStrPair> invisibles;
+    vector<IntStrPair> moons;
+    vector<IntStrPair> planets;
+    vector<IntStrPair> spacecraft;
+
+    // We will use these objects to iterate over all the above vectors
+    vector<IntStrPairVec> objects;
+    vector<string> menuNames;
+
+    // Place each body in the correct vector based on classification
+    HMENU menu = CreatePopupMenu();
+    for (int i = 0; i < psys->getSystemSize(); i++)
+    {
+        Body* body = psys->getBody(i);
+        switch(body->getClassification())
+        {
+        case Body::Asteroid:
+            asteroids.push_back(make_pair(i, body->getName()));
+            break;
+        case Body::Comet:
+            comets.push_back(make_pair(i, body->getName()));
+            break;
+        case Body::Invisible:
+            invisibles.push_back(make_pair(i, body->getName()));
+            break;
+        case Body::Moon:
+            moons.push_back(make_pair(i, body->getName()));
+            break;
+        case Body::Planet:
+            planets.push_back(make_pair(i, body->getName()));
+            break;
+        case Body::Spacecraft:
+            spacecraft.push_back(make_pair(i, body->getName()));
+            break;
+        }
+    }
+
+    // Add each vector of PlanetarySystem bodies to a vector to iterate over
+    objects.push_back(asteroids);
+    menuNames.push_back("Asteroids");
+    objects.push_back(comets);
+    menuNames.push_back("Comets");
+    objects.push_back(invisibles);
+    menuNames.push_back("Invisibles");
+    objects.push_back(moons);
+    menuNames.push_back("Moons");
+    objects.push_back(planets);
+    menuNames.push_back("Planets");
+    objects.push_back(spacecraft);
+    menuNames.push_back("Spacecraft");
+    
+    // Now sort each vector and generate submenus 
+    IntStrPairComparePredicate pred;
+    vector<IntStrPairVec>::iterator obj;
+    vector<IntStrPair>::iterator it;
+    vector<string>::iterator menuName;
+    HMENU hSubMenu;
+    int numSubMenus;
+
+    // Count how many submenus we need to create
+    numSubMenus = 0;
+    for (obj=objects.begin(); obj != objects.end(); obj++)
+    {
+        if (obj->size() > 0)
+            numSubMenus++;
+    }
+
+    menuName = menuNames.begin();
+    for (obj=objects.begin(); obj != objects.end(); obj++)
+    {
+        // Only generate a submenu if the vector is not empty
+        if (obj->size() > 0)
+        {
+            // Don't create a submenu for a single item
+            if (obj->size() == 1)
+            {
+                it=obj->begin();
+                AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
+            }
+            else
+            {
+                // Skip sorting if we are dealing with the planets in our own Solar System.
+                if (parentName != "Sol" || *menuName != "Planets")
+                    sort(obj->begin(), obj->end(), pred);
+
+                if (numSubMenus > 1)
+                {
+                    // Add items to submenu
+                    hSubMenu = CreatePopupMenu();
+                    for(it=obj->begin(); it != obj->end(); it++)
+                        AppendMenu(hSubMenu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
+
+                    AppendMenu(menu, MF_POPUP | MF_STRING, (DWORD)hSubMenu, menuName->c_str());
+                }
+                else
+                {
+                    // Just add items to the popup
+                    for(it=obj->begin(); it != obj->end(); it++)
+                        AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
+                }
+            }
+        }
+        menuName++;
     }
 
     return menu;
@@ -1450,8 +1570,8 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     {
     case Selection::Type_Body:
         {
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER,
-                       sel.body()->getName().c_str());
+            name = sel.body()->getName();
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
@@ -1461,7 +1581,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             const PlanetarySystem* satellites = sel.body()->getSatellites();
             if (satellites != NULL && satellites->getSystemSize() != 0)
             {
-                HMENU satMenu = CreatePlanetarySystemMenu(satellites);
+                HMENU satMenu = CreatePlanetarySystemMenu(name, satellites);
                 AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) satMenu,
                            "&Satellites");
             }
@@ -1494,11 +1614,11 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             if (iter != solarSystemCatalog->end())
             {
                 SolarSystem* solarSys = iter->second;
-                HMENU planetsMenu = CreatePlanetarySystemMenu(solarSys->getPlanets());
-                AppendMenu(hMenu,
-                           MF_POPUP | MF_STRING,
-                           (DWORD) planetsMenu,
-                           "&Planets");
+                HMENU planetsMenu = CreatePlanetarySystemMenu(name, solarSys->getPlanets());
+                if (name == "Sol")
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, "Orbiting Bodies");
+                else
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, "Planets");
             }
         }
         break;
