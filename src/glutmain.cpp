@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include "gl.h"
 #include <GL/glut.h>
+#include "../config.h"
 #include "celestia.h"
 #include "vecmath.h"
 #include "quaternion.h"
