@@ -25,9 +25,9 @@ class PlanetarySystem
 {
  public:
     PlanetarySystem(Body* _primary);
-    PlanetarySystem(uint32 _starNumber);
+    PlanetarySystem(const Star* _star);
     
-    uint32 getStarNumber() const { return starNumber; };
+    const Star* getStar() const { return star; };
     Body* getPrimaryBody() const { return primary; };
     int getSystemSize() const { return satellites.size(); };
     Body* getBody(int i) const { return satellites[i]; };
@@ -45,7 +45,7 @@ class PlanetarySystem
     Body* find(std::string, bool deepSearch = false) const;
 
  private:
-    uint32 starNumber;
+    const Star* star;
     Body* primary;
     std::vector<Body*> satellites;
 };

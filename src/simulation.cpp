@@ -48,6 +48,16 @@ Simulation::~Simulation()
 }
 
 
+static const Star* getSun(Body* body)
+{
+    PlanetarySystem* system = body->getSystem();
+    if (system == NULL)
+        return NULL;
+    else
+        return system->getStar();
+}
+
+
 RigidTransform Simulation::toUniversal(const FrameOfReference& frame,
                                        const RigidTransform& xform,
                                        double t)
@@ -60,7 +70,7 @@ RigidTransform Simulation::toUniversal(const FrameOfReference& frame,
     Point3d offset(0.0, 0.0, 0.0);
     if (frame.body != NULL)
     {
-        Star* sun = getSun(frame.body);
+        const Star* sun = getSun(frame.body);
         if (sun != NULL)
             base = sun->getPosition();
         if (frame.coordSys == astro::Ecliptical ||
@@ -110,7 +120,7 @@ RigidTransform Simulation::fromUniversal(const FrameOfReference& frame,
     Point3d offset(0.0, 0.0, 0.0);
     if (frame.body != NULL)
     {
-        Star* sun = getSun(frame.body);
+        const Star* sun = getSun(frame.body);
         if (sun != NULL)
             base = sun->getPosition();
         if (frame.coordSys == astro::Ecliptical ||
@@ -173,7 +183,7 @@ static Quatf lookAt(Point3f from, Point3f to, Vec3f up)
 }
 
 
-SolarSystem* Simulation::getSolarSystem(Star* star)
+SolarSystem* Simulation::getSolarSystem(const Star* star)
 {
     if (star == NULL)
         return NULL;
@@ -187,22 +197,12 @@ SolarSystem* Simulation::getSolarSystem(Star* star)
 }
 
 
-Star* Simulation::getSun(Body* body)
-{
-    PlanetarySystem* system = body->getSystem();
-    if (system == NULL)
-        return NULL;
-    else
-        return stardb->find(system->getStarNumber());
-}
-
-
 UniversalCoord Simulation::getSelectionPosition(Selection& sel, double when)
 {
     if (sel.body != NULL)
     {
         Point3f sunPos(0.0f, 0.0f, 0.0f);
-        Star* sun = getSun(sel.body);
+        const Star* sun = getSun(sel.body);
         if (sun != NULL)
             sunPos = sun->getPosition();
         return astro::universalPosition(sel.body->getHeliocentricPosition(when),
@@ -501,7 +501,7 @@ bool ExactPlanetPickTraversal(Body* body, void* info)
 
 
 Selection Simulation::pickPlanet(Observer& observer,
-                                 Star& sun,
+                                 const Star& sun,
                                  SolarSystem& solarSystem,
                                  Vec3f pickRay)
 {
@@ -698,7 +698,7 @@ Selection Simulation::pickObject(Vec3f pickRay)
 
     if (closestSolarSystem != NULL)
     {
-        Star* sun = stardb->find(closestSolarSystem->getPlanets()->getStarNumber());
+        const Star* sun = closestSolarSystem->getPlanets()->getStar();
         if (sun != NULL)
             sel = pickPlanet(observer, *sun, *closestSolarSystem, pickRay);
     }
@@ -1148,12 +1148,12 @@ void Simulation::selectPlanet(int index)
         {
             PlanetarySystem* system = selection.body->getSystem();
             if (system != NULL)
-                selectStar(system->getStarNumber());
+                selectStar(system->getStar()->getCatalogNumber());
         }
     }
     else
     {
-        Star* star = NULL;
+        const Star* star = NULL;
         if (selection.star != NULL)
         {
             star = selection.star;
