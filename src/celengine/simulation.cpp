@@ -429,7 +429,7 @@ Selection Simulation::pickObject(Vec3f pickRay, float tolerance)
 void Simulation::reverseObserverOrientation()
 {
     Quatf q = observer.getOrientation();
-    q.xrotate(PI);
+    q.yrotate(PI);
     setObserverOrientation(q);
 }
 
