@@ -2082,6 +2082,15 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
         appCore->charEntered('\033');
         break;
 
+    case 'q':
+    case 'Q':
+        if(event->state & GDK_CONTROL_MASK)
+            {  /* Why isn't Ctrl-Q sending char 21 ? I have no idea, but as
+                  long as it isn't, this will work. */
+            gtk_main_quit();
+            }
+        // Intentional fallthrough if *not* Ctrl-Q
+
     default:
         if (!handleSpecialKey(event->keyval, true))
         {
