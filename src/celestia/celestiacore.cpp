@@ -2453,7 +2453,7 @@ static void displayApparentDiameter(Overlay& overlay,
 
         // Only display the arc size if it's less than 160 degrees and greater
         // than one second--otherwise, it's probably not interesting data.
-        if (arcSize < 160.0 arcSize > 1.0 / 3600.0)
+        if (arcSize < 160.0 && arcSize > 1.0 / 3600.0)
         {
             overlay << "Apparent diameter: ";
             displayAngle(overlay, arcSize);
