@@ -1,0 +1,45 @@
+# Gemini and Mercury models created by Shrox -- http://www.shrox.com/
+
+"Gemini" "Sol/Earth"
+{
+	Mesh "gemini.3ds"
+	Radius 0.0075
+
+	# Data for Gemini VII mission.  Only the SMA, inclination, and period
+	# are approximately correct.
+	EllipticalOrbit
+	{
+		Period            0.06686
+		SemiMajorAxis  6705
+		Eccentricity      0
+		Inclination      28.89
+		AscendingNode   133
+		ArgOfPericenter  96
+		MeanAnomaly       8
+	}
+
+	Albedo 	      0.10
+}
+
+"Friendship 7" "Sol/Earth"
+{
+	Mesh "mercury7.3ds"
+	Radius 0.003
+
+	# I'm missing good orbital data for this mission.  The period,
+	# inclination, and SMA are correct.
+	#
+	# Launched Feb 20, 1962, 9:47:49am EST
+	EllipticalOrbit
+	{
+		Period            0.06144
+		SemiMajorAxis  6587 # perigee 100 miles, apogee 160 miles
+		Eccentricity      0.00737
+		Inclination      32.54
+		AscendingNode   329
+		ArgOfPericenter  96
+		MeanAnomaly     287
+	}
+
+	Albedo 	      0.10
+}
