@@ -63,6 +63,7 @@ OBJS=\
 	$(INTDIR)\solarsys.obj \
 	$(INTDIR)\spheremesh.obj \
 	$(INTDIR)\star.obj \
+	$(INTDIR)\starcolors.obj \
 	$(INTDIR)\stardb.obj \
 	$(INTDIR)\starname.obj \
 	$(INTDIR)\stellarclass.obj \

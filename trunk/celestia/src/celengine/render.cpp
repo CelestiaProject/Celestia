@@ -1,6 +1,6 @@
 // render.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2004, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -152,12 +152,14 @@ Renderer::Renderer() :
     minOrbitSize(MinOrbitSizeForLabel),
     minFeatureSize(MinFeatureSizeForLabel),
     locationFilter(~0),
-    distanceLimit(1.0e6f)
+    distanceLimit(1.0e6f),
+    colorTemp(NULL)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
     skyIndices = new uint32[(MaxSkySlices + 1) * 2 * MaxSkyRings];
     skyContour = new SkyContourPoint[MaxSkySlices + 1];
+    colorTemp = GetStarColorTable(ColorTable_Enhanced);
 }
 
 
@@ -651,6 +653,21 @@ void Renderer::setOrbitMask(int mask)
 {
     orbitMask = mask;
 }
+
+
+const ColorTemperatureTable*
+Renderer::getStarColorTable() const
+{
+    return colorTemp;
+}
+
+
+void
+Renderer::setStarColorTable(const ColorTemperatureTable* ct)
+{
+    colorTemp = ct;
+}
+
 
 void Renderer::addLabelledStar(Star* star, const string& label)
 {
@@ -4788,6 +4805,21 @@ void Renderer::renderPlanet(Body& body,
             if (system != NULL)
             {
                 const Star* sun = system->getStar();
+                float temp = sun->getTemperature();
+                if (temp > 30000.0f)
+                    sunColor = Color(0.8f, 0.8f, 1.0f);
+                else if (temp > 10000.0f)
+                    sunColor = Color(0.9f, 0.9f, 1.0f);
+                else if (temp > 5400.0f)
+                    sunColor = Color(1.0f, 1.0f, 1.0f);
+                else if (temp > 3900.0f)
+                    sunColor = Color(1.0f, 0.9f, 0.8f);
+                else if (temp > 2000.0f)
+                    sunColor = Color(1.0f, 0.7f, 0.7f);
+                else
+                    sunColor = Color(1.0f, 0.4f, 0.4f);
+
+#if 0
                 switch (sun->getStellarClass().getSpectralClass())
                 {
                 case StellarClass::Spectral_O:
@@ -4813,6 +4845,7 @@ void Renderer::renderPlanet(Body& body,
                     // switch values.
                     break;
                 }
+#endif
             }
         }
 
@@ -4920,7 +4953,8 @@ void Renderer::renderStar(const Star& star,
                           float nearPlaneDistance,
                           float farPlaneDistance)
 {
-    Color color = star.getStellarClass().getApparentColor();
+    //Color color = star.getStellarClass().getApparentColor();
+    Color color = colorTemp->lookupColor(star.getTemperature());
     float radius = star.getRadius();
     float discSizeInPixels = radius / (distance * pixelSize);
 
@@ -4932,6 +4966,7 @@ void Renderer::renderStar(const Star& star,
 
         surface.color = color;
         ResourceHandle tex;
+#if 0
         switch (star.getStellarClass().getSpectralClass())
         {
         case StellarClass::Spectral_O:
@@ -4961,6 +4996,8 @@ void Renderer::renderStar(const Star& star,
             tex = starTexA;
             break;
         }
+#endif
+        tex = starTexA;
         surface.baseTexture = MultiResTexture(tex, tex, tex);
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;
@@ -5459,6 +5496,8 @@ public:
 
     bool useDiscs;
     float maxDiscSize;
+    
+    const ColorTemperatureTable* colorTemp;
 };
 
 StarRenderer::StarRenderer() :
@@ -5469,7 +5508,8 @@ StarRenderer::StarRenderer() :
     nBright(0),
     nProcessed(0),
     useDiscs(false),
-    maxDiscSize(1.0f)
+    maxDiscSize(1.0f),
+    colorTemp(NULL)
 {
 }
 
@@ -5485,7 +5525,8 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
     if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f)
     {
-        Color starColor = star.getStellarClass().getApparentColor();
+        //Color starColor = star.getStellarClass().getApparentColor();
+        Color starColor = colorTemp->lookupColor(star.getTemperature());
         float renderDistance = distance;
         float s = renderDistance * size;
         float discSizeInPixels = 0.0f;
@@ -5629,6 +5670,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
         starRenderer.brightnessScale *= 2.0f;
         starRenderer.maxDiscSize = starRenderer.size * MaxScaledDiscStarSize;
     }
+
+    starRenderer.colorTemp = colorTemp;
 
     glareParticles.clear();
 

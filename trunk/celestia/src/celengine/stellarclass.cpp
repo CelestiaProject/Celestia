@@ -88,7 +88,7 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
     {
 	s0[0] = "OBAFGKMRSNWW?LTC"[(unsigned int) getSpectralClass()];
         s0[1] = '\0';
-	s1[0] = "0123456789"[getSpectralSubclass()];
+	s1[0] = "0123456789"[getSubclass()];
         s1[1] = '\0';
 	switch (getLuminosityClass())
         {
@@ -143,6 +143,49 @@ string StellarClass::str() const
 }
 
 
+uint16
+StellarClass::pack() const
+{
+    return (((uint16) starType << 12) |
+	    (((uint16) specClass & 0xf) << 8) |
+	    ((uint16) subclass << 4) |
+	    ((uint16) lumClass));
+}
+
+
+bool
+StellarClass::unpack(uint16 st)
+{
+    starType = static_cast<StellarClass::StarType>(st >> 12);
+
+    switch (starType)
+    {
+    case NormalStar:
+        specClass = static_cast<SpectralClass>(st >> 8 & 0xf);
+        subclass = st >> 4 & 0xf;
+        lumClass = static_cast<LuminosityClass>(st & 0xf);
+        break;
+    case WhiteDwarf:
+        specClass = static_cast<SpectralClass>((st >> 8 & 0xf) + Spectral_DA);
+        if (specClass >= WDClassCount)
+            return false;
+        subclass = st >> 4 & 0xf;
+        lumClass = Lum_Unknown;
+        break;
+    case NeutronStar:
+    case BlackHole:
+        specClass = Spectral_Unknown;
+        subclass = Subclass_Unknown;
+        lumClass = Lum_Unknown;
+        break;
+    default:
+        return false;
+    }
+
+    return true;
+}
+
+
 ostream& operator<<(ostream& os, const StellarClass& sc)
 {
     char buf[20];
@@ -157,7 +200,7 @@ ostream& operator<<(ostream& os, const StellarClass& sc)
 
 bool operator<(const StellarClass& sc0, const StellarClass& sc1)
 {
-    return sc0.data < sc1.data;
+    return sc0.pack() < sc1.pack();
 }
 
 
@@ -166,11 +209,11 @@ StellarClass StellarClass::parse(const std::string& s)
     const char* starType = s.c_str();
     StellarClass::StarType type = StellarClass::NormalStar;
     StellarClass::SpectralClass specClass = StellarClass::Spectral_A;
-    StellarClass::LuminosityClass lum = StellarClass::Lum_V;
-    unsigned short number = 5;
+    StellarClass::LuminosityClass lum = StellarClass::Lum_Unknown;
+    unsigned short number = Subclass_Unknown;
     int i = 0;
 
-    // Subdwarves (luminosity class VI) are prefixed with sd
+    // Subdwarves (luminosity class VI) may be prefixed with sd
     if (starType[i] == 's' && starType[i + 1] == 'd')
     {
         lum = StellarClass::Lum_VI;
@@ -229,7 +272,51 @@ StellarClass StellarClass::parse(const std::string& s)
         break;
     case 'D':
         type = StellarClass::WhiteDwarf;
-        return StellarClass(type, specClass, 0, lum);
+        i++;
+        switch (starType[i])
+        {
+        case 'A':
+            specClass = Spectral_DA;
+            break;
+        case 'B':
+            specClass = Spectral_DB;
+            break;
+        case 'C':
+            specClass = Spectral_DC;
+            break;
+        case 'O':
+            specClass = Spectral_DO;
+            break;
+        case 'Q':
+            specClass = Spectral_DQ;
+            break;
+        case 'Z':
+            specClass = Spectral_DZ;
+            break;
+        default:
+            specClass = Spectral_D;
+            break;
+        }
+
+        if (specClass != Spectral_D)
+            i++;
+
+        if (starType[i] != '\0')
+        {
+            if (isdigit(starType[i]))
+            {
+                number = starType[i] - '0';
+            }
+            else
+            {
+                // Some white dwarf types have two spectral class letters;
+                // skip past the second one to look for a subclass digit
+                i++;
+                if (isdigit(starType[i]))
+                    number = starType[i] - '0';
+            }
+        }
+        return StellarClass(type, specClass, number, lum);
 
     case 'Q':
         type = StellarClass::NeutronStar;
@@ -248,15 +335,6 @@ StellarClass StellarClass::parse(const std::string& s)
     if (starType[i] >= '0' && starType[i] <= '9')
     {
         number = starType[i] - '0';
-    }
-    else
-    {
-        // No number given for spectral class; assume it's a 5 unless
-        // the star is type O, as O5 stars are exceedingly rare.
-        if (specClass == StellarClass::Spectral_O)
-            number = 9;
-        else
-            number = 5;
     }
 
     if (lum != StellarClass::Lum_VI)

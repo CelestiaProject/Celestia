@@ -507,7 +507,7 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
         uint32 hdCatNo = 0;
 	float RA = 0, dec = 0, parallax = 0;
 	int16 appMag;
-	uint16 stellarClass;
+	uint16 spectralType;
 	uint8 parallaxError;
 
 	in.read((char *) &catNo, sizeof catNo);
@@ -522,8 +522,8 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
         LE_TO_CPU_FLOAT(parallax, parallax);
 	in.read((char *) &appMag, sizeof appMag);
         LE_TO_CPU_INT16(appMag, appMag);
-	in.read((char *) &stellarClass, sizeof stellarClass);
-        LE_TO_CPU_INT16(stellarClass, stellarClass);
+	in.read((char *) &spectralType, sizeof spectralType);
+        LE_TO_CPU_INT16(spectralType, spectralType);
 	in.read((char *) &parallaxError, sizeof parallaxError);
         if ( in.bad() )
 	    break;
@@ -546,15 +546,20 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
 	star->setAbsoluteMagnitude((float) (appMag / 256.0 + 5 -
 					    5 * log10(distance / 3.26)));
 
-	StellarClass sc((StellarClass::StarType) (stellarClass >> 12),
-			(StellarClass::SpectralClass)(stellarClass >> 8 & 0xf),
-			(unsigned int) (stellarClass >> 4 & 0xf),
-			(StellarClass::LuminosityClass) (stellarClass & 0xf));
-	star->setStellarClass(sc);
+        
+        StarDetails* details = NULL;
+        StellarClass sc;
+        if (sc.unpack(spectralType))
+            details = StarDetails::GetStarDetails(sc);
 
+        if (details == NULL)
+        {
+            cerr << "Bad spectral type in star database, star #\n";
+            return false;
+        }
+        
+        star->setDetails(details);
         star->setCatalogNumber(catNo);
-	//star->setCatalogNumber(Star::HIPCatalog, catNo);
-        //star->setCatalogNumber(Star::HDCatalog, hdCatNo);
 
 	// TODO: Use a photometric estimate of distance if parallaxError is
 	// greater than 25%.
@@ -633,7 +638,7 @@ bool StarDatabase::loadBinary(istream& in)
 	uint32 catNo = 0;
 	float x = 0.0f, y = 0.0f, z = 0.0f;
 	int16 absMag;
-	uint16 stellarClass;
+	uint16 spectralType;
 
 	in.read((char *) &catNo, sizeof catNo);
         LE_TO_CPU_INT32(catNo, catNo);
@@ -645,8 +650,8 @@ bool StarDatabase::loadBinary(istream& in)
         LE_TO_CPU_FLOAT(z, z);
 	in.read((char *) &absMag, sizeof absMag);
         LE_TO_CPU_INT16(absMag, absMag);
-	in.read((char *) &stellarClass, sizeof stellarClass);
-        LE_TO_CPU_INT16(stellarClass, stellarClass);
+	in.read((char *) &spectralType, sizeof spectralType);
+        LE_TO_CPU_INT16(spectralType, spectralType);
         if (in.bad())
 	    break;
 
@@ -655,12 +660,18 @@ bool StarDatabase::loadBinary(istream& in)
         star->setPosition(x, y, z);
 	star->setAbsoluteMagnitude((float) absMag / 256.0f);
 
-	StellarClass sc((StellarClass::StarType) (stellarClass >> 12),
-			(StellarClass::SpectralClass)(stellarClass >> 8 & 0xf),
-			(unsigned int) (stellarClass >> 4 & 0xf),
-			(StellarClass::LuminosityClass) (stellarClass & 0xf));
-	star->setStellarClass(sc);
+        StarDetails* details = NULL;
+        StellarClass sc;
+        if (sc.unpack(spectralType))
+            details = StarDetails::GetStarDetails(sc);
 
+        if (details == NULL)
+        {
+            cerr << "Bad spectral type in star database, star #\n";
+            return false;
+        }
+
+        star->setDetails(details);
 	star->setCatalogNumber(catNo);
 
 	nStars++;
@@ -670,7 +681,7 @@ bool StarDatabase::loadBinary(istream& in)
         return false;
 
     DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
-    cout << "nStars: " << nStars << '\n';
+    clog << nStars << " stars in database\n";
 
     return true;
 }
@@ -763,6 +774,13 @@ static Star* CreateStar(uint32 catalogNumber, Hash* starData)
         return NULL;
     }
     StellarClass sc = StellarClass::parse(spectralType);
+    StarDetails* details = NULL;
+    details = StarDetails::GetStarDetails(sc);
+    if (details == NULL)
+    {
+        DPRINTF(1, "Invalid star: bad spectral type.\n");
+        return NULL;
+    }
 
     double absMag = 0.0;
     if (!starData->getNumber("AbsMag", absMag))
@@ -773,8 +791,8 @@ static Star* CreateStar(uint32 catalogNumber, Hash* starData)
     }
 
     Star* star = new Star();
+    star->setDetails(details);
     star->setCatalogNumber(catalogNumber);
-    star->setStellarClass(sc);
     star->setAbsoluteMagnitude((float) absMag);
 
     // Convert ra from degrees to hours for eqToCelCart function

@@ -16,6 +16,7 @@
 #include <celengine/universe.h>
 #include <celengine/selection.h>
 #include <celengine/glcontext.h>
+#include <celengine/starcolors.h>
 #include <celtxf/texturefont.h>
 
 
@@ -125,6 +126,8 @@ class Renderer
     void setDistanceLimit(float);
     int getOrbitMask() const;
     void setOrbitMask(int);
+    const ColorTemperatureTable* getStarColorTable() const;
+    void setStarColorTable(const ColorTemperatureTable*);
 
     bool getFragmentShaderEnabled() const;
     void setFragmentShaderEnabled(bool);
@@ -431,6 +434,8 @@ class Renderer
     SkyVertex* skyVertices;
     uint32* skyIndices;
     SkyContourPoint* skyContour;
+
+    const ColorTemperatureTable* colorTemp;
 };
 
 #endif // _RENDER_H_

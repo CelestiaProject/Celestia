@@ -45,18 +45,41 @@ public:
         Spectral_L     = 13,
         Spectral_T     = 14,
         Spectral_C     = 15,
+        Spectral_DA    = 16, // white dwarf A (Balmer lines, no He I or metals)
+        Spectral_DB    = 17, // white dwarf B (He I lines, no H or metals)
+        Spectral_DC    = 18, // white dwarf C, continuous spectrum
+        Spectral_DO    = 19, // white dwarf O, He II strong, He I or H
+        Spectral_DQ    = 20, // white dwarf Q, carbon features
+        Spectral_DZ    = 21, // white dwarf Z, metal lines only, no H or He
+        Spectral_D     = 22, // generic white dwarf, no additional data
+        Spectral_Count = 23,
+    };
+
+    enum
+    {
+        FirstWDClass = 16,
+        WDClassCount = 7,
+        SubclassCount = 11,
+        NormalClassCount = 16,
     };
 
     enum LuminosityClass
     {
-	Lum_Ia0  = 0,
-	Lum_Ia   = 1,
-	Lum_Ib   = 2,
-	Lum_II   = 3,
-	Lum_III  = 4,
-	Lum_IV   = 5,
-	Lum_V    = 6,
-	Lum_VI   = 7,
+	Lum_Ia0     = 0,
+	Lum_Ia      = 1,
+	Lum_Ib      = 2,
+	Lum_II      = 3,
+	Lum_III     = 4,
+	Lum_IV      = 5,
+	Lum_V       = 6,
+	Lum_VI      = 7,
+        Lum_Unknown = 8,
+        Lum_Count   = 9,
+    };
+
+    enum
+    {
+        Subclass_Unknown = 10
     };
 
     inline StellarClass();
@@ -67,7 +90,7 @@ public:
 
     inline StarType getStarType() const;
     inline SpectralClass getSpectralClass() const;
-    inline unsigned int getSpectralSubclass() const;
+    inline unsigned int getSubclass() const;
     inline LuminosityClass getLuminosityClass() const;
 
     Color getApparentColor() const;
@@ -80,10 +103,14 @@ public:
 
     friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
+    uint16 pack() const;
+    bool unpack(uint16);
+
 private:
-    // It'd be nice to use bitfields, but gcc can't seem to pack
-    // them into under 4 bytes.
-    uint16 data;
+    StarType starType;
+    SpectralClass specClass;
+    LuminosityClass lumClass;
+    unsigned int subclass;
 };
 
 
@@ -96,37 +123,41 @@ bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 StellarClass::StellarClass(StarType t,
 			   SpectralClass sc,
 			   unsigned int ssub,
-			   LuminosityClass lum)
+			   LuminosityClass lum) :
+    starType(t),
+    specClass(sc),
+    subclass(ssub),
+    lumClass(lum)
 {
-    data = (((unsigned short) t << 12) |
-	    ((unsigned short) sc << 8) |
-	    ((unsigned short) ssub << 4) |
-	    ((unsigned short) lum));
 }
 
-StellarClass::StellarClass()
+StellarClass::StellarClass() :
+    starType(NormalStar),
+    specClass(Spectral_Unknown),
+    subclass(Subclass_Unknown),
+    lumClass(Lum_Unknown)
 {
-    data = 0;
+    
 }
 
 StellarClass::StarType StellarClass::getStarType() const
 {
-    return (StarType) (data >> 12);
+    return starType;
 }
 
 StellarClass::SpectralClass StellarClass::getSpectralClass() const
 {
-    return (SpectralClass) (data >> 8 & 0xf);
+    return specClass;
 }
 
-unsigned int StellarClass::getSpectralSubclass() const
+unsigned int StellarClass::getSubclass() const
 {
-    return data >> 4 & 0xf;
+    return subclass;
 }
 
 StellarClass::LuminosityClass StellarClass::getLuminosityClass() const
 {
-    return (LuminosityClass) (data & 0xf);
+    return lumClass;
 }
 
 #endif // _STELLARCLASS_H_
