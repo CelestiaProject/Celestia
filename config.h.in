@@ -6,11 +6,16 @@
 /* Define if the X Window System is missing or not being used.  */
 #undef X_DISPLAY_MISSING
 
+#undef HAVE_LIBSM
+
 /* Define if you have the <GL/gl.h> header file.  */
 #undef HAVE_GL_GL_H
 
 /* Define if you have the <GL/glut.h> header file.  */
 #undef HAVE_GL_GLUT_H
+
+/* Define if you have the <X11/SM/SMlib.h> header file.  */
+#undef HAVE_X11_SM_SMLIB_H
 
 /* Define if you have the GL library (-lGL).  */
 #undef HAVE_LIBGL

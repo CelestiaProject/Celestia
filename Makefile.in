@@ -63,12 +63,32 @@ CC = @CC@
 CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+GNOMEGNORBA_LIBS = @GNOMEGNORBA_LIBS@
+GNOMEUI_LIBS = @GNOMEUI_LIBS@
+GNOME_APPLETS_LIBS = @GNOME_APPLETS_LIBS@
+GNOME_CAPPLET_LIBS = @GNOME_CAPPLET_LIBS@
+GNOME_CONFIG = @GNOME_CONFIG@
+GNOME_INCLUDEDIR = @GNOME_INCLUDEDIR@
+GNOME_LIBDIR = @GNOME_LIBDIR@
+GNOME_LIBS = @GNOME_LIBS@
+GNORBA_CFLAGS = @GNORBA_CFLAGS@
+GNORBA_LIBS = @GNORBA_LIBS@
+GTKXMHTML_LIBS = @GTKXMHTML_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_CONFIG = @GTK_CONFIG@
 GTK_LIBS = @GTK_LIBS@
 MAKEINFO = @MAKEINFO@
+ORBIT_CFLAGS = @ORBIT_CFLAGS@
+ORBIT_CONFIG = @ORBIT_CONFIG@
+ORBIT_IDL = @ORBIT_IDL@
+ORBIT_LIBS = @ORBIT_LIBS@
 PACKAGE = @PACKAGE@
+PTHREAD_LIB = @PTHREAD_LIB@
 VERSION = @VERSION@
+XPM_LIBS = @XPM_LIBS@
+ZVT_LIBS = @ZVT_LIBS@
+cflags_set = @cflags_set@
+cxxflags_set = @cxxflags_set@
 
 SUBDIRS = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -76,8 +96,9 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
 DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING ChangeLog INSTALL \
-Makefile.am Makefile.in NEWS aclocal.m4 config.guess config.h.in \
-config.sub configure configure.in install-sh missing mkinstalldirs
+Makefile.am Makefile.in NEWS TODO acconfig.h aclocal.m4 config.guess \
+config.h.in config.sub configure configure.in install-sh missing \
+mkinstalldirs
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -116,7 +137,7 @@ $(srcdir)/config.h.in: $(srcdir)/stamp-h.in
 		rm -f $(srcdir)/stamp-h.in; \
 		$(MAKE) $(srcdir)/stamp-h.in; \
 	else :; fi
-$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
 	cd $(top_srcdir) && $(AUTOHEADER)
 	@echo timestamp > $(srcdir)/stamp-h.in 2> /dev/null
 
