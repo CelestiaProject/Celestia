@@ -1753,16 +1753,13 @@ static void addStars()
         sprintf(buf, " %.2f ", star->getAbsoluteMagnitude());
         tmp[3] = g_strdup(buf);
 
-        star->getStellarClass().str(buf, sizeof buf);
-        tmp[4] = g_strdup(buf);
-
 		gtk_list_store_append(starListStore, &iter);
 		gtk_list_store_set(starListStore, &iter,
 		                   0, tmp[0],
 						   1, tmp[1],
 						   2, tmp[2],
 						   3, tmp[3],
-						   4, tmp[4],
+						   4, star->getSpectralType(),
 						   5, (gpointer)star, -1);
 
         for (unsigned int j = 0; j < 5; j++)
@@ -1806,7 +1803,7 @@ static void loadNearestStarSystem()
 		tmp[0] = const_cast<char*>(stardb->getStarName(*nearestStar).c_str());
 
 		char buf[30];
-		sprintf(buf, "%s Star", (nearestStar->getStellarClass().str().c_str()));
+		sprintf(buf, "%s Star", nearestStar->getSpectralType());
 		tmp[1] = buf;
 	
 		// Set up the top-level node
