@@ -298,6 +298,50 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore)
     }
 }
 
+void AddNewLocationFolderInTree(HWND hTree, char* folderName)
+{
+    //Add new item to Location item after other folders but before root items
+    HTREEITEM hParent, hItem, hInsertAfter;
+    TVINSERTSTRUCT tvis;
+    TVITEM tvItem;
+
+    hParent = TreeView_GetChild(hTree, TVI_ROOT);
+    if (hParent)
+    {
+        //Find last "folder" in children of hParent
+        hItem = TreeView_GetChild(hTree, hParent);
+        while (hItem)
+        {
+            //Is this a "folder
+            tvItem.hItem = hItem;
+            tvItem.mask = TVIF_HANDLE | TVIF_PARAM;
+            if (TreeView_GetItem(hTree, &tvItem))
+            {
+                if(tvItem.lParam == 1)
+                    hInsertAfter = hItem;
+            }
+            hItem = TreeView_GetNextSibling(hTree, hItem);
+        }
+
+        tvis.hParent = hParent;
+        tvis.hInsertAfter = hInsertAfter;
+        tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+        tvis.item.pszText = folderName;
+        tvis.item.lParam = 1;
+        tvis.item.iImage = 2;
+        tvis.item.iSelectedImage = 1;
+        if (hItem = TreeView_InsertItem(hTree, &tvis))
+        {
+            //Make sure root tree item is open and newly
+            //added item is visible.
+            TreeView_Expand(hTree, hParent, TVE_EXPAND);
+
+            //Select the item
+            TreeView_SelectItem(hTree, hItem);
+        }
+    }
+}
+
 void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
 {
     const FavoritesList* favorites = appCore->getFavorites();
