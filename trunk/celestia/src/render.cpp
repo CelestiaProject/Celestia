@@ -17,6 +17,8 @@
 #include "spheremesh.h"
 #include "regcombine.h"
 #include "vertexprog.h"
+#include "texmanager.h"
+#include "meshmanager.h"
 #include "render.h"
 
 using namespace std;
@@ -33,6 +35,12 @@ static const float PixelOffset = 0.375f;
 
 static const int StarVertexListSize = 1024;
 
+// These two values constrain the near and far planes of the view frustum
+// when rendering planet and object meshes.  The near plane will never be
+// closer than MinNearPlaneDistance, and the far plane is set so that far/near
+// will not exceed MaxFarNearRatio.
+static const float MinNearPlaneDistance = 0.0001f; // km
+static const float MaxFarNearRatio      = 10000.0f;
 
 // Static meshes and textures used by all instances of Simulation
 
@@ -92,8 +100,6 @@ Renderer::Renderer() :
     useCubeMaps(false),
     useVertexPrograms(false)
 {
-    textureManager = new TextureManager("textures");
-    meshManager = new MeshManager("models");
     starVertexBuffer = new StarVertexBuffer(2048);
 }
 
@@ -235,7 +241,7 @@ static float AsteroidDisplacementFunc(float u, float v, void* info)
 
 static float calcPixelSize(float fovY, float windowHeight)
 {
-    return 2 * NEAR_DIST * (float) tan(degToRad(fovY / 2.0)) / (float) windowHeight;
+    return 2 * (float) tan(degToRad(fovY / 2.0)) / (float) windowHeight;
 }
 
 
@@ -674,6 +680,7 @@ void Renderer::render(const Observer& observer,
         sun = starDB.find(solarSystem->getStarNumber());
     if (sun != NULL)
     {
+#if 0
         // Change the projection matrix for rendering planets and moons.  Since
         // planets are all rendered at a fixed distance of RENDER_DISTANCE from
         // the viewer, we'll set up the near and far planes to just enclose that
@@ -684,7 +691,7 @@ void Renderer::render(const Observer& observer,
                        (float) windowWidth / (float) windowHeight,
                        NEAR_DIST, RENDER_DISTANCE * 2.0f);
         glMatrixMode(GL_MODELVIEW);
-
+#endif
         renderPlanetarySystem(*sun,
                               *solarSystem->getPlanets(),
                               observer,
@@ -724,9 +731,47 @@ void Renderer::render(const Observer& observer,
         // Set up the depth bucket.
         glDepthRange(depthBucket * depthRange, (depthBucket + 1) * depthRange);
 
+        // Set the initial near and far plane distance; any reasonable choice
+        // for these will do, since different values will be chosen as soon
+        // as we need to render a body as a mesh.
+        float nearPlaneDistance = 1.0f;
+        float farPlaneDistance = 10.0f;
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluPerspective(fov, (float) windowWidth / (float) windowHeight,
+                       nearPlaneDistance, farPlaneDistance);
+        glMatrixMode(GL_MODELVIEW);
+
         // Render all the bodies in the render list.
         for (i = nEntries - 1; i >= 0; i--)
         {
+            if (renderList[i].discSizeInPixels > 1)
+            {
+                float distance = renderList[i].distance;
+                float radius = 0.0f;
+                if (renderList[i].body != NULL)
+                    radius = renderList[i].body->getRadius();
+                else if (renderList[i].star != NULL)
+                    radius = renderList[i].star->getRadius();
+
+                float distanceToSurface = distance - radius;
+                nearPlaneDistance = distance - 1.5f * radius;
+                farPlaneDistance = distance + 1.1f * radius;
+                if (distanceToSurface < radius * 2.0f)
+                    nearPlaneDistance = distanceToSurface / 2.0f;
+                if (nearPlaneDistance < MinNearPlaneDistance)
+                    nearPlaneDistance = MinNearPlaneDistance;
+                if (farPlaneDistance / nearPlaneDistance > MaxFarNearRatio)
+                    farPlaneDistance = nearPlaneDistance * MaxFarNearRatio;
+
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                gluPerspective(fov, (float) windowWidth / (float) windowHeight,
+                               nearPlaneDistance, farPlaneDistance);
+                glMatrixMode(GL_MODELVIEW);
+                cout << "near: " << nearPlaneDistance << "     far: " << farPlaneDistance << '\n';
+            }
+
             if (renderList[i].body != NULL)
             {
                 renderPlanet(*renderList[i].body,
@@ -735,7 +780,8 @@ void Renderer::render(const Observer& observer,
                              renderList[i].distance,
                              renderList[i].appMag,
                              now,
-                             observer.getOrientation());
+                             observer.getOrientation(),
+                             nearPlaneDistance, farPlaneDistance);
             }
             else if (renderList[i].star != NULL)
             {
@@ -744,7 +790,8 @@ void Renderer::render(const Observer& observer,
                            renderList[i].distance,
                            renderList[i].appMag,
                            observer.getOrientation(),
-                           now);
+                           now,
+                           nearPlaneDistance, farPlaneDistance);
             }
 
             // If this body is larger than a pixel, we rendered it as a mesh
@@ -897,6 +944,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
                                     float discSizeInPixels,
                                     Color color,
                                     const Quatf& orientation,
+                                    float renderDistance,
                                     bool useHaloes)
 {
     if (discSizeInPixels < 4 || useHaloes)
@@ -914,16 +962,22 @@ void Renderer::renderBodyAsParticle(Point3f position,
             a = clamp(1.0f - appMag * brightnessScale + brightnessBias);
         }
 
-        // We scale up the particle by a factor of 3 so that it's more visible--the
-        // texture we use has fuzzy edges, and if we render it in just one pixel,
-        // it's likely to disappear.  Also, the render distance is scaled by a factor
-        // of 0.1 so that we're rendering in front of any mesh that happens to be
-        // sharing this depth bucket.  What we really want is to render the particle
-        // with the frontmost z value in this depth bucket, and scaling the render
-        // distance is just hack to accomplish this.  There are cases where it will
-        // fail and a more robust method should be implemented.
-        float size = pixelSize * 3.0f * RENDER_DISTANCE * 0.1f;
-        Point3f center(position.x * 0.1f, position.y * 0.1f, position.z * 0.1f);
+        // We scale up the particle by a factor of 1.5 so that it's more
+        // visible--the texture we use has fuzzy edges, and if we render it
+        // in just one pixel, it's likely to disappear.  Also, the render
+        // distance is scaled by a factor of 0.1 so that we're rendering in
+        // front of any mesh that happens to be sharing this depth bucket.
+        // What we really want is to render the particle with the frontmost
+        // z value in this depth bucket, and scaling the render distance is
+        // just hack to accomplish this.  There are cases where it will fail
+        // and a more robust method should be implemented.
+        float distance = position.distanceFromOrigin();
+        float size = pixelSize * 1.5f * renderDistance;
+        float posScale = renderDistance / position.distanceFromOrigin();
+
+        Point3f center(position.x * posScale,
+                       position.y * posScale,
+                       position.z * posScale);
         Mat3f m = orientation.toMatrix3();
         Vec3f v0 = Vec3f(-1, -1, 0) * m;
         Vec3f v1 = Vec3f( 1, -1, 0) * m;
@@ -949,20 +1003,15 @@ void Renderer::renderBodyAsParticle(Point3f position,
         //
         // TODO: Currently, this is extremely broken.  Stars look fine,
         // but planets look ridiculous with bright haloes.
-
         if (useHaloes && appMag < 1.0f)
         {
             a = 0.4f * clamp((appMag - 1) * -0.8f);
-            // size *= (3 - (appMag - 1)) * 2;
-            // size = RENDER_DISTANCE * 0.001f * (3 - (appMag - 1)) * 1;
-            // size = discSizeInPixels * 3 * pixelSize;
-            // size *= 30.0f;
-            float s = RENDER_DISTANCE * 0.0001f * (3 - (appMag - 1)) * 2;
+            float s = renderDistance * 0.001f * (3 - (appMag - 1)) * 2;
             if (s > size * 3)
                 size = s;
             else
                 size = size * 3;
-            float realSize = discSizeInPixels * (pixelSize / NEAR_DIST) * RENDER_DISTANCE * 0.1f;
+            float realSize = discSizeInPixels * pixelSize * renderDistance;
             if (size < realSize * 10)
                 size = realSize * 10;
             glareTex->bind();
@@ -1292,6 +1341,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
     }
     else
     {
+        glEnable(GL_LIGHTING);
         ri.mesh->render();
     }
 
@@ -1357,7 +1407,9 @@ static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
             vp::use(vp::diffuseBumpHaze);
         else
             vp::use(vp::diffuseBump);
-        SetupCombinersDecalAndBumpMap(*(ri.bumpTex), ri.ambientColor);
+        SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
+                                      ri.ambientColor * ri.color,
+                                      ri.sunColor * ri.color);
         ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0);
         DisableCombiners();
     }
@@ -1416,10 +1468,11 @@ void Renderer::renderPlanet(const Body& body,
                             float distance,
                             float appMag,
                             double now,
-                            Quatf orientation)
+                            Quatf orientation,
+                            float nearPlaneDistance,
+                            float farPlaneDistance)
 {
-    float discSizeInPixels = body.getRadius() / distance / (pixelSize / NEAR_DIST);
-
+    float discSizeInPixels = body.getRadius() / (distance * pixelSize);
     if (discSizeInPixels > 1)
     {
         RenderInfo ri;
@@ -1489,15 +1542,14 @@ void Renderer::renderPlanet(const Body& body,
                       0, 1, 0);
         }
 
-        float discSize = body.getRadius() / distance * RENDER_DISTANCE;
-
-        // Apply a scale factor which depends on the apparent size of the
-        // planet and its oblateness.  Since the oblateness is usually quite
+        // Apply a scale factor which depends on the size of the planet and
+        // its oblateness.  Since the oblateness is usually quite
         // small, the potentially nonuniform scale factor shouldn't mess up
-        // the lighting calculations enough to cause a problem.
+        // the lighting calculations enough to be noticeable.
         // TODO:  Figure out a better way to render ellipsoids than applying
         // a nonunifom scale factor to a sphere . . . it makes me nervous.
-        glScalef(discSize, discSize * (1.0f - body.getOblateness()), discSize);
+        float radius = body.getRadius();
+        glScalef(radius, radius * (1.0f - body.getOblateness()), radius);
 
         // Compute the direction to the eye and light source in object space
         Mat4f planetMat = (Mat4f::xrotation((float) body.getObliquity()) *
@@ -1522,7 +1574,13 @@ void Renderer::renderPlanet(const Body& body,
         ri.specularColor = surface.specularColor;
         ri.specularPower = surface.specularPower;
         ri.useTexEnvCombine = useTexEnvCombine;
-        
+
+        // Currently, there are three different rendering paths:
+        //   1. Generic OpenGL 1.1
+        //   2. OpenGL 1.2 + nVidia register combiners
+        //   3. OpenGL 1.2 + nVidia register combiners + vertex programs
+        // Unfortunately, this means that unless you've got a GeForce card,
+        // you'll miss out on a lot of the eye candy . . .
         if (ri.mesh != NULL)
         {
             if (fragmentShaderEnabled && vertexShaderEnabled)
@@ -1541,22 +1599,18 @@ void Renderer::renderPlanet(const Body& body,
             float outer = rings->outerRadius / body.getRadius();
             int nSections = 100;
 
-            // Convert the sun direction to the planet's coordinate system
-            Mat4f planetMat = Mat4f::xrotation((float) body.getObliquity()) *
-                Mat4f::yrotation((float) planetRotation);
-            Vec3f localSunDir = sunDirection * planetMat;
-
-            // Ring Illumination
-            // Since a ring system is composed of millions of individual particles,
-            // it's not at all realistic to model it as a flat Lambertian surface.
-            // We'll approximate the llumination function by assuming that the ring
-            // system contains Lambertian particles, and that the brightness at some
-            // point in the ring system is proportional to the illuminated fraction
-            // of a particle there.  In fact, we'll simplify things further and set
-            // the illumination of the entire ring system to the same value, computing
-            // the illuminated fraction of a hypothetical particle located at the center
-            // of the planet.  This approximation breaks down when you get close to the
-            // planet . . .
+            // Ring Illumination:
+            // Since a ring system is composed of millions of individual
+            // particles, it's not at all realistic to model it as a flat
+            // Lambertian surface.  We'll approximate the llumination
+            // function by assuming that the ring system contains Lambertian
+            // particles, and that the brightness at some point in the ring
+            // system is proportional to the illuminated fraction of a
+            // particle there.  In fact, we'll simplify things further and
+            // set the illumination of the entire ring system to the same
+            // value, computing the illuminated fraction of a hypothetical
+            // particle located at the center of the planet.  This
+            // approximation breaks down when you get close to the planet.
             float ringIllumination = 0.0f;
             {
                 float illumFraction = (1.0f + ri.eyeDir_obj * ri.sunDir_obj) / 2.0f;
@@ -1624,34 +1678,28 @@ void Renderer::renderPlanet(const Body& body,
                 glColor4f(litColor.x, litColor.y, litColor.z, 1.0f);
             }
 
-            // This gets tricky . . .  we render the rings in two parts.  One part
-            // is potentially shadowed by the planet, and we need to render that part
-            // with the projected shadow texture enabled.  The other part isn't shadowed,
-            // but will appear so if we don't first disable the shadow texture.  The problem
-            // is that the shadow texture will affect anything along the line between the
-            // sun and the planet, regardless of whether it's in front or behing the planet.
+            // This gets tricky . . .  we render the rings in two parts.  One
+            // part is potentially shadowed by the planet, and we need to
+            // render that part with the projected shadow texture enabled.
+            // The other part isn't shadowed, but will appear so if we don't
+            // first disable the shadow texture.  The problem is that the
+            // shadow texture will affect anything along the line between the
+            // sun and the planet, regardless of whether it's in front or
+            // behind the planet.
 
             // Compute the angle of the sun projected on the ring plane
-            float sunAngle = (float) atan2(localSunDir.z, localSunDir.x);
+            float sunAngle = (float) atan2(ri.sunDir_obj.z, ri.sunDir_obj.x);
 
-#if 0
-            // Render the potentially shadowed side
-            // glNormal3f(0, 1, 0);
             renderRingSystem(inner, outer,
-                             0.0f, (float) (2 * PI),
-                             nSections);
-            // glNormal3f(0, -1, 0);
-            renderRingSystem(inner, outer,
-                             0.0f, (float) (-2 * PI),
-                             nSections);
-#endif
-            renderRingSystem(inner, outer,
-                             (float) (sunAngle + PI / 2), (float) (sunAngle + 3 * PI / 2),
+                             (float) (sunAngle + PI / 2),
+                             (float) (sunAngle + 3 * PI / 2),
                              nSections / 2);
             // glNormal3f(0, -1, 0);
             renderRingSystem(inner, outer,
-                             (float) (sunAngle +  3 * PI / 2), (float) (sunAngle + PI / 2),
+                             (float) (sunAngle +  3 * PI / 2),
+                             (float) (sunAngle + PI / 2),
                              nSections / 2);
+
             // Disable the second texture unit if it was used
             if (nSimultaneousTextures > 1)
             {
@@ -1665,11 +1713,13 @@ void Renderer::renderPlanet(const Body& body,
             // Render the unshadowed side
             // glNormal3f(0, 1, 0);
             renderRingSystem(inner, outer,
-                             (float) (sunAngle - PI / 2), (float) (sunAngle + PI / 2),
+                             (float) (sunAngle - PI / 2),
+                             (float) (sunAngle + PI / 2),
                              nSections / 2);
             // glNormal3f(0, -1, 0);
             renderRingSystem(inner, outer,
-                             (float) (sunAngle + PI / 2), (float) (sunAngle - PI / 2),
+                             (float) (sunAngle + PI / 2),
+                             (float) (sunAngle - PI / 2),
                              nSections / 2);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         }
@@ -1680,12 +1730,12 @@ void Renderer::renderPlanet(const Body& body,
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
     }
-
     renderBodyAsParticle(pos,
                          appMag,
                          discSizeInPixels,
                          body.getSurface().color,
                          orientation,
+                         (nearPlaneDistance + farPlaneDistance) / 2.0f,
                          false);
 }
 
@@ -1695,11 +1745,13 @@ void Renderer::renderStar(const Star& star,
                           float distance,
                           float appMag,
                           Quatf orientation,
-                          double now)
+                          double now,
+                          float nearPlaneDistance,
+                          float farPlaneDistance)
 {
     Color color = star.getStellarClass().getApparentColor();
     float radius = star.getRadius();
-    float discSizeInPixels = radius / distance / (pixelSize / NEAR_DIST);
+    float discSizeInPixels = radius / (distance * pixelSize);
     float discSize = radius / distance * RENDER_DISTANCE;
 
     if (discSizeInPixels > 1)
@@ -1709,11 +1761,12 @@ void Renderer::renderStar(const Star& star,
         glDepthMask(GL_TRUE);
 
         glDisable(GL_BLEND);
+
         glPushMatrix();
         glTranslate(pos);
+        glScalef(radius, radius, radius);
 
         glColor(color);
-        glScalef(discSize, discSize, discSize);
 
         Texture* tex = NULL;
         switch (star.getStellarClass().getSpectralClass())
@@ -1784,6 +1837,7 @@ void Renderer::renderStar(const Star& star,
                          discSizeInPixels,
                          color,
                          orientation,
+                         (nearPlaneDistance + farPlaneDistance) / 2.0f,
                          true);
 }
 
@@ -1816,15 +1870,10 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         float appMag = body->getApparentMagnitude(sun,
                                                   bodyPos - Point3d(0, 0, 0),
                                                   posd);
-
-        // Scale the position of the body so that it lies at RENDER_DISTANCE units
-        // from the observer.
-        if (distanceFromObserver > 0.0)
-            posd *= (RENDER_DISTANCE / distanceFromObserver);
         Vec3f pos((float) posd.x, (float) posd.y, (float) posd.z);
 
         // Compute the size of the planet/moon disc in pixels
-        float discSize = (body->getRadius() / (float) distanceFromObserver) / (pixelSize / NEAR_DIST);
+        float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
 
         if (discSize > 1 || appMag < 1.0f / brightnessScale)
         {
@@ -1952,7 +2001,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
             float radius = star.getRadius();
             discSizeInPixels = radius / astro::lightYearsToKilometers(distance) /
-                (pixelSize / NEAR_DIST);
+                pixelSize;
 
             nClose++;
         }
@@ -1997,10 +2046,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // Objects in the render list are always rendered relative to
             // a viewer at the origin--this is different than for distant
             // stars.
-            float scale = RENDER_DISTANCE / distance;
+            float scale = astro::lightYearsToKilometers(1.0f);
             rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
-
-            rle.distance = astro::lightYearsToKilometers(distance);
+            rle.distance = rle.position.distanceFromOrigin();
             rle.discSizeInPixels = discSizeInPixels;
             rle.appMag = appMag;
             renderList->insert(renderList->end(), rle);
@@ -2021,7 +2069,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.renderList = &renderList;
     starRenderer.starVertexBuffer = starVertexBuffer;
     starRenderer.faintestVisible = faintestVisible;
-    starRenderer.size = pixelSize * 3.0f;
+    starRenderer.size = pixelSize * 1.5f;
     starRenderer.pixelSize = pixelSize;
     starRenderer.brightnessScale = brightnessScale;
     starRenderer.brightnessBias = brightnessBias;
@@ -2070,7 +2118,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
         float distanceToGalaxy = offset.distanceFromOrigin() - radius;
         if (distanceToGalaxy < 0)
             distanceToGalaxy = 0;
-        float minimumFeatureSize = pixelSize * distanceToGalaxy;
+        float minimumFeatureSize = pixelSize * 0.5f * distanceToGalaxy;
 
         GalacticForm* form = galaxy->getForm();
         if (form != NULL)
