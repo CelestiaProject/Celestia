@@ -108,12 +108,14 @@ class Body
     RingSystem* getRings() const;
     void setRings(const RingSystem&);
     const Atmosphere* getAtmosphere() const;
+    Atmosphere* getAtmosphere();
     void setAtmosphere(const Atmosphere&);
 
     void setMesh(ResourceHandle);
     ResourceHandle getMesh() const;
     void setSurface(const Surface&);
     const Surface& getSurface() const;
+    Surface& getSurface();
 
     float getLuminosity(const Star& sun,
                         float distanceFromSun) const;

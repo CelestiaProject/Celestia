@@ -137,6 +137,12 @@ const Surface& Body::getSurface() const
 }
 
 
+Surface& Body::getSurface()
+{
+    return surface;
+}
+
+
 void Body::setSurface(const Surface& surf)
 {
     surface = surf;
@@ -180,6 +186,11 @@ void Body::setRings(const RingSystem& _rings)
 
 
 const Atmosphere* Body::getAtmosphere() const
+{
+    return atmosphere;
+}
+
+Atmosphere* Body::getAtmosphere()
 {
     return atmosphere;
 }
