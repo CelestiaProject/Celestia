@@ -44,6 +44,8 @@
 -(void)setBrightnessBias:(NSNumber*)bias;
 -(NSNumber*)resolution;
 -(void)setResolution:(NSNumber*)res;
+- (int) getOrbitmask;
+- (void) setOrbitMask: (int) mask;
 
 -(void)archive;
 @end
