@@ -29,6 +29,7 @@ static string HIPPARCOSCatalogPrefix("HIP ");
 static string GlieseCatalogPrefix("Gliese ");
 static string RossCatalogPrefix("Ross ");
 static string LacailleCatalogPrefix("Lacaille ");
+static string TychoCatalogPrefix("TYC ");
 
 static const float OctreeRootSize = 15000.0f;
 static const float OctreeMagnitude = 6.0f;
@@ -112,6 +113,19 @@ Star* StarDatabase::find(const string& name) const
         uint32 catalogNumber = (uint32) atoi(string(name, HIPPARCOSCatalogPrefix.length(), string::npos).c_str());
         return find(catalogNumber, Star::HIPCatalog);
     }
+    else if (compareIgnoringCase(name, TychoCatalogPrefix, TychoCatalogPrefix.length()) == 0)
+    {
+        uint32 tyc1 = 0, tyc2 = 0, tyc3 = 0;
+        if (sscanf(string(name, TychoCatalogPrefix.length(), string::npos).c_str(), " %u-%u-%u", &tyc1, &tyc2, &tyc3) == 3)
+        {
+            return find(tyc3 * 1000000000 + tyc2 * 10000 + tyc1,
+                        Star::HIPCatalog);
+        }
+        else
+        {
+            return NULL;
+        }
+    }
     else
     {
 #if 0
@@ -169,7 +183,21 @@ string StarDatabase::getStarName(const Star& star) const
     if (star.getCatalogNumber(Star::HDCatalog) != Star::InvalidCatalogNumber)
         sprintf(buf, "HD %d", star.getCatalogNumber(Star::HDCatalog));
     else
-        sprintf(buf, "HIP %d", catalogNumber);
+    {
+        if (catalogNumber < 1000000000)
+        {
+            sprintf(buf, "HIP %d", catalogNumber);
+        }
+        else
+        {
+            uint32 tyc3 = catalogNumber / 1000000000;
+            catalogNumber -= tyc3 * 1000000000;
+            uint32 tyc2 = catalogNumber / 10000;
+            catalogNumber -= tyc2 * 10000;
+            uint32 tyc1 = catalogNumber;
+            sprintf(buf, "TYC %d-%d-%d", tyc1, tyc2, tyc3);
+        }
+    }
     return string(buf);
 }
 

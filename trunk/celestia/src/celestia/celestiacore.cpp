@@ -316,6 +316,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == MiddleButton)
 	{
+            printf("Middle button!\n");
             if (renderer->getFieldOfView() != stdFOV)
 	    { 
                 oldFOV = renderer->getFieldOfView();	    
@@ -1094,7 +1095,17 @@ static void displayStarNames(Overlay& overlay,
     {
         if (count != 0)
             overlay << " / ";
-        overlay << "HIP " << hip;
+        if (hip >= 1000000000)
+        {
+            uint32 tyc3 = hip / 1000000000;
+            hip -= tyc3 * 1000000000;
+            uint32 tyc2 = hip / 10000;
+            hip -= tyc2 * 10000;
+            uint32 tyc1 = hip;
+            overlay << "TYC " << tyc1 << '-' << tyc2 << '-' << tyc3;
+        }
+        else
+            overlay << "HIP " << hip;
         count++;
     }
 }
