@@ -1,0 +1,45 @@
+!!ARBvp1.0
+
+# Vertex program use for applying up to four shadow textures.  2D texture
+# coordinates are generated from vertex coordinates using the s and t
+# texture planes.
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iTex0         = vertex.texcoord[0];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir      = program.env[0];
+PARAM  texgen_s0     = program.env[10];
+PARAM  texgen_t0     = program.env[11];
+PARAM  texgen_s1     = program.env[12];
+PARAM  texgen_t1     = program.env[13];
+PARAM  texgen_s2     = program.env[14];
+PARAM  texgen_t2     = program.env[15];
+PARAM  texgen_s3     = program.env[16];
+PARAM  texgen_t3     = program.env[17];
+PARAM  halfW         = { 0, 0, 0, 0.5 };
+OUTPUT oPos          = result.position;
+OUTPUT oTex0         = result.texcoord[0];
+OUTPUT oTex1         = result.texcoord[1];
+OUTPUT oTex2         = result.texcoord[2];
+OUTPUT oTex3         = result.texcoord[3];
+
+TEMP   t;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Generate texture coordinates
+DP4   oTex0.x, texgen_s0, iPos;
+DP4   oTex0.y, texgen_t0, iPos;
+DP4   oTex1.x, texgen_s1, iPos;
+DP4   oTex1.y, texgen_t1, iPos;
+DP4   oTex2.x, texgen_s2, iPos;
+DP4   oTex2.y, texgen_t2, iPos;
+DP4   oTex3.x, texgen_s3, iPos;
+DP4   oTex3.y, texgen_t3, iPos;
+
+END
+

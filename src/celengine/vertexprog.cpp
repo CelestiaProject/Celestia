@@ -23,6 +23,7 @@ unsigned int vp::diffuseHaze = 0;
 unsigned int vp::diffuseBump = 0;
 unsigned int vp::diffuseBumpHaze = 0;
 unsigned int vp::shadowTexture = 0;
+unsigned int vp::multiShadow = 0;
 unsigned int vp::everything = 0;
 unsigned int vp::diffuseTexOffset = 0;
 unsigned int vp::ringIllum = 0;
@@ -237,6 +238,8 @@ VertexProcessor* vp::initARB()
         return NULL;
     if (!LoadARBVertexProgram("shaders/shadowtex_arb.vp", shadowTexture))
         return NULL;
+    if (!LoadARBVertexProgram("shaders/multishadow_arb.vp", multiShadow))
+        return NULL;
     if (!LoadARBVertexProgram("shaders/diffuse_texoff_arb.vp", diffuseTexOffset))
         return NULL;
     if (!LoadARBVertexProgram("shaders/rings_arb.vp", ringIllum))
@@ -363,7 +366,13 @@ static unsigned int parameterMappings[] =
     90, // Constant0 - relevant for NV_vertex_program only
      0, // Unused
     41, // TexGen_S,
-    42, // TexGen_Y
+    42, // TexGen_T
+     0, // TexGen_S2
+     0, // TexGen_T2
+     0, // TexGen_S3
+     0, // TexGen_T3
+     0, // TexGen_S4
+     0, // TexGen_T4
 };
 
 VertexProcessorNV::VertexProcessorNV()

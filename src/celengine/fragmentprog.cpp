@@ -18,6 +18,8 @@ using namespace std;
 
 
 unsigned int fp::sphereShadowOnRings = 0;
+unsigned int fp::eclipseShadow1      = 0;
+unsigned int fp::eclipseShadow2      = 0;
 
 
 class FragmentProcessorNV : public FragmentProcessor
@@ -117,6 +119,10 @@ FragmentProcessor* fp::initNV()
 {
     cout << "Initializing NV fragment programs . . .\n";
     if (!LoadNvFragmentProgram("shaders/shadow_on_rings_nv.fp", sphereShadowOnRings))
+        return NULL;
+    if (!LoadNvFragmentProgram("shaders/eclipse1_nv.fp", eclipseShadow1))
+        return NULL;
+    if (!LoadNvFragmentProgram("shaders/eclipse2_nv.fp", eclipseShadow2))
         return NULL;
     cout << "All NV fragment programs loaded successfully.\n";
 
