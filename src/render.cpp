@@ -1987,7 +1987,7 @@ void Renderer::labelStars(const vector<Star*>& stars,
             Vec3f rpos = pos - observerPos;
             if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
             {
-                addLabel(starDB.getStarName(star->getCatalogNumber()),
+                addLabel(starDB.getStarName(*star),
                          Color(0.3f, 0.3f, 1.0f),
                          Point3f(rpos.x, rpos.y, rpos.z));
             }
