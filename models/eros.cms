@@ -1,0 +1,11 @@
+# Eros.cms
+# Irregular body with approximate dimensions of the near-Earth asteroid
+# Eros (33 x 13 x 13)
+
+SphereDisplacementMesh
+{
+	Size [ 1.0 0.4 0.4 ]
+	NoiseOffset [ 34 12 37 ]
+	FeatureHeight  0.2
+	Octaves 2
+}
