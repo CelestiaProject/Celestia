@@ -167,6 +167,7 @@ class Renderer
     int nSimultaneousTextures;
     bool useRegisterCombiners;
     bool useCubeMaps;
+    bool useCompressedTextures;
 
  public:
     friend bool operator<(const Renderer::RenderListEntry&,

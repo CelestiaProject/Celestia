@@ -11,6 +11,7 @@
 #define _TEXTURE_H_
 
 #include <string>
+#include "basictypes.h"
 
 
 typedef void (*ProceduralTexEval)(float, float, float, unsigned char*);
@@ -21,7 +22,12 @@ class CTexture
     CTexture(int w, int h, int fmt);
     ~CTexture();
 
-    void bindName(bool wrap = false);
+    enum {
+        WrapTexture      = 0x1,
+        CompressTexture  = 0x2,
+    };
+
+    void bindName(uint32 flags = 0);
     unsigned int getName();
     void normalMap(float scale, bool wrap);
 
