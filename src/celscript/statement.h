@@ -10,6 +10,7 @@
 #ifndef STATEMENT_H_
 #define STATEMENT_H_
 
+#include <vector>
 #include <celscript/expression.h>
 
 
@@ -69,6 +70,16 @@ class IfStatement : public Statement
 
 class CompoundStatement : public Statement
 {
+ public:
+    CompoundStatement();
+    virtual ~CompoundStatement();
+
+    virtual Control execute();
+
+    void addStatement(Statement*);
+
+ private:
+    std::vector<Statement*> statements;
 };
 
 
