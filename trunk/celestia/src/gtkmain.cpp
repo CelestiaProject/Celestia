@@ -31,6 +31,8 @@
 #include "timer.h"
 #include "mathlib.h"
 #include "astro.h"
+#include "filetype.h"
+#include "imagecapture.h"
 #include "celestiacore.h"
 
 
@@ -226,6 +228,74 @@ static void menuAbout()
 }
 
 
+static GtkWidget* fileSelector = NULL;
+static gchar* captureFilename = NULL;
+
+void storeCaptureFilename(GtkFileSelection* selector, gpointer)
+{
+    captureFilename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(fileSelector));
+    if (captureFilename == NULL)
+        return;
+
+    string filename(captureFilename);
+
+    // Get the dimensions of the current viewport
+    int viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    bool success = false;
+    ContentType type = DetermineFileType(filename);
+    if (type == Content_JPEG)
+    {
+        success = CaptureGLBufferToJPEG(filename,
+                                        viewport[0], viewport[1],
+                                        viewport[2], viewport[3]);
+    }
+    else if (type == Content_PNG)
+    {
+        success = CaptureGLBufferToPNG(string(filename),
+                                       viewport[0], viewport[1],
+                                       viewport[2], viewport[3]);
+    }
+    else
+    {
+        DPRINTF("Unknown file type for screen capture.\n");
+    }
+
+    if (!success)
+    {
+        GtkWidget* errBox = gnome_message_box_new("Error writing captured image.",
+                                                  GNOME_MESSAGE_BOX_ERROR,
+                                                  GNOME_STOCK_BUTTON_OK,
+                                                  NULL);
+        gtk_widget_show(errBox);
+    }
+}
+
+
+
+static void menuCaptureImage()
+{
+    captureFilename = NULL;
+    fileSelector = gtk_file_selection_new("Select capture file.");
+
+    gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
+                       "clicked",
+                       GTK_SIGNAL_FUNC(storeCaptureFilename),
+                       NULL);
+    gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
+                              "clicked",
+                              GTK_SIGNAL_FUNC(gtk_widget_destroy),
+                              GTK_OBJECT(fileSelector));
+    gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->cancel_button),
+                              "clicked",
+                              GTK_SIGNAL_FUNC(gtk_widget_destroy),
+                              GTK_OBJECT(fileSelector));
+
+    gtk_widget_show(fileSelector);
+}
+
+
 static void menuSelectObject()
 {
     GtkWidget* dialog = gnome_dialog_new("Find Object",
@@ -272,6 +342,201 @@ static void menuSelectObject()
 
     gnome_dialog_close(GNOME_DIALOG(dialog));
 }
+
+
+class GotoObjectDialog
+{
+public:
+    GotoObjectDialog();
+    ~GotoObjectDialog();
+    bool init();
+
+    GtkWidget* dialog;
+    GtkWidget* nameEntry;
+    GtkWidget* latEntry;
+    GtkWidget* longEntry;
+    GtkWidget* distEntry;
+};
+
+
+static bool GetEntryFloat(GtkWidget* w, float& f)
+{
+    GtkEntry* entry = GTK_ENTRY(w);
+    if (entry == NULL)
+        return false;
+
+    gchar* text = gtk_entry_get_text(entry);
+    if (text == NULL)
+        return false;
+
+    return sscanf(text, " %f", &f) == 1;
+}
+
+
+static gint GotoObject(GtkWidget* w, gpointer data)
+{
+    GotoObjectDialog* gotoObjectDlg = reinterpret_cast<GotoObjectDialog*>(data);
+    if (gotoObjectDlg == NULL)
+        return FALSE;
+
+    Simulation* sim = appCore->getSimulation();
+
+    gchar* objectName = gtk_entry_get_text(GTK_ENTRY(gotoObjectDlg->nameEntry));
+    if (objectName != NULL)
+    {
+        Selection sel = sim->findObjectFromPath(objectName);
+        if (!sel.empty())
+        {
+            sim->setSelection(sel);
+            sim->follow();
+
+            float distance = (float) (sel.radius() * 5.0f);
+            if (GetEntryFloat(gotoObjectDlg->distEntry, distance))
+            {
+                distance += (float) sel.radius();
+            }
+            distance = astro::kilometersToLightYears(distance);
+
+            float longitude, latitude;
+            if (GetEntryFloat(gotoObjectDlg->latEntry, latitude) &&
+                GetEntryFloat(gotoObjectDlg->longEntry, longitude))
+            {
+                sim->gotoSelectionLongLat(5.0,
+                                          distance,
+                                          degToRad(longitude),
+                                          degToRad(latitude),
+                                          Vec3f(0, 1, 0));
+            }
+            else
+            {
+                sim->gotoSelection(5.0,
+                                   distance,
+                                   Vec3f(0, 1, 0),
+                                   astro::ObserverLocal);
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+
+GotoObjectDialog::GotoObjectDialog() :
+    dialog(NULL),
+    nameEntry(NULL),
+    latEntry(NULL),
+    longEntry(NULL),
+    distEntry(NULL)
+{
+}
+
+GotoObjectDialog::~GotoObjectDialog()
+{
+}
+
+
+bool GotoObjectDialog::init()
+{
+    dialog = gnome_dialog_new("Goto Object",
+                              GNOME_STOCK_BUTTON_CANCEL,
+                              NULL);
+    nameEntry = gtk_entry_new();
+    latEntry = gtk_entry_new();
+    longEntry = gtk_entry_new();
+    distEntry = gtk_entry_new();
+    
+    if (dialog == NULL ||
+        nameEntry == NULL ||
+        latEntry == NULL ||
+        longEntry == NULL ||
+        distEntry == NULL)
+    {
+        // Potential memory leak here . . .
+        return false;
+    }
+
+    GtkWidget* hbox = NULL;
+    GtkWidget* label = NULL;
+
+    // Object name label and entry
+    hbox = gtk_hbox_new(FALSE, 6);
+    if (hbox == NULL)
+        return false;
+    label = gtk_label_new("Object name:");
+    if (label == NULL)
+        return false;
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), nameEntry, FALSE, TRUE, 0);
+    gtk_widget_show(label);
+    gtk_widget_show(nameEntry);
+    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
+                       hbox, FALSE, TRUE, 0);
+    gtk_widget_show(hbox);
+
+    // Latitude and longitude
+    hbox = gtk_hbox_new(FALSE, 6);
+    if (hbox == NULL)
+        return false;
+    label = gtk_label_new("Latitude:");
+    if (label == NULL)
+        return false;
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), latEntry, FALSE, TRUE, 0);
+    gtk_widget_show(label);
+    gtk_widget_show(latEntry);
+
+    label = gtk_label_new("Longitude:");
+    if (label == NULL)
+        return false;
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), longEntry, FALSE, TRUE, 0);
+    gtk_widget_show(label);
+    gtk_widget_show(longEntry);
+    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
+                       hbox, FALSE, TRUE, 0);
+    gtk_widget_show(hbox);
+
+    // Distance
+    hbox = gtk_hbox_new(FALSE, 6);
+    if (hbox == NULL)
+        return false;
+    label = gtk_label_new("Distance:");
+    if (label == NULL)
+        return false;
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), distEntry, FALSE, TRUE, 0);
+    gtk_widget_show(label);
+    gtk_widget_show(distEntry);
+    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
+                       hbox, FALSE, TRUE, 0);
+    gtk_widget_show(hbox);
+
+    // Goto button
+    GtkWidget* gotoButton = gtk_button_new_with_label("   Go To   ");
+    if (gotoButton == NULL)
+        return false;
+    gtk_widget_show(gotoButton);
+    gtk_box_pack_start(GTK_BOX (GNOME_DIALOG (dialog)->vbox),
+                       gotoButton, FALSE, TRUE, 0);
+
+    gtk_signal_connect(GTK_OBJECT(gotoButton),
+                       "pressed",
+                       GTK_SIGNAL_FUNC(GotoObject),
+                       this);
+
+    gnome_dialog_run_and_close(GNOME_DIALOG(dialog));
+
+    return true;
+}
+
+
+static void menuGotoObject()
+{
+    GotoObjectDialog* gotoObjectDlg = new GotoObjectDialog();
+
+    gotoObjectDlg->init();
+}
+
 
 static Destination* selectedDest = NULL;
 static gint TourGuideSelect(GtkWidget* w, gpointer data)
@@ -442,11 +707,13 @@ static void menuTourGuide()
 static GtkItemFactoryEntry menuItems[] =
 {
     { "/_File",  NULL,                      NULL,          0, "<Branch>" },
+    { "/File/Capture Image...", "F10",       menuCaptureImage, 0, NULL },
     { "/File/Quit", "<control>Q",           gtk_main_quit, 0, NULL },
     { "/_Navigation", NULL,                 NULL,          0, "<Branch>" },
     { "/Navigation/Select Sol", "H",        menuSelectSol, 0, NULL },
     { "/Navigation/Tour Guide", NULL,       menuTourGuide, 0, NULL },
     { "/Navigation/Select Object...", NULL, menuSelectObject, 0, NULL },
+    { "/Navigation/Goto Object...", NULL,   menuGotoObject, 0, NULL },
     { "/Navigation/sep1", NULL,             NULL,          0, "<Separator>" },
     { "/Navigation/Center Selection", "C",  menuCenter,    0, NULL },
     { "/Navigation/Goto Selection", "G",    menuGoto,      0, NULL },
@@ -692,6 +959,10 @@ static bool handleSpecialKey(int key, bool down)
     case GDK_F6:
         k = CelestiaCore::Key_F6;
         break;
+    case GDK_F10:
+        if (down)
+            menuCaptureImage();
+        break;
     case GDK_KP_0:
         k = CelestiaCore::Key_NumPad0;
         break;
@@ -749,7 +1020,6 @@ static bool handleSpecialKey(int key, bool down)
 
 gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
 {
-    cout << "down\n";
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_press_event");
     switch (event->keyval)
     {
@@ -779,7 +1049,6 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
 
 gint glarea_key_release(GtkWidget* widget, GdkEventKey* event)
 {
-    cout << "up\n";
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_release_event");
     return handleSpecialKey(event->keyval, false);
 }
