@@ -40,6 +40,7 @@ NSString* fatalErrorMessage;
     isDirty = YES;
     appCore = nil;
     fatalErrorMessage = nil;
+    lastScript = nil;
 	
     [self setupResourceDirectory];
 
@@ -216,7 +217,7 @@ NSString* fatalErrorMessage;
     // run script if pending
     if (pendingScript != nil )
     {
-        [appCore runScript: pendingScript ];
+        [self runScript: pendingScript ];
     }
         
     ready = YES;
@@ -236,7 +237,7 @@ NSString* fatalErrorMessage;
 - (BOOL) application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
     if ( ready )
-        [appCore runScript: filename ];
+        [self runScript: filename ];
     else
         pendingScript = [filename retain];
     return YES;
@@ -360,27 +361,43 @@ NSString* fatalErrorMessage;
 
 // Application Action Methods ----------------------------------------------------------
 
+
+- (void) runScript: (NSString*) path
+{
+        NSString* oldScript = lastScript;
+        lastScript = [path retain];
+        [oldScript autorelease];
+        [appCore runScript: lastScript];       
+}
+
 - (void) openPanelDidEnd:(NSOpenPanel*)openPanel returnCode: (int) rc contextInfo: (void *) ci
 {
     if (rc == NSOKButton )
     {
         NSString *path;
         path = [openPanel filename];
-        [appCore runScript: path];        
+        [self runScript: path];       
     }
 }
 
 - (IBAction) openScript: (id) sender
 {
-    NSOpenPanel* panel = [NSOpenPanel openPanel];
-    [ panel beginSheetForDirectory:  nil
-        file: nil
+    NSOpenPanel* panel = [[NSOpenPanel alloc] init]; //[NSOpenPanel openPanel];
+    if (!lastScript) lastScript = [[NSHomeDirectory() stringByAppendingString: @"/"]  retain];
+
+    [ panel beginSheetForDirectory:  [lastScript stringByDeletingLastPathComponent]
+        file: [lastScript lastPathComponent]
         types: [NSArray arrayWithObjects: @"cel", @"celx", nil ]
         modalForWindow: [glView window]
         modalDelegate: self
         didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
         contextInfo: nil
     ];
+}
+
+- (IBAction) rerunScript: (id) sender
+{
+        if (lastScript) [appCore runScript: lastScript];       
 }
 
 - (IBAction) back:(id)sender

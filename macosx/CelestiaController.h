@@ -34,6 +34,7 @@
 
     NSConditionLock* startupCondition;
     int keyCode, keyTime;
+    NSString* lastScript;
     NSString *pendingScript;
     NSString *pendingUrl;
 }
@@ -42,7 +43,9 @@
 -(IBAction)back:(id)sender;
 -(IBAction)forward:(id)sender;
 -(IBAction)showInfoURL:(id)sender;
+- (void) runScript: (NSString*) path;
 -(IBAction)openScript:(id)sender;
+- (IBAction) rerunScript: (id) sender;
 -(void)setDirty;
 -(void)forceDisplay;
 -(void)resize;
