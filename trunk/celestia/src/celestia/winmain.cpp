@@ -1831,6 +1831,12 @@ void handleKey(WPARAM key, bool down)
     case VK_END:
         k = CelestiaCore::Key_End;
         break;
+    case VK_PRIOR:
+        k = CelestiaCore::Key_PageUp;
+        break;
+    case VK_NEXT:
+        k = CelestiaCore::Key_PageDown;
+        break;
     case VK_F1:
         k = CelestiaCore::Key_F1;
         break;
