@@ -18,6 +18,21 @@
 #include <celtxf/texturefont.h>
 
 
+struct RenderListEntry
+{
+    const Star* star;
+    Body* body;
+    Point3f position;
+    Vec3f sun;
+    float distance;
+    float radius;
+    float nearZ;
+    float farZ;
+    float discSizeInPixels;
+    float appMag;
+    bool isCometTail;
+};
+
 class Renderer
 {
  public:
@@ -125,27 +140,6 @@ class Renderer
         Color color;
         float pad0, pad1, pad2;
     };
-
-    typedef struct _RenderListEntry
-    {
-        const Star* star;
-        Body* body;
-        Point3f position;
-        Vec3f sun;
-        float distance;
-        float radius;
-        float nearZ;
-        float farZ;
-        float discSizeInPixels;
-        float appMag;
-        bool isCometTail;
-
-        bool operator<(const _RenderListEntry& r) const
-        {
-            return distance - radius < r.distance - r.radius;
-            // return z > r.z;
-        }
-    } RenderListEntry;
 
     struct EclipseShadow
     {

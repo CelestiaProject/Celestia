@@ -21,6 +21,7 @@
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
+#include <celmath/intersect.h>
 #include "gl.h"
 #include "astro.h"
 #include "glext.h"
@@ -261,6 +262,44 @@ static void IllumMapEval(float x, float y, float z,
 static float calcPixelSize(float fovY, float windowHeight)
 {
     return 2 * (float) tan(degToRad(fovY / 2.0)) / (float) windowHeight;
+}
+
+
+bool operator<(const RenderListEntry& a, const RenderListEntry& b)
+{
+    // This comparison functions tries to determine which of two objects is
+    // closer to the viewer.  Looking just at the distances of the centers
+    // is not enough, nor is comparing distances to the bounding spheres.
+    // Here we trace a ray from the viewer to the center of the smaller
+    // of the two objects and see which object it intersects first.  If the
+    // ray doesn't intersect the larger object at all, it's safe to use
+    // the distance to bounding sphere test.
+    if (a.radius < b.radius)
+    {
+        Vec3f dir = a.position - Point3f(0.0f, 0.0f, 0.0f);
+        float distance;
+        dir.normalize();
+        if (testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f), dir),
+                             Spheref(b.position, b.radius),
+                             distance))
+        {
+            return a.distance - a.radius < distance;
+        }
+    }
+    else
+    {
+        Vec3f dir = b.position - Point3f(0.0f, 0.0f, 0.0f);
+        float distance;
+        dir.normalize();
+        if (testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f), dir),
+                             Spheref(a.position, a.radius),
+                             distance))
+        {
+            return distance < b.distance - b.radius;
+        }
+    }
+
+    return a.distance - a.radius < b.distance - b.radius;
 }
 
 
@@ -842,6 +881,7 @@ void Renderer::autoMag(float& faintestMag)
 #endif
       
 }
+
 
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
@@ -3647,7 +3687,7 @@ public:
     Vec3f viewNormal;
 
     vector<Renderer::Particle>* glareParticles;
-    vector<Renderer::RenderListEntry>* renderList;
+    vector<RenderListEntry>* renderList;
     Renderer::StarVertexBuffer* starVertexBuffer;
 
     float faintestMagNight;
@@ -3759,7 +3799,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
-            Renderer::RenderListEntry rle;
+            RenderListEntry rle;
             rle.star = &star;
             rle.body = NULL;
             rle.isCometTail = false;
