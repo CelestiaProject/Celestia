@@ -230,7 +230,7 @@ float getSelectionSize(Selection& sel)
     else if (sel.star != NULL)
         return sel.star->getRadius();
     else if (sel.galaxy != NULL)
-        return sel.galaxy->getRadius();
+        return astro::lightYearsToKilometers(sel.galaxy->getRadius());
     else
         return 0.0f;
 }
@@ -553,21 +553,13 @@ Selection Simulation::pickObject(Vec3f pickRay)
 }
 
 
-void Simulation::computeGotoParameters(Selection& destination, JourneyParams& jparams,
-                                       double gotoTime)
+void Simulation::computeGotoParameters(Selection& destination,
+                                       JourneyParams& jparams,
+                                       double gotoTime,
+                                       double distance)
 {
     UniversalCoord targetPosition = getSelectionPosition(selection, simTime);
     Vec3d v = targetPosition - observer.getPosition();
-    double distanceToTarget = v.length();
-    double maxOrbitDistance;
-    if (selection.body != NULL)
-        maxOrbitDistance = astro::kilometersToLightYears(5.0f * selection.body->getRadius());
-    else if (selection.galaxy != NULL)
-        maxOrbitDistance = 5.0f * selection.galaxy->getRadius();
-    else
-        maxOrbitDistance = 0.5f;
-    double orbitDistance = (distanceToTarget > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distanceToTarget * 0.1f;
-
     v.normalize();
 
     jparams.duration = gotoTime;
@@ -578,7 +570,7 @@ void Simulation::computeGotoParameters(Selection& destination, JourneyParams& jp
 
     // The destination position lies along the line between the current
     // position and the star
-    jparams.to = targetPosition - v * orbitDistance;
+    jparams.to = targetPosition - v * distance;
     jparams.initialFocus = jparams.from +
         (Vec3f(0, 0, -1.0f) * observer.getOrientation().toMatrix4());
     jparams.finalFocus = targetPosition;
@@ -724,7 +716,28 @@ void Simulation::gotoSelection(double gotoTime)
 {
     if (!selection.empty())
     {
-        computeGotoParameters(selection, journey, gotoTime);
+        UniversalCoord pos = getSelectionPosition(selection, simTime);
+        Vec3d v = pos - observer.getPosition();
+        double distance = v.length();
+        double maxOrbitDistance;
+        if (selection.body != NULL)
+            maxOrbitDistance = astro::kilometersToLightYears(5.0f * selection.body->getRadius());
+        else if (selection.galaxy != NULL)
+            maxOrbitDistance = 5.0f * selection.galaxy->getRadius();
+        else
+            maxOrbitDistance = 0.5f;
+        double orbitDistance = (distance > maxOrbitDistance * 10.0f) ? maxOrbitDistance : distance * 0.1f;
+
+        computeGotoParameters(selection, journey, gotoTime, orbitDistance);
+        observerMode = Travelling;
+    }
+}
+
+void Simulation::gotoSelection(double gotoTime, double distance)
+{
+    if (!selection.empty())
+    {
+        computeGotoParameters(selection, journey, gotoTime, distance);
         observerMode = Travelling;
     }
 }
