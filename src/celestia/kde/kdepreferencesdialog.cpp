@@ -39,6 +39,15 @@
 #include "celengine/render.h"
 #include "celengine/glcontext.h"
 
+static uint32 FilterOtherLocations = ~(Location::City |
+                    Location::Observatory |
+                    Location::LandingSite |
+                    Location::Crater |
+                    Location::Mons |
+                    Location::Terra |
+                    Location::Vallis |
+                    Location::Mare);
+
 KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) :
     KDialogBase (KDialogBase::IconList, "",
     KDialogBase::Ok | KDialogBase::Apply | KDialogBase::Cancel, KDialogBase::Ok,parent)
@@ -249,10 +258,68 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     dtsSpin->setValue(savedDistanceToScreen / 10);
     connect(dtsSpin, SIGNAL(valueChanged(int)), SLOT(slotDistanceToScreen(int)));
 
+    // Locations page
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    savedLocationFilter = obs->getLocationFilter();
+
+    QFrame* locationsFrame = addPage(i18n("Locations"), i18n("Locations"),
+       KGlobal::iconLoader()->loadIcon("package_network", KIcon::NoGroup));
+    QVBoxLayout* locationsLayout = new QVBoxLayout( locationsFrame );
+    locationsLayout->setAutoAdd(TRUE);
+    locationsLayout->setAlignment(Qt::AlignTop);
+
+    QCheckBox* showCityLocationsCheck = new QCheckBox(i18n("Cities"), locationsFrame);
+    actionColl->action("showCityLocations")->connect(showCityLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showCityLocationsCheck->setChecked(savedLocationFilter & Location::City);
+
+    QCheckBox* showObservatoryLocationsCheck = new QCheckBox(i18n("Observatories"), locationsFrame);
+    actionColl->action("showObservatoryLocations")->connect(showObservatoryLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showObservatoryLocationsCheck->setChecked(savedLocationFilter & Location::Observatory);
+
+    QCheckBox* showLandingSiteLocationsCheck = new QCheckBox(i18n("Landing Sites"), locationsFrame);
+    actionColl->action("showLandingSiteLocations")->connect(showLandingSiteLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showLandingSiteLocationsCheck->setChecked(savedLocationFilter & Location::LandingSite);
+
+    QCheckBox* showCraterLocationsCheck = new QCheckBox(i18n("Craters"), locationsFrame);
+    actionColl->action("showCraterLocations")->connect(showCraterLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showCraterLocationsCheck->setChecked(savedLocationFilter & Location::Crater);
+
+    QCheckBox* showMonsLocationsCheck = new QCheckBox(i18n("Mons"), locationsFrame);
+    actionColl->action("showMonsLocations")->connect(showMonsLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showMonsLocationsCheck->setChecked(savedLocationFilter & Location::Mons);
+
+    QCheckBox* showTerraLocationsCheck = new QCheckBox(i18n("Terra"), locationsFrame);
+    actionColl->action("showTerraLocations")->connect(showTerraLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showTerraLocationsCheck->setChecked(savedLocationFilter & Location::Terra);
+
+    QCheckBox* showVallisLocationsCheck = new QCheckBox(i18n("Vallis"), locationsFrame);
+    actionColl->action("showVallisLocations")->connect(showVallisLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showVallisLocationsCheck->setChecked(savedLocationFilter & Location::Vallis);
+
+    QCheckBox* showMareLocationsCheck = new QCheckBox(i18n("Mare"), locationsFrame);
+    actionColl->action("showMareLocations")->connect(showMareLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showMareLocationsCheck->setChecked(savedLocationFilter & Location::Mare);
+
+    QCheckBox* showOtherLocationsCheck = new QCheckBox(i18n("Other"), locationsFrame);
+    actionColl->action("showOtherLocations")->connect(showOtherLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showOtherLocationsCheck->setChecked(savedLocationFilter & FilterOtherLocations);
+
+    QGroupBox* minFeatureSizeGroup = new QGroupBox(1, Qt::Vertical, i18n("Minimum Feature Size"), locationsFrame);
+    minFeatureSizeGroup->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
+    savedMinFeatureSize = (int)appCore->getRenderer()->getMinimumFeatureSize();
+    QSlider* minFeatureSizeSlider = new QSlider(1, 1000, 1, savedMinFeatureSize, Qt::Horizontal, minFeatureSizeGroup);
+    connect(minFeatureSizeSlider, SIGNAL(valueChanged(int)), SLOT(slotMinFeatureSize(int)));
+    minFeatureSizeLabel = new QLabel(minFeatureSizeGroup);
+    minFeatureSizeLabel->setMinimumWidth(40);
+    minFeatureSizeLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    sprintf(buff, "%d", savedMinFeatureSize);
+    minFeatureSizeLabel->setText(buff);
+
+
     // Time page
     timeHasChanged = false;
     QVBox* timeFrame = addVBoxPage(i18n("Date/Time"), i18n("Date/Time"),
-        KGlobal::iconLoader()->loadIcon("kalarm", KIcon::NoGroup));
+        KGlobal::iconLoader()->loadIcon("clock", KIcon::NoGroup));
 
     savedDisplayLocalTime = appCore->getTimeZoneBias();
     QGroupBox* displayTimezoneGroup = new QGroupBox(1, Qt::Vertical, i18n("Display"), timeFrame);
@@ -518,7 +585,8 @@ void KdePreferencesDialog::slotCancel() {
     appCore->setHudDetail(savedHudDetail);
     appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)savedRenderPath);
     appCore->setDistanceToScreen(savedDistanceToScreen);
-
+    appCore->getSimulation()->getActiveObserver()->setLocationFilter(savedLocationFilter);
+    appCore->getRenderer()->setMinimumFeatureSize(savedMinFeatureSize);
     reject();
 }
 
@@ -531,6 +599,8 @@ void KdePreferencesDialog::slotApply() {
     savedDisplayLocalTime = appCore->getTimeZoneBias();
     savedRenderPath = (int)appCore->getRenderer()->getGLContext()->getRenderPath();
     savedDistanceToScreen = appCore->getDistanceToScreen();
+    savedLocationFilter = appCore->getSimulation()->getActiveObserver()->getLocationFilter();
+    savedMinFeatureSize = appCore->getRenderer()->getMinimumFeatureSize();
 
     keyChooser->commitChanges();
 
@@ -573,6 +643,14 @@ void KdePreferencesDialog::slotFaintestVisible(int m) {
     parent->slotFaintestVisible(m / 100.);
     sprintf(buff, "%.2f", m / 100.);
     faintestLabel->setText(buff);
+}
+
+void KdePreferencesDialog::slotMinFeatureSize(int s) {
+    char buff[20];
+
+    parent->slotMinFeatureSize(s);
+    sprintf(buff, "%d", s);
+    minFeatureSizeLabel->setText(buff);
 }
 
 void KdePreferencesDialog::slotAmbientLightLevel(int l) {

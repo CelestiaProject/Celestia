@@ -81,6 +81,15 @@ KdeApp* KdeApp::app=0;
 
 KBookmarkManager* KCelBookmarkManager::s_bookmarkManager;
 
+static uint32 FilterOtherLocations = ~(Location::City |
+                    Location::Observatory |
+                    Location::LandingSite |
+                    Location::Crater |
+                    Location::Mons |
+                    Location::Terra |
+                    Location::Vallis |
+                    Location::Mare);
+
 KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 {
     appCore=new CelestiaCore();
@@ -387,6 +396,7 @@ void KdeApp::initActions()
     new KAction(i18n("Eclipse Finder"), 0, ALT + Key_E, this, SLOT(slotEclipseFinder()), actionCollection(), "eclipseFinder");
 
     int rFlags, lMode, oMask;
+    uint32 lFilter;
     bool isLocal = true;
     if (KGlobal::config()->hasKey("RendererFlags"))
         rFlags = KGlobal::config()->readNumEntry("RendererFlags");
@@ -396,11 +406,18 @@ void KdeApp::initActions()
         lMode = KGlobal::config()->readNumEntry("LabelMode");
     else lMode = appCore->getRenderer()->getLabelMode();
 
+    if (KGlobal::config()->hasKey("LocationFilter"))
+        lFilter = KGlobal::config()->readUnsignedNumEntry("LocationFilter");
+    else lFilter = appCore->getSimulation()->getActiveObserver()->getLocationFilter();
+    appCore->getSimulation()->getActiveObserver()->setLocationFilter(lFilter);
+
     oMask = appCore->getRenderer()->getOrbitMask();
 
     if (KGlobal::config()->hasKey("TimeZoneBias"))
         isLocal = (KGlobal::config()->readNumEntry("TimeZoneBias") != 0);
     
+    /////////////////////////////////////////
+    // Render Flags
     KToggleAction* showStars = new KToggleAction(i18n("Show Stars"), 0, this, SLOT(slotShowStars()), actionCollection(), "showStars");
     showStars->setChecked(rFlags & Renderer::ShowStars);
 
@@ -469,6 +486,8 @@ void KdeApp::initActions()
     KToggleAction* showStarLabels = new KToggleAction(i18n("Show Star Labels"), Key_B, this, SLOT(slotShowStarLabels()), actionCollection(), "showStarLabels");
     showStarLabels->setChecked(lMode & Renderer::StarLabels);
 
+    /////////////////////////////////////////
+    // Label Mode
     KToggleAction* showPlanetLabels = new KToggleAction(i18n("Show Planet Labels"), Key_P, this, SLOT(slotShowPlanetLabels()), actionCollection(), "showPlanetLabels");
     showPlanetLabels->setChecked(lMode & Renderer::PlanetLabels);
 
@@ -477,7 +496,6 @@ void KdeApp::initActions()
 
     KToggleAction* showCometLabels = new KToggleAction(i18n("Show Comet Labels"), SHIFT + Key_W, this, SLOT(slotShowCometLabels()), actionCollection(), "showCometLabels");
     showMoonLabels->setChecked(lMode & Renderer::CometLabels);
-
 
     KToggleAction* showConstellationLabels = new KToggleAction(i18n("Show Constellation Labels"), Key_Equal, this, SLOT(slotShowConstellationLabels()), actionCollection(), "showConstellationLabels");
     showConstellationLabels->setChecked(lMode & Renderer::ConstellationLabels);
@@ -496,6 +514,36 @@ void KdeApp::initActions()
 
     KToggleAction* displayLocalTime = new KToggleAction(i18n("Display Local Time"), ALT + Key_U, this, SLOT(slotDisplayLocalTime()), actionCollection(), "displayLocalTime");
     displayLocalTime->setChecked(isLocal);
+
+    /////////////////////////////////////////
+    // Location Filters
+    KToggleAction* showCityLocations = new KToggleAction(i18n("Show City Locations"), 0, this, SLOT(slotShowCityLocations()), actionCollection(), "showCityLocations");
+    showCityLocations->setChecked(lFilter & Location::City);
+
+    KToggleAction* showObservatoryLocations = new KToggleAction(i18n("Show Observatory Locations"), 0, this, SLOT(slotShowObservatoryLocations()), actionCollection(), "showObservatoryLocations");
+    showObservatoryLocations->setChecked(lFilter & Location::Observatory);
+
+    KToggleAction* showLandingSiteLocations = new KToggleAction(i18n("Show Landing Sites Locations"), 0, this, SLOT(slotShowLandingSiteLocations()), actionCollection(), "showLandingSiteLocations");
+    showLandingSiteLocations->setChecked(lFilter & Location::LandingSite);
+
+    KToggleAction* showCraterLocations = new KToggleAction(i18n("Show Crater Locations"), 0, this, SLOT(slotShowCraterLocations()), actionCollection(), "showCraterLocations");
+    showCraterLocations->setChecked(lFilter & Location::Crater);
+
+    KToggleAction* showMonsLocations = new KToggleAction(i18n("Show Mons Locations"), 0, this, SLOT(slotShowMonsLocations()), actionCollection(), "showMonsLocations");
+    showMonsLocations->setChecked(lFilter & Location::Mons);
+
+    KToggleAction* showTerraLocations = new KToggleAction(i18n("Show Terra Locations"), 0, this, SLOT(slotShowTerraLocations()), actionCollection(), "showTerraLocations");
+    showTerraLocations->setChecked(lFilter & Location::Terra);
+
+    KToggleAction* showVallisLocations = new KToggleAction(i18n("Show Vallis Locations"), 0, this, SLOT(slotShowVallisLocations()), actionCollection(), "showVallisLocations");
+    showVallisLocations->setChecked(lFilter & Location::Vallis);
+
+    KToggleAction* showMareLocations = new KToggleAction(i18n("Show Mare Locations"), 0, this, SLOT(slotShowMareLocations()), actionCollection(), "showMareLocations");
+    showMareLocations->setChecked(lFilter & Location::Mare);
+
+    KToggleAction* showOtherLocations = new KToggleAction(i18n("Show Other Locations"), 0, this, SLOT(slotShowOtherLocations()), actionCollection(), "showOtherLocations");
+    showOtherLocations->setChecked(lFilter & FilterOtherLocations);
+    /////////////////////////////////////////
 
     new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
 
@@ -573,6 +621,8 @@ bool KdeApp::queryExit() {
     conf->writeEntry("ActiveFrameVisible", appCore->getActiveFrameVisible());
     conf->writeEntry("SyncTime", appCore->getSimulation()->getSyncTime());
     conf->writeEntry("DistanceToScreen", appCore->getDistanceToScreen());
+    conf->writeEntry("LocationFilter", appCore->getSimulation()->getActiveObserver()->getLocationFilter());
+    conf->writeEntry("MinFeatureSize", appCore->getRenderer()->getMinimumFeatureSize());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
     openRecent->saveEntries(KGlobal::config());
@@ -974,6 +1024,64 @@ void KdeApp::slotShowSpacecraftLabels() {
 void KdeApp::slotShowLocationLabels() {
      appCore->getRenderer()->setLabelMode(
             appCore->getRenderer()->getLabelMode() ^ Renderer::LocationLabels);
+}
+
+void KdeApp::slotShowCityLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ Location::City);
+}
+
+void KdeApp::slotShowObservatoryLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ Location::Observatory);
+}
+
+void KdeApp::slotShowLandingSiteLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ Location::LandingSite);
+}
+
+void KdeApp::slotShowCraterLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ Location::Crater);
+}
+
+void KdeApp::slotShowMonsLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ Location::Mons);
+}
+
+void KdeApp::slotShowTerraLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ Location::Terra);
+}
+
+void KdeApp::slotShowVallisLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ Location::Vallis);
+}
+
+void KdeApp::slotShowMareLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ Location::Mare);
+}
+
+void KdeApp::slotShowOtherLocations() {
+    Observer* obs = appCore->getSimulation()->getActiveObserver();
+    int locationFilter = obs->getLocationFilter();
+    obs->setLocationFilter(locationFilter ^ FilterOtherLocations);
+}
+
+void KdeApp::slotMinFeatureSize(int size) {
+    appCore->getRenderer()->setMinimumFeatureSize((float)size);  
 }
 
 void KdeApp::slotSplitH() {

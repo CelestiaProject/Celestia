@@ -45,6 +45,7 @@ public slots:
     void slotFaintestVisible(int m);
     void slotRenderPath(int);
     void slotDistanceToScreen(int);
+    void slotMinFeatureSize(int);
 
 protected:
     CelestiaCore* appCore;
@@ -61,6 +62,8 @@ protected:
     int savedDisplayLocalTime;
     int savedRenderPath;
     int savedDistanceToScreen;
+    uint32 savedLocationFilter;
+    int savedMinFeatureSize;
 
     bool timeHasChanged;
 
@@ -74,7 +77,7 @@ protected:
 
     QComboBox *renderPathCombo;
     QLabel* renderPathLabel;
-    QLabel* ambientLabel, *faintestLabel;
+    QLabel* ambientLabel, *faintestLabel, *minFeatureSizeLabel;
     
     void setTime(double d);
     double getTime() const;
