@@ -1,0 +1,100 @@
+dnl
+dnl Celestia autoconf file
+dnl
+
+AC_INIT(src/glutmain.cpp)
+AM_INIT_AUTOMAKE(Celestia, 1.08)
+AM_CONFIG_HEADER(config.h)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CPP
+AC_PROG_CXXCPP
+AC_PROG_INSTALL
+
+AC_ARG_WITH(
+ gl-libs,
+ [  --with-gl-libs=DIR      Specify OpenGL library location],
+ CELESTIALIBS="$CELESTIALIBS -L$withval")
+
+AC_ARG_WITH(
+ gl-inc,
+ [  --with-gl-inc=DIR       Specify OpenGL header file location],
+ CELESTIAFLAGS="$CELESTIAFLAGS -I$withval")
+
+AC_ARG_WITH(
+ glut-libs,
+ [  --with-glut-libs=DIR    Specify GLUT library location],
+ CELESTIALIBS="$CELESTIALIBS -L$withval")
+
+AC_ARG_WITH(
+ glut-inc,
+ [  --with-glut-inc=DIR     Specify GLUT header file location],
+ CELESTIAFLAGS="$CELESTIAFLAGS -I$withval")
+
+
+
+CFLAGS="$CFLAGS $CELESTIAFLAGS $CELESTIA_EXTRA_CFLAGS"
+CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_EXTRA_CFLAGS"
+LIBS="$LIBS $CELESTIA_LIBS"
+
+dnl Check for X11.
+AC_PATH_XTRA
+
+LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 $X_EXTRA_LIBS"
+CFLAGS="$CFLAGS $X_CFLAGS"
+
+dnl Check for OpenGL. Taken partly from the plib sources.
+AC_CHECK_LIB(GL,glNewList)
+
+if test "x$ac_cv_lib_GL_glNewList" = "xno" ; then
+        dnl Check for MesaGL.
+        AC_CHECK_LIB(MesaGL, glNewList,,
+                     AC_MSG_ERROR(GL library was not found))
+fi
+
+AC_CHECK_LIB(GLU,gluLookAt)
+
+if test "x$ac_cv_lib_GLU_gluLookAt" = "xno"; then
+        dnl Check for MesaGLU.
+        AC_CHECK_LIB(MesaGLU, gluLookAt,,
+        AC_MSG_ERROR(GLU library was not found))
+fi
+
+
+dnl Check for GLUT.
+AC_CHECK_LIB(glut, glutKeyboardUpFunc,,
+             AC_MSG_ERROR(GLUT library version >= 3.7 not found))
+
+dnl Check for JPEG library.
+AC_CHECK_LIB(jpeg, jpeg_start_decompress,,
+             AC_MSG_ERROR(jpeg library not found))
+
+
+
+dnl Checks for header files.
+
+AC_HEADER_STDC
+
+AC_CHECK_HEADERS(GL/gl.h GL/glut.h)
+
+# AC_DEFINE(TEXTURE_DIR,"textures")
+# AC_DEFINE(FONT_DIR,"fonts")
+# AC_DEFINE(MODEL_DIR,"models")
+# AC_DEFINE(DATA_DIR,"data")
+
+AC_OUTPUT( Makefile          \
+           src/Makefile      \
+          )
+
+AC_MSG_RESULT()
+AC_MSG_RESULT()
+AC_MSG_RESULT(********************************************************************)
+AC_MSG_RESULT(*** Before compiling Celestia take a look at the configuration )
+AC_MSG_RESULT(*** file in the conf directory. Default configuration file is tuned )
+AC_MSG_RESULT(*** for a GeForce card so if you own a less powerful card you'll )
+AC_MSG_RESULT(*** have to edit that file and read carefully )
+AC_MSG_RESULT(********************************************************************)
+AC_MSG_RESULT()
+AC_MSG_RESULT()
