@@ -40,6 +40,16 @@
 
 class KdeApp;
 
+class KdeAlerter : public CelestiaCore::Alerter
+{
+public:
+    KdeAlerter(QWidget* parent = 0);
+    virtual ~KdeAlerter() {};
+    virtual void fatalError(const std::string&);
+protected:
+    QWidget* parent;
+};
+
 class KdeWatcher : public CelestiaWatcher {
 public:
     KdeWatcher(CelestiaCore* core, KdeApp* app) : CelestiaWatcher(*core),kdeapp(app) {};
@@ -208,7 +218,8 @@ private:
     CelestiaCore* appCore;
     QLineEdit *altEdit, *longEdit, *latEdit, *objEdit;
     QComboBox *longSign, *latSign;
-    
+
 };
+
 
 #endif
