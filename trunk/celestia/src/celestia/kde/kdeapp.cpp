@@ -632,6 +632,8 @@ void KdeApp::slotOpenFileURL(const KURL& url) {
 
 #ifdef CELX
     if (file.right(5).compare(QString(".celx")) == 0) {
+        openRecent->addURL(url);
+        appCore->cancelScript();
         appCore->runScript(file.latin1());
         return;
     }
@@ -1092,6 +1094,7 @@ void KdeApp::popupInsert(KPopupMenu &popup, Selection sel, int baseId) {
     popup.insertItem(i18n("&Follow"), baseId + 4);
     popup.insertItem(i18n("S&ynch Orbit"), baseId + 5);
     popup.insertItem(i18n("&Info"), baseId + 6);
+    popup.insertItem(i18n("Unmark &All"), baseId + 8);
     if (app->appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
     {
         popup.insertItem(i18n("&Unmark"), baseId + 7);
@@ -1114,7 +1117,7 @@ void KdeApp::popupInsert(KPopupMenu &popup, Selection sel, int baseId) {
         {
             popup.insertSeparator();
             KPopupMenu *planetaryMenu = new KPopupMenu(app);
-            for (int i = 0; i < satellites->getSystemSize(); i++)
+            for (int i = 0; i < satellites->getSystemSize() && i < MENUMAXSIZE; i++)
             {
                 Body* body = satellites->getBody(i);
                 Selection satSel(body);
@@ -1136,7 +1139,7 @@ void KdeApp::popupInsert(KPopupMenu &popup, Selection sel, int baseId) {
             popup.insertSeparator();
             SolarSystem* solarSys = iter->second;
             KPopupMenu* planetsMenu = new KPopupMenu(app);
-            for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
+            for (int i = 0; i < solarSys->getPlanets()->getSystemSize() && i < MENUMAXSIZE; i++)
             {
                 Body* body = solarSys->getPlanets()->getBody(i);
                 Selection satSel(body);
@@ -1296,8 +1299,8 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
         if (markers->size() > 0)
         {
             KPopupMenu *markMenu = new KPopupMenu(app);
-            int j=0;
-            for (std::vector<Marker>::iterator i = markers->begin(); i < markers->end(); i++)
+            int j=1;
+            for (std::vector<Marker>::iterator i = markers->begin(); i < markers->end() && j < MENUMAXSIZE; i++)
             {
                 KPopupMenu *objMenu = new KPopupMenu(app);
                 app->popupInsert(*objMenu, (*i).getObject(), (2 * MENUMAXSIZE + j) * MENUMAXSIZE);
@@ -1314,7 +1317,6 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
     int actionId = id;
     actionId = id - (id / MENUMAXSIZE) * MENUMAXSIZE;
 
-
     int subId = id;
     int level = 1;
     while (id > MENUMAXSIZE) {
@@ -1322,7 +1324,6 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
         level *= MENUMAXSIZE;
     }
     subId -= id * level;
-
 
     if (id == 1)
     {
@@ -1339,7 +1340,7 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
         }
         subsubId -= subId * level;
         MarkerList* markers = sim->getUniverse()->getMarkers();
-        sel = (*markers)[subId].getObject();
+        sel = (*markers)[subId-1].getObject();
         int selId = subsubId / MENUMAXSIZE;
         sel = app->getSelectionFromId(sel, selId);
     }
@@ -1394,6 +1395,19 @@ void KdeApp::popupMenu(QWidget* parent, const QPoint& p, Selection sel) {
     {
         if (sim->getUniverse() != NULL)
             sim->getUniverse()->unmarkObject(sel, 1);
+        return;
+    }
+    if (actionId == 8)
+    {
+        MarkerList* markers = sim->getUniverse()->getMarkers();fprintf(stderr, "toto\n");
+        if (markers != 0)
+        {
+            for (vector<Marker>::const_iterator iter = markers->begin();
+                 iter < markers->end(); iter++)
+            {
+                sim->getUniverse()->unmarkObject((*iter).getObject(), 1);
+            }
+        }
         return;
     }
     if (actionId >= 10 && actionId <= 14)
