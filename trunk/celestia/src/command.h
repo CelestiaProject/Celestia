@@ -18,7 +18,7 @@ class Command
  public:
     Command() {};
     virtual ~Command() {};
-    virtual void process(Simulation* sim, Renderer* renderer, double t) = 0;
+    virtual void process(Simulation* sim, Renderer* renderer, double t, double dt) = 0;
     virtual double getDuration() const = 0;
 };
 
@@ -32,7 +32,7 @@ class InstantaneousCommand : public Command
     virtual ~InstantaneousCommand() {};
     virtual double getDuration() const { return 0.0; };
     virtual void process(Simulation* sim, Renderer* renderer) = 0;
-    void process(Simulation* sim, Renderer* renderer, double t)
+    void process(Simulation* sim, Renderer* renderer, double t, double dt)
     {
         process(sim, renderer);
     };
@@ -56,7 +56,7 @@ class CommandWait : public TimedCommand
  public:
     CommandWait(double _duration);
     ~CommandWait();
-    void process(Simulation* sim, Renderer* renderer, double t);
+    void process(Simulation* sim, Renderer* renderer, double t, double dt);
 };
 
 
@@ -94,5 +94,83 @@ class CommandCenter : public InstantaneousCommand
  private:
     double centerTime;
 };
+
+
+class CommandFollow : public InstantaneousCommand
+{
+ public:
+    CommandFollow();
+    void process(Simulation*, Renderer*);
+
+ private:
+    int dummy;   // Keep the class from having zero size
+};
+
+
+class CommandCancel : public InstantaneousCommand
+{
+ public:
+    CommandCancel();
+    void process(Simulation*, Renderer*);
+
+ private:
+    int dummy;   // Keep the class from having zero size
+};
+
+
+class CommandPrint : public InstantaneousCommand
+{
+ public:
+    CommandPrint(std::string);
+    void process(Simulation*, Renderer*);
+
+ private:
+    std::string text;
+};
+
+
+class CommandClearScreen : public InstantaneousCommand
+{
+ public:
+    CommandClearScreen();
+    void process(Simulation*, Renderer*);
+
+ private:
+    int dummy;   // Keep the class from having zero size
+};
+
+
+class CommandSetTime : public InstantaneousCommand
+{
+ public:
+    CommandSetTime(double _jd);
+    void process(Simulation*, Renderer*);
+
+ private:
+    double jd;
+};
+
+
+class CommandSetTimeRate : public InstantaneousCommand
+{
+ public:
+    CommandSetTimeRate(double);
+    void process(Simulation*, Renderer*);
+
+ private:
+    double rate;
+};
+
+
+class CommandChangeDistance : public TimedCommand
+{
+ public:
+    CommandChangeDistance(double duration, double rate);
+    void process(Simulation*, Renderer*, double t, double dt);
+
+ private:
+    double rate;
+};
+
 
 #endif // _COMMAND_H_
