@@ -479,6 +479,11 @@ void CommandSet::process(ExecutionEnvironment& env)
         if (env.getRenderer() != NULL)
             env.getRenderer()->setFieldOfView((float) value);
     }
+    else if (compareIgnoringCase(name, "StarDistanceLimit") == 0)
+    {
+        if (env.getRenderer() != NULL)
+            env.getRenderer()->setDistanceLimit((float) value);
+    }
 }
 
 

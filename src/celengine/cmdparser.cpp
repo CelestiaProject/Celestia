@@ -440,6 +440,12 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowRingShadows;
             else if (compareIgnoringCase(name, "pointstars") == 0)
                 flags |= Renderer::ShowStarsAsPoints;
+            else if (compareIgnoringCase(name, "ringshadows") == 0)
+                flags |= Renderer::ShowRingShadows;
+            else if (compareIgnoringCase(name, "comettails") == 0)
+                flags |= Renderer::ShowCometTails;
+            else if (compareIgnoringCase(name, "boundaries") == 0)
+                flags |= Renderer::ShowBoundaries;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
