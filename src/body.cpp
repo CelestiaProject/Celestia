@@ -308,13 +308,13 @@ float Body::getApparentMagnitude(const Star& sun,
 PlanetarySystem::PlanetarySystem(Body* _primary) : primary(_primary)
 {
     if (primary != NULL && primary->getSystem() != NULL)
-        starNumber = primary->getSystem()->getStarNumber();
+        star = primary->getSystem()->getStar();
     else
-        starNumber = Star::InvalidCatalogNumber;
+        star = NULL;
 }
 
-PlanetarySystem::PlanetarySystem(uint32 _starNumber) :
-    starNumber(_starNumber), primary(NULL)
+PlanetarySystem::PlanetarySystem(const Star* _star) :
+    star(_star), primary(NULL)
 {
 }
 

@@ -20,14 +20,14 @@
 class SolarSystem
 {
  public:
-    SolarSystem(uint32 _starNumber);
+    SolarSystem(const Star*);
 
-    uint32 getStarNumber() const;
+    const Star* getStar() const;
     PlanetarySystem* getPlanets() const;
     
  private:
     PlanetarySystem* planets;
-    uint32 starNumber;
+    const Star* star;
 };
 
 typedef std::map<uint32, SolarSystem*> SolarSystemCatalog;

@@ -315,9 +315,8 @@ static SolarSystem* ReadSolarSystem(Parser& parser,
         delete solarSystemDataValue;
         return NULL;
     }
-    uint32 starNumber = star->getCatalogNumber();
 
-    SolarSystem* solarSys = new SolarSystem(starNumber);
+    SolarSystem* solarSys = new SolarSystem(star);
     
     Value* planetsDataValue = solarSystemData->getValue("Planets");
     if (planetsDataValue != NULL)
@@ -370,7 +369,7 @@ SolarSystemCatalog* ReadSolarSystemCatalog(istream& in,
         SolarSystem* solarSystem = ReadSolarSystem(parser, starDB);
         if (solarSystem != NULL)
         {
-            catalog->insert(SolarSystemCatalog::value_type(solarSystem->getStarNumber(),
+            catalog->insert(SolarSystemCatalog::value_type(solarSystem->getStar()->getCatalogNumber(),
                                                            solarSystem));
         }
     }
@@ -392,7 +391,7 @@ bool ReadSolarSystems(istream& in,
         SolarSystem* solarSystem = ReadSolarSystem(parser, starDB);
         if (solarSystem != NULL)
         {
-            catalog.insert(SolarSystemCatalog::value_type(solarSystem->getStarNumber(),
+            catalog.insert(SolarSystemCatalog::value_type(solarSystem->getStar()->getCatalogNumber(),
                                                           solarSystem));
         }
     }
@@ -402,15 +401,15 @@ bool ReadSolarSystems(istream& in,
 }
 
 
-SolarSystem::SolarSystem(uint32 _starNumber) : starNumber(_starNumber)
+SolarSystem::SolarSystem(const Star* _star) : star(_star)
 {
-    planets = new PlanetarySystem(starNumber);
+    planets = new PlanetarySystem(star);
 }
 
 
-uint32 SolarSystem::getStarNumber() const
+const Star* SolarSystem::getStar() const
 {
-    return starNumber;
+    return star;
 }
 
 PlanetarySystem* SolarSystem::getPlanets() const
