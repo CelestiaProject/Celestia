@@ -885,16 +885,20 @@ std::vector<std::string> Universe::getCompletion(const string& s,
 {
     std::vector<std::string> completion;
 
-    // solar bodies first
+    // Solar bodies first
     for (int i = 0; i < nContexts; i++)
     {
-        if (withLocations && contexts[i].getType() == Selection::Type_Body) {
+        if (withLocations && contexts[i].getType() == Selection::Type_Body)
+        {
             std::vector<Location*>* locations = contexts[i].body()->getLocations();
-            for (vector<Location*>::const_iterator iter = locations->begin();
-                 iter != locations->end(); iter++)
+            if (locations != NULL)
             {
-                if (!UTF8StringCompare(s, (*iter)->getName(), s.length()))
-                    completion.push_back((*iter)->getName());
+                for (vector<Location*>::const_iterator iter = locations->begin();
+                     iter != locations->end(); iter++)
+                {
+                    if (!UTF8StringCompare(s, (*iter)->getName(), s.length()))
+                        completion.push_back((*iter)->getName());
+                }
             }
         }
 
