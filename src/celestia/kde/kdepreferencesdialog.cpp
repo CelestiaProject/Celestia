@@ -31,6 +31,8 @@
 #include <kkeydialog.h>
 #include <qspinbox.h>
 #include <qlabel.h>
+#include <qlayout.h>
+
 
 #include "kdeapp.h"
 #include "kdepreferencesdialog.h"
@@ -131,38 +133,82 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     int labelMode = appCore->getRenderer()->getLabelMode();
     savedLabelMode = labelMode;
 
-    QGroupBox* labelGroup = new QGroupBox(1, Qt::Horizontal, i18n("Labels"), vbox1);
+    QGroupBox* labelGroup = new QGroupBox(0, Qt::Horizontal, i18n("Orbits / Labels"), vbox1);
+    QGridLayout* labelGroupLayout = new QGridLayout( labelGroup->layout() );
+    labelGroupLayout->setAlignment( Qt::AlignTop );
+
+    QLabel* orbitsLabel = new QLabel(i18n("Orbits"), labelGroup);
+    labelGroupLayout->addWidget(orbitsLabel, 0, 0);
+    QLabel* labelsLabel = new QLabel(i18n("Labels"), labelGroup);
+    labelGroupLayout->addWidget(labelsLabel, 0, 1);
+
     QCheckBox* showStarLabelsCheck = new QCheckBox(i18n("Stars"), labelGroup);
     actionColl->action("showStarLabels")->connect(showStarLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showStarLabelsCheck->setChecked(labelMode & Renderer::StarLabels);
+    labelGroupLayout->addWidget(showStarLabelsCheck, 1, 1);
 
+    QCheckBox* showPlanetOrbitsCheck = new QCheckBox("", labelGroup);
+    actionColl->action("showPlanetOrbits")->connect(showPlanetOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showPlanetOrbitsCheck->setChecked(renderFlags & Renderer::ShowPlanetOrbits);
+    labelGroupLayout->addWidget(showPlanetOrbitsCheck, 3, 0, Qt::AlignHCenter);
     QCheckBox* showPlanetLabelsCheck = new QCheckBox(i18n("Planets"), labelGroup);
     actionColl->action("showPlanetLabels")->connect(showPlanetLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showPlanetLabelsCheck->setChecked(labelMode & Renderer::PlanetLabels);
+    labelGroupLayout->addWidget(showPlanetLabelsCheck, 3, 1);
 
+    QCheckBox* showMoonOrbitsCheck = new QCheckBox("", labelGroup);
+    actionColl->action("showMoonOrbits")->connect(showMoonOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showMoonOrbitsCheck->setChecked(renderFlags & Renderer::ShowMoonOrbits);
+    labelGroupLayout->addWidget(showMoonOrbitsCheck, 4, 0, Qt::AlignHCenter);
     QCheckBox* showMoonLabelsCheck = new QCheckBox(i18n("Moons"), labelGroup);
     actionColl->action("showMoonLabels")->connect(showMoonLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showMoonLabelsCheck->setChecked(labelMode & Renderer::MoonLabels);
+    labelGroupLayout->addWidget(showMoonLabelsCheck, 4, 1);
+
+    QCheckBox* showCometOrbitsCheck = new QCheckBox("", labelGroup);
+    actionColl->action("showCometOrbits")->connect(showCometOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showCometOrbitsCheck->setChecked(renderFlags & Renderer::ShowCometOrbits);
+    labelGroupLayout->addWidget(showCometOrbitsCheck, 5, 0, Qt::AlignHCenter);
+    QCheckBox* showCometLabelsCheck = new QCheckBox(i18n("Comets"), labelGroup);
+    actionColl->action("showCometLabels")->connect(showCometLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showCometLabelsCheck->setChecked(labelMode & Renderer::CometLabels);
+    labelGroupLayout->addWidget(showCometLabelsCheck, 5, 1);
 
     QCheckBox* showConstellationLabelsCheck = new QCheckBox(i18n("Constellations"), labelGroup);
     actionColl->action("showConstellationLabels")->connect(showConstellationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showConstellationLabelsCheck->setChecked(labelMode & Renderer::ConstellationLabels);
+    labelGroupLayout->addWidget(showConstellationLabelsCheck, 6, 1);
 
     QCheckBox* showGalaxyLabelsCheck = new QCheckBox(i18n("Galaxies"), labelGroup);
     actionColl->action("showGalaxyLabels")->connect(showGalaxyLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showGalaxyLabelsCheck->setChecked(labelMode & Renderer::GalaxyLabels);
+    labelGroupLayout->addWidget(showGalaxyLabelsCheck, 7, 1);
 
+    QCheckBox* showAsteroidOrbitsCheck = new QCheckBox("", labelGroup);
+    actionColl->action("showAsteroidOrbits")->connect(showAsteroidOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showAsteroidOrbitsCheck->setChecked(renderFlags & Renderer::ShowAsteroidOrbits);
+    labelGroupLayout->addWidget(showAsteroidOrbitsCheck, 8, 0, Qt::AlignHCenter);
     QCheckBox* showAsteroidLabelsCheck = new QCheckBox(i18n("Asteroids"), labelGroup);
     actionColl->action("showAsteroidLabels")->connect(showAsteroidLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showAsteroidLabelsCheck->setChecked(labelMode & Renderer::AsteroidLabels);
+    labelGroupLayout->addWidget(showAsteroidLabelsCheck, 8, 1);
 
+    QCheckBox* showSpacecraftOrbitsCheck = new QCheckBox("", labelGroup);
+    actionColl->action("showSpacecraftOrbits")->connect(showSpacecraftOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showSpacecraftOrbitsCheck->setChecked(renderFlags & Renderer::ShowSpacecraftOrbits);
+    labelGroupLayout->addWidget(showSpacecraftOrbitsCheck, 9, 0, Qt::AlignHCenter);
     QCheckBox* showSpacecraftLabelsCheck = new QCheckBox(i18n("Spacecrafts"), labelGroup);
     actionColl->action("showSpacecraftLabels")->connect(showSpacecraftLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showSpacecraftLabelsCheck->setChecked(labelMode & Renderer::SpacecraftLabels);
+    labelGroupLayout->addWidget(showSpacecraftLabelsCheck, 9, 1);
 
     QCheckBox* showLocationLabelsCheck = new QCheckBox(i18n("Locations"), labelGroup);
     actionColl->action("showLocationLabels")->connect(showLocationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showLocationLabelsCheck->setChecked(labelMode & Renderer::LocationLabels);
+    labelGroupLayout->addWidget(showLocationLabelsCheck, 10, 1);
+
+    QSpacerItem* spacer = new QSpacerItem( 151, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    labelGroupLayout->addItem( spacer, 0, 2 );
 
     savedAmbientLightLevel = int(appCore->getRenderer()->getAmbientLightLevel() * 100);
     QGroupBox* ambientLightGroup = new QGroupBox(1, Qt::Vertical, i18n("Ambient Light"), vbox1);
