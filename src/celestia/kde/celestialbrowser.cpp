@@ -15,6 +15,7 @@
 #include "celestialbrowser.h"
 #include "cellistviewitem.h"
 #include "selectionpopup.h"
+#include "celutil/utf8.h"
 
 /* 
  *  Constructs a CelestialBrowser which is a child of 'parent', with the 
@@ -136,7 +137,8 @@ void CelestialBrowser::slotRefresh()
         star->getStellarClass().str(buf, sizeof buf);
         QString starClass(buf);
 
-        CelListViewItem *starItem = new CelListViewItem(listStars, name, dist, appMag, absMag, starClass);
+        CelListViewItem *starItem = new CelListViewItem(listStars, QString(name),
+                                    QString::fromUtf8(ReplaceGreekLetterAbbr(name).c_str()), dist, appMag, absMag, starClass);
         
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
@@ -154,7 +156,8 @@ void CelestialBrowser::slotRefresh()
                 sprintf(buf, " %.2f au", starBodyDist / KM_PER_AU);
                 QString distStarBody(buf);
                                                                              
-                CelListViewItem *planetItem = new CelListViewItem(starItem, QString::fromUtf8(body->getName().c_str()),
+                CelListViewItem *planetItem = new CelListViewItem(starItem, QString(body->getName()), 
+                                            QString::fromUtf8(body->getName().c_str()),
                                             distStarBody, "", "", getClassification(body->getClassification()));
                 
                 const PlanetarySystem* satellites = body->getSatellites();
@@ -170,7 +173,7 @@ void CelestialBrowser::slotRefresh()
                                 sprintf(buf, " %.0f km", bodySatDist);
                                 QString distBodySat(buf);
                                 
-                                new CelListViewItem(planetItem, 
+                                new CelListViewItem(planetItem, QString(sat->getName()),
                                     QString::fromUtf8(sat->getName().c_str()),
                                     distBodySat, "", "", getClassification(sat->getClassification()));
 
@@ -212,10 +215,10 @@ QString CelestialBrowser::getClassification(int c) const{
 
 
 void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p, int col) {
-    QListViewItem *i = item;
-    QString name = i->text(0);
-    while ( (i = i->parent()) ) {
-        name = i->text(0) + "/" + name;
+    CelListViewItem *i = dynamic_cast<CelListViewItem*>(item);
+    QString name = i->getName();
+    while ( (i = dynamic_cast<CelListViewItem*>(i->parent())) ) {
+        name = i->text(0) + "/" + i->getName();
     }
     Selection sel = appSim->findObjectFromPath(std::string(name.latin1()));
 
@@ -226,17 +229,19 @@ void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p
 }
 
 
-CelListViewItem::CelListViewItem( QListView * parent, QString label1, QString label2, 
+CelListViewItem::CelListViewItem( QListView * parent, QString _name, QString label1, QString label2, 
    QString label3, QString label4, QString label5, QString label6, QString label7, 
    QString label8 )
-    : QListViewItem(parent, label1, label2, label3, label4, label5, label6, label7, label8)
+    : QListViewItem(parent, label1, label2, label3, label4, label5, label6, label7, label8),
+    name(_name)
 {
 }
 
-CelListViewItem::CelListViewItem( QListViewItem * parent, QString label1, QString label2, 
+CelListViewItem::CelListViewItem( QListViewItem * parent, QString _name, QString label1, QString label2, 
    QString label3, QString label4, QString label5, QString label6, QString label7, 
    QString label8 )
-    : QListViewItem(parent, label1, label2, label3, label4, label5, label6, label7, label8)
+    : QListViewItem(parent, label1, label2, label3, label4, label5, label6, label7, label8),
+    name(_name)
 {
 }
 

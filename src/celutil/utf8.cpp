@@ -9,7 +9,7 @@
 
 #include "utf8.h"
 #include <cctype>
-
+#include "util.h"
 
 unsigned int WGL4_Normalization_00[256] = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 
@@ -297,9 +297,9 @@ unsigned int* WGL4NormalizationTables[256] = {
 };    
 
 
-// Decode the UTF-8 characters in string str beginning at position pos.
-// The decoded character is returned in ch; the return value of the function
-// is true if a valid UTF-8 sequence was successfully decoded.
+//! Decode the UTF-8 characters in string str beginning at position pos.
+//! The decoded character is returned in ch; the return value of the function
+//! is true if a valid UTF-8 sequence was successfully decoded.
 bool UTF8Decode(const std::string& str, int pos, wchar_t& ch)
 {
     unsigned int c0 = (unsigned int) str[pos];
@@ -359,9 +359,9 @@ bool UTF8Decode(const std::string& str, int pos, wchar_t& ch)
 }
 
 
-// Decode the UTF-8 characters in string str beginning at position pos.
-// The decoded character is returned in ch; the return value of the function
-// is true if a valid UTF-8 sequence was successfully decoded.
+//! Decode the UTF-8 characters in string str beginning at position pos.
+//! The decoded character is returned in ch; the return value of the function
+//! is true if a valid UTF-8 sequence was successfully decoded.
 bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch)
 {
     unsigned int c0 = (unsigned int) str[pos];
@@ -421,9 +421,9 @@ bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch)
 }
 
 
-// UTF-8 encode the Unicode character ch into the string s and return the
-// encoded length.  There should be space for at least 7 characters in s--up
-// to six encoded bytes, plus one byte for the terminating null character.
+//! UTF-8 encode the Unicode character ch into the string s and return the
+//! encoded length.  There should be space for at least 7 characters in s--up
+//! to six encoded bytes, plus one byte for the terminating null character.
 int UTF8Encode(wchar_t ch, char* s)
 {
     if (ch < 0x80)
@@ -480,7 +480,7 @@ int UTF8Encode(wchar_t ch, char* s)
 }
 
 
-// Return the number of characters encoded by a UTF-8 string
+//! Return the number of characters encoded by a UTF-8 string
 int UTF8Length(const std::string& s)
 {
     int len = s.length();
@@ -510,9 +510,9 @@ inline wchar_t UTF8Normalize(wchar_t ch)
 }
 
 
-// Perform a normalized comparison of two UTF-8 strings.  The normalization
-// only works for characters in the WGL-4 subset, and no multicharacter
-// translations are performed.
+//! Perform a normalized comparison of two UTF-8 strings.  The normalization
+//! only works for characters in the WGL-4 subset, and no multicharacter
+//! translations are performed.
 int UTF8StringCompare(const std::string& s0, const std::string& s1)
 {
     int len0 = s0.length();
@@ -594,8 +594,8 @@ int UTF8StringCompare(const std::string& s0, const std::string& s1, size_t n)
 }
 
 
-// Currently incomplete, but could be a helpful class for dealing with
-// UTF-8 streams
+//! Currently incomplete, but could be a helpful class for dealing with
+//! UTF-8 streams
 class UTF8StringIterator
 {
 public:
@@ -634,4 +634,150 @@ UTF8StringIterator& UTF8StringIterator::operator++()
 UTF8StringIterator& UTF8StringIterator::operator++(int)
 {
     return *this;
+}
+
+
+static const char *greekAlphabet[] =
+{
+    "Alpha",
+    "Beta",
+    "Gamma",
+    "Delta",
+    "Epsilon",
+    "Zeta",
+    "Eta",
+    "Theta",
+    "Iota",
+    "Kappa",
+    "Lambda",
+    "Mu",
+    "Nu",
+    "Xi",
+    "Omicron",
+    "Pi",
+    "Rho",
+    "Sigma",
+    "Tau",
+    "Upsilon",
+    "Phi",
+    "Chi",
+    "Psi",
+    "Omega"
+};
+
+static const char* greekAlphabetUTF8[] =
+{
+    "\316\261",
+    "\316\262",
+    "\316\263",
+    "\316\264",
+    "\316\265",
+    "\316\266",
+    "\316\267",
+    "\316\270",
+    "\316\271",
+    "\316\272",
+    "\316\273",
+    "\316\274",
+    "\316\275",
+    "\316\276",
+    "\316\277",
+    "\317\200",
+    "\317\201",
+    "\317\203",
+    "\317\204",
+    "\317\205",
+    "\317\206",
+    "\317\207",
+    "\317\210",
+    "\317\211",
+};
+
+static const char* canonicalAbbrevs[] =
+{
+    "ALF", "BET", "GAM", "DEL", "EPS", "ZET", "ETA", "TET",
+    "IOT", "KAP", "LAM", "MU" , "NU" , "XI" , "OMI", "PI" ,
+    "RHO", "SIG", "TAU", "UPS", "PHI", "CHI", "PSI", "OME",
+};
+
+static std::string noAbbrev("");
+
+// Greek alphabet crud . . . should probably moved to it's own module.
+
+Greek* Greek::instance = NULL;
+
+Greek::Greek()
+{
+    nLetters = sizeof(greekAlphabet) / sizeof(greekAlphabet[0]);
+    names = new std::string[nLetters];
+    abbrevs = new std::string[nLetters];
+
+    for (int i = 0; i < nLetters; i++)
+    {
+        names[i] = std::string(greekAlphabet[i]);
+        abbrevs[i] = std::string(canonicalAbbrevs[i]);
+    }
+}
+
+Greek::~Greek()
+{
+    delete[] names;
+    delete[] abbrevs;
+}
+
+const std::string& Greek::canonicalAbbreviation(const std::string& letter)
+{
+    if (instance == NULL)
+        instance = new Greek();
+
+    int i;
+    for (i = 0; i < Greek::instance->nLetters; i++)
+    {
+        if (compareIgnoringCase(letter, instance->names[i]) == 0)
+            return instance->abbrevs[i];
+    }
+
+    for (i = 0; i < Greek::instance->nLetters; i++)
+    {
+        if (compareIgnoringCase(letter, instance->abbrevs[i]) == 0)
+            return instance->abbrevs[i];
+    }
+
+    if (letter.length() == 2)
+    {
+        for (i = 0; i < Greek::instance->nLetters; i++)
+        {
+            if (letter[0] == greekAlphabetUTF8[i][0] &&
+                letter[1] == greekAlphabetUTF8[i][1])
+            {
+                return instance->abbrevs[i];
+            }
+        }
+    }
+
+    return noAbbrev;
+}
+
+//! Replaces the Greek letter abbreviation at the beginning
+//! of a string by the UTF-8 representation of that letter.
+std::string ReplaceGreekLetterAbbr(std::string str) 
+{
+    std::string ret = str;
+    
+    if (str[0] >= 'A' && str[0] <= 'Z' &&
+        str[1] >= 'A' && str[1] <= 'Z')
+    {
+        // Linear search through all letter abbreviations
+        for (int i = 0; i < Greek::instance->nLetters; i++)
+        {
+            const std::string& abbr = Greek::instance->abbrevs[i];
+            if (str.compare(0, abbr.length(), abbr) == 0)
+            {
+                ret = std::string(greekAlphabetUTF8[i]) + str.substr(abbr.length());               
+                break;
+            }
+        }
+    }
+    
+    return ret;
 }
