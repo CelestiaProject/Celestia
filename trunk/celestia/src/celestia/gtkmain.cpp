@@ -43,6 +43,7 @@
 #include "celengine/simulation.h"
 #include <libgnomeui/gnome-init.h>
 
+using namespace std;
 
 char AppName[] = "Celestia";
 
