@@ -723,6 +723,90 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
+    if ((renderFlags & ShowOrbits) != 0 && solarSystem != NULL)
+    {
+        // At this point, we're not rendering into the depth buffer
+        // so we'll set the far plane to be way out there.  If we don't
+        // do this, the orbits either suffer from clipping by the far
+        // plane, or else get clipped to close to the viewer.
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluPerspective(fov,
+                       (float) windowWidth / (float) windowHeight,
+                       NEAR_DIST, 1000000);
+    
+        // Set the modelview matrix
+        glMatrixMode(GL_MODELVIEW);
+
+        const Star* sun = solarSystem->getStar();
+        Point3f starPos = sun->getPosition();
+        // Compute the position of the observer relative to the star
+        Vec3d opos = observer.getPosition() - Point3d((double) starPos.x,
+                                                      (double) starPos.y,
+                                                      (double) starPos.z);
+
+        // At the solar system scale, we'll handle all calculations in
+        // AU instead of light years.
+        opos = Vec3d(astro::lightYearsToAU(opos.x) * 100,
+                     astro::lightYearsToAU(opos.y) * 100,
+                     astro::lightYearsToAU(opos.z) * 100);
+        glPushMatrix();
+        glTranslated(-opos.x, -opos.y, -opos.z);
+        
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+
+        // Render orbits
+        PlanetarySystem* planets = solarSystem->getPlanets();
+        int nBodies = planets->getSystemSize();
+        for (int i = 0; i < nBodies; i++)
+        {
+            Body* body = planets->getBody(i);
+            
+            // Only show orbits for major bodies or selected objects
+            if (body->getRadius() > 1000 || body == sel.body)
+            {
+                if (body == sel.body)
+                    glColor4f(1, 0, 0, 1);
+                else
+                    glColor4f(0, 0, 1, 1);
+                glBegin(GL_LINE_LOOP);
+                int nSteps = 100;
+                double dt = body->getOrbit()->getPeriod() / (double) nSteps;
+                for (int j = 0; j < nSteps; j++)
+                {
+                    Point3d p = body->getOrbit()->positionAtTime(j * dt + now);
+                    glVertex3f(astro::kilometersToAU((float) p.x * 100),
+                               astro::kilometersToAU((float) p.y * 100),
+                               astro::kilometersToAU((float) p.z * 100));
+                }
+                glEnd();
+            }
+        }
+
+#ifdef ECLIPTIC_AXES
+        // Render axes in plane of the ecliptic for debugging
+        glBegin(GL_LINES);
+        glColor4f(1, 0, 0, 1);
+        glVertex3f(3000, 0, 0);
+        glVertex3f(-3000, 0, 0);
+        glVertex3f(2800, 0, 200);
+        glVertex3f(3000, 0, 0);
+        glVertex3f(2800, 0, -200);
+        glVertex3f(3000, 0, 0);
+        glColor4f(0, 1, 0, 1);
+        glVertex3f(0, 0, 3000);
+        glVertex3f(0, 0, -3000);
+        glVertex3f(200, 0, 2800);
+        glVertex3f(0, 0, 3000);
+        glVertex3f(-200, 0, 2800);
+        glVertex3f(0, 0, 3000);
+        glEnd();
+#endif
+
+        glPopMatrix();
+    }
+
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
     glPolygonMode(GL_BACK, (GLenum) renderMode);
 
@@ -909,90 +993,6 @@ void Renderer::render(const Observer& observer,
 
         // reset the depth range
         glDepthRange(0, 1);
-
-        if ((renderFlags & ShowOrbits) != 0 && solarSystem != NULL)
-        {
-            // At this point, we're not rendering into the depth buffer
-            // so we'll set the far plane to be way out there.  If we don't
-            // do this, the orbits either suffer from clipping by the far
-            // plane, or else get clipped to close to the viewer.
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            gluPerspective(fov,
-                           (float) windowWidth / (float) windowHeight,
-                           NEAR_DIST, 1000000);
-    
-            // Set the modelview matrix
-            glMatrixMode(GL_MODELVIEW);
-
-            const Star* sun = solarSystem->getStar();
-            Point3f starPos = sun->getPosition();
-            // Compute the position of the observer relative to the star
-            Vec3d opos = observer.getPosition() - Point3d((double) starPos.x,
-                                                          (double) starPos.y,
-                                                          (double) starPos.z);
-
-            // At the solar system scale, we'll handle all calculations in
-            // AU instead of light years.
-            opos = Vec3d(astro::lightYearsToAU(opos.x) * 100,
-                         astro::lightYearsToAU(opos.y) * 100,
-                         astro::lightYearsToAU(opos.z) * 100);
-            glPushMatrix();
-            glTranslated(-opos.x, -opos.y, -opos.z);
-        
-            glDisable(GL_LIGHTING);
-            glDisable(GL_TEXTURE_2D);
-
-            // Render orbits
-            PlanetarySystem* planets = solarSystem->getPlanets();
-            int nBodies = planets->getSystemSize();
-            for (i = 0; i < nBodies; i++)
-            {
-                Body* body = planets->getBody(i);
-
-                // Only show orbits for major bodies or selected objects
-                if (body->getRadius() > 1000 || body == sel.body)
-                {
-                    if (body == sel.body)
-                        glColor4f(1, 0, 0, 1);
-                    else
-                        glColor4f(0, 0, 1, 1);
-                    glBegin(GL_LINE_LOOP);
-                    int nSteps = 100;
-                    double dt = body->getOrbit()->getPeriod() / (double) nSteps;
-                    for (int j = 0; j < nSteps; j++)
-                    {
-                        Point3d p = body->getOrbit()->positionAtTime(j * dt + now);
-                        glVertex3f(astro::kilometersToAU((float) p.x * 100),
-                                   astro::kilometersToAU((float) p.y * 100),
-                                   astro::kilometersToAU((float) p.z * 100));
-                    }
-                    glEnd();
-                }
-            }
-
-#ifdef ECLIPTIC_AXES
-            // Render axes in plane of the ecliptic for debugging
-            glBegin(GL_LINES);
-            glColor4f(1, 0, 0, 1);
-            glVertex3f(3000, 0, 0);
-            glVertex3f(-3000, 0, 0);
-            glVertex3f(2800, 0, 200);
-            glVertex3f(3000, 0, 0);
-            glVertex3f(2800, 0, -200);
-            glVertex3f(3000, 0, 0);
-            glColor4f(0, 1, 0, 1);
-            glVertex3f(0, 0, 3000);
-            glVertex3f(0, 0, -3000);
-            glVertex3f(200, 0, 2800);
-            glVertex3f(0, 0, 3000);
-            glVertex3f(-200, 0, 2800);
-            glVertex3f(0, 0, 3000);
-            glEnd();
-#endif
-
-            glPopMatrix();
-        }
     }
 
     glPopMatrix();
