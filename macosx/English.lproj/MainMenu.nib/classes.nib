@@ -13,6 +13,7 @@
             OUTLETS = {
                 favoritesDrawerController = FavoritesDrawerController; 
                 glView = NSOpenGLView; 
+                renderPanelController = RenderPanelController; 
             }; 
             SUPERCLASS = NSWindowController; 
         }, 

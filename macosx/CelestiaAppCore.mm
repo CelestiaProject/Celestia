@@ -80,6 +80,7 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 {
     NSLog(@"[CelestiaAppCore archive]");
     [[CelestiaFavorites sharedFavorites] archive];
+    [[self renderer] archive];
 }
 
 - (void)dealloc

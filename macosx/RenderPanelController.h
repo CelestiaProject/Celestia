@@ -33,5 +33,6 @@
     IBOutlet NSButton *rStarsAsPoints;
     IBOutlet NSButton *rVertexShader;
 }
+- (void)finishSetup;
 - (IBAction)applyChanges:(id)sender;
 @end
