@@ -1,0 +1,847 @@
+# Small sample locations file, listing some large or prominent
+# surface features of various solar system bodies
+
+Location "Caloris Planitia" "Sol/Mercury"
+{
+    LongLat [ -189.8 30.5 0 ]
+    Size 1300
+    Type "PL"
+}
+
+Location "Beethoven" "Sol/Mercury"
+{
+    LongLat [ -123.6 -20.8 0 ]
+    Size 643
+    Type "AA"
+}
+
+Location "Dostoevskij" "Sol/Mercury"
+{
+    LongLat [ -176.4 -45.1 0 ]
+    Size 411
+    Type "AA"
+}
+
+Location "Goethe" "Sol/Mercury"
+{
+    LongLat [ -44.5 78.5 0 ]
+    Size 383
+    Type "AA"
+}
+
+Location "Shakespeare" "Sol/Mercury"
+{
+    LongLat [ -150.9 49.7 0 ]
+    Size 370
+    Type "AA"
+}
+
+Location "Tolstoj" "Sol/Mercury"
+{
+    LongLat [ -163.5 -16.3 0 ]
+    Size 390
+    Type "AA"
+}
+
+Location "APHRODITE TERRA" "Sol/Venus"
+{
+    LongLat [ -104.8 5.8 0 ]
+    Size 10000
+    Type "TA"
+}
+
+Location "ISHTAR TERRA" "Sol/Venus"
+{
+    LongLat [ -27.5 -70.4 0 ]
+    Size 5610
+    Type "TA"
+}
+
+Location "Maxwell Montes" "Sol/Venus"
+{
+    LongLat [ -3.3 -65.2 0 ]
+    Size 797
+    Type "MO"
+}
+
+Location "Lakshmi Planum" "Sol/Venus"
+{
+    LongLat [ -339.3 -68.6 0 ]
+    Size 2345
+    Type "PM"
+}
+
+Location "Artemis Chasma" "Sol/Venus"
+{
+    LongLat [ -138.5 41.2 0 ]
+    Size 3087
+    Type "CM"
+}
+
+Location "Hecate Chasma" "Sol/Venus"
+{
+    LongLat [ -254.3 -18.2 0 ]
+    Size 3145
+    Type "CM"
+}
+
+Location "Devana Chasma" "Sol/Venus"
+{
+    LongLat [ -285 -16 0 ]
+    Size 4600
+    Type "CM"
+}
+
+Location "Dali Chasma" "Sol/Venus"
+{
+    LongLat [ -167 17.6 0 ]
+    Size 2077
+    Type "CM"
+}
+
+Location "NORTH AMERICA" "Sol/Earth"
+{
+    LongLat [ -105 40 0 ]
+    Size 5000
+    Type "TA"
+}
+
+Location "SOUTH AMERICA" "Sol/Earth"
+{
+    LongLat [ -60 -10 0 ]
+    Size 1300
+    Type "TA"
+}
+
+
+Location "EURASIA" "Sol/Earth"
+{
+    LongLat [ 60 50 0 ]
+    Size 7300
+    Type "TA"
+}
+
+Location "AFRICA" "Sol/Earth"
+{
+    LongLat [ 20 5 0 ]
+    Size 5500
+    Type "TA"
+}
+
+Location "AUSTRALIA" "Sol/Earth"
+{
+    LongLat [ 135 -25 0 ]
+    Size 2800
+    Type "TA"
+}
+
+Location "ANTARCTICA" "Sol/Earth"
+{
+    LongLat [ 0 -90 0 ]
+    Size 3600
+    Type "TA"
+}
+
+Location "NORTH AMERICA" "Sol/Earth"
+{
+    LongLat [ -105 40 0 ]
+    Size 5000
+    Type "TA"
+}
+
+Location "NORTH ATLANTIC OCEAN" "Sol/Earth"
+{
+    LongLat [ -45 40 0 ]
+    Size 6400
+    Type "ME"
+}
+
+Location "SOUTH ATLANTIC OCEAN" "Sol/Earth"
+{
+    LongLat [ -15 -15 0 ]
+    Size 6400
+    Type "ME"
+}
+
+Location "NORTH PACIFIC OCEAN" "Sol/Earth"
+{
+    LongLat [ 180 30 0 ]
+    Size 9000
+    Type "ME"
+}
+
+Location "SOUTH PACIFIC OCEAN" "Sol/Earth"
+{
+    LongLat [ -160 -10 0 ]
+    Size 9000
+    Type "ME"
+}
+
+Location "INDIAN OCEAN" "Sol/Earth"
+{
+    LongLat [ 75 -15 0 ]
+    Size 8500
+    Type "ME"
+}
+
+Location "ARCTIC OCEAN" "Sol/Earth"
+{
+    LongLat [ 0 90 0 ]
+    Size 3700
+    Type "ME"
+}
+
+Location "MARE AUSTRALE" "Sol/Earth/Moon"
+{
+    LongLat [ 93 -38.9 0 ]
+    Size 603
+    Type "ME"
+}
+
+Location "MARE CRISIUM" "Sol/Earth/Moon"
+{
+    LongLat [ 59.1 17 0 ]
+    Size 418
+    Type "ME"
+}
+
+Location "MARE FECUNDITATIS" "Sol/Earth/Moon"
+{
+    LongLat [ 51.3 -7.8 0 ]
+    Size 909
+    Type "ME"
+}
+
+Location "MARE FRIGORIS" "Sol/Earth/Moon"
+{
+    LongLat [ 1.4 56 0 ]
+    Size 1596
+    Type "ME"
+}
+
+Location "MARE IMBRIUM" "Sol/Earth/Moon"
+{
+    LongLat [ -15.6 32.8 0 ]
+    Size 1123
+    Type "ME"
+}
+
+Location "MARE INSULARUM" "Sol/Earth/Moon"
+{
+    LongLat [ -30.9 7.5 0 ]
+    Size 513
+    Type "ME"
+}
+
+Location "MARE MOSCOVIENSE" "Sol/Earth/Moon"
+{
+    LongLat [ 147.9 27.3 0 ]
+    Size 277
+    Type "ME"
+}
+
+Location "MARE NUBIUM" "Sol/Earth/Moon"
+{
+    LongLat [ -16.6 -21.3 0 ]
+    Size 715
+    Type "ME"
+}
+
+Location "MARE ORIENTALE" "Sol/Earth/Moon"
+{
+    LongLat [ -92.8 -19.4 0 ]
+    Size 327
+    Type "ME"
+}
+
+Location "MARE SERENITATIS" "Sol/Earth/Moon"
+{
+    LongLat [ 17.5 28 0 ]
+    Size 707
+    Type "ME"
+}
+
+Location "MARE TRANQUILLITATIS" "Sol/Earth/Moon"
+{
+    LongLat [ 31.4 8.5 0 ]
+    Size 873
+    Type "ME"
+}
+
+Location "OCEANUS PROCELLARUM" "Sol/Earth/Moon"
+{
+    LongLat [ -57.4 18.4 0 ]
+    Size 2568
+    Type "OC"
+}
+
+Location "Aristarchus" "Sol/Earth/Moon"
+{
+    LongLat [ -47.4 23.7 0 ]
+    Size 40
+    Type "AA"
+}
+
+Location "Copernicus" "Sol/Earth/Moon"
+{
+    LongLat [ -20.1 9.7 0 ]
+    Size 93
+    Type "AA"
+}
+
+Location "Kepler" "Sol/Earth/Moon"
+{
+    LongLat [ -38 8.1 0 ]
+    Size 31
+    Type "AA"
+}
+
+Location "Tycho" "Sol/Earth/Moon"
+{
+    LongLat [ -11.1 -43.4 0 ]
+    Size 102
+    Type "AA"
+}
+
+Location "Tsiolkovskiy" "Sol/Earth/Moon"
+{
+    LongLat [ 128.9 -21.2 0 ]
+    Size 185
+    Type "AA"
+}
+
+Location "Acidalia Planitia" "Sol/Mars"
+{
+    LongLat [ 338 46.7 0 ]
+    Size 2300
+    Type "PL"
+}
+
+Location "Amazonis Planitia" "Sol/Mars"
+{
+    LongLat [ 196 24.8 0 ]
+    Size 2800
+    Type "PL"
+}
+
+Location "Arcadia Planitia" "Sol/Mars"
+{
+    LongLat [ 192 46.7 0 ]
+    Size 2200
+    Type "PL"
+}
+
+Location "Argyre Planitia" "Sol/Mars"
+{
+    LongLat [ 316 -49.7 0 ]
+    Size 800
+    Type "PL"
+}
+
+Location "Chryse Planitia" "Sol/Mars"
+{
+    LongLat [ 320 26.7 0 ]
+    Size 1700
+    Type "PL"
+}
+
+Location "Elysium Planitia" "Sol/Mars"
+{
+    LongLat [ 155 2 0 ]
+    Size 3000
+    Type "PL"
+}
+
+Location "Hellas Planitia" "Sol/Mars"
+{
+    LongLat [ 70 -42.7 0 ]
+    Size 2200
+    Type "PL"
+}
+
+Location "Isidis Planitia" "Sol/Mars"
+{ 
+    LongLat [ 87 12.9 0 ]
+    Size 1200
+    Type "PL"
+}
+
+Location "Utopia Planitia" "Sol/Mars"
+{
+    LongLat [ 118 49.7 0 ]
+    Size 3200
+    Type "PL"
+}
+
+Location "Valles Marineris" "Sol/Mars"
+{
+    LongLat [ 300.8 -13.8 0 ]
+    Size 3769
+    Type "VA"
+}
+
+Location "Olympus Mons" "Sol/Mars"
+{
+    LongLat [ 226 18.4 0 ]
+    Size 648
+    Type "MO"
+}
+
+Location "Ascraeus Mons" "Sol/Mars"
+{
+    LongLat [ 255.5 11.8 0 ]
+    Size 460
+    Type "MO"
+}
+
+Location "Pavonis Mons" "Sol/Mars"
+{
+    LongLat [ 246.6 0.8 0 ]
+    Size 375
+    Type "MO"
+}
+
+Location "Arsia Mons" "Sol/Mars"
+{
+    LongLat [ 238.9 -8.4 0 ]
+    Size 475
+    Type "MO"
+}
+
+Location "Elysium Mons" "Sol/Mars"
+{
+    LongLat [ 146.9 24.8 0 ]
+    Size 410
+    Type "MO"
+}
+
+Location "Cassini" "Sol/Mars"
+{
+    LongLat [ 31.8 23.6 0 ]
+    Size 412
+    Type "AA"
+}
+
+Location "Huygens" "Sol/Mars"
+{
+    LongLat [ 55.4 -14.1 0 ]
+    Size 470
+    Type "AA"
+}
+
+Location "Schiaparelli" "Sol/Mars"
+{
+    LongLat [ 16.7 -2.7 0 ]
+    Size 471
+    Type "AA"
+}
+
+Location "Stickney" "Sol/Mars/Phobos"
+{
+    LongLat [ -235 5 0 ]
+    Size 5
+    Type "AA"
+}
+
+
+Location "Dazhbog Patera" "Sol/Jupiter/Io"
+{
+    LongLat [ -301.6 54 0 ]
+    Size 150
+    Type "PE"
+}
+
+Location "Loki Patera" "Sol/Jupiter/Io"
+{
+    LongLat [ -308.8 12.6 0 ]
+    Size 250
+    Type "PE"
+}
+
+Location "Pele" "Sol/Jupiter/Io"
+{
+    LongLat [ -257.8 -18.6 0 ]
+    Size 200
+    Type "ER"
+}
+
+Location "Prometheus" "Sol/Jupiter/Io"
+{
+    LongLat [ -153 -1.6 0 ]
+    Size 400
+    Type "ER"
+}
+
+Location "Callanish" "Sol/Jupiter/Europa"
+{
+    LongLat [ -333.4 -16 0 ]
+    Size 100
+    Type "LG"
+}
+
+Location "Tyre" "Sol/Jupiter/Europa"
+{
+    LongLat [ -147 31.7 0 ]
+    Size 148
+    Type "LG"
+}
+
+Location "Cyclades Macula" "Sol/Jupiter/Europa"
+{
+    LongLat [ -192 -64 0 ]
+    Size 105
+    Type "MA"
+}
+
+Location "Thera Macula" "Sol/Jupiter/Europa"
+{
+    LongLat [ -180.9 -47.7 0 ]
+    Size 78
+    Type "MA"
+}
+
+Location "Thrace Macula" "Sol/Jupiter/Europa"
+{
+    LongLat [ -171.2 -46.6 0 ]
+    Size 173
+    Type "MA"
+}
+
+Location "Taliesin" "Sol/Jupiter/Europa"
+{
+    LongLat [ -137.4 -23.2 0 ]
+    Size 48
+    Type "AA"
+}
+
+
+Location "Memphis Facula" "Sol/Jupiter/Ganymede"
+{
+    LongLat [ -132.5 15.4 0 ]
+    Size 344
+    Type "FA"
+}
+
+
+Location "Elam Sulci" "Sol/Jupiter/Ganymede"
+{
+    LongLat [ -205.5 57.4 0 ]
+    Size 1866
+    Type "SU"
+}
+
+Location "Phrygia Sulcus" "Sol/Jupiter/Ganymede"
+{
+    LongLat [ -19.3 12.4 0 ]
+    Size 3205
+    Type "SU"
+}
+
+Location "Uruk Sulcus" "Sol/Jupiter/Ganymede"
+{
+    LongLat [ -169 8.4 0 ]
+    Size 2456
+    Type "SU"
+}
+
+Location "Punt" "Sol/Jupiter/Ganymede"
+{
+    LongLat [ -242.2 -26.1 0 ]
+    Size 228
+    Type "AA"
+}
+
+Location "Tashmetum" "Sol/Jupiter/Ganymede"
+{
+    LongLat [ -264.4 -39.7 0 ]
+    Size 155
+    Type "AA"
+}
+
+Location "Valhalla" "Sol/Jupiter/Callisto"
+{
+    LongLat [ -56.6 15.9 0 ]
+    Size 2748
+    Type "LG"
+}
+
+Location "Asgard" "Sol/Jupiter/Callisto"
+{
+    LongLat [ -139.8 32 0 ]
+    Size 1347
+    Type "LG"
+}
+
+Location "Heimdall" "Sol/Jupiter/Callisto"
+{
+    LongLat [ -357 -64 0 ]
+    Size 345
+    Type "AA"
+}
+
+Location "Lofn" "Sol/Jupiter/Callisto"
+{
+    LongLat [ -24 -57 0 ]
+    Size 200
+    Type "AA"
+}
+
+Location "Herschel" "Sol/Saturn/Mimas"
+{
+    LongLat [ -109.5 2.9 0 ]
+    Size 150
+    Type "AA"
+}
+
+Location "Diyar Planitia" "Sol/Saturn/Enceladus"
+{
+    LongLat [ -239.7 0.5 0 ]
+    Size 311
+    Type "PL"
+}
+
+Location "Sarandib Planitia" "Sol/Saturn/Enceladus"
+{
+    LongLat [ -298 4.4 0 ]
+    Size 200
+    Type "PL"
+}
+
+Location "Samarkand Sulci" "Sol/Saturn/Enceladus"
+{
+    LongLat [ -326.8 30.5 0 ]
+    Size 383
+    Type "SU"
+}
+
+Location "Aladdin" "Sol/Saturn/Enceladus"
+{
+    LongLat [ -16.9 63.1 0 ]
+    Size 34
+    Type "AA"
+}
+
+Location "Ali Baba" "Sol/Saturn/Enceladus"
+{
+    LongLat [ -12 57.2 0 ]
+    Size 35
+    Type "AA"
+}
+
+Location "Odysseus" "Sol/Saturn/Tethys"
+{
+    LongLat [ -130 30 0 ]
+    Size 400
+    Type "AA"
+}
+
+Location "Penelope" "Sol/Saturn/Tethys"
+{
+    LongLat [ -248 -11.5 0 ]
+    Size 250
+    Type "AA"
+}
+
+Location "Ithaca Chasma" "Sol/Saturn/Tethys"
+{
+    LongLat [ -3 -10.3 0 ]
+    Size 800
+    Type "CM"
+}
+
+Location "Aeneas" "Sol/Saturn/Dione"
+{
+    LongLat [ -46.3 26.1 0 ]
+    Size 166
+    Type "AA"
+}
+
+Location "Dido" "Sol/Saturn/Dione"
+{
+    LongLat [ -18.5 -23.7 0 ]
+    Size 118
+    Type "AA"
+}
+
+Location "Izanagi" "Sol/Saturn/Rhea"
+{
+    LongLat [ -310.2 -49.4 0 ]
+    Size 200
+    Type "AA"
+}
+
+Location "Ormazd" "Sol/Saturn/Rhea"
+{
+    LongLat [ -58.5 52.5 0 ]
+    Size 200
+    Type "AA"
+}
+
+Location "Roland" "Sol/Saturn/Iapetus"
+{
+    LongLat [ -25.2 73.3 0 ]
+    Size 144
+    Type "AA"
+}
+
+Location "Marsilion" "Sol/Saturn/Iapetus"
+{
+    LongLat [ -176.1 39.2 0 ]
+    Size 136
+    Type "AA"
+}
+
+Location "CASSINI REGIO" "Sol/Saturn/Iapetus"
+{
+    LongLat [ -92.6 -28.1 0 ]
+    Size 1000
+    Type "RE"
+}
+
+Location "Argier Rupes" "Sol/Uranus/Miranda"
+{
+    LongLat [ -322.8 43.2 0 ]
+    Size 141
+    Type "RU"
+}
+
+Location "Arden Corona" "Sol/Uranus/Miranda"
+{
+    LongLat [ -73.7 29.1 0 ]
+    Size 318
+    Type "CR"
+}
+
+Location "Elsinore Corona" "Sol/Uranus/Miranda"
+{
+    LongLat [ -257.1 24.8 0 ]
+    Size 323
+    Type "CR"
+}
+
+Location "Inverness Corona" "Sol/Uranus/Miranda"
+{
+    LongLat [ -325.7 66.9 0 ]
+    Size 234
+    Type "CR"
+}
+
+Location "Kachina Chasmata" "Sol/Uranus/Ariel"
+{
+    LongLat [ -246 33.7 0 ]
+    Size 622
+    Type "CM"
+}
+
+Location "Kewpie Chasma" "Sol/Uranus/Ariel"
+{
+    LongLat [ -326.9 28.3 0 ]
+    Size 467
+    Type "CM"
+}
+
+Location "Korrigan Chasma" "Sol/Uranus/Ariel"
+{
+    LongLat [ -347.5 27.6 0 ]
+    Size 365
+    Type "CM"
+}
+
+Location "Laica" "Sol/Uranus/Ariel"
+{
+    LongLat [ -44.4 21.3 0 ]
+    Size 30
+    Type "AA"
+}
+
+Location "Messina Chasmata" "Sol/Uranus/Titania"
+{
+    LongLat [ -335 33.3 0 ]
+    Size 1492
+    Type "CM"
+}
+
+Location "Gertrude" "Sol/Uranus/Titania"
+{
+    LongLat [ -287.1 15.8 0 ]
+    Size 326
+    Type "AA"
+}
+
+
+Location "Ursula" "Sol/Uranus/Titania"
+{
+    LongLat [ -45.2 12.4 0 ]
+    Size 135
+    Type "AA"
+}
+
+Location "Malingee" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -13.9 22.9 0 ]
+    Size 164
+    Type "AA"
+}
+
+Location "Wokolo" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -1.8 30 0 ]
+    Size 208
+    Type "AA"
+}
+
+Location "Wunda" "Sol/Uranus/Umbriel"
+{
+    LongLat [ -273.6 7.9 0 ]
+    Size 131
+    Type "AA"
+}
+
+Location "Hamlet" "Sol/Uranus/Oberon"
+{
+    LongLat [ -44.4 46.1 0 ]
+    Size 206
+    Type "AA"
+}
+
+Location "MacBeth" "Sol/Uranus/Oberon"
+{
+    LongLat [ -112.5 58.4 0 ]
+    Size 203
+    Type "AA"
+}
+
+Location "Pharos" "Sol/Neptune/Proteus"
+{
+    LongLat [ -180 -20 0 ]
+    Size 255
+    Type "AA"
+}
+
+Location "Doro Macula" "Sol/Neptune/Triton"
+{
+    LongLat [ -31.7 27.5 0 ]
+    Size 100
+    Type "MA"
+}
+
+Location "Namazu Macula" "Sol/Neptune/Triton"
+{
+    LongLat [ -14 25.5 0 ]
+    Size 100
+    Type "MA"
+}
+
+Location "Viviane Macula" "Sol/Neptune/Triton"
+{
+    LongLat [ -36.5 31 0 ]
+    Size 100
+    Type "MA"
+}
+
+Location "Zin Maculae" "Sol/Neptune/Triton"
+{
+    LongLat [ -68 24.5 0 ]
+    Size 300
+    Type "MA"
+}
