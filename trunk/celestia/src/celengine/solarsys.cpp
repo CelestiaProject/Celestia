@@ -62,13 +62,9 @@ static Location* CreateLocation(Hash* locationData,
     Vec3d longlat(0.0, 0.0, 0.0);
     locationData->getVector("LongLat", longlat);
 
-    double phi = -degToRad(longlat.y) + PI / 2;
-    double theta = degToRad(longlat.x) - PI;
-
-    Vec3f position((float) (cos(theta) * sin(phi)),
-                   (float) (cos(phi)),
-                   (float) (-sin(theta) * sin(phi)));
-    position = position * (body->getRadius() + (float) longlat.z);
+    Vec3f position = body->planetocentricToCartesian((float) longlat.x,
+                                                     (float) longlat.y,
+                                                     (float) longlat.z);
     location->setPosition(Point3f(0.0f, 0.0f, 0.0f) + position);
 
     double size = 0.0;
@@ -78,6 +74,10 @@ static Location* CreateLocation(Hash* locationData,
     double importance = -1.0;
     locationData->getNumber("Importance", importance);
     location->setImportance((float) importance);
+
+    string featureTypeName;
+    if (locationData->getString("Type", featureTypeName))
+        location->setFeatureType(Location::parseFeatureType(featureTypeName));
 
     return location;
 }
