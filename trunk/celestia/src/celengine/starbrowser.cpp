@@ -10,7 +10,6 @@
 // of the License, or (at your option) any later version.
 
 #include <string>
-#include <sstream>
 #include <algorithm>
 #include <set>
 #include "starbrowser.h"
