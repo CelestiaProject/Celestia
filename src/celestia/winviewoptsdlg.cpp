@@ -262,10 +262,6 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowGalaxies)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
-#if 0
-    SendDlgItemMessage(hDlg, IDC_SHOWORBITS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowOrbits)? BST_CHECKED:BST_UNCHECKED, 0);
-#endif
     dlgCheck(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
     dlgCheck(hDlg, IDC_PLANETORBITS,     orbitMask,   Body::Planet);
     dlgCheck(hDlg, IDC_MOONORBITS,       orbitMask,   Body::Moon);
@@ -285,20 +281,14 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     SendDlgItemMessage(hDlg, IDC_SHOWMARKERS, BM_SETCHECK,
         (renderFlags & Renderer::ShowMarkers)? BST_CHECKED:BST_UNCHECKED, 0);
 
-    SendDlgItemMessage(hDlg, IDC_LABELCONSTELLATIONS, BM_SETCHECK,
-        (labelMode & Renderer::ConstellationLabels)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_LABELGALAXIES, BM_SETCHECK,
-        (labelMode & Renderer::GalaxyLabels)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_LABELPLANETS, BM_SETCHECK,
-        (labelMode & Renderer::PlanetLabels)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_LABELMOONS, BM_SETCHECK,
-        (labelMode & Renderer::MoonLabels)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_LABELSTARS, BM_SETCHECK,
-        (labelMode & Renderer::StarLabels)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_LABELASTEROIDS, BM_SETCHECK,
-        (labelMode & Renderer::AsteroidLabels)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_LABELSPACECRAFT, BM_SETCHECK,
-        (labelMode & Renderer::SpacecraftLabels)? BST_CHECKED:BST_UNCHECKED, 0);
+    dlgCheck(hDlg, IDC_LABELCONSTELLATIONS, labelMode, Renderer::ConstellationLabels);
+    dlgCheck(hDlg, IDC_LABELGALAXIES,   labelMode, Renderer::GalaxyLabels);
+    dlgCheck(hDlg, IDC_LABELSTARS,      labelMode, Renderer::StarLabels);
+    dlgCheck(hDlg, IDC_LABELPLANETS,    labelMode, Renderer::PlanetLabels);
+    dlgCheck(hDlg, IDC_LABELMOONS,      labelMode, Renderer::MoonLabels);
+    dlgCheck(hDlg, IDC_LABELASTEROIDS,  labelMode, Renderer::AsteroidLabels);
+    dlgCheck(hDlg, IDC_LABELCOMETS,     labelMode, Renderer::CometLabels);
+    dlgCheck(hDlg, IDC_LABELSPACECRAFT, labelMode, Renderer::SpacecraftLabels);
 
     CheckRadioButton(hDlg, IDC_INFOTEXT0, IDC_INFOTEXT2, IDC_INFOTEXT0 + hudDetail);
 
