@@ -942,7 +942,7 @@ void Renderer::render(const Observer& observer,
         renderPlanetarySystem(*sun,
                               *solarSystem->getPlanets(),
                               observer,
-                              Mat4d::identity(), now,
+                              now,
                               (labelMode & (BodyLabelMask)) != 0);
         starTex->bind();
     }
@@ -2025,15 +2025,20 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
             glBlendFunc(GL_ONE, GL_ONE);
             vp::parameter(34, ri.sunColor * ri.specularColor);
             vp::use(vp::specular);
+
             // Disable ambient and diffuse
             vp::parameter(20, Color::Black);
             vp::parameter(32, Color::Black);
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
-            
+
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
             lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
                               frustum, ri.lod,
                               textures, 1);
+
+            // re-enable diffuse
+            vp::parameter(20, ri.sunColor * ri.color);
+
             DisableCombiners();
             glDisable(GL_BLEND);
         }
@@ -2066,11 +2071,11 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
+        vp::use(vp::diffuse);
+        vp::parameter(32, Color::Black); // Disable ambient color
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        vp::use(vp::diffuse);
-        vp::parameter(32, Color::Black); // Disable ambient color
         lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
                           ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -3083,10 +3088,12 @@ void Renderer::renderPlanet(const Body& body,
                     sunColor = Color(1.0f, 0.9f, 0.8f);
                     break;
                 case StellarClass::Spectral_M:
+                    sunColor = Color(1.0f, 0.7f, 0.7f);
+                    break;
                 case StellarClass::Spectral_R:
                 case StellarClass::Spectral_S:
                 case StellarClass::Spectral_N:
-                    sunColor = Color(1.0f, 0.7f, 0.7f);
+                    sunColor = Color(1.0f, 0.4f, 0.4f);
                     break;
                 default:
                     // Default case to keep gcc from compaining about unhandled
@@ -3527,7 +3534,6 @@ void Renderer::renderCometTail(const Body& body,
 void Renderer::renderPlanetarySystem(const Star& sun,
                                      const PlanetarySystem& solSystem,
                                      const Observer& observer,
-                                     const Mat4d& frame,
                                      double now,
                                      bool showLabels)
 {
@@ -3542,10 +3548,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             continue;
 
         Point3d localPos = body->getOrbit()->positionAtTime(now);
-        Mat4d newFrame =
-            Mat4d::xrotation(-body->getRotationElements().obliquity) *
-            Mat4d::yrotation(-body->getRotationElements().ascendingNode) *
-            Mat4d::translation(localPos) * frame;
         Point3d bodyPos = body->getHeliocentricPosition(now);
         
         // We now have the positions of the observer and the planet relative
@@ -3661,7 +3663,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             if (satellites != NULL)
             {
                 renderPlanetarySystem(sun, *satellites, observer,
-                                      newFrame, now, showLabels);
+                                      now, showLabels);
             }
         }
 
