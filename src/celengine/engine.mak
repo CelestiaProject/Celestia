@@ -61,6 +61,7 @@ OBJS=\
 	$(INTDIR)\texmanager.obj \
 	$(INTDIR)\texture.obj \
 	$(INTDIR)\tokenizer.obj \
+	$(INTDIR)\trajmanager.obj \
 	$(INTDIR)\univcoord.obj \
 	$(INTDIR)\universe.obj \
 	$(INTDIR)\vertexlist.obj \
