@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
-"POT-Creation-Date: 2003-06-09 14:05+0200\n"
-"PO-Revision-Date: 2003-06-09 14:58GMT\n"
+"POT-Creation-Date: 2003-06-09 21:17+0200\n"
+"PO-Revision-Date: 2003-06-09 21:17GMT\n"
 "Last-Translator: Christophe Teyssier <chris@teyssier.org>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -411,7 +411,7 @@ msgid "Stars"
 msgstr "Étoiles"
 
 #: kdepreferencesdialog.cpp:65 kdepreferencesdialog.cpp:139
-#: selectionpopup.cpp:356
+#: selectionpopup.cpp:385
 msgid "Planets"
 msgstr "Planètes"
 
@@ -641,7 +641,7 @@ msgstr "Vaisseau"
 msgid "-"
 msgstr "-"
 
-#: eclipsefinderdlg.cpp:117 selectionpopup.cpp:299
+#: eclipsefinderdlg.cpp:117 selectionpopup.cpp:310
 msgid "&Goto"
 msgstr "&Aller à"
 
@@ -709,59 +709,67 @@ msgstr "Rayon: "
 msgid "Marked objects"
 msgstr "Objets marqués"
 
-#: selectionpopup.cpp:297
+#: selectionpopup.cpp:308
 msgid "&Select"
 msgstr "&Selectionner"
 
-#: selectionpopup.cpp:298
+#: selectionpopup.cpp:309
 msgid "&Center"
 msgstr "&Centrer"
 
-#: selectionpopup.cpp:300
+#: selectionpopup.cpp:311
 msgid "&Follow"
 msgstr "&Suivre"
 
-#: selectionpopup.cpp:301
+#: selectionpopup.cpp:312
 msgid "S&ynch Orbit"
 msgstr "S&ynch. Orbite"
 
-#: selectionpopup.cpp:302
+#: selectionpopup.cpp:313
 msgid "&Info"
 msgstr "&Info"
 
-#: selectionpopup.cpp:303
+#: selectionpopup.cpp:314
 msgid "Unmark &All"
 msgstr "Démarquer &tous"
 
-#: selectionpopup.cpp:306
+#: selectionpopup.cpp:317
 msgid "&Unmark"
 msgstr "&Démarquer"
 
-#: selectionpopup.cpp:311
+#: selectionpopup.cpp:322
 msgid "Diamond"
 msgstr "Losange"
 
-#: selectionpopup.cpp:312
+#: selectionpopup.cpp:323
 msgid "Triangle"
 msgstr "Triangle"
 
-#: selectionpopup.cpp:313
+#: selectionpopup.cpp:324
 msgid "Square"
 msgstr "Carré"
 
-#: selectionpopup.cpp:314
+#: selectionpopup.cpp:325
 msgid "Plus"
 msgstr "Plus"
 
-#: selectionpopup.cpp:315
+#: selectionpopup.cpp:326
 msgid "X"
 msgstr "X"
 
-#: selectionpopup.cpp:316
+#: selectionpopup.cpp:327
 msgid "&Mark"
 msgstr "&Marquer"
 
-#: selectionpopup.cpp:334
+#: selectionpopup.cpp:338
+msgid "Normal"
+msgstr "Normale"
+
+#: selectionpopup.cpp:345
+msgid "&Alternate Surfaces"
+msgstr "Surfaces &alternatives"
+
+#: selectionpopup.cpp:363
 msgid "Satellites"
 msgstr "Satellites"
 
@@ -888,4 +896,7 @@ msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
 msgstr "chris@teyssier.org"
+
+#~ msgid "Normal (default surface)"
+#~ msgstr "Normale"
 
