@@ -38,6 +38,7 @@ class ShaderProperties
  {
      DiffuseModel     = 0,
      SpecularModel    = 1,
+     RingIllumModel   = 2,
  };
 
  public:
@@ -112,6 +113,8 @@ class ShaderManager
     CelestiaGLProgram* buildProgram(const ShaderProperties&);
     GLVertexShader* buildVertexShader(const ShaderProperties&);
     GLFragmentShader* buildFragmentShader(const ShaderProperties&);
+    GLVertexShader* buildRingsVertexShader(const ShaderProperties&);
+    GLFragmentShader* buildRingsFragmentShader(const ShaderProperties&);
 
     std::map<ShaderProperties, CelestiaGLProgram*> shaders;
 
