@@ -539,12 +539,6 @@ void Renderer::resize(int width, int height)
     // glViewport(windowWidth, windowHeight);
 }
 
-
-float Renderer::getFieldOfView()
-{
-    return fov;
-}
-
 float Renderer::calcPixelSize(float fovY, float windowHeight)
 {
     return 2 * (float) tan(degToRad(fovY / 2.0)) / (float) windowHeight;
@@ -918,6 +912,7 @@ void Renderer::render(const Observer& observer,
                       double now)
 {
     // Compute the size of a pixel
+    setFieldOfView(radToDeg(observer.getFOV()));
     pixelSize = calcPixelSize(fov, windowHeight);
 
     // Set up the projection we'll use for rendering stars.
@@ -1478,7 +1473,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // just hack to accomplish this.  There are cases where it will fail
         // and a more robust method should be implemented.
 
-        float size = pixelSize * 1.6f * renderZ/corrFac;
+        float size = pixelSize * 1.6f * renderZ / corrFac;
         float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
 
         Point3f center(position.x * posScale,
@@ -3940,7 +3935,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.faintestMagNight = faintestMagNight;
     starRenderer.fov              = fov;
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
-    starRenderer.size = pixelSize * 1.6f/corrFac;
+    starRenderer.size = pixelSize * 1.6f / corrFac;
     starRenderer.pixelSize = pixelSize;
     starRenderer.brightnessScale = brightnessScale * corrFac;
     starRenderer.brightnessBias = brightnessBias;
