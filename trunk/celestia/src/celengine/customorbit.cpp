@@ -2359,7 +2359,7 @@ Orbit* GetCustomOrbit(const string& name)
     if (name == "earth")
         return new MixedOrbit(new EarthOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "moon")
-        return new MixedOrbit(new LunarOrbit(), yearToJD(-2000), yearToJD(4000), astro::SolarMass);
+        return new MixedOrbit(new LunarOrbit(), yearToJD(-2000), yearToJD(4000), astro::EarthMass + astro::LunarMass);
     if (name == "mars")
         return new MixedOrbit(new MarsOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "jupiter")
