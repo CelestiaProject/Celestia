@@ -228,6 +228,13 @@ class Renderer
         bool usePoints;
     };
 
+    struct LightSource
+    {
+        Point3d position;
+        Color color;
+        float luminosity;
+    };
+
  private:
     struct SkyVertex
     {
@@ -281,9 +288,8 @@ class Renderer
                       Quatf cameraOrientation,
                       float nearPlaneDistance,
                       float farPlaneDistance,
-                      Vec3f sunDirection,
-                      Color sunColor,
-                      RenderProperties& obj);
+                      RenderProperties& obj,
+                      const LightingState&);
 
     void renderPlanet(Body& body,
                       Point3f pos,
@@ -396,6 +402,8 @@ class Renderer
     std::vector<Label> depthSortedLabels;
     std::vector<EclipseShadow> eclipseShadows;
     std::vector<const Star*> nearStars;
+
+    std::vector<LightSource> lightSources;
 
     std::vector<StarLabel> labelledStars;
 

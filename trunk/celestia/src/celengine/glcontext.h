@@ -68,5 +68,24 @@ class GLContext
     std::vector<std::string> extensions;
 };
 
+
+static const unsigned int MaxLights = 8;
+
+struct DirectionalLight
+{
+    Color color;
+    float intensity;
+    Vec3f direction;
+};
+
+
+struct LightingState
+{
+    LightingState() : nLights(0) {};
+    unsigned int nLights;
+    DirectionalLight lights[MaxLights];
+};
+
+
 #endif // _CELENGINE_GLCONTEXT_H_
 
