@@ -32,7 +32,7 @@
 	EllipticalOrbit
 	{
 	Epoch             2451973.25864
-	Period            1.950619
+	Period            0.08127579
 	SemiMajorAxis     3767.968213
 	Eccentricity      0.005809
 	Inclination      93.0092
