@@ -540,12 +540,6 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
     if (frustum.testSphere(patchCenter, boundingRadius) == Frustum::Outside)
         outside = true;
 
-#if 0
-    cout << "[ " << patchCenter.x << ' ' << patchCenter.y << ' ' << patchCenter.z << " ], " << boundingRadius << " (" << thetaExtent << ')' << '\n';
-    cout << "frustum point 0: " << fp[0].x << "," << fp[0].y << "," << fp[0].z << '\n';
-#endif
-    cout << "r = " << boundingRadius << ", f-n = " << frustum.getPlane(Frustum::Near).d - frustum.getPlane(Frustum::Far).d << '\n';
-
     if (outside)
     {
         return 0;
