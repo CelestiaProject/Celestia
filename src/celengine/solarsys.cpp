@@ -509,7 +509,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
         body->setOrientation(orientation);
 
     RotationElements re = body->getRotationElements();
-    re.period = (float) body->getOrbit()->getPeriod();
+    if (disposition != ModifyObject)
+        re.period = (float) body->getOrbit()->getPeriod();
     FillinRotationElements(planetData, re, (float) body->getOrbit()->getPeriod());
     body->setRotationElements(re);
 
@@ -612,19 +613,25 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 Hash* ringsData = ringsDataValue->getHash();
                 // ASSERT(ringsData != NULL);
 
+                RingSystem rings(0.0f, 0.0f);
+                if (body->getRings() != NULL)
+                    rings = *body->getRings();
+
                 double inner = 0.0, outer = 0.0;
-                ringsData->getNumber("Inner", inner);
-                ringsData->getNumber("Outer", outer);
+                if (ringsData->getNumber("Inner", inner))
+                    rings.innerRadius = inner;
+                if (ringsData->getNumber("Outer", outer))
+                    rings.outerRadius = outer;
 
                 Color color(1.0f, 1.0f, 1.0f);
-                ringsData->getColor("Color", color);
+                if (ringsData->getColor("Color", color))
+                    rings.color = color;
 
                 string textureName;
-                ringsData->getString("Texture", textureName);
-                MultiResTexture ringTex(textureName, path);
+                if (ringsData->getString("Texture", textureName))
+                    rings.texture = MultiResTexture(textureName, path);
 
-                body->setRings(RingSystem((float) inner, (float) outer,
-                                          color, ringTex));
+                body->setRings(rings);
             }
 
             delete ringsDataValue;
