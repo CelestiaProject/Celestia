@@ -160,7 +160,8 @@ class Renderer
             oblateness(0.0f),
             mesh(InvalidResource),
             orientation(1.0f),
-            eclipseShadows(NULL)
+            eclipseShadows(NULL),
+            locations(NULL)
         {};
 
         Surface* surface;
@@ -171,6 +172,7 @@ class Renderer
         ResourceHandle mesh;
         Quatf orientation;
         std::vector<EclipseShadow>* eclipseShadows;
+        std::vector<Location*>* locations;
     };
 
     class StarVertexBuffer
@@ -277,6 +279,11 @@ class Renderer
                                    Color ambientColor,
                                    float fade,
                                    bool lit);
+
+    void renderLocations(const vector<Location*>& locations,
+                         const Point3f& position,
+                         const Quatf& orientation,
+                         float scale);
 
     bool testEclipse(const Body&, const Body&, double now);
 

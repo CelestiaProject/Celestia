@@ -18,6 +18,7 @@
 #include <celengine/atmosphere.h>
 #include <celengine/orbit.h>
 #include <celengine/star.h>
+#include <celengine/location.h>
 #include <celengine/astro.h>
 
 
@@ -168,6 +169,9 @@ class Body
     void addAlternateSurface(const std::string&, Surface*);
     std::vector<std::string>* getAlternateSurfaceNames() const;
 
+    std::vector<Location*>* getLocations() const;
+    void addLocation(Location*);
+
  private:
     std::string name;
 
@@ -199,6 +203,8 @@ class Body
 
     typedef std::map<const std::string, Surface*> AltSurfaceTable;
     AltSurfaceTable *altSurfaces;
+
+    std::vector<Location*>* locations;
 };
 
 #endif // _BODY_H_

@@ -659,7 +659,6 @@ bool Renderer::vertexShaderSupported() const
 }
 
 
-
 void Renderer::addLabel(string text, Color color, Point3f pos, float depth)
 {
     double winX, winY, winZ;
@@ -3197,6 +3196,86 @@ renderRingShadowsVS(Mesh* mesh,
 }
 
 
+void Renderer::renderLocations(const vector<Location*>& locations,
+                               const Point3f& position,
+                               const Quatf& orientation,
+                               float scale)
+{
+    if (font == NULL)
+        return;
+
+    double winX, winY, winZ;
+    int view[4] = { 0, 0, 0, 0 };
+    view[0] = -windowWidth / 2;
+    view[1] = -windowHeight / 2;
+    view[2] = windowWidth;
+    view[3] = windowHeight;
+
+    double modelview[16];
+    double projection[16];
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+    font->bind();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_LIGHTING);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, windowWidth, 0, windowHeight, 1.0f, -1.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef((int) (windowWidth / 2), (int) (windowHeight / 2), 0.0f);
+
+    Ellipsoidf ellipsoid(position, Vec3f(scale, scale, scale));
+
+    float iScale = 1.0f / scale;
+    Mat3f mat = orientation.toMatrix3();
+
+    for (vector<Location*>::const_iterator iter = locations.begin();
+         iter != locations.end(); iter++)
+    {
+        Point3f off = (*iter)->getPosition();
+        Point3f off_t = off * mat;
+        Point3f wpos(position.x + off_t.x * 1.01f,
+                     position.y + off_t.y * 1.01f,
+                     position.z + off_t.z * 1.01f);
+        float t = 0.0f;
+        bool hit = testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f),
+                                          wpos - Point3f(0.0f, 0.0f, 0.0f)),
+                                    ellipsoid, t);
+
+        if (!hit || t >= 1.0f)
+        {
+            if (gluProject(off.x * iScale, off.y * iScale, off.z * iScale,
+                           modelview,
+                           projection,
+                           (const GLint*) view,
+                           &winX, &winY, &winZ) != GL_FALSE)
+            {
+                glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+                glPushMatrix();
+                glTranslatef((int) winX + PixelOffset,
+                             (int) winY + PixelOffset,
+                             0.0f);
+                font->render((*iter)->getName());
+                glPopMatrix();
+            }
+        }
+    }
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+}
+
+
 static float getSphereLOD(float discSizeInPixels)
 {
     if (discSizeInPixels < 10)
@@ -3598,6 +3677,9 @@ void Renderer::renderObject(Point3f pos,
                     *context);
     }
 
+    if (obj.locations != NULL)
+        renderLocations(*obj.locations, pos, obj.orientation, radius);
+
     glPopMatrix();
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -3778,6 +3860,8 @@ void Renderer::renderPlanet(const Body& body,
                 }
             }
         }
+
+        rp.locations = body.getLocations();
 
         // Calculate eclipse circumstances
         if ((renderFlags & ShowEclipseShadows) != 0 &&
