@@ -114,6 +114,7 @@
 #define ID_RENDER_DISPLAYMODE           40059
 #define ID_RENDER_FULLSCREEN            40060
 #define ID_RENDER_VIEWOPTIONS           40061
+#define ID_RENDER_ANTIALIASING          40062
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
 // Next default values for new objects
@@ -121,7 +122,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        120
-#define _APS_NEXT_COMMAND_VALUE         40062
+#define _APS_NEXT_COMMAND_VALUE         40063
 #define _APS_NEXT_CONTROL_VALUE         1051
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
