@@ -343,6 +343,7 @@ Deon Ramsey (UNIX installer, Gtk interface)
 Bob Ippolito (Mac OS X version)
 Christopher ANDRE (Eclipse finder)
 Colin Walters (endianness fixes)
+Grant Hutchison (solarsys.ssc guru)
 James Holmes
 
 
@@ -388,7 +389,7 @@ http://www.eecs.wsu.edu/~hudson/Research/Asteroids/4179/index.html
 Mathilde, and Gaspra are derived from Phil Stooke's Cartography of
 Non-Spherical Worlds:  http://publish.uwo.ca/~pjstooke/plancart.htm
 
-Grant Hutchinson supplied the correct orientations for the major planets,
+Grant Hutchison supplied the correct orientations for the major planets,
 their moons, and a number of asteroids.
 
 The Mac OS X icon was designed by Chris Alford (http://www.chrisalford.com/)
