@@ -568,6 +568,8 @@ void Renderer::render(const Observer& observer,
 
     if ((labelMode & StarLabels) != 0)
         labelStars(labelledStars, starDB, observer);
+    if ((labelMode & ConstellationLabels) != 0 && asterisms != NULL)
+        labelConstellations(*asterisms, observer);
 
     glPopMatrix();
 
@@ -665,7 +667,7 @@ void Renderer::render(const Observer& observer,
         // reset the depth range
         glDepthRange(0, 1);
 
-        if ((labelMode & PlanetOrbits) != 0)
+        if ((renderFlags & ShowOrbits) != 0)
         {
             // At this point, we're not rendering into the depth buffer
             // so we'll set the far plane to be way out there.  If we don't
@@ -1939,7 +1941,6 @@ void Renderer::labelStars(const vector<Star*>& stars,
                           const Observer& observer)
 {
     Point3f observerPos = (Point3f) observer.getPosition();
-    Vec3f relPos;
 
     for (vector<Star*>::const_iterator iter = stars.begin(); iter != stars.end(); iter++)
     {
@@ -1956,6 +1957,42 @@ void Renderer::labelStars(const vector<Star*>& stars,
                 addLabel(starDB.getStarName(star->getCatalogNumber()),
                          Color(0.3f, 0.3f, 1.0f),
                          Point3f(rpos.x, rpos.y, rpos.z));
+            }
+        }
+    }
+}
+
+
+void Renderer::labelConstellations(const AsterismList& asterisms,
+                                   const Observer& observer)
+{
+    Point3f observerPos = (Point3f) observer.getPosition();
+
+    for (AsterismList::const_iterator iter = asterisms.begin();
+         iter != asterisms.end(); iter++)
+    {
+        Asterism* ast = *iter;
+        if (ast->getChainCount() > 0)
+        {
+            const Asterism::Chain& chain = ast->getChain(0);
+
+            if (chain.size() > 0)
+            {
+                // The constellation label is positioned at the average
+                // position of all stars in the first chain.  This usually
+                // gives reasonable results.
+                Vec3f avg(0, 0, 0);
+                for (Asterism::Chain::const_iterator iter = chain.begin();
+                     iter != chain.end(); iter++)
+                    avg += (*iter - Point3f(0, 0, 0));
+
+                avg = avg / (float) chain.size();
+                Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
+                if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0) {
+                    addLabel(ast->getName(),
+                             Color(0.5f, 0.0f, 1.0f, 1.0f),
+                             Point3f(rpos.x, rpos.y, rpos.z));
+                }
             }
         }
     }

@@ -56,7 +56,7 @@ class Renderer
         NoLabels = 0,
         StarLabels = 1,
         PlanetLabels = 2,
-        PlanetOrbits = 4,
+        ConstellationLabels = 4,
     };
     enum {
         ShowNothing     =  0,
@@ -65,6 +65,7 @@ class Renderer
         ShowGalaxies    =  4,
         ShowDiagrams    =  8,
         ShowCloudMaps   = 16,
+        ShowOrbits      = 32
     };
     int getRenderFlags() const;
     void setRenderFlags(int);
@@ -156,6 +157,8 @@ class Renderer
     void labelStars(const vector<Star*>& stars,
                     const StarDatabase& starDB,
                     const Observer& observer);
+    void labelConstellations(const AsterismList& asterisms,
+                             const Observer& observer);
     void renderParticles(const vector<Particle>& particles,
                          Quatf orientation);
     void renderLabels();
