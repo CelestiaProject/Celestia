@@ -40,10 +40,15 @@ static bool isPow2(int x)
     return ((x & (x - 1)) == 0);
 }
 
-static inline lodOffset(uint lod)
+
+#if 0
+// Useful if we want to use a packed quadtree to store tiles instead of
+// the currently implemented tree structure.
+static inline uint lodOffset(uint lod)
 {
     return ((1 << (lod << 1)) - 1) & 0xaaaaaaaa;
 }
+#endif
 
 
 VirtualTexture::VirtualTexture(const string& _tilePath,
@@ -77,7 +82,7 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
     cout << "getTile(" << lod << ", " << u << ", " << v << ")\n";
 
     lod <<= baseSplit;
-    if (lod >= nResolutionLevels || 
+    if (lod < 0 || (uint) lod >= nResolutionLevels || 
         u < 0 || u >= (2 << lod) ||
         v < 0 || v >= (1 << lod))
     {

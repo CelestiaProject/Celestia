@@ -181,6 +181,9 @@ static int getInternalFormat(int format)
 }
 
 
+#if 0
+// Required in order to support on-the-fly compression; currently, this
+// feature is disabled.
 static int getCompressedInternalFormat(int format)
 {
     switch (format)
@@ -206,6 +209,7 @@ static int getCompressedInternalFormat(int format)
         return 0;
     }
 }
+#endif
 
 
 static int getCompressedBlockSize(int format)
@@ -256,8 +260,8 @@ static void LoadMipmapSet(Image& img, GLenum target)
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
     {
-        uint mipWidth  = max((uint) img.getWidth() >> mip, 1);
-        uint mipHeight = max((uint) img.getHeight() >> mip, 1);
+        uint mipWidth  = max((uint) img.getWidth() >> mip, 1u);
+        uint mipHeight = max((uint) img.getHeight() >> mip, 1u);
             
         if (img.isCompressed())
         {
@@ -313,7 +317,7 @@ static void LoadMiplessTexture(Image& img, GLenum target)
 }
 
 
-static int log2(unsigned int x)
+static int ilog2(unsigned int x)
 {
     int n = -1;
 
@@ -329,7 +333,7 @@ static int log2(unsigned int x)
 
 static int CalcMipLevelCount(int w, int h)
 {
-    return max(log2(w), log2(h)) + 1;
+    return max(ilog2(w), ilog2(h)) + 1;
 }
 
 
@@ -531,7 +535,6 @@ TiledTexture::TiledTexture(Image& img,
     // Create a temporary image which we'll use for the tile texels
     int tileWidth = img.getWidth() / uSplit;
     int tileHeight = img.getHeight() / vSplit;
-    int tileSize = img.getMipLevelSize(0) / (uSplit * vSplit);
     int tileMipLevelCount = CalcMipLevelCount(tileWidth, tileHeight);
     Image* tile = new Image(img.getFormat(),
                             tileWidth, tileHeight,
@@ -564,16 +567,14 @@ TiledTexture::TiledTexture(Image& img,
                     {
                         int blockSize = getCompressedBlockSize(img.getFormat());
                         unsigned char* imgMip = img.getMipLevel(mip);
-                        uint mipWidth  = max((uint) img.getWidth() >> mip, 1);
-                        uint mipHeight = max((uint) img.getHeight() >>mip, 1);
-
+                        uint mipWidth  = max((uint) img.getWidth() >> mip, 1u);
                         unsigned char* tileMip = tile->getMipLevel(mip);
-                        uint tileMipWidth  = max((uint) tile->getWidth() >> mip, 1);
-                        uint tileMipHeight = max((uint) tile->getHeight() >> mip, 1);
-                        int uBlocks = max(tileMipWidth / 4, 1);
-                        int vBlocks = max(tileMipHeight / 4, 1);
+                        uint tileMipWidth  = max((uint) tile->getWidth() >> mip, 1u);
+                        uint tileMipHeight = max((uint) tile->getHeight() >> mip, 1u);
+                        int uBlocks = max(tileMipWidth / 4, 1u);
+                        int vBlocks = max(tileMipHeight / 4, 1u);
                         int destBytesPerRow = uBlocks * blockSize;
-                        int srcBytesPerRow = max(mipWidth / 4, 1) * blockSize;
+                        int srcBytesPerRow = max(mipWidth / 4, 1u) * blockSize;
                         int srcU = u * tileMipWidth / 4;
                         int srcV = v * tileMipHeight / 4;
                         int tileOffset = srcV * srcBytesPerRow +
