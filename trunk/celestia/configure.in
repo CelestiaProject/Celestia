@@ -3,7 +3,7 @@ dnl Celestia autoconf file
 dnl Process this file with autoconf to make a configure script
 dnl
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.57)
 AC_INIT([celestia], [1.3.3], [celestia-developers@lists.sf.net])
 AC_CONFIG_SRCDIR(acinclude.m4)
 
