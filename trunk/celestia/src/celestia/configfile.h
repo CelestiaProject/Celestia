@@ -33,6 +33,7 @@ struct CelestiaConfig
     std::string labelFont;
     std::string titleFont;
     std::string logoTextureFile;
+    std::string cursor;
     std::vector<std::string> ignoreGLExtensions;
     float rotateAcceleration;
 };

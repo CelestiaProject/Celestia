@@ -70,6 +70,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     configParams->getString("LabelFont", config->labelFont);
     configParams->getString("TitleFont", config->titleFont);
     configParams->getString("LogoTexture", config->logoTextureFile);
+    configParams->getString("Cursor", config->cursor);
     // configParams->getNumber("LogoWidth", config->logoWidth);
     // configParams->getNumber("LogoHeight", config->logoHeight);
 
