@@ -12,104 +12,101 @@
 #import "FavoritesDrawerController.h"
 #import "CGLInfo.h"
 
+#include <float.h>
+
 @implementation CelestiaController
 
--(BOOL)applicationShouldTerminate:(id)sender
+static CelestiaController* firstInstance;
+
++(CelestiaController*) shared
 {
-    if (timer != nil) {
-        [timer invalidate];
-        [timer release];
-    }
-    timer = nil;
-    [[CelestiaAppCore sharedAppCore] archive];
-    return YES;
+    // class method to get single shared instance
+    return firstInstance;
 }
 
--(BOOL)windowShouldClose:(id)sender
-{
-    [NSApp terminate:nil];
-    return YES;
-}
-
-- (void)resize 
-{
-    //NSLog(@"[CelestiaController resize]");
-    [appCore resize:[glView frame]];
-    isDirty = NO;
-}
-
-- (void)setDirty
-{
-    isDirty = YES;
-}
-
-- (void)display 
-{
-    if ( [startupCondition condition] != 1 )
-        return;
-    if (!ready) 
-       [self finishInitialization];
-//    else
-    {
-        if (isDirty) [self resize];
-            [appCore tick];
-            [appCore draw];
-    }
-//else {
- //       [self finishInitialization];
-//    }
-}
-
--(void) keyPress:(int) code hold: (int) time
-{
-    keyCode = code;
-    keyTime = time;
-    [appCore keyDown: keyCode ];
-}
-
--(void) startGLView
-{
-    static bool needsStart = YES;
-    if (!needsStart) return;
-    needsStart = NO;
-    [[glView window] setAutodisplay:YES];
-    [glView setNeedsDisplay:YES];
-    [[glView window] setFrameUsingName: @"Celestia"];
-    [loadingPanel orderOut: nil ];
-    [[glView window] setAlphaValue: 1.0f];
-    [[glView window] setFrameAutosaveName: @"Celestia"];
-    [[glView window] makeFirstResponder: glView ];
-    [glView registerForDraggedTypes:
-    [NSArray arrayWithObject: NSStringPboardType]];
-//    [self scanForKeys: [renderPanelController window]];
-}
-
-/*
-static    NSMenu* savedMainMenu;
-
-- (void) beginLoading
-{
-    NSMenu* tempMenu = [[NSMenu alloc] initWithTitle: @""];
-    NSMenu* tempSubmenu = [[NSMenu alloc] initWithTitle: @""];
-    [tempMenu addItem: [[NSMenuItem alloc] initWithTitle: @"" action: NULL keyEquivalent: @""]];
-    [tempMenu setSubmenu: tempSubmenu forItem: [tempMenu itemAtIndex: 0] ];
-    [[glView window] setAlphaValue: 0.0f];
-    [loadingIndicator startAnimation: nil];
-    savedMainMenu = [NSApp mainMenu];
-    [ NSApp setMainMenu: tempMenu ];
-//    [ NSApp setAppleMenu: tempMenu ];
-}
-
-- (void)  endLoading
-{
-//    [ NSApp setMainMenu: savedMainMenu ];
-}
-*/
+// Startup Methods ----------------------------------------------------------
 
 NSString* fatalErrorMessage;
 
+- (void)awakeFromNib
+{
+    if ([[self superclass] instancesRespondToSelector:@selector(awakeFromNib)]) 
+    {
+        [super awakeFromNib];
+    }
+
+    if (firstInstance == nil ) firstInstance = self;
+    ready = NO;
+    isDirty = YES;
+    appCore = nil;
+    fatalErrorMessage = nil;
+	
+    [self setupResourceDirectory];
+
+    //  hide main window until ready
+    [[glView window] setAlphaValue: 0.0f];  //  not  [[glView window] orderOut: nil];
+
+    // create appCore
+    appCore = [CelestiaAppCore sharedAppCore];
+    // check for startup failure
+    if (appCore == nil)
+    {
+        NSLog(@"Could not create CelestiaAppCore!");
+        [NSApp terminate:self];
+        return;
+    }
+    
+    startupCondition = [[NSConditionLock alloc] initWithCondition: 0];
+
+    // start initialization thread
+    [NSThread detachNewThreadSelector: @selector(startInitialization) toTarget: self
+    withObject: nil];
+
+    // wait for completion
+    [self performSelectorOnMainThread: @selector(waitWhileLoading:) withObject: nil waitUntilDone: NO ];
+}
+
+
+- (void) setupResourceDirectory
+{
+    NSBundle* mainBundle = [NSBundle mainBundle];
+    // Change directory to resource dir so Celestia can find cfg files and textures
+    NSFileManager *fileManager = [NSFileManager defaultManager]; 
+    NSString* path; 
+    if ( [ fileManager fileExistsAtPath: path = [[[ mainBundle bundlePath ]  stringByDeletingLastPathComponent] stringByAppendingPathComponent: @"CelestiaResources" ]] )
+        chdir([path cString]);
+    else if ( [ fileManager fileExistsAtPath: path = [ @"~/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath] ] )
+        chdir([path cString]);
+    else if ( [ fileManager fileExistsAtPath: path = @"/Library/Application Support/CelestiaResources" ] )
+        chdir([path cString]);
+    else if ( [ fileManager fileExistsAtPath: path = [[ mainBundle resourcePath ] stringByAppendingPathComponent: @"CelestiaResources" ]] )
+        chdir([path cString]);
+    else {
+        NSRunAlertPanel(@"Missing Resource Directory",@"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again.",nil,nil,nil);
+        chdir([[mainBundle resourcePath] cString]);
+        }
+}
+
+- (void)startInitialization
+{
+    // initialize simulator in separate thread to allow loading indicator window while waiting
+    if (![appCore initSimulation])
+    {
+        NSLog(@"Could not initSimulation!");
+        [startupCondition lock];
+        [startupCondition unlockWithCondition: 99];
+        [NSThread exit];
+        return;
+    }
+
+    [startupCondition lock];
+    [startupCondition unlockWithCondition: 1];
+}
+
+
 - (void) fatalError: (NSString *) msg
 {
+    // handle fatal error message from either main or loading threads
     if ( msg == nil )
     {
         if (fatalErrorMessage == nil) return;
@@ -121,11 +118,184 @@ NSString* fatalErrorMessage;
     fatalErrorMessage = [msg retain];
 }
 
-- (void)idle
+- (void) waitWhileLoading: (id) obj
 {
+    // display loading indicator window while loading
+    
     static NSModalSession session = nil;
-    if (ready)
+
+    if ( [startupCondition condition] == 0 ) 
     {
+        if ( session != nil )
+            return;
+        [loadingIndicator startAnimation: nil];
+        // begin modal session for loading panel
+        session = [NSApp beginModalSessionForWindow:loadingPanel];
+        // modal session runloop
+        for (;;) 
+        {
+            if ( fatalErrorMessage != nil )
+                break;
+            if ([NSApp runModalSession:session] != NSRunContinuesResponse)
+                break;
+            if ( [startupCondition condition] != 0 )
+                break;
+        }
+        // terminate modal session for loading panel
+        [NSApp endModalSession:session];
+    }
+    // check for fatal error in loading thread
+    [self fatalError: nil];
+    // complete startup
+    [loadingPanel orderOut: nil ];
+    [self finishInitialization];
+}
+
+-(void) setupFavorites
+{
+    NSInvocation *menuCallback;
+
+    menuCallback = [NSInvocation invocationWithMethodSignature:[FavoritesDrawerController instanceMethodSignatureForSelector:@selector(synchronizeFavoritesMenu)]];
+    [menuCallback setSelector:@selector(synchronizeFavoritesMenu)];
+    [menuCallback setTarget:favoritesDrawerController];
+    [[CelestiaFavorites sharedFavorites] setSynchronize:menuCallback];
+    [[CelestiaFavorites sharedFavorites] synchronize];
+}
+
+-(void) setupRenderPanel
+{
+//    [[renderPanelController window] setAlphaValue: 0.8f];
+//    [[renderPanelController window] setLevel: NSFloatingWindowLevel];
+//    [[glView window] addChildWindow: [renderPanelController window] ordered: NSWindowAbove];
+    [[renderPanelController window] setMovableByWindowBackground: YES];
+    [[renderPanelController window] setHidesOnDeactivate: YES];
+    [[renderPanelController window] setReleasedWhenClosed: NO];
+    [[renderPanelController window] setOneShot: NO];
+//    [renderPanelController finishSetup];
+}
+
+-(void) startGLView
+{
+    [[glView window] setAutodisplay:YES];
+    [[glView window] setHidesOnDeactivate: NO];
+    [[glView window] setFrameUsingName: @"Celestia"];
+    [[glView window] setAlphaValue: 1.0f];
+    [[glView window] setFrameAutosaveName: @"Celestia"];
+    [[glView window] makeMainWindow ];
+    [[glView window] makeFirstResponder: glView ];
+    [[glView window] makeKeyAndOrderFront: glView ];
+    [glView registerForDraggedTypes:
+        [NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, NSURLPboardType, nil]];
+    [glView setNeedsDisplay:YES];
+}
+
+- (void)finishInitialization
+{
+    [appCore initRenderer];
+
+    [self setupFavorites];
+
+    settings = [CelestiaSettings shared];
+    [settings setControl: self];
+    [settings scanForKeys: [renderPanelController window]];
+    [self setupRenderPanel];
+    [settings validateItems];
+
+    // load settings
+    [settings loadUserDefaults];
+
+    // set the simulation starting time to the current system time
+    [appCore start:[NSDate date] withTimeZone:[NSTimeZone defaultTimeZone]];
+
+    // run script if pending
+    if (pendingScript != nil )
+    {
+        [appCore runScript: pendingScript ];
+    }
+
+    // paste URL if pending
+    if (pendingUrl != nil )
+    {
+        [ appCore goToUrl: pendingUrl ];
+    }
+        
+    ready = YES;
+    [self startGLView];
+
+    // start animation timer
+    timer = [[NSTimer scheduledTimerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:true] retain];
+
+}
+
+// Application Event Handler Methods ----------------------------------------------------------
+
+- (void) applicationWillFinishLaunching:(NSNotification *) notification {
+	[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self andSelector:@selector( handleURLEvent:withReplyEvent: ) forEventClass:kInternetEventClass andEventID:kAEGetURL];
+}
+
+- (BOOL) application:(NSApplication *)theApplication openFile:(NSString *)filename
+{
+    if ( ready )
+        [appCore runScript: filename ];
+    else
+        pendingScript = [filename retain];
+    return YES;
+}
+
+- (void) handleURLEvent:(NSAppleEventDescriptor *) event withReplyEvent:(NSAppleEventDescriptor *) replyEvent 
+{
+    if ( ready )
+        [ appCore goToUrl: [[event descriptorAtIndex:1] stringValue] ];
+    else
+        pendingUrl = [[[event descriptorAtIndex:1] stringValue] retain];
+}
+
+-(BOOL)applicationShouldTerminate:(id)sender
+{
+   if (  NSRunAlertPanel(@"Quit Celestia?",@"Are you sure you want to quit Celestia?",@"Quit",@"Cancel",nil) != NSAlertDefaultReturn ) 
+   {
+   return NO;
+   }
+    if (timer != nil) {
+        [timer invalidate];
+        [timer release];
+    }
+    timer = nil;
+    [[CelestiaAppCore sharedAppCore] archive];
+    return YES;
+}
+
+- (void) applicationWillTerminate:(NSNotification *) notification {
+    [settings storeUserDefaults];
+}
+
+
+// Window Event Handler Methods ----------------------------------------------------------
+
+-(BOOL)windowShouldClose:(id)sender
+{
+    [NSApp terminate:nil];
+    return NO;
+}
+
+- (void)resize 
+{
+    [appCore resize:[glView frame]];
+    isDirty = NO;
+}
+
+// Held Key Simulation Methods ----------------------------------------------------------
+
+-(void) keyPress:(int) code hold: (int) time
+{
+    // start simulated key hold
+    keyCode = code;
+    keyTime = time;
+    [appCore keyDown: keyCode ];
+}
+
+- (void) keyTick
+{
        if ( keyCode != 0 )
        {
             if ( keyTime <= 0 )
@@ -135,165 +305,77 @@ NSString* fatalErrorMessage;
             }
             else 
                keyTime --;
-       }
-    
+       }    
+}
+ 
+// Display Update Management Methods ----------------------------------------------------------
+
+- (void)setDirty
+{
+    isDirty = YES;
+}
+
+- (void) forceDisplay
+{
+    if (![glView needsDisplay]) [glView setNeedsDisplay:YES];
+}
+
+- (void) display 
+{
+    // update display when required by glView (invoked from drawRect:)
+    if (ready)
+    {
+        if (isDirty)
+            [self resize];
+        // render to glView
+        [appCore draw];
+        // update scene
         [appCore tick];
-        [glView setNeedsDisplay:YES];
+    }
+}
+
+- (void) timeDisplay
+{
+    if (!ready) return;
+
+    // check for time to release simulated key held down
+    [self keyTick];
+
+    // adjust timer if necessary to avoid saturating the runloop
+    // otherwise appkit events may be delayed
+    static NSEvent* lastEvent = nil;
+     NSEvent* nextEvent = nil;
+
+    nextEvent = nil;
+    // make sure we get some events (so we don't block checking the event queue)
+    [NSEvent startPeriodicEventsAfterDelay: 0.0 withPeriod: 0.001 ]; 
+    // check for waiting events
+    nextEvent = [NSApp nextEventMatchingMask: ( NSPeriodicMask|NSAppKitDefined ) untilDate: nil inMode: NSDefaultRunLoopMode dequeue: NO];
+    // stop generating periodic events
+    [NSEvent stopPeriodicEvents]; 
+    if ( [nextEvent type] == NSPeriodic )
+    {   
+        // ignore periodic events
+        [NSApp discardEventsMatchingMask: NSPeriodicMask beforeEvent: nil ];
     }
     else
     {
-        if ( [startupCondition condition] == 0 ) 
+        if ( nextEvent == lastEvent )
+        {   
+            // event is still waiting, so delay firing timer to allow event to process
+            [timer setFireDate: [[NSDate date] addTimeInterval: 0.01 ] ];
+        }
+        else
         {
-    if ( session != nil )
-        return;
-    [loadingIndicator startAnimation: nil];
-    session = [NSApp beginModalSessionForWindow:loadingPanel];
-    for (;;) {
-        if ( fatalErrorMessage != nil )
-            break;
-        if ([NSApp runModalSession:session] != NSRunContinuesResponse)
-            break;
-        if ( [startupCondition condition] != 0 )
-            break;
-    }
-    [NSApp endModalSession:session];
+            lastEvent = nextEvent;
+            return;
         }
-//        [glView setNeedsDisplay:YES];
-//        if ( fatalErrorMessage != nil )
-//        {
-                [self fatalError: nil];
-//                return;
-//        }
-        [self startGLView];
     }
+    // force display update
+    [self forceDisplay];
+ }
 
-}
-
-
-static CelestiaController* firstInstance;
-
-+(CelestiaController*) shared
-{
-    return firstInstance;
-}
-
-- (void)awakeFromNib
-{
-    if ([[self superclass] instancesRespondToSelector:@selector(awakeFromNib)]) {
-        [super awakeFromNib];
-    }
-    //NSLog(@"[CelestiaController awakeFromNib]");
-//    [self startInitialization];
-
-    if (firstInstance == nil ) firstInstance = self;
-    ready = NO;
-    isDirty = YES;
-    appCore = nil;
-	fatalErrorMessage = nil;
-	
-    [ self setupResourceDirectory ];
-	NSLog(@"about to createAppCore\n");
-    appCore = [CelestiaAppCore sharedAppCore];
-    if (appCore == nil)
-    {
-        NSLog(@"Could not create CelestiaAppCore!");
-        [NSApp terminate:self];
-        return;
-    }
-    [self scanForKeys: [renderPanelController window]];
-//  hide main window until ready
-    [[glView window] setAlphaValue: 0.0f];
-//    [[glView window] orderOut: nil];
-    startupCondition = [[NSConditionLock alloc] initWithCondition: 0];
-    [NSThread detachNewThreadSelector: @selector(startInitialization) toTarget: self
-    withObject: nil];
-    
-    timer = [[NSTimer scheduledTimerWithTimeInterval: 0.001 target: self selector:@selector(idle) userInfo:nil repeats:true] retain];
-
-
-}
-
-- (void) setupResourceDirectory
-{
-    // Change directory to resource dir so Celestia can find cfg files and textures
-    NSFileManager *fileManager = [NSFileManager defaultManager]; 
-    NSString* path; //  = [ @"~/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath];
-    if ( [ fileManager fileExistsAtPath: path = [ @"~/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath] ] )
-        chdir([path cString]);
-    else if ( [ fileManager fileExistsAtPath: path = [ @"/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath] ] )
-        chdir([path cString]);
-    else {
-        NSRunAlertPanel(@"Missing Resource Directory",@"It appears that the \"CelestiaResources\" directory was not properly installed in the correct location as indicated in the installation instructions. \n\nPlease try again and see if you can get it right this time!",nil,nil,nil);
-        chdir([[[NSBundle mainBundle] resourcePath] cString]);
-        }
-}
-
-- (void)startInitialization
-{
-    //NSLog(@"[CelestiaController startInitialization]");
-    if (![appCore initSimulation])
-    {
-        NSLog(@"Could not initSimulation!");
-    [startupCondition lock];
-    [startupCondition unlockWithCondition: 99];
-    [NSThread exit];
-    return;
-//        [NSApp terminate:self];
-//        return;
-    }
-NSLog(@"done with initSimulation\n");
-
-    [startupCondition lock];
-    [startupCondition unlockWithCondition: 1];
-}
-
-- (void)finishInitialization
-{
-    NSInvocation *menuCallback;
-    //NSLog(@"finishInitialization");
-    // GL should be all set up, now initialize the renderer.
-    [appCore initRenderer];
-    // Set the simulation starting time to the current system time
-    [appCore start:[NSDate date] withTimeZone:[NSTimeZone defaultTimeZone]];
-    ready = YES;
-    menuCallback = [NSInvocation invocationWithMethodSignature:[FavoritesDrawerController instanceMethodSignatureForSelector:@selector(synchronizeFavoritesMenu)]];
-    [menuCallback setSelector:@selector(synchronizeFavoritesMenu)];
-    [menuCallback setTarget:favoritesDrawerController];
-    [[CelestiaFavorites sharedFavorites] setSynchronize:menuCallback];
-    [[CelestiaFavorites sharedFavorites] synchronize];
-    // DEBUG
-    //NSLog(@"%@",[CGLInfo displayDescriptions]);
-
-    [renderPanelController finishSetup];
-    [appCore validateItems];
-}
-
-- (void)dealloc
-{
-    NSLog(@"[CelestiaController dealloc]");
-    if (appCore != nil) {
-        [appCore release];
-    }
-    appCore = nil;
-    if (timer != nil) {
-        [timer invalidate];
-        [timer release];
-    }
-    timer = nil;
-    [super dealloc];
-}
-
-
-- (IBAction)gotoObject:(id)sender
-{
-    NSLog(@"[CelestiaController gotoObject:%@]",sender);
-}
-
-- (IBAction)showGotoObject:(id)sender
-{
-    NSLog(@"[CelestiaController showGotoObject:%@]",sender);
-    [gotoWindow makeKeyAndOrderFront:self];
-}
+// Application Action Methods ----------------------------------------------------------
 
 - (void) openPanelDidEnd:(NSOpenPanel*)openPanel returnCode: (int) rc contextInfo: (void *) ci
 {
@@ -301,41 +383,39 @@ NSLog(@"done with initSimulation\n");
     {
         NSString *path;
         path = [openPanel filename];
-        [openPanel close];
-        [appCore runScript: path];
-        
-//       NSRunAlertPanel(@"Not yet implemented",@"Stay tuned.",nil,nil,nil);
+        [appCore runScript: path];        
     }
 }
 
 - (IBAction) openScript: (id) sender
 {
     NSOpenPanel* panel = [NSOpenPanel openPanel];
-    [ panel beginSheetForDirectory: nil
+    [ panel beginSheetForDirectory:  nil
         file: nil
-            types: nil // @".cel"
-            modalForWindow: [glView window]
-            modalDelegate: self
-            didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
-            contextInfo: nil
+        types: [NSArray arrayWithObjects: @"cel", @"celx", nil ]
+        modalForWindow: [glView window]
+        modalDelegate: self
+        didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
+        contextInfo: nil
     ];
 }
 
-
-- (IBAction)back:(id)sender
+- (IBAction) back:(id)sender
 {
     [appCore back];
 }
 
-- (IBAction)forward:(id)sender
+- (IBAction) forward:(id)sender
 {
     [appCore forward];
 }
 
-- (IBAction)showInfoURL:(id)sender
+- (IBAction) showInfoURL:(id)sender
 {
     [appCore showInfoURL];
 }
+
+// GUI Tag Methods ----------------------------------------------------------
 
 - (BOOL)     validateMenuItem: (id) item
 {
@@ -346,7 +426,7 @@ NSLog(@"done with initSimulation\n");
     }
     else
     {
-        return [appCore validateItem: item ];
+        return [settings validateItem: item ];
     }
 }
 
@@ -355,128 +435,38 @@ NSLog(@"done with initSimulation\n");
     int tag = [item tag];
     if ( tag != 0 )
     {
-        if ( tag < 0 ) {
+        if ( tag < 0 ) // simulate key press and hold
+        {
             [self keyPress: -tag hold: 2];
-		} else {
-			[appCore actionForItem: item ];
-		}
-        [appCore validateItemForTag: tag];
+        } 
+        else 
+        {
+            [settings actionForItem: item ];
+        }
+        [settings validateItemForTag: tag];
     }
 }
 
-- (IBAction) activateSwitchButton: (id) item
+- (void) addSurfaceMenu: (NSMenu*) contextMenu
 {
-    int tag = [item tag];
-    if ( tag != 0 )
-    {
-        [appCore actionForItem: item];
-        [appCore tick]; 
-		[glView setNeedsDisplay:YES];
-    }
+    [settings addSurfaceMenu: contextMenu ];
 }
 
-- (IBAction) activateMatrixButton: (id) item
+// Dealloc Method ----------------------------------------------------------
+
+- (void)dealloc
 {
-    item = [item selectedCell];
-    int tag = [item tag];
-    if ( tag != 0 )
-    {
-        [appCore actionForItem: item];
+    if (appCore != nil) {
+        [appCore release];
     }
-}
-
-- (void) scanForKeys: (id) item
-{
-//    NSLog(@"scanning item %@\n", [item description]);
-
-    if ( [item isKindOfClass: [NSTabViewItem class]] )
-    {
-//	 NSLog(@"scanning viewitem\n");
-        item = [item view];
-        [ self scanForKeys: item ];
-        return;
+    appCore = nil;
+    if (timer != nil) {
+        [timer invalidate];
+        [timer release];
     }
-
-
-    if ([item isKindOfClass: [NSMenuItem class]] && [item tag] != 0)
-        {
-//	 NSLog(@"scanning menuItem\n");
-            [appCore defineKeyForItem: item];
-            [item setTarget: self];
-            [item setAction: @selector(activateMenuItem:)];
-            return; 
-        }
-    else if ([item isKindOfClass: [NSSlider class]] && [item tag] != 0)
-        {
-//            NSLog(@"scanning cell\n");
-            [appCore defineKeyForItem: item];
-            [item setTarget: self];
-            [item setAction: @selector(activateSwitchButton:)];
-            return; 
-        }
-
-    if ( [item isKindOfClass: [NSTabView class]] )
-    {
-//	 NSLog(@"scanning tabview\n");
-        item = [ [item tabViewItems] objectEnumerator ];
-    }
-    else if ( [item isKindOfClass: [NSPopUpButton class]] )
-    {
-        [appCore defineKeyForItem: item];
-//	 NSLog(@"scanning popupbutton\n");
-        item = [ [item itemArray] objectEnumerator ];
-    }
-    else if ([item isKindOfClass: [NSControl class]] && [item tag] != 0)
-        {
-//	 NSLog(@"scanning control\n");
-            [appCore defineKeyForItem: item];
-            [item setTarget: self];
-            [item setAction: @selector(activateSwitchButton:)];
-            return; 
-        }
-    else if ( [item isKindOfClass: [NSMatrix class]] )
-    {
-//	 NSLog(@"scanning matrix\n");
-        item = [ [item cells] objectEnumerator ];
-    }
-    else if ( [item isKindOfClass: [NSView class]] )
-    {
-//	 NSLog(@"scanning view\n");
-//        NSLog(@"subviews items = %@\n", [item subviews]);
-        item = [ [item subviews] objectEnumerator ];
-//        NSLog(@"view items = %@\n", item);
-    };
-
-    if ( [item isKindOfClass: [NSEnumerator class] ] )
-    {
-//	 NSLog(@"scanning array\n");
-        id subitem;
-        while(subitem = [item nextObject])
-        {
-//            NSLog(@"scanning array  item\n");
-            [ self scanForKeys: subitem ];
-        }
-        return;
-    }
-
-    if ([item isKindOfClass: [NSCell class]] && [item tag] != 0)
-        {
-//	 NSLog(@"scanning cell\n");
-            [appCore defineKeyForItem: item];
-            [item setTarget: self];
-            [item setAction: @selector(activateMatrixButton:)];
-            return; 
-        }
-
-    if ( [item isKindOfClass: [NSWindow class]] )
-    {
-//        NSLog(@"scanning window\n");
-        item = [item contentView ];
-        [ self scanForKeys: item ];
-        return;
-    }
-    
+    timer = nil;
+    [super dealloc];
+}    
         
-}
 
 @end

@@ -16,14 +16,16 @@
 #import "CelestiaSimulation.h"
 #import "CelestiaRenderer.h"
 
+
 @interface CelestiaAppCore : NSObject {
     CelestiaDestinations* _destinations;
 }
+-(void*) appCore;
 -(int)toCelestiaKey:(NSEvent*)theEvent;
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
 -(void)archive;
 +(CelestiaAppCore *)sharedAppCore;
--(BOOL)initSimulation;
+    -(BOOL)initSimulation;
 -(BOOL)initRenderer;
 -(void)start:(NSDate *)date withTimeZone:(NSTimeZone *)timeZone;
 -(void)charEntered:(char)c;
@@ -53,20 +55,12 @@
 -(void)setContextMenuCallback:(id)cObj;
 -(void)back;
 -(void)forward;
-- (NSURL *) currentURL;
+- (NSString *) currentURL;
 -(void)goToUrl:(NSString *)url;
 -(unsigned int) getLocationFilter;
 -(void) setLocationFilter: (unsigned int) filter;
 -(void)runScript:(NSString *)fileName;
-//- (BOOL) testSetting: (int) tag;
-//- (void) handleSetting: (int) tag;
--(void)validateItems;
--(BOOL)validateItem:(id)item;
 -(void)showInfoURL;
--(void)actionForItem:(id)item;
--(void)validateItemForTag:(int)tag;
--(void)defineKeyForItem:(id)item;
--(void)addSurfaceMenu:(NSMenu*)contextMenu;
 -(void)keyDown:(int)c withModifiers:(int)m;
 -(void)keyUp:(int)c withModifiers:(int)m;
 
