@@ -127,6 +127,8 @@ enum
     Menu_ShowPlanets         = 2023,
     Menu_ShowRingShadows     = 2024,
     Menu_ShowStars           = 2025,
+	Menu_ShowFrames          = 2026,
+	Menu_SyncTime            = 2027,
 };
 
 static void menuSelectSol()
@@ -182,6 +184,38 @@ static void menuRealTime()
 static void menuReverse()
 {
     appCore->charEntered('J');
+}
+
+static void menuViewSplitH()
+{
+	appCore->splitView(View::HorizontalSplit);
+}
+
+static void menuViewSplitV()
+{
+	appCore->splitView(View::VerticalSplit);
+}
+
+static void menuViewDelete()
+{
+	appCore->deleteView();
+}
+
+static void menuViewSingle()
+{
+	appCore->singleView();
+}
+
+static void menuViewShowFrames()
+{
+	appCore->setFramesVisible(!appCore->getFramesVisible());
+}
+
+static void menuViewSyncTime()
+{
+	appSim->setSyncTime(!appSim->getSyncTime());
+	if (appSim->getSyncTime())
+		appSim->synchronizeTime();
 }
 
 /*
@@ -2503,20 +2537,20 @@ static GtkItemFactoryEntry menuItems[] =
     { (gchar *)"/_File",                               NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
     { (gchar *)"/File/_Open Script...",                NULL,                    menuOpenScript  , 0,                (gchar *)"<StockItem>",  GTK_STOCK_OPEN },
     { (gchar *)"/File/_Capture Image...",              (gchar *)"F10",          menuCaptureImage, 0,                (gchar *)"<StockItem>",  GTK_STOCK_SAVE_AS },
-    { (gchar *)"/File/sep0",                           NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/File/-",                              NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/File/_Quit",                          (gchar *)"<control>Q",   gtk_main_quit,    0,                (gchar *)"<StockItem>",  GTK_STOCK_QUIT },
     { (gchar *)"/_Navigation",                         NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
     { (gchar *)"/Navigation/Select _Sol",              (gchar *)"H",            menuSelectSol,    0,                (gchar *)"<StockItem>",  GTK_STOCK_HOME },
     { (gchar *)"/Navigation/Tour G_uide...",           NULL,                    menuTourGuide,    0,                NULL,                    NULL },
     { (gchar *)"/Navigation/Select _Object...",        NULL,                    menuSelectObject, 0,                NULL,                    NULL },
     { (gchar *)"/Navigation/Goto Object...",           NULL,                    menuGotoObject,   0,                (gchar *)"<StockItem>",  GTK_STOCK_FIND },
-    { (gchar *)"/Navigation/sep1",                     NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Navigation/-",                        NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Navigation/_Center Selection",        (gchar *)"C",            menuCenter,       0,                NULL,                    NULL },
     { (gchar *)"/Navigation/_Goto Selection",          (gchar *)"G",            menuGoto,         0,                (gchar *)"<StockItem>",  GTK_STOCK_JUMP_TO },
     { (gchar *)"/Navigation/_Follow Selection",        (gchar *)"F",            menuFollow,       0,                NULL,                    NULL },
     { (gchar *)"/Navigation/S_ync Orbit Selection",    (gchar *)"Y",            menuSync,         0,                NULL,                    NULL },
     { (gchar *)"/Navigation/_Track Selection",         (gchar *)"T",            menuTrack,        0,                NULL,                    NULL },
-    { (gchar *)"/Navigation/sep2",                     NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Navigation/-",                        NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Navigation/Solar System _Browser...", NULL,                    menuSolarBrowser, 0,                NULL,                    NULL },
     { (gchar *)"/Navigation/Star B_rowser...",         NULL,                    menuStarBrowser,  0,                NULL,                    NULL },
     { (gchar *)"/Navigation/_Eclipse Finder",          NULL,                    menuEclipseFinder,0,                NULL,                    NULL },
@@ -2527,26 +2561,34 @@ static GtkItemFactoryEntry menuItems[] =
     { (gchar *)"/Time/_Real Time",                     (gchar *)"backslash",    menuRealTime,     0,                NULL,                    NULL },
     { (gchar *)"/Time/Re_verse Time",                  (gchar *)"J",            menuReverse,      0,                NULL,                    NULL },
     { (gchar *)"/Time/Set _Time...",                   NULL,                    menuSetTime,      0,                NULL,                    NULL },
-    { (gchar *)"/Time/sep3",                           NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Time/-",                              NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Time/Show _Local Time",               NULL,                    NULL,             Menu_ShowLocTime, (gchar *)"<ToggleItem>", NULL },
     { (gchar *)"/_Render",                             NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
     { (gchar *)"/Render/Set Viewer Size...",           NULL,                    menuViewerSize,   0,                (gchar *)"<StockItem>",  GTK_STOCK_ZOOM_FIT },
-    { (gchar *)"/Render/sep4",                         NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Render/-",                            NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Render/View _Options...",             NULL,                    menuOptions,      0,                (gchar *)"<StockItem>",  GTK_STOCK_PREFERENCES },
     { (gchar *)"/Render/Show _Info Text",              (gchar *)"V",            menuShowInfo,     0,                NULL,                    NULL },
-    { (gchar *)"/Render/sep5",                         NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Render/-",                            NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Render/_More Stars Visible",          (gchar *)"bracketright", menuMoreStars,    0,                NULL,                    NULL },
     { (gchar *)"/Render/_Fewer Stars Visible",         (gchar *)"bracketleft",  menuLessStars,    0,                NULL,                    NULL },
     { (gchar *)"/Render/Auto Magnitude",               (gchar *)"<control>Y",   NULL,             Menu_AutoMag,     (gchar *)"<ToggleItem>", NULL },
-    { (gchar *)"/Render/sep6",                         NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Render/-",                            NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Render/_Antialiasing",                (gchar *)"<control>X",   NULL,             Menu_AntiAlias,   (gchar *)"<ToggleItem>", NULL },
+	{ (gchar *)"/_View",                               NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
+    { (gchar *)"/View/Split _Horizontally",            (gchar *)"<control>R",   menuViewSplitH,   0,                NULL,                    NULL },
+    { (gchar *)"/View/Split _Vertically",              (gchar *)"<control>U",   menuViewSplitV,   0,                NULL,                    NULL },
+    { (gchar *)"/View/_Delete Active View",            (gchar *)"delete",       menuViewDelete,   0,                NULL,                    NULL },
+    { (gchar *)"/View/_Single View",                   (gchar *)"<control>D",   menuViewSingle,   0,                NULL,                    NULL },
+    { (gchar *)"/View/-",                              NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/View/Show _Frames",                   NULL,                    NULL,             Menu_ShowFrames,  (gchar *)"<ToggleItem>", NULL },
+    { (gchar *)"/View/Synchronize _Time",              NULL,                    NULL,             Menu_SyncTime,    (gchar *)"<ToggleItem>", NULL },
     { (gchar *)"/_Help",                               NULL,                    NULL,             0,                (gchar *)"<LastBranch>", NULL },
     { (gchar *)"/Help/Run _Demo",                      (gchar *)"D",            menuRunDemo,      0,                (gchar *)"<StockItem>",  GTK_STOCK_EXECUTE },  
-    { (gchar *)"/Help/sep7",                           NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Help/-",                              NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Help/_Controls",                      NULL,                    menuControls,     0,                (gchar *)"<StockItem>",  GTK_STOCK_HELP },
     { (gchar *)"/Help/OpenGL _Info",                   NULL,                    menuOpenGL,       0,                NULL,                    NULL },
     { (gchar *)"/Help/_License",                       NULL,                    menuLicense,      0,                NULL,                    NULL },
-    { (gchar *)"/Help/sep8",                           NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
+    { (gchar *)"/Help/-",                              NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Help/_About",                         NULL,                    menuAbout,        0,                (gchar *)"<StockItem>",  GNOME_STOCK_ABOUT },
 };
 
@@ -2572,6 +2614,16 @@ int checkVertexShaders(int, char*)
 int checkShowGalaxies(int, char*)
 {
 	return((appRenderer->getRenderFlags() & Renderer::ShowGalaxies) == Renderer::ShowGalaxies);
+}
+
+int checkShowFrames(int, char*)
+{
+	return appCore->getFramesVisible();
+}
+
+int checkSyncTime(int, char*)
+{
+	return appSim->getSyncTime();
 }
 
 
@@ -2607,7 +2659,15 @@ int checkLabelFlag(int flag, char*)
 }
 
 
-// Reverse alphabetical order!
+/*
+	Reverse alphabetical order!
+
+	Legend for [4] ----
+	 0 = Off
+	 1 = View Options Only
+	 2 = Menu Only
+	 3 = Both
+*/
 static CheckFunc checks[] =
 {
     { NULL, NULL, "/Time/Show Local Time",         checkLocalTime,     3, 0, Menu_ShowLocTime, GTK_SIGNAL_FUNC(menuShowLocTime) },
@@ -2635,6 +2695,8 @@ static CheckFunc checks[] =
     { NULL, NULL, "/Render/Clouds",                checkRenderFlag,    1, Renderer::ShowCloudMaps, Menu_ShowClouds, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/Render/Celestial Grid",        checkRenderFlag,    1, Renderer::ShowCelestialSphere, Menu_ShowCelestialSphere, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/Render/Atmospheres",           checkRenderFlag,    1, Renderer::ShowAtmospheres, Menu_ShowAtmospheres, GTK_SIGNAL_FUNC(menuRenderer) },
+    { NULL, NULL, "/View/Synchronize Time",        checkSyncTime,      2, 0, Menu_SyncTime, GTK_SIGNAL_FUNC(menuViewSyncTime) },
+    { NULL, NULL, "/View/Show Frames",             checkShowFrames,    2, 0, Menu_ShowFrames, GTK_SIGNAL_FUNC(menuViewShowFrames) },
 };
 
 
