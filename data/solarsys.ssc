@@ -63,7 +63,8 @@ Planets [
         MeanLongitude   100.464
 
 	RotationPeriod   23.93419
-	Obliquity        23.45
+	RotationPhase    120.0
+	Obliquity        -23.45
 	Albedo            0.30
 
 	Moons [
@@ -873,6 +874,28 @@ Planets [
 	Epoch       2450800.5
 
 	RotationPeriod    5.9
+}
+
+# Kuiper belt objects
+
+# 20000 Varuna
+{
+	Name   "Varuna"
+	Texture "asteroid.jpg"
+	Radius 450
+
+	Period           284.664
+	SemiMajorAxis     43.274
+	Eccentricity      0.056
+	Inclination      17.1
+	AscendingNode    97.3
+	ArgOfPericenter 274.9
+        MeanAnomaly      81.7
+	Epoch       2452003.0
+
+	Albedo 0.07
+
+	RotationPeriod     48.0   # Just a guess . . .
 }
 ]
 }
