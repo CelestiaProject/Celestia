@@ -49,6 +49,7 @@ class Console : public std::ostream
     void setFont(TexFont*);
     TexFont* getFont();
 
+    void setOrigin(float, float);
     void setScale(float, float);
 
     void render();
@@ -60,6 +61,7 @@ class Console : public std::ostream
     void cursorLeft();
     void CR();
     void LF();
+    void backspace();
 
     inline void setChar(char c);
     void setCharAt(char c, int row, int col);
@@ -81,6 +83,7 @@ class Console : public std::ostream
     int cursorColumn;
 
     float xscale, yscale;
+    float left, top;
 
     ConsoleStreamBuf sbuf;
 };
