@@ -29,6 +29,10 @@ RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
         case Selection::Type_Star:
             rotation = Quatd(1, 0, 0, 0);
             break;
+        case Selection::Type_Location:
+            if (refObject.location()->getParentBody() != NULL)
+                rotation = refObject.location()->getParentBody()->getEclipticalToGeographic(t);
+            break;
         default:
             break;
         }
@@ -118,6 +122,10 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
             break;
         case Selection::Type_Star:
             rotation = Quatd(1, 0, 0, 0);
+            break;
+        case Selection::Type_Location:
+            if (refObject.location()->getParentBody() != NULL)
+                rotation = refObject.location()->getParentBody()->getEclipticalToGeographic(t);
             break;
         default:
             break;

@@ -64,7 +64,19 @@ UniversalCoord Selection::getPosition(double t) const
         }
         
     case Type_Location:
-        return UniversalCoord(Point3d(0.0, 0.0, 0.0));
+        {
+            Point3f sunPos(0.0f, 0.0f, 0.0f);
+            Body* body = location()->getParentBody();
+            if (body != NULL && body->getSystem() != NULL)
+            {
+                const Star* sun = body->getSystem()->getStar();
+                if (sun != NULL)
+                    sunPos = sun->getPosition();
+            }
+
+            return astro::universalPosition(location()->getHeliocentricPosition(t),
+                                            sunPos);
+        }
 
     default:
         return UniversalCoord(Point3d(0.0, 0.0, 0.0));
@@ -112,7 +124,15 @@ string Selection::getName() const
         }
 
     case Type_Location:
-        return "";
+        if (location()->getParentBody() == NULL)
+        {
+            return location()->getName();
+        }
+        else
+        {
+            return Selection(location()->getParentBody()).getName() + '/' +
+                location()->getName();
+        }
 
     default:
         return "";

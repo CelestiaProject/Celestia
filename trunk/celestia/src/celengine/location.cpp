@@ -9,6 +9,7 @@
 
 #include <map>
 #include <celengine/location.h>
+#include <celengine/body.h>
 #include <celutil/util.h>
 
 using namespace std;
@@ -59,6 +60,7 @@ FeatureNameEntry FeatureNames[] =
 
 
 Location::Location() :
+    parent(NULL),
     position(0.0f, 0.0f, 0.0f),
     size(0.0f),
     importance(-1.0f),
@@ -166,3 +168,33 @@ uint32 Location::parseFeatureType(const string& s)
 }
 
 
+Body* Location::getParentBody() const
+{
+    return parent;
+}
+
+
+void Location::setParentBody(Body* _parent)
+{
+    parent = _parent;
+}
+
+
+Point3d Location::getPlanetocentricPosition(double t) const
+{
+    if (parent == NULL)
+        return Point3d(position.x, position.y, position.z);
+
+    Quatd q = parent->getEclipticalToGeographic(t);
+    return Point3d(position.x, position.y, position.z) * q.toMatrix3();
+}
+
+
+Point3d Location::getHeliocentricPosition(double t) const
+{
+    if (parent == NULL)
+        return Point3d(position.x, position.y, position.z);
+
+    return parent->getHeliocentricPosition(t) +
+        (getPlanetocentricPosition(t) - Point3d(0.0, 0.0, 0.0));
+}

@@ -490,12 +490,29 @@ void Body::addLocation(Location* loc)
     if (locations == NULL)
         locations = new vector<Location*>();
     locations->insert(locations->end(), loc);
+    loc->setParentBody(this);
 }
 
 
 vector<Location*>* Body::getLocations() const
 {
     return locations;
+}
+
+
+Location* Body::findLocation(const string& name) const
+{
+    if (locations == NULL)
+        return NULL;
+
+    for (vector<Location*>::const_iterator iter = locations->begin();
+         iter != locations->end(); iter++)
+    {
+        if (!compareIgnoringCase(name, (*iter)->getName()))
+            return *iter;
+    }
+
+    return NULL;
 }
 
 
