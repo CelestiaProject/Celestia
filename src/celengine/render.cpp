@@ -2609,7 +2609,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
     // Set up the fog parameters if the haze density is non-zero
     float hazeDensity = ri.hazeColor.alpha();
 
-    if (hazeDensity > 0.0f)
+    if (hazeDensity > 0.0f && !buggyVertexProgramEmulation)
     {
         glEnable(GL_FOG);
         float fogColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
