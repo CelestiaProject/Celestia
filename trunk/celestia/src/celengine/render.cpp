@@ -1087,7 +1087,7 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
 
 // Convert a position in the universal coordinate system to astrocentric
 // coordinates, taking into account possible orbital motion of the star.
-static Point3d astrocentricPosition(UniversalCoord& pos,
+static Point3d astrocentricPosition(const UniversalCoord& pos,
                                     const Star& star,
                                     double t)
 {
