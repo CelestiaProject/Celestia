@@ -203,7 +203,6 @@ class Renderer
     void renderPlanetarySystem(const Star& sun,
                                const PlanetarySystem& solSystem,
                                const Observer& observer,
-                               const Mat4d& frame,
                                double now,
                                bool showLabels = false);
 
