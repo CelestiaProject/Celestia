@@ -55,6 +55,7 @@ namespace vp
     extern unsigned int ringShadow;
     extern unsigned int cometTail;
     extern unsigned int nightLights;
+    extern unsigned int glossMap;
 };
 
 
