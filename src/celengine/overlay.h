@@ -23,14 +23,24 @@ class Overlay;
 class OverlayStreamBuf : public std::streambuf
 {
  public:
-    OverlayStreamBuf() : overlay(NULL) { setbuf(0, 0); };
+    OverlayStreamBuf();
 
     void setOverlay(Overlay*);
 
     int overflow(int c = EOF);
 
+    enum UTF8DecodeState
+    {
+        UTF8DecodeStart     = 0,
+        UTF8DecodeMultibyte = 1,
+    };
+
  private:
     Overlay* overlay;
+    
+    UTF8DecodeState decodeState;
+    wchar_t decodedChar;
+    unsigned int decodeShift;
 };
 
 
@@ -50,6 +60,7 @@ class Overlay : public std::ostream
 
     void beginText();
     void endText();
+    void print(wchar_t);
     void print(char);
     void print(char*);
     void printf(const char*, ...);

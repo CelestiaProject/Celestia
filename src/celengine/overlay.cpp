@@ -9,6 +9,7 @@
 
 #include <cstdarg>
 #include <cstdio>
+#include <celutil/utf8.h>
 #include "gl.h"
 #include "vecgl.h"
 #include "overlay.h"
@@ -93,6 +94,36 @@ void Overlay::endText()
 }
 
 
+void Overlay::print(wchar_t c)
+{
+    if (font != NULL)
+    {
+        if (!useTexture || fontChanged)
+        {
+            glEnable(GL_TEXTURE_2D);
+            font->bind();
+            useTexture = true;
+            fontChanged = false;
+        }
+
+        switch (c)
+        {
+        case '\n':
+            if (textBlock > 0)
+            {
+                glPopMatrix();
+                glTranslatef(0, -(1 + font->getHeight()), 0);
+                glPushMatrix();
+            }
+            break;
+        default:
+            font->render(c);
+            break;
+        }
+    }
+}
+
+
 void Overlay::print(char c)
 {
     if (font != NULL)
@@ -124,8 +155,22 @@ void Overlay::print(char c)
 
 void Overlay::print(char* s)
 {
+#if 0
     while (*s != '\0')
         print(*s++);
+#else
+    int length = strlen(s);
+    bool validChar = true;
+    
+    for (int i = 0; i < length && validChar; i)
+    {
+        wchar_t ch = 0;
+        validChar = UTF8Decode(s, i, length, ch);
+        i += UTF8EncodedSize(ch);
+
+        font->render(ch);
+    }
+#endif    
 }
 
 
@@ -169,14 +214,85 @@ void Overlay::rect(float x, float y, float w, float h, bool fill)
 //
 // OverlayStreamBuf implementation
 //
+OverlayStreamBuf::OverlayStreamBuf() :
+    overlay(NULL),
+    decodeState(UTF8DecodeStart)
+{
+    setbuf(0, 0);
+};
+
+
 void OverlayStreamBuf::setOverlay(Overlay* o)
 {
     overlay = o;
 }
 
+
 int OverlayStreamBuf::overflow(int c)
 {
     if (overlay != NULL)
-        overlay->print((char) c);
+    {
+        switch (decodeState)
+        {
+        case UTF8DecodeStart:
+            if (c < 0x80)
+            {
+                // Just a normal 7-bit character
+                overlay->print((char) c);
+            }
+            else
+            {
+                unsigned int count;
+
+                if ((c & 0xe0) == 0xc0)
+                    count = 2;
+                else if ((c & 0xf0) == 0xe0)
+                    count = 3;
+                else if ((c & 0xf8) == 0xf0)
+                    count = 4;
+                else if ((c & 0xfc) == 0xf8)
+                    count = 5;
+                else if ((c & 0xfe) == 0xfc)
+                    count = 6;
+                else
+                    count = 1; // Invalid byte
+
+                if (count > 1)
+                {
+                    unsigned int mask = (1 << (7 - count)) - 1;
+                    decodeShift = (count - 1) * 6;
+                    decodedChar = (c & mask) << decodeShift;
+                    decodeState = UTF8DecodeMultibyte;
+                }
+                else
+                {
+                    // If the character isn't valid multibyte sequence head,
+                    // silently skip it by leaving the decoder state alone.
+                }
+            }
+            break;
+
+        case UTF8DecodeMultibyte:
+            if ((c & 0xc0) == 0x80)
+            {
+                // We have a valid non-head byte in the sequence
+                decodeShift -= 6;
+                decodedChar |= (c & 0x3f) << decodeShift;
+                if (decodeShift == 0)
+                {
+                    overlay->print(decodedChar);
+                    decodeState = UTF8DecodeStart;
+                }
+            }
+            else
+            {
+                // Bad byte in UTF-8 encoded sequence; we'll silently ignore
+                // it and reset the state of the UTF-8 decoder.
+                decodeState = UTF8DecodeStart;
+            }
+            break;
+        }
+    }
+
     return c;
 }
