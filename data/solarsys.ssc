@@ -1008,7 +1008,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 "Proteus" "Sol/Neptune"
 {
 	Mesh "proteus.3ds"
-	Texture "asteroid.jpg"
+	Texture "proteus.*" # Phil Stooke
 	Radius    219 # maximum semi-axis
 	MeshCenter [ 4.146 -0.022 -5.153 ]
 
