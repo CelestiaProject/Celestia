@@ -55,5 +55,10 @@
 -(void)forward;
 - (NSURL *) currentURL;
 -(void)goToUrl:(NSString *)url;
+-(unsigned int) getLocationFilter;
+-(void) setLocationFilter: (unsigned int) filter;
+-(void)runScript:(NSString *)fileName;
+- (BOOL) testSetting: (int) tag;
+- (void) handleSetting: (int) tag;
 
 @end
