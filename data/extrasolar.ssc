@@ -423,10 +423,10 @@ Planets [
 }
 
 
-# HD 46735 system
+# HD 46375 system
 #
 # M sin i = 0.249 Jupiters
-"HD 46735"
+"HD 46375"
 {
 Planets [
 {
@@ -570,7 +570,7 @@ Planets [
 
 # HD 192263 system
 #
-# M sin i = 0.75 Jupiters
+# M sin i = 0.76 Jupiters
 "HD 192263"
 {
 Planets [
