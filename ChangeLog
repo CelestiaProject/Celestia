@@ -284,3 +284,10 @@ Code:
   of special case code for the different 'modes'
 * Stopped using the Intel JPEG library on Windows; instead, the Independent
   JPEG Group's library is now used on all platforms.
+
+
+1.1.4
+* Windows version: fixed bug that broke web info for stars
+* Windows version: improved web info feature so that it doesn't launch a new
+  instance of IE every time.
+
