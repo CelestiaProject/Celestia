@@ -14,6 +14,9 @@
 
 #include <float.h>
 
+#define CELESTIA_RESOURCES_FOLDER @"CelestiaResources"
+
+
 @implementation CelestiaController
 
 static CelestiaController* firstInstance;
@@ -73,19 +76,51 @@ NSString* fatalErrorMessage;
     NSBundle* mainBundle = [NSBundle mainBundle];
     // Change directory to resource dir so Celestia can find cfg files and textures
     NSFileManager *fileManager = [NSFileManager defaultManager]; 
-    NSString* path; 
-    if ( [ fileManager fileExistsAtPath: path = [[[ mainBundle bundlePath ]  stringByDeletingLastPathComponent] stringByAppendingPathComponent: @"CelestiaResources" ]] )
-        chdir([path cString]);
-    else if ( [ fileManager fileExistsAtPath: path = [ @"~/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath] ] )
-        chdir([path cString]);
-    else if ( [ fileManager fileExistsAtPath: path = @"/Library/Application Support/CelestiaResources" ] )
-        chdir([path cString]);
-    else if ( [ fileManager fileExistsAtPath: path = [[ mainBundle resourcePath ] stringByAppendingPathComponent: @"CelestiaResources" ]] )
-        chdir([path cString]);
-    else {
-        NSRunAlertPanel(@"Missing Resource Directory",@"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again.",nil,nil,nil);
-        chdir([[mainBundle resourcePath] cString]);
+    NSString* path;
+    BOOL isFolder = NO;
+
+    if ( [ fileManager fileExistsAtPath: path = [[[ mainBundle bundlePath ]  stringByDeletingLastPathComponent] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder ] && isFolder )
+        [fileManager changeCurrentDirectoryPath: path];
+    else
+    {
+        FSRef folder;
+        CFURLRef url;
+        static short domains[] = { kUserDomain, kLocalDomain, kNetworkDomain };
+        unsigned i;
+        path = nil;
+
+        for (i = 0; i < (sizeof domains / sizeof(short)); ++i)
+        {
+            if (FSFindFolder(domains[i], kApplicationSupportFolderType, FALSE, &folder) == noErr)
+            {
+                url = CFURLCreateFromFSRef(nil, &folder);
+                path = [(NSURL *)url path];
+
+                if (path)
+                {
+                    if ([fileManager fileExistsAtPath: path = [path stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER] isDirectory: &isFolder] && isFolder)
+                    {
+                        break;
+                    }
+                }
+
+                path = nil;
+                CFRelease(url);
+            }
         }
+
+        if (path == nil)
+        {
+            if (![fileManager fileExistsAtPath: path = [[ mainBundle resourcePath ] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder] || !isFolder)
+            {
+                NSRunAlertPanel(@"Missing Resource Directory",@"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again.",nil,nil,nil);
+                path = [mainBundle resourcePath];
+            }
+        }
+
+        if (path)
+            [fileManager changeCurrentDirectoryPath: path];
+    }
 }
 
 - (void)startInitialization
