@@ -176,6 +176,17 @@ bool LuaState::createThread()
 }
 
 
+string LuaState::getErrorMessage()
+{
+    if (lua_gettop(state) > 0)
+    {
+        if (lua_isstring(state, -1))
+            return lua_tostring(state, -1);
+    }
+    return "";
+}
+
+
 static int auxresume(lua_State *L, lua_State *co, int narg)
 {
     int status;
@@ -377,7 +388,7 @@ static CelestiaCore* getAppCore(lua_State* l)
 }
 
 
-int LuaState::loadScript(istream& in)
+int LuaState::loadScript(istream& in, const string& streamname)
 {
     char buf[4096];
     ReadChunkInfo info;
@@ -385,7 +396,7 @@ int LuaState::loadScript(istream& in)
     info.bufSize = sizeof(buf);
     info.in = &in;
 
-    int status = lua_load(state, readStreamChunk, &info, "stream");
+    int status = lua_load(state, readStreamChunk, &info, streamname.c_str());
     if (status != 0)
         cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
     
@@ -399,7 +410,7 @@ int LuaState::loadScript(const string& s)
 #else
     istrstream in(s.c_str());
 #endif
-    return loadScript(in);
+    return loadScript(in, "string");
 }
 
 int LuaState::resume()
@@ -462,7 +473,7 @@ static UniversalCoord* to_position(lua_State* l, int index)
     return static_cast<UniversalCoord*>(CheckUserData(l, index, _Position));
 }
 
-static UniversalCoord* position_this(lua_State* l)
+static UniversalCoord* this_position(lua_State* l)
 {
     UniversalCoord* uc = to_position(l, 1);
     if (uc == NULL)
@@ -486,7 +497,7 @@ static int position_distanceto(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected to position:distanceto()");
 
-    UniversalCoord* uc = position_this(l);
+    UniversalCoord* uc = this_position(l);
     UniversalCoord* uc2 = to_position(l, 2);
     if (uc2 == NULL)
     {
@@ -673,6 +684,18 @@ static Selection* to_object(lua_State* l, int index)
     return static_cast<Selection*>(CheckUserData(l, index, _Object));
 }
 
+static Selection* this_object(lua_State* l)
+{
+    Selection* sel = to_object(l, 1);
+    if (sel == NULL)
+    {
+        lua_pushstring(l, "Bad position object!");
+        lua_error(l);
+    }
+
+    return sel;
+}
+
 static int object_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Object]");
@@ -735,6 +758,7 @@ static int object_type(lua_State* l)
         }
         else if (sel->deepsky != NULL)
         {
+            // TODO: return cluster, galaxy, or nebula as appropriate
             tname = "deepsky";
         }
             
@@ -980,6 +1004,56 @@ static int object_getposition(lua_State* l)
 }
 
 
+static int object_getchildren(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for object:getchildren()");
+    Selection* sel = this_object(l);
+
+    CelestiaCore* appCore = getAppCore(l);
+    if (appCore == NULL)
+    {
+        lua_pushstring(l, "Celestia instance missing!");
+        lua_error(l);
+    }
+
+    Simulation* sim = appCore->getSimulation();
+
+    lua_newtable(l);
+    if (sel->star != NULL)
+    {
+        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star->getCatalogNumber());
+        if (iter != solarSystemCatalog->end())
+        {
+            SolarSystem* solarSys = iter->second;
+            for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
+            {
+                Body* body = solarSys->getPlanets()->getBody(i);
+                Selection satSel(body);
+                object_new(l, satSel);
+                lua_rawseti(l, -2, i + 1);
+            }
+        }
+    }
+    else if (sel->body != NULL)
+    {
+        const PlanetarySystem* satellites = sel->body->getSatellites();
+        if (satellites != NULL && satellites->getSystemSize() != 0)
+        {
+            for (int i = 0; i < satellites->getSystemSize(); i++)
+            {
+                Body* body = satellites->getBody(i);
+                Selection satSel(body);
+                object_new(l, satSel);
+                lua_rawseti(l, -2, i + 1);
+            }
+        }
+    }
+
+    return 1;
+}
+
+
 static void CreateObjectMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Object);
@@ -993,6 +1067,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "mark", object_mark);
     RegisterMethod(l, "unmark", object_unmark);
     RegisterMethod(l, "getposition", object_getposition);
+    RegisterMethod(l, "getchildren", object_getchildren);
 
     lua_pop(l, 1); // pop metatable off the stack
 }
@@ -1334,24 +1409,30 @@ static int celestia_new(lua_State* l, CelestiaCore* appCore)
 
 static CelestiaCore* to_celestia(lua_State* l, int index)
 {
-    CelestiaCore** c = reinterpret_cast<CelestiaCore**>(lua_touserdata(l, index));
-    if (c == NULL)
+    CelestiaCore** appCore = static_cast<CelestiaCore**>(CheckUserData(l, index, _Celestia));
+    if (appCore == NULL)
         return NULL;
     else
-        return *c;
+        return *appCore;
 }
 
-
-static int celestia_flash(lua_State* l)
+static CelestiaCore* this_celestia(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore == NULL)
     {
-        lua_pushstring(l, "One argument expected to function celestia:flash");
+        lua_pushstring(l, "Bad celestia object!");
         lua_error(l);
     }
 
-    CelestiaCore* appCore = to_celestia(l, 1);
+    return appCore;
+}
+
+static int celestia_flash(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to function celestia:flash");
+    CelestiaCore* appCore = this_celestia(l);
+
     const char* s = lua_tostring(l, 2);
 
     if (appCore != NULL && s != NULL)
@@ -1363,15 +1444,10 @@ static int celestia_flash(lua_State* l)
 
 static int celestia_show(lua_State* l)
 {
+    checkArgs(l, 1, 1000, "Bad method call!");
+    CelestiaCore* appCore = this_celestia(l);
+
     int argc = lua_gettop(l);
-    if (argc < 1)
-    {
-        lua_pushstring(l, "Bad method call: celestia:show");
-        lua_error(l);
-    }
-
-    CelestiaCore* appCore = to_celestia(l, 1);
-
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
@@ -1380,11 +1456,8 @@ static int celestia_show(lua_State* l)
             flags |= parseRenderFlag(s);
     }
 
-    if (appCore != NULL)
-    {
-        Renderer* r = appCore->getRenderer();
-        r->setRenderFlags(r->getRenderFlags() | flags);
-    }
+    Renderer* r = appCore->getRenderer();
+    r->setRenderFlags(r->getRenderFlags() | flags);
 
     return 0;
 }
@@ -1392,15 +1465,10 @@ static int celestia_show(lua_State* l)
 
 static int celestia_hide(lua_State* l)
 {
+    checkArgs(l, 1, 1000, "Bad method call!");
+    CelestiaCore* appCore = this_celestia(l);
+
     int argc = lua_gettop(l);
-    if (argc < 1)
-    {
-        lua_pushstring(l, "Bad method call: celestia:hide");
-        lua_error(l);
-    }
-
-    CelestiaCore* appCore = to_celestia(l, 1);
-
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
@@ -1409,11 +1477,8 @@ static int celestia_hide(lua_State* l)
             flags |= parseRenderFlag(s);
     }
 
-    if (appCore != NULL)
-    {
-        Renderer* r = appCore->getRenderer();
-        r->setRenderFlags(r->getRenderFlags() & ~flags);
-    }
+    Renderer* r = appCore->getRenderer();
+    r->setRenderFlags(r->getRenderFlags() & ~flags);
 
     return 0;
 }
@@ -1421,15 +1486,10 @@ static int celestia_hide(lua_State* l)
 
 static int celestia_showlabel(lua_State* l)
 {
+    checkArgs(l, 1, 1000, "Bad method call!");
+    CelestiaCore* appCore = this_celestia(l);
+
     int argc = lua_gettop(l);
-    if (argc < 1)
-    {
-        lua_pushstring(l, "Bad method call: celestia:showlabel");
-        lua_error(l);
-    }
-
-    CelestiaCore* appCore = to_celestia(l, 1);
-
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
@@ -1438,11 +1498,8 @@ static int celestia_showlabel(lua_State* l)
             flags |= parseLabelFlag(s);
     }
 
-    if (appCore != NULL)
-    {
-        Renderer* r = appCore->getRenderer();
-        r->setLabelMode(r->getLabelMode() | flags);
-    }
+    Renderer* r = appCore->getRenderer();
+    r->setLabelMode(r->getLabelMode() | flags);
 
     return 0;
 }
@@ -1450,15 +1507,10 @@ static int celestia_showlabel(lua_State* l)
 
 static int celestia_hidelabel(lua_State* l)
 {
+    checkArgs(l, 1, 1000, "Bad method call!");
+    CelestiaCore* appCore = this_celestia(l);
+
     int argc = lua_gettop(l);
-    if (argc < 1)
-    {
-        lua_pushstring(l, "Bad method call: celestia:hidelabel");
-        lua_error(l);
-    }
-
-    CelestiaCore* appCore = to_celestia(l, 1);
-
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
@@ -1467,11 +1519,8 @@ static int celestia_hidelabel(lua_State* l)
             flags |= parseLabelFlag(s);
     }
 
-    if (appCore != NULL)
-    {
-        Renderer* r = appCore->getRenderer();
-        r->setLabelMode(r->getLabelMode() & ~flags);
-    }
+    Renderer* r = appCore->getRenderer();
+    r->setLabelMode(r->getLabelMode() & ~flags);
 
     return 0;
 }
@@ -1479,28 +1528,14 @@ static int celestia_hidelabel(lua_State* l)
 
 static int celestia_getobserver(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc < 1 || argc > 2)
-    {
-        lua_pushstring(l, "Wrong number of arguments for function celestia:getobserver()");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 2, "Wrong number of arguments to celestia:getobserver()");
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-
-    if (appCore != NULL)
-    {
-        Observer* o = appCore->getSimulation()->getActiveObserver();
-        if (o == NULL)
-            lua_pushnil(l);
-        else
-            observer_new(l, o);
-    }
+    CelestiaCore* appCore = this_celestia(l);
+    Observer* o = appCore->getSimulation()->getActiveObserver();
+    if (o == NULL)
+        lua_pushnil(l);
     else
-    {
-        lua_pushstring(l, "Bad celestia object!\n");
-        lua_error(l);
-    }
+        observer_new(l, o);
 
     return 1;
 }
@@ -1508,25 +1543,10 @@ static int celestia_getobserver(lua_State* l)
 
 static int celestia_getselection(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected for function celestia:getselection()");
-        lua_error(l);
-    }
-
-    CelestiaCore* appCore = to_celestia(l, 1);
-
-    if (appCore != NULL)
-    {
-        Selection sel = appCore->getSimulation()->getSelection();
-        object_new(l, sel);
-    }
-    else
-    {
-        lua_pushstring(l, "Bad celestia object!\n");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to celestia:getselection()");
+    CelestiaCore* appCore = this_celestia(l);
+    Selection sel = appCore->getSimulation()->getSelection();
+    object_new(l, sel);
 
     return 1;
 }
@@ -1541,18 +1561,13 @@ static int celestia_find(lua_State* l)
         lua_error(l);
     }
 
-    CelestiaCore* appCore = to_celestia(l, 1);
+    CelestiaCore* appCore = this_celestia(l);
     if (appCore != NULL)
     {
         Simulation* sim = appCore->getSimulation();
         // Should use universe not simulation for finding objects
         Selection sel = sim->findObjectFromPath(lua_tostring(l, 2));
         object_new(l, sel);
-    }
-    else
-    {
-        lua_pushstring(l, "Bad celestia object!\n");
-        lua_error(l);
     }
 
     return 1;
@@ -1561,90 +1576,20 @@ static int celestia_find(lua_State* l)
 
 static int celestia_select(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function celestia:select");
-        lua_error(l);
-    }
+    checkArgs(l, 2, 2, "One argument expected for celestia:select()");
+    CelestiaCore* appCore = this_celestia(l);
 
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        Simulation* sim = appCore->getSimulation();
-        Selection* sel = to_object(l, 2);
+    Simulation* sim = appCore->getSimulation();
+    Selection* sel = to_object(l, 2);
 
-        // If the argument is an object, set the selection; if it's anything else
-        // clear the selection.
-        if (sel != NULL)
-            sim->setSelection(*sel);
-        else
-            sim->setSelection(Selection());
-    }
+    // If the argument is an object, set the selection; if it's anything else
+    // clear the selection.
+    if (sel != NULL)
+        sim->setSelection(*sel);
+    else
+        sim->setSelection(Selection());
 
     return 0;
-}
-
-static int celestia_getchildren(lua_State* l)
-{
-    int argc = lua_gettop(l);
-    if (argc != 2)
-    {
-        lua_pushstring(l, "One argument expected to function celestia:getchildren");
-        lua_error(l);
-    }
-
-    CelestiaCore* appCore = to_celestia(l, 1);
-    if (appCore != NULL)
-    {
-        Simulation* sim = appCore->getSimulation();
-        Selection* sel = to_object(l, 2);
-        lua_pop(l, 2);
-
-        if (sel != NULL)
-        {
-            lua_newtable(l);
-            if (sel->star != NULL)
-            {
-                SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-                SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star->getCatalogNumber());
-                if (iter != solarSystemCatalog->end())
-                {
-                    SolarSystem* solarSys = iter->second;
-                    for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
-                    {
-                        Body* body = solarSys->getPlanets()->getBody(i);
-                        Selection satSel(body);
-                        lua_pushnumber(l, i+1);
-                        object_new(l, satSel);
-                        lua_settable(l, 1);
-                    }
-                }
-            }
-            if (sel->body != NULL)
-            {
-                const PlanetarySystem* satellites = sel->body->getSatellites();
-                if (satellites != NULL && satellites->getSystemSize() != 0)
-                {
-                    for (int i = 0; i < satellites->getSystemSize(); i++)
-                    {
-                        Body* body = satellites->getBody(i);
-                        Selection satSel(body);
-                        lua_pushnumber(l, i+1);
-                        object_new(l, satSel);
-                        lua_settable(l, 1);
-                    }
-                }
-            }
-        }
-        else
-        {
-            lua_pushstring(l, "Bad celestia object!\n");
-            lua_error(l);
-        }
-    }
-
-    return 1;
 }
 
 
@@ -1831,36 +1776,13 @@ static int celestia_tojulianday(lua_State* l)
 
 static int celestia_unmarkall(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No arguments expected to function celestia:unmarkall");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to function celestia:unmarkall");
 
     CelestiaCore* appCore = to_celestia(l, 1);
     if (appCore != NULL)
     {
         Simulation* sim = appCore->getSimulation();
-        MarkerList* markers = sim->getUniverse()->getMarkers();
-
-        if (markers->size() > 0)
-        {
-            Selection* objects = new Selection[markers->size()];
-            int nMarkers = markers->size();
-
-            int i = 0;
-            for (vector<Marker>::const_iterator iter = markers->begin();
-                 iter != markers->end(); iter++)
-            {
-                objects[i++] = iter->getObject();
-            }
-
-            for (i = 0; i < nMarkers; i++)
-                sim->getUniverse()->unmarkObject(objects[i], 1);
-
-            delete[] objects;
-        }
+        sim->getUniverse()->unmarkAll();
     }
 
     return 0;
@@ -1869,12 +1791,7 @@ static int celestia_unmarkall(lua_State* l)
 
 static int celestia_getstarcount(lua_State* l)
 {
-    int argc = lua_gettop(l);
-    if (argc != 1)
-    {
-        lua_pushstring(l, "No argument expected to function celestia:getstarcount");
-        lua_error(l);
-    }
+    checkArgs(l, 1, 1, "No arguments expected to function celestia:getstarcount");
 
     CelestiaCore* appCore = to_celestia(l, 1);
     if (appCore != NULL)
@@ -2013,7 +1930,6 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "getselection", celestia_getselection);
     RegisterMethod(l, "find", celestia_find);
     RegisterMethod(l, "select", celestia_select);
-    RegisterMethod(l, "getchildren", celestia_getchildren);
     RegisterMethod(l, "mark", celestia_mark);
     RegisterMethod(l, "unmark", celestia_unmark);
     RegisterMethod(l, "unmarkall", celestia_unmarkall);

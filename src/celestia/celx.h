@@ -28,10 +28,11 @@ public:
 
     lua_State* getState() const;
 
-    int loadScript(std::istream&);
+    int loadScript(std::istream&, const std::string& streamname);
     int loadScript(const std::string&);
     bool init(CelestiaCore*);
 
+    std::string getErrorMessage();
 
     bool createThread();
     int resume();
