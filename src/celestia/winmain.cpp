@@ -1839,10 +1839,6 @@ static void syncMenusWithRendererState()
     int labelMode = appCore->getRenderer()->getLabelMode();
     float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
 
-    setMenuItemCheck(ID_RENDER_PIXEL_SHADERS,
-                     appCore->getRenderer()->getFragmentShaderEnabled());
-    setMenuItemCheck(ID_RENDER_VERTEX_SHADERS,
-                     appCore->getRenderer()->getVertexShaderEnabled());
     setMenuItemCheck(ID_VIEW_SHOW_FRAMES,
                      appCore->getFramesVisible());
     setMenuItemCheck(ID_VIEW_SYNC_TIME,
@@ -2815,12 +2811,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     syncMenusWithRendererState();
 
-    // Gray-out Render menu options that hardware does not support.
-    if(!appCore->getRenderer()->fragmentShaderSupported())
-        EnableMenuItem(menuBar, ID_RENDER_PIXEL_SHADERS, MF_BYCOMMAND | MF_GRAYED);
-    if(!appCore->getRenderer()->vertexShaderSupported())
-        EnableMenuItem(menuBar, ID_RENDER_VERTEX_SHADERS, MF_BYCOMMAND | MF_GRAYED);
-
     appCore->setContextMenuCallback(ContextMenu);
 
     bReady = true;
@@ -3353,15 +3343,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_RENDER_ANTIALIASING:
             appCore->charEntered('\030');
-            syncMenusWithRendererState();
-            break;
-
-        case ID_RENDER_PIXEL_SHADERS:
-            appCore->charEntered('\020');
-            syncMenusWithRendererState();
-            break;
-        case ID_RENDER_VERTEX_SHADERS:
-            appCore->charEntered('\026');
             syncMenusWithRendererState();
             break;
 
