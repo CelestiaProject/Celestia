@@ -296,6 +296,10 @@ SOURCE=.\res\config.bmp
 # End Source File
 # Begin Source File
 
+SOURCE=".\res\crosshair-opaque.cur"
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\crosshair.cur
 # End Source File
 # Begin Source File
