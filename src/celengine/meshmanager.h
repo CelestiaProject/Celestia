@@ -47,12 +47,16 @@ class MeshInfo : public ResourceInfo<Mesh>
 
 inline bool operator<(const MeshInfo& mi0, const MeshInfo& mi1)
 {
-    // TODO: To be completely correct, we need to compare the centers as
-    // well.
-    if (mi0.source == mi1.source)
-        return mi0.path < mi1.path;
-    else
+    if (mi0.source != mi1.source)
         return mi0.source < mi1.source;
+    else if (mi0.path != mi1.path)
+        return mi0.path < mi1.path;
+    else if (mi0.center.x != mi1.center.x)
+        return mi0.center.x < mi1.center.x;
+    else if (mi0.center.y != mi1.center.y)
+        return mi0.center.y < mi1.center.y;
+    else
+        return mi0.center.z < mi1.center.z;
 }
 
 typedef ResourceManager<MeshInfo> MeshManager;
