@@ -243,6 +243,20 @@ Mesh::clearGroups()
 }
 
 
+const string&
+Mesh::getName() const
+{
+    return name;
+}
+
+
+void
+Mesh::setName(const string& _name)
+{
+    name = _name;
+}
+
+
 void
 Mesh::remapIndices(const vector<uint32>& indexMap)
 {
