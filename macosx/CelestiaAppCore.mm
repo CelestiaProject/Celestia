@@ -32,8 +32,6 @@ runScript(CommandSequence *);
 CommandParser
 CommandSequence
 
-do addFavorites
-
 */
 
 CelestiaAppCore *_sharedCelestiaAppCore;
@@ -75,17 +73,12 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     self = [super init];
     appCore = new CelestiaCore();
     contextMenuCallbackInvocation = NULL;
-    _favorites = nil;
     _destinations = nil;
     return self;
 }
 
 - (void)dealloc
 {
-    if (_favorites != nil) {
-        [_favorites release];
-        _favorites = nil;
-    }
     if (_destinations != nil) {
         [_destinations release];
         _destinations = nil;
@@ -193,18 +186,6 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     appCore->showText([text stdString]);
 }
 
--(void)readFavoritesFile
-{
-//    Will do this with MacOS X functionality soon
-    appCore->readFavoritesFile();
-}
-
--(void)writeFavoritesFile
-{
-//    Will do this with MacOS X functionality soon
-    appCore->writeFavoritesFile();
-}
-
 -(void)activateFavorite:(id)fav
 {
     //NSLog(@"[CelestiaAppCore activateFavorite:%@]",fav);
@@ -215,12 +196,7 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 
 -(CelestiaFavorites *)favorites
 {
-    if (_favorites == nil || [_favorites favorites] != appCore->getFavorites()) {
-        if (_favorites != nil)
-            [_favorites release];
-        _favorites = [[CelestiaFavorites alloc] initWithFavorites:appCore->getFavorites()];
-    }
-    return _favorites;
+    return [CelestiaFavorites sharedFavorites];
 }
 
 -(CelestiaDestinations *)destinations
