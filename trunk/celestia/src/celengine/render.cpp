@@ -139,6 +139,7 @@ Renderer::Renderer() :
     textureResolution(medres),
     minOrbitSize(MinOrbitSizeForLabel),
     minFeatureSize(MinFeatureSizeForLabel),
+    locationFilter(~0),
     distanceLimit(1.0e6f)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
@@ -919,6 +920,8 @@ void Renderer::render(const Observer& observer,
 
     // Get the displayed surface texture set to use from the observer
     displayedSurface = observer.getDisplayedSurface();
+
+    locationFilter = observer.getLocationFilter();
 
     // Set up the camera
     Point3f observerPos = (Point3f) observer.getPosition();
@@ -3250,45 +3253,49 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 
     Ellipsoidf ellipsoid(position, Vec3f(scale, scale, scale));
 
+    Point3f origin(0.0f, 0.0f, 0.0f);
     float iScale = 1.0f / scale;
     Mat3f mat = orientation.toMatrix3();
 
     for (vector<Location*>::const_iterator iter = locations.begin();
          iter != locations.end(); iter++)
     {
-        Point3f off = (*iter)->getPosition();
-        Point3f off_t = off * mat;
-        Point3f wpos(position.x + off_t.x * 1.01f,
-                     position.y + off_t.y * 1.01f,
-                     position.z + off_t.z * 1.01f);
-
-        float effSize = (*iter)->getImportance();
-        if (effSize < 0.0f)
-            effSize = (*iter)->getSize();
-
-        if (effSize / (wpos.distanceFromOrigin() * pixelSize) < minFeatureSize)
-            continue;
-
-        float t = 0.0f;
-        bool hit = testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f),
-                                          wpos - Point3f(0.0f, 0.0f, 0.0f)),
-                                    ellipsoid, t);
-
-        if (!hit || t >= 1.0f)
+        if ((*iter)->getFeatureType() & locationFilter)
         {
-            if (gluProject(off.x * iScale, off.y * iScale, off.z * iScale,
-                           modelview,
-                           projection,
-                           (const GLint*) view,
-                           &winX, &winY, &winZ) != GL_FALSE)
+            Point3f off = (*iter)->getPosition();
+            Point3f off_t = off * mat;
+            Point3f wpos(position.x + off_t.x * 1.01f,
+                         position.y + off_t.y * 1.01f,
+                         position.z + off_t.z * 1.01f);
+
+            float effSize = (*iter)->getImportance();
+            if (effSize < 0.0f)
+                effSize = (*iter)->getSize();
+            float pixSize = effSize / (wpos.distanceFromOrigin() * pixelSize);
+            
+            if (pixSize > minFeatureSize)
             {
-                glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-                glPushMatrix();
-                glTranslatef((int) winX + PixelOffset,
-                             (int) winY + PixelOffset,
-                             0.0f);
-                font->render((*iter)->getName());
-                glPopMatrix();
+
+                float t = 0.0f;
+                bool hit = testIntersection(Ray3f(origin, wpos - origin),
+                                            ellipsoid, t);
+                if (!hit || t >= 1.0f)
+                {
+                    if (gluProject(off.x * iScale, off.y * iScale, off.z * iScale,
+                                   modelview,
+                                   projection,
+                                   (const GLint*) view,
+                                   &winX, &winY, &winZ) != GL_FALSE)
+                    {
+                        glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+                        glPushMatrix();
+                        glTranslatef((int) winX + PixelOffset,
+                                     (int) winY + PixelOffset,
+                                     0.0f);
+                        font->render((*iter)->getName());
+                        glPopMatrix();
+                    }
+                }
             }
         }
     }
