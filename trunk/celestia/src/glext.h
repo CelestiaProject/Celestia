@@ -55,6 +55,13 @@ typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC) (GLenum target, GL
 typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *data);
 typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC) (GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const GLvoid *data);
 typedef void (APIENTRY * PFNGLGETCOMPRESSEDTEXIMAGEARBPROC) (GLenum target, GLint level, void *img);
+
+extern PFNGLCOMPRESSEDTEXIMAGE3DARBPROC glCompressedTexImage3DARB;
+extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB;
+extern PFNGLCOMPRESSEDTEXIMAGE1DARBPROC glCompressedTexImage1DARB;
+extern PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC glCompressedTexSubImage3DARB;
+extern PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC glCompressedTexSubImage2DARB;
+extern PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC glCompressedTexSubImage1DARB;
 #endif
 
 /* GL_EXT_texture_compression_s3tc */
@@ -106,6 +113,13 @@ typedef void (APIENTRY * PFNGLMULTITEXCOORD4SARBPROC) (GLenum target, GLshort s,
 typedef void (APIENTRY * PFNGLMULTITEXCOORD4SVARBPROC) (GLenum target, const GLshort *v);
 typedef void (APIENTRY * PFNGLACTIVETEXTUREARBPROC) (GLenum target);
 typedef void (APIENTRY * PFNGLCLIENTACTIVETEXTUREARBPROC) (GLenum target);
+
+extern PFNGLMULTITEXCOORD2IARBPROC glMultiTexCoord2iARB;
+extern PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
+extern PFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB;
+extern PFNGLMULTITEXCOORD3FVARBPROC glMultiTexCoord3fvARB;
+extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
+extern PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
 #endif
 
 /* EXT_texture_cube_map defines from <GL/gl.h> */
@@ -245,46 +259,6 @@ typedef void (APIENTRY * PFNGLGETCOMBINEROUTPUTPARAMETERFVNVPROC) (GLenum stage,
 typedef void (APIENTRY * PFNGLGETCOMBINEROUTPUTPARAMETERIVNVPROC) (GLenum stage, GLenum portion, GLenum pname, GLint *params);
 typedef void (APIENTRY * PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC) (GLenum variable, GLenum pname, GLfloat *params);
 typedef void (APIENTRY * PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC) (GLenum variable, GLenum pname, GLint *params);
-#endif
-
-/* EXT_paletted_texture defines and prototypes from <GL/gl.h> */
-#ifndef GL_EXT_paletted_texture
-#define GL_COLOR_INDEX1_EXT               0x80E2
-#define GL_COLOR_INDEX2_EXT               0x80E3
-#define GL_COLOR_INDEX4_EXT               0x80E4
-#define GL_COLOR_INDEX8_EXT               0x80E5
-#define GL_COLOR_INDEX12_EXT              0x80E6
-#define GL_COLOR_INDEX16_EXT              0x80E7
-typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid * table);
-PFNGLCOLORTABLEEXTPROC glColorTableEXT;
-#endif
-
-/* WGL_EXT_swap_control defines and prototypes from <GL/gl.h> */
-#ifndef WGL_EXT_swap_control
-typedef int (APIENTRY * PFNWGLSWAPINTERVALEXTPROC) (int);
-typedef int (APIENTRY * PFNWGLGETSWAPINTERVALEXTPROC) (void);
-#endif
-
-/* OpenGL 1.2 defines and prototypes from <GL/gl.h> */
-#ifndef GL_CLAMP_TO_EDGE
-#define GL_CLAMP_TO_EDGE                    0x812F
-#endif
-
-/* ARB_texture_compression command function pointers */
-extern PFNGLCOMPRESSEDTEXIMAGE3DARBPROC glCompressedTexImage3DARB;
-extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB;
-extern PFNGLCOMPRESSEDTEXIMAGE1DARBPROC glCompressedTexImage1DARB;
-extern PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC glCompressedTexSubImage3DARB;
-extern PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC glCompressedTexSubImage2DARB;
-extern PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC glCompressedTexSubImage1DARB;
-
-/* ARB_multitexture command function pointers */
-extern PFNGLMULTITEXCOORD2IARBPROC glMultiTexCoord2iARB;
-extern PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
-extern PFNGLMULTITEXCOORD3FARBPROC glMultiTexCoord3fARB;
-extern PFNGLMULTITEXCOORD3FVARBPROC glMultiTexCoord3fvARB;
-extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
-extern PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
 
 /* NV_register_combiners command function pointers */
 extern PFNGLCOMBINERPARAMETERFVNVPROC glCombinerParameterfvNV;
@@ -301,8 +275,34 @@ extern PFNGLGETCOMBINEROUTPUTPARAMETERIVNVPROC glGetCombinerOutputParameterivNV;
 extern PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC glGetFinalCombinerInputParameterfvNV;
 extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC glGetFinalCombinerInputParameterivNV;
 
+#endif
+
+/* EXT_paletted_texture defines and prototypes from <GL/gl.h> */
+#ifndef GL_EXT_paletted_texture
+#define GL_COLOR_INDEX1_EXT               0x80E2
+#define GL_COLOR_INDEX2_EXT               0x80E3
+#define GL_COLOR_INDEX4_EXT               0x80E4
+#define GL_COLOR_INDEX8_EXT               0x80E5
+#define GL_COLOR_INDEX12_EXT              0x80E6
+#define GL_COLOR_INDEX16_EXT              0x80E7
+typedef void (APIENTRY * PFNGLCOLORTABLEEXTPROC) (GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid * table);
+PFNGLCOLORTABLEEXTPROC glColorTableEXT;
+
 /* EXT_paletted_texture command function pointers */
 extern PFNGLCOLORTABLEEXTPROC glColorTableEXT;
+
+#endif
+
+/* WGL_EXT_swap_control defines and prototypes from <GL/gl.h> */
+#ifndef WGL_EXT_swap_control
+typedef int (APIENTRY * PFNWGLSWAPINTERVALEXTPROC) (int);
+typedef int (APIENTRY * PFNWGLGETSWAPINTERVALEXTPROC) (void);
+#endif
+
+/* OpenGL 1.2 defines and prototypes from <GL/gl.h> */
+#ifndef GL_CLAMP_TO_EDGE
+#define GL_CLAMP_TO_EDGE                    0x812F
+#endif
 
 #ifdef _WIN32
 
