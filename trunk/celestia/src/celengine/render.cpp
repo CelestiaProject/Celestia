@@ -864,7 +864,7 @@ void Renderer::render(const Observer& observer,
                 float maxSpan = (float) sqrt(square((float) windowWidth) +
                                              square((float) windowHeight));
 
-                nearZ = -nearZ / (float) cos(degToRad(fov / 2)) *
+                nearZ = -nearZ * (float) cos(degToRad(fov / 2)) *
                     ((float) windowHeight / maxSpan);
                 
                 if (nearZ > -MinNearPlaneDistance)
@@ -880,18 +880,27 @@ void Renderer::render(const Observer& observer,
                 }
                 else
                 {
-                    // Make the far plane as close as possible; the
-                    // calculation used is correct only for spherical bodies,
-                    // though it should work well enough for ellipsoids.
+                    // Make the far plane as close as possible
                     float d = center.distanceFromOrigin();
 
-                    // TODO: The factor of 0.5 should not be necessary, but
-                    // we get incorrect clipping without it.  Figure out what's
-                    // going on here so that we can use a smaller frustum and
-                    // cull as much as possible.
-                    iter->farZ = -(d - square(radius) / d * 0.5f);
-                    if (iter->farZ < -d)
-                        iter->farZ = -d;
+                    // Account for the oblateness
+                    float eradius = radius;
+                    if (iter->body != NULL)
+                        eradius *= 1.0f - iter->body->getOblateness();
+
+                    if (d > eradius)
+                    {
+                        // Multiply by a factor to eliminate overaggressive
+                        // clipping due to limited floating point precision
+                        iter->farZ = (float) (sqrt(square(d) - 
+                                                   square(eradius)) * -1.1);
+                    }
+                    else
+                    {
+                        // We're inside the bounding sphere (and, if the planet
+                        // is spherical, inside the planet.)
+                        iter->farZ = iter->nearZ * 2.0f;
+                    }
                 }
 
                 *notCulled = *iter;
