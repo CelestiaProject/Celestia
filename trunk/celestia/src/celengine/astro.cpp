@@ -116,6 +116,11 @@ float astro::AUtoKilometers(float au)
     return au * (float) KM_PER_AU;
 }
 
+double astro::AUtoKilometers(double au)
+{
+    return au * (double) KM_PER_AU;
+}
+
 float astro::kilometersToAU(float km)
 {
     return km / (float) KM_PER_AU;
@@ -185,7 +190,7 @@ double astro::kilometersToMicroLightYears(double km)
 
 float astro::microLightYearsToAU(float ly)
 {
-    return ly * AU_PER_LY * 1e-6f;
+    return ly * (float) AU_PER_LY * 1e-6f;
 }
 
 double astro::microLightYearsToAU(double ly)
