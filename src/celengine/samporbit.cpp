@@ -108,9 +108,9 @@ static Point3d cubicInterpolate(Point3d& p0, Vec3d& v0,
                                 Point3d& p1, Vec3d& v1,
                                 double t)
 {
-    return p0 + ((2.0 * (p1 - p0) + (v1 - v0)) * (t * t * t)) +
-                (((p0 - p1) - v1) * (t * t)) +
-                (v0 * t);
+    return p0 + (((2.0 * (p0 - p1) + v1 + v0) * (t * t * t)) +
+                 ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (t * t)) +
+                 (v0 * t));
 }
 
 
@@ -173,8 +173,13 @@ Point3d SampledOrbit::computePosition(double jd) const
                 double t = (jd - s1.t) / (s2.t - s1.t);
                 Point3d p0(s1.x, s1.y, s1.z);
                 Point3d p1(s2.x, s2.y, s2.z);
-                Vec3d v0(s2.x - s0.x, s2.y - s0.y, s2.z - s0.z);
-                Vec3d v1(s3.x - s1.x, s3.y - s1.y, s3.z - s1.z);
+
+                Vec3d v0((double) s2.x - (double) s0.x,
+                         (double) s2.y - (double) s0.y,
+                         (double) s2.z - (double) s0.z);
+                Vec3d v1((double) s3.x - (double) s1.x,
+                         (double) s3.y - (double) s1.y,
+                         (double) s3.z - (double) s1.z);
                 v0 *= 1.0 / (s2.t - s0.t);
                 v1 *= 1.0 / (s3.t - s1.t);
 
