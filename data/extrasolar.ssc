@@ -2141,7 +2141,7 @@
 
 # HD 104985
 # First planet discovered by Japanese team of Sato, Ando, et al
-"b" "HD 41004"
+"b" "HD 104985"
 {
 	Texture "jupiterlike.jpg"
 	Mass 2000
