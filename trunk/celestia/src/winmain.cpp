@@ -644,6 +644,9 @@ void handleKey(WPARAM key, bool down)
     case VK_NUMPAD4:
         k = CelestiaCore::Key_NumPad4;
         break;
+    case VK_NUMPAD5:
+        k = CelestiaCore::Key_NumPad5;
+        break;
     case VK_NUMPAD6:
         k = CelestiaCore::Key_NumPad6;
         break;
