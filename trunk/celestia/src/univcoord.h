@@ -39,7 +39,10 @@ class UniversalCoord
     friend UniversalCoord operator-(const UniversalCoord&, const Vec3d&);
     friend UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
 
+    friend UniversalCoord operator+(const UniversalCoord&, const UniversalCoord&);
+
     double distanceTo(const UniversalCoord&);
+    UniversalCoord difference(const UniversalCoord&) const;
 
     BigFix x, y, z;
 };
@@ -53,6 +56,10 @@ UniversalCoord operator+(const UniversalCoord&, const Vec3d&);
 UniversalCoord operator+(const UniversalCoord&, const Vec3f&);
 UniversalCoord operator-(const UniversalCoord&, const Vec3d&);
 UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
+
+// Not really proper--we can't add points.  But the only way around it is
+// to create a separate version of UniversalCoord that acts like a vector.
+UniversalCoord operator+(const UniversalCoord&, const UniversalCoord&);
 
 #endif // _UNIVCOORD_H_
 
