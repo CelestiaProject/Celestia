@@ -21,7 +21,6 @@
 	RotationPeriod 1407.509405
 	Obliquity         7.01
 	EquatorAscendingNode 48.42
-	
 	RotationOffset 291.20
 
 	Albedo            0.06
@@ -102,8 +101,9 @@
 	}
 
 	RotationPeriod   23.9344694 # 23.93419
-	RotationOffset   280.5    # offset at default epoch J2000
 	Obliquity        -23.45
+	RotationOffset   280.5    # offset at default epoch J2000
+
 	Albedo            0.30
 }
 
@@ -125,7 +125,9 @@
 		Inclination      5.15
 	}
 
-	RotationOffset 		43
+	Obliquity		23.45 # mean axis
+	EquatorAscendingNode	 0.0  # mean axis
+	RotationOffset 		38
 
 	Albedo           0.12
 }
@@ -263,9 +265,8 @@
 	MeanAnomaly    191.771   # J2000
 	}
 
-	Obliquity              1.075
-	EquatorAscendingNode 128.694
-	RotationOffset        45.575
+	Obliquity		  0.0
+	RotationOffset	      	174.2
 
 	Albedo         0.07
 }
@@ -287,9 +288,9 @@
 	MeanAnomaly     344.128
 	}
 
-	Obliquity              1.791 
-	EquatorAscendingNode  25.229
-	RotationOffset       192.341 
+	Obliquity		  0.9
+	EquatorAscendingNode	183.0
+	RotationOffset		 34.7
 
 	Albedo         0.08
 }
@@ -345,9 +346,8 @@
 	MeanAnomaly     319.3794140
 	}
 
-        Obliquity            0.4
-        EquatorAscendingNode 224.41
-        RotationOffset       209.583
+	Obliquity		  0.0
+	RotationOffset		 72.1
 
 	Albedo          0.06
 }
@@ -371,7 +371,8 @@
 	MeanLongitude    106.724
 	}
 
-	RotationOffset 219
+	Obliquity		  0.0
+	RotationOffset		220.8
 
 	Albedo         0.61
 }
@@ -394,7 +395,8 @@
 	MeanLongitude    176.377
 	}
 
-	RotationOffset 53
+	Obliquity		  0.0
+	RotationOffset 		 56.2
 
 	Albedo         0.64
 }
@@ -417,7 +419,9 @@
 	MeanLongitude    121.206
 	}
 
-	RotationOffset 60
+	Obliquity		  0.1
+	EquatorAscendingNode	161.6
+	RotationOffset		262.1
 
 	Albedo         0.42
 }
@@ -440,7 +444,9 @@
 	MeanLongitude     85.091
 	}
 
-	RotationOffset 282
+	Obliquity		  0.4
+	EquatorAscendingNode	160.6
+	RotationOffset		120.1
 
 	Albedo         0.20
 }
@@ -505,7 +511,9 @@
 	MeanAnomaly    23
 	}
 
-	RotationOFfset 330
+	Obliquity		  1.5 #J2000.0
+	EquatorAscendingNode	137.8 #J2000.0
+	RotationOffset		190.7 #J2000.0
 
 	Albedo         0.5
 }
@@ -525,7 +533,8 @@
 	MeanAnomaly    215
 	}
 
-	RotationOffset 320
+	Obliquity		  0.0
+	RotationOffset		322.9
 
 	Albedo         0.99
 }
@@ -545,7 +554,8 @@
 	MeanAnomaly    98
 	}
 
-	RotationOffset 325
+	Obliquity		  0.0
+	RotationOffset		330.6
 
 	Albedo         0.9
 }
@@ -565,7 +575,8 @@
 	MeanAnomaly    310
 	}
 
-	RotationOffset 315
+	Obliquity		  0.0
+	RotationOffset		317.1
 
 	Albedo         0.7
 }
@@ -585,7 +596,8 @@
 	MeanAnomaly    190
 	}
 
-	RotationOffset 190
+	Obliquity		  0.0
+	RotationOffset 		195.0
 
 	Albedo         0.7
 }
@@ -615,7 +627,9 @@
 	MeanAnomaly    120
 	}
 
-	RotationOffset 145
+	Obliquity		  0.6
+	EquatorAscendingNode	186.6
+	RotationOffset		318.9
 
 	Albedo         0.21
 }
@@ -639,9 +653,9 @@
 	# The rotation of Hyperion is chaotic; we don't attempt to model
 	# the rotation exactly, but instead use non-zero precession rate to
 	# make the rotation appear somewhat irregular.
-	Obliquity       25
-	RotationPeriod  336 # 13 days
-	PrecessionRate  15.65 # 23 days
+	Obliquity       	 25
+	RotationPeriod  	336    # 13 days
+	PrecessionRate  	 15.65 # 23 days
 
 	Albedo         0.3
 }
@@ -661,7 +675,9 @@
 	MeanAnomaly    245
 	}
 
-	RotationOffset 230
+	Obliquity		 15.5
+	EquatorAscendingNode	213.7
+	RotationOffset		 14.9
 
 	Albedo         0.2
 }
@@ -685,7 +701,10 @@
 	AscendingNode  233.037
 	}
 
-	RotationPeriod 9.6
+	RotationPeriod		  9.282  # 9.6
+	Obliquity		 17.4
+	EquatorAscendingNode	259.9
+	RotationOffset		320.3
 
 	Albedo         0.05
 }
@@ -715,8 +734,7 @@
 	RotationPeriod   17.24 # System III - magnetic field
 	Obliquity        97.81
 	EquatorAscendingNode 167.76
-
-	RotationOffset -28.82
+	RotationOffset 331.18
 
 	Albedo            0.66
 
@@ -742,8 +760,11 @@
 	MeanAnomaly    120
 	}
 
-	RotationPeriod 33.92350159 # enforce sync rotation
-	RotationOffset 140
+	RotationPeriod		 33.92350159 # enforce sync rotation
+	Obliquity		  0.0
+	RotationOffset 		144.3
+
+	Albedo         0.32
 }
 
 "Ariel" "Sol/Uranus"
@@ -761,8 +782,11 @@
 	MeanAnomaly    56
 	}
 
-	RotationPeriod 60.48909292 # enforce sync rotation
-	RotationOffset 20
+	RotationPeriod		 60.48909292 # enforce sync rotation
+	Obliquity		  0.0
+	RotationOffset 		 18.8
+
+	Albedo         0.39
 }
 
 "Umbriel" "Sol/Uranus"
@@ -780,8 +804,11 @@
 	MeanAnomaly    280
 	}
 
-	RotationPeriod 99.46022991 # enforce sync rotation
-	RotationOffset 70
+	RotationPeriod		 99.46022991 # enforce sync rotation
+	Obliquity		  0.0
+	RotationOffset 		 66.9
+
+	Albedo         0.21
 }
 
 "Titania" "Sol/Uranus"
@@ -799,8 +826,11 @@
 	MeanAnomaly    30
 	}
 
-	RotationPeriod 208.94077099 # enforce sync rotation
-	RotationOffset 100
+	RotationPeriod		208.94077099 # enforce sync rotation
+	Obliquity		  0.0
+	RotationOffset 		 97.2
+
+	Albedo         0.27
 }
 
 "Oberon" "Sol/Uranus"
@@ -818,8 +848,11 @@
 	MeanAnomaly    150
 	}
 
-	RotationPeriod 323.117567539 # enforce sync rotation
-	RotationOffset 170
+	RotationPeriod		323.117567539 # enforce sync rotation
+	Obliquity		  0.0
+	RotationOffset 		168.2
+
+	Albedo         0.23
 }
 
 
@@ -870,9 +903,9 @@
 	MeanAnomaly	206.367   #revised value - at epoch 
 	}
 
-	Obliquity              1.1
-	EquatorAscendingNode 327.378
-	RotationOffset       281.590
+	Obliquity              	  0.6
+	EquatorAscendingNode 	331.0
+	RotationOffset       	277.8
 
 	Albedo         0.2
 }
@@ -902,11 +935,11 @@
 	MeanAnomaly	315.726316 #revised value - at epoch
 	}
 
-	Obliquity	         23.174
-	EquatorAscendingNode	327.899
-	RotationOffset	        -53.161
-
-	RotationPeriod	-141.0444984 #correct retrograde rotation
+	RotationPeriod	       -141.0444984 # retrograde rotation
+	Obliquity		 23.2 # at epoch
+	EquatorAscendingNode	327.9 # at epoch
+	RotationEpoch	    2447763.5 # 1989 Aug 25.00
+	RotationOffset		108.5 # at epoch
 
 	Albedo         0.7
 }
@@ -950,10 +983,10 @@
         MeanLongitude    238.92881
 	}
 
-	RotationPeriod  153.293904
-	Obliquity        115.604
-	EquatorAscendingNode 228.335
-	RotationOffset   -39.25
+	RotationPeriod		153.293904
+	Obliquity		115.60
+	EquatorAscendingNode	228.34
+	RotationOffset		320.75
 	
 	Albedo            0.3
 }
@@ -967,16 +1000,19 @@
 
 	EllipticalOrbit
 	{
-	Period         6.387246
-	SemiMajorAxis  19636
-	Eccentricity   0.0076
-	Inclination    0.0
-	# AscendingNode  103.957
-	# ArgOfPericenter 34.3419
-	MeanAnomaly     -39.254
+	Period		6.387246
+	SemiMajorAxis	19636
+	Eccentricity	0.0002
+	Inclination	0.0048
+	AscendingNode	93.5582
+	ArgOfPericenter	133.7606
+	MeanAnomaly	93.4395
 	}
 
-	RotationOffset 140.75
+	RotationPeriod		153.293904
+	Obliquity		  1.0
+	EquatorAscendingNode	287.6
+	RotationOffset		213.3
 	
 	Albedo         0.3
 }
