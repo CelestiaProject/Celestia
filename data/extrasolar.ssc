@@ -518,10 +518,10 @@ AltSurface "limit of knowledge" "OGLE-TR-10/b"
 
 	EllipticalOrbit {
 		Period          0.0091
-		SemiMajorAxis   0.0462
-		Eccentricity    0.018
+		SemiMajorAxis   0.05
+		Eccentricity    0.01
 		ArgOfPericenter 353
-		MeanAnomaly     26
+		MeanAnomaly     110
 	}
 
 	# likely to be in captured synchronous rotation
@@ -964,6 +964,7 @@ AltSurface "limit of knowledge" "HD 217107/b"
 {
 	Texture "browndwarf.*"
 	Emissive true
+	Color [1 0.5 0.5]
 
 	Mass       4370     # M.sin(i) = 13.75 jupiters
 	Radius     70000
@@ -1149,6 +1150,7 @@ AltSurface "limit of knowledge" "HD 38529/b"
 {
 	Texture "browndwarf.*"
 	Emissive true
+	Color [1 0.5 0.5]
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
 	Mass       4040     # M.sin(i) = 12.7 jupiters
@@ -1510,15 +1512,17 @@ AltSurface "limit of knowledge" "HD 74156/c"
 {
 	Texture "gasgiant.*"
 
-	Mass       70     # M.sin(i) = 0.22 jupiters
+	Mass       60     # M.sin(i) = 0.19 jupiters
 	Radius     84000
 
 	InfoURL "http://www.obspm.fr/encycl/HD117618.html"
 
 	EllipticalOrbit {
-		Period          0.1424
+		Period          0.1429
 		SemiMajorAxis   0.28
-		Eccentricity    0.25
+		Eccentricity    0.39
+		ArgOfPericenter 310
+		MeanAnomaly     333
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1588,6 +1592,7 @@ AltSurface "limit of knowledge" "HD 168443/b"
 {
 	Texture "browndwarf.*"
 	Emissive true
+	Color [1 0.5 0.5]
 
 	Mass       5440     # M.sin(i) = 17.1 jupiters
 	Radius     70000
@@ -1723,6 +1728,7 @@ AltSurface "limit of knowledge" "HD 16141/b"
 {
 	Texture "browndwarf.*"
 	Emissive true
+	Color [1 0.5 0.5]
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
 	Mass       3500     # M.sin(i) = 11.02 jupiters
@@ -2190,6 +2196,61 @@ AltSurface "limit of knowledge" "HD 169830/c"
 }
 
 AltSurface "limit of knowledge" "HD 8574/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 202206"
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+
+	Mass       5530     # M.sin(i) = 17.4 jupiters
+	Radius     70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD202206.html"
+
+	EllipticalOrbit {
+		Period          0.7005
+		SemiMajorAxis   0.83
+		Eccentricity    0.435
+		ArgOfPericenter 206
+		MeanAnomaly     88
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 202206/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 202206"
+{
+	Texture "jupiterlike.*"
+
+	Mass       760     # M.sin(i) = 2.4 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://www.obspm.fr/encycl/HD202206.html"
+
+	EllipticalOrbit {
+		Period          3.7875
+		SemiMajorAxis   2.55
+		Eccentricity    0.267
+		ArgOfPericenter 124
+		MeanAnomaly     177
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 202206/c"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -3478,6 +3539,7 @@ AltSurface "limit of knowledge" "HD 2039/b"
 {
 	Texture "browndwarf.*"
 	Emissive true
+	Color [1 0.5 0.5]
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
 	Mass       3780     # M.sin(i) = 11.9 jupiters
