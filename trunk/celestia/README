@@ -21,20 +21,7 @@ USA.
 
 --
 
-Installing:
-
-WINDOWS:
-Unzip the files into a temporary directory, such as c:\temp\  Then, select
-Run from the Start menu and enter:
-
-TEMPDIR\setup.exe
-
-Where TEMPDIR is the name of your temporary directory (e.g. c:\temp\setup.exe)
-This will launch the setup program that will install Celestia on your
-computer.  After setup is complete, launch Celestia by selecting it from
-the start menu.
-
-UNIX:
+Installing in UNIX:
 
 Type ./configure --help for a list of options.
 
@@ -313,11 +300,11 @@ is specified in earth years, and the semi-major axis in AU; for
 satellites, days and kilometers are used instead.
 
 All solar system textures should be placed in the textures
-subdirectory.  Currently, JPEG and BMP are the only formats supported.
-Models belong in the models directory.  Celestia can read 3DS models,
-as well as a custom format (.cms files, used right now just for rough
-fractal displacement map likenesses of asteroids and small moons.)  3DS
-meshes are normalized to fit within a unit cube--the Radius field
+subdirectory.  Currently, JPEG, PNG, BMP, and DDS are the only formats 
+supported.  Models belong in the models directory.  Celestia can read 3DS
+models, as well as a custom format (.cms files, used right now just for
+rough fractal displacement map likenesses of asteroids and small moons.) 
+3DS meshes are normalized to fit within a unit cube--the Radius field
 determines how big they appear within Celestia.
 
 The stars.dat file is a binary database of stars, processed from
