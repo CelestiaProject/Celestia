@@ -25,6 +25,9 @@ STARTEXTDUMP_OBJS=\
 MAKESTARDB_OBJS=\
 	$(INTDIR)\makestardb.obj
 
+MAKEXINDEX_OBJS=\
+	$(INTDIR)\makexindex.obj
+
 CEL_INCLUDEDIRS=\
 	/I ../..
 
@@ -76,17 +79,23 @@ RSC_FLAGS=/l 0x409 /d "_DEBUG"
 <<
 
 
-all : $(OUTDIR)\startextdump.exe $(OUTDIR)\makestardb.exe
+all : $(OUTDIR)\startextdump.exe $(OUTDIR)\makestardb.exe $(OUTDIR)\makexindex.exe
 
 startextdump.exe : $(OUTDIR)\startextdump.exe
 
 makestardb.exe : $(OUTDIR)\makestardb.exe
+
+makexindex.exe : $(OUTDIR)\makexindex.exe
 
 $(OUTDIR)\startextdump.exe : $(OUTDIR) $(STARTEXTDUMP_OBJS)
 	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\startextdump.exe $(STARTEXTDUMP_OBJS) $(CEL_LIBS)
 
 $(OUTDIR)\makestardb.exe : $(OUTDIR) $(MAKESTARDB_OBJS)
 	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\makestardb.exe $(MAKESTARDB_OBJS) $(CEL_LIBS)
+
+$(OUTDIR)\makexindex.exe : $(OUTDIR) $(MAKEXINDEX_OBJS)
+	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\makexindex.exe $(MAKEXINDEX_OBJS) $(CEL_LIBS)
+
 
 "$(OUTDIR)" :
 	if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
