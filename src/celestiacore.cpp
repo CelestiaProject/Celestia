@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <algorithm>
 #include <cstdlib>
 #include <cctype>
@@ -313,12 +314,15 @@ void CelestiaCore::keyDown(int key)
         sim->setTargetSpeed(astro::kilometersToLightYears(1000.0));
         break;
     case Key_F4:
-        sim->setTargetSpeed(astro::kilometersToLightYears(1000000.0));
+        sim->setTargetSpeed(astro::kilometersToLightYears(astro::speedOfLight));
         break;
     case Key_F5:
-        sim->setTargetSpeed(astro::AUtoLightYears(1));
+        sim->setTargetSpeed(astro::kilometersToLightYears(1000000.0));
         break;
     case Key_F6:
+        sim->setTargetSpeed(astro::AUtoLightYears(1));
+        break;
+    case Key_F7:
         sim->setTargetSpeed(1);
         break;
     }
@@ -397,6 +401,10 @@ void CelestiaCore::charEntered(char c)
 
     case 'Y':
         sim->geosynchronousFollow();
+        break;
+
+    case 'T':
+        sim->track();
         break;
 
     case 'H':
@@ -695,7 +703,9 @@ void CelestiaCore::showText(string s)
 
 static void displayDistance(Overlay& overlay, double distance)
 {
-    if (distance >= astro::AUtoLightYears(1000.0f))
+    if (distance < astro::kilometersToLightYears(1.0f))
+        overlay.printf("%.3f m", distance);
+    else if (distance >= astro::AUtoLightYears(1000.0f))
         overlay.printf("%.3f ly", distance);
     else if (distance >= astro::kilometersToLightYears(10000000.0))
         overlay.printf("%.3f au", astro::lightYearsToAU(distance));
@@ -821,34 +831,24 @@ void CelestiaCore::renderOverlay()
     {
         glPushMatrix();
         glTranslatef(0, fontHeight * 2 + 5, 0);
-        overlay->beginText();
-
-        double speed = sim->getObserver().getVelocity().length();
-        char* units;
-        if (speed < astro::AUtoLightYears(1000))
-        {
-            if (speed < astro::kilometersToLightYears(10000000.0f))
-            {
-                speed = astro::lightYearsToKilometers(speed);
-                units = "km/s";
-            }
-            else
-            {
-                speed = astro::lightYearsToAU(speed);
-                units = "AU/s";
-            }
-        }
-        else
-        {
-            units = "ly/s";
-        }
-
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
 
+        overlay->beginText();
         *overlay << '\n';
         if (showFPSCounter)
             *overlay << "FPS: " << fps;
-        *overlay << "\nSpeed: " << speed << ' ' << units;
+        *overlay << "\nSpeed: " << setprecision(3) << fixed;
+
+        double speed = sim->getObserver().getVelocity().length();
+        if (speed < astro::kilometersToLightYears(1.0f))
+            *overlay << astro::lightYearsToKilometers(speed) * 1000.0f << " m/s";
+        else if (speed < astro::kilometersToLightYears(10000.0f))
+            *overlay << astro::lightYearsToKilometers(speed) << " km/s";
+        else if (speed < astro::kilometersToLightYears((float) astro::speedOfLight * 1000000.0f))
+            *overlay << astro::lightYearsToKilometers(speed) / astro::speedOfLight << 'c';
+        else
+            *overlay << speed << " ly/s";
+        *overlay << setprecision(6) << scientific;
 
         overlay->endText();
         glPopMatrix();
