@@ -17,6 +17,8 @@
 #include <config.h>
 #endif /* _WIN32 */
 
+int verbose=0;
+
 #if defined(DEBUG) || defined(_DEBUG)
 void DebugPrint(char *format, ...)
 {

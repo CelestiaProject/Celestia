@@ -23,16 +23,18 @@
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <celutil/util.h>
+#include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include "celestiacore.h"
+#include "popt.h"
 
 
 char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
 
-static bool fullscreen = false;
+//static bool fullscreen = false;
 static bool ready = false;
 
 
@@ -229,6 +231,21 @@ int main(int argc, char* argv[])
         cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
             "', probably due to improper installation\n";
     }
+
+    char c;
+    while((c=getopt(argc,argv,"v"))>-1)
+    {
+        if (c=='?')
+        {
+            cout << "Usage: celestia [-v]\n";
+            exit(1);
+        }
+        else if (c=='v')
+        {
+            verbose=1;
+        }
+    }
+
 
     appCore = new CelestiaCore();
     if (appCore == NULL)

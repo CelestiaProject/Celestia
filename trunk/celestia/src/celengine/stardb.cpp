@@ -340,7 +340,8 @@ StarDatabase *StarDatabase::read(istream& in)
 	db = NULL;
     }
 
-    cout << "nStars = " << db->nStars << '\n';
+    if(verbose)
+        cout << "nStars = " << db->nStars << '\n';
 
     db->buildOctree();
     db->buildIndexes();
@@ -354,7 +355,8 @@ void StarDatabase::buildOctree()
     // This should only be called once for the database
     // ASSERT(octreeRoot == NULL);
 
-    cout << "Sorting stars into octree . . .\n";
+    if(verbose)
+        cout << "Sorting stars into octree . . .\n";
     cout.flush();
     float absMag = astro::appToAbsMag(OctreeMagnitude,
                                       OctreeRootSize * (float) sqrt(3.0));
@@ -363,16 +365,20 @@ void StarDatabase::buildOctree()
     for (int i = 0; i < nStars; i++)
         root->insertStar(stars[i], OctreeRootSize);
 
-    cout << "Spatially sorting stars for improved locality of reference . . .\n";
+    if(verbose)
+        cout << "Spatially sorting stars for improved locality of reference . . .\n";
     cout.flush();
     Star* sortedStars = new Star[nStars];
     Star* firstStar = sortedStars;
     root->rebuildAndSort(octreeRoot, firstStar);
 
     // ASSERT((int) (firstStar - sortedStars) == nStars);
-    cout << (int) (firstStar - sortedStars) << " stars total\n";
-    cout << "Octree has " << 1 + octreeRoot->countChildren() << " nodes " <<
-        " and " << octreeRoot->countStars() << " stars.\n";
+    if(verbose)
+    {
+        cout << (int) (firstStar - sortedStars) << " stars total\n";
+        cout << "Octree has " << 1 + octreeRoot->countChildren() << " nodes " <<
+            " and " << octreeRoot->countStars() << " stars.\n";
+    }
 
     // Clean up . . .
     delete stars;
@@ -387,14 +393,16 @@ void StarDatabase::buildIndexes()
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == NULL);
 
-    cout << "Building catalog number indexes . . .\n";
+    if(verbose)
+        cout << "Building catalog number indexes . . .\n";
     cout.flush();
 
     for (unsigned int whichCatalog = 0;
          whichCatalog < sizeof(catalogNumberIndexes) / sizeof(catalogNumberIndexes[0]);
          whichCatalog++)
     {
-        cout << "Sorting catalog number index #" << whichCatalog << '\n';
+        if(verbose)
+            cout << "Sorting catalog number index #" << whichCatalog << '\n';
         catalogNumberIndexes[whichCatalog] = new Star*[nStars];
         for (int i = 0; i < nStars; i++)
             catalogNumberIndexes[whichCatalog][i] = &stars[i];

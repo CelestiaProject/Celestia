@@ -198,7 +198,7 @@ void TextureFont::rebuildGlyphLookupTable()
     if (glyphLookup != NULL)
         delete[] glyphLookup;
 
-    DPRINTF("texturefont: allocating glyph lookup table with %d entries.\n",
+    DVPRINTF("texturefont: allocating glyph lookup table with %d entries.\n",
             maxID + 1);
     glyphLookup = new const Glyph*[maxID + 1];
     for (int i = 0; i <= maxID; i++)
@@ -298,7 +298,7 @@ TextureFont* TextureFont::load(istream& in)
         return NULL;
     }
 
-    DPRINTF("Font contains %d glyphs.\n", nGlyphs);
+    DVPRINTF("Font contains %d glyphs.\n", nGlyphs);
 
     TextureFont* font = new TextureFont();
     assert(font != NULL);
@@ -356,7 +356,7 @@ TextureFont* TextureFont::load(istream& in)
             return NULL;
         }
 
-        DPRINTF("Reading %d x %d 8-bit font image.\n", texWidth, texHeight);
+        DVPRINTF("Reading %d x %d 8-bit font image.\n", texWidth, texHeight);
 
         in.read(reinterpret_cast<char*>(fontImage), texWidth * texHeight);
         if (in.fail())
@@ -385,7 +385,7 @@ TextureFont* TextureFont::load(istream& in)
             return NULL;
         }
 
-        DPRINTF("Reading %d x %d 1-bit font image.\n", texWidth, texHeight);
+        DVPRINTF("Reading %d x %d 1-bit font image.\n", texWidth, texHeight);
 
         in.read(reinterpret_cast<char*>(fontBits), rowBytes * texHeight);
         if (in.fail())
