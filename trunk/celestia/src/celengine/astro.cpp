@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <iomanip>
+#include <cstdio>
 #include <celmath/mathlib.h>
 #include "celestia.h"
 #include "astro.h"
@@ -295,6 +296,15 @@ double astro::meanEclipticObliquity(double jd)
     return 23.439292 - de;
 }
 
+astro::Date::Date()
+{
+    year = 0;
+    month = 0;
+    day = 0;
+    hour = 0;
+    minute = 0;
+    seconds = 0.0;
+}
 
 astro::Date::Date(int Y, int M, int D)
 {
@@ -379,7 +389,7 @@ bool astro::parseDate(const string& s, astro::Date& date)
     if (sscanf(s.c_str(), " %d %u %u %u:%u:%u ",
                &year, &month, &day, &hour, &minute, &second) == 6 ||
         sscanf(s.c_str(), " %d %u %u %u:%u ",
-               &year, &month, &day, &hour, &minute, &second) == 5 ||
+               &year, &month, &day, &hour, &minute) == 5 ||
         sscanf(s.c_str(), " %d %u %u ", &year, &month, &day) == 3)
     {
         if (month < 1 || month > 12)

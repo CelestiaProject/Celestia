@@ -11,6 +11,7 @@
 #define _ASTRO_H_
 
 #include <iostream>
+#include <string>
 #include <celmath/vecmath.h>
 #include <celengine/univcoord.h>
 
@@ -26,6 +27,7 @@ namespace astro
     class Date
     {
     public:
+        Date();
         Date(int Y, int M, int D);
         Date(double);
 
