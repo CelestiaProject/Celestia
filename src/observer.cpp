@@ -13,7 +13,8 @@
 
 
 Observer::Observer() : orientation(0, 0, 0, 1),
-                       velocity(0, 0, 0)
+                       velocity(0, 0, 0),
+                       angularVelocity(0, 0, 0)
 {
 }
 
@@ -64,6 +65,18 @@ Vec3d Observer::getVelocity() const
 void Observer::setVelocity(const Vec3d& v)
 {
     velocity = v;
+}
+
+
+Vec3f Observer::getAngularVelocity() const
+{
+    return angularVelocity;
+}
+
+
+void Observer::setAngularVelocity(const Vec3f& v)
+{
+    angularVelocity = v;
 }
 
 
