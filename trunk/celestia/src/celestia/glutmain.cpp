@@ -36,6 +36,8 @@
 #include "popt.h"
 */
 
+using namespace std;
+
 
 char AppName[] = "Celestia";
 

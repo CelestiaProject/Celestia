@@ -14,6 +14,8 @@
 #include <set>
 #include "starbrowser.h"
 
+using namespace std;
+
 
 // TODO: More of the functions in this module should be converted to
 // methods of the StarBrowser class.
