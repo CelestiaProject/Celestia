@@ -51,14 +51,14 @@ static const int StarVertexListSize = 1024;
 
 // Fractional pixel offset used when rendering text as texture mapped
 // quads to assure consistent mapping of texels to pixels.
-static const float PixelOffset = 0.375f;
+static const float PixelOffset = 0.125f;
 
 // These two values constrain the near and far planes of the view frustum
 // when rendering planet and object meshes.  The near plane will never be
 // closer than MinNearPlaneDistance, and the far plane is set so that far/near
 // will not exceed MaxFarNearRatio.
 static const float MinNearPlaneDistance = 0.0001f; // km
-static const float MaxFarNearRatio      = 10000.0f;
+static const float MaxFarNearRatio      = 2000.0f;
 
 static const float RenderDistance       = 50.0f;
 
@@ -1380,7 +1380,6 @@ void Renderer::render(const Observer& observer,
             float cloudHeight = 0.0f;
             if (iter->body != NULL)
             {
-                // radius = iter->body->getRadius();
                 radius = iter->body->getBoundingRadius();
                 if (iter->body->getRings() != NULL)
                 {
