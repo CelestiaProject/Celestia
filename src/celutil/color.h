@@ -39,6 +39,8 @@ class Color
     static const Color Black;
     static const Color White;
 
+    static bool parse(const char*, Color&);
+
  private:
     unsigned char c[4];
 };
