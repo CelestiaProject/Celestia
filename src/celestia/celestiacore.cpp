@@ -2427,8 +2427,22 @@ bool CelestiaCore::initRenderer()
                              Renderer::ShowAtmospheres |
                              Renderer::ShowAutoMag);
 
+    GLContext* context = new GLContext();
+    assert(context != NULL);
+    if (context == NULL)
+        return false;
+
+    context->init(config->ignoreGLExtensions);
+    // Choose the render path, starting with the least desirable
+    context->setRenderPath(GLContext::GLPath_Basic);
+    context->setRenderPath(GLContext::GLPath_Multitexture);
+    context->setRenderPath(GLContext::GLPath_DOT3_ARBVP);
+    context->setRenderPath(GLContext::GLPath_NvCombiner_NvVP);
+    context->setRenderPath(GLContext::GLPath_NvCombiner_ARBVP);
+    cout << "render path: " << context->getRenderPath() << '\n';
+
     // Prepare the scene for rendering.
-    if (!renderer->init((int) width, (int) height))
+    if (!renderer->init(context, (int) width, (int) height))
     {
         fatalError("Failed to initialize renderer");
         return false;

@@ -105,6 +105,7 @@ static SphericalCoordLabel* coordLabels = NULL;
 
 
 Renderer::Renderer() :
+    context(0),
     windowWidth(0),
     windowHeight(0),
     fov(FOV),
@@ -120,10 +121,6 @@ Renderer::Renderer() :
     saturationMagNight(1.0f),
     saturationMag(1.0f),
     starVertexBuffer(NULL),
-    nSimultaneousTextures(1),
-    useTexEnvCombine(false),
-    useRegisterCombiners(false),
-    useCubeMaps(false),
     useVertexPrograms(false),
     useRescaleNormal(false),
     useMinMaxBlending(false),
@@ -317,8 +314,10 @@ bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 }
 
 
-bool Renderer::init(int winWidth, int winHeight)
+bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
 {
+    context = _context;
+
     // Initialize static meshes and textures common to all instances of Renderer
     if (!commonDataInitialized)
     {
@@ -343,7 +342,7 @@ bool Renderer::init(int winWidth, int winHeight)
         // supported, which solves the problem much more elegantly than all
         // the mipmap level nonsense.
         // shadowTex->setMaxMipMapLevel(3);
-        useClampToBorder = ExtensionSupported("GL_ARB_texture_border_clamp");
+        useClampToBorder = context->extensionSupported("GL_ARB_texture_border_clamp");
         uint32 texFlags = useClampToBorder ? Texture::BorderClamp : Texture::NoMipMaps;
         shadowTex->setBorderColor(Color::White);
         shadowTex->bindName(texFlags);
@@ -376,16 +375,7 @@ bool Renderer::init(int winWidth, int winHeight)
         starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg", 0));
         starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg", 0));
 
-        // Initialize GL extensions
-        if (ExtensionSupported("GL_ARB_multitexture"))
-            InitExtension("GL_ARB_multitexture");
-        if (ExtensionSupported("GL_NV_register_combiners"))
-            InitExtension("GL_NV_register_combiners");
-        if (ExtensionSupported("GL_NV_vertex_program"))
-            InitExtension("GL_NV_vertex_program");
-        if (ExtensionSupported("GL_EXT_blend_minmax"))
-            InitExtension("GL_EXT_blend_minmax");
-        if (ExtensionSupported("GL_EXT_texture_cube_map"))
+        if (context->extensionSupported("GL_EXT_texture_cube_map"))
         {
             // normalizationTex = CreateNormalizationCubeMap(64);
             normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
@@ -433,35 +423,7 @@ bool Renderer::init(int winWidth, int winHeight)
         commonDataInitialized = true;
     }
 
-    // Get GL extension information
-    if (ExtensionSupported("GL_ARB_multitexture") &&
-        glx::glActiveTextureARB != NULL)
-    {
-        DPRINTF(1, "Renderer: multi-texture supported.\n");
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
-                      (GLint*) &nSimultaneousTextures);
-    }
-    if (ExtensionSupported("GL_EXT_texture_env_combine"))
-    {
-        useTexEnvCombine = true;
-        DPRINTF(1, "Renderer: texture env combine supported.\n");
-    }
-    if (ExtensionSupported("GL_NV_register_combiners"))
-    {
-        DPRINTF(1, "Renderer: nVidia register combiners supported.\n");
-        useRegisterCombiners = true;
-    }
-    if (ExtensionSupported("GL_NV_vertex_program") && glx::glGenProgramsNV)
-    {
-        DPRINTF(1, "Renderer: nVidia vertex programs supported.\n");
-        useVertexPrograms = vp::init();
-    }
-    if (ExtensionSupported("GL_EXT_texture_cube_map"))
-    {
-        DPRINTF(1, "Renderer: cube texture maps supported.\n");
-        useCubeMaps = true;
-    }
-    if (ExtensionSupported("GL_EXT_rescale_normal"))
+    if (context->extensionSupported("GL_EXT_rescale_normal"))
     {
         // We need this enabled because we use glScale, but only
         // with uniform scale factors.
@@ -469,7 +431,7 @@ bool Renderer::init(int winWidth, int winHeight)
         useRescaleNormal = true;
         glEnable(GL_RESCALE_NORMAL_EXT);
     }
-    if (ExtensionSupported("GL_EXT_blend_minmax"))
+    if (context->extensionSupported("GL_EXT_blend_minmax"))
     {
         DPRINTF(1, "Renderer: minmax blending supported.\n");
         useMinMaxBlending = true;
@@ -513,8 +475,6 @@ bool Renderer::init(int winWidth, int winHeight)
                 buggyVertexProgramEmulation = false;
         }
     }
-
-    DPRINTF(1, "Simultaneous textures supported: %d\n", nSimultaneousTextures);
 
     glLoadIdentity();
 
@@ -667,7 +627,7 @@ void Renderer::setFragmentShaderEnabled(bool enable)
 
 bool Renderer::fragmentShaderSupported() const
 {
-    return useCubeMaps && useRegisterCombiners;
+    return context->bumpMappingSupported();
 }
 
 bool Renderer::getVertexShaderEnabled() const
@@ -1924,8 +1884,8 @@ static void renderSphereDefault(const RenderInfo& ri,
 }
 
 
-static void renderSphereFragmentShader(const RenderInfo& ri,
-                                       const Frustum& frustum)
+static void renderSphere_Combiners(const RenderInfo& ri,
+                                   const Frustum& frustum)
 {
     glDisable(GL_LIGHTING);
 
@@ -1984,8 +1944,8 @@ static void renderSphereFragmentShader(const RenderInfo& ri,
 }
 
 
-static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
-                                                const Frustum& frustum)
+static void renderSphere_Combiners_NvVP(const RenderInfo& ri,
+                                       const Frustum& frustum)
 {
     Texture* textures[4];
 
@@ -2118,6 +2078,135 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
 }
 
 
+static void renderSphere_Combiners_ARBVP(const RenderInfo& ri,
+                                         const Frustum& frustum)
+{
+    Texture* textures[4];
+
+    if (ri.baseTex == NULL)
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+        ri.baseTex->bind();
+    }
+
+    // Compute the half angle vector required for specular lighting
+    Vec3f halfAngle_obj = ri.eyeDir_obj + ri.sunDir_obj;
+    if (halfAngle_obj.length() != 0.0f)
+        halfAngle_obj.normalize();
+
+    // Set up the fog parameters if the haze density is non-zero
+    float hazeDensity = ri.hazeColor.alpha();
+
+    if (hazeDensity > 0.0f)
+    {
+        glEnable(GL_FOG);
+        float fogColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        fogColor[0] = ri.hazeColor.red();
+        fogColor[1] = ri.hazeColor.green();
+        fogColor[2] = ri.hazeColor.blue();
+        glFogfv(GL_FOG_COLOR, fogColor);
+        glFogi(GL_FOG_MODE, GL_LINEAR);
+        glFogf(GL_FOG_START, 0.0);
+        glFogf(GL_FOG_END, 1.0f / hazeDensity);
+    }
+
+    glEnable(GL_VERTEX_PROGRAM_ARB);
+
+    arbvp::parameter(arbvp::EyePosition, ri.eyePos_obj);
+    arbvp::parameter(arbvp::SunDirection, ri.sunDir_obj);
+    arbvp::parameter(arbvp::DiffuseColor, ri.sunColor * ri.color);
+    arbvp::parameter(arbvp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
+    arbvp::parameter(arbvp::SpecularColor, ri.sunColor * ri.specularColor);
+    arbvp::parameter(arbvp::AmbientColor, ri.ambientColor * ri.color);
+    arbvp::parameter(arbvp::HazeColor, ri.hazeColor);
+
+    if (ri.bumpTex != NULL)
+    {
+        if (hazeDensity > 0.0f)
+            glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::diffuseBumpHaze);
+        else
+            glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::diffuseBump);
+        SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
+                                      ri.ambientColor * ri.color,
+                                      ri.sunColor * ri.color);
+        lodSphere->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
+                          Mesh::VertexProgParams, frustum, ri.lod,
+                          ri.baseTex, ri.bumpTex);
+        DisableCombiners();
+
+#if 0
+        // Render a specular pass
+        if (ri.specularColor != Color::Black)
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+            vp::parameter(34, ri.sunColor * ri.specularColor);
+            vp::use(vp::specular);
+
+            // Disable ambient and diffuse
+            vp::parameter(20, Color::Black);
+            vp::parameter(32, Color::Black);
+            SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
+
+            textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
+            lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
+                              frustum, ri.lod,
+                              textures, 1);
+
+            // re-enable diffuse
+            vp::parameter(20, ri.sunColor * ri.color);
+
+            DisableCombiners();
+            glDisable(GL_BLEND);
+        }
+#endif
+    }
+    else if (ri.specularColor != Color::Black)
+    {
+        glEnable(0x8458);
+        glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::specular);
+        SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
+        unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
+            Mesh::VertexProgParams;
+        lodSphere->render(attributes, frustum, ri.lod,
+                          ri.baseTex, ri.glossTex);
+        DisableCombiners();
+        glDisable(0x8458);
+    }
+    else
+    {
+        if (hazeDensity > 0.0f)
+            glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::diffuseHaze);
+        else
+            glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::diffuse);
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0 |
+                          Mesh::VertexProgParams, frustum, ri.lod,
+                          ri.baseTex);
+    }
+
+    if (hazeDensity > 0.0f)
+        glDisable(GL_FOG);
+
+    if (ri.nightTex != NULL)
+    {
+        ri.nightTex->bind();
+        glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vp::nightLights);
+        setupNightTextureCombine();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          ri.nightTex);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
+
+    glDisable(GL_VERTEX_PROGRAM_ARB);
+}
+
+
 static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
 {
     float f[4];
@@ -2180,17 +2269,20 @@ static void renderShadowedMeshVertexShader(const RenderInfo& ri,
                                            const Frustum& frustum,
                                            float* sPlane, float* tPlane,
                                            Vec3f& lightDir,
-                                           bool useShadowMask)
+                                           const GLContext& context)
 {
-    vp::enable();
-    vp::parameter(20, 1, 1, 1, 1); // color = white
-    vp::parameter(41, sPlane[0], sPlane[1], sPlane[2], sPlane[3]);
-    vp::parameter(42, tPlane[0], tPlane[1], tPlane[2], tPlane[3]);
-    if (useShadowMask)
-        vp::parameter(43, lightDir.x, lightDir.y, lightDir.z, 0.5f);
-    vp::use(vp::shadowTexture);
+    VertexProcessor* vproc = context.getVertexProcessor();
+    assert(vproc != NULL);
+
+    vproc->enable();
+    vproc->parameter(vp::SunDirection, lightDir);
+    vproc->parameter(vp::TexGen_S, sPlane);
+    vproc->parameter(vp::TexGen_T, tPlane);
+    vproc->use(vp::shadowTexture);
+
     lodSphere->render(Mesh::Normals | Mesh::Multipass, frustum, ri.lod, NULL);
-    vp::disable();
+
+    vproc->disable();
 }
 
 
@@ -2199,16 +2291,11 @@ static void renderRings(RingSystem& rings,
                         float planetRadius,
                         unsigned int textureResolution,
                         bool renderShadow,
-                        bool useVertexPrograms)
+                        const GLContext& context)
 {
     float inner = rings.innerRadius / planetRadius;
     float outer = rings.outerRadius / planetRadius;
     int nSections = 100;
-
-#if 0
-    if (useVertexPrograms)
-        renderShadow = false;
-#endif
 
     // Ring Illumination:
     // Since a ring system is composed of millions of individual
@@ -2229,15 +2316,19 @@ static void renderRings(RingSystem& rings,
         ringIllumination = illumFraction;
     }
 
-    if (useVertexPrograms)
+    GLContext::VertexPath vpath = context.getVertexPath();
+    VertexProcessor* vproc = context.getVertexProcessor();
+
+    if (vproc != NULL)
     {
-        vp::enable();
-        vp::use(vp::ringIllum);
-        vp::parameter(16, ri.sunDir_obj);
-        vp::parameter(20, ri.sunColor * rings.color);
-        vp::parameter(32, ri.ambientColor * ri.color);
-        vp::parameter(90, Vec3f(0, 0.5, 1.0));
+        vproc->enable();
+        vproc->use(vp::ringIllum);
+        vproc->parameter(vp::SunDirection, ri.sunDir_obj);
+        vproc->parameter(vp::DiffuseColor, ri.sunColor * rings.color);
+        vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
+        vproc->parameter(vp::Constant0, Vec3f(0, 0.5, 1.0));
     }
+    
 
     // If we have multi-texture support, we'll use the second texture unit
     // to render the shadow of the planet on the rings.  This is a bit of
@@ -2270,10 +2361,10 @@ static void renderRings(RingSystem& rings,
         sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
         tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
 
-        if (useVertexPrograms)
+        if (vproc != NULL)
         {
-            vp::parameter(41, sPlane[0], sPlane[1], sPlane[2], sPlane[3]);
-            vp::parameter(42, tPlane[0], tPlane[1], tPlane[2], tPlane[3]);
+            vproc->parameter(vp::TexGen_S, sPlane);
+            vproc->parameter(vp::TexGen_T, tPlane);
         }
         else
         {
@@ -2307,10 +2398,7 @@ static void renderRings(RingSystem& rings,
     // Perform our own lighting for the rings.
     // TODO: Don't forget about light source color (required when we
     // paying attention to star color.)
-    if (useVertexPrograms)
-    {
-    }
-    else
+    if (vpath == GLContext::VPath_Basic)
     {
         glDisable(GL_LIGHTING);
         Vec3f litColor(rings.color.red(), rings.color.green(), rings.color.blue());
@@ -2362,8 +2450,8 @@ static void renderRings(RingSystem& rings,
                      nSections / 2);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    if (useVertexPrograms)
-        vp::disable();
+    if (vproc != NULL)
+        vproc->disable();
 }
 
 
@@ -2374,7 +2462,7 @@ renderEclipseShadows(Mesh* mesh,
                      float planetRadius,
                      Mat4f& planetMat,
                      Frustum& viewFrustum,
-                     bool useVertexShader)
+                     const GLContext& context)
 {
     for (vector<Renderer::EclipseShadow>::iterator iter = eclipseShadows.begin();
          iter != eclipseShadows.end(); iter++)
@@ -2475,12 +2563,12 @@ renderEclipseShadows(Mesh* mesh,
         // standard transformation pipeline isn't guaranteed, we have to
         // make sure to use the same transformation engine on subsequent
         // rendering passes as we did on the initial one.
-        if (useVertexShader && mesh == NULL)
+        if (context.getVertexPath() != GLContext::VPath_Basic && mesh == NULL)
         {
             renderShadowedMeshVertexShader(ri, viewFrustum,
                                            sPlane, tPlane,
                                            dir,
-                                           ri.useTexEnvCombine);
+                                           context);
         }
         else
         {
@@ -2587,7 +2675,8 @@ renderRingShadowsVS(Mesh* mesh,
                     float planetRadius,
                     float oblateness,
                     Mat4f& planetMat,
-                    Frustum& viewFrustum)
+                    Frustum& viewFrustum,
+                    const GLContext& context)
 {
     // Compute the transformation to use for generating texture
     // coordinates from the object vertices.
@@ -2608,18 +2697,15 @@ renderRingShadowsVS(Mesh* mesh,
 
     // If the ambient light level is greater than zero, reduce the
     // darkness of the shadows.
-    if (ri.useTexEnvCombine)
-    {
-        float color[4] = { ri.ambientColor.red(), ri.ambientColor.green(),
-                           ri.ambientColor.blue(), 1.0f };
-        glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_CONSTANT_EXT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
-    }
+    float color[4] = { ri.ambientColor.red(), ri.ambientColor.green(),
+                       ri.ambientColor.blue(), 1.0f };
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_CONSTANT_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
 
     // Tweak the texture--set clamp to border and a border color with
     // a zero alpha.  If a graphics card doesn't support clamp to border,
@@ -2637,17 +2723,20 @@ renderRingShadowsVS(Mesh* mesh,
     // there is to travel through.
     float alpha = (1.0f - abs(ri.sunDir_obj.y)) * 0.5f;
 
-    vp::enable();
-    vp::parameter(16, ri.sunDir_obj);
-    vp::parameter(20, 1, 1, 1, alpha); // color = white
-    vp::parameter(43, rings.innerRadius / planetRadius,
-                  1.0f / (ringWidth / planetRadius),
-                  0.0f, 0.5f);
-    vp::parameter(44, scale, 0, 0, 0);
-    vp::parameter(45, 1, 1.0f - oblateness, 1, 0);
-    vp::use(vp::ringShadow);
+    VertexProcessor* vproc = context.getVertexProcessor();
+    assert(vproc != NULL);
+
+    vproc->enable();
+    vproc->use(vp::ringShadow);
+    vproc->parameter(vp::SunDirection, ri.sunDir_obj);
+    vproc->parameter(vp::DiffuseColor, 1, 1, 1, alpha); // color = white
+    vproc->parameter(vp::TexGen_S,
+                     rings.innerRadius / planetRadius,
+                     1.0f / (ringWidth / planetRadius),
+                     0.0f, 0.5f);
+    vproc->parameter(vp::TexGen_T, scale, 0, 0, 0);
     lodSphere->render(Mesh::Multipass, viewFrustum, ri.lod, NULL);
-    vp::disable();
+    vproc->disable();
 
     // Restore the texture combiners
     if (ri.useTexEnvCombine)
@@ -2709,7 +2798,7 @@ void Renderer::renderObject(Point3f pos,
     if (obj.surface->baseTexture.tex[textureResolution] != InvalidResource)
         ri.baseTex = obj.surface->baseTexture.find(textureResolution);
     if ((obj.surface->appearanceFlags & Surface::ApplyBumpMap) != 0 &&
-        (fragmentShaderEnabled && useRegisterCombiners && useCubeMaps) &&
+        context->bumpMappingSupported() &&
         obj.surface->bumpTexture.tex[textureResolution] != InvalidResource)
         ri.bumpTex = obj.surface->bumpTexture.find(textureResolution);
     if ((obj.surface->appearanceFlags & Surface::ApplyNightMap) != 0 &&
@@ -2758,7 +2847,7 @@ void Renderer::renderObject(Point3f pos,
     ri.hazeColor = obj.surface->hazeColor;
     ri.specularColor = obj.surface->specularColor;
     ri.specularPower = obj.surface->specularPower;
-    ri.useTexEnvCombine = useTexEnvCombine;
+    ri.useTexEnvCombine = context->getRenderPath() != GLContext::GLPath_Basic;
 
     // See if the surface should be lit
     bool lit = (obj.surface->appearanceFlags & Surface::Emissive) == 0;
@@ -2832,12 +2921,20 @@ void Renderer::renderObject(Point3f pos,
         // you'll miss out on a lot of the eye candy . . .
         if (lit)
         {
-            if (fragmentShaderEnabled && vertexShaderEnabled)
-                renderSphereVertexAndFragmentShader(ri, viewFrustum);
-            else if (fragmentShaderEnabled && !vertexShaderEnabled)
-                renderSphereFragmentShader(ri, viewFrustum);
-            else
+            switch (context->getRenderPath())
+            {
+            case GLContext::GLPath_NvCombiner_ARBVP:
+                renderSphere_Combiners_ARBVP(ri, viewFrustum);
+                break;
+            case GLContext::GLPath_NvCombiner_NvVP:
+                renderSphere_Combiners_NvVP(ri, viewFrustum);
+                break;
+            case GLContext::GLPath_NvCombiner:
+                renderSphere_Combiners(ri, viewFrustum);
+                break;
+            default:
                 renderSphereDefault(ri, viewFrustum, true);
+            }
         }
         else
         {
@@ -2856,9 +2953,9 @@ void Renderer::renderObject(Point3f pos,
     {
         renderRings(*obj.rings, ri, radius,
                     textureResolution,
-                    nSimultaneousTextures > 1 &&
+                    context->getMaxTextures() > 1 &&
                     (renderFlags & ShowRingShadows) != 0 && lit,
-                    vertexShaderEnabled);
+                    *context);
     }
 
     if (obj.atmosphere != NULL)
@@ -2917,6 +3014,8 @@ void Renderer::renderObject(Point3f pos,
             if (distance - radius < atmosphere->cloudHeight)
                 glFrontFace(GL_CW);
 
+            float texOffset = -pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0);
+
             if (atmosphere->cloudSpeed != 0.0f)
             {
                 // Make the clouds appear to rotate above the surface of
@@ -2925,8 +3024,7 @@ void Renderer::renderObject(Point3f pos,
                 // texture matrix doesn't require us to compute a second
                 // set of model space rendering parameters.
                 glMatrixMode(GL_TEXTURE);
-                glTranslatef(-pfmod(now * atmosphere->cloudSpeed / (2*PI),
-                                    1.0), 0, 0);
+                glTranslatef(texOffset, 0.0f, 0.0f);
                 glMatrixMode(GL_MODELVIEW);
             }
 
@@ -2939,24 +3037,24 @@ void Renderer::renderObject(Point3f pos,
 
             if (lit)
             {
-                if (vertexShaderEnabled)
+                VertexProcessor* vproc = context->getVertexProcessor();
+                if (vproc != NULL)
                 {
-                    vp::enable();
-                    vp::use(vp::diffuseTexOffset);
-                    vp::parameter(20, ri.sunColor * ri.color);
-                    vp::parameter(32, ri.ambientColor * ri.color);
-                    vp::parameter(41,
-                                  (float) -pfmod(now * atmosphere->cloudSpeed / (2*PI), 1.0),
-                                  0.0f, 0.0f, 0.0f);
+                    vproc->enable();
+                    vproc->use(vp::diffuseTexOffset);
+                    vproc->parameter(vp::DiffuseColor, ri.sunColor * ri.color);
+                    vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
+                    vproc->parameter(vp::TextureTranslation,
+                                     texOffset, 0.0f, 0.0f, 0.0f);
                 }
+
                 lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
                                   viewFrustum,
                                   ri.lod,
                                   cloudTex);
-                if (vertexShaderEnabled)
-                {
-                    vp::disable();
-                }
+
+                if (vproc != NULL)
+                    vproc->disable();
             }
             else
             {
@@ -2986,7 +3084,7 @@ void Renderer::renderObject(Point3f pos,
                              *obj.eclipseShadows,
                              ri,
                              radius, planetMat, viewFrustum,
-                             vertexShaderEnabled);
+                             *context);
     }
 
     if (obj.rings != NULL &&
@@ -3001,14 +3099,16 @@ void Renderer::renderObject(Point3f pos,
 
             ringsTex->bind();
 
-            if (useClampToBorder && vertexShaderEnabled)
+            if (useClampToBorder &&
+                context->getVertexPath() != GLContext::VPath_Basic)
             {
                 renderRingShadowsVS(mesh,
                                     *obj.rings,
                                     sunDir,
                                     ri,
                                     radius, obj.oblateness,
-                                    planetMat, viewFrustum);
+                                    planetMat, viewFrustum,
+                                    *context);
             }
             else if (useClampToBorder)
             {
@@ -3029,9 +3129,9 @@ void Renderer::renderObject(Point3f pos,
     {
         renderRings(*obj.rings, ri, radius,
                     textureResolution,
-                    nSimultaneousTextures > 1 &&
-                    (renderFlags & ShowRingShadows) != 0 && lit,
-                    vertexShaderEnabled);
+                    (context->hasMultitexture() &&
+                     (renderFlags & ShowRingShadows) != 0 && lit),
+                    *context);
     }
 
     glPopMatrix();
@@ -4479,7 +4579,7 @@ void Renderer::loadTextures(Body* body)
     if (surface.baseTexture.tex[textureResolution] != InvalidResource)
         surface.baseTexture.find(textureResolution);
     if ((surface.appearanceFlags & Surface::ApplyBumpMap) != 0 &&
-        (fragmentShaderEnabled && useRegisterCombiners && useCubeMaps) &&
+        context->bumpMappingSupported() &&
         surface.bumpTexture.tex[textureResolution] != InvalidResource)
         surface.bumpTexture.find(textureResolution);
     if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0 &&
