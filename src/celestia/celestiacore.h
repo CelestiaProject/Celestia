@@ -173,8 +173,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     // event processing methods
     void charEntered(char);
-    void keyDown(int);
-    void keyUp(int);
+    void keyDown(int key, int modifiers = 0);
+    void keyUp(int key, int modifiers = 0);
     void mouseWheel(float, int);
     void mouseButtonDown(float, float, int);
     void mouseButtonUp(float, float, int);
@@ -336,6 +336,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     Vec3f joystickRotation;
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
+    bool shiftKeysPressed[KeyCount];
     double KeyAccel;
 
     MovieCapture* movieCapture;
