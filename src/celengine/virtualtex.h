@@ -27,6 +27,7 @@ class VirtualTexture : public Texture
     virtual const TextureTile getTile(int lod, int u, int v);
     virtual void bind();
 
+    virtual int getLODCount() const;
     virtual int getUTileCount(int lod) const;
     virtual int getVTileCount(int lod) const;
     virtual void beginUsage();

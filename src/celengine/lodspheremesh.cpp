@@ -65,6 +65,27 @@ static void InitTrigArrays()
 }
 
 
+static float getSphereLOD(float discSizeInPixels)
+{
+    if (discSizeInPixels < 10)
+        return -3.0f;
+    else if (discSizeInPixels < 20)
+        return -2.0f;
+    else if (discSizeInPixels < 50)
+        return -1.0f;
+    else if (discSizeInPixels < 200)
+        return 0.0f;
+    else if (discSizeInPixels < 1200)
+        return 1.0f;
+    else if (discSizeInPixels < 7200)
+        return 2.0f;
+    else if (discSizeInPixels < 53200)
+        return 3.0f;
+    else
+        return 4.0f;
+}
+
+
 LODSphereMesh::LODSphereMesh() :
     vertices(NULL),
     normals(NULL),
@@ -112,12 +133,12 @@ static Point3f spherePoint(int theta, int phi)
 
 void LODSphereMesh::render(const GLContext& context,
                            const Frustum& frustum,
-                           float lodBias,
+                           float pixWidth,
                            Texture** tex,
                            int nTextures)
 {
     render(context,
-           Mesh::Normals | Mesh::TexCoords0, frustum, lodBias, tex,
+           Mesh::Normals | Mesh::TexCoords0, frustum, pixWidth, tex,
            nTextures);
 }
 
@@ -125,7 +146,7 @@ void LODSphereMesh::render(const GLContext& context,
 void LODSphereMesh::render(const GLContext& context,
                            unsigned int attributes,
                            const Frustum& frustum,
-                           float lodBias,
+                           float pixWidth,
                            Texture* tex0,
                            Texture* tex1,
                            Texture* tex2,
@@ -142,20 +163,20 @@ void LODSphereMesh::render(const GLContext& context,
         textures[nTextures++] = tex2;
     if (tex3 != NULL)
         textures[nTextures++] = tex3;
-    render(context, attributes, frustum, lodBias, textures, nTextures);
+    render(context, attributes, frustum, pixWidth, textures, nTextures);
 }
 
 
 void LODSphereMesh::render(const GLContext& context,
                            unsigned int attributes,
                            const Frustum& frustum,
-                           float lodBias,
+                           float pixWidth,
                            Texture** tex,
                            int nTextures)
 {
-    Point3f fp[8];
-
     int lod = 64;
+    float lodBias = getSphereLOD(pixWidth);
+
     if (lodBias < 0.0f)
     {
         if (lodBias < -30)
@@ -188,16 +209,19 @@ void LODSphereMesh::render(const GLContext& context,
     if (tex == NULL)
         nTextures = 0;
 
+    RenderInfo ri(step, attributes, frustum);
+
     // If one of the textures is split into subtextures, we may have to
     // use extra patches, since there can be at most one subtexture per patch.
     int i;
     int minSplit = 1;
     for (i = 0; i < nTextures; i++)
     {
+        ri.texLOD[i] = tex[i]->getLODCount() - 1;
         if (tex[i]->getUTileCount(0) > minSplit)
-            minSplit = tex[i]->getUTileCount(0);
+            minSplit = tex[i]->getUTileCount(ri.texLOD[i]);
         if (tex[i]->getVTileCount(0) > minSplit)
-            minSplit = tex[i]->getVTileCount(0);
+            minSplit = tex[i]->getVTileCount(ri.texLOD[i]);
     }
     
     if (split < minSplit)
@@ -269,17 +293,10 @@ void LODSphereMesh::render(const GLContext& context,
 
     glDisableClientState(GL_COLOR_ARRAY);
 
-    // Use nVidia's vertex program extension . . .  right now, we
-    // just assume that we only send down tangents if we're using this
-    // extension.  Need to come up with a better solution . . .
     if (tangents != NULL && ((attributes & Mesh::Tangents) != 0))
     {
-#if 0
-        glEnableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
-        glx::glVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
-        glx::glEnableVertexAttribArrayARB(6);
-        glx::glVertexAttribPointerARB(6, 3, GL_FLOAT, GL_FALSE, 0, tangents);
-#endif
+        // Need to have vertex programs enabled in order to make
+        // use of surface tangents.
         VertexProcessor* vproc = context.getVertexProcessor();
         if (vproc != NULL)
         {
@@ -290,7 +307,7 @@ void LODSphereMesh::render(const GLContext& context,
 
     if (split == 1)
     {
-        renderSection(0, 0, thetaExtent, step, attributes);
+        renderSection(0, 0, thetaExtent, ri);
     }
     else
     {
@@ -299,30 +316,30 @@ void LODSphereMesh::render(const GLContext& context,
 
         // Compute the vertices of the view frustum.  These will be used for
         // culling patches.
-        fp[0] = Planef::intersection(frustum.getPlane(Frustum::Near),
-                                     frustum.getPlane(Frustum::Top),
-                                     frustum.getPlane(Frustum::Left));
-        fp[1] = Planef::intersection(frustum.getPlane(Frustum::Near),
-                                     frustum.getPlane(Frustum::Top),
-                                     frustum.getPlane(Frustum::Right));
-        fp[2] = Planef::intersection(frustum.getPlane(Frustum::Near),
-                                     frustum.getPlane(Frustum::Bottom),
-                                     frustum.getPlane(Frustum::Left));
-        fp[3] = Planef::intersection(frustum.getPlane(Frustum::Near),
-                                     frustum.getPlane(Frustum::Bottom),
-                                     frustum.getPlane(Frustum::Right));
-        fp[4] = Planef::intersection(frustum.getPlane(Frustum::Far),
-                                     frustum.getPlane(Frustum::Top),
-                                     frustum.getPlane(Frustum::Left));
-        fp[5] = Planef::intersection(frustum.getPlane(Frustum::Far),
-                                     frustum.getPlane(Frustum::Top),
-                                     frustum.getPlane(Frustum::Right));
-        fp[6] = Planef::intersection(frustum.getPlane(Frustum::Far),
-                                     frustum.getPlane(Frustum::Bottom),
-                                     frustum.getPlane(Frustum::Left));
-        fp[7] = Planef::intersection(frustum.getPlane(Frustum::Far),
-                                     frustum.getPlane(Frustum::Bottom),
-                                     frustum.getPlane(Frustum::Right));
+        ri.fp[0] = Planef::intersection(frustum.getPlane(Frustum::Near),
+                                        frustum.getPlane(Frustum::Top),
+                                        frustum.getPlane(Frustum::Left));
+        ri.fp[1] = Planef::intersection(frustum.getPlane(Frustum::Near),
+                                        frustum.getPlane(Frustum::Top),
+                                        frustum.getPlane(Frustum::Right));
+        ri.fp[2] = Planef::intersection(frustum.getPlane(Frustum::Near),
+                                        frustum.getPlane(Frustum::Bottom),
+                                        frustum.getPlane(Frustum::Left));
+        ri.fp[3] = Planef::intersection(frustum.getPlane(Frustum::Near),
+                                        frustum.getPlane(Frustum::Bottom),
+                                        frustum.getPlane(Frustum::Right));
+        ri.fp[4] = Planef::intersection(frustum.getPlane(Frustum::Far),
+                                        frustum.getPlane(Frustum::Top),
+                                        frustum.getPlane(Frustum::Left));
+        ri.fp[5] = Planef::intersection(frustum.getPlane(Frustum::Far),
+                                        frustum.getPlane(Frustum::Top),
+                                        frustum.getPlane(Frustum::Right));
+        ri.fp[6] = Planef::intersection(frustum.getPlane(Frustum::Far),
+                                        frustum.getPlane(Frustum::Bottom),
+                                        frustum.getPlane(Frustum::Left));
+        ri.fp[7] = Planef::intersection(frustum.getPlane(Frustum::Far),
+                                        frustum.getPlane(Frustum::Bottom),
+                                        frustum.getPlane(Frustum::Right));
 
 
 
@@ -342,12 +359,7 @@ void LODSphereMesh::render(const GLContext& context,
                 for (int j = 0; j < 2; j++)
                 {
                     nPatches += renderPatches(i * extent / 2, j * extent,
-                                              extent,
-                                              split / 2,
-                                              step,
-                                              attributes,
-                                              frustum,
-                                              fp);
+                                              extent, split / 2, ri);
                 }
             }
         }
@@ -356,10 +368,6 @@ void LODSphereMesh::render(const GLContext& context,
 
     if (tangents != NULL && ((attributes & Mesh::Tangents) != 0))
     {
-#if 0
-        glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
-        glDisableVertexAttribArrayARB(6);
-#endif
         VertexProcessor* vproc = context.getVertexProcessor();
         if (vproc != NULL)
             vproc->disableAttribArray(6);
@@ -399,18 +407,18 @@ void LODSphereMesh::render(const GLContext& context,
     glColor4f(1, 0, 0, 1);
     glTranslatef(0, 0, -20);
     glBegin(GL_LINES);
-    glVertex(fp[0]); glVertex(fp[1]);
-    glVertex(fp[0]); glVertex(fp[2]);
-    glVertex(fp[3]); glVertex(fp[1]);
-    glVertex(fp[3]); glVertex(fp[2]);
-    glVertex(fp[4]); glVertex(fp[5]);
-    glVertex(fp[4]); glVertex(fp[6]);
-    glVertex(fp[7]); glVertex(fp[5]);
-    glVertex(fp[7]); glVertex(fp[6]);
-    glVertex(fp[0]); glVertex(fp[4]);
-    glVertex(fp[1]); glVertex(fp[5]);
-    glVertex(fp[2]); glVertex(fp[6]);
-    glVertex(fp[3]); glVertex(fp[7]);
+    glVertex(ri.fp[0]); glVertex(ri.fp[1]);
+    glVertex(ri.fp[0]); glVertex(ri.fp[2]);
+    glVertex(ri.fp[3]); glVertex(ri.fp[1]);
+    glVertex(ri.fp[3]); glVertex(ri.fp[2]);
+    glVertex(ri.fp[4]); glVertex(ri.fp[5]);
+    glVertex(ri.fp[4]); glVertex(ri.fp[6]);
+    glVertex(ri.fp[7]); glVertex(ri.fp[5]);
+    glVertex(ri.fp[7]); glVertex(ri.fp[6]);
+    glVertex(ri.fp[0]); glVertex(ri.fp[4]);
+    glVertex(ri.fp[1]); glVertex(ri.fp[5]);
+    glVertex(ri.fp[2]); glVertex(ri.fp[6]);
+    glVertex(ri.fp[3]); glVertex(ri.fp[7]);
     glEnd();
 
     // Render axes representing the unit sphere.
@@ -479,10 +487,7 @@ void LODSphereMesh::render(const GLContext& context,
 int LODSphereMesh::renderPatches(int phi0, int theta0, 
                                  int extent,
                                  int level,
-                                 int step,
-                                 unsigned int attributes,
-                                 const Frustum& frustum,
-                                 Point3f* fp)
+                                 const RenderInfo& ri)
 {
     int thetaExtent = extent;
     int phiExtent = extent / 2;
@@ -513,7 +518,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
 #if 1
     for (int k = 0; k < 8; k++)
     {
-        if (separatingPlane.distanceTo(fp[k]) > 0.0f)
+        if (separatingPlane.distanceTo(ri.fp[k]) > 0.0f)
         {
             outside = false;
             break;
@@ -543,7 +548,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p1));
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p2));
     boundingRadius = max(boundingRadius, patchCenter.distanceTo(p3));
-    if (frustum.testSphere(patchCenter, boundingRadius) == Frustum::Outside)
+    if (ri.frustum.testSphere(patchCenter, boundingRadius) == Frustum::Outside)
         outside = true;
 
     if (outside)
@@ -552,9 +557,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
     }
     else if (level == 1)
     {
-        renderSection(phi0, theta0,
-                      thetaExtent,
-                      step, attributes);
+        renderSection(phi0, theta0, thetaExtent, ri);
         return 1;
     }
     else
@@ -568,10 +571,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
                                            theta0 + thetaExtent / 2 * j,
                                            extent / 2,
                                            level / 2,
-                                           step,
-                                           attributes,
-                                           frustum,
-                                           fp);
+                                           ri);
             }
         }
         return nRendered;
@@ -579,10 +579,9 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
 }
 
 
-void LODSphereMesh::renderSection(int phi0, int theta0,
-                                  int extent,
-                                  int step,
-                                  unsigned int attributes)
+void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
+                                  const RenderInfo& ri)
+
 {
 #ifdef SHOW_PATCH_VISIBILITY
     {
@@ -594,7 +593,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             visiblePatches[y * width + x] = 1;
     }
 #endif // SHOW_PATCH_VISIBILITY
-    // assert(step >= minStep);
+    // assert(ri.step >= minStep);
     // assert(phi0 + extent <= maxDivisions);
     // assert(theta0 + extent / 2 < maxDivisions);
     // assert(isPow2(extent));
@@ -621,8 +620,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
 
         if (textures[tex] != NULL)
         {
-            int uTexSplit = textures[tex]->getUTileCount(0);
-            int vTexSplit = textures[tex]->getVTileCount(0);
+            int uTexSplit = textures[tex]->getUTileCount(ri.texLOD[tex]);
+            int vTexSplit = textures[tex]->getVTileCount(ri.texLOD[tex]);
             int patchSplit = maxDivisions / extent;
             assert(patchSplit >= uTexSplit && patchSplit >= vTexSplit);
 
@@ -643,13 +642,14 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             u /= patchesPerUSubtex;
             v /= patchesPerVSubtex;
 
-            TextureTile tile = textures[tex]->getTile(0,
+            TextureTile tile = textures[tex]->getTile(ri.texLOD[tex],
                                                       uTexSplit - u - 1,
                                                       vTexSplit - v - 1);
-#if 0
-            unsigned int tn = textures[tex]->getName(uTexSplit - u - 1,
-                                                     vTexSplit - v - 1);
-#endif
+            du[tex] *= tile.du;
+            dv[tex] *= tile.dv;
+            u0[tex] = u0[tex] * tile.du + tile.u;
+            v0[tex] = v0[tex] * tile.dv + tile.v;
+
             unsigned int tn = tile.texID;
             // We track the current texture to avoid unnecessary and costly
             // texture state changes.
@@ -663,14 +663,14 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
         }
     }
 
-    for (int phi = phi0; phi <= phi1; phi += step)
+    for (int phi = phi0; phi <= phi1; phi += ri.step)
     {
         float cphi = cosPhi[phi];
         float sphi = sinPhi[phi];
 
-        if ((attributes & Mesh::Tangents) != 0)
+        if ((ri.attributes & Mesh::Tangents) != 0)
         {
-            for (int theta = theta0; theta <= theta1; theta += step)
+            for (int theta = theta0; theta <= theta1; theta += ri.step)
             {
                 float ctheta = cosTheta[theta];
                 float stheta = sinTheta[theta];
@@ -690,7 +690,7 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
         }
         else
         {
-            for (int theta = theta0; theta <= theta1; theta += step)
+            for (int theta = theta0; theta <= theta1; theta += ri.step)
             {
                 float ctheta = cosTheta[theta];
                 float stheta = sinTheta[theta];
@@ -711,8 +711,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             float du_ = du[tex];
             float dv_ = dv[tex];
 
-            n2 -= (theta1 - theta0) / step * 2 + 2;
-            for (int theta = theta0; theta <= theta1; theta += step)
+            n2 -= (theta1 - theta0) / ri.step * 2 + 2;
+            for (int theta = theta0; theta <= theta1; theta += ri.step)
             {
                 float ctheta = cosTheta[theta];
                 float stheta = sinTheta[theta];
@@ -724,9 +724,9 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
     }
 
     // TODO: Fix this--number of rings can reach zero and cause dropout
-    // int nRings = max(phiExtent / step, 1); // buggy
-    int nRings = phiExtent / step;
-    int nSlices = thetaExtent / step;
+    // int nRings = max(phiExtent / ri.step, 1); // buggy
+    int nRings = phiExtent / ri.step;
+    int nSlices = thetaExtent / ri.step;
     for (int i = 0; i < nRings; i++)
     {
         glDrawElements(GL_QUAD_STRIP,
