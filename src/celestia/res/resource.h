@@ -136,6 +136,7 @@
 #define ID_RENDER_VIEWOPTIONS           40061
 #define ID_RENDER_ANTIALIASING          40062
 #define ID_LOCATIONS_ORGANIZE           40063
+#define ID_FILE_OPENSCRIPT              40064
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
 // Next default values for new objects
@@ -143,7 +144,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
-#define _APS_NEXT_COMMAND_VALUE         40064
+#define _APS_NEXT_COMMAND_VALUE         40065
 #define _APS_NEXT_CONTROL_VALUE         1066
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
