@@ -1526,11 +1526,13 @@ void CelestiaCore::tick()
 
     currentTime += dt;
 
+#ifdef CELX
     if (celxScript != NULL && scriptAwakenTime != 0.0)
     {
         if (currentTime >= scriptAwakenTime)
             resumeScript();
     }
+#endif // CELX
 
     // Mouse wheel zoom
     if (zoomMotion != 0.0f)
