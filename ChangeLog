@@ -678,6 +678,7 @@ Code:
 * Corrected specular highlights; abrupt cutoff near terminator eliminated
 * Fixed 'hole in the sky' bug
 * Allow sunset color to be specified in .ssc files
+* Improved rendering of objects in daytime skies
 * Bound Ctrl+P to mark/unmark selection
 * Implemented tab completion of star, planet, and deep sky object names
 * Implemented new, scientifically accurate Pluto-Charon textures
@@ -690,3 +691,8 @@ Code:
 * Bound + to toggle limit of knowledge maps
 * Improved estimates for stellar rotation period; previously all stars
   were assigned the same rotation rate as the sun.
+* Added locations--labels of planetary surface features
+* Bound & to toggle display of location labels
+* Added a locations dialog for controlling the display of locations
+* Allow orbit paths to be turned on independently for all object classes
+* Added a 'scaled disc' style for rendering stars
