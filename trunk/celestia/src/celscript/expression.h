@@ -33,6 +33,13 @@ class BinaryExpression : public Expression
         Subtract,
         Multiply,
         Divide,
+        Equal,
+        NotEqual,
+        Lesser,
+        Greater,
+        LesserEqual,
+        GreaterEqual,
+        InvalidOp,
     };
 
     BinaryExpression(Operator, Expression*, Expression*);
@@ -72,6 +79,18 @@ class ConstantExpression : public Expression
 
  private:
     Value value;
+};
+
+
+class NameExpression : public Expression
+{
+ public:
+    NameExpression(const std::string&);
+    virtual ~NameExpression();
+    virtual Value eval();
+
+ private:
+    const std::string name;
 };
 
 } // namespace celx

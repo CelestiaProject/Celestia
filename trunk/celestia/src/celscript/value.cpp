@@ -18,6 +18,10 @@ Value::Value() :
 {
 }
 
+Value::~Value()
+{
+}
+
 Value::Value(double x) :
     type(NumberType)
 {

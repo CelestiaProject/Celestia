@@ -42,6 +42,14 @@ public:
         TokenDivide         = 18,
         TokenEndStatement   = 19,
         TokenAssign         = 20,
+        TokenGreater        = 21,
+        TokenLesser         = 22,
+        TokenGreaterEqual   = 23,
+        TokenLesserEqual    = 24,
+        KeywordIf           = 50,
+        KeywordElse         = 51,
+        KeywordFor          = 52,
+        KeywordWhile        = 53,
         TokenError          = 255,
     };
 
@@ -75,6 +83,8 @@ private:
         EqualState          = 13,
         AsteriskState       = 14,
         SlashState          = 15,
+        LessState           = 16,
+        GreaterState        = 17,
     };
 
     std::istream* in;

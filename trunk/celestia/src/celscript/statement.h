@@ -10,8 +10,53 @@
 #ifndef STATEMENT_H_
 #define STATEMENT_H_
 
+#include <celscript/expression.h>
+
+
+namespace celx 
+{
+
 class Statement
 {
+ public:
+    Statement();
+    virtual ~Statement();
 };
+
+
+class EmptyStatement : public Statement
+{
+};
+
+
+class ExpressionStatement : public Statement
+{
+ public:
+    ExpressionStatement(Expression*);
+    virtual ~ExpressionStatement();
+
+ private:
+    Expression* expr;
+};
+
+
+class IfStatement : public Statement
+{
+ public:
+    IfStatement(Expression*, Statement*, Statement*);
+    virtual ~IfStatement();
+
+ private:
+    Expression* condition;
+    Statement* ifClause;
+    Statement* elseClause;
+};
+
+
+class CompoundStatement : public Statement
+{
+};
+
+} // namespace celx
 
 #endif // STATEMENT_H_
