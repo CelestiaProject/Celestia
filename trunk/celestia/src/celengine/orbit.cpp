@@ -93,7 +93,10 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
 
     double x, z;
-    if (eccentricity < 0.98)
+
+    // TODO: It's probably not a good idea to use this calculation for orbits
+    // with eccentricities greater than 0.98.
+    if (eccentricity < 1.0)
     {
         double eccAnomaly;
 
