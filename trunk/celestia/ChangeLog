@@ -650,3 +650,6 @@ Code:
 * Fixed eclipse shadow z-fighting artifacts
 * Fixed vertical mirroring of textures on 3DS models
 * Fixed problems with bump mapping
+* Enabled loading of .cel scripts through the Windows or KDE shell
+* New directory structure for add-ons; meshes, textures, and other media
+  may now be located withing an add-on subdirectory.
