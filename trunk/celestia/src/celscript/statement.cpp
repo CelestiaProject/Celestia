@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include <celscript/statement.h>
 
 using namespace celx;
@@ -33,11 +34,33 @@ ExpressionStatement::~ExpressionStatement()
     delete expr;
 }
 
-Statement::Control ExpressionStatement::execute()
+Statement::Control ExpressionStatement::execute(ExecutionContext& context)
 {
-    cout << expr->eval() << '\n';
+    cout << expr->eval(context) << '\n';
     return Statement::ControlAdvance;
 }
+
+
+
+VarStatement::VarStatement(const string& _name, Expression*_initializer) :
+    name(_name), initializer(_initializer)
+{
+}
+
+VarStatement::~VarStatement()
+{
+}
+
+Statement::Control VarStatement::execute(ExecutionContext& context)
+{
+    Environment* env = context.getEnvironment();
+    assert(env != NULL);
+
+    env->bind(name, Value(initializer->eval(context)));
+
+    return ControlAdvance;
+}
+
 
 
 CompoundStatement::CompoundStatement()
@@ -53,12 +76,12 @@ CompoundStatement::~CompoundStatement()
     }
 }
 
-Statement::Control CompoundStatement::execute()
+Statement::Control CompoundStatement::execute(ExecutionContext& context)
 {
     for (vector<Statement*>::iterator iter = statements.begin();
          iter != statements.end(); iter++)
     {
-        Control control = (*iter)->execute();
+        Control control = (*iter)->execute(context);
         switch (control)
         {
         case ControlReturn:
@@ -69,6 +92,8 @@ Statement::Control CompoundStatement::execute()
             break;
         }
     }
+
+    return ControlAdvance;
 }
 
 void CompoundStatement::addStatement(Statement* st)
@@ -89,12 +114,12 @@ IfStatement::~IfStatement()
 }
 
 
-Statement::Control IfStatement::execute()
+Statement::Control IfStatement::execute(ExecutionContext& context)
 {
-    if (condition->eval().toBoolean())
-        return ifClause->execute();
+    if (condition->eval(context).toBoolean())
+        return ifClause->execute(context);
     else
-        return elseClause->execute();
+        return elseClause->execute(context);
 }
 
 
@@ -107,12 +132,12 @@ WhileStatement::~WhileStatement()
 {
 }
 
-Statement::Control WhileStatement::execute()
+Statement::Control WhileStatement::execute(ExecutionContext& context)
 {
     Control control = ControlAdvance;
-    while (condition->eval().toBoolean())
+    while (condition->eval(context).toBoolean())
     {
-        control = body->execute();
+        control = body->execute(context);
         if (control == ControlReturn || control == ControlBreak)
             break;
     }
