@@ -45,7 +45,6 @@ static CTexture* smoothTex = NULL;
 
 static CTexture* starTex = NULL;
 static CTexture* glareTex = NULL;
-static CTexture* ringsTex = NULL;
 static CTexture* shadowTex = NULL;
 
 static TexFont* font;
@@ -62,6 +61,7 @@ Renderer::Renderer() :
     brightnessBias(0.0f),
     perPixelLightingEnabled(false),
     console(NULL),
+    entryConsole(NULL),
     nSimultaneousTextures(1),
     useRegisterCombiners(false),
     useCubeMaps(false)
@@ -69,6 +69,8 @@ Renderer::Renderer() :
     textureManager = new TextureManager("textures");
     meshManager = new MeshManager("models");
     console = new Console(30, 100);
+    entryConsole = new Console(2, 100);
+    entryConsole->setOrigin(0.0f, 0.85f);
 }
 
 
@@ -181,11 +183,6 @@ bool Renderer::init(int winWidth, int winHeight)
         smoothTex = CreateProceduralTexture(4, 4, GL_RGB, BlueTextureEval);
         smoothTex->bindName();
 
-        ringsTex = CreateJPEGTexture("textures\\rings.jpg",
-                                     CTexture::ColorChannel | CTexture::AlphaChannel);
-        if (ringsTex != NULL)
-            ringsTex->bindName();
-
         // font = txfLoadFont("fonts\\helvetica_14b.txf");
         font = txfLoadFont("fonts\\default.txf");
         if (font != NULL)
@@ -244,6 +241,7 @@ bool Renderer::init(int winWidth, int winHeight)
     glEnable(GL_RESCALE_NORMAL_EXT);
 
     console->setFont(font);
+    entryConsole->setFont(font);
 
     resize(winWidth, winHeight);
 
@@ -292,9 +290,14 @@ Vec3f Renderer::getPickRay(int winX, int winY)
 }
 
 
-Console* Renderer::getConsole()
+Console* Renderer::getConsole() const
 {
     return console;
+}
+
+Console* Renderer::getEntryConsole() const
+{
+    return entryConsole;
 }
 
 
@@ -596,6 +599,10 @@ void Renderer::render(const Observer& observer,
     glColor4f(0.8f, 0.8f, 1.0f, 1);
     console->setScale(2.0f / (float) windowWidth, 2.0f / (float) windowHeight);
     console->render();
+
+    glColor4f(0.7f, 0.7f, 1.0f, 1);
+    entryConsole->setScale(2.0f / (float) windowWidth, 2.0f / (float) windowHeight);
+    entryConsole->render();
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
@@ -1037,6 +1044,14 @@ void Renderer::renderPlanet(const Body& body,
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            CTexture* ringsTex = NULL;
+            if (rings->texture != "")
+            {
+                if (!textureManager->find(rings->texture, &ringsTex))
+                    ringsTex = textureManager->load(rings->texture);
+            }
+
             if (ringsTex != NULL)
                 glBindTexture(GL_TEXTURE_2D, ringsTex->getName());
             else

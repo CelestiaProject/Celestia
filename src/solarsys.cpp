@@ -243,8 +243,11 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 Color color(1.0f, 1.0f, 1.0f);
                 ringsData->getColor("Color", color);
 
+                string texture;
+                ringsData->getString("Texture", texture);
+
                 body->setRings(RingSystem((float) inner, (float) outer,
-                                          color));
+                                          color, texture));
             }
         }
     }
