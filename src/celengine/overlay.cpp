@@ -167,8 +167,7 @@ void Overlay::print(char* s)
         wchar_t ch = 0;
         validChar = UTF8Decode(s, i, length, ch);
         i += UTF8EncodedSize(ch);
-
-        font->render(ch);
+        print(ch);
     }
 #endif    
 }
