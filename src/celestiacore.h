@@ -162,7 +162,7 @@ class CelestiaCore
 
     ContextMenuFunc contextMenuCallback;
 
-    CTexture* logoTexture;
+    Texture* logoTexture;
 
     Alerter* alerter;
 };
