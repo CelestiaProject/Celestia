@@ -247,10 +247,11 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = ../src;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "/usr/lib/gcc/darwin/3.1 ./Frameworks";
+				LIBRARY_SEARCH_PATHS = Frameworks;
 				OTHER_CFLAGS = "";
 				PFE_FILE_C_DIALECTS = "objective-c c++ objective-c++";
 				PREBINDING = NO;
@@ -437,6 +438,12 @@
 				F523322A042F819501000002,
 				F5EDC6BB0456666601000002,
 				F59FA90C04A12E3001000002,
+				F581CC7204E0AFDF01000002,
+				F581CC7604E0B15701000002,
+				F5A0AE6904E89E2401000002,
+				F56223DA04F0992001000002,
+				F57B5A35057AB63101000002,
+				F57B5A39057AB65E01000002,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -485,7 +492,6 @@
 				F51C6E1D02959A17014901DC,
 				F51C6E1E02959A17014901DC,
 				F51C6E1F02959A17014901DC,
-				F51C6E2002959A17014901DC,
 				F51C6E2102959A17014901DC,
 				F51C6E2202959A17014901DC,
 				F51C6E2302959A17014901DC,
@@ -553,6 +559,12 @@
 				F5233229042F819501000002,
 				F5EDC6BC0456666601000002,
 				F59FA90B04A12E3001000002,
+				F581CC7104E0AFDF01000002,
+				F581CC7504E0B15701000002,
+				F581CC7704E0B1BF01000002,
+				F5A0AE6804E89E2401000002,
+				F57B5A34057AB63101000002,
+				F57B5A38057AB65E01000002,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -568,10 +580,10 @@
 		29B9732DFDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
 			files = (
+				F5040B1302A48AAD014901DC,
+				F581CB2204D6D24F01000002,
 				1058C7A3FEA54F0111CA2CBB,
 				F5040AF702A46404014901DC,
-				F5040AFD02A46537014901DC,
-				F5040B1302A48AAD014901DC,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -590,8 +602,8 @@
 			buildRules = (
 			);
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
+				COPY_PHASE_STRIP = YES;
+				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "-DWORDS_BIGENDIAN=1 -DMACOSX=1 -DPNG_SUPPORT=1 -DSTDC_HEADERS=1 -DCONFIG_DATA_DIR=\"/usr/local/share/celestia\" -DHAVE_LIBJPEG=1 -DHAVE_LIBPNG=1 -DPACKAGE=\"celestia\" -DVERSION=\"1.2.4\" -DMACOSX_PB=1 -DDEBUG=1 ";
 			};
 			isa = PBXBuildStyle;
@@ -631,14 +643,8 @@
 		F5040AFC02A46537014901DC = {
 			isa = PBXFileReference;
 			name = "libstdc++.a";
-			path = "/usr/lib/gcc/darwin/2.95.2/libstdc++.a";
+			path = "/usr/lib/gcc/darwin/3.1/libstdc++.a";
 			refType = 0;
-		};
-		F5040AFD02A46537014901DC = {
-			fileRef = F5040AFC02A46537014901DC;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F5040AFE02A46BDB014901DC = {
 			isa = PBXFileReference;
@@ -848,6 +854,9 @@
 				F51C6D620295987B014901DC,
 				F51C6D660295987B014901DC,
 				F55B3E800423A1DB01000002,
+				F5A0AE6604E89E2401000002,
+				F5A0AE6704E89E2401000002,
+				F56223D904F0992001000002,
 			);
 			isa = PBXGroup;
 			name = celutil;
@@ -1016,6 +1025,14 @@
 				F5233228042F819501000002,
 				F59FA90904A12E3001000002,
 				F59FA90A04A12E3001000002,
+				F581CC6F04E0AFDF01000002,
+				F581CC7004E0AFDF01000002,
+				F581CC7304E0B15701000002,
+				F581CC7404E0B15701000002,
+				F57B5A32057AB63101000002,
+				F57B5A33057AB63101000002,
+				F57B5A36057AB65E01000002,
+				F57B5A37057AB65E01000002,
 			);
 			isa = PBXGroup;
 			name = celengine;
@@ -2163,12 +2180,6 @@
 			settings = {
 			};
 		};
-		F51C6E2002959A17014901DC = {
-			fileRef = F51C6DC302959A17014901DC;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F51C6E2102959A17014901DC = {
 			fileRef = F51C6DC402959A17014901DC;
 			isa = PBXBuildFile;
@@ -3072,6 +3083,18 @@
 			settings = {
 			};
 		};
+		F56223D904F0992001000002 = {
+			isa = PBXFileReference;
+			name = watcher.h;
+			path = ../src/celutil/watcher.h;
+			refType = 2;
+		};
+		F56223DA04F0992001000002 = {
+			fileRef = F56223D904F0992001000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5626A0002A49B8B014901DC = {
 			isa = PBXFileReference;
 			name = celestia.cfg;
@@ -3343,6 +3366,54 @@
 			settings = {
 			};
 		};
+		F57B5A32057AB63101000002 = {
+			isa = PBXFileReference;
+			name = console.cpp;
+			path = ../src/celengine/console.cpp;
+			refType = 2;
+		};
+		F57B5A33057AB63101000002 = {
+			isa = PBXFileReference;
+			name = console.h;
+			path = ../src/celengine/console.h;
+			refType = 2;
+		};
+		F57B5A34057AB63101000002 = {
+			fileRef = F57B5A32057AB63101000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57B5A35057AB63101000002 = {
+			fileRef = F57B5A33057AB63101000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57B5A36057AB65E01000002 = {
+			isa = PBXFileReference;
+			name = fragmentprog.cpp;
+			path = ../src/celengine/fragmentprog.cpp;
+			refType = 2;
+		};
+		F57B5A37057AB65E01000002 = {
+			isa = PBXFileReference;
+			name = fragmentprog.h;
+			path = ../src/celengine/fragmentprog.h;
+			refType = 2;
+		};
+		F57B5A38057AB65E01000002 = {
+			fileRef = F57B5A36057AB65E01000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57B5A39057AB65E01000002 = {
+			fileRef = F57B5A37057AB65E01000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F57F9FD302B94A0B01000006 = {
 			isa = PBXFileReference;
 			path = ContextOutlineView.h;
@@ -3464,6 +3535,66 @@
 			settings = {
 			};
 		};
+		F581CB2204D6D24F01000002 = {
+			fileRef = F5040AFC02A46537014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F581CC6F04E0AFDF01000002 = {
+			isa = PBXFileReference;
+			name = image.cpp;
+			path = ../src/celengine/image.cpp;
+			refType = 2;
+		};
+		F581CC7004E0AFDF01000002 = {
+			isa = PBXFileReference;
+			name = image.h;
+			path = ../src/celengine/image.h;
+			refType = 2;
+		};
+		F581CC7104E0AFDF01000002 = {
+			fileRef = F581CC6F04E0AFDF01000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F581CC7204E0AFDF01000002 = {
+			fileRef = F581CC7004E0AFDF01000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F581CC7304E0B15701000002 = {
+			isa = PBXFileReference;
+			name = virtualtex.cpp;
+			path = ../src/celengine/virtualtex.cpp;
+			refType = 2;
+		};
+		F581CC7404E0B15701000002 = {
+			isa = PBXFileReference;
+			name = virtualtex.h;
+			path = ../src/celengine/virtualtex.h;
+			refType = 2;
+		};
+		F581CC7504E0B15701000002 = {
+			fileRef = F581CC7304E0B15701000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F581CC7604E0B15701000002 = {
+			fileRef = F581CC7404E0B15701000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F581CC7704E0B1BF01000002 = {
+			fileRef = F51C6DC302959A17014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F59DDEAA02B5F10E0100020A = {
 			fileRef = F55A246202B2AE6E0100020A;
 			isa = PBXBuildFile;
@@ -3490,6 +3621,30 @@
 		};
 		F59FA90C04A12E3001000002 = {
 			fileRef = F59FA90A04A12E3001000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A0AE6604E89E2401000002 = {
+			isa = PBXFileReference;
+			name = formatnum.cpp;
+			path = ../src/celutil/formatnum.cpp;
+			refType = 2;
+		};
+		F5A0AE6704E89E2401000002 = {
+			isa = PBXFileReference;
+			name = formatnum.h;
+			path = ../src/celutil/formatnum.h;
+			refType = 2;
+		};
+		F5A0AE6804E89E2401000002 = {
+			fileRef = F5A0AE6604E89E2401000002;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A0AE6904E89E2401000002 = {
+			fileRef = F5A0AE6704E89E2401000002;
 			isa = PBXBuildFile;
 			settings = {
 			};
