@@ -31,33 +31,34 @@ defined here--they have the obvious definitions.
 
 <material_definition> ::= material
                           { <material_attribute> }
-                          end
+                          end_material
 
 <material_attribute>  ::= diffuse <color>   |
                           specular <color>  |
                           emissive <color>  |
                           specpower <float> |
                           opacity <float>   |
-                          tex0 <string>     |
-                          tex1 <string>
+                          texture0 <string> |
+                          texture1 <string>
 
 <color>               ::= <float> <float> <float>
 
 <string>              ::= """ { letter } """
 
-<mesh_definition>     ::= <vertex_description>
+<mesh_definition>     ::= mesh
+                          <vertex_description>
                           <vertex_pool>
-                          groups
                           { <prim_group> }
-                          end
+                          end_mesh
 
 <vertex_description>  ::= vertexdesc
                           { <vertex_attribute> }
-                          end
+                          end_vertexdesc
 
 <vertex_attribute>    ::= <vertex_semantic> <vertex_format>
 
-<vertex_semantic>     ::= pos | norm | col0 | col1 | tex0 | tex1 | tan
+<vertex_semantic>     ::= position | normal | color0 | color1 | tangent |
+                          texcoord0 | texcoord1 | texcoord2 | texcoord3
 
 <vertex_format>       ::= f1 | f2 | f3 | f4 | ub4
 
@@ -234,11 +235,11 @@ AsciiModelLoader::loadMaterial()
     material->opacity = 1.0f;
 
     while (tok.nextToken() == Tokenizer::TokenName &&
-           tok.getNameValue() != "end")
+           tok.getNameValue() != "end_material")
     {
         string property = tok.getNameValue();
 
-        if (property == "tex0" || property == "tex1")
+        if (property == "texture0" || property == "texture1")
         {
             if (tok.nextToken() != Tokenizer::TokenString)
             {
@@ -248,10 +249,9 @@ AsciiModelLoader::loadMaterial()
             }
 
             ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(tok.getStringValue(), getTexturePath(), TextureInfo::WrapTexture));
-            clog << "Model has texture " << tok.getStringValue() << ", id=" << tex << '\n';
-            if (property == "tex0")
+            if (property == "texture0")
                 material->tex0 = tex;
-            else if (property == "tex1")
+            else if (property == "texture1")
                 material->tex1 = tex;
         }
         else
@@ -319,7 +319,7 @@ AsciiModelLoader::loadVertexDescription()
     Mesh::VertexAttribute* attributes = new Mesh::VertexAttribute[maxAttributes];
 
     while (tok.nextToken() == Tokenizer::TokenName &&
-           tok.getNameValue() != "end")
+           tok.getNameValue() != "end_vertexdesc")
     {
         string semanticName;
         string formatName;
@@ -513,16 +513,8 @@ AsciiModelLoader::loadMesh()
     mesh->setVertexDescription(*vertexDesc);
     mesh->setVertices(vertexCount, vertexData);
 
-    if (tok.nextToken() != Tokenizer::TokenName ||
-        tok.getNameValue() != "groups")
-    {
-        reportError("Primitive group list expected");
-        delete mesh;
-        return NULL;
-    }
- 
     while (tok.nextToken() == Tokenizer::TokenName &&
-           tok.getNameValue() != "end")
+           tok.getNameValue() != "end_mesh")
     {
         Mesh::PrimitiveGroupType type =
             Mesh::parsePrimitiveGroupType(tok.getNameValue());
