@@ -740,7 +740,7 @@ void Simulation::gotoSelection(double gotoTime,
         UniversalCoord pos = selection.getPosition(simTime);
         Vec3d v = pos - observer.getPosition();
         double distance = v.length();
-        //printf("Distance: %f km\n", astro::microLightYearsToKilometers(distance));
+
         double maxOrbitDistance;
         if (selection.body != NULL)
             maxOrbitDistance = astro::kilometersToMicroLightYears(5.0f * selection.body->getRadius());
