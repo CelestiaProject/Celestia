@@ -1015,6 +1015,138 @@ static int celestia_unmark(lua_State* l)
 }
 
 
+static int celestia_gettime(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No argument expected to function celestia:gettime");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Simulation* sim = appCore->getSimulation();
+        lua_pushnumber(l, sim->getTime());
+    }
+
+    return 1;
+}
+
+
+static int celestia_gettimescale(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No argument expected to function celestia:gettimescale");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+        lua_pushnumber(l, appCore->getSimulation()->getTimeScale());
+
+    return 1;
+}
+
+
+static int celestia_settime(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function celestia:settime");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        if (lua_isnumber(l, 2))
+            appCore->getSimulation()->setTime(lua_tonumber(l, 2));
+    }
+
+    return 0;
+}
+
+
+static int celestia_settimescale(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function celestia:settimescale");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        if (lua_isnumber(l, 2))
+            appCore->getSimulation()->setTimeScale(lua_tonumber(l, 2));
+    }
+
+    return 0;
+}
+
+
+static int celestia_tojulianday(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc < 2 || argc > 7)
+    {
+        lua_pushstring(l, "Wrong number of arguments to function celestia:tojulianday");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        int year = 0;
+        int month = 1;
+        int day = 1;
+        int hour = 0;
+        int minute = 0;
+        double seconds = 0.0;
+
+        // Require that all arguments are numeric
+        for (int i = 2; i < argc; i++)
+        {
+            if (!lua_isnumber(l, i))
+            {
+                lua_pushstring(l, "Arguments of celestia:tojulianday must be numberic");
+                lua_error(l);
+            }
+        }
+
+        year = (int) lua_tonumber(l, 2);
+        if (argc > 2)
+            month = (int) lua_tonumber(l, 3);
+        if (argc > 3)
+            day = (int) lua_tonumber(l, 4);
+        if (argc > 4)
+            hour = (int) lua_tonumber(l, 5);
+        if (argc > 5)
+            minute = (int) lua_tonumber(l, 6);
+        if (argc > 6)
+            seconds = lua_tonumber(l, 7);
+
+        astro::Date date(year, month, day);
+        date.hour = hour;
+        date.minute = minute;
+        date.seconds = seconds;
+
+        double jd = (double) date;
+
+        lua_pushnumber(l, jd);
+    }
+
+    return 1;
+}
+
+
 static int celestia_unmarkall(lua_State* l)
 {
     int argc = lua_gettop(l);
@@ -1076,6 +1208,11 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "mark", celestia_mark);
     RegisterMethod(l, "unmark", celestia_unmark);
     RegisterMethod(l, "unmarkall", celestia_unmarkall);
+    RegisterMethod(l, "gettime", celestia_gettime);
+    RegisterMethod(l, "settime", celestia_settime);
+    RegisterMethod(l, "gettimescale", celestia_gettimescale);
+    RegisterMethod(l, "settimescale", celestia_settimescale);
+    RegisterMethod(l, "tojulianday", celestia_tojulianday);
 
     lua_pop(l, 1);
 }
