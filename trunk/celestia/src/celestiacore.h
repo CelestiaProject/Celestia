@@ -14,6 +14,7 @@
 #include "solarsys.h"
 #include "config.h"
 #include "favorites.h"
+#include "destination.h"
 #include "overlay.h"
 #include "command.h"
 #include "execution.h"
@@ -88,6 +89,8 @@ class CelestiaCore
     void addFavorite(std::string);
     const FavoritesList* getFavorites();
 
+    const DestinationList* getDestinations();
+
     int getTimeZoneBias() const;
     void setTimeZoneBias(int);
 
@@ -117,6 +120,7 @@ class CelestiaCore
     AsterismList* asterisms;
 
     FavoritesList* favorites;
+    DestinationList* destinations;
 
     Simulation* sim;
     Renderer* renderer;
