@@ -21,6 +21,7 @@
 #include <time.h>
 #include <windows.h>
 #include <commctrl.h>
+#include <mmsystem.h>
 #include "gl.h"
 #include "glext.h"
 #include "celestia.h"
@@ -62,6 +63,11 @@ static TourGuide* tourGuide = NULL;
 
 static HMENU menuBar = 0;
 static HACCEL acceleratorTable = 0;
+
+// Joystick info
+static bool useJoystick = false;
+static bool joystickAvailable = false;
+static JOYCAPS joystickCaps;
 
 bool cursorVisible = true;
 
@@ -165,7 +171,6 @@ bool LoadItemTextFromFile(HWND hWnd,
     char c;
     while (textFile.get(c))
     {
-        // if (c == '\012' || c == '\014')
         if (c == '\n')
             s += "\r\r\n";
         else
@@ -646,6 +651,15 @@ void handleKey(WPARAM key, bool down)
     case VK_F7:
         k = CelestiaCore::Key_F7;
         break;
+    case VK_F8:
+        if (joystickAvailable && down)
+        {
+            appCore->joystickAxis(CelestiaCore::Joy_XAxis, 0);
+            appCore->joystickAxis(CelestiaCore::Joy_YAxis, 0);
+            appCore->joystickAxis(CelestiaCore::Joy_ZAxis, 0);
+            useJoystick = !useJoystick;
+        }
+        break;
     case VK_NUMPAD2:
         k = CelestiaCore::Key_NumPad2;
         break;
@@ -804,6 +818,51 @@ public:
                    MB_OK | MB_ICONERROR);
     }
 };
+
+
+static bool InitJoystick(JOYCAPS& caps)
+{
+    int nJoysticks = joyGetNumDevs();
+    if (nJoysticks <= 0)
+        return false;
+
+    if (joyGetDevCaps(JOYSTICKID1, &caps, sizeof caps) != JOYERR_NOERROR)
+    {
+        cout << "Error getting joystick caps.\n";
+        return false;
+    }
+
+    cout << "Using joystick: " << caps.szPname << '\n';
+
+    return true;
+}
+
+
+static void HandleJoystick()
+{
+    JOYINFOEX info;
+
+    info.dwSize = sizeof info;
+    info.dwFlags = JOY_RETURNX | JOY_RETURNY | JOY_RETURNBUTTONS;
+    MMRESULT err = joyGetPosEx(JOYSTICKID1, &info);
+
+    if (err == JOYERR_NOERROR)
+    {
+        float x = (float) info.dwXpos / 32768.0f - 1.0f;
+        float y = (float) info.dwYpos / 32768.0f - 1.0f;
+
+        appCore->joystickAxis(CelestiaCore::Joy_XAxis, x);
+        appCore->joystickAxis(CelestiaCore::Joy_YAxis, y);
+        appCore->joystickButton(CelestiaCore::JoyButton1,
+                                (info.dwButtons & 0x1) != 0);
+        appCore->joystickButton(CelestiaCore::JoyButton2,
+                                (info.dwButtons & 0x2) != 0);
+        appCore->joystickButton(CelestiaCore::JoyButton7,
+                                (info.dwButtons & 0x40) != 0);
+        appCore->joystickButton(CelestiaCore::JoyButton8,
+                                (info.dwButtons & 0x80) != 0);
+    }
+}
 
 
 static bool GetRegistryInt(HKEY key, LPTSTR value, int& intVal)
@@ -983,6 +1042,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	return FALSE;
     }
 
+    joystickAvailable = InitJoystick(joystickCaps);
+
     appCore = new CelestiaCore();
     if (appCore == NULL)
     {
@@ -1091,6 +1152,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             // And force a redraw
 	    InvalidateRect(hWnd, NULL, FALSE);
 	}
+
+        if (useJoystick)
+            HandleJoystick();
     }
 
     // Not ready to render anymore.
