@@ -7,7 +7,7 @@
 # written by Oswald Buddenhagen <ossi@kde.org>
 #  inspired by the "old" cvs-clean target from Makefile.common
 #
-# This file is free software in terms of the BSD licence. That means
+# This file is free software in terms of the BSD license. That means
 # that you can do anything with it except removing this license or
 # the above copyright notice. There is NO WARRANTY of any kind.
 #

@@ -6,7 +6,7 @@
 
 SHELL=/bin/sh
 
-cvs dist cvs-clean configure.in configure.files subdirs package-messages package-merge:
+cvs dist cvs-clean configure configure.in configure.files subdirs package-messages package-merge Makefile.am acinclude.m4:
 	@admindir=$(admindir); \
 	if test "x$$admindir" = x; then \
 	  admindir=.; until test -f $$admindir/admin/cvs.sh; do \
@@ -21,14 +21,14 @@ cvs dist cvs-clean configure.in configure.files subdirs package-messages package
 	  fi; \
 	fi; \
 	if test "$@" = "package-merge"; then \
-		MAKE=$(MAKE) POFILES="$(POFILES)" PACKAGE="$(PACKAGE)" \
+		MAKE="$(MAKE)" POFILES="$(POFILES)" PACKAGE="$(PACKAGE)" \
 	  	$(SHELL) $$admindir/cvs.sh package-merge ;\
-	else MAKE=$(MAKE) $(SHELL) $$admindir/cvs.sh $@ ;\
+	else \
+		MAKE="$(MAKE)" $(SHELL) $$admindir/cvs.sh $@ ;\
 	fi
 
-# Celestia, we don't build configure.in from configure.in.in
-# configure.in: configure.files $(shell test -f configure.files && cat configure.files) subdirs
-# configure.files: subdirs
+configure.in: configure.files subdirs
+configure.files: subdirs
 
 .SILENT:
 
