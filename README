@@ -45,22 +45,22 @@ though:
 Running Celestia:
 
 Celestia will start up in a window, and if everything is working
-correctly, you'll see the asteroid Eros in front of a field of
+correctly, you'll see Jupiter's moon Io in front of a field of
 stars.  In the left corner is a welcome message and some information
-about your target (Eros), your speed, and the current time (Universal
+about your target (Io), your speed, and the current time (Universal
 Time, so it'll probably be a few hours off from your computer's clock.)
-Right drag the mouse to orbit Eros and you should see other planets and
+Right drag the mouse to orbit Io and you should see Jupiter and
 some familiar constellations.  Left dragging the mouse changes your
 orientation too, but the camera rotates about its center instead of
-rotating around Eros.  Rolling the mouse wheel will change your distance
+rotating around Io.  Rolling the mouse wheel will change your distance
 to the space station--you can move light years away, then roll the wheel
 in the opposite direction to get back to your starting location.  If your
 mouse lacks a wheel, you can use the Home and End keys instead.
 
 In Celestia, you'll usually have some object selected; currently,
-it's Eros, but it could also be a star, planet, spacecraft, or galaxy.
+it's Io, but it could also be a star, planet, spacecraft, or galaxy.
 The simplest way to select an object is to click on it.  Try clicking
-on a star to select it.  The information about Eros is replaced with
+on a star to select it.  The information about Io is replaced with
 some details about the star.  Press G (or use the navigation menu),
 and you'll zoom through space toward the selected star.  If you
 press G again, you'll approach the star even closer.
@@ -300,10 +300,14 @@ James Holmes
 
 Contributors:
 
-Most of the planet maps are from David Seal's site: http://maps.jpl.nasa.gov/.
-A few of these maps were modified by me, with fictional terrain added
-to fill in gaps.  The model of the Galileo spacecraft is also from
-David Seal's site (though it was converter from Inventor to 3DS format.)
+Models of Mars Global Surveyor and Mars Odyssey were created by
+Shrox: http://www.shrox.com/
+
+Most of the planet maps are from David Seal's
+site: http://maps.jpl.nasa.gov/.  A few of these maps were modified by me,
+with fictional terrain added to fill in gaps.  The model of the Galileo
+spacecraft is also from David Seal's site (though it was converter from
+Inventor to 3DS format.)
 
 The Earth, Mars, Moon, and Pluto textures and bump maps are all from
 James Hastings-Trew's collection.  Some of the prettiest planet maps
@@ -328,9 +332,9 @@ The star database (stars.dat) was derived from the ESA's HIPPARCOS data set.
 This software is based in part on the work of the Independent JPEG
 Group.
 
-Thank you to all the Celestia users who've submitted bug reports, suggestions,
-and fixes over the past year.  Celestia wouldn't be the program it is without
-your help.
+Thank you to all the Celestia users who've submitted bug reports,
+suggestions, and fixes over the past year.  Celestia wouldn't be the
+program it is without your help.
 
 
 Chris Laurel

@@ -1,5 +1,5 @@
 {
-	select { object "Sol/Eros" }
+	select { object "Sol/Jupiter/Io" }
 	follow {}
 	goto { time 5 }
 	# gotolonglat { time 0 distance 1e11 longitude 0 latitude 0 }
