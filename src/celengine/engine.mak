@@ -36,6 +36,7 @@ OBJS=\
 	$(INTDIR)\galaxy.obj \
 	$(INTDIR)\glcontext.obj \
 	$(INTDIR)\glext.obj \
+	$(INTDIR)\location.obj \
 	$(INTDIR)\lodspheremesh.obj \
 	$(INTDIR)\marker.obj \
 	$(INTDIR)\meshmanager.obj \
