@@ -31,6 +31,7 @@ OBJS=\
 	$(INTDIR)\imagecapture.obj \
 	$(INTDIR)\ODMenu.obj \
 	$(INTDIR)\url.obj \
+	$(INTDIR)\wglext.obj \
 	$(INTDIR)\wineclipses.obj \
 	$(INTDIR)\wingotodlg.obj \
 	$(INTDIR)\winbookmarks.obj \

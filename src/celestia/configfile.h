@@ -46,6 +46,10 @@ struct CelestiaConfig
     unsigned int eclipseTextureSize;
     unsigned int ringSystemSections;
     unsigned int orbitPathSamplePoints;
+
+    unsigned int aaSamples;
+
+    bool hdr;
 };
 
 
