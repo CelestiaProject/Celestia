@@ -4504,52 +4504,6 @@ renderEclipseShadows_Shaders(Model* model,
                       ri.pixWidth, NULL);
 
     vproc->disable();
-    
-#if 0
-        float R2 = 0.25f;
-        float umbra = shadow.umbraRadius / shadow.penumbraRadius;
-        umbra = umbra * umbra;
-        if (umbra < 0.0001f)
-            umbra = 0.0001f;
-        else if (umbra > 0.99f)
-            umbra = 0.99f;
-
-        float umbraRadius = R2 * umbra;
-        float penumbraRadius = R2;
-        float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
-        float shadowScale = -shadowBias / umbraRadius;
-        
-        fproc->parameter(fp::ShadowParams0,
-                         shadowScale, shadowBias, 0.0f, 0.0f);
-        fproc->parameter(fp::AmbientColor, ri.ambientColor * ri.color);
-
-        // Compute the transformation to use for generating texture
-        // coordinates from the object vertices.
-        Point3f origin = shadow.origin * planetMat;
-        Vec3f dir = shadow.direction * planetMat;
-        float scale = planetRadius / shadow.penumbraRadius;
-        Vec3f axis = Vec3f(0, 1, 0) ^ dir;
-        float angle = (float) acos(Vec3f(0, 1, 0) * dir);
-        axis.normalize();
-        Mat4f mat = Mat4f::rotation(axis, -angle);
-        Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-        Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
-
-        float sPlane[4] = { 0, 0, 0, 0 };
-        float tPlane[4] = { 0, 0, 0, 0 };
-        sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
-        tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
-        sPlane[3] = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
-        tPlane[3] = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
-
-        renderShadowedModelVertexShader(ri, viewFrustum,
-                                        sPlane, tPlane,
-                                        dir,
-                                        context);
-
-    }
-#endif
-
     fproc->disable();
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -5654,11 +5608,7 @@ void Renderer::renderStar(const Star& star,
             rp.atmosphere = NULL;
 
         const RotationElements& re = star.getRotationElements();
-        double ascendingNode = (double) re.ascendingNode +
-            re.precessionRate * (now - astro::J2000);
-        Quatd q =
-            Quatd::xrotation(-re.obliquity) *
-            Quatd::yrotation(-ascendingNode);
+        Quatd q = re.eclipticalToEquatorial(now);
 
         double rotation = 0.0;
         // Watch out for the precision limits of floats when computing
