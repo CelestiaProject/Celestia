@@ -92,9 +92,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 	Atmosphere {
 		Height 60
-		Lower [ 0.30 0.52 0.65 ]
+		Lower [ 0.43 0.52 0.65 ]
 		Upper [ 0.26 0.47 0.84 ]
-		Sky [ 0.30 0.48 0.82 ]
+		Sky [ 0.40 0.6 1.0 ]
 		Sunset [ 1.0 0.6 0.2 ]
 		# Sunset [ 0.3 1.0 0.5 ]
 		CloudHeight 7
