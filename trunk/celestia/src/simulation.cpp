@@ -673,6 +673,9 @@ void Simulation::orbit(Quatf q)
         v *= distance;
 
         observer.setPosition(focusPosition + v);
+
+        if (observerMode == Following)
+            followInfo.offset = v * astro::lightYearsToKilometers(1.0);
     }
 }
 
@@ -701,6 +704,9 @@ void Simulation::changeOrbitDistance(float d)
             double newDistance = minOrbitDistance + naturalOrbitDistance * exp(log(r) + d);
             v = v * (newDistance / currentDistance);
             observer.setPosition(focusPosition + v);
+
+            if (observerMode == Following)
+                followInfo.offset = v * astro::lightYearsToKilometers(1.0);
         }
     }
 }
