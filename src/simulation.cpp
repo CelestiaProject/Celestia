@@ -481,8 +481,7 @@ Selection Simulation::pickPlanet(Observer& observer,
                                        (void*) &pickInfo);
     if (pickInfo.closestBody != NULL)
     {
-        selection = Selection(pickInfo.closestBody);
-        return selection;
+        return Selection(pickInfo.closestBody);
     }
 
     // If no planet was intersected by the pick ray, choose the planet
@@ -494,11 +493,9 @@ Selection Simulation::pickPlanet(Observer& observer,
     solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
                                        (void*) &pickInfo);
     if (pickInfo.cosClosestAngle > cos(degToRad(0.5f)))
-        selection = Selection(pickInfo.closestBody);
+        return Selection(pickInfo.closestBody);
     else
-        selection = Selection();
-
-    return selection;
+        return Selection();
 }
 
 
@@ -531,15 +528,9 @@ Selection Simulation::pickStar(Vec3f pickRay)
     }
 
     if (cosAngleClosest > cos(degToRad(0.5f)))
-    {
-        selection = Selection(stardb->getStar(closest));
-    }
+        return Selection(stardb->getStar(closest));
     else
-    {
-        selection = Selection();
-    }
-
-    return selection;
+        return Selection();
 }
 
 
@@ -547,24 +538,27 @@ Selection Simulation::pickObject(Vec3f pickRay)
 {
     Point3f observerPos = (Point3f) observer.getPosition();
     vector<uint32>* closeStars = visibleStars->getCloseSet();
+    Selection sel;
+
     for (int i = 0; i < closeStars->size(); i++)
     {
         uint32 starIndex = (*closeStars)[i];
         Star* star = stardb->getStar(starIndex);
+
+        // Only attempt to pick planets if the star is less
+        // than one light year away.  Seems like a reasonable limit . . .
         if (observerPos.distanceTo(star->getPosition()) < 1.0f)
         {
             SolarSystem* solarSystem = getSolarSystem(star);
             if (solarSystem != NULL)
-            {
-                pickPlanet(observer, *star, *solarSystem, pickRay);
-            }
+                sel = pickPlanet(observer, *star, *solarSystem, pickRay);
         }
     }
 
-    if (selection.body == NULL)
-        return pickStar(pickRay);
-    else
-        return selection;
+    if (sel.empty())
+        sel = pickStar(pickRay);
+
+    return sel;
 }
 
 
