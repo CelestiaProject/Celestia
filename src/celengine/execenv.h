@@ -22,7 +22,7 @@ class ExecutionEnvironment
 
     virtual inline Simulation* getSimulation() const = 0;
     virtual inline Renderer* getRenderer() const = 0;
-    virtual void showText(std::string) = 0;
+    virtual void showText(std::string, int, int, int, int, double) = 0;
 };
 
 #endif // _EXECENV_H_

@@ -236,13 +236,19 @@ void CommandCancel::process(ExecutionEnvironment& env)
 ////////////////
 // Print command: print text to the console
 
-CommandPrint::CommandPrint(string _text) : text(_text)
+CommandPrint::CommandPrint(string _text,
+                           int horig, int vorig, int hoff, int voff,
+                           double _duration
+                           ) : text(_text),
+                               hOrigin(horig), vOrigin(vorig),
+                               hOffset(hoff), vOffset(voff),
+                               duration(_duration)
 {
 }
 
 void CommandPrint::process(ExecutionEnvironment& env)
 {
-    env.showText(text);
+    env.showText(text, hOrigin, vOrigin, hOffset, vOffset, duration);
 }
 
 
