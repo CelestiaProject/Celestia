@@ -720,6 +720,25 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             if (sel.deepsky != NULL)
                 sel.deepsky->setOrientation(q);
         }
+        else if (editMode && checkMask(modifiers, RightButton | ShiftKey | ControlKey))
+        {
+            // Rotate the selected object about an axis from its center to the
+            // viewer.
+            Selection sel = sim->getSelection();
+            if (sel.deepsky != NULL)
+            {
+                double t = sim->getTime();
+                Vec3d v = sel.getPosition(t) - sim->getObserver().getPosition();
+                Vec3f axis((float) v.x, (float) v.y, (float) v.z);
+                axis.normalize();
+
+                Quatf r;
+                r.setAxisAngle(axis, dx / width);
+
+                Quatf q = sel.deepsky->getOrientation();
+                sel.deepsky->setOrientation(r * q);
+            }
+        }
         else if (checkMask(modifiers, LeftButton | RightButton) ||
                  checkMask(modifiers, LeftButton | ControlKey))
         {
@@ -968,9 +987,6 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '\020':  // Ctrl+P
-        if (renderer->fragmentShaderSupported())
-            renderer->setFragmentShaderEnabled(!renderer->getFragmentShaderEnabled());
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\025': // Ctrl+U
@@ -2909,13 +2925,6 @@ bool CelestiaCore::initRenderer()
         fatalError("Failed to initialize renderer");
         return false;
     }
-
-#if defined (_WIN32) || defined (__linux__)
-    if (renderer->fragmentShaderSupported())
-        renderer->setFragmentShaderEnabled(true);
-    if (renderer->vertexShaderSupported())
-        renderer->setVertexShaderEnabled(true);
-#endif
 
     // Set up the star labels
     for (vector<string>::const_iterator iter = config->labelledStars.begin();
