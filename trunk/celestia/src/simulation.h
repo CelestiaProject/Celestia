@@ -108,6 +108,8 @@ class Simulation
         Quatf initialOrientation;
         Quatf finalOrientation;
         Vec3f up;
+        double expFactor;
+        double accelTime;
     } JourneyParams;
 
     typedef struct
