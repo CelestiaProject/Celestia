@@ -395,7 +395,7 @@ void CelestiaCore::keyDown(int key)
         sim->setTargetSpeed(astro::kilometersToLightYears(astro::speedOfLight));
         break;
     case Key_F5:
-        sim->setTargetSpeed(astro::kilometersToLightYears(1000000.0));
+        sim->setTargetSpeed(astro::kilometersToLightYears(astro::speedOfLight * 10.0));
         break;
     case Key_F6:
         sim->setTargetSpeed(astro::AUtoLightYears(1));
