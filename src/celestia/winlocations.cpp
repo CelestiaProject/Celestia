@@ -191,7 +191,14 @@ HTREEITEM PopulateLocationFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
 void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInstance, ODMenu* odMenu)
 {
     // Add favorites to locations menu
-    int numStaticItems = 2; //The number of items defined in the .rc file.
+    int numStaticItems = 2; // The number of items defined in the .rc file.
+
+    // Ugly dependence on menu defined in celestia.rc; this needs to change
+    // if the locations menu is moved, or if another item is added to the
+    // menu bar.
+    // TODO: Fix this dependency
+    UINT locationsMenuPosition = 5;
+            
 
     FavoritesList* favorites = appCore->getFavorites();
     if (favorites != NULL)
@@ -199,7 +206,7 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
         MENUITEMINFO menuInfo;
         menuInfo.cbSize = sizeof(MENUITEMINFO);
         menuInfo.fMask = MIIM_SUBMENU;
-        if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
+        if (GetMenuItemInfo(menuBar, locationsMenuPosition, TRUE, &menuInfo))
         {
             HMENU locationsMenu = menuInfo.hSubMenu;
 
@@ -216,7 +223,7 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
             menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
             menuInfo.fType = MFT_SEPARATOR;
             menuInfo.fState = MFS_UNHILITE;
-            if(InsertMenuItem(locationsMenu, numStaticItems, TRUE, &menuInfo))
+            if (InsertMenuItem(locationsMenu, numStaticItems, TRUE, &menuInfo))
             {
                 odMenu->AddItem(locationsMenu, numStaticItems);
                 numStaticItems++;
