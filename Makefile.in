@@ -84,6 +84,7 @@ ORBIT_IDL = @ORBIT_IDL@
 ORBIT_LIBS = @ORBIT_LIBS@
 PACKAGE = @PACKAGE@
 PTHREAD_LIB = @PTHREAD_LIB@
+RANLIB = @RANLIB@
 VERSION = @VERSION@
 XPM_LIBS = @XPM_LIBS@
 ZVT_LIBS = @ZVT_LIBS@
@@ -97,14 +98,14 @@ DIST = $(pkgdata_DATA)
 SUBDIRS = src data textures models shaders fonts
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = config.h config.h
+CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
 DATA =  $(pkgdata_DATA)
 
-DIST_COMMON =  README ./stamp-h1.in ./stamp-h2.in AUTHORS COPYING \
-ChangeLog INSTALL Makefile.am Makefile.in NEWS TODO acconfig.h \
-aclocal.m4 config.guess config.h.in config.sub configure configure.in \
-install-sh missing mkinstalldirs
+DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING ChangeLog INSTALL \
+Makefile.am Makefile.in NEWS TODO acconfig.h aclocal.m4 config.guess \
+config.h.in config.sub configure configure.in install-sh missing \
+mkinstalldirs
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -128,50 +129,31 @@ config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 $(srcdir)/configure: $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
 
-config.h: stamp-h1
+config.h: stamp-h
 	@if test ! -f $@; then \
-		rm -f stamp-h1; \
-		$(MAKE) stamp-h1; \
+		rm -f stamp-h; \
+		$(MAKE) stamp-h; \
 	else :; fi
-stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
+stamp-h: $(srcdir)/config.h.in $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES= CONFIG_HEADERS=config.h \
 	     $(SHELL) ./config.status
-	@echo timestamp > stamp-h1 2> /dev/null
-$(srcdir)/config.h.in: $(srcdir)/stamp-h1.in
+	@echo timestamp > stamp-h 2> /dev/null
+$(srcdir)/config.h.in: $(srcdir)/stamp-h.in
 	@if test ! -f $@; then \
-		rm -f $(srcdir)/stamp-h1.in; \
-		$(MAKE) $(srcdir)/stamp-h1.in; \
+		rm -f $(srcdir)/stamp-h.in; \
+		$(MAKE) $(srcdir)/stamp-h.in; \
 	else :; fi
-$(srcdir)/stamp-h1.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
+$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
 	cd $(top_srcdir) && $(AUTOHEADER)
-	@echo timestamp > $(srcdir)/stamp-h1.in 2> /dev/null
-
-config.h: stamp-h2
-	@if test ! -f $@; then \
-		rm -f stamp-h2; \
-		$(MAKE) stamp-h2; \
-	else :; fi
-stamp-h2: $(srcdir)/config.h.in $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES= CONFIG_HEADERS=config.h \
-	     $(SHELL) ./config.status
-	@echo timestamp > stamp-h2 2> /dev/null
-$(srcdir)/config.h.in: $(srcdir)/stamp-h2.in
-	@if test ! -f $@; then \
-		rm -f $(srcdir)/stamp-h2.in; \
-		$(MAKE) $(srcdir)/stamp-h2.in; \
-	else :; fi
-$(srcdir)/stamp-h2.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
-	cd $(top_srcdir) && $(AUTOHEADER)
-	@echo timestamp > $(srcdir)/stamp-h2.in 2> /dev/null
+	@echo timestamp > $(srcdir)/stamp-h.in 2> /dev/null
 
 mostlyclean-hdr:
 
 clean-hdr:
 
 distclean-hdr:
-	-rm -f config.h config.h
+	-rm -f config.h
 
 maintainer-clean-hdr:
 
@@ -259,7 +241,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP)
 	here=`pwd` && cd $(srcdir) \
 	  && mkid -f$$here/ID $$unique $(LISP)
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in config.h.in $(TAGS_DEPENDENCIES) $(LISP)
+TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) $(LISP)
 	tags=; \
 	here=`pwd`; \
 	list='$(SUBDIRS)'; for subdir in $$list; do \
@@ -271,8 +253,8 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in config.h.in $(TAGS_DEPEND
 	unique=`for i in $$list; do echo $$i; done | \
 	  awk '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)config.h.in config.h.in$$unique$(LISP)$$tags" \
-	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags config.h.in config.h.in $$unique $(LISP) -o $$here/TAGS)
+	test -z "$(ETAGS_ARGS)config.h.in$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags config.h.in $$unique $(LISP) -o $$here/TAGS)
 
 mostlyclean-tags:
 
@@ -354,7 +336,7 @@ check-am: all-am
 check: check-recursive
 installcheck-am:
 installcheck: installcheck-recursive
-all-recursive-am: config.h config.h
+all-recursive-am: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 install-exec-am:
@@ -368,7 +350,7 @@ install-am: all-am
 install: install-recursive
 uninstall-am: uninstall-pkgdataDATA
 uninstall: uninstall-recursive
-all-am: Makefile $(DATA) config.h config.h
+all-am: Makefile $(DATA) config.h
 all-redirect: all-recursive-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
