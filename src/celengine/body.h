@@ -102,7 +102,7 @@ class Body
     float getAlbedo() const;
     void setAlbedo(float);
 
-    const PlanetarySystem* getSatellites() const;
+    PlanetarySystem* getSatellites() const;
     void setSatellites(PlanetarySystem*);
 
     RingSystem* getRings() const;
