@@ -70,14 +70,14 @@ MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 
-bin_PROGRAMS = celestia gcelestia
+bin_PROGRAMS = celestia
+@ENABLE_GTK_TRUE@FRONTENDSOURCE = gtkmain.cpp
+@ENABLE_GTK_FALSE@FRONTENDSOURCE = glutmain.cpp
 
 COMMONSOURCES =  	3dsmesh.cpp 	3dsmodel.cpp 	3dsread.cpp 	asterism.cpp 	astro.cpp 	bigfix.cpp 	body.cpp 	cmdparser.cpp 	color.cpp 	command.cpp 	config.cpp 	console.cpp 	constellation.cpp 	debug.cpp 	dispmap.cpp 	execution.cpp 	favorites.cpp 	filetype.cpp 	galaxy.cpp 	glext.cpp 	meshmanager.cpp 	observer.cpp 	octree.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	perlin.cpp 	regcombine.cpp 	render.cpp 	resmanager.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texfont.cpp 	texmanager.cpp 	texture.cpp 	texturefont.cpp 	tokenizer.cpp 	univcoord.cpp 	unixtimer.cpp 	util.cpp 	vertexlist.cpp 	visstars.cpp
 
 
-celestia_SOURCES = $(COMMONSOURCES) glutmain.cpp
-
-gcelestia_SOURCES = $(COMMONSOURCES) gtkmain.cpp
+celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -92,30 +92,31 @@ X_CFLAGS = @X_CFLAGS@
 X_LIBS = @X_LIBS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
-celestia_OBJECTS =  3dsmesh.o 3dsmodel.o 3dsread.o asterism.o astro.o \
-bigfix.o body.o cmdparser.o color.o command.o config.o console.o \
-constellation.o debug.o dispmap.o execution.o favorites.o filetype.o \
-galaxy.o glext.o meshmanager.o observer.o octree.o orbit.o overlay.o \
-parser.o perlin.o regcombine.o render.o resmanager.o selection.o \
-simulation.o solarsys.o spheremesh.o star.o stardb.o starname.o \
-stellarclass.o texfont.o texmanager.o texture.o texturefont.o \
-tokenizer.o univcoord.o unixtimer.o util.o vertexlist.o visstars.o \
-glutmain.o
+@ENABLE_GTK_TRUE@celestia_OBJECTS =  3dsmesh.o 3dsmodel.o 3dsread.o \
+@ENABLE_GTK_TRUE@asterism.o astro.o bigfix.o body.o cmdparser.o color.o \
+@ENABLE_GTK_TRUE@command.o config.o console.o constellation.o debug.o \
+@ENABLE_GTK_TRUE@dispmap.o execution.o favorites.o filetype.o galaxy.o \
+@ENABLE_GTK_TRUE@glext.o meshmanager.o observer.o octree.o orbit.o \
+@ENABLE_GTK_TRUE@overlay.o parser.o perlin.o regcombine.o render.o \
+@ENABLE_GTK_TRUE@resmanager.o selection.o simulation.o solarsys.o \
+@ENABLE_GTK_TRUE@spheremesh.o star.o stardb.o starname.o stellarclass.o \
+@ENABLE_GTK_TRUE@texfont.o texmanager.o texture.o texturefont.o \
+@ENABLE_GTK_TRUE@tokenizer.o univcoord.o unixtimer.o util.o \
+@ENABLE_GTK_TRUE@vertexlist.o visstars.o gtkmain.o
+@ENABLE_GTK_FALSE@celestia_OBJECTS =  3dsmesh.o 3dsmodel.o 3dsread.o \
+@ENABLE_GTK_FALSE@asterism.o astro.o bigfix.o body.o cmdparser.o \
+@ENABLE_GTK_FALSE@color.o command.o config.o console.o constellation.o \
+@ENABLE_GTK_FALSE@debug.o dispmap.o execution.o favorites.o filetype.o \
+@ENABLE_GTK_FALSE@galaxy.o glext.o meshmanager.o observer.o octree.o \
+@ENABLE_GTK_FALSE@orbit.o overlay.o parser.o perlin.o regcombine.o \
+@ENABLE_GTK_FALSE@render.o resmanager.o selection.o simulation.o \
+@ENABLE_GTK_FALSE@solarsys.o spheremesh.o star.o stardb.o starname.o \
+@ENABLE_GTK_FALSE@stellarclass.o texfont.o texmanager.o texture.o \
+@ENABLE_GTK_FALSE@texturefont.o tokenizer.o univcoord.o unixtimer.o \
+@ENABLE_GTK_FALSE@util.o vertexlist.o visstars.o glutmain.o
 celestia_LDADD = $(LDADD)
 celestia_DEPENDENCIES = 
 celestia_LDFLAGS = 
-gcelestia_OBJECTS =  3dsmesh.o 3dsmodel.o 3dsread.o asterism.o astro.o \
-bigfix.o body.o cmdparser.o color.o command.o config.o console.o \
-constellation.o debug.o dispmap.o execution.o favorites.o filetype.o \
-galaxy.o glext.o meshmanager.o observer.o octree.o orbit.o overlay.o \
-parser.o perlin.o regcombine.o render.o resmanager.o selection.o \
-simulation.o solarsys.o spheremesh.o star.o stardb.o starname.o \
-stellarclass.o texfont.o texmanager.o texture.o texturefont.o \
-tokenizer.o univcoord.o unixtimer.o util.o vertexlist.o visstars.o \
-gtkmain.o
-gcelestia_LDADD = $(LDADD)
-gcelestia_DEPENDENCIES = 
-gcelestia_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -141,8 +142,8 @@ DEP_FILES =  .deps/3dsmesh.P .deps/3dsmodel.P .deps/3dsread.P \
 .deps/texmanager.P .deps/texture.P .deps/texturefont.P \
 .deps/tokenizer.P .deps/univcoord.P .deps/unixtimer.P .deps/util.P \
 .deps/vertexlist.P .deps/visstars.P
-SOURCES = $(celestia_SOURCES) $(gcelestia_SOURCES)
-OBJECTS = $(celestia_OBJECTS) $(gcelestia_OBJECTS)
+SOURCES = $(celestia_SOURCES)
+OBJECTS = $(celestia_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -199,10 +200,6 @@ maintainer-clean-compile:
 celestia: $(celestia_OBJECTS) $(celestia_DEPENDENCIES)
 	@rm -f celestia
 	$(CXXLINK) $(celestia_LDFLAGS) $(celestia_OBJECTS) $(celestia_LDADD) $(LIBS)
-
-gcelestia: $(gcelestia_OBJECTS) $(gcelestia_DEPENDENCIES)
-	@rm -f gcelestia
-	$(CXXLINK) $(gcelestia_LDFLAGS) $(gcelestia_OBJECTS) $(gcelestia_LDADD) $(LIBS)
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 

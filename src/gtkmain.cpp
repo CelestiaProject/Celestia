@@ -57,8 +57,6 @@ static double fps = 0.0;
 static double fpsCounterStartTime = 0.0;
 static bool showFPSCounter = false;
 
-static bool fullscreen;
-
 // Mouse motion tracking
 static int lastX = 0;
 static int lastY = 0;
@@ -128,6 +126,45 @@ int oglAttributeList[] =
     GDK_GL_NONE,
 };
 
+static GtkItemFactory* menuItemFactory = NULL;
+
+// Extremely basic implementation of an ExecutionEnvironment for
+// running scripts.
+class MainExecutionEnvironment : public ExecutionEnvironment
+{
+public:
+    Simulation* getSimulation() const
+    {
+        return sim;
+    }
+
+    Renderer* getRenderer() const
+    {
+        return renderer;
+    }
+
+    void showText(string s)
+    {
+        messageText = s;
+    }
+};
+
+static MainExecutionEnvironment execEnv;
+
+
+
+static void SetRenderFlag(int flag, bool state)
+{
+    renderer->setRenderFlags((renderer->getRenderFlags() & ~flag) |
+                             (state ? flag : 0));
+}
+
+static void SetLabelFlag(int flag, bool state)
+{
+    renderer->setLabelMode((renderer->getLabelMode() & ~flag) |
+                           (state ? flag : 0));
+}
+
 
 static void SetFaintest(float magnitude)
 {
@@ -136,9 +173,17 @@ static void SetFaintest(float magnitude)
     sim->setFaintestVisible(magnitude);
 }
 
-static void menuQuit()
+
+enum
 {
-}
+    Menu_ShowGalaxies        = 2001,
+    Menu_ShowOrbits          = 2002,
+    Menu_ShowConstellations  = 2003,
+    Menu_ShowAtmospheres     = 2004,
+    Menu_PlanetLabels        = 2005,
+    Menu_StarLabels          = 2006,
+    Menu_ConstellationLabels = 2007,
+};
 
 static void menuSelectSol()
 {
@@ -194,6 +239,56 @@ static void menuReverse()
     sim->setTimeScale(-sim->getTimeScale());
 }
 
+static gint menuShowGalaxies(GtkWidget* w, gpointer data)
+{
+    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    SetRenderFlag(Renderer::ShowGalaxies, on);
+    return TRUE;
+}
+
+static gint menuShowOrbits(GtkWidget* w, gpointer data)
+{
+    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    SetRenderFlag(Renderer::ShowOrbits, on);
+    return TRUE;
+}
+
+static gint menuShowAtmospheres(GtkWidget* w, gpointer data)
+{
+    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    SetRenderFlag(Renderer::ShowCloudMaps, on);
+    return TRUE;
+}
+
+static gint menuShowConstellations(GtkWidget* w, gpointer data)
+{
+    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    SetRenderFlag(Renderer::ShowDiagrams, on);
+    return TRUE;
+}
+
+static gint menuStarLabels(GtkWidget* w, gpointer data)
+{
+    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    SetLabelFlag(Renderer::StarLabels, on);
+    return TRUE;
+}
+
+static gint menuConstellationLabels(GtkWidget* w, gpointer data)
+{
+    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    SetLabelFlag(Renderer::ConstellationLabels, on);
+    return TRUE;
+}
+
+static gint menuPlanetLabels(GtkWidget* w, gpointer data)
+{
+    bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    SetLabelFlag(Renderer::MajorPlanetLabels, on);
+    return TRUE;
+}
+
+
 static void menuMoreStars()
 {
     if (sim->getFaintestVisible() < 8.0f)
@@ -205,6 +300,13 @@ static void menuLessStars()
     if (sim->getFaintestVisible() > 1.0f)
         SetFaintest(sim->getFaintestVisible() - 0.5f);
 }
+
+static void menuRunDemo()
+{
+    if (runningScript == NULL && demoScript != NULL)
+        runningScript = new Execution(*demoScript, execEnv);
+}
+
 
 
 static GtkItemFactoryEntry menuItems[] =
@@ -221,21 +323,37 @@ static GtkItemFactoryEntry menuItems[] =
     { "/_Time", NULL,                       NULL,          0, "<Branch>" },
     { "/Time/10x Faster", "L",              menuFaster,    0, NULL },
     { "/Time/10x Slower", "K",              menuSlower,    0, NULL },
-    { "/Time/Pause", "Space",               menuPause,     0, NULL },
+    { "/Time/Pause", " ",               menuPause,     0, NULL },
     { "/Time/Real Time", NULL,              menuRealTime,  0, NULL },
     { "/Time/Reverse", "J",                 menuReverse,   0, NULL },
     { "/_Render", NULL,                     NULL,          0, "<Branch>" },
-    { "/Render/Show Galaxies", NULL,        NULL,          0, "<ToggleItem>" },
-    { "/Render/Show Atmospheres", NULL,     NULL,          0, "<ToggleItem>" },
-    { "/Render/Show Orbits", NULL,          NULL,          0, "<ToggleItem>" },
-    { "/Render/Show Constellations", NULL,  NULL,          0, "<ToggleItem>" },
+    { "/Render/Show Galaxies", "U",        NULL,          Menu_ShowGalaxies, "<ToggleItem>" },
+    { "/Render/Show Atmospheres", "I",     NULL,          Menu_ShowAtmospheres, "<ToggleItem>" },
+    { "/Render/Show Orbits", "O",          NULL,          Menu_ShowOrbits, "<ToggleItem>" },
+    { "/Render/Show Constellations", "-",  NULL,          Menu_ShowConstellations, "<ToggleItem>" },
     { "/Render/sep1", NULL,                 NULL,          0, "<Separator>" },
     { "/Render/More Stars", "]",            menuMoreStars, 0, NULL },
-    { "/Render/Fewer Stars", "]",           menuLessStars, 0, NULL },
+    { "/Render/Fewer Stars", "[",           menuLessStars, 0, NULL },
+    { "/Render/sep2", NULL,                 NULL,          0, "<Separator>" },
+    { "/Render/Label Planets", "N",         NULL,          Menu_PlanetLabels, "<ToggleItem>" },
+    { "/Render/Label Stars", "B",           NULL,          Menu_StarLabels, "<ToggleItem>" },
+    { "/Render/LabelConstellations", "=",   NULL,          Menu_ConstellationLabels, "<ToggleItem>" },
     { "/_Help", NULL,                       NULL,          0, "<LastBranch>" },
-    { "/_Help/About", NULL,                 NULL,          0, NULL },
+    { "/Help/Run Demo", "D",                menuRunDemo,   0, NULL },  
+    { "/Help/About", NULL,                  NULL,          0, NULL },
 };
 
+
+void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func)
+{
+    GtkWidget* w = gtk_item_factory_get_widget_by_action(factory, action);
+    if (w != NULL)
+    {
+        gtk_signal_connect(GTK_OBJECT(w), "toggled",
+                           GTK_SIGNAL_FUNC(func),
+                           NULL);
+    }
+}
 
 
 void createMainMenu(GtkWidget* window, GtkWidget** menubar)
@@ -243,40 +361,30 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
     gint nItems = sizeof(menuItems) / sizeof(menuItems[0]);
 
     GtkAccelGroup* accelGroup = gtk_accel_group_new();
-    GtkItemFactory* itemFactory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
-                                                       "<main>",
-                                                       accelGroup);
-    gtk_item_factory_create_items(itemFactory, nItems, menuItems, NULL);
+    menuItemFactory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
+                                           "<main>",
+                                           accelGroup);
+    gtk_item_factory_create_items(menuItemFactory, nItems, menuItems, NULL);
 
     gtk_window_add_accel_group(GTK_WINDOW(window), accelGroup);
     if (menubar != NULL)
-        *menubar = gtk_item_factory_get_widget(itemFactory, "<main>");
+        *menubar = gtk_item_factory_get_widget(menuItemFactory, "<main>");
+
+    setupCheckItem(menuItemFactory, Menu_ShowGalaxies,
+                   GTK_SIGNAL_FUNC(menuShowGalaxies));
+    setupCheckItem(menuItemFactory, Menu_ShowConstellations,
+                   GTK_SIGNAL_FUNC(menuShowConstellations));
+    setupCheckItem(menuItemFactory, Menu_ShowAtmospheres,
+                   GTK_SIGNAL_FUNC(menuShowAtmospheres));
+    setupCheckItem(menuItemFactory, Menu_ShowOrbits,
+                   GTK_SIGNAL_FUNC(menuShowOrbits));
+    setupCheckItem(menuItemFactory, Menu_PlanetLabels,
+                   GTK_SIGNAL_FUNC(menuPlanetLabels));
+    setupCheckItem(menuItemFactory, Menu_StarLabels,
+                   GTK_SIGNAL_FUNC(menuStarLabels));
+    setupCheckItem(menuItemFactory, Menu_ConstellationLabels,
+                   GTK_SIGNAL_FUNC(menuConstellationLabels));
 }
-
-
-// Extremely basic implementation of an ExecutionEnvironment for
-// running scripts.
-class MainExecutionEnvironment : public ExecutionEnvironment
-{
-public:
-    Simulation* getSimulation() const
-    {
-        return sim;
-    }
-
-    Renderer* getRenderer() const
-    {
-        return renderer;
-    }
-
-    void showText(string s)
-    {
-        messageText = s;
-    }
-};
-
-static MainExecutionEnvironment execEnv;
-
 
 
 bool ReadStars(string starsFileName, string namesFileName)
@@ -312,36 +420,6 @@ bool ReadStars(string starsFileName, string namesFileName)
     starDB->setNameDatabase(starNameDB);
 
     return true;
-}
-
-
-static void WriteFavoritesFile()
-{
-    if (config->favoritesFile != "")
-    {
-        ofstream out(config->favoritesFile.c_str(), ios::out);
-        if (out.good())
-        WriteFavoritesList(*favorites, out);
-    }
-}
-
-static void ActivateFavorite(FavoritesEntry& fav)
-{
-    sim->cancelMotion();
-    sim->setTime(fav.jd);
-    sim->getObserver().setPosition(fav.position);
-    sim->getObserver().setOrientation(fav.orientation);
-}
-
-static void AddFavorite(string name)
-{
-    FavoritesEntry* fav = new FavoritesEntry();
-    fav->jd = sim->getTime();
-    fav->position = sim->getObserver().getPosition();
-    fav->orientation = sim->getObserver().getOrientation();
-    fav->name = name;
-    favorites->insert(favorites->end(), fav);
-    WriteFavoritesFile();
 }
 
 
@@ -535,17 +613,6 @@ void RenderOverlay()
 }
 
 
-static void ToggleLabelState(int labelState)
-{
-    renderer->setLabelMode(renderer->getLabelMode() ^ labelState);
-}
-
-static void ToggleRenderFlag(int renderFlag)
-{
-    renderer->setRenderFlags(renderer->getRenderFlags() ^ renderFlag);
-}
-
-
 /*
  * Definition of Gtk callback functions
  */
@@ -564,6 +631,13 @@ gint initFunc(GtkWidget* widget)
             cerr << "Failed to initialize renderer.\n";
             return 1;
         }
+
+#if 0
+        // GL extensions which require glXGetProcAddressARB still not working,
+        // so leave this disabled.
+        if (renderer->perPixelLightingSupported())
+            renderer->setPerPixelLighting(true);
+#endif
 
         // Set up the star labels
         for (vector<string>::const_iterator iter = config->labelledStars.begin();
@@ -708,7 +782,9 @@ gint glarea_motion_notify(GtkWidget* widget, GdkEventMotion* event)
     if (leftButton ^ rightButton)
     {
         Quatf q(1);
-        float coarseness = renderer->getFieldOfView() / 30.0f;
+        float coarseness = degToRad(360.0f);
+        if (leftButton)
+            coarseness = degToRad(renderer->getFieldOfView() * 1.5f);
         q.yrotate((float) (x - lastX) / g_w * coarseness);
         q.xrotate((float) (y - lastY) / g_h * coarseness);
         if (rightButton)
@@ -783,26 +859,24 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_press_event");
     switch (event->keyval)
     {
-#if 0
-    case GLUT_KEY_F1:
+    case GDK_F1:
         sim->setTargetSpeed(0);
-        break;
-    case GLUT_KEY_F2:
+        return TRUE;
+    case GDK_F2:
         sim->setTargetSpeed(astro::kilometersToLightYears(1.0));
-        break;
-    case GLUT_KEY_F3:
+        return TRUE;
+    case GDK_F3:
         sim->setTargetSpeed(astro::kilometersToLightYears(1000.0));
-        break;
-    case GLUT_KEY_F4:
+        return TRUE;
+    case GDK_F4:
         sim->setTargetSpeed(astro::kilometersToLightYears(1000000.0));
-        break;
-    case GLUT_KEY_F5:
+        return TRUE;
+    case GDK_F5:
         sim->setTargetSpeed(astro::AUtoLightYears(1));
-        break;
-    case GLUT_KEY_F6:
+        return TRUE;
+    case GDK_F6:
         sim->setTargetSpeed(1);
-        break;
-#endif
+        return TRUE;
     case GDK_Left:
         leftPress = true;
         return TRUE;
@@ -896,22 +970,6 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
         sim->setTargetSpeed(sim->getTargetSpeed());
         break;
 
-    case 'G':
-        sim->gotoSelection(5.0);
-        break;
-
-    case 'C':
-        sim->centerSelection();
-        break;
-
-    case 'F':
-        sim->follow();
-        break;
-
-    case 'H':
-        sim->selectStar(0);
-        break;
-
     case 'V':
         sim->setHUDDetail((sim->getHUDDetail() + 1) % 2);
         hudDetail = 1 - hudDetail;
@@ -927,52 +985,12 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
             renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
         break;
 
-    case 'K':
-        sim->setTimeScale(0.1 * sim->getTimeScale());
-        break;
-
-    case 'L':
-        sim->setTimeScale(10.0 * sim->getTimeScale());
-        break;
-
-    case 'J':
-        sim->setTimeScale(-sim->getTimeScale());
-        break;
-
-    case 'B':
-        ToggleLabelState(Renderer::StarLabels);
-        break;
-
-    case 'N':
-        ToggleLabelState(Renderer::MajorPlanetLabels);
-        break;
-
-    case 'O':
-        ToggleRenderFlag(Renderer::ShowOrbits);
-        break;
-
     case 'P':
         if (renderer->perPixelLightingSupported())
         {
             bool enabled = !renderer->getPerPixelLighting();
             renderer->setPerPixelLighting(enabled);
         }
-        break;
-
-    case 'I':
-        ToggleRenderFlag(Renderer::ShowCloudMaps);
-        break;
-
-    case 'U':
-        ToggleRenderFlag(Renderer::ShowGalaxies);
-        break;
-
-    case '/':
-        ToggleRenderFlag(Renderer::ShowDiagrams);
-        break;
-
-    case '=':
-        ToggleLabelState(Renderer::ConstellationLabels);
         break;
 
     case '~':
@@ -986,11 +1004,6 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
 
     case '`':
         showFPSCounter = !showFPSCounter;
-        break;
-
-    case 'D':
-        if (runningScript == NULL && demoScript != NULL)
-            runningScript = new Execution(*demoScript, execEnv);
         break;
 
     case '1':
@@ -1036,6 +1049,9 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
         }
         paused = !paused;
         break;
+
+    default:
+        return FALSE;
     }
 
     return TRUE;
