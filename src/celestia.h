@@ -29,6 +29,7 @@ extern void DebugPrint(char *format, ...);
 #define HAVE_SSTREAM
 #ifdef __GNUC__
 #undef HAVE_SSTREAM
+#define NONSTANDARD_STRING_COMPARE
 #endif // __GNUC__
 
 extern void Log(char *format, ...);

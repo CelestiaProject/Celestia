@@ -3,6 +3,10 @@
 #ifndef _GLEXT_H_
 #define _GLEXT_H_
 
+#ifndef _WIN32
+#define APIENTRY
+#endif
+
 /* EXT_rescale_normal defines from <GL/gl.h> */
 #ifndef GL_EXT_rescale_normal
 #define GL_RESCALE_NORMAL_EXT               0x803A

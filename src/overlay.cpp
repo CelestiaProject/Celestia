@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cstdarg>
+#include <cstdio>
 #include "gl.h"
 #include "vecgl.h"
 #include "overlay.h"

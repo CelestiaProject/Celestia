@@ -62,7 +62,8 @@ static char readChar(ifstream& in)
 
 static int readString(ifstream& in, char* s, int maxLength)
 {
-    for (int count = 0; count < maxLength; count++)
+    int count;
+    for (count = 0; count < maxLength; count++)
     {
         in.read(s + count, 1);
         if (s[count] == '\0')
