@@ -822,58 +822,29 @@ StarDatabase::createStar(uint32 catalogNumber,
                          const string& path,
                          bool isBarycenter)
 {
-    double ra = 0.0;
-    double dec = 0.0;
-    double distance = 0.0;
+    StarDetails* details = NULL;
     string spectralType;
 
-    if (!starData->getNumber("RA", ra))
-    {
-        DPRINTF(1, "Invalid star: missing right ascension\n");
-        return NULL;
-    }
-
-    if (!starData->getNumber("Dec", dec))
-    {
-        DPRINTF(1, "Invalid star: missing declination.\n");
-        return NULL;
-    }
-
-    if (!starData->getNumber("Distance", distance))
-    {
-        DPRINTF(1, "Invalid star: missing distance.\n");
-        return NULL;
-    }
-
-    // Get the magnitude and spectral type; if the star is actually just
+    // Get the magnitude and spectral type; if the star is actually
     // a barycenter placeholder, these fields are ignored.
-    double absMag = 0.0;
-    StarDetails* details = NULL;
+    double magnitude = 0.0;
     if (isBarycenter)
     {
         details = StarDetails::GetBarycenterDetails();
-        absMag = 30.0;
     }
     else
     {
         if (!starData->getString("SpectralType", spectralType))
         {
-            DPRINTF(1, "Invalid star: missing spectral type.\n");
+            cerr << "Invalid star: missing spectral type.\n";
             return NULL;
         }
         StellarClass sc = StellarClass::parse(spectralType);
         details = StarDetails::GetStarDetails(sc);
         if (details == NULL)
         {
-            DPRINTF(1, "Invalid star: bad spectral type.\n");
+            cerr << "Invalid star: bad spectral type.\n";
             return NULL;
-        }
-
-        if (!starData->getNumber("AbsMag", absMag))
-        {
-            double appMag;
-            if (starData->getNumber("AppMag", appMag))
-                absMag = astro::appToAbsMag((float) appMag, (float) distance);
         }
     }
 
@@ -885,11 +856,11 @@ StarDatabase::createStar(uint32 catalogNumber,
     RotationElements re = details->getRotationElements();
     FillinRotationElements(starData, re);
     bool hasRotationElements = !(re == details->getRotationElements());
-    if (hasRotationElements)
-        cout << "Has rotation elements!\n";
 
     Vec3d semiAxes;
     bool hasSemiAxes = starData->getVector("SemiAxes", semiAxes);
+    bool hasBarycenter = false;
+    Point3f barycenterPosition;
 
     Orbit* orbit = CreateOrbit(NULL, starData, path, true);
 
@@ -930,7 +901,7 @@ StarDatabase::createStar(uint32 catalogNumber,
 
             // See if a barycenter was specified as well
             string barycenterName;
-            if (starData->getString("Barycenter", barycenterName))
+            if (starData->getString("OrbitBarycenter", barycenterName))
             {
                 uint32 barycenterCatNo = names->findCatalogNumber(barycenterName);
                 if (barycenterCatNo != Star::InvalidCatalogNumber)
@@ -943,10 +914,36 @@ StarDatabase::createStar(uint32 catalogNumber,
                     bc.catNo = catalogNumber;
                     bc.barycenterCatNo = barycenterCatNo;
                     barycenters.push_back(bc);
+
+                    // Even though we can't actually get the Star pointer for
+                    // the barycenter, we can get the star information.  We
+                    // need this in order to get the star's position.  Since
+                    // the stars aren't sorted, we're stuck doing a linear
+                    // search of the currently loaded stars. But, since
+                    // barycenters are typically defined immediately before
+                    // stars that use them, a reverse linear search will have
+                    // very good performance most of the time.
+                    if (nStars > 0)
+                    {
+                        uint32 starIndex = nStars;
+                        do 
+                        {
+                            starIndex--;
+                            if (stars[starIndex].getCatalogNumber() == 
+                                barycenterCatNo)
+                            {
+                                hasBarycenter = true;
+                                barycenterPosition = stars[starIndex].getPosition();
+                                break;
+                            }
+                        } while (starIndex != 0);
+                    }
                 }
-                else
+
+                if (!hasBarycenter)
                 {
                     cerr << "Barycenter " << barycenterName << " does not exist.\n";
+                    return NULL;
                 }
             }
         }
@@ -958,17 +955,72 @@ StarDatabase::createStar(uint32 catalogNumber,
     Star* star = new Star();
     star->setDetails(details);
     star->setCatalogNumber(catalogNumber);
-    star->setAbsoluteMagnitude((float) absMag);
 
-    // Truncate to floats to match behavior of reading from binary file.  The
-    // conversion to rectangular coordinates is still performed at double
-    // precision, however.
-    float raf = ((float) (ra * 24.0 / 360.0));
-    float decf = ((float) dec);
-    float distancef = ((float) distance);
+    // Compute the position in rectangular coordinates.  If a star has an
+    // orbit and barycenter, it's position is the position of the barycenter.
+    if (hasBarycenter)
+    {
+        star->setPosition(barycenterPosition);
+    }
+    else
+    {
+        double ra = 0.0;
+        double dec = 0.0;
+        double distance = 0.0;
+        if (!starData->getNumber("RA", ra))
+        {
+            cerr << "Invalid star: missing right ascension\n";
+            delete star;
+            return NULL;
+        }
 
-    Point3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
-    star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
+        if (!starData->getNumber("Dec", dec))
+        {
+            cerr << "Invalid star: missing declination.\n";
+            delete star;
+            return NULL;
+        }
+
+        if (!starData->getNumber("Distance", distance))
+        {
+            cerr << "Invalid star: missing distance.\n";
+            delete star;
+            return NULL;
+        }
+
+        // Truncate to floats to match behavior of reading from binary file.
+        // The conversion to rectangular coordinates is still performed at
+        // double precision, however.
+        float raf = ((float) (ra * 24.0 / 360.0));
+        float decf = ((float) dec);
+        float distancef = ((float) distance);
+        Point3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
+        star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
+    }
+
+    if (isBarycenter)
+    {
+        star->setAbsoluteMagnitude(30.0f);
+    }
+    else
+    {
+        double magnitude;
+        if (!starData->getNumber("AbsMag", magnitude))
+        {
+            if (!starData->getNumber("AppMag", magnitude))
+            {
+                cerr << "Invalid star: missing magnitude.\n";
+                magnitude = 30.0;
+            }
+            else
+            {
+                float distance = star->getPosition().distanceFromOrigin();
+                magnitude = astro::appToAbsMag((float) magnitude, distance);
+            }
+        }
+
+        star->setAbsoluteMagnitude((float) magnitude);
+    }
 
     return star;
 }
