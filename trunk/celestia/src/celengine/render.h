@@ -189,7 +189,7 @@ class Renderer
             atmosphere(NULL),
             rings(NULL),
             radius(1.0f),
-            oblateness(0.0f),
+            semiAxes(1.0f, 1.0f, 1.0f),
             model(InvalidResource),
             orientation(1.0f),
             eclipseShadows(NULL),
@@ -200,7 +200,7 @@ class Renderer
         const Atmosphere* atmosphere;
         RingSystem* rings;
         float radius;
-        float oblateness;
+        Vec3f semiAxes;
         ResourceHandle model;
         Quatf orientation;
         std::vector<EclipseShadow>* eclipseShadows;
