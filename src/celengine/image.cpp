@@ -86,6 +86,7 @@ static int formatComponents(int fmt)
     switch (fmt)
     {
     case GL_RGBA:
+    case GL_BGRA_EXT:
         return 4;
     case GL_RGB:
     case GL_BGR_EXT:

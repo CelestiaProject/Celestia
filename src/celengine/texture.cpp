@@ -159,6 +159,7 @@ static int getInternalFormat(int format)
     switch (format)
     {
     case GL_RGBA:
+    case GL_BGRA_EXT:
         return 4;
     case GL_RGB:
     case GL_BGR_EXT:
@@ -192,6 +193,7 @@ static int getCompressedInternalFormat(int format)
     case GL_BGR_EXT:
         return GL_COMPRESSED_RGB_ARB;
     case GL_RGBA:
+    case GL_BGRA_EXT:
         return GL_COMPRESSED_RGBA_ARB;
     case GL_ALPHA:
         return GL_COMPRESSED_ALPHA_ARB;
