@@ -28,6 +28,15 @@ static bool GetDialogFloat(HWND hDlg, int id, float& f)
         return false;
 }
 
+static bool SetDialogFloat(HWND hDlg, int id, char* format, float f)
+{
+    char buf[128];
+
+    sprintf(buf, format, f);
+
+    return (SetDlgItemText(hDlg, id, buf) == TRUE);
+}
+
 
 static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                                     UINT message,
@@ -47,6 +56,27 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
             CheckRadioButton(hDlg,
                              IDC_RADIO_KM, IDC_RADIO_RADII,
                              IDC_RADIO_KM);
+
+            //Initialize name, distance, latitude and longitude edit boxes with current values.
+            Simulation* sim = gotoDlg->appCore->getSimulation();
+            double distance, longitude, latitude;
+            sim->getSelectionLongLat(distance, longitude, latitude);
+
+            //Display information in format appropriate for object
+            if (sim->getSelection().body != NULL)
+            {
+                distance = distance - (double)sim->getSelection().body->getRadius();
+                SetDialogFloat(hDlg, IDC_EDIT_DISTANCE, "%.1f", (float)distance);
+                SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, "%.5f", (float)longitude);
+                SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, "%.5f", (float)latitude);
+                SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, (char*)sim->getSelection().body->getName().c_str());
+            }
+//            else if (sim->getSelection().star != NULL)
+//            {
+//                //Code to obtain searchable star name
+//               SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, (char*)sim->getSelection().star->);
+//            }
+
             return(TRUE);
         }
         break;
