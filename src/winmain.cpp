@@ -767,7 +767,12 @@ void handleKeyPress(int c)
         break;
 
     case 'I':
-        renderer->setCloudMapping(!renderer->getCloudMapping());
+        {
+            bool enabled = !renderer->getCloudMapping();
+            CheckMenuItem(menuBar, ID_RENDER_SHOWATMOSPHERES,
+                          enabled ? MF_CHECKED : MF_UNCHECKED);
+            renderer->setCloudMapping(enabled);
+        }
         break;
 
     case '/':
@@ -879,7 +884,7 @@ void ChangeSize(GLsizei w, GLsizei h)
 
 
 GLsizei g_w, g_h;
-int bReady;
+bool bReady = false;
 
 
 void RenderOverlay()
@@ -1012,7 +1017,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      int       nCmdShow)
 {
     // Say we're not ready to render yet.
-    bReady = 0;
+    bReady = false;
 
     appInstance = hInstance;
 
@@ -1257,22 +1262,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         }
     }
 
-    // We're now ready.
-    bReady = 1;
-
-#if 0
-    // Start out at Mir
-    sim->selectBody("Sol");
-    sim->selectBody("Mir");
-    sim->gotoSelection();
-    sim->setTimeScale(0.0f);
-    sim->update(5.0);
-    sim->setTimeScale(1.0f);
-    sim->follow();
-#endif
-
+    if (config->initScriptFile != "")
     {
-        ifstream scriptfile("test.cel");
+        ifstream scriptfile(config->initScriptFile.c_str());
         CommandParser parser(scriptfile);
         script = parser.parse();
         if (script == NULL)
@@ -1280,7 +1272,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             const vector<string>* errors = parser.getErrors();
             for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
         }
+        else
+        {
+            runningScript = new Execution(*script, sim, renderer);
+        }
     }
+
+    bReady = true;
 
     // Usual running around in circles bit...
     int bGotMsg;
@@ -1306,7 +1304,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     // Not ready to render anymore.
-    bReady = 0;
+    bReady = false;
 
     // Nuke all applicable scene stuff.
     renderer->shutdown();
@@ -1563,6 +1561,14 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             CheckMenuItem(menuBar, ID_RENDER_SHOWCONSTELLATIONS,
                           showAsterisms ? MF_CHECKED : MF_UNCHECKED);
             renderer->showAsterisms(showAsterisms ? asterisms : NULL);
+            break;
+        case ID_RENDER_SHOWATMOSPHERES:
+            {
+                bool enabled = !renderer->getCloudMapping();
+                CheckMenuItem(menuBar, ID_RENDER_SHOWATMOSPHERES,
+                              enabled ? MF_CHECKED : MF_UNCHECKED);
+                renderer->setCloudMapping(enabled);
+            }
             break;
 
         case ID_RENDER_AMBIENTLIGHT_NONE:

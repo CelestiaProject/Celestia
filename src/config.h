@@ -22,6 +22,7 @@ struct CelestiaConfig
     std::string asterismsFile;
     float faintestVisible;
     std::string favoritesFile;
+    std::string initScriptFile;
 };
 
 
