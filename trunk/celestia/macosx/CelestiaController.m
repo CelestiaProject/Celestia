@@ -45,7 +45,8 @@
 
 - (void)display 
 {
-    //NSLog(@"[CelestiaController display]");
+    if ( [startupCondition condition] != 1 )
+        return;
     if (!ready) 
        [self finishInitialization];
 //    else
@@ -66,9 +67,63 @@
     [appCore keyDown: keyCode ];
 }
 
+-(void) startGLView
+{
+    static bool needsStart = YES;
+    if (!needsStart) return;
+    needsStart = NO;
+    [[glView window] setAutodisplay:YES];
+    [glView setNeedsDisplay:YES];
+    [[glView window] setFrameUsingName: @"Celestia"];
+    [loadingPanel orderOut: nil ];
+    [[glView window] setAlphaValue: 1.0f];
+    [[glView window] setFrameAutosaveName: @"Celestia"];
+    [[glView window] makeFirstResponder: glView ];
+    [glView registerForDraggedTypes:
+    [NSArray arrayWithObject: NSStringPboardType]];
+//    [self scanForKeys: [renderPanelController window]];
+}
+
+/*
+static    NSMenu* savedMainMenu;
+
+- (void) beginLoading
+{
+    NSMenu* tempMenu = [[NSMenu alloc] initWithTitle: @""];
+    NSMenu* tempSubmenu = [[NSMenu alloc] initWithTitle: @""];
+    [tempMenu addItem: [[NSMenuItem alloc] initWithTitle: @"" action: NULL keyEquivalent: @""]];
+    [tempMenu setSubmenu: tempSubmenu forItem: [tempMenu itemAtIndex: 0] ];
+    [[glView window] setAlphaValue: 0.0f];
+    [loadingIndicator startAnimation: nil];
+    savedMainMenu = [NSApp mainMenu];
+    [ NSApp setMainMenu: tempMenu ];
+//    [ NSApp setAppleMenu: tempMenu ];
+}
+
+- (void)  endLoading
+{
+//    [ NSApp setMainMenu: savedMainMenu ];
+}
+*/
+
+static char* fatalErrorMessage;
+
+- (void) fatalError: (NSString *) msg
+{
+    if ( msg == nil )
+    {
+        if (fatalErrorMessage == nil) return;
+        [loadingPanel orderOut: nil ];
+        NSRunAlertPanel(@"Fatal Error",fatalErrorMessage,nil,nil,nil);
+        [NSApp terminate:self];
+        return;
+    }
+    fatalErrorMessage = [msg retain];
+}
+
 - (void)idle
 {
-    //NSLog(@"[CelestiaController idle]");
+    static NSModalSession session = nil;
     if (ready)
     {
        if ( keyCode != 0 )
@@ -85,8 +140,42 @@
         [appCore tick];
         [glView setNeedsDisplay:YES];
     }
+    else
+    {
+        if ( [startupCondition condition] == 0 ) 
+        {
+    if ( session != nil )
+        return;
+    [loadingIndicator startAnimation: nil];
+    session = [NSApp beginModalSessionForWindow:loadingPanel];
+    for (;;) {
+        if ( fatalErrorMessage != nil )
+            break;
+        if ([NSApp runModalSession:session] != NSRunContinuesResponse)
+            break;
+        if ( [startupCondition condition] != 0 )
+            break;
+    }
+    [NSApp endModalSession:session];
+        }
+//        [glView setNeedsDisplay:YES];
+//        if ( fatalErrorMessage != nil )
+//        {
+                [self fatalError: nil];
+//                return;
+//        }
+        [self startGLView];
+    }
+
 }
 
+
+static CelestiaController* firstInstance;
+
++(CelestiaController*) shared
+{
+    return firstInstance;
+}
 
 - (void)awakeFromNib
 {
@@ -94,30 +183,12 @@
         [super awakeFromNib];
     }
     //NSLog(@"[CelestiaController awakeFromNib]");
-    [self startInitialization];
+//    [self startInitialization];
 
-
-}
-
-- (void) setupResourceDirectory
-{
-    // Change directory to resource dir so Celestia can find cfg files and textures
-    NSFileManager *fileManager = [NSFileManager defaultManager]; 
-    NSString* path = [ @"~/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath];
-    if ( [ fileManager fileExistsAtPath: path ] )
-        chdir([path cString]);
-    else
-        chdir([[[NSBundle mainBundle] resourcePath] cString]);
-}
-
-- (void)startInitialization
-{
-    //NSLog(@"[CelestiaController startInitialization]");
-
+    if (firstInstance == nil ) firstInstance = self;
     ready = NO;
     isDirty = YES;
     appCore = nil;
-    timer = nil;
     [ self setupResourceDirectory ];
 NSLog(@"about to createAppCore\n");
     appCore = [CelestiaAppCore sharedAppCore];
@@ -127,27 +198,56 @@ NSLog(@"about to createAppCore\n");
         [NSApp terminate:self];
         return;
     }
-NSLog(@"about to initSimulation\n");
+    [self scanForKeys: [renderPanelController window]];
+//  hide main window until ready
+    [[glView window] setAlphaValue: 0.0f];
+//    [[glView window] orderOut: nil];
+    startupCondition = [[NSConditionLock alloc] initWithCondition: 0];
+    [NSThread detachNewThreadSelector: @selector(startInitialization) toTarget: self
+    withObject: nil];
+    
+    timer = [[NSTimer scheduledTimerWithTimeInterval: 0.001 target: self selector:@selector(idle) userInfo:nil repeats:true] retain];
+
+
+}
+
+- (void) setupResourceDirectory
+{
+    // Change directory to resource dir so Celestia can find cfg files and textures
+    NSFileManager *fileManager = [NSFileManager defaultManager]; 
+    NSString* path; //  = [ @"~/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath];
+    if ( [ fileManager fileExistsAtPath: path = [ @"~/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath] ] )
+        chdir([path cString]);
+    else if ( [ fileManager fileExistsAtPath: path = [ @"/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath] ] )
+        chdir([path cString]);
+    else {
+        NSRunAlertPanel(@"Missing Resource Directory",@"It appears that the \"CelestiaResources\" directory was not properly installed in the correct location as indicated in the installation instructions. \n\nPlease try again and see if you can get it right this time!",nil,nil,nil);
+        chdir([[[NSBundle mainBundle] resourcePath] cString]);
+        }
+}
+
+- (void)startInitialization
+{
+    //NSLog(@"[CelestiaController startInitialization]");
     if (![ appCore initSimulation])
     {
         NSLog(@"Could not initSimulation!");
-        [NSApp terminate:self];
-        return;
+    [startupCondition lock];
+    [startupCondition unlockWithCondition: 99];
+    [NSThread exit];
+    return;
+//        [NSApp terminate:self];
+//        return;
     }
 NSLog(@"done with initSimulation\n");
-    timer = [[NSTimer scheduledTimerWithTimeInterval: 0.001 target: self selector:@selector(idle) userInfo:nil repeats:true] retain];
-    [[glView window] setAutodisplay:YES];
-    [glView setNeedsDisplay:YES];
-    [[glView window] setFrameUsingName: @"Celestia"];
-    [[glView window] setFrameAutosaveName: @"Celestia"];
-    [[glView window] makeFirstResponder: glView ];
-    [glView registerForDraggedTypes:
-            [NSArray arrayWithObject: NSStringPboardType]];
-    [self scanForKeys: [renderPanelController window]];
+
+    [startupCondition lock];
+    [startupCondition unlockWithCondition: 1];
 }
 
 - (void)finishInitialization
 {
+    int i;
     NSInvocation *menuCallback;
     //NSLog(@"finishInitialization");
     // GL should be all set up, now initialize the renderer.
@@ -231,8 +331,14 @@ NSLog(@"done with initSimulation\n");
     [appCore forward];
 }
 
+- (IBAction)showInfoURL:(id)sender
+{
+    [appCore showInfoURL];
+}
+
 - (BOOL)     validateMenuItem: (id) item
 {
+    if ( [startupCondition condition] == 0 ) return NO;
     if ( [item tag] == 0 )
     {
         return [item isEnabled];
