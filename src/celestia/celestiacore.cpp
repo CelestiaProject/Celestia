@@ -61,6 +61,7 @@ static const float stdFOV = degToRad(45.0f);
 static const float MaximumFOV = degToRad(120.0f);
 static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
+static float MouseRotationSensitivity = degToRad(1.0f);
 
 static const int ConsolePageRows = 10;
 static Console console(100, 120);
@@ -814,7 +815,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             if (dx * dx > dy * dy)
             {
                 Observer& observer = sim->getObserver();
-                Vec3d v = Vec3d(0, 0, dx * -degToRad(1.0f));
+                Vec3d v = Vec3d(0, 0, dx * -MouseRotationSensitivity);
                 RigidTransform rt = observer.getSituation();
                 Quatd dr = 0.5 * (v * rt.rotation);
                 rt.rotation += dr;
@@ -3246,6 +3247,7 @@ bool CelestiaCore::initSimulation()
     }
 
     KeyRotationAccel = degToRad(config->rotateAcceleration);
+    MouseRotationSensitivity = degToRad(config->mouseRotationSensitivity);
 
     readFavoritesFile();
 
