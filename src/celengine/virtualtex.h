@@ -44,7 +44,8 @@ class VirtualTexture : public Texture
 
     struct TileQuadtreeNode
     {
-        TileQuadtreeNode()
+        TileQuadtreeNode() :
+            tile(NULL)
         {
             for (int i = 0; i < 4; i++)
                 children[i] = NULL;

@@ -55,14 +55,13 @@ VirtualTexture::VirtualTexture(const string& _tilePath,
                                unsigned int _baseSplit,
                                unsigned int _tileSize,
                                const string& _tileType) :
-    Texture(0, 0),
+    Texture(_tileSize << (_baseSplit + 1), _tileSize << _baseSplit),
     tilePath(_tilePath),
     baseSplit(_baseSplit),
     tileSize(_tileSize),
     ticks(0),
     nResolutionLevels(0)
 {
-    assert(baseSplit > 0);
     assert(tileSize != 0 && isPow2(tileSize));
     tileTree[0] = new TileQuadtreeNode();
     tileTree[1] = new TileQuadtreeNode();
@@ -79,7 +78,9 @@ VirtualTexture::~VirtualTexture()
 const TextureTile VirtualTexture::getTile(int lod, int u, int v)
 {
     tilesRequested++;
+#if 0
     cout << "getTile(" << lod << ", " << u << ", " << v << ")\n";
+#endif
 
     lod <<= baseSplit;
     if (lod < 0 || (uint) lod >= nResolutionLevels || 
@@ -107,8 +108,10 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
             {
                 node = node->children[child];
                 if (node->tile != NULL)
+                {
                     tile = node->tile;
-                tileLOD = n + 1;
+                    tileLOD = n + 1;
+                }
             }
         }
 
@@ -143,9 +146,11 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
             texDU = texDV = 1.0f / (float) (1 << lodDiff);
             texU = (u & ((1 << lodDiff) - 1)) * texDU;
             texV = (v & ((1 << lodDiff) - 1)) * texDV;
-            
+
+#if 0
             cout << "Tile: " << tile->tex->getName() << ", " <<
                 texU << ", " << texV << ", " << texDU << ", " << texDV << '\n';
+#endif
             return TextureTile(tile->tex->getName(),
                                texU, texV, texDU, texDV);
         }
@@ -211,14 +216,19 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
     sprintf(filename, "level%d/tx_%d_%d", lod, u, v);
     
     string pathname = tilePath + filename + tileExt;
-    cout << "Loading virtual texture tile: " << pathname << '\n';
+    //cout << "Loading virtual texture tile: " << pathname << '\n';
     Image* img = LoadImageFromFile(pathname);
     if (img == NULL)
         return NULL;
 
     ImageTexture* tex = NULL;
+
+    // Only use mip maps for the LOD 0; for higher LODs, the function of mip
+    // mapping is built into the texture.
+    MipMapMode mipMapMode = lod == 0 ? DefaultMipMaps : NoMipMaps;
+
     if (isPow2(img->getWidth()) && isPow2(img->getHeight()))
-        tex = new ImageTexture(*img, EdgeClamp, NoMipMaps);
+        tex = new ImageTexture(*img, EdgeClamp, mipMapMode);
     delete img;
 
     return tex;
@@ -227,13 +237,15 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
 
 void VirtualTexture::makeResident(Tile* tile, uint lod, uint u, uint v)
 {
-    cout << "makeResident: " << lod << ", " << u << ", " << v << '\n';
     if (tile->tex == NULL && !tile->loadFailed)
     {
         // Potentially evict other tiles in order to make this one fit
         tile->tex = loadTileTexture(lod, u, v);
         if (tile->tex == NULL)
+        {
+            // cout << "Texture load failed!\n";
             tile->loadFailed = true;
+        }
     }
 }
 
@@ -252,7 +264,6 @@ void VirtualTexture::populateTileTree()
             if (dir != NULL)
             {
                 maxLevel = i + baseSplit;
-                cout << filename << ", levels = " << maxLevel + 1 << '\n';
                 int uLimit = 2 << maxLevel;
                 int vLimit = 1 << maxLevel;
                 
@@ -260,7 +271,6 @@ void VirtualTexture::populateTileTree()
                 while (dir->nextFile(filename))
                 {
                     int u = -1, v = -1;
-                    cout << "Scanning file " << filename << '\n';
                     if (sscanf(filename.c_str(), "tx_%d_%d.", &u, &v) == 2)
                     {
                         if (u >= 0 && v >= 0 && u < uLimit && v < vLimit)
@@ -291,7 +301,9 @@ void VirtualTexture::addTileToTree(Tile* tile, uint lod, uint u, uint v)
             node->children[child] = new TileQuadtreeNode();
         node = node->children[child];
     }
+#if 0
     cout << "addTileToTree: " << node << ", " << lod << ", " << u << ", " << v << '\n';
+#endif
 
     // Verify that the tile doesn't already exist
     if (node->tile == NULL)
@@ -334,11 +346,12 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
 
     string tileType = "dds";
     texParams->getString("TileType", tileType);
-
     return new VirtualTexture(path + "/" + imageDirectory + "/",
                               (unsigned int) baseSplit,
                               (unsigned int) tileSize,
                               tileType);
+
+    return NULL;
 }
 
 
@@ -371,11 +384,9 @@ VirtualTexture* LoadVirtualTexture(const string& filename)
 {
     ifstream in(filename.c_str(), ios::in);
 
-    cout << "LoadVirtualTexture: " << filename << '\n';
-    
     if (!in.good())
     {
-        DPRINTF(0, "Error opening virtual texture file: %s\n", filename);
+        //DPRINTF(0, "Error opening virtual texture file: %s\n", filename.c_str());
         return NULL;
     }
 
