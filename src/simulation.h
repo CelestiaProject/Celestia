@@ -70,6 +70,7 @@ class Simulation
     void centerSelection(double centerTime = 0.5);
     void follow();
     void geosynchronousFollow();
+    void track();
     void cancelMotion();
 
     SolarSystem* getNearestSolarSystem() const;
@@ -88,6 +89,7 @@ class Simulation
         Travelling              = 1,
         Following               = 2,
         GeosynchronousFollowing = 3,
+        Tracking                = 4,
     };
 
     void setObserverMode(ObserverMode);
@@ -154,8 +156,6 @@ class Simulation
     double beginAccelTime;
 
     ObserverMode observerMode;
-    bool travelling;
-    bool following;
     JourneyParams journey;
     FollowParams followInfo;
 
