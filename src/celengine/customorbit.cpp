@@ -2633,6 +2633,67 @@ static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
 };
 
 
+class TritonOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        // Pole of the fixed reference plane
+        //double t = jd - 2433282.5;
+        double epoch = 2433282.5;
+        double t = jd - epoch;
+        double T = (jd - 2451545.0) / 36525;
+        double N = degToRad(359.28 + 54.308 * T);
+        double refplane_RA  = degToRad(298.72 +
+                                       2.58 * sin(N) - 0.04 * sin(2 * N));
+        double refplane_Dec = degToRad(42.63 -
+                                       1.90 * cos(N) - 0.01 * cos(2 * N));
+        double nepPole_RA = degToRad(299.36);
+        double nepPole_Dec = degToRad(43.46);
+
+        double a = 354800;
+        double e = 0.0000;
+        double n = degToRad(61.2588532);
+        double L0 = degToRad(200.913);
+        double L  = L0 + n * t;
+        double gamma = degToRad(158.996);
+        double theta = degToRad(151.401 + 0.57806 * t / 365.25);
+
+        double E = L - theta;
+        Point3d p(a * cos(E), 0.0, a * -sin(E));
+
+        // Orientation of the orbital plane with respect to the Laplacian plane
+        Mat3d Rorbit     = (Mat3d::yrotation(theta) *
+                            Mat3d::xrotation(gamma));
+
+        // Rotate to the Earth's equatorial plane
+        double Nr = degToRad(refplane_RA);
+        double Jr = degToRad(90 - refplane_Dec);
+        Mat3d Rrefplane = (Mat3d::yrotation( Nr) *
+                           Mat3d::xrotation( Jr) *
+                           Mat3d::yrotation(-Nr));
+
+        // Rotate to the Neptunian equatorial plane
+        double Nn = degToRad(nepPole_RA);
+        double Jn = degToRad(90 - nepPole_Dec);
+        Mat3d RNept_eq   = (Mat3d::yrotation( Nn) *
+                            Mat3d::xrotation(-Jn) *
+                            Mat3d::yrotation(-Nn));
+
+        return RNept_eq * (Rrefplane * (Rorbit * p));
+    }
+    
+    double getPeriod() const
+    {
+        return 5.877;
+    }
+
+    double getBoundingRadius() const
+    {
+        return 354800 * BoundingRadiusSlack;
+    }
+};
+
+
 class JPLEphOrbit : public CachingOrbit
 {
 public:
@@ -2799,6 +2860,8 @@ Orbit* GetCustomOrbit(const string& name)
         return CreateUranianSatelliteOrbit(4);
     if (name == "oberon")
         return CreateUranianSatelliteOrbit(5);
+    if (name == "triton")
+        return new TritonOrbit();
     else
         return CreateVSOP87Orbit(name);
 }

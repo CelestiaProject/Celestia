@@ -63,6 +63,37 @@ class Model
      */
     void normalize(const Vec3f& centerOffset);
 
+    class MeshComparator
+    {
+    public:
+        virtual bool operator()(const Mesh&, const Mesh&) const = 0;
+    };
+
+    /*! Sort the model's meshes in place. */
+    void sortMeshes(const MeshComparator&);
+
+    /*! This comparator will roughly sort the model's meshes by
+     *  opacity so that transparent meshes are rendered last.  It's far
+     *  from perfect, but covers a lot of cases.  A better method of
+     *  opacity sorting would operate at the primitive group level, or
+     *  even better at the triangle level.
+     *
+     *  Standard usage for this class is:
+     *     model->sortMeshes(Model::OpacityComparator(*model));
+     */
+    class OpacityComparator : public MeshComparator
+    {
+    public:
+        OpacityComparator(const Model&);
+
+        virtual bool operator()(const Mesh&, const Mesh&) const;
+
+    private:
+        float getOpacity(const Mesh& mesh) const;
+
+        const Model& model;
+    };
+
  private:
     std::vector<const Mesh::Material*> materials;
     std::vector<Mesh*> meshes;

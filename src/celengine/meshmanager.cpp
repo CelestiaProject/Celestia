@@ -95,8 +95,17 @@ Model* ModelInfo::load(const string& filename)
         model = LoadCelestiaMesh(filename);
     }
 
-    if (model == NULL)
+    if (model != NULL)
+    {
+        // Sort the submeshes roughly by opacity.  This will eliminate a
+        // good number of the errors caused when translucent triangles are
+        // rendered before geometry that they cover.
+        model->sortMeshes(Model::OpacityComparator(*model));
+    }
+    else
+    {
         cerr << "Error loading model '" << filename << "'\n";
+    }
  
     return model;
 }
@@ -125,7 +134,7 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
     NoiseMeshParameters* params = (NoiseMeshParameters*) info;
 
     return fractalsum(Point3f(x, y, z) + params->offset,
-                      (int) params->octaves) * params->featureHeight;
+                      params->octaves) * params->featureHeight;
 }
 
 

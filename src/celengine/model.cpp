@@ -10,6 +10,8 @@
 #include "model.h"
 #include "rendcontext.h"
 #include <cassert>
+#include <functional>
+#include <algorithm>
 
 using namespace std;
 
@@ -156,4 +158,62 @@ Model::normalize(const Vec3f& centerOffset)
     for (i = vertexLists.begin(); i != vertexLists.end(); i++)
         (*i)->transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
 #endif
+}
+
+
+
+class MeshComparatorAdapter : public std::binary_function<const Mesh*, const Mesh*, bool>
+{
+public:
+    MeshComparatorAdapter(const Model::MeshComparator& c) :
+        comparator(c)
+    {
+    }
+
+    bool operator()(const Mesh* a, const Mesh* b) const
+    {
+        return comparator(*a, *b);
+    }
+
+private:
+    const Model::MeshComparator& comparator;
+};
+
+
+Model::OpacityComparator::OpacityComparator(const Model& _model) :
+    model(_model)
+{
+}
+
+
+// Look at the material used by first primitive group in the mesh for the
+// opacity of the whole model.  This is a very crude way to check the opacity
+// of a mesh and misses many cases.
+float
+Model::OpacityComparator::getOpacity(const Mesh& mesh) const
+{
+    const Mesh::PrimitiveGroup* group = mesh.getGroup(0);
+
+    if (group != NULL)
+    {
+        const Mesh::Material* material = model.getMaterial(group->materialIndex);
+        if (material != NULL)
+            return material->opacity;
+    }
+
+    return 1.0f;
+}
+
+
+bool
+Model::OpacityComparator::operator()(const Mesh& a, const Mesh& b) const
+{
+    return getOpacity(a) > getOpacity(b);
+}
+
+
+void
+Model::sortMeshes(const MeshComparator& comparator)
+{
+    sort(meshes.begin(), meshes.end(), MeshComparatorAdapter(comparator));
 }
