@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include "star.h"
 
 
@@ -48,5 +49,11 @@ class CatalogCrossReference
     std::string prefix;
     std::vector<Entry> entries;
 };
+
+
+class StarDatabase;
+
+extern CatalogCrossReference* ReadCatalogCrossReference(std::istream&,
+                                                        const StarDatabase&);
 
 #endif // _CATALOGXREF_H_
