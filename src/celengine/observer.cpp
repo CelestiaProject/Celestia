@@ -254,11 +254,12 @@ void Observer::update(double dt, double timeScale)
         // Spherically interpolate the orientation over the first half
         // of the journey.
         Quatf orientation;
-        if (t < 0.5f)
+        if (t >= journey.startInterpolation && t < journey.endInterpolation )
         {
             // Smooth out the interpolation to avoid jarring changes in
             // orientation
-            double v = sin(t * PI);
+            double v = pow( sin( (t - journey.startInterpolation) /
+                                 (journey.endInterpolation - journey.startInterpolation) * PI / 2), 2);
 
             // Be careful to choose the shortest path when interpolating
             if (norm(journey.initialOrientation - journey.finalOrientation) <
@@ -273,7 +274,11 @@ void Observer::update(double dt, double timeScale)
                                            -journey.finalOrientation, v);
             }
         }
-        else
+        else if (t < journey.startInterpolation)
+        {
+            orientation = journey.initialOrientation;
+        }
+        else // t >= endInterpolation
         {
             orientation = journey.finalOrientation;
         }
@@ -358,6 +363,8 @@ struct TravelExpFunc : public unary_function<double, double>
 void Observer::computeGotoParameters(const Selection& destination,
                                      JourneyParams& jparams,
                                      double gotoTime,
+                                     double startInter,
+                                     double endInter,
                                      Vec3d offset,
                                      astro::CoordinateSystem offsetFrame,
                                      Vec3f up,
@@ -386,6 +393,8 @@ void Observer::computeGotoParameters(const Selection& destination,
     Vec3d vn = targetPosition - jparams.to;
     Point3f focus((float) vn.x, (float) vn.y, (float) vn.z);
     jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, upf);
+    jparams.startInterpolation = min(startInter, endInter);
+    jparams.endInterpolation   = max(startInter, endInter);
 
     jparams.accelTime = 0.5;
     double distance = astro::microLightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
@@ -433,6 +442,9 @@ void Observer::computeCenterParameters(const Selection& destination,
     Vec3d vn = targetPosition - jparams.to;
     Point3f focus((float) vn.x, (float) vn.y, (float) vn.z);
     jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, up);
+    jparams.startInterpolation = 0;
+    jparams.endInterpolation   = 1;
+
 
     jparams.accelTime = 0.5;
     jparams.expFactor = 0;
@@ -610,9 +622,18 @@ float Observer::getTargetSpeed()
     return targetSpeed;
 }
 
+void Observer::gotoSelection(const Selection& selection,
+                             double gotoTime,
+                             Vec3f up,
+                             astro::CoordinateSystem upFrame)
+{
+    gotoSelection(selection, gotoTime, 0.25, 0.75, up, upFrame);
+}
 
 void Observer::gotoSelection(const Selection& selection,
-                             double gotoTime, 
+                             double gotoTime,
+                             double startInter,
+                             double endInter,
                              Vec3f up,
                              astro::CoordinateSystem upFrame)
 {
@@ -639,7 +660,7 @@ void Observer::gotoSelection(const Selection& selection,
         if (orbitDistance < minOrbitDistance)
             orbitDistance = minOrbitDistance;
 
-        computeGotoParameters(selection, journey, gotoTime,
+        computeGotoParameters(selection, journey, gotoTime, startInter, endInter,
                               v * -(orbitDistance / distance), astro::Universal,
                               up, upFrame);
         observerMode = Travelling;
@@ -659,7 +680,7 @@ void Observer::gotoSelection(const Selection& selection,
         Vec3d v = pos - getPosition();
         v.normalize();
 
-        computeGotoParameters(selection, journey, gotoTime,
+        computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
                               v * -distance * 1e6, astro::Universal,
                               up, upFrame);
         observerMode = Travelling;
@@ -681,7 +702,7 @@ void Observer::gotoSelectionLongLat(const Selection& selection,
         double x = cos(theta) * sin(phi);
         double y = cos(phi);
         double z = -sin(theta) * sin(phi);
-        computeGotoParameters(selection, journey, gotoTime,
+        computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
                               Vec3d(x, y, z) * distance * 1e6, astro::Geographic,
                               up, astro::Geographic);
         observerMode = Travelling;
@@ -706,6 +727,9 @@ void Observer::gotoLocation(const RigidTransform& transform,
                                      (float) transform.rotation.x,
                                      (float) transform.rotation.y,
                                      (float) transform.rotation.z);
+    journey.startInterpolation = 0.25f;
+    journey.endInterpolation   = 0.75f;
+
 
     journey.accelTime = 0.5;
     double distance = astro::microLightYearsToKilometers(journey.from.distanceTo(journey.to)) / 2.0;
