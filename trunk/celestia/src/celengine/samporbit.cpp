@@ -48,6 +48,9 @@ public:
     double getBoundingRadius() const;
     Point3d computePosition(double jd) const;
 
+    bool isPeriodic() const;
+    void getValidRange(double& begin, double& end) const;
+
 private:
     vector<Sample> samples;
     double boundingRadius;
@@ -95,6 +98,19 @@ void SampledOrbit::addSample(double t, double x, double y, double z)
 double SampledOrbit::getPeriod() const
 {
     return samples[samples.size() - 1].t - samples[0].t;
+}
+
+
+bool SampledOrbit::isPeriodic() const
+{
+    return false;
+}
+
+
+void SampledOrbit::getValidRange(double& begin, double& end) const
+{
+    begin = samples[0].t;
+    end = samples[samples.size() - 1].t;
 }
 
 
