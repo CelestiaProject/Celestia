@@ -221,8 +221,8 @@ numberWithInt:Renderer::ShowPlanets],@"Planets",[NSNumber numberWithInt:Renderer
         prefs = [[NSUserDefaults standardUserDefaults] objectForKey:@"renderPreferences"];
         [self setLabelFlags:[prefs objectForKey:@"labelFlags"]];
         [self setRenderFlags:[prefs objectForKey:@"renderFlags"]];
-        [self setBrightnessBias:[prefs objectForKey:@"brightnessBias"]];
-        [self setSaturationMagnitude:[prefs objectForKey:@"saturationMagnitude"]];
+//        [self setBrightnessBias:[prefs objectForKey:@"brightnessBias"]];
+//        [self setSaturationMagnitude:[prefs objectForKey:@"saturationMagnitude"]];
         [self setVertexShaderEnabled:[prefs objectForKey:@"vertexShaderEnabled"]];
         [self setFragmentShaderEnabled:[prefs objectForKey:@"fragmentShaderEnabled"]];
         [self setResolution:[prefs objectForKey:@"resolution"]];

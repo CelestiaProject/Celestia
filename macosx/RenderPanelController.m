@@ -89,8 +89,8 @@ valueWithNonretainedObject:rOrbits],@"Planets",[NSValue valueWithNonretainedObje
         [renderer setVertexShaderEnabled:[NSNumber numberWithBool:([rVertexShader state]==NSOnState)]];
         [renderer setFragmentShaderEnabled:[NSNumber numberWithBool:([rFragmentShader state]==NSOnState)]];
 
-        [renderer setBrightnessBias:[NSNumber numberWithFloat:[fBrightnessBias floatValue]]];
-        [renderer setSaturationMagnitude:[NSNumber numberWithFloat:[fSaturation floatValue]]];
+//        [renderer setBrightnessBias:[NSNumber numberWithFloat:[fBrightnessBias floatValue]]];
+//        [renderer setSaturationMagnitude:[NSNumber numberWithFloat:[fSaturation floatValue]]];
         [renderer setResolution:[NSNumber numberWithInt:[fResolution indexOfSelectedItem]]];
 
         return;
@@ -107,12 +107,12 @@ valueWithNonretainedObject:rOrbits],@"Planets",[NSValue valueWithNonretainedObje
     }
 
     if (sender == fBrightnessBias) {
-        [renderer setBrightnessBias:[NSNumber numberWithFloat:[fBrightnessBias floatValue]]];
+//        [renderer setBrightnessBias:[NSNumber numberWithFloat:[fBrightnessBias floatValue]]];
         return;
     }
 
     if (sender == fSaturation) {
-        [renderer setSaturationMagnitude:[NSNumber numberWithFloat:[fSaturation floatValue]]];
+//        [renderer setSaturationMagnitude:[NSNumber numberWithFloat:[fSaturation floatValue]]];
         return;
     }
 
