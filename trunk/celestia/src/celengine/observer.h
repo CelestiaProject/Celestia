@@ -68,6 +68,9 @@ public:
 
     const std::string& getDisplayedSurface() const;
     void setDisplayedSurface(const std::string&);
+    
+    uint32 getLocationFilter() const;
+    void setLocationFilter(uint32);
 
     void gotoSelection(const Selection&,
                        double gotoTime,
@@ -174,6 +177,7 @@ public:
     float fov;
     bool reverseFlag;
 
+    uint32 locationFilter;
     std::string displayedSurface;
 };
 
