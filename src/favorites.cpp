@@ -42,6 +42,8 @@ FavoritesList* ReadFavoritesList(istream& in)
             DPRINTF("Error parsing favorites entry %s\n", fav->name.c_str());
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
+            if (favParamsValue != NULL)
+                delete favParamsValue;
             return NULL;
         }
 
