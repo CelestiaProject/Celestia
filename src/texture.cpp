@@ -65,13 +65,16 @@ static void initTextureLoader()
 }
 
 
-CTexture::CTexture(int w, int h, int fmt) :
+CTexture::CTexture(int w, int h, int fmt, bool _cubeMap) :
     width(w),
     height(h),
-    format(fmt)
+    format(fmt),
+    cubeMap(_cubeMap)
 {
     cmap = NULL;
     cmapEntries = 0;
+
+    // assert(!cubeMap || height == width);
 
     // Yuck . . .
     if (!initialized)
@@ -99,7 +102,8 @@ CTexture::CTexture(int w, int h, int fmt) :
         break;
     }
 
-    pixels = new unsigned char[width * height * components];
+    int faces = cubeMap ? 6 : 1;
+    pixels = new unsigned char[width * height * components * faces];
 
     glName = 0;
 }
@@ -124,14 +128,22 @@ void CTexture::bindName(uint32 flags)
     if (pixels == NULL)
         return;
 
-    GLuint tn;
+    GLuint textureType = GL_TEXTURE_2D;
+    GLuint wrapMode = wrap ? GL_REPEAT : GL_CLAMP;
+    if (cubeMap)
+    {
+        textureType = GL_TEXTURE_CUBE_MAP_EXT;
+        wrapMode = GL_CLAMP_TO_EDGE;
+    }
 
+    GLuint tn;
     glGenTextures(1, &tn);
-    glBindTexture(GL_TEXTURE_2D, tn);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap ? GL_REPEAT : GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap ? GL_REPEAT : GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glBindTexture(textureType, tn);
+
+    glTexParameteri(textureType, GL_TEXTURE_WRAP_S, wrapMode);
+    glTexParameteri(textureType, GL_TEXTURE_WRAP_T, wrapMode);
+    glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
     int internalFormat = components;
     // compress = true;
@@ -162,12 +174,23 @@ void CTexture::bindName(uint32 flags)
 	glHint((GLenum) GL_TEXTURE_COMPRESSION_HINT_ARB, GL_NICEST);
     }
 
-    gluBuild2DMipmaps(GL_TEXTURE_2D,
-                      internalFormat,
-                      width, height,
-                      format,
-                      GL_UNSIGNED_BYTE,
-                      pixels);
+    int nFaces = 1;
+    int textureTarget = GL_TEXTURE_2D;
+    if (cubeMap)
+    {
+        nFaces = 6;
+        textureTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT;
+    }
+
+    for (int face = 0; face < nFaces; face++)
+    {
+        gluBuild2DMipmaps(textureTarget + face,
+                          internalFormat,
+                          width, height,
+                          format,
+                          GL_UNSIGNED_BYTE,
+                          pixels + face * width * height * components);
+    }
     
     glName = tn;
 
@@ -798,9 +821,9 @@ CTexture* CreateNormalizationCubeMap(int size)
     if (tex == NULL)
         return NULL;
 
-    GLuint tn;
-    glGenTextures(1, &tn);
-    glBindTexture(GL_TEXTURE_2D, tn);
+    glGenTextures(1, &tex->glName);
+    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, tex->glName);
+    
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -874,4 +897,30 @@ CTexture* CreateDiffuseLightCubeMap(int size)
     }
 
     return tex;
+}
+
+
+CTexture* CreateProceduralCubeMap(int size, int format,
+                                  ProceduralTexEval func)
+{
+    CTexture* tex = new CTexture(size, size, format, true);
+    if (tex == NULL)
+        return NULL;
+
+    for (int face = 0; face < 6; face++)
+    {
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float s = (float) x / (float) size * 2 - 1;
+                float t = (float) y / (float) size * 2 - 1;
+                Vec3f v = cubeVector(face, s, t);
+                func(v.x, v.y, v.z, tex->pixels + ((face * size + y) * size + x) * tex->components);
+            }
+        }
+    }
+
+    return tex;
+
 }
