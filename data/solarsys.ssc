@@ -597,12 +597,14 @@
 
 	EllipticalOrbit
 	{
-	Period         2.736915
+	Period         550.48
 	SemiMajorAxis  12952000
 	Eccentricity   0.163
 	Inclination    175.3
 	MeanAnomaly    52
 	}
+
+	RotationPeriod 9.6
 
 	Albedo         0.05
 }
