@@ -46,10 +46,10 @@
 KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core )
     : QGLWidget( parent, name )
 {
-    if (chdir(CONFIG_DATA_DIR) == -1)
+    if (chdir(CONFIG_DATA_DIR "/celestia" ) == -1)
     {
-        cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
-            "', probably due to improper installation\n";
+//        cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
+//            "', probably due to improper installation\n";
     }
 
     setFocusPolicy(QWidget::ClickFocus);
@@ -97,7 +97,7 @@ void KdeGlWidget::initializeGL()
 {
     if (!appCore->initRenderer())
     {
-        cerr << "Failed to initialize renderer.\n";
+//        cerr << "Failed to initialize renderer.\n";
         exit(1);
     }
 
@@ -166,12 +166,16 @@ void KdeGlWidget::mouseMoveEvent( QMouseEvent* m )
     int y = (int) m->y();
 
     int buttons = 0;
-    if (m->state() == LeftButton)
+    if (m->state() & LeftButton)
         buttons |= CelestiaCore::LeftButton;
-    if (m->state() == MidButton)
+    if (m->state() & MidButton)
         buttons |= CelestiaCore::MiddleButton;
-    if (m->state() == RightButton)
+    if (m->state() & RightButton)
         buttons |= CelestiaCore::RightButton;
+    if (m->state() & ShiftButton)
+        buttons |= CelestiaCore::ShiftKey;
+    if (m->state() & ControlButton)
+        buttons |= CelestiaCore::ControlKey;
 
     appCore->mouseMove(x - lastX, y - lastY, buttons);
 
