@@ -16,6 +16,15 @@
 
 typedef void (*ProceduralTexEval)(float, float, float, unsigned char*);
 
+class TexelFunctionObject
+{
+ public:
+    TexelFunctionObject() {};
+    virtual ~TexelFunctionObject() {};
+    virtual void operator ()(float, float, float, unsigned char*) = 0;
+};
+
+
 class Texture
 {
  public:
@@ -65,6 +74,9 @@ class Texture
 extern Texture* CreateProceduralTexture(int width, int height,
                                         int format,
                                         ProceduralTexEval func);
+extern Texture* CreateProceduralTexture(int width, int height,
+                                        int format,
+                                        TexelFunctionObject& func);
 extern Texture* CreateProceduralCubeMap(int size, int format,
                                         ProceduralTexEval func);
 extern Texture* CreateJPEGTexture(const char* filename,
