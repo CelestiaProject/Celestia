@@ -67,7 +67,7 @@ AC_MSG_CHECKING([whether to include debugging code])
 AC_ARG_ENABLE(debug,     [  --enable-debug          Produce an executable with debugging symbols], , enable_debug="no")
 if test "$enable_debug" = "yes" ; then
 	CELESTIA_CFLAGS="-g -Wall"; CELESTIA_CXXFLAGS="-g -Wall"
-	AC_DEFINE(DEBUG)
+	AC_DEFINE(DEBUG, 1, [Are we debugging ?])
 fi
 AC_MSG_RESULT($enable_debug)
 
@@ -323,15 +323,15 @@ else
 fi
 AC_SUBST(PKGDATADIR)
 
-AC_DEFINE_UNQUOTED(CONFIG_DATA_DIR, "$PKGDATADIR")
-AC_DEFINE_UNQUOTED(G_LOG_DOMAIN,"Celestia")
-AC_DEFINE_UNQUOTED(GNOMELOCALEDIR,"$PKGDATADIR/locale")
+AC_DEFINE_UNQUOTED(CONFIG_DATA_DIR, "$PKGDATADIR", [The directory where our data will be installed in])
+AC_DEFINE_UNQUOTED(G_LOG_DOMAIN,"Celestia", [Log Domain for Gnome])
+AC_DEFINE_UNQUOTED(GNOMELOCALEDIR,"$PKGDATADIR/locale", [Locale Directory for Gnome (Currently unused])
 
 enable_hipparcos="no"
 AC_ARG_ENABLE(hipparcos-dir,
  [  --enable-hipparcos-dir=DIR      Specify location of HIPPARCOS/TYCHO stardata],
  HIPDIR="$enableval",HIPDIR="$PKGDATADIR")
-AC_DEFINE_UNQUOTED(HIP_DATA_DIR, "$HIPDIR")
+AC_DEFINE_UNQUOTED(HIP_DATA_DIR, "$HIPDIR", [The directory where the HIPPARCOS/TYCHO data resides])
 AC_SUBST(HIPDIR)
 AC_MSG_CHECKING([whether we can create a new star database])
 if test -f "$HIPDIR/hip_main.dat" ; then
