@@ -165,6 +165,11 @@ enum
 	Menu_AmbientMed          = 2033,
 	Menu_CometLabels         = 2034,
 	Menu_LocationLabels      = 2035,
+	Menu_AsteroidOrbits      = 2036,
+	Menu_CometOrbits         = 2037,
+	Menu_MoonOrbits          = 2038,
+	Menu_PlanetOrbits        = 2039,
+	Menu_SpacecraftOrbits    = 2040,
 };
 
 static void menuSelectSol()
@@ -304,7 +309,7 @@ void setFlag(int type, const char* name, int value) {
 	gchar key[60];
 	switch (type) {
 		case 0: sprintf(key, "%s%s", "/apps/celestia/render/", name); break;
-		case 1: sprintf(key, "%s%s", "/apps/celestia/orbit/", name); break;
+		case 1: sprintf(key, "%s%s", "/apps/celestia/orbits/", name); break;
 		case 2: sprintf(key, "%s%s", "/apps/celestia/labels/", name); break;
 	}
 	
@@ -370,6 +375,29 @@ static gint menuLabeler(GtkWidget* w, gpointer flag)
 		case Renderer::SpacecraftLabels: setFlag(2, "spacecraft", state); break;
 		case Renderer::LocationLabels: setFlag(2, "location", state); break;
 		case Renderer::CometLabels: setFlag(2, "comet", state); break;
+	}
+	#endif
+
+	return TRUE;
+}
+
+// Orbit Checkbox control superfunction!
+// Renderer::*Orbits passed as (gpointer)
+static gint menuOrbiter(GtkWidget* w, gpointer flag)
+{
+	bool state = getActiveState(w);
+
+    appRenderer->setOrbitMask((appRenderer->getOrbitMask() & ~(int)flag) |
+                           (state ? (int)flag : 0));
+
+	#ifdef GNOME
+	// Update GConf
+	switch ((int)flag) {
+		case Body::Planet: setFlag(1, "planet", state); break;
+		case Body::Moon: setFlag(1, "moon", state); break;
+		case Body::Asteroid: setFlag(1, "asteroid", state); break;
+		case Body::Spacecraft: setFlag(1, "spacecraft", state); break;
+		case Body::Comet: setFlag(1, "comet", state); break;
 	}
 	#endif
 
@@ -935,7 +963,7 @@ static int infoChanged(GtkButton*, int info)
 
 extern void resyncAll();
 
-GtkWidget *showFrame=NULL, *labelFrame=NULL, *showBox=NULL, *labelBox=NULL;
+GtkWidget *showFrame=NULL, *labelFrame=NULL, *orbitFrame=NULL, *showBox=NULL, *labelBox=NULL, *orbitBox=NULL;
 GtkWidget *optionDialog=NULL, *slider=NULL;
 
 static void menuOptions()
@@ -983,6 +1011,7 @@ static void menuOptions()
     gtk_box_pack_start(GTK_BOX(hbox), showFrame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(midBox), labelFrame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(midBox), limitFrame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(miscBox), orbitFrame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(miscBox), ambientFrame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(miscBox), infoFrame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), midBox, TRUE, TRUE, 0);
@@ -1008,21 +1037,7 @@ static void menuOptions()
     makeRadioItems(ambientLabels,ambientBox,GTK_SIGNAL_FUNC(ambientChanged),ambientGads, NULL);
     makeRadioItems(infoLabels,infoBox,GTK_SIGNAL_FUNC(infoChanged),infoGads, NULL);
 
-    gtk_widget_show(showFrame);
-    gtk_widget_show(showBox);
-    gtk_widget_show(labelFrame);
-    gtk_widget_show(labelBox);
-    gtk_widget_show(limitFrame);
-    gtk_widget_show(limitBox);
-    gtk_widget_show(midBox);
-    gtk_widget_show(miscBox);
-    gtk_widget_show(ambientFrame);
-    gtk_widget_show(infoFrame);
-    gtk_widget_show(ambientBox);
-    gtk_widget_show(infoBox);
-	gtk_widget_show(slider);
-	gtk_widget_show(maglabel);
-    gtk_widget_show(hbox);
+	gtk_widget_show_all(hbox);
 
     resyncAll();
 
@@ -2875,6 +2890,11 @@ int checkLabelFlag(int flag, char*)
 	return ((appRenderer->getLabelMode() & flag) == flag);
 }
 
+int checkOrbitFlag(int flag, char*)
+{
+	return ((appRenderer->getOrbitMask() & flag) == flag);
+}
+
 int radioStarStyle(int flag, char*)
 {
 	return (appCore->getRenderer()->getStarStyle() == flag);
@@ -2901,6 +2921,11 @@ static CheckFunc checks[] =
 //  { NULL, NULL, "/Render/Use Vertex Shaders",    checkVertexShaders, 3, 0, Menu_VertexShaders, GTK_SIGNAL_FUNC(menuVertexShaders) },
     { NULL, NULL, "/Render/Antialiasing",          checkRenderFlag,    3, Renderer::ShowSmoothLines, Menu_AntiAlias, GTK_SIGNAL_FUNC(menuRenderer) },
     { NULL, NULL, "/Render/AutoMag for Stars",     checkRenderFlag,    3, Renderer::ShowAutoMag, Menu_AutoMag, GTK_SIGNAL_FUNC(menuRenderer) },
+	{ NULL, NULL, "/Render/Spacecraft",            checkOrbitFlag,     1, Body::Spacecraft, Menu_SpacecraftOrbits, GTK_SIGNAL_FUNC(menuOrbiter) },
+	{ NULL, NULL, "/Render/Planets",               checkOrbitFlag,     1, Body::Planet, Menu_PlanetOrbits, GTK_SIGNAL_FUNC(menuOrbiter) },
+	{ NULL, NULL, "/Render/Moons",                 checkOrbitFlag,     1, Body::Moon, Menu_MoonOrbits, GTK_SIGNAL_FUNC(menuOrbiter) },
+	{ NULL, NULL, "/Render/Comets",                checkOrbitFlag,     1, Body::Comet, Menu_CometOrbits, GTK_SIGNAL_FUNC(menuOrbiter) },
+	{ NULL, NULL, "/Render/Asteroids",             checkOrbitFlag,     1, Body::Asteroid, Menu_AsteroidOrbits, GTK_SIGNAL_FUNC(menuOrbiter) },
     { NULL, NULL, "/Render/Stars",                 checkLabelFlag,     1, Renderer::StarLabels, Menu_StarLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Spacecraft",            checkLabelFlag,     1, Renderer::SpacecraftLabels, Menu_CraftLabels, GTK_SIGNAL_FUNC(menuLabeler) },
     { NULL, NULL, "/Render/Planets",               checkLabelFlag,     1, Renderer::PlanetLabels, Menu_PlanetLabels, GTK_SIGNAL_FUNC(menuLabeler) },
@@ -2934,26 +2959,30 @@ static CheckFunc checks[] =
 };
 
 
-void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func, CheckFunc *cfunc)
-{
-    if(cfunc->active & 2)
-        {
+void setupCheckItem(GtkItemFactory* factory, int action, GtkSignalFunc func, CheckFunc *cfunc) {
+	GtkWidget *frame = NULL;
+
+    if (cfunc->active & 2) {
         GtkWidget* w = gtk_item_factory_get_widget_by_action(factory, action);
-        if (w != NULL)
-        {
+		
+        if (w != NULL) {
 			// Add signal handler and pass Renderer::whatever as gpointer data
             g_signal_connect(GTK_OBJECT(w), "toggled",
                              G_CALLBACK(func),
                              (gpointer)cfunc->funcdata);
         }
-#ifdef DEBUG
-        else
-            DPRINTF(0,"Unable to attach signal to action %d!\n",action);
-#endif
-        } else {
-		char *optName=rindex(cfunc->path,'/');
-		if (optName)
-			cfunc->optWidget=makeCheckButton(++optName, ((cfunc->func==checkLabelFlag)?labelBox:showBox), 0, cfunc->sigFunc, (gpointer)cfunc->funcdata);
+	}
+	else {
+		char *optName = rindex(cfunc->path,'/');
+		if (optName) {
+			if (cfunc->func == checkLabelFlag) frame = labelBox;
+			else if (cfunc->func == checkRenderFlag) frame = showBox;
+			else if (cfunc->func == checkOrbitFlag) frame = orbitBox;
+			else frame = NULL;
+
+			// Add a check button with appropriate callback
+			cfunc->optWidget = makeCheckButton(++optName, frame, 0, cfunc->sigFunc, (gpointer)cfunc->funcdata);
+		}
 	}
 }
 
@@ -4213,17 +4242,26 @@ int main(int argc, char* argv[])
     showFrame = gtk_frame_new("Show");
     g_assert(showFrame);
     showBox = gtk_vbox_new(FALSE, 0);
-    gtk_container_border_width(GTK_CONTAINER(showBox), CELSPACING);
     g_assert(showBox);
-    gtk_container_add(GTK_CONTAINER(showFrame),GTK_WIDGET(showBox));
+    gtk_container_border_width(GTK_CONTAINER(showBox), CELSPACING);
+    gtk_container_add(GTK_CONTAINER(showFrame), GTK_WIDGET(showBox));
     gtk_container_border_width(GTK_CONTAINER(showFrame), 0);
+	
     labelFrame = gtk_frame_new("Label");
     g_assert(labelFrame);
     labelBox = gtk_vbox_new(FALSE, 0);
-    gtk_container_border_width(GTK_CONTAINER(labelBox), CELSPACING);
     g_assert(labelBox);
-    gtk_container_add(GTK_CONTAINER(labelFrame),GTK_WIDGET(labelBox));
+    gtk_container_border_width(GTK_CONTAINER(labelBox), CELSPACING);
+    gtk_container_add(GTK_CONTAINER(labelFrame), GTK_WIDGET(labelBox));
     gtk_container_border_width(GTK_CONTAINER(labelFrame), 0);
+
+	orbitFrame = gtk_frame_new("Orbits");
+	g_assert(orbitFrame);
+	orbitBox = gtk_vbox_new(FALSE, 0);
+	g_assert(orbitBox);
+	gtk_container_border_width(GTK_CONTAINER(orbitBox), CELSPACING);
+	gtk_container_add(GTK_CONTAINER(orbitFrame), GTK_WIDGET(orbitBox));
+	gtk_container_border_width(GTK_CONTAINER(orbitFrame), 0);
 
 	// Create the main menu bar
 	createMainMenu(mainWindow, &mainMenu);
