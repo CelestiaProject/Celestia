@@ -67,7 +67,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = celestia
 
-celestia_SOURCES =  	3dsmesh.cpp 	3dsmodel.cpp 	3dsread.cpp 	asterism.cpp 	astro.cpp 	bigfix.cpp 	body.cpp 	cmdparser.cpp 	color.cpp 	command.cpp 	config.cpp 	console.cpp 	constellation.cpp 	debug.cpp 	dispmap.cpp 	execution.cpp 	favorites.cpp 	filetype.cpp 	galaxy.cpp 	glext.cpp 	meshmanager.cpp 	observer.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	perlin.cpp 	regcombine.cpp 	render.cpp 	resmanager.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texfont.cpp 	texmanager.cpp 	texture.cpp 	tokenizer.cpp 	univcoord.cpp 	util.cpp 	vertexlist.cpp 	visstars.cpp 	glutmain.cpp
+celestia_SOURCES =  	3dsmesh.cpp 	3dsmodel.cpp 	3dsread.cpp 	asterism.cpp 	astro.cpp 	bigfix.cpp 	body.cpp 	cmdparser.cpp 	color.cpp 	command.cpp 	config.cpp 	console.cpp 	constellation.cpp 	debug.cpp 	dispmap.cpp 	execution.cpp 	favorites.cpp 	filetype.cpp 	galaxy.cpp 	glext.cpp 	meshmanager.cpp 	observer.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	perlin.cpp 	regcombine.cpp 	render.cpp 	resmanager.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texfont.cpp 	texmanager.cpp 	texture.cpp 	tokenizer.cpp 	univcoord.cpp 	unixtimer.cpp 	util.cpp 	vertexlist.cpp 	visstars.cpp 	glutmain.cpp
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -89,8 +89,8 @@ constellation.o debug.o dispmap.o execution.o favorites.o filetype.o \
 galaxy.o glext.o meshmanager.o observer.o orbit.o overlay.o parser.o \
 perlin.o regcombine.o render.o resmanager.o selection.o simulation.o \
 solarsys.o spheremesh.o star.o stardb.o starname.o stellarclass.o \
-texfont.o texmanager.o texture.o tokenizer.o univcoord.o util.o \
-vertexlist.o visstars.o glutmain.o
+texfont.o texmanager.o texture.o tokenizer.o univcoord.o unixtimer.o \
+util.o vertexlist.o visstars.o glutmain.o
 celestia_LDADD = $(LDADD)
 celestia_DEPENDENCIES = 
 celestia_LDFLAGS = 
@@ -116,7 +116,7 @@ DEP_FILES =  .deps/3dsmesh.P .deps/3dsmodel.P .deps/3dsread.P \
 .deps/simulation.P .deps/solarsys.P .deps/spheremesh.P .deps/star.P \
 .deps/stardb.P .deps/starname.P .deps/stellarclass.P .deps/texfont.P \
 .deps/texmanager.P .deps/texture.P .deps/tokenizer.P .deps/univcoord.P \
-.deps/util.P .deps/vertexlist.P .deps/visstars.P
+.deps/unixtimer.P .deps/util.P .deps/vertexlist.P .deps/visstars.P
 SOURCES = $(celestia_SOURCES)
 OBJECTS = $(celestia_OBJECTS)
 

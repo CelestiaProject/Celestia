@@ -43,6 +43,7 @@ celestia_SOURCES = \
 	texture.cpp \
 	tokenizer.cpp \
 	univcoord.cpp \
+	unixtimer.cpp \
 	util.cpp \
 	vertexlist.cpp \
 	visstars.cpp \
