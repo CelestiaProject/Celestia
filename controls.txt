@@ -125,3 +125,4 @@ F8  : Enable joystick
 F10 : Capture image to file
 `   : Show frames rendered per second
 ENTER : Select a star or planet by typing its name
+Ctrl+INS : Copy location URL to clipboard (Windows)
