@@ -1266,7 +1266,6 @@ void Renderer::render(const Observer& observer,
                 }
                 else
                 {
-#if 1
                     renderPlanet(*renderList[i].body,
                                  renderList[i].position,
                                  renderList[i].sun,
@@ -1275,7 +1274,6 @@ void Renderer::render(const Observer& observer,
                                  now,
                                  observer.getOrientation(),
                                  nearPlaneDistance, farPlaneDistance);
-#endif
                 }
             }
             else if (renderList[i].star != NULL)
@@ -1453,23 +1451,21 @@ void Renderer::renderBodyAsParticle(Point3f position,
 }
 
 
-static void renderBumpMappedMesh(Texture& bumpTexture,
+static void renderBumpMappedMesh(Texture& baseTexture,
+                                 Texture& bumpTexture,
                                  Vec3f lightDirection,
                                  Quatf orientation,
                                  Color ambientColor,
                                  const Frustum& frustum,
                                  float lod)
 {
-    Texture* textures[4];
-
     // We're doing our own per-pixel lighting, so disable GL's lighting
     glDisable(GL_LIGHTING);
 
-    // Render the base texture on the first pass . . .  The base
-    // texture and color should have been set up already by the
-    // caller.
+    // Render the base texture on the first pass . . .  The color
+    // should have already been set up by the caller.
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
-                      NULL, 0);
+                      &baseTexture);
 
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
@@ -1532,9 +1528,8 @@ static void renderBumpMappedMesh(Texture& bumpTexture,
     glMatrixMode(GL_MODELVIEW);
     EXTglActiveTextureARB(GL_TEXTURE0_ARB);
 
-    textures[0] = &bumpTexture;
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
-                      textures, 1);
+                      &bumpTexture);
 
     // Reset the second texture unit
     EXTglActiveTextureARB(GL_TEXTURE1_ARB);
@@ -1865,7 +1860,8 @@ static void renderSphereFragmentShader(const RenderInfo& ri,
 
     if (ri.bumpTex != NULL)
     {
-        renderBumpMappedMesh(*(ri.bumpTex),
+        renderBumpMappedMesh(*(ri.baseTex),
+                             *(ri.bumpTex),
                              ri.sunDir_eye,
                              ri.orientation,
                              ri.ambientColor,
@@ -2869,6 +2865,7 @@ void Renderer::renderPlanet(const Body& body,
                      sunDirection, sunColor, rp);
     }
 
+    glEnable(GL_TEXTURE_2D);
     renderBodyAsParticle(pos,
                          appMag,
                          faintestPlanetMag,
@@ -2967,6 +2964,24 @@ void Renderer::renderStar(const Star& star,
 
 
 static const int MaxCometTailPoints = 20;
+static const int CometTailSlices = 16;
+struct CometTailVertex
+{
+    Point3f point;
+    Vec3f normal;
+    float brightness;
+};
+
+static CometTailVertex cometTailVertices[CometTailSlices * MaxCometTailPoints];
+
+static void ProcessCometTailVertex(const CometTailVertex& v,
+                                   const Vec3f& viewDir)
+{
+    float shade = abs(viewDir * v.normal * v.brightness);
+    glColor4f(0.0f, 0.5f, 1.0f, shade);
+    glVertex(v.point);
+}
+
 
 void Renderer::renderCometTail(const Body& body,
                                Point3f pos,
@@ -2989,6 +3004,7 @@ void Renderer::renderCometTail(const Body& body,
     // float dt = 0.1f;
 
     int i;
+#if 0
     for (i = 0; i < MaxCometTailPoints; i++)
     {
         Vec3d pd = body.getOrbit()->positionAtTime(t) - pos0;
@@ -2999,11 +3015,30 @@ void Renderer::renderCometTail(const Body& body,
         float distance = r.length();
             
         Vec3f a = r * ((1 / square(distance)) * f * dt);
-        Vec3f dx = a * square(i * dt);
+        Vec3f dx = a * (square(i * dt) * 0.5f);
 
         cometPoints[i] = p + dx;
 
         t -= dt;
+    }
+#endif
+    // Compute a rough estimate of the visible length of the dust tail
+    float dustTailLength = (1.0e8f / (float) pos0.distanceFromOrigin()) *
+        (body.getRadius() / 5.0f) * 1.0e7;
+    float dustTailRadius = dustTailLength * 0.1f;
+    float comaRadius = dustTailRadius * 0.5f;
+
+    for (i = 0; i < MaxCometTailPoints; i++)
+    {
+        float alpha = (float) i / (float) MaxCometTailPoints;
+        alpha = alpha * alpha;
+        
+        Point3d pd = body.getOrbit()->positionAtTime(t);
+        Point3f p = Point3f((float) pd.x, (float) pd.y, (float) pd.z);
+        Vec3f sunDir = p - Point3f(0, 0, 0);
+        sunDir.normalize();
+        
+        cometPoints[i] = Point3f(0, 0, 0) + sunDir * (dustTailLength * alpha);
     }
 
     // We need three axes to define the coordinate system for rendering the
@@ -3024,22 +3059,27 @@ void Renderer::renderCometTail(const Body& body,
     u.normalize();
     Vec3f w = u ^ v;
 
-    // EXTglActiveTextureARB(GL_TEXTURE0_ARB);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_BLEND);
-
-    glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+    glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
     glPushMatrix();
     glTranslate(pos);
 
+    // EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
     for (i = 0; i < MaxCometTailPoints; i++)
     {
-#if 1
+        float brightness = 1.0f - (float) i / (float) (MaxCometTailPoints - 1);
+        Vec3f v0, v1;
+        float sectionLength;
         if (i != 0 && i != MaxCometTailPoints - 1)
         {
-            Vec3f v0 = cometPoints[i] - cometPoints[i - 1];
-            Vec3f v1 = cometPoints[i + 1] - cometPoints[i];
+            v0 = cometPoints[i] - cometPoints[i - 1];
+            v1 = cometPoints[i + 1] - cometPoints[i];
+            sectionLength = v0.length();
             v0.normalize();
             v1.normalize();
             Vec3f axis = v1 ^ v0;
@@ -3054,19 +3094,64 @@ void Renderer::renderCometTail(const Body& body,
                 w = w * m;
             }
         }
-#endif
-        glBegin(GL_LINE_LOOP);
-        for (int j = 0; j < 16; j++)
+        else if (i == 0)
         {
-            float theta = 2 * PI * (float) j / 16.0f;
-            float s = (float) sin(theta) * i * 20000.0;
-            float c = (float) cos(theta) * i * 20000.0;
-            glVertex3f(cometPoints[i].x + u.x * s + w.x * c,
-                       cometPoints[i].y + u.y * s + w.y * c,
-                       cometPoints[i].z + u.z * s + w.z * c);
+            v0 = cometPoints[i + 1] - cometPoints[i];
+            sectionLength = v0.length();
+            v0.normalize();
+            v1 = v0;
         }
+        else
+        {
+            v0 = v1 = cometPoints[i] - cometPoints[i - 1];
+            sectionLength = v0.length();
+            v0.normalize();
+            v1 = v0;
+        }
+
+        float radius = (float) i / (float) MaxCometTailPoints *
+            dustTailRadius;
+        float dr = (dustTailRadius / (float) MaxCometTailPoints) /
+            sectionLength;
+        float w0 = (float) atan(dr);
+        float w1 = (float) sqrt(1.0f - square(w0));
+
+        for (int j = 0; j < CometTailSlices; j++)
+        {
+            float theta = 2 * PI * (float) j / CometTailSlices;
+            float s = (float) sin(theta);
+            float c = (float) cos(theta);
+            CometTailVertex* vtx = &cometTailVertices[i * CometTailSlices + j];
+            vtx->normal = u * (s * w1) + w * (c * w1) + v * w0;
+            s *= radius;
+            c *= radius;
+            vtx->point = Point3f(cometPoints[i].x + u.x * s + w.x * c,
+                                 cometPoints[i].y + u.y * s + w.y * c,
+                                 cometPoints[i].z + u.z * s + w.z * c);
+            vtx->brightness = brightness;
+        }
+    }
+
+    Vec3f viewDir = pos - Point3f(0.0f, 0.0f, 0.0f);
+    viewDir.normalize();
+
+    glDisable(GL_CULL_FACE);
+    for (i = 0; i < MaxCometTailPoints - 1; i++)
+    {
+        glBegin(GL_QUAD_STRIP);
+        int n = i * CometTailSlices;
+        for (int j = 0; j < CometTailSlices; j++)
+        {
+            ProcessCometTailVertex(cometTailVertices[n + j], viewDir);
+            ProcessCometTailVertex(cometTailVertices[n + j + CometTailSlices],
+                                   viewDir);
+        }
+        ProcessCometTailVertex(cometTailVertices[n], viewDir);
+        ProcessCometTailVertex(cometTailVertices[n + CometTailSlices],
+                               viewDir);
         glEnd();
     }
+    glEnable(GL_CULL_FACE);
 
     glBegin(GL_LINE_STRIP);
     for (i = 0; i < MaxCometTailPoints; i++)
@@ -3075,63 +3160,9 @@ void Renderer::renderCometTail(const Body& body,
     }
     glEnd();
 
-#if 0
-    int nSteps = 20;
-    float dt = 5000000.0f / (nSteps * speed);
-    {
-    t = now;
-    for (int i = 0; i < nSteps; i++)
-    {
-        Point3d p = body.getOrbit()->positionAtTime(t);
-        Vec3d v = p - pos0;
-        glBegin(GL_LINE_LOOP);
-        for (int j = 0; j < 16; j++)
-        {
-            float theta = 2 * PI * (float) j / 16.0f;
-            float s = (float) sin(theta) * i * 20000.0;
-            float c = (float) cos(theta) * i * 20000.0;
-            glVertex3f((float) v.x + u.x * s + w.x * c,
-                       (float) v.y + u.y * s + w.y * c,
-                       (float) v.z + u.z * s + w.z * c);
-        }
-        glEnd();
-        t -= dt;
-    }
-    }
-#endif
-    
-#if 0
-    for (int k = 0; k < 16; k++)
-    {
-        float theta = 2 * PI * (float) k / 16.0f;
-        float s = (float) sin(theta);
-        float c = (float) cos(theta);
-
-        float f = 1.0e15f;
-        Point3f p(0.0f, 0.0f, 0.0f);
-        Vec3f pv((float) (u.x * s + w.x * c),
-                 (float) (u.y * s + w.y * c),
-                 (float) (u.z * s + w.z * c));
-        pv = pv * 500000.0f;
-        pv = pv - Vec3f((float) v.x, (float) v.y, (float) v.z) * speed;
-        t = now;
-
-        glBegin(GL_LINE_STRIP);
-        for (int i = 0; i < nSteps; i++)
-        {
-            glVertex(p);
-            Vec3f r(p.x + (float) pos0.x, p.y + (float) pos0.y, p.z + (float) pos0.z);
-            float distance = r.length();
-            
-            p = p + pv * dt;
-            pv = pv + r * ((1 / square(distance)) * f * dt);
-            if (k == 0)
-                cout << pv.x << ", " << pv.y << ", " << pv.z << '\n';
-            t -= dt;
-        }
-        glEnd();
-    }
-#endif
+    glDepthMask(GL_TRUE);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
 
     glPopMatrix();
 }
