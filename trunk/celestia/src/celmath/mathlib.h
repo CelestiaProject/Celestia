@@ -69,7 +69,7 @@ template<class T> T clamp(T x)
         return x;
 }
 
-template<class T> int sign(T x)
+template<class T> T sign(T x)
 {
     if (x < 0)
         return -1;
