@@ -6,8 +6,9 @@ USER INTERFACE
 * Make picking more intelligent
   * Picking a distant planet is likely to select one of its satellites
   * Picking stars doesn't work at close range
-  * Make picking work better for non-spherical bodies
+  * Make picking more accurate for non-spherical bodies
 * Tracking mode for camera
+* Add more intuitive free flight controls
 * Views of planet and satellite orbits
   * Add satellite orbits
   * User control over which orbits should be displayed
@@ -17,16 +18,17 @@ USER INTERFACE
 * Make context menus work properly in full-screen mode
 * Fix camera rotation wackiness when using goto--probably slerp between orientations
 * Dialog box for displaying detailed information about a star or planet
+* More detailed info via the Internet--link to Nine Planets, simbad, etc.
 * Create a help file
 
 VISUALS
 * Shadows from rings on planet
-* Bump maps for planets and satellites
+* Make bump maps work for irregular objects
 * Get a real texture map for Eros
 * Change the color of the light illuminating planets based on star class;
   probably only M and maybe K class stars should have a noticeable hue
-* Better and flashier star rendering: improve corona effects, add limb darkening, change
-  convection cell size based on spectral class, etc.
+* Better and flashier star rendering: improve corona effects, add limb
+  darkening, change  convection cell size based on spectral class, etc.
 * Non-Lambertian illumination functions for planets
 * Add haloes around bright planets similar to the ones around stars
 * Render the Milky Way
@@ -34,8 +36,9 @@ VISUALS
 * Add some deep sky objects--planetary nebula, supernova remnants, etc.
 * Procedural textures for extrasolar planets
 * Atmospheric veils around planets
-* Add clouds to Earth
 * Specularity map for Earth (and other hypothetical ocean bearing worlds)
+* Bump mapped cloud layers
+* Show the Milky Way and neighboring galaxies
 
 POLISH
 * Get a real installer working for Windows version
@@ -51,14 +54,13 @@ SIMULATION ACCURACY
 * Calculate the eccentric anomaly for orbits instead of just using the mean anomaly
 * Obtain and read spacecraft ephemerii, so Galileo, Cassini, etc. appear in the proper places
 * Use a better estimate for star radius
+* Make some attempt at calculating stellar rotation rates
 * Model the irregular rotations of objects like Toutatis and Hyperion
 * Double star systems
 
 BUGS
 * Find out why picking sometimes stops working, apparently after orbiting
 * Fix wobbling of planet shadow on rings when time is accelerated
-* Problem stars: HIP 114110 has no spectral class!  Search the database for other problem
-  stars and fix them.
 * Find out about texture problems on Matrox G450
 * Investigate possible visual anomalies with ring shadows on ATI Rage cards
 
@@ -81,7 +83,4 @@ PORTING
 
 MISC
 * Make solar system creation applet, for adding hypothetical systems to a Celestia universe
-
-
-
 

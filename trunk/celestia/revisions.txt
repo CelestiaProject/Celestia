@@ -105,3 +105,32 @@ Celestia Revision History
   elements section.
 * Epoch can now be specified for orbital elements.  Default is J2000.
 
+
+1.06
+* Made Alt+F4 exit the app.
+* Fixed text rendering to be pixel-accurate; labels and console text are now
+  crisper and don't have any missing pixels (need to test on more graphics
+  chipsets.)
+* Updated parser to handle negative numbers.  Big oops.
+* Corrected errors and omissions in extrasolar planets catalog.
+* Added locations menu for saving and recalling favorite places.
+* Added intro message.
+* Removed stars without spectral class info from database.
+* Included support for cloud maps
+* Added extrasolar planets from the ESO's April 4th announcement
+* Axial rotation for stars
+* Alleviated clipping of very distant stars (Deneb was missing from Earth's
+  sky due to this bug.)
+* Increased depth buffer precision for planet rendering--this should improve
+  the quality of rendering with 16-bit z buffers
+* Added option to render constellation diagrams
+* Use strips instead of lists for rendering spheres
+* Enabled keyboard control of zoom with home and end
+* Implemented basics of linear scripting system
+* Run a script at startup; the script filename can be set in the config file
+
+Code revisions:
+* Converted Simulation class to use Julian days instead of seconds as internal
+  time units.
+* Eliminated brain damaged observer methods in Simulation
+* Cleaned up Console class
