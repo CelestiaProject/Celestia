@@ -670,6 +670,10 @@ void Simulation::orbit(Quatf q)
         // Make sure the quaternion remains a rotation
         q2.normalize();
 
+        // TODO: Make Follow mode behave more like GeosynchronousFollow
+        // mode; these are both essentially the same mode, except in different
+        // coordinate systems.  In fact, Free mode is really just the trivial
+        // case of Follow in the universal coordinate system.
         if (observerMode == GeosynchronousFollowing)
         {
             // Get a double precision version of the rotation
@@ -948,6 +952,68 @@ Selection Simulation::findObject(string s)
             Body* body = closestSolarSystem->getPlanets()->find(s, true);
             if (body != NULL)
                 return Selection(body);
+        }
+    }
+
+    return Selection();
+}
+
+
+// Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b
+// Currently, 'absolute' paths starting with a / are not supported nor are
+// paths that contain galaxies.
+Selection Simulation::findObjectFromPath(string s)
+{
+    string::size_type pos = s.find('/', 0);
+
+    if (pos == string::npos)
+        return findObject(s);
+
+    string base(s, 0, pos);
+    Selection sel = findObject(base);
+    if (sel.empty())
+        return sel;
+
+    // Don't support paths relative to a galaxy . . . for now.
+    if (sel.galaxy != NULL)
+        return Selection();
+
+    const PlanetarySystem* worlds = NULL;
+    if (sel.body != NULL)
+    {
+        worlds = sel.body->getSatellites();
+    }
+    else if (sel.star != NULL)
+    {
+        SolarSystem* ssys = getSolarSystem(sel.star);
+        if (ssys != NULL)
+            worlds = ssys->getPlanets();
+    }
+
+    while (worlds != NULL)
+    {
+        string::size_type nextPos = s.find('/', pos + 1);
+        string::size_type len;
+        if (nextPos == string::npos)
+            len = s.size() - pos - 1;
+        else
+            len = nextPos - pos - 1;
+
+        string name = string(s, pos + 1, len);
+        
+        Body* body = worlds->find(name);
+        if (body == NULL)
+        {
+            return Selection();
+        }
+        else if (nextPos == string::npos)
+        {
+            return Selection(body);
+        }
+        else
+        {
+            worlds = body->getSatellites();
+            pos = nextPos;
         }
     }
 
