@@ -214,19 +214,19 @@ void CTexture::bindName(uint32 flags)
     }
 
     int nFaces = 1;
-    int textureTarget = GL_TEXTURE_2D;
+    unsigned int textureTarget = GL_TEXTURE_2D;
     if (cubeMap)
     {
         nFaces = 6;
-        textureTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT;
+        textureTarget = (unsigned int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT;
     }
 
     for (int face = 0; face < nFaces; face++)
     {
-        gluBuild2DMipmaps(textureTarget + face,
+        gluBuild2DMipmaps((GLenum) (textureTarget + face),
                           internalFormat,
                           width, height,
-                          format,
+                          (GLenum) format,
                           GL_UNSIGNED_BYTE,
                           pixels + face * width * height * components);
     }
@@ -511,7 +511,6 @@ CTexture* CreateJPEGTexture(const char* filename,
     JSAMPARRAY buffer;		// Output row buffer
     int row_stride;		// physical row width in output buffer
     long cont;
-    JSAMPLE *image_buffer;
 
     // In this example we want to open the input file before doing anything else,
     // so that the setjmp() error recovery below can assume the file is open.
@@ -654,7 +653,6 @@ CTexture* CreatePNGTexture(const string& filename)
     unsigned int sig_read = 0;
     png_uint_32 width, height;
     int bit_depth, color_type, interlace_type;
-    int glformat;
     FILE* fp = NULL;
     CTexture* tex = NULL;
     png_bytep* row_pointers = NULL;
@@ -710,6 +708,8 @@ CTexture* CreatePNGTexture(const string& filename)
                  &width, &height, &bit_depth,
                  &color_type, &interlace_type,
                  NULL, NULL);
+
+    GLenum glformat = GL_RGB;
     switch (color_type)
     {
     case PNG_COLOR_TYPE_GRAY:
@@ -1051,7 +1051,7 @@ CTexture* CreateNormalizationCubeMap(int size)
             }
         }
 
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT + face,
+        glTexImage2D((GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT + face),
                      0, GL_RGB8,
                      size, size,
                      0, GL_RGB,
@@ -1095,7 +1095,7 @@ CTexture* CreateDiffuseLightCubeMap(int size)
             }
         }
 
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT + face,
+        glTexImage2D((GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT + face),
                      0, GL_RGB8,
                      size, size,
                      0, GL_RGB,

@@ -74,12 +74,12 @@ inline void glLightPosition(GLenum light, const Point3f& pos)
     glLightfv(light, GL_POSITION, &(Vec4f(pos.x, pos.y, pos.z, 1.0f).x));
 }
 
-inline void glLightColor(GLenum light, int which, const Vec3f& color)
+inline void glLightColor(GLenum light, GLenum which, const Vec3f& color)
 {
     glLightfv(light, which, &(Vec4f(color.x, color.y, color.z, 1.0f).x));
 }
 
-inline void glLightColor(GLenum light, int which, const Vec4f& color)
+inline void glLightColor(GLenum light, GLenum which, const Vec4f& color)
 {
     glLightfv(light, which, &color.x);
 }
