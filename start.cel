@@ -1,7 +1,7 @@
 {
 	select { object "Sol/Eros" }
 	follow {}
-	goto { time 10 }
+	goto { time 5 }
 	# gotolonglat { time 0 distance 1e11 longitude 0 latitude 0 }
 	# gotolonglat { time 0 distance 2.5 longitude -122 latitude 47 } # Seattle!
 	# wait { duration 0.1 }
