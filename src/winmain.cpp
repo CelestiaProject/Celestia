@@ -780,7 +780,7 @@ void handleKeyPress(int c)
         break;
 
     case 'O':
-        ToggleLabelState(ID_RENDER_SHOWORBITS, Renderer::PlanetOrbits);
+        ToggleRenderFlag(ID_RENDER_SHOWORBITS, Renderer::ShowOrbits);
         break;
 
     case 'P':
@@ -803,6 +803,10 @@ void handleKeyPress(int c)
 
     case '/':
         ToggleRenderFlag(ID_RENDER_SHOWCONSTELLATIONS, Renderer::ShowDiagrams);
+        break;
+
+    case '=':
+        ToggleLabelState(ID_RENDER_SHOWCONSTLABELS, Renderer::ConstellationLabels);
         break;
 
     case '~':
@@ -944,7 +948,7 @@ void RenderOverlay()
             double timeScale = sim->getTimeScale();
             if (abs(timeScale - 1) < 1e-6)
                 *overlay << "Real time";
-            else if (timeScale > 1.0)
+            else if (abs(timeScale) > 1.0)
                 *overlay << timeScale << "x faster";
             else
                 *overlay << 1.0 / timeScale << "x slower";
@@ -1630,8 +1634,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_RENDER_SHOWSTARLABELS:
             ToggleLabelState(ID_RENDER_SHOWSTARLABELS, Renderer::StarLabels);
             break;
+        case ID_RENDER_SHOWCONSTLABELS:
+            ToggleLabelState(ID_RENDER_SHOWCONSTLABELS, Renderer::ConstellationLabels);
+            break;
+
         case ID_RENDER_SHOWORBITS:
-            ToggleLabelState(ID_RENDER_SHOWORBITS, Renderer::PlanetOrbits);
+            ToggleRenderFlag(ID_RENDER_SHOWORBITS, Renderer::ShowOrbits);
             break;
         case ID_RENDER_SHOWCONSTELLATIONS:
             ToggleRenderFlag(ID_RENDER_SHOWCONSTELLATIONS, Renderer::ShowDiagrams);
