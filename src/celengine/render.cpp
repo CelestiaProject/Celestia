@@ -2694,7 +2694,7 @@ static void setupBumpTexenv()
     // The primary color contains the light direction in surface
     // space, and texture0 is a normal map.  The lighting is
     // calculated by computing the dot product.
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_ARB);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
@@ -2703,8 +2703,8 @@ static void setupBumpTexenv()
     // In the final stage, modulate the lighting value by the
     // base texture color.
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE); 
+   glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
@@ -2729,7 +2729,7 @@ static void setupBumpTexenvAmbient(Color ambientColor)
     // space, and texture0 is a normal map.  The lighting is
     // calculated by computing the dot product.
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_ARB);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
@@ -2905,6 +2905,8 @@ static void setLightParameters_GLSL(CelestiaGLProgram& prog,
                                     Color materialDiffuse,
                                     Color materialSpecular)
 {
+    unsigned int nLights = min(MaxShaderLights, ls.nLights);
+
     Vec3f diffuseColor(materialDiffuse.red(),
                        materialDiffuse.green(),
                        materialDiffuse.blue());
@@ -2912,7 +2914,7 @@ static void setLightParameters_GLSL(CelestiaGLProgram& prog,
                         materialSpecular.green(),
                         materialSpecular.blue());
     
-    for (unsigned int i = 0; i < ls.nLights; i++)
+    for (unsigned int i = 0; i < nLights; i++)
     {
         const DirectionalLight& light = ls.lights[i];
 
@@ -3629,7 +3631,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
     glDisable(GL_LIGHTING);
 
     ShaderProperties shadprop;
-    shadprop.nLights = ls.nLights;
+    shadprop.nLights = min(ls.nLights, MaxShaderLights);
 
     // Set up the textures used by this object
     if (ri.baseTex != NULL)
@@ -3855,7 +3857,6 @@ static void renderShadowedModelDefault(Model* model,
     glEnable(GL_TEXTURE_GEN_S);
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGenfv(GL_S, GL_OBJECT_PLANE, sPlane);
-    //texGenPlane(GL_S, GL_OBJECT_PLANE, sPlane);
     glEnable(GL_TEXTURE_GEN_T);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, tPlane);

@@ -688,6 +688,13 @@ namespace glx
 #endif
 
 
+#ifndef GL_ARB_texture_env_dot3
+#define GL_ARB_texture_env_dot3
+#define GL_DOT3_RGB_ARB                   0x86AE
+#define GL_DOT3_RGBA_ARB                  0x86AF
+#endif
+
+
 /* ARB_vertex_program */
 #ifndef GL_ARB_vertex_program
 #define GL_ARB_vertex_program 1
