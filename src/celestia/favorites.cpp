@@ -28,7 +28,7 @@ FavoritesList* ReadFavoritesList(istream& in)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            DPRINTF("Error parsing favorites file.\n");
+            DPRINTF(0, "Error parsing favorites file.\n");
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
             return NULL;
@@ -40,7 +40,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         Value* favParamsValue = parser.readValue();
         if (favParamsValue == NULL || favParamsValue->getType() != Value::HashType)
         {
-            DPRINTF("Error parsing favorites entry %s\n", fav->name.c_str());
+            DPRINTF(0, "Error parsing favorites entry %s\n", fav->name.c_str());
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
             if (favParamsValue != NULL)
@@ -151,7 +151,7 @@ FavoritesList* ReadFavoritesList(string filename)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            DPRINTF("Error parsing favorites file.\n");
+            DPRINTF(0, "Error parsing favorites file.\n");
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
             return NULL;
@@ -161,7 +161,7 @@ FavoritesList* ReadFavoritesList(string filename)
         CommandSequence* cmdSeq = parser.parse();
         if (cmdSeq == NULL)
         {
-            DPRINTF("Error parsing favorites entry %s\n", name.c_str());
+            DPRINTF(0, "Error parsing favorites entry %s\n", name.c_str());
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
             return NULL;

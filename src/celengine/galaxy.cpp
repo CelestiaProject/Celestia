@@ -250,7 +250,7 @@ GalaxyList* ReadGalaxyList(istream& in)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            DPRINTF("Error parsing galaxies file.\n");
+            DPRINTF(0, "Error parsing galaxies file.\n");
             for_each(galaxies->begin(), galaxies->end(), deleteFunc<Galaxy*>());
             delete galaxies;
             return NULL;
@@ -262,7 +262,7 @@ GalaxyList* ReadGalaxyList(istream& in)
         Value* galaxyParamsValue = parser.readValue();
         if (galaxyParamsValue == NULL || galaxyParamsValue->getType() != Value::HashType)
         {
-            DPRINTF("Error parsing galaxy entry %s\n", galaxy->getName().c_str());
+            DPRINTF(0, "Error parsing galaxy entry %s\n", galaxy->getName().c_str());
             for_each(galaxies->begin(), galaxies->end(), deleteFunc<Galaxy*>());
             delete galaxy;
             return NULL;
@@ -286,7 +286,7 @@ GalaxyList* ReadGalaxyList(istream& in)
             galaxyParams->getNumber("Dec", dec);
             Point3d p = astro::equatorialToCelestialCart(RA, dec, distance);
             galaxy->setPosition(p);
-            DVPRINTF("%s: %f, %f, %f\n", galaxy->getName().c_str(),
+            DPRINTF(5, "Galaxy %s: %f, %f, %f\n", galaxy->getName().c_str(),
                     p.x, p.y, p.z);
         }
 

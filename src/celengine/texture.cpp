@@ -314,7 +314,7 @@ void Texture::normalMap(float scale, bool wrap)
     // data, but before bindName was called and texel data deleted.
     if (pixels == NULL)
     {
-        DPRINTF("Texture::normalMap: no texel data!\n");
+        DPRINTF(0, "Texture::normalMap: no texel data!\n");
         return;
     }
 
@@ -423,7 +423,7 @@ Texture* LoadTextureFromFile(const string& filename)
     case Content_PNG:
         return CreatePNGTexture(filename);
     default:
-        DPRINTF("Unrecognized or unsupported image file type.\n");
+        DPRINTF(0, "Unrecognized or unsupported image file type.\n");
         return NULL;
     }
 }
@@ -623,14 +623,14 @@ Texture* CreatePNGTexture(const string& filename)
     fp = fopen(filename.c_str(), "rb");
     if (fp == NULL)
     {
-        DPRINTF("Error opening texture file %s\n", filename.c_str());
+        DPRINTF(0, "Error opening texture file %s\n", filename.c_str());
         return NULL;
     }
    
     fread(header, 1, sizeof(header), fp);
     if (png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
-        DPRINTF("Error: %s is not a PNG file.\n", filename.c_str());
+        DPRINTF(0, "Error: %s is not a PNG file.\n", filename.c_str());
         fclose(fp);
         return NULL;
     }
@@ -657,7 +657,7 @@ Texture* CreatePNGTexture(const string& filename)
         if (tex != NULL)
             delete tex;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        DPRINTF("Error reading PNG texture file %s\n", filename.c_str());
+        DPRINTF(0, "Error reading PNG texture file %s\n", filename.c_str());
         return NULL;
     }
 

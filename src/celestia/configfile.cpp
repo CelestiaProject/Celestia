@@ -22,7 +22,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     ifstream configFile(filename.c_str());
     if (!configFile.good())
     {
-        DPRINTF("Error opening config file.");
+        DPRINTF(0, "Error opening config file.");
         return NULL;
     }
 
@@ -31,14 +31,14 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
 
     if (tokenizer.nextToken() != Tokenizer::TokenName)
     {
-        DPRINTF("%s:%d 'Configuration' expected.\n", filename.c_str(),
+        DPRINTF(0, "%s:%d 'Configuration' expected.\n", filename.c_str(),
                 tokenizer.getLineNumber());
         return NULL;
     }
 
     if (tokenizer.getStringValue() != "Configuration")
     {
-        DPRINTF("%s:%d 'Configuration' expected.\n", filename.c_str(),
+        DPRINTF(0, "%s:%d 'Configuration' expected.\n", filename.c_str(),
                 tokenizer.getLineNumber());
         return NULL;
     }
@@ -46,7 +46,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     Value* configParamsValue = parser.readValue();
     if (configParamsValue == NULL || configParamsValue->getType() != Value::HashType)
     {
-        DPRINTF("%s: Bad configuration file.\n", filename.c_str());
+        DPRINTF(0, "%s: Bad configuration file.\n", filename.c_str());
         return NULL;
     }
 
@@ -76,7 +76,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     {
         if (solarSystemsVal->getType() != Value::ArrayType)
         {
-            DPRINTF("%s: SolarSystemCatalogs must be an array.\n", filename.c_str());
+            DPRINTF(0, "%s: SolarSystemCatalogs must be an array.\n", filename.c_str());
         }
         else
         {
@@ -94,7 +94,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
                 }
                 else
                 {
-                    DPRINTF("%s: Solar system catalog name must be a string.\n",
+                    DPRINTF(0, "%s: Solar system catalog name must be a string.\n",
                             filename.c_str());
                 }
             }
@@ -108,7 +108,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     {
         if (xrefsVal->getType() != Value::ArrayType)
         {
-            DPRINTF("%s: StarCatalogCrossReferences must be an array.\n", filename.c_str());
+            DPRINTF(0, "%s: StarCatalogCrossReferences must be an array.\n", filename.c_str());
         }
         else
         {
@@ -126,7 +126,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
                 }
                 else
                 {
-                    DPRINTF("%s: Catalog cross reference name must be a string.\n",
+                    DPRINTF(0, "%s: Catalog cross reference name must be a string.\n",
                             filename.c_str());
                 }
             }
@@ -138,7 +138,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     {
         if (labelledStarsVal->getType() != Value::ArrayType)
         {
-            DPRINTF("%s: LabelledStars must be an array.\n", filename.c_str());
+            DPRINTF(0, "%s: LabelledStars must be an array.\n", filename.c_str());
         }
         else
         {
@@ -156,7 +156,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
                 }
                 else
                 {
-                    DPRINTF("%s: Star name must be a string.\n", filename.c_str());
+                    DPRINTF(0, "%s: Star name must be a string.\n", filename.c_str());
                 }
             }
         }

@@ -83,6 +83,8 @@ int oglAttributeList[] =
 
 static GtkItemFactory* menuItemFactory = NULL;
 
+static int verbose;
+
 #if 0
 static void SetRenderFlag(int flag, bool state)
 {
@@ -913,10 +915,10 @@ static void textInfoDialog(GtkWidget** dialog, const char *txt, const char *titl
 				   GNOME_STOCK_BUTTON_OK,
 				   NULL);
 	if (*dialog == NULL)
-	    {
-	    DPRINTF("Unable to open '%s' dialog!\n",title);
+        {
+	    DPRINTF(0, "Unable to open '%s' dialog!\n",title);
 	    return;
-	    }
+        }
 
 	GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
 	gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (*dialog)->vbox), scrolled_window, TRUE, TRUE, 0);
@@ -1116,7 +1118,7 @@ static gint treeSelect(GtkCTree *tree, GtkCTreeNode *node, gint column, gpointer
             browserSel.select(body);
 	return TRUE;
     }
-    DPRINTF("Unable to find body for this node.\n");
+    DPRINTF(0, "Unable to find body for this node.\n");
     return FALSE;
 }
 
@@ -1155,7 +1157,7 @@ static gint buttonMake(GtkWidget *hbox, char *txt, GtkSignalFunc func, gpointer 
     GtkWidget* button = gtk_button_new_with_label(txt);
     if (button == NULL)
     {
-	DPRINTF("Unable to get GTK Elements.\n");
+	DPRINTF(0, "Unable to get GTK Elements.\n");
 	return 1;
     }
     gtk_widget_show(button);
@@ -1288,7 +1290,7 @@ static void menuBrowser()
     browserSel.select((Star *)NULL);
     if (browser == NULL)
     {
-	DPRINTF("Unable to open celestial browser dialog!\n");
+	DPRINTF(0, "Unable to open celestial browser dialog!\n");
 	return;
     }
     
@@ -1299,7 +1301,7 @@ static void menuBrowser()
     GtkWidget *scrolled_win;
     if ((nbook==NULL) || (label==NULL) || (vbox==NULL) || (hbox==NULL))
     {
-	DPRINTF("Unable to get GTK Elements.\n");
+	DPRINTF(0, "Unable to get GTK Elements.\n");
 	return;
     }
 
@@ -1316,7 +1318,7 @@ static void menuBrowser()
     GtkWidget *align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
     if ((align==NULL) || (clist==NULL) || (scrolled_win==NULL))
     {
-	DPRINTF("Unable to get GTK Elements.\n");
+	DPRINTF(0, "Unable to get GTK Elements.\n");
 	return;
     }
     gtk_clist_set_column_justification(GTK_CLIST(clist), 0, GTK_JUSTIFY_LEFT);
@@ -1352,7 +1354,7 @@ static void menuBrowser()
         GtkWidget *button=gtk_radio_button_new_with_label(group, radioLabels[i]);
         if (button==NULL)
         {
-            DPRINTF("Unable to get GTK Elements.\n");
+            DPRINTF(0, "Unable to get GTK Elements.\n");
             return;
         }
         group=gtk_radio_button_group (GTK_RADIO_BUTTON (button));
@@ -1379,7 +1381,7 @@ static void menuBrowser()
     scrolled_win = gtk_scrolled_window_new (NULL, NULL);
     if ((label==NULL) || (vbox==NULL) || (scrolled_win==NULL))
     {
-	DPRINTF("Unable to get GTK Elements.\n");
+	DPRINTF(0, "Unable to get GTK Elements.\n");
 	return;
     }
     gtk_notebook_append_page(GTK_NOTEBOOK(nbook), vbox, label);
@@ -1579,7 +1581,7 @@ static void menuSetTime()
 	
     if (stimedialog == NULL)
     {
-	DPRINTF("Unable to open 'Set Time' dialog!\n");
+	DPRINTF(0, "Unable to open 'Set Time' dialog!\n");
 	return;
     }
 
@@ -1589,7 +1591,7 @@ static void menuSetTime()
     
     if ((hbox == NULL) || (frame == NULL) || (align == NULL))
     {
-	DPRINTF("Unable to get GTK Elements.\n");
+	DPRINTF(0, "Unable to get GTK Elements.\n");
 	return;
     }
     astro::Date date(appSim->getTime() +
@@ -1614,7 +1616,7 @@ static void menuSetTime()
     
     if ((hbox == NULL) || (frame == NULL) || (align == NULL))
     {
-	DPRINTF("Unable to get GTK Elements.\n");
+	DPRINTF(0, "Unable to get GTK Elements.\n");
 	return;
     }
     chooseOption(hbox,"Month", monthOptions, &date.month, " ", GTK_SIGNAL_FUNC(monthchosen));
@@ -2173,6 +2175,7 @@ int main(int argc, char* argv[])
     // Now initialize OpenGL and Gnome
     gnome_init_with_popt_table("Celestia", VERSION, argc, argv, options, 0,
                                NULL);
+    SetDebugVerbosity(verbose);
 
     appCore = new CelestiaCore();
     if (appCore == NULL)
@@ -2269,7 +2272,7 @@ int main(int argc, char* argv[])
 	if (!cfunc->widget)
 	{
 	    cfunc->active=0;
-	    DPRINTF("Menu item %s status checking deactivated due to being unable to find it!", cfunc->path);
+	    DPRINTF(0, "Menu item %s status checking deactivated due to being unable to find it!", cfunc->path);
 	    continue;
 	}
 	g_assert(cfunc->func);

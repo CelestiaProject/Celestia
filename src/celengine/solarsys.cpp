@@ -94,7 +94,7 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
     {
         if (!orbitData->getNumber("PericenterDistance", pericenterDistance))
         {
-            DPRINTF("SemiMajorAxis/PericenterDistance missing!  Skipping planet . . .\n");
+            DPRINTF(0, "SemiMajorAxis/PericenterDistance missing!  Skipping planet . . .\n");
             return NULL;
         }
     }
@@ -102,7 +102,7 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
     double period = 0.0;
     if (!orbitData->getNumber("Period", period))
     {
-        DPRINTF("Period missing!  Skipping planet . . .\n");
+        DPRINTF(0, "Period missing!  Skipping planet . . .\n");
         return NULL;
     }
 
@@ -208,7 +208,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     {
         orbit = GetCustomOrbit(customOrbitName);
         if (orbit == NULL)
-            DPRINTF("Could not find custom orbit named '%s'\n",
+            DPRINTF(0, "Could not find custom orbit named '%s'\n",
                     customOrbitName.c_str());
     }
     if (orbit == NULL)
@@ -218,7 +218,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
         {
             if (orbitDataValue->getType() != Value::HashType)
             {
-                DPRINTF("Object '%s' has incorrect elliptical orbit syntax.\n",
+                DPRINTF(0, "Object '%s' has incorrect elliptical orbit syntax.\n",
                         body->getName().c_str());
             }
             else
@@ -230,7 +230,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     }
     if (orbit == NULL)
     {
-        DPRINTF("No valid orbit specified for object '%s'; skipping . . .\n",
+        DPRINTF(0, "No valid orbit specified for object '%s'; skipping . . .\n",
                 body->getName().c_str());
         delete body;
         return NULL;
@@ -372,7 +372,7 @@ bool LoadSolarSystemObjects(istream& in, Universe& universe)
         }
         Hash* objectData = objectDataValue->getHash();
 
-        DVPRINTF("Reading planet %s %s\n", parentName.c_str(), name.c_str());
+        DPRINTF(2, "Reading planet %s %s\n", parentName.c_str(), name.c_str());
 
         Selection parent = universe.findPath(parentName, NULL, 0);
         PlanetarySystem* parentSystem = NULL;
@@ -388,9 +388,11 @@ bool LoadSolarSystemObjects(istream& in, Universe& universe)
             }
             parentSystem = solarSystem->getPlanets();
 #ifdef DEBUG
-            if(parentSystem->find(name))
-                DPRINTF("Warning, duplicate initialization of %s %s!\n",
+            if (parentSystem->find(name))
+            {
+                DPRINTF(0, "Warning duplicate definition of %s %s!\n",
                         parentName.c_str(), name.c_str());
+            }
 #endif // DEBUG
         }
         else if (parent.body != NULL)
@@ -407,9 +409,11 @@ bool LoadSolarSystemObjects(istream& in, Universe& universe)
 #ifdef DEBUG
             else
             {
-                if(parentSystem->find(name))
-                    DPRINTF("Warning, duplicate initialization of %s %s!\n",
+                if (parentSystem->find(name))
+                {
+                    DPRINTF(0, "Warning, duplicate definition of %s %s!\n",
                             parentName.c_str(), name.c_str());
+                }
             }
 #endif // DEBUG
             orbitsPlanet = true;
