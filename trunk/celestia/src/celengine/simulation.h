@@ -59,7 +59,7 @@ class Simulation
     void selectPlanet(int);
     Selection findObject(std::string s);
     Selection findObjectFromPath(std::string s);
-    std::vector<std::string> getObjectCompletion(std::string s);
+    std::vector<std::string> getObjectCompletion(std::string s, bool withLocations = false);
     void gotoSelection(double gotoTime,
                        Vec3f up, astro::CoordinateSystem upFrame);
     void gotoSelection(double gotoTime, double distance,
