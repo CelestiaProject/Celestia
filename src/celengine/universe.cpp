@@ -175,7 +175,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     double cosAngle = bodyDir * pickInfo->pickRay.direction;
     if (cosAngle > pickInfo->cosClosestAngle)
     {
-        pickInfo->cosClosestAngle = cosAngle;
+        pickInfo->cosClosestAngle = (float) cosAngle;
         pickInfo->closestBody = body;
     }
 
@@ -442,6 +442,42 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 }
 
 
+Selection Universe::pickGalaxy(const UniversalCoord& origin,
+                               const Vec3f& direction,
+                               float faintestMag,
+                               float tolerance)
+{
+    Selection sel;
+    Point3d p = (Point3d) origin;
+    Ray3d pickRay(Point3d(p.x * 1e-6, p.y * 1e-6, p.z * 1e-6),
+                  Vec3d(direction.x, direction.y, direction.z));
+    double closestDistance = 1.0e30;
+
+    if (galaxyCatalog != NULL)
+    {
+        for (GalaxyList::const_iterator iter = galaxyCatalog->begin();
+             iter != galaxyCatalog->end(); iter++)
+        {
+            double distance = 0.0;
+            if (testIntersection(pickRay, 
+                                 Sphered((*iter)->getPosition(), (*iter)->getRadius()),
+                                 distance))
+            {
+                // Don't select a galaxy that contains the origin
+                if (pickRay.origin.distanceTo((*iter)->getPosition()) > (*iter)->getRadius() &&
+                    distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    sel = Selection(*iter);
+                }
+            }
+        }
+    }
+
+    return sel;
+}
+
+
 Selection Universe::pick(const UniversalCoord& origin,
                          const Vec3f& direction,
                          double when,
@@ -462,6 +498,9 @@ Selection Universe::pick(const UniversalCoord& origin,
 
     if (sel.empty())
         sel = pickStar(origin, direction, faintestMag, tolerance);
+
+    if (sel.empty())
+        sel = pickGalaxy(origin, direction, faintestMag, tolerance);
 
     return sel;
 }
@@ -577,7 +616,7 @@ Selection Universe::findPath(const string& s,
 SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) const
 {
     Point3f pos = (Point3f) position;
-    Point3f lyPos(pos.x * 1e-6, pos.y * 1e-6, pos.z * 1e-6);
+    Point3f lyPos(pos.x * 1.0e-6f, pos.y * 1.0e-6f, pos.z * 1.0e-6f);
     ClosestStarFinder closestFinder(1.0f);
     starCatalog->findCloseStars(closestFinder, lyPos, 1.0f);
     return getSolarSystem(closestFinder.closestStar);
