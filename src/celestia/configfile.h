@@ -18,6 +18,7 @@ struct CelestiaConfig
     std::string starDatabaseFile;
     std::string starNamesFile;
     std::vector<std::string> solarSystemFiles;
+    std::vector<std::string> starCatalogFiles;
     std::vector<std::string> extrasDirs;
     std::string deepSkyCatalog;
     std::vector<std::string> labelledStars;

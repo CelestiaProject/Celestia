@@ -995,19 +995,19 @@ void CelestiaCore::keyDown(int key, int modifiers)
         sim->setTargetSpeed(0);
         break;
     case Key_F2:
-        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1.0));
+        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1.0f));
         break;
     case Key_F3:
-        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1000.0));
+        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1000.0f));
         break;
     case Key_F4:
-        sim->setTargetSpeed(astro::kilometersToMicroLightYears(astro::speedOfLight));
+        sim->setTargetSpeed((float) astro::kilometersToMicroLightYears(astro::speedOfLight));
         break;
     case Key_F5:
-        sim->setTargetSpeed(astro::kilometersToMicroLightYears(astro::speedOfLight * 10.0));
+        sim->setTargetSpeed((float) astro::kilometersToMicroLightYears(astro::speedOfLight * 10.0));
         break;
     case Key_F6:
-        sim->setTargetSpeed(astro::AUtoMicroLightYears(1.0));
+        sim->setTargetSpeed(astro::AUtoMicroLightYears(1.0f));
         break;
     case Key_F7:
         sim->setTargetSpeed(1e6);
@@ -1980,7 +1980,7 @@ void CelestiaCore::tick()
     }
 
     // Mouse wheel dolly
-    if (dollyMotion != 0.0f)
+    if (dollyMotion != 0.0)
     {
         double span = 0.1;
         double fraction;
@@ -1990,16 +1990,16 @@ void CelestiaCore::tick()
         else
             fraction = dt / span;
 
-        sim->changeOrbitDistance(dollyMotion * (float) fraction);
+        sim->changeOrbitDistance((float) (dollyMotion * fraction));
         if (currentTime - dollyTime >= span)
             dollyMotion = 0.0f;
     }
 
     // Keyboard dolly
     if (keysPressed[Key_Home])
-        sim->changeOrbitDistance(-dt * 2);
+        sim->changeOrbitDistance((float) (-dt * 2));
     if (keysPressed[Key_End])
-        sim->changeOrbitDistance(dt * 2);
+        sim->changeOrbitDistance((float) (dt * 2));
 
     // Keyboard rotate
     Vec3f av = sim->getObserver().getAngularVelocity();
@@ -2016,13 +2016,13 @@ void CelestiaCore::tick()
         if (!altAzimuthMode)
         {
             if (keysPressed[Key_Left])
-                av += Vec3f(0, 0, dt * -KeyRotationAccel);
+                av += Vec3f(0.0f, 0.0f, (float) (dt * -KeyRotationAccel));
             if (keysPressed[Key_Right])
-                av += Vec3f(0, 0, dt * KeyRotationAccel);
+                av += Vec3f(0.0f, 0.0f, (float) (dt * KeyRotationAccel));
             if (keysPressed[Key_Down])
-                av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
+                av += Vec3f((float) (dt * fov * -KeyRotationAccel), 0.0f, 0.0f);
             if (keysPressed[Key_Up])
-                av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
+                av += Vec3f((float) (dt * fov * KeyRotationAccel), 0.0f, 0.0f);
         }
         else
         {
@@ -2043,25 +2043,25 @@ void CelestiaCore::tick()
                 if (keysPressed[Key_Right])
                     av += v;
                 if (keysPressed[Key_Down])
-                    av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
+                    av += Vec3f((float) (dt * fov * -KeyRotationAccel), 0.0f, 0.0f);
                 if (keysPressed[Key_Up])
-                    av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
+                    av += Vec3f((float) (dt * fov * KeyRotationAccel), 0.0f, 0.0f);
             }
         }
     }
 
     if (keysPressed[Key_NumPad4])
-        av += Vec3f(0, dt * fov * -KeyRotationAccel, 0);
+        av += Vec3f(0.0f, (float) (dt * fov * -KeyRotationAccel), 0.0f);
     if (keysPressed[Key_NumPad6])
-        av += Vec3f(0, dt * fov * KeyRotationAccel, 0);
+        av += Vec3f(0.0f, (float) (dt * fov * KeyRotationAccel), 0.0f);
     if (keysPressed[Key_NumPad2])
-        av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
+        av += Vec3f((float) (dt * fov * -KeyRotationAccel), 0.0f, 0.0f);
     if (keysPressed[Key_NumPad8])
-        av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
+        av += Vec3f((float) (dt * fov * KeyRotationAccel), 0.0f, 0.0f);
     if (keysPressed[Key_NumPad7] || joyButtonsPressed[JoyButton7])
-        av += Vec3f(0, 0, dt * -KeyRotationAccel);
+        av += Vec3f(0.0f, 0.0f, (float) (dt * -KeyRotationAccel));
     if (keysPressed[Key_NumPad9] || joyButtonsPressed[JoyButton8])
-        av += Vec3f(0, 0, dt * KeyRotationAccel);
+        av += Vec3f(0.0f, 0.0f, (float) (dt * KeyRotationAccel));
 
     //Use Boolean to indicate if sim->setTargetSpeed() is called
     bool bSetTargetSpeed = false;
@@ -2106,13 +2106,13 @@ void CelestiaCore::tick()
         float coarseness = ComputeRotationCoarseness(*sim);
 
         if (shiftKeysPressed[Key_Left])
-            q = q * Quatf::yrotation(dt * -KeyRotationAccel * coarseness);
+            q = q * Quatf::yrotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Right])
-            q = q * Quatf::yrotation(dt *  KeyRotationAccel * coarseness);
+            q = q * Quatf::yrotation((float) (dt *  KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Up])
-            q = q * Quatf::xrotation(dt * -KeyRotationAccel * coarseness);
+            q = q * Quatf::xrotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Down])
-            q = q * Quatf::xrotation(dt *  KeyRotationAccel * coarseness);
+            q = q * Quatf::xrotation((float) (dt *  KeyRotationAccel * coarseness));
         sim->orbit(q);
     }
 
@@ -2317,7 +2317,7 @@ void CelestiaCore::setFOVFromZoom()
         if ((*i)->type == View::ViewWindow)
         {
             double fov = 2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) / (*i)->zoom;
-            (*i)->observer->setFOV(fov);
+            (*i)->observer->setFOV((float) fov);
         }
 }
 
@@ -2952,7 +2952,7 @@ void CelestiaCore::renderOverlay()
         {
             glLineWidth(8.0f);
             glColor4f(0.5f, 0.5f, 1.0f,
-                      1.0f - (currentTime - flashFrameStart) / 0.5f);
+                      (float) (1.0 - (currentTime - flashFrameStart) / 0.5));
             showViewFrame(av, width, height);
             glLineWidth(1.0f);
         }
@@ -2964,7 +2964,8 @@ void CelestiaCore::renderOverlay()
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
         glTranslatef((float) (width - (11 + timeZoneName.length() + 3) * emWidth),
-                     (float) (height - fontHeight), 0.0f);
+                     (float) (height - fontHeight),
+                     0.0f);
         overlay->beginText();
 
 	bool time_displayed = false;
@@ -3061,7 +3062,7 @@ void CelestiaCore::renderOverlay()
 
         // Speed
         glPushMatrix();
-        glTranslatef(0.0f, fontHeight * 2 + 5, 0.0f);
+        glTranslatef(0.0f, (float) (fontHeight * 2 + 5), 0.0f);
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
 
         overlay->beginText();
@@ -3089,7 +3090,8 @@ void CelestiaCore::renderOverlay()
 
         // Field of view and camera mode in lower right corner
         glPushMatrix();
-        glTranslatef(width - emWidth * 15, fontHeight * 3 + 5, 0);
+        glTranslatef((float) (width - emWidth * 15), 
+                     (float) (fontHeight * 3 + 5), 0.0f);
         overlay->beginText();
         glColor4f(0.6f, 0.6f, 1.0f, 1);
 
@@ -3169,7 +3171,7 @@ void CelestiaCore::renderOverlay()
     {
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(0, height - titleFont->getHeight(), 0);
+        glTranslatef(0.0f, (float) (height - titleFont->getHeight()), 0.0f);
 
         overlay->beginText();
         Vec3d v = sel.getPosition(sim->getTime()) -
@@ -3255,9 +3257,9 @@ void CelestiaCore::renderOverlay()
         overlay->setFont(titleFont);
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 0.2f);
-        overlay->rect(0, 0, width, 100);
-        glTranslatef(0, fontHeight * 3 + 35, 0);
-        glColor4f(0.6f, 0.6f, 1.0f, 1);
+        overlay->rect(0.0f, 0.0f, (float) width, 100.0f);
+        glTranslatef(0.0f, fontHeight * 3.0f + 35.0f, 0.0f);
+        glColor4f(0.6f, 0.6f, 1.0f, 1.0f);
         overlay->beginText();
         *overlay << "Target name: " << ReplaceGreekLetterAbbr(typedText);
         overlay->endText();
@@ -3267,7 +3269,7 @@ void CelestiaCore::renderOverlay()
             int nb_cols = 4;
             int nb_lines = 3;
             int start = 0;
-            glTranslatef( 3, - font->getHeight() - 3, 0);
+            glTranslatef(3.0f, -font->getHeight() - 3.0f, 0.0f);
             std::vector<std::string>::const_iterator iter = typedTextCompletion.begin();
             if (typedTextCompletionIdx >= nb_cols * nb_lines)
             {
@@ -3288,7 +3290,7 @@ void CelestiaCore::renderOverlay()
                 }
                 overlay->endText();
                 glPopMatrix();
-                glTranslatef( (width/nb_cols), 0, 0);
+                glTranslatef((float) (width/nb_cols), 0.0f, 0.0f);
            }
         }
         glPopMatrix();
@@ -3320,8 +3322,8 @@ void CelestiaCore::renderOverlay()
         float alpha = 1.0f;
         if (currentTime > messageStart + messageDuration - 0.5)
             alpha = (float) ((messageStart + messageDuration - currentTime) / 0.5);
-        glColor4f(1, 1, 1, alpha);
-        glTranslatef(x, y, 0);
+        glColor4f(1.0f, 1.0f, 1.0f, alpha);
+        glTranslatef((float) x, (float) y, 0.0f);
         overlay->beginText();
         *overlay << messageText;
         overlay->endText();
@@ -3337,8 +3339,10 @@ void CelestiaCore::renderOverlay()
         glColor4f(1, 0, 0, 1);
         overlay->rect((float) ((width - movieWidth) / 2 - 1),
                       (float) ((height - movieHeight) / 2 - 1),
-                      movieWidth + 1, movieHeight + 1, false);
-        glTranslatef((width - movieWidth) / 2, (height + movieHeight) / 2 + 2, 0);
+                      (float) (movieWidth + 1), 
+                      (float) (movieHeight + 1), false);
+        glTranslatef((float) ((width - movieWidth) / 2),
+                     (float) ((height + movieHeight) / 2 + 2), 0.0f);
         *overlay << movieWidth << 'x' << movieHeight << " at " <<
             movieCapture->getFrameRate() << " fps";
         if (recording)
@@ -3349,8 +3353,9 @@ void CelestiaCore::renderOverlay()
         glPopMatrix();
 
         glPushMatrix();
-        glTranslatef((width + movieWidth) / 2 - emWidth * 5,
-                     (height + movieHeight) / 2 + 2, 0);
+        glTranslatef((float) ((width + movieWidth) / 2 - emWidth * 5),
+                     (float) ((height + movieHeight) / 2 + 2),
+                     0.0f);
         float sec = movieCapture->getFrameCount() /
             movieCapture->getFrameRate();
         int min = (int) (sec / 60);
@@ -3359,8 +3364,9 @@ void CelestiaCore::renderOverlay()
         glPopMatrix();
 
         glPushMatrix();
-        glTranslatef((width - movieWidth) / 2,
-                     (height - movieHeight) / 2 - fontHeight - 2, 0);
+        glTranslatef((float) ((width - movieWidth) / 2),
+                     (float) ((height - movieHeight) / 2 - fontHeight - 2),
+                     0.0f);
         *overlay << "F11 Start/Pause    F12 Stop";
         glPopMatrix();
 
@@ -3370,7 +3376,8 @@ void CelestiaCore::renderOverlay()
     if (editMode)
     {
         glPushMatrix();
-        glTranslatef((width - font->getWidth("Edit Mode")) / 2, height - fontHeight, 0);
+        glTranslatef((float) ((width - font->getWidth("Edit Mode")) / 2),
+                     (float) (height - fontHeight), 0.0f);
         glColor4f(1, 0, 1, 1);
         *overlay << "Edit Mode";
         glPopMatrix();
@@ -3575,7 +3582,7 @@ bool CelestiaCore::initSimulation()
     {
         fatalError("Cannot read star database.");
         return false;
-    }    
+    }
 
     // First read the solar system files listed individually in the
     // config file.
@@ -3864,6 +3871,8 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         return false;
     }
 
+    // First load the binary star database file.  The majority of stars
+    // will be defined here.
     StarDatabase* starDB = new StarDatabase();
     if (!cfg.starDatabaseFile.empty())
     {
@@ -3888,6 +3897,28 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
     loadCrossIndex(starDB, StarDatabase::HenryDraper, cfg.HDCrossIndexFile);
     loadCrossIndex(starDB, StarDatabase::SAO,         cfg.SAOCrossIndexFile);
     loadCrossIndex(starDB, StarDatabase::Gliese,      cfg.GlieseCrossIndexFile);
+
+    // Next, read any ASCII star catalog files specified in the StarCatalogs
+    // list.
+    if (!cfg.starCatalogFiles.empty())
+    {
+        for (vector<string>::const_iterator iter = config->starCatalogFiles.begin();
+             iter != config->starCatalogFiles.end(); iter++)
+        {
+            if (*iter != "")
+            {
+                ifstream starFile(iter->c_str(), ios::in);
+                if (starFile.good())
+                {
+                    starDB->load(starFile, "");
+                }
+                else
+                {
+                    cerr << "Error opening star catalog " << *iter << '\n';
+                }
+            }
+        }
+    }
 
     // Now, read supplemental star files from the extras directories
     for (vector<string>::const_iterator iter = config->extrasDirs.begin();
