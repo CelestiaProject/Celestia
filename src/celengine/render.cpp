@@ -593,6 +593,9 @@ void Renderer::render(const Observer& observer,
     if (solarSystem != NULL)
         sun = solarSystem->getStar();
 
+    faintestMag = faintestMagNight;
+    saturationMag = saturationMagNight;
+    faintestPlanetMag = faintestMag + (2.5f * (float)log10((double)square(45.0f / fov)));
     if ((sun != NULL) && ((renderFlags & ShowPlanets) != 0))
     {
         renderPlanetarySystem(*sun,
@@ -602,9 +605,6 @@ void Renderer::render(const Observer& observer,
                               (labelMode & (MinorPlanetLabels | MajorPlanetLabels)) != 0);
         starTex->bind();
     }
-
-    faintestMag = faintestMagNight;
-    saturationMag = saturationMagNight;
 
     Color skyColor(0.0f, 0.0f, 0.0f);
 
@@ -1074,6 +1074,7 @@ static void renderRingSystem(float innerRadius,
 // 4 pixels.
 void Renderer::renderBodyAsParticle(Point3f position,
                                     float appMag,
+                                    float _faintestMag,
                                     float discSizeInPixels,
                                     Color color,
                                     const Quatf& orientation,
@@ -1092,7 +1093,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
         }
         else
         {
-            a = clamp((faintestMag - appMag) * brightnessScale + brightnessBias);
+            a = clamp((_faintestMag - appMag) * brightnessScale + brightnessBias);
         }
 
         // We scale up the particle by a factor of 1.5 so that it's more
@@ -2151,6 +2152,7 @@ void Renderer::renderPlanet(const Body& body,
 
     renderBodyAsParticle(pos,
                          appMag,
+                         faintestPlanetMag,
                          discSizeInPixels,
                          body.getSurface().color,
                          orientation,
@@ -2242,6 +2244,7 @@ void Renderer::renderStar(const Star& star,
 
     renderBodyAsParticle(pos,
                          appMag,
+                         faintestMag,
                          discSizeInPixels,
                          color,
                          orientation,
@@ -2284,7 +2287,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
 
         // if (discSize > 1 || appMag < 1.0f / brightnessScale)
-        if (discSize > 1 || appMag < faintestMag)
+        if (discSize > 1 || appMag < faintestPlanetMag)
         {
             RenderListEntry rle;
             rle.body = body;
@@ -2318,7 +2321,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         }
 #endif
 
-        if (appMag < faintestMag)
+        if (appMag < faintestPlanetMag)
         {
             const PlanetarySystem* satellites = body->getSatellites();
             if (satellites != NULL)
