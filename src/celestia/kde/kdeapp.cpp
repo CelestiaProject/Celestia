@@ -129,14 +129,21 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 
 void KdeApp::setStartURL(KURL url) {
     if (url.protocol() == "cel") { 
-            appCore->setStartURL(url.url().latin1());
+        appCore->setStartURL(url.url().latin1());
+    }
+    if (url.protocol() == "file") { 
+        appCore->setStartURL(url.path().latin1());
     }
 }
 
-void KdeApp::goToURL(KURL url) {
+void KdeApp::goToURL(const KURL& url) {
     if (url.protocol() == "cel")  {
         appCore->addToHistory();
         appCore->goToUrl(url.prettyURL().latin1());
+    }
+    if (url.protocol() == "file") { 
+        appCore->addToHistory();
+        slotOpenFileURL(url);
     }
 }
 
