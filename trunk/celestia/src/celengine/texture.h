@@ -66,6 +66,8 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
                                         ProceduralTexEval func);
 extern Texture* CreateJPEGTexture(const char* filename,
                                   int channels = Texture::ColorChannel);
+extern Texture* getJPEGTexture(const char* filename,
+                                  int channels = Texture::ColorChannel);
 extern Texture* CreateBMPTexture(const char* filename);
 extern Texture* CreatePNGTexture(const std::string& filename);
 

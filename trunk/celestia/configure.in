@@ -208,24 +208,27 @@ fi
 AC_MSG_RESULT($enable_hipparcos)
 AM_CONDITIONAL(ENABLE_HIPPARCOS, test "x$enable_hipparcos" = "xyes")
 
-AC_OUTPUT( Makefile               \
-           src/Makefile           \
-	   src/celutil/Makefile   \
-	   src/celmath/Makefile   \
-	   src/cel3ds/Makefile    \
-	   src/celtxf/Makefile    \
-	   src/celengine/Makefile \
-	   src/celestia/Makefile  \
-	   data/Makefile          \
-	   extras/Makefile        \
-	   textures/Makefile      \
-	   models/Makefile        \
-	   shaders/Makefile       \
-	   fonts/Makefile         \
-	   src/celestia/res/Makefile \
-	   macros/Makefile        \
-	   manual/Makefile        \
-          )
+AC_OUTPUT( Makefile                  \
+           src/Makefile              \
+           src/celutil/Makefile      \
+           src/celmath/Makefile      \
+           src/cel3ds/Makefile       \
+           src/celtxf/Makefile       \
+           src/celengine/Makefile    \
+           src/celestia/Makefile     \
+           data/Makefile             \
+           extras/Makefile           \
+           textures/Makefile         \
+           textures/lores/Makefile   \
+           textures/medres/Makefile  \
+           textures/hires/Makefile   \
+           models/Makefile           \
+           shaders/Makefile          \
+           fonts/Makefile            \
+           src/celestia/res/Makefile \
+           macros/Makefile           \
+           manual/Makefile           \
+         )
 
 AC_MSG_RESULT()
 AC_MSG_RESULT()

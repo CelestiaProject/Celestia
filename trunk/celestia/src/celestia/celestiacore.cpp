@@ -31,8 +31,10 @@
 #include <celengine/overlay.h>
 #include <celengine/execution.h>
 #include <celengine/cmdparser.h>
+#include <celengine/multitexture.h>
 #include "favorites.h"
 #include "celestiacore.h"
+#include <celutil/debug.h>
 
 
 using namespace std;
@@ -471,8 +473,8 @@ void CelestiaCore::charEntered(char c)
         return;
     }
 
-    c = toupper(c);
-    switch (c)
+    char C = toupper(c);
+    switch (C)
     {
     case '\001': // Ctrl+A
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAtmospheres);
@@ -639,6 +641,13 @@ void CelestiaCore::charEntered(char c)
 
     case 'Q':
         sim->setTargetSpeed(-sim->getTargetSpeed());
+        break;
+
+    case 'R':
+        if(c=='r') // Doing no rangechecking as setResolution does it allready
+            renderer->setResolution(renderer->getResolution()-1);
+        else
+            renderer->setResolution(renderer->getResolution()+1);
         break;
 
     case 'S':

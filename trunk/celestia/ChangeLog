@@ -421,5 +421,5 @@ Code:
 * Improved the appearance of the corona around stars
 * Fixed specular lighting for 3DS meshes, but correcting the mapping of 3DS
   shininess to OpenGL specular exponents.
-
+* Multi Resolution Texturing. (dramsey)
 	
