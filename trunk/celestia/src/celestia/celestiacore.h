@@ -142,6 +142,9 @@ class CelestiaCore
     bool isCaptureActive();
     bool isRecording();
 
+    void runScript(CommandSequence*);
+    void cancelScript();
+
     int getHudDetail();
     void setHudDetail(int);
 
@@ -157,7 +160,6 @@ class CelestiaCore
     void setAlerter(Alerter*);
 
  private:
-    void cancelScript();
     bool readStars(const CelestiaConfig&);
     void setFaintest(float);
     void renderOverlay();

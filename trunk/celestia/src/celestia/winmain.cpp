@@ -33,6 +33,7 @@
 #include <celutil/filetype.h>
 #include <celengine/celestia.h>
 #include <celengine/astro.h>
+#include <celengine/cmdparser.h>
 
 #include "../celengine/gl.h"
 #include "../celengine/glext.h"
@@ -2135,6 +2136,66 @@ static void HandleCaptureMovie(HWND hWnd)
 }
 
 
+static CommandSequence* HandleOpenScript(HWND hWnd)
+{
+    // Display File Open dialog to allow user to specify name and location of
+    // of captured screen image.
+    OPENFILENAME Ofn;
+    char szFile[_MAX_PATH+1], szFileTitle[_MAX_PATH+1];
+
+    szFile[0] = '\0';
+    szFileTitle[0] = '\0';
+
+    // Initialize OPENFILENAME
+    ZeroMemory(&Ofn, sizeof(OPENFILENAME));
+    Ofn.lStructSize = sizeof(OPENFILENAME);
+    Ofn.hwndOwner = hWnd;
+    Ofn.lpstrFilter = "Celestia Script\0*.cel\0";
+    Ofn.lpstrFile= szFile;
+    Ofn.nMaxFile = sizeof(szFile);
+    Ofn.lpstrFileTitle = szFileTitle;
+    Ofn.nMaxFileTitle = sizeof(szFileTitle);
+    Ofn.lpstrInitialDir = (LPSTR)NULL;
+
+    // Comment this out if you just want the standard "Save As" caption.
+    // Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
+
+    // Display the Open dialog box.
+    if (GetOpenFileName(&Ofn))
+    {
+        // If you got here, a path and file has been specified.
+        // Ofn.lpstrFile contains full path to specified file
+        // Ofn.lpstrFileTitle contains just the filename with extension
+        ifstream scriptfile(Ofn.lpstrFile);
+        if (!scriptfile.good())
+        {
+            MessageBox(hWnd, "Error opening script file.", "Error",
+                       MB_OK | MB_ICONERROR);
+        }
+        else
+        {
+            CommandParser parser(scriptfile);
+            CommandSequence* script = parser.parse();
+            if (script == NULL)
+            {
+                const vector<string>* errors = parser.getErrors();
+                const char* errorMsg = "";
+                if (errors->size() > 0)
+                    errorMsg = (*errors)[0].c_str();
+                MessageBox(hWnd, errorMsg, "Error in script file.",
+                           MB_OK | MB_ICONERROR);
+            }
+            else
+            {
+                return script;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+
 bool operator<(const DEVMODE& a, const DEVMODE& b)
 {
     if (a.dmBitsPerPel != b.dmBitsPerPel)
@@ -2839,6 +2900,17 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_INFO:
             ShowWWWInfo(appCore->getSimulation()->getSelection());
+            break;
+
+        case ID_FILE_OPENSCRIPT:
+            {
+                CommandSequence* script = HandleOpenScript(hWnd);
+                if (script != NULL)
+                {
+                    appCore->cancelScript(); // cancel any running script
+                    appCore->runScript(script);
+                }
+            }
             break;
 
         case ID_FILE_CAPTUREIMAGE:

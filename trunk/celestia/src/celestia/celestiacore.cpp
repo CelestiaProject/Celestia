@@ -263,6 +263,13 @@ void CelestiaCore::cancelScript()
 }
 
 
+void CelestiaCore::runScript(CommandSequence* script)
+{
+    if (runningScript == NULL && script != NULL)
+        runningScript = new Execution(*script, *execEnv);
+}
+
+
 bool checkMask(int modifiers, int mask)
 {
     return (modifiers & mask) == mask;
