@@ -31,6 +31,7 @@ Simulation::Simulation() :
     solarSystemCatalog(NULL),
     galaxies(NULL),
     visibleStars(NULL),
+    visTree(NULL),
     closestSolarSystem(NULL),
     selection(),
     targetSpeed(0.0),
@@ -154,6 +155,8 @@ void  Simulation::render(Renderer& renderer)
     renderer.render(observer,
                     *stardb,
                     *visibleStars,
+                    *visTree,
+                    faintestVisible,
                     closestSolarSystem,
                     galaxies,
                     selection,
@@ -255,6 +258,14 @@ void Simulation::setStarDatabase(StarDatabase* db,
         visibleStars->setLimitingMagnitude(faintestVisible);
         visibleStars->setCloseDistance(10.0f);
         visibleStars->updateAll(observer);
+
+        visTree = new StarOctree(Point3f(1000, 1000, 1000), 5000.0f, 6.0f);
+        for (int i = 0; i < db->size(); i++)
+        {
+            visTree->insertStar(*db->getStar(i));
+        }
+        cout << "Node count: " << visTree->countNodes() << "\n";
+        cout << "Total stars: " << visTree->countStars() << "\n";
     }
 }
 
@@ -360,8 +371,10 @@ void Simulation::update(double dt)
         observer.update(dt);
     }
 
+#if 0
     if (visibleStars != NULL)
         visibleStars->update(observer, 0.05f);
+#endif
 
     // Find the closest solar system
     Point3f observerPos = (Point3f) observer.getPosition();
