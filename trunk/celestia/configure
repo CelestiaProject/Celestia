@@ -6311,6 +6311,14 @@ cat >>confdefs.h <<EOF
 #define CONFIG_DATA_DIR "$PKGDATADIR"
 EOF
 
+cat >>confdefs.h <<EOF
+#define G_LOG_DOMAIN "Celestia"
+EOF
+
+cat >>confdefs.h <<EOF
+#define GNOMELOCALEDIR "$PKGDATADIR/locale"
+EOF
+
 ac_config_files="$ac_config_files Makefile src/Makefile src/celutil/Makefile src/celmath/Makefile src/cel3ds/Makefile src/celtxf/Makefile src/celengine/Makefile src/celestia/Makefile data/Makefile textures/Makefile models/Makefile shaders/Makefile fonts/Makefile src/celestia/res/Makefile macros/Makefile manual/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -6391,7 +6399,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:6394: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:6402: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -6567,7 +6575,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:6570: error: ambiguous option: $1
+    { { echo "$as_me:6578: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6586,7 +6594,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:6589: error: unrecognized option: $1
+  -*) { { echo "$as_me:6597: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -6646,7 +6654,7 @@ do
   "manual/Makefile" ) CONFIG_FILES="$CONFIG_FILES manual/Makefile" ;;
   "default-1" ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
-  *) { { echo "$as_me:6649: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:6657: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -6910,7 +6918,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:6913: creating $ac_file" >&5
+    { echo "$as_me:6921: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -6928,7 +6936,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:6931: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:6939: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -6941,7 +6949,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:6944: error: cannot find input file: $f" >&5
+           { { echo "$as_me:6952: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7002,7 +7010,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:7005: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:7013: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -7013,7 +7021,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:7016: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:7024: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -7026,7 +7034,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:7029: error: cannot find input file: $f" >&5
+           { { echo "$as_me:7037: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -7143,7 +7151,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:7146: $ac_file is unchanged" >&5
+      { echo "$as_me:7154: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
@@ -7224,19 +7232,19 @@ if test "$no_create" != yes; then
   $ac_cs_success || { (exit 1); exit 1; }
 fi
 
-echo "$as_me:7227: result: " >&5
+echo "$as_me:7235: result: " >&5
 echo "${ECHO_T}" >&6
-echo "$as_me:7229: result: " >&5
+echo "$as_me:7237: result: " >&5
 echo "${ECHO_T}" >&6
-echo "$as_me:7231: result: ********************************************************************" >&5
+echo "$as_me:7239: result: ********************************************************************" >&5
 echo "${ECHO_T}********************************************************************" >&6
-echo "$as_me:7233: result: *** Celestia configuration complete. Now do a 'make' followed    ***" >&5
+echo "$as_me:7241: result: *** Celestia configuration complete. Now do a 'make' followed    ***" >&5
 echo "${ECHO_T}*** Celestia configuration complete. Now do a 'make' followed    ***" >&6
-echo "$as_me:7235: result: *** by 'make install'                                            ***" >&5
+echo "$as_me:7243: result: *** by 'make install'                                            ***" >&5
 echo "${ECHO_T}*** by 'make install'                                            ***" >&6
-echo "$as_me:7237: result: ********************************************************************" >&5
+echo "$as_me:7245: result: ********************************************************************" >&5
 echo "${ECHO_T}********************************************************************" >&6
-echo "$as_me:7239: result: " >&5
+echo "$as_me:7247: result: " >&5
 echo "${ECHO_T}" >&6
-echo "$as_me:7241: result: " >&5
+echo "$as_me:7249: result: " >&5
 echo "${ECHO_T}" >&6
