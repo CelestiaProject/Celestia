@@ -66,7 +66,7 @@ class CelestiaCore
         Key_NumPad7         = 29,
         Key_NumPad8         = 30,
         Key_NumPad9         = 31,
-        KeyCount            = 32,
+        KeyCount            = 128,
     };
 
     typedef void (*ContextMenuFunc)(float, float, Selection);
@@ -140,6 +140,7 @@ class CelestiaCore
     int height;
 
     TextureFont* font;
+    TextureFont* titleFont;
     std::string messageText;
     std::string typedText;
     bool textEnterMode;
