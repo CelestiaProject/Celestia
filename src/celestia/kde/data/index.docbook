@@ -3,9 +3,91 @@
  "dtd/kdex.dtd" [
   <!ENTITY celestia "Celestia">
   <!ENTITY kappname "&celestia;">
+  <!ENTITY ver "1.3.0">
   <!ENTITY package "kde-module">
   <!ENTITY % English "INCLUDE" > <!-- change language only here -->
   <!ENTITY % addindex "IGNORE">
+  <!ENTITY atmospheres "<keycombo action='simul'>&Ctrl; <keycap>A</keycap></keycombo>">
+  <!ENTITY celestialgrid "<keycap>;</keycap>">
+  <!ENTITY clouds "<keycap>I</keycap>">
+  <!ENTITY comettails "<keycombo action='simul'>&Ctrl; <keycap>T</keycap></keycombo>">
+  <!ENTITY constellations "<keycap>/</keycap>">
+  <!ENTITY constellationboundaries "<keycombo action='simul'>&Ctrl; <keycap>B</keycap></keycombo>">
+  <!ENTITY eclipseshadows "<keycombo action='simul'>&Ctrl; <keycap>E</keycap></keycombo>">
+  <!ENTITY galaxies "<keycap>U</keycap>">
+  <!ENTITY nightsidelights "<keycombo action='simul'>&Ctrl; <keycap>L</keycap></keycombo>">
+  <!ENTITY orbits "<keycombo action='simul'>&Ctrl; <keycap>O</keycap></keycombo>">
+  <!ENTITY starsaspoints "<keycombo action='simul'>&Ctrl; <keycap>S</keycap></keycombo>">
+  <!ENTITY verbose "<keycap>V</keycap>">
+  <!ENTITY dec_fov "<keycap>.</keycap>">
+  <!ENTITY inc_fov "<keycap>,</keycap>">
+  <!ENTITY dec_ambientlight "<keycap>{</keycap>">
+  <!ENTITY inc_ambientlight "<keycap>}</keycap>">
+  <!ENTITY dec_magnitude "<keycap>[</keycap>">
+  <!ENTITY inc_magnitude "<keycap>]</keycap>">
+  <!ENTITY automag "<keycombo action='simul'>&Ctrl; <keycap>Y</keycap></keycombo>">
+  <!ENTITY antialias "<keycombo action='simul'>&Ctrl; <keycap>X</keycap></keycombo>">
+  <!ENTITY pixelshading "<keycombo action='simul'>&Ctrl; <keycap>P</keycap></keycombo>">
+  <!ENTITY renderpath "<keycombo action='simul'>&Ctrl; <keycap>V</keycap></keycombo>">
+  <!ENTITY fullscreen "<keycombo action='simul'>&Alt; <keycap>Enter</keycap></keycombo>">
+  <!ENTITY wireframe "<keycombo action='simul'>&Ctrl; <keycap>W</keycap></keycombo>">
+  <!ENTITY goto "<keycap>G</keycap>">
+  <!ENTITY follow "<keycap>F</keycap>">
+  <!ENTITY center "<keycap>C</keycap>">
+  <!ENTITY esc "<keycap>Esc</keycap>">
+  <!ENTITY advance "<keycap>Home</keycap>">
+  <!ENTITY back "<keycap>End</keycap>">
+  <!ENTITY lock "<keycap>:</keycap>">
+  <!ENTITY home "<keycap>H</keycap>">
+  <!ENTITY cancel "<keycap>Backspace</keycap>">
+  <!ENTITY enter "<keycap>Enter</keycap>">
+  <!ENTITY sync "<keycap>Y</keycap>">
+  <!ENTITY track "<keycap>T</keycap>">
+  <!ENTITY chase "<keycap>&quot;</keycap>">
+  <!ENTITY lookback "<keycap>*</keycap>">
+  <!ENTITY mark "<keycombo action='simul'>&Ctrl; <keycap>K</keycap></keycombo>">
+  <!ENTITY accelerate "<keycap>A</keycap>">
+  <!ENTITY decelerate "<keycap>Z</keycap>">
+  <!ENTITY reverse "<keycap>Q</keycap>">
+  <!ENTITY stop "<keycap>S</keycap>">
+  <!ENTITY align "<keycap>X</keycap>">
+  <!ENTITY F1 "<keycap>F1</keycap>">
+  <!ENTITY F2 "<keycap>F2</keycap>">
+  <!ENTITY F3 "<keycap>F3</keycap>">
+  <!ENTITY F4 "<keycap>F4</keycap>">
+  <!ENTITY F5 "<keycap>F5</keycap>">
+  <!ENTITY F6 "<keycap>F6</keycap>">
+  <!ENTITY F7 "<keycap>F7</keycap>">
+  <!ENTITY F8 "<keycap>F8</keycap>">
+  <!ENTITY F9 "<keycap>F9</keycap>">
+  <!ENTITY F10 "<keycap>F10</keycap>">
+  <!ENTITY F11 "<keycap>F11</keycap>">
+  <!ENTITY F12 "<keycap>F12</keycap>">
+  <!ENTITY pause "<keycap>Spacebar</keycap>">
+  <!ENTITY time_faster "<keycap>L</keycap>">
+  <!ENTITY time_slower "<keycap>K</keycap>">
+  <!ENTITY time_reverse "<keycap>J</keycap>">
+  <!ENTITY time_1 "<keycap>\</keycap>">
+  <!ENTITY time_now "<keycap>!</keycap>">
+  <!ENTITY lighttraveldelay "<keycap>?</keycap>">
+  <!ENTITY adjlighttraveldelay "<keycap>-</keycap>">
+  <!ENTITY copy_url_win "<keycombo action='simul'>&Ctrl; <keycap>Ins</keycap></keycombo>">
+  <!ENTITY copy_url_lin "<keycombo action='simul'>&Ctrl; <keycap>C</keycap></keycombo>">
+  <!ENTITY paste "<keycombo action='simul'>&Ctrl; <keycap>V</keycap></keycombo>">
+  <!ENTITY splitV "<keycombo action='simul'>&Ctrl; <keycap>R</keycap></keycombo>">
+  <!ENTITY splitH "<keycombo action='simul'>&Ctrl; <keycap>U</keycap></keycombo>">
+  <!ENTITY cycleviews "<keycap>Tab</keycap>">
+  <!ENTITY deleteview "<keycap>Del</keycap>">
+  <!ENTITY singleview "<keycombo action='simul'>&Ctrl; <keycap>D</keycap></keycombo>">
+  <!ENTITY planetlabels "<keycap>P</keycap>">
+  <!ENTITY moonlabels "<keycap>M</keycap>">
+  <!ENTITY galaxylabels "<keycap>E</keycap>">
+  <!ENTITY starlabels "<keycap>B</keycap>">
+  <!ENTITY asteroidlabels "<keycap>W</keycap>">
+  <!ENTITY spacecraftlabels "<keycap>N</keycap>">
+  <!ENTITY constellationlabels "<keycap>=</keycap>">
+  <!ENTITY demo "<keycap>D</keycap>">
+  <!ENTITY fps "<keycap>`</keycap>">
 ]>
 
 <book lang="&language;">
@@ -64,16 +146,11 @@
 <holder>Chris Laurel</holder>
 </copyright>
 
-<legalnotice><para>
-Permission is granted to copy, distribute and/or modify this
-document under the terms of the GNU Free Documentation License,
-Version 1.1 or any later version published by the Free Software
-Foundation; with no Invariant Sections, with no Front-Cover Texts, and
-with no Back-Cover Texts.  A copy of the license is included in the section entitled "GNU Free Documentation License".</para>
+<legalnotice>&FDLNotice;
 </legalnotice>
 
 <date>2003-03-20</date>
-<releaseinfo>1.2.5</releaseinfo>
+<releaseinfo>&ver;</releaseinfo>
 
 <abstract><para>
 &celestia; is a free real-time space simulation that lets you experience
@@ -106,7 +183,7 @@ Many of us have looked up at the stars on a dark night and wondered what it woul
 </para>
 
 <para>
-&celestia; is a free real-time space simulation that lets you visually experience our universe in three dimensions.  &celestia; was the initial inspiration and creation of Mr. Chris Laurel, a Seattle, WA computer programmer who in 2001, decided to write a free software program to be made available to everyone on the internet that would place you in control of a virtual reality world of the solar system.  His vision and dedication gave birth to a program that is unlike any other planetarium program in existence.  &celestia; doesn't confine you to the surface of the Earth as many other programs do.  Instead, Chris created a capability to travel throughout the solar system and anywhere else in space, at any speed and in any direction you choose.  If you wish, you can fly via your own ?hyperdrive? spacecraft to visit stars circling the center of the Milky Way beyond the confines of our Sun.  You can even travel completely out of the Milky Way galaxy and view it from far space.
+&celestia; is a free real-time space simulation that lets you visually experience our universe in three dimensions.  &celestia; was the initial inspiration and creation of Mr. Chris Laurel, a Seattle, WA computer programmer who in 2001, decided to write a free software program to be made available to everyone on the internet that would place you in control of a virtual reality world of the solar system.  His vision and dedication gave birth to a program that is unlike any other planetarium program in existence.  &celestia; doesn't confine you to the surface of the Earth as many other programs do.  Instead, Chris created a capability to travel throughout the solar system and anywhere else in space, at any speed and in any direction you choose.  If you wish, you can fly via your own <quote>hyperdrive</quote> spacecraft to visit stars circling the center of the Milky Way beyond the confines of our Sun.  You can even travel completely out of the Milky Way galaxy and view it from far space.
 </para>
 
 <para>
@@ -114,11 +191,11 @@ When &celestia; version 1.0 first appeared available for download on the Interne
 </para>
 
 <para>
-They have succeeded.  As of this writing, over 500 members of the public are part of the &celestia; forum community.  Over 1 million people have downloaded the program for use at home or school.  The list grows daily and includes talented graphic artists, computer programmers, astronomers, astrophysicists, animators, engineers, teachers, students, professionals from scores of occupations and ordinary citizens in over 20 countries around the world.  We invite you to join the &celestia; forum at <ulink url="http://www.shatters.net/forum/profile.php?mode=register">http://www.shatters.net/forum/profile.php?mode=register</ulink>.
+They have succeeded.  As of this writing, over 500 members of the public are part of the &celestia; forum community.  Over 1 million people have downloaded the program for use at home or school.  The list grows daily and includes talented graphic artists, computer programmers, astronomers, astrophysicists, animators, engineers, teachers, students, professionals from scores of occupations and ordinary citizens in over 20 countries around the world.  We invite you to join the &celestia; <ulink url="http://www.shatters.net/forum/profile.php?mode=register">forum</ulink>.
 </para>
 
 <para>
-&celestia; is available free of charge for Windows, Linux, and Mac OS X from <ulink url="http://www.shatters.net/celestia/download.html">http://www.shatters.net/celestia/download.html</ulink>.  Hopefully, you?ve already downloaded &celestia; and are really to install it and experience the beauty of space.  Here is just a taste of what you will be able to encounter:
+&celestia; is available free of charge for Windows, Linux, and Mac OS X from <ulink url="http://www.shatters.net/celestia/download.html">http://www.shatters.net/celestia/download.html</ulink>.  Hopefully, you've already downloaded &celestia; and are really to install it and experience the beauty of space.  Here is just a taste of what you will be able to encounter:
 </para>
 
 <itemizedlist>
@@ -173,7 +250,7 @@ They have succeeded.  As of this writing, over 500 members of the public are par
 </itemizedlist>
 
 <para>
-These are just a few of &celestia;'s features.  Each week, new features are being added by &celestia;'s programmers and other talented contributors.  It is a program undergoing a rapid evolution in computer graphics.  Add-on features, for example, will include entirely new solar systems with dozens of planets and moons drawn in vivid detail, gaseous nebula clouds, new galaxies, stars, globular clusters and spacecraft both real and imaginary.  Periodically as new features are added, this User's Guide will also be revised.  If this list above excites you, let?s get started on our journey into the heart of &celestia;.
+These are just a few of &celestia;'s features.  Each week, new features are being added by &celestia;'s programmers and other talented contributors.  It is a program undergoing a rapid evolution in computer graphics.  Add-on features, for example, will include entirely new solar systems with dozens of planets and moons drawn in vivid detail, gaseous nebula clouds, new galaxies, stars, globular clusters and spacecraft both real and imaginary.  Periodically as new features are added, this User's Guide will also be revised.  If this list above excites you, let's get started on our journey into the heart of &celestia;.
 </para>
 
 </chapter>
@@ -196,7 +273,7 @@ In addition to the actual program, &celestia; includes many other files (graphic
 The &celestia; package for computers running <trademark class="registered">Microsoft Windows</trademark> 95, 98, ME, 2000, XP, or NT 4.0 is offered as a fully "executable" program.  It will install itself into your computer.  The current Windows version is 11 megabytes in size and is called &celestia;-win32-1.3.0.exe.  It is available for download at <ulink url="http://www.shatters.net/celestia/download.html">http://www.shatters.net/celestia/download.html</ulink>.  If you have a computer that is less than 3 years old, this is the only file you will need to get started.  If you have an older computer, or one with a graphics card with less than 16 megabytes (MB) of memory (see below), the &celestia; package with low-resolution textures is only 4.5 MB in size and may run better on your system.  You can find it at the same website above.  Please note that you do not need both of them.  See hardware comments in the next section below for more detail.
 &celestia; is also available to Apple Macintosh users running MacOS X (&celestia; version 1.2.5).  The comments mentioned above for Windows also apply to the Apple version of &celestia;.
 </para><para>
-&celestia; is available for Linux in three different versions.  All of them are available in a single tarred, gzipped source archive at http://www.shatters.net/celestia/download.html.  Which version you choose to install depends upon which desktop environment you have installed.  The most polished version of &celestia; for Linux requires KDE3 (&celestia; is not compatible with earlier versions of KDE.)  If you do have KDE3, it's highly recommended that you choose the KDE version of &celestia;, as it's under the most active development.  &celestia; can also be compiled to use Gnome/Gtk, although Gnome interface is not up to par with KDE and Windows UI.  It's still possible to build &celestia; even if you don't have either KDE3 or Gnome.  The third version of &celestia; is the GLUT version.  GLUT is a cross platform framework for OpenGL applications that should be installed on nearly every Linux computer with OpenGL.  However, it provides only a bare minimum of GUI features; if you use the GLUT version of &celestia;, you will be missing the helpful menus and dialog boxes of the other versions.
+&celestia; is available for Linux in three different versions.  All of them are available in a single tarred, gzipped source archive at <ulink url="http://www.shatters.net/celestia/download.html">http://www.shatters.net/celestia/download.html</ulink>.  Which version you choose to install depends upon which desktop environment you have installed.  The most polished version of &celestia; for Linux requires KDE3 (&celestia; is not compatible with earlier versions of KDE.)  If you do have KDE3, it's highly recommended that you choose the KDE version of &celestia;, as it's under the most active development.  &celestia; can also be compiled to use Gnome/Gtk, although Gnome interface is not up to par with KDE and Windows UI.  It's still possible to build &celestia; even if you don't have either KDE3 or Gnome.  The third version of &celestia; is the GLUT version.  GLUT is a cross platform framework for OpenGL applications that should be installed on nearly every Linux computer with OpenGL.  However, it provides only a bare minimum of GUI features; if you use the GLUT version of &celestia;, you will be missing the helpful menus and dialog boxes of the other versions.
 </para>
 
 <important>
@@ -223,7 +300,7 @@ Although it's not absolutely required, the program will be vastly more enjoyable
 <para>&celestia; uses the OpenGL API to render 3D graphics.  In order to get the most from &celestia;, you should have a modern OpenGL graphics card with the latest drivers from the manufacturer.  If you have problems running &celestia;, the first thing to do is verify that your graphics card is capable enough to run &celestia;, and that the drivers are up to date.  If in doubt about the OpenGL driver, download and install a new one.  It will be available free from your card maker's web site.  Having a new driver is the best thing you can do to ensure that &celestia; runs properly.
 </para>
 <para>
-While a graphic video card might use Open GL processing, &celestia; does not run well on all such card brands or models.  Major improvements have been made in version 1.3.0 to render &celestia; more compatible with as many brands of cards as possible, but several graphic cards may handle images in a manner that &celestia; still cannot control properly.  To date, &celestia;'s features will work best on the video chipsets manufactured by NVIDIA, Inc.  Those video cards are sold under the model names "Riva", "GeForce" and "Quadro".  If an NVIDIA Open GL card is not present in your computer, &celestia; can still offer you a beautiful solar system experience, but some of its advanced features may not function smoothly or may not work at all.  These include shadows on mountains and craters (bump mapping), Sunlight reflections off water, land or atmosphere (specular highlights), the shadows of moon eclipses, and atmospheric haze near a planet's surface.
+While a graphic video card might use Open GL processing, &celestia; does not run well on all such card brands or models.  Major improvements have been made in version &ver; to render &celestia; more compatible with as many brands of cards as possible, but several graphic cards may handle images in a manner that &celestia; still cannot control properly.  To date, &celestia;'s features will work best on the video chipsets manufactured by NVIDIA, Inc.  Those video cards are sold under the model names "Riva", "GeForce" and "Quadro".  If an NVIDIA Open GL card is not present in your computer, &celestia; can still offer you a beautiful solar system experience, but some of its advanced features may not function smoothly or may not work at all.  These include shadows on mountains and craters (bump mapping), Sunlight reflections off water, land or atmosphere (specular highlights), the shadows of moon eclipses, and atmospheric haze near a planet's surface.
 </para><para>
 As development of &celestia; continues, better support for graphics hardware will continue to be introduced; if not all the features of your graphics card are supported yet, be patient.  Better yet, join the &celestia; development team and help improve the program.
 </para></important>
@@ -232,13 +309,13 @@ As development of &celestia; continues, better support for graphics hardware wil
 <chapter id="installation_uninstallation">
 <title>Installation and Uninstallation</title>
 <para>
-If you have a video card incorporating a graphics accelerator with at least 8 MB of memory, install the full Celestia installation (i.e. - celestia-win32-1.3.0.exe).  If your computer is an older model, does not have a graphics accelerator or does not support Open GL processing, obtain the Celestia package with low-resolution textures and install that.  The views you see in Celestia will be simpler and less detailed, but this version of the program and its files require less RAM and it may run more smoothly.  Also, see the Celestia website for additional answers to troubleshooting questions at http://www.shatters.net/celestia/faq.html.  Alternatively, the main Celestia package includes some low-resolution image files.  While running Celestia, you can actually switch from one resolution of graphics to another by tapping the [R] key on the keyboard (for large resolution), or the [r] key (to change to low resolution images).  This alone may speed up your program.  Note, however, that not every image in Celestia is represented by both a high and low-resolution image.  If you tap the [r] key and nothing happens, it just means there is no smaller resolution image of that moon or asteroid or spacecraft to use.
+If you have a video card incorporating a graphics accelerator with at least 8 MB of memory, install the full &celestia; installation (i.e. - celestia-win32-1.3.0.exe).  If your computer is an older model, does not have a graphics accelerator or does not support Open GL processing, obtain the &celestia; package with low-resolution textures and install that.  The views you see in &celestia; will be simpler and less detailed, but this version of the program and its files require less RAM and it may run more smoothly.  Also, see the &celestia; website for additional <ulink url="http://www.shatters.net/celestia/faq.html">answers to troubleshooting questions</ulink>.  Alternatively, the main &celestia; package includes some low-resolution image files.  While running &celestia;, you can actually switch from one resolution of graphics to another by tapping the <keycap>R</keycap> key on the keyboard (for large resolution), or the <keycap>r</keycap> key (to change to low resolution images).  This alone may speed up your program.  Note, however, that not every image in &celestia; is represented by both a high and low-resolution image.  If you tap the <keycap>r</keycap> key and nothing happens, it just means there is no smaller resolution image of that moon or asteroid or spacecraft to use.
 </para>
 
 <sect1 id="win">
 <title>Windows Operating System (95, 98, ME, 2000, NT, XP)</title>
 <para>
-Once you have obtained and downloaded the executable file, simply click twice (double-click) rapidly on its name with your left mouse button.  The file will begin running and will install Celestia.  In general, just click [Next" whenever it asks a question.  Celestia has its preferred choices and unless you have reasons for altering them, we suggest you follow them.
+Once you have obtained and downloaded the executable file, simply click twice (double-click) rapidly on its name with your left mouse button.  The file will begin running and will install &celestia;.  In general, just click <guibutton>Next</guibutton> whenever it asks a question.  &celestia; has its preferred choices and unless you have reasons for altering them, we suggest you follow them.
 </para>
 </sect1>
 
@@ -252,34 +329,1450 @@ To install the Macintosh version, click on it and follow the on-screen menu inst
 <sect1 id="linux">
 <title>Linux Operating Systems</title>
 <para>
-To install the Linux version, unpack it and its libraries with gzip and tar via the command:</para>
-<para><command>gzip</command> <option>-dc</option> <filename>celestia-1.2.5.tar.gz</filename> <command>| tar</command> <option>xvf</option></para>
-<para>
-Then change directory (cd) into the newly created directory and configure Celestia.  Run configure with the appropriate command line for the version that you want to compile:</para>
-<para>
-KDE: ./configure -with-kde
-Gnome/Gtk: ./configure -with-gtk
-GLUT: ./configure
-Configure may complain if you are missing a required component, or if you have an out of date version of a required component.  Check the error output from configure to determine what's missing, install the necessary items, and then try rerunning configure.  If neither the KDE orGnome versions of Celestia will build, try falling back to the GLUT version.  There are many options for configure; you can view them all-together with a brief explanation for each-by running configure -help.
+RPMS packages are provided for the SuSE and Mandrake distribution. You can get them from the SourceForge <ulink url="http://sourceforge.net/project/showfiles.php?group_id=21302">project page</ulink>.
 </para>
 <para>
-After running configure, compile and install Celestia:
-make
-make -install
-Note that make -install will need to be run as the root unless you've overridden the default install directory by invoking configure with the -prefix option.
+If you run SuSE or Mandrake the prefered way to install &celestia; is to get the <filename>celestia-kde</filename> and <filename>celestia-kde-texture</filename> packages for your distribution and to install them by running as root in the directory where the files have been downloaded:</para>
+<para><userinput><command>rpm</command> <option>-Uvh</option> <filename>celestia-kde*</filename></userinput>
 </para>
 <para>
-Hopefully, compilation of Celestia will go smoothly.  If it doesn't, it's most likely because some required package is missing.  A relatively common problem is that the OpenGL developer package necessary for building OpenGL applications has not been installed.  If the compiler complains that gl.h or glu.h is not found, it's a symptom of a missing or improperly installed OpenGL developer package.  Once make completes without errors, you're ready to run Celestia from either your desktop of choice or the command line.
+Alternatively, or if you don't run one of the supported distribution, you can compile &celestia; yourself.
+Unpack it and its libraries with gzip and tar via the command:</para>
+<para><userinput><command>gzip</command> <option>-dc</option> <filename>celestia-1.2.5.tar.gz</filename> <command>| tar</command> <option>xvf</option></userinput></para>
+<para>
+Then change directory (<command>cd</command>) into the newly created directory and configure Celestia.  Run <command>configure</command> with the appropriate command line for the version that you want to compile:</para>
+<variablelist>
+<varlistentry>
+<term>KDE</term>
+<listitem><para><userinput><command>./configure</command> <option>-with-kde</option></userinput></para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Gnome/Gtk</term>
+<listitem><para><userinput><command>./configure</command> <option>-with-gtk</option></userinput></para></listitem>
+</varlistentry>
+<varlistentry>
+<term>GLUT</term>
+<listitem><para><userinput><command>./configure</command></userinput></para></listitem>
+</varlistentry>
+</variablelist>
+<para>
+<command>configure</command> may complain if you are missing a required component, or if you have an out of date version of a required component.  Check the error output from configure to determine what's missing, install the necessary items, and then try rerunning <command>configure</command>.  If neither the KDE or Gnome versions of &celestia; will build, try falling back to the GLUT version.  There are many options for configure; you can view them all-together with a brief explanation for each-by running <userinput><command>./configure</command> <option>-help</option></userinput>.
+</para>
+<para>After running configure, compile and install &celestia;:</para>
+<para><userinput><command>make</command></userinput></para>
+<para><userinput><command>make</command> <option>-install</option></userinput></para>
+<note><para><command>make</command> <option>-install</option> will need to be run as root unless you've overridden the default install directory by invoking <command>configure</command> with the <option>-prefix</option> option.
+</para></note>
+<para>
+Hopefully, compilation of &celestia; will go smoothly.  If it doesn't, it's most likely because some required package is missing.  A relatively common problem is that the OpenGL developer package necessary for building OpenGL applications has not been installed.  If the compiler complains that gl.h or glu.h is not found, it's a symptom of a missing or improperly installed OpenGL developer package.  Once make completes without errors, you're ready to run &celestia; from either your desktop of choice or the command line.
 </para>
 </sect1>
 
 <sect1 id="uninstall">
 <title>Uninstall</title>
 <para>
-To uninstall Celestia in Windows, click the Start button at the bottom left of your screen, select "Settings", then select "Control Panel", then select Add/Remove Programs.  Locate Celestia in the pull-down list and click the button that says, "Add/Remove".  For Apple and UNIX owners, follow your system's standard uninstall procedure.
+To uninstall &celestia; in Windows, click the <guibutton>Start</guibutton> button at the bottom left of your screen, select <guisubmenu>Settings</guisubmenu>, then select <guimenuitem>Control Panel</guimenuitem>, then select Add/Remove Programs.  Locate &celestia; in the pull-down list and click the button that says, "Add/Remove". </para>
+<para> For Apple and UNIX owners, follow your system's standard uninstall procedure.
 </para>
 </sect1>
 
 </chapter>
+
+
+<chapter id="general_operation">
+<title>General Operation and Keyboard commands</title>
+<para>
+To launch &celestia;, double-click on its icon either on your desktop or in the Programs menu that appears when you click your Start button.  The program will load and will open far out in space hovering above Io, one of Jupiter's most fascinating moons.  Mighty Jupiter will be visible somewhere behind Io.  The beauty of &celestia; is its accuracy.  The image in front of you is exactly what you would see if you were really positioned in space at that very spot right now.  In other words, Io, Jupiter, and all of the planets and stars and spacecraft visible on your computer screen really are located in space where &celestia; has put them.</para>
+
+<para>In the 1970s, the United States sent two space probes named Voyager 1 and Voyager 2 to explore the outer solar system.  The images you see in &celestia; have in part, been taken directly from Voyager photographs.  The image of Io in front of you is one of these.  The Voyagers found Io to be actively volcanic.  Those mountains and black smudges are really there on the moon and are volcanoes.  Some of them were erupting when Voyager flew by.
+The Opening Screen</para>
+
+<screenshot>
+<screeninfo>Io orbiting Jupiter</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig1.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Io orbiting Jupiter</phrase>
+</textobject>
+<caption><para><ulink url="cel://Follow/Sol:Jupiter:Io/2003-03-22T18:57:24.47?x=PBygg/CNqzyADA&amp;y=xcYz59EJEyMB&amp;z=8zEibTeutH3G/////////w&amp;ow=0.913801&amp;ox=0.023259&amp;oy=-0.405273&amp;oz=-0.013429&amp;select=Sol:Jupiter:Io&amp;fov=45.000000&amp;ts=1.000000&amp;rf=57239&amp;lm=0">Io orbiting Jupiter</ulink></para></caption>
+</mediaobject>
+</screenshot>
+
+<para>Io orbits Jupiter rapidly and is always changing position.  Thus, the screenshot above may or may not be the same scene you see when you open &celestia;.  However, it will be similar.</para>
+
+<itemizedlist>
+<listitem><para>In the top left corner will be some information about your target (Io).  The Distance will be the distance in kilometers (km) from you to the surface of the moon.  Io's Radius in km will also be listed.</para></listitem>
+<listitem><para>In the lower left corner will be Speed through space relative to the Sun.  At the moment, your ship is not moving so your speed is zero.  Later, we will begin to fly on our own and your speed will be listed here.</para></listitem>
+<listitem><para>In the top right corner will be the current time and date.  In Astronomy, times are given in Universal Time (commonly referred to as Greenwich Mean Time), and this is what &celestia; uses by default.  If you find it more convenient, you can access the Time menu to make &celestia; use your local time zone instead.  The date is listed in the format (year/month/day).  Note that time will be in 24-hour format.  Thus, 1:00 PM will be 13:00:00 hours.  &celestia; can also speed up or slow down time or travel forward or backward in time with the touch of a button.  Now, you are experiencing the program in "Real Time".</para></listitem>
+<listitem><para>In the lower right of the screen will be a message telling you that you are "Following" Io.  Wherever it goes, you go.  Thus, although Io is actually moving rapidly through space, you are moving with it.  Under that will be your <quote>Field of View</quote> or <quote>FOV</quote>.  This is amount of sky your view takes in.  &celestia; starts you out with an FOV of 45°, which means your monitor is displaying about 45° of the sky (most people have a visual field of 120°).  However, you can change the FOV easily by holding down the &Shift; key on the keyboard, <mousebutton>left</mousebutton>-clicking your mouse button and dragging the mouse forward or backward.  Try it.  As the FOV gets smaller, the scene enlarges.  It is similar to a telescope magnification.  You can also press the &dec_fov; key or the &inc_fov; key to change field of view from the keyboard.  Enlarging the FOV allows you to magnify objects in the distance, while still keeping the planet in the foreground.  If you wish to return to an FOV of 45° and have a mouse wheel, click/push the <mousebutton>wheel</mousebutton> button.</para></listitem>
+</itemizedlist>
+
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>The FOV here is 45°.  Notice size of the moon behind Earth.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig2.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>The FOV here is 45°.  Notice size of the moon behind Earth.</phrase>
+</textobject>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2003-03-22T18:59:45.88?x=OD6Jd5I3xO6tDA&amp;y=TuD9jqpi/f///////////w&amp;z=hVjrjdVgKXc&amp;ow=-0.363648&amp;ox=0.079560&amp;oy=0.927376&amp;oz=0.037466&amp;select=Sol:Earth&amp;fov=45.000004&amp;ts=1.000000&amp;rf=57239&amp;lm=0">The FOV here is 45°.  Notice size of the moon behind Earth.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>The FOV here is 12°.  Earth and moon are now enlarged.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig3.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>The FOV here is 12°.  Earth and moon are now enlarged.</phrase>
+</textobject>
+<caption><para><ulink url="cel://Follow/Sol:Earth/2003-03-22T19:01:27.24?x=4P8Iu2jRse6tDA&amp;y=rV64OPKX/////////////w&amp;z=FdjZPUzzKHc&amp;ow=-0.255431&amp;ox=0.084504&amp;oy=0.962843&amp;oz=0.023405&amp;select=Sol:Earth&amp;fov=12.053194&amp;ts=1.000000&amp;rf=57239&amp;lm=0">The FOV here is 12°.  Earth and moon are now enlarged.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+
+
+</chapter>
+
+<chapter id="set_program_options">
+<title>Set Program Options</title>
+<para>
+When you use &celestia; for the first time, you will need to choose some options that will tell the program how you want things done.  During your subsequent use of &celestia;, you may have occasion to change these options.  To open the Options screen, <mousebutton>left</mousebutton> click on the word "Render" at the top of the &celestia; view screen and select "View Options".  A list of choices will appear.  Deciding which ones you want is a personal and a practical choice.  If your computer is a newer model, then we recommend the options below.  If your computer is slower or older and &celestia; appears to be running slowly, deselect some options, as follows:</para>
+
+<sect1 id="opt_atmosphere">
+<title>Atmospheres (&atmospheres;)</title>
+<para>
+&celestia; will draw colored atmospheres above all planets and moons that have them.  You will be able to see them from space and even fly through them.  As you do, the sky will lighten.  Atmospheres will even dim and turn color as you view them near the terminator (near the dark side).</para>
+<para><emphasis>Highly Recommended</emphasis> - but does require computer resources.  Try turning it off if &celestia; is running too slowly on your system.</para>
+
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Earth with Atmospheres selected.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig2.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Earth with Atmospheres selected.</phrase>
+</textobject>
+<caption><para><ulink url="">Earth with Atmospheres selected.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene without Atmospheres selected.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig3.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Same scene without Atmospheres selected.</phrase>
+</textobject>
+<caption><para><ulink url="">Same scene without Atmospheres selected.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+<sect1 id="opt_celestial_grid">
+<title>Celestial Grid (&celestialgrid;)</title>
+<para>&celestia; places an equatorial coordinate grid on the screen showing you the celestial position and direction in space.  The grid follows the standard convention of Right Ascension and Declination used in Astronomy.</para>
+<para><emphasis>Recommended</emphasis> - when needed to locate a direction in space.  For example, you can turn the grid on temporarily to identify direction of an object in &celestia; then go to a real telescope and swing to that approximate coordinate.  You can also use the Celestial Grid to help you decide where to place a fictional add-on (see Part 2 of the User's Manual).</para>
+
+<screenshot>
+<screeninfo>Sky with &celestia;l Grid Enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig3.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Sky with &celestia;l Grid Enabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Sky with &celestia;l Grid Enabled.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</sect1>
+
+<sect1 id="opt_clouds">
+<title>Clouds (&clouds;)</title>
+<para>Some of the planets in our solar system and many fictional planets that &celestia; users create in other solar systems have clouds drifting across their surfaces.  &celestia; has the ability to both place clouds above the surface and put them in motion.</para>
+<para><emphasis>Highly Recommended</emphasis> - but does require computer resources.  Try turning off if &celestia; is running too slowly or if you just want clear skies.</para>
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Earth with moving clouds selected.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig2.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Earth with moving clouds selected.</phrase>
+</textobject>
+<caption><para><ulink url="">Earth with moving clouds selected.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene without clouds selected.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig3.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Same scene without clouds selected.</phrase>
+</textobject>
+<caption><para><ulink url="">Same scene without clouds selected.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+<sect1 id="opt_comet_tails">
+<title>Comet Tails (&comettails;)</title>
+<para>&celestia; will accurately place a gaseous comet tail behind all comets, properly oriented to always point away from the Sun.  To see those tails, you have to be close enough to the comet.</para>
+<para><emphasis>Highly Recommended</emphasis> - but requires computer resources.  Try turning off if &celestia; is running too slowly.
+</para>
+<screenshot>
+<screeninfo>Venus and comet Ikaya-Zhang in Feb, 2002.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig9.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Venus and comet Ikaya-Zhang in Feb, 2002.</phrase>
+</textobject>
+<caption><para><ulink url="">Venus and comet Ikaya-Zhang in Feb, 2002.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</sect1>
+
+<sect1 id="opt_constellations">
+<title>Constellations (&constellations;)</title>
+<para>&celestia; will display both constellation shapes and their official "borders" for each of the 88 constellations in the sky.  In the second Options row, you can also turn on constellation labels.  These 3 options are useful whenever you have an interest in locating a particular constellation in &celestia;.</para>
+<para><emphasis>Recommended</emphasis> - only when desired.  Does not use much computer resource.</para>
+<screenshot>
+<screeninfo>Constellations with borders and labels enabled.  As viewed from Earth, the Sun is "in" Capricorn.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig10.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Constellations with borders and labels enabled.  As viewed from Earth, the Sun is "in" Capricorn.</phrase>
+</textobject>
+<caption><para><ulink url="">Constellations with borders and labels enabled.  As viewed from Earth, the Sun is "in" Capricorn.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</sect1>
+
+<sect1 id="opt_eclipse_shadows">
+<title>Eclipse Shadows (&eclipseshadows;)</title>
+<para>&celestia; can compute the actual position of the shadows a moon will cast on a planet below as the moon passes in front of the Sun (a solar eclipse).  Turning this feature on will cause shadows to be drawn on all planets whenever an eclipse occurs.  It is an elegant feature, particularly when observing moon shadows drifting across the giant gas worlds of Jupiter and Saturn.</para>
+<para><emphasis>Highly Recommended</emphasis> - but does require significant computer resources.  Note:  On some older video cards, eclipse shadows may lock up the program.</para>
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Io eclipsing Jupiter, an example of Eclipse Shadows.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig11.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Io eclipsing Jupiter, an example of Eclipse Shadows.</phrase>
+</textobject>
+<caption><para><ulink url="">Io eclipsing Jupiter, an example of Eclipse Shadows.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>A total solar eclipse over Africa, as seen from space.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig12.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>A total solar eclipse over Africa, as seen from space.</phrase>
+</textobject>
+<caption><para><ulink url="">A total solar eclipse over Africa, as seen from space.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+<sect1 id="opt_galaxies">
+<title>Galaxies (&galaxies;)</title>
+<para>&celestia; comes with a galaxy data file that tells the program the position of numerous galaxies in the night sky and what type they are.  When this option is selected, &celestia; will create a small, dim sketch of each galaxy and position it in the proper place in space.  It will also draw the huge band of starry haze we know as the Milky Way.  Selecting the option, therefore, will improve your &celestia; experience and you will be able to see dim galaxies in the distance.  You can even travel to them in your spaceship.  However, the galaxy sketches are simple and appear as dim "blobs".  Later versions of &celestia; will improve on the graphics of galaxies.</para>
+<para><emphasis>Recommended</emphasis> - but does require computer resources.  Try turning off if &celestia; is running too slowly.
+</para>
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Neptune and Milky Way with Galaxies enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig13.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Neptune and Milky Way with Galaxies enabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Neptune and Milky Way with Galaxies enabled.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene without Galaxies enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig14.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Same scene without Galaxies enabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Same scene without Galaxies enabled.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+<sect1 id="opt_night_side_lights">
+<title>Night Side Lights (&nightsidelights;)</title>
+<para>&celestia; has the ability to light up the night sky.  From space, the thousands of cities across our continents are ablaze with light so bright that they can be seen vividly from hundreds of km up.  Turning on this option commands &celestia; to add those lights to the nighttime vista you see from space above Earth.</para>
+<para><emphasis>Highly Recommended</emphasis> - but does require computer resources.  Note:  On older video cards, night-side lights may slow down the program.  Try turning off if &celestia; is running too slowly.</para>
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Earth, Sun and terminator with night-lights enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig15.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Earth, Sun and terminator with night-lights enabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Earth, Sun and terminator with night-lights enabled.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene without night-lights enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig16.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Same scene without night-lights enabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Same scene without night-lights enabled.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+<sect1 id="opt_orbits">
+<title>Orbits (&orbits;)</title>
+<para>&celestia; will draw the actual path of a planetary orbit through the solar system.  The Option also draws orbits of all moons, comets, asteroids and spacecraft.  Orbits are excellent for seeing the celestial mechanics of the solar system.  Turn them on, zoom out from the Sun and view the orbits from above.  Speed up time (see later discussion) and you will see the alignment of planets speeding around the Sun.</para>
+<para><emphasis>Recommended</emphasis> - when desired.  Does not use much computer resources.</para>
+<screenshot>
+<screeninfo>Solar System with orbits enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig17.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Solar System with orbits enabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Solar System with orbits enabled.</ulink> The inclined orbit is that of Pluto, a large Kuiper Belt Object that may have swung into its current orbit through a past collision with another object.</para></caption>
+</mediaobject>
+</screenshot>
+</sect1>
+
+<sect1 id="opt_planets">
+<title>Planets</title>
+<para>Normally selected.  <emphasis>Highly Recommended.</emphasis></para>
+</sect1>
+<sect1 id="opt_ring_shadows">
+<title>Ring Shadows</title>
+<para>&celestia; can compute and draw the actual position of the shadows a planet's ring will cast on a planet below and conversely, the shadow a planet will cast on its rings.</para>
+<para><emphasis>Highly Recommended</emphasis> - but does require significant computer resources.</para>
+<note><para>On some older video cards, ring shadows have also been known to slow down the program dramatically or lock it up entirely.</para></note>
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Ring Shadows enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig18.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Ring Shadows enabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Ring Shadows enabled.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene without night-lights enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig19.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Ring Shadows disabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Ring Shadows disabled.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+<sect1 id="opt_stars_as_point">
+<title>Stars As PointsOrbits (&starsaspoints;)</title>
+<para>&celestia; can display stars either as points or fuzzy disks.  Which looks better is a matter of personal taste and the resolution of your monitor.  In general, disks make a clearer distinction between brightnesses of a star and look better at high resolutions (see Display Mode below).  Points tend to be of similar brightness, but may look better at lower resolutions.  Selecting Stars as Points may also make &celestia; run faster, but this is only noticeable when you adjust the visibility limit so that tens of thousands of faint stars are visible all at once.  The slider in the "Filter Stars" section allows you to look at just the stars that are closer than a specified distance.  Normally, it is set to one million light years, so that all stars are visible but you can drop it so that you are looking at only close stars to our own.  This may also improve performance on slower or older computers.</para>
+<informaltable pgwide="1">
+<tgroup cols="3">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Voyager 1 against stars - windows mode - Stars as Points enabled.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig20.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Voyager 1 against stars - windows mode - Stars as Points enabled.</phrase>
+</textobject>
+<caption><para><ulink url="">Voyager 1 against stars - windows mode - Stars as Points enabled.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Stars as Points off - at resolution of 800x600 (windows mode).</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig21.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Stars as Points off - at resolution of 800x600 (windows mode).</phrase>
+</textobject>
+<caption><para><ulink url="">Stars as Points off - at resolution of 800x600 (windows mode).</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene as figure 21 but at a higher screen resolution of 1280x720.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig22.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Same scene as figure 21 but at a higher screen resolution of 1280x720.</phrase>
+</textobject>
+<caption><para><ulink url="">Same scene as figure 21 but at a higher screen resolution of 1280x720.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</sect1>
+<sect1 id="opt_other">
+<title>Other options</title>
+<para>The remaining Options in this menu include turning on or off various labels for planets, major stars, moons, etc.  Turn them on or off as you desire.  They do not use much computer power.</para>
+
+<para>The box regarding Information Text allows you to choose how much data you want displayed when you select an object.  Pressing &verbose; toggles the information display on or off through two levels of detail.</para>
+
+<para>We have a few more options to set.  On the <guimenu>Render</guimenu> menu, select <guimenuitem>Ambient Light</guimenuitem>.  Since space is a near vacuum, there is very little light scattered and shadows are completely black.  You can set the ambient light level to "none" to simulate this and get the most realistic views of space.  However, there are times when a bit of extra light is useful or aesthetically pleasing For example, go to the dark side of any planet and adjust ambient light from None to Low, then to Medium.  You'll discover that portions of a planet's dark side become visible with some light scattering.  Having a bit of extra light is also good for seeing spacecraft.  When they are on the dark side of a planet, they almost disappear in the shadows.  Low or medium light allows you to track them better.  Use &dec_ambientlight;  to decrease ambient illumination and &inc_ambientlight;  to increase it.</para>
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Pluto and its moon Charon with Ambient Light set to None.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig23.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Pluto and its moon Charon with Ambient Light set to None.</phrase>
+</textobject>
+<caption><para><ulink url="">Pluto and its moon Charon with Ambient Light set to None.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene with Ambient Light set to Medium.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig24.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Same scene with Ambient Light set to Medium.</phrase>
+</textobject>
+<caption><para><ulink url="">Same scene with Ambient Light set to Medium.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+
+<para>On the <guimenu>Render</guimenu> menu, select <guimenuitem>More or less stars visible</guimenuitem>. This tells &celestia; how many stars to draw in the sky at one time.  It controls star numbers by Magnitude (brightness).  You can choose to display only bright stars.  On the surface of Earth, our view generally includes stars of a magnitude of +6.0 or less (the lower the number, the brighter the star).  Setting this option to Magnitude 6.0 - 7.0 results is a realistic sky as seen from Earth on a clear night, with about 3,000 stars visible.  However, if you were living on a space station far above earth's atmosphere, you might see stars up to a magnitude of 9.0 with the naked eye.  Because there are more stars in the sky, some &celestia; users prefer higher star settings of 8.0 to 10.0.</para>
+
+<para>The default download of &celestia; actually contains about 100,000 stars up to magnitude 15.0 visible from the vicinity of Earth.  A setting of 11.0 or more simulates the view you would see through a telescope.  However, millions of stars have been cataloged by Astronomers and if you wish, you can download a star database from the &celestia; website that contains over 2,100,000 stars.  If this file is loaded, and you select the maximum magnitude limit of 15.0, the sky will be ablaze with stars.  However, note that this level of star display will dramatically slow down even fast computers.  The choice is yours.  Experiment by using the keyboard key &dec_magnitude; to decrease limiting magnitude (fewer stars visible), and &inc_magnitude; to increase limiting magnitude (more stars visible).  &celestia; also helps you to set realistic star magnitudes with a feature known as AutoMag.  To enable AutoMag, press &automag;.  To disable it, press them again.  When Automag is enabled, star magnitudes are restricted to a range of 6.0 - 12.0 when your Field of View (FOV) is at the default range of 45°.  A screen display will advise you of your changes.  Also, note that by turning stars on or off, you are changing the amount of data &celestia; must process each second.  If you are experiencing slow performance, try turning the stars display down to 6.0 or less.</para>
+
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Stars at Magnitude setting of 7.5.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig25.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Stars at Magnitude setting of 7.5.</phrase>
+</textobject>
+<caption><para><ulink url="">Stars at Magnitude setting of 7.5.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene at Magnitude setting of 15.0.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig26.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Same scene at Magnitude setting of 15.0.</phrase>
+</textobject>
+<caption><para><ulink url="">Same scene at Magnitude setting of 15.0.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+
+<para>On the <guimenu>Render menu</guimenu>, select <guimenuitem>Antialiasing and Pixel Shaders</guimenuitem>.  These are instructions to &celestia; to use certain graphical processing techniques when it draws images on the viewscreen.  &celestia; relies on some of these techniques for drawing certain objects properly.  In general, both choices should be selected.  &antialias; toggles Antialiasing (smoothing) of the lines used to render orbit paths and constellation figures.  &pixelshading; toggles Pixel Shading.</para>
+
+<para>New in &celestia; &ver; are five possible <quote>render paths</quote> for Vertex Shading.  &renderpath; toggles among the five choices (the Render menu choice is grayed out).  Vertex Shading is a technique that draws (renders) graphical shades (haze, shadows, etc.) on &celestia; objects.  To see such shading, your must have a graphics accelerator card that renders shading via a process known as Open GL.  However, as mentioned earlier, not all graphics cards can handle vertex shading properly.  Sometimes, vertex shading must be set in advance to certain parameters.</para>
+
+<para>&celestia; gives you five choices for Vertex Shading.  They are:  Basic, Multitexture, Nvidia Combiners, Open GL and Open GL/Nvidia Combiners.  The number of these available render paths you can cycle through with &renderpath; depends on the graphics card and driver version you have.  By default, &celestia; starts up with the highest quality rendering selected.  If you have a Nvidia Graphics card, select the last choice (Open GL/Nvidia Combiners); observe Earth and then cycle through the other choices.  You will see surface shadows and a haze appear on Earth.  If you have another brand of graphic accelerator card, cycle through the five choices while viewing Earth and choose the one that is most pleasing to you.  If you have no graphics card at all, the Basic or Multitexture settings are your best choices.  The Basic path will always work well, although rendering will be at a basic level only.</para>
+<informaltable pgwide="1">
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>
+<screenshot>
+<screeninfo>Open GL/Nvidia Combiners render path selected.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig27.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Open GL/Nvidia Combiners render path selected.</phrase>
+</textobject>
+<caption><para><ulink url="">Open GL/Nvidia Combiners render path selected.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry><entry>
+<screenshot>
+<screeninfo>Same scene with Basic render path only.</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig28.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Same scene with Basic render path only.</phrase>
+</textobject>
+<caption><para><ulink url="">Same scene with Basic render path only.</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+
+<para>On the <guimenu>Render</guimenu> menu, select <guimenuitem>Display Mode</guimenuitem> or <guimenuitem>Toggle Full Screen</guimenuitem>.  These are instructions to &celestia; to change the size of the view screen.  Use the <guimenuitem>Display Mode</guimenuitem> menu first to select the size of the viewscreen you prefer.  <quote>Windowed Mode</quote> is typically the same resolution size your display monitor is set to display.</para>
+
+<para>For example, most computers are set to display a default screen resolution of 800x600 pixels (to find out what your screen is set at, <mousebutton>right</mousebutton> click on your desktop, choose <guimenu>properties</guimenu> and <guimenuitem>settings</guimenuitem>, and read the resolution setting).  When running in Windowed Mode, that is the resolution &celestia; will display when it runs the program.</para>
+
+<para>Windowed Mode has advantages in that it gives you visible screen borders, sliders and toolbars.  You can resize the screen by clicking on its corners, minimize the screen, switch between programs, etc.</para>
+
+<para>If instead you select a different screen resolution from the Display Mode pulldown menu, &celestia; will immediately switch to Full Screen Mode, and draw the screen in that pixel size, filling up the entire screen.  All of the toolbars, sliders and side borders will disappear.  High-end computers and those with up-to-date video cards can take advantage of smaller pixel sizes and more detailed appearance, and many users prefer to view &celestia; in Full Screen Mode and in smaller pixel sizes.  The screen is uncluttered and your view really looks like the window in a spacecraft.  However, there are disadvantages to Full Screen Mode.  First, in order to access the toolbars, you must point your mouse toward the top of the screen and wait for the menu/toolbar to be drawn.  With some video cards, the entire screen will go black for a moment as the toolbars are being drawn.  Also, be advised that the ability of &celestia; to redraw complex scenes in different screen sizes varies from system to system.  Some users have reported lockups and program crashes when using Full Screen Mode at certain display sizes.  We recommend you experiment with your own system and choose the resolution that works best for you.  &fullscreen; is a useful keyboard shortcut that toggles between your chosen Display mode and Full screen.
+</para>
+<para>Keyboard shortcuts for turning on and off (toggling) the above options exist and are summarized in a later section below.  You can press these keys instead of pulling down the <guimenu>Render</guimenu>, <guimenuitem>View Options</guimenuitem> menu.
+</para>
+</sect1>
+</chapter>
+
+<chapter id="movement">
+<title>Movement</title>
+<para>General movement in &celestia; is one of the highlights of this program.  It is easy.  Movement keys are very important for enjoying &celestia;.  For example, if you wish to go into an orbit hovering above a planet, drop down to the surface or fly around in your spaceship, you will need to change direction, orientation and distance in space frequently.  There are 15 keyboard or mouse general movement commands.  Let's return to our opening scene of the moon Io (select Io from the Solar system Browser and Goto).</para>
+
+<orderedlist>
+<listitem><para><mousebutton>Right</mousebutton> click on the scene in front of you and while holding down the <mousebutton>right</mousebutton> mouse button, move your mouse (<mousebutton>Right</mousebutton>-dragging).  Io will rotate left, right, up or down.  You can view it from any perspective you wish.</para></listitem>
+
+<listitem><para><mousebutton>Left</mousebutton> click your mouse and while holding the button down, drag the mouse.  The whole scene will shift as a whole.</para></listitem>
+
+<listitem><para>Tap the <keycap>Down Arrow</keycap> on the keypad or <keycap>2</keycap> on numeric keypad.  Your view of Io will pitch upward.  Make sure you press the key labeled <keycap>Num Lock</keycap> at the top of the numeric keypad.  If so, there should be a little light lit up above the numbers on your keyboard.</para></listitem>
+<listitem><para>Tap the <keycap>Up Arrow</keycap> on the keypad or <keycap>8</keycap> on numeric keypad.  Your view of Io will pitch downward.</para></listitem>
+<listitem><para>Tap the <keycap>Left Arrow</keycap> on the keypad or <keycap>7</keycap> on numeric keypad.  Your view will rotate (roll) counter-clockwise</para></listitem>
+<listitem><para>Tap the <keycap>Right Arrow</keycap> on the keypad or <keycap>9</keycap> on numeric keypad.  Your view will (roll) clockwise.</para></listitem>
+<listitem><para>Tap the <keycap>4</keycap> key on the numeric keypad of the keyboard (the one on the right side).  The view will move (yaw) to the left</para></listitem>
+<listitem><para>Tap the <keycap>6</keycap> key on the numeric keypad.  The sky will move (yaw) to the right as a whole.</para></listitem>
+<listitem><para>Tap the <keycap>5</keycap> key on the numeric keypad to instantly stop all pitch, roll and yaw movement.</para>
+<note><para>The speed with which the view turns when you press the above keys is initially set at a particular value (120) in one of the files that &celestia; uses to operate.  That file is called <filename>celestia.cfg</filename>, and can be found in the main (root) directory of the &celestia; folder.  If you find that your view is turning too fast or too slowly for your taste when you press a movement key, that document can be opened by you and the Rotate Acceleration (turning speed) of the above keys can be lowered or increased.  To do so, double-click on the file.  If a menu comes up asking you which program you wish to use to open the document, choose "WordPad" (for Windows systems) or the proper plain text editor for MAC and Linux systems.  When open, locate the line "RotateAcceleration 120" and change the number either higher (to turn even faster) or lower (to turn more slowly).  For example, RotateAcceleration 30 will result in your view turning much more slowly when you hit a movement key.  Some users prefer this, particularly if they use the &celestia; spaceship.  Do not change any other values in this document, or &celestia; may not operate properly.  After changing, save the change by clicking the <guimenu>File</guimenu> and <guimenuitem>Save</guimenuitem> menu choices, and close the document.</para></note></listitem>
+
+<listitem><para><keycombo action="simul"><mousebutton>Right-click</mousebutton> <mousebutton>Left-click</mousebutton><keycap>Drag</keycap></keycombo> your position will advance toward or recede away from the object.</para></listitem>
+<listitem><para><keycombo action="simul">&Ctrl; <mousebutton>left</mousebutton> <keycap>Drag</keycap></keycombo> - same as #&nbsp;10 above</para></listitem>
+
+<listitem><para><mousebutton>Roll Center Mouse Wheel</mousebutton> (if you have one) forward or backward - same as #&nbsp;10 above.</para></listitem>
+
+<listitem><para>Press the <keycap>End</keycap> key on the keyboard.  This is the same as #&nbsp;10 but using the keyboard only.  Your position above Io will rapidly recede away.  Hold down the key and you can move light years away if you wish.</para></listitem>
+
+<listitem><para>Press the <keycap>Home</keycap> key on the keyboard.  Your position above Io will rapidly advance toward the moon.</para>
+<note><para>The above five keys resemble a "zoom" ability.  However, they don't magnify an image; they just reposition you toward or away from it.  Because this feature operates exponentially, you can adjust the distance much more finely when your viewpoint is close to the object of interest.  Exponential control also makes it possible to move smoothly and rapidly from a distance of one meter to one million light years away from a &celestia; object without sacrificing precision at small distances, or experiencing long time delays traveling long distances.</para></note></listitem>
+
+<listitem><para>Press the &lookback; on the keyboard.  This is a Lookback command.  It will reverse your view so that instead of looking forward, you will look behind you (a rearview window).  It is very useful when flying from one planet to another.  You can see forward and then examine your journey from the rear view, watching the planet or moon recede from you.</para>
+</listitem>
+</orderedlist>
+<para>Joystick control: You can also control your movement via a joystick (Windows only).  The seven commands for joystick control of &celestia; are listed in the back of this document, in the Keyboard and Mouse Command Summary.
+</para>
+</chapter>
+
+<chapter id="selecting_objects">
+<title>Selecting Objects</title>
+
+<para>In &celestia;, you will usually have some object selected.  If so, the program will list its name in the upper left-hand corner.  Currently, it is Io, but it could also be a star, planet, moon, asteroid, comet, spacecraft, or galaxy.  The simplest way to select an object is to point at it with your mouse and <mousebutton>left-click</mousebutton> on it. Try clicking on a star to select it. The information about Io is replaced with details about the star. Note that you have not actually gone there or changed anything yet. You've simply told &celestia; that you have selected a new object. (If you see no text on the screen, type the &verbose; key on the keyboard.)</para>
+
+<para>To go to the star you just selected, you have four main ways to make the journey:</para>
+
+<orderedlist>
+<listitem><para>If you <mousebutton>right-click</mousebutton> on the star, and select <guimenuitem>Goto</guimenuitem>, &celestia; will take you at hyper-light speed directly to that star and position you in space at a convenient distance.</para></listitem>
+
+<listitem><para>Alternately, you can press the letter &goto; on the keyboard.  That is the shortcut command for <quote>Goto</quote>.</para></listitem>
+
+<listitem><para>You can select the star and fly to it in your spaceship.  It takes longer but sometimes the journey is half the fun of getting there.  How to operate your spaceship is explained later below.</para></listitem>
+
+<listitem><para>You can select an object using keyboard commands, then use the recede and advance commands to get there.  Simply point at a star or planet, <mousebutton>left-click</mousebutton> on it with the mouse so that it is selected and tap either or both the &follow; and the &center; keys on the keyboard.  The &follow; key tells &celestia; to follow the selected object, keeping it the same distance from you even though it is moving through space.  To see that effect in action, swing the sky and locate Io.  <mousebutton>Left-click</mousebutton> on it to select it and press the &follow; key.  The words <quote>Follow Io</quote> will appear in the lower right corner of the screen.  Io will stay the same distance from you.  Now release your hold on Io by pressing the &esc; key.  Io will begin to drift away.  The &center; key tells &celestia; to center a selected object in the middle of your viewscreen.  Let's try it.  Point at a star, <mousebutton>left-click</mousebutton> on it to select it, and tap the &center; key on the keyboard.  Now, hold down the advance key (&advance; or the <mousebutton>mouse wheel</mousebutton>) and you will go to that star.  <mousebutton>Double-clicking</mousebutton> quickly on an object will also center it.</para></listitem>
+
+<listitem><para>You can select one object such as Io and follow it (&follow; key).  Then, select a second object such as Jupiter by <mousebutton>left-clicking</mousebutton> on it and press &lock; on the keyboard.  This will Lock Io and Jupiter together as a pair.  When you rotate the scene, Io will stay locked to Jupiter and the display will read distances between them.</para></listitem>
+</orderedlist>
+
+<para>To return to our solar system (a useful thing), press the &home; key on the keyboard.  That will select the Sun.  Tap the &goto; key and you will be whisked back to our Sun (Sol).</para>
+
+<note><para>You will use these two keystrokes constantly as you explore the &celestia; universe and wish to return home.</para></note>
+
+<para>To cancel a current selection, hit the &cancel; key on the keyboard.  To unselect everything and release your hold on your current object, press the &esc; key in the upper left of your keyboard.  You will now be adrift in space.  You can still turn and point at anything you want, but pressing the &goto; <quote>Goto</quote> key will have no effect.</para>
+
+<note><para>All of these keyboard shortcut strokes are summarized in a later section.
+</para></note>
+
+<sect1 id="select_objects_by_menu">
+<title>Select Objects by Navigation Menus</title>
+
+<para><mousebutton>Right-Click</mousebutton>: There is another way to select objects and is one you will use often. To demonstrate it, press &home; to select our Sun, and then &goto; to go to our solar system.  You'll find yourself in space above the Sun, which looks merely like a bright star at this range. Press &goto; again and you will advance close enough to see a few planets visible near the Sun. <mousebutton>Right-click</mousebutton> on the Sun to bring up a menu of planets and other objects orbiting the Sun. After selecting a planet from the menu, hit &goto; again to travel toward it. You can use this <mousebutton>right-click</mousebutton> feature when the object you visit orbits the Sun or planet directly.</para>
+
+<sect2 id="select_solar_system_browser">
+<title>Solar System Browser</title>
+<para>&celestia; also has a complete menu dedicated to navigation that will be used often as well.  At the top of the screen, select the Navigation menu and choose Solar System Browser.  A complete list of all objects being tracked in our solar system by &celestia; will appear.  Next to planets or moons may be a + sign, which indicates that around them are more objects to choose from.  Select any one of them and choose either to <guibutton>center</guibutton> it, or <guibutton>Goto</guibutton> it.</para>
+
+<para>Centering is useful when you want to see where an object is in space without going to it, or when you want to use your spaceship to journey to that planet.  Goto is used when you just want to get there fast.  You should use this navigation menu frequently, since it is the complete list of all objects in the solar system, including all moons and spacecraft.  Try it.  Go to Neptune, Saturn, or one of their moons.</para>
+
+<note><para>On the KDE version, the Solar System Browser is integrated with the Star Browser, please see the following section.</para></note>
+</sect2>
+
+<sect2 id="select_star_browser">
+<title>Star Browser</title>
+<para>Select the <guimenu>Navigation</guimenu> menu and choose <guimenuitem>Star Browser</guimenuitem>. A list of some of the stars being tracked by &celestia; will appear. Clicking on the column headers will sort the stars different ways. You have your choice of <guilabel>nearest</guilabel>, <guilabel>brightest</guilabel> or stars <guilabel>with planets</guilabel>.  Although extrasolar planets have not yet been seen directly or photographed, gravitational evidence strongly points to their existence. To give you an <quote>up-to-date</quote> astronomy experience, &celestia; includes some hypothetical planets that have been placed around candidate stars. In addition, as will be discussed in Part 2, &celestia;'s many users have designed fictional solar systems that they have placed around some of the stars in our sky. When downloaded, their solar systems will appear here in the star browser list also.</para>
+
+<para>To practice such a journey, locate the star 51 Peg in the star browser list (make sure you choose the <guilabel>with planets</guilabel> option), and select <guibutton>Goto</guibutton>.  You will fly at great speed to a bright yellow star much like our Sun.  A planet will be seen near it.  Either point to it and <mousebutton>left-click</mousebutton> to select it, or <mousebutton>right-click</mousebutton> on the star 51 Peg and select the planet (named "b").  Press the &goto; key on the keyboard and you will zoom to the planet, which will appear as a big gas world similar to Jupiter.  Using your movement keys, you can move around this tiny solar system.  Notice that the Solar System Browser is no longer listing our solar system.  It now lists the one planet system of 51 Peg.  To return to Earth, press &home; to select the Sun, then &goto; to go to it.</para>
+
+<note><para>On the KDE version, stars with planets appear with a '+' on their left. By clicking on it you will bring up the list of objects orbiting that star. The <guimenuitem>Select</guimenuitem>, <guimenuitem>Goto</guimenuitem>, and <guimenuitem>Center</guimenuitem> options are available in a popup menu which you can bring up by <mousebutton>right</mousebutton> clicking on an object (star, planet, satellite...) in the list.</para></note>
+</sect2>
+
+<sect2 id="select_object">
+<title>Select Object</title>
+<para>The <guimenu>Navigation</guimenu> menu also provides an option of typing the name of an object you wish to visit and then going there.  Select this option from the pull-down menu and in the space provided, type <userinput>Hubble</userinput> and click <guibutton>OK</guibutton>.  Now, hit the &goto; key and you will zoom to an orbit above Earth directly next to the Hubble Space Telescope.  Try another one.</para>
+
+<para>You can also select an object via a convenient keyboard command.  Hit the &enter; key and the <guilabel>Target Name</guilabel> window will appear at the bottom of the screen.  Type <userinput>Betelgeuse</userinput> and hit &enter; again.  Now, press the &follow; key and then the &center; key.  You will begin to follow a small reddish star centered in your viewscreen.  Tap the &goto; key and you will be taken to one of the largest and brightest stars in our sky.  Betelgeuse is a Red Giant, 264 times larger than our Sun.  Someday, it will blow up in a huge explosion that may become a Supernova.  Get closer to it with the Home key or your mouse <mousebutton>wheel</mousebutton>.</para>
+</sect2>
+
+<sect2 id="select_goto_object">
+<title>Goto Object (&goto;)</title>
+<para>Choose this option from the <guimenu>Navigation</guimenu> menu and a dialog box appears allowing you to not only enter the name of an object, but enter a precise position above it. Type Mars, enter 30 for the latitude, 5 for the longitude and 5000 (km) for distance.  Click <guibutton>GoTo</guibutton>.  You will be taken to a position 5,000 km above Mars, at 30° N latitude and 5° W Longitude.  This is an excellent way to position yourself for eclipse events.  The Goto Object command can also tell you your current exact position above a planet or space object (see later heading).  Position yourself with the mouse anywhere above a planet, and then select <guimenuitem>Goto Object</guimenuitem> from this menu.  It will display your latitude, longitude and distance at the moment.</para>
+</sect2>
+
+<sect2 id="select_follow_object">
+<title>Follow Object (&follow;)</title>
+<para>Previously mentioned, this command will direct &celestia; to lock onto the object selected and follow it.  As it moves through space on its orbit, you will move.  It can turn below you on its axis so the longitude will change constantly, but you will stay the same distance and latitude above it.  It is used when you wish to hover above a planet or moon or spacecraft.</para>
+
+<para>You can use common names or Bayer and Flamsteed designations and HD or HIP catalog numbers when selecting stars and space objects. &celestia; stores star data taken from the HD catalog but if a star isn't in the HD catalog, the HIPPARCOS data set number is used (the prefix is "HIP").  Both the 1st name or number and 2nd name of the object/star can be spelled out or abbreviated (3 letters).</para>
+<para>Examples:</para>
+<informalexample>
+<itemizedlist>
+<listitem><para><userinput>Upsilon And</userinput></para></listitem>
+<listitem><para><userinput>Ups Andromedae</userinput></para></listitem>
+<listitem><para><userinput>Ups And</userinput></para></listitem>
+<listitem><para><userinput>51 Peg</userinput></para></listitem>
+<listitem><para><userinput>51 Pegasi</userinput></para></listitem>
+<listitem><para><userinput>HD 173739</userinput></para></listitem>
+<listitem><para><userinput>HIP 5643</userinput></para></listitem>
+</itemizedlist>
+</informalexample>
+
+<para>Planets, moons, asteroids and artificial satellites may also be specified using &celestia;'s <quote>path</quote> syntax.  Type the name of the star, followed by a forward slash, then the planet name/, then the moon or satellite name, etc.</para>
+<para>Examples:</para>
+<informalexample>
+<itemizedlist>
+<listitem><para><userinput>51 Peg/b</userinput></para></listitem>
+<listitem><para><userinput>Sol/Earth</userinput></para></listitem>
+<listitem><para><userinput>Sol/Earth/Moon</userinput></para></listitem>
+<listitem><para><userinput>Sol/Earth/ISS</userinput></para></listitem>
+<listitem><para><userinput>Sol/Jupiter/Europa</userinput></para></listitem>
+</itemizedlist>
+</informalexample>
+</sect2>
+
+<sect2 id="select_tour_guide">
+<title>Tour Guide</title>
+<para>The tour guide is a list of a few of the more interesting objects you can visit in &celestia; Select the <guimenuitem>Tour guide</guimenuitem> option in the <guimenu>Navigation</guimenu> menu to bring up the guide window, choose a destination from the list, click the <guibutton>Goto</guibutton> button, and you're off.  We urge you to visit some of these stops on the tour.</para>
+
+<note><para>The Tour Guide is not available on the KDE version yet.</para></note>
+</sect2>
+
+<sect2 id="select_sync_orbit">
+<title>Sync Orbit (&sync;)</title>
+<para>This feature lets you hover directly over the same position in space above any object selected.  For example, if you are above Earth with Africa below you, selecting Sync Orbit will tell &celestia; to keep you positioned above Africa all the time.  As the Earth turns below, so will you.  Many of our satellites (navigation, weather, spy, GPS, TV and radio) are in synchronous orbit around Earth.  The keyboard shortcut for Sync Orbit is &sync;.</para>
+</sect2>
+
+<sect2 id="select_track_selection">
+<title>Track Selection (&track;)</title>
+<para>This command tells &celestia; to track a selected object, keeping it centered in view.  To be useful, the selected object should first be released from other effects, then reacquired and tracked.  For example, if you are currently centered on Earth, first release your hold on it (unselect it) with the &esc; key.  Then <mousebutton>left-click</mousebutton> on it to re-select it and choose the Track Selection command.  Earth will begin to recede from you at the speed it actually travels in space (about 47,100 mph, or 78,500 km/hr), but your view will swing to track it.  To see that happen, speed up time. A particular challenge is to try chasing one of our interplanetary spacecraft using the Track Selection Command.  The keyboard shortcut for Track Selection is &track;.</para>
+</sect2>
+
+<sect2 id="select_chase_selection">
+<title>Chase Selection (&chase;)</title>
+<para>Although not in the pull-down <guimenu>Navigation</guimenu> Menu, this command is available by pressing the quotation &chase; key on the keyboard.  It instructs &celestia; to chase a selected object in space.  It is similar to the <guimenuitem>Follow</guimenuitem> command but locks you above the object at the same position.  Try comparing the two commands.</para>
+
+<para>When interacting with an object, you can choose any one of the Follow, Center, SyncOrbit, Track, Chase and Lock commands at any time.  Only the most recent of these will be used.  If you type the &esc; key, the current object will be completely released from all commands.</para>
+</sect2>
+
+<sect2 id="select_eclipse_finder">
+<title>Eclipse Finder</title>
+<para>&celestia; will calculate and provide you dates of all partial and total solar or lunar eclipses for all planets in its database.  Simply select the planet and the date and click <guibutton>Compute</guibutton>.  When a list comes up, pick one, click the <guibutton>set date and GoTo the planet</guibutton> button and enjoy the show.  All eclipse shadows in space are actually composed of an inner shadow (the Umbra) and outer shadow (the Penumbra).  &celestia; draws both.  See figure 11 for an example of a total solar eclipse.  The Umbra is the darker inner shadow.</para>
+
+<note><para>To see eclipses, you must have <guimenuitem>Eclipse Shadows</guimenuitem> selected in the Options menu.</para></note>
+
+<note><para>On the KDE version, the <guibutton>set date and GoTo the planet</guibutton> command is available through a popupmenu.</para></note>
+</sect2>
+
+<sect2 id="selection_mark">
+<title>Mark (&mark;)</title>
+<para>A new feature in &celestia; &ver; and later is Mark.  Markers are small symbols used to keep track of the location of an object.  To set a marker on an object, turn on the Mark feature by pressing &mark;, then <mousebutton>right</mousebutton> click on the object and select <guimenuitem>Mark</guimenuitem> from the popup menu.  If the object is already marked, an <guimenuitem>unmark</guimenuitem> item will appear on the menu instead.  Markers are especially useful for keeping track of the positions of very small or faint objects that would not otherwise be visible.  For example, spacecraft are tiny compared to planets and can easily be lost in the vastness of space.  Setting a Mark on a spacecraft will enable you to track or see it from great distances.  To turn the Mark off, either unmark it, or turn off the feature by toggling &mark; again.
+</para>
+</sect2>
+</sect1>
+
+<sect1 id="select_keystroke">
+<title>Select Objects by Keystroke</title>
+<para>There is yet another way to select planets.  The nine (9) planets in our solar system have been given numbers from 1 for Mercury to 9 for Pluto.  To go to one of them, you can simply press the number at the top of the keyboard (not on the numeric keypad to the left) and hit the &goto; key.  For example, pressing <keycap>3</keycap> and &goto; will take you to the 3rd planet, Earth.  If you are in another (fictional) solar system, number keys will also work.  To select and go to  the Sun, press &home;, then &goto;.  This will always take you back to Sol, no matter where you are in the universe.</para>
+</sect1>
+</chapter>
+
+<chapter id="flying_your_spaceship">
+<title>Flying your Spaceship</title>
+<para>What good is a space simulation program if you cannot fly around in it? The designers of &celestia; have created a seamless and easy way to fly through the &celestia; universe. You are in command of your own spaceship. The video screen in front of you is its window. You can use this ship to fly through the solar system, chase planets, drift above moons, try your hand at rendezvousing with spacecraft or visit another star. Start some beautiful music playing and your journey can become more stirring. Right now, your ship is stopped. Let's get it moving. Return to our solar system, select the Earth from the Solar System Browser and click <guibutton>Goto</guibutton>. Make sure your information text option is active in the four corners (toggle the &verbose; key).  Using the &back; or &advance; keys or <mousebutton>mouse wheel</mousebutton> position yourself about 10,000 km above the surface (look in left corner for distance reading).</para>
+
+<para>Now, press and hold down &accelerate; on the keyboard for a second or two.  This is the throttle for your spaceship.  You will begin moving forward.  Your speed is shown in the lower left of the screen.  You will start slowly (in meters/sec).  As you hold down the &accelerate; key, &celestia; increases your speed exponentially.  Accelerate to about "20 km/s" (20 kilometers/sec or 43,000 mph), which is a bit faster than our fastest spacecraft (the Voyagers) have ever flown.  Earth will begin getting bigger as you fly toward it on a collision course.  To change course, simply tap the arrow or other movement keys and your view (and forward direction) will change to a new orientation.  You will miss and fly by Earth.</para>
+
+<para>To slow down, press or hold down the &decelerate; key.  Your speed will drop (the Brake).
+To reverse course instantly, simply press the &reverse; key.  Now, you will begin flying away from Earth at the speed you selected.  Press &reverse; again and you move forward again.  This command is useful if you overshoot a target.  Just reverse course and the target will again come into view in front of you.</para>
+<para>To emergency stop, press the &stop; key.</para>
+
+<para>&celestia; gives you the opportunity to accelerate to a <quote>hyperspeed</quote> billions of times faster than light (C).  Just keep holding down the &accelerate; key to speed up.  The &accelerate; and &decelerate; keys are exponential speed controls.  As you gain speed, the stars will wiz by you like a scene from StarTrek.  You will quickly be taken out of the Milky Way entirely and into the blackness of the space between the galaxies.  You can journey to the very edges of &celestia;'s universe. There is not much to look at out there.  Swing the sky around and you may be able to notice some dim galaxies. Generally, to see the Milky Way from outside of its confines, start your spaceship moving anywhere inside of our solar system, press the &reverse; key to reverse course, accelerate to a warp speed of about 10 ly/s (light years/sec) and watch.  The stars and then the Milky Way itself will begin to recede from you.  Hit the &stop; stop key and enjoy the view.  To return, press the &home; and &goto; keys, or hit the &reverse; key to reverse course again, start your ship moving forward and you will fly back to your point of origin.  Please remember that &celestia; only tracks a relative few of the over 200 billion stars in the Milky Way.  Galaxies contain FAR more stars than this program can track.</para>
+
+<para>&celestia;  also provides shortcut keys for specific speeds:</para>
+<variablelist>
+<varlistentry><term>&F1;</term><listitem><para>Stop</para></listitem></varlistentry>
+<varlistentry><term>&F2;</term><listitem><para>Set velocity to 1 km/s</para></listitem></varlistentry>
+<varlistentry><term>&F3;</term><listitem><para>Set velocity to 1,000 km/s</para></listitem></varlistentry>
+<varlistentry><term>&F4;</term><listitem><para>Set velocity to speed of light</para></listitem></varlistentry>
+<varlistentry><term>&F5;</term><listitem><para>Set velocity to 10x the speed of light.</para></listitem></varlistentry>
+<varlistentry><term>&F6;</term><listitem><para>Set velocity to 1 AU/s</para></listitem></varlistentry>
+<varlistentry><term>&F7;</term><listitem><para>Set velocity to 1 ly/s</para></listitem></varlistentry>
+</variablelist>
+
+</chapter>
+
+<chapter id="telling_where_you_are">
+<title>Telling Where You Are</title>
+<para>&celestia; will provide you a general idea of where you are in space by simply looking at the information view display.  The top left corner identifies which object you've selected and how far away from it you are.  By changing objects, you can determine a rough estimate of where you are in space.  However, if you have taken up position above a star, planet, moon, etc., &celestia; will tell you not only how far you are from it, but what latitude and longitude above it you are positioned.  To see that, pull down the <guimenu>Navigation</guimenu> menu and select <guimenuitem>Goto Object</guimenuitem>.  As long as you have an object selected, you will see your distance, Latitude and Longitude from it.</para>
+</chapter>
+
+<chapter id="adjusting_time">
+<title>Adjusting Time</title>
+<para>Many events in space take place at certain times.  Planets experience seasons, spacecraft are launched and eventually fall back to Earth, moons eclipse the Sun on specific dates, comets pass by, space probes fly by target planets and take their measurements, etc.  &celestia; gives you the opportunity to set a specific date and time, or to speed up or slow down the passage of time.  Your time will appear in the upper right corner of the screen.  For example, to see a planet turning under you, simply speed up the clock and it will rotate faster.  The keyboard commands for selecting date and time are accessed from the Time Menu at the top of the screen, or by the following keystrokes:</para>
+
+<variablelist>
+<varlistentry><term>&pause;</term><listitem><para>Stop or pause time</para></listitem></varlistentry>
+<varlistentry><term>&time_faster;</term><listitem><para>Time 10x faster (repeat for faster time)</para></listitem></varlistentry>
+<varlistentry><term>&time_slower;</term><listitem><para>Time 10x slower (repeat for slower time)</para></listitem></varlistentry>
+<varlistentry><term>&time_reverse;</term><listitem><para>Reverse time (it flows backward)</para></listitem></varlistentry>
+<varlistentry><term>&time_1;</term><listitem><para>Return to Real Time</para></listitem></varlistentry>
+<varlistentry><term>&time_now;</term><listitem><para>Set time to the current clock time</para></listitem></varlistentry>
+</variablelist>
+
+<note><para>&celestia; has programmed some of its spacecraft to appear in space and then actually fall back to Earth (disappear) on the day that they really did so.  For example, the Russian space station Mir was launched on 02/20/1986 and fell back to earth on 03/21/2001.  To see Mir in orbit above the Earth, you will have to reset the date to some period between those two dates.</para></note>
+</chapter>
+
+<chapter id="light_travel_delay">
+<title>Light Travel Delay</title>
+<para>&celestia; &ver; and later also has a new feature called Light Travel Time Delay.  Light travels at a speed of 300,000 kilometers per second.  The Sunlight we see on Earth actually left the Sun eight minutes before it reached your eyes.  Pressing the &lighttraveldelay; key will display the one-way light travel time from the camera position to the currently selected object.</para>
+
+<para>The &adjlighttraveldelay; key controls light time delay adjustment; if it's turned on, a message will appear and the displayed time will have the light time delay subtracted.  Most lists of solar system phenomena give times that include light time delay.  When observing these events with &celestia;, automatic light time adjustment is extremely helpful.</para>
+
+<para>For example, if a transit of a moon of Saturn is set to occur at 14:00 hours and you are one light hour away from Saturn, pressing the &adjlighttraveldelay; key will reset the time to 13:00 hours, so that you can witness the event in real time.</para>
+</chapter>
+
+<chapter id="saving_images_and_locations">
+<title>Saving Images and Locations</title>
+<para>&celestia; gives you the opportunity to capture and save an image on your screen as an individual graphic file (as figures seen in this User's Guide).  You can also save a series of images as a movie file and play it back later in your computer.  Thirdly, if you like a particular location and would like to return to that exact spot and time quickly, &celestia; can save your location internally within the program.  You can also save your location as a <quote>hyperlink</quote> and paste it into another software program.</para>
+<note><para>Movie capture is only available on the Windows version.</para></note>
+
+<sect1 id="save_image">
+<title>Save Image</title>
+<para>To save a graphic file (in .jpg or .png format), simply set up the screen as you want it, pull down the <guimenu>File</guimenu> Menu and select <guimenuitem>Capture Image</guimenuitem>.  A dialog will appear.  Choose the folder you wish to put the file into, type a name for it; decide if it is to be saved as a jpg or png file and click <guibutton>Save</guibutton>.</para>
+
+<para>JPG files are common graphic files that are most useful for viewing in a computer running typical application software such as word processing or slideshows.  They are smaller than png files but do have limitations.</para>
+
+<para>PNG files are graphic files that are designed for viewing best on the Internet.  If you wish to add your image to a webpage or E-mail it to a friend, save it in png format.  Otherwise, use jpg format.  To view a jpg or png image, click on it and your default graphic image viewer or browser in your computer will open it.  You do not need &celestia; running.  You can paste and view images anywhere you wish.</para>
+</sect1>
+
+<sect1 id="save_movie">
+<title>Save Movie</title>
+<para>To save a movie file (in .avi format), set up the screen as you want it, set the time moving forward at the speed you desire or temporarily pause it, pull down the <guimenu>File</guimenu> Menu and select <guimenuitem>Capture MovieImage</guimenuitem>.  Choose the folder you wish to put the movie into, and type a file name for the movie.  Then choose the size of the video.  Generally, <quote>320x240</quote> or <quote>640x480</quote> are the preferred sizes.  Next, choose a frame rate.  We recommend <quote>24 frames per second</quote>.  24 fps is used in film, 25 fps is used for PAL (Europe) video and 29.97 for NTSC (US/Canada) video.  15 fps is often adequate for displaying video on the web.</para>
+
+<variablelist>
+<varlistentry><term>Click <guibutton>Save</guibutton></term>
+<listitem><para>Another menu will appear, asking if you wish to save the file compressed or uncompressed.  A compressed file requires less disk space than an uncompressed file, but may not look as good when played back, and the process of compressing video can dramatically slow down &celestia;.  &celestia; is set to save movie files uncompressed.  To save a compressed file, choose the format you desire. You may wish to try different choices and determine which one works best for your computer. The free DivX video codec available from <ulink url="http://www.divx.com/">www.divx.com</ulink> provides excellent compression and quality, and is quite fast.  If you want to create many video files with &celestia; and are concerned with file size, we recommend you download and install DivX, and save your videos as a compressed DivX file.</para></listitem>
+</varlistentry>
+
+<varlistentry><term>Click <guibutton>OK</guibutton></term>
+<listitem><para>Click <guibutton>OK</guibutton> A red box will now appear on your screen.  You can move what is in that box by clicking on the screen with your standard movement keys.  When ready to start taping your movie, start time moving forward if it was paused, and press the &F11; key on the keyboard.  Recording will begin.  To stop, press the &F12; key.  The recording will stop and the red box will disappear.  Your movie is saved.  You can execute any command you wish while taping a movie.  For example, you can accelerate in your spaceship, move the screen with your mouse, zoom in or out, speed up time, etc.  In this manner, you can set up your own movie <quote>demo</quote> of a celestial event for others to see.</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="save_location">
+<title>Save Location</title>
+<para>To save a particular location, simply set up your position and time as you would like it, pull down the <guimenu>Locations Menu</guimenu> and choose <guimenuitem>Add to Locations</guimenuitem>.  Type a name and click <guibutton>OK</guibutton>.  To return to that location at any time, simply click on the <guimenu>Location Menu</guimenu> again, choose a saved location and you will go there instantly.</para>
+
+<note><para>Locations are available only on Windows, you can use Bookmarks instead on the KDE version.</para></note>
+</sect1>
+
+<sect1 id="save_url">
+<title>cel:// URLs</title>
+<para>&celestia; &ver; and later also makes it possible to share locations via a web page or other document, through cel:// URLs.  A cel:// URL is a string of text (a hyperlink) that contains your current camera location, orientation, time, and field of view.  With it, you can take a snapshot of your precise position, time and view in space, and save it as a hyperlink (a URL).  If you then paste that address into a document that recognizes hyperlinks (word processors, web browsers, notepads, etc.), a user clicking on that link will automatically launch their own copy of &celestia; and be taken to the exact position in space that you were viewing.  It can be used anywhere you would use an http hyperlink.  Obviously, the user must have &celestia; on their computer for this feature to work.  For example, below is a cel://url that captures the position of Phobos, one of Mar's moons, orbiting high above the planet in January 2000.  Click on the link below, and you will be taken to that exact position, time and place in &celestia;.</para>
+
+<screenshot>
+<screeninfo>image captured via cel://URL</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig29.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>image captured via cel://URL</phrase>
+</textobject>
+<caption><para><ulink url="">image captured via cel://URL</ulink></para></caption>
+</mediaobject>
+</screenshot>
+
+<note><para>cel://URls are hyperlinks. You should only click on them once (single-click, not double-click).</para></note>
+
+<para>To save your position in &celestia; as a hyperlink, press &copy_url_win; (&copy_url_lin; on Linux).  This will save the location to your computer clipboard.  To paste that link into a web browser, simply position your cursor in the address field at the top of the browser and press &paste;.  To paste the link into a text document or a PowerPoint presentation, you may be able to simply paste the link by positioning the cursor on the page and pressing &paste;.  If successful, the link will change color when you hit the Enter key and clicking on it will launch &celestia;.  If that doesn't work, you may have to paste the link by <quote>inserting a hyperlink</quote>.  See your application software for directions on how to do that.  cel:// URL addresses may also be dragged onto an open &celestia; window to get the same effect.</para>
+
+<para>cel:// URLs are ideal for showing others a particular discovery you've made in the world of &celestia;.  For example, perhaps you've positioned yourself to witness the passing of a Near-Earth asteroid as it whizzes past Earth, or have assumed a position off the North Pole of the Sun with orbits selected and the entire solar system orbiting below you.  Saving that location to a cel:// URL and pasting it on the web or in an e-mail for others to activate is an ideal way to share your &celestia; experience.  You'll find cel:// URLs used frequently in the &celestia; forum.</para>
+
+<note><para>Be careful using cel:// URLs with add-ons.  If you save the camera position near a body that is part of an add-on you installed, someone who later clicks on the URL will likely see a very dull view of empty space unless they also have the same add-on installed.</para></note>
+
+</sect1>
+</chapter>
+
+<chapter id="multiview">
+<title>Multiview</title>
+<para>&celestia; can also show you views from different camera positions simultaneously.  This can be very helpful for visualizing phenomena like eclipses, where you want to watch a view from the Sun, the eclipsed planet or moon, and the occluding body all at the same time.  Planetary encounters by spacecraft are another category of events where multiple views can be illuminating.</para>
+
+<para>When multiple views are enabled, one of the views is always designated the active view and is marked as such by a thin highlighting frame around it.  All Movement commands will affect just the active view.  Other commands such as setting the time or date or Render menu commands are global, affecting all views.  New views are created through the keyboard commands of &splitH; and &splitV;.  &splitH; splits the active view horizontally, leaving two identical views side by side.  Pressing &splitV; performs a vertical split that gives two vertically stacked views.  A newly created view can be further split by pressing &splitV; or &splitH; again; you can continue this until the views become impractically small.</para>
+
+<para>The &cycleviews; key is used to cycle the active view.  A view that is no longer required may be removed by pressing the Delete &deleteview; key.  &deleteview; will delete the currently active view.</para>
+
+<para>Views can also be created and deleted with the <guimenu>View</guimenu> menu.  The <guimenu>View</guimenu> menu also contains two additional options which are not available via a keyboard command.  The first option changes the visibility of the view frames.  Drawing frames can be useful to delimit the different views, but it can also clutter the screen; it's entirely an issue of personal taste.  The other setting on the view menu is time synchronization.  Ordinarily, time is synchronized between all views, but if you deselect time synchronization, you can set the current time in each view independently by clicking within the view frame.  Turning time synchronization back on resets the time in all views to the time of the active view.</para>
+<note><para>Time rate cannot be set per-view; the time rate commands and pause always affect every view.</para></note>
+
+
+<screenshot>
+<screeninfo>Four &celestia; Multiviews seen at once</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="fig30.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Four &celestia; Multiviews seen at once</phrase>
+</textobject>
+<caption><para><ulink url="">Four &celestia; Multiviews seen at once</ulink></para></caption>
+</mediaobject>
+</screenshot>
+</chapter>
+
+<chapter id="part23">
+<title>User's Guide Part 2 and 3</title>
+<para>This concludes Part 1 of the User's Guide to operating &celestia;.  In Part 2, you will learn what image files are, how &celestia; loads and uses them, and how data files of various kinds are used to instruct &celestia; in what to do and where to do it.  Part 2 will teach you how to modify those data files and locate and download scores of other add-on files designed by &celestia; users.  These files include exotic spacecraft, fictional solar systems, rotating black holes and much more.  Obtaining and using some of them will significantly boost your viewing pleasure in the &celestia; universe.</para>
+
+<para>Part 3 of the User's Guide will teach you how to create scripts which are a series of lists that &celestia; follows one at a time to take a space journey.  For example, you can design a script to open &celestia; not at Io but orbiting a Red Giant star thousands of light years away.  Then as you watch, your spacecraft will accelerate and fly back to Earth at warp speed.  You can also insert text messages for the viewer to read.  The Run Demo referenced earlier in this Guide is just such a script journey.</para>
+
+
+</chapter>
+
+<chapter id="credits">
+<title>Credits and Licenses</title>
+
+<para>This User's Guide was written by Frank Gregorio, a high school teacher in Manassas, VA, and edited by Chris Laurel, founding developer of Celestia, with additional editing assistance by several members of the forum. It was converted to the DocBook format by Christophe Teyssier.</para>
+
+<para>The source code for Celestia version 1.3.0 is a joint effort of:</para>
+<itemizedlist>
+<listitem><para>Chris Laurel</para></listitem>
+<listitem><para>Clint Weisbrod</para></listitem>
+<listitem><para>Fridger Schrempp</para></listitem>
+<listitem><para>Christophe Teyssier</para></listitem>
+<listitem><para>Deon Ramsey</para></listitem>
+<listitem><para>and many other valued members of the Celestia forum group</para></listitem>
+</itemizedlist>
+
+<para>&celestia; Copyright 2000,2003 by Chris Laurel
+<email>claurel@shatters.net</email></para>
+
+<para>Documentation Copyright 2003 by Frank Gregorio.</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underFDL;
+&underGPL;
+
+</chapter>
+
+<appendix id="command_ref">
+<title>Celestia Keyboard and Mouse Command Summary</title>
+
+<para>
+This command summary can also be accessed within Celestia.  Simply pull down the <guimenu>Help</guimenu> menu and click on <guimenuitem>Controls</guimenuitem>.</para>
+
+<sect1 id="ref_mouse">
+<title>Mouse Functions</title>
+<variablelist>
+<varlistentry>
+<term><mousebutton>Left click</mousebutton> on object</term>
+<listitem><para>select object</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><mousebutton>Right drag</mousebutton></term>
+<listitem><para>orbit the selected object in any direction</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><mousebutton>Left drag</mousebutton></term>
+<listitem><para>orient scene in any direction</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><mousebutton>Rotate Mouse Wheel</mousebutton></term>
+<listitem><para>adjust distance to selection</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycombo action="simul"><mousebutton>Right</mousebutton> <mousebutton>Left drag</mousebutton></keycombo></term>
+<listitem><para>adjust distance to selection</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycombo action="simul">&Ctrl; <mousebutton>Left drag</mousebutton></keycombo></term>
+<listitem><para>adjust distance to selection</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycombo action="simul">&Shift; <mousebutton>Left drag</mousebutton></keycombo></term>
+<listitem><para>change field of view (FOV) (e.g. => telescopic view)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><mousebutton>Wheel (middle button) click</mousebutton></term>
+<listitem><para>toggle field of view between 45 degrees and the previous field (e.g. telescopic view)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><mousebutton>Left double click</mousebutton></term>
+<listitem><para>center selection</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><mousebutton>Right click</mousebutton></term>
+<listitem><para>bring up context/select menu</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="ref_render">
+<title>Render Functions - Keyboard</title>
+<variablelist>
+<varlistentry>
+<term>&planetlabels;</term>
+<listitem><para>Toggle (turns on or off) planet labels</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&moonlabels;</term>
+<listitem><para>Toggle moon labels</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&galaxylabels;</term>
+<listitem><para>Toggle galaxy labels</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&starlabels;</term>
+<listitem><para>Toggle star labels</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&asteroidlabels;</term>
+<listitem><para>Toggle asteroid and comet labels</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&spacecraftlabels;</term>
+<listitem><para>Toggle spacecraft labels</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&constellationlabels;</term>
+<listitem><para>Toggle constellation labels</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&verbose;</term>
+<listitem><para>Toggle info text</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&galaxies;</term>
+<listitem><para>Toggle galaxy rendering</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&orbits;</term>
+<listitem><para>Toggle planet orbits</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&clouds;</term>
+<listitem><para>Toggle clouds</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&celestialgrid;</term>
+<listitem><para>Toggle Celestial grid (Earth-based equatorial coordinate sphere)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&constellations;</term>
+<listitem><para>Toggle constellation diagrams</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&atmospheres;</term>
+<listitem><para>Toggle atmospheres</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&constellationboundaries;</term>
+<listitem><para>Toggle constellation boundaries</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&eclipseshadows;</term>
+<listitem><para>Toggle eclipse shadows</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&nightsidelights;</term>
+<listitem><para>Toggle night side lights</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&starsaspoints;</term>
+<listitem><para>Toggle stars as points</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&pixelshading;</term>
+<listitem><para>Toggle pixel shading (if supported)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&comettails;</term>
+<listitem><para>Toggle comet tails</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&renderpath;</term>
+<listitem><para>Cycle render paths</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&wireframe;</term>
+<listitem><para>Toggle wireframe mode (displays objects as wireframe models)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&antialias;</term>
+<listitem><para>Toggle antialias lines</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&automag;</term>
+<listitem><para>Toggle autoMag = auto adaptation of star visibility to field of view</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&dec_magnitude;</term>
+<listitem><para>If autoMag OFF:	Decrease magnitude (fewer stars visible)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&dec_magnitude;</term>
+<listitem><para>If autoMag ON:	Decrease magnitude at 45 deg field of view</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&inc_magnitude;</term>
+<listitem><para>If autoMag OFF:	Increase magnitude (more stars visible)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&inc_magnitude;</term>
+<listitem><para>If autoMag ON:	Increase magnitude at 45 deg field of view</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&dec_ambientlight;</term>
+<listitem><para>Decrease ambient illumination</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&inc_ambientlight;</term>
+<listitem><para>Increase ambient illumination</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&fullscreen;</term>
+<listitem><para>Toggle full screen display mode on or off</para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+<sect1 id="ref_navigation">
+<title>Navigation Functions - Keyboard</title>
+<variablelist>
+<varlistentry>
+<term>&home;</term>
+<listitem><para>Select the Sun (Home)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&center;</term>
+<listitem><para>Center on selected object</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&goto;</term>
+<listitem><para>Goto selected object</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&follow;</term>
+<listitem><para>Follow selected object</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&enter;</term>
+<listitem><para>Select a star or planet by typing its name</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&sync;</term>
+<listitem><para>Orbit the selected object at a rate synchronized to its rotation</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&dec_fov;</term>
+<listitem><para>Increase Field Of View (FOV)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&inc_fov;</term>
+<listitem><para>Decrease Field of View (FOV)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&lock;</term>
+<listitem><para>Lock on selected object.  Point at 2nd object and press again to pair the two.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&chase;</term>
+<listitem><para>Chase selected object (orientation is based on selection's velocity)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&track;</term>
+<listitem><para>Track selected object (keep selected object centered in view)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&advance;</term>
+<listitem><para>Move closer to object</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&back;</term>
+<listitem><para>Move farther from object</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycap>Up Arrow</keycap></term>
+<listitem><para>Your view pitches downward (also see # 8 key on numerical keypad)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycap>Down Arrow</keycap></term>
+<listitem><para>Your view pitches upward (also see # 2 key on numerical keypad)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycap>Left Arrow</keycap></term>
+<listitem><para>Your view rolls counter-clockwise (also see # 7 key on numerical keypad)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycap>Right Arrow</keycap></term>
+<listitem><para>Your view rolls clockwise (also see # 9 on numerical keypad)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycap>4</keycap> on numerical keypad</term>
+<listitem><para>Your view yaws (swings) to the left</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycap>6</keycap> on numerical keypad</term>
+<listitem><para>Your view yaws to the right</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycap>5</keycap> on numerical keypad</term>
+<listitem><para>instantly stops yaw, pitch or roll</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&lookback;</term>
+<listitem><para>Look back</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycap>1</keycap>-<keycap>9</keycap></term>
+<listitem><para>Select planets around nearby Sun</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&esc;</term>
+<listitem><para>Cancel hold on object, cancel command or script action</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&cancel;</term>
+<listitem><para>Cancel current selection</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="ref_time">
+<title>Time Functions - Keyboard</title>
+<variablelist>
+<varlistentry>
+<term>&pause;</term>
+<listitem><para>Stop or pause time</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&time_faster;</term>
+<listitem><para>Time 10x faster (repeat for faster time)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&time_slower;</term>
+<listitem><para>Time 10x slower (repeat for slower time)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&time_reverse;</term>
+<listitem><para>Reverse time (it flows backward)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&time_1;</term>
+<listitem><para>Return to Real Time</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&time_now;</term>
+<listitem><para>Set time to the current clock time</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&lighttraveldelay;</term>
+<listitem><para>Display light-travel delay between observer and selected object</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&adjlighttraveldelay;</term>
+<listitem><para>Subtract light-travel delay from current simulation time</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="ref_joystick">
+<title>Joystick Functions</title>
+<variablelist>
+<varlistentry>
+<term>&F8;</term>
+<listitem><para>Enable joystick (press again to disable)</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>X axis</term>
+<listitem><para>yaw</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Y axis</term>
+<listitem><para>pitch</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>L trigger</term>
+<listitem><para>roll left</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>R trigger</term>
+<listitem><para>roll right</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Button 1</term>
+<listitem><para>slower</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Button 2</term>
+<listitem><para>faster</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="ref_multiview">
+<title>Multiview Functions - Keyboard</title>
+<variablelist>
+<varlistentry>
+<term>&splitV;</term>
+<listitem><para>Split view vertically</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&splitH;</term>
+<listitem><para>Split view horizontally</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&cycleviews;</term>
+<listitem><para>Cycle active view</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&deleteview;</term>
+<listitem><para>Delete active view</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&singleview;</term>
+<listitem><para>Delete all views except active one</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="ref_spaceship">
+<title>Spaceship commands - Keyboard</title>
+<variablelist>
+<varlistentry>
+<term>&accelerate;</term>
+<listitem><para>Increase velocity</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&decelerate;</term>
+<listitem><para>Decrease velocity</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&reverse;</term>
+<listitem><para>Reverse direction</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&align;</term>
+<listitem><para>Set movement direction toward center of screen</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&stop; or &F1;</term>
+<listitem><para>Stop</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&F2;</term>
+<listitem><para>Set velocity to 1 km/s</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&F3;</term>
+<listitem><para>Set velocity to 1,000 km/s</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&F4;</term>
+<listitem><para>Set velocity to speed of light</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&F5;</term>
+<listitem><para>Set velocity to 10x the speed of light.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&F6;</term>
+<listitem><para>Set velocity to 1 AU/s</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&F7;</term>
+<listitem><para>Set velocity to 1 ly/sv</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="ref_other">
+<title>Other commands - Keyboard</title>
+<variablelist>
+<varlistentry>
+<term>&demo;</term>
+<listitem><para>Run demo</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&F10;</term>
+<listitem><para>Capture image to file</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&fps;</term>
+<listitem><para>Show frames rendered per second</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&copy_url_win; (Windows) or &copy_url_lin; (Linux)</term>
+<listitem><para>Copy location URL to clipboard (Windows)</para></listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+</appendix>
 
 </book>
