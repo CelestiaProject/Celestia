@@ -17,6 +17,7 @@
 #include "overlay.h"
 #include "command.h"
 #include "execution.h"
+#include "texture.h"
 #include "render.h"
 #include "simulation.h"
 
@@ -141,6 +142,8 @@ class CelestiaCore
     bool keysPressed[KeyCount];
 
     ContextMenuFunc contextMenuCallback;
+
+    CTexture* logoTexture;
 };
 
 #endif // _CELESTIACORE_H_
