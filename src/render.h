@@ -57,14 +57,15 @@ class Renderer
         ConstellationLabels = 8,
     };
     enum {
-        ShowNothing         =  0,
-        ShowStars           =  1,
-        ShowPlanets         =  2,
-        ShowGalaxies        =  4,
-        ShowDiagrams        =  8,
-        ShowCloudMaps       = 16,
-        ShowOrbits          = 32,
-        ShowCelestialSphere = 64,
+        ShowNothing         =   0,
+        ShowStars           =   1,
+        ShowPlanets         =   2,
+        ShowGalaxies        =   4,
+        ShowDiagrams        =   8,
+        ShowCloudMaps       =  16,
+        ShowOrbits          =  32,
+        ShowCelestialSphere =  64,
+        ShowNightMaps       = 128,
     };
     int getRenderFlags() const;
     void setRenderFlags(int);
@@ -74,9 +75,13 @@ class Renderer
     void clearLabelledStars();
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
-    bool getPerPixelLighting() const;
-    void setPerPixelLighting(bool);
-    bool perPixelLightingSupported() const;
+
+    bool getFragmentShaderEnabled() const;
+    void setFragmentShaderEnabled(bool);
+    bool fragmentShaderSupported() const;
+    bool getVertexShaderEnabled() const;
+    void setVertexShaderEnabled(bool);
+    bool vertexShaderSupported() const;
 
     float getBrightnessScale() const;
     void setBrightnessScale(float);
@@ -181,7 +186,8 @@ class Renderer
     int labelMode;
     int renderFlags;
     float ambientLightLevel;
-    bool perPixelLightingEnabled;
+    bool fragmentShaderEnabled;
+    bool vertexShaderEnabled;
     float brightnessBias;
     float brightnessScale;
 
@@ -203,6 +209,7 @@ class Renderer
     bool useRegisterCombiners;
     bool useCubeMaps;
     bool useCompressedTextures;
+    bool useVertexPrograms;
 };
 
 #endif // _RENDER_H_

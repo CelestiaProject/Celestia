@@ -16,6 +16,7 @@
 #include "perlin.h"
 #include "spheremesh.h"
 #include "regcombine.h"
+#include "vertexprog.h"
 #include "render.h"
 
 using namespace std;
@@ -76,14 +77,16 @@ Renderer::Renderer() :
     labelMode(NoLabels),
     renderFlags(ShowStars | ShowPlanets),
     ambientLightLevel(0.1f),
-    perPixelLightingEnabled(false),
+    fragmentShaderEnabled(false),
+    vertexShaderEnabled(false),
     brightnessBias(0.0f),
     brightnessScale(1.0f / 6.0f),
     asterisms(NULL),
     nSimultaneousTextures(1),
     useTexEnvCombine(false),
     useRegisterCombiners(false),
-    useCubeMaps(false)
+    useCubeMaps(false),
+    useVertexPrograms(false)
 {
     textureManager = new TextureManager("textures");
     meshManager = new MeshManager("models");
@@ -186,6 +189,28 @@ static void BoxTextureEval(float u, float v, float w,
 }
 #endif
 
+static void IllumMapEval(float x, float y, float z,
+                         unsigned char* pixel)
+{
+    Vec3f v(x, y, z);
+    Vec3f n(0, 0, 1);
+    Vec3f u(0, 0, 1);
+    float c = v * n;
+    if (c < 0.0f)
+    {
+        u = v;
+    }
+    else
+    {
+        c = (1 - ((1 - c))) * 1.0f;
+        u = v + (c * n);
+        u.normalize();
+    }
+
+    pixel[0] = 128 + (int) (127 * u.x);
+    pixel[1] = 128 + (int) (127 * u.y);
+    pixel[2] = 128 + (int) (127 * u.z);
+}
 
 
 static float AsteroidDisplacementFunc(float u, float v, void* info)
@@ -254,10 +279,13 @@ bool Renderer::init(int winWidth, int winHeight)
             InitExtMultiTexture();
         if (ExtensionSupported("GL_NV_register_combiners"))
             InitExtRegisterCombiners();
+        if (ExtensionSupported("GL_NV_vertex_program"))
+            InitExtVertexProgram();
         if (ExtensionSupported("GL_EXT_texture_cube_map"))
         {
-            normalizationTex = CreateNormalizationCubeMap(64);
-            // diffuseLightTex = CreateDiffuseLightCubeMap(64);
+            // normalizationTex = CreateNormalizationCubeMap(64);
+            normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
+            normalizationTex->bindName();
         }
 
         // Create labels for celestial sphere
@@ -319,6 +347,11 @@ bool Renderer::init(int winWidth, int winHeight)
     {
         DPRINTF("Renderer: nVidia register combiners supported.\n");
         useRegisterCombiners = true;
+    }
+    if (ExtensionSupported("GL_NV_vertex_program"))
+    {
+        DPRINTF("Renderer: nVidia vertex programs supported.\n");
+        useVertexPrograms = vp::init();
     }
     if (ExtensionSupported("GL_EXT_texture_cube_map"))
     {
@@ -461,20 +494,36 @@ void Renderer::setAmbientLightLevel(float level)
 }
 
 
-bool Renderer::getPerPixelLighting() const
+bool Renderer::getFragmentShaderEnabled() const
 {
-    return perPixelLightingEnabled;
+    return fragmentShaderEnabled;
 }
 
-void Renderer::setPerPixelLighting(bool enable)
+void Renderer::setFragmentShaderEnabled(bool enable)
 {
-    perPixelLightingEnabled = enable && perPixelLightingSupported();
+    fragmentShaderEnabled = enable && fragmentShaderSupported();
 }
 
-bool Renderer::perPixelLightingSupported() const
+bool Renderer::fragmentShaderSupported() const
 {
     return useCubeMaps && useRegisterCombiners;
 }
+
+bool Renderer::getVertexShaderEnabled() const
+{
+    return vertexShaderEnabled;
+}
+
+void Renderer::setVertexShaderEnabled(bool enable)
+{
+    vertexShaderEnabled = enable && vertexShaderSupported();
+}
+
+bool Renderer::vertexShaderSupported() const
+{
+    return useVertexPrograms;
+}
+
 
 
 void Renderer::addLabel(string text, Color color, Point3f pos)
@@ -634,7 +683,7 @@ void Renderer::render(const Observer& observer,
                               observer,
                               Mat4d::identity(), now,
                               (labelMode & (MinorPlanetLabels | MajorPlanetLabels)) != 0);
-        glBindTexture(GL_TEXTURE_2D, starTex->getName());
+        starTex->bind();
     }
 
     {
@@ -894,7 +943,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
         Vec3f v2 = Vec3f( 1,  1, 0) * m;
         Vec3f v3 = Vec3f(-1,  1, 0) * m;
 
-        glBindTexture(GL_TEXTURE_2D, starTex->getName());
+        starTex->bind();
         glColor(color, a);
         glBegin(GL_QUADS);
         glTexCoord2f(0, 0);
@@ -929,7 +978,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
             float realSize = discSizeInPixels * (pixelSize / NEAR_DIST) * RENDER_DISTANCE * 0.1f;
             if (size < realSize * 10)
                 size = realSize * 10;
-            glBindTexture(GL_TEXTURE_2D, glareTex->getName());
+            glareTex->bind();
             glColor(color, a);
             glBegin(GL_QUADS);
             glTexCoord2f(0, 0);
@@ -1042,7 +1091,8 @@ static void renderSmoothMesh(Mesh& mesh,
                              Texture& baseTexture,
                              Vec3f lightDirection,
                              Quatf orientation,
-                             Color ambientColor)
+                             Color ambientColor,
+                             bool invert = false)
 {
     // We're doing our own per-pixel lighting, so disable GL's lighting
     glDisable(GL_LIGHTING);
@@ -1076,7 +1126,7 @@ static void renderSmoothMesh(Mesh& mesh,
         lightOrientation.setAxisAngle(axis, angle);
     }
 
-    SetupCombinersSmooth(baseTexture, *normalizationTex, ambientColor);
+    SetupCombinersSmooth(baseTexture, *normalizationTex, ambientColor, invert);
 
     // The second set texture coordinates will contain the light
     // direction in tangent space.  We'll generate the texture coordinates
@@ -1119,6 +1169,259 @@ static void renderSmoothMesh(Mesh& mesh,
 }
 
 
+struct RenderInfo
+{
+    Mesh* mesh;
+    Color color;
+    Texture* baseTex;
+    Texture* bumpTex;
+    Texture* cloudTex;
+    Texture* nightTex;
+    Color hazeColor;
+    Color specularColor;
+    float specularPower;
+    Vec3f sunDir_eye;
+    Vec3f sunDir_obj;
+    Vec3f eyeDir_obj;
+    Point3f eyePos_obj;
+    Color sunColor;
+    Color ambientColor;
+    Quatf orientation;
+    bool useTexEnvCombine;
+
+    RenderInfo() : mesh(NULL),
+                   color(1.0f, 1.0f, 1.0f),
+                   baseTex(NULL),
+                   bumpTex(NULL),
+                   cloudTex(NULL),
+                   nightTex(NULL),
+                   hazeColor(0.0f, 0.0f, 0.0f),
+                   specularColor(0.0f, 0.0f, 0.0f),
+                   specularPower(0.0f),
+                   sunDir_eye(0.0f, 0.0f, 1.0f),
+                   sunDir_obj(0.0f, 0.0f, 1.0f),
+                   eyeDir_obj(0.0f, 0.0f, 1.0f),
+                   eyePos_obj(0.0f, 0.0f, 0.0f),
+                   sunColor(1.0f, 1.0f, 1.0f),
+                   ambientColor(0.0f, 0.0f, 0.0f),
+                   orientation(1.0f, 0.0f, 0.0f, 0.0f),
+                   useTexEnvCombine(false)
+    {};
+};
+
+
+static void renderMeshDefault(const RenderInfo& ri)
+{
+    // Set up the light source for the sun
+    glEnable(GL_LIGHTING);
+    glLightDirection(GL_LIGHT0, ri.sunDir_obj);
+    glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
+    glEnable(GL_LIGHT0);
+
+    if (ri.baseTex == NULL)
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+        ri.baseTex->bind();
+    }
+
+    glColor(ri.color);
+
+    ri.mesh->render();
+    if (ri.nightTex != NULL && ri.useTexEnvCombine)
+    {
+        ri.nightTex->bind();
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_ONE_MINUS_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        ri.mesh->render();
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
+
+    if (ri.cloudTex != NULL)
+    {
+        ri.cloudTex->bind();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        ri.mesh->render();
+    }
+}
+
+
+static void renderMeshFragmentShader(const RenderInfo& ri)
+{
+    if (ri.baseTex == NULL)
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+        ri.baseTex->bind();
+    }
+
+    glColor(ri.color);
+
+    if (ri.bumpTex != NULL)
+    {
+        renderBumpMappedMesh(*(ri.mesh),
+                             *(ri.bumpTex),
+                             ri.sunDir_eye,
+                             ri.orientation,
+                             ri.ambientColor);
+    }
+    else if (ri.baseTex != NULL)
+    {
+        renderSmoothMesh(*(ri.mesh),
+                         *(ri.baseTex),
+                         ri.sunDir_eye,
+                         ri.orientation,
+                         ri.ambientColor);
+        if (ri.nightTex != NULL)
+        {
+            ri.nightTex->bind();
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+            renderSmoothMesh(*(ri.mesh),
+                             *(ri.nightTex),
+                             ri.sunDir_eye, 
+                             ri.orientation,
+                             ri.ambientColor,
+                             true);
+        }
+    }
+    else
+    {
+        ri.mesh->render();
+    }
+
+    if (ri.cloudTex != NULL)
+    {
+        ri.cloudTex->bind();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+}
+
+
+static void renderMeshVertexAndFragmentShader(const RenderInfo& ri)
+{
+    if (ri.baseTex == NULL)
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+        ri.baseTex->bind();
+    }
+
+    // Compute the half angle vector required for specular lighting
+    Vec3f halfAngle_obj = ri.eyeDir_obj + ri.sunDir_obj;
+    if (halfAngle_obj.length() != 0.0f)
+        halfAngle_obj.normalize();
+
+    // Set up the fog parameters if the haze density is non-zero
+    float hazeDensity = ri.hazeColor.alpha();
+    if (hazeDensity > 0.0f)
+    {
+        glEnable(GL_FOG);
+        float fogColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        fogColor[0] = ri.hazeColor.red();
+        fogColor[1] = ri.hazeColor.green();
+        fogColor[2] = ri.hazeColor.blue();
+        glFogfv(GL_FOG_COLOR, fogColor);
+        glFogi(GL_FOG_MODE, GL_LINEAR);
+        glFogf(GL_FOG_START, 0.0);
+        glFogf(GL_FOG_END, 1.0f / hazeDensity);
+    }
+
+    vp::enable();
+    vp::parameter(15, ri.eyePos_obj);
+    vp::parameter(16, ri.sunDir_obj);
+    vp::parameter(17, halfAngle_obj);
+    vp::parameter(20, ri.sunColor * ri.color);
+    vp::parameter(32, ri.ambientColor * ri.color);
+    vp::parameter(33, ri.hazeColor);
+    vp::parameter(40, 0.0f, 1.0f, 0.5f, ri.specularPower);
+
+    if (ri.bumpTex != NULL)
+    {
+#if 0
+        vp::use(vp::diffuseBump);
+        glDisable(GL_TEXTURE_2D);
+        ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0);
+#else
+        glDisable(GL_LIGHTING);
+        vp::disable();
+        ri.mesh->render();
+        vp::enable();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_DST_COLOR, GL_ZERO);
+        vp::use(vp::diffuseBump);
+        SetupCombinersDecalAndBumpMap(*(ri.bumpTex), ri.ambientColor);
+        ri.mesh->render(Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0);
+        DisableCombiners();
+        glDisable(GL_BLEND);
+#endif
+    }
+    else if (ri.specularColor != Color(0.0f, 0.0f, 0.0f))
+    {
+        vp::parameter(34, ri.sunColor * ri.specularColor);
+        vp::use(vp::specular);
+        SetupCombinersGlossMapWithFog();
+        ri.mesh->render();
+        DisableCombiners();
+    }
+    else
+    {
+        if (hazeDensity > 0.0f)
+            vp::use(vp::diffuseHaze);
+        else
+            vp::use(vp::diffuse);
+        ri.mesh->render();
+    }
+
+    if (hazeDensity > 0.0f)
+        glDisable(GL_FOG);
+
+    if (ri.nightTex != NULL && ri.useTexEnvCombine)
+    {
+        ri.nightTex->bind();
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_ONE_MINUS_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        vp::use(vp::diffuse);
+        ri.mesh->render();
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
+
+    if (ri.cloudTex != NULL)
+    {
+        ri.cloudTex->bind();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        vp::use(vp::diffuse);
+        ri.mesh->render();
+    }
+
+    vp::disable();
+}
+
 
 void Renderer::renderPlanet(const Body& body,
                             Point3f pos,
@@ -1132,58 +1435,57 @@ void Renderer::renderPlanet(const Body& body,
 
     if (discSizeInPixels > 1)
     {
+        RenderInfo ri;
+
         // Enable depth buffering
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
 
-        sunDirection.normalize();
+        glDisable(GL_BLEND);
 
-        // Set up the light source for the sun
-        glLightDirection(GL_LIGHT0, sunDirection);
-        glLightColor(GL_LIGHT0, GL_DIFFUSE, Vec3f(1.0f, 1.0f, 1.0f));
-        glEnable(GL_LIGHT0);
+        // Determine the mesh to use
+        if (body.getMesh() == InvalidResource)
+        {
+            int lod = 0;
+            if (discSizeInPixels < 10)
+                lod = 0;
+            else if (discSizeInPixels < 50)
+                lod = 1;
+            else if (discSizeInPixels < 200)
+                lod = 2;
+            else if (discSizeInPixels < 400)
+                lod = 3;
+            else
+                lod = 4;
+    
+            if (body.getRadius() < 50)
+                ri.mesh = asteroidMesh;
+            else
+                ri.mesh = sphereMesh[lod];
+        }
+        else
+        {
+            ri.mesh = GetMeshManager()->find(body.getMesh());
+        }
 
         const Surface& surface = body.getSurface();
-        // Get the texture . . .
-        Texture* tex = NULL;
-        Texture* bumpTex = NULL;
-        Texture* cloudTex = NULL;
-        Texture* nightTex = NULL;
+
+        // Get the textures . . .
         TextureManager* textureManager = GetTextureManager();
-
         if (surface.baseTexture != InvalidResource)
-            tex = textureManager->find(surface.baseTexture);
-
-        // If this renderer can support bump mapping then get the bump texture
+            ri.baseTex = textureManager->find(surface.baseTexture);
         if ((surface.appearanceFlags & Surface::ApplyBumpMap) != 0 &&
-            (perPixelLightingEnabled && useRegisterCombiners && useCubeMaps) &&
+            (fragmentShaderEnabled && useRegisterCombiners && useCubeMaps) &&
             surface.bumpTexture != InvalidResource)
-            bumpTex = textureManager->find(surface.bumpTexture);
-
+            ri.bumpTex = textureManager->find(surface.bumpTexture);
         if ((surface.appearanceFlags & Surface::ApplyCloudMap) != 0 &&
             (renderFlags & ShowCloudMaps) != 0)
-            cloudTex = textureManager->find(surface.cloudTexture);
+            ri.cloudTex = textureManager->find(surface.cloudTexture);
+        if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0 &&
+            (renderFlags & ShowNightMaps) != 0)
+            ri.nightTex = textureManager->find(surface.nightTexture);
 
-        if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0)
-            nightTex = textureManager->find(surface.nightTexture);
-
-        if (tex == NULL)
-        {
-            glDisable(GL_TEXTURE_2D);
-        }
-        else
-        {
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex->getName());
-        }
-
-        if (tex == NULL || (surface.appearanceFlags & Surface::BlendTexture) != 0)
-            glColor(surface.color);
-        else
-            glColor4f(1, 1, 1, 1);
-
-        glDisable(GL_BLEND);
-        glEnable(GL_LIGHTING);
+        // Apply the modelview transform for the body
         glPushMatrix();
         glTranslate(pos);
         glRotatef(radToDeg(body.getObliquity()), 1, 0, 0);
@@ -1210,150 +1512,38 @@ void Renderer::renderPlanet(const Body& body,
         // a nonunifom scale factor to a sphere . . . it makes me nervous.
         glScalef(discSize, discSize * (1.0f - body.getOblateness()), discSize);
 
-        Mesh* mesh = NULL;
-        if (body.getMesh() == -1)
+        // Compute the direction to the eye and light source in object space
+        Mat4f planetMat = (Mat4f::xrotation((float) body.getObliquity()) *
+                           Mat4f::yrotation((float) planetRotation));
+        ri.sunDir_eye = sunDirection;
+        ri.sunDir_eye.normalize();
+        ri.sunDir_obj = ri.sunDir_eye * planetMat;
+        ri.eyeDir_obj = (Point3f(0, 0, 0) - pos) * planetMat;
+        ri.eyeDir_obj.normalize();
+        ri.eyePos_obj = Point3f(-pos.x, -pos.y, -pos.z) * planetMat;
+        ri.orientation = orientation;
+
+        // Set up the colors
+        if (ri.baseTex == NULL ||
+            (surface.appearanceFlags & Surface::BlendTexture) != 0)
         {
-            int lod = 0;
-            if (discSizeInPixels < 10)
-                lod = 0;
-            else if (discSizeInPixels < 50)
-                lod = 1;
-            else if (discSizeInPixels < 200)
-                lod = 2;
-            else if (discSizeInPixels < 400)
-                lod = 3;
-            else
-                lod = 4;
-    
-            if (body.getRadius() < 50)
-                mesh = asteroidMesh;
-            else
-                mesh = sphereMesh[lod];
+            ri.color = surface.color;
         }
-        else
+        ri.sunColor = Color(1.0f, 1.0f, 1.0f);
+        ri.ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
+        ri.hazeColor = surface.hazeColor;
+        ri.specularColor = surface.specularColor;
+        ri.specularPower = surface.specularPower;
+        ri.useTexEnvCombine = useTexEnvCombine;
+        
+        if (ri.mesh != NULL)
         {
-            mesh = GetMeshManager()->find(body.getMesh());
-        }
-
-        if (mesh != NULL)
-        {
-            if (perPixelLightingEnabled)
-            {
-                Color ambientColor(ambientLightLevel, ambientLightLevel, ambientLightLevel);
-                if (bumpTex != NULL)
-                {
-                    renderBumpMappedMesh(*mesh,
-                                         *bumpTex,
-                                         sunDirection, orientation,
-                                         ambientColor);
-                }
-                else if (tex != NULL)
-                {
-                    renderSmoothMesh(*mesh,
-                                     *tex,
-                                     sunDirection, orientation,
-                                     ambientColor);
-                }
-                else
-                {
-                    mesh->render();
-                }
-
-                if (cloudTex != NULL)
-                {
-                    glBindTexture(GL_TEXTURE_2D, cloudTex->getName());
-                    glEnable(GL_BLEND);
-                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#if 0
-                    // TODO: Enable per-pixel lighting for cloud maps
-                    renderSmoothMesh(*mesh, *cloudTex, sunDirection, orientation,
-                                     ambientColor);
-#else
-                    glEnable(GL_LIGHTING);
-                    mesh->render();
-#endif
-
-#if 0
-                    // Attempt rendering an atmospheric veil . . . this needs
-                    // several adjustments before it will work.
-                    glEnable(GL_TEXTURE_CUBE_MAP_EXT);
-                    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, veilTex->getName());
-                    glPushMatrix();
-                    glScalef(1.02f, 1.02f, 1.02f);
-
-                    // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
-                    // mode is part of the cube map extension.
-                    glEnable(GL_TEXTURE_GEN_R);
-                    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
-                    glEnable(GL_TEXTURE_GEN_S);
-                    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
-                    glEnable(GL_TEXTURE_GEN_T);
-                    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
-
-                    mesh->render();
-
-                    glMatrixMode(GL_TEXTURE);
-                    glLoadIdentity();
-                    glMatrixMode(GL_MODELVIEW);
-                    glDisable(GL_TEXTURE_GEN_R);
-                    glDisable(GL_TEXTURE_GEN_S);
-                    glDisable(GL_TEXTURE_GEN_T);
-                    glDisable(GL_TEXTURE_CUBE_MAP_EXT);
-
-                    glPopMatrix();
-
-#if 0
-                    // Render an atmospheric halo.  Broken.
-                    {
-                        int nSections = 400;
-                        glDisable(GL_LIGHTING);
-                        glPushMatrix();
-                        glRotate(~orientation);
-                        glBegin(GL_QUAD_STRIP);
-                        for (int i = 0; i <= nSections; i++)
-                        {
-                            float theta = (float) i / (float) nSections * 2 * PI;
-                            float c = (float) cos(theta);
-                            float s = (float) sin(theta);
-                            glColor4f(0, 0, 1, 0);
-                            glVertex3f(c * 1.01f, s * 1.01f, 0);
-                            glColor4f(0, 0, 1, 1);
-                            glVertex3f(c, s, 0);
-                        }
-                        glEnd();
-                        glPopMatrix();
-                    }
-#endif
-#endif
-                }
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            }
+            if (fragmentShaderEnabled && vertexShaderEnabled)
+                renderMeshVertexAndFragmentShader(ri);
+            else if (fragmentShaderEnabled && !vertexShaderEnabled)
+                renderMeshFragmentShader(ri);
             else
-            {
-                mesh->render();
-                if (nightTex != NULL && useTexEnvCombine)
-                {
-                    glBindTexture(GL_TEXTURE_2D, nightTex->getName());
-                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-                    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
-                    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_ONE_MINUS_SRC_COLOR);
-                    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
-                    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-                    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
-                    glEnable(GL_BLEND);
-                    glBlendFunc(GL_ONE, GL_ONE);
-                    mesh->render();
-                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-                }
-
-                if (cloudTex != NULL)
-                {
-                    glBindTexture(GL_TEXTURE_2D, cloudTex->getName());
-                    glEnable(GL_BLEND);
-                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                    mesh->render();
-                }
-            }
+                renderMeshDefault(ri);
         }
 
         // If the planet has a ring system, render it.
@@ -1401,7 +1591,7 @@ void Renderer::renderPlanet(const Body& body,
             {
                 glActiveTextureARB(GL_TEXTURE1_ARB);
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, shadowTex->getName());
+                shadowTex->bind();
 
                 float sPlane[4] = { 0, 0, 0, 0.5f };
                 float tPlane[4] = { 0, 0, 0, 0.5f };
@@ -1437,7 +1627,7 @@ void Renderer::renderPlanet(const Body& body,
             Texture* ringsTex = GetTextureManager()->find(rings->texture);
 
             if (ringsTex != NULL)
-                glBindTexture(GL_TEXTURE_2D, ringsTex->getName());
+                ringsTex->bind();
             else
                 glDisable(GL_TEXTURE_2D);
         
@@ -1567,7 +1757,7 @@ void Renderer::renderStar(const Star& star,
         else
         {
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex->getName());
+            tex->bind();
         }
 
         int lod = 0;
@@ -1850,9 +2040,9 @@ void Renderer::renderStars(const StarDatabase& starDB,
                             (float) windowWidth / (float) windowHeight,
                             faintestVisible);
 
-    glBindTexture(GL_TEXTURE_2D, starTex->getName());
+    starTex->bind();
     renderParticles(starParticles, observer.getOrientation());
-    glBindTexture(GL_TEXTURE_2D, glareTex->getName());
+    glareTex->bind();
     renderParticles(glareParticles, observer.getOrientation());
 }
 
@@ -1869,7 +2059,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
     Vec3f v3 = Vec3f(-1,  1, 0) * viewMat;
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D, galaxyTex->getName());
+    galaxyTex->bind();
 
     for (GalaxyList::const_iterator iter = galaxies.begin();
          iter != galaxies.end(); iter++)
