@@ -493,7 +493,14 @@ void Observer::computeGotoParameters(const Selection& destination,
                                      Vec3f up,
                                      astro::CoordinateSystem upFrame)
 {
-    setFrame(FrameOfReference(frame.coordSys, destination));
+    if (frame.coordSys == astro::PhaseLock)
+    {
+        setFrame(FrameOfReference(astro::Ecliptical, destination));
+    }
+    else
+    {
+        setFrame(FrameOfReference(frame.coordSys, destination));
+    }
 
     UniversalCoord targetPosition = destination.getPosition(getTime());
     Vec3d v = targetPosition - getPosition();
