@@ -572,13 +572,10 @@ static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
 // Return the CelestiaCore object stored in the globals table
 static CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors = NoErrors)
 {
-    lua_pushstring(l, "celestia");
-    lua_gettable(l, LUA_GLOBALSINDEX);
-    CelestiaCore** appCore =
-        static_cast<CelestiaCore**>(CheckUserData(l, -1, _Celestia));
-    lua_pop(l, 1);
+    lua_pushstring(l, "celestia-appcore");
+    lua_gettable(l, LUA_REGISTRYINDEX);
 
-    if (appCore == NULL)
+    if (!lua_islightuserdata(l, -1))
     {
         if (fatalErrors == NoErrors)
             return NULL;
@@ -589,7 +586,9 @@ static CelestiaCore* getAppCore(lua_State* l, FatalErrors fatalErrors = NoErrors
         }
     }
 
-    return *appCore;
+    CelestiaCore* appCore = static_cast<CelestiaCore*>(lua_touserdata(l, -1));
+    lua_pop(l, 1);
+    return appCore;
 }
 
 
@@ -1234,6 +1233,21 @@ static int rotation_transform(lua_State* l)
     return 1;
 }
 
+static int rotation_setaxisangle(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Two arguments expected for rotation:setaxisangle()");
+    Quatd* q = this_rotation(l);
+    Vec3d* v = to_vector(l, 2);
+    if (v == NULL)
+    {
+        doError(l, "setaxisangle: first argument must be a vector");
+    }
+    double angle = safeGetNumber(l, 3, AllErrors, "second argument to rotation:setaxisangle must be a number");
+    q->setAxisAngle(*v, angle);
+    return 0;
+}
+
+
 static int rotation_get(lua_State* l)
 {
     checkArgs(l, 2, 2, "Invalid access of rotation-component");
@@ -1302,6 +1316,7 @@ static void CreateRotationMetaTable(lua_State* l)
     RegisterMethod(l, "real", rotation_real);
     RegisterMethod(l, "imag", rotation_imag);
     RegisterMethod(l, "transform", rotation_transform);
+    RegisterMethod(l, "setaxisangle", rotation_setaxisangle);
     RegisterMethod(l, "__tostring", rotation_tostring);
     RegisterMethod(l, "__add", rotation_add);
     RegisterMethod(l, "__mul", rotation_mult);
@@ -2007,6 +2022,15 @@ static int object_getinfo(lua_State* l)
         lua_pushstring(l, "hasRings");
         lua_pushboolean(l, body->getRings() != NULL);
         lua_settable(l, -3);
+        RotationElements re = body->getRotationElements();
+        setTable(l, "rotationPeriod", (double)re.period);
+        setTable(l, "rotationOffset", (double)re.offset);
+        setTable(l, "rotationEpoch", re.epoch);
+        setTable(l, "rotationObliquity", (double)re.obliquity);
+        setTable(l, "rotationAscendingNode", (double)re.ascendingNode);
+        setTable(l, "rotationPrecessionRate", (double)re.precessionRate);
+        Orbit* orbit = body->getOrbit();
+        setTable(l, "orbitPeriod", orbit->getPeriod());
     }
     else if (sel->deepsky() != NULL)
     {
@@ -2085,8 +2109,8 @@ static int object_mark(lua_State* l)
     float markSize = (float)safeGetNumber(l, 4, WrongType, "Third arg to object:mark must be a number", 10.0);
     if (markSize < 1.0f)
         markSize = 1.0f;
-    else if (markSize > 100.0f)
-        markSize = 100.0f;
+    else if (markSize > 10000.0f)
+        markSize = 10000.0f;
 
     Simulation* sim = appCore->getSimulation();
     sim->getUniverse()->markObject(*sel, markSize,
@@ -3309,6 +3333,19 @@ static int celestia_getrenderflags(lua_State* l)
     return 1;
 }
 
+int celestia_getscreendimension(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getscreendimension()");
+    // error checking only:
+    this_celestia(l);
+    // Get the dimensions of the current viewport
+    int viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    lua_pushnumber(l, viewport[2]-viewport[0]);
+    lua_pushnumber(l, viewport[3]-viewport[1]);
+    return 2;
+}
+
 static int celestia_showlabel(lua_State* l)
 {
     checkArgs(l, 1, 1000, "Bad method call!");
@@ -3565,7 +3602,7 @@ static int celestia_getobserver(lua_State* l)
 static int celestia_getobservers(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for celestia:getobservers()");
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    CelestiaCore* appCore = this_celestia(l);
 
     std::vector<Observer*> observer_list;
     getObservers(appCore, observer_list);
@@ -4230,6 +4267,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "hide", celestia_hide);
     RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
     RegisterMethod(l, "setrenderflags", celestia_setrenderflags);
+    RegisterMethod(l, "getscreendimension", celestia_getscreendimension);
     RegisterMethod(l, "showlabel", celestia_showlabel);
     RegisterMethod(l, "hidelabel", celestia_hidelabel);
     RegisterMethod(l, "getlabelflags", celestia_getlabelflags);
@@ -4313,6 +4351,10 @@ bool LuaState::init(CelestiaCore* appCore)
     lua_pushstring(state, "celestia");
     celestia_new(state, appCore);
     lua_settable(state, LUA_GLOBALSINDEX);
+    // add reference to appCore in the registry
+    lua_pushstring(state, "celestia-appcore");
+    lua_pushlightuserdata(state, static_cast<void*>(appCore));
+    lua_settable(state, LUA_REGISTRYINDEX);
     // add a reference to the LuaState-object in the registry
     lua_pushstring(state, "celestia-luastate");
     lua_pushlightuserdata(state, static_cast<void*>(this));
