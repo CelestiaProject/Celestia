@@ -9,6 +9,7 @@
 
 #include <cassert>
 // #include <limits>
+#include <cstdio>
 
 #ifndef _WIN32
 #ifndef MACOSX_PB
@@ -19,6 +20,7 @@
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
+#include <cstdio>
 #include "astro.h"
 #include "parser.h"
 #include "customorbit.h"
@@ -29,6 +31,27 @@
 #include "multitexture.h"
 
 using namespace std;
+
+
+bool getDate(Hash* hash, const string& name, double& jd)
+{
+    // Check first for a number value representing a Julian date
+    if (hash->getNumber(name, jd))
+        return true;
+
+    string dateString;
+    if (hash->getString(name, dateString))
+    {
+        astro::Date date(1, 1, 1);
+        if (astro::parseDate(dateString, date))
+        {
+            jd = (double) date;
+            return true;
+        }
+    }
+
+    return false;
+}
 
 
 static Surface* CreateSurface(Hash* surfaceData)
@@ -145,7 +168,7 @@ static EllipticalOrbit* CreateEllipticalOrbit(Hash* orbitData,
     }
 
     double epoch = astro::J2000;
-    orbitData->getNumber("Epoch", epoch);
+    getDate(orbitData, "Epoch", epoch);
 
     // Accept either the mean anomaly or mean longitude--use mean anomaly
     // if both are specified.
@@ -322,8 +345,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
     // double ending      =  numeric_limits<double>::infinity();
     double beginning   = -1.0e+50;
     double ending      =  1.0e+50;
-    planetData->getNumber("Beginning", beginning);
-    planetData->getNumber("Ending", ending);
+    getDate(planetData, "Beginning", beginning);
+    getDate(planetData, "Ending", ending);
     body->setLifespan(beginning, ending);
 
     string infoURL;
