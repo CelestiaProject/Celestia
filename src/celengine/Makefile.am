@@ -17,6 +17,7 @@ libcelengine_a_SOURCES = \
 	catalogxref.cpp \
 	cmdparser.cpp \
 	command.cpp \
+	console.cpp \
 	constellation.cpp \
 	customorbit.cpp \
 	dds.cpp \
