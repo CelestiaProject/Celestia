@@ -12,6 +12,7 @@
 
 #include <celutil/basictypes.h>
 #include <celutil/color.h>
+#include <celutil/reshandle.h>
 #include <celmath/vecmath.h>
 #include <celmath/aabox.h>
 
@@ -51,6 +52,12 @@ class VertexList
 
     Color getDiffuseColor() const;
     void setDiffuseColor(Color);
+    Color getSpecularColor() const;
+    void setSpecularColor(Color);
+    float getShininess() const;
+    void setShininess(float);
+    ResourceHandle getTexture() const;
+    void setTexture(ResourceHandle);
 
     void render();
 
@@ -66,6 +73,9 @@ class VertexList
     VertexPart* vertices;
 
     Color diffuseColor;
+    Color specularColor;
+    float shininess;
+    ResourceHandle texture;
 
     AxisAlignedBox bbox;
 };

@@ -11,6 +11,7 @@
 #include "gl.h"
 #include "glext.h"
 #include "vertexprog.h"
+#include "texmanager.h"
 #include "3dsmesh.h"
 
 using namespace std;
@@ -56,12 +57,55 @@ void Mesh3DS::render(float lod)
 
 void Mesh3DS::render(unsigned int attributes, float)
 {
+    TextureManager* textureManager = GetTextureManager();
+    ResourceHandle currentTexture = InvalidResource;
+    bool specularOn = false;
+    Color black(0.0f, 0.0f, 0.0f);
+
     for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
     {
         // Ugly hack to set the diffuse color parameters when vertex programs
         // are enabled.
         if (attributes & VertexProgParams)
             vp::parameter(20, (*i)->getDiffuseColor());
+        Color specular = (*i)->getSpecularColor();
+        float shininess = (*i)->getShininess();
+        ResourceHandle texture = (*i)->getTexture();
+        bool useSpecular = (specular != black);
+
+        if (specularOn && !useSpecular)
+        {
+            float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+            float zero = 0.0f;
+            glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+            glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+        }
+        if (useSpecular)
+        {
+            float matSpecular[4] = { specular.red(), specular.green(),
+                                     specular.blue(), 1.0f };
+            glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+            glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
+        }
+        specularOn = useSpecular;
+
+        if (currentTexture != texture)
+        {
+            if (texture == InvalidResource)
+            {
+                glDisable(GL_TEXTURE_2D);
+            }
+            else
+            {
+                if (currentTexture == InvalidResource)
+                    glEnable(GL_TEXTURE_2D);
+                Texture* t = textureManager->find(texture);
+                if (t != NULL)
+                    t->bind();
+            }
+            currentTexture = texture;
+        }
+        
         (*i)->render();
     }
 }
@@ -224,7 +268,7 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
         }
     }
 
-    // set the color
+    // Set the material properties
     {
         string materialName = mesh.getMaterialName();
         if (materialName.length() > 0)
@@ -237,6 +281,19 @@ static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
                 {
                     M3DColor diffuse = material->getDiffuseColor();
                     vl->setDiffuseColor(Color(diffuse.red, diffuse.green, diffuse.blue));
+                    M3DColor specular = material->getSpecularColor();
+                    vl->setSpecularColor(Color(specular.red, specular.green, specular.blue));
+                    // 3DS files record shininess as a percentage; assume
+                    // that OpenGL uses a range of 0-127 for shininess
+                    float shininess = material->getShininess();
+                    vl->setShininess(shininess * 1.27f);
+
+                    if (material->getTextureMap() != "")
+                    {
+                        ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap()));
+                        vl->setTexture(tex);
+                    }
+
                     break;
                 }
             }
