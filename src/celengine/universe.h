@@ -37,10 +37,10 @@ class Universe
 
     Selection pick(const UniversalCoord& origin,
                    const Vec3f& direction);
-    Selection find(std::string s,
+    Selection find(const std::string& s,
                    PlanetarySystem** solarSystems = NULL,
                    int nSolarSystems = 0);
-    Selection findPath(std::string s,
+    Selection findPath(const std::string& s,
                        PlanetarySystem** solarSystems = NULL,
                        int nSolarSystems = 0);
 
@@ -48,15 +48,15 @@ class Universe
 
  private:
     SolarSystem* getSolarSystem(const Star* star);
-    Selection pickPlanet(Observer& observer,
-                         const Star& sun,
-                         SolarSystem& solarSystem,
-                         Vec3f pickRay);
-    Selection pickStar(Vec3f pickRay);
+    Selection pickPlanet(SolarSystem& solarSystem,
+                         const UniversalCoord&,
+                         const Vec3f&,
+                         double);
+    Selection pickStar(const UniversalCoord&, const Vec3f&);
 
  private:
     StarDatabase* starCatalog;
-    SolarSystemCatalog* solarSysCatalog;
+    SolarSystemCatalog* solarSystemCatalog;
     GalaxyList* galaxyCatalog;
 };
 
