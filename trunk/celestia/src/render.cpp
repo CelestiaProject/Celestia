@@ -1860,8 +1860,6 @@ void Renderer::renderStars(const StarDatabase& starDB,
     renderParticles(starParticles, observer.getOrientation());
     glBindTexture(GL_TEXTURE_2D, glareTex->getName());
     renderParticles(glareParticles, observer.getOrientation());
-
-    cout << "*Rendered stars: " << starRenderer.nProcessed << '/' << starParticles.size() << '/' << glareParticles.size() << '/' << starRenderer.nClose << '\n';
 }
 
 #if 0
