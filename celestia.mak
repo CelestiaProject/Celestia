@@ -124,7 +124,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\celestia.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijl.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\celestia.pdb" /machine:I386 /out:"$(OUTDIR)\celestia.exe" 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijl.lib zlib.lib libpng1.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\celestia.pdb" /machine:I386 /out:"$(OUTDIR)\celestia.exe" 
 LINK32_OBJS= \
 	"$(INTDIR)\3dsmesh.obj" \
 	"$(INTDIR)\3dsmodel.obj" \
@@ -273,7 +273,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\celestia.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijl.lib /nologo /subsystem:windows /incremental:yes /pdb:"$(OUTDIR)\celestia.pdb" /debug /machine:I386 /out:"$(OUTDIR)\celestia.exe" /pdbtype:sept 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib opengl32.lib glu32.lib ijl.lib zlibd.lib libpng1d.lib /nologo /subsystem:windows /incremental:yes /pdb:"$(OUTDIR)\celestia.pdb" /debug /machine:I386 /out:"$(OUTDIR)\celestia.exe" /pdbtype:sept 
 LINK32_OBJS= \
 	"$(INTDIR)\3dsmesh.obj" \
 	"$(INTDIR)\3dsmodel.obj" \
