@@ -31,9 +31,10 @@
 #define IDC_BUTTON_REFRESH              1014
 #define IDC_RADIO_NEAREST               1015
 #define IDC_RADIO_BRIGHTEST             1016
-#define IDC_COMBO_TOURGUIDE             1017
-#define IDC_TEXT_DESCRIPTION            1018
-#define IDC_TEXT_CONTROLSHELP           1019
+#define IDC_RADIO_WITHPLANETS           1017
+#define IDC_COMBO_TOURGUIDE             1018
+#define IDC_TEXT_DESCRIPTION            1019
+#define IDC_TEXT_CONTROLSHELP           1020
 
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
