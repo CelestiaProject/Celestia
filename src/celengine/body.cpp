@@ -39,6 +39,14 @@ Body::Body(PlanetarySystem* _system) :
 }
 
 
+Body::~Body()
+{
+    // clean up orbit, atmosphere, etc.
+    if (system != NULL)
+        system->removeBody(this);
+}
+
+
 PlanetarySystem* Body::getSystem() const
 {
     return system;
@@ -338,6 +346,26 @@ PlanetarySystem::PlanetarySystem(Body* _primary) : primary(_primary)
 PlanetarySystem::PlanetarySystem(const Star* _star) :
     star(_star), primary(NULL)
 {
+}
+
+
+void PlanetarySystem::addBody(Body* body)
+{
+    satellites.insert(satellites.end(), body);
+}
+
+
+void PlanetarySystem::removeBody(Body* body)
+{
+    for (vector<Body*>::iterator iter = satellites.begin();
+         iter != satellites.end(); iter++)
+    {
+        if (*iter == body)
+        {
+            satellites.erase(iter);
+            break;
+        }
+    }
 }
 
 
