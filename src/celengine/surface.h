@@ -38,6 +38,7 @@ class Surface
         ApplySpecularityMap  = 0x20,
         SpecularReflection   = 0x40,
         Emissive             = 0x80,
+        SeparateSpecularMap  = 0x100,
     };
 
     uint32 appearanceFlags;
@@ -48,6 +49,7 @@ class Surface
     MultiResTexture baseTexture;    // surface colors
     MultiResTexture bumpTexture;    // normal map based on terrain relief
     MultiResTexture nightTexture;   // artificial lights to show on night side
+    MultiResTexture specularTexture;// specular mask
     float bumpHeight;               // scale of bump map relief
 };
 
