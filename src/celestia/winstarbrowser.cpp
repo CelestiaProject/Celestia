@@ -10,7 +10,6 @@
 // of the License, or (at your option) any later version.
 
 #include <string>
-#include <sstream>
 #include <algorithm>
 #include <set>
 #include <windows.h>
@@ -202,7 +201,7 @@ bool InitStarBrowserLVItems(HWND listView, vector<const Star*>& stars)
     lvi.stateMask = 0;
     lvi.pszText = LPSTR_TEXTCALLBACK;
 
-    for (int i = 0; i < stars.size(); i++)
+    for (unsigned int i = 0; i < stars.size(); i++)
     {
         lvi.iItem = i;
         lvi.iSubItem = 0;
@@ -248,7 +247,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
             solarSysPred.pos = browser->pos;
             solarSysPred.solarSystems = solarSystems;
             stars = FindStars(*stardb, solarSysPred,
-                              min(browser->nStars, solarSystems->size()));
+                              min((unsigned int) browser->nStars, solarSystems->size()));
         }
         break;
 
@@ -266,7 +265,6 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
 // Crud used for the list item display callbacks
 static string starNameString("");
 static char callbackScratch[256];
-static ostringstream browserOss(ostringstream::out);
 
 struct StarBrowserSortInfo
 {
@@ -291,7 +289,7 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
         {
             float d0 = sortInfo->pos.distanceTo(star0->getPosition());
             float d1 = sortInfo->pos.distanceTo(star1->getPosition());
-            return sign(d0 - d1);
+            return (int) sign(d0 - d1);
         }
 
     case 2:
@@ -302,12 +300,12 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
                 d0 = (toMicroLY(star0->getPosition()) - sortInfo->ucPos).length() * 1e-6f;
             if (d1 < 1.0f)
                 d1 = (toMicroLY(star1->getPosition()) - sortInfo->ucPos).length() * 1e-6f;
-            return sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
-                        astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
+            return (int) sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
+                              astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
         }
 
     case 3:
-        return sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
+        return (int) sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
 
     case 4:
         if (star0->getStellarClass() < star1->getStellarClass())
@@ -343,11 +341,9 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
         break;
             
     case 1:
-        {
-            sprintf(callbackScratch, "%.3f",
-                    browser->pos.distanceTo(star->getPosition()));
-            nm->item.pszText = callbackScratch;
-        }
+        sprintf(callbackScratch, "%.3f",
+                browser->pos.distanceTo(star->getPosition()));
+        nm->item.pszText = callbackScratch;
         break;
 
     case 2:
@@ -361,22 +357,14 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
         break;
             
     case 3:
-        {
-            sprintf(callbackScratch, "%.2f", star->getAbsoluteMagnitude());
-            nm->item.pszText = callbackScratch;
-        }
+        sprintf(callbackScratch, "%.2f", star->getAbsoluteMagnitude());
+        nm->item.pszText = callbackScratch;
         break;
 
     case 4:
-        {
-            // Convoluted way of getting the stellar class string . . .
-            // Seek to the beginning of an stringstream, output, then grab
-            // the string and copy it to the scratch buffer.
-            browserOss.seekp(0);
-            browserOss << star->getStellarClass() << '\0';
-            strcpy(callbackScratch, browserOss.str().c_str());
-            nm->item.pszText = callbackScratch;
-        }
+        star->getStellarClass().str(callbackScratch, sizeof(callbackScratch));
+        nm->item.pszText = callbackScratch;
+        break;
     }
 }
 
@@ -487,7 +475,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
             if (HIWORD(wParam) == EN_KILLFOCUS && browser != NULL)
             {
                 char val[16];
-                int nNewStars;
+                DWORD nNewStars;
                 DWORD minRange, maxRange;
                 GetWindowText((HWND) lParam, val, sizeof(val));
                 nNewStars = atoi(val);
