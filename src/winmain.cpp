@@ -24,6 +24,7 @@
 #include "vecmath.h"
 #include "quaternion.h"
 #include "util.h"
+#include "timer.h"
 #include "stardb.h"
 #include "solarsys.h"
 #include "asterism.h"
@@ -48,13 +49,9 @@ static string welcomeMessage1("Welcome to Celestia 1.07");
 static string welcomeMessage2("Press D to run demo");
 
 
-//----------------------------------
 // Timer info.
-static LARGE_INTEGER TimerFreq;	// Timer Frequency.
-static LARGE_INTEGER TimeStart;	// Time of start.
-static LARGE_INTEGER TimeCur;	// Current time.
-static double currentTime=0.0;
-static double deltaTime=0.0;
+static double currentTime = 0.0;
+static Timer* timer = NULL;
 
 static int nFrames = 0;
 static double fps = 0.0;
@@ -1352,10 +1349,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     icex.dwICC = ICC_DATE_CLASSES;
     InitCommonControlsEx(&icex);
 
-    // Reset the timer
-    QueryPerformanceFrequency(&TimerFreq);
-    QueryPerformanceCounter(&TimeStart);
-
+    timer = CreateTimer();
     renderer = new Renderer();
 
     // Prepare the scene for rendering.
@@ -1391,7 +1385,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // Set up the overlay
     overlay = new Overlay();
     overlay->setWindowSize(g_w, g_h);
-    font = txfLoadFont("fonts\\default.txf");
+    font = txfLoadFont("fonts/default.txf");
     if (font != NULL)
     {
         txfEstablishTexture(font, 0, GL_FALSE);
@@ -1896,9 +1890,8 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 	if (bReady)
         {
 	    // Get the current time, and update the time controller.
-	    QueryPerformanceCounter(&TimeCur);
 	    double lastTime = currentTime;
-	    currentTime = (double) (TimeCur.QuadPart - TimeStart.QuadPart) / (double) TimerFreq.QuadPart;
+            currentTime = timer->getTime();
 	    double deltaTime = currentTime - lastTime;
             nFrames++;
             if (nFrames == 100)
