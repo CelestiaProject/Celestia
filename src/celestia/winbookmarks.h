@@ -22,7 +22,7 @@
 void BuildFavoritesMenu(HMENU, CelestiaCore*, HINSTANCE, ODMenu*);
 HTREEITEM PopulateBookmarkFolders(HWND, CelestiaCore*, HINSTANCE);
 HTREEITEM PopulateBookmarksTree(HWND, CelestiaCore*, HINSTANCE);
-void AddNewBookmarkFolderInTree(HWND, char*);
+void AddNewBookmarkFolderInTree(HWND, CelestiaCore*, char*);
 void SyncTreeFoldersWithFavoriteFolders(HWND, CelestiaCore*);
 void InsertBookmarkInFavorites(HWND, char*, CelestiaCore*);
 void DeleteBookmarkFromFavorites(HWND, CelestiaCore*);

@@ -12,6 +12,7 @@
 #include "winbookmarks.h"
 #include "res/resource.h"
 #include <celutil/winutil.h>
+#include <iostream>
 
 using namespace std;
 
@@ -19,6 +20,14 @@ bool dragging;
 HTREEITEM hDragItem;
 HTREEITEM hDropTargetItem;
 POINT dragPos;
+
+static const unsigned int StdItemMask = (TVIF_TEXT | TVIF_PARAM |
+                                         TVIF_IMAGE | TVIF_SELECTEDIMAGE);
+
+static bool isTopLevel(const FavoritesEntry* fav)
+{
+    return fav->parentFolder == "";
+}
 
 
 HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE appInstance)
@@ -47,14 +56,14 @@ HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
     FavoritesList* favorites = appCore->getFavorites();
     if (favorites != NULL)
     {
-        //Create a subtree item called "Bookmarks"
+        // Create a subtree item called "Bookmarks"
         TVINSERTSTRUCT tvis;
 
         tvis.hParent = TVI_ROOT;
         tvis.hInsertAfter = TVI_LAST;
-        tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+        tvis.item.mask = StdItemMask;
         tvis.item.pszText = "Bookmarks";
-        tvis.item.lParam = 1; //1 for folders, 0 for items.
+        tvis.item.lParam = NULL;
         tvis.item.iImage = 2;
         tvis.item.iSelectedImage = 2;
         if (hParent = TreeView_InsertItem(hTree, &tvis))
@@ -63,16 +72,17 @@ HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
             while (iter != favorites->end())
             {
                 TVINSERTSTRUCT tvis;
+                FavoritesEntry* fav = *iter;
 
-                //Is this a folder?
-                if ((*iter)->isFolder)
+                // Is this a folder?
+                if (fav->isFolder)
                 {
-                    //Create a subtree item
+                    // Create a subtree item
                     tvis.hParent = hParent;
                     tvis.hInsertAfter = TVI_LAST;
-                    tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-                    tvis.item.pszText = const_cast<char*>((*iter)->name.c_str());
-                    tvis.item.lParam = 1; //1 for folders, 0 for items.
+                    tvis.item.mask = StdItemMask;
+                    tvis.item.pszText = const_cast<char*>(fav->name.c_str());
+                    tvis.item.lParam = reinterpret_cast<LPARAM>(fav);
                     tvis.item.iImage = 0;
                     tvis.item.iSelectedImage = 1;
 
@@ -81,14 +91,17 @@ HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
                         FavoritesList::iterator subIter = favorites->begin();
                         while (subIter != favorites->end())
                         {
-                            if (!(*subIter)->isFolder && (*subIter)->parentFolder == (*iter)->name)
+                            FavoritesEntry* child = *subIter;
+
+                            // See if this entry is a child
+                            if (!child->isFolder && child->parentFolder == fav->name)
                             {
-                                //Add items to sub tree
+                                // Add items to sub tree
                                 tvis.hParent = hParentItem;
                                 tvis.hInsertAfter = TVI_LAST;
-                                tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-                                tvis.item.pszText = const_cast<char*>((*subIter)->name.c_str());
-                                tvis.item.lParam = 0; //1 for folders, 0 for items.
+                                tvis.item.mask = StdItemMask;
+                                tvis.item.pszText = const_cast<char*>(child->name.c_str());
+                                tvis.item.lParam = reinterpret_cast<LPARAM>(child);
                                 tvis.item.iImage = 3;
                                 tvis.item.iSelectedImage = 3;
                                 TreeView_InsertItem(hTree, &tvis);
@@ -100,14 +113,14 @@ HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
                         TreeView_Expand(hTree, hParentItem, TVE_EXPAND);
                     }
                 }
-                else if((*iter)->parentFolder == "")
+                else if (isTopLevel(fav))
                 {
                     // Add item to root "Bookmarks"
                     tvis.hParent = hParent;
                     tvis.hInsertAfter = TVI_LAST;
-                    tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+                    tvis.item.mask = StdItemMask;
                     tvis.item.pszText = const_cast<char*>((*iter)->name.c_str());
-                    tvis.item.lParam = 0; //1 for folders, 0 for items.
+                    tvis.item.lParam = reinterpret_cast<LPARAM>(fav);
                     tvis.item.iImage = 3;
                     tvis.item.iSelectedImage = 3;
                     TreeView_InsertItem(hTree, &tvis);
@@ -123,9 +136,10 @@ HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
     return hParent;
 }
 
+
 HTREEITEM PopulateBookmarkFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE appInstance)
 {
-    //First create an image list for the icons in the control
+    // First create an image list for the icons in the control
     HTREEITEM hParent=NULL;
     HIMAGELIST himlIcons;
     HICON hIcon;
@@ -147,14 +161,14 @@ HTREEITEM PopulateBookmarkFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
     FavoritesList* favorites = appCore->getFavorites();
     if (favorites != NULL)
     {
-        //Create a subtree item called "Bookmarks"
+        // Create a subtree item called "Bookmarks"
         TVINSERTSTRUCT tvis;
 
         tvis.hParent = TVI_ROOT;
         tvis.hInsertAfter = TVI_LAST;
         tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
         tvis.item.pszText = "Bookmarks";
-        tvis.item.lParam = 1;
+        tvis.item.lParam = 0;
         tvis.item.iImage = 2;
         tvis.item.iSelectedImage = 2;
         if (hParent = TreeView_InsertItem(hTree, &tvis))
@@ -162,17 +176,17 @@ HTREEITEM PopulateBookmarkFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
             FavoritesList::iterator iter = favorites->begin();
             while (iter != favorites->end())
             {
-                TVINSERTSTRUCT tvis;
+                FavoritesEntry* fav = *iter;
 
-                //Is this a folder?
-                if ((*iter)->isFolder)
+                if (fav->isFolder)
                 {
-                    //Create a subtree item for the folder
+                    // Create a subtree item for the folder
+                    TVINSERTSTRUCT tvis;
                     tvis.hParent = hParent;
                     tvis.hInsertAfter = TVI_LAST;
-                    tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-                    tvis.item.pszText = const_cast<char*>((*iter)->name.c_str());
-                    tvis.item.lParam = 1;
+                    tvis.item.mask = StdItemMask;
+                    tvis.item.pszText = const_cast<char*>(fav->name.c_str());
+                    tvis.item.lParam = reinterpret_cast<LPARAM>(fav);
                     tvis.item.iImage = 0;
                     tvis.item.iSelectedImage = 1;
                     TreeView_InsertItem(hTree, &tvis);
@@ -189,7 +203,11 @@ HTREEITEM PopulateBookmarkFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
     return hParent;
 }
 
-void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInstance, ODMenu* odMenu)
+
+void BuildFavoritesMenu(HMENU menuBar,
+                        CelestiaCore* appCore,
+                        HINSTANCE appInstance,
+                        ODMenu* odMenu)
 {
     // Add item to bookmarks menu
     int numStaticItems = 2; // The number of items defined in the .rc file.
@@ -201,138 +219,152 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
     UINT bookmarksMenuPosition = 5;
 
     FavoritesList* favorites = appCore->getFavorites();
-    if (favorites != NULL)
+    if (favorites == NULL)
+        return;
+
+    MENUITEMINFO menuInfo;
+    menuInfo.cbSize = sizeof(MENUITEMINFO);
+    menuInfo.fMask = MIIM_SUBMENU;
+    if (GetMenuItemInfo(menuBar, bookmarksMenuPosition, TRUE, &menuInfo))
     {
-        MENUITEMINFO menuInfo;
-        menuInfo.cbSize = sizeof(MENUITEMINFO);
-        menuInfo.fMask = MIIM_SUBMENU;
-        if (GetMenuItemInfo(menuBar, bookmarksMenuPosition, TRUE, &menuInfo))
+        HMENU bookmarksMenu = menuInfo.hSubMenu;
+
+        // First, tear down existing menu beyond separator.
+        while (DeleteMenu(bookmarksMenu, numStaticItems, MF_BYPOSITION))
+            odMenu->DeleteItem(bookmarksMenu, numStaticItems);
+
+        // Don't continue if there are no items in favorites
+        if (favorites->size() == 0)
+            return;
+
+        // Insert separator
+        menuInfo.cbSize = sizeof MENUITEMINFO;
+        menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
+        menuInfo.fType = MFT_SEPARATOR;
+        menuInfo.fState = MFS_UNHILITE;
+        if (InsertMenuItem(bookmarksMenu, numStaticItems, TRUE, &menuInfo))
         {
-            HMENU bookmarksMenu = menuInfo.hSubMenu;
+            odMenu->AddItem(bookmarksMenu, numStaticItems);
+            numStaticItems++;
+        }
 
-            // First, tear down existing menu beyond separator.
-            while (DeleteMenu(bookmarksMenu, numStaticItems, MF_BYPOSITION))
-                odMenu->DeleteItem(bookmarksMenu, numStaticItems);
+        // Add folders and their sub items
+        int rootMenuIndex = numStaticItems;
+        int rootResIndex = 0;
+        FavoritesList::iterator iter = favorites->begin();
+        while (iter != favorites->end())
+        {
+            FavoritesEntry* fav = *iter;
 
-            // Don't continue if there are no items in favorites
-            if (favorites->size() == 0)
-                return;
-
-            // Insert separator
-            menuInfo.cbSize = sizeof MENUITEMINFO;
-            menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
-            menuInfo.fType = MFT_SEPARATOR;
-            menuInfo.fState = MFS_UNHILITE;
-            if (InsertMenuItem(bookmarksMenu, numStaticItems, TRUE, &menuInfo))
+            // Is this a folder?
+            if (fav->isFolder)
             {
-                odMenu->AddItem(bookmarksMenu, numStaticItems);
-                numStaticItems++;
-            }
-
-            // Add folders and their sub items
-            int rootMenuIndex = numStaticItems;
-            int subMenuIndex, resourceIndex = 0;
-            FavoritesList::iterator iter = favorites->begin();
-            while (iter != favorites->end())
-            {
-                // Is this a folder?
-                if ((*iter)->isFolder)
+                // Create a submenu
+                HMENU subMenu;
+                if (subMenu = CreatePopupMenu())
                 {
-                    // Create a submenu
-                    HMENU subMenu;
-                    if (subMenu = CreatePopupMenu())
+                    // Create a menu item that displays a popup sub menu
+                    menuInfo.cbSize = sizeof MENUITEMINFO;
+                    menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
+                    menuInfo.fType = MFT_STRING;
+                    menuInfo.wID = ID_BOOKMARKS_FIRSTBOOKMARK + rootResIndex;
+                    menuInfo.hSubMenu = subMenu;
+                    menuInfo.dwTypeData = const_cast<char*>(fav->name.c_str());
+
+                    if (InsertMenuItem(bookmarksMenu,
+                                       rootMenuIndex,
+                                       TRUE,
+                                       &menuInfo))
                     {
-                        // Create a menu item that displays a popup sub menu
-                        menuInfo.cbSize = sizeof MENUITEMINFO;
-                        menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
-                        menuInfo.fType = MFT_STRING;
-                        menuInfo.wID = ID_BOOKMARKS_FIRSTBOOKMARK + resourceIndex;
-                        menuInfo.hSubMenu = subMenu;
-                        menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
-                        if (InsertMenuItem(bookmarksMenu, rootMenuIndex, TRUE, &menuInfo))
+                        odMenu->AddItem(bookmarksMenu, rootMenuIndex);
+                        odMenu->SetItemImage(appInstance, menuInfo.wID,
+                                             IDB_FOLDERCLOSED);
+                        rootMenuIndex++;
+
+                        // Now iterate through all Favorites and add items
+                        // to this folder where parentFolder == folderName
+                        int subMenuIndex = 0;
+                        int childResIndex = 0;
+                        string folderName = fav->name;
+                        clog << "Folder: " << folderName << '\n';
+
+                        for (FavoritesList::iterator childIter = favorites->begin();
+                             childIter != favorites->end();
+                             childIter++, childResIndex++)
                         {
-                            odMenu->AddItem(bookmarksMenu, rootMenuIndex);
-                            odMenu->SetItemImage(appInstance, menuInfo.wID, IDB_FOLDERCLOSED);
-
-                            rootMenuIndex++;
-                            resourceIndex++;
-
-                            // Now iterate through all Favorites and add items
-                            // to this folder where parentFolder == folderName
-                            subMenuIndex = 0;
-                            string folderName = (*iter)->name;
-                            iter++;
-                            while (iter != favorites->end())
+                            FavoritesEntry* child = *childIter;
+                            if (!child->isFolder &&
+                                child->parentFolder == folderName)
                             {
-                                if (!(*iter)->isFolder && (*iter)->parentFolder == folderName)
-                                {
-                                    // Add items to sub menu
-                                    menuInfo.cbSize = sizeof MENUITEMINFO;
-                                    menuInfo.fMask = MIIM_TYPE | MIIM_ID;
-                                    menuInfo.fType = MFT_STRING;
-                                    menuInfo.wID = ID_BOOKMARKS_FIRSTBOOKMARK + resourceIndex;
-                                    menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
-                                    if(InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo))
-                                    {
-                                        odMenu->AddItem(subMenu, subMenuIndex);
-                                        odMenu->SetItemImage(appInstance, menuInfo.wID, IDB_BOOKMARK);
-                                        subMenuIndex++;
-                                    }
-                                }
-                                else
-                                    break;
-
-                                iter++;
-                                resourceIndex++;
-                            }
-
-                            // Add a disabled "(empty)" item if no items
-                            // were added to sub menu
-                            if (subMenuIndex == 0)
-                            {
+                                clog << "  " << child->name << '\n';
+                                // Add item to sub menu
                                 menuInfo.cbSize = sizeof MENUITEMINFO;
-                                menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
+                                menuInfo.fMask = MIIM_TYPE | MIIM_ID;
                                 menuInfo.fType = MFT_STRING;
-                                menuInfo.fState = MFS_DISABLED;
-                                menuInfo.dwTypeData = "(empty)";
+                                menuInfo.wID = ID_BOOKMARKS_FIRSTBOOKMARK + childResIndex;
+                                menuInfo.dwTypeData = const_cast<char*>(child->name.c_str());
                                 if (InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo))
                                 {
                                     odMenu->AddItem(subMenu, subMenuIndex);
+                                    odMenu->SetItemImage(appInstance, menuInfo.wID, IDB_BOOKMARK);
+                                    subMenuIndex++;
                                 }
+                            }
+                        }
+
+                        // Add a disabled "(empty)" item if no items
+                        // were added to sub menu
+                        if (subMenuIndex == 0)
+                        {
+                            menuInfo.cbSize = sizeof MENUITEMINFO;
+                            menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
+                            menuInfo.fType = MFT_STRING;
+                            menuInfo.fState = MFS_DISABLED;
+                            menuInfo.dwTypeData = "(empty)";
+                            if (InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo))
+                            {
+                                odMenu->AddItem(subMenu, subMenuIndex);
                             }
                         }
                     }
                 }
-                else
-                    iter++;
             }
 
-            // Add root bookmark items
-            iter = favorites->begin();
-            while (iter != favorites->end())
+            rootResIndex++;
+            iter++;
+        }
+
+        // Add root bookmark items
+        iter = favorites->begin();
+        rootResIndex = 0;
+        while (iter != favorites->end())
+        {
+            FavoritesEntry* fav = *iter;
+
+            // Is this a non folder item?
+            if (!fav->isFolder && isTopLevel(fav))
             {
-                // Is this a non folder item?
-                if (!(*iter)->isFolder && (*iter)->parentFolder == "")
-                {
-                    // Append to bookmarksMenu
-                    AppendMenu(bookmarksMenu, MF_STRING,
-                        ID_BOOKMARKS_FIRSTBOOKMARK + resourceIndex,
-                        const_cast<char*>((*iter)->name.c_str()));
+                // Append to bookmarksMenu
+                AppendMenu(bookmarksMenu, MF_STRING,
+                           ID_BOOKMARKS_FIRSTBOOKMARK + rootResIndex,
+                           const_cast<char*>(fav->name.c_str()));
 
-                    odMenu->AddItem(bookmarksMenu, rootMenuIndex);
-                    odMenu->SetItemImage(appInstance, ID_BOOKMARKS_FIRSTBOOKMARK + resourceIndex, IDB_BOOKMARK);
-                    rootMenuIndex++;
-                    resourceIndex++;
-                }
-                iter++;
+                odMenu->AddItem(bookmarksMenu, rootMenuIndex);
+                odMenu->SetItemImage(appInstance,
+                                     ID_BOOKMARKS_FIRSTBOOKMARK + rootResIndex,
+                                     IDB_BOOKMARK);
+                rootMenuIndex++;
             }
+            iter++;
+            rootResIndex++;
         }
     }
 }
 
-void AddNewBookmarkFolderInTree(HWND hTree, char* folderName)
+
+void AddNewBookmarkFolderInTree(HWND hTree, CelestiaCore* appCore, char* folderName)
 {
-    //Add new item to bookmark item after other folders but before root items
+    // Add new item to bookmark item after other folders but before root items
     HTREEITEM hParent, hItem, hInsertAfter;
     TVINSERTSTRUCT tvis;
     TVITEM tvItem;
@@ -340,39 +372,48 @@ void AddNewBookmarkFolderInTree(HWND hTree, char* folderName)
     hParent = TreeView_GetChild(hTree, TVI_ROOT);
     if (hParent)
     {
-        //Find last "folder" in children of hParent
+        // Find last "folder" in children of hParent
         hItem = TreeView_GetChild(hTree, hParent);
         while (hItem)
         {
-            //Is this a "folder
+            // Is this a "folder"
             tvItem.hItem = hItem;
             tvItem.mask = TVIF_HANDLE | TVIF_PARAM;
             if (TreeView_GetItem(hTree, &tvItem))
             {
-                if(tvItem.lParam == 1)
+                FavoritesEntry* fav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
+                if (fav == NULL || fav->isFolder)
                     hInsertAfter = hItem;
             }
             hItem = TreeView_GetNextSibling(hTree, hItem);
         }
 
+        FavoritesEntry* folderFav = new FavoritesEntry();
+        folderFav->isFolder = true;
+        folderFav->name = folderName;
+
+        FavoritesList* favorites = appCore->getFavorites();
+        favorites->insert(favorites->end(), folderFav);
+
         tvis.hParent = hParent;
         tvis.hInsertAfter = hInsertAfter;
-        tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+        tvis.item.mask = StdItemMask;
         tvis.item.pszText = folderName;
-        tvis.item.lParam = 1;
+        tvis.item.lParam = reinterpret_cast<LPARAM>(folderFav);
         tvis.item.iImage = 2;
         tvis.item.iSelectedImage = 1;
         if (hItem = TreeView_InsertItem(hTree, &tvis))
         {
-            //Make sure root tree item is open and newly
-            //added item is visible.
+            // Make sure root tree item is open and newly
+            // added item is visible.
             TreeView_Expand(hTree, hParent, TVE_EXPAND);
 
-            //Select the item
+            // Select the item
             TreeView_SelectItem(hTree, hItem);
         }
     }
 }
+
 
 void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
 {
@@ -385,33 +426,33 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
 
     if (favorites != NULL)
     {
-        //Scan through tree control folders and add any folder that does
-        //not exist in Favorites.
+        // Scan through tree control folders and add any folder that does
+        // not exist in Favorites.
         if (hParent = TreeView_GetChild(hTree, TVI_ROOT))
         {
             hItem = TreeView_GetChild(hTree, hParent);
             do
             {
-                //Get information on item
+                // Get information on item
                 tvItem.hItem = hItem;
                 tvItem.mask = TVIF_TEXT | TVIF_PARAM | TVIF_HANDLE;
                 tvItem.pszText = itemName;
                 tvItem.cchTextMax = sizeof(itemName);
                 if (TreeView_GetItem(hTree, &tvItem))
                 {
-                    //Skip non-folders.
+                    // Skip non-folders.
                     if(tvItem.lParam == 0)
                         continue;
 
                     string name(itemName);
                     if (favorites->size() == 0)
                     {
-                        //Just append the folder
+                        // Just append the folder
                         appCore->addFavoriteFolder(name);
                         continue;
                     }
 
-                    //Loop through favorites to find item = itemName
+                    // Loop through favorites to find item = itemName
                     found = false;
                     iter = favorites->begin();
                     while (iter != favorites->end())
@@ -423,13 +464,14 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
                         }
                         iter++;
                     }
+
                     if (!found)
                     {
-                        //If not found in favorites, add it.
-                        //We want all folders to appear before root items so this
-                        //new folder must be inserted after the last item of the 
-                        //last folder.
-                        //Locate position of last folder.
+                        // If not found in favorites, add it.
+                        // We want all folders to appear before root items so this
+                        // new folder must be inserted after the last item of the 
+                        // last folder.
+                        // Locate position of last folder.
                         FavoritesList::iterator folderIter = favorites->begin();
                         iter = favorites->begin();
                         while (iter != favorites->end())
@@ -453,18 +495,18 @@ void SyncTreeFoldersWithFavoriteFolders(HWND hTree, CelestiaCore* appCore)
     }
 }
 
+
 void InsertBookmarkInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
 {
     FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::iterator iter;
     TVITEM tvItem;
     HTREEITEM hItem;
     char itemName[33];
     string newBookmark(name);
 
-    SyncTreeFoldersWithFavoriteFolders(hTree, appCore);
+    // SyncTreeFoldersWithFavoriteFolders(hTree, appCore);
 
-    //Determine which tree item (folder) is selected (if any)
+    // Determine which tree item (folder) is selected (if any)
     hItem = TreeView_GetSelection(hTree);
     if (!TreeView_GetParent(hTree, hItem))
         hItem = NULL;
@@ -477,342 +519,209 @@ void InsertBookmarkInFavorites(HWND hTree, char* name, CelestiaCore* appCore)
         tvItem.cchTextMax = sizeof(itemName);
         if (TreeView_GetItem(hTree, &tvItem))
         {
-            //Iterate through Favorites to locate folder = selected tree item
-            iter = favorites->begin();
-            while (iter != favorites->end())
+            FavoritesEntry* fav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
+            if (fav != NULL && fav->isFolder)
             {
-                if ((*iter)->isFolder && (*iter)->name == itemName)
-                {
-                    // To insert new item at end of folder menu, we have to iterate
-                    // to the one item past the last item in the folder.
-                    // vector::insert() inserts item before specified iterator.
-                    iter++;
-                    while (iter != favorites->end() && !((*iter)->isFolder) && (*iter)->parentFolder != "")
-                        iter++;
-                    
-                    // Insert new bookmark at position in iteration.
-                    string parentFolder(itemName);
-                    appCore->addFavorite(newBookmark, parentFolder, &iter);
-                    break;
-                }
-                iter++;
+                appCore->addFavorite(newBookmark, string(itemName));
             }
         }
     }
     else
     {
-        //Folder not specified, add to end of favorites
+        // Folder not specified, add to end of favorites
         appCore->addFavorite(newBookmark, "");
     }
 }
 
+
 void DeleteBookmarkFromFavorites(HWND hTree, CelestiaCore* appCore)
 {
     FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::iterator iter;
     TVITEM tvItem;
-    HTREEITEM hItem, hFolder;
-    char itemName[33], folderName[33];
+    HTREEITEM hItem;
+    char itemName[33];
 
-    //First get the selected item
-    if (hItem = TreeView_GetSelection(hTree))
+    hItem = TreeView_GetSelection(hTree);
+    if (!hItem)
+        return;
+
+    // Get the selected item text (which is the bookmark name)
+    tvItem.hItem = hItem;
+    tvItem.mask = TVIF_TEXT | TVIF_PARAM | TVIF_HANDLE;
+    tvItem.pszText = itemName;
+    tvItem.cchTextMax = sizeof(itemName);
+    if (!TreeView_GetItem(hTree, &tvItem))
+        return;
+
+    FavoritesEntry* fav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
+    if (!fav)
+        return;
+
+    // Delete the item from the tree view; give up if this fails for some
+    // reason (it shouldn't . . .)
+    if (!TreeView_DeleteItem(hTree, hItem))
+        return;
+
+    if (fav->isFolder)
     {
-        //Next get this items parent (which is the folder)
-        if (hFolder = TreeView_GetParent(hTree, hItem))
+        // Delete item in favorites, as well as all of it's children
+        FavoritesList::iterator iter = favorites->begin();
+        while (iter != favorites->end())
         {
-            //Get the item text (which is the folder name)
-            tvItem.hItem = hFolder;
-            tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-            tvItem.pszText = folderName;
-            tvItem.cchTextMax = sizeof(folderName);
-            if (TreeView_GetItem(hTree, &tvItem))
+            if (*iter == fav)
             {
-                // Have we selected a root bookmark item?
-                if (!TreeView_GetParent(hTree, hFolder))
-                    folderName[0] = '\0';
-
-                //Get the selected item text (which is the bookmark name)
-                tvItem.hItem = hItem;
-                tvItem.mask = TVIF_TEXT | TVIF_PARAM | TVIF_HANDLE;
-                tvItem.pszText = itemName;
-                tvItem.cchTextMax = sizeof(itemName);
-                if (TreeView_GetItem(hTree, &tvItem))
-                {
-                    //tvItem.lParam == 1 if this is a folder we are trying to delete
-                    if (tvItem.lParam == 1)
-                    {
-                        //Delete folder and all children
-                        if (TreeView_DeleteItem(hTree, hItem))
-                        {
-                            //Delete items in favorites
-                            iter = favorites->begin();
-                            while (iter != favorites->end())
-                            {
-                                if ((*iter)->name == itemName || (*iter)->parentFolder == itemName)
-                                {
-				    // Delete item from favorites.
-                                    favorites->erase(iter);
-                                }
-                                else
-                                    iter++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //Delete the corresponding item in Favorites
-                        iter = favorites->begin();
-                        while (iter != favorites->end())
-                        {
-                            if ((*iter)->name == itemName && (*iter)->parentFolder == folderName)
-                            {
-                                // Delete the tree item
-                                if (TreeView_DeleteItem(hTree, hItem))
-                                {
-                                    // Delete item from favorites.
-                                    favorites->erase(iter);
-                                }
-                                break;
-                            }
-                            iter++;
-                        }
-                    }
-                }
+                favorites->erase(iter);
+            }
+            else if (fav->isFolder && (*iter)->parentFolder == itemName)
+            {
+                favorites->erase(iter);
+                // delete *iter;
+            }
+            else
+            {
+                iter++;
             }
         }
     }
+
+    // delete fav;
 }
+
 
 void RenameBookmarkInFavorites(HWND hTree, char* newName, CelestiaCore* appCore)
 {
     FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::iterator iter;
     TVITEM tvItem;
-    HTREEITEM hItem, hFolder;
-    char itemName[33], folderName[33];
+    HTREEITEM hItem;
+    char itemName[33];
 
-    //First get the selected item
-    if (hItem = TreeView_GetSelection(hTree))
-    {
-        //Next get this items parent (which is the folder)
-        if (hFolder = TreeView_GetParent(hTree, hItem))
-        {
-            //Get the item text (which is the folder name)
-            tvItem.hItem = hFolder;
-            tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-            tvItem.pszText = folderName;
-            tvItem.cchTextMax = sizeof(folderName);
-            if (TreeView_GetItem(hTree, &tvItem))
-            {
-                //Have we selected a root bookmark item?
-                if (!TreeView_GetParent(hTree, hFolder))
-                    folderName[0] = '\0';
+    // First get the selected item
+    hItem = TreeView_GetSelection(hTree);
+    if (!hItem)
+        return;
 
-                //Get the selected item text (which is the bookmark name)
-                tvItem.hItem = hItem;
-                tvItem.mask = TVIF_TEXT | TVIF_PARAM | TVIF_HANDLE;
-                tvItem.pszText = itemName;
-                tvItem.cchTextMax = sizeof(itemName);
-                if (TreeView_GetItem(hTree, &tvItem))
-                {
-                    //tvItem.lParam == 1 if this is a folder we are trying to delete
-                    if (tvItem.lParam == 1)
-                    {
-                        //Rename folder and update children
-                        tvItem.hItem = hItem;
-                        tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-                        tvItem.pszText = newName;
-                        if (TreeView_SetItem(hTree, &tvItem))
-                        {
-                            //Rename folder item in favorites, and update children
-                            iter = favorites->begin();
-                            while (iter != favorites->end())
-                            {
-                                if ((*iter)->name == itemName)
-                                    (*iter)->name = newName;
-                                else if ((*iter)->parentFolder == itemName)
-                                    (*iter)->parentFolder = newName;
-
-                                iter++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //Rename the corresponding item in Favorites
-                        iter = favorites->begin();
-                        while (iter != favorites->end())
-                        {
-                            if ((*iter)->name == itemName && (*iter)->parentFolder == folderName)
-                            {
-                                //Rename the tree item
-                                tvItem.hItem = hItem;
-                                tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-                                tvItem.pszText = newName;
-                                if (TreeView_SetItem(hTree, &tvItem))
-                                    (*iter)->name = newName;
-
-                                break;
-                            }
-                            iter++;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
-{
-    FavoritesList* favorites = appCore->getFavorites();
-    FavoritesList::iterator iter;
-    TVITEM tvItem;
-    TVINSERTSTRUCT tvis;
-    HTREEITEM hDragItemFolder, hDropItem;
-    char dragItemName[33], dragItemFolderName[33];
-    char dropFolderName[33];
-    bool bMovedInTree = false;
-
-    //First get the target folder name
-    tvItem.hItem = hDropTargetItem;
+    // Get the item text 
+    tvItem.hItem = hItem;
     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-    tvItem.pszText = dropFolderName;
-    tvItem.cchTextMax = sizeof(dropFolderName);
-    if (TreeView_GetItem(hTree, &tvItem))
+    tvItem.pszText = itemName;
+    tvItem.cchTextMax = sizeof(itemName);
+    if (!TreeView_GetItem(hTree, &tvItem))
+        return;
+
+    FavoritesEntry* fav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
+    if (fav == NULL)
+        return;
+    
+    tvItem.hItem = hItem;
+    tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+    tvItem.pszText = newName;
+    if (!TreeView_SetItem(hTree, &tvItem))
+        return;
+
+    string oldName = fav->name;
+    fav->name = newName;
+
+    if (fav->isFolder)
     {
-        if (!TreeView_GetParent(hTree, hDropTargetItem))
-            dropFolderName[0] = '\0';
-
-        //First get the dragged item text
-        tvItem.hItem = hDragItem;
-        tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-        tvItem.pszText = dragItemName;
-        tvItem.cchTextMax = sizeof(dragItemName);
-        if (TreeView_GetItem(hTree, &tvItem))
-        {
-            //Get the dragged item folder
-            if (hDragItemFolder = TreeView_GetParent(hTree, hDragItem))
-            {
-                tvItem.hItem = hDragItemFolder;
-                tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-                tvItem.pszText = dragItemFolderName;
-                tvItem.cchTextMax = sizeof(dragItemFolderName);
-                if (TreeView_GetItem(hTree, &tvItem))
-                {
-                    if (!TreeView_GetParent(hTree, hDragItemFolder))
-                        dragItemFolderName[0] = '\0';
-
-                    //Make sure drag and target folders are different
-                    if (strcmp(dragItemFolderName, dropFolderName))
-                    {
-                        // Delete tree item from source bookmark
-                        if (TreeView_DeleteItem(hTree, hDragItem))
-                        {
-                            // Add item to dest bookmark
-                            tvis.hParent = hDropTargetItem;
-                            tvis.hInsertAfter = TVI_LAST;
-                            tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-                            tvis.item.pszText = dragItemName;
-                            tvis.item.lParam = 0; //1 for folders, 0 for items.
-                            tvis.item.iImage = 3;
-                            tvis.item.iSelectedImage = 3;
-                            if (hDropItem = TreeView_InsertItem(hTree, &tvis))
-                            {
-                                TreeView_Expand(hTree, hDropTargetItem, TVE_EXPAND);
-                                
-                                //Make the dropped item selected
-                                TreeView_SelectItem(hTree, hDropItem);
-
-                                bMovedInTree = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    //Now perform the move in Favorites
-    if(bMovedInTree)
-    {
-        // Locate item with name == dragItemName and parentFolder == dragItemFolderName
-        iter = favorites->begin();
+        FavoritesList::iterator iter = favorites->begin();
         while (iter != favorites->end())
         {
-            if ((*iter)->name == dragItemName && (*iter)->parentFolder == dragItemFolderName)
-            {
-                FavoritesList::iterator subIter;
-
-                FavoritesEntry* fav = new FavoritesEntry();
-                fav->name = dragItemName;
-                fav->parentFolder = dropFolderName;
-                fav->jd = (*iter)->jd;
-                fav->position = (*iter)->position;
-                fav->orientation = (*iter)->orientation;
-                fav->isFolder = false;
-                fav->selectionName = (*iter)->selectionName;
-                fav->coordSys = (*iter)->coordSys;
-
-                // Locate position to insert moved item
-                if (dropFolderName[0] != '\0')
-                {
-                    subIter = favorites->begin();
-                    while (subIter != favorites->end())
-                    {
-                        if ((*subIter)->isFolder && (*subIter)->name == dropFolderName)
-                        {
-                            //To insert new item at end of folder menu, we have to iterate
-                            //to the one item past the last item in the folder.
-                            //vector::insert() inserts item before specified iterator.
-                            subIter++;
-                            while (subIter != favorites->end() && !((*subIter)->isFolder) &&
-                                  (*subIter)->parentFolder != "")
-                                  subIter++;
-
-                            // Insert new bookmark at position in iterator
-                            favorites->insert(subIter, fav);
-                            break;
-                        }
-
-                        subIter++;
-                    }
-
-                    //vector::insert() likely has moved item iter was pointing at
-                    iter = favorites->begin();
-                    while (iter != favorites->end())
-                    {
-                        if ((*iter)->name == dragItemName && (*iter)->parentFolder == dragItemFolderName)
-                        {
-                            // Delete item from favorites.
-                            favorites->erase(iter);
-                            break;
-                        }
-
-                        iter++;
-                    }
-                }
-                else
-                {
-                    // Just append item to end for root folders
-                    favorites->insert(favorites->end(), fav);
-
-                    // Delete item from favorites.
-                    favorites->erase(iter);
-                }
-
-                break;
-            }
-
+            if ((*iter)->parentFolder == oldName)
+                (*iter)->parentFolder = newName;
             iter++;
         }
     }
 }
 
+
+void MoveBookmarkInFavorites(HWND hTree, CelestiaCore* appCore)
+{
+    FavoritesList* favorites = appCore->getFavorites();
+    TVITEM tvItem;
+    TVINSERTSTRUCT tvis;
+    HTREEITEM hDragItemFolder, hDropItem;
+    char dragItemName[33];
+    char dragItemFolderName[33];
+    char dropFolderName[33];
+    bool bMovedInTree = false;
+    FavoritesEntry* draggedFav = NULL;
+    FavoritesEntry* dropFolderFav = NULL;
+
+    // First get the target folder name
+    tvItem.hItem = hDropTargetItem;
+    tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+    tvItem.pszText = dropFolderName;
+    tvItem.cchTextMax = sizeof(dropFolderName);
+    if (!TreeView_GetItem(hTree, &tvItem))
+        return;
+
+    if (!TreeView_GetParent(hTree, hDropTargetItem))
+        dropFolderName[0] = '\0';
+
+    // Get the dragged item text
+    tvItem.lParam = NULL;
+    tvItem.hItem = hDragItem;
+    tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+    tvItem.pszText = dragItemName;
+    tvItem.cchTextMax = sizeof(dragItemName);
+    if (TreeView_GetItem(hTree, &tvItem))
+    {
+        draggedFav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
+            
+        // Get the dragged item folder
+        if (hDragItemFolder = TreeView_GetParent(hTree, hDragItem))
+        {
+            tvItem.hItem = hDragItemFolder;
+            tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
+            tvItem.pszText = dragItemFolderName;
+            tvItem.cchTextMax = sizeof(dragItemFolderName);
+            if (TreeView_GetItem(hTree, &tvItem))
+            {
+                if (!TreeView_GetParent(hTree, hDragItemFolder))
+                    dragItemFolderName[0] = '\0';
+
+                // Make sure drag and target folders are different
+                if (strcmp(dragItemFolderName, dropFolderName))
+                {
+                    // Delete tree item from source bookmark
+                    if (TreeView_DeleteItem(hTree, hDragItem))
+                    {
+                        // Add item to dest bookmark
+                        tvis.hParent = hDropTargetItem;
+                        tvis.hInsertAfter = TVI_LAST;
+                        tvis.item.mask = StdItemMask;
+                        tvis.item.pszText = dragItemName;
+                        tvis.item.lParam = reinterpret_cast<LPARAM>(draggedFav);
+                        tvis.item.iImage = 3;
+                        tvis.item.iSelectedImage = 3;
+                        if (hDropItem = TreeView_InsertItem(hTree, &tvis))
+                        {
+                            TreeView_Expand(hTree, hDropTargetItem, TVE_EXPAND);
+                                
+                            // Make the dropped item selected
+                            TreeView_SelectItem(hTree, hDropItem);
+
+                            bMovedInTree = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Now perform the move in favorites
+    if (bMovedInTree && draggedFav != NULL)
+    {
+        draggedFav->parentFolder = dropFolderName;
+    }
+}
+
+
 bool isOrganizeBookmarksDragDropActive()
 {
     return dragging;
 }
+
 
 void OrganizeBookmarksOnBeginDrag(HWND hTree, LPNMTREEVIEW lpnmtv)
 {
@@ -849,6 +758,7 @@ void OrganizeBookmarksOnBeginDrag(HWND hTree, LPNMTREEVIEW lpnmtv)
     dragging = true;
 }
 
+
 void OrganizeBookmarksOnMouseMove(HWND hTree, LONG xCur, LONG yCur)
 {
     TVHITTESTINFO tvht;  // hit test information
@@ -866,17 +776,18 @@ void OrganizeBookmarksOnMouseMove(HWND hTree, LONG xCur, LONG yCur)
         ImageList_DragLeave(hTree);
 
         // Find out if the pointer is on the item. If it is,
-		// highlight the item as a drop target.
+        // highlight the item as a drop target.
         tvht.pt.x = dragPos.x;
         tvht.pt.y = dragPos.y;
         if(hItem = TreeView_HitTest(hTree, &tvht))
         {
-            //Only select folder items for drop targets
+            // Only select folder items for drop targets
             tvItem.hItem = hItem;
             tvItem.mask = TVIF_PARAM | TVIF_HANDLE;
             if (TreeView_GetItem(hTree, &tvItem))
             {
-                if(tvItem.lParam == 1)
+                FavoritesEntry* fav = reinterpret_cast<FavoritesEntry*>(tvItem.lParam);
+                if (fav != NULL && fav->isFolder)
                 {
                     hDropTargetItem = hItem;
                     TreeView_SelectDropTarget(hTree, hDropTargetItem);
@@ -888,6 +799,7 @@ void OrganizeBookmarksOnMouseMove(HWND hTree, LONG xCur, LONG yCur)
     }
 }
 
+
 void OrganizeBookmarksOnLButtonUp(HWND hTree)
 {
     if (dragging)
@@ -898,10 +810,11 @@ void OrganizeBookmarksOnLButtonUp(HWND hTree)
         ShowCursor(TRUE);
         dragging = false;
 
-        //Remove TVIS_DROPHILITED state from drop target item
+        // Remove TVIS_DROPHILITED state from drop target item
         TreeView_SelectDropTarget(hTree, NULL);
     }
 }
+
 
 void DragDropAutoScroll(HWND hTree)
 {
@@ -913,30 +826,31 @@ void DragDropAutoScroll(HWND hTree)
 
     ImageList_DragLeave(hTree);
 
-    //See if we need to scroll.
-    if(dragPos.y > rect.bottom - 10)
+    // See if we need to scroll.
+    if (dragPos.y > rect.bottom - 10)
     {
-        //If we are down towards the bottom but have not scrolled to the last
-        //item, we need to scroll down.
-        if(dragPos.x > rect.left && dragPos.x < rect.right)
+        // If we are down towards the bottom but have not scrolled to the last
+        // item, we need to scroll down.
+        if (dragPos.x > rect.left && dragPos.x < rect.right)
         {
             SendMessage(hTree, WM_VSCROLL, SB_LINEDOWN, 0);
             count = TreeView_GetVisibleCount(hTree);
             hItem = TreeView_GetFirstVisible(hTree);
-            for (i=0; i<count-1; i++)
+            for (i = 0; i < count - 1; i++)
                 hItem = TreeView_GetNextVisible(hTree, hItem);
-            if(hItem)
+
+            if (hItem)
             {
                 hDropTargetItem = hItem;
                 TreeView_SelectDropTarget(hTree, hDropTargetItem);
             }
         }
     }
-    else if(dragPos.y < rect.top + 10)
+    else if (dragPos.y < rect.top + 10)
     {
-        //If we are up towards the top but have not scrolled to the first
-        //item, we need to scroll up.
-        if(dragPos.x > rect.left && dragPos.x < rect.right)
+        // If we are up towards the top but have not scrolled to the first
+        // item, we need to scroll up.
+        if (dragPos.x > rect.left && dragPos.x < rect.right)
         {
             SendMessage(hTree, WM_VSCROLL, SB_LINEUP, 0);
             hItem = TreeView_GetFirstVisible(hTree);
