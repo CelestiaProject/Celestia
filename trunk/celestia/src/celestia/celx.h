@@ -37,10 +37,11 @@ public:
 
     bool createThread();
     int resume();
+    void cleanup();
     bool isAlive() const;
     bool timesliceExpired() const;
 
-    bool charEntered(char c);
+    bool charEntered(const char*);
     double getTime() const;    
 private:
     double timeout;
