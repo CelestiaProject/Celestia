@@ -218,7 +218,7 @@ void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p
     CelListViewItem *i = dynamic_cast<CelListViewItem*>(item);
     QString name = i->getName();
     while ( (i = dynamic_cast<CelListViewItem*>(i->parent())) ) {
-        name = i->text(0) + "/" + i->getName();
+        name = i->getName() + "/" + name;
     }
     Selection sel = appSim->findObjectFromPath(std::string(name.latin1()));
 
