@@ -52,6 +52,7 @@
 
 #include <qdatetime.h>
 #include <kshortcut.h>
+#include <ksplashscreen.h>
 #include <klocale.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
@@ -92,6 +93,12 @@ static uint32 FilterOtherLocations = ~(Location::City |
 
 KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 {
+    QPixmap splash_pixmap(locate("appdata", "celestia-splash.jpg"));
+    KSplashScreen *splash = new KSplashScreen(splash_pixmap);
+    splash->show();
+    
+    splash->message( i18n("Loading..."), Qt::AlignBottom | Qt::AlignAuto, QColor(255,255,255) );
+    
     appCore=new CelestiaCore();
     if (appCore == NULL)
     {
@@ -139,6 +146,8 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     if (toolBar()->isHidden()) toggleToolbar->setChecked(false);
     if (menuBar()->isHidden()) toggleMenubar->setChecked(false);
 
+    splash->finish(this);
+    delete splash;
     
     // We use a timer with a null timeout value
     // to add appCore->tick to Qt's event loop
@@ -636,6 +645,7 @@ bool KdeApp::queryExit() {
     saveWindowSize(conf);
     conf->setGroup("Preferences");
     conf->writeEntry("RendererFlags", appCore->getRenderer()->getRenderFlags());
+    conf->writeEntry("OrbitMask", appCore->getRenderer()->getOrbitMask());
     conf->writeEntry("LabelMode", appCore->getRenderer()->getLabelMode());
     conf->writeEntry("AmbientLightLevel", appCore->getRenderer()->getAmbientLightLevel());
     conf->writeEntry("FaintestVisible", appCore->getSimulation()->getFaintestVisible());
