@@ -41,6 +41,11 @@ using namespace std;
 
 static const int DragThreshold = 3;
 
+//Perhaps you'll want to put this stuff in configuration file.
+static const float fIncrementFactor = 2.0f;
+static const double fMinSlewRate = 3.0;
+static const double fMaxKeyAccel = 20.0;
+static const float fAltitudeThreshold = 4.0f;
 
 static void warning(string s)
 {
@@ -114,7 +119,8 @@ CelestiaCore::CelestiaCore() :
     paused(false),
     contextMenuCallback(NULL),
     logoTexture(NULL),
-    alerter(NULL)
+    alerter(NULL),
+    KeyAccel(1.0)
 {
     execEnv = new CoreExecutionEnvironment(*this);
     for (int i = 0; i < KeyCount; i++)
@@ -328,13 +334,25 @@ void CelestiaCore::keyDown(int key)
     case Key_F7:
         sim->setTargetSpeed(1);
         break;
+    case Key_NumPad2:
+    case Key_NumPad4:
+    case Key_NumPad6:
+    case Key_NumPad7:
+    case Key_NumPad8:
+    case Key_NumPad9:
+        sim->setTargetSpeed(sim->getTargetSpeed());
+        break;
     }
+
+    if(KeyAccel < fMaxKeyAccel)
+        KeyAccel *= 1.1;
 
     keysPressed[key] = true;
 }
 
 void CelestiaCore::keyUp(int key)
 {
+    KeyAccel = 1.0;
     keysPressed[key] = false;
 }
 
@@ -372,10 +390,10 @@ void CelestiaCore::charEntered(char c)
         if (sim->getTargetSpeed() == 0)
             sim->setTargetSpeed(0.000001f);
         else
-            sim->setTargetSpeed(sim->getTargetSpeed() * 10.0f);
+            sim->setTargetSpeed(sim->getTargetSpeed() * fIncrementFactor);
         break;
     case 'Z':
-        sim->setTargetSpeed(sim->getTargetSpeed() * 0.1f);
+        sim->setTargetSpeed(sim->getTargetSpeed() / fIncrementFactor);
         break;
 
     case 'S':
@@ -429,11 +447,11 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'K':
-        sim->setTimeScale(0.1 * sim->getTimeScale());
+        sim->setTimeScale(sim->getTimeScale() / fIncrementFactor);
         break;
 
     case 'L':
-        sim->setTimeScale(10.0 * sim->getTimeScale());
+        sim->setTimeScale(sim->getTimeScale() * fIncrementFactor);
         break;
 
     case 'J':
@@ -645,6 +663,19 @@ void CelestiaCore::tick(double dt)
         q.xrotate((float) dt * 2);
     if (keysPressed[Key_Up])
         q.xrotate((float) dt * -2);
+
+    if(keysPressed[Key_NumPad4])
+      q.yrotate((float)degToRad(dt * -fMinSlewRate * KeyAccel));
+    if(keysPressed[Key_NumPad6])
+      q.yrotate((float)degToRad(dt * fMinSlewRate * KeyAccel));
+    if(keysPressed[Key_NumPad2])
+      q.xrotate((float)degToRad(dt * -fMinSlewRate * KeyAccel));
+    if(keysPressed[Key_NumPad8])
+      q.xrotate((float)degToRad(dt * fMinSlewRate * KeyAccel));
+    if(keysPressed[Key_NumPad7])
+      q.zrotate((float)degToRad(dt * -fMinSlewRate * KeyAccel));
+    if(keysPressed[Key_NumPad9])
+      q.zrotate((float)degToRad(dt * fMinSlewRate * KeyAccel));
     sim->rotate(q);
 
     // If there's a script running, tick it
@@ -709,7 +740,6 @@ void CelestiaCore::showText(string s)
     messageText = s;
 }
 
-
 static void displayDistance(Overlay& overlay, double distance)
 {
     if (distance >= astro::AUtoLightYears(1000.0f))
@@ -760,14 +790,29 @@ static void displayPlanetInfo(Overlay& overlay,
                               double distance)
 {
     overlay << body.getName() << '\n';
-    overlay << "Distance: ";
+
+    //If within fAltitudeThreshold radii of planet, show altitude instead of distance
+    double kmDistance = astro::lightYearsToKilometers(distance);
+    if((kmDistance < (fAltitudeThreshold * body.getRadius())) && (kmDistance > body.getRadius()))
+    {
+        kmDistance -= body.getRadius();
+        overlay << "Altitude: ";
+        distance = astro::kilometersToLightYears(kmDistance);
+        displayDistance(overlay, distance);
+        overlay << '\n';
+    }
+    else
+    {
+        overlay << "Distance: ";
+        displayDistance(overlay, distance);
+        overlay << '\n';
+    }
+
+    overlay << "Radius: ";
+    distance = astro::kilometersToLightYears(body.getRadius());
     displayDistance(overlay, distance);
     overlay << '\n';
-    overlay << "Radius: ";
-    if (body.getRadius() < 1.0f)
-        overlay << body.getRadius() * 1000.0f << " m\n";
-    else
-        overlay << body.getRadius() << " km\n";
+
     overlay << "Day length: " << body.getRotationPeriod() * 24.0 << " hours\n";
 }
 
@@ -842,8 +887,10 @@ void CelestiaCore::renderOverlay()
             *overlay << astro::lightYearsToKilometers(speed) * 1000.0f << " m/s";
         else if (speed < astro::kilometersToLightYears(10000.0f))
             *overlay << astro::lightYearsToKilometers(speed) << " km/s";
-        else if (speed < astro::kilometersToLightYears((float) astro::speedOfLight * 1000000.0f))
+        else if (speed < astro::kilometersToLightYears((float) astro::speedOfLight * 100.0f))
             *overlay << astro::lightYearsToKilometers(speed) / astro::speedOfLight << 'c';
+        else if (speed < astro::AUtoLightYears(1000.0f))
+            *overlay << astro::lightYearsToAU(speed) << " AU/s";
         else
             *overlay << speed << " ly/s";
         *overlay << setprecision(3);
@@ -1268,3 +1315,4 @@ void CelestiaCore::setTimeZoneBias(int bias)
 {
     timeZoneBias = bias;
 }
+

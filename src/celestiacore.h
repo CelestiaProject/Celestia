@@ -35,27 +35,38 @@ class CelestiaCore
     };
 
     enum {
-        Key_Left     =  1,
-        Key_Right    =  2,
-        Key_Up       =  3,
-        Key_Down     =  4,
-        Key_Home     =  5,
-        Key_End      =  6,
-        Key_PageUp   =  7,
-        Key_PageDown =  8,
-        Key_Insert   =  9,
-        Key_Delete   = 10,
-        Key_F1       = 11,
-        Key_F2       = 12,
-        Key_F3       = 13,
-        Key_F4       = 14,
-        Key_F5       = 15,
-        Key_F6       = 16,
-        Key_F7       = 17,
-        Key_F8       = 18,
-        Key_F9       = 19,
-        Key_F10      = 20,
-        KeyCount     = 21,
+        Key_Left            =  1,
+        Key_Right           =  2,
+        Key_Up              =  3,
+        Key_Down            =  4,
+        Key_Home            =  5,
+        Key_End             =  6,
+        Key_PageUp          =  7,
+        Key_PageDown        =  8,
+        Key_Insert          =  9,
+        Key_Delete          = 10,
+        Key_F1              = 11,
+        Key_F2              = 12,
+        Key_F3              = 13,
+        Key_F4              = 14,
+        Key_F5              = 15,
+        Key_F6              = 16,
+        Key_F7              = 17,
+        Key_F8              = 18,
+        Key_F9              = 19,
+        Key_F10             = 20,
+        Key_NumPadDecimal   = 21,
+        Key_NumPad0         = 22,
+        Key_NumPad1         = 23,
+        Key_NumPad2         = 24,
+        Key_NumPad3         = 25,
+        Key_NumPad4         = 26,
+        Key_NumPad5         = 27,
+        Key_NumPad6         = 28,
+        Key_NumPad7         = 29,
+        Key_NumPad8         = 30,
+        Key_NumPad9         = 31,
+        KeyCount            = 32,
     };
 
     typedef void (*ContextMenuFunc)(float, float, Selection);
@@ -159,6 +170,7 @@ class CelestiaCore
     bool paused;
 
     bool keysPressed[KeyCount];
+    double KeyAccel;
 
     ContextMenuFunc contextMenuCallback;
 
