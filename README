@@ -1,6 +1,6 @@
 Celestia:  A real-time visual space simulation
 
-Copyright (C) 2001-2002, Chris Laurel <claurel@shatters.net>
+Copyright (C) 2001-2004, Chris Laurel <claurel@shatters.net>
 
 --
 
@@ -381,8 +381,10 @@ occultations of Pluto and Charon.
 
 Venus's clouds and the textures for Io, Europa, Ganymede, Callisto and 
 Saturn are from Björn Jónsson. His site at http://www.mmedia.is/~bjj/ 
-is an excellent resource for solar system rendering. Saturn's rings are 
-by Jens Meyer, and Venus's surface is a copyright-free NASA image.
+is an excellent resource for solar system rendering. Saturn's rings were
+built by Grant Hutchison from early Cassini imaging, and stellar transit 
+data obtained from http://pds-rings.arc.nasa.gov/ringocc/ringocc.html
+Venus's surface is a copyright-free NASA image.
 
 The Earth texture was created by NASA using data from the MODIS instrument
 aboard the Terra satellite.  Further information is available from
