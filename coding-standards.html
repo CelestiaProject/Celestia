@@ -1,0 +1,315 @@
+<html>
+<head><title>Celestia Coding Standards</title>
+<style type="text/css">
+<!--
+* {
+font-size: 12;
+font-family: Tahoma, Arial, Helvetica, Sans-serif;
+color: black;
+}
+
+.documenttitle {
+font-size: 24;
+font-weight: bold;
+}
+
+.sectiontitle {
+font-size: 16;
+font-weight: bold;
+}
+
+.subsectiontitle {
+font-weight: bold;
+}
+
+.mailaddr {
+font-size: 12;
+font-style: italic;
+}
+
+.newsdate {
+font-style: italic;
+color: #909090
+}
+
+.newsheadline {
+font-weight: bold;
+color: #d09040;
+}
+
+A:link { color: #5050cc }
+A:hover { color: #a0a0ff }
+A:active { color: #ffffff }
+A:visited { color: #4040bb }
+
+PRE
+{
+background-color: #dddddd;
+font-family: Courier;
+}
+
+BODY
+{
+background-color: white;
+}
+-->
+</style>
+</head>
+<body>
+<p>
+<span class="documenttitle">Celestia Coding Standards</span><br>
+I'm not religious about any particular indentation style or naming
+conventions for code, but I do believe that it is very important that
+whatever standards are chosen are used consistently throughout a project.
+This document describes the coding style already in use throughout the
+Celestia code base.  As Celestia grows, there will undoubtedly be
+clarifications, additions, and edits made to this document, and I encourage
+suggestions.  However, no recommendations will be entertained which require
+reformatting or renaming huge chunks of the existing code.  No stylistic
+convention is so inherently superior that it's worth all that hassle.
+</p>
+
+<div>
+<span class="sectiontitle">Files</span><br>
+<p>
+The names of Celestia source files and data files are always lower case.
+Unix is a case-sensitive OS, but Windows is not; using strictly lower case
+filenames reduces confusion.  The extension .cpp should be used for all C++
+sources files.  A process is set up to run nightly and cull all .C, .c++,
+and .cc files from the CVS tree.
+</p>
+<p>
+You should "guard defines" around include files to prevent multiple
+inclusion of headers.  Take care to assure that the guard macros will
+be unique.  The scheme for naming them in Celestia is
+_&lt;subdirectory&gt;_&lt;filename&gt;_H_  Here's an example:
+<blockquote>
+<pre style="code">
+// This header file is star.h in the celengine subdirectory.
+
+#ifndef _CELENGINE_STAR_H_
+#define _CELENGINE_STAR_H_
+
+class Star
+{
+...
+};
+
+#endif // _CELENGINE_STAR_H_
+</pre>
+</blockquote>
+
+Since celengine is a library, it is important include the subdirectory in the
+guard macro name in order to make macro name collisions less likely.
+</pre>
+</blockquote>
+</p>
+</div>
+<br><br>
+<div>
+<span class="sectiontitle">Language</span><br>
+Celestia is unrepentantly a C++ project.  C++ has many language features
+which replace unsafe or awkward constructions in C; use the C++ features
+wherever possible (which should be everywhere except in some cases where
+you need to call functions from external libraries.)
+<p><span class="subsectiontitle">STL</span><br>
+Celestia makes heavy use of the Standard Template Library.  Resist the urge
+to write your own dynamic array or tree classes--you can almost certainly
+use STL's vector or map.  Don't do this in a header:
+<blockquote>
+<pre style="code">
+#include &lt;string&gt;
+
+using namespace std;
+
+extern string foo;
+</pre>
+</blockquote>
+Instead, when referring to an STL class or function in a header,
+prefix it with std.  Implementation modules shouldn't be forced to import
+the entire std namespace just because they include a particular header.
+The right way:
+<blockquote>
+<pre style="code">
+#include &lt;string&gt;
+
+extern std::string foo;
+</pre>
+</blockquote>
+</p>
+<p><span class="subsectiontitle">Strings</span><br>
+Use C++'s string class rather than C-style zero terminated strings.  The
+string class is safer, more convenient, and in many cases, more efficient
+than C strings.  You can always call string::c_str() for a pointer to a
+zero terminated string to pass to external API functions that require one,
+but it's important to keep in mind that c_str() does not allocate a new
+string.  Methods which are declared to accept C++ string parameters can
+also accept C strings, because the string class's string(char*) constructor
+is automatically applied.
+<blockquote>
+<pre style="code">
+void foo(const string& s)
+{
+...
+}
+
+void bar()
+{
+    string text("Test");
+
+    // This will work properly:
+    foo(text);
+
+    // . . . and so will this:
+    foo("Test");
+}
+</pre>
+</blockquote>
+<p><span class="subsectiontitle">Casts</span><br>
+Type casting should be avoided as much as possible.  However, it is still
+occasionally necessary to use it, particularly when calling external API
+functions.  When you do have to cast, favor C++ style casts
+(reinterpret_cast, static_cast, and const_cast) over C casts.  While
+they're a pain to type, they're much easier to notice when browsing the code
+(since casts are the source of so many bugs, it's important that they're
+as obvious as possible.)<br><br>
+<blockquote>
+<pre style="code">
+UINT CALLBACK DialogProc(HWND hDlg, UINT message,
+                         WPARAM wParam, LPARAM lParam)
+{
+   HWND hwnd;
+
+   // Bad cast
+   hwnd = (HWND) lParam;
+
+   // Better cast
+   hwnd = reinterpret_cast&lt;HWND&gt;(lParam);
+}
+</pre>
+</blockquote>
+<br>
+You do not need to bother with C++ style casts when casting between
+numeric types.
+</p>
+<p><span class="subsectiontitle">Const</span><br>
+Use const liberally.  Properly const'd programs are safer.  Const
+declarations act as documentation for developers and hints for the compiler
+to help it produce more efficient code.  All reference parameters to a
+function should be declared const unless they are intended to be modified
+by the function.  Make a point of declaring const any method which does not
+modify class members.  When iterating through the members of a container,
+use const_iterator instead of iterator unless you intend to modify the
+elements of the container.
+</p>
+<p><span class="subsectiontitle">Reference Parameters</span><br>
+Favor passing parameters as references to passing them as pointers.  If it is
+not expected that the value of the parameter will ever be NULL, you should
+certainly use a reference instead of a pointer.  The current Celestia code
+isn't as consistent about pointers vs. references as it should be.
+</p>
+<p><span class="subsectiontitle">I/O</span><br>
+While C++ I/O is usually preferred, C style I/O with printf/scanf is also
+also acceptable.  In many cases, printf is simply more convenient and
+produces much more readable code than C++'s operator overloading based I/O.
+The gets function from the C standard library should never, ever be used.
+It's unsafe, and gets related buffer overflows have been the source of
+many security holes.
+</p>
+</div>
+<br>
+<div>
+<span class="sectiontitle">Indentation</span><br>
+<ul>
+<li>Always set your editor to use spaces for indentation.  Text editors
+interpret tabs in various incompatible ways, but a space is always a space.
+<li>The bodies of functions, compound statements, and class definitions
+should be indented four spaces.
+<li>The braces around a function or compound statement should be on lines
+by themselves:
+<pre style="code">
+if (x)
+{
+    cout << "The value of x is: " << x;
+}
+</pre>
+<li>Labels of switch statements are not indented, but the body is:
+<pre style="code">
+switch (foo)
+{
+case 1:
+    x = 1;
+    break;
+case 2:
+    x = 4;
+    break;
+default:
+    x = 0;
+    break;
+}
+</pre>
+<li>Access control labels are indented one space:
+<pre style="code">
+class Foo
+{
+ public:
+    Foo();
+ private:
+    int x;
+};
+</pre>
+</ul>
+</div>
+<br>
+<div>
+<span class="sectiontitle">Naming</span>
+<ul>
+<li>Use capitalization not underscores to separate words in class and
+variable names.
+<li>Class names should start with a capital letter.  The first letter of each
+word within the class name should also be capitalized.  Class names should
+not be prefixed with a C.
+<pre style="code">
+// Celestia class names
+class Renderer;
+class UniversalCoord;
+
+// Not Celestia class names:
+class RENDERER;
+class renderer;
+class Universal_Coord;
+class CUniversalCoord;
+</pre>
+<li>Method names are written using the class name conventions except with
+the first letter in lower case.
+<pre style="code">
+// Celestia method names
+void render();
+int getValue();
+void setAbsoluteMagnitude(float);
+
+// Not Celestia method names:
+void Render();
+int get_value();
+void Set_Absolute_Magnitude(float);
+</pre>
+<li>Functions both static and global use the class name conventions.
+<li>Enum values also use the class name conventions.
+<li>Macros should be all caps, with words separated by underscores.
+<pre style="code">
+// Celestia macros
+#define INFINITE_MOUSE
+#define BROKEN_SSTREAM
+
+// Not Celestia macros
+#define InfiniteMouse
+#define INFINITEMOUSE
+#define broken_sstream
+</pre>
+<li>Variable names do not contain type information, i.e. Hungarian and other
+type-based naming conventions are not used.  There are a few important 
+exceptions.  Convenience typedefs for class templates in Celestia's vector
+math library do contain type informations.  For example,
+Vector3&lt;float&gt; is Vec3f and Matrix4&lt;double&gt; is Mat4d.
+</body>
+</html>
