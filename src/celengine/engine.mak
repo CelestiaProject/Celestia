@@ -37,6 +37,7 @@ OBJS=\
 	$(INTDIR)\galaxy.obj \
 	$(INTDIR)\glcontext.obj \
 	$(INTDIR)\glext.obj \
+	$(INTDIR)\glshader.obj \
 	$(INTDIR)\image.obj \
 	$(INTDIR)\jpleph.obj \
 	$(INTDIR)\location.obj \
@@ -60,6 +61,7 @@ OBJS=\
 	$(INTDIR)\rendcontext.obj \
 	$(INTDIR)\samporbit.obj \
 	$(INTDIR)\selection.obj \
+	$(INTDIR)\shadermanager.obj \
 	$(INTDIR)\simulation.obj \
 	$(INTDIR)\solarsys.obj \
 	$(INTDIR)\spheremesh.obj \

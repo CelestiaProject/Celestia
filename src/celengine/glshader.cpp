@@ -68,18 +68,18 @@ GLShader::~GLShader()
 
 //************* GLxxxProperty **********
 
-FloatShaderProperty::FloatShaderProperty() :
+FloatShaderParameter::FloatShaderParameter() :
     slot(-1)
 {
 }
 
-FloatShaderProperty::FloatShaderProperty(int obj, const char* name)
+FloatShaderParameter::FloatShaderParameter(int obj, const char* name)
 {
     slot = glx::glGetUniformLocationARB(obj, name);
 }
 
-FloatShaderProperty&
-FloatShaderProperty::operator=(float f)
+FloatShaderParameter&
+FloatShaderParameter::operator=(float f)
 {
     if (slot != -1)
         glx::glUniform1fARB(slot, f);
@@ -87,26 +87,26 @@ FloatShaderProperty::operator=(float f)
 }
 
 
-Vec3ShaderProperty::Vec3ShaderProperty() :
+Vec3ShaderParameter::Vec3ShaderParameter() :
     slot(-1)
 {
 }
 
-Vec3ShaderProperty::Vec3ShaderProperty(int obj, const char* name)
+Vec3ShaderParameter::Vec3ShaderParameter(int obj, const char* name)
 {
     slot = glx::glGetUniformLocationARB(obj, name);
 }
 
-Vec3ShaderProperty&
-Vec3ShaderProperty::operator=(const Vec3f& v)
+Vec3ShaderParameter&
+Vec3ShaderParameter::operator=(const Vec3f& v)
 {
     if (slot != -1)
         glx::glUniform3fARB(slot, v.x, v.y, v.z);
     return *this;
 }
 
-Vec3ShaderProperty&
-Vec3ShaderProperty::operator=(const Point3f& p)
+Vec3ShaderParameter&
+Vec3ShaderParameter::operator=(const Point3f& p)
 {
     if (slot != -1)
         glx::glUniform3fARB(slot, p.x, p.y, p.z);
@@ -114,18 +114,18 @@ Vec3ShaderProperty::operator=(const Point3f& p)
 }
 
 
-Vec4ShaderProperty::Vec4ShaderProperty() :
+Vec4ShaderParameter::Vec4ShaderParameter() :
     slot(-1)
 {
 }
 
-Vec4ShaderProperty::Vec4ShaderProperty(int obj, const char* name)
+Vec4ShaderParameter::Vec4ShaderParameter(int obj, const char* name)
 {
     slot = glx::glGetUniformLocationARB(obj, name);
 }
 
-Vec4ShaderProperty&
-Vec4ShaderProperty::operator=(const Vec4f& v)
+Vec4ShaderParameter&
+Vec4ShaderParameter::operator=(const Vec4f& v)
 {
     if (slot != -1)
         glx::glUniform4fARB(slot, v.x, v.y, v.z, v.w);
@@ -170,7 +170,11 @@ GLProgram::link()
     glx::glGetObjectParameterivARB(id, GL_OBJECT_LINK_STATUS_ARB,
                                    &linkSuccess);
     if (linkSuccess == GL_FALSE)
+    {
+        cout << "Error linking shader program:\n";
+        cout << GetInfoLog(getID());
         return ShaderStatus_LinkError;
+    }
 
     return ShaderStatus_OK;
 }
@@ -261,14 +265,6 @@ GLShaderLoader::CreateProgram(const GLVertexShader& vs,
 
     prog->attach(vs);
     prog->attach(fs);
-
-    GLShaderStatus status = prog->link();
-    if (status != ShaderStatus_OK)
-    {
-        cout << "Error linking shader program:\n";
-        cout << GetInfoLog(prog->getID());
-        return status;
-    }
 
     *progOut = prog;
 
