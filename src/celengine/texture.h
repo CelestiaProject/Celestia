@@ -12,6 +12,7 @@
 
 #include <string>
 #include <celutil/basictypes.h>
+#include <celutil/color.h>
 
 
 typedef void (*ProceduralTexEval)(float, float, float, unsigned char*);
@@ -38,6 +39,7 @@ class Texture
         NoMipMaps        = 0x4,
         AutoMipMaps      = 0x8,
         AllowSplitting   = 0x10,
+        BorderClamp      = 0x20,
     };
 
     void bindName(uint32 flags = 0);
@@ -56,6 +58,7 @@ class Texture
     int getVSubtextures() const;
 
     void setMaxMipMapLevel(int);
+    void setBorderColor(Color);
 
     enum {
         ColorChannel = 1,
@@ -82,6 +85,8 @@ class Texture
     int uSplit;
     int vSplit;
     unsigned int* glNames;
+
+    Color borderColor;
 };
 
 

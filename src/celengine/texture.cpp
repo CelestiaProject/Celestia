@@ -109,6 +109,7 @@ typedef struct
 static bool initialized = false;
 static bool compressionSupported = false;
 static bool clampToEdgeSupported = false;
+static bool clampToBorderSupported = false;
 static bool autoMipMapSupported = false;
 static bool maxLevelSupported = false;
 static GLint maxTextureSize = 0;
@@ -148,6 +149,7 @@ static void initTextureLoader()
 #else
     clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
 #endif // GL_VERSION_1_2
+    clampToBorderSupported = ExtensionSupported("GL_ARB_texture_border_clamp");
     autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
     maxLevelSupported = testMaxLevel();
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
@@ -319,8 +321,19 @@ void Texture::bindName(uint32 flags)
 
     // If we're not wrapping, use GL_CLAMP_TO_EDGE if it's available; we want
     // to ignore the border color.
-    GLenum wrapMode = wrap ? GL_REPEAT :
-        (clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP);
+    GLenum wrapMode = GL_REPEAT;
+    if (!wrap)
+    {
+        if ((flags & BorderClamp) != 0 && clampToBorderSupported)
+        {
+            wrapMode = GL_CLAMP_TO_BORDER_ARB;
+        }
+        else
+        {
+            wrapMode = clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP;
+        }
+    }
+
     if (cubeMap)
     {
         textureType = GL_TEXTURE_CUBE_MAP_EXT;
@@ -481,6 +494,12 @@ void Texture::bindName(uint32 flags)
             glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER,
                             mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+            if (wrapMode == GL_CLAMP_TO_BORDER_ARB)
+            {
+                float bc[4] = { borderColor.red(), borderColor.green(),
+                                borderColor.blue(), borderColor.alpha() };
+                glTexParameterfv(textureType, GL_TEXTURE_BORDER_COLOR, bc);
+            }
             
             if (automipmap)
                 glTexParameteri(textureType, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
@@ -642,6 +661,12 @@ int Texture::getVSubtextures() const
 void Texture::setMaxMipMapLevel(int level)
 {
     maxMipMapLevel = level;
+}
+
+
+void Texture::setBorderColor(Color c)
+{
+    borderColor = c;
 }
 
 
