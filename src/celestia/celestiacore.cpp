@@ -64,7 +64,7 @@ static float KeyRotationAccel = degToRad(120.0f);
 static float MouseRotationSensitivity = degToRad(1.0f);
 
 static const int ConsolePageRows = 10;
-static Console console(100, 120);
+static Console console(200, 120);
 
 
 static void warning(string s)
@@ -242,7 +242,7 @@ bool View::walkTreeResizeDelta(View* v, float delta, bool check)
         newSize = v->height * ratio;
         if (newSize <= .1) return false;
         if (check) return true;
-        v->height = newSize;
+        v->height = (float) newSize;
         if (sign == 1)
         {
             v->y = p->y + (v->y - p->y) * ratio;
@@ -258,7 +258,7 @@ bool View::walkTreeResizeDelta(View* v, float delta, bool check)
         newSize = v->width * ratio;
         if (newSize <= .1) return false;
         if (check) return true;
-        v->width = newSize;
+        v->width = (float) newSize;
         if (sign == 1)
         {
             v->x = p->x + (v->x - p->x) * ratio;
@@ -2561,40 +2561,23 @@ static void displayAcronym(Overlay& overlay, char* s)
 }
 
 
-static void displayStarNames(Overlay& overlay,
-                             Star& star,
-                             StarDatabase& starDB,
-                             int maxNames = 10)
+static void displayStarName(Overlay& overlay,
+                            Star& star,
+                            StarDatabase& starDB)
 {
     StarNameDatabase::NumberIndex::const_iterator iter =
         starDB.getStarNames(star.getCatalogNumber());
 
-    int count = 0;
-    while (iter != starDB.finalName() &&
-           iter->first == star.getCatalogNumber() &&
-           count < maxNames)
+    if (iter != starDB.finalName() &&
+        iter->first == star.getCatalogNumber())
     {
-        if (count != 0)
-            overlay << " / ";
-        
         overlay << ReplaceGreekLetterAbbr(iter->second);
-        iter++;
-        count++;
+        return;
     }
 
-    uint32 hd = star.getCatalogNumber(Star::HDCatalog);
-    uint32 hip = star.getCatalogNumber(Star::HIPCatalog);
-    if (hd != Star::InvalidCatalogNumber && hd != 0 && count < maxNames)
+    uint32 hip = star.getCatalogNumber();
+    if (hip != Star::InvalidCatalogNumber && hip != 0)
     {
-        if (count != 0)
-            overlay << " / ";
-        overlay << "HD " << hd;
-        count++;
-    }
-    if (hip != Star::InvalidCatalogNumber && hip != 0 && count < maxNames)
-    {
-        if (count != 0)
-            overlay << " / ";
         if (hip >= 1000000)
         {
             uint32 tyc3 = hip / 1000000000;
@@ -2605,9 +2588,80 @@ static void displayStarNames(Overlay& overlay,
             overlay << "TYC " << tyc1 << '-' << tyc2 << '-' << tyc3;
         }
         else
+        {
             overlay << "HIP " << hip;
+        }
+    }
+}
+
+
+static string starNameList(Star& star,
+                           StarDatabase& starDB,
+                           int maxNames = 10)
+{
+    string starNames;
+    char numString[32];
+
+    StarNameDatabase::NumberIndex::const_iterator iter =
+        starDB.getStarNames(star.getCatalogNumber());
+
+    int count = 0;
+    while (iter != starDB.finalName() &&
+           iter->first == star.getCatalogNumber() &&
+           count < maxNames)
+    {
+        if (count != 0)
+            starNames += " / ";
+        
+        starNames += ReplaceGreekLetterAbbr(iter->second);
+        iter++;
         count++;
     }
+
+    uint32 hip = star.getCatalogNumber();
+    if (hip != Star::InvalidCatalogNumber && hip != 0 && count < maxNames)
+    {
+        if (count != 0)
+            starNames += " / ";
+        if (hip >= 1000000)
+        {
+            uint32 tyc3 = hip / 1000000000;
+            hip -= tyc3 * 1000000000;
+            uint32 tyc2 = hip / 10000;
+            hip -= tyc2 * 10000;
+            uint32 tyc1 = hip;
+            sprintf(numString, "TYC %u-%u-%u", tyc1, tyc2, tyc3);
+            starNames += numString;
+        }
+        else
+        {
+            sprintf(numString, "HIP %u", hip);
+            starNames += numString;
+        }
+
+        count++;
+    }
+
+    uint32 hd = starDB.crossIndex(StarDatabase::HenryDraper, hip);
+    if (count < maxNames && hd != Star::InvalidCatalogNumber)
+    {
+        if (count != 0)
+            starNames += " / ";
+        sprintf(numString, "HD %u", hd);
+        starNames += numString;
+    }
+
+    uint32 sao = starDB.crossIndex(StarDatabase::SAO, hip);
+    if (count < maxNames && sao != Star::InvalidCatalogNumber)
+    {
+        if (count != 0)
+            starNames += " / ";
+        sprintf(numString, "SAO %u", sao);
+        starNames += numString;
+    }
+
+
+    return starNames;
 }
 
 
@@ -2793,7 +2847,7 @@ static void displaySelectionName(Overlay& overlay,
         overlay << sel.deepsky()->getName();
         break;
     case Selection::Type_Star:
-        displayStarNames(overlay, *(sel.star()), *univ.getStarCatalog(), 1);
+        displayStarName(overlay, *(sel.star()), *univ.getStarCatalog());
         break;
     case Selection::Type_Location:
         overlay << sel.location()->getName();
@@ -3085,10 +3139,15 @@ void CelestiaCore::renderOverlay()
         {
         case Selection::Type_Star:
             {
+                if (sel != lastSelection)
+                {
+                    lastSelection = sel;
+                    selectionNames = starNameList(*(sel.star()),
+                                                  *(sim->getUniverse()->getStarCatalog()));
+                }
+
                 overlay->setFont(titleFont);
-                displayStarNames(*overlay,
-                                 *(sel.star()),
-                                 *(sim->getUniverse()->getStarCatalog()));
+                *overlay << selectionNames;
                 overlay->setFont(font);
                 *overlay << '\n';
                 displayStarInfo(*overlay,
@@ -3730,6 +3789,24 @@ bool CelestiaCore::initRenderer()
 }
 
 
+static void loadCrossIndex(StarDatabase* starDB,
+                           StarDatabase::Catalog catalog,
+                           const string& filename)
+{
+    if (!filename.empty())
+    {
+        ifstream xrefFile(filename.c_str(), ios::in | ios::binary);
+        if (xrefFile.good())
+        {
+            if (!starDB->loadCrossIndex(catalog, xrefFile))
+                cerr << "Error reading cross index " << filename << '\n';
+            else
+                clog << "Loaded cross index " << filename << '\n';
+        }
+    }
+}
+
+
 bool CelestiaCore::readStars(const CelestiaConfig& cfg)
 {
     ifstream starNamesFile(cfg.starNamesFile.c_str(), ios::in);
@@ -3766,6 +3843,10 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
     }
 
     starDB->setNameDatabase(starNameDB);
+
+    loadCrossIndex(starDB, StarDatabase::HenryDraper, cfg.HDCrossIndexFile);
+    loadCrossIndex(starDB, StarDatabase::SAO,         cfg.SAOCrossIndexFile);
+    loadCrossIndex(starDB, StarDatabase::Gliese,      cfg.GlieseCrossIndexFile);
 
     // Now, read supplemental star files from the extras directories
     for (vector<string>::const_iterator iter = config->extrasDirs.begin();

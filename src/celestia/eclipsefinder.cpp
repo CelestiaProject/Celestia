@@ -127,8 +127,7 @@ int EclipseFinder::CalculateEclipses()
         delete eclipse;
         return 1;
     }
-    else if ((sys->getStar()->getCatalogNumber(0) != 0) 
-          && (sys->getStar()->getCatalogNumber(1) != 0))
+    else if (sys->getStar()->getCatalogNumber() != 0)
     {
         eclipse = new Eclipse(0.);
         eclipse->planete = "None";
