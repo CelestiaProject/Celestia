@@ -149,6 +149,31 @@ void CommandSynchronous::process(ExecutionEnvironment& env)
 
 
 ////////////////
+// Chase command: 
+
+CommandChase::CommandChase()
+{
+}
+
+void CommandChase::process(ExecutionEnvironment& env)
+{
+    env.getSimulation()->chase();
+}
+
+////////////////
+// Lock command:
+
+CommandLock::CommandLock()
+{
+}
+
+void CommandLock::process(ExecutionEnvironment& env)
+{
+    env.getSimulation()->follow();
+}
+
+
+////////////////
 // Cancel command: cancel a follow or goto command
 
 CommandCancel::CommandCancel()
@@ -363,4 +388,20 @@ void CommandSetVisibilityLimit::process(ExecutionEnvironment& env)
         r->setSaturationMagnitude(1.0f);
     }
     env.getSimulation()->setFaintestVisible(magnitude);
+}
+
+
+////////////////
+// Set ambient light command
+
+CommandSetAmbientLight::CommandSetAmbientLight(float level) :
+    lightLevel(level)
+{
+}
+
+void CommandSetAmbientLight::process(ExecutionEnvironment& env)
+{
+    Renderer* r = env.getRenderer();
+    if (r != NULL)
+        r->setAmbientLightLevel(lightLevel);
 }
