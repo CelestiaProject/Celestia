@@ -4842,6 +4842,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
 
     starVertexBuffer->setBillboardOrientation(observer.getOrientation());
 
+    glEnable(GL_TEXTURE_2D);
+
     starTex->bind();
     starRenderer.starVertexBuffer->start(starStyle == PointStars);
     starDB.findVisibleStars(starRenderer,
