@@ -68,6 +68,7 @@ BEGIN
         MENUITEM "Show &Orbits",                ID_RENDER_SHOWORBITS
         MENUITEM "Show &Planet Labels",         ID_RENDER_SHOWPLANETLABELS
         MENUITEM "Show &Star Labels",           ID_RENDER_SHOWSTARLABELS
+	MENUITEM "Show &Constellations",        ID_RENDER_SHOWCONSTELLATIONS
         MENUITEM "Show &HUD Text",              ID_RENDER_SHOWHUDTEXT
         , CHECKED
         POPUP "&Ambient Light"
@@ -83,7 +84,7 @@ BEGIN
     END
     POPUP "&Locations"
     BEGIN
-        MENUITEM "&Add Location",                   ID_LOCATIONS_ADDLOCATION
+        MENUITEM "&Add Location...",                ID_LOCATIONS_ADDLOCATION
     END
     POPUP "&Help"
     BEGIN
@@ -131,7 +132,7 @@ CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,76,50,14
-    CTEXT           "Celestia 1.05",IDC_STATIC,6,7,297,9
+    CTEXT           "Celestia 1.06",IDC_STATIC,6,7,297,9
     CTEXT           "Copyright (C) 2001, Chris Laurel",IDC_STATIC,6,16,297,9
     CTEXT           "Visit http://www.shatters.net/celestia for more info.",
                     IDC_STATIC,6,53,297,9
@@ -182,6 +183,17 @@ BEGIN
                     WS_TABSTOP | 0x8,7,24,121,15
     DEFPUSHBUTTON   "OK",IDOK,7,45,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,62,45,50,14
+END
+
+IDD_ADDLOCATION DIALOG DISCARDABLE  100, 50, 220, 45
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Location"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_LOCATION_EDIT,45,5,100,14,ES_AUTOHSCROLL
+    LTEXT           "Name",IDC_STATIC,10,8,30,8
+    DEFPUSHBUTTON   "OK",IDOK,160,5,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,160,23,50,14
 END
 
 
