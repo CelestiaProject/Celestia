@@ -121,6 +121,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool initSimulation();
     bool initRenderer();
     void start(double t);
+    void getLightTravelDelay(double distance, int&, int&, float&);
+    void setLightTravelDelay(double distance);
 
     // URLs and history navigation
     void setStartURL(std::string url);

@@ -688,6 +688,65 @@ void CelestiaCore::charEntered(char c)
     case '*':
         addToHistory();
 	sim->reverseObserverOrientation();
+        sim->setTargetSpeed(-sim->getTargetSpeed());
+        break;
+
+    case '?':
+        addToHistory();
+        if (!sim->getSelection().empty())
+        {
+            Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
+            sim->getObserver().getPosition();
+            int hours, mins;
+            float secs;
+            char buf[128];
+	    if (astro::microLightYearsToKilometers(v.length()) >= 
+                86400.0 * astro::speedOfLight) 
+	    {
+	        // Light travel time in years, if >= 1day
+	        sprintf(buf,"Light travel time:  %.4f yr ", 
+                        v.length() * 1.0e-6);
+                flash(buf, 2.0);
+	    } 
+	    else
+	    {
+	        // If Light travel delay < 1 day, display in [ hr : min : sec ]
+                getLightTravelDelay(v.length(), hours, mins, secs);
+                if (hours == 0)
+                    sprintf(buf,"Light travel time:  %d min  %.1f s", 
+                            mins, secs);
+                else
+		    sprintf(buf,"Light travel time:  %d h  %d min  %.1f s"
+                            ,hours, mins, secs);
+                flash(buf, 2.0);
+	    }
+        }
+        break;
+
+    case '-': 
+        addToHistory();
+        if (sim->getSelection().body)
+        {
+            Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
+            sim->getObserver().getPosition();
+            int hours, mins;
+            float secs;
+            char buf[128];
+	    if (astro::microLightYearsToKilometers(v.length()) < 
+                86400.0 * astro::speedOfLight)
+	    { 
+	        // If Light travel delay < 1 day, display in [ hr : min : sec ]
+                getLightTravelDelay(v.length(), hours, mins, secs);
+                if (hours == 0)
+                    sprintf(buf,"Light travel time:  %d min  %.1f s  subtracted", 
+                            mins, secs);
+                else
+		    sprintf(buf,"Light travel time:  %d h  %d min  %.1f s  subtracted"
+                            ,hours, mins, secs);
+                flash(buf, 2.0);
+                setLightTravelDelay(v.length());
+	    }
+	}
         break;
 
     case ',':
@@ -993,6 +1052,25 @@ void CelestiaCore::charEntered(char c)
     }
 }
 
+void CelestiaCore::getLightTravelDelay(double distance, int& hours, int& mins, 
+                                    float& secs)
+{
+    // light travel time in hours
+    double lt = astro::microLightYearsToKilometers(distance)/
+	        (3600.0 * astro::speedOfLight);
+    hours = (int) lt;
+    double mm    = (lt - hours) * 60;  
+    mins = (int) mm;
+    secs = (float) ((mm  - mins) * 60);
+} 
+
+void CelestiaCore::setLightTravelDelay(double distance)
+{
+    // light travel time in days
+    double lt = astro::microLightYearsToKilometers(distance)/
+	        (86400.0 * astro::speedOfLight);
+    sim->setTime(sim->getTime() - lt);    
+}
 
 void CelestiaCore::start(double t)
 {
