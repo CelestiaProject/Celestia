@@ -18,11 +18,15 @@
 #     11 - 80 Jupiter masses: brown dwarf
 #     > 80 Jupiter masses:    M class star
 #
+# I've invented some data, just to make the simulation look a bit better.  Planets more
+# than about 0.25 AU from their parent stars have been assigned rotation periods of
+# 10 hours, which is roughly the same as Jupiter's.  Other planets are left with the
+# default period (i.e. synchronized to orbital period.)
+#
 #
 # [1] HAN I., BLACK D. & GATEWOOD G., 2000
 #     Preliminary astrometric masses for proposed exrasolar planetary companions.
 #     ApJ. Letters, accepted
-
 
 
 # Ups Andromeda system detected by Marcy, Butler et al using
@@ -56,6 +60,8 @@ Planets [
 	Period            0.6604
 	SemiMajorAxis     0.83
 	Eccentricity      0.18
+
+	RotationPeriod   10.0
 }
 
 {
@@ -68,6 +74,8 @@ Planets [
 	Period            3.48
 	SemiMajorAxis     2.50
 	Eccentricity      0.41
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -114,6 +122,8 @@ Planets [
 	Period          2.962
 	SemiMajorAxis   2.11
 	Eccentricity    0.096
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -132,6 +142,8 @@ Planets [
 	Period          0.3176
 	SemiMajorAxis   0.43
 	Eccentricity    0.4
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -181,6 +193,8 @@ Planets [
 	Period          5.85
 	SemiMajorAxis   2.87
 	Eccentricity    0.2
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -204,6 +218,8 @@ Planets [
 	Period          0.72668
 	SemiMajorAxis   0.8267
 	Eccentricity    0.328
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -226,6 +242,8 @@ Planets [
 	Period          0.9246
 	SemiMajorAxis   0.97
 	Eccentricity    0.27
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -330,13 +348,13 @@ Planets [
 }
 
 
-# HD 16141 system
+# 79 Cet (HD 16141) system
 #
 # M sin i = 0.215 Jupiters
 # Han et al claim a mass of 111 Jupiters and an inclination of only 0.1 deg,
 # making the companion an M dwarf instead of planet.  Until there's more
 # evidence, I'll just go with the minimum mass instead.
-"HD 168746"
+"79 Cet"
 {
 Planets [
 {
@@ -349,6 +367,8 @@ Planets [
 	Period          0.2076
 	SemiMajorAxis   0.35
 	Eccentricity    0.28
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -530,6 +550,8 @@ Planets [
 	Period          6.850
 	SemiMajorAxis   3.3
 	Eccentricity    0.608
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -593,6 +615,8 @@ Planets [
 	Period          0.177
 	SemiMajorAxis   0.32
 	Eccentricity    0.13
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -614,6 +638,8 @@ Planets [
 	Period          0.424
 	SemiMajorAxis   0.585
 	Eccentricity    0.19
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -713,6 +739,8 @@ Planets [
 	Period          0.325606
 	SemiMajorAxis   0.49
 	Eccentricity    0.29
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -734,6 +762,8 @@ Planets [
 	Period          1.0705
 	SemiMajorAxis   1.00
 	Eccentricity    0.43
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -780,6 +810,8 @@ Planets [
 	Period          1.1964
 	SemiMajorAxis   1.097
 	Eccentricity    0.45
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -803,6 +835,8 @@ Planets [
 	Period          1.16
 	SemiMajorAxis   1.18
 	Eccentricity    0.02
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -811,7 +845,7 @@ Planets [
 # 16 Cyg B system
 #
 # M sin i = 1.5 Jupiters
-"16 Cyg B"
+"HD 186427"
 {
 Planets [
 {
@@ -824,6 +858,8 @@ Planets [
 	Period          2.201
 	SemiMajorAxis   1.72
 	Eccentricity    0.67
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -845,6 +881,8 @@ Planets [
 	Period          0.7118
 	SemiMajorAxis   0.78
 	Eccentricity    0.24
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -866,6 +904,8 @@ Planets [
 	Period          2.0342
 	SemiMajorAxis   1.65
 	Eccentricity    0.62
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -887,6 +927,8 @@ Planets [
 	Period          1.2430
 	SemiMajorAxis   1.3
 	Eccentricity    0.2
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -894,20 +936,36 @@ Planets [
 
 # HD 82943 system
 #
-# M sin i = 2.24 Jupiters
+# b: M sin i = 1.63 Jupiters
+# c: M sin i = 0.88 Jupiters
 "HD 82943"
 {
 Planets [
 {
 	Name "b"
 	Texture "jupiterlike.jpg"
-	Mass      720
+	Mass      520
 	Radius    72000
 
 	# orbital data
-	Period          1.2118
+	Period          1.2172
 	SemiMajorAxis   1.16
-	Eccentricity    0.61
+	Eccentricity    0.41
+
+	RotationPeriod   10.0
+}
+{
+	Name "c"
+	Texture "jupiterlike.jpg"
+	Mass      290
+	Radius    70000
+
+	# orbital data
+	Period          0.6067
+	SemiMajorAxis   0.73 
+	Eccentricity    0.54
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -929,6 +987,8 @@ Planets [
 	Period          0.8764
 	SemiMajorAxis   0.925
 	Eccentricity    0.161
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -937,7 +997,7 @@ Planets [
 # HD 169830 system
 #
 # M sin i = 2.96 Jupiters
-"HR 810"
+"HD 169830"
 {
 Planets [
 {
@@ -950,6 +1010,8 @@ Planets [
 	Period          0.6308
 	SemiMajorAxis   0.823
 	Eccentricity    0.34
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -971,6 +1033,8 @@ Planets [
 	Period          4.5174
 	SemiMajorAxis   2.5
 	Eccentricity    0.326
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -979,7 +1043,7 @@ Planets [
 # GJ 3021 (HD 1237) system
 #
 # M sin i = 3.32 Jupiters
-"GJ 3021"
+"HD 1237"
 {
 Planets [
 {
@@ -992,6 +1056,8 @@ Planets [
 	Period          0.3664
 	SemiMajorAxis   0.49
 	Eccentricity    0.505
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -1034,6 +1100,8 @@ Planets [
 	Period          3.0856
 	SemiMajorAxis   2.31
 	Eccentricity    0.43
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -1055,6 +1123,8 @@ Planets [
 	Period          1.5770
 	SemiMajorAxis   1.35
 	Eccentricity    0.71
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -1076,6 +1146,8 @@ Planets [
 	Period          2.9651
 	SemiMajorAxis   2.0
 	Eccentricity    0.12
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -1097,6 +1169,8 @@ Planets [
 	Period          0.7009
 	SemiMajorAxis   0.88
 	Eccentricity    0.70
+
+	RotationPeriod   10.0
 }
 ]
 }
@@ -1121,6 +1195,285 @@ Planets [
 	Period          0.2328
 	SemiMajorAxis   0.3     # ????? Missing data
 	Eccentricity    0.0     # ????? Missing data
+}
+]
+}
+
+
+# Iota Horologii (HD 17051) system
+#
+# M sin i = 947 Earths
+"Iota Hor"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      950
+	Radius    75000
+
+	# orbital data
+	Period          0.8761
+	SemiMajorAxis   0.970
+	Eccentricity    0.16
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# 55 Rho1 Cancri A (HD 75732) system
+#
+# b: M sin i = 0.84 Jupiters
+# c: M sin i > 5 Jupiters
+#
+# Planet c as yet unconfirmed
+"HD 75732"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      300
+	Radius    70000
+
+	# orbital data
+	Period          0.040126
+	SemiMajorAxis   0.118
+	Eccentricity    0.03
+}
+{
+	Name "c"
+	Texture "jupiterlike.jpg"
+	Mass      1600
+	Radius    70000
+
+	# orbital data
+	Period          12.91
+	SemiMajorAxis   5.5
+	Eccentricity    0.0
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# New planets announced April 4th, 2001 by Geneva Team
+
+# HD 28185 system
+#
+# M sin i = 5.6 Jupiters
+"HD 28185"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1750
+	Radius    70000
+
+	# orbital data
+	Period          1.0541
+	SemiMajorAxis   1.0
+	Eccentricity    0.06
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# HD 141937 system
+#
+# M sin i = 9.7 Jupiters
+"HD 141937"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      3000
+	Radius    65000
+
+	# orbital data
+	Period          1.804
+	SemiMajorAxis   1.49
+	Eccentricity    0.40
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# HD 213240 system
+#
+# M sin i = 3.7 Jupiters
+"HD 213240"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1200
+	Radius    70000
+
+	# orbital data
+	Period          2.078
+	SemiMajorAxis   1.60
+	Eccentricity    0.31
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# HD 8574 system
+#
+# M sin i = 2.23 Jupiters
+"HD 8574"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      710
+	Radius    78000
+
+	# orbital data
+	Period          0.6264
+	SemiMajorAxis   0.76
+	Eccentricity    0.40
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# HD 50554 system
+#
+# M sin i = 4.9 Jupiters
+"HD 50554"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1550
+	Radius    68000
+
+	# orbital data
+	Period          3.502
+	SemiMajorAxis   2.38
+	Eccentricity    0.42
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# HD 74156 system
+#
+# b: M sin i = 1.56 Jupiters
+# c: M sin i > 7.5 Jupiters
+"HD 74156"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      490
+	Radius    74000
+
+	# orbital data
+	Period          0.1413
+	SemiMajorAxis   0.276
+	Eccentricity    0.649
+}
+{
+	Name "c"
+	Texture "jupiterlike.jpg"
+	Mass      2000
+	Radius    65000
+
+	# orbital data
+	Period          6.3
+	SemiMajorAxis   4.47
+	Eccentricity    0.295
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# HD 106252 system
+#
+# M sin i = 6.81 Jupiters
+"HD 106252"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      2200
+	Radius    65000
+
+	# orbital data
+	Period          4.1
+	SemiMajorAxis   2.61
+	Eccentricity    0.54
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# HD 80606 system
+#
+# M sin i = 3.41 Jupiters
+"HD 80606"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      1250
+	Radius    70000
+
+	# orbital data
+	Period          0.3060
+	SemiMajorAxis   0.439
+	Eccentricity    0.927
+
+	RotationPeriod   10.0
+}
+]
+}
+
+
+# HD 178911 B system
+#
+# M sin i = 6.47 Jupiters
+"HD 178911"
+{
+Planets [
+{
+	Name "b"
+	Texture "jupiterlike.jpg"
+	Mass      2100
+	Radius    65000
+
+	# orbital data
+	Period          0.1958
+	SemiMajorAxis   0.326
+	Eccentricity    0.145
 }
 ]
 }
