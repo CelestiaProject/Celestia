@@ -124,6 +124,22 @@ Planets [
 
 		Albedo        0.10
 	}
+	{
+		Name "Hubble"
+		Mesh "hubble.3ds"
+		Radius 0.015
+
+		Period          0.06903
+		SemiMajorAxis   6767
+		Eccentricity    0.0012082
+		Inclination      28.4675
+		AscendingNode    51.0100
+		ArgOfPericenter  27.0378
+		MeanAnomaly     333.0836
+		Epoch           2452028.18381755
+
+		Albedo       0.10
+	}
 	]	
 }
 
@@ -872,7 +888,7 @@ Planets [
 	Radius 7.5
 
 	# orbital data
-	Period            76
+	Period            75.7
 	SemiMajorAxis    17.9541
 	Eccentricity      0.9673
 	Inclination       162.24
@@ -882,6 +898,26 @@ Planets [
 	Epoch       2446480.5
 
 	RotationPeriod  170     # Guess; see http://www.lpi.usra.edu/meetings/dps97/html/H2918/H2918.html
+	Albedo            0.04
+}
+
+{
+	Name   "Borrelly"
+	Mesh "borrelly.cms"
+	Texture "asteroid.jpg"
+	Radius 2.5
+
+	# orbital data
+	Period            6.8631
+	SemiMajorAxis     3.61145
+	Eccentricity      0.623919
+	Inclination       30.3244
+	AscendingNode    75.4248
+	ArgOfPericenter 353.3741
+        MeanAnomaly       0.0
+	Epoch       2452200.5
+
+	RotationPeriod  170     #
 	Albedo            0.04
 }
 
