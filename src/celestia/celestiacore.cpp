@@ -506,6 +506,8 @@ void CelestiaCore::charEntered(char c)
                 sim->setObserverMode(Simulation::Free);
             else
                 sim->setFrame(astro::Universal, Selection());
+            if (!sim->getTrackedObject().empty())
+                sim->setTrackedObject(Selection());
         }
         break;
 
@@ -637,7 +639,10 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case 'T':
-        sim->track();
+        if (sim->getTrackedObject().empty())
+            sim->setTrackedObject(sim->getSelection());
+        else
+            sim->setTrackedObject(Selection());
         break;
 
     case 'U':
@@ -922,40 +927,39 @@ static void displayDistance(Overlay& overlay, double distance)
 
 static void displayStarNames(Overlay& overlay,
                              Star& star,
-                             StarDatabase& starDB)
+                             StarDatabase& starDB,
+                             int maxNames = 10)
 {
     StarNameDatabase::NumberIndex::const_iterator iter =
         starDB.getStarNames(star.getCatalogNumber());
 
-    bool first = true;
+    int count = 0;
     while (iter != starDB.finalName() &&
-           iter->first == star.getCatalogNumber())
+           iter->first == star.getCatalogNumber() &&
+           count < maxNames)
     {
-        if (!first)
+        if (count != 0)
             overlay << " / ";
-        else
-            first = false;
         overlay << iter->second;
         iter++;
+        count++;
     }
 
     uint32 hd = star.getCatalogNumber(Star::HDCatalog);
     uint32 hip = star.getCatalogNumber(Star::HIPCatalog);
-    if (hd != Star::InvalidCatalogNumber && hd != 0)
+    if (hd != Star::InvalidCatalogNumber && hd != 0 && count < maxNames)
     {
-        if (!first)
+        if (count != 0)
             overlay << " / ";
-        else
-            first = false;
         overlay << "HD " << hd;
+        count++;
     }
-    if (hip != Star::InvalidCatalogNumber && hip != 0)
+    if (hip != Star::InvalidCatalogNumber && hip != 0 && count < maxNames)
     {
-        if (!first)
+        if (count != 0)
             overlay << " / ";
-        else
-            first = false;
         overlay << "HIP " << hip;
+        count++;
     }
 }
 
@@ -1047,6 +1051,19 @@ static void displayGalaxyInfo(Overlay& overlay,
     overlay << "Radius: " << galaxy.getRadius() << " ly\n";
 }
 
+static void displaySelectionName(Overlay& overlay,
+                                 const Selection& sel,
+                                 const Universe& univ)
+{
+    if (sel.body != NULL)
+        overlay << sel.body->getName();
+    else if (sel.galaxy != NULL)
+        overlay << sel.galaxy->getName();
+    else
+        displayStarNames(overlay, *sel.star, *univ.getStarCatalog(), 1);
+}
+
+
 void CelestiaCore::renderOverlay()
 {
     if (font == NULL)
@@ -1124,45 +1141,55 @@ void CelestiaCore::renderOverlay()
         overlay->endText();
         glPopMatrix();
 
-        // Field of view and camera mode
+        // Field of view and camera mode in lower right corner
+        glPushMatrix();
+        glTranslatef(width - emWidth * 15, fontHeight * 3 + 5, 0);
+        overlay->beginText();
+        glColor4f(0.6f, 0.6f, 1.0f, 1);
+
+        if (sim->getObserverMode() == Simulation::Travelling)
+            *overlay << "Travelling\n";
+        else
+            *overlay << '\n';
+
+        if (!sim->getTrackedObject().empty())
+        {
+            *overlay << "Track ";
+            displaySelectionName(*overlay, sim->getTrackedObject(),
+                                 *sim->getUniverse());
+        }
+        *overlay << '\n';
+        
+        {
+            FrameOfReference frame = sim->getFrame();
+
+            switch (frame.coordSys)
+            {
+            case astro::Ecliptical:
+                *overlay << "Follow ";
+                displaySelectionName(*overlay, frame.refObject,
+                                     *sim->getUniverse());
+                break;
+            case astro::Geographic:
+                *overlay << "Sync Orbit ";
+                displaySelectionName(*overlay, frame.refObject,
+                                     *sim->getUniverse());
+                break;
+	    default:
+		break;
+            }
+
+            *overlay << '\n';
+        }
+
+        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+
+        // Field of view
         float fov = renderer->getFieldOfView();
         int degrees, minutes;
         double seconds;
-
         astro::decimalToDegMinSec((double)fov, degrees, minutes, seconds);
 
-        Simulation::ObserverMode mode = sim->getObserverMode();
-        char* modeName = "";
-        if (mode == Simulation::Travelling)
-        {
-            modeName = "Travelling";
-        }
-        else if (mode == Simulation::Tracking)
-        {
-            modeName = "Tracking";
-        }
-        else
-        {
-            switch (sim->getFrame().coordSys)
-            {
-            case astro::Ecliptical:
-                modeName = "Following";
-                break;
-            case astro::Geographic:
-                modeName = "Sync Orbiting";
-                break;
-	    default:
-		// Keep compiler from warning about unhandled cases
-		break;
-            }
-        }
-
-        glPushMatrix();
-        glTranslatef(width - emWidth * 11, fontHeight + 5, 0);
-        overlay->beginText();
-        glColor4f(0.6f, 0.6f, 1.0f, 1);
-        *overlay << modeName << '\n';
-        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
         if (degrees > 0)
             overlay->printf("FOV: %d° %02d' %.1f\"\n", degrees, minutes, seconds);
         else if (minutes > 0)
