@@ -19,6 +19,7 @@
 #define IDD_GOTO_OBJECT                 116
 #define IDD_MOVIE_PARAMS_CHOOSER        117
 #define IDD_DISPLAYMODE                 118
+#define IDD_VIEWOPTIONS                 119
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
 #define IDC_GLINFO_TEXT                 1005
@@ -50,6 +51,23 @@
 #define IDC_MAXSTARS_SLIDER             1031
 #define IDC_MAXSTARS_EDIT               1032
 #define IDC_COMBO_RESOLUTION            1033
+#define IDC_SHOWGALAXIES                1034
+#define IDC_SHOWATMOSPHERES             1035
+#define IDC_SHOWCLOUDS                  1036
+#define IDC_SHOWORBITS                  1037
+#define IDC_SHOWCONSTELLATIONS          1038
+#define IDC_SHOWCELESTIALGRID           1039
+#define IDC_SHOWNIGHTSIDELIGHTS         1040
+#define IDC_SHOWPLANETS                 1041
+#define IDC_SHOWSTARS                   1042
+#define IDC_LABELMAJORPLANETS           1043
+#define IDC_LABELMINORPLANETS           1044
+#define IDC_LABELSTARS                  1045
+#define IDC_LABELCONSTELLATIONS         1046
+#define IDC_INFOTEXT0                   1047
+#define IDC_INFOTEXT1                   1048
+#define IDC_INFOTEXT2                   1049
+#define IDC_LABELGALAXIES               1050
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -59,9 +77,6 @@
 #define ID_QUIT                         40008
 #define ID_FILE_EXIT                    40009
 #define ID_HELP_ABOUT                   40010
-#define ID_RENDER_SHOWORBITS            40011
-#define ID_RENDER_SHOWPLANETLABELS      40012
-#define ID_RENDER_SHOWHUDTEXT           40013
 #define ID_RENDER_AMBIENTLIGHT_NONE     40014
 #define ID_RENDER_AMBIENTLIGHT_LOW      40015
 #define ID_RENDER_AMBIENTLIGHT_MEDIUM   40016
@@ -79,43 +94,35 @@
 #define ID_HELP_LICENSE                 40028
 #define ID_NAVIGATION_CENTER            40029
 #define ID_TIME_REALTIME                40030
-#define ID_RENDER_SHOWSTARLABELS        40031
 #define ID_TIME_SETTIME                 40032
 #define ID_HELP_GLINFO                  40033
 #define ID_LOCATIONS_ADDLOCATION        40034
-#define ID_RENDER_SHOWCONSTELLATIONS    40035
-#define ID_RENDER_SHOWATMOSPHERES       40036
-#define ID_RENDER_SHOWGALAXIES          40037
-#define ID_RENDER_SHOWCONSTLABELS       40038
-#define ID_RENDER_SHOWMINORPLANETLABELS 40039
 #define ID_INFO                         40040
 #define ID_HELP_RUNDEMO                 40041
 #define ID_RENDER_MORESTARS             40042
 #define ID_RENDER_FEWERSTARS            40043
-#define ID_RENDER_SHOWCELESTIALSPHERE   40044
 #define ID_NAVIGATION_SYNCORBIT         40045
 #define ID_NAVIGATION_SSBROWSER         40046
 #define ID_NAVIGATION_STARBROWSER       40047
-#define ID_RENDER_SHOWCLOUDS            40048
 #define ID_TIME_SHOWLOCAL               40050
 #define ID_NAVIGATION_TRACK             40051
 #define ID_HELP_CONTROLS                40053
-#define ID_RENDER_SHOWNIGHTLIGHTS       40054
 #define ID_RENDER_VERTEX_SHADERS        40055
 #define ID_NAVIGATION_GOTO_OBJECT       40056
 #define ID_FILE_CAPTUREIMAGE            40057
 #define ID_FILE_CAPTUREMOVIE            40058
 #define ID_RENDER_DISPLAYMODE           40059
 #define ID_RENDER_FULLSCREEN            40060
+#define ID_RENDER_VIEWOPTIONS           40061
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        119
-#define _APS_NEXT_COMMAND_VALUE         40061
-#define _APS_NEXT_CONTROL_VALUE         1034
+#define _APS_NEXT_RESOURCE_VALUE        120
+#define _APS_NEXT_COMMAND_VALUE         40062
+#define _APS_NEXT_CONTROL_VALUE         1051
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
