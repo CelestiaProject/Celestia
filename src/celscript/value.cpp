@@ -96,6 +96,7 @@ Value& Value::operator=(const Value& v)
 
 void Value::output(ostream& out) const
 {
+    // cout << type << ':';
     switch (type)
     {
     case NilType:
@@ -120,7 +121,7 @@ void Value::output(ostream& out) const
 }
 
 
-ostream& operator<<(ostream& out, const Value& v)
+ostream& operator<<(ostream& out, const celx::Value& v)
 {
     v.output(out);
     return out;
