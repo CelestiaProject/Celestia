@@ -2225,6 +2225,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.position = Point3f(pos.x, pos.y, pos.z);
             rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
             rle.distance = distanceFromObserver;
+            rle.radius = body->getRadius();
             rle.discSizeInPixels = discSize;
             rle.appMag = appMag;
             renderList.insert(renderList.end(), rle);
@@ -2396,6 +2397,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             float scale = astro::lightYearsToKilometers(1.0f);
             rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
             rle.distance = rle.position.distanceFromOrigin();
+            rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
             rle.appMag = appMag;
             renderList->insert(renderList->end(), rle);
