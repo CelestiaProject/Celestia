@@ -58,6 +58,8 @@
 #define ID_RENDER_SHOWMINORPLANETLABELS 40039
 #define ID_INFO                         40040
 #define ID_HELP_RUNDEMO                 40041
+#define ID_RENDER_MORESTARS             40042
+#define ID_RENDER_FEWERSTARS            40043
 
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
@@ -66,7 +68,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        112
-#define _APS_NEXT_COMMAND_VALUE         40042
+#define _APS_NEXT_COMMAND_VALUE         40044
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
