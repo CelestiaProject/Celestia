@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
@@ -21,6 +22,7 @@
 #include "celestia.h"
 #include "vecmath.h"
 #include "quaternion.h"
+#include "util.h"
 #include "stardb.h"
 #include "solarsys.h"
 #include "visstars.h"
@@ -28,6 +30,8 @@
 #include "astro.h"
 #include "config.h"
 #include "simulation.h"
+#include "execution.h"
+#include "cmdparser.h"
 
 #include "../res/resource.h"
 
@@ -67,9 +71,6 @@ static double timeScale = 0.0;
 static bool textEnterMode = false;
 static string typedText = "";
 
-static Point3f initialPosition(0, 0, 0);
-static Point3f position;
-static Vec3f velocity;
 static float distanceFromCenter = 0;
 
 static CelestiaConfig* config = NULL;
@@ -80,6 +81,9 @@ static SolarSystemCatalog* solarSystemCatalog = NULL;
 
 static Simulation* sim = NULL;
 static Renderer* renderer = NULL;
+
+static CommandSequence* script = NULL;
+static Execution* runningScript = NULL;
 
 HINSTANCE appInstance;
 
@@ -142,17 +146,17 @@ bool ReadStars(string starsFileName, string namesFileName)
 
 void ChangeDisplayMode()
 {
-  DEVMODE device_mode;
+    DEVMODE device_mode;
   
-  memset(&device_mode, 0, sizeof(DEVMODE));
+    memset(&device_mode, 0, sizeof(DEVMODE));
 
-  device_mode.dmSize = sizeof(DEVMODE);
+    device_mode.dmSize = sizeof(DEVMODE);
 
-  device_mode.dmPelsWidth  = 800;
-  device_mode.dmPelsHeight = 600;
-  device_mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+    device_mode.dmPelsWidth  = 800;
+    device_mode.dmPelsHeight = 600;
+    device_mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
 
-  ChangeDisplaySettings(&device_mode, CDS_FULLSCREEN);
+    ChangeDisplaySettings(&device_mode, CDS_FULLSCREEN);
 }
 
   
@@ -343,7 +347,7 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
     case WM_INITDIALOG:
         {
             SYSTEMTIME sysTime;
-            newTime = astro::Date(sim->getTime() / 86400.0);
+            newTime = astro::Date(sim->getTime());
             sysTime.wYear = newTime.year;
             sysTime.wMonth = newTime.month;
             sysTime.wDay = newTime.day;
@@ -372,7 +376,7 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             if (LOWORD(wParam) == IDOK)
-                sim->setTime((double) newTime * 86400.0);
+                sim->setTime((double) newTime);
             EndDialog(hDlg, 0);
             return TRUE;
         }
@@ -664,6 +668,11 @@ void handleKeyPress(int c)
         }
         break;
 
+    case 'Y':
+        if (runningScript == NULL)
+            runningScript = new Execution(*script, sim, renderer);
+        break;
+
     case '1':
     case '2':
     case '3':
@@ -771,9 +780,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     appInstance = hInstance;
 
-    position = Point3f(0, 0, 0);
-    velocity = Vec3f(0, 0, 0);
-
     // Setup the window class.
     WNDCLASS wc;
     HWND hWnd;
@@ -855,7 +861,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     sim->setFaintestVisible(config->faintestVisible);
 
     // Set the simulation starting time to the current system time
-    sim->setTime((double) time(NULL) + (double) astro::Date(1970, 1, 1) * 86400.0);
+    sim->setTime((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
     sim->update(0.0);
 
     if (!fullscreen)
@@ -948,6 +954,38 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     sim->update(5.0);
     sim->setTimeScale(1.0f);
     sim->follow();
+
+#if 0
+    script.insert(script.end(), new CommandSelect("Sirius"));
+    script.insert(script.end(), new CommandCenter(1.0));
+    script.insert(script.end(), new CommandWait(1.0));
+    script.insert(script.end(), new CommandSelect("Rigel"));
+    script.insert(script.end(), new CommandCenter(1.0));
+    script.insert(script.end(), new CommandWait(1.0));
+    script.insert(script.end(), new CommandSelect("Antares"));
+    script.insert(script.end(), new CommandGoto(5.0));
+#endif
+#if 0
+    script.insert(script.end(), new CommandSelect("Sol"));
+    script.insert(script.end(), new CommandSelect("Mir"));
+    script.insert(script.end(), new CommandSetTimeRate(0.0));
+    script.insert(script.end(), new CommandGoto(3.0));
+    script.insert(script.end(), new CommandWait(3.0));
+    script.insert(script.end(), new CommandFollow());
+    script.insert(script.end(), new CommandSetTimeRate(100.0));
+    script.insert(script.end(), new CommandWait(3.0));
+    script.insert(script.end(), new CommandChangeDistance(5.0, 2.5));
+#endif
+    {
+        ifstream scriptfile("test.csc");
+        CommandParser parser(scriptfile);
+        script = parser.parse();
+        if (script == NULL)
+        {
+            const vector<string>* errors = parser.getErrors();
+            for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
+        }
+    }
 
     // Usual running around in circles bit...
     int bGotMsg;
@@ -1043,7 +1081,7 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                 if ((wParam & MK_RBUTTON) != 0)
                     sim->orbit(~q);
                 else
-                    sim->setOrientation(sim->getOrientation() * q);
+                    sim->rotate(q);
             }
 
             mouseMotion += abs(x - lastX) + abs(y - lastY);
@@ -1138,6 +1176,11 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
         switch (wParam)
         {
         case VK_ESCAPE:
+            if (runningScript != NULL)
+            {
+                delete runningScript;
+                runningScript = NULL;
+            }
             sim->cancelMotion();
             break;
         case VK_RETURN:
@@ -1360,15 +1403,21 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
                 q.xrotate((float) deltaTime * 2);
             if (upPress)
                 q.xrotate((float) deltaTime * -2);
-            sim->setOrientation(sim->getOrientation() * q);
-            position = Point3f(0, 0, distanceFromCenter) * conjugate(sim->getOrientation()).toMatrix4();
-
-	    velocity *= 0.9f;
+            sim->rotate(q);
 
             // cap the time step at 0.05 secs--extremely long time steps
             // may make the simulation unstable
             if (deltaTime > 0.05)
                 deltaTime = 0.05;
+            if (runningScript != NULL)
+            {
+                bool finished = runningScript->tick(deltaTime);
+                if (finished)
+                {
+                    delete runningScript;
+                    runningScript = NULL;
+                }
+            }
             sim->update(deltaTime);
 	    sim->render(*renderer);
 	    SwapBuffers(hDC);

@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <iostream>
 #include "command.h"
 
 using namespace std;
@@ -23,8 +24,9 @@ CommandWait::~CommandWait()
 {
 }
 
-void CommandWait::process(Simulation* sim, Renderer* renderer, double t)
+void CommandWait::process(Simulation* sim, Renderer* renderer, double t, double dt)
 {
+    cout << "Wait: " << t << '\n';
 }
 
 
@@ -81,3 +83,93 @@ void CommandCenter::process(Simulation* sim, Renderer* renderer)
 }
 
 
+////////////////
+// Follow command: follow the selected body
+
+CommandFollow::CommandFollow()
+{
+}
+
+void CommandFollow::process(Simulation* sim, Renderer* renderer)
+{
+    sim->follow();
+}
+
+
+////////////////
+// Cancel command: cancel a follow or goto command
+
+CommandCancel::CommandCancel()
+{
+}
+
+void CommandCancel::process(Simulation* sim, Renderer* renderer)
+{
+    sim->cancelMotion();
+}
+
+
+////////////////
+// Print command: print text to the console
+
+CommandPrint::CommandPrint(string _text) : text(_text)
+{
+}
+
+void CommandPrint::process(Simulation* sim, Renderer* renderer)
+{
+}
+
+
+////////////////
+// Clear screen command: clear the console of all text
+
+CommandClearScreen::CommandClearScreen()
+{
+}
+
+void CommandClearScreen::process(Simulation* sim, Renderer* renderer)
+{
+}
+
+
+////////////////
+// Set time command: set the simulation time
+
+CommandSetTime::CommandSetTime(double _jd) : jd(_jd)
+{
+}
+
+void CommandSetTime::process(Simulation* sim, Renderer* renderer)
+{
+    sim->setTime(jd);
+}
+
+
+
+////////////////
+// Set time rate command: set the simulation time rate
+
+CommandSetTimeRate::CommandSetTimeRate(double _rate) : rate(_rate)
+{
+}
+
+void CommandSetTimeRate::process(Simulation* sim, Renderer* renderer)
+{
+    sim->setTimeScale(rate);
+}
+
+
+////////////////
+// Change distance command change the distance from the selected object
+
+CommandChangeDistance::CommandChangeDistance(double _duration, double _rate) :
+    TimedCommand(_duration),
+    rate(_rate)
+{
+}
+
+void CommandChangeDistance::process(Simulation* sim, Renderer* renderer, double t, double dt)
+{
+    sim->changeOrbitDistance((float) (rate * dt));
+}

@@ -123,7 +123,7 @@ void Simulation::displaySelectionInfo(Console& console)
         
         if (star != NULL)
         {
-            Vec3d v = astro::universalPosition(selection.body->getHeliocentricPosition(simTime / 86400.0), star->getPosition()) - observer.getPosition();
+            Vec3d v = astro::universalPosition(selection.body->getHeliocentricPosition(simTime), star->getPosition()) - observer.getPosition();
             console << "Distance to target: ";
             displayDistance(console, v.length());
             console << '\n';
@@ -178,7 +178,7 @@ void  Simulation::render(Renderer& renderer)
         }
 
         // Display the date
-        *console << astro::Date(simTime / 86400.0) << '\n';
+        *console << astro::Date(simTime) << '\n';
 
         displaySelectionInfo(*console);
     }
@@ -234,7 +234,7 @@ UniversalCoord Simulation::getSelectionPosition(Selection& sel, double when)
         Star* sun = getSun(sel.body);
         if (sun != NULL)
             sunPos = sun->getPosition();
-        return astro::universalPosition(sel.body->getHeliocentricPosition(when / 86400.0),
+        return astro::universalPosition(sel.body->getHeliocentricPosition(when),
                                         sunPos);
     }
     else if (sel.star != NULL)
@@ -280,23 +280,24 @@ void Simulation::setStarDatabase(StarDatabase* db,
 }
 
 
-// Get the time in seconds (JD * 86400)
+// Get the time (Julian date)
 double Simulation::getTime() const
 {
     return simTime;
 }
 
-// Set the time in seconds (JD * 86400)
-void Simulation::setTime(double t)
+// Set the time to the specified Julian date
+void Simulation::setTime(double jd)
 {
-    simTime = t;
+    simTime = jd;
 }
 
 
+// Tick the simulation by dt seconds
 void Simulation::update(double dt)
 {
     realTime += dt;
-    simTime += dt * timeScale;
+    simTime += (dt / 86400.0) * timeScale;
 
     if (observerMode == Travelling)
     {
@@ -364,7 +365,7 @@ void Simulation::update(double dt)
     }
     else if (observerMode == Following)
     {
-        Point3d posRelToSun = followInfo.body->getHeliocentricPosition(simTime / 86400.0) + followInfo.offset;
+        Point3d posRelToSun = followInfo.body->getHeliocentricPosition(simTime) + followInfo.offset;
         observer.setPosition(astro::universalPosition(posRelToSun,
                                                       followInfo.sun->getPosition()));
     }
@@ -484,7 +485,7 @@ Selection Simulation::pickPlanet(Observer& observer,
     pickInfo.cosClosestAngle = -1.0f;
     pickInfo.closestDistance = 1.0e50;
     pickInfo.closestBody = NULL;
-    pickInfo.jd = simTime / 86400.0f;
+    pickInfo.jd = simTime;
 
     // First see if there's a planet that the pick ray intersects.
     // Select the closest planet intersected.
@@ -618,26 +619,15 @@ void Simulation::computeCenterParameters(Selection& destination, JourneyParams& 
     jparams.up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
 }
 
-
-void Simulation::applyForce(Vec3f force, float dt)
+Observer& Simulation::getObserver()
 {
-    Vec3d f(force.x * dt, force.y * dt, force.z * dt);
-    observer.setVelocity(observer.getVelocity() + f);
+    return observer;
 }
 
-void Simulation::applyForceRelativeToOrientation(Vec3f force, float dt)
+// Rotate the observer about its center.
+void Simulation::rotate(Quatf q)
 {
-    applyForce(force * observer.getOrientation().toMatrix4(), dt);
-}
-
-Quatf Simulation::getOrientation()
-{
-    return observer.getOrientation();
-}
-
-void Simulation::setOrientation(Quatf q)
-{
-    observer.setOrientation(q);
+    observer.setOrientation(observer.getOrientation() * q);
 }
 
 // Orbit around the selection (if there is one.)  This involves changing
@@ -770,7 +760,7 @@ void Simulation::follow()
                 observerMode = Following;
                 followInfo.sun = sun;
                 followInfo.body = selection.body;
-                Point3d planetPos = selection.body->getHeliocentricPosition(simTime / 86400.0);
+                Point3d planetPos = selection.body->getHeliocentricPosition(simTime);
                 Point3d observerPos = astro::heliocentricPosition(observer.getPosition(),
                                                                   sun->getPosition());
                 followInfo.offset = observerPos - planetPos;
