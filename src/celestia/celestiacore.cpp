@@ -54,7 +54,10 @@ static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
 static const float stdFOV = 45.0f;
+static const float MaximumFOV = 120.0f;
+static const float MinimumFOV = 0.001f;
 static float KeyRotationAccel = degToRad(120.0f);
+
 
 
 static void warning(string s)
@@ -386,8 +389,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         {
             // Mouse zoom control
             float amount = dy / height;
-            float minFOV = 0.01f;
-            float maxFOV = 120.0f;
+            float minFOV = MinimumFOV;
+            float maxFOV = MaximumFOV;
             float fov = renderer->getFieldOfView();
 
             if (fov < minFOV)
@@ -689,7 +692,7 @@ void CelestiaCore::charEntered(char c)
 
     case ',':
         addToHistory();
-        if (renderer->getFieldOfView() > 0.01f)
+        if (renderer->getFieldOfView() > MinimumFOV)
 	{
 	    renderer->setFieldOfView(renderer->getFieldOfView() / 1.05f);
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
@@ -704,7 +707,7 @@ void CelestiaCore::charEntered(char c)
 
     case '.':
         addToHistory();
-        if (renderer->getFieldOfView() < 120.0f)
+        if (renderer->getFieldOfView() < MaximumFOV)
 	{
 	    renderer->setFieldOfView(renderer->getFieldOfView() * 1.05f);
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
