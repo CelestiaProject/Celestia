@@ -10,6 +10,7 @@
 #include <iostream>
 #include "astro.h"
 #include "command.h"
+#include "execution.h"
 
 using namespace std;
 
@@ -103,6 +104,29 @@ void CommandGotoLongLat::process(ExecutionEnvironment& env)
 }
 
 
+/////////////////////////////
+// GotoLocation
+
+CommandGotoLocation::CommandGotoLocation(double t,
+                                         const Point3d& _translation,
+                                         const Quatf& _rotation) :
+    gotoTime(t), translation(_translation), rotation(_rotation)
+{
+}
+
+CommandGotoLocation::~CommandGotoLocation()
+{
+}
+
+void CommandGotoLocation::process(ExecutionEnvironment& env)
+{
+    RigidTransform to;
+    to.rotation = Quatd(rotation.w, rotation.x, rotation.y, rotation.z);
+    to.translation = translation;
+    env.getSimulation()->gotoLocation(to, gotoTime);
+}
+
+
 
 ////////////////
 // Center command: go to the selected body
@@ -169,8 +193,30 @@ CommandLock::CommandLock()
 
 void CommandLock::process(ExecutionEnvironment& env)
 {
-    env.getSimulation()->follow();
+    env.getSimulation()->phaseLock();
 }
+
+
+
+////////////////
+// Select command: select a body
+
+CommandSetFrame::CommandSetFrame(astro::CoordinateSystem _coordSys,
+                                 const string& refName,
+                                 const string& targetName) :
+    coordSys(_coordSys), refObjectName(refName), targetObjectName(targetName)
+{
+}
+
+void CommandSetFrame::process(ExecutionEnvironment& env)
+{
+    Selection ref = env.getSimulation()->findObjectFromPath(refObjectName);
+    Selection target;
+    if (coordSys == astro::PhaseLock)
+        target = env.getSimulation()->findObjectFromPath(targetObjectName);
+    env.getSimulation()->setFrame(FrameOfReference(coordSys, ref, target));
+}
+
 
 
 ////////////////
@@ -404,4 +450,64 @@ void CommandSetAmbientLight::process(ExecutionEnvironment& env)
     Renderer* r = env.getRenderer();
     if (r != NULL)
         r->setAmbientLightLevel(lightLevel);
+}
+
+
+///////////////
+// Repeat command
+
+RepeatCommand::RepeatCommand(CommandSequence* _body, int _repeatCount) :
+    body(_body),
+    repeatCount(_repeatCount),
+    bodyDuration(0.0),
+    execution(NULL)
+{
+    for (CommandSequence::const_iterator iter = body->begin();
+         iter != body->end(); iter++)
+    {
+        bodyDuration += (*iter)->getDuration();
+    }
+}
+
+RepeatCommand::~RepeatCommand()
+{
+    if (execution != NULL)
+        delete execution;
+    // delete body;
+}
+
+void RepeatCommand::process(ExecutionEnvironment& env, double t, double dt)
+{
+    double t0 = t - dt;
+    int loop0 = (int) (t0 / bodyDuration);
+    int loop1 = (int) (t / bodyDuration);
+
+    // TODO: This is bogus . . . should not be storing a reference to an
+    // execution environment.
+    if (execution == NULL)
+        execution = new Execution(*body, env);
+
+    if (loop0 == loop1)
+    {
+        execution->tick(dt);
+    }
+    else
+    {
+        double timeLeft = (loop0 + 1) * bodyDuration - t0;
+        execution->tick(timeLeft);
+
+        for (int i = loop0 + 1; i < loop1; i++)
+        {
+            execution->reset(*body);
+            execution->tick(bodyDuration);
+        }
+
+        execution->reset(*body);
+        execution->tick(t - loop1 * bodyDuration);
+    }
+}
+
+double RepeatCommand::getDuration()
+{
+    return bodyDuration * repeatCount;
 }
