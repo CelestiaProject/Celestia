@@ -3503,7 +3503,7 @@ public:
             ifstream starFile(fullname.c_str(), ios::in);
             if (starFile.good())
             {
-                bool success = starDB->load(starFile);
+                bool success = starDB->load(starFile, getPath());
                 if (!success)
                 {
                     DPRINTF(0, "Error reading star file: %s\n",
