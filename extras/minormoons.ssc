@@ -493,7 +493,7 @@
 "Pan" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
-	#Mesh		"asteroid.cms"
+	Mesh		"asteroid.cms"
 	Radius		10
 
 	EllipticalOrbit
