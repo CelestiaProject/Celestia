@@ -53,6 +53,12 @@ FrameOfReference getFrame() const;
 {
     [self simulation]->setTime([t doubleValue]);
 }
+
+-(NSNumber*)getTimeScale
+{
+    return [NSNumber numberWithDouble:[self simulation]->getTimeScale()];
+}
+
 -(NSNumber*)realTime
 {
     return [NSNumber numberWithDouble:[self simulation]->getRealTime()];
