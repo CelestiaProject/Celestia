@@ -674,3 +674,9 @@ Code:
 * Fixed near clipping of small deep sky objects
 * Windows: added auto magnitude toggle to render menu
 * KDE: added popup error notifications
+* Allow oblate planets to have atmospheres
+* Corrected specular highlights; abrupt cutoff near terminator eliminated
+* Fixed 'hole in the sky' bug
+* Allow sunset color to be specified in .ssc files
+* Bound Ctrl+P to mark/unmark selection
+* Implemented tab completion of star, planet, and deep sky object names
