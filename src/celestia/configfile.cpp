@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 #include <celutil/debug.h>
 #include <celengine/celestia.h>
 #include <celengine/parser.h>
@@ -105,7 +106,40 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
         }
     }
 
-    configParams->getString("ExtrasDirectory", config->extrasDir);
+    Value* extrasDirsVal = configParams->getValue("ExtrasDirectories");
+    if (extrasDirsVal != NULL)
+    {
+        if (extrasDirsVal->getType() == Value::ArrayType)
+        {
+            Array* extrasDirs = extrasDirsVal->getArray();
+            assert(extrasDirs != NULL);
+
+            for (Array::iterator iter = extrasDirs->begin();
+                 iter != extrasDirs->end(); iter++)
+            {
+                Value* dirNameVal = *iter;
+                if (dirNameVal->getType() == Value::StringType)
+                {
+                    config->extrasDirs.insert(config->extrasDirs.end(),
+                                              dirNameVal->getString());
+                }
+                else
+                {
+                    DPRINTF(0, "%s: Extras directory name must be a string.\n",
+                            filename.c_str());
+                }
+            }
+        }
+        else if (extrasDirsVal->getType() == Value::StringType)
+        {
+            config->extrasDirs.insert(config->extrasDirs.end(),
+                                      extrasDirsVal->getString());
+        }
+        else
+        {
+            DPRINTF(0, "%s: ExtrasDirectories must be an array or string.\n", filename.c_str());
+        }
+    }
 
     Value* xrefsVal = configParams->getValue("StarCatalogCrossReferences");
     if (xrefsVal != NULL)
