@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <cstdarg>
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
 void DebugPrint(char *format, ...)
 {
     va_list args;
