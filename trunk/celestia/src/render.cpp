@@ -26,7 +26,7 @@ using namespace std;
 #define NEAR_DIST      0.5f
 #define FAR_DIST     3000.0f
 
-#define RENDER_DISTANCE 10.0f
+#define RENDER_DISTANCE 50.0f
 
 #define FAINTEST_MAGNITUDE  5.5f
 
@@ -34,7 +34,7 @@ using namespace std;
 
 static bool commonDataInitialized = false;
 
-#define SPHERE_LODS 4
+#define SPHERE_LODS 5
 
 static SphereMesh* sphereMesh[SPHERE_LODS];
 static SphereMesh* asteroidMesh = NULL;
@@ -163,6 +163,7 @@ bool Renderer::init(int winWidth, int winHeight)
         sphereMesh[1] = new SphereMesh(1.0f, 21, 20);
         sphereMesh[2] = new SphereMesh(1.0f, 31, 30);
         sphereMesh[3] = new SphereMesh(1.0f, 41, 40);
+        sphereMesh[4] = new SphereMesh(1.0f, 81, 80);
         asteroidMesh = new SphereMesh(Vec3f(0.7f, 1.1f, 1.0f),
                                       21, 20,
                                       AsteroidDisplacementFunc,
@@ -938,8 +939,10 @@ void Renderer::renderPlanet(const Body& body,
                 lod = 1;
             else if (discSizeInPixels < 200)
                 lod = 2;
-            else
+            else if (discSizeInPixels < 400)
                 lod = 3;
+            else
+                lod = 4;
     
             if (body.getRadius() < 50)
                 mesh = asteroidMesh;
@@ -1373,7 +1376,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
         Star* star = starDB.getStar((*vis)[i]);
         Point3f pos = star->getPosition();
         Vec3f relPos = pos - observerPos;
-        if (relPos * viewNormal > 0)
+        if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f)
         {
             float distance = relPos.length();
 
