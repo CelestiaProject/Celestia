@@ -459,8 +459,29 @@ Code:
   crashes on some systems
 * UNIX: Modified GL extension handling code to make it possible to compile
   against Mesa 4 headers.
+
+
+1.2.4
+* Fixed bug that caused alpha blending to always be enabled for 3DS meshes
+* Fixed sign error in that caused some orbits to be retrograde
+* Fixed rendering of night lights to ignore ambient color (keeps night lights
+  from being visible on lit side of planet.)
+* Improved precision to eliminate position drifting because of rounding errors
+  (was apparent when orbiting within 1km of an object)
+* Replaced perfectly spherical Comet Halley with an irregular model
+* Added object classifications and label coloring based on them
+* Created new 'phase-lock' coordinate system
+* Created new 'chase' coordinate system
 * Unix Gtk: removed bug in Text enter mode. (dramsey)
 * Unix Gtk: Menus for new Labels. (dramsey)
 * Unix Gtk: Star Browser Body Types. (dramsey)
 * Unix Gtk: Correct Underlines for Menus. (dramsey)
 * Guess Body Types more accurately. (dramsey)
+* Support hyperbolic orbits
+* Improved algorithm for calculating positions on highly eccentric orbits
+* Added setambientlight scripting command
+* Enabled rendering of satellite orbits
+* Windows: added open script option to file menu
+* Changed orbit and dolly functions so they operate with respect to the
+  current reference object instead of the selection.
+* Made Goto command automatically switch to follow mode
