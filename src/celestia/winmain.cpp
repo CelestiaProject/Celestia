@@ -2702,7 +2702,7 @@ vector<DEVMODE>* EnumerateDisplayModes(int minBPP)
     }
     sort(modes->begin(), modes->end());
 
-    // Bail out early if EnumDisplaySettings fails for some mssed up reason
+    // Bail out early if EnumDisplaySettings fails for some messed up reason
     if (i == 0)
         return modes;
 
@@ -2721,7 +2721,7 @@ vector<DEVMODE>* EnumerateDisplayModes(int minBPP)
         }
     }
 
-    modes->resize(keepIter - modes->begin());
+    modes->resize(keepIter - modes->begin() + 1);
 
     // Select the default display mode--choose 640x480 at the current
     // pixel depth.  If for some bizarre reason that's not available,
