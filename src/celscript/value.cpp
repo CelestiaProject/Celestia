@@ -27,6 +27,10 @@ Value::~Value()
     {
         delete val.strVal;
     }
+    else if (type == FunctionType)
+    {
+        delete val.funcVal;
+    }
 }
 
 
@@ -51,6 +55,13 @@ Value::Value(bool x) :
 }
 
 
+Value::Value(Function* f) :
+    type(FunctionType)
+{
+    val.funcVal = new Function(*f);
+}
+
+
 // Copy constructor
 Value::Value(const Value& v) :
     type(NilType)
@@ -69,6 +80,9 @@ Value& Value::operator=(const Value& v)
         case StringType:
             delete val.strVal;
             break;
+        case FunctionType:
+            delete val.funcVal;
+            break;
         default:
             break;
         }
@@ -86,6 +100,9 @@ Value& Value::operator=(const Value& v)
             val.boolVal = v.val.boolVal;
             break;
         case NilType:
+            break;
+        case FunctionType:
+            val.funcVal = new Function(*v.val.funcVal);
             break;
         default:
             assert(0);
@@ -109,7 +126,9 @@ bool Value::operator==(const Value& v) const
     case NumberType:
         return v.val.numVal == val.numVal;
     case StringType:
-        return v.val.strVal == val.strVal;
+        return *v.val.strVal == *val.strVal;
+    case FunctionType:
+        return v.val.funcVal == val.funcVal;
     case NilType:
         return true;
     default:
@@ -202,6 +221,9 @@ void Value::output(ostream& out) const
         break;
     case StringType:
         out << '"' << *val.strVal << '"';
+        break;
+    case FunctionType:
+        out << "[function]";
         break;
     default:
         out << "#unknown";

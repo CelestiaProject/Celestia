@@ -99,6 +99,19 @@ class CompoundStatement : public Statement
 };
 
 
+class ReturnStatement : public Statement
+{
+ public:
+    ReturnStatement(Expression*);
+    virtual ~ReturnStatement();
+
+    virtual Control execute(ExecutionContext&);
+
+ private:
+    Expression* expr;
+};
+
+
 class WhileStatement : public Statement
 {
  public:

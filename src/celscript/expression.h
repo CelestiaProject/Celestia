@@ -11,6 +11,7 @@
 #define CELSCRIPT_EXPRESSION_H_
 
 #include <celscript/celx.h>
+#include <vector>
 #include <celscript/value.h>
 #include <celscript/execution.h>
 
@@ -121,6 +122,20 @@ class AssignmentExpression : public Expression
     Expression* right;
 };
 
+
+class FunctionCallExpression : public Expression
+{
+ public:
+    FunctionCallExpression(Expression*);
+    ~FunctionCallExpression();
+    virtual Value eval(ExecutionContext&);
+
+    void addArgument(Expression*);
+
+ private:
+    Expression* func;
+    std::vector<Expression*> arguments;
+};
 
 } // namespace celx
 
