@@ -66,6 +66,7 @@ void Nebula::render(const Vec3f& offset,
     glDisable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
     glScalef(getRadius(), getRadius(), getRadius());
+    glRotate(getOrientation());
 
     m->render(Mesh::TexCoords0, 0);
 }
