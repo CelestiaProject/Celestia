@@ -31,6 +31,7 @@ libcelengine_a_SOURCES = \
 	nebula.cpp \
 	observer.cpp \
 	octree.cpp \
+	opencluster.cpp \
 	orbit.cpp \
 	overlay.cpp \
 	parser.cpp \

@@ -15,6 +15,7 @@
 #include "deepskyobj.h"
 #include "galaxy.h"
 #include "nebula.h"
+#include "opencluster.h"
 #include <celutil/util.h>
 #include <celutil/debug.h>
 
@@ -154,6 +155,8 @@ int LoadDeepSkyObjects(DeepSkyCatalog& catalog, istream& in)
             obj = new Galaxy();
         else if (compareIgnoringCase(objType, "Nebula") == 0)
             obj = new Nebula();
+        else if (compareIgnoringCase(objType, "OpenCluster") == 0)
+            obj = new OpenCluster();
 
         if (obj != NULL)
         {
