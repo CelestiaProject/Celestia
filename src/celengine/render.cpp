@@ -4135,6 +4135,29 @@ void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
                 distanceToObject = 0;
             float minimumFeatureSize = pixelSize * 0.5f * distanceToObject;
 
+            if (radius < 10.0)
+            {
+                // Small objects may be prone to clipping; give them special
+                // handling.  We don't want to always set the projection
+                // matrix, since that could be expensive with large galaxy
+                // catalogs.
+                float nearZ = distanceToObject;
+                float farZ = offset.length() + radius * 2;
+                if (nearZ < radius * 0.001f)
+                {
+                    nearZ = radius * 0.001f;
+                    farZ = nearZ * 10000.0f;
+                }
+
+                glMatrixMode(GL_PROJECTION);
+                glPushMatrix();
+                glLoadIdentity();
+                gluPerspective(fov,
+                               (float) windowWidth / (float) windowHeight,
+                               nearZ, farZ);
+                glMatrixMode(GL_MODELVIEW);
+            }
+
             glPushMatrix();
             glTranslate(offset);
             obj->render(offset,
@@ -4142,6 +4165,13 @@ void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
                         brightness,
                         pixelSize);
             glPopMatrix();
+
+            if (radius < 10.0)
+            {
+                glMatrixMode(GL_PROJECTION);
+                glPopMatrix();
+                glMatrixMode(GL_MODELVIEW);
+            }
         }
     }
 }
