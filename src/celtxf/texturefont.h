@@ -22,7 +22,7 @@ class TextureFont
     TextureFont();
     ~TextureFont();
 
-    void render(int c) const;
+    void render(wchar_t) const;
     void render(const std::string&) const;
 
     int getWidth(const std::string&) const;
@@ -69,7 +69,7 @@ class TextureFont
 
  private:
     void addGlyph(const Glyph&);
-    const TextureFont::Glyph* getGlyph(int) const;
+    const TextureFont::Glyph* getGlyph(wchar_t) const;
     void rebuildGlyphLookupTable();
 
  private:
@@ -85,7 +85,7 @@ class TextureFont
     std::vector<Glyph> glyphs;
 
     const Glyph** glyphLookup;
-    int glyphLookupTableSize;
+    unsigned int glyphLookupTableSize;
 
  public:
     static TextureFont* load(std::istream& in);
