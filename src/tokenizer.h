@@ -60,6 +60,7 @@ private:
         CommentState        = 7,
         StringState         = 8,
         ErrorState          = 9,
+        StringEscapeState   = 10,
     };
 
     istream* in;
