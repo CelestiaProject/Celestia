@@ -33,6 +33,9 @@ class Location
     float getImportance() const;
     void setImportance(float);
 
+    uint32 getFeatureType() const;
+    void setFeatureType(uint32);
+
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
@@ -46,7 +49,7 @@ class Location
         Crater         = 0x00000008,
         Vallis         = 0x00000010,
         Mons           = 0x00000020,
-        Planitia       = 0x00000040,
+        Planum         = 0x00000040,
         Chasma         = 0x00000080,
         Patera         = 0x00000100,
         Mare           = 0x00000200,
@@ -55,6 +58,19 @@ class Location
         Regio          = 0x00001000,
         Chaos          = 0x00002000,
         Terra          = 0x00004000,
+        Astrum         = 0x00008000,
+        Corona         = 0x00010000,
+        Dorsum         = 0x00020000,
+        Fossa          = 0x00040000,
+        Catena         = 0x00080000,
+        Mensa          = 0x00100000,
+        Rima           = 0x00200000,
+        Undae          = 0x00400000,
+        Reticulum      = 0x01000000,
+        Planitia       = 0x02000000,
+        Linea          = 0x04000000,
+        Fluctus        = 0x08000000,
+        Farrum         = 0x10000000,
         Other          = 0x80000000,
     };
 
@@ -63,6 +79,7 @@ class Location
     Point3f position;
     float size;
     float importance;
+    uint32 featureType;
     std::string* infoURL;
 };
 
