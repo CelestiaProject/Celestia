@@ -494,3 +494,4 @@ Code:
 * Unix Gtk: removed problem preventing ShowClouds from working. (dramsey)
 * Unix Gtk: Options Dialog. (dramsey)
 * Celestia Watcher extended. (dramsey)
+* Unix Glut: Keyboard handling corrected. (dramsey)
