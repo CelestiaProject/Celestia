@@ -1952,24 +1952,25 @@ static void renderSphereFragmentShader(const RenderInfo& ri,
                          ri.ambientColor,
                          ri.lod,
                          frustum);
-        if (ri.nightTex != NULL)
-        {
-            ri.nightTex->bind();
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE, GL_ONE);
-            renderSmoothMesh(*(ri.nightTex),
-                             ri.sunDir_eye, 
-                             ri.orientation,
-                             Color::Black,
-                             ri.lod,
-                             frustum,
-                             true);
-        }
     }
     else
     {
         glEnable(GL_LIGHTING);
         lodSphere->render(frustum, ri.lod, NULL, 0);
+    }
+
+    if (ri.nightTex != NULL)
+    {
+        ri.nightTex->bind();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        renderSmoothMesh(*(ri.nightTex),
+                         ri.sunDir_eye, 
+                         ri.orientation,
+                         Color::Black,
+                         ri.lod,
+                         frustum,
+                         true);
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -2096,7 +2097,7 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
-        vp::use(vp::diffuse);
+        vp::use(vp::nightLights);
         vp::parameter(32, Color::Black); // Disable ambient color
         setupNightTextureCombine();
         glEnable(GL_BLEND);

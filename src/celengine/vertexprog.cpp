@@ -28,6 +28,7 @@ unsigned int vp::diffuseTexOffset = 0;
 unsigned int vp::ringIllum = 0;
 unsigned int vp::ringShadow = 0;
 unsigned int vp::cometTail = 0;
+unsigned int vp::nightLights = 0;
 
 
 static string* ReadTextFromFile(const string& filename)
@@ -99,6 +100,8 @@ bool vp::init()
     if (!LoadVertexProgram("shaders/rings.vp", ringIllum))
         return false;
     if (!LoadVertexProgram("shaders/ringshadow.vp", ringShadow))
+        return false;
+    if (!LoadVertexProgram("shaders/night.vp", nightLights))
         return false;
     // if (!LoadVertexProgram("shaders/comet.vp", cometTail))
     //    return false;
