@@ -473,7 +473,7 @@ txfGetStringMetrics(TexFont* txf,
     TexGlyphVertexInfo *tgvi;
     int w = 0;
 
-    for (int i = 0; i < s.length(); i++)
+    for (unsigned int i = 0; i < s.length(); i++)
     {
         tgvi = getTCVI(txf, s[i]);
         w += (int) tgvi->advance;
@@ -508,13 +508,13 @@ void txfRenderGlyph(TexFont * txf, int c)
 
 void txfRenderString(TexFont * txf, char *s, int len)
 {
-    for (int i = 0; i < len; i++)
+    for (unsigned int i = 0; i < len; i++)
         txfRenderGlyph(txf, s[i]);
 }
 
 void txfRenderString(TexFont * txf, string s)
 {
-    for (int i = 0; i < s.length(); i++)
+    for (unsigned int i = 0; i < s.length(); i++)
         txfRenderGlyph(txf, s[i]);
 }
 
