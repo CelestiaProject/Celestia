@@ -1793,6 +1793,8 @@ void CelestiaCore::start(double t)
     sim->setTime(t);
     sim->update(0.0);
 
+    sysTime = timer->getTime();
+
     if (startURL != "")
         goToUrl(startURL);
 }
