@@ -44,12 +44,15 @@ CLEAN :
 	-@erase "$(INTDIR)\bigfix.obj"
 	-@erase "$(INTDIR)\body.obj"
 	-@erase "$(INTDIR)\celestia.res"
+	-@erase "$(INTDIR)\cmdparser.obj"
 	-@erase "$(INTDIR)\color.obj"
+	-@erase "$(INTDIR)\command.obj"
 	-@erase "$(INTDIR)\config.obj"
 	-@erase "$(INTDIR)\console.obj"
 	-@erase "$(INTDIR)\constellation.obj"
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\dispmap.obj"
+	-@erase "$(INTDIR)\execution.obj"
 	-@erase "$(INTDIR)\filetype.obj"
 	-@erase "$(INTDIR)\glext.obj"
 	-@erase "$(INTDIR)\gui.obj"
@@ -133,12 +136,15 @@ LINK32_OBJS= \
 	"$(INTDIR)\astro.obj" \
 	"$(INTDIR)\bigfix.obj" \
 	"$(INTDIR)\body.obj" \
+	"$(INTDIR)\cmdparser.obj" \
 	"$(INTDIR)\color.obj" \
+	"$(INTDIR)\command.obj" \
 	"$(INTDIR)\config.obj" \
 	"$(INTDIR)\console.obj" \
 	"$(INTDIR)\constellation.obj" \
 	"$(INTDIR)\debug.obj" \
 	"$(INTDIR)\dispmap.obj" \
+	"$(INTDIR)\execution.obj" \
 	"$(INTDIR)\filetype.obj" \
 	"$(INTDIR)\glext.obj" \
 	"$(INTDIR)\gui.obj" \
@@ -192,12 +198,15 @@ CLEAN :
 	-@erase "$(INTDIR)\bigfix.obj"
 	-@erase "$(INTDIR)\body.obj"
 	-@erase "$(INTDIR)\celestia.res"
+	-@erase "$(INTDIR)\cmdparser.obj"
 	-@erase "$(INTDIR)\color.obj"
+	-@erase "$(INTDIR)\command.obj"
 	-@erase "$(INTDIR)\config.obj"
 	-@erase "$(INTDIR)\console.obj"
 	-@erase "$(INTDIR)\constellation.obj"
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\dispmap.obj"
+	-@erase "$(INTDIR)\execution.obj"
 	-@erase "$(INTDIR)\filetype.obj"
 	-@erase "$(INTDIR)\glext.obj"
 	-@erase "$(INTDIR)\gui.obj"
@@ -284,12 +293,15 @@ LINK32_OBJS= \
 	"$(INTDIR)\astro.obj" \
 	"$(INTDIR)\bigfix.obj" \
 	"$(INTDIR)\body.obj" \
+	"$(INTDIR)\cmdparser.obj" \
 	"$(INTDIR)\color.obj" \
+	"$(INTDIR)\command.obj" \
 	"$(INTDIR)\config.obj" \
 	"$(INTDIR)\console.obj" \
 	"$(INTDIR)\constellation.obj" \
 	"$(INTDIR)\debug.obj" \
 	"$(INTDIR)\dispmap.obj" \
+	"$(INTDIR)\execution.obj" \
 	"$(INTDIR)\filetype.obj" \
 	"$(INTDIR)\glext.obj" \
 	"$(INTDIR)\gui.obj" \
@@ -379,6 +391,18 @@ SOURCE=.\src\color.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+SOURCE=.\src\cmdparser.cpp
+
+"$(INTDIR)\cmdparser.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\command.cpp
+
+"$(INTDIR)\command.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
 SOURCE=.\src\config.cpp
 
 "$(INTDIR)\config.obj" : $(SOURCE) "$(INTDIR)"
@@ -406,6 +430,12 @@ SOURCE=.\src\debug.cpp
 SOURCE=.\src\dispmap.cpp
 
 "$(INTDIR)\dispmap.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\execution.cpp
+
+"$(INTDIR)\execution.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
