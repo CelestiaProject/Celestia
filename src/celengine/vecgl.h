@@ -50,14 +50,14 @@ inline void glColor(const Color& c, float a)
 
 inline void glMatrix(const Mat4f& m)
 {
-    Mat4f& trans = m.transpose();
+    Mat4f trans = m.transpose();
     glMultMatrixf(&trans[0].x);
 }
 
 
 inline void glMatrix(const Mat4d& m)
 {
-    Mat4d& trans = m.transpose();
+    Mat4d trans = m.transpose();
     glMultMatrixd(&trans[0].x);
 }
 
