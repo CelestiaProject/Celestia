@@ -68,6 +68,7 @@ Source: "textures\medres\earth.png"; DestDir: "{app}/textures/medres"; CopyMode:
 Source: "textures\medres\earth-clouds.png"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\earthnight.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\enceladus.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\eros.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\europa.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\ganymede.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\gasgiant.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
@@ -102,6 +103,7 @@ Source: "textures\medres\triton.jpg"; DestDir: "{app}/textures/medres"; CopyMode
 Source: "textures\medres\umbriel.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\venus.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\venuslike.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\venussurface.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 
 ; Low res textures
 Source: "textures\lores\astar.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
@@ -119,6 +121,7 @@ Source: "textures\lores\earth.png"; DestDir: "{app}/textures/lores"; CopyMode: a
 Source: "textures\lores\earth-clouds.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\earthnight.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\enceladus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\eros.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\europa.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\ganymede.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\gasgiant.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
@@ -153,6 +156,7 @@ Source: "textures\lores\uranus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: 
 Source: "textures\lores\uranus-rings.png"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\venus.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 Source: "textures\lores\venuslike.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
+Source: "textures\lores\venussurface.jpg"; DestDir: "{app}/textures/lores"; CopyMode: alwaysoverwrite
 
 ; NV shaders
 Source: "shaders\bumpdiffuse.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
