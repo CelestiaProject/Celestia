@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="2">
+<kpartgui name="celestia" version="3">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -13,49 +13,53 @@
     <Action name="go_to" />
     <Action name="go_to_long_lat" />
     <Action name="celestialBrowser" />
+    <Action name="eclipseFinder" />
   </Menu>
   <Action name="bookmarks" />
+  <Menu name="options"><text>Options</text>
+     <Menu name="objects"><text>Objects</text>
+         <Action name="showStars"/>
+         <Action name="showPlanets"/>
+         <Action name="showGalaxies"/>
+         <Action name="showDiagrams"/>
+         <Action name="showCloudMaps"/>
+         <Action name="showOrbits"/>
+         <Action name="showCelestialSphere"/>
+         <Action name="showNightMaps"/>
+         <Action name="showAtmospheres"/>
+         <Action name="showSmoothLines"/>
+         <Action name="showEclipseShadows"/>
+         <Action name="showStarsAsPoints"/>
+         <Action name="showRingShadows"/>
+         <Action name="showBoundaries"/>
+         <Action name="showAutoMag"/>
+         <Action name="showCometTails"/>
+     </Menu>
+     <Menu name="labels"><text>Labels</text>
+         <Action name="showStarLabels"/>
+         <Action name="showPlanetLabels"/>
+         <Action name="showMoonLabels"/>
+         <Action name="showConstellationLabels"/>
+         <Action name="showGalaxyLabels"/>
+         <Action name="showAsteroidLabels"/>
+         <Action name="showSpacecraftLabels"/>
+     </Menu>
+     <Menu name="opengl" icon="configure"><text>OpenGL</text>
+         <Action name="vertexShader"/>
+         <Action name="pixelShader"/>
+     </Menu>
+  </Menu>
+  <Menu name="time" icon="kalarm"><text>Time</text>
+      <Action name="setTime"/>
+      <Action name="displayLocalTime"/>
+      <Action name="reverseTime" />
+      <Action name="slowDownTime" />
+      <Action name="pauseTime" />
+      <Action name="accelerateTime" />
+      <Action name="setTimeNow"/>
+  </Menu>
   <Menu name="settings">
         <Action name="showBookmarkBar" append="show_merge"/>
-        <Menu name="objects"><text>Objects</text>
-            <Action name="showStars"/>
-            <Action name="showPlanets"/>
-            <Action name="showGalaxies"/>
-            <Action name="showDiagrams"/>
-            <Action name="showCloudMaps"/>
-            <Action name="showOrbits"/>
-            <Action name="showCelestialSphere"/>
-            <Action name="showNightMaps"/>
-            <Action name="showAtmospheres"/>
-            <Action name="showSmoothLines"/>
-            <Action name="showEclipseShadows"/>
-            <Action name="showStarsAsPoints"/>
-            <Action name="showRingShadows"/>
-            <Action name="showBoundaries"/>
-            <Action name="showAutoMag"/>
-            <Action name="showCometTails"/>
-        </Menu>
-        <Menu name="labels"><text>Labels</text>
-            <Action name="showStarLabels"/>
-            <Action name="showPlanetLabels"/>
-            <Action name="showMoonLabels"/>
-            <Action name="showConstellationLabels"/>
-            <Action name="showGalaxyLabels"/>
-            <Action name="showAsteroidLabels"/>
-            <Action name="showSpacecraftLabels"/>
-        </Menu>
-        <Menu name="opengl"><text>OpenGL</text>
-            <Action name="vertexShader"/>
-            <Action name="pixelShader"/>
-        </Menu>
-        <Menu name="time"><text>Time</text>
-            <Action name="displayLocalTime"/>
-            <Action name="reverseTime" />
-            <Action name="slowDownTime" />
-            <Action name="pauseTime" />
-            <Action name="accelerateTime" />
-            <Action name="setTimeNow"/>
-        </Menu>
   </Menu>
   <Menu name="help">
     <Action name="opengl_info"/>
