@@ -679,83 +679,42 @@ void Renderer::render(const Observer& observer,
         {
             Point3f center = iter->position * viewMat;
 
+            bool convex = true;
             float radius = 1.0f;
             if (iter->body != NULL)
+            {
                 radius = iter->body->getRadius();
+                if (iter->body->getRings() != NULL)
+                {
+                    radius = iter->body->getRings()->outerRadius;
+                    convex = false;
+                }
+            }
             else if (iter->star != NULL)
+            {
                 radius = iter->star->getRadius();
+            }
 
             // Test the object's bounding sphere against the view frustum
             if (frustum.testSphere(center, radius) != Frustum::Outside)
             {
-#if 0
-                float nearZ = center.z - radius;
-
-                // Now, determine where to set the near clip plane so that
-                // it's close to, but does not intersect, the bounding sphere.
-                if (frustum.test(center + Vec3f(0, 0, radius)) !=
-                    Frustum::Outside)
-                {
-                    // If the frontmost point of the sphere lies within the
-                    // view frustum, that's our closest point . . .
-                    nearZ = center.z + radius;
-                }
-                else
-                {
-                    float maxDist = 0.0f;
-                    if (frustum.test(center) == Frustum::Inside)
-                        maxDist = radius;
-
-                    // Otherwise we need to check the intersections of
-                    // the sphere with each of the frustum planes.
-                    for (int i = 0; i < 4; i++)
-                    {
-                        Planef plane = frustum.getPlane(i);
-
-                        // See if the sphere intersects this plane
-                        float distanceToCenter = plane.distanceTo(center);
-                        if (distanceToCenter > -radius &&
-                            distanceToCenter < maxDist)
-                        {
-                            // Compute the z value of frontmost point of
-                            // the circle formed by the intersection of the
-                            // frustum plane and the bounding sphere.
-                            Point3f closestPoint = center -
-                                plane.normal * distanceToCenter;
-                            float r = (float) sqrt(square(radius) -
-                                                   square(distanceToCenter));
-                            float z = closestPoint.z +
-                                r * sqrt(1 - square(plane.normal.z));
-                            if (z > nearZ)
-                                nearZ = z;
-
-                            {
-                                switch (i) {
-                                case 0: cout << "Bottom "; break;
-                                case 1: cout << "Top    "; break;
-                                case 2: cout << "Left   "; break;
-                                case 3: cout << "Right  "; break;
-                                case 4: cout << "Near   "; break;
-                                };
-                                cout << z << " : " << closestPoint.z << '\n';
-                            }
-                        }
-                    }
-                }
-#endif
                 float nearZ = center.distanceFromOrigin() - radius;
                 float maxSpan = (float) sqrt(square((float) windowWidth) +
                                              square((float) windowHeight));
-                cout << "nearZ = " << nearZ;
                 nearZ = -nearZ / (float) cos(degToRad(fov)) *
                     ((float) windowHeight / maxSpan);
-                cout << ", " << nearZ << '\n';
-
+                
                 if (nearZ > -MinNearPlaneDistance)
                     iter->nearZ = -MinNearPlaneDistance;
                 else
                     iter->nearZ = nearZ;
                 iter->farZ = center.z - radius;
+
+                if (!convex)
+                {
+                    if (iter->farZ / iter->nearZ > MaxFarNearRatio)
+                        iter->nearZ = iter->farZ / MaxFarNearRatio;
+                }
 
                 *notCulled = *iter;
                 notCulled++;
@@ -763,7 +722,6 @@ void Renderer::render(const Observer& observer,
         }
 
         renderList.resize(notCulled - renderList.begin());
-        cout << renderList.size() << " objects not culled.\n";
         
         // The calls to renderSolarSystem/renderStars filled renderList
         // with visible planetary bodies.  Sort it by distance, then
@@ -841,7 +799,7 @@ void Renderer::render(const Observer& observer,
                 gluPerspective(fov, (float) windowWidth / (float) windowHeight,
                                nearPlaneDistance, farPlaneDistance);
                 glMatrixMode(GL_MODELVIEW);
-#if 1
+#if 0
                 if (renderList[i].body != NULL)
                 {
                     cout << renderList[i].body->getName() << " : ";
