@@ -923,7 +923,7 @@ void BuildMultistarSystemCatalog()
             {
                 MultistarSystem* multiSystem = new MultistarSystem();
                 multiSystem->nStars = 1;
-                multiSystem->stars[0] = iter;
+                multiSystem->stars[0] = &*iter;
                 starSystems.insert(MultistarSystemCatalog::value_type(iter->CCDMIdentifier, multiSystem));
             }
             else
@@ -935,7 +935,7 @@ void BuildMultistarSystemCatalog()
                 }
                 else
                 {
-                    multiSystem->stars[multiSystem->nStars] = iter;
+                    multiSystem->stars[multiSystem->nStars] = &*iter;
                     multiSystem->nStars++;
                 }
             }
@@ -1164,7 +1164,7 @@ int main(int argc, char* argv[])
         for (vector<HipparcosStar>::iterator iter = stars.begin();
              iter != stars.end(); iter++)
         {
-            starIndex.insert(starIndex.end(), iter);
+            starIndex.insert(starIndex.end(), &*iter);
         }
 
         HIPCatalogComparePredicate pred;
