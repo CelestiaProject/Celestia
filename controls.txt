@@ -2,40 +2,41 @@ Mouse and Keyboard Controls for Celestia
 
 Mouse Functions:
 
-Left drag to orient camera
-Right drag to orbit the selected object
-Use the mouse wheel to adjust distance to selection
-    (for wheelless mice, dragging while holding left and right
-    buttons or left dragfing while holding control to dolly camera
-    will adjust distance)
-Left drag while holding shift to zoom
-Click the wheel to reset the field of view to 45 degrees
-Left-click to select; double click to center selection
-Right-click to bring up context menu
+Left drag:           orient camera
+Right drag:          orbit the selected object
+Wheel:               adjust distance to selection
+Right + Left drag:   adjust distance to selection
+Ctrl  + Left drag:   adjust distance to selection
+Shift + Left drag:   change field of view (e.g. => telescopic view)
+Wheel (middle button) click:  toggle field of view between 45 degrees 
+                              and the previous field (e.g. telescopic view)
+Left - click:        select object 
+Left double click:   center selection
+Right - click:       bring up context menu
 
-Keyboard Commands
+Keyboard Commands:
 
 Navigation:
-H  : Select the sun (Home)
-C  : Center on selected object
-G  : Goto selected object
-F  : Follow selected object
-Y  : Orbit the selected object at a rate synced to its rotation
-:  : Lock on selected object
-"  : Chase selected object (orientation is based on selection's velocity)
-T  : Track selected object (keep selected object centered in view)
+H    : Select the sun (Home)
+C    : Center on selected object
+G    : Goto selected object
+F    : Follow selected object
+Y    : Orbit the selected object at a rate synced to its rotation
+:    : Lock on selected object
+"    : Chase selected object (orientation is based on selection's velocity)
+T    : Track selected object (keep selected object centered in view)
 HOME : Move closer to object
 END  : Move farther from object
 ESC  : Cancel motion or script
 Left/Right Arrows : Roll Camera
 Up / Down Arrows  : Change Camera Pitch
-1-9 : Select planets around nearby sun
+1-9  : Select planets around nearby sun
 
 Time:
 Space : stop time
-L  : Time 10x faster
-K  : Time 10x slower
-J  : Reverse time
+L     : Time 10x faster
+K     : Time 10x slower
+J     : Reverse time
 
 Labels:
 N  : Toggle planet and moon labels
