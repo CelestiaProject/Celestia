@@ -87,6 +87,7 @@ CLEAN :
 	-@erase "$(INTDIR)\util.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vertexlist.obj"
+	-@erase "$(INTDIR)\vertexprog.obj"
 	-@erase "$(INTDIR)\visstars.obj"
 	-@erase "$(INTDIR)\winmain.obj"
 	-@erase "$(INTDIR)\winssbrowser.obj"
@@ -190,6 +191,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\univcoord.obj" \
 	"$(INTDIR)\util.obj" \
 	"$(INTDIR)\vertexlist.obj" \
+	"$(INTDIR)\vertexprog.obj" \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\winmain.obj" \
 	"$(INTDIR)\winssbrowser.obj" \
@@ -267,6 +269,7 @@ CLEAN :
 	-@erase "$(INTDIR)\vc60.pdb"
 	-@erase "$(INTDIR)\visstars.obj"
 	-@erase "$(INTDIR)\vertexlist.obj"
+	-@erase "$(INTDIR)\vertexprog.obj"
 	-@erase "$(INTDIR)\winmain.obj"
 	-@erase "$(INTDIR)\winssbrowser.obj"
 	-@erase "$(INTDIR)\winstarbrowser.obj"
@@ -372,6 +375,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\util.obj" \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\vertexlist.obj" \
+	"$(INTDIR)\vertexprog.obj" \
 	"$(INTDIR)\winmain.obj" \
 	"$(INTDIR)\winssbrowser.obj" \
 	"$(INTDIR)\winstarbrowser.obj" \
@@ -688,6 +692,12 @@ SOURCE=.\src\visstars.cpp
 SOURCE=.\src\vertexlist.cpp
 
 "$(INTDIR)\vertexlist.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\vertexprog.cpp
+
+"$(INTDIR)\vertexprog.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
