@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.2.4
+AppVerName=Celestia 1.2.5
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -16,6 +16,7 @@ LicenseFile=C:\celestia\celestia\COPYING
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4
+Name: "urlassoc"; Description: "Associate cel:// &URLs"; GroupDescription: "Other tasks:"
 
 [Dirs]
 Name: "{app}\extras"
@@ -207,6 +208,13 @@ Name: "{group}\Celestia"; Filename: "{app}\celestia.exe"; WorkingDir: "{app}"
 Name: "{group}\README"; Filename: "{app}\README.txt"
 Name: "{group}\Celestia on the Web"; Filename: "{app}\celestia.url"
 Name: "{userdesktop}\Celestia"; Filename: "{app}\celestia.exe"; MinVersion: 4,4; Tasks: desktopicon; WorkingDir: "{app}"
+
+[Registry]
+Root: HKCR; Subkey: "cel"; ValueType: string; ValueData: "URL:cel Protocol"; Tasks: urlassoc
+Root: HKCR; Subkey: "cel"; ValueName: "URL Protocol"; ValueType: string; Tasks: urlassoc
+Root: HKCR; Subkey: "cel\Shell"; ValueType: string; Tasks: urlassoc
+Root: HKCR; Subkey: "cel\Shell\open"; ValueType: string; Tasks: urlassoc
+Root: HKCR; Subkey: "cel\Shell\open\Command"; ValueType: string; ValueData: "{app}\celestia.exe -u ""%1"""; Tasks: urlassoc
 
 [Run]
 Filename: "{app}\celestia.exe"; Description: "Launch Celestia"; Flags: nowait postinstall skipifsilent
