@@ -15,7 +15,7 @@
 #include "mesh.h"
 #include "resmanager.h"
 
-
+#if 0
 class MeshManager : public ResourceManager
 {
  public:
@@ -27,6 +27,26 @@ class MeshManager : public ResourceManager
     bool find(const std::string& name, Mesh**);
     Mesh* load(const std::string& name);
 };
+#endif
+
+class MeshInfo : public ResourceInfo<Mesh>
+{
+ public:
+    std::string source;
+
+    MeshInfo(const std::string _source) : source(_source) {};
+
+    virtual Mesh* load(const std::string&);
+};
+
+inline bool operator<(const MeshInfo& mi0, const MeshInfo& mi1)
+{
+    return mi0.source < mi1.source;
+}
+
+typedef ResourceManager<MeshInfo> MeshManager;
+
+extern MeshManager* GetMeshManager();
 
 #endif // _MESHMANAGER_H_
 

@@ -25,45 +25,40 @@ using namespace std;
 
 static Mesh* LoadCelestiaMesh(const string& filename);
 
+static MeshManager* meshManager = NULL;
 
-MeshManager::~MeshManager()
+
+MeshManager* GetMeshManager()
 {
-    // TODO: Clean up
+    if (meshManager == NULL)
+        meshManager = new MeshManager("models");
+    return meshManager;
 }
 
 
-bool MeshManager::find(const string& name, Mesh** mesh)
+Mesh* MeshInfo::load(const string& baseDir)
 {
-    return findResource(name, (void**) mesh);
-}
-
-
-Mesh* MeshManager::load(const string& name)
-{
-    DPRINTF("Loading mesh: %s\n", name.c_str());
-    ContentType fileType = DetermineFileType(name);
-    Mesh* mesh = NULL;
+    DPRINTF("Loading mesh: %s\n", source.c_str());
+    ContentType fileType = DetermineFileType(source);
 
     if (fileType == Content_3DStudio)
     {
         Mesh3DS* mesh3 = NULL;
-        M3DScene* scene = Read3DSFile(baseDir + '/' + name);
+        M3DScene* scene = Read3DSFile(baseDir + '/' + source);
         if (scene != NULL)
         {
             mesh3 = new Mesh3DS(*scene);
             mesh3->normalize();
             delete scene;
+            return mesh3;
         }
-        mesh = mesh3;
     }
     else if (fileType == Content_CelestiaMesh)
     {
-        mesh = LoadCelestiaMesh(baseDir + '/' + name);
+        return LoadCelestiaMesh(baseDir + '/' + source);
     }
-
-    addResource(name, (void*) mesh);
  
-    return mesh;
+    return NULL;
 }
 
 
