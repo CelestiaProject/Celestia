@@ -919,17 +919,25 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '[':
-        if (sim->getFaintestVisible() > 1.0f)
-        {
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
 	    {
-            setFaintest(sim->getFaintestVisible() - 0.5f);
+            if (sim->getFaintestVisible() > 1.0f)
+	    {
+	        setFaintest(sim->getFaintestVisible() - 0.2f);
             notifyWatchers(FaintestChanged);
             char buf[128];
-            sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
+		sprintf(buf, "Magnitude limit: %.2f",sim->getFaintestVisible());
             flash(buf);
         }
         }
+	else if (renderer->getFaintestAM45deg() > 6.0f)
+	{
+	    renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() - 0.1f);
+	    setFaintestAutoMag();
+	    char buf[128];
+	    sprintf(buf, "Auto magnitude limit at 45 degrees:  %.2f",renderer->getFaintestAM45deg());
+	    flash(buf);
+	}
         break;
 
     case '\\':
@@ -938,17 +946,25 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case ']':
-        if (sim->getFaintestVisible() < 15.0f)
-        {
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
         {
-            setFaintest(sim->getFaintestVisible() + 0.5f);
+            if (sim->getFaintestVisible() < 15.0f)
+	    {
+	        setFaintest(sim->getFaintestVisible() + 0.2f);
             notifyWatchers(FaintestChanged);
             char buf[128];
-            sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
+		sprintf(buf, "Magnitude limit: %.2f",sim->getFaintestVisible());
             flash(buf);
         }
         }
+	else if (renderer->getFaintestAM45deg() < 12.0f)
+	{
+	    renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() + 0.1f);
+	    setFaintestAutoMag();
+	    char buf[128];
+	    sprintf(buf, "Auto magnitude limit at 45 degrees:  %.2f",renderer->getFaintestAM45deg());
+	    flash(buf);
+	}
         break;
 
     case '`':
@@ -1954,7 +1970,10 @@ bool CelestiaCore::initRenderer()
     }
 
     if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+    {
+	renderer->setFaintestAM45deg(renderer->getFaintestAM45deg());
         setFaintestAutoMag();
+    }
     else
     {
     renderer->setBrightnessBias(0.1f);
@@ -2086,7 +2105,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
 // brightness parameters appropriately.
 void CelestiaCore::setFaintest(float magnitude)
 {
-    renderer->setBrightnessBias(0.05f);
+    renderer->setBrightnessBias(0.1f);
     renderer->setSaturationMagnitude(1.0f);
     sim->setFaintestVisible(magnitude);
 }
@@ -2097,7 +2116,7 @@ void CelestiaCore::setFaintest(float magnitude)
 void CelestiaCore::setFaintestAutoMag()
 {
     float faintestMag;
-    renderer->setBrightnessBias(0.05f);
+    renderer->setBrightnessBias(0.1f);
     renderer->autoMag(faintestMag);
     sim->setFaintestVisible(faintestMag);
 }
