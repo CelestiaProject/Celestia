@@ -73,5 +73,13 @@ void Nebula::render(const Vec3f& offset,
     RenderContext rc;
     m->render(rc);
 
+    // Reset the material
+    float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float zero = 0.0f;
+    glColor4fv(black);
+    glMaterialfv(GL_FRONT, GL_EMISSION, black);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+    glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+
     glEnable(GL_BLEND);
 }
