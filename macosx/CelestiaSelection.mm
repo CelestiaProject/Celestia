@@ -13,6 +13,10 @@
 #import "CelestiaStar_PrivateAPI.h"
 #import "NSString_ObjCPlusPlus.h"
 #import "CelestiaUniversalCoord_PrivateAPI.h"
+#import "CelestiaAppCore.h"
+#import "CelestiaUniverse_PrivateAPI.h"
+
+#include <celengine/universe.h>
 
 @implementation CelestiaSelection(PrivateAPI)
 -(CelestiaSelection *)initWithSelection:(Selection)selection
@@ -101,8 +105,71 @@
 {
     return [NSString stringWithStdString:[self selection].getName()];
 }
+
+-(NSString *)briefName
+{
+    NSString* name;
+    if ([self star] != NULL)
+    {
+        CelestiaAppCore* appCore = [CelestiaAppCore sharedAppCore];
+        Universe* univ = [[[appCore simulation] universe] universe];
+        StarDatabase* stardb = univ->getStarCatalog();
+        string starname = stardb->getStarName(*[[self star]star]);
+        name = [NSString stringWithStdString:starname];
+/*
+        char buf[20];
+        sprintf(buf, "#%d", [[[self star] catalogNumber] intValue]);
+//        string tname = string(buf);
+        name = [NSString stringWithStdString:string(buf)];
+*/
+    }
+    else if ([ self galaxy] != NULL)
+    {
+        name = [ [self galaxy] name ];
+    }
+    else if ([self body] != NULL)
+    {
+        name = [[self body] name];
+/*
+        PlanetarySystem* system = body->getSystem();
+        while (system != NULL)
+        {
+            Body* parent = system->getPrimaryBody();
+            if (parent != NULL)
+            {
+                name = parent->getName() + '/' + name;
+                system = parent->getSystem();
+            }
+            else
+            {
+                const Star* parentStar = system->getStar();
+                if (parentStar != NULL)
+                {
+
+                    char buf[20];
+                    sprintf(buf, "#%d", parentStar->getCatalogNumber());
+                    name = string(buf) + '/' + name;
+
+
+                }
+                system = NULL;
+            }
+        }
+*/
+    }
+    else
+    {
+        name = @"";
+    }
+    return name;
+}
+
+
+
+
 -(CelestiaUniversalCoord*)position:(NSNumber*)t
 {
     return [[[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self selection].getPosition([t doubleValue])] autorelease];
 }
+
 @end
