@@ -13,6 +13,7 @@
 #define _CELESTIA_CELX_H_
 
 #include <iostream>
+#include <string>
 extern "C" {
 #include "lua/lua.h"
 }
@@ -28,10 +29,18 @@ public:
     lua_State* getState() const;
 
     int loadScript(std::istream&);
+    int loadScript(const std::string&);
     bool init(CelestiaCore*);
+
+
+    bool createThread();
+    int resume();
+    bool isAlive() const;
 
 private:
     lua_State* state;
+    lua_State* costate; // coroutine stack
+    bool alive;
 };
 
 #endif // _CELESTIA_CELX_H_

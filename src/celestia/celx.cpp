@@ -10,6 +10,17 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+
+#include <celengine/celestia.h>
+
+// Ugh . . . the C++ standard says that stringstream should be in
+// sstream, but the GNU C++ compiler uses strstream instead.
+#ifdef HAVE_SSTREAM
+#include <sstream>
+#else
+#include <strstream>
+#endif // HAVE_SSTREAM
+
 #include "celx.h"
 #include "celestiacore.h"
 extern "C" {
@@ -50,7 +61,10 @@ static void lua_setclass(lua_State* l, int id)
 }
 
 
-LuaState::LuaState()
+LuaState::LuaState() :
+    state(NULL),
+    costate(NULL),
+    alive(false)
 {
     state = lua_open();
 }
@@ -59,12 +73,99 @@ LuaState::~LuaState()
 {
     if (state != NULL)
         lua_close(state);
+#if 0
+    if (costate != NULL)
+        lua_close(costate);
+#endif
 }
 
 lua_State* LuaState::getState() const
 {
     return state;
 }
+
+
+bool LuaState::createThread()
+{
+    // Initialize the coroutine which wraps the script
+    if (!(lua_isfunction(state, -1) && !lua_iscfunction(state, -1)))
+    {
+        // Should never happen; we manually set up the stack in C++
+        assert(0);
+        return false;
+    }
+    else
+    {
+        costate = lua_newthread(state);
+        if (costate == NULL)
+            return false;
+        lua_pushvalue(state, -2);
+        lua_xmove(state, costate, 1);  /* move function from L to NL */
+        alive = true;
+        return true;
+    }
+}
+
+
+static int auxresume(lua_State *L, lua_State *co, int narg)
+{
+    int status;
+#if 0
+    if (!lua_checkstack(co, narg))
+        luaL_error(L, "too many arguments to resume");
+#endif
+    lua_xmove(L, co, narg);
+
+    status = lua_resume(co, narg);
+    if (status == 0)
+    {
+        int nres = lua_gettop(co);
+        //printf("args: %d\n", nres);
+#if 0
+        if (!lua_checkstack(L, narg))
+              luaL_error(L, "too many results to resume");
+#endif
+        lua_xmove(co, L, nres);  /* move yielded values */
+        return nres;
+    }
+    else
+    {
+        lua_xmove(co, L, 1);  /* move error message */
+        return -1;  /* error flag */
+    }
+}
+
+
+int LuaState::resume()
+{
+    assert(costate != NULL);
+    if (costate == NULL)
+        return false;
+
+    lua_State* co = lua_tothread(state, -1);
+    assert(co == costate);
+    if (co != costate)
+        return false;
+
+    int nArgs = auxresume(state, co, 0);
+    if (nArgs < 0)
+    {
+        alive = false;
+        cout << "Error: " << lua_tostring(state, -1) << '\n';
+        return 1; // just the error string
+    }
+    else
+    {
+        return nArgs; // arguments from yield
+    }
+}
+
+
+bool LuaState::isAlive() const
+{
+    return alive;
+}
+
 
 struct ReadChunkInfo
 {
@@ -112,6 +213,49 @@ int LuaState::loadScript(istream& in)
     return status;
 }
 
+int LuaState::loadScript(const string& s)
+{
+#ifdef HAVE_SSTREAM    
+    istringstream in(s);
+#else
+    istrstream in(s.c_str());
+#endif
+    return loadScript(in);
+}
+
+#if 0
+struct StringChunkInfo
+{
+    const char* buf;
+    int bufSize;
+    bool done;
+};
+
+static const char* readStringChunk(lua_State* state, void* udata, size_t* size)
+{
+    StringChunkInfo* info = static_cast<StringChunkInfo*>(udata);
+    if (info->done)
+    {
+        return NULL;
+    }
+    else
+    {
+        *size = info->bufSize;
+        info->done = true;
+        return info->buf;
+    }
+}
+
+int LuaState::loadString(const string& s)
+{
+    StringChunkInfo info;
+    info.buf = s.c_str();
+    info.bufSize = s.length;
+    info.done = false;
+
+    int status = lua_load(state, readStringChunk, &
+}
+#endif
 
 static int parseRenderFlag(const string& name)
 {
@@ -180,7 +324,7 @@ static int celestia_flash(lua_State* l)
     const char* s = lua_tostring(l, 2);
 
     if (appCore != NULL && s != NULL)
-        appCore->flash(s, 5.0);
+        appCore->flash(s, 1.5);
 
     return 0;
 }
@@ -287,6 +431,18 @@ static void CreateCelestiaMetaTable(lua_State* l)
 
 bool LuaState::init(CelestiaCore* appCore)
 {
+    // Import the base library
+    lua_baselibopen(state);
+
+    // Add an easy to use wait function, so that script writers can
+    // live in ignorance of coroutines.  There will probably be a significant
+    // library of useful functions that can be defined purely in Lua.
+    // At that point, we'll want something a bit more robust than just
+    // parsing the whole text of the library every time a script is launched
+    if (loadScript("wait = function(x) coroutine.yield(x) end") != 0)
+        return false;
+    lua_pcall(state, 0, 0, 0); // execute it
+
     CreateCelestiaMetaTable(state);
 
     // Create the celestia object
