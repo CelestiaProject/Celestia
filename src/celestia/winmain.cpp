@@ -2572,6 +2572,7 @@ static bool startFullscreen = false;
 static bool runOnce = false;
 static string startURL;
 static string startDirectory;
+static string startScript;
 
 static bool parseCommandLine(int argc, char* argv[])
 {
@@ -2606,6 +2607,7 @@ static bool parseCommandLine(int argc, char* argv[])
             i++;
             startURL = string(argv[i]);
         }
+
         i++;
     }
 
@@ -3165,12 +3167,50 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             if (cd != NULL && cd->lpData != NULL)
             {
                 char* urlChars = reinterpret_cast<char*>(cd->lpData);
-                if (cd->cbData > 3) // minimum of "cel:"
+                if (cd->cbData > 3) // minimum of "cel:" or ".cel"
                 {
                     string urlString(urlChars, cd->cbData);
-                    appCore->flash("Loading URL");
-                    Url url(string(urlString), appCore);
-                    url.goTo();
+
+                    if (!urlString.substr(0,4).compare("cel:")) 
+                    {
+                        appCore->flash("Loading URL");
+                        Url url(string(urlString), appCore);
+                        url.goTo();
+                    }
+                    else
+                    {
+                        ifstream scriptfile(urlString.c_str());
+                        if (!scriptfile.good())
+                        {
+                            appCore->flash("Error opening script");
+                        }
+                        else
+                        {
+                            // TODO: Need to fix memory leak with scripts;
+                            // a refcount is probably required.
+                            CommandParser parser(scriptfile);
+                            CommandSequence* script = parser.parse();
+                            if (script == NULL)
+                            {
+                                const vector<string>* errors = parser.getErrors();
+                                const char* errorMsg = "";
+                                if (errors->size() > 0)
+                                {
+                                    errorMsg = (*errors)[0].c_str();
+                                    appCore->flash(errorMsg);
+                                }
+                                else
+                                {
+                                    appCore->flash("Error loading script");
+                                }
+                            }
+                            else
+                            {
+                                appCore->flash("Running script");
+                                appCore->runScript(script);
+                            }
+                        }
+                    }
                 }
             }
         }
