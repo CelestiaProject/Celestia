@@ -19,6 +19,8 @@
 bool UTF8Decode(const std::string& str, int pos, wchar_t& ch);
 bool UTF8Decode(const char* str, int pos, int length, wchar_t& ch);
 int UTF8Encode(wchar_t ch, char* s);
+int UTF8StringCompare(const std::string& s0, const std::string& s1);
+int UTF8Length(const std::string& s);
 
 inline int UTF8EncodedSize(wchar_t ch)
 {
