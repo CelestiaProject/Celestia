@@ -26,6 +26,8 @@
 #include "astro.h"
 #include "glext.h"
 #include "vecgl.h"
+#include "glshader.h"
+#include "shadermanager.h"
 #include "spheremesh.h"
 #include "lodspheremesh.h"
 #include "model.h"
@@ -93,12 +95,6 @@ static const float ShadowTextureScale = 15.0f / 16.0f;
 static Texture* eclipseShadowTextures[4];
 static Texture* shadowMaskTexture = NULL;
 static Texture* penumbraFunctionTexture = NULL;
-
-static ResourceHandle starTexB = InvalidResource;
-static ResourceHandle starTexA = InvalidResource;
-static ResourceHandle starTexG = InvalidResource;
-static ResourceHandle starTexM = InvalidResource;
-static ResourceHandle starTexL = InvalidResource;
 
 static const Color compassColor(0.4f, 0.4f, 1.0f);
 
@@ -443,12 +439,6 @@ bool Renderer::init(GLContext* _context,
         penumbraFunctionTexture = CreateProceduralTexture(512, 1, GL_LUMINANCE,
                                                           PenumbraFunctionEval,
                                                           Texture::EdgeClamp);
-
-        starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg", 0));
-        starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg", 0));
-        starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg", 0));
-        starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg", 0));
-        starTexL = GetTextureManager()->getHandle(TextureInfo("browndwarf.jpg", 0));
 
         if (context->extensionSupported("GL_EXT_texture_cube_map"))
         {
@@ -3482,6 +3472,117 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
 }
 
 
+static void renderSphere_GLSL(const RenderInfo& ri,
+                              const LightingState& ls,
+                              const Frustum& frustum,
+                              const GLContext& context)
+{
+    Texture* textures[4] = { NULL, NULL, NULL, NULL };
+    unsigned int nTextures = 0;
+    VertexProcessor* vproc = context.getVertexProcessor();
+    assert(vproc != NULL);
+
+    bool perFragmentLighting = (ri.bumpTex != NULL);
+
+    vproc->disable();
+    glDisable(GL_LIGHTING);
+
+    ShaderProperties shadprop;
+    shadprop.nLights = ls.nLights;
+
+    // Set up the textures used by this object
+    shadprop.texUsage = ShaderProperties::DiffuseTexture;
+    textures[nTextures++] = ri.baseTex;
+
+    if (ri.bumpTex != NULL)
+    {
+        shadprop.texUsage |= ShaderProperties::NormalTexture;
+        textures[nTextures++] = ri.bumpTex;
+    }
+
+    if (ri.specularColor != Color::Black)
+    {
+        shadprop.lightModel = ShaderProperties::SpecularModel;
+        if (ri.glossTex == NULL)
+        {
+            shadprop.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
+        }
+        else
+        {
+            shadprop.texUsage |= ShaderProperties::SpecularTexture;
+            textures[nTextures++] = ri.glossTex;
+        }
+    }
+
+    if (ri.nightTex != NULL)
+    {
+        shadprop.texUsage |= ShaderProperties::NightTexture;
+        textures[nTextures++] = ri.nightTex;
+    }
+
+    // Get a shader for the current rendering configuration
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    if (prog == NULL)
+        return;
+
+    prog->use();
+
+    Vec3f diffuseColor(ri.color.red(),
+                       ri.color.green(),
+                       ri.color.blue());
+    Vec3f specularColor(ri.specularColor.red(),
+                        ri.specularColor.green(),
+                        ri.specularColor.blue());
+
+    for (unsigned int i = 0; i < ls.nLights; i++)
+    {
+        const DirectionalLight& light = ls.lights[i];
+
+        Vec3f lightColor = Vec3f(light.color.red(),
+                                 light.color.green(),
+                                 light.color.blue()) * light.irradiance;
+        prog->lights[i].direction = light.direction_obj;
+
+        if (perFragmentLighting)
+        {
+            prog->fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
+                                            lightColor.y * diffuseColor.y,
+                                            lightColor.z * diffuseColor.z);
+        }
+        else
+        {
+            prog->lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
+                                            lightColor.y * diffuseColor.y,
+                                            lightColor.z * diffuseColor.z);
+        }
+        prog->lights[i].specular = Vec3f(lightColor.x * specularColor.x,
+                                         lightColor.y * specularColor.y,
+                                         lightColor.z * specularColor.z);
+
+        Vec3f halfAngle_obj = ri.eyeDir_obj + light.direction_obj;
+        if (halfAngle_obj.length() != 0.0f)
+            halfAngle_obj.normalize();
+        prog->lights[i].halfVector = halfAngle_obj;
+    }
+
+    prog->shininess = ri.specularPower;
+    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                               ri.ambientColor.blue());
+    
+    glColor(ri.color);
+
+    unsigned int attributes = LODSphereMesh::Normals;
+    if (ri.bumpTex != NULL)
+        attributes |= LODSphereMesh::Tangents;
+    lodSphere->render(context,
+                      attributes,
+                      frustum, ri.pixWidth,
+                      textures[0], textures[1], textures[2], textures[3]);
+
+    glx::glUseProgramObjectARB(0);
+}
+
+
 static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
 {
     float f[4];
@@ -4634,6 +4735,10 @@ void Renderer::renderObject(Point3f pos,
         {
             switch (context->getRenderPath())
             {
+            case GLContext::GLPath_GLSL:
+                renderSphere_GLSL(ri, ls, viewFrustum, *context);
+                break;
+
             case GLContext::GLPath_NV30:
                 renderSphere_FP_VP(ri, viewFrustum, *context);
                 break;
@@ -5173,39 +5278,7 @@ void Renderer::renderStar(const Star& star,
         RenderProperties rp;
 
         surface.color = color;
-#if 0
-        ResourceHandle tex;
 
-        switch (star.getStellarClass().getSpectralClass())
-        {
-        case StellarClass::Spectral_O:
-        case StellarClass::Spectral_B:
-            tex = starTexB;
-            break;
-        case StellarClass::Spectral_A:
-        case StellarClass::Spectral_F:
-            tex = starTexA;
-            break;
-        case StellarClass::Spectral_G:
-        case StellarClass::Spectral_K:
-            tex = starTexG;
-            break;
-        case StellarClass::Spectral_M:
-        case StellarClass::Spectral_R:
-        case StellarClass::Spectral_S:
-        case StellarClass::Spectral_N:
-        case StellarClass::Spectral_C:
-            tex = starTexM;
-            break;
-        case StellarClass::Spectral_L:
-        case StellarClass::Spectral_T:
-            tex = starTexL;
-            break;
-        default:
-            tex = starTexA;
-            break;
-        }
-#endif
         MultiResTexture mtex = star.getTexture();
         if (mtex.tex[textureResolution] != InvalidResource)
         {

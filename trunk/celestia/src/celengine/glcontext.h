@@ -31,6 +31,7 @@ class GLContext
         GLPath_NvCombiner_ARBVP  = 5,
         GLPath_ARBFP_ARBVP       = 6,
         GLPath_NV30              = 7,
+        GLPath_GLSL              = 8,
     };
 
     enum VertexPath

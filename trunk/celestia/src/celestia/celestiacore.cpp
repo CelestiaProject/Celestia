@@ -1369,6 +1369,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 case GLContext::GLPath_NV30:
                     flash("Render path: NVIDIA GeForce FX");
                     break;
+                case GLContext::GLPath_GLSL:
+                    flash("Render path: OpenGL 2.0");
+                    break;
                 }
                 context->setRenderPath(newPath);
                 notifyWatchers(RenderFlagsChanged);
