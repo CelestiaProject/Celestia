@@ -60,7 +60,7 @@ void Console::begin()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(0.375f, 0.375f, 0);
+    glTranslatef(0.125f, 0.125f, 0);
 
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
