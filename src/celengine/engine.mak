@@ -42,6 +42,7 @@ OBJS=\
 	$(INTDIR)\parser.obj \
 	$(INTDIR)\regcombine.obj \
 	$(INTDIR)\render.obj \
+	$(INTDIR)\samporbit.obj \
 	$(INTDIR)\selection.obj \
 	$(INTDIR)\simulation.obj \
 	$(INTDIR)\solarsys.obj \
