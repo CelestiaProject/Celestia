@@ -306,7 +306,7 @@ bool UTF8Decode(const std::string& str, int pos, wchar_t& ch)
     int charlen = UTF8EncodedSizeFromFirstByte(c0);
 
     // Bad UTF-8 character that extends past end of string
-    if (pos + charlen > str.length())
+    if (pos + charlen > (int)str.length())
         return false;
 
     // TODO: Should check that the bytes of characters after the first are all

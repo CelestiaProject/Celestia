@@ -134,8 +134,8 @@ FragmentProcessor* fp::initNV()
         return NULL;
     if (!LoadNvFragmentProgram("shaders/night.vp", nightLights))
         return NULL;
-#endif 0
     everything = 0;
+#endif 0
     cout << "All NV fragment programs loaded successfully.\n";
 
     return new FragmentProcessorNV();

@@ -127,7 +127,7 @@ static bool LoadNvVertexProgram(const string& filename, unsigned int& id)
 
 static int findLineNumber(const string& s, int index)
 {
-    if (index >= s.length())
+    if (index >= (int)s.length())
         return -1;
 
     int lineno = 1;

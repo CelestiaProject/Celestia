@@ -37,7 +37,7 @@ static const string CelestiaScriptExt2(".celx");
 ContentType DetermineFileType(const string& filename)
 {
     int extPos = filename.rfind('.');
-    if (extPos == string::npos)
+    if (extPos == (int)string::npos)
         return Content_Unknown;
     string ext = string(filename, extPos, filename.length() - extPos + 1);
 
