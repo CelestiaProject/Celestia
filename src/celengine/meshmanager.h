@@ -22,10 +22,24 @@ class MeshInfo : public ResourceInfo<Mesh>
     std::string source;
     std::string path;
     bool resolvedToPath;
+    Vec3f center;
 
     MeshInfo(const std::string _source,
              const std::string _path = "") :
-        source(_source), path(_path), resolvedToPath(false) {};
+        source(_source),
+        path(_path),
+        resolvedToPath(false),
+        center(0.0, 0.0f, 0.0f)
+        {};
+
+    MeshInfo(const std::string _source,
+             const std::string _path,
+             const Vec3f& _center) :
+        source(_source),
+        path(_path),
+        resolvedToPath(false),
+        center(_center)
+        {};
 
     virtual std::string resolve(const std::string&);
     virtual Mesh* load(const std::string&);
@@ -33,6 +47,8 @@ class MeshInfo : public ResourceInfo<Mesh>
 
 inline bool operator<(const MeshInfo& mi0, const MeshInfo& mi1)
 {
+    // TODO: To be completely correct, we need to compare the centers as
+    // well.
     if (mi0.source == mi1.source)
         return mi0.path < mi1.path;
     else

@@ -426,8 +426,16 @@ static Body* CreatePlanet(PlanetarySystem* system,
         string mesh("");
         if (planetData->getString("Mesh", mesh))
         {
-            ResourceHandle meshHandle = GetMeshManager()->getHandle(MeshInfo(mesh, path));
+            Vec3f meshCenter(0.0f, 0.0f, 0.0f);
+            if (planetData->getVector("MeshCenter", meshCenter))
+            {
+                // TODO: Adjust bounding radius if mesh center isn't
+                // (0.0f, 0.0f, 0.0f)
+            }
+
+            ResourceHandle meshHandle = GetMeshManager()->getHandle(MeshInfo(mesh, path, meshCenter));
             body->setMesh(meshHandle);
+
         }
     }
 
@@ -466,6 +474,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 body->setAtmosphere(*atmosphere);
                 delete atmosphere;
             }
+
+            delete atmosDataValue;
         }
     }
 
@@ -497,6 +507,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 body->setRings(RingSystem((float) inner, (float) outer,
                                           color, ringTex));
             }
+
+            delete ringsDataValue;
         }
     }
 
