@@ -992,7 +992,7 @@ void Renderer::render(const Observer& observer,
                     double dt = body->getOrbit()->getPeriod() / (double) nSteps;
                     for (int j = 0; j < nSteps; j++)
                     {
-                        Point3d p = body->getOrbit()->positionAtTime(j * dt);
+                        Point3d p = body->getOrbit()->positionAtTime(j * dt + now);
                         glVertex3f(astro::kilometersToAU((float) p.x * 100),
                                    astro::kilometersToAU((float) p.y * 100),
                                    astro::kilometersToAU((float) p.z * 100));
