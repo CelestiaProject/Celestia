@@ -4,7 +4,7 @@ pkgdata_DATA = celestia.cfg $(wildcard *.cel) controls.txt COPYING
 
 EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA)
 
-SUBDIRS = src data textures models shaders fonts macros manual
+SUBDIRS = src data extras textures models shaders fonts macros manual
 
 ## include some basic Makefiles and config files, who knows, they might even
 ## work, and they're better than nothing.
