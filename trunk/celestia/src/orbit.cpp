@@ -64,14 +64,14 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
     double eccAnomaly = meanAnomaly;
     // eccAnomaly = solveKeplerSeries(meanAnomaly, eccentricity);
 
-    double x = semiMajorAxis * (-cos(eccAnomaly) - eccentricity);
-    double z = semiMajorAxis * sqrt(1 - square(eccentricity)) * -sin(eccAnomaly);
+    double x = semiMajorAxis * (cos(eccAnomaly) - eccentricity);
+    double z = semiMajorAxis * sqrt(1 - square(eccentricity)) * sin(eccAnomaly);
 
-    Mat3d R = (Mat3d::yrotation(ascendingNode) *
+    Mat3d R = (Mat3d::yrotation(-ascendingNode) *
                Mat3d::xrotation(inclination) *
-               Mat3d::yrotation(argOfPeriapsis - ascendingNode));
+               Mat3d::yrotation(-argOfPeriapsis));
 
-    return Point3d(x, 0, z) * R;
+    return R * Point3d(x, 0, z);
 }
 
 
