@@ -1,4 +1,4 @@
-SUBDIRS = res kde
+SUBDIRS = res kde gtk
 
 bin_PROGRAMS = celestia
 INCLUDES = -I..
