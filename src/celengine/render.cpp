@@ -2323,8 +2323,8 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             const PlanetarySystem* satellites = body->getSatellites();
             if (satellites != NULL)
             {
-                // Only show labels for satellites if the planet is nearby.
-                bool showSatelliteLabels = showLabels && (distanceFromObserver < 25000000);
+                // Only show labels for satellites if within 250 planet radii.
+                bool showSatelliteLabels = showLabels && (distanceFromObserver < (double)body->getRadius() * 250.0);
                 renderPlanetarySystem(sun, *satellites, observer, newFrame, now,
                                       showSatelliteLabels);
             }
