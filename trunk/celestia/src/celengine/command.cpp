@@ -275,8 +275,7 @@ CommandMove::CommandMove(double _duration, const Vec3d& _velocity) :
 
 void CommandMove::process(ExecutionEnvironment& env, double t, double dt)
 {
-    Observer obs = env.getSimulation()->getObserver();
-    obs.setPosition(obs.getPosition() + (velocity * dt));
+    env.getSimulation()->setObserverPosition(env.getSimulation()->getObserver().getPosition() + (velocity * dt));
 }
 
 
@@ -289,7 +288,7 @@ CommandSetPosition::CommandSetPosition(const UniversalCoord& uc) : pos(uc)
 
 void CommandSetPosition::process(ExecutionEnvironment& env)
 {
-    env.getSimulation()->getObserver().setPosition(pos);
+    env.getSimulation()->setObserverPosition(pos);
 }
 
 
@@ -305,8 +304,7 @@ void CommandSetOrientation::process(ExecutionEnvironment& env)
 {
     Quatf q(1);
     q.setAxisAngle(axis, angle);
-    env.getSimulation()->getObserver().setOrientation(q);
-    // env.getSimulation()->setOrientation(q);
+    env.getSimulation()->setObserverOrientation(q);
 }
 
 
