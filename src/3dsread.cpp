@@ -34,7 +34,7 @@ static int32 readInt(ifstream& in)
 {
     int32 ret;
     in.read((char *) &ret, sizeof(int32));
-    BE_TO_CPU_INT32(ret, ret);
+    LE_TO_CPU_INT32(ret, ret);
     return ret;
 }
  
@@ -42,7 +42,7 @@ static int16 readShort(ifstream& in)
 {
     int16 ret;
     in.read((char *) &ret, sizeof(int16));
-    BE_TO_CPU_INT16(ret, ret);
+    LE_TO_CPU_INT16(ret, ret);
     return ret;
 }
  
@@ -50,7 +50,7 @@ static uint16 readUshort(ifstream& in)
 {
     uint16 ret;
     in.read((char *) &ret, sizeof(uint16));
-    BE_TO_CPU_INT16(ret, ret);
+    LE_TO_CPU_INT16(ret, ret);
     return ret;
 }
  
