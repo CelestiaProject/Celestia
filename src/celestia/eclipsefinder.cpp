@@ -22,12 +22,14 @@
 
 using namespace std;
 
-Eclipse::Eclipse(int Y, int M, int D)
+Eclipse::Eclipse(int Y, int M, int D) :
+    body(NULL)
 {
     date = new astro::Date(Y, M, D);
 }
 
-Eclipse::Eclipse(double JD)
+Eclipse::Eclipse(double JD) :
+    body(NULL)
 {
     date = new astro::Date(JD);
 }
