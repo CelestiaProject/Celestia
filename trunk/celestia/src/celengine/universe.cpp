@@ -180,6 +180,12 @@ void Universe::unmarkObject(const Selection& sel, int priority)
 }
 
 
+void Universe::unmarkAll()
+{
+    markers->erase(markers->begin(), markers->end());
+}
+
+
 bool Universe::isMarked(const Selection& sel, int priority) const
 {
     for (MarkerList::iterator iter = markers->begin();
