@@ -29,8 +29,11 @@ HOME : Move closer to object
 *    : Look back
 END  : Move farther from object
 ESC  : Cancel motion or script
+Shift+C : Center/orbit--center the selected object without changing the
+           position of the reference object.
 Left/Right Arrows : Roll Camera
 Up / Down Arrows  : Change Camera Pitch
+Shift+Arrows      : Orbit object
 1-9  : Select planets around nearby sun
 
 Time:
