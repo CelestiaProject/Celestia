@@ -25,17 +25,9 @@
 #include "quaternion.h"
 #include "util.h"
 #include "timer.h"
-#include "stardb.h"
-#include "solarsys.h"
-#include "asterism.h"
 #include "mathlib.h"
 #include "astro.h"
-#include "overlay.h"
-#include "config.h"
-#include "favorites.h"
-#include "simulation.h"
-#include "execution.h"
-#include "cmdparser.h"
+#include "celestiacore.h"
 
 #include "../res/resource.h"
 
@@ -45,65 +37,14 @@
 //-----------------
 char AppName[] = "Celestia";
 
-static string welcomeMessage1("Welcome to Celestia 1.0.10");
-static string welcomeMessage2("Press D to run demo");
-
+static CelestiaCore* appCore = NULL;
 
 // Timer info.
 static double currentTime = 0.0;
 static Timer* timer = NULL;
 
-static int nFrames = 0;
-static double fps = 0.0;
-static double fpsCounterStartTime = 0.0;
-static bool showFPSCounter = false;
-
-static bool fullscreen;
-
-// Mouse motion tracking
-static int lastX = 0;
-static int lastY = 0;
-static int mouseMotion = 0;
-static double mouseWheelTime = -1000.0;
-static float mouseWheelMotion = 0.0f;
-
-static bool upPress = false;
-static bool downPress = false;
-static bool leftPress = false;
-static bool rightPress = false;
-static bool pgupPress = false;
-static bool pgdnPress = false;
-
-static bool wireframe = false;
-
-static bool paused = false;
-static double timeScale = 0.0;
-
-static bool textEnterMode = false;
-static string typedText = "";
-static string messageText = "";
-static bool editMode = false;
-
-static int hudDetail = 1;
-
-static CelestiaConfig* config = NULL;
-
-static StarDatabase* starDB = NULL;
-static StarNameDatabase* starNameDB = NULL;
-static SolarSystemCatalog* solarSystemCatalog = NULL;
-static GalaxyList* galaxies = NULL;
-static AsterismList* asterisms = NULL;
-
-static FavoritesList* favorites = NULL;
-
-static Simulation* sim = NULL;
-static Renderer* renderer = NULL;
-static Overlay* overlay = NULL;
-static TextureFont* font = NULL;
-
-static CommandSequence* script = NULL;
-static CommandSequence* demoScript = NULL;
-static Execution* runningScript = NULL;
+static bool fullscreen = false;
+static bool bReady = false;
 
 HINSTANCE appInstance;
 
@@ -115,77 +56,19 @@ bool cursorVisible = true;
 astro::Date newTime(0.0);
 
 #define INFINITE_MOUSE
+static int lastX = 0;
+static int lastY = 0;
 
 #define ROTATION_SPEED  6
 #define ACCELERATION    20.0f
 
+static LRESULT CALLBACK MainWindowProc(HWND hWnd,
+                                       UINT uMsg,
+                                       WPARAM wParam, LPARAM lParam);
+
 
 #define MENU_CHOOSE_PLANET   32000
 
-
-// Extremely basic implementation of an ExecutionEnvironment for
-// running scripts.
-class MainExecutionEnvironment : public ExecutionEnvironment
-{
-public:
-    Simulation* getSimulation() const
-    {
-        return sim;
-    }
-
-    Renderer* getRenderer() const
-    {
-        return renderer;
-    }
-
-    void showText(string s)
-    {
-        messageText = s;
-    }
-};
-
-static MainExecutionEnvironment execEnv;
-
-
-// Good 'ol generic drawing stuff.
-LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-
-
-bool ReadStars(string starsFileName, string namesFileName)
-{
-    ifstream starFile(starsFileName.c_str(), ios::in | ios::binary);
-    if (!starFile.good())
-    {
-	cerr << "Error opening " << starsFileName << '\n';
-        return false;
-    }
-
-    ifstream starNamesFile(namesFileName.c_str(), ios::in);
-    if (!starNamesFile.good())
-    {
-	cerr << "Error opening " << namesFileName << '\n';
-        return false;
-    }
-
-    starDB = StarDatabase::read(starFile);
-    if (starDB == NULL)
-    {
-	cerr << "Error reading stars file\n";
-        return false;
-    }
-
-    starNameDB = StarDatabase::readNames(starNamesFile);
-    if (starNameDB == NULL)
-    {
-        cerr << "Error reading star names file\n";
-        return false;
-    }
-
-    starDB->setNameDatabase(starNameDB);
-
-    return true;
-}
 
 
 void ChangeDisplayMode()
@@ -207,44 +90,6 @@ void ChangeDisplayMode()
 void RestoreDisplayMode()
 {
     ChangeDisplaySettings(0, 0);
-}
-
-
-static void SetFaintest(float magnitude)
-{
-    renderer->setBrightnessBias(0.0f);
-    renderer->setBrightnessScale(1.0f / (magnitude + 1.0f));
-    sim->setFaintestVisible(magnitude);
-}
-
-
-static void WriteFavoritesFile()
-{
-    if (config->favoritesFile != "")
-    {
-        ofstream out(config->favoritesFile.c_str(), ios::out);
-        if (out.good())
-        WriteFavoritesList(*favorites, out);
-    }
-}
-
-static void ActivateFavorite(FavoritesEntry& fav)
-{
-    sim->cancelMotion();
-    sim->setTime(fav.jd);
-    sim->getObserver().setPosition(fav.position);
-    sim->getObserver().setOrientation(fav.orientation);
-}
-
-static void AddFavorite(string name)
-{
-    FavoritesEntry* fav = new FavoritesEntry();
-    fav->jd = sim->getTime();
-    fav->position = sim->getObserver().getPosition();
-    fav->orientation = sim->getObserver().getOrientation();
-    fav->name = name;
-    favorites->insert(favorites->end(), fav);
-    WriteFavoritesFile();
 }
 
 
@@ -415,9 +260,9 @@ BOOL APIENTRY FindObjectProc(HWND hDlg,
             int len = GetDlgItemText(hDlg, IDC_FINDOBJECT_EDIT, buf, 1024);
             if (len > 0)
             {
-                Selection sel = sim->findObject(string(buf));
+                Selection sel = appCore->getSimulation()->findObject(string(buf));
                 if (!sel.empty())
-                    sim->setSelection(sel);
+                    appCore->getSimulation()->setSelection(sel);
             }
             EndDialog(hDlg, 0);
             return TRUE;
@@ -453,8 +298,8 @@ BOOL APIENTRY AddLocationProc(HWND hDlg,
             {
                 string name(buf);
 
-                AddFavorite(name);
-                AppendLocationToMenu(name, favorites->size() - 1);
+                appCore->addFavorite(name);
+                AppendLocationToMenu(name, appCore->getFavorites()->size() - 1);
             }
             EndDialog(hDlg, 0);
             return TRUE;
@@ -481,7 +326,7 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
     case WM_INITDIALOG:
         {
             SYSTEMTIME sysTime;
-            newTime = astro::Date(sim->getTime());
+            newTime = astro::Date(appCore->getSimulation()->getTime());
             sysTime.wYear = newTime.year;
             sysTime.wMonth = newTime.month;
             sysTime.wDay = newTime.day;
@@ -510,7 +355,7 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             if (LOWORD(wParam) == IDOK)
-                sim->setTime((double) newTime);
+                appCore->getSimulation()->setTime((double) newTime);
             EndDialog(hDlg, 0);
             return TRUE;
         }
@@ -547,7 +392,7 @@ HMENU CreateMenuBar()
     return LoadMenu(appInstance, MAKEINTRESOURCE(IDR_MAIN_MENU));
 }
 
-
+#if 0
 static void ToggleLabelState(int menuItem, int labelState)
 {
     if ((GetMenuState(menuBar, menuItem, MF_BYCOMMAND) & MF_CHECKED) == 0)
@@ -589,6 +434,7 @@ static bool ToggleMenuItem(int menuItem)
         return false;
     }
 }
+#endif
 
 
 VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
@@ -629,6 +475,7 @@ HMENU CreatePlanetarySystemMenu(const PlanetarySystem* planets)
 }
 
 
+#if 0
 VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
                               const Selection& sel)
 {
@@ -675,27 +522,14 @@ VOID APIENTRY handlePopupMenu(HWND hwnd, POINT point,
 
     ClientToScreen(hwnd, (LPPOINT) &point);
 
-    sim->setSelection(sel);
+    appCore->getSimulation()->setSelection(sel);
     TrackPopupMenu(hMenu, 0, point.x, point.y, 0, hwnd, NULL);
 
     // TODO: Do we need to explicitly destroy submenus or does DestroyMenu
     // work recursively?
     DestroyMenu(hMenu);
 }
-
-
-// Used in the super-secret edit mode
-void ShowSelectionInfo(const Selection& sel)
-{
-    if (sel.galaxy != NULL)
-    {
-        cout << sel.galaxy->getName() << '\n';
-        Vec3f axis;
-        float angle;
-        sel.galaxy->getOrientation().getAxisAngle(axis, angle);
-        cout << "Orientation: " << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
-    }
-}
+#endif
 
 
 // This still needs a lot of work . . .
@@ -731,226 +565,55 @@ void ShowWWWInfo(const Selection& sel)
 }
 
 
-void CancelScript()
-{
-    if (runningScript != NULL)
-    {
-        delete runningScript;
-        runningScript = NULL;
-    }
-    messageText = "";
-}
-
-
 void handleKey(WPARAM key, bool down)
 {
-    switch (key) {
+    int k = -1;
+    switch (key)
+    {
     case VK_UP:
-	upPress = down;
-	break;
+        k = CelestiaCore::Key_Up;
+        break;
     case VK_DOWN:
-	downPress = down;
-	break;
+        k = CelestiaCore::Key_Down;
+        break;
     case VK_LEFT:
-	leftPress = down;
-	break;
+        k = CelestiaCore::Key_Left;
+        break;
     case VK_RIGHT:
-	rightPress = down;
-	break;
+        k = CelestiaCore::Key_Right;
+        break;
     case VK_HOME:
-	pgupPress = down;
-	break;
+        k = CelestiaCore::Key_Home;
+        break;
     case VK_END:
-	pgdnPress = down;
-	break;
+        k = CelestiaCore::Key_End;
+        break;
+    case VK_F1:
+        k = CelestiaCore::Key_F1;
+        break;
+    case VK_F2:
+        k = CelestiaCore::Key_F2;
+        break;
+    case VK_F3:
+        k = CelestiaCore::Key_F3;
+        break;
+    case VK_F4:
+        k = CelestiaCore::Key_F4;
+        break;
+    case VK_F5:
+        k = CelestiaCore::Key_F5;
+        break;
+    case VK_F6:
+        k = CelestiaCore::Key_F6;
+        break;
     }
-}
 
-void handleKeyPress(int c)
-{
-    if (textEnterMode)
+    if (k >= 0)
     {
-        if (c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
-        {
-            typedText += c;
-        }
-        else if (c == '\b')
-        {
-            if (typedText.size() > 0)
-                typedText = string(typedText, 0, typedText.size() - 1);
-        }
-        return;
-    }
-
-    c = toupper(c);
-    switch (c)
-    {
-    case 'A':
-        if (sim->getTargetSpeed() == 0)
-            sim->setTargetSpeed(0.000001f);
+        if (down)
+            appCore->keyDown(k);
         else
-            sim->setTargetSpeed(sim->getTargetSpeed() * 10.0f);
-        break;
-    case 'Z':
-        sim->setTargetSpeed(sim->getTargetSpeed() * 0.1f);
-        break;
-
-    case 'S':
-        sim->setTargetSpeed(0);
-        break;
-
-    case 'Q':
-        sim->setTargetSpeed(-sim->getTargetSpeed());
-        break;
-
-    case 'X':
-        sim->setTargetSpeed(sim->getTargetSpeed());
-        break;
-
-    case 'G':
-        sim->gotoSelection(5.0);
-        break;
-
-    case 'C':
-        sim->centerSelection();
-        break;
-
-    case 'F':
-        sim->follow();
-        break;
-
-    case 'H':
-        sim->selectStar(0);
-        break;
-
-    case 'V':
-        sim->setHUDDetail((sim->getHUDDetail() + 1) % 2);
-        hudDetail = 1 - hudDetail;
-        break;
-
-    case ',':
-        if (renderer->getFieldOfView() > 1.0f)
-            renderer->setFieldOfView(renderer->getFieldOfView() / 1.1f);
-        break;
-
-    case '.':
-        if (renderer->getFieldOfView() < 120.0f)
-            renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
-        break;
-
-    case 'K':
-        sim->setTimeScale(0.1 * sim->getTimeScale());
-        break;
-
-    case 'L':
-        sim->setTimeScale(10.0 * sim->getTimeScale());
-        break;
-
-    case 'J':
-        sim->setTimeScale(-sim->getTimeScale());
-        break;
-
-    case 'B':
-        ToggleLabelState(ID_RENDER_SHOWSTARLABELS, Renderer::StarLabels);
-        break;
-
-    case 'N':
-        ToggleLabelState(ID_RENDER_SHOWPLANETLABELS, Renderer::MajorPlanetLabels);
-        break;
-
-    case 'O':
-        ToggleRenderFlag(ID_RENDER_SHOWORBITS, Renderer::ShowOrbits);
-        break;
-
-    case 'P':
-        if (renderer->perPixelLightingSupported())
-        {
-            bool enabled = !renderer->getPerPixelLighting();
-            CheckMenuItem(menuBar, ID_RENDER_PERPIXEL_LIGHTING,
-                          enabled ? MF_CHECKED : MF_UNCHECKED);
-            renderer->setPerPixelLighting(enabled);
-        }
-        break;
-
-    case 'I':
-        ToggleRenderFlag(ID_RENDER_SHOWATMOSPHERES, Renderer::ShowCloudMaps);
-        break;
-
-    case 'U':
-        ToggleRenderFlag(ID_RENDER_SHOWGALAXIES, Renderer::ShowGalaxies);
-        break;
-
-    case '/':
-        ToggleRenderFlag(ID_RENDER_SHOWCONSTELLATIONS, Renderer::ShowDiagrams);
-        break;
-
-    case '=':
-        ToggleLabelState(ID_RENDER_SHOWCONSTLABELS, Renderer::ConstellationLabels);
-        break;
-
-    case '~':
-        editMode = !editMode;
-        break;
-
-    case '!':
-        if (editMode)
-            ShowSelectionInfo(sim->getSelection());
-        break;
-
-    case '`':
-        showFPSCounter = !showFPSCounter;
-        break;
-
-    case 'D':
-        if (runningScript == NULL && demoScript != NULL)
-            runningScript = new Execution(*demoScript, execEnv);
-        break;
-
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-        sim->selectPlanet(c - '1');
-        break;
-
-    case '0':
-        sim->selectPlanet(-1);
-        break;
-
-    case 'W':
-        wireframe = !wireframe;
-        renderer->setRenderMode(wireframe ? GL_LINE : GL_FILL);
-        break;
-
-    case '[':
-        if (sim->getFaintestVisible() > 1.0f)
-            SetFaintest(sim->getFaintestVisible() - 0.5f);
-        break;
-
-    case ']':
-        if (sim->getFaintestVisible() < 8.0f)
-            SetFaintest(sim->getFaintestVisible() + 0.5f);
-        break;
-
-    case ' ':
-        if (paused)
-        {
-            sim->setTimeScale(timeScale);
-            CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_UNCHECKED);
-        }
-        else
-        {
-            timeScale = sim->getTimeScale();
-            sim->setTimeScale(0.0);
-            CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_CHECKED);
-        }
-        paused = !paused;
-        break;
+            appCore->keyUp(k);
     }
 }
 
@@ -987,177 +650,40 @@ void SetDCPixelFormat(HDC hDC)
 }
 
 
-void ChangeSize(GLsizei w, GLsizei h)
+static void BuildFavoritesMenu()
 {
-    if (h == 0)
-	h = 1;
-
-    glViewport(0, 0, w, h);
-    if (renderer != NULL)
-        renderer->resize(w, h);
-    if (overlay != NULL)
-        overlay->setWindowSize(w, h);
-}
-
-
-GLsizei g_w, g_h;
-bool bReady = false;
-
-
-void RenderOverlay()
-{
-    if (font == NULL)
-        return;
-
-    int height = font->getHeight();
-    int emWidth = font->getWidth("M");
-
-    overlay->begin();
-
-    // Time and date
-    if (hudDetail > 0)
+    // Add favorites to locations menu
+    const FavoritesList* favorites = appCore->getFavorites();
+    if (favorites != NULL)
     {
-        glPushMatrix();
-        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef(g_w - 11 * emWidth, g_h - height, 0);
-        overlay->beginText();
-        *overlay << astro::Date(sim->getTime()) << '\n';
-        if (paused)
+        MENUITEMINFO menuInfo;
+        menuInfo.cbSize = sizeof(MENUITEMINFO);
+        menuInfo.fMask = MIIM_SUBMENU;
+        if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
         {
-            glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-            *overlay << "Paused";
-        }
-        else
-        {
-            double timeScale = sim->getTimeScale();
-            if (abs(timeScale - 1) < 1e-6)
-                *overlay << "Real time";
-            else if (abs(timeScale) == 0.0f)
-                *overlay << "Time stopped";
-            else if (abs(timeScale) > 1.0)
-                *overlay << timeScale << "x faster";
-            else
-                *overlay << 1.0 / timeScale << "x slower";
-        }
-        overlay->endText();
-        glPopMatrix();
-    }
+            HMENU locationsMenu = menuInfo.hSubMenu;
 
-    // Speed
-    if (hudDetail > 0)
-    {
-        glPushMatrix();
-        glTranslatef(0, height * 2 + 5, 0);
-        overlay->beginText();
+            menuInfo.cbSize = sizeof MENUITEMINFO;
+            menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
+            menuInfo.fType = MFT_SEPARATOR;
+            menuInfo.fState = MFS_UNHILITE;
+            InsertMenuItem(locationsMenu, 1, TRUE, &menuInfo);
 
-        double speed = sim->getObserver().getVelocity().length();
-        char* units;
-        if (speed < astro::AUtoLightYears(1000))
-        {
-            if (speed < astro::kilometersToLightYears(10000000.0f))
+            int index = 0;
+            for (FavoritesList::const_iterator iter = favorites->begin();
+                 iter != favorites->end();
+                 iter++, index++)
             {
-                speed = astro::lightYearsToKilometers(speed);
-                units = "km/s";
-            }
-            else
-            {
-                speed = astro::lightYearsToAU(speed);
-                units = "AU/s";
+                menuInfo.cbSize = sizeof MENUITEMINFO;
+                menuInfo.fMask = MIIM_TYPE | MIIM_ID;
+                menuInfo.fType = MFT_STRING;
+                // menuInfo.fState = MFS_DEFAULT;
+                menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + index;
+                menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
+                InsertMenuItem(locationsMenu, index + 2, TRUE, &menuInfo);
             }
         }
-        else
-        {
-            units = "ly/s";
-        }
-
-        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-
-        *overlay << '\n';
-        if (showFPSCounter)
-            *overlay << "FPS: " << fps;
-        *overlay << "\nSpeed: " << speed << ' ' << units;
-
-        overlay->endText();
-        glPopMatrix();
     }
-
-    // Field of view and camera mode
-    if (hudDetail > 0)
-    {
-        float fov = renderer->getFieldOfView();
-
-        Simulation::ObserverMode mode = sim->getObserverMode();
-        char* modeName = "";
-        if (mode == Simulation::Travelling)
-            modeName = "Travelling";
-        else if (mode == Simulation::Following)
-            modeName = "Following";
-
-        glPushMatrix();
-        glTranslatef(g_w - emWidth * 11, height + 5, 0);
-        overlay->beginText();
-        glColor4f(0.6f, 0.6f, 1.0f, 1);
-        *overlay << modeName << '\n';
-        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        overlay->printf("FOV: %6.2f\n", fov);
-        overlay->endText();
-        glPopMatrix();
-    }
-
-    // Text input
-    if (textEnterMode)
-    {
-        glPushMatrix();
-        glColor4f(0.7f, 0.7f, 1.0f, 0.2f);
-        overlay->rect(0, 0, g_w, 70);
-        glTranslatef(0, height * 3 + 5, 0);
-        glColor4f(0.6f, 0.6f, 1.0f, 1);
-        *overlay << "Target name: " << typedText;
-        glPopMatrix();
-    }
-
-    // Text messages
-    if (messageText != "")
-    {
-        glPushMatrix();
-        glColor4f(1, 1, 1, 1);
-        glTranslatef(0, height * 5 + 5, 0);
-        overlay->beginText();
-        *overlay << messageText;
-        overlay->endText();
-        glPopMatrix();
-    }
-
-    // Intro message
-    if (currentTime < 5.0)
-    {
-
-        float alpha = 1.0f;
-        if (currentTime > 3.0)
-            alpha = 0.5f * (float) (5.0 - currentTime);
-        glColor4f(1, 1, 1, alpha);
-
-        glPushMatrix();
-        glTranslatef((g_w - font->getWidth(welcomeMessage1)) / 2, g_h / 2, 0);
-        *overlay << welcomeMessage1;
-        glPopMatrix();
-
-        glPushMatrix();
-        glTranslatef((g_w - font->getWidth(welcomeMessage2)) / 2, g_h / 2 - height, 0);
-        *overlay << welcomeMessage2;
-        glPopMatrix();
-    }
-
-    if (editMode)
-    {
-        glPushMatrix();
-        glTranslatef((g_w - font->getWidth("Edit Mode")) / 2, g_h - height, 0);
-        glColor4f(1, 0, 1, 1);
-        *overlay << "Edit Mode";
-        glPopMatrix();
-    }
-
-    overlay->end();
 }
 
 
@@ -1199,109 +725,16 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	return FALSE;
     }
 
-    // Check for the presence of the license file--don't run unless it's there.
-    {
-        ifstream license("License.txt");
-        if (!license.good())
-        {
-            MessageBox(NULL,
-                       "License file 'License.txt' is missing!", "Fatal Error",
-                       MB_OK | MB_ICONERROR);
-            return FALSE;
-        }
-    }
-
-    config = ReadCelestiaConfig("celestia.cfg");
-    if (config == NULL)
+    appCore = new CelestiaCore();
+    if (appCore == NULL)
     {
         MessageBox(NULL,
-                   "Error reading configuration file.", "Fatal Error",
+                   "Out of memory.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-        return FALSE;
+        return false;
     }
 
-    // Set up favorites list
-    if (config->favoritesFile != "")
-    {
-        ifstream in(config->favoritesFile.c_str(), ios::in);
-
-        if (in.good())
-        {
-            favorites = ReadFavoritesList(in);
-            if (favorites == NULL)
-            {
-                MessageBox(NULL,
-                           "Error reading favorites file.", "Warning",
-                           MB_OK | MB_ICONERROR);
-            }
-        }
-    }
-
-    // If we couldn't read the favorites list from a file, allocate
-    // an empty list.
-    if (favorites == NULL)
-        favorites = new FavoritesList();
-
-    if (!ReadStars(config->starDatabaseFile, config->starNamesFile))
-    {
-        MessageBox(NULL,
-                   "Cannot read star database",
-                   "Error",
-                   MB_OK | MB_ICONERROR);
-        return FALSE;
-    }
-
-    solarSystemCatalog = new SolarSystemCatalog();
-    {
-        for (vector<string>::const_iterator iter = config->solarSystemFiles.begin();
-             iter != config->solarSystemFiles.end();
-             iter++)
-        {
-            ifstream solarSysFile(iter->c_str(), ios::in);
-            if (!solarSysFile.good())
-            {
-                cout << "Error opening " << iter->c_str() << '\n';
-            }
-            else
-            {
-                ReadSolarSystems(solarSysFile, *starDB, *solarSystemCatalog);
-            }
-        }
-    }
-
-    if (config->galaxyCatalog != "")
-    {
-        ifstream galaxiesFile(config->galaxyCatalog.c_str(), ios::in);
-        if (!galaxiesFile.good())
-        {
-            cout << "Error opening galaxies file " << config->galaxyCatalog << '\n';
-        }
-        else
-        {
-            galaxies = ReadGalaxyList(galaxiesFile);
-        }
-    }
-
-    if (config->asterismsFile != "")
-    {
-        ifstream asterismsFile(config->asterismsFile.c_str(), ios::in);
-        if (!asterismsFile.good())
-        {
-            cout << "Error opening asterisms file " << config->asterismsFile << '\n';
-        }
-        else
-        {
-            asterisms = ReadAsterismList(asterismsFile, *starDB);
-        }
-    }
-
-    sim = new Simulation();
-    sim->setStarDatabase(starDB, solarSystemCatalog, galaxies);
-    sim->setFaintestVisible(config->faintestVisible);
-
-    // Set the simulation starting time to the current system time
-    sim->setTime((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
-    sim->update(0.0);
+    appCore->initSimulation();
 
     if (!fullscreen)
     {
@@ -1349,138 +782,22 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     icex.dwICC = ICC_DATE_CLASSES;
     InitCommonControlsEx(&icex);
 
+    appCore->initRenderer();
     timer = CreateTimer();
-    renderer = new Renderer();
 
-    // Prepare the scene for rendering.
-    if (!renderer->init((int) g_w, (int) g_h)) {
-	MessageBox(hWnd,
-		   "Failed to initialize",
-		   "Fatal Error",
-		   MB_OK | MB_ICONERROR);
-	return FALSE;
-    }
-
-    if (renderer->perPixelLightingSupported())
-    {
-        renderer->setPerPixelLighting(true);
-        CheckMenuItem(menuBar, ID_RENDER_PERPIXEL_LIGHTING, MF_CHECKED);
-    }
-
-    // Set up the star labels
-    for (vector<string>::const_iterator iter = config->labelledStars.begin();
-         iter != config->labelledStars.end();
-         iter++)
-    {
-        Star* star = starDB->find(*iter);
-        if (star != NULL)
-            renderer->addLabelledStar(star);
-    }
-
-    renderer->setBrightnessBias(0.0f);
-    renderer->setBrightnessScale(1.0f / (config->faintestVisible + 1.0f));
-
-    renderer->showAsterisms(asterisms);
-
-    
-    if (config->mainFont == "")
-        font = LoadTextureFont("fonts/default.txf");
-    else
-        font = LoadTextureFont(string("fonts") + "/" + config->mainFont);
-    if (font == NULL)
-    {
-        cout << "Error loading font; text will not be visible.";
-    }
-    
-    // Set up the overlay
-    overlay = new Overlay();
-    overlay->setWindowSize(g_w, g_h);
-    overlay->setFont(font);
-
-    if (config->labelFont == "")
-    {
-        renderer->setFont(font);
-    }
-    else
-    {
-        TextureFont* labelFont = LoadTextureFont(string("fonts") + "/" + config->labelFont);
-        if (labelFont == NULL)
-            renderer->setFont(font);
-        else
-            renderer->setFont(labelFont);
-    }
-
-    // Add favorites to locations menu
-    if (favorites != NULL)
-    {
-        MENUITEMINFO menuInfo;
-        menuInfo.cbSize = sizeof(MENUITEMINFO);
-        menuInfo.fMask = MIIM_SUBMENU;
-        if (GetMenuItemInfo(menuBar, 4, TRUE, &menuInfo))
-        {
-            HMENU locationsMenu = menuInfo.hSubMenu;
-
-            menuInfo.cbSize = sizeof MENUITEMINFO;
-            menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
-            menuInfo.fType = MFT_SEPARATOR;
-            menuInfo.fState = MFS_UNHILITE;
-            InsertMenuItem(locationsMenu, 1, TRUE, &menuInfo);
-
-            int index = 0;
-            for (FavoritesList::const_iterator iter = favorites->begin();
-                 iter != favorites->end();
-                 iter++, index++)
-            {
-                menuInfo.cbSize = sizeof MENUITEMINFO;
-                menuInfo.fMask = MIIM_TYPE | MIIM_ID;
-                menuInfo.fType = MFT_STRING;
-                // menuInfo.fState = MFS_DEFAULT;
-                menuInfo.wID = ID_LOCATIONS_FIRSTLOCATION + index;
-                menuInfo.dwTypeData = const_cast<char*>((*iter)->name.c_str());
-                InsertMenuItem(locationsMenu, index + 2, TRUE, &menuInfo);
-            }
-        }
-    }
-
-    if (config->initScriptFile != "")
-    {
-        ifstream scriptfile(config->initScriptFile.c_str());
-        CommandParser parser(scriptfile);
-        script = parser.parse();
-        if (script == NULL)
-        {
-            const vector<string>* errors = parser.getErrors();
-            for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
-        }
-        else
-        {
-            runningScript = new Execution(*script, execEnv);
-        }
-    }
-
-    if (config->demoScriptFile != "")
-    {
-        ifstream scriptfile(config->demoScriptFile.c_str());
-        CommandParser parser(scriptfile);
-        demoScript = parser.parse();
-        if (demoScript == NULL)
-        {
-            const vector<string>* errors = parser.getErrors();
-            for_each(errors->begin(), errors->end(), printlineFunc<string>(cout));
-        }
-    }
+    BuildFavoritesMenu();
 
     bReady = true;
+    appCore->start((double) time(NULL) / 86400.0 +
+                   (double) astro::Date(1970, 1, 1));
 
-    // Usual running around in circles bit...
-    int bGotMsg;
-    MSG  msg;
+    MSG msg;
     PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
     while (msg.message != WM_QUIT)
     {
 	// Use PeekMessage() if the app is active, so we can use idle time to
 	// render the scene.  Else, use GetMessage() to avoid eating CPU time.
-	bGotMsg = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
+	int bGotMsg = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
 
 	if (bGotMsg)
         {
@@ -1491,15 +808,21 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
         else
         {
+	    // Get the current time, and update the time controller.
+	    double lastTime = currentTime;
+            currentTime = timer->getTime();
+	    double dt = currentTime - lastTime;
+
+            // Tick the simulation
+            appCore->tick(dt);
+
+            // And force a redraw
 	    InvalidateRect(hWnd, NULL, FALSE);
 	}
     }
 
     // Not ready to render anymore.
     bReady = false;
-
-    // Nuke all applicable scene stuff.
-    renderer->shutdown();
 
     return msg.wParam;
 }
@@ -1509,6 +832,7 @@ bool modifiers(WPARAM wParam, WPARAM mods)
 {
     return (wParam & mods) == mods;
 }
+
 
 LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                 UINT uMsg,
@@ -1529,95 +853,64 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 	break;
 
     case WM_MOUSEMOVE:
-        if ((wParam & (MK_LBUTTON | MK_RBUTTON)) != 0)
-	{
+        {
 	    int x, y;
 	    x = LOWORD(lParam);
 	    y = HIWORD(lParam);
-
-            if (editMode && modifiers(wParam, MK_LBUTTON | MK_SHIFT | MK_CONTROL))
+            if ((wParam & (MK_LBUTTON | MK_RBUTTON)) != 0)
             {
-                // Rotate the selected object
-                Selection sel = sim->getSelection();
-                Quatf q(1);
-                if (sel.galaxy != NULL)
-                    q = sel.galaxy->getOrientation();
-
-                q.yrotate((float) (x - lastX) / g_w);
-                q.xrotate((float) (y - lastY) / g_h);
-
-                if (sel.galaxy != NULL)
-                    sel.galaxy->setOrientation(q);
-            }
-            else if (modifiers(wParam, MK_LBUTTON | MK_RBUTTON) ||
-                     modifiers(wParam, MK_LBUTTON | MK_CONTROL))
-            {
-                float amount = (float) (lastY - y) / g_h;
-                sim->changeOrbitDistance(amount * 5);
-            }
-            else if (modifiers(wParam, MK_LBUTTON | MK_SHIFT))
-            {
-                // Zoom control
-                float amount = (float) (lastY - y) / g_h;
-                float minFOV = 0.01f;
-                float maxFOV = 120.0f;
-                float fov = renderer->getFieldOfView();
-
-                if (fov < minFOV)
-                    fov = minFOV;
-
-                // In order for the zoom to have the right feel, it should be
-                // exponential.
-                float newFOV = minFOV + (float) exp(log(fov - minFOV) + amount * 4);
-                if (newFOV < minFOV)
-                    newFOV = minFOV;
-                else if (newFOV > maxFOV)
-                    newFOV = maxFOV;
-                renderer->setFieldOfView(newFOV);
-            }
-            else
-            {
-                Quatf q(1);
-                // For a small field of view, rotate the camera more finely
-                float coarseness = renderer->getFieldOfView() / 30.0f;
-                q.yrotate((float) (x - lastX) / g_w * coarseness);
-                q.xrotate((float) (y - lastY) / g_h * coarseness);
-                if ((wParam & MK_RBUTTON) != 0)
-                    sim->orbit(~q);
-                else
-                    sim->rotate(q);
-            }
-
-            mouseMotion += abs(x - lastX) + abs(y - lastY);
-
 #ifdef INFINITE_MOUSE
-            // A bit of mouse tweaking here . . .  we want to allow the user to
-            // rotate and zoom continuously, without having to pick up the mouse
-            // every time it leaves the window.  So, once we start dragging, we'll
-            // hide the mouse and reset it's position every time it's moved.
-            POINT pt;
-            pt.x = lastX;
-            pt.y = lastY;
-            ClientToScreen(hWnd, &pt);
-            if (x - lastX != 0 || y - lastY != 0)
-                SetCursorPos(pt.x, pt.y);
-            if (cursorVisible)
-            {
-                ShowCursor(FALSE);
-                cursorVisible = false;
-            }
+                // A bit of mouse tweaking here . . .  we want to allow the
+                // user to rotate and zoom continuously, without having to
+                // pick up the mouse every time it leaves the window.  So,
+                // once we start dragging, we'll hide the mouse and reset
+                // its position every time it's moved.
+                POINT pt;
+                pt.x = lastX;
+                pt.y = lastY;
+                ClientToScreen(hWnd, &pt);
+                if (x - lastX != 0 || y - lastY != 0)
+                    SetCursorPos(pt.x, pt.y);
+                if (cursorVisible)
+                {
+                    ShowCursor(FALSE);
+                    cursorVisible = false;
+                }
 #else
-            lastX = x;
-            lastY = y;
+                lastX = x;
+                lastY = y;
 #endif // INFINITE_MOUSE
-	}
-	break;
+            }
+
+            int buttons = 0;
+            if ((wParam & MK_LBUTTON) != 0)
+                buttons |= CelestiaCore::LeftButton;
+            if ((wParam & MK_RBUTTON) != 0)
+                buttons |= CelestiaCore::RightButton;
+            if ((wParam & MK_MBUTTON) != 0)
+                buttons |= CelestiaCore::MiddleButton;
+            appCore->mouseMove(x - lastX, y - lastY, buttons);
+        }
+        break;
 
     case WM_LBUTTONDOWN:
-	lastX = LOWORD(lParam);
-	lastY = HIWORD(lParam);
-        mouseMotion = 0;
+        lastX = LOWORD(lParam);
+        lastY = HIWORD(lParam);
+        appCore->mouseButtonDown(LOWORD(lParam), HIWORD(lParam),
+                                 CelestiaCore::LeftButton);
 	break;
+    case WM_RBUTTONDOWN:
+        lastX = LOWORD(lParam);
+        lastY = HIWORD(lParam);
+        appCore->mouseButtonDown(LOWORD(lParam), HIWORD(lParam),
+                                 CelestiaCore::RightButton);
+        break;
+    case WM_MBUTTONDOWN:
+        lastX = LOWORD(lParam);
+        lastY = HIWORD(lParam);
+        appCore->mouseButtonDown(LOWORD(lParam), HIWORD(lParam),
+                                 CelestiaCore::MiddleButton);
+        break;
 
     case WM_LBUTTONUP:
         if (!cursorVisible)
@@ -1625,23 +918,9 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             ShowCursor(TRUE);
             cursorVisible = true;
         }
-        if (mouseMotion < 3)
-        {
-            Vec3f pickRay = renderer->getPickRay(LOWORD(lParam),
-                                                 HIWORD(lParam));
-            Selection oldSel = sim->getSelection();
-            Selection newSel = sim->pickObject(pickRay);
-            sim->setSelection(newSel);
-            if (!oldSel.empty() && oldSel == newSel)
-                sim->centerSelection();
-        }
+        appCore->mouseButtonUp(LOWORD(lParam), HIWORD(lParam),
+                               CelestiaCore::LeftButton);
 	break;
-
-    case WM_RBUTTONDOWN:
-	lastX = LOWORD(lParam);
-	lastY = HIWORD(lParam);
-        mouseMotion = 0;
-        break;
 
     case WM_RBUTTONUP:
         if (!cursorVisible)
@@ -1649,6 +928,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             ShowCursor(TRUE);
             cursorVisible = true;
         }
+#if 0
         if (mouseMotion < 3)
         {
             POINT pt;
@@ -1660,121 +940,78 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             if (!sel.empty())
                 handlePopupMenu(hWnd, pt, sel);
         }
+#endif
+        appCore->mouseButtonUp(LOWORD(lParam), HIWORD(lParam),
+                               CelestiaCore::RightButton);
         break;
 
     case WM_MOUSEWHEEL:
-        // The mouse wheel controls the range to target
-        {
-            short wheelMove = (short) HIWORD(wParam);
-            float factor = wheelMove > 0 ? -1.0f : 1.0f;
-            mouseWheelTime = currentTime;
-            mouseWheelMotion = factor * 0.25f;
-        }
-        break;
-
-    case WM_MBUTTONDOWN:
-        renderer->setFieldOfView(45.0f);
+        appCore->mouseWheel((short) HIWORD(wParam) > 0 ? -1.0f : 1.0f);
         break;
 
     case WM_KEYDOWN:
         switch (wParam)
         {
         case VK_ESCAPE:
-            if (runningScript != NULL)
-                CancelScript();
-            sim->cancelMotion();
+            appCore->charEntered('\033');
             break;
-        case VK_RETURN:
-            if (textEnterMode)
-            {
-                if (typedText != "")
-                {
-                    Selection sel = sim->findObject(typedText);
-                    if (!sel.empty())
-                        sim->setSelection(sel);
-                    typedText = "";
-                }
-            }
-            textEnterMode = !textEnterMode;
-            break;
-        case VK_UP:
-        case VK_DOWN:
-        case VK_LEFT:
-        case VK_RIGHT:
-        case VK_HOME:
-        case VK_END:
+        default:
             handleKey(wParam, true);
-            break;
-
-        case VK_F1:
-            sim->setTargetSpeed(0);
-            break;
-        case VK_F2:
-            sim->setTargetSpeed(astro::kilometersToLightYears(1.0));
-            break;
-        case VK_F3:
-            sim->setTargetSpeed(astro::kilometersToLightYears(1000.0));
-            break;
-        case VK_F4:
-            sim->setTargetSpeed(astro::kilometersToLightYears(1000000.0));
-            break;
-        case VK_F5:
-            sim->setTargetSpeed(astro::AUtoLightYears(1));
-            break;
-        case VK_F6:
-            sim->setTargetSpeed(1);
             break;
         }
 	break;
 
+    case WM_KEYUP:
+	handleKey(wParam, false);
+	break;
+
     case WM_CHAR:
-        handleKeyPress(wParam);
+        appCore->charEntered((char) wParam);
         break;
 
     case WM_COMMAND:
         switch (LOWORD(wParam))
         {
         case ID_NAVIGATION_CENTER:
-            sim->centerSelection();
+            appCore->charEntered('C');
             break;
         case ID_NAVIGATION_GOTO:
-            sim->gotoSelection(5.0);
+            appCore->charEntered('G');
             break;
         case ID_NAVIGATION_FOLLOW:
-            sim->follow();
+            appCore->charEntered('F');
             break;
         case ID_NAVIGATION_HOME:
-            sim->selectStar(0);
+            appCore->charEntered('H');
             break;
         case ID_NAVIGATION_SELECT:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
             break;
 
+#if 0
         case ID_RENDER_SHOWHUDTEXT:
-            {
-                bool on = ToggleMenuItem(ID_RENDER_SHOWHUDTEXT);
-                sim->setHUDDetail(on ? 1 : 0);
-                hudDetail = on ? 1 : 0;
-            }
+            appCore->charEntered('V');
             break;
         case ID_RENDER_SHOWPLANETLABELS:
-            ToggleLabelState(ID_RENDER_SHOWPLANETLABELS, Renderer::MajorPlanetLabels);
+            appCore->charEntered('N');
             break;
         case ID_RENDER_SHOWMINORPLANETLABELS:
-            ToggleLabelState(ID_RENDER_SHOWMINORPLANETLABELS, Renderer::MinorPlanetLabels);
+            // ToggleLabelState(ID_RENDER_SHOWMINORPLANETLABELS, Renderer::MinorPlanetLabels);
             break;
         case ID_RENDER_SHOWSTARLABELS:
-            ToggleLabelState(ID_RENDER_SHOWSTARLABELS, Renderer::StarLabels);
+            appCore->charEntered('B');
             break;
         case ID_RENDER_SHOWCONSTLABELS:
-            ToggleLabelState(ID_RENDER_SHOWCONSTLABELS, Renderer::ConstellationLabels);
+            // ToggleLabelState(ID_RENDER_SHOWCONSTLABELS, Renderer::ConstellationLabels);
+            appCore->charEntered('=');
             break;
 
         case ID_RENDER_SHOWORBITS:
-            ToggleRenderFlag(ID_RENDER_SHOWORBITS, Renderer::ShowOrbits);
+            // ToggleRenderFlag(ID_RENDER_SHOWORBITS, Renderer::ShowOrbits);
+            appCore->charEntered('O');
             break;
         case ID_RENDER_SHOWCONSTELLATIONS:
-            ToggleRenderFlag(ID_RENDER_SHOWCONSTELLATIONS, Renderer::ShowDiagrams);
+            //ToggleRenderFlag(ID_RENDER_SHOWCONSTELLATIONS, Renderer::ShowDiagrams);
             break;
         case ID_RENDER_SHOWATMOSPHERES:
             ToggleRenderFlag(ID_RENDER_SHOWATMOSPHERES, Renderer::ShowCloudMaps);
@@ -1782,35 +1019,34 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_RENDER_SHOWGALAXIES:
             ToggleRenderFlag(ID_RENDER_SHOWGALAXIES, Renderer::ShowGalaxies);
             break;
-
+#endif
         case ID_RENDER_MORESTARS:
-            if (sim->getFaintestVisible() < 8.0f)
-                SetFaintest(sim->getFaintestVisible() + 0.5f);
+            appCore->charEntered(']');
             break;
 
         case ID_RENDER_FEWERSTARS:
-            if (sim->getFaintestVisible() > 1.0f)
-                SetFaintest(sim->getFaintestVisible() - 0.5f);
+            appCore->charEntered(']');
             break;
 
         case ID_RENDER_AMBIENTLIGHT_NONE:
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_NONE,   MF_CHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_UNCHECKED);
-            renderer->setAmbientLightLevel(0.0f);
+            appCore->getRenderer()->setAmbientLightLevel(0.0f);
             break;
         case ID_RENDER_AMBIENTLIGHT_LOW:
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_NONE,   MF_UNCHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_CHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_UNCHECKED);
-            renderer->setAmbientLightLevel(0.1f);
+            appCore->getRenderer()->setAmbientLightLevel(0.1f);
             break;
         case ID_RENDER_AMBIENTLIGHT_MEDIUM:
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_NONE,   MF_UNCHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
             CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_MEDIUM, MF_CHECKED);
-            renderer->setAmbientLightLevel(0.25f);
+            appCore->getRenderer()->setAmbientLightLevel(0.25f);
             break;
+#if 0
         case ID_RENDER_PERPIXEL_LIGHTING:
             if (renderer->perPixelLightingSupported())
             {
@@ -1820,32 +1056,23 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 renderer->setPerPixelLighting(enabled);
             }
             break;
-
+#endif
         case ID_TIME_FASTER:
-            sim->setTimeScale(10.0 * sim->getTimeScale());
+            appCore->charEntered('L');
             break;
         case ID_TIME_SLOWER:
-            sim->setTimeScale(0.1 * sim->getTimeScale());
+            appCore->charEntered('K');
             break;
+#if 0
         case ID_TIME_REALTIME:
             sim->setTimeScale(1.0);
             break;
+#endif
         case ID_TIME_FREEZE:
-            if (paused)
-            {
-                sim->setTimeScale(timeScale);
-                CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_UNCHECKED);
-            }
-            else
-            {
-                timeScale = sim->getTimeScale();
-                sim->setTimeScale(0.0);
-                CheckMenuItem(menuBar, ID_TIME_FREEZE, MF_CHECKED);
-            }
-            paused = !paused;
+            appCore->charEntered(' ');
             break;
         case ID_TIME_REVERSE:
-            sim->setTimeScale(-sim->getTimeScale());
+            appCore->charEntered('J');
             break;
         case ID_TIME_SETTIME:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_SETTIME), hWnd, SetTimeProc);
@@ -1856,8 +1083,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_HELP_RUNDEMO:
-            if (runningScript == NULL && demoScript != NULL)
-                runningScript = new Execution(*demoScript, execEnv);
+            appCore->charEntered('D');
             break;
             
         case ID_HELP_ABOUT:
@@ -1873,7 +1099,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_INFO:
-            ShowWWWInfo(sim->getSelection());
+            ShowWWWInfo(appCore->getSimulation()->getSelection());
             break;
 
         case ID_FILE_EXIT:
@@ -1881,103 +1107,41 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         default:
-            cout << LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION << '\n';
-            if (favorites != NULL &&
-                LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION < favorites->size())
             {
-                int whichFavorite = LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION;
-                ActivateFavorite(*(*favorites)[whichFavorite]);
+                const FavoritesList* favorites = appCore->getFavorites();
+                if (favorites != NULL &&
+                    LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION < favorites->size())
+                {
+                    int whichFavorite = LOWORD(wParam) - ID_LOCATIONS_FIRSTLOCATION;
+                    appCore->activateFavorite(*(*favorites)[whichFavorite]);
+                }
+                else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
+                         LOWORD(wParam) < MENU_CHOOSE_PLANET + 1000)
+                {
+                    appCore->getSimulation()->selectPlanet(LOWORD(wParam) - MENU_CHOOSE_PLANET);
+                }
             }
-            else if (LOWORD(wParam) >= MENU_CHOOSE_PLANET && 
-                     LOWORD(wParam) < MENU_CHOOSE_PLANET + 1000)
-            {
-                sim->selectPlanet(LOWORD(wParam) - MENU_CHOOSE_PLANET);
-            }
+            break;
         }
         break;
-
-    case WM_KEYUP:
-	handleKey(wParam, false);
-	break;
 
     case WM_DESTROY:
 	wglMakeCurrent(hDC, NULL);
 	wglDeleteContext(hRC);
 	if (fullscreen)
 	    RestoreDisplayMode();
-	PostQuitMessage( 0 );
+	PostQuitMessage(0);
 	break;
 
     case WM_SIZE:
-	g_w = LOWORD(lParam);
-	g_h = HIWORD(lParam);
-	ChangeSize(g_w, g_h);
+        appCore->resize(LOWORD(lParam), HIWORD(lParam));
 	break;
 
     case WM_PAINT:
 	if (bReady)
         {
-	    // Get the current time, and update the time controller.
-	    double lastTime = currentTime;
-            currentTime = timer->getTime();
-	    double deltaTime = currentTime - lastTime;
-            nFrames++;
-            if (nFrames == 100)
-            {
-                fps = (double) nFrames / (currentTime - fpsCounterStartTime);
-                nFrames = 0;
-                fpsCounterStartTime = currentTime;
-            }
-
-            // Mouse wheel zoom
-            if (mouseWheelMotion != 0.0f)
-            {
-                double mouseWheelSpan = 0.1;
-                double fraction;
-                
-                if (currentTime - mouseWheelTime >= mouseWheelSpan)
-                    fraction = (mouseWheelTime + mouseWheelSpan) - lastTime;
-                else
-                    fraction = deltaTime / mouseWheelSpan;
-
-                sim->changeOrbitDistance(mouseWheelMotion * (float) fraction);
-                if (currentTime - mouseWheelTime >= mouseWheelSpan)
-                    mouseWheelMotion = 0.0f;
-            }
-
-            // Keyboard zoom
-            if (pgupPress)
-                sim->changeOrbitDistance(-deltaTime * 2);
-            else if (pgdnPress)
-                sim->changeOrbitDistance(deltaTime * 2);
-
-            // Keyboard rotate
-            Quatf q(1);
-	    if (leftPress)
-		q.zrotate((float) deltaTime * 2);
-	    if (rightPress)
-		q.zrotate((float) deltaTime * -2);
-            if (downPress)
-                q.xrotate((float) deltaTime * 2);
-            if (upPress)
-                q.xrotate((float) deltaTime * -2);
-            sim->rotate(q);
-
-            // cap the time step at 0.05 secs--extremely long time steps
-            // may make the simulation unstable
-            if (deltaTime > 0.05)
-                deltaTime = 0.05;
-            if (runningScript != NULL)
-            {
-                bool finished = runningScript->tick(deltaTime);
-                if (finished)
-                    CancelScript();
-            }
-            sim->update(deltaTime);
-	    sim->render(*renderer);
-            RenderOverlay();
+            appCore->draw();
 	    SwapBuffers(hDC);
-
 	    ValidateRect(hWnd, NULL);
 	}
 	break;
