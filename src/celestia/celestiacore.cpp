@@ -25,6 +25,8 @@
 #include <celmath/quaternion.h>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
+#include <celutil/filetype.h>
+#include <celutil/directory.h>
 #include <celengine/astro.h>
 #include <celengine/overlay.h>
 #include <celengine/execution.h>
@@ -972,13 +974,9 @@ static void displayStarInfo(Overlay& overlay,
         overlay << "Surface Temp: " << star.getTemperature() << " K\n";
         overlay.printf("Radius: %.2f Rsun\n", star.getRadius() / 696000.0f);
 
-        SolarSystemCatalog* solarSystems = universe.getSolarSystemCatalog();
-        if (solarSystems != NULL)
-        {
-            SolarSystemCatalog::iterator iter = solarSystems->find(star.getCatalogNumber());
-            if (iter != solarSystems->end())
-                overlay << "Planetary companions present\n";
-        }
+        SolarSystem* sys = universe.getSolarSystem(&star);
+        if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
+            overlay << "Planetary companions present\n";
     }
 }
 
@@ -1381,7 +1379,10 @@ bool CelestiaCore::initSimulation()
     }
 
     {
+        // First read the solar system files listed individually in the
+        // config file.
         SolarSystemCatalog* solarSystemCatalog = new SolarSystemCatalog();
+        universe->setSolarSystemCatalog(solarSystemCatalog);
         for (vector<string>::const_iterator iter = config->solarSystemFiles.begin();
              iter != config->solarSystemFiles.end();
              iter++)
@@ -1393,12 +1394,27 @@ bool CelestiaCore::initSimulation()
             }
             else
             {
-                ReadSolarSystems(solarSysFile,
-                                 *(universe->getStarCatalog()),
-                                 *solarSystemCatalog);
+                LoadSolarSystemObjects(solarSysFile, *universe);
             }
         }
-        universe->setSolarSystemCatalog(solarSystemCatalog);
+
+        // Next, read all the solar system files in the extras directory
+        if (config->extrasDir != "")
+        {
+            Directory* dir = OpenDirectory(config->extrasDir);
+
+            string filename;
+            while (dir->nextFile(filename))
+            {
+                if (DetermineFileType(filename) == Content_CelestiaCatalog)
+                {
+                    string fullname = config->extrasDir + '/' + filename;
+                    ifstream solarSysFile(fullname.c_str(), ios::in);
+                    if (solarSysFile.good())
+                        LoadSolarSystemObjects(solarSysFile, *universe);
+                }
+            }
+        }
     }
 
     if (config->galaxyCatalog != "")
