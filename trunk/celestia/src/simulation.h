@@ -15,7 +15,6 @@
 #include "vecmath.h"
 #include "quaternion.h"
 #include "texture.h"
-#include "console.h"
 #include "mesh.h"
 #include "stardb.h"
 #include "solarsys.h"
@@ -131,7 +130,6 @@ class Simulation
                                Vec3d offset, astro::CoordinateSystem offsetFrame,
                                Vec3f up, astro::CoordinateSystem upFrame);
     void computeCenterParameters(Selection& sel, JourneyParams& jparams, double centerTime);
-    void displaySelectionInfo(Console&);
 
  private:
     double realTime;
