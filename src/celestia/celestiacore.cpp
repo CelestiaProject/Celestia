@@ -1066,6 +1066,8 @@ void CelestiaCore::renderOverlay()
         }
         else
         {
+            *overlay << setprecision(0);
+
             double timeScale = sim->getTimeScale();
             if (abs(abs(timeScale) - 1) < 1e-6)
             {
@@ -1080,6 +1082,8 @@ void CelestiaCore::renderOverlay()
                 *overlay << timeScale << "x faster";
             else
                 *overlay << 1.0 / timeScale << "x slower";
+
+            *overlay << setprecision(3);
         }
         overlay->endText();
         glPopMatrix();
@@ -1138,6 +1142,9 @@ void CelestiaCore::renderOverlay()
                 break;
             case astro::Geographic:
                 modeName = "Sync Orbiting";
+                break;
+            default:
+                //Prevent Gnu C compiler from warning about unhandled case.
                 break;
             }
         }
