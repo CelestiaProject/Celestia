@@ -13,7 +13,6 @@
 #include <vector>
 #include <string>
 #include "stardb.h"
-#include "visstars.h"
 #include "observer.h"
 #include "solarsys.h"
 #include "galaxy.h"
@@ -41,7 +40,6 @@ class Renderer
 
     void render(const Observer&,
                 const StarDatabase&,
-                const VisibleStarSet&,
                 float faintestVisible,
                 SolarSystem*,
                 GalaxyList*,
@@ -126,10 +124,6 @@ class Renderer
     } RenderListEntry;
 
  private:
-    void renderStars(const StarDatabase& starDB,
-                     const VisibleStarSet& visset,
-                     float faintestVisible,
-                     const Observer& observer);
     void renderStars(const StarDatabase& starDB,
                      float faintestVisible,
                      const Observer& observer);

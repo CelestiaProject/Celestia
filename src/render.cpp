@@ -480,7 +480,6 @@ void Renderer::clearLabels()
 
 void Renderer::render(const Observer& observer,
                       const StarDatabase& starDB,
-                      const VisibleStarSet& visset,
                       float faintestVisible,
                       SolarSystem* solarSystem,
                       GalaxyList* galaxies,
@@ -541,12 +540,7 @@ void Renderer::render(const Observer& observer,
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     if ((renderFlags & ShowStars) != 0)
-    {
-        if ((renderFlags & ShowCloudMaps) != 0)
-            renderStars(starDB, faintestVisible, observer);
-        else
-            renderStars(starDB, visset, faintestVisible, observer);
-    }
+        renderStars(starDB, faintestVisible, observer);
 
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && asterisms != NULL)
@@ -583,7 +577,6 @@ void Renderer::render(const Observer& observer,
 
     // Render planets, moons, asteroids, etc.  Stars close and large enough
     // to have discernible surface detail are also placed in renderList.
-    // planetParticles.clear();
     Star* sun = NULL;
     if (solarSystem != NULL)
         sun = starDB.find(solarSystem->getStarNumber());
@@ -606,10 +599,12 @@ void Renderer::render(const Observer& observer,
                               Mat4d::identity(), now,
                               (labelMode & (MinorPlanetLabels | MajorPlanetLabels)) != 0);
         glBindTexture(GL_TEXTURE_2D, starTex->getName());
-        // renderParticles(planetParticles, observer.getOrientation());
+    }
 
-        // The call to renderSolarSystem filled renderList with visible
-        // planetary bodies.  Sort it by distance, then render each entry.
+    {
+        // The calls to renderSolarSystem/renderStars filled renderList
+        // with visible planetary bodies.  Sort it by distance, then
+        // render each entry.
         sort(renderList.begin(), renderList.end());
 
         int nEntries = renderList.size();
@@ -673,7 +668,7 @@ void Renderer::render(const Observer& observer,
         // reset the depth range
         glDepthRange(0, 1);
 
-        if ((renderFlags & ShowOrbits) != 0)
+        if ((renderFlags & ShowOrbits) != 0 && solarSystem != NULL)
         {
             // At this point, we're not rendering into the depth buffer
             // so we'll set the far plane to be way out there.  If we don't
@@ -918,6 +913,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
         //
         // TODO: Currently, this is extremely broken.  Stars look fine, but planets
         // look ridiculous with bright haloes.
+#if 1
         if (useHaloes && appMag < 1.0f)
         {
             a = 0.4f * clamp((appMag - 1) * -0.8f);
@@ -946,6 +942,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
             glVertex(center + (v3 * size));
             glEnd();
         }
+#endif
     }
 }
 
@@ -1506,63 +1503,9 @@ void Renderer::renderPlanet(const Body& body,
                          body.getSurface().color,
                          orientation,
                          false);
-#if 0
-    // If the size of the planetary disc is under a pixel, we don't
-    // render the mesh for the planet and just display a starlike point instead.
-    // Switching between the particle and mesh renderings of a body is
-    // jarring, however . . . so we'll blend in the particle view of the
-    // body to smooth things out, making it dimmer as the disc size approaches
-    // 4 pixels.
-    if (discSizeInPixels < 4)
-    {
-        float r = 1, g = 1, b = 1;
-        float a = 1;
-
-        if (discSizeInPixels > 1)
-        {
-            a = 0.5f * (4 - discSizeInPixels);
-            if (a > 1)
-                a = 1;
-        }
-        else
-        {
-            a = clamp(1.0f - appMag * brightnessScale + brightnessBias);
-        }
-
-        // We scale up the particle by a factor of 3 so that it's more visible--the
-        // texture we use has fuzzy edges, and if we render it in just one pixel,
-        // it's likely to disappear.  Also, the render distance is scaled by a factor
-        // of 0.1 so that we're rendering in front of any mesh that happens to be
-        // sharing this depth bucket.  What we really want is to render the particle
-        // with the frontmost z value in this depth bucket, and scaling the render
-        // distance is just hack to accomplish this.  There are cases where it will
-        // fail and a more robust method should be implemented.
-        float size = pixelSize * 3.0f * RENDER_DISTANCE * 0.1f;
-        Point3f center(pos.x * 0.1f, pos.y * 0.1f, pos.z * 0.1f);
-        Mat3f m = orientation.toMatrix3();
-        Vec3f v0 = Vec3f(-1, -1, 0) * m;
-        Vec3f v1 = Vec3f( 1, -1, 0) * m;
-        Vec3f v2 = Vec3f( 1,  1, 0) * m;
-        Vec3f v3 = Vec3f(-1,  1, 0) * m;
-
-        glBindTexture(GL_TEXTURE_2D, starTex->getName());
-        glColor(body.getColor(), a);
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 0);
-        glVertex(center + (v0 * size));
-        glTexCoord2f(1, 0);
-        glVertex(center + (v1 * size));
-        glTexCoord2f(1, 1);
-        glVertex(center + (v2 * size));
-        glTexCoord2f(0, 1);
-        glVertex(center + (v3 * size));
-        glEnd();
-    }
-#endif
 }
 
 
-#if 1
 void Renderer::renderStar(const Star& star,
                           Point3f pos,
                           float distance,
@@ -1662,7 +1605,6 @@ void Renderer::renderStar(const Star& star,
                          orientation,
                          true);
 }
-#endif
 
 
 void Renderer::renderPlanetarySystem(const Star& sun,
@@ -1821,6 +1763,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             relPos = starPos - observer->getPosition();
             distance = relPos.length();
 
+            // Recompute apparent magnitude using new distance computation
+            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
+
             float f = RENDER_DISTANCE / distance;
             renderDistance = RENDER_DISTANCE;
             starPos = position + relPos * f;
@@ -1902,12 +1847,12 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starParticles.clear();
     glareParticles.clear();
 
-    starDB.processVisibleStars(starRenderer,
-                               (Point3f) observer.getPosition(),
-                               observer.getOrientation(),
-                               fov,
-                               (float) windowWidth / (float) windowHeight,
-                               faintestVisible);
+    starDB.findVisibleStars(starRenderer,
+                            (Point3f) observer.getPosition(),
+                            observer.getOrientation(),
+                            fov,
+                            (float) windowWidth / (float) windowHeight,
+                            faintestVisible);
 
     glBindTexture(GL_TEXTURE_2D, starTex->getName());
     renderParticles(starParticles, observer.getOrientation());
@@ -1917,7 +1862,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     cout << "*Rendered stars: " << starRenderer.nProcessed << '/' << starParticles.size() << '/' << glareParticles.size() << '/' << starRenderer.nClose << '\n';
 }
 
-
+#if 0
 void Renderer::renderStars(const StarDatabase& starDB,
                            const VisibleStarSet& visset,
                            float faintestVisible,
@@ -2033,7 +1978,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
 
     cout << "Rendered stars: " << nRendered << '\n';
 }
-
+#endif
 
 void Renderer::renderGalaxies(const GalaxyList& galaxies,
                               const Observer& observer)
