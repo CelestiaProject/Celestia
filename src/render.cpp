@@ -15,7 +15,6 @@
 #include "vecgl.h"
 #include "perlin.h"
 #include "spheremesh.h"
-#include "gui.h"
 #include "regcombine.h"
 #include "render.h"
 
