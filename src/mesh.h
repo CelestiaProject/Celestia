@@ -15,8 +15,8 @@ class Mesh
 {
  public:
     virtual ~Mesh() {};
-    virtual void render() = 0;
-    virtual void render(unsigned int attributes) = 0;
+    virtual void render(float lod) = 0;
+    virtual void render(unsigned int attributes, float lod) = 0;
 
     enum {
         Normals    = 0x01,

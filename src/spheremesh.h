@@ -28,8 +28,8 @@ public:
                void* info);
     ~SphereMesh();
 
-    void render();
-    void render(unsigned int attributes);
+    void render(float lod);
+    void render(unsigned int attributes, float lod);
 
  private:
     void createSphere(float radius, int nRings, int nSlices);
