@@ -3551,11 +3551,19 @@ static void setLightParameters_GLSL(CelestiaGLProgram& prog,
                                  light.color.blue()) * light.irradiance;
         prog.lights[i].direction = light.direction_obj;
 
-        if (shadprop.usesShadows() || shadprop.usesFragmentLighting())
+        if (shadprop.usesShadows() ||
+            shadprop.usesFragmentLighting() ||
+            shadprop.lightModel == ShaderProperties::RingIllumModel)
         {
             prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
                                            lightColor.y * diffuseColor.y,
                                            lightColor.z * diffuseColor.z);
+            if (shadprop.lightModel == ShaderProperties::SpecularModel)
+            {
+                prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
+                                                   lightColor.y * specularColor.y,
+                                                   lightColor.z * specularColor.z);
+            }
         }
         else
         {
@@ -3672,43 +3680,9 @@ static void renderSphere_GLSL(const RenderInfo& ri,
 
     prog->use();
 
-    Vec3f diffuseColor(ri.color.red(),
-                       ri.color.green(),
-                       ri.color.blue());
-    Vec3f specularColor(ri.specularColor.red(),
-                        ri.specularColor.green(),
-                        ri.specularColor.blue());
+    setLightParameters_GLSL(*prog, shadprop, ls,
+                            ri.color, ri.specularColor);
 
-    for (unsigned int i = 0; i < ls.nLights; i++)
-    {
-        const DirectionalLight& light = ls.lights[i];
-
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
-        prog->lights[i].direction = light.direction_obj;
-
-        if (shadprop.usesShadows() || shadprop.usesFragmentLighting())
-        {
-            prog->fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
-                                            lightColor.y * diffuseColor.y,
-                                            lightColor.z * diffuseColor.z);
-        }
-        else
-        {
-            prog->lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
-                                            lightColor.y * diffuseColor.y,
-                                            lightColor.z * diffuseColor.z);
-        }
-        prog->lights[i].specular = Vec3f(lightColor.x * specularColor.x,
-                                         lightColor.y * specularColor.y,
-                                         lightColor.z * specularColor.z);
-
-        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
-        if (halfAngle_obj.length() != 0.0f)
-            halfAngle_obj.normalize();
-        prog->lights[i].halfVector = halfAngle_obj;
-    }
 
     prog->shininess = ri.specularPower;
     prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
