@@ -139,9 +139,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
 
 
 ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
-                                   HWND _parent,
-                                   CelestiaCore* _appCore) :
-    CelestiaWatcher(_appCore),
+                                     HWND _parent,
+                                     CelestiaCore* _appCore) :
+    CelestiaWatcher(*_appCore),
     appCore(_appCore),
     parent(_parent)
 {
@@ -207,7 +207,7 @@ void ViewOptionsDialog::RestoreSettings(HWND hDlg)
     appCore->setHudDetail(initialHudDetail);
 }
 
-void ViewOptionsDialog::notifyChange(int)
+void ViewOptionsDialog::notifyChange(CelestiaCore*, int)
 {
     if (parent != NULL)
         SetControls(hwnd);
