@@ -24,6 +24,13 @@
 
 using namespace std;
 
+// Trajectories are sampled adaptively for rendering.  MaxSampleInterval
+// is the maximum time (in days) between samples.  The threshold angle
+// is the maximum angle allowed between path segments.
+static const double MinSampleInterval = 1.0 / 1440.0; // one minute
+static const double MaxSampleInterval = 50.0;
+static const double SampleThresholdAngle = 2.0;
+
 struct Sample
 {
     double t;
@@ -220,52 +227,55 @@ Point3d SampledOrbit::computePosition(double jd) const
 
 
 void SampledOrbit::sample(double start, double t, int nSamples,
-						  OrbitSampleProc& proc) const
+                          OrbitSampleProc& proc) const
 {
-	double dt = 1.0/1440.0;
-	double end = start + t;
-	double current = start;
-	proc.sample(positionAtTime(current));
+    double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
+    double dt = MinSampleInterval;
+    double end = start + t;
+    double current = start;
 
-	while (current < end)
-	{
-		double dt2 = dt;
+    proc.sample(positionAtTime(current));
 
-		Point3d goodpt;
-		double gooddt = 0.0;
-		Point3d pos0 = positionAtTime(current);
-		goodpt = positionAtTime(current + dt2);
-		while (1)
-		{
-			Point3d pos1 = positionAtTime(current + dt2);
-			Point3d pos2 = positionAtTime(current + dt2*2);
-			Vec3d vec1 = pos1 - pos0;
-			Vec3d vec2 = pos2 - pos0;
+    while (current < end)
+    {
+        double dt2 = dt;
 
-			vec1.normalize();
-			vec2.normalize();
-			double dot = vec1 * vec2;
+        Point3d goodpt;
+        double gooddt = dt;
+        Point3d pos0 = positionAtTime(current);
+        goodpt = positionAtTime(current + dt2);
+        while (1)
+        {
+            Point3d pos1 = positionAtTime(current + dt2);
+            Point3d pos2 = positionAtTime(current + dt2 * 2.0);
+            Vec3d vec1 = pos1 - pos0;
+            Vec3d vec2 = pos2 - pos0;
 
-			if (dot > 1.0)
-				dot = 1.0;
-			else if (dot < -1.0)
-				dot = -1.0;
+            vec1.normalize();
+            vec2.normalize();
+            double dot = vec1 * vec2;
 
-			if (dot > 0.9998 && dt2 < 10.0)
-			{
-				gooddt = dt2;
-				goodpt = pos1;
-				dt2 *= 2.0;
-			}
-			else
-			{
-				proc.sample(goodpt);
-				break;
-			}
-		}
-		current += gooddt;
-	}
+            if (dot > 1.0)
+                dot = 1.0;
+            else if (dot < -1.0)
+                dot = -1.0;
+
+            if (dot > cosThresholdAngle && dt2 < MaxSampleInterval)
+            {
+                gooddt = dt2;
+                goodpt = pos1;
+                dt2 *= 2.0;
+            }
+            else
+            {
+                proc.sample(goodpt);
+                break;
+            }
+        }
+        current += gooddt;
+    }
 }
+
 
 Orbit* LoadSampledOrbit(const string& filename)
 {
