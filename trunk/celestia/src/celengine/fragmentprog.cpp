@@ -23,6 +23,7 @@ unsigned int fp::eclipseShadow2      = 0;
 unsigned int fp::texDiffuse          = 0;
 unsigned int fp::texDiffuseBump      = 0;
 unsigned int fp::texSpecular         = 0;
+unsigned int fp::texSpecularAlpha    = 0;
 
 
 class FragmentProcessorNV : public FragmentProcessor
@@ -132,6 +133,8 @@ FragmentProcessor* fp::initNV()
     if (!LoadNvFragmentProgram("shaders/bumpdiffuse_nv.fp", texDiffuseBump))
         return NULL;
     if (!LoadNvFragmentProgram("shaders/texphong_nv.fp", texSpecular))
+        return NULL;
+    if (!LoadNvFragmentProgram("shaders/texphong_alpha_nv.fp", texSpecularAlpha))
         return NULL;
 
     cout << "All NV fragment programs loaded successfully.\n";
