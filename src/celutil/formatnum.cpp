@@ -33,8 +33,15 @@ double FormattedNumber::getRoundedValue() const
 {
     if (flags & SignificantDigits)
     {
-        double m = pow(10, floor(log10(value)) - precision + 1);
-        return floor(value / m + 0.5) * m;
+        if (value == 0.0)
+        {
+            return 0.0;
+        }
+        else
+        {
+            double m = pow(10, floor(log10(fabs(value))) - precision + 1);
+            return floor(value / m + 0.5) * m;
+        }
     }
     else
     {
@@ -52,10 +59,17 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
 
     if (num.flags & FormattedNumber::SignificantDigits)
     {
-        int fmtPrecision = (int) log10(value) - num.precision + 1;
-        if (value < 1.0)
-            fmtPrecision--;
-        sprintf(fmt, "%%.%df", fmtPrecision > 0 ? 0 : -fmtPrecision);
+        if (value == 0.0)
+        {
+            sprintf(fmt, "%%.%df", 5);
+        }
+        else
+        {
+            int fmtPrecision = (int) log10(fabs(value)) - num.precision + 1;
+            if (fabs(value) < 1.0)
+                fmtPrecision--;
+            sprintf(fmt, "%%.%df", fmtPrecision > 0 ? 0 : -fmtPrecision);
+        }
     }
     else
     {
