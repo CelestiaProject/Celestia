@@ -224,7 +224,7 @@ static void PenumbraFunctionEval(float u, float v, float w,
     u = (u + 1.0f) * 0.5f;
 
     // Using the cube root produces a good visual result
-    unsigned char pixVal = (unsigned char) (pow(u, 0.33) * 255.99);
+    unsigned char pixVal = (unsigned char) (::pow(u, 0.33) * 255.99);
 
     pixel[0] = pixVal;
 }

@@ -1475,7 +1475,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             // If there's a script running then pause it.  This has the potentially
             // confusing side effect of rendering nonfunctional goto, center, and
             // other movement commands.
-            if ((runningScript != NULL) || (celxScript != NULL))
+#ifdef CELX
+            if (runningScript != NULL || celxScript != NULL)
+#else
+            if (runningScript != NULL)
+#endif
                 scriptPaused = true;
             else
                 scriptPaused = false;
