@@ -73,6 +73,7 @@ CLEAN :
 	-@erase "$(INTDIR)\texture.obj"
 	-@erase "$(INTDIR)\tokenizer.obj"
 	-@erase "$(INTDIR)\univcoord.obj"
+	-@erase "$(INTDIR)\util.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vertexlist.obj"
 	-@erase "$(INTDIR)\visstars.obj"
@@ -161,6 +162,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\texture.obj" \
 	"$(INTDIR)\tokenizer.obj" \
 	"$(INTDIR)\univcoord.obj" \
+	"$(INTDIR)\util.obj" \
 	"$(INTDIR)\vertexlist.obj" \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\winmain.obj" \
@@ -219,6 +221,7 @@ CLEAN :
 	-@erase "$(INTDIR)\texture.obj"
 	-@erase "$(INTDIR)\tokenizer.obj"
 	-@erase "$(INTDIR)\univcoord.obj"
+	-@erase "$(INTDIR)\util.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
 	-@erase "$(INTDIR)\visstars.obj"
@@ -310,6 +313,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\texture.obj" \
 	"$(INTDIR)\tokenizer.obj" \
 	"$(INTDIR)\univcoord.obj" \
+	"$(INTDIR)\util.obj" \
 	"$(INTDIR)\visstars.obj" \
 	"$(INTDIR)\vertexlist.obj" \
 	"$(INTDIR)\winmain.obj" \
@@ -540,6 +544,12 @@ SOURCE=.\src\tokenizer.cpp
 SOURCE=.\src\univcoord.cpp
 
 "$(INTDIR)\univcoord.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\util.cpp
+
+"$(INTDIR)\util.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
