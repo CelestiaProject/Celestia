@@ -12,7 +12,7 @@
 
 #include "gl.h"
 #include "solarsys.h"
-#include "config.h"
+#include "configfile.h"
 #include "favorites.h"
 #include "destination.h"
 #include "overlay.h"

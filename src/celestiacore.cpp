@@ -32,7 +32,6 @@
 #include "mathlib.h"
 #include "astro.h"
 #include "overlay.h"
-#include "config.h"
 #include "favorites.h"
 #include "celestiacore.h"
 #include "execution.h"
