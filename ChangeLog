@@ -502,3 +502,7 @@ Code:
 * Fixed orbits of major planets so that they don't get wacky far into the
   future or past
 * Windows: fixed image capture in Windows so it doesn't screw up texture loading
+* Display time to arrival when travelling
+* Added preloadtex command for scripting
+* Enforce a maximum time rate of 1e15 times normal
+
