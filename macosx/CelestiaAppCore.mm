@@ -89,7 +89,7 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     int	celestiaKey = 0;
     unichar key = [[theEvent characters] characterAtIndex: 0];
 
-   if ( ([theEvent modifierFlags] && NSNumericPadKeyMask) && (key >= '0') && (key <= '9'))
+   if ( ([theEvent modifierFlags] & NSNumericPadKeyMask) && (key >= '0') && (key <= '9'))
     switch(key)
     {
         case '0':
