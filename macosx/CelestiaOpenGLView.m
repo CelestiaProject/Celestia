@@ -18,12 +18,15 @@
 
 @implementation CelestiaOpenGLView
 
-/*
 - (id) initWithCoder: (NSCoder *) coder
 {   
     NSOpenGLPixelFormatAttribute attrs[] = 
     {
         NSOpenGLPFADoubleBuffer,
+        NSOpenGLPFANoRecovery,
+        NSOpenGLPFAAccelerated,
+        NSOpenGLPFADepthSize,
+        (NSOpenGLPixelFormatAttribute)1,
         nil
     } ;
 
@@ -31,19 +34,26 @@
     long swapInterval ;
 
     self = [super initWithCoder: coder] ;
-    pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: attrs] ;
+    if (self)
+    {
+        pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: attrs] ;
 
-    [self setPixelFormat: pixFmt] ;
+        if (pixFmt)
+        {
+            [self setPixelFormat: pixFmt] ;
+            [pixFmt release];
 
-    swapInterval = 1 ;
+            swapInterval = 1 ;
 
-    [[self openGLContext]
-        setValues: &swapInterval
-        forParameter: NSOpenGLCPSwapInterval ] ;
+            [[self openGLContext]
+                setValues: &swapInterval
+                forParameter: NSOpenGLCPSwapInterval ] ;
+        }
+    }
         
     return self;
 }
-*/
+
 
 - (BOOL) isFlipped {return YES;}
 
@@ -122,35 +132,20 @@
 */
 - (void) mouseDown: (NSEvent*)theEvent
 {
-[ [self window] makeFirstResponder: self ];
-    if ( [theEvent modifierFlags] & NSAlternateKeyMask )
-    {
-        [self rightMouseDown: theEvent];
-        return;
-    }
-//     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
-    {
-    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
-//    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: self];
+    [ [self window] makeFirstResponder: self ];
+
+     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    NSLog(@"mouseDown: %@",theEvent);
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
-    }
 }
 
 - (void) mouseUp: (NSEvent*)theEvent
 {
-    if ( [theEvent modifierFlags] & NSAlternateKeyMask )
-    {
-        [self rightMouseUp: theEvent];
-        return;
-    }
-    {
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    NSLog(@"mouseUp: %@", theEvent);
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
-    }
 }
 - (void) mouseDragged: (NSEvent*) theEvent
 {
@@ -180,6 +175,8 @@
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    NSLog(@"rightMouseUp: %@", theEvent);
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
+    if([theEvent clickCount] > 0)
+        [super rightMouseDown:theEvent];    //...Force context menu to appear only on clicks (not drags)
 }
 
 - (void) rightMouseDragged: (NSEvent*) theEvent
@@ -195,9 +192,7 @@
 - (void) scrollWheel: (NSEvent*)theEvent
 {
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    if ( [[theEvent characters] characterAtIndex: 0] < 128 )
-       [ appCore charEntered: [[theEvent characters] characterAtIndex: 0] ];
-    [ appCore mouseWheel: [theEvent deltaZ]
+    [ appCore mouseWheel: [theEvent deltaY]
        modifiers: [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0] ];
 }
 
