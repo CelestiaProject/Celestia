@@ -11,6 +11,8 @@
 #define _OCTREE_H_
 
 #include <vector>
+#include "quaternion.h"
+#include "plane.h"
 #include "star.h"
 
 
@@ -20,7 +22,7 @@ class StarHandler
     StarHandler() {};
     virtual ~StarHandler() {};
     
-    virtual void process(const Star&) = 0;
+    virtual void process(const Star& star, float distance, float appMag) = 0;
 };
 
 
@@ -33,9 +35,11 @@ class StarOctreeNode
     void insertStar(const Star&, float);
     void processVisibleStars(StarHandler& starHandler,
                              const Point3f& position,
+                             const Planef* frustumPlanes,
                              float limitingMag,
                              float scale) const;
     int countChildren() const;
+    int countStars() const;
 
  private:
     void addStar(const Star&);
@@ -59,8 +63,12 @@ class StarOctree
     void insertStar(const Star&);
     void processVisibleStars(StarHandler& starHandler,
                              const Point3f& position,
+                             const Quatf& orientation,
+                             float fovY,
+                             float aspectRatio,
                              float limitingMag) const;
     int countNodes() const;
+    int countStars() const;
 
  private:
     StarOctreeNode* root;
