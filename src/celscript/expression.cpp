@@ -211,6 +211,43 @@ Value* AssignmentExpression::leval(ExecutionContext& context)
 }
 
 
+FunctionCallExpression::FunctionCallExpression(Expression* _func) :
+    func(_func)
+{
+}
+
+FunctionCallExpression::~FunctionCallExpression()
+{
+    if (func != NULL)
+        delete func;
+    for (vector<Expression*>::iterator iter = arguments.begin();
+         iter != arguments.end(); iter++)
+    {
+        delete *iter;
+    }
+}
+
+Value FunctionCallExpression::eval(ExecutionContext& context)
+{
+    Value funcVal = func->eval(context);
+    Function* f;
+    if (!funcVal.functionValue(f))
+    {
+        // Not a function
+        context.runtimeError();
+        return Value();
+    }
+
+    return Value();
+}
+
+void FunctionCallExpression::addArgument(Expression* expr)
+{
+    arguments.insert(arguments.end(), expr);
+}
+
+
+
 Value AddFunc(const Value& a, const Value& b)
 {
     if (a.getType() == NumberType && b.getType() == NumberType)

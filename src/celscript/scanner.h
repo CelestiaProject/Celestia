@@ -48,6 +48,7 @@ public:
         TokenGreaterEqual   = 23,
         TokenLesserEqual    = 24,
         TokenNot            = 25,
+        TokenComma          = 26,
         KeywordIf           = 50,
         KeywordElse         = 51,
         KeywordFor          = 52,
@@ -56,6 +57,9 @@ public:
         KeywordFalse        = 55,
         KeywordNull         = 56,
         KeywordVar          = 57,
+        KeywordReturn       = 58,
+        KeywordFunction     = 59,
+        KeywordLambda       = 60,
         TokenError          = 255,
     };
 

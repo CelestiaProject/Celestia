@@ -29,6 +29,7 @@ public:
     Expression* parseExpression();
     Expression* parseFinalExpression();
     Expression* parseSubexpression();
+    Expression* parseFunctionCallExpression();
     Expression* parseUnaryExpression();
     Expression* parseMultiplyExpression();
     Expression* parseAddExpression();
@@ -36,12 +37,15 @@ public:
     Expression* parseRelationalExpression();
     Expression* parseAssignmentExpression();
 
+    Function* parseFunction();
+
     Statement* parseStatement();
     Statement* parseVarStatement();
     Statement* parseCompoundStatement();
     Statement* parseExpressionStatement();
     Statement* parseIfStatement();
     Statement* parseWhileStatement();
+    Statement* parseReturnStatement();
 
 private:
     void syntaxError(const std::string&);
@@ -54,6 +58,7 @@ private:
     Scanner& scanner;
     std::vector<std::string> scope;
     int loopDepth;
+    int funcDepth;
 };
 
 } // namespace celx

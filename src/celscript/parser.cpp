@@ -16,7 +16,8 @@ using namespace celx;
 
 Parser::Parser(Scanner& _scanner) :
     scanner(_scanner),
-    loopDepth(0)
+    loopDepth(0),
+    funcDepth(0)
 {
 }
 
@@ -48,6 +49,14 @@ Expression* Parser::parseFinalExpression()
     else if (tok == Scanner::KeywordFalse)
     {
         return new ConstantExpression(Value(false));
+    }
+    else if (tok == Scanner::KeywordLambda)
+    {
+        Function* func = parseFunction();
+        if (func == NULL)
+            return NULL;
+        else
+            return new ConstantExpression(Value(func));
     }
     else if (tok == Scanner::TokenName)
     {
@@ -86,6 +95,54 @@ Expression* Parser::parseSubexpression()
     }
 }
 
+Expression* Parser::parseFunctionCallExpression()
+{
+    Expression* expr = parseSubexpression();
+    if (expr == NULL)
+        return NULL;
+
+    // TODO: Should check to see if we have something like a number
+    // or string constant that can't possibly be a function call.  As it
+    // is now, we treat all expressions equally.
+
+    if (scanner.nextToken() != Scanner::TokenOpen)
+    {
+        scanner.pushBack();
+        return expr;
+    }
+
+    FunctionCallExpression* func = new FunctionCallExpression(expr);
+
+    Scanner::TokenType tok;
+    for (;;)
+    {
+        tok = scanner.nextToken();
+        if (tok == Scanner::TokenClose)
+            break;
+        scanner.pushBack();
+        
+        Expression* arg = parseExpression();
+        if (arg == NULL)
+        {
+            delete func;
+            return NULL;
+        }
+
+        func->addArgument(arg);
+        if (scanner.nextToken() != Scanner::TokenComma)
+            scanner.pushBack();
+    }
+
+    if (tok != Scanner::TokenClose)
+    {
+        syntaxError(") expected in function call");
+        delete func;
+        return NULL;
+    }
+
+    return func;
+}
+
 Expression* Parser::parseUnaryExpression()
 {
     UnaryExpression::Operator op;
@@ -106,7 +163,7 @@ Expression* Parser::parseUnaryExpression()
     if (op == UnaryExpression::InvalidOp)
     {
         scanner.pushBack();
-        return parseSubexpression();
+        return parseFunctionCallExpression();
     }
     else
     {
@@ -296,6 +353,68 @@ Expression* Parser::parseExpression()
 }
 
 
+Function* Parser::parseFunction()
+{
+    if (scanner.nextToken() != Scanner::TokenOpen)
+    {
+        syntaxError("Argument list expected for function");
+        return NULL;
+    }
+
+    vector<string>* args = new vector<string>;
+
+    Scanner::TokenType tok;
+    for (;;)
+    {
+        tok = scanner.nextToken();
+        if (tok == Scanner::TokenClose)
+            break;
+
+        if (tok != Scanner::TokenName)
+        {
+            delete args;
+            return NULL;
+        }
+
+        args->insert(args->end(), scanner.getNameValue());
+        if (scanner.nextToken() != Scanner::TokenComma)
+            scanner.pushBack();
+    }
+
+    if (tok != Scanner::TokenClose)
+    {
+        syntaxError(") expected in function definition");
+        delete args;
+        return NULL;
+    }
+
+    // TODO: Verify that there are no duplicate names in the argument list
+
+    if (scanner.nextToken() != Scanner::TokenBeginGroup)
+    {
+        syntaxError("function body expected");
+        delete args;
+        return NULL;
+    }
+    scanner.pushBack();
+
+    funcDepth++;
+    Statement* body = parseCompoundStatement();
+    funcDepth--;
+    assert(funcDepth >= 0);
+
+    if (body == NULL)
+    {
+        delete args;
+        return NULL;
+    }
+    else
+    {
+        return new Function(args, body);
+    }
+}
+
+
 Statement* Parser::parseExpressionStatement()
 {
     Expression* expr = parseExpression();
@@ -478,7 +597,11 @@ Statement* Parser::parseWhileStatement()
         return NULL;
     }
 
+    loopDepth++;
     body = parseStatement();
+    loopDepth--;
+    assert(loopDepth >= 0);
+
     if (body == NULL)
     {
         delete condition;
@@ -486,6 +609,43 @@ Statement* Parser::parseWhileStatement()
     }
 
     return new WhileStatement(condition, body);
+}
+
+Statement* Parser::parseReturnStatement()
+{
+    if (scanner.nextToken() != Scanner::KeywordReturn)
+    {
+        syntaxError("return statement expected");
+        return NULL;
+    }
+    
+    Expression* expr = NULL;
+    if (scanner.nextToken() == Scanner::TokenEndStatement)
+    {
+        expr = new ConstantExpression(Value());
+    }
+    else
+    {
+        scanner.pushBack();
+        expr = parseExpression();
+        if (expr == NULL)
+            return NULL;
+        if (scanner.nextToken() != Scanner::TokenEndStatement)
+        {
+            syntaxError("missing ;");
+            delete expr;
+            return NULL;
+        }
+    }
+
+    if (funcDepth == 0)
+    {
+        syntaxError("return appears outside a function");
+        delete expr;
+        return NULL;
+    }
+
+    return new ReturnStatement(expr);
 }
 
 
@@ -510,6 +670,9 @@ Statement* Parser::parseStatement()
 
     case Scanner::KeywordWhile:
         return parseWhileStatement();
+
+    case Scanner::KeywordReturn:
+        return parseReturnStatement();
 
     default:
         return parseExpressionStatement();
