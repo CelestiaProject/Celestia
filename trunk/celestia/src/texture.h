@@ -22,8 +22,9 @@ class CTexture
     CTexture(int w, int h, int fmt);
     ~CTexture();
 
-    void bindName();
+    void bindName(bool wrap = false);
     unsigned int getName();
+    void normalMap(float scale, bool wrap);
 
     enum {
         ColorChannel = 1,
@@ -35,6 +36,7 @@ class CTexture
     int height;
     int components;
     int format;
+    bool isNormalMap;
     unsigned char* pixels;
 
     int cmapEntries;
@@ -54,5 +56,6 @@ extern CTexture* CreateBMPTexture(const char* filename);
 
 extern CTexture* LoadTextureFromFile(string filename);
 
+extern CTexture* CreateNormalizationCubeMap(int size);
 
 #endif // _TEXTURE_H_
