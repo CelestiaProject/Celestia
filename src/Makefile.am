@@ -1,4 +1,10 @@
-bin_PROGRAMS = celestia gcelestia
+bin_PROGRAMS = celestia
+
+if ENABLE_GTK
+FRONTENDSOURCE = gtkmain.cpp
+else
+FRONTENDSOURCE = glutmain.cpp
+endif
 
 COMMONSOURCES = \
 	3dsmesh.cpp \
@@ -50,8 +56,4 @@ COMMONSOURCES = \
 	vertexlist.cpp \
 	visstars.cpp
 
-celestia_SOURCES = $(COMMONSOURCES) glutmain.cpp
-
-gcelestia_SOURCES = $(COMMONSOURCES) gtkmain.cpp
-
-
+celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
