@@ -20,18 +20,18 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
-#include "../celengine/gl.h"
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
-#include <celmath/mathlib.h>
-#include <celutil/util.h>
-#include <celengine/stardb.h>
-#include <celengine/solarsys.h>
-#include <celengine/asterism.h>
-#include <celengine/astro.h>
-#include <celengine/overlay.h>
-#include <celengine/execution.h>
-#include <celengine/cmdparser.h>
+#include "celengine/gl.h"
+#include "celmath/vecmath.h"
+#include "celmath/quaternion.h"
+#include "celmath/mathlib.h"
+#include "celutil/util.h"
+#include "celengine/stardb.h"
+#include "celengine/solarsys.h"
+#include "celengine/asterism.h"
+#include "celengine/astro.h"
+#include "celengine/overlay.h"
+#include "celengine/execution.h"
+#include "celengine/cmdparser.h"
 #include "favorites.h"
 #include "celestiacore.h"
 
@@ -133,6 +133,10 @@ CelestiaCore::CelestiaCore() :
     logoTexture(NULL),
     alerter(NULL)
 {
+    /* Get a renderer here so it may be queried for capabilities of the
+       underlying engine even before rendering is enabled. It's initRenderer()
+       routine will be called much later. */
+    renderer = new Renderer();
     timer = CreateTimer();
 
     execEnv = new CoreExecutionEnvironment(*this);
@@ -604,6 +608,10 @@ void CelestiaCore::charEntered(char c)
             runningScript = new Execution(*demoScript, *execEnv);
         break;
 
+    case 'E':
+	renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
+	break;
+
     case '1':
     case '2':
     case '3':
@@ -1066,8 +1074,6 @@ void CelestiaCore::renderOverlay()
         }
         else
         {
-            *overlay << setprecision(0);
-
             double timeScale = sim->getTimeScale();
             if (abs(abs(timeScale) - 1) < 1e-6)
             {
@@ -1082,8 +1088,6 @@ void CelestiaCore::renderOverlay()
                 *overlay << timeScale << "x faster";
             else
                 *overlay << 1.0 / timeScale << "x slower";
-
-            *overlay << setprecision(3);
         }
         overlay->endText();
         glPopMatrix();
@@ -1143,9 +1147,9 @@ void CelestiaCore::renderOverlay()
             case astro::Geographic:
                 modeName = "Sync Orbiting";
                 break;
-            default:
-                //Prevent Gnu C compiler from warning about unhandled case.
-                break;
+	    default:
+		// Keep compiler from warning about unhandled cases
+		break;
             }
         }
 
@@ -1463,8 +1467,6 @@ bool CelestiaCore::initSimulation()
 
 bool CelestiaCore::initRenderer()
 {
-    renderer = new Renderer();
-
     renderer->setRenderFlags(Renderer::ShowStars |
                              Renderer::ShowPlanets |
                              Renderer::ShowAtmospheres);

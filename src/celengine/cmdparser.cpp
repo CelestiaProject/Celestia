@@ -361,6 +361,8 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowPlanets;
             else if (compareIgnoringCase(name, "stars") == 0)
                 flags |= Renderer::ShowStars;
+	    else if (compareIgnoringCase(name, "nightmaps") == 0)
+		flags |= Renderer::ShowNightMaps;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
@@ -401,6 +403,8 @@ int parseLabelFlags(string s)
                 flags |= Renderer::ConstellationLabels;
             else if (compareIgnoringCase(name, "stars") == 0)
                 flags |= Renderer::StarLabels;
+	    else if (compareIgnoringCase(name, "galaxies") == 0)
+		flags |= Renderer::GalaxyLabels;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
