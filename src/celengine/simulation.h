@@ -106,6 +106,7 @@ class Simulation
     void follow();
     void geosynchronousFollow();
     void phaseLock();
+    void chase();
     void cancelMotion();
 
     Observer& getObserver();

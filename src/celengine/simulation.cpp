@@ -99,6 +99,27 @@ static RigidTransform toUniversal(const FrameOfReference& frame,
         return RigidTransform(origin + Vec3d(p.x, p.y, p.z),
                               xform.rotation * Quatd(m));
     }
+    else if (frame.coordSys == astro::Chase)
+    {
+        Mat3d m;
+        if (frame.refObject.body != NULL)
+        {
+            Body* body = frame.refObject.body;
+            Vec3d lookDir = body->getOrbit()->positionAtTime(t) -
+                body->getOrbit()->positionAtTime(t - 1.0 / 1440.0);
+            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
+            lookDir.normalize();
+            Vec3d v = lookDir ^ axisDir;
+            v.normalize();
+            Vec3d u = v ^ lookDir;
+            m = Mat3d(v, u, -lookDir);
+        }
+
+        Point3d p = (Point3d) xform.translation * m;
+
+        return RigidTransform(origin + Vec3d(p.x, p.y, p.z),
+                              xform.rotation * Quatd(m));
+    }
     else
     {
         return RigidTransform(origin + xform.translation, xform.rotation);
@@ -135,6 +156,27 @@ static RigidTransform fromUniversal(const FrameOfReference& frame,
             Body* body = frame.refObject.body;
             Vec3d lookDir = frame.refObject.getPosition(t) -
                 frame.targetObject.getPosition(t);
+            Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
+            lookDir.normalize();
+            Vec3d v = lookDir ^ axisDir;
+            v.normalize();
+            Vec3d u = v ^ lookDir;
+            m = Mat3d(v, u, -lookDir);
+        }
+
+        Vec3d v = (xform.translation - origin) * m.transpose();
+
+        return RigidTransform(UniversalCoord(v.x, v.y, v.z),
+                              xform.rotation * ~Quatd(m));
+    }
+    else if (frame.coordSys == astro::Chase)
+    {
+        Mat3d m;
+        if (frame.refObject.body != NULL)
+        {
+            Body* body = frame.refObject.body;
+            Vec3d lookDir = body->getOrbit()->positionAtTime(t) -
+                body->getOrbit()->positionAtTime(t - 1.0 / 1440.0);
             Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
             lookDir.normalize();
             Vec3d v = lookDir ^ axisDir;
@@ -755,7 +797,7 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
         double y = cos(phi);
         double z = -sin(theta) * sin(phi);
         computeGotoParameters(selection, journey, gotoTime,
-                              Vec3d(x, y, z) * distance, astro::Geographic,
+                              Vec3d(x, y, z) * distance * 1e6, astro::Geographic,
                               up, astro::Geographic);
         observerMode = Travelling;
     }
@@ -836,6 +878,17 @@ void Simulation::phaseLock()
         {
             frame = FrameOfReference(astro::PhaseLock, frame.refObject, selection);
         }
+        transform = fromUniversal(frame,
+                                  RigidTransform(observer.getPosition(), observer.getOrientation()),
+                                  simTime);
+    }
+}
+
+void Simulation::chase()
+{
+    if (selection.body != NULL)
+    {
+        frame = FrameOfReference(astro::Chase, selection.body);
         transform = fromUniversal(frame,
                                   RigidTransform(observer.getPosition(), observer.getOrientation()),
                                   simTime);
