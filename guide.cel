@@ -16,5 +16,15 @@
 {
 	Name "Alpha Centauri"
 	Target "Rigil Kent"
-	Description "Alpha Centauri A and B are, together with Proxima Centauri, the nearest star system to us.  Alpha Cen A is very similar to our own Sun, though slightly older and brighter.  B is dimmer and redder, and Proxima is so dim that it is can't be seen by the naked eye even though it is the star nearest to the Sun."
+	Description "Alpha Centauri A and B are together with Proxima Centauri, the nearest star system to us.  Alpha Cen A is very similar to our own Sun, though slightly older and brighter.  B is dimmer and redder, and Proxima is so dim that it is can't be seen by the naked eye even though it is the star nearest to the Sun."
+}
+{
+	Name "Pleiades"
+	Target "Alcyone"
+	Description "The Pleiades star cluster is a group of bright recently-formed stars.  The Pleiades are named for the seven sisters from Greek mythology, though telescopes have revealed that there are considerable more than seven stars in the cluster."
+}
+{
+	Name "Hyades"
+	Target "63 Tau"
+	Description "Named for the five daughters of Atlas and Aethra, the Hyades is one of the most prominent open star clusters in the sky.  It is estimated that the stars of the Hyades are approximately 660 million years old--over six times older than the hotter, bluer Pleiades stars which appear nearby in our night sky."
 }
