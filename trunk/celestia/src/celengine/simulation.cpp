@@ -88,10 +88,10 @@ static RigidTransform toUniversal(const FrameOfReference& frame,
                 frame.targetObject.getPosition(t);
             Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
             lookDir.normalize();
-            Vec3d v = lookDir ^ axisDir;
+            Vec3d v = axisDir ^ lookDir;
             v.normalize();
-            Vec3d u = v ^ lookDir;
-            m = Mat3d(v, u, -lookDir);
+            Vec3d u = lookDir ^ v;
+            m = Mat3d(v, u, lookDir);
         }
 
         Point3d p = (Point3d) xform.translation * m;
@@ -158,10 +158,10 @@ static RigidTransform fromUniversal(const FrameOfReference& frame,
                 frame.targetObject.getPosition(t);
             Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial().toMatrix3();
             lookDir.normalize();
-            Vec3d v = lookDir ^ axisDir;
+            Vec3d v = axisDir ^ lookDir;
             v.normalize();
-            Vec3d u = v ^ lookDir;
-            m = Mat3d(v, u, -lookDir);
+            Vec3d u = lookDir ^ v;
+            m = Mat3d(v, u, lookDir);
         }
 
         Vec3d v = (xform.translation - origin) * m.transpose();
@@ -481,18 +481,15 @@ void Simulation::computeGotoParameters(Selection& destination,
     // position and the star
     offset = toUniversal(offset, observer, selection, simTime, offsetFrame);
     jparams.to = targetPosition + offset;
-    jparams.initialFocus = jparams.from +
-        (Vec3f(0, 0, -1.0f) * observer.getOrientation().toMatrix4());
-    jparams.finalFocus = targetPosition;
 
     Vec3d upd(up.x, up.y, up.z);
     upd = toUniversal(upd, observer, selection, simTime, upFrame);
-    jparams.up = Vec3f((float) upd.x, (float) upd.y, (float) upd.z);
+    Vec3f upf = Vec3f((float) upd.x, (float) upd.y, (float) upd.z);
 
     jparams.initialOrientation = observer.getOrientation();
     Vec3d vn = targetPosition - jparams.to;
     Point3f focus((float) vn.x, (float) vn.y, (float) vn.z);
-    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, jparams.up);
+    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, upf);
 
     jparams.accelTime = 0.5;
     double distance = astro::microLightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
@@ -530,15 +527,12 @@ void Simulation::computeCenterParameters(Selection& destination,
     jparams.from = observer.getPosition();
     jparams.to = jparams.from;
 
-    jparams.initialFocus = jparams.from +
-        (Vec3f(0, 0, -1.0f) * observer.getOrientation().toMatrix4());
-    jparams.finalFocus = targetPosition;
-    jparams.up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
+    Vec3f up = Vec3f(0, 1, 0) * observer.getOrientation().toMatrix4();
 
     jparams.initialOrientation = observer.getOrientation();
     Vec3d vn = targetPosition - jparams.to;
     Point3f focus((float) vn.x, (float) vn.y, (float) vn.z);
-    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, jparams.up);
+    jparams.finalOrientation = lookAt(Point3f(0, 0, 0), focus, up);
 
     jparams.accelTime = 0.5;
     jparams.expFactor = 0;
@@ -596,6 +590,11 @@ void Simulation::setFrame(astro::CoordinateSystem coordSys,
     transform = fromUniversal(frame,
                               RigidTransform(observer.getPosition(), observer.getOrientation()),
                               simTime);
+}
+
+void Simulation::setFrame(const FrameOfReference& _frame)
+{
+    frame = _frame;
 }
 
 FrameOfReference Simulation::getFrame() const
@@ -806,6 +805,36 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
         observerMode = Travelling;
     }
 }
+
+
+void Simulation::gotoLocation(const RigidTransform& transform,
+                              double duration)
+{
+    journey.startTime = realTime;
+    journey.duration = duration;
+    
+    RigidTransform from(observer.getPosition(), observer.getOrientation());
+    from = fromUniversal(frame, from, simTime);
+    journey.from = from.translation;
+    journey.initialOrientation= Quatf((float) from.rotation.w, (float) from.rotation.x,
+                                      (float) from.rotation.y, (float) from.rotation.z);
+    
+    journey.to = transform.translation;
+    journey.finalOrientation = Quatf((float) transform.rotation.w,
+                                     (float) transform.rotation.x,
+                                     (float) transform.rotation.y,
+                                     (float) transform.rotation.z);
+
+    journey.accelTime = 0.5;
+    double distance = astro::microLightYearsToKilometers(journey.from.distanceTo(journey.to)) / 2.0;
+    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
+                                               0.0001, 100.0,
+                                               1e-10);
+    journey.expFactor = sol.first;
+
+    observerMode = Travelling;
+}
+
 
 void Simulation::getSelectionLongLat(double& distance,
                                      double& longitude,
