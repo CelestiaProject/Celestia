@@ -54,6 +54,7 @@ CLEAN :
 	-@erase "$(INTDIR)\console.obj"
 	-@erase "$(INTDIR)\constellation.obj"
 	-@erase "$(INTDIR)\debug.obj"
+	-@erase "$(INTDIR)\destination.obj"
 	-@erase "$(INTDIR)\dispmap.obj"
 	-@erase "$(INTDIR)\execution.obj"
 	-@erase "$(INTDIR)\favorites.obj"
@@ -91,6 +92,7 @@ CLEAN :
 	-@erase "$(INTDIR)\winmain.obj"
 	-@erase "$(INTDIR)\winssbrowser.obj"
 	-@erase "$(INTDIR)\winstarbrowser.obj"
+	-@erase "$(INTDIR)\wintourguide.obj"
 	-@erase "$(INTDIR)\wintimer.obj"
 	-@erase "$(OUTDIR)\celestia.exe"
 
@@ -157,6 +159,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\console.obj" \
 	"$(INTDIR)\constellation.obj" \
 	"$(INTDIR)\debug.obj" \
+	"$(INTDIR)\destination.obj" \
 	"$(INTDIR)\dispmap.obj" \
 	"$(INTDIR)\execution.obj" \
 	"$(INTDIR)\favorites.obj" \
@@ -193,6 +196,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\winmain.obj" \
 	"$(INTDIR)\winssbrowser.obj" \
 	"$(INTDIR)\winstarbrowser.obj" \
+	"$(INTDIR)\wintourguide.obj" \
 	"$(INTDIR)\wintimer.obj" \
 	"$(INTDIR)\celestia.res"
 
@@ -230,6 +234,7 @@ CLEAN :
 	-@erase "$(INTDIR)\console.obj"
 	-@erase "$(INTDIR)\constellation.obj"
 	-@erase "$(INTDIR)\debug.obj"
+	-@erase "$(INTDIR)\destination.obj"
 	-@erase "$(INTDIR)\dispmap.obj"
 	-@erase "$(INTDIR)\execution.obj"
 	-@erase "$(INTDIR)\favorites.obj"
@@ -269,6 +274,7 @@ CLEAN :
 	-@erase "$(INTDIR)\winssbrowser.obj"
 	-@erase "$(INTDIR)\winstarbrowser.obj"
 	-@erase "$(INTDIR)\wintimer.obj"
+	-@erase "$(INTDIR)\wintourguide.obj"
 	-@erase "$(OUTDIR)\celestia.exe"
 	-@erase "$(OUTDIR)\celestia.ilk"
 	-@erase "$(OUTDIR)\celestia.pdb"
@@ -336,6 +342,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\console.obj" \
 	"$(INTDIR)\constellation.obj" \
 	"$(INTDIR)\debug.obj" \
+	"$(INTDIR)\destination.obj" \
 	"$(INTDIR)\dispmap.obj" \
 	"$(INTDIR)\execution.obj" \
 	"$(INTDIR)\favorites.obj" \
@@ -373,6 +380,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\winssbrowser.obj" \
 	"$(INTDIR)\winstarbrowser.obj" \
 	"$(INTDIR)\wintimer.obj" \
+	"$(INTDIR)\wintourguide.obj" \
 	"$(INTDIR)\celestia.res"
 
 "$(OUTDIR)\celestia.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
@@ -486,6 +494,12 @@ SOURCE=.\src\constellation.cpp
 SOURCE=.\src\debug.cpp
 
 "$(INTDIR)\debug.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\destination.cpp
+
+"$(INTDIR)\destination.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -708,6 +722,12 @@ SOURCE=.\src\winstarbrowser.cpp
 SOURCE=.\src\wintimer.cpp
 
 "$(INTDIR)\wintimer.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\wintourguide.cpp
+
+"$(INTDIR)\wintourguide.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
