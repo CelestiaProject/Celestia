@@ -1,0 +1,24 @@
+<!DOCTYPE xbel>
+<xbel folded="no" toolbar="no" icon="" hide_nsbk="yes" >
+ <folder folded="no" toolbar="yes" icon="bookmark_toolbar" >
+  <title>bar</title>
+  <bookmark icon="favicons/celestia_20020830193805713" href="cel://Fallow/Sol%3AEarth/2002-08-29T06%3A43%3A06?x=iL7Z1cJ03DjMDA&amp;y=/jih9BUqCA&amp;z=m2LP5H62RowG&amp;ow=0.599114&amp;ox=-0.019979&amp;oy=0.797475&amp;oz=0.068535&amp;select=Sol:Earth&amp;fov=45.000000&amp;ts=1000.000000&amp;rf=6035&amp;lm=0" >
+   <title>Fallow Earth [Earth]</title>
+  </bookmark>
+  <bookmark icon="favicons/celestia_20020830193654912" href="cel://Fallow/Sol%3AJupiter%3AIo/2002-08-30T17%3A26%3A56?x=GA+zXN5KkleTDA&amp;y=eA/amNVc+6U&amp;z=L60hc5wceHu4/////////w&amp;ow=-0.897022&amp;ox=0.006752&amp;oy=-0.441923&amp;oz=-0.003062&amp;select=Sol:Jupiter:Io&amp;fov=44.999992&amp;ts=1.000000&amp;rf=6035&amp;lm=0" >
+   <title>Fallow Io [Io]</title>
+  </bookmark>
+  <bookmark icon="favicons/celestia_20020830192632826" href="cel://Freeflight/2002-08-28T21%3A23%3A28?x=nAwt65cscOKnDA&amp;y=uGUL5P4k1tc&amp;z=KQ5MYJntW1Dx/////////w&amp;ow=0.987201&amp;ox=-0.006205&amp;oy=0.158988&amp;oz=0.010915&amp;track=Sol:Mars&amp;select=Sol:Mars&amp;fov=45.000000&amp;ts=100.000000&amp;rf=6035&amp;lm=0" >
+   <title>Mars Fly-by</title>
+  </bookmark>
+  <bookmark icon="favicons/celestia_20020830193319927" href="cel://SyncOrbit/Sol%3AEarth%3AMoon/2003-04-27T18%3A05%3A17?x=w/er3wS0UAWxDA&amp;y=CbuinJB7Gv///////////w&amp;z=Lw9dexfm0ZcJ&amp;ow=0.453642&amp;ox=0.473567&amp;oy=-0.356589&amp;oz=0.665423&amp;select=Sol:Earth&amp;fov=49.499996&amp;ts=100000.000000&amp;rf=6035&amp;lm=0" >
+   <title>Moon Nutation</title>
+  </bookmark>
+  <bookmark icon="favicons/celestia_20020830192652097" href="cel://Fallow/Sol/2002-09-01T16%3A58%3A49?x=AAAAAMCrktOdILb5/////w&amp;y=CkxgAADEXts7E7HX/////w&amp;z=VcpQAAAAAAAAAMIy/////w&amp;ow=0.090610&amp;ox=-0.494683&amp;oy=0.860207&amp;oz=-0.084397&amp;select=Sol&amp;fov=49.499992&amp;ts=1.000000&amp;rf=6043&amp;lm=0" >
+   <title>Constellation Depth</title>
+  </bookmark>
+  <bookmark icon="favicons/celestia_20020830192655186" href="cel://Fallow/Alcyone/2002-08-28T21%3A21%3A54?x=AAAAAIAkQ+npIjwI&amp;y=AAAAAPDc1cfOcHcD&amp;z=AAAAAECBbejMjbDw/////w&amp;ow=-0.422344&amp;ox=-0.357955&amp;oy=0.053244&amp;oz=0.831059&amp;select=Alcyone&amp;fov=45.000000&amp;ts=1.000000&amp;rf=6035&amp;lm=0" >
+   <title>The Pleiades</title>
+  </bookmark>
+ </folder>
+</xbel>

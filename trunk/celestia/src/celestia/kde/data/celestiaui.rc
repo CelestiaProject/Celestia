@@ -1,0 +1,76 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="celestia">
+<MenuBar noMerge="0">
+  <Menu name="file">
+    <Action name="grabImage"/>
+    <Action name="copyUrl"/>
+  </Menu>
+  <Menu name="go_web" noMerge="1"><text>&amp;Go</text>
+    <Action name="go_back" />
+    <Action name="go_forward" />
+    <Action name="go_home" />
+    <Separator />
+    <Action name="go_to" />
+  </Menu>
+  <Action name="bookmarks" />
+  <Menu name="settings">
+        <Action name="showBookmarkBar" append="show_merge"/>
+        <Menu name="objects"><text>Objects</text>
+            <Action name="showStars"/>
+            <Action name="showPlanets"/>
+            <Action name="showGalaxies"/>
+            <Action name="showDiagrams"/>
+            <Action name="showCloudMaps"/>
+            <Action name="showOrbits"/>
+            <Action name="showCelestialSphere"/>
+            <Action name="showNightMaps"/>
+            <Action name="showAtmospheres"/>
+            <Action name="showSmoothLines"/>
+            <Action name="showEclipseShadows"/>
+            <Action name="showStarsAsPoints"/>
+            <Action name="showRingShadows"/>
+        </Menu>
+        <Menu name="labels"><text>Labels</text>
+            <Action name="showStarLabels"/>
+            <Action name="showPlanetLabels"/>
+            <Action name="showMoonLabels"/>
+            <Action name="showConstellationLabels"/>
+            <Action name="showGalaxyLabels"/>
+            <Action name="showAsteroidLabels"/>
+            <Action name="showSpacecraftLabels"/>
+        </Menu>
+        <Menu name="opengl"><text>OpenGL</text>
+            <Action name="vertexShader"/>
+            <Action name="pixelShader"/>
+        </Menu>
+        <Menu name="time"><text>Time</text>
+            <Action name="displayLocalTime"/>
+            <Action name="reverseTime" />
+            <Action name="slowDownTime" />
+            <Action name="pauseTime" />
+            <Action name="accelerateTime" />
+            <Action name="setTimeNow"/>
+        </Menu>
+  </Menu>
+  <Menu name="help">
+    <Action name="opengl_info"/>
+  </Menu>
+</MenuBar>
+<ToolBar noMerge="1" name="mainToolBar" fullWidth="true" >
+  <Action name="file_open" />
+  <Action name="go_home" />
+  <Action name="fullScreen" />
+  <text>Main Toolbar</text>
+  <Separator name="separator_0" />
+  <Action name="go_back" />
+  <Action name="go_forward" />
+  <Separator name="separator_1" />
+  <Action name="reverseTime" />
+  <Action name="slowDownTime" />
+  <Action name="pauseTime" />
+  <Action name="accelerateTime" />
+  <Action name="setTimeNow" />
+  <Separator name="separator_2" />
+  <Action name="file_close" />
+</ToolBar>
+</kpartgui>
