@@ -30,7 +30,7 @@ class Selection
     void select(Star* _star)     {star=_star; body=NULL;  deepsky=NULL;}
     void select(Body* _body)     {star=NULL;  body=_body; deepsky=NULL;}
     void select(DeepSkyObject* _deepsky) {star=NULL;  body=NULL;  deepsky=_deepsky;}
-    bool empty() { return star == NULL && body == NULL && deepsky == NULL; };
+    bool empty() const { return star == NULL && body == NULL && deepsky == NULL; };
     double radius() const;
     UniversalCoord getPosition(double t) const;
     std::string getName() const;

@@ -7,8 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _SIMULATION_H_
-#define _SIMULATION_H_
+#ifndef _CELENGINE_SIMULATION_H_
+#define _CELENGINE_SIMULATION_H_
 
 #include <vector>
 
@@ -21,44 +21,9 @@
 #include <celengine/galaxy.h>
 #include <celengine/texmanager.h>
 #include <celengine/render.h>
+#include <celengine/frame.h>
+#include <celengine/observer.h>
 
-
-// TODO: Move FrameOfReference and RigidTransform out of simulation.h
-// and into separate modules.  And think of a better name for RigidTransform.
-struct FrameOfReference
-{
-    FrameOfReference() :
-        coordSys(astro::Universal) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, Body* _body) :
-        coordSys(_coordSys), refObject(_body) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, Star* _star) :
-        coordSys(_coordSys), refObject(_star) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, Galaxy* _galaxy) :
-        coordSys(_coordSys), refObject(_galaxy) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, const Selection& sel) :
-        coordSys(_coordSys), refObject(sel) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, const Selection& ref,
-                     const Selection& target) :
-        coordSys(_coordSys), refObject(ref), targetObject(target) {};
-
-    astro::CoordinateSystem coordSys;
-    Selection refObject;
-    Selection targetObject;
-};
-
-struct RigidTransform
-{
-    RigidTransform() :
-        translation(0.0, 0.0, 0.0), rotation(1, 0, 0, 0) {};
-    RigidTransform(const UniversalCoord& uc) :
-        translation(uc), rotation(1.0) {};
-    RigidTransform(const UniversalCoord& uc, const Quatd& q) :
-        translation(uc), rotation(q) {};
-    RigidTransform(const UniversalCoord& uc, const Quatf& q) :
-        translation(uc), rotation(q.w, q.x, q.y, q.z) {};
-    UniversalCoord translation;
-    Quatd rotation;
-};
 
 class Simulation
 {
@@ -74,6 +39,7 @@ class Simulation
 
     void update(double dt);
     void render(Renderer&);
+    void render(Renderer&, Observer&);
 
     Selection pickObject(Vec3f pickRay, float tolerance = 0.0f);
 
@@ -90,7 +56,6 @@ class Simulation
     Selection getTrackedObject() const;
     void setTrackedObject(const Selection&);
 
-    void selectStar(uint32);
     void selectPlanet(int);
     Selection findObject(std::string s);
     Selection findObjectFromPath(std::string s);
@@ -106,6 +71,7 @@ class Simulation
     void getSelectionLongLat(double& distance,
                              double& longitude,
                              double& latitude);
+    void gotoSurface(double duration);
     void centerSelection(double centerTime = 0.5);
     void follow();
     void geosynchronousFollow();
@@ -118,6 +84,11 @@ class Simulation
     void setObserverOrientation(const Quatf&);
     void reverseObserverOrientation();
 
+    Observer* addObserver();
+    void removeObserver(Observer*);
+    Observer* getActiveObserver();
+    void setActiveObserver(Observer*);
+
     SolarSystem* getNearestSolarSystem() const;
 
     double getTimeScale();
@@ -126,41 +97,15 @@ class Simulation
     float getFaintestVisible() const;
     void setFaintestVisible(float);
 
-    enum ObserverMode {
-        Free                    = 0,
-        Travelling              = 1,
-    };
-
-    void setObserverMode(ObserverMode);
-    ObserverMode getObserverMode() const;
+    void setObserverMode(Observer::ObserverMode);
+    Observer::ObserverMode getObserverMode() const;
 
     void setFrame(astro::CoordinateSystem, const Selection&);
     void setFrame(const FrameOfReference&);
     FrameOfReference getFrame() const;
 
  private:
-    struct JourneyParams
-    {
-        double duration;
-        double startTime;
-        UniversalCoord from;
-        UniversalCoord to;
-        Quatf initialOrientation;
-        Quatf finalOrientation;
-        double expFactor;
-        double accelTime;
-    };
-
- private:
     SolarSystem* getSolarSystem(const Star* star);
-    void computeGotoParameters(Selection& sel,
-                               JourneyParams& jparams,
-                               double gotoTime,
-                               Vec3d offset, astro::CoordinateSystem offsetFrame,
-                               Vec3f up, astro::CoordinateSystem upFrame);
-    void computeCenterParameters(Selection& sel, JourneyParams& jparams, double centerTime);
-
-    void updateObserver();
 
  private:
     double realTime;
@@ -170,27 +115,12 @@ class Simulation
     Universe* universe;
 
     SolarSystem* closestSolarSystem;
-    Star* selectedStar;
-    Body* selectedBody;
     Selection selection;
-    int selectedPlanet;
 
-    Observer observer;
-
-    double targetSpeed;
-    Vec3d targetVelocity;
-    Vec3d initialVelocity;
-    double beginAccelTime;
-
-    ObserverMode observerMode;
-    JourneyParams journey;
-    FrameOfReference frame;
-    RigidTransform transform;
-    Selection trackObject;
+    Observer* activeObserver;
+    std::vector<Observer*> observers;
 
     float faintestVisible;
-
-    Quatf trackingOrientation;   //Orientation prior to selecting tracking
 };
 
-#endif // SIMULATION_H_
+#endif // _CELENGINE_SIMULATION_H_
