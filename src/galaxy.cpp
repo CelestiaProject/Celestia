@@ -57,6 +57,7 @@ static GalaxyTypeName GalaxyTypeNames[] =
 Galaxy::Galaxy() :
     name(""),
     position(0, 0, 0), orientation(1), radius(1),
+    detail(1.0f),
     form(NULL)
 {
 }
@@ -100,6 +101,16 @@ float Galaxy::getRadius() const
 void Galaxy::setRadius(float r)
 {
     radius = r;
+}
+
+float Galaxy::getDetail() const
+{
+    return detail;
+}
+
+void Galaxy::setDetail(float d)
+{
+    detail = d;
 }
 
 
@@ -288,6 +299,10 @@ GalaxyList* ReadGalaxyList(istream& in)
         double radius = 0.0;
         galaxyParams->getNumber("Radius", radius);
         galaxy->setRadius((float) radius);
+
+        double detail = 1.0;
+        galaxyParams->getNumber("Detail", detail);
+        galaxy->setDetail((float) detail);
 
         string typeName;
         galaxyParams->getString("Type", typeName);
