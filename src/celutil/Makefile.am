@@ -10,6 +10,7 @@ libcelutil_a_SOURCES = \
 	directory.cpp \
 	filetype.cpp \
 	formatnum.cpp \
+	utf8.cpp \
 	util.cpp \
 	unixdirectory.cpp \
 	unixtimer.cpp
