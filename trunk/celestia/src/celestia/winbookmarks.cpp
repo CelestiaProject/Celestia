@@ -561,29 +561,24 @@ void DeleteBookmarkFromFavorites(HWND hTree, CelestiaCore* appCore)
     if (!TreeView_DeleteItem(hTree, hItem))
         return;
 
-    if (fav->isFolder)
+    // Delete item in favorites, as well as all of it's children
+    FavoritesList::iterator iter = favorites->begin();
+    while (iter != favorites->end())
     {
-        // Delete item in favorites, as well as all of it's children
-        FavoritesList::iterator iter = favorites->begin();
-        while (iter != favorites->end())
+        if (*iter == fav)
         {
-            if (*iter == fav)
-            {
-                favorites->erase(iter);
-            }
-            else if (fav->isFolder && (*iter)->parentFolder == itemName)
-            {
-                favorites->erase(iter);
-                // delete *iter;
-            }
-            else
-            {
-                iter++;
-            }
+            favorites->erase(iter);
+        }
+        else if (fav->isFolder && (*iter)->parentFolder == itemName)
+        {
+            favorites->erase(iter);
+            // delete *iter;
+        }
+        else
+        {
+            iter++;
         }
     }
-
-    // delete fav;
 }
 
 
