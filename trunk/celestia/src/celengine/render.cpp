@@ -593,7 +593,7 @@ void Renderer::render(const Observer& observer,
     if (solarSystem != NULL)
         sun = solarSystem->getStar();
 
-    if (sun != NULL)
+    if ((sun != NULL) && ((renderFlags & ShowPlanets) != 0))
     {
         renderPlanetarySystem(*sun,
                               *solarSystem->getPlanets(),
