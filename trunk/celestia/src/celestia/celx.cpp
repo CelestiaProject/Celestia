@@ -243,6 +243,19 @@ static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
         return info->buf;
 }
 
+
+static void checkArgs(lua_State* l,
+                      int minArgs, int maxArgs, char* errorMessage)
+{
+    int argc = lua_gettop(l);
+    if (argc < minArgs || argc > maxArgs)
+    {
+        lua_pushstring(l, errorMessage);
+        lua_error(l);
+    }
+}
+
+
 static int parseRenderFlag(const string& name)
 {
     if (compareIgnoringCase(name, "orbits") == 0)
@@ -271,6 +284,8 @@ static int parseRenderFlag(const string& name)
         return Renderer::ShowCometTails;
     else if (compareIgnoringCase(name, "boundaries") == 0)
         return Renderer::ShowBoundaries;
+    else if (compareIgnoringCase(name, "markers") == 0)
+        return Renderer::ShowMarkers;
     else
         return 0;
 }
@@ -447,6 +462,18 @@ static UniversalCoord* to_position(lua_State* l, int index)
     return static_cast<UniversalCoord*>(CheckUserData(l, index, _Position));
 }
 
+static UniversalCoord* position_this(lua_State* l)
+{
+    UniversalCoord* uc = to_position(l, 1);
+    if (uc == NULL)
+    {
+        lua_pushstring(l, "Bad position object!");
+        lua_error(l);
+    }
+
+    return uc;
+}
+
 static int position_tostring(lua_State* l)
 {
     // TODO: print out the coordinate as it would appear in a cel:// URL
@@ -455,11 +482,30 @@ static int position_tostring(lua_State* l)
     return 1;
 }
 
+static int position_distanceto(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to position:distanceto()");
+
+    UniversalCoord* uc = position_this(l);
+    UniversalCoord* uc2 = to_position(l, 2);
+    if (uc2 == NULL)
+    {
+        lua_pushstring(l, "Position expected as argument to position:distanceto");
+        lua_error(l);
+    }
+
+    Vec3d v = *uc2 - *uc;
+    lua_pushnumber(l, astro::microLightYearsToKilometers(v.length()));
+        
+    return 1;
+}
+
 static void CreatePositionMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Position);
     
     RegisterMethod(l, "__tostring", position_tostring);
+    RegisterMethod(l, "distanceto", position_distanceto);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -888,6 +934,52 @@ static int object_unmark(lua_State* l)
 }
 
 
+// Return the observer's current position.  A time argument is optional;
+// if not provided, the current master simulation time is used.
+static int object_getposition(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1 && argc != 2)
+    {
+        lua_pushstring(l, "Bad number of arguments to observer:getposition");
+        lua_error(l);
+    }
+
+    Selection* sel = to_object(l, 1);
+    if (sel != NULL)
+    {
+        double t = 0.0;
+        if (argc == 2)
+        {
+            if (lua_isnumber(l, 2))
+            {
+                t = lua_tonumber(l, 2);
+            }
+            else
+            {
+                lua_pushstring(l, "Time expected as argument to object:getposition");
+                lua_error(l);
+            }
+        }
+        else
+        {
+            CelestiaCore* appCore = getAppCore(l);
+            if (appCore != NULL)
+                t = appCore->getSimulation()->getTime();
+        }
+
+        position_new(l, sel->getPosition(t));
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
 static void CreateObjectMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Object);
@@ -900,6 +992,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "name", object_name);
     RegisterMethod(l, "mark", object_mark);
     RegisterMethod(l, "unmark", object_unmark);
+    RegisterMethod(l, "getposition", object_getposition);
 
     lua_pop(l, 1); // pop metatable off the stack
 }
@@ -1181,6 +1274,31 @@ static int observer_gettime(lua_State* l)
 }
 
 
+// Return the observer's current position
+static int observer_getposition(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function observer:getposition");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        position_new(l, o->getPosition());
+    }
+    else
+    {
+        lua_pushstring(l, "Bad method call");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
 static void CreateObserverMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Observer);
@@ -1195,6 +1313,7 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "track", observer_track);
     RegisterMethod(l, "travelling", observer_travelling);
     RegisterMethod(l, "gettime", observer_gettime);
+    RegisterMethod(l, "getposition", observer_getposition);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -1931,6 +2050,7 @@ bool LuaState::init(CelestiaCore* appCore)
     CreateObjectMetaTable(state);
     CreateObserverMetaTable(state);
     CreateCelestiaMetaTable(state);
+    CreatePositionMetaTable(state);
 
     // Create the celestia object
     lua_pushstring(state, "celestia");
