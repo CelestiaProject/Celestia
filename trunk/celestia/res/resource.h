@@ -10,8 +10,10 @@
 #define IDR_ACCELERATORS                106
 #define IDD_LICENSE                     108
 #define IDD_SETTIME                     109
+#define IDD_GLINFO                      110
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
+#define IDC_GLINFO_TEXT                 1005
 #define IDC_CALENDAR                    1006
 #define IDC_TIMEPICKER                  1007
 #define IDC_DATEPICKER                  1008
@@ -39,18 +41,20 @@
 #define ID_TIME_FASTER                  40024
 #define ID_TIME_SLOWER                  40025
 #define ID_TIME_FREEZE                  40026
-#define ID_HELP_LICENSE                 40027
-#define ID_NAVIGATION_CENTER            40028
-#define ID_TIME_REALTIME                40029
-#define ID_RENDER_SHOWSTARLABELS        40030
-#define ID_TIME_SETTIME                 40031
+#define ID_TIME_REVERSE                 40027
+#define ID_HELP_LICENSE                 40028
+#define ID_NAVIGATION_CENTER            40029
+#define ID_TIME_REALTIME                40030
+#define ID_RENDER_SHOWSTARLABELS        40031
+#define ID_TIME_SETTIME                 40032
+#define ID_HELP_GLINFO                  40033
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        110
-#define _APS_NEXT_COMMAND_VALUE         40032
+#define _APS_NEXT_RESOURCE_VALUE        111
+#define _APS_NEXT_COMMAND_VALUE         40034
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
