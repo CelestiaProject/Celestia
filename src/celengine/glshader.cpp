@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <iostream>
 #include "glshader.h"
 #include "gl.h"
 #include "glext.h"
@@ -79,6 +80,13 @@ GLProgram::~GLProgram()
 
 
 void
+GLProgram::use() const
+{
+    glx::glUseProgramObjectARB(id);
+}
+
+
+void
 GLProgram::attach(const GLShader& shader)
 {
     glx::glAttachObjectARB(id, shader.getID());
@@ -114,7 +122,11 @@ GLShaderLoader::CreateVertexShader(const vector<string>& source,
 
     GLShaderStatus status = shader->compile(source);
     if (status != ShaderStatus_OK)
+    {
+        cout << "Error compiling vertex shader:\n";
+        cout << GetInfoLog(shader->getID());
         return status;
+    }
 
     *vs = shader;
 
@@ -134,7 +146,12 @@ GLShaderLoader::CreateFragmentShader(const vector<string>& source,
 
     GLShaderStatus status = shader->compile(source);
     if (status != ShaderStatus_OK)
+    {
+        cout << "Error compiling fragment shader:\n";
+        cout << source[0] << '\n';
+        cout << GetInfoLog(shader->getID());
         return status;
+    }
 
     *fs = shader;
 

@@ -70,6 +70,9 @@ class GLProgram
     void attach(const GLShader&);
     GLShaderStatus link();
 
+ public:
+    void use() const;
+
  private:
     int id;
 
@@ -98,8 +101,6 @@ class GLShaderLoader
     static GLShaderStatus CreateProgram(const std::string& vs,
                                         const std::string& fs,
                                         GLProgram**);
-
-    static std::string GetInfoLog();
 };
 
 #endif // _CELENGINE_GLSHADER_H_
