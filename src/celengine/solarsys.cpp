@@ -654,7 +654,7 @@ SolarSystem::SolarSystem(Star* _star) : star(_star)
 }
 
 
-const Star* SolarSystem::getStar() const
+Star* SolarSystem::getStar() const
 {
     return star;
 }
