@@ -270,8 +270,6 @@ typedef int (APIENTRY * PFNWGLGETSWAPINTERVALEXTPROC) (void);
 #define GL_CLAMP_TO_EDGE                    0x812F
 #endif
 
-#ifdef _WIN32
-
 /* ARB_texture_compression command function pointers */
 extern PFNGLCOMPRESSEDTEXIMAGE3DARBPROC glCompressedTexImage3DARB;
 extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB;
@@ -305,6 +303,8 @@ extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC glGetFinalCombinerInputParame
 
 /* EXT_paletted_texture command function pointers */
 extern PFNGLCOLORTABLEEXTPROC glColorTableEXT;
+
+#ifdef _WIN32
 
 /* WGL_EXT_swap_control command function pointers */
 extern PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
