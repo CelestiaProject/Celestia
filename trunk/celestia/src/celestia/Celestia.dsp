@@ -116,6 +116,10 @@ SOURCE=.\destination.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\eclipsefinder.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\favorites.cpp
 # End Source File
 # Begin Source File
@@ -184,6 +188,10 @@ SOURCE=.\destination.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\eclipsefinder.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\favorites.h
 # End Source File
 # Begin Source File
@@ -240,6 +248,10 @@ SOURCE=.\res\camcorder.bmp
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\camcorder2.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\Camera.bmp
 # End Source File
 # Begin Source File
@@ -257,6 +269,10 @@ SOURCE=.\res\Clsdfolder.ico
 # Begin Source File
 
 SOURCE=.\res\FolderClosed.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\folderclosed2.bmp
 # End Source File
 # Begin Source File
 

@@ -129,6 +129,10 @@ SOURCE=.\dds.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\deepskyobj.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\dispmap.cpp
 # End Source File
 # Begin Source File
@@ -137,7 +141,15 @@ SOURCE=.\execution.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\frame.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\galaxy.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\glcontext.cpp
 # End Source File
 # Begin Source File
 
@@ -149,6 +161,10 @@ SOURCE=.\lodspheremesh.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\marker.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\meshmanager.cpp
 # End Source File
 # Begin Source File
@@ -157,11 +173,19 @@ SOURCE=.\multitexture.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\nebula.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\observer.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\octree.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\opencluster.cpp
 # End Source File
 # Begin Source File
 
@@ -305,6 +329,10 @@ SOURCE=.\customorbit.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\deepskyobj.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\dispmap.h
 # End Source File
 # Begin Source File
@@ -317,6 +345,10 @@ SOURCE=.\execution.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\frame.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\galaxy.h
 # End Source File
 # Begin Source File
@@ -325,11 +357,19 @@ SOURCE=.\gl.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\glcontext.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\glext.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\lodspheremesh.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\marker.h
 # End Source File
 # Begin Source File
 
@@ -345,11 +385,19 @@ SOURCE=.\multitexture.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\nebula.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\observer.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\octree.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\opencluster.h
 # End Source File
 # Begin Source File
 
