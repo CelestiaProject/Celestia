@@ -1417,10 +1417,10 @@ void Renderer::renderPlanetarySystem(const Star& sun,
     for (int i = 0; i < nBodies; i++)
     {
         Body* body = solSystem.getBody(i);
-        Point3d localPos = body->getOrbit()->positionAtTime(now / 86400.0);
+        Point3d localPos = body->getOrbit()->positionAtTime(now);
         Mat4d newFrame = Mat4d::xrotation(-body->getObliquity()) * Mat4d::translation(localPos) * frame;
         Point3d bodyPos = Point3d(0, 0, 0) * newFrame;
-        bodyPos = body->getHeliocentricPosition(now / 86400.0);
+        bodyPos = body->getHeliocentricPosition(now);
         double distanceFromSun = bodyPos.distanceTo(Point3d(0, 0, 0));
         
         // We now have the positions of the observer and the planet relative

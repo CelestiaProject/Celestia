@@ -41,15 +41,13 @@ class Simulation
     void setStarDatabase(StarDatabase* db,
                          SolarSystemCatalog* catalog);
 
-    // Methods for moving the observer
-    // TODO: Fix up this ancient and stupid interface
-    void applyForce(Vec3f force, float dt);
-    void applyForceRelativeToOrientation(Vec3f force, float dt);
+    Observer& getObserver();
+
     Quatf getOrientation();
     void setOrientation(Quatf q);
     void orbit(Quatf q);
+    void rotate(Quatf q);
     void changeOrbitDistance(float d);
-
     void setTargetSpeed(float s);
     float getTargetSpeed();
 
