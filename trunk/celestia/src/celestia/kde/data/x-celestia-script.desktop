@@ -3,5 +3,5 @@ Comment=Celestia script file
 Hidden=false
 Icon=celestia
 MimeType=application/x-celestia-script
-Patterns=*.cel;*.CEL
+Patterns=*.cel;*.CEL;*.celx;*.CELX
 Type=MimeType
