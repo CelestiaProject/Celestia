@@ -92,25 +92,24 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
     {
         TileQuadtreeNode* node = tileTree[u >> lod];
         Tile* tile = node->tile;
-        int tileLOD = 0;
-        int n = 0;
+        uint tileLOD = 0;
 
-        while (n < lod)
+        for (int n = 0; n < lod; n++)
         {
-            int child = (((v << 1) | u) >> (lod - n - 1)) & 3;
+            uint mask = 1 << (lod - n - 1);
+            uint child = (((v & mask) << 1) | (u & mask)) >> (lod - n - 1);
+            //int child = (((v << 1) | u) >> (lod - n - 1)) & 3;
             if (node->children[child] == NULL)
             {
                 break;
             }
             else
             {
+                node = node->children[child];
                 if (node->tile != NULL)
                     tile = node->tile;
-                tileLOD = n;
+                tileLOD = n + 1;
             }
-            
-            node = node->children[child];
-            n++;
         }
 
         // No tile was found at all--not even the base texture was found
@@ -118,13 +117,15 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
             return TextureTile(0);
 
         // Make the tile resident.
-        makeResident(tile, lod, u, v);
+        uint tileU = u >> (lod - tileLOD);
+        uint tileV = v >> (lod - tileLOD);
+        makeResident(tile, tileLOD, tileU, tileV);
 
         // It's possible that we failed to make the tile resident, either
         // because the texture file was bad, or there was an unresolvable
         // out of memory situation.  In that case there is nothing else to
         // do but return a texture tile with a null texture name.
-        if (node->tile->tex == NULL)
+        if (tile->tex == NULL)
         {
             return TextureTile(0);
         }
@@ -143,7 +144,9 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
             texU = (u & ((1 << lodDiff) - 1)) * texDU;
             texV = (v & ((1 << lodDiff) - 1)) * texDV;
             
-            return TextureTile(node->tile->tex->getName(),
+            cout << "Tile: " << tile->tex->getName() << ", " <<
+                texU << ", " << texV << ", " << texDU << ", " << texDV << '\n';
+            return TextureTile(tile->tex->getName(),
                                texU, texV, texDU, texDV);
         }
     }
@@ -154,6 +157,12 @@ void VirtualTexture::bind()
 {
     // Treating a virtual texture like an ordinary one will not work; this is a
     // weakness in the class hierarchy.
+}
+
+
+int VirtualTexture::getLODCount() const
+{
+    return nResolutionLevels - baseSplit;
 }
 
 
@@ -218,6 +227,7 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
 
 void VirtualTexture::makeResident(Tile* tile, uint lod, uint u, uint v)
 {
+    cout << "makeResident: " << lod << ", " << u << ", " << v << '\n';
     if (tile->tex == NULL && !tile->loadFailed)
     {
         // Potentially evict other tiles in order to make this one fit
@@ -231,35 +241,41 @@ void VirtualTexture::makeResident(Tile* tile, uint lod, uint u, uint v)
 void VirtualTexture::populateTileTree()
 {
     // Count the number of resolution levels present
+    uint maxLevel = 0;
     for (int i = 0; i < MaxResolutionLevels; i++)
     {
         char filename[32];
         sprintf(filename, "level%d", i);
-        Directory* dir = OpenDirectory(tilePath + filename);
-        if (dir)
+        if (IsDirectory(tilePath + filename))
         {
-            nResolutionLevels = i + baseSplit;
-            int uLimit = 2 << nResolutionLevels;
-            int vLimit = 1 << nResolutionLevels;
-
-            string filename;
-            while (dir->nextFile(filename))
+            Directory* dir = OpenDirectory(tilePath + filename);
+            if (dir != NULL)
             {
-                int u = -1, v = -1;
-                cout << "Scanning file " << filename << '\n';
-                if (sscanf(filename.c_str(), "tx_%d_%d.", &u, &v) == 2)
+                maxLevel = i + baseSplit;
+                cout << filename << ", levels = " << maxLevel + 1 << '\n';
+                int uLimit = 2 << maxLevel;
+                int vLimit = 1 << maxLevel;
+                
+                string filename;
+                while (dir->nextFile(filename))
                 {
-                    if (u >= 0 && v >= 0 && u < uLimit && v < vLimit)
+                    int u = -1, v = -1;
+                    cout << "Scanning file " << filename << '\n';
+                    if (sscanf(filename.c_str(), "tx_%d_%d.", &u, &v) == 2)
                     {
-                        // Found a tile, so add it to the quadtree
-                        Tile* tile = new Tile();
-                        addTileToTree(tile, nResolutionLevels,
-                                      (uint) u, (uint) v);
+                        if (u >= 0 && v >= 0 && u < uLimit && v < vLimit)
+                        {
+                            // Found a tile, so add it to the quadtree
+                            Tile* tile = new Tile();
+                            addTileToTree(tile, maxLevel, (uint) u, (uint) v);
+                        }
                     }
                 }
             }
         }
     }
+
+    nResolutionLevels = maxLevel + 1;
 }
 
 
@@ -269,11 +285,13 @@ void VirtualTexture::addTileToTree(Tile* tile, uint lod, uint u, uint v)
 
     for (uint i = 0; i < lod; i++)
     {
-        int child = (((v << 1) | u) >> (lod - i - 1)) & 3;
+        uint mask = 1 << (lod - i - 1);
+        uint child = (((v & mask) << 1) | (u & mask)) >> (lod - i - 1);
         if (node->children[child] == NULL)
             node->children[child] = new TileQuadtreeNode();
         node = node->children[child];
     }
+    cout << "addTileToTree: " << node << ", " << lod << ", " << u << ", " << v << '\n';
 
     // Verify that the tile doesn't already exist
     if (node->tile == NULL)

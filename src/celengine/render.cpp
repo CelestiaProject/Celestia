@@ -1818,7 +1818,7 @@ struct RenderInfo
     Color sunColor;
     Color ambientColor;
     Quatf orientation;
-    float lod;
+    float pixWidth;
     bool useTexEnvCombine;
 
     RenderInfo() : color(1.0f, 1.0f, 1.0f),
@@ -1837,7 +1837,7 @@ struct RenderInfo
                    sunColor(1.0f, 1.0f, 1.0f),
                    ambientColor(0.0f, 0.0f, 0.0f),
                    orientation(1.0f, 0.0f, 0.0f, 0.0f),
-                   lod(0.0f),
+                   pixWidth(1.0f),
                    useTexEnvCombine(false)
     {};
 };
@@ -2345,7 +2345,7 @@ static void renderMeshDefault(Mesh* mesh,
 
     glColor(ri.color);
 
-    mesh->render(Mesh::Normals | Mesh::TexCoords0, ri.lod);
+    mesh->render(Mesh::Normals | Mesh::TexCoords0, ri.pixWidth);
 }
 
 
@@ -2372,7 +2372,7 @@ static void renderSphereDefault(const RenderInfo& ri,
     glColor(ri.color);
 
     lodSphere->render(context,
-                      Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                      Mesh::Normals | Mesh::TexCoords0, frustum, ri.pixWidth,
                       ri.baseTex);
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
@@ -2382,7 +2382,8 @@ static void renderSphereDefault(const RenderInfo& ri,
         glBlendFunc(GL_ONE, GL_ONE);
         glAmbientLightColor(Color::Black); // Disable ambient light
         lodSphere->render(context,
-                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          Mesh::Normals | Mesh::TexCoords0,
+                          frustum, ri.pixWidth,
                           ri.nightTex);
         glAmbientLightColor(ri.ambientColor);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -2394,7 +2395,8 @@ static void renderSphereDefault(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         lodSphere->render(context,
-                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          Mesh::Normals | Mesh::TexCoords0,
+                          frustum, ri.pixWidth,
                           ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
     }
@@ -2428,7 +2430,7 @@ static void renderSphere_Combiners(const RenderInfo& ri,
                              ri.orientation,
                              ri.ambientColor,
                              frustum,
-                             ri.lod);
+                             ri.pixWidth);
     }
     else if (ri.baseTex != NULL)
     {
@@ -2437,13 +2439,13 @@ static void renderSphere_Combiners(const RenderInfo& ri,
                          ri.sunDir_eye,
                          ri.orientation,
                          ri.ambientColor,
-                         ri.lod,
+                         ri.pixWidth,
                          frustum);
     }
     else
     {
         glEnable(GL_LIGHTING);
-        lodSphere->render(context, frustum, ri.lod, NULL, 0);
+        lodSphere->render(context, frustum, ri.pixWidth, NULL, 0);
     }
 
     if (ri.nightTex != NULL)
@@ -2456,7 +2458,7 @@ static void renderSphere_Combiners(const RenderInfo& ri,
                          ri.sunDir_eye, 
                          ri.orientation,
                          Color::Black,
-                         ri.lod,
+                         ri.pixWidth,
                          frustum,
                          true);
     }
@@ -2468,7 +2470,8 @@ static void renderSphere_Combiners(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         lodSphere->render(context,
-                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          Mesh::Normals | Mesh::TexCoords0, 
+                          frustum, ri.pixWidth,
                           ri.overlayTex);
 #if 0
         renderSmoothMesh(context,
@@ -2476,7 +2479,7 @@ static void renderSphere_Combiners(const RenderInfo& ri,
                          ri.sunDir_eye,
                          ri.orientation,
                          ri.ambientColor,
-                         ri.lod,
+                         ri.pixWidth,
                          frustum);
 #endif
         glBlendFunc(GL_ONE, GL_ONE);
@@ -2523,7 +2526,7 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         setupBumpTexenv();
         lodSphere->render(context,
                           Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.lod,
+                          Mesh::VertexProgParams, frustum, ri.pixWidth,
                           ri.bumpTex, ri.baseTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
@@ -2533,7 +2536,7 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         lodSphere->render(context,
                           Mesh::Normals | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.lod,
+                          Mesh::VertexProgParams, frustum, ri.pixWidth,
                           ri.baseTex);
     }
 
@@ -2552,7 +2555,7 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
 
         lodSphere->render(context,
                           Mesh::Normals | Mesh::TexCoords0,
-                          frustum, ri.lod,
+                          frustum, ri.pixWidth,
                           ri.glossTex != NULL ? ri.glossTex : ri.baseTex);
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -2567,7 +2570,8 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         lodSphere->render(context,
-                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          Mesh::Normals | Mesh::TexCoords0,
+                          frustum, ri.pixWidth,
                           ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
@@ -2579,7 +2583,8 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         lodSphere->render(context,
-                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          Mesh::Normals | Mesh::TexCoords0,
+                          frustum, ri.pixWidth,
                           ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
     }
@@ -2648,7 +2653,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
                                       ri.sunColor * ri.color);
         lodSphere->render(context,
                           Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.lod,
+                          Mesh::VertexProgParams, frustum, ri.pixWidth,
                           ri.baseTex, ri.bumpTex);
         DisableCombiners();
 
@@ -2668,7 +2673,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
             lodSphere->render(context,
                               Mesh::Normals | Mesh::TexCoords0,
-                              frustum, ri.lod,
+                              frustum, ri.pixWidth,
                               textures, 1);
 
             // re-enable diffuse
@@ -2687,7 +2692,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         unsigned int attributes = Mesh::Normals | Mesh::TexCoords0 |
             Mesh::VertexProgParams;
         lodSphere->render(context,
-                          attributes, frustum, ri.lod,
+                          attributes, frustum, ri.pixWidth,
                           ri.baseTex, ri.glossTex);
         DisableCombiners();
         glDisable(GL_COLOR_SUM_EXT);
@@ -2700,7 +2705,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
             vproc->use(vp::diffuse);
         lodSphere->render(context,
                           Mesh::Normals | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.lod,
+                          Mesh::VertexProgParams, frustum, ri.pixWidth,
                           ri.baseTex);
     }
 
@@ -2715,7 +2720,8 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         lodSphere->render(context,
-                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          Mesh::Normals | Mesh::TexCoords0,
+                          frustum, ri.pixWidth,
                           ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
@@ -2727,7 +2733,8 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         lodSphere->render(context,
-                          Mesh::Normals | Mesh::TexCoords0, frustum, ri.lod,
+                          Mesh::Normals | Mesh::TexCoords0,
+                          frustum, ri.pixWidth,
                           ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
     }
@@ -2777,11 +2784,11 @@ static void renderShadowedMeshDefault(Mesh* mesh,
     {
         lodSphere->render(context,
                           Mesh::Normals | Mesh::Multipass,
-                          frustum, ri.lod, NULL);
+                          frustum, ri.pixWidth, NULL);
     }
     else
     {
-        mesh->render(Mesh::Normals | Mesh::Multipass, ri.lod);
+        mesh->render(Mesh::Normals | Mesh::Multipass, ri.pixWidth);
     }
     glEnable(GL_LIGHTING);
 
@@ -2812,7 +2819,8 @@ static void renderShadowedMeshVertexShader(const RenderInfo& ri,
     vproc->use(vp::shadowTexture);
 
     lodSphere->render(context,
-                      Mesh::Normals | Mesh::Multipass, frustum, ri.lod, NULL);
+                      Mesh::Normals | Mesh::Multipass, frustum,
+                      ri.pixWidth, NULL);
 
     vproc->disable();
 }
@@ -3264,7 +3272,8 @@ renderRingShadowsVS(Mesh* mesh,
                      1.0f / (ringWidth / planetRadius),
                      0.0f, 0.5f);
     vproc->parameter(vp::TexGen_T, scale, 0, 0, 0);
-    lodSphere->render(context, Mesh::Multipass, viewFrustum, ri.lod, NULL);
+    lodSphere->render(context, Mesh::Multipass,
+                      viewFrustum, ri.pixWidth, NULL);
     vproc->disable();
 
     // Restore the texture combiners
@@ -3373,27 +3382,6 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 }
 
 
-static float getSphereLOD(float discSizeInPixels)
-{
-    if (discSizeInPixels < 10)
-        return -3.0f;
-    else if (discSizeInPixels < 20)
-        return -2.0f;
-    else if (discSizeInPixels < 50)
-        return -1.0f;
-    else if (discSizeInPixels < 200)
-        return 0.0f;
-    else if (discSizeInPixels < 1200)
-        return 1.0f;
-    else if (discSizeInPixels < 7200)
-        return 2.0f;
-    else if (discSizeInPixels < 53200)
-        return 3.0f;
-    else
-        return 4.0f;
-}
-
-
 void Renderer::renderObject(Point3f pos,
                             float distance,
                             double now,
@@ -3458,7 +3446,7 @@ void Renderer::renderObject(Point3f pos,
     
     ri.orientation = cameraOrientation;
 
-    ri.lod = getSphereLOD(discSizeInPixels);
+    ri.pixWidth = discSizeInPixels;
 
     // Set up the colors
     if (ri.baseTex == NULL ||
@@ -3530,8 +3518,8 @@ void Renderer::renderObject(Point3f pos,
     // Temporary hack until we fix culling for ringed planets
     if (obj.rings != NULL)
     {
-        if (ri.lod > 2.0f)
-            ri.lod = 2.0f;
+        if (ri.pixWidth > 5000)
+            ri.pixWidth = 5000;
     }
 
     Mesh* mesh = NULL;
@@ -3688,7 +3676,7 @@ void Renderer::renderObject(Point3f pos,
                 lodSphere->render(*context,
                                   Mesh::Normals | Mesh::TexCoords0,
                                   viewFrustum,
-                                  ri.lod,
+                                  ri.pixWidth,
                                   cloudTex);
 
                 if (vproc != NULL)
@@ -3700,7 +3688,7 @@ void Renderer::renderObject(Point3f pos,
                 lodSphere->render(*context,
                                   Mesh::Normals | Mesh::TexCoords0,
                                   viewFrustum,
-                                  ri.lod,
+                                  ri.pixWidth,
                                   cloudTex);
                 glEnable(GL_LIGHTING);
             }
