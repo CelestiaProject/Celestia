@@ -448,23 +448,23 @@ Mesh::parsePrimitiveGroupType(const string& name)
 Mesh::VertexAttributeSemantic
 Mesh::parseVertexAttributeSemantic(const string& name)
 {
-    if (name == "pos")
+    if (name == "position")
         return Position;
-    else if (name == "norm")
+    else if (name == "normal")
         return Normal;
-    else if (name == "col0")
+    else if (name == "color0")
         return Color0;
-    else if (name == "col1")
+    else if (name == "color1")
         return Color1;
-    else if (name == "tan")
+    else if (name == "tangent")
         return Tangent;
-    else if (name == "tex0")
+    else if (name == "texcoord0")
         return Texture0;
-    else if (name == "tex1")
+    else if (name == "texcoord1")
         return Texture0;
-    else if (name == "tex2")
+    else if (name == "texcoord2")
         return Texture0;
-    else if (name == "tex3")
+    else if (name == "texcoord3")
         return Texture0;
     else
         return InvalidSemantic;
