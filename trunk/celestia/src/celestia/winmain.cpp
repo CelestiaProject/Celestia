@@ -46,7 +46,7 @@
 #include "wingotodlg.h"
 #include "winviewoptsdlg.h"
 #include "winlocations.h"
-#include "ODMenu.h"
+#include "odmenu.h"
 
 #include "res/resource.h"
 
