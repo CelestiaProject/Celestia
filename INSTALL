@@ -10,53 +10,44 @@ glu and glibc packages.
 OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
 
-	configure
+	./configure --with-INTERFACE                   [*]
 	make
 	make install
+
+[*] INTERFACE must be replaced with one of "kde", "gtk", "gnome", or "glut".
 
 Four interfaces are available for Celestia:
 - glut: minimal interface, barebone Celestia core with no toolbar or menu...
 - GTK: A full interface with minimal dependencies, adds a menu, a configuration
        dialog some other utilities.
 - Gnome: The full GTK interface plus a few Gnome integration goodies, such as
-         preference saving in GConf. This looks and works almost identical to
-		 the Windows interface.
-- KDE3: brings contextual menus, toolbars, KDE integration, internationalization,
-        bookmarks...
+         preference saving in GConf. This looks and works very much like the
+         Windows interface.
+- KDE3: brings contextual menus, toolbars, KDE integration,
+        internationalization, bookmarks...
 
 By default the KDE interface will be built. It requires the various kde-devel
 packages.
 
-To build the Gnome interface (requires gnome-devel and everything GTK requires):
+To build the KDE interface (requires various kde-devel packages):
+	configure --with-kde
+
+To build the Gnome interface (requires gnome-devel and all GTK requirements):
 	configure --with-gnome
 
 To build the GTK interface (requires gtkglext and gtkglext-devel):
 	configure --with-gtk
 
 To build the GLUT interface (requires glut and glut-devel):
-	configure --without-kde --without-gtk
+	configure --with-glut
 
-The configure output tells you which interface has been selected, you should
-check it before running make.
-
-For KDE you will get:
-	checking whether to enable GLUT... no
-	checking interface to build... KDE
-	checking whether to disable GTK.... yes
-
-For GTK:
-	checking whether to enable GLUT... no
-	checking interface to build... GTK
-	checking whether to disable GTK.... no
-
-And for GLUT:
-	checking whether to enable GLUT... yes
-	checking interface to build... GLUT
-	checking whether to disable GTK.... yes
+At the end of the configure output shows which interface has been selected, you
+should check it is correct before running make.
 
 Starting with version 1.3.1, Lua is the new scripting engine for Celestia, 
 the old homegrown scripting engine is still available. By default Lua support
-will NOT be compiled in, to enable it you need to download the Lua library from:
+will NOT be compiled in, to enable it you need to download the Lua library
+from:
 	http://www.lua.org/
 Version 5.0 or newer is required.
 
@@ -67,16 +58,14 @@ To check wether your Celestia has been compiled with Lua support, go to File
 -> Open. If you have '*.cel *.celx' in the filter box, then Lua is available
 otherwise the filter will contain only '*.cel'.
 
-The GtkGLArea widget that is required in order to build Celestia with Gtk+ may
-be downloaded from http://www.student.oulu.fi/~jlof/gtkglarea/ . Note that
-depending in your Installation Distributions you may also need other packages
-containing various information needed by the build process, for instance, to
-build under SUSE Linux, you will also need to have the gtk-devel package
-installed, and having GNOME's devel packages present also is probably not
-a bad idea (in fact, currently absolutely necessary for the GTK version).
+The GtkGLExt widget that is required in order to build Celestia with Gtk+ may
+be downloaded from http://gtkglext.sf.net. Note that depending in your
+distribution you may also need other packages containing various files needed
+by the build process. For instance, to build under SUSE Linux, you will also
+need to have the gtk-devel package installed.
 
 Celestia will be installed into /usr/local by default, with data files landing
-in /usr/local/share/Celestia , but you may specify a new location with the
+in /usr/local/share/celestia , but you may specify a new location with the
 --prefix option to configure:
 
 	configure --prefix=/home/my_directory
@@ -99,3 +88,4 @@ Updated 2003-06-10 by
 Christophe Teyssier
 chris@teyssier.org
 
+Updated 2004-04-28 by pat@suwalski.net

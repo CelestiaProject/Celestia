@@ -55,7 +55,7 @@ Type "./configure --help" for a list of options.  The basic commands are shown
 below.  For more detailed information, refer to the INSTALL file.
 
 This GTK version is built with...
-  ./configure
+  ./configure --with-gtk
   make
   make install
 
@@ -66,6 +66,11 @@ The KDE3 version is built with...
 
 The Gnome version is built with...
   ./configure --with-gnome
+  make
+  make install
+
+If all else fails, try the gui-less version with...
+  ./configure --with-glut
   make
   make install
 
