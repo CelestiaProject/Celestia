@@ -875,9 +875,11 @@ void Renderer::autoMag(float& faintestMag)
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
                       float faintestMagNight,
-                      const Selection& sel,
-                      double now)
+                      const Selection& sel)
 {
+    // Get the observer's time
+    double now = observer.getTime();
+
     // Compute the size of a pixel
     setFieldOfView(radToDeg(observer.getFOV()));
     pixelSize = calcPixelSize(fov, windowHeight);
