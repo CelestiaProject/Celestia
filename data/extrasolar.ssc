@@ -992,28 +992,6 @@
 	RotationPeriod 10     # guess
 }
 
-"b" "BD-02 5917 B"   # HD 219542 B
-
-# Star not present in Celestia's default stars.dat file.
-
-{
-	Texture "jupiterlike.jpg"
-
-	Mass    100     # M.sin(i) = 0.3 jupiters
-	Radius  56000
-
-	InfoURL "http://www.obspm.fr/encycl/HD219542B.html"
-
-	EllipticalOrbit {
-		Period          0.3069
-		SemiMajorAxis   0.46
-		Eccentricity    0.32
-		ArgOfPericenter 130
-		MeanAnomaly     356
-	}
-
-	RotationPeriod 10     # guess
-}
 
 "b" "HD 117176"   # 70 Vir
 {
