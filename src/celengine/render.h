@@ -101,8 +101,6 @@ class Renderer
     void setFont(TextureFont*);
     TextureFont* getFont() const;
 
-    bool isSelectionInRenderList(Selection*);
-
  public:
     // Internal types
     // TODO: Figure out how to make these private.  Even with a friend
