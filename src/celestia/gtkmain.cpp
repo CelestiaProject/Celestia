@@ -4276,11 +4276,12 @@ int main(int argc, char* argv[])
 	#ifdef GNOME
 	// Set window contents (GNOME)
     gnome_app_set_contents((GnomeApp *)mainWindow, GTK_WIDGET(mainBox));
-	gtk_window_set_default_icon_from_file("celestia.svg", NULL);
 	#else
 	// Set window contents (GTK)
     gtk_container_add(GTK_CONTAINER(mainWindow), GTK_WIDGET(mainBox));
 	#endif
+
+	gtk_window_set_default_icon_from_file("celestia.png", NULL);
 
     gtk_box_pack_start(GTK_BOX(mainBox), mainMenu, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(mainBox), oglArea, TRUE, TRUE, 0);
