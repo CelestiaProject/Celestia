@@ -10,9 +10,14 @@
 #include <cassert>
 #include <cstring>
 #include <fstream>
-#include <celutil/debug.h>
-#include <celutil/bytes.h>
-#include "../celengine/gl.h"
+
+#ifndef _WIN32
+#include "config.h"
+#endif
+
+#include "celutil/debug.h"
+#include "celutil/bytes.h"
+#include "celengine/gl.h"
 #include "texturefont.h"
 
 using namespace std;
@@ -227,12 +232,13 @@ static uint8 readUint8(istream& in)
     return x;
 }
 
+/* Not currently used
 static int32 readInt32(istream& in, bool swap)
 {
     int32 x;
     in.read(reinterpret_cast<char*>(&x), sizeof x);
     return swap ? static_cast<int32>(bswap_32(static_cast<uint32>(x))) : x;
-}
+}*/
 
 static int16 readInt16(istream& in, bool swap)
 {

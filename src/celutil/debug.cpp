@@ -12,6 +12,9 @@
 #endif
 #include <stdio.h>
 #include <cstdarg>
+#ifndef _WIN32
+#include "config.h"
+#endif
 
 #if defined(DEBUG) || defined(_DEBUG)
 void DebugPrint(char *format, ...)

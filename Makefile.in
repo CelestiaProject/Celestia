@@ -68,6 +68,7 @@ GNOMEUI_LIBS = @GNOMEUI_LIBS@
 GNOME_APPLETS_LIBS = @GNOME_APPLETS_LIBS@
 GNOME_CAPPLET_LIBS = @GNOME_CAPPLET_LIBS@
 GNOME_CONFIG = @GNOME_CONFIG@
+GNOME_DOCKLETS_LIBS = @GNOME_DOCKLETS_LIBS@
 GNOME_INCLUDEDIR = @GNOME_INCLUDEDIR@
 GNOME_LIBDIR = @GNOME_LIBDIR@
 GNOME_LIBS = @GNOME_LIBS@
@@ -91,16 +92,18 @@ ZVT_LIBS = @ZVT_LIBS@
 cflags_set = @cflags_set@
 cxxflags_set = @cxxflags_set@
 
+dosstuff = celestia.mak $(wildcard *.bat) Celestia.dsp
+noinst_DATA = $(wildcard *.txt) $(dosstuff)
 pkgdata_DATA = celestia.cfg $(wildcard *.cel)
 
-DIST = $(pkgdata_DATA)
+EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA)
 
-SUBDIRS = src data textures models shaders fonts
+SUBDIRS = src data textures models shaders fonts res macros manual
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
-DATA =  $(pkgdata_DATA)
+DATA =  $(noinst_DATA) $(pkgdata_DATA)
 
 DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING ChangeLog INSTALL \
 Makefile.am Makefile.in NEWS TODO acconfig.h aclocal.m4 config.guess \
@@ -403,6 +406,12 @@ install uninstall-am uninstall all-redirect all-am all installdirs-am \
 installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
++dist-hook:
+	cp Makefile $(distdir)/Makefile
+	cp Makefile $(distdir)/Makefile.orig
+	cp config.h $(distdir)/config.h
+	cp config.h $(distdir)/config.h.orig
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

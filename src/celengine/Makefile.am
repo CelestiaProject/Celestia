@@ -1,4 +1,10 @@
 noinst_LIBRARIES = libcelengine.a
+noinst_HEADERS = $(wildcard *.h)
+dosstuff = celengine.dsp engine.mak
+noinst_DATA = $(dosstuff)
+
+EXTRA_DIST = $(noinst_DATA)
+
 
 INCLUDES = -I..
 

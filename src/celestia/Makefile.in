@@ -68,6 +68,7 @@ GNOMEUI_LIBS = @GNOMEUI_LIBS@
 GNOME_APPLETS_LIBS = @GNOME_APPLETS_LIBS@
 GNOME_CAPPLET_LIBS = @GNOME_CAPPLET_LIBS@
 GNOME_CONFIG = @GNOME_CONFIG@
+GNOME_DOCKLETS_LIBS = @GNOME_DOCKLETS_LIBS@
 GNOME_INCLUDEDIR = @GNOME_INCLUDEDIR@
 GNOME_LIBDIR = @GNOME_LIBDIR@
 GNOME_LIBS = @GNOME_LIBS@
@@ -100,11 +101,17 @@ INCLUDES = -I..
 COMMONSOURCES =  	celestiacore.cpp 	configfile.cpp 	destination.cpp 	favorites.cpp 	imagecapture.cpp
 
 
+WINSOURCES =  	wingotodlg.cpp 	winmain.cpp 	winssbrowser.cpp 	winstarbrowser.cpp 	wintourguide.cpp 	avicapture.cpp
+
+
 celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
+EXTRA_celestia_SOURCES = gtkmain.cpp glutmain.cpp $(WINSOURCES)
+EXTRA_DIST = Celestia.dsp celestia.mak
 
 LDADD =  	../celengine/libcelengine.a 	../celtxf/libceltxf.a 	../cel3ds/libcel3ds.a 	../celmath/libcelmath.a 	../celutil/libcelutil.a
 
 
+noinst_HEADERS = $(wildcard *.h)
 noinst_DATA = ../../celestia
 CLEANFILES = ../../celestia
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -136,6 +143,8 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
 DATA =  $(noinst_DATA)
 
+HEADERS =  $(noinst_HEADERS)
+
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -143,9 +152,11 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/celestiacore.P .deps/configfile.P .deps/destination.P \
-.deps/favorites.P .deps/glutmain.P .deps/gtkmain.P .deps/imagecapture.P
-SOURCES = $(celestia_SOURCES)
+DEP_FILES =  .deps/avicapture.P .deps/celestiacore.P .deps/configfile.P \
+.deps/destination.P .deps/favorites.P .deps/glutmain.P .deps/gtkmain.P \
+.deps/imagecapture.P .deps/wingotodlg.P .deps/winmain.P \
+.deps/winssbrowser.P .deps/winstarbrowser.P .deps/wintourguide.P
+SOURCES = $(celestia_SOURCES) $(EXTRA_celestia_SOURCES)
 OBJECTS = $(celestia_OBJECTS)
 
 all: all-redirect
@@ -325,7 +336,7 @@ install-am: all-am
 install: install-am
 uninstall-am: uninstall-binPROGRAMS
 uninstall: uninstall-am
-all-am: Makefile $(PROGRAMS) $(DATA)
+all-am: Makefile $(PROGRAMS) $(DATA) $(HEADERS)
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install

@@ -41,8 +41,8 @@ AC_ARG_ENABLE(bonobotest, [  --disable-bonobotest       Do not try to compile an
   if test "$GNOME_CONFIG" = "no" ; then
     no_bonobo=yes
   else
-    BONOBO_CFLAGS=`$GNOME_CONFIG $bonoboconf_args --cflags bonobo`
-    BONOBO_LIBS=`$GNOME_CONFIG $bonoboconf_args --libs bonobo`
+    BONOBO_CFLAGS=`$GNOME_CONFIG $bonoboconf_args --cflags bonobo bonobox`
+    BONOBO_LIBS=`$GNOME_CONFIG $bonoboconf_args --libs bonobo bonobox`
 
     bonobo_major_version=`$GNOME_CONFIG $bonobo_args --version | \
            sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
@@ -64,7 +64,7 @@ dnl
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <bonobo/gnome-object.h>
+#include <bonobo.h>
 
 static char*
 my_strdup (char *str)
@@ -88,7 +88,7 @@ int main ()
   char *tmp_version;
 
   system ("touch conf.bonobotest");
-  gnome_object_get_type ();
+  bonobo_object_get_type ();
   return 0;
 }
 
@@ -148,3 +148,19 @@ AC_DEFUN([BONOBO_CHECK], [
 	AM_PATH_BONOBO(0.1.0,,[AC_MSG_ERROR(BONOBO not found)])
 ])
 
+AC_DEFUN([AM_BONOBO_USES_OAF],
+[
+	AC_REQUIRE([AM_PATH_BONOBO])
+
+	AC_MSG_CHECKING(if Bonobo uses OAF)
+	if ( gnome-config --libs bonobo | grep oaf ) > /dev/null 2>&1 ; then
+	  using_oaf="yes"
+	  AC_DEFINE(BONOBO_USES_OAF)
+	else
+	  using_oaf="no"
+	fi
+
+	AC_MSG_RESULT("$using_oaf")
+
+	AM_CONDITIONAL(BONOBO_USES_OAF, test x"using_oaf" = "xyes")
+])

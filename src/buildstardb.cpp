@@ -15,7 +15,7 @@
 #include <fstream>
 #include <cstdio>
 #include <assert.h>
-#include "stardb.h"
+#include "celengine/stardb.h"
 
 using namespace std;
 

@@ -132,18 +132,11 @@ File Overview
 * texfont.cpp
   Mark J. Kilgard's texture font package
 
-* rng.cpp
-* gui.cpp
-  These aren't used any more . . .  gui.cpp should be removed.
+* buildstardb.cpp
+  The program used to munge the HIPPARCOS data set into x the star database.
 
-* slurp.c
-* startest.cpp
-* packnames.cpp
-* packdb.cpp
-* readstars.cpp
-  Miscellaneous test code and small programs used to munge the HIPPARCOS data
-  set into a star database.
-
+* starcat.c
+  A utility program to show some stuff about some of the HIPPARCOS stars.
 
 
 The Star Database

@@ -7,8 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celutil/debug.h>
 #include "celestia.h"
+#include "celutil/debug.h"
 #include "texmanager.h"
 
 using namespace std;

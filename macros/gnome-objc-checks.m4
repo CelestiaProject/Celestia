@@ -14,8 +14,12 @@ dnl FIXME: extend list of possible names of ObjC compilers.
 
   OBJC_LIBS="-lobjc $PTHREAD_LIB"
   AC_CHECK_FUNC(sched_yield,,[
-    AC_CHECK_LIB(posix4,sched_yield,
-		OBJC_LIBS="$OBJC_LIBS -lposix4",, $OBJC_LIBS)])
+    AC_CHECK_LIB(rt,sched_yield,
+      OBJC_LIBS="$OBJC_LIBS -lrt",[
+      AC_CHECK_LIB(posix4,sched_yield,
+        OBJC_LIBS="$OBJC_LIBS -lposix4",, 
+        $OBJC_LIBS)],
+      $OBJC_LIBS)])
   AC_SUBST(OBJC_LIBS)
 
   AC_CACHE_CHECK([if Objective C compiler ($OBJC) works],

@@ -15,7 +15,17 @@ COMMONSOURCES = \
 	favorites.cpp \
 	imagecapture.cpp
 
+WINSOURCES = \
+	wingotodlg.cpp \
+	winmain.cpp \
+	winssbrowser.cpp \
+	winstarbrowser.cpp \
+	wintourguide.cpp \
+	avicapture.cpp
+
 celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
+EXTRA_celestia_SOURCES = gtkmain.cpp glutmain.cpp $(WINSOURCES)
+EXTRA_DIST =  Celestia.dsp celestia.mak
 
 LDADD = \
 	../celengine/libcelengine.a \
@@ -24,6 +34,7 @@ LDADD = \
 	../celmath/libcelmath.a \
 	../celutil/libcelutil.a
 
+noinst_HEADERS =$(wildcard *.h)
 noinst_DATA= ../../celestia
 CLEANFILES= ../../celestia
 

@@ -223,9 +223,9 @@ void computePlanetElements(double t, vector<int> pList)
 
 	double *ep, *pp;
 	double aa;
-	int i, j, planet;
+	int planet;
 
-    for(i=0; i < pList.size(); i++)
+    for(unsigned i=0; i < pList.size(); i++)
     {
         planet = pList[i];
 	    ep = gElements[planet];
@@ -235,7 +235,7 @@ void computePlanetElements(double t, vector<int> pList)
 	    *pp = pfmod(*pp, 360.0);
 	    pp[1] = (ep[1]*9.856263e-3) + (ep[2] + ep[3])/36525;
 
-	    for(j = 4; j < 20; j += 4)
+	    for(unsigned j = 4; j < 20; j += 4)
 		    pp[j/4+1] = ((ep[j+3]*t + ep[j+2])*t + ep[j+1])*t + ep[j+0];
 
 	    pp[6] = ep[20];

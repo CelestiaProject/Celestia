@@ -11,14 +11,14 @@ what you need to do to build and run Celestia:
 	make
 	make install
 
-There are two versions of Celestia which can be built--the default version
-uses GLUT and has no GUI.  The other version uses Gtk+ to provide a basic
-menu bar similar to the one in Celestia for Windows.  To build Celestia with
-Gtk+ support, run configure with --enable-gtk:
+Celestia can be built with or without support for Gtk, by default the Gtk+
+version will be built if you have Gtk+ and GtkGLArea available, otherwise it
+just uses GLUT and has no GUI. If you need/want to build the non-Gtk+ version
+even though you have Gtk+ and GtkGLArea, run configure with --without-gtk:
 
-	configure --enable-gtk
+	configure --without-gtk
 
-The GtkGLArea widget is required in order build Celestia with Gtk+.  It can
+The GtkGLArea widget thats is required in order to build Celestia with Gtk+ may
 be downloaded from http://www.student.oulu.fi/~jlof/gtkglarea/
 
 Celestia will be installed into /usr/local by default, with data files landing

@@ -176,7 +176,7 @@ M3DModel::M3DModel()
 
 M3DModel::~M3DModel()
 {
-    for (int i = 0; i < triMeshes.size(); i++)
+    for (unsigned int i = 0; i < triMeshes.size(); i++)
         if (triMeshes[i] != NULL)
             delete triMeshes[i];
 }
@@ -216,7 +216,7 @@ M3DScene::M3DScene()
 
 M3DScene::~M3DScene()
 {
-    int i;
+    unsigned int i;
     for (i = 0; i < models.size(); i++)
         if (models[i] != NULL)
             delete models[i];

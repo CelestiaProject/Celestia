@@ -36,15 +36,16 @@ static int32 readInt(ifstream& in)
     LE_TO_CPU_INT32(ret, ret);
     return ret;
 }
- 
+
+/* not currently used
 static int16 readShort(ifstream& in)
 {
     int16 ret;
     in.read((char *) &ret, sizeof(int16));
     LE_TO_CPU_INT16(ret, ret);
     return ret;
-}
- 
+}*/
+
 static uint16 readUshort(ifstream& in)
 {
     uint16 ret;
@@ -68,6 +69,7 @@ static char readChar(ifstream& in)
 }
 
 
+/* Not currently used
 static int readString(ifstream& in, char* s, int maxLength)
 {
     int count;
@@ -79,7 +81,7 @@ static int readString(ifstream& in, char* s, int maxLength)
     }
 
     return count;
-}
+}*/
 
 static string readString(ifstream& in)
 {
@@ -381,7 +383,7 @@ void readFaceArray(ifstream& in, M3DTriangleMesh* triMesh, int contentSize)
         uint16 v0 = readUshort(in);
         uint16 v1 = readUshort(in);
         uint16 v2 = readUshort(in);
-        uint16 flags = readUshort(in);
+        /*uint16 flags = */ readUshort(in);
         triMesh->addFace(v0, v1, v2);
     }
 

@@ -1,7 +1,11 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
 #undef HAVE_LIBSM
 
+/* The directory where our data will be installed in */
 #undef CONFIG_DATA_DIR
+
+/* Are we debugging ? */
+#undef DEBUG
 
 
 /* Define if you have the <byteswap.h> header file. */
@@ -21,6 +25,9 @@
 
 /* Define if you have the `glut' library (-lglut). */
 #undef HAVE_LIBGLUT
+
+/* Define if you have the `gtkgl' library (-lgtkgl). */
+#undef HAVE_LIBGTKGL
 
 /* Define if you have the `jpeg' library (-ljpeg). */
 #undef HAVE_LIBJPEG

@@ -8,8 +8,9 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <celutil/util.h>
-#include <celutil/debug.h>
+#include "config.h"
+#include "celutil/util.h"
+#include "celutil/debug.h"
 #include "parser.h"
 #include "asterism.h"
 
