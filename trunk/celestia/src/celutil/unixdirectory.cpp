@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <sys/types.h>
 #include <dirent.h>
 #include "directory.h"
 
