@@ -83,7 +83,7 @@ static const float CoronaHeight = 0.2f;
 
 static const int OrbitMask = Body::Planet | Body::Moon;
 
-static bool isGF3 = false;
+static bool buggyVertexProgramEmulation = true;
 
 struct SphericalCoordLabel
 {
@@ -398,8 +398,11 @@ bool Renderer::init(int winWidth, int winHeight)
         // Fog is broken with vertex program emulation in most versions of
         // the GF 1 and 2 drivers; we need to detect this and disable
         // vertex programs which output fog coordinates
-        if (strstr(glRenderer, "GeForce3") != NULL)
-            isGF3 = true;
+        if (strstr(glRenderer, "GeForce3") != NULL ||
+            strstr(glRenderer, "GeForce4") != NULL)
+        {
+            buggyVertexProgramEmulation = false;
+        }
 
         if (strstr(glRenderer, "Savage4") != NULL)
         {
@@ -1829,7 +1832,7 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
     // how the fog coordinate is handled by the GeForce3 and the rest of the
     // nVidia cards.  For now, just disable haze if we're running on anything
     // but a GeForce3 :<
-    if (!isGF3)
+    if (buggyVertexProgramEmulation)
         hazeDensity = 0.0f;
 
     if (hazeDensity > 0.0f)
