@@ -515,6 +515,10 @@ void CelestiaCore::charEntered(char c)
             renderer->setFragmentShaderEnabled(!renderer->getFragmentShaderEnabled());
         break;
 
+    case '\023':  // Ctrl+S
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowStarsAsPoints);
+        break;
+
     case '\026':  // Ctrl+V
         if (renderer->vertexShaderSupported())
             renderer->setVertexShaderEnabled(!renderer->getVertexShaderEnabled());
