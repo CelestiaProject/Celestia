@@ -13,7 +13,8 @@ libcelutil_a_SOURCES = \
 	unixtimer.cpp
 
 WINSOURCES = \
-	wintimer.cpp
+	wintimer.cpp \
+	winutil.cpp
 
 EXTRA_DIST = $(noinst_DATA)
 
