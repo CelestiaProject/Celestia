@@ -812,17 +812,15 @@ void Simulation::selectPlanet(int index)
 
 // Select an object by name, with the following priority:
 //   1. Try to look up the name in the star database
-//   2. Search the planets and moons in the planetary system of the currently selected
+//   2. Search the galaxy catalog for a matching name.
+//   3. Search the planets and moons in the planetary system of the currently selected
 //      star
-//   3. Search the planets and moons in any 'nearby' (< 0.1 ly) planetary systems
-void Simulation::selectBody(string s)
+//   4. Search the planets and moons in any 'nearby' (< 0.1 ly) planetary systems
+Selection Simulation::findObject(string s)
 {
     Star* star = stardb->find(s);
     if (star != NULL)
-    {
-        selectStar(star->getCatalogNumber());
-        return;
-    }
+        return Selection(star);
 
     if (galaxies != NULL)
     {
@@ -830,10 +828,7 @@ void Simulation::selectBody(string s)
              iter != galaxies->end(); iter++)
         {
             if ((*iter)->getName() == s)
-            {
-                selection = Selection(*iter);
-                return;
-            }
+                return Selection(*iter);
         }
     }
         
@@ -853,24 +848,22 @@ void Simulation::selectBody(string s)
                 solarSystem = solarSystem->getPrimaryBody()->getSystem();
         }
         
-        bool found = false;
         if (solarSystem != NULL)
         {
             Body* body = solarSystem->find(s, true);
             if (body != NULL)
-            {
-                selection = Selection(body);
-                found = true;
-            }
+                return Selection(body);
         }
 
-        if (closestSolarSystem != NULL && !found)
+        if (closestSolarSystem != NULL)
         {
             Body* body = closestSolarSystem->getPlanets()->find(s, true);
             if (body != NULL)
-                selection = Selection(body);
+                return Selection(body);
         }
     }
+
+    return Selection();
 }
 
 

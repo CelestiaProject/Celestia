@@ -57,7 +57,7 @@ class Simulation
     void setSelection(const Selection&);
     void selectStar(uint32);
     void selectPlanet(int);
-    void selectBody(string s);
+    Selection findObject(string s);
     void gotoSelection(double gotoTime = 5.0);
     void centerSelection(double centerTime = 0.5);
     void follow();
