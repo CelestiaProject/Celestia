@@ -102,7 +102,13 @@
 
 - (void)finishInitialization
 {
+    CelestiaRenderer *renderer;
     NSInvocation *menuCallback;
+#if 0
+    NSMutableDictionary *flags;
+    NSEnumerator *enumerator;
+    id obj;
+#endif
     NSLog(@"finishInitialization");
     // GL should be all set up, now initialize the renderer.
     [appCore initRenderer];
@@ -116,6 +122,35 @@
     [[CelestiaFavorites sharedFavorites] synchronize];
     // DEBUG
     NSLog(@"%@",[CGLInfo displayDescriptions]);
+    renderer = [appCore renderer];
+    NSLog(@"renderFlags = %@",[renderer renderFlags]);
+    NSLog(@"labelFlags = %@",[renderer labelFlags]);
+    NSLog(@"vertexShaderEnabled = %@",[renderer vertexShaderEnabled]);
+    NSLog(@"isVertexShaderSupported = %@",([renderer isVertexShaderSupported]?@"YES":@"NO"));
+    NSLog(@"fragmentShaderEnabled = %@",[renderer fragmentShaderEnabled]);
+    NSLog(@"isFragmentShaderSupported = %@",([renderer isFragmentShaderSupported]?@"YES":@"NO"));
+    NSLog(@"ambientLightLevel = %@",[renderer ambientLightLevel]);
+    NSLog(@"saturationMagnitude = %@",[renderer saturationMagnitude]);
+    NSLog(@"resolution = %@",[renderer resolution]);
+
+#if 0
+    // turn everything on
+    flags = [[renderer renderFlags] mutableCopy];
+    enumerator = [flags keyEnumerator];
+    while ((obj = [enumerator nextObject]) != nil) {
+        [flags setObject:[NSNumber numberWithBool:YES] forKey:obj];
+    }
+    [renderer setRenderFlags:flags];
+
+    // turn everything on
+    flags = [[renderer labelFlags] mutableCopy];
+    enumerator = [flags keyEnumerator];
+    while ((obj = [enumerator nextObject]) != nil) {
+        [flags setObject:[NSNumber numberWithBool:YES] forKey:obj];
+    }
+    [renderer setLabelFlags:flags];
+#endif
+    
 }
 
 - (void)dealloc
