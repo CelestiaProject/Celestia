@@ -636,6 +636,20 @@ void PlanetarySystem::removeBody(Body* body)
 }
 
 
+void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
+{
+    for (vector<Body*>::iterator iter = satellites.begin();
+         iter != satellites.end(); iter++)
+    {
+        if (*iter == oldBody)
+        {
+            *iter = newBody;
+            break;
+        }
+    }
+}
+
+
 Body* PlanetarySystem::find(string _name, bool deepSearch) const
 {
     for (vector<Body*>::const_iterator iter = satellites.begin();
