@@ -3216,6 +3216,7 @@ struct CometTailVertex
 {
     Point3f point;
     Vec3f normal;
+    Point3f paraboloidPoint;
     float brightness;
 };
 
@@ -3239,14 +3240,14 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
     glVertex(v.point);
 }
 
-#if 0
+
 static void ProcessCometTailVertex(const CometTailVertex& v,
                                    const Point3f& eyePos_obj,
                                    float b,
                                    float h)
 {
     float shade = 0.0f;
-    Vec3f R = v.point - eyePos_obj;
+    Vec3f R = v.paraboloidPoint - eyePos_obj;
     float c0 = b * (square(eyePos_obj.x) + square(eyePos_obj.y)) + eyePos_obj.z;
     float c1 = 2 * b * (R.x * eyePos_obj.x + R.y * eyePos_obj.y) - R.z;
     float c2 = b * (square(R.x) + square(R.y));
@@ -3264,7 +3265,7 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
         float t0 = (h - eyePos_obj.z) / R.z;
         float t1 = (c1 - disc) * s;
         float t2 = (c1 + disc) * s;
-        float u0 = m(t0, 0.0f);
+        float u0 = max(t0, 0.0f);
         float u1, u2;
 
         if (R.z < 0.0f)
@@ -3279,9 +3280,13 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
         }
         u1 = max(0.0f, u1);
         u2 = max(0.0f, u2);
+
+        shade = u2 - u1;
     }
+
+    glColor4f(0.0f, 0.5f, 1.0f, shade);
+    glVertex(v.point);
 }
-#endif
 
 
 void Renderer::renderCometTail(const Body& body,
@@ -3399,6 +3404,7 @@ void Renderer::renderCometTail(const Body& body,
                 axis *= 1.0f / axisLength;
                 q.setAxisAngle(axis, asin(axisLength));
                 Mat3f m = q.toMatrix3();
+
                 u = u * m;
                 v = v * m;
                 w = w * m;
@@ -3435,10 +3441,13 @@ void Renderer::renderCometTail(const Body& body,
             vtx->normal = u * (s * w1) + w * (c * w1) + v * w0;
             s *= radius;
             c *= radius;
+
             vtx->point = Point3f(cometPoints[i].x + u.x * s + w.x * c,
                                  cometPoints[i].y + u.y * s + w.y * c,
                                  cometPoints[i].z + u.z * s + w.z * c);
             vtx->brightness = brightness;
+            vtx->paraboloidPoint =
+                Point3f(c, s, square((float) i / (float) MaxCometTailPoints));
         }
     }
 
@@ -3848,16 +3857,16 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
         Galaxy* galaxy = *iter;
         Point3d pos = galaxy->getPosition();
         float radius = galaxy->getRadius();
-        Point3f center = Point3f((float)pos.x,(float)pos.y,(float)pos.z) * 
-                         conjugate(observer.getOrientation()).toMatrix3(); 
+        Vec3f offset = Vec3f((float) (pos.x - observerPos.x),
+                             (float) (pos.y - observerPos.y),
+                             (float) (pos.z - observerPos.z));
+        Point3f center = Point3f(0.0f, 0.0f, 0.0f) + offset *
+            conjugate(observer.getOrientation()).toMatrix3(); 
 
         // Test the galaxy's bounding sphere against the view frustum
 	if (frustum.testSphere(center, radius) != Frustum::Outside)
         {
-        Point3f offset = Point3f((float) (observerPos.x - pos.x),
-                                 (float) (observerPos.y - pos.y),
-                                 (float) (observerPos.z - pos.z));
-        float distanceToGalaxy = offset.distanceFromOrigin() - radius;
+        float distanceToGalaxy = offset.length() - radius;
         if (distanceToGalaxy < 0)
             distanceToGalaxy = 0;
         float minimumFeatureSize = pixelSize * 0.5f * distanceToGalaxy;
@@ -3866,7 +3875,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
         if (form != NULL)
         {
             glPushMatrix();
-            glTranslate(Point3f(0, 0, 0) - offset);
+            glTranslate(offset);
 
             Mat4f m = (galaxy->getOrientation().toMatrix4() *
                        Mat4f::scaling(form->scale) *
@@ -3881,7 +3890,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
             for (int i = 0; i < nPoints; i++)
             {
                 Point3f p = (*points)[i] * m;
-                Vec3f relPos = p - offset;
+                Point3f relPos = p + offset;
 
                 if ((i & pow2) != 0)
                 {
@@ -3892,7 +3901,7 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
                 }
 
                 {
-                    float distance = relPos.length();
+                    float distance = relPos.distanceFromOrigin();
                     float screenFrac = size / distance;
 
                     if (screenFrac < 0.05f)
