@@ -10,7 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-
+#include <cstring>
 #include <celengine/celestia.h>
 
 // Ugh . . . the C++ standard says that stringstream should be in
@@ -50,14 +50,18 @@ static const int _Rotation = 5;
 
 static void lua_pushclass(lua_State* l, int id)
 {
-    lua_pushlstring(l, ClassNames[id], sizeof(ClassNames[id]) - 1);
+    
+    lua_pushlstring(l, ClassNames[id], strlen(ClassNames[id]) - 1);
 }
 
 static void lua_setclass(lua_State* l, int id)
 {
     lua_pushclass(l, id);
     lua_rawget(l, LUA_REGISTRYINDEX);
-    lua_setmetatable(l, -2);
+    if (lua_type(l, -1) != LUA_TTABLE)
+        cout << "Metatable for " << ClassNames[id] << " not found!\n";
+    if (lua_setmetatable(l, -2) == 0)
+        cout << "Error setting metatable for " << ClassNames[id] << '\n';
 }
 
 
@@ -223,39 +227,6 @@ int LuaState::loadScript(const string& s)
     return loadScript(in);
 }
 
-#if 0
-struct StringChunkInfo
-{
-    const char* buf;
-    int bufSize;
-    bool done;
-};
-
-static const char* readStringChunk(lua_State* state, void* udata, size_t* size)
-{
-    StringChunkInfo* info = static_cast<StringChunkInfo*>(udata);
-    if (info->done)
-    {
-        return NULL;
-    }
-    else
-    {
-        *size = info->bufSize;
-        info->done = true;
-        return info->buf;
-    }
-}
-
-int LuaState::loadString(const string& s)
-{
-    StringChunkInfo info;
-    info.buf = s.c_str();
-    info.bufSize = s.length;
-    info.done = false;
-
-    int status = lua_load(state, readStringChunk, &
-}
-#endif
 
 static int parseRenderFlag(const string& name)
 {
@@ -289,6 +260,186 @@ static int parseRenderFlag(const string& name)
         return 0;
 }
 
+
+// object - star, planet, or deep-sky object
+static int object_new(lua_State* l, const Selection& sel)
+{
+    Selection* ud = reinterpret_cast<Selection*>(lua_newuserdata(l, sizeof(Selection)));
+    *ud = sel;
+
+    lua_setclass(l, _Object);
+
+    return 1;
+}
+
+static Selection* to_object(lua_State* l, int index)
+{
+    // TODO: need to verify that this is actually an object, not some
+    // other userdata
+    return static_cast<Selection*>(lua_touserdata(l, index));
+}
+
+static int object_tostring(lua_State* l)
+{
+    cout << "object_tostring\n"; cout.flush();
+    lua_pushstring(l, "[Object]");
+
+    return 1;
+}
+
+static int object_radius(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function object:radius");
+        lua_error(l);
+    }
+
+    Selection* sel = to_object(l, 1);
+    if (sel != NULL)
+    {
+        lua_pushnumber(l, sel->radius());
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
+static void CreateObjectMetaTable(lua_State* l)
+{
+    lua_newtable(l);
+    lua_pushclass(l, _Object);
+    lua_pushvalue(l, -2);
+    lua_rawset(l, LUA_REGISTRYINDEX);
+
+    lua_pushliteral(l, "__tostring");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, object_tostring, 1);
+    lua_rawset(l, -3);
+
+    lua_pushliteral(l, "__index");
+    lua_pushvalue(l, -2);
+    lua_rawset(l, -3);
+
+    lua_pushstring(l, "radius");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, object_radius, 1);
+    lua_settable(l, -3);
+
+    lua_pop(l, 1);
+}
+
+
+// observer object
+
+static int observer_new(lua_State* l, Observer* o)
+{
+    Observer** ud = static_cast<Observer**>(lua_newuserdata(l, sizeof(Observer*)));
+    *ud = o;
+
+    lua_setclass(l, _Observer);
+
+    return 1;
+}
+
+
+static Observer* to_observer(lua_State* l, int index)
+{
+    // TODO: need to verify that this is actually an object, not some
+    // other userdata
+    Observer** o = static_cast<Observer**>(lua_touserdata(l, index));
+    if (o == NULL)
+        return NULL;
+    else
+        return *o;
+}
+
+
+static int observer_goto(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "Two arguments expected to function observer:goto");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        Selection* sel = to_object(l, 2);
+        if (sel != NULL)
+        {
+            o->gotoSelection(*sel, 5.0, Vec3f(0, 1, 0), astro::ObserverLocal);
+        }
+    }
+
+    return 0;
+}
+
+
+static int observer_center(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc > 1)
+    {
+        lua_pushstring(l, "Too many argument to function observer:center");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+    }
+
+    return 0;
+}
+
+
+static int observer_tostring(lua_State* l)
+{
+    cout << "observer_tostring\n"; cout.flush();
+    lua_pushstring(l, "[Observer]");
+
+    return 1;
+}
+
+static void CreateObserverMetaTable(lua_State* l)
+{
+    lua_pushclass(l, _Observer);
+    lua_newtable(l);
+
+    lua_pushliteral(l, "__tostring");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, observer_tostring, 1);
+    lua_rawset(l, -3);
+
+    lua_pushliteral(l, "__index");
+    lua_pushvalue(l, -2);
+    lua_rawset(l, -3);
+    lua_pushvalue(l, -1);
+
+    lua_pushstring(l, "goto");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, observer_goto, 1);
+    lua_settable(l, -4);
+    lua_pushstring(l, "center");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, observer_center, 1);
+    lua_settable(l, -4);
+    lua_pop(l, 1);
+
+    lua_rawset(l, LUA_REGISTRYINDEX);
+}
+
+
+// Celestia objects
 
 static int celestia_new(lua_State* l, CelestiaCore* appCore)
 {
@@ -388,6 +539,90 @@ static int celestia_hide(lua_State* l)
 }
 
 
+static int celestia_getobserver(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc < 1 || argc > 2)
+    {
+        lua_pushstring(l, "Wrong number of arguments for function celestia:getobserver()");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+
+    if (appCore != NULL)
+    {
+        cout << "celestia_getobserver\n"; cout.flush();
+        Observer* o = appCore->getSimulation()->getActiveObserver();
+        if (o == NULL)
+            lua_pushnil(l);
+        else
+            observer_new(l, o);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad celestia object!\n");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
+static int celestia_find(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2 || !lua_isstring(l, 2))
+    {
+        lua_pushstring(l, "One string argument expected for function celestia:find()");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Simulation* sim = appCore->getSimulation();
+        // Should use universe not simulation for finding objects
+        Selection sel = sim->findObjectFromPath(lua_tostring(l, 2));
+        object_new(l, sel);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad celestia object!\n");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
+static int celestia_select(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function observer:select");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Simulation* sim = appCore->getSimulation();
+        Selection* sel = to_object(l, 2);
+
+        // If the argument is an object, set the selection; if it's anything else
+        // clear the selection.
+        if (sel != NULL)
+            sim->setSelection(*sel);
+        else
+            sim->setSelection(Selection());
+    }
+
+    return 0;
+}
+
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -398,6 +633,52 @@ static int celestia_tostring(lua_State* l)
 
 static void CreateCelestiaMetaTable(lua_State* l)
 {
+    lua_newtable(l);
+    lua_pushclass(l, _Celestia);
+    lua_pushvalue(l, -2);
+    lua_rawset(l, LUA_REGISTRYINDEX);
+
+    lua_pushliteral(l, "__tostring");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_tostring, 1);
+    lua_rawset(l, -3);
+
+    lua_pushliteral(l, "__index");
+    lua_pushvalue(l, -2);
+    lua_rawset(l, -3);
+
+    lua_pushstring(l, "flash");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_flash, 1);
+    lua_settable(l, -3);
+
+    lua_pushstring(l, "show");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_show, 1);
+    lua_settable(l, -3);
+
+    lua_pushstring(l, "hide");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_hide, 1);
+    lua_settable(l, -3);
+
+    lua_pushstring(l, "getobserver");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_getobserver, 1);
+    lua_settable(l, -3);
+
+    lua_pushstring(l, "find");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_find, 1);
+    lua_settable(l, -3);
+
+    lua_pushstring(l, "select");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_select, 1);
+    lua_settable(l, -3);
+
+    lua_pop(l, 1);
+#if 0
     lua_pushclass(l, _Celestia);
     lua_newtable(l);
 
@@ -423,9 +704,18 @@ static void CreateCelestiaMetaTable(lua_State* l)
     lua_pushvalue(l, -2);
     lua_pushcclosure(l, celestia_hide, 1);
     lua_settable(l, -4);
+    lua_pushstring(l, "getobserver");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_getobserver, 1);
+    lua_settable(l, -4);
+    lua_pushstring(l, "find");
+    lua_pushvalue(l, -2);
+    lua_pushcclosure(l, celestia_find, 1);
+    lua_settable(l, -4);
     lua_pop(l, 1);
 
     lua_rawset(l, LUA_REGISTRYINDEX);
+#endif
 }
 
 
@@ -443,6 +733,8 @@ bool LuaState::init(CelestiaCore* appCore)
         return false;
     lua_pcall(state, 0, 0, 0); // execute it
 
+    CreateObjectMetaTable(state);
+    CreateObserverMetaTable(state);
     CreateCelestiaMetaTable(state);
 
     // Create the celestia object
