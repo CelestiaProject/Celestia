@@ -537,8 +537,8 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	Albedo            0.50
 
 	Rings {
-		Inner   74000
-		Outer  141000
+		Inner   74650
+		Outer  140500
 		Texture "saturn-rings.png"
 
 		# Bjorn Jonsson <http://www.mmedia.is/~bjj> recommends this
@@ -891,8 +891,8 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	Albedo            0.66
 
 	Rings {
-		Inner  41800
-		Outer  51149
+		Inner  41837
+		Outer  51179
 		Texture "uranus-rings.png"
 	}
 }
@@ -1072,6 +1072,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	RotationOffset       228.65 # correct System III prime meridian
 
 	Albedo                 0.62
+
+	Rings {
+		Inner  53150
+		Outer  62947
+		Texture "neptune-rings.png"
+	}
 }
 
 "Proteus" "Sol/Neptune"
