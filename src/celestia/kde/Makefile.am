@@ -7,6 +7,11 @@ noinst_HEADERS = $(wildcard *.h)
 INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
 
 libkdegui_a_SOURCES = \
+                 eclipsefinderdlgbase.uic.h \
+                 eclipsefinderdlgbase.uic.cpp \
+                 eclipsefinderdlgbase.uic.moc.cpp \
+                 eclipsefinderdlg.cpp \
+                 eclipsefinderdlg.moc.cpp \
                  celestialbrowserbase.uic.h \
                  celestialbrowserbase.uic.cpp \
                  celestialbrowserbase.uic.moc.cpp \
@@ -43,5 +48,5 @@ SUBDIRS = data
 
 endif
 
-EXTRA_DIST = celestialbrowserbase.ui
+EXTRA_DIST = celestialbrowserbase.ui eclipsefinderdlgbase.ui
                  

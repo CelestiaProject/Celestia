@@ -121,6 +121,7 @@ public slots:
     void slotHudDetail(int l);
 
     void slotCelestialBrowser();
+    void slotEclipseFinder();
     
     void slotDisplayLocalTime();
     void slotWireframeMode();
