@@ -25,7 +25,8 @@ Tokenizer::Tokenizer(istream* _in) :
     haveValidNumber(false),
     haveValidName(false),
     haveValidString(false),
-    pushedBack(false)
+    pushedBack(false),
+    lineNum(1)
 {
 }
 
@@ -348,7 +349,11 @@ string Tokenizer::getStringValue()
 
 int Tokenizer::readChar()
 {
-    return (int) in->get();
+    int c = (int) in->get();
+    if (c == '\n')
+        lineNum++;
+
+    return c;
 }
 
 void Tokenizer::syntaxError(const char* message)
@@ -357,9 +362,9 @@ void Tokenizer::syntaxError(const char* message)
 }
 
 
-int Tokenizer::getLineNumber()
+int Tokenizer::getLineNumber() const
 {
-    return 0;
+    return lineNum;
 }
 
 #if 0
