@@ -19,7 +19,13 @@
 
 #include "res/resource.h"
 
+extern void SetMousePointer(LPCTSTR lpCursor);
+
 using namespace std;
+
+static const int MinListStars = 50;
+static const int MaxListStars = 500;
+static const int DefaultListStars = 100;
 
 
 // TODO: More of the functions in this module should be converted to
@@ -50,7 +56,7 @@ bool InitStarBrowserColumns(HWND listView)
 
     columns[0].pszText = "Name";
     columns[0].cx = 100;
-    columns[1].pszText = "Distance";
+    columns[1].pszText = "Distance (ly)";
     columns[1].fmt = LVCFMT_RIGHT;
     columns[1].cx = 75;
     columns[2].pszText = "App. mag";
@@ -364,6 +370,22 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
     }
 }
 
+void RefreshItems(HWND hDlg, StarBrowser* browser)
+{
+    SetMousePointer(IDC_WAIT);
+
+    Simulation* sim = browser->appCore->getSimulation();
+    browser->ucPos = sim->getObserver().getPosition();
+    browser->pos = (Point3f) browser->ucPos;
+    HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
+    if (hwnd != 0)
+    {
+        ListView_DeleteAllItems(hwnd);
+        InitStarBrowserItems(hwnd, browser);
+    }
+
+    SetMousePointer(IDC_ARROW);
+}
 
 BOOL APIENTRY StarBrowserProc(HWND hDlg,
                               UINT message,
@@ -385,6 +407,20 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
             InitStarBrowserColumns(hwnd);
             InitStarBrowserItems(hwnd, browser);
             CheckRadioButton(hDlg, IDC_RADIO_NEAREST, IDC_RADIO_WITHPLANETS, IDC_RADIO_NEAREST);
+
+            //Initialize Max Stars edit box
+            char val[16];
+            hwnd = GetDlgItem(hDlg, IDC_MAXSTARS_EDIT);
+            sprintf(val, "%d", DefaultListStars);
+            SetWindowText(hwnd, val);
+            SendMessage(hwnd, EM_LIMITTEXT, 3, 0);
+
+            //Initialize Max Stars Slider control
+            SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_SETRANGE,
+                (WPARAM)TRUE, (LPARAM)MAKELONG(MinListStars, MaxListStars));
+            SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_SETPOS,
+                (WPARAM)TRUE, (LPARAM)DefaultListStars);
+            
             return(TRUE);
         }
 
@@ -419,26 +455,57 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
 
         case IDC_RADIO_BRIGHTEST:
             browser->predicate = BrightestStars;
+            RefreshItems(hDlg, browser);
             break;
 
         case IDC_RADIO_NEAREST:
             browser->predicate = NearestStars;
+            RefreshItems(hDlg, browser);
             break;
 
         case IDC_RADIO_WITHPLANETS:
             browser->predicate = StarsWithPlanets;
+            RefreshItems(hDlg, browser);
             break;
 
         case IDC_BUTTON_REFRESH:
+            RefreshItems(hDlg, browser);
+            break;
+
+        case IDC_MAXSTARS_EDIT:
+            if(HIWORD(wParam) == EN_KILLFOCUS)
             {
-                Simulation* sim = browser->appCore->getSimulation();
-                browser->ucPos = sim->getObserver().getPosition();
-                browser->pos = (Point3f) browser->ucPos;
-                HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
-                if (hwnd != 0)
+                char val[16];
+                int nNewStars;
+                DWORD minRange, maxRange;
+                GetWindowText((HWND)lParam, val, sizeof(val));
+                nNewStars = atoi(val);
+
+                //Check if new value is different from old. Don't want to cause
+                //a refresh to occur if not necessary.
+                if(nNewStars != browser->nStars)
                 {
-                    ListView_DeleteAllItems(hwnd);
-                    InitStarBrowserItems(hwnd, browser);
+                    minRange = SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_GETRANGEMIN, 0, 0);
+                    maxRange = SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_GETRANGEMAX, 0, 0);
+                    if(nNewStars < minRange)
+                        nNewStars = minRange;
+                    else if(nNewStars > maxRange)
+                        nNewStars = maxRange;
+                    //If new value has been adjusted from what was entered, reflect
+                    //new value back in edit control.
+                    if(atoi(val) != nNewStars)
+                    {
+                        sprintf(val, "%d", nNewStars);
+                        SetWindowText((HWND)lParam, val);
+                    }
+                    //Recheck value if different from original.
+                    if(nNewStars != browser->nStars)
+                    {
+                        browser->nStars = nNewStars;
+                        SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_SETPOS, (WPARAM)TRUE,
+                            (LPARAM)browser->nStars);
+                        RefreshItems(hDlg, browser);
+                    }
                 }
             }
             break;
@@ -448,34 +515,64 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
     case WM_NOTIFY:
         {
             LPNMHDR hdr = (LPNMHDR) lParam;
-            
-            if (hdr->code == LVN_GETDISPINFO)
+
+            if(hdr->idFrom == IDC_STARBROWSER_LIST)
             {
-                StarBrowserDisplayItem((LPNMLVDISPINFOA) lParam, browser);
-            }
-            else if (hdr->code == LVN_ITEMCHANGED)
-            {
-                LPNMLISTVIEW nm = (LPNMLISTVIEW) lParam;
-                if ((nm->uNewState & LVIS_SELECTED) != 0)
+                switch(hdr->code)
                 {
-                    Simulation* sim = browser->appCore->getSimulation();
-                    Star* star = reinterpret_cast<Star*>(nm->lParam);
-                    if (star != NULL)
-                        sim->setSelection(Selection(star));
+                case LVN_GETDISPINFO:
+                    StarBrowserDisplayItem((LPNMLVDISPINFOA) lParam, browser);
+                    break;
+                case LVN_ITEMCHANGED:
+                    {
+                        LPNMLISTVIEW nm = (LPNMLISTVIEW) lParam;
+                        if ((nm->uNewState & LVIS_SELECTED) != 0)
+                        {
+                            Simulation* sim = browser->appCore->getSimulation();
+                            Star* star = reinterpret_cast<Star*>(nm->lParam);
+                            if (star != NULL)
+                                sim->setSelection(Selection(star));
+                        }
+                        break;
+                    }
+                case LVN_COLUMNCLICK:
+                    {
+                        HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
+                        if (hwnd != 0)
+                        {
+                            LPNMLISTVIEW nm = (LPNMLISTVIEW) lParam;
+                            StarBrowserSortInfo sortInfo;
+                            sortInfo.subItem = nm->iSubItem;
+                            sortInfo.ucPos = browser->ucPos;
+                            sortInfo.pos = browser->pos;
+                            ListView_SortItems(hwnd, StarBrowserCompareFunc,
+                                               reinterpret_cast<LPARAM>(&sortInfo));
+                        }
+                    }
+
                 }
             }
-            else if (hdr->code == LVN_COLUMNCLICK)
+        }
+        break;
+
+    case WM_HSCROLL:
+        {
+            WORD sbValue = LOWORD(wParam);
+            switch(sbValue)
             {
-                HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
-                if (hwnd != 0)
+                case SB_THUMBTRACK:
                 {
-                    LPNMLISTVIEW nm = (LPNMLISTVIEW) lParam;
-                    StarBrowserSortInfo sortInfo;
-                    sortInfo.subItem = nm->iSubItem;
-                    sortInfo.ucPos = browser->ucPos;
-                    sortInfo.pos = browser->pos;
-                    ListView_SortItems(hwnd, StarBrowserCompareFunc,
-                                       reinterpret_cast<LPARAM>(&sortInfo));
+                    char val[16];
+                    HWND hwnd = GetDlgItem(hDlg, IDC_MAXSTARS_EDIT);
+                    sprintf(val, "%d", HIWORD(wParam));
+                    SetWindowText(hwnd, val);
+                    break;
+                }
+                case SB_THUMBPOSITION:
+                {
+                    browser->nStars = (int)HIWORD(wParam);
+                    RefreshItems(hDlg, browser);
+                    break;
                 }
             }
         }
@@ -496,7 +593,7 @@ StarBrowser::StarBrowser(HINSTANCE appInstance,
     pos = (Point3f) ucPos;
 
     predicate = NearestStars;
-    nStars = 100;
+    nStars = DefaultListStars;
 
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_STARBROWSER),
