@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include "util.h"
+#include "astro.h"
 #include "cmdparser.h"
 
 using namespace std;
@@ -176,6 +177,14 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("rate", rate);
         paramList->getNumber("duration", duration);
         cmd = new CommandChangeDistance(duration, rate);
+    }
+    else if (commandName == "setposition")
+    {
+        Vec3d base, offset;
+        paramList->getVector("base", base);
+        paramList->getVector("offset", offset);
+        cmd = new CommandSetPosition(astro::universalPosition(Point3d(offset.x, offset.y, offset.z),
+                                                              Point3f((float) base.x, (float) base.y, (float) base.z)));
     }
     else
     {
