@@ -1659,7 +1659,6 @@
 56975:92 Leo
 56997:61 UMa
 57029:62 UMa
-57087:Gliese 436
 57111:3 Dra
 57283:ZET Crt:27 Crt
 57328:XI Vir:2 Vir
@@ -2000,8 +1999,8 @@
 71352:ETA Cen
 71536:RHO Lup
 71618:33 Boo
-71681:Rigel Kentaurus B:ALF2 Cen:ALF Cen B:Gliese 559 B
-71683:Rigel Kentaurus A:Toliman:ALF1 Cen:ALF Cen A:Gliese 559 A
+71681:Rigel Kentaurus B:Toliman B:ALF2 Cen:ALF Cen B:Gliese 559 B
+71683:Rigel Kentaurus A:Toliman A:ALF1 Cen:ALF Cen A:Gliese 559 A
 71762:PI1 Boo:PI2 Boo:29 Boo
 71795:ZET Boo:30 Boo
 71832:31 Boo
@@ -3358,4 +3357,5 @@
 118243:SIG Cas:8 Cas
 118268:OME Psc:28 Psc
 118322:EPS Tuc
+
 
