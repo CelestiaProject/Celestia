@@ -53,13 +53,22 @@ private:
     double boundingRadius;
     double period;
     mutable int lastSample;
+
+    enum InterpolationType
+    {
+        Linear = 0,
+        Cubic = 1,
+    };
+
+    InterpolationType interpolation;
 };
 
 
 SampledOrbit::SampledOrbit() :
     boundingRadius(0.0),
     period(1.0),
-    lastSample(0)
+    lastSample(0),
+    interpolation(Linear)
 {
 }
 
@@ -95,6 +104,16 @@ double SampledOrbit::getBoundingRadius() const
 }
 
 
+static Point3d cubicInterpolate(Point3d& p0, Vec3d& v0,
+                                Point3d& p1, Vec3d& v1,
+                                double t)
+{
+    return p0 + ((2.0 * (p1 - p0) + (v1 - v0)) * (t * t * t)) +
+                (((p0 - p1) - v1) * (t * t)) +
+                (v0 * t);
+}
+
+
 Point3d SampledOrbit::computePosition(double jd) const
 {
     Point3d pos;
@@ -127,14 +146,45 @@ Point3d SampledOrbit::computePosition(double jd) const
         }
         else if (n < (int) samples.size())
         {
-            Sample s0 = samples[n - 1];
-            Sample s1 = samples[n];
-            // TODO: Linear interpolation between samples is inadequate; we
-            // need something more sophisticated.
-            double t = (jd - s0.t) / (s1.t - s0.t);
-            pos = Point3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
-                          Mathd::lerp(t, (double) s0.y, (double) s1.y),
-                          Mathd::lerp(t, (double) s0.z, (double) s1.z));
+            if (interpolation == Linear)
+            {
+                Sample s0 = samples[n - 1];
+                Sample s1 = samples[n];
+
+                double t = (jd - s0.t) / (s1.t - s0.t);
+                pos = Point3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
+                              Mathd::lerp(t, (double) s0.y, (double) s1.y),
+                              Mathd::lerp(t, (double) s0.z, (double) s1.z));
+            }
+            else if (interpolation == Cubic)
+            {
+                Sample s0, s1, s2, s3;
+                if (n > 1)
+                    s0 = samples[n - 2];
+                else
+                    s0 = samples[n - 1];
+                s1 = samples[n - 1];
+                s2 = samples[n];
+                if (n < (int) samples.size() - 1)
+                    s3 = samples[n + 1];
+                else
+                    s3 = samples[n];
+
+                double t = (jd - s1.t) / (s2.t - s1.t);
+                Point3d p0(s1.x, s1.y, s1.z);
+                Point3d p1(s2.x, s2.y, s2.z);
+                Vec3d v0(s2.x - s0.x, s2.y - s0.y, s2.z - s0.z);
+                Vec3d v1(s3.x - s1.x, s3.y - s1.y, s3.z - s1.z);
+                v0 *= 1.0 / (s2.t - s0.t);
+                v1 *= 1.0 / (s3.t - s1.t);
+
+                pos = cubicInterpolate(p0, v0, p1, v1, t);
+            }
+            else
+            {
+                // Unknown interpolation type
+                pos = Point3d(0.0, 0.0, 0.0);
+            }
         }
         else
         {
