@@ -203,15 +203,15 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
         {
             HMENU locationsMenu = menuInfo.hSubMenu;
 
-            //First, tear down existing menu beyond separator.
+            // First, tear down existing menu beyond separator.
             while (DeleteMenu(locationsMenu, numStaticItems, MF_BYPOSITION))
                 odMenu->DeleteItem(locationsMenu, numStaticItems);
 
-            //Don't continue if there are no items in favorites
+            // Don't continue if there are no items in favorites
             if (favorites->size() == 0)
                 return;
 
-            //Insert separator
+            // Insert separator
             menuInfo.cbSize = sizeof MENUITEMINFO;
             menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
             menuInfo.fType = MFT_SEPARATOR;
@@ -222,20 +222,20 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
                 numStaticItems++;
             }
 
-            //Add folders and their sub items
+            // Add folders and their sub items
             int rootMenuIndex = numStaticItems;
             int subMenuIndex, resourceIndex = 0;
             FavoritesList::const_iterator iter = favorites->begin();
             while (iter != favorites->end())
             {
-                //Is this a folder?
+                // Is this a folder?
                 if ((*iter)->isFolder)
                 {
-                    //Create a submenu
+                    // Create a submenu
                     HMENU subMenu;
                     if (subMenu = CreatePopupMenu())
                     {
-                        //Create a menu item that displays a popup sub menu
+                        // Create a menu item that displays a popup sub menu
                         menuInfo.cbSize = sizeof MENUITEMINFO;
                         menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
                         menuInfo.fType = MFT_STRING;
@@ -250,8 +250,8 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
                             rootMenuIndex++;
                             resourceIndex++;
 
-                            //Now iterate through all Favorites and add items to this folder
-                            //where parentFolder == folderName
+                            // Now iterate through all Favorites and add items
+                            // to this folder where parentFolder == folderName
                             subMenuIndex = 0;
                             string folderName = (*iter)->name;
                             iter++;
@@ -259,7 +259,7 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
                             {
                                 if (!(*iter)->isFolder && (*iter)->parentFolder == folderName)
                                 {
-                                    //Add items to sub menu
+                                    // Add items to sub menu
                                     menuInfo.cbSize = sizeof MENUITEMINFO;
                                     menuInfo.fMask = MIIM_TYPE | MIIM_ID;
                                     menuInfo.fType = MFT_STRING;
@@ -279,7 +279,8 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
                                 resourceIndex++;
                             }
 
-                            //Add a disabled "(empty)" item if no items were added to sub menu
+                            // Add a disabled "(empty)" item if no items
+                            // were added to sub menu
                             if (subMenuIndex == 0)
                             {
                                 menuInfo.cbSize = sizeof MENUITEMINFO;
@@ -287,7 +288,7 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
                                 menuInfo.fType = MFT_STRING;
                                 menuInfo.fState = MFS_DISABLED;
                                 menuInfo.dwTypeData = "(empty)";
-                                if(InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo))
+                                if (InsertMenuItem(subMenu, subMenuIndex, TRUE, &menuInfo))
                                 {
                                     odMenu->AddItem(subMenu, subMenuIndex);
                                 }
@@ -299,14 +300,14 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
                     iter++;
             }
 
-            //Add root locations items
+            // Add root locations items
             iter = favorites->begin();
             while (iter != favorites->end())
             {
-                //Is this a non folder item?
+                // Is this a non folder item?
                 if (!(*iter)->isFolder && (*iter)->parentFolder == "")
                 {
-                    //Append to locationsMenu
+                    // Append to locationsMenu
                     AppendMenu(locationsMenu, MF_STRING,
                         ID_LOCATIONS_FIRSTLOCATION + resourceIndex,
                         const_cast<char*>((*iter)->name.c_str()));
@@ -314,6 +315,7 @@ void BuildFavoritesMenu(HMENU menuBar, CelestiaCore* appCore, HINSTANCE appInsta
                     odMenu->AddItem(locationsMenu, rootMenuIndex);
                     odMenu->SetItemImage(appInstance, ID_LOCATIONS_FIRSTLOCATION + resourceIndex, IDB_LOCATION);
                     rootMenuIndex++;
+                    resourceIndex++;
                 }
                 iter++;
             }
