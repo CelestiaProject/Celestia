@@ -2865,11 +2865,13 @@ void Renderer::renderObject(Point3f pos,
             {
                 // Approximate ring shadow rendering . . . turned off
                 // for now.  Vertex shaders give you the real thing.
+#if 0
                 renderRingShadows(mesh,
                                   *obj.rings,
                                   sunDir,
                                   ri,
                                   radius, planetMat, viewFrustum);
+#endif
             }
         }
     }
