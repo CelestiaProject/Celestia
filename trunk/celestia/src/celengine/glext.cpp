@@ -221,6 +221,47 @@ glx::PFNGLUNMAPBUFFERARBPROC               glx::glUnmapBufferARB;
 glx::PFNGLGETBUFFERPARAMETERIVARBPROC      glx::glGetBufferParameterivARB;
 glx::PFNGLGETBUFFERPOINTERVARBPROC         glx::glGetBufferPointervARB;
 
+// ARB_shader_objects function pointers
+glx::PFNGLDELETEOBJECTARBPROC              glx::glDeleteObjectARB;
+glx::PFNGLGETHANDLEARBPROC                 glx::glGetHandleARB;
+glx::PFNGLDETACHOBJECTARBPROC              glx::glDetachObjectARB;
+glx::PFNGLCREATESHADEROBJECTARBPROC        glx::glCreateShaderObjectARB;
+glx::PFNGLSHADERSOURCEARBPROC              glx::glShaderSourceARB;
+glx::PFNGLCOMPILESHADERARBPROC             glx::glCompileShaderARB;
+glx::PFNGLCREATEPROGRAMOBJECTARBPROC       glx::glCreateProgramObjectARB;
+glx::PFNGLATTACHOBJECTARBPROC              glx::glAttachObjectARB;
+glx::PFNGLLINKPROGRAMARBPROC               glx::glLinkProgramARB;
+glx::PFNGLUSEPROGRAMOBJECTARBPROC          glx::glUseProgramObjectARB;
+glx::PFNGLVALIDATEPROGRAMARBPROC           glx::glValidateProgramARB;
+glx::PFNGLUNIFORM1FARBPROC                 glx::glUniform1fARB;
+glx::PFNGLUNIFORM2FARBPROC                 glx::glUniform2fARB;
+glx::PFNGLUNIFORM3FARBPROC                 glx::glUniform3fARB;
+glx::PFNGLUNIFORM4FARBPROC                 glx::glUniform4fARB;
+glx::PFNGLUNIFORM1IARBPROC                 glx::glUniform1iARB;
+glx::PFNGLUNIFORM2IARBPROC                 glx::glUniform2iARB;
+glx::PFNGLUNIFORM3IARBPROC                 glx::glUniform3iARB;
+glx::PFNGLUNIFORM4IARBPROC                 glx::glUniform4iARB;
+glx::PFNGLUNIFORM1FVARBPROC                glx::glUniform1fvARB;
+glx::PFNGLUNIFORM2FVARBPROC                glx::glUniform2fvARB;
+glx::PFNGLUNIFORM3FVARBPROC                glx::glUniform3fvARB;
+glx::PFNGLUNIFORM4FVARBPROC                glx::glUniform4fvARB;
+glx::PFNGLUNIFORM1IVARBPROC                glx::glUniform1ivARB;
+glx::PFNGLUNIFORM2IVARBPROC                glx::glUniform2ivARB;
+glx::PFNGLUNIFORM3IVARBPROC                glx::glUniform3ivARB;
+glx::PFNGLUNIFORM4IVARBPROC                glx::glUniform4ivARB;
+glx::PFNGLUNIFORMMATRIX2FVARBPROC          glx::glUniformMatrix2fvARB;
+glx::PFNGLUNIFORMMATRIX3FVARBPROC          glx::glUniformMatrix3fvARB;
+glx::PFNGLUNIFORMMATRIX4FVARBPROC          glx::glUniformMatrix4fvARB;
+glx::PFNGLGETOBJECTPARAMETERFVARBPROC      glx::glGetObjectParameterfvARB;
+glx::PFNGLGETOBJECTPARAMETERIVARBPROC      glx::glGetObjectParameterivARB;
+glx::PFNGLGETINFOLOGARBPROC                glx::glGetInfoLogARB;
+glx::PFNGLGETATTACHEDOBJECTSARBPROC        glx::glGetAttachedObjectsARB;
+glx::PFNGLGETUNIFORMLOCATIONARBPROC        glx::glGetUniformLocationARB;
+glx::PFNGLGETACTIVEUNIFORMARBPROC          glx::glGetActiveUniformARB;
+glx::PFNGLGETUNIFORMFVARBPROC              glx::glGetUniformfvARB;
+glx::PFNGLGETUNIFORMIVARBPROC              glx::glGetUniformivARB;
+glx::PFNGLGETSHADERSOURCEARBPROC           glx::glGetShaderSourceARB;
+
 
 // extern void Alert(const char *szFormat, ...);
 
@@ -709,6 +750,52 @@ static void InitExt_ARB_vertex_buffer_object()
 #endif
 }
 
+
+static void InitExt_ARB_shader_objects()
+{
+#if defined(GET_GL_PROC_ADDRESS)
+    glx::glDeleteObjectARB = (glx::PFNGLDELETEOBJECTARBPROC) GET_GL_PROC_ADDRESS("glDeleteObjectARB");
+    glx::glGetHandleARB = (glx::PFNGLGETHANDLEARBPROC) GET_GL_PROC_ADDRESS("glGetHandleARB");
+    glx::glDetachObjectARB = (glx::PFNGLDETACHOBJECTARBPROC) GET_GL_PROC_ADDRESS("glDetachObjectARB");
+    glx::glCreateShaderObjectARB = (glx::PFNGLCREATESHADEROBJECTARBPROC) GET_GL_PROC_ADDRESS("glCreateShaderObjectARB");
+    glx::glShaderSourceARB = (glx::PFNGLSHADERSOURCEARBPROC) GET_GL_PROC_ADDRESS("glShaderSourceARB");
+    glx::glCompileShaderARB = (glx::PFNGLCOMPILESHADERARBPROC) GET_GL_PROC_ADDRESS("glCompileShaderARB");
+    glx::glCreateProgramObjectARB = (glx::PFNGLCREATEPROGRAMOBJECTARBPROC) GET_GL_PROC_ADDRESS("glCreateProgramObjectARB");
+    glx::glAttachObjectARB = (glx::PFNGLATTACHOBJECTARBPROC) GET_GL_PROC_ADDRESS("glAttachObjectARB");
+    glx::glLinkProgramARB = (glx::PFNGLLINKPROGRAMARBPROC) GET_GL_PROC_ADDRESS("glLinkProgramARB");
+    glx::glUseProgramObjectARB = (glx::PFNGLUSEPROGRAMOBJECTARBPROC) GET_GL_PROC_ADDRESS("glUseProgramObjectARB");
+    glx::glValidateProgramARB = (glx::PFNGLVALIDATEPROGRAMARBPROC) GET_GL_PROC_ADDRESS("glValidateProgramARB");
+    glx::glUniform1fARB = (glx::PFNGLUNIFORM1FARBPROC) GET_GL_PROC_ADDRESS("glUniform1fARB");
+    glx::glUniform2fARB = (glx::PFNGLUNIFORM2FARBPROC) GET_GL_PROC_ADDRESS("glUniform2fARB");
+    glx::glUniform3fARB = (glx::PFNGLUNIFORM3FARBPROC) GET_GL_PROC_ADDRESS("glUniform3fARB");
+    glx::glUniform4fARB = (glx::PFNGLUNIFORM4FARBPROC) GET_GL_PROC_ADDRESS("glUniform4fARB");
+    glx::glUniform1iARB = (glx::PFNGLUNIFORM1IARBPROC) GET_GL_PROC_ADDRESS("glUniform1iARB");
+    glx::glUniform2iARB = (glx::PFNGLUNIFORM2IARBPROC) GET_GL_PROC_ADDRESS("glUniform2iARB");
+    glx::glUniform3iARB = (glx::PFNGLUNIFORM3IARBPROC) GET_GL_PROC_ADDRESS("glUniform3iARB");
+    glx::glUniform4iARB = (glx::PFNGLUNIFORM4IARBPROC) GET_GL_PROC_ADDRESS("glUniform4iARB");
+    glx::glUniform1fvARB = (glx::PFNGLUNIFORM1FVARBPROC) GET_GL_PROC_ADDRESS("glUniform1fvARB");
+    glx::glUniform2fvARB = (glx::PFNGLUNIFORM2FVARBPROC) GET_GL_PROC_ADDRESS("glUniform2fvARB");
+    glx::glUniform3fvARB = (glx::PFNGLUNIFORM3FVARBPROC) GET_GL_PROC_ADDRESS("glUniform3fvARB");
+    glx::glUniform4fvARB = (glx::PFNGLUNIFORM4FVARBPROC) GET_GL_PROC_ADDRESS("glUniform4fvARB");
+    glx::glUniform1ivARB = (glx::PFNGLUNIFORM1IVARBPROC) GET_GL_PROC_ADDRESS("glUniform1ivARB");
+    glx::glUniform2ivARB = (glx::PFNGLUNIFORM2IVARBPROC) GET_GL_PROC_ADDRESS("glUniform2ivARB");
+    glx::glUniform3ivARB = (glx::PFNGLUNIFORM3IVARBPROC) GET_GL_PROC_ADDRESS("glUniform3ivARB");
+    glx::glUniform4ivARB = (glx::PFNGLUNIFORM4IVARBPROC) GET_GL_PROC_ADDRESS("glUniform4ivARB");
+    glx::glUniformMatrix2fvARB = (glx::PFNGLUNIFORMMATRIX2FVARBPROC) GET_GL_PROC_ADDRESS("glUniformMatrix2fvARB");
+    glx::glUniformMatrix3fvARB = (glx::PFNGLUNIFORMMATRIX3FVARBPROC) GET_GL_PROC_ADDRESS("glUniformMatrix3fvARB");
+    glx::glUniformMatrix4fvARB = (glx::PFNGLUNIFORMMATRIX4FVARBPROC) GET_GL_PROC_ADDRESS("glUniformMatrix4fvARB");
+    glx::glGetObjectParameterfvARB = (glx::PFNGLGETOBJECTPARAMETERFVARBPROC) GET_GL_PROC_ADDRESS("glGetObjectParameterfvARB");
+    glx::glGetObjectParameterivARB = (glx::PFNGLGETOBJECTPARAMETERIVARBPROC) GET_GL_PROC_ADDRESS("glGetObjectParameterivARB");
+    glx::glGetInfoLogARB = (glx::PFNGLGETINFOLOGARBPROC) GET_GL_PROC_ADDRESS("glGetInfoLogARB");
+    glx::glGetAttachedObjectsARB = (glx::PFNGLGETATTACHEDOBJECTSARBPROC) GET_GL_PROC_ADDRESS("glGetAttachedObjectsARB");
+    glx::glGetUniformLocationARB = (glx::PFNGLGETUNIFORMLOCATIONARBPROC) GET_GL_PROC_ADDRESS("glGetUniformLocationARB");
+    glx::glGetActiveUniformARB = (glx::PFNGLGETACTIVEUNIFORMARBPROC) GET_GL_PROC_ADDRESS("glGetActiveUniformARB");
+    glx::glGetUniformfvARB = (glx::PFNGLGETUNIFORMFVARBPROC) GET_GL_PROC_ADDRESS("glGetUniformfvARB");
+    glx::glGetUniformivARB = (glx::PFNGLGETUNIFORMIVARBPROC) GET_GL_PROC_ADDRESS("glGetUniformivARB");
+    glx::glGetShaderSourceARB = (glx::PFNGLGETSHADERSOURCEARBPROC) GET_GL_PROC_ADDRESS("glGetShaderSourceARB");
+#endif
+}
+
 void InitExtension(const char* ext)
 {
     if (!strcmp(ext, "GL_NV_fragment_program"))
@@ -731,6 +818,8 @@ void InitExtension(const char* ext)
         InitExt_EXT_blend_minmax();
     else if (!strcmp(ext, "GL_EXT_paletted_texture"))
         InitExt_EXT_paletted_texture();
+    else if (!strcmp(ext, "GL_ARB_shader_objects"))
+        InitExt_ARB_shader_objects();
     else if (!strcmp(ext, "WGL_EXT_swap_control"))
         InitExt_EXT_swap_control();
 }
