@@ -360,6 +360,14 @@ void Simulation::update(double dt)
         observer.setPosition(astro::universalPosition(posRelToSun,
                                                       followInfo.sun->getPosition()));
     }
+    else if (observerMode == GeosynchronousFollowing)
+    {
+        Point3d posRelToSun = followInfo.body->getHeliocentricPosition(simTime) + followInfo.offset * followInfo.body->getEclipticalToGeographic(simTime).toMatrix4();
+        observer.setPosition(astro::universalPosition(posRelToSun,
+                                                      followInfo.sun->getPosition()));
+        Quatd q = followInfo.body->getEclipticalToGeographic(simTime) * followInfo.offsetR;
+        observer.setOrientation(Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z));
+    }
     else
     {
         if (observer.getVelocity() != targetVelocity)
@@ -630,7 +638,15 @@ void Simulation::setObserverMode(Simulation::ObserverMode mode)
 // Rotate the observer about its center.
 void Simulation::rotate(Quatf q)
 {
-    observer.setOrientation(observer.getOrientation() * q);
+    if (observerMode == GeosynchronousFollowing)
+    {
+        Quatd qd(q.w, q.x, q.y, q.z);
+        followInfo.offsetR = followInfo.offsetR * qd;
+    }
+    else
+    {
+        observer.setOrientation(observer.getOrientation() * q);
+    }
 }
 
 // Orbit around the selection (if there is one.)  This involves changing
@@ -645,7 +661,6 @@ void Simulation::orbit(Quatf q)
 
         Mat3f m = conjugate(observer.getOrientation()).toMatrix3();
 
-
         // Convert the matrix to double precision so we can multiply it
         // by the double precision vector.  Yuck.  VC doesn't seem to
         // be able to figure out that the constructor declared in
@@ -656,7 +671,18 @@ void Simulation::orbit(Quatf q)
         md[2][0] = m[2][0]; md[2][1] = m[2][1]; md[2][2] = m[2][2];
         v = v * md;
 
-        observer.setOrientation(observer.getOrientation() * q);
+        if (observerMode == GeosynchronousFollowing)
+        {
+            // TODO: This is bogus; something's screwed up about the
+            // way this coordinate system is working.
+            Quatd qd(q.w, q.x, q.y, q.z);
+            followInfo.offsetR = qd * followInfo.offsetR;
+            followInfo.offset = followInfo.offset * qd.toMatrix3();
+        }
+        else
+        {
+            observer.setOrientation(observer.getOrientation() * q);
+        }
         
         m = observer.getOrientation().toMatrix3();
         md[0][0] = m[0][0]; md[0][1] = m[0][1]; md[0][2] = m[0][2];
@@ -667,13 +693,26 @@ void Simulation::orbit(Quatf q)
         // Roundoff errors will accumulate and cause the distance between
         // viewer and focus to change unless we take steps to keep the
         // length of v constant.
+#if 0
+        {
+            Quatd qd(q.w, q.x, q.y, q.z);
+            Vec3d v2 = observer.getPosition() - focusPosition;
+            // v = (qd).toMatrix3() * v2;
+            v = 
+        }
+#endif
         v.normalize();
         v *= distance;
 
-        observer.setPosition(focusPosition + v);
+        if (observerMode != GeosynchronousFollowing)
+        {
+            observer.setPosition(focusPosition + v);
+        }
 
         if (observerMode == Following)
+        {
             followInfo.offset = v * astro::lightYearsToKilometers(1.0);
+        }
     }
 }
 
@@ -704,11 +743,17 @@ void Simulation::changeOrbitDistance(float d)
         {
             double r = (currentDistance - minOrbitDistance) / naturalOrbitDistance;
             double newDistance = minOrbitDistance + naturalOrbitDistance * exp(log(r) + d);
-            v = v * (newDistance / currentDistance);
-            observer.setPosition(focusPosition + v);
 
-            if (observerMode == Following)
-                followInfo.offset = v * astro::lightYearsToKilometers(1.0);
+            if (observerMode == GeosynchronousFollowing ||
+                     observerMode == Following)
+            {
+                followInfo.offset *= (newDistance / currentDistance);
+            }
+            else
+            {
+                v = v * (newDistance / currentDistance);
+                observer.setPosition(focusPosition + v);
+            }
         }
     }
 }
@@ -792,6 +837,37 @@ void Simulation::follow()
                 Point3d observerPos = astro::heliocentricPosition(observer.getPosition(),
                                                                   sun->getPosition());
                 followInfo.offset = observerPos - planetPos;
+                Quatf o = observer.getOrientation();
+                followInfo.offsetR = Quatd(o.w, o.x, o.y, o.z);
+            }
+        }
+    }
+}
+
+void Simulation::geosynchronousFollow()
+{
+    if (observerMode == GeosynchronousFollowing)
+    {
+        observerMode = Free;
+    }
+    else
+    {
+        if (selection.body != NULL)
+        {
+            Star* sun = getSun(selection.body);
+            if (sun != NULL)
+            {
+                observerMode = GeosynchronousFollowing;
+                followInfo.sun = sun;
+                followInfo.body = selection.body;
+                Point3d planetPos = selection.body->getHeliocentricPosition(simTime);
+                Point3d observerPos = astro::heliocentricPosition(observer.getPosition(),
+                                                                  sun->getPosition());
+                Quatf o = observer.getOrientation();
+                Quatd od(o.w, o.x, o.y, o.z);
+                Quatd q = followInfo.body->getEclipticalToGeographic(simTime);
+                followInfo.offsetR = ~q * od;
+                followInfo.offset = (observerPos - planetPos) * conjugate(q).toMatrix4();
             }
         }
     }
