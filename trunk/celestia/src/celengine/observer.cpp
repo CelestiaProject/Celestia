@@ -926,6 +926,18 @@ float Observer::getTargetSpeed()
 }
 
 
+void Observer::gotoJourney(const JourneyParams& params)
+{
+    journey = params;
+    double distance = astro::microLightYearsToKilometers(journey.from.distanceTo(journey.to)) / 2.0;
+    pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
+                                               0.0001, 100.0,
+                                               1e-10);
+    journey.expFactor = sol.first;
+    journey.startTime = realTime;
+    observerMode = Travelling;
+}
+
 void Observer::gotoSelection(const Selection& selection,
                              double gotoTime,
                              Vec3f up,
