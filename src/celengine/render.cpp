@@ -39,7 +39,7 @@ using namespace std;
 #define NEAR_DIST      0.5f
 #define FAR_DIST   10000000.0f
 
-
+static const float faintestAutoMag45deg = 12.5f;
 static const int StarVertexListSize = 1024;
 
 // Fractional pixel offset used when rendering text as texture mapped
@@ -815,6 +815,23 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
     }
 }
 
+void Renderer::autoMag(float faintestMagNight, float& faintestMag, 
+                       float& saturationMag)
+{
+  if ((renderFlags & ShowAutoMag) != 0)
+  {
+      float autoMag = 2 * FOV/(fov + FOV);
+      faintestMag = faintestAutoMag45deg * autoMag;
+      saturationMag = saturationMagNight * (1.0f + autoMag * autoMag);
+  } else {
+      faintestMag = faintestMagNight;
+      saturationMag = saturationMagNight;
+  }
+#if 0
+    cout <<"faintestMag, satMag: "<<faintestMag<<'\t'<< saturationMag<<endl;  
+#endif
+      
+}
 
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
@@ -860,9 +877,7 @@ void Renderer::render(const Observer& observer,
     const Star* sun = NULL;
     if (solarSystem != NULL)
         sun = solarSystem->getStar();
-
-    faintestMag = faintestMagNight;
-    saturationMag = saturationMagNight;
+    autoMag(faintestMagNight, faintestMag, saturationMag);
     faintestPlanetMag = faintestMag + (2.5f * (float)log10((double)square(45.0f / fov)));
     if ((sun != NULL) && ((renderFlags & ShowPlanets) != 0))
     {
@@ -908,8 +923,10 @@ void Renderer::render(const Observer& observer,
                                      atmosphere->skyColor.green() * lightness,
                                      atmosphere->skyColor.blue() * lightness);
 
-                    faintestMag = faintestMagNight - 10.0f * lightness;
-                    saturationMag = saturationMagNight - 10.0f * lightness;
+                    autoMag(faintestMagNight, faintestMag, saturationMag);
+                    faintestMag = faintestMag  - 10.0f * lightness;
+                    saturationMag = saturationMag - 10.0f * lightness;
+
                 }
             }
         }
@@ -945,9 +962,10 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowCelestialSphere) != 0)
     {
-        glColor4f(0.0f, 0.0, 0.9f, 0.5f);
+        glColor4f(0.3f, 0.7, 0.7f, 0.55f);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
+            enableSmoothLines();
             enableSmoothLines();
         renderCelestialSphere(observer);
         if ((renderFlags & ShowSmoothLines) != 0)
@@ -971,11 +989,11 @@ void Renderer::render(const Observer& observer,
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != NULL)
     {
-        glColor4f(0.5f, 0.0, 1.0f, 0.5f);
+        glColor4f(0.28f, 0.0f, 0.66f, 0.96f);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
-
+            enableSmoothLines();
         AsterismList* asterisms = universe.getAsterisms();
         for (AsterismList::const_iterator iter = asterisms->begin();
              iter != asterisms->end(); iter++)
@@ -1000,10 +1018,11 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowBoundaries) != 0)
     {
-        glColor4f(0.33f, 0.0, 0.66f, 1.0f);
+        glColor4f(0.8f,0.33, 0.63f, 0.35f);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
+	   enableSmoothLines();
         if (universe.getBoundaries() != NULL)
             universe.getBoundaries()->render();
         if ((renderFlags & ShowSmoothLines) != 0)
@@ -1360,7 +1379,8 @@ void Renderer::renderBodyAsParticle(Point3f position,
             a = clamp((_faintestMag - appMag) * brightnessScale + brightnessBias);
         }
 
-        // We scale up the particle by a factor of 1.5 so that it's more
+        // We scale up the particle by a factor of 1.5 (at fov = 45deg) 
+        // so that it's more
         // visible--the texture we use has fuzzy edges, and if we render it
         // in just one pixel, it's likely to disappear.  Also, the render
         // distance is scaled by a factor of 0.1 so that we're rendering in
@@ -1369,7 +1389,9 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // z value in this depth bucket, and scaling the render distance is
         // just hack to accomplish this.  There are cases where it will fail
         // and a more robust method should be implemented.
-        float size = pixelSize * 1.5f * renderZ;
+
+        float corrFac = (0.05f * fov/FOV * fov/FOV + 1.0f);
+        float size = pixelSize * 1.6f * renderZ/corrFac;
         float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
 
         Point3f center(position.x * posScale,
@@ -1405,7 +1427,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
             a = 0.4f * clamp((appMag - saturationMag) * -0.8f);
             float s = renderZ * 0.001f * (3 - (appMag - saturationMag)) * 2;
             if (s > size * 3)
-                size = s;
+	        size = s * 2.0f/(1.0f +FOV/fov);
             else
                 size = size * 3;
             float realSize = discSizeInPixels * pixelSize * renderZ;
@@ -3064,6 +3086,7 @@ public:
     Renderer::StarVertexBuffer* starVertexBuffer;
 
     float faintestMagNight;
+    float fov;
     float size;
     float pixelSize;
     float faintestMag;
@@ -3130,9 +3153,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             starPos = position + relPos * f;
 
             float radius = star.getRadius();
-            discSizeInPixels = radius / astro::lightYearsToKilometers(distance) /
-                pixelSize;
-
+            discSizeInPixels = radius / astro::lightYearsToKilometers(distance) /pixelSize;
             nClose++;
         }
 
@@ -3157,9 +3178,8 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
                 alpha = 0.4f * clamp((appMag - saturationMag) * -0.8f);
                 s = renderDistance * 0.001f * (3 - (appMag - saturationMag)) * 2;
-
-                if (s > p.size * 3)
-                    p.size = s;
+                if (s > p.size * 3 )
+		    p.size = s * 2.0f/(1.0f +FOV/fov);
                 else
                     p.size = p.size * 3;
                 p.color = Color(starColor, alpha);
@@ -3205,9 +3225,12 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.renderList = &renderList;
     starRenderer.starVertexBuffer = starVertexBuffer;
     starRenderer.faintestMagNight = faintestMagNight;
-    starRenderer.size = pixelSize * 1.5f;
+    starRenderer.fov              = fov;
+    // size/pixelSize =1.2 at 120deg, 1.5 at 45deg and 1.6 at 0deg.
+    float corrFac = (0.05f * fov/FOV * fov/FOV + 1.0f);
+    starRenderer.size = pixelSize * 1.6f/corrFac;
     starRenderer.pixelSize = pixelSize;
-    starRenderer.brightnessScale = brightnessScale;
+    starRenderer.brightnessScale = brightnessScale * corrFac;
     starRenderer.brightnessBias = brightnessBias;
     starRenderer.faintestMag = faintestMag;
     starRenderer.saturationMag = saturationMag;
@@ -3364,7 +3387,7 @@ void Renderer::renderCelestialSphere(const Observer& observer)
                                                        radius);
         if ((pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
-            addLabel(coordLabels[i].label, Color(0.0f, 0.0f, 1.0f, 0.7f), pos);
+            addLabel(coordLabels[i].label, Color(0.3f, 0.7, 0.7f, 0.85f), pos);
         }
     }
 }
