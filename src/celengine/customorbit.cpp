@@ -2304,28 +2304,34 @@ static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
 };
 
 
+static double yearToJD(int year)
+{
+    return (double) astro::Date(year, 1, 1);
+}
+
+
 Orbit* GetCustomOrbit(const string& name)
 {
     if (name == "mercury")
-        return new MercuryOrbit();
+        return new MixedOrbit(new MercuryOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "venus")
-        return new VenusOrbit();
+        return new MixedOrbit(new VenusOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "earth")
-        return new EarthOrbit();
+        return new MixedOrbit(new EarthOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "moon")
         return new LunarOrbit();
     if (name == "mars")
-        return new MarsOrbit();
+        return new MixedOrbit(new MarsOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "jupiter")
-        return new JupiterOrbit();
+        return new MixedOrbit(new JupiterOrbit(), yearToJD(2000), yearToJD(4000), astro::SolarMass);
     if (name == "saturn")
-        return new SaturnOrbit();
+        return new MixedOrbit(new SaturnOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "uranus")
-        return new UranusOrbit();
+        return new MixedOrbit(new UranusOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "neptune")
-        return new NeptuneOrbit();
+        return new MixedOrbit(new NeptuneOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "pluto")
-        return new PlutoOrbit();
+        return new MixedOrbit(new PlutoOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "io")
         return new IoOrbit();
     if (name == "europa")
