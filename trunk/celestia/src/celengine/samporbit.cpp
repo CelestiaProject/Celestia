@@ -82,7 +82,7 @@ void SampledOrbit::addSample(double t, double x, double y, double z)
 
 double SampledOrbit::getPeriod() const
 {
-    return period;
+    return samples[samples.size() - 1].t - samples[0].t;
 }
 
 
