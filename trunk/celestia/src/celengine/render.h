@@ -150,7 +150,8 @@ class Renderer
         Point3f position;
     } Label;
 
-    void addLabel(std::string, Color, Point3f, float depth = -1);
+    void addLabel(std::string, Color, const Point3f&, float depth = -1);
+    void addSortedLabel(std::string, Color, const Point3f&);
     void clearLabels();
 
     void setFont(TextureFont*);
@@ -341,6 +342,8 @@ class Renderer
     void renderParticles(const std::vector<Particle>& particles,
                          Quatf orientation);
     void renderLabels();
+    std::vector<Label>::iterator renderSortedLabels(std::vector<Label>::iterator,
+                                                    float depth);
     void renderMarkers(const MarkerList&,
                        const UniversalCoord& position,
                        const Quatf& orientation,
@@ -385,6 +388,7 @@ class Renderer
     std::vector<RenderListEntry> renderList;
     std::vector<Particle> glareParticles;
     std::vector<Label> labels;
+    std::vector<Label> depthSortedLabels;
     std::vector<EclipseShadow> eclipseShadows;
 
     std::vector<StarLabel> labelledStars;
