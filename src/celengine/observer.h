@@ -56,7 +56,7 @@ public:
 
     Vec3f          getPickRay(float x, float y) const;
 
-    
+
     void orbit(const Selection&, Quatf q);
     void rotate(Quatf q);
     void changeOrbitDistance(const Selection&, float d);
@@ -68,6 +68,12 @@ public:
 
     void gotoSelection(const Selection&,
                        double gotoTime,
+                       Vec3f up,
+                       astro::CoordinateSystem upFrame);
+    void gotoSelection(const Selection&,
+                       double gotoTime,
+                       double startInter,
+                       double endInter,
                        Vec3f up,
                        astro::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
@@ -120,6 +126,8 @@ public:
         UniversalCoord to;
         Quatf initialOrientation;
         Quatf finalOrientation;
+        double startInterpolation; // start of orientation interpolation phase [0-1]
+        double endInterpolation;   // end of orientation interpolation phase [0-1]
         double expFactor;
         double accelTime;
     };
@@ -130,6 +138,8 @@ public:
     void computeGotoParameters(const Selection& sel,
                                JourneyParams& jparams,
                                double gotoTime,
+                               double startInter,
+                               double endInter,
                                Vec3d offset, astro::CoordinateSystem offsetFrame,
                                Vec3f up,
                                astro::CoordinateSystem upFrame);
