@@ -43,9 +43,9 @@ LIBS=\
 
 TARGET = celestia.exe
 
-INCLUDEDIRS=/I .. /I ../inc/libjpeg /I ../inc/libpng /I ../inc/libz
+INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz
 
-LIBDIRS=/LIBPATH:..\..
+LIBDIRS=/LIBPATH:..\..\lib
 
 !IF "$(CFG)" == "Release"
 
@@ -82,7 +82,7 @@ RSC_FLAGS=/l 0x409 /d "_DEBUG"
 <<
 
 
-$(OUTDIR)\$(TARGET) : $(OUTDIR) $(OBJS) $(RESOURCES)
+$(OUTDIR)\$(TARGET) : $(OUTDIR) $(OBJS) $(LIBS) $(RESOURCES)
 	$(LINK32) @<<
         $(LINK32_FLAGS) /out:$(OUTDIR)\$(TARGET) $(OBJS) $(RESOURCES)
 <<
