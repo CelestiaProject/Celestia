@@ -428,7 +428,7 @@
 
 	RotationPeriod      10.65622
 	Obliquity           28.052 # old value: 26.73
-	LongOfRotationAxis  159.528 # old value: 169.394
+	LongOfRotationAxis  168
 
 	Albedo            0.50
 
@@ -610,13 +610,17 @@
 	Texture "asteroid.jpg"
 	Radius     110
 
+	# CustomOrbit "phoebe"
 	EllipticalOrbit
 	{
-	Period         550.48
-	SemiMajorAxis  12952000
-	Eccentricity   0.163
-	Inclination    175.3
-	MeanAnomaly    52
+	Epoch          2447892.5
+	Period         548.2122790
+	SemiMajorAxis  12944346
+	Eccentricity   0.16435
+	Inclination    174.751
+	LongOfPericenter 203.958
+	MeanLongitude  390.742
+	AscendingNode  233.037
 	}
 
 	RotationPeriod 9.6
