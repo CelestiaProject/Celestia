@@ -631,6 +631,86 @@ private:
 };
 
 
+class OrbitSampler : public OrbitSampleProc
+{
+public:
+    vector<Point3f>* samples;
+
+    OrbitSampler(vector<Point3f>* _samples) : samples(_samples) {};
+    void sample(const Point3d& p)
+    {
+        samples->insert(samples->end(),
+                        Point3f((float) p.x, (float) p.y, (float) p.z));
+    };
+};
+
+
+
+void Renderer::renderOrbit(Body* body, double t)
+{
+    vector<Point3f>* trajectory = NULL;
+    for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin();
+         iter != orbitCache.end(); iter++)
+    {
+        if ((*iter)->body == body)
+        {
+            (*iter)->keep = true;
+            trajectory = &((*iter)->trajectory);
+            break;
+        }
+    }
+
+    // If it's not in the cache already
+    if (trajectory == NULL)
+    {
+        CachedOrbit* orbit = NULL;
+
+        // Search the cache an see if we can reuse an old orbit
+        for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin();
+             iter != orbitCache.end(); iter++)
+        {
+            if ((*iter)->body == NULL)
+            {
+                orbit = *iter;
+                orbit->trajectory.clear();
+                cout << "Reusing orbit: " << body->getName() << '\n';
+                break;
+            }
+        }
+
+        // If we can't reuse an old orbit, allocate a new one.
+        bool reuse = true;
+        if (orbit == NULL)
+        {
+            orbit = new CachedOrbit();
+            reuse = false;
+        }
+
+        orbit->body = body;
+        orbit->keep = true;
+        OrbitSampler sampler(&orbit->trajectory);
+        body->getOrbit()->sample(t, body->getOrbit()->getPeriod(), 100,
+                                 sampler);
+        trajectory = &orbit->trajectory;
+
+        // If the orbit is new, put it back in the cache
+        if (!reuse)
+            orbitCache.insert(orbitCache.end(), orbit);
+    }
+
+    // Actually render the orbit
+    glBegin(GL_LINE_LOOP);
+    for (vector<Point3f>::const_iterator p = trajectory->begin();
+         p != trajectory->end(); p++)
+    {
+        glVertex3f(astro::kilometersToAU(p->x * 100),
+                   astro::kilometersToAU(p->y * 100),
+                   astro::kilometersToAU(p->z * 100));
+    }
+    glEnd();
+}
+
+
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
                       float faintestMagNight,
@@ -696,7 +776,6 @@ void Renderer::render(const Observer& observer,
     // limiting magnitude of stars (so stars aren't visible in the daytime
     // on planets with thick atmospheres.)
     {
-        //vector<RenderListEntry>::iterator notCulled = renderList.begin();
         for (vector<RenderListEntry>::iterator iter = renderList.begin();
              iter != renderList.end(); iter++)
         {
@@ -826,6 +905,13 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowOrbits) != 0 && solarSystem != NULL)
     {
+        vector<CachedOrbit*>::const_iterator iter;
+
+        // Clear the keep flag for all orbits in the cache; if they're not
+        // used when rendering this frame, they'll get marked for recycling.
+        for (iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
+            (*iter)->keep = false;
+
         // At this point, we're not rendering into the depth buffer
         // so we'll set the far plane to be way out there.  If we don't
         // do this, the orbits either suffer from clipping by the far
@@ -874,15 +960,21 @@ void Renderer::render(const Observer& observer,
                     glColor4f(1, 0, 0, 1);
                 else
                     glColor4f(0, 0, 1, 1);
-                glBegin(GL_LINE_LOOP);
-                body->getOrbit()->sample(now, body->getOrbit()->getPeriod(),
-                                         100, OrbitRenderer());
-                glEnd();
+                renderOrbit(body, now);
             }
         }
 
         if ((renderFlags & ShowSmoothLines) != 0)
             disableSmoothLines();
+
+        // Mark for recycling all unused orbits in the cache
+        for (iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
+        {
+            if (!(*iter)->keep)
+                (*iter)->body = NULL;
+        }
+
+        cout << "Orbit cache size: " << orbitCache.size() << '\n';
 
 #ifdef ECLIPTIC_AXES
         // Render axes in plane of the ecliptic for debugging
