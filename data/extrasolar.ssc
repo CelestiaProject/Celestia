@@ -395,8 +395,8 @@ AltSurface "limit of knowledge" "HD 46375/b"
 		Period          0.0083
 		SemiMajorAxis   0.0393
 		Eccentricity    0
-		Inclination     85
-		AscendingNode   284
+		Inclination     85.2
+		AscendingNode   283.9
 		ArgOfPericenter 149
 		MeanAnomaly     58
 	}
@@ -425,7 +425,7 @@ AltSurface "limit of knowledge" "TrES-1/b"
 
 	EllipticalOrbit {
 		Period          0.0085
-		SemiMajorAxis   0.045
+		SemiMajorAxis   0.04
 		Eccentricity    0
 		MeanAnomaly     357
 	}
@@ -470,8 +470,8 @@ AltSurface "limit of knowledge" "HD 187123/b"
 "b" "OGLE-TR-10"
 
 # Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed at 87-90 degrees, so mass can be determined.
-# Radius is estimated at 1.52 jupiter.
+# inclination is fixed at 89.2 degrees, so mass can be determined.
+# Radius is estimated at 1.24 jupiter.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -479,17 +479,16 @@ AltSurface "limit of knowledge" "HD 187123/b"
 	Texture "gasgiant.*"
 	NightTexture "gasgiantnight.*"
 
-	Mass       200     # M.sin(i) = 0.63 jupiters
-	Radius     106400
-	Oblateness 0.01
+	Mass       180     # M.sin(i) = 0.57 jupiters
+	Radius     86800
 
 	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-10.html"
 
 	EllipticalOrbit {
 		Period          0.0085
-		SemiMajorAxis   0.04
-		Inclination     90.7
-		AscendingNode   266.6
+		SemiMajorAxis   0.04162
+		Inclination     90.8
+		AscendingNode   267.3
 		ArgOfPericenter 84
 		MeanAnomaly     234
 	}
@@ -506,7 +505,7 @@ AltSurface "limit of knowledge" "OGLE-TR-10/b"
 }
 
 
-"b" "HD 120136"   # Tau Boo
+"b" "HD 120136"   # Tau Boo A
 {
 	Texture "gasgiant.*"
 	NightTexture "gasgiantnight.*"
@@ -772,7 +771,7 @@ AltSurface "limit of knowledge" "HD 217014/b"
 }
 
 
-"b" "HD 9826"   # Ups And
+"b" "HD 9826"   # Ups And A
 {
 	Texture "gasgiant.*"
 	NightTexture "gasgiantnight.*"
@@ -799,7 +798,7 @@ AltSurface "limit of knowledge" "HD 9826/b"
 }
 
 
-"c" "HD 9826"   # Ups And
+"c" "HD 9826"   # Ups And A
 {
 	Texture "jupiterlike.*"
 
@@ -826,7 +825,7 @@ AltSurface "limit of knowledge" "HD 9826/c"
 }
 
 
-"d" "HD 9826"   # Ups And
+"d" "HD 9826"   # Ups And A
 {
 	Texture "jupiterlike.*"
 
@@ -1097,7 +1096,7 @@ AltSurface "limit of knowledge" "HD 130322/b"
 {
 	Texture "gasgiant.*"
 
-	Mass       130     # M.sin(i) = 0.41 jupiters
+	Mass       130     # M.sin(i) = 0.4 jupiters
 	Radius     98000
 
 	InfoURL "http://www.obspm.fr/encycl/HD108147.html"
@@ -1175,7 +1174,7 @@ AltSurface "limit of knowledge" "HD 38529/c"
 }
 
 
-"b" "HD 13445"   # Gliese 86
+"b" "HD 13445"   # Gliese 86 A
 {
 	Texture "jupiterlike.*"
 
@@ -2525,7 +2524,7 @@ AltSurface "limit of knowledge" "HD 92788/b"
 {
 	Texture "jupiterlike.*"
 
-	Mass       1780     # M.sin(i) = 5.6 jupiters
+	Mass       1810     # M.sin(i) = 5.7 jupiters
 	Radius     70000
 	Oblateness 0.01
 
