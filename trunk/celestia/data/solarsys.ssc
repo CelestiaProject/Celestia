@@ -10,6 +10,7 @@ Planets [
 	BumpHeight 2.5
 	Radius 2440
 
+	CustomOrbit "mercury"
 	EllipticalOrbit {
 	Period            0.2408
 	SemiMajorAxis     0.3871
@@ -40,6 +41,7 @@ Planets [
 		Sky [ 0.8 0.8 0.5 ]
 	}
 
+	CustomOrbit "venus"
 	EllipticalOrbit {
 		Period            0.6152
 		SemiMajorAxis     0.7233
@@ -189,6 +191,7 @@ Planets [
 		Sky [ 0.83 0.75 0.65 ]
 	}
 
+	CustomOrbit "mars"
 	EllipticalOrbit
 	{
 	Period            1.8809
@@ -254,6 +257,7 @@ Planets [
 	Radius 71398
 	Oblateness 0.064
 
+	CustomOrbit "jupiter"
 	EllipticalOrbit
 	{
 	Period           11.8622
@@ -382,6 +386,7 @@ Planets [
 	Radius 60330
 	Oblateness 0.1076
 
+	CustomOrbit "saturn"
 	EllipticalOrbit
 	{
 	Period           29.4577
@@ -582,6 +587,7 @@ Planets [
 	Radius 26200
 	Oblateness 0.024
 
+	CustomOrbit "uranus"
 	EllipticalOrbit
 	{
 	Period           84.0139
@@ -680,6 +686,7 @@ Planets [
 	Radius 25225
 	Oblateness 0.027
 
+	CustomOrbit "neptune"
 	EllipticalOrbit
 	{
 	Period           164.793
@@ -761,6 +768,7 @@ Planets [
 	BumpHeight 2.5
 	Radius 1137
 
+	CustomOrbit "pluto"
 	EllipticalOrbit
 	{
 	Period            248.54
