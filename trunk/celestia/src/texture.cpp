@@ -48,6 +48,15 @@ typedef struct
     unsigned int colorsImportant;
 } BMPImageHeader;
 
+static bool initialized = false;
+static bool compressionSupported = false;
+
+
+static void initTextureLoader()
+{
+    compressionSupported = ExtensionSupported("GL_ARB_texture_compression");
+    initialized = true;
+}
 
 
 CTexture::CTexture(int w, int h, int fmt) :
@@ -57,6 +66,10 @@ CTexture::CTexture(int w, int h, int fmt) :
 {
     cmap = NULL;
     cmapEntries = 0;
+
+    // Yuck . . .
+    if (!initialized)
+        initTextureLoader();
 
     switch (format)
     {
@@ -97,8 +110,11 @@ CTexture::~CTexture()
 }
 
 
-void CTexture::bindName(bool wrap)
+void CTexture::bindName(uint32 flags)
 {
+    bool wrap = ((flags & WrapTexture) != 0);
+    bool compress = ((flags & CompressTexture) != 0) && compressionSupported;
+
     if (pixels == NULL)
         return;
 
@@ -110,8 +126,37 @@ void CTexture::bindName(bool wrap)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap ? GL_REPEAT : GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    int internalFormat = components;
+    if (compress)
+    {
+        switch (format)
+        {
+        case GL_RGB:
+        case GL_BGR_EXT:
+            internalFormat = GL_COMPRESSED_RGB_ARB;
+            break;
+        case GL_RGBA:
+            internalFormat = GL_COMPRESSED_RGBA_ARB;
+            break;
+        case GL_ALPHA:
+            internalFormat = GL_COMPRESSED_ALPHA_ARB;
+            break;
+        case GL_LUMINANCE:
+            internalFormat = GL_COMPRESSED_LUMINANCE_ARB;
+            break;
+        case GL_LUMINANCE_ALPHA:
+            internalFormat = GL_COMPRESSED_LUMINANCE_ALPHA_ARB;
+            break;
+        case GL_INTENSITY:
+            internalFormat = GL_COMPRESSED_INTENSITY_ARB;
+            break;
+        }
+	glHint((GLenum) GL_TEXTURE_COMPRESSION_HINT_ARB, GL_NICEST);
+    }
+
     gluBuild2DMipmaps(GL_TEXTURE_2D,
-                      components,
+                      internalFormat,
                       width, height,
                       format,
                       GL_UNSIGNED_BYTE,

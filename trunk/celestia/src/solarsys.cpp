@@ -174,12 +174,16 @@ static Body* CreatePlanet(PlanetarySystem* system,
     bool applyBumpMap = planetData->getString("BumpMap", surface.bumpTexture);
     bool blendTexture = false;
     planetData->getBoolean("BlendTexture", blendTexture);
+    bool compressTexture = false;
+    planetData->getBoolean("CompressTexture", compressTexture);
     if (blendTexture)
         surface.appearanceFlags |= Surface::BlendTexture;
     if (applyBaseTexture)
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
     if (applyBumpMap)
         surface.appearanceFlags |= Surface::ApplyBumpMap;
+    if (compressTexture)
+        surface.appearanceFlags |= Surface::CompressBaseTexture;
     body->setSurface(surface);
     
     string mesh("");
