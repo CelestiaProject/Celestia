@@ -668,7 +668,7 @@
 
 "Ariel" "Sol/Uranus"
 {
-	Texture "asteroid.jpg"
+	Texture "ariel.jpg"
 	Radius   576
 
 	EllipticalOrbit
@@ -683,7 +683,7 @@
 
 "Umbriel" "Sol/Uranus"
 {
-	Texture "asteroid.jpg"
+	Texture "umbriel.jpg"
 	Radius   585
 
 	EllipticalOrbit
@@ -698,7 +698,7 @@
 
 "Titania" "Sol/Uranus"
 {
-	Texture "asteroid.jpg"
+	Texture "titania.jpg"
 	Radius   789
 
 	EllipticalOrbit
@@ -713,7 +713,7 @@
 
 "Oberon" "Sol/Uranus"
 {
-	Texture "asteroid.jpg"
+	Texture "oberon.jpg"
 	Radius   761
 
 	EllipticalOrbit
