@@ -86,6 +86,8 @@ F  : Follow selected object
 ESC: Cancel motion
 
 Free movement:
+HOME : Move closer to object
+END  : Move farther from object
 F1 : Stop 
 F2 : Set velocity to 1 km/s
 F3 : Set velocity to 1,000 km/s
@@ -108,6 +110,7 @@ N  : Toggle planet and moon labels
 O  : Toggle planet orbits
 V  : Toggle HUD Text
 W  : Toggle wireframe mode
+/  : Toggle constellation diagrams
 P  : Toggle per-pixel lighting (if supported)
 [  : Decrease limiting magnitude (fewer stars visible)
 ]  : Increase limiting magnitude (more stars visible)
