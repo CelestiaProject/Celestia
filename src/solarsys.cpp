@@ -52,6 +52,33 @@ Planet SolSystem[] =
 };
 
 
+static Surface* CreateSurface(Hash* surfaceData)
+{
+    Surface* surface = new Surface();
+
+    surface->color = Color(1.0f, 1.0f, 1.0f);
+    surfaceData->getColor("Color", surface->color);
+    bool applyBaseTexture = surfaceData->getString("Texture", surface->baseTexture);
+    bool applyBumpMap = surfaceData->getString("BumpMap", surface->bumpTexture);
+    surface->bumpHeight = 2.5f;
+    surfaceData->getNumber("BumpHeight", surface->bumpHeight);
+    bool blendTexture = false;
+    surfaceData->getBoolean("BlendTexture", blendTexture);
+    bool compressTexture = false;
+    surfaceData->getBoolean("CompressTexture", compressTexture);
+    if (blendTexture)
+        surface->appearanceFlags |= Surface::BlendTexture;
+    if (applyBaseTexture)
+        surface->appearanceFlags |= Surface::ApplyBaseTexture;
+    if (applyBumpMap)
+        surface->appearanceFlags |= Surface::ApplyBumpMap;
+    if (compressTexture)
+        surface->appearanceFlags |= Surface::CompressBaseTexture;
+
+    return surface;
+}
+
+
 static Body* createSatellite(Planet* p)
 {
     EllipticalOrbit* orbit = new EllipticalOrbit(astro::AUtoKilometers(p->semiMajorAxis),
@@ -167,6 +194,7 @@ static Body* CreatePlanet(PlanetarySystem* system,
     planetData->getNumber("RotationPeriod", rotationPeriod);
     body->setRotationPeriod(rotationPeriod);
 
+#if 0    
     Surface surface;
     surface.color = Color(1.0f, 1.0f, 1.0f);
     planetData->getColor("Color", surface.color);
@@ -185,6 +213,10 @@ static Body* CreatePlanet(PlanetarySystem* system,
     if (compressTexture)
         surface.appearanceFlags |= Surface::CompressBaseTexture;
     body->setSurface(surface);
+#endif
+    Surface* surface = CreateSurface(planetData);
+    body->setSurface(*surface);
+    delete surface;
     
     string mesh("");
     planetData->getString("Mesh", mesh);

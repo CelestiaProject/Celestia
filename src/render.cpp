@@ -874,7 +874,8 @@ void Renderer::renderPlanet(const Body& body,
             surface.bumpTexture != "")
         {
             if (!textureManager->find(surface.bumpTexture, &bumpTex))
-                bumpTex = textureManager->loadBumpMap(surface.bumpTexture);
+                bumpTex = textureManager->loadBumpMap(surface.bumpTexture,
+                                                      surface.bumpHeight);
         }
 
         if (tex == NULL)

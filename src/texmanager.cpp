@@ -43,13 +43,13 @@ CTexture* TextureManager::load(const string& name, bool compress)
 }
 
 
-CTexture* TextureManager::loadBumpMap(const string& name)
+CTexture* TextureManager::loadBumpMap(const string& name, float bumpHeight)
 {
     DPRINTF("Loading bump map: %s\n", name.c_str());
     CTexture* tex = LoadTextureFromFile(baseDir + "\\" + name);
     if (tex != NULL)
     {
-        tex->normalMap(2.5f, true);
+        tex->normalMap(bumpHeight, true);
         tex->bindName(CTexture::WrapTexture);
     }
     addResource(name, static_cast<void*>(tex));
