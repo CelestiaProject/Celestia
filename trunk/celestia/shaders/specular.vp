@@ -67,6 +67,7 @@ MAD   o[COL0], c[20], R2.xxxx, R0;
 
 # Compute and output the secondary color
 LIT   R0, R6;
+MUL   R0.z, R0.z, R2.x;
 MUL   o[COL1], c[34], R0.zzzz;
 # Output the vertex
 MOV   o[HPOS], R1;

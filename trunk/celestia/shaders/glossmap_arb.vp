@@ -62,6 +62,7 @@ MOV   oTex0, iTex0;
 
 # Compute and output the specular color
 LIT   dotProds, dotProds;
+MUL   dotProds.z, dotProds.z, diffuseFactor.x;
 MUL   oColor, specular, dotProds.z;
 
 END

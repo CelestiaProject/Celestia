@@ -74,6 +74,7 @@ MAD   oColor, diffuse, diffuseFactor.x, ambient;
 
 # Compute and output the secondary color
 LIT   dotProds, dotProds;
+MUL   dotProds.z, dotProds.z, diffuseFactor.x;
 MUL   oSpecColor, specular, dotProds.z;
 
 END
