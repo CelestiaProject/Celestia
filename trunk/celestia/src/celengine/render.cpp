@@ -2092,11 +2092,17 @@ static void renderRings(RingSystem& rings,
                         RenderInfo& ri,
                         float planetRadius,
                         unsigned int textureResolution,
-                        bool renderShadow)
+                        bool renderShadow,
+                        bool useVertexPrograms)
 {
     float inner = rings.innerRadius / planetRadius;
     float outer = rings.outerRadius / planetRadius;
     int nSections = 100;
+
+#if 0
+    if (useVertexPrograms)
+        renderShadow = false;
+#endif
 
     // Ring Illumination:
     // Since a ring system is composed of millions of individual
@@ -2115,6 +2121,16 @@ static void renderRings(RingSystem& rings,
         float illumFraction = (1.0f + ri.eyeDir_obj * ri.sunDir_obj) / 2.0f;
         // Just use the illuminated fraction for now . . .
         ringIllumination = illumFraction;
+    }
+
+    if (useVertexPrograms)
+    {
+        vp::enable();
+        vp::use(vp::ringIllum);
+        vp::parameter(16, ri.sunDir_obj);
+        vp::parameter(20, ri.sunColor * rings.color);
+        vp::parameter(32, ri.ambientColor * ri.color);
+        vp::parameter(90, Vec3f(0, 0.5, 1.0));
     }
 
     // If we have multi-texture support, we'll use the second texture unit
@@ -2148,13 +2164,27 @@ static void renderRings(RingSystem& rings,
         sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
         tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
 
-        glEnable(GL_TEXTURE_GEN_S);
-        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-        glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
-        glEnable(GL_TEXTURE_GEN_T);
-        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-        glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
+        if (useVertexPrograms)
+        {
+            vp::parameter(41, sPlane[0], sPlane[1], sPlane[2], sPlane[3]);
+            vp::parameter(42, tPlane[0], tPlane[1], tPlane[2], tPlane[3]);
+        }
+        else
+        {
+            glEnable(GL_TEXTURE_GEN_S);
+            glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+            glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
+            glEnable(GL_TEXTURE_GEN_T);
+            glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+            glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
+        }
 
+        EXTglActiveTextureARB(GL_TEXTURE0_ARB);
+    }
+    else
+    {
+        EXTglActiveTextureARB(GL_TEXTURE1_ARB);
+        glDisable(GL_TEXTURE_2D);
         EXTglActiveTextureARB(GL_TEXTURE0_ARB);
     }
 
@@ -2171,8 +2201,12 @@ static void renderRings(RingSystem& rings,
     // Perform our own lighting for the rings.
     // TODO: Don't forget about light source color (required when we
     // paying attention to star color.)
-    glDisable(GL_LIGHTING);
+    if (useVertexPrograms)
     {
+    }
+    else
+    {
+        glDisable(GL_LIGHTING);
         Vec3f litColor(rings.color.red(), rings.color.green(), rings.color.blue());
         litColor = litColor * ringIllumination +
             Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
@@ -2221,6 +2255,9 @@ static void renderRings(RingSystem& rings,
                      (float) (sunAngle - PI / 2),
                      nSections / 2);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    if (useVertexPrograms)
+        vp::disable();
 }
 
 
@@ -2538,7 +2575,8 @@ void Renderer::renderObject(Point3f pos,
         renderRings(*obj.rings, ri, radius,
                     textureResolution,
                     nSimultaneousTextures > 1 &&
-                    (renderFlags & ShowRingShadows) != 0);
+                    (renderFlags & ShowRingShadows) != 0,
+                    vertexShaderEnabled);
     }
 
     if (obj.atmosphere != NULL)
@@ -2661,7 +2699,8 @@ void Renderer::renderObject(Point3f pos,
         renderRings(*obj.rings, ri, radius,
                     textureResolution,
                     nSimultaneousTextures > 1 &&
-                    (renderFlags & ShowRingShadows) != 0);
+                    (renderFlags & ShowRingShadows) != 0,
+                    vertexShaderEnabled);
     }
 
     glPopMatrix();
@@ -2992,6 +3031,16 @@ static CometTailVertex cometTailVertices[CometTailSlices * MaxCometTailPoints];
 static void ProcessCometTailVertex(const CometTailVertex& v,
                                    const Vec3f& viewDir)
 {
+    float shade = abs(viewDir * v.normal * v.brightness);
+    glColor4f(0.0f, 0.5f, 1.0f, shade);
+    glVertex(v.point);
+}
+
+static void ProcessCometTailVertex(const CometTailVertex& v,
+                                   const Point3f& cameraPos)
+{
+    Vec3f viewDir = v.point - cameraPos;
+    viewDir.normalize();
     float shade = abs(viewDir * v.normal * v.brightness);
     glColor4f(0.0f, 0.5f, 1.0f, shade);
     glVertex(v.point);
