@@ -1880,7 +1880,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starDB.findVisibleStars(starRenderer,
                             (Point3f) observer.getPosition(),
                             observer.getOrientation(),
-                            fov,
+                            degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             faintestVisible);
 
