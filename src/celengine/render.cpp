@@ -1235,14 +1235,28 @@ void Renderer::render(const Observer& observer,
 
             if (renderList[i].body != NULL)
             {
-                renderPlanet(*renderList[i].body,
-                             renderList[i].position,
-                             renderList[i].sun,
-                             renderList[i].distance,
-                             renderList[i].appMag,
-                             now,
-                             observer.getOrientation(),
-                             nearPlaneDistance, farPlaneDistance);
+                if (renderList[i].isCometTail)
+                {
+                    renderPlanet(*renderList[i].body,
+                                 renderList[i].position,
+                                 renderList[i].sun,
+                                 renderList[i].distance,
+                                 renderList[i].appMag,
+                                 now,
+                                 observer.getOrientation(),
+                                 nearPlaneDistance, farPlaneDistance);
+                }
+                else
+                {
+                    renderPlanet(*renderList[i].body,
+                                 renderList[i].position,
+                                 renderList[i].sun,
+                                 renderList[i].distance,
+                                 renderList[i].appMag,
+                                 now,
+                                 observer.getOrientation(),
+                                 nearPlaneDistance, farPlaneDistance);
+                }
             }
             else if (renderList[i].star != NULL)
             {
@@ -1475,7 +1489,7 @@ static void renderBumpMappedMesh(Texture& bumpTexture,
     // isn't as general as transforming the light direction by an
     // orthonormal basis for each mesh vertex, but it works well enough
     // for spheres illuminated by directional light sources.
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    EXTglActiveTextureARB(GL_TEXTURE1_ARB);
 
     // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
     // mode is part of the cube map extension.
@@ -1491,13 +1505,13 @@ static void renderBumpMappedMesh(Texture& bumpTexture,
     glMatrixMode(GL_TEXTURE);
     glRotate(lightOrientation * ~orientation);
     glMatrixMode(GL_MODELVIEW);
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    EXTglActiveTextureARB(GL_TEXTURE0_ARB);
 
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
                       &bumpTexture);
 
     // Reset the second texture unit
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    EXTglActiveTextureARB(GL_TEXTURE1_ARB);
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -1560,7 +1574,7 @@ static void renderSmoothMesh(Texture& baseTexture,
     // isn't as general as transforming the light direction by an
     // orthonormal basis for each mesh vertex, but it works well enough
     // for spheres illuminated by directional light sources.
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    EXTglActiveTextureARB(GL_TEXTURE1_ARB);
 
     // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
     // mode is part of the cube map extension.
@@ -1576,13 +1590,13 @@ static void renderSmoothMesh(Texture& baseTexture,
     glMatrixMode(GL_TEXTURE);
     glRotate(lightOrientation * ~orientation);
     glMatrixMode(GL_MODELVIEW);
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    EXTglActiveTextureARB(GL_TEXTURE0_ARB);
 
     lodSphere->render(Mesh::Normals | Mesh::TexCoords0, frustum, lod,
                       &baseTexture);
 
     // Reset the second texture unit
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    EXTglActiveTextureARB(GL_TEXTURE1_ARB);
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -2045,7 +2059,7 @@ static void renderRings(RingSystem& rings,
     // distance to the sun is very large relative to its diameter.
     if (renderShadow)
     {
-        glActiveTextureARB(GL_TEXTURE1_ARB);
+        EXTglActiveTextureARB(GL_TEXTURE1_ARB);
         glEnable(GL_TEXTURE_2D);
         shadowTex->bind();
 
@@ -2076,7 +2090,7 @@ static void renderRings(RingSystem& rings,
         glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
         glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
 
-        glActiveTextureARB(GL_TEXTURE0_ARB);
+        EXTglActiveTextureARB(GL_TEXTURE0_ARB);
     }
 
     glEnable(GL_BLEND);
@@ -2125,11 +2139,11 @@ static void renderRings(RingSystem& rings,
     // Disable the second texture unit if it was used
     if (renderShadow)
     {
-        glActiveTextureARB(GL_TEXTURE1_ARB);
+        EXTglActiveTextureARB(GL_TEXTURE1_ARB);
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
-        glActiveTextureARB(GL_TEXTURE0_ARB);
+        EXTglActiveTextureARB(GL_TEXTURE0_ARB);
     }
 
     // Render the unshadowed side
@@ -2879,6 +2893,19 @@ void Renderer::renderStar(const Star& star,
 }
 
 
+void Renderer::renderCometTail(const Body& body,
+                               Point3f pos,
+                               Vec3f sunDirection,
+                               float distance,
+                               float appMag,
+                               double now,
+                               Quatf orientation,
+                               float nearPlaneDistance,
+                               float farPlaneDistance)
+{
+}
+
+
 void Renderer::renderPlanetarySystem(const Star& sun,
                                      const PlanetarySystem& solSystem,
                                      const Observer& observer,
@@ -2930,7 +2957,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.appMag = appMag;
             renderList.insert(renderList.end(), rle);
         }
-#if 0
+#if 1
         if (body->getClassification() == Body::Comet)
         {
             float radius = body->getRadius() * 100000.0f;
