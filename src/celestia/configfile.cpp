@@ -11,6 +11,7 @@
 #include <fstream>
 #include <cassert>
 #include <celutil/debug.h>
+#include <celutil/directory.h>
 #include <celengine/celestia.h>
 #include <celengine/parser.h>
 #include "configfile.h"
@@ -30,13 +31,13 @@ static unsigned int getUint(Hash* params,
 }
 
 
-CelestiaConfig* ReadCelestiaConfig(string filename)
+CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
 {
     ifstream configFile(filename.c_str());
     if (!configFile.good())
     {
         DPRINTF(0, "Error opening config file.");
-        return NULL;
+        return config;
     }
 
     Tokenizer tokenizer(&configFile);
@@ -46,41 +47,53 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     {
         DPRINTF(0, "%s:%d 'Configuration' expected.\n", filename.c_str(),
                 tokenizer.getLineNumber());
-        return NULL;
+        return config;
     }
 
     if (tokenizer.getStringValue() != "Configuration")
     {
         DPRINTF(0, "%s:%d 'Configuration' expected.\n", filename.c_str(),
                 tokenizer.getLineNumber());
-        return NULL;
+        return config;
     }
 
     Value* configParamsValue = parser.readValue();
     if (configParamsValue == NULL || configParamsValue->getType() != Value::HashType)
     {
         DPRINTF(0, "%s: Bad configuration file.\n", filename.c_str());
-        return NULL;
+        return config;
     }
 
     Hash* configParams = configParamsValue->getHash();
 
-    CelestiaConfig* config = new CelestiaConfig();
+    if (config == NULL) config = new CelestiaConfig();
 
     config->faintestVisible = 6.0f;
     configParams->getNumber("FaintestVisibleMagnitude", config->faintestVisible);
     configParams->getString("FavoritesFile", config->favoritesFile);
+    config->favoritesFile = WordExp(config->favoritesFile);
     configParams->getString("DestinationFile", config->destinationsFile);
+    config->destinationsFile = WordExp(config->destinationsFile);
     configParams->getString("InitScript", config->initScriptFile);
+    config->initScriptFile = WordExp(config->initScriptFile);
     configParams->getString("DemoScript", config->demoScriptFile);
+    config->demoScriptFile = WordExp(config->demoScriptFile);
     configParams->getString("AsterismsFile", config->asterismsFile);
+    config->asterismsFile = WordExp(config->asterismsFile);
     configParams->getString("BoundariesFile", config->boundariesFile);
+    config->boundariesFile = WordExp(config->boundariesFile);
     configParams->getString("DeepSkyCatalog", config->deepSkyCatalog);
+    config->deepSkyCatalog = WordExp(config->deepSkyCatalog);
     configParams->getString("StarDatabase", config->starDatabaseFile);
+    config->starDatabaseFile = WordExp(config->starDatabaseFile);
     configParams->getString("StarNameDatabase", config->starNamesFile);
+    config->starNamesFile = WordExp(config->starNamesFile);
     configParams->getString("HDCrossIndex", config->HDCrossIndexFile);
+    config->HDCrossIndexFile = WordExp(config->HDCrossIndexFile);
     configParams->getString("SAOCrossIndex", config->SAOCrossIndexFile);
+    config->SAOCrossIndexFile = WordExp(config->SAOCrossIndexFile);
     configParams->getString("GlieseCrossIndex", config->GlieseCrossIndexFile);
+    config->GlieseCrossIndexFile = WordExp(config->GlieseCrossIndexFile);
     configParams->getString("Font", config->mainFont);
     configParams->getString("LabelFont", config->labelFont);
     configParams->getString("TitleFont", config->titleFont);
@@ -101,6 +114,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     config->mouseRotationSensitivity = 1.0f;
     configParams->getNumber("MouseRotationSensitivity", config->mouseRotationSensitivity);
     configParams->getString("ScriptScreenshotDirectory", config->scriptScreenshotDirectory);
+    config->scriptScreenshotDirectory = WordExp(config->scriptScreenshotDirectory);
     config->scriptSystemAccessPolicy = "ask";
     configParams->getString("ScriptSystemAccessPolicy", config->scriptSystemAccessPolicy);
 
@@ -128,7 +142,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
                 if (catalogNameVal->getType() == Value::StringType)
                 {
                     config->solarSystemFiles.insert(config->solarSystemFiles.end(),
-                                                    catalogNameVal->getString());
+                                                    WordExp(catalogNameVal->getString()));
                 }
                 else
                 {
@@ -160,7 +174,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
 
                 if (catalogNameVal->getType() == Value::StringType)
                 {
-                    config->starCatalogFiles.push_back(catalogNameVal->getString());
+                    config->starCatalogFiles.push_back(WordExp(catalogNameVal->getString()));
                 }
                 else
                 {
@@ -186,7 +200,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
                 if (dirNameVal->getType() == Value::StringType)
                 {
                     config->extrasDirs.insert(config->extrasDirs.end(),
-                                              dirNameVal->getString());
+                                              WordExp(dirNameVal->getString()));
                 }
                 else
                 {
@@ -198,7 +212,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
         else if (extrasDirsVal->getType() == Value::StringType)
         {
             config->extrasDirs.insert(config->extrasDirs.end(),
-                                      extrasDirsVal->getString());
+                                      WordExp(extrasDirsVal->getString()));
         }
         else
         {

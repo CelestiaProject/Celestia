@@ -3568,6 +3568,10 @@ bool CelestiaCore::initSimulation()
 #endif
 
     config = ReadCelestiaConfig("celestia.cfg");
+    std::string localConfigFile = WordExp("~/.celestia.cfg");
+    if (localConfigFile != "") {
+        ReadCelestiaConfig(localConfigFile.c_str(), config);
+    }
     if (config == NULL)
     {
         fatalError("Error reading configuration file.");;
