@@ -395,19 +395,18 @@ void Simulation::update(double dt)
         }
     }
 
+    if (observer.getVelocity() != targetVelocity)
+    {
+        double t = clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
+        observer.setVelocity(observer.getVelocity() * (1.0 - t) +
+                             targetVelocity * t);
+    }
+
+    // Update the observer's position
+    transform.translation = transform.translation + observer.getVelocity() * dt;
+
     if (observerMode == Free)
     {
-        if (observer.getVelocity() != targetVelocity)
-        {
-            double t = clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
-            observer.setVelocity(observer.getVelocity() * (1.0 - t) +
-                                 targetVelocity * t);
-        }
-        
-        // Update the observer's position
-        transform.translation = transform.translation +
-            observer.getVelocity() * dt;
-
         // Update the observer's orientation
         Vec3f fAV = observer.getAngularVelocity();
         Vec3d AV(fAV.x, fAV.y, fAV.z);
@@ -1169,7 +1168,16 @@ void Simulation::geosynchronousFollow()
 
 void Simulation::track()
 {
-    trackObject = selection;
+    if (observerMode == Tracking)
+    {
+        trackObject = Selection();
+        observerMode = Free;
+    }
+    else
+    {
+        trackObject = selection;
+        observerMode = Tracking;
+    }
 }
 
 
