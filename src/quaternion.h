@@ -472,7 +472,7 @@ template<class T> bool Quaternion<T>::isPure() const
 
 template<class T> T Quaternion<T>::normalize()
 {
-    T s = abs(*this);
+    T s = (T) sqrt(w * w + x * x + y * y + z * z);
     T invs = (T) 1 / (T) s;
     x *= invs;
     y *= invs;
@@ -540,9 +540,9 @@ template<class T> Matrix4<T> Quaternion<T>::toMatrix4() const
     T yz = y * z * 2;
     T zz = z * z * 2;
 
-    return Matrix4<T>(Vector4<T>(1 - yy - zz, xy + wz, xz - wy, 0),
-                      Vector4<T>(xy - wz, 1 - xx - zz, yz + wx, 0),
-                      Vector4<T>(xz + wy, yz - wx, 1 - xx - yy, 0),
+    return Matrix4<T>(Vector4<T>(1 - yy - zz, xy - wz, xz + wy, 0),
+                      Vector4<T>(xy + wz, 1 - xx - zz, yz - wx, 0),
+                      Vector4<T>(xz - wy, yz + wx, 1 - xx - yy, 0),
                       Vector4<T>(0, 0, 0, 1));
 }
 
@@ -560,9 +560,9 @@ template<class T> Matrix3<T> Quaternion<T>::toMatrix3() const
     T yz = y * z * 2;
     T zz = z * z * 2;
 
-    return Matrix3<T>(Vector3<T>(1 - yy - zz, xy + wz, xz - wy),
-                      Vector3<T>(xy - wz, 1 - xx - zz, yz + wx),
-                      Vector3<T>(xz + wy, yz - wx, 1 - xx - yy));
+    return Matrix3<T>(Vector3<T>(1 - yy - zz, xy - wz, xz + wy),
+                      Vector3<T>(xy + wz, 1 - xx - zz, yz - wx),
+                      Vector3<T>(xz - wy, yz + wx, 1 - xx - yy));
 }
 
 
