@@ -149,3 +149,9 @@ Code revisions:
 * New script commands: renderflags, labels, orbit
 * Implemented a scripted demo mode
 * Placed ISS in Earth orbit
+
+
+1.08
+* Initial UNIX port
+* Created GLUT based front-end
+* Created abstract Timer class with Windows and UNIX implementations

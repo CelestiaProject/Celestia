@@ -7,6 +7,7 @@ USER INTERFACE
   * Picking a distant planet is likely to select one of its satellites
   * Picking stars doesn't work at close range
   * Make picking more accurate for non-spherical bodies
+  * Make galaxies pickable
 * Tracking mode for camera
 * Add more intuitive free flight controls
 * Views of planet and satellite orbits
@@ -74,12 +75,12 @@ CODE
 * Make parser more robust (and fix that EOF problem)
 * Change random printfs to DPRINTFs and Logs
 * Finish assert-ing the code
+* Move common code from glutmain.cpp and winmain.cpp to a single module
 
 PORTING
 * Make 3DS loading code byte-order and FP format independent
 * Make stars.dat loading code byte-order and FP format independent
-* Write a version which uses GLUT instead of Win32 API calls
-* Linux port
+* Bring UNIX UI up to level of Windows UI
 * MacOS port
 
 MISC
