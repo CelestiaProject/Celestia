@@ -710,6 +710,7 @@ static void displayStarInfo(Overlay& overlay,
 {
     StarNameDatabase* starNameDB = starDB.getNameDatabase();
 
+#if 0
     // Print the star name and designations
     StarNameDatabase::iterator iter = starNameDB->find(star.getCatalogNumber());
     if (iter != starNameDB->end())
@@ -723,10 +724,23 @@ static void displayStarInfo(Overlay& overlay,
         if (constellation != NULL)
             overlay << starName->getDesignation() << ' ' <<  constellation->getGenitive() << "  /  ";
     }
-    if ((star.getCatalogNumber() & 0xf0000000) == 0)
-        overlay << "HD " << star.getCatalogNumber() << '\n';
-    else
-        overlay << "HIP " << (star.getCatalogNumber() & 0x0fffffff) << '\n';
+#endif
+    {
+        StarNameDatabase::NumberIndex::const_iterator iter =
+            starDB.getStarNames(star.getCatalogNumber());
+        while (iter != starDB.finalName() &&
+               iter->first == star.getCatalogNumber())
+        {
+            overlay << iter->second << " / ";
+            iter++;
+        }
+    }
+
+    if (star.getCatalogNumber(Star::HDCatalog) != Star::InvalidCatalogNumber)
+        overlay << "HD " << star.getCatalogNumber(Star::HDCatalog) << "  /  ";
+    if (star.getCatalogNumber(Star::HIPCatalog) != Star::InvalidCatalogNumber)
+        overlay << "HIP " << (star.getCatalogNumber(Star::HIPCatalog));
+    overlay << '\n';
 
     overlay << "Distance: ";
     displayDistance(overlay, distance);
@@ -1010,7 +1024,7 @@ bool CelestiaCore::initSimulation()
     if (favorites == NULL)
         favorites = new FavoritesList();
 
-    if (!readStars(config->starDatabaseFile, config->starNamesFile))
+    if (!readStars(*config))
     {
         fatalError("Cannot read star database.");
         return false;
@@ -1165,19 +1179,19 @@ bool CelestiaCore::initRenderer()
 }
 
 
-bool CelestiaCore::readStars(string starsFileName, string namesFileName)
+bool CelestiaCore::readStars(const CelestiaConfig& cfg)
 {
-    ifstream starFile(starsFileName.c_str(), ios::in | ios::binary);
+    ifstream starFile(cfg.starDatabaseFile.c_str(), ios::in | ios::binary);
     if (!starFile.good())
     {
-	cerr << "Error opening " << starsFileName << '\n';
+	cerr << "Error opening " << cfg.starDatabaseFile << '\n';
         return false;
     }
 
-    ifstream starNamesFile(namesFileName.c_str(), ios::in);
+    ifstream starNamesFile(cfg.starNamesFile.c_str(), ios::in);
     if (!starNamesFile.good())
     {
-	cerr << "Error opening " << namesFileName << '\n';
+	cerr << "Error opening " << cfg.starNamesFile << '\n';
         return false;
     }
 
@@ -1188,7 +1202,7 @@ bool CelestiaCore::readStars(string starsFileName, string namesFileName)
         return false;
     }
 
-    StarNameDatabase* starNameDB = StarDatabase::readNames(starNamesFile);
+    StarNameDatabase* starNameDB = StarNameDatabase::readNames(starNamesFile);
     if (starNameDB == NULL)
     {
         cerr << "Error reading star names file\n";
