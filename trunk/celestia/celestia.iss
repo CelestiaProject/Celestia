@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.3.2
+AppVerName=Celestia 1.4.0pre2
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -58,6 +58,9 @@ Source: "data\asterisms.dat";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\boundaries.dat";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\starnames.dat";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\stars.dat";          DestDir: "{app}/data"; Flags: ignoreversion
+
+Source: "data\extrasolar.stc";     DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\nearstars.stc";      DestDir: "{app}/data"; Flags: ignoreversion
 
 Source: "data\deepsky.dsc";        DestDir: "{app}/data"; Flags: ignoreversion
 
@@ -257,6 +260,12 @@ Source: "shaders\simple_arb.vp";         DestDir: "{app}/shaders"; Flags: ignore
 Source: "shaders\specular_arb.vp";       DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\texphong_arb.vp";       DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\texphong_alpha_arb.vp"; DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\diffuse2_arb.vp";       DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\diffuse_texoff2_arb.vp"; DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\haze2_arb.vp";          DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\night2_arb.vp";         DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\specular2_arb.vp";      DestDir: "{app}/shaders"; Flags: ignoreversion
+
 
 
 ; Shaders (NV pixel)
