@@ -23,6 +23,7 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
+#include <locale>
 #include <celengine/gl.h>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
@@ -2178,6 +2179,7 @@ void CelestiaCore::showText(string s,
     messageDuration = duration;
 }
 
+
 static void displayDistance(Overlay& overlay, double distance)
 {
     if (abs(distance) >= astro::AUtoLightYears(1000.0f))
@@ -2854,7 +2856,7 @@ void CelestiaCore::renderOverlay()
                 botAlpha = topAlpha = (float) (5.0 - currentTime);
             }
 
-            glBindTexture(GL_TEXTURE_2D, logoTexture->getName());
+            logoTexture->bind();
             glBegin(GL_QUADS);
             glColor4f(0.8f, 0.8f, 1.0f, botAlpha);
             glTexCoord2f(0, 1);
@@ -3245,8 +3247,6 @@ bool CelestiaCore::initRenderer()
     if (config->logoTextureFile != "")
     {
         logoTexture = LoadTextureFromFile(string("textures") + "/" + config->logoTextureFile);
-        if (logoTexture != NULL)
-            logoTexture->bindName();
     }
     
     return true;
