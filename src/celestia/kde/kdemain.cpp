@@ -38,8 +38,9 @@ int main(int argc, char *argv[])
       VERSION, description, KAboutData::License_GPL,
       "(c) 2002, Chris Laurel", 0, "http://www.shatters.net/celestia/", "chris@teyssier.org");
     aboutData.addAuthor("Chris Laurel",0, "claurel@shatters.net");
-    aboutData.addAuthor("Deon Ramsey",0, "dramsey@sourceforge.net");
     aboutData.addAuthor("Clint Weisbrod",0, "cweisbrod@adelphia.net");
+    aboutData.addAuthor("Fridger Schrempp",0, "t00fri@mail.desy.de");
+    aboutData.addAuthor("Bob Ippolito",0, "bob@redivi.com");
     aboutData.addAuthor("Christophe Teyssier", "KDE interface", "chris@teyssier.org");
 
     KCmdLineArgs::init( argc, argv, &aboutData );
