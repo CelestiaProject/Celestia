@@ -60,6 +60,7 @@ class Overlay : public std::ostream
     int windowHeight;
     TextureFont* font;
     bool useTexture;
+    bool fontChanged;
     int textBlock;
 
     OverlayStreamBuf sbuf;
