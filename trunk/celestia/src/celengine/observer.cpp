@@ -272,7 +272,7 @@ void Observer::update(double dt, double timeScale)
                         p = journey.to - v * astro::kilometersToMicroLightYears(x);
                 }
             }
-            else
+            else if (journey.traj == GreatCircle)
             {
                 Selection centerObj = frame.refObject;
                 if (centerObj.body() != NULL)
@@ -311,6 +311,36 @@ void Observer::update(double dt, double timeScale)
                     p = frame.fromUniversal(RigidTransform(p, Quatf(1.0f)), simTime).translation;
                 }
             }
+            else if (journey.traj == CircularOrbit)
+            {
+                Quatf r = journey.rotation1;
+                Quatd qd = ~Quatd::slerp(Quatd(1.0),
+                                         Quatd(r.w, r.x, r.y, r.z),
+                                         dt / journey.duration);
+                
+                Selection center = journey.centerObject;
+
+                // Get the focus position (center of rotation) in frame
+                // coordinates; in order to make this function work in all
+                // frames of reference, it's important to work in frame
+                // coordinates.
+                UniversalCoord focusPosition = center.getPosition(getTime());
+                focusPosition = frame.fromUniversal(RigidTransform(focusPosition), getTime()).translation;
+
+                // v = the vector from the observer's position to the focus
+                Vec3d v = situation.translation - focusPosition;
+
+                // Roundoff errors will accumulate and cause the distance
+                // between viewer and focus to drift unless we take steps
+                // to keep the length of v constant.
+                double distance = v.length();
+                v = v * qd.toMatrix3();
+                v.normalize();
+                v *= distance;
+
+                situation.rotation = situation.rotation * qd;
+                situation.translation = focusPosition + v;
+            }
         }
 
         // Spherically interpolate the orientation over the first half
@@ -345,12 +375,14 @@ void Observer::update(double dt, double timeScale)
             orientation = journey.finalOrientation;
         }
 
-        situation = RigidTransform(p, orientation);
+        if (journey.traj != CircularOrbit)
+            situation = RigidTransform(p, orientation);
 
         // If the journey's complete, reset to manual control
         if (t == 1.0f)
         {
-            situation = RigidTransform(journey.to, journey.finalOrientation);
+            if (journey.traj != CircularOrbit)
+                situation = RigidTransform(journey.to, journey.finalOrientation);
             observerMode = Free;
             setVelocity(Vec3d(0, 0, 0));
 //            targetVelocity = Vec3d(0, 0, 0);
@@ -581,6 +613,7 @@ void Observer::computeCenterParameters(const Selection& destination,
 
     jparams.duration = centerTime;
     jparams.startTime = realTime;
+    jparams.traj = Linear;
 
     // Don't move through space, just rotate the camera
     jparams.from = getPosition();
@@ -618,10 +651,69 @@ void Observer::computeCenterParameters(const Selection& destination,
 }
 
 
+void Observer::computeCenterCOParameters(const Selection& destination,
+                                         JourneyParams& jparams,
+                                         double centerTime)
+{
+    jparams.duration = centerTime;
+    jparams.startTime = realTime;
+    jparams.traj = CircularOrbit;
+
+    jparams.centerObject = frame.refObject;
+    jparams.expFactor = 0.5;
+
+    Vec3d v = destination.getPosition(getTime()) - getPosition();
+    Vec3f wf = Vec3f(0.0, 0.0, -1.0) * getOrientation().toMatrix3();
+    Vec3d w(wf.x, wf.y, wf.z);
+    v.normalize();
+
+    Vec3d n = w ^ v;
+    double nl = n.length();
+    double angle = 0.0;
+    if (nl > 0.0)
+    {
+        double cosAngle = w * v;
+        if (cosAngle < 1.0 - 1e-8)
+        {
+            if (cosAngle > 1e-8 - 1.0)
+                angle = acos(cosAngle);
+            else
+                angle = PI;
+        }
+        else
+        {
+            angle = 0.0;
+        }
+
+        n = n / nl;
+    }
+    else
+    {
+        n = Vec3d(1.0, 0.0, 0.0);
+    }
+
+    jparams.rotation1.setAxisAngle(Vec3f((float) n.x, (float) n.y, (float)n.z),
+                                   (float) angle);
+}
+
+
 Observer::ObserverMode Observer::getMode() const
 {
     return observerMode;
 }
+
+
+// Center the selection by moving on a circular orbit arround
+// the primary body (refObject).
+void Observer::centerSelectionCO(const Selection& selection, double centerTime)
+{
+    if (!selection.empty() && !frame.refObject.empty())
+    {
+        computeCenterCOParameters(selection, journey, centerTime);
+        observerMode = Travelling;
+    }
+}
+
 
 void Observer::setMode(Observer::ObserverMode mode)
 {
