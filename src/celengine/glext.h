@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-#ifndef _WIN32
+#ifndef APIENTRY
 #define APIENTRY
 #endif
 
@@ -915,6 +915,14 @@ namespace glx
 #define GL_PROGRAM_ERROR_STRING_NV        0x8874
 #endif /* GL_NV_fragment_program */
 
+#ifndef GL_ARB_fragment_shader
+#define GL_ARB_fragment_shader 1
+#endif
+
+#ifndef GL_ARB_shading_language_100
+#define GL_ARB_shading_language_100 1
+#endif
+
 namespace glx
 {
     typedef void (APIENTRY * PFNGLPROGRAMNAMEDPARAMETER4FNVPROC)    (GLuint id, GLsizei len, const GLubyte *name, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
@@ -945,6 +953,146 @@ namespace glx
     extern PFNGLPROGRAMLOCALPARAMETER4DVNVPROC glProgramLocalParameter4dvNV;
     extern PFNGLGETPROGRAMLOCALPARAMETERFVNVPROC glGetProgramLocalParameterfvNV;
     extern PFNGLGETPROGRAMLOCALPARAMETERDVNVPROC glGetProgramLocalParameterdvNV;
+};
+
+
+#ifndef GL_ARB_fragment_program
+#define GL_ARB_fragment_program 1
+// All ARB_fragment_program entry points are shared with ARB_vertex_program.
+
+#define GL_FRAGMENT_PROGRAM_ARB           0x8804
+#define GL_PROGRAM_ALU_INSTRUCTIONS_ARB   0x8805
+#define GL_PROGRAM_TEX_INSTRUCTIONS_ARB   0x8806
+#define GL_PROGRAM_TEX_INDIRECTIONS_ARB   0x8807
+#define GL_PROGRAM_NATIVE_ALU_INSTRUCTIONS_ARB 0x8808
+#define GL_PROGRAM_NATIVE_TEX_INSTRUCTIONS_ARB 0x8809
+#define GL_PROGRAM_NATIVE_TEX_INDIRECTIONS_ARB 0x880A
+#define GL_MAX_PROGRAM_ALU_INSTRUCTIONS_ARB 0x880B
+#define GL_MAX_PROGRAM_TEX_INSTRUCTIONS_ARB 0x880C
+#define GL_MAX_PROGRAM_TEX_INDIRECTIONS_ARB 0x880D
+#define GL_MAX_PROGRAM_NATIVE_ALU_INSTRUCTIONS_ARB 0x880E
+#define GL_MAX_PROGRAM_NATIVE_TEX_INSTRUCTIONS_ARB 0x880F
+#define GL_MAX_PROGRAM_NATIVE_TEX_INDIRECTIONS_ARB 0x8810
+#define GL_MAX_TEXTURE_COORDS_ARB         0x8871
+#define GL_MAX_TEXTURE_IMAGE_UNITS_ARB    0x8872
+#endif
+
+
+#ifndef GL_ARB_shader_objects
+#define GL_ARB_shader_objects 1
+#define GL_PROGRAM_OBJECT_ARB             0x8B40
+#define GL_SHADER_OBJECT_ARB              0x8B48
+#define GL_OBJECT_TYPE_ARB                0x8B4E
+#define GL_OBJECT_SUBTYPE_ARB             0x8B4F
+#define GL_FLOAT_VEC2_ARB                 0x8B50
+#define GL_FLOAT_VEC3_ARB                 0x8B51
+#define GL_FLOAT_VEC4_ARB                 0x8B52
+#define GL_INT_VEC2_ARB                   0x8B53
+#define GL_INT_VEC3_ARB                   0x8B54
+#define GL_INT_VEC4_ARB                   0x8B55
+#define GL_BOOL_ARB                       0x8B56
+#define GL_BOOL_VEC2_ARB                  0x8B57
+#define GL_BOOL_VEC3_ARB                  0x8B58
+#define GL_BOOL_VEC4_ARB                  0x8B59
+#define GL_FLOAT_MAT2_ARB                 0x8B5A
+#define GL_FLOAT_MAT3_ARB                 0x8B5B
+#define GL_FLOAT_MAT4_ARB                 0x8B5C
+#define GL_OBJECT_DELETE_STATUS_ARB       0x8B80
+#define GL_OBJECT_COMPILE_STATUS_ARB      0x8B81
+#define GL_OBJECT_LINK_STATUS_ARB         0x8B82
+#define GL_OBJECT_VALIDATE_STATUS_ARB     0x8B83
+#define GL_OBJECT_INFO_LOG_LENGTH_ARB     0x8B84
+#define GL_OBJECT_ATTACHED_OBJECTS_ARB    0x8B85
+#define GL_OBJECT_ACTIVE_UNIFORMS_ARB     0x8B86
+#define GL_OBJECT_ACTIVE_UNIFORM_MAX_LENGTH_ARB 0x8B87
+#define GL_OBJECT_SHADER_SOURCE_LENGTH_ARB 0x8B88
+
+typedef char GLcharARB;		       // native character
+typedef unsigned int GLhandleARB;      // shader object handle
+#endif
+
+
+namespace glx
+{
+    typedef void (APIENTRY* PFNGLDELETEOBJECTARBPROC) (GLhandleARB obj);
+    typedef GLhandleARB (APIENTRY* PFNGLGETHANDLEARBPROC) (GLenum pname);
+    typedef void (APIENTRY* PFNGLDETACHOBJECTARBPROC) (GLhandleARB containerObj, GLhandleARB attachedObj);
+    typedef GLhandleARB (APIENTRY* PFNGLCREATESHADEROBJECTARBPROC) (GLenum shaderType);
+    typedef void (APIENTRY* PFNGLSHADERSOURCEARBPROC) (GLhandleARB shaderObj, GLsizei count, const GLcharARB* *string, const GLint *length);
+    typedef void (APIENTRY* PFNGLCOMPILESHADERARBPROC) (GLhandleARB shaderObj);
+    typedef GLhandleARB (APIENTRY* PFNGLCREATEPROGRAMOBJECTARBPROC) (void);
+    typedef void (APIENTRY* PFNGLATTACHOBJECTARBPROC) (GLhandleARB containerObj, GLhandleARB obj);
+    typedef void (APIENTRY* PFNGLLINKPROGRAMARBPROC) (GLhandleARB programObj);
+    typedef void (APIENTRY* PFNGLUSEPROGRAMOBJECTARBPROC) (GLhandleARB programObj);
+    typedef void (APIENTRY* PFNGLVALIDATEPROGRAMARBPROC) (GLhandleARB programObj);
+    typedef void (APIENTRY* PFNGLUNIFORM1FARBPROC) (GLint location, GLfloat v0);
+    typedef void (APIENTRY* PFNGLUNIFORM2FARBPROC) (GLint location, GLfloat v0, GLfloat v1);
+    typedef void (APIENTRY* PFNGLUNIFORM3FARBPROC) (GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
+    typedef void (APIENTRY* PFNGLUNIFORM4FARBPROC) (GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+    typedef void (APIENTRY* PFNGLUNIFORM1IARBPROC) (GLint location, GLint v0);
+    typedef void (APIENTRY* PFNGLUNIFORM2IARBPROC) (GLint location, GLint v0, GLint v1);
+    typedef void (APIENTRY* PFNGLUNIFORM3IARBPROC) (GLint location, GLint v0, GLint v1, GLint v2);
+    typedef void (APIENTRY* PFNGLUNIFORM4IARBPROC) (GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
+    typedef void (APIENTRY* PFNGLUNIFORM1FVARBPROC) (GLint location, GLsizei count, const GLfloat *value);
+    typedef void (APIENTRY* PFNGLUNIFORM2FVARBPROC) (GLint location, GLsizei count, const GLfloat *value);
+    typedef void (APIENTRY* PFNGLUNIFORM3FVARBPROC) (GLint location, GLsizei count, const GLfloat *value);
+    typedef void (APIENTRY* PFNGLUNIFORM4FVARBPROC) (GLint location, GLsizei count, const GLfloat *value);
+    typedef void (APIENTRY* PFNGLUNIFORM1IVARBPROC) (GLint location, GLsizei count, const GLint *value);
+    typedef void (APIENTRY* PFNGLUNIFORM2IVARBPROC) (GLint location, GLsizei count, const GLint *value);
+    typedef void (APIENTRY* PFNGLUNIFORM3IVARBPROC) (GLint location, GLsizei count, const GLint *value);
+    typedef void (APIENTRY* PFNGLUNIFORM4IVARBPROC) (GLint location, GLsizei count, const GLint *value);
+    typedef void (APIENTRY* PFNGLUNIFORMMATRIX2FVARBPROC) (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+    typedef void (APIENTRY* PFNGLUNIFORMMATRIX3FVARBPROC) (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+    typedef void (APIENTRY* PFNGLUNIFORMMATRIX4FVARBPROC) (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+    typedef void (APIENTRY* PFNGLGETOBJECTPARAMETERFVARBPROC) (GLhandleARB obj, GLenum pname, GLfloat *params);
+    typedef void (APIENTRY* PFNGLGETOBJECTPARAMETERIVARBPROC) (GLhandleARB obj, GLenum pname, GLint *params);
+    typedef void (APIENTRY* PFNGLGETINFOLOGARBPROC) (GLhandleARB obj, GLsizei maxLength, GLsizei *length, GLcharARB *infoLog);
+    typedef void (APIENTRY* PFNGLGETATTACHEDOBJECTSARBPROC) (GLhandleARB containerObj, GLsizei maxCount, GLsizei *count, GLhandleARB *obj);
+    typedef GLint (APIENTRY* PFNGLGETUNIFORMLOCATIONARBPROC) (GLhandleARB programObj, const GLcharARB *name);
+    typedef void (APIENTRY* PFNGLGETACTIVEUNIFORMARBPROC) (GLhandleARB programObj, GLuint index, GLsizei maxLength, GLsizei *length, GLint *size, GLenum *type, GLcharARB *name);
+    typedef void (APIENTRY* PFNGLGETUNIFORMFVARBPROC) (GLhandleARB programObj, GLint location, GLfloat *params);
+    typedef void (APIENTRY* PFNGLGETUNIFORMIVARBPROC) (GLhandleARB programObj, GLint location, GLint *params);
+    typedef void (APIENTRY* PFNGLGETSHADERSOURCEARBPROC) (GLhandleARB obj, GLsizei maxLength, GLsizei *length, GLcharARB *source);
+
+    extern PFNGLDELETEOBJECTARBPROC glDeleteObjectARB;
+    extern PFNGLGETHANDLEARBPROC glGetHandleARB;
+    extern PFNGLDETACHOBJECTARBPROC glDetachObjectARB;
+    extern PFNGLCREATESHADEROBJECTARBPROC glCreateShaderObjectARB;
+    extern PFNGLSHADERSOURCEARBPROC glShaderSourceARB;
+    extern PFNGLCOMPILESHADERARBPROC glCompileShaderARB;
+    extern PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObjectARB;
+    extern PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
+    extern PFNGLLINKPROGRAMARBPROC glLinkProgramARB;
+    extern PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObjectARB;
+    extern PFNGLVALIDATEPROGRAMARBPROC glValidateProgramARB;
+    extern PFNGLUNIFORM1FARBPROC glUniform1fARB;
+    extern PFNGLUNIFORM2FARBPROC glUniform2fARB;
+    extern PFNGLUNIFORM3FARBPROC glUniform3fARB;
+    extern PFNGLUNIFORM4FARBPROC glUniform4fARB;
+    extern PFNGLUNIFORM1IARBPROC glUniform1iARB;
+    extern PFNGLUNIFORM2IARBPROC glUniform2iARB;
+    extern PFNGLUNIFORM3IARBPROC glUniform3iARB;
+    extern PFNGLUNIFORM4IARBPROC glUniform4iARB;
+    extern PFNGLUNIFORM1FVARBPROC glUniform1fvARB;
+    extern PFNGLUNIFORM2FVARBPROC glUniform2fvARB;
+    extern PFNGLUNIFORM3FVARBPROC glUniform3fvARB;
+    extern PFNGLUNIFORM4FVARBPROC glUniform4fvARB;
+    extern PFNGLUNIFORM1IVARBPROC glUniform1ivARB;
+    extern PFNGLUNIFORM2IVARBPROC glUniform2ivARB;
+    extern PFNGLUNIFORM3IVARBPROC glUniform3ivARB;
+    extern PFNGLUNIFORM4IVARBPROC glUniform4ivARB;
+    extern PFNGLUNIFORMMATRIX2FVARBPROC glUniformMatrix2fvARB;
+    extern PFNGLUNIFORMMATRIX3FVARBPROC glUniformMatrix3fvARB;
+    extern PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fvARB;
+    extern PFNGLGETOBJECTPARAMETERFVARBPROC glGetObjectParameterfvARB;
+    extern PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB;
+    extern PFNGLGETINFOLOGARBPROC glGetInfoLogARB;
+    extern PFNGLGETATTACHEDOBJECTSARBPROC glGetAttachedObjectsARB;
+    extern PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB;
+    extern PFNGLGETACTIVEUNIFORMARBPROC glGetActiveUniformARB;
+    extern PFNGLGETUNIFORMFVARBPROC glGetUniformfvARB;
+    extern PFNGLGETUNIFORMIVARBPROC glGetUniformivARB;
+    extern PFNGLGETSHADERSOURCEARBPROC glGetShaderSourceARB;
 };
 
 
