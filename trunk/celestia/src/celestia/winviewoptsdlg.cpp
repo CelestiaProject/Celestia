@@ -102,16 +102,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowPlanets);
             break;
         case IDC_SHOWSTARS:
-            {
-                renderer->setRenderFlags(renderFlags ^ Renderer::ShowStars);
-
-                HWND hAsPoints = GetDlgItem(hDlg, IDC_SHOWSTARSASPOINTS);
-                if (hAsPoints)
-                    EnableWindow(hAsPoints, (BOOL)(renderFlags & Renderer::ShowStars));
-            }
-            break;
-        case IDC_SHOWSTARSASPOINTS:
-            renderer->setRenderFlags(renderFlags ^ Renderer::ShowStarsAsPoints);
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowStars);
             break;
         case IDC_SHOWCONSTELLATIONBORDERS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowBoundaries);
@@ -285,8 +276,6 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowPlanets)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,
         (renderFlags & Renderer::ShowStars)? BST_CHECKED:BST_UNCHECKED, 0);
-    SendDlgItemMessage(hDlg, IDC_SHOWSTARSASPOINTS, BM_SETCHECK,
-        (renderFlags & Renderer::ShowStarsAsPoints)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONBORDERS, BM_SETCHECK,
         (renderFlags & Renderer::ShowBoundaries)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWRINGSHADOWS, BM_SETCHECK,
