@@ -692,10 +692,6 @@ void CelestiaCore::charEntered(char c)
             renderer->setAmbientLightLevel(1.0f);
         break;
 
-    case '*':
-        sim->getObserver().setOrientation(Quatf(1));
-        break;
-
     case '~':
         editMode = !editMode;
         break;
