@@ -6,17 +6,35 @@ noinst_HEADERS = $(wildcard *.h)
 
 INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
 
-libkdegui_a_SOURCES = kdemain.cpp kdeapp.cpp kdeglwidget.cpp kdepreferencesdialog.cpp \
-                 kdeapp.moc.cpp kdeglwidget.moc.cpp kdepreferencesdialog.moc.cpp \
-                 kdeuniquecelestia.cpp  kdeuniquecelestia.moc.cpp kcelbookmarkmenu.cpp \
-                 kcelbookmarkmenu.moc.cpp kcelbookmarkmanager.cpp
-nodist_libkdegui_a_SOURCES = kdeapp.moc.cpp kdeglwidget.moc.cpp kdepreferencesdialog.moc.cpp \
-                 kdeuniquecelestia.moc.cpp kcelbookmarkmenu.moc.cpp
+libkdegui_a_SOURCES = \
+                 celestialbrowserbase.uic.cpp \
+                 celestialbrowserbase.uic.moc.cpp \
+                 celestialbrowser.cpp \
+                 celestialbrowser.moc.cpp \
+                 kdemain.cpp \
+                 kdeapp.cpp \
+                 kdeapp.moc.cpp \
+                 kdeglwidget.cpp \
+                 kdeglwidget.moc.cpp \
+                 kdepreferencesdialog.cpp \
+                 kdepreferencesdialog.moc.cpp \
+                 kdeuniquecelestia.cpp \
+                 kdeuniquecelestia.moc.cpp \
+                 kcelbookmarkmenu.cpp \
+                 kcelbookmarkmenu.moc.cpp \
+                 kcelbookmarkmanager.cpp \
+                 kcelbookmarkmanager.moc.cpp
 
 
+%.uic.h: %.ui
+	$(UIC) $< -o $@
+
+%.uic.cpp: %.uic.h
+	$(UIC) -impl $< $*.ui -o $@
+        
 %.moc.cpp: %.h
 	$(MOC) $< -o $@
-
+                          
 SUBDIRS = data
 
 endif

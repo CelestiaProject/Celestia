@@ -1,0 +1,262 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>CelestialBrowserBase</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>CelestialBrowserBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>557</width>
+            <height>521</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Celestial Browser</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QButtonGroup" row="0" column="0">
+            <property name="name">
+                <cstring>buttonGroup2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
+            </property>
+            <property name="lineWidth">
+                <number>0</number>
+            </property>
+            <property name="title">
+                <string></string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <widget class="KListView" row="0" column="0" rowspan="1" colspan="4">
+                    <column>
+                        <property name="text">
+                            <string>Name</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Dist.</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>App. Mag.</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Abs. Mag.</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Type</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <property name="name">
+                        <cstring>listStars</cstring>
+                    </property>
+                </widget>
+                <spacer row="2" column="2">
+                    <property name="name">
+                        <cstring>spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>140</width>
+                            <height>21</height>
+                        </size>
+                    </property>
+                </spacer>
+                <spacer row="1" column="2">
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>140</width>
+                            <height>31</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QRadioButton" row="2" column="0">
+                    <property name="name">
+                        <cstring>radioPlanets</cstring>
+                    </property>
+                    <property name="text">
+                        <string>With Planets</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="1" column="1">
+                    <property name="name">
+                        <cstring>radioBrightest</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Brightest (Abs.)</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="2" column="1">
+                    <property name="name">
+                        <cstring>radioBrighter</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Brightest (App.)</string>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>radioNearest</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Nearest</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="2" column="3">
+                    <property name="name">
+                        <cstring>buttonOk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Close</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+C</string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="1" column="3">
+                    <property name="name">
+                        <cstring>refresh</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Refresh</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>radioNearest</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CelestialBrowserBase</receiver>
+        <slot>slotNearest(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioBrightest</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CelestialBrowserBase</receiver>
+        <slot>slotBrightest(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioBrighter</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CelestialBrowserBase</receiver>
+        <slot>slotBrighter(bool)</slot>
+    </connection>
+    <connection>
+        <sender>radioPlanets</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CelestialBrowserBase</receiver>
+        <slot>slotWithPlanets(bool)</slot>
+    </connection>
+    <connection>
+        <sender>listStars</sender>
+        <signal>contextMenuRequested(QListViewItem*,const QPoint&amp;,int)</signal>
+        <receiver>CelestialBrowserBase</receiver>
+        <slot>slotRightClickOnStar(QListViewItem*,const QPoint&amp;,int)</slot>
+    </connection>
+    <connection>
+        <sender>refresh</sender>
+        <signal>clicked()</signal>
+        <receiver>CelestialBrowserBase</receiver>
+        <slot>slotRefresh()</slot>
+    </connection>
+    <connection>
+        <sender>buttonOk</sender>
+        <signal>clicked()</signal>
+        <receiver>CelestialBrowserBase</receiver>
+        <slot>close()</slot>
+    </connection>
+</connections>
+<slots>
+    <slot>slotNearest(bool)</slot>
+    <slot>slotBrightest(bool)</slot>
+    <slot>slotWithPlanets(bool)</slot>
+    <slot>slotRefresh()</slot>
+    <slot>slotRightClickOnStar(QListViewItem*,const QPoint&amp;,int)</slot>
+    <slot>slotBrighter(bool)</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klistview.h</includehint>
+</includehints>
+</UI>
