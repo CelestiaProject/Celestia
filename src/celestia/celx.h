@@ -38,9 +38,11 @@ public:
     bool createThread();
     int resume();
     bool isAlive() const;
+    bool timesliceExpired() const;
 
     double getTime() const;    
 private:
+    double timeout;
     lua_State* state;
     lua_State* costate; // coroutine stack
     bool alive;

@@ -53,6 +53,9 @@ static const int _Frame    = 7;
 
 #define CLASS(i) ClassNames[(i)]
 
+// Maximum timeslice a script may run without
+// returning control to celestia
+static const double MaxTimeslice = 5.0;
 
 // select which type of error will be fatal (call lua_error) and
 // which will return a default value instead
@@ -166,6 +169,7 @@ static bool istype(lua_State* l, int index, int id)
 }
 
 LuaState::LuaState() :
+    timeout(MaxTimeslice),
     state(NULL),
     costate(NULL),
     alive(false),
@@ -197,6 +201,32 @@ double LuaState::getTime() const
     return timer->getTime();
 }
 
+static void checkTimeslice(lua_State *l, lua_Debug *ar)
+{
+    lua_pushstring(l, "celestia-luastate");
+    lua_gettable(l, LUA_REGISTRYINDEX);
+    if (!lua_islightuserdata(l, -1))
+    {
+        lua_pushstring(l, "Internal Error: Invalid table entry in checkTimeslice");
+        lua_error(l);
+    }
+    LuaState* luastate = static_cast<LuaState*>(lua_touserdata(l, -1));
+    if (luastate == NULL)
+    {
+        lua_pushstring(l, "Internal Error: Invalid value in checkTimeslice");
+        lua_error(l);
+    }
+
+    if (luastate->timesliceExpired())
+    {
+        const char* errormsg = "Timeout: script hasn't returned control to celestia (forgot to call wait()?)";
+        cerr << errormsg << "\n";
+        lua_pushstring(l, errormsg);
+        lua_error(l);
+    }
+    return;
+}
+
 bool LuaState::createThread()
 {
     // Initialize the coroutine which wraps the script
@@ -211,6 +241,7 @@ bool LuaState::createThread()
         costate = lua_newthread(state);
         if (costate == NULL)
             return false;
+        lua_sethook(costate, checkTimeslice, LUA_MASKCOUNT, 1000);
         lua_pushvalue(state, -2);
         lua_xmove(state, costate, 1);  /* move function from L to NL */
         alive = true;
@@ -227,6 +258,11 @@ string LuaState::getErrorMessage()
             return lua_tostring(state, -1);
     }
     return "";
+}
+
+bool LuaState::timesliceExpired() const
+{
+    return (timeout < getTime());
 }
 
 
@@ -486,6 +522,7 @@ int LuaState::resume()
     if (co != costate)
         return false;
 
+    timeout = getTime() + MaxTimeslice;
     int nArgs = auxresume(state, co, 0);
     if (nArgs < 0)
     {
@@ -2506,7 +2543,7 @@ static int celestia_newframe(lua_State* l)
             lua_pushstring(l, "newframe: two objects required for lock frame");
             lua_error(l);
         }
-        
+
         frame_new(l, FrameOfReference(coordSys, *ref, *target));
     }
     else
@@ -2518,7 +2555,7 @@ static int celestia_newframe(lua_State* l)
             lua_pushstring(l, "newframe: one object argument required for frame");
             lua_error(l);
         }
-        
+
         frame_new(l, FrameOfReference(coordSys, *ref));
     }
 
