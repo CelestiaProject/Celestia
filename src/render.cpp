@@ -522,7 +522,7 @@ bool Renderer::vertexShaderSupported() const
 
 
 
-void Renderer::addLabel(string text, Color color, Point3f pos)
+void Renderer::addLabel(string text, Color color, Point3f pos, float depth)
 {
     double winX, winY, winZ;
     int view[4] = { 0, 0, 0, 0 };
@@ -539,7 +539,7 @@ void Renderer::addLabel(string text, Color color, Point3f pos)
         Label l;
         l.text = text;
         l.color = color;
-        l.position = Point3f((float) winX, (float) winY, (float) winZ);
+        l.position = Point3f((float) winX, (float) winY, depth);
         labels.insert(labels.end(), l);
     }
 }
@@ -876,6 +876,24 @@ void Renderer::render(const Observer& observer,
                              now,
                              observer.getOrientation(),
                              nearPlaneDistance, farPlaneDistance);
+#if 0
+                if ((labelMode & MajorPlanetLabels) != 0 &&
+                    renderList[i].body->getRadius() >= 1000.0f)
+                {
+                    addLabel(renderList[i].body->getName(),
+                             Color(0.0f, 1.0f, 0.0f),
+                             renderList[i].position,
+                             depthBucket * depthRange * -2 + 1);
+                }
+                else if ((labelMode & MinorPlanetLabels) != 0 &&
+                         renderList[i].body->getRadius() < 1000.0f)
+                {
+                    addLabel(renderList[i].body->getName(),
+                             Color(0.0f, 0.6f, 0.0f),
+                             renderList[i].position,
+                             depthBucket * depthRange * -2 + 1);
+                }
+#endif
             }
             else if (renderList[i].star != NULL)
             {
@@ -1352,6 +1370,8 @@ void renderAtmosphere(const Atmosphere& atmosphere,
     if (atmosphere.height == 0.0f)
         return;
 
+    glDepthMask(GL_FALSE);
+
     Vec3f eyeVec = center - Point3f(0.0f, 0.0f, 0.0f);
     double centerDist = eyeVec.length();
     // double surfaceDist = (double) centerDist - (double) radius;
@@ -1742,10 +1762,18 @@ void Renderer::renderPlanet(const Body& body,
             (renderFlags & ShowNightMaps) != 0)
             ri.nightTex = textureManager->find(surface.nightTexture);
 
+        // Compute the orientation of the planet before axial rotation
+        Quatf planetOrientation(1);
+        {
+            Quatd q = body.getEclipticalToEquatorial();
+            planetOrientation = Quatf((float) q.w, (float) q.x, (float) q.y,
+                                      (float) q.z);
+        }
+        
         // Apply the modelview transform for the body
         glPushMatrix();
         glTranslate(pos);
-        glRotatef(radToDeg(body.getObliquity()), 1, 0, 0);
+        glRotate(~planetOrientation);
 
         double planetRotation = 0.0;
         // Watch out for the precision limits of floats when computing planet
@@ -1769,7 +1797,7 @@ void Renderer::renderPlanet(const Body& body,
         glScalef(radius, radius * (1.0f - body.getOblateness()), radius);
 
         // Compute the direction to the eye and light source in object space
-        Mat4f planetMat = (Mat4f::xrotation((float) body.getObliquity()) *
+        Mat4f planetMat = ((~planetOrientation).toMatrix4() *
                            Mat4f::yrotation((float) planetRotation));
         ri.sunDir_eye = sunDirection;
         ri.sunDir_eye.normalize();
@@ -1860,12 +1888,22 @@ void Renderer::renderPlanet(const Body& body,
 
         if (body.getAtmosphere() != NULL)
         {
+            float fade;
+
             // Compute the apparent thickness in pixels of the atmosphere.
             // If it's only one pixel thick, it can look quite unsightly
             // due to aliasing.  To avoid popping, we gradually fade in the
             // atmosphere as it grows from two to three pixels thick.
-            float fade = clamp(body.getAtmosphere()->height / radius *
-                               discSizeInPixels - 2);
+            if (distance - radius > 0.0f)
+            {
+                float thicknessInPixels = body.getAtmosphere()->height /
+                    ((distance - radius) * pixelSize);
+                fade = clamp(thicknessInPixels - 2);
+            }
+            else
+            {
+                fade = 1.0f;
+            }
 
             if (fade > 0)
             {
@@ -2189,7 +2227,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.appMag = appMag;
             renderList.insert(renderList.end(), rle);
         }
-        
+#if 1
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
             if (body->getRadius() >= 1000.0 && (labelMode & MajorPlanetLabels) != 0)
@@ -2197,15 +2235,18 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             {
                 addLabel(body->getName(),
                          Color(0.0f, 1.0f, 0.0f),
-                         Point3f(pos.x, pos.y, pos.z));
+                         Point3f(pos.x, pos.y, pos.z),
+                         1.0f);
             }
             else if (body->getRadius() < 1000.0 && (labelMode & MinorPlanetLabels) != 0)
             {
                 addLabel(body->getName(),
                          Color(0.0f, 0.6f, 0.0f),
-                         Point3f(pos.x, pos.y, pos.z));
+                         Point3f(pos.x, pos.y, pos.z),
+                         1.0f);
             }
         }
+#endif
 
         if (appMag < 5.0f)
         {
@@ -2628,6 +2669,7 @@ void Renderer::renderLabels()
     if (font == NULL)
         return;
 
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     font->bind();
     glEnable(GL_BLEND);
@@ -2648,7 +2690,7 @@ void Renderer::renderLabels()
         glPushMatrix();
         glTranslatef((int) labels[i].position.x + PixelOffset,
                      (int) labels[i].position.y + PixelOffset,
-                     0);
+                     labels[i].position.z);
         font->render(labels[i].text);
         glPopMatrix();
     }
@@ -2657,6 +2699,7 @@ void Renderer::renderLabels()
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
+    glDisable(GL_DEPTH_TEST);
 }
 
 
