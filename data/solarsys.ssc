@@ -678,7 +678,7 @@ Planets [
 
 {
 	Name   "Eros"
-	Mesh   "eros.cms"
+	Mesh   "eros.3ds"
 	Texture "asteroid.jpg"
 	# Color sampled from true color photo taken by NEAR
 	Color   [ 0.52 0.47 0.42 ]
