@@ -21,7 +21,7 @@
 
 using namespace std;
 
-static const int MaxResolutionLevels = 10;
+static const int MaxResolutionLevels = 11;
 
 
 // Virtual textures are composed of tiles that are loaded from the hard drive
@@ -119,7 +119,9 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
 
         // No tile was found at all--not even the base texture was found
         if (tile == NULL)
+        {
             return TextureTile(0);
+        }
 
         // Make the tile resident.
         uint tileU = u >> (lod - tileLOD);
@@ -218,7 +220,6 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
     sprintf(filename, "level%d/%s%d_%d", lod, tilePrefix.c_str(), u, v);
     
     string pathname = tilePath + filename + tileExt;
-    //cout << "Loading virtual texture tile: " << pathname << '\n';
     Image* img = LoadImageFromFile(pathname);
     if (img == NULL)
         return NULL;
