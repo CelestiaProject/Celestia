@@ -72,8 +72,6 @@ class Simulation
 
     Universe* getUniverse() const;
 
-    Observer& getObserver();
-
     void orbit(Quatf q);
     void rotate(Quatf q);
     void changeOrbitDistance(float d);
@@ -84,7 +82,6 @@ class Simulation
     void setSelection(const Selection&);
     void selectStar(uint32);
     void selectPlanet(int);
-    UniversalCoord getSelectionPosition(Selection& sel, double when);
     Selection findObject(std::string s);
     Selection findObjectFromPath(std::string s);
     void gotoSelection(double gotoTime,
@@ -103,6 +100,10 @@ class Simulation
     void geosynchronousFollow();
     void track();
     void cancelMotion();
+
+    Observer& getObserver();
+    void setObserverPosition(const UniversalCoord&);
+    void setObserverOrientation(const Quatf&);
 
     SolarSystem* getNearestSolarSystem() const;
 
