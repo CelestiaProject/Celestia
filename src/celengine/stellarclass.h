@@ -36,14 +36,15 @@ public:
 	Spectral_G     = 4,
 	Spectral_K     = 5,
 	Spectral_M     = 6,
-	Spectral_R     = 7,
+	Spectral_R     = 7, // superceded by class C
 	Spectral_S     = 8,
-	Spectral_N     = 9,
+	Spectral_N     = 9, // superceded by class C
 	Spectral_WC    = 10,
 	Spectral_WN    = 11,
         Spectral_Unknown = 12,
         Spectral_L     = 13,
         Spectral_T     = 14,
+        Spectral_C     = 15,
     };
 
     enum LuminosityClass

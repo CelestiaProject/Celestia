@@ -4044,6 +4044,7 @@ void Renderer::renderPlanet(Body& body,
                 case StellarClass::Spectral_R:
                 case StellarClass::Spectral_S:
                 case StellarClass::Spectral_N:
+                case StellarClass::Spectral_C:
                     sunColor = Color(1.0f, 0.4f, 0.4f);
                     break;
                 default:
@@ -4159,6 +4160,7 @@ void Renderer::renderStar(const Star& star,
         case StellarClass::Spectral_R:
         case StellarClass::Spectral_S:
         case StellarClass::Spectral_N:
+        case StellarClass::Spectral_C:
             tex = starTexM;
             break;
         case StellarClass::Spectral_L:
