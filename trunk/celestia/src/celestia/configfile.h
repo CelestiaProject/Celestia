@@ -39,6 +39,12 @@ struct CelestiaConfig
     float mouseRotationSensitivity;
     float scriptScreenshotCount;
     std::string scriptScreenshotDirectory;
+
+    // Renderer detail options
+    unsigned int shadowTextureSize;
+    unsigned int eclipseTextureSize;
+    unsigned int ringSystemSections;
+    unsigned int orbitPathSamplePoints;
 };
 
 

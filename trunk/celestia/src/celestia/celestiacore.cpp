@@ -3690,8 +3690,14 @@ bool CelestiaCore::initRenderer()
     context->setRenderPath(GLContext::GLPath_NvCombiner_ARBVP);
     cout << "render path: " << context->getRenderPath() << '\n';
 
+    Renderer::DetailOptions detailOptions;
+    detailOptions.ringSystemSections = config->ringSystemSections;
+    detailOptions.orbitPathSamplePoints = config->orbitPathSamplePoints;
+    detailOptions.shadowTextureSize = config->shadowTextureSize;
+    detailOptions.eclipseTextureSize = config->eclipseTextureSize;
+    
     // Prepare the scene for rendering.
-    if (!renderer->init(context, (int) width, (int) height))
+    if (!renderer->init(context, (int) width, (int) height, detailOptions))
     {
         fatalError("Failed to initialize renderer");
         return false;
