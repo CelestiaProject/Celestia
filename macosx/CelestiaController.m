@@ -46,13 +46,17 @@
 - (void)display 
 {
     //NSLog(@"[CelestiaController display]");
-    if (ready)
+    if (!ready) 
+       [self finishInitialization];
+//    else
     {
         if (isDirty) [self resize];
+        [appCore tick];
         [appCore draw];
-    } else {
-        [self finishInitialization];
     }
+//else {
+ //       [self finishInitialization];
+//    }
 }
 
 - (void)idle
@@ -69,19 +73,31 @@
     if ([[self superclass] instancesRespondToSelector:@selector(awakeFromNib)]) {
         [super awakeFromNib];
     }
-    NSLog(@"[CelestiaController awakeFromNib]");
+    //NSLog(@"[CelestiaController awakeFromNib]");
     [self startInitialization];
+
 }
+
+- (void) setupResourceDirectory
+{
+    // Change directory to resource dir so Celestia can find cfg files and textures
+    NSFileManager *fileManager = [NSFileManager defaultManager]; 
+    NSString* path = [ @"~/Library/Application Support/CelestiaResources" stringByExpandingTildeInPath];
+    if ( [ fileManager fileExistsAtPath: path ] )
+        chdir([path cString]);
+    else
+        chdir([[[NSBundle mainBundle] resourcePath] cString]);
+}
+
 - (void)startInitialization
 {
-    NSLog(@"[CelestiaController startInitialization]");
+    //NSLog(@"[CelestiaController startInitialization]");
 
     ready = NO;
     isDirty = YES;
     appCore = nil;
     timer = nil;
-    // Change directory to resource dir so Celestia can find cfg files and textures
-    chdir([[[NSBundle mainBundle] resourcePath] cString]);
+    [ self setupResourceDirectory ];
     appCore = [CelestiaAppCore sharedAppCore];
     if (appCore == nil)
     {
@@ -98,12 +114,17 @@
     timer = [[NSTimer scheduledTimerWithTimeInterval: 0.001 target: self selector:@selector(idle) userInfo:nil repeats:true] retain];
     [[glView window] setAutodisplay:YES];
     [glView setNeedsDisplay:YES];
+    [[glView window] setFrameUsingName: @"Celestia"];
+    [[glView window] setFrameAutosaveName: @"Celestia"];
+    [[glView window] makeFirstResponder: glView ];
+    [glView registerForDraggedTypes:
+            [NSArray arrayWithObject: NSStringPboardType]];
 }
 
 - (void)finishInitialization
 {
     NSInvocation *menuCallback;
-    NSLog(@"finishInitialization");
+    //NSLog(@"finishInitialization");
     // GL should be all set up, now initialize the renderer.
     [appCore initRenderer];
     // Set the simulation starting time to the current system time
@@ -115,10 +136,9 @@
     [[CelestiaFavorites sharedFavorites] setSynchronize:menuCallback];
     [[CelestiaFavorites sharedFavorites] synchronize];
     // DEBUG
-    NSLog(@"%@",[CGLInfo displayDescriptions]);
+    //NSLog(@"%@",[CGLInfo displayDescriptions]);
 
     [renderPanelController finishSetup];
-    
 }
 
 - (void)dealloc
@@ -146,6 +166,17 @@
 {
     NSLog(@"[CelestiaController showGotoObject:%@]",sender);
     [gotoWindow makeKeyAndOrderFront:self];
+}
+
+- (IBAction)back:(id)sender
+{
+    NSLog( [[appCore currentURL] relativeString]  );
+    [appCore back];
+}
+
+- (IBAction)forward:(id)sender
+{
+    [appCore forward];
 }
 
 @end
