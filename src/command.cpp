@@ -223,3 +223,39 @@ void CommandSetOrientation::process(Simulation* sim, Renderer* renderer)
     q.setAxisAngle(axis, angle);
     sim->getObserver().setOrientation(q);
 }
+
+
+//////////////////
+// Set render flags command
+
+CommandRenderFlags::CommandRenderFlags(int _setFlags, int _clearFlags) :
+    setFlags(_setFlags), clearFlags(_clearFlags)
+{
+}
+
+void CommandRenderFlags::process(Simulation* sim, Renderer* renderer)
+{
+    if (renderer != NULL)
+    {
+        renderer->setRenderFlags(renderer->getRenderFlags() | setFlags);
+        renderer->setRenderFlags(renderer->getRenderFlags() & ~clearFlags);
+    }
+}
+
+
+//////////////////
+// Set labels command
+
+CommandLabels::CommandLabels(int _setFlags, int _clearFlags) :
+    setFlags(_setFlags), clearFlags(_clearFlags)
+{
+}
+
+void CommandLabels::process(Simulation* sim, Renderer* renderer)
+{
+    if (renderer != NULL)
+    {
+        renderer->setLabelMode(renderer->getLabelMode() | setFlags);
+        renderer->setLabelMode(renderer->getLabelMode() & ~clearFlags);
+    }
+}

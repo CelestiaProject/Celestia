@@ -10,12 +10,16 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <sstream>
 #include "util.h"
 #include "astro.h"
 #include "cmdparser.h"
 
 using namespace std;
 
+
+static int parseRenderFlags(string);
+static int parseLabelFlags(string);
 
 CommandParser::CommandParser(istream& in)
 {
@@ -198,6 +202,32 @@ Command* CommandParser::parseCommand()
         cmd = new CommandSetPosition(astro::universalPosition(Point3d(offset.x, offset.y, offset.z),
                                                               Point3f((float) base.x, (float) base.y, (float) base.z)));
     }
+    else if (commandName == "renderflags")
+    {
+        int setFlags = 0;
+        int clearFlags = 0;
+        string s;
+
+        if (paramList->getString("set", s))
+            setFlags = parseRenderFlags(s);
+        if (paramList->getString("clear", s))
+            clearFlags = parseRenderFlags(s);
+
+        cmd = new CommandRenderFlags(setFlags, clearFlags);
+    }
+    else if (commandName == "labels")
+    {
+        int setFlags = 0;
+        int clearFlags = 0;
+        string s;
+
+        if (paramList->getString("set", s))
+            setFlags = parseLabelFlags(s);
+        if (paramList->getString("clear", s))
+            clearFlags = parseLabelFlags(s);
+
+        cmd = new CommandLabels(setFlags, clearFlags);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");
@@ -207,4 +237,80 @@ Command* CommandParser::parseCommand()
     delete paramListValue;
 
     return cmd;
+}
+
+
+int parseRenderFlags(string s)
+{
+    istringstream in(s);
+    Tokenizer tokenizer(&in);
+    int flags = 0;
+
+    Tokenizer::TokenType ttype = tokenizer.nextToken();
+    while (ttype != Tokenizer::TokenEnd)
+    {
+        if (ttype == Tokenizer::TokenName)
+        {
+            string name = tokenizer.getNameValue();
+            if (compareIgnoringCase(name, "orbits") == 0)
+                flags |= Renderer::ShowOrbits;
+            else if (compareIgnoringCase(name, "cloudmaps") == 0)
+                flags |= Renderer::ShowCloudMaps;
+            else if (compareIgnoringCase(name, "constellations") == 0)
+                flags |= Renderer::ShowDiagrams;
+            else if (compareIgnoringCase(name, "galaxies") == 0)
+                flags |= Renderer::ShowGalaxies;
+            else if (compareIgnoringCase(name, "planets") == 0)
+                flags |= Renderer::ShowPlanets;
+            else if (compareIgnoringCase(name, "stars") == 0)
+                flags |= Renderer::ShowStars;
+
+            ttype = tokenizer.nextToken();
+            if (ttype == Tokenizer::TokenBar)
+                ttype = tokenizer.nextToken();
+        }
+        else
+        {
+            DPRINTF("Error parsing render flags\n");
+            return 0;
+        }
+    }
+
+    return flags;
+}
+
+
+int parseLabelFlags(string s)
+{
+    istringstream in(s);
+    Tokenizer tokenizer(&in);
+    int flags = 0;
+
+    Tokenizer::TokenType ttype = tokenizer.nextToken();
+    while (ttype != Tokenizer::TokenEnd)
+    {
+        if (ttype == Tokenizer::TokenName)
+        {
+            string name = tokenizer.getNameValue();
+            if (compareIgnoringCase(name, "planets") == 0)
+                flags |= Renderer::MajorPlanetLabels;
+            else if (compareIgnoringCase(name, "minorplanets") == 0)
+                flags |= Renderer::MinorPlanetLabels;
+            else if (compareIgnoringCase(name, "constellations") == 0)
+                flags |= Renderer::ConstellationLabels;
+            else if (compareIgnoringCase(name, "stars") == 0)
+                flags |= Renderer::StarLabels;
+
+            ttype = tokenizer.nextToken();
+            if (ttype == Tokenizer::TokenBar)
+                ttype = tokenizer.nextToken();
+        }
+        else
+        {
+            DPRINTF("Error parsing label flags\n");
+            return 0;
+        }
+    }
+
+    return flags;
 }
