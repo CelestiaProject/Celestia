@@ -72,7 +72,7 @@ class StarOctree
     int countChildren() const;
     int countStars() const;
 
-    friend DynamicStarOctree;
+    friend class DynamicStarOctree;
 
  private:
     Point3f center;
