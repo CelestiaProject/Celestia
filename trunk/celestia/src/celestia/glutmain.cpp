@@ -267,7 +267,7 @@ int main(int argc, char* argv[])
     appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
     localtime(&curtime); // Only doing this to set timezone as a side effect
     appCore->setTimeZoneBias(-timezone);
-    appCore->setTimeZone(tzname[daylight?0:1]);
+    appCore->setTimeZoneName(tzname[daylight?0:1]);
 
     ready = true;
     glutMainLoop();
