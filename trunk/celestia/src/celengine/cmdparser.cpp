@@ -370,7 +370,7 @@ int parseRenderFlags(string s)
         }
         else
         {
-            DPRINTF("Error parsing render flags\n");
+            DPRINTF(0, "Command Parser: error parsing render flags\n");
             return 0;
         }
     }
@@ -412,7 +412,7 @@ int parseLabelFlags(string s)
         }
         else
         {
-            DPRINTF("Error parsing label flags\n");
+            DPRINTF(0, "Command Parser: error parsing label flags\n");
             return 0;
         }
     }

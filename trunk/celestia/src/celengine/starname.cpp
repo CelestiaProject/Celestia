@@ -123,7 +123,7 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
 	    break;
 	}
 
-        in.get(); // skip a space (or colon);
+        // in.get(); // skip a space (or colon);
 
         string name;
         getline(in, name);
@@ -132,15 +132,21 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
             failed = true;
             break;
         }
-        string::size_type pos; /* Iterate through the string for names delimited
-                                  by ':', and insert them into the DB. Note that
-                                  db->add() will skip empty names */
-        while(string::npos!=(pos=name.find(':')))
+
+        // Iterate through the string for names delimited
+        // by ':', and insert them into the star database. Note that
+        // db->add() will skip empty names.
+        string::size_type startPos = 0; 
+        while (startPos != string::npos)
         {
-            db->add(catalogNumber,name.substr(0,pos));
-            name.erase(0,pos+1);
+            startPos++;
+            string::size_type next = name.find(':', startPos);
+            string::size_type length = string::npos;
+            if (next != string::npos)
+                length = next - startPos;
+            db->add(catalogNumber, name.substr(startPos, length));
+            startPos = next;
         }
-        db->add(catalogNumber, name);
     }
 
     if (failed)
@@ -156,7 +162,7 @@ StarNameDatabase* StarNameDatabase::readNames(istream& in)
 
 
 uint32 StarNameDatabase::findName(string name) const
-{   // Moved here from stardb.cpp
+{
     string priName = name;
     string altName;
     // See if the name is a Bayer or Flamsteed designation
@@ -209,7 +215,6 @@ uint32 StarNameDatabase::findName(string name) const
         }
     }
 
-
     uint32 catalogNumber = findCatalogNumber(priName);
     if (catalogNumber != Star::InvalidCatalogNumber)
         return catalogNumber;
@@ -219,7 +224,7 @@ uint32 StarNameDatabase::findName(string name) const
         return catalogNumber;
 
     // If the first search failed, try using the alternate name
-    if ( altName.length() != 0)
+    if (altName.length() != 0)
     {
         catalogNumber = findCatalogNumber(altName);
         if (catalogNumber == Star::InvalidCatalogNumber)

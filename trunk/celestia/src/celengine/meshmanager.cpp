@@ -40,7 +40,7 @@ MeshManager* GetMeshManager()
 
 Mesh* MeshInfo::load(const string& baseDir)
 {
-    DPRINTF("Loading mesh: %s\n", source.c_str());
+    DPRINTF(1, "Loading mesh: %s\n", source.c_str());
     ContentType fileType = DetermineFileType(source);
 
     if (fileType == Content_3DStudio)
@@ -94,7 +94,7 @@ Mesh* LoadCelestiaMesh(const string& filename)
     ifstream meshFile(filename.c_str(), ios::in);
     if (!meshFile.good())
     {
-        DPRINTF("Error opening mesh file: %s\n", filename.c_str());
+        DPRINTF(0, "Error opening mesh file: %s\n", filename.c_str());
         return NULL;
     }
 
@@ -103,13 +103,13 @@ Mesh* LoadCelestiaMesh(const string& filename)
 
     if (tokenizer.nextToken() != Tokenizer::TokenName)
     {
-        DPRINTF("Mesh file %s is invalid.\n", filename.c_str());
+        DPRINTF(0, "Mesh file %s is invalid.\n", filename.c_str());
         return NULL;
     }
 
     if (tokenizer.getStringValue() != "SphereDisplacementMesh")
     {
-        DPRINTF("%s: Unrecognized mesh type %s.\n",
+        DPRINTF(0, "%s: Unrecognized mesh type %s.\n",
                 filename.c_str(),
                 tokenizer.getStringValue().c_str());
         return NULL;
@@ -118,13 +118,13 @@ Mesh* LoadCelestiaMesh(const string& filename)
     Value* meshDefValue = parser.readValue();
     if (meshDefValue == NULL)
     {
-        DPRINTF("%s: Bad mesh file.\n", filename.c_str());
+        DPRINTF(0, "%s: Bad mesh file.\n", filename.c_str());
         return NULL;
     }
 
     if (meshDefValue->getType() != Value::HashType)
     {
-        DPRINTF("%s: Bad mesh file.\n", filename.c_str());
+        DPRINTF(0, "%s: Bad mesh file.\n", filename.c_str());
         delete meshDefValue;
         return NULL;
     }

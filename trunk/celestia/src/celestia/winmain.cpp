@@ -826,10 +826,6 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
 }
 
 
-// This still needs a lot of work . . .
-// TODO: spawn isn't the best way to launch IE--we don't want to start a new
-//       process every time.
-// TODO: the location of IE is assumed to be c:\program files\internet explorer
 // TODO: get rid of fixed urls
 void ShowWWWInfo(const Selection& sel)
 {
@@ -1570,7 +1566,7 @@ static void HandleCaptureImage(HWND hWnd)
         else
         {
             // Invalid file extension specified.
-            DPRINTF("WTF? Unknown file extension specified for screen capture.\n");
+            DPRINTF(0, "WTF? Unknown file extension specified for screen capture.\n");
         }
 
         if (!success)
@@ -1674,7 +1670,7 @@ static void HandleCaptureMovie(HWND hWnd)
         if (nFileType != 1)
         {
             // Invalid file extension specified.
-            DPRINTF("Unknown file extension specified for movie capture.\n");
+            DPRINTF(0, "Unknown file extension specified for movie capture.\n");
         }
         else
         {
@@ -1818,12 +1814,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     bool startFullscreen;
     if (strstr(lpCmdLine, "-fullscreen"))
-	    startFullscreen = true;
+        startFullscreen = true;
     else
-	    startFullscreen = false;
+        startFullscreen = false;
 
     if (strstr(lpCmdLine, "-verbose"))
-	    verbose = 1;
+        SetDebugVerbosity(1);
 
     joystickAvailable = InitJoystick(joystickCaps);
 
@@ -1997,9 +1993,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     bReady = false;
 
     // Clean up the window
-    DestroyOpenGLWindow();
     if (currentScreenMode != 0)
         RestoreDisplayMode();
+    DestroyOpenGLWindow();
 
     if (appCore != NULL)
         delete appCore;

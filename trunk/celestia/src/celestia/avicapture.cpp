@@ -68,7 +68,7 @@ bool AVICapture::start(const string& filename,
                              NULL);
     if (hr != AVIERR_OK)
     {
-        DPRINTF("Erroring creating avi file for capture.\n");
+        DPRINTF(0, "Erroring creating avi file for capture.\n");
         return false;
     }
 
@@ -83,7 +83,7 @@ bool AVICapture::start(const string& filename,
     hr = AVIFileCreateStream(aviFile, &aviStream, &info);
     if (hr != AVIERR_OK)
     {
-        DPRINTF("Error %08x creating AVI stream.\n", hr);
+        DPRINTF(0, "Error %08x creating AVI stream.\n", hr);
         cleanup();
         return false;
     }
@@ -104,7 +104,7 @@ bool AVICapture::start(const string& filename,
     hr = AVIMakeCompressedStream(&compAviStream, aviStream, &options, NULL);
     if (hr != AVIERR_OK)
     {
-        DPRINTF("Error %08x creating compressed AVI stream.\n", hr);
+        DPRINTF(0, "Error %08x creating compressed AVI stream.\n", hr);
         cleanup();
         return false;
     }
@@ -126,7 +126,7 @@ bool AVICapture::start(const string& filename,
     hr = AVIStreamSetFormat(compAviStream, 0, &bi, sizeof bi);
     if (hr != AVIERR_OK)
     {
-        DPRINTF("AVIStreamSetFormat failed: %08x\n", hr);
+        DPRINTF(0, "AVIStreamSetFormat failed: %08x\n", hr);
         cleanup();
         return false;
     }
@@ -176,7 +176,7 @@ bool AVICapture::captureFrame()
                                 &bytesWritten);
     if (hr != AVIERR_OK)
     {
-        DPRINTF("AVIStreamWrite failed on frame %d\n", frameCounter);
+        DPRINTF(0, "AVIStreamWrite failed on frame %d\n", frameCounter);
         return false;
     }
 

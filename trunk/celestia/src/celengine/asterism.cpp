@@ -61,7 +61,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            DPRINTF("Error parsing asterism file.\n");
+            DPRINTF(0, "Error parsing asterism file.\n");
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete asterisms;
             return NULL;
@@ -73,7 +73,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
         Value* chainsValue = parser.readValue();
         if (chainsValue == NULL || chainsValue->getType() != Value::ArrayType)
         {
-            DPRINTF("Error parsing asterism %s\n", name.c_str());
+            DPRINTF(0, "Error parsing asterism %s\n", name.c_str());
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete asterisms;
             return NULL;
