@@ -85,6 +85,8 @@ Star* StarDatabase::find(uint32 catalogNumber, unsigned int whichCatalog) const
 
 Star* StarDatabase::find(string name) const
 {
+    string altName;
+
     if (compareIgnoringCase(name, HDCatalogPrefix, HDCatalogPrefix.length()) == 0)
     {
         // Search by catalog number
@@ -123,14 +125,38 @@ Star* StarDatabase::find(string name) const
                     Constellation* con = Constellation::getConstellation(conName);
                     if (con != NULL)
                     {
+                        char digit = ' ';
+                        int len = prefix.length();
+
+                        // If the first character of the prefix is a letter
+                        // and the last character is a digit, we may have
+                        // something like 'Alpha2 Cen' . . . Extract the digit
+                        // before trying to match a Greek letter.
+                        if (len > 2 &&
+                            isalpha(prefix[0]) && isdigit(prefix[len - 1]))
+                        {
+                            len--;
+                            digit = prefix[len];
+                        }
+
                         // We have a valid constellation as the last part
                         // of the name.  Next, we see if the first part of
                         // the name is a greek letter.
-                        const string& letter = Greek::canonicalAbbreviation(prefix);
+                        const string& letter = Greek::canonicalAbbreviation(string(prefix, 0, len));
                         if (letter != "")
                         {
                             // Matched . . . this is a Bayer designation
-                            name = letter + ' ' + con->getAbbreviation();
+                            if (digit == ' ')
+                            {
+                                name = letter + ' ' + con->getAbbreviation();
+                                // If 'let con' doesn't match, try using
+                                // 'let1 con' instead.
+                                altName = letter + '1' + ' ' + con->getAbbreviation();
+                            }
+                            else
+                            {
+                                name = letter + digit + ' ' + con->getAbbreviation();
+                            }
                         }
                         else
                         {
@@ -142,6 +168,12 @@ Star* StarDatabase::find(string name) const
             }
 
             uint32 catalogNumber = names->findCatalogNumber(name);
+
+            // If the first search failed, try using the alternate name
+            if (catalogNumber == Star::InvalidCatalogNumber &&
+                altName.length() != 0)
+                catalogNumber = names->findCatalogNumber(altName);
+
             if (catalogNumber != Star::InvalidCatalogNumber)
                 return find(catalogNumber, Star::HIPCatalog);
         }
