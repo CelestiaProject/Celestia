@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="7">
+<kpartgui name="celestia" version="9">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -64,6 +64,15 @@
       <Action name="pauseTime" />
       <Action name="accelerateTime" />
       <Action name="setTimeNow"/>
+  </Menu>
+  <Menu name="multiview"><text>MultiView</text>
+      <Action name="splitH"/>
+      <Action name="splitV"/>
+      <Action name="cycleView"/>
+      <Action name="deleteView"/>
+      <Action name="singleView"/>
+      <Action name="framesVisible"/>
+      <Action name="activeFrameVisible"/>
   </Menu>
   <Menu name="settings">
         <Action name="showBookmarkBar" append="show_merge"/>
