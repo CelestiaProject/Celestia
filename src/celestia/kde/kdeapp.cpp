@@ -220,17 +220,18 @@ void KdeApp::resyncHistory() {
 
 void KdeApp::resyncMenus() {
     int rFlags = renderer->getRenderFlags();
+    int orbitMask = renderer->getOrbitMask();
     ((KToggleAction*)action("showStars"))->setChecked(rFlags & Renderer::ShowStars);
     ((KToggleAction*)action("showPlanets"))->setChecked(rFlags & Renderer::ShowPlanets);
     ((KToggleAction*)action("showGalaxies"))->setChecked(rFlags & Renderer::ShowGalaxies);
     ((KToggleAction*)action("showDiagrams"))->setChecked(rFlags & Renderer::ShowDiagrams);
     ((KToggleAction*)action("showCloudMaps"))->setChecked(rFlags & Renderer::ShowCloudMaps);
     ((KToggleAction*)action("showOrbits"))->setChecked(rFlags & Renderer::ShowOrbits);
-    ((KToggleAction*)action("showAsteroidOrbits"))->setChecked(rFlags & Renderer::ShowAsteroidOrbits);
-    ((KToggleAction*)action("showCometOrbits"))->setChecked(rFlags & Renderer::ShowCometOrbits);
-    ((KToggleAction*)action("showMoonOrbits"))->setChecked(rFlags & Renderer::ShowMoonOrbits);
-    ((KToggleAction*)action("showPlanetOrbits"))->setChecked(rFlags & Renderer::ShowPlanetOrbits);
-    ((KToggleAction*)action("showSpacecraftOrbits"))->setChecked(rFlags & Renderer::ShowSpacecraftOrbits);
+    ((KToggleAction*)action("showAsteroidOrbits"))->setChecked(orbitMask & Body::Asteroid);
+    ((KToggleAction*)action("showCometOrbits"))->setChecked(orbitMask & Body::Comet);
+    ((KToggleAction*)action("showMoonOrbits"))->setChecked(orbitMask & Body::Moon);
+    ((KToggleAction*)action("showPlanetOrbits"))->setChecked(orbitMask & Body::Planet);
+    ((KToggleAction*)action("showSpacecraftOrbits"))->setChecked(orbitMask & Body::Spacecraft);
     ((KToggleAction*)action("showCelestialSphere"))->setChecked(rFlags & Renderer::ShowCelestialSphere);
     ((KToggleAction*)action("showNightMaps"))->setChecked(rFlags & Renderer::ShowNightMaps);
     ((KToggleAction*)action("showMarkers"))->setChecked(rFlags & Renderer::ShowMarkers);
@@ -386,7 +387,7 @@ void KdeApp::initActions()
     new KAction(i18n("Celestial Browser"), 0, ALT + Key_C, this, SLOT(slotCelestialBrowser()), actionCollection(), "celestialBrowser");
     new KAction(i18n("Eclipse Finder"), 0, ALT + Key_E, this, SLOT(slotEclipseFinder()), actionCollection(), "eclipseFinder");
 
-    int rFlags, lMode;
+    int rFlags, lMode, oMask;
     bool isLocal = true;
     if (KGlobal::config()->hasKey("RendererFlags"))
         rFlags = KGlobal::config()->readNumEntry("RendererFlags");
@@ -396,9 +397,11 @@ void KdeApp::initActions()
         lMode = KGlobal::config()->readNumEntry("LabelMode");
     else lMode = appCore->getRenderer()->getLabelMode();
 
+    oMask = appCore->getRenderer()->getOrbitMask();
+
     if (KGlobal::config()->hasKey("TimeZoneBias"))
         isLocal = (KGlobal::config()->readNumEntry("TimeZoneBias") != 0);
-
+    
     KToggleAction* showStars = new KToggleAction(i18n("Show Stars"), 0, this, SLOT(slotShowStars()), actionCollection(), "showStars");
     showStars->setChecked(rFlags & Renderer::ShowStars);
 
@@ -418,19 +421,19 @@ void KdeApp::initActions()
     showOrbits->setChecked(rFlags & Renderer::ShowOrbits);
 
     KToggleAction* showAsteroidOrbits = new KToggleAction(i18n("Show Asteroid Orbits"), 0, this, SLOT(slotShowAsteroidOrbits()), actionCollection(), "showAsteroidOrbits");
-    showAsteroidOrbits->setChecked(rFlags & Renderer::ShowAsteroidOrbits);
+    showAsteroidOrbits->setChecked(oMask & Body::Asteroid);
 
     KToggleAction* showCometOrbits = new KToggleAction(i18n("Show Comet Orbits"), 0, this, SLOT(slotShowCometOrbits()), actionCollection(), "showCometOrbits");
-    showCometOrbits->setChecked(rFlags & Renderer::ShowCometOrbits);
+    showCometOrbits->setChecked(oMask & Body::Comet);
 
     KToggleAction* showMoonOrbits = new KToggleAction(i18n("Show Moon Orbits"), 0, this, SLOT(slotShowMoonOrbits()), actionCollection(), "showMoonOrbits");
-    showMoonOrbits->setChecked(rFlags & Renderer::ShowMoonOrbits);
+    showMoonOrbits->setChecked(oMask & Body::Moon);
 
     KToggleAction* showPlanetOrbits = new KToggleAction(i18n("Show Planet Orbits"), 0, this, SLOT(slotShowPlanetOrbits()), actionCollection(), "showPlanetOrbits");
-    showPlanetOrbits->setChecked(rFlags & Renderer::ShowPlanetOrbits);
+    showPlanetOrbits->setChecked(oMask & Body::Planet);
 
     KToggleAction* showSpacecraftOrbits = new KToggleAction(i18n("Show Spacecraft Orbits"), 0, this, SLOT(slotShowSpacecraftOrbits()), actionCollection(), "showSpacecraftOrbits");
-    showSpacecraftOrbits->setChecked(rFlags & Renderer::ShowSpacecraftOrbits);
+    showSpacecraftOrbits->setChecked(oMask & Body::Spacecraft);
 
     KToggleAction* showCelestialSphere = new KToggleAction(i18n("Show Celestial Grid"), Key_Semicolon, this, SLOT(slotShowCelestialSphere()), actionCollection(), "showCelestialSphere");
     showCelestialSphere->setChecked(rFlags & Renderer::ShowCelestialSphere);
@@ -834,27 +837,27 @@ void KdeApp::slotShowOrbits() {
 
 void KdeApp::slotShowAsteroidOrbits() {
      appCore->getRenderer()->setRenderFlags(
-            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowAsteroidOrbits);
+            appCore->getRenderer()->getOrbitMask() ^ Body::Asteroid);
 }
 
 void KdeApp::slotShowCometOrbits() {
      appCore->getRenderer()->setRenderFlags(
-            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowCometOrbits);
+            appCore->getRenderer()->getOrbitMask() ^ Body::Comet);
 }
 
 void KdeApp::slotShowMoonOrbits() {
      appCore->getRenderer()->setRenderFlags(
-            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowMoonOrbits);
+            appCore->getRenderer()->getOrbitMask() ^ Body::Moon);
 }
 
 void KdeApp::slotShowPlanetOrbits() {
      appCore->getRenderer()->setRenderFlags(
-            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowPlanetOrbits);
+            appCore->getRenderer()->getOrbitMask() ^ Body::Planet);
 }
 
 void KdeApp::slotShowSpacecraftOrbits() {
      appCore->getRenderer()->setRenderFlags(
-            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowSpacecraftOrbits);
+            appCore->getRenderer()->getOrbitMask() ^ Body::Spacecraft);
 }
 
 void KdeApp::slotShowCelestialSphere() {

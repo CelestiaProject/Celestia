@@ -132,6 +132,8 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QVBox* vbox1 = new QVBox(renderFrame);
     int labelMode = appCore->getRenderer()->getLabelMode();
     savedLabelMode = labelMode;
+    int orbitMask = appCore->getRenderer()->getOrbitMask();
+    savedOrbitMask = orbitMask;
 
     QGroupBox* labelGroup = new QGroupBox(0, Qt::Horizontal, i18n("Orbits / Labels"), vbox1);
     QGridLayout* labelGroupLayout = new QGridLayout( labelGroup->layout() );
@@ -147,9 +149,10 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     showStarLabelsCheck->setChecked(labelMode & Renderer::StarLabels);
     labelGroupLayout->addWidget(showStarLabelsCheck, 1, 1);
 
+
     QCheckBox* showPlanetOrbitsCheck = new QCheckBox("", labelGroup);
     actionColl->action("showPlanetOrbits")->connect(showPlanetOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showPlanetOrbitsCheck->setChecked(renderFlags & Renderer::ShowPlanetOrbits);
+    showPlanetOrbitsCheck->setChecked(orbitMask & Body::Planet);
     labelGroupLayout->addWidget(showPlanetOrbitsCheck, 3, 0, Qt::AlignHCenter);
     QCheckBox* showPlanetLabelsCheck = new QCheckBox(i18n("Planets"), labelGroup);
     actionColl->action("showPlanetLabels")->connect(showPlanetLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
@@ -158,7 +161,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
 
     QCheckBox* showMoonOrbitsCheck = new QCheckBox("", labelGroup);
     actionColl->action("showMoonOrbits")->connect(showMoonOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showMoonOrbitsCheck->setChecked(renderFlags & Renderer::ShowMoonOrbits);
+    showMoonOrbitsCheck->setChecked(orbitMask & Body::Moon);
     labelGroupLayout->addWidget(showMoonOrbitsCheck, 4, 0, Qt::AlignHCenter);
     QCheckBox* showMoonLabelsCheck = new QCheckBox(i18n("Moons"), labelGroup);
     actionColl->action("showMoonLabels")->connect(showMoonLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
@@ -167,7 +170,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
 
     QCheckBox* showCometOrbitsCheck = new QCheckBox("", labelGroup);
     actionColl->action("showCometOrbits")->connect(showCometOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showCometOrbitsCheck->setChecked(renderFlags & Renderer::ShowCometOrbits);
+    showCometOrbitsCheck->setChecked(orbitMask & Body::Comet);
     labelGroupLayout->addWidget(showCometOrbitsCheck, 5, 0, Qt::AlignHCenter);
     QCheckBox* showCometLabelsCheck = new QCheckBox(i18n("Comets"), labelGroup);
     actionColl->action("showCometLabels")->connect(showCometLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
@@ -186,7 +189,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
 
     QCheckBox* showAsteroidOrbitsCheck = new QCheckBox("", labelGroup);
     actionColl->action("showAsteroidOrbits")->connect(showAsteroidOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showAsteroidOrbitsCheck->setChecked(renderFlags & Renderer::ShowAsteroidOrbits);
+    showAsteroidOrbitsCheck->setChecked(orbitMask & Body::Asteroid);
     labelGroupLayout->addWidget(showAsteroidOrbitsCheck, 8, 0, Qt::AlignHCenter);
     QCheckBox* showAsteroidLabelsCheck = new QCheckBox(i18n("Asteroids"), labelGroup);
     actionColl->action("showAsteroidLabels")->connect(showAsteroidLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
@@ -195,7 +198,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
 
     QCheckBox* showSpacecraftOrbitsCheck = new QCheckBox("", labelGroup);
     actionColl->action("showSpacecraftOrbits")->connect(showSpacecraftOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showSpacecraftOrbitsCheck->setChecked(renderFlags & Renderer::ShowSpacecraftOrbits);
+    showSpacecraftOrbitsCheck->setChecked(orbitMask & Body::Spacecraft);
     labelGroupLayout->addWidget(showSpacecraftOrbitsCheck, 9, 0, Qt::AlignHCenter);
     QCheckBox* showSpacecraftLabelsCheck = new QCheckBox(i18n("Spacecrafts"), labelGroup);
     actionColl->action("showSpacecraftLabels")->connect(showSpacecraftLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
@@ -513,6 +516,7 @@ void KdePreferencesDialog::slotOk() {
 void KdePreferencesDialog::slotCancel() {
     appCore->getRenderer()->setRenderFlags(savedRendererFlags);
     appCore->getRenderer()->setLabelMode(savedLabelMode);
+    appCore->getRenderer()->setOrbitMask(savedOrbitMask);
     appCore->getRenderer()->setAmbientLightLevel(savedAmbientLightLevel/100.);
     appCore->getSimulation()->setFaintestVisible(savedFaintestVisible/100.);
     appCore->setHudDetail(savedHudDetail);
