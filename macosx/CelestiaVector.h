@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface CelestiaVector : NSArray
+@interface CelestiaVector : NSArray <NSCoding>
 {
     NSArray* _array;
 }
+-(void)encodeWithCoder:(NSCoder*)coder;
+-(id)initWithCoder:(NSCoder*)coder;
 +(CelestiaVector*)vectorWithArray:(NSArray*)v;
 +(CelestiaVector*)vectorWithx:(NSNumber*)v y:(NSNumber*)y;
 +(CelestiaVector*)vectorWithx:(NSNumber*)v y:(NSNumber*)y z:(NSNumber*)z;

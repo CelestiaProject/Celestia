@@ -9,10 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "NSArray_Extensions.h"
 
-@interface MyVector : NSMutableArray {
+@interface MyVector : NSMutableArray <NSCoding> {
     NSMutableArray *_array;
     Class _myClass;
 }
+-(void)encodeWithCoder:(NSCoder*)coder;
+-(id)initWithCoder:(NSCoder*)coder;
 -(id)initWithClass:(Class)myClass;
 -(void)addObject:(id)obj;
 -(void)insertObject:(id)obj atIndex:(unsigned)idx;
@@ -23,11 +25,13 @@
 -(id)objectAtIndex:(unsigned)idx;
 @end
 
-@interface MyTree : NSObject {
-    id _nodeValue;
+@interface MyTree : NSObject <NSCoding> {
+    id <NSCoding> _nodeValue;
     MyVector* _children;
     MyTree* _parent;
 }
+-(void)encodeWithCoder:(NSCoder*)coder;
+-(id)initWithCoder:(NSCoder*)coder;
 // for initializing a tree root node
 -(id)init;
 // initializing a leaf node
@@ -45,6 +49,10 @@
 -(BOOL)isDescendantOfNodeInArray:(NSArray*)array;
 +(NSArray*)minimumNodeCoverFromNodesInArray:(NSArray*)allNodes;
 
+-(id)initWithDictionary:(NSDictionary*)dict parent:(MyTree*)parent;
+-(NSDictionary*)dictionary;
+-(NSDictionary*)recursiveDictionary;
+
 - (void)insertChild:(MyTree*)child atIndex:(int)index;
 - (void)insertChildren:(NSArray*)children atIndex:(int)index;
 - (void)removeChild:(MyTree*)child;
@@ -54,7 +62,6 @@
 - (int)indexOfChildIdenticalTo:(MyTree*)child;
 
 - (int)numberOfChildren;
-- (NSArray*)children;
 - (MyTree*)firstChild;
 - (MyTree*)lastChild;
 - (MyTree*)childAtIndex:(int)index;

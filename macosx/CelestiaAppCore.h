@@ -17,6 +17,7 @@
 @interface CelestiaAppCore : NSObject {
     CelestiaDestinations* _destinations;
 }
+-(void)archive;
 +(CelestiaAppCore *)sharedAppCore;
 -(BOOL)initSimulation;
 -(BOOL)initRenderer;

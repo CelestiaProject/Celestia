@@ -28,9 +28,64 @@
 {
     return reinterpret_cast<FavoritesEntry*>([_data pointerValue]);
 }
+-(void)setSelectionName:(NSString*)name
+{
+    if (name == nil)
+        name = @"";
+    [self favorite]->selectionName = [name stdString];
+}
+-(void)setPosition:(CelestiaUniversalCoord*)position
+{
+    [self favorite]->position = [position universalCoord];
+}
+-(void)setOrientation:(CelestiaVector*)orientation
+{
+    [self favorite]->orientation = [orientation quatf];
+}
+-(void)setJd:(NSNumber*)jd
+{
+    [self favorite]->jd = [jd doubleValue];
+}
+-(void)setCoordinateSystem:(NSString*)coordSys
+{
+    [self favorite]->coordSys = (astro::CoordinateSystem)[[Astro coordinateSystem:coordSys] intValue];
+}
 @end
 
 @implementation CelestiaFavorite
+-(void)encodeWithCoder:(NSCoder*)coder
+{
+    //[super encodeWithCoder:coder];
+    [coder encodeObject:[NSNumber numberWithBool:[self isFolder]]];
+    [coder encodeObject:[self name]];
+    [coder encodeObject:[self parentFolder]];
+    if ([self isFolder])
+        return;
+    [coder encodeObject:[self selectionName]];
+    [coder encodeObject:[self position]];
+    [coder encodeObject:[self orientation]];
+    [coder encodeObject:[self jd]];
+    [coder encodeObject:[self coordinateSystem]];
+}
+-(id)initWithCoder:(NSCoder*)coder
+{
+    FavoritesEntry* fav = new FavoritesEntry();
+    //self = [super initWithCoder:coder];
+    self = [self init];
+    _data = [[NSValue alloc] initWithBytes:reinterpret_cast<void*>(&fav) objCType:@encode(FavoritesEntry*)];
+    _freeWhenDone = YES;
+    fav->isFolder = (bool)[[coder decodeObject] boolValue];
+    [self setName:[coder decodeObject]];
+    [self setParentFolder:[coder decodeObject]];
+    if ([self isFolder])
+        return self;
+    [self setSelectionName:[coder decodeObject]];
+    [self setPosition:[coder decodeObject]];
+    [self setOrientation:[coder decodeObject]];
+    [self setJd:[coder decodeObject]];
+    [self setCoordinateSystem:[coder decodeObject]];
+    return self;
+}
 -(void)activate
 {
     [[CelestiaAppCore sharedAppCore] activateFavorite:self];
@@ -111,22 +166,48 @@
     }
     return NO;
 }
--(NSDictionary*)dictionaryRepresentation
+-(NSDictionary*)dictionary
 {
     if ([self isFolder])
-        return [NSDictionary dictionaryWithObjectsAndKeys:[self name],@"name",@"YES",@"isFolder",nil,nil];
-    return [NSDictionary dictionaryWithObjectsAndKeys:[self name],@"name",[self parentFolder],@"parentFolder",[self selectionName],@"selectionName",[self position],@"position",[self orientation],@"orientation",[self jd],@"jd",@"NO",@"isFolder",[self coordinateSystem],@"coordinateSystem",nil,nil];
+        return [NSDictionary dictionaryWithObjectsAndKeys:[self name],@"name",[NSNumber numberWithBool:YES],@"isFolder",nil,nil];
+    return [NSDictionary dictionaryWithObjectsAndKeys:[self name],@"name",[self parentFolder],@"parentFolder",[self selectionName],@"selectionName",[NSArray arrayWithArray:[self orientation]],@"orientation",[[self position] data],@"position",[self jd],@"jd",[NSNumber numberWithBool:NO],@"isFolder",[self coordinateSystem],@"coordinateSystem",nil,nil];
+}
+-(id)initWithDictionary:(NSDictionary*)dict
+{
+    FavoritesEntry* fav;
+    if ([[dict objectForKey:@"isFolder"] boolValue]) {
+        self = [self initWithFolderName:[dict objectForKey:@"name"]];
+        [self setParentFolder:[dict objectForKey:@"parentFolder"]];
+        return self;
+    }
+    fav = new FavoritesEntry();
+    self = [self init];
+    _data = [[NSValue alloc] initWithBytes:reinterpret_cast<void*>(&fav) objCType:@encode(FavoritesEntry*)];
+    _freeWhenDone = YES;
+    fav->isFolder = false;
+    [self setName:[dict objectForKey:@"name"]];
+    [self setParentFolder:[dict objectForKey:@"parentFolder"]];
+    [self setSelectionName:[dict objectForKey:@"selectionName"]];
+    [self setOrientation:[CelestiaVector vectorWithArray:[dict objectForKey:@"orientation"]]];
+    [self setPosition:[[[CelestiaUniversalCoord alloc] initWithData:[dict objectForKey:@"position"]] autorelease]];
+    [self setJd:[dict objectForKey:@"jd"]];
+    [self setCoordinateSystem:[dict objectForKey:@"coordinateSystem"]];
+    return self;
 }
 -(NSString*)description
 {
-    return [[self dictionaryRepresentation] description];
+    return [[self dictionary] description];
 }
 -(void)setName:(NSString*)name
 {
+    if (name == nil)
+        name = @"";
     [self favorite]->name = [name stdString];
 }
 -(void)setParentFolder:(NSString*)parentFolder
 {
+    if (parentFolder == nil)
+        parentFolder = @"";
     [self favorite]->parentFolder = [parentFolder stdString];
 }
 -(NSString*)name

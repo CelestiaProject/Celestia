@@ -12,6 +12,7 @@
 
 
 @interface CelestiaFavorites : MyTree
+-(void)archive;
 -(void)setSynchronize:(NSInvocation*)synchronize;
 -(void)synchronize;
 +(CelestiaFavorites*)sharedFavorites;
