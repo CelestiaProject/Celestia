@@ -3,55 +3,60 @@
 	labels { clear "planets|minorplanets|stars|constellations" }
 	renderflags { set "stars|planets"
                       clear "constellations|orbits|cloudmaps" }
-	print { text "Beginning demo . . .  Press ESC to end." }
+	print { text "Beginning demo . . .\nPress ESC to end." origin "center" duration 2 }
 	wait { duration 2.0 }
 
-	print { text "Let's start near home . . ." }
+	print { text "Let's start near home . . ." row -3 }
 	select { object "Sol/Earth" }
 	cancel {}
 	# goto { time 0 distance 3 upframe "ecliptical" }
-	gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
-	wait { duration 1.5 }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
 
-	print { text "We're now orbiting about 12,500km above the Earth" }
+	print { text "We're now orbiting about 12,500km above the Earth" row -3 duration 5 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
-	print { text "Earth looks much more familiar with clouds." }
+	print { text "Earth looks much more familiar with clouds." row -3}
 	wait { duration 0.1 }
 	renderflags { set "cloudmaps" }
 	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
 
-	print { text "Next stop: the Moon." }
+	print { text "Next stop: the Moon." row -3 }
 	select { object "Moon" }
 	goto { time 5 distance 4 upframe "equatorial" }
 	wait { duration 5.5 }
-	print { text "Watch for the Earth and Sun as we orbit the Moon" }
+	print { text "Watch for the Earth and Sun as we orbit the Moon" row -3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
 	
-	print { text "Off toward the Sun." }
+	print { text "Off toward the Sun." row -3}
 	select { object "Sol" }
 	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
 	wait { duration 8.5 }
-	print { text "At this distance, dark sunspots are visible on the Sun's surface." }
+	print { text "At this distance, dark sunspots are visible on the Sun's surface." row -3}
 	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
 
-	print { text "Let's zoom out for an overview of the inner solar system." }
+	print { text "Let's zoom out for an overview of the inner solar system." row -3}
 	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
 	renderflags { set "orbits" }
 	changedistance { duration 4.0 rate 1.0 }
 	
-	print { text "Turning on planet labels . . ." }
+	print { text "Turning on planet labels . . ." row -3}
 	labels { set "planets" }
 	wait { duration 1.0 }
-	print { text "We can speed up time to watch the planets orbit the sun." }
+	print { text "We can speed up time to watch the planets orbit the sun." row -3}
 	timerate { rate 2592000 }
 	wait { duration 3.0 }
-	print { text "For each second, a month of time elapses in the simulation." }
+	print { text "For each second, a month of time elapses in the simulation." row -3}
 	wait { duration 12.0 }
 	timerate { rate 1 }
-	print { text "Now, time has been stopped completely." }
+	print { text "Now, time has been stopped completely." row -3}
 
 	wait { duration 1.0 }
-	print { text "Our next destination is Saturn." }
+	print { text "Our next destination is Saturn." row -3}
 	select { object "Saturn" }
 	center { time 2 }
 	wait { duration 2 }
@@ -59,96 +64,87 @@
 	wait { duration 6.5 }
 	renderflags { clear "orbits" }
 	labels { clear "planets" }
-	print { text "Several of the moons of Saturn are visible as bright dots" }
-	orbit { axis [ 0 1 0 ] rate 30 duration 3 }
-	print { text "" }
-	orbit { axis [ 0 1 0 ] rate 30 duration 9 }
+	print { text "Several of the moons of Saturn are visible as bright dots" row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	
 	select { object "Mimas" }
 	goto { time 5 distance 4 upframe "equatorial" }
-	print { text "The most prominent feature on Saturn's moon Mimas is the huge impact crater Herschel." }
+	print { text "The most prominent feature on Saturn's moon Mimas is the huge impact crater Herschel." row -3 duration 9 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
-	print { text "" }
 	changedistance { duration 6.0 rate 0.5 }
 
 	select { object "Sol" }
 	center { time 2 }
-	print { text "Note how faint the Sun appears at this distance." }
+	print { text "Note how faint the Sun appears at this distance." row -3 }
 	wait { duration 2 }
 
-	print { text "Let's look around at the stars in the sky." }
-	wait { duration 1 }
+	print { text "Let's look around at the stars in the sky." row -3 duration 2 }
+	wait { duration 2 }
 	select { object "Alpha UMa" }
 	center { time 2 }
-	print { text "Northern Hemisphere residents should recognize the Big Dipper in the constellation Ursa Major." }
+	print { text "Northern Hemisphere residents should recognize the Big Dipper in the constellation Ursa Major." row -3 duration 3 }
 	wait { duration 4 }
 
 	select { object "Polaris" }
 	center { time 2 }
 	wait { duration 2 }
-	print { text "We're now centered on Polaris, the North Star." }
+	print { text "We're now centered on Polaris, the North Star." row -3}
 	wait { duration 1 }
 	labels { set "stars" }
 	wait { duration 2 }
-	print { text "Polaris is part of the asterism commonly called the Little Dipper." }
+	print { text "Polaris is part of the asterism commonly called the Little Dipper." row -3}
 	wait { duration 2 }
-	print { text "To help us get oriented in the sky, Celestia can draw constellation diagrams for us . . ." }
+	print { text "To help us get oriented in the sky, Celestia can draw constellation diagrams for us . . ." row -3}
 	renderflags { set "constellations" }
 	wait { duration 2 }
-	print { text ". . . and constellation names" }
+	print { text ". . . and constellation names" row -3}
 	labels { set "constellations" }
 	wait { duration 2 }
 
 	select { object "Alnilam" }
 	center { time 4 }
 	wait { duration 2 }
-	print { text "Orion is the sky's most prominent constellation." }
+	print { text "Orion is the sky's most prominent constellation." row -3 duration 3 }
 	wait { duration 4 }
-	print { text "" }
 
 	select { object "Beta Cru" }
 	center { time 4 }
 	wait { duration 2 }
-	print { text "The Southern Cross is a familiar sight in Southern Hemisphere skies." }
+	print { text "The Southern Cross is a familiar sight in Southern Hemisphere skies." row -3 duration 4 }
 	wait { duration 4 }
-	print { text "" }
 
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
-	print { text "Let's enable galaxy rendering so that we can see the Milky Way" }
+	print { text "Let's enable galaxy rendering so that we can see the Milky Way" row -3 duration 4 }
 	renderflags { set "galaxies" }
-	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 4 }
-	print { text "" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
 
 	select { object "Antares" }
 	center { time 5 }
 	wait { duration 3 }
-	print { text "We'll now travel to Antares, a red giant star in Scorpius." }
+	print { text "We'll now travel to Antares, a red giant star in Scorpius." row -3 duration 5 }
 	wait { duration 2 }
 	renderflags { clear "constellations" }
 	labels { clear "constellations|stars" }
 	wait { duration 1 }
 	goto { time 8 distance 200 }
 	wait { duration 8.5 }
-	print { text "" }
 	goto { time 5 distance 10 }
 	wait { duration 5.0 }
-	print { text "Even though we are now 10 times farther from Antares than\nEarth is from the Sun, the massive red giant star still looms huge in the sky." }
+	print { text "Even though we are now 10 times farther from Antares than\nEarth is from the Sun, the massive red giant star still looms huge in the sky." row -3}
 	wait { duration 4.0 }
 
-	print { text "Let's zoom out and get the big picture . . ." }
+	print { text "Let's zoom out and get the big picture . . ." row -3}
 	changedistance { duration 10.0 rate 2.0 }
 
 	select { object "Milky Way" }
-	print { text "We're viewing the entire Milky Way galaxy." }
-	orbit { axis [ 1 0 0 ] rate 30 duration 6.0 }
-	print { text "" }
-	orbit { axis [ 1 0 0 ] rate 30 duration 10.0 }
-	print { text "Time to go home . . ." }
+	print { text "We're viewing the entire Milky Way galaxy." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Time to go home . . ." row -3}
 
 	select { object "Sol/Earth" }
 	goto { time 20 distance 10 upframe "equatorial" }
 	wait { duration 20.0 }
-	print { text "Demo completed." }
+	print { text "Demo completed." row -3}
 	wait { duration 3.0 }
 }
