@@ -48,8 +48,7 @@ Planets [
 
 {
 	Name   "Earth"
-	# Texture "earth.jpg"
-	Texture "earth2k.png"
+	Texture "earth.png"
 	CloudMap "earth-clouds.png"
 	NightTexture "earthnight.jpg"
 	# CompressTexture true    # looks bad up close with this enabled
@@ -339,10 +338,10 @@ Planets [
 	Moons [
 	{
 		Name "Mimas"
-		# Texture "mimas.jpg"
-		Texture "white.jpg"
-		BumpMap "mimasbump.jpg"
-		BumpHeight 10.0
+		Texture "mimas.jpg"
+		# Texture "white.jpg"
+		# BumpMap "mimasbump.jpg"
+		# BumpHeight 10.0
 		Color [ 0.75 0.63 0.58 ]
 		BlendTexture true
 		Radius    199
