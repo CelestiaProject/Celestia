@@ -24,6 +24,7 @@ public:
 	NormalStar     = 0,
 	WhiteDwarf     = 1,
 	NeutronStar    = 2,
+        BlackHole      = 3,
     };
 
     enum SpectralClass
@@ -71,6 +72,8 @@ public:
 
     char* str(char* buf, unsigned int buflen) const;
     std::string str() const;
+
+    static StellarClass parse(const std::string&);
 
     friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
