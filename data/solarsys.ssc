@@ -28,7 +28,7 @@
 
 "Venus" "Sol"
 {
-	Texture "venus.jpg"
+	Texture "venussurface.jpg"
 	# BumpMap "venusbump.jpg"
 	HazeColor [ 0.5 0.35 0.2 ]
 	HazeDensity 0.35
@@ -39,6 +39,9 @@
 		Lower [ 0.8 0.8 0.5 ]
 		Upper [ 0.6 0.6 0.6 ]
 		Sky [ 0.8 0.8 0.5 ]
+		CloudMap "venus.jpg"
+		CloudHeight 50
+		CloudSpeed  90
 	}
 
 	CustomOrbit "vsop87-venus"
@@ -316,11 +319,12 @@
         MeanLongitude    34.404
 	}
 
-	RotationPeriod      9.927953 # System II (for GRS)
-	# RotationPeriod    9.92425  # System III (radio emissions)
-	Obliquity           2.222461 # 1.82246 # 2.22246
-	EquatorAscendingNode -22.203 # -1.87785 # -22.203
-	RotationOffset     16        # 305.40
+	RotationPeriod         9.927953 # System II (for GRS)
+	# RotationPeriod       9.92425  # System III (radio emissions)
+	Obliquity              2.222461 # 1.82246 # 2.22246
+	EquatorAscendingNode -22.203    # -1.87785 # -22.203
+	RotationOffset        16        # for correct location of GRS
+	# RotationOffset     305.40     # correct System III prime meridian
 
 	Albedo 0.51
 }
@@ -472,7 +476,7 @@
         MeanLongitude    49.944
 	}
 
-	RotationPeriod        10.65622 # System III - magnetic field
+	RotationPeriod        10.65622 # System III (magnetic field)
 	Obliquity             28.049   # 28.052   # old value: 26.73
 	EquatorAscendingNode 169.530   # 168.8112 # 169.53
         RotationOffset       358.922   # correct System III prime meridian
@@ -731,10 +735,10 @@
         MeanLongitude    313.232
 	}
 
-	RotationPeriod   17.24 # System III - magnetic field
-	Obliquity        97.81
+	RotationPeriod        17.24 # System III (magnetic field)
+	Obliquity             97.81
 	EquatorAscendingNode 167.76
-	RotationOffset 331.18
+	RotationOffset       331.18 # correct System III prime meridian
 
 	Albedo            0.66
 
@@ -877,10 +881,10 @@
         MeanLongitude   304.880
 	}
 
-	RotationPeriod        16.11 # System III - magnetic field
+	RotationPeriod        16.11 # System III (magnetic field)
 	Obliquity             28.03
 	EquatorAscendingNode  49.235
-	RotationOffset       228.65
+	RotationOffset       228.65 # correct System III prime meridian
 
 	Albedo                 0.62
 }
@@ -907,7 +911,7 @@
 	EquatorAscendingNode 	331.0
 	RotationOffset       	277.8
 
-	Albedo         0.2
+	Albedo         0.061
 }
 
 "Triton" "Sol/Neptune"
@@ -941,7 +945,7 @@
 	RotationEpoch	    2447763.5 # 1989 Aug 25.00
 	RotationOffset		108.5 # at epoch
 
-	Albedo         0.7
+	Albedo         0.756
 }
 
 "Nereid" "Sol/Neptune"
@@ -961,6 +965,8 @@
 	ArgOfPericenter 17.690    #revised value - at epoch
 	MeanAnomaly    	36.056    #revised value - at epoch
 	}
+
+	Albedo 0.155
 }
 
 
@@ -1254,7 +1260,7 @@
 {
 	Class "asteroid"
 	Mesh   "eros.3ds"
-	Texture "asteroid.jpg"
+	Texture "eros.jpg"
 	# Texture "white.jpg"
 	# NormalMap "erosbump2k.jpg"
 	# Color sampled from true color photo taken by NEAR
