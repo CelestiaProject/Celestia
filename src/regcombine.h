@@ -24,7 +24,8 @@ extern void SetupCombinersSmooth(Texture& baseTexture,
                                  Color ambientColor,
                                  bool invert);
 extern void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
-                                          Color ambientColor);
+                                          Color ambientColor,
+                                          Color diffuseColor);
 extern void SetupCombinersGlossMap();
 extern void SetupCombinersGlossMapWithFog();
 extern void DisableCombiners();
