@@ -23,10 +23,10 @@
 -(BOOL)isEmpty;
 -(NSNumber*)radius;
 -(BOOL)isEqualToSelection:(CelestiaSelection*)csel;
--(void)select:(id)inst;
 -(CelestiaStar*)star;
 -(CelestiaBody*)body;
 -(CelestiaGalaxy*)galaxy;
 -(NSString *)name;
+-(NSString *)briefName;
 -(CelestiaUniversalCoord*)position:(NSNumber*)t;
 @end
