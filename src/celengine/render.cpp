@@ -81,6 +81,8 @@ static ResourceHandle starTexM = InvalidResource;
 
 static const float CoronaHeight = 0.2f;
 
+static const int OrbitMask = Body::Planet | Body::Moon;
+
 static bool isGF3 = false;
 
 struct SphericalCoordLabel
@@ -673,7 +675,6 @@ void Renderer::renderOrbit(Body* body, double t)
             {
                 orbit = *iter;
                 orbit->trajectory.clear();
-                cout << "Reusing orbit: " << body->getName() << '\n';
                 break;
             }
         }
@@ -703,11 +704,80 @@ void Renderer::renderOrbit(Body* body, double t)
     for (vector<Point3f>::const_iterator p = trajectory->begin();
          p != trajectory->end(); p++)
     {
-        glVertex3f(astro::kilometersToAU(p->x * 100),
-                   astro::kilometersToAU(p->y * 100),
-                   astro::kilometersToAU(p->z * 100));
+        glVertex3f(astro::kilometersToAU(p->x),
+                   astro::kilometersToAU(p->y),
+                   astro::kilometersToAU(p->z));
     }
     glEnd();
+}
+
+
+void Renderer::renderOrbits(PlanetarySystem* planets,
+                            const Selection& sel,
+                            double t,
+                            const Point3d& observerPos,
+                            const Point3d& center)
+{
+    if (planets == NULL)
+        return;
+
+    double distance = (center - observerPos).length();
+
+    // At the solar system scale, we'll handle all calculations in AU
+    Vec3d opos = (center - Point3d(0.0, 0.0, 0.0)) * astro::kilometersToAU(1.0);
+
+    int nBodies = planets->getSystemSize();
+    for (int i = 0; i < nBodies; i++)
+    {
+        Body* body = planets->getBody(i);
+            
+        // Only show orbits for major bodies or selected objects
+        if ((body->getClassification() & OrbitMask) != 0 || body == sel.body)
+        {
+            if (body == sel.body)
+                glColor4f(1, 0, 0, 1);
+            else
+                glColor4f(0, 0, 1, 1);
+            
+            float orbitRadiusInPixels =
+                (float) (body->getOrbit()->getBoundingRadius() /
+                         (distance * pixelSize));
+            if (orbitRadiusInPixels > MinOrbitSizeForLabel)
+            {
+                float farDistance = 
+                    (float) (body->getOrbit()->getBoundingRadius() + distance);
+                farDistance = astro::kilometersToAU(farDistance);
+
+                // Set up the projection matrix so that the far plane is
+                // distant enough that the orbit won't be clipped.
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                gluPerspective(fov,
+                               (float) windowWidth / (float) windowHeight,
+                               farDistance * 1e-6f, farDistance * 1.1f);
+                glMatrixMode(GL_MODELVIEW);
+                renderOrbit(body, t);
+
+                if (body->getSatellites() != NULL)
+                {
+                    Point3d localPos = body->getOrbit()->positionAtTime(t);
+                    Quatd rotation =
+                        Quatd::yrotation(body->getRotationElements().axisLongitude) *
+                        Quatd::xrotation(body->getRotationElements().obliquity);
+                    double scale = astro::kilometersToAU(1.0);
+                    glPushMatrix();
+                    glTranslated(localPos.x * scale,
+                                 localPos.y * scale,
+                                 localPos.z * scale);
+                    glRotate(rotation);
+                    renderOrbits(body->getSatellites(), sel, t,
+                                 observerPos,
+                                 body->getHeliocentricPosition(t));
+                    glPopMatrix();
+                }
+            }
+        }
+    }
 }
 
 
@@ -912,57 +982,21 @@ void Renderer::render(const Observer& observer,
         for (iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
             (*iter)->keep = false;
 
-        // At this point, we're not rendering into the depth buffer
-        // so we'll set the far plane to be way out there.  If we don't
-        // do this, the orbits either suffer from clipping by the far
-        // plane, or else get clipped to close to the viewer.
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective(fov,
-                       (float) windowWidth / (float) windowHeight,
-                       NEAR_DIST, 1000000);
-    
-        // Set the modelview matrix
-        glMatrixMode(GL_MODELVIEW);
-
-        const Star* sun = solarSystem->getStar();
-        Point3f starPos = sun->getPosition();
-        // Compute the position of the observer relative to the star
-        Vec3d opos = observer.getPosition() - Point3d((double) starPos.x * 1e6,
-                                                      (double) starPos.y * 1e6,
-                                                      (double) starPos.z * 1e6);
-
-        // At the solar system scale, we'll handle all calculations in
-        // AU instead of light years.
-        opos = Vec3d(astro::microLightYearsToAU(opos.x) * 100,
-                     astro::microLightYearsToAU(opos.y) * 100,
-                     astro::microLightYearsToAU(opos.z) * 100);
-        glPushMatrix();
-        glTranslated(-opos.x, -opos.y, -opos.z);
-        
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
-
-        // Render orbits
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
-
-        PlanetarySystem* planets = solarSystem->getPlanets();
-        int nBodies = planets->getSystemSize();
-        for (int i = 0; i < nBodies; i++)
-        {
-            Body* body = planets->getBody(i);
-            
-            // Only show orbits for major bodies or selected objects
-            if (body->getRadius() > 1000 || body == sel.body)
-            {
-                if (body == sel.body)
-                    glColor4f(1, 0, 0, 1);
-                else
-                    glColor4f(0, 0, 1, 1);
-                renderOrbit(body, now);
-            }
-        }
+        
+        const Star* sun = solarSystem->getStar();
+        Point3d obsPos = astro::heliocentricPosition(observer.getPosition(),
+                                                     sun->getPosition());
+        glPushMatrix();
+        glTranslatef((float) astro::kilometersToAU(-obsPos.x),
+                     (float) astro::kilometersToAU(-obsPos.y),
+                     (float) astro::kilometersToAU(-obsPos.z));
+        renderOrbits(solarSystem->getPlanets(), sel, now,
+                     obsPos, Point3d(0.0, 0.0, 0.0));
+        glPopMatrix();
 
         if ((renderFlags & ShowSmoothLines) != 0)
             disableSmoothLines();
@@ -973,30 +1007,6 @@ void Renderer::render(const Observer& observer,
             if (!(*iter)->keep)
                 (*iter)->body = NULL;
         }
-
-        cout << "Orbit cache size: " << orbitCache.size() << '\n';
-
-#ifdef ECLIPTIC_AXES
-        // Render axes in plane of the ecliptic for debugging
-        glBegin(GL_LINES);
-        glColor4f(1, 0, 0, 1);
-        glVertex3f(3000, 0, 0);
-        glVertex3f(-3000, 0, 0);
-        glVertex3f(2800, 0, 200);
-        glVertex3f(3000, 0, 0);
-        glVertex3f(2800, 0, -200);
-        glVertex3f(3000, 0, 0);
-        glColor4f(0, 1, 0, 1);
-        glVertex3f(0, 0, 3000);
-        glVertex3f(0, 0, -3000);
-        glVertex3f(200, 0, 2800);
-        glVertex3f(0, 0, 3000);
-        glVertex3f(-200, 0, 2800);
-        glVertex3f(0, 0, 3000);
-        glEnd();
-#endif
-
-        glPopMatrix();
     }
 
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
@@ -2866,36 +2876,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             float boundingRadiusSize = (float) (body->getOrbit()->getBoundingRadius() / distanceFromObserver) / pixelSize;
             if (boundingRadiusSize > MinOrbitSizeForLabel)
             {
-                // Arbitrary definitions of 'major' and 'minor' planet.  The
-                // limiting radii were chose so the labels of all nine
-                // recognized planets and their major moons are displayed
-                // when 'major planet labels' are enabled.
-                bool isMajorPlanet = false;
-                if (body->getSystem() != NULL &&
-                    body->getSystem()->getPrimaryBody() != NULL)
-                {
-                    isMajorPlanet = body->getRadius() >= 200.0f;
-                }
-                else
-                {
-                    isMajorPlanet = body->getRadius() >= 1000.0f;
-                }
-#if 0
-                if (isMajorPlanet && (labelMode & MajorPlanetLabels) != 0)
-                {
-                    addLabel(body->getName(),
-                             Color(0.0f, 1.0f, 0.0f),
-                             Point3f(pos.x, pos.y, pos.z),
-                             1.0f);
-                }
-                else if (!isMajorPlanet && (labelMode & MinorPlanetLabels) != 0)
-                {
-                    addLabel(body->getName(),
-                             Color(0.0f, 0.6f, 0.0f),
-                             Point3f(pos.x, pos.y, pos.z),
-                             1.0f);
-                }
-#endif
                 Color labelColor;
                 bool showLabel = false;
 
