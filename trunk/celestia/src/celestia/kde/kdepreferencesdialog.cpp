@@ -161,7 +161,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     connect(ambientLightSlider, SIGNAL(valueChanged(int)), SLOT(slotAmbientLightLevel(int)));
     ambientLabel = new QLabel(ambientLightGroup);
     ambientLabel->setMinimumWidth(40);
-    ambientLabel->setAlignment(Qt::AlignRight);
+    ambientLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     char buff[20];
     sprintf(buff, "%.2f", savedAmbientLightLevel / 100.);
     ambientLabel->setText(buff);
@@ -172,7 +172,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     connect(faintestVisibleSlider, SIGNAL(valueChanged(int)), SLOT(slotFaintestVisible(int)));
     faintestLabel = new QLabel(faintestVisibleGroup);
     faintestLabel->setMinimumWidth(40);
-    faintestLabel->setAlignment(Qt::AlignRight);
+    faintestLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     sprintf(buff, "%.2f", savedFaintestVisible / 100.);
     faintestLabel->setText(buff);
 
@@ -342,7 +342,7 @@ void KdePreferencesDialog::slotCancel() {
     appCore->getRenderer()->setFragmentShaderEnabled(savedPixelShader);
 
                                                   
-    accept();
+    reject();
 }
 
 void KdePreferencesDialog::slotApply() {
