@@ -33,6 +33,8 @@
 
 #include "../res/resource.h"
 
+using namespace std;
+
 
 //----------------------------------
 // Skeleton functions and variables.
@@ -1236,6 +1238,8 @@ static void syncMenusWithRendererState()
 
     setMenuItemCheck(ID_RENDER_SHOWPLANETLABELS,
                      (labelMode & Renderer::MajorPlanetLabels) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWMINORPLANETLABELS,
+                     (labelMode & Renderer::MinorPlanetLabels) != 0);
     setMenuItemCheck(ID_RENDER_SHOWSTARLABELS,
                      (labelMode & Renderer::StarLabels) != 0);
     setMenuItemCheck(ID_RENDER_SHOWCONSTLABELS,
