@@ -483,7 +483,8 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
                 }
                 activeView = n;
                 sim->setActiveObserver(views[activeView]->observer);
-                if (!showActiveViewFrame) flashFrameStart = currentTime;
+                if (!showActiveViewFrame)
+                    flashFrameStart = currentTime;
                 return;
             }
 
@@ -832,7 +833,8 @@ void CelestiaCore::charEntered(char c)
         if (activeView >= (int) views.size())
             activeView = 0;
         sim->setActiveObserver(views[activeView]->observer);
-        if (!showActiveViewFrame) flashFrameStart = currentTime;
+        if (!showActiveViewFrame)
+            flashFrameStart = currentTime;
         break;
 
     case '\020':  // Ctrl+P
@@ -1752,7 +1754,18 @@ void CelestiaCore::deleteView()
     delete(v->parent);
     delete(v);
 
-    if (!showActiveViewFrame) flashFrameStart = currentTime;
+    if (!showActiveViewFrame)
+        flashFrameStart = currentTime;
+}
+
+bool CelestiaCore::getFramesVisible() const
+{
+    return showViewFrames;
+}
+
+void CelestiaCore::setFramesVisible(bool visible)
+{
+    showViewFrames = visible;
 }
 
 
@@ -1971,7 +1984,7 @@ void CelestiaCore::renderOverlay()
 
     if (views.size() > 1)
     {
-    // Render a thin border arround all views
+        // Render a thin border arround all views
         if (showViewFrames || resizeSplit)
         {
             glLineWidth(1.0f);
@@ -1984,7 +1997,7 @@ void CelestiaCore::renderOverlay()
         }
         glLineWidth(1.0f);
 
-    // Render a very simple border around the active view
+        // Render a very simple border around the active view
         View* av = views[activeView];
 
         if (showActiveViewFrame)
@@ -2416,8 +2429,11 @@ class SolarSystemLoader : public EnumFilesHandler
             string fullname = getPath() + '/' + filename;
             ifstream solarSysFile(fullname.c_str(), ios::in);
             if (solarSysFile.good())
-                LoadSolarSystemObjects(solarSysFile, *universe);
-            cout << "Loading: " << fullname << '\n';
+            {
+                LoadSolarSystemObjects(solarSysFile,
+                                       *universe,
+                                       getPath() + '/');
+            }
         }
 
         return true;
@@ -2532,7 +2548,7 @@ bool CelestiaCore::initSimulation()
             }
             else
             {
-                LoadSolarSystemObjects(solarSysFile, *universe);
+                LoadSolarSystemObjects(solarSysFile, *universe, "");
             }
         }
     }
@@ -2826,26 +2842,6 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
             dir->enumFiles(loader, true);
 
             delete dir;
-#if 0
-            string filename;
-            while (dir->nextFile(filename))
-            {
-                if (DetermineFileType(filename) == Content_CelestiaStarCatalog)
-                {
-                    string fullname = *iter + '/' + filename;
-                    ifstream starFile(fullname.c_str(), ios::in);
-                    if (starFile.good())
-                    {
-                        bool success = starDB->load(starFile);
-                        if (!success)
-                        {
-                            DPRINTF(0, "Error reading star file: %s\n",
-                                    fullname.c_str());
-                        }
-                    }
-                }
-            }
-#endif
         }
     }
 
@@ -2982,7 +2978,6 @@ void CelestiaCore::flash(const std::string& s, double duration)
 }
 
 
-#if 1
 void CelestiaCore::addWatcher(CelestiaWatcher* watcher)
 {
     assert(watcher != NULL);
@@ -3005,7 +3000,6 @@ void CelestiaCore::notifyWatchers(int property)
         (*iter)->notifyChange(this, property);
     }
 }
-#endif
 
 
 void CelestiaCore::goToUrl(const std::string& urlStr)

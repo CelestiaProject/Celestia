@@ -224,6 +224,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void splitView(View::Type);
     void singleView();
     void deleteView();
+    bool getFramesVisible() const;
+    void setFramesVisible(bool);
 
     void flash(const std::string&, double duration = 1.0);
 
