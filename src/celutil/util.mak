@@ -23,6 +23,7 @@ OBJS=\
 	$(INTDIR)\debug.obj \
 	$(INTDIR)\directory.obj \
 	$(INTDIR)\filetype.obj \
+	$(INTDIR)\formatnum.obj \
 	$(INTDIR)\util.obj \
 	$(INTDIR)\windirectory.obj \
 	$(INTDIR)\wintimer.obj \
