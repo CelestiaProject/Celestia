@@ -74,6 +74,8 @@ static bool leftPress = false;
 static bool rightPress = false;
 static bool pgupPress = false;
 static bool pgdnPress = false;
+static bool homePress = false;
+static bool endPress = false;
 
 static bool wireframe = false;
 
@@ -447,9 +449,34 @@ void Idle(void)
             CancelScript();
     }
 
+    if (homePress)
+        sim->changeOrbitDistance(-dt * 2);
+    else if (endPress)
+        sim->changeOrbitDistance(dt * 2);
+
+    // Keyboard rotate
+    Quatf q(1);
+    if (leftPress)
+        q.zrotate((float) dt * 2);
+    if (rightPress)
+        q.zrotate((float) dt * -2);
+    if (downPress)
+        q.xrotate((float) dt * 2);
+    if (upPress)
+        q.xrotate((float) dt * -2);
+    sim->rotate(q);
+
     sim->update(dt);
 
     Display();
+
+    nFrames++;
+    if (nFrames == 100)
+    {
+        fps = (double) nFrames / (currentTime - fpsCounterStartTime);
+        nFrames = 0;
+        fpsCounterStartTime = currentTime;
+    }
 }
 
 void MouseDrag(int x, int y)
@@ -740,6 +767,50 @@ void SpecialKeyPress(int key, int x, int y)
     case GLUT_KEY_F6:
         sim->setTargetSpeed(1);
         break;
+    case GLUT_KEY_LEFT:
+        leftPress = true;
+        break;
+    case GLUT_KEY_RIGHT:
+        rightPress = true;
+        break;
+    case GLUT_KEY_UP:
+        upPress = true;
+        break;
+    case GLUT_KEY_DOWN:
+        downPress = true;
+        break;
+    case GLUT_KEY_HOME:
+        homePress = true;
+        break;
+    case GLUT_KEY_END:
+        endPress = true;
+        break;
+    }
+}
+
+
+void SpecialKeyUp(int key, int x, int y)
+{
+    switch (key)
+    {
+    case GLUT_KEY_LEFT:
+        leftPress = false;
+        break;
+    case GLUT_KEY_RIGHT:
+        rightPress = false;
+        break;
+    case GLUT_KEY_UP:
+        upPress = false;
+        break;
+    case GLUT_KEY_DOWN:
+        downPress = false;
+        break;
+    case GLUT_KEY_HOME:
+        homePress = false;
+        break;
+    case GLUT_KEY_END:
+        endPress = false;
+        break;
     }
 }
 
@@ -858,6 +929,7 @@ int main(int argc, char* argv[])
     glutMotionFunc(MouseDrag);
     glutKeyboardFunc(KeyPress);
     glutSpecialFunc(SpecialKeyPress);
+    glutSpecialUpFunc(SpecialKeyUp);
 
     timer = CreateTimer();
     renderer = new Renderer();
