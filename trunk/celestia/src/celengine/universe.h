@@ -35,8 +35,8 @@ class Universe
     void setGalaxyCatalog(GalaxyList*);
     AsterismList* getAsterisms() const;
     void setAsterisms(AsterismList*);
-    //ConstellationBoundaries* getBoundaries() const;
-    //void setBoundaries(ConstellationBoundaries*);
+    ConstellationBoundaries* getBoundaries() const;
+    void setBoundaries(ConstellationBoundaries*);
 
     Selection pick(const UniversalCoord& origin,
                    const Vec3f& direction,
@@ -69,7 +69,7 @@ class Universe
     SolarSystemCatalog* solarSystemCatalog;
     GalaxyList* galaxyCatalog;
     AsterismList* asterisms;
-    //ConstellationBoundaries* boundaries;
+    ConstellationBoundaries* boundaries;
 };
 
 #endif // UNIVERSE_H_
