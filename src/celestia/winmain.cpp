@@ -1802,6 +1802,10 @@ void handleKey(WPARAM key, bool down)
     case VK_NUMPAD9:
         k = CelestiaCore::Key_NumPad9;
         break;
+    case VK_DELETE:
+        if (!down)
+            appCore->charEntered('\177');
+        break;
     case 'A':
     case 'Z':
         k = key;
