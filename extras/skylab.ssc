@@ -2,6 +2,7 @@
 
 "Skylab" "Sol/Earth"
 {
+	Class "spacecraft"
 	Mesh "skylab.3ds"
 	Radius 0.015
 
