@@ -240,11 +240,15 @@ dnl Check for GLUT.
 fi
 AM_CONDITIONAL(ENABLE_GLUT, test "$enable_glut" = "yes")
 
-AM_GCONF_SOURCE_2
+dnl Default GConf to FALSE
+dnl (this is a silly trick to make configure behave)
+AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, test "x" = "y")
+
 if test "$enable_gtk" != "no" ; then
 	dnl GNOME is an extension to the GTK options
 	if test "$enable_gnome" = "yes" ; then
 		PKG_CHECK_MODULES(GTK, libgnomeui-2.0 gtk+-2.0 gtkglext-1.0)
+		AM_GCONF_SOURCE_2
 		AC_DEFINE(GNOME, 1, [Use Gnome Flag])
 
 	dnl Otherwise, vanilla GTK
