@@ -1,5 +1,7 @@
 // octree.h
 //
+// Octree-based visibility determination for a star database.
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -58,11 +60,15 @@ class StarOctree
                uint32 _nStars);
     ~StarOctree();
 
-    void processVisibleStars(StarHandler& starHandler,
-                             const Point3f& position,
-                             const Planef* frustumPlanes,
-                             float limitingMag,
-                             float scale) const;
+    void findVisibleStars(StarHandler& starHandler,
+                          const Point3f& position,
+                          const Planef* frustumPlanes,
+                          float limitingMag,
+                          float scale) const;
+    void findCloseStars(StarHandler& starHandler,
+                        const Point3f& position,
+                        float radius,
+                        float scale) const;
     int countChildren() const;
     int countStars() const;
 

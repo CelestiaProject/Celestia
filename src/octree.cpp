@@ -1,5 +1,7 @@
 // octree.cpp
 //
+// Octree-based visibility determination for a star database.
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -14,6 +16,20 @@
 using namespace std;
 
 
+// There are two classed implemented in this module: StarOctree and
+// DynamicStarOctree.  The DynamicStarOctree is built first by inserting
+// stars from a database and is then 'compiled' into a StarOctree.  In the
+// process of building the StarOctree, the original star database is
+// reorganized, with stars in the same octree node all placed adjacent to each
+// other.  This spatial sorting of the stars dramatically improves the
+// performance of octree operations through much more coherent memory access.
+//
+// The octree node into which a star is placed is dependent on two properties:
+// its position and its luminosity--the fainter the star, the deeper the node
+// in which it will reside.  Each node stores an absolute magnitude; no child
+// of the node is allowed contain star brighter than this value, making it
+// possible to determine quickly whether or not to cull subtrees.
+
 enum
 {
     XPos = 1,
@@ -24,9 +40,9 @@ enum
 // The splitThreshold is the number of stars a node must contain before it's
 // children are generated.  Increasing this number will decrease the number of
 // octree nodes in the tree, which will use less memory but make culling less
-// efficient.  In testing, changing splitThreshold from 100 to 50 nearly doubled
-// the number of nodes in the tree, but provided anywhere from a 0 to 5 percent
-// frame rate improvement.
+// efficient.  In testing, changing splitThreshold from 100 to 50 nearly
+// doubled the number of nodes in the tree, but provided only between a
+// 0 to 5 percent frame rate improvement.
 static const int splitThreshold = 100;
 
 static const float sqrt3 = 1.732050808f;
@@ -81,16 +97,10 @@ void DynamicStarOctree::insertStar(const Star& star, float scale)
         // to avoid having the octree degenerate into one star per node.
         if (children == NULL)
         {
-            if (stars == NULL || stars->size() < splitThreshold)
-            {
-                // There's enough room left for the star in this node
-                addStar(star);
-            }
-            else
-            {
-                // Not enough room in this node; we need to split it
+            // Make sure that there's enough room left in this node
+            if (stars != NULL && stars->size() >= splitThreshold)
                 split(scale * 0.5f);
-            }
+            addStar(star);
         }
         else
         {
@@ -199,11 +209,18 @@ StarOctree::~StarOctree()
 }
 
 
-void StarOctree::processVisibleStars(StarHandler& starHandler,
-                                     const Point3f& position,
-                                     const Planef* frustumPlanes,
-                                     float limitingMag,
-                                     float scale) const
+// This method searches the octree for stars that are likely to be visible
+// to a viewer with the specified position and limiting magnitude.  The
+// starHandler is invoked for each potentially visible star--no star with
+// a magnitude greater than the limiting magnitude will be processed, but
+// stars that are outside the view frustum may be.  Frustum tests are performed
+// only at the node level to optimize the octree traversal, so an exact test
+// (if one is required) is the responsibility of the callback method.
+void StarOctree::findVisibleStars(StarHandler& starHandler,
+                                  const Point3f& position,
+                                  const Planef* frustumPlanes,
+                                  float limitingMag,
+                                  float scale) const
 {
     // See if this node lies within the view frustum
     {
@@ -223,19 +240,21 @@ void StarOctree::processVisibleStars(StarHandler& starHandler,
     float minDistance = (position - center).length() - scale * sqrt3;
 
     // Process the stars in this node
-    float dimmest = minDistance > 0 ? astro::appToAbsMag(limitingMag, minDistance) : 100;
+    float dimmest = minDistance > 0 ? astro::appToAbsMag(limitingMag, minDistance) : 1000;
     for (int i = 0; i < nStars; i++)
     {
         Star& star = firstStar[i];
         if (star.getAbsoluteMagnitude() < dimmest)
         {
-            float distance = (position - star.getPosition()).length();
+            float distance = position.distanceTo(star.getPosition());
             float appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
             if (appMag < limitingMag)
                 starHandler.process(star, distance, appMag);
         }
     }
 
+    // See if any of the stars in child nodes are potentially bright enough
+    // that we need to recurse deeper.
     if (minDistance <= 0 || astro::absToAppMag(absMag, minDistance) <= limitingMag)
     {
         // Recurse into the child nodes
@@ -243,15 +262,61 @@ void StarOctree::processVisibleStars(StarHandler& starHandler,
         {
             for (int i = 0; i < 8; i++)
             {
-                children[i]->processVisibleStars(starHandler,
-                                                 position,
-                                                 frustumPlanes,
-                                                 limitingMag,
-                                                 scale * 0.5f);
+                children[i]->findVisibleStars(starHandler,
+                                              position,
+                                              frustumPlanes,
+                                              limitingMag,
+                                              scale * 0.5f);
             }
         }
     }
 }
+
+
+void StarOctree::findCloseStars(StarHandler& starHandler,
+                                const Point3f& position,
+                                float radius,
+                                float scale) const
+{
+    // Compute the distance to node; this is equal to the distance to
+    // the center of the node minus the radius of the node, scale * sqrt3.
+    float nodeDistance = (position - center).length() - scale * sqrt3;
+    if (nodeDistance > radius)
+        return;
+
+    // At this point, we've determined that the center of the node is
+    // close enough that we must check individual stars for proximity.
+
+    // Compute distance squared to avoid having to sqrt for distance
+    // comparison.
+    float radiusSquared = radius * radius;
+
+    // Check all the stars in the node.
+    for (int i = 0; i < nStars; i++)
+    {
+        Star& star = firstStar[i];
+        if (position.distanceToSquared(star.getPosition()) < radiusSquared)
+        {
+            float distance = position.distanceTo(star.getPosition());
+            float appMag = astro::absToAppMag(star.getAbsoluteMagnitude(),
+                                              distance);
+            starHandler.process(star, distance, appMag);
+        }
+    }
+
+    // Recurse into the child nodes
+    if (children != NULL)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            children[i]->findCloseStars(starHandler,
+                                        position,
+                                        radius,
+                                        scale * 0.5f);
+        }
+    }
+}
+
 
 
 int StarOctree::countChildren() const
