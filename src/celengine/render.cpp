@@ -603,7 +603,7 @@ void Renderer::clearLabels()
 static void enableSmoothLines()
 {
     // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(1.5f);
 }
@@ -611,6 +611,7 @@ static void enableSmoothLines()
 static void disableSmoothLines()
 {
     // glDisable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glDisable(GL_LINE_SMOOTH);
     glLineWidth(1.0f);
 }
@@ -738,7 +739,7 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
             if (body == sel.body)
                 glColor4f(1, 0, 0, 1);
             else
-                glColor4f(0, 0, 1, 1);
+                glColor4f(0, 0.4f, 1.0f, 1);
             
             float orbitRadiusInPixels =
                 (float) (body->getOrbit()->getBoundingRadius() /
@@ -911,7 +912,7 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowCelestialSphere) != 0)
     {
-        glColor4f(0.5f, 0.0, 0.7f, 0.5f);
+        glColor4f(0.0f, 0.0, 0.9f, 0.5f);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -3129,7 +3130,6 @@ void Renderer::renderStars(const StarDatabase& starDB,
 void Renderer::renderGalaxies(const GalaxyList& galaxies,
                               const Observer& observer)
 {
-    // Vec3f viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
     Point3d observerPos = (Point3d) observer.getPosition();
     observerPos.x *= 1e-6;
     observerPos.y *= 1e-6;
@@ -3140,6 +3140,12 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
     Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
     Vec3f v2 = Vec3f( 1,  1, 0) * viewMat;
     Vec3f v3 = Vec3f(-1,  1, 0) * viewMat;
+
+    // Kludgy way to diminish brightness of galaxies based on faintest
+    // magnitude.  I need to rethink how galaxies are rendered.
+    float brightness = min((faintestMag - 2.0f) / 4.0f, 1.0f);
+    if (brightness < 0.0f)
+        return;
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     galaxyTex->bind();
@@ -3187,14 +3193,13 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
                         break;
                 }
 
-                // if (relPos * viewNormal > 0)
                 {
                     float distance = relPos.length();
                     float screenFrac = size / distance;
 
                     if (screenFrac < 0.05f)
                     {
-                        float a = 8 * (0.05f - screenFrac);
+                        float a = 8 * (0.05f - screenFrac) * brightness;
                         glColor4f(1, 1, 1, a);
                         glTexCoord2f(0, 0);
                         glVertex(p + (v0 * size));
