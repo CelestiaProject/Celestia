@@ -680,3 +680,4 @@ Code:
 * Allow sunset color to be specified in .ssc files
 * Bound Ctrl+P to mark/unmark selection
 * Implemented tab completion of star, planet, and deep sky object names
+* Implemented new, scientifically accurate Pluto-Charon textures
