@@ -511,3 +511,32 @@ Code:
 * Implemented text-based auxilliary star catalogs
 * Added orientation property for planets
 * Corrected rotation of Toutatis
+* Improved specular highlights on planets (use local viewer model)
+* Added constellation boundaries
+* Fixed z fighting when cloud layers are used with vertex shaders
+* Added Christopher Andre's eclipse finder for windows
+* Fixed writing of locations file so locations still work after restarting
+* Comets
+* Added newly discovered extrasolar planets
+* Added InfoURL field for objects in .ssc files
+* Numerous Gtk UI fixes (details?)
+* Fixed 'squareness' of planets and moons viewed at a distance
+* Middle mouse button toggles between 45 degree and last field of view
+* Added FOV to set command, so scripts can set the field of view.
+* Made ring shadows optional
+* Added distance filtering for stars
+* Encode/decode Tycho catalog numbers, to support extended star database
+* Fixed Moon's orbit so it doesn't crash into the Earth far in the future
+* Improved vertex shader illumination for planetary rings
+* Better text display from .cel scripts
+* Added text "flash" messages for many keyboard commands
+* Fixed Windows Solar System Browser to allow arbitrary depth tree
+* Added shadows cast by rings onto planets
+* Fixed lots of bugs with sampled orbits (.xyz files)
+* Bound ! key to use current time
+* Added RotateAcceleration field to config file; allows adjustment of
+  navigation control sensitivity
+* Improved accuracy of orbital calculations; VSOP87 series for all planets
+* Added beginning/ending fields to definitions in .ssc files; allows
+  setting finite lifespans for objects
+
