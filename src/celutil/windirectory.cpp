@@ -97,3 +97,13 @@ Directory* OpenDirectory(const std::string& dirname)
 {
     return new WindowsDirectory(dirname);
 }
+
+
+bool IsDirectory(const std::string& filename)
+{
+    DWORD attr = GetFileAttributes(const_cast<LPCTSTR>(filename.c_str()));
+    if (attr == 0xffffffff)
+        return false;
+    else
+        return ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0);
+}

@@ -85,3 +85,11 @@ Directory* OpenDirectory(const std::string& dirname)
 {
     return new UnixDirectory(dirname);
 }
+
+
+bool IsDirectory(const std::string& filename)
+{
+    // TODO: implement this!
+    return false;
+}
+
