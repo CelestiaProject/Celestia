@@ -31,6 +31,7 @@ public:
     float getRadius() const;
     float getTemperature() const;
     float getRotationPeriod() const;
+    float getBolometricMagnitude() const;
 
     void setCatalogNumber(uint32);
     void setCatalogNumber(unsigned int, uint32);
