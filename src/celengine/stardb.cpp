@@ -878,10 +878,14 @@ static Star* CreateStar(uint32 catalogNumber,
     star->setCatalogNumber(catalogNumber);
     star->setAbsoluteMagnitude((float) absMag);
 
-    // Convert ra from degrees to hours for eqToCelCart function
-    ra /= 15.0;
+    // Truncate to floats to match behavior of reading from binary file.  The
+    // conversion to rectangular coordinates is still performed at double
+    // precision, however.
+    float raf = ((float) (ra * 24.0 / 360.0));
+    float decf = ((float) dec);
+    float distancef = ((float) distance);
 
-    Point3d pos = astro::equatorialToCelestialCart(ra, dec, distance);
+    Point3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
     star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
 
     return star;
