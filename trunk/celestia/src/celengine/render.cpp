@@ -2484,6 +2484,89 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 }
 
 
+void renderCompass(Point3f center,
+                   const Quatf& orientation,
+                   Vec3f semiAxes,
+                   const Quatf& bodyOrientation,
+                   float pixelScale)
+{
+    Mat3f rot = orientation.toMatrix3();
+    Mat3f irot = conjugate(orientation).toMatrix3();
+
+    Point3f eyePos(0.0f, 0.0f, 0.0f);
+    float radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
+    Vec3f eyeVec = center - eyePos;
+    eyeVec = eyeVec * irot;
+    double centerDist = eyeVec.length();
+
+    float height = 1.0f / radius;
+    Vec3f recipSemiAxes(1.0f / semiAxes.x,
+                        1.0f / semiAxes.y,
+                        1.0f / semiAxes.z);
+
+    Vec3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
+    Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
+    Mat3f A1 = Mat3f::scaling(recipSemiAxes);
+
+    const int nCompassPoints = 16;
+    Vec3f compassPoints[nCompassPoints];
+    
+
+    // ellipDist is not the true distance from the surface unless the
+    // planet is spherical.  Computing the true distance requires finding
+    // the roots of a sixth degree polynomial, and isn't actually what we
+    // want anyhow since the atmosphere region is just the planet ellipsoid
+    // multiplied by a uniform scale factor.  The value that we do compute
+    // is the distance to the surface along a line from the eye position to
+    // the center of the ellipsoid.
+    float ellipDist = (float) sqrt((eyeVec * A1) * (eyeVec * A1)) - 1.0f;
+
+    Vec3f e = -eyeVec;
+    Vec3f e_(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
+    float ee = e_ * e_;
+
+    Vec3f normal = eyeVec;
+    normal = normal / (float) centerDist;
+
+    Vec3f uAxis, vAxis;
+    Vec3f pole = Vec3f(0.0f, 1.0f, 0.0f) * bodyOrientation.toMatrix3();
+    pole = pole * irot;
+    vAxis = normal ^ pole;
+    vAxis.normalize();
+    uAxis = vAxis ^ normal;
+
+    // Compute the compass points
+    int i;
+    for (i = 0; i < nCompassPoints; i++)
+    {
+        // We want rays with an origin at the eye point and tangent to the the
+        // ellipsoid.
+        float theta = (float) i / (float) nCompassPoints * 2 * (float) PI;
+        Vec3f w = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
+        w = w * (float) centerDist;
+
+        Vec3f toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
+        compassPoints[i] = toCenter * rot;
+    }
+
+    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+    glBegin(GL_LINES);
+    glDisable(GL_LIGHTING);
+    for (i = 0; i < nCompassPoints; i++)
+    {
+        float length = 5.0f / pixelScale;
+        if (i % 4 == 0)
+            length *= 4.0f;
+        else if (i % 2 == 0)
+            length *= 2.0f;
+        
+        glVertex(center + compassPoints[i]);
+        glVertex(center + compassPoints[i] * (1.0f + length));
+    }
+    glEnd();
+}
+
+
 static void setupNightTextureCombine()
 {
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
@@ -4781,6 +4864,28 @@ void Renderer::renderPlanet(Body& body,
         renderObject(pos, distance, now,
                      orientation, nearPlaneDistance, farPlaneDistance,
                      sunDirection, sunColor, rp);
+
+        if ((renderFlags & ShowCelestialSphere) != 0 &&
+            discSizeInPixels > 100.0f)
+        {
+            glPushMatrix();
+            glLoadIdentity();
+            glDisable(GL_TEXTURE_2D);
+            glRotate(orientation);
+            
+            Vec3f semiMajorAxes(rp.radius, rp.radius * (1.0f - body.getOblateness()), rp.radius);
+
+            // Compute the orientation of the planet before axial rotation
+            Quatd q = body.getEclipticalToEquatorial(now);
+            Quatf qf = Quatf((float) q.w, (float) q.x, (float) q.y,
+                             (float) q.z);
+            renderCompass(pos, orientation, semiMajorAxes, qf,
+                          rp.radius / (distance * pixelSize));
+
+            glEnable(GL_TEXTURE_2D);
+            glPopMatrix();
+        }
+
     }
 
     glEnable(GL_TEXTURE_2D);
