@@ -552,7 +552,16 @@ bool StarDatabase::load(istream& in)
             // Ensure that the star array is large enough
             if (nStars == capacity)
             {
+                // Grow the array by 5%--this may be too little, but the
+                // assumption here is that there will be small numbers of
+                // stars in text files added to a big collection loaded from
+                // a binary file.
                 capacity = (int) (capacity * 1.05);
+
+                // 100 stars seems like a reasonable minimum
+                if (capacity < 100)
+                    capacity = 100;
+
                 Star* newStars = new Star[capacity];
                 if (newStars == NULL)
                 {
@@ -560,8 +569,11 @@ bool StarDatabase::load(istream& in)
                     return false;
                 }
 
-                copy(stars, stars + nStars, newStars);
-                delete[] stars;
+                if (stars != NULL)
+                {
+                    copy(stars, stars + nStars, newStars);
+                    delete[] stars;
+                }
                 stars = newStars;
             }
             stars[nStars++] = *star;
