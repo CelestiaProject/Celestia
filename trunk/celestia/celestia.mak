@@ -53,6 +53,7 @@ CLEAN :
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\dispmap.obj"
 	-@erase "$(INTDIR)\execution.obj"
+	-@erase "$(INTDIR)\favorites.obj"
 	-@erase "$(INTDIR)\filetype.obj"
 	-@erase "$(INTDIR)\glext.obj"
 	-@erase "$(INTDIR)\gui.obj"
@@ -145,6 +146,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\debug.obj" \
 	"$(INTDIR)\dispmap.obj" \
 	"$(INTDIR)\execution.obj" \
+	"$(INTDIR)\favorites.obj" \
 	"$(INTDIR)\filetype.obj" \
 	"$(INTDIR)\glext.obj" \
 	"$(INTDIR)\gui.obj" \
@@ -207,6 +209,7 @@ CLEAN :
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\dispmap.obj"
 	-@erase "$(INTDIR)\execution.obj"
+	-@erase "$(INTDIR)\favorites.obj"
 	-@erase "$(INTDIR)\filetype.obj"
 	-@erase "$(INTDIR)\glext.obj"
 	-@erase "$(INTDIR)\gui.obj"
@@ -302,6 +305,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\debug.obj" \
 	"$(INTDIR)\dispmap.obj" \
 	"$(INTDIR)\execution.obj" \
+	"$(INTDIR)\favorites.obj" \
 	"$(INTDIR)\filetype.obj" \
 	"$(INTDIR)\glext.obj" \
 	"$(INTDIR)\gui.obj" \
@@ -436,6 +440,12 @@ SOURCE=.\src\dispmap.cpp
 SOURCE=.\src\execution.cpp
 
 "$(INTDIR)\execution.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\favorites.cpp
+
+"$(INTDIR)\favorites.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
