@@ -14,6 +14,7 @@
 #include <sstream>
 #include <algorithm>
 #include <set>
+#include <cassert>
 #include "eclipsefinder.h"
 #include "celmath/mathlib.h"
 #include "celmath/ray.h"
