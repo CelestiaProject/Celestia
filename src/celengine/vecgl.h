@@ -73,6 +73,11 @@ inline void glTranslate(const Point3f& p)
     glTranslatef(p.x, p.y, p.z);
 }
 
+inline void glScale(const Vec3f& v)
+{
+    glScalef(v.x, v.y, v.z);
+}
+
 inline void glLightDirection(GLenum light, const Vec3f& dir)
 {
     glLightfv(light, GL_POSITION, &(Vec4f(dir.x, dir.y, dir.z, 0.0f).x));
