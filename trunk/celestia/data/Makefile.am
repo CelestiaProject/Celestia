@@ -15,5 +15,7 @@ EXTRA_DIST = $(pkgdata_DATA)
 
 MAINTAINERCLEANFILES = stars.dat
 
+if ENABLE_HIPPARCOS
 stars.dat: @HIPDIR@/hip_main.dat
 	../src/buildstardb -q
+endif

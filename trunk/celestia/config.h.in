@@ -1,15 +1,4 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
-
-/* Define if you have the ANSI C header files.  */
-#undef STDC_HEADERS
-
-/* Define if your processor stores words with the most significant
-   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
-#undef WORDS_BIGENDIAN
-
-/* Define if the X Window System is missing or not being used.  */
-#undef X_DISPLAY_MISSING
-
 #undef HAVE_LIBSM
 
 /* The directory where our data will be installed in */
@@ -27,45 +16,54 @@
 /* The directory where the HIPPARCOS/TYCHO data resides */
 #undef HIP_DATA_DIR
 
-/* Define if you have the <GL/gl.h> header file.  */
-#undef HAVE_GL_GL_H
-
-/* Define if you have the <GL/glut.h> header file.  */
-#undef HAVE_GL_GLUT_H
-
-/* Define if you have the <X11/SM/SMlib.h> header file.  */
-#undef HAVE_X11_SM_SMLIB_H
-
-/* Define if you have the <byteswap.h> header file.  */
+/* Define if you have the <byteswap.h> header file. */
 #undef HAVE_BYTESWAP_H
 
-/* Define if you have the GL library (-lGL).  */
+/* Define if you have the <GL/glut.h> header file. */
+#undef HAVE_GL_GLUT_H
+
+/* Define if you have the <GL/gl.h> header file. */
+#undef HAVE_GL_GL_H
+
+/* Define if you have the `GL' library (-lGL). */
 #undef HAVE_LIBGL
 
-/* Define if you have the GLU library (-lGLU).  */
+/* Define if you have the `GLU' library (-lGLU). */
 #undef HAVE_LIBGLU
 
-/* Define if you have the MesaGL library (-lMesaGL).  */
-#undef HAVE_LIBMESAGL
-
-/* Define if you have the MesaGLU library (-lMesaGLU).  */
-#undef HAVE_LIBMESAGLU
-
-/* Define if you have the glut library (-lglut).  */
+/* Define if you have the `glut' library (-lglut). */
 #undef HAVE_LIBGLUT
 
-/* Define if you have the gtkgl library (-lgtkgl).  */
+/* Define if you have the `gtkgl' library (-lgtkgl). */
 #undef HAVE_LIBGTKGL
 
-/* Define if you have the jpeg library (-ljpeg).  */
+/* Define if you have the `jpeg' library (-ljpeg). */
 #undef HAVE_LIBJPEG
 
-/* Define if you have the png library (-lpng).  */
+/* Define if you have the `MesaGL' library (-lMesaGL). */
+#undef HAVE_LIBMESAGL
+
+/* Define if you have the `MesaGLU' library (-lMesaGLU). */
+#undef HAVE_LIBMESAGLU
+
+/* Define if you have the `png' library (-lpng). */
 #undef HAVE_LIBPNG
+
+/* Define if you have the <X11/SM/SMlib.h> header file. */
+#undef HAVE_X11_SM_SMLIB_H
 
 /* Name of package */
 #undef PACKAGE
 
+/* Define if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
 /* Version number of package */
 #undef VERSION
 
+/* Define if your processor stores words with the most significant byte first
+   (like Motorola and SPARC, unlike Intel and VAX). */
+#undef WORDS_BIGENDIAN
+
+/* Define if the X Window System is missing or not being used. */
+#undef X_DISPLAY_MISSING
