@@ -149,6 +149,7 @@ Code revisions:
 * New script commands: renderflags, labels, orbit
 * Implemented a scripted demo mode
 * Placed ISS in Earth orbit
+<<<<<<< ChangeLog
 
 
 1.08
@@ -162,7 +163,7 @@ Code revisions:
   configure.in, added missing return type for methods in Console and Overlay
 
 
-1.10
+1.0.10
 * Fixed problem with ring shadow texture by setting wrap mode to GL_CLAMP_TO_EDGE
 * Corrected scale of ring shadow to match size of planet
 * Switched to octree based visibility determinination algorithm for
@@ -181,3 +182,28 @@ Code revisions:
 * UNIX version: Ctrl-Q now exits program
 * UNIX version: Fixed vertically flipped textures
 * UNIX version: Initial Gtk+ version, with rudimentary GUI
+
+
+1.1.0
+* Added RotationPhase field to solar system bodies; tweaking this makes sure
+  that the right part of the planet is dark at a given time.
+* Changed axial tilt of Earth so that the North Pole is illuminated in summer,
+  not winter.
+* Added option to render celestial coordinate sphere
+* Added geosynchronous follow mode
+* Added synchronous command to enable geosynchronous follow mode
+* Fixed disappearing stars when modifying field of view
+* Fixed bug reading angle in galaxies file
+* Made it possible to select an object by 'path' e.g. Sol/Earth/Moon
+* Bound { and } keys to control ambient light level
+* Windows version: added solar system browser window
+* Windows version: added star browser window
+* Windows version: separated update from redraw so animation no longer occurs
+  when dragging modal dialogs over the view window
+* Windows version: made context menus work when running fullscreen
+
+Code:
+* Fixed bug in quaternion to matrix conversion; conversion was returning the
+  matrix representation of the conjugate.
+* Moved common UI code into CelestiaCore
+
