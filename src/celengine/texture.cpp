@@ -112,8 +112,7 @@ static void initTextureLoader()
 #endif // GL_VERSION_1_2
     autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    maxTextureSize = 512;
-
+ 
     initialized = true;
 }
 
