@@ -62,6 +62,7 @@ static bool paused = false;
 static double timeScale = 0.0;
 
 static bool textEnterMode = false;
+static string typedText = "";
 
 static Point3f initialPosition(0, 0, 0);
 static Point3f position;
@@ -83,6 +84,8 @@ static HMENU menuBar = 0;
 static HACCEL acceleratorTable = 0;
 
 bool cursorVisible = true;
+
+astro::Date newTime(0.0);
 
 #define INFINITE_MOUSE
 
@@ -335,15 +338,62 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
+        {
+            SYSTEMTIME sysTime;
+            newTime = astro::Date(sim->getTime() / 86400.0);
+            sysTime.wYear = newTime.year;
+            sysTime.wMonth = newTime.month;
+            sysTime.wDay = newTime.day;
+            sysTime.wDayOfWeek = ((int) ((double) newTime + 0.5) + 1) % 7;
+            sysTime.wHour = newTime.hour;
+            sysTime.wMinute = newTime.minute;
+            sysTime.wSecond = (int) newTime.seconds;
+            sysTime.wMilliseconds = 0;
+
+            HWND hwnd = GetDlgItem(hDlg, IDC_DATEPICKER);
+            if (hwnd != NULL)
+            {
+                DateTime_SetFormat(hwnd, "dd' 'MMM' 'yyy");
+                DateTime_SetSystemtime(hwnd, GDT_VALID, &sysTime);
+            }
+            hwnd = GetDlgItem(hDlg, IDC_TIMEPICKER);
+            if (hwnd != NULL)
+            {
+                DateTime_SetFormat(hwnd, "HH':'mm':'ss' UT'");
+                DateTime_SetSystemtime(hwnd, GDT_VALID, &sysTime);
+            }
+        }
         return(TRUE);
 
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
+            if (LOWORD(wParam) == IDOK)
+                sim->setTime((double) newTime * 86400.0);
             EndDialog(hDlg, 0);
             return TRUE;
         }
         break;
+
+    case WM_NOTIFY:
+        {
+            LPNMHDR hdr = (LPNMHDR) lParam;
+
+            if (hdr->code == DTN_DATETIMECHANGE)
+            {
+                LPNMDATETIMECHANGE change = (LPNMDATETIMECHANGE) lParam;
+                if (change->dwFlags == GDT_VALID)
+                {
+                    astro::Date date(change->st.wYear, change->st.wMonth, change->st.wDay);
+                    newTime.year = change->st.wYear;
+                    newTime.month = change->st.wMonth;
+                    newTime.day = change->st.wDay;
+                    newTime.hour = change->st.wHour;
+                    newTime.minute = change->st.wMinute;
+                    newTime.seconds = change->st.wSecond + (double) change->st.wMilliseconds / 1000.0;
+                }
+            }
+        }
     }
 
     return FALSE;
@@ -506,14 +556,18 @@ void handleKey(WPARAM key, bool down)
 
 void handleKeyPress(int c)
 {
-    bool shift = ((GetKeyState(VK_SHIFT) & 0x8000) != 0);
     if (textEnterMode)
     {
         if (c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
         {
-            if (!shift && isalpha(c))
-                c = tolower(c);
-            sim->typeChar(c);
+            typedText += c;
+            renderer->getEntryConsole()->print(c);
+        }
+        else if (c == '\b')
+        {
+            if (typedText.size() > 0)
+                typedText = string(typedText, 0, typedText.size() - 1);
+            renderer->getEntryConsole()->backspace();
         }
         return;
     }
@@ -1073,7 +1127,20 @@ LRESULT CALLBACK SkeletonProc(HWND hWnd,
             break;
         case VK_RETURN:
             if (textEnterMode)
-                sim->typeChar('\n');
+            {
+                if (typedText != "")
+                {
+                    sim->selectBody(typedText);
+                    typedText = "";
+                }
+                renderer->getEntryConsole()->clear();
+            }
+            else
+            {
+                renderer->getEntryConsole()->home();
+                renderer->getEntryConsole()->clear();
+                renderer->getEntryConsole()->printf("Target name: ");
+            }
             textEnterMode = !textEnterMode;
             break;
         case VK_UP:
