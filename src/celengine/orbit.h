@@ -22,6 +22,12 @@ public:
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
     virtual void sample(double, double, int, OrbitSampleProc&) const = 0;
+    virtual bool isPeriodic() const { return true; };
+
+    // Return the time range over which the orbit is valid; if the orbit
+    // is always valid, begin and end should be equal.
+    virtual void getValidRange(double& begin, double& end) const
+        { begin = 0.0; end = 0.0; };
 };
 
 
