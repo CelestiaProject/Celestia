@@ -229,6 +229,7 @@ class Renderer
     bool useCubeMaps;
     bool useCompressedTextures;
     bool useVertexPrograms;
+    bool useRescaleNormal;
 };
 
 #endif // _RENDER_H_
