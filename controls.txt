@@ -67,6 +67,7 @@ Ctrl+E : Toggle eclipse shadow rendering
 Ctrl+L : Toggle night side planet maps (light pollution)
 Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
 Ctrl+P : Toggle per-pixel lighting (if supported)
+Ctrl+T : Toggle rendering of comet tails
 Ctrl+V : Toggle vertex programs (if supported)
 Ctrl+W : Toggle wireframe mode
 Ctrl+X : Toggle antialias lines
