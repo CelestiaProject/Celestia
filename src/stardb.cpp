@@ -391,7 +391,7 @@ void StarDatabase::buildOctree()
     cout << "Sorting stars into octree . . .\n";
     cout.flush();
     float absMag = astro::appToAbsMag(OctreeMagnitude,
-                                      OctreeRootSize * (float) sqrt(3));
+                                      OctreeRootSize * (float) sqrt(3.0));
     DynamicStarOctree* root = new DynamicStarOctree(Point3f(1000, 1000, 1000),
                                                     absMag);
     for (int i = 0; i < nStars; i++)
