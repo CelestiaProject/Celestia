@@ -427,41 +427,29 @@ BEGIN
     RTEXT           "New Name",IDC_STATIC,4,15,42,8
 END
 
-IDD_ECLIPSEFINDER DIALOGEX 0, 0, 388, 300
+IDD_ECLIPSEFINDER DIALOGEX 0, 0, 243, 257
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Eclipse Finder"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "Compute",IDCOMPUTE,330,258,50,14
-    PUSHBUTTON      "Close",IDCLOSE,330,279,50,14
     CONTROL         "List2",IDC_ECLIPSES_LIST,"SysListView32",LVS_REPORT | 
-                    LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,17,17,232,181,
+                    LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,5,7,232,181,
                     WS_EX_CLIENTEDGE
-    CONTROL         "Earth",IDC_EARTH,"Button",BS_AUTORADIOBUTTON,267,87,39,
-                    10
-    CONTROL         "Saturn",IDC_SATURN,"Button",BS_AUTORADIOBUTTON,267,117,
-                    39,10
-    CONTROL         "Jupiter",IDC_JUPITER,"Button",BS_AUTORADIOBUTTON,267,
-                    102,39,10
-    CONTROL         "Uranus",IDC_URANUS,"Button",BS_AUTORADIOBUTTON,267,132,
-                    39,10
-    CONTROL         "Neptune",IDC_NEPTUNE,"Button",BS_AUTORADIOBUTTON,267,
-                    147,39,10
-    CONTROL         "Pluto",IDC_PLUTO,"Button",BS_AUTORADIOBUTTON,267,162,39,
-                    10
-    LTEXT           "Find :",IDC_STATIC,267,15,18,8
-    LTEXT           "From",IDC_STATIC,267,177,68,8
-    LTEXT           "To",IDC_STATIC,267,211,68,8
-    CONTROL         "DateTimePicker3",IDC_DATETO,"SysDateTimePick32",
-                    DTS_RIGHTALIGN | WS_TABSTOP,267,222,78,15
-    CONTROL         "DateTimePicker3",IDC_DATEFROM,"SysDateTimePick32",
-                    DTS_RIGHTALIGN | WS_TABSTOP,267,191,78,15
-    DEFPUSHBUTTON   "Set Date and Go to Planet",IDSETDATEANDGO,136,202,88,14
-    CONTROL         "Solar eclipses",IDC_SOLAR,"Button",BS_AUTORADIOBUTTON,
-                    267,33,59,10
-    CONTROL         "Moon eclipses",IDC_MOON,"Button",BS_AUTORADIOBUTTON,267,
-                    50,61,10
-    LTEXT           "on :",IDC_STATIC,267,68,13,8
+    COMBOBOX        IDC_ECLIPSETYPE,27,194,61,42,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_ECLIPSETARGET,131,194,49,74,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "DateTimePicker3",IDC_ECLIPSEFROM,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | WS_TABSTOP,27,213,78,15
+    CONTROL         "DateTimePicker3",IDC_ECLIPSETO,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | WS_TABSTOP,120,213,78,15
+    DEFPUSHBUTTON   "Compute",IDCOMPUTE,22,237,50,14
+    PUSHBUTTON      "Set Date and Go to Planet",IDSETDATEANDGO,75,237,94,14
+    PUSHBUTTON      "Close",IDCLOSE,172,237,50,14
+    RTEXT           "Find",IDC_STATIC,5,196,17,8
+    RTEXT           "From",IDC_STATIC,5,215,17,8
+    CTEXT           "to",IDC_STATIC,108,215,9,8
+    CTEXT           "eclipse on",IDC_STATIC,92,196,35,8
 END
 
 

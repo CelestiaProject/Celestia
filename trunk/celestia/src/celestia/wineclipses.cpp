@@ -448,10 +448,23 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             SetWindowLong(hDlg, DWL_USER, lParam);
             HWND hwnd = GetDlgItem(hDlg, IDC_ECLIPSES_LIST);
             InitEclipseFinderColumns(hwnd);
-            SendDlgItemMessage(hDlg, IDC_EARTH, BM_SETCHECK, BST_CHECKED, 0);
-            SendDlgItemMessage(hDlg, IDC_SOLAR, BM_SETCHECK, BST_CHECKED, 0);
-            InitDateControls(hDlg, astro::Date(eclipse->appCore->getSimulation()->getTime()), eclipse->fromTime, eclipse->toTime);
+            SendDlgItemMessage(hDlg, IDC_ECLIPSES_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
+
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_ADDSTRING, 0, (LPARAM)"solar");
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_ADDSTRING, 0, (LPARAM)"moon");
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_SETCURSEL, 0, 0);
             eclipse->bSolar = true;
+
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Earth");
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Jupiter");
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Saturn");
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Uranus");
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Neptune");
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)"Pluto");
+            SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_SETCURSEL, 0, 0);
+            eclipse->strPlaneteToFindOn = "Earth";
+
+            InitDateControls(hDlg, astro::Date(eclipse->appCore->getSimulation()->getTime()), eclipse->fromTime, eclipse->toTime);
         }
         return(TRUE);
 
@@ -512,31 +525,44 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 sim->gotoSelection(0., Vec3f(0, 1, 0), astro::ObserverLocal);
             }
             break;
-
-        case IDC_EARTH:
-            eclipseFinder->strPlaneteToFindOn = "Earth";
-            break;
-        case IDC_JUPITER:
-            eclipseFinder->strPlaneteToFindOn = "Jupiter";
-            break;
-        case IDC_SATURN:
-            eclipseFinder->strPlaneteToFindOn = "Saturn";
-            break;
-        case IDC_URANUS:
-            eclipseFinder->strPlaneteToFindOn = "Uranus";
-            break;
-        case IDC_NEPTUNE:
-            eclipseFinder->strPlaneteToFindOn = "Neptune";
-            break;
-        case IDC_PLUTO:
-            eclipseFinder->strPlaneteToFindOn = "Pluto";
-            break;
-        case IDC_SOLAR:
-            eclipseFinder->bSolar = true;
-            break;
-        case IDC_MOON:
-            eclipseFinder->bSolar = false;
-            break;
+        case IDC_ECLIPSETYPE:
+            if(HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                switch(SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0))
+                {
+                case 0:
+                    eclipseFinder->bSolar = true;
+                    break;
+                case 1:
+                    eclipseFinder->bSolar = false;
+                    break;
+                }
+            }
+        case IDC_ECLIPSETARGET:
+            if(HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                switch(SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0))
+                {
+                case 0:
+                    eclipseFinder->strPlaneteToFindOn = "Earth";
+                    break;
+                case 1:
+                    eclipseFinder->strPlaneteToFindOn = "Jupiter";
+                    break;
+                case 2:
+                    eclipseFinder->strPlaneteToFindOn = "Saturn";
+                    break;
+                case 3:
+                    eclipseFinder->strPlaneteToFindOn = "Uranus";
+                    break;
+                case 4:
+                    eclipseFinder->strPlaneteToFindOn = "Neptune";
+                    break;
+                case 5:
+                    eclipseFinder->strPlaneteToFindOn = "Pluto";
+                    break;
+                }
+            }
         }
 
         return TRUE;
