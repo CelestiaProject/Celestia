@@ -1844,3 +1844,16 @@
 }
 
 
+"b" "HD 2039"
+{
+	Texture "jupiterlike.jpg"
+	Mass 1300
+	Radius 66000
+
+	EllipticalOrbit {
+		Period        3.31
+		SemiMajorAxis 2.19
+	        Eccentricity  0.65
+                # Omega       223
+	}
+}
