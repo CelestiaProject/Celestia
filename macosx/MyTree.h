@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "NSArray_Extensions.h"
 
-@interface MyVector : NSMutableArray <NSCoding> {
+@interface MyVector : NSMutableArray /*<NSCoding>*/ {
     NSMutableArray *_array;
     Class _myClass;
 }

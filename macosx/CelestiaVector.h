@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface CelestiaVector : NSArray <NSCoding>
+@interface CelestiaVector : NSArray /*<NSCoding>*/
 {
     NSArray* _array;
 }

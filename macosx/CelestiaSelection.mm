@@ -78,13 +78,13 @@
 -(void)select:(id)inst
 {
         if ([inst isKindOfClass:[CelestiaBody class]]) {
-            [self selection].select([(CelestiaBody*)inst body]);
+            [self selection].select((Body*)[(CelestiaBody*)inst body]);
         }
         else if ([inst isKindOfClass:[CelestiaStar class]]) {
-            [self selection].select([(CelestiaStar*)inst star]);
+            [self selection].select((Star *)[(CelestiaStar*)inst star]);
 	}
         else if ([inst isKindOfClass:[CelestiaGalaxy class]]) {
-            [self selection].select([(CelestiaGalaxy*)inst galaxy]);
+            [self selection].select((Galaxy*)[(CelestiaGalaxy*)inst galaxy]);
 	}
 }
 -(CelestiaStar*)star
