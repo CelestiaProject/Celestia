@@ -48,4 +48,5 @@
 - (void) setOrbitMask: (int) mask;
 
 -(void)archive;
+-(void)unarchive;
 @end
