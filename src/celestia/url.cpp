@@ -279,6 +279,10 @@ std::string Url::getCoordSysName(astro::CoordinateSystem mode) const
         return "Chase";
     case astro::PhaseLock:
         return "PhaseLock";
+    case astro::Equatorial:
+        return "Unknown";
+    case astro::ObserverLocal:
+        return "Unknown";
     }
     return "Unknown";
 }
@@ -360,8 +364,8 @@ std::string Url::decode_string(const std::string& str)
     b = str.find("%");
     while (b != std::string::npos)
     {
-        char c;
-        out += str.substr(a, b-a);      
+        unsigned int c;
+        out += str.substr(a, b-a);
         std::string c_code = str.substr(b+1, 2); 
         sscanf(c_code.c_str(), "%02x", &c);
         out += c;

@@ -14,3 +14,4 @@ public slots:
 };
 
 #endif // CELESTIALBROWSER_H
+

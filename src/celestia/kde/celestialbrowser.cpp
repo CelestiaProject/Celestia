@@ -215,7 +215,7 @@ void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p
     
     QListViewItem *i = item;
     QString name = i->text(0);
-    while (i = i->parent()) {
+    while ( (i = i->parent()) ) {
         name = i->text(0) + "/" + name;
     }
     
