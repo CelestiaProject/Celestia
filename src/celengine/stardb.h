@@ -49,6 +49,10 @@ class StarDatabase
     void setNameDatabase(StarNameDatabase*);
     
     void addCrossReference(const CatalogCrossReference*);
+    bool load(std::istream&);
+    bool loadBinary(std::istream&);
+
+    void finish();
 
     static StarDatabase* read(std::istream&);
 
@@ -57,6 +61,7 @@ class StarDatabase
     void buildIndexes();
 
     int nStars;
+    int capacity;
     Star* stars;
     StarNameDatabase* names;
     Star** catalogNumberIndexes[Star::CatalogCount];

@@ -76,6 +76,10 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
     {
         strcpy(s0, "Q");
     }
+    else if (st == StellarClass::BlackHole)
+    {
+        strcpy(s0, "X");
+    }
     else if (st == StellarClass::NormalStar)
     {
 	s0[0] = "OBAFGKMRSNWW?"[(unsigned int) getSpectralClass()];
@@ -150,4 +154,134 @@ ostream& operator<<(ostream& os, const StellarClass& sc)
 bool operator<(const StellarClass& sc0, const StellarClass& sc1)
 {
     return sc0.data < sc1.data;
+}
+
+
+StellarClass StellarClass::parse(const std::string& s)
+{
+    const char* starType = s.c_str();
+    StellarClass::StarType type = StellarClass::NormalStar;
+    StellarClass::SpectralClass specClass = StellarClass::Spectral_A;
+    StellarClass::LuminosityClass lum = StellarClass::Lum_V;
+    unsigned short number = 5;
+    int i = 0;
+
+    // Subdwarves (luminosity class VI) are prefixed with sd
+    if (starType[i] == 's' && starType[i + 1] == 'd')
+    {
+        lum = StellarClass::Lum_VI;
+        i += 2;
+    }
+
+    switch (starType[i])
+    {
+    case 'O':
+        specClass = StellarClass::Spectral_O;
+        break;
+    case 'B':
+        specClass = StellarClass::Spectral_B;
+        break;
+    case 'A':
+        specClass = StellarClass::Spectral_A;
+        break;
+    case 'F':
+        specClass = StellarClass::Spectral_F;
+        break;
+    case 'G':
+        specClass = StellarClass::Spectral_G;
+        break;
+    case 'K':
+        specClass = StellarClass::Spectral_K;
+        break;
+    case 'M':      
+        specClass = StellarClass::Spectral_M;
+        break;
+    case 'R':
+        specClass = StellarClass::Spectral_R;
+        break;
+    case 'N':
+        specClass = StellarClass::Spectral_S;
+        break;
+    case 'S':
+        specClass = StellarClass::Spectral_N;
+        break;
+    case 'W':
+        i++;
+        if (starType[i] == 'C')
+             specClass = StellarClass::Spectral_WC;
+        else if (starType[i] == 'N')
+            specClass = StellarClass::Spectral_WN;
+        else
+            i--;
+        break;
+
+    case 'D':
+        type = StellarClass::WhiteDwarf;
+        return StellarClass(type, specClass, 0, lum);
+
+    case 'Q':
+        type = StellarClass::NeutronStar;
+        return StellarClass(type, specClass, 0, lum);
+
+    case 'X':
+        type = StellarClass::BlackHole;
+        return StellarClass(type, specClass, 0, lum);
+
+    default:
+        specClass = StellarClass::Spectral_Unknown;
+        break;
+    }
+
+    i++;
+    if (starType[i] >= '0' && starType[i] <= '9')
+    {
+        number = starType[i] - '0';
+    }
+    else
+    {
+        // No number given for spectral class; assume it's a 5 unless
+        // the star is type O, as O5 stars are exceedingly rare.
+        if (specClass == StellarClass::Spectral_O)
+            number = 9;
+        else
+            number = 5;
+    }
+
+    if (lum != StellarClass::Lum_VI)
+    {
+        i++;
+        lum = StellarClass::Lum_V;
+        while (i < 13 && starType[i] != '\0') {
+            if (starType[i] == 'I') {
+                if (starType[i + 1] == 'I') {
+                    if (starType[i + 2] == 'I') {
+                        lum = StellarClass::Lum_III;
+                    } else {
+                        lum = StellarClass::Lum_II;
+                    }
+                } else if (starType[i + 1] == 'V') {
+                    lum = StellarClass::Lum_IV;
+                } else if (starType[i + 1] == 'a') {
+                    if (starType[i + 2] == '0')
+                        lum = StellarClass::Lum_Ia0;
+                    else
+                        lum = StellarClass::Lum_Ia;
+                } else if (starType[i + 1] == 'b') {
+                    lum = StellarClass::Lum_Ib;
+                } else {
+                    lum = StellarClass::Lum_Ib;
+                }
+                break;
+            } else if (starType[i] == 'V') {
+                if (starType[i + 1] == 'I')
+                    lum = StellarClass::Lum_VI;
+                else
+                    lum = StellarClass::Lum_V;
+                break;
+            }
+            i++;
+        }
+    }
+
+    return StellarClass(type, specClass, number, lum);    
 }
