@@ -13,7 +13,16 @@
 #define _UTIL_H_
 
 #include <string>
+#include <iostream>
+#include <functional>
 
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
+
+template <class T> struct printlineFunc : public std::unary_function<T, void>
+{
+    printlineFunc(std::ostream& o) : out(o) {};
+    void operator() (T x) { out << x << '\n'; };
+    std::ostream& out;
+};
 
 #endif // _UTIL_H_
