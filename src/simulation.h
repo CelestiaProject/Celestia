@@ -30,7 +30,8 @@ class Simulation
     Simulation();
     ~Simulation();
 
-    void setTime(double t); // Time in seconds
+    double getTime() const; // Time in seconds
+    void setTime(double t);
 
     void update(double dt);
     void render(Renderer&);
@@ -71,8 +72,6 @@ class Simulation
 
     int getHUDDetail() const;
     void setHUDDetail(int);
-
-    void typeChar(char c);
 
     enum ObserverMode {
         Free        = 0,
@@ -121,8 +120,6 @@ class Simulation
     double realTime;
     double simTime;
     double timeScale;
-
-    string typedText;
 
     StarDatabase* stardb;
     SolarSystemCatalog* solarSystemCatalog;
