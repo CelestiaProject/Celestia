@@ -56,6 +56,7 @@ CLEAN :
 	-@erase "$(INTDIR)\execution.obj"
 	-@erase "$(INTDIR)\favorites.obj"
 	-@erase "$(INTDIR)\filetype.obj"
+	-@erase "$(INTDIR)\galaxy.obj"
 	-@erase "$(INTDIR)\glext.obj"
 	-@erase "$(INTDIR)\gui.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
@@ -151,6 +152,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\execution.obj" \
 	"$(INTDIR)\favorites.obj" \
 	"$(INTDIR)\filetype.obj" \
+	"$(INTDIR)\galaxy.obj" \
 	"$(INTDIR)\glext.obj" \
 	"$(INTDIR)\gui.obj" \
 	"$(INTDIR)\meshmanager.obj" \
@@ -216,6 +218,7 @@ CLEAN :
 	-@erase "$(INTDIR)\execution.obj"
 	-@erase "$(INTDIR)\favorites.obj"
 	-@erase "$(INTDIR)\filetype.obj"
+	-@erase "$(INTDIR)\galaxy.obj"
 	-@erase "$(INTDIR)\glext.obj"
 	-@erase "$(INTDIR)\gui.obj"
 	-@erase "$(INTDIR)\meshmanager.obj"
@@ -314,6 +317,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\execution.obj" \
 	"$(INTDIR)\favorites.obj" \
 	"$(INTDIR)\filetype.obj" \
+	"$(INTDIR)\galaxy.obj" \
 	"$(INTDIR)\glext.obj" \
 	"$(INTDIR)\gui.obj" \
 	"$(INTDIR)\meshmanager.obj" \
@@ -466,6 +470,12 @@ SOURCE=.\src\favorites.cpp
 SOURCE=.\src\filetype.cpp
 
 "$(INTDIR)\filetype.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\galaxy.cpp
+
+"$(INTDIR)\galaxy.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
