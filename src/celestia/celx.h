@@ -17,6 +17,7 @@
 extern "C" {
 #include "lua.h"
 }
+#include <celutil/timer.h>
 
 class CelestiaCore;
 
@@ -38,10 +39,12 @@ public:
     int resume();
     bool isAlive() const;
 
+    double getTime() const;    
 private:
     lua_State* state;
     lua_State* costate; // coroutine stack
     bool alive;
+    Timer* timer;
 };
 
 #endif // _CELESTIA_CELX_H_
