@@ -51,6 +51,19 @@ class PlanetarySystem
 };
 
 
+class RotationElements
+{
+ public:
+    RotationElements();
+
+    float period;        // sidereal rotation period
+    float offset;        // rotation at epoch
+    double epoch;
+    float obliquity;     // tilt of rotation axis
+    float axisLongitude; // longitude of rot. axis projected onto orbital plane
+};
+
+
 class RingSystem 
 {
  public:
@@ -78,20 +91,16 @@ class Body
     void setName(const std::string);
     Orbit* getOrbit() const;
     void setOrbit(Orbit*);
+    RotationElements getRotationElements() const;
+    void setRotationElements(const RotationElements&);
     float getRadius() const;
     void setRadius(float);
     float getMass() const;
     void setMass(float);
     float getOblateness() const;
     void setOblateness(float);
-    float getObliquity() const;
-    void setObliquity(float);
     float getAlbedo() const;
     void setAlbedo(float);
-    float getRotationPeriod() const;
-    void setRotationPeriod(float);
-    float getRotationPhase() const;
-    void setRotationPhase(float);
 
     const PlanetarySystem* getSatellites() const;
     void setSatellites(PlanetarySystem*);
@@ -127,14 +136,12 @@ class Body
 
     PlanetarySystem* system;
     Orbit* orbit;
+    RotationElements rotationElements;
 
     float radius;
     float mass;
     float oblateness;
-    float obliquity; // aka 'axial tilt'
     float albedo;
-    float rotationPeriod;
-    float rotationPhase;
 
     ResourceHandle mesh;
     Surface surface;

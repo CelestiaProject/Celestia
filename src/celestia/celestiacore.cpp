@@ -959,7 +959,7 @@ static void displayPlanetInfo(Overlay& overlay,
 
     if (detail > 1)
     {
-        overlay << "Day length: " << body.getRotationPeriod() * 24.0 << " hours\n";
+        overlay << "Day length: " << body.getRotationElements().period * 24.0 << " hours\n";
         
         PlanetarySystem* system = body.getSystem();
         if (system != NULL)

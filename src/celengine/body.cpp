@@ -16,11 +16,19 @@
 using namespace std;
 
 
+RotationElements::RotationElements() :
+    period(1.0f),
+    offset(0.0f),
+    epoch(astro::J2000),
+    obliquity(0.0f),
+    axisLongitude(0.0f)
+{
+}
+
+
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     oblateness(0),
-    rotationPeriod(1),
-    rotationPhase(0.0f),
     mesh(InvalidResource),
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
@@ -99,18 +107,6 @@ void Body::setOblateness(float _oblateness)
 }
 
 
-float Body::getObliquity() const
-{
-    return obliquity;
-}
-
-
-void Body::setObliquity(float _obliquity)
-{
-    obliquity = _obliquity;
-}
-
-
 float Body::getAlbedo() const
 {
     return albedo;
@@ -123,27 +119,15 @@ void Body::setAlbedo(float _albedo)
 }
 
 
-float Body::getRotationPeriod() const
+RotationElements Body::getRotationElements() const
 {
-    return rotationPeriod;
+    return rotationElements;
 }
 
 
-void Body::setRotationPeriod(float _rotationPeriod)
+void Body::setRotationElements(const RotationElements& re)
 {
-    rotationPeriod = _rotationPeriod;
-}
-
-
-float Body::getRotationPhase() const
-{
-    return rotationPhase;
-}
-
-
-void Body::setRotationPhase(float _rotationPhase)
-{
-    rotationPhase = _rotationPhase;
+    rotationElements = re;
 }
 
 
@@ -212,7 +196,8 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
 Mat4d Body::getLocalToHeliocentric(double when)
 {
     Point3d pos = orbit->positionAtTime(when);
-    Mat4d frame = Mat4d::xrotation(-obliquity) * Mat4d::translation(pos);
+    Mat4d frame = Mat4d::xrotation(-rotationElements.obliquity) *
+        Mat4d::translation(pos);
  
     // Recurse up the hierarchy . . .
     if (system != NULL && system->getPrimaryBody() != NULL)
@@ -232,7 +217,8 @@ Point3d Body::getHeliocentricPosition(double when)
 Quatd Body::getEclipticalToEquatorial() const
 {
     Quatd q(1);
-    q.xrotate(-obliquity);
+    q.xrotate(-rotationElements.obliquity);
+    // TODO: Need to rotate by longitude of rotation axis
 
     // Recurse up the hierarchy . . .
     if (system != NULL && system->getPrimaryBody() != NULL)
@@ -255,12 +241,18 @@ Quatd Body::getEclipticalToGeographic(double when)
 // to a point on the surface of the body.
 Quatd Body::getEquatorialToGeographic(double when)
 {
-    double rotations = when / (double) getRotationPeriod();
-    int wholeRotations = (int) rotations;
+    double t = when - rotationElements.epoch;
+    double rotations = t / (double) rotationElements.period;
+    double wholeRotations = floor(rotations);
     double remainder = rotations - wholeRotations;
+
+    // Add an extra half rotation because of the convention in all
+    // planet texture maps where zero deg long. is in the middle of
+    // the texture.
+    remainder += 0.5;
     
     Quatd q(1);
-    q.yrotate(-remainder * 2 * PI - getRotationPhase());
+    q.yrotate(-remainder * 2 * PI - rotationElements.offset);
     return q;
 }
 
