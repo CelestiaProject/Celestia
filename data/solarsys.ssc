@@ -610,7 +610,7 @@
 	Texture "asteroid.jpg"
 	Radius     110
 
-	# CustomOrbit "phoebe"
+	CustomOrbit "phoebe"
 	EllipticalOrbit
 	{
 	Epoch          2447892.5
@@ -652,7 +652,7 @@
 
 	RotationPeriod   17.24
 	Obliquity        97.92
-	LongOfRotationAxis 167.62
+	LongOfRotationAxis 167.76
 
 	Albedo            0.66
 
@@ -663,12 +663,12 @@
 	}
 }
 
-
 "Miranda" "Sol/Uranus"
 {
 	Texture "miranda.jpg"
 	Radius   235
 
+	CustomOrbit "miranda"
 	EllipticalOrbit
 	{
 	Period         1.413
@@ -684,6 +684,7 @@
 	Texture "ariel.jpg"
 	Radius   576
 
+	CustomOrbit "ariel"
 	EllipticalOrbit
 	{
 	Period         2.520
@@ -699,6 +700,7 @@
 	Texture "umbriel.jpg"
 	Radius   585
 
+	CustomOrbit "umbriel"
 	EllipticalOrbit
 	{
 	Period         4.144
@@ -714,6 +716,7 @@
 	Texture "titania.jpg"
 	Radius   789
 
+	CustomOrbit "titania"
 	EllipticalOrbit
 	{
 	Period         8.706
@@ -729,6 +732,7 @@
 	Texture "oberon.jpg"
 	Radius   761
 
+	CustomOrbit "oberon"
 	EllipticalOrbit
 	{
 	Period        13.463
@@ -762,8 +766,8 @@
 	}
 
 	RotationPeriod   16.11
-	Obliquity        28.8
-	LongOfRotationAxis 221.13
+	Obliquity        28.03
+	LongOfRotationAxis 49.235
 
 	Albedo            0.62
 }
@@ -1019,14 +1023,14 @@
 
 	EllipticalOrbit
 	{
-	Period            3.98
-	SemiMajorAxis     2.510
-	Eccentricity      0.634
-	Inclination       0.5
-	AscendingNode   128.2
-	ArgOfPericenter 274.8
-        MeanAnomaly      36.7
-	# Epoch        20010401
+	Period            3.976715
+	SemiMajorAxis     2.5100537
+	Eccentricity      0.6342274
+	Inclination       0.46959
+	AscendingNode   128.24788
+	ArgOfPericenter 274.78070
+        MeanAnomaly      86.28120
+	Epoch        2452200.5
 	}
 
 	RotationPeriod  180
