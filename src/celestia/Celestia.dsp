@@ -128,6 +128,10 @@ SOURCE=.\wingotodlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\winlocations.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\winmain.cpp
 # End Source File
 # Begin Source File
@@ -184,6 +188,10 @@ SOURCE=.\wingotodlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\winlocations.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\winssbrowser.h
 # End Source File
 # Begin Source File
@@ -204,7 +212,35 @@ SOURCE=.\winviewoptsdlg.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=.\res\icon1.ico
+SOURCE=.\res\Celestia.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Clsdfold.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Clsdfolder.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Location.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Openfold.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Openfolder.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Rootfold.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Rootfolder.ico
 # End Source File
 # End Group
 # End Target
