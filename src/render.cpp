@@ -15,7 +15,6 @@
 #include "vecgl.h"
 #include "perlin.h"
 #include "spheremesh.h"
-#include "console.h"
 #include "gui.h"
 #include "regcombine.h"
 #include "render.h"
@@ -69,7 +68,6 @@ Renderer::Renderer() :
     windowWidth(0),
     windowHeight(0),
     fov(FOV),
-    console(NULL),
     renderMode(GL_FILL),
     labelMode(NoLabels),
     renderFlags(ShowStars | ShowPlanets),
@@ -84,7 +82,6 @@ Renderer::Renderer() :
 {
     textureManager = new TextureManager("textures");
     meshManager = new MeshManager("models");
-    console = new Console(30, 100);
 }
 
 
@@ -366,7 +363,6 @@ TextureFont* Renderer::getFont() const
 void Renderer::setFont(TextureFont* txf)
 {
     font = txf;
-    console->setFont(txf);
 }
 
 
@@ -388,12 +384,6 @@ Vec3f Renderer::getPickRay(int winX, int winY)
     pickDirection.normalize();
 
     return pickDirection;
-}
-
-
-Console* Renderer::getConsole() const
-{
-    return console;
 }
 
 
@@ -751,8 +741,9 @@ void Renderer::render(const Observer& observer,
                     glEnd();
                 }
             }
-#if 0
-            // Render axes in orbital plane for debugging
+
+#ifdef ECLIPTIC_AXES
+            // Render axes in plane of the ecliptic for debugging
             glBegin(GL_LINES);
             glColor4f(1, 0, 0, 1);
             glVertex3f(3000, 0, 0);
@@ -785,23 +776,6 @@ void Renderer::render(const Observer& observer,
     glPolygonMode(GL_BACK, GL_FILL);
 
     renderLabels();
-
-    glColor4f(0.8f, 0.8f, 1.0f, 1);
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, windowWidth, 0, windowHeight);
-
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glTranslatef(PixelOffset, windowHeight - 20 + PixelOffset, 0);
-    console->render();
-    glPopMatrix();
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
@@ -1826,8 +1800,6 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
     }
 }
 
-
-
 void Renderer::renderStars(const StarDatabase& starDB,
                            float faintestVisible,
                            const Observer& observer)
@@ -1862,123 +1834,6 @@ void Renderer::renderStars(const StarDatabase& starDB,
     renderParticles(glareParticles, observer.getOrientation());
 }
 
-#if 0
-void Renderer::renderStars(const StarDatabase& starDB,
-                           const VisibleStarSet& visset,
-                           float faintestVisible,
-                           const Observer& observer)
-{
-    int nRendered = 0;
-    vector<uint32>* vis = visset.getVisibleSet();
-    int nStars = vis->size();
-    Point3f observerPos = (Point3f) observer.getPosition();
-    Vec3f viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
-
-    float size = pixelSize * 3.0f;
-
-    starParticles.clear();
-    glareParticles.clear();
-
-    for (int i = 0; i < nStars; i++)
-    {
-        Star* star = starDB.getStar((*vis)[i]);
-        Point3f pos = star->getPosition();
-        Vec3f relPos = pos - observerPos;
-        if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f)
-        {
-            float distance = relPos.length();
-
-            Color starColor = star->getStellarClass().getApparentColor();
-            float alpha = 0.0f;
-            float renderDistance = distance;
-            float s = renderDistance * size;
-            float discSizeInPixels = 0.0f;
-
-            // Special handling for stars less than one light year away . . .
-            // We can't just go ahead and render a nearby star in the usual way
-            // for two reasons:
-            //   * It may be clipped by the near plane
-            //   * It may be large enough that we should render it as a mesh instead
-            //     of a particle
-            // It's possible that the second condition might apply for stars further
-            // than one light year away if the star is huge, the fov is very small,
-            // and the resolution is high.  We'll ignore this for now and use the
-            // most inexpensive test possible . . .
-            if (distance < 1.0f)
-            {
-                // Compute the position of the observer relative to the star.
-                // This is a much more accurate (and expensive) distance
-                // calculation than the previous one which used the observer's
-                // position rounded off to floats.
-                relPos = pos - observer.getPosition();
-                distance = relPos.length();
-
-                float f = RENDER_DISTANCE / distance;
-                renderDistance = RENDER_DISTANCE;
-                pos = observerPos + relPos * f;
-
-                float radius = star->getRadius();
-                // s = renderDistance * size + astro::kilometersToLightYears(radius * f);
-                discSizeInPixels = radius / astro::lightYearsToKilometers(distance) /
-                    (pixelSize / NEAR_DIST);
-            }
-
-            float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(), distance);
-        
-            alpha = clamp(1.0f - appMag * brightnessScale + brightnessBias);
-
-            if (appMag < faintestVisible && discSizeInPixels <= 1)
-            {
-                Particle p;
-                p.center = pos;
-                p.size = renderDistance * size;
-                p.color = Color(starColor, alpha);
-                starParticles.insert(starParticles.end(), p);
-                nRendered++;
-
-                // If the star is brighter than magnitude 1, add a halo around it to
-                // make it appear more brilliant.  This is a hack to compensate for the
-                // limited dynamic range of monitors.
-                if (appMag < 1.0f)
-                {
-                    alpha = 0.4f * clamp((appMag - 1) * -0.8f);
-                    s = renderDistance * 0.001f * (3 - (appMag - 1)) * 2;
-
-                    if (s > p.size * 3)
-                        p.size = s;
-                    else
-                        p.size = p.size * 3;
-                    p.color = Color(starColor, alpha);
-                    glareParticles.insert(glareParticles.end(), p);
-                }
-            }
-            else
-            {
-                RenderListEntry rle;
-                rle.star = star;
-                rle.body = NULL;
-
-                // Objects in the render list are always rendered relative to a viewer
-                // at the origin--this is different than for distance stars.
-                float scale = RENDER_DISTANCE / distance;
-                rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
-
-                rle.distance = astro::lightYearsToKilometers(distance);
-                rle.discSizeInPixels = discSizeInPixels;
-                rle.appMag = appMag;
-                renderList.insert(renderList.end(), rle);
-            }
-        }
-    }
-
-    glBindTexture(GL_TEXTURE_2D, starTex->getName());
-    renderParticles(starParticles, observer.getOrientation());
-    glBindTexture(GL_TEXTURE_2D, glareTex->getName());
-    renderParticles(glareParticles, observer.getOrientation());
-
-    cout << "Rendered stars: " << nRendered << '\n';
-}
-#endif
 
 void Renderer::renderGalaxies(const GalaxyList& galaxies,
                               const Observer& observer)
