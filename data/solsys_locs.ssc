@@ -109,7 +109,7 @@ Location "NORTH AMERICA" "Sol/Earth"
 Location "SOUTH AMERICA" "Sol/Earth"
 {
     LongLat [ -60 -10 0 ]
-    Size 1300
+    Size 4200
     Type "TA"
 }
 
@@ -139,13 +139,6 @@ Location "ANTARCTICA" "Sol/Earth"
 {
     LongLat [ 0 -90 0 ]
     Size 3600
-    Type "TA"
-}
-
-Location "NORTH AMERICA" "Sol/Earth"
-{
-    LongLat [ -105 40 0 ]
-    Size 5000
     Type "TA"
 }
 
