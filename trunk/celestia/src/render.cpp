@@ -285,10 +285,6 @@ bool Renderer::init(int winWidth, int winHeight)
             normalizationTex->bindName();
         }
 
-        char* glRenderer = (char*) glGetString(GL_RENDERER);
-        if (glRenderer != NULL && strstr(glRenderer, "GeForce3") != NULL)
-            isGF3 = true;
-
         // Create labels for celestial sphere
         {
             char buf[10];
@@ -366,6 +362,25 @@ bool Renderer::init(int winWidth, int winHeight)
         DPRINTF("Renderer: EXT_rescale_normal supported.\n");
         useRescaleNormal = true;
         glEnable(GL_RESCALE_NORMAL_EXT);
+    }
+
+    // Ugly renderer-specific bug workarounds follow . . .
+    char* glRenderer = (char*) glGetString(GL_RENDERER);
+    if (glRenderer != NULL)
+    {
+        // Fog is broken with vertex program emulation in most versions of
+        // the GF 1 and 2 drivers; we need to detect this and disable
+        // vertex programs which output fog coordinates
+        if (strstr(glRenderer, "GeForce3") != NULL)
+            isGF3 = true;
+
+        if (strstr(glRenderer, "Savage4") != NULL)
+        {
+            // S3 Savage4 drivers appear to rescale normals without reporting
+            // EXT_rescale_normal.  Lighting will be messed up unless
+            // we set the useRescaleNormal flag.
+            useRescaleNormal = true;
+        }
     }
 
     cout << "Simultaneous textures supported: " << nSimultaneousTextures << '\n';
@@ -764,6 +779,9 @@ void Renderer::render(const Observer& observer,
                     convex = false;
                 }
 
+                if (iter->body->getMesh() != InvalidResource)
+                    convex = false;
+
                 cullRadius = radius;
                 if (iter->body->getAtmosphere() != NULL)
                     cullRadius += iter->body->getAtmosphere()->height;
@@ -780,7 +798,8 @@ void Renderer::render(const Observer& observer,
                 float nearZ = center.distanceFromOrigin() - radius;
                 float maxSpan = (float) sqrt(square((float) windowWidth) +
                                              square((float) windowHeight));
-                nearZ = -nearZ / (float) cos(degToRad(fov)) *
+
+                nearZ = -nearZ / (float) cos(degToRad(fov / 2)) *
                     ((float) windowHeight / maxSpan);
                 
                 if (nearZ > -MinNearPlaneDistance)
