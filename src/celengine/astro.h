@@ -40,6 +40,8 @@ namespace astro
         double seconds;
     };
 
+    bool parseDate(const std::string&, Date&);
+
     enum CoordinateSystem
     {
         Universal       = 0,
