@@ -296,7 +296,7 @@ static NSMutableDictionary* tagMap;
 
 // Visibility Settings
 
-#define RENDERMETHODS(flag)  -(BOOL) show##flag { return (appCore->getRenderer()->getRenderFlags()&Renderer::Show##flag) != 0; } -(void) setShow##flag##: (BOOL) value  { appCore->getRenderer()->setRenderFlags( [self setValue: value forBit: Renderer::Show##flag inSet: appCore->getRenderer()->getRenderFlags() ] ); } 
+#define RENDERMETHODS(flag)  -(BOOL) show##flag { return (appCore->getRenderer()->getRenderFlags()&Renderer::Show##flag) != 0; } -(void) setShow##flag: (BOOL) value  { appCore->getRenderer()->setRenderFlags( [self setValue: value forBit: Renderer::Show##flag inSet: appCore->getRenderer()->getRenderFlags() ] ); } 
 
 RENDERMETHODS(Stars)
 RENDERMETHODS(Planets)
@@ -319,7 +319,7 @@ RENDERMETHODS(CelestialSphere)
 
 // Label Settings
 
-#define LABELMETHODS(flag)  -(BOOL) show##flag##Labels { return (appCore->getRenderer()->getLabelMode()&Renderer::##flag##Labels) != 0; } -(void) setShow##flag##Labels: (BOOL) value  { appCore->getRenderer()->setLabelMode( [self setValue: value forBit: Renderer::##flag##Labels inSet: appCore->getRenderer()->getLabelMode()] ); } 
+#define LABELMETHODS(flag)  -(BOOL) show##flag##Labels { return (appCore->getRenderer()->getLabelMode()&Renderer::flag##Labels) != 0; } -(void) setShow##flag##Labels : (BOOL) value  { appCore->getRenderer()->setLabelMode( [self setValue: value forBit: Renderer::flag##Labels inSet: appCore->getRenderer()->getLabelMode()] ); } 
 
 LABELMETHODS(Star)
 LABELMETHODS(Planet)
@@ -333,7 +333,7 @@ LABELMETHODS(Comet)
 
 // Orbit Settings
 
-#define ORBITMETHODS(flag)  -(BOOL) show##flag##Orbits { return (appCore->getRenderer()->getOrbitMask()&Body::##flag) != 0; } -(void) setShow##flag##Orbits: (BOOL) value  { appCore->getRenderer()->setOrbitMask([self setValue: value forBit: Body::##flag inSet: appCore->getRenderer()->getOrbitMask()]); } 
+#define ORBITMETHODS(flag)  -(BOOL) show##flag##Orbits { return (appCore->getRenderer()->getOrbitMask()&Body::flag) != 0; } -(void) setShow##flag##Orbits: (BOOL) value  { appCore->getRenderer()->setOrbitMask([self setValue: value forBit: Body::flag inSet: appCore->getRenderer()->getOrbitMask()]); } 
 
 ORBITMETHODS(Planet)
 ORBITMETHODS(Moon)
@@ -347,7 +347,7 @@ ORBITMETHODS(Comet)
 
 // Feature Settings
 
-#define FEATUREMETHODS(flag)  -(BOOL) show##flag##Labels { return (appCore->getSimulation()->getObserver().getLocationFilter()&Location::##flag) != 0; } -(void) setShow##flag##Labels: (BOOL) value  { appCore->getSimulation()->getObserver().setLocationFilter([self setValue: value forBit: Location::##flag inSet: appCore->getSimulation()->getObserver().getLocationFilter()]); } 
+#define FEATUREMETHODS(flag)  -(BOOL) show##flag##Labels { return (appCore->getSimulation()->getObserver().getLocationFilter()&Location::flag) != 0; } -(void) setShow##flag##Labels: (BOOL) value  { appCore->getSimulation()->getObserver().setLocationFilter([self setValue: value forBit: Location::flag inSet: appCore->getSimulation()->getObserver().getLocationFilter()]); } 
 
 FEATUREMETHODS(City)
 FEATUREMETHODS(Observatory)
