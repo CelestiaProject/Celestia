@@ -576,5 +576,18 @@ Code:
 * [,] keys now adjust the limiting magnitude at 45 degrees 
   field of view, if automag is ON. Values displayed via flash messages  
 * Associated the 'looking back' operation  with the '*' key shortcut
-
+* Linux: Added KDE interface, all features of the GTK interface are 
+  available (except for the Tour Guide), new features include:
+   - Bookmarks / URLs;
+   - History navigation;
+   - Configurable shortcuts and tool bar;
+   - Contextual menus;
+   - Saved Settings and Preferences.
+  Integration with KDE:
+   - New Mime Type application/x-celestia-script for *.cel files;
+   - *.cel files and cel:// URLs are associated with Celestia, if no instance
+     of Celestia is running when the file or URL is activated it will be
+     started and the script will be run or the location set to that of the URL.
+     If an instance is already running the script will be run in that instance
+     or that instance's location will be changed to match the URL.
 
