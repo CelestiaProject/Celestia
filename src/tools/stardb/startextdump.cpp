@@ -25,14 +25,16 @@ static string inputFilename;
 static string outputFilename;
 static string hdFilename;
 static bool useOldFormat = false;
+static bool useSphericalCoords = false;
 
 
 void Usage()
 {
     cerr << "Usage: startextdump [options] <star database file> [output file]\n";
     cerr << "  Options:\n";
-    cerr << "    --old (or -o) : input star database is pre 2.0 format\n";
-    cerr << "    --hd          : dump HD catalog cross reference\n";
+    cerr << "    --old (or -o)       : input star database is pre-2.0 format\n";
+    cerr << "    --hd                : dump HD catalog cross reference\n";
+    cerr << "    --spherical (or -s) : output spherical coordinates (RA/dec/distance\n";
 }
 
 
@@ -142,7 +144,8 @@ void printStellarClass(uint16 sc, ostream& out)
 }
 
 
-bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut)
+bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut,
+                         bool spherical)
 {
     uint32 nStarsInFile = readUint(in);
     if (!in.good())
@@ -172,14 +175,26 @@ bool DumpOldStarDatabase(istream& in, ostream& out, ostream* hdOut)
 
 	// Compute distance based on parallax
 	double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
-        Point3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
-	float absMag = (float) (appMag / 256.0 + 5 -
-                                5 * log10(distance / 3.26));
         out << catalogNum << ' ';
-        out << setprecision(7);
-        out << (float) pos.x << ' ' << (float) pos.y << ' ' << (float) pos.z << ' ';
-        out << setprecision(5);
-        out << absMag << ' ';
+        out << setprecision(8);
+
+        if (spherical)
+        {
+            out << RA * 360.0 / 24.0 << ' ' << dec << ' ' << distance << ' ';
+            out << setprecision(6);
+            out << (float) appMag / 256.0f << ' ';
+        }
+        else
+        {
+            Point3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
+            float absMag = (float) (appMag / 256.0 + 5 -
+                                    5 * log10(distance / 3.26));
+            out << (float) pos.x << ' ' <<
+                   (float) pos.y << ' ' <<
+                   (float) pos.z << ' ';
+            out << setprecision(5);
+            out << absMag << ' ';
+        }
         printStellarClass(stellarClass, out);
         out << '\n';
 
@@ -272,6 +287,10 @@ bool parseCommandLine(int argc, char* argv[])
             {
                 useOldFormat = true;
             }
+            else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--spherical"))
+            {
+                useSphericalCoords = true;
+            }
             else
             {
                 cerr << "Unknown command line switch: " << argv[i] << '\n';
@@ -301,6 +320,8 @@ bool parseCommandLine(int argc, char* argv[])
             i++;
         }
     }
+
+    return true;
 }
 
 
@@ -343,9 +364,14 @@ int main(int argc, char* argv[])
     }
 
     if (useOldFormat)
-        success = DumpOldStarDatabase(stardbFile, *out, hdOut);
+    {
+        success = DumpOldStarDatabase(stardbFile, *out, hdOut,
+                                      useSphericalCoords);
+    }
     else
+    {
         success = DumpStarDatabase(stardbFile, *out, hdOut);
+    }
 
     return success ? 0 : 1;
 }
