@@ -293,7 +293,7 @@ GalaxyList* ReadGalaxyList(istream& in)
         galaxyParams->getNumber("Angle", angle);
         Quatf q(1);
         q.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
-                       (float) angle);
+                       (float) degToRad(angle));
         galaxy->setOrientation(q);
 
         double radius = 0.0;
