@@ -66,7 +66,7 @@ void Overlay::setWindowSize(int w, int h)
     windowHeight = h;
 }
 
-void Overlay::setFont(TexFont* f)
+void Overlay::setFont(TextureFont* f)
 {
     font = f;
 }
@@ -95,7 +95,7 @@ void Overlay::print(char c)
         if (!useTexture)
         {
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, font->texobj);
+            glBindTexture(GL_TEXTURE_2D, font->getTextureName());
             useTexture = true;
         }
 
@@ -105,12 +105,12 @@ void Overlay::print(char c)
             if (textBlock > 0)
             {
                 glPopMatrix();
-                glTranslatef(0, -(1 + font->max_ascent + font->max_descent), 0);
+                glTranslatef(0, -(1 + font->getHeight()), 0);
                 glPushMatrix();
             }
             break;
         default:
-            txfRenderGlyph(font, c);
+            font->render(c);
             break;
         }
     }
