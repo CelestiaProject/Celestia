@@ -1458,6 +1458,14 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
                        "&Planets");
         }
     }
+    else if (sel.deepsky != NULL)
+    {
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, sel.deepsky->getName().c_str());
+        AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
+        AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
+        AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
+    }
 
     if (appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
         AppendMenu(hMenu, MF_STRING, ID_TOOLS_UNMARK, "&Unmark");
@@ -1503,6 +1511,10 @@ void ShowWWWInfo(const Selection& sel)
         sprintf(name, "HIP%d", sel.star->getCatalogNumber() & ~0xf0000000);
 
         url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
+    }
+    else if (sel.deepsky != NULL)
+    {
+        url = sel.deepsky->getInfoURL();
     }
 
     ShellExecute(mainWindow,
