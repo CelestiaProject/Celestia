@@ -12,32 +12,37 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include "vecmath.h"
 #include "quaternion.h"
 
 
-typedef std::vector<Point3f> GalacticForm;
+struct GalacticForm
+{
+    std::vector<Point3f>* points;
+    Vec3f scale;
+};
 
 class Galaxy
 {
  public:
     enum GalaxyType {
-        S0,
-        Sa,
-        Sb,
-        Sc,
-        SBa,
-        SBb,
-        SBc,
-        E0,
-        E1,
-        E2,
-        E3,
-        E4,
-        E5,
-        E6,
-        E7,
-        Irr
+        S0   =  0,
+        Sa   =  1,
+        Sb   =  2,
+        Sc   =  3,
+        SBa  =  4,
+        SBb  =  5,
+        SBc  =  6,
+        E0   =  7,
+        E1   =  8,
+        E2   =  9,
+        E3   = 10,
+        E4   = 11, 
+        E5   = 12,
+        E6   = 13,
+        E7   = 14,
+        Irr  = 15,
     };
         
  public:
@@ -67,5 +72,7 @@ class Galaxy
 
 
 typedef std::vector<Galaxy*> GalaxyList;
+
+GalaxyList* ReadGalaxyList(std::istream& in);
 
 #endif // _GALAXY_H_
