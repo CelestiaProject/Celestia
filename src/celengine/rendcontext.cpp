@@ -53,7 +53,7 @@ RenderContext::makeCurrent()
     }
 
     bool blendOnNow = false;
-    if (material->opacity != 1.0f || (t != NULL && t->hasAlpha))
+    if (material->opacity != 1.0f || (t != NULL && t->hasAlpha()))
         blendOnNow = true;
 
     if (blendOnNow != blendOn)
