@@ -46,6 +46,9 @@ static const float fIncrementFactor = 10.0f;
 static const double fMinSlewRate = 3.0;
 static const double fMaxKeyAccel = 20.0;
 static const float fAltitudeThreshold = 4.0f;
+static const float KeyRotationAccel = degToRad(120.0f);
+static const float RotationBraking = 10.0f;
+static const float RotationDecay = 2.0f;
 
 static void warning(string s)
 {
@@ -585,12 +588,19 @@ void CelestiaCore::charEntered(char c)
         textEnterMode = true;
         break;
 
-    case '\033':
+    case '\033': // Escape
         cancelScript();
         if (textEnterMode == true)
+        {
             textEnterMode = false;
+        }
         else
-            sim->setFrame(astro::Universal, Selection());
+        {
+            if (sim->getObserverMode() == Simulation::Travelling)
+                sim->setObserverMode(Simulation::Free);
+            else
+                sim->setFrame(astro::Universal, Selection());
+        }
         break;
 
     case ' ':
@@ -676,15 +686,33 @@ void CelestiaCore::tick(double dt)
 
     // Keyboard rotate
     Quatf q(1);
+#if 0
     if (keysPressed[Key_Left])
         q.zrotate((float) dt * 2);
     if (keysPressed[Key_Right])
         q.zrotate((float) dt * -2);
+#endif
+    Vec3f av = sim->getObserver().getAngularVelocity();
+
+    av = av * (float) exp(-dt * RotationDecay);
+
+    if (keysPressed[Key_Left])
+        av += Vec3f(0, 0, dt);
+    if (keysPressed[Key_Right])
+        av += Vec3f(0, 0, -dt);
+    if (keysPressed[Key_Down])
+        av += Vec3f(dt, 0, 0);
+    if (keysPressed[Key_Up])
+        av += Vec3f(-dt, 0, 0);
+#if 0    
     if (keysPressed[Key_Down])
         q.xrotate((float) dt * 2);
     if (keysPressed[Key_Up])
         q.xrotate((float) dt * -2);
+#endif
 
+#if 0
+    // Leaving this in until the new rotation code is fine tuned
     if(keysPressed[Key_NumPad4])
       q.yrotate((float)degToRad(dt * -fMinSlewRate * KeyAccel));
     if(keysPressed[Key_NumPad6])
@@ -697,6 +725,25 @@ void CelestiaCore::tick(double dt)
       q.zrotate((float)degToRad(dt * -fMinSlewRate * KeyAccel));
     if(keysPressed[Key_NumPad9])
       q.zrotate((float)degToRad(dt * fMinSlewRate * KeyAccel));
+#endif
+    if(keysPressed[Key_NumPad4])
+        av += Vec3f(0, dt * -KeyRotationAccel, 0);
+    if(keysPressed[Key_NumPad6])
+        av += Vec3f(0, dt * KeyRotationAccel, 0);
+    if(keysPressed[Key_NumPad2])
+        av += Vec3f(dt * -KeyRotationAccel, 0, 0);
+    if(keysPressed[Key_NumPad8])
+        av += Vec3f(dt * KeyRotationAccel, 0, 0);
+    if(keysPressed[Key_NumPad7])
+        av += Vec3f(0, 0, dt * -KeyRotationAccel);
+    if(keysPressed[Key_NumPad9])
+        av += Vec3f(0, 0, dt * KeyRotationAccel);
+
+    if (keysPressed[Key_NumPad5])
+        av = av * (float) exp(-dt * RotationBraking);
+
+    sim->getObserver().setAngularVelocity(av);
+
     sim->rotate(q);
 
     if (keysPressed['A'])
@@ -859,8 +906,7 @@ static void displayPlanetInfo(Overlay& overlay,
 {
     // If within fAltitudeThreshold radii of planet, show altitude instead of distance
     double kmDistance = astro::lightYearsToKilometers(distance);
-    if((kmDistance < (fAltitudeThreshold * body.getRadius())) &&
-       (kmDistance > body.getRadius()))
+    if (kmDistance < fAltitudeThreshold * body.getRadius())
     {
         kmDistance -= body.getRadius();
         overlay << "Altitude: ";
@@ -1358,7 +1404,7 @@ bool CelestiaCore::initRenderer()
         }
         else
         {
-            titleFont->buildTexture();
+            labelFont->buildTexture();
             renderer->setFont(labelFont);
         }
     }
