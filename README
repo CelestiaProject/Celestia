@@ -290,8 +290,8 @@ Celestia Source Code (SourceForge.net):
 CREDITS
 -------
 
-Code Authors
-------------
+Authors
+-------
   Chris Laurel .......... Creator, Lead Developer
   Clint Weisbrod ........
   Fridger Schrempp ......
@@ -302,8 +302,8 @@ Code Authors
   Harald Schmidt ........ Celx/Lua scripting enhancements, bug fixes
   Pat Suwalski .......... GTK Overhaul
 
-Code Contributors
------------------
+Contributors
+------------
   Deon Ramsey ........... UNIX installer, GTK interface
   Christopher ANDRE ..... Eclipse Finder
   Colin Walters ......... Endianness fixes
