@@ -43,26 +43,29 @@ class Renderer
     Vec3f getPickRay(int winX, int winY);
 
     enum {
-        NoLabels = 0,
-        StarLabels = 1,
-        MajorPlanetLabels = 2,
-        MinorPlanetLabels = 4,
-        ConstellationLabels = 8,
-        GalaxyLabels = 16,
+        NoLabels            = 0x00,
+        StarLabels          = 0x01,
+        MajorPlanetLabels   = 0x02,
+        MinorPlanetLabels   = 0x04,
+        ConstellationLabels = 0x08,
+        GalaxyLabels        = 0x10,
     };
+
     enum {
-        ShowNothing         =   0,
-        ShowStars           =   1,
-        ShowPlanets         =   2,
-        ShowGalaxies        =   4,
-        ShowDiagrams        =   8,
-        ShowCloudMaps       =  16,
-        ShowOrbits          =  32,
-        ShowCelestialSphere =  64,
-        ShowNightMaps       = 128,
-        ShowAtmospheres     = 256,
-        ShowSmoothLines     = 512,
+        ShowNothing         = 0x0000,
+        ShowStars           = 0x0001,
+        ShowPlanets         = 0x0002,
+        ShowGalaxies        = 0x0004,
+        ShowDiagrams        = 0x0008,
+        ShowCloudMaps       = 0x0010,
+        ShowOrbits          = 0x0020,
+        ShowCelestialSphere = 0x0040,
+        ShowNightMaps       = 0x0080,
+        ShowAtmospheres     = 0x0100,
+        ShowSmoothLines     = 0x0200,
+        ShowEclipseShadows  = 0x0400,
     };
+
     int getRenderFlags() const;
     void setRenderFlags(int);
     int getLabelMode() const;
@@ -132,6 +135,14 @@ class Renderer
         }
     } RenderListEntry;
 
+    struct EclipseShadow
+    {
+        Point3f origin;
+        Vec3f direction;
+        float penumbraRadius;
+        float umbraRadius;
+    };
+
     struct RenderProperties
     {
         RenderProperties() :
@@ -141,7 +152,8 @@ class Renderer
             radius(1.0f),
             oblateness(0.0f),
             mesh(InvalidResource),
-            orientation(1.0f)
+            orientation(1.0f),
+            eclipseShadows(NULL)
         {};
 
         Surface* surface;
@@ -152,6 +164,7 @@ class Renderer
         float oblateness;
         ResourceHandle mesh;
         Quatf orientation;
+        std::vector<EclipseShadow>* eclipseShadows;
     };
 
     class StarVertexBuffer
@@ -221,6 +234,9 @@ class Renderer
                               const Quatf& orientation,
                               float renderDistance,
                               bool useHaloes);
+
+    bool testEclipse(const Body&, const Body&, double now);
+
     void labelGalaxies(const GalaxyList& galaxies,
                     const Observer& observer);
     void labelStars(const std::vector<Star*>& stars,
@@ -261,6 +277,7 @@ class Renderer
     std::vector<RenderListEntry> renderList;
     std::vector<Particle> glareParticles;
     std::vector<Label> labels;
+    std::vector<EclipseShadow> eclipseShadows;
 
     std::vector<Star*> labelledStars;
 
