@@ -97,6 +97,7 @@
 #define IDC_SHOWSTARSASPOINTS           1063
 #define IDC_LABELASTEROIDS              1064
 #define IDC_LABELSPACECRAFT             1065
+#define IDC_SHOWMARKERS                 1066
 #define IDC_ECLIPSES_LIST               1071
 #define IDCOMPUTE                       1078
 #define IDC_DATEFROM                    1079
