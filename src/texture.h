@@ -19,7 +19,7 @@ typedef void (*ProceduralTexEval)(float, float, float, unsigned char*);
 class CTexture
 {
  public:
-    CTexture(int w, int h, int fmt);
+    CTexture(int w, int h, int fmt, bool _cubeMap = false);
     ~CTexture();
 
     enum {
@@ -41,6 +41,7 @@ class CTexture
     int height;
     int components;
     int format;
+    bool cubeMap;
     bool isNormalMap;
     unsigned char* pixels;
 
@@ -54,6 +55,8 @@ class CTexture
 
 extern CTexture* CreateProceduralTexture(int width, int height,
                                          int format,
+                                         ProceduralTexEval func);
+extern CTexture* CreateProceduralCubeMap(int size, int format,
                                          ProceduralTexEval func);
 extern CTexture* CreateJPEGTexture(const char* filename,
                                    int channels = CTexture::ColorChannel);
