@@ -342,7 +342,8 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# RotationPeriod       9.92425  # System III (radio emissions)
 	Obliquity              2.222461 # 1.82246 # 2.22246
 	EquatorAscendingNode -22.203    # -1.87785 # -22.203
-	RotationOffset        16        # for correct location of GRS
+	RotationOffset        12        # for correct location of GRS 
+	                                # (equal to 101 minus current W longitude of GRS)
 	# RotationOffset     305.40     # correct System III prime meridian
 
 	Albedo 0.51
