@@ -40,6 +40,7 @@ bool MeshManager::find(string name, Mesh** mesh)
 
 Mesh* MeshManager::load(string name)
 {
+    DPRINTF("Loading mesh: %s\n", name.c_str());
     ContentType fileType = DetermineFileType(name);
     Mesh* mesh = NULL;
 
