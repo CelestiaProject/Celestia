@@ -15,8 +15,10 @@
 #ifdef MACOSX
 #include <unistd.h>
 #include "CGBuffer.h"
+#ifndef PNG_SUPPORT
 #include <Quicktime/ImageCompression.h>
 #include <QuickTime/QuickTimeComponents.h>
+#endif
 #endif
 
 #include <cmath>
@@ -1093,7 +1095,7 @@ Texture* CreatePNGTexture(const string& filename)
 #ifndef PNG_SUPPORT
     return NULL;
 /*
-#elif MACOSX
+#if MACOSX
     FSRef fsr;
     FSSpec fss;
     GraphicsImportComponent gi;

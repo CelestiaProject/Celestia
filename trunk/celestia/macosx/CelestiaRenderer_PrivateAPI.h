@@ -7,6 +7,7 @@
  *
  */
 
+#include <celengine/render.h>
 
 @interface CelestiaRenderer(PrivateAPI)
 -(CelestiaRenderer*)initWithRenderer:(Renderer*)ren;

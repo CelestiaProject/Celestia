@@ -7,7 +7,10 @@
 //
 
 #import "CelestiaRenderer.h"
-#include <celengine/render.h>
+#import "CelestiaRenderer_PrivateAPI.h"
+
+NSDictionary* _labelFlags;
+NSDictionary* _renderFlags;
 
 @implementation CelestiaRenderer(PrivateAPI)
 -(CelestiaRenderer *)initWithRenderer:(Renderer *)ren 
@@ -24,6 +27,12 @@
 @end
 
 @implementation CelestiaRenderer
++(void)initialize
+{
+    _labelFlags = [[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:Renderer::StarLabels],@"Stars",[NSNumber numberWithInt:Renderer::PlanetLabels],@"Planets",[NSNumber numberWithInt:Renderer::MoonLabels],@"Moons",[NSNumber numberWithInt:Renderer::ConstellationLabels],@"Constellations",[NSNumber numberWithInt:Renderer::GalaxyLabels],@"Galaxies",[NSNumber numberWithInt:Renderer::AsteroidLabels],@"Asteroids",[NSNumber numberWithInt:Renderer::SpacecraftLabels],@"Spacecraft",nil,nil] retain];
+    _renderFlags = [[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:Renderer::ShowStars],@"Stars",[NSNumber numberWithInt:Renderer::ShowPlanets],@"Planets",[NSNumber numberWithInt:Renderer::ShowGalaxies],@"Galaxies",[NSNumber numberWithInt:Renderer::ShowDiagrams],@"Diagrams",[NSNumber numberWithInt:Renderer::ShowCloudMaps],@"CloudMaps",[NSNumber numberWithInt:Renderer::ShowOrbits],@"Orbits",[NSNumber numberWithInt:Renderer::ShowCelestialSphere],@"CelestialSphere",[NSNumber numberWithInt:Renderer::ShowNightMaps],@"NightMaps",[NSNumber numberWithInt:Renderer::ShowAtmospheres],@"Atmospheres",[NSNumber numberWithInt:Renderer::ShowSmoothLines],@"SmoothLines",[NSNumber numberWithInt:Renderer::ShowEclipseShadows],@"EclipseShadows",[NSNumber numberWithInt:Renderer::ShowStarsAsPoints],@"StarsAsPoints",[NSNumber numberWithInt:Renderer::ShowRingShadows],@"RingShadows",[NSNumber numberWithInt:Renderer::ShowBoundaries],@"Boundaries",[NSNumber numberWithInt:Renderer::ShowAutoMag],@"AutoMag",nil,nil] retain];
+}
+
 -(void)dealloc
 {
     if (_data != nil) {
@@ -32,4 +41,165 @@
     }
     [super dealloc];
 }
+
+-(NSDictionary*)renderFlags
+{
+    int iflags = [self renderer]->getRenderFlags();
+    NSMutableDictionary* flags = [NSMutableDictionary dictionaryWithCapacity:[_renderFlags count]];
+    NSEnumerator* enumerator = [_renderFlags keyEnumerator];
+    id obj = nil;
+    while ((obj = [enumerator nextObject]) != nil) {
+        [flags setObject:[NSNumber numberWithBool:(BOOL)(iflags & [[_renderFlags objectForKey:obj] intValue])] forKey:obj];
+    }
+    return flags;
+}
+    
+-(void)setRenderFlags:(NSDictionary*)flags
+{
+    int iflags = 0;
+    NSEnumerator* enumerator = [flags keyEnumerator];
+    id obj = nil;
+    while ((obj = [enumerator nextObject]) != nil) {
+        if ([[flags objectForKey:obj] boolValue])
+            iflags |= [[_renderFlags objectForKey:obj] intValue];
+    }
+    [self renderer]->setRenderFlags(iflags);
+}    
+
+-(void)setRenderFlag:(NSString*)key value:(NSNumber*)value
+{
+    if ([value boolValue]) {
+        [self renderer]->setRenderFlags([self renderer]->getRenderFlags() | [[_renderFlags objectForKey:key] intValue]);
+    } else {
+        [self renderer]->setRenderFlags([self renderer]->getRenderFlags() &~ [[_renderFlags objectForKey:key] intValue]);
+    }
+}
+
+-(NSNumber*)renderFlag:(NSString*)key
+{
+    return [NSNumber numberWithBool:(BOOL)([[_renderFlags objectForKey:key] intValue] & [self renderer]->getRenderFlags())];
+}
+
+-(NSDictionary*)labelFlags
+{
+    int iflags = [self renderer]->getLabelMode();
+    NSMutableDictionary* flags = [NSMutableDictionary dictionaryWithCapacity:[_labelFlags count]];
+    NSEnumerator* enumerator = [_labelFlags keyEnumerator];
+    id obj = nil;
+    while ((obj = [enumerator nextObject]) != nil) {
+        [flags setObject:[NSNumber numberWithBool:(BOOL)(iflags & [[_labelFlags objectForKey:obj] intValue])] forKey:obj];
+    }
+    return flags;
+}
+
+-(void)setLabelFlags:(NSDictionary*)flags
+{
+    int iflags = 0;
+    NSEnumerator* enumerator = [flags keyEnumerator];
+    id obj = nil;
+    while ((obj = [enumerator nextObject]) != nil) {
+        if ([[flags objectForKey:obj] boolValue])
+            iflags |= [[_labelFlags objectForKey:obj] intValue];
+    }
+    [self renderer]->setLabelMode(iflags);
+}
+
+-(void)setLabelFlag:(NSString*)key value:(NSNumber*)value
+{
+    if ([value boolValue]) {
+        [self renderer]->setLabelMode([self renderer]->getLabelMode() | [[_labelFlags objectForKey:key] intValue]);
+    } else {
+        [self renderer]->setLabelMode([self renderer]->getLabelMode() &~ [[_labelFlags objectForKey:key] intValue]);
+    }
+}
+
+-(NSNumber*)labelFlag:(NSString*)key
+{
+    return [NSNumber numberWithBool:(BOOL)([[_labelFlags objectForKey:key] intValue] & [self renderer]->getLabelMode())];
+}
+
+-(NSNumber*)ambientLightLevel
+{
+    return [NSNumber numberWithFloat:[self renderer]->getAmbientLightLevel()];
+}
+-(void)setAmbientLightLevel:(NSNumber*)level
+{
+    [self renderer]->setAmbientLightLevel([level floatValue]);
+}
+
+-(void)setMinimumOrbitSize:(NSNumber*)pixels
+{
+    [self renderer]->setMinimumOrbitSize([pixels intValue]);
+}
+
+-(BOOL)isFragmentShaderEnabled
+{
+    return (BOOL)[self renderer]->getFragmentShaderEnabled();
+}
+
+-(NSNumber*)fragmentShaderEnabled
+{
+    return [NSNumber numberWithBool:[self isFragmentShaderEnabled]];
+}
+
+-(void)setFragmentShaderEnabled:(NSNumber*)enable
+{
+    [self renderer]->setFragmentShaderEnabled((bool)[enable boolValue]);
+}
+
+-(BOOL)isFragmentShaderSupported
+{
+    return (BOOL)[self renderer]->fragmentShaderSupported();
+}
+
+-(BOOL)isVertexShaderEnabled
+{
+    return (BOOL)[self renderer]->getVertexShaderEnabled();
+}
+
+-(NSNumber*)vertexShaderEnabled;
+{
+    return [NSNumber numberWithBool:[self isVertexShaderEnabled]];
+}
+
+-(void)setVertexShaderEnabled:(NSNumber*)enable
+{
+    [self renderer]->setVertexShaderEnabled((bool)[enable boolValue]);
+}
+
+-(BOOL)isVertexShaderSupported
+{
+    return (BOOL)[self renderer]->vertexShaderSupported();
+}
+
+-(NSNumber*)saturationMagnitude
+{
+    return [NSNumber numberWithFloat:[self renderer]->getSaturationMagnitude()];
+}
+
+-(void)setSaturationMagnitude:(NSNumber*)mag
+{
+    [self renderer]->setSaturationMagnitude([mag floatValue]);
+}
+
+-(NSNumber*)brightnessBias
+{
+    return [NSNumber numberWithFloat:[self renderer]->getBrightnessBias()];
+}
+
+-(void)setBrightnessBias:(NSNumber*)bias
+{
+    [self renderer]->setBrightnessBias([bias floatValue]);
+}
+
+-(NSNumber*)resolution
+{
+    return [NSNumber numberWithUnsignedInt:[self renderer]->getResolution()];
+}
+
+-(void)setResolution:(NSNumber*)res
+{
+    [self renderer]->setResolution([res unsignedIntValue]);
+}
+
 @end
