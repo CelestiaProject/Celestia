@@ -1,0 +1,8 @@
+jd = celestia:gettime()
+last = jd + 365
+
+repeat
+    jd = jd + 1.0
+    celestia:settime(jd)
+    wait(0.05)
+until jd >= last

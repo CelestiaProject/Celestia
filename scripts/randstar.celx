@@ -1,0 +1,9 @@
+obs = celestia:getobserver()
+while 1 do
+    nstars = celestia:getstarcount()
+    index = math.floor(nstars * math.random())
+    star = celestia:getstar(index)
+    celestia:select(star)
+    obs:goto(star, 10)
+    wait(10)
+end
