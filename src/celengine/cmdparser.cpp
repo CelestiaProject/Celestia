@@ -559,10 +559,6 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowEclipseShadows;
             else if (compareIgnoringCase(name, "ringshadows") == 0)
                 flags |= Renderer::ShowRingShadows;
-            else if (compareIgnoringCase(name, "pointstars") == 0)
-                flags |= Renderer::ShowStarsAsPoints;
-            else if (compareIgnoringCase(name, "ringshadows") == 0)
-                flags |= Renderer::ShowRingShadows;
             else if (compareIgnoringCase(name, "comettails") == 0)
                 flags |= Renderer::ShowCometTails;
             else if (compareIgnoringCase(name, "boundaries") == 0)
@@ -615,6 +611,8 @@ int parseLabelFlags(string s)
                 flags |= Renderer::SpacecraftLabels;
             else if (compareIgnoringCase(name, "asteroids") == 0)
                 flags |= Renderer::AsteroidLabels;
+	    else if (compareIgnoringCase(name, "comets") == 0)
+		flags |= Renderer::CometLabels;
             else if (compareIgnoringCase(name, "constellations") == 0)
                 flags |= Renderer::ConstellationLabels;
             else if (compareIgnoringCase(name, "stars") == 0)
