@@ -7,7 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <stdlib.h>
+#include <cstdlib>
+#include <limits>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include "astro.h"
@@ -31,6 +32,8 @@ Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     oblateness(0),
     orientation(1.0f),
+    protos(-numeric_limits<double>::infinity()),
+    eschatos(numeric_limits<double>::infinity()),
     mesh(InvalidResource),
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
@@ -305,6 +308,19 @@ Mat4d Body::getGeographicToHeliocentric(double when)
 }
 
 
+bool Body::extant(double t) const
+{
+    return t >= protos && t < eschatos;
+}
+
+
+void Body::setLifespan(double begin, double end)
+{
+    protos = begin;
+    eschatos = end;
+}
+
+
 #define SOLAR_IRRADIANCE   1367.6
 #define SOLAR_POWER           3.8462e26
 
@@ -347,10 +363,9 @@ float Body::getApparentMagnitude(const Star& sun,
     double distanceToViewer = viewerPosition.length();
     double distanceToSun = sunPosition.length();
     float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer) *
-                                         (sunPosition / distanceToSun)) / 2.0;
+                                         (sunPosition / distanceToSun)) / 2.0f;
 
-    return astro::lumToAppMag(getLuminosity(sun, distanceToSun) * illuminatedFraction,
-                              astro::kilometersToLightYears(distanceToViewer));
+    return astro::lumToAppMag(getLuminosity(sun, (float) distanceToSun) * illuminatedFraction, (float) astro::kilometersToLightYears(distanceToViewer));
 }
 
 

@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <limits>
 
 #ifndef _WIN32
 #ifndef MACOSX_PB
@@ -316,6 +317,12 @@ static Body* CreatePlanet(PlanetarySystem* system,
     }
     body->setClassification(classification);
 
+    double beginning   = -numeric_limits<double>::infinity();
+    double ending      =  numeric_limits<double>::infinity();
+    planetData->getNumber("Beginning", beginning);
+    planetData->getNumber("Ending", ending);
+    body->setLifespan(beginning, ending);
+
     string infoURL;
     if (planetData->getString("InfoURL", infoURL))
         body->setInfoURL(infoURL);
@@ -338,8 +345,6 @@ static Body* CreatePlanet(PlanetarySystem* system,
     body->setSurface(*surface);
     delete surface;
 
-    
-    
     {
         string mesh("");
         if (planetData->getString("Mesh", mesh))
