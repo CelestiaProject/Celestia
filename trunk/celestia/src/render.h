@@ -16,6 +16,7 @@
 #include "visstars.h"
 #include "observer.h"
 #include "solarsys.h"
+#include "asterism.h"
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "console.h"
@@ -53,7 +54,7 @@ class Renderer
         NoLabels = 0,
         StarLabels = 1,
         PlanetLabels = 2,
-        PlanetOrbits = 4
+        PlanetOrbits = 4,
     };
     int getLabelMode() const;
     void setLabelMode(int);
@@ -63,12 +64,16 @@ class Renderer
     void setAmbientLightLevel(float);
     bool getPerPixelLighting() const;
     void setPerPixelLighting(bool);
+    bool getCloudMapping() const;
+    void setCloudMapping(bool);
     bool perPixelLightingSupported() const;
 
     float getBrightnessScale() const;
     void setBrightnessScale(float);
     float getBrightnessBias() const;
     void setBrightnessBias(float);
+
+    void showAsterisms(AsterismList*);
 
     typedef struct {
         string text;
@@ -128,7 +133,8 @@ class Renderer
                     Point3f pos,
                     float distance,
                     float appMag,
-                    Quatf orientation);
+                    Quatf orientation,
+                    double now);
     void renderBodyAsParticle(Point3f center,
                               float appMag,
                               float discSizeInPixels,
@@ -157,6 +163,7 @@ class Renderer
     int labelMode;
     float ambientLightLevel;
     bool perPixelLightingEnabled;
+    bool cloudMappingEnabled;
     float brightnessBias;
     float brightnessScale;
 
@@ -167,6 +174,8 @@ class Renderer
     vector<Label> labels;
 
     vector<Star*> labelledStars;
+
+    AsterismList* asterisms;
 
     double modelMatrix[16];
     double projMatrix[16];
