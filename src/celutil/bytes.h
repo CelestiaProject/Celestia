@@ -10,11 +10,9 @@
 #ifndef _BYTES_H_
 #define _BYTES_H_
 
-#if 0
 #ifndef _WIN32
-#include "../config.h"
+#include <config.h>
 #endif /* _WIN32 */
-#endif
 
 /* Use the system byteswap.h definitions if we have them */
 #ifdef HAVE_BYTESWAP_H
