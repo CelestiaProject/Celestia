@@ -8,7 +8,7 @@
   <!ENTITY % English "INCLUDE" > <!-- change language only here -->
   <!ENTITY % addindex "IGNORE">
   <!ENTITY hiresolution "<keycombo action='simul'>&Shift;<keycap>R</keycap></keycombo>">
-  <!ENTITY loresolution "<keycap>r</keycap>">
+  <!ENTITY loresolution "<keycap>R</keycap>">
   <!ENTITY atmospheres "<keycombo action='simul'>&Ctrl; <keycap>A</keycap></keycombo>">
   <!ENTITY celestialgrid "<keycap>;</keycap>">
   <!ENTITY clouds "<keycap>I</keycap>">
@@ -101,6 +101,8 @@
   <!ENTITY limit_of_knowledge "<keycap>+</keycap>">
   <!ENTITY goto_surface_win "<keycombo action='simul'>&Ctrl; <keycap>G</keycap></keycombo>">
   <!ENTITY goto_surface_lin "<keycombo action='simul'>&Alt; <keycap>S</keycap></keycombo>">
+  <!ENTITY capture_image_win "<keycap>F10</keycap>">
+  <!ENTITY capture_image_lin "<keycombo action='simul'>&Ctrl; <keycap>G</keycap></keycombo>">
 ]>
 
 <book lang="&language;">
@@ -1516,11 +1518,12 @@ To reverse course instantly, simply press the &reverse; key.  Now, you will begi
 
 <para>This User's Guide was written by Frank Gregorio, a high school teacher in Manassas, VA, and edited by Chris Laurel, founding developer of Celestia, with additional editing assistance by several members of the forum. It was converted to the DocBook format by Christophe Teyssier.</para>
 
-<para>The source code for Celestia version 1.3.0 is a joint effort of:</para>
+<para>The source code for Celestia version 1.3.1 is a joint effort of:</para>
 <itemizedlist>
 <listitem><para>Chris Laurel</para></listitem>
 <listitem><para>Clint Weisbrod</para></listitem>
 <listitem><para>Fridger Schrempp</para></listitem>
+<listitem><para>Bob Ippolito</para></listitem>
 <listitem><para>Christophe Teyssier</para></listitem>
 <listitem><para>Deon Ramsey</para></listitem>
 <listitem><para>and many other valued members of the Celestia forum group</para></listitem>
@@ -1594,6 +1597,14 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 <title>Render Functions - Keyboard</title>
 <variablelist>
 <varlistentry>
+<term>&loresolution;</term>
+<listitem><para>Decrease texture resolution</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&hiresolution;</term>
+<listitem><para>Increase texture resolution</para></listitem>
+</varlistentry>
+<varlistentry>
 <term>&planetlabels;</term>
 <listitem><para>Toggle (turns on or off) planet labels</para></listitem>
 </varlistentry>
@@ -1620,6 +1631,10 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 <varlistentry>
 <term>&constellationlabels;</term>
 <listitem><para>Toggle constellation labels</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&locationlabels;</term>
+<listitem><para>Toggle locaiton labels</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>&verbose;</term>
@@ -1666,10 +1681,6 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 <listitem><para>Toggle stars as points</para></listitem>
 </varlistentry>
 <varlistentry>
-<term>&pixelshading;</term>
-<listitem><para>Toggle pixel shading (if supported)</para></listitem>
-</varlistentry>
-<varlistentry>
 <term>&comettails;</term>
 <listitem><para>Toggle comet tails</para></listitem>
 </varlistentry>
@@ -1714,8 +1725,12 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 <listitem><para>Increase ambient illumination</para></listitem>
 </varlistentry>
 <varlistentry>
-<term>&fullscreen;</term>
+<term>&winfullscreen; (Windows) &kdefullscreen; (KDE)</term>
 <listitem><para>Toggle full screen display mode on or off</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&limit_of_knowledge;</term>
+<listitem><para>Toggle Limit of Knowledge textures</para></listitem>
 </varlistentry>
 </variablelist>
 
@@ -1732,8 +1747,16 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 <listitem><para>Center on selected object</para></listitem>
 </varlistentry>
 <varlistentry>
+<term>&center_co;</term>
+<listitem><para>Center on selected object while keeping the primary object at its current location in the viewport.</para></listitem>
+</varlistentry>
+<varlistentry>
 <term>&goto;</term>
 <listitem><para>Goto selected object</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>&goto_surface_win; (Windows) &goto_surface_lin; (Linux)</term>
+<listitem><para>Goto surface of selected object</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>&follow;</term>
@@ -1801,7 +1824,11 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 </varlistentry>
 <varlistentry>
 <term><keycap>5</keycap> on numerical keypad</term>
-<listitem><para>instantly stops yaw, pitch or roll</para></listitem>
+<listitem><para>Instantly stops yaw, pitch or roll</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><keycombo action="simul">&Shift; <keycap>Arrow Keys</keycap></keycombo></term>
+<listitem><para>Orbit around the object automatically</para></listitem>
 </varlistentry>
 <varlistentry>
 <term>&lookback;</term>
@@ -1979,7 +2006,7 @@ This command summary can also be accessed within Celestia.  Simply pull down the
 <listitem><para>Run demo</para></listitem>
 </varlistentry>
 <varlistentry>
-<term>&F10;</term>
+<term>&capture_image_win; (Windows) &capture_image_lin; (Linux)</term>
 <listitem><para>Capture image to file</para></listitem>
 </varlistentry>
 <varlistentry>
