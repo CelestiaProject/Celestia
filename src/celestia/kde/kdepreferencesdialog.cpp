@@ -280,10 +280,10 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
 
     Selection selection = appCore->getSimulation()->getSelection();
     std::string sel_name;
-    if (selection.body != 0) {
+    if (selection.body() != 0) {
         QHBox* ltBox = new QHBox(setTimezoneGroup);
         char time[50];
-        sel_name = selection.body->getName();
+        sel_name = selection.body()->getName();
         Vec3d v = selection.getPosition(appCore->getSimulation()->getTime()) - 
                   appCore->getSimulation()->getObserver().getPosition();
         double dist = astro::lightYearsToKilometers(v.length()*1e-6);
@@ -394,13 +394,13 @@ void KdePreferencesDialog::ltSubstract() {
 
     // LT-delay only for solar bodies && target-speed < 0.99 c
 
-    if (selection.body != 0 &&
+    if (selection.body() != 0 &&
         (appCore->getSimulation()->getTargetSpeed() < 0.99 *
             astro::kilometersToMicroLightYears(astro::speedOfLight))) {
-        sel_name = selection.body->getName();
-        Vec3d v = selection.getPosition(d) - 
+        sel_name = selection.body()->getName();
+        Vec3d v = selection.getPosition(d) -
                   appCore->getSimulation()->getObserver().getPosition();
-        appCore->setLightDelayActive(!appCore->getLightDelayActive());     
+        appCore->setLightDelayActive(!appCore->getLightDelayActive());
         double dist = astro::lightYearsToKilometers(v.length()*1e-6);
         double lt = dist / astro::speedOfLight;
         if (appCore->getLightDelayActive())

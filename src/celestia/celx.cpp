@@ -768,8 +768,12 @@ static int object_type(lua_State* l)
         case Selection::Type_Location:
             tname = "location";
             break;
+
+        case Selection::Type_Nil:
+            tname = "null";
+            break;
         }
-            
+
         lua_pushstring(l, tname);
     }
     else
@@ -836,7 +840,7 @@ static int object_spectraltype(lua_State* l)
     Selection* sel = to_object(l, 1);
     if (sel != NULL)
     {
-        if (sel->star != NULL)
+        if (sel->star() != NULL)
         {
             char buf[16];
             StellarClass sc = sel->star()->getStellarClass();
@@ -880,7 +884,7 @@ static int object_absmag(lua_State* l)
     Selection* sel = to_object(l, 1);
     if (sel != NULL)
     {
-        if (sel->star != NULL)
+        if (sel->star() != NULL)
             lua_pushnumber(l, sel->star()->getAbsoluteMagnitude());
         else
             lua_pushnil(l);
