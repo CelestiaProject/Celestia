@@ -849,8 +849,6 @@ void Simulation::computeCenterParameters(Selection& destination,
     jparams.accelTime = 0.5;
     jparams.expFactor = 0;
 
-    setFrame(frame.coordSys, destination);
-
     // Convert to frame coordinates
     RigidTransform from(jparams.from, jparams.initialOrientation);
     from = fromUniversal(frame, from, simTime);
