@@ -62,6 +62,7 @@ static const int _Frame    = 7;
 // returning control to celestia
 static const double MaxTimeslice = 5.0;
 
+// names of callback-functions in Lua:
 static const char* KbdCallback = "celestia_keyboard_callback";
 static const char* CleanupCallback = "celestia_cleanup_callback";
 
@@ -83,6 +84,7 @@ enum FatalErrors {
 };
 
 
+// Initialize various maps from named keywords to numeric flags used within celestia:
 static void initRenderFlagMap()
 {
     RenderFlagMap["orbits"] = Renderer::ShowOrbits;
@@ -158,7 +160,7 @@ static void initLocationFlagMap()
     LocationFlagMap["fluctus"] = Location::Fluctus;
     LocationFlagMap["farrum"] = Location::Farrum;
     LocationFlagMap["other"] = Location::Other;
-}    
+}
 
 static void initMaps()
 {
@@ -179,7 +181,6 @@ static void PushClass(lua_State* l, int id)
     lua_pushlstring(l, ClassNames[id], strlen(ClassNames[id]));
 }
 
-
 // Set the class (metatable) of the object on top of the stack
 static void SetClass(lua_State* l, int id)
 {
@@ -190,7 +191,6 @@ static void SetClass(lua_State* l, int id)
     if (lua_setmetatable(l, -2) == 0)
         cout << "Error setting metatable for " << ClassNames[id] << '\n';
 }
-
 
 // Initialize the metatable for a class; sets the appropriate registry
 // entries and __index, leaving the metatable on the stack when done.
@@ -209,7 +209,6 @@ static void CreateClassMetatable(lua_State* l, int id)
     lua_rawset(l, -3);
 }
 
-
 // Register a class 'method' in the metatable (assumed to be on top of the stack)
 static void RegisterMethod(lua_State* l, const char* name, lua_CFunction fn)
 {
@@ -219,37 +218,9 @@ static void RegisterMethod(lua_State* l, const char* name, lua_CFunction fn)
     lua_settable(l, -3);
 }
 
+
 // Verify that an object at location index on the stack is of the
 // specified class
-static void* CheckUserData(lua_State* l, int index, int id)
-{
-    // get registry[metatable]
-    if (!lua_getmetatable(l, index))
-        return NULL;
-    lua_rawget(l, LUA_REGISTRYINDEX);
-
-    if (lua_type(l, -1) != LUA_TSTRING)
-    {
-        cout << "CheckUserData failed!  Unregistered class.\n";
-        lua_pop(l, 1);
-        return NULL;
-    }
-
-    const char* classname = lua_tostring(l, -1);
-    if (classname != NULL && strcmp(classname, ClassNames[id]) == 0)
-    {
-        lua_pop(l, 1);
-        return lua_touserdata(l, index);
-    }
-    else
-    {
-        cout << "CheckUserData failed!  Expected " << ClassNames[id] << " but got " << classname << '\n';
-        lua_pop(l, 1);
-        return NULL;
-    }
-}
-
-// Only check for type: similar to CheckUserData, but don't report errors
 static bool istype(lua_State* l, int index, int id)
 {
     // get registry[metatable]
@@ -273,6 +244,17 @@ static bool istype(lua_State* l, int index, int id)
     lua_pop(l, 1);
     return false;
 }
+
+// Verify that an object at location index on the stack is of the
+// specified class and return pointer to userdata
+static void* CheckUserData(lua_State* l, int index, int id)
+{
+    if (istype(l, index, id))
+        return lua_touserdata(l, index);
+    else
+        return NULL;
+}
+
 
 LuaState::LuaState() :
     timeout(MaxTimeslice),
@@ -335,22 +317,8 @@ bool LuaState::charEntered(const char* c_p)
     return result;
 }
 
-// allow the script to perform cleanup
-void LuaState::cleanup()
-{
-    lua_pushstring(costate, CleanupCallback);
-    lua_gettable(costate, LUA_GLOBALSINDEX);
-    if (lua_isnil(costate, -1))
-    {
-        return;
-    }
-    timeout = getTime() + 1.0;
-    if (lua_pcall(costate, 0, 0, 0) != 0)
-    {
-        cerr << "Error while executing cleanup-callback: " << lua_tostring(costate, -1) << "\n";
-    }
-}
-
+// Check if the running script has exceeded its allowed timeslice
+// and terminate it if it has:
 static void checkTimeslice(lua_State *l, lua_Debug *ar)
 {
     lua_pushstring(l, "celestia-luastate");
@@ -376,6 +344,24 @@ static void checkTimeslice(lua_State *l, lua_Debug *ar)
     }
     return;
 }
+
+
+// allow the script to perform cleanup
+void LuaState::cleanup()
+{
+    lua_pushstring(costate, CleanupCallback);
+    lua_gettable(costate, LUA_GLOBALSINDEX);
+    if (lua_isnil(costate, -1))
+    {
+        return;
+    }
+    timeout = getTime() + 1.0;
+    if (lua_pcall(costate, 0, 0, 0) != 0)
+    {
+        cerr << "Error while executing cleanup-callback: " << lua_tostring(costate, -1) << "\n";
+    }
+}
+
 
 bool LuaState::createThread()
 {
@@ -409,6 +395,7 @@ string LuaState::getErrorMessage()
     }
     return "";
 }
+
 
 bool LuaState::timesliceExpired()
 {
@@ -490,70 +477,6 @@ static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
         return NULL;
     else
         return info->buf;
-}
-
-
-static void checkArgs(lua_State* l,
-                      int minArgs, int maxArgs, const char* errorMessage)
-{
-    int argc = lua_gettop(l);
-    if (argc < minArgs || argc > maxArgs)
-    {
-        lua_pushstring(l, errorMessage);
-        lua_error(l);
-    }
-}
-
-
-static astro::CoordinateSystem parseCoordSys(const string& name)
-{
-    if (compareIgnoringCase(name, "universal") == 0)
-        return astro::Universal;
-    else if (compareIgnoringCase(name, "ecliptic") == 0)
-        return astro::Ecliptical;
-    else if (compareIgnoringCase(name, "equatorial") == 0)
-        return astro::Equatorial;
-    else if (compareIgnoringCase(name, "planetographic") == 0)
-        return astro::Geographic;
-    else if (compareIgnoringCase(name, "observer") == 0)
-        return astro::ObserverLocal;
-    else if (compareIgnoringCase(name, "lock") == 0)
-        return astro::PhaseLock;
-    else if (compareIgnoringCase(name, "chase") == 0)
-        return astro::Chase;
-    else
-        return astro::Universal;
-}
-
-
-static Marker::Symbol parseMarkerSymbol(const string& name)
-{
-    if (compareIgnoringCase(name, "diamond") == 0)
-        return Marker::Diamond;
-    else if (compareIgnoringCase(name, "triangle") == 0)
-        return Marker::Triangle;
-    else if (compareIgnoringCase(name, "square") == 0)
-        return Marker::Square;
-    else if (compareIgnoringCase(name, "plus") == 0)
-        return Marker::Plus;
-    else if (compareIgnoringCase(name, "x") == 0)
-        return Marker::X;
-    else
-        return Marker::Diamond;
-}
-
-
-static Color to_color(lua_State* l, int index)
-{
-    Color c(0.0f, 0.0f, 0.0f);
-
-    if (lua_isstring(l, index))
-    {
-        const char* s = lua_tostring(l, index);
-        Color::parse(s, c);
-    }
-
-    return c;
 }
 
 
@@ -650,6 +573,60 @@ int LuaState::resume()
     }
 }
 
+
+// Check if the number of arguments on the stack matches
+// the allowed range [minArgs, maxArgs]. Cause an error if not. 
+static void checkArgs(lua_State* l,
+                      int minArgs, int maxArgs, const char* errorMessage)
+{
+    int argc = lua_gettop(l);
+    if (argc < minArgs || argc > maxArgs)
+    {
+        lua_pushstring(l, errorMessage);
+        lua_error(l);
+    }
+}
+
+
+static astro::CoordinateSystem parseCoordSys(const string& name)
+{
+    if (compareIgnoringCase(name, "universal") == 0)
+        return astro::Universal;
+    else if (compareIgnoringCase(name, "ecliptic") == 0)
+        return astro::Ecliptical;
+    else if (compareIgnoringCase(name, "equatorial") == 0)
+        return astro::Equatorial;
+    else if (compareIgnoringCase(name, "planetographic") == 0)
+        return astro::Geographic;
+    else if (compareIgnoringCase(name, "observer") == 0)
+        return astro::ObserverLocal;
+    else if (compareIgnoringCase(name, "lock") == 0)
+        return astro::PhaseLock;
+    else if (compareIgnoringCase(name, "chase") == 0)
+        return astro::Chase;
+    else
+        return astro::Universal;
+}
+
+
+static Marker::Symbol parseMarkerSymbol(const string& name)
+{
+    if (compareIgnoringCase(name, "diamond") == 0)
+        return Marker::Diamond;
+    else if (compareIgnoringCase(name, "triangle") == 0)
+        return Marker::Triangle;
+    else if (compareIgnoringCase(name, "square") == 0)
+        return Marker::Square;
+    else if (compareIgnoringCase(name, "plus") == 0)
+        return Marker::Plus;
+    else if (compareIgnoringCase(name, "x") == 0)
+        return Marker::X;
+    else
+        return Marker::Diamond;
+}
+
+
+// Get a pointer to the LuaState-object from the registry:
 LuaState* getLuaStateObject(lua_State* l)
 {
     int stackSize = lua_gettop(l);
@@ -671,6 +648,9 @@ LuaState* getLuaStateObject(lua_State* l)
     return luastate_ptr;
 }
 
+
+// Map the observer to its View. Return NULL if no view exists 
+// for this observer (anymore).
 View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
 {
     for (unsigned int i = 0; i < appCore->views.size(); i++)
@@ -683,6 +663,7 @@ View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
     return NULL;
 }
 
+// Fill list with all Observers
 void getObservers(CelestiaCore* appCore, std::vector<Observer*>& list)
 {
     for (unsigned int i = 0; i < appCore->views.size(); i++)
@@ -690,6 +671,8 @@ void getObservers(CelestiaCore* appCore, std::vector<Observer*>& list)
         list.push_back(appCore->views[i]->observer);
     }
 }
+
+// ==================== Helpers ====================
 
 // safe wrapper for lua_tostring: fatal errors will terminate script by calling
 // lua_error with errorMsg.
@@ -771,7 +754,6 @@ static void setTable(lua_State* l, const char* field, lua_Number value)
     lua_settable(l, -3);
 }
 
-
 static void setTable(lua_State* l, const char* field, const char* value)
 {
     lua_pushstring(l, field);
@@ -779,7 +761,13 @@ static void setTable(lua_State* l, const char* field, const char* value)
     lua_settable(l, -3);
 }
 
+// ==================== forward declarations ====================
 
+// must be declared for vector_add:
+static UniversalCoord* to_position(lua_State* l, int index);
+static int position_new(lua_State* l, const UniversalCoord& uc);
+
+// ==================== Vector ====================
 static int vector_new(lua_State* l, const Vec3d& v)
 {
     Vec3d* v3 = reinterpret_cast<Vec3d*>(lua_newuserdata(l, sizeof(Vec3d)));
@@ -805,6 +793,7 @@ static Vec3d* this_vector(lua_State* l)
 
     return v3;
 }
+
 
 static int vector_sub(lua_State* l)
 {
@@ -926,10 +915,6 @@ static int vector_length(lua_State* l)
     return 1;
 }
 
-// need these to be declared here for vector_add -- ugly
-static UniversalCoord* to_position(lua_State* l, int index);
-static int position_new(lua_State* l, const UniversalCoord& uc);
-
 static int vector_add(lua_State* l)
 {
     checkArgs(l, 2, 2, "Need two operands for addition");
@@ -1018,7 +1003,6 @@ static int vector_tostring(lua_State* l)
     return 1;
 }
 
-
 static void CreateVectorMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Vec3);
@@ -1039,6 +1023,7 @@ static void CreateVectorMetaTable(lua_State* l)
     lua_pop(l, 1); // remove metatable from stack
 }
 
+// ==================== Rotation ====================
 static int rotation_new(lua_State* l, const Quatd& qd)
 {
     Quatd* q = reinterpret_cast<Quatd*>(lua_newuserdata(l, sizeof(Quatd)));
@@ -1064,6 +1049,7 @@ static Quatd* this_rotation(lua_State* l)
 
     return q;
 }
+
 
 static int rotation_add(lua_State* l)
 {
@@ -1219,8 +1205,8 @@ static void CreateRotationMetaTable(lua_State* l)
     lua_pop(l, 1); // remove metatable from stack
 }
 
-
-// position - a 128-bit per component universal coordinate
+// ==================== Position ====================
+// a 128-bit per component universal coordinate
 static int position_new(lua_State* l, const UniversalCoord& uc)
 {
     UniversalCoord* ud = reinterpret_cast<UniversalCoord*>(lua_newuserdata(l, sizeof(UniversalCoord)));
@@ -1247,6 +1233,7 @@ static UniversalCoord* this_position(lua_State* l)
 
     return uc;
 }
+
 
 static int position_get(lua_State* l)
 {
@@ -1484,7 +1471,6 @@ static int position_addvector(lua_State* l)
     return 1;
 }
 
-
 static void CreatePositionMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Position);
@@ -1505,8 +1491,7 @@ static void CreatePositionMetaTable(lua_State* l)
     lua_pop(l, 1); // remove metatable from stack
 }
 
-
-// frame of reference
+// ==================== FrameOfReference ====================
 static int frame_new(lua_State* l, const FrameOfReference& f)
 {
     FrameOfReference* ud = reinterpret_cast<FrameOfReference*>(lua_newuserdata(l, sizeof(FrameOfReference)));
@@ -1581,7 +1566,6 @@ static int frame_from(lua_State* l)
     return 1;
 }
 
-
 // Convert from universal to frame coordinates.
 static int frame_to(lua_State* l)
 {
@@ -1630,7 +1614,6 @@ static int frame_to(lua_State* l)
     return 1;
 }
 
-
 static int frame_tostring(lua_State* l)
 {
     // TODO: print out the actual information about the frame
@@ -1650,8 +1633,8 @@ static void CreateFrameMetaTable(lua_State* l)
     lua_pop(l, 1); // remove metatable from stack
 }
 
-
-// object - star, planet, or deep-sky object
+// ==================== Object ====================
+// star, planet, or deep-sky object
 static int object_new(lua_State* l, const Selection& sel)
 {
     Selection* ud = reinterpret_cast<Selection*>(lua_newuserdata(l, sizeof(Selection)));
@@ -1678,6 +1661,7 @@ static Selection* this_object(lua_State* l)
 
     return sel;
 }
+
 
 static int object_tostring(lua_State* l)
 {
@@ -1742,7 +1726,6 @@ static int object_type(lua_State* l)
     return 1;
 }
 
-
 static int object_name(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function object:name");
@@ -1770,7 +1753,6 @@ static int object_name(lua_State* l)
 
     return 1;
 }
-
 
 static int object_spectraltype(lua_State* l)
 {
@@ -1801,7 +1783,6 @@ static int object_spectraltype(lua_State* l)
 
     return 1;
 }
-
 
 static int object_getinfo(lua_State* l)
 {
@@ -1914,7 +1895,6 @@ static int object_getinfo(lua_State* l)
     return 1;
 }
 
-
 static int object_absmag(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function object:absmag");
@@ -1927,7 +1907,6 @@ static int object_absmag(lua_State* l)
 
     return 1;
 }
-
 
 static int object_mark(lua_State* l)
 {
@@ -1959,7 +1938,6 @@ static int object_mark(lua_State* l)
     return 0;
 }
 
-
 static int object_unmark(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function object:unmark");
@@ -1972,7 +1950,6 @@ static int object_unmark(lua_State* l)
 
     return 0;
 }
-
 
 // Return the object's current position.  A time argument is optional;
 // if not provided, the current master simulation time is used.
@@ -2069,9 +2046,7 @@ static void CreateObjectMetaTable(lua_State* l)
     lua_pop(l, 1); // pop metatable off the stack
 }
 
-
-// observer object
-
+// ==================== Observer ====================
 static int observer_new(lua_State* l, Observer* o)
 {
     Observer** ud = static_cast<Observer**>(lua_newuserdata(l, sizeof(Observer*)));
@@ -2081,7 +2056,6 @@ static int observer_new(lua_State* l, Observer* o)
 
     return 1;
 }
-
 
 static Observer* to_observer(lua_State* l, int index)
 {
@@ -2115,7 +2089,6 @@ static int observer_isvalid(lua_State* l)
     lua_pushboolean(l, to_observer(l, 1) != NULL);
     return 1;
 }
-
 
 static int observer_tostring(lua_State* l)
 {
@@ -2244,7 +2217,6 @@ static int observer_lookat(lua_State* l)
     return 0;
 }
 
-
 static int observer_gototable(lua_State* l)
 {
     checkArgs(l, 2, 2, "Expected one table as argument to goto");
@@ -2327,7 +2299,6 @@ static int observer_gototable(lua_State* l)
     return 0;
 }
 
-
 // First argument is the target object or position; optional second argument
 // is the travel time
 static int observer_goto(lua_State* l)
@@ -2370,7 +2341,6 @@ static int observer_goto(lua_State* l)
     return 0;
 }
 
-
 static int observer_gotolonglat(lua_State* l)
 {
     checkArgs(l, 2, 7, "One to five arguments expected to observer:gotolonglat");
@@ -2408,7 +2378,6 @@ static int observer_gotolonglat(lua_State* l)
     return 0;
 }
 
-
 // deprecated: wrong name, bad interface.
 static int observer_gotolocation(lua_State* l)
 {
@@ -2435,7 +2404,6 @@ static int observer_gotolocation(lua_State* l)
 
     return 0;
 }
-
 
 static int observer_gotodistance(lua_State* l)
 {
@@ -2471,7 +2439,6 @@ static int observer_gotodistance(lua_State* l)
     return 0;
 }
 
-
 static int observer_gotosurface(lua_State* l)
 {
     checkArgs(l, 2, 3, "One to two arguments expected to observer:gotosurface");
@@ -2493,7 +2460,6 @@ static int observer_gotosurface(lua_State* l)
     return 0;
 }
 
-
 static int observer_center(lua_State* l)
 {
     checkArgs(l, 2, 3, "Expected one or two arguments for to observer:center");
@@ -2512,7 +2478,6 @@ static int observer_center(lua_State* l)
     return 0;
 }
 
-
 static int observer_follow(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for observer:follow");
@@ -2528,7 +2493,6 @@ static int observer_follow(lua_State* l)
 
     return 0;
 }
-
 
 static int observer_synchronous(lua_State* l)
 {
@@ -2546,7 +2510,6 @@ static int observer_synchronous(lua_State* l)
     return 0;
 }
 
-
 static int observer_lock(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for observer:lock");
@@ -2563,7 +2526,6 @@ static int observer_lock(lua_State* l)
     return 0;
 }
 
-
 static int observer_chase(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for observer:chase");
@@ -2579,7 +2541,6 @@ static int observer_chase(lua_State* l)
 
     return 0;
 }
-
 
 static int observer_track(lua_State* l)
 {
@@ -2607,7 +2568,6 @@ static int observer_track(lua_State* l)
     return 0;
 }
 
-
 // Return true if the observer is still moving as a result of a goto, center,
 // or similar command.
 static int observer_travelling(lua_State* l)
@@ -2623,7 +2583,6 @@ static int observer_travelling(lua_State* l)
     return 1;
 }
 
-
 // Return the observer's current time as a Julian day number
 static int observer_gettime(lua_State* l)
 {
@@ -2634,7 +2593,6 @@ static int observer_gettime(lua_State* l)
 
     return 1;
 }
-
 
 // Return the observer's current position
 static int observer_getposition(lua_State* l)
@@ -2647,7 +2605,6 @@ static int observer_getposition(lua_State* l)
     return 1;
 }
 
-
 static int observer_getsurface(lua_State* l)
 {
     checkArgs(l, 1, 1, "One argument expected to observer:getsurface()");
@@ -2657,7 +2614,6 @@ static int observer_getsurface(lua_State* l)
 
     return 1;
 }
-
 
 static int observer_setsurface(lua_State* l)
 {
@@ -2799,7 +2755,6 @@ static int observer_equal(lua_State* l)
     return 1;
 }
 
-
 static int observer_setlocationflags(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for observer:setlocationflags()");
@@ -2856,7 +2811,6 @@ static int observer_setlocationflags(lua_State* l)
     return 0;
 }
 
-
 static int observer_getlocationflags(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for observer:getlocationflags()");
@@ -2874,7 +2828,6 @@ static int observer_getlocationflags(lua_State* l)
     }
     return 1;
 }
-
 
 static void CreateObserverMetaTable(lua_State* l)
 {
@@ -2919,9 +2872,7 @@ static void CreateObserverMetaTable(lua_State* l)
     lua_pop(l, 1); // remove metatable from stack
 }
 
-
-// Celestia objects
-
+// ==================== Celestia-object ====================
 static int celestia_new(lua_State* l, CelestiaCore* appCore)
 {
     CelestiaCore** ud = reinterpret_cast<CelestiaCore**>(lua_newuserdata(l, sizeof(CelestiaCore*)));
@@ -2931,7 +2882,6 @@ static int celestia_new(lua_State* l, CelestiaCore* appCore)
 
     return 1;
 }
-
 
 static CelestiaCore* to_celestia(lua_State* l, int index)
 {
@@ -2953,6 +2903,7 @@ static CelestiaCore* this_celestia(lua_State* l)
 
     return appCore;
 }
+
 
 static int celestia_flash(lua_State* l)
 {
@@ -2993,7 +2944,6 @@ static int celestia_print(lua_State* l)
     return 0;
 }
 
-
 static int celestia_show(lua_State* l)
 {
     checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:show");
@@ -3013,7 +2963,6 @@ static int celestia_show(lua_State* l)
 
     return 0;
 }
-
 
 static int celestia_hide(lua_State* l)
 {
@@ -3135,7 +3084,6 @@ static int celestia_showlabel(lua_State* l)
 
     return 0;
 }
-
 
 static int celestia_hidelabel(lua_State* l)
 {
@@ -3380,7 +3328,6 @@ static int celestia_getselection(lua_State* l)
     return 1;
 }
 
-
 static int celestia_find(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for function celestia:find()");
@@ -3398,7 +3345,6 @@ static int celestia_find(lua_State* l)
 
     return 1;
 }
-
 
 static int celestia_select(lua_State* l)
 {
@@ -3440,7 +3386,6 @@ static int celestia_mark(lua_State* l)
     return 0;
 }
 
-
 static int celestia_unmark(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected to function celestia:unmark");
@@ -3462,7 +3407,6 @@ static int celestia_unmark(lua_State* l)
     return 0;
 }
 
-
 static int celestia_gettime(lua_State* l)
 {
     checkArgs(l, 1, 1, "No argument expected to function celestia:gettime");
@@ -3474,7 +3418,6 @@ static int celestia_gettime(lua_State* l)
     return 1;
 }
 
-
 static int celestia_gettimescale(lua_State* l)
 {
     checkArgs(l, 1, 1, "No argument expected to function celestia:gettimescale");
@@ -3484,7 +3427,6 @@ static int celestia_gettimescale(lua_State* l)
 
     return 1;
 }
-
 
 static int celestia_settime(lua_State* l)
 {
@@ -3497,7 +3439,6 @@ static int celestia_settime(lua_State* l)
     return 0;
 }
 
-
 static int celestia_settimescale(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected to function celestia:settimescale");
@@ -3508,7 +3449,6 @@ static int celestia_settimescale(lua_State* l)
 
     return 0;
 }
-
 
 static int celestia_tojulianday(lua_State* l)
 {
@@ -3536,7 +3476,6 @@ static int celestia_tojulianday(lua_State* l)
     return 1;
 }
 
-
 static int celestia_unmarkall(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function celestia:unmarkall");
@@ -3547,7 +3486,6 @@ static int celestia_unmarkall(lua_State* l)
 
     return 0;
 }
-
 
 static int celestia_getstarcount(lua_State* l)
 {
@@ -3922,7 +3860,7 @@ static int celestia_takescreenshot(lua_State* l)
     string fileid(fileid_ptr);
 
     // be paranoid about the fileid, make sure it only contains 'A-Za-z0-9_':
-    for (int i = 0; i < fileid.length(); i++)
+    for (unsigned int i = 0; i < fileid.length(); i++)
     {
         char ch = fileid[i];
         if (!((ch >= 'a' && ch <= 'z') || 
@@ -3977,7 +3915,7 @@ static int celestia_takescreenshot(lua_State* l)
     }
     // no matter how long it really took, make it look like 0.1s to timeout check:
     luastate->timeout = luastate->getTime() + timeToTimeout - 0.1;
-    return 1;    
+    return 1;
 }
 
 static int celestia_tostring(lua_State* l)
@@ -3986,7 +3924,6 @@ static int celestia_tostring(lua_State* l)
 
     return 1;
 }
-
 
 static void CreateCelestiaMetaTable(lua_State* l)
 {
@@ -4040,7 +3977,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     lua_pop(l, 1);
 }
 
-
+// ==================== Initialization ====================
 bool LuaState::init(CelestiaCore* appCore)
 {
     initMaps();
