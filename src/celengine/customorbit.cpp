@@ -12,6 +12,7 @@
 #include <celmath/mathlib.h>
 #include "astro.h"
 #include "customorbit.h"
+#include "vsop87.h"
 
 using namespace std;
 
@@ -321,35 +322,6 @@ void ComputeGalileanElements(double t,
 }
 
 
-// Custom orbit classes are derived from CachingOrbit.  The custom orbital
-// calculations can be expensive to compute, with more than 50 periodic terms.
-// Celestia may need require position of a planet more than once per frame; in
-// order to avoid redundant calculation, the CachingOrbit class saves the
-// result of the last calculation and uses it if the time matches the cached
-// time.
-class CachingOrbit : public Orbit
-{
-public:
-    CachingOrbit() : lastTime(1.0e-30) {};
-
-    virtual Point3d computePosition(double jd) const = 0;
-    virtual double getPeriod() const = 0;
-    virtual double getBoundingRadius() const = 0;
-
-    Point3d positionAtTime(double jd) const
-    {
-        if (jd != lastTime)
-        {
-            lastTime = jd;
-            lastPosition = computePosition(jd);
-        }
-        return lastPosition;
-    };
-
-private:
-    mutable Point3d lastPosition;
-    mutable double lastTime;
-};
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -481,7 +453,7 @@ class VenusOrbit : public CachingOrbit
 
     double getBoundingRadius() const
     {
-        return 1.089e+7 * BoundingRadiusSlack;
+        return 1.089e+8 * BoundingRadiusSlack;
     };
 };
 
@@ -2391,5 +2363,5 @@ Orbit* GetCustomOrbit(const std::string& name)
     if (name == "oberon")
         return CreateUranianSatelliteOrbit(5);
     else
-        return NULL;
+        return CreateVSOP87Orbit(name);
 }
