@@ -40,6 +40,7 @@ public:
     bool isAlive() const;
     bool timesliceExpired() const;
 
+    bool charEntered(char c);
     double getTime() const;    
 private:
     double timeout;

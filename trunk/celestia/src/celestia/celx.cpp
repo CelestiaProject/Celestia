@@ -57,6 +57,8 @@ static const int _Frame    = 7;
 // returning control to celestia
 static const double MaxTimeslice = 5.0;
 
+static const char* KbdCallback = "celestia_keyboard_callback";
+
 // select which type of error will be fatal (call lua_error) and
 // which will return a default value instead
 enum FatalErrors {
@@ -199,6 +201,33 @@ lua_State* LuaState::getState() const
 double LuaState::getTime() const
 {
     return timer->getTime();
+}
+
+// Callback for CelestiaCore::charEntered.
+// Returns true if keypress has been consumed 
+bool LuaState::charEntered(char c)
+{
+    int stack_top = lua_gettop(costate);
+    bool result = true;
+    lua_pushstring(costate, KbdCallback);
+    lua_gettable(costate, LUA_GLOBALSINDEX);
+    lua_pushnumber(costate, static_cast<lua_Number>(c));
+    timeout = getTime() + 1.0;
+    if (lua_pcall(costate, 1, 1, 0) != 0)
+    {
+        cerr << "Error while executing keyboard-callback: " << lua_tostring(costate, -1) << "\n";
+        result = false;
+    }
+    else
+    {
+        if (lua_isboolean(costate, -1))
+        {
+            result = static_cast<bool>(lua_toboolean(costate, -1));
+        }
+    }
+    // cleanup stack - is this necessary?
+    lua_settop(costate, stack_top);
+    return result;
 }
 
 static void checkTimeslice(lua_State *l, lua_Debug *ar)
@@ -2675,6 +2704,41 @@ static int celestia_newframe(lua_State* l)
     return 1;
 }
 
+static int celestia_requestkeyboard(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need one arguments for celestia:requestkeyboard");
+    CelestiaCore* appCore = this_celestia(l);
+
+    if (!lua_isboolean(l, 2))
+    {
+        lua_pushstring(l, "First argument for celestia:requestkeyboard must be a boolean");
+        lua_error(l);
+    }
+
+    int mode = appCore->getTextEnterMode();
+
+    if (lua_toboolean(l, 2))
+    {
+        // Check for existence of charEntered:
+        lua_pushstring(l, KbdCallback);
+        lua_gettable(l, LUA_GLOBALSINDEX);
+        if (lua_isnil(l, -1))
+        {
+            lua_pushstring(l, "script requested keyboard, but did not provide callback");
+            lua_error(l);
+        }
+        lua_remove(l, -1);
+
+        mode = mode | CelestiaCore::KbPassToScript;
+    }
+    else
+    {
+        mode = mode & ~CelestiaCore::KbPassToScript;
+    }
+    appCore->setTextEnterMode(mode);
+
+    return 0;
+}
 
 static int celestia_tostring(lua_State* l)
 {
@@ -2715,6 +2779,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "newvector", celestia_newvector);
     RegisterMethod(l, "newrotation", celestia_newrotation);
     RegisterMethod(l, "getscripttime", celestia_getscripttime);
+    RegisterMethod(l, "requestkeyboard", celestia_requestkeyboard);
 
     lua_pop(l, 1);
 }
