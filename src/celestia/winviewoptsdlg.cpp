@@ -10,12 +10,17 @@
 // of the License, or (at your option) any later version.
 
 #include <windows.h>
+#include <commctrl.h>
 #include "winviewoptsdlg.h"
 #include "..\celengine\render.h"
 
 #include "res/resource.h"
 
 using namespace std;
+
+static const int DistanceSliderRange = 10000;
+static const float MinDistanceLimit = 1.0f;
+static const float MaxDistanceLimit = 1.0e6f;
 
 static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
                                      UINT message,
@@ -78,6 +83,12 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         }
         else if(LOWORD(wParam) == IDC_SHOWSTARSASPOINTS)
             renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowStarsAsPoints);
+        else if(LOWORD(wParam) == IDC_SHOWCONSTELLATIONBORDERS)
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowBoundaries);
+        else if(LOWORD(wParam) == IDC_SHOWRINGSHADOWS)
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowRingShadows);
+        else if(LOWORD(wParam) == IDC_SHOWCOMETTAILS)
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ renderer->ShowCometTails);
         else if(LOWORD(wParam) == IDC_LABELCONSTELLATIONS)
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->ConstellationLabels);
         else if(LOWORD(wParam) == IDC_LABELGALAXIES)
@@ -98,7 +109,6 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             Dlg->appCore->setHudDetail(1);
         else if(LOWORD(wParam) == IDC_INFOTEXT2)
             Dlg->appCore->setHudDetail(2);
-
         else if (LOWORD(wParam) == IDOK)
         {
             if (Dlg != NULL && Dlg->parent != NULL)
@@ -132,6 +142,40 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
                         reinterpret_cast<LPARAM>(Dlg));
         }
         return TRUE;
+
+    case WM_HSCROLL:
+        {
+            WORD sbValue = LOWORD(wParam);
+            switch (sbValue)
+            {
+            case SB_THUMBTRACK:
+                // case SB_ENDSCROLL:
+                {
+                    char val[16];
+                    HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FILTER_DISTANCE);
+                    float logDistanceLimit = (float) HIWORD(wParam) /
+                        (float) DistanceSliderRange;
+                    float distanceLimit = (float) pow(MaxDistanceLimit, 
+                                                 logDistanceLimit);
+                    sprintf(val, "%d", (int) distanceLimit);
+                    SetWindowText(hwnd, val);
+                    Dlg->appCore->getRenderer()->setDistanceLimit(distanceLimit);
+                    break;
+                }
+
+            default:
+                cout << "Slider msg: " << sbValue << '\n';
+                break;
+#if 0
+            case SB_THUMBPOSITION:
+                {
+                    browser->nStars = (int)HIWORD(wParam);
+                    RefreshItems(hDlg, browser);
+                    break;
+                }
+#endif
+            }
+        }
     }
 
     return FALSE;
@@ -181,6 +225,12 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         ((renderFlags & appCore->getRenderer()->ShowStars) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARSASPOINTS, BM_SETCHECK,
         ((renderFlags & appCore->getRenderer()->ShowStarsAsPoints) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONBORDERS, BM_SETCHECK,
+        ((renderFlags & appCore->getRenderer()->ShowBoundaries) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWRINGSHADOWS, BM_SETCHECK,
+        ((renderFlags & appCore->getRenderer()->ShowRingShadows) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWCOMETTAILS, BM_SETCHECK,
+        ((renderFlags & appCore->getRenderer()->ShowCometTails) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
 
     SendDlgItemMessage(hDlg, IDC_LABELCONSTELLATIONS, BM_SETCHECK,
         ((labelMode & appCore->getRenderer()->ConstellationLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
@@ -198,7 +248,28 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         ((labelMode & appCore->getRenderer()->SpacecraftLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
 
     CheckRadioButton(hDlg, IDC_INFOTEXT0, IDC_INFOTEXT2, IDC_INFOTEXT0 + hudDetail);
+
+    // Set up distance slider
+    SendDlgItemMessage(hDlg,
+                       IDC_SLIDER_FILTER_DISTANCE,
+                       TBM_SETRANGE,
+                       (WPARAM)TRUE,
+                       (LPARAM) MAKELONG(0, DistanceSliderRange));
+    float distanceLimit = appCore->getRenderer()->getDistanceLimit();
+    float logDistanceLimit = (float) (log(distanceLimit) / 
+                                      log(MaxDistanceLimit));
+    SendDlgItemMessage(hDlg,
+                       IDC_SLIDER_FILTER_DISTANCE,
+                       TBM_SETPOS,
+                       (WPARAM) TRUE,
+                       (LPARAM) (logDistanceLimit * DistanceSliderRange));
+
+    char val[16];
+    HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FILTER_DISTANCE);
+    sprintf(val, "%d", (int) distanceLimit);
+    SetWindowText(hwnd, val);
 }
+
 
 void ViewOptionsDialog::RestoreSettings(HWND hDlg)
 {
