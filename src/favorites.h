@@ -12,19 +12,20 @@
 
 #include <string>
 #include <vector>
-#include "command.h"
+#include <iostream>
 
 
 struct FavoritesEntry
 {
-    FavoritesEntry(std::string _name, CommandSequence* _cmdSeq) :
-        name(_name), cmdSeq(_cmdSeq) {};
     std::string name;
-    CommandSequence* cmdSeq;
+    UniversalCoord position;
+    Quatf orientation;
+    double jd;
 };
 
 typedef std::vector<FavoritesEntry*> FavoritesList;
 
-FavoritesList* ReadFavoritesList(string filename);
+FavoritesList* ReadFavoritesList(std::istream&);
+void WriteFavoritesList(FavoritesList&, std::ostream&);
 
 #endif // _FAVORITES_H_
