@@ -361,31 +361,43 @@ std::string Url::getCoordSysName(astro::CoordinateSystem mode) const
 std::string Url::getSelectionName(const Selection& selection) const
 {
     Universe *universe = appCore->getSimulation()->getUniverse();
-    if (selection.body != 0)
+
+    switch (selection.getType())
     {
-        std::string name=selection.body->getName();
-        if (selection.body->getSystem() != 0)
+    case Selection::Type_Body:
         {
-            if (selection.body->getSystem()->getPrimaryBody() != 0)
+            std::string name = selection.body()->getName();
+            if (selection.body()->getSystem() != NULL)
             {
-                name=selection.body->getSystem()->getPrimaryBody()->getName() + ":" + name;
+                if (selection.body()->getSystem()->getPrimaryBody() != NULL)
+                {
+                    name = selection.body()->getSystem()->getPrimaryBody()->getName() + ":" + name;
+                }
+                if (selection.body()->getSystem()->getStar() != NULL)
+                {
+                    name=universe->getStarCatalog()->getStarName(*(selection.body()->getSystem()->getStar()))
+                        + ":" + name;
+                }
             }
-            if (selection.body->getSystem()->getStar() != 0)
-            {
-                name=universe->getStarCatalog()->getStarName(*(selection.body->getSystem()->getStar()))
-                    + ":" + name;
-            }
+            return name;
         }
 
-        return name;
+    case Selection::Type_Star:
+        return universe->getStarCatalog()->getStarName(*selection.star());
+
+    case Selection::Type_DeepSky:
+        return selection.deepsky()->getName();
+
+    case Selection::Type_Location:
+        return "";
+
+    default:
+        return "";
     }
-    if (selection.star != 0) return universe->getStarCatalog()->getStarName(*selection.star);
-    if (selection.deepsky != 0) return selection.deepsky->getName();
-    return "";
 }
 
 void Url::goTo()
-{
+    {
     Selection sel;
 
     if (urlStr == "")

@@ -159,16 +159,16 @@ Vec3d toUniversal(const Vec3d& v,
         }
         
     case astro::Geographic:
-        if (sel.body == NULL)
+        if (sel.getType() != Selection::Type_Body)
             return v;
         else
-            return v * sel.body->getGeographicToHeliocentric(t);
+            return v * sel.body()->getGeographicToHeliocentric(t);
         
     case astro::Equatorial:
-        if (sel.body == NULL)
+        if (sel.getType() != Selection::Type_Body)
             return v;
         else
-            return v * sel.body->getLocalToHeliocentric(t);
+            return v * sel.body()->getLocalToHeliocentric(t);
 
     case astro::Ecliptical:
         // TODO: Multiply this by the planetary system's ecliptic orientation,
@@ -669,14 +669,26 @@ void Observer::gotoSelection(const Selection& selection,
         double distance = v.length();
 
         double maxOrbitDistance;
-        if (selection.body != NULL)
-            maxOrbitDistance = astro::kilometersToMicroLightYears(5.0f * selection.body->getRadius());
-        else if (selection.deepsky != NULL)
-            maxOrbitDistance = 5.0f * selection.deepsky->getRadius() * 1e6f;
-        else if (selection.star != NULL)
-            maxOrbitDistance = astro::kilometersToMicroLightYears(100.0f * selection.star->getRadius());
-        else
+        switch (selection.getType())
+        {
+        case Selection::Type_Body:
+            maxOrbitDistance = astro::kilometersToMicroLightYears(5.0f * selection.body()->getRadius());
+            break;
+        case Selection::Type_DeepSky:
+            maxOrbitDistance = 5.0f * selection.deepsky()->getRadius() * 1e6f;
+            break;
+        case Selection::Type_Star:
+            maxOrbitDistance = astro::kilometersToMicroLightYears(100.0f * selection.star()->getRadius());
+            break;
+        case Selection::Type_Location:
+            maxOrbitDistance = selection.location()->getSize() / 2.0f;
+            if (maxOrbitDistance == 0.0f)
+                maxOrbitDistance = 1.0f;
+            break;
+        default:
             maxOrbitDistance = 0.5f;
+            break;
+        }
 
         double radius = selection.radius();
         double minOrbitDistance = astro::kilometersToMicroLightYears(1.01 * radius);
@@ -776,7 +788,7 @@ void Observer::getSelectionLongLat(const Selection& selection,
     // respect to currently selected object.
     if (!selection.empty())
     {
-        FrameOfReference refFrame(astro::Geographic, selection.body);
+        FrameOfReference refFrame(astro::Geographic, selection);
         RigidTransform xform = refFrame.fromUniversal(RigidTransform(getPosition(), getOrientation()),
                                                       getTime());
 
@@ -851,7 +863,7 @@ void Observer::geosynchronousFollow(const Selection& selection)
 {
     if (selection.body != NULL)
     {
-        setFrame(FrameOfReference(astro::Geographic, selection.body));
+        setFrame(FrameOfReference(astro::Geographic, selection));
     }
 }
 
@@ -862,7 +874,7 @@ void Observer::phaseLock(const Selection& selection)
         if (selection == frame.refObject)
         {
             setFrame(FrameOfReference(astro::PhaseLock, selection,
-                                      Selection(selection.body->getSystem()->getStar())));
+                                      Selection(selection.body()->getSystem()->getStar())));
         }
         else
         {
@@ -875,7 +887,7 @@ void Observer::chase(const Selection& selection)
 {
     if (selection.body != NULL)
     {
-        setFrame(FrameOfReference(astro::Chase, selection.body));
+        setFrame(FrameOfReference(astro::Chase, selection));
     }
 }
 

@@ -14,41 +14,77 @@
 #include <celengine/star.h>
 #include <celengine/body.h>
 #include <celengine/deepskyobj.h>
+#include <celengine/location.h>
 #include <celengine/univcoord.h>
 
 class Selection
 {
  public:
-    Selection() : star(NULL), body(NULL), deepsky(NULL) {};
-    Selection(Star* _star) : star(_star), body(NULL), deepsky(NULL) {};
-    Selection(Body* _body) : star(NULL), body(_body), deepsky(NULL) {};
-    Selection(DeepSkyObject* _deepsky) : star(NULL), body(NULL), deepsky(_deepsky) {};
-    Selection(const Selection& sel) :
-        star(sel.star), body(sel.body), deepsky(sel.deepsky) {};
+    enum Type {
+        Type_Nil,
+        Type_Star,
+        Type_Body,
+        Type_DeepSky,
+        Type_Location,
+    };
+
+ public:
+    Selection() : type(Type_Nil), obj(NULL) {};
+    Selection(Star* star) : type(Type_Star), obj(star) { checkNull(); };
+    Selection(Body* body) : type(Type_Body), obj(body) { checkNull(); };
+    Selection(DeepSkyObject* deepsky) : type(Type_DeepSky), obj(deepsky) {checkNull(); };
+    Selection(Location* location) : type(Type_Location), obj(location) { checkNull(); };
+    Selection(const Selection& sel) : type(sel.type), obj(sel.obj) {};
     ~Selection() {};
 
+#if 0
     void select(Star* _star)     {star=_star; body=NULL;  deepsky=NULL;}
     void select(Body* _body)     {star=NULL;  body=_body; deepsky=NULL;}
     void select(DeepSkyObject* _deepsky) {star=NULL;  body=NULL;  deepsky=_deepsky;}
-    bool empty() const { return star == NULL && body == NULL && deepsky == NULL; };
+#endif
+    bool empty() const { return type == Type_Nil; }
     double radius() const;
     UniversalCoord getPosition(double t) const;
     std::string getName() const;
-        
-    Star* star;
-    Body* body;
-    DeepSkyObject* deepsky;
+
+    Star* star() const
+    {
+        return type == Type_Star ? static_cast<Star*>(obj) : NULL;
+    }
+
+    Body* body() const
+    {
+        return type == Type_Body ? static_cast<Body*>(obj) : NULL;
+    }
+
+    DeepSkyObject* deepsky() const
+    {
+        return type == Type_DeepSky ? static_cast<DeepSkyObject*>(obj) : NULL;
+    }
+
+    Location* location() const
+    {
+        return type == Type_Location ? static_cast<Location*>(obj) : NULL;
+    }
+
+    Type getType() const { return type; }
+
+    // private:
+    Type type;
+    void* obj;
+
+    void checkNull() { if (obj == NULL) type = Type_Nil; }
 };
 
 
 inline bool operator==(const Selection& s0, const Selection& s1)
 {
-    return s0.star == s1.star && s0.body == s1.body && s0.deepsky == s1.deepsky;
+    return s0.type == s1.type && s0.obj == s1.obj;
 }
 
 inline bool operator!=(const Selection& s0, const Selection& s1)
 {
-    return s0.star != s1.star || s0.body != s1.body || s0.deepsky != s1.deepsky;
+    return s0.type != s1.type || s0.obj != s1.obj;
 }
 
 #endif // _CELENGINE_SELECTION_H_
