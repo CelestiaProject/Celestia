@@ -145,9 +145,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void readFavoritesFile();
     void writeFavoritesFile();
     void activateFavorite(FavoritesEntry&);
-    void addFavorite(std::string, std::string, FavoritesList::const_iterator* iter=NULL);
-    void addFavoriteFolder(std::string, FavoritesList::const_iterator* iter=NULL);
-    const FavoritesList* getFavorites();
+    void addFavorite(std::string, std::string, FavoritesList::iterator* iter=NULL);
+    void addFavoriteFolder(std::string, FavoritesList::iterator* iter=NULL);
+    FavoritesList* getFavorites();
 
     const DestinationList* getDestinations();
 
