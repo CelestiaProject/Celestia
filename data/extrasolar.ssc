@@ -1857,3 +1857,17 @@
                 # Omega       223
 	}
 }
+
+
+"b" "HD 76700"
+{
+	Texture "jupiterlike.jpg"
+	Mass 65
+	Radius 55000
+
+	EllipticalOrbit {
+		Period        0.01087
+		SemiMajorAxis 0.049
+	        Eccentricity  0.0
+	}
+}
