@@ -32,6 +32,7 @@
 #include "mathlib.h"
 #include "astro.h"
 #include "celestiacore.h"
+#include "imagecapture.h"
 #include "winstarbrowser.h"
 #include "winssbrowser.h"
 #include "wintourguide.h"
@@ -1034,10 +1035,12 @@ static void HandleScreenCapture(HWND hWnd)
 
         //Ofn.lpstrFile contains full path to specified file
         //Ofn.lpstrFileTitle contains just the filename with extension
+        int viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
 
-        /////////////////////////////////////////////////////////
-        //TODO: Call function that implement Screen Capture here.
-        /////////////////////////////////////////////////////////
+        CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
+                              viewport[0], viewport[1],
+                              viewport[2], viewport[3]);
     }
 }
 
