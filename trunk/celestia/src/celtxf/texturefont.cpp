@@ -12,7 +12,9 @@
 #include <fstream>
 
 #ifndef _WIN32
+#ifndef MACOSX_PB
 #include <config.h>
+#endif /* MACOSX_PB */
 #endif /* _WIN32 */
 
 #include <celutil/debug.h>
@@ -186,12 +188,12 @@ void TextureFont::rebuildGlyphLookupTable()
         return;
 
     // Find the largest glyph id
-    int maxID = glyphs[0].id;
+    int maxID = glyphs[0].__id;
     vector<Glyph>::const_iterator iter;
     for (iter = glyphs.begin(); iter != glyphs.end(); iter++)
     {
-        if (iter->id > maxID)
-            maxID = iter->id;
+        if (iter->__id > maxID)
+            maxID = iter->__id;
     }
 
     // If there was already a lookup table, delete it.
@@ -206,7 +208,7 @@ void TextureFont::rebuildGlyphLookupTable()
 
     // Fill the table with glyph pointers
     for (iter = glyphs.begin(); iter != glyphs.end(); iter++)
-        glyphLookup[iter->id] = &(*iter);
+        glyphLookup[iter->__id] = &(*iter);
     glyphLookupTableSize = maxID + 1;
 }
 
@@ -311,8 +313,8 @@ TextureFont* TextureFont::load(istream& in)
 
     for (unsigned int i = 0; i < nGlyphs; i++)
     {
-        uint16 id = readUint16(in, byteSwap);
-        TextureFont::Glyph glyph(id);
+        uint16 __id = readUint16(in, byteSwap);
+        TextureFont::Glyph glyph(__id);
 
         glyph.width = readUint8(in);
         glyph.height = readUint8(in);

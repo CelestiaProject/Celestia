@@ -49,9 +49,9 @@ class TextureFont
 
     struct Glyph
     {
-        Glyph(unsigned short _id) : id(_id) {};
+        Glyph(unsigned short _id) : __id(_id) {};
 
-        unsigned short id;
+        unsigned short __id;
         unsigned short width;
         unsigned short height;
         short x;

@@ -7,8 +7,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#ifndef MACOSX
 #define IJG_JPEG_SUPPORT
 #define PNG_SUPPORT
+#endif
+
+#ifdef MACOSX
+#include <unistd.h>
+#include "CGBuffer.h"
+#include <Quicktime/ImageCompression.h>
+#include <QuickTime/QuickTimeComponents.h>
+#endif
 
 #include <cmath>
 #include <algorithm>
@@ -19,8 +28,10 @@
 #include <cassert>
 
 #ifndef _WIN32
+#ifndef MACOSX
 #include <config.h>
-#endif /* _WIN32 */
+#endif /* ! MACOSX */
+#endif /* ! _WIN32 */
 
 #include <celmath/vecmath.h>
 #include <celutil/filetype.h>
@@ -42,9 +53,6 @@
 #include "setjmp.h"
 #endif // PNG_SUPPORT
 
-#ifdef MACOSX
-#include "../celestia/Celestia.app.skel/Contents/Frameworks/Headers/jpeglib.h"
-#else
 extern "C" {
 #ifdef _WIN32
 #include "jpeglib.h"
@@ -52,13 +60,12 @@ extern "C" {
 #include <jpeglib.h>
 #endif
 }
-#endif // MACOSX
 
-#endif
+#endif // IJG_JPEG_SUPPORT
 
-#ifdef PNG_SUPPORT
+#ifdef PNG_SUPPORT // PNG_SUPPORT
 #ifdef MACOSX
-#include "../celestia/Celestia.app.skel/Contents/Frameworks/Headers/png.h"
+#include "../../macosx/png.h"
 #else
 #include "png.h"
 #endif // MACOSX
@@ -66,14 +73,14 @@ extern "C" {
 // Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
 #ifndef png_jmpbuf
 #define png_jmpbuf(png_ptr) png_ptr->jmpbuf
-#endif
+#endif // PNG_SUPPORT
 
 // Define various expansion transformations for old versions of libpng
 #if PNG_LIBPNG_VER < 10004
 #define png_set_palette_to_rgb(p)  png_set_expand(p)
 #define png_set_gray_1_2_4_to_8(p) png_set_expand(p)
 #define png_set_tRNS_to_alpha(p)   png_set_expand(p)
-#endif
+#endif // PNG_LIBPNG_VER < 10004
 
 #endif // PNG_SUPPORT
 
@@ -1000,6 +1007,73 @@ Texture* CreateJPEGTexture(const char* filename,
     // warnings occurred (test whether jerr.pub.num_warnings is nonzero).
 
     return tex;
+    
+#elif MACOSX
+
+    Texture* tex = NULL;
+    CGBuffer* cgJpegImage;
+    size_t img_w, img_h, img_d;
+
+    cgJpegImage = new CGBuffer(filename);
+    if (cgJpegImage == NULL) {
+        char tempcwd[2048];
+        getcwd(tempcwd, sizeof(tempcwd));
+        DPRINTF(0, "CGBuffer :: Error opening JPEG texture file %s/%s\n", tempcwd, filename);
+        delete cgJpegImage;
+        return NULL;
+    }
+
+    if (!cgJpegImage->LoadJPEG()) {
+        char tempcwd[2048];
+        getcwd(tempcwd, sizeof(tempcwd));
+        DPRINTF(0, "CGBuffer :: Error loading JPEG texture file %s/%s\n", tempcwd, filename);
+        delete cgJpegImage;
+        return NULL;
+    }
+    
+    cgJpegImage->Render();
+
+    img_w = (size_t)cgJpegImage->image_size.width;
+    img_h = (size_t)cgJpegImage->image_size.height;
+    img_d = (size_t)((cgJpegImage->image_depth == 8) ? 1 : 4);
+
+    //DPRINTF(0,"cgJpegImage :: %d x %d x %d [%d] bpp\n", img_w, img_h, (size_t)cgJpegImage->image_depth, img_d);
+
+
+#ifdef MACOSX_ALPHA_JPEGS
+    int format = (img_d == 1) ? GL_LUMINANCE : GL_RGBA;
+#else
+    int format = (img_d == 1) ? GL_LUMINANCE : GL_RGB;
+#endif
+    tex = new Texture(img_w, img_h, format);
+    if (tex == NULL || tex->pixels == NULL) {
+        DPRINTF(0, "Could not create Texture\n");
+        delete cgJpegImage;
+        return NULL;
+    }
+#ifndef MACOSX_ALPHA_JPEGS
+    if (img_d == 1) {
+#endif /* !MACOSX_ALPHA_JPEGS */
+        memcpy((void*)tex->pixels,(void*)cgJpegImage->buffer->data,(unsigned int)(img_w * img_h * img_d));
+        delete cgJpegImage;
+        return tex;
+#ifndef MACOSX_ALPHA_JPEGS
+    }
+    // this could probably use a duffs, but it's probably not a bottleneck
+    unsigned char* bout = (unsigned char*)tex->pixels;
+    unsigned char* bin  = (unsigned char*)cgJpegImage->buffer->data;
+    unsigned int bcount = img_w * img_h * img_d;
+    unsigned int i = 0;
+    for (i=0; i<bcount; ++i) {
+        if ((i&3)^3) {
+            *bout++ = *bin++;
+        } else {
+            ++bin;
+        }
+    }
+    return tex;
+#endif /* !MACOSX_ALPHA_JPEGS */
+    
 #else
     return NULL;
 #endif // IJG_JPEG_SUPPORT
@@ -1018,6 +1092,78 @@ Texture* CreatePNGTexture(const string& filename)
 {
 #ifndef PNG_SUPPORT
     return NULL;
+/*
+#elif MACOSX
+    FSRef fsr;
+    FSSpec fss;
+    GraphicsImportComponent gi;
+    ImageDescriptionHandle imageDescH = NULL;
+    ImageDescription* desc = NULL;
+    ComponentResult result;
+    Texture* tex = NULL;
+    size_t img_w, img_h, img_d;
+    
+    if (FSPathMakeRef(filename.c_str(), &fsr, false) != noErr) {
+        DPRINTF(0,"CreatePNGTexture :: Could not FSPathMakeRef for %s\n",filename.c_str());
+        return NULL;
+    }
+    
+    if (FSGetCatalogInfo(&fsr, kFSCatInfoNone, NULL, NULL, &fss, NULL) != noErr) {
+        DPRINTF(0,"CreatePNGTexture :: Could not FSRef -> FSSpec\n");
+        return NULL;
+    }
+        
+    if (GetGraphicsImporterForFile(&fss, &gi) != noErr) {
+        DPRINTF(0,"CreatePNGTexture :: Could not GetGraphicsImporterForFile\n");
+        return NULL;
+    }
+    
+    result = GraphicsImportGetImageDescription(gi, &imageDescH);
+    if( noErr != result || imageDescH == NULL ) {
+            DPRINTF(0,"CreatePNGTexture :: Error while retrieving image description\n");
+            return NULL;
+    }
+    
+    desc = *imageDescH;
+    img_w = (size_t)desc->width;
+    img_h = (size_t)desc->height;
+    img_d = (size_t)desc->depth;
+    size_t data_size = img_w * img_h * (img_d >> 3);
+    if( imageDescH != NULL)
+            DisposeHandle((Handle)imageDescH);
+    imageDescH = NULL;
+    desc = NULL;
+
+    GWorldPtr gWorld;
+    QDErr err = noErr;
+    Rect boundsRect = { 0, 0, (short)img_w, (short)img_h };
+
+    MemoryBuffer* buf = MemoryBuffer::Create(data_size);
+    
+    if( buff == NULL ) {
+            error("no bitmap buffer available");
+            exit(1);
+    }
+    
+    err = NewGWorldFromPtr( &gWorld, k32ARGBPixelFormat, &boundsRect, NULL, NULL, 0, 
+                                                    bi->data, bi->bytesPerRow );
+    if (noErr != err) {
+            error("error creating new gworld - %d", err);
+            exit(1);
+    }
+    
+    if( (result = GraphicsImportSetGWorld(gi, gWorld, NULL)) != noErr ) {
+            error("error while setting gworld");
+            exit(1);
+    }
+    
+    if( (result = GraphicsImportDraw(gi)) != noErr ) {
+            error("error while drawing image through qt");
+            exit(1);
+    }
+    
+    DisposeGWorld(gWorld);	
+*/
 #else
     char header[8];
     png_structp png_ptr;

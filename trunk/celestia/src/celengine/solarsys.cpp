@@ -10,8 +10,10 @@
 #include <cassert>
 
 #ifndef _WIN32
+#ifndef MACOSX_PB
 #include <config.h>
-#endif /* _WIN32 */
+#endif /* ! MACOSX_PB */
+#endif /* ! _WIN32 */
 
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>

@@ -212,7 +212,7 @@ void LODSphereMesh::render(unsigned int attributes,
     if (tangents != NULL && ((attributes & Mesh::Tangents) != 0))
     {
         glEnableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
-        glVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
+        EXTglVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
     }
 
     if (split == 1)

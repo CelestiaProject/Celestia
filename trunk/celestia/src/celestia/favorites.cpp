@@ -147,6 +147,10 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
                 out << "geographic"; break;
             case astro::ObserverLocal:
                 out << "local"; break;
+            case astro::PhaseLock:
+                out << "phaselock"; break;
+            case astro::Chase:
+                out << "chase"; break;
             }
             out << "\"\n";
         }
