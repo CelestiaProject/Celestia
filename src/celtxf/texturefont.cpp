@@ -40,7 +40,7 @@ TextureFont::TextureFont() :
 TextureFont::~TextureFont()
 {
     if (texName != 0)
-        glDeleteTextures(1, &texName);
+        glDeleteTextures(1, (const GLuint*) &texName);
     if (fontImage != NULL)
         delete[] fontImage;
     if (glyphLookup != NULL)
@@ -157,8 +157,8 @@ bool TextureFont::buildTexture()
     assert(fontImage != NULL);
 
     if (texName != 0)
-        glDeleteTextures(1, &texName);
-    glGenTextures(1, &texName);
+        glDeleteTextures(1, (const GLuint*) &texName);
+    glGenTextures(1, (const GLuint*) &texName);
     if (texName == 0)
     {
         DPRINTF(0, "Failed to allocate texture object for font.\n");
