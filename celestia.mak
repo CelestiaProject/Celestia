@@ -58,6 +58,7 @@ CLEAN :
 	-@erase "$(INTDIR)\orbit.obj"
 	-@erase "$(INTDIR)\parser.obj"
 	-@erase "$(INTDIR)\perlin.obj"
+	-@erase "$(INTDIR)\regcombine.obj"
 	-@erase "$(INTDIR)\render.obj"
 	-@erase "$(INTDIR)\resmanager.obj"
 	-@erase "$(INTDIR)\simulation.obj"
@@ -145,6 +146,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\orbit.obj" \
 	"$(INTDIR)\parser.obj" \
 	"$(INTDIR)\perlin.obj" \
+	"$(INTDIR)\regcombine.obj" \
 	"$(INTDIR)\render.obj" \
 	"$(INTDIR)\resmanager.obj" \
 	"$(INTDIR)\simulation.obj" \
@@ -202,6 +204,7 @@ CLEAN :
 	-@erase "$(INTDIR)\orbit.obj"
 	-@erase "$(INTDIR)\parser.obj"
 	-@erase "$(INTDIR)\perlin.obj"
+	-@erase "$(INTDIR)\regcombine.obj"
 	-@erase "$(INTDIR)\render.obj"
 	-@erase "$(INTDIR)\resmanager.obj"
 	-@erase "$(INTDIR)\simulation.obj"
@@ -292,6 +295,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\orbit.obj" \
 	"$(INTDIR)\parser.obj" \
 	"$(INTDIR)\perlin.obj" \
+	"$(INTDIR)\regcombine.obj" \
 	"$(INTDIR)\render.obj" \
 	"$(INTDIR)\resmanager.obj" \
 	"$(INTDIR)\simulation.obj" \
@@ -446,6 +450,12 @@ SOURCE=.\src\parser.cpp
 SOURCE=.\src\perlin.cpp
 
 "$(INTDIR)\perlin.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\regcombine.cpp
+
+"$(INTDIR)\regcombine.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
