@@ -22,7 +22,7 @@ static bool trigArraysInitialized = false;
 static int maxDivisions = 2048;
 static int thetaDivisions = maxDivisions;
 static int phiDivisions = maxDivisions / 2;
-static int minStep = 16;
+static int minStep = 32;
 static float* sinPhi = NULL;
 static float* cosPhi = NULL;
 static float* sinTheta = NULL;
@@ -193,6 +193,166 @@ void LODSphereMesh::render(unsigned int attributes, float lodBias)
 }
 
 
+static Point3f spherePoint(int theta, int phi)
+{
+    return Point3f(cosPhi[phi] * cosTheta[theta],
+                   sinPhi[phi],
+                   cosPhi[phi] * sinTheta[theta]);
+}
+
+
+void LODSphereMesh::render(unsigned int attributes,
+                           const Frustum& frustum,
+                           float lodBias)
+{
+    int lod = 64;
+    if (lodBias < 0.0f)
+    {
+        if (lodBias < -30)
+            lodBias = -30;
+        lod = lod / (1 << (int) (-lodBias));
+        if (lod < 2)
+            lod = 2;
+    }
+    else if (lodBias > 0.0f)
+    {
+        if (lodBias > 30)
+            lodBias = 30;
+        lod = lod * (1 << (int) lodBias);
+        if (lod > maxDivisions)
+            lod = maxDivisions;
+    }
+    
+    int step = maxDivisions / lod;
+    int thetaExtent = maxDivisions;
+    int phiExtent = thetaExtent / 2;
+
+    int split = 1;
+    if (step < minStep)
+    {
+        split = minStep / step;
+        thetaExtent /= split;
+        phiExtent /= split;
+    }
+
+    // Set up the mesh vertices 
+    int nRings = phiExtent / step;
+    int nSlices = thetaExtent / step;
+
+    int n2 = 0;
+    for (int i = 0; i < nRings; i++)
+    {
+        for (int j = 0; j <= nSlices; j++)
+        {
+            indices[n2 + 0] = i * (nSlices + 1) + j;
+            indices[n2 + 1] = (i + 1) * (nSlices + 1) + j;
+            n2 += 2;
+        }
+    }
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+
+    if ((attributes & Normals) != 0)
+    {
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, 0, vertices);
+    }
+    else
+    {
+        glDisableClientState(GL_NORMAL_ARRAY);
+    }
+
+    if (texCoords != NULL && ((attributes & TexCoords0) != 0))
+    {
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+    }
+    else
+    {
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    // Use nVidia's vertex program extension . . .  right now, we
+    // just assume that we only send down tangents if we're using this
+    // extension.  Need to come up with a better solution . . .
+    if (tangents != NULL && ((attributes & Tangents) != 0))
+    {
+        glEnableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
+        glVertexAttribPointerNV(6, 3, GL_FLOAT, 0, tangents);
+    }
+
+    if (split == 1)
+    {
+        renderSection(0, 0, thetaExtent, step, attributes);
+    }
+    else
+    {
+        Vec3f viewNormal = frustum.getPlane(Frustum::Near).normal;
+        Point3f origin(0.0f, 0.0f, 0.0f);
+
+        int reject = 0;
+        // Render the sphere section by section.
+        for (int phi = 0; phi < split; phi++)
+        {
+            for (int theta = 0; theta < split; theta++)
+            {
+                // For each section, compute a bounding sphere; only
+                // render the section if the bounding sphere lies within
+                // the view frustum.
+                int phi0 = phi * phiExtent;
+                int theta0 = theta * thetaExtent;
+                Point3f p0 = spherePoint(theta0, phi0);
+                Point3f p1 = spherePoint(theta0 + thetaExtent, phi0);
+                Point3f p2 = spherePoint(theta0 + thetaExtent,
+                                         phi0 + phiExtent);
+                Point3f p3 = spherePoint(theta0, phi0 + phiExtent);
+
+                // See if the patch is back facing by testing the normals
+                // of the corners.
+                if (viewNormal * (origin - p0) < 0.0f &&
+                    viewNormal * (origin - p1) < 0.0f &&
+                    viewNormal * (origin - p2) < 0.0f &&
+                    viewNormal * (origin - p3) < 0.0f)
+                {
+                    reject++;
+                    continue;
+                }
+
+                Point3f center = Point3f((p0.x + p1.x + p2.x + p3.x) * 0.25f,
+                                         (p0.y + p1.y + p2.y + p3.y) * 0.25f,
+                                         (p0.z + p1.z + p2.z + p3.z) * 0.25f);
+                float radius = 0.0f;
+                radius = max(radius, p0.distanceToSquared(center));
+                radius = max(radius, p1.distanceToSquared(center));
+                radius = max(radius, p2.distanceToSquared(center));
+                radius = max(radius, p3.distanceToSquared(center));
+                radius = (float) sqrt(radius);
+
+                if (frustum.testSphere(center, radius) != Frustum::Outside)
+                {
+                    renderSection(phi0, theta0,
+                                  thetaExtent,
+                                  step, attributes);
+                }
+                else
+                {
+                    reject++;
+                }
+            }
+        }
+
+        // cout << "Rejected " << reject << " of " << square(split) << " sphere sections\n";
+    }
+
+    if (tangents != NULL && ((attributes & Tangents) != 0))
+    {
+        glDisableClientState(GL_VERTEX_ATTRIB_ARRAY6_NV);
+    }
+}
+
+
 void LODSphereMesh::renderSection(int phi0, int theta0,
                                   int extent,
                                   int step,
@@ -222,17 +382,6 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
             float ctheta = cosTheta[theta];
             float stheta = sinTheta[theta];
 
-#if 0
-            float x = cphi * ctheta;
-            float y = sphi;
-            float z = cphi * stheta;
-            vertices[n3]      = x;
-            vertices[n3 + 1]  = y;
-            vertices[n3 + 2]  = z;
-            normals[n3]       = x;
-            normals[n3 + 1]   = y;
-            normals[n3 + 2]   = z;
-#endif
             vertices[n3]      = cphi * ctheta;
             vertices[n3 + 1]  = sphi;
             vertices[n3 + 2]  = cphi * stheta;

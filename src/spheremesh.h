@@ -30,6 +30,7 @@ public:
 
     void render(float lod);
     void render(unsigned int attributes, float lod);
+    void render(unsigned int attributes, const Frustum&, float lod);
 
  private:
     void createSphere(float radius, int nRings, int nSlices);

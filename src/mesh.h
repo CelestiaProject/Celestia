@@ -10,6 +10,8 @@
 #ifndef _MESH_H_
 #define _MESH_H_
 
+#include "frustum.h"
+
 
 class Mesh
 {
@@ -17,6 +19,7 @@ class Mesh
     virtual ~Mesh() {};
     virtual void render(float lod) = 0;
     virtual void render(unsigned int attributes, float lod) = 0;
+    virtual void render(unsigned int attributes, const Frustum&, float lod) = 0;
 
     enum {
         Normals    = 0x01,
