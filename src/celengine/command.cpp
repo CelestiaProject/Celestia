@@ -185,6 +185,20 @@ void CommandChase::process(ExecutionEnvironment& env)
     env.getSimulation()->chase();
 }
 
+
+////////////////
+// Track command: 
+
+CommandTrack::CommandTrack()
+{
+}
+
+void CommandTrack::process(ExecutionEnvironment& env)
+{
+    env.getSimulation()->setTrackedObject(env.getSimulation()->getSelection());
+}
+
+
 ////////////////
 // Lock command:
 
