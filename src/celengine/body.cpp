@@ -403,13 +403,20 @@ void Body::getLifespan(double& begin, double& end) const
 
 
 #define SOLAR_IRRADIANCE   1367.6
-#define SOLAR_POWER           3.8462e26
+#define SOLAR_POWER           3.8462e26  // Watts
 
 float Body::getLuminosity(const Star& sun,
                           float distanceFromSun) const
 {
+    return getLuminosity(sun.getLuminosity(), distanceFromSun);
+}
+
+
+float Body::getLuminosity(float sunLuminosity,
+                          float distanceFromSun) const
+{
     // Compute the total power of the star in Watts
-    double power = SOLAR_POWER * sun.getLuminosity();
+    double power = SOLAR_POWER * sunLuminosity;
 
     // Compute the irradiance at a distance of 1au from the star in W/m^2
     // double irradiance = power / sphereArea(astro::AUtoKilometers(1.0) * 1000);
@@ -441,12 +448,22 @@ float Body::getApparentMagnitude(const Star& sun,
                                  const Vec3d& sunPosition,
                                  const Vec3d& viewerPosition) const
 {
+    return getApparentMagnitude(sun.getLuminosity(),
+                                sunPosition,
+                                viewerPosition);
+}
+
+
+float Body::getApparentMagnitude(float sunLuminosity,
+                                 const Vec3d& sunPosition,
+                                 const Vec3d& viewerPosition) const
+{
     double distanceToViewer = viewerPosition.length();
     double distanceToSun = sunPosition.length();
     float illuminatedFraction = (float) (1.0 + (viewerPosition / distanceToViewer) *
                                          (sunPosition / distanceToSun)) / 2.0f;
 
-    return astro::lumToAppMag(getLuminosity(sun, (float) distanceToSun) * illuminatedFraction, (float) astro::kilometersToLightYears(distanceToViewer));
+    return astro::lumToAppMag(getLuminosity(sunLuminosity, (float) distanceToSun) * illuminatedFraction, (float) astro::kilometersToLightYears(distanceToViewer));
 }
 
 

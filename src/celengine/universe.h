@@ -107,6 +107,8 @@ class Universe
     AsterismList* asterisms;
     ConstellationBoundaries* boundaries;
     MarkerList* markers;
+
+    std::vector<const Star*> closeStars;
 };
 
 #endif // UNIVERSE_H_

@@ -13,6 +13,7 @@
 #include <celmath/vecmath.h>
 #include <celmath/intersect.h>
 #include <celutil/utf8.h>
+#include <cassert>
 #include "astro.h"
 #include "3dsmesh.h"
 #include "meshmanager.h"
@@ -428,9 +429,18 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
 	              sin(tolerance/2.0) : ANGULAR_RES);
     PlanetPickInfo pickInfo;
 
-    // Transform the pick direction
-    pickInfo.pickRay = Ray3d(astro::heliocentricPosition(origin, 
-    solarSystem.getCenter()), Vec3d(direction.x, direction.y, direction.z));
+    Star* star = solarSystem.getStar();
+    assert(star != NULL);
+
+    // Transform the pick ray origin into astrocentric coordinates
+    UniversalCoord starPos = star->getPosition(when);
+    Vec3d v = origin - starPos;
+    Point3d astrocentricOrigin(astro::microLightYearsToKilometers(v.x),
+                               astro::microLightYearsToKilometers(v.y),
+                               astro::microLightYearsToKilometers(v.z));
+
+    pickInfo.pickRay = Ray3d(astrocentricOrigin,
+                             Vec3d(direction.x, direction.y, direction.z));
                              
     pickInfo.sinAngle2Closest = 1.0;
     pickInfo.closestDistance = 1.0e50;
@@ -746,6 +756,25 @@ Selection Universe::pick(const UniversalCoord& origin,
 {
     Selection sel;
 
+    closeStars.clear();
+    getNearStars(origin, 1.0f, closeStars);
+    for (vector<const Star*>::const_iterator iter = closeStars.begin();
+         iter != closeStars.end(); iter++)
+    {
+        SolarSystem* solarSystem = getSolarSystem(*iter);
+        if (solarSystem != NULL)
+        {
+            sel = pickPlanet(*solarSystem,
+                             origin, direction,
+                             when,
+                             faintestMag,
+                             tolerance);
+            if (!sel.empty())
+                break;
+        }
+    }
+    
+#if 0
     SolarSystem* closestSolarSystem = getNearestSolarSystem(origin);
     if (closestSolarSystem != NULL)
     {
@@ -755,6 +784,7 @@ Selection Universe::pick(const UniversalCoord& origin,
                          faintestMag,
                          tolerance);
     }
+#endif
 
     if (sel.empty())
         sel = pickStar(origin, direction, when, faintestMag, tolerance);
