@@ -1534,6 +1534,20 @@ static int object_getchildren(lua_State* l)
     return 1;
 }
 
+static int object_preloadtexture(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected to object:preloadtexture");
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    Renderer* renderer = appCore->getRenderer();
+    Selection* sel = this_object(l);
+    if (sel->body() != NULL)
+    {
+        if (renderer != NULL)
+            renderer->loadTextures(sel->body());
+    }
+    return 0;
+}
 
 static void CreateObjectMetaTable(lua_State* l)
 {
@@ -1549,6 +1563,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "unmark", object_unmark);
     RegisterMethod(l, "getposition", object_getposition);
     RegisterMethod(l, "getchildren", object_getchildren);
+    RegisterMethod(l, "preloadtexture", object_preloadtexture);
 
     lua_pop(l, 1); // pop metatable off the stack
 }
