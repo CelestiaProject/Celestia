@@ -24,7 +24,7 @@ using namespace std;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
-#define FAR_DIST     3000.0f
+#define FAR_DIST   10000.0f
 
 #define RENDER_DISTANCE 50.0f
 
@@ -43,11 +43,11 @@ static SphereMesh* asteroidMesh = NULL;
 
 static CTexture* normalizationTex = NULL;
 static CTexture* diffuseLightTex = NULL;
-static CTexture* smoothTex = NULL;
 
 static CTexture* starTex = NULL;
 static CTexture* glareTex = NULL;
 static CTexture* shadowTex = NULL;
+static CTexture* veilTex = NULL;
 
 static TexFont* font;
 
@@ -57,11 +57,13 @@ Renderer::Renderer() :
     windowHeight(0),
     fov(FOV),
     renderMode(GL_FILL),
+    asterisms(NULL),
     labelMode(NoLabels),
     ambientLightLevel(0.1f),
     brightnessScale(1.0f / 6.0f),
     brightnessBias(0.0f),
     perPixelLightingEnabled(false),
+    cloudMappingEnabled(false),
     console(NULL),
     nSimultaneousTextures(1),
     useRegisterCombiners(false),
@@ -133,6 +135,48 @@ static void ShadowTextureEval(float u, float v, float w,
     pixel[2] = pixVal;
 }
 
+static void VeilTextureEval(float u, float v, float w,
+                            unsigned char* pixel)
+{
+    float t = 0.0f;
+    if (w > 0)
+    {
+        t = 1.0f - clamp(abs(w - 0.04f) * 25);
+    }
+        
+    pixel[0] = 0;
+    pixel[1] = 0;
+    pixel[2] = 255;
+    pixel[3] = (int) (128.99f * t);
+    // pixel[3] = (int) (128.99f * (1 - (float) pow(abs(w), 0.5f)));
+}
+
+static void BoxTextureEval(float u, float v, float w,
+                            unsigned char* pixel)
+{
+    int r = 0, g = 0, b = 0;
+    if (abs(u) > abs(v))
+    {
+        if (abs(u) > abs(w))
+            r = 255;
+        else
+            b = 255;
+    }
+    else
+    {
+        if (abs(v) > abs(w))
+            g = 255;
+        else
+            b = 255;
+    }
+
+    pixel[0] = r;
+    pixel[1] = g;
+    pixel[2] = b;
+    pixel[3] = 80;
+}
+
+
 
 static float AsteroidDisplacementFunc(float u, float v, void* info)
 {
@@ -159,10 +203,10 @@ bool Renderer::init(int winWidth, int winHeight)
     if (!commonDataInitialized)
     {
         sphereMesh[0] = new SphereMesh(1.0f, 11, 10);
-        sphereMesh[1] = new SphereMesh(1.0f, 21, 20);
-        sphereMesh[2] = new SphereMesh(1.0f, 31, 30);
-        sphereMesh[3] = new SphereMesh(1.0f, 41, 40);
-        sphereMesh[4] = new SphereMesh(1.0f, 81, 80);
+        sphereMesh[1] = new SphereMesh(1.0f, 21, 40);
+        sphereMesh[2] = new SphereMesh(1.0f, 31, 60);
+        sphereMesh[3] = new SphereMesh(1.0f, 41, 80);
+        sphereMesh[4] = new SphereMesh(1.0f, 61, 120);
         asteroidMesh = new SphereMesh(Vec3f(0.7f, 1.1f, 1.0f),
                                       21, 20,
                                       AsteroidDisplacementFunc,
@@ -178,10 +222,6 @@ bool Renderer::init(int winWidth, int winHeight)
 
         shadowTex = CreateProceduralTexture(256, 256, GL_RGB, ShadowTextureEval);
         shadowTex->bindName();
-
-        // Create a smooth bump map
-        smoothTex = CreateProceduralTexture(4, 4, GL_RGB, BlueTextureEval);
-        smoothTex->bindName();
 
         // font = txfLoadFont("fonts\\helvetica_14b.txf");
         font = txfLoadFont("fonts\\default.txf");
@@ -223,6 +263,14 @@ bool Renderer::init(int winWidth, int winHeight)
     }
 
     cout << "Simultaneous textures supported: " << nSimultaneousTextures << '\n';
+
+    if (useCubeMaps)
+    {
+        // Initialize texture use for rendering atmospheric veils
+        veilTex = CreateProceduralCubeMap(128, GL_RGBA, VeilTextureEval);
+        veilTex->bindName();
+    }
+
 
     glLoadIdentity();
 
@@ -319,6 +367,12 @@ void Renderer::clearLabelledStars()
 }
 
 
+void Renderer::showAsterisms(AsterismList* a)
+{
+    asterisms = a;
+}
+
+
 float Renderer::getAmbientLightLevel() const
 {
     return ambientLightLevel;
@@ -344,6 +398,17 @@ void Renderer::setPerPixelLighting(bool enable)
 bool Renderer::perPixelLightingSupported() const
 {
     return useCubeMaps && useRegisterCombiners;
+}
+
+
+bool Renderer::getCloudMapping() const
+{
+    return cloudMappingEnabled;
+}
+
+void Renderer::setCloudMapping(bool enable)
+{
+    cloudMappingEnabled = enable;
 }
 
 
@@ -391,7 +456,7 @@ void Renderer::render(const Observer& observer,
     // Compute the size of a pixel
     pixelSize = calcPixelSize(fov, windowHeight);
 
-    // Set up the projection
+    // Set up the projection we'll use for rendering stars.
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(fov,
@@ -414,7 +479,9 @@ void Renderer::render(const Observer& observer,
     Point3f observerPos = (Point3f) observer.getPosition();
     glPushMatrix();
     glRotate(~observer.getOrientation());
-    // Get the model matrix *before* translation
+
+    // Get the model matrix *before* translation.  We'll use this for positioning
+    // star and planet labels.
     glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
     glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
     glPushMatrix();
@@ -430,6 +497,30 @@ void Renderer::render(const Observer& observer,
 
     // Render stars
     renderStars(starDB, visset, observer);
+
+    // Render asterisms
+    if (asterisms != NULL)
+    {
+        glColor4f(0.5f, 0.0, 1.0f, 0.5f);
+        glDisable(GL_TEXTURE_2D);
+        for (AsterismList::const_iterator iter = asterisms->begin();
+             iter != asterisms->end(); iter++)
+        {
+            Asterism* ast = *iter;
+
+            for (int i = 0; i < ast->getChainCount(); i++)
+            {
+                const Asterism::Chain& chain = ast->getChain(i);
+
+                glBegin(GL_LINE_STRIP);
+                for (Asterism::Chain::const_iterator iter = chain.begin();
+                     iter != chain.end(); iter++)
+                    glVertex(*iter);
+                glEnd();
+            }
+        }
+    }
+
     if ((labelMode & StarLabels) != 0)
         labelStars(labelledStars, starDB, observer);
 
@@ -446,6 +537,17 @@ void Renderer::render(const Observer& observer,
         sun = starDB.find(solarSystem->getStarNumber());
     if (sun != NULL)
     {
+        // Change the projection matrix for rendering planets and moons.  Since
+        // planets are all rendered at a fixed distance of RENDER_DISTANCE from
+        // the viewer, we'll set up the near and far planes to just enclose that
+        // range and make the most of our depth buffer resolution
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluPerspective(fov,
+                       (float) windowWidth / (float) windowHeight,
+                       NEAR_DIST, RENDER_DISTANCE * 2.0f);
+        glMatrixMode(GL_MODELVIEW);
+
         renderPlanetarySystem(*sun,
                               *solarSystem->getPlanets(),
                               observer,
@@ -501,7 +603,8 @@ void Renderer::render(const Observer& observer,
                            renderList[i].position,
                            renderList[i].distance,
                            renderList[i].appMag,
-                           observer.getOrientation());
+                           observer.getOrientation(),
+                           now);
             }
 
             // If this body is larger than a pixel, we rendered it as a mesh
@@ -623,7 +726,7 @@ void Renderer::render(const Observer& observer,
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(0, windowHeight - 20 + PixelOffset, 0);
+    glTranslatef(PixelOffset, windowHeight - 20 + PixelOffset, 0);
     console->render();
     glPopMatrix();
 
@@ -975,6 +1078,7 @@ void Renderer::renderPlanet(const Body& body,
         // Get the texture . . .
         CTexture* tex = NULL;
         CTexture* bumpTex = NULL;
+        CTexture* cloudTex = NULL;
         if (surface.baseTexture != "")
         {
             if (!textureManager->find(surface.baseTexture, &tex))
@@ -992,6 +1096,13 @@ void Renderer::renderPlanet(const Body& body,
             if (!textureManager->find(surface.bumpTexture, &bumpTex))
                 bumpTex = textureManager->loadBumpMap(surface.bumpTexture,
                                                       surface.bumpHeight);
+        }
+
+        if ((surface.appearanceFlags & Surface::ApplyCloudMap) != 0 &&
+            cloudMappingEnabled)
+        {
+            if (!textureManager->find(surface.cloudTexture, &cloudTex))
+                cloudTex = textureManager->load(surface.cloudTexture, false);
         }
 
         if (tex == NULL)
@@ -1019,8 +1130,7 @@ void Renderer::renderPlanet(const Body& body,
         // Watch out for the precision limits of floats when computing planet
         // rotation . . .
         {
-            double hours = now * 24.0;
-            double rotations = hours / (double) body.getRotationPeriod();
+            double rotations = now / (double) body.getRotationPeriod();
             int wholeRotations = (int) rotations;
             double remainder = rotations - wholeRotations;
             planetRotation = -remainder * 2 * PI;
@@ -1034,7 +1144,7 @@ void Renderer::renderPlanet(const Body& body,
         // small, the potentially nonuniform scale factor shouldn't mess up
         // the lighting calculations enough to cause a problem.
         // TODO:  Figure out a better way to render ellipsoids than applying
-        // a nonunifom scale factor to a sphere.  It just makes me nervous.
+        // a nonunifom scale factor to a sphere . . . it makes me nervous.
         glScalef(discSize, discSize * (1.0f - body.getOblateness()), discSize);
 
         Mesh* mesh = NULL;
@@ -1068,12 +1178,6 @@ void Renderer::renderPlanet(const Body& body,
             if (perPixelLightingEnabled)
             {
                 Color ambientColor(ambientLightLevel, ambientLightLevel, ambientLightLevel);
-#if 0
-                renderBumpMappedMesh(*mesh,
-                                     bumpTex == NULL ? *smoothTex : *bumpTex,
-                                     sunDirection, orientation,
-                                     ambientColor);
-#endif
                 if (bumpTex != NULL)
                 {
                     renderBumpMappedMesh(*mesh,
@@ -1093,11 +1197,85 @@ void Renderer::renderPlanet(const Body& body,
                     mesh->render();
                 }
 
+                if (cloudTex != NULL)
+                {
+                    glBindTexture(GL_TEXTURE_2D, cloudTex->getName());
+                    glEnable(GL_BLEND);
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#if 0
+                    // TODO: Enable per-pixel lighting for cloud maps
+                    renderSmoothMesh(*mesh, *cloudTex, sunDirection, orientation,
+                                     ambientColor);
+#else
+                    glEnable(GL_LIGHTING);
+                    mesh->render();
+#endif
+
+#if 0
+                    // Attempt rendering an atmospheric veil . . . this needs
+                    // several adjustments before it will work.
+                    glEnable(GL_TEXTURE_CUBE_MAP_EXT);
+                    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, veilTex->getName());
+                    glPushMatrix();
+                    glScalef(1.02f, 1.02f, 1.02f);
+
+                    // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
+                    // mode is part of the cube map extension.
+                    glEnable(GL_TEXTURE_GEN_R);
+                    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+                    glEnable(GL_TEXTURE_GEN_S);
+                    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+                    glEnable(GL_TEXTURE_GEN_T);
+                    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+
+                    mesh->render();
+
+                    glMatrixMode(GL_TEXTURE);
+                    glLoadIdentity();
+                    glMatrixMode(GL_MODELVIEW);
+                    glDisable(GL_TEXTURE_GEN_R);
+                    glDisable(GL_TEXTURE_GEN_S);
+                    glDisable(GL_TEXTURE_GEN_T);
+                    glDisable(GL_TEXTURE_CUBE_MAP_EXT);
+
+                    glPopMatrix();
+
+#if 0
+                    // Render an atmospheric halo.  Broken.
+                    {
+                        int nSections = 400;
+                        glDisable(GL_LIGHTING);
+                        glPushMatrix();
+                        glRotate(~orientation);
+                        glBegin(GL_QUAD_STRIP);
+                        for (int i = 0; i <= nSections; i++)
+                        {
+                            float theta = (float) i / (float) nSections * 2 * PI;
+                            float c = (float) cos(theta);
+                            float s = (float) sin(theta);
+                            glColor4f(0, 0, 1, 0);
+                            glVertex3f(c * 1.01f, s * 1.01f, 0);
+                            glColor4f(0, 0, 1, 1);
+                            glVertex3f(c, s, 0);
+                        }
+                        glEnd();
+                        glPopMatrix();
+                    }
+#endif
+#endif
+                }
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             }
             else
             {
                 mesh->render();
+                if (cloudTex != NULL)
+                {
+                    glBindTexture(GL_TEXTURE_2D, cloudTex->getName());
+                    glEnable(GL_BLEND);
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                    mesh->render();
+                }
             }
         }
 
@@ -1316,7 +1494,8 @@ void Renderer::renderStar(const Star& star,
                           Point3f pos,
                           float distance,
                           float appMag,
-                          Quatf orientation)
+                          Quatf orientation,
+                          double now)
 {
     Color color = star.getStellarClass().getApparentColor();
     float radius = star.getRadius();
@@ -1384,6 +1563,16 @@ void Renderer::renderStar(const Star& star,
             lod = 2;
         else
             lod = 3;
+
+        // Rotate the star
+        {
+            // Use doubles to avoid precision problems here . . .
+            double rotations = now / (double) star.getRotationPeriod();
+            int wholeRotations = (int) rotations;
+            double remainder = rotations - wholeRotations;
+            glRotatef((float) (-remainder * 360.0), 0, 1, 0);
+        }
+
         sphereMesh[lod]->render();;
 
         glDisable(GL_DEPTH_TEST);
@@ -1680,7 +1869,7 @@ void Renderer::renderLabels()
     {
         glColor(labels[i].color);
         glPushMatrix();
-        glTranslatef((int) labels[i].position.x,
+        glTranslatef((int) labels[i].position.x + PixelOffset,
                      (int) labels[i].position.y + PixelOffset,
                      0);
         txfRenderString(font, labels[i].text);
