@@ -24,6 +24,7 @@ class Mesh
         Colors     = 0x04,
         TexCoords0 = 0x08,
         TexCoords1 = 0x10,
+        VertexProgParams = 0x1000,
     };
 };
 
