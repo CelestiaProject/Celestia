@@ -1,0 +1,789 @@
+# Data for our solar system.
+
+"Sol"
+{
+Planets [
+{
+	Name   "Mercury"
+	Texture "mercury.jpg"
+	Radius 2440
+
+	# orbital data
+	Period            0.2408
+	SemiMajorAxis     0.3871
+	Eccentricity      0.2056
+	Inclination       7.0049
+	AscendingNode    77.456
+	ArgOfPeriapsis   48.331
+        TrueAnomaly     252.251
+
+	RotationPeriod 1047.51
+	Obliquity         7.0
+	Albedo            0.06
+}
+
+{
+	Name   "Venus"
+	Texture "venus.jpg"
+	Radius 6052
+
+	# orbital data
+	Period            0.6152
+	SemiMajorAxis     0.7233
+	Eccentricity      0.0068
+	Inclination       3.3947
+	AscendingNode   131.533
+	ArgOfPeriapsis   76.681
+        TrueAnomaly     181.979
+
+	RotationPeriod  5832.444
+	Obliquity       177.4
+	Albedo            0.77
+}
+
+{
+	Name   "Earth"
+	Texture "earth.jpg"
+	Color [ 0.85 0.85 1.0 ]
+	Radius 6378
+	Oblateness 0.003
+
+	# orbital data
+	Period            1.0000
+	SemiMajorAxis     1.0000
+	Eccentricity      0.0167
+	Inclination       0.0001
+	AscendingNode   102.947
+	ArgOfPeriapsis  348.739
+        TrueAnomaly     100.464
+
+	RotationPeriod   23.93419
+	Obliquity        23.45
+	Albedo            0.30
+
+	Moons [
+	{
+		Name "Moon"
+		Texture "moon.jpg"
+		Radius   1737.53
+		Oblateness 0.002
+
+		# orbital data
+		Period           27.321661
+		SemiMajorAxis    384400
+		Eccentricity     0.054900
+		Inclination      5.15
+
+		Albedo           0.12
+	}
+	]	
+}
+
+{
+	Name   "Mars"
+	Texture "mars.jpg"
+	Color   [ 1 0.75 0.7 ]
+	Radius 3394
+	Oblateness 0.006
+
+	# orbital data
+	Period            1.8809
+	SemiMajorAxis     1.5237
+	Eccentricity      0.0934
+	Inclination       1.8506
+	AscendingNode   336.041
+	ArgOfPeriapsis   49.479
+        TrueAnomaly     355.453
+
+	RotationPeriod    24.622962
+	Obliquity         23.98
+	Albedo            0.150
+
+	Moons [
+	{
+		Name "Phobos"
+		Texture "asteroid.jpg"
+		Radius 11
+
+		# orbital data
+		Period         0.318910
+		SemiMajorAxis  9377.2
+		Eccentricity   0.0151
+		Inclination    1.082
+		TrueAnomaly    50
+
+		Albedo         0.07
+	}
+	{
+		Name "Deimos"
+		Texture "asteroid.jpg"
+		Radius 6
+
+		# orbital data
+		Period         1.262441
+		SemiMajorAxis  23463.2
+		Eccentricity   0.00033
+		Inclination    1.791
+		TrueAnomaly    150
+
+		Albedo         0.08
+	}
+	]
+}
+
+{
+	Name   "Jupiter"
+	Texture "jupiter.jpg"
+	Radius 71398
+	Oblateness 0.064
+
+	# orbital data
+	Period           11.8622
+	SemiMajorAxis     5.2034
+	Eccentricity      0.0484
+	Inclination       1.3053
+	AscendingNode    14.7539
+	ArgOfPeriapsis  100.556
+        TrueAnomaly      34.404
+
+	RotationPeriod    9.92425
+	Obliquity         3.08
+	Albedo            0.51
+
+	Moons [
+	{
+		Name "Io"
+		Texture "io.jpg"
+		Radius   1821
+
+		# orbital data
+		Period         1.769138
+		SemiMajorAxis  421600
+		Eccentricity   0.0041
+		Inclination    0.040
+		TrueAnomaly    50
+
+		Albedo         0.61
+	}
+	{
+		Name "Europa"
+		Texture "europa.jpg"
+		Radius   1565
+
+		# orbital data
+		Period         3.551810
+		SemiMajorAxis  670900
+		Eccentricity   0.0101
+		Inclination    0.470
+		TrueAnomaly    310
+
+		Albedo         0.64
+	}
+	{
+		Name "Ganymede"
+		Texture "ganymede.jpg"
+		Radius   2634
+
+		# orbital data
+		Period         7.154553
+		SemiMajorAxis  1070000
+		Eccentricity   0.0015
+		Inclination    0.195
+		TrueAnomaly    243
+
+		Albedo         0.42
+	}
+	{
+		Name "Callisto"
+		Texture "callisto.jpg"
+		Radius   2403
+
+		# orbital data
+		Period        16.689018
+		SemiMajorAxis  1883000
+		Eccentricity   0.007
+		Inclination    0.281
+		TrueAnomaly    120
+
+		Albedo         0.20
+	}
+	{
+		Name "Galileo"
+		Mesh "galileo.3ds"
+		Radius   0.01
+
+		# orbital data
+		Period        18
+		SemiMajorAxis  1883000
+		Eccentricity   0.2
+		Inclination    0.281
+		TrueAnomaly    215
+
+		Albedo         0.50
+	}
+	]
+}
+
+{
+	Name   "Saturn"
+	Texture "saturn.jpg"
+	Radius 60330
+	Oblateness 0.1076
+
+	# orbital data
+	Period           29.4577
+	SemiMajorAxis     9.5371
+	Eccentricity      0.0542
+	Inclination       2.4845
+	AscendingNode    92.432
+	ArgOfPeriapsis  113.715
+        TrueAnomaly      49.944
+
+	RotationPeriod   10.65622
+	Obliquity         26.73
+	Albedo            0.50
+
+	Rings {
+		Inner   74658
+		Outer  140000
+
+		# Bjorn Jonsson <http://www.mmedia.is/~bjj> recommends this
+		# color for rendering Saturn's rings.  No idea if it's right,
+		# but it looks nice
+		Color  [ 1.0 0.88 0.82 ]
+	}
+
+	Moons [
+	{
+		Name "Mimas"
+		Texture "mimas.jpg"
+		Radius    199
+
+		# orbital data
+		Period         0.9424218
+		SemiMajorAxis  185520
+		Eccentricity   0.0202
+		Inclination    1.53
+		TrueAnomaly    23
+
+		Albedo         0.5
+	}
+	{
+		Name "Enceladus"
+		Texture "asteroid.jpg"
+		Radius     249
+
+		# orbital data
+		Period         1.370218
+		SemiMajorAxis  238020
+		Eccentricity   0.0045
+		Inclination    0.02
+		TrueAnomaly    215
+
+		Albedo         0.99
+	}
+	{
+		Name "Tethys"
+		Texture "tethys.jpg"
+		Radius     530
+
+		# orbital data
+		Period         1.887802
+		SemiMajorAxis  294660
+		Eccentricity   0.0
+		Inclination    1.09
+		TrueAnomaly    98
+
+		Albedo         0.9
+	}
+	{
+		Name "Dione"
+		Texture "dione.jpg"
+		Radius     560
+
+		# orbital data
+		Period         2.736915
+		SemiMajorAxis  377400
+		Eccentricity   0.0022
+		Inclination    0.02
+		TrueAnomaly    310
+
+		Albedo         0.7
+	}
+	{
+		Name "Rhea"
+		Texture "rhea.jpg"
+		Radius     764
+
+		# orbital data
+		Period         4.517500
+		SemiMajorAxis  527040
+		Eccentricity   0.0010
+		Inclination    0.35
+		TrueAnomaly    190
+
+		Albedo         0.7
+	}
+	{
+		Name "Titan"
+		Texture "titan.jpg"
+		Color [ 1.0 0.9 0.75 ]
+		Radius   2575
+
+		# orbital data
+		Period        15.945421
+		SemiMajorAxis  1221850
+		Eccentricity   0.0292
+		Inclination    0.33
+		TrueAnomaly    120
+
+		Albedo         0.21
+	}
+	{
+		Name "Hyperion"
+		Mesh "hyperion.cms"
+		Texture "asteroid.jpg"
+		Radius   205
+
+		# orbital data
+		Period        21.276609
+		SemiMajorAxis  1481100
+		Eccentricity   0.1042
+		Inclination    0.43
+		TrueAnomaly    350
+
+		Albedo         0.3
+	}
+	{
+		Name "Iapetus"
+		Texture "iapetus.jpg"
+		Radius     718
+
+		# orbital data
+		Period         79.330183
+		SemiMajorAxis  3561300
+		Eccentricity   0.0283
+		Inclination    7.52
+		TrueAnomaly    245
+
+		Albedo         0.2
+	}
+	{
+		Name "Phoebe"
+		Mesh "roughsphere.cms"
+		Texture "asteroid.jpg"
+		Radius     110
+
+		# orbital data
+		Period         2.736915
+		SemiMajorAxis  12952000
+		Eccentricity   0.163
+		Inclination    175.3
+		TrueAnomaly    52
+
+		Albedo         0.05
+	}
+	]
+}
+
+{
+	Name   "Uranus"
+	Texture "uranus.jpg"
+	Color [ 0.75 0.85 1.0 ]
+	Radius 26200
+	Oblateness 0.024
+
+	# orbital data
+	Period           84.0139
+	SemiMajorAxis    19.1913
+	Eccentricity      0.0472
+	Inclination       0.7699
+	AscendingNode   170.964
+	ArgOfPeriapsis   74.230
+        TrueAnomaly     313.232
+
+	RotationPeriod   17.24
+	Obliquity        97.92
+	Albedo            0.66
+
+	Moons [
+	{
+		Name "Miranda"
+		Texture "asteroid.jpg"
+		Radius   235
+
+		# orbital data
+		Period         1.413
+		SemiMajorAxis  129800
+		Eccentricity   0.0027
+		Inclination    4.22
+		TrueAnomaly    120
+	}
+	{
+		Name "Ariel"
+		Texture "asteroid.jpg"
+		Radius   576
+
+		# orbital data
+		Period         2.520
+		SemiMajorAxis  191200
+		Eccentricity   0.0034
+		Inclination    0.31
+		TrueAnomaly    56
+	}
+	{
+		Name "Umbriel"
+		Texture "asteroid.jpg"
+		Radius   585
+
+		# orbital data
+		Period         4.144
+		SemiMajorAxis  266000
+		Eccentricity   0.0050
+		Inclination    0.36
+		TrueAnomaly    280
+	}
+	{
+		Name "Titania"
+		Texture "asteroid.jpg"
+		Radius   789
+
+		# orbital data
+		Period         8.706
+		SemiMajorAxis  435800
+		Eccentricity   0.0022
+		Inclination    0.10
+		TrueAnomaly    30
+	}
+	{
+		Name "Oberon"
+		Texture "asteroid.jpg"
+		Radius   761
+
+		# orbital data
+		Period        13.463
+		SemiMajorAxis  583600
+		Eccentricity   0.0008
+		Inclination    0.10
+		TrueAnomaly    150
+	}
+	]
+}
+
+{
+	Name   "Neptune"
+	Texture "neptune.jpg"
+	Color [ 0.75 0.75 1.0 ]
+	Radius 25225
+	Oblateness 0.027
+
+	# orbital data
+	Period           164.793
+	SemiMajorAxis     30.0690
+	Eccentricity      0.0086
+	Inclination       1.7692
+	AscendingNode    44.971
+	ArgOfPeriapsis  131.722
+        TrueAnomaly     304.880
+
+	RotationPeriod   16.11
+	Obliquity        28.8
+	Albedo            0.62
+
+	Moons [
+	{
+		Name "Proteus"
+		Mesh "proteus.cms"
+		Texture "asteroid.jpg"
+		Radius   218
+
+		# orbital data
+		Period         1.122315
+		SemiMajorAxis  117647
+		Eccentricity   0.000
+		Inclination    0.55
+		TrueAnomaly    310
+
+		Albedo         0.2
+	}
+	{
+		Name "Triton"
+		Texture "triton.jpg"
+		Radius   1353
+
+		# orbital data
+		Period         5.876854
+		SemiMajorAxis  354760
+		Eccentricity   0.00004
+		Inclination    156.834
+		TrueAnomaly    120
+
+		Albedo         0.7
+	}
+	{
+		Name "Nereid"
+		Mesh "asteroid.cms"
+		Texture "asteroid.jpg"
+		Radius   170
+
+		# orbital data
+		Period         360.13619
+		SemiMajorAxis  5513400
+		Eccentricity   0.7512
+		Inclination    7.23
+		TrueAnomaly    185
+	}
+	]
+}
+
+{
+	Name   "Pluto"
+	Texture "pluto.jpg"
+	Radius 1137
+
+	# orbital data
+	Period           248.54
+	SemiMajorAxis     39.48168677
+	Eccentricity      0.24880766
+	Inclination      17.14175
+	AscendingNode   224.06776
+	ArgOfPeriapsis  110.30347
+        TrueAnomaly     238.92881
+
+	RotationPeriod  153.29
+	Obliquity        28.8
+	Albedo            0.3
+
+	Moons [
+	{
+		Name "Charon"
+		Texture "charon.jpg"
+		Radius   593
+
+		# orbital data
+		Period         6.387083
+		SemiMajorAxis  19636
+		Eccentricity   0.0076
+		Inclination    96.163
+		TrueAnomaly    120
+
+		Albedo         0.3
+	}
+	]
+}
+
+# A few asteriods for fun . . .
+{
+	Name   "Ceres"
+	Texture "asteroid.jpg"
+	Radius 456
+
+	# orbital data
+	Period            4.60
+	SemiMajorAxis     2.7678
+	Eccentricity      0.0774
+	Inclination      10.581
+	AscendingNode    80.530
+	ArgOfPeriapsis   73.460
+        TrueAnomaly     207.082
+
+	RotationPeriod    9.075
+}
+
+{
+	Name   "Pallas"
+	Texture "asteroid.jpg"
+	Radius 260
+
+	# orbital data
+	Period            4.61
+	SemiMajorAxis     2.7739
+	Eccentricity      0.2323
+	Inclination      34.823
+	AscendingNode   173.237
+	ArgOfPeriapsis  309.824
+        TrueAnomaly     194.832
+
+	RotationPeriod    7.811
+}
+
+{
+	Name   "Juno"
+	Texture "asteroid.jpg"
+	Radius 120
+
+	# orbital data
+	Period            4.36
+	SemiMajorAxis     2.669
+	Eccentricity      0.2579
+	Inclination      12.97
+	AscendingNode    90.0
+	ArgOfPeriapsis  180.0
+        TrueAnomaly     270.0
+
+	RotationPeriod    7.811
+}
+
+{
+	Name   "Vesta"
+	Texture "asteroid.jpg"
+	Radius 265
+
+	# orbital data
+	Period            4.36
+	SemiMajorAxis     2.3607
+	Eccentricity      0.0904
+	Inclination       7.135
+	AscendingNode   103.962
+	ArgOfPeriapsis  149.854
+        TrueAnomaly     138.500
+
+	RotationPeriod    5.342
+}
+
+{
+	Name   "Ida"
+	Texture "asteroid.jpg"
+	Radius 45
+
+	# orbital data
+	Period            4.84
+	SemiMajorAxis     2.861
+	Eccentricity      0.0451
+	Inclination       1.14
+	AscendingNode   324.419
+	ArgOfPeriapsis  112.419
+        TrueAnomaly      92.511
+
+	RotationPeriod    4.633
+
+	# Data for Dactyl is a very rough guess based on a value of
+	# 2.8 g/cm^3 for Ida
+	Moons [
+	{
+		Name "Dactyl"
+		Texture "asteroid.jpg"
+		Radius   0.7
+
+		# orbital data
+		Period         1.13
+		SemiMajorAxis  98
+		Eccentricity   0.05
+	}
+	]
+}
+
+{
+	Name   "Eros"
+	Mesh   "eros.cms"
+	Texture "asteroid.jpg"
+	# Color sampled from true color photo taken by NEAR
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+	Radius 16.5
+
+	# orbital data
+	Period            1.76
+	SemiMajorAxis     1.4583
+	Eccentricity      0.2230
+	Inclination      10.831
+	AscendingNode   304.435
+	ArgOfPeriapsis    0.987
+        TrueAnomaly     310.0
+
+	RotationPeriod    5.270
+	Albedo            0.16
+}
+
+{
+	Name   "Toutatis"
+	Mesh   "toutatis.3ds"
+	Texture "asteroid.jpg"
+	# We'll just use the same color as Eros
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+	Radius  2.3
+
+	# orbital data
+	Period            3.98
+	SemiMajorAxis     2.510
+	Eccentricity      0.634
+	Inclination       0.5
+	AscendingNode   128.2
+	ArgOfPeriapsis  274.8
+        TrueAnomaly      36.7
+	# Epoch        20010401
+
+	RotationPeriod  180
+	Albedo            0.16
+}
+
+{
+	Name   "Geographos"
+	Mesh   "geographos.3ds"
+	Texture "asteroid.jpg"
+	# We'll just use the same color as Eros
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+	Radius  1.0
+
+	# orbital data
+	Period            1.39 
+	SemiMajorAxis     1.2455
+	Eccentricity      0.3354
+	Inclination      13.34
+	AscendingNode   337.352
+	ArgOfPeriapsis  276.756
+        TrueAnomaly     180.595
+	Epoch      2450800.5
+
+	RotationPeriod    5.222
+	Albedo            0.16
+}
+
+{
+	Name   "Kleopatra"
+	Mesh   "kleopatra.3ds"
+	Texture "asteroid.jpg"
+	# We'll just use the same color as Eros
+	Color   [ 0.52 0.47 0.42 ]
+	BlendTexture true
+	Radius  109
+
+	# orbital data
+	Period            4.67
+	SemiMajorAxis     2.793
+	Eccentricity      0.2535
+	Inclination      13.14
+	AscendingNode   337.352
+	ArgOfPeriapsis  276.756
+        TrueAnomaly     180.595
+	Epoch      2450800.5
+
+	RotationPeriod    5.385
+	Albedo            0.16
+	# Class M
+
+}
+
+
+# Centaurs
+{
+	Name   "Chiron"
+	Texture "asteroid.jpg"
+	Radius 90
+
+	# orbital data
+	Period            50.7
+	SemiMajorAxis     13.6481
+	Eccentricity      0.3806
+	Inclination       6.937
+	AscendingNode   209.381
+	ArgOfPeriapsis  339.483
+        TrueAnomaly      13.177
+	Epoch       2450800.5
+
+	RotationPeriod    5.9
+}
+]
+}
