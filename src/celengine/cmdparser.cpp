@@ -644,6 +644,8 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowAtmospheres;
             else if (compareIgnoringCase(name, "grid") == 0)
                 flags |= Renderer::ShowCelestialSphere;
+            else if (compareIgnoringCase(name, "partialtrajectories") == 0)
+                flags |= Renderer::ShowPartialTrajectories;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
