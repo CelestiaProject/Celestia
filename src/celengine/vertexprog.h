@@ -72,6 +72,7 @@ namespace vp
     extern unsigned int diffuseTexOffset_2light;
     extern unsigned int diffuseHaze_2light;
     extern unsigned int specular_2light;
+    extern unsigned int nightLights_2light;
 };
 
 
