@@ -14,6 +14,7 @@
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 
+class CelestiaCore;
 
 class ExecutionEnvironment
 {
@@ -22,6 +23,7 @@ class ExecutionEnvironment
 
     virtual inline Simulation* getSimulation() const = 0;
     virtual inline Renderer* getRenderer() const = 0;
+    virtual inline CelestiaCore* getCelestiaCore() const = 0;
     virtual void showText(std::string, int, int, int, int, double) = 0;
 };
 
