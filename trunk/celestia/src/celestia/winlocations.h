@@ -21,9 +21,14 @@
 void BuildFavoritesMenu(HMENU, CelestiaCore*);
 HTREEITEM PopulateLocationFolders(HWND, CelestiaCore*, HINSTANCE);
 HTREEITEM PopulateLocationsTree(HWND, CelestiaCore*, HINSTANCE);
+void SyncTreeFoldersWithFavoriteFolders(HWND, CelestiaCore*);
 void InsertLocationInFavorites(HWND, char*, CelestiaCore*);
 void DeleteLocationFromFavorites(HWND, CelestiaCore*);
 void RenameLocationInFavorites(HWND, char*, CelestiaCore*);
+void MoveLocationInFavorites(HWND, CelestiaCore*);
+void OrganizeLocationsOnBeginDrag(HWND, LPNMTREEVIEW);
+void OrganizeLocationsOnMouseMove(HWND, LONG, LONG);
+void OrganizeLocationsOnLButtonUp(HWND);
 //HTREEITEM GetTreeViewItemHandle(HWND, char*, HTREEITEM);
 
 #endif
