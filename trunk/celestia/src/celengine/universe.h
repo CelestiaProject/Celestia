@@ -38,8 +38,10 @@ class Universe
     Selection pick(const UniversalCoord& origin,
                    const Vec3f& direction,
                    double when,
-                   float faintestMag);
-    Selection pickStar(const UniversalCoord&, const Vec3f&, float faintest);
+                   float faintestMag,
+                   float tolerance = 0.0f);
+    Selection pickStar(const UniversalCoord&, const Vec3f&, float faintest,
+                       float tolerance = 0.0f);
     Selection find(const std::string& s,
                    PlanetarySystem** solarSystems = NULL,
                    int nSolarSystems = 0);
@@ -56,7 +58,8 @@ class Universe
                          const UniversalCoord&,
                          const Vec3f&,
                          double when,
-                         float faintestMag);
+                         float faintestMag,
+                         float tolerance);
 
  private:
     StarDatabase* starCatalog;

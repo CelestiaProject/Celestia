@@ -193,7 +193,8 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
                                const UniversalCoord& origin,
                                const Vec3f& direction,
                                double when,
-                               float faintestMag)
+                               float faintestMag,
+                               float tolerance)
 {
     PlanetPickInfo pickInfo;
 
@@ -221,7 +222,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     // size has to be greater than their actual disc size.
     solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
                                        (void*) &pickInfo);
-    if (pickInfo.cosClosestAngle > cos(degToRad(0.5f)))
+    if (pickInfo.cosClosestAngle > cos(tolerance))
         return Selection(pickInfo.closestBody);
     else
         return Selection();
@@ -345,17 +346,16 @@ void CloseStarPicker::process(const Star& star,
 
 Selection Universe::pickStar(const UniversalCoord& origin,
                              const Vec3f& direction,
-                             float faintestMag)
+                             float faintestMag,
+                             float tolerance)
 {
-    float angle = degToRad(0.5f);
-
     // Use a high precision pick test for any stars that are close to the
     // observer.  If this test fails, use a low precision pick test for stars
     // which are further away.  All this work is necessary because the low
     // precision pick test isn't reliable close to a star and the high
     // precision test isn't nearly fast enough to use on our database of
     // over 100k stars.
-    CloseStarPicker closePicker(origin, direction, 1.0f, angle);
+    CloseStarPicker closePicker(origin, direction, 1.0f, tolerance);
     starCatalog->findCloseStars(closePicker, (Point3f) origin, 1.0f);
     if (closePicker.closestStar != NULL)
         return Selection(const_cast<Star*>(closePicker.closestStar));
@@ -382,11 +382,11 @@ Selection Universe::pickStar(const UniversalCoord& origin,
         rotation.setAxisAngle(axis, (float) acos(cosAngle));
     }
     
-    StarPicker picker((Point3f) origin, direction, angle);
+    StarPicker picker((Point3f) origin, direction, tolerance);
     starCatalog->findVisibleStars(picker,
                                   (Point3f) origin,
                                   rotation,
-                                  angle, 1.0f,
+                                  tolerance, 1.0f,
                                   faintestMag);
     if (picker.pickedStar != NULL)
         return Selection(const_cast<Star*>(picker.pickedStar));
@@ -398,7 +398,8 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 Selection Universe::pick(const UniversalCoord& origin,
                          const Vec3f& direction,
                          double when,
-                         float faintestMag)
+                         float faintestMag,
+                         float tolerance)
 {
     Selection sel;
 
@@ -408,11 +409,12 @@ Selection Universe::pick(const UniversalCoord& origin,
         sel = pickPlanet(*closestSolarSystem,
                          origin, direction,
                          when,
-                         faintestMag);
+                         faintestMag,
+                         tolerance);
     }
 
     if (sel.empty())
-        sel = pickStar(origin, direction, faintestMag);
+        sel = pickStar(origin, direction, faintestMag, tolerance);
 
     return sel;
 }
