@@ -604,7 +604,8 @@ Code:
 * Updates for asteroids and comets from Grant Hutchinson:
    - Added Phil Stooke's textures for the asteroids Ida and Gaspra
    - Fixed mirror-reversal of Ida and Gaspra meshes (Grant Hutchinson)
-   - Use orbital elements valid for the Galileo encounters
+   - Use orbital elements valid for the Galileo encounters of Ida and Gaspra
+   - Corrected rotation parameters
 * Made name matching for galaxies case-insensitive
 * Corrected orbits of Uranians satellites Miranda, Ariel, Umbriel, Titania and
   Oberon.
@@ -633,4 +634,5 @@ Code:
    - Added flash messages indicating on|off status of markers 
    - Implemented markers into KDE interface	
 * Added triangle-accurate picking of mesh objects
-
+* Multiview
+* Eliminated eclipse shadows appearing on wrong side of planet
