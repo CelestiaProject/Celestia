@@ -223,6 +223,9 @@ NSString* fatalErrorMessage;
     ready = YES;
     [self startGLView];
 
+    // workaround for fov problem
+    if (pendingUrl) [appCore goToUrl: pendingUrl];
+
     // start animation timer
     timer = [[NSTimer scheduledTimerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:true] retain];
 
