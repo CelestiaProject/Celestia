@@ -61,4 +61,4 @@ static unsigned int bswap_32(unsigned int val) {
 
 #endif
 
-#endif
+#endif // _BYTES_H_
