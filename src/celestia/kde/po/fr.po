@@ -939,4 +939,3 @@ msgstr "chris@teyssier.org"
 
 #~ msgid "Normal (default surface)"
 #~ msgstr "Normale"
-
