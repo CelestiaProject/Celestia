@@ -16,12 +16,15 @@
     CelestiaAppCore* appCore;
     BOOL ready;
     BOOL isDirty;
+    IBOutlet NSPanel *loadingPanel;
+    IBOutlet NSProgressIndicator *loadingIndicator;
     IBOutlet NSOpenGLView *glView;
     IBOutlet NSWindow *mainWindow;
     IBOutlet NSWindow *gotoWindow;
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     IBOutlet RenderPanelController *renderPanelController;
     NSTimer* timer;
+    NSConditionLock* startupCondition;
     int keyCode, keyTime;
 }
 -(BOOL)applicationShouldTerminate:(id)sender;
@@ -30,6 +33,7 @@
 - (IBAction)gotoObject:(id)sender;
 - (IBAction)back:(id)sender;
 - (IBAction)forward:(id)sender;
+- (IBAction)showInfoURL:(id)sender;
 - (IBAction) openScript: (id) sender;
 - (void)setDirty;
 - (void)resize;
