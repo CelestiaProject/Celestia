@@ -218,7 +218,7 @@ Root: HKCR; Subkey: "cel"; ValueType: string; ValueData: "URL:cel Protocol"; Tas
 Root: HKCR; Subkey: "cel"; ValueName: "URL Protocol"; ValueType: string; Tasks: urlassoc
 Root: HKCR; Subkey: "cel\Shell"; ValueType: string; Tasks: urlassoc
 Root: HKCR; Subkey: "cel\Shell\open"; ValueType: string; Tasks: urlassoc
-Root: HKCR; Subkey: "cel\Shell\open\Command"; ValueType: string; ValueData: "{app}\celestia.exe -u ""%1"""; Tasks: urlassoc
+Root: HKCR; Subkey: "cel\Shell\open\Command"; ValueType: string; ValueData: "{app}\celestia.exe --once -dir ""{app}"" -u ""%1"""; Tasks: urlassoc
 
 [Run]
 Filename: "{app}\celestia.exe"; Description: "Launch Celestia"; Flags: nowait postinstall skipifsilent
