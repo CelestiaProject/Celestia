@@ -236,10 +236,18 @@ Code:
 * Fixed picking of stars so it works properly at close distances
 * Fixed bug that caused solar systems not to be displayed when another star
   was nearby (this made it impossible to visit the planets of Gliese 876)
+* Fixed inverted bump maps
+* Now use exponential interpolation during goto movement.
+* New Jupiter texture based on Cassini images
+* Added a tour guide feature
+* Added more constellation diagrams
 * Windows version: save and restore window size settings in registry
 * Windows version: added toggle between GMT and local time
 * Windows version: added keyboard command mnemonics to menus
 * Windows version: InstallShield setup
+* Windows version: added controls help dialog
+* UNIX version: implemented find object and about dialogs (Gnome/Gtk only)
 	
 Code:
 * Moved star browser and solar system browser code into separate modules
+* Fixed DPRINTF macro so it's not broken in g++
