@@ -1,0 +1,211 @@
+File Overview
+-------------
+
+* winmain.cpp
+  Windows front-end.  There's a lot of initialization code that should be
+  moved to a module that's not platform-specific.
+
+* simulation.cpp
+  The heart of Celestia . . .  handles tracking an observer moving through
+  the universe.
+
+* render.cpp
+  The Renderer class.  Everything on the screen is put there by an instance
+  of Renderer.
+
+* bigfix.cpp
+  High precision (128-bit) fixed point numbers.
+
+* univcoord.cpp
+  UnivseralCoord class--a 3-vector with BigFix components.  Represents
+  positions over a range of billions of light years to about
+  millimeter resolution.
+
+* observer.cpp
+  This class is a package for position, orientation, and velocity.  The
+  position of the observer is a UniversalCoord.
+
+* visstars.cpp
+  VisibleStarSet is a class that maintains a list of stars from a database
+  which visible to an Observer.
+
+* stellarclass.cpp
+* starname.cpp
+* star.cpp
+* stardb.cpp
+  Everything to do with stars.  StarDatabase contains a list of Stars and a
+  list of StarNames.
+
+* constellation.cpp
+  Just a bunch of static data giving the names and official abbreviations of
+  the 88 recognized constellations.
+
+* orbit.cpp
+  The Orbit base class has a single method to compute the barycentric position
+  of an object at a given Julian Date.  Currently, the only subclass of Orbit
+  is EllipticalOrbit, which calculates the position of an object along an
+  orbit specified by the standard six orbital elements.
+
+* body.cpp
+  A planet, moon, probe, etc.  Pretty much anything in space other than
+  a star is a Body.  A PlanetarySystem is a list of bodies.
+
+* solarsys.cpp
+  SolarSystem and SolarSystemCatalog classes.
+
+* mesh.cpp
+* spheremesh.cpp
+* 3dsmesh.cpp
+* vertexlist.cpp
+  These files are all related to internal geometry representation.
+  Mesh is an abstract class from which SphereMesh and Mesh3DS are derived.
+  VertexList is basically an easy to use wrapper for OpenGL 1.1 vertex arrays.
+  Eventually, VertexList will be made a subclass of mesh (SimpleMesh) and
+  Mesh3DS will be replaced by a more general class, CompositeMesh, which is
+  just a container for multiple Meshes.
+
+* surface.h
+  An aggregation of surface properties that may be applied to a mesh.
+
+* texture.cpp
+  An OpenGL texture class.
+
+* tokenizer.cpp
+* parser.cpp
+  The tokenizer and parser for Celestia text files (including the config file,
+  the solar system catalogs, and Celestia procedural meshes)
+
+* resmanager.cpp
+* texmanager.cpp
+* meshmanager.cpp
+  Resource management.  Resource manager is an abstract class from which
+  TextureManager and MeshManager are derived.  Right now, there isn't much
+  in the way of actual management done, but having these classes around
+  makes it much easier to implement a more sophisticated texture manager
+  in the future.
+
+* 3dschunk.h
+* 3dsread.cpp
+* 3dsmodel.cpp
+  3DS mesh reading stuff.  Slurp a file and spits out a Mesh3DS.
+
+* console.cpp
+  GL text console class that supports both printf and C++ << style output.
+
+* perlin.cpp
+  Noise functions used for procedural geometry and textures.
+
+* regcombine.cpp
+  A few functions that make it easy to use nVidia's REGISTER_COMBINERS
+  extension.
+
+* color.cpp
+  Simple RGBA color class.
+
+* astro.cpp
+  Astronomical conversions and a Date class for converting from dd/mm/yyyy
+  to Julian date.
+
+* vecmath.h
+  Templatized classes for Points, Vectors, and Matrices
+
+* quaternion.h
+  Templatized quaternion class
+
+* vecgl.h
+  A handful of template functions which make it easy to use types from
+  vecmath.h with OpenGL
+
+* aabox.h
+  Axis-aligned bounding box class.
+
+* glext.h
+* glext.cpp
+  GL extension declarations
+
+* filetype.cpp
+  A function for determining the type of a file based on its extension.
+
+* dispmap.cpp
+  Some silly code for applying displacement maps to SphereMeshes.
+
+* texfont.cpp
+  Mark J. Kilgard's texture font package
+
+* rng.cpp
+* gui.cpp
+  These aren't used any more . . .  gui.cpp should be removed.
+
+* slurp.c
+* startest.cpp
+* packnames.cpp
+* packdb.cpp
+* readstars.cpp
+  Miscellaneous test code and small programs used to munge the HIPPARCOS data
+  set into a star database.
+
+
+
+The Star Database
+-----------------
+The main star database is data/stars.dat.  This contains about 120,000 stars,
+including everything from the HIPPARCOS catalog, plus one addition: Sol, our
+sun.  The file starnames.dat contains proper names and Bayer and Flamsteed
+designations for about 1000 stars.  Every star in stars.dat has a unique
+identifier called its catalog number, and the name entries are linked with
+stars from the database via this number.
+
+The ReadStars function in winmain.cpp is responsible for loading the star
+database for Celestia.  Once initialized, the StarDatabase may be queried in
+one of three ways:  by star index, by catalog number, or by star name.  The
+star index is just the order of the star within the database, so lookup by
+index is a constant time operation.  Looking up a star by catalog number
+requires a search of the star database; since the database entries are sorted
+by catalog number, this is a log N operation.  All three query types return
+a pointer to a star from the database.
+
+
+Stars
+-----
+Since there are so many stars in a star database, it's important that the
+size of the Star class be kept to a minimum.  Thus, in order to avoid the 
+4 byte vtable overhead Star is not a derived class, even though it might
+be somewhat useful to have a common base class for stars and planets.  All
+stars have a unique catalog number, a position, a stellar class, and a
+luminosity.  The radius, temperature, and color of a star are not stored,
+but are instead derived from stellar class and luminosity.  The position
+of a star is its cartesian ecliptical position in units of
+light years.  The catalog number of a star is generally it's HD number.  In
+cases where the star doesn't have an HD number, the lower 28 bits are the
+HIPPARCOS catalog number and the high 4 bits are 0x1.
+
+
+Celestia Overview
+-----------------
+
+The basic skeleton of Celestia looks like this:
+
+StarDatabase* stardb = ReadStars("data/stars.dat", "data/starnames.dat");
+SolarSystemCatalog* solarSystems = ReadSolarSystems("data/solarsys.ssc");
+Simulation* sim = new Simulation();
+sim->setStarDatabase(stardb);
+sim->setTime(now);
+Renderer renderer = new Renderer();
+renderer->init();
+for (;;)
+{
+    sim->update(tick);
+    sim->render(*renderer);
+}
+
+The platform specific stuff to create a GL window and update it has been
+omitted, as has any UI.
+
+
+Tracking Visible Stars
+----------------------
+The VisibleStarSet class exists to limit the amount of computation spent
+determining which stars from a StarDatabase are visible to an Observer.  The
+fairly simple trick used to help alleviate the problem involves only checking a
+portion of the database for visibility at each update.
+
