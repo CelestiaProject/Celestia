@@ -726,6 +726,8 @@ Image* LoadPNGImage(const string& filename)
     png_read_end(png_ptr, NULL);
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
+    fclose(fp);
+
     return img;
 #endif
 }
