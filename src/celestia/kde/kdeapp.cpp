@@ -74,7 +74,7 @@
 
 #include "celengine/glext.h"
 
-#define MENUMAXSIZE 40
+#define MENUMAXSIZE 100
 
 KdeApp* KdeApp::app=0;
 
