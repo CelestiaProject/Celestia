@@ -15,15 +15,19 @@
 #include <iostream>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
-#include <celengine/univcoord.h>
+#include <celengine/astro.h>
 
 
 struct FavoritesEntry
 {
     std::string name;
+    std::string selectionName;
+    
     UniversalCoord position;
     Quatf orientation;
     double jd;
+
+    astro::CoordinateSystem coordSys;
 };
 
 typedef std::vector<FavoritesEntry*> FavoritesList;
