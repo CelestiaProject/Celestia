@@ -53,9 +53,9 @@ static const float fAltitudeThreshold = 4.0f;
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
-static const float stdFOV = 45.0f;
-static const float MaximumFOV = 120.0f;
-static const float MinimumFOV = 0.001f;
+static const float stdFOV = degToRad(45.0f);
+static const float MaximumFOV = degToRad(120.0f);
+static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 
 
@@ -104,6 +104,15 @@ View::View(Observer* _observer,
     width(_width),
     height(_height)
 {
+}
+
+
+void View::mapWindowToView(float wx, float wy, float& vx, float& vy) const
+{
+    vx = (wx - x) / width;
+    vy = (wy + (y + height - 1)) / height;
+    vx = (vx - 0.5f) * (width / height);
+    vy = 0.5f - vy;
 }
     
 
@@ -315,7 +324,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
 
     // Four pixel tolerance for picking
-    float pickTolerance = degToRad(renderer->getFieldOfView()) / height * 4.0f;
+    float pickTolerance = sim->getActiveObserver()->getFOV() / height * 4.0f;
 
     // If the mouse hasn't moved much since it was pressed, treat this
     // as a selection or context menu event.  Otherwise, assume that the
@@ -339,9 +348,14 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
                 return;
             }
 
-            int pickX = x - (int) (views[activeView]->x * width);
-            int pickY = y + (int) ((views[activeView]->y + views[activeView]->height - 1) * height);
-            Vec3f pickRay = renderer->getPickRay(pickX, pickY);
+            float pickX, pickY;
+            float aspectRatio = ((float) width / (float) height);
+            views[activeView]->mapWindowToView((float) x / (float) width,
+                                               (float) y / (float) height,
+                                               pickX, pickY);
+            Vec3f pickRay =
+                sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
+
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, pickTolerance);
             addToHistory();
@@ -351,9 +365,14 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == RightButton)
         {
-            int pickX = x - (int) (views[activeView]->x * width);
-            int pickY = y + (int) ((views[activeView]->y + views[activeView]->height - 1) * height);
-            Vec3f pickRay = renderer->getPickRay(pickX, pickY);
+            float pickX, pickY;
+            float aspectRatio = ((float) width / (float) height);
+            views[activeView]->mapWindowToView((float) x / (float) width,
+                                               (float) y / (float) height,
+                                               pickX, pickY);
+            Vec3f pickRay =
+                sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
+
             Selection sel = sim->pickObject(pickRay, pickTolerance);
             if (!sel.empty())
             {
@@ -363,13 +382,15 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == MiddleButton)
 	{
-            if (renderer->getFieldOfView() != stdFOV)
+            if (sim->getActiveObserver()->getFOV() != stdFOV)
 	    { 
-                oldFOV = renderer->getFieldOfView();	    
-                renderer->setFieldOfView(stdFOV);
+                oldFOV = sim->getActiveObserver()->getFOV();
+                sim->getActiveObserver()->setFOV(stdFOV);
             }
             else
-                renderer->setFieldOfView(oldFOV);
+            {
+                sim->getActiveObserver()->setFOV(oldFOV);
+            }
 
             // If AutoMag, adapt the faintestMag to the new fov
             if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
@@ -425,7 +446,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             float amount = dy / height;
             float minFOV = MinimumFOV;
             float maxFOV = MaximumFOV;
-            float fov = renderer->getFieldOfView();
+            float fov = sim->getActiveObserver()->getFOV();
 
             if (fov < minFOV)
                 fov = minFOV;
@@ -437,8 +458,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 newFOV = minFOV;
             else if (newFOV > maxFOV)
                 newFOV = maxFOV;
-            renderer->setFieldOfView(newFOV);
-	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
+            sim->getActiveObserver()->setFOV(newFOV);
+	    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
 	    {
 	        setFaintestAutoMag();
 		char buf[128];
@@ -452,7 +473,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             // For a small field of view, rotate the camera more finely
             float coarseness = 1.5f;
             if ((modifiers & RightButton) == 0)
-                coarseness = renderer->getFieldOfView() / 30.0f;
+                coarseness = radToDeg(sim->getActiveObserver()->getFOV()) / 30.0f;
             q.yrotate(dx / width * coarseness);
             q.xrotate(dy / height * coarseness);
             if ((modifiers & RightButton) != 0)
@@ -559,6 +580,8 @@ void CelestiaCore::keyUp(int key)
 
 void CelestiaCore::charEntered(char c)
 {
+    Observer* observer = sim->getActiveObserver();
+
     if (textEnterMode)
     {
         if (c == ' ' || isalpha(c) || isdigit(c) || ispunct(c))
@@ -667,6 +690,10 @@ void CelestiaCore::charEntered(char c)
     case '\022': // Ctrl+R
         splitView(false);
         flash("Added view");
+        break;
+
+    case '\004': // Ctrl+D
+        singleView();
         break;
 
     case '\023':  // Ctrl+S
@@ -829,9 +856,9 @@ void CelestiaCore::charEntered(char c)
 
     case ',':
         addToHistory();
-        if (renderer->getFieldOfView() > MinimumFOV)
+        if (observer->getFOV() > MinimumFOV)
 	{
-	    renderer->setFieldOfView(renderer->getFieldOfView() / 1.05f);
+	    observer->setFOV(observer->getFOV() / 1.05f);
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag))
 	    {
 	        setFaintestAutoMag();
@@ -844,9 +871,9 @@ void CelestiaCore::charEntered(char c)
 
     case '.':
         addToHistory();
-        if (renderer->getFieldOfView() < MaximumFOV)
+        if (observer->getFOV() < MaximumFOV)
 	{
-	    renderer->setFieldOfView(renderer->getFieldOfView() * 1.05f);
+	    observer->setFOV(observer->getFOV() * 1.05f);
 	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
 	    {
 	        setFaintestAutoMag();   
@@ -1249,7 +1276,7 @@ void CelestiaCore::tick()
 
     av = av * (float) exp(-dt * RotationDecay);
 
-    float fov = renderer->getFieldOfView()/stdFOV;
+    float fov = sim->getActiveObserver()->getFOV() / stdFOV;
 
     if (!altAzimuthMode)
     {
@@ -1361,6 +1388,9 @@ void CelestiaCore::draw()
         // reasonable in the typical single view case, we'll use this
         // scissorless special case.  I'm only paranoid because I've been
         // burned by crap hardware so many times. cjl
+        glViewport(0, 0, width, height);
+        renderer->resize(width, height);
+        renderer->setFieldOfView(radToDeg(views[0]->observer->getFOV()));
         sim->render(*renderer);
     }
     else
@@ -1380,6 +1410,7 @@ void CelestiaCore::draw()
                        (GLsizei) (view->width * width),
                        (GLsizei) (view->height * height));
             renderer->resize(view->width * width, view->height * height);
+            renderer->setFieldOfView(radToDeg(view->observer->getFOV()));
             sim->render(*renderer, *view->observer);
         }
         glDisable(GL_SCISSOR_TEST);
@@ -1445,7 +1476,30 @@ void CelestiaCore::splitView(bool vertical)
                           views[activeView]->y + (vertical ? 0 : h),
                           w, h);
     views.insert(views.end(), view);
+}
 
+
+void CelestiaCore::singleView()
+{
+    View* av = views[activeView];
+
+    for (int i = 0; i < views.size(); i++)
+    {
+        if (i != activeView)
+        {
+            sim->removeObserver(views[i]->observer);
+            delete views[i];
+        }
+    }
+
+    av->x = 0.0f;
+    av->y = 0.0f; 
+    av->width = 1.0f;
+    av->height = 1.0f;
+
+    views.clear();
+    views.insert(views.end(), av);
+    activeView = 0;
 }
 
 
@@ -1820,10 +1874,10 @@ void CelestiaCore::renderOverlay()
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
 
         // Field of view
-        float fov = renderer->getFieldOfView();
+        float fov = radToDeg(sim->getActiveObserver()->getFOV());
         int degrees, minutes;
         double seconds;
-        astro::decimalToDegMinSec((double)fov, degrees, minutes, seconds);
+        astro::decimalToDegMinSec((double) fov, degrees, minutes, seconds);
 
         if (degrees > 0)
             overlay->printf("FOV: %d° %02d' %.1f\"\n", degrees, minutes, seconds);

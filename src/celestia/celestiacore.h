@@ -39,6 +39,9 @@ class View
  public:
     View(Observer*, float, float, float, float);
 
+    void mapWindowToView(float, float, float&, float&) const;
+    
+ public:
     Observer* observer;
     float x;
     float y;
@@ -203,6 +206,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setFaintestAutoMag();
 
     void splitView(bool vertical);
+    void singleView();
 
     void flash(const std::string&, double duration = 1.0);
 
