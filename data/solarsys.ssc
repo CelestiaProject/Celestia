@@ -32,6 +32,12 @@ Planets [
 	HazeDensity 0.35
 	Radius 6052
 
+	Atmosphere {
+		Height 60
+		Lower [ 0.8 0.8 0.5 ]
+		Upper [ 0.6 0.6 0.6 ]
+	}
+
 	# orbital data
 	Period            0.6152
 	SemiMajorAxis     0.7233
@@ -58,7 +64,13 @@ Planets [
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.3
 	Radius 6378
-	Oblateness 0.003
+	# Oblateness 0.003
+
+	Atmosphere {
+		Height 60
+		Lower [ 0.6 0.6 0.6 ]
+		Upper [ 0.3 0.3 0.6 ]
+	}
 
 	# orbital data
 	Period            1.0000
@@ -153,7 +165,13 @@ Planets [
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.45
 	Radius 3394
-	Oblateness 0.006
+	# Oblateness 0.006
+
+	Atmosphere {
+		Height 30
+		Lower [ 0.8 0.6 0.6 ]
+		Upper [ 0.7 0.3 0.3 ]
+	}
 
 	# orbital data
 	Period            1.8809
@@ -434,6 +452,13 @@ Planets [
 		HazeColor [ 0.2 0.5 1 ]
 		HazeDensity 1
 		Radius   2575
+
+		Atmosphere {
+			Height 60
+			Lower [ 0.8 0.4 0.1 ]
+			Upper [ 0.0 0.0 0.9 ]
+		}
+
 
 		# orbital data
 		Period        15.945421
