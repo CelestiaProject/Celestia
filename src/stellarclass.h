@@ -66,6 +66,8 @@ public:
 
     Color getApparentColor() const;
 
+    friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
+
 private:
     // It'd be nice to use bitfields, but gcc can't seem to pack
     // them into under 4 bytes.
@@ -75,6 +77,9 @@ private:
 
 std::ostream& operator<<(std::ostream& s, const StellarClass& sc);
 
+// A rough ordering of stellar classes, from 'early' to 'late' . . .
+// Useful for organizing a list of stars by spectral class.
+bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
 StellarClass::StellarClass(StarType t,
 			   SpectralClass sc,
