@@ -163,11 +163,11 @@ void CTexture::bindName(uint32 flags)
     if (pixels == NULL)
         return;
 
-    GLuint textureType = GL_TEXTURE_2D;
+    GLenum textureType = GL_TEXTURE_2D;
 
     // If we're not wrapping, use GL_CLAMP_TO_EDGE if it's available; we want
     // to ignore the border color.
-    GLuint wrapMode = wrap ? GL_REPEAT :
+    GLenum wrapMode = wrap ? GL_REPEAT :
         (clampToEdgeSupported ? GL_CLAMP_TO_EDGE : GL_CLAMP);
     if (cubeMap)
     {

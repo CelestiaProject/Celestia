@@ -1,9 +1,20 @@
 // glext.cpp
+//
+// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 
 #include <string.h>
 #include "gl.h"
 #include "glext.h"
 
+#ifndef _WIN32
+// Assume that this is a UNIX/X11 system if it's not Windows.
+#include "GL/glx.h"
+#endif
 
 // ARB_texture_compression
 PFNGLCOMPRESSEDTEXIMAGE3DARBPROC glCompressedTexImage3DARB;
@@ -46,6 +57,12 @@ PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT;
 
 // extern void Alert(const char *szFormat, ...);
+
+#if defined(_WIN32)
+#define GET_GL_PROC_ADDRESS(name) wglGetProcAddress(name)
+#elif defined(GLX_ARB_get_proc_address)
+#define GET_GL_PROC_ADDRESS(name) glXGetProcAddressARB((GLubyte*) name)
+#endif
 
 
 void Alert(const char *szFormat, ...)
@@ -109,20 +126,20 @@ bool InitGLExtensions(void)
 void InitExtMultiTexture()
 {
 #ifndef GL_ARB_multitexture
-#ifdef _WIN32
+#ifdef GET_GL_PROC_ADDRESS
     glMultiTexCoord2iARB =
-        (PFNGLMULTITEXCOORD2IARBPROC) wglGetProcAddress("glMultiTexCoord2iARB");
+        (PFNGLMULTITEXCOORD2IARBPROC) GET_GL_PROC_ADDRESS("glMultiTexCoord2iARB");
     glMultiTexCoord2fARB =
-        (PFNGLMULTITEXCOORD2FARBPROC) wglGetProcAddress("glMultiTexCoord2fARB");
+        (PFNGLMULTITEXCOORD2FARBPROC) GET_GL_PROC_ADDRESS("glMultiTexCoord2fARB");
     glMultiTexCoord3fARB =
-        (PFNGLMULTITEXCOORD3FARBPROC) wglGetProcAddress("glMultiTexCoord3fARB");
+        (PFNGLMULTITEXCOORD3FARBPROC) GET_GL_PROC_ADDRESS("glMultiTexCoord3fARB");
     glMultiTexCoord3fvARB =
-        (PFNGLMULTITEXCOORD3FVARBPROC) wglGetProcAddress("glMultiTexCoord3fvARB");
+        (PFNGLMULTITEXCOORD3FVARBPROC) GET_GL_PROC_ADDRESS("glMultiTexCoord3fvARB");
     glActiveTextureARB =
-        (PFNGLACTIVETEXTUREARBPROC) wglGetProcAddress("glActiveTextureARB");
+        (PFNGLACTIVETEXTUREARBPROC) GET_GL_PROC_ADDRESS("glActiveTextureARB");
     glClientActiveTextureARB =
-        (PFNGLCLIENTACTIVETEXTUREARBPROC) wglGetProcAddress("glClientActiveTextureARB");
-#endif // _WIN32
+        (PFNGLCLIENTACTIVETEXTUREARBPROC) GET_GL_PROC_ADDRESS("glClientActiveTextureARB");
+#endif // GET_GL_PROC_ADDRESS
 #endif // GL_ARB_multitexture
 }
 
@@ -130,82 +147,82 @@ void InitExtMultiTexture()
 // ARB_texture_compression
 void InitExtTextureCompression()
 {
-#ifdef _WIN32
+#ifdef GET_GL_PROC_ADDRESS
     glCompressedTexImage3DARB =
         (PFNGLCOMPRESSEDTEXIMAGE3DARBPROC)
-        wglGetProcAddress("glCompressedTexImage3DARB");
+        GET_GL_PROC_ADDRESS("glCompressedTexImage3DARB");
     glCompressedTexImage2DARB =
         (PFNGLCOMPRESSEDTEXIMAGE2DARBPROC)
-        wglGetProcAddress("glCompressedTexImage2DARB");
+        GET_GL_PROC_ADDRESS("glCompressedTexImage2DARB");
     glCompressedTexImage1DARB =
         (PFNGLCOMPRESSEDTEXIMAGE1DARBPROC)
-        wglGetProcAddress("glCompressedTexImage1DARB");
+        GET_GL_PROC_ADDRESS("glCompressedTexImage1DARB");
     glCompressedTexSubImage3DARB =
         (PFNGLCOMPRESSEDTEXSUBIMAGE3DARBPROC)
-        wglGetProcAddress("glCompressedTexSubImage3DARB");
+        GET_GL_PROC_ADDRESS("glCompressedTexSubImage3DARB");
     glCompressedTexSubImage2DARB =
         (PFNGLCOMPRESSEDTEXSUBIMAGE2DARBPROC)
-        wglGetProcAddress("glCompressedTexSubImage2DARB");
+        GET_GL_PROC_ADDRESS("glCompressedTexSubImage2DARB");
     glCompressedTexSubImage1DARB =
         (PFNGLCOMPRESSEDTEXSUBIMAGE1DARBPROC)
-        wglGetProcAddress("glCompressedTexSubImage1DARB");
-#endif // _WIN32
+        GET_GL_PROC_ADDRESS("glCompressedTexSubImage1DARB");
+#endif // GET_GL_PROC_ADDRESS
 }
 
 
 // NV_register_combiners
 void InitExtRegisterCombiners()
 {
-#ifdef _WIN32
+#ifdef GET_GL_PROC_ADDRESS
   /* Retrieve all NV_register_combiners routines. */
   glCombinerParameterfvNV =
     (PFNGLCOMBINERPARAMETERFVNVPROC)
-    wglGetProcAddress("glCombinerParameterfvNV");
+    GET_GL_PROC_ADDRESS("glCombinerParameterfvNV");
   glCombinerParameterivNV =
     (PFNGLCOMBINERPARAMETERIVNVPROC)
-    wglGetProcAddress("glCombinerParameterivNV");
+    GET_GL_PROC_ADDRESS("glCombinerParameterivNV");
   glCombinerParameterfNV =
     (PFNGLCOMBINERPARAMETERFNVPROC)
-    wglGetProcAddress("glCombinerParameterfNV");
+    GET_GL_PROC_ADDRESS("glCombinerParameterfNV");
   glCombinerParameteriNV =
     (PFNGLCOMBINERPARAMETERINVPROC)
-    wglGetProcAddress("glCombinerParameteriNV");
+    GET_GL_PROC_ADDRESS("glCombinerParameteriNV");
   glCombinerInputNV =
     (PFNGLCOMBINERINPUTNVPROC)
-    wglGetProcAddress("glCombinerInputNV");
+    GET_GL_PROC_ADDRESS("glCombinerInputNV");
   glCombinerOutputNV =
     (PFNGLCOMBINEROUTPUTNVPROC)
-    wglGetProcAddress("glCombinerOutputNV");
+    GET_GL_PROC_ADDRESS("glCombinerOutputNV");
   glFinalCombinerInputNV =
     (PFNGLFINALCOMBINERINPUTNVPROC)
-    wglGetProcAddress("glFinalCombinerInputNV");
+    GET_GL_PROC_ADDRESS("glFinalCombinerInputNV");
   glGetCombinerInputParameterfvNV =
     (PFNGLGETCOMBINERINPUTPARAMETERFVNVPROC)
-    wglGetProcAddress("glGetCombinerInputParameterfvNV");
+    GET_GL_PROC_ADDRESS("glGetCombinerInputParameterfvNV");
   glGetCombinerInputParameterivNV =
     (PFNGLGETCOMBINERINPUTPARAMETERIVNVPROC)
-    wglGetProcAddress("glGetCombinerInputParameterivNV");
+    GET_GL_PROC_ADDRESS("glGetCombinerInputParameterivNV");
   glGetCombinerOutputParameterfvNV =
     (PFNGLGETCOMBINEROUTPUTPARAMETERFVNVPROC)
-    wglGetProcAddress("glGetCombinerOutputParameterfvNV");
+    GET_GL_PROC_ADDRESS("glGetCombinerOutputParameterfvNV");
   glGetCombinerOutputParameterivNV =
     (PFNGLGETCOMBINEROUTPUTPARAMETERIVNVPROC)
-    wglGetProcAddress("glGetCombinerOutputParameterivNV");
+    GET_GL_PROC_ADDRESS("glGetCombinerOutputParameterivNV");
   glGetFinalCombinerInputParameterfvNV =
     (PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC)
-    wglGetProcAddress("glGetFinalCombinerInputParameterfvNV");
+    GET_GL_PROC_ADDRESS("glGetFinalCombinerInputParameterfvNV");
   glGetFinalCombinerInputParameterivNV =
     (PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC)
-    wglGetProcAddress("glGetFinalCombinerInputParameterivNV");
-#endif // _WIN32
+    GET_GL_PROC_ADDRESS("glGetFinalCombinerInputParameterivNV");
+#endif // GET_GL_PROC_ADDRESS
 }
 
 
 void InitExtPalettedTexture()
 {
-#ifdef _WIN32
-    // glColorTableEXT = (void *) wglGetProcAddress("glColorTableEXT");
-#endif // _WIN32
+#ifdef GET_GL_PROC_ADDRESS
+    glColorTableEXT = (void *) GET_GL_PROC_ADDRESS("glColorTableEXT");
+#endif // _GET_GL_PROC_ADDRESS
 }
 
 
@@ -213,9 +230,9 @@ void InitExtSwapControl()
 {
 #ifdef _WIN32
     wglSwapIntervalEXT = 
-        (PFNWGLSWAPINTERVALEXTPROC) wglGetProcAddress("wglSwapIntervalEXT");
+        (PFNWGLSWAPINTERVALEXTPROC) GET_GL_PROC_ADDRESS("wglSwapIntervalEXT");
     wglGetSwapIntervalEXT =
-        (PFNWGLGETSWAPINTERVALEXTPROC) wglGetProcAddress("wglGetSwapIntervalEXT");
+        (PFNWGLGETSWAPINTERVALEXTPROC) GET_GL_PROC_ADDRESS("wglGetSwapIntervalEXT");
 #endif // _WIN32
 }
 
