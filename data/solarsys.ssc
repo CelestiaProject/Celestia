@@ -1055,12 +1055,10 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 
 "Pluto" "Sol"
 {
-	Texture "pluto.png"
+	Texture "pluto.jpg"
 	#BumpMap "plutobump1k.jpg"
 	#BumpHeight 2.5
-        SpecularTexture "pluto-spec.jpg"
-        SpecularColor            [ 0.135 0.12 0.08 ]
-        SpecularPower             9.5
+
 	Radius 1137
 
 	CustomOrbit "pluto"
@@ -1083,12 +1081,17 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	Albedo           0.55
 }
 
+AltSurface "limit of knowledge" "Sol/Pluto"
+{
+	Texture "pluto-lok.jpg"
+        SpecularTexture "pluto-lok-spec.jpg"
+        SpecularColor            [ 0.135 0.12 0.08 ]
+        SpecularPower             9.5
+}
+
 "Charon" "Sol/Pluto"
 {
 	Texture "charon.jpg"
-        SpecularTexture "charon-spec.jpg"
-        SpecularColor            [ 0.135 0.12 0.08 ]
-        SpecularPower             9.5
 	Radius   586
 
 	InfoURL "http://www.nineplanets.org/pluto.html#Charon"
@@ -1109,6 +1112,14 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	RotationOffset	 	213.3
 	
 	Albedo          0.35
+}
+
+AltSurface "limit of knowledge" "Sol/Pluto/Charon"
+{
+	Texture "charon-lok.jpg"
+        SpecularTexture "charon-lok-spec.jpg"
+        SpecularColor            [ 0.135 0.12 0.08 ]
+        SpecularPower             9.5
 }
 
 
