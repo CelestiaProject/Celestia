@@ -42,6 +42,7 @@ public:
                       int level,
                       int step,
                       unsigned int attributes,
+                      const Frustum&,
                       Point3f* fp);
 
     void renderSection(int phi0, int theta0,
