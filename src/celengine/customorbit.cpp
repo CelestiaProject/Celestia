@@ -122,6 +122,20 @@ double gElements[8][23] = {
 	}
 };
 
+
+// Useful version of trig functions which operate on values in degrees instead
+// of radians.
+static double sinD(double theta)
+{
+    return sin(degToRad(theta));
+}
+
+static double cosD(double theta)
+{
+    return cos(degToRad(theta));
+}
+
+
 static double Obliquity(double t)
 {
     // Parameter t represents the Julian centuries elapsed since 1900.
@@ -1255,6 +1269,227 @@ class PlutoOrbit : public CachingOrbit
     };
 };
 
+
+// Compute for mean anomaly M the point on the ellipse with
+// semimajor axis a and eccentricity e.  This helper function assumes
+// a low eccentricity; orbit.cpp has functions appropriate for solving
+// Kepler's equation for larger values of e.
+static Point3d ellipsePosition(double a, double e, double M)
+{
+    // Solve Kepler's equation--for a low eccentricity orbit, just a few
+    // iterations is enough.
+    double E = M;
+    for (int k = 0; k < 3; k++)
+        E = M + e * sin(E);
+
+    return Point3d(a * (cos(E) - e),
+                   0.0,
+                   a * sqrt(1 - square(e)) * -sin(E));
+}
+
+
+class PhobosOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        double epoch = 2433283.0 - 0.5; // 00:00 1 Jan 1950
+        double a     = 9380.0;
+        double e     = 0.0151;
+        double w0    = 150.247;
+        double M0    =  92.474;
+        double i     =   1.075;
+        double node0 = 164.931;
+        double n     = 1128.8444155;
+        double Pw    =  1.131;
+        double Pnode =  2.262;
+
+        double refplane_RA  = 317.724;
+        double refplane_Dec =  52.924;
+        double marspole_RA  = 317.681;
+        double marspole_Dec =  52.886;
+
+        double t = jd - epoch;
+        t += 10.5 / 1440.0;     // light time correction?
+        double T = t / 365.25;
+
+        double dnode = 360.0 / Pnode;
+        double dw    = 360.0 / Pw;
+        double node = degToRad(node0 + T * dnode);
+        double w    = degToRad(w0 + T * dw - T * dnode);
+        double M    = degToRad(M0 + t * n  - T * dw);
+
+        Point3d p = ellipsePosition(a, e, M);
+
+        // Orientation of the orbital plane with respect to the Laplacian plane
+        Mat3d Rorbit     = (Mat3d::yrotation(node) *
+                            Mat3d::xrotation(degToRad(i)) *
+                            Mat3d::yrotation(w));
+
+        // Rotate to the Earth's equatorial plane
+        double N = degToRad(refplane_RA);
+        double J = degToRad(90 - refplane_Dec);
+        Mat3d RLaplacian = (Mat3d::yrotation( N) *
+                            Mat3d::xrotation( J) *
+                            Mat3d::yrotation(-N));
+
+        // Rotate to the Martian equatorial plane
+        N = degToRad(marspole_RA);
+        J = degToRad(90 - marspole_Dec);
+        Mat3d RMars_eq   = (Mat3d::yrotation( N) *
+                            Mat3d::xrotation(-J) *
+                            Mat3d::yrotation(-N));
+
+        return RMars_eq * (RLaplacian * (Rorbit * p));
+    }
+    
+    double getPeriod() const
+    {
+        return 0.319;
+    }
+
+    double getBoundingRadius() const
+    {
+        return 9380 * BoundingRadiusSlack;
+    }
+};
+
+
+class DeimosOrbit : public CachingOrbit
+{
+    Point3d computePosition(double jd) const
+    {
+        double epoch = 2433283.0 - 0.5;
+        double a     = 23460.0;
+        double e     = 0.0002;
+        double w0    = 290.496;
+        double M0    = 296.230;
+        double i     = 1.793;
+        double node0 = 339.600;
+        double n     = 285.1618919;
+        double Pw    = 26.892;
+        double Pnode = 54.536;
+
+        double refplane_RA  = 316.700;
+        double refplane_Dec =  53.564;
+        double marspole_RA  = 317.681;
+        double marspole_Dec =  52.886;
+
+        double t = jd - epoch;
+        t += 10.5 / 1440.0;     // light time correction?
+        double T = t / 365.25;
+
+        double dnode = 360.0 / Pnode;
+        double dw    = 360.0 / Pw;
+        double node = degToRad(node0 + T * dnode);
+        double w    = degToRad(w0 + T * dw - T * dnode);
+        double M    = degToRad(M0 + t * n  - T * dw);
+
+        Point3d p = ellipsePosition(a, e, M);
+
+        // Orientation of the orbital plane with respect to the Laplacian plane
+        Mat3d Rorbit     = (Mat3d::yrotation(node) *
+                            Mat3d::xrotation(degToRad(i)) *
+                            Mat3d::yrotation(w));
+
+        // Rotate to the Earth's equatorial plane
+        double N = degToRad(refplane_RA);
+        double J = degToRad(90 - refplane_Dec);
+        Mat3d RLaplacian = (Mat3d::yrotation( N) *
+                            Mat3d::xrotation( J) *
+                            Mat3d::yrotation(-N));
+
+        // Rotate to the Martian equatorial plane
+        N = degToRad(marspole_RA);
+        J = degToRad(90 - marspole_Dec);
+        Mat3d RMars_eq   = (Mat3d::yrotation( N) *
+                            Mat3d::xrotation(-J) *
+                            Mat3d::yrotation(-N));
+
+        return RMars_eq * (RLaplacian * (Rorbit * p));
+    }
+
+#if 0
+    // More accurate orbit calculation for Mars from _Explanatory
+    // Supplement to the Astronomical Almanac_  There's still a bug in
+    // this routine however.
+    Point3d computePosition(double jd) const
+    {
+        double d = jd - 2441266.5;  // days since 11 Nov 1971
+        double D = d / 365.25;      // years
+
+        double a = 1.56828e-4 * KM_PER_AU;
+        double n = 285.161888;
+        double e = 0.0004;
+        double gamma = degToRad(1.79);
+        double theta = degToRad(240.38 - 0.01801 * d);
+
+        double h = degToRad(196.55 - 0.01801 * d);
+        double L = degToRad(28.96 + n * d - 0.27 * sin(h));
+        double P = degToRad(111.7 + 0.01798 * d);
+
+        // N and J give the orientation of the Laplacian plane with respect
+        // to the Earth's equator and equinox.
+        //    N - longitude of ascending node
+        //    J - inclination
+        double N = degToRad(46.37 - 0.0014 * D);
+        double J = degToRad(36.62 + 0.0008 * D);
+
+        // Compute the mean anomaly
+        double M = L - P;
+        
+        // Solve Kepler's equation--for a low eccentricity orbit, just a few
+        // iterations is enough.
+        double E = M;
+        for (int i = 0; i < 3; i++)
+            E = M + e * sin(E);
+
+        // Compute the position in the orbital plane (y = 0)
+        double x = a * (cos(E) - e);
+        double z = a * sqrt(1 - square(e)) * -sin(E);
+
+        // Orientation of the orbital plane with respect to the Laplacian plane
+        Mat3d Rorbit     = (Mat3d::yrotation(theta) *
+                            Mat3d::xrotation(gamma) *
+                            Mat3d::yrotation(P - theta));
+
+        Mat3d RLaplacian = (Mat3d::yrotation( N) *
+                            Mat3d::xrotation(-J) *
+                            Mat3d::yrotation(-N));
+
+        double marspole_RA  = 317.681;
+        double marspole_Dec =  52.886;
+        double Nm = degToRad(marspole_RA + 90);
+        double Jm = degToRad(90 - marspole_Dec);
+        Mat3d RMars_eq   = (Mat3d::yrotation( Nm) *
+                            Mat3d::xrotation( Jm) *
+                            Mat3d::yrotation(-Nm));
+
+        // Celestia wants the position of a satellite with respect to the
+        // equatorial plane of the planet it orbits.
+
+        // to Laplacian...
+        Point3d p = Rorbit * Point3d(x, 0.0, z);
+
+        // to Earth equatorial...
+        p = RLaplacian * p;
+
+        // to Mars equatorial...
+        return RMars_eq * p;
+    }
+#endif
+
+    double getPeriod() const
+    {
+        return 1.262441;
+    }
+
+    double getBoundingRadius() const
+    {
+        return 23462 * BoundingRadiusSlack;
+    }
+};
+
+
 // static const double JupAscendingNode = degToRad(20.453422);
 static const double JupAscendingNode = degToRad(22.203);
 
@@ -1653,17 +1888,6 @@ class CallistoOrbit : public CachingOrbit
         return 1890000 * BoundingRadiusSlack;
     };
 };
-
-
-static double sinD(double theta)
-{
-    return sin(degToRad(theta));
-}
-
-static double cosD(double theta)
-{
-    return cos(degToRad(theta));
-}
 
 
 static const double SatAscendingNode = 168.8112;
@@ -2535,6 +2759,10 @@ Orbit* GetCustomOrbit(const string& name)
         return CreateJPLEphOrbit(JPLEph_Pluto,   248.54   * 365.25, 6.0e9);
     if (name == "moon-jpl")
         return CreateJPLEphOrbit(JPLEph_Moon,     27.321661,        5.0e5);
+    if (name == "phobos")
+        return new PhobosOrbit();
+    if (name == "deimos")
+        return new DeimosOrbit();
     if (name == "io")
         return new IoOrbit();
     if (name == "europa")
