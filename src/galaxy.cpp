@@ -307,7 +307,7 @@ GalaxyList* ReadGalaxyList(istream& in)
         string typeName;
         galaxyParams->getString("Type", typeName);
         Galaxy::GalaxyType type = Galaxy::Irr;
-        for (int i = 0; i < sizeof(GalaxyTypeNames) / sizeof(GalaxyTypeNames[0]); i++)
+        for (int i = 0; i < (int) (sizeof(GalaxyTypeNames) / sizeof(GalaxyTypeNames[0])); i++)
         {
             if (GalaxyTypeNames[i].name == typeName)
             {
