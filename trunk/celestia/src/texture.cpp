@@ -233,7 +233,8 @@ void CTexture::bindName(uint32 flags)
     
     glName = tn;
 
-    delete pixels;
+    delete[] pixels;
+    pixels = NULL;
 }
 
 
