@@ -30,15 +30,14 @@
 #include "mathlib.h"
 #include "astro.h"
 #include "celestiacore.h"
+#include "winstarbrowser.h"
+#include "winssbrowser.h"
 
 #include "../res/resource.h"
 
 using namespace std;
 
 
-//----------------------------------
-// Skeleton functions and variables.
-//-----------------
 char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
@@ -52,7 +51,9 @@ static bool bReady = false;
 
 HINSTANCE appInstance;
 HWND mainWindow = 0;
-HWND ssBrowserWindow = 0;
+
+static SolarSystemBrowser* solarSystemBrowser = NULL;
+static StarBrowser* starBrowser = NULL;
 
 static HMENU menuBar = 0;
 static HACCEL acceleratorTable = 0;
@@ -395,581 +396,6 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
 }
 
 
-HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data)
-{ 
-    TVITEM tvi; 
-    TVINSERTSTRUCT tvins; 
-    static HTREEITEM hPrev = (HTREEITEM) TVI_FIRST; 
-    static HTREEITEM hPrevRootItem = NULL; 
-    static HTREEITEM hPrevLev2Item = NULL; 
-    // HTREEITEM hti; 
-
-#if 0 
-    tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM; 
-#endif
-    tvi.mask = TVIF_TEXT | TVIF_PARAM;
- 
-    // Set the text of the item. 
-    tvi.pszText = lpszItem; 
-    tvi.cchTextMax = lstrlen(lpszItem); 
- 
-    // Assume the item is not a parent item, so give it a 
-    // document image. 
-    // tvi.iImage = g_nDocument; 
-    // tvi.iSelectedImage = g_nDocument; 
- 
-    // Save the heading level in the item's application-defined 
-    // data area. 
-    tvi.lParam = (LPARAM) data; 
- 
-    tvins.item = tvi; 
-    tvins.hInsertAfter = hPrev; 
- 
-    // Set the parent item based on the specified level. 
-    if (nLevel == 1) 
-        tvins.hParent = TVI_ROOT; 
-    else if (nLevel == 2) 
-        tvins.hParent = hPrevRootItem; 
-    else 
-        tvins.hParent = hPrevLev2Item; 
- 
-    // Add the item to the tree view control. 
-    hPrev = (HTREEITEM) SendMessage(hwndTV, TVM_INSERTITEM, 0, 
-                                    (LPARAM) (LPTVINSERTSTRUCT) &tvins); 
- 
-    // Save the handle to the item. 
-    if (nLevel == 1) 
-        hPrevRootItem = hPrev; 
-    else if (nLevel == 2) 
-        hPrevLev2Item = hPrev; 
-
-#if 0 
-    // The new item is a child item. Give the parent item a 
-    // closed folder bitmap to indicate it now has child items. 
-    if (nLevel > 1)
-    { 
-        hti = TreeView_GetParent(hwndTV, hPrev); 
-        tvi.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE; 
-        tvi.hItem = hti; 
-        // tvi.iImage = g_nClosed; 
-        // tvi.iSelectedImage = g_nClosed; 
-        TreeView_SetItem(hwndTV, &tvi); 
-    }
-#endif 
- 
-    return hPrev; 
-}
-
-
-void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level)
-{
-    for (int i = 0; i < sys->getSystemSize(); i++)
-    {
-        Body* world = sys->getBody(i);
-        (void) AddItemToTree(treeView, 
-                             const_cast<char*>(world->getName().c_str()),
-                             level,
-                             static_cast<void*>(world));
-
-        const PlanetarySystem* satellites = world->getSatellites();
-        if (satellites != NULL)
-            AddPlanetarySystemToTree(satellites, treeView, level + 1);
-    }
-}
-
-
-BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
-                                     UINT message,
-                                     UINT wParam,
-                                     LONG lParam)
-{
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        {
-            HWND hwnd = GetDlgItem(hDlg, IDC_SSBROWSER_TREE);
-            const SolarSystem* solarSys = appCore->getSimulation()->getNearestSolarSystem();
-            if (solarSys != NULL)
-            {
-                HTREEITEM rootItem = AddItemToTree(hwnd, "Sun", 1, NULL);
-                const PlanetarySystem* planets = solarSys->getPlanets();
-                if (planets != NULL)
-                    AddPlanetarySystemToTree(planets, hwnd, 2);
-
-                SendMessage(hwnd, TVM_EXPAND, TVE_EXPAND, (LPARAM) rootItem); 
-            }
-        }
-        return(TRUE);
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            ssBrowserWindow = 0;
-            EndDialog(hDlg, 0);
-            return TRUE;
-        }
-        else if (LOWORD(wParam) == IDC_BUTTON_CENTER)
-        {
-            appCore->charEntered('C');
-        }
-        else if (LOWORD(wParam) == IDC_BUTTON_GOTO)
-        {
-            appCore->charEntered('G');
-        }
-        break;
-
-    case WM_NOTIFY:
-        {
-            LPNMHDR hdr = (LPNMHDR) lParam;
-            
-            if (hdr->code == TVN_SELCHANGED)
-            {
-                LPNMTREEVIEW nm = (LPNMTREEVIEW) lParam;
-                Body* body = reinterpret_cast<Body*>(nm->itemNew.lParam);
-                if (body != NULL)
-                {
-                    appCore->getSimulation()->setSelection(Selection(body));
-                }
-            }
-        }
-    }
-
-    return FALSE;
-}
-
-
-/*
- * A whole ton of code to implement the star browser tool.  Support
- * displaying, selecting, sorting of information from the star
- * database.  This should all probably be moved into a separate module.
- */
-
-enum {
-    BrightestStars = 0,
-    NearestStars = 1,
-};
-
-struct StarBrowserInstance
-{
-    StarBrowserInstance(Simulation*);
-
-    HWND hwnd;
-
-    // The star browser data is valid for a particular point
-    // in space, and for performance issues is not continuously
-    // updated.
-    Point3f pos;
-    UniversalCoord ucPos;
-    int predicate;
-    int nStars;
-};
-
-StarBrowserInstance::StarBrowserInstance(Simulation* sim)
-{
-    ucPos = sim->getObserver().getPosition();
-    pos = (Point3f) ucPos;
-    predicate = NearestStars;
-    nStars = 100;
-}
-
-static StarBrowserInstance* starBrowser = NULL;
-
-
-bool InitStarBrowserColumns(HWND listView)
-{
-    LVCOLUMN lvc;
-    LVCOLUMN columns[5];
-
-    lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-    lvc.fmt = LVCFMT_LEFT;
-    lvc.cx = 60;
-    lvc.pszText = "";
-
-    int nColumns = sizeof(columns) / sizeof(columns[0]);
-    int i;
-
-    for (i = 0; i < nColumns; i++)
-        columns[i] = lvc;
-
-    columns[0].pszText = "Name";
-    columns[0].cx = 100;
-    columns[1].pszText = "Distance";
-    columns[1].fmt = LVCFMT_RIGHT;
-    columns[1].cx = 75;
-    columns[2].pszText = "App. mag";
-    columns[2].fmt = LVCFMT_RIGHT;
-    columns[3].pszText = "Abs. mag";
-    columns[3].fmt = LVCFMT_RIGHT;
-    columns[4].pszText = "Type";
-
-    for (i = 0; i < nColumns; i++)
-    {
-        columns[i].iSubItem = i;
-        if (ListView_InsertColumn(listView, i, &columns[i]) == -1)
-            return false;
-    }
-
-    return true;
-}
-
-
-struct CloserStarPredicate
-{
-    Point3f pos;
-    bool operator()(const Star* star0, const Star* star1) const
-    {
-        return ((pos - star0->getPosition()).lengthSquared() <
-                (pos - star1->getPosition()).lengthSquared());
-                               
-    }
-};
-
-struct BrighterStarPredicate
-{
-    Point3f pos;
-    UniversalCoord ucPos;
-    bool operator()(const Star* star0, const Star* star1) const
-    {
-        float d0 = pos.distanceTo(star0->getPosition());
-        float d1 = pos.distanceTo(star1->getPosition());
-
-        // If the stars are closer than one light year, use
-        // a more precise distance estimate.
-        if (d0 < 1.0f)
-            d0 = (star0->getPosition() - ucPos).length();
-        if (d1 < 1.0f)
-            d1 = (star1->getPosition() - ucPos).length();
-
-        return (star0->getApparentMagnitude(d0) <
-                star1->getApparentMagnitude(d1));
-    }
-};
-
-
-// Find the nearest/brightest/whatever N stars in a database.  The
-// supplied predicate determines which of two stars is a better match.
-template<class Pred> vector<const Star*>*
-FindStars(const StarDatabase& stardb, Pred pred, int nStars)
-{
-    vector<const Star*>* finalStars = new vector<const Star*>();
-    if (nStars == 0)
-        return finalStars;
-
-    typedef multiset<const Star*, Pred> StarSet;
-    StarSet firstStars(pred);
-
-    int totalStars = stardb.size();
-    if (totalStars < nStars)
-        nStars = totalStars;
-
-    // We'll need at least nStars in the set, so first fill
-    // up the list indiscriminately.
-    int i = 0;
-    for (i = 0; i < nStars; i++)
-        firstStars.insert(stardb.getStar(i));
-
-    // From here on, only add a star to the set if it's
-    // a better match than the worst matching star already
-    // in the set.
-    const Star* lastStar = *--firstStars.end();
-    for (; i < totalStars; i++)
-    {
-        Star* star = stardb.getStar(i);
-        if (pred(star, lastStar))
-        {
-            firstStars.insert(star);
-            firstStars.erase(--firstStars.end());
-            lastStar = *--firstStars.end();
-        }
-    }
-
-    // Move the best matching stars into the vector
-    finalStars->reserve(nStars);
-    for (StarSet::const_iterator iter = firstStars.begin();
-         iter != firstStars.end(); iter++)
-    {
-        finalStars->insert(finalStars->end(), *iter);
-    }
-
-    return finalStars;
-}
-
-
-bool InitStarBrowserLVItems(HWND listView, vector<const Star*>& stars)
-{
-    LVITEM lvi;
-
-    lvi.mask = LVIF_TEXT | LVIF_PARAM | LVIF_STATE;
-    lvi.state = 0;
-    lvi.stateMask = 0;
-    lvi.pszText = LPSTR_TEXTCALLBACK;
-
-    for (int i = 0; i < stars.size(); i++)
-    {
-        lvi.iItem = i;
-        lvi.iSubItem = 0;
-        lvi.lParam = (LPARAM) stars[i];
-        ListView_InsertItem(listView, &lvi);
-    }
-
-    return true;
-}
-
-bool InitStarBrowserItems(HWND listView, int pred, int nItems)
-{
-    Simulation* sim = appCore->getSimulation();
-    StarDatabase* stardb = sim->getStarDatabase();
-    if (starBrowser == NULL)
-        return false;
-
-    vector<const Star*>* stars = NULL;
-    switch (pred)
-    {
-    case BrightestStars:
-        {
-            BrighterStarPredicate brighterPred;
-            brighterPred.pos = starBrowser->pos;
-            brighterPred.ucPos = starBrowser->ucPos;
-            stars = FindStars(*stardb, brighterPred, nItems);
-        }
-        break;
-
-    case NearestStars:
-        {
-            CloserStarPredicate closerPred;
-            closerPred.pos = starBrowser->pos;
-            stars = FindStars(*stardb, closerPred, nItems);
-        }
-        break;
-
-    default:
-        return false;
-    }
-            
-    bool succeeded = InitStarBrowserLVItems(listView, *stars);
-    delete stars;
-
-    return succeeded;
-}
-
-
-// Crud used for the list item display callbacks
-static string starNameString("");
-static char callbackScratch[256];
-static ostringstream browserOss(ostringstream::out);
-
-struct StarBrowserSortInfo
-{
-    int subItem;
-    Point3f pos;
-    UniversalCoord ucPos;
-};
-
-int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
-                                    LPARAM lParamSort)
-{
-    StarBrowserSortInfo* sortInfo = reinterpret_cast<StarBrowserSortInfo*>(lParamSort);
-    Star* star0 = reinterpret_cast<Star*>(lParam0);
-    Star* star1 = reinterpret_cast<Star*>(lParam1);
-
-    switch (sortInfo->subItem)
-    {
-    case 0:
-        return 0;
-
-    case 1:
-        {
-            float d0 = sortInfo->pos.distanceTo(star0->getPosition());
-            float d1 = sortInfo->pos.distanceTo(star1->getPosition());
-            return sign(d0 - d1);
-        }
-
-    case 2:
-        {
-            float d0 = sortInfo->pos.distanceTo(star0->getPosition());
-            float d1 = sortInfo->pos.distanceTo(star1->getPosition());
-            if (d0 < 1.0f)
-                d0 = (star0->getPosition() - sortInfo->ucPos).length();
-            if (d1 < 1.0f)
-                d1 = (star1->getPosition() - sortInfo->ucPos).length();
-            return sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
-                        astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
-        }
-
-    case 3:
-        return sign(star0->getAbsoluteMagnitude() - star1->getAbsoluteMagnitude());
-
-    case 4:
-        if (star0->getStellarClass() < star1->getStellarClass())
-            return -1;
-        else if (star1->getStellarClass() < star0->getStellarClass())
-            return 1;
-        else
-            return 0;
-
-    default:
-        return 0;
-    }
-}
-
-
-void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, Simulation* sim)
-{
-    Star* star = reinterpret_cast<Star*>(nm->item.lParam);
-    if (star == NULL)
-    {
-        nm->item.pszText = "";
-        return;
-    }
-
-    switch (nm->item.iSubItem)
-    {
-    case 0:
-        {
-            starNameString = sim->getStarDatabase()->getStarName(star->getCatalogNumber());
-            nm->item.pszText = const_cast<char*>(starNameString.c_str());
-        }
-        break;
-            
-    case 1:
-        {
-            sprintf(callbackScratch, "%.3f",
-                    starBrowser->pos.distanceTo(star->getPosition()));
-            nm->item.pszText = callbackScratch;
-        }
-        break;
-
-    case 2:
-        {
-            Vec3f r = star->getPosition() - starBrowser->ucPos;
-            float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(),
-                                              r.length());
-            sprintf(callbackScratch, "%.2f", appMag);
-            nm->item.pszText = callbackScratch;
-        }
-        break;
-            
-    case 3:
-        {
-            sprintf(callbackScratch, "%.2f", star->getAbsoluteMagnitude());
-            nm->item.pszText = callbackScratch;
-        }
-        break;
-
-    case 4:
-        {
-            // Convoluted way of getting the stellar class string . . .
-            // Seek to the beginning of an stringstream, output, then grab
-            // the string and copy it to the scratch buffer.
-            browserOss.seekp(0);
-            browserOss << star->getStellarClass() << '\0';
-            strcpy(callbackScratch, browserOss.str().c_str());
-            nm->item.pszText = callbackScratch;
-        }
-    }
-}
-
-
-BOOL APIENTRY StarBrowserProc(HWND hDlg,
-                              UINT message,
-                              UINT wParam,
-                              LONG lParam)
-{
-    Simulation* sim = appCore->getSimulation();
-
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        {
-            HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
-            InitStarBrowserColumns(hwnd);
-            InitStarBrowserItems(hwnd, starBrowser->predicate, starBrowser->nStars);
-            CheckRadioButton(hDlg, IDC_RADIO_NEAREST, IDC_RADIO_BRIGHTEST, IDC_RADIO_NEAREST);
-            return(TRUE);
-        }
-
-    case WM_COMMAND:
-        switch (LOWORD(wParam))
-        {
-        case IDOK:
-        case IDCANCEL:
-            delete starBrowser;
-            starBrowser = NULL;
-            EndDialog(hDlg, 0);
-            return TRUE;
-
-        case IDC_BUTTON_CENTER:
-            appCore->charEntered('C');
-            break;
-
-        case IDC_BUTTON_GOTO:
-            appCore->charEntered('G');
-            break;
-
-        case IDC_RADIO_BRIGHTEST:
-            starBrowser->predicate = BrightestStars;
-            break;
-
-        case IDC_RADIO_NEAREST:
-            starBrowser->predicate = NearestStars;
-            break;
-
-        case IDC_BUTTON_REFRESH:
-            {
-                starBrowser->ucPos = sim->getObserver().getPosition();
-                starBrowser->pos = (Point3f) starBrowser->ucPos;
-                HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
-                if (hwnd != 0)
-                {
-                    ListView_DeleteAllItems(hwnd);
-                    InitStarBrowserItems(hwnd, starBrowser->predicate, starBrowser->nStars);
-                }
-            }
-            break;
-        }
-        break;
-
-    case WM_NOTIFY:
-        {
-            LPNMHDR hdr = (LPNMHDR) lParam;
-            
-            if (hdr->code == LVN_GETDISPINFO)
-            {
-                StarBrowserDisplayItem((LPNMLVDISPINFOA) lParam, sim);
-            }
-            else if (hdr->code == LVN_ITEMCHANGED)
-            {
-                LPNMLISTVIEW nm = (LPNMLISTVIEW) lParam;
-                if ((nm->uNewState & LVIS_SELECTED) != 0)
-                {
-                    Star* star = reinterpret_cast<Star*>(nm->lParam);
-                    if (star != NULL)
-                        sim->setSelection(Selection(star));
-                }
-            }
-            else if (hdr->code == LVN_COLUMNCLICK)
-            {
-                HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
-                if (hwnd != 0)
-                {
-                    LPNMLISTVIEW nm = (LPNMLISTVIEW) lParam;
-                    StarBrowserSortInfo sortInfo;
-                    sortInfo.subItem = nm->iSubItem;
-                    sortInfo.ucPos = starBrowser->ucPos;
-                    sortInfo.pos = starBrowser->pos;
-                    ListView_SortItems(hwnd, StarBrowserCompareFunc,
-                                       reinterpret_cast<LPARAM>(&sortInfo));
-                }
-            }
-        }
-        break;
-    }
-
-    return FALSE;
-}
-
-
-
 HMENU CreateMenuBar()
 {
     return LoadMenu(appInstance, MAKEINTRESOURCE(IDR_MAIN_MENU));
@@ -1025,7 +451,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     else if (sel.star != NULL)
     {
         Simulation* sim = appCore->getSimulation();
-        name = sim->getStarDatabase()->getStarName(sel.star->getCatalogNumber());
+        name = sim->getStarDatabase()->getStarName(*sel.star);
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
         AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
         AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
@@ -1578,22 +1004,31 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
             break;
         case ID_NAVIGATION_SSBROWSER:
-            if (ssBrowserWindow == 0)
-                ssBrowserWindow = CreateDialog(appInstance, MAKEINTRESOURCE(IDD_SSBROWSER), hWnd, SolarSystemBrowserProc);
+            if (solarSystemBrowser == NULL)
+                solarSystemBrowser = new SolarSystemBrowser(appInstance, hWnd, appCore);
+            break;
+
+        case ID_CLOSE_SSBROWSER:
+            if (reinterpret_cast<LPARAM>(solarSystemBrowser) == lParam &&
+                solarSystemBrowser != NULL)
+            {
+                delete solarSystemBrowser;
+                solarSystemBrowser = NULL;
+            }
             break;
 
         case ID_NAVIGATION_STARBROWSER:
             if (starBrowser == NULL)
-            {
-                starBrowser = new StarBrowserInstance(appCore->getSimulation());
-                HWND w = CreateDialog(appInstance, MAKEINTRESOURCE(IDD_STARBROWSER), hWnd, StarBrowserProc);
-                if (w == 0)
-                {
-                    delete starBrowser;
-                    starBrowser = NULL;
-                }
-            }
+                starBrowser = new StarBrowser(appInstance, hWnd, appCore);
             break;
+
+        case ID_CLOSE_STARBROWSER:
+            if (reinterpret_cast<LPARAM>(starBrowser) == lParam &&
+                starBrowser != NULL)
+            {
+                delete starBrowser;
+                starBrowser = NULL;
+            }
 
         case ID_RENDER_SHOWHUDTEXT:
             appCore->charEntered('V');
