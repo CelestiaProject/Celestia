@@ -35,7 +35,14 @@ class Value
     inline bool booleanValue(bool&) const;
     inline bool stringValue(std::string&) const;
 
+    bool toBoolean() const;
+    double toNumber() const;
+    std::string toString() const;
+
     void output(std::ostream&) const;
+
+    bool operator==(const Value&) const;
+    bool operator!=(const Value&) const;
 
  private:
     Type type;

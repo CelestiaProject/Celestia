@@ -35,6 +35,14 @@ Expression* Parser::parseFinalExpression()
     {
         return new ConstantExpression(Value(scanner.getNumberValue()));
     }
+    else if (tok == Scanner::KeywordTrue)
+    {
+        return new ConstantExpression(Value(true));
+    }
+    else if (tok == Scanner::KeywordFalse)
+    {
+        return new ConstantExpression(Value(false));
+    }
     else if (tok == Scanner::TokenName)
     {
         return new NameExpression(scanner.getNameValue());
@@ -72,9 +80,41 @@ Expression* Parser::parseSubexpression()
     }
 }
 
+Expression* Parser::parseUnaryExpression()
+{
+    UnaryExpression::Operator op;
+    Scanner::TokenType tok = scanner.nextToken();
+    switch (tok)
+    {
+    case Scanner::TokenNot:
+        op = UnaryExpression::LogicalNot;
+        break;
+    case Scanner::TokenMinus:
+        op = UnaryExpression::Negate;
+        break;
+    default:
+        op = UnaryExpression::InvalidOp;
+        break;
+    }
+
+    if (op == UnaryExpression::InvalidOp)
+    {
+        scanner.pushBack();
+        return parseSubexpression();
+    }
+    else
+    {
+        Expression* expr = parseUnaryExpression();
+        if (expr == NULL)
+            return NULL;
+        else
+            return new UnaryExpression(op, expr);
+    }
+}
+
 Expression* Parser::parseMultiplyExpression()
 {
-    Expression* left = parseSubexpression();
+    Expression* left = parseUnaryExpression();
     if (left == NULL)
         return NULL;
 
@@ -86,7 +126,7 @@ Expression* Parser::parseMultiplyExpression()
             BinaryExpression::Operator op = BinaryExpression::Multiply;
             if (tok == Scanner::TokenDivide)
                 op = BinaryExpression::Divide;
-            Expression* right = parseSubexpression();
+            Expression* right = parseUnaryExpression();
             if (right == NULL)
             {
                 delete left;
@@ -132,9 +172,39 @@ Expression* Parser::parseAddExpression()
     }
 }
 
-Expression* Parser::parseRelationalExpression()
+Expression* Parser::parseEqualityExpression()
 {
     Expression* left = parseAddExpression();
+    if (left == NULL)
+        return NULL;
+
+    for (;;)
+    {
+        Scanner::TokenType tok = scanner.nextToken();
+        if (tok == Scanner::TokenEqual || tok == Scanner::TokenNotEqual)
+        {
+            BinaryExpression::Operator op = BinaryExpression::Equal;
+            if (tok == Scanner::TokenNotEqual)
+                op = BinaryExpression::NotEqual;
+            Expression* right = parseAddExpression();
+            if (right == NULL)
+            {
+                delete left;
+                return NULL;
+            }
+            left = new BinaryExpression(op, left, right);
+        }
+        else
+        {
+            scanner.pushBack();
+            return left;
+        }
+    }
+}
+
+Expression* Parser::parseRelationalExpression()
+{
+    Expression* left = parseEqualityExpression();
     if (left == NULL)
         return NULL;
 
@@ -144,12 +214,6 @@ Expression* Parser::parseRelationalExpression()
         BinaryExpression::Operator op;
         switch (tok)
         {
-        case Scanner::TokenEqual:
-            op = BinaryExpression::Equal;
-            break;
-        case Scanner::TokenNotEqual:
-            op = BinaryExpression::NotEqual;
-            break;
         case Scanner::TokenLesser:
             op = BinaryExpression::Lesser;
             break;
@@ -169,8 +233,7 @@ Expression* Parser::parseRelationalExpression()
 
         if (op != BinaryExpression::InvalidOp)
         {
-            BinaryExpression::Operator op = BinaryExpression::Add;
-            Expression* right = parseAddExpression();
+            Expression* right = parseEqualityExpression();
             if (right == NULL)
             {
                 delete left;
@@ -286,6 +349,45 @@ Statement* Parser::parseCompoundStatement()
 }
 
 
+Statement* Parser::parseWhileStatement()
+{
+    Expression* condition = NULL;
+    Statement* body = NULL;
+
+    if (scanner.nextToken() != Scanner::KeywordWhile)
+    {
+        syntaxError("while statement expected");
+        return NULL;
+    }
+
+    if (scanner.nextToken() != Scanner::TokenOpen)
+    {
+        syntaxError("( expected");
+        return NULL;
+    }
+
+    condition = parseExpression();
+    if (condition == NULL)
+        return NULL;
+
+    if (scanner.nextToken() != Scanner::TokenClose)
+    {
+        syntaxError(") expected");
+        delete condition;
+        return NULL;
+    }
+
+    body = parseStatement();
+    if (body == NULL)
+    {
+        delete condition;
+        return NULL;
+    }
+
+    return new WhileStatement(condition, body);
+}
+
+
 Statement* Parser::parseStatement()
 {
     Scanner::TokenType tok = scanner.nextToken();
@@ -301,6 +403,9 @@ Statement* Parser::parseStatement()
 
     case Scanner::TokenBeginGroup:
         return parseCompoundStatement();
+
+    case Scanner::KeywordWhile:
+        return parseWhileStatement();
 
     default:
         return parseExpressionStatement();

@@ -58,7 +58,10 @@ class UnaryExpression : public Expression
 {
  public:
     enum Operator {
-        Negate,
+        Negate        = 0,
+        LogicalNot    = 1,
+        InvalidOp     = 2,
+        OperatorCount = 3,
     };
 
     UnaryExpression(Operator, Expression*);
@@ -67,7 +70,7 @@ class UnaryExpression : public Expression
 
  private:
     const Operator op;
-    const Expression* expr;
+    Expression* expr;
 };
 
 

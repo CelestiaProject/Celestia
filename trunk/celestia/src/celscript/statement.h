@@ -26,6 +26,8 @@ class Statement
     {
         ControlAdvance,
         ControlReturn,
+        ControlBreak,
+        ControlContinue,
     };
 
     virtual Control execute() { return ControlAdvance; };
@@ -56,6 +58,8 @@ class IfStatement : public Statement
     IfStatement(Expression*, Statement*, Statement*);
     virtual ~IfStatement();
 
+    virtual Control execute();
+
  private:
     Expression* condition;
     Statement* ifClause;
@@ -66,6 +70,21 @@ class IfStatement : public Statement
 class CompoundStatement : public Statement
 {
 };
+
+
+class WhileStatement : public Statement
+{
+ public:
+    WhileStatement(Expression*, Statement*);
+    virtual ~WhileStatement();
+
+    virtual Control execute();
+
+ private:
+    Expression* condition;
+    Statement* body;
+};
+
 
 } // namespace celx
 
