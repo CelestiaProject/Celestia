@@ -62,6 +62,10 @@ class M3DTriangleMesh
     uint16 getVertexCount() const;
     void addVertex(Point3f);
 
+    Point2f getTexCoord(uint16) const;
+    uint16 getTexCoordCount() const;
+    void addTexCoord(Point2f);
+
     void getFace(uint16, uint16&, uint16&, uint16&) const;
     uint16 getFaceCount() const;
     void addFace(uint16, uint16, uint16);
@@ -75,6 +79,7 @@ class M3DTriangleMesh
     
  private:
     std::vector<Point3f> points;
+    std::vector<Point2f> texCoords;
     std::vector<uint16> faces;
     std::vector<uint32> smoothingGroups;
     Mat4f matrix;

@@ -7,14 +7,19 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <iostream.h>
 #include "gl.h"
 #include "3dsmesh.h"
 
 using namespace std;
 
 
+#if 0
 static TriangleList* convertTriangleMesh(M3DTriangleMesh& mesh,
                                          const M3DScene& scene);
+#endif
+static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
+                                       const M3DScene& scene);
 
 Mesh3DS::Mesh3DS(const M3DScene& scene)
 {
@@ -28,8 +33,8 @@ Mesh3DS::Mesh3DS(const M3DScene& scene)
                 M3DTriangleMesh* mesh = model->getTriMesh(j);
                 if (mesh != NULL)
                 {
-                    triLists.insert(triLists.end(),
-                                    convertTriangleMesh(*mesh, scene));
+                    vertexLists.insert(vertexLists.end(),
+                                       convertToVertexList(*mesh, scene));
                 }
             }
         }
@@ -39,7 +44,7 @@ Mesh3DS::Mesh3DS(const M3DScene& scene)
 
 Mesh3DS::~Mesh3DS()
 {
-    for (TriListVec::iterator i = triLists.begin(); i != triLists.end(); i++)
+    for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
         if (*i != NULL)
             delete *i;
 }
@@ -47,7 +52,7 @@ Mesh3DS::~Mesh3DS()
 
 void Mesh3DS::render()
 {
-    for (TriListVec::iterator i = triLists.begin(); i != triLists.end(); i++)
+    for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
         (*i)->render();
 }
 
@@ -56,7 +61,7 @@ void Mesh3DS::normalize()
 {
     AxisAlignedBox bbox;
 
-    for (TriListVec::iterator i = triLists.begin(); i != triLists.end(); i++)
+    for (VertexListVec::iterator i = vertexLists.begin(); i != vertexLists.end(); i++)
         bbox.include((*i)->getBoundingBox());
 
     Point3f center = bbox.getCenter();
@@ -69,19 +74,24 @@ void Mesh3DS::normalize()
 
     printf("Normalize: %f\n", maxExtent);
 
-    for (i = triLists.begin(); i != triLists.end(); i++)
+    for (i = vertexLists.begin(); i != vertexLists.end(); i++)
         (*i)->transform(Point3f(0, 0, 0) - center, 1.0f / maxExtent);
 }
 
 
-static TriangleList* convertTriangleMesh(M3DTriangleMesh& mesh,
-                                         const M3DScene& scene)
+static VertexList* convertToVertexList(M3DTriangleMesh& mesh,
+                                       const M3DScene& scene)
 {
-    TriangleList* tl = new TriangleList();
     int nFaces = mesh.getFaceCount();
     int nVertices = mesh.getVertexCount();
+    int nTexCoords = mesh.getTexCoordCount();
     bool smooth = (mesh.getSmoothingGroupCount() == nFaces);
     int i;
+
+    uint32 parts = VertexList::VertexNormal;
+    if (nTexCoords == nVertices)
+        parts |= VertexList::TexCoord0;
+    VertexList* vl = new VertexList(parts);
     
     Vec3f* faceNormals = new Vec3f[nFaces];
     Vec3f* vertexNormals = new Vec3f[nFaces * 3];
@@ -196,12 +206,21 @@ static TriangleList* convertTriangleMesh(M3DTriangleMesh& mesh,
     // build the triangle list
     for (i = 0; i < nFaces; i++)
     {
-        uint16 v0, v1, v2;
-        mesh.getFace(i, v0, v1, v2);
+        uint16 triVert[3];
+        mesh.getFace(i, triVert[0], triVert[1], triVert[2]);
 
-        tl->addTriangle(mesh.getVertex(v0), vertexNormals[i * 3],
-                        mesh.getVertex(v1), vertexNormals[i * 3 + 1],
-                        mesh.getVertex(v2), vertexNormals[i * 3 + 2]);
+        for (int j = 0; j < 3; j++)
+        {
+            VertexList::Vertex v;
+            v.point = mesh.getVertex(triVert[j]);
+            v.normal = vertexNormals[i * 3 + j];
+            if ((parts & VertexList::TexCoord0) != 0)
+            {
+                v.texCoords[0] = mesh.getTexCoord(triVert[j]);
+                cout << "vt " << v.texCoords[0].x << ',' << v.texCoords[0].y << '\n';
+            }
+            vl->addVertex(v);
+        }
     }
 
     // set the color
@@ -209,7 +228,6 @@ static TriangleList* convertTriangleMesh(M3DTriangleMesh& mesh,
         string materialName = mesh.getMaterialName();
         if (materialName.length() > 0)
         {
-            tl->setColorMode(1);
             int nMaterials = scene.getMaterialCount();
             for (i = 0; i < nMaterials; i++)
             {
@@ -217,7 +235,7 @@ static TriangleList* convertTriangleMesh(M3DTriangleMesh& mesh,
                 if (materialName == material->getName())
                 {
                     M3DColor diffuse = material->getDiffuseColor();
-                    tl->setColor(Vec3f(diffuse.red, diffuse.green, diffuse.blue));
+                    vl->setDiffuseColor(Color(diffuse.red, diffuse.green, diffuse.blue));
                     break;
                 }
             }
@@ -241,5 +259,5 @@ static TriangleList* convertTriangleMesh(M3DTriangleMesh& mesh,
         delete[] vertexFaces;
     }
 
-    return tl;
+    return vl;
 }

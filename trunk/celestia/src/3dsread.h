@@ -16,7 +16,7 @@
 #include "3dsmodel.h"
 
 M3DScene* Read3DSFile(std::ifstream& in);
-M3DScene* Read3DSFile(std::string filename);
-M3DScene* Read3DSFile(char* filename);
+M3DScene* Read3DSFile(const std::string& filename);
+// M3DScene* Read3DSFile(char* filename);
 
 #endif // _3DSREAD_H_
