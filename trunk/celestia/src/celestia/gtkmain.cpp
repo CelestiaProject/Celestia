@@ -67,6 +67,9 @@ static int numListStars = 100;
 static int lastX = 0;
 static int lastY = 0;
 
+// Keep track of fullscreen mode
+static int fullscreen = 0;
+
 typedef struct _checkFunc CheckFunc;
 typedef int (*Callback)(int, char *);
 
@@ -351,6 +354,19 @@ static void menuUnMark()
 		sim->getUniverse()->unmarkObject(sim->getSelection(), 1);
 }
 
+// CALLBACK: Toggle fullscreen mode
+static void menuFullScreen()
+{
+	if (fullscreen == 0) {
+		gtk_window_fullscreen(GTK_WINDOW(mainWindow));
+		fullscreen = 1;
+	}
+	else {
+		gtk_window_unfullscreen(GTK_WINDOW(mainWindow));
+		fullscreen = 0;
+	}
+}
+
 static void menuAbout()
 {
     const gchar* authors[] = {
@@ -464,11 +480,17 @@ void menuViewerSize()
     GtkWidget* menu = gtk_menu_new();
 
 	char res[15];
-	sprintf(res, "Current: %d x %d", oglArea->allocation.width, oglArea->allocation.height);
+
+	if (fullscreen) {
+		sprintf(res, "Fullscreen");
+		gtk_widget_set_sensitive(menubox, FALSE);
+	}
+	else {
+		sprintf(res, "Current: %d x %d", oglArea->allocation.width, oglArea->allocation.height);
+	}
 
 	GtkWidget *item = gtk_menu_item_new_with_label(res);
     gtk_menu_append(GTK_MENU(menu), item);
-
 	gtk_menu_append(GTK_MENU(menu), GTK_WIDGET(gtk_separator_menu_item_new()));
 
     for (int i = 0; i < int(sizeof(resolutions) / sizeof(i)); i++)
@@ -2622,6 +2644,7 @@ static GtkItemFactoryEntry menuItems[] =
     { (gchar *)"/Time/Show _Local Time",               NULL,                    NULL,             Menu_ShowLocTime, (gchar *)"<ToggleItem>", NULL },
     { (gchar *)"/_Render",                             NULL,                    NULL,             0,                (gchar *)"<Branch>",     NULL },
     { (gchar *)"/Render/Set Viewer Size...",           NULL,                    menuViewerSize,   0,                (gchar *)"<StockItem>",  GTK_STOCK_ZOOM_FIT },
+    { (gchar *)"/Render/Toggle Full Screen",           (gchar *)"<alt>Return",  menuFullScreen,   0,                NULL,                    NULL },
     { (gchar *)"/Render/-",                            NULL,                    NULL,             0,                (gchar *)"<Separator>",  NULL },
     { (gchar *)"/Render/View _Options...",             NULL,                    menuOptions,      0,                (gchar *)"<StockItem>",  GTK_STOCK_PREFERENCES },
     { (gchar *)"/Render/Show _Info Text",              (gchar *)"V",            menuShowInfo,     0,                NULL,                    NULL },
