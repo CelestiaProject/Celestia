@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <cstdio>
 #include "gl.h"
 #include "astro.h"
 #include "glext.h"
@@ -47,6 +48,21 @@ static CTexture* glareTex = NULL;
 static CTexture* galaxyTex = NULL;
 static CTexture* shadowTex = NULL;
 static CTexture* veilTex = NULL;
+
+struct SphericalCoordLabel
+{
+    string label;
+    float ra;
+    float dec;
+
+    SphericalCoordLabel() : ra(0), dec(0) {};
+    SphericalCoordLabel(float _ra, float _dec) : ra(_ra), dec(_dec)
+    {
+    }
+};
+
+static int nCoordLabels = 32;
+static SphericalCoordLabel* coordLabels = NULL;
 
 
 Renderer::Renderer() :
@@ -235,43 +251,46 @@ bool Renderer::init(int winWidth, int winHeight)
             // diffuseLightTex = CreateDiffuseLightCubeMap(64);
         }
 
+        // Create labels for celestial sphere
+        {
+            char buf[10];
+            int i;
+
+            coordLabels = new SphericalCoordLabel[nCoordLabels];
+            for (i = 0; i < 12; i++)
+            {
+                coordLabels[i].ra = i * 2;
+                coordLabels[i].dec = 0;
+                sprintf(buf, "%dh", i * 2);
+                coordLabels[i].label = string(buf);
+            }
+
+            coordLabels[12] = SphericalCoordLabel(0, -75);
+            coordLabels[13] = SphericalCoordLabel(0, -60);
+            coordLabels[14] = SphericalCoordLabel(0, -45);
+            coordLabels[15] = SphericalCoordLabel(0, -30);
+            coordLabels[16] = SphericalCoordLabel(0, -15);
+            coordLabels[17] = SphericalCoordLabel(0,  15);
+            coordLabels[18] = SphericalCoordLabel(0,  30);
+            coordLabels[19] = SphericalCoordLabel(0,  45);
+            coordLabels[20] = SphericalCoordLabel(0,  60);
+            coordLabels[21] = SphericalCoordLabel(0,  75);
+            for (i = 22; i < nCoordLabels; i++)
+            {
+                coordLabels[i].ra = 12;
+                coordLabels[i].dec = coordLabels[i - 10].dec;
+            }
+
+            for (i = 12; i < nCoordLabels; i++)
+            {
+                char buf[10];
+                sprintf(buf, "%d", (int) coordLabels[i].dec);
+                coordLabels[i].label = string(buf);
+            }
+        }
+
         commonDataInitialized = true;
     }
-
-#if 0
-    {
-        Galaxy* g = new Galaxy();
-        g->setName("Milky Way");
-        g->setPosition(Point3d(28000, 20, 0));
-        Quatf q(1);
-        q.setAxisAngle(Vec3f(1, 0, 0), degToRad(50.0f));
-        g->setOrientation(q);
-        g->setRadius(50000.0f);
-        g->setType(Galaxy::SBa);
-        galaxies.insert(galaxies.end(), g);
-
-        g = new Galaxy();
-        g->setName("Andromeda");
-        g->setPosition(Point3d(2000000, 1000000, 2000000));
-        g->setRadius(95000.0f);
-        g->setType(Galaxy::Sb);
-        galaxies.insert(galaxies.end(), g);
-
-        g = new Galaxy();
-        g->setName("LMC");
-        g->setPosition(Point3d(100000, -100000, 100000));
-        g->setRadius(15000.0f);
-        g->setType(Galaxy::Irr);
-        galaxies.insert(galaxies.end(), g);
-
-        g = new Galaxy();
-        g->setName("SMC");
-        g->setPosition(Point3d(50000, -150000, 80000));
-        g->setRadius(12500.0f);
-        g->setType(Galaxy::Irr);
-        galaxies.insert(galaxies.end(), g);
-    }
-#endif
 
     cout << "GL extensions supported:\n";
     cout << glGetString(GL_EXTENSIONS) << '\n';
@@ -532,6 +551,14 @@ void Renderer::render(const Observer& observer,
 
     clearLabels();
     renderList.clear();
+
+    if ((renderFlags & ShowCelestialSphere) != 0)
+    {
+        glColor4f(0.5f, 0.0, 0.7f, 0.5f);
+        glDisable(GL_TEXTURE_2D);
+        renderCelestialSphere(observer);
+        glEnable(GL_TEXTURE_2D);
+    }
 
     if ((renderFlags & ShowGalaxies) != 0 && galaxies != NULL)
         renderGalaxies(*galaxies, observer);
@@ -1205,7 +1232,8 @@ void Renderer::renderPlanet(const Body& body,
             int wholeRotations = (int) rotations;
             double remainder = rotations - wholeRotations;
             planetRotation = -remainder * 2 * PI;
-            glRotatef((float) (-remainder * 360.0), 0, 1, 0);
+            glRotatef((float) (-remainder * 360.0 - radToDeg(body.getRotationPhase())),
+                      0, 1, 0);
         }
 
         float discSize = body.getRadius() / distance * RENDER_DISTANCE;
@@ -2067,6 +2095,51 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
     }
 }
 
+
+void Renderer::renderCelestialSphere(const Observer& observer)
+{
+    int raDivisions = 24;
+    int decDivisions = 18;
+    int nSections = 60;
+    float radius = 10.0f;
+
+    int i;
+    for (i = 0; i < raDivisions; i++)
+    {
+        float ra = (float) i / (float) raDivisions * 24.0f;
+
+        glBegin(GL_LINE_STRIP);
+        for (int j = 0; j <= nSections; j++)
+        {
+            float dec = ((float) j / (float) nSections) * 180 - 90;
+            glVertex(astro::equatorialToCelestialCart(ra, dec, radius));
+        }
+        glEnd();
+    }
+
+    for (i = 1; i < decDivisions; i++)
+    {
+        float dec = (float) i / (float) decDivisions * 180 - 90;
+        glBegin(GL_LINE_LOOP);
+        for (int j = 0; j < nSections; j++)
+        {
+            float ra = (float) j / (float) nSections * 24.0f;
+            glVertex(astro::equatorialToCelestialCart(ra, dec, radius));
+        }
+        glEnd();
+    }
+
+    for (i = 0; i < nCoordLabels; i++)
+    {
+        Point3f pos = astro::equatorialToCelestialCart(coordLabels[i].ra,
+                                                       coordLabels[i].dec,
+                                                       radius);
+        if ((pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
+        {
+            addLabel(coordLabels[i].label, Color(0.0f, 0.0f, 1.0f, 0.7f), pos);
+        }
+    }
+}
 
 
 void Renderer::labelStars(const vector<Star*>& stars,
