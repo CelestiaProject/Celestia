@@ -48,6 +48,8 @@ O  : Toggle planet orbits
 Ctrl+A : Toggle atmospheres
 I  : Toggle cloud textures
 Ctrl+L : Toggle night side planet maps (light pollution)
+Ctrl+E : Toggle eclipse shadow rendering
+Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
 ;  : Show an earth-based equatorial coordinate sphere
 [  : Decrease limiting magnitude (fewer stars visible)
 ]  : Increase limiting magnitude (more stars visible)
