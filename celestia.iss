@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.2.2
+AppVerName=Celestia 1.2.4
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -68,6 +68,10 @@ Source: "textures\medres\ganymede.jpg"; DestDir: "{app}/textures/medres"; CopyMo
 Source: "textures\medres\gasgiant.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\iapetus.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\io.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\iss-cap1.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\iss-mc1.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\iss-mc31.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
+Source: "textures\medres\iss-sol1.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\jupiter.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\jupiterlike.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
 Source: "textures\medres\mars.jpg"; DestDir: "{app}/textures/medres"; CopyMode: alwaysoverwrite
