@@ -286,7 +286,6 @@ void BuildFavoritesMenu(HMENU menuBar,
                         int subMenuIndex = 0;
                         int childResIndex = 0;
                         string folderName = fav->name;
-                        clog << "Folder: " << folderName << '\n';
 
                         for (FavoritesList::iterator childIter = favorites->begin();
                              childIter != favorites->end();
