@@ -123,3 +123,26 @@ For example, instead of this:
    cmodfix -b in.cmod > out.cmod
 Write this:
    cmodfix -b in.cmod out.cmod
+
+
+
+LICENSE:
+
+The 3dstocmod and cmodfix programs are free software.  You can redistribute
+and modify them under the terms of the GNU General Public License, the full
+text of which is in the COPYING file.  The source code for the programs is
+available for free from the Celestia project on SourceForge:
+http://www.sourceforge.net/projects/celestia/
+
+cmodfix may be optionally compiled with NVIDIA's NvTriStrip library, available
+in source form from NVIDIA's developer web site:
+http://developer.nvidia.com/object/nvtristrip_library.html
+NvTriStrip is /not/ covered by the same license as the cmodtools.
+
+
+
+CREDITS:
+
+The cmod tools were developed by Chris Laurel as part of the Celestia project.
+Send bug reports and suggesestion to claurel@shatters.net.
+
