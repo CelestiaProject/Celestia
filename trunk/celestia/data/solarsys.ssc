@@ -44,6 +44,7 @@ Planets [
 {
 	Name   "Earth"
 	Texture "earth.jpg"
+	CompressTexture false    # looks bad up close with this enabled
 	Color [ 0.85 0.85 1.0 ]
 	Radius 6378
 	Oblateness 0.003
@@ -83,6 +84,7 @@ Planets [
 {
 	Name   "Mars"
 	Texture "mars.jpg"
+	CompressTexture true
 	BumpMap "marsbump1k.jpg"
 	Color   [ 1 0.75 0.7 ]
 	Radius 3394
