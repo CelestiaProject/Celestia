@@ -574,17 +574,17 @@ void ShowWWWInfo(const Selection& sel)
     else if (sel.star != NULL)
     {
         char name[32];
-        if ((sel.star->getCatalogNumber() & 0xf0000000) == 0)
-            sprintf(name, "HD%d", sel.star->getCatalogNumber());
-        else
-            sprintf(name, "HIP%d", sel.star->getCatalogNumber() & ~0xf0000000);
+        sprintf(name, "HIP%d", sel.star->getCatalogNumber() & ~0xf0000000);
 
         url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
     }
 
-    char* command = "c:\\program files\\internet explorer\\iexplore";
-
-    _spawnl(_P_NOWAIT, command, "iexplore", url.c_str(), NULL);
+    ShellExecute(mainWindow,
+                 "open",
+                 url.c_str(),
+                 NULL,
+                 NULL,
+                 0);
 }
 
 
@@ -638,6 +638,24 @@ void handleKey(WPARAM key, bool down)
     case VK_F7:
         k = CelestiaCore::Key_F7;
         break;
+     case VK_NUMPAD2:
+         k = CelestiaCore::Key_NumPad2;
+         break;
+     case VK_NUMPAD4:
+         k = CelestiaCore::Key_NumPad4;
+         break;
+     case VK_NUMPAD6:
+         k = CelestiaCore::Key_NumPad6;
+         break;
+     case VK_NUMPAD7:
+         k = CelestiaCore::Key_NumPad7;
+         break;
+     case VK_NUMPAD8:
+         k = CelestiaCore::Key_NumPad8;
+         break;
+     case VK_NUMPAD9:
+         k = CelestiaCore::Key_NumPad9;
+         break;
     }
 
     if (k >= 0)
@@ -1197,6 +1215,15 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
     case WM_CHAR:
         {
+             // Bits 16-23 of lParam specify the scan code of the key pressed.
+             // Ignore all keypad input, this will be handled by WM_KEYDOWN
+             // messages.
+             char cScanCode = (char) (HIWORD(lParam) & 0xFF);
+             if((cScanCode >= 71 && cScanCode <= 73) ||
+                (cScanCode >= 75 && cScanCode <= 77) ||
+                (cScanCode >= 79 && cScanCode <= 83))
+                 break;
+
             Renderer* r = appCore->getRenderer();
             int oldRenderFlags = r->getRenderFlags();
             int oldLabelMode = r->getLabelMode();
