@@ -103,6 +103,24 @@ void CompoundStatement::addStatement(Statement* st)
 
 
 
+ReturnStatement::ReturnStatement(Expression* _expr) :
+    expr(_expr)
+{
+};
+
+ReturnStatement::~ReturnStatement()
+{
+    delete expr;
+}
+
+Statement::Control ReturnStatement::execute(ExecutionContext& context)
+{
+    Value val = expr->eval(context);
+
+    return ControlReturn;
+}
+
+
 IfStatement::IfStatement(Expression* _cond, Statement* _ifClause,
                          Statement* _elseClause) :
     condition(_cond), ifClause(_ifClause), elseClause(_elseClause)

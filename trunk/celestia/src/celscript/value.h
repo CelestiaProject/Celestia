@@ -14,6 +14,7 @@
 #include <string>
 #include <iostream>
 #include <celscript/type.h>
+#include <celscript/function.h>
 
 namespace celx
 {
@@ -26,6 +27,7 @@ class Value
     Value(double);
     Value(const std::string&);
     Value(bool);
+    Value(Function*);
 
     ~Value();
 
@@ -35,6 +37,7 @@ class Value
     inline bool numberValue(double&) const;
     inline bool booleanValue(bool&) const;
     inline bool stringValue(std::string&) const;
+    inline bool functionValue(Function*&) const;
 
     bool toBoolean() const;
     double toNumber() const;
@@ -52,6 +55,7 @@ class Value
         bool boolVal;
         double numVal;
         const std::string* strVal;
+        Function* funcVal;
     } val;
 };
 
@@ -95,6 +99,19 @@ bool Value::stringValue(std::string& x) const
     else
     {
         x = *val.strVal;
+        return true;
+    }
+}
+
+bool Value::functionValue(Function*& f) const
+{
+    if (type != FunctionType)
+    {
+        return false;
+    }
+    else
+    {
+        f = val.funcVal;
         return true;
     }
 }

@@ -18,11 +18,13 @@ namespace celx
 
 enum Type
 {
-    NilType     = 0,
-    NumberType  = 1,
-    StringType  = 2,
-    VectorType  = 3,
-    BooleanType = 4,
+    NilType      = 0,
+    NumberType   = 1,
+    StringType   = 2,
+    VectorType   = 3,
+    BooleanType  = 4,
+    FunctionType = 5,
+    ObjectType   = 6,
     InvalidType = -1,
 };
 

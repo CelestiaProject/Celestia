@@ -21,6 +21,7 @@ OBJS=\
 	$(INTDIR)\environment.obj \
 	$(INTDIR)\execution.obj \
 	$(INTDIR)\expression.obj \
+	$(INTDIR)\function.obj \
 	$(INTDIR)\parser.obj \
 	$(INTDIR)\scanner.obj \
 	$(INTDIR)\statement.obj \

@@ -91,6 +91,11 @@ Scanner::TokenType Scanner::nextToken()
                 newToken = TokenClose;
                 nextChar = readChar();                
             }
+            else if (nextChar == ',')
+            {
+                newToken = TokenComma;
+                nextChar = readChar();                
+            }
             else if (nextChar == '+')
             {
                 state = PlusState;
@@ -195,6 +200,12 @@ Scanner::TokenType Scanner::nextToken()
                     newToken = KeywordElse;
                 else if (textToken == "var")
                     newToken = KeywordVar;
+                else if (textToken == "return")
+                    newToken = KeywordReturn;
+                else if (textToken == "function")
+                    newToken = KeywordFunction;
+                else if (textToken == "lambda")
+                    newToken = KeywordLambda;
                 else if (textToken == "null")
                     newToken = KeywordNull;
                 else if (textToken == "true")
