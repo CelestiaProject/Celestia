@@ -648,6 +648,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
             u /= patchesPerUSubtex;
             v /= patchesPerVSubtex;
 
+            if (nTexturesUsed > 1)
+                glx::glActiveTextureARB(GL_TEXTURE0_ARB + tex);
             TextureTile tile = textures[tex]->getTile(ri.texLOD[tex],
                                                       uTexSplit - u - 1,
                                                       vTexSplit - v - 1);
@@ -656,15 +658,12 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
             u0[tex] = u0[tex] * tile.du + tile.u;
             v0[tex] = v0[tex] * tile.dv + tile.v;
 
-            unsigned int tn = tile.texID;
             // We track the current texture to avoid unnecessary and costly
             // texture state changes.
-            if (tn != subtextures[tex])
+            if (tile.texID != subtextures[tex])
             {
-                if (nTexturesUsed > 1)
-                    glx::glActiveTextureARB(GL_TEXTURE0_ARB + tex);
-                glBindTexture(GL_TEXTURE_2D, tn);
-                subtextures[tex] = tn;
+                glBindTexture(GL_TEXTURE_2D, tile.texID);
+                subtextures[tex] = tile.texID;
             }
         }
     }
