@@ -75,6 +75,7 @@ static Texture* galaxyTex = NULL;
 static Texture* shadowTex = NULL;
 
 static Texture* eclipseShadowTextures[4];
+static Texture* shadowMaskTexture = NULL;
 
 static ResourceHandle starTexB = InvalidResource;
 static ResourceHandle starTexA = InvalidResource;
@@ -229,6 +230,26 @@ void ShadowTextureFunction::operator()(float u, float v, float w,
     pixel[2] = pixVal;
 };
 
+
+class ShadowMaskTextureFunction : public TexelFunctionObject
+{
+public:
+    ShadowMaskTextureFunction() {};
+    virtual void operator()(float u, float v, float w, unsigned char* pixel);
+    float dummy;
+};
+
+void ShadowMaskTextureFunction::operator()(float u, float v, float w,
+                                           unsigned char* pixel)
+{
+    unsigned char a = u > 0.0f ? 255 : 0;
+    pixel[0] = a;
+    pixel[1] = a;
+    pixel[2] = a;
+    pixel[3] = a;
+}
+
+
 static void IllumMapEval(float x, float y, float z,
                          unsigned char* pixel)
 {
@@ -342,6 +363,11 @@ bool Renderer::init(int winWidth, int winHeight)
                 }
             }
         }
+
+        // Create the shadow mask texture
+        shadowMaskTexture = CreateProceduralTexture(128, 1, GL_RGBA,
+                                                    ShadowMaskTextureFunction());
+        shadowMaskTexture->bindName();
 
         starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg", 0));
         starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg", 0));
@@ -882,10 +908,6 @@ void Renderer::autoMag(float& faintestMag)
       float fieldCorr = 2.0 * FOV/(fov + FOV);
       faintestMag = faintestAutoMag45deg * sqrt(fieldCorr);
       saturationMag = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
-#if 0
-    cout <<"faintestMag, satMag: "<<faintestMag<<'\t'<< saturationMag<<endl;  
-#endif
-      
 }
 
 
@@ -2099,19 +2121,42 @@ static void renderSphereVertexAndFragmentShader(const RenderInfo& ri,
 }
 
 
+static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
+{
+    float f[4];
+    f[0] = plane.x; f[1] = plane.y; f[2] = plane.z; f[3] = plane.w;
+    glTexGenfv(coord, mode, f);
+}
+
 static void renderShadowedMeshDefault(Mesh* mesh,
                                       const RenderInfo& ri,
                                       const Frustum& frustum,
-                                      float* sPlane, float* tPlane)
+                                      float *sPlane,
+                                      float *tPlane,
+                                      const Vec3f& lightDir,
+                                      bool useShadowMask)
 {
     glEnable(GL_TEXTURE_GEN_S);
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGenfv(GL_S, GL_OBJECT_PLANE, sPlane);
+    //texGenPlane(GL_S, GL_OBJECT_PLANE, sPlane);
     glEnable(GL_TEXTURE_GEN_T);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, tPlane);
+
+    if (useShadowMask)
+    {
+        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+        glEnable(GL_TEXTURE_GEN_S);
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+        texGenPlane(GL_S, GL_OBJECT_PLANE,
+                    Vec4f(lightDir.x, lightDir.y, lightDir.z, 0.5f));
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    }
+
     glColor4f(1, 1, 1, 1);
     glDisable(GL_LIGHTING);
+
     if (mesh == NULL)
     {
         lodSphere->render(Mesh::Normals | Mesh::Multipass,
@@ -2122,6 +2167,13 @@ static void renderShadowedMeshDefault(Mesh* mesh,
         mesh->render(Mesh::Normals | Mesh::Multipass, ri.lod);
     }
     glEnable(GL_LIGHTING);
+
+    if (useShadowMask)
+    {
+        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+        glDisable(GL_TEXTURE_GEN_S);
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    }
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
 }
@@ -2129,12 +2181,16 @@ static void renderShadowedMeshDefault(Mesh* mesh,
 
 static void renderShadowedMeshVertexShader(const RenderInfo& ri,
                                            const Frustum& frustum,
-                                           float* sPlane, float* tPlane)
+                                           float* sPlane, float* tPlane,
+                                           Vec3f& lightDir,
+                                           bool useShadowMask)
 {
     vp::enable();
     vp::parameter(20, 1, 1, 1, 1); // color = white
     vp::parameter(41, sPlane[0], sPlane[1], sPlane[2], sPlane[3]);
     vp::parameter(42, tPlane[0], tPlane[1], tPlane[2], tPlane[3]);
+    if (useShadowMask)
+        vp::parameter(43, lightDir.x, lightDir.y, lightDir.z, 0.5f);
     vp::use(vp::shadowTexture);
     lodSphere->render(Mesh::Normals | Mesh::Multipass, frustum, ri.lod, NULL);
     vp::disable();
@@ -2387,6 +2443,7 @@ renderEclipseShadows(Mesh* mesh,
         // pass using multitexture.
         if (eclipseTex != NULL)
             eclipseTex->bind();
+        // shadowMaskTexture->bind();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ZERO, GL_SRC_COLOR);
 
@@ -2403,6 +2460,18 @@ renderEclipseShadows(Mesh* mesh,
             glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
             glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
             glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
+
+            // The second texture unit has the shadow 'mask'
+            glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+            glEnable(GL_TEXTURE_2D);
+            shadowMaskTexture->bind();
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+            glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
+            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
+            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
         }
 
         // Since invariance between nVidia's vertex programs and the
@@ -2412,16 +2481,26 @@ renderEclipseShadows(Mesh* mesh,
         if (useVertexShader && mesh == NULL)
         {
             renderShadowedMeshVertexShader(ri, viewFrustum,
-                                           sPlane, tPlane);
+                                           sPlane, tPlane,
+                                           dir,
+                                           ri.useTexEnvCombine);
         }
         else
         {
             renderShadowedMeshDefault(mesh, ri, viewFrustum,
-                                      sPlane, tPlane);
+                                      sPlane, tPlane,
+                                      dir,
+                                      ri.useTexEnvCombine);
         }
 
         if (ri.useTexEnvCombine)
         {
+            // Disable second texture unit
+            glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+            glDisable(GL_TEXTURE_2D);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+
             float color[4] = { 0, 0, 0, 0 };
             glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -2489,7 +2568,7 @@ renderRingShadows(Mesh* mesh,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
 
     renderShadowedMeshDefault(mesh, ri, viewFrustum,
-                              sPlane, tPlane);
+                              sPlane, tPlane, Vec3f(0.0f, 0.0f, 0.0f), false);
 
     if (ri.useTexEnvCombine)
     {

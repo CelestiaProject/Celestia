@@ -8,6 +8,9 @@
 # matrices.
 # c[20] contains the color
 # c[41]..c[42] contain the texture transformation
+# c[43] contains the light direction; used to compute texture coordinates
+#    for a 'shadow mask' texture used to prevent shadows from appearing on
+#    the wrong side of an object.
 
 # Transform the vertex by the modelview matrix
 DP4   o[HPOS].x, c[0], v[OPOS];
@@ -18,6 +21,8 @@ DP4   o[HPOS].w, c[3], v[OPOS];
 # Generate texture coordinates
 DP4   o[TEX0].x, c[41], v[OPOS];
 DP4   o[TEX0].y, c[42], v[OPOS];
+
+DP4   o[TEX1].x, c[43], v[OPOS];
 
 # Color
 MOV   o[COL0], c[20];
