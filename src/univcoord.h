@@ -39,6 +39,8 @@ class UniversalCoord
     friend UniversalCoord operator-(const UniversalCoord&, const Vec3d&);
     friend UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
 
+    double distanceTo(const UniversalCoord&);
+
     BigFix x, y, z;
 };
 

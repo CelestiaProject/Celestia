@@ -8,6 +8,8 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
+#include <cmath>
+#include "mathlib.h"
 #include "univcoord.h"
 
 
@@ -43,6 +45,13 @@ UniversalCoord::operator Point3d() const
 UniversalCoord::operator Point3f() const
 {
     return Point3f((float) x, (float) y, (float) z);
+}
+
+double UniversalCoord::distanceTo(const UniversalCoord& uc)
+{
+    return sqrt(square((double) (uc.x - x)) +
+                square((double) (uc.y - y)) +
+                square((double) (uc.z - z)));
 }
 
 Vec3d operator-(const UniversalCoord& uc0, const UniversalCoord& uc1)
