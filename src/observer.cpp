@@ -24,7 +24,7 @@ UniversalCoord Observer::getPosition() const
 }
 
 
-Point3d Observer::getRelativePosition(Point3d& p) const
+Point3d Observer::getRelativePosition(const Point3d& p) const
 {
     BigFix x(p.x);
     BigFix y(p.y);
@@ -43,7 +43,7 @@ Quatf Observer::getOrientation() const
 }
 
 
-void Observer::setOrientation(Quatf q)
+void Observer::setOrientation(const Quatf& q)
 {
     orientation = q;
 }
@@ -55,19 +55,19 @@ Vec3d Observer::getVelocity() const
 }
 
 
-void Observer::setVelocity(Vec3d v)
+void Observer::setVelocity(const Vec3d& v)
 {
     velocity = v;
 }
 
 
-void Observer::setPosition(Point3d p)
+void Observer::setPosition(const Point3d& p)
 {
     position = UniversalCoord(p);
 }
 
 
-void Observer::setPosition(UniversalCoord p)
+void Observer::setPosition(const UniversalCoord& p)
 {
     position = p;
 }
