@@ -16,7 +16,6 @@ USER INTERFACE
 * Add preferences for text color to config file
 * Dialog box for displaying detailed information about a star or planet
 * Create a manual
-* Improve web info feature
 * Star browser: flag stars with planetary systems
 * Star browser: allow user to select how many stars to show
 * Solar system browser: add icons
@@ -26,22 +25,18 @@ USER INTERFACE
 VISUALS
 * Shadows from rings on planet
 * Get a real texture map for Eros
-* Change the color of the light illuminating planets based on star class;
-  probably only M and maybe K class stars should have a noticeable hue
-  darkening, change  convection cell size based on spectral class, etc.
 * Non-Lambertian illumination functions for planets
 * Add haloes around bright planets similar to the ones around stars
 * Comets with dust and ion tails
 * Add some deep sky objects--planetary nebula, supernova remnants, etc.
 * Procedural textures for extrasolar planets
-* Atmospheric veils around planets
 * Bump mapped cloud layers
+* Make atmospheres work for oblate planets
 * Render galaxies with colors--bluish spiral arms, yellowish center
 * Render dark dust bands in galaxies
 * Add textures to ISS and Mir models
 
 POLISH
-* Get a real installer working for Windows version
 * Tutorial mode
 * Add a flashy intro screen
 * Add screen shot feature
@@ -50,6 +45,8 @@ POLISH
 * Use Greek letters in Bayer designations
 * Make the demo loop
 * Add a demo mode that visits random targets
+* Compute accurate altitude above oblate planets/stars using point-to-ellipsoid
+  distance function.
 
 SIMULATION ACCURACY
 * Fix apparent magnitude calculation for planets
@@ -64,7 +61,6 @@ SIMULATION ACCURACY
 BUGS
 * Find out why picking sometimes stops working, apparently after orbiting (fixed?)
 * Fix wobbling of planet shadow on rings when time is accelerated
-* Find out about texture problems on Matrox G450
 * Investigate possible visual anomalies with ring shadows on ATI Rage cards
 
 OPTIMIZATION
@@ -89,3 +85,5 @@ MISC
   a Celestia universe
 * Allow lists of bodies from different .ssc files to be incorporated into
   the same planetary system
+* Switch to UNICODE
+* Internationalization

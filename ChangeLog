@@ -287,7 +287,50 @@ Code:
 
 
 1.1.4
+* Fixed text rendering problems that appeared on Matrox cards
 * Windows version: fixed bug that broke web info for stars
 * Windows version: improved web info feature so that it doesn't launch a new
   instance of IE every time.
+* Added eight new extrasolar planets announced 15 Oct
+* Fixed goto command so that it doesn't ever place you inside a planet
+* Allow navigation with number pad
+* Much greater resolution in planet meshes
+* Implemented atmospheric effects
+* Modified center so it does not change the frame of reference--will prevent
+  suddenly leaving the ground when used on the surface of a planet.
+* Changed rendering order so star and constellation labels are obscured by
+  planets.
+* Corrected satellite obliquities--they should have been relative to their
+  planets equatorial plane.
+* Eliminated premature clipping of irregular bodies at close range
+* Fixed problem with lighting on S3 Savage4
+* Fixed clipping bug with fields of view greater than 45 degrees
+* Introduced support for custom orbital calculations
+* Much more accurate orbital calculations for Earth and Moon; eclipses now
+  occur at the correct time.  Also, introduced accurate calculations for
+  other solar system planets except Pluto.
+* Require solar system catalog files have orbital elements in an
+  EllipticalOrbit group.
+* Added four more asteroids with models by Scott Hudson: KY26, Castalia,
+  Bacchus, and Golevka
+* Added keyboard commands to toggle night side lights (Ctrl+L) and
+  atmospheres (Ctrl+A)
+* Added a 'Goto Object' dialog box, which lets you specify an object name
+  and distance, longitude, and latitude.
+* Implemented a screen capture feature
+* Windows version: added a star browser option to display just those stars
+  with planetary systems.
+* Windows version: fixed bug in Set Time dialog that wouldn't allow setting
+  both the date and the time of day.
+* Windows version: added basic joystick support.
+* Windows version: fixed 'jumping' that occurred when using Goto or Follow
+  from popup menu.
+* Windows version: added 'Set to Current Time' button in Set Time dialog
+* Windows version: fixed selection of planetary satellites via context menu
+* Windows version: made tab, return, and escape work properly in modeless
+  dialogs
+* Unix version: created installer (Deon Ramsey)
 
+Code:
+* Rewrote texture font code; texfont.cpp is gone, everything now in
+  texturefont.cpp

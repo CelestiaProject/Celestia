@@ -125,9 +125,11 @@ V  : Toggle info text
 
 Options:
 U  : Toggle galaxy rendering
-I  : Toggle planet atmospheres (cloud textures)
 O  : Toggle planet orbits
 /  : Toggle constellation diagrams
+Ctrl+A : Toggle atmospheres
+I  : Toggle cloud textures
+Ctrl+L : Toggle night side planet maps (light pollution)
 ;  : Show an earth-based equatorial coordinate sphere
 [  : Decrease limiting magnitude (fewer stars visible)
 ]  : Increase limiting magnitude (more stars visible)
@@ -147,14 +149,33 @@ F4 : Set velocity to speed of light
 F5 : Set velocity to 1,000,000 km/s
 F6 : Set velocity to 1 AU/s
 F7 : Set velocity to 1 ly/s
-A  : Increase velocity by 10x
-Z  : Decrease velocity by 10x
+A  : Increase velocity (exponentially)
+Z  : Decrease velocity (exponentially)
 Q  : Reverse direction
 X  : Set movement direction toward center of screen
 
+Number pad:
+4  : Yaw left
+6  : Yaw right
+8  : Pitch down
+2  : Pitch up
+7  : Roll left
+9  : Roll right
+5  : Stop rotation
+
+Joystick:
+X axis : yaw
+Y axis : pitch
+L trigger : roll left
+R trigger : roll right
+Button 1 : slower
+Button 2 : faster
+
 Other:
-D  : Run demo
-`  : Show frames rendered per second
+D   : Run demo
+F8  : Enable joystick
+F10 : Capture image to file
+`   : Show frames rendered per second
 ENTER : Select a star or planet by typing its name
 
 
@@ -268,7 +289,16 @@ and apparent magnitude is converted to absolute magnitude when the
 database is read.
 
 
-Credits and Copyrights:
+Authors:
+
+Chris Laurel
+Clint Weisbrod
+Deon Ramsey (UNIX installer)
+Colin Walters (endianness fixes)
+James Holmes
+
+
+Contributors:
 
 Most of the planet maps are from David Seal's site: http://maps.jpl.nasa.gov/.
 A few of these maps were modified by me, with fictional terrain added
@@ -291,13 +321,17 @@ http://www.eecs.wsu.edu/~hudson/Research/Asteroids/4179/index.html
 Mathilde, and Gaspra are derived from Phil Stooke's Cartography of
 Non-Spherical Worlds:  http://publish.uwo.ca/~pjstooke/plancart.htm
 
-The texture font library I use for displaying text in OpenGL is
-copyright Mark Kilgard.
+The txf font format used by Celestia was devised by Mark Kilgard.
 
-The star database (stars.dat) was derived from the HIPPARCOS data set.
+The star database (stars.dat) was derived from the ESA's HIPPARCOS data set.
 
 This software is based in part on the work of the Independent JPEG
 Group.
+
+Thank you to all the Celestia users who've submitted bug reports, suggestions,
+and fixes over the past year.  Celestia wouldn't be the program it is without
+your help.
+
 
 Chris Laurel
 claurel@shatters.net
