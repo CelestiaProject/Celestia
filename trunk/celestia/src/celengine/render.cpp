@@ -2298,7 +2298,7 @@ static void setupBumpTexenv()
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
 
-    // In the second stage, modulate the lighting value by the
+    // In the final stage, modulate the lighting value by the
     // base texture color.
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
@@ -2309,6 +2309,78 @@ static void setupBumpTexenv()
     glEnable(GL_TEXTURE_2D);
 
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+}
+
+
+static void setupBumpTexenvAmbient(Color ambientColor)
+{
+    float texenvConst[4];
+    texenvConst[0] = ambientColor.red();
+    texenvConst[1] = ambientColor.green();
+    texenvConst[2] = ambientColor.blue();
+    texenvConst[3] = ambientColor.alpha();
+
+    // Set up the texenv_combine extension to do DOT3 bump mapping.
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+
+    // The primary color contains the light direction in surface
+    // space, and texture0 is a normal map.  The lighting is
+    // calculated by computing the dot product.
+    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+
+    // Add in the ambient color
+    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, texenvConst);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_CONSTANT_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+    glEnable(GL_TEXTURE_2D);
+
+    // In the final stage, modulate the lighting value by the
+    // base texture color.
+    glx::glActiveTextureARB(GL_TEXTURE2_ARB);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+    glEnable(GL_TEXTURE_2D);
+
+    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+}
+
+
+static void setupTexenvAmbient(Color ambientColor)
+{
+    float texenvConst[4];
+    texenvConst[0] = ambientColor.red();
+    texenvConst[1] = ambientColor.green();
+    texenvConst[2] = ambientColor.blue();
+    texenvConst[3] = ambientColor.alpha();
+
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+
+    // The primary color contains the light direction in surface
+    // space, and texture0 is a normal map.  The lighting is
+    // calculated by computing the dot product.
+    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, texenvConst);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_CONSTANT_EXT);
+    glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+    glEnable(GL_TEXTURE_2D);
 }
 
 
@@ -2519,16 +2591,45 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         // We don't yet handle the case where there's a bump map but no
         // base texture.
         vproc->use(vp::diffuseBump);
-        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
-        ri.baseTex->bind();
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-        ri.bumpTex->bind();
-        setupBumpTexenv();
-        lodSphere->render(context,
-                          Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
-                          Mesh::VertexProgParams, frustum, ri.pixWidth,
-                          ri.bumpTex, ri.baseTex);
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        if (ri.ambientColor != Color::Black)
+        {
+            // If there's ambient light, we'll need to render in two passes:
+            // one for the ambient light, and the second for light from the star.
+            // We could do this in a single pass using three texture stages, but
+            // this isn't won't work with hardware that only supported two
+            // texture stages.
+
+            // Render the base texture modulated by the ambient color
+            setupTexenvAmbient(ri.ambientColor);
+            lodSphere->render(context,
+                              Mesh::TexCoords0 | Mesh::VertexProgParams,
+                              frustum, ri.pixWidth,
+                              ri.baseTex);
+
+            // Add the light from the sun
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+            setupBumpTexenv();
+            lodSphere->render(context,
+                              Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
+                              Mesh::VertexProgParams, frustum, ri.pixWidth,
+                              ri.bumpTex, ri.baseTex);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            glDisable(GL_BLEND);
+        }
+        else
+        {
+            glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+            ri.baseTex->bind();
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+            ri.bumpTex->bind();
+            setupBumpTexenv();
+            lodSphere->render(context,
+                              Mesh::Normals | Mesh::Tangents | Mesh::TexCoords0 |
+                              Mesh::VertexProgParams, frustum, ri.pixWidth,
+                              ri.bumpTex, ri.baseTex);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        }
     }
     else
     {
