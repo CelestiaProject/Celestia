@@ -26,6 +26,7 @@ OBJS=\
 	$(INTDIR)\catalogxref.obj \
 	$(INTDIR)\cmdparser.obj \
 	$(INTDIR)\command.obj \
+	$(INTDIR)\console.obj \
 	$(INTDIR)\constellation.obj \
 	$(INTDIR)\customorbit.obj \
 	$(INTDIR)\dds.obj \
