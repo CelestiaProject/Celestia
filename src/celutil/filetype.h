@@ -24,6 +24,7 @@ enum ContentType {
     Content_AVI            = 9,
     Content_CelestiaCatalog = 10,
     Content_DDS             = 11,
+    Content_CelestiaStarCatalog = 12,
     Content_Unknown         = -1,
 };
 
