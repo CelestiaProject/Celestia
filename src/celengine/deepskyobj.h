@@ -51,7 +51,7 @@ class DeepSkyObject
 };
 
 typedef std::vector<DeepSkyObject*> DeepSkyCatalog;
-DeepSkyCatalog* ReadDeepSkyCatalog(std::istream& in);
+int LoadDeepSkyObjects(DeepSkyCatalog&, std::istream& in);
 
 
 #endif // _CELENGINE_DEEPSKYOBJ_H_
