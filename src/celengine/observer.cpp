@@ -32,7 +32,8 @@ Observer::Observer() :
     observerMode(Free),
     trackingOrientation(1.0f, 0.0f, 0.0f, 0.0f),
     fov((float) (PI / 4.0)),
-    reverseFlag(false)
+    reverseFlag(false),
+    locationFilter(~0)
 {
 }
 
@@ -348,6 +349,18 @@ void Observer::setDisplayedSurface(const string& surf)
 }
 
 
+uint32 Observer::getLocationFilter() const
+{
+    return locationFilter;
+}
+
+
+void Observer::setLocationFilter(uint32 _locationFilter)
+{
+    locationFilter = _locationFilter;
+}
+
+
 void Observer::reverseOrientation()
 {
     Quatf q = getOrientation();
@@ -639,7 +652,7 @@ void Observer::gotoSelection(const Selection& selection,
                              Vec3f up,
                              astro::CoordinateSystem upFrame)
 {
-    gotoSelection(selection, gotoTime, 0.25, 0.75, up, upFrame);
+    gotoSelection(selection, gotoTime, 0.0, 0.5, up, upFrame);
 }
 
 void Observer::gotoSelection(const Selection& selection,
