@@ -738,3 +738,6 @@ Code:
 * Fixed seams in Jupiter and Phobos textures
 * Spacecraft orbit paths adaptively sampled for smoother results
 * Eliminated obscuring of location labels that occurred low view aspect ratios
+* Added models of comet Halley and the small moons Pandora and Larissa
+* Added limit of knowledge masks for the Galilean moons
+
