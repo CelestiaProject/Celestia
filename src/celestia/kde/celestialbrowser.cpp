@@ -23,7 +23,7 @@
  *  TRUE to construct a modal dialog.
  */
 CelestialBrowser::CelestialBrowser( QWidget* parent, CelestiaCore* appCore)
-    : CelestialBrowserBase( parent, "Celestial Browser")
+    : CelestialBrowserBase( parent, i18n("Celestial Browser"))
 {
     this->appCore = appCore;
     this->appSim = appCore->getSimulation();
