@@ -390,7 +390,7 @@ void Simulation::update(double dt)
             transform = RigidTransform(journey.to, journey.finalOrientation);
             observerMode = Free;
             observer.setVelocity(Vec3d(0, 0, 0));
-            targetVelocity = Vec3d(0, 0, 0);
+//            targetVelocity = Vec3d(0, 0, 0);
         }
     }
 
@@ -1012,7 +1012,21 @@ void Simulation::changeOrbitDistance(float d)
 void Simulation::setTargetSpeed(float s)
 {
     targetSpeed = s;
-    Vec3f v = Vec3f(0, 0, -s) * observer.getOrientation().toMatrix4();
+    Vec3f v;
+
+    if(observerMode != Tracking)
+    {
+        trackingOrientation = observer.getOrientation();
+
+        //Generate vector for velocity using current orientation and specified speed.
+        v = Vec3f(0, 0, -s) * observer.getOrientation().toMatrix4();
+    }
+    else
+    {
+        //Use tracking orientation vector to generate target velocity
+        v = Vec3f(0, 0, -s) * trackingOrientation.toMatrix4();
+    }
+
     targetVelocity = Vec3d(v.x, v.y, v.z);
     initialVelocity = observer.getVelocity();
     beginAccelTime = realTime;
@@ -1091,6 +1105,30 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
                               Vec3d(x, y, z) * distance, astro::Geographic,
                               up, astro::Geographic);
         observerMode = Travelling;
+    }
+}
+
+void Simulation::getSelectionLongLat(double& distance,
+                                     double& longitude,
+                                     double& latitude)
+{
+    //Compute distance (km) and lat/long (degrees) of observer with respect to currently
+    //selected object.
+    if (!selection.empty())
+    {
+        FrameOfReference refFrame(astro::Geographic, selection.body);
+        RigidTransform xform = fromUniversal(refFrame,
+                                             RigidTransform(observer.getPosition(), observer.getOrientation()),
+                                             simTime);
+
+        Point3d pos = (Point3d)xform.translation;
+
+        distance = sqrt(pos.x*pos.x + pos.y*pos.y + pos.z*pos.z);
+        longitude = -radToDeg(atan2(-pos.z, -pos.x));
+        latitude = radToDeg(PI/2 - acos(pos.y / distance));
+
+        //Convert distance from light years to kilometers.
+        distance = astro::lightYearsToKilometers(distance);
     }
 }
 
