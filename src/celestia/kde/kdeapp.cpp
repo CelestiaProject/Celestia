@@ -219,6 +219,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showOrbits"))->setChecked(rFlags & Renderer::ShowOrbits);
     ((KToggleAction*)action("showCelestialSphere"))->setChecked(rFlags & Renderer::ShowCelestialSphere);
     ((KToggleAction*)action("showNightMaps"))->setChecked(rFlags & Renderer::ShowNightMaps);
+    ((KToggleAction*)action("showMarkers"))->setChecked(rFlags & Renderer::ShowMarkers);
     ((KToggleAction*)action("showAtmospheres"))->setChecked(rFlags & Renderer::ShowAtmospheres);
     ((KToggleAction*)action("showSmoothLines"))->setChecked(rFlags & Renderer::ShowSmoothLines);
     ((KToggleAction*)action("showEclipseShadows"))->setChecked(rFlags & Renderer::ShowEclipseShadows);
@@ -335,6 +336,9 @@ void KdeApp::initActions()
 
     KToggleAction* showNightMaps = new KToggleAction(i18n("Show Night Side Lights"), CTRL + Key_L, this, SLOT(slotShowNightMaps()), actionCollection(), "showNightMaps");
     showNightMaps->setChecked(rFlags & Renderer::ShowNightMaps);
+
+    KToggleAction* showMarkers = new KToggleAction(i18n("Show Markers"), CTRL + Key_K, this, SLOT(slotShowMarkers()), actionCollection(), "showMarkers");
+    showMarkers->setChecked(rFlags & Renderer::ShowMarkers);
 
     KToggleAction* showAtmospheres = new KToggleAction(i18n("Show Atmospheres"), CTRL + Key_A, this, SLOT(slotShowAtmospheres()), actionCollection(), "showAtmospheres");
     showAtmospheres->setChecked(rFlags & Renderer::ShowAtmospheres);
@@ -685,6 +689,11 @@ void KdeApp::slotShowCelestialSphere() {
 void KdeApp::slotShowNightMaps() {
      appCore->getRenderer()->setRenderFlags(
             appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowNightMaps);
+}
+
+void KdeApp::slotShowMarkers() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowMarkers);
 }
 
 void KdeApp::slotShowAtmospheres() {
