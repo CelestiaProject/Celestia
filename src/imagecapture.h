@@ -16,5 +16,8 @@
 extern bool CaptureGLBufferToJPEG(const std::string& filename,
                                   int x, int y,
                                   int width, int height);
+extern bool CaptureGLBufferToPNG(const std::string& filename,
+                                 int x, int y,
+                                 int width, int height);
 
 #endif // _IMAGECAPTURE_H_

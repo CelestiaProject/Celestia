@@ -96,4 +96,100 @@ bool CaptureGLBufferToJPEG(const string& filename,
     return true;
 }
 
+
+void PNGWriteData(png_structp png_ptr, png_bytep data, png_size_t length)
+{
+    FILE* fp = (FILE*) png_get_io_ptr(png_ptr);
+    fwrite((void*) data, 1, length, fp);
+}
+
                            
+bool CaptureGLBufferToPNG(const string& filename,
+                           int x, int y,
+                           int width, int height)
+{
+    int rowStride = width * 3;
+    int imageSize = height * rowStride;
+    unsigned char* pixels = new unsigned char[imageSize];
+
+    glReadPixels(x, y, width, height,
+                 GL_RGB, GL_UNSIGNED_BYTE,
+                 pixels);
+
+    // TODO: Check for GL errors
+
+    FILE* out;
+    out = fopen(filename.c_str(), "wb");
+    if (out == NULL)
+    {
+        DPRINTF("Can't open screen capture file '%s'\n", filename.c_str());
+        delete[] pixels;
+        return false;
+    }
+
+    png_bytep* row_pointers = new png_bytep[height];
+    for (int i = 0; i < height; i++)
+        row_pointers[i] = (png_bytep) &pixels[rowStride * (height - i - 1)];
+
+    png_structp png_ptr;
+    png_infop info_ptr;
+
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+                                      NULL, NULL, NULL);
+
+    if (png_ptr == NULL)
+    {
+        DPRINTF("Screen capture: error allocating png_ptr\n");
+        fclose(out);
+        delete[] pixels;
+        delete[] row_pointers;
+        return false;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == NULL)
+    {
+        DPRINTF("Screen capture: error allocating info_ptr\n");
+        fclose(out);
+        delete[] pixels;
+        delete[] row_pointers;
+        png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
+        return false;
+    }
+
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        DPRINTF("Error writing PNG file '%s'\n", filename.c_str());
+        fclose(out);
+        delete[] pixels;
+        delete[] row_pointers;
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        return false;
+    }
+
+    // png_init_io(png_ptr, out);
+    png_set_write_fn(png_ptr, (void*) out, PNGWriteData, NULL);
+
+    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
+    png_set_IHDR(png_ptr, info_ptr,
+                 width, height,
+                 8,
+                 PNG_COLOR_TYPE_RGB,
+                 PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT);
+
+    png_write_info(png_ptr, info_ptr);
+    png_write_image(png_ptr, row_pointers);
+    png_write_end(png_ptr, info_ptr);
+
+    // Clean up everything . . .
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    delete[] row_pointers;
+    delete[] pixels;
+    fclose(out);
+
+    return true;
+}
+
+
