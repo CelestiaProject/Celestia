@@ -37,14 +37,13 @@ static int32 readInt(ifstream& in)
     return ret;
 }
 
-/* not currently used
 static int16 readShort(ifstream& in)
 {
     int16 ret;
     in.read((char *) &ret, sizeof(int16));
     LE_TO_CPU_INT16(ret, ret);
     return ret;
-}*/
+}
 
 static uint16 readUshort(ifstream& in)
 {
@@ -477,6 +476,30 @@ bool processColorChunk(ifstream& in,
 }
 
 
+static bool processPercentageChunk(ifstream& in,
+                                   unsigned short chunkType,
+                                   int contentSize,
+                                   void* obj)
+{
+    float* percent = (float*) obj;
+
+    if (chunkType == M3DCHUNK_INT_PERCENTAGE)
+    {
+        *percent = readShort(in);
+        return true;
+    }
+    else if (chunkType == M3DCHUNK_FLOAT_PERCENTAGE)
+    {
+        *percent = readFloat(in);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
 bool processMaterialChunk(ifstream& in,
                           unsigned short chunkType,
                           int contentSize,
@@ -509,6 +532,14 @@ bool processMaterialChunk(ifstream& in,
         M3DColor specular;
         read3DSChunks(in, contentSize, processColorChunk, (void*) &specular);
         material->setSpecularColor(specular);
+        return true;
+    }
+    else if (chunkType == M3DCHUNK_MATERIAL_SHININESS)
+    {
+        float shininess;
+        read3DSChunks(in, contentSize, processPercentageChunk,
+                      (void*) &shininess);
+        material->setShininess(shininess);
         return true;
     }
     else

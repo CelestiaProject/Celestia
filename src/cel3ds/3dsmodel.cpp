@@ -26,7 +26,8 @@ M3DColor::M3DColor(float _red, float _green, float _blue) :
 M3DMaterial::M3DMaterial() :
     ambient(0, 0, 0),
     diffuse(0, 0, 0),
-    specular(0, 0, 0)
+    specular(0, 0, 0),
+    shininess(1.0f)
 {
 }
 
@@ -68,6 +69,16 @@ M3DColor M3DMaterial::getSpecularColor() const
 void M3DMaterial::setSpecularColor(M3DColor color)
 {
     specular = color;
+}
+
+float M3DMaterial::getShininess() const
+{
+    return shininess;
+}
+
+void M3DMaterial::setShininess(float _shininess)
+{
+    shininess = _shininess;
 }
 
 
