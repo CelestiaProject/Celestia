@@ -65,7 +65,7 @@
 
 "Earth" "Sol"
 {
-	Texture "earth.png"
+	Texture "earth.*"
 	# Texture "earth8k.dds"
 	NightTexture "earthnight.jpg"
 	
@@ -79,7 +79,7 @@
 	# Oblateness 0.003
 
 	# NormalMap "earthbump4k.jpg"
-	# BumpMap "earthbump4k.jpg"
+	# BumpMap "earthbump.*"
 	# BumpHeight 4.5
 
 	Atmosphere {
@@ -87,9 +87,11 @@
 		Lower [ 0.30 0.52 0.65 ]
 		Upper [ 0.26 0.47 0.84 ]
 		Sky [ 0.30 0.48 0.82 ]
+		Sunset [ 1.0 0.6 0.2 ]
+		# Sunset [ 0.3 1.0 0.5 ]
 		CloudHeight 7
 		CloudSpeed 65
-		CloudMap "earth-clouds.png"
+		CloudMap "earth-clouds.*"
 	}
 
 	CustomOrbit "vsop87-earth"
@@ -212,9 +214,9 @@
 
 "Mars" "Sol"
 {
-	Texture "mars.jpg"
+	Texture "mars.*"
 	# Texture "mars8k.dds"
-	BumpMap "marsbump1k.jpg"
+	BumpMap "marsbump.*"
 	BumpHeight 2.5
 	Color   [ 1 0.75 0.7 ]
 	HazeColor [ 1 1 1 ]
@@ -227,6 +229,10 @@
 		Lower [ 0.8 0.6 0.6 ]
 		Upper [ 0.7 0.3 0.3 ]
 		Sky [ 0.83 0.75 0.65 ]
+
+		# Slightly bluish sunset, as seen in true color pictures
+		# from Pathfinder
+		Sunset [ 0.7 0.7 0.8 ]
 	}
 
 	CustomOrbit "vsop87-mars"
@@ -317,6 +323,13 @@
 	AscendingNode   100.556
 	LongOfPericenter 14.7539
         MeanLongitude    34.404
+	}
+
+	Atmosphere {
+		Height 300
+		Lower [ 0.7 0.6 0.5 ]
+		Upper [ 0.5 0.45 0.4 ]
+		Sky [ 0.8 0.8 0.5 ]
 	}
 
 	RotationPeriod         9.927953 # System II (for GRS)
@@ -474,6 +487,13 @@
 	AscendingNode   113.715
 	LongOfPericenter 92.432
         MeanLongitude    49.944
+	}
+
+	Atmosphere {
+		Height 300
+		Lower [ 0.8 0.75 0.65 ]
+		Upper [ 0.6 0.55 0.45 ]
+		Sky [ 0.8 0.8 0.5 ]
 	}
 
 	RotationPeriod        10.65622 # System III (magnetic field)
@@ -734,6 +754,13 @@
         MeanLongitude    313.232
 	}
 
+	Atmosphere {
+		Height 130
+		Lower [ 0.75 0.85 1.0 ]
+		Upper [ 0.5 0.8 0.9 ]
+		Sky [ 0.6 0.7 0.7 ]
+	}
+
 	RotationPeriod        17.24 # System III (magnetic field)
 	Obliquity             97.81
 	EquatorAscendingNode 167.76
@@ -878,6 +905,13 @@
 	AscendingNode   131.722
 	LongOfPericenter 44.971
         MeanLongitude   304.880
+	}
+
+	Atmosphere {
+		Height 130
+		Lower [ 0.6 0.65 1.0 ]
+		Upper [ 0.5 0.55 0.9 ]
+		Sky [ 0.5 0.7 0.9 ]
 	}
 
 	RotationPeriod        16.11 # System III (magnetic field)
@@ -1166,7 +1200,6 @@
 {
 	Class "asteroid"
 	Mesh "gaspra.3ds"
-	#Texture "asteroid.jpg"
 	Texture "gaspramosaic.jpg" # Phil Stooke
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
