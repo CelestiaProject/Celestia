@@ -142,7 +142,8 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
 
     case GLPath_Multitexture:
         return (maxSimultaneousTextures > 1 &&
-                extensionSupported("GL_EXT_texture_env_combine"));
+               ( extensionSupported("GL_EXT_texture_env_combine") ||
+                 extensionSupported("GL_ARB_texture_env_combine")) );
 
     case GLPath_NvCombiner:
         return extensionSupported("GL_NV_register_combiners");
