@@ -126,6 +126,7 @@ struct AppPreferences
     int pixelShader;
     int vertexShader;
     int showLocalTime;
+    int hudDetail;
 };
 
 void SetMouseCursor(LPCTSTR lpCursor)
@@ -1397,6 +1398,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "PixelShader", &prefs.pixelShader, sizeof(prefs.pixelShader));
     GetRegistryValue(key, "VertexShader", &prefs.vertexShader, sizeof(prefs.vertexShader));
     GetRegistryValue(key, "ShowLocalTime", &prefs.showLocalTime, sizeof(prefs.showLocalTime));
+    GetRegistryValue(key, "HudDetail", &prefs.hudDetail, sizeof(prefs.hudDetail));
 
     RegCloseKey(key);
 
@@ -1433,6 +1435,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "PixelShader", prefs.pixelShader);
     SetRegistryInt(key, "VertexShader", prefs.vertexShader);
     SetRegistryInt(key, "ShowLocalTime", prefs.showLocalTime);
+    SetRegistryInt(key, "HudDetail", prefs.hudDetail);
 
     RegCloseKey(key);
 
@@ -1460,6 +1463,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.pixelShader = appCore->getRenderer()->getFragmentShaderEnabled()?1:0;
     prefs.vertexShader = appCore->getRenderer()->getVertexShaderEnabled()?1:0;
     prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
+    prefs.hudDetail = appCore->getHudDetail();
 
     return true;
 }
@@ -1772,6 +1776,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.vertexShader = 0;
     prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
+    prefs.hudDetail = 1;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Adjust window dimensions for screen dimensions
@@ -1863,6 +1868,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
     appCore->getRenderer()->setFragmentShaderEnabled(prefs.pixelShader == 1);
     appCore->getRenderer()->setVertexShaderEnabled(prefs.vertexShader == 1);
+    appCore->setHudDetail(prefs.hudDetail);
     if (prefs.showLocalTime == 1)
         ShowLocalTime(appCore);
     else
