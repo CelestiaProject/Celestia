@@ -25,7 +25,12 @@ libkdegui_a_SOURCES = \
                  kcelbookmarkmanager.cpp \
                  kcelbookmarkmanager.moc.cpp
 
-
+dist-hook:
+	rm -f $(distdir)/*.uic.*
+	rm -f $(distdir)/*.moc.cpp
+                 
+EXTRA_DIST = celestialbrowserbase.ui
+                 
 %.uic.h: %.ui
 	$(UIC) $< -o $@
 
