@@ -19,17 +19,17 @@ class ResourceManager
 {
  public:
     ResourceManager();
-    ResourceManager(string _baseDir);
+    ResourceManager(std::string _baseDir);
     ResourceManager(char* _baseDir);
     ~ResourceManager();
 
  protected:
-    bool findResource(string name, void**);
-    void addResource(string name, void*);
-    string baseDir;
+    bool findResource(const std::string& name, void**);
+    void addResource(const std::string& name, void*);
+    std::string baseDir;
 
  private:
-    typedef std::map<string, void*> ResourceTable;
+    typedef std::map<std::string, void*> ResourceTable;
 
     ResourceTable resources;
 };

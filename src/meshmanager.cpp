@@ -32,13 +32,13 @@ MeshManager::~MeshManager()
 }
 
 
-bool MeshManager::find(string name, Mesh** mesh)
+bool MeshManager::find(const string& name, Mesh** mesh)
 {
     return findResource(name, (void**) mesh);
 }
 
 
-Mesh* MeshManager::load(string name)
+Mesh* MeshManager::load(const string& name)
 {
     DPRINTF("Loading mesh: %s\n", name.c_str());
     ContentType fileType = DetermineFileType(name);

@@ -37,7 +37,7 @@ ResourceManager::~ResourceManager()
 // in res and return true.  Otherwise, leave res untouched and return false.
 // find() can be safely called with res == NULL just to test whether or not
 // the resource is resident.
-bool ResourceManager::findResource(string name, void** res)
+bool ResourceManager::findResource(const string& name, void** res)
 {
     ResourceTable::iterator iter = resources.find(name);
     if (iter != resources.end())
@@ -53,7 +53,7 @@ bool ResourceManager::findResource(string name, void** res)
 }
 
 
-void ResourceManager::addResource(string name, void* res)
+void ResourceManager::addResource(const string& name, void* res)
 {
     resources.insert(ResourceTable::value_type(name, res));
 }

@@ -24,8 +24,8 @@ class MeshManager : public ResourceManager
     MeshManager(char* _baseDir) : ResourceManager(_baseDir) {};
     ~MeshManager();
 
-    bool find(string name, Mesh**);
-    Mesh* load(string name);
+    bool find(const string& name, Mesh**);
+    Mesh* load(const string& name);
 };
 
 #endif // _MESHMANAGER_H_
