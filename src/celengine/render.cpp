@@ -4991,6 +4991,9 @@ void Renderer::renderStar(const Star& star,
                           float nearPlaneDistance,
                           float farPlaneDistance)
 {
+    if (!star.getVisibility())
+        return;
+
     //Color color = star.getStellarClass().getApparentColor();
     Color color = colorTemp->lookupColor(star.getTemperature());
     float radius = star.getRadius();
@@ -5381,7 +5384,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
     Point3d observerPos = astrocentricPosition(observer.getPosition(),
                                                sun, now);
 
-    clog << "renderPlanetarySystem: " << sun.getSpectralType() << '\n';
     int nBodies = solSystem.getSystemSize();
     for (int i = 0; i < nBodies; i++)
     {
