@@ -109,8 +109,8 @@ enum
     Menu_ShowClouds          = 2005,
     Menu_ShowCelestialSphere = 2006,
     Menu_ShowNightSideMaps   = 2007,
-    Menu_MajorPlanetLabels   = 2008,
-    Menu_MinorPlanetLabels   = 2009,
+    Menu_MoonLabels          = 2008,
+    Menu_AsteroidLabels      = 2009,
     Menu_StarLabels          = 2010,
     Menu_GalaxyLabels        = 2011,
     Menu_ConstellationLabels = 2012,
@@ -119,6 +119,7 @@ enum
     Menu_ShowLocTime         = 2015,
     Menu_ShowEclipseShadows  = 2016,
     Menu_ShowStarsAsPoints   = 2017,
+    Menu_CraftLabels         = 2018,
 };
 
 static void menuSelectSol()
@@ -304,19 +305,36 @@ static gint menuConstellationLabels(GtkWidget* w, gpointer data)
     return TRUE;
 }
 
-static gint menuMajorPlanetLabels(GtkWidget* w, gpointer data)
+static gint menuPlanetLabels(GtkWidget* w, gpointer data)
 {
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::MajorPlanetLabels, on);
-    appCore->charEntered('N');
+    // SetLabelFlag(Renderer::PlanetLabels, on);
+    appCore->charEntered('P');
     return TRUE;
 }
 
-static gint menuMinorPlanetLabels(GtkWidget* w, gpointer data)
+static gint menuMoonLabels(GtkWidget* w, gpointer data)
 {
     // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
-    // SetLabelFlag(Renderer::MinorPlanetLabels, on);
+    // SetLabelFlag(Renderer::MoonLabels, on);
     appCore->charEntered('M');
+    return TRUE;
+}
+
+static gint menuAsteroidLabels(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetLabelFlag(Renderer::AsteroidLabels, on);
+    DPRINTF(0,"Asteroid Labels Toggling\n");
+    appCore->charEntered('W');
+    return TRUE;
+}
+
+static gint menuCraftLabels(GtkWidget* w, gpointer data)
+{
+    // bool on = (GTK_CHECK_MENU_ITEM(w)->active == 1);
+    // SetLabelFlag(Renderer::SpacecraftLabels, on);
+    appCore->charEntered('N');
     return TRUE;
 }
 
@@ -1710,8 +1728,10 @@ static GtkItemFactoryEntry menuItems[] =
     { "/Render/More Stars Visible", "bracketleft",  menuMoreStars, 0, NULL },
     { "/Render/Fewer Stars Visible", "bracketright", menuLessStars, 0, NULL },
     { "/Render/sep2", NULL,                 NULL,          0, "<Separator>" },
-    { "/Render/Label Major Planets", "N",   NULL,          Menu_MajorPlanetLabels, "<ToggleItem>" },
-    { "/Render/Label Minor Planets", "M",   NULL,          Menu_MinorPlanetLabels, "<ToggleItem>" },
+    { "/Render/Label Planets", "P",         NULL,          Menu_PlanetLabels, "<ToggleItem>" },
+    { "/Render/Label Moons", "M",           NULL,          Menu_MoonLabels, "<ToggleItem>" },
+    { "/Render/Label Asteroids&Comets", "W",NULL,          Menu_AsteroidLabels, "<ToggleItem>" },
+    { "/Render/Label Spacecraft", "N",      NULL,          Menu_CraftLabels, "<ToggleItem>" },
     { "/Render/Label Stars", "B",           NULL,          Menu_StarLabels, "<ToggleItem>" },
     { "/Render/Label Galaxies", "E",        NULL,          Menu_GalaxyLabels, "<ToggleItem>" },
     { "/Render/Label Constellations", "equal",NULL,        Menu_ConstellationLabels, "<ToggleItem>" },
@@ -1790,8 +1810,10 @@ static CheckFunc checks[] =
     { NULL,	"/Render/Show Night Side Lights",checkRenderFlag,	1, Renderer::ShowNightMaps },
     { NULL,	"/Render/Show Eclipse Shadows", checkRenderFlag,	1, Renderer::ShowEclipseShadows },
     { NULL,	"/Render/Show Stars as Points", checkRenderFlag,	1, Renderer::ShowStarsAsPoints },
-    { NULL,	"/Render/Label Major Planets",	checkLabelFlag,		1, Renderer::MajorPlanetLabels },
-    { NULL,	"/Render/Label Minor Planets",	checkLabelFlag,		1, Renderer::MinorPlanetLabels },
+    { NULL,	"/Render/Label Planets",	checkLabelFlag,		1, Renderer::PlanetLabels },
+    { NULL,	"/Render/Label Moons",  	checkLabelFlag,		1, Renderer::MoonLabels },
+    { NULL,	"/Render/Label Asteroids&Comets",checkLabelFlag,	1, Renderer::AsteroidLabels },
+    { NULL,	"/Render/Label Spacecraft",	checkLabelFlag,		1, Renderer::SpacecraftLabels },
     { NULL,	"/Render/Label Stars",		checkLabelFlag,		1, Renderer::StarLabels },
     { NULL,	"/Render/Label Galaxies",	checkLabelFlag,		1, Renderer::GalaxyLabels },
     { NULL,	"/Render/Label Constellations",	checkRenderFlag,	1, Renderer::ConstellationLabels },
@@ -1855,10 +1877,14 @@ void createMainMenu(GtkWidget* window, GtkWidget** menubar)
                    GTK_SIGNAL_FUNC(menuShowStarsAsPoints));
     setupCheckItem(menuItemFactory, Menu_ShowOrbits,
                    GTK_SIGNAL_FUNC(menuShowOrbits));
-    setupCheckItem(menuItemFactory, Menu_MajorPlanetLabels,
-                   GTK_SIGNAL_FUNC(menuMajorPlanetLabels));
-    setupCheckItem(menuItemFactory, Menu_MinorPlanetLabels,
-                   GTK_SIGNAL_FUNC(menuMinorPlanetLabels));
+    setupCheckItem(menuItemFactory, Menu_PlanetLabels,
+                   GTK_SIGNAL_FUNC(menuPlanetLabels));
+    setupCheckItem(menuItemFactory, Menu_MoonLabels,
+                   GTK_SIGNAL_FUNC(menuMoonLabels));
+    setupCheckItem(menuItemFactory, Menu_AsteroidLabels,
+                   GTK_SIGNAL_FUNC(menuAsteroidLabels));
+    setupCheckItem(menuItemFactory, Menu_CraftLabels,
+                   GTK_SIGNAL_FUNC(menuCraftLabels));
     setupCheckItem(menuItemFactory, Menu_StarLabels,
                    GTK_SIGNAL_FUNC(menuStarLabels));
     setupCheckItem(menuItemFactory, Menu_GalaxyLabels,
@@ -2140,7 +2166,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event)
             if (event->string != NULL)
             {
                 // See if our key accelerators will handle this event.
-                if(gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, (GdkModifierType)event->state))
+                if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (GTK_OBJECT (mainWindow), event->keyval, (GdkModifierType)event->state))
                     return TRUE;
             
                 char* s = event->string;

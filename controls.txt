@@ -39,6 +39,7 @@ N  : Toggle planet and moon labels
 B  : Toggle star labels
 E  : Toggle galaxy labels
 =  : Toggle constellation labels
+W  : Toggle asteroid labels
 V  : Toggle info text
 
 Options:
@@ -57,7 +58,7 @@ Ctrl+S : Toggle rendering stars as points (otherwise, they're textures)
 }  : Increase ambient illumination
 ,  : Narrow field of view
 .  : Widen field of view
-W  : Toggle wireframe mode
+Ctrl+W : Toggle wireframe mode
 Ctrl+P : Toggle per-pixel lighting (if supported)
 Ctrl+V : Toggle vertex programs (if supported)
 r R: lower or raise texture resolution
