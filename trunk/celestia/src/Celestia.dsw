@@ -1,0 +1,104 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "Celestia"=.\celestia\Celestia.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name cel3ds
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name celengine
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name celmath
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name celtxf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name celutil
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "cel3ds"=.\cel3ds\cel3ds.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "celengine"=.\celengine\celengine.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "celmath"=.\celmath\celmath.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "celtxf"=.\celtxf\celtxf.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "celutil"=.\celutil\celutil.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+
