@@ -375,37 +375,51 @@ static void menuAbout()
 
 
 static GtkWidget* fileSelector = NULL;
-static gchar* captureFilename = NULL;
+static string* captureFilename = NULL;
 
 void storeCaptureFilename(GtkFileSelection* selector, gpointer)
 {
-    captureFilename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(fileSelector));
-    if (captureFilename == NULL)
+    char *tmp;
+    tmp=gtk_file_selection_get_filename(GTK_FILE_SELECTION(fileSelector));
+    if(!tmp || !(*tmp))  // Don't change the captureFilename and exit if empty
         return;
-
-    string filename(captureFilename);
+    *captureFilename = tmp; // remember it for next time
 
     // Get the dimensions of the current viewport
     int viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
 
     bool success = false;
-    ContentType type = DetermineFileType(filename);
-    if (type == Content_JPEG)
+    ContentType type = DetermineFileType(*captureFilename);
+    if (type == Content_Unknown)
     {
-        success = CaptureGLBufferToJPEG(filename,
+        GtkWidget* errBox = gnome_message_box_new("Unable to determine image file type from name, please use a name ending in '.jpg' or '.png'.",
+                                                  GNOME_MESSAGE_BOX_ERROR,
+                                                  GNOME_STOCK_BUTTON_OK,
+                                                  NULL);
+        gtk_widget_show(errBox);
+        return;
+    }
+    else if (type == Content_JPEG)
+    {
+        success = CaptureGLBufferToJPEG(*captureFilename,
                                         viewport[0], viewport[1],
                                         viewport[2], viewport[3]);
     }
     else if (type == Content_PNG)
     {
-        success = CaptureGLBufferToPNG(string(filename),
+        success = CaptureGLBufferToPNG(string(*captureFilename),
                                        viewport[0], viewport[1],
                                        viewport[2], viewport[3]);
     }
     else
     {
-        DPRINTF("Unknown file type for screen capture.\n");
+        GtkWidget* errBox = gnome_message_box_new("Sorry, currently screen capturing to JPEG or PNG files only is supported, please use a name ending in '.jpg' or '.png'.",
+                                                  GNOME_MESSAGE_BOX_ERROR,
+                                                  GNOME_STOCK_BUTTON_OK,
+                                                  NULL);
+        gtk_widget_show(errBox);
+        return;
     }
 
     if (!success)
@@ -422,7 +436,6 @@ void storeCaptureFilename(GtkFileSelection* selector, gpointer)
 
 static void menuCaptureImage()
 {
-    captureFilename = NULL;
     fileSelector = gtk_file_selection_new("Select capture file.");
 
     gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(fileSelector)->ok_button),
@@ -437,7 +450,8 @@ static void menuCaptureImage()
                               "clicked",
                               GTK_SIGNAL_FUNC(gtk_widget_destroy),
                               GTK_OBJECT(fileSelector));
-
+    gtk_file_selection_set_filename(GTK_FILE_SELECTION(fileSelector), captureFilename->c_str());
+    gtk_file_selection_show_fileop_buttons(GTK_FILE_SELECTION(fileSelector));
     gtk_widget_show(fileSelector);
 }
 
@@ -2123,6 +2137,10 @@ int main(int argc, char* argv[])
     // Say we're not ready to render yet.
     bReady = false;
 
+    // Set starting filename for screen captures
+    captureFilename = new string(getcwd(NULL,0));
+    *captureFilename+="/celestia.jpg";
+    
     if (chdir(CONFIG_DATA_DIR) == -1)
     {
         cerr << "Cannot chdir to '" << CONFIG_DATA_DIR <<
@@ -2245,6 +2263,7 @@ int main(int argc, char* argv[])
 	}
     }
     gtk_main();
+    delete captureFilename;
 
     return 0;
 }
