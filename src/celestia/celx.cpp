@@ -1636,8 +1636,8 @@ static int object_getinfo(lua_State* l)
 
         double lifespanStart, lifespanEnd;
         body->getLifespan(lifespanStart, lifespanEnd);
-        setTable(l, "lifespan_start", (lua_Number)lifespanStart);
-        setTable(l, "lifespan_end", (lua_Number)lifespanEnd);
+        setTable(l, "lifespanStart", (lua_Number)lifespanStart);
+        setTable(l, "lifespanEnd", (lua_Number)lifespanEnd);
         // TODO: atmosphere, surfaces ?
 
         PlanetarySystem* system = body->getSystem();
@@ -1656,7 +1656,7 @@ static int object_getinfo(lua_State* l)
             lua_settable(l, -3);
         }
 
-        lua_pushstring(l, "hasrings");
+        lua_pushstring(l, "hasRings");
         lua_pushboolean(l, body->getRings() != NULL);
         lua_settable(l, -3);
     }
@@ -3007,7 +3007,7 @@ static int celestia_getlabelflags(lua_State* l)
 
 static int celestia_getobserver(lua_State* l)
 {
-    checkArgs(l, 1, 2, "Wrong number of arguments to celestia:getobserver()");
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getobserver()");
 
     CelestiaCore* appCore = this_celestia(l);
     Observer* o = appCore->getSimulation()->getActiveObserver();
@@ -3336,7 +3336,7 @@ static int celestia_getscripttime(lua_State* l)
 
 static int celestia_newframe(lua_State* l)
 {
-    checkArgs(l, 2, 4, "At least argument expected to function celestia:newframe");
+    checkArgs(l, 2, 4, "One to three arguments expected for function celestia:newframe");
     int argc = lua_gettop(l);
 
     // for error checking only:
@@ -3347,7 +3347,11 @@ static int celestia_newframe(lua_State* l)
     Selection* ref = NULL;
     Selection* target = NULL;
 
-    if (coordSys == astro::PhaseLock)
+    if (coordSys == astro::Universal)
+    {
+        frame_new(l, FrameOfReference());
+    }
+    else if (coordSys == astro::PhaseLock)
     {
         if (argc >= 4)
         {
