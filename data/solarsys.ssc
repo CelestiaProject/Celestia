@@ -76,6 +76,7 @@
 	Radius 6378
 	# Oblateness 0.003
 
+	# NormalMap "earthbump4k.jpg"
 	# BumpMap "earthbump4k.jpg"
 	# BumpHeight 4.5
 
@@ -1104,7 +1105,8 @@
 {
 	Class "asteroid"
 	Mesh "gaspra.3ds"
-	Texture "asteroid.jpg"
+	#Texture "asteroid.jpg"
+	Texture "gaspramosaic.jpg" # Phil Stooke
 	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
 
@@ -1112,56 +1114,81 @@
 
 	EllipticalOrbit
 	{
-	Epoch           2452332.5
-	Period          3.284564
-	SemiMajorAxis   2.2096245
-	Eccentricity    0.1730324
-	Inclination     4.10285
-	AscendingNode   253.31108
-	ArgOfPericenter 129.42680
-	MeanAnomaly     353.04048
+	Epoch           2448559    #1991 Oct 29 - Galileo encounter
+	Period          3.2837     #average
+	SemiMajorAxis   2.2096348  #at epoch
+	Eccentricity    0.1738752  #at epoch
+	Inclination     4.0975771  #at epoch
+	AscendingNode   253.445592 #at epoch
+	ArgOfPericenter 129.045896 #at epoch
+	MeanAnomaly     280.769206 #at epoch
 	}
 
-	RotationPeriod 7.042
+	RotationPeriod       7.042073
+	EquatorAscendingNode 109.59
+	Obliquity            69.28
+
+        RotationOffset       238.865
+
 	Albedo 0.1
 }
 
 "Ida" "Sol"
 {
 	Class "asteroid"
-	Mesh   "ida.3ds"
-	Texture "asteroid.jpg"
+	Mesh "ida.3ds"
+	#Texture "asteroid.jpg"
+	Texture "idamosaic.jpg" #Phil Stooke
 	Radius 45
 
 	EllipticalOrbit
 	{
-	Period            4.84
-	SemiMajorAxis     2.861
-	Eccentricity      0.0451
-	Inclination       1.14
-	AscendingNode   324.419
-	ArgOfPericenter 112.419
-        MeanAnomaly      92.511
+	Epoch		2449228      #1993 Aug 28: Galileo encounter
+	Period          4.8417       #average
+	SemiMajorAxis   2.863731     #at epoch
+	Eccentricity    0.043109     #at epoch
+	Inclination     1.137110     #at epoch
+	AscendingNode   324.586055   #at epoch
+	ArgOfPericenter 113.017101   #at epoch
+        MeanAnomaly     131.594945   #at epoch
 	}
 
-	RotationPeriod    4.633
+	RotationPeriod       -4.633632
+	EquatorAscendingNode  172.77
+	Obliquity	      23.04
+	RotationOffset        0.54
+
+	Albedo 0.24
 }
 
 "Dactyl" "Sol/Ida"
 {
+	#Data for Dactyl taken from: 
+	#Petit et al.: The Long-Term Dynamics of Dactyl's Orbit
+	#(Icarus 1997: 130; 177-197)
+	InfoURL "http://www.lpl.arizona.edu/~hurfordt/research/papers/Icarus130.pdf"
+
 	Class "asteroid"
-	# Data for Dactyl is a very rough guess based on a value of
-	# 2.8 g/cm^3 for Ida
 	Texture "asteroid.jpg"
 	Mesh "roughsphere.cms"
 	Radius   0.7
 
 	EllipticalOrbit
 	{
-	Period         1.13
-	SemiMajorAxis  98
-	Eccentricity   0.05
+	Epoch	         2449228.2028 #1993 Aug 28 16:52:05
+	Period           -0.96534 #stable 5:1 resonant orbit (Petit et al.)
+	SemiMajorAxis    83.5     #stable 5:1 resonant orbit (Petit et al.)
+	Eccentricity     0.13     #stable 5:1 resonant orbit (Petit et al.)
+	LongOfPericenter 230      #stable pericenter at 90:E Ida longitude (Petit et al.)
+	AscendingNode    90       #VERY approximate - chosen to place Dactyl north 
+                                  #of Ida's equator, as seen at time of Galileo encounter
+	Inclination      8        #estimated at 7-9 degrees (Petit et al.)
 	}
+
+	RotationPeriod  -23.16816 #enforce synchronous rotation
+	RotationOffset  57        #place prime meridian facing Ida
+
+	Albedo 0.2
 }
 
 
