@@ -21,7 +21,7 @@
 
 using namespace std;
 
-#define VELOCITY_CHANGE_TIME      1.0f
+#define VELOCITY_CHANGE_TIME      0.25f
 
 
 Simulation::Simulation() :
