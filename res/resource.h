@@ -11,12 +11,14 @@
 #define IDD_LICENSE                     108
 #define IDD_SETTIME                     109
 #define IDD_GLINFO                      110
+#define IDD_ADDLOCATION                 111
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
 #define IDC_GLINFO_TEXT                 1005
 #define IDC_CALENDAR                    1006
 #define IDC_TIMEPICKER                  1007
 #define IDC_DATEPICKER                  1008
+#define IDC_LOCATION_EDIT               1009
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -49,6 +51,7 @@
 #define ID_TIME_SETTIME                 40032
 #define ID_HELP_GLINFO                  40033
 #define ID_LOCATIONS_ADDLOCATION        40034
+#define ID_RENDER_SHOWCONSTELLATIONS    40035
 
 #define ID_LOCATIONS_FIRSTLOCATION      41000
 
@@ -56,9 +59,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        111
-#define _APS_NEXT_COMMAND_VALUE         40035
-#define _APS_NEXT_CONTROL_VALUE         1009
+#define _APS_NEXT_RESOURCE_VALUE        112
+#define _APS_NEXT_COMMAND_VALUE         40036
+#define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
