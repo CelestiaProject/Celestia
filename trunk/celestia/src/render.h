@@ -48,7 +48,6 @@ class Renderer
     Vec3f getPickRay(int winX, int winY);
 
     Console* getConsole() const;
-    Console* getInputConsole() const;
 
     enum {
         NoLabels = 0,
@@ -153,7 +152,6 @@ class Renderer
     TextureManager* textureManager;
     MeshManager* meshManager;
     Console* console;
-    Console* inputConsole;
 
     int renderMode;
     int labelMode;
