@@ -445,3 +445,5 @@ Code:
 * Unix Gtk: New Renderer Options
 * Fixed colors on the Hubble model
 * Fixed some clipping problems with 3DS meshes caused by bad center calculation
+* Enhanced Locations menu to support full manipulation and categorization of
+  saved locations.
