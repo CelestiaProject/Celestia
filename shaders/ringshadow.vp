@@ -11,9 +11,9 @@
 # matrices.
 # c[16] contains the light direction in object space
 # c[20] contains the color
-# c[43] is [ inner ring radius, 1/ring width, 0, 0.5 ]
-# c[44] is 1 / sunDir.y
-# c[45] contains scaling vector [1 1-oblateness 1 0]
+# c[41] is [ inner ring radius, 1/ring width, 0, 0.5 ]
+# c[42] is 1 / sunDir.y
+# c[43] contains scaling vector [1 1-oblateness 1 0]
 
 # Transform the vertex by the modelview matrix
 DP4   o[HPOS].x, c[0], v[OPOS];
@@ -23,11 +23,11 @@ DP4   o[HPOS].w, c[3], v[OPOS];
 
 # Scale by oblateness . . . off for now because it makes Saturn look
 # weird, even though I think it's more realistic.
-# MUL   R2, v[OPOS], c[45];
+# MUL   R2, v[OPOS], c[43];
 MOV   R2, v[OPOS];
 
-MUL   R1.x, R2.y, -c[44].x;
-MAX   R1.x, R1.x, c[44].w;  # Clamp to zero--don't trace both directions
+MUL   R1.x, R2.y, -c[42].x;
+MAX   R1.x, R1.x, c[42].w;  # Clamp to zero--don't trace both directions
 MAD   R0, R1.x, c[16], R2;
 
 # Compute the distance from the center.  The s coordinate is the distance
@@ -37,12 +37,12 @@ RSQ   R0.x, R0.x;
 RCP   R0.x, R0.x;
 
 # Scale and bias by ring width and radius
-MUL   R0.x, R0.x, c[43].y;
-ADD   R0.x, R0.x, -c[43].x;
+MUL   R0.x, R0.x, c[41].y;
+ADD   R0.x, R0.x, -c[41].x;
 # Now we have our s coordinate . . .
 MOV   o[TEX0].x, R0.x;
 # The t coordinate is always 0.5
-MOV   o[TEX0].y, c[43].w;
+MOV   o[TEX0].y, c[41].w;
 
 MOV   o[COL0], c[20];
 
