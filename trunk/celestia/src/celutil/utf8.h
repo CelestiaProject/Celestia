@@ -14,6 +14,9 @@
 
 #define UTF8_DEGREE_SIGN         "\302\260"
 #define UTF8_MULTIPLICATION_SIGN "\303\227"
+#define UTF8_SUPERSCRIPT_1       "\302\271"
+#define UTF8_SUPERSCRIPT_2       "\302\262"
+#define UTF8_SUPERSCRIPT_3       "\302\263"
 
 
 bool UTF8Decode(const std::string& str, int pos, wchar_t& ch);
