@@ -86,9 +86,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         else if(LOWORD(wParam) == IDC_LABELGALAXIES)
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->GalaxyLabels);
         else if(LOWORD(wParam) == IDC_LABELMAJORPLANETS)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->MajorPlanetLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->PlanetLabels);
         else if(LOWORD(wParam) == IDC_LABELMINORPLANETS)
-            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->MinorPlanetLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ renderer->MoonLabels);
         else if(LOWORD(wParam) == IDC_LABELSTARS)
             renderer->setLabelMode(renderer->getLabelMode() ^ renderer->StarLabels);
         else if(LOWORD(wParam) == IDC_INFOTEXT0)
@@ -192,9 +192,9 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     SendDlgItemMessage(hDlg, IDC_LABELGALAXIES, BM_SETCHECK,
         ((labelMode & appCore->getRenderer()->GalaxyLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELMAJORPLANETS, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->MajorPlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((labelMode & appCore->getRenderer()->PlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELMINORPLANETS, BM_SETCHECK,
-        ((labelMode & appCore->getRenderer()->MinorPlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
+        ((labelMode & appCore->getRenderer()->PlanetLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_LABELSTARS, BM_SETCHECK,
         ((labelMode & appCore->getRenderer()->StarLabels) != 0)? BST_CHECKED:BST_UNCHECKED, 0);
 
