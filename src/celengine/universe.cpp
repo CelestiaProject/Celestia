@@ -236,6 +236,10 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
 
+    // Reject invisible bodies
+    if (body->getClassification() == Body::Invisible)
+        return true;
+
     Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
     Vec3d bodyDir = bpos - pickInfo->pickRay.origin;
     double distance = bodyDir.length();
@@ -275,7 +279,8 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
     double distance = -1.0;
 
     // Test for intersection with the bounding sphere
-    if (testIntersection(pickInfo->pickRay, Sphered(bpos, radius), distance))
+    if (body->getClassification() != Body::Invisible &&
+        testIntersection(pickInfo->pickRay, Sphered(bpos, radius), distance))
     {
         if (body->getMesh() == InvalidResource)
         {
