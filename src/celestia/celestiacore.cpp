@@ -670,7 +670,7 @@ void CelestiaCore::charEntered(char c)
 
     case '\011': // TAB
         activeView++;
-        if (activeView >= views.size())
+        if (activeView >= (int) views.size())
             activeView = 0;
         sim->setActiveObserver(views[activeView]->observer);
         flash("Cycle view");
@@ -1409,7 +1409,8 @@ void CelestiaCore::draw()
                        (GLint) (view->y * height),
                        (GLsizei) (view->width * width),
                        (GLsizei) (view->height * height));
-            renderer->resize(view->width * width, view->height * height);
+            renderer->resize((int) (view->width * width),
+                             (int) (view->height * height));
             renderer->setFieldOfView(radToDeg(view->observer->getFOV()));
             sim->render(*renderer, *view->observer);
         }
@@ -1483,9 +1484,9 @@ void CelestiaCore::singleView()
 {
     View* av = views[activeView];
 
-    for (int i = 0; i < views.size(); i++)
+    for (unsigned int i = 0; i < views.size(); i++)
     {
-        if (i != activeView)
+        if ((int) i != activeView)
         {
             sim->removeObserver(views[i]->observer);
             delete views[i];
