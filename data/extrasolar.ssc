@@ -14,8 +14,8 @@
 # a radius of 1.2 jupiters if they are more massive. At temperatures between 500K and 800K, these
 # same objects are assigned radii of 1.2 and 1 jupiters, respectively. Cold objects have a radius
 # of 1 jupiter unless M.sin(i)<0.7, at which point radius is reduced to 0.8 jupiters.
-# The low-mass planets of PSR 1257+12 have been assigned radii which give them a density comparable
-# to Mercury or Earth.
+# Planets with a mass less than 0.05 jupiter masses have been assigned radii which give them a
+# density comparable to Mercury or Earth.
 #
 # Planetary rotation periods have been estimated from the tidal spin-down formulae in 'Solar
 # System Dynamics' by CD Murray & SF Dermott, Cambridge University Press 1999, ISBN 0521 57597 4.
@@ -38,9 +38,8 @@
 # For most extrasolar planets, the position of the pericenter and the mean anomaly are known,
 # but the actually orientation and inclination of the orbit in the plane of the sky are unknown.
 # These objects have been left with their orbital planes in the default position (the ecliptic
-# plane), but their pericenters and anomalies are correctly rendered. For HD 209458 b and
-# OGLE-TR-56 b, the true inclination is known from transits, but the orientation of the orbit
-# in the plane of the sky is unknown.
+# plane), but their pericenters and anomalies are correctly rendered. For transiting planets
+# the true inclination is known, but the orientation of the orbit in the plane of the sky is not.
 
 "b" "OGLE-TR-56"
 
@@ -48,12 +47,11 @@
 # inclination is fixed at 81 degrees, so mass can be determined.
 # Radius is estimated at 1.23 jupiters.
 
-
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       460     # M.sin(i) = 1.45 jupiters
 	Radius     86100
@@ -71,15 +69,15 @@
 		MeanAnomaly     213
 	}
 
-	Obliquity             89   # guess, to match inclination
-	EquatorAscendingNode 260   # guess, to match ascending node
+	Obliquity             89 # guess, to match inclination
+	EquatorAscendingNode  260 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "OGLE-TR-56/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
@@ -89,12 +87,11 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 # inclination is fixed close to 90 degrees, so mass can be determined.
 # Radius is estimated at 1.08 jupiters.
 
-
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       430     # M.sin(i) = 1.35 jupiters
 	Radius     75600
@@ -105,40 +102,38 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 		Period          0.0039
 		SemiMajorAxis   0.0228
 		Eccentricity    0
-		Inclination     112
-		AscendingNode   162
+		Inclination     112.4
+		AscendingNode   161.7
 		ArgOfPericenter 21
 		MeanAnomaly     335
 	}
 
-	Obliquity            112   # guess, to match inclination
-	EquatorAscendingNode 162   # guess, to match ascending node
+	Obliquity             112 # guess, to match inclination
+	EquatorAscendingNode  162 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "OGLE-TR-113/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "OGLE-TR-132"
 
 # Detected via transit as well as radial velocity methods; from transit,
-# inclination is fixed close to 90 degrees, so mass can be determined.
-# Radius is estimated at 1.15 jupiters.
-
+# inclination is fixed at 85 degrees, so mass can be determined.
+# Radius is estimated at 1.13 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
-	Mass       320     # M.sin(i) = 1.01 jupiters
-	Radius     80500
-	Oblateness 0.01
+	Mass       380     # M.sin(i) = 1.19 jupiters
+	Radius     79100
 
 	InfoURL "http://www.obspm.fr/encycl/OGLE-TR-132.html"
 
@@ -146,28 +141,28 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 		Period          0.0046
 		SemiMajorAxis   0.0306
 		Eccentricity    0
-		Inclination     112
-		AscendingNode   161
-		ArgOfPericenter 21
-		MeanAnomaly     196
+		Inclination     107.6
+		AscendingNode   159.3
+		ArgOfPericenter 20
+		MeanAnomaly     216
 	}
 
-	Obliquity            112   # guess, to match inclination
-	EquatorAscendingNode 161   # guess, to match ascending node
+	Obliquity             108 # guess, to match inclination
+	EquatorAscendingNode  159 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "OGLE-TR-132/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 73256"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       590     # M.sin(i) = 1.85 jupiters
 	Radius     84000
@@ -187,14 +182,14 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 
 AltSurface "limit of knowledge" "HD 73256/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 83443"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       130     # M.sin(i) = 0.41 jupiters
 	Radius     98000
@@ -215,14 +210,14 @@ AltSurface "limit of knowledge" "HD 73256/b"
 
 AltSurface "limit of knowledge" "HD 83443/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 46375"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       80     # M.sin(i) = 0.249 jupiters
 	Radius     98000
@@ -243,14 +238,53 @@ AltSurface "limit of knowledge" "HD 83443/b"
 
 AltSurface "limit of knowledge" "HD 46375/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TrES-1"
+
+# Detected via transit as well as radial velocity methods; from transit,
+# inclination is fixed at 88.5 degrees, so mass can be determined.
+# Radius is estimated at 1.08 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       240     # M.sin(i) = 0.75 jupiters
+	Radius     75600
+
+	InfoURL "http://www.obspm.fr/encycl/TrES-1.html"
+
+	EllipticalOrbit {
+		Period          0.0083
+		SemiMajorAxis   0.0393
+		Eccentricity    0
+		Inclination     85
+		AscendingNode   284
+		ArgOfPericenter 149
+		MeanAnomaly     58
+	}
+
+	Obliquity             85 # guess, to match inclination
+	EquatorAscendingNode  284 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TrES-1/b"
+{
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 179949"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       310     # M.sin(i) = 0.98 jupiters
 	Radius     98000
@@ -269,14 +303,14 @@ AltSurface "limit of knowledge" "HD 46375/b"
 
 AltSurface "limit of knowledge" "HD 179949/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 187123"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       170     # M.sin(i) = 0.52 jupiters
 	Radius     98000
@@ -297,14 +331,14 @@ AltSurface "limit of knowledge" "HD 179949/b"
 
 AltSurface "limit of knowledge" "HD 187123/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 120136"   # Tau Boo
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       1310     # M.sin(i) = 4.13 jupiters
 	Radius     84000
@@ -324,13 +358,13 @@ AltSurface "limit of knowledge" "HD 187123/b"
 
 AltSurface "limit of knowledge" "HD 120136/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 330075"
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       240     # M.sin(i) = 0.76 jupiters
 	Radius     98000
@@ -350,17 +384,16 @@ AltSurface "limit of knowledge" "HD 120136/b"
 
 AltSurface "limit of knowledge" "HD 330075/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "TYC 5503-946-1"   # BD-10 3166
-
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     98000
@@ -380,14 +413,14 @@ AltSurface "limit of knowledge" "HD 330075/b"
 
 AltSurface "limit of knowledge" "TYC 5503-946-1/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 75289"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       130     # M.sin(i) = 0.42 jupiters
 	Radius     98000
@@ -408,7 +441,7 @@ AltSurface "limit of knowledge" "TYC 5503-946-1/b"
 
 AltSurface "limit of knowledge" "HD 75289/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
@@ -419,8 +452,8 @@ AltSurface "limit of knowledge" "HD 75289/b"
 # Radius is estimated at 1.43 jupiters.
 
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       220     # M.sin(i) = 0.69 jupiters
 	Radius     100100
@@ -433,27 +466,26 @@ AltSurface "limit of knowledge" "HD 75289/b"
 		Eccentricity    0
 		Inclination     71.7
 		AscendingNode   325.1
-		Inclination     71.7
 		ArgOfPericenter 205
 		MeanAnomaly     148
 	}
 
-	Obliquity             72   # guess, to match inclination
-	EquatorAscendingNode 325   # guess, to match ascending node
+	Obliquity             72 # guess, to match inclination
+	EquatorAscendingNode  325 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "HD 209458/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 76700"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       60     # M.sin(i) = 0.197 jupiters
 	Radius     98000
@@ -473,14 +505,14 @@ AltSurface "limit of knowledge" "HD 209458/b"
 
 AltSurface "limit of knowledge" "HD 76700/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 217014"   # 51 Peg
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       150     # M.sin(i) = 0.468 jupiters
 	Radius     98000
@@ -500,14 +532,14 @@ AltSurface "limit of knowledge" "HD 76700/b"
 
 AltSurface "limit of knowledge" "HD 217014/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 9826"   # Ups And
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       220     # M.sin(i) = 0.69 jupiters
 	Radius     98000
@@ -527,13 +559,13 @@ AltSurface "limit of knowledge" "HD 217014/b"
 
 AltSurface "limit of knowledge" "HD 9826/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 9826"   # Ups And
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       600     # M.sin(i) = 1.89 jupiters
 	Radius     70000
@@ -554,13 +586,13 @@ AltSurface "limit of knowledge" "HD 9826/b"
 
 AltSurface "limit of knowledge" "HD 9826/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "d" "HD 9826"   # Ups And
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1190     # M.sin(i) = 3.75 jupiters
 	Radius     70000
@@ -581,14 +613,14 @@ AltSurface "limit of knowledge" "HD 9826/c"
 
 AltSurface "limit of knowledge" "HD 9826/d"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 49674"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       40     # M.sin(i) = 0.12 jupiters
 	Radius     98000
@@ -609,14 +641,14 @@ AltSurface "limit of knowledge" "HD 9826/d"
 
 AltSurface "limit of knowledge" "HD 49674/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 68988"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       600     # M.sin(i) = 1.9 jupiters
 	Radius     84000
@@ -634,14 +666,14 @@ AltSurface "limit of knowledge" "HD 49674/b"
 
 AltSurface "limit of knowledge" "HD 68988/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 168746"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       70     # M.sin(i) = 0.23 jupiters
 	Radius     98000
@@ -661,14 +693,14 @@ AltSurface "limit of knowledge" "HD 68988/b"
 
 AltSurface "limit of knowledge" "HD 168746/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 217107"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       410     # M.sin(i) = 1.28 jupiters
 	Radius     84000
@@ -688,13 +720,13 @@ AltSurface "limit of knowledge" "HD 168746/b"
 
 AltSurface "limit of knowledge" "HD 217107/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 162020"
 {
-	Texture "browndwarf.jpg"
+	Texture "browndwarf.*"
 	Emissive true
 
 	Mass       4370     # M.sin(i) = 13.75 jupiters
@@ -715,13 +747,13 @@ AltSurface "limit of knowledge" "HD 217107/b"
 
 AltSurface "limit of knowledge" "HD 162020/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 130322"
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       340     # M.sin(i) = 1.08 jupiters
 	Radius     84000
@@ -741,13 +773,13 @@ AltSurface "limit of knowledge" "HD 162020/b"
 
 AltSurface "limit of knowledge" "HD 130322/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 108147"
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       130     # M.sin(i) = 0.41 jupiters
 	Radius     98000
@@ -767,14 +799,14 @@ AltSurface "limit of knowledge" "HD 130322/b"
 
 AltSurface "limit of knowledge" "HD 108147/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 38529"
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       250     # M.sin(i) = 0.78 jupiters
 	Radius     98000
@@ -794,13 +826,13 @@ AltSurface "limit of knowledge" "HD 108147/b"
 
 AltSurface "limit of knowledge" "HD 38529/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 38529"
 {
-	Texture "browndwarf.jpg"
+	Texture "browndwarf.*"
 	Emissive true
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
@@ -822,13 +854,13 @@ AltSurface "limit of knowledge" "HD 38529/b"
 
 AltSurface "limit of knowledge" "HD 38529/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 75732"   # Rho Cnc
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       270     # M.sin(i) = 0.84 jupiters
 	Radius     84000
@@ -848,13 +880,13 @@ AltSurface "limit of knowledge" "HD 38529/c"
 
 AltSurface "limit of knowledge" "HD 75732/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 75732"   # Rho Cnc
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       70     # M.sin(i) = 0.21 jupiters
 	Radius     56000
@@ -874,13 +906,13 @@ AltSurface "limit of knowledge" "HD 75732/b"
 
 AltSurface "limit of knowledge" "HD 75732/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "d" "HD 75732"   # Rho Cnc
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1290     # M.sin(i) = 4.05 jupiters
 	Radius     70000
@@ -901,13 +933,13 @@ AltSurface "limit of knowledge" "HD 75732/c"
 
 AltSurface "limit of knowledge" "HD 75732/d"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 13445"   # Gliese 86
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1280     # M.sin(i) = 4.01 jupiters
 	Radius     70000
@@ -927,13 +959,13 @@ AltSurface "limit of knowledge" "HD 75732/d"
 
 AltSurface "limit of knowledge" "HD 13445/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 195019"
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       1090     # M.sin(i) = 3.43 jupiters
 	Radius     84000
@@ -953,13 +985,13 @@ AltSurface "limit of knowledge" "HD 13445/b"
 
 AltSurface "limit of knowledge" "HD 195019/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 6434"
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     84000
@@ -979,13 +1011,13 @@ AltSurface "limit of knowledge" "HD 195019/b"
 
 AltSurface "limit of knowledge" "HD 6434/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 192263"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       230     # M.sin(i) = 0.72 jupiters
 	Radius     70000
@@ -1004,13 +1036,13 @@ AltSurface "limit of knowledge" "HD 6434/b"
 
 AltSurface "limit of knowledge" "HD 192263/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "Gliese 876"   # IL Aqr
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       180     # M.sin(i) = 0.56 jupiters
 	Radius     56000
@@ -1030,13 +1062,13 @@ AltSurface "limit of knowledge" "HD 192263/b"
 
 AltSurface "limit of knowledge" "Gliese 876/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "Gliese 876"   # IL Aqr
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       600     # M.sin(i) = 1.89 jupiters
 	Radius     70000
@@ -1057,13 +1089,13 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 
 AltSurface "limit of knowledge" "Gliese 876/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 143761"   # Rho CrB
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       330     # M.sin(i) = 1.04 jupiters
 	Radius     84000
@@ -1083,13 +1115,13 @@ AltSurface "limit of knowledge" "Gliese 876/b"
 
 AltSurface "limit of knowledge" "HD 143761/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 74156"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       590     # M.sin(i) = 1.86 jupiters
 	Radius     70000
@@ -1110,13 +1142,13 @@ AltSurface "limit of knowledge" "HD 143761/b"
 
 AltSurface "limit of knowledge" "HD 74156/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 74156"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1960     # M.sin(i) = 6.17 jupiters
 	Radius     70000
@@ -1137,13 +1169,13 @@ AltSurface "limit of knowledge" "HD 74156/b"
 
 AltSurface "limit of knowledge" "HD 74156/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 37605"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       900     # M.sin(i) = 2.84 jupiters
 	Radius     70000
@@ -1164,13 +1196,13 @@ AltSurface "limit of knowledge" "HD 74156/c"
 
 AltSurface "limit of knowledge" "HD 37605/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 168443"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2290     # M.sin(i) = 7.2 jupiters
 	Radius     70000
@@ -1191,13 +1223,13 @@ AltSurface "limit of knowledge" "HD 37605/b"
 
 AltSurface "limit of knowledge" "HD 168443/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 168443"
 {
-	Texture "browndwarf.jpg"
+	Texture "browndwarf.*"
 	Emissive true
 
 	Mass       5440     # M.sin(i) = 17.1 jupiters
@@ -1218,13 +1250,13 @@ AltSurface "limit of knowledge" "HD 168443/b"
 
 AltSurface "limit of knowledge" "HD 168443/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 3651"   # 54 Psc
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       60     # M.sin(i) = 0.2 jupiters
 	Radius     56000
@@ -1245,13 +1277,13 @@ AltSurface "limit of knowledge" "HD 168443/c"
 
 AltSurface "limit of knowledge" "HD 3651/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 121504"
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       280     # M.sin(i) = 0.89 jupiters
 	Radius     84000
@@ -1272,13 +1304,13 @@ AltSurface "limit of knowledge" "HD 3651/b"
 
 AltSurface "limit of knowledge" "HD 121504/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HIP 94075"   # HD 178911 B
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2000     # M.sin(i) = 6.292 jupiters
 	Radius     70000
@@ -1299,13 +1331,13 @@ AltSurface "limit of knowledge" "HD 121504/b"
 
 AltSurface "limit of knowledge" "HIP 94075/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 16141"   # 79 Cet
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       70     # M.sin(i) = 0.23 jupiters
 	Radius     84000
@@ -1326,13 +1358,13 @@ AltSurface "limit of knowledge" "HIP 94075/b"
 
 AltSurface "limit of knowledge" "HD 16141/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 114762"
 {
-	Texture "browndwarf.jpg"
+	Texture "browndwarf.*"
 	Emissive true
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
@@ -1353,13 +1385,13 @@ AltSurface "limit of knowledge" "HD 16141/b"
 
 AltSurface "limit of knowledge" "HD 114762/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 80606"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1080     # M.sin(i) = 3.41 jupiters
 	Radius     70000
@@ -1380,13 +1412,13 @@ AltSurface "limit of knowledge" "HD 114762/b"
 
 AltSurface "limit of knowledge" "HD 80606/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 117176"   # 70 Vir
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2370     # M.sin(i) = 7.44 jupiters
 	Radius     70000
@@ -1407,13 +1439,13 @@ AltSurface "limit of knowledge" "HD 80606/b"
 
 AltSurface "limit of knowledge" "HD 117176/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 216770"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       210     # M.sin(i) = 0.65 jupiters
 	Radius     56000
@@ -1434,13 +1466,13 @@ AltSurface "limit of knowledge" "HD 117176/b"
 
 AltSurface "limit of knowledge" "HD 216770/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 52265"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       360     # M.sin(i) = 1.13 jupiters
 	Radius     70000
@@ -1461,13 +1493,13 @@ AltSurface "limit of knowledge" "HD 216770/b"
 
 AltSurface "limit of knowledge" "HD 52265/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 1237"   # GJ 3021
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1020     # M.sin(i) = 3.21 jupiters
 	Radius     70000
@@ -1488,13 +1520,13 @@ AltSurface "limit of knowledge" "HD 52265/b"
 
 AltSurface "limit of knowledge" "HD 1237/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 37124"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       240     # M.sin(i) = 0.75 jupiters
 	Radius     70000
@@ -1515,13 +1547,13 @@ AltSurface "limit of knowledge" "HD 1237/b"
 
 AltSurface "limit of knowledge" "HD 37124/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 37124"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       380     # M.sin(i) = 1.2 jupiters
 	Radius     70000
@@ -1542,14 +1574,14 @@ AltSurface "limit of knowledge" "HD 37124/b"
 
 AltSurface "limit of knowledge" "HD 37124/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 219449"   # Psi1 Aqr
 {
-	Texture "gasgiant.jpg"
-	NightTexture "gasgiantnight.jpg"
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       920     # M.sin(i) = 2.9 jupiters
 	Radius     84000
@@ -1567,13 +1599,13 @@ AltSurface "limit of knowledge" "HD 37124/c"
 
 AltSurface "limit of knowledge" "HD 219449/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 73526"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       950     # M.sin(i) = 3 jupiters
 	Radius     70000
@@ -1594,13 +1626,13 @@ AltSurface "limit of knowledge" "HD 219449/b"
 
 AltSurface "limit of knowledge" "HD 73526/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 104985"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2000     # M.sin(i) = 6.3 jupiters
 	Radius     70000
@@ -1621,13 +1653,13 @@ AltSurface "limit of knowledge" "HD 73526/b"
 
 AltSurface "limit of knowledge" "HD 104985/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 82943"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       520     # M.sin(i) = 1.63 jupiters
 	Radius     70000
@@ -1648,13 +1680,13 @@ AltSurface "limit of knowledge" "HD 104985/b"
 
 AltSurface "limit of knowledge" "HD 82943/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 82943"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       280     # M.sin(i) = 0.88 jupiters
 	Radius     70000
@@ -1673,13 +1705,13 @@ AltSurface "limit of knowledge" "HD 82943/b"
 
 AltSurface "limit of knowledge" "HD 82943/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 169830"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       920     # M.sin(i) = 2.88 jupiters
 	Radius     70000
@@ -1700,13 +1732,13 @@ AltSurface "limit of knowledge" "HD 82943/c"
 
 AltSurface "limit of knowledge" "HD 169830/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 169830"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1280     # M.sin(i) = 4.04 jupiters
 	Radius     70000
@@ -1727,13 +1759,13 @@ AltSurface "limit of knowledge" "HD 169830/b"
 
 AltSurface "limit of knowledge" "HD 169830/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 8574"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       710     # M.sin(i) = 2.23 jupiters
 	Radius     70000
@@ -1752,13 +1784,13 @@ AltSurface "limit of knowledge" "HD 169830/c"
 
 AltSurface "limit of knowledge" "HD 8574/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 89744"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2290     # M.sin(i) = 7.2 jupiters
 	Radius     70000
@@ -1779,13 +1811,13 @@ AltSurface "limit of knowledge" "HD 8574/b"
 
 AltSurface "limit of knowledge" "HD 89744/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 134987"   # 23 Lib
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       500     # M.sin(i) = 1.58 jupiters
 	Radius     70000
@@ -1806,13 +1838,13 @@ AltSurface "limit of knowledge" "HD 89744/b"
 
 AltSurface "limit of knowledge" "HD 134987/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 40979"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1060     # M.sin(i) = 3.32 jupiters
 	Radius     70000
@@ -1833,13 +1865,13 @@ AltSurface "limit of knowledge" "HD 134987/b"
 
 AltSurface "limit of knowledge" "HD 40979/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 12661"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       730     # M.sin(i) = 2.3 jupiters
 	Radius     70000
@@ -1860,13 +1892,13 @@ AltSurface "limit of knowledge" "HD 40979/b"
 
 AltSurface "limit of knowledge" "HD 12661/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 12661"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       500     # M.sin(i) = 1.57 jupiters
 	Radius     70000
@@ -1887,13 +1919,13 @@ AltSurface "limit of knowledge" "HD 12661/b"
 
 AltSurface "limit of knowledge" "HD 12661/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 150706"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       320     # M.sin(i) = 1 jupiters
 	Radius     70000
@@ -1914,13 +1946,13 @@ AltSurface "limit of knowledge" "HD 12661/c"
 
 AltSurface "limit of knowledge" "HD 150706/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 59686"
 {
-	Texture "gasgiant.jpg"
+	Texture "gasgiant.*"
 
 	Mass       2070     # M.sin(i) = 6.5 jupiters
 	Radius     84000
@@ -1938,13 +1970,13 @@ AltSurface "limit of knowledge" "HD 150706/b"
 
 AltSurface "limit of knowledge" "HD 59686/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 17051"   # Iot Hor / HR 810
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       620     # M.sin(i) = 1.94 jupiters
 	Radius     70000
@@ -1965,13 +1997,13 @@ AltSurface "limit of knowledge" "HD 59686/b"
 
 AltSurface "limit of knowledge" "HD 17051/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 142"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       320     # M.sin(i) = 1 jupiters
 	Radius     70000
@@ -1990,13 +2022,13 @@ AltSurface "limit of knowledge" "HD 17051/b"
 
 AltSurface "limit of knowledge" "HD 142/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 92788"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1230     # M.sin(i) = 3.86 jupiters
 	Radius     70000
@@ -2017,13 +2049,13 @@ AltSurface "limit of knowledge" "HD 142/b"
 
 AltSurface "limit of knowledge" "HD 92788/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 28185"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1780     # M.sin(i) = 5.6 jupiters
 	Radius     70000
@@ -2044,13 +2076,13 @@ AltSurface "limit of knowledge" "HD 92788/b"
 
 AltSurface "limit of knowledge" "HD 28185/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 142415"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       520     # M.sin(i) = 1.62 jupiters
 	Radius     70000
@@ -2071,13 +2103,13 @@ AltSurface "limit of knowledge" "HD 28185/b"
 
 AltSurface "limit of knowledge" "HD 142415/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 177830"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       410     # M.sin(i) = 1.28 jupiters
 	Radius     70000
@@ -2098,13 +2130,13 @@ AltSurface "limit of knowledge" "HD 142415/b"
 
 AltSurface "limit of knowledge" "HD 177830/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 108874"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       530     # M.sin(i) = 1.65 jupiters
 	Radius     70000
@@ -2125,13 +2157,13 @@ AltSurface "limit of knowledge" "HD 177830/b"
 
 AltSurface "limit of knowledge" "HD 108874/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 4203"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       530     # M.sin(i) = 1.65 jupiters
 	Radius     70000
@@ -2152,13 +2184,13 @@ AltSurface "limit of knowledge" "HD 108874/b"
 
 AltSurface "limit of knowledge" "HD 4203/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 128311"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       840     # M.sin(i) = 2.63 jupiters
 	Radius     70000
@@ -2179,13 +2211,13 @@ AltSurface "limit of knowledge" "HD 4203/b"
 
 AltSurface "limit of knowledge" "HD 128311/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 27442"   # Eps Ret
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       410     # M.sin(i) = 1.28 jupiters
 	Radius     70000
@@ -2206,13 +2238,13 @@ AltSurface "limit of knowledge" "HD 128311/b"
 
 AltSurface "limit of knowledge" "HD 27442/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 210277"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       390     # M.sin(i) = 1.24 jupiters
 	Radius     70000
@@ -2233,13 +2265,13 @@ AltSurface "limit of knowledge" "HD 27442/b"
 
 AltSurface "limit of knowledge" "HD 210277/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 19994"   # 94 Cet
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       640     # M.sin(i) = 2 jupiters
 	Radius     70000
@@ -2260,13 +2292,13 @@ AltSurface "limit of knowledge" "HD 210277/b"
 
 AltSurface "limit of knowledge" "HD 19994/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 20367"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       340     # M.sin(i) = 1.07 jupiters
 	Radius     70000
@@ -2287,13 +2319,13 @@ AltSurface "limit of knowledge" "HD 19994/b"
 
 AltSurface "limit of knowledge" "HD 20367/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 114783"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       290     # M.sin(i) = 0.9 jupiters
 	Radius     70000
@@ -2312,13 +2344,13 @@ AltSurface "limit of knowledge" "HD 20367/b"
 
 AltSurface "limit of knowledge" "HD 114783/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 147513"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       320     # M.sin(i) = 1 jupiters
 	Radius     70000
@@ -2339,13 +2371,13 @@ AltSurface "limit of knowledge" "HD 114783/b"
 
 AltSurface "limit of knowledge" "HD 147513/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 137759"   # Iot Dra
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2750     # M.sin(i) = 8.64 jupiters
 	Radius     70000
@@ -2366,13 +2398,13 @@ AltSurface "limit of knowledge" "HD 147513/b"
 
 AltSurface "limit of knowledge" "HD 137759/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 222582"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1620     # M.sin(i) = 5.11 jupiters
 	Radius     70000
@@ -2393,13 +2425,13 @@ AltSurface "limit of knowledge" "HD 137759/b"
 
 AltSurface "limit of knowledge" "HD 222582/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 65216"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       390     # M.sin(i) = 1.21 jupiters
 	Radius     70000
@@ -2420,13 +2452,38 @@ AltSurface "limit of knowledge" "HD 222582/b"
 
 AltSurface "limit of knowledge" "HD 65216/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "HD 160691"   # Mu Ara
+{
+	Texture "venuslike.*"
+
+	Mass      14     # M.sin(i) = 14 earths
+	Radius     15400
+
+	InfoURL "http://www.obspm.fr/encycl/HD160691.html"
+
+	EllipticalOrbit {
+		Period          0.0261
+		SemiMajorAxis   0.09
+		Eccentricity    0
+		MeanAnomaly     348
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 160691/d"
+{
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 160691"   # Mu Ara
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       540     # M.sin(i) = 1.7 jupiters
 	Radius     70000
@@ -2447,13 +2504,13 @@ AltSurface "limit of knowledge" "HD 65216/b"
 
 AltSurface "limit of knowledge" "HD 160691/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 160691"   # Mu Ara
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       320     # M.sin(i) = 1 jupiters
 	Radius     70000
@@ -2474,13 +2531,13 @@ AltSurface "limit of knowledge" "HD 160691/b"
 
 AltSurface "limit of knowledge" "HD 160691/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 141937"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       3080     # M.sin(i) = 9.7 jupiters
 	Radius     70000
@@ -2501,13 +2558,13 @@ AltSurface "limit of knowledge" "HD 160691/c"
 
 AltSurface "limit of knowledge" "HD 141937/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 41004"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       730     # M.sin(i) = 2.3 jupiters
 	Radius     70000
@@ -2528,13 +2585,13 @@ AltSurface "limit of knowledge" "HD 141937/b"
 
 AltSurface "limit of knowledge" "HD 41004/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 47536"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1580     # M.sin(i) = 4.96 jupiters
 	Radius     70000
@@ -2555,13 +2612,13 @@ AltSurface "limit of knowledge" "HD 41004/b"
 
 AltSurface "limit of knowledge" "HD 47536/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 23079"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       830     # M.sin(i) = 2.61 jupiters
 	Radius     70000
@@ -2582,13 +2639,13 @@ AltSurface "limit of knowledge" "HD 47536/b"
 
 AltSurface "limit of knowledge" "HD 23079/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 186427"   # 16 Cyg B
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       540     # M.sin(i) = 1.69 jupiters
 	Radius     70000
@@ -2609,13 +2666,13 @@ AltSurface "limit of knowledge" "HD 23079/b"
 
 AltSurface "limit of knowledge" "HD 186427/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 4208"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       250     # M.sin(i) = 0.8 jupiters
 	Radius     70000
@@ -2636,13 +2693,13 @@ AltSurface "limit of knowledge" "HD 186427/b"
 
 AltSurface "limit of knowledge" "HD 4208/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 114386"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       320     # M.sin(i) = 0.99 jupiters
 	Radius     70000
@@ -2663,13 +2720,13 @@ AltSurface "limit of knowledge" "HD 4208/b"
 
 AltSurface "limit of knowledge" "HD 114386/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 222404"   # Gam Cep
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       510     # M.sin(i) = 1.59 jupiters
 	Radius     70000
@@ -2690,13 +2747,13 @@ AltSurface "limit of knowledge" "HD 114386/b"
 
 AltSurface "limit of knowledge" "HD 222404/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 213240"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1430     # M.sin(i) = 4.5 jupiters
 	Radius     70000
@@ -2717,13 +2774,13 @@ AltSurface "limit of knowledge" "HD 222404/b"
 
 AltSurface "limit of knowledge" "HD 213240/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 10647"   # q1 Eri
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       290     # M.sin(i) = 0.91 jupiters
 	Radius     70000
@@ -2744,13 +2801,13 @@ AltSurface "limit of knowledge" "HD 213240/b"
 
 AltSurface "limit of knowledge" "HD 10647/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 10697"   # 109 Psc
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1950     # M.sin(i) = 6.12 jupiters
 	Radius     70000
@@ -2771,13 +2828,13 @@ AltSurface "limit of knowledge" "HD 10647/b"
 
 AltSurface "limit of knowledge" "HD 10697/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 95128"   # 47 UMa
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       810     # M.sin(i) = 2.54 jupiters
 	Radius     70000
@@ -2798,13 +2855,13 @@ AltSurface "limit of knowledge" "HD 10697/b"
 
 AltSurface "limit of knowledge" "HD 95128/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 95128"   # 47 UMa
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       240     # M.sin(i) = 0.76 jupiters
 	Radius     70000
@@ -2825,13 +2882,13 @@ AltSurface "limit of knowledge" "HD 95128/b"
 
 AltSurface "limit of knowledge" "HD 95128/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 190228"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1590     # M.sin(i) = 4.99 jupiters
 	Radius     70000
@@ -2852,13 +2909,13 @@ AltSurface "limit of knowledge" "HD 95128/c"
 
 AltSurface "limit of knowledge" "HD 190228/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 114729"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       260     # M.sin(i) = 0.82 jupiters
 	Radius     70000
@@ -2879,13 +2936,13 @@ AltSurface "limit of knowledge" "HD 190228/b"
 
 AltSurface "limit of knowledge" "HD 114729/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 111232"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2160     # M.sin(i) = 6.8 jupiters
 	Radius     70000
@@ -2906,13 +2963,13 @@ AltSurface "limit of knowledge" "HD 114729/b"
 
 AltSurface "limit of knowledge" "HD 111232/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 2039"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1540     # M.sin(i) = 4.85 jupiters
 	Radius     70000
@@ -2933,13 +2990,13 @@ AltSurface "limit of knowledge" "HD 111232/b"
 
 AltSurface "limit of knowledge" "HD 2039/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 136118"
 {
-	Texture "browndwarf.jpg"
+	Texture "browndwarf.*"
 	Emissive true
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
@@ -2961,13 +3018,13 @@ AltSurface "limit of knowledge" "HD 2039/b"
 
 AltSurface "limit of knowledge" "HD 136118/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 50554"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1560     # M.sin(i) = 4.9 jupiters
 	Radius     70000
@@ -2987,13 +3044,13 @@ AltSurface "limit of knowledge" "HD 136118/b"
 
 AltSurface "limit of knowledge" "HD 50554/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 196050"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       950     # M.sin(i) = 3 jupiters
 	Radius     70000
@@ -3014,13 +3071,13 @@ AltSurface "limit of knowledge" "HD 50554/b"
 
 AltSurface "limit of knowledge" "HD 196050/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 216437"   # Rho Ind
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       670     # M.sin(i) = 2.1 jupiters
 	Radius     70000
@@ -3041,13 +3098,13 @@ AltSurface "limit of knowledge" "HD 196050/b"
 
 AltSurface "limit of knowledge" "HD 216437/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 216435"   # Tau1 Gru
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       470     # M.sin(i) = 1.49 jupiters
 	Radius     70000
@@ -3068,13 +3125,13 @@ AltSurface "limit of knowledge" "HD 216437/b"
 
 AltSurface "limit of knowledge" "HD 216435/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 106252"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2170     # M.sin(i) = 6.81 jupiters
 	Radius     70000
@@ -3094,13 +3151,13 @@ AltSurface "limit of knowledge" "HD 216435/b"
 
 AltSurface "limit of knowledge" "HD 106252/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 23596"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2290     # M.sin(i) = 7.19 jupiters
 	Radius     70000
@@ -3121,13 +3178,13 @@ AltSurface "limit of knowledge" "HD 106252/b"
 
 AltSurface "limit of knowledge" "HD 23596/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 145675"   # 14 Her
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       1510     # M.sin(i) = 4.74 jupiters
 	Radius     70000
@@ -3148,13 +3205,13 @@ AltSurface "limit of knowledge" "HD 23596/b"
 
 AltSurface "limit of knowledge" "HD 145675/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 39091"   # Pi Men
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       3290     # M.sin(i) = 10.35 jupiters
 	Radius     70000
@@ -3175,13 +3232,13 @@ AltSurface "limit of knowledge" "HD 145675/b"
 
 AltSurface "limit of knowledge" "HD 39091/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 72659"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       810     # M.sin(i) = 2.55 jupiters
 	Radius     70000
@@ -3202,13 +3259,13 @@ AltSurface "limit of knowledge" "HD 39091/b"
 
 AltSurface "limit of knowledge" "HD 72659/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 70642"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       640     # M.sin(i) = 2 jupiters
 	Radius     70000
@@ -3229,13 +3286,13 @@ AltSurface "limit of knowledge" "HD 72659/b"
 
 AltSurface "limit of knowledge" "HD 70642/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 33636"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2950     # M.sin(i) = 9.28 jupiters
 	Radius     70000
@@ -3256,13 +3313,13 @@ AltSurface "limit of knowledge" "HD 70642/b"
 
 AltSurface "limit of knowledge" "HD 33636/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 22049"   # Eps Eri
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       270     # M.sin(i) = 0.86 jupiters
 	Radius     70000
@@ -3283,13 +3340,13 @@ AltSurface "limit of knowledge" "HD 33636/b"
 
 AltSurface "limit of knowledge" "HD 22049/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "HD 22049"   # Eps Eri
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       30     # M.sin(i) = 0.1 jupiters
 	Radius     56000
@@ -3308,13 +3365,13 @@ AltSurface "limit of knowledge" "HD 22049/b"
 
 AltSurface "limit of knowledge" "HD 22049/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 30177"
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       2920     # M.sin(i) = 9.17 jupiters
 	Radius     70000
@@ -3335,13 +3392,13 @@ AltSurface "limit of knowledge" "HD 22049/c"
 
 AltSurface "limit of knowledge" "HD 30177/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "HD 190360"   # Gliese 777
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       420     # M.sin(i) = 1.33 jupiters
 	Radius     70000
@@ -3362,16 +3419,16 @@ AltSurface "limit of knowledge" "HD 30177/b"
 
 AltSurface "limit of knowledge" "HD 190360/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "a" "PSR 1257+12"   # PSR J1300+1240
-
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "asteroid.jpg"
+	Texture "asteroid.*"
+
 	Mass      0.02     # M.sin(i) = 0.02 earths
 	Radius     1680
 
@@ -3380,32 +3437,32 @@ AltSurface "limit of knowledge" "HD 190360/b"
 	EllipticalOrbit {
 		Period          0.0692
 		SemiMajorAxis   0.19
-		AscendingNode   119
-		Inclination     152 # approx. plane of other planets
+		Inclination     119.2 # approx. plane of other planets
+		AscendingNode   152.2
 		ArgOfPericenter 89
 		MeanAnomaly     165
 	}
 
-	Obliquity            152   # guess, to match inclination
-	EquatorAscendingNode 119   # guess, to match ascending node
+	Obliquity             119 # guess, to match inclination
+	EquatorAscendingNode  152 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "PSR 1257+12/a"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "PSR 1257+12"   # PSR J1300+1240
-
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "asteroid.jpg"
+	Texture "asteroid.*"
+
 	Mass      4.3     # M.sin(i) = 4.3 earths
-	Radius     9800
+	Radius     10500
 
 	InfoURL "http://www.obspm.fr/encycl/1257+12.html"
 
@@ -3413,30 +3470,30 @@ AltSurface "limit of knowledge" "PSR 1257+12/a"
 		Period          0.1822
 		SemiMajorAxis   0.36
 		Eccentricity    0.0186
-		AscendingNode   119
-		Inclination     156
+		Inclination     119.3
+		AscendingNode   155.6
 		ArgOfPericenter 91
 		MeanAnomaly     253
 	}
 
-	Obliquity            156   # guess, to match inclination
-	EquatorAscendingNode 119   # guess, to match ascending node
+	Obliquity             119 # guess, to match inclination
+	EquatorAscendingNode  156 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "PSR 1257+12/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "c" "PSR 1257+12"   # PSR J1300+1240
-
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "asteroid.jpg"
+	Texture "asteroid.*"
+
 	Mass      3.9     # M.sin(i) = 3.9 earths
 	Radius     9800
 
@@ -3446,30 +3503,29 @@ AltSurface "limit of knowledge" "PSR 1257+12/b"
 		Period          0.2689
 		SemiMajorAxis   0.46
 		Eccentricity    0.0252
-		AscendingNode   119
-		Inclination     149
+		Inclination     119.1
+		AscendingNode   148.7
 		ArgOfPericenter 87
 		MeanAnomaly     39
 	}
 
-	Obliquity            149   # guess, to match inclination
-	EquatorAscendingNode 119   # guess, to match ascending node
+	Obliquity             119 # guess, to match inclination
+	EquatorAscendingNode  149 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "PSR 1257+12/c"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
 
 
 "b" "PSR 1620-26"   # PSR J1623-2631
-
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "jupiterlike.jpg"
+	Texture "jupiterlike.*"
 
 	Mass       790     # M.sin(i) = 2.5 jupiters
 	Radius     70000
@@ -3480,19 +3536,21 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 	EllipticalOrbit {
 		Period          100
 		SemiMajorAxis   23
-		AscendingNode   95
-		Inclination     213
+		Inclination     94.8
+		AscendingNode   212.7
 		ArgOfPericenter 81
 		MeanAnomaly     15
 	}
 
+	Obliquity             95 # guess, to match inclination
+	EquatorAscendingNode  213 # guess, to match ascending node
 
-	Obliquity            213   # guess, to match inclination
-	EquatorAscendingNode  95   # guess, to match ascending node
 	RotationPeriod  10 # plausible guess
 }
 
 AltSurface "limit of knowledge" "PSR 1620-26/b"
 {
-	Texture "extrasolar-lok.jpg"
+	Texture "extrasolar-lok.*"
 }
+
+
