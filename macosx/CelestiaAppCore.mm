@@ -44,9 +44,8 @@ public:
 
     void fatalError(const std::string& msg)
     {
-//        NSRunAlertPanel(@"Fatal Error",[NSString stringWithCString: msg.c_str()],nil,nil,nil);
         NSLog(@"alerter fatalError!");
-        [[CelestiaController shared] fatalError: [NSString stringWithCString: msg.c_str()] ];
+        [[CelestiaController shared] fatalError: [NSString stringWithStdString: msg] ];
         NSLog(@"alerter fatalError finis");
     }
 };
@@ -538,7 +537,7 @@ static NSMutableDictionary* tagDict;
         for (int i = 0; i < (int)surfaces->size(); i++)
         {
             NSMenuItem* newItem = [ [NSMenuItem alloc] init ]; 
-            [newItem setTitle: [ NSString stringWithCString: (*surfaces)[i].c_str() ] ];
+            [newItem setTitle: [ NSString stringWithStdString: (*surfaces)[i] ] ];
             [newItem setTag:  601+i ];
             [newItem setEnabled:  YES ];
             [newItem setTarget:  [firstItem target] ];
