@@ -43,6 +43,7 @@ libcelengine_a_SOURCES = \
 	texture.cpp \
 	tokenizer.cpp \
 	univcoord.cpp \
+	universe.cpp \
 	vertexlist.cpp \
 	vertexprog.cpp
 
