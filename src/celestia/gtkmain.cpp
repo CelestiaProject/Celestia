@@ -1786,10 +1786,10 @@ static void menuSetTime()
     gtk_container_add(GTK_CONTAINER(frame),GTK_WIDGET(align));
     gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
     gtk_box_pack_start (GTK_BOX (GNOME_DIALOG (stimedialog)->vbox), frame, FALSE, FALSE, 0);
-    intSpin(hbox, "Hour", 1, 24, &date.hour, ":");
-    intSpin(hbox, "Minute", 1, 60, &date.minute, ":");
+    intSpin(hbox, "Hour", 0, 23, &date.hour, ":");
+    intSpin(hbox, "Minute", 0, 59, &date.minute, ":");
     second=(int)date.seconds;
-    intSpin(hbox, "Second", 1, 60, &second, "  ");
+    intSpin(hbox, "Second", 0, 59, &second, "  ");
     chooseOption(hbox, "Timzone", timeOptions, &tzone, NULL, GTK_SIGNAL_FUNC(zonechosen));
     gtk_widget_show_all(hbox);
     hbox = gtk_hbox_new(FALSE, 6);
@@ -2110,6 +2110,10 @@ gint glarea_motion_notify(GtkWidget* widget, GdkEventMotion* event)
         buttons |= CelestiaCore::MiddleButton;
     if ((event->state & GDK_BUTTON3_MASK) != 0)
         buttons |= CelestiaCore::RightButton;
+    if ((event->state & GDK_SHIFT_MASK) != 0)
+        buttons |= CelestiaCore::ShiftKey;
+    if ((event->state & GDK_CONTROL_MASK) != 0)
+        buttons |= CelestiaCore::ControlKey;
 
     appCore->mouseMove(x - lastX, y - lastY, buttons);
 
