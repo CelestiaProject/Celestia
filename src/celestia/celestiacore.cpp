@@ -2708,7 +2708,14 @@ static void displayStarInfo(Overlay& overlay,
                    astro::absToAppMag(star.getAbsoluteMagnitude(),
                                       (float) distance));
     overlay << "Luminosity: " << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
-    overlay << "Class: " << star.getSpectralType() << '\n';
+    overlay << "Class: ";
+    if (star.getSpectralType()[0] == 'Q')
+        overlay << "Neutron star";
+    else if (star.getSpectralType()[0] == 'X')
+        overlay << "Black hole";
+    else
+        overlay << star.getSpectralType();
+    overlay << '\n';
 
     displayApparentDiameter(overlay, star.getRadius(),
                             astro::lightYearsToKilometers(distance));
@@ -3424,16 +3431,16 @@ void CelestiaCore::renderOverlay()
             glBegin(GL_QUADS);
             glColor4f(0.8f, 0.8f, 1.0f, botAlpha);
             //glColor4f(1.0f, 1.0f, 1.0f, botAlpha);
-            glTexCoord2f(0, 1);
-            glVertex2f(left, bottom);
-            glTexCoord2f(1, 1);
-            glVertex2f(left + xSize, bottom);
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex2i(left, bottom);
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex2i(left + xSize, bottom);
             glColor4f(0.6f, 0.6f, 1.0f, topAlpha);
             //glColor4f(1.0f, 1.0f, 1.0f, topAlpha);
-            glTexCoord2f(1, 0);
-            glVertex2f(left + xSize, bottom + ySize);
-            glTexCoord2f(0, 0);
-            glVertex2f(left, bottom + ySize);
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex2i(left + xSize, bottom + ySize);
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex2i(left, bottom + ySize);
             glEnd();
         }
         else
@@ -3838,6 +3845,8 @@ static void loadCrossIndex(StarDatabase* starDB,
 
 bool CelestiaCore::readStars(const CelestiaConfig& cfg)
 {
+    StarDetails::InitializeStarTextures();
+
     ifstream starNamesFile(cfg.starNamesFile.c_str(), ios::in);
     if (!starNamesFile.good())
     {
