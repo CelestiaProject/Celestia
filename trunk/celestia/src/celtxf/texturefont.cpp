@@ -75,9 +75,9 @@ void TextureFont::render(const string& s) const
 {
     int len = s.length();
     bool validChar = true;
-    
-    for (int i = 0; i < len && validChar; i)
-    {
+    int i = 0;
+	
+	while (i < len && validChar) {
         wchar_t ch = 0;
         validChar = UTF8Decode(s, i, ch);
         i += UTF8EncodedSize(ch);
@@ -92,8 +92,9 @@ int TextureFont::getWidth(const string& s) const
     int width = 0;
     int len = s.length();
     bool validChar = true;
+	int i = 0;
 
-    for (int i = 0; i < len && validChar; i)
+    while (i < len && validChar)
     {
         wchar_t ch = 0;
         validChar = UTF8Decode(s, i, ch);
@@ -162,7 +163,7 @@ void TextureFont::addGlyph(const TextureFont::Glyph& g)
 
 const TextureFont::Glyph* TextureFont::getGlyph(wchar_t ch) const
 {
-    if (ch >= glyphLookupTableSize)
+    if (ch >= (wchar_t)glyphLookupTableSize)
         return NULL;
     else
         return glyphLookup[ch];

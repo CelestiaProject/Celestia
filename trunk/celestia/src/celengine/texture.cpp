@@ -404,7 +404,7 @@ ImageTexture::ImageTexture(Image& img,
     Texture(img.getWidth(), img.getHeight()),
     glName(0)
 {
-    glGenTextures(1, &glName);
+    glGenTextures(1, (GLuint*)&glName);
     glBindTexture(GL_TEXTURE_2D, glName);
 
     bool mipmap = mipMapMode == DefaultMipMaps;
@@ -545,7 +545,7 @@ TiledTexture::TiledTexture(Image& img,
         for (int u = 0; u < uSplit; u++)
         {
             // Create the texture and set up sampling and addressing
-            glGenTextures(1, &glNames[v * uSplit + u]);
+            glGenTextures(1, (GLuint*)&glNames[v * uSplit + u]);
             glBindTexture(GL_TEXTURE_2D, glNames[v * uSplit + u]);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texAddress);
@@ -735,7 +735,7 @@ CubeMap::CubeMap(Image* faces[]) :
     if (!precomputedMipMaps && faces[0]->isCompressed())
         mipmap = false;
 
-    glGenTextures(1, &glName);
+    glGenTextures(1, (GLuint*)&glName);
     glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, glName);
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

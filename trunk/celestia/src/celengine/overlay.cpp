@@ -161,8 +161,9 @@ void Overlay::print(char* s)
 #else
     int length = strlen(s);
     bool validChar = true;
+	int i = 0;
     
-    for (int i = 0; i < length && validChar; i)
+    while (i < length && validChar)
     {
         wchar_t ch = 0;
         validChar = UTF8Decode(s, i, length, ch);

@@ -408,7 +408,7 @@ bool astro::parseDate(const string& s, astro::Date& date)
             else
                 maxDay = 28;
         }
-        if (day > maxDay || day < 1)
+        if (day > (unsigned int)maxDay || day < 1)
             return false;
 
         date.year = year;

@@ -232,7 +232,7 @@ void SampledOrbit::sample(double start, double t, int nSamples,
 		double dt2 = dt;
 
 		Point3d goodpt;
-		double gooddt;
+		double gooddt = 0.0;
 		Point3d pos0 = positionAtTime(current);
 		goodpt = positionAtTime(current + dt2);
 		while (1)
