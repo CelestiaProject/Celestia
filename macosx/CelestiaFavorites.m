@@ -20,7 +20,7 @@ static CelestiaFavorites* _celestiaFavorites;
     while ((obj = [enumerator nextObject]) != nil)
         [children addObject:[(MyTree*)obj recursiveDictionary]];
     [defaults setObject:children forKey:@"favorites"];
-    NSLog(@"\"favorites\" = %@",[defaults objectForKey:@"favorites"]);
+    // NSLog(@"\"favorites\" = %@",[defaults objectForKey:@"favorites"]);
 }
 -(void)setSynchronize:(NSInvocation*)synchronize
 {
