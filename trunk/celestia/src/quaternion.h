@@ -162,9 +162,9 @@ template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
     else
     {
         int i = 0;
-        if (m[1][1] > m[1][1])
+        if (m[1][1] > m[i][i])
             i = 1;
-        if (m[2][2] > m[1][1])
+        if (m[2][2] > m[i][i])
             i = 2;
         int j = (i == 2) ? 0 : i + 1;
         int k = (j == 2) ? 0 : j + 1;
