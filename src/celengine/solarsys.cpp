@@ -24,9 +24,9 @@
 #include "astro.h"
 #include "parser.h"
 #include "customorbit.h"
-#include "samporbit.h"
 #include "texmanager.h"
 #include "meshmanager.h"
+#include "trajmanager.h"
 #include "universe.h"
 #include "multitexture.h"
 
@@ -273,7 +273,9 @@ static Body* CreatePlanet(PlanetarySystem* system,
         {
             DPRINTF(1, "Attempting to load sampled orbit file '%s'\n",
                     sampOrbitFile.c_str());
-            orbit = LoadSampledOrbit(string("data/") + sampOrbitFile);
+            ResourceHandle orbitHandle =
+                GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile, path));
+            orbit = GetTrajectoryManager()->find(orbitHandle);
             if (orbit == NULL)
             {
                 DPRINTF(0, "Could not load sampled orbit file '%s'\n",
