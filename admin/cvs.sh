@@ -109,7 +109,7 @@ if test -r configure.in.in; then
 fi
 
 echo "*** Creating aclocal.m4"
-$ACLOCAL || exit 1
+$ACLOCAL -I macros || exit 1
 echo "*** Creating configure"
 call_and_fix_autoconf
 
