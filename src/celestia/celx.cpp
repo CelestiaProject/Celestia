@@ -598,7 +598,7 @@ bool LuaState::charEntered(const char* c_p)
         int stackTop = lua_gettop(costate);
         if (strcmp(c_p, "y") == 0)
         {
-            luaopen_io(costate);
+            lua_iolibopen(costate);
             ioMode = IOAllowed;
         }
         else
@@ -855,7 +855,7 @@ void LuaState::requestIO()
         string policy = appCore->getConfig()->scriptSystemAccessPolicy;
         if (policy == "allow")
         {
-            luaopen_io(costate);
+            lua_iolibopen(costate);
             ioMode = IOAllowed;
         }
         else if (policy == "deny")
