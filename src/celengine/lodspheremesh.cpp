@@ -20,6 +20,8 @@
 
 using namespace std;
 
+//#define SHOW_PATCH_VISIBILITY
+//#define SHOW_FRUSTUM
 
 static bool trigArraysInitialized = false;
 static int maxDivisions = 2048;
@@ -30,6 +32,11 @@ static float* sinPhi = NULL;
 static float* cosPhi = NULL;
 static float* sinTheta = NULL;
 static float* cosTheta = NULL;
+
+#ifdef SHOW_PATCH_VISIBILITY
+static const int MaxPatchesShown = 4096;
+static int visiblePatches[MaxPatchesShown];
+#endif
 
 
 static void InitTrigArrays()
@@ -315,10 +322,15 @@ void LODSphereMesh::render(const GLContext& context,
         fp[7] = Planef::intersection(frustum.getPlane(Frustum::Far),
                                      frustum.getPlane(Frustum::Bottom),
                                      frustum.getPlane(Frustum::Right));
-#if 0
-        for (int foo = 0; foo < 8; foo++)
-            cout << "x: " << fp[foo].x << "  y: " << fp[foo].y << "  z: " << fp[foo].z << '\n';
-#endif
+
+
+
+#ifdef SHOW_PATCH_VISIBILITY
+        {
+            for (int i = 0; i < MaxPatchesShown; i++)
+                visiblePatches[i] = 0;
+        }
+#endif // SHOW_PATCH_VISIBILITY
 
         int nPatches = 0;
         {
@@ -333,6 +345,7 @@ void LODSphereMesh::render(const GLContext& context,
                                               split / 2,
                                               step,
                                               attributes,
+                                              frustum,
                                               fp);
                 }
             }
@@ -369,7 +382,7 @@ void LODSphereMesh::render(const GLContext& context,
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     }
 
-#if SHOW_FRUSTUM
+#ifdef SHOW_FRUSTUM
     // Debugging code for visualizing the frustum.
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -409,6 +422,54 @@ void LODSphereMesh::render(const GLContext& context,
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 #endif
+
+#ifdef SHOW_PATCH_VISIBILITY
+    // Debugging code for visualizing the frustum.
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glColor4f(1, 0, 1, 1);
+
+    {
+        int width = split;
+        int height = width / 2;
+        float patchWidth = 1.0f / (float) width;
+        float patchHeight = 1.0f / (float) height;
+        if (width * height <= MaxPatchesShown)
+        {
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    glPushMatrix();
+                    glTranslatef(-0.5f + j * patchWidth,
+                                 1.0f - i * patchHeight,
+                                 0.0f);
+                    if (visiblePatches[i * width + j])
+                        glBegin(GL_QUADS);
+                    else
+                        glBegin(GL_LINE_LOOP);
+                    glVertex3f(0.0f, 0.0f, 0.0f);
+                    glVertex3f(0.0f, -patchHeight, 0.0f);
+                    glVertex3f(patchWidth, -patchHeight, 0.0f);
+                    glVertex3f(patchWidth, 0.0f, 0.0f);
+                    glEnd();
+                    glPopMatrix();
+                }
+            }
+        }
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+#endif // SHOW_PATCH_VISIBILITY
 }
 
 
@@ -417,6 +478,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
                                  int level,
                                  int step,
                                  unsigned int attributes,
+                                 const Frustum& frustum,
                                  Point3f* fp)
 {
     int thetaExtent = extent;
@@ -445,6 +507,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
     Planef separatingPlane(normal, p0);
 
     bool outside = true;
+#if 1
     for (int k = 0; k < 8; k++)
     {
         if (separatingPlane.distanceTo(fp[k]) > 0.0f)
@@ -455,6 +518,34 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
     }
 
     // If this patch is outside the view frustum, so are all of its subpatches
+    if (outside)
+        return 0;
+#else
+    outside = false;
+#endif
+
+    // Second cull test uses the bounding sphere of the patch
+#if 0
+    Point3f patchCenter = spherePoint(theta0 + thetaExtent / 2,
+                                      phi0 + phiExtent / 2);
+#endif
+    Point3f patchCenter = Point3f(p0.x + p1.x + p2.x + p3.x,
+                                  p0.y + p1.y + p2.y + p3.y,
+                                  p0.z + p1.z + p2.z + p3.z) * 0.25f;
+    float boundingRadius = 0.0f;
+    boundingRadius = max(boundingRadius, patchCenter.distanceTo(p0));
+    boundingRadius = max(boundingRadius, patchCenter.distanceTo(p1));
+    boundingRadius = max(boundingRadius, patchCenter.distanceTo(p2));
+    boundingRadius = max(boundingRadius, patchCenter.distanceTo(p3));
+    if (frustum.testSphere(patchCenter, boundingRadius) == Frustum::Outside)
+        outside = true;
+
+#if 0
+    cout << "[ " << patchCenter.x << ' ' << patchCenter.y << ' ' << patchCenter.z << " ], " << boundingRadius << " (" << thetaExtent << ')' << '\n';
+    cout << "frustum point 0: " << fp[0].x << "," << fp[0].y << "," << fp[0].z << '\n';
+#endif
+    cout << "r = " << boundingRadius << ", f-n = " << frustum.getPlane(Frustum::Near).d - frustum.getPlane(Frustum::Far).d << '\n';
+
     if (outside)
     {
         return 0;
@@ -479,6 +570,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
                                            level / 2,
                                            step,
                                            attributes,
+                                           frustum,
                                            fp);
             }
         }
@@ -492,6 +584,17 @@ void LODSphereMesh::renderSection(int phi0, int theta0,
                                   int step,
                                   unsigned int attributes)
 {
+#ifdef SHOW_PATCH_VISIBILITY
+    {
+        int width = thetaDivisions / extent;
+        int height = phiDivisions / extent;
+        int x = theta0 / extent;
+        int y = phi0 / extent;
+        if (width * height <= MaxPatchesShown)
+            visiblePatches[y * width + x] = 1;
+        //printf("%d %d\n", phi0 / extent, theta0 / extent);
+    }
+#endif // SHOW_PATCH_VISIBILITY
     // assert(step >= minStep);
     // assert(phi0 + extent <= maxDivisions);
     // assert(theta0 + extent / 2 < maxDivisions);
