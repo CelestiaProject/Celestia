@@ -19,6 +19,7 @@
 	Dec  -68.95
 	Distance 179000
 	Radius 15000
+	Detail 0.5
 }
 
 # Small Magellanic Cloud / NGC 292
@@ -31,6 +32,7 @@
 	Radius 12000
 	Axis [ 1 0 0 ]
 	Angle 100
+	Detail 0.5
 }
 
 # Andromeda / NGC 224
@@ -63,6 +65,7 @@
 	Dec   41.683
 	Distance 2.9e6
 	Radius 8500
+	Detail 0.5
 }
 
 # NGC 221, satellite of M31
@@ -73,6 +76,7 @@
         Dec  40.867
 	Distance 2.9e6
 	Radius 4000
+	Detail 0.5
 }
 
 # M82 / NGC 3031
