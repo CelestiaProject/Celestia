@@ -36,7 +36,9 @@ static const char* ClassNames[] =
     "class_object",
     "class_vec3",
     "class_matrix",
-    "class_rotation"
+    "class_rotation",
+    "class_position",
+    "class_frame",
 };
 
 static const int _Celestia = 0;
@@ -45,6 +47,8 @@ static const int _Object   = 2;
 static const int _Vec3     = 3;
 static const int _Matrix   = 4;
 static const int _Rotation = 5;
+static const int _Position = 6;
+static const int _Frame    = 7;
 
 #define CLASS(i) ClassNames[(i)]
 
@@ -345,6 +349,207 @@ static int parseLabelFlag(const string& name)
 }
 
 
+static astro::CoordinateSystem parseCoordSys(const string& name)
+{
+    if (compareIgnoringCase(name, "universal") == 0)
+        return astro::Universal;
+    else if (compareIgnoringCase(name, "ecliptic") == 0)
+        return astro::Ecliptical;
+    else if (compareIgnoringCase(name, "equatorial") == 0)
+        return astro::Equatorial;
+    else if (compareIgnoringCase(name, "planetographic") == 0)
+        return astro::Geographic;
+    else if (compareIgnoringCase(name, "observer") == 0)
+        return astro::ObserverLocal;
+    else if (compareIgnoringCase(name, "lock") == 0)
+        return astro::PhaseLock;
+    else if (compareIgnoringCase(name, "chase") == 0)
+        return astro::Chase;
+    else
+        return astro::Universal;
+}
+
+
+// position - a 128-bit per component universal coordinate
+static int position_new(lua_State* l, const UniversalCoord& uc)
+{
+    UniversalCoord* ud = reinterpret_cast<UniversalCoord*>(lua_newuserdata(l, sizeof(UniversalCoord)));
+    *ud = uc;
+
+    SetClass(l, _Position);
+
+    return 1;
+}
+
+static UniversalCoord* to_position(lua_State* l, int index)
+{
+    return static_cast<UniversalCoord*>(CheckUserData(l, index, _Position));
+}
+
+static int position_tostring(lua_State* l)
+{
+    // TODO: print out the coordinate as it would appear in a cel:// URL
+    lua_pushstring(l, "[Position]");
+
+    return 1;
+}
+
+static void CreatePositionMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _Position);
+    
+    RegisterMethod(l, "__tostring", position_tostring);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+
+
+// frame of reference
+static int frame_new(lua_State* l, const FrameOfReference& f)
+{
+    FrameOfReference* ud = reinterpret_cast<FrameOfReference*>(lua_newuserdata(l, sizeof(FrameOfReference)));
+    *ud = f;
+
+    SetClass(l, _Frame);
+
+    return 1;
+}
+
+static FrameOfReference* to_frame(lua_State* l, int index)
+{
+    return static_cast<FrameOfReference*>(CheckUserData(l, index, _Frame));
+}
+
+// Convert from frame coordinates to universal.  The arguments are a time
+// (Julian day number), position, and optionally an orientation.  If just
+// a position is passed, the function returns just the converted position.
+// Otherwise, the transformed position and orientation are both pushed onto
+// the stack.
+static int frame_from(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc < 3)
+    {
+        lua_pushstring(l, "Two arguments expected to function frame:from");
+        lua_error(l);
+    }
+
+    FrameOfReference* frame = to_frame(l, 1);
+    if (frame != NULL)
+    {
+        // Time is the first argument
+        if (!lua_isnumber(l, 2))
+        {
+            lua_pushstring(l, "Time expected as first argument to frame:from()");
+            lua_error(l);
+        }
+        double jd = lua_tonumber(l, 2);
+
+        RigidTransform rt;
+        UniversalCoord* uc = to_position(l, 3);
+        if (uc != NULL)
+        {
+            rt.translation = *uc;
+        }
+        else
+        {
+            lua_pushstring(l, "Position expected as second argument to frame:from()");
+            lua_error(l);
+        }
+
+        if (argc > 3)
+        {
+            // handle optional orientation
+        }
+
+        rt = frame->toUniversal(rt, jd);
+        position_new(l, rt.translation);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad method call");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
+// Convert from universal to frame coordinates.  The arguments are a time
+// (Julian day number), position, and optionally an orientation.  If just
+// a position is passed, the function returns just the converted position.
+// Otherwise, the transformed position and orientation are both pushed onto
+// the stack.
+static int frame_to(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc < 3)
+    {
+        lua_pushstring(l, "Two arguments expected to function frame:to");
+        lua_error(l);
+    }
+
+    FrameOfReference* frame = to_frame(l, 1);
+    if (frame != NULL)
+    {
+        // Time is the first argument
+        if (!lua_isnumber(l, 2))
+        {
+            lua_pushstring(l, "Time expected as first argument to frame:to()");
+            lua_error(l);
+        }
+        double jd = lua_tonumber(l, 2);
+
+        RigidTransform rt;
+        UniversalCoord* uc = to_position(l, 3);
+        if (uc != NULL)
+        {
+            rt.translation = *uc;
+        }
+        else
+        {
+            lua_pushstring(l, "Position expected as second argument to frame:to()");
+            lua_error(l);
+        }
+
+        if (argc > 3)
+        {
+            // handle optional orientation
+        }
+
+        rt = frame->fromUniversal(rt, jd);
+        position_new(l, rt.translation);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad method call");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
+static int frame_tostring(lua_State* l)
+{
+    // TODO: print out the actual information about the frame
+    lua_pushstring(l, "[Frame]");
+
+    return 1;
+}
+
+static void CreateFrameMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _Frame);
+    
+    RegisterMethod(l, "__tostring", frame_tostring);
+    RegisterMethod(l, "to", frame_to);
+    RegisterMethod(l, "from", frame_from);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+
+
 // object - star, planet, or deep-sky object
 static int object_new(lua_State* l, const Selection& sel)
 {
@@ -566,7 +771,8 @@ static int observer_tostring(lua_State* l)
 }
 
 
-// First argument is the target object; optional second argument is the travel time
+// First argument is the target object or position; optional second argument
+// is the travel time
 static int observer_goto(lua_State* l)
 {
     int argc = lua_gettop(l);
@@ -586,10 +792,24 @@ static int observer_goto(lua_State* l)
     Observer* o = to_observer(l, 1);
     if (o != NULL)
     {
+        // The first argument may be either an object or a position
         Selection* sel = to_object(l, 2);
         if (sel != NULL)
         {
-            o->gotoSelection(*sel, travelTime, Vec3f(0, 1, 0), astro::ObserverLocal);
+            o->gotoSelection(*sel, travelTime, Vec3f(0, 1, 0),
+                             astro::ObserverLocal);
+        }
+        else 
+        {
+            // TODO: would it be better to have a separate gotolocation
+            // command?  Probably.
+            UniversalCoord* uc = to_position(l, 2);
+            if (uc != NULL)
+            {
+                RigidTransform rt = o->getSituation();
+                rt.translation = *uc;
+                o->gotoLocation(rt, travelTime);
+            }
         }
     }
 
@@ -768,6 +988,31 @@ static int observer_travelling(lua_State* l)
 }
 
 
+// Return the observer's current time as a Julian day number
+static int observer_gettime(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function observer:time");
+        lua_error(l);
+    }
+
+    Observer* o = to_observer(l, 1);
+    if (o != NULL)
+    {
+        lua_pushnumber(l, o->getTime());
+    }
+    else
+    {
+        lua_pushstring(l, "Bad method call");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
 static void CreateObserverMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Observer);
@@ -781,6 +1026,7 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "lock", observer_lock);
     RegisterMethod(l, "track", observer_track);
     RegisterMethod(l, "travelling", observer_travelling);
+    RegisterMethod(l, "gettime", observer_gettime);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -1371,6 +1617,68 @@ static int celestia_getstar(lua_State* l)
 }
 
 
+static int celestia_newframe(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc < 2)
+    {
+        lua_pushstring(l, "At least argument expected to function celestia:getstar");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        if (!lua_isstring(l, 2))
+        {
+            lua_pushstring(l, "newframe: first argument must be a string");
+            lua_error(l);
+        }
+        else
+        {
+            const char* coordsysName = lua_tostring(l, 2);
+            astro::CoordinateSystem coordSys = parseCoordSys(coordsysName);
+            Selection* ref = NULL;
+            Selection* target = NULL;
+
+            if (coordSys == astro::PhaseLock)
+            {
+                if (argc >= 4)
+                {
+                    ref = to_object(l, 3);
+                    target = to_object(l, 4);
+                }
+
+                if (ref == NULL || target == NULL)
+                {
+                    lua_pushstring(l, "newframe: two objects required for lock frame");
+                    lua_error(l);
+                }
+            }
+            else
+            {
+                if (argc >= 3)
+                    ref = to_object(l, 3);
+                if (ref == NULL)
+                {
+                    lua_pushstring(l, "newframe: one object argument required for frame");
+                    lua_error(l);
+                }
+            }
+            
+            frame_new(l, FrameOfReference(coordSys, *ref, *target));
+        }
+    }
+    else
+    {
+        lua_pushstring(l, "Bad celestia object");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -1403,6 +1711,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "tojulianday", celestia_tojulianday);
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
     RegisterMethod(l, "getstar", celestia_getstar);
+    RegisterMethod(l, "newframe", celestia_newframe);
 
     lua_pop(l, 1);
 }
