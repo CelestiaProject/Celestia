@@ -792,6 +792,8 @@ static void syncMenusWithRendererState()
     setMenuItemCheck(ID_RENDER_SHOWCONSTELLATIONS,
                      (renderFlags & Renderer::ShowDiagrams) != 0);
     setMenuItemCheck(ID_RENDER_SHOWATMOSPHERES,
+                     (renderFlags & Renderer::ShowAtmospheres) != 0);
+    setMenuItemCheck(ID_RENDER_SHOWCLOUDS,
                      (renderFlags & Renderer::ShowCloudMaps) != 0);
     setMenuItemCheck(ID_RENDER_SHOWNIGHTLIGHTS,
                      (renderFlags & Renderer::ShowNightMaps) != 0);
@@ -1200,10 +1202,28 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	if (bGotMsg)
         {
+            bool dialogMessage = false;
+
+            if (starBrowser != NULL &&
+                IsDialogMessage(starBrowser->hwnd, &msg))
+                dialogMessage = true;
+            if (solarSystemBrowser != NULL &&
+                IsDialogMessage(solarSystemBrowser->hwnd, &msg))
+                dialogMessage = true;
+            if (tourGuide != NULL &&
+                IsDialogMessage(tourGuide->hwnd, &msg))
+                dialogMessage = true;
+            if (gotoObjectDlg != NULL &&
+                IsDialogMessage(gotoObjectDlg->hwnd, &msg))
+                dialogMessage = true;
+
 	    // Translate and dispatch the message
-            if (!TranslateAccelerator(hWnd, acceleratorTable, &msg))
-                TranslateMessage(&msg);
-	    DispatchMessage(&msg);
+            if (!dialogMessage)
+            {
+                if (!TranslateAccelerator(hWnd, acceleratorTable, &msg))
+                    TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
 	}
         else
         {
@@ -1481,11 +1501,15 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWATMOSPHERES:
+            appCore->charEntered('\001');
+            syncMenusWithRendererState();
+            break;
+        case ID_RENDER_SHOWCLOUDS:
             appCore->charEntered('I');
             syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWNIGHTLIGHTS:
-            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowNightMaps);
+            appCore->charEntered('\014');
             syncMenusWithRendererState();
             break;
         case ID_RENDER_SHOWGALAXIES:
