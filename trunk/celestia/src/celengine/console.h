@@ -43,7 +43,7 @@ class Console : public std::ostream
     void end();
     void render(int rowHeight);
 
-    void setWindowSize(int, int);
+    void setScale(int, int);
     void setFont(TextureFont*);
 
     void print(char);
@@ -57,6 +57,7 @@ class Console : public std::ostream
     int getColumn() const;
     int getWindowRow() const;
     void setWindowRow(int);
+    void setWindowHeight(int);
 
     int getHeight() const;
     int getWidth() const;
@@ -70,8 +71,10 @@ class Console : public std::ostream
 
     int windowRow;
 
-    int windowWidth;
     int windowHeight;
+
+    int xscale;
+    int yscale;
     TextureFont* font;
 
     ConsoleStreamBuf sbuf;

@@ -17,6 +17,12 @@
 using namespace std;
 
 
+static int pmod(int n, int m)
+{
+    return n >= 0 ? n % m : m - (-(n + 1) % m) - 1;
+}
+
+
 Console::Console(int _nRows, int _nColumns) :
     ostream(&sbuf),
     text(NULL),
@@ -25,8 +31,9 @@ Console::Console(int _nRows, int _nColumns) :
     row(0),
     column(0),
     windowRow(0),
-    windowWidth(1),
-    windowHeight(1),
+    windowHeight(10),
+    xscale(1),
+    yscale(1),
     font(NULL),
     autoScroll(true)
 {
@@ -49,7 +56,7 @@ void Console::begin()
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    gluOrtho2D(0, windowWidth, 0, windowHeight);
+    gluOrtho2D(0, xscale, 0, yscale);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -81,7 +88,8 @@ void Console::render(int rowHeight)
     glPushMatrix();
     for (int i = 0; i < rowHeight; i++)
     {
-        int r = (nRows - rowHeight + 1 + windowRow + i) % nRows;
+        //int r = (nRows - rowHeight + 1 + windowRow + i) % nRows;
+        int r = pmod(row + windowRow + i, nRows);
         for (int j = 0; j < nColumns; j++)
         {
             char ch = text[r * (nColumns + 1) + j];
@@ -99,10 +107,10 @@ void Console::render(int rowHeight)
 }
 
 
-void Console::setWindowSize(int w, int h)
+void Console::setScale(int w, int h)
 {
-    windowWidth = w;
-    windowHeight = h;
+    xscale = w;
+    yscale = h;
 }
 
 
@@ -125,7 +133,7 @@ void Console::newline()
     column = 0;
 
     if (autoScroll)
-        windowRow = row;
+        windowRow = -(windowHeight - 1);
 }
 
 
@@ -189,6 +197,12 @@ int Console::getWindowRow() const
 void Console::setWindowRow(int _row)
 {
     windowRow = _row;
+}
+
+
+void Console::setWindowHeight(int _height)
+{
+    windowHeight = _height;
 }
 
 
