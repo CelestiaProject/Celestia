@@ -222,9 +222,9 @@ void LODSphereMesh::render(const GLContext& context,
         double l = log(pixelsPerTexel) / log(2.0);
         
         ri.texLOD[i] = max(min(tex[i]->getLODCount() - 1, (int) l), 0);
-        if (tex[i]->getUTileCount(0) > minSplit)
+        if (tex[i]->getUTileCount(ri.texLOD[i]) > minSplit)
             minSplit = tex[i]->getUTileCount(ri.texLOD[i]);
-        if (tex[i]->getVTileCount(0) > minSplit)
+        if (tex[i]->getVTileCount(ri.texLOD[i]) > minSplit)
             minSplit = tex[i]->getVTileCount(ri.texLOD[i]);
     }
     
