@@ -60,8 +60,9 @@ class Universe
     SolarSystem* getSolarSystem(const Star* star) const;
     SolarSystem* createSolarSystem(Star* star) const;
 
-    void markObject(const Selection&, float size, Color color);
-    void unmarkObject(const Selection&);
+    void markObject(const Selection&, float size, Color color, int priority);
+    void unmarkObject(const Selection&, int priority);
+    bool isMarked(const Selection&, int priority) const;
     MarkerList* getMarkers() const;
 
  private:
