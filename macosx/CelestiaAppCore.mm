@@ -19,6 +19,7 @@
 #import "Astro.h"
 #import <AppKit/AppKit.h>
 
+#import "CelestiaController.h"
 #include "celestiacore.h"
 /*
 
@@ -43,7 +44,10 @@ public:
 
     void fatalError(const std::string& msg)
     {
-        NSRunAlertPanel(@"Fatal Error",[NSString stringWithCString: msg.c_str()],nil,nil,nil);
+//        NSRunAlertPanel(@"Fatal Error",[NSString stringWithCString: msg.c_str()],nil,nil,nil);
+        NSLog(@"alerter fatalError!");
+        [[CelestiaController shared] fatalError: [NSString stringWithCString: msg.c_str()] ];
+        NSLog(@"alerter fatalError finis");
     }
 };
 
@@ -186,7 +190,7 @@ void ContextMenuCallback(float x,float y, Selection selection) {
             celestiaKey = CelestiaCore::Key_Insert;
             break;
         default:
-            if ((key < 128) && (key > 32))
+            if ((key < 128) && (key > 33))
             {
                 celestiaKey = (int) (key & 0x00FF);
             }
@@ -301,6 +305,16 @@ static NSMutableDictionary* tagDict;
 -(void)keyUp:(int)c
 {
     appCore->keyUp(c);
+}
+
+-(void)keyDown:(int)c withModifiers:(int)m
+{
+    appCore->keyDown(c,m);
+}
+
+-(void)keyUp:(int)c withModifiers:(int)m
+{
+    appCore->keyUp(c,m);
 }
 
 -(void)mouseWheel:(float)motion modifiers:(int)modifiers
@@ -591,6 +605,59 @@ static NSMutableDictionary* tagDict;
         }
     }
 }
+
+- (void) showInfoURL
+{
+    Selection sel = appCore->getSimulation()->getSelection();
+
+    string url;
+    switch (sel.getType())
+    {
+    case Selection::Type_Body:
+        {
+            url = sel.body()->getInfoURL();
+            if (url.empty())
+            {
+                string name = sel.body()->getName();
+                for (int i = 0; i < name.size(); i++)
+                    name[i] = tolower(name[i]);
+
+                url = string("http://www.nineplanets.org/") + name + ".html";
+            }
+        }
+        break;
+
+    case Selection::Type_Star:
+        {
+            char name[32];
+            sprintf(name, "HIP%d", sel.star()->getCatalogNumber() & ~0xf0000000);
+
+            url = string("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=") + name;
+        }
+        break;
+
+    case Selection::Type_DeepSky:
+        url = sel.deepsky()->getInfoURL();
+        break;
+
+    case Selection::Type_Location:
+        break;
+
+    default:
+        break;
+    }
+
+
+    if ( url != NULL )
+    {
+        NSURL* theURL = [NSURL URLWithString: [NSString stringWithStdString: url ]];
+        if ( theURL != NULL)
+        {
+            [[NSWorkspace sharedWorkspace] openURL: theURL];
+        }
+    }
+}
+
 
 - (int) tagForKey: (int) key
 {
