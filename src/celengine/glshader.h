@@ -39,7 +39,7 @@ class GLShader
 
     GLShaderStatus compile(const std::vector<std::string>& source);
 
-    friend GLShaderLoader;
+    friend class GLShaderLoader;
 };
 
 
@@ -48,7 +48,7 @@ class GLVertexShader : public GLShader
  private:
     GLVertexShader(int _id) : GLShader(_id) {};
 
- friend GLShaderLoader;
+ friend class GLShaderLoader;
 };
 
 
@@ -57,7 +57,7 @@ class GLFragmentShader : public GLShader
  private:
     GLFragmentShader(int _id) : GLShader(_id) {};
 
- friend GLShaderLoader;
+ friend class GLShaderLoader;
 };
 
 
@@ -79,7 +79,7 @@ class GLProgram
  private:
     int id;
 
- friend GLShaderLoader;
+ friend class GLShaderLoader;
 };
 
 
