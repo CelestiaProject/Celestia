@@ -13,6 +13,7 @@
 #include <cassert>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
+#include <celutil/utf8.h>
 #include "mesh.h"
 #include "meshmanager.h"
 #include "body.h"
@@ -527,7 +528,7 @@ Location* Body::findLocation(const string& name) const
     for (vector<Location*>::const_iterator iter = locations->begin();
          iter != locations->end(); iter++)
     {
-        if (!compareIgnoringCase(name, (*iter)->getName()))
+        if (!UTF8StringCompare(name, (*iter)->getName()))
             return *iter;
     }
 
