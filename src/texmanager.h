@@ -15,19 +15,57 @@
 #include "resmanager.h"
 #include "texture.h"
 
+#if 0
+typedef ResourceHandle TextureHandle;
 
 class TextureManager : public ResourceManager
 {
  public:
     TextureManager() : ResourceManager() {};
     TextureManager(std::string _baseDir) : ResourceManager(_baseDir) {};
-    TextureManager(char* _baseDir) : ResourceManager(_baseDir) {};
     ~TextureManager();
 
-    bool find(const std::string& name, CTexture**);
-    CTexture* load(const std::string& name, bool compress = false);
-    CTexture* loadBumpMap(const std::string& name, float bumpHeight);
+    bool find(TextureHandle, Texture**);
+    Texture* load(const std::string& name, bool compress = false);
+    Texture* loadBumpMap(const std::string& name, float bumpHeight);
+
+ private:
+    class TextureInfo : public ResourceInfo
+    {
+    public:
+        TextureInfo();
+
+        virtual bool operator<(const TextureInfo&);
+
+        std::string source;
+        float bumpHeight;
+        bool compress;
+    };
 };
+#endif
+
+class TextureInfo : public ResourceInfo<Texture>
+{
+ public:
+    std::string source;
+    float bumpHeight;
+    bool compressed;
+
+    TextureInfo(const std::string _source, bool _compressed = false) :
+        source(_source), bumpHeight(0.0f), compressed(_compressed) {};
+    TextureInfo(const std::string _source, float _bumpHeight) :
+        source(_source), bumpHeight(_bumpHeight), compressed(false) {};
+    virtual Texture* load(const std::string&);
+};
+
+inline bool operator<(const TextureInfo& ti0, const TextureInfo& ti1)
+{
+    return ti0.source < ti1.source;
+}
+
+typedef ResourceManager<TextureInfo> TextureManager;
+
+extern TextureManager* GetTextureManager();
 
 #endif // _TEXMANAGER_H_
 
