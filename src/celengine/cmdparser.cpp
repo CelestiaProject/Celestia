@@ -509,6 +509,10 @@ Command* CommandParser::parseCommand()
         paramList->getString("object", object);
         cmd = new CommandUnmark(object);
     }
+    else if (commandName == "unmarkall")
+    {
+        cmd = new CommandUnmarkAll();
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");

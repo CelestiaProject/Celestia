@@ -588,6 +588,20 @@ void CommandUnmark::process(ExecutionEnvironment& env)
 
 
 
+///////////////
+// Unmarkall command - clear all current markers
+
+CommandUnmarkAll::CommandUnmarkAll()
+{
+}
+
+void CommandUnmarkAll::process(ExecutionEnvironment& env)
+{
+    if (env.getSimulation()->getUniverse() != NULL)
+        env.getSimulation()->getUniverse()->unmarkAll();
+}
+
+
 ////////////////
 // Preload textures command
 
