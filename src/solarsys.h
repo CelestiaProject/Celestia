@@ -35,8 +35,5 @@ typedef std::map<uint32, SolarSystem*> SolarSystemCatalog;
 SolarSystemCatalog* ReadSolarSystemCatalog(std::istream&, StarDatabase&);
 bool ReadSolarSystems(std::istream&, const StarDatabase&, SolarSystemCatalog&);
 
-// Mercury, Venus, Earth, etc.
-SolarSystem* CreateOurSolarSystem();
-
 #endif // _SOLARSYS_H_
 
