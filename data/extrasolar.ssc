@@ -41,6 +41,8 @@
 	Mass   0
 	Radius 70000
 
+	InfoURL "http://www.obspm.fr/encycl/ups-And.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period            0.01264
@@ -54,6 +56,8 @@
 	Texture "gasgiant.jpg"
 	Mass   0
 	Radius 70000
+
+	InfoURL "http://www.obspm.fr/encycl/ups-And.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -70,6 +74,8 @@
 	Texture "jupiterlike.jpg"
 	Mass   0
 	Radius 70000
+
+	InfoURL "http://www.obspm.fr/encycl/ups-And.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -91,6 +97,8 @@
 	Texture "gasgiant.jpg"
 	Mass   160
 	Radius 60000
+
+	InfoURL "http://www.obspm.fr/encycl/51Peg.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -114,6 +122,8 @@
 	Mass     920
 	Radius   90000
 
+	InfoURL "http://www.obspm.fr/encycl/47Uma.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          2.962
@@ -129,6 +139,8 @@
 	Texture "gasgiant.jpg"
 	Mass     240     # Msin i is approx. 0.75 Jupiters
 	Radius   66000
+
+	InfoURL "http://www.obspm.fr/encycl/47Uma.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -147,6 +159,8 @@
 	Mass     8100
 	Radius   130000
 
+	InfoURL "http://www.obspm.fr/encycl/70Vir.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.3176
@@ -163,6 +177,8 @@
 	Texture "gasgiant.jpg"
 	Mass     1200
 	Radius   75000
+
+	InfoURL "http://www.obspm.fr/encycl/tau-Boo.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -182,6 +198,8 @@
 	Mass      2300       # 7.2 +- 0.4 Mj
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/HD168443.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.1585
@@ -195,6 +213,8 @@
 	Texture "browndwarf.jpg"
 	Mass      5400       # 17.1 Mj - brown dwarf?
 	Radius    70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD168443.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -219,6 +239,8 @@
 	Mass      800
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/HD12661.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.72668
@@ -234,6 +256,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      530
 	Radius    71000
+
+	InfoURL "http://www.obspm.fr/encycl/HD12661.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -257,6 +281,8 @@
 	Mass      1200
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/HD92788.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.9246
@@ -277,6 +303,8 @@
 	Mass      320
 	Radius    72000
 
+	InfoURL "http://www.obspm.fr/encycl/HD130322.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.02936
@@ -294,6 +322,8 @@
 	Texture "gasgiant.jpg"
 	Mass      135
 	Radius    60000
+
+	InfoURL "http://www.obspm.fr/encycl/HD75289.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -317,6 +347,8 @@
 	Mass      110
 	Radius    58000
 
+	InfoURL "http://www.obspm.fr/encycl/HD83443.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.008173
@@ -330,6 +362,8 @@
 	Texture   "gasgiant.jpg"
 	Mass      55
 	Radius    46000
+
+	InfoURL "http://www.obspm.fr/encycl/HD83443.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -348,6 +382,8 @@
 	Texture "gasgiant.jpg"
 	Mass      75
 	Radius    48000
+
+	InfoURL "http://www.obspm.fr/encycl/HD168746.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -370,6 +406,8 @@
 	Mass      80
 	Radius    49000
 
+	InfoURL "http://www.obspm.fr/encycl/HD16141.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.2076
@@ -390,6 +428,8 @@
 	Mass      80
 	Radius    49000
 
+	InfoURL "http://www.obspm.fr/encycl/HD46375.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.00828
@@ -407,6 +447,8 @@
 	Texture "gasgiant.jpg"
 	Mass      110
 	Radius    52000
+
+	InfoURL "http://www.obspm.fr/encycl/HD108147.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -426,6 +468,8 @@
 	Mass      150
 	Radius    58000
 
+	InfoURL "http://www.obspm.fr/encycl/BD-10_3166.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.00955
@@ -443,6 +487,8 @@
 	Texture "gasgiant.jpg"
 	Mass      150
 	Radius    58000
+
+	InfoURL "http://www.obspm.fr/encycl/HD6434.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -463,6 +509,8 @@
 	Texture "gasgiant.jpg"
 	Mass      155
 	Radius    58000
+
+	InfoURL "http://www.obspm.fr/encycl/HD187123.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -487,6 +535,8 @@
 	Mass      220
 	Radius    101000
 
+	InfoURL "http://www.obspm.fr/encycl/HD209458.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.0096502
@@ -504,6 +554,8 @@
 	Texture "gasgiant.jpg"
 	Mass      225
 	Radius    65000
+
+	InfoURL "http://www.obspm.fr/encycl/HD192263.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -529,6 +581,8 @@
 	Mass      380
 	Radius    73000
 
+	InfoURL "http://www.obspm.fr/encycl/eps-Eri.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          6.850
@@ -549,6 +603,8 @@
 	Mass      245
 	Radius    65000
 
+	InfoURL "http://www.obspm.fr/encycl/HD38529.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.03921
@@ -562,6 +618,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      3500
 	Radius    60000
+
+	InfoURL "http://www.obspm.fr/encycl/HD38529.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -582,6 +640,8 @@
 	Mass      270
 	Radius    66000
 
+	InfoURL "http://www.obspm.fr/encycl/HD179949.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.00847
@@ -599,6 +659,8 @@
 	Texture "gasgiant.jpg"
 	Mass      285
 	Radius    67000
+
+	InfoURL "http://www.obspm.fr/encycl/HD121504.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -620,6 +682,8 @@
 	Mass      270
 	Radius    72000
 
+	InfoURL "http://www.obspm.fr/encycl/HD37124.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.424
@@ -635,6 +699,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      325
 	Radius    72000
+
+	InfoURL "http://www.obspm.fr/encycl/HD37124.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -656,6 +722,8 @@
 	Texture "gasgiant.jpg"
 	Mass      350
 	Radius    73000
+
+	InfoURL "http://www.obspm.fr/encycl/rho-Crb.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -679,6 +747,8 @@
 	Mass      600
 	Radius    80000
 
+	InfoURL "http://www.obspm.fr/encycl/Gl876.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.1671
@@ -692,6 +762,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      180
 	Radius    60000
+
+	InfoURL "http://www.obspm.fr/encycl/Gl876.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -711,6 +783,8 @@
 	Mass      1280
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/Gl86.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.04320
@@ -728,6 +802,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      360
 	Radius    74000
+
+	InfoURL "http://www.obspm.fr/encycl/HD52265.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -748,6 +824,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      400
 	Radius    76000
+
+	InfoURL "http://www.obspm.fr/encycl/177830.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -771,6 +849,8 @@
 	Mass      400
 	Radius    76000
 
+	InfoURL "http://www.obspm.fr/encycl/HD217107.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.019512
@@ -790,6 +870,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      400
 	Radius    76000
+
+	InfoURL "http://www.obspm.fr/encycl/HD210277.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -813,6 +895,8 @@
 	Mass      520
 	Radius    78000
 
+	InfoURL "http://www.obspm.fr/encycl/HD27442.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          1.16
@@ -832,6 +916,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      480
 	Radius    80000
+
+	InfoURL "http://www.obspm.fr/encycl/HD186427.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -853,6 +939,8 @@
 	Mass      500
 	Radius    80000
 
+	InfoURL "http://www.obspm.fr/encycl/HD134987.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.7118
@@ -873,6 +961,8 @@
 	Mass      625
 	Radius    75000
 
+	InfoURL "http://www.obspm.fr/encycl/HD160691.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          2.0342
@@ -889,6 +979,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      320
 	Radius    73000
+
+	InfoURL "http://www.obspm.fr/encycl/HD160691.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -911,6 +1003,8 @@
 	Mass      640
 	Radius    75000
 
+	InfoURL "http://www.obspm.fr/encycl/HD19994.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          1.2430
@@ -932,6 +1026,8 @@
 	Mass      520
 	Radius    72000
 
+	InfoURL "http://www.obspm.fr/encycl/HD82943.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          1.2172
@@ -947,6 +1043,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      290
 	Radius    70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD82943.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -968,6 +1066,8 @@
 	Mass      730
 	Radius    72000
 
+	InfoURL "http://www.obspm.fr/encycl/iota-Hor.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.8764
@@ -987,6 +1087,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      950
 	Radius    70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD169830.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1008,6 +1110,8 @@
 	Mass      1050
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/Gl614.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          4.5174
@@ -1027,6 +1131,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      1050
 	Radius    72000
+
+	InfoURL "http://www.obspm.fr/encycl/GJ3021.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1048,6 +1154,8 @@
 	Mass      1100
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/HD195019.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.0501
@@ -1065,6 +1173,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      1600
 	Radius    68000
+
+	InfoURL "http://www.obspm.fr/encycl/HD190228.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1086,6 +1196,8 @@
 	Mass      1750
 	Radius    67000
 
+	InfoURL "http://www.obspm.fr/encycl/HD222582.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          1.5770
@@ -1106,6 +1218,8 @@
 	Mass      2080
 	Radius    66000
 
+	InfoURL "http://www.obspm.fr/encycl/HD10697.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          2.9651
@@ -1125,6 +1239,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      2300
 	Radius    65000
+
+	InfoURL "http://www.obspm.fr/encycl/HD89744.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1149,6 +1265,8 @@
 	Mass      4800
 	Radius    60000
 
+	InfoURL "http://www.obspm.fr/encycl/HD114762.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.2328
@@ -1169,6 +1287,8 @@
 	Mass      300
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.040126
@@ -1182,6 +1302,8 @@
 	Texture "gasgiant.jpg"
 	Mass      65
 	Radius    35000
+
+	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1198,6 +1320,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      1280
 	Radius    69000
+
+	InfoURL "http://www.obspm.fr/encycl/55Cnc.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1222,6 +1346,8 @@
 	Mass      1750
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/HD28185.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          1.0541
@@ -1241,6 +1367,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      3000
 	Radius    65000
+
+	InfoURL "http://www.obspm.fr/encycl/HD141937.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1262,6 +1390,8 @@
 	Mass      1200
 	Radius    70000
 
+	InfoURL "http://www.obspm.fr/encycl/HD213240.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          2.078
@@ -1282,6 +1412,8 @@
 	Mass      710
 	Radius    78000
 
+	InfoURL "http://www.obspm.fr/encycl/HD8574.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.6264
@@ -1301,6 +1433,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      1550
 	Radius    68000
+
+	InfoURL "http://www.obspm.fr/encycl/HD50554.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1323,6 +1457,8 @@
 	Mass      490
 	Radius    74000
 
+	InfoURL "http://www.obspm.fr/encycl/HD74156.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.1413
@@ -1336,6 +1472,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      2000
 	Radius    65000
+
+	InfoURL "http://www.obspm.fr/encycl/HD74156.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1358,6 +1496,8 @@
 	Mass      2200
 	Radius    65000
 
+	InfoURL "http://www.obspm.fr/encycl/HD106252.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          4.1
@@ -1378,6 +1518,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      1250
 	Radius    70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD80606.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1400,6 +1542,8 @@
 	Mass      2100
 	Radius    65000
 
+	InfoURL "http://www.obspm.fr/encycl/HD178911.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.1958
@@ -1415,6 +1559,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      600
 	Radius    75000
+
+	InfoURL "http://www.obspm.fr/encycl/HD68988.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1432,6 +1578,8 @@
 	Mass      430
 	Radius    73000
 
+	InfoURL "http://www.obspm.fr/encycl/HD142.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          0.925
@@ -1447,6 +1595,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      520
 	Radius    75000
+
+	InfoURL "http://www.obspm.fr/encycl/HD4203.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1464,6 +1614,8 @@
 	Mass      320
 	Radius    71500
 
+	InfoURL "http://www.obspm.fr/encycl/HD114783.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          1.372
@@ -1479,6 +1631,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      877
 	Radius    70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD23079.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1496,6 +1650,8 @@
 	Mass      290
 	Radius    69000
 
+	InfoURL "http://www.obspm.fr/encycl/HD4208.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          2.270
@@ -1512,6 +1668,8 @@
 	Mass      2500
 	Radius    65000
 
+	InfoURL "http://www.obspm.fr/encycl/HD33636.html"
+
 	# orbital data
 	EllipticalOrbit {
 		Period          4.252
@@ -1527,6 +1685,8 @@
 	Texture "jupiterlike.jpg"
 	Mass      3160
 	Radius    65000
+
+	InfoURL "http://www.obspm.fr/encycl/HD39091.html"
 
 	# orbital data
 	EllipticalOrbit {
@@ -1545,6 +1705,8 @@
 	Mass    2750
 	Radius  65000
 
+	InfoURL "http://www.obspm.fr/encycl/iota-Dra.html"
+
 	EllipticalOrbit {
 		Period         1.508
 		SemiMajorAxis  1.34
@@ -1561,6 +1723,8 @@
 	Texture "browndwarf.jpg"
 	Mass 3800
 	Radius 64000
+
+	InfoURL "http://www.obspm.fr/encycl/HD136118.html"
 
 	EllipticalOrbit {
 		Period         3.39
@@ -1579,6 +1743,8 @@
 	Mass 670
 	Radius 73000
 
+	InfoURL "http://www.obspm.fr/encycl/HD216437.html"
+
 	EllipticalOrbit {
 		Period        3.54
 		SemiMajorAxis 2.7
@@ -1594,6 +1760,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 960
 	Radius 70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD196050.html"
 
 	EllipticalOrbit {
 		Period        3.53
@@ -1611,6 +1779,8 @@
 	Mass 960
 	Radius 70000
 
+	InfoURL "http://www.obspm.fr/encycl/HD73526.html"
+
 	EllipticalOrbit {
 		Period        0.5117
 		SemiMajorAxis 0.05  # What????  exoplanet encyc lists 0.002
@@ -1626,6 +1796,8 @@
 	Texture "gasgiant.jpg"
 	Mass 30
 	Radius 29000
+
+	InfoURL "http://www.obspm.fr/encycl/HD49674.html"
 
 	EllipticalOrbit {
 		Period         0.07583
@@ -1643,21 +1815,7 @@
 	Mass 525 
 	Radius 70000
 
-	EllipticalOrbit {
-		Period        1.099
-		SemiMajorAxis 1.06
-	        Eccentricity  0.20
-                # Omega       232
-	}
-}
-
-
-# HD 108874
-"b" "HD 108874"
-{
-	Texture "jupiterlike.jpg"
-	Mass 525 
-	Radius 70000
+	InfoURL "http://www.obspm.fr/encycl/HD108874.html"
 
 	EllipticalOrbit {
 		Period        1.099
@@ -1675,6 +1833,8 @@
 	Mass 9500
 	Radius 65000
 
+	InfoURL "http://www.obspm.fr/encycl/HD72659.html"
+
 	EllipticalOrbit {
 		Period        5.98
 		SemiMajorAxis 3.24
@@ -1690,6 +1850,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 290
 	Radius 70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD114729.html"
 
 	EllipticalOrbit {
 		Period        3.110
@@ -1707,6 +1869,8 @@
 	Mass 820
 	Radius 69000
 
+	InfoURL "http://www.obspm.fr/encycl/HD128311.html"
+
 	EllipticalOrbit {
 		Period        1.1335
 		SemiMajorAxis 1.01
@@ -1722,6 +1886,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 1080
 	Radius 67000
+
+	InfoURL "http://www.obspm.fr/encycl/HD13507.html"
 
 	EllipticalOrbit {
 		Period        4.97
@@ -1739,6 +1905,8 @@
 	Mass 340
 	Radius 72000
 
+	InfoURL "http://www.obspm.fr/encycl/HD20367.html"
+
 	EllipticalOrbit {
 		Period        1.37
 		SemiMajorAxis 1.25
@@ -1754,6 +1922,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 2300
 	Radius 65000
+
+	InfoURL "http://www.obspm.fr/encycl/HD23596.html"
 
 	EllipticalOrbit {
 		Period        4.27
@@ -1771,6 +1941,8 @@
 	Mass 320
 	Radius 71000
 
+	InfoURL "http://www.obspm.fr/encycl/HD150706.html"
+
 	EllipticalOrbit {
 		Period        0.72
 		SemiMajorAxis 0.82
@@ -1786,6 +1958,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 315
 	Radius 71000
+
+	InfoURL "http://www.obspm.fr/encycl/HD114386.html"
 
 	EllipticalOrbit {
 		Period        2.39
@@ -1803,6 +1977,8 @@
 	Mass 320
 	Radius 71000
 
+	InfoURL "http://www.obspm.fr/encycl/HD147513.html"
+
 	EllipticalOrbit {
 		Period        1.48
 		SemiMajorAxis 1.26
@@ -1818,6 +1994,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 375
 	Radius 73000
+
+	InfoURL "http://www.obspm.fr/encycl/HD223084.html"
 
 	EllipticalOrbit {
 		Period        0.277
@@ -1835,6 +2013,8 @@
 	Mass 370
 	Radius 73000
 
+	InfoURL "http://www.obspm.fr/encycl/HD190360.html"
+
 	EllipticalOrbit {
 		Period        7.15
 		SemiMajorAxis 3.65
@@ -1849,6 +2029,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 1300
 	Radius 66000
+
+	InfoURL "http://www.obspm.fr/encycl/HD2039.html"
 
 	EllipticalOrbit {
 		Period        3.31
@@ -1865,6 +2047,8 @@
 	Mass 65
 	Radius 55000
 
+	InfoURL "http://www.obspm.fr/encycl/HD76700.html"
+
 	EllipticalOrbit {
 		Period        0.01087
 		SemiMajorAxis 0.049
@@ -1878,6 +2062,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 400
 	Radius 72000
+
+	InfoURL "http://www.obspm.fr/encycl/HD216435.html"
 
 	EllipticalOrbit {
 		Period        3.63
@@ -1893,6 +2079,8 @@
 	Texture "jupiterlike.jpg"
 	Mass 565
 	Radius 65000
+
+	InfoURL "http://www.obspm.fr/encycl/gamma-Ceph.html"
 
 	EllipticalOrbit {
 		Period	      2.47
