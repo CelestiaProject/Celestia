@@ -40,6 +40,7 @@
 #include "celestiacore.h"
 #include "imagecapture.h"
 #include "avicapture.h"
+#include "url.h"
 #include "winstarbrowser.h"
 #include "winssbrowser.h"
 #include "wintourguide.h"
@@ -163,6 +164,133 @@ void RestoreDisplayMode()
 }
 
 
+//
+// A very minimal IDropTarget interface implementation
+//
+
+class CelestiaDropTarget : public IDropTarget
+{
+public:
+    CelestiaDropTarget();
+    ~CelestiaDropTarget();
+
+    STDMETHOD  (QueryInterface)(REFIID idd, void** ppvObject);
+    STDMETHOD_ (ULONG, AddRef) (void);
+    STDMETHOD_ (ULONG, Release) (void);
+
+    // IDropTarget methods
+    STDMETHOD (DragEnter)(LPDATAOBJECT pDataObj, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect);
+    STDMETHOD (DragOver) (DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect);
+    STDMETHOD (DragLeave)(void);
+    STDMETHOD (Drop)     (LPDATAOBJECT pDataObj, DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect); 
+
+private:
+    ULONG refCount;
+};
+
+static CelestiaDropTarget* dropTarget = NULL;
+
+CelestiaDropTarget::CelestiaDropTarget() :
+    refCount(0)
+{
+}
+
+CelestiaDropTarget::~CelestiaDropTarget()
+{
+}
+
+HRESULT CelestiaDropTarget::QueryInterface(REFIID iid, void** ppvObject)
+{
+    if (iid == IID_IUnknown || iid == IID_IDropTarget)
+    {
+        *ppvObject = this;
+        AddRef();
+        return ResultFromScode(S_OK);
+    }
+    else
+    {
+        *ppvObject = NULL;
+        return ResultFromScode(E_NOINTERFACE);
+    }
+}
+
+ULONG CelestiaDropTarget::AddRef(void)
+{
+    return ++refCount;
+}
+
+ULONG CelestiaDropTarget::Release(void)
+{
+    if (--refCount == 0)
+    {
+        delete this;
+        return 0;
+    }
+
+    return refCount;
+}
+
+STDMETHODIMP
+CelestiaDropTarget::DragEnter(IDataObject* pDataObject,
+                              DWORD grfKeyState,
+                              POINTL pt,
+                              DWORD* pdwEffect)
+{
+    return S_OK;
+}
+
+STDMETHODIMP
+CelestiaDropTarget::DragOver(DWORD grfKeyState,
+                             POINTL pt,
+                             DWORD* pdwEffect)
+{
+    return S_OK;
+}
+
+STDMETHODIMP
+CelestiaDropTarget::DragLeave(void)
+{
+    return S_OK;
+}
+
+STDMETHODIMP
+CelestiaDropTarget::Drop(IDataObject* pDataObject,
+                         DWORD grfKeyState,
+                         POINTL pt,
+                         DWORD* pdwEffect)
+{
+    IEnumFORMATETC* enumFormat = NULL;
+    HRESULT hr = pDataObject->EnumFormatEtc(DATADIR_GET, &enumFormat);
+    if (FAILED(hr) || enumFormat == NULL)
+        return E_FAIL;
+
+    FORMATETC format;
+    ULONG nFetched;
+    while (enumFormat->Next(1, &format, &nFetched) == S_OK)
+    {
+        if (format.cfFormat == CF_TEXT)
+        {
+            STGMEDIUM medium;
+            if (pDataObject->GetData(&format, &medium) == S_OK)
+            {
+                if (medium.tymed == TYMED_HGLOBAL && medium.hGlobal != 0)
+                {
+                    char* s = (char*) GlobalLock(medium.hGlobal);
+                    Url url(s, appCore);
+                    GlobalUnlock(medium.hGlobal);
+                    url.goTo();
+                }
+            }
+        }
+    }
+
+    enumFormat->Release();
+
+    return E_FAIL;
+}
+
+
+
 static void acronymify(char* words, int length)
 {
     int n = 0;
@@ -241,6 +369,37 @@ static bool BeginMovieCapture(const std::string& filename,
     
     return success;
 }
+
+
+static bool CopyStateURLToClipboard()
+{
+    BOOL b;
+    b = OpenClipboard(mainWindow);
+    if (!b)
+        return false;
+
+    Url url(appCore);
+    char* s = const_cast<char*>(url.getAsString().c_str());
+
+    HGLOBAL clipboardDataHandle = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE,
+                                              strlen(s));
+    char* clipboardData = (char*) GlobalLock(clipboardDataHandle);
+    if (clipboardData != NULL)
+    {
+        strcpy(clipboardData, s);
+        GlobalUnlock(clipboardDataHandle);
+        EmptyClipboard();
+        HANDLE h = SetClipboardData(CF_TEXT, clipboardDataHandle);
+        CloseClipboard();
+        return h != NULL;
+    }
+    else
+    {
+        CloseClipboard();
+        return false;
+    }
+}
+
 
 static bool ToggleMenuItem(HMENU menu, int id)
 {
@@ -1877,6 +2036,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
         prefs.renderFlags |= Renderer::ShowRingShadows;
     }
     prefs.lastVersion = 0x01020500;
+    prefs.renderFlags &= ~Renderer::ShowAutoMag;
 
     RegCloseKey(key);
 
@@ -2258,6 +2418,10 @@ vector<DEVMODE>* EnumerateDisplayModes(int minBPP)
     }
     sort(modes->begin(), modes->end());
 
+    // Bail out early if EnumDisplaySettings fails for some mssed up reason
+    if (i == 0)
+        return modes;
+
     // Go through the sorted list and eliminate modes that differ only
     // by refresh rates.
     vector<DEVMODE>::iterator keepIter = modes->begin();
@@ -2305,6 +2469,18 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     bReady = false;
 
     appInstance = hInstance;
+
+    OleInitialize(NULL);
+    dropTarget = new CelestiaDropTarget();
+    if (dropTarget)
+    {
+        if (CoLockObjectExternal(dropTarget, TRUE, TRUE) != S_OK)
+        {
+            cout << "Error locking drop target\n";
+            delete dropTarget;
+            dropTarget = NULL;
+        }
+    }
 
     // Specify some default values in case registry keys are not found.
     AppPreferences prefs;
@@ -2411,6 +2587,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	           "Fatal Error",
 	           MB_OK | MB_ICONERROR);
         return FALSE;
+    }
+
+    if (dropTarget != NULL)
+    {
+        HRESULT hr = RegisterDragDrop(hWnd, dropTarget);
+        if (hr != S_OK)
+        {
+            cout << "Failed to register drop target as OLE object.\n";
+        }
     }
 
     mainWindow = hWnd;
@@ -2541,6 +2726,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (appCore != NULL)
         delete appCore;
 
+    OleUninitialize();
+
     return msg.wParam;
 }
 
@@ -2574,6 +2761,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREIMAGE, IDB_CAMERA);
         odAppMenu.SetItemImage(appInstance, ID_FILE_CAPTUREMOVIE, IDB_CAMCORDER);
         odAppMenu.SetItemImage(appInstance, ID_TIME_SETTIME, IDB_CLOCK);
+
+        DragAcceptFiles(hWnd, TRUE);
+        break;
+
+    case WM_DROPFILES:
+        cout << "Dropped files!\n";
         break;
 
     case WM_MEASUREITEM:
@@ -2727,6 +2920,13 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         {
         case VK_ESCAPE:
             appCore->charEntered('\033');
+            break;
+        case VK_INSERT:
+            if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+            {
+                CopyStateURLToClipboard();
+                appCore->flash("Copied URL");
+            }            
             break;
         default:
             handleKey(wParam, true);
