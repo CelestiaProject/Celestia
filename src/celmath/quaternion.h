@@ -579,6 +579,13 @@ template<class T> Quaternion<T> Quaternion<T>::slerp(Quaternion<T> q0,
                                                      T t)
 {
     T c = dot(q0, q1);
+
+    // Because of potential rounding errors, we must clamp c to the domain of acos.
+    if (c > (T) 1.0)
+        c = (T) 1.0;
+    else if (c < (T) -1.0)
+        c = (T) -1.0;
+
     T angle = (T) acos(c);
 
     if (abs(angle) < (T) 1.0e-5)
