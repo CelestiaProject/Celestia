@@ -149,7 +149,6 @@ Code revisions:
 * New script commands: renderflags, labels, orbit
 * Implemented a scripted demo mode
 * Placed ISS in Earth orbit
-<<<<<<< ChangeLog
 
 
 1.08
@@ -360,4 +359,13 @@ Code:
 * Windows: added slider for controlling number of stars displayed by
   star browser.
 * Windows: vastly improved full screen support
-* Unix: fixed problems with '--enable-debug' under Unix automake (dramsey)
+* Unix: fixed problems with '--enable-debug' under automake (dramsey)
+* Unix: Enhanced autoconfigure to enable automated distribution build, as well
+        as building the buildstardb program used to create stars.dat (dramsey)
+* Unix: Fixed Problem with --enable-debug=no acting as if --enable-debug=yes
+        had been given. (dramsey)
+* Unix: Changed --enable-gtk into --with-gtk, and made it automatic if Gtk+ and
+        GtkGLArea is present. (dramsey)
+* Unix: Inserted testing code for GtkGLArea into configure.in (dramsey)
+* Unix: Integrated a current gnome macros package. (dramsey)
+* Removed many errors and compiler warnings (dramsey)

@@ -129,7 +129,7 @@ extern PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
 #endif
 
 /* EXT_texture_cube_map defines from <GL/gl.h> */
-#ifndef GL_EXT_texture_cube_map
+#if !(defined( GL_EXT_texture_cube_map) || defined(__glext_h_))
 #define GL_NORMAL_MAP_EXT                   ((GLenum) 0x8511)
 #define GL_REFLECTION_MAP_EXT               ((GLenum) 0x8512)
 #define GL_TEXTURE_CUBE_MAP_EXT             ((GLenum) 0x8513)

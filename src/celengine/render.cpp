@@ -10,9 +10,12 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
-#include <celutil/debug.h>
-#include <celmath/frustum.h>
-#include <celmath/perlin.h>
+#ifndef _WIN32
+#include "config.h"
+#endif
+#include "celutil/debug.h"
+#include "celmath/frustum.h"
+#include "celmath/perlin.h"
 #include "gl.h"
 #include "astro.h"
 #include "glext.h"
@@ -1812,6 +1815,10 @@ void Renderer::renderPlanet(const Body& body,
                 case StellarClass::Spectral_N:
                     ri.sunColor = Color(1.0f, 0.7f, 0.7f);
                     break;
+		default:
+		    // Default case to keep gcc from compaining about unhandled
+		    // switch values.
+		    break;
                 }
             }
         }
@@ -2785,9 +2792,9 @@ Renderer::StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
 
     // Fill the texture coordinate array now, since it will always have
     // the same contents.
-    for (int i = 0; i < capacity; i++)
+    for (unsigned int i = 0; i < capacity; i++)
     {
-        int n = i * 8;
+        unsigned int n = i * 8;
         texCoords[n    ] = 0; texCoords[n + 1] = 0;
         texCoords[n + 2] = 1; texCoords[n + 3] = 0;
         texCoords[n + 4] = 1; texCoords[n + 5] = 1;

@@ -14,15 +14,17 @@ AC_DEFUN([GNOME_XML_HOOK],[
 			AC_MSG_ERROR(Could not find gnome-config)
 		fi
 	fi
+	GNOME_XML_CFLAGS=`$GNOME_CONFIG --cflags xml`
+	AC_SUBST(GNOME_XML_CFLAGS)
 	AC_CHECK_LIB(xml, xmlNewDoc, [
 		$1
-		AC_SUBST(GNOME_XML_LIB)
 		GNOME_XML_LIB=`$GNOME_CONFIG --libs xml`
 	], [
 		if test x$2 = xfailure; then 
 			AC_MSG_ERROR(Could not link sample xml program)
 		fi
 	], `$GNOME_CONFIG --libs xml`)
+	AC_SUBST(GNOME_XML_LIB)
 ])
 
 AC_DEFUN([GNOME_XML_CHECK], [

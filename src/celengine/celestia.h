@@ -25,5 +25,9 @@
 #define NONSTANDARD_STRING_COMPARE
 #endif // __GNUC__
 
+#ifndef _WIN32
+#include "config.h"
+#endif
+
 #endif // _CELESTIA_H_
 

@@ -68,6 +68,7 @@ GNOMEUI_LIBS = @GNOMEUI_LIBS@
 GNOME_APPLETS_LIBS = @GNOME_APPLETS_LIBS@
 GNOME_CAPPLET_LIBS = @GNOME_CAPPLET_LIBS@
 GNOME_CONFIG = @GNOME_CONFIG@
+GNOME_DOCKLETS_LIBS = @GNOME_DOCKLETS_LIBS@
 GNOME_INCLUDEDIR = @GNOME_INCLUDEDIR@
 GNOME_LIBDIR = @GNOME_LIBDIR@
 GNOME_LIBS = @GNOME_LIBS@
@@ -92,9 +93,19 @@ cflags_set = @cflags_set@
 cxxflags_set = @cxxflags_set@
 
 noinst_LIBRARIES = libcelutil.a
+noinst_HEADERS = $(wildcard *.h)
+dosstuff = util.mak celutil.dsp
+noinst_DATA = $(dosstuff)
 
 libcelutil_a_SOURCES =  	bigfix.cpp 	color.cpp 	debug.cpp 	filetype.cpp 	util.cpp 	unixtimer.cpp
 
+
+WINSOURCES =  	wintimer.cpp
+
+
+EXTRA_DIST = $(noinst_DATA)
+
+EXTRA_libcelutil_a_SOURCES = $(WINSOURCES)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
@@ -117,6 +128,10 @@ CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+DATA =  $(noinst_DATA)
+
+HEADERS =  $(noinst_HEADERS)
+
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -125,8 +140,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/bigfix.P .deps/color.P .deps/debug.P .deps/filetype.P \
-.deps/unixtimer.P .deps/util.P
-SOURCES = $(libcelutil_a_SOURCES)
+.deps/unixtimer.P .deps/util.P .deps/wintimer.P
+SOURCES = $(libcelutil_a_SOURCES) $(EXTRA_libcelutil_a_SOURCES)
 OBJECTS = $(libcelutil_a_OBJECTS)
 
 all: all-redirect
@@ -291,7 +306,7 @@ install-am: all-am
 install: install-am
 uninstall-am:
 uninstall: uninstall-am
-all-am: Makefile $(LIBRARIES)
+all-am: Makefile $(LIBRARIES) $(DATA) $(HEADERS)
 all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install

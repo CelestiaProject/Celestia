@@ -10,13 +10,13 @@
 #include <iostream>
 #include <fstream>
 
-#include <celutil/debug.h>
-#include <celutil/filetype.h>
-#include <celmath/mathlib.h>
-#include <celmath/perlin.h>
-#include <cel3ds/3dsread.h>
-
 #include "celestia.h"
+#include "celutil/debug.h"
+#include "celutil/filetype.h"
+#include "celmath/mathlib.h"
+#include "celmath/perlin.h"
+#include "cel3ds/3dsread.h"
+
 #include "3dsmesh.h"
 #include "parser.h"
 #include "spheremesh.h"

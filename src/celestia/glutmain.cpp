@@ -17,15 +17,14 @@
 #include <cstring>
 #include <time.h>
 #include <unistd.h>
-#include "gl.h"
+#include "celengine/gl.h"
 #include <GL/glut.h>
-#include "../config.h"
-#include "celestia.h"
-#include "vecmath.h"
-#include "quaternion.h"
-#include "util.h"
-#include "mathlib.h"
-#include "astro.h"
+#include "celengine/celestia.h"
+#include "celmath/vecmath.h"
+#include "celmath/quaternion.h"
+#include "celutil/util.h"
+#include "celmath/mathlib.h"
+#include "celengine/astro.h"
 #include "celestiacore.h"
 
 
