@@ -482,6 +482,8 @@ void Renderer::clearLabels()
 void Renderer::render(const Observer& observer,
                       const StarDatabase& starDB,
                       const VisibleStarSet& visset,
+                      const StarOctree& visTree,
+                      float faintestVisible,
                       SolarSystem* solarSystem,
                       GalaxyList* galaxies,
                       const Selection& sel,
@@ -541,7 +543,12 @@ void Renderer::render(const Observer& observer,
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     if ((renderFlags & ShowStars) != 0)
-        renderStars(starDB, visset, observer);
+    {
+        // if ((renderFlags & ShowCloudMaps) != 0)
+        renderStars(starDB, visTree, faintestVisible, observer);
+        //        else
+        // renderStars(starDB, visset, faintestVisible, observer);
+    }
 
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && asterisms != NULL)
@@ -1750,10 +1757,180 @@ void Renderer::renderPlanetarySystem(const Star& sun,
 }
 
 
+class StarRenderer : public StarHandler
+{
+public:
+    StarRenderer();
+    ~StarRenderer() {};
+    
+    void process(const Star&, float, float);
+
+public:
+    const Observer* observer;
+    Point3f position;
+    Vec3f viewNormal;
+
+    vector<Renderer::Particle>* starParticles;
+    vector<Renderer::Particle>* glareParticles;
+    vector<Renderer::RenderListEntry>* renderList;
+
+    float faintestVisible;
+    float size;
+    float pixelSize;
+    float brightnessScale;
+    float brightnessBias;
+
+    int nProcessed;
+    int nRendered;
+    int nClose;
+    int nBright;
+};
+
+StarRenderer::StarRenderer()
+{
+    nRendered = 0;
+    nClose = 0;
+    nBright = 0;
+    nProcessed = 0;
+}
+
+void StarRenderer::process(const Star& star, float distance, float appMag)
+{
+    nProcessed++;
+
+    Point3f starPos = star.getPosition();
+    Vec3f relPos = starPos - position;
+
+    if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f)
+    {
+        Color starColor = star.getStellarClass().getApparentColor();
+        float renderDistance = distance;
+        float s = renderDistance * size;
+        float discSizeInPixels = 0.0f;
+
+        // Special handling for stars less than one light year away . . .
+        // We can't just go ahead and render a nearby star in the usual way
+        // for two reasons:
+        //   * It may be clipped by the near plane
+        //   * It may be large enough that we should render it as a mesh instead
+        //     of a particle
+        // It's possible that the second condition might apply for stars further
+        // than one light year away if the star is huge, the fov is very small,
+        // and the resolution is high.  We'll ignore this for now and use the
+        // most inexpensive test possible . . .
+        if (distance < 1.0f)
+        {
+            // Compute the position of the observer relative to the star.
+            // This is a much more accurate (and expensive) distance
+            // calculation than the previous one which used the observer's
+            // position rounded off to floats.
+            relPos = starPos - observer->getPosition();
+            distance = relPos.length();
+
+            float f = RENDER_DISTANCE / distance;
+            renderDistance = RENDER_DISTANCE;
+            starPos = position + relPos * f;
+
+            float radius = star.getRadius();
+            discSizeInPixels = radius / astro::lightYearsToKilometers(distance) /
+                (pixelSize / NEAR_DIST);
+
+            nClose++;
+        }
+
+        if (discSizeInPixels <= 1)
+        {
+            float alpha = clamp(1.0f - appMag * brightnessScale + brightnessBias);
+
+            Renderer::Particle p;
+            p.center = starPos;
+            p.size = renderDistance * size;
+            p.color = Color(starColor, alpha);
+            starParticles->insert(starParticles->end(), p);
+            nRendered++;
+
+            // If the star is brighter than magnitude 1, add a halo around it to
+            // make it appear more brilliant.  This is a hack to compensate for the
+            // limited dynamic range of monitors.
+            if (appMag < 1.0f)
+            {
+                alpha = 0.4f * clamp((appMag - 1) * -0.8f);
+                s = renderDistance * 0.001f * (3 - (appMag - 1)) * 2;
+
+                if (s > p.size * 3)
+                    p.size = s;
+                else
+                    p.size = p.size * 3;
+                p.color = Color(starColor, alpha);
+                glareParticles->insert(glareParticles->end(), p);
+                nBright++;
+            }
+        }
+        else
+        {
+            Renderer::RenderListEntry rle;
+            rle.star = &star;
+            rle.body = NULL;
+            
+            // Objects in the render list are always rendered relative to a viewer
+            // at the origin--this is different than for distant stars.
+            float scale = RENDER_DISTANCE / distance;
+            rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
+
+            rle.distance = astro::lightYearsToKilometers(distance);
+            rle.discSizeInPixels = discSizeInPixels;
+            rle.appMag = appMag;
+            renderList->insert(renderList->end(), rle);
+        }
+    }
+}
+
+
+
 void Renderer::renderStars(const StarDatabase& starDB,
-                           const VisibleStarSet& visset,
+                           const StarOctree& visTree,
+                           float faintestVisible,
                            const Observer& observer)
 {
+    StarRenderer starRenderer;
+
+    starRenderer.observer = &observer;
+    starRenderer.position = (Point3f) observer.getPosition();
+    starRenderer.viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    starRenderer.starParticles = &starParticles;
+    starRenderer.glareParticles = &glareParticles;
+    starRenderer.renderList = &renderList;
+    starRenderer.faintestVisible = faintestVisible;
+    starRenderer.size = pixelSize * 3.0f;
+    starRenderer.pixelSize = pixelSize;
+    starRenderer.brightnessScale = brightnessScale;
+    starRenderer.brightnessBias = brightnessBias;
+
+    starParticles.clear();
+    glareParticles.clear();
+
+    visTree.processVisibleStars(starRenderer,
+                                (Point3f) observer.getPosition(),
+                                observer.getOrientation(),
+                                fov,
+                                (float) windowWidth / (float) windowHeight,
+                                faintestVisible);
+
+    glBindTexture(GL_TEXTURE_2D, starTex->getName());
+    renderParticles(starParticles, observer.getOrientation());
+    glBindTexture(GL_TEXTURE_2D, glareTex->getName());
+    renderParticles(glareParticles, observer.getOrientation());
+
+    cout << "*Rendered stars: " << starRenderer.nProcessed << '/' << starParticles.size() << '/' << glareParticles.size() << '/' << starRenderer.nClose << '\n';
+}
+
+
+void Renderer::renderStars(const StarDatabase& starDB,
+                           const VisibleStarSet& visset,
+                           float faintestVisible,
+                           const Observer& observer)
+{
+    int nRendered = 0;
     vector<uint32>* vis = visset.getVisibleSet();
     int nStars = vis->size();
     Point3f observerPos = (Point3f) observer.getPosition();
@@ -1812,13 +1989,14 @@ void Renderer::renderStars(const StarDatabase& starDB,
         
             alpha = clamp(1.0f - appMag * brightnessScale + brightnessBias);
 
-            if (discSizeInPixels <= 1)
+            if (appMag < faintestVisible && discSizeInPixels <= 1)
             {
                 Particle p;
                 p.center = pos;
                 p.size = renderDistance * size;
                 p.color = Color(starColor, alpha);
                 starParticles.insert(starParticles.end(), p);
+                nRendered++;
 
                 // If the star is brighter than magnitude 1, add a halo around it to
                 // make it appear more brilliant.  This is a hack to compensate for the
@@ -1859,6 +2037,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
     renderParticles(starParticles, observer.getOrientation());
     glBindTexture(GL_TEXTURE_2D, glareTex->getName());
     renderParticles(glareParticles, observer.getOrientation());
+
+    cout << "Rendered stars: " << nRendered << '\n';
 }
 
 
