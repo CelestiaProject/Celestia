@@ -369,8 +369,8 @@ void KdeApp::initActions()
 
     KToggleAction* wireframeMode = new KToggleAction(i18n("Wireframe Mode"), CTRL + Key_W, this, SLOT(slotWireframeMode()), actionCollection(), "wireframeMode");
 
-    new KToggleAction(i18n("Enable Vertex Shader"), 0, this, SLOT(slotVertexShader()), actionCollection(), "vertexShader");
-    new KToggleAction(i18n("Enable Pixel Shader"), 0, this, SLOT(slotPixelShader()), actionCollection(), "pixelShader");
+    new KToggleAction(i18n("Enable Vertex Shader"), CTRL + Key_V, this, SLOT(slotVertexShader()), actionCollection(), "vertexShader");
+    new KToggleAction(i18n("Enable Pixel Shader"), CTRL + Key_P, this, SLOT(slotPixelShader()), actionCollection(), "pixelShader");
 
     new KAction(i18n("Grab Image"), "filesave", 0, this, SLOT(slotGrabImage()), actionCollection(), "grabImage");
 
