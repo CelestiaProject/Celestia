@@ -14,8 +14,6 @@
 #include <string>
 #include <iostream>
 #include "basictypes.h"
-#include "gl.h"
-#include "texfont.h"
 
 
 class TextureFont

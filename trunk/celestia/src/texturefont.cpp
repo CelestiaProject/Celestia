@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cstring>
 #include <fstream>
+#include "gl.h"
 #include "celestia.h"
 #include "bytes.h"
 #include "texturefont.h"
