@@ -1828,6 +1828,260 @@ static void renderShadowedMeshVertexShader(const RenderInfo& ri,
 }
 
 
+static void renderRings(RingSystem& rings,
+                        RenderInfo& ri,
+                        float planetRadius,
+                        unsigned int textureResolution,
+                        bool renderShadow)
+{
+    float inner = rings.innerRadius / planetRadius;
+    float outer = rings.outerRadius / planetRadius;
+    int nSections = 100;
+
+    // Ring Illumination:
+    // Since a ring system is composed of millions of individual
+    // particles, it's not at all realistic to model it as a flat
+    // Lambertian surface.  We'll approximate the llumination
+    // function by assuming that the ring system contains Lambertian
+    // particles, and that the brightness at some point in the ring
+    // system is proportional to the illuminated fraction of a
+    // particle there.  In fact, we'll simplify things further and
+    // set the illumination of the entire ring system to the same
+    // value, computing the illuminated fraction of a hypothetical
+    // particle located at the center of the planet.  This
+    // approximation breaks down when you get close to the planet.
+    float ringIllumination = 0.0f;
+    {
+        float illumFraction = (1.0f + ri.eyeDir_obj * ri.sunDir_obj) / 2.0f;
+        // Just use the illuminated fraction for now . . .
+        ringIllumination = illumFraction;
+    }
+
+    // If we have multi-texture support, we'll use the second texture unit
+    // to render the shadow of the planet on the rings.  This is a bit of
+    // a hack, and assumes that the planet is nearly spherical in shape,
+    // and only works for a planet illuminated by a single sun where the
+    // distance to the sun is very large relative to its diameter.
+    if (renderShadow)
+    {
+        glActiveTextureARB(GL_TEXTURE1_ARB);
+        glEnable(GL_TEXTURE_2D);
+        shadowTex->bind();
+
+        float sPlane[4] = { 0, 0, 0, 0.5f };
+        float tPlane[4] = { 0, 0, 0, 0.5f };
+
+        // Compute the projection vectors based on the sun direction.
+        // I'm being a little careless here--if the sun direction lies
+        // along the y-axis, this will fail.  It's unlikely that a
+        // planet would ever orbit underneath its sun (an orbital
+        // inclination of 90 degrees), but this should be made
+        // more robust anyway.
+        float scale = rings.innerRadius / planetRadius;
+        Vec3f axis = Vec3f(0, 1, 0) ^ ri.sunDir_obj;
+        float angle = (float) acos(Vec3f(0, 1, 0) * ri.sunDir_obj);
+        Mat4f mat = Mat4f::rotation(axis, -angle);
+        Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+        Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+        sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
+        tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
+
+        glEnable(GL_TEXTURE_GEN_S);
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+        glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+        glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
+
+        glActiveTextureARB(GL_TEXTURE0_ARB);
+    }
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    Texture* ringsTex = rings.texture.find(textureResolution);
+
+    if (ringsTex != NULL)
+        ringsTex->bind();
+    else
+        glDisable(GL_TEXTURE_2D);
+        
+    // Perform our own lighting for the rings.
+    // TODO: Don't forget about light source color (required when we
+    // paying attention to star color.)
+    glDisable(GL_LIGHTING);
+    {
+        Vec3f litColor(rings.color.red(), rings.color.green(), rings.color.blue());
+        litColor = litColor * ringIllumination +
+            Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                  ri.ambientColor.blue());
+        glColor4f(litColor.x, litColor.y, litColor.z, 1.0f);
+    }
+
+    // This gets tricky . . .  we render the rings in two parts.  One
+    // part is potentially shadowed by the planet, and we need to
+    // render that part with the projected shadow texture enabled.
+    // The other part isn't shadowed, but will appear so if we don't
+    // first disable the shadow texture.  The problem is that the
+    // shadow texture will affect anything along the line between the
+    // sun and the planet, regardless of whether it's in front or
+    // behind the planet.
+
+    // Compute the angle of the sun projected on the ring plane
+    float sunAngle = (float) atan2(ri.sunDir_obj.z, ri.sunDir_obj.x);
+
+    renderRingSystem(inner, outer,
+                     (float) (sunAngle + PI / 2),
+                     (float) (sunAngle + 3 * PI / 2),
+                     nSections / 2);
+    renderRingSystem(inner, outer,
+                     (float) (sunAngle +  3 * PI / 2),
+                     (float) (sunAngle + PI / 2),
+                     nSections / 2);
+
+    // Disable the second texture unit if it was used
+    if (renderShadow)
+    {
+        glActiveTextureARB(GL_TEXTURE1_ARB);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glActiveTextureARB(GL_TEXTURE0_ARB);
+    }
+
+    // Render the unshadowed side
+    renderRingSystem(inner, outer,
+                     (float) (sunAngle - PI / 2),
+                     (float) (sunAngle + PI / 2),
+                     nSections / 2);
+    renderRingSystem(inner, outer,
+                     (float) (sunAngle + PI / 2),
+                     (float) (sunAngle - PI / 2),
+                     nSections / 2);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+}
+
+
+static void
+renderEclipseShadows(Mesh* mesh,
+                     vector<Renderer::EclipseShadow>& eclipseShadows,
+                     RenderInfo& ri,
+                     float planetRadius,
+                     Mat4f& planetMat,
+                     Frustum& viewFrustum,
+                     bool useVertexShader)
+{
+    for (vector<Renderer::EclipseShadow>::iterator iter = eclipseShadows.begin();
+         iter != eclipseShadows.end(); iter++)
+    {
+        Renderer::EclipseShadow shadow = *iter;
+
+#if 0
+        // Eclipse debugging: render the central axis of the eclipse
+        // shadow volume.
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(1, 0, 0, 1);
+        Point3f blorp = shadow.origin * planetMat;
+        Vec3f blah = shadow.direction * planetMat;
+        blorp.x /= planetRadius; blorp.y /= planetRadius; blorp.z /= planetRadius;
+        float foo = blorp.distanceFromOrigin();
+        glBegin(GL_LINES);
+        glVertex(blorp);
+        glVertex(blorp + foo * blah);
+        glEnd();
+        glEnable(GL_TEXTURE_2D);
+#endif
+
+        // Determine which eclipse shadow texture to use.  This is only
+        // a very rough approximation to reality.  Since there are an
+        // infinite number of possible eclipse volumes, what we should be
+        // doing is generating the eclipse textures on the fly using
+        // render-to-texture.  But for now, we'll just choose from a fixed
+        // set of eclipse shadow textures based on the relative size of
+        // the umbra and penumbra.
+        Texture* eclipseTex = NULL;
+        float umbra = shadow.umbraRadius / shadow.penumbraRadius;
+        if (umbra < 0.1f)
+            eclipseTex = eclipseShadowTextures[0];
+        else if (umbra < 0.35f)
+            eclipseTex = eclipseShadowTextures[1];
+        else if (umbra < 0.6f)
+            eclipseTex = eclipseShadowTextures[2];
+        else if (umbra < 0.9f)
+            eclipseTex = eclipseShadowTextures[3];
+        else
+            eclipseTex = shadowTex;
+
+        // Compute the transformation to use for generating texture
+        // coordinates from the object vertices.
+        Point3f origin = shadow.origin * planetMat;
+        Vec3f dir = shadow.direction * planetMat;
+        float scale = planetRadius / shadow.penumbraRadius;
+        Vec3f axis = Vec3f(0, 1, 0) ^ dir;
+        float angle = (float) acos(Vec3f(0, 1, 0) * dir);
+        axis.normalize();
+        Mat4f mat = Mat4f::rotation(axis, -angle);
+        Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+        Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+        float sPlane[4] = { 0, 0, 0, 0 };
+        float tPlane[4] = { 0, 0, 0, 0 };
+        sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
+        tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
+        sPlane[3] = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
+        tPlane[3] = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
+
+        // TODO: Multiple eclipse shadows should be rendered in a single
+        // pass using multitexture.
+        if (eclipseTex != NULL)
+            eclipseTex->bind();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+
+        // If the ambient light level is greater than zero, reduce the
+        // darkness of the shadows.
+        if (ri.useTexEnvCombine)
+        {
+            float color[4] = { ri.ambientColor.red(), ri.ambientColor.green(),
+                               ri.ambientColor.blue(), 1.0f };
+            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_CONSTANT_EXT);
+            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
+            glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
+            glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
+            glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
+        }
+
+        // Since invariance between nVidia's vertex programs and the
+        // standard transformation pipeline is guaranteed, we have to
+        // make sure to use the same transformation engine on subsequent
+        // rendering passes as we did on the initial one.
+        if (useVertexShader && mesh == NULL)
+        {
+            renderShadowedMeshVertexShader(ri, viewFrustum,
+                                           sPlane, tPlane);
+        }
+        else
+        {
+            renderShadowedMeshDefault(mesh, ri, viewFrustum,
+                                      sPlane, tPlane);
+        }
+
+        if (ri.useTexEnvCombine)
+        {
+            float color[4] = { 0, 0, 0, 0 };
+            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        }
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glDisable(GL_BLEND);
+    }
+}
+
+
 static float getSphereLOD(float discSizeInPixels)
 {
     if (discSizeInPixels < 10)
@@ -2026,6 +2280,13 @@ void Renderer::renderObject(Point3f pos,
             renderMeshDefault(mesh, ri, lit);
     }
 
+    if (obj.rings != NULL && distance <= obj.rings->innerRadius)
+    {
+        renderRings(*obj.rings, ri, radius,
+                    textureResolution,
+                    nSimultaneousTextures > 1);
+    }
+
     if (obj.atmosphere != NULL)
     {
         Atmosphere* atmosphere = const_cast<Atmosphere *>(obj.atmosphere);
@@ -2119,223 +2380,18 @@ void Renderer::renderObject(Point3f pos,
 
     if (obj.eclipseShadows != NULL)
     {
-        for (vector<EclipseShadow>::iterator iter = obj.eclipseShadows->begin();
-             iter != obj.eclipseShadows->end(); iter++)
-        {
-            EclipseShadow shadow = *iter;
-
-#if 0
-            // Eclipse debugging: render the central axis of the eclipse
-            // shadow volume.
-            glDisable(GL_TEXTURE_2D);
-            glColor4f(1, 0, 0, 1);
-            Point3f blorp = shadow.origin * planetMat;
-            Vec3f blah = shadow.direction * planetMat;
-            blorp.x /= radius; blorp.y /= radius; blorp.z /= radius;
-            float foo = blorp.distanceFromOrigin();
-            glBegin(GL_LINES);
-            glVertex(blorp);
-            glVertex(blorp + foo * blah);
-            glEnd();
-            glEnable(GL_TEXTURE_2D);
-#endif
-
-            // Determine which eclipse shadow texture to use.  This is only
-            // a very rough approximation to reality.  Since there are an
-            // infinite number of possible eclipse volumes, what we should be
-            // doing is generating the eclipse textures on the fly using
-            // render-to-texture.  But for now, we'll just choose from a fixed
-            // set of eclipse shadow textures based on the relative size of
-            // the umbra and penumbra.
-            Texture* eclipseTex = NULL;
-            float umbra = shadow.umbraRadius / shadow.penumbraRadius;
-            if (umbra < 0.1f)
-                eclipseTex = eclipseShadowTextures[0];
-            else if (umbra < 0.35f)
-                eclipseTex = eclipseShadowTextures[1];
-            else if (umbra < 0.6f)
-                eclipseTex = eclipseShadowTextures[2];
-            else if (umbra < 0.9f)
-                eclipseTex = eclipseShadowTextures[3];
-            else
-                eclipseTex = shadowTex;
-
-            // Compute the transformation to use for generating texture
-            // coordinates from the object vertices.
-            Point3f origin = shadow.origin * planetMat;
-            Vec3f dir = shadow.direction * planetMat;
-            float scale = radius / shadow.penumbraRadius;
-            Vec3f axis = Vec3f(0, 1, 0) ^ dir;
-            float angle = (float) acos(Vec3f(0, 1, 0) * dir);
-            axis.normalize();
-            Mat4f mat = Mat4f::rotation(axis, -angle);
-            Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-            Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
-
-            float sPlane[4] = { 0, 0, 0, 0 };
-            float tPlane[4] = { 0, 0, 0, 0 };
-            sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
-            tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
-            sPlane[3] = (Point3f(0, 0, 0) - origin) * sAxis / radius + 0.5f;
-            tPlane[3] = (Point3f(0, 0, 0) - origin) * tAxis / radius + 0.5f;
-
-            // TODO: Areas in eclipse shadow should be no darker than the
-            // ambient color.
-            // TODO: Multiple eclipse shadows should be rendered in a single
-            // pass using multitexture.
-            if (eclipseTex != NULL)
-                eclipseTex->bind();
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-
-            // Since invariance between nVidia's vertex programs and the
-            // standard transformation pipeline is guaranteed, we have to
-            // make sure to use the same transformation engine on subsequent
-            // rendering passes as we did on the initial one.
-            if (vertexShaderEnabled && mesh == NULL)
-            {
-                renderShadowedMeshVertexShader(ri, viewFrustum,
-                                               sPlane, tPlane);
-            }
-            else
-            {
-                renderShadowedMeshDefault(mesh, ri, viewFrustum,
-                                          sPlane, tPlane);
-            }
-
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            glDisable(GL_BLEND);
-        }
+        renderEclipseShadows(mesh,
+                             *obj.eclipseShadows,
+                             ri,
+                             radius, planetMat, viewFrustum,
+                             vertexShaderEnabled);
     }
 
-    // If the planet has a ring system, render it.
-    if (obj.rings != NULL)
+    if (obj.rings != NULL && distance > obj.rings->innerRadius)
     {
-        RingSystem* rings = obj.rings;
-        float inner = rings->innerRadius / radius;
-        float outer = rings->outerRadius / radius;
-        int nSections = 100;
-
-        // Ring Illumination:
-        // Since a ring system is composed of millions of individual
-        // particles, it's not at all realistic to model it as a flat
-        // Lambertian surface.  We'll approximate the llumination
-        // function by assuming that the ring system contains Lambertian
-        // particles, and that the brightness at some point in the ring
-        // system is proportional to the illuminated fraction of a
-        // particle there.  In fact, we'll simplify things further and
-        // set the illumination of the entire ring system to the same
-        // value, computing the illuminated fraction of a hypothetical
-        // particle located at the center of the planet.  This
-        // approximation breaks down when you get close to the planet.
-        float ringIllumination = 0.0f;
-        {
-            float illumFraction = (1.0f + ri.eyeDir_obj * ri.sunDir_obj) / 2.0f;
-            // Just use the illuminated fraction for now . . .
-            ringIllumination = illumFraction;
-        }
-
-        // If we have multi-texture support, we'll use the second texture unit
-        // to render the shadow of the planet on the rings.  This is a bit of
-        // a hack, and assumes that the planet is nearly spherical in shape,
-        // and only works for a planet illuminated by a single sun where the
-        // distance to the sun is very large relative to its diameter.
-        if (nSimultaneousTextures > 1)
-        {
-            glActiveTextureARB(GL_TEXTURE1_ARB);
-            glEnable(GL_TEXTURE_2D);
-            shadowTex->bind();
-
-            float sPlane[4] = { 0, 0, 0, 0.5f };
-            float tPlane[4] = { 0, 0, 0, 0.5f };
-
-            // Compute the projection vectors based on the sun direction.
-            // I'm being a little careless here--if the sun direction lies
-            // along the y-axis, this will fail.  It's unlikely that a
-            // planet would ever orbit underneath its sun (an orbital
-            // inclination of 90 degrees), but this should be made
-            // more robust anyway.
-            float scale = rings->innerRadius / radius;
-            Vec3f axis = Vec3f(0, 1, 0) ^ ri.sunDir_obj;
-            float angle = (float) acos(Vec3f(0, 1, 0) * ri.sunDir_obj);
-            Mat4f mat = Mat4f::rotation(axis, -angle);
-            Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-            Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
-
-            sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
-            tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
-
-            glEnable(GL_TEXTURE_GEN_S);
-            glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-            glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
-            glEnable(GL_TEXTURE_GEN_T);
-            glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-            glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
-
-            glActiveTextureARB(GL_TEXTURE0_ARB);
-        }
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        Texture* ringsTex = rings->texture.find(textureResolution);
-
-        if (ringsTex != NULL)
-            ringsTex->bind();
-        else
-            glDisable(GL_TEXTURE_2D);
-        
-        // Perform our own lighting for the rings.
-        // TODO: Don't forget about light source color (required when we
-        // paying attention to star color.)
-        glDisable(GL_LIGHTING);
-        {
-            Vec3f litColor(rings->color.red(), rings->color.green(), rings->color.blue());
-            litColor = litColor * ringIllumination + Vec3f(1, 1, 1) * ambientLightLevel;
-            glColor4f(litColor.x, litColor.y, litColor.z, 1.0f);
-        }
-
-        // This gets tricky . . .  we render the rings in two parts.  One
-        // part is potentially shadowed by the planet, and we need to
-        // render that part with the projected shadow texture enabled.
-        // The other part isn't shadowed, but will appear so if we don't
-        // first disable the shadow texture.  The problem is that the
-        // shadow texture will affect anything along the line between the
-        // sun and the planet, regardless of whether it's in front or
-        // behind the planet.
-
-        // Compute the angle of the sun projected on the ring plane
-        float sunAngle = (float) atan2(ri.sunDir_obj.z, ri.sunDir_obj.x);
-
-        renderRingSystem(inner, outer,
-                         (float) (sunAngle + PI / 2),
-                         (float) (sunAngle + 3 * PI / 2),
-                         nSections / 2);
-        renderRingSystem(inner, outer,
-                         (float) (sunAngle +  3 * PI / 2),
-                         (float) (sunAngle + PI / 2),
-                         nSections / 2);
-
-        // Disable the second texture unit if it was used
-        if (nSimultaneousTextures > 1)
-        {
-            glActiveTextureARB(GL_TEXTURE1_ARB);
-            glDisable(GL_TEXTURE_2D);
-            glDisable(GL_TEXTURE_GEN_S);
-            glDisable(GL_TEXTURE_GEN_T);
-            glActiveTextureARB(GL_TEXTURE0_ARB);
-        }
-
-        // Render the unshadowed side
-        renderRingSystem(inner, outer,
-                         (float) (sunAngle - PI / 2),
-                         (float) (sunAngle + PI / 2),
-                         nSections / 2);
-        renderRingSystem(inner, outer,
-                         (float) (sunAngle + PI / 2),
-                         (float) (sunAngle - PI / 2),
-                         nSections / 2);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        renderRings(*obj.rings, ri, radius,
+                    textureResolution,
+                    nSimultaneousTextures > 1);
     }
 
     glPopMatrix();
