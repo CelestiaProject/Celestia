@@ -25,6 +25,8 @@
 #define IDI_OPENFOLDER                  126
 #define IDI_ROOTFOLDER                  127
 #define IDD_ADDLOCATION_FOLDER          128
+#define IDD_ORGANIZE_LOCATIONS          129
+#define IDD_RENAME_LOCATION             130
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
 #define IDC_GLINFO_TEXT                 1005
@@ -78,6 +80,11 @@
 #define IDC_LOCATION_NEWFOLDER          1053
 #define IDC_LOCATION_FOLDERTREE         1054
 #define IDC_LOCATIONFOLDER              1057
+#define IDC_ORGANIZE_LOCATION_TREE      1058
+#define IDC_ORGANIZE_LOCATIONS_NEWFOLDER 1059
+#define IDC_ORGANIZE_LOCATIONS_RENAME   1060
+#define IDC_ORGANIZE_LOCATIONS_DELETE   1061
+#define IDC_NEWLOCATION                 1062
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -132,9 +139,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        129
+#define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         40064
-#define _APS_NEXT_CONTROL_VALUE         1058
+#define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
