@@ -161,6 +161,7 @@ public:
         TrajectoryType traj;
     };
 
+    void gotoJourney(const JourneyParams&);
     // void setSimulation(Simulation* _sim) { sim = _sim; };
 
  private:
