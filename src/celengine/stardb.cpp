@@ -183,7 +183,7 @@ Star* StarDatabase::find(const string& name) const
     {
         return find(catalogNumber, Star::HDCatalog);
     }
-    else if (compareIgnoringCase(name, TychoCatalogPrefix, TychoCatalogPrefix.length()) == 0)
+    else if (parseTychoCatalogNumber(name, &catalogNumber))
     {
         return find(catalogNumber, Star::HIPCatalog);
     }
