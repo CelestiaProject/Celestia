@@ -116,6 +116,14 @@ template<class T> class ResourceManager
                 return NULL;
         }
     }
+
+    const T* getResourceInfo(ResourceHandle h)
+    {
+        if (h >= (int) handles.size() || h < 0)
+            return NULL;
+        else
+            return &resources[h];
+    }
 };
 
 #endif // _CELUTIL_RESMANAGER_H_
