@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
+#include "astro.h"
 #include "command.h"
 
 using namespace std;
@@ -24,7 +25,7 @@ CommandWait::~CommandWait()
 {
 }
 
-void CommandWait::process(Simulation* sim, Renderer* renderer, double t, double dt)
+void CommandWait::process(ExecutionEnvironment& env, double t, double dt)
 {
 }
 
@@ -40,10 +41,10 @@ CommandSelect::~CommandSelect()
 {
 }
 
-void CommandSelect::process(Simulation* sim, Renderer* renderer)
+void CommandSelect::process(ExecutionEnvironment& env)
 {
-    Selection sel = sim->findObject(target);
-    sim->setSelection(sel);
+    Selection sel = env.getSimulation()->findObject(target);
+    env.getSimulation()->setSelection(sel);
 }
 
 
@@ -51,7 +52,7 @@ void CommandSelect::process(Simulation* sim, Renderer* renderer)
 ////////////////
 // Goto command: go to the selected body
 
-CommandGoto::CommandGoto(double t) : gotoTime(t)
+CommandGoto::CommandGoto(double t, double dist) : gotoTime(t), distance(dist)
 {
 }
 
@@ -59,9 +60,11 @@ CommandGoto::~CommandGoto()
 {
 }
 
-void CommandGoto::process(Simulation* sim, Renderer* renderer)
+void CommandGoto::process(ExecutionEnvironment& env)
 {
-    sim->gotoSelection(gotoTime);
+    Selection sel = env.getSimulation()->getSelection();
+    env.getSimulation()->gotoSelection(gotoTime,
+                                       astro::kilometersToLightYears(sel.radius() * distance));
 }
 
 
@@ -77,9 +80,9 @@ CommandCenter::~CommandCenter()
 {
 }
 
-void CommandCenter::process(Simulation* sim, Renderer* renderer)
+void CommandCenter::process(ExecutionEnvironment& env)
 {
-    sim->centerSelection(centerTime);
+    env.getSimulation()->centerSelection(centerTime);
 }
 
 
@@ -90,9 +93,9 @@ CommandFollow::CommandFollow()
 {
 }
 
-void CommandFollow::process(Simulation* sim, Renderer* renderer)
+void CommandFollow::process(ExecutionEnvironment& env)
 {
-    sim->follow();
+    env.getSimulation()->follow();
 }
 
 
@@ -103,9 +106,9 @@ CommandCancel::CommandCancel()
 {
 }
 
-void CommandCancel::process(Simulation* sim, Renderer* renderer)
+void CommandCancel::process(ExecutionEnvironment& env)
 {
-    sim->cancelMotion();
+    env.getSimulation()->cancelMotion();
 }
 
 
@@ -116,8 +119,9 @@ CommandPrint::CommandPrint(string _text) : text(_text)
 {
 }
 
-void CommandPrint::process(Simulation* sim, Renderer* renderer)
+void CommandPrint::process(ExecutionEnvironment& env)
 {
+    env.showText(text);
 }
 
 
@@ -128,7 +132,7 @@ CommandClearScreen::CommandClearScreen()
 {
 }
 
-void CommandClearScreen::process(Simulation* sim, Renderer* renderer)
+void CommandClearScreen::process(ExecutionEnvironment& env)
 {
 }
 
@@ -140,9 +144,9 @@ CommandSetTime::CommandSetTime(double _jd) : jd(_jd)
 {
 }
 
-void CommandSetTime::process(Simulation* sim, Renderer* renderer)
+void CommandSetTime::process(ExecutionEnvironment& env)
 {
-    sim->setTime(jd);
+    env.getSimulation()->setTime(jd);
 }
 
 
@@ -154,9 +158,9 @@ CommandSetTimeRate::CommandSetTimeRate(double _rate) : rate(_rate)
 {
 }
 
-void CommandSetTimeRate::process(Simulation* sim, Renderer* renderer)
+void CommandSetTimeRate::process(ExecutionEnvironment& env)
 {
-    sim->setTimeScale(rate);
+    env.getSimulation()->setTimeScale(rate);
 }
 
 
@@ -169,9 +173,9 @@ CommandChangeDistance::CommandChangeDistance(double _duration, double _rate) :
 {
 }
 
-void CommandChangeDistance::process(Simulation* sim, Renderer* renderer, double t, double dt)
+void CommandChangeDistance::process(ExecutionEnvironment& env, double t, double dt)
 {
-    sim->changeOrbitDistance((float) (rate * dt));
+    env.getSimulation()->changeOrbitDistance((float) (rate * dt));
 }
 
 
@@ -184,15 +188,46 @@ CommandOrbit::CommandOrbit(double _duration, const Vec3f& axis, float rate) :
 {
 }
 
-void CommandOrbit::process(Simulation* sim, Renderer* rend, double t, double dt)
+void CommandOrbit::process(ExecutionEnvironment& env, double t, double dt)
 {
     float v = spin.length();
     if (v != 0.0f)
     {
         Quatf q;
         q.setAxisAngle(spin / v, (float) (v * dt));
-        sim->orbit(q);
+        env.getSimulation()->orbit(q);
     }
+}
+
+
+CommandRotate::CommandRotate(double _duration, const Vec3f& axis, float rate) :
+    TimedCommand(_duration),
+    spin(axis * rate)
+{
+}
+
+void CommandRotate::process(ExecutionEnvironment& env, double t, double dt)
+{
+    float v = spin.length();
+    if (v != 0.0f)
+    {
+        Quatf q;
+        q.setAxisAngle(spin / v, (float) (v * dt));
+        env.getSimulation()->rotate(q);
+    }
+}
+
+
+CommandMove::CommandMove(double _duration, const Vec3d& _velocity) :
+    TimedCommand(_duration),
+    velocity(_velocity)
+{
+}
+
+void CommandMove::process(ExecutionEnvironment& env, double t, double dt)
+{
+    Observer obs = env.getSimulation()->getObserver();
+    obs.setPosition(obs.getPosition() + (velocity * dt));
 }
 
 
@@ -203,9 +238,9 @@ CommandSetPosition::CommandSetPosition(const UniversalCoord& uc) : pos(uc)
 {
 }
 
-void CommandSetPosition::process(Simulation* sim, Renderer* renderer)
+void CommandSetPosition::process(ExecutionEnvironment& env)
 {
-    sim->getObserver().setPosition(pos);
+    env.getSimulation()->getObserver().setPosition(pos);
 }
 
 
@@ -217,11 +252,12 @@ CommandSetOrientation::CommandSetOrientation(const Vec3f& _axis, float _angle) :
 {
 }
 
-void CommandSetOrientation::process(Simulation* sim, Renderer* renderer)
+void CommandSetOrientation::process(ExecutionEnvironment& env)
 {
     Quatf q(1);
     q.setAxisAngle(axis, angle);
-    sim->getObserver().setOrientation(q);
+    env.getSimulation()->getObserver().setOrientation(q);
+    // env.getSimulation()->setOrientation(q);
 }
 
 
@@ -233,12 +269,13 @@ CommandRenderFlags::CommandRenderFlags(int _setFlags, int _clearFlags) :
 {
 }
 
-void CommandRenderFlags::process(Simulation* sim, Renderer* renderer)
+void CommandRenderFlags::process(ExecutionEnvironment& env)
 {
-    if (renderer != NULL)
+    Renderer* r = env.getRenderer();
+    if (r != NULL)
     {
-        renderer->setRenderFlags(renderer->getRenderFlags() | setFlags);
-        renderer->setRenderFlags(renderer->getRenderFlags() & ~clearFlags);
+        r->setRenderFlags(r->getRenderFlags() | setFlags);
+        r->setRenderFlags(r->getRenderFlags() & ~clearFlags);
     }
 }
 
@@ -251,11 +288,12 @@ CommandLabels::CommandLabels(int _setFlags, int _clearFlags) :
 {
 }
 
-void CommandLabels::process(Simulation* sim, Renderer* renderer)
+void CommandLabels::process(ExecutionEnvironment& env)
 {
-    if (renderer != NULL)
+    Renderer* r = env.getRenderer();
+    if (r != NULL)
     {
-        renderer->setLabelMode(renderer->getLabelMode() | setFlags);
-        renderer->setLabelMode(renderer->getLabelMode() & ~clearFlags);
+        r->setLabelMode(r->getLabelMode() | setFlags);
+        r->setLabelMode(r->getLabelMode() & ~clearFlags);
     }
 }

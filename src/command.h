@@ -11,15 +11,15 @@
 #define _COMMAND_H_
 
 #include <iostream>
-#include "simulation.h"
-#include "render.h"
+#include "execenv.h"
+
 
 class Command
 {
  public:
     Command() {};
     virtual ~Command() {};
-    virtual void process(Simulation* sim, Renderer* renderer, double t, double dt) = 0;
+    virtual void process(ExecutionEnvironment&, double t, double dt) = 0;
     virtual double getDuration() const = 0;
 };
 
@@ -32,10 +32,10 @@ class InstantaneousCommand : public Command
     InstantaneousCommand() {};
     virtual ~InstantaneousCommand() {};
     virtual double getDuration() const { return 0.0; };
-    virtual void process(Simulation* sim, Renderer* renderer) = 0;
-    void process(Simulation* sim, Renderer* renderer, double t, double dt)
+    virtual void process(ExecutionEnvironment&) = 0;
+    void process(ExecutionEnvironment& env, double t, double dt)
     {
-        process(sim, renderer);
+        process(env);
     };
 };
 
@@ -57,7 +57,7 @@ class CommandWait : public TimedCommand
  public:
     CommandWait(double _duration);
     ~CommandWait();
-    void process(Simulation* sim, Renderer* renderer, double t, double dt);
+    void process(ExecutionEnvironment&, double t, double dt);
 };
 
 
@@ -66,7 +66,7 @@ class CommandSelect : public InstantaneousCommand
  public:
     CommandSelect(std::string _target);
     ~CommandSelect();
-    void process(Simulation* sim, Renderer* renderer);
+    void process(ExecutionEnvironment&);
 
  private:
     string target;
@@ -76,12 +76,13 @@ class CommandSelect : public InstantaneousCommand
 class CommandGoto : public InstantaneousCommand
 {
  public:
-    CommandGoto(double t);
+    CommandGoto(double t, double dist);
     ~CommandGoto();
-    void process(Simulation* sim, Renderer* renderer);
+    void process(ExecutionEnvironment&);
 
  private:
     double gotoTime;
+    double distance;
 };
 
 
@@ -90,7 +91,7 @@ class CommandCenter : public InstantaneousCommand
  public:
     CommandCenter(double t);
     ~CommandCenter();
-    void process(Simulation* sim, Renderer* renderer);
+    void process(ExecutionEnvironment&);
 
  private:
     double centerTime;
@@ -101,7 +102,7 @@ class CommandFollow : public InstantaneousCommand
 {
  public:
     CommandFollow();
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     int dummy;   // Keep the class from having zero size
@@ -112,7 +113,7 @@ class CommandCancel : public InstantaneousCommand
 {
  public:
     CommandCancel();
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     int dummy;   // Keep the class from having zero size
@@ -123,7 +124,7 @@ class CommandPrint : public InstantaneousCommand
 {
  public:
     CommandPrint(std::string);
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     std::string text;
@@ -134,7 +135,7 @@ class CommandClearScreen : public InstantaneousCommand
 {
  public:
     CommandClearScreen();
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     int dummy;   // Keep the class from having zero size
@@ -145,7 +146,7 @@ class CommandSetTime : public InstantaneousCommand
 {
  public:
     CommandSetTime(double _jd);
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     double jd;
@@ -156,7 +157,7 @@ class CommandSetTimeRate : public InstantaneousCommand
 {
  public:
     CommandSetTimeRate(double);
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     double rate;
@@ -167,7 +168,7 @@ class CommandChangeDistance : public TimedCommand
 {
  public:
     CommandChangeDistance(double duration, double rate);
-    void process(Simulation*, Renderer*, double t, double dt);
+    void process(ExecutionEnvironment&, double t, double dt);
 
  private:
     double rate;
@@ -178,10 +179,32 @@ class CommandOrbit : public TimedCommand
 {
  public:
     CommandOrbit(double _duration, const Vec3f& axis, float rate);
-    void process(Simulation*, Renderer*, double t, double dt);
+    void process(ExecutionEnvironment&, double t, double dt);
 
  private:
     Vec3f spin;
+};
+
+
+class CommandRotate : public TimedCommand
+{
+ public:
+    CommandRotate(double _duration, const Vec3f& axis, float rate);
+    void process(ExecutionEnvironment&, double t, double dt);
+
+ private:
+    Vec3f spin;
+};
+
+
+class CommandMove : public TimedCommand
+{
+ public:
+    CommandMove(double _duration, const Vec3d& _velocity);
+    void process(ExecutionEnvironment&, double t, double dt);
+
+ private:
+    Vec3d velocity;
 };
 
 
@@ -189,7 +212,7 @@ class CommandSetPosition : public InstantaneousCommand
 {
  public:
     CommandSetPosition(const UniversalCoord&);
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     UniversalCoord pos;
@@ -200,7 +223,7 @@ class CommandSetOrientation : public InstantaneousCommand
 {
  public:
     CommandSetOrientation(const Vec3f&, float);
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     Vec3f axis;
@@ -212,7 +235,7 @@ class CommandRenderFlags : public InstantaneousCommand
 {
  public:
     CommandRenderFlags(int _setFlags, int _clearFlags);
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     int setFlags;
@@ -224,7 +247,7 @@ class CommandLabels : public InstantaneousCommand
 {
  public:
     CommandLabels(int _setFlags, int _clearFlags);
-    void process(Simulation*, Renderer*);
+    void process(ExecutionEnvironment&);
 
  private:
     int setFlags;
