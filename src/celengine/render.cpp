@@ -568,22 +568,6 @@ void Renderer::setRenderMode(int _renderMode)
     renderMode = _renderMode;
 }
 
-
-Vec3f Renderer::getPickRay(int winX, int winY)
-{
-    float aspectRatio = (float) windowWidth / (float) windowHeight;
-    float nearPlaneHeight = 2 * NEAR_DIST * (float) tan(degToRad(fov / 2.0));
-    float nearPlaneWidth = nearPlaneHeight * aspectRatio;
-
-    float x = nearPlaneWidth * ((float) winX / (float) windowWidth - 0.5f);
-    float y = nearPlaneHeight * (0.5f - (float) winY / (float) windowHeight);
-    Vec3f pickDirection = Vec3f(x, y, -NEAR_DIST);
-    pickDirection.normalize();
-
-    return pickDirection;
-}
-
-
 int Renderer::getRenderFlags() const
 {
     return renderFlags;
