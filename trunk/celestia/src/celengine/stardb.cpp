@@ -403,3 +403,45 @@ void StarDatabase::buildIndexes()
              catalogNumberIndexes[whichCatalog] + nStars, pred);
     }
 }
+
+#if 0
+static Star* CreateStar(Hash* starData)
+{
+}
+
+
+bool LoadStars(istream& in, StarDatabase& stardb)
+{
+    Tokenizer tokenizer(&in);
+    Parser parser(&tokenizer);
+
+    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    {
+        if (tokenizer.getTokenType() != Tokenizer::TokenNumber)
+        {
+            cout << "Error parsing star file.\n";
+            return false;
+        }
+        uint32 catalogNumber = (uint32) tokenizer.getNumberValue();
+
+        Value* starDataValue = parser.readValue();
+        if (starDataValue == NULL)
+        {
+            cout << "Error reading star.\n";
+            return false;
+        }
+
+        if (starDataValue->getType() != Value::Hash)
+        {
+            cout << "Bad star definition.\n";
+            return false;
+        }
+        Hash* starData = starDataValue->getHash();
+
+        Star* star = CreateStar(starData);
+        if (star != NULL)
+        {
+        }
+    }
+}
+#endif
