@@ -2139,7 +2139,7 @@ struct poptOption options[] =
     {
     "verbose",
     'v',
-    POPT_ARG_NONE,
+    POPT_ARG_INT,
     &verbose,
     0,
     "Lots of additional Messages",

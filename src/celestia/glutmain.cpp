@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
     }
 
     char c;
-    while ((c = getopt(argc, argv, "v")) > -1)
+    while ((c = getopt(argc, argv, "v::")) > -1)
     {
         if (c == '?')
         {
@@ -242,7 +242,10 @@ int main(int argc, char* argv[])
         }
         else if (c == 'v')
         {
-            SetDebugVerbosity(1);
+            if(optarg)
+                SetDebugVerbosity(atoi(optarg));
+            else
+                SetDebugVerbosity(0);
         }
     }
 

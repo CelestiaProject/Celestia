@@ -25,7 +25,7 @@ void DebugPrint(int level, char *format, ...)
     va_list args;
     va_start(args, format);
 
-    if (level >= debugVerbosity)
+    if (level <= debugVerbosity)
     {
 #ifdef _MSC_VER
         if (IsDebuggerPresent())
@@ -50,6 +50,8 @@ void DebugPrint(int level, char *format, ...)
 
 void SetDebugVerbosity(int dv)
 {
+    if(dv<0)
+        dv=0;
     debugVerbosity = dv;
 }
 
