@@ -20,10 +20,12 @@
     IBOutlet NSButton *rBoundaries;
     IBOutlet NSButton *rCelestialSphere;
     IBOutlet NSButton *rCloudMaps;
+    IBOutlet NSButton *rCometTails;
     IBOutlet NSButton *rDiagrams;
     IBOutlet NSButton *rEclipseShadows;
     IBOutlet NSButton *rFragmentShader;
     IBOutlet NSButton *rGalaxies;
+    IBOutlet NSButton *rMarkers;
     IBOutlet NSButton *rNightMaps;
     IBOutlet NSButton *rOrbits;
     IBOutlet NSButton *rPlanets;
