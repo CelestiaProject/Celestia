@@ -169,6 +169,15 @@ Renderer::~Renderer()
 }
 
 
+Renderer::DetailOptions::DetailOptions() :
+    ringSystemSections(100),
+    orbitPathSamplePoints(100),
+    shadowTextureSize(256),
+    eclipseTextureSize(128)
+{
+}
+
+
 static void StarTextureEval(float u, float v, float w,
                             unsigned char *pixel)
 {
@@ -353,9 +362,12 @@ bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 }
 
 
-bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
+bool Renderer::init(GLContext* _context,
+                    int winWidth, int winHeight,
+                    DetailOptions& _detailOptions)
 {
     context = _context;
+    detailOptions = _detailOptions;
 
     // Initialize static meshes and textures common to all instances of Renderer
     if (!commonDataInitialized)
@@ -384,7 +396,9 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
             shadowTexMip = Texture::DefaultMipMaps;
         }
         
-        shadowTex = CreateProceduralTexture(256, 256, GL_RGB,
+        shadowTex = CreateProceduralTexture(detailOptions.shadowTextureSize,
+                                            detailOptions.shadowTextureSize,
+                                            GL_RGB,
                                             ShadowTextureEval,
                                             shadowTexAddress, shadowTexMip);
         shadowTex->setBorderColor(Color::White);
@@ -395,7 +409,9 @@ bool Renderer::init(GLContext* _context, int winWidth, int winHeight)
             {
                 ShadowTextureFunction func(i * 0.25f);
                 eclipseShadowTextures[i] =
-                    CreateProceduralTexture(128, 128, GL_RGB, func,
+                    CreateProceduralTexture(detailOptions.eclipseTextureSize,
+                                            detailOptions.eclipseTextureSize,
+                                            GL_RGB, func,
                                             shadowTexAddress, shadowTexMip);
                 if (eclipseShadowTextures[i] != NULL)
                 {
@@ -834,7 +850,7 @@ void Renderer::renderOrbit(Body* body, double t)
         }
 
         double startTime = t;
-        int nSamples = 100;
+        int nSamples = detailOptions.orbitPathSamplePoints;
 
         // Adjust the number of samples used for aperiodic orbits--these aren't
         // true orbits, but are sampled trajectories, generally of spacecraft.
@@ -1523,12 +1539,12 @@ static void renderRingSystem(float innerRadius,
                              float outerRadius,
                              float beginAngle,
                              float endAngle,
-                             int nSections)
+                             unsigned int nSections)
 {
     float angle = endAngle - beginAngle;
 
     glBegin(GL_QUAD_STRIP);
-    for (int i = 0; i <= nSections; i++)
+    for (unsigned int i = 0; i <= nSections; i++)
     {
         float t = (float) i / (float) nSections;
         float theta = beginAngle + t * angle;
@@ -2994,11 +3010,11 @@ static void renderRings(RingSystem& rings,
                         float planetOblateness,
                         unsigned int textureResolution,
                         bool renderShadow,
-                        const GLContext& context)
+                        const GLContext& context,
+                        unsigned int nSections)
 {
     float inner = rings.innerRadius / planetRadius;
     float outer = rings.outerRadius / planetRadius;
-    int nSections = 100;
 
     // Ring Illumination:
     // Since a ring system is composed of millions of individual
@@ -3967,7 +3983,8 @@ void Renderer::renderObject(Point3f pos,
                     textureResolution,
                     context->getMaxTextures() > 1 &&
                     (renderFlags & ShowRingShadows) != 0 && lit,
-                    *context);
+                    *context,
+                    detailOptions.ringSystemSections);
     }
 
     if (obj.atmosphere != NULL)
@@ -4175,7 +4192,8 @@ void Renderer::renderObject(Point3f pos,
                     textureResolution,
                     (context->hasMultitexture() &&
                      (renderFlags & ShowRingShadows) != 0 && lit),
-                    *context);
+                    *context,
+                    detailOptions.ringSystemSections);
     }
 
     if (obj.locations != NULL && (labelMode & LocationLabels) != 0)

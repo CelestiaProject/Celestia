@@ -39,8 +39,17 @@ class Renderer
  public:
     Renderer();
     ~Renderer();
-    
-    bool init(GLContext*, int, int);
+
+    struct DetailOptions
+    {
+        DetailOptions();
+        unsigned int ringSystemSections;
+        unsigned int orbitPathSamplePoints;
+        unsigned int shadowTextureSize;
+        unsigned int eclipseTextureSize;
+    };
+
+    bool init(GLContext*, int, int, DetailOptions&);
     void shutdown() {};
     void resize(int, int);
 
@@ -388,6 +397,8 @@ class Renderer
     bool useMinMaxBlending;
     bool useClampToBorder;
     unsigned int textureResolution;
+
+    DetailOptions detailOptions;
 
     struct CachedOrbit
     {
