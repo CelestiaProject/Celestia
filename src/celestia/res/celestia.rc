@@ -588,11 +588,10 @@ END
 // Bitmap
 //
 
-IDB_FOLDERCLOSED        BITMAP  DISCARDABLE     "FolderClosed.bmp"
-IDB_FOLDEROPENED        BITMAP  DISCARDABLE     "FolderOpened.bmp"
-IDB_FOLDERROOT          BITMAP  DISCARDABLE     "FolderRoot.bmp"
-IDB_LOCATION            BITMAP  DISCARDABLE     "Location.bmp"
-IDB_CAMERA              BITMAP  DISCARDABLE     "Camera.bmp"
+IDB_FOLDERCLOSED        BITMAP  DISCARDABLE     "folderclosed.bmp"
+IDB_FOLDEROPENED        BITMAP  DISCARDABLE     "folderopened.bmp"
+IDB_LOCATION            BITMAP  DISCARDABLE     "location.bmp"
+IDB_CAMERA              BITMAP  DISCARDABLE     "camera.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
