@@ -214,6 +214,44 @@ Point3d Body::getHeliocentricPosition(double when)
 }
 
 
+Quatd Body::getEclipticalToEquatorial()
+{
+    Quatd q(1);
+    q.xrotate(obliquity);
+    return q;
+}
+
+
+Quatd Body::getEclipticalToGeographic(double when)
+{
+    return getEclipticalToEquatorial() * getEquatorialToGeographic(when);
+}
+
+
+// The geographic coordinate system has an origin at the center of the
+// body, y-axis parallel to the rotation axis, x-axis through the prime
+// meridian, and z-axis at a right angle the xy plane.  An object with
+// constant geographic coordinates will thus remain fixed with respect
+// to a point on the surface of the body.
+Quatd Body::getEquatorialToGeographic(double when)
+{
+    double rotations = when / (double) getRotationPeriod();
+    int wholeRotations = (int) rotations;
+    double remainder = rotations - wholeRotations;
+    
+    Quatd q(1);
+    q.yrotate(-remainder * 2 * PI - getRotationPhase());
+    return q;
+}
+
+
+Mat4d Body::getGeographicToHeliocentric(double when)
+{
+    return getEquatorialToGeographic(when).toMatrix4() *
+        getLocalToHeliocentric(when);
+}
+
+
 #define SOLAR_IRRADIANCE   1367.6
 #define SOLAR_POWER           3.8462e26
 
