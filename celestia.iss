@@ -160,6 +160,7 @@ Source: "textures\lores\uranus.jpg";            DestDir: "{app}/textures/lores";
 Source: "textures\lores\uranus-rings.png";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\venus.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\venuslike.jpg";         DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\venuslikenight.jpg";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\venussurface.jpg";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
 
 
@@ -227,6 +228,7 @@ Source: "textures\medres\triton.jpg";          DestDir: "{app}/textures/medres";
 Source: "textures\medres\umbriel.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\venus.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\venuslike.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\venuslikenight.jpg";  DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\venussurface.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
 
 
