@@ -2131,14 +2131,10 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
 }
 
 
-void CelestiaCore::splitView(View::Type type)
+void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
 {
-#ifdef CELX
-    if (celxScript != NULL)
-    {
-        return;
-    }
-#endif
+    if (av == NULL)
+        av = views[activeView];
     bool vertical = ( type == View::VerticalSplit );
     Observer* o = sim->addObserver();
     bool tooSmall = false;
@@ -2146,10 +2142,10 @@ void CelestiaCore::splitView(View::Type type)
     switch (type) // If active view is too small, don't split it.
     {
     case View::HorizontalSplit:
-        if (views[activeView]->height < 0.2f) tooSmall = true;
+        if (av->height < 0.2f) tooSmall = true;
         break;
     case View::VerticalSplit:
-        if (views[activeView]->width < 0.2f) tooSmall = true;
+        if (av->width < 0.2f) tooSmall = true;
         break;
     case View::ViewWindow:
         return;
@@ -2168,37 +2164,50 @@ void CelestiaCore::splitView(View::Type type)
     // should be defined.
     *o = *(sim->getActiveObserver());
 
-    float w = views[activeView]->width * (vertical ? 0.5f : 1.0f);
-    float h = views[activeView]->height * (vertical ? 1.0f : 0.5f);
+    float w1, h1, w2, h2;
+    if (vertical)
+    {
+        w1 = av->width * splitPos;
+        w2 = av->width - w1;
+        h1 = av->height;
+        h2 = av->height;
+    }
+    else
+    {
+        w1 = av->width;
+        w2 = av->width;
+        h1 = av->height * splitPos;
+        h2 = av->height - h1;
+    }        
 
     View* split = new View(type,
                            0,
-                           views[activeView]->x,
-                           views[activeView]->y,
-                           views[activeView]->width,
-                           views[activeView]->height);
-    split->parent = views[activeView]->parent;
-    if (views[activeView]->parent != 0)
+                           av->x,
+                           av->y,
+                           av->width,
+                           av->height);
+    split->parent = av->parent;
+    if (av->parent != 0)
     {
-        if (views[activeView]->parent->child1 == views[activeView])
-            views[activeView]->parent->child1 = split;
+        if (av->parent->child1 == av)
+            av->parent->child1 = split;
         else
-            views[activeView]->parent->child2 = split;
+            av->parent->child2 = split;
     }
-    split->child1 = views[activeView];
+    split->child1 = av;
 
-    views[activeView]->width = w;
-    views[activeView]->height = h;
-    views[activeView]->parent = split;
+    av->width = w1;
+    av->height = h1;
+    av->parent = split;
 
     View* view = new View(View::ViewWindow,
                           o,
-                          views[activeView]->x + (vertical ? w : 0),
-                          views[activeView]->y + (vertical ? 0 : h),
-                          w, h);
+                          av->x + (vertical ? w1 : 0),
+                          av->y + (vertical ? 0  : h1),
+                          w2, h2);
     split->child2 = view;
     view->parent = split;
-    view->zoom = views[activeView]->zoom;
+    view->zoom = av->zoom;
 
     views.insert(views.end(), view);
 
@@ -2224,15 +2233,10 @@ void CelestiaCore::setZoomFromFOV()
         }
 }
 
-void CelestiaCore::singleView()
+void CelestiaCore::singleView(View* av)
 {
-#ifdef CELX
-    if (celxScript != NULL)
-    {
-        return;
-    }
-#endif
-    View* av = views[activeView];
+    if (av == NULL)
+        av = views[activeView];
 
     for (unsigned int i = 0; i < views.size(); i++)
     {
@@ -2256,15 +2260,11 @@ void CelestiaCore::singleView()
     setFOVFromZoom();
 }
 
-void CelestiaCore::deleteView()
+void CelestiaCore::deleteView(View* v)
 {
-#ifdef CELX
-    if (celxScript != NULL)
-    {
-        return;
-    }
-#endif
-    View *v = views[activeView];
+    if (v == NULL)
+        v = views[activeView];
+
     if (v->parent == 0) return;
 
     for(std::vector<View*>::iterator i = views.begin(); i < views.end() ; i++)

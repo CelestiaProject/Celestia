@@ -602,6 +602,25 @@ int LuaState::resume()
     }
 }
 
+View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
+{
+    for (unsigned int i = 0; i < appCore->views.size(); i++)
+    {
+        if ((appCore->views[i])->observer == obs)
+        {
+            return appCore->views[i];
+        }
+    }
+    return NULL;
+}
+
+void getObservers(CelestiaCore* appCore, std::vector<Observer*>& list)
+{
+    for (unsigned int i = 0; i < appCore->views.size(); i++)
+    {
+        list.push_back(appCore->views[i]->observer);
+    }
+}
 
 // safe wrapper for lua_tostring: fatal errors will terminate script by calling
 // lua_error with errorMsg.
@@ -1703,13 +1722,15 @@ static int observer_new(lua_State* l, Observer* o)
 
 static Observer* to_observer(lua_State* l, int index)
 {
-    // TODO: need to verify that this is actually an object, not some
-    // other userdata
     Observer** o = static_cast<Observer**>(lua_touserdata(l, index));
-    if (o == NULL)
-        return NULL;
-    else
-        return *o;
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    // Check if pointer is still valid, i.e. is used by a view:
+    if (getViewByObserver(appCore, *o) != NULL)
+    {
+            return *o;
+    }
+    return NULL;
 }
 
 static Observer* this_observer(lua_State* l)
@@ -1717,7 +1738,7 @@ static Observer* this_observer(lua_State* l)
     Observer* obs = to_observer(l, 1);
     if (obs == NULL)
     {
-        lua_pushstring(l, "Bad observer object!");
+        lua_pushstring(l, "Bad observer object (maybe tried to access a deleted view?)!");
         lua_error(l);
     }
 
@@ -2211,6 +2232,57 @@ static int observer_getfov(lua_State* l)
     return 1;
 }
 
+static int observer_splitview(lua_State* l)
+{
+    checkArgs(l, 2, 3, "One or two arguments expected for observer:splitview()");
+
+    Observer* obs = this_observer(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    const char* splitType = safeGetString(l, 2, AllErrors, "First argument to observer:splitview() must be a string");
+    View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
+    double splitPos = safeGetNumber(l, 3, WrongType, "Number expected as argument to observer:splitview()", 0.5);
+    if (splitPos < 0.1)
+        splitPos = 0.1;
+    if (splitPos > 0.9)
+        splitPos = 0.9;
+    View* view = getViewByObserver(appCore, obs);
+    appCore->splitView(type, view, (float)splitPos);
+    return 0;
+}
+
+static int observer_deleteview(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected for observer:deleteview()");
+
+    Observer* obs = this_observer(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    View* view = getViewByObserver(appCore, obs);
+    appCore->deleteView(view);
+    return 0;
+}
+
+static int observer_singleview(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected for observer:singleview()");
+
+    Observer* obs = this_observer(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    View* view = getViewByObserver(appCore, obs);
+    appCore->singleView(view);
+    return 0;
+}
+
+static int observer_equal(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Wrong number of arguments for comparison!");
+
+    Observer* o1 = this_observer(l);
+    Observer* o2 = to_observer(l, 2);
+
+    lua_pushboolean(l, (o1 == o2));
+    return 1;
+}
+
 static void CreateObserverMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Observer);
@@ -2241,6 +2313,10 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "getposition", observer_getposition);
     RegisterMethod(l, "getsurface", observer_getsurface);
     RegisterMethod(l, "setsurface", observer_setsurface);
+    RegisterMethod(l, "splitview", observer_splitview);
+    RegisterMethod(l, "deleteview", observer_deleteview);
+    RegisterMethod(l, "singleview", observer_singleview);
+    RegisterMethod(l, "__eq", observer_equal);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -2418,6 +2494,22 @@ static int celestia_getobserver(lua_State* l)
     return 1;
 }
 
+static int celestia_getobservers(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getobservers()");
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    std::vector<Observer*> observer_list;
+    getObservers(appCore, observer_list);
+    lua_newtable(l);
+    for (unsigned int i = 0; i < observer_list.size(); i++)
+    {
+        observer_new(l, observer_list[i]);
+        lua_rawseti(l, -2, i + 1);
+    }
+
+    return 1;
+}
 
 static int celestia_getselection(lua_State* l)
 {
@@ -2818,6 +2910,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "showlabel", celestia_showlabel);
     RegisterMethod(l, "hidelabel", celestia_hidelabel);
     RegisterMethod(l, "getobserver", celestia_getobserver);
+    RegisterMethod(l, "getobservers", celestia_getobservers);
     RegisterMethod(l, "getselection", celestia_getselection);
     RegisterMethod(l, "find", celestia_find);
     RegisterMethod(l, "select", celestia_select);
