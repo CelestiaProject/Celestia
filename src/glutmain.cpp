@@ -28,9 +28,6 @@
 #include "celestiacore.h"
 
 
-//----------------------------------
-// Skeleton functions and variables.
-//-----------------
 char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
