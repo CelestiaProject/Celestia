@@ -389,6 +389,18 @@ class CommandLabels : public InstantaneousCommand
 };
 
 
+class CommandOrbitFlags : public InstantaneousCommand
+{
+ public:
+    CommandOrbitFlags(int _setFlags, int _clearFlags);
+    void process(ExecutionEnvironment&);
+
+ private:
+    int setFlags;
+    int clearFlags;
+};
+
+
 class CommandSetVisibilityLimit : public InstantaneousCommand
 {
  public:

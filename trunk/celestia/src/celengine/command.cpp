@@ -478,6 +478,26 @@ void CommandLabels::process(ExecutionEnvironment& env)
 }
 
 
+//////////////////
+// Set orbit flags command
+
+CommandOrbitFlags::CommandOrbitFlags(int _setFlags, int _clearFlags) :
+    setFlags(_setFlags), clearFlags(_clearFlags)
+{
+}
+
+void CommandOrbitFlags::process(ExecutionEnvironment& env)
+{
+    Renderer* r = env.getRenderer();
+    if (r != NULL)
+    {
+        r->setOrbitMask(r->getOrbitMask() | setFlags);
+        r->setOrbitMask(r->getOrbitMask() & ~clearFlags);
+    }
+}
+
+
+
 ////////////////
 // Set limiting magnitude command
 
@@ -494,7 +514,7 @@ void CommandSetVisibilityLimit::process(ExecutionEnvironment& env)
         r->setBrightnessBias(0.05f);
         r->setSaturationMagnitude(1.0f);
     }
-    env.getSimulation()->setFaintestVisible(magnitude);
+    env.getSimulation()->setFaintestVisible((float) magnitude);
 }
 ////////////////
 // Set FaintestAutoMag45deg command
@@ -508,7 +528,7 @@ void CommandSetFaintestAutoMag45deg::process(ExecutionEnvironment& env)
 {
     Renderer* r = env.getRenderer();
     if (r != NULL)
-        r->setFaintestAM45deg(magnitude);
+        r->setFaintestAM45deg((float) magnitude);
 }
 
 ////////////////
