@@ -356,6 +356,15 @@ class CommandSetVisibilityLimit : public InstantaneousCommand
     double magnitude;
 };
 
+class CommandSetFaintestAutoMag45deg : public InstantaneousCommand
+{
+ public:
+    CommandSetFaintestAutoMag45deg(double);
+    void process(ExecutionEnvironment&);
+
+ private:
+    double magnitude;
+};
 
 class CommandSetAmbientLight : public InstantaneousCommand
 {
