@@ -478,13 +478,11 @@ void KdeApp::slotClose() {
 }
 
 void KdeApp::slotZoomIn() {
-    if (renderer->getFieldOfView() > 0.01f)
-        renderer->setFieldOfView(renderer->getFieldOfView() / 1.1f);
+    appCore->charEntered(',');
 }
 
 void KdeApp::slotZoomOut() {
-    if (renderer->getFieldOfView() < 120.0f)
-        renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
+    appCore->charEntered('.');
 }
 
 void KdeApp::slotToggleToolbar() {
