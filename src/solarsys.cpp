@@ -216,8 +216,10 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 atmosData->getNumber("Height", atmosphere->height);
                 atmosData->getColor("Lower", atmosphere->lowerColor);
                 atmosData->getColor("Upper", atmosphere->upperColor);
+                atmosData->getColor("Sky", atmosphere->skyColor);
 
                 body->setAtmosphere(*atmosphere);
+                delete atmosphere;
             }
         }
     }
