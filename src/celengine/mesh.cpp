@@ -137,6 +137,18 @@ Mesh::VertexDescription::clearSemanticMap()
 }
 
 
+Mesh::PrimitiveGroup::PrimitiveGroup()
+{
+}
+
+
+Mesh::PrimitiveGroup::~PrimitiveGroup()
+{
+    // TODO: probably should free index list; need to sort out
+    // ownership issues.
+}
+
+
 Mesh::Mesh() :
     vertexDesc(0, 0, NULL),
     nVertices(0),
@@ -195,6 +207,14 @@ Mesh::getGroup(uint32 index) const
 
 
 uint32
+Mesh::addGroup(PrimitiveGroup* group)
+{
+    groups.push_back(group);
+    return groups.size();
+}
+
+
+uint32
 Mesh::addGroup(PrimitiveGroupType prim,
                uint32 materialIndex,
                uint32 nIndices,
@@ -205,9 +225,21 @@ Mesh::addGroup(PrimitiveGroupType prim,
     g->materialIndex = materialIndex;
     g->nIndices = nIndices;
     g->indices = indices;
-    groups.push_back(g);
+    
+    return addGroup(g);
+}
 
-    return groups.size();
+
+void
+Mesh::clearGroups()
+{
+    for (vector<PrimitiveGroup*>::iterator iter = groups.begin();
+         iter != groups.end(); iter++)
+    {
+        delete *iter;
+    }
+
+    groups.clear();
 }
 
 
