@@ -3622,3 +3622,31 @@ void Renderer::StarVertexBuffer::setBillboardOrientation(const Quatf& q)
     v3 = Vec3f(-1,  1, 0) * m;
 }
                                
+
+void Renderer::loadTextures(Body* body)
+{
+    Surface& surface = body->getSurface();
+
+    if (surface.baseTexture.tex[textureResolution] != InvalidResource)
+        surface.baseTexture.find(textureResolution);
+    if ((surface.appearanceFlags & Surface::ApplyBumpMap) != 0 &&
+        (fragmentShaderEnabled && useRegisterCombiners && useCubeMaps) &&
+        surface.bumpTexture.tex[textureResolution] != InvalidResource)
+        surface.bumpTexture.find(textureResolution);
+    if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0 &&
+        (renderFlags & ShowNightMaps) != 0)
+        surface.nightTexture.find(textureResolution);
+
+    if ((renderFlags & ShowCloudMaps) != 0 &&
+        body->getAtmosphere() != NULL &&
+        body->getAtmosphere()->cloudTexture.tex[textureResolution] != InvalidResource)
+    {
+        body->getAtmosphere()->cloudTexture.find(textureResolution);
+    }
+
+    if (body->getRings() != NULL &&
+        body->getRings()->texture.tex[textureResolution] != InvalidResource)
+    {
+        body->getRings()->texture.find(textureResolution);
+    }
+}
