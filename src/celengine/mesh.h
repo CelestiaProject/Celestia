@@ -84,6 +84,31 @@ class Mesh
         {
         }
 
+        VertexDescription(const VertexDescription& desc) :
+            stride(desc.stride),
+            nAttributes(desc.nAttributes),
+            attributes(NULL)
+        {
+            if (nAttributes != 0)
+            {
+                attributes = new VertexAttribute[nAttributes];
+                for (uint32 i = 0; i < nAttributes; i++)
+                    attributes[i] = desc.attributes[i];
+            }
+        }
+
+        const VertexAttribute* getAttribute(VertexAttributeSemantic semantic) const
+        {
+            // TODO: Instead of scanning, the vertex description should
+            // store the reverse mapping.
+            for (uint32 i = 0; i < nAttributes; i++)
+            {
+                if (semantic == attributes[i].semantic)
+                    return &attributes[i];
+            }
+            return NULL;
+        }
+
         uint32 stride;
         uint32 nAttributes;
         VertexAttribute* attributes;
