@@ -97,10 +97,10 @@
     // Set the simulation starting time to the current system time
     [appCore start:[NSDate date] withTimeZone:[NSTimeZone defaultTimeZone]];
     ready = YES;
-    menuCallback = [NSInvocation invocationWithMethodSignature:[FavoritesDrawerController instanceMethodSignatureForSelector:@selector(synchronizeFavoritesMenu:)]];
-    [menuCallback setSelector:@selector(synchronizeFavoritesMenu:)];
+    menuCallback = [NSInvocation invocationWithMethodSignature:[FavoritesDrawerController instanceMethodSignatureForSelector:@selector(synchronizeFavoritesMenu)]];
+    [menuCallback setSelector:@selector(synchronizeFavoritesMenu)];
     [menuCallback setTarget:favoritesDrawerController];
-    [[appCore favorites] setSynchronize:menuCallback];
+    [[CelestiaFavorites sharedFavorites] setSynchronize:menuCallback];
 }
 
 - (void)dealloc

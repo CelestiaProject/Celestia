@@ -10,11 +10,11 @@
 
 #import "CelestiaDestination.h"
 #import "CelestiaFavorite.h"
+#import "CelestiaFavorites.h"
 #import "CelestiaSimulation.h"
 #import "CelestiaRenderer.h"
 
 @interface CelestiaAppCore : NSObject {
-    CelestiaFavorites* _favorites;
     CelestiaDestinations* _destinations;
 }
 +(CelestiaAppCore *)sharedAppCore;
