@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.4-p5 from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
-# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -102,7 +102,7 @@ EXTRA_DIST = $(noinst_DATA)
 
 INCLUDES = -I..
 
-libcelengine_a_SOURCES =  	3dsmesh.cpp 	asterism.cpp 	astro.cpp 	body.cpp 	catalogxref.cpp 	cmdparser.cpp 	command.cpp 	constellation.cpp 	customorbit.cpp 	dispmap.cpp 	execution.cpp 	galaxy.cpp 	glext.cpp 	lodspheremesh.cpp 	meshmanager.cpp 	observer.cpp 	octree.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	regcombine.cpp 	render.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texmanager.cpp 	texture.cpp 	tokenizer.cpp 	univcoord.cpp 	vertexlist.cpp 	vertexprog.cpp
+libcelengine_a_SOURCES =  	3dsmesh.cpp 	asterism.cpp 	astro.cpp 	body.cpp 	catalogxref.cpp 	cmdparser.cpp 	command.cpp 	constellation.cpp 	customorbit.cpp 	dispmap.cpp 	execution.cpp 	galaxy.cpp 	glext.cpp 	lodspheremesh.cpp 	meshmanager.cpp 	observer.cpp 	octree.cpp 	orbit.cpp 	overlay.cpp 	parser.cpp 	regcombine.cpp 	render.cpp 	selection.cpp 	simulation.cpp 	solarsys.cpp 	spheremesh.cpp 	star.cpp 	stardb.cpp 	starname.cpp 	stellarclass.cpp 	texmanager.cpp 	texture.cpp 	tokenizer.cpp 	univcoord.cpp 	universe.cpp 	vertexlist.cpp 	vertexprog.cpp
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
@@ -125,7 +125,7 @@ dispmap.o execution.o galaxy.o glext.o lodspheremesh.o meshmanager.o \
 observer.o octree.o orbit.o overlay.o parser.o regcombine.o render.o \
 selection.o simulation.o solarsys.o spheremesh.o star.o stardb.o \
 starname.o stellarclass.o texmanager.o texture.o tokenizer.o \
-univcoord.o vertexlist.o vertexprog.o
+univcoord.o universe.o vertexlist.o vertexprog.o
 AR = ar
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -140,7 +140,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/3dsmesh.P .deps/asterism.P .deps/astro.P .deps/body.P \
 .deps/catalogxref.P .deps/cmdparser.P .deps/command.P \
@@ -151,7 +151,7 @@ DEP_FILES =  .deps/3dsmesh.P .deps/asterism.P .deps/astro.P .deps/body.P \
 .deps/selection.P .deps/simulation.P .deps/solarsys.P \
 .deps/spheremesh.P .deps/star.P .deps/stardb.P .deps/starname.P \
 .deps/stellarclass.P .deps/texmanager.P .deps/texture.P \
-.deps/tokenizer.P .deps/univcoord.P .deps/vertexlist.P \
+.deps/tokenizer.P .deps/univcoord.P .deps/universe.P .deps/vertexlist.P \
 .deps/vertexprog.P
 SOURCES = $(libcelengine_a_SOURCES)
 OBJECTS = $(libcelengine_a_OBJECTS)
