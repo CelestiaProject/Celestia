@@ -134,6 +134,7 @@ class Renderer
         float farZ;
         float discSizeInPixels;
         float appMag;
+        bool isCometTail;
 
         bool operator<(const _RenderListEntry& r) const
         {
