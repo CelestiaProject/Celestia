@@ -1,4 +1,4 @@
-// multitexture.h
+// multirestexture.h
 //
 // Copyright (C) 2002, Deon Ramsey
 //
@@ -23,15 +23,17 @@ enum {
 };
 
 
-class MultiTexture
+class MultiResTexture
 {
  public:
-    MultiTexture() {tex[lores]=tex[medres]=tex[hires]=InvalidResource;};
-    MultiTexture(ResourceHandle loTexture, ResourceHandle medTexture=InvalidResource, ResourceHandle hiTexture=InvalidResource) {tex[lores]=loTexture; tex[medres]=medTexture; tex[hires]=hiTexture;};
-    MultiTexture(string source) {setTexture(source);};
-    ~MultiTexture() {};
-    void setTexture(const string &source, bool compressed = false);
-    void setTexture(const string &source, float height);
+    MultiResTexture();
+    MultiResTexture(ResourceHandle loTex,
+                    ResourceHandle medTex = InvalidResource,
+                    ResourceHandle hiTex = InvalidResource);
+    MultiResTexture(const std::string& source);
+    ~MultiResTexture() {};
+    void setTexture(const std::string& source, bool compressed = false);
+    void setTexture(const std::string& source, float height);
     Texture* find(unsigned int resolution);
 
  public:
