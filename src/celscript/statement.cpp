@@ -33,6 +33,12 @@ ExpressionStatement::~ExpressionStatement()
     delete expr;
 }
 
+Statement::Control ExpressionStatement::execute()
+{
+    cout << expr->eval() << '\n';
+    return Statement::ControlAdvance;
+}
+
 
 
 IfStatement::IfStatement(Expression* _cond, Statement* _ifClause,
@@ -44,6 +50,3 @@ IfStatement::IfStatement(Expression* _cond, Statement* _ifClause,
 IfStatement::~IfStatement()
 {
 }
-
-
-

@@ -91,8 +91,8 @@ bool Value::stringValue(std::string& x) const
     }
 }
 
-std::ostream& operator<<(std::ostream&, const Value&);
-    
 } // namespace celx
+
+std::ostream& operator<<(std::ostream&, const celx::Value&);
 
 #endif // CELSCRIPT_VALUE_H_
