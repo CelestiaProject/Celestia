@@ -715,23 +715,6 @@ static void displayStarInfo(Overlay& overlay,
                             StarDatabase& starDB,
                             double distance)
 {
-    StarNameDatabase* starNameDB = starDB.getNameDatabase();
-
-#if 0
-    // Print the star name and designations
-    StarNameDatabase::iterator iter = starNameDB->find(star.getCatalogNumber());
-    if (iter != starNameDB->end())
-    {
-        StarName* starName = iter->second;
-
-        if (starName->getName() != "")
-            overlay << starName->getName() << "  /  ";
-
-        Constellation* constellation = starName->getConstellation();
-        if (constellation != NULL)
-            overlay << starName->getDesignation() << ' ' <<  constellation->getGenitive() << "  /  ";
-    }
-#endif
     {
         StarNameDatabase::NumberIndex::const_iterator iter =
             starDB.getStarNames(star.getCatalogNumber());
@@ -835,7 +818,7 @@ void CelestiaCore::renderOverlay()
         *overlay << '\n';
         if (showFPSCounter)
             *overlay << "FPS: " << fps;
-        *overlay << "\nSpeed: " << setprecision(3) << fixed;
+        *overlay << "\nSpeed: " << setprecision(3) << ios::fixed;
 
         double speed = sim->getObserver().getVelocity().length();
         if (speed < astro::kilometersToLightYears(1.0f))
@@ -938,8 +921,8 @@ void CelestiaCore::renderOverlay()
     {
         if (currentTime < 5.0)
         {
-            int xSize = logoTexture->getWidth() * 0.8f;
-            int ySize = logoTexture->getHeight() * 0.8f;
+            int xSize = (int) (logoTexture->getWidth() * 0.8f);
+            int ySize = (int) (logoTexture->getHeight() * 0.8f);
             int left = (width - xSize) / 2;
             int bottom = height / 2;
 
