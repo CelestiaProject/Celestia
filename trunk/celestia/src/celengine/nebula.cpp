@@ -70,7 +70,7 @@ void Nebula::render(const Vec3f& offset,
     glScalef(getRadius(), getRadius(), getRadius());
     glRotate(getOrientation());
 
-    RenderContext rc;
+    FixedFunctionRenderContext rc;
     m->render(rc);
 
     // Reset the material

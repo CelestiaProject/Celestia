@@ -2598,8 +2598,8 @@ static void renderModelDefault(Model* model,
                                const RenderInfo& ri,
                                bool lit)
 {
-    RenderContext rc;
-    rc.makeCurrent();
+    FixedFunctionRenderContext rc;
+    //rc.makeCurrent();
 
     if (lit)
         glEnable(GL_LIGHTING);
@@ -3270,7 +3270,7 @@ static void renderShadowedModelDefault(Model* model,
     }
     else
     {
-        RenderContext rc;
+        FixedFunctionRenderContext rc;
         model->render(rc);
     }
     glEnable(GL_LIGHTING);
