@@ -90,7 +90,12 @@ static bool clampToEdgeSupported = false;
 static void initTextureLoader()
 {
     compressionSupported = ExtensionSupported("GL_ARB_texture_compression");
+#ifdef GL_VERSION_1_2
+    clampToEdgeSupported = true;
+#else
     clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
+#endif // GL_VERSION_1_2
+
     initialized = true;
 }
 
