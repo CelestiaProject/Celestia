@@ -28,6 +28,7 @@ class AVICapture : public MovieCapture
     int getWidth() const;
     int getHeight() const;
     float getFrameRate() const;
+    int getFrameCount() const;
 
  private:
     void cleanup();

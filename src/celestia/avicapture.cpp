@@ -228,3 +228,8 @@ float AVICapture::getFrameRate() const
 {
     return frameRate;
 }
+
+int AVICapture::getFrameCount() const
+{
+    return frameCounter;
+}
