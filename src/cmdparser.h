@@ -21,6 +21,7 @@ class CommandParser
 {
  public:
     CommandParser(std::istream&);
+    CommandParser(Tokenizer&);
     ~CommandParser();
 
     CommandSequence* parse();
