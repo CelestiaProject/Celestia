@@ -22,6 +22,7 @@ Overlay::Overlay() :
     windowHeight(1),
     font(NULL),
     useTexture(false),
+    fontChanged(false),
     textBlock(0)
 {
     sbuf.setOverlay(this);
@@ -68,7 +69,11 @@ void Overlay::setWindowSize(int w, int h)
 
 void Overlay::setFont(TextureFont* f)
 {
-    font = f;
+    if (f != font)
+    {
+        font = f;
+        fontChanged = true;
+    }
 }
 
 
@@ -92,11 +97,12 @@ void Overlay::print(char c)
 {
     if (font != NULL)
     {
-        if (!useTexture)
+        if (!useTexture || fontChanged)
         {
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, font->getTextureName());
             useTexture = true;
+            fontChanged = false;
         }
 
         switch (c)
