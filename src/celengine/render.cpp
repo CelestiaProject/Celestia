@@ -2606,10 +2606,20 @@ void Renderer::renderObject(Point3f pos,
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glColor4f(1, 1, 1, 1);
+
+            if (useVertexPrograms)
+            {
+                vp::enable();
+                vp::use(vp::diffuse);
+            }
             lodSphere->render(Mesh::Normals | Mesh::TexCoords0,
                               viewFrustum,
                               ri.lod,
                               cloudTex);
+            if (useVertexPrograms)
+            {
+                vp::disable();
+            }
 
             // Reset the texture matrix
             glMatrixMode(GL_TEXTURE);
@@ -3173,7 +3183,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.appMag = appMag;
             renderList.insert(renderList.end(), rle);
         }
-#if 0
+#if 1
         if (body->getClassification() == Body::Comet)
         {
             float radius = 10000000.0f; // body->getRadius() * 1000000.0f;
