@@ -111,6 +111,10 @@ SOURCE=.\windirectory.cpp
 
 SOURCE=.\wintimer.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\winutil.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -158,6 +162,10 @@ SOURCE=.\timer.h
 # Begin Source File
 
 SOURCE=.\util.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\winutil.h
 # End Source File
 # End Group
 # End Target
