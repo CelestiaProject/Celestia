@@ -6,6 +6,10 @@
 # given are derived from RECONS's weighted average parallaxes, rather than
 # pure Hipparcos data.
 
+# Orbits are obtained largely from the Sixth Catalog of Orbits of Visual
+# Binary Stars (http://ad.usno.navy.mil/wds/orb6.html) and the Ninth
+# Catalogue of Spectroscopic Binary Orbits (http://sb9.astro.ulb.ac.be).
+
 # For binary orbits, the direction of an orbit's node on the plane of the 
 # sky is often unknown - the orbits given below will appear correct when
 # viewed from Earth, but the true orbit may be tilted either towards 
@@ -19,7 +23,7 @@
 {
 	RA 0
 	Dec 0
-	Distance 0.00326167 
+	Distance 0 #0.00326167 
 	SpectralType "G2V"
 	AbsMag 4.83
 
@@ -55,9 +59,9 @@ Barycenter "Rigel Kentaurus:Toliman:ALF Cen:Gliese 559"
 		Period          79.914
 		SemiMajorAxis   10.765   # mass ratio 1.09:0.92
 		Eccentricity    0.5179
-		Inclination	82.980
-		AscendingNode   67.708
-		ArgOfPericenter 3.774
+		Inclination	82.986
+		AscendingNode   67.726
+		ArgOfPericenter 3.772
 		MeanAnomaly     200.119
 	}
 }
@@ -72,9 +76,9 @@ Barycenter "Rigel Kentaurus:Toliman:ALF Cen:Gliese 559"
 		Period          79.914
 		SemiMajorAxis   12.755   # mass ratio 1.09:0.92
 		Eccentricity    0.5179
-		Inclination	82.980
-		AscendingNode   67.708
-		ArgOfPericenter 183.774
+		Inclination	82.986
+		AscendingNode   67.726
+		ArgOfPericenter 183.772
 		MeanAnomaly     200.119
 	}
 }
@@ -233,6 +237,9 @@ Barycenter "Luyten 726-8:Gliese 65"
 	AppMag 11.13
 }
 
+# Delfosse, X. et al. (1999) "New Neighbours I: 13 new
+# companions to nearby M dwarfs" A&A, 344, 897
+# (http://aa.springer.de/papers/9344003/2300897/small.htm)
 Barycenter "Luyten 789-6:Gliese 866"
 {
 	RA 339.640833
@@ -479,6 +486,9 @@ Barycenter "EPS Ind:Gliese 845" # orbit of A & B components unknown
 	AppMag 4.69
 }
 
+# McCaughrean, M.J. et al.(2004) "Eps Indi Ba,Bb: The nearest binary
+# brown dwarf" A&A 413, 1029.
+# (http://arxiv.org/PS_cache/astro-ph/pdf/0309/0309256.pdf)
 Barycenter "EPS Ind B:Gliese 845 B"
 {
 	RA 331.043833
@@ -968,7 +978,7 @@ Barycenter "Keid:OMI2 Eri:40 Eri:Gliese 166" # Orbits of A & (BC) unknown
 	AppMag 4.43
 }
 
-Barycenter "Keid BC: OMI2 Eri BC:40 Eri BC:Gliese 166 BC"
+Barycenter "Keid B-C: OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 {
 	RA 63.841667
 	Dec -7.659722
@@ -977,7 +987,7 @@ Barycenter "Keid BC: OMI2 Eri BC:40 Eri BC:Gliese 166 BC"
 
 "Keid B:OMI2 Eri B:40 Eri B:Gliese 166 B"
 {
-	OrbitBarycenter "Keid BC"
+	OrbitBarycenter "Keid B-C"
 	SpectralType "DA4"
 	AppMag 9.52
 
@@ -994,7 +1004,7 @@ Barycenter "Keid BC: OMI2 Eri BC:40 Eri BC:Gliese 166 BC"
 
 "Keid C:OMI2 Eri C:40 Eri C:DY Eri:Gliese 166 C"
 {
-	OrbitBarycenter "Keid BC"
+	OrbitBarycenter "Keid B-C"
 	SpectralType "M4.5V"
 	AppMag 11.19
 
@@ -1362,7 +1372,7 @@ Barycenter "33 Lib:Gliese 570"
 	}
 }
 
-Barycenter "33 Lib BC:Gliese 570 BC"         # fully specified orientation
+Barycenter "33 Lib B-C:Gliese 570 B-C"         # fully specified orientation
 {
 	OrbitBarycenter "33 Lib"
 
@@ -1379,7 +1389,7 @@ Barycenter "33 Lib BC:Gliese 570 BC"         # fully specified orientation
 
 73182 "33 Lib B:Gliese 570 B"
 {
-	OrbitBarycenter "33 Lib BC"
+	OrbitBarycenter "33 Lib B-C"
 	SpectralType "M1V"
 	AppMag 8.28
 
@@ -1396,7 +1406,7 @@ Barycenter "33 Lib BC:Gliese 570 BC"         # fully specified orientation
 
 "33 Lib C:Gliese 570 C"
 {
-	OrbitBarycenter "33 Lib BC"
+	OrbitBarycenter "33 Lib B-C"
 	SpectralType "M3V"
 	AppMag 10.05
 
@@ -1495,7 +1505,7 @@ Barycenter "36 Oph:Gliese 663" # orbit of (AB) & C unknown
 	Distance 19.471
 }
 
-Barycenter "36 Oph AB:Gliese 663 AB"
+Barycenter "36 Oph A-B:Gliese 663 A-B"
 {
 	RA 258.837500
 	Dec -26.602778
@@ -1504,7 +1514,7 @@ Barycenter "36 Oph AB:Gliese 663 AB"
 
 84405 "36 Oph A:Gliese 663 A"
 {
-	OrbitBarycenter "36 Oph AB"
+	OrbitBarycenter "36 Oph A-B"
 	SpectralType "K1V"
 	AppMag 5.07
 
@@ -1521,7 +1531,7 @@ Barycenter "36 Oph AB:Gliese 663 AB"
 
 "36 Oph B:Gliese 663 B"
 {
-	OrbitBarycenter "36 Oph AB"
+	OrbitBarycenter "36 Oph A-B"
 	SpectralType "K1V"
 	AppMag 5.08
 
@@ -1597,6 +1607,9 @@ Barycenter "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A & B unk
 	AppMag 3.56
 }
 
+# Delfosse, X. et al. (1999) "New Neighbours I: 13 new
+# companions to nearby M dwarfs" A&A, 344, 897
+# (http://aa.springer.de/papers/9344003/2300897/small.htm)
 Barycenter "Ross 986:Gliese 268"
 {
 	RA 107.5075
@@ -1688,6 +1701,9 @@ Barycenter "Struve 1321:Gliese 338"
 	}
 }
 
+# Delfosse, X. et al. (1999) "New Neighbours I: 13 new
+# companions to nearby M dwarfs" A&A, 344, 897
+# (http://aa.springer.de/papers/9344003/2300897/small.htm)
 Barycenter "GJ 2130" # orbit of A & B unknown
 {
 	RA 266.556484   # mass ratio 0.3:(0.19+0.15)
@@ -1913,6 +1929,12 @@ Barycenter "Gliese 661:BD+45 2505"
 	AppMag 14.45
 }
 
+# Delfosse, X. et al. (1999) "New Neighbours I: 13 new
+# companions to nearby M dwarfs" A&A, 344, 897
+# (http://aa.springer.de/papers/9344003/2300897/small.htm)
+# Mazeh, T. et al. (2001) "Studies of multiple stellar systems - IV. The
+# triple-lined spectroscopic system Gliese 644" MNRAS, 325, 343.
+# (http://arxiv.org/PS_cache/astro-ph/pdf/0102/0102451.pdf)
 Barycenter "Wolf 630:Gliese 644" # orbit of (AB) & C unknown
 {
 	RA 253.872065   # mass ratio (0.41+0.34+0.30):0.08
@@ -1920,7 +1942,7 @@ Barycenter "Wolf 630:Gliese 644" # orbit of (AB) & C unknown
 	Distance 21.047
 }
 
-Barycenter "Wolf 630 AB:Gliese 644 AB"
+Barycenter "Wolf 630 A-B:Gliese 644 A-B"
 {
 	RA 253.870000
 	Dec -8.336389
@@ -1929,7 +1951,7 @@ Barycenter "Wolf 630 AB:Gliese 644 AB"
 
 82817 "Wolf 630 A:Gliese 644 A:V1054 Oph"
 {
-	OrbitBarycenter "Wolf 630 AB"
+	OrbitBarycenter "Wolf 630 A-B"
 	SpectralType "M2.5V"
 	AppMag 9.72
 
@@ -1946,7 +1968,7 @@ Barycenter "Wolf 630 AB:Gliese 644 AB"
 
 Barycenter "Wolf 630 B:Gliese 644 B"
 {
-	OrbitBarycenter "Wolf 630 AB"
+	OrbitBarycenter "Wolf 630 A-B"
 
 	EllipticalOrbit {                # fully specified orientation
 		Period          1.71727
@@ -2062,6 +2084,9 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	AppMag 10.02
 }
 
+# Delfosse, X. et al. (1999) "New Neighbours I: 13 new
+# companions to nearby M dwarfs" A&A, 344, 897
+# (http://aa.springer.de/papers/9344003/2300897/small.htm)
 Barycenter "Ross 775:Gliese 829"
 {
 	RA 322.403333
@@ -2223,7 +2248,7 @@ Barycenter "Gliese 667:CD-34 11626" # orbit of (AB) & C unknown
 	Distance 23.597
 }
 
-Barycenter "Gliese 667 AB:CD-34 11626 AB"
+Barycenter "Gliese 667 A-B:CD-34 11626 A-B"
 {
 	RA 259.741667
 	Dec -34.990000
@@ -2232,7 +2257,7 @@ Barycenter "Gliese 667 AB:CD-34 11626 AB"
 
 84709 "Gliese 667 A:CD-34 11626 A"
 {
-	OrbitBarycenter "Gliese 667 AB"
+	OrbitBarycenter "Gliese 667 A-B"
 	SpectralType "K4V"
 	AppMag 5.90
 
@@ -2249,7 +2274,7 @@ Barycenter "Gliese 667 AB:CD-34 11626 AB"
 
 "Gliese 667 B:CD-34 11626 B"
 {
-	OrbitBarycenter "Gliese 667 AB"
+	OrbitBarycenter "Gliese 667 A-B"
 	SpectralType "K5V"
 	AppMag 5.90
 
@@ -2382,6 +2407,9 @@ Barycenter "268 Cet A:Gliese 105 A"
 }
 
 
+# Delfosse, X. et al. (1999) "New Neighbours I: 13 new
+# companions to nearby M dwarfs" A&A, 344, 897
+# (http://aa.springer.de/papers/9344003/2300897/small.htm)
 Barycenter "Giclas 203-47:GJ 3991"
 {
 	RA 257.381250
@@ -2628,8 +2656,6 @@ Barycenter "Alula Australis B"
 	}
 }
 
-
-
 "Alula Australis Bb::XI UMa Bb:53 UMa Bb:Gliese 423 Bb"
 {
 	OrbitBarycenter "Alula Australis B"
@@ -2637,8 +2663,19 @@ Barycenter "Alula Australis B"
 	AbsMag 21         # for approximate radius in Celestia
 
 	EllipticalOrbit {
-		Period          0.0109 # 3.98dy
+		Period          0.0109 # 3.981dy
 		SemiMajorAxis   0.056  # mass ratio 1.05:0.08
 		Eccentricity    0
 	}
+}
+
+# Washington Multiplicity Catalog
+# (http://ad.usno.navy.mil/wds/wmc/wmc_post191.html)
+"Alula Australis C:XI UMa C:53 UMa C:Gliese 423 C"
+{
+	RA 169.53272
+	Dec 31.539614
+	Distance 27.294
+	SpectralType "M7V"  # from luminosity
+	AppMag 15
 }
