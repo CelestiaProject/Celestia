@@ -274,6 +274,8 @@ int LuaState::loadScript(istream& in)
     info.in = &in;
 
     int status = lua_load(state, readStreamChunk, &info, "stream");
+    if (status != 0)
+        cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
     
     return status;
 }
@@ -368,12 +370,59 @@ static int object_radius(lua_State* l)
     return 1;
 }
 
+static int object_type(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function object:type");
+        lua_error(l);
+    }
+
+    Selection* sel = to_object(l, 1);
+    if (sel != NULL)
+    {
+        char* tname = "unknown";
+        if (sel->body != NULL)
+        {
+            int cl = sel->body->getClassification();
+            switch (cl)
+            {
+            case Body::Planet     : tname = "planet"; break;
+            case Body::Moon       : tname = "moon"; break;
+            case Body::Asteroid   : tname = "asteroid"; break;
+            case Body::Comet      : tname = "comet"; break;
+            case Body::Spacecraft : tname = "spacecraft"; break;
+            case Body::Invisible  : tname = "invisible"; break;
+            }
+        }
+        else if (sel->star != NULL)
+        {
+            tname = "star";
+        }
+        else if (sel->deepsky != NULL)
+        {
+            tname = "deepsky";
+        }
+            
+        lua_pushstring(l, tname);
+    }
+    else
+    {
+        lua_pushstring(l, "Bad object!");
+        lua_error(l);
+    }
+
+    return 1;
+}
+
 static void CreateObjectMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Object);
 
     RegisterMethod(l, "__tostring", object_tostring);
     RegisterMethod(l, "radius", object_radius);
+    RegisterMethod(l, "type", object_type);
 
     lua_pop(l, 1); // pop metatable off the stack
 }
@@ -879,6 +928,93 @@ static int celestia_getchildren(lua_State* l)
 }
 
 
+static int celestia_mark(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function celestia:mark");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Simulation* sim = appCore->getSimulation();
+        Selection* sel = to_object(l, 2);
+
+        if (sel != NULL)
+        {
+            sim->getUniverse()->markObject(*sel, 10.0f,
+                                           Color(0.0f, 1.0f, 0.0f), Marker::Diamond, 1);
+        }
+    }
+
+    return 0;
+}
+
+
+static int celestia_unmark(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 2)
+    {
+        lua_pushstring(l, "One argument expected to function celestia:unmark");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Simulation* sim = appCore->getSimulation();
+        Selection* sel = to_object(l, 2);
+
+        if (sel != NULL)
+            sim->getUniverse()->unmarkObject(*sel, 1);
+    }
+
+    return 0;
+}
+
+
+static int celestia_unmarkall(lua_State* l)
+{
+    int argc = lua_gettop(l);
+    if (argc != 1)
+    {
+        lua_pushstring(l, "No arguments expected to function celestia:unmarkall");
+        lua_error(l);
+    }
+
+    CelestiaCore* appCore = to_celestia(l, 1);
+    if (appCore != NULL)
+    {
+        Simulation* sim = appCore->getSimulation();
+        MarkerList* markers = sim->getUniverse()->getMarkers();
+
+        if (markers->size() > 0)
+        {
+            Selection* objects = new Selection[markers->size()];
+            int nMarkers = markers->size();
+
+            int i = 0;
+            for (vector<Marker>::const_iterator iter = markers->begin();
+                 iter != markers->end(); iter++)
+            {
+                objects[i++] = iter->getObject();
+            }
+
+            for (i = 0; i < nMarkers; i++)
+                sim->getUniverse()->unmarkObject(objects[i], 1);
+
+            delete[] objects;
+        }
+    }
+
+    return 0;
+}
+
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -899,6 +1035,9 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "find", celestia_find);
     RegisterMethod(l, "select", celestia_select);
     RegisterMethod(l, "getchildren", celestia_getchildren);
+    RegisterMethod(l, "mark", celestia_mark);
+    RegisterMethod(l, "unmark", celestia_unmark);
+    RegisterMethod(l, "unmarkall", celestia_unmarkall);
 
     lua_pop(l, 1);
 }
