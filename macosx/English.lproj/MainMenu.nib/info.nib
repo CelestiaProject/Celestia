@@ -9,38 +9,38 @@
 		<key>242</key>
 		<string>441 337 270 342 0 0 1152 746 </string>
 		<key>29</key>
-		<string>96 770 721 44 0 0 1280 832 </string>
+		<string>151 936 721 44 0 0 1600 1002 </string>
 		<key>296</key>
-		<string>538 384 170 341 0 0 1280 832 </string>
+		<string>730 497 170 341 0 0 1600 1002 </string>
 		<key>335</key>
-		<string>585 667 98 118 0 0 1280 832 </string>
+		<string>743 825 98 114 0 0 1600 1002 </string>
 		<key>342</key>
-		<string>576 564 117 68 0 0 1280 832 </string>
+		<string>734 689 117 66 0 0 1600 1002 </string>
 		<key>792</key>
-		<string>464 394 209 287 0 0 1280 832 </string>
+		<string>603 514 209 276 0 0 1600 1002 </string>
 	</dict>
 	<key>IBFramework Version</key>
-	<string>349.0</string>
+	<string>283.0</string>
 	<key>IBLockedObjects</key>
 	<array>
 		<integer>352</integer>
 	</array>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>687</integer>
-		<integer>352</integer>
 		<integer>383</integer>
-		<integer>335</integer>
 		<integer>1310</integer>
-		<integer>716</integer>
-		<integer>29</integer>
-		<integer>21</integer>
-		<integer>342</integer>
-		<integer>792</integer>
 		<integer>242</integer>
+		<integer>352</integer>
+		<integer>29</integer>
 		<integer>296</integer>
+		<integer>687</integer>
+		<integer>342</integer>
+		<integer>716</integer>
+		<integer>335</integer>
+		<integer>792</integer>
+		<integer>21</integer>
 	</array>
 	<key>IBSystem Version</key>
-	<string>7D24</string>
+	<string>6L60</string>
 </dict>
 </plist>

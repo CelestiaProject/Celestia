@@ -9,13 +9,11 @@
         {
             ACTIONS = {
                 activateMenuItem = id; 
-                activateSwitchButon = id; 
                 back = id; 
                 forward = id; 
-                gotoObject = id; 
                 openScript = id; 
-                showGotoObject = id; 
                 showInfoURL = id; 
+                showPanel = id; 
             }; 
             CLASS = CelestiaController; 
             LANGUAGE = ObjC; 
