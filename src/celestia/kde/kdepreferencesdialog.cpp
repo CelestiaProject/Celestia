@@ -208,7 +208,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     displayTimezoneGroup->addSpace(0);
 
     QGroupBox* setTimezoneGroup = new QGroupBox(1, Qt::Horizontal, i18n("Set"), timeFrame);
-    new QLabel(i18n("Local Time is only supported for dates between 1902 and 2037."), setTimezoneGroup);   
+    new QLabel(i18n("Local Time is only supported for dates between 1902 and 2037.\n"), setTimezoneGroup);   
     QHBox *hbox2 = new QHBox(setTimezoneGroup);
     new QLabel(i18n("Timezone: "), hbox2);
     setTimezoneCombo = new QComboBox(hbox2);
@@ -282,11 +282,17 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
         if (lt_h == 0) snprintf(time, 50, "%d min %02.1f s", lt_m, lt_s);
         else snprintf(time, 50, "%ld h %02d min %02.1f s", lt_h, lt_m, lt_s);
         
-        new QLabel(i18n("Selection: " + QString(sel_name.c_str()) 
+        new QLabel(i18n("\nSelection: " + QString(sel_name.c_str()) 
         + QString("\nLight Travel Time: %2").arg(time)), ltBox);
         
         KPushButton *ltButton = new KPushButton(ltBox);
-        ltButton->setText(i18n("Subtract"));
+        ltButton->setToggleButton(true);        
+
+        if (!appCore->getLightDelayActive())
+            ltButton->setText(i18n("Include Light Travel Time"));
+        else
+            ltButton->setText(i18n("Ignore Light Travel Time "));
+
         ltButton->setSizePolicy(nowButtonSizePolicy);
         connect(ltButton, SIGNAL(clicked()), SLOT(ltSubstract()));
     }
@@ -373,16 +379,24 @@ void KdePreferencesDialog::ltSubstract() {
     
     Selection selection = appCore->getSimulation()->getSelection();
     std::string sel_name;
-    if (selection.body != 0) {
+
+    // LT-delay only for solar bodies && target-speed < 0.99 c
+
+    if (selection.body != 0 &&
+        (appCore->getSimulation()->getTargetSpeed() < 0.99 *
+            astro::kilometersToMicroLightYears(astro::speedOfLight))) {
         sel_name = selection.body->getName();
         Vec3d v = selection.getPosition(d) - 
                   appCore->getSimulation()->getObserver().getPosition();
+        appCore->setLightDelayActive(!appCore->getLightDelayActive());     
         double dist = astro::lightYearsToKilometers(v.length()*1e-6);
         double lt = dist / astro::speedOfLight;
+        if (appCore->getLightDelayActive())
         d -= lt / 86400.;
-    }    
-    
+        else
+            d += lt / 86400.;
     setTime(d);
+    }
 }
 
 void KdePreferencesDialog::setTime(double d) {
