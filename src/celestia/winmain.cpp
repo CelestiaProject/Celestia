@@ -3167,6 +3167,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                         Url url(string(urlString), appCore);
                         url.goTo();
                     }
+                    else if (DetermineFileType(urlString) == Content_CelestiaScript)
+                    {
+                        appCore->runScript(urlString);
+                    }
                     else
                     {
                         ifstream scriptfile(urlString.c_str());
