@@ -294,6 +294,19 @@ BEGIN
 END
 
 
+IDD_MOVIE_PARAMS_CHOOSER DIALOG DISCARDABLE  20, 20, 280, 50
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Size",IDC_STATIC,7,9,20,8
+    COMBOBOX        IDC_COMBO_MOVIE_SIZE,33,7,80,90,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Frame rate",IDC_STATIC,140,9,50,8
+    COMBOBOX        IDC_COMBO_MOVIE_FRAMERATE,196,7,60,90,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
