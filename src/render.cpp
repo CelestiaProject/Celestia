@@ -855,26 +855,6 @@ void Renderer::render(const Observer& observer,
 }
 
 
-#if 0
-static void renderParticle(Point3f& center,
-                           Vec3f& v0,
-                           Vec3f& v1,
-                           Vec3f& v2,
-                           Vec3f& v3,
-                           float size)
-{
-    glTexCoord2f(0, 0);
-    glVertex(center + (v0 * size));
-    glTexCoord2f(1, 0);
-    glVertex(center + (v1 * size));
-    glTexCoord2f(1, 1);
-    glVertex(center + (v2 * size));
-    glTexCoord2f(0, 1);
-    glVertex(center + (v3 * size));
-}
-#endif
-
-
 static void renderRingSystem(float innerRadius,
                              float outerRadius,
                              float beginAngle,
@@ -960,9 +940,9 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // make it appear more brilliant.  This is a hack to compensate for the
         // limited dynamic range of monitors.
         //
-        // TODO: Currently, this is extremely broken.  Stars look fine, but planets
-        // look ridiculous with bright haloes.
-#if 1
+        // TODO: Currently, this is extremely broken.  Stars look fine,
+        // but planets look ridiculous with bright haloes.
+
         if (useHaloes && appMag < 1.0f)
         {
             a = 0.4f * clamp((appMag - 1) * -0.8f);
@@ -991,7 +971,6 @@ void Renderer::renderBodyAsParticle(Point3f position,
             glVertex(center + (v3 * size));
             glEnd();
         }
-#endif
     }
 }
 
@@ -1258,6 +1237,11 @@ static void renderMeshDefault(const RenderInfo& ri)
 
 static void renderMeshFragmentShader(const RenderInfo& ri)
 {
+    glLightDirection(GL_LIGHT0, ri.sunDir_obj);
+    glLightColor(GL_LIGHT0, GL_DIFFUSE, ri.sunColor);
+    glEnable(GL_LIGHT0);
+    glDisable(GL_LIGHTING);
+
     if (ri.baseTex == NULL)
     {
         glDisable(GL_TEXTURE_2D);
@@ -1296,6 +1280,7 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
                              ri.orientation,
                              ri.ambientColor,
                              true);
+            // ri.mesh->render();
         }
     }
     else
@@ -1308,6 +1293,8 @@ static void renderMeshFragmentShader(const RenderInfo& ri)
         ri.cloudTex->bind();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LIGHTING);
+        ri.mesh->render();
     }
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
