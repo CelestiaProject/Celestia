@@ -13,6 +13,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cstdio>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -330,6 +331,10 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             }
             else
                 renderer->setFieldOfView(oldFOV);
+
+            // If AutoMag, adapt the faintestMag to the new fov
+            if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+	        setFaintestAutoMag();
 	}
     }
 }
@@ -394,6 +399,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             else if (newFOV > maxFOV)
                 newFOV = maxFOV;
             renderer->setFieldOfView(newFOV);
+	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+	        setFaintestAutoMag();
         }
         else
         {
@@ -572,6 +579,18 @@ void CelestiaCore::charEntered(char c)
         notifyWatchers(RenderFlagsChanged);
         break;
 
+    case '\024':  // Ctrl+T
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCometTails);
+        if (renderer->getRenderFlags() & Renderer::ShowCometTails)
+	{
+            flash("Comet tails enabled");
+	    setFaintestAutoMag();
+	}
+        else
+            flash("Comet tails disabled");
+        notifyWatchers(RenderFlagsChanged);
+        break;
+
     case '\026':  // Ctrl+V
         if (renderer->vertexShaderSupported())
             renderer->setVertexShaderEnabled(!renderer->getVertexShaderEnabled());
@@ -591,7 +610,10 @@ void CelestiaCore::charEntered(char c)
     case '\031':  // Ctrl+Y
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAutoMag);
         if (renderer->getRenderFlags() & Renderer::ShowAutoMag)
+	{
             flash("Auto-magnitude enabled");
+	    setFaintestAutoMag();
+	}
         else
             flash("Auto-magnitude disabled");
         notifyWatchers(RenderFlagsChanged);
@@ -646,12 +668,20 @@ void CelestiaCore::charEntered(char c)
 
     case ',':
         if (renderer->getFieldOfView() > 0.01f)
-            renderer->setFieldOfView(renderer->getFieldOfView() / 1.1f);
+	{
+	    renderer->setFieldOfView(renderer->getFieldOfView() / 1.05f);
+	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+	        setFaintestAutoMag();
+	}
         break;
 
     case '.':
         if (renderer->getFieldOfView() < 120.0f)
-            renderer->setFieldOfView(renderer->getFieldOfView() * 1.1f);
+	{
+	    renderer->setFieldOfView(renderer->getFieldOfView() * 1.05f);
+	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+	        setFaintestAutoMag();   
+	}
         break;
 
     case '/':
@@ -829,11 +859,14 @@ void CelestiaCore::charEntered(char c)
     case '[':
         if (sim->getFaintestVisible() > 1.0f)
         {
+	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
+	    {
             setFaintest(sim->getFaintestVisible() - 0.5f);
             notifyWatchers(FaintestChanged);
             char buf[128];
             sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
             flash(buf);
+        }
         }
         break;
 
@@ -842,13 +875,16 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case ']':
-        if (sim->getFaintestVisible() < 12.0f)
+        if (sim->getFaintestVisible() < 15.0f)
+        {
+	    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
         {
             setFaintest(sim->getFaintestVisible() + 0.5f);
             notifyWatchers(FaintestChanged);
             char buf[128];
             sprintf(buf, "Magnitude limit: %.2f", sim->getFaintestVisible());
             flash(buf);
+        }
         }
         break;
 
@@ -1777,6 +1813,7 @@ bool CelestiaCore::initSimulation()
     }
 
     sim = new Simulation(universe);
+    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     sim->setFaintestVisible(config->faintestVisible);
 
     return true;
@@ -1814,8 +1851,13 @@ bool CelestiaCore::initRenderer()
             renderer->addLabelledStar(star);
     }
 
+    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
+        setFaintestAutoMag();
+    else
+    {
     renderer->setBrightnessBias(0.1f);
     renderer->setSaturationMagnitude(1.0f);
+    }
 
     if (config->mainFont == "")
         font = LoadTextureFont("fonts/default.txf");
@@ -1943,6 +1985,16 @@ void CelestiaCore::setFaintest(float magnitude)
     sim->setFaintestVisible(magnitude);
 }
 
+// Set faintest visible star magnitude and saturation magnitude 
+// for a given field of view;
+// adjust the renderer's brightness parameters appropriately.
+void CelestiaCore::setFaintestAutoMag()
+{
+    float faintestMag;
+    renderer->setBrightnessBias(0.05f);
+    renderer->autoMag(faintestMag);
+    sim->setFaintestVisible(faintestMag);
+}
 
 void CelestiaCore::fatalError(const string& msg)
 {
