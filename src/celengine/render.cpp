@@ -1804,9 +1804,14 @@ static void renderShadowedMeshDefault(Mesh* mesh,
     glColor4f(1, 1, 1, 1);
     glDisable(GL_LIGHTING);
     if (mesh == NULL)
-        lodSphere->render(Mesh::Normals, frustum, ri.lod, NULL);
+    {
+        lodSphere->render(Mesh::Normals | Mesh::Multipass,
+                          frustum, ri.lod, NULL);
+    }
     else
-        mesh->render(Mesh::Normals, ri.lod);
+    {
+        mesh->render(Mesh::Normals | Mesh::Multipass, ri.lod);
+    }
     glEnable(GL_LIGHTING);
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
@@ -1822,7 +1827,7 @@ static void renderShadowedMeshVertexShader(const RenderInfo& ri,
     vp::parameter(41, sPlane[0], sPlane[1], sPlane[2], sPlane[3]);
     vp::parameter(42, tPlane[0], tPlane[1], tPlane[2], tPlane[3]);
     vp::use(vp::shadowTexture);
-    lodSphere->render(Mesh::Normals, frustum, ri.lod, NULL);
+    lodSphere->render(Mesh::Normals | Mesh::Multipass, frustum, ri.lod, NULL);
     vp::disable();
 }
 
