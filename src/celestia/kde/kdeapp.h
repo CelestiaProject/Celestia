@@ -164,8 +164,6 @@ public slots:
     void slotForwardActivated(int i);
 
     static void popupMenu(float x, float y, Selection sel);
-    static void popupMenu(QWidget* parent, const QPoint& p, Selection sel);
-    static const char* getSelectionName(const Selection& sel);
 
 protected:
     CelestiaCore* appCore;
@@ -193,8 +191,6 @@ protected:
     KToolBarPopupAction *backAction, *forwardAction;
     static KdeApp* app;
 
-    void popupInsert(KPopupMenu &popup, Selection sel, int baseId);
-    Selection getSelectionFromId(Selection sel, int id);
 };
 
 class LongLatDialog : public KDialogBase {

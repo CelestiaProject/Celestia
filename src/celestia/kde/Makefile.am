@@ -29,7 +29,9 @@ libkdegui_a_SOURCES = \
                  kcelbookmarkmenu.cpp \
                  kcelbookmarkmenu.moc.cpp \
                  kcelbookmarkmanager.cpp \
-                 kcelbookmarkmanager.moc.cpp
+                 kcelbookmarkmanager.moc.cpp \
+                 selectionpopup.cpp \
+                 selectionpopup.moc.cpp
 
 dist-hook:
 	rm -f $(distdir)/*.uic.*

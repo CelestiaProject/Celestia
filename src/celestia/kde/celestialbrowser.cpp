@@ -14,6 +14,7 @@
 
 #include "celestialbrowser.h"
 #include "cellistviewitem.h"
+#include "selectionpopup.h"
 
 /* 
  *  Constructs a CelestialBrowser which is a child of 'parent', with the 
@@ -217,7 +218,10 @@ void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p
     }
     Selection sel = appSim->findObjectFromPath(std::string(name.latin1()));
 
-    parent->popupMenu(this, p, sel);
+    SelectionPopup popup(this, appCore, sel);
+    popup.init();
+    int id = popup.exec(p);
+    popup.process(id);
 }
 
 
