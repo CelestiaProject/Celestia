@@ -16,15 +16,15 @@ The cp command should really be automatic, but I'm not quite there yet.  It's
 very important run Celestia from the base directory in which it was unpacked;
 otherwise, it won't find the configuration and data files.
 
-This README included with this release is for the Windows version.  Not
-every feature of the Window version of Celestia is supported yet.  There are
-there are no menus right now, no mouse wheel support, and the arrow keys are
-currently not working.  The only UNIX system I have available right now
-is a P2-266 with RedHat 6.1 and no hardware 3D acceleration, which means that
-Celestia is a slide show.  It's not too bad when there's nothing visible except
-a star field, but once you get close to a planet or enable galaxies,
-performance goes down the tubes.  I'm very interested in reports from users
-with hardware acceleration.
+There are two versions of Celestia which can be built--the default version
+uses GLUT and has no GUI.  The other version uses Gtk+ to provide a basic
+menu bar similar to the one in Celestia for Windows.  To build Celestia with
+Gtk+ support, run configure with --enable-gtk:
+
+	configure --enable-gtk
+
+The GtkGLArea widget is required in order build Celestia with Gtk+.  It can
+be downloaded from http://www.student.oulu.fi/~jlof/gtkglarea/
 
 --Chris Laurel
 claurel@www.shatters.net
