@@ -3,19 +3,24 @@ SUBDIRS = res kde
 bin_PROGRAMS = celestia
 INCLUDES = -I..
 
-if ENABLE_GTK
-FRONTENDSOURCE = gtkmain.cpp
-else
-if ENABLE_KDE
-FRONTENDSOURCE = 
-celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) $(LIBSOCKET) \
-	kde/libkdegui.a
 
-celestia_DEPENDENCIES = kde/libkdegui.a
+if ENABLE_KDE
+celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) \
+                  $(LIBSOCKET) kde/libkdegui.a
 celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 endif
-endif
 
+if ENABLE_CELX
+COMMONSOURCES = \
+	celestiacore.cpp \
+	configfile.cpp \
+	destination.cpp \
+	eclipsefinder.cpp\
+	favorites.cpp \
+	imagecapture.cpp \
+	url.cpp \
+	celx.cpp
+else !ENABLE_CELX
 COMMONSOURCES = \
 	celestiacore.cpp \
 	configfile.cpp \
@@ -24,6 +29,8 @@ COMMONSOURCES = \
 	favorites.cpp \
 	imagecapture.cpp \
 	url.cpp
+endif !ENABLE_CELX
+
 
 WINSOURCES = \
 	wingotodlg.cpp \
@@ -35,7 +42,18 @@ WINSOURCES = \
         winviewoptsdlg.cpp \
 	avicapture.cpp
 
-celestia_SOURCES = $(COMMONSOURCES) $(FRONTENDSOURCE)
+if     ENABLE_GTK
+celestia_SOURCES = $(COMMONSOURCES) gtkmain.cpp
+else  !ENABLE_GTK
+
+if     ENABLE_GLUT
+celestia_SOURCES = $(COMMONSOURCES) glutmain.cpp
+else  !ENABLE_GLUT
+celestia_SOURCES = $(COMMONSOURCES) 
+endif !ENABLE_GLUT
+endif !ENABLE_GTK
+
+
 EXTRA_celestia_SOURCES = gtkmain.cpp glutmain.cpp $(WINSOURCES)
 EXTRA_DIST =  Celestia.dsp celestia.mak
 

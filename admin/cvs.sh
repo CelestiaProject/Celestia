@@ -32,12 +32,12 @@ case $AUTOCONF_VERSION in
   Autoconf*2.5* | autoconf*2.5* ) : ;;
   "" )
     echo "*** AUTOCONF NOT FOUND!."
-    echo "*** KDE requires autoconf 2.52 or 2.53"
+    echo "*** KDE requires autoconf 2.52, 2.53 or 2.54"
     exit 1
     ;;
   * )
     echo "*** YOU'RE USING $AUTOCONF_VERSION."
-    echo "*** KDE requires autoconf 2.52 or 2.53"
+    echo "*** KDE requires autoconf 2.52, 2.53 or 2.54"
     exit 1
     ;;
 esac
@@ -64,7 +64,7 @@ case $AUTOMAKE_STRING in
     echo "*** KDE requires automake 1.5"
     exit 1
     ;;
-  automake*1.5* | automake*1.5-* | automake*1.6.* ) : ;;
+  automake*1.5* | automake*1.5-* | automake*1.6.* | automake*1.7* ) : ;;
   "" )
     echo "*** AUTOMAKE NOT FOUND!."
     echo "*** KDE requires automake 1.5"
@@ -122,12 +122,12 @@ echo "*** Creating Makefile templates"
 $AUTOMAKE || exit 1
 if test -z "$UNSERMAKE"; then
   echo "*** Postprocessing Makefile templates"
-  perl admin/am_edit || exit 1
+  perl -w admin/am_edit || exit 1
 fi
 
 if egrep "^cvs-local:" $makefile_am >/dev/null; then \
   strip_makefile
-  $MAKE -f $makefile_wo cvs-local || exit 1
+  $MAKE -f $makefile_wo cvs-local top_srcdir=. || exit 1
 fi
 
 echo "*** Creating date/time stamp"
@@ -158,12 +158,12 @@ fi
 $ACLOCAL
 $AUTOHEADER
 $AUTOMAKE --foreign --include-deps
-perl admin/am_edit
+perl -w admin/am_edit
 call_and_fix_autoconf
 touch stamp-h.in
 if grep "^cvs-local:" $makefile_am >/dev/null; then
   strip_makefile
-  $MAKE -f $makefile_wo cvs-local
+  $MAKE -f $makefile_wo cvs-local top_srcdir=.
 fi
 
 ###
@@ -178,7 +178,7 @@ if test -d po; then
 fi
 if grep "^cvs-dist-local:" $makefile_am >/dev/null; then
   strip_makefile
-  $MAKE -f $makefile_wo cvs-dist-local
+  $MAKE -f $makefile_wo cvs-dist-local top_srcdir=.
 fi
 }
 
@@ -187,7 +187,7 @@ subdir_dist()
 $ACLOCAL
 $AUTOHEADER
 $AUTOMAKE --foreign --include-deps
-perl ../admin/am_edit
+perl -w ../admin/am_edit
 call_and_fix_autoconf
 }
 
@@ -201,7 +201,7 @@ echo "KDE_CREATE_SUBDIRSLIST" >> configure.in.new
 if test -f Makefile.am.in; then
   subdirs=`cat subdirs`
   for dir in $subdirs; do
-    dir=`echo $dir | sed -e "s,[-+],_,g"`
+    dir=`echo $dir | sed -e "s,[-+.],_,g"`
     echo "AM_CONDITIONAL($dir""_SUBDIR_included, test \"x\$$dir""_SUBDIR_included\" = xyes)" >> configure.in.new
   done
 fi
@@ -234,7 +234,13 @@ for i in $mfs; do
       fi
   fi
 done
-egrep '^dnl AC_OUTPUT\(.*\)' `cat configure.files` | sed -e "s#^.*dnl AC_OUTPUT(\(.*\))#AC_CONFIG_FILES([ \1 ])#" >> configure.in.new
+
+files=`cat configure.files`
+list=`egrep '^dnl AC_OUTPUT\(.*\)' $files | sed -e "s#^.*dnl AC_OUTPUT(\(.*\))#\1#"`
+for file in $list; do 
+    echo "AC_CONFIG_FILES([ $file ])" >>  configure.in.new
+done
+
 if test -n "$UNSERMAKE"; then
   echo "AC_CONFIG_FILES([ MakeVars ])" >> configure.in.new
 fi
@@ -255,7 +261,7 @@ if test -f configure.in.in; then
    fi
 fi
 if test -z "$VERSION" || test "$VERSION" = "@VERSION@"; then
-     VERSION="\"3.0.7\""
+     VERSION="\"3.1.0\""
 fi
 if test -z "$modulename" || test "$modulename" = "@MODULENAME@"; then
    modulename=`pwd`; 
@@ -272,6 +278,7 @@ sed -e "s#@MODULENAME@#$modulename#" configure.in.new |
 	sed -e "s#@VERSION@#$VERSION#" > configure.in
 botfiles=`cat configure.files | egrep "configure.in.bot"`
 test -n "$botfiles" && cat $botfiles >> configure.in
+cat $admindir/configure.in.bot.end >> configure.in
 rm -f configure.in.new
 }
 
@@ -417,7 +424,7 @@ for subdir in $dirs; do
 	echo -e 'i18n("_: NAME OF TRANSLATORS\\n"\n"Your names")\ni18n("_: EMAIL OF TRANSLATORS\\n"\n"Your emails")' > _translatorinfo.cpp
    else echo " " > _translatorinfo.cpp
    fi
-   perl -e '$mes=0; while (<STDIN>) { next if (/^(if|else|endif)\s/); if (/^messages:/) { $mes=1; print $_; next; } if ($mes) { if (/$\\(XGETTEXT\)/ && / -o/) { s/ -o \$\(podir\)/ _translatorinfo.cpp -o \$\(podir\)/ } print $_; } else { print $_; } }' < Makefile.am > _transMakefile
+   perl -e '$mes=0; while (<STDIN>) { next if (/^(if|else|endif)\s/); if (/^messages:/) { $mes=1; print $_; next; } if ($mes) { if (/$\\(XGETTEXT\)/ && / -o/) { s/ -o \$\(podir\)/ _translatorinfo.cpp -o \$\(podir\)/ } print $_; } else { print $_; } }' < Makefile.am | egrep -v '^include ' > _transMakefile
 
    $MAKE -s -f _transMakefile podir=$podir EXTRACTRC="$EXTRACTRC" PREPARETIPS="$PREPARETIPS" \
 	XGETTEXT="${XGETTEXT:-xgettext} -C -ki18n -ktr2i18n -kI18N_NOOP -ktranslate -kaliasLocale -x ${includedir:-$KDEDIR/include}/kde.pot" \

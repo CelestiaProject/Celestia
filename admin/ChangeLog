@@ -1,3 +1,7 @@
+2002-10-03  Stephan Kulow  <coolo@kde.org>
+	
+	* made config.h.bot obsolete
+
 2002-04-26  Stephan Kulow  <coolo@kde.org>
 
 	* acinclude.m4.in removed bogus message
