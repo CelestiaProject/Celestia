@@ -34,6 +34,7 @@
 #include <celutil/formatnum.h>
 #include <celengine/astro.h>
 #include <celengine/overlay.h>
+#include <celengine/console.h>
 #include <celengine/execution.h>
 #include <celengine/cmdparser.h>
 // #include <celengine/solarsysxml.h>
@@ -61,6 +62,8 @@ static const float MaximumFOV = degToRad(120.0f);
 static const float MinimumFOV = degToRad(0.001f);
 static float KeyRotationAccel = degToRad(120.0f);
 
+static const int ConsolePageRows = 10;
+static Console console(100, 120);
 
 
 static void warning(string s)
@@ -250,6 +253,7 @@ CelestiaCore::CelestiaCore() :
     wireframe(false),
     editMode(false),
     altAzimuthMode(false),
+    showConsole(false),
     lightTravelFlag(false),
     flashFrameStart(0.0),
     timer(NULL),
@@ -309,6 +313,9 @@ CelestiaCore::CelestiaCore() :
     }
     for (i = 0; i < JoyButtonCount; i++)
         joyButtonsPressed[i] = false;
+
+    clog.rdbuf(console.rdbuf());
+    cerr.rdbuf(console.rdbuf());
 }
 
 CelestiaCore::~CelestiaCore()
@@ -839,6 +846,29 @@ void CelestiaCore::joystickButton(int button, bool down)
 }
 
 
+static void scrollConsole(Console& con, int lines)
+{
+    int currentRow = con.getWindowRow();
+    int topRow = con.getWindowRow();
+    int height = con.getHeight();
+
+    if (lines < 0)
+    {
+        if ((topRow <= currentRow) != (topRow + lines <= currentRow))
+            console.setWindowRow(currentRow);
+        else
+            console.setWindowRow((topRow + lines) % height);
+    }
+    else
+    {
+        if ((topRow < currentRow) != (topRow + lines < currentRow))
+            console.setWindowRow(currentRow);
+        else
+            console.setWindowRow((topRow + lines) % height);
+    }
+}
+
+
 void CelestiaCore::keyDown(int key, int modifiers)
 {
     switch (key)
@@ -884,6 +914,26 @@ void CelestiaCore::keyDown(int key, int modifiers)
     case Key_NumPad8:
     case Key_NumPad9:
         sim->setTargetSpeed(sim->getTargetSpeed());
+        break;
+
+    case Key_Down:
+        if (showConsole)
+            scrollConsole(console, 1);
+        break;
+
+    case Key_Up:
+        if (showConsole)
+            scrollConsole(console, -1);
+        break;
+
+    case Key_PageDown:
+        if (showConsole)
+            scrollConsole(console, ConsolePageRows);
+        break;
+
+    case Key_PageUp:
+        if (showConsole)
+            scrollConsole(console, -ConsolePageRows);
         break;
     }
 
@@ -1643,6 +1693,10 @@ void CelestiaCore::charEntered(char c)
         break;
 
     case '~':
+        showConsole = !showConsole;
+        break;
+
+    case '@':
         editMode = !editMode;
         break;
     }
@@ -1778,39 +1832,44 @@ void CelestiaCore::tick()
     float fov = sim->getActiveObserver()->getFOV() / stdFOV;
     FrameOfReference frame = sim->getFrame();
 
-    if (!altAzimuthMode)
+    // Handle arrow keys; disable them when the log console is displayed,
+    // because then they're used to scroll up and down.
+    if (!showConsole)
     {
-        if (keysPressed[Key_Left])
-            av += Vec3f(0, 0, dt * -KeyRotationAccel);
-        if (keysPressed[Key_Right])
-            av += Vec3f(0, 0, dt * KeyRotationAccel);
-        if (keysPressed[Key_Down])
-            av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
-        if (keysPressed[Key_Up])
-            av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
-    }
-    else
-    {
-        if (!frame.refObject.empty())
+        if (!altAzimuthMode)
         {
-            Quatf orientation = sim->getObserver().getOrientation();
-            Vec3d upd = sim->getObserver().getPosition() -
-                frame.refObject.getPosition(sim->getTime());
-            upd.normalize();
-
-            Vec3f up((float) upd.x, (float) upd.y, (float) upd.z);
-
-            Vec3f v = up * (float) (KeyRotationAccel * dt);
-            v = v * (~orientation).toMatrix3();
-
             if (keysPressed[Key_Left])
-                av -= v;
+                av += Vec3f(0, 0, dt * -KeyRotationAccel);
             if (keysPressed[Key_Right])
-                av += v;
+                av += Vec3f(0, 0, dt * KeyRotationAccel);
             if (keysPressed[Key_Down])
                 av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
             if (keysPressed[Key_Up])
                 av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
+        }
+        else
+        {
+            if (!frame.refObject.empty())
+            {
+                Quatf orientation = sim->getObserver().getOrientation();
+                Vec3d upd = sim->getObserver().getPosition() -
+                    frame.refObject.getPosition(sim->getTime());
+                upd.normalize();
+                
+                Vec3f up((float) upd.x, (float) upd.y, (float) upd.z);
+                
+                Vec3f v = up * (float) (KeyRotationAccel * dt);
+                v = v * (~orientation).toMatrix3();
+
+                if (keysPressed[Key_Left])
+                    av -= v;
+                if (keysPressed[Key_Right])
+                    av += v;
+                if (keysPressed[Key_Down])
+                    av += Vec3f(dt * fov * -KeyRotationAccel, 0, 0);
+                if (keysPressed[Key_Up])
+                    av += Vec3f(dt * fov * KeyRotationAccel, 0, 0);
+            }
         }
     }
 
@@ -1931,6 +1990,16 @@ void CelestiaCore::draw()
     }
 
     renderOverlay();
+    if (showConsole)
+    {
+        console.setFont(font);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        console.begin();
+        glTranslatef(0.0f, 200.0f, 0.0f);
+        console.render(ConsolePageRows);
+        console.end();
+    }
+        
 
     if (movieCapture != NULL && recording)
         movieCapture->captureFrame();
@@ -1964,6 +2033,7 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
         renderer->resize(w, h);
     if (overlay != NULL)
         overlay->setWindowSize(w, h);
+    console.setWindowSize(w, h);
     width = w;
     height = h;
 
@@ -2993,6 +3063,7 @@ class SolarSystemLoader : public EnumFilesHandler
         if (DetermineFileType(filename) == Content_CelestiaCatalog)
         {
             string fullname = getPath() + '/' + filename;
+            clog << "Loading solar system catalog: " << fullname << '\n';
             ifstream solarSysFile(fullname.c_str(), ios::in);
             if (solarSysFile.good())
             {
@@ -3017,6 +3088,7 @@ public:
         if (DetermineFileType(filename) == Content_CelestiaDeepSkyCatalog)
         {
             string fullname = getPath() + '/' + filename;
+            clog << "Loading deep sky catalog: " << fullname << '\n';
             ifstream deepSkyFile(fullname.c_str(), ios::in);
             if (deepSkyFile.good())
             {
@@ -3042,6 +3114,7 @@ public:
         if (DetermineFileType(filename) == Content_CelestiaStarCatalog)
         {
             string fullname = getPath() + '/' + filename;
+            clog << "Loading star catalog: " << fullname << '\n';
             ifstream starFile(fullname.c_str(), ios::in);
             if (starFile.good())
             {
