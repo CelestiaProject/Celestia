@@ -12,6 +12,7 @@ apidox-am-yes:
 		fi ;\
 		cp $(top_srcdir)/admin/Doxyfile.global Doxyfile; \
 		echo "PROJECT_NAME           = \"$(subdir) Library\"" >> Doxyfile; \
+		echo "PROJECT_NUMBER         = \"Version $(VERSION)\"" >> Doxyfile; \
 		echo "INPUT                  = $(srcdir)" >> Doxyfile; \
 		echo "IMAGE_PATH             = $(top_srcdir)/doc/api" >> Doxyfile ;\
 		echo "OUTPUT_DIRECTORY       = $(top_builddir)/apidocs" >> Doxyfile; \
@@ -56,7 +57,6 @@ install-data-local: install-apidox
 
 ## install API documentation
 install-apidox:
-	echo "$(subdir)"
 	@if test "$(subdir)" != "."; then \
 		$(mkinstalldirs) $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs/$(subdir)/html ; \
 		if test -f $(top_builddir)/apidocs/$(subdir)/$(subdir).tag; then \
@@ -73,6 +73,7 @@ install-apidox:
 		rm -f $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs/common; \
 		$(LN_S) $(kde_libs_htmldir)/en/common $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs/common; \
 	else\
+		if test -d $(top_builddir)/apidocs; then \
 		$(mkinstalldirs) $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs ;\
 		list=`cd $(top_builddir)/apidocs && ls -1`; \
 		for file in $$list; do \
@@ -80,7 +81,7 @@ install-apidox:
 				echo $(INSTALL_DATA) $(top_builddir)/apidocs/$$file $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs; \
 				$(INSTALL_DATA) $(top_builddir)/apidocs/$$file $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs; \
 			fi; \
-		done ;\
+		done ; fi; \
 	fi
 
 uninstall-local: uninstall-apidox
@@ -121,6 +122,7 @@ apidox:
 	    done; \
 	fi
 
+apidox-am-toplevel-no:
 apidox-am-toplevel-yes:
 	@echo "*** Creating API documentation main page"; \
 	cp $(top_srcdir)/admin/Doxyfile.global Doxyfile; \
