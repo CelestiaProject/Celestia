@@ -149,7 +149,7 @@ Mesh* LoadCelestiaMesh(const string& filename)
 
     delete meshDefValue;
 
-    cout << "Read Celestia mesh " << filename << " successfully!";
+    cout << "Read Celestia mesh " << filename << " successfully!\n";
 
     return new SphereMesh(params.size,
                           (int) params.rings, (int) params.slices,

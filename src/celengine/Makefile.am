@@ -36,6 +36,7 @@ libcelengine_a_SOURCES = \
 	solarsys.cpp \
 	spheremesh.cpp \
 	star.cpp \
+	starbrowser.cpp \
 	stardb.cpp \
 	starname.cpp \
 	stellarclass.cpp \
