@@ -24,7 +24,7 @@ void SetupCombinersBumpMap(CTexture& bumpTexture,
     glDisable(GL_LIGHTING);
     glActiveTextureARB(GL_TEXTURE1_ARB);
     glEnable(GL_TEXTURE_CUBE_MAP_EXT);
-    glBindTexture(GL_TEXTURE_2D, normalizationTexture.getName());
+    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, normalizationTexture.getName());
 
     glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
@@ -102,7 +102,7 @@ void SetupCombinersSmooth(CTexture& baseTexture,
     glDisable(GL_LIGHTING);
     glActiveTextureARB(GL_TEXTURE1_ARB);
     glEnable(GL_TEXTURE_CUBE_MAP_EXT);
-    glBindTexture(GL_TEXTURE_2D, normalizationTexture.getName());
+    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, normalizationTexture.getName());
     glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, baseTexture.getName());
