@@ -31,7 +31,6 @@ Simulation::Simulation() :
     solarSystemCatalog(NULL),
     galaxies(NULL),
     visibleStars(NULL),
-    visTree(NULL),
     closestSolarSystem(NULL),
     selection(),
     targetSpeed(0.0),
@@ -155,7 +154,6 @@ void  Simulation::render(Renderer& renderer)
     renderer.render(observer,
                     *stardb,
                     *visibleStars,
-                    *visTree,
                     faintestVisible,
                     closestSolarSystem,
                     galaxies,
@@ -259,12 +257,14 @@ void Simulation::setStarDatabase(StarDatabase* db,
         visibleStars->setCloseDistance(10.0f);
         visibleStars->updateAll(observer);
 
+#if 0
         visTree = new StarOctree(Point3f(1000, 1000, 1000), 5000.0f, 6.0f);
         for (int i = 0; i < (int) db->size(); i++)
             visTree->insertStar(*db->getStar(i));
 
         cout << "Node count: " << visTree->countNodes() << "\n";
         cout << "Total stars: " << visTree->countStars() << "\n";
+#endif
     }
 }
 

@@ -14,6 +14,8 @@
 #include "celestia.h"
 #include "mathlib.h"
 #include "util.h"
+#include "astro.h"
+#include "plane.h"
 #include "stardb.h"
 
 using namespace std;
@@ -28,8 +30,15 @@ static string GlieseCatalogPrefix("Gliese ");
 static string RossCatalogPrefix("Ross ");
 static string LacailleCatalogPrefix("Lacaille ");
 
+static const float OctreeRootSize = 5000.0f;
+static const float OctreeMagnitude = 6.0f;
 
-StarDatabase::StarDatabase() : nStars(0), stars(NULL), names(NULL)
+
+StarDatabase::StarDatabase() : nStars(0),
+                               stars(NULL),
+                               names(NULL),
+                               catalogNumberIndex(NULL),
+                               octreeRoot(NULL)
 {
 }
 
@@ -37,10 +46,11 @@ StarDatabase::~StarDatabase()
 {
     if (stars != NULL)
 	delete [] stars;
+    if (catalogNumberIndex != NULL)
+        delete [] catalogNumberIndex;
 }
 
-// Less than operator for stars is used to sort and find stars by catalog
-// number
+#if 0
 bool operator<(const Star& a, const Star& b)
 {
     return a.getCatalogNumber() < b.getCatalogNumber();
@@ -50,15 +60,38 @@ bool operator<(Star& s, uint32 n)
 {
     return s.getCatalogNumber() < n;
 }
+#endif
+
+// Less than operator for stars is used to sort and find stars by catalog
+// number
+bool operator<(const StarRecord& a,
+               const StarRecord& b)
+{
+    return a.star->getCatalogNumber() < b.star->getCatalogNumber();
+}
+
+bool operator<(StarRecord& s, uint32 n)
+{
+    return s.star->getCatalogNumber() < n;
+}
 
 
 Star* StarDatabase::find(uint32 catalogNumber) const
 {
+#if 0
     Star* star = lower_bound(stars, stars + nStars, catalogNumber);
     if (star != stars + nStars && star->getCatalogNumber() == catalogNumber)
         return star;
     else
         return NULL;
+#endif
+    StarRecord* star = lower_bound(catalogNumberIndex, catalogNumberIndex + nStars,
+                                   catalogNumber);
+    if (star != catalogNumberIndex + nStars &&
+        star->star->getCatalogNumber() == catalogNumber)
+        return star->star;
+    else
+        return NULL;                           
 }
 
 
@@ -169,6 +202,36 @@ string StarDatabase::getStarName(uint32 catalogNumber) const
 }
 
 
+void StarDatabase::processVisibleStars(StarHandler& starHandler,
+                                       const Point3f& position,
+                                       const Quatf& orientation,
+                                       float fovY,
+                                       float aspectRatio,
+                                       float limitingMag) const
+{
+    // Compute the bounding planes of an infinite view frustum
+    Planef frustumPlanes[5];
+    Vec3f planeNormals[5];
+    Mat3f rot = orientation.toMatrix3();
+    float h = (float) tan(fovY / 2);
+    float w = h * aspectRatio;
+    planeNormals[0] = Vec3f(0, 1, -h);
+    planeNormals[1] = Vec3f(0, -1, -h);
+    planeNormals[2] = Vec3f(1, 0, -w);
+    planeNormals[3] = Vec3f(-1, 0, -w);
+    planeNormals[4] = Vec3f(0, 0, -1);
+    for (int i = 0; i < 5; i++)
+    {
+        planeNormals[i].normalize();
+        planeNormals[i] = planeNormals[i] * rot;
+        frustumPlanes[i] = Planef(planeNormals[i], position);
+    }
+    
+    octreeRoot->processVisibleStars(starHandler, position, frustumPlanes,
+                                    limitingMag, OctreeRootSize);
+}
+
+
 StarNameDatabase* StarDatabase::getNameDatabase() const
 {
     return names;
@@ -272,13 +335,57 @@ StarDatabase *StarDatabase::read(istream& in)
 	db = NULL;
     }
 
-    sort(db->stars, db->stars + db->nStars);
-
     cout << "nStars = " << db->nStars << '\n';
-    cout << "throw out = " << throwOut << '\n';
-    cout << "fix up = " << fixUp << '\n';
+
+    db->buildOctree();
+    db->buildIndexes();
 
     return db;
+}
+
+
+void StarDatabase::buildOctree()
+{
+    // This should only be called once for the database
+    // ASSERT(octreeRoot == NULL);
+
+    cout << "Sorting stars into octree . . .\n";
+    cout.flush();
+    float absMag = astro::appToAbsMag(OctreeMagnitude,
+                                      OctreeRootSize * (float) sqrt(3));
+    DynamicStarOctree* root = new DynamicStarOctree(Point3f(1000, 1000, 1000),
+                                                    absMag);
+    for (int i = 0; i < nStars; i++)
+        root->insertStar(stars[i], OctreeRootSize);
+
+    cout << "Spatially sorting stars for improved locality of reference . . .\n";
+    cout.flush();
+    Star* sortedStars = new Star[nStars];
+    Star* firstStar = sortedStars;
+    root->rebuildAndSort(octreeRoot, firstStar);
+
+    cout << "Octree has " << 1 + octreeRoot->countChildren() << " nodes " <<
+        " and " << octreeRoot->countStars() << " stars.\n";
+
+    // Clean up . . .
+    delete stars;
+    delete root;
+
+    stars = sortedStars;
+}
+
+
+void StarDatabase::buildIndexes()
+{
+    // This should only be called once for the database
+    // ASSERT(catalogNumberIndex == NULL);
+
+    cout << "Building catalog number index . . .\n";
+    cout.flush();
+    catalogNumberIndex = new StarRecord[nStars];
+    for (int i = 0; i < nStars; i++)
+        catalogNumberIndex[i].star = &stars[i];
+    sort(catalogNumberIndex, catalogNumberIndex + nStars);
 }
 
 

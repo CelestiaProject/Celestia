@@ -481,7 +481,6 @@ void Renderer::clearLabels()
 void Renderer::render(const Observer& observer,
                       const StarDatabase& starDB,
                       const VisibleStarSet& visset,
-                      const StarOctree& visTree,
                       float faintestVisible,
                       SolarSystem* solarSystem,
                       GalaxyList* galaxies,
@@ -544,7 +543,7 @@ void Renderer::render(const Observer& observer,
     if ((renderFlags & ShowStars) != 0)
     {
         if ((renderFlags & ShowCloudMaps) != 0)
-            renderStars(starDB, visTree, faintestVisible, observer);
+            renderStars(starDB, faintestVisible, observer);
         else
             renderStars(starDB, visset, faintestVisible, observer);
     }
@@ -1883,7 +1882,6 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
 
 void Renderer::renderStars(const StarDatabase& starDB,
-                           const StarOctree& visTree,
                            float faintestVisible,
                            const Observer& observer)
 {
@@ -1904,12 +1902,12 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starParticles.clear();
     glareParticles.clear();
 
-    visTree.processVisibleStars(starRenderer,
-                                (Point3f) observer.getPosition(),
-                                observer.getOrientation(),
-                                fov,
-                                (float) windowWidth / (float) windowHeight,
-                                faintestVisible);
+    starDB.processVisibleStars(starRenderer,
+                               (Point3f) observer.getPosition(),
+                               observer.getOrientation(),
+                               fov,
+                               (float) windowWidth / (float) windowHeight,
+                               faintestVisible);
 
     glBindTexture(GL_TEXTURE_2D, starTex->getName());
     renderParticles(starParticles, observer.getOrientation());
