@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
-#include <celutil/directory.h>
+#include "directory.h"
 
 using namespace std;
 
