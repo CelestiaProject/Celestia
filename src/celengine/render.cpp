@@ -3290,6 +3290,7 @@ renderRingShadowsVS(Mesh* mesh,
 
 
 void Renderer::renderLocations(const vector<Location*>& locations,
+                               const Quatf& cameraOrientation,
                                const Point3f& position,
                                const Quatf& orientation,
                                float scale)
@@ -3303,6 +3304,9 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     view[1] = -windowHeight / 2;
     view[2] = windowWidth;
     view[3] = windowHeight;
+
+    Vec3f viewNormal = Vec3f(0.0f, 0.0f, -1.0f) *
+        cameraOrientation.toMatrix3();
 
     double modelview[16];
     double projection[16];
@@ -3338,14 +3342,15 @@ void Renderer::renderLocations(const vector<Location*>& locations,
         {
             Vec3f off = (*iter)->getPosition();
             Vec3f off_t = off * mat;
-            Point3f wpos(position + off_t * 1.01f);
+            Point3f wpos(position + off_t * 1.0001f);
 
             float effSize = (*iter)->getImportance();
             if (effSize < 0.0f)
                 effSize = (*iter)->getSize();
             float pixSize = effSize / (wpos.distanceFromOrigin() * pixelSize);
             
-            if (pixSize > minFeatureSize)
+            if (pixSize > minFeatureSize &&
+                (wpos - origin) * viewNormal > 0.0f)
             {
                 float r = off_t.length();
                 if (r < scale * 0.99f)
@@ -3763,7 +3768,9 @@ void Renderer::renderObject(Point3f pos,
     }
 
     if (obj.locations != NULL && (labelMode & LocationLabels) != 0)
-        renderLocations(*obj.locations, pos, obj.orientation, radius);
+        renderLocations(*obj.locations,
+                        cameraOrientation,
+                        pos, obj.orientation, radius);
 
     glPopMatrix();
     glDisable(GL_DEPTH_TEST);
