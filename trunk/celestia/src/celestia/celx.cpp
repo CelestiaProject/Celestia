@@ -11,6 +11,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <map>
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
 #include <celmath/vecmath.h>
@@ -61,6 +62,13 @@ static const double MaxTimeslice = 5.0;
 static const char* KbdCallback = "celestia_keyboard_callback";
 static const char* CleanupCallback = "celestia_cleanup_callback";
 
+typedef map<string, uint32> FlagMap; 
+
+static FlagMap RenderFlagMap;
+static FlagMap LabelFlagMap;
+static FlagMap LocationFlagMap;
+static bool mapsInitialized = false;
+
 // select which type of error will be fatal (call lua_error) and
 // which will return a default value instead
 enum FatalErrors {
@@ -69,6 +77,84 @@ enum FatalErrors {
     WrongArgc = 2,
     AllErrors = WrongType | WrongArgc,
 };
+
+
+static void initRenderFlagMap()
+{
+    RenderFlagMap["orbits"] = Renderer::ShowOrbits;
+    RenderFlagMap["cloudmaps"] = Renderer::ShowCloudMaps;
+    RenderFlagMap["constellations"] = Renderer::ShowDiagrams;
+    RenderFlagMap["galaxies"] = Renderer::ShowGalaxies;
+    RenderFlagMap["planets"] = Renderer::ShowPlanets;
+    RenderFlagMap["stars"] = Renderer::ShowStars;
+    RenderFlagMap["nightmaps"] = Renderer::ShowNightMaps;
+    RenderFlagMap["eclipseshadows"] = Renderer::ShowEclipseShadows;
+    RenderFlagMap["ringshadows"] = Renderer::ShowRingShadows;
+    RenderFlagMap["comettails"] = Renderer::ShowCometTails;
+    RenderFlagMap["boundaries"] = Renderer::ShowBoundaries;
+    RenderFlagMap["markers"] = Renderer::ShowMarkers;
+    RenderFlagMap["automag"] = Renderer::ShowAutoMag;
+    RenderFlagMap["atmospheres"] = Renderer::ShowAtmospheres;
+    RenderFlagMap["grid"] = Renderer::ShowCelestialSphere;
+    RenderFlagMap["smoothlines"] = Renderer::ShowSmoothLines;
+}
+
+static void initLabelFlagMap()
+{
+    LabelFlagMap["planets"] = Renderer::PlanetLabels;
+    LabelFlagMap["moons"] = Renderer::MoonLabels;
+    LabelFlagMap["spacecraft"] = Renderer::SpacecraftLabels;
+    LabelFlagMap["asteroids"] = Renderer::AsteroidLabels;
+    LabelFlagMap["comets"] = Renderer::CometLabels;
+    LabelFlagMap["constellations"] = Renderer::ConstellationLabels;
+    LabelFlagMap["stars"] = Renderer::StarLabels;
+    LabelFlagMap["galaxies"] = Renderer::GalaxyLabels;
+    LabelFlagMap["locations"] = Renderer::LocationLabels;
+}
+
+static void initLocationFlagMap()
+{
+    LocationFlagMap["city"] = Location::City;
+    LocationFlagMap["observatory"] = Location::Observatory;
+    LocationFlagMap["landingsite"] = Location::LandingSite;
+    LocationFlagMap["crater"] = Location::Crater;
+    LocationFlagMap["vallis"] = Location::Vallis;
+    LocationFlagMap["mons"] = Location::Mons;
+    LocationFlagMap["planum"] = Location::Planum;
+    LocationFlagMap["chasma"] = Location::Chasma;
+    LocationFlagMap["patera"] = Location::Patera;
+    LocationFlagMap["mare"] = Location::Mare;
+    LocationFlagMap["rupes"] = Location::Rupes;
+    LocationFlagMap["tessera"] = Location::Tessera;
+    LocationFlagMap["regio"] = Location::Regio;
+    LocationFlagMap["chaos"] = Location::Chaos;
+    LocationFlagMap["terra"] = Location::Terra;
+    LocationFlagMap["astrum"] = Location::Astrum;
+    LocationFlagMap["corona"] = Location::Corona;
+    LocationFlagMap["dorsum"] = Location::Dorsum;
+    LocationFlagMap["fossa"] = Location::Fossa;
+    LocationFlagMap["catena"] = Location::Catena;
+    LocationFlagMap["mensa"] = Location::Mensa;
+    LocationFlagMap["rima"] = Location::Rima;
+    LocationFlagMap["undae"] = Location::Undae;
+    LocationFlagMap["reticulum"] = Location::Reticulum;
+    LocationFlagMap["planitia"] = Location::Planitia;
+    LocationFlagMap["linea"] = Location::Linea;
+    LocationFlagMap["fluctus"] = Location::Fluctus;
+    LocationFlagMap["farrum"] = Location::Farrum;
+    LocationFlagMap["other"] = Location::Other;
+}    
+
+static void initMaps()
+{
+    if (!mapsInitialized)
+    {
+        initRenderFlagMap();
+        initLabelFlagMap();
+        initLocationFlagMap();
+    }
+    mapsInitialized = true;
+}
 
 
 // Push a class name onto the Lua stack
@@ -390,70 +476,6 @@ static void checkArgs(lua_State* l,
         lua_pushstring(l, errorMessage);
         lua_error(l);
     }
-}
-
-
-static int parseRenderFlag(const string& name)
-{
-    if (compareIgnoringCase(name, "orbits") == 0)
-        return Renderer::ShowOrbits;
-    else if (compareIgnoringCase(name, "cloudmaps") == 0)
-        return Renderer::ShowCloudMaps;
-    else if (compareIgnoringCase(name, "constellations") == 0)
-        return Renderer::ShowDiagrams;
-    else if (compareIgnoringCase(name, "galaxies") == 0)
-        return Renderer::ShowGalaxies;
-    else if (compareIgnoringCase(name, "planets") == 0)
-        return Renderer::ShowPlanets;
-    else if (compareIgnoringCase(name, "stars") == 0)
-        return Renderer::ShowStars;
-    else if (compareIgnoringCase(name, "nightmaps") == 0)
-        return Renderer::ShowNightMaps;
-    else if (compareIgnoringCase(name, "eclipseshadows") == 0)
-        return Renderer::ShowEclipseShadows;
-    else if (compareIgnoringCase(name, "ringshadows") == 0)
-        return Renderer::ShowRingShadows;
-    else if (compareIgnoringCase(name, "comettails") == 0)
-        return Renderer::ShowCometTails;
-    else if (compareIgnoringCase(name, "boundaries") == 0)
-        return Renderer::ShowBoundaries;
-    else if (compareIgnoringCase(name, "markers") == 0)
-        return Renderer::ShowMarkers;
-    else if (compareIgnoringCase(name, "automag") == 0)
-        return Renderer::ShowAutoMag;
-    else if (compareIgnoringCase(name, "atmospheres") == 0)
-        return Renderer::ShowAtmospheres;
-    else if (compareIgnoringCase(name, "grid") == 0)
-        return Renderer::ShowCelestialSphere;
-    else if (compareIgnoringCase(name, "smoothlines") == 0)
-        return Renderer::ShowSmoothLines;
-    else
-        return 0;
-}
-
-
-static int parseLabelFlag(const string& name)
-{
-    if (compareIgnoringCase(name, "planets") == 0)
-        return Renderer::PlanetLabels;
-    else if (compareIgnoringCase(name, "moons") == 0)
-        return Renderer::MoonLabels;
-    else if (compareIgnoringCase(name, "spacecraft") == 0)
-        return Renderer::SpacecraftLabels;
-    else if (compareIgnoringCase(name, "asteroids") == 0)
-        return Renderer::AsteroidLabels;
-    else if (compareIgnoringCase(name, "comets") == 0)
-        return Renderer::CometLabels;
-    else if (compareIgnoringCase(name, "constellations") == 0)
-        return Renderer::ConstellationLabels;
-    else if (compareIgnoringCase(name, "stars") == 0)
-        return Renderer::StarLabels;
-    else if (compareIgnoringCase(name, "galaxies") == 0)
-        return Renderer::GalaxyLabels;
-    else if (compareIgnoringCase(name, "locations") == 0)
-        return Renderer::LocationLabels;
-    else
-        return 0;
 }
 
 
@@ -1248,6 +1270,7 @@ static void CreatePositionMetaTable(lua_State* l)
     RegisterMethod(l, "orientationto", position_orientationto);
     RegisterMethod(l, "addvector", position_addvector);
     RegisterMethod(l, "__add", position_add);
+    RegisterMethod(l, "__sub", position_sub);
     RegisterMethod(l, "getx", position_getx);
     RegisterMethod(l, "gety", position_gety);
     RegisterMethod(l, "getz", position_getz);
@@ -2428,6 +2451,83 @@ static int observer_equal(lua_State* l)
     return 1;
 }
 
+
+static int observer_setlocationflags(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for observer:setlocationflags()");
+    Observer* obs = this_observer(l);
+    if (!lua_istable(l, 2))
+    {
+        lua_pushstring(l, "Argument to observer:setlocationflags() must be a table");
+        lua_error(l);
+    }
+
+    lua_pushnil(l);
+    int locationFlags = obs->getLocationFilter();
+    while (lua_next(l, -2) != 0)
+    {
+        string key;
+        bool value = false;
+        if (lua_isstring(l, -2))
+        {
+            key = lua_tostring(l, -2);
+        }
+        else
+        {
+            lua_pushstring(l, "Keys in table-argument to observer:setlocationflags() must be strings");
+            lua_error(l);
+        }
+        if (lua_isboolean(l, -1))
+        {
+            value = lua_toboolean(l, -1);
+        }
+        else
+        {
+            lua_pushstring(l, "Values in table-argument to observer:setlocationflags() must be boolean");
+            lua_error(l);
+        }
+        if (LocationFlagMap.count(key) == 0)
+        {
+            cerr << "Unknown key: " << key << "\n";
+        }
+        else
+        {
+            int flag = LocationFlagMap[key];
+            if (value)
+            {
+                locationFlags |= flag;
+            }
+            else
+            {
+                locationFlags &= ~flag;
+            }
+        }
+        lua_pop(l,1);
+    }
+    obs->setLocationFilter(locationFlags);
+    return 0;
+}
+
+
+static int observer_getlocationflags(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for observer:getlocationflags()");
+    Observer* obs = this_observer(l);
+    lua_newtable(l);
+    FlagMap::const_iterator it = LocationFlagMap.begin();
+    const int locationFlags = obs->getLocationFilter();
+    while (it != LocationFlagMap.end())
+    {
+        string key = it->first;
+        lua_pushstring(l, key.c_str());
+        lua_pushboolean(l, (it->second & locationFlags) != 0);
+        lua_settable(l,-3);
+        it++;
+    }
+    return 1;
+}
+
+
 static void CreateObserverMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Observer);
@@ -2463,6 +2563,8 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "splitview", observer_splitview);
     RegisterMethod(l, "deleteview", observer_deleteview);
     RegisterMethod(l, "singleview", observer_singleview);
+    RegisterMethod(l, "getlocationflags", observer_getlocationflags);
+    RegisterMethod(l, "setlocationflags", observer_setlocationflags);
     RegisterMethod(l, "__eq", observer_equal);
 
     lua_pop(l, 1); // remove metatable from stack
@@ -2552,9 +2654,9 @@ static int celestia_show(lua_State* l)
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        const char* s = lua_tostring(l, i);
-        if (s != NULL)
-            flags |= parseRenderFlag(s);
+        string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings"); 
+        if (RenderFlagMap.count(renderFlag) > 0)
+            flags |= RenderFlagMap[renderFlag];
     }
 
     Renderer* r = appCore->getRenderer();
@@ -2566,16 +2668,16 @@ static int celestia_show(lua_State* l)
 
 static int celestia_hide(lua_State* l)
 {
-    checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:show");
+    checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:hide");
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        const char* s = lua_tostring(l, i);
-        if (s != NULL)
-            flags |= parseRenderFlag(s);
+        string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings"); 
+        if (RenderFlagMap.count(renderFlag) > 0)
+            flags |= RenderFlagMap[renderFlag];
     }
 
     Renderer* r = appCore->getRenderer();
@@ -2584,6 +2686,79 @@ static int celestia_hide(lua_State* l)
     return 0;
 }
 
+static int celestia_setrenderflags(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for celestia:setrenderflags()");
+    CelestiaCore* appCore = this_celestia(l);
+    if (!lua_istable(l, 2))
+    {
+        lua_pushstring(l, "Argument to celestia:setrenderflags() must be a table");
+        lua_error(l);
+    }
+
+    int renderFlags = appCore->getRenderer()->getRenderFlags();
+    lua_pushnil(l);
+    while (lua_next(l, -2) != 0)
+    {
+        string key;
+        bool value = false;
+        if (lua_isstring(l, -2))
+        {
+            key = lua_tostring(l, -2);
+        }
+        else
+        {
+            lua_pushstring(l, "Keys in table-argument to celestia:setrenderflags() must be strings");
+            lua_error(l);
+        }
+        if (lua_isboolean(l, -1))
+        {
+            value = lua_toboolean(l, -1);
+        }
+        else
+        {
+            lua_pushstring(l, "Values in table-argument to celestia:setrenderflags() must be boolean");
+            lua_error(l);
+        }
+        if (RenderFlagMap.count(key) == 0)
+        {
+            cerr << "Unknown key: " << key << "\n";
+        }
+        else
+        {
+            int flag = RenderFlagMap[key];
+            if (value)
+            {
+                renderFlags |= flag;
+            }
+            else
+            {
+                renderFlags &= ~flag;
+            }
+        }
+        lua_pop(l,1);
+    }
+    appCore->getRenderer()->setRenderFlags(renderFlags);
+    return 0;
+}
+
+static int celestia_getrenderflags(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getrenderflags()");
+    CelestiaCore* appCore = this_celestia(l);
+    lua_newtable(l);
+    FlagMap::const_iterator it = RenderFlagMap.begin();
+    const int renderFlags = appCore->getRenderer()->getRenderFlags();
+    while (it != RenderFlagMap.end())
+    {
+        string key = it->first;
+        lua_pushstring(l, key.c_str());
+        lua_pushboolean(l, (it->second & renderFlags) != 0);
+        lua_settable(l,-3);
+        it++;
+    }
+    return 1;
+}
 
 static int celestia_showlabel(lua_State* l)
 {
@@ -2594,9 +2769,9 @@ static int celestia_showlabel(lua_State* l)
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        const char* s = lua_tostring(l, i);
-        if (s != NULL)
-            flags |= parseLabelFlag(s);
+        string labelFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:showlabel() must be strings"); 
+        if (LabelFlagMap.count(labelFlag) > 0)
+            flags |= LabelFlagMap[labelFlag];
     }
 
     Renderer* r = appCore->getRenderer();
@@ -2615,9 +2790,9 @@ static int celestia_hidelabel(lua_State* l)
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        const char* s = lua_tostring(l, i);
-        if (s != NULL)
-            flags |= parseLabelFlag(s);
+        string labelFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hidelabel() must be strings"); 
+        if (LabelFlagMap.count(labelFlag) > 0)
+            flags |= LabelFlagMap[labelFlag];
     }
 
     Renderer* r = appCore->getRenderer();
@@ -2626,6 +2801,79 @@ static int celestia_hidelabel(lua_State* l)
     return 0;
 }
 
+static int celestia_setlabelflags(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for celestia:setlabelflags()");
+    CelestiaCore* appCore = this_celestia(l);
+    if (!lua_istable(l, 2))
+    {
+        lua_pushstring(l, "Argument to celestia:setlabelflags() must be a table");
+        lua_error(l);
+    }
+
+    int labelFlags = appCore->getRenderer()->getLabelMode();
+    lua_pushnil(l);
+    while (lua_next(l, -2) != 0)
+    {
+        string key;
+        bool value = false;
+        if (lua_isstring(l, -2))
+        {
+            key = lua_tostring(l, -2);
+        }
+        else
+        {
+            lua_pushstring(l, "Keys in table-argument to celestia:setlabelflags() must be strings");
+            lua_error(l);
+        }
+        if (lua_isboolean(l, -1))
+        {
+            value = lua_toboolean(l, -1);
+        }
+        else
+        {
+            lua_pushstring(l, "Values in table-argument to celestia:setlabelflags() must be boolean");
+            lua_error(l);
+        }
+        if (LabelFlagMap.count(key) == 0)
+        {
+            cerr << "Unknown key: " << key << "\n";
+        }
+        else
+        {
+            int flag = LabelFlagMap[key];
+            if (value)
+            {
+                labelFlags |= flag;
+            }
+            else
+            {
+                labelFlags &= ~flag;
+            }
+        }
+        lua_pop(l,1);
+    }
+    appCore->getRenderer()->setLabelMode(labelFlags);
+    return 0;
+}
+
+static int celestia_getlabelflags(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getlabelflags()");
+    CelestiaCore* appCore = this_celestia(l);
+    lua_newtable(l);
+    FlagMap::const_iterator it = LabelFlagMap.begin();
+    const int labelFlags = appCore->getRenderer()->getLabelMode();
+    while (it != LabelFlagMap.end())
+    {
+        string key = it->first;
+        lua_pushstring(l, key.c_str());
+        lua_pushboolean(l, (it->second & labelFlags) != 0);
+        lua_settable(l,-3);
+        it++;
+    }
+    return 1;
+}
 
 static int celestia_getobserver(lua_State* l)
 {
@@ -3054,8 +3302,12 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "print", celestia_print);
     RegisterMethod(l, "show", celestia_show);
     RegisterMethod(l, "hide", celestia_hide);
+    RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
+    RegisterMethod(l, "setrenderflags", celestia_setrenderflags);
     RegisterMethod(l, "showlabel", celestia_showlabel);
     RegisterMethod(l, "hidelabel", celestia_hidelabel);
+    RegisterMethod(l, "getlabelflags", celestia_getlabelflags);
+    RegisterMethod(l, "setlabelflags", celestia_setlabelflags);
     RegisterMethod(l, "getobserver", celestia_getobserver);
     RegisterMethod(l, "getobservers", celestia_getobservers);
     RegisterMethod(l, "getselection", celestia_getselection);
@@ -3085,6 +3337,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
 
 bool LuaState::init(CelestiaCore* appCore)
 {
+    initMaps();
+
     // Import the base and math libraries
     lua_baselibopen(state);
     lua_mathlibopen(state);
