@@ -49,6 +49,8 @@ static Timer* timer = NULL;
 static bool fullscreen = false;
 static bool bReady = false;
 
+static LPTSTR CelestiaRegKey = "Software\\Shatters.net\\Celestia";
+
 HINSTANCE appInstance;
 HWND mainWindow = 0;
 
@@ -77,6 +79,15 @@ static LRESULT CALLBACK MainWindowProc(HWND hWnd,
 #define MENU_CHOOSE_PLANET   32000
 
 
+struct AppPreferences
+{
+    int winWidth;
+    int winHeight;
+    int winX;
+    int winY;
+};
+
+
 
 void ChangeDisplayMode()
 {
@@ -97,6 +108,21 @@ void ChangeDisplayMode()
 void RestoreDisplayMode()
 {
     ChangeDisplaySettings(0, 0);
+}
+
+
+static bool ToggleMenuItem(HMENU menu, int id)
+{
+    MENUITEMINFO menuInfo;
+    menuInfo.cbSize = sizeof(MENUITEMINFO);
+    menuInfo.fMask = MIIM_STATE;
+    if (GetMenuItemInfo(menu, id, FALSE, &menuInfo))
+    {
+        bool isChecked = ((menuInfo.fState & MFS_CHECKED) != 0);
+        CheckMenuItem(menu, id, isChecked ? MF_UNCHECKED : MF_CHECKED);
+        return !isChecked;
+    }
+    return false;
 }
 
 
@@ -678,6 +704,148 @@ static void syncMenusWithRendererState()
 }
 
 
+class WinAlerter : public CelestiaCore::Alerter
+{
+private:
+    HWND hwnd;
+
+public:
+    WinAlerter() : hwnd(NULL) {};
+    ~WinAlerter() {};
+
+    void fatalError(const std::string& msg)
+    {
+	MessageBox(NULL,
+                   msg.c_str(),
+                   "Fatal Error",
+                   MB_OK | MB_ICONERROR);
+    }
+};
+
+
+static bool GetRegistryInt(HKEY key, LPTSTR value, int& intVal)
+{
+    DWORD type;
+    DWORD data;
+    DWORD count = 4;
+    
+    LONG err = RegQueryValueEx(key,
+                               value,
+                               NULL,
+                               &type,
+                               reinterpret_cast<LPBYTE>(&data),
+                               &count);
+    if (err != ERROR_SUCCESS || type != REG_DWORD)
+    {
+        cout << "Error: " << err << '\n';
+        return false;
+    }
+
+    intVal = (int) data;
+
+    return true;
+}
+
+
+static bool SetRegistryInt(HKEY key, LPCTSTR value, int intVal)
+{
+    LONG err = RegSetValueEx(key,
+                             value,
+                             NULL,
+                             REG_DWORD,
+                             reinterpret_cast<CONST BYTE*>(&intVal),
+                             4);
+    return err == ERROR_SUCCESS;
+}
+
+
+static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
+{
+    LONG err;
+    HKEY key;
+
+#if 0    
+    err = RegOpenKeyEx(HKEY_CURRENT_USER,
+                       regkey,
+                       0,
+                       KEY_ALL_ACCESS,
+                       &key);
+#endif
+    DWORD disposition;
+    err = RegCreateKeyEx(HKEY_CURRENT_USER,
+                         regkey,
+                         0,
+                         NULL,
+                         REG_OPTION_NON_VOLATILE,
+                         KEY_ALL_ACCESS,
+                         NULL,
+                         &key,
+                         &disposition);
+    if (err  != ERROR_SUCCESS)
+    {
+        cout << "Error opening registry key: " << err << '\n';
+        return false;
+    }
+    cout << "Opened registry key\n";
+
+    GetRegistryInt(key, "Width", prefs.winWidth);
+    GetRegistryInt(key, "Height", prefs.winHeight);
+    GetRegistryInt(key, "XPos", prefs.winX);
+    GetRegistryInt(key, "YPos", prefs.winY);
+
+    RegCloseKey(key);
+
+    return true;
+}
+
+
+static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
+{
+    LONG err;
+    HKEY key;
+
+    cout << "Saving preferences . . .\n";
+    err = RegOpenKeyEx(HKEY_CURRENT_USER,
+                       regkey,
+                       0,
+                       KEY_ALL_ACCESS,
+                       &key);
+    if (err  != ERROR_SUCCESS)
+    {
+        cout << "Error opening registry key: " << err << '\n';
+        return false;
+    }
+    cout << "Opened registry key\n";
+
+    SetRegistryInt(key, "Width", prefs.winWidth);
+    SetRegistryInt(key, "Height", prefs.winHeight);
+    SetRegistryInt(key, "XPos", prefs.winX);
+    SetRegistryInt(key, "YPos", prefs.winY);
+
+    RegCloseKey(key);
+
+    return true;
+}
+
+
+static bool GetCurrentPreferences(AppPreferences& prefs)
+{
+    WINDOWPLACEMENT placement;
+
+    placement.length = sizeof(placement);
+    if (!GetWindowPlacement(mainWindow, &placement))
+        return false;
+
+    RECT rect = placement.rcNormalPosition;
+    prefs.winX = rect.left;
+    prefs.winY = rect.top;
+    prefs.winWidth = rect.right - rect.left;
+    prefs.winHeight = rect.bottom - rect.top;
+
+    return true;
+}
+
+
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR     lpCmdLine,
@@ -687,6 +855,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     bReady = false;
 
     appInstance = hInstance;
+
+    AppPreferences prefs;
+    prefs.winWidth = 800;
+    prefs.winHeight = 600;
+    prefs.winX = CW_USEDEFAULT;
+    prefs.winY = CW_USEDEFAULT;
+    LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
 
     // Setup the window class.
     WNDCLASS wc;
@@ -725,6 +900,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return false;
     }
 
+    appCore->setAlerter(new WinAlerter());
+
     if (!appCore->initSimulation())
     {
         return 1;
@@ -739,8 +916,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	hWnd = CreateWindow(AppName,
 			    AppName,
 			    WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN|WS_CLIPSIBLINGS,
-			    CW_USEDEFAULT, CW_USEDEFAULT,
-			    800, 600,
+                            prefs.winX, prefs.winY,
+			    prefs.winWidth, prefs.winHeight,
 			    NULL,
                             menuBar,
 			    hInstance,
@@ -1129,6 +1306,26 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case ID_TIME_SETTIME:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_SETTIME), hWnd, SetTimeProc);
             break;
+        case ID_TIME_SHOWLOCAL:
+            if (ToggleMenuItem(menuBar, ID_TIME_SHOWLOCAL))
+            {
+                TIME_ZONE_INFORMATION tzi;
+                DWORD dst = GetTimeZoneInformation(&tzi);
+                if (dst != TIME_ZONE_ID_INVALID)
+                {
+                    LONG dstBias = 0;
+                    if (dst == TIME_ZONE_ID_STANDARD)
+                        dstBias = tzi.StandardBias;
+                    else if (dst == TIME_ZONE_ID_DAYLIGHT)
+                        dstBias = tzi.DaylightBias;
+                    appCore->setTimeZoneBias((tzi.Bias + dstBias) * -60);
+                }
+            }
+            else
+            {
+                appCore->setTimeZoneBias(0);
+            }
+            break;
 
         case ID_LOCATIONS_ADDLOCATION:
             DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDLOCATION), hWnd, AddLocationProc);
@@ -1155,6 +1352,13 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_FILE_EXIT:
+            {
+                AppPreferences prefs;
+                if (GetCurrentPreferences(prefs))
+                {
+                    SavePreferencesToRegistry(CelestiaRegKey, prefs);
+                }
+            }
 	    DestroyWindow(hWnd);
             break;
 
