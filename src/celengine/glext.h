@@ -9,6 +9,12 @@
 #define APIENTRY
 #endif
 
+#ifndef GL_ARB_shader_objects
+/* GL types for handling shader object handles and characters */
+typedef char GLcharARB;		/* native character */
+typedef unsigned int GLhandleARB;	/* shader object handle */
+#endif
+
 /* EXT_rescale_normal defines from <GL/gl.h> */
 #ifndef GL_EXT_rescale_normal
 #define GL_EXT_rescale_normal 1
@@ -924,6 +930,18 @@ namespace glx
 #define GL_OBJECT_ACTIVE_ATTRIBUTES_ARB   0x8B89
 #define GL_OBJECT_ACTIVE_ATTRIBUTE_MAX_LENGTH_ARB 0x8B8A
 #endif
+
+namespace glx
+{
+    typedef void (APIENTRY* PFNGLBINDATTRIBLOCATIONARBPROC) (GLhandleARB programObj, GLuint index, const GLcharARB *name);
+    typedef void (APIENTRY* PFNGLGETACTIVEATTRIBARBPROC) (GLhandleARB programObj, GLuint index, GLsizei maxLength, GLsizei *length, GLint *size, GLenum *type, GLcharARB *name);
+    typedef GLint (APIENTRY* PFNGLGETATTRIBLOCATIONARBPROC) (GLhandleARB programObj, const GLcharARB *name);
+
+    extern PFNGLBINDATTRIBLOCATIONARBPROC glBindAttribLocationARB;
+    extern PFNGLGETACTIVEATTRIBARBPROC glGetActiveAttribARB;
+    extern PFNGLGETATTRIBLOCATIONARBPROC glGetAttribLocationARB;
+};
+
 
 #ifndef GL_ARB_fragment_shader
 #define GL_ARB_fragment_shader 1

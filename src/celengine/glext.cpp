@@ -221,6 +221,11 @@ glx::PFNGLUNMAPBUFFERARBPROC               glx::glUnmapBufferARB;
 glx::PFNGLGETBUFFERPARAMETERIVARBPROC      glx::glGetBufferParameterivARB;
 glx::PFNGLGETBUFFERPOINTERVARBPROC         glx::glGetBufferPointervARB;
 
+// ARB_vertex_shader function pointers
+glx::PFNGLBINDATTRIBLOCATIONARBPROC        glx::glBindAttribLocationARB;
+glx::PFNGLGETACTIVEATTRIBARBPROC           glx::glGetActiveAttribARB;
+glx::PFNGLGETATTRIBLOCATIONARBPROC         glx::glGetAttribLocationARB;
+
 // ARB_shader_objects function pointers
 glx::PFNGLDELETEOBJECTARBPROC              glx::glDeleteObjectARB;
 glx::PFNGLGETHANDLEARBPROC                 glx::glGetHandleARB;
@@ -751,6 +756,16 @@ static void InitExt_ARB_vertex_buffer_object()
 }
 
 
+static void InitExt_ARB_vertex_shader()
+{
+#if defined(GET_GL_PROC_ADDRESS)
+    glx::glBindAttribLocationARB = (glx::PFNGLBINDATTRIBLOCATIONARBPROC) GET_GL_PROC_ADDRESS("glBindAttribLocationARB");
+    glx::glGetActiveAttribARB = (glx::PFNGLGETACTIVEATTRIBARBPROC) GET_GL_PROC_ADDRESS("glGetActiveAttribARB");
+    glx::glGetAttribLocationARB = (glx::PFNGLGETATTRIBLOCATIONARBPROC) GET_GL_PROC_ADDRESS("glGetAttribLocationARB");
+#endif
+}
+
+
 static void InitExt_ARB_shader_objects()
 {
 #if defined(GET_GL_PROC_ADDRESS)
@@ -796,6 +811,7 @@ static void InitExt_ARB_shader_objects()
 #endif
 }
 
+
 void InitExtension(const char* ext)
 {
     if (!strcmp(ext, "GL_NV_fragment_program"))
@@ -820,6 +836,8 @@ void InitExtension(const char* ext)
         InitExt_EXT_paletted_texture();
     else if (!strcmp(ext, "GL_ARB_shader_objects"))
         InitExt_ARB_shader_objects();
+    else if (!strcmp(ext, "GL_ARB_vertex_shader"))
+        InitExt_ARB_vertex_shader();
     else if (!strcmp(ext, "WGL_EXT_swap_control"))
         InitExt_EXT_swap_control();
 }
