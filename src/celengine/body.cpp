@@ -34,7 +34,7 @@ RotationElements::RotationElements() :
 
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
-    orbitFrame(astro::Equatorial),
+    orbitRefPlane(astro::BodyEquator),
     oblateness(0),
     orientation(1.0f),
     // Ugh.  Numeric_limits class is missing from g++
@@ -97,25 +97,17 @@ void Body::setOrbit(Orbit* _orbit)
 }
 
 
-astro::CoordinateSystem Body::getOrbitFrame() const
+astro::ReferencePlane Body::getOrbitReferencePlane() const
 {
-    return orbitFrame;
+    return orbitRefPlane;
 }
 
 
-void Body::setOrbitFrame(astro::CoordinateSystem _orbitFrame)
+void Body::setOrbitReferencePlane(astro::ReferencePlane refPlane)
 {
-    switch (_orbitFrame)
-    {
-    case astro::Equatorial:
-    case astro::Ecliptical:
-    case astro::Geographic:
-        orbitFrame = _orbitFrame;
-        break;
-    default:
-        assert(0);
-    }
+    orbitRefPlane = refPlane;
 }
+
 
 float Body::getRadius() const
 {
@@ -268,10 +260,24 @@ Mat4d Body::getLocalToHeliocentric(double when) const
         rotationElements.precessionRate * (when - astro::J2000);
 
     Point3d pos = orbit->positionAtTime(when);
-    Mat4d frame = 
-        Mat4d::xrotation(-rotationElements.obliquity) *
-        Mat4d::yrotation(-ascendingNode) *
-        Mat4d::translation(pos);
+    Mat4d frame;
+
+    switch (orbitRefPlane)
+    {
+    case astro::BodyEquator:
+        frame = (Mat4d::xrotation(-rotationElements.obliquity) *
+                 Mat4d::yrotation(-ascendingNode) *
+                 Mat4d::translation(pos));
+        break;
+    case astro::Ecliptic_J2000:
+        frame = Mat4d::translation(pos);
+        break;
+    case astro::Equator_J2000:
+        frame = Mat4d::translation(pos);
+        break;
+    default:
+        assert(0);
+    }
  
     // Recurse up the hierarchy . . .
     if (system != NULL && system->getPrimaryBody() != NULL)
@@ -305,7 +311,7 @@ Quatd Body::getEclipticalToEquatorial(double when) const
 }
 
 
-Quatd Body::getEclipticalToGeographic(double when)
+Quatd Body::getEclipticalToGeographic(double when) const
 {
     return getEquatorialToGeographic(when) * getEclipticalToEquatorial(when);
 }
@@ -316,7 +322,7 @@ Quatd Body::getEclipticalToGeographic(double when)
 // meridian, and z-axis at a right angle the xy plane.  An object with
 // constant geographic coordinates will thus remain fixed with respect
 // to a point on the surface of the body.
-Quatd Body::getEquatorialToGeographic(double when)
+Quatd Body::getEquatorialToGeographic(double when) const
 {
     double t = when - rotationElements.epoch;
     double rotations = t / (double) rotationElements.period;
@@ -334,7 +340,7 @@ Quatd Body::getEquatorialToGeographic(double when)
 }
 
 
-Mat4d Body::getGeographicToHeliocentric(double when)
+Mat4d Body::getGeographicToHeliocentric(double when) const
 {
     return getEquatorialToGeographic(when).toMatrix4() *
         getLocalToHeliocentric(when);

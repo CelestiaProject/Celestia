@@ -66,12 +66,13 @@ class OrbitSampleProc
 
 
 
-// Custom orbit classes should be derived from CachingOrbit.  The custom
-// orbits can be expensive to compute, with more than 50 periodic terms.
-// Celestia may need require position of a planet more than once per frame; in
-// order to avoid redundant calculation, the CachingOrbit class saves the
-// result of the last calculation and uses it if the time matches the cached
-// time.
+/*! Custom orbit classes should be derived from CachingOrbit.  The custom
+ * orbits can be expensive to compute, with more than 50 periodic terms.
+ * Celestia may need require position of a planet more than once per frame; in
+ * order to avoid redundant calculation, the CachingOrbit class saves the
+ * result of the last calculation and uses it if the time matches the cached
+ * time.
+ */
 class CachingOrbit : public Orbit
 {
 public:
@@ -91,7 +92,12 @@ private:
 };
 
 
-
+/*! A mixed orbit is a composite orbit, typically used when you have a
+ *  custom orbit calculation that is only valid over limited span of time.
+ *  When a mixed orbit is constructed, it computes elliptical orbits
+ *  to approximate the behavior of the primary orbit before and after the
+ *  span over which it is valid.
+ */
 class MixedOrbit : public Orbit
 {
  public:
@@ -110,6 +116,30 @@ class MixedOrbit : public Orbit
     double begin;
     double end;
     double boundingRadius;
+};
+
+
+class Body;
+
+/*! An object in a synchronous orbit will always hover of the same spot on
+ *  the surface of the body it orbits.  Only equatorial orbits of a certain
+ *  radius are stable in the real world.  In Celestia, synchronous orbits are
+ *  a convenient way to fix objects to a planet surface.
+ */
+class SynchronousOrbit : public Orbit
+{
+ public:
+    SynchronousOrbit(const Body& _body, const Point3d& _position);
+    virtual ~SynchronousOrbit();
+
+    Point3d positionAtTime(double jd) const;
+    virtual double getPeriod() const;
+    virtual double getBoundingRadius() const;
+    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
+
+ private:
+    const Body& body;
+    Point3d position;
 };
 
 

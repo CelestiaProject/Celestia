@@ -112,8 +112,8 @@ class Body
     void setName(const std::string);
     Orbit* getOrbit() const;
     void setOrbit(Orbit*);
-    astro::CoordinateSystem getOrbitFrame() const;
-    void setOrbitFrame(astro::CoordinateSystem);
+    astro::ReferencePlane getOrbitReferencePlane() const;
+    void setOrbitReferencePlane(astro::ReferencePlane);
     RotationElements getRotationElements() const;
     void setRotationElements(const RotationElements&);
     float getRadius() const;
@@ -157,10 +157,10 @@ class Body
 
     Mat4d getLocalToHeliocentric(double) const;
     Point3d getHeliocentricPosition(double) const;
-    Quatd getEquatorialToGeographic(double);
+    Quatd getEquatorialToGeographic(double) const;
     Quatd getEclipticalToEquatorial(double) const;
-    Quatd getEclipticalToGeographic(double);
-    Mat4d getGeographicToHeliocentric(double);
+    Quatd getEclipticalToGeographic(double) const;
+    Mat4d getGeographicToHeliocentric(double) const;
 
     Vec3f planetocentricToCartesian(float lon, float lat, float alt) const;
     Vec3f planetocentricToCartesian(const Vec3f& lonLatAlt) const;
@@ -184,7 +184,7 @@ class Body
 
     PlanetarySystem* system;
     Orbit* orbit;
-    astro::CoordinateSystem orbitFrame;
+    astro::ReferencePlane orbitRefPlane;
     RotationElements rotationElements;
 
     float radius;

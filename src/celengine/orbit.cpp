@@ -15,6 +15,7 @@
 #include <celmath/solve.h>
 #include "astro.h"
 #include "orbit.h"
+#include "body.h"
 
 using namespace std;
 
@@ -390,3 +391,41 @@ void MixedOrbit::sample(double t0, double t1, int nSamples,
 }
 
 
+
+SynchronousOrbit::SynchronousOrbit(const Body& _body,
+                                   const Point3d& _position) :
+    body(_body),
+    position(_position)
+{
+}
+
+
+SynchronousOrbit::~SynchronousOrbit()
+{
+}
+
+
+Point3d SynchronousOrbit::positionAtTime(double jd) const
+{
+    //Quatd q = body.getEclipticalToGeographic(jd);
+    Quatd q = body.getEquatorialToGeographic(jd);
+    return position * q.toMatrix3();
+}
+
+
+double SynchronousOrbit::getPeriod() const
+{
+    return body.getRotationElements().period;
+}
+
+
+double SynchronousOrbit::getBoundingRadius() const
+{
+    return position.distanceFromOrigin();
+}
+
+
+void SynchronousOrbit::sample(double, double, int, OrbitSampleProc&) const
+{
+    // Empty method--we never want to show a synchronous orbit.
+}
