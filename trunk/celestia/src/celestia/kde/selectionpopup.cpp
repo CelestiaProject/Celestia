@@ -48,14 +48,14 @@ void SelectionPopup::init()
     Simulation *sim = appCore->getSimulation();
     Vec3d v = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
 
-    if (sel.body != NULL)
+    if (sel.body() != NULL)
     {
-        insertTitle(sel.body->getName().c_str(), 0, 0);
+        insertTitle(sel.body()->getName().c_str(), 0, 0);
         insert(this, sel, MENUMAXSIZE);
     }
-    else if (sel.star != NULL)
+    else if (sel.star() != NULL)
     {
-        std::string name = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star);
+        std::string name = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
 
         double distance = v.length() * 1e-6;
         char buff[50];
@@ -76,21 +76,21 @@ void SelectionPopup::init()
         o << i18n("Abs (app) mag: ");
 
         sprintf(buff, "%.2f (%.2f)",
-                   sel.star->getAbsoluteMagnitude(),
-                   astro::absToAppMag(sel.star->getAbsoluteMagnitude(),
+                   sel.star()->getAbsoluteMagnitude(),
+                   astro::absToAppMag(sel.star()->getAbsoluteMagnitude(),
                                       (float) distance));
         o << buff << "\n";
 
         o << i18n("Class: ");
-        sprintf(buff, "%s", sel.star->getStellarClass().str().c_str());
+        sprintf(buff, "%s", sel.star()->getStellarClass().str().c_str());
         o << buff << "\n";
 
         o << i18n("Surface Temp: ");
-        sprintf(buff, "%.0f K", sel.star->getTemperature());
+        sprintf(buff, "%.0f K", sel.star()->getTemperature());
         o << buff << "\n";
 
         o << i18n("Radius: ");
-        sprintf(buff, "%.2f Rsun", sel.star->getRadius() / 696000.0f);
+        sprintf(buff, "%.2f Rsun", sel.star()->getRadius() / 696000.0f);
         o << buff;
 
         QLabel *starDetails = new QLabel(QString(o.str().c_str()), this);
@@ -102,9 +102,9 @@ void SelectionPopup::init()
         insertSeparator();
         insert(this, sel, MENUMAXSIZE);
     }
-    else if (sel.deepsky != NULL)
+    else if (sel.deepsky() != NULL)
     {
-        insertTitle(sel.deepsky->getName().c_str(), 0);
+        insertTitle(sel.deepsky()->getName().c_str(), 0);
         insert(this, sel, MENUMAXSIZE);
     }
 
@@ -188,22 +188,22 @@ void SelectionPopup::process(int id)
     }
     if (actionId == 6) {
         QString url;
-        if (sel.body != NULL) {
-            url = QString(sel.body->getInfoURL().c_str());
+        if (sel.body() != NULL) {
+            url = QString(sel.body()->getInfoURL().c_str());
             if (url == "") {
-                QString name = QString(sel.body->getName().c_str()).lower();
+                QString name = QString(sel.body()->getName().c_str()).lower();
                 url = QString("http://www.nineplanets.org/") + name + ".html";
             }
-        } else if (sel.star != NULL) {
-            if (sel.star->getCatalogNumber() != 0) {
+        } else if (sel.star() != NULL) {
+            if (sel.star()->getCatalogNumber() != 0) {
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=HIP %1")
-                      .arg(sel.star->getCatalogNumber() & ~0xf0000000);
+                      .arg(sel.star()->getCatalogNumber() & ~0xf0000000);
             } else {
                 url = QString("http://www.nineplanets.org/sun.html");
             }
-        } else if (sel.deepsky != NULL) {
+        } else if (sel.deepsky() != NULL) {
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=%1")
-                      .arg(sel.deepsky->getName().c_str());
+                      .arg(sel.deepsky()->getName().c_str());
         }
         KRun::runURL(url, "text/html");
         return;
@@ -236,7 +236,7 @@ void SelectionPopup::process(int id)
         return;
     }
     if (actionId > 20) {
-        std::vector<std::string>* altSurfaces = sel.body->getAlternateSurfaceNames();
+        std::vector<std::string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
         if (altSurfaces != NULL && altSurfaces->size() > actionId - 21)
         {
             sim->getActiveObserver()->setDisplayedSurface((*altSurfaces)[actionId - 21]);
@@ -246,18 +246,18 @@ void SelectionPopup::process(int id)
 
 const char* SelectionPopup::getSelectionName(const Selection& sel) const
 {
-    if (sel.body != NULL)
+    if (sel.body() != NULL)
     {
-        return sel.body->getName().c_str();
+        return sel.body()->getName().c_str();
     }
-    else if (sel.star != NULL)
+    else if (sel.star() != NULL)
     {
         Simulation *sim = appCore->getSimulation();
-        return sim->getUniverse()->getStarCatalog()->getStarName(*sel.star).c_str();
+        return sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star())).c_str();
     }
-    else if (sel.deepsky != NULL)
+    else if (sel.deepsky() != NULL)
     {
-        return sel.deepsky->getName().c_str();
+        return sel.deepsky()->getName().c_str();
     }
 
     return "";
@@ -276,9 +276,9 @@ Selection SelectionPopup::getSelectionFromId(Selection sel, int id) const
     subId -= id * level;
     if (subId < 0) subId = 0;
 
-    if (sel.body != NULL)
+    if (sel.body() != NULL)
     {
-        const PlanetarySystem* satellites = sel.body->getSatellites();
+        const PlanetarySystem* satellites = sel.body()->getSatellites();
         if (satellites != NULL && satellites->getSystemSize() != 0)
         {
             Body* body = satellites->getBody(id - 1);
@@ -286,11 +286,11 @@ Selection SelectionPopup::getSelectionFromId(Selection sel, int id) const
             return getSelectionFromId(satSel, subId);
         }
     }
-    else if (sel.star != NULL)
+    else if (sel.star() != NULL)
     {
         Simulation *sim = appCore->getSimulation();
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
         {
             SolarSystem* solarSys = iter->second;
@@ -327,7 +327,7 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
         popup->insertItem(i18n("&Mark"), markMenu);
     }
 
-    if (showSubObjects && sel.body != NULL)
+    if (showSubObjects && sel.body() != NULL)
     {
         std::vector<std::string>* altSurfaces = sel.body->getAlternateSurfaceNames();
         if (altSurfaces != NULL)
@@ -347,7 +347,7 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
             delete altSurfaces;
         }
 
-        const PlanetarySystem* satellites = sel.body->getSatellites();
+        const PlanetarySystem* satellites = sel.body()->getSatellites();
         if (satellites != NULL && satellites->getSystemSize() != 0)
         {
             popup->insertSeparator();
@@ -363,12 +363,12 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
             popup->insertItem(i18n("Satellites"), planetaryMenu);
         }
     }
-    else if (showSubObjects && sel.star != NULL)
+    else if (showSubObjects && sel.star() != NULL)
     {
         popup->setItemEnabled(baseId + 5, false);
         Simulation *sim = appCore->getSimulation();
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star->getCatalogNumber());
+        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
         {
             popup->insertSeparator();
@@ -385,7 +385,7 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
             popup->insertItem(i18n("Planets"), planetsMenu);
         }
     }
-    else if (sel.deepsky != NULL)
+    else if (sel.deepsky() != NULL)
     {
         popup->setItemEnabled(baseId + 5, false);
     }
