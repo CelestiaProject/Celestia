@@ -2,7 +2,7 @@
 //
 // Why is this file necessary?  Because Microsoft requires us to include
 // windows.h before including the GL headers, even though GL is a
-// cross-platform API.  So, we encapsulate the resulting ifdef nonsense
+// cross-platform API.  So, we encapsulate the resulting #ifdef nonsense
 // in this file.
 // 
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
@@ -15,6 +15,8 @@
 #ifndef _GL_H_
 #define _GL_H_
 
+#ifdef _WIN32
+
 #ifdef _MSC_VER
 #if _MSC_VER > 1000
 #pragma once
@@ -24,6 +26,8 @@
 
 #include <windows.h>
 #endif // _MSC_VER
+
+#endif
 
 #include <GL/gl.h>
 #include <GL/glu.h>
