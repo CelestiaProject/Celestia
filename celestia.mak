@@ -52,6 +52,7 @@ CLEAN :
 	-@erase "$(INTDIR)\command.obj"
 	-@erase "$(INTDIR)\configfile.obj"
 	-@erase "$(INTDIR)\constellation.obj"
+	-@erase "$(INTDIR)\customorbit.obj"
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\destination.obj"
 	-@erase "$(INTDIR)\dispmap.obj"
@@ -156,6 +157,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\command.obj" \
 	"$(INTDIR)\configfile.obj" \
 	"$(INTDIR)\constellation.obj" \
+	"$(INTDIR)\customorbit.obj" \
 	"$(INTDIR)\debug.obj" \
 	"$(INTDIR)\destination.obj" \
 	"$(INTDIR)\dispmap.obj" \
@@ -231,6 +233,7 @@ CLEAN :
 	-@erase "$(INTDIR)\command.obj"
 	-@erase "$(INTDIR)\configfile.obj"
 	-@erase "$(INTDIR)\constellation.obj"
+	-@erase "$(INTDIR)\customorbit.obj"
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\destination.obj"
 	-@erase "$(INTDIR)\dispmap.obj"
@@ -339,6 +342,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\command.obj" \
 	"$(INTDIR)\configfile.obj" \
 	"$(INTDIR)\constellation.obj" \
+	"$(INTDIR)\customorbit.obj" \
 	"$(INTDIR)\debug.obj" \
 	"$(INTDIR)\destination.obj" \
 	"$(INTDIR)\dispmap.obj" \
@@ -481,6 +485,12 @@ SOURCE=.\src\configfile.cpp
 SOURCE=.\src\constellation.cpp
 
 "$(INTDIR)\constellation.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\customorbit.cpp
+
+"$(INTDIR)\customorbit.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
