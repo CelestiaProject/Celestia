@@ -30,6 +30,7 @@
 #define IDD_RENAME_BOOKMARK             130
 #define IDD_COMPUTEECLIPSES             131
 #define IDD_ECLIPSEFINDER               132
+#define IDC_CROSSHAIR                   134
 #define IDB_FOLDERCLOSED                532
 #define IDB_FOLDEROPENED                534
 #define IDB_BOOKMARK                    536
@@ -197,9 +198,10 @@
 #define ID_BOOKMARKS_FIRSTBOOKMARK      41000
 
 // Next default values for new objects
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         40083
 #define _APS_NEXT_CONTROL_VALUE         1152
 #define _APS_NEXT_SYMED_VALUE           101
