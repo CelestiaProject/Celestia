@@ -21,9 +21,6 @@
 using namespace std;
 
 
-#define MAX_STARS 120000
-
-
 static string HDCatalogPrefix("HD ");
 static string HIPPARCOSCatalogPrefix("HIP ");
 static string GlieseCatalogPrefix("Gliese ");
@@ -37,7 +34,6 @@ static const float OctreeMagnitude = 6.0f;
 StarDatabase::StarDatabase() : nStars(0),
                                stars(NULL),
                                names(NULL),
-                               catalogNumberIndex(NULL),
                                octreeRoot(NULL)
 {
 }
@@ -46,34 +42,45 @@ StarDatabase::~StarDatabase()
 {
     if (stars != NULL)
 	delete [] stars;
-    if (catalogNumberIndex != NULL)
-        delete [] catalogNumberIndex;
+
+    for (int i = 0; i < Star::CatalogCount; i++)
+    {
+        if (catalogNumberIndexes[i] != NULL)
+            delete [] catalogNumberIndexes[i];
+    }
 }
 
 
-// Less than operator for stars is used to sort and find stars by catalog
-// number
-bool operator<(const StarRecord& a,
-               const StarRecord& b)
+// Used to sort stars by catalog number
+struct CatalogNumberPredicate
 {
-    return a.star->getCatalogNumber() < b.star->getCatalogNumber();
-}
+    int which;
 
-bool operator<(StarRecord& s, uint32 n)
+    CatalogNumberPredicate(int _which) : which(0) {};
+
+    bool operator()(const Star* const & star0, const Star* const & star1) const
+    {
+        return (star0->getCatalogNumber(which) < star1->getCatalogNumber(which));
+    }
+};
+
+
+Star* StarDatabase::find(uint32 catalogNumber, unsigned int whichCatalog) const
 {
-    return s.star->getCatalogNumber() < n;
-}
+    // assert(whichCatalog < Star::CatalogCount);
+    Star refStar;
+    refStar.setCatalogNumber(catalogNumber);
 
+    CatalogNumberPredicate pred(whichCatalog);
+    Star** star = lower_bound(catalogNumberIndexes[whichCatalog],
+                              catalogNumberIndexes[whichCatalog] + nStars,
+                              &refStar, pred);
 
-Star* StarDatabase::find(uint32 catalogNumber) const
-{
-    StarRecord* star = lower_bound(catalogNumberIndex, catalogNumberIndex + nStars,
-                                   catalogNumber);
-    if (star != catalogNumberIndex + nStars &&
-        star->star->getCatalogNumber() == catalogNumber)
-        return star->star;
+    if (star != catalogNumberIndexes[whichCatalog] + nStars &&
+        (*star)->getCatalogNumber(whichCatalog) == catalogNumber)
+        return *star;
     else
-        return NULL;                           
+        return NULL;
 }
 
 
@@ -95,15 +102,28 @@ Star* StarDatabase::find(string name) const
         // Search by catalog number
         uint32 catalogNumber = (uint32) atoi(string(name, HDCatalogPrefix.length(),
                                                     string::npos).c_str());
-        return find(catalogNumber);
-    }
-    else if (compareIgnoringCase(name, HIPPARCOSCatalogPrefix, HIPPARCOSCatalogPrefix.length()) == 0)
+        return find(catalogNumber, 1);
+    } else if (compareIgnoringCase(name, HIPPARCOSCatalogPrefix, HIPPARCOSCatalogPrefix.length()) == 0)
     {
-        uint32 catalogNumber = (uint32) atoi(string(name, HIPPARCOSCatalogPrefix.length(), string::npos).c_str()) | 0x10000000;
-        return find(catalogNumber);
+        uint32 catalogNumber = (uint32) atoi(string(name, HIPPARCOSCatalogPrefix.length(), string::npos).c_str());
+        return find(catalogNumber, 0);
     }
     else
     {
+#if 0
+        // Search through the catalog cross references
+        {
+            for (vector<CatalogCrossReference*>::const_iterator iter = catalogs->begin();
+                 iter != catalogs->end(); iter++)
+            {
+                Star* star = (*iter)->lookup(name);
+                if (star != NULL)
+                    return star;
+            }
+        }
+#endif
+
+#if 0
         string conAbbrev;
         string designation;
 
@@ -134,54 +154,97 @@ Star* StarDatabase::find(string name) const
                 }
             }
         }
+#endif
+        if (names != NULL)
+        {
+            // See if the name is a Bayer or Flamsteed designation
+            {
+                string::size_type pos = name.find(' ');
+                if (pos != 0 && pos != string::npos && pos < name.length() - 1)
+                {
+                    string prefix(name, 0, pos);
+                    string conName(name, pos + 1, string::npos);
+                    Constellation* con = Constellation::getConstellation(conName);
+                    if (con != NULL)
+                    {
+                        // We have a valid constellation as the last part
+                        // of the name.  Next, we see if the first part of
+                        // the name is a greek letter.
+                        const string& letter = Greek::canonicalAbbreviation(prefix);
+                        if (letter != "")
+                        {
+                            // Matched . . . this is a Bayer designation
+                            name = letter + ' ' + con->getAbbreviation();
+                        }
+                        else
+                        {
+                            // Something other than a Bayer designation
+                            name = prefix + ' ' + con->getAbbreviation();
+                        }
+                    }
+                }
+            }
+
+            uint32 catalogNumber = names->findCatalogNumber(name);
+            if (catalogNumber != Star::InvalidCatalogNumber)
+                return find(catalogNumber, Star::HIPCatalog);
+        }
 
         return NULL;
     }
 }
 
 
-// Return the name for the star with specified catalog number.  The returned string
-// will be:
+// Return the name for the star with specified catalog number.  The returned
+// string will be:
 //      the common name if it exists, otherwise
 //      the Bayer or Flamsteed designation if it exists, otherwise
 //      the HD catalog number if it exists, otherwise
 //      the HIPPARCOS catalog number.
-string StarDatabase::getStarName(uint32 catalogNumber) const
+//
+// CAREFUL:
+// If the star name is not present int the names database, a new
+// string is constructed to contain the catalog number--keep in
+// mind that calling this method could possibly incur the overhead
+// of a memory allocation (though no explcit deallocation is
+// required as it's all wrapped in the string class.)
+string StarDatabase::getStarName(const Star& star) const
 {
-    StarNameDatabase::iterator iter = names->find(catalogNumber);
-    if (iter != names->end())
+    uint32 catalogNumber = star.getCatalogNumber();
+
+    if (names != NULL)
     {
-        StarName* starName = iter->second;
-
-        if (starName->getName() != "")
-            return starName->getName();
-
-        Constellation* constellation = starName->getConstellation();
-        if (constellation != NULL)
+        StarNameDatabase::NumberIndex::const_iterator iter = getStarNames(catalogNumber);
+        if (iter != finalName() && iter->first == catalogNumber)
         {
-            string name = starName->getDesignation();
-            name += ' ';
-            name += constellation->getGenitive();
-            return name;
+            return iter->second;
         }
     }
 
     char buf[20];
-    switch ((catalogNumber & 0xf0000000) >> 28)
-    {
-    case 0:
-        sprintf(buf, "HD %d", catalogNumber);
-        break;
-    case 1:
-        sprintf(buf, "HIP %d", catalogNumber & 0x0fffffff);
-        break;
-    default:
-        sprintf(buf, "? %d", catalogNumber & 0x0fffffff);
-        break;
-    }
-
+    if (star.getCatalogNumber(Star::HDCatalog) != Star::InvalidCatalogNumber)
+        sprintf(buf, "HD %d", star.getCatalogNumber(Star::HDCatalog));
+    else
+        sprintf(buf, "HIP %d", catalogNumber);
     return string(buf);
 }
+
+
+StarNameDatabase::NumberIndex::const_iterator
+StarDatabase::getStarNames(uint32 catalogNumber) const
+{
+    // assert(names != NULL);
+    return names->findFirstName(catalogNumber);
+}
+
+
+StarNameDatabase::NumberIndex::const_iterator
+StarDatabase::finalName() const
+{
+    // assert(names != NULL);
+    return names->finalName();
+}
+
 
 
 void StarDatabase::findVisibleStars(StarHandler& starHandler,
@@ -233,6 +296,12 @@ void StarDatabase::setNameDatabase(StarNameDatabase* _names)
 }
 
 
+void StarDatabase::addCrossReference(const CatalogCrossReference* xref)
+{
+    catalogs.insert(catalogs.end(), xref);
+}
+
+
 StarDatabase *StarDatabase::read(istream& in)
 {
     StarDatabase *db = new StarDatabase();
@@ -261,12 +330,14 @@ StarDatabase *StarDatabase::read(istream& in)
     while (db->nStars < nStars)
     {
 	uint32 catNo = 0;
+        uint32 hdCatNo = 0;
 	float RA = 0, dec = 0, parallax = 0;
 	int16 appMag;
 	uint16 stellarClass;
 	uint8 parallaxError;
 
 	in.read((char *) &catNo, sizeof catNo);
+        in.read((char *) &hdCatNo, sizeof hdCatNo);
 	in.read((char *) &RA, sizeof RA);
 	in.read((char *) &dec, sizeof dec);
 	in.read((char *) &parallax, sizeof parallax);
@@ -293,7 +364,8 @@ StarDatabase *StarDatabase::read(istream& in)
 			(StellarClass::LuminosityClass) (stellarClass & 0xf));
 	star->setStellarClass(sc);
 
-	star->setCatalogNumber(catNo);
+	star->setCatalogNumber(Star::HIPCatalog, catNo);
+        star->setCatalogNumber(Star::HDCatalog, hdCatNo);
 
 	// Use a photometric estimate of distance if parallaxError is
 	// greater than 25%.
@@ -359,108 +431,21 @@ void StarDatabase::buildOctree()
 void StarDatabase::buildIndexes()
 {
     // This should only be called once for the database
-    // ASSERT(catalogNumberIndex == NULL);
+    // assert(catalogNumberIndexes[0] == NULL);
 
-    cout << "Building catalog number index . . .\n";
+    cout << "Building catalog number indexes . . .\n";
     cout.flush();
 
-    catalogNumberIndex = new StarRecord[nStars];
-    for (int i = 0; i < nStars; i++)
-        catalogNumberIndex[i].star = &stars[i];
-    sort(catalogNumberIndex, catalogNumberIndex + nStars);
-}
-
-
-StarNameDatabase* StarDatabase::readNames(istream& in)
-{
-    StarNameDatabase* db = new StarNameDatabase();
-    bool failed = false;
-    string s;
-
-    for (;;)
+    for (int whichCatalog = 0;
+         whichCatalog < sizeof(catalogNumberIndexes) / sizeof(catalogNumberIndexes[0]);
+         whichCatalog++)
     {
-	unsigned int catalogNumber;
-	char sep;
+        catalogNumberIndexes[whichCatalog] = new Star*[nStars];
+        for (int i = 0; i < nStars; i++)
+            catalogNumberIndexes[whichCatalog][i] = &stars[i];
 
-	in >> catalogNumber;
-	if (in.eof())
-	    break;
-	if (in.bad())
-        {
-	    failed = true;
-	    break;
-	}
-
-	in >> sep;
-	if (sep != ':')
-        {
-	    failed = true;
-	    break;
-	}
-
-	// Get the rest of the line
-	getline(in, s);
-
-	unsigned int nextSep = s.find_first_of(':');
-	if (nextSep == string::npos)
-        {
-	    failed = true;
-	    break;
-	}
-
-	string common, designation;
-	string conAbbr;
-	string conName;
-	string bayerLetter;
-	
-	if (nextSep != 0)
-	    common = s.substr(0, nextSep);
-	designation = s.substr(nextSep + 1, string::npos);
-
-	if (designation != "")
-        {
-	    nextSep = designation.find_last_of(' ');
-	    if (nextSep != string::npos)
-	    {
-		bayerLetter = designation.substr(0, nextSep);
-		conAbbr = designation.substr(nextSep + 1, string::npos);
-	    }
-	}
-
-	Constellation *constel;
-        
-        if (designation != "")
-        {
-            for (int i = 0; i < 88; i++)
-            {
-                constel = Constellation::getConstellation(i);
-                if (constel == NULL)
-                {
-                    DPRINTF("Error getting constellation %d", i);
-                    break;
-                }
-                if (constel->getAbbreviation() == conAbbr)
-                {
-                    conName = constel->getName();
-                    break;
-                }
-            }
-        }
-        else
-        {
-            constel = NULL;
-        }
-
-	StarName* sn = new StarName(common, bayerLetter, constel);
-
-	db->insert(StarNameDatabase::value_type(catalogNumber, sn));
+        CatalogNumberPredicate pred(whichCatalog);
+        sort(catalogNumberIndexes[whichCatalog],
+             catalogNumberIndexes[whichCatalog] + nStars, pred);
     }
-
-    if (failed)
-    {
-	delete db;
-	db = NULL;
-    }
-
-    return db;
 }
