@@ -216,7 +216,6 @@ void TextureFont::rebuildGlyphLookupTable()
     if (glyphLookup != NULL)
         delete[] glyphLookup;
 
-    printf("texturefont: glyph table size %d\n", maxID + 1);
     DPRINTF(1, "texturefont: allocating glyph lookup table with %d entries.\n",
             maxID + 1);
     glyphLookup = new const Glyph*[maxID + 1];
