@@ -22,7 +22,7 @@ using namespace std;
 Universe::Universe() :
     starCatalog(NULL),
     solarSystemCatalog(NULL),
-    galaxyCatalog(NULL),
+    deepSkyCatalog(NULL),
     asterisms(NULL)/*,
     boundaries(NULL)*/
 {
@@ -56,14 +56,14 @@ void Universe::setSolarSystemCatalog(SolarSystemCatalog* catalog)
 }
 
 
-GalaxyList* Universe::getGalaxyCatalog() const
+DeepSkyCatalog* Universe::getDeepSkyCatalog() const
 {
-    return galaxyCatalog;
+    return deepSkyCatalog;
 }
 
-void Universe::setGalaxyCatalog(GalaxyList* catalog)
+void Universe::setDeepSkyCatalog(DeepSkyCatalog* catalog)
 {
-    galaxyCatalog = catalog;
+    deepSkyCatalog = catalog;
 }
 
 
@@ -500,10 +500,10 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 }
 
 
-Selection Universe::pickGalaxy(const UniversalCoord& origin,
-                               const Vec3f& direction,
-                               float faintestMag,
-                               float tolerance)
+Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
+                                      const Vec3f& direction,
+                                      float faintestMag,
+                                      float tolerance)
 {
     Selection sel;
     Point3d p = (Point3d) origin;
@@ -511,17 +511,17 @@ Selection Universe::pickGalaxy(const UniversalCoord& origin,
                   Vec3d(direction.x, direction.y, direction.z));
     double closestDistance = 1.0e30;
 
-    if (galaxyCatalog != NULL)
+    if (deepSkyCatalog != NULL)
     {
-        for (GalaxyList::const_iterator iter = galaxyCatalog->begin();
-             iter != galaxyCatalog->end(); iter++)
+        for (DeepSkyCatalog::const_iterator iter = deepSkyCatalog->begin();
+             iter != deepSkyCatalog->end(); iter++)
         {
             double distance = 0.0;
             if (testIntersection(pickRay, 
                                  Sphered((*iter)->getPosition(), (*iter)->getRadius()),
                                  distance))
             {
-                // Don't select a galaxy that contains the origin
+                // Don't select an object that contains the origin
                 if (pickRay.origin.distanceTo((*iter)->getPosition()) > (*iter)->getRadius() &&
                     distance < closestDistance)
                 {
@@ -558,7 +558,7 @@ Selection Universe::pick(const UniversalCoord& origin,
         sel = pickStar(origin, direction, faintestMag, tolerance);
 
     if (sel.empty())
-        sel = pickGalaxy(origin, direction, faintestMag, tolerance);
+        sel = pickDeepSkyObject(origin, direction, faintestMag, tolerance);
 
     return sel;
 }
@@ -566,7 +566,7 @@ Selection Universe::pick(const UniversalCoord& origin,
 
 // Select an object by name, with the following priority:
 //   1. Try to look up the name in the star catalog
-//   2. Search the galaxy catalog for a matching name.
+//   2. Search the deep sky catalog for a matching name.
 //   3. Check the solar systems for planet names; we don't make any decisions
 //      about which solar systems are relevant, and let the caller pass them
 //      to us to search.
@@ -574,12 +574,12 @@ Selection Universe::find(const string& s,
                          PlanetarySystem** solarSystems,
                          int nSolarSystems)
 {
-    if (galaxyCatalog != NULL)
+    if (deepSkyCatalog != NULL)
     {
-        for (GalaxyList::const_iterator iter = galaxyCatalog->begin();
-             iter != galaxyCatalog->end(); iter++)
+        for (DeepSkyCatalog::const_iterator iter = deepSkyCatalog->begin();
+             iter != deepSkyCatalog->end(); iter++)
         {
-            if ((*iter)->getName() == s)
+            if (compareIgnoringCase((*iter)->getName(), s) == 0)
                 return Selection(*iter);
         }
     }
@@ -622,8 +622,7 @@ Selection Universe::findPath(const string& s,
     if (sel.empty())
         return sel;
 
-    // Don't support paths relative to a galaxy . . . for now.
-    if (sel.galaxy != NULL)
+    if (sel.deepsky != NULL)
         return Selection();
 
     const PlanetarySystem* worlds = NULL;

@@ -20,7 +20,7 @@ struct CelestiaConfig
     std::vector<std::string> catalogXrefFiles;
     std::vector<std::string> solarSystemFiles;
     std::vector<std::string> extrasDirs;
-    std::string galaxyCatalog;
+    std::string deepSkyCatalog;
     std::vector<std::string> labelledStars;
     std::string asterismsFile;
     std::string boundariesFile;

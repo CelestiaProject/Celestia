@@ -777,8 +777,8 @@ void Simulation::gotoSelection(double gotoTime,
         double maxOrbitDistance;
         if (selection.body != NULL)
             maxOrbitDistance = astro::kilometersToMicroLightYears(5.0f * selection.body->getRadius());
-        else if (selection.galaxy != NULL)
-            maxOrbitDistance = 5.0f * selection.galaxy->getRadius() * 1e6f;
+        else if (selection.deepsky != NULL)
+            maxOrbitDistance = 5.0f * selection.deepsky->getRadius() * 1e6f;
         else if (selection.star != NULL)
             maxOrbitDistance = astro::kilometersToMicroLightYears(100.0f * selection.star->getRadius());
         else
@@ -1007,7 +1007,7 @@ void Simulation::selectPlanet(int index)
 
 // Select an object by name, with the following priority:
 //   1. Try to look up the name in the star database
-//   2. Search the galaxy catalog for a matching name.
+//   2. Search the deep sky catalog for a matching name.
 //   3. Search the planets and moons in the planetary system of the currently selected
 //      star
 //   4. Search the planets and moons in any 'nearby' (< 0.1 ly) planetary systems

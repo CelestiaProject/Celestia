@@ -1051,8 +1051,8 @@ void Renderer::render(const Observer& observer,
     }
 
     if ((renderFlags & ShowGalaxies) != 0 &&
-        universe.getGalaxyCatalog() != NULL)
-        renderGalaxies(*universe.getGalaxyCatalog(), observer);
+        universe.getDeepSkyCatalog() != NULL)
+        renderDeepSkyObjects(*universe.getDeepSkyCatalog(), observer);
 
     // Translate the camera before rendering the stars
     glPushMatrix();
@@ -1103,8 +1103,8 @@ void Renderer::render(const Observer& observer,
             disableSmoothLines();
     }
 
-    if ((labelMode & GalaxyLabels) != 0 && universe.getGalaxyCatalog() != NULL)
-        labelGalaxies(*universe.getGalaxyCatalog(), observer);
+    if ((labelMode & GalaxyLabels) != 0 && universe.getDeepSkyCatalog() != NULL)
+        labelGalaxies(*universe.getDeepSkyCatalog(), observer);
     if ((labelMode & StarLabels) != 0 && universe.getStarCatalog() != NULL)
         labelStars(labelledStars, *universe.getStarCatalog(), observer);
     if ((labelMode & ConstellationLabels) != 0 &&
@@ -3897,8 +3897,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
 }
 
 
-void Renderer::renderGalaxies(const GalaxyList& galaxies,
-                              const Observer& observer)
+void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
+                                    const Observer& observer)
 {
     Point3d observerPos = (Point3d) observer.getPosition();
     observerPos.x *= 1e-6;
@@ -3924,79 +3924,34 @@ void Renderer::renderGalaxies(const GalaxyList& galaxies,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     galaxyTex->bind();
 
-    for (GalaxyList::const_iterator iter = galaxies.begin();
-         iter != galaxies.end(); iter++)
+    for (DeepSkyCatalog::const_iterator iter = catalog.begin();
+         iter != catalog.end(); iter++)
     {
-        Galaxy* galaxy = *iter;
-        Point3d pos = galaxy->getPosition();
-        float radius = galaxy->getRadius();
+        DeepSkyObject* obj = *iter;
+        Point3d pos = obj->getPosition();
+        float radius = obj->getRadius();
         Vec3f offset = Vec3f((float) (pos.x - observerPos.x),
                              (float) (pos.y - observerPos.y),
                              (float) (pos.z - observerPos.z));
         Point3f center = Point3f(0.0f, 0.0f, 0.0f) + offset *
             conjugate(observer.getOrientation()).toMatrix3(); 
 
-        // Test the galaxy's bounding sphere against the view frustum
+        // Test the object's bounding sphere against the view frustum
 	if (frustum.testSphere(center, radius) != Frustum::Outside)
         {
-        float distanceToGalaxy = offset.length() - radius;
-        if (distanceToGalaxy < 0)
-            distanceToGalaxy = 0;
-        float minimumFeatureSize = pixelSize * 0.5f * distanceToGalaxy;
+            float distanceToObject = offset.length() - radius;
+            if (distanceToObject < 0)
+                distanceToObject = 0;
+            float minimumFeatureSize = pixelSize * 0.5f * distanceToObject;
 
-        GalacticForm* form = galaxy->getForm();
-        if (form != NULL)
-        {
             glPushMatrix();
             glTranslate(offset);
-
-            Mat4f m = (galaxy->getOrientation().toMatrix4() *
-                       Mat4f::scaling(form->scale) *
-                       Mat4f::scaling(radius));
-            float size = radius;
-            int pow2 = 1;
-
-            vector<Point3f>* points = form->points;
-            int nPoints = (int) (points->size() * clamp(galaxy->getDetail()));
-
-            glBegin(GL_QUADS);
-            for (int i = 0; i < nPoints; i++)
-            {
-                Point3f p = (*points)[i] * m;
-                Point3f relPos = p + offset;
-
-                if ((i & pow2) != 0)
-                {
-                    pow2 <<= 1;
-                    size /= 1.5f;
-                    if (size < minimumFeatureSize)
-                        break;
-                }
-
-                {
-                    float distance = relPos.distanceFromOrigin();
-                    float screenFrac = size / distance;
-
-                    if (screenFrac < 0.05f)
-                    {
-                        float a = 8 * (0.05f - screenFrac) * brightness;
-                        glColor4f(1, 1, 1, a);
-                        glTexCoord2f(0, 0);
-                        glVertex(p + (v0 * size));
-                        glTexCoord2f(1, 0);
-                        glVertex(p + (v1 * size));
-                        glTexCoord2f(1, 1);
-                        glVertex(p + (v2 * size));
-                        glTexCoord2f(0, 1);
-                        glVertex(p + (v3 * size));
-                    }
-                }
-            }
-            glEnd();
-
+            obj->render(offset,
+                        observer.getOrientation(),
+                        brightness,
+                        pixelSize);
             glPopMatrix();
         }
-	}
     }
 }
 
@@ -4047,22 +4002,22 @@ void Renderer::renderCelestialSphere(const Observer& observer)
 }
 
 
-void Renderer::labelGalaxies(const GalaxyList& galaxies,
-                          const Observer& observer)
+void Renderer::labelGalaxies(const DeepSkyCatalog& catalog,
+                             const Observer& observer)
 {
     Point3f observerPos_ly = (Point3f) observer.getPosition() * ((float)1e-6);
 
-    for (GalaxyList::const_iterator iter = galaxies.begin();
-         iter != galaxies.end(); iter++)
+    for (DeepSkyCatalog::const_iterator iter = catalog.begin();
+         iter != catalog.end(); iter++)
     {
-        Galaxy* galaxy = *iter;
-        Point3d posd = galaxy->getPosition();
+        DeepSkyObject* obj = *iter;
+        Point3d posd = obj->getPosition();
         Point3f pos(posd.x,posd.y,posd.z);
 
         Vec3f rpos = pos - observerPos_ly;
         if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
-            addLabel(galaxy->getName(), Color(0.7f, 0.7f, 0.0f),
+            addLabel(obj->getName(), Color(0.7f, 0.7f, 0.0f),
                      Point3f(rpos.x, rpos.y, rpos.z));
         }
     }

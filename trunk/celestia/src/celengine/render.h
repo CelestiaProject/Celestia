@@ -200,8 +200,8 @@ class Renderer
     void renderStars(const StarDatabase& starDB,
                      float faintestVisible,
                      const Observer& observer);
-    void renderGalaxies(const GalaxyList& galaxies,
-                        const Observer& observer);
+    void renderDeepSkyObjects(const DeepSkyCatalog& catalog,
+                              const Observer& observer);
     void renderCelestialSphere(const Observer& observer);
     void renderPlanetarySystem(const Star& sun,
                                const PlanetarySystem& solSystem,
@@ -256,8 +256,8 @@ class Renderer
 
     bool testEclipse(const Body&, const Body&, double now);
 
-    void labelGalaxies(const GalaxyList& galaxies,
-                    const Observer& observer);
+    void labelGalaxies(const DeepSkyCatalog& catalog,
+                       const Observer& observer);
     void labelStars(const std::vector<Star*>& stars,
                     const StarDatabase& starDB,
                     const Observer& observer);

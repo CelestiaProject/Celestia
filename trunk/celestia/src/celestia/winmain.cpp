@@ -80,7 +80,7 @@ static StarBrowser* starBrowser = NULL;
 static TourGuide* tourGuide = NULL;
 static GotoObjectDialog* gotoObjectDlg = NULL;
 static ViewOptionsDialog* viewOptionsDlg = NULL;
-static EclipseFinder* eclipseFinder = NULL;
+static EclipseFinderDialog* eclipseFinder = NULL;
 
 static HMENU menuBar = 0;
 ODMenu odAppMenu;
@@ -3074,7 +3074,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_NAVIGATION_ECLIPSEFINDER:
             if (eclipseFinder == NULL)
-                eclipseFinder = new EclipseFinder(appInstance, hWnd, appCore);
+                eclipseFinder = new EclipseFinderDialog(appInstance, hWnd, appCore);
             break;
 
         case ID_RENDER_DISPLAYMODE:
@@ -3246,9 +3246,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                         PlanetarySystem* satellites = (PlanetarySystem*)sel.body->getSatellites();
                         appCore->getSimulation()->setSelection(Selection(satellites->getBody(LOWORD(wParam) - MENU_CHOOSE_PLANET)));
                     }
-                    else if(sel.galaxy)
+                    else if(sel.deepsky)
                     {
-                        //Current Galaxy implementation does not have children to select.
+                        // Current deep sky object/galaxy implementation does
+                        // not have children to select.
                     }
                 }
             }

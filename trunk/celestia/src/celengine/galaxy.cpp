@@ -14,9 +14,10 @@
 #include <celmath/perlin.h>
 #include "astro.h"
 #include "galaxy.h"
-#include "parser.h"
 #include <celutil/util.h>
 #include <celutil/debug.h>
+#include "gl.h"
+#include "vecgl.h"
 
 using namespace std;
 
@@ -57,53 +58,11 @@ static GalaxyTypeName GalaxyTypeNames[] =
 
 
 Galaxy::Galaxy() :
-    name(""),
-    position(0, 0, 0), orientation(1), radius(1),
     detail(1.0f),
     form(NULL)
 {
 }
 
-
-string Galaxy::getName() const
-{
-    return name;
-}
-
-void Galaxy::setName(const string& s)
-{
-    name = s;
-}
-
-Point3d Galaxy::getPosition() const
-{
-    return position;
-}
-
-void Galaxy::setPosition(Point3d p)
-{
-    position = p;
-}
-
-Quatf Galaxy::getOrientation() const
-{
-    return orientation;
-}
-
-void Galaxy::setOrientation(Quatf q)
-{
-    orientation = q;
-}
-
-float Galaxy::getRadius() const
-{
-    return radius;
-}
-
-void Galaxy::setRadius(float r)
-{
-    radius = r;
-}
 
 float Galaxy::getDetail() const
 {
@@ -125,6 +84,7 @@ void Galaxy::setType(Galaxy::GalaxyType _type)
 {
     type = _type;
 
+    cout << "setType: " << type << "\n";
     if (!formsInitialized)
         InitializeForms();
     switch (type)
@@ -158,6 +118,95 @@ void Galaxy::setType(Galaxy::GalaxyType _type)
 GalacticForm* Galaxy::getForm() const
 {
     return form;
+}
+
+
+bool Galaxy::load(AssociativeArray* params)
+{
+    double detail = 1.0;
+    params->getNumber("Detail", detail);
+    setDetail((float) detail);
+
+    string typeName;
+    params->getString("Type", typeName);
+    Galaxy::GalaxyType type = Galaxy::Irr;
+    for (int i = 0; i < (int) (sizeof(GalaxyTypeNames) / sizeof(GalaxyTypeNames[0])); i++)
+    {
+        if (GalaxyTypeNames[i].name == typeName)
+        {    cout << type << '\n';
+
+            type = GalaxyTypeNames[i].type;
+            break;
+        }
+    }
+    setType(type);
+    
+    return DeepSkyObject::load(params);
+}
+
+
+void Galaxy::render(const Vec3f& offset,
+                    const Quatf& viewerOrientation,
+                    float brightness,
+                    float pixelSize)
+{
+    if (form == NULL)
+        return;
+
+    Mat3f viewMat = viewerOrientation.toMatrix3();
+    Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
+    Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
+    Vec3f v2 = Vec3f( 1,  1, 0) * viewMat;
+    Vec3f v3 = Vec3f(-1,  1, 0) * viewMat;
+
+    float distanceToObject = offset.length() - getRadius();
+    if (distanceToObject < 0)
+        distanceToObject = 0;
+    float minimumFeatureSize = pixelSize * 0.5f * distanceToObject;
+
+    Mat4f m = (getOrientation().toMatrix4() *
+               Mat4f::scaling(form->scale) *
+               Mat4f::scaling(getRadius()));
+    float size = getRadius();
+    int pow2 = 1;
+
+    vector<Point3f>* points = form->points;
+    int nPoints = (int) (points->size() * clamp(getDetail()));
+
+    glBegin(GL_QUADS);
+    for (int i = 0; i < nPoints; i++)
+    {
+        Point3f p = (*points)[i] * m;
+        Point3f relPos = p + offset;
+
+        if ((i & pow2) != 0)
+        {
+            pow2 <<= 1;
+            size /= 1.5f;
+            if (size < minimumFeatureSize)
+                break;
+        }
+
+        {
+            float distance = relPos.distanceFromOrigin();
+            float screenFrac = size / distance;
+
+            if (screenFrac < 0.05f)
+            {
+                float a = 8 * (0.05f - screenFrac) * brightness;
+                glColor4f(1, 1, 1, a);
+                glTexCoord2f(0, 0);
+                glVertex(p + (v0 * size));
+                glTexCoord2f(1, 0);
+                glVertex(p + (v1 * size));
+                glTexCoord2f(1, 1);
+                glVertex(p + (v2 * size));
+                glTexCoord2f(0, 1);
+                glVertex(p + (v3 * size));
+            }
+        }
+    }
+    glEnd();
 }
 
 
@@ -237,94 +286,6 @@ void InitializeForms()
     }
 
     formsInitialized = true;
-}
-
-
-GalaxyList* ReadGalaxyList(istream& in)
-{
-    GalaxyList* galaxies = new GalaxyList();
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
-
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
-    {
-        if (tokenizer.getTokenType() != Tokenizer::TokenString)
-        {
-            DPRINTF(0, "Error parsing galaxies file.\n");
-            for_each(galaxies->begin(), galaxies->end(), deleteFunc<Galaxy*>());
-            delete galaxies;
-            return NULL;
-        }
-
-        Galaxy* galaxy = new Galaxy();
-        galaxy->setName(tokenizer.getStringValue());
-
-        Value* galaxyParamsValue = parser.readValue();
-        if (galaxyParamsValue == NULL || galaxyParamsValue->getType() != Value::HashType)
-        {
-            DPRINTF(0, "Error parsing galaxy entry %s\n", galaxy->getName().c_str());
-            for_each(galaxies->begin(), galaxies->end(), deleteFunc<Galaxy*>());
-            delete galaxy;
-            return NULL;
-        }
-
-        Hash* galaxyParams = galaxyParamsValue->getHash();
-
-        // Get position
-        Vec3d position(0.0, 0.0, 0.0);
-        if (galaxyParams->getVector("Position", position))
-        {
-            galaxy->setPosition(Point3d(position.x, position.y, position.z));
-        }
-        else
-        {
-            double distance = 1.0;
-            double RA = 0.0;
-            double dec = 0.0;
-            galaxyParams->getNumber("Distance", distance);
-            galaxyParams->getNumber("RA", RA);
-            galaxyParams->getNumber("Dec", dec);
-            Point3d p = astro::equatorialToCelestialCart(RA, dec, distance);
-            galaxy->setPosition(p);
-            DPRINTF(5, "Galaxy %s: %f, %f, %f\n", galaxy->getName().c_str(),
-                    p.x, p.y, p.z);
-        }
-
-        // Get orientation
-        Vec3d axis(1.0, 0.0, 0.0);
-        double angle = 0.0;
-        galaxyParams->getVector("Axis", axis);
-        galaxyParams->getNumber("Angle", angle);
-        Quatf q(1);
-        q.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
-                       (float) degToRad(angle));
-        galaxy->setOrientation(q);
-
-        double radius = 0.0;
-        galaxyParams->getNumber("Radius", radius);
-        galaxy->setRadius((float) radius);
-
-        double detail = 1.0;
-        galaxyParams->getNumber("Detail", detail);
-        galaxy->setDetail((float) detail);
-
-        string typeName;
-        galaxyParams->getString("Type", typeName);
-        Galaxy::GalaxyType type = Galaxy::Irr;
-        for (int i = 0; i < (int) (sizeof(GalaxyTypeNames) / sizeof(GalaxyTypeNames[0])); i++)
-        {
-            if (GalaxyTypeNames[i].name == typeName)
-            {
-                type = GalaxyTypeNames[i].type;
-                break;
-            }
-        }
-        galaxy->setType(type);
-
-        galaxies->insert(galaxies->end(), galaxy);
-    }
-
-    return galaxies;
 }
 
 

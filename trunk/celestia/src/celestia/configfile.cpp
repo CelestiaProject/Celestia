@@ -63,7 +63,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename)
     configParams->getString("DemoScript", config->demoScriptFile);
     configParams->getString("AsterismsFile", config->asterismsFile);
     configParams->getString("BoundariesFile", config->boundariesFile);
-    configParams->getString("GalaxyCatalog", config->galaxyCatalog);
+    configParams->getString("DeepSkyCatalog", config->deepSkyCatalog);
     configParams->getString("StarDatabase", config->starDatabaseFile);
     configParams->getString("StarNameDatabase", config->starNamesFile);
     configParams->getString("Font", config->mainFont);
