@@ -140,13 +140,13 @@ void astro::decimalToDegMinSec(double angle, int& hours, int& minutes, double& s
 {
     double A, B, C;
 
-    hours = (int)angle;
+    hours = (int) angle;
 
-    A = angle - (double)hours;
+    A = angle - (double) hours;
     B = A * 60.0;
-    minutes = (int)B;
-    C = B - (double)minutes;
-    seconds = (int)(C * 60.0);
+    minutes = (int) B;
+    C = B - (double) minutes;
+    seconds = C * 60.0;
 }
 
 double astro::degMinSecToDecimal(int hours, int minutes, double seconds)
