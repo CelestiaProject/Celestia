@@ -164,7 +164,11 @@ FindStars(const StarDatabase& stardb, Pred pred, int nStars)
     // up the list indiscriminately.
     int i = 0;
     for (i = 0; i < nStars; i++)
-        firstStars.insert(stardb.getStar(i));
+    {
+        Star* star = stardb.getStar(i);
+        if (star->getVisibility())
+            firstStars.insert(star);
+    }
 
     // From here on, only add a star to the set if it's
     // a better match than the worst matching star already
@@ -173,7 +177,7 @@ FindStars(const StarDatabase& stardb, Pred pred, int nStars)
     for (; i < totalStars; i++)
     {
         Star* star = stardb.getStar(i);
-        if (pred(star, lastStar))
+        if (star->getVisibility() && pred(star, lastStar))
         {
             firstStars.insert(star);
             firstStars.erase(--firstStars.end());
