@@ -9,6 +9,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+#include "util.h"
 #include "cmdparser.h"
 
 using namespace std;
@@ -20,6 +22,11 @@ CommandParser::CommandParser(istream& in)
     parser = new Parser(tokenizer);
 }
 
+CommandParser::CommandParser(Tokenizer& tok)
+{
+    tokenizer = &tok;
+    parser = new Parser(tokenizer);
+}
 
 CommandParser::~CommandParser()
 {
@@ -32,7 +39,15 @@ CommandSequence* CommandParser::parse()
 {
     CommandSequence* seq = new CommandSequence();
 
-    while (tokenizer->nextToken() != Tokenizer::TokenEnd)
+    if (tokenizer->nextToken() != Tokenizer::TokenBeginGroup)
+    {
+        error("'{' expected at start of script.");
+        delete seq;
+        return NULL;
+    }
+
+    Tokenizer::TokenType ttype = tokenizer->nextToken();
+    while (ttype != Tokenizer::TokenEnd && ttype != Tokenizer::TokenEndGroup)
     {
         tokenizer->pushBack();
         Command* cmd = parseCommand();
@@ -51,6 +66,16 @@ CommandSequence* CommandParser::parse()
         {
             seq->insert(seq->end(), cmd);
         }
+
+        ttype = tokenizer->nextToken();
+    }
+
+    if (ttype != Tokenizer::TokenEndGroup)
+    {
+        error("Missing '}' at end of script.");
+        for_each(seq->begin(), seq->end(), deleteFunc<Command*>());;
+        delete seq;
+        return NULL;
     }
 
     return seq;
@@ -87,61 +112,62 @@ Command* CommandParser::parseCommand()
     }
 
     Hash* paramList = paramListValue->getHash();
+    Command* cmd = NULL;
 
     cout << "parsing: " << commandName << '\n';
     if (commandName == "wait")
     {
         double duration = 1.0;
         paramList->getNumber("duration", duration);
-        return new CommandWait(duration);
+        cmd = new CommandWait(duration);
     }
     else if (commandName == "select")
     {
         string object;
         paramList->getString("object", object);
-        return new CommandSelect(object);
+        cmd = new CommandSelect(object);
     }
     else if (commandName == "goto")
     {
         double t = 1.0;
         paramList->getNumber("time", t);
-        return new CommandGoto(t);
+        cmd = new CommandGoto(t);
     }
     else if (commandName == "center")
     {
         double t = 1.0;
         paramList->getNumber("time", t);
-        return new CommandCenter(t);
+        cmd = new CommandCenter(t);
     }
     else if (commandName == "follow")
     {
-        return new CommandFollow();
+        cmd = new CommandFollow();
     }
     else if (commandName == "cancel")
     {
-        return new CommandCancel();
+        cmd = new CommandCancel();
     }
     else if (commandName == "print")
     {
         string text;
         paramList->getString("text", text);
-        return new CommandPrint(text);
+        cmd = new CommandPrint(text);
     }
     else if (commandName == "cls")
     {
-        return new CommandClearScreen();
+        cmd = new CommandClearScreen();
     }
     else if (commandName == "time")
     {
         double jd = 2451545;
         paramList->getNumber("jd", jd);
-        return new CommandSetTime(jd);
+        cmd = new CommandSetTime(jd);
     }
     else if (commandName == "timerate")
     {
         double rate = 1.0;
         paramList->getNumber("rate", rate);
-        return new CommandSetTimeRate(rate);
+        cmd = new CommandSetTimeRate(rate);
     }
     else if (commandName == "changedistance")
     {
@@ -149,11 +175,15 @@ Command* CommandParser::parseCommand()
         double duration = 1.0;
         paramList->getNumber("rate", rate);
         paramList->getNumber("duration", duration);
-        return new CommandChangeDistance(duration, rate);
+        cmd = new CommandChangeDistance(duration, rate);
     }
     else
     {
         error("Unknown command name '" + commandName + "'");
-        return NULL;
+        cmd = NULL;
     }
+
+    delete paramListValue;
+
+    return cmd;
 }
