@@ -137,8 +137,8 @@ void CelestialBrowser::slotRefresh()
         star->getStellarClass().str(buf, sizeof buf);
         QString starClass(buf);
 
-        CelListViewItem *starItem = new CelListViewItem(listStars, QString(name),
-                                    QString::fromUtf8(ReplaceGreekLetterAbbr(name).c_str()), dist, appMag, absMag, starClass);
+        CelListViewItem *starItem = new CelListViewItem(listStars, name,
+                                    QString::fromUtf8(ReplaceGreekLetterAbbr(name.latin1()).c_str()), dist, appMag, absMag, starClass);
         
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
@@ -156,7 +156,7 @@ void CelestialBrowser::slotRefresh()
                 sprintf(buf, " %.2f au", starBodyDist / KM_PER_AU);
                 QString distStarBody(buf);
                                                                              
-                CelListViewItem *planetItem = new CelListViewItem(starItem, QString(body->getName()), 
+                CelListViewItem *planetItem = new CelListViewItem(starItem, QString(body->getName().c_str()), 
                                             QString::fromUtf8(body->getName().c_str()),
                                             distStarBody, "", "", getClassification(body->getClassification()));
                 
@@ -173,7 +173,7 @@ void CelestialBrowser::slotRefresh()
                                 sprintf(buf, " %.0f km", bodySatDist);
                                 QString distBodySat(buf);
                                 
-                                new CelListViewItem(planetItem, QString(sat->getName()),
+                                new CelListViewItem(planetItem, QString(sat->getName().c_str()),
                                     QString::fromUtf8(sat->getName().c_str()),
                                     distBodySat, "", "", getClassification(sat->getClassification()));
 
