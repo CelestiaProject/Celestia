@@ -31,6 +31,7 @@ namespace vp
     extern unsigned int diffuseBump;
     extern unsigned int diffuseBumpHaze;
     extern unsigned int everything;
+    extern unsigned int shadowTexture;
 };
 
 #endif // _VERTEXPROG_H_
