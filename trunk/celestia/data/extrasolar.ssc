@@ -215,19 +215,36 @@
 # So, we'll call this one a brown dwarf . . .
 "b" "HD 12661"
 {
-	Texture "browndwarf.jpg"
-	Mass      18000
-	Radius    150000
+	Texture "jupiterlike.jpg"
+	Mass      800
+	Radius    70000
 
 	# orbital data
 	EllipticalOrbit {
 		Period          0.72668
 		SemiMajorAxis   0.8267
-		Eccentricity    0.328
+		Eccentricity    0.347
 	}
 
 	RotationPeriod   10.0
 }
+
+"c" "HD 12661"
+{
+	Texture "jupiterlike.jpg"
+	Mass      530
+	Radius    71000
+
+	# orbital data
+	EllipticalOrbit {
+		Period          1.1143
+		SemiMajorAxis   2.61
+		Eccentricity    0.22
+	}
+
+	RotationPeriod   10.0
+}
+
 
 
 # HD 92788 system
@@ -536,9 +553,24 @@
 	EllipticalOrbit {
 		Period          0.03921
 		SemiMajorAxis   0.1293
-		Eccentricity    0.27
+		Eccentricity    0.312
 	}
 }
+
+"c" "HD 38529"
+{
+	Texture "jupiterlike.jpg"
+	Mass      3500
+	Radius    60000
+
+	# orbital data
+	EllipticalOrbit {
+		Period          5.995
+		SemiMajorAxis   3.51
+		Eccentricity    0.34
+	}
+}
+
 
 
 # HD 179949 system
@@ -585,18 +617,35 @@
 "b" "HD 37124"
 {
 	Texture "jupiterlike.jpg"
-	Mass      325
+	Mass      270
 	Radius    72000
 
 	# orbital data
 	EllipticalOrbit {
 		Period          0.424
-		SemiMajorAxis   0.585
-		Eccentricity    0.19
+		SemiMajorAxis   0.54
+		Eccentricity    0.10
 	}
 
 	RotationPeriod   10.0
 }
+
+"c" "HD 37124"
+{
+	Texture "jupiterlike.jpg"
+	Mass      325
+	Radius    72000
+
+	# orbital data
+	EllipticalOrbit {
+		Period          5.317
+		SemiMajorAxis   2.95
+		Eccentricity    0.40
+	}
+
+	RotationPeriod   10.0
+}
+
 
 
 # Rho CrB system
@@ -833,6 +882,24 @@
 
 	RotationPeriod   10.0
 }
+
+# Lots of very rough values here . . . update as they're refined.
+"c" "HD 160691"
+{
+	Texture "jupiterlike.jpg"
+	Mass      320
+	Radius    73000
+
+	# orbital data
+	EllipticalOrbit {
+		Period          3.56
+		SemiMajorAxis   2.3
+		Eccentricity    0.8
+	}
+
+	RotationPeriod   10.0
+}
+
 
 
 # HD 19994 system
@@ -1094,7 +1161,6 @@
 # 55 Rho1 Cancri A (HD 75732) system
 #
 # b: M sin i = 0.84 Jupiters
-# c: M sin i > 5 Jupiters
 #
 # Planet c as yet unconfirmed
 "b" "HD 75732"
@@ -1113,19 +1179,36 @@
 
 "c" "HD 75732"
 {
-	Texture "jupiterlike.jpg"
-	Mass      1600
-	Radius    70000
+	Texture "gasgiant.jpg"
+	Mass      65
+	Radius    35000
 
 	# orbital data
 	EllipticalOrbit {
-		Period          12.91
-		SemiMajorAxis   5.5
-		Eccentricity    0.0
+		Period          0.1211
+		SemiMajorAxis   0.24
+		Eccentricity    0.34
 	}
 
 	RotationPeriod   10.0
 }
+
+"d" "HD 75732"
+{
+	Texture "jupiterlike.jpg"
+	Mass      1280
+	Radius    69000
+
+	# orbital data
+	EllipticalOrbit {
+		Period         14.67
+		SemiMajorAxis   5.9
+		Eccentricity    0.16
+	}
+
+	RotationPeriod   10.0
+}
+
 
 
 # New planets announced April 4th, 2001 by Geneva Team
@@ -1486,3 +1569,150 @@
 		# Omega 314
 	}
 }
+
+
+
+# HD 216437
+"b" "HD 216437"
+{
+	Texture "jupiterlike.jpg"
+	Mass 670
+	Radius 73000
+
+	EllipticalOrbit {
+		Period        3.54
+		SemiMajorAxis 2.7
+	        Eccentricity  0.34
+                # Omega       67
+	}
+}
+
+
+# HD 196050
+"b" "HD 196050"
+{
+	Texture "jupiterlike.jpg"
+	Mass 960
+	Radius 70000
+
+	EllipticalOrbit {
+		Period        3.53
+		SemiMajorAxis 2.5
+	        Eccentricity  0.28
+                # Omega       223
+	}
+}
+
+
+# HD 73526
+"b" "HD 73526"
+{
+	Texture "jupiterlike.jpg"
+	Mass 960
+	Radius 70000
+
+	EllipticalOrbit {
+		Period        0.5117
+		SemiMajorAxis 0.05  # What????  exoplanet encyc lists 0.002
+	        Eccentricity  0.41
+                # Omega       182
+	}
+}
+
+
+# HD 49674
+"b" "HD 49674"
+{
+	Texture "gasgiant.jpg"
+	Mass 30
+	Radius 29000
+
+	EllipticalOrbit {
+		Period         0.07583
+		SemiMajorAxis  0.0568
+		Eccentricity   0.0
+		Omega          0.0
+	}
+}
+
+
+# HD 108874
+"b" "HD 108874"
+{
+	Texture "jupiterlike.jpg"
+	Mass 525 
+	Radius 70000
+
+	EllipticalOrbit {
+		Period        1.099
+		SemiMajorAxis 1.06
+	        Eccentricity  0.20
+                # Omega       232
+	}
+}
+
+
+# HD 108874
+"b" "HD 108874"
+{
+	Texture "jupiterlike.jpg"
+	Mass 525 
+	Radius 70000
+
+	EllipticalOrbit {
+		Period        1.099
+		SemiMajorAxis 1.06
+	        Eccentricity  0.20
+                # Omega       232
+	}
+}
+
+
+# HD 72659
+"b" "HD 72659"
+{
+	Texture "browndwarf.jpg"
+	Mass 9500
+	Radius 65000
+
+	EllipticalOrbit {
+		Period        5.98
+		SemiMajorAxis 3.24
+	        Eccentricity  0.18
+                # Omega       350
+	}
+}
+
+
+# HD 114729
+"b" "HD 114729"
+{
+	Texture "jupiterlike.jpg"
+	Mass 290
+	Radius 70000
+
+	EllipticalOrbit {
+		Period        3.110
+		SemiMajorAxis 2.08
+	        Eccentricity  0.33
+                # Omega        70
+	}
+}
+
+
+# HD 128311
+"b" "HD 128311"
+{
+	Texture "jupiterlike.jpg"
+	Mass 820
+	Radius 69000
+
+	EllipticalOrbit {
+		Period        1.1335
+		SemiMajorAxis 1.01
+	        Eccentricity  0.21
+                # Omega       200
+	}
+}
+
+
