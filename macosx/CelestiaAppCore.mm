@@ -50,6 +50,86 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 
 @implementation CelestiaAppCore
 
+-(int)toCelestiaKey:(unichar)key {
+
+    int	celestiaKey = 0;
+
+    switch(key)
+    {
+        case NSF1FunctionKey:
+            celestiaKey = CelestiaCore::Key_F1;
+            break;
+        case NSF2FunctionKey:
+            celestiaKey = CelestiaCore::Key_F2;
+            break;
+        case NSF3FunctionKey:
+            celestiaKey = CelestiaCore::Key_F3;
+            break;
+        case NSF4FunctionKey:
+            celestiaKey = CelestiaCore::Key_F4;
+            break;
+        case NSF5FunctionKey:
+            celestiaKey = CelestiaCore::Key_F5;
+            break;
+        case NSF6FunctionKey:
+            celestiaKey = CelestiaCore::Key_F6;
+            break;
+        case NSF7FunctionKey:
+            celestiaKey = CelestiaCore::Key_F7;
+            break;
+        case NSF8FunctionKey:
+            celestiaKey = CelestiaCore::Key_F8;
+            break;
+        case NSF9FunctionKey:
+            celestiaKey = CelestiaCore::Key_F9;
+            break;
+        case NSF10FunctionKey:
+            celestiaKey = CelestiaCore::Key_F10;
+            break;
+        case NSF11FunctionKey:
+            celestiaKey = CelestiaCore::Key_F11;
+            break;
+        case NSF12FunctionKey:
+            celestiaKey = CelestiaCore::Key_F12;
+            break;
+        case NSUpArrowFunctionKey:
+            celestiaKey = CelestiaCore::Key_Up;
+            break;
+        case NSDownArrowFunctionKey:
+            celestiaKey = CelestiaCore::Key_Down;
+            break;
+        case NSLeftArrowFunctionKey:
+            celestiaKey = CelestiaCore::Key_Left;
+            break;
+        case NSRightArrowFunctionKey:
+            celestiaKey = CelestiaCore::Key_Right;
+            break;
+        case NSPageUpFunctionKey:
+            celestiaKey = CelestiaCore::Key_PageUp;
+            break;
+        case NSPageDownFunctionKey:
+            celestiaKey = CelestiaCore::Key_PageDown;
+            break;
+        case NSHomeFunctionKey:
+            celestiaKey = CelestiaCore::Key_Home;
+            break;
+        case NSEndFunctionKey:
+            celestiaKey = CelestiaCore::Key_End;
+            break;
+        case NSInsertFunctionKey:
+            celestiaKey = CelestiaCore::Key_Insert;
+            break;
+        default:
+            if ((key < 128) && (key > 32))
+            {
+                celestiaKey = (int) (key & 0x00FF);
+            }
+            break;
+    }
+
+    return celestiaKey;
+}
+
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons {
     int cModifiers = 0;
     if (modifiers & NSControlKeyMask)
@@ -93,7 +173,7 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 }
 -(void)archive
 {
-    NSLog(@"[CelestiaAppCore archive]");
+    //NSLog(@"[CelestiaAppCore archive]");
     [[CelestiaFavorites sharedFavorites] archive];
     [[self renderer] archive];
 }
@@ -135,6 +215,7 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 
 -(void)charEntered:(char)c
 {
+    if (c == 127) c = 8; // map del to bs
     appCore->charEntered(c);
 }
 
@@ -282,6 +363,29 @@ void ContextMenuCallback(float x,float y, Selection selection) {
         [contextMenuCallbackInvocation setTarget:cObj];
     }
 }
+
+-(void)back
+{
+    appCore->back();
+}
+
+-(void)forward
+{
+    appCore->forward();
+}
+
+- (NSURL *) currentURL
+{
+   Url currentUrl = Url(appCore, Url::Absolute);
+   NSURL *url = [NSURL URLWithString: [ NSString stringWithStdString: currentUrl.getAsString() ]];
+   return url;
+}
+
+-(void)goToUrl:(NSString *)url
+{
+    appCore->goToUrl([url stdString]);
+}
+
 
 @end
 
