@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <sstream>
 #include "util.h"
+#include "mathlib.h"
 #include "astro.h"
 #include "cmdparser.h"
 
@@ -136,7 +137,9 @@ Command* CommandParser::parseCommand()
     {
         double t = 1.0;
         paramList->getNumber("time", t);
-        cmd = new CommandGoto(t);
+        double distance = 5.0;
+        paramList->getNumber("distance", distance);
+        cmd = new CommandGoto(t, distance);
     }
     else if (commandName == "center")
     {
@@ -192,7 +195,27 @@ Command* CommandParser::parseCommand()
         paramList->getVector("axis", axis);
         cmd = new CommandOrbit(duration,
                                Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
-                               (float) rate);
+                               (float) degToRad(rate));
+    }
+    else if (commandName == "rotate")
+    {
+        double rate = 0.0;
+        double duration = 1.0;
+        Vec3d axis;
+        paramList->getNumber("duration", duration);
+        paramList->getNumber("rate", rate);
+        paramList->getVector("axis", axis);
+        cmd = new CommandRotate(duration,
+                                Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
+                                (float) degToRad(rate));
+    }
+    else if (commandName == "move")
+    {
+        Vec3d velocity;
+        double duration;
+        paramList->getNumber("duration", duration);
+        paramList->getVector("velocity", velocity);
+        cmd = new CommandMove(duration, velocity * astro::kilometersToLightYears(1.0));
     }
     else if (commandName == "setposition")
     {
@@ -201,6 +224,15 @@ Command* CommandParser::parseCommand()
         paramList->getVector("offset", offset);
         cmd = new CommandSetPosition(astro::universalPosition(Point3d(offset.x, offset.y, offset.z),
                                                               Point3f((float) base.x, (float) base.y, (float) base.z)));
+    }
+    else if (commandName == "setorientation")
+    {
+        Vec3d axis;
+        double angle;
+        paramList->getNumber("angle", angle);
+        paramList->getVector("axis", axis);
+        cmd = new CommandSetOrientation(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
+                                        (float) degToRad(angle));
     }
     else if (commandName == "renderflags")
     {
