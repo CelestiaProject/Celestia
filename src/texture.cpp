@@ -282,6 +282,13 @@ unsigned int Texture::getName()
 }
 
 
+void Texture::bind() const
+{
+    glBindTexture(cubeMap ? GL_TEXTURE_CUBE_MAP_EXT : GL_TEXTURE_2D,
+                  glName);
+}
+
+
 int Texture::getWidth() const
 {
     return width;
@@ -354,10 +361,10 @@ void Texture::normalMap(float scale, bool wrap)
             float rmag = 1.0f / mag;
 
             int n = (i * width + j) * 4;
-            // npixels[n]     = (unsigned char) (128 + 127 * dy * rmag);
-            // npixels[n + 1] = (unsigned char) (128 - 127 * dx * rmag);
-            npixels[n]     = (unsigned char) (128 - 127 * dx * rmag);
-            npixels[n + 1] = (unsigned char) (128 + 127 * dy * rmag);
+            npixels[n]     = (unsigned char) (128 + 127 * dy * rmag);
+            npixels[n + 1] = (unsigned char) (128 - 127 * dx * rmag);
+            // npixels[n]     = (unsigned char) (128 - 127 * dx * rmag);
+            // npixels[n + 1] = (unsigned char) (128 + 127 * dy * rmag);
             npixels[n + 2] = (unsigned char) (128 + 127 * rmag);
             npixels[n + 3] = 255;
         }
@@ -373,8 +380,8 @@ void Texture::normalMap(float scale, bool wrap)
 
 
 Texture* CreateProceduralTexture(int width, int height,
-                                  int format,
-                                  ProceduralTexEval func)
+                                 int format,
+                                 ProceduralTexEval func)
 {
     Texture* tex = new Texture(width, height, format);
     if (tex == NULL)
@@ -1092,8 +1099,8 @@ Texture* CreateNormalizationCubeMap(int size)
         {
             for (int x = 0; x < size; x++)
             {
-                float s = (float) x / (float) size * 2 - 1;
-                float t = (float) y / (float) size * 2 - 1;
+                float s = ((float) x + 0.5f) / (float) size * 2 - 1;
+                float t = ((float) y + 0.5f) / (float) size * 2 - 1;
                 Vec3f v = cubeVector(face, s, t);
                 tex->pixels[(y * size + x) * 3]     = 128 + (int) (127 * v.x);
                 tex->pixels[(y * size + x) * 3 + 1] = 128 + (int) (127 * v.y);
@@ -1135,8 +1142,8 @@ Texture* CreateDiffuseLightCubeMap(int size)
         {
             for (int x = 0; x < size; x++)
             {
-                float s = (float) x / (float) size * 2 - 1;
-                float t = (float) y / (float) size * 2 - 1;
+                float s = ((float) x + 0.5f) / (float) size * 2 - 1;
+                float t = ((float) y + 0.5f) / (float) size * 2 - 1;
                 Vec3f v = cubeVector(face, s, t);
                 float Lz = v.z < 0.0f ? 0.0f : v.z;
                 tex->pixels[(y * size + x) * 3]     = (int) (255.99f * Lz);
@@ -1158,7 +1165,7 @@ Texture* CreateDiffuseLightCubeMap(int size)
 
 
 Texture* CreateProceduralCubeMap(int size, int format,
-                                  ProceduralTexEval func)
+                                 ProceduralTexEval func)
 {
     Texture* tex = new Texture(size, size, format, true);
     if (tex == NULL)
@@ -1170,8 +1177,8 @@ Texture* CreateProceduralCubeMap(int size, int format,
         {
             for (int x = 0; x < size; x++)
             {
-                float s = (float) x / (float) size * 2 - 1;
-                float t = (float) y / (float) size * 2 - 1;
+                float s = ((float) x + 0.5f) / (float) size * 2 - 1;
+                float t = ((float) y + 0.5f) / (float) size * 2 - 1;
                 Vec3f v = cubeVector(face, s, t);
                 func(v.x, v.y, v.z, tex->pixels + ((face * size + y) * size + x) * tex->components);
             }
@@ -1179,5 +1186,4 @@ Texture* CreateProceduralCubeMap(int size, int format,
     }
 
     return tex;
-
 }
