@@ -142,6 +142,13 @@ Location "ANTARCTICA" "Sol/Earth"
     Type "TA"
 }
 
+Location "NORTH AMERICA" "Sol/Earth"
+{
+    LongLat [ -105 40 0 ]
+    Size 5000
+    Type "TA"
+}
+
 Location "NORTH ATLANTIC OCEAN" "Sol/Earth"
 {
     LongLat [ -45 40 0 ]
@@ -431,7 +438,7 @@ Location "Schiaparelli" "Sol/Mars"
 
 Location "Stickney" "Sol/Mars/Phobos"
 {
-    LongLat [ -235 5 0 ]
+    LongLat [ -55 5 0 ]
     Size 5
     Type "AA"
 }
@@ -806,7 +813,7 @@ Location "MacBeth" "Sol/Uranus/Oberon"
 
 Location "Pharos" "Sol/Neptune/Proteus"
 {
-    LongLat [ -180 -20 0 ]
+    LongLat [ -5 -20 0 ]
     Size 255
     Type "AA"
 }
