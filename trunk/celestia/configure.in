@@ -3,7 +3,51 @@ dnl Celestia autoconf file
 dnl Process this file with autoconf to make a configure script
 dnl
 
-AC_INIT(acinclude.m4) dnl a source file from your sub dir
+dnl DEPRECATED
+dnl AC_INIT(acinclude.m4) dnl a source file from your sub dir
+
+AC_INIT(celestia, 1.3.2, celestia-developers@lists.sf.net)
+AC_CONFIG_SRCDIR(acinclude.m4)
+
+dnl The following section confirms that the user provided necessary option
+dnl BEFORE anything is checked.
+
+AC_ARG_WITH(glut,
+            [  --with-glut             Use Glut for the UI],
+            ui_glut="yes";
+              ui_gtk="no"; ui_gnome="no"; ui_kde="no",
+            ui_glut="no")
+			
+AC_ARG_WITH(gtk,
+            [  --with-gtk              Use Gtk for an enhanced GUI],
+	        ui_gtk="yes";
+              ui_glut="no"; ui_gnome="no"; ui_kde="no",
+            ui_gtk="no")
+
+AC_ARG_WITH(gnome,
+            [  --with-gnome            Use Gnome for an enhanced GUI],
+            ui_gnome="yes"; ui_gtk="yes";
+			  ui_glut="no"; ui_kde="no",
+            ui_gnome="no")
+
+AC_ARG_WITH(kde,
+            [  --with-kde              Use KDE for an enhanced GUI],
+            ui_kde="yes";
+			  ui_glut="no"; ui_gtk="no"; ui_gnome="no",
+            ui_kde="no")
+
+dnl Following line left in: great for debugging.
+dnl AC_MSG_ERROR([$ui_glut $ui_gtk $ui_gnome $ui_kde])
+
+dnl Check that an interface was provided
+if (test "$ui_glut" != "yes" -a "$ui_gtk" != "yes" -a "$ui_gnome" != "yes" -a "$ui_kde" != "yes"); then
+	AC_MSG_ERROR([You must select an interface to build.
+                  Possible options are:
+                    --with-glut      GLUT front-end
+                    --with-gtk       Enhanced GTK GUI
+                    --with-gnome     GTK GUI with Gnome features
+                    --with-kde       Enhanced KDE GUI]);
+fi
 
 dnl For KDE interface
 AC_CONFIG_AUX_DIR(admin)
@@ -21,7 +65,10 @@ AC_CANONICAL_SYSTEM
 dnl Perform program name transformation
 AC_ARG_PROGRAM
 
-AM_INIT_AUTOMAKE(celestia, 1.3.2)
+dnl Apparently this AM_INIT_AUTOMAKE is deprecated
+dnl AM_INIT_AUTOMAKE(celestia, 1.3.2)
+
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
 dnl Check for compilers.  Set CFLAGS and CXXFLAGS to null if unset, so
@@ -124,74 +171,36 @@ GTK_LIBS=""
 GTKGL_LIBS=""
 GTK_CFLAGS=""
 
-AC_ARG_WITH(gtk, [  --with-gtk              Use Gtk for an enhanced GUI],
-	    enable_gtk="$withval";gtk_by_default="no", enable_gtk="no";gtk_by_default="yes")
-
-AC_ARG_WITH(gnome, [  --with-gnome            Use Gnome for an enhanced GUI],
-	    enable_gnome="$withval";enable_gtk="$withval";gtk_by_default="no")
-
-AC_ARG_WITH(kde, [  --with-kde              Use KDE for an enhanced GUI],
-	    enable_kde="$withval";kde_by_default="no", enable_kde="yes";kde_by_default="yes")
-
 
 AC_MSG_CHECKING([whether to enable GLUT])
-dnl if gtk and kde are explicitly disabled, enable GLUT
-if test "$enable_gtk" = "no" -a "$gtk_by_default" = "no" -a "$enable_kde" = "no" -a "$kde_by_default" = "no"; then
-	enable_glut="yes"
+if test "$ui_glut" != "no"; then
+dnl	ui_glut="yes"
 	AC_MSG_RESULT(yes)
 else
 	AC_MSG_RESULT(no)
 fi
 
-dnl if both kde and gtk are explicitly enabled, disable gtk
-if test "$enable_gtk" != "no" -a "$gtk_by_default" = "no" -a  "$enable_kde" != "no" -a "$kde_by_default" = "no"; then
-	enable_gtk="no"
+AC_MSG_CHECKING([whether to enable GTK])
+if test "$ui_gtk" != "no"; then
+	AC_MSG_RESULT(yes)
+else
+	AC_MSG_RESULT(no)
 fi
 
-dnl if gtk is explicitly enabled, disable kde
-if test "$enable_gtk" != "no" -a "$gtk_by_default" = "no"; then
-	enable_kde="no"
+AC_MSG_CHECKING([whether to enable Gnome])
+if test "$ui_gnome" != "no"; then
+	AC_MSG_RESULT(yes)
+else
+	AC_MSG_RESULT(no)
 fi
 
-dnl if kde is explicitly disabled, enable gtk
-if test "$enable_gtk" = "no" -a "$gtk_by_default" = "yes" -a "$enable_kde" = "no" -a "$kde_by_default" = "no" ; then
-	enable_gtk="yes"
+AC_MSG_CHECKING([whether to enable KDE])
+if test "$ui_kde" != "no"; then
+	AC_MSG_RESULT(yes)
+else
+	AC_MSG_RESULT(no)
 fi
 
-
-AC_MSG_CHECKING([interface to build])
-if test "$enable_kde" != "no" ; then
-	AC_MSG_RESULT(KDE)
-fi
-if test "$enable_gtk" != "no" ; then
-	AC_MSG_RESULT(GTK)
-fi
-if test "$enable_glut" = "yes" ; then
-	AC_MSG_RESULT(GLUT)
-fi
-
-
-dnl
-dnl GTK
-dnl
-
-dnl THE FOLLOWING SHOULD BE REDONE
-dnl CURRENTLY, THERE IS NO FALLBACK FROM GTK
-dnl So to build glut, need --without-kde --without-gtk
-
-dnl AC_MSG_CHECKING([whether to disable GTK.])
-dnl if test "$enable_gtk" = "yes" ; then
-dnl     AC_MSG_RESULT(no, so try to find GTK)
-dnl     AM_PATH_GTK(1.2.0,enable_gtk="yes",enable_gtk="no")
-dnl
-dnl dnl Complain only if the user insisted we do GTK
-dnl	if test "$enable_gtk_by_default" = "no" -a "$enable_gtk" = "no"; then
-dnl     AC_MSG_RESULT(Unable to find GTK, building GLUT only version)
-dnl                enable_glut="yes"
-dnl	fi
-dnl else
-dnl     AC_MSG_RESULT(yes)
-dnl fi
 
 AC_CHECK_COMPILERS
 
@@ -229,7 +238,7 @@ if test "x$ac_cv_lib_GLU_gluLookAt" = "xno"; then
 fi
 
 
-if test "$enable_gtk" != "no" -o "$enable_glut" = "yes" ; then
+if test "$ui_gtk" != "no" -o "$ui_glut" = "yes" ; then
 dnl Check for GLUT headers first.
 	AC_CHECK_HEADERS(GL/glut.h,,AC_MSG_ERROR([[No glut.h found.  See INSTALL file for details on correcting this problem.]]))
 
@@ -237,15 +246,15 @@ dnl Check for GLUT.
 	AC_CHECK_LIB(glut, glutKeyboardUpFunc,,
 		AC_MSG_ERROR(GLUT library version >= 3.7 not found))
 fi
-AM_CONDITIONAL(ENABLE_GLUT, test "$enable_glut" = "yes")
+AM_CONDITIONAL(ENABLE_GLUT, test "$ui_glut" = "yes")
 
 dnl Default GConf to FALSE
 dnl (this is a silly trick to make configure behave)
 AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, test "x" = "y")
 
-if test "$enable_gtk" != "no" ; then
+if test "$ui_gtk" != "no" ; then
 	dnl GNOME is an extension to the GTK options
-	if test "$enable_gnome" = "yes" ; then
+	if test "$ui_gnome" = "yes" ; then
 		PKG_CHECK_MODULES(GTK, libgnomeui-2.0 gtk+-2.0 gtkglext-1.0)
 		AM_GCONF_SOURCE_2
 		AC_DEFINE(GNOME, 1, [Use Gnome Flag])
@@ -258,28 +267,20 @@ if test "$enable_gtk" != "no" ; then
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
-	dnl Complain only if the user insisted we do GTK
-	if test "$enable_gtk_by_default" = "no" -a "$enable_gtk" = "no"; then
-		AC_MSG_ERROR(Unable to find gtkglarea)
-	fi
-
 	CFLAGS="$CFLAGS $GTK_CFLAGS"
 	CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
 	LIBS="$LIBS $GTK_LIBS"
-else
-	if test "$enable_gtk_by_default" = "yes" ; then
-		AC_MSG_WARN(Disabled GTK GUI because of missing necessary packages)
-	fi
-
 fi
-AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" = "yes")
+
+dnl If all the GTK tests succeeded, safe to enable GTK
+AM_CONDITIONAL(ENABLE_GTK, test "$ui_gtk" = "yes")
 
 
 dnl
 dnl KDE
 dnl
 
-if test "$enable_kde" != "no" ; then
+if test "$ui_kde" != "no" ; then
 dnl  KDE_SET_PREFIX
   AC_ENABLE_SHARED(yes)
   AC_ENABLE_STATIC(no)
@@ -290,7 +291,7 @@ dnl  KDE_SET_PREFIX
 dnl  KDE_USE_QT(3)
   AC_PATH_KDE
 fi
-AM_CONDITIONAL(ENABLE_KDE, test "$enable_kde" = "yes")
+AM_CONDITIONAL(ENABLE_KDE, test "$ui_kde" = "yes")
 
 
 
@@ -322,7 +323,7 @@ if test "$prefix" = "NONE" ; then
 	prefix=$ac_default_prefix
 fi
 
-if test "$enable_kde" = "yes" ; then
+if test "$ui_kde" = "yes" ; then
     PKGDATADIR=`eval echo "${kde_datadir}/$PACKAGE"`
     datadir=${kde_datadir}
 else
@@ -410,4 +411,8 @@ AC_MSG_RESULT(*** Celestia configuration complete. Now do a 'make' followed    *
 AC_MSG_RESULT(*** by 'make install'                                            ***)
 AC_MSG_RESULT(********************************************************************)
 AC_MSG_RESULT()
+if (test "$ui_glut" = "yes"); then AC_MSG_RESULT([Front-End: GLUT]); fi
+if (test "$ui_gtk" = "yes" -a "$ui_gnome" = "no"); then AC_MSG_RESULT([Front-End: GTK]); fi
+if (test "$ui_gnome" = "yes"); then AC_MSG_RESULT([Front-End: Gnome]); fi
+if (test "$ui_kde" = "yes"); then AC_MSG_RESULT([Front-End: KDE]); fi
 AC_MSG_RESULT()
