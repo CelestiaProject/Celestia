@@ -44,6 +44,8 @@ Source: "data\extrasolar.ssc"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\starnames.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\galaxies.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 Source: "data\asterisms.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
+Source: "data\boundaries.dat"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
+Source: "data\galileo.xyz"; DestDir: "{app}/data"; CopyMode: alwaysoverwrite
 
 ; Textures
 Source: "textures\flare.jpg"; DestDir: "{app}/textures"; CopyMode: alwaysoverwrite
@@ -148,10 +150,14 @@ Source: "textures\lores\venuslike.jpg"; DestDir: "{app}/textures/lores"; CopyMod
 Source: "shaders\bumpdiffuse.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\bumphaze.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\diffuse.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\diffuse_texoff.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\haze.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\shadowtex.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\simple.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 Source: "shaders\specular.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\rings.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\ringshadow.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
+Source: "shaders\night.vp"; DestDir: "{app}/shaders"; CopyMode: alwaysoverwrite
 
 ; models
 Source: "models\amalthea.3ds"; DestDir: "{app}/models"; CopyMode: alwaysoverwrite

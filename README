@@ -299,7 +299,11 @@ Authors:
 
 Chris Laurel
 Clint Weisbrod
-Deon Ramsey (UNIX installer)
+Fridger Schrempp
+Christophe Teyssier
+Deon Ramsey (UNIX installer, Gtk interface)
+Bob Ippolito (Mac OS X version)
+Christopher ANDRE (Eclipse finder)
 Colin Walters (endianness fixes)
 James Holmes
 
@@ -330,6 +334,8 @@ http://earthobservatory.nasa.gov/Newsroom/BlueMarble/
 The textures for the Uranian satellites were created by Ivan Rivera from
 JPL data.  His Celestia page is http://bruckner.homelinux.net/celestia.html
 
+The asteroid.jpg texture was created by Paul Roberts.
+
 The lower resolution textures were all converted from their higher resolution
 Versions using Gimp.
 
@@ -340,6 +346,9 @@ http://www.eecs.wsu.edu/~hudson/Research/Asteroids/4179/index.html
 3D models of Phobos, Deimos, Amalthea, Proteus, Vesta, Ida,
 Mathilde, and Gaspra are derived from Phil Stooke's Cartography of
 Non-Spherical Worlds:  http://publish.uwo.ca/~pjstooke/plancart.htm
+
+Grant Hutchinson supplied the correct orientations for the major planets
+and their moons.
 
 The txf font format used by Celestia was devised by Mark Kilgard.
 
