@@ -32,8 +32,7 @@ class Renderer
     void setFieldOfView(float);
 
     void setRenderMode(int);
-    void autoMag(float faintestMagNight, float& faintestMag, 
-		 float& saturationMag);
+    void autoMag(float& faintestMag);
     void render(const Observer&,
                 const Universe&,
                 float faintestVisible,
@@ -280,6 +279,7 @@ class Renderer
     int windowWidth;
     int windowHeight;
     float fov;
+    float corrFac;
     float pixelSize;
 
     TextureFont* font;
