@@ -105,6 +105,35 @@ public:
 };
 
 
+// If right dragging to rotate, adjust the rotation rate based on the
+// distance from the reference object.  This makes right drag rotation
+// useful even when the camera is very near the surface of an object.
+// Disable adjustments if the reference is a deep sky object, since they
+// have no true surface (and the observer is likely to be inside one.)
+float ComputeRotationCoarseness(Simulation& sim)
+{
+    float coarseness = 1.5f;
+
+    Selection selection = sim.getActiveObserver()->getFrame().refObject;
+    if (selection.getType() == Selection::Type_Star ||
+        selection.getType() == Selection::Type_Body)
+    {
+        double radius = selection.radius();
+        double t = sim.getTime();
+        UniversalCoord observerPosition = sim.getActiveObserver()->getPosition();
+        UniversalCoord selectionPosition = selection.getPosition(t);
+        double distance = astro::microLightYearsToKilometers(observerPosition.distanceTo(selectionPosition));
+        double altitude = distance - radius;
+        if (altitude > 0.0 && altitude < radius)                        
+        {
+            coarseness *= (float) max(0.01, altitude / radius);
+        }
+    }
+
+    return coarseness;
+}
+
+
 View::View(View::Type _type,
            Observer* _observer,
            float _x, float _y,
@@ -777,8 +806,20 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         else if (checkMask(modifiers, LeftButton | RightButton) ||
                  checkMask(modifiers, LeftButton | ControlKey))
         {
+            // Y-axis controls distance (exponentially), and x-axis motion
+            // rotates the camera about the view normal.
             float amount = dy / height;
             sim->changeOrbitDistance(amount * 5);
+            if (dx * dx > dy * dy)
+            {
+                Observer& observer = sim->getObserver();
+                Vec3d v = Vec3d(0, 0, dx * -degToRad(1.0f));
+                RigidTransform rt = observer.getSituation();
+                Quatd dr = 0.5 * (v * rt.rotation);
+                rt.rotation += dr;
+                rt.rotation.normalize();
+                observer.setSituation(rt);
+            }
         }
         else if (checkMask(modifiers, LeftButton | ShiftKey))
         {
@@ -815,7 +856,15 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             // For a small field of view, rotate the camera more finely
             float coarseness = 1.5f;
             if ((modifiers & RightButton) == 0)
+            {
                 coarseness = radToDeg(sim->getActiveObserver()->getFOV()) / 30.0f;
+            }
+            else 
+            {
+                // If right dragging to rotate, adjust the rotation rate
+                // based on the distance from the reference object.
+                coarseness = ComputeRotationCoarseness(*sim);
+            }
             q.yrotate(dx / width * coarseness);
             q.xrotate(dy / height * coarseness);
             if ((modifiers & RightButton) != 0)
@@ -1936,15 +1985,16 @@ void CelestiaCore::tick()
     if (!frame.refObject.empty())
     {
         Quatf q(1.0f);
+        float coarseness = ComputeRotationCoarseness(*sim);
 
         if (shiftKeysPressed[Key_Left])
-            q = q * Quatf::yrotation(dt * -KeyRotationAccel);
+            q = q * Quatf::yrotation(dt * -KeyRotationAccel * coarseness);
         if (shiftKeysPressed[Key_Right])
-            q = q * Quatf::yrotation(dt *  KeyRotationAccel);
+            q = q * Quatf::yrotation(dt *  KeyRotationAccel * coarseness);
         if (shiftKeysPressed[Key_Up])
-            q = q * Quatf::xrotation(dt * -KeyRotationAccel);
+            q = q * Quatf::xrotation(dt * -KeyRotationAccel * coarseness);
         if (shiftKeysPressed[Key_Down])
-            q = q * Quatf::xrotation(dt *  KeyRotationAccel);
+            q = q * Quatf::xrotation(dt *  KeyRotationAccel * coarseness);
         sim->orbit(q);
     }
 
@@ -2053,6 +2103,12 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
 
 void CelestiaCore::splitView(View::Type type)
 {
+#ifdef CELX
+    if (celxScript != NULL)
+    {
+        return;
+    }
+#endif
     bool vertical = ( type == View::VerticalSplit );
     Observer* o = sim->addObserver();
     bool tooSmall = false;
@@ -2140,6 +2196,12 @@ void CelestiaCore::setZoomFromFOV()
 
 void CelestiaCore::singleView()
 {
+#ifdef CELX
+    if (celxScript != NULL)
+    {
+        return;
+    }
+#endif
     View* av = views[activeView];
 
     for (unsigned int i = 0; i < views.size(); i++)
@@ -2166,6 +2228,12 @@ void CelestiaCore::singleView()
 
 void CelestiaCore::deleteView()
 {
+#ifdef CELX
+    if (celxScript != NULL)
+    {
+        return;
+    }
+#endif
     View *v = views[activeView];
     if (v->parent == 0) return;
 
