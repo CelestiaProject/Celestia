@@ -534,7 +534,7 @@ bool PlanetarySystem::traverse(TraversalFunc func, void* info) const
     return true;
 }
 
-std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name) const
+std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name, bool rec) const
 {
     std::vector<std::string> completion;
     for (vector<Body*>::const_iterator iter = satellites.begin();
@@ -544,7 +544,7 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
         {
             completion.push_back((*iter)->getName());
         }
-        if ((*iter)->getSatellites() != NULL)
+        if (rec && (*iter)->getSatellites() != NULL)
         {
             std::vector<std::string> bodies = (*iter)->getSatellites()->getCompletion(_name);
             completion.insert(completion.end(), bodies.begin(), bodies.end());
