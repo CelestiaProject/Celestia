@@ -3270,6 +3270,31 @@ AltSurface "limit of knowledge" "HD 41004/b"
 }
 
 
+"b" "HD 8673"
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+
+	Mass       4450     # M.sin(i) = 14 jupiters
+	Radius     70000
+
+	InfoURL "http://www.obspm.fr/encycl/HD8673.html"
+
+	EllipticalOrbit {
+		Period          1.7495
+		SemiMajorAxis   1.58
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 8673/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 47536"
 {
 	Texture "jupiterlike.*"
