@@ -97,11 +97,27 @@ static uint32 FilterOtherLocations = ~(Location::City |
 
 KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 {
-#if KDE_VERSION >= 0x030200 
-    QPixmap splash_pixmap(locate("appdata", "celestia-splash.jpg"));
+#if KDE_VERSION >= 0x030200
+    QStringList splashDirs = KGlobal::dirs()->findDirs("appdata", "splash");
+    QStringList images;
+    srandom(time(NULL));
+    for(QStringList::iterator i = splashDirs.begin(); i != splashDirs.end(); ++i) {
+        QDir d(*i);
+        d.setFilter(QDir::Files);
+        QStringList splashImages = d.entryList().grep(QRegExp("\\.jpg$", FALSE));
+        for(QStringList::iterator j = splashImages.begin(); j != splashImages.end(); ++j) {
+            images.append(*i + *j);
+        }
+    }
+    
+    int index = (int)(random()*1./RAND_MAX*images.size());   
+    QPixmap splash_pixmap(images[index]);
     KSplashScreen *splash = new KSplashScreen(splash_pixmap);
-    splash->show();
-    splash->message( i18n("Loading..."), Qt::AlignBottom | Qt::AlignAuto, QColor(255,255,255) );
+    
+    if (splash != NULL) {
+        splash->show();
+        splash->message( i18n("Loading..."), Qt::AlignBottom | Qt::AlignAuto, QColor(255,255,255) );
+    }
 #endif
     
     appCore=new CelestiaCore();
