@@ -65,8 +65,6 @@
 #include <kcelbookmarkmanager.h>
 #include <kdeversion.h>
 
-#include <kfontdialog.h>
-
 #if KDE_VERSION >= 0x030200 
 #include <ksplashscreen.h>
 #endif
@@ -123,7 +121,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
             splash->message( i18n("Loading..."), Qt::AlignBottom | Qt::AlignAuto, QColor(255,255,255) );
         }
     } else {
-        KMessageBox::queuedMessageBox(this, KMessageBox::Information, "Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \nStart-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation.");
+        KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \nStart-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."));
     }
 #endif
     
@@ -154,7 +152,6 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     glWidget->setFocus();
 
     resize(640,480);
-    setlocale(LC_ALL, "C");
     setAutoSaveSettings("MainWindow");
     KConfig* conf = kapp->config();
     applyMainWindowSettings(conf, "MainWindow");
@@ -174,7 +171,6 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
 
     if (toolBar()->isHidden()) toggleToolbar->setChecked(false);
     if (menuBar()->isHidden()) toggleMenubar->setChecked(false);
-    setlocale(LC_ALL, "");
 
 #if KDE_VERSION >= 0x030200
     if (splash != NULL) {
@@ -366,7 +362,6 @@ void KdeApp::resyncVerbosity() {
 
 void KdeApp::initActions()
 {
-    setlocale(LC_ALL, "C");
     KStdAction::open(this, SLOT(slotFileOpen()), actionCollection());
     openRecent = KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
     openRecent->loadEntries(KGlobal::config());
@@ -676,8 +671,6 @@ void KdeApp::initActions()
 
     bookmarkBar = 0;
     initBookmarkBar();    
-
-    setlocale(LC_ALL, "");
 }
 
 void KdeApp::initBookmarkBar() {
@@ -695,7 +688,6 @@ void KdeApp::initBookmarkBar() {
 
 
 bool KdeApp::queryExit() { 
-    setlocale(LC_ALL, "C");
     KConfig* conf = kapp->config();
     saveMainWindowSettings(conf, "MainWindow");
     conf->setGroup("MainWindow");
@@ -722,7 +714,6 @@ bool KdeApp::queryExit() {
 }
 
 bool KdeApp::queryClose() {
-    setlocale(LC_ALL, "C");
     KConfig* conf = kapp->config();
     saveMainWindowSettings(conf, "MainWindow");
     conf->setGroup("MainWindow");
@@ -954,11 +945,6 @@ void KdeApp::slotAccelerateTime() {
 
 void KdeApp::slotPauseTime() {
     appCore->charEntered(' ');
-    QFont myFont;
-    int result = KFontDialog::getFont( myFont );
-    if ( result == KFontDialog::Accepted ) {
-        std::cerr << myFont.key() << std::endl;
-    }
 }
 
 void KdeApp::slotSlowDownTime() {
