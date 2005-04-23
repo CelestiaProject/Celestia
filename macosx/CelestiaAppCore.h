@@ -17,7 +17,11 @@
 #import "CelestiaRenderer.h"
 
 
+#ifdef __cplusplus
+class CelestiaCore;
+#else
 @class CelestiaCore;
+#endif
 
 @interface CelestiaAppCore : NSObject {
     CelestiaDestinations* _destinations;
