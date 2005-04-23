@@ -226,7 +226,6 @@
     if (oglContext != nil) 
     {
         [controller display];
-        glFinish();
         [oglContext flushBuffer];
     }
 }
@@ -252,7 +251,7 @@
     NSString *value = nil;
     NSString *type = [pb availableTypeFromArray:
         [NSArray arrayWithObjects: NSURLPboardType, NSFilenamesPboardType, NSStringPboardType, nil ]];
-NSLog(@"read paste");
+//NSLog(@"read paste");
     if ( type != nil )
     {
         CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
@@ -292,7 +291,7 @@ NSLog(@"read paste");
     NSPasteboard *pb = [sender draggingPasteboard];
     NSString *type = [pb availableTypeFromArray:
         [NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil ]];
-    NSLog(@"dragentered");
+//    NSLog(@"dragentered");
     if ( type != nil )
     {
         return NSDragOperationCopy;
