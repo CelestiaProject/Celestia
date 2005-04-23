@@ -7,6 +7,6 @@
  *
  */
 
-#include <celestia/astro.h>
+#include <celengine/astro.h>
 @interface Astro(PrivateAPI)
 @end
