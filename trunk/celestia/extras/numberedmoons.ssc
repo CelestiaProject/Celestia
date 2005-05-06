@@ -1,28 +1,26 @@
 # Additional moons of the giant planets.
 
+# This file supplements the solar system moons defined in
+# the Celestia distribution files solarsys.ssc and minormoons.ssc.
+# Added to these files, it provides Celestia with a complete
+# set of all the known planetary moons with well-defined orbits.
+# It does not contain some recently discovered moons, and some moons
+# which were discovered in the past but not subsequently recovered -
+# the orbits of such moons are poorly known and unreliable. If you
+# want a representation of these in Celestia, you could try the
+# "poormoons" add-on at:
+# http://www.lns.cornell.edu/~seb/celestia/hutchison/poormoons.html
+# which supplements this file without overlap.
+
+# Explanatory Note:
+# This file was originally named "numberedmoons.ssc" a) because it 
+# originally contained only unnamed moons and b) to ensure that it
+# loaded after "minormoons.ssc". Although many of the moons have
+# now been named, for reasons of backward compatibility the file has
+# not been renamed, and moons have not been transferred between files.
+
+
 # Additional moons of Jupiter
-
-"2000J11" "Sol/Jupiter"
-{
-	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		2.0
-
-	EllipticalOrbit
-	{
-	Period		286.95
-	SemiMajorAxis	12555000
-	Eccentricity	0.2484
-	Inclination	25.851	#
-	AscendingNode	312.669	#
-	ArgOfPericenter	172.672	# J2000.0
-	MeanAnomaly     329.329	#
-	}
-
-	RotationPeriod  10   # Guess
-
-	Albedo 0.04
-}
 
 "Autonoe" "Sol/Jupiter"
 {
@@ -1106,6 +1104,281 @@
 	Albedo 0.06
 }
 
+"2004S7" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1101.99
+	SemiMajorAxis	20576693
+	Eccentricity	0.5541269
+	Inclination	150.244
+	AscendingNode	29.863
+	ArgOfPericenter	100.469
+	MeanAnomaly     292.198
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S8" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1354.34
+	SemiMajorAxis	23608937
+	Eccentricity	0.1859169
+	Inclination	160.463
+	AscendingNode	338.808
+	ArgOfPericenter	359.959
+	MeanAnomaly     276.509
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S9" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1079.10
+	SemiMajorAxis	20290752
+	Eccentricity	0.2094328
+	Inclination	134.993
+	AscendingNode	24.833
+	ArgOfPericenter	336.165
+	MeanAnomaly     196.228
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S10" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1025.91
+	SemiMajorAxis	19618384
+	Eccentricity	0.2371238
+	Inclination	140.097
+	AscendingNode	350.511
+	ArgOfPericenter	281.088
+	MeanAnomaly     236.449
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S11" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		820.13
+	SemiMajorAxis	16898411
+	Eccentricity	0.3333091
+	Inclination	17.959
+	AscendingNode	304.428
+	ArgOfPericenter	9.709
+	MeanAnomaly     246.488
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S12" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1048.54
+	SemiMajorAxis	19905866
+	Eccentricity	0.3962529
+	Inclination	163.328
+	AscendingNode	30.672
+	ArgOfPericenter	96.528
+	MeanAnomaly     286.163
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S13" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		905.85
+	SemiMajorAxis	18056253
+	Eccentricity	0.2610261
+	Inclination	145.257
+	AscendingNode	339.270
+	ArgOfPericenter	6.322
+	MeanAnomaly     33.254
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S14" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1080.10
+	SemiMajorAxis	20303288
+	Eccentricity	0.2913261
+	Inclination	159.759
+	AscendingNode	38.649
+	ArgOfPericenter	25.041
+	MeanAnomaly     96.443
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S15" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1006.66
+	SemiMajorAxis	19372191
+	Eccentricity	0.1520172
+	Inclination	135.949
+	AscendingNode	332.243
+	ArgOfPericenter	144.641
+	MeanAnomaly     252.374
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S16" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1269.36
+	SemiMajorAxis	22610716
+	Eccentricity	0.1311897
+	Inclination	148.921
+	AscendingNode	325.939
+	ArgOfPericenter	133.487
+	MeanAnomaly     302.163
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S17" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		985.45
+	SemiMajorAxis	19099175
+	Eccentricity	0.2259100
+	Inclination	153.848
+	AscendingNode	331.252
+	ArgOfPericenter	175.790
+	MeanAnomaly     165.425
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2004S18" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.5
+
+	EllipticalOrbit
+	{
+	Epoch		2453400.5	# 2005 Jan 30
+	Period		1052.72
+	SemiMajorAxis	19958734
+	Eccentricity	0.7723547
+	Inclination	174.731
+	AscendingNode	214.577
+	ArgOfPericenter	84.480
+	MeanAnomaly     144.215
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
 
 # Additional moons of Uranus
 
