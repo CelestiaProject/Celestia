@@ -3505,7 +3505,7 @@ gint glarea_button_release(GtkWidget*, GdkEventButton* event, gpointer)
 }
 
 
-static bool handleSpecialKey(int key, bool down)
+static bool handleSpecialKey(int key, int state, bool down)
 {
     int k = -1;
 
@@ -3607,7 +3607,9 @@ static bool handleSpecialKey(int key, bool down)
     if (k >= 0)
     {
         if (down)
-            appCore->keyDown(k);
+            appCore->keyDown(k, (state & GDK_SHIFT_MASK) 
+                                    ? CelestiaCore::ShiftKey 
+                                    : 0);
         else
             appCore->keyUp(k);
         return (k < 'A' || k > 'Z');
@@ -3660,7 +3662,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer)
 		break;
 
     default:
-		if (!handleSpecialKey(event->keyval, true)) {
+		if (!handleSpecialKey(event->keyval, event->state, true)) {
 			if ((event->string != NULL) && (*(event->string))) {
 				// See if our key accelerators will handle this event.
 				if((!appCore->getTextEnterMode()) && gtk_accel_groups_activate (G_OBJECT (mainWindow), event->keyval, GDK_SHIFT_MASK))
@@ -3685,7 +3687,7 @@ gint glarea_key_press(GtkWidget* widget, GdkEventKey* event, gpointer)
 gint glarea_key_release(GtkWidget* widget, GdkEventKey* event, gpointer)
 {
     gtk_signal_emit_stop_by_name(GTK_OBJECT(widget),"key_release_event");
-    return handleSpecialKey(event->keyval, false);
+    return handleSpecialKey(event->keyval, event->state, false);
 }
 
 
