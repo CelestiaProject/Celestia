@@ -238,7 +238,7 @@ Barycenter "16 Cyg"
 {
 	RA 295.460800
 	Dec 50.521685
-	Distance 70.522595
+	Distance 70.522
 }
 
 96895 # 16 Cyg A
@@ -273,6 +273,14 @@ Barycenter "16 Cyg"
                 ArgOfPericenter 187.15
                 MeanAnomaly     38.67
 	}
+}
+
+Barycenter "Gliese 777"
+# approximate barycentre based on mass ratio 0.9:0.2
+{
+	RA 300.896216
+	Dec 29.872105
+	Distance 51.838
 }
 
 98767 "Gliese 777 A"
