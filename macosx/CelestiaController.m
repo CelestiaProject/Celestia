@@ -63,11 +63,15 @@ NSString* fatalErrorMessage;
     startupCondition = [[NSConditionLock alloc] initWithCondition: 0];
 
     // start initialization thread
+#ifdef USE_THREADEDLOAD
     [NSThread detachNewThreadSelector: @selector(startInitialization) toTarget: self
     withObject: nil];
 
     // wait for completion
     [self performSelectorOnMainThread: @selector(waitWhileLoading:) withObject: nil waitUntilDone: NO ];
+#else
+    [self performSelector:@selector(startInitialization) withObject:nil afterDelay:0];
+#endif
 }
 
 
@@ -125,17 +129,50 @@ NSString* fatalErrorMessage;
 
 - (void)startInitialization
 {
+#ifdef DEBUG
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+#endif
+#ifndef USE_THREADEDLOAD
+    [loadingPanel makeKeyAndOrderFront: nil];
+    [loadingPanel displayIfNeeded];
+    [loadingIndicator setUsesThreadedAnimation: YES];
+    [loadingIndicator startAnimation: nil];
+#endif
     // initialize simulator in separate thread to allow loading indicator window while waiting
+#ifdef DEBUG
+    NSDate *t = [NSDate date];
+#endif
     if (![appCore initSimulation])
     {
         [startupCondition lock];
         [startupCondition unlockWithCondition: 99];
+#ifndef USE_THREADEDLOAD
+        [loadingPanel orderOut: nil];
+#endif
+#ifdef DEBUG
+        [pool release];
+#endif
+        [self fatalError: @"Error loading data files. Celestia will now quit."];
+        [self fatalError: nil];
         [NSThread exit];
         return;
     }
 
+#ifdef DEBUG
+    NSLog(@"Init took %lf seconds\n", -[t timeIntervalSinceNow]);
+#endif
     [startupCondition lock];
     [startupCondition unlockWithCondition: 1];
+#ifndef USE_THREADEDLOAD
+    [loadingPanel orderOut: nil];
+    // complete startup
+    [self fatalError: nil];
+    [self finishInitialization];
+#endif
+
+#ifdef DEBUG
+    [pool release];
+#endif
 }
 
 
@@ -196,7 +233,7 @@ NSString* fatalErrorMessage;
     [[CelestiaFavorites sharedFavorites] setSynchronize:menuCallback];
     [[CelestiaFavorites sharedFavorites] synchronize];
 }
-
+/*
 -(void) setupRenderPanel
 {
 //    [[renderPanelController window] setAlphaValue: 0.8f];
@@ -208,7 +245,7 @@ NSString* fatalErrorMessage;
     [[renderPanelController window] setOneShot: NO];
 //    [renderPanelController finishSetup];
 }
-
+*/
 -(void) startGLView
 {
     [[glView window] setAutodisplay:YES];
@@ -233,7 +270,7 @@ NSString* fatalErrorMessage;
     settings = [CelestiaSettings shared];
     [settings setControl: self];
     [settings scanForKeys: [renderPanelController window]];
-    [self setupRenderPanel];
+//    [self setupRenderPanel];
     [settings validateItems];
 
     // load settings
@@ -519,23 +556,5 @@ NSString* fatalErrorMessage;
     if (path)
         [[NSWorkspace sharedWorkspace] openFile:path];
 }
-
-// Dealloc Method ----------------------------------------------------------
-
-- (void)dealloc
-{
-    [browserWindowController release];
-    if (appCore != nil) {
-        [appCore release];
-    }
-    appCore = nil;
-    if (timer != nil) {
-        [timer invalidate];
-        [timer release];
-    }
-    timer = nil;
-    [super dealloc];
-}    
-        
 
 @end
