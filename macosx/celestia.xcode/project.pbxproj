@@ -7,6 +7,7 @@
 	objects = {
 		080E96DDFE201D6D7F000001 = {
 			children = (
+				E56A3DB70848C19800A21D7E,
 				F5040B0F02A484DA014901DC,
 				F5231C7102C2997601000006,
 				F5274ED302AE88260100020A,
@@ -348,7 +349,7 @@
 		};
 		E55E8C0C078FD40200E0A11C = {
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -360,7 +361,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				PREBINDING = YES;
-				UNSTRIPPED_PRODUCT = NO;
+				UNSTRIPPED_PRODUCT = YES;
 				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
@@ -391,6 +392,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = Frameworks;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS) -fpermissive";
 				PRODUCT_NAME = Celestia;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1427,7 +1429,6 @@
 				E56430C507769C9000E2C4A3,
 				E56430C607769C9000E2C4A3,
 				E56430C707769C9000E2C4A3,
-				E56430C807769C9000E2C4A3,
 				E56430C907769C9000E2C4A3,
 				E56430CA07769C9000E2C4A3,
 				E56430CB07769C9000E2C4A3,
@@ -1536,6 +1537,7 @@
 				E54343170783C42500053094,
 				E589B6DD078AC511005B8DD9,
 				E589B6DF078AC511005B8DD9,
+				E56A3DB80848C19800A21D7E,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1580,12 +1582,6 @@
 		};
 		E56430C707769C9000E2C4A3 = {
 			fileRef = F51C6D5E0295987B014901DC;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		E56430C807769C9000E2C4A3 = {
-			fileRef = F51C6D630295987B014901DC;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2446,6 +2442,20 @@
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E56A3DB70848C19800A21D7E = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = MacDirectory.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E56A3DB80848C19800A21D7E = {
+			fileRef = E56A3DB70848C19800A21D7E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E572837307939E0200C1F239 = {
 			buildActionMask = 8;
 			comments = "1. Removes extraneous Makefiles from CelestiaResources\n2. Creates writable disk image containing Celestia.app, CelestiaResources, and readme files.";
@@ -3108,7 +3118,6 @@
 				F51C6D590295987B014901DC,
 				F51C6D5B0295987B014901DC,
 				F51C6D5E0295987B014901DC,
-				F51C6D630295987B014901DC,
 				F51C6D640295987B014901DC,
 				F51C6D650295987B014901DC,
 				F51C6D550295987B014901DC,
@@ -3455,14 +3464,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = timer.h;
 			path = ../src/celutil/timer.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F51C6D630295987B014901DC = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = unixdirectory.cpp;
-			path = ../src/celutil/unixdirectory.cpp;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
