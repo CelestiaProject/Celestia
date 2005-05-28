@@ -185,9 +185,9 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				E5C9B46B084909B90071B1EE,
 				E53C2FBE079433D300C76766,
 				E57283AD0793FC7300C1F239,
-				E572839E0793F91300C1F239,
 				E57283980793F82A00C1F239,
 				E57283990793F82A00C1F239,
 				E572839A0793F82A00C1F239,
@@ -2657,20 +2657,6 @@
 			settings = {
 			};
 		};
-		E572839E0793F91300C1F239 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = "README for Mac OS X.txt";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		E572839F0793F91D00C1F239 = {
-			fileRef = E572839E0793F91300C1F239;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		E57283A00793F93500C1F239 = {
 			buildActionMask = 8;
 			dstPath = Celestia;
@@ -2681,7 +2667,7 @@
 				E572838D0793DBB500C1F239,
 				E572839C0793F84000C1F239,
 				E572839D0793F84000C1F239,
-				E572839F0793F91D00C1F239,
+				E5C9B478084909E40071B1EE,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 1;
@@ -2872,6 +2858,19 @@
 		};
 		E5C9ADE10848FFEF0071B1EE = {
 			fileRef = F5040B0602A47B91014901DC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C9B46B084909B90071B1EE = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			path = "README for Mac OS X.rtf";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C9B478084909E40071B1EE = {
+			fileRef = E5C9B46B084909B90071B1EE;
 			isa = PBXBuildFile;
 			settings = {
 			};
