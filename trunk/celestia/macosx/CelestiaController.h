@@ -22,6 +22,8 @@
     BOOL isDirty;
     IBOutlet NSPanel *loadingPanel;
     IBOutlet NSProgressIndicator *loadingIndicator;
+    IBOutlet NSTextView *glInfo;
+    IBOutlet NSPanel *glInfoPanel;
     IBOutlet NSOpenGLView *glView;
     IBOutlet NSWindow *mainWindow;
     IBOutlet NSWindow *gotoWindow;
@@ -42,6 +44,7 @@
 -(BOOL)windowShouldClose:(id)sender;
 -(IBAction)back:(id)sender;
 -(IBAction)forward:(id)sender;
+-(IBAction)showGLInfo:(id)sender;
 -(IBAction)showInfoURL:(id)sender;
 - (void) runScript: (NSString*) path;
 -(IBAction)openScript:(id)sender;

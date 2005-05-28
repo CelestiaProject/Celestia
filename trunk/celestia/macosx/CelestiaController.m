@@ -492,6 +492,19 @@ NSString* fatalErrorMessage;
     [appCore forward];
 }
 
+-(IBAction)showGLInfo:(id)sender
+{
+    if (![glInfoPanel isVisible])
+    {
+        NSTextStorage *text = [glInfo textStorage];
+        NSAttributedString *str = [[NSAttributedString alloc] initWithString: [CGLInfo info]];
+        [text setAttributedString: str];
+        [str release];
+    }
+
+    [glInfoPanel makeKeyAndOrderFront: self];
+}
+
 - (IBAction) showInfoURL:(id)sender
 {
     [appCore showInfoURL];

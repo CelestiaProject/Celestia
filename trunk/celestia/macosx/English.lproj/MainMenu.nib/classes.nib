@@ -13,6 +13,7 @@
                 forward = id; 
                 openScript = id; 
                 rerunScript = id; 
+                showGLInfo = id; 
                 showInfoURL = id; 
                 showPanel = id; 
             }; 
@@ -20,6 +21,8 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 favoritesDrawerController = FavoritesDrawerController; 
+                glInfo = NSTextView; 
+                glInfoPanel = NSPanel; 
                 glView = NSOpenGLView; 
                 gotoWindow = NSWindow; 
                 loadingIndicator = NSProgressIndicator; 
