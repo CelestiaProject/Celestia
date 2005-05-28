@@ -16,6 +16,8 @@
 			<string>Celestia Script</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
