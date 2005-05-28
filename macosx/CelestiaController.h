@@ -20,6 +20,7 @@
     CelestiaAppCore* appCore;
     BOOL ready;
     BOOL isDirty;
+    BOOL isFullScreen;
     IBOutlet NSPanel *loadingPanel;
     IBOutlet NSProgressIndicator *loadingIndicator;
     IBOutlet NSTextView *glInfo;
@@ -46,9 +47,13 @@
 -(IBAction)forward:(id)sender;
 -(IBAction)showGLInfo:(id)sender;
 -(IBAction)showInfoURL:(id)sender;
-- (void) runScript: (NSString*) path;
+-(void)runScript: (NSString*) path;
 -(IBAction)openScript:(id)sender;
-- (IBAction) rerunScript: (id) sender;
+-(IBAction)rerunScript: (id) sender;
+-(IBAction)toggleFullScreen:(id)sender;
+-(void)pauseFullScreen;
+-(void)unpauseFullScreen;
+-(BOOL)hideMenuBarOnActiveScreen;
 -(void)setDirty;
 -(void)forceDisplay;
 -(void)resize;

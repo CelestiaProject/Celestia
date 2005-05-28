@@ -204,6 +204,11 @@
 -(int)  resolution;
 -(void) setResolution: (int) value ;
 
+// Full screen
+
+-(int)  fullScreenMode;
+-(void) setFullScreenMode: (int) value ;
+
 // GUI Methods
 
 - (void) addSurfaceMenu: (id) contextMenu;
