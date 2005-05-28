@@ -128,7 +128,6 @@ NSString* fatalErrorMessage;
     // initialize simulator in separate thread to allow loading indicator window while waiting
     if (![appCore initSimulation])
     {
-        NSLog(@"Could not initSimulation!");
         [startupCondition lock];
         [startupCondition unlockWithCondition: 99];
         [NSThread exit];
@@ -295,17 +294,25 @@ NSString* fatalErrorMessage;
    {
    return NO;
    }
+    
     if (timer != nil) {
         [timer invalidate];
         [timer release];
+        timer = nil;
     }
-    timer = nil;
     [[CelestiaAppCore sharedAppCore] archive];
     return YES;
 }
 
-- (void) applicationWillTerminate:(NSNotification *) notification {
+- (void) applicationWillTerminate:(NSNotification *) notification
+{
     [settings storeUserDefaults];
+
+    [browserWindowController release];
+    if (appCore != nil) {
+        [appCore release];
+        appCore = nil;
+    }
 }
 
 
