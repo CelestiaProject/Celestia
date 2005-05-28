@@ -10,6 +10,9 @@
 #import <Cocoa/Cocoa.h>
 #import "CelestiaController.h"
 #import "FavoritesDrawerController.h"
+#import "CelestiaOpenGLView.h"
+#import "FullScreenWindow.h"
+#import <Carbon/Carbon.h>
 #import "CGLInfo.h"
 
 #include <float.h>
@@ -41,6 +44,7 @@ NSString* fatalErrorMessage;
     if (firstInstance == nil ) firstInstance = self;
     ready = NO;
     isDirty = YES;
+    isFullScreen = NO;
     appCore = nil;
     fatalErrorMessage = nil;
     lastScript = nil;
@@ -275,6 +279,9 @@ NSString* fatalErrorMessage;
 
     // load settings
     [settings loadUserDefaults];
+    // Have to delay going full screen until after view is started
+    BOOL shouldGoFullScreen = isFullScreen;
+    isFullScreen = NO;
 
     // paste URL if pending
     if (pendingUrl != nil )
@@ -285,21 +292,23 @@ NSString* fatalErrorMessage;
     // set the simulation starting time to the current system time
     [appCore start:[NSDate date] withTimeZone:[NSTimeZone defaultTimeZone]];
 
+    ready = YES;
+    timer = [[NSTimer timerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:YES] retain];
+    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+
+    [self startGLView];
+
+    if (shouldGoFullScreen)
+        [self toggleFullScreen: self];
+
     // run script if pending
     if (pendingScript != nil )
     {
         [self runScript: pendingScript ];
     }
-        
-    ready = YES;
-    [self startGLView];
 
     // workaround for fov problem
     if (pendingUrl) [appCore goToUrl: pendingUrl];
-
-    // start animation timer
-    timer = [[NSTimer scheduledTimerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:true] retain];
-
 }
 
 // Application Event Handler Methods ----------------------------------------------------------
@@ -325,10 +334,58 @@ NSString* fatalErrorMessage;
         pendingUrl = [[[event descriptorAtIndex:1] stringValue] retain];
 }
 
+- (void) applicationDidBecomeActive:(NSNotification *) aNotification
+{
+    if (isFullScreen && aNotification && ([aNotification object] == NSApp))
+    {
+        [self unpauseFullScreen];
+    }
+}
+
+- (void) applicationWillHide:(NSNotification *) aNotification
+{
+    if (isFullScreen && aNotification && ([aNotification object] == NSApp))
+    {
+        [self pauseFullScreen];
+    }
+}
+
+- (void) applicationWillResignActive:(NSNotification *) aNotification
+{
+    if (isFullScreen && aNotification && ([aNotification object] == NSApp) && ![[aNotification object] isHidden])
+    {
+        // Hiding also causes deactivation - handle hiding separately
+        [self pauseFullScreen];
+        [[self window] orderBack: self];
+    }
+}
+
+/* On a multi-screen setup, user is able to change the resolution of the screen running Celestia from a different screen, or the menu bar position so handle that */
+- (void)applicationDidChangeScreenParameters:(NSNotification *) aNotification
+{
+    if (isFullScreen && aNotification && ([aNotification object] == NSApp))
+    {
+        // If menu bar not on same screen, don't hide it anymore
+        if (![self hideMenuBarOnActiveScreen])
+            ShowMenuBar();
+
+        NSScreen *screen = [[self window] screen];
+        NSRect screenRect = [screen frame];
+
+        if (!NSEqualSizes(screenRect.size, [[self window] frame].size))
+            [[self window] setFrame: screenRect display:YES];
+    }
+}
+
 -(BOOL)applicationShouldTerminate:(id)sender
 {
+    if (isFullScreen)
+        [self pauseFullScreen];   // allow dialog to show
+
    if (  NSRunAlertPanel(@"Quit Celestia?",@"Are you sure you want to quit Celestia?",@"Quit",@"Cancel",nil) != NSAlertDefaultReturn ) 
    {
+        if (isFullScreen)
+            [self unpauseFullScreen];
    return NO;
    }
     
@@ -419,7 +476,7 @@ NSString* fatalErrorMessage;
 
 - (void) timeDisplay
 {
-    if (!ready) return;
+//    if (!ready) return;
 
     // check for time to release simulated key held down
     [self keyTick];
@@ -443,6 +500,120 @@ NSString* fatalErrorMessage;
 
 // Application Action Methods ----------------------------------------------------------
 
+
+/* Full screen toggle method. Uses a borderless window that covers the screen so that context menus continue to work. */
+- (IBAction) toggleFullScreen: (id) sender
+{
+    if (isFullScreen)
+    {
+        CelestiaOpenGLView *windowedView = nil;
+        Class viewClass = [CelestiaOpenGLView class];
+        NSArray *mainSubViews = [[mainWindow contentView] subviews];
+
+        if (mainSubViews && [mainSubViews count]>0)
+        {
+            // Just to be safe, search for first child of correct type
+            NSEnumerator *viewEnum = [mainSubViews objectEnumerator];
+            id subView;
+            while ((subView = [viewEnum nextObject]))
+            {
+                if ([subView isKindOfClass: viewClass])
+                {
+                    windowedView = subView;
+                    break;
+                }
+            }
+        }
+        else if ([[mainWindow contentView] isKindOfClass: viewClass])
+            windowedView = [mainWindow contentView];
+
+        [mainWindow makeKeyAndOrderFront: self];
+
+        if (windowedView == nil)
+        {
+            // Can't switch back to windowed mode, but hide full screen window
+            // so user can still quit the program
+            [[self window] orderOut: self];
+            ShowMenuBar();
+            [self fatalError: @"Unable to properly exit full screen mode. Celestia will now quit."];
+            [self performSelector:@selector(fatalError:) withObject:nil afterDelay:0.1];
+            return;
+        }
+
+        [windowedView setOpenGLContext: [glView openGLContext]];
+        [[glView openGLContext] setView: windowedView];
+
+        [[self window] close];  // full screen window releases on close
+        ShowMenuBar();
+        [self setWindow: mainWindow];
+        glView = windowedView;
+        [self setDirty];
+        isFullScreen = NO;
+        return;
+    }
+
+    // We will take over the screen that the window is on
+    // (if there are >1 screens, the 50% rule applies)
+    NSScreen *screen = [[glView window] screen];
+
+    CelestiaOpenGLView *fullScreenView = [[CelestiaOpenGLView alloc] initWithFrame:[glView frame] pixelFormat:[glView pixelFormat]];
+    [fullScreenView setMenu: [glView menu]];    // context menu
+
+    FullScreenWindow *fullScreenWindow = [[FullScreenWindow alloc] initWithScreen: screen];
+
+    [fullScreenWindow setBackgroundColor: [NSColor blackColor]];
+    [fullScreenWindow setReleasedWhenClosed: YES];
+    [fullScreenWindow setLevel: NSStatusWindowLevel];
+    [self setWindow: fullScreenWindow];
+    [fullScreenWindow setDelegate: self];
+    // Hide the menu bar only if it's on the same screen
+    [self hideMenuBarOnActiveScreen];
+    [fullScreenWindow makeKeyAndOrderFront: nil];
+
+    [fullScreenWindow setContentView: fullScreenView];
+    [fullScreenView release];
+    [fullScreenView setOpenGLContext: [glView openGLContext]];
+    [[glView openGLContext] setView: fullScreenView];
+
+    // Remember the original (bordered) window
+    mainWindow = [glView window];
+    // Close the original window (does not release it)
+    [mainWindow close];
+    glView = fullScreenView;
+    [glView takeValue: self forKey: @"controller"];
+    [fullScreenWindow makeFirstResponder: glView];
+    // Make sure the view looks ready before unfading from black
+    [glView update];
+    [glView display];
+
+    CGDisplayRestoreColorSyncSettings();
+    isFullScreen = YES;
+}
+
+/* Lowers the level of a full-screen window (to allow Cmd-Tabbing, etc) */
+- (void) pauseFullScreen
+{
+    [[self window] setLevel: NSNormalWindowLevel];
+    ShowMenuBar();
+}
+
+/* Resumes full screen after a pauseFullScreen */
+- (void) unpauseFullScreen
+{
+    [self hideMenuBarOnActiveScreen];
+    [[self window] setLevel: NSStatusWindowLevel];
+}
+
+- (BOOL) hideMenuBarOnActiveScreen
+{
+    NSScreen *screen = [[self window] screen];
+    NSArray *allScreens = [NSScreen screens];
+    if (allScreens && [allScreens objectAtIndex: 0]!=screen)
+        return NO;
+
+    HideMenuBar();
+    return YES;
+}
 
 - (void) runScript: (NSString*) path
 {

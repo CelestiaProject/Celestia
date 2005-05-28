@@ -88,6 +88,7 @@ static NSMutableDictionary* tagMap;
     tagDict = [[NSDictionary dictionaryWithObjectsAndKeys:
 //        TAGDEF(101,@"time")
 //        TAGDEF(999,@"timeScale")
+        TAGDEF(300,@"fullScreenMode")
         // render flags
         TAGDEF(400,@"showStars")
         TAGDEF(401,@"showPlanets")
@@ -452,6 +453,9 @@ FEATUREMETHODS(Other)
 
 -(int)  renderPath { return appCore->getRenderer()->getGLContext()->getRenderPath(); }  ;
 -(void) setRenderPath: (int) value { appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)value); };
+
+-(int)  fullScreenMode { return [[control valueForKey: @"isFullScreen"] intValue]; }
+-(void) setFullScreenMode: (int) value { [control takeValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"]; }
 
 // Alt Surface Setting
 

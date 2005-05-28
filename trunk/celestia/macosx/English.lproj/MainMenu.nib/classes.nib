@@ -16,6 +16,7 @@
                 showGLInfo = id; 
                 showInfoURL = id; 
                 showPanel = id; 
+                toggleFullScreen = id; 
             }; 
             CLASS = CelestiaController; 
             LANGUAGE = ObjC; 
