@@ -3,78 +3,100 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Wed Jun 26 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
+//  2005-05 Modified substantially by Da Woon Jung
 //
 
 #import "CGLInfo.h"
 #import <OpenGL/OpenGL.h>
-#import <OpenGL/CGLRenderers.h>
-#define NSUNSIGNED(x) [NSNumber numberWithUnsignedInt:x]
-#define MAX_DISPLAYS 16
-FOUNDATION_STATIC_INLINE NSRect NSRectFromCGRect(CGRect r) {
-    return NSMakeRect(r.origin.x,r.origin.y,r.size.width,r.size.height);
-}
-NSDictionary* _CGLRenderers;
-@implementation CGLInfo
-+(void)initialize
-{
-    _CGLRenderers = [[NSDictionary dictionaryWithObjectsAndKeys:@"Generic",NSUNSIGNED(kCGLRendererGenericID),@"Software",NSUNSIGNED(kCGLRendererAppleSWID),@"ATI Rage 128",NSUNSIGNED(kCGLRendererATIRage128ID),@"ATI Rage Pro",NSUNSIGNED(kCGLRendererATIRageProID),@"ATI Radeon",NSUNSIGNED(kCGLRendererATIRadeonID),@"nVidia GeForce2MX",NSUNSIGNED(kCGLRendererGeForce2MXID),@"nVidia GeForce3",NSUNSIGNED(kCGLRendererGeForce3ID),@"3DFX (Mesa)",NSUNSIGNED(kCGLRendererMesa3DFXID),nil,nil] retain];
-}
-+(NSString*)rendererFromID:(unsigned)rc
-{
-    NSString* obj = [_CGLRenderers objectForKey:NSUNSIGNED(rc)];
-    return ((id)obj == nil) ? (NSString*)@"Unknown" : (NSString*)obj;
-}
-+(NSArray*)displayDescriptions
-{
-    NSMutableArray* allDisplays = [NSMutableArray arrayWithCapacity:1];
-    CGDirectDisplayID* displayList;
-    CGDisplayCount displayIndex, displayCount;
-    CGDisplayErr err;
+#import <OpenGL/gl.h>
+#import <OpenGL/glext.h>
 
-    err = CGGetActiveDisplayList(0, NULL, &displayCount);
-    if (err != CGDisplayNoErr)
-        return nil;
-    displayList = (CGDirectDisplayID*)malloc(displayCount*sizeof(CGDirectDisplayID));
-    err = CGGetActiveDisplayList(displayCount, displayList, &displayCount);
-    for (displayIndex = 0; displayIndex<displayCount; ++displayIndex) {
-        CGDirectDisplayID selectedDisplay;
-        CGOpenGLDisplayMask glMask;
-        NSMutableDictionary* displayInfo = [NSMutableDictionary dictionaryWithCapacity:10];
-        selectedDisplay = displayList[displayIndex];
-        if ((glMask = CGDisplayIDToOpenGLDisplayMask(selectedDisplay)) != 0) {
-            CGLRendererInfoObj rend;
-            NSMutableArray* renderers;
-            long i,nrend;
-            err = CGLQueryRendererInfo(glMask, &rend, &nrend);
-            renderers = [NSMutableArray arrayWithCapacity:nrend];
-            for (i = 0; i < nrend; ++i) {
-                long value;
-                NSMutableDictionary *glInfo = [NSMutableDictionary dictionaryWithCapacity:10];
-                CGLDescribeRenderer(rend, i, kCGLRPAccelerated, &value);
-                [glInfo setObject:[NSNumber numberWithLong:value] forKey:@"Accelerated"];
-                CGLDescribeRenderer(rend, i, kCGLRPMultiScreen, &value);
-                [glInfo setObject:[NSNumber numberWithLong:value] forKey:@"MultiScreen"];
-                CGLDescribeRenderer(rend, i, kCGLRPRendererID, &value);
-                [glInfo setObject:[NSNumber numberWithLong:value] forKey:@"RendererID"];
-                [glInfo setObject:[CGLInfo rendererFromID:value] forKey:@"Renderer"];
-                CGLDescribeRenderer(rend, i, kCGLRPOffScreen, &value);
-                [glInfo setObject:[NSNumber numberWithLong:value] forKey:@"OffScreen"];
-                CGLDescribeRenderer(rend, i, kCGLRPVideoMemory, &value);
-                [glInfo setObject:[NSNumber numberWithLong:value] forKey:@"VRAM"];
-                CGLDescribeRenderer(rend, i, kCGLRPTextureMemory, &value);
-                [glInfo setObject:[NSNumber numberWithLong:value] forKey:@"TextureVRAM"];
-                [renderers addObject:glInfo];
-            }
-            CGLDestroyRendererInfo(rend);
-            [displayInfo setObject:renderers forKey:@"Renderers"];
-        }
-        [displayInfo setObject:[NSNumber numberWithUnsignedInt:glMask] forKey:@"OpenGLDisplayMask"];
-        [displayInfo setObject:NSStringFromRect(NSRectFromCGRect(CGDisplayBounds(selectedDisplay))) forKey:@"displayBounds"];
-        [displayInfo setObject:[(NSDictionary*)CGDisplayCurrentMode(selectedDisplay) autorelease] forKey:@"currentMode"];
-        [allDisplays addObject:displayInfo];
+
+static char *gExtensions;
+
+#define ENDL    [result appendString:@"\n"]
+
+// Function taken from glext.cpp, so we don't have to compile
+// this whole file as Obj-C++
+static BOOL ExtensionSupported(const char *ext)
+{
+    if (gExtensions == nil)
+        return false;
+
+    char *extensions = gExtensions;
+    int len = strlen(ext);
+    for (;;) {
+        if (strncmp(extensions, ext, len) == 0)
+            return YES;
+        extensions = strchr(extensions, ' ');
+        if  (extensions != nil)
+            ++extensions;
+        else
+            break;
     }
-    free(displayList);
-    return allDisplays;
+
+    return NO;
+}
+
+static NSString *queryGLInteger(GLenum e, NSString *desc)
+{
+    GLuint r[2];
+    NSString *result;
+
+    glGetIntegerv(e, r);
+    if (glGetError())
+        result = [NSString stringWithFormat:NSLocalizedString(@"%@: --not available--",""), desc];
+    else
+        result = [NSString stringWithFormat:NSLocalizedString(@"%@: %d",""), desc, (int)r[0]];
+
+    return result;
+}
+
+static NSString *queryGLExtension(const char *extName)
+{
+    return [NSString stringWithFormat: NSLocalizedString(@"%s:  %@",""), extName, (ExtensionSupported(extName) ? NSLocalizedString(@"Supported","") : @"-")];
+}
+
+
+@implementation CGLInfo
+
++(NSString *)info
+{
+    NSMutableString *result = [NSMutableString string];
+    gExtensions = (char *) glGetString(GL_EXTENSIONS);
+
+    [result appendString:
+        [NSString stringWithFormat:NSLocalizedString(@"Vendor: %@",""),
+            [NSString stringWithUTF8String:glGetString (GL_VENDOR)]]]; ENDL;
+    [result appendString:
+        [NSString stringWithFormat:NSLocalizedString(@"Renderer: %@",""), [NSString stringWithUTF8String:glGetString (GL_RENDERER)]]]; ENDL;
+    [result appendString:
+        [NSString stringWithFormat:NSLocalizedString(@"Version: %@",""), [NSString stringWithUTF8String:glGetString (GL_VERSION)]]]; ENDL;
+
+    ENDL;
+
+    [result appendString:
+        (ExtensionSupported("GL_ARB_multitexture") ?
+         queryGLInteger(GL_MAX_TEXTURE_UNITS_ARB, NSLocalizedString(@"Max simultaneous textures","")) :
+         [NSString stringWithFormat: [NSString stringWithFormat: @"%@: 1", NSLocalizedString(@"Max simultaneous textures","")]])]; ENDL;
+    [result appendString: queryGLInteger(GL_MAX_TEXTURE_SIZE, NSLocalizedString(@"Max texture size",""))]; ENDL;
+
+    ENDL;
+
+    [result appendString: NSLocalizedString(@"Extensions:","")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_vertex_program")]; ENDL;
+    [result appendString: queryGLExtension("GL_NV_vertex_program")]; ENDL;
+    [result appendString: queryGLExtension("GL_NV_fragment_program")]; ENDL;
+    [result appendString: queryGLExtension("GL_NV_register_combiners")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_texture_env_dot3")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_texture_env_combine")]; ENDL;
+    [result appendString: queryGLExtension("GL_EXT_texture_env_combine")]; ENDL;
+
+    [result appendString: queryGLExtension("GL_ARB_shading_language_100")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_shader_objects")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_vertex_shader")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_fragment_shader")]; ENDL;
+
+    return result;
 }
 @end
