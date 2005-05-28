@@ -190,6 +190,7 @@
 				E57283990793F82A00C1F239,
 				E572839A0793F82A00C1F239,
 				E5B615060777307F001BB2BF,
+				E56A5AD00848F24D00A21D7E,
 				F578B7AE02B3E35F0100020A,
 				29B97318FDCFA39411CA2CEA,
 				E54343100783C3F200053094,
@@ -1403,6 +1404,7 @@
 				E5B615070777307F001BB2BF,
 				E54343120783C3F200053094,
 				E53C2FBF079433D300C76766,
+				E56A5AD10848F24D00A21D7E,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2452,6 +2454,19 @@
 		};
 		E56A3DB80848C19800A21D7E = {
 			fileRef = E56A3DB70848C19800A21D7E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E56A5AD00848F24D00A21D7E = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			path = caution.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E56A5AD10848F24D00A21D7E = {
+			fileRef = E56A5AD00848F24D00A21D7E;
 			isa = PBXBuildFile;
 			settings = {
 			};
