@@ -478,13 +478,27 @@ NSString* fatalErrorMessage;
 {
 //    if (!ready) return;
 
+    [NSEvent stopPeriodicEvents];    
+
     // check for time to release simulated key held down
     [self keyTick];
-
+#ifdef USE_PERIODIC
     // adjust timer if necessary to receive waiting appkit events
     static NSEvent* lastEvent = nil;
-    NSEvent* nextEvent = [NSApp nextEventMatchingMask: ( NSAppKitDefined ) untilDate: [NSDate date] inMode: NSDefaultRunLoopMode dequeue: NO];
-    if ( nextEvent && nextEvent == lastEvent )
+    NSEvent *nextEvent;
+
+    [NSEvent startPeriodicEventsAfterDelay: 0.0 withPeriod: 0.001 ];
+    nextEvent = [NSApp nextEventMatchingMask: ( NSPeriodicMask|NSAppKitDefinedMask ) untilDate: nil inMode: NSDefaultRunLoopMode dequeue: NO];
+    [NSEvent stopPeriodicEvents]; 
+
+    if ( [nextEvent type] == NSPeriodic )
+    {   
+        // ignore periodic events
+        [NSApp discardEventsMatchingMask: NSPeriodicMask beforeEvent: nil ];
+    }
+    else
+    {
+        if ( nextEvent == lastEvent )
     {   
         // event is still waiting, so delay firing timer to allow event to process
         [timer setFireDate: [[NSDate date] addTimeInterval: 0.01 ] ];
@@ -492,8 +506,10 @@ NSString* fatalErrorMessage;
     else
     {
         lastEvent = nextEvent;
+            return;
     }
-
+    }
+#endif
     // force display update
     [self forceDisplay];
 }
