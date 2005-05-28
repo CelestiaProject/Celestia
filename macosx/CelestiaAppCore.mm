@@ -264,7 +264,6 @@ static NSMutableDictionary* tagDict;
 
 - (void)dealloc
 {
-    NSLog(@"[CelestiaAppCore dealloc]");
     if (_destinations != nil) {
         [_destinations release];
         _destinations = nil;
@@ -297,10 +296,10 @@ static NSMutableDictionary* tagDict;
     [self setTimeZone:timeZone withDate:date];
 }
 
--(void)charEntered:(char)c
+-(void)charEntered:(char)c withModifiers:(int)modifiers
 {
 // moved to CelestiaOpenGLView...    if (c == 127) c = 8; 
-    appCore->charEntered(c);
+    appCore->charEntered(c, modifiers);
 }
 
 -(void)keyDown:(int)c

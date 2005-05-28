@@ -65,7 +65,7 @@
     NSPoint location2 = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 
-    [appCore charEntered: 8 ];
+    [appCore charEntered: 8 withModifiers:0];
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
     [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
 
@@ -89,18 +89,27 @@
 - (void) keyDown: (NSEvent*)theEvent
 {
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-    unichar key = [[theEvent characters] characterAtIndex: 0];
+    NSString *eventChars = [theEvent characters];
+    if (!eventChars || [eventChars length] == 0)
+    {
+        eventChars = [theEvent charactersIgnoringModifiers];
+        if (!eventChars || [eventChars length] == 0)
+            return;
+    }
+    unichar key = [eventChars characterAtIndex: 0];
+    int modifiers = [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0];
 
         if (key == 127)
-            key = 8; // delete = backspace 
-        if ( key == NSDeleteFunctionKey ) 
+        key = 8; // delete = backspace
+    else if ( key == NSDeleteFunctionKey || key == NSClearLineFunctionKey )
            key = 127; // del = delete
-//        if ( [theEvent modifierFlags] && NSFunctionKeyMask ) NSLog( @"isFunctionKey");
+    
     if ( (key<128) && ((key < '0') || (key>'9') || !([theEvent modifierFlags] & NSNumericPadKeyMask)) )
-       [ appCore charEntered: key ];
-//    [ appCore keyDown: [appCore toCelestiaKey: theEvent ] ];
+        [ appCore charEntered: key
+                withModifiers: modifiers];
+
         [ appCore keyDown: [appCore toCelestiaKey: theEvent] 
-            withModifiers: [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0]  ];
+        withModifiers: modifiers  ];
 }
 
 - (void) keyUp: (NSEvent*)theEvent
