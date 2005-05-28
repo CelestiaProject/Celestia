@@ -36,8 +36,7 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
 
 - (NSDictionary*) deepSkyDict
 {
-    std::vector<const Star*>* nearStars;
-    int objCount = 50;
+    int objCount = 100;
     NSMutableDictionary* newDict = [NSMutableDictionary dictionaryWithCapacity: objCount];
     int i = 0;
     DeepSkyCatalog* catalog = appCore->getSimulation()->getUniverse()->getDeepSkyCatalog();
@@ -57,21 +56,24 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
 - (NSDictionary*) starDict: (int) kind
 {
     std::vector<const Star*>* nearStars;
-    int starCount = 50;
+    int starCount = 100;
     StarBrowser* sb = new StarBrowser(appCore->getSimulation(),kind);
     nearStars = sb->listStars( starCount );
     starCount = nearStars->size();            
 //    if (nearStars == nil ) return 1;
     NSMutableDictionary* starDict = [NSMutableDictionary dictionaryWithCapacity: starCount+2];
+    const Star *aStar;
     int i;
     for (i=0;i<starCount;i++)
     {
-        Star* aStar = (*nearStars)[i];
-	NSString* starName = [NSString  stringWithStdString: appCore->getSimulation()->getUniverse()->getStarCatalog()->getStarName(*aStar) ];
+        aStar = (*nearStars)[i];
+        NSString* starName = [NSString  stringWithStdString: appCore->getSimulation()->getUniverse()->getStarCatalog()->getStarName(*aStar) ];
         [starDict setObject: starName forKey: starName];
     }
     [starDict setObject: [[starDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
     [starDict setObject: @"" forKey: @"_path" ];
+    delete sb;
+    delete nearStars;
     return starDict;       
 }
 
@@ -100,8 +102,7 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
 -(id) newDictForPath: (NSString*) objPath
 {   // creates browser dictionary for star or planet
     NSMutableDictionary* newDict = NULL;
-    PlanetarySystem* sys;
-    Body* bod;
+    PlanetarySystem* sys = nil;
     Selection sel = appCore->getSimulation()->findObjectFromPath([objPath stdString]);
     if ( sel.getType() == Selection::Type_Body )
     {
@@ -232,8 +233,8 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
 {	//returns dictionary for path array
     NSMutableDictionary* lastDict = [self rootDict];
     NSMutableDictionary* nextDict = lastDict;
-    NSString* lastKey;
-    int i;
+    NSString* lastKey = nil;
+    unsigned i;
     for (i=1;i<[pathNames count];i++)
     {
 	lastKey = [pathNames objectAtIndex: i];
@@ -254,7 +255,7 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
 - (id) infoForPathArray: (NSArray*) pathNames
 {
     NSDictionary* nextDict = [self rootDict];
-    int i;
+    unsigned i;
     for (i=1;i<[pathNames count];i++)
     {
         NSString* key = [pathNames objectAtIndex: i];
@@ -266,7 +267,7 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
 
 - (Selection) selFromPathArray: (NSArray*) pathNames
 {
-    NSString* objPath;    
+    NSString* objPath = nil;    
     id obj = [self infoForPathArray: pathNames];
 
     if ([obj isKindOfClass: [NSDictionary class]])
@@ -278,7 +279,7 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
         objPath = (NSString*)obj;
     }
     
-    Selection sel = appCore->getSimulation()->findObjectFromPath([objPath stdString]);
+    Selection sel = appCore->getSimulation()->findObjectFromPath(objPath ? [objPath stdString] : std::string());
 
 //    if (sel == nil) NSLog([NSString stringWithFormat: @"obj %@ not found", objPath]);
     return sel;
@@ -307,7 +308,6 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
     if ([obj isKindOfClass: [NSString class]])
     {
         Selection sel = appCore->getSimulation()->findObjectFromPath([obj stdString]);
-        PlanetarySystem* sys;
         if ( sel.getType() == Selection::Type_Body )
         {
             if ( sel.body()->getSatellites() || sel.body()->getLocations()) return NO;
