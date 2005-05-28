@@ -81,41 +81,9 @@
             SUPERCLASS = NSWindowController; 
         }, 
         {
-            ACTIONS = {applyChanges = id; }; 
             CLASS = RenderPanelController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {
-                bButton = NSButton; 
-                fBrightnessBias = NSTextField; 
-                fResolution = NSPopUpButton; 
-                fSaturation = NSTextField; 
-                lAsteroids = NSButton; 
-                lConstellations = NSButton; 
-                lGalaxies = NSButton; 
-                lMoons = NSButton; 
-                lPlanets = NSButton; 
-                lSpacecraft = NSButton; 
-                lStars = NSButton; 
-                rAtmospheres = NSButton; 
-                rAutoMag = NSButton; 
-                rBoundaries = NSButton; 
-                rCelestialSphere = NSButton; 
-                rCloudMaps = NSButton; 
-                rCometTails = NSButton; 
-                rDiagrams = NSButton; 
-                rEclipseShadows = NSButton; 
-                rFragmentShader = NSButton; 
-                rGalaxies = NSButton; 
-                rMarkers = NSButton; 
-                rNightMaps = NSButton; 
-                rOrbits = NSButton; 
-                rPlanets = NSButton; 
-                rRingShadows = NSButton; 
-                rSmoothLines = NSButton; 
-                rStars = NSButton; 
-                rStarsAsPoints = NSButton; 
-                rVertexShader = NSButton; 
-            }; 
+            OUTLETS = {renderPathCautionIcon = NSImageView; renderPathWarning = NSTextField; }; 
             SUPERCLASS = NSWindowController; 
         }, 
         {
