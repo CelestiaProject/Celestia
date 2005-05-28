@@ -29,7 +29,7 @@ static CelestiaCore *appCore;
 
 - (void) windowDidLoad
 {
-if ([self window]==nil) NSLog(@"loaded browser window is nil");
+    if ([self window]==nil) NSLog(@"loaded browser window is nil");
 }
 
 //--------------------------------------------------------------
@@ -80,7 +80,7 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
 -(id) rootDict
 {    // creates root dictionary for browser
     static NSDictionary* staticRootDict = NULL;
-    
+
     if (staticRootDict!=NULL) return staticRootDict;
     int rootSize = 4;
     NSMutableDictionary* newDict;
@@ -291,10 +291,12 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
     if (browser==nil) 
     {
         browser = sender;        
+        if ([browser respondsToSelector:@selector(setColumnResizingType:)])
+            [browser setColumnResizingType: 2];
         [browser setMinColumnWidth: 80];
-        [browser setMaxVisibleColumns: 1];
+//        [browser setMaxVisibleColumns: 1];
         [browser setDoubleAction:@selector(doubleClick:)];
-        [browser setAction:@selector(click:)];
+//        [browser setAction:@selector(click:)];
     }
 
     NSDictionary*  colDict = [self dictForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
@@ -339,6 +341,7 @@ if ([self window]==nil) NSLog(@"loaded browser window is nil");
     if ([sender tag]!=0) appCore->charEntered([sender tag]);
 }
 
+/*
 static int firstVisibleColumn = 0;
 
 -(void) adjustColumns: (id) sender
@@ -364,6 +367,7 @@ static int firstVisibleColumn = 0;
      // delay column adjustment to allow double click
     [self performSelector: @selector(adjustColumns:) withObject: nil afterDelay: 0.3 ];
 }
+*/
 
 
 - (IBAction) doubleClick: (id) sender
@@ -372,7 +376,7 @@ static int firstVisibleColumn = 0;
     appCore->getSimulation()->setSelection(sel);
     appCore->charEntered('g');
     // adjust columns immediately
-    [self adjustColumns: nil];
+//    [self adjustColumns: nil];
 }
 
 
