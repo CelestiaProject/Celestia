@@ -619,6 +619,7 @@ FEATUREMETHODS(Other)
 - (void) actionForItem: (id) item
 {
     int tag = [item tag];
+    id value;
 
     if ( tag <= 128 ) tag = [self tagForKey: tag ]; // handle menu item for setting; obsolete?
     if ( tag <= 128 ) { appCore->charEntered(tag); return; };
@@ -628,8 +629,18 @@ FEATUREMETHODS(Other)
             [self takeValue: [NSNumber numberWithInt: (1-[[self valueForTag: tag] intValue])] forTag: tag ];
         break;
         case 6: // 600
-            [self takeValue: [NSNumber numberWithInt: tag%10 ] forTag: (tag/10)*10 ];
+            value = [NSNumber numberWithInt: tag%10 ];
+            [self takeValue: value forTag: (tag/10)*10 ];
             [self selectPopUpButtonItem: item withIndex: tag%10];
+            //[self setPopUpButtonWithTag: ((tag/10)*10) toIndex: [value intValue]];
+            if ([[tagDict objectForKey:[NSNumber numberWithInt:((tag/10)*10)]] isEqualToString: @"renderPath"])
+            {
+                value = [self valueForTag: (tag/10)*10];
+                if ([value intValue] != (tag%10))
+                    [[control valueForKey:@"renderPanelController"] performSelector:@selector(displayRenderPathWarning:) withObject:[item title]];
+                else
+                    [[control valueForKey:@"renderPanelController"] performSelector:@selector(hideRenderPathWarning)];
+            }
         break;
         case 9: // 900
             [self takeValue: [NSNumber numberWithFloat: [item floatValue]] forTag: tag];
