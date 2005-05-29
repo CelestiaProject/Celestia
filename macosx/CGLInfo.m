@@ -40,7 +40,7 @@ static BOOL ExtensionSupported(const char *ext)
 
 static NSString *queryGLInteger(GLenum e, NSString *desc)
 {
-    GLuint r[2];
+    GLint r[2];
     NSString *result;
 
     glGetIntegerv(e, r);
@@ -67,11 +67,11 @@ static NSString *queryGLExtension(const char *extName)
 
     [result appendString:
         [NSString stringWithFormat:NSLocalizedString(@"Vendor: %@",""),
-            [NSString stringWithUTF8String:glGetString (GL_VENDOR)]]]; ENDL;
+            [NSString stringWithUTF8String:(const char *)glGetString (GL_VENDOR)]]]; ENDL;
     [result appendString:
-        [NSString stringWithFormat:NSLocalizedString(@"Renderer: %@",""), [NSString stringWithUTF8String:glGetString (GL_RENDERER)]]]; ENDL;
+        [NSString stringWithFormat:NSLocalizedString(@"Renderer: %@",""), [NSString stringWithUTF8String:(const char *)glGetString (GL_RENDERER)]]]; ENDL;
     [result appendString:
-        [NSString stringWithFormat:NSLocalizedString(@"Version: %@",""), [NSString stringWithUTF8String:glGetString (GL_VERSION)]]]; ENDL;
+        [NSString stringWithFormat:NSLocalizedString(@"Version: %@",""), [NSString stringWithUTF8String:(const char *)glGetString (GL_VERSION)]]]; ENDL;
 
     ENDL;
 
