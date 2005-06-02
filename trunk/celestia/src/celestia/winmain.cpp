@@ -2981,6 +2981,7 @@ static bool runOnce = false;
 static string startURL;
 static string startDirectory;
 static string startScript;
+static vector<string> extrasDirectories;
 
 static bool parseCommandLine(int argc, char* argv[])
 {
@@ -3012,6 +3013,18 @@ static bool parseCommandLine(int argc, char* argv[])
             }
             i++;
             startDirectory = string(argv[i]);
+        }
+        else if (strcmp(argv[i], "--extrasdir") == 0)
+        {
+            if (isLastArg)
+            {
+                MessageBox(NULL,
+                           "Directory expected after --extrasdir", "Celestia Command Line Error",
+                           MB_OK | MB_ICONERROR);
+                return false;
+            }
+            i++;
+            extrasDirectories.push_back(string(argv[i]));
         }
         else if (strcmp(argv[i], "-u") == 0 || strcmp(argv[i], "--url") == 0)
         {
@@ -3167,7 +3180,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (startDirectory != "")
         SetCurrentDirectory(startDirectory.c_str());
 
-    if (!appCore->initSimulation())
+    if (!appCore->initSimulation(&extrasDirectories))
     {
         return 1;
     }

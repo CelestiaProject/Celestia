@@ -3563,7 +3563,7 @@ public:
 };
 
 
-bool CelestiaCore::initSimulation()
+bool CelestiaCore::initSimulation(const vector<string>* extrasDirs)
 {
     // Say we're not ready to render yet.
     // bReady = false;
@@ -3588,6 +3588,27 @@ bool CelestiaCore::initSimulation()
     {
         fatalError("Error reading configuration file.");;
         return false;
+    }
+
+    // Insert additional extras directories into the configuration. These
+    // additional directories typically come from the command line. It may
+    // be useful to permit other command line overrides of config file fields.
+    if (extrasDirs != NULL)
+    {
+        // Only insert the additional extras directories that aren't also
+        // listed in the configuration file. The additional directories are added
+        // after the ones from the config file and the order in which they were
+        // specified is preserved. This process in O(N*M), but the number of
+        // additional extras directories should be small.
+        for (vector<string>::const_iterator iter = extrasDirs->begin();
+             iter != extrasDirs->end(); iter++)
+        {
+            if (find(config->extrasDirs.begin(), config->extrasDirs.end(), *iter) == 
+                config->extrasDirs.end())
+            {
+                config->extrasDirs.push_back(*iter);
+            }
+        }
     }
 
     KeyRotationAccel = degToRad(config->rotateAcceleration);
