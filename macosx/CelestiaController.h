@@ -68,6 +68,8 @@
 
 -(IBAction) showPanel: (id) sender;
 
+- (IBAction) captureMovie: (id) sender;
+
 -(void)addSurfaceMenu:(NSMenu*)contextMenu;
 -(BOOL)validateMenuItem:(id)item;
 -(IBAction)activateMenuItem:(id)item;

@@ -697,6 +697,38 @@ NSString* fatalErrorMessage;
     [appCore showInfoURL];
 }
 
+- (void) moviePanelDidEnd:(NSSavePanel*)savePanel returnCode: (int) rc contextInfo: (void *) ci
+{
+//    if (rc == NSOKButton )
+    if (rc == 0 ) return;
+    {
+        NSString *path;
+        path = [savePanel filename];
+        NSLog(@"Saving movie: %@",path);       
+		[appCore captureMovie: path width: 640 height: 480 frameRate: 30 ];
+    }
+}
+
+- (IBAction) captureMovie: (id) sender
+{
+//  Remove following line to enable movie capture...
+	NSRunAlertPanel(@"No Movie Capture",@"Movie capture is not available in this version of Celestia.",nil,nil,nil); return;
+
+    NSSavePanel* panel = [[NSSavePanel alloc] init];
+	NSString* lastMovie = nil; // temporary; should be saved in defaults
+
+	[panel setRequiredFileType: @"mov"];
+	[panel setTitle: @"Capture Movie"];
+	[panel setMessage: @"Capture Movie"];
+    [ panel beginSheetForDirectory:  [lastMovie stringByDeletingLastPathComponent]
+        file: [lastMovie lastPathComponent]
+        modalForWindow: [glView window]
+        modalDelegate: self
+        didEndSelector: @selector(moviePanelDidEnd:returnCode:contextInfo:)
+        contextInfo: nil
+    ];
+}
+
 // GUI Tag Methods ----------------------------------------------------------
 
 - (BOOL)     validateMenuItem: (id) item

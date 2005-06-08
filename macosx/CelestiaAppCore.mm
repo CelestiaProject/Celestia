@@ -21,6 +21,7 @@
 
 #import "CelestiaController.h"
 #include "celestiacore.h"
+#include "qtcapture.h"
 /*
 
 void initMovieCapture(MovieCapture *)
@@ -675,6 +676,22 @@ static NSMutableDictionary* tagDict;
         }
     }
 }
+
+- (BOOL) captureMovie: (NSString*) filename width: (int) width height: (int) height
+                              frameRate: (float) framerate
+{
+    MovieCapture* movieCapture = new QTCapture();
+
+    bool success = movieCapture->start([filename cString], width, height, framerate);
+    if (success)
+        appCore->initMovieCapture(movieCapture);
+    else
+        delete movieCapture;
+
+    return success;
+ return true;
+}
+
 
 @end
 
