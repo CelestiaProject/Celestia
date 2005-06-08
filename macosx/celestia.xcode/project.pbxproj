@@ -65,6 +65,59 @@
 //082
 //083
 //084
+//0C0
+//0C1
+//0C2
+//0C3
+//0C4
+		0C76BFC0085215B100D31A90 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = moviecapture.h;
+			path = ../src/celestia/moviecapture.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		0C76BFC1085215B100D31A90 = {
+			fileRef = 0C76BFC0085215B100D31A90;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0C76BFCF08537EDB00D31A90 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = qtcapture.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		0C76BFD008537EDB00D31A90 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = qtcapture.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		0C76BFD108537EDB00D31A90 = {
+			fileRef = 0C76BFCF08537EDB00D31A90;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0C76BFD208537EDB00D31A90 = {
+			fileRef = 0C76BFD008537EDB00D31A90;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//0C0
+//0C1
+//0C2
+//0C3
+//0C4
 //100
 //101
 //102
@@ -567,6 +620,8 @@
 				E589B6DE078AC511005B8DD9,
 				E589B6E0078AC511005B8DD9,
 				E56A5AEC0848F92200A21D7E,
+				0C76BFC1085215B100D31A90,
+				0C76BFD208537EDB00D31A90,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1544,6 +1599,7 @@
 				E589B6DF078AC511005B8DD9,
 				E56A3DB80848C19800A21D7E,
 				E56A5AED0848F92200A21D7E,
+				0C76BFD108537EDB00D31A90,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3229,17 +3285,20 @@
 		};
 		F51C6D51029596B4014901DC = {
 			children = (
-				E56431450776D52D00E2C4A3,
 				F51C6D8B02959960014901DC,
+				E56431450776D52D00E2C4A3,
 				F51C6D8C02959960014901DC,
 				F51C6D8D02959960014901DC,
 				F51C6D8E02959960014901DC,
+				0C76BFCF08537EDB00D31A90,
+				F53036BB03D908CE01000002,
 				F51C6D9A02959960014901DC,
 				E56431460776D52D00E2C4A3,
 				F51C6D9B02959960014901DC,
 				F51C6D9C02959960014901DC,
 				F51C6D9D02959960014901DC,
-				F53036BB03D908CE01000002,
+				0C76BFC0085215B100D31A90,
+				0C76BFD008537EDB00D31A90,
 				F53036BC03D908CE01000002,
 			);
 			isa = PBXGroup;
