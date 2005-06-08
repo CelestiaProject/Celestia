@@ -70,5 +70,8 @@ class CelestiaCore;
 -(void)showInfoURL;
 -(void)keyDown:(int)c withModifiers:(int)m;
 -(void)keyUp:(int)c withModifiers:(int)m;
+- (BOOL) captureMovie: (NSString*)filename width: (int)width height: (int)height
+                              frameRate: (float)framerate;
+
 
 @end

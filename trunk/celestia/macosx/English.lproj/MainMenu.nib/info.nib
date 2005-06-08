@@ -9,7 +9,7 @@
 		<key>242</key>
 		<string>441 337 270 342 0 0 1152 746 </string>
 		<key>29</key>
-		<string>57 787 721 44 0 0 1280 832 </string>
+		<string>90 957 721 44 0 0 1600 1002 </string>
 		<key>296</key>
 		<string>555 398 170 341 0 0 1280 832 </string>
 		<key>335</key>
@@ -27,12 +27,12 @@
 	</array>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>383</integer>
-		<integer>21</integer>
-		<integer>29</integer>
 		<integer>1310</integer>
+		<integer>383</integer>
+		<integer>29</integer>
+		<integer>21</integer>
 	</array>
 	<key>IBSystem Version</key>
-	<string>7W98</string>
+	<string>7D28</string>
 </dict>
 </plist>
