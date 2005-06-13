@@ -1,11 +1,11 @@
-# Catalog of 161 known extrasolar planetary systems.
+# Catalog of 162 known extrasolar planetary systems.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
 #
 # M.sin(i) has been used as an estimate of mass. Where this is greater than 11 jupiters, the
 # body is rendered as a brown dwarf, since its true mass is likely to exceed the brown dwarf
-# limit of 13 jupiters. When M.sin(i) is less than 0.03 jupiters (10 earths), the body is
+# limit of 13 jupiters. When M.sin(i) is less than 0.02 jupiters (6 earths), the body is
 # rendered as a terrestrial planet rather than a gas giant.
 #
 # Gas giant radii are usually unknown. Theoretical models are available, but depend on other
@@ -1401,6 +1401,29 @@ AltSurface "limit of knowledge" "HD 6434/b"
 }
 
 AltSurface "limit of knowledge" "HD 192263/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "Gliese 876"   # IL Aqr
+{
+	Texture "venuslike.*"
+
+	Mass      7     # M.sin(i) = 7 earths
+	Radius     12600
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Gliese+876"
+
+	EllipticalOrbit {
+		Period          0.0053
+		SemiMajorAxis   0.021
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Gliese 876/d"
 {
 	Texture "extrasolar-lok.*"
 }
