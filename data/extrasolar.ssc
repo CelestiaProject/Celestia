@@ -1,4 +1,4 @@
-# Catalog of 166 known extrasolar planets.
+# Catalog of 167 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
@@ -572,8 +572,8 @@ AltSurface "limit of knowledge" "HD 187123/b"
 "b" "OGLE-TR-10"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 89.2 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.24 jupiters.
+# duration, inclination is fixed at 86.46 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.16 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -581,21 +581,21 @@ AltSurface "limit of knowledge" "HD 187123/b"
 	Texture "gasgiant.*"
 	NightTexture "gasgiantnight.*"
 
-	Mass       180     # M.sin(i) = 0.57 jupiters
-	Radius     86800
+	Mass       170     # M.sin(i) = 0.54 jupiters
+	Radius     81200
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=OGLE-TR-10"
 
 	EllipticalOrbit {
 		Period          0.0085
 		SemiMajorAxis   0.04162
-		Inclination     90.8
-		AscendingNode   267.3
-		MeanLongitude   317
+		Inclination     90.5
+		AscendingNode   264.5
+		MeanLongitude   315
 	}
 
-	Obliquity             91 # guess, to match inclination
-	EquatorAscendingNode  267 # guess, to match ascending node
+	Obliquity             90 # guess, to match inclination
+	EquatorAscendingNode  265 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -802,6 +802,41 @@ AltSurface "limit of knowledge" "HD 75289/b"
 }
 
 AltSurface "limit of knowledge" "HD 209458/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 149026"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.3 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.73 jupiters.
+
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       110     # M.sin(i) = 0.36 jupiters
+	Radius     51100
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+149026"
+
+	EllipticalOrbit {
+		Period          0.0106
+		SemiMajorAxis   0.042
+		Inclination     102.8
+		AscendingNode   246.9
+		MeanLongitude   63
+	}
+
+	Obliquity             103 # guess, to match inclination
+	EquatorAscendingNode  247 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 149026/b"
 {
 	Texture "extrasolar-lok.*"
 }
