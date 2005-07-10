@@ -683,7 +683,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 {
 	Texture  "titan.*"
         Color              [ 0.8 0.2 0.45 ]
-        HazeColor          [ 0.781 0.629 0.975 ]
+        # HazeColor          [ 0.781 0.629 0.975 ]
 	HazeDensity        0.6
 	Radius          2575
 
@@ -751,7 +751,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 "Iapetus" "Sol/Saturn"
 {
 	Texture "iapetus.*"
-	Radius     718
+        BumpMap "iapetusbump.*" 
+        BumpHeight 4.0
+        SpecularTexture "iapetusspec.*"
+        SpecularColor [ 0.32 0.32 0.32 ]
+        SpecularPower 9.5	
+        Radius     718
 
 	CustomOrbit "iapetus"
 	EllipticalOrbit
