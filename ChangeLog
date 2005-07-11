@@ -778,16 +778,43 @@ Code:
 * WINDOWS: Save texture resolution setting between sessions
 
 1.4.0
-
+* New stars.dat format with HD catalog numbers and parallax errors omitted
+* Added catalog cross indexes for HD and SAO catalogs
+* Fixed bugs in parsing catalog numbers
+* Added white dwarf temperatures and  spectral types DA, DB, DC, DO, DQ, and DZ
+* Added handling for partial spectral types where one or both of the subclass
+  and luminosity class are unknown
+* Permit extended star attributes in .stc files: mesh, texture, rotation
+  elements, semiaxes
+* Support multiple star systems of any complexity with orbits and barycenters
+* Changed .stc loader so that a star definition with a duplicate catalog
+  number replaces the previous definition
+* Made catalog numbers optional in .stc files; stars can be defined without
+  having to create fake catalog numbers
+* Star colors now chosen based on temperature; either 'classic' and black body
+  colors may be selected
+* Bound % key to toggle between star color tables
+* Fixed black holes: infinite radius bug gone, rendered just as a plain black
+  sphere
+* Created new command line tools for building binary star databases
+* Removed limitation that two or more solar systems couldn't be shown
+  simultaneously
+* Show light from multiple nearby stars illuminating planets
+* Implemented new GLSL render path; NVIDIA combiners and GeForceFX paths
+  deprecated.
+* Display UTF-8 superscript digits in some star names
 * Updated the Titan texture. It accomodates all published high resolution 
   imaging from the Cassini mission until and including the flyby of 03/31/05. 
 * Updated the Iapetus texture. It accomodates all published high resolution
   imaging from the Cassini mission, including also a unique hires photo taken 
   in "Saturn shine". 
-* Added catalogs of 163 visual and 39 spectroscopic binary orbits, respectively,
-  (Söderhjelm 1999, Pourbaix 2000) with known primary/secondary mass ratios.
+* Added catalogs of 163 visual and 39 spectroscopic binary orbits,
+  respectively, (Söderhjelm 1999, Pourbaix 2000) with known primary/secondary
+  mass ratios.
 * Added an extended and precise data base of 942 galaxies 
   (Steinicke's rev. NGC/IC, 2005) with a magnitude cutoff Bmag < 12. 
-* Included the commented PERL scripts used to extract and adapt the binary orbit
-  and  galaxy data from published professional catalogs.
+* Included the commented PERL scripts used to extract and adapt the binary
+  orbit and  galaxy data from published professional catalogs.
+* Added --extrasdir command line option for specifying additional directories
+  to search for add-ons
 
