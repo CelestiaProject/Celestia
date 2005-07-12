@@ -55,7 +55,8 @@ bool Nebula::load(AssociativeArray* params, const string& resPath)
 }
 
 
-void Nebula::render(const Vec3f& offset,
+void Nebula::render(const GLContext&,
+                    const Vec3f& offset,
                     const Quatf& viewerOrientation,
                     float brightness,
                     float pixelSize)
