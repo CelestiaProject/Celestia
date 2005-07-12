@@ -51,7 +51,7 @@ using namespace std;
 static const int StarVertexListSize = 1024;
 
 // Fractional pixel offset used when rendering text as texture mapped
-// quads to assure consistent mapping of texels to pixels.
+// quads to ensure consistent mapping of texels to pixels.
 static const float PixelOffset = 0.125f;
 
 // These two values constrain the near and far planes of the view frustum
@@ -2701,8 +2701,8 @@ static void setupBumpTexenv()
     // In the final stage, modulate the lighting value by the
     // base texture color.
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
-    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE); 
-   glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_PREVIOUS_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
@@ -2981,7 +2981,6 @@ static void renderModelDefault(Model* model,
         rc.lock();
 
     model->render(rc);
-
     if (model->usesTextureType(Mesh::EmissiveMap))
     {
         glDisable(GL_LIGHTING);
@@ -3009,7 +3008,6 @@ static void renderModel_GLSL(Model* Model,
 			     const Mat4f& planetMat)
 {
     glDisable(GL_LIGHTING);
-
 }
 
 
@@ -3876,6 +3874,7 @@ static void renderShadowedModelDefault(Model* model,
     glEnable(GL_TEXTURE_GEN_S);
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGenfv(GL_S, GL_OBJECT_PLANE, sPlane);
+    //texGenPlane(GL_S, GL_OBJECT_PLANE, sPlane);
     glEnable(GL_TEXTURE_GEN_T);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, tPlane);
@@ -6375,14 +6374,15 @@ void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
         enableSmoothLines();
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 
     for (DeepSkyCatalog::const_iterator iter = catalog.begin();
          iter != catalog.end(); iter++)
     {
         DeepSkyObject* obj = *iter;
 
-	if ((renderFlags & obj->getRenderMask()) == 0)
-	    continue;
+        if ((renderFlags & obj->getRenderMask()) == 0)
+            continue;
 
         Point3d pos = obj->getPosition();
         float radius = obj->getRadius();
@@ -6425,7 +6425,8 @@ void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
 
             glPushMatrix();
             glTranslate(offset);
-            obj->render(offset,
+            obj->render(*context,
+                        offset,
                         observer.getOrientation(),
                         brightness,
                         pixelSize);
@@ -6492,7 +6493,7 @@ void Renderer::renderCelestialSphere(const Observer& observer)
 
 
 void Renderer::labelDeepSkyObjects(const DeepSkyCatalog& catalog,
-				   const Observer& observer)
+                                   const Observer& observer)
 {
     Point3f observerPos_ly = (Point3f) observer.getPosition() * ((float)1e-6);
 
@@ -6500,6 +6501,7 @@ void Renderer::labelDeepSkyObjects(const DeepSkyCatalog& catalog,
          iter != catalog.end(); iter++)
     {
         DeepSkyObject* obj = *iter;
+
         if ((obj->getLabelMask() & labelMode) != 0)
         {
             Point3d posd = obj->getPosition();
@@ -6527,7 +6529,7 @@ void Renderer::labelStars(const vector<StarLabel>& stars,
         Star* star = iter->star;
         Point3f pos = star->getPosition();
         float distance = pos.distanceTo(observerPos_ly);
-	float appMag = (distance > 0.0f) ?
+        float appMag = (distance > 0.0f) ?
             astro::absToAppMag(star->getAbsoluteMagnitude(), distance) : -100.0f;
         
         if (appMag < faintestMag && distance <= distanceLimit)

@@ -15,6 +15,7 @@
 #include <iostream>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
+#include <celengine/glcontext.h>
 #include <celengine/parser.h>
 
 
@@ -40,12 +41,16 @@ class DeepSkyObject
     float getRadius() const;
     void setRadius(float);
 
+    float getAbsoluteMagnitude() const;
+    void setAbsoluteMagnitude(float);
+
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
     virtual bool load(AssociativeArray*, const std::string& resPath);
 
-    virtual void render(const Vec3f& offset,
+    virtual void render(const GLContext& context,
+                        const Vec3f& offset,
                         const Quatf& viewerOrientation,
                         float brightness,
                         float pixelSize) = 0;
@@ -58,6 +63,7 @@ class DeepSkyObject
     Point3d position;
     Quatf orientation;
     float radius;
+    float absMag;
     std::string* infoURL;
 };
 

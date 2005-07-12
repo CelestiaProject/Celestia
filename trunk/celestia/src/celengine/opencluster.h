@@ -25,7 +25,8 @@ class OpenCluster : public DeepSkyObject
     OpenCluster();
 
     virtual bool load(AssociativeArray*, const std::string&);
-    virtual void render(const Vec3f& offset,
+    virtual void render(const GLContext& context,
+                        const Vec3f& offset,
                         const Quatf& viewerOrientation,
                         float brightness,
                         float pixelSize);
