@@ -36,7 +36,8 @@ bool OpenCluster::load(AssociativeArray* params, const string& resPath)
 }
 
 
-void OpenCluster::render(const Vec3f& offset,
+void OpenCluster::render(const GLContext&,
+                         const Vec3f& offset,
                          const Quatf& viewerOrientation,
                          float brightness,
                          float pixelSize)

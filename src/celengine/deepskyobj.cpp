@@ -27,6 +27,7 @@ DeepSkyObject::DeepSkyObject() :
     position(0, 0, 0),
     orientation(1),
     radius(1),
+    absMag(30.0f),
     infoURL(NULL)
 {
 }
@@ -74,6 +75,16 @@ float DeepSkyObject::getRadius() const
 void DeepSkyObject::setRadius(float r)
 {
     radius = r;
+}
+
+float DeepSkyObject::getAbsoluteMagnitude() const
+{
+    return absMag;
+}
+
+void DeepSkyObject::setAbsoluteMagnitude(float _absMag)
+{
+    absMag = _absMag;
 }
 
 string DeepSkyObject::getInfoURL() const
@@ -125,6 +136,10 @@ bool DeepSkyObject::load(AssociativeArray* params, const string&)
     double radius = 1.0;
     params->getNumber("Radius", radius);
     setRadius((float) radius);
+
+    double absMag = 0.0;
+    if (params->getNumber("AbsMag", absMag))
+        setAbsoluteMagnitude((float) absMag);
 
     string infoURL;
     if (params->getString("InfoURL", infoURL))
