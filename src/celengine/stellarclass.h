@@ -127,16 +127,16 @@ StellarClass::StellarClass(StarType t,
 			   LuminosityClass lum) :
     starType(t),
     specClass(sc),
-    subclass(ssub),
-    lumClass(lum)
+    lumClass(lum),
+    subclass(ssub)
 {
 }
 
 StellarClass::StellarClass() :
     starType(NormalStar),
     specClass(Spectral_Unknown),
-    subclass(Subclass_Unknown),
-    lumClass(Lum_Unknown)
+    lumClass(Lum_Unknown),
+    subclass(Subclass_Unknown)
 {
     
 }
