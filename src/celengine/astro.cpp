@@ -279,25 +279,25 @@ Point3d astro::equatorialToCelestialCart(double ra, double dec, double distance)
 }
 
 
-void astro::Anomaly(double meanAnomaly, double eccentricity,
+void astro::anomaly(double meanAnomaly, double eccentricity,
                     double& trueAnomaly, double& eccentricAnomaly)
 {
     double e, delta, err;
     double tol = 0.00000001745;
-    int iterations = 20;	//limit while() to maximum of 20 iterations.
+    int iterations = 20;	// limit while() to maximum of 20 iterations.
 
-    e = meanAnomaly - 2*PI * (int)(meanAnomaly/(2*PI));
+    e = meanAnomaly - 2*PI * (int) (meanAnomaly / (2*PI));
     err = 1;
     while(abs(err) > tol && iterations > 0)
     {
         err = e - eccentricity*sin(e) - meanAnomaly;
-        delta = err / (1 - eccentricity * sin(e));
+        delta = err / (1 - eccentricity * cos(e));
         e -= delta;
         iterations--;
     }
 
-	trueAnomaly = 2*atan(sqrt((1+eccentricity)/(1-eccentricity))*tan(e/2));
-	eccentricAnomaly = e;
+    trueAnomaly = 2*atan(sqrt((1+eccentricity)/(1-eccentricity))*tan(e/2));
+    eccentricAnomaly = e;
 }
 
 
