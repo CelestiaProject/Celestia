@@ -2982,6 +2982,8 @@ static string startURL;
 static string startDirectory;
 static string startScript;
 static vector<string> extrasDirectories;
+static string configFileName;
+static bool useAlternateConfigFile = false;
 
 static bool parseCommandLine(int argc, char* argv[])
 {
@@ -3013,6 +3015,20 @@ static bool parseCommandLine(int argc, char* argv[])
             }
             i++;
             startDirectory = string(argv[i]);
+        }
+        else if (strcmp(argv[i], "--config") == 0)
+        {
+            if (isLastArg)
+            {
+                MessageBox(NULL,
+                           "Configuration file name expected after --config",
+                           "Celestia Command Line Error",
+                           MB_OK | MB_ICONERROR);
+                return false;
+            }
+            i++;
+            configFileName = string(argv[i]);
+            useAlternateConfigFile = true;
         }
         else if (strcmp(argv[i], "--extrasdir") == 0)
         {
@@ -3180,7 +3196,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (startDirectory != "")
         SetCurrentDirectory(startDirectory.c_str());
 
-    if (!appCore->initSimulation(&extrasDirectories))
+    string* altConfig = useAlternateConfigFile ? &configFileName : NULL;
+    if (!appCore->initSimulation(altConfig, &extrasDirectories))
     {
         return 1;
     }
