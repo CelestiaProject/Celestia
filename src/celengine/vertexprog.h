@@ -50,6 +50,8 @@ namespace vp
         LightDirection1    = 18,
         DiffuseColor1      = 19,
         SpecularColor1     = 20,
+        Scale              = 21,
+        InverseScale       = 22
     };
 
     extern unsigned int specular;
@@ -73,6 +75,7 @@ namespace vp
     extern unsigned int diffuseHaze_2light;
     extern unsigned int specular_2light;
     extern unsigned int nightLights_2light;
+    extern unsigned int ellipticalGalaxy;
 };
 
 
