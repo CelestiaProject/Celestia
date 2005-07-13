@@ -38,6 +38,7 @@ unsigned int vp::diffuseHaze_2light = 0;
 unsigned int vp::diffuseTexOffset_2light = 0;
 unsigned int vp::specular_2light = 0;
 unsigned int vp::nightLights_2light = 0;
+unsigned int vp::ellipticalGalaxy = 0;
 
 
 class VertexProcessorNV : public VertexProcessor
@@ -286,6 +287,9 @@ VertexProcessor* vp::initARB()
         if (!LoadARBVertexProgram("shaders/texphong_alpha_arb.vp", perFragmentSpecularAlpha))
             return NULL;
     }
+
+    if (!LoadARBVertexProgram("shaders/ell_galaxy_arb.vp", ellipticalGalaxy))
+        return NULL;
 
     cout << "All ARB vertex programs loaded successfully.\n";
 
