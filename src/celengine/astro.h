@@ -110,7 +110,7 @@ namespace astro
     Point3f equatorialToCelestialCart(float ra, float dec, float distance);
     Point3d equatorialToCelestialCart(double ra, double dec, double distance);
 
-    void Anomaly(double meanAnomaly, double eccentricity,
+    void anomaly(double meanAnomaly, double eccentricity,
                  double& trueAnomaly, double& eccentricAnomaly);
     double meanEclipticObliquity(double jd);
 
