@@ -18,9 +18,17 @@
 #include <celengine/deepskyobj.h>
 
 
+
+struct Blob
+{
+    Point3f        position;
+    unsigned int   colorIndex; 
+    float          brightness;
+};  
+
 struct GalacticForm
 {
-    std::vector<Point3f>* points;
+    std::vector<Blob>* blobs;
     Vec3f scale;
 };
 
@@ -57,18 +65,34 @@ class Galaxy : public DeepSkyObject
     //    void setBrightness();
 
     virtual bool load(AssociativeArray*, const std::string&);
-    virtual void render(const Vec3f& offset,
+    virtual void render(const GLContext& context,
+                        const Vec3f& offset,
                         const Quatf& viewerOrientation,
                         float brightness,
                         float pixelSize);
+    virtual void renderGalaxyPointSprites(const GLContext& context,
+                                          const Vec3f& offset,
+                                          const Quatf& viewerOrientation,
+                                          float brightness,
+                                          float pixelSize);
+    virtual void renderGalaxyEllipsoid(const GLContext& context,
+                                       const Vec3f& offset,
+                                       const Quatf& viewerOrientation,
+                                       float brightness,
+                                       float pixelSize);
+
+    GalacticForm* getForm() const;
+
+    static void  increaseLightGain();
+    static void  decreaseLightGain();
+    static float getLightGain();
 
     virtual unsigned int getRenderMask();
     virtual unsigned int getLabelMask();
-
-    GalacticForm* getForm() const;
     
- private:
+ private:    
     float detail;
+    static float lightGain;
     //    float brightness;
     GalaxyType type;
     GalacticForm* form;
