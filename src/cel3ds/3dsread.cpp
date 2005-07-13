@@ -56,8 +56,10 @@ static uint16 readUshort(ifstream& in)
  
 static float readFloat(ifstream& in)
 {
-    int i = readInt(in);
-    return *((float*) &i);
+    float f;
+    in.read((char*) &f, sizeof(float));
+    LE_TO_CPU_FLOAT(f, f);
+    return f;
 }
 
 
