@@ -183,7 +183,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CelestiaCore();
     ~CelestiaCore();
 
-    bool initSimulation(const std::vector<std::string>* extrasDirs = NULL);
+    bool initSimulation(const std::string* = NULL,
+                        const std::vector<std::string>* extrasDirs = NULL);
     bool initRenderer();
     void start(double t);
     void getLightTravelDelay(double distance, int&, int&, float&);
