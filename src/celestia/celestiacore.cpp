@@ -1886,6 +1886,14 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         notifyWatchers(AmbientLightChanged);
         break;
 
+    case '(':
+        Galaxy::increaseLightGain();
+        break;
+
+    case ')':
+        Galaxy::decreaseLightGain();
+        break;
+
     case '~':
         showConsole = !showConsole;
         break;
@@ -3563,7 +3571,8 @@ public:
 };
 
 
-bool CelestiaCore::initSimulation(const vector<string>* extrasDirs)
+bool CelestiaCore::initSimulation(const string* configFileName,
+                                  const vector<string>* extrasDirs)
 {
     // Say we're not ready to render yet.
     // bReady = false;
@@ -3579,11 +3588,19 @@ bool CelestiaCore::initSimulation(const vector<string>* extrasDirs)
     }
 #endif
 
-    config = ReadCelestiaConfig("celestia.cfg");
-    std::string localConfigFile = WordExp("~/.celestia.cfg");
-    if (localConfigFile != "") {
-        ReadCelestiaConfig(localConfigFile.c_str(), config);
+    if (configFileName != NULL)
+    {
+        config = ReadCelestiaConfig(*configFileName);
     }
+    else
+    {
+        config = ReadCelestiaConfig("celestia.cfg");
+
+        std::string localConfigFile = WordExp("~/.celestia.cfg");
+        if (localConfigFile != "")
+            ReadCelestiaConfig(localConfigFile.c_str(), config);
+    }
+
     if (config == NULL)
     {
         fatalError("Error reading configuration file.");;
