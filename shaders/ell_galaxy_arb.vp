@@ -1,0 +1,57 @@
+!!ARBvp1.0
+
+# Transform the position by the modelview/projection matrix, and that's it!
+
+ATTRIB iPos          = vertex.position;
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  galaxyColor   = { 0, 1, 1, 0.3 };
+PARAM  const         = { 0, 0.5, 1, 2 };
+PARAM  eyePos        = program.env[1];
+PARAM  semiAxes      = program.env[21];
+PARAM  invSemiAxes   = program.env[22];
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+TEMP  coeff;
+TEMP  disc;
+TEMP  t;
+TEMP  dir;
+TEMP  pos;
+
+MUL   t, semiAxes, iPos;
+SUB   dir, t, eyePos;
+MUL   pos, invSemiAxes, eyePos;
+MUL   dir, invSemiAxes, dir;
+
+# Compute coefficients of quadratic
+DP3   coeff.x, dir, dir;
+DP3   coeff.y, dir, pos;
+DP3   coeff.z, pos, pos;
+SUB   coeff.z, coeff.z, const.z;
+
+# Solve the quadratic
+# Compute discriminant: b*b - ac
+MUL   disc.x, coeff.y, coeff.y;
+MUL   t.x, coeff.x, coeff.z;
+SUB   disc.x, disc.x, t.x;
+# Clamp negative values to zero
+MAX   disc.x, const.x, disc.x;
+# Take the square root
+#POW   disc.x, disc.x, const.y;
+
+RCP   t.x, coeff.x;
+MUL   t.x, t.x, disc.x;
+#MUL   t.x, t.x, invSemiAxes.x;
+MUL   t.x, t.x, const.w;
+
+# Output the texture
+MOV   oColor, galaxyColor;
+MOV   oColor.x, t.x;
+
+END
