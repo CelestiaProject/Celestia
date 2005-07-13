@@ -324,7 +324,7 @@ void computePlanetCoords(int p, double map, double da, double dhl, double dl,
 
     s = gPlanetElements[p][3] + ds;
     ma = map + dm;
-    astro::Anomaly(ma, s, nu, ea);
+    astro::anomaly(ma, s, nu, ea);
     distance = (gPlanetElements[p][6] + da)*(1 - s*s)/(1 + s*cos(nu));
     lp = radToDeg(nu) + gPlanetElements[p][2] + radToDeg(dml - dm);
     lp = degToRad(lp);
@@ -516,21 +516,21 @@ class EarthOrbit : public CachingOrbit
     Point3d computePosition(double jd) const
     {
    	double t, t2;
-	double ls, ms;    /* mean longitude and mean anomoay */
-	double s, nu, ea; /* eccentricity, true anomaly, eccentric anomaly */
+	double ls, ms;    // mean longitude and mean anomaly
+	double s, nu, ea; // eccentricity, true anomaly, eccentric anomaly
 	double a, b, a1, b1, c1, d1, e1, h1, dl, dr;
-    double eclLong, distance;
+        double eclLong, distance;
 
-    //Calculate the Julian centuries elapsed since 1900
+        // Calculate the Julian centuries elapsed since 1900
 	t = (jd - 2415020.0)/36525.0;
 
 	t2 = t*t;
 	a = 100.0021359*t;
 	b = 360.*(a-(int)a);
 	ls = 279.69668+.0003025*t2+b;
-    ms = meanAnomalySun(t);
+        ms = meanAnomalySun(t);
 	s = .016751-.0000418*t-1.26e-07*t2;
-    astro::Anomaly(degToRad(ms), s, nu, ea);
+        astro::anomaly(degToRad(ms), s, nu, ea);
 	a = 62.55209472000015*t;
 	b = 360*(a-(int)a);
 	a1 = degToRad(153.23+b);
@@ -552,16 +552,16 @@ class EarthOrbit : public CachingOrbit
 	dr = 5.43e-06*sin(a1)+1.575e-05*sin(b1)+1.627e-05*sin(c1)+
             3.076e-05*cos(d1)+9.27e-06*sin(h1);
 
-    eclLong = nu+degToRad(ls-ms+dl) + PI;
-    eclLong = pfmod(eclLong, TWOPI);
-    distance = KM_PER_AU * (1.0000002*(1-s*cos(ea))+dr);
+        eclLong = nu+degToRad(ls-ms+dl) + PI;
+        eclLong = pfmod(eclLong, TWOPI);
+        distance = KM_PER_AU * (1.0000002*(1-s*cos(ea))+dr);
 
-    //Correction for internal coordinate system
-    eclLong += PI;
-
-    return Point3d(-cos(eclLong) * distance,
-                   0,
-                   sin(eclLong) * distance);
+        // Correction for internal coordinate system
+        eclLong += PI;
+        
+        return Point3d(-cos(eclLong) * distance,
+                       0,
+                       sin(eclLong) * distance);
     };
 
     double getPeriod() const
