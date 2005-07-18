@@ -2213,7 +2213,7 @@ void CelestiaCore::draw()
 
     // Frame rate counter
     nFrames++;
-    if (nFrames == 100)
+    if (nFrames == 100 || sysTime - fpsCounterTime > 10.0)
     {
         fps = (double) nFrames / (sysTime - fpsCounterStartTime);
         nFrames = 0;
