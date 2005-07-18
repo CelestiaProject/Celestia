@@ -2213,7 +2213,7 @@ void CelestiaCore::draw()
 
     // Frame rate counter
     nFrames++;
-    if (nFrames == 100 || sysTime - fpsCounterTime > 10.0)
+    if (nFrames == 100 || sysTime - fpsCounterStartTime > 10.0)
     {
         fps = (double) nFrames / (sysTime - fpsCounterStartTime);
         nFrames = 0;
@@ -2497,7 +2497,17 @@ static void displayDistance(Overlay& overlay, double distance)
 {
     char* units = "";
 
-    if (abs(distance) >= astro::AUtoLightYears(1000.0f))
+    if (abs(distance) >= astro::parsecsToLightYears(1e+6))
+    {
+        units = "Mpc";
+        distance = astro::lightYearsToParsecs(distance) / 1e+6;
+    }
+    else if (abs(distance) >= 0.5 * astro::parsecsToLightYears(1e+3))
+    {
+        units = "Kpc";
+        distance = astro::lightYearsToParsecs(distance) / 1e+3;
+    }
+    else if (abs(distance) >= astro::AUtoLightYears(1000.0f))
     {
         units = "ly";
     }
@@ -2518,17 +2528,6 @@ static void displayDistance(Overlay& overlay, double distance)
     }
 
     overlay << SigDigitNum(distance, 5) << ' ' << units;
-
-#if 0
-    if (abs(distance) >= astro::AUtoLightYears(1000.0f))
-        overlay.printf("%.3f ly", distance);
-    else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
-        overlay.printf("%.3f au", astro::lightYearsToAU(distance));
-    else if (abs(distance) > astro::kilometersToLightYears(1.0f))
-        overlay.printf("%.3f km", astro::lightYearsToKilometers(distance));
-    else
-        overlay.printf("%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
-#endif
 }
 
 
