@@ -27,9 +27,13 @@ static const char *description =
 
 
 static KCmdLineOptions options[] =
-{ { "+url", I18N_NOOP("Start and go to url"), 0},
+{ 
+  { "conf <file>", I18N_NOOP("Use alternate configuration file"), 0 },
+  { "dir <directory>", I18N_NOOP("Use alternate installation directory"), 0 },
+  { "extrasdirs <directory list>", I18N_NOOP("Colon separated list of \"extras\" directories"), 0 },
+  { "fullscreen", I18N_NOOP("Start fullscreen"), 0 },
+  { "+[url]", I18N_NOOP("Start and go to url"), 0},
   { 0, 0, 0 }
-  // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 
 int main(int argc, char *argv[])

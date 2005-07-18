@@ -16,18 +16,59 @@
  ***************************************************************************/
 #include "kdeuniquecelestia.h"
 #include <kcmdlineargs.h>
+#include <qfile.h>
+#include <qdir.h>
+#include <string>
+#include <vector>
+#include <klocale.h>
 
 KdeUniqueCelestia::KdeUniqueCelestia() {
-    app = new KdeApp();
-
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    std::vector<std::string> validDirs;
+    std::string config, dir;
+    bool fullscreen = false;
+
+    if (args->isSet("conf")) {
+        if (QFile::exists(args->getOption("conf")))
+            config = std::string((const char*)args->getOption("conf"));
+        else
+            std::cerr << i18n("File %1 does not exist, using default configuration file %2/celestia.cfg")
+                    .arg(args->getOption("conf"))
+                    .arg(CONFIG_DATA_DIR) << std::endl;
+    }
+
+    if (args->isSet("dir")) {
+        QDir d(args->getOption("dir"));
+        if (d.exists())
+            dir = std::string((const char*)args->getOption("dir"));
+        else 
+            std::cerr << i18n("Directory %1 does not exist, using default %2")
+                    .arg(args->getOption("dir"))
+                    .arg(CONFIG_DATA_DIR)  << std::endl;
+    }
+
+    if (args->isSet("extrasdirs")) {
+        QStringList dirs = QStringList::split(":", args->getOption("extrasdir"));
+        for (QStringList::Iterator i = dirs.begin(); i != dirs.end(); ++i) {
+            QDir d(*i);
+            if (d.exists()) 
+                validDirs.push_back(std::string((const char*)*i));
+            else 
+                std::cerr << i18n("Extras directory %1 does not exist").arg(*i) << std::endl;
+        }
+    }
+
+    if (args->isSet("fullscreen")) fullscreen = true;
+
+    app = new KdeApp(config, dir, validDirs, fullscreen);
 
     if (args->count() != 0) {
         app->setStartURL(args->url(0));
     }
+
     setMainWidget(app);
     app->show();
-     
+    
 }
 
 int KdeUniqueCelestia::newInstance() {
