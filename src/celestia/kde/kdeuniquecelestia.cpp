@@ -47,9 +47,9 @@ KdeUniqueCelestia::KdeUniqueCelestia() {
                     .arg(CONFIG_DATA_DIR)  << std::endl;
     }
 
-    if (args->isSet("extrasdirs")) {
-        QStringList dirs = QStringList::split(":", args->getOption("extrasdir"));
-        for (QStringList::Iterator i = dirs.begin(); i != dirs.end(); ++i) {
+    if (args->isSet("extrasdir")) {
+        QCStringList dirs = args->getOptionList("extrasdir");
+        for (QCStringList::Iterator i = dirs.begin(); i != dirs.end(); ++i) {
             QDir d(*i);
             if (d.exists()) 
                 validDirs.push_back(std::string((const char*)*i));
