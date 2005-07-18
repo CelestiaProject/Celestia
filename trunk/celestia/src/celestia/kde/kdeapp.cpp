@@ -95,7 +95,7 @@ static uint32 FilterOtherLocations = ~(Location::City |
                     Location::Vallis |
                     Location::Mare);
 
-KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
+KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> extrasDirs, bool fullscreen) : KMainWindow(0, 0)
 {
 #if KDE_VERSION >= 0x030200
     QStringList splashDirs = KGlobal::dirs()->findDirs("appdata", "splash");
@@ -144,7 +144,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     setAcceptDrops(true);
 
     // Create our OpenGL widget
-    glWidget = new KdeGlWidget( this, "kdeglwidget", appCore);
+    glWidget = new KdeGlWidget( this, "kdeglwidget", appCore, config, dir, extrasDirs);
     
     setCentralWidget(glWidget);
     initActions();
@@ -158,6 +158,7 @@ KdeApp::KdeApp(QWidget *parent, const char *name) : KMainWindow(parent, name)
     conf->setGroup("MainWindow");
     restoreWindowSize(conf);
     conf->setGroup(0);
+    if (fullscreen) slotFullScreen();
 
     KGlobal::config()->setGroup("Preferences");
     if (KGlobal::config()->hasKey("DistanceToScreen"))

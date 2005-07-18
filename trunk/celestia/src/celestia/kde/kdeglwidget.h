@@ -25,7 +25,8 @@
 #include "celestiacore.h"
 #include "celengine/simulation.h"
 #include <celengine/starbrowser.h>
-
+#include <string>
+#include <vector>
 
 /**
   *@author Christophe Teyssier
@@ -35,7 +36,7 @@ class KdeGlWidget : public QGLWidget, public CelestiaCore::CursorHandler {
     Q_OBJECT
 
 public:
-    KdeGlWidget( QWidget* parent, const char* name, CelestiaCore* core );
+    KdeGlWidget( QWidget* parent, const char* name, CelestiaCore* core, std::string config, std::string dir, std::vector<std::string> extrasDirs);
     ~KdeGlWidget();
 
     void setCursorShape(CelestiaCore::CursorShape);

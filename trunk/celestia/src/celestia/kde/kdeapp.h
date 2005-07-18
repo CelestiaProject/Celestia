@@ -68,7 +68,7 @@ friend void KdeWatcher::notifyChange(CelestiaCore*, int);
 
 public:
     /** construtor */
-    KdeApp(QWidget* parent=0, const char *name=0);
+    KdeApp(std::string config, std::string dir, std::vector<std::string> extrasDirs, bool fullscreen);
     /** destructor */
     ~KdeApp() {};
 

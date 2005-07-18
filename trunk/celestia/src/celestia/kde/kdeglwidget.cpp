@@ -49,11 +49,11 @@
 #include <math.h>
 #include <vector>
 
-KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core )
+KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core, std::string config, std::string dir, std::vector<std::string> extrasDirs )
     : QGLWidget( parent, name )
 {
 
-    if (chdir(CONFIG_DATA_DIR) == -1)
+    if ( (dir.length() > 1 ? chdir(dir.c_str()):chdir(CONFIG_DATA_DIR)) == -1)
     {
         ::std::cout << "Cannot chdir to '" << CONFIG_DATA_DIR << "', probably due to improper installation" << ::std::endl;
 	exit(1);
@@ -74,8 +74,9 @@ KdeGlWidget::KdeGlWidget(  QWidget* parent, const char* name, CelestiaCore* core
     appCore->setCursorHandler(this);
     
     lastX = lastY = 0;
-
-    if (!appCore->initSimulation())
+ 
+    string* altConfig = config.length() > 0 ? &config : NULL;
+    if (!appCore->initSimulation(altConfig, &extrasDirs))
     {
         exit(1);
     }
