@@ -30,7 +30,7 @@ static KCmdLineOptions options[] =
 { 
   { "conf <file>", I18N_NOOP("Use alternate configuration file"), 0 },
   { "dir <directory>", I18N_NOOP("Use alternate installation directory"), 0 },
-  { "extrasdirs <directory list>", I18N_NOOP("Colon separated list of \"extras\" directories"), 0 },
+  { "extrasdir <directory>", I18N_NOOP("Use as additional \"extras\" directory"), 0 },
   { "fullscreen", I18N_NOOP("Start fullscreen"), 0 },
   { "+[url]", I18N_NOOP("Start and go to url"), 0},
   { 0, 0, 0 }
