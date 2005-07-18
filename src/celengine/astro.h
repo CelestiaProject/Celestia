@@ -69,7 +69,9 @@ namespace astro
     float absToAppMag(float absMag, float lyrs);
     float appToAbsMag(float appMag, float lyrs);
     float lightYearsToParsecs(float);
+    double lightYearsToParsecs(double);
     float parsecsToLightYears(float);
+    double parsecsToLightYears(double);
     float lightYearsToKilometers(float);
     double lightYearsToKilometers(double);
     float kilometersToLightYears(float);
