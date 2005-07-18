@@ -71,9 +71,19 @@ float astro::lightYearsToParsecs(float ly)
     return ly / (float) LY_PER_PARSEC;
 }
 
+double astro::lightYearsToParsecs(double ly)
+{
+    return ly / (double) LY_PER_PARSEC;
+}
+
 float astro::parsecsToLightYears(float pc)
 {
     return pc * (float) LY_PER_PARSEC;
+}
+
+double astro::parsecsToLightYears(double pc)
+{
+    return pc * (double) LY_PER_PARSEC;
 }
 
 float astro::lightYearsToKilometers(float ly)
