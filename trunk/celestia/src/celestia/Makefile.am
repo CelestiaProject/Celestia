@@ -3,6 +3,8 @@ SUBDIRS = res kde gtk
 bin_PROGRAMS = celestia
 INCLUDES = -I..
 
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 if ENABLE_KDE
 celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) \

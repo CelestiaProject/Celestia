@@ -54,14 +54,18 @@ class Universe
                                 float tolerance = 0.0f);
     Selection find(const std::string& s,
                    Selection* contexts = NULL,
-                   int nContexts = 0);
+                   int nContexts = 0,
+                   bool i18n = false);
     Selection findPath(const std::string& s,
                        Selection* contexts = NULL,
-                       int nContexts = 0);
+                       int nContexts = 0,
+                       bool i18n = false);
     Selection findChildObject(const Selection& sel,
-                              const string& name) const;
+                              const string& name,
+                              bool i18n = false) const;
     Selection findObjectInContext(const Selection& sel,
-                                  const string& name) const;
+                                  const string& name,
+                                  bool i18n = false) const;
 
     std::vector<std::string> getCompletion(const std::string& s,
                                            Selection* contexts = NULL,

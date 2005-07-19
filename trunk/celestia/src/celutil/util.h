@@ -16,6 +16,9 @@
 #include <iostream>
 #include <functional>
 
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define _(s) gettext(s)
+
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2, int n);
 

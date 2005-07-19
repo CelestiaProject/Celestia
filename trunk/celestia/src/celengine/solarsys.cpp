@@ -77,7 +77,7 @@ enum Disposition
 
 static void errorMessagePrelude(const Tokenizer& tok)
 {
-    cerr << "Error in .ssc file (line " << tok.getLineNumber() << "): ";
+    cerr << _("Error in .ssc file (line ") << tok.getLineNumber() << "): ";
 }
 
 static void sscError(const Tokenizer& tok,
@@ -489,14 +489,14 @@ bool LoadSolarSystemObjects(istream& in,
             sscError(tokenizer, "object name expected");
             return false;
         }
-        string name = tokenizer.getStringValue();
+        string name = tokenizer.getStringValue().c_str();
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
             sscError(tokenizer, "bad parent object name");
             return false;
         }
-        string parentName = tokenizer.getStringValue();
+        string parentName = tokenizer.getStringValue().c_str();
 
         Value* objectDataValue = parser.readValue();
         if (objectDataValue == NULL)
@@ -545,7 +545,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << "parent body '" << parentName << "' of '" << name << "' not found.\n";
+                cerr << _("parent body '") << parentName << _("' of '") << name << _("' not found.\n");
             }
 
             if (parentSystem != NULL)
@@ -554,7 +554,7 @@ bool LoadSolarSystemObjects(istream& in,
                 if (existingBody && disposition == AddObject)
                 {
                     errorMessagePrelude(tokenizer);
-                    cerr << "warning duplicate definition of " <<
+                    cerr << _("warning duplicate definition of ") <<
                         parentName << " " <<  name << '\n';
                 }
                 
@@ -583,7 +583,7 @@ bool LoadSolarSystemObjects(istream& in,
             if (surface != NULL && parent.body() != NULL)
                 parent.body()->addAlternateSurface(name, surface);
             else
-                sscError(tokenizer, "bad alternate surface");
+                sscError(tokenizer, _("bad alternate surface"));
         }
         else if (itemType == "Location")
         {
@@ -597,13 +597,13 @@ bool LoadSolarSystemObjects(istream& in,
                 }
                 else
                 {
-                    sscError(tokenizer, "bad location");
+                    sscError(tokenizer, _("bad location"));
                 }
             }
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << "parent body '" << parentName << "' of '" << name << "' not found.\n";
+                cerr << _("parent body '") << parentName << _("' of '") << name << _("' not found.\n");
             }
         }
     }

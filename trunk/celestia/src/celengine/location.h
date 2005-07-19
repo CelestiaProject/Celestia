@@ -23,7 +23,7 @@ class Location
     Location();
     virtual ~Location();
 
-    std::string getName() const;
+    std::string getName(bool i18n = false) const;
     void setName(const std::string&);
 
     Vec3f getPosition() const;
@@ -85,6 +85,7 @@ class Location
  private:
     Body* parent;
     std::string name;
+    std::string i18nName;
     Vec3f position;
     float size;
     float importance;

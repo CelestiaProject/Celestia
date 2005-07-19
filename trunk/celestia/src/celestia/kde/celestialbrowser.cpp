@@ -115,29 +115,18 @@ void CelestialBrowser::slotRefresh()
          i != stars->end() ; 
          i++ )
     {
-        char buf[20];
         const Star *star=(Star *)(*i);
-        QString name = QString::fromUtf8((stardb->getStarName(*star)).c_str());
 
         Point3f starPos = star->getPosition();
         Vec3d v(starPos.x - obsPos.x, 
                 starPos.y - obsPos.y, 
                 starPos.z - obsPos.z);
-        double d = v.length();
-        
-        sprintf(buf, " %.2f ly", d);
-        QString dist(buf);
-
-        sprintf(buf, " %.2f ", astro::absToAppMag(star->getAbsoluteMagnitude(), d));
-        QString appMag(buf);
-
-        sprintf(buf, " %.2f ", star->getAbsoluteMagnitude());
-        QString absMag(buf);
+        double dist = v.length();
 
         QString starClass(star->getSpectralType());
-
-        CelListViewItem *starItem = new CelListViewItem(listStars, name,
-                                    QString::fromUtf8(ReplaceGreekLetterAbbr(name.latin1()).c_str()), dist, appMag, absMag, starClass);
+        CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), dist, "ly",
+                astro::absToAppMag(star->getAbsoluteMagnitude(), dist),
+                star->getAbsoluteMagnitude(), starClass);
         
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
@@ -152,12 +141,10 @@ void CelestialBrowser::slotRefresh()
                 
                 Point3d bodyPos = body->getHeliocentricPosition(appSim->getTime());
                 double starBodyDist = bodyPos.distanceFromOrigin();
-                sprintf(buf, " %.2f au", starBodyDist / KM_PER_AU);
-                QString distStarBody(buf);
-                                                                             
-                CelListViewItem *planetItem = new CelListViewItem(starItem, QString(body->getName().c_str()), 
-                                            QString::fromUtf8(body->getName().c_str()),
-                                            distStarBody, "", "", getClassification(body->getClassification()));
+
+                CelListViewItem *planetItem = new CelListViewItem(starItem, body->getName(), 
+                                            starBodyDist / KM_PER_AU, "au",
+                                            0, 0, getClassification(body->getClassification()));
                 
                 const PlanetarySystem* satellites = body->getSatellites();
                 if (satellites != NULL && satellites->getSystemSize() != 0)
@@ -169,17 +156,14 @@ void CelestialBrowser::slotRefresh()
                                 Point3d satPos = sat->getHeliocentricPosition(appSim->getTime());
                                 Vec3d bodySatVec(bodyPos.x - satPos.x, bodyPos.y - satPos.y, bodyPos.z - satPos.z);
                                 double bodySatDist = bodySatVec.length();
-                                sprintf(buf, " %.0f km", bodySatDist);
-                                QString distBodySat(buf);
                                 
-                                new CelListViewItem(planetItem, QString(sat->getName().c_str()),
-                                    QString::fromUtf8(sat->getName().c_str()),
-                                    distBodySat, "", "", getClassification(sat->getClassification()));
+                                new CelListViewItem(planetItem, sat->getName(),
+                                    bodySatDist, "km", 0, 0, getClassification(sat->getClassification()));
 
                         }
                 }
             }
-        }                       
+        }
     }
     delete(stars);
 }
@@ -215,11 +199,11 @@ QString CelestialBrowser::getClassification(int c) const{
 
 void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p, int col) {
     CelListViewItem *i = dynamic_cast<CelListViewItem*>(item);
-    QString name = i->getName();
+    std::string name = i->getName();
     while ( (i = dynamic_cast<CelListViewItem*>(i->parent())) ) {
         name = i->getName() + "/" + name;
     }
-    Selection sel = appSim->findObjectFromPath(std::string(name.latin1()));
+    Selection sel = appSim->findObjectFromPath(name);
 
     SelectionPopup popup(this, appCore, sel);
     popup.init();
@@ -228,20 +212,69 @@ void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p
 }
 
 
-CelListViewItem::CelListViewItem( QListView * parent, QString _name, QString label1, QString label2, 
-   QString label3, QString label4, QString label5, QString label6, QString label7, 
-   QString label8 )
-    : QListViewItem(parent, label1, label2, label3, label4, label5, label6, label7, label8),
-    name(_name)
+CelListViewItem::CelListViewItem( QListView * parent, std::string _name, double _dist, const char* _dist_unit, double _app_mag, double _abs_mag, QString _type )
+    : QListViewItem(parent),
+    name(_name),
+    dist(_dist),
+    dist_unit(_dist_unit),
+    app_mag(_app_mag),
+    abs_mag(_abs_mag),
+    type(_type)
 {
+    char buf[20];
+    QString label;
+    this->setText(0, QString::fromUtf8(ReplaceGreekLetterAbbr(_name).c_str()));
+
+    sprintf(buf, " %.2f %s", _dist, _dist_unit);
+    label = buf;
+    this->setText(1, label);
+
+    if (_app_mag != 0) {
+        sprintf(buf, " %.2f ", _app_mag);
+        label = buf;
+        this->setText(2, label);
+    }
+
+    if (_abs_mag != 0) {
+        sprintf(buf, " %.2f ", _abs_mag);
+        label = buf;
+        this->setText(3, label);
+    }
+
+    this->setText(4, _type);
 }
 
-CelListViewItem::CelListViewItem( QListViewItem * parent, QString _name, QString label1, QString label2, 
-   QString label3, QString label4, QString label5, QString label6, QString label7, 
-   QString label8 )
-    : QListViewItem(parent, label1, label2, label3, label4, label5, label6, label7, label8),
-    name(_name)
+CelListViewItem::CelListViewItem( QListViewItem * parent, std::string _name, double _dist, const char* _dist_unit, double _app_mag, double _abs_mag, QString _type )
+    : QListViewItem(parent),
+    name(_name),
+    dist(_dist),
+    dist_unit(_dist_unit),
+    app_mag(_app_mag),
+    abs_mag(_abs_mag),
+    type(_type)
 {
+    char buf[20];
+    QString label;
+
+    this->setText(0, QString::fromUtf8(ReplaceGreekLetterAbbr(_name).c_str()));
+
+    sprintf(buf, " %.2f %s", _dist, _dist_unit);
+    label = buf;
+    this->setText(1, label);
+
+    if (_app_mag != 0) {
+        sprintf(buf, " %.2f ", _app_mag);
+        label = buf;
+        this->setText(2, label);
+    }
+
+    if (_abs_mag != 0) {
+        sprintf(buf, " %.2f ", _abs_mag);
+        label = buf;
+        this->setText(3, label);
+    }
+
+    this->setText(4, _type);
 }
 
 CelListViewItem::~CelListViewItem() {
@@ -249,16 +282,12 @@ CelListViewItem::~CelListViewItem() {
 }
 
 int CelListViewItem::compare ( QListViewItem * i, int col, bool ascending ) const {
-
     if (col == 0 || col > 3) {
         return key(col, ascending).localeAwareCompare(i->key(col, ascending));
-    } else {    
-        float a = key(col, ascending).toFloat();
-        float b = i->key(col, ascending).toFloat();
-        if ( a == b && col == 1) { return 0; }
-        if ( a == b && col != 1) { return compare(i, 1, ascending); }
-        if ( a < b ) { return -1; }
-        return 1;
+    } else {
+        if (col == 1) return (dist > dynamic_cast<CelListViewItem*>(i)->getDist()) * 2 - 1;
+        if (col == 2) return (app_mag > dynamic_cast<CelListViewItem*>(i)->getAppMag()) * 2 - 1;
+        if (col == 3) return (abs_mag > dynamic_cast<CelListViewItem*>(i)->getAbsMag()) * 2 - 1;
     }
 }
 

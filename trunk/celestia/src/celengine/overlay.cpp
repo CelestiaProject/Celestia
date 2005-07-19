@@ -162,7 +162,6 @@ void Overlay::print(char* s)
     int length = strlen(s);
     bool validChar = true;
 	int i = 0;
-    
     while (i < length && validChar)
     {
         wchar_t ch = 0;

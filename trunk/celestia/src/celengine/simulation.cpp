@@ -416,7 +416,7 @@ void Simulation::selectPlanet(int index)
 //   3. Search the planets and moons in the planetary system of the currently selected
 //      star
 //   4. Search the planets and moons in any 'nearby' (< 0.1 ly) planetary systems
-Selection Simulation::findObject(string s)
+Selection Simulation::findObject(string s, bool i18n)
 {
     Selection path[2];
     int nPathEntries = 0;
@@ -427,14 +427,14 @@ Selection Simulation::findObject(string s)
     if (closestSolarSystem != NULL)
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
 
-    return universe->find(s, path, nPathEntries);
+    return universe->find(s, path, nPathEntries, i18n);
 }
 
 
 // Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b
 // Currently, 'absolute' paths starting with a / are not supported nor are
 // paths that contain galaxies.
-Selection Simulation::findObjectFromPath(string s)
+Selection Simulation::findObjectFromPath(string s, bool i18n)
 {
     Selection path[2];
     int nPathEntries = 0;
@@ -445,7 +445,7 @@ Selection Simulation::findObjectFromPath(string s)
     if (closestSolarSystem != NULL)
         path[nPathEntries++] = Selection(closestSolarSystem->getStar());
 
-    return universe->findPath(s, path, nPathEntries);
+    return universe->findPath(s, path, nPathEntries, i18n);
 }
 
 

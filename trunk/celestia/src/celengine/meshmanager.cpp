@@ -14,6 +14,7 @@
 #include "celestia.h"
 #include <celutil/debug.h>
 #include <celutil/filetype.h>
+#include <celutil/util.h>
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
 #include <cel3ds/3dsread.h>
@@ -62,7 +63,7 @@ string ModelInfo::resolve(const string& baseDir)
 
 Model* ModelInfo::load(const string& filename)
 {
-    clog << "Loading model: " << filename << '\n';
+    clog << _("Loading model: ") << filename << '\n';
     Model* model = NULL;
     ContentType fileType = DetermineFileType(filename);
 
@@ -104,7 +105,7 @@ Model* ModelInfo::load(const string& filename)
     }
     else
     {
-        cerr << "Error loading model '" << filename << "'\n";
+        cerr << _("Error loading model '") << filename << "'\n";
     }
  
     return model;

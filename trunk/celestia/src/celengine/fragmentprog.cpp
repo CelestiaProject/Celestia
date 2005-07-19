@@ -88,12 +88,12 @@ static int findLineNumber(const string& s, unsigned int index)
 
 static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
 {
-    cout << "Loading NV fragment program: " << filename << '\n';
+    cout << _("Loading NV fragment program: ") << filename << '\n';
 
     string* source = ReadTextFromFile(filename);
     if (source == NULL)
     {
-        cout << "Error loading NV fragment program: " << filename << '\n';
+        cout << _("Error loading NV fragment program: ") << filename << '\n';
         return false;
     }
 
@@ -110,7 +110,7 @@ static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
     {
         GLint errPos = 0;
         glGetIntegerv(GL_PROGRAM_ERROR_POSITION_NV, &errPos);
-        cout << "Error in fragment program " << filename << ' ' <<
+        cout << _("Error in fragment program ") << filename << ' ' <<
             glGetString(GL_PROGRAM_ERROR_STRING_NV) << '\n';
         return false;
     }
@@ -121,7 +121,7 @@ static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
 
 FragmentProcessor* fp::initNV()
 {
-    cout << "Initializing NV fragment programs . . .\n";
+    cout << _("Initializing NV fragment programs . . .\n");
     if (!LoadNvFragmentProgram("shaders/shadow_on_rings_nv.fp", sphereShadowOnRings))
         return NULL;
     if (!LoadNvFragmentProgram("shaders/eclipse1_nv.fp", eclipseShadow1))
@@ -137,7 +137,7 @@ FragmentProcessor* fp::initNV()
     if (!LoadNvFragmentProgram("shaders/texphong_alpha_nv.fp", texSpecularAlpha))
         return NULL;
 
-    cout << "All NV fragment programs loaded successfully.\n";
+    cout << _("All NV fragment programs loaded successfully.\n");
 
     return new FragmentProcessorNV();
 }
@@ -145,7 +145,7 @@ FragmentProcessor* fp::initNV()
 
 FragmentProcessor* fp::initARB()
 {
-    cout << "Initializing ARB fragment programs . . .\n";
+    cout << _("Initializing ARB fragment programs . . .\n");
 
     return new FragmentProcessorARB();
 }

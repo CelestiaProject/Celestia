@@ -21,7 +21,7 @@
 #include "celengine/astro.h"
 #include "url.h"
 
-Url::Url() 
+Url::Url()
 {};
 
 Url::Url(const std::string& str, CelestiaCore *core)
@@ -285,21 +285,21 @@ void Url::evalName() {
     char las = 'N';
     switch(type) {
     case Absolute:
-        name = modeStr;
-        if (body1 != "") name += " " + getBodyShortName(body1);
-        if (body2 != "") name += " " + getBodyShortName(body2);
-        if (trackedStr != "") name += " -> " + getBodyShortName(trackedStr);
-        if (selectedStr != "") name += " [" + getBodyShortName(selectedStr) + "]";
+        name = _(modeStr.c_str());
+        if (body1 != "") name += " " + std::string(_(getBodyShortName(body1).c_str()));
+        if (body2 != "") name += " " + std::string(_(getBodyShortName(body2).c_str()));
+        if (trackedStr != "") name += " -> " + std::string(_(getBodyShortName(trackedStr).c_str()));
+        if (selectedStr != "") name += " [" + std::string(_(getBodyShortName(selectedStr).c_str())) + "]";
         break;
     case Relative:
-        if (selectedStr != "") name = getBodyShortName(selectedStr) + " ";
+        if (selectedStr != "") name = std::string(_(getBodyShortName(selectedStr).c_str())) + " ";
         if (lo < 0) { lo = -lo; los = 'W'; }
         if (la < 0) { la = -la; las = 'S'; }
         sprintf(buff, "(%.1lf%c, %.1lf%c)", lo, los, la, las);
         name += buff;
         break;
     case Settings:
-        name = "Settings";
+        name = _("Settings");
         break;
     }
 }
@@ -360,6 +360,8 @@ std::string Url::getCoordSysName(astro::CoordinateSystem mode) const
 
 std::string Url::getSelectionName(const Selection& selection) const
 {
+    PlanetarySystem* parentSystem;
+    Body* parentBody;
     Universe *universe = appCore->getSimulation()->getUniverse();
 
     switch (selection.getType())
@@ -367,11 +369,14 @@ std::string Url::getSelectionName(const Selection& selection) const
     case Selection::Type_Body:
         {
             std::string name = selection.body()->getName();
-            if (selection.body()->getSystem() != NULL)
+            parentSystem = selection.body()->getSystem();
+            if (parentSystem != NULL && (parentBody = parentSystem->getPrimaryBody()) != NULL)
             {
-                if (selection.body()->getSystem()->getPrimaryBody() != NULL)
+                while (parentSystem != NULL && parentBody != NULL)
                 {
-                    name = selection.body()->getSystem()->getPrimaryBody()->getName() + ":" + name;
+                    name = parentSystem->getPrimaryBody()->getName() + ":" + name;
+                    parentSystem = parentSystem->getPrimaryBody()->getSystem();
+                    parentBody = parentSystem->getPrimaryBody();
                 }
                 if (selection.body()->getSystem()->getStar() != NULL)
                 {

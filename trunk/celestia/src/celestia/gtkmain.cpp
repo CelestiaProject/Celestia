@@ -4154,6 +4154,11 @@ int main(int argc, char* argv[])
 	// Force number displays into C locale.
 	setlocale(LC_NUMERIC, "C");
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset(PACKAGE, "UTF-8");
+	textdomain(PACKAGE);
+
     appCore = new CelestiaCore();
     if (appCore == NULL)
     {

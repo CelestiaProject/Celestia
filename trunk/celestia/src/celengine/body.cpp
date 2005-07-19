@@ -63,15 +63,18 @@ PlanetarySystem* Body::getSystem() const
 }
 
 
-string Body::getName() const
+string Body::getName(bool i18n) const
 {
-    return name;
+    if (!i18n || i18nName == "") return name;
+    return i18nName;
 }
 
 
 void Body::setName(const string _name)
 {
     name = _name;
+    i18nName = _(_name.c_str());
+    if (name == i18nName) i18nName = "";
 }
 
 
@@ -547,7 +550,7 @@ vector<Location*>* Body::getLocations() const
 }
 
 
-Location* Body::findLocation(const string& name) const
+Location* Body::findLocation(const string& name, bool i18n) const
 {
     if (locations == NULL)
         return NULL;
@@ -555,7 +558,7 @@ Location* Body::findLocation(const string& name) const
     for (vector<Location*>::const_iterator iter = locations->begin();
          iter != locations->end(); iter++)
     {
-        if (!UTF8StringCompare(name, (*iter)->getName()))
+        if (!UTF8StringCompare(name, (*iter)->getName(i18n)))
             return *iter;
     }
 
@@ -656,18 +659,18 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
 }
 
 
-Body* PlanetarySystem::find(string _name, bool deepSearch) const
+Body* PlanetarySystem::find(string _name, bool deepSearch, bool i18n) const
 {
     for (vector<Body*>::const_iterator iter = satellites.begin();
          iter != satellites.end(); iter++)
     {
-        if (UTF8StringCompare((*iter)->getName(), _name) == 0)
+        if (UTF8StringCompare((*iter)->getName(i18n), _name) == 0)
         {
             return *iter;
         }
         else if (deepSearch && (*iter)->getSatellites() != NULL)
         {
-            Body* body = (*iter)->getSatellites()->find(_name, deepSearch);
+            Body* body = (*iter)->getSatellites()->find(_name, deepSearch, i18n);
             if (body != NULL)
                 return body;
         }
@@ -702,9 +705,9 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
     for (vector<Body*>::const_iterator iter = satellites.begin();
          iter != satellites.end(); iter++)
     {
-        if (UTF8StringCompare((*iter)->getName(), _name, _name.length()) == 0)
+        if (UTF8StringCompare((*iter)->getName(true), _name, _name.length()) == 0)
         {
-            completion.push_back((*iter)->getName());
+            completion.push_back((*iter)->getName(true));
         }
         if (rec && (*iter)->getSatellites() != NULL)
         {
