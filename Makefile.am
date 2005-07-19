@@ -5,7 +5,7 @@ pkgdatadir = @datadir@/@PACKAGE@
 
 EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA) admin
 
-SUBDIRS = src data extras textures models shaders fonts manual
+SUBDIRS = src data extras textures models shaders fonts manual po
 
 
 # From KDE app template
@@ -38,3 +38,4 @@ install-data-hook:
 	if [ ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
 		ln -s $(datadir)/@PACKAGE@ $(kde_datadir)/@PACKAGE@ ; \
 	fi
+
