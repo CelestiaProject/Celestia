@@ -196,6 +196,7 @@ void KdeGlWidget::initializeGL()
 
     QPaintDeviceMetrics pdm(this);
     appCore->setScreenDpi(pdm.logicalDpiY());
+
 }
 
 void KdeGlWidget::resizeGL( int w, int h )

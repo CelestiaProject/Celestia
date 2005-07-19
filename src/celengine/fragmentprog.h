@@ -12,6 +12,7 @@
 
 #include <celmath/vecmath.h>
 #include <celutil/color.h>
+#include <celutil/util.h>
 #include <celengine/gl.h>
 
 class FragmentProcessor;

@@ -5,17 +5,26 @@ class CelListViewItem : public QListViewItem
 {
    
 public:
-    CelListViewItem( QListView * parent, QString name, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
-    CelListViewItem( QListViewItem * parent, QString name, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
+    CelListViewItem( QListView * parent, std::string name, double dist, const char* dist_unit, double app_mag, double abs_mag, QString type);
+    CelListViewItem( QListViewItem * parent, std::string name, double dist, const char* dist_unit, double app_mag, double abs_mag, QString type);
     ~CelListViewItem();   
         
-    QString getName() const { return name; }
+    std::string getName() const { return name; }
+
+    double getDist() const { return dist; }
+    double getAppMag() const { return app_mag; }
+    double getAbsMag() const { return abs_mag; }
     
 public slots:
     int compare ( QListViewItem * i, int col, bool ascending ) const;
     
 private:
-    QString name;
+    std::string name;
+    double dist;
+    const char* dist_unit;
+    double app_mag;
+    double abs_mag;
+    QString type;
 };
 
 #endif // CELESTIALBROWSER_H

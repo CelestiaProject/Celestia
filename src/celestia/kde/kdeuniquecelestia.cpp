@@ -23,6 +23,11 @@
 #include <klocale.h>
 
 KdeUniqueCelestia::KdeUniqueCelestia() {
+
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    bind_textdomain_codeset(PACKAGE, "UTF-8");
+    textdomain(PACKAGE);
+
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     std::vector<std::string> validDirs;
     std::string config, dir;

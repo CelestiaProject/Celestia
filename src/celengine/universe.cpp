@@ -798,7 +798,8 @@ Selection Universe::pick(const UniversalCoord& origin,
 
 // Search by name for an immediate child of the specified object.
 Selection Universe::findChildObject(const Selection& sel,
-                                    const string& name) const
+                                    const string& name,
+                                    bool i18n) const
 {
     switch (sel.getType())
     {
@@ -809,7 +810,7 @@ Selection Universe::findChildObject(const Selection& sel,
             {
                 PlanetarySystem* planets = sys->getPlanets();
                 if (planets != NULL)
-                    return Selection(planets->find(name, false));
+                    return Selection(planets->find(name, false, i18n));
             }
         }
         break;
@@ -820,13 +821,13 @@ Selection Universe::findChildObject(const Selection& sel,
             PlanetarySystem* sats = sel.body()->getSatellites();
             if (sats != NULL)
             {
-                Body* body = sats->find(name, false);
+                Body* body = sats->find(name, false, i18n);
                 if (body != NULL)
                     return Selection(body);
             }
 
             // If a satellite wasn't found, check this object's locations
-            Location* loc = sel.body()->findLocation(name);
+            Location* loc = sel.body()->findLocation(name, i18n);
             if (loc != NULL)
                 return Selection(loc);
         }
@@ -853,7 +854,8 @@ Selection Universe::findChildObject(const Selection& sel,
 // system.  For locations and planets, the context additionally includes
 // sibling or child locations, respectively.
 Selection Universe::findObjectInContext(const Selection& sel,
-                                        const string& name) const
+                                        const string& name,
+                                        bool i18n) const
 {
     Body* contextBody = NULL;
 
@@ -878,7 +880,7 @@ Selection Universe::findObjectInContext(const Selection& sel,
         PlanetarySystem* planets = sys->getPlanets();
         if (planets != NULL)
         {
-            Body* body = planets->find(name, true);
+            Body* body = planets->find(name, true, i18n);
             if (body != NULL)
                 return Selection(body);
         }
@@ -887,7 +889,7 @@ Selection Universe::findObjectInContext(const Selection& sel,
     // . . . and then locations.
     if (contextBody != NULL)
     {
-        Location* loc = contextBody->findLocation(name);
+        Location* loc = contextBody->findLocation(name, i18n);
         if (loc != NULL)
             return Selection(loc);
     }
@@ -904,7 +906,8 @@ Selection Universe::findObjectInContext(const Selection& sel,
 //      to us to search.
 Selection Universe::find(const string& s,
                          Selection* contexts,
-                         int nContexts)
+                         int nContexts,
+                         bool i18n)
 {
     if (deepSkyCatalog != NULL)
     {
@@ -922,7 +925,7 @@ Selection Universe::find(const string& s,
 
     for (int i = 0; i < nContexts; i++)
     {
-        Selection sel = findObjectInContext(contexts[i], s);
+        Selection sel = findObjectInContext(contexts[i], s, i18n);
         if (!sel.empty())
             return sel;
     }
@@ -939,17 +942,19 @@ Selection Universe::find(const string& s,
 // in which the user is currently located.
 Selection Universe::findPath(const string& s,
                              Selection contexts[],
-                             int nContexts)
-{
+                             int nContexts,
+                             bool i18n)
+{ 
     string::size_type pos = s.find('/', 0);
 
     // No delimiter found--just do a normal find.
     if (pos == string::npos)
-        return find(s, contexts, nContexts);
+        return find(s, contexts, nContexts, i18n);
 
     // Find the base object
     string base(s, 0, pos);
-    Selection sel = find(base, contexts, nContexts);
+
+    Selection sel = find(base, contexts, nContexts, i18n);
 
     while (!sel.empty() && pos != string::npos)
     {
@@ -961,7 +966,7 @@ Selection Universe::findPath(const string& s,
             len = nextPos - pos - 1;
         string name = string(s, pos + 1, len);
 
-        sel = findChildObject(sel, name);
+        sel = findChildObject(sel, name, i18n);
 
         pos = nextPos;
     }
@@ -988,8 +993,8 @@ std::vector<std::string> Universe::getCompletion(const string& s,
                 for (vector<Location*>::const_iterator iter = locations->begin();
                      iter != locations->end(); iter++)
                 {
-                    if (!UTF8StringCompare(s, (*iter)->getName(), s.length()))
-                        completion.push_back((*iter)->getName());
+                    if (!UTF8StringCompare(s, (*iter)->getName(true), s.length()))
+                        completion.push_back((*iter)->getName(true));
                 }
             }
         }
@@ -1032,18 +1037,17 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
 {
     std::vector<std::string> completion;
     std::vector<std::string> locationCompletion;
-    
     string::size_type pos = s.rfind('/', s.length());
 
     if (pos == string::npos)
         return getCompletion(s, contexts, nContexts, withLocations);
 
     string base(s, 0, pos);
-    Selection sel = findPath(base, contexts, nContexts);
+    Selection sel = findPath(base, contexts, nContexts, true);
 
-    if (sel.empty())
+    if (sel.empty()){ std::cerr << "nothing found" << std::endl;
         return completion;
-
+}
     if (sel.getType() == Selection::Type_DeepSky)
     {
         completion.push_back(sel.deepsky()->getName());
@@ -1052,7 +1056,7 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
 
     PlanetarySystem* worlds = NULL;
     if (sel.getType() == Selection::Type_Body)
-    {
+    {std::cerr << "body found" << std::endl;
         worlds = sel.body()->getSatellites();
         std::vector<Location*>* locations = sel.body()->getLocations();
         if (locations != NULL && withLocations)
@@ -1061,10 +1065,10 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
             for (vector<Location*>::const_iterator iter = locations->begin();
                  iter != locations->end(); iter++)
             {
-                if (!UTF8StringCompare(search, (*iter)->getName(),
+                if (!UTF8StringCompare(search, (*iter)->getName(true),
                                        search.length()))
                 {
-                    locationCompletion.push_back((*iter)->getName());
+                    locationCompletion.push_back((*iter)->getName(true));
                 }
             }
         }

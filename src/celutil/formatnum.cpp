@@ -56,6 +56,11 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
     char buf[32];
     char obuf[64];
     double value = num.getRoundedValue();
+    static const char *decimal_point = localeconv()->decimal_point;
+    static const char *thousands_sep = localeconv()->thousands_sep;
+    static const char *grouping = localeconv()->grouping;
+
+    memset(obuf, 0, sizeof(obuf));
 
     if (num.flags & FormattedNumber::SignificantDigits)
     {
@@ -80,31 +85,43 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
 
     if (num.flags & FormattedNumber::GroupThousands)
     {
-        int foundDecimal = (strchr(buf, '.') == NULL);
-        int digitCount = 0;
-        int i = strlen(buf);
+        const char* decimalPosition = strstr(buf, decimal_point);
         int j = sizeof(obuf) - 1;
+        int i = strlen(buf);
+        int digitCount = 0;
+        if (decimalPosition != NULL) {
+            int len = strlen(decimalPosition);
+            j -= len;
+            i -= len;
+            memcpy(obuf + j, decimalPosition, len);
+            --i;
+            --j;
+        }
         
+        const char *g = grouping;
+        bool does_grouping = *g != 0;
         while (i >= 0)
         {
-            if (foundDecimal)
+            if (isdigit(buf[i]))
             {
-                if (isdigit(buf[i]))
+                if (does_grouping && *g != CHAR_MAX)
                 {
-                    if (digitCount == 3)
+                    if (digitCount == *g)
                     {
-                        obuf[j] = ',';
-                        j--;
+                        const char *c, *ts = thousands_sep;
+                        for (c = ts + strlen(ts) - 1; c >= ts; c--)
+                        {
+                            obuf[j] = *c;
+                            j--;
+                        }
+                        if (*(g+1) != 0) g += 1;
                         digitCount = 0;
                     }
-                    digitCount++;
                 }
+                digitCount++;
             }
 
             obuf[j] = buf[i];
-
-            if (buf[i] == '.')
-                foundDecimal = true;
 
             j--;
             i--;

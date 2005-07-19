@@ -22,6 +22,8 @@
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
+#include <celutil/utf8.h>
+#include <celutil/util.h>
 #include "gl.h"
 #include "astro.h"
 #include "glext.h"
@@ -772,7 +774,7 @@ void Renderer::addLabel(string text,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Label l;
-        l.text = text;
+        l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
         l.color = color;
         l.position = Point3f((float) winX, (float) winY, -depth);
         labels.insert(labels.end(), l);
@@ -798,7 +800,7 @@ void Renderer::addSortedLabel(string text, Color color, const Point3f& pos)
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Label l;
-        l.text = text;
+        l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
         l.color = color;
         l.position = Point3f((float) winX, (float) winY, -depth);
         depthSortedLabels.insert(depthSortedLabels.end(), l);
@@ -4728,7 +4730,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
                         glTranslatef((int) winX + PixelOffset,
                                      (int) winY + PixelOffset,
                                      0.0f);
-                        font->render((*iter)->getName());
+                        font->render((*iter)->getName(true));
                         glPopMatrix();
                     }
                 }
@@ -6653,7 +6655,8 @@ void Renderer::renderLabels()
         glTranslatef((int) labels[i].position.x + PixelOffset + 2.0f,
                      (int) labels[i].position.y + PixelOffset,
                      0.0f);
-        font->render(labels[i].text);
+		  // EK TODO: Check where to replace (see '_(' above)
+		  font->render(_(labels[i].text.c_str()));
         glPopMatrix();
     }
 

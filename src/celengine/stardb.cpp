@@ -443,7 +443,7 @@ bool StarDatabase::loadCrossIndex(Catalog catalog, istream& in)
         in.read(header, headerLength);
         if (strncmp(header, CrossIndexFileHeader, headerLength))
         {
-            cerr << "Bad header for cross index\n";
+            cerr << _("Bad header for cross index\n");
             return false;
         }
         delete[] header;
@@ -456,7 +456,7 @@ bool StarDatabase::loadCrossIndex(Catalog catalog, istream& in)
         LE_TO_CPU_INT16(version, version);
         if (version != 0x0100)
         {
-            cerr << "Bad version for cross index\n";
+            cerr << _("Bad version for cross index\n");
             return false;
         }
     }
@@ -478,7 +478,7 @@ bool StarDatabase::loadCrossIndex(Catalog catalog, istream& in)
         LE_TO_CPU_INT32(ent.celCatalogNumber, ent.celCatalogNumber);
         if (in.fail())
         {
-            cerr << "Loading cross index failed at record " << record << '\n';
+            cerr << _("Loading cross index failed at record ") << record << '\n';
             delete xindex;
             return false;
         }
@@ -579,7 +579,7 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
 
         if (details == NULL)
         {
-            cerr << "Bad spectral type in star database, star #\n";
+            cerr << _("Bad spectral type in star database, star #\n");
             return false;
         }
         
@@ -692,7 +692,7 @@ bool StarDatabase::loadBinary(istream& in)
 
         if (details == NULL)
         {
-            cerr << "Bad spectral type in star database, star #" << nStars << "\n";
+            cerr << _("Bad spectral type in star database, star #") << nStars << "\n";
             return false;
         }
 
@@ -706,7 +706,7 @@ bool StarDatabase::loadBinary(istream& in)
         return false;
 
     DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
-    clog << nStars << " stars in binary database\n";
+    clog << nStars << _(" stars in binary database\n");
 
     return true;
 }
@@ -722,9 +722,9 @@ void StarDatabase::finish()
                             CatalogNumberEquivalencePredicate());
 
     int nUniqueStars = lastStar - stars;
-    clog << "Total star count: " << nUniqueStars <<
+    clog << _("Total star count: ") << nUniqueStars <<
         " (" << (nStars - nUniqueStars) <<
-        " star(s) with duplicate catalog numbers deleted.)\n";
+        _(" star(s) with duplicate catalog numbers deleted.)\n");
     nStars = nUniqueStars;
 
     buildOctree();
@@ -798,7 +798,7 @@ void StarDatabase::buildIndexes()
 
 static void errorMessagePrelude(const Tokenizer& tok)
 {
-    cerr << "Error in .stc file (line " << tok.getLineNumber() << "): ";
+    cerr << _("Error in .stc file (line ") << tok.getLineNumber() << "): ";
 }
 
 static void stcError(const Tokenizer& tok,
@@ -829,14 +829,14 @@ StarDatabase::createStar(uint32 catalogNumber,
     {
         if (!starData->getString("SpectralType", spectralType))
         {
-            cerr << "Invalid star: missing spectral type.\n";
+            cerr << _("Invalid star: missing spectral type.\n");
             return NULL;
         }
         StellarClass sc = StellarClass::parse(spectralType);
         details = StarDetails::GetStarDetails(sc);
         if (details == NULL)
         {
-            cerr << "Invalid star: bad spectral type.\n";
+            cerr << _("Invalid star: bad spectral type.\n");
             return NULL;
         }
     }
@@ -945,7 +945,7 @@ StarDatabase::createStar(uint32 catalogNumber,
 
                 if (!hasBarycenter)
                 {
-                    cerr << "Barycenter " << barycenterName << " does not exist.\n";
+                    cerr << _("Barycenter ") << barycenterName << _(" does not exist.\n");
                     return NULL;
                 }
             }
@@ -972,21 +972,21 @@ StarDatabase::createStar(uint32 catalogNumber,
         double distance = 0.0;
         if (!starData->getNumber("RA", ra))
         {
-            cerr << "Invalid star: missing right ascension\n";
+            cerr << _("Invalid star: missing right ascension\n");
             delete star;
             return NULL;
         }
 
         if (!starData->getNumber("Dec", dec))
         {
-            cerr << "Invalid star: missing declination.\n";
+            cerr << _("Invalid star: missing declination.\n");
             delete star;
             return NULL;
         }
 
         if (!starData->getNumber("Distance", distance))
         {
-            cerr << "Invalid star: missing distance.\n";
+            cerr << _("Invalid star: missing distance.\n");
             delete star;
             return NULL;
         }
@@ -1012,7 +1012,7 @@ StarDatabase::createStar(uint32 catalogNumber,
         {
             if (!starData->getNumber("AppMag", magnitude))
             {
-                cerr << "Invalid star: missing magnitude.\n";
+                cerr << _("Invalid star: missing magnitude.\n");
                 magnitude = 30.0;
             }
             else

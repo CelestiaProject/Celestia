@@ -47,7 +47,7 @@ class PlanetarySystem
     typedef bool (*TraversalFunc)(Body*, void*);
 
     bool traverse(TraversalFunc, void*) const;
-    Body* find(std::string, bool deepSearch = false) const;
+    Body* find(std::string, bool deepSearch = false, bool i18n = false) const;
     std::vector<std::string> getCompletion(const std::string& _name, bool rec = true) const;
 
  private:
@@ -95,7 +95,7 @@ class Body
     };
 
     PlanetarySystem* getSystem() const;
-    std::string getName() const;
+    std::string getName(bool i18n = false) const;
     void setName(const std::string);
     Orbit* getOrbit() const;
     void setOrbit(Orbit*);
@@ -170,11 +170,12 @@ class Body
 
     std::vector<Location*>* getLocations() const;
     void addLocation(Location*);
-    Location* findLocation(const std::string&) const;
+    Location* findLocation(const std::string&, bool i18n = false) const;
     void computeLocations();
 
  private:
     std::string name;
+    std::string i18nName;
 
     PlanetarySystem* system;
     Orbit* orbit;

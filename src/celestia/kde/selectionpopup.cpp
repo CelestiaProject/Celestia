@@ -15,10 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "selectionpopup.h"
 
-#include <fstream>
 #include <sstream>
+#include <fstream>
+
+#include "selectionpopup.h"
 
 #include <qlabel.h>
 
