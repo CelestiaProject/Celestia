@@ -27,9 +27,17 @@ class ConsoleStreamBuf : public std::streambuf
     void setConsole(Console*);
 
     int overflow(int c = EOF);
+    enum UTF8DecodeState
+    {
+        UTF8DecodeStart     = 0,
+        UTF8DecodeMultibyte = 1,
+    };
 
  private:
     Console* console;
+    UTF8DecodeState decodeState;
+    wchar_t decodedChar;
+    unsigned int decodeShift;
 };
 
 
@@ -46,7 +54,7 @@ class Console : public std::ostream
     void setScale(int, int);
     void setFont(TextureFont*);
 
-    void print(char);
+    void print(wchar_t);
     void print(char*);
     void newline();
 #if 0
@@ -63,7 +71,7 @@ class Console : public std::ostream
     int getWidth() const;
 
  private:
-    char* text;
+    wchar_t* text;
     int nRows;
     int nColumns;
     int row;

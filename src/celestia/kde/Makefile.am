@@ -13,6 +13,8 @@ KDE_SOURCES = \
 
 EXTRA_DIST = celestialbrowserbase.ui eclipsefinderdlgbase.ui $(KDE_SOURCES)
 
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 if ENABLE_KDE
 
@@ -39,7 +41,7 @@ libkdegui_a_SOURCES = \
                  selectionpopup.moc.cpp \
                  $(KDE_SOURCES)
                           
-SUBDIRS = data doc po
+SUBDIRS = data doc
 
 endif
 
@@ -52,12 +54,6 @@ endif
 %.moc.cpp: %.h
 	$(MOC) $< -o $@
                  
-messages: rc.cpp
-	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
-	if test -n "$$LIST"; then \
-		$(XGETTEXT) $$LIST -j -o $(podir)/celestia-kde.pot; \
-	fi
- 
 dist-hook:
 	rm -f $(distdir)/*.uic.*
 	rm -f $(distdir)/*.moc.cpp

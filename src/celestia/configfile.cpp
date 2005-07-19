@@ -12,6 +12,7 @@
 #include <cassert>
 #include <celutil/debug.h>
 #include <celutil/directory.h>
+#include <celutil/util.h>
 #include <celengine/celestia.h>
 #include <celengine/parser.h>
 #include "configfile.h"

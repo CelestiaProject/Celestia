@@ -76,15 +76,18 @@ Location::~Location()
 }
 
 
-string Location::getName() const
+string Location::getName(bool i18n) const
 {
-    return name;
+    if (!i18n || i18nName == "") return name;
+    return i18nName;
 }
 
 
 void Location::setName(const string& _name)
 {
     name = _name;
+    i18nName = _(_name.c_str()); 
+    if (name == i18nName) i18nName = "";
 }
 
 
