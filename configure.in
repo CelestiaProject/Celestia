@@ -59,6 +59,9 @@ AC_ARG_PROGRAM
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
+AM_PO_SUBDIRS
+AM_GNU_GETTEXT([external])
+
 dnl Check for compilers.  Set CFLAGS and CXXFLAGS to null if unset, so
 dnl that these macros won't set the to default values that we don't want.
 if (test "x${CFLAGS-notset}" = "xnotset"); then
@@ -400,13 +403,14 @@ AC_CONFIG_FILES([ fonts/Makefile ])
 AC_CONFIG_FILES([ src/celestia/res/Makefile ])
 AC_CONFIG_FILES([ manual/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/Makefile ])
-AC_CONFIG_FILES([ src/celestia/kde/po/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/data/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/doc/Makefile ])
 AC_CONFIG_FILES([ src/celestia/kde/doc/celestia/Makefile ])
 AC_CONFIG_FILES([ src/celestia/gtk/Makefile ])
 AC_CONFIG_FILES([ src/celestia/gtk/data/Makefile ])
-AC_OUTPUT
+AC_CONFIG_FILES([ macros/Makefile ])
+AC_CONFIG_FILES([ po/Makefile.in ])
+AC_OUTPUT()
 
 AC_MSG_RESULT()
 AC_MSG_RESULT()
