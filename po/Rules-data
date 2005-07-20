@@ -1,0 +1,6 @@
+# Additional Makefile rule to extract object names from data files
+
+celestia.pot-update: ../data/data.cpp
+
+../data/data.cpp:
+	egrep ^\" ../data/solarsys.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' > ../data/data.cpp
