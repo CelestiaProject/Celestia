@@ -53,7 +53,7 @@ void SelectionPopup::init()
 
     if (sel.body() != NULL)
     {
-        insertTitle(QString::fromUtf8(sel.body()->getName().c_str()), 0, 0);
+        insertTitle(QString::fromUtf8(sel.body()->getName(true).c_str()), 0, 0);
         insert(this, sel, MENUMAXSIZE);
     }
     else if (sel.star() != NULL)
@@ -122,7 +122,7 @@ void SelectionPopup::init()
             {
                 KPopupMenu *objMenu = new KPopupMenu(this);
                 insert(objMenu, (*i).getObject(), (2 * MENUMAXSIZE + j) * MENUMAXSIZE, false);
-                markMenu->insertItem(getSelectionName((*i).getObject()), objMenu);
+                markMenu->insertItem(QString::fromUtf8(getSelectionName((*i).getObject())), objMenu);
                 j++;
             }
             insertItem(i18n("Marked objects"), markMenu);
@@ -251,7 +251,7 @@ const char* SelectionPopup::getSelectionName(const Selection& sel) const
 {
     if (sel.body() != NULL)
     {
-        return sel.body()->getName().c_str();
+        return sel.body()->getName(true).c_str();
     }
     else if (sel.star() != NULL)
     {
@@ -361,7 +361,7 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
                 Selection satSel(body);
                 KPopupMenu *satMenu = new KPopupMenu(this);
                 insert(satMenu, satSel, baseId * MENUMAXSIZE + (i + 1) * MENUMAXSIZE);
-                planetaryMenu->insertItem(body->getName().c_str(), satMenu);
+                planetaryMenu->insertItem(QString::fromUtf8(body->getName(true).c_str()), satMenu);
             }
             popup->insertItem(i18n("Satellites"), planetaryMenu);
         }
@@ -383,7 +383,7 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
                 Selection satSel(body);
                 KPopupMenu *satMenu = new KPopupMenu(this);
                 insert(satMenu, satSel, baseId * MENUMAXSIZE + (i + 1) * MENUMAXSIZE);
-                planetsMenu->insertItem(body->getName().c_str(), satMenu);
+                planetsMenu->insertItem(QString::fromUtf8(body->getName(true).c_str()), satMenu);
             }
             popup->insertItem(i18n("Planets"), planetsMenu);
         }
