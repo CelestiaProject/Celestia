@@ -142,7 +142,7 @@ void CelestialBrowser::slotRefresh()
                 Point3d bodyPos = body->getHeliocentricPosition(appSim->getTime());
                 double starBodyDist = bodyPos.distanceFromOrigin();
 
-                CelListViewItem *planetItem = new CelListViewItem(starItem, body->getName(), 
+                CelListViewItem *planetItem = new CelListViewItem(starItem, body->getName(true), 
                                             starBodyDist / KM_PER_AU, "au",
                                             0, 0, getClassification(body->getClassification()));
                 
@@ -157,7 +157,7 @@ void CelestialBrowser::slotRefresh()
                                 Vec3d bodySatVec(bodyPos.x - satPos.x, bodyPos.y - satPos.y, bodyPos.z - satPos.z);
                                 double bodySatDist = bodySatVec.length();
                                 
-                                new CelListViewItem(planetItem, sat->getName(),
+                                new CelListViewItem(planetItem, sat->getName(true),
                                     bodySatDist, "km", 0, 0, getClassification(sat->getClassification()));
 
                         }
@@ -203,7 +203,7 @@ void CelestialBrowser::slotRightClickOnStar(QListViewItem* item, const QPoint& p
     while ( (i = dynamic_cast<CelListViewItem*>(i->parent())) ) {
         name = i->getName() + "/" + name;
     }
-    Selection sel = appSim->findObjectFromPath(name);
+    Selection sel = appSim->findObjectFromPath(name, true);
 
     SelectionPopup popup(this, appCore, sel);
     popup.init();
