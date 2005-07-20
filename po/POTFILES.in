@@ -101,19 +101,6 @@ src/celestia/kde/kdeuniquecelestia.cpp
 src/celestia/kde/kdeuniquecelestia.h
 src/celestia/kde/selectionpopup.cpp
 src/celestia/kde/selectionpopup.h
-src/celestia/kde/kdeapp.moc.cpp
-src/celestia/kde/eclipsefinderdlgbase.uic.h
-src/celestia/kde/eclipsefinderdlgbase.uic.cpp
-src/celestia/kde/eclipsefinderdlgbase.uic.moc.cpp
-src/celestia/kde/eclipsefinderdlg.moc.cpp
-src/celestia/kde/celestialbrowserbase.uic.h
-src/celestia/kde/celestialbrowserbase.uic.cpp
-src/celestia/kde/celestialbrowserbase.uic.moc.cpp
-src/celestia/kde/celestialbrowser.moc.cpp
-src/celestia/kde/kdeglwidget.moc.cpp
-src/celestia/kde/kdepreferencesdialog.moc.cpp
-src/celestia/kde/kdeuniquecelestia.moc.cpp
-src/celestia/kde/kcelbookmarkmenu.moc.cpp
-src/celestia/kde/kcelbookmarkmanager.moc.cpp
-src/celestia/kde/selectionpopup.moc.cpp
+src/celestia/kde/rc.cpp
 
+data/data.cpp
