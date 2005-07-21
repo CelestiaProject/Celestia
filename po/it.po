@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: it\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2005-07-21 23:21+0200\n"
+"POT-Creation-Date: 2005-07-22 00:35+0200\n"
 "PO-Revision-Date: 2003-07-05 13:58GMT\n"
 "Last-Translator: Paolo Angeli <pangeli70@tele2.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -2054,8 +2054,9 @@ msgid "Auriga"
 msgstr "Quadrato"
 
 #: data/data.cpp:49
-msgid "Bo\\u00f6tes"
-msgstr ""
+#, fuzzy
+msgid "Boötes"
+msgstr "Pulito"
 
 #: data/data.cpp:50
 #, fuzzy
@@ -2489,10 +2490,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Rho Pup"
 #~ msgstr "Più"
-
-#, fuzzy
-#~ msgid "Boötes"
-#~ msgstr "Pulito"
 
 #, fuzzy
 #~ msgid "m"

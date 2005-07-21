@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia-kde_pt_br\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2005-07-21 23:21+0200\n"
+"POT-Creation-Date: 2005-07-22 00:35+0200\n"
 "PO-Revision-Date: 2003-07-06 18:59-0300\n"
 "Last-Translator: Luis Gabriel <lgabriel@brazilmail.com>\n"
 "Language-Team: Brazilian Portuguese <en@li.org>\n"
@@ -2063,8 +2063,9 @@ msgid "Auriga"
 msgstr "Quadrado"
 
 #: data/data.cpp:49
-msgid "Bo\\u00f6tes"
-msgstr ""
+#, fuzzy
+msgid "Boötes"
+msgstr "Breve"
 
 #: data/data.cpp:50
 #, fuzzy
@@ -2498,10 +2499,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Rho Pup"
 #~ msgstr "Mais"
-
-#, fuzzy
-#~ msgid "Boötes"
-#~ msgstr "Breve"
 
 #, fuzzy
 #~ msgid "m"
