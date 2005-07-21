@@ -7,12 +7,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.3.3\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2005-07-21 00:03+0200\n"
+"POT-Creation-Date: 2005-07-21 23:21+0200\n"
 "PO-Revision-Date: 2004-10-19 19:49+0300\n"
 "Last-Translator:  <eugine@aroks.kiev.ua>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CP1251\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -236,58 +236,58 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:591 src/celestia/celestiacore.cpp:593
 msgid "Invalid filetype"
-msgstr "Некорректный тип файла"
+msgstr "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С‚РёРї С„Р°Р№Р»Р°"
 
 #: src/celestia/celestiacore.cpp:890 src/celestia/celestiacore.cpp:1578
 #: src/celestia/celestiacore.cpp:1594 src/celestia/celestiacore.cpp:1828
 #: src/celestia/celestiacore.cpp:1855
 #, c-format
 msgid "Magnitude limit: %.2f"
-msgstr "Предел величины: %.2f"
+msgstr "РџСЂРµРґРµР» РІРµР»РёС‡РёРЅС‹: %.2f"
 
 #: src/celestia/celestiacore.cpp:1239
 msgid "Markers enabled"
-msgstr "Маркеры разрешены"
+msgstr "РњР°СЂРєРµСЂС‹ СЂР°Р·СЂРµС€РµРЅС‹"
 
 #: src/celestia/celestiacore.cpp:1242
 msgid "Markers disabled"
-msgstr "Маркеры запрещены"
+msgstr "РњР°СЂРєРµСЂС‹ Р·Р°РїСЂРµС‰РµРЅС‹"
 
 #: src/celestia/celestiacore.cpp:1252
 msgid "Goto surface"
-msgstr "Перейти к поверхности"
+msgstr "РџРµСЂРµР№С‚Рё Рє РїРѕРІРµСЂС…РЅРѕСЃС‚Рё"
 
 #: src/celestia/celestiacore.cpp:1261
 msgid "Alt-azimuth mode"
-msgstr "Режим 'высота-азимут'"
+msgstr "Р РµР¶РёРј 'РІС‹СЃРѕС‚Р°-Р°Р·РёРјСѓС‚'"
 
 #: src/celestia/celestiacore.cpp:1316
 msgid "Star style: fuzzy points"
-msgstr "Стиль звезд: расплывчатые точки"
+msgstr "РЎС‚РёР»СЊ Р·РІРµР·Рґ: СЂР°СЃРїР»С‹РІС‡Р°С‚С‹Рµ С‚РѕС‡РєРё"
 
 #: src/celestia/celestiacore.cpp:1319
 msgid "Star style: points"
-msgstr "Стиль звезд: точки"
+msgstr "РЎС‚РёР»СЊ Р·РІРµР·Рґ: С‚РѕС‡РєРё"
 
 #: src/celestia/celestiacore.cpp:1322
 msgid "Star style: scaled discs"
-msgstr "Стиль звезд: масштабируемые диски"
+msgstr "РЎС‚РёР»СЊ Р·РІРµР·Рґ: РјР°СЃС€С‚Р°Р±РёСЂСѓРµРјС‹Рµ РґРёСЃРєРё"
 
 #: src/celestia/celestiacore.cpp:1335
 msgid "Comet tails enabled"
-msgstr "Хвосты комет разрешены"
+msgstr "РҐРІРѕСЃС‚С‹ РєРѕРјРµС‚ СЂР°Р·СЂРµС€РµРЅС‹"
 
 #: src/celestia/celestiacore.cpp:1338
 msgid "Comet tails disabled"
-msgstr "Хвосты комет запрещены"
+msgstr "РҐРІРѕСЃС‚С‹ РєРѕРјРµС‚ Р·Р°РїСЂРµС‰РµРЅС‹"
 
 #: src/celestia/celestiacore.cpp:1353
 msgid "Render path: Basic"
-msgstr "Путь рендеринга: базовый"
+msgstr "РџСѓС‚СЊ СЂРµРЅРґРµСЂРёРЅРіР°: Р±Р°Р·РѕРІС‹Р№"
 
 #: src/celestia/celestiacore.cpp:1356
 msgid "Render path: Multitexture"
-msgstr "Путь рендеринга: мультитекстура"
+msgstr "РџСѓС‚СЊ СЂРµРЅРґРµСЂРёРЅРіР°: РјСѓР»СЊС‚РёС‚РµРєСЃС‚СѓСЂР°"
 
 #: src/celestia/celestiacore.cpp:1359
 msgid "Render path: NVIDIA combiners"
@@ -319,112 +319,112 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:1400
 msgid "Auto-magnitude enabled"
-msgstr "Автоувеличение разрешено"
+msgstr "РђРІС‚РѕСѓРІРµР»РёС‡РµРЅРёРµ СЂР°Р·СЂРµС€РµРЅРѕ"
 
 #: src/celestia/celestiacore.cpp:1404
 msgid "Auto-magnitude disabled"
-msgstr "Автоувеличение запрещено"
+msgstr "РђРІС‚РѕСѓРІРµР»РёС‡РµРЅРёРµ Р·Р°РїСЂРµС‰РµРЅРѕ"
 
 #: src/celestia/celestiacore.cpp:1425
 msgid "Cancel"
-msgstr "Отмена"
+msgstr "РћС‚РјРµРЅР°"
 
 #: src/celestia/celestiacore.cpp:1456
 msgid "Time and script are paused"
-msgstr "Время и сценарий остановлены"
+msgstr "Р’СЂРµРјСЏ Рё СЃС†РµРЅР°СЂРёР№ РѕСЃС‚Р°РЅРѕРІР»РµРЅС‹"
 
 #: src/celestia/celestiacore.cpp:1458
 msgid "Time is paused"
-msgstr "Время остановлено"
+msgstr "Р’СЂРµРјСЏ РѕСЃС‚Р°РЅРѕРІР»РµРЅРѕ"
 
 #: src/celestia/celestiacore.cpp:1460
 msgid "Resume"
-msgstr "Восстановление"
+msgstr "Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ"
 
 #: src/celestia/celestiacore.cpp:1522
 #, c-format
 msgid "Light travel time:  %.4f yr "
-msgstr "Световое запаздывание:  %.4f г "
+msgstr "РЎРІРµС‚РѕРІРѕРµ Р·Р°РїР°Р·РґС‹РІР°РЅРёРµ:  %.4f Рі "
 
 #: src/celestia/celestiacore.cpp:1531
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
-msgstr "Световое запаздывание:  %d мин  %.1f с"
+msgstr "РЎРІРµС‚РѕРІРѕРµ Р·Р°РїР°Р·РґС‹РІР°РЅРёРµ:  %d РјРёРЅ  %.1f СЃ"
 
 #: src/celestia/celestiacore.cpp:1534
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
-msgstr "Световое запаздывание:  %d ч  %d мин  %.1f с"
+msgstr "РЎРІРµС‚РѕРІРѕРµ Р·Р°РїР°Р·РґС‹РІР°РЅРёРµ:  %d С‡  %d РјРёРЅ  %.1f СЃ"
 
 #: src/celestia/celestiacore.cpp:1553
 msgid "Light travel delay included"
-msgstr "Световое запаздывание включено"
+msgstr "РЎРІРµС‚РѕРІРѕРµ Р·Р°РїР°Р·РґС‹РІР°РЅРёРµ РІРєР»СЋС‡РµРЅРѕ"
 
 #: src/celestia/celestiacore.cpp:1558
 msgid "Light travel delay switched off"
-msgstr "Световое запаздывание выключено"
+msgstr "РЎРІРµС‚РѕРІРѕРµ Р·Р°РїР°Р·РґС‹РІР°РЅРёРµ РІС‹РєР»СЋС‡РµРЅРѕ"
 
 #: src/celestia/celestiacore.cpp:1564
 msgid "Light travel delay ignored"
-msgstr "Световое запаздывание игнорируется"
+msgstr "РЎРІРµС‚РѕРІРѕРµ Р·Р°РїР°Р·РґС‹РІР°РЅРёРµ РёРіРЅРѕСЂРёСЂСѓРµС‚СЃСЏ"
 
 #: src/celestia/celestiacore.cpp:1605
 msgid "Using normal surface textures."
-msgstr "Использование нормальных текстур поверхностей."
+msgstr "РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РЅРѕСЂРјР°Р»СЊРЅС‹С… С‚РµРєСЃС‚СѓСЂ РїРѕРІРµСЂС…РЅРѕСЃС‚РµР№."
 
 #: src/celestia/celestiacore.cpp:1609
 msgid "limit of knowledge"
-msgstr "предел знаний"
+msgstr "РїСЂРµРґРµР» Р·РЅР°РЅРёР№"
 
 #: src/celestia/celestiacore.cpp:1610
 msgid "Using limit of knowledge surface textures."
-msgstr "Использование предела знаний текстур поверхностей"
+msgstr "РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РїСЂРµРґРµР»Р° Р·РЅР°РЅРёР№ С‚РµРєСЃС‚СѓСЂ РїРѕРІРµСЂС…РЅРѕСЃС‚РµР№"
 
 #: src/celestia/celestiacore.cpp:1673
 msgid "Follow"
-msgstr "Слежение"
+msgstr "РЎР»РµР¶РµРЅРёРµ"
 
 #: src/celestia/celestiacore.cpp:1698
 msgid "Time: Forward"
-msgstr "Время: вперед"
+msgstr "Р’СЂРµРјСЏ: РІРїРµСЂРµРґ"
 
 #: src/celestia/celestiacore.cpp:1700
 msgid "Time: Backward"
-msgstr "Время: назад"
+msgstr "Р’СЂРµРјСЏ: РЅР°Р·Р°Рґ"
 
 #: src/celestia/celestiacore.cpp:1708 src/celestia/celestiacore.cpp:1719
 #, c-format
 msgid "Time rate: %.1f"
-msgstr "Скорость течения времени: %.1f"
+msgstr "РЎРєРѕСЂРѕСЃС‚СЊ С‚РµС‡РµРЅРёСЏ РІСЂРµРјРµРЅРё: %.1f"
 
 #: src/celestia/celestiacore.cpp:1756
 msgid "Low res textures"
-msgstr "Текстуры низкого разрешения"
+msgstr "РўРµРєСЃС‚СѓСЂС‹ РЅРёР·РєРѕРіРѕ СЂР°Р·СЂРµС€РµРЅРёСЏ"
 
 #: src/celestia/celestiacore.cpp:1759
 msgid "Medium res textures"
-msgstr "Текстуры среднего разрешения"
+msgstr "РўРµРєСЃС‚СѓСЂС‹ СЃСЂРµРґРЅРµРіРѕ СЂР°Р·СЂРµС€РµРЅРёСЏ"
 
 #: src/celestia/celestiacore.cpp:1762
 msgid "High res textures"
-msgstr "Текстуры высокого разрешения"
+msgstr "РўРµРєСЃС‚СѓСЂС‹ РІС‹СЃРѕРєРѕРіРѕ СЂР°Р·СЂРµС€РµРЅРёСЏ"
 
 #: src/celestia/celestiacore.cpp:1801
 msgid "Sync Orbit"
-msgstr "Синхронная орбита"
+msgstr "РЎРёРЅС…СЂРѕРЅРЅР°СЏ РѕСЂР±РёС‚Р°"
 
 #: src/celestia/celestiacore.cpp:1807
 msgid "Lock"
-msgstr "Захват"
+msgstr "Р—Р°С…РІР°С‚"
 
 #: src/celestia/celestiacore.cpp:1813
 msgid "Chase"
-msgstr "Погоня"
+msgstr "РџРѕРіРѕРЅСЏ"
 
 #: src/celestia/celestiacore.cpp:1837 src/celestia/celestiacore.cpp:1864
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
-msgstr "Предел автоувеличения на 45 градусов:  %.1f"
+msgstr "РџСЂРµРґРµР» Р°РІС‚РѕСѓРІРµР»РёС‡РµРЅРёСЏ РЅР° 45 РіСЂР°РґСѓСЃРѕРІ:  %.1f"
 
 #: src/celestia/celestiacore.cpp:2227
 msgid "GL error: "
@@ -432,101 +432,101 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:2274
 msgid "View too small to be split"
-msgstr "Изображение слишком мало для разделения"
+msgstr "РР·РѕР±СЂР°Р¶РµРЅРёРµ СЃР»РёС€РєРѕРј РјР°Р»Рѕ РґР»СЏ СЂР°Р·РґРµР»РµРЅРёСЏ"
 
 #: src/celestia/celestiacore.cpp:2277
 msgid "Added view"
-msgstr "Добавленный вид"
+msgstr "Р”РѕР±Р°РІР»РµРЅРЅС‹Р№ РІРёРґ"
 
 #: src/celestia/celestiacore.cpp:2537
 msgid " days"
-msgstr " дней"
+msgstr " РґРЅРµР№"
 
 #: src/celestia/celestiacore.cpp:2539
 msgid " hours"
-msgstr " часов"
+msgstr " С‡Р°СЃРѕРІ"
 
 #: src/celestia/celestiacore.cpp:2541
 msgid " minutes"
-msgstr " минут"
+msgstr " РјРёРЅСѓС‚"
 
 #: src/celestia/celestiacore.cpp:2580
 msgid "Apparent diameter: "
-msgstr "Видимый диаметр: "
+msgstr "Р’РёРґРёРјС‹Р№ РґРёР°РјРµС‚СЂ: "
 
 #: src/celestia/celestiacore.cpp:2724 src/celestia/celestiacore.cpp:2779
 #: src/celestia/celestiacore.cpp:2843 src/celestia/celestiacore.cpp:3264
 #: src/celestia/kde/selectionpopup.cpp:77
 msgid "Distance: "
-msgstr "Расстояние: "
+msgstr "Р Р°СЃСЃС‚РѕСЏРЅРёРµ: "
 
 #: src/celestia/celestiacore.cpp:2730
 msgid "Star system barycenter\n"
-msgstr "Центр тяжести звездной системы\n"
+msgstr "Р¦РµРЅС‚СЂ С‚СЏР¶РµСЃС‚Рё Р·РІРµР·РґРЅРѕР№ СЃРёСЃС‚РµРјС‹\n"
 
 #: src/celestia/celestiacore.cpp:2734
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr " Абс. (отн.) величина: %.2f (%.2f)\n"
+msgstr " РђР±СЃ. (РѕС‚РЅ.) РІРµР»РёС‡РёРЅР°: %.2f (%.2f)\n"
 
 #: src/celestia/celestiacore.cpp:2740
 msgid "Luminosity: "
-msgstr "Светимость: "
+msgstr "РЎРІРµС‚РёРјРѕСЃС‚СЊ: "
 
 #: src/celestia/celestiacore.cpp:2741 src/celestia/kde/selectionpopup.cpp:87
 msgid "Class: "
-msgstr "Класс: "
+msgstr "РљР»Р°СЃСЃ: "
 
 #: src/celestia/celestiacore.cpp:2743
 msgid "Neutron star"
-msgstr "Нейтронная звезда"
+msgstr "РќРµР№С‚СЂРѕРЅРЅР°СЏ Р·РІРµР·РґР°"
 
 #: src/celestia/celestiacore.cpp:2745
 msgid "Black hole"
-msgstr "Черная дыра"
+msgstr "Р§РµСЂРЅР°СЏ РґС‹СЂР°"
 
 #: src/celestia/celestiacore.cpp:2755
 msgid "Surface temp: "
-msgstr "Темп. поверхности:"
+msgstr "РўРµРјРї. РїРѕРІРµСЂС…РЅРѕСЃС‚Рё:"
 
 #: src/celestia/celestiacore.cpp:2756
 #, c-format
 msgid "Radius: %.2f Rsun\n"
-msgstr "Радиус: %.2f Rсолн\n"
+msgstr "Р Р°РґРёСѓСЃ: %.2f RСЃРѕР»РЅ\n"
 
 #: src/celestia/celestiacore.cpp:2758
 msgid "Rotation period: "
-msgstr "Период вращения: "
+msgstr "РџРµСЂРёРѕРґ РІСЂР°С‰РµРЅРёСЏ: "
 
 #: src/celestia/celestiacore.cpp:2765
 msgid "Planetary companions present\n"
-msgstr "Присутствует планетарная система\n"
+msgstr "РџСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РїР»Р°РЅРµС‚Р°СЂРЅР°СЏ СЃРёСЃС‚РµРјР°\n"
 
 #: src/celestia/celestiacore.cpp:2784 src/celestia/celestiacore.cpp:2834
 #: src/celestia/kde/selectionpopup.cpp:95
 msgid "Radius: "
-msgstr "Радиус: "
+msgstr "Р Р°РґРёСѓСЃ: "
 
 #: src/celestia/celestiacore.cpp:2793
 msgid "Day length: "
-msgstr "Продолжительность дня:"
+msgstr "РџСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ РґРЅСЏ:"
 
 #: src/celestia/celestiacore.cpp:2808
 msgid "Temperature: "
-msgstr "Температура: "
+msgstr "РўРµРјРїРµСЂР°С‚СѓСЂР°: "
 
 #: src/celestia/celestiacore.cpp:2820
 #, c-format
 msgid "Apparent mag: %.2f\n"
-msgstr "Видимая величина: %.2f\n"
+msgstr "Р’РёРґРёРјР°СЏ РІРµР»РёС‡РёРЅР°: %.2f\n"
 
 #: src/celestia/celestiacore.cpp:2833
 msgid "Type: "
-msgstr "Тип: "
+msgstr "РўРёРї: "
 
 #: src/celestia/celestiacore.cpp:2834
 msgid " ly\n"
-msgstr " св. лет\n"
+msgstr " СЃРІ. Р»РµС‚\n"
 
 #: src/celestia/celestiacore.cpp:3056 src/celestia/celestiacore.cpp:3070
 msgid "  LT"
@@ -538,27 +538,27 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3079
 msgid "Paused"
-msgstr "Пауза"
+msgstr "РџР°СѓР·Р°"
 
 #: src/celestia/celestiacore.cpp:3089
 msgid "Real time"
-msgstr "Реальное время"
+msgstr "Р РµР°Р»СЊРЅРѕРµ РІСЂРµРјСЏ"
 
 #: src/celestia/celestiacore.cpp:3091
 msgid "-Real time"
-msgstr "-Реальное время"
+msgstr "-Р РµР°Р»СЊРЅРѕРµ РІСЂРµРјСЏ"
 
 #: src/celestia/celestiacore.cpp:3094
 msgid "Time stopped"
-msgstr "Время остановлено"
+msgstr "Р’СЂРµРјСЏ РѕСЃС‚Р°РЅРѕРІР»РµРЅРѕ"
 
 #: src/celestia/celestiacore.cpp:3096
 msgid " faster"
-msgstr " раз быстрее"
+msgstr " СЂР°Р· Р±С‹СЃС‚СЂРµРµ"
 
 #: src/celestia/celestiacore.cpp:3098
 msgid " slower"
-msgstr " раз медленее"
+msgstr " СЂР°Р· РјРµРґР»РµРЅРµРµ"
 
 #: src/celestia/celestiacore.cpp:3112
 msgid "FPS: "
@@ -570,31 +570,31 @@ msgid ""
 "Speed: "
 msgstr ""
 "\n"
-"Скорость: "
+"РЎРєРѕСЂРѕСЃС‚СЊ: "
 
 #: src/celestia/celestiacore.cpp:3141
 msgid "Travelling "
-msgstr "Путешествие "
+msgstr "РџСѓС‚РµС€РµСЃС‚РІРёРµ "
 
 #: src/celestia/celestiacore.cpp:3154
 msgid "Track "
-msgstr "Трек "
+msgstr "РўСЂРµРє "
 
 #: src/celestia/celestiacore.cpp:3166
 msgid "Follow "
-msgstr "Слежение "
+msgstr "РЎР»РµР¶РµРЅРёРµ "
 
 #: src/celestia/celestiacore.cpp:3171
 msgid "Sync Orbit "
-msgstr "Синхронная орбита"
+msgstr "РЎРёРЅС…СЂРѕРЅРЅР°СЏ РѕСЂР±РёС‚Р°"
 
 #: src/celestia/celestiacore.cpp:3176
 msgid "Lock "
-msgstr "Захват "
+msgstr "Р—Р°С…РІР°С‚ "
 
 #: src/celestia/celestiacore.cpp:3185
 msgid "Chase "
-msgstr "Погоня "
+msgstr "РџРѕРіРѕРЅСЏ "
 
 #: src/celestia/celestiacore.cpp:3201
 #, c-format
@@ -603,11 +603,11 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3305
 msgid "Target name: "
-msgstr "Имя цели: "
+msgstr "РРјСЏ С†РµР»Рё: "
 
 #: src/celestia/celestiacore.cpp:3387
 msgid " at "
-msgstr " при "
+msgstr " РїСЂРё "
 
 #: src/celestia/celestiacore.cpp:3388
 msgid " fps"
@@ -615,19 +615,19 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3390
 msgid "  Recording"
-msgstr "  Запись"
+msgstr "  Р—Р°РїРёСЃСЊ"
 
 #: src/celestia/celestiacore.cpp:3392
 msgid "  Paused"
-msgstr "  Приостановлено"
+msgstr "  РџСЂРёРѕСЃС‚Р°РЅРѕРІР»РµРЅРѕ"
 
 #: src/celestia/celestiacore.cpp:3411
 msgid "F11 Start/Pause    F12 Stop"
-msgstr "F11 Пуск/Пауза    F12 Стоп"
+msgstr "F11 РџСѓСЃРє/РџР°СѓР·Р°    F12 РЎС‚РѕРї"
 
 #: src/celestia/celestiacore.cpp:3420 src/celestia/celestiacore.cpp:3423
 msgid "Edit Mode"
-msgstr "Режим редактирования"
+msgstr "Р РµР¶РёРј СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ"
 
 #: src/celestia/celestiacore.cpp:3522
 msgid "Loading solar system catalog: "
@@ -714,7 +714,7 @@ msgstr ""
 msgid "Error opening star catalog "
 msgstr ""
 
-#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:465
+#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:466
 #: src/celestia/kde/rc.cpp:30
 #, no-c-format
 msgid "Celestial Browser"
@@ -723,13 +723,13 @@ msgstr ""
 #: src/celestia/kde/celestialbrowser.cpp:177 src/celestia/kde/rc.cpp:73
 #, fuzzy, no-c-format
 msgid "Planet"
-msgstr "Пан"
+msgstr "РџР°РЅ"
 
 #: src/celestia/kde/celestialbrowser.cpp:180 src/celestia/kde/rc.cpp:76
 #: data/data.cpp:4
 #, no-c-format
 msgid "Moon"
-msgstr "Луна"
+msgstr "Р›СѓРЅР°"
 
 #: src/celestia/kde/celestialbrowser.cpp:183
 msgid "Asteroid"
@@ -738,7 +738,7 @@ msgstr ""
 #: src/celestia/kde/celestialbrowser.cpp:186
 #, fuzzy
 msgid "Comet"
-msgstr "Кит"
+msgstr "РљРёС‚"
 
 #: src/celestia/kde/celestialbrowser.cpp:189
 msgid "Spacecraft"
@@ -748,7 +748,7 @@ msgstr ""
 msgid "-"
 msgstr ""
 
-#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:466
+#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:467
 #: src/celestia/kde/rc.cpp:70
 #, no-c-format
 msgid "Eclipse Finder"
@@ -813,424 +813,428 @@ msgid ""
 "files and may not work correctly, please check your installation."
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:374
+#: src/celestia/kde/kdeapp.cpp:375
 msgid "Go to &URL..."
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:375
+#: src/celestia/kde/kdeapp.cpp:376
 msgid "Go to &Long/Lat..."
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:377
+#: src/celestia/kde/kdeapp.cpp:378
 msgid "&Back"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:380
+#: src/celestia/kde/kdeapp.cpp:381
 #, fuzzy
 msgid "&Forward"
-msgstr "Время: вперед"
+msgstr "Р’СЂРµРјСЏ: РІРїРµСЂРµРґ"
 
-#: src/celestia/kde/kdeapp.cpp:387
+#: src/celestia/kde/kdeapp.cpp:388
 #, fuzzy
 msgid "Home"
-msgstr "Наугольника"
+msgstr "РќР°СѓРіРѕР»СЊРЅРёРєР°"
 
-#: src/celestia/kde/kdeapp.cpp:394
+#: src/celestia/kde/kdeapp.cpp:395
 msgid "Bookmarks"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:406
+#: src/celestia/kde/kdeapp.cpp:407
 msgid "Full Screen"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:410
+#: src/celestia/kde/kdeapp.cpp:411
 msgid "Copy URL"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:413
+#: src/celestia/kde/kdeapp.cpp:414
 msgid "Set Time..."
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:414
+#: src/celestia/kde/kdeapp.cpp:415
 msgid "Set Time to Now"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:415
+#: src/celestia/kde/kdeapp.cpp:416
 msgid "Accelerate Time"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:416
+#: src/celestia/kde/kdeapp.cpp:417
 msgid "Decelerate Time"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:417
+#: src/celestia/kde/kdeapp.cpp:418
 #, fuzzy
 msgid "Pause Time"
-msgstr "Пауза"
+msgstr "РџР°СѓР·Р°"
 
-#: src/celestia/kde/kdeapp.cpp:418
+#: src/celestia/kde/kdeapp.cpp:419
 msgid "Reverse Time"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:420
+#: src/celestia/kde/kdeapp.cpp:421
 msgid "Split View Vertically"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:421
+#: src/celestia/kde/kdeapp.cpp:422
 msgid "Split View Horizontally"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:422
+#: src/celestia/kde/kdeapp.cpp:423
 msgid "Cycle View"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:423
+#: src/celestia/kde/kdeapp.cpp:424
 msgid "Single View"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:424
+#: src/celestia/kde/kdeapp.cpp:425
 msgid "Delete View"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:425
+#: src/celestia/kde/kdeapp.cpp:426
 #, fuzzy
 msgid "Frames Visible"
-msgstr "Маркеры запрещены"
+msgstr "РњР°СЂРєРµСЂС‹ Р·Р°РїСЂРµС‰РµРЅС‹"
 
-#: src/celestia/kde/kdeapp.cpp:438
+#: src/celestia/kde/kdeapp.cpp:439
 msgid "Active Frame Visible"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:450
+#: src/celestia/kde/kdeapp.cpp:451
 msgid "Synchronize Time"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:462
-#, fuzzy
-msgid "Alt-Azimuth Mode"
-msgstr "Режим 'высота-азимут'"
-
 #: src/celestia/kde/kdeapp.cpp:463
 #, fuzzy
-msgid "Go To Surface"
-msgstr "Перейти к поверхности"
+msgid "Alt-Azimuth Mode"
+msgstr "Р РµР¶РёРј 'РІС‹СЃРѕС‚Р°-Р°Р·РёРјСѓС‚'"
 
-#: src/celestia/kde/kdeapp.cpp:491
+#: src/celestia/kde/kdeapp.cpp:464
+#, fuzzy
+msgid "Go To Surface"
+msgstr "РџРµСЂРµР№С‚Рё Рє РїРѕРІРµСЂС…РЅРѕСЃС‚Рё"
+
+#: src/celestia/kde/kdeapp.cpp:492
 msgid "Show Stars"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:494
+#: src/celestia/kde/kdeapp.cpp:495
 #, fuzzy
 msgid "Show Planets"
-msgstr "Летучей рыбы"
+msgstr "Р›РµС‚СѓС‡РµР№ СЂС‹Р±С‹"
 
-#: src/celestia/kde/kdeapp.cpp:497
+#: src/celestia/kde/kdeapp.cpp:498
 msgid "Show Galaxies"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:500
+#: src/celestia/kde/kdeapp.cpp:501
 msgid "Show Partial Trajectories"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:503
+#: src/celestia/kde/kdeapp.cpp:504
 msgid "Show Nebulae"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:506
+#: src/celestia/kde/kdeapp.cpp:507
 msgid "Show Open Clusters"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:509
+#: src/celestia/kde/kdeapp.cpp:510
 msgid "Show Constellations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:512
+#: src/celestia/kde/kdeapp.cpp:513
 msgid "Show CloudMaps"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:515
+#: src/celestia/kde/kdeapp.cpp:516
 #, fuzzy
 msgid "Show Orbits"
-msgstr "Синхронная орбита"
+msgstr "РЎРёРЅС…СЂРѕРЅРЅР°СЏ РѕСЂР±РёС‚Р°"
 
-#: src/celestia/kde/kdeapp.cpp:518
+#: src/celestia/kde/kdeapp.cpp:519
 msgid "Show Asteroid Orbits"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:521
+#: src/celestia/kde/kdeapp.cpp:522
 msgid "Show Comet Orbits"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:524
+#: src/celestia/kde/kdeapp.cpp:525
 #, fuzzy
 msgid "Show Moon Orbits"
-msgstr "Синхронная орбита"
+msgstr "РЎРёРЅС…СЂРѕРЅРЅР°СЏ РѕСЂР±РёС‚Р°"
 
-#: src/celestia/kde/kdeapp.cpp:527
+#: src/celestia/kde/kdeapp.cpp:528
 msgid "Show Planet Orbits"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:530
+#: src/celestia/kde/kdeapp.cpp:531
 msgid "Show Spacecraft Orbits"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:533
+#: src/celestia/kde/kdeapp.cpp:534
 msgid "Show Celestial Grid"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:536
+#: src/celestia/kde/kdeapp.cpp:537
 msgid "Show Night Side Lights"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:539
+#: src/celestia/kde/kdeapp.cpp:540
 msgid "Show Markers"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:542
+#: src/celestia/kde/kdeapp.cpp:543
 msgid "Show Atmospheres"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:545
+#: src/celestia/kde/kdeapp.cpp:546
 msgid "Show Smooth Orbit Lines"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:548
+#: src/celestia/kde/kdeapp.cpp:549
 msgid "Show Eclipse Shadows"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:551
+#: src/celestia/kde/kdeapp.cpp:552
 msgid "Cycle Star Mode"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:553
+#: src/celestia/kde/kdeapp.cpp:554
 msgid "Show Ring Shadows"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:556
+#: src/celestia/kde/kdeapp.cpp:557
 msgid "Show Boundaries"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:559
+#: src/celestia/kde/kdeapp.cpp:560
 #: src/celestia/kde/kdepreferencesdialog.cpp:140
 #, fuzzy
 msgid "Auto Magnitudes"
-msgstr "Автоувеличение запрещено"
+msgstr "РђРІС‚РѕСѓРІРµР»РёС‡РµРЅРёРµ Р·Р°РїСЂРµС‰РµРЅРѕ"
 
-#: src/celestia/kde/kdeapp.cpp:562
+#: src/celestia/kde/kdeapp.cpp:563
 msgid "Show Comet Tails"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:565
+#: src/celestia/kde/kdeapp.cpp:566
 msgid "Show Star Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:570
+#: src/celestia/kde/kdeapp.cpp:571
 msgid "Show Planet Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:573
+#: src/celestia/kde/kdeapp.cpp:574
 msgid "Show Moon Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:576
+#: src/celestia/kde/kdeapp.cpp:577
 msgid "Show Comet Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:579
+#: src/celestia/kde/kdeapp.cpp:580
 msgid "Show Constellation Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:582
+#: src/celestia/kde/kdeapp.cpp:583
+msgid "Constellation Labels in Latin"
+msgstr ""
+
+#: src/celestia/kde/kdeapp.cpp:586
 msgid "Show Galaxy Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:585
+#: src/celestia/kde/kdeapp.cpp:589
 msgid "Show Nebula Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:588
+#: src/celestia/kde/kdeapp.cpp:592
 msgid "Show Open Cluster Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:591
+#: src/celestia/kde/kdeapp.cpp:595
 msgid "Show Asteroid Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:594
+#: src/celestia/kde/kdeapp.cpp:598
 msgid "Show Spacecraft Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:597
+#: src/celestia/kde/kdeapp.cpp:601
 msgid "Show Location Labels"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:600
+#: src/celestia/kde/kdeapp.cpp:604
 msgid "Display Local Time"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:605
+#: src/celestia/kde/kdeapp.cpp:609
 msgid "Show City Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:608
+#: src/celestia/kde/kdeapp.cpp:612
 msgid "Show Observatory Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:611
+#: src/celestia/kde/kdeapp.cpp:615
 msgid "Show Landing Sites Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:614
+#: src/celestia/kde/kdeapp.cpp:618
 msgid "Show Crater Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:617
+#: src/celestia/kde/kdeapp.cpp:621
 msgid "Show Mons Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:620
+#: src/celestia/kde/kdeapp.cpp:624
 msgid "Show Terra Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:623
+#: src/celestia/kde/kdeapp.cpp:627
 msgid "Show Vallis Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:626
+#: src/celestia/kde/kdeapp.cpp:630
 msgid "Show Mare Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:629
+#: src/celestia/kde/kdeapp.cpp:633
 msgid "Show Other Locations"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:633
+#: src/celestia/kde/kdeapp.cpp:637
 msgid "Wireframe Mode"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:635
+#: src/celestia/kde/kdeapp.cpp:639
 msgid "Center on Orbit"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:639
-#: src/celestia/kde/kdepreferencesdialog.cpp:453
+#: src/celestia/kde/kdeapp.cpp:643
+#: src/celestia/kde/kdepreferencesdialog.cpp:458
 msgid "Basic"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:641
-#: src/celestia/kde/kdepreferencesdialog.cpp:455
+#: src/celestia/kde/kdeapp.cpp:645
+#: src/celestia/kde/kdepreferencesdialog.cpp:460
 #, fuzzy
 msgid "Multitexture"
-msgstr "Путь рендеринга: мультитекстура"
+msgstr "РџСѓС‚СЊ СЂРµРЅРґРµСЂРёРЅРіР°: РјСѓР»СЊС‚РёС‚РµРєСЃС‚СѓСЂР°"
 
-#: src/celestia/kde/kdeapp.cpp:643
-#: src/celestia/kde/kdepreferencesdialog.cpp:457
+#: src/celestia/kde/kdeapp.cpp:647
+#: src/celestia/kde/kdepreferencesdialog.cpp:462
 msgid "NvCombiners"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:645
-#: src/celestia/kde/kdepreferencesdialog.cpp:459
+#: src/celestia/kde/kdeapp.cpp:649
+#: src/celestia/kde/kdepreferencesdialog.cpp:464
 msgid "DOT3 ARBVP"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:647
-#: src/celestia/kde/kdepreferencesdialog.cpp:461
+#: src/celestia/kde/kdeapp.cpp:651
+#: src/celestia/kde/kdepreferencesdialog.cpp:466
 msgid "NvCombiner NvVP"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:649
-#: src/celestia/kde/kdepreferencesdialog.cpp:463
+#: src/celestia/kde/kdeapp.cpp:653
+#: src/celestia/kde/kdepreferencesdialog.cpp:468
 msgid "NvCombiner ARBVP"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:651
-#: src/celestia/kde/kdepreferencesdialog.cpp:465
+#: src/celestia/kde/kdeapp.cpp:655
+#: src/celestia/kde/kdepreferencesdialog.cpp:470
 msgid "ARBFP ARBVP"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:653
-#: src/celestia/kde/kdepreferencesdialog.cpp:467
+#: src/celestia/kde/kdeapp.cpp:657
+#: src/celestia/kde/kdepreferencesdialog.cpp:472
 msgid "NV30"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:655
+#: src/celestia/kde/kdeapp.cpp:659
 msgid "Cycle OpenGL Render Path"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:657
+#: src/celestia/kde/kdeapp.cpp:661
 msgid "Grab Image"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:659
+#: src/celestia/kde/kdeapp.cpp:663
 msgid "OpenGL info"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:665
+#: src/celestia/kde/kdeapp.cpp:669
 msgid "Show Bookmark Toolbar"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:910
+#: src/celestia/kde/kdeapp.cpp:914
 msgid "OpenGL Info"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1240
-#: src/celestia/kde/kdepreferencesdialog.cpp:350
-#: src/celestia/kde/kdepreferencesdialog.cpp:361
+#: src/celestia/kde/kdeapp.cpp:1249
+#: src/celestia/kde/kdepreferencesdialog.cpp:355
+#: src/celestia/kde/kdepreferencesdialog.cpp:366
 msgid "UTC"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1325
+#: src/celestia/kde/kdeapp.cpp:1334
 msgid "Enter URL"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1417
+#: src/celestia/kde/kdeapp.cpp:1426
 msgid "Object: "
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1422
-msgid "Longitude: "
-msgstr ""
-
-#: src/celestia/kde/kdeapp.cpp:1428
-#, fuzzy
-msgid "East"
-msgstr "Земля"
-
-#: src/celestia/kde/kdeapp.cpp:1429
-#, fuzzy
-msgid "West"
-msgstr "Веста"
-
 #: src/celestia/kde/kdeapp.cpp:1431
-msgid "Latitude: "
+msgid "Longitude: "
 msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:1437
 #, fuzzy
-msgid "North"
-msgstr "Нау"
+msgid "East"
+msgstr "Р—РµРјР»СЏ"
 
 #: src/celestia/kde/kdeapp.cpp:1438
 #, fuzzy
-msgid "South"
-msgstr "Щита"
+msgid "West"
+msgstr "Р’РµСЃС‚Р°"
 
 #: src/celestia/kde/kdeapp.cpp:1440
+msgid "Latitude: "
+msgstr ""
+
+#: src/celestia/kde/kdeapp.cpp:1446
+#, fuzzy
+msgid "North"
+msgstr "РќР°Сѓ"
+
+#: src/celestia/kde/kdeapp.cpp:1447
+#, fuzzy
+msgid "South"
+msgstr "Р©РёС‚Р°"
+
+#: src/celestia/kde/kdeapp.cpp:1449
 msgid "Altitude: "
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1445
+#: src/celestia/kde/kdeapp.cpp:1454
 msgid "km"
-msgstr "км"
+msgstr "РєРј"
 
-#: src/celestia/kde/kdeapp.cpp:1515
+#: src/celestia/kde/kdeapp.cpp:1524
 msgid "Celestia encountered an error while processing your script"
 msgstr ""
 
 #: src/celestia/kde/kdemain.cpp:25 src/celestia/kde/kdemain.cpp:41
 #, fuzzy
 msgid "Celestia"
-msgstr "Телеста"
+msgstr "РўРµР»РµСЃС‚Р°"
 
 #: src/celestia/kde/kdemain.cpp:31
 msgid "Use alternate configuration file"
@@ -1259,7 +1263,7 @@ msgstr ""
 #: src/celestia/kde/kdepreferencesdialog.cpp:62
 #, fuzzy
 msgid "Rendering"
-msgstr "  Запись"
+msgstr "  Р—Р°РїРёСЃСЊ"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:70
 msgid "Show"
@@ -1269,32 +1273,32 @@ msgstr ""
 #: src/celestia/kde/kdepreferencesdialog.cpp:164
 #, fuzzy
 msgid "Stars"
-msgstr "Марс"
+msgstr "РњР°СЂСЃ"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:76
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
 #: src/celestia/kde/selectionpopup.cpp:388
 #, fuzzy
 msgid "Planets"
-msgstr "Летучей рыбы"
+msgstr "Р›РµС‚СѓС‡РµР№ СЂС‹Р±С‹"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:80
-#: src/celestia/kde/kdepreferencesdialog.cpp:202
+#: src/celestia/kde/kdepreferencesdialog.cpp:207
 #, fuzzy
 msgid "Galaxies"
-msgstr "Галатея"
+msgstr "Р“Р°Р»Р°С‚РµСЏ"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:84
 msgid "Partial Trajectories"
 msgstr ""
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:88
-#: src/celestia/kde/kdepreferencesdialog.cpp:207
+#: src/celestia/kde/kdepreferencesdialog.cpp:212
 msgid "Nebulae"
 msgstr ""
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:92
-#: src/celestia/kde/kdepreferencesdialog.cpp:212
+#: src/celestia/kde/kdepreferencesdialog.cpp:217
 msgid "Open Clusters"
 msgstr ""
 
@@ -1306,13 +1310,13 @@ msgstr ""
 #: src/celestia/kde/kdepreferencesdialog.cpp:100
 #, fuzzy
 msgid "Clouds"
-msgstr "Ворон"
+msgstr "Р’РѕСЂРѕРЅ"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:104
 #: src/celestia/kde/kdepreferencesdialog.cpp:159
 #, fuzzy
 msgid "Orbits"
-msgstr "Ори"
+msgstr "РћСЂРё"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:108
 msgid "Celestial Grid"
@@ -1325,7 +1329,7 @@ msgstr ""
 #: src/celestia/kde/kdepreferencesdialog.cpp:116
 #, fuzzy
 msgid "Markers"
-msgstr "Марс"
+msgstr "РњР°СЂСЃ"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:120
 msgid "Atmospheres"
@@ -1350,7 +1354,7 @@ msgstr ""
 #: src/celestia/kde/kdepreferencesdialog.cpp:144
 #, fuzzy
 msgid "Comet Tails"
-msgstr "Хвосты комет разрешены"
+msgstr "РҐРІРѕСЃС‚С‹ РєРѕРјРµС‚ СЂР°Р·СЂРµС€РµРЅС‹"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:155
 msgid "Orbits / Labels"
@@ -1364,191 +1368,195 @@ msgstr ""
 #: src/celestia/kde/kdepreferencesdialog.cpp:183
 #, fuzzy
 msgid "Moons"
-msgstr "Луна"
+msgstr "Р›СѓРЅР°"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:192
 #, fuzzy
 msgid "Comets"
-msgstr "Кит"
+msgstr "РљРёС‚"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:221
+#: src/celestia/kde/kdepreferencesdialog.cpp:202
+msgid "Constellations in Latin"
+msgstr ""
+
+#: src/celestia/kde/kdepreferencesdialog.cpp:226
 msgid "Asteroids"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:230
+#: src/celestia/kde/kdepreferencesdialog.cpp:235
 msgid "Spacecrafts"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:235
-#: src/celestia/kde/kdepreferencesdialog.cpp:287
+#: src/celestia/kde/kdepreferencesdialog.cpp:240
+#: src/celestia/kde/kdepreferencesdialog.cpp:292
 msgid "Locations"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:244
+#: src/celestia/kde/kdepreferencesdialog.cpp:249
 msgid "Ambient Light"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:255
+#: src/celestia/kde/kdepreferencesdialog.cpp:260
 msgid "Limiting Magnitude"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:264
+#: src/celestia/kde/kdepreferencesdialog.cpp:269
 msgid "Info Text"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:265
+#: src/celestia/kde/kdepreferencesdialog.cpp:270
 msgid "Level: "
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:267
+#: src/celestia/kde/kdepreferencesdialog.cpp:272
 #, fuzzy
 msgid "None"
-msgstr "Диона"
+msgstr "Р”РёРѕРЅР°"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:268
+#: src/celestia/kde/kdepreferencesdialog.cpp:273
 #, fuzzy
 msgid "Terse"
-msgstr "Персея"
-
-#: src/celestia/kde/kdepreferencesdialog.cpp:269
-#, fuzzy
-msgid "Verbose"
-msgstr "Персея"
+msgstr "РџРµСЂСЃРµСЏ"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:274
+#, fuzzy
+msgid "Verbose"
+msgstr "РџРµСЂСЃРµСЏ"
+
+#: src/celestia/kde/kdepreferencesdialog.cpp:279
 msgid "Automatic FOV"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:275
+#: src/celestia/kde/kdepreferencesdialog.cpp:280
 msgid "Screen DPI: "
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:277
+#: src/celestia/kde/kdepreferencesdialog.cpp:282
 #, fuzzy
 msgid "Viewing Distance (cm): "
-msgstr "Расстояние: "
+msgstr "Р Р°СЃСЃС‚РѕСЏРЅРёРµ: "
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:293
+#: src/celestia/kde/kdepreferencesdialog.cpp:298
 #, fuzzy
 msgid "Cities"
-msgstr "Овна"
+msgstr "РћРІРЅР°"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:297
+#: src/celestia/kde/kdepreferencesdialog.cpp:302
 msgid "Observatories"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:301
+#: src/celestia/kde/kdepreferencesdialog.cpp:306
 msgid "Landing Sites"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:305
+#: src/celestia/kde/kdepreferencesdialog.cpp:310
 #, fuzzy
 msgid "Craters"
-msgstr "Чаши"
+msgstr "Р§Р°С€Рё"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:309
+#: src/celestia/kde/kdepreferencesdialog.cpp:314
 #, fuzzy
 msgid "Mons"
-msgstr "Еди"
+msgstr "Р•РґРё"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:313
+#: src/celestia/kde/kdepreferencesdialog.cpp:318
 msgid "Terra"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:317
+#: src/celestia/kde/kdepreferencesdialog.cpp:322
 #, fuzzy
 msgid "Vallis"
-msgstr "Каллисто"
+msgstr "РљР°Р»Р»РёСЃС‚Рѕ"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:321
+#: src/celestia/kde/kdepreferencesdialog.cpp:326
 #, fuzzy
 msgid "Mare"
-msgstr "Марс"
+msgstr "РњР°СЂСЃ"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:325
+#: src/celestia/kde/kdepreferencesdialog.cpp:330
 msgid "Other"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:329
+#: src/celestia/kde/kdepreferencesdialog.cpp:334
 msgid "Minimum Feature Size"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:343
+#: src/celestia/kde/kdepreferencesdialog.cpp:348
 msgid "Date/Time"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:347
+#: src/celestia/kde/kdepreferencesdialog.cpp:352
 msgid "Display"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:348
-#: src/celestia/kde/kdepreferencesdialog.cpp:359
+#: src/celestia/kde/kdepreferencesdialog.cpp:353
+#: src/celestia/kde/kdepreferencesdialog.cpp:364
 msgid "Timezone: "
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:351
-#: src/celestia/kde/kdepreferencesdialog.cpp:362
+#: src/celestia/kde/kdepreferencesdialog.cpp:356
+#: src/celestia/kde/kdepreferencesdialog.cpp:367
 #, fuzzy
 msgid "Local Time"
-msgstr "Реальное время"
+msgstr "Р РµР°Р»СЊРЅРѕРµ РІСЂРµРјСЏ"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:356
+#: src/celestia/kde/kdepreferencesdialog.cpp:361
 #, fuzzy
 msgid "Set"
-msgstr "Сек"
+msgstr "РЎРµРє"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:357
+#: src/celestia/kde/kdepreferencesdialog.cpp:362
 msgid "Local Time is only supported for dates between 1902 and 2037.\n"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:410 src/celestia/kde/rc.cpp:27
+#: src/celestia/kde/kdepreferencesdialog.cpp:415 src/celestia/kde/rc.cpp:27
 #, fuzzy, no-c-format
 msgid "Now"
-msgstr "Нау"
+msgstr "РќР°Сѓ"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:431
+#: src/celestia/kde/kdepreferencesdialog.cpp:436
 #, fuzzy
 msgid ""
 "\n"
 "Selection: "
 msgstr ""
 "\n"
-"Скорость: "
+"РЎРєРѕСЂРѕСЃС‚СЊ: "
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:438
+#: src/celestia/kde/kdepreferencesdialog.cpp:443
 msgid "Include Light Travel Time"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:440
+#: src/celestia/kde/kdepreferencesdialog.cpp:445
 #, fuzzy
 msgid "Ignore Light Travel Time "
-msgstr "Световое запаздывание:  %.4f г "
+msgstr "РЎРІРµС‚РѕРІРѕРµ Р·Р°РїР°Р·РґС‹РІР°РЅРёРµ:  %.4f Рі "
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:447
+#: src/celestia/kde/kdepreferencesdialog.cpp:452
 msgid "OpenGL"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:492
+#: src/celestia/kde/kdepreferencesdialog.cpp:497
 msgid "Key Bindings"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:706
+#: src/celestia/kde/kdepreferencesdialog.cpp:711
 msgid "<b>Unextended OpenGL 1.1</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:709
+#: src/celestia/kde/kdepreferencesdialog.cpp:714
 msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:712
+#: src/celestia/kde/kdepreferencesdialog.cpp:717
 msgid "<b>NVIDIA combiners, no vertex programs</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:715
+#: src/celestia/kde/kdepreferencesdialog.cpp:720
 msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:718
+#: src/celestia/kde/kdepreferencesdialog.cpp:723
 msgid ""
 "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
 "mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon "
@@ -1556,17 +1564,17 @@ msgid ""
 "Geforce users"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:724
+#: src/celestia/kde/kdepreferencesdialog.cpp:729
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:727
+#: src/celestia/kde/kdepreferencesdialog.cpp:732
 msgid ""
 "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
 "advanced effects on Geforce FX and Radeon 9700 cards"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:731
+#: src/celestia/kde/kdepreferencesdialog.cpp:736
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
 msgstr ""
 
@@ -1586,12 +1594,12 @@ msgstr ""
 #: src/celestia/kde/selectionpopup.cpp:79
 #, fuzzy
 msgid "Abs (app) mag: "
-msgstr " Абс. (отн.) величина: %.2f (%.2f)\n"
+msgstr " РђР±СЃ. (РѕС‚РЅ.) РІРµР»РёС‡РёРЅР°: %.2f (%.2f)\n"
 
 #: src/celestia/kde/selectionpopup.cpp:91
 #, fuzzy
 msgid "Surface Temp: "
-msgstr "Темп. поверхности:"
+msgstr "РўРµРјРї. РїРѕРІРµСЂС…РЅРѕСЃС‚Рё:"
 
 #: src/celestia/kde/selectionpopup.cpp:128
 msgid "Marked objects"
@@ -1600,22 +1608,22 @@ msgstr ""
 #: src/celestia/kde/selectionpopup.cpp:311
 #, fuzzy
 msgid "&Select"
-msgstr "Щит"
+msgstr "Р©РёС‚"
 
 #: src/celestia/kde/selectionpopup.cpp:312
 #, fuzzy
 msgid "&Center"
-msgstr "Центавра"
+msgstr "Р¦РµРЅС‚Р°РІСЂР°"
 
 #: src/celestia/kde/selectionpopup.cpp:314
 #, fuzzy
 msgid "&Follow"
-msgstr "Слежение"
+msgstr "РЎР»РµР¶РµРЅРёРµ"
 
 #: src/celestia/kde/selectionpopup.cpp:315
 #, fuzzy
 msgid "S&ynch Orbit"
-msgstr "Синхронная орбита"
+msgstr "РЎРёРЅС…СЂРѕРЅРЅР°СЏ РѕСЂР±РёС‚Р°"
 
 #: src/celestia/kde/selectionpopup.cpp:316
 msgid "&Info"
@@ -1632,22 +1640,22 @@ msgstr ""
 #: src/celestia/kde/selectionpopup.cpp:325
 #, fuzzy
 msgid "Diamond"
-msgstr "Диона"
+msgstr "Р”РёРѕРЅР°"
 
 #: src/celestia/kde/selectionpopup.cpp:326
 #, fuzzy
 msgid "Triangle"
-msgstr "Треугольника"
+msgstr "РўСЂРµСѓРіРѕР»СЊРЅРёРєР°"
 
 #: src/celestia/kde/selectionpopup.cpp:327
 #, fuzzy
 msgid "Square"
-msgstr "Водолея"
+msgstr "Р’РѕРґРѕР»РµСЏ"
 
 #: src/celestia/kde/selectionpopup.cpp:328
 #, fuzzy
 msgid "Plus"
-msgstr "Плутон"
+msgstr "РџР»СѓС‚РѕРЅ"
 
 #: src/celestia/kde/selectionpopup.cpp:329
 msgid "X"
@@ -1656,12 +1664,12 @@ msgstr ""
 #: src/celestia/kde/selectionpopup.cpp:330
 #, fuzzy
 msgid "&Mark"
-msgstr "Марс"
+msgstr "РњР°СЂСЃ"
 
 #: src/celestia/kde/selectionpopup.cpp:341
 #, fuzzy
 msgid "Normal"
-msgstr "Наугольник"
+msgstr "РќР°СѓРіРѕР»СЊРЅРёРє"
 
 #: src/celestia/kde/selectionpopup.cpp:348
 msgid "&Alternate Surfaces"
@@ -1679,12 +1687,12 @@ msgstr ""
 #: src/celestia/kde/rc.cpp:6
 #, fuzzy, no-c-format
 msgid "Options"
-msgstr "Ориона"
+msgstr "РћСЂРёРѕРЅР°"
 
 #: src/celestia/kde/rc.cpp:9
 #, fuzzy, no-c-format
 msgid "Objects"
-msgstr "Ори"
+msgstr "РћСЂРё"
 
 #: src/celestia/kde/rc.cpp:15
 #, no-c-format
@@ -1709,7 +1717,7 @@ msgstr ""
 #: src/celestia/kde/rc.cpp:34
 #, fuzzy, no-c-format
 msgid "Name"
-msgstr "Карме"
+msgstr "РљР°СЂРјРµ"
 
 #: src/celestia/kde/rc.cpp:37
 #, no-c-format
@@ -1729,12 +1737,12 @@ msgstr ""
 #: src/celestia/kde/rc.cpp:46
 #, fuzzy, no-c-format
 msgid "Type"
-msgstr "Тип: "
+msgstr "РўРёРї: "
 
 #: src/celestia/kde/rc.cpp:49
 #, fuzzy, no-c-format
 msgid "With Planets"
-msgstr "Летучей рыбы"
+msgstr "Р›РµС‚СѓС‡РµР№ СЂС‹Р±С‹"
 
 #: src/celestia/kde/rc.cpp:52
 #, no-c-format
@@ -1749,12 +1757,12 @@ msgstr ""
 #: src/celestia/kde/rc.cpp:58
 #, fuzzy, no-c-format
 msgid "Nearest"
-msgstr "Нереида"
+msgstr "РќРµСЂРµРёРґР°"
 
 #: src/celestia/kde/rc.cpp:61
 #, fuzzy, no-c-format
 msgid "&Close"
-msgstr "Ворон"
+msgstr "Р’РѕСЂРѕРЅ"
 
 #: src/celestia/kde/rc.cpp:64
 #, no-c-format
@@ -1769,17 +1777,17 @@ msgstr ""
 #: src/celestia/kde/rc.cpp:79
 #, fuzzy, no-c-format
 msgid "Date"
-msgstr "Дактиль"
+msgstr "Р”Р°РєС‚РёР»СЊ"
 
 #: src/celestia/kde/rc.cpp:82
 #, fuzzy, no-c-format
 msgid "Start"
-msgstr "Марс"
+msgstr "РњР°СЂСЃ"
 
 #: src/celestia/kde/rc.cpp:85
 #, fuzzy, no-c-format
 msgid "End"
-msgstr "Инд"
+msgstr "РРЅРґ"
 
 #: src/celestia/kde/rc.cpp:88
 #, no-c-format
@@ -1799,32 +1807,32 @@ msgstr ""
 #: src/celestia/kde/rc.cpp:97 data/data.cpp:3
 #, fuzzy, no-c-format
 msgid "Earth"
-msgstr "Земля"
+msgstr "Р—РµРјР»СЏ"
 
 #: src/celestia/kde/rc.cpp:100 data/data.cpp:8
 #, no-c-format
 msgid "Jupiter"
-msgstr "Юпитер"
+msgstr "Р®РїРёС‚РµСЂ"
 
 #: src/celestia/kde/rc.cpp:103 data/data.cpp:14
 #, no-c-format
 msgid "Saturn"
-msgstr "Сатурн"
+msgstr "РЎР°С‚СѓСЂРЅ"
 
 #: src/celestia/kde/rc.cpp:106 data/data.cpp:28
 #, no-c-format
 msgid "Uranus"
-msgstr "Уран"
+msgstr "РЈСЂР°РЅ"
 
 #: src/celestia/kde/rc.cpp:109 data/data.cpp:34
 #, no-c-format
 msgid "Neptune"
-msgstr "Нептун"
+msgstr "РќРµРїС‚СѓРЅ"
 
 #: src/celestia/kde/rc.cpp:112 data/data.cpp:39
 #, fuzzy, no-c-format
 msgid "Pluto"
-msgstr "Плутон"
+msgstr "РџР»СѓС‚РѕРЅ"
 
 #: src/celestia/kde/rc.cpp:115
 #, no-c-format
@@ -1834,7 +1842,7 @@ msgstr ""
 #: src/celestia/kde/rc.cpp:118
 #, fuzzy, no-c-format
 msgid "Search"
-msgstr "Зме"
+msgstr "Р—РјРµ"
 
 #: src/celestia/kde/rc.cpp:121
 #, no-c-format
@@ -1849,1171 +1857,1318 @@ msgstr ""
 #: src/celestia/kde/rc.cpp:127
 #, fuzzy, no-c-format
 msgid "Close"
-msgstr "Ворон"
+msgstr "Р’РѕСЂРѕРЅ"
 
 #: data/data.cpp:1
 msgid "Mercury"
-msgstr "Меркурий"
+msgstr "РњРµСЂРєСѓСЂРёР№"
 
 #: data/data.cpp:2
 msgid "Venus"
-msgstr "Венера"
+msgstr "Р’РµРЅРµСЂР°"
 
 #: data/data.cpp:5
 #, fuzzy
 msgid "Mars"
-msgstr "Марс"
+msgstr "РњР°СЂСЃ"
 
 #: data/data.cpp:6
 msgid "Phobos"
-msgstr "Фобос"
+msgstr "Р¤РѕР±РѕСЃ"
 
 #: data/data.cpp:7
 msgid "Deimos"
-msgstr "Деймос"
+msgstr "Р”РµР№РјРѕСЃ"
 
 #: data/data.cpp:9
 msgid "Amalthea"
-msgstr "Амальтея"
+msgstr "РђРјР°Р»СЊС‚РµСЏ"
 
 #: data/data.cpp:10
 msgid "Io"
-msgstr "Ио"
+msgstr "РРѕ"
 
 #: data/data.cpp:11
 msgid "Europa"
-msgstr "Европа"
+msgstr "Р•РІСЂРѕРїР°"
 
 #: data/data.cpp:12
 msgid "Ganymede"
-msgstr "Ганимед"
+msgstr "Р“Р°РЅРёРјРµРґ"
 
 #: data/data.cpp:13
 #, fuzzy
 msgid "Callisto"
-msgstr "Каллисто"
+msgstr "РљР°Р»Р»РёСЃС‚Рѕ"
 
 #: data/data.cpp:15
 msgid "Prometheus"
-msgstr "Прометей"
+msgstr "РџСЂРѕРјРµС‚РµР№"
 
 #: data/data.cpp:16
 msgid "Pandora"
-msgstr "Пандора"
+msgstr "РџР°РЅРґРѕСЂР°"
 
 #: data/data.cpp:17
 msgid "Epimetheus"
-msgstr "Эпиметей"
+msgstr "Р­РїРёРјРµС‚РµР№"
 
 #: data/data.cpp:18
 msgid "Janus"
-msgstr "Янус"
+msgstr "РЇРЅСѓСЃ"
 
 #: data/data.cpp:19
 msgid "Mimas"
-msgstr "Мимас"
+msgstr "РњРёРјР°СЃ"
 
 #: data/data.cpp:20
 msgid "Enceladus"
-msgstr "Энкелад"
+msgstr "Р­РЅРєРµР»Р°Рґ"
 
 #: data/data.cpp:21
 msgid "Tethys"
-msgstr "Тетис"
+msgstr "РўРµС‚РёСЃ"
 
 #: data/data.cpp:22
 #, fuzzy
 msgid "Dione"
-msgstr "Диона"
+msgstr "Р”РёРѕРЅР°"
 
 #: data/data.cpp:23
 msgid "Rhea"
-msgstr "Рея"
+msgstr "Р РµСЏ"
 
 #: data/data.cpp:24
 msgid "Titan"
-msgstr "Титан"
+msgstr "РўРёС‚Р°РЅ"
 
 #: data/data.cpp:25
 msgid "Hyperion"
-msgstr "Гиперион"
+msgstr "Р“РёРїРµСЂРёРѕРЅ"
 
 #: data/data.cpp:26
 msgid "Iapetus"
-msgstr "Япет"
+msgstr "РЇРїРµС‚"
 
 #: data/data.cpp:27
 msgid "Phoebe"
-msgstr "Феба"
+msgstr "Р¤РµР±Р°"
 
 #: data/data.cpp:29
 msgid "Miranda"
-msgstr "Миранда"
+msgstr "РњРёСЂР°РЅРґР°"
 
 #: data/data.cpp:30
 msgid "Ariel"
-msgstr "Ариэль"
+msgstr "РђСЂРёСЌР»СЊ"
 
 #: data/data.cpp:31
 msgid "Umbriel"
-msgstr "Умбриэль"
+msgstr "РЈРјР±СЂРёСЌР»СЊ"
 
 #: data/data.cpp:32
 msgid "Titania"
-msgstr "Титания"
+msgstr "РўРёС‚Р°РЅРёСЏ"
 
 #: data/data.cpp:33
 msgid "Oberon"
-msgstr "Оберон"
+msgstr "РћР±РµСЂРѕРЅ"
 
 #: data/data.cpp:35
 msgid "Larissa"
-msgstr "Ларисса"
+msgstr "Р›Р°СЂРёСЃСЃР°"
 
 #: data/data.cpp:36
 msgid "Proteus"
-msgstr "Протей"
+msgstr "РџСЂРѕС‚РµР№"
 
 #: data/data.cpp:37
 msgid "Triton"
-msgstr "Тритон"
+msgstr "РўСЂРёС‚РѕРЅ"
 
 #: data/data.cpp:38
 #, fuzzy
 msgid "Nereid"
-msgstr "Персея"
+msgstr "РџРµСЂСЃРµСЏ"
 
 #: data/data.cpp:40
 msgid "Charon"
-msgstr "Харон"
+msgstr "РҐР°СЂРѕРЅ"
+
+#: data/data.cpp:41
+msgid "Andromeda"
+msgstr "РђРЅРґСЂРѕРјРµРґР°"
+
+#: data/data.cpp:42
+msgid "Antlia"
+msgstr "РќР°СЃРѕСЃ"
+
+#: data/data.cpp:43
+msgid "Apus"
+msgstr "Р Р°Р№СЃРєР°СЏ РїС‚РёС†Р°"
+
+#: data/data.cpp:44
+msgid "Aquarius"
+msgstr "Р’РѕРґРѕР»РµР№"
+
+#: data/data.cpp:45
+msgid "Aquila"
+msgstr "РћСЂРµР»"
+
+#: data/data.cpp:46
+msgid "Ara"
+msgstr "Р–РµСЂС‚РІРµРЅРЅРёРє"
+
+#: data/data.cpp:47
+msgid "Aries"
+msgstr "РћРІРµРЅ"
+
+#: data/data.cpp:48
+msgid "Auriga"
+msgstr "Р’РѕР·РЅРёС‡РёР№"
+
+#: data/data.cpp:49
+msgid "Bo\\u00f6tes"
+msgstr ""
+
+#: data/data.cpp:50
+msgid "Caelum"
+msgstr "Р РµР·РµС†"
+
+#: data/data.cpp:51
+msgid "Camelopardalis"
+msgstr "Р–РёСЂР°С„"
+
+#: data/data.cpp:52
+msgid "Cancer"
+msgstr "Р Р°Рє"
+
+#: data/data.cpp:53
+msgid "Canes Venatici"
+msgstr "Р“РѕРЅС‡РёРµ РїСЃС‹"
+
+#: data/data.cpp:54
+msgid "Canis Major"
+msgstr "Р‘РѕР»СЊС€РѕР№ РїРµСЃ"
+
+#: data/data.cpp:55
+msgid "Canis Minor"
+msgstr "РњР°Р»С‹Р№ РїРµСЃ"
+
+#: data/data.cpp:56
+msgid "Capricornus"
+msgstr "РљРѕР·РµСЂРѕРі"
+
+#: data/data.cpp:57
+msgid "Carina"
+msgstr "РљРёР»СЊ"
+
+#: data/data.cpp:58
+msgid "Cassiopeia"
+msgstr "РљР°СЃСЃРёРѕРїРµСЏ"
+
+#: data/data.cpp:59
+msgid "Centaurus"
+msgstr "Р¦РµРЅС‚Р°РІСЂ"
+
+#: data/data.cpp:60
+msgid "Cepheus"
+msgstr "Р¦РµС„РµР№"
+
+#: data/data.cpp:61
+msgid "Cetus"
+msgstr "РљРёС‚"
+
+#: data/data.cpp:62
+msgid "Chamaeleon"
+msgstr "РҐР°РјРµР»РµРѕРЅ"
+
+#: data/data.cpp:63
+msgid "Circinus"
+msgstr "Р¦РёСЂРєСѓР»СЊ"
+
+#: data/data.cpp:64
+msgid "Columba"
+msgstr "Р“РѕР»СѓР±СЊ"
+
+#: data/data.cpp:65
+msgid "Coma Berenices"
+msgstr "Р’РѕР»РѕСЃС‹ Р’РµСЂРѕРЅРёРєРё"
+
+#: data/data.cpp:66
+msgid "Corona Australis"
+msgstr "Р®Р¶РЅР°СЏ РєРѕСЂРѕРЅР°"
+
+#: data/data.cpp:67
+msgid "Corona Borealis"
+msgstr "РЎРµРІРµСЂРЅР°СЏ РєРѕСЂРѕРЅР°"
+
+#: data/data.cpp:68
+msgid "Corvus"
+msgstr "Р’РѕСЂРѕРЅ"
+
+#: data/data.cpp:69
+msgid "Crater"
+msgstr "Р§Р°С€Р°"
+
+#: data/data.cpp:70
+msgid "Crux"
+msgstr "Р®Р¶РЅС‹Р№ РєСЂРµСЃС‚"
+
+#: data/data.cpp:71
+msgid "Cygnus"
+msgstr "Р›РµР±РµРґСЊ"
+
+#: data/data.cpp:72
+msgid "Delphinus"
+msgstr "Р”РµР»СЊС„РёРЅ"
+
+#: data/data.cpp:73
+msgid "Dorado"
+msgstr "Р—РѕР»РѕС‚Р°СЏ СЂС‹Р±Р°"
+
+#: data/data.cpp:74
+msgid "Draco"
+msgstr "Р”СЂР°РєРѕРЅ"
+
+#: data/data.cpp:75
+msgid "Equuleus"
+msgstr "РњР°Р»С‹Р№ РєРѕРЅСЊ"
+
+#: data/data.cpp:76
+msgid "Eridanus"
+msgstr "Р­СЂРёРґР°РЅ"
+
+#: data/data.cpp:77
+msgid "Fornax"
+msgstr "РџРµС‡СЊ"
+
+#: data/data.cpp:78
+msgid "Gemini"
+msgstr "Р‘Р»РёР·РЅРµС†С‹"
+
+#: data/data.cpp:79
+msgid "Grus"
+msgstr "Р–СѓСЂР°РІР»СЊ"
+
+#: data/data.cpp:80
+msgid "Hercules"
+msgstr "Р“РµСЂРєСѓР»РµСЃ"
+
+#: data/data.cpp:81
+msgid "Horologium"
+msgstr "Р§Р°СЃС‹"
+
+#: data/data.cpp:82
+msgid "Hydra"
+msgstr "Р“РёРґСЂР°"
+
+#: data/data.cpp:83
+msgid "Hydrus"
+msgstr "Р®Р¶РЅР°СЏ РіРёРґСЂР°"
+
+#: data/data.cpp:84
+msgid "Indus"
+msgstr "РРЅРґРµРµС†"
+
+#: data/data.cpp:85
+msgid "Lacerta"
+msgstr "РЇС‰РµСЂРёС†Р°"
+
+#: data/data.cpp:86
+msgid "Leo"
+msgstr "Р›РµРІ"
+
+#: data/data.cpp:87
+msgid "Leo Minor"
+msgstr "РњР°Р»С‹Р№ Р»РµРІ"
+
+#: data/data.cpp:88
+msgid "Lepus"
+msgstr "Р—Р°СЏС†"
+
+#: data/data.cpp:89
+msgid "Libra"
+msgstr "Р’РµСЃС‹"
+
+#: data/data.cpp:90
+msgid "Lupus"
+msgstr "Р’РѕР»Рє"
+
+#: data/data.cpp:91
+msgid "Lynx"
+msgstr "Р С‹СЃСЊ"
+
+#: data/data.cpp:92
+msgid "Lyra"
+msgstr "Р›РёСЂР°"
+
+#: data/data.cpp:93
+msgid "Mensa"
+msgstr "РЎС‚РѕР»РѕРІР°СЏ РіРѕСЂР°"
+
+#: data/data.cpp:94
+msgid "Microscopium"
+msgstr "РњРёРєСЂРѕСЃРєРѕРї"
+
+#: data/data.cpp:95
+msgid "Monoceros"
+msgstr "Р•РґРёРЅРѕСЂРѕРі"
+
+#: data/data.cpp:96
+msgid "Musca"
+msgstr "РњСѓС…Р°"
+
+#: data/data.cpp:97
+msgid "Norma"
+msgstr "РќР°СѓРіРѕР»СЊРЅРёРє"
+
+#: data/data.cpp:98
+msgid "Octans"
+msgstr "РћРєС‚Р°РЅС‚"
+
+#: data/data.cpp:99
+msgid "Ophiuchus"
+msgstr "Р—РјРµРµРЅРѕСЃРµС†"
+
+#: data/data.cpp:100
+msgid "Orion"
+msgstr "РћСЂРёРѕРЅ"
+
+#: data/data.cpp:101
+msgid "Pavo"
+msgstr "РџР°РІР»РёРЅ"
+
+#: data/data.cpp:102
+msgid "Pegasus"
+msgstr "РџРµРіР°СЃ"
+
+#: data/data.cpp:103
+msgid "Perseus"
+msgstr "РџРµСЂСЃРµР№"
+
+#: data/data.cpp:104
+msgid "Phoenix"
+msgstr "Р¤РµРЅРёРєСЃ"
+
+#: data/data.cpp:105
+msgid "Pictor"
+msgstr "Р–РёРІРѕРїРёСЃРµС†"
+
+#: data/data.cpp:106
+msgid "Pisces"
+msgstr "Р С‹Р±С‹"
+
+#: data/data.cpp:107
+msgid "Piscis Austrinus"
+msgstr "Р®Р¶РЅР°СЏ Р С‹Р±Р°"
+
+#: data/data.cpp:108
+msgid "Puppis"
+msgstr "РљРѕСЂРјР°"
+
+#: data/data.cpp:109
+msgid "Pyxis"
+msgstr "РљРѕРјРїР°СЃ"
+
+#: data/data.cpp:110
+msgid "Reticulum"
+msgstr "РЎРµС‚РєР°"
+
+#: data/data.cpp:111
+msgid "Sagitta"
+msgstr "РЎС‚СЂРµР»Р°"
+
+#: data/data.cpp:112
+msgid "Sagittarius"
+msgstr "РЎС‚СЂРµР»РµС†"
+
+#: data/data.cpp:113
+msgid "Scorpius"
+msgstr "РЎРєРѕСЂРїРёРѕРЅ"
+
+#: data/data.cpp:114
+msgid "Sculptor"
+msgstr "РЎРєСѓР»СЊРїС‚РѕСЂ"
+
+#: data/data.cpp:115
+msgid "Scutum"
+msgstr "Р©РёС‚"
+
+#: data/data.cpp:116
+#, fuzzy
+msgid "Serpens Caput"
+msgstr "Р—РјРµСЏ"
+
+#: data/data.cpp:117
+#, fuzzy
+msgid "Serpens Cauda"
+msgstr "Р—РјРµСЏ"
+
+#: data/data.cpp:118
+msgid "Sextans"
+msgstr "РЎРµРєСЃС‚Р°РЅС‚"
+
+#: data/data.cpp:119
+msgid "Taurus"
+msgstr "РўРµР»РµС†"
+
+#: data/data.cpp:120
+msgid "Telescopium"
+msgstr "РўРµР»РµСЃРєРѕРї"
+
+#: data/data.cpp:121
+msgid "Triangulum"
+msgstr "РўСЂРµСѓРіРѕР»СЊРЅРёРє"
+
+#: data/data.cpp:122
+msgid "Triangulum Australe"
+msgstr "Р®Р¶РЅС‹Р№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє"
+
+#: data/data.cpp:123
+msgid "Tucana"
+msgstr "РўСѓРєР°РЅ"
+
+#: data/data.cpp:124
+msgid "Ursa Major"
+msgstr "Р‘РѕР»СЊС€Р°СЏ РјРµРґРІРµРґРёС†Р°"
+
+#: data/data.cpp:125
+msgid "Ursa Minor"
+msgstr "РњР°Р»Р°СЏ РјРµРґРІРµРґРёС†Р°"
+
+#: data/data.cpp:126
+msgid "Vela"
+msgstr "РџР°СЂСѓСЃР°"
+
+#: data/data.cpp:127
+msgid "Virgo"
+msgstr "Р”РµРІР°"
+
+#: data/data.cpp:128
+msgid "Volans"
+msgstr "Р›РµС‚СѓС‡Р°СЏ СЂС‹Р±Р°"
+
+#: data/data.cpp:129
+msgid "Vulpecula"
+msgstr "Р›РёСЃРёС‡РєР°"
+
+#: data/data.cpp:130
+msgid "NORTH AMERICA"
+msgstr ""
+
+#: data/data.cpp:131
+msgid "SOUTH AMERICA"
+msgstr ""
+
+#: data/data.cpp:132
+msgid "EURASIA"
+msgstr ""
+
+#: data/data.cpp:133
+msgid "AFRICA"
+msgstr ""
+
+#: data/data.cpp:134
+msgid "AUSTRALIA"
+msgstr ""
+
+#: data/data.cpp:135
+msgid "ANTARCTICA"
+msgstr ""
+
+#: data/data.cpp:136
+msgid "NORTH ATLANTIC OCEAN"
+msgstr ""
+
+#: data/data.cpp:137
+msgid "SOUTH ATLANTIC OCEAN"
+msgstr ""
+
+#: data/data.cpp:138
+msgid "NORTH PACIFIC OCEAN"
+msgstr ""
+
+#: data/data.cpp:139
+msgid "SOUTH PACIFIC OCEAN"
+msgstr ""
+
+#: data/data.cpp:140
+msgid "INDIAN OCEAN"
+msgstr ""
+
+#: data/data.cpp:141
+msgid "ARCTIC OCEAN"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Rho Pup"
+#~ msgstr "РљСЂРј"
+
+#, fuzzy
+#~ msgid "BoГ¶tes"
+#~ msgstr "Р’РѕР»РѕРїР°СЃ"
 
 #~ msgid "%.3f m"
-#~ msgstr "%.3f м"
+#~ msgstr "%.3f Рј"
 
 #~ msgid "ly"
-#~ msgstr "св.лет"
+#~ msgstr "СЃРІ.Р»РµС‚"
 
 #~ msgid "au"
-#~ msgstr "а.е."
+#~ msgstr "Р°.Рµ."
 
 #~ msgid "m"
-#~ msgstr "м"
+#~ msgstr "Рј"
 
 #~ msgid " m/s"
-#~ msgstr " м/с"
+#~ msgstr " Рј/СЃ"
 
 #~ msgid " km/s"
-#~ msgstr " км/с"
+#~ msgstr " РєРј/СЃ"
 
 #~ msgid " AU/s"
-#~ msgstr " а.е./с"
+#~ msgstr " Р°.Рµ./СЃ"
 
 #~ msgid " ly/s"
-#~ msgstr " св.лет/с"
-
-#~ msgid "Aries"
-#~ msgstr "Овен"
+#~ msgstr " СЃРІ.Р»РµС‚/СЃ"
 
 #~ msgid "Arietis"
-#~ msgstr "Овна"
+#~ msgstr "РћРІРЅР°"
 
 #~ msgid "Ari"
-#~ msgstr "Овн"
-
-#~ msgid "Taurus"
-#~ msgstr "Телец"
+#~ msgstr "РћРІРЅ"
 
 #~ msgid "Tauri"
-#~ msgstr "Тельца"
+#~ msgstr "РўРµР»СЊС†Р°"
 
 #~ msgid "Tau"
-#~ msgstr "Тлц"
-
-#~ msgid "Gemini"
-#~ msgstr "Близнецы"
+#~ msgstr "РўР»С†"
 
 #~ msgid "Geminorum"
-#~ msgstr "Близнецов"
+#~ msgstr "Р‘Р»РёР·РЅРµС†РѕРІ"
 
 #~ msgid "Gem"
-#~ msgstr "Бли"
-
-#~ msgid "Cancer"
-#~ msgstr "Рак"
+#~ msgstr "Р‘Р»Рё"
 
 #~ msgid "Cancri"
-#~ msgstr "Рака"
+#~ msgstr "Р Р°РєР°"
 
 #~ msgid "Cnc"
-#~ msgstr "Рак"
-
-#~ msgid "Leo"
-#~ msgstr "Лев"
+#~ msgstr "Р Р°Рє"
 
 #~ msgid "Leonis"
-#~ msgstr "Льва"
-
-#~ msgid "Virgo"
-#~ msgstr "Дева"
+#~ msgstr "Р›СЊРІР°"
 
 #~ msgid "Virginis"
-#~ msgstr "Девы"
+#~ msgstr "Р”РµРІС‹"
 
 #~ msgid "Vir"
-#~ msgstr "Дев"
-
-#~ msgid "Libra"
-#~ msgstr "Весы"
+#~ msgstr "Р”РµРІ"
 
 #~ msgid "Librae"
-#~ msgstr "Весов"
+#~ msgstr "Р’РµСЃРѕРІ"
 
 #~ msgid "Lib"
-#~ msgstr "Вес"
-
-#~ msgid "Scorpius"
-#~ msgstr "Скорпион"
+#~ msgstr "Р’РµСЃ"
 
 #~ msgid "Scorpii"
-#~ msgstr "Скорпиона"
+#~ msgstr "РЎРєРѕСЂРїРёРѕРЅР°"
 
 #~ msgid "Sco"
-#~ msgstr "Ско"
-
-#~ msgid "Sagittarius"
-#~ msgstr "Стрелец"
+#~ msgstr "РЎРєРѕ"
 
 #~ msgid "Sagittarii"
-#~ msgstr "Стрельца"
+#~ msgstr "РЎС‚СЂРµР»СЊС†Р°"
 
 #~ msgid "Sgr"
-#~ msgstr "Стц"
-
-#~ msgid "Capricornus"
-#~ msgstr "Козерог"
+#~ msgstr "РЎС‚С†"
 
 #~ msgid "Capricornii"
-#~ msgstr "Козерога"
+#~ msgstr "РљРѕР·РµСЂРѕРіР°"
 
 #~ msgid "Cap"
-#~ msgstr "Коз"
-
-#~ msgid "Aquarius"
-#~ msgstr "Водолей"
+#~ msgstr "РљРѕР·"
 
 #~ msgid "Aquarii"
-#~ msgstr "Водолея"
+#~ msgstr "Р’РѕРґРѕР»РµСЏ"
 
 #~ msgid "Aqr"
-#~ msgstr "Вод"
-
-#~ msgid "Pisces"
-#~ msgstr "Рыбы"
+#~ msgstr "Р’РѕРґ"
 
 #~ msgid "Piscium"
-#~ msgstr "Рыб"
+#~ msgstr "Р С‹Р±"
 
 #~ msgid "Psc"
-#~ msgstr "Рыб"
-
-#~ msgid "Ursa Major"
-#~ msgstr "Большая медведица"
+#~ msgstr "Р С‹Р±"
 
 #~ msgid "Ursae Majoris"
-#~ msgstr "Большой медведицы"
+#~ msgstr "Р‘РѕР»СЊС€РѕР№ РјРµРґРІРµРґРёС†С‹"
 
 #~ msgid "UMa"
-#~ msgstr "БМед"
-
-#~ msgid "Ursa Minor"
-#~ msgstr "Малая медведица"
+#~ msgstr "Р‘РњРµРґ"
 
 #~ msgid "Ursae Minoris"
-#~ msgstr "Малой медведицы"
+#~ msgstr "РњР°Р»РѕР№ РјРµРґРІРµРґРёС†С‹"
 
 #~ msgid "UMi"
-#~ msgstr "ММед"
-
-#~ msgid "Bootes"
-#~ msgstr "Волопас"
+#~ msgstr "РњРњРµРґ"
 
 #~ msgid "Bootis"
-#~ msgstr "Волопаса"
+#~ msgstr "Р’РѕР»РѕРїР°СЃР°"
 
 #~ msgid "Boo"
-#~ msgstr "Вол"
-
-#~ msgid "Orion"
-#~ msgstr "Орион"
+#~ msgstr "Р’РѕР»"
 
 #~ msgid "Ori"
-#~ msgstr "Ори"
-
-#~ msgid "Canis Major"
-#~ msgstr "Большой пес"
+#~ msgstr "РћСЂРё"
 
 #~ msgid "Canis Majoris"
-#~ msgstr "Большого пса"
+#~ msgstr "Р‘РѕР»СЊС€РѕРіРѕ РїСЃР°"
 
 #~ msgid "CMa"
-#~ msgstr "БПес"
-
-#~ msgid "Canis Minor"
-#~ msgstr "Малый пес"
+#~ msgstr "Р‘РџРµСЃ"
 
 #~ msgid "Canis Minoris"
-#~ msgstr "Малого пса"
+#~ msgstr "РњР°Р»РѕРіРѕ РїСЃР°"
 
 #~ msgid "CMi"
-#~ msgstr "МПес"
-
-#~ msgid "Lepus"
-#~ msgstr "Заяц"
+#~ msgstr "РњРџРµСЃ"
 
 #~ msgid "Leporis"
-#~ msgstr "Зайца"
+#~ msgstr "Р—Р°Р№С†Р°"
 
 #~ msgid "Lep"
-#~ msgstr "Зай"
-
-#~ msgid "Perseus"
-#~ msgstr "Персей"
+#~ msgstr "Р—Р°Р№"
 
 #~ msgid "Per"
-#~ msgstr "Пер"
-
-#~ msgid "Andromeda"
-#~ msgstr "Андромеда"
+#~ msgstr "РџРµСЂ"
 
 #~ msgid "Andromedae"
-#~ msgstr "Андромеды"
+#~ msgstr "РђРЅРґСЂРѕРјРµРґС‹"
 
 #~ msgid "And"
-#~ msgstr "Анд"
-
-#~ msgid "Cassiopeia"
-#~ msgstr "Кассиопея"
+#~ msgstr "РђРЅРґ"
 
 #~ msgid "Cassiopeiae"
-#~ msgstr "Кассиопеи"
+#~ msgstr "РљР°СЃСЃРёРѕРїРµРё"
 
 #~ msgid "Cas"
-#~ msgstr "Кас"
-
-#~ msgid "Cepheus"
-#~ msgstr "Цефей"
+#~ msgstr "РљР°СЃ"
 
 #~ msgid "Cephei"
-#~ msgstr "Цефея"
+#~ msgstr "Р¦РµС„РµСЏ"
 
 #~ msgid "Cep"
-#~ msgstr "Цеф"
-
-#~ msgid "Cetus"
-#~ msgstr "Кит"
+#~ msgstr "Р¦РµС„"
 
 #~ msgid "Ceti"
-#~ msgstr "Кита"
+#~ msgstr "РљРёС‚Р°"
 
 #~ msgid "Cet"
-#~ msgstr "Кит"
-
-#~ msgid "Pegasus"
-#~ msgstr "Пегас"
+#~ msgstr "РљРёС‚"
 
 #~ msgid "Pegasi"
-#~ msgstr "Пегаса"
+#~ msgstr "РџРµРіР°СЃР°"
 
 #~ msgid "Peg"
-#~ msgstr "Пег"
-
-#~ msgid "Carina"
-#~ msgstr "Киль"
+#~ msgstr "РџРµРі"
 
 #~ msgid "Carinae"
-#~ msgstr "Киля"
+#~ msgstr "РљРёР»СЏ"
 
 #~ msgid "Car"
-#~ msgstr "Кил"
-
-#~ msgid "Puppis"
-#~ msgstr "Корма"
-
-#~ msgid "Pup"
-#~ msgstr "Крм"
-
-#~ msgid "Vela"
-#~ msgstr "Паруса"
+#~ msgstr "РљРёР»"
 
 #~ msgid "Velorum"
-#~ msgstr "Парусов"
+#~ msgstr "РџР°СЂСѓСЃРѕРІ"
 
 #~ msgid "Vel"
-#~ msgstr "Пар"
-
-#~ msgid "Hercules"
-#~ msgstr "Геркулес"
+#~ msgstr "РџР°СЂ"
 
 #~ msgid "Herculis"
-#~ msgstr "Геркулеса"
+#~ msgstr "Р“РµСЂРєСѓР»РµСЃР°"
 
 #~ msgid "Her"
-#~ msgstr "Гер"
-
-#~ msgid "Hydra"
-#~ msgstr "Гидра"
+#~ msgstr "Р“РµСЂ"
 
 #~ msgid "Hydrae"
-#~ msgstr "Гидры"
+#~ msgstr "Р“РёРґСЂС‹"
 
 #~ msgid "Hya"
-#~ msgstr "Гид"
-
-#~ msgid "Centaurus"
-#~ msgstr "Центавр"
+#~ msgstr "Р“РёРґ"
 
 #~ msgid "Centauri"
-#~ msgstr "Центавра"
+#~ msgstr "Р¦РµРЅС‚Р°РІСЂР°"
 
 #~ msgid "Cen"
-#~ msgstr "Цен"
-
-#~ msgid "Lupus"
-#~ msgstr "Волк"
+#~ msgstr "Р¦РµРЅ"
 
 #~ msgid "Lupi"
-#~ msgstr "Волка"
+#~ msgstr "Р’РѕР»РєР°"
 
 #~ msgid "Lup"
-#~ msgstr "Влк"
-
-#~ msgid "Ara"
-#~ msgstr "Жертвенник"
+#~ msgstr "Р’Р»Рє"
 
 #~ msgid "Arae"
-#~ msgstr "Жертвенника"
-
-#~ msgid "Ophiuchus"
-#~ msgstr "Змееносец"
+#~ msgstr "Р–РµСЂС‚РІРµРЅРЅРёРєР°"
 
 #~ msgid "Ophiuchi"
-#~ msgstr "Змееносца"
+#~ msgstr "Р—РјРµРµРЅРѕСЃС†Р°"
 
 #~ msgid "Oph"
-#~ msgstr "Змн"
-
-#~ msgid "Serpens"
-#~ msgstr "Змея"
+#~ msgstr "Р—РјРЅ"
 
 #~ msgid "Serpentis"
-#~ msgstr "Змеи"
+#~ msgstr "Р—РјРµРё"
 
 #, fuzzy
 #~ msgid "Ser"
-#~ msgstr "Сек"
-
-#~ msgid "Aquila"
-#~ msgstr "Орел"
+#~ msgstr "РЎРµРє"
 
 #~ msgid "Aquilae"
-#~ msgstr "Орла"
+#~ msgstr "РћСЂР»Р°"
 
 #~ msgid "Aql"
-#~ msgstr "Орл"
-
-#~ msgid "Auriga"
-#~ msgstr "Возничий"
+#~ msgstr "РћСЂР»"
 
 #~ msgid "Aurigae"
-#~ msgstr "Возничего"
+#~ msgstr "Р’РѕР·РЅРёС‡РµРіРѕ"
 
 #~ msgid "Aur"
-#~ msgstr "Воз"
-
-#~ msgid "Corona Australis"
-#~ msgstr "Южная корона"
+#~ msgstr "Р’РѕР·"
 
 #~ msgid "Coronae Australis"
-#~ msgstr "Южной короны"
+#~ msgstr "Р®Р¶РЅРѕР№ РєРѕСЂРѕРЅС‹"
 
 #~ msgid "CrA"
-#~ msgstr "ЮжКор"
-
-#~ msgid "Corona Borealis"
-#~ msgstr "Северная корона"
+#~ msgstr "Р®Р¶РљРѕСЂ"
 
 #~ msgid "Coronae Borealis"
-#~ msgstr "Северной короны"
+#~ msgstr "РЎРµРІРµСЂРЅРѕР№ РєРѕСЂРѕРЅС‹"
 
 #~ msgid "CrB"
-#~ msgstr "СевКор"
-
-#~ msgid "Corvus"
-#~ msgstr "Ворон"
+#~ msgstr "РЎРµРІРљРѕСЂ"
 
 #~ msgid "Corvi"
-#~ msgstr "Ворона"
+#~ msgstr "Р’РѕСЂРѕРЅР°"
 
 #~ msgid "Crv"
-#~ msgstr "Вор"
-
-#~ msgid "Crater"
-#~ msgstr "Чаша"
+#~ msgstr "Р’РѕСЂ"
 
 #~ msgid "Crateris"
-#~ msgstr "Чаши"
+#~ msgstr "Р§Р°С€Рё"
 
 #~ msgid "Crt"
-#~ msgstr "Чаш"
-
-#~ msgid "Cygnus"
-#~ msgstr "Лебедь"
+#~ msgstr "Р§Р°С€"
 
 #~ msgid "Cygni"
-#~ msgstr "Лебедя"
+#~ msgstr "Р›РµР±РµРґСЏ"
 
 #~ msgid "Cyg"
-#~ msgstr "Леб"
-
-#~ msgid "Delphinus"
-#~ msgstr "Дельфин"
+#~ msgstr "Р›РµР±"
 
 #~ msgid "Delphini"
-#~ msgstr "Дельфина"
+#~ msgstr "Р”РµР»СЊС„РёРЅР°"
 
 #~ msgid "Del"
-#~ msgstr "Дел"
-
-#~ msgid "Draco"
-#~ msgstr "Дракон"
+#~ msgstr "Р”РµР»"
 
 #~ msgid "Draconis"
-#~ msgstr "Дракона"
+#~ msgstr "Р”СЂР°РєРѕРЅР°"
 
 #~ msgid "Dra"
-#~ msgstr "Дра"
-
-#~ msgid "Equuleus"
-#~ msgstr "Малый конь"
+#~ msgstr "Р”СЂР°"
 
 #~ msgid "Equulei"
-#~ msgstr "Малого коня"
+#~ msgstr "РњР°Р»РѕРіРѕ РєРѕРЅСЏ"
 
 #~ msgid "Equ"
-#~ msgstr "МКонь"
-
-#~ msgid "Eridanus"
-#~ msgstr "Эридан"
+#~ msgstr "РњРљРѕРЅСЊ"
 
 #~ msgid "Eridani"
-#~ msgstr "Эридана"
+#~ msgstr "Р­СЂРёРґР°РЅР°"
 
 #~ msgid "Eri"
-#~ msgstr "Эри"
-
-#~ msgid "Lyra"
-#~ msgstr "Лира"
+#~ msgstr "Р­СЂРё"
 
 #~ msgid "Lyrae"
-#~ msgstr "Лиры"
+#~ msgstr "Р›РёСЂС‹"
 
 #~ msgid "Lyr"
-#~ msgstr "Лир"
-
-#~ msgid "Piscis Austrinus"
-#~ msgstr "Южная Рыба"
+#~ msgstr "Р›РёСЂ"
 
 #~ msgid "Piscis Austrini"
-#~ msgstr "Южной рыбы"
+#~ msgstr "Р®Р¶РЅРѕР№ СЂС‹Р±С‹"
 
 #~ msgid "PsA"
-#~ msgstr "ЮжРыб"
-
-#~ msgid "Sagitta"
-#~ msgstr "Стрела"
+#~ msgstr "Р®Р¶Р С‹Р±"
 
 #~ msgid "Sagittae"
-#~ msgstr "Стрелы"
+#~ msgstr "РЎС‚СЂРµР»С‹"
 
 #~ msgid "Sge"
-#~ msgstr "Стр"
-
-#~ msgid "Triangulum"
-#~ msgstr "Треугольник"
+#~ msgstr "РЎС‚СЂ"
 
 #~ msgid "Trianguli"
-#~ msgstr "Треугольника"
+#~ msgstr "РўСЂРµСѓРіРѕР»СЊРЅРёРєР°"
 
 #~ msgid "Tri"
-#~ msgstr "Тре"
-
-#~ msgid "Antlia"
-#~ msgstr "Насос"
+#~ msgstr "РўСЂРµ"
 
 #~ msgid "Antliae"
-#~ msgstr "Насоса"
+#~ msgstr "РќР°СЃРѕСЃР°"
 
 #~ msgid "Ant"
-#~ msgstr "Нас"
-
-#~ msgid "Apus"
-#~ msgstr "Райская птица"
+#~ msgstr "РќР°СЃ"
 
 #~ msgid "Apodis"
-#~ msgstr "Райской птицы"
+#~ msgstr "Р Р°Р№СЃРєРѕР№ РїС‚РёС†С‹"
 
 #~ msgid "Aps"
-#~ msgstr "РайПти"
-
-#~ msgid "Caelum"
-#~ msgstr "Резец"
+#~ msgstr "Р Р°Р№РџС‚Рё"
 
 #~ msgid "Caeli"
-#~ msgstr "Резца"
+#~ msgstr "Р РµР·С†Р°"
 
 #~ msgid "Cae"
-#~ msgstr "Рез"
-
-#~ msgid "Camelopardalis"
-#~ msgstr "Жираф"
+#~ msgstr "Р РµР·"
 
 #~ msgid "Cam"
-#~ msgstr "Жир"
-
-#~ msgid "Canes Venatici"
-#~ msgstr "Гончие псы"
+#~ msgstr "Р–РёСЂ"
 
 #~ msgid "Canum Venaticorum"
-#~ msgstr "Гончих псов"
+#~ msgstr "Р“РѕРЅС‡РёС… РїСЃРѕРІ"
 
 #~ msgid "CVn"
-#~ msgstr "ГПсы"
-
-#~ msgid "Chamaeleon"
-#~ msgstr "Хамелеон"
+#~ msgstr "Р“РџСЃС‹"
 
 #~ msgid "Chamaeleontis"
-#~ msgstr "Хамелеона"
+#~ msgstr "РҐР°РјРµР»РµРѕРЅР°"
 
 #~ msgid "Cha"
-#~ msgstr "Хам"
-
-#~ msgid "Circinus"
-#~ msgstr "Циркуль"
+#~ msgstr "РҐР°Рј"
 
 #~ msgid "Circini"
-#~ msgstr "Циркуля"
+#~ msgstr "Р¦РёСЂРєСѓР»СЏ"
 
 #~ msgid "Cir"
-#~ msgstr "Цир"
-
-#~ msgid "Columba"
-#~ msgstr "Голубь"
+#~ msgstr "Р¦РёСЂ"
 
 #~ msgid "Columbae"
-#~ msgstr "Голубя"
+#~ msgstr "Р“РѕР»СѓР±СЏ"
 
 #~ msgid "Col"
-#~ msgstr "Гол"
-
-#~ msgid "Coma Berenices"
-#~ msgstr "Волосы Вероники"
+#~ msgstr "Р“РѕР»"
 
 #~ msgid "Comae Berenices"
-#~ msgstr "Волос Вероники"
+#~ msgstr "Р’РѕР»РѕСЃ Р’РµСЂРѕРЅРёРєРё"
 
 #~ msgid "Com"
-#~ msgstr "ВолВер"
-
-#~ msgid "Crux"
-#~ msgstr "Южный крест"
+#~ msgstr "Р’РѕР»Р’РµСЂ"
 
 #~ msgid "Crucis"
-#~ msgstr "Южного креста"
+#~ msgstr "Р®Р¶РЅРѕРіРѕ РєСЂРµСЃС‚Р°"
 
 #~ msgid "Cru"
-#~ msgstr "ЮжКре"
-
-#~ msgid "Dorado"
-#~ msgstr "Золотая рыба"
+#~ msgstr "Р®Р¶РљСЂРµ"
 
 #~ msgid "Doradus"
-#~ msgstr "Золотой рыбы"
+#~ msgstr "Р—РѕР»РѕС‚РѕР№ СЂС‹Р±С‹"
 
 #~ msgid "Dor"
-#~ msgstr "ЗолРыб"
-
-#~ msgid "Fornax"
-#~ msgstr "Печь"
+#~ msgstr "Р—РѕР»Р С‹Р±"
 
 #~ msgid "Fornacis"
-#~ msgstr "Печи"
+#~ msgstr "РџРµС‡Рё"
 
 #~ msgid "For"
-#~ msgstr "Печ"
-
-#~ msgid "Grus"
-#~ msgstr "Журавль"
+#~ msgstr "РџРµС‡"
 
 #~ msgid "Gruis"
-#~ msgstr "Журавля"
+#~ msgstr "Р–СѓСЂР°РІР»СЏ"
 
 #~ msgid "Gru"
-#~ msgstr "Жур"
-
-#~ msgid "Horologium"
-#~ msgstr "Часы"
+#~ msgstr "Р–СѓСЂ"
 
 #~ msgid "Horologii"
-#~ msgstr "Часов"
+#~ msgstr "Р§Р°СЃРѕРІ"
 
 #~ msgid "Hor"
-#~ msgstr "Час"
-
-#~ msgid "Hydrus"
-#~ msgstr "Южная гидра"
+#~ msgstr "Р§Р°СЃ"
 
 #~ msgid "Hydri"
-#~ msgstr "Южной гидры"
+#~ msgstr "Р®Р¶РЅРѕР№ РіРёРґСЂС‹"
 
 #~ msgid "Hyi"
-#~ msgstr "ЮжГид"
-
-#~ msgid "Indus"
-#~ msgstr "Индеец"
+#~ msgstr "Р®Р¶Р“РёРґ"
 
 #~ msgid "Indi"
-#~ msgstr "Индейца"
+#~ msgstr "РРЅРґРµР№С†Р°"
 
 #, fuzzy
 #~ msgid "Ind"
-#~ msgstr "Индейца"
-
-#~ msgid "Lacerta"
-#~ msgstr "Ящерица"
+#~ msgstr "РРЅРґРµР№С†Р°"
 
 #~ msgid "Lacertae"
-#~ msgstr "Ящерицы"
+#~ msgstr "РЇС‰РµСЂРёС†С‹"
 
 #~ msgid "Lac"
-#~ msgstr "Яще"
-
-#~ msgid "Leo Minor"
-#~ msgstr "Малый лев"
+#~ msgstr "РЇС‰Рµ"
 
 #~ msgid "Leonis Minoris"
-#~ msgstr "Малого льва"
+#~ msgstr "РњР°Р»РѕРіРѕ Р»СЊРІР°"
 
 #~ msgid "LMi"
-#~ msgstr "МЛев"
-
-#~ msgid "Lynx"
-#~ msgstr "Рысь"
+#~ msgstr "РњР›РµРІ"
 
 #~ msgid "Lyncis"
-#~ msgstr "Рыси"
+#~ msgstr "Р С‹СЃРё"
 
 #~ msgid "Lyn"
-#~ msgstr "Рыс"
-
-#~ msgid "Microscopium"
-#~ msgstr "Микроскоп"
+#~ msgstr "Р С‹СЃ"
 
 #~ msgid "Microscopii"
-#~ msgstr "Микроскопа"
+#~ msgstr "РњРёРєСЂРѕСЃРєРѕРїР°"
 
 #~ msgid "Mic"
-#~ msgstr "Мик"
-
-#~ msgid "Monoceros"
-#~ msgstr "Единорог"
+#~ msgstr "РњРёРє"
 
 #~ msgid "Monocerotis"
-#~ msgstr "Единорога"
+#~ msgstr "Р•РґРёРЅРѕСЂРѕРіР°"
 
 #~ msgid "Mon"
-#~ msgstr "Еди"
-
-#~ msgid "Mensa"
-#~ msgstr "Столовая гора"
+#~ msgstr "Р•РґРё"
 
 #~ msgid "Mensae"
-#~ msgstr "Столовой горы"
+#~ msgstr "РЎС‚РѕР»РѕРІРѕР№ РіРѕСЂС‹"
 
 #~ msgid "Men"
-#~ msgstr "СтГор"
-
-#~ msgid "Musca"
-#~ msgstr "Муха"
+#~ msgstr "РЎС‚Р“РѕСЂ"
 
 #~ msgid "Muscae"
-#~ msgstr "Мухи"
+#~ msgstr "РњСѓС…Рё"
 
 #~ msgid "Mus"
-#~ msgstr "Мух"
-
-#~ msgid "Norma"
-#~ msgstr "Наугольник"
+#~ msgstr "РњСѓС…"
 
 #~ msgid "Normae"
-#~ msgstr "Наугольника"
+#~ msgstr "РќР°СѓРіРѕР»СЊРЅРёРєР°"
 
 #~ msgid "Nor"
-#~ msgstr "Нау"
-
-#~ msgid "Octans"
-#~ msgstr "Октант"
+#~ msgstr "РќР°Сѓ"
 
 #~ msgid "Octantis"
-#~ msgstr "Октанта"
+#~ msgstr "РћРєС‚Р°РЅС‚Р°"
 
 #~ msgid "Oct"
-#~ msgstr "Окт"
-
-#~ msgid "Pavo"
-#~ msgstr "Павлин"
+#~ msgstr "РћРєС‚"
 
 #~ msgid "Pavonis"
-#~ msgstr "Павлина"
+#~ msgstr "РџР°РІР»РёРЅР°"
 
 #~ msgid "Pav"
-#~ msgstr "Пав"
-
-#~ msgid "Phoenix"
-#~ msgstr "Феникс"
+#~ msgstr "РџР°РІ"
 
 #~ msgid "Phoenicis"
-#~ msgstr "Феникса"
+#~ msgstr "Р¤РµРЅРёРєСЃР°"
 
 #~ msgid "Phe"
-#~ msgstr "Фен"
-
-#~ msgid "Pictor"
-#~ msgstr "Живописец"
+#~ msgstr "Р¤РµРЅ"
 
 #~ msgid "Pictoris"
-#~ msgstr "Живописца"
+#~ msgstr "Р–РёРІРѕРїРёСЃС†Р°"
 
 #~ msgid "Pic"
-#~ msgstr "Жив"
-
-#~ msgid "Pyxis"
-#~ msgstr "Компас"
+#~ msgstr "Р–РёРІ"
 
 #~ msgid "Pyxidis"
-#~ msgstr "Компаса"
+#~ msgstr "РљРѕРјРїР°СЃР°"
 
 #~ msgid "Pyx"
-#~ msgstr "Ком"
-
-#~ msgid "Reticulum"
-#~ msgstr "Сетка"
+#~ msgstr "РљРѕРј"
 
 #~ msgid "Reticuli"
-#~ msgstr "Сетки"
+#~ msgstr "РЎРµС‚РєРё"
 
 #~ msgid "Ret"
-#~ msgstr "Сет"
-
-#~ msgid "Sculptor"
-#~ msgstr "Скульптор"
+#~ msgstr "РЎРµС‚"
 
 #~ msgid "Sculptoris"
-#~ msgstr "Скульптора"
+#~ msgstr "РЎРєСѓР»СЊРїС‚РѕСЂР°"
 
 #~ msgid "Scl"
-#~ msgstr "Ску"
-
-#~ msgid "Scutum"
-#~ msgstr "Щит"
+#~ msgstr "РЎРєСѓ"
 
 #~ msgid "Scuti"
-#~ msgstr "Щита"
+#~ msgstr "Р©РёС‚Р°"
 
 #~ msgid "Sct"
-#~ msgstr "Щит"
-
-#~ msgid "Sextans"
-#~ msgstr "Секстант"
+#~ msgstr "Р©РёС‚"
 
 #~ msgid "Sextantis"
-#~ msgstr "Секстанта"
+#~ msgstr "РЎРµРєСЃС‚Р°РЅС‚Р°"
 
 #~ msgid "Sex"
-#~ msgstr "Сек"
-
-#~ msgid "Telescopium"
-#~ msgstr "Телескоп"
+#~ msgstr "РЎРµРє"
 
 #~ msgid "Telescopii"
-#~ msgstr "Телескопа"
+#~ msgstr "РўРµР»РµСЃРєРѕРїР°"
 
 #~ msgid "Tel"
-#~ msgstr "Тел"
-
-#~ msgid "Triangulum Australe"
-#~ msgstr "Южный треугольник"
+#~ msgstr "РўРµР»"
 
 #~ msgid "Trianguli Australis"
-#~ msgstr "Южного треугольника"
+#~ msgstr "Р®Р¶РЅРѕРіРѕ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°"
 
 #~ msgid "TrA"
-#~ msgstr "ЮжТре"
-
-#~ msgid "Tucana"
-#~ msgstr "Тукан"
+#~ msgstr "Р®Р¶РўСЂРµ"
 
 #~ msgid "Tucanae"
-#~ msgstr "Тукана"
+#~ msgstr "РўСѓРєР°РЅР°"
 
 #~ msgid "Tuc"
-#~ msgstr "Тук"
-
-#~ msgid "Volans"
-#~ msgstr "Летучая рыба"
+#~ msgstr "РўСѓРє"
 
 #~ msgid "Volantis"
-#~ msgstr "Летучей рыбы"
+#~ msgstr "Р›РµС‚СѓС‡РµР№ СЂС‹Р±С‹"
 
 #~ msgid "Vol"
-#~ msgstr "ЛеРыб"
-
-#~ msgid "Vulpecula"
-#~ msgstr "Лисичка"
+#~ msgstr "Р›РµР С‹Р±"
 
 #~ msgid "Vulpeculae"
-#~ msgstr "Лисички"
+#~ msgstr "Р›РёСЃРёС‡РєРё"
 
 #~ msgid "Vul"
-#~ msgstr "Лис"
+#~ msgstr "Р›РёСЃ"
 
 #~ msgid "Sol"
-#~ msgstr "Солнце"
+#~ msgstr "РЎРѕР»РЅС†Рµ"
 
 #~ msgid "ALF Centauri"
-#~ msgstr "ALF Центавра"
+#~ msgstr "ALF Р¦РµРЅС‚Р°РІСЂР°"
 
 #~ msgid "Capella"
-#~ msgstr "Капелла"
+#~ msgstr "РљР°РїРµР»Р»Р°"
 
 #~ msgid "BET Centauri"
-#~ msgstr "BET Центавра"
+#~ msgstr "BET Р¦РµРЅС‚Р°РІСЂР°"
 
 #~ msgid "BET Crucis"
-#~ msgstr "BET Южного креста"
+#~ msgstr "BET Р®Р¶РЅРѕРіРѕ РєСЂРµСЃС‚Р°"
 
 #~ msgid "GAM Crucis"
-#~ msgstr "GAM Южного креста"
+#~ msgstr "GAM Р®Р¶РЅРѕРіРѕ РєСЂРµСЃС‚Р°"
 
 #~ msgid "GAM Velorum"
-#~ msgstr "GAM Паруса"
+#~ msgstr "GAM РџР°СЂСѓСЃР°"
 
 #~ msgid "EPS Carinae"
-#~ msgstr "EPS Киля"
+#~ msgstr "EPS РљРёР»СЏ"
 
 #~ msgid "BET Aurigae"
-#~ msgstr "BET Возничего"
+#~ msgstr "BET Р’РѕР·РЅРёС‡РµРіРѕ"
 
 #~ msgid "Polaris"
-#~ msgstr "Полярная звезда"
+#~ msgstr "РџРѕР»СЏСЂРЅР°СЏ Р·РІРµР·РґР°"
 
 #~ msgid "Mir"
-#~ msgstr "Мир"
+#~ msgstr "РњРёСЂ"
 
 #~ msgid "ISS"
-#~ msgstr "МКС"
+#~ msgstr "РњРљРЎ"
 
 #~ msgid "Hubble"
-#~ msgstr "Хаббл"
+#~ msgstr "РҐР°Р±Р±Р»"
 
 #~ msgid "Galileo"
-#~ msgstr "Галилео"
+#~ msgstr "Р“Р°Р»РёР»РµРѕ"
 
 #~ msgid "Pallas"
-#~ msgstr "Паллада"
+#~ msgstr "РџР°Р»Р»Р°РґР°"
 
 #~ msgid "Juno"
-#~ msgstr "Юнона"
+#~ msgstr "Р®РЅРѕРЅР°"
 
 #~ msgid "Gaspra"
-#~ msgstr "Гаспра"
+#~ msgstr "Р“Р°СЃРїСЂР°"
 
 #~ msgid "Ida"
-#~ msgstr "Ида"
+#~ msgstr "РРґР°"
 
 #~ msgid "Eros"
-#~ msgstr "Эрос"
+#~ msgstr "Р­СЂРѕСЃ"
 
 #~ msgid "Toutatis"
-#~ msgstr "Тутатис"
+#~ msgstr "РўСѓС‚Р°С‚РёСЃ"
 
 #~ msgid "Geographos"
-#~ msgstr "Географ"
+#~ msgstr "Р“РµРѕРіСЂР°С„"
 
 #~ msgid "Kleopatra"
-#~ msgstr "Клеопатра"
+#~ msgstr "РљР»РµРѕРїР°С‚СЂР°"
 
 #~ msgid "Bacchus"
-#~ msgstr "Бахус"
+#~ msgstr "Р‘Р°С…СѓСЃ"
 
 #~ msgid "Golevka"
-#~ msgstr "Голевка"
+#~ msgstr "Р“РѕР»РµРІРєР°"
 
 #~ msgid "Castalia"
-#~ msgstr "Касталия"
+#~ msgstr "РљР°СЃС‚Р°Р»РёСЏ"
 
 #~ msgid "Halley"
-#~ msgstr "Галлея"
+#~ msgstr "Р“Р°Р»Р»РµСЏ"
 
 #~ msgid "Borrelly"
-#~ msgstr "Борелли"
+#~ msgstr "Р‘РѕСЂРµР»Р»Рё"
 
 #~ msgid "Ikeya-Zhang"
-#~ msgstr "Икея-Чжанга"
+#~ msgstr "РРєРµСЏ-Р§Р¶Р°РЅРіР°"
 
 #~ msgid "Chiron"
-#~ msgstr "Хирон"
+#~ msgstr "РҐРёСЂРѕРЅ"
 
 #~ msgid "Varuna"
-#~ msgstr "Варуна"
+#~ msgstr "Р’Р°СЂСѓРЅР°"
 
 #~ msgid "Ixion"
-#~ msgstr "Иксион"
+#~ msgstr "РРєСЃРёРѕРЅ"
 
 #~ msgid "Alhajot"
-#~ msgstr "Альхайот"
+#~ msgstr "РђР»СЊС…Р°Р№РѕС‚"
 
 #~ msgid "ALF Aur"
-#~ msgstr "ALF Воз"
+#~ msgstr "ALF Р’РѕР·"
 
 #~ msgid "13 Aur"
-#~ msgstr "13 Воз"
+#~ msgstr "13 Р’РѕР·"
 
 #~ msgid "BET Aur"
-#~ msgstr "BET Воз"
+#~ msgstr "BET Р’РѕР·"
 
 #~ msgid "Metis"
-#~ msgstr "Метис"
+#~ msgstr "РњРµС‚РёСЃ"
 
 #~ msgid "Adrastea"
-#~ msgstr "Адрастея"
+#~ msgstr "РђРґСЂР°СЃС‚РµСЏ"
 
 #~ msgid "Thebe"
-#~ msgstr "Тиба"
+#~ msgstr "РўРёР±Р°"
 
 #~ msgid "Themisto"
-#~ msgstr "Темиста"
+#~ msgstr "РўРµРјРёСЃС‚Р°"
 
 #~ msgid "Leda"
-#~ msgstr "Леда"
+#~ msgstr "Р›РµРґР°"
 
 #~ msgid "Himalia"
-#~ msgstr "Гималия"
+#~ msgstr "Р“РёРјР°Р»РёСЏ"
 
 #~ msgid "Lysithea"
-#~ msgstr "Лиситея"
+#~ msgstr "Р›РёСЃРёС‚РµСЏ"
 
 #~ msgid "Elara"
-#~ msgstr "Элара"
+#~ msgstr "Р­Р»Р°СЂР°"
 
 #~ msgid "Harpalyke"
-#~ msgstr "Гарпалик"
+#~ msgstr "Р“Р°СЂРїР°Р»РёРє"
 
 #~ msgid "Praxidike"
-#~ msgstr "Праксидик"
+#~ msgstr "РџСЂР°РєСЃРёРґРёРє"
 
 #~ msgid "Iocaste"
-#~ msgstr "Иокаста"
+#~ msgstr "РРѕРєР°СЃС‚Р°"
 
 #~ msgid "Ananke"
-#~ msgstr "Ананке"
+#~ msgstr "РђРЅР°РЅРєРµ"
 
 #~ msgid "Chaldene"
-#~ msgstr "Халдена"
+#~ msgstr "РҐР°Р»РґРµРЅР°"
 
 #~ msgid "Isonoe"
-#~ msgstr "Исона"
+#~ msgstr "РСЃРѕРЅР°"
 
 #~ msgid "Erinome"
-#~ msgstr "Эринома"
+#~ msgstr "Р­СЂРёРЅРѕРјР°"
 
 #~ msgid "Taygete"
-#~ msgstr "Тайгета"
+#~ msgstr "РўР°Р№РіРµС‚Р°"
 
 #~ msgid "Megaclite"
-#~ msgstr "Мегаклите"
+#~ msgstr "РњРµРіР°РєР»РёС‚Рµ"
 
 #~ msgid "Kalyke"
-#~ msgstr "Калике"
+#~ msgstr "РљР°Р»РёРєРµ"
 
 #~ msgid "Pasiphae"
-#~ msgstr "Пасифея"
+#~ msgstr "РџР°СЃРёС„РµСЏ"
 
 #~ msgid "Sinope"
-#~ msgstr "Синопа"
+#~ msgstr "РЎРёРЅРѕРїР°"
 
 #~ msgid "Callirrhoe"
-#~ msgstr "Калирхоя"
+#~ msgstr "РљР°Р»РёСЂС…РѕСЏ"
 
 #~ msgid "Calypso"
-#~ msgstr "Калипсо"
+#~ msgstr "РљР°Р»РёРїСЃРѕ"
 
 #~ msgid "Helene"
-#~ msgstr "Елена"
+#~ msgstr "Р•Р»РµРЅР°"
 
 #~ msgid "Cordelia"
-#~ msgstr "Корделия"
+#~ msgstr "РљРѕСЂРґРµР»РёСЏ"
 
 #~ msgid "Ophelia"
-#~ msgstr "Офелия"
+#~ msgstr "РћС„РµР»РёСЏ"
 
 #~ msgid "Bianca"
-#~ msgstr "Бьянка"
+#~ msgstr "Р‘СЊСЏРЅРєР°"
 
 #~ msgid "Cressida"
-#~ msgstr "Крессида"
+#~ msgstr "РљСЂРµСЃСЃРёРґР°"
 
 #~ msgid "Desdemona"
-#~ msgstr "Дездемона"
+#~ msgstr "Р”РµР·РґРµРјРѕРЅР°"
 
 #~ msgid "Juliet"
-#~ msgstr "Джульета"
+#~ msgstr "Р”Р¶СѓР»СЊРµС‚Р°"
 
 #~ msgid "Portia"
-#~ msgstr "Порция"
+#~ msgstr "РџРѕСЂС†РёСЏ"
 
 #~ msgid "Rosalind"
-#~ msgstr "Розалинда"
+#~ msgstr "Р РѕР·Р°Р»РёРЅРґР°"
 
 #~ msgid "Belinda"
-#~ msgstr "Белинда"
+#~ msgstr "Р‘РµР»РёРЅРґР°"
 
 #~ msgid "Puck"
-#~ msgstr "Пук"
+#~ msgstr "РџСѓРє"
 
 #~ msgid "Caliban"
-#~ msgstr "Калибан"
+#~ msgstr "РљР°Р»РёР±Р°РЅ"
 
 #~ msgid "Stephano"
-#~ msgstr "Стефан"
+#~ msgstr "РЎС‚РµС„Р°РЅ"
 
 #~ msgid "Sycorax"
-#~ msgstr "Сикоракс"
+#~ msgstr "РЎРёРєРѕСЂР°РєСЃ"
 
 #~ msgid "Prospero"
-#~ msgstr "Просперо"
+#~ msgstr "РџСЂРѕСЃРїРµСЂРѕ"
 
 #~ msgid "Setebos"
-#~ msgstr "Сетебос"
+#~ msgstr "РЎРµС‚РµР±РѕСЃ"
 
 #~ msgid "Naiad"
-#~ msgstr "Наяда"
+#~ msgstr "РќР°СЏРґР°"
 
 #~ msgid "Thalassa"
-#~ msgstr "Таласса"
+#~ msgstr "РўР°Р»Р°СЃСЃР°"
 
 #~ msgid "Despina"
-#~ msgstr "Деспина"
+#~ msgstr "Р”РµСЃРїРёРЅР°"
 
 #~ msgid "x Sun\n"
-#~ msgstr "св. Солнца\n"
+#~ msgstr "СЃРІ. РЎРѕР»РЅС†Р°\n"
