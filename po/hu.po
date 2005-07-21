@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hu\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2005-07-21 23:21+0200\n"
+"POT-Creation-Date: 2005-07-22 00:35+0200\n"
 "PO-Revision-Date: 2005-02-27 15:44+0100\n"
 "Last-Translator: Aron Novak <aaron@szentimre.hu>\n"
 "Language-Team: Hungarian\n"
@@ -2039,8 +2039,9 @@ msgid "Auriga"
 msgstr "Négyzet"
 
 #: data/data.cpp:49
-msgid "Bo\\u00f6tes"
-msgstr ""
+#, fuzzy
+msgid "Boötes"
+msgstr "Tömör"
 
 #: data/data.cpp:50
 #, fuzzy
@@ -2474,10 +2475,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Rho Pup"
 #~ msgstr "Plusz"
-
-#, fuzzy
-#~ msgid "Boötes"
-#~ msgstr "Tömör"
 
 #, fuzzy
 #~ msgid "m"

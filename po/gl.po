@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gl\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2005-07-21 23:21+0200\n"
+"POT-Creation-Date: 2005-07-22 00:35+0200\n"
 "PO-Revision-Date: 2003-06-18 12:12+0200\n"
 "Last-Translator: Javier Martinez <tengwar@terra.es>\n"
 "Language-Team:  <es@li.org>\n"
@@ -2062,8 +2062,9 @@ msgid "Auriga"
 msgstr "Cuadrado"
 
 #: data/data.cpp:49
-msgid "Bo\\u00f6tes"
-msgstr ""
+#, fuzzy
+msgid "Boötes"
+msgstr "Sucinta"
 
 #: data/data.cpp:50
 #, fuzzy
@@ -2497,10 +2498,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Rho Pup"
 #~ msgstr "Suma"
-
-#, fuzzy
-#~ msgid "Boötes"
-#~ msgstr "Sucinta"
 
 #, fuzzy
 #~ msgid "m"

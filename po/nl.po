@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2005-07-21 23:21+0200\n"
+"POT-Creation-Date: 2005-07-22 00:35+0200\n"
 "PO-Revision-Date: 2003-07-04 13:10-0100\n"
 "Last-Translator: Andre Schoordijk\n"
 "Language-Team: Dutch <LL@li.org>\n"
@@ -2051,8 +2051,9 @@ msgid "Auriga"
 msgstr "Vierkant"
 
 #: data/data.cpp:49
-msgid "Bo\\u00f6tes"
-msgstr ""
+#, fuzzy
+msgid "Boötes"
+msgstr "Beknopt"
 
 #: data/data.cpp:50
 #, fuzzy
@@ -2486,10 +2487,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Rho Pup"
 #~ msgstr "Plus"
-
-#, fuzzy
-#~ msgid "Boötes"
-#~ msgstr "Beknopt"
 
 #, fuzzy
 #~ msgid "m"

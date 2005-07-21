@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pt\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2005-07-21 23:21+0200\n"
+"POT-Creation-Date: 2005-07-22 00:35+0200\n"
 "PO-Revision-Date: 2005-03-29 12:40+0100\n"
 "Last-Translator: Andre Lourenço <andrelourenco@yahoo.com>\n"
 "Language-Team:  <pt@li.org>\n"
@@ -2017,7 +2017,7 @@ msgid "Auriga"
 msgstr ""
 
 #: data/data.cpp:49
-msgid "Bo\\u00f6tes"
+msgid "Boötes"
 msgstr ""
 
 #: data/data.cpp:50
