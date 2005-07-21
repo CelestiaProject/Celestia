@@ -1887,11 +1887,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '(':
-        Galaxy::increaseLightGain();
+        Galaxy::decreaseLightGain();
         break;
 
     case ')':
-        Galaxy::decreaseLightGain();
+        Galaxy::increaseLightGain();
         break;
 
     case '~':
