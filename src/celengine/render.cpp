@@ -43,7 +43,7 @@ using namespace std;
 
 #define FOV           45.0f
 #define NEAR_DIST      0.5f
-#define FAR_DIST   10000000.0f
+#define FAR_DIST       1.0e9f
 
 // This should be in the GL headers, but where?
 #ifndef GL_COLOR_SUM_EXT
