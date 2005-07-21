@@ -201,7 +201,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
 
     QCheckBox* showI18nConstellationLabelsCheck = new QCheckBox(i18n("Constellations in Latin"), labelGroup);
     actionColl->action("showI18nConstellationLabels")->connect(showI18nConstellationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showI18nConstellationLabelsCheck->setChecked(! labelMode & Renderer::I18nConstellationLabels);
+    showI18nConstellationLabelsCheck->setChecked(!(labelMode & Renderer::I18nConstellationLabels));
     labelGroupLayout->addWidget(showI18nConstellationLabelsCheck, 7, 1);
 
     QCheckBox* showGalaxyLabelsCheck = new QCheckBox(i18n("Galaxies"), labelGroup);
