@@ -140,6 +140,7 @@ public slots:
     void slotShowMoonLabels();
     void slotShowCometLabels();
     void slotShowConstellationLabels();
+    void slotShowI18nConstellationLabels();
     void slotShowGalaxyLabels();
     void slotShowNebulaLabels();
     void slotShowOpenClusterLabels();

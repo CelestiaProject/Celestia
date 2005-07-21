@@ -23,13 +23,14 @@ class Asterism
 
     typedef std::vector<Point3f> Chain;
 
-    std::string getName() const;
+    std::string getName(bool i18n = false) const;
     int getChainCount() const;
     const Chain& getChain(int) const;
 
     void addChain(Chain&);
  private:
     std::string name;
+    std::string i18nName;
     std::vector<Chain*> chains;
 };
 

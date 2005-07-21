@@ -84,6 +84,7 @@ class Renderer
         CometLabels         = 0x100,
 	NebulaLabels        = 0x200,
 	OpenClusterLabels   = 0x400,
+        I18nConstellationLabels = 0x800,
         BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
 
