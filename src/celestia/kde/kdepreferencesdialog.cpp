@@ -199,43 +199,48 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     showConstellationLabelsCheck->setChecked(labelMode & Renderer::ConstellationLabels);
     labelGroupLayout->addWidget(showConstellationLabelsCheck, 6, 1);
 
+    QCheckBox* showI18nConstellationLabelsCheck = new QCheckBox(i18n("Constellations in Latin"), labelGroup);
+    actionColl->action("showI18nConstellationLabels")->connect(showI18nConstellationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showI18nConstellationLabelsCheck->setChecked(! labelMode & Renderer::I18nConstellationLabels);
+    labelGroupLayout->addWidget(showI18nConstellationLabelsCheck, 7, 1);
+
     QCheckBox* showGalaxyLabelsCheck = new QCheckBox(i18n("Galaxies"), labelGroup);
     actionColl->action("showGalaxyLabels")->connect(showGalaxyLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showGalaxyLabelsCheck->setChecked(labelMode & Renderer::GalaxyLabels);
-    labelGroupLayout->addWidget(showGalaxyLabelsCheck, 7, 1);
+    labelGroupLayout->addWidget(showGalaxyLabelsCheck, 8, 1);
 
     QCheckBox* showNebulaLabelsCheck = new QCheckBox(i18n("Nebulae"), labelGroup);
     actionColl->action("showNebulaLabels")->connect(showNebulaLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showNebulaLabelsCheck->setChecked(labelMode & Renderer::NebulaLabels);
-    labelGroupLayout->addWidget(showNebulaLabelsCheck, 8, 1);
+    labelGroupLayout->addWidget(showNebulaLabelsCheck, 9, 1);
 
     QCheckBox* showOpenClusterLabelsCheck = new QCheckBox(i18n("Open Clusters"), labelGroup);
     actionColl->action("showOpenClusterLabels")->connect(showOpenClusterLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showOpenClusterLabelsCheck->setChecked(labelMode & Renderer::OpenClusterLabels);
-    labelGroupLayout->addWidget(showOpenClusterLabelsCheck, 9, 1);
+    labelGroupLayout->addWidget(showOpenClusterLabelsCheck, 10, 1);
 
     QCheckBox* showAsteroidOrbitsCheck = new QCheckBox("", labelGroup);
     actionColl->action("showAsteroidOrbits")->connect(showAsteroidOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showAsteroidOrbitsCheck->setChecked(orbitMask & Body::Asteroid);
-    labelGroupLayout->addWidget(showAsteroidOrbitsCheck, 10, 0, Qt::AlignHCenter);
+    labelGroupLayout->addWidget(showAsteroidOrbitsCheck, 11, 0, Qt::AlignHCenter);
     QCheckBox* showAsteroidLabelsCheck = new QCheckBox(i18n("Asteroids"), labelGroup);
     actionColl->action("showAsteroidLabels")->connect(showAsteroidLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showAsteroidLabelsCheck->setChecked(labelMode & Renderer::AsteroidLabels);
-    labelGroupLayout->addWidget(showAsteroidLabelsCheck, 10, 1);
+    labelGroupLayout->addWidget(showAsteroidLabelsCheck, 11, 1);
 
     QCheckBox* showSpacecraftOrbitsCheck = new QCheckBox("", labelGroup);
     actionColl->action("showSpacecraftOrbits")->connect(showSpacecraftOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showSpacecraftOrbitsCheck->setChecked(orbitMask & Body::Spacecraft);
-    labelGroupLayout->addWidget(showSpacecraftOrbitsCheck, 11, 0, Qt::AlignHCenter);
+    labelGroupLayout->addWidget(showSpacecraftOrbitsCheck, 12, 0, Qt::AlignHCenter);
     QCheckBox* showSpacecraftLabelsCheck = new QCheckBox(i18n("Spacecrafts"), labelGroup);
     actionColl->action("showSpacecraftLabels")->connect(showSpacecraftLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showSpacecraftLabelsCheck->setChecked(labelMode & Renderer::SpacecraftLabels);
-    labelGroupLayout->addWidget(showSpacecraftLabelsCheck, 11, 1);
+    labelGroupLayout->addWidget(showSpacecraftLabelsCheck, 12, 1);
 
     QCheckBox* showLocationLabelsCheck = new QCheckBox(i18n("Locations"), labelGroup);
     actionColl->action("showLocationLabels")->connect(showLocationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showLocationLabelsCheck->setChecked(labelMode & Renderer::LocationLabels);
-    labelGroupLayout->addWidget(showLocationLabelsCheck, 12, 1);
+    labelGroupLayout->addWidget(showLocationLabelsCheck, 13, 1);
 
     QSpacerItem* spacer = new QSpacerItem( 151, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     labelGroupLayout->addItem( spacer, 0, 2 );

@@ -25,6 +25,7 @@ using namespace std;
 
 Asterism::Asterism(string _name) : name(_name)
 {
+    i18nName = _(_name.c_str());
 }
 
 Asterism::~Asterism()
@@ -32,9 +33,9 @@ Asterism::~Asterism()
 }
 
 
-string Asterism::getName() const
+string Asterism::getName(bool i18n) const
 {
-    return name;
+    return i18n?i18nName:name;
 }
 
 int Asterism::getChainCount() const
