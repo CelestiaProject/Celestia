@@ -774,7 +774,7 @@ void Renderer::addLabel(string text,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Label l;
-        l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
+        l.text = ReplaceGreekLetterAbbr(text.c_str());
         l.color = color;
         l.position = Point3f((float) winX, (float) winY, -depth);
         labels.insert(labels.end(), l);
@@ -6586,7 +6586,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                 avg = avg * 1e6f;
                 Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
                 if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0) {
-                    addLabel(ast->getName(),
+                    addLabel(ast->getName(labelMode & I18nConstellationLabels),
                              Color(0.5f, 0.0f, 1.0f, 1.0f),
                              Point3f(rpos.x, rpos.y, rpos.z));
                 }
@@ -6656,7 +6656,7 @@ void Renderer::renderLabels()
                      (int) labels[i].position.y + PixelOffset,
                      0.0f);
 		  // EK TODO: Check where to replace (see '_(' above)
-		  font->render(_(labels[i].text.c_str()));
+		  font->render(labels[i].text.c_str());
         glPopMatrix();
     }
 

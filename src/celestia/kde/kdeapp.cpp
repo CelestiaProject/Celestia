@@ -319,6 +319,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showMoonLabels"))->setChecked(lMode & Renderer::MoonLabels);
     ((KToggleAction*)action("showCometLabels"))->setChecked(lMode & Renderer::CometLabels);
     ((KToggleAction*)action("showConstellationLabels"))->setChecked(lMode & Renderer::ConstellationLabels);
+    ((KToggleAction*)action("showI18nConstellationLabels"))->setChecked(! lMode & Renderer::I18nConstellationLabels);
     ((KToggleAction*)action("showGalaxyLabels"))->setChecked(lMode & Renderer::GalaxyLabels);
     ((KToggleAction*)action("showNebulaLabels"))->setChecked(lMode & Renderer::NebulaLabels);
     ((KToggleAction*)action("showOpenClusterLabels"))->setChecked(lMode & Renderer::OpenClusterLabels);
@@ -579,6 +580,9 @@ void KdeApp::initActions()
     KToggleAction* showConstellationLabels = new KToggleAction(i18n("Show Constellation Labels"), Key_Equal, this, SLOT(slotShowConstellationLabels()), actionCollection(), "showConstellationLabels");
     showConstellationLabels->setChecked(lMode & Renderer::ConstellationLabels);
     
+    KToggleAction* showI18nConstellationLabels = new KToggleAction(i18n("Constellation Labels in Latin"), 0, this, SLOT(slotShowI18nConstellationLabels()), actionCollection(), "showI18nConstellationLabels");
+    showI18nConstellationLabels->setChecked(! lMode & Renderer::I18nConstellationLabels);
+
     KToggleAction* showGalaxyLabels = new KToggleAction(i18n("Show Galaxy Labels"), Key_E, this, SLOT(slotShowGalaxyLabels()), actionCollection(), "showGalaxyLabels");
     showGalaxyLabels->setChecked(lMode & Renderer::GalaxyLabels);
 
@@ -1104,6 +1108,11 @@ void KdeApp::slotShowCometLabels() {
 void KdeApp::slotShowConstellationLabels() {
      appCore->getRenderer()->setLabelMode(
             appCore->getRenderer()->getLabelMode() ^ Renderer::ConstellationLabels);
+}
+
+void KdeApp::slotShowI18nConstellationLabels() {
+     appCore->getRenderer()->setLabelMode(
+            appCore->getRenderer()->getLabelMode() ^ Renderer::I18nConstellationLabels);
 }
 
 void KdeApp::slotShowGalaxyLabels() {
