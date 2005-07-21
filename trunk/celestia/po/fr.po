@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2005-07-21 23:21+0200\n"
-"PO-Revision-Date: 2005-07-21 23:22+0200\n"
+"POT-Creation-Date: 2005-07-22 00:35+0200\n"
+"PO-Revision-Date: 2005-07-22 00:35+0200\n"
 "Last-Translator: Christophe Teyssier <chris@teyssier.org>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1558,8 +1558,7 @@ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
 msgstr "<b>extensions NV_fragment_program et ARB_vertex_program</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:40
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
 msgstr ""
 "Le fichier %1 n'existe pas, utilisation du fichier de configuration par "
 "défaut %2/celestia.cfg"
@@ -1993,8 +1992,8 @@ msgid "Auriga"
 msgstr "Le Cocher"
 
 #: data/data.cpp:49
-msgid "Bo\\u00f6tes"
-msgstr "Le Bélier"
+msgid "Boötes"
+msgstr "Le Bouvier"
 
 #: data/data.cpp:50
 msgid "Caelum"
@@ -2364,7 +2363,7 @@ msgstr "OCÉAN INDIEN"
 msgid "ARCTIC OCEAN"
 msgstr "OCÉAN ARCTIQUE"
 
-#~ msgid "Boötes"
+#~ msgid "Bo\\u00f6tes"
 #~ msgstr "Le Bouvier"
 
 #~ msgid "%.3f m"
@@ -2372,3 +2371,4 @@ msgstr "OCÉAN ARCTIQUE"
 
 #~ msgid "Sol"
 #~ msgstr "Soleil"
+
