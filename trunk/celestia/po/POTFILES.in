@@ -65,7 +65,6 @@ src/celengine/virtualtex.cpp
 src/celengine/vsop87.cpp
 
 src/celestia/celestiacore.cpp
-#src/celengine/constellation.cpp
 
 # Config
 #po/celestia.cfg.pot
