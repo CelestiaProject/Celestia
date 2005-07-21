@@ -56,7 +56,7 @@
 [ "Alpha Cae" "Beta Cae" ]
 ]
 
-"Camelopardus"
+"Camelopardalis"
 [
 [ "7 Cam" "Beta Cam" "Alpha Cam" "Gamma Cam" ]
 ]
@@ -384,7 +384,7 @@
 [ "Tau Psc" "Upsilon Psc" "Phi Psc" "Eta Psc" "Omicron Psc" "Alpha Psc" "Nu Psc" "Mu Psc" "Epsilon Psc" "Delta Psc" "Omega Psc" "Iota Psc" "Theta Psc" "Gamma Psc" "Kappa Psc" "Lambda Psc" "Iota Psc" ]
 ]
 
-"Pisces Austrinus"
+"Piscis Austrinus"
 [
 [ "Alpha PsA" "Epsilon PsA" "Lambda PsA" "Theta PsA" "Iota PsA" "Mu PsA" "Beta PsA" "Gamma PsA" "Delta PsA" "Alpha PsA" ]
 ]
@@ -392,7 +392,7 @@
 "Puppis"
 [
 [ "Xi Pup" "K Pup" "Pi Pup" "Nu Pup" "Tau Pup" "Sigma Pup" "Zeta Pup"
-"Rho Pup" "11 Pup" "Xi Pup" ]
+  "Rho Pup" "11 Pup" "Xi Pup" ]
 [ "11 Pup" "16 Pup" ]
 ]
 
