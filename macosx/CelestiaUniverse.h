@@ -16,5 +16,5 @@
 -(CelestiaSelection*)pick:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction when:(NSNumber*)when faintestMag:(NSNumber*)faintestMag tolerance:(NSNumber*)tolerance;
 -(CelestiaSelection*)pick:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction when:(NSNumber*)when faintestMag:(NSNumber*)faintestMag;
 -(CelestiaSelection*)pickStar:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction faintestMag:(NSNumber*)faintestMag tolerance:(NSNumber*)tolerance;
--(CelestiaSelection*)pickStar:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction faintestMag:(NSNumber*)faintestMag;
+//-(CelestiaSelection*)pickStar:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction faintestMag:(NSNumber*)faintestMag;
 @end
