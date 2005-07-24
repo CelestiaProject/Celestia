@@ -283,7 +283,19 @@ static NSMutableDictionary* tagDict;
     
 -(BOOL)initSimulation
 {
-    return (BOOL)appCore->initSimulation();
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSArray *extrasDirsSetting;
+    std::vector<std::string> extrasDirs;
+    NSString *extrasDir;
+
+    if ((extrasDirsSetting = [prefs stringArrayForKey:@"extrasDirs"]))
+    {
+        NSEnumerator *iter = [extrasDirsSetting objectEnumerator];
+        while ((extrasDir = [iter nextObject]))
+            extrasDirs.push_back([extrasDir stdString]);
+    }
+
+    return (BOOL)appCore->initSimulation(nil, extrasDirsSetting ? &extrasDirs : nil);
 }
 
 -(BOOL)initRenderer
@@ -465,6 +477,9 @@ static NSMutableDictionary* tagDict;
 
 -(void)forward
 {
+    std::vector<Url>::size_type historySize = appCore->getHistory().size();
+    if (historySize < 2) return;
+    if (appCore->getHistoryCurrent() > historySize-2) return;
     appCore->forward();
 }
 
@@ -689,9 +704,7 @@ static NSMutableDictionary* tagDict;
         delete movieCapture;
 
     return success;
- return true;
 }
-
 
 @end
 
