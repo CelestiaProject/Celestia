@@ -177,7 +177,7 @@ NSDictionary* coordinateDict;
 +(NSArray*)anomaly:(NSNumber*)meanAnamaly eccentricity:(NSNumber*)eccentricity
 {
     double trueAnomaly,eccentricAnomaly;
-    astro::Anomaly([meanAnamaly doubleValue], [eccentricity doubleValue], trueAnomaly, eccentricAnomaly);
+    astro::anomaly([meanAnamaly doubleValue], [eccentricity doubleValue], trueAnomaly, eccentricAnomaly);
     return [NSArray arrayWithObjects:[NSNumber numberWithDouble:trueAnomaly], [NSNumber numberWithDouble:eccentricAnomaly],nil];
 }
 +(NSNumber*)meanEclipticObliquity:(NSNumber*)jd

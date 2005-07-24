@@ -437,6 +437,7 @@
 			buildRules = (
 			);
 			buildSettings = {
+				GCC_PREFIX_HEADER = Util.h;
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
@@ -622,6 +623,7 @@
 				E56A5AEC0848F92200A21D7E,
 				0C76BFC1085215B100D31A90,
 				0C76BFD208537EDB00D31A90,
+				E57E35100892A42A008E2F7F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2743,6 +2745,20 @@
 			settings = {
 			};
 		};
+		E57E350E0892A42A008E2F7F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = Util.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E57E35100892A42A008E2F7F = {
+			fileRef = E57E350E0892A42A008E2F7F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E5818E43077902950064934D = {
 			isa = PBXFileReference;
 			lastKnownFileType = folder;
@@ -4670,6 +4686,7 @@
 				F55F041902B1502B0100020A,
 				F55F044302B15AFB0100020A,
 				F55A246C02B2DA1A0100020A,
+				E57E350E0892A42A008E2F7F,
 			);
 			isa = PBXGroup;
 			name = Wrappers;
