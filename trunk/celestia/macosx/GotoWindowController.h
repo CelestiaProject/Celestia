@@ -9,7 +9,7 @@
 
 @interface GotoWindowController : NSWindowController
 {
-    IBOutlet NSPopUpButton *distanceField;
+    IBOutlet NSTextField *distanceField;
     IBOutlet NSTextField *latitudeField;
     IBOutlet NSTextField *longitudeField;
     IBOutlet NSTextField *objectField;
