@@ -866,6 +866,37 @@ public:
 };
 
 
+void renderOrbitColor(const Body* body, bool selected)
+{
+    if (selected)
+    {
+        // Highlight the orbit of the selected object in red
+        glColor4f(1, 0, 0, 1);
+    }
+    else
+    {
+        switch (body->getClassification())
+        {
+        case Body::Moon:
+            glColor4f(0.0f, 0.2f, 0.5f, 1.0f);
+            break;
+        case Body::Asteroid:
+            glColor4f(0.35f, 0.2f, 0.0f, 1.0f);
+            break;
+        case Body::Comet:
+            glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
+            break;
+        case Body::Spacecraft:
+            glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
+            break;
+        case Body::Planet:
+        default:
+            glColor4f(0.0f, 0.4f, 1.0f, 1.0f);
+            break;
+        }
+    }
+}
+
 
 void Renderer::renderOrbit(Body* body, double t)
 {
@@ -1005,34 +1036,8 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
         // Only show orbits for major bodies or selected objects
         if ((body->getClassification() & orbitMask) != 0 || body == sel.body())
         {
-            if (body == sel.body())
-            {
-                // Highlight the orbit of the selected object in red
-                glColor4f(1, 0, 0, 1);
-            }
-            else
-            {
-                switch (body->getClassification())
-                {
-                case Body::Moon:
-                    glColor4f(0.0f, 0.2f, 0.5f, 1.0f);
-                    break;
-                case Body::Asteroid:
-                    glColor4f(0.35f, 0.2f, 0.0f, 1.0f);
-                    break;
-                case Body::Comet:
-                    glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
-                    break;
-                case Body::Spacecraft:
-                    glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
-                    break;
-                case Body::Planet:
-                default:
-                    glColor4f(0.0f, 0.4f, 1.0f, 1.0f);
-                    break;
-                }
-            }
-            
+            renderOrbitColor(body, body == sel.body());
+
             float orbitRadiusInPixels =
                 (float) (body->getOrbit()->getBoundingRadius() /
                          (distance * pixelSize));
@@ -1073,6 +1078,78 @@ void Renderer::renderOrbits(PlanetarySystem* planets,
             }
         }
     }
+}
+
+
+void transformOrbits(const PlanetarySystem *system)
+{
+    if (system->getPrimaryBody())
+    {
+        const Body *body = system->getPrimaryBody();
+        transformOrbits(body->getSystem());
+        Quatd rotation =
+            Quatd::yrotation(body->getRotationElements().ascendingNode) *
+            Quatd::xrotation(body->getRotationElements().obliquity);
+        glRotate(rotation);      
+    } 
+}
+
+
+void Renderer::renderForegroundOrbits(const PlanetarySystem* system,
+                                      const Point3f &center, // km
+                                      float distance, // km
+                                      float discSizeInPixels,
+                                      const Selection& sel,
+                                      double t)
+{
+    // Render orbit paths
+  
+    if ((renderFlags & ShowOrbits) == 0 || orbitMask == 0)
+        return;
+    if (system == NULL)
+        return;
+    if (discSizeInPixels < minOrbitSize)
+        return;
+
+    distance = astro::kilometersToAU(distance);
+    double scale = astro::kilometersToAU(1.0);
+    glPushMatrix();
+    glTranslated(center.x * scale,
+                 center.y * scale,
+                 center.z * scale);
+
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    if ((renderFlags & ShowSmoothLines) != 0)
+        enableSmoothLines();
+    transformOrbits(system);
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(fov,
+                   (float) windowWidth / (float) windowHeight,
+                   max( distance * 1e-6f, 
+                        (float)(1e-5/2./tan(fov*3.14159/360.0)) ),
+                   distance);
+    
+    glMatrixMode(GL_MODELVIEW);
+
+    int nBodies = system->getSystemSize();
+    for (int i = 0; i < nBodies; i++)
+    {
+        Body* body = system->getBody(i);
+
+        // Only show orbits for major bodies or selected objects
+        if ((body->getClassification() & orbitMask) == 0 && 
+            body != sel.body())
+            continue;
+        renderOrbitColor(body, body == sel.body());
+        renderOrbit(body, t);
+    }
+
+    if ((renderFlags & ShowSmoothLines) != 0)
+        disableSmoothLines();
+    glPopMatrix();
 }
 
 
@@ -1715,6 +1792,13 @@ void Renderer::render(const Observer& observer,
                                  observer.getOrientation(),
                                  lightSourceLists[renderList[i].solarSysIndex],
                                  nearPlaneDistance, farPlaneDistance);
+
+                    renderForegroundOrbits(renderList[i].body->getSatellites(),
+                                           renderList[i].position,
+                                           renderList[i].distance,
+                                           renderList[i].discSizeInPixels,
+                                           sel,
+                                           now);
                 }
             }
             else if (renderList[i].star != NULL)
