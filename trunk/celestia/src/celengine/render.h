@@ -369,7 +369,12 @@ class Renderer
     void renderOrbit(Body*, double);
     void renderOrbits(PlanetarySystem*, const Selection&, double,
                       const Point3d&, const Point3d&);
-
+    void renderForegroundOrbits(const PlanetarySystem* system,
+                                const Point3f &center,
+                                float distance,
+                                float discSizeInPixels,
+                                const Selection& sel, 
+                                double t);
 
  private:
     GLContext* context;
