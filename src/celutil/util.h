@@ -16,8 +16,15 @@
 #include <iostream>
 #include <functional>
 
+#ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+#ifdef _WIN32
+#define _(s) s
+#else
 #define _(s) gettext(s)
+#endif
 
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2, int n);

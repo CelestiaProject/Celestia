@@ -56,9 +56,9 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
     char buf[32];
     char obuf[64];
     double value = num.getRoundedValue();
-    static const char *decimal_point = localeconv()->decimal_point;
-    static const char *thousands_sep = localeconv()->thousands_sep;
-    static const char *grouping = localeconv()->grouping;
+    char *decimal_point = localeconv()->decimal_point;
+    char *thousands_sep = localeconv()->thousands_sep;
+    char *grouping = localeconv()->grouping;
 
     memset(obuf, 0, sizeof(obuf));
 
@@ -89,7 +89,8 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
         int j = sizeof(obuf) - 1;
         int i = strlen(buf);
         int digitCount = 0;
-        if (decimalPosition != NULL) {
+        if (decimalPosition != NULL)
+        {
             int len = strlen(decimalPosition);
             j -= len;
             i -= len;
