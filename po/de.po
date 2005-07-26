@@ -1,4 +1,6 @@
-# translation of de.new.po to 
+# translation of de.po to 
+# translation of de.po to
+# translation of de.new.po to
 # translation of de.po to deutsch
 # translation of celestia-kde.po to deutsch
 # This file is distributed under the same license as the PACKAGE package.
@@ -7,10 +9,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: de.new\n"
+"Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2005-07-22 00:35+0200\n"
-"PO-Revision-Date: 2005-07-20 21:31+0200\n"
+"PO-Revision-Date: 2005-07-25 21:17+0200\n"
 "Last-Translator: Steffen Schreiber <SchreiberSte@web.de>\n"
 "Language-Team:  <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1036,9 +1038,8 @@ msgid "Show Constellation Labels"
 msgstr "Sternbildnamen anzeigen"
 
 #: src/celestia/kde/kdeapp.cpp:583
-#, fuzzy
 msgid "Constellation Labels in Latin"
-msgstr "Sternbildnamen anzeigen"
+msgstr "Sternbildnamen in Latein"
 
 #: src/celestia/kde/kdeapp.cpp:586
 msgid "Show Galaxy Labels"
@@ -1235,9 +1236,8 @@ msgid "Use alternate installation directory"
 msgstr "Verwende alternatives Installationsverzeichnis"
 
 #: src/celestia/kde/kdemain.cpp:33
-#, fuzzy
 msgid "Use as additional \"extras\" directory"
-msgstr "Liste von \"extras\" Verzeichnissen, durch Doppelpunkt getrennt"
+msgstr "Als zusätzliches \"extras\" Verzeichnis verwenden"
 
 #: src/celestia/kde/kdemain.cpp:34
 msgid "Start fullscreen"
@@ -1357,9 +1357,8 @@ msgid "Comets"
 msgstr "Kometen"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:202
-#, fuzzy
 msgid "Constellations in Latin"
-msgstr "Sternbilder"
+msgstr "Sternbildnamen in Latein"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:226
 msgid "Asteroids"
@@ -1554,8 +1553,7 @@ msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
 msgstr "<b>NV_fragment_program und ARB_vertex_program Erweiterungen</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:40
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
 msgstr ""
 "Datei %1 existiert nicht, verwende voreingestellte Konfigurationsdatei %2/"
 "celestia.cfg"
@@ -1647,37 +1645,37 @@ msgstr "Satelliten"
 #: src/celestia/kde/rc.cpp:3
 #, no-c-format
 msgid "&Navigation"
-msgstr ""
+msgstr "&Navigation"
 
 #: src/celestia/kde/rc.cpp:6
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Options"
-msgstr "Orte"
+msgstr "Optionen"
 
 #: src/celestia/kde/rc.cpp:9
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Objects"
-msgstr "Objekt: "
+msgstr "Objekte"
 
 #: src/celestia/kde/rc.cpp:15
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "OpenGL Render Path"
-msgstr "OpenGL Render Pfad wechseln"
+msgstr "OpenGL-Render-Pfad"
 
 #: src/celestia/kde/rc.cpp:18
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Time"
-msgstr "Datum/Zeit"
+msgstr "Zeit"
 
 #: src/celestia/kde/rc.cpp:21
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "MultiView"
-msgstr "Ansicht entfernen"
+msgstr "Mehrfachansicht"
 
 #: src/celestia/kde/rc.cpp:24
 #, no-c-format
 msgid "Main Toolbar"
-msgstr ""
+msgstr "Haupt-Werkzeugleiste"
 
 #: src/celestia/kde/rc.cpp:34
 #, no-c-format
@@ -1826,565 +1824,537 @@ msgstr "Schließen"
 
 #: data/data.cpp:1
 msgid "Mercury"
-msgstr ""
+msgstr "Merkur"
 
 #: data/data.cpp:2
 msgid "Venus"
-msgstr ""
+msgstr "Venus"
 
 #: data/data.cpp:5
-#, fuzzy
 msgid "Mars"
-msgstr "Mare"
+msgstr "Mars"
 
 #: data/data.cpp:6
 msgid "Phobos"
-msgstr ""
+msgstr "Phobos"
 
 #: data/data.cpp:7
-#, fuzzy
 msgid "Deimos"
-msgstr "Raute"
+msgstr "Deimos"
 
 #: data/data.cpp:9
 msgid "Amalthea"
-msgstr ""
+msgstr "Amalthea"
 
 #: data/data.cpp:10
 msgid "Io"
-msgstr ""
+msgstr "Io"
 
 #: data/data.cpp:11
 msgid "Europa"
-msgstr ""
+msgstr "Europa"
 
 #: data/data.cpp:12
 msgid "Ganymede"
-msgstr ""
+msgstr "Ganymed"
 
 #: data/data.cpp:13
-#, fuzzy
 msgid "Callisto"
-msgstr "Vallis"
+msgstr "Callisto"
 
 #: data/data.cpp:15
-#, fuzzy
 msgid "Prometheus"
-msgstr "Kometen"
+msgstr "Prometheus"
 
 #: data/data.cpp:16
 msgid "Pandora"
-msgstr ""
+msgstr "Pandora"
 
 #: data/data.cpp:17
 msgid "Epimetheus"
-msgstr ""
+msgstr "Epimetheus"
 
 #: data/data.cpp:18
-#, fuzzy
 msgid "Janus"
-msgstr "Uranus"
+msgstr "Janus"
 
 #: data/data.cpp:19
 msgid "Mimas"
-msgstr ""
+msgstr "Mimas"
 
 #: data/data.cpp:20
 msgid "Enceladus"
-msgstr ""
+msgstr "Enceladus"
 
 #: data/data.cpp:21
 msgid "Tethys"
-msgstr ""
+msgstr "Tethys"
 
 #: data/data.cpp:22
-#, fuzzy
 msgid "Dione"
-msgstr "Raute"
+msgstr "Dione"
 
 #: data/data.cpp:23
 msgid "Rhea"
-msgstr ""
+msgstr "Rhea"
 
 #: data/data.cpp:24
-#, fuzzy
 msgid "Titan"
-msgstr "Dreieck"
+msgstr "Titan"
 
 #: data/data.cpp:25
 msgid "Hyperion"
-msgstr ""
+msgstr "Hyperion"
 
 #: data/data.cpp:26
 msgid "Iapetus"
-msgstr ""
+msgstr "Iapetus"
 
 #: data/data.cpp:27
 msgid "Phoebe"
-msgstr ""
+msgstr "Phoebe"
 
 #: data/data.cpp:29
 msgid "Miranda"
-msgstr ""
+msgstr "Miranda"
 
 #: data/data.cpp:30
 msgid "Ariel"
-msgstr ""
+msgstr "Ariel"
 
 #: data/data.cpp:31
 msgid "Umbriel"
-msgstr ""
+msgstr "Umbriel"
 
 #: data/data.cpp:32
 msgid "Titania"
-msgstr ""
+msgstr "Titania"
 
 #: data/data.cpp:33
 msgid "Oberon"
-msgstr ""
+msgstr "Oberon"
 
 #: data/data.cpp:35
 msgid "Larissa"
-msgstr ""
+msgstr "Larissa"
 
 #: data/data.cpp:36
 msgid "Proteus"
-msgstr ""
+msgstr "Proteus"
 
 #: data/data.cpp:37
 msgid "Triton"
-msgstr ""
+msgstr "Triton"
 
 #: data/data.cpp:38
-#, fuzzy
 msgid "Nereid"
-msgstr "Nächste"
+msgstr "Nereid"
 
 #: data/data.cpp:40
 msgid "Charon"
-msgstr ""
+msgstr "Charon"
 
 #: data/data.cpp:41
 msgid "Andromeda"
-msgstr ""
+msgstr "Andromeda"
 
 #: data/data.cpp:42
 msgid "Antlia"
-msgstr ""
+msgstr "Luftpumpe"
 
 #: data/data.cpp:43
 msgid "Apus"
-msgstr ""
+msgstr "Paradiesvogel"
 
 #: data/data.cpp:44
 msgid "Aquarius"
-msgstr ""
+msgstr "Wassermann"
 
 #: data/data.cpp:45
 msgid "Aquila"
-msgstr ""
+msgstr "Adler"
 
 #: data/data.cpp:46
 msgid "Ara"
-msgstr ""
+msgstr "Altar"
 
 #: data/data.cpp:47
 msgid "Aries"
-msgstr ""
+msgstr "Widder"
 
 #: data/data.cpp:48
 msgid "Auriga"
-msgstr ""
+msgstr "Fuhrmann"
 
 #: data/data.cpp:49
 msgid "Boötes"
-msgstr ""
+msgstr "Bootes (Bärenhüter)"
 
 #: data/data.cpp:50
-#, fuzzy
 msgid "Caelum"
-msgstr "Abbruch"
+msgstr "Grabstichel"
 
 #: data/data.cpp:51
 msgid "Camelopardalis"
-msgstr ""
+msgstr "Giraffe"
 
 #: data/data.cpp:52
-#, fuzzy
 msgid "Cancer"
-msgstr "Abbruch"
+msgstr "Krebs"
 
 #: data/data.cpp:53
 msgid "Canes Venatici"
-msgstr ""
+msgstr "Jagdhunde"
 
 #: data/data.cpp:54
 msgid "Canis Major"
-msgstr ""
+msgstr "Großer Hund"
 
 #: data/data.cpp:55
 msgid "Canis Minor"
-msgstr ""
+msgstr "Kleiner Hund"
 
 #: data/data.cpp:56
 msgid "Capricornus"
-msgstr ""
+msgstr "Steinbock"
 
 #: data/data.cpp:57
 msgid "Carina"
-msgstr ""
+msgstr "Schiffskiel"
 
 #: data/data.cpp:58
 msgid "Cassiopeia"
-msgstr ""
+msgstr "Kassiopeia"
 
 #: data/data.cpp:59
-#, fuzzy
 msgid "Centaurus"
-msgstr "&Zentrieren"
+msgstr "Kentaur"
 
 #: data/data.cpp:60
 msgid "Cepheus"
-msgstr ""
+msgstr "Kepheus"
 
 #: data/data.cpp:61
-#, fuzzy
 msgid "Cetus"
-msgstr "Kometen"
+msgstr "Walfisch"
 
 #: data/data.cpp:62
 msgid "Chamaeleon"
-msgstr ""
+msgstr "Chamäleon"
 
 #: data/data.cpp:63
 msgid "Circinus"
-msgstr ""
+msgstr "Zirkel"
 
 #: data/data.cpp:64
 msgid "Columba"
-msgstr ""
+msgstr "Taube"
 
 #: data/data.cpp:65
 msgid "Coma Berenices"
-msgstr ""
+msgstr "Haar der Berenike"
 
 #: data/data.cpp:66
 msgid "Corona Australis"
-msgstr ""
+msgstr "Südliche Krone"
 
 #: data/data.cpp:67
 msgid "Corona Borealis"
-msgstr ""
+msgstr "Nördliche Krone"
 
 #: data/data.cpp:68
-#, fuzzy
 msgid "Corvus"
-msgstr "Wolken"
+msgstr "Rabe"
 
 #: data/data.cpp:69
-#, fuzzy
 msgid "Crater"
-msgstr "Krater"
+msgstr "Becher"
 
 #: data/data.cpp:70
 msgid "Crux"
-msgstr ""
+msgstr "Kreuz des Südens"
 
 #: data/data.cpp:71
 msgid "Cygnus"
-msgstr ""
+msgstr "Schwan"
 
 #: data/data.cpp:72
 msgid "Delphinus"
-msgstr ""
+msgstr "Delphin"
 
 #: data/data.cpp:73
 msgid "Dorado"
-msgstr ""
+msgstr "Schwertfisch"
 
 #: data/data.cpp:74
 msgid "Draco"
-msgstr ""
+msgstr "Drache"
 
 #: data/data.cpp:75
 msgid "Equuleus"
-msgstr ""
+msgstr "Füllen"
 
 #: data/data.cpp:76
-#, fuzzy
 msgid "Eridanus"
-msgstr "Uranus"
+msgstr "Eridanus"
 
 #: data/data.cpp:77
 msgid "Fornax"
-msgstr ""
+msgstr "Ofen"
 
 #: data/data.cpp:78
 msgid "Gemini"
-msgstr ""
+msgstr "Zwillinge"
 
 #: data/data.cpp:79
-#, fuzzy
 msgid "Grus"
-msgstr "Uranus"
+msgstr "Kranich"
 
 #: data/data.cpp:80
 msgid "Hercules"
-msgstr ""
+msgstr "Herkules"
 
 #: data/data.cpp:81
 msgid "Horologium"
-msgstr ""
+msgstr "Pendeluhr"
 
 #: data/data.cpp:82
 msgid "Hydra"
-msgstr ""
+msgstr "Wasserschlange"
 
 #: data/data.cpp:83
 msgid "Hydrus"
-msgstr ""
+msgstr "Kleine Wasserschlange"
 
 #: data/data.cpp:84
 msgid "Indus"
-msgstr ""
+msgstr "Indianer"
 
 #: data/data.cpp:85
 msgid "Lacerta"
-msgstr ""
+msgstr "Eidechse"
 
 #: data/data.cpp:86
 msgid "Leo"
-msgstr ""
+msgstr "Löwe"
 
 #: data/data.cpp:87
 msgid "Leo Minor"
-msgstr ""
+msgstr "Kleiner Löwe"
 
 #: data/data.cpp:88
 msgid "Lepus"
-msgstr ""
+msgstr "Hase"
 
 #: data/data.cpp:89
 msgid "Libra"
-msgstr ""
+msgstr "Waage"
 
 #: data/data.cpp:90
 msgid "Lupus"
-msgstr ""
+msgstr "Wolf"
 
 #: data/data.cpp:91
 msgid "Lynx"
-msgstr ""
+msgstr "Luchs"
 
 #: data/data.cpp:92
 msgid "Lyra"
-msgstr ""
+msgstr "Leier"
 
 #: data/data.cpp:93
-#, fuzzy
 msgid "Mensa"
-msgstr "Mons"
+msgstr "Tafelberg"
 
 #: data/data.cpp:94
 msgid "Microscopium"
-msgstr ""
+msgstr "Mikroskop"
 
 #: data/data.cpp:95
-#, fuzzy
 msgid "Monoceros"
-msgstr "Mons"
+msgstr "Einhorn"
 
 #: data/data.cpp:96
 msgid "Musca"
-msgstr ""
+msgstr "Fliege"
 
 #: data/data.cpp:97
-#, fuzzy
 msgid "Norma"
-msgstr "Normal"
+msgstr "Winkelmaß"
 
 #: data/data.cpp:98
 msgid "Octans"
-msgstr ""
+msgstr "Oktant"
 
 #: data/data.cpp:99
 msgid "Ophiuchus"
-msgstr ""
+msgstr "Schlangenträger"
 
 #: data/data.cpp:100
 msgid "Orion"
-msgstr ""
+msgstr "Orion"
 
 #: data/data.cpp:101
 msgid "Pavo"
-msgstr ""
+msgstr "Pfau"
 
 #: data/data.cpp:102
-#, fuzzy
 msgid "Pegasus"
-msgstr "Zeit angehalten"
+msgstr "Pegasus"
 
 #: data/data.cpp:103
-#, fuzzy
 msgid "Perseus"
-msgstr "Knapp"
+msgstr "Perseus"
 
 #: data/data.cpp:104
 msgid "Phoenix"
-msgstr ""
+msgstr "Phönix"
 
 #: data/data.cpp:105
 msgid "Pictor"
-msgstr ""
+msgstr "Maler"
 
 #: data/data.cpp:106
 msgid "Pisces"
-msgstr ""
+msgstr "Fische"
 
 #: data/data.cpp:107
 msgid "Piscis Austrinus"
-msgstr ""
+msgstr "Südlicher Fisch"
 
 #: data/data.cpp:108
-#, fuzzy
 msgid "Puppis"
-msgstr "Plus"
+msgstr "Achterdeck"
 
 #: data/data.cpp:109
 msgid "Pyxis"
-msgstr ""
+msgstr "Kompaß"
 
 #: data/data.cpp:110
 msgid "Reticulum"
-msgstr ""
+msgstr "Netz"
 
 #: data/data.cpp:111
 msgid "Sagitta"
-msgstr ""
+msgstr "Pfeil"
 
 #: data/data.cpp:112
-#, fuzzy
 msgid "Sagittarius"
-msgstr "Sterne"
+msgstr "Schütze"
 
 #: data/data.cpp:113
 msgid "Scorpius"
-msgstr ""
+msgstr "Skorpion"
 
 #: data/data.cpp:114
 msgid "Sculptor"
-msgstr ""
+msgstr "Bildhauer"
 
 #: data/data.cpp:115
 msgid "Scutum"
-msgstr ""
+msgstr "Schild"
 
 #: data/data.cpp:116
 msgid "Serpens Caput"
-msgstr ""
+msgstr "Kopf der Schlange"
 
 #: data/data.cpp:117
 msgid "Serpens Cauda"
-msgstr ""
+msgstr "Schwanz der Schlange"
 
 #: data/data.cpp:118
-#, fuzzy
 msgid "Sextans"
-msgstr "Sterne"
+msgstr "Sextant"
 
 #: data/data.cpp:119
 msgid "Taurus"
-msgstr ""
+msgstr "Stier"
 
 #: data/data.cpp:120
 msgid "Telescopium"
-msgstr ""
+msgstr "Teleskop"
 
 #: data/data.cpp:121
-#, fuzzy
 msgid "Triangulum"
 msgstr "Dreieck"
 
 #: data/data.cpp:122
 msgid "Triangulum Australe"
-msgstr ""
+msgstr "Südliches Dreieck"
 
 #: data/data.cpp:123
 msgid "Tucana"
-msgstr ""
+msgstr "Tukan"
 
 #: data/data.cpp:124
 msgid "Ursa Major"
-msgstr ""
+msgstr "Großer Wagen"
 
 #: data/data.cpp:125
 msgid "Ursa Minor"
-msgstr ""
+msgstr "Kleiner Wagen"
 
 #: data/data.cpp:126
 msgid "Vela"
-msgstr ""
+msgstr "Segel"
 
 #: data/data.cpp:127
 msgid "Virgo"
-msgstr ""
+msgstr "Jungfrau"
 
 #: data/data.cpp:128
-#, fuzzy
 msgid "Volans"
-msgstr "Planeten"
+msgstr "Fliegender Fisch"
 
 #: data/data.cpp:129
 msgid "Vulpecula"
-msgstr ""
+msgstr "Füchschen"
 
 #: data/data.cpp:130
 msgid "NORTH AMERICA"
-msgstr ""
+msgstr "NORDAMERIKA"
 
 #: data/data.cpp:131
 msgid "SOUTH AMERICA"
-msgstr ""
+msgstr "SÜDAMERIKA"
 
 #: data/data.cpp:132
 msgid "EURASIA"
-msgstr ""
+msgstr "EURASIEN"
 
 #: data/data.cpp:133
 msgid "AFRICA"
-msgstr ""
+msgstr "AFRIKA"
 
 #: data/data.cpp:134
 msgid "AUSTRALIA"
-msgstr ""
+msgstr "AUSTRALIEN"
 
 #: data/data.cpp:135
 msgid "ANTARCTICA"
-msgstr ""
+msgstr "ANTARKTIS"
 
 #: data/data.cpp:136
 msgid "NORTH ATLANTIC OCEAN"
-msgstr ""
+msgstr "NORDATLANTISCHER OZEAN"
 
 #: data/data.cpp:137
 msgid "SOUTH ATLANTIC OCEAN"
-msgstr ""
+msgstr "SÜDATLANTISCHER OZEAN"
 
 #: data/data.cpp:138
 msgid "NORTH PACIFIC OCEAN"
-msgstr ""
+msgstr "NORDPAZIFISCHER OZEAN"
 
 #: data/data.cpp:139
 msgid "SOUTH PACIFIC OCEAN"
-msgstr ""
+msgstr "SÜDPAZIFISCHER OZEAN"
 
 #: data/data.cpp:140
 msgid "INDIAN OCEAN"
-msgstr ""
+msgstr "INDISCHER OZEAN"
 
 #: data/data.cpp:141
 msgid "ARCTIC OCEAN"
-msgstr ""
+msgstr "ARKTISCHER OZEAN"
 
-#~ msgid "%.3f m"
-#~ msgstr "%.3f m"
