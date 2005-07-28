@@ -32,7 +32,7 @@ Galaxy "NGC 23"
         Dec          25.9239
         Distance   2.128e+08
         Radius     6.499e+04
-        absMag        -22.17
+        AbsMag        -22.17
         Axis    [  0.2102   0.8901   0.4045]
         Angle    138.7010
 }
@@ -46,7 +46,7 @@ Galaxy "NGC 24"
         Dec         -24.9644
         Distance   3.633e+07
         Radius     3.065e+04
-        absMag        -18.73
+        AbsMag        -18.73
         Axis    [  0.2274   0.9581   0.1740]
         Angle    191.0316
 }
@@ -60,7 +60,7 @@ Galaxy "NGC 27"
         Dec          28.9969
         Distance    3.08e+08
         Radius     5.376e+04
-        absMag        -21.18
+        AbsMag        -21.18
         Axis    [ -0.1186   0.9065  -0.4053]
         Angle    185.2511
 }
@@ -74,7 +74,7 @@ Galaxy "NGC 28"
         Dec         -56.9889
         Distance   8.242e+07
         Radius          9590
-        absMag        -18.21
+        AbsMag        -18.21
         Axis    [  0.9196   0.2250  -0.3221]
         Angle    209.0624
 }
@@ -88,7 +88,7 @@ Galaxy "NGC 45"
         Dec         -23.1814
         Distance   4.725e+07
         Radius     5.841e+04
-        absMag         -20.1
+        AbsMag         -20.1
         Axis    [  0.4406   0.6677  -0.6000]
         Angle    194.9599
 }
@@ -102,7 +102,7 @@ Galaxy "NGC 55"
         Dec         -39.2194
         Distance    1.66e+07
         Radius     7.532e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.3366   0.8768  -0.3435]
         Angle    178.2645
 }
@@ -116,7 +116,7 @@ Galaxy "NGC 93"
         Dec          22.4089
         Distance     3.5e+08
         Radius     7.126e+04
-        absMag        -21.55
+        AbsMag        -21.55
         Axis    [  0.0063   0.9892   0.1461]
         Angle    160.6922
 }
@@ -130,7 +130,7 @@ Galaxy "NGC 94-1"
         Dec          22.4833
         Distance   3.885e+07
         Radius          2260
-        absMag        -15.78
+        AbsMag        -15.78
         Axis    [  0.0912   0.9554   0.2807]
         Angle    153.4862
 }
@@ -144,7 +144,7 @@ Galaxy "NGC 100"
         Dec          16.4864
         Distance   7.162e+07
         Radius     4.375e+04
-        absMag        -18.51
+        AbsMag        -18.51
         Axis    [ -0.1013   0.9899   0.0991]
         Angle    166.8750
 }
@@ -158,7 +158,7 @@ Galaxy "NGC 134"
         Dec         -33.2450
         Distance   6.541e+07
         Radius     7.992e+04
-        absMag        -21.11
+        AbsMag        -21.11
         Axis    [  0.3167   0.9405   0.1234]
         Angle    190.4549
 }
@@ -172,7 +172,7 @@ Galaxy "NGC 135"
         Dec         -13.3378
         Distance   6.629e+06
         Radius         482.1
-        absMag        -11.44
+        AbsMag        -11.44
         Axis    [  0.6994   0.5510   0.4552]
         Angle    141.8564
 }
@@ -186,7 +186,7 @@ Galaxy "NGC 147"
         Dec          48.5072
         Distance    2.52e+06
         Radius          4838
-        absMag        -15.04
+        AbsMag        -15.04
         Axis    [  0.4782   0.8782   0.0141]
         Angle    122.2064
 }
@@ -200,7 +200,7 @@ Galaxy "NGC 150"
         Dec         -27.8050
         Distance   7.135e+07
         Radius     4.047e+04
-        absMag         -20.5
+        AbsMag         -20.5
         Axis    [  0.4065   0.7986  -0.4438]
         Angle    180.9190
 }
@@ -214,7 +214,7 @@ Galaxy "NGC 151"
         Dec          -9.7050
         Distance   1.655e+08
         Radius     9.146e+04
-        absMag        -21.93
+        AbsMag        -21.93
         Axis    [  0.2895   0.9533  -0.0859]
         Angle    176.9908
 }
@@ -228,7 +228,7 @@ Galaxy "NGC 154"
         Dec         -12.6558
         Distance   2.455e+07
         Radius          3928
-        absMag        -15.38
+        AbsMag        -15.38
         Axis    [  0.7863   0.6069  -0.1160]
         Angle    186.8576
 }
@@ -242,7 +242,7 @@ Galaxy "NGC 157"
         Dec          -8.3961
         Distance    7.04e+07
         Radius     3.584e+04
-        absMag        -21.27
+        AbsMag        -21.27
         Axis    [  0.4440   0.8643   0.2362]
         Angle    168.0120
 }
@@ -256,7 +256,7 @@ Galaxy "NGC 159"
         Dec         -55.7897
         Distance   1.526e+07
         Radius          3106
-        absMag        -14.35
+        AbsMag        -14.35
         Axis    [  0.5364   0.8063  -0.2493]
         Angle    183.2857
 }
@@ -270,7 +270,7 @@ Galaxy "NGC 185"
         Dec          48.3372
         Distance   2.077e+06
         Radius          2417
-        absMag        -14.72
+        AbsMag        -14.72
         Axis    [  0.4669   0.8838  -0.0291]
         Angle    129.9180
 }
@@ -284,7 +284,7 @@ Galaxy "NGC 200"
         Dec           2.8869
         Distance   2.468e+08
         Radius     6.101e+04
-        absMag        -21.69
+        AbsMag        -21.69
         Axis    [  0.1008   0.6766  -0.7295]
         Angle    191.6454
 }
@@ -298,7 +298,7 @@ Galaxy "M 110"
         Dec          41.6853
         Distance   2.089e+07
         Radius     5.926e+04
-        absMag        -21.13
+        AbsMag        -21.13
         Axis    [  0.2155   0.8200  -0.5303]
         Angle    249.5817
 }
@@ -312,7 +312,7 @@ Galaxy "NGC 210"
         Dec         -13.8725
         Distance   5.975e+07
         Radius     4.345e+04
-        absMag        -20.41
+        AbsMag        -20.41
         Axis    [  0.2859   0.6152  -0.7347]
         Angle    192.4935
 }
@@ -326,7 +326,7 @@ Galaxy "M 32"
         Dec          40.8658
         Distance   2.651e+06
         Radius          3278
-        absMag        -16.45
+        AbsMag        -16.45
         Axis    [  0.1854   0.7953  -0.5772]
         Angle    256.1765
 }
@@ -340,7 +340,7 @@ Galaxy "M 31"
         Dec          41.2689
         Distance   2.474e+06
         Radius     6.805e+04
-        absMag         -20.9
+        AbsMag         -20.9
         Axis    [ -0.1274   0.9554   0.2663]
         Angle    142.9019
 }
@@ -354,7 +354,7 @@ Galaxy "NGC 237"
         Dec          -0.1253
         Distance   1.934e+08
         Radius     4.501e+04
-        absMag        -20.97
+        AbsMag        -20.97
         Axis    [  0.1464   0.5758  -0.8044]
         Angle    201.2699
 }
@@ -368,7 +368,7 @@ Galaxy "NGC 247"
         Dec         -20.7600
         Distance   1.318e+07
         Radius     3.681e+04
-        absMag        -19.13
+        AbsMag        -19.13
         Axis    [  0.1677   0.5659  -0.8072]
         Angle    169.4572
 }
@@ -382,7 +382,7 @@ Galaxy "NGC 253"
         Dec         -25.2875
         Distance    1.21e+07
         Radius     5.102e+04
-        absMag        -20.55
+        AbsMag        -20.55
         Axis    [  0.2837   0.9535   0.1016]
         Angle    182.2500
 }
@@ -396,7 +396,7 @@ Galaxy "NGC 255"
         Dec         -11.4683
         Distance   4.643e+07
         Radius     2.094e+04
-        absMag        -18.87
+        AbsMag        -18.87
         Axis    [  0.5634   0.7331   0.3810]
         Angle    157.6405
 }
@@ -410,7 +410,7 @@ Galaxy "NGC 257"
         Dec           8.2967
         Distance   2.703e+08
         Radius     7.469e+04
-        absMag        -21.89
+        AbsMag        -21.89
         Axis    [  0.2679   0.9024  -0.3375]
         Angle    181.0438
 }
@@ -424,7 +424,7 @@ Galaxy "NGC 258"
         Dec          27.6578
         Distance   2.509e+07
         Radius          1824
-        absMag        -15.23
+        AbsMag        -15.23
         Axis    [  0.1686   0.9265  -0.3365]
         Angle    183.4090
 }
@@ -438,7 +438,7 @@ Galaxy "NGC 259"
         Dec          -2.7758
         Distance   1.777e+08
         Radius     7.496e+04
-        absMag        -20.88
+        AbsMag        -20.88
         Axis    [  0.0399   0.8021  -0.5959]
         Angle    171.0279
 }
@@ -452,7 +452,7 @@ Galaxy "NGC 278"
         Dec          47.5508
         Distance   4.241e+07
         Radius     1.295e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.3673   0.9083   0.2003]
         Angle    110.7079
 }
@@ -466,7 +466,7 @@ Galaxy "NGC 280"
         Dec          24.3508
         Distance   4.057e+08
         Radius     1.003e+05
-        absMag        -21.97
+        AbsMag        -21.97
         Axis    [ -0.0366   0.9709  -0.2366]
         Angle    167.6086
 }
@@ -480,7 +480,7 @@ Galaxy "NGC 282"
         Dec          30.6389
         Distance   8.395e+07
         Radius     1.221e+04
-        absMag        -18.35
+        AbsMag        -18.35
         Axis    [  0.5741   0.8175  -0.0473]
         Angle    147.1331
 }
@@ -494,7 +494,7 @@ Galaxy "NGC 289"
         Dec         -31.2056
         Distance   6.211e+07
         Radius     4.607e+04
-        absMag         -20.5
+        AbsMag         -20.5
         Axis    [  0.5109   0.6621  -0.5482]
         Angle    185.2136
 }
@@ -508,7 +508,7 @@ Galaxy "NGC 292"
         Dec         -72.8094
         Distance   1.259e+06
         Radius     5.843e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.7760   0.6099   0.1606]
         Angle    205.1594
 }
@@ -522,7 +522,7 @@ Galaxy "NGC 300"
         Dec         -37.6842
         Distance   1.223e+07
         Radius      3.38e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.5869   0.7014  -0.4044]
         Angle    183.2719
 }
@@ -536,7 +536,7 @@ Galaxy "NGC 327"
         Dec          -5.1308
         Distance   2.845e+08
         Radius     6.207e+04
-        absMag         -21.2
+        AbsMag         -21.2
         Axis    [  0.0763   0.5704  -0.8178]
         Angle    181.6806
 }
@@ -550,7 +550,7 @@ Galaxy "NGC 404"
         Dec          35.7183
         Distance   1.065e+07
         Radius          5423
-        absMag        -17.57
+        AbsMag        -17.57
         Axis    [  0.6270   0.7467   0.2223]
         Angle    102.9214
 }
@@ -564,7 +564,7 @@ Galaxy "NGC 428"
         Dec           0.9814
         Distance   8.318e+07
         Radius     4.839e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.3024   0.8294  -0.4698]
         Angle    181.4719
 }
@@ -578,7 +578,7 @@ Galaxy "NGC 431"
         Dec          33.7053
         Distance   4.195e+08
         Radius     8.543e+04
-        absMag        -22.65
+        AbsMag        -22.65
         Axis    [  0.0455   0.9182   0.3935]
         Angle    136.3387
 }
@@ -592,7 +592,7 @@ Galaxy "NGC 439"
         Dec         -31.7472
         Distance   2.376e+08
         Radius      8.64e+04
-        absMag        -22.81
+        AbsMag        -22.81
         Axis    [  0.3671   0.5645  -0.7393]
         Angle    175.6623
 }
@@ -606,7 +606,7 @@ Galaxy "NGC 450"
         Dec          -0.8614
         Distance   7.203e+07
         Radius     3.143e+04
-        absMag        -20.12
+        AbsMag        -20.12
         Axis    [  0.3822   0.9192  -0.0948]
         Angle    165.3832
 }
@@ -620,7 +620,7 @@ Galaxy "NGC 452"
         Dec          31.0333
         Distance   2.316e+08
         Radius     8.422e+04
-        absMag        -20.76
+        AbsMag        -20.76
         Axis    [  0.0146   0.9790   0.2034]
         Angle    143.3460
 }
@@ -634,7 +634,7 @@ Galaxy "NGC 454-1"
         Dec         -55.4006
         Distance   3.576e+07
         Radius          8843
-        absMag           -18
+        AbsMag           -18
         Axis    [  0.7572   0.5183   0.3975]
         Angle    187.9872
 }
@@ -648,7 +648,7 @@ Galaxy "NGC 488"
         Dec           5.2558
         Distance   8.874e+07
         Radius      6.97e+04
-        absMag        -21.77
+        AbsMag        -21.77
         Axis    [  0.4339   0.8221   0.3686]
         Angle    145.5491
 }
@@ -662,7 +662,7 @@ Galaxy "NGC 493"
         Dec           0.9464
         Distance   9.722e+07
         Radius     4.807e+04
-        absMag        -20.17
+        AbsMag        -20.17
         Axis    [  0.1711   0.9834   0.0601]
         Angle    160.6602
 }
@@ -676,7 +676,7 @@ Galaxy "NGC 494"
         Dec          33.1728
         Distance   2.149e+08
         Radius      6.25e+04
-        absMag        -21.09
+        AbsMag        -21.09
         Axis    [ -0.1222   0.9596  -0.2534]
         Angle    160.5306
 }
@@ -690,7 +690,7 @@ Galaxy "NGC 524"
         Dec           9.5386
         Distance   7.824e+07
         Radius     3.186e+04
-        absMag         -21.5
+        AbsMag         -21.5
         Axis    [  0.7356   0.5932   0.3270]
         Angle    119.8269
 }
@@ -704,7 +704,7 @@ Galaxy "NGC 536"
         Dec          34.7033
         Distance   2.011e+08
         Radius     9.654e+04
-        absMag        -21.55
+        AbsMag        -21.55
         Axis    [ -0.0630   0.9980   0.0027]
         Angle    147.3018
 }
@@ -718,7 +718,7 @@ Galaxy "NGC 578"
         Dec         -22.6667
         Distance   9.223e+07
         Radius     6.439e+04
-        absMag        -21.46
+        AbsMag        -21.46
         Axis    [  0.4519   0.7815  -0.4302]
         Angle    172.9661
 }
@@ -732,7 +732,7 @@ Galaxy "NGC 582"
         Dec          33.4756
         Distance   2.098e+08
         Radius     6.714e+04
-        absMag        -20.74
+        AbsMag        -20.74
         Axis    [ -0.1093   0.9874   0.1143]
         Angle    144.1927
 }
@@ -746,7 +746,7 @@ Galaxy "NGC 583"
         Dec         -18.3394
         Distance   3.728e+07
         Radius          3795
-        absMag        -16.09
+        AbsMag        -16.09
         Axis    [  0.6600   0.7374   0.1438]
         Angle    163.5832
 }
@@ -760,7 +760,7 @@ Galaxy "NGC 584"
         Dec          -6.8672
         Distance   6.568e+07
         Radius     3.917e+04
-        absMag        -21.02
+        AbsMag        -21.02
         Axis    [  0.7811   0.6041  -0.1576]
         Angle    171.4217
 }
@@ -774,7 +774,7 @@ Galaxy "NGC 596"
         Dec          -7.0319
         Distance   7.103e+07
         Radius     3.306e+04
-        absMag        -20.79
+        AbsMag        -20.79
         Axis    [  0.8175   0.5725   0.0637]
         Angle    152.3735
 }
@@ -788,7 +788,7 @@ Galaxy "M 33"
         Dec          30.6581
         Distance   3.262e+06
         Radius     3.259e+04
-        absMag         -19.5
+        AbsMag         -19.5
         Axis    [  0.2097   0.9210   0.3283]
         Angle    130.5563
 }
@@ -802,7 +802,7 @@ Galaxy "NGC 599"
         Dec         -12.1908
         Distance   1.385e+06
         Radius           282
-        absMag         -9.64
+        AbsMag         -9.64
         Axis    [  0.4829   0.6401  -0.5976]
         Angle    193.8126
 }
@@ -816,7 +816,7 @@ Galaxy "NGC 613"
         Dec         -29.4186
         Distance   1.079e+08
         Radius     8.628e+04
-        absMag         -22.7
+        AbsMag         -22.7
         Axis    [  0.5354   0.6677  -0.5171]
         Angle    178.4741
 }
@@ -830,7 +830,7 @@ Galaxy "NGC 615"
         Dec          -7.3403
         Distance   1.012e+08
         Radius     3.976e+04
-        absMag        -20.76
+        AbsMag        -20.76
         Axis    [  0.1040   0.6860  -0.7201]
         Angle    169.2557
 }
@@ -844,7 +844,7 @@ Galaxy "NGC 617"
         Dec          -9.7736
         Distance   2.341e+07
         Radius          1703
-        absMag        -14.78
+        AbsMag        -14.78
         Axis    [  0.7860   0.4886   0.3789]
         Angle    134.2540
 }
@@ -858,7 +858,7 @@ Galaxy "NGC 625"
         Dec         -41.4375
         Distance   7.586e+07
         Radius       6.4e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.4703   0.8350  -0.2857]
         Angle    169.1216
 }
@@ -872,7 +872,7 @@ Galaxy "M 74"
         Dec          15.7833
         Distance   1.938e+07
         Radius      2.96e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.5423   0.8127   0.2130]
         Angle    133.1949
 }
@@ -886,7 +886,7 @@ Galaxy "NGC 658"
         Dec          12.6014
         Distance   1.258e+08
         Radius     5.489e+04
-        absMag        -20.63
+        AbsMag        -20.63
         Axis    [  0.2990   0.8933   0.3355]
         Angle    143.5576
 }
@@ -900,7 +900,7 @@ Galaxy "NGC 660"
         Dec          13.6436
         Distance   2.205e+07
         Radius     2.662e+04
-        absMag        -18.45
+        AbsMag        -18.45
         Axis    [ -0.1148   0.6442  -0.7562]
         Angle    176.4655
 }
@@ -914,7 +914,7 @@ Galaxy "NGC 668"
         Dec          36.4600
         Distance   1.224e+08
         Radius     3.203e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.0497   0.9427   0.3300]
         Angle    131.0211
 }
@@ -928,7 +928,7 @@ Galaxy "NGC 669"
         Dec          35.5631
         Distance   3.427e+08
         Radius     1.545e+05
-        absMag        -22.61
+        AbsMag        -22.61
         Axis    [  0.0398   0.9593   0.2795]
         Angle    132.8071
 }
@@ -942,7 +942,7 @@ Galaxy "NGC 672"
         Dec          27.4328
         Distance    4.05e+07
         Radius     3.534e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.0308   0.9993   0.0221]
         Angle    144.1068
 }
@@ -956,7 +956,7 @@ Galaxy "NGC 673"
         Dec          11.5214
         Distance    2.63e+08
         Radius     8.032e+04
-        absMag        -22.03
+        AbsMag        -22.03
         Axis    [  0.4900   0.7390   0.4624]
         Angle    131.4155
 }
@@ -970,7 +970,7 @@ Galaxy "NGC 675"
         Dec          13.0597
         Distance   2.763e+07
         Radius          4019
-        absMag        -15.24
+        AbsMag        -15.24
         Axis    [  0.0660   0.9562  -0.2850]
         Angle    156.2383
 }
@@ -984,7 +984,7 @@ Galaxy "NGC 678"
         Dec          21.9969
         Distance   8.988e+07
         Radius     5.882e+04
-        absMag         -19.7
+        AbsMag         -19.7
         Axis    [ -0.1103   0.9925  -0.0522]
         Angle    147.7800
 }
@@ -998,7 +998,7 @@ Galaxy "NGC 684"
         Dec          27.6461
         Distance   1.538e+08
         Radius     2.685e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [ -0.1459   0.9813  -0.1257]
         Angle    148.1737
 }
@@ -1012,7 +1012,7 @@ Galaxy "NGC 685"
         Dec         -52.7619
         Distance     5.5e+07
         Radius      2.88e+04
-        absMag        -19.93
+        AbsMag        -19.93
         Axis    [  0.8255   0.5398  -0.1649]
         Angle    183.4400
 }
@@ -1026,7 +1026,7 @@ Galaxy "NGC 688"
         Dec          35.2847
         Distance   2.288e+08
         Radius     7.986e+04
-        absMag        -21.73
+        AbsMag        -21.73
         Axis    [ -0.2292   0.8067  -0.5446]
         Angle    173.1468
 }
@@ -1040,7 +1040,7 @@ Galaxy "NGC 689"
         Dec         -27.4664
         Distance   4.106e+07
         Radius          5972
-        absMag         -16.7
+        AbsMag         -16.7
         Axis    [  0.5546   0.8260  -0.1004]
         Angle    168.5442
 }
@@ -1054,7 +1054,7 @@ Galaxy "NGC 697"
         Dec          22.3575
         Distance   1.277e+08
         Radius     7.429e+04
-        absMag        -20.96
+        AbsMag        -20.96
         Axis    [ -0.0771   0.9505  -0.3010]
         Angle    154.5839
 }
@@ -1068,7 +1068,7 @@ Galaxy "NGC 701"
         Dec          -9.7033
         Distance   7.792e+07
         Radius     2.946e+04
-        absMag        -19.69
+        AbsMag        -19.69
         Axis    [  0.4025   0.8991   0.1723]
         Angle    159.1974
 }
@@ -1082,7 +1082,7 @@ Galaxy "NGC 716"
         Dec          12.7083
         Distance   2.107e+08
         Radius     5.516e+04
-        absMag        -21.05
+        AbsMag        -21.05
         Axis    [  0.1846   0.9807   0.0649]
         Angle    147.6635
 }
@@ -1096,7 +1096,7 @@ Galaxy "NGC 720"
         Dec         -13.7386
         Distance   9.025e+07
         Radius     6.169e+04
-        absMag        -22.01
+        AbsMag        -22.01
         Axis    [  0.5908   0.5075  -0.6272]
         Angle    207.5389
 }
@@ -1110,7 +1110,7 @@ Galaxy "NGC 753"
         Dec          35.9158
         Distance    2.02e+08
         Radius     8.812e+04
-        absMag        -21.76
+        AbsMag        -21.76
         Axis    [ -0.0177   0.9024  -0.4305]
         Angle    172.0669
 }
@@ -1124,7 +1124,7 @@ Galaxy "NGC 754"
         Dec         -56.7611
         Distance   8.631e+07
         Radius          7532
-        absMag        -17.91
+        AbsMag        -17.91
         Axis    [  0.9230   0.2219  -0.3145]
         Angle    194.3946
 }
@@ -1138,7 +1138,7 @@ Galaxy "NGC 755"
         Dec          -9.0625
         Distance   7.461e+07
         Radius     3.581e+04
-        absMag         -19.2
+        AbsMag         -19.2
         Axis    [  0.3078   0.9403   0.1453]
         Angle    159.2590
 }
@@ -1152,7 +1152,7 @@ Galaxy "NGC 756"
         Dec         -16.7075
         Distance   2.841e+07
         Radius          3305
-        absMag         -15.2
+        AbsMag         -15.2
         Axis    [  0.5338   0.8179   0.2148]
         Angle    161.2381
 }
@@ -1166,7 +1166,7 @@ Galaxy "NGC 772"
         Dec          19.0075
         Distance    1.25e+08
         Radius     1.309e+05
-        absMag        -22.62
+        AbsMag        -22.62
         Axis    [  0.0386   0.8584  -0.5116]
         Angle    169.2346
 }
@@ -1180,7 +1180,7 @@ Galaxy "NGC 779"
         Dec          -5.9642
         Distance   6.831e+07
         Radius     4.074e+04
-        absMag        -20.41
+        AbsMag        -20.41
         Axis    [  0.0001   0.6668  -0.7452]
         Angle    157.5093
 }
@@ -1194,7 +1194,7 @@ Galaxy "NGC 780"
         Dec          28.2258
         Distance   1.157e+07
         Radius          2188
-        absMag        -13.75
+        AbsMag        -13.75
         Axis    [ -0.1134   0.6787  -0.7256]
         Angle    198.2475
 }
@@ -1208,7 +1208,7 @@ Galaxy "NGC 784"
         Dec          28.8381
         Distance   1.522e+07
         Radius     1.461e+04
-        absMag        -16.85
+        AbsMag        -16.85
         Axis    [  0.1102   0.7954   0.5959]
         Angle    138.1296
 }
@@ -1222,7 +1222,7 @@ Galaxy "NGC 803"
         Dec          16.0311
         Distance   7.031e+07
         Radius     3.068e+04
-        absMag        -19.17
+        AbsMag        -19.17
         Axis    [  0.2779   0.8333   0.4779]
         Angle    139.5995
 }
@@ -1236,7 +1236,7 @@ Galaxy "NGC 804"
         Dec          30.8325
         Distance   2.544e+07
         Radius          5179
-        absMag        -15.76
+        AbsMag        -15.76
         Axis    [  0.0678   0.8277   0.5570]
         Angle    137.0263
 }
@@ -1250,7 +1250,7 @@ Galaxy "NGC 821"
         Dec          10.9942
         Distance    7.86e+07
         Radius     2.744e+04
-        absMag        -21.11
+        AbsMag        -21.11
         Axis    [  0.7970   0.5985   0.0810]
         Angle    127.4978
 }
@@ -1264,7 +1264,7 @@ Galaxy "NGC 840"
         Dec           7.8458
         Distance   3.803e+08
         Radius     9.957e+04
-        absMag        -21.83
+        AbsMag        -21.83
         Axis    [  0.2956   0.9487  -0.1123]
         Angle    149.1332
 }
@@ -1278,7 +1278,7 @@ Galaxy "NGC 864"
         Dec           6.0019
         Distance   5.898e+07
         Radius     4.032e+04
-        absMag        -20.29
+        AbsMag        -20.29
         Axis    [  0.5279   0.7965   0.2949]
         Angle    137.1218
 }
@@ -1292,7 +1292,7 @@ Galaxy "NGC 891"
         Dec          42.3472
         Distance   2.725e+07
         Radius     4.638e+04
-        absMag        -19.51
+        AbsMag        -19.51
         Axis    [ -0.0400   0.8707   0.4902]
         Angle    127.1011
 }
@@ -1306,7 +1306,7 @@ Galaxy "NGC 895"
         Dec          -5.5211
         Distance   9.386e+07
         Radius     4.915e+04
-        absMag         -20.6
+        AbsMag         -20.6
         Axis    [  0.2892   0.7735  -0.5639]
         Angle    165.4921
 }
@@ -1320,7 +1320,7 @@ Galaxy "NGC 908"
         Dec         -21.2333
         Distance   6.587e+07
         Radius     5.844e+04
-        absMag        -21.33
+        AbsMag        -21.33
         Axis    [  0.4336   0.8856  -0.1668]
         Angle    156.7375
 }
@@ -1334,7 +1334,7 @@ Galaxy "NGC 917"
         Dec          31.9122
         Distance   2.625e+08
         Radius     9.544e+04
-        absMag        -20.83
+        AbsMag        -20.83
         Axis    [  0.1644   0.9831   0.0809]
         Angle    129.9982
 }
@@ -1348,7 +1348,7 @@ Galaxy "NGC 918"
         Dec          18.4958
         Distance   7.121e+07
         Radius     3.625e+04
-        absMag         -19.3
+        AbsMag         -19.3
         Axis    [ -0.0618   0.7355  -0.6747]
         Angle    174.6019
 }
@@ -1362,7 +1362,7 @@ Galaxy "NGC 925"
         Dec          33.5789
         Distance   2.727e+07
         Radius     4.165e+04
-        absMag        -19.71
+        AbsMag        -19.71
         Axis    [ -0.0080   0.9608  -0.2770]
         Angle    148.7675
 }
@@ -1376,7 +1376,7 @@ Galaxy "NGC 936"
         Dec          -1.1564
         Distance   7.507e+07
         Radius     5.131e+04
-        absMag        -21.61
+        AbsMag        -21.61
         Axis    [  0.3301   0.7114  -0.6204]
         Angle    177.8626
 }
@@ -1390,7 +1390,7 @@ Galaxy "NGC 959"
         Dec          35.4950
         Distance    5.83e+07
         Radius      1.95e+04
-        absMag        -18.96
+        AbsMag        -18.96
         Axis    [  0.1428   0.9897  -0.0098]
         Angle    130.7274
 }
@@ -1404,7 +1404,7 @@ Galaxy "NGC 960"
         Dec          -9.3003
         Distance   3.173e+07
         Radius          5538
-        absMag        -15.74
+        AbsMag        -15.74
         Axis    [  0.0889   0.8469  -0.5242]
         Angle    144.4804
 }
@@ -1418,7 +1418,7 @@ Galaxy "NGC 972"
         Dec          29.3103
         Distance   6.238e+07
         Radius     2.994e+04
-        absMag        -20.11
+        AbsMag        -20.11
         Axis    [ -0.1805   0.7834  -0.5947]
         Angle    167.7020
 }
@@ -1432,7 +1432,7 @@ Galaxy "NGC 986"
         Dec         -39.0458
         Distance   8.358e+07
         Radius     4.863e+04
-        absMag        -21.24
+        AbsMag        -21.24
         Axis    [  0.4316   0.4545  -0.7792]
         Angle    171.2174
 }
@@ -1446,7 +1446,7 @@ Galaxy "NGC 988"
         Dec          -9.3550
         Distance   5.799e+07
         Radius     3.458e+04
-        absMag        -20.25
+        AbsMag        -20.25
         Axis    [  0.2077   0.8608  -0.4647]
         Angle    148.8213
 }
@@ -1460,7 +1460,7 @@ Galaxy "NGC 1003"
         Dec          40.8728
         Distance    4.43e+07
         Radius     2.771e+04
-        absMag        -19.37
+        AbsMag        -19.37
         Axis    [ -0.1877   0.9678  -0.1680]
         Angle    139.4011
 }
@@ -1474,7 +1474,7 @@ Galaxy "NGC 1012"
         Dec          30.1514
         Distance    6.27e+07
         Radius      2.28e+04
-        absMag        -19.22
+        AbsMag        -19.22
         Axis    [  0.2553   0.8954   0.3649]
         Angle    122.4002
 }
@@ -1488,7 +1488,7 @@ Galaxy "NGC 1013"
         Dec         -11.5067
         Distance   5.146e+07
         Radius          5987
-        absMag        -16.99
+        AbsMag        -16.99
         Axis    [  0.5521   0.8072  -0.2088]
         Angle    153.8948
 }
@@ -1502,7 +1502,7 @@ Galaxy "NGC 1023"
         Dec          39.0633
         Distance   3.728e+07
         Radius     4.012e+04
-        absMag        -20.79
+        AbsMag        -20.79
         Axis    [ -0.1387   0.9857  -0.0953]
         Angle    135.4846
 }
@@ -1516,7 +1516,7 @@ Galaxy "NGC 1035"
         Dec          -8.1325
         Distance   7.783e+07
         Radius      2.49e+04
-        absMag        -19.69
+        AbsMag        -19.69
         Axis    [  0.0333   0.7111  -0.7023]
         Angle    148.5332
 }
@@ -1530,7 +1530,7 @@ Galaxy "NGC 1036"
         Dec          19.2969
         Distance   3.873e+07
         Radius          8449
-        absMag        -17.67
+        AbsMag        -17.67
         Axis    [  0.5228   0.7260   0.4469]
         Angle    120.3269
 }
@@ -1544,7 +1544,7 @@ Galaxy "NGC 1042"
         Dec          -8.4342
         Distance   5.232e+07
         Radius     3.272e+04
-        absMag        -20.03
+        AbsMag        -20.03
         Axis    [  0.6908   0.6755   0.2579]
         Angle    142.4456
 }
@@ -1558,7 +1558,7 @@ Galaxy "NGC 1052"
         Dec          -8.2547
         Distance   6.331e+07
         Radius     2.578e+04
-        absMag        -20.94
+        AbsMag        -20.94
         Axis    [  0.5901   0.5480  -0.5928]
         Angle    191.1286
 }
@@ -1572,7 +1572,7 @@ Galaxy "NGC 1055"
         Dec           0.4428
         Distance   5.536e+07
         Radius     6.119e+04
-        absMag        -20.55
+        AbsMag        -20.55
         Axis    [  0.1394   0.9202  -0.3657]
         Angle    144.6472
 }
@@ -1586,7 +1586,7 @@ Galaxy "NGC 1058"
         Dec          37.3414
         Distance   5.098e+07
         Radius     1.854e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.7844   0.5946   0.1763]
         Angle     89.0047
 }
@@ -1600,7 +1600,7 @@ Galaxy "M 77"
         Dec          -0.0128
         Distance   1.851e+07
         Radius     1.912e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.5613   0.8082  -0.1783]
         Angle    148.0870
 }
@@ -1614,7 +1614,7 @@ Galaxy "NGC 1073"
         Dec           1.3761
         Distance   4.241e+07
         Radius     3.022e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.6910   0.6709   0.2691]
         Angle    132.1121
 }
@@ -1628,7 +1628,7 @@ Galaxy "NGC 1084"
         Dec          -7.5778
         Distance   8.961e+07
         Radius     3.649e+04
-        absMag        -21.49
+        AbsMag        -21.49
         Axis    [  0.6439   0.7463   0.1686]
         Angle    143.6937
 }
@@ -1642,7 +1642,7 @@ Galaxy "NGC 1087"
         Dec          -0.4992
         Distance   5.889e+07
         Radius     3.341e+04
-        absMag        -20.48
+        AbsMag        -20.48
         Axis    [  0.5265   0.7351   0.4271]
         Angle    141.9335
 }
@@ -1656,7 +1656,7 @@ Galaxy "NGC 1090"
         Dec          -0.2478
         Distance   9.835e+07
         Radius     5.579e+04
-        absMag         -20.6
+        AbsMag         -20.6
         Axis    [  0.2031   0.9108  -0.3594]
         Angle    145.3736
 }
@@ -1670,7 +1670,7 @@ Galaxy "NGC 1091"
         Dec         -17.5333
         Distance   1.956e+07
         Radius          2561
-        absMag        -14.59
+        AbsMag        -14.59
         Axis    [  0.5399   0.8101  -0.2285]
         Angle    153.7154
 }
@@ -1684,7 +1684,7 @@ Galaxy "NGC 1097"
         Dec         -30.2756
         Distance   4.997e+07
         Radius     6.831e+04
-        absMag        -21.43
+        AbsMag        -21.43
         Axis    [  0.4342   0.6163  -0.6570]
         Angle    161.5621
 }
@@ -1698,7 +1698,7 @@ Galaxy "NGC 1114"
         Dec         -16.9939
         Distance   1.842e+08
         Radius     4.822e+04
-        absMag        -20.86
+        AbsMag        -20.86
         Axis    [  0.5160   0.7687   0.3779]
         Angle    159.4926
 }
@@ -1712,7 +1712,7 @@ Galaxy "NGC 1115"
         Dec          13.2669
         Distance   4.183e+07
         Radius          4258
-        absMag        -15.74
+        AbsMag        -15.74
         Axis    [  0.2918   0.8362   0.4644]
         Angle    139.3811
 }
@@ -1726,7 +1726,7 @@ Galaxy "NGC 1163"
         Dec         -17.1528
         Distance   9.939e+07
         Radius      3.18e+04
-        absMag        -18.52
+        AbsMag        -18.52
         Axis    [  0.0587   0.7521  -0.6565]
         Angle    133.8547
 }
@@ -1740,7 +1740,7 @@ Galaxy "NGC 1169"
         Dec          46.3864
         Distance   1.687e+08
         Radius     9.817e+04
-        absMag        -21.97
+        AbsMag        -21.97
         Axis    [  0.2843   0.9111   0.2986]
         Angle    103.3349
 }
@@ -1754,7 +1754,7 @@ Galaxy "NGC 1171"
         Dec          43.3978
         Distance   8.154e+07
         Radius     2.253e+04
-        absMag        -19.29
+        AbsMag        -19.29
         Axis    [ -0.2964   0.8222  -0.4859]
         Angle    160.7320
 }
@@ -1768,7 +1768,7 @@ Galaxy "NGC 1187"
         Dec         -22.8672
         Distance   5.563e+07
         Radius     3.398e+04
-        absMag        -20.56
+        AbsMag        -20.56
         Axis    [  0.4037   0.6305  -0.6629]
         Angle    161.3983
 }
@@ -1782,7 +1782,7 @@ Galaxy "NGC 1201"
         Dec         -26.0689
         Distance   6.598e+07
         Radius     3.455e+04
-        absMag        -20.83
+        AbsMag        -20.83
         Axis    [  0.6415   0.6860   0.3432]
         Angle    161.8030
 }
@@ -1796,7 +1796,7 @@ Galaxy "NGC 1232"
         Dec         -20.5792
         Distance   6.881e+07
         Radius     7.406e+04
-        absMag        -21.82
+        AbsMag        -21.82
         Axis    [  0.5610   0.6348  -0.5314]
         Angle    162.4223
 }
@@ -1810,7 +1810,7 @@ Galaxy "NGC 1241"
         Dec          -8.9222
         Distance   1.786e+08
         Radius     8.831e+04
-        absMag        -21.49
+        AbsMag        -21.49
         Axis    [  0.1499   0.6903  -0.7078]
         Angle    153.3835
 }
@@ -1824,7 +1824,7 @@ Galaxy "NGC 1247"
         Dec         -10.4811
         Distance   2.353e+08
         Radius     1.164e+05
-        absMag        -21.59
+        AbsMag        -21.59
         Axis    [  0.2455   0.9675  -0.0602]
         Angle    139.7779
 }
@@ -1838,7 +1838,7 @@ Galaxy "NGC 1249"
         Dec         -53.3361
         Distance   5.889e+07
         Radius     4.026e+04
-        absMag        -19.78
+        AbsMag        -19.78
         Axis    [  0.6422   0.6730  -0.3670]
         Angle    158.9083
 }
@@ -1852,7 +1852,7 @@ Galaxy "NGC 1253"
         Dec          -2.8231
         Distance   9.568e+07
         Radius     7.375e+04
-        absMag        -20.64
+        AbsMag        -20.64
         Axis    [  0.3204   0.9243  -0.2072]
         Angle    137.9266
 }
@@ -1866,7 +1866,7 @@ Galaxy "NGC 1255"
         Dec         -25.7244
         Distance   7.814e+07
         Radius     4.774e+04
-        absMag         -21.2
+        AbsMag         -21.2
         Axis    [  0.3941   0.6775  -0.6210]
         Angle    151.3904
 }
@@ -1880,7 +1880,7 @@ Galaxy "NGC 1269"
         Dec         -41.1072
         Distance   1.612e+07
         Radius     2.579e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.7887   0.5441  -0.2861]
         Angle    164.4533
 }
@@ -1894,7 +1894,7 @@ Galaxy "NGC 1292"
         Dec         -27.6106
         Distance   7.543e+07
         Radius     3.291e+04
-        absMag        -19.82
+        AbsMag        -19.82
         Axis    [  0.6023   0.7244   0.3354]
         Angle    164.6967
 }
@@ -1908,7 +1908,7 @@ Galaxy "NGC 1300"
         Dec         -19.4114
         Distance   6.804e+07
         Radius     6.136e+04
-        absMag         -21.3
+        AbsMag         -21.3
         Axis    [  0.4457   0.7452  -0.4960]
         Angle    148.9926
 }
@@ -1922,7 +1922,7 @@ Galaxy "NGC 1302"
         Dec         -26.0606
         Distance   7.076e+07
         Radius     4.014e+04
-        absMag        -20.98
+        AbsMag        -20.98
         Axis    [  0.8531   0.4147   0.3166]
         Angle    148.3773
 }
@@ -1936,7 +1936,7 @@ Galaxy "NGC 1313"
         Dec         -66.4953
         Distance   1.938e+07
         Radius     2.594e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.8768   0.4804  -0.0215]
         Angle    184.4931
 }
@@ -1950,7 +1950,7 @@ Galaxy "NGC 1316"
         Dec         -37.2078
         Distance   7.006e+07
         Radius     1.121e+05
-        absMag        -23.26
+        AbsMag        -23.26
         Axis    [  0.7188   0.6914  -0.0729]
         Angle    159.2628
 }
@@ -1964,7 +1964,7 @@ Galaxy "NGC 1317"
         Dec         -37.1033
         Distance   8.272e+07
         Radius     3.369e+04
-        absMag        -20.92
+        AbsMag        -20.92
         Axis    [  0.7513   0.5664  -0.3389]
         Angle    161.3079
 }
@@ -1978,7 +1978,7 @@ Galaxy "NGC 1325"
         Dec         -21.5431
         Distance   8.064e+07
         Radius     5.629e+04
-        absMag        -20.57
+        AbsMag        -20.57
         Axis    [  0.4716   0.8812  -0.0336]
         Angle    146.4275
 }
@@ -1992,7 +1992,7 @@ Galaxy "NGC 1325A"
         Dec         -21.3364
         Distance   1.704e+07
         Radius          5204
-        absMag        -15.99
+        AbsMag        -15.99
         Axis    [  0.3700   0.5285  -0.7640]
         Angle    171.2535
 }
@@ -2006,7 +2006,7 @@ Galaxy "NGC 1326"
         Dec         -36.4642
         Distance   5.817e+07
         Radius     3.299e+04
-        absMag        -20.66
+        AbsMag        -20.66
         Axis    [  0.6951   0.6463  -0.3149]
         Angle    157.0052
 }
@@ -2020,7 +2020,7 @@ Galaxy "NGC 1332"
         Dec         -21.3344
         Distance   7.472e+07
         Radius      4.89e+04
-        absMag         -21.5
+        AbsMag         -21.5
         Axis    [  0.2545   0.8181  -0.5158]
         Angle    134.6396
 }
@@ -2034,7 +2034,7 @@ Galaxy "NGC 1337"
         Dec          -8.3883
         Distance   6.265e+07
         Radius     5.194e+04
-        absMag        -19.52
+        AbsMag        -19.52
         Axis    [ -0.0146   0.7451  -0.6668]
         Angle    132.1688
 }
@@ -2048,7 +2048,7 @@ Galaxy "NGC 1344"
         Dec         -31.0681
         Distance   6.448e+07
         Radius     4.502e+04
-        absMag        -21.08
+        AbsMag        -21.08
         Axis    [  0.3656   0.3186  -0.8745]
         Angle    200.0991
 }
@@ -2062,7 +2062,7 @@ Galaxy "NGC 1350"
         Dec         -33.6272
         Distance   7.846e+07
         Radius     6.733e+04
-        absMag        -21.51
+        AbsMag        -21.51
         Axis    [  0.1348   0.4320  -0.8918]
         Angle    144.6388
 }
@@ -2076,7 +2076,7 @@ Galaxy "NGC 1365"
         Dec         -36.1408
         Distance   4.657e+07
         Radius     7.451e+04
-        absMag        -21.27
+        AbsMag        -21.27
         Axis    [  0.6933   0.7161   0.0815]
         Angle    160.6674
 }
@@ -2090,7 +2090,7 @@ Galaxy "NGC 1366"
         Dec         -31.1933
         Distance   6.878e+07
         Radius     2.101e+04
-        absMag        -20.62
+        AbsMag        -20.62
         Axis    [  0.6254   0.6994   0.3460]
         Angle    167.8018
 }
@@ -2104,7 +2104,7 @@ Galaxy "NGC 1371"
         Dec         -24.9333
         Distance   6.093e+07
         Radius     4.963e+04
-        absMag        -20.66
+        AbsMag        -20.66
         Axis    [  0.3377   0.6078  -0.7187]
         Angle    151.4295
 }
@@ -2118,7 +2118,7 @@ Galaxy "NGC 1374"
         Dec         -35.2258
         Distance   6.448e+07
         Radius     2.532e+04
-        absMag        -20.48
+        AbsMag        -20.48
         Axis    [  0.6433   0.3191  -0.6959]
         Angle    186.0114
 }
@@ -2132,7 +2132,7 @@ Galaxy "NGC 1379"
         Dec         -35.4408
         Distance   6.538e+07
         Radius     2.282e+04
-        absMag        -20.81
+        AbsMag        -20.81
         Axis    [  0.9661   0.2360   0.1047]
         Angle    154.1601
 }
@@ -2146,7 +2146,7 @@ Galaxy "NGC 1380"
         Dec         -34.9753
         Distance   5.747e+07
         Radius     3.343e+04
-        absMag        -21.33
+        AbsMag        -21.33
         Axis    [  0.7173   0.6376   0.2810]
         Angle    165.3047
 }
@@ -2160,7 +2160,7 @@ Galaxy "NGC 1385"
         Dec         -24.5028
         Distance   4.779e+07
         Radius     2.502e+04
-        absMag        -19.93
+        AbsMag        -19.93
         Axis    [  0.0786   0.4687  -0.8799]
         Angle    149.6176
 }
@@ -2174,7 +2174,7 @@ Galaxy "NGC 1387"
         Dec         -35.5058
         Distance   6.629e+07
         Radius       2.7e+04
-        absMag        -20.74
+        AbsMag        -20.74
         Axis    [  0.5890   0.4594  -0.6649]
         Angle    167.3591
 }
@@ -2188,7 +2188,7 @@ Galaxy "NGC 1395"
         Dec         -23.0272
         Distance    7.86e+07
         Radius     5.716e+04
-        absMag        -22.11
+        AbsMag        -22.11
         Axis    [  0.6278   0.4138  -0.6592]
         Angle    181.1569
 }
@@ -2202,7 +2202,7 @@ Galaxy "NGC 1398"
         Dec         -26.3372
         Distance   5.844e+07
         Radius      6.12e+04
-        absMag        -21.47
+        AbsMag        -21.47
         Axis    [  0.5428   0.6786  -0.4949]
         Angle    148.9944
 }
@@ -2216,7 +2216,7 @@ Galaxy "NGC 1399"
         Dec         -35.4497
         Distance   6.508e+07
         Radius     6.531e+04
-        absMag         -22.1
+        AbsMag         -22.1
         Axis    [  0.8717   0.3091  -0.3803]
         Angle    170.4092
 }
@@ -2230,7 +2230,7 @@ Galaxy "NGC 1400"
         Dec         -18.6881
         Distance   8.619e+07
         Radius     3.134e+04
-        absMag        -21.21
+        AbsMag        -21.21
         Axis    [  0.7738   0.6334  -0.0108]
         Angle    144.3280
 }
@@ -2244,7 +2244,7 @@ Galaxy "NGC 1404"
         Dec         -35.5928
         Distance   6.846e+07
         Radius     3.286e+04
-        absMag        -21.61
+        AbsMag        -21.61
         Axis    [  0.3732   0.2830  -0.8835]
         Angle    197.3389
 }
@@ -2258,7 +2258,7 @@ Galaxy "NGC 1406"
         Dec         -31.3222
         Distance   6.985e+07
         Radius     3.962e+04
-        absMag        -19.95
+        AbsMag        -19.95
         Axis    [  0.4952   0.8285   0.2613]
         Angle    167.5758
 }
@@ -2272,7 +2272,7 @@ Galaxy "NGC 1407"
         Dec         -18.5803
         Distance   9.407e+07
         Radius     6.294e+04
-        absMag         -22.6
+        AbsMag         -22.6
         Axis    [  0.9363   0.3438  -0.0717]
         Angle    144.6816
 }
@@ -2286,7 +2286,7 @@ Galaxy "NGC 1417"
         Dec          -4.7053
         Distance   1.878e+08
         Radius     6.281e+04
-        absMag         -21.7
+        AbsMag         -21.7
         Axis    [  0.6105   0.6678   0.4258]
         Angle    141.3972
 }
@@ -2300,7 +2300,7 @@ Galaxy "NGC 1421"
         Dec         -13.4878
         Distance   9.273e+07
         Radius     4.586e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [  0.4882   0.7562   0.4356]
         Angle    158.3756
 }
@@ -2314,7 +2314,7 @@ Galaxy "NGC 1425"
         Dec         -29.8942
         Distance    7.37e+07
         Radius     6.218e+04
-        absMag        -21.17
+        AbsMag        -21.17
         Axis    [  0.3062   0.6750  -0.6713]
         Angle    136.6701
 }
@@ -2328,7 +2328,7 @@ Galaxy "NGC 1427"
         Dec         -35.3928
         Distance   7.681e+07
         Radius     4.245e+04
-        absMag        -21.06
+        AbsMag        -21.06
         Axis    [  0.8699   0.3060  -0.3868]
         Angle    169.9576
 }
@@ -2342,7 +2342,7 @@ Galaxy "NGC 1433"
         Dec         -47.2219
         Distance   2.934e+07
         Radius     2.774e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.7253   0.4192  -0.5461]
         Angle    166.5096
 }
@@ -2356,7 +2356,7 @@ Galaxy "NGC 1448"
         Dec         -44.6458
         Distance   6.242e+07
         Radius       6.9e+04
-        absMag        -20.71
+        AbsMag        -20.71
         Axis    [  0.5550   0.8318   0.0025]
         Angle    162.3781
 }
@@ -2370,7 +2370,7 @@ Galaxy "NGC 1493"
         Dec         -46.2117
         Distance   4.869e+07
         Radius     1.983e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.9582   0.1734   0.2275]
         Angle    161.0574
 }
@@ -2384,7 +2384,7 @@ Galaxy "NGC 1494"
         Dec         -48.9094
         Distance   6.596e+07
         Radius     3.166e+04
-        absMag        -19.93
+        AbsMag        -19.93
         Axis    [  0.1389   0.2570  -0.9564]
         Angle    140.7843
 }
@@ -2398,7 +2398,7 @@ Galaxy "NGC 1507"
         Dec          -2.1886
         Distance   4.444e+07
         Radius     2.327e+04
-        absMag        -18.37
+        AbsMag        -18.37
         Axis    [  0.4582   0.7925   0.4024]
         Angle    142.7195
 }
@@ -2412,7 +2412,7 @@ Galaxy "NGC 1508"
         Dec          25.4092
         Distance   2.603e+07
         Radius          2650
-        absMag        -14.91
+        AbsMag        -14.91
         Axis    [  0.6831   0.7093   0.1740]
         Angle    103.1732
 }
@@ -2426,7 +2426,7 @@ Galaxy "NGC 1511"
         Dec         -67.6347
         Distance   6.066e+07
         Radius     3.088e+04
-        absMag        -20.35
+        AbsMag        -20.35
         Axis    [  0.5406   0.4625  -0.7027]
         Angle    135.8025
 }
@@ -2440,7 +2440,7 @@ Galaxy "NGC 1512"
         Dec         -43.3489
         Distance   3.527e+07
         Radius     4.566e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.6351   0.6156  -0.4665]
         Angle    147.9011
 }
@@ -2454,7 +2454,7 @@ Galaxy "NGC 1527"
         Dec         -47.8967
         Distance   5.881e+07
         Radius     3.336e+04
-        absMag        -20.58
+        AbsMag        -20.58
         Axis    [  0.6068   0.7143  -0.3487]
         Angle    145.2922
 }
@@ -2468,7 +2468,7 @@ Galaxy "NGC 1532"
         Dec         -32.8731
         Distance   5.092e+07
         Radius     8.591e+04
-        absMag        -21.17
+        AbsMag        -21.17
         Axis    [  0.5918   0.8024   0.0773]
         Angle    152.9240
 }
@@ -2482,7 +2482,7 @@ Galaxy "NGC 1533"
         Dec         -56.1178
         Distance   6.973e+07
         Radius      2.84e+04
-        absMag        -20.95
+        AbsMag        -20.95
         Axis    [  0.3903   0.2603  -0.8831]
         Angle    155.8989
 }
@@ -2496,7 +2496,7 @@ Galaxy "NGC 1537"
         Dec         -31.6456
         Distance   7.576e+07
         Radius     4.297e+04
-        absMag        -21.33
+        AbsMag        -21.33
         Axis    [  0.5535   0.6500  -0.5207]
         Angle    141.5236
 }
@@ -2510,7 +2510,7 @@ Galaxy "NGC 1543"
         Dec         -57.7372
         Distance   6.538e+07
         Radius     3.613e+04
-        absMag        -21.21
+        AbsMag        -21.21
         Axis    [  0.7128   0.4503  -0.5378]
         Angle    157.1952
 }
@@ -2524,7 +2524,7 @@ Galaxy "NGC 1546"
         Dec         -56.0603
         Distance   5.146e+07
         Radius     2.395e+04
-        absMag        -19.99
+        AbsMag        -19.99
         Axis    [  0.3759   0.3519  -0.8572]
         Angle    138.4110
 }
@@ -2538,7 +2538,7 @@ Galaxy "NGC 1549"
         Dec         -55.5914
         Distance   6.419e+07
         Radius     4.574e+04
-        absMag        -21.87
+        AbsMag        -21.87
         Axis    [  0.5546   0.1280  -0.8222]
         Angle    187.4673
 }
@@ -2552,7 +2552,7 @@ Galaxy "NGC 1553"
         Dec         -55.7794
         Distance   6.046e+07
         Radius     3.957e+04
-        absMag        -22.34
+        AbsMag        -22.34
         Axis    [  0.3566   0.3303  -0.8739]
         Angle    139.6587
 }
@@ -2566,7 +2566,7 @@ Galaxy "NGC 1559"
         Dec         -62.7839
         Distance   6.002e+07
         Radius     3.056e+04
-        absMag        -20.92
+        AbsMag        -20.92
         Axis    [  0.7700   0.5544  -0.3159]
         Angle    162.4796
 }
@@ -2580,7 +2580,7 @@ Galaxy "NGC 1560"
         Dec          71.8794
         Distance   1.468e+07
         Radius     2.092e+04
-        absMag        -16.87
+        AbsMag        -16.87
         Axis    [ -0.0270   0.6699   0.7420]
         Angle     96.6808
 }
@@ -2594,7 +2594,7 @@ Galaxy "NGC 1561"
         Dec         -15.8453
         Distance   1.347e+07
         Radius          2155
-        absMag        -14.18
+        AbsMag        -14.18
         Axis    [ -0.0096   0.4725  -0.8813]
         Angle    153.9894
 }
@@ -2608,7 +2608,7 @@ Galaxy "NGC 1566"
         Dec         -54.9372
         Distance   6.668e+07
         Radius     7.953e+04
-        absMag        -22.15
+        AbsMag        -22.15
         Axis    [  0.8338   0.4681  -0.2927]
         Angle    163.3636
 }
@@ -2622,7 +2622,7 @@ Galaxy "NGC 1569"
         Dec          64.8481
         Distance   7.944e+07
         Radius     4.275e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.3354   0.9294  -0.1539]
         Angle    129.7873
 }
@@ -2636,7 +2636,7 @@ Galaxy "NGC 1574"
         Dec         -56.9744
         Distance   6.478e+07
         Radius     3.769e+04
-        absMag        -21.19
+        AbsMag        -21.19
         Axis    [  0.5113   0.2538  -0.8211]
         Angle    162.6885
 }
@@ -2650,7 +2650,7 @@ Galaxy "NGC 1600"
         Dec          -5.0872
         Distance   1.739e+08
         Radius     6.322e+04
-        absMag        -22.63
+        AbsMag        -22.63
         Axis    [  0.9683   0.2497   0.0012]
         Angle    123.0123
 }
@@ -2664,7 +2664,7 @@ Galaxy "NGC 1617"
         Dec         -54.6019
         Distance   4.766e+07
         Radius      2.98e+04
-        absMag        -20.32
+        AbsMag        -20.32
         Axis    [  0.5623   0.5414  -0.6251]
         Angle    137.7211
 }
@@ -2678,7 +2678,7 @@ Galaxy "NGC 1620"
         Dec          -0.1442
         Distance   1.494e+08
         Radius     6.304e+04
-        absMag        -20.91
+        AbsMag        -20.91
         Axis    [  0.4997   0.8168   0.2884]
         Angle    129.5346
 }
@@ -2692,7 +2692,7 @@ Galaxy "NGC 1621"
         Dec          -4.9867
         Distance   4.169e+07
         Radius          8489
-        absMag        -16.93
+        AbsMag        -16.93
         Axis    [  0.6095   0.4980  -0.6169]
         Angle    158.1291
 }
@@ -2706,7 +2706,7 @@ Galaxy "NGC 1637"
         Dec          -2.8578
         Distance   4.241e+07
         Radius     2.035e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.8076   0.5816   0.0971]
         Angle    122.8345
 }
@@ -2720,7 +2720,7 @@ Galaxy "NGC 1672"
         Dec         -59.2478
         Distance   6.098e+07
         Radius     5.942e+04
-        absMag        -21.66
+        AbsMag        -21.66
         Axis    [  0.2012   0.1426  -0.9691]
         Angle    151.7849
 }
@@ -2734,7 +2734,7 @@ Galaxy "NGC 1679"
         Dec         -31.9672
         Distance    4.72e+07
         Radius     1.854e+04
-        absMag         -19.4
+        AbsMag         -19.4
         Axis    [  0.2175   0.4493  -0.8665]
         Angle    141.6859
 }
@@ -2748,7 +2748,7 @@ Galaxy "NGC 1703"
         Dec         -59.7428
         Distance   6.138e+07
         Radius     2.589e+04
-        absMag        -20.17
+        AbsMag        -20.17
         Axis    [  0.9422   0.3227   0.0900]
         Angle    176.1924
 }
@@ -2762,7 +2762,7 @@ Galaxy "NGC 1744"
         Dec         -26.0228
         Distance   4.693e+07
         Radius     5.051e+04
-        absMag        -19.69
+        AbsMag        -19.69
         Axis    [ -0.0204   0.4418  -0.8969]
         Angle    129.3029
 }
@@ -2776,7 +2776,7 @@ Galaxy "NGC 1752"
         Dec          -8.2408
         Distance   1.672e+08
         Radius     6.321e+04
-        absMag        -20.95
+        AbsMag        -20.95
         Axis    [  0.4346   0.8874  -0.1536]
         Angle    115.2903
 }
@@ -2790,7 +2790,7 @@ Galaxy "NGC 1753"
         Dec          -3.3447
         Distance    2.88e+07
         Radius          5865
-        absMag        -15.13
+        AbsMag        -15.13
         Axis    [ -0.1746   0.6009  -0.7800]
         Angle    126.6445
 }
@@ -2804,7 +2804,7 @@ Galaxy "NGC 1784"
         Dec         -11.8711
         Distance   1.145e+08
         Radius     6.829e+04
-        absMag        -21.03
+        AbsMag        -21.03
         Axis    [  0.3821   0.7400  -0.5536]
         Angle    121.9690
 }
@@ -2818,7 +2818,7 @@ Galaxy "NGC 1792"
         Dec         -37.9797
         Distance   4.412e+07
         Radius     3.337e+04
-        absMag        -20.66
+        AbsMag        -20.66
         Axis    [  0.2674   0.5151  -0.8144]
         Angle    122.4860
 }
@@ -2832,7 +2832,7 @@ Galaxy "NGC 1796"
         Dec         -61.1397
         Distance     8.5e+06
         Radius          2225
-        absMag        -14.98
+        AbsMag        -14.98
         Axis    [  0.6135   0.4497  -0.6491]
         Angle    139.7406
 }
@@ -2846,7 +2846,7 @@ Galaxy "NGC 1808"
         Dec         -37.5133
         Distance   4.607e+07
         Radius     4.355e+04
-        absMag        -20.85
+        AbsMag        -20.85
         Axis    [  0.3163   0.5003  -0.8060]
         Angle    127.8831
 }
@@ -2860,7 +2860,7 @@ Galaxy "NGC 1832"
         Dec         -15.6889
         Distance   1.133e+08
         Radius     4.283e+04
-        absMag         -21.4
+        AbsMag         -21.4
         Axis    [  0.8288   0.5343   0.1662]
         Angle    134.3060
 }
@@ -2874,7 +2874,7 @@ Galaxy "NGC 1892"
         Dec         -64.9603
         Distance   5.912e+07
         Radius     2.494e+04
-        absMag        -19.19
+        AbsMag        -19.19
         Axis    [  0.6550   0.6170  -0.4363]
         Angle    140.6163
 }
@@ -2888,7 +2888,7 @@ Galaxy "NGC 1906"
         Dec         -15.9428
         Distance    2.88e+07
         Radius          3770
-        absMag        -15.63
+        AbsMag        -15.63
         Axis    [  0.0686   0.6057  -0.7928]
         Angle    121.0604
 }
@@ -2902,7 +2902,7 @@ Galaxy "NGC 1947"
         Dec         -63.7608
         Distance   5.423e+07
         Radius     2.366e+04
-        absMag         -20.3
+        AbsMag         -20.3
         Axis    [  0.5421   0.2028  -0.8155]
         Angle    153.9372
 }
@@ -2916,7 +2916,7 @@ Galaxy "NGC 1961"
         Dec          69.3786
         Distance   1.772e+08
         Radius      1.16e+05
-        absMag        -22.77
+        AbsMag        -22.77
         Axis    [ -0.0439   0.9964   0.0726]
         Angle     90.8282
 }
@@ -2930,7 +2930,7 @@ Galaxy "NGC 1964"
         Dec         -21.9453
         Distance   7.108e+07
         Radius     5.789e+04
-        absMag        -20.89
+        AbsMag        -20.89
         Axis    [  0.6941   0.7186   0.0430]
         Angle    131.3902
 }
@@ -2944,7 +2944,7 @@ Galaxy "NGC 1979"
         Dec         -23.3103
         Distance   8.579e+06
         Radius          2246
-        absMag         -15.3
+        AbsMag         -15.3
         Axis    [  0.9962   0.0692   0.0534]
         Angle    136.9671
 }
@@ -2958,7 +2958,7 @@ Galaxy "NGC 2090"
         Dec         -34.2508
         Distance   4.811e+07
         Radius     3.429e+04
-        absMag        -19.54
+        AbsMag        -19.54
         Axis    [  0.8077   0.5843   0.0792]
         Angle    147.7746
 }
@@ -2972,7 +2972,7 @@ Galaxy "NGC 2146"
         Dec          78.3558
         Distance   3.868e+07
         Radius     3.038e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.0268   0.8311   0.5554]
         Angle     72.3881
 }
@@ -2986,7 +2986,7 @@ Galaxy "NGC 2146A"
         Dec          78.5300
         Distance   8.707e+07
         Radius     3.799e+04
-        absMag        -19.33
+        AbsMag        -19.33
         Axis    [  0.1872   0.5412   0.8198]
         Angle     75.5738
 }
@@ -3000,7 +3000,7 @@ Galaxy "NGC 2148"
         Dec         -59.1264
         Distance   3.353e+07
         Radius          5364
-        absMag        -16.26
+        AbsMag        -16.26
         Axis    [  0.2329   0.1775  -0.9562]
         Angle    132.5987
 }
@@ -3014,7 +3014,7 @@ Galaxy "NGC 2196"
         Dec         -21.8061
         Distance   1.093e+08
         Radius      4.45e+04
-        absMag        -21.73
+        AbsMag        -21.73
         Axis    [  0.8767   0.4535  -0.1604]
         Angle    126.4743
 }
@@ -3028,7 +3028,7 @@ Galaxy "NGC 2207"
         Dec         -21.3728
         Distance   1.288e+08
         Radius     7.305e+04
-        absMag        -21.98
+        AbsMag        -21.98
         Axis    [  0.0832   0.5476  -0.8326]
         Angle    110.0088
 }
@@ -3042,7 +3042,7 @@ Galaxy "NGC 2217"
         Dec         -27.2342
         Distance   7.805e+07
         Radius     5.336e+04
-        absMag        -21.19
+        AbsMag        -21.19
         Axis    [  0.9555   0.2651  -0.1295]
         Angle    135.9078
 }
@@ -3056,7 +3056,7 @@ Galaxy "NGC 2268"
         Dec          84.3822
         Distance    1.43e+08
         Radius     5.616e+04
-        absMag        -21.81
+        AbsMag        -21.81
         Axis    [  0.0476   0.7901   0.6111]
         Angle     65.2658
 }
@@ -3070,7 +3070,7 @@ Galaxy "NGC 2273B"
         Dec          60.3403
         Distance   1.158e+08
         Radius     4.547e+04
-        absMag        -20.15
+        AbsMag        -20.15
         Axis    [  0.4209   0.7338   0.5333]
         Angle     67.9266
 }
@@ -3084,7 +3084,7 @@ Galaxy "NGC 2276"
         Dec          85.7550
         Distance   1.085e+08
         Radius     3.628e+04
-        absMag        -21.31
+        AbsMag        -21.31
         Axis    [  0.5908   0.1549   0.7918]
         Angle     45.7702
 }
@@ -3098,7 +3098,7 @@ Galaxy "NGC 2280"
         Dec         -27.6389
         Distance   8.168e+07
         Radius     7.484e+04
-        absMag        -21.49
+        AbsMag        -21.49
         Axis    [ -0.1457   0.3823  -0.9125]
         Angle    105.3301
 }
@@ -3112,7 +3112,7 @@ Galaxy "NGC 2283"
         Dec         -18.2103
         Distance   9.805e+06
         Radius          5134
-        absMag        -15.19
+        AbsMag        -15.19
         Axis    [  0.9444   0.3164   0.0890]
         Angle    131.7032
 }
@@ -3126,7 +3126,7 @@ Galaxy "NGC 2292"
         Dec         -26.7464
         Distance   1.075e+08
         Radius     6.253e+04
-        absMag        -21.79
+        AbsMag        -21.79
         Axis    [  0.3176   0.4036  -0.8580]
         Angle    125.9054
 }
@@ -3140,7 +3140,7 @@ Galaxy "NGC 2325"
         Dec         -28.6978
         Distance   8.345e+07
         Radius     3.641e+04
-        absMag        -21.04
+        AbsMag        -21.04
         Axis    [  0.9842  -0.0792  -0.1582]
         Angle    141.9748
 }
@@ -3154,7 +3154,7 @@ Galaxy "NGC 2336"
         Dec          80.1778
         Distance   1.292e+08
         Radius     1.334e+05
-        absMag        -22.69
+        AbsMag        -22.69
         Axis    [ -0.4810   0.8647  -0.1445]
         Angle    142.8355
 }
@@ -3168,7 +3168,7 @@ Galaxy "NGC 2357"
         Dec          23.3564
         Distance   1.297e+08
         Radius     6.793e+04
-        absMag         -19.3
+        AbsMag         -19.3
         Axis    [ -0.2865   0.9390  -0.1900]
         Angle     75.9335
 }
@@ -3182,7 +3182,7 @@ Galaxy "NGC 2363"
         Dec          69.1928
         Distance   4.055e+07
         Radius          9437
-        absMag        -15.57
+        AbsMag        -15.57
         Axis    [  0.6368   0.2710   0.7218]
         Angle     63.8675
 }
@@ -3196,7 +3196,7 @@ Galaxy "NGC 2366"
         Dec          69.2161
         Distance   1.672e+07
         Radius     1.969e+04
-        absMag        -17.65
+        AbsMag        -17.65
         Axis    [  0.4769   0.3626   0.8007]
         Angle     74.2735
 }
@@ -3210,7 +3210,7 @@ Galaxy "NGC 2403"
         Dec          65.6017
         Distance   1.413e+07
         Radius      4.81e+04
-        absMag        -19.98
+        AbsMag        -19.98
         Axis    [ -0.2813   0.9595  -0.0156]
         Angle     93.4131
 }
@@ -3224,7 +3224,7 @@ Galaxy "NGC 2405-1"
         Dec          25.9061
         Distance    3.85e+06
         Radius           280
-        absMag        -11.26
+        AbsMag        -11.26
         Axis    [  0.1576   0.9155  -0.3701]
         Angle     76.1090
 }
@@ -3238,7 +3238,7 @@ Galaxy "NGC 2427"
         Dec         -47.6358
         Distance   4.358e+07
         Radius     3.106e+04
-        absMag        -19.03
+        AbsMag        -19.03
         Axis    [  0.2824   0.3459  -0.8948]
         Angle     93.6846
 }
@@ -3252,7 +3252,7 @@ Galaxy "NGC 2442"
         Dec         -69.5247
         Distance    7.04e+07
         Radius     6.143e+04
-        absMag        -21.27
+        AbsMag        -21.27
         Axis    [  0.8913   0.2142  -0.3997]
         Angle    165.3793
 }
@@ -3266,7 +3266,7 @@ Galaxy "NGC 2541"
         Dec          49.0619
         Distance   5.237e+07
         Radius     4.798e+04
-        absMag        -19.53
+        AbsMag        -19.53
         Axis    [ -0.4919   0.8251  -0.2781]
         Angle    105.7921
 }
@@ -3280,7 +3280,7 @@ Galaxy "NGC 2545"
         Dec          21.3561
         Distance   2.277e+08
         Radius     7.287e+04
-        absMag        -21.82
+        AbsMag        -21.82
         Axis    [ -0.4899   0.6743  -0.5526]
         Angle    100.5046
 }
@@ -3294,7 +3294,7 @@ Galaxy "NGC 2559"
         Dec         -27.4569
         Distance   8.159e+07
         Radius      3.56e+04
-        absMag        -21.09
+        AbsMag        -21.09
         Axis    [  0.9261   0.3752  -0.0384]
         Angle    130.3242
 }
@@ -3308,7 +3308,7 @@ Galaxy "NGC 2566"
         Dec         -25.5006
         Distance   8.585e+07
         Radius     3.621e+04
-        absMag         -21.1
+        AbsMag         -21.1
         Axis    [  0.7629   0.4221  -0.4897]
         Angle     97.5415
 }
@@ -3322,7 +3322,7 @@ Galaxy "NGC 2591"
         Dec          78.0256
         Distance   7.683e+07
         Radius     3.352e+04
-        absMag        -19.66
+        AbsMag        -19.66
         Axis    [  0.3570   0.2109   0.9100]
         Angle     90.4052
 }
@@ -3336,7 +3336,7 @@ Galaxy "NGC 2596"
         Dec          17.2844
         Distance   2.566e+08
         Radius     5.598e+04
-        absMag        -21.08
+        AbsMag        -21.08
         Axis    [  0.6737   0.7378   0.0428]
         Angle     64.5709
 }
@@ -3350,7 +3350,7 @@ Galaxy "NGC 2613"
         Dec         -22.9728
         Distance   1.106e+08
         Radius     1.045e+05
-        absMag        -22.25
+        AbsMag        -22.25
         Axis    [  0.2095   0.6325  -0.7456]
         Angle     60.1846
 }
@@ -3364,7 +3364,7 @@ Galaxy "NGC 2655"
         Dec          78.2236
         Distance   6.464e+07
         Radius     4.607e+04
-        absMag        -21.39
+        AbsMag        -21.39
         Axis    [  0.2813   0.9056   0.3173]
         Angle     49.6344
 }
@@ -3378,7 +3378,7 @@ Galaxy "NGC 2663"
         Dec         -33.7950
         Distance   9.674e+07
         Radius     4.924e+04
-        absMag        -21.46
+        AbsMag        -21.46
         Axis    [  0.3113   0.0921  -0.9458]
         Angle    140.6939
 }
@@ -3392,7 +3392,7 @@ Galaxy "NGC 2681"
         Dec          51.3131
         Distance   5.616e+07
         Radius     2.941e+04
-        absMag        -20.98
+        AbsMag        -20.98
         Axis    [  0.9995   0.0079   0.0316]
         Angle     53.8470
 }
@@ -3406,7 +3406,7 @@ Galaxy "NGC 2683"
         Dec          33.4200
         Distance    2.52e+07
         Radius     3.409e+04
-        absMag        -19.74
+        AbsMag        -19.74
         Axis    [  0.6867   0.5131   0.5150]
         Angle     74.4381
 }
@@ -3420,7 +3420,7 @@ Galaxy "NGC 2701"
         Dec          53.7706
         Distance   1.653e+08
         Radius     5.289e+04
-        absMag        -21.52
+        AbsMag        -21.52
         Axis    [  0.9145  -0.0380   0.4028]
         Angle     64.7414
 }
@@ -3434,7 +3434,7 @@ Galaxy "NGC 2715"
         Dec          78.0858
         Distance   7.271e+07
         Radius     5.076e+04
-        absMag        -20.64
+        AbsMag        -20.64
         Axis    [  0.5315   0.0016   0.8471]
         Angle     84.8720
 }
@@ -3448,7 +3448,7 @@ Galaxy "NGC 2721"
         Dec          -4.9014
         Distance   2.098e+08
         Radius     7.323e+04
-        absMag        -21.84
+        AbsMag        -21.84
         Axis    [ -0.2998   0.4938  -0.8162]
         Angle     84.8988
 }
@@ -3462,7 +3462,7 @@ Galaxy "NGC 2722"
         Dec          -3.7097
         Distance   1.507e+08
         Radius     4.384e+04
-        absMag        -20.62
+        AbsMag        -20.62
         Axis    [  0.8035   0.4353  -0.4061]
         Angle     74.5443
 }
@@ -3476,7 +3476,7 @@ Galaxy "NGC 2742"
         Dec          60.4794
         Distance   8.625e+07
         Radius     3.763e+04
-        absMag        -20.71
+        AbsMag        -20.71
         Axis    [  0.2123   0.8629   0.4587]
         Angle     52.8572
 }
@@ -3490,7 +3490,7 @@ Galaxy "NGC 2748"
         Dec          76.4758
         Distance    7.42e+07
         Radius     3.346e+04
-        absMag        -20.28
+        AbsMag        -20.28
         Axis    [  0.4571   0.1553   0.8757]
         Angle     77.9117
 }
@@ -3504,7 +3504,7 @@ Galaxy "NGC 2763"
         Dec         -15.4992
         Distance   1.126e+08
         Radius     3.766e+04
-        absMag        -20.69
+        AbsMag        -20.69
         Axis    [  0.1639   0.3453  -0.9241]
         Angle     89.9569
 }
@@ -3518,7 +3518,7 @@ Galaxy "NGC 2768"
         Dec          60.0364
         Distance   7.302e+07
         Radius     6.797e+04
-        absMag        -21.85
+        AbsMag        -21.85
         Axis    [  0.4949   0.6236  -0.6051]
         Angle     63.4895
 }
@@ -3532,7 +3532,7 @@ Galaxy "NGC 2770"
         Dec          33.1242
         Distance   1.222e+08
         Radius     6.575e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [ -0.5595   0.8106  -0.1730]
         Angle     70.5809
 }
@@ -3546,7 +3546,7 @@ Galaxy "NGC 2770A"
         Dec          33.1222
         Distance   2.627e+07
         Radius          2292
-        absMag        -14.33
+        AbsMag        -14.33
         Axis    [  0.9561  -0.2452   0.1607]
         Angle     91.1266
 }
@@ -3560,7 +3560,7 @@ Galaxy "NGC 2775"
         Dec           7.0372
         Distance   7.475e+07
         Radius     4.675e+04
-        absMag         -21.4
+        AbsMag         -21.4
         Axis    [ -0.2925   0.5859  -0.7557]
         Angle     89.4334
 }
@@ -3574,7 +3574,7 @@ Galaxy "NGC 2784"
         Dec         -24.1725
         Distance   3.202e+07
         Radius     2.562e+04
-        absMag        -19.66
+        AbsMag        -19.66
         Axis    [  0.7039   0.4464  -0.5525]
         Angle     76.0011
 }
@@ -3588,7 +3588,7 @@ Galaxy "NGC 2787"
         Dec          69.2036
         Distance    2.44e+07
         Radius       1.1e+04
-        absMag        -18.47
+        AbsMag        -18.47
         Axis    [ -0.0937   0.9435   0.3180]
         Angle     63.1727
 }
@@ -3602,7 +3602,7 @@ Galaxy "NGC 2805"
         Dec          64.1028
         Distance   8.322e+07
         Radius     7.625e+04
-        absMag        -21.13
+        AbsMag        -21.13
         Axis    [ -0.1949   0.9738  -0.1168]
         Angle     80.3078
 }
@@ -3616,7 +3616,7 @@ Galaxy "NGC 2811"
         Dec         -16.3125
         Distance   1.278e+08
         Radius     4.647e+04
-        absMag        -21.57
+        AbsMag        -21.57
         Axis    [  0.9326   0.3499  -0.0888]
         Angle    105.1264
 }
@@ -3630,7 +3630,7 @@ Galaxy "NGC 2812"
         Dec          19.9192
         Distance   3.815e+07
         Radius          2774
-        absMag        -15.44
+        AbsMag        -15.44
         Axis    [ -0.6758   0.7074  -0.2071]
         Angle     61.7320
 }
@@ -3644,7 +3644,7 @@ Galaxy "NGC 2822"
         Dec         -69.6442
         Distance   7.245e+07
         Radius     3.477e+04
-        absMag        -21.13
+        AbsMag        -21.13
         Axis    [  0.3769  -0.1261  -0.9176]
         Angle    169.5730
 }
@@ -3658,7 +3658,7 @@ Galaxy "NGC 2835"
         Dec         -22.3553
         Distance   4.304e+07
         Radius     4.131e+04
-        absMag         -20.3
+        AbsMag         -20.3
         Axis    [  0.9751   0.1371  -0.1741]
         Angle    122.5795
 }
@@ -3672,7 +3672,7 @@ Galaxy "NGC 2836"
         Dec         -69.3331
         Distance   1.323e+07
         Radius          5194
-        absMag        -16.24
+        AbsMag        -16.24
         Axis    [  0.2518  -0.0224  -0.9675]
         Angle    121.7515
 }
@@ -3686,7 +3686,7 @@ Galaxy "NGC 2841"
         Dec          50.9764
         Distance   8.684e+07
         Radius     1.023e+05
-        absMag        -22.83
+        AbsMag        -22.83
         Axis    [ -0.4646   0.8846  -0.0408]
         Angle     77.6316
 }
@@ -3700,7 +3700,7 @@ Galaxy "NGC 2859"
         Dec          34.5133
         Distance   8.702e+07
         Radius     5.822e+04
-        absMag        -21.23
+        AbsMag        -21.23
         Axis    [  0.6309   0.5490  -0.5483]
         Angle     54.0741
 }
@@ -3714,7 +3714,7 @@ Galaxy "NGC 2903"
         Dec          21.4992
         Distance   3.429e+07
         Radius     6.284e+04
-        absMag        -21.31
+        AbsMag        -21.31
         Axis    [  0.9715   0.1018   0.2139]
         Angle     89.5186
 }
@@ -3728,7 +3728,7 @@ Galaxy "NGC 2950"
         Dec          58.8514
         Distance   4.869e+07
         Radius     1.912e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [ -0.3025   0.9491  -0.0876]
         Angle     76.4619
 }
@@ -3742,7 +3742,7 @@ Galaxy "NGC 2964"
         Dec          31.8469
         Distance   7.819e+07
         Radius     3.412e+04
-        absMag         -20.7
+        AbsMag         -20.7
         Axis    [  0.4071   0.8804  -0.2433]
         Angle     41.8077
 }
@@ -3756,7 +3756,7 @@ Galaxy "NGC 2974"
         Dec          -3.6992
         Distance   7.006e+07
         Radius     3.464e+04
-        absMag        -20.76
+        AbsMag        -20.76
         Axis    [  0.7475  -0.2433  -0.6181]
         Angle    111.3445
 }
@@ -3770,7 +3770,7 @@ Galaxy "NGC 2976"
         Dec          67.9175
         Distance   3.072e+07
         Radius     2.636e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.3934   0.8964   0.2043]
         Angle     79.8987
 }
@@ -3784,7 +3784,7 @@ Galaxy "NGC 2980"
         Dec          -9.6125
         Distance   2.697e+08
         Radius     6.276e+04
-        absMag        -21.59
+        AbsMag        -21.59
         Axis    [ -0.5717   0.3481  -0.7430]
         Angle     74.8700
 }
@@ -3798,7 +3798,7 @@ Galaxy "NGC 2985"
         Dec          72.2786
         Distance   3.694e+07
         Radius     2.471e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.7081  -0.4804   0.5175]
         Angle     83.7615
 }
@@ -3812,7 +3812,7 @@ Galaxy "NGC 2986"
         Dec         -21.2781
         Distance   1.349e+08
         Radius     6.277e+04
-        absMag        -22.38
+        AbsMag        -22.38
         Axis    [  0.2698   0.0722  -0.9602]
         Angle    123.2266
 }
@@ -3826,7 +3826,7 @@ Galaxy "NGC 2997"
         Dec         -31.1906
         Distance   6.288e+07
         Radius     8.139e+04
-        absMag        -22.03
+        AbsMag        -22.03
         Axis    [  0.2293   0.1562  -0.9607]
         Angle     88.9309
 }
@@ -3840,7 +3840,7 @@ Galaxy "NGC 3003"
         Dec          33.4219
         Distance   8.163e+07
         Radius     6.768e+04
-        absMag        -20.49
+        AbsMag        -20.49
         Axis    [  0.4942   0.7035   0.5107]
         Angle     49.0233
 }
@@ -3854,7 +3854,7 @@ Galaxy "NGC 3005"
         Dec          44.1306
         Distance   2.374e+07
         Radius          3798
-        absMag        -14.91
+        AbsMag        -14.91
         Axis    [ -0.6488   0.7433   0.1633]
         Angle     71.5625
 }
@@ -3868,7 +3868,7 @@ Galaxy "NGC 3026"
         Dec          28.5514
         Distance   9.278e+07
         Radius     3.643e+04
-        absMag        -19.17
+        AbsMag        -19.17
         Axis    [  0.5676   0.7577   0.3220]
         Angle     43.6579
 }
@@ -3882,7 +3882,7 @@ Galaxy "NGC 3027"
         Dec          72.2042
         Distance   8.503e+07
         Radius     4.823e+04
-        absMag        -20.58
+        AbsMag        -20.58
         Axis    [ -0.2846   0.8869   0.3638]
         Angle     72.7150
 }
@@ -3896,7 +3896,7 @@ Galaxy "NGC 3028"
         Dec         -19.1844
         Distance   3.479e+07
         Radius          4554
-        absMag        -17.44
+        AbsMag        -17.44
         Axis    [  0.2503   0.1820  -0.9509]
         Angle     91.3896
 }
@@ -3910,7 +3910,7 @@ Galaxy "M 81"
         Dec          69.0672
         Distance   1.275e+07
         Radius     4.617e+04
-        absMag        -20.96
+        AbsMag        -20.96
         Axis    [ -0.4601   0.8780   0.1323]
         Angle     89.2624
 }
@@ -3924,7 +3924,7 @@ Galaxy "M 82"
         Dec          69.6831
         Distance    1.47e+07
         Radius     2.395e+04
-        absMag        -19.67
+        AbsMag        -19.67
         Axis    [  0.4124   0.3536   0.8396]
         Angle     62.3995
 }
@@ -3938,7 +3938,7 @@ Galaxy "NGC 3041"
         Dec          16.6775
         Distance   3.256e+08
         Radius     1.752e+05
-        absMag         -23.3
+        AbsMag         -23.3
         Axis    [  0.5112   0.6324  -0.5820]
         Angle     45.9365
 }
@@ -3952,7 +3952,7 @@ Galaxy "NGC 3042"
         Dec           0.6978
         Distance     4.3e+07
         Radius          7504
-        absMag         -17.8
+        AbsMag         -17.8
         Axis    [  0.1985   0.5537  -0.8087]
         Angle     51.4900
 }
@@ -3966,7 +3966,7 @@ Galaxy "NGC 3059"
         Dec         -73.9214
         Distance   6.301e+07
         Radius     3.299e+04
-        absMag        -20.63
+        AbsMag        -20.63
         Axis    [  0.5042  -0.0395  -0.8627]
         Angle    147.7364
 }
@@ -3980,7 +3980,7 @@ Galaxy "NGC 3077"
         Dec          68.7350
         Distance   1.317e+07
         Radius          9957
-        absMag        -18.03
+        AbsMag        -18.03
         Axis    [  0.9198  -0.2202   0.3249]
         Angle     43.0539
 }
@@ -3994,7 +3994,7 @@ Galaxy "NGC 3079"
         Dec          55.6814
         Distance    6.94e+07
         Radius     8.176e+04
-        absMag        -20.84
+        AbsMag        -20.84
         Axis    [ -0.6884   0.7029   0.1788]
         Angle     88.1809
 }
@@ -4008,7 +4008,7 @@ Galaxy "NGC 3080"
         Dec          13.0442
         Distance   7.897e+06
         Radius          1034
-        absMag        -13.32
+        AbsMag        -13.32
         Axis    [  0.7609   0.1091  -0.6397]
         Angle     67.0152
 }
@@ -4022,7 +4022,7 @@ Galaxy "NGC 3087"
         Dec         -34.2256
         Distance   1.141e+08
         Radius      3.32e+04
-        absMag        -21.92
+        AbsMag        -21.92
         Axis    [  0.8581  -0.3274  -0.3957]
         Angle    152.0610
 }
@@ -4036,7 +4036,7 @@ Galaxy "NGC 3109"
         Dec         -26.1583
         Distance   4.169e+07
         Radius     1.158e+05
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.5616   0.4755  -0.6771]
         Angle     46.8824
 }
@@ -4050,7 +4050,7 @@ Galaxy "NGC 3115"
         Dec          -7.7181
         Distance   3.158e+07
         Radius     3.307e+04
-        absMag        -20.83
+        AbsMag        -20.83
         Axis    [  0.9468   0.2891  -0.1411]
         Angle     81.1879
 }
@@ -4064,7 +4064,7 @@ Galaxy "NGC 3126"
         Dec          31.8636
         Distance   4.582e+08
         Radius     1.866e+05
-        absMag        -23.04
+        AbsMag        -23.04
         Axis    [ -0.3692   0.8799   0.2991]
         Angle     44.3633
 }
@@ -4078,7 +4078,7 @@ Galaxy "NGC 3127"
         Dec         -16.1261
         Distance   2.309e+07
         Radius          4030
-        absMag        -15.45
+        AbsMag        -15.45
         Axis    [  0.8731   0.4472  -0.1941]
         Angle     69.6445
 }
@@ -4092,7 +4092,7 @@ Galaxy "NGC 3136"
         Dec         -67.3775
         Distance   8.006e+07
         Radius      3.61e+04
-        absMag        -21.25
+        AbsMag        -21.25
         Axis    [  0.7094  -0.1949  -0.6774]
         Angle    174.7481
 }
@@ -4106,7 +4106,7 @@ Galaxy "NGC 3145"
         Dec         -12.4344
         Distance   1.797e+08
         Radius     7.841e+04
-        absMag        -22.01
+        AbsMag        -22.01
         Axis    [  0.9779   0.1265  -0.1662]
         Angle    103.8120
 }
@@ -4120,7 +4120,7 @@ Galaxy "NGC 3146"
         Dec         -20.8708
         Distance   2.591e+07
         Radius          3768
-        absMag         -16.3
+        AbsMag         -16.3
         Axis    [  0.3058   0.0974  -0.9471]
         Angle     91.6651
 }
@@ -4134,7 +4134,7 @@ Galaxy "NGC 3147"
         Dec          73.4003
         Distance   1.302e+08
         Radius     7.388e+04
-        absMag        -22.41
+        AbsMag        -22.41
         Axis    [ -0.1178   0.9841  -0.1330]
         Angle     84.8658
 }
@@ -4148,7 +4148,7 @@ Galaxy "NGC 3153"
         Dec          12.6667
         Distance    1.16e+08
         Radius     3.542e+04
-        absMag        -19.95
+        AbsMag        -19.95
         Axis    [ -0.7315   0.5206  -0.4403]
         Angle     72.5853
 }
@@ -4162,7 +4162,7 @@ Galaxy "NGC 3154"
         Dec          17.0344
         Distance    4.36e+07
         Radius          5707
-        absMag        -17.13
+        AbsMag        -17.13
         Axis    [ -0.2137   0.8575  -0.4681]
         Angle     39.1957
 }
@@ -4176,7 +4176,7 @@ Galaxy "NGC 3166"
         Dec           3.4258
         Distance   7.638e+07
         Radius     5.332e+04
-        absMag        -21.35
+        AbsMag        -21.35
         Axis    [  0.6859   0.4852  -0.5423]
         Angle     44.2177
 }
@@ -4190,7 +4190,7 @@ Galaxy "NGC 3169"
         Dec           3.4669
         Distance   7.135e+07
         Radius     4.358e+04
-        absMag         -21.4
+        AbsMag         -21.4
         Axis    [  0.9427   0.0382  -0.3314]
         Angle     76.5011
 }
@@ -4204,7 +4204,7 @@ Galaxy "NGC 3184"
         Dec          41.4233
         Distance    2.44e+07
         Radius     2.626e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.0205   0.7968  -0.6038]
         Angle     67.0365
 }
@@ -4218,7 +4218,7 @@ Galaxy "NGC 3190"
         Dec          21.8328
         Distance   7.434e+07
         Radius     4.757e+04
-        absMag        -20.69
+        AbsMag        -20.69
         Axis    [ -0.3307   0.9274  -0.1748]
         Angle     36.8744
 }
@@ -4232,7 +4232,7 @@ Galaxy "NGC 3193"
         Dec          21.8939
         Distance    1.11e+08
         Radius      3.23e+04
-        absMag        -21.86
+        AbsMag        -21.86
         Axis    [  0.7499  -0.6119  -0.2514]
         Angle    107.7462
 }
@@ -4246,7 +4246,7 @@ Galaxy "NGC 3198"
         Dec          45.5500
         Distance   5.151e+07
         Radius     6.368e+04
-        absMag        -20.79
+        AbsMag        -20.79
         Axis    [  0.8602   0.0241   0.5094]
         Angle     73.0306
 }
@@ -4260,7 +4260,7 @@ Galaxy "NGC 3223"
         Dec         -34.2669
         Distance   1.229e+08
         Radius     7.329e+04
-        absMag        -21.88
+        AbsMag        -21.88
         Axis    [ -0.1599   0.0672  -0.9848]
         Angle     81.4317
 }
@@ -4274,7 +4274,7 @@ Galaxy "NGC 3225"
         Dec          58.1497
         Distance   1.411e+08
         Radius     4.103e+04
-        absMag        -20.58
+        AbsMag        -20.58
         Axis    [ -0.4662   0.8823   0.0647]
         Angle     75.0429
 }
@@ -4288,7 +4288,7 @@ Galaxy "NGC 3227"
         Dec          19.8653
         Distance   6.668e+07
         Radius     3.976e+04
-        absMag        -21.15
+        AbsMag        -21.15
         Axis    [ -0.1900   0.6083  -0.7706]
         Angle     84.5723
 }
@@ -4302,7 +4302,7 @@ Galaxy "NGC 3239"
         Dec          17.1603
         Distance    4.87e+07
         Radius     3.187e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.8342   0.4579  -0.3075]
         Angle     40.0986
 }
@@ -4316,7 +4316,7 @@ Galaxy "NGC 3245"
         Dec          28.5078
         Distance   6.815e+07
         Radius     3.172e+04
-        absMag         -20.9
+        AbsMag         -20.9
         Axis    [ -0.6735   0.6601  -0.3326]
         Angle     82.8646
 }
@@ -4330,7 +4330,7 @@ Galaxy "NGC 3254"
         Dec          29.4922
         Distance   1.208e+08
         Radius     7.907e+04
-        absMag        -21.24
+        AbsMag        -21.24
         Axis    [  0.9160   0.1721   0.3624]
         Angle     65.6552
 }
@@ -4344,7 +4344,7 @@ Galaxy "NGC 3256B"
         Dec         -44.4033
         Distance    1.22e+08
         Radius      3.37e+04
-        absMag        -19.86
+        AbsMag        -19.86
         Axis    [ -0.2006  -0.0944  -0.9751]
         Angle     60.8890
 }
@@ -4358,7 +4358,7 @@ Galaxy "NGC 3256C"
         Dec         -43.8503
         Distance   3.262e+07
         Radius          8065
-        absMag         -17.4
+        AbsMag         -17.4
         Axis    [ -0.4283  -0.0413  -0.9027]
         Angle     94.4811
 }
@@ -4372,7 +4372,7 @@ Galaxy "NGC 3261"
         Dec         -44.6575
         Distance   1.281e+08
         Radius     6.522e+04
-        absMag        -21.77
+        AbsMag        -21.77
         Axis    [  0.4050  -0.0173  -0.9142]
         Angle    103.7912
 }
@@ -4386,7 +4386,7 @@ Galaxy "NGC 3263"
         Dec         -44.1228
         Distance   1.491e+08
         Radius     6.507e+04
-        absMag         -22.2
+        AbsMag         -22.2
         Axis    [  0.3374   0.1120  -0.9347]
         Angle     55.9255
 }
@@ -4400,7 +4400,7 @@ Galaxy "NGC 3294"
         Dec          37.3247
         Distance   1.161e+08
         Radius     5.739e+04
-        absMag        -21.56
+        AbsMag        -21.56
         Axis    [ -0.1770   0.9834  -0.0403]
         Angle     37.9386
 }
@@ -4414,7 +4414,7 @@ Galaxy "NGC 3296"
         Dec         -12.7167
         Distance   2.524e+07
         Radius          2569
-        absMag        -15.54
+        AbsMag        -15.54
         Axis    [  0.7965  -0.4656  -0.3857]
         Angle    135.9570
 }
@@ -4428,7 +4428,7 @@ Galaxy "NGC 3310"
         Dec          53.5033
         Distance   5.296e+07
         Radius     2.388e+04
-        absMag        -20.45
+        AbsMag        -20.45
         Axis    [ -0.3256   0.9211  -0.2135]
         Angle     72.5245
 }
@@ -4442,7 +4442,7 @@ Galaxy "NGC 3318B"
         Dec         -41.4661
         Distance   1.201e+08
         Radius      2.62e+04
-        absMag        -19.63
+        AbsMag        -19.63
         Axis    [  0.1518   0.0020  -0.9884]
         Angle     77.2297
 }
@@ -4456,7 +4456,7 @@ Galaxy "NGC 3319"
         Dec          41.6872
         Distance    6.99e+07
         Radius     6.202e+04
-        absMag        -20.86
+        AbsMag        -20.86
         Axis    [  0.9387  -0.1098   0.3268]
         Angle     67.4530
 }
@@ -4470,7 +4470,7 @@ Galaxy "NGC 3320"
         Dec          47.3972
         Distance   1.276e+08
         Radius     4.082e+04
-        absMag        -20.56
+        AbsMag        -20.56
         Axis    [  0.8807  -0.1781   0.4390]
         Angle     85.2357
 }
@@ -4484,7 +4484,7 @@ Galaxy "NGC 3321"
         Dec         -11.6489
         Distance   1.499e+08
         Radius     5.452e+04
-        absMag        -19.81
+        AbsMag        -19.81
         Axis    [  0.9503   0.0893  -0.2982]
         Angle     86.8704
 }
@@ -4498,7 +4498,7 @@ Galaxy "NGC 3338"
         Dec          13.7467
         Distance   9.459e+07
         Radius     7.842e+04
-        absMag        -21.41
+        AbsMag        -21.41
         Axis    [  0.4759   0.5170  -0.7115]
         Angle     35.8712
 }
@@ -4512,7 +4512,7 @@ Galaxy "NGC 3344"
         Dec          24.9228
         Distance   2.676e+07
         Radius     2.763e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.8809  -0.4366  -0.1829]
         Angle     89.3005
 }
@@ -4526,7 +4526,7 @@ Galaxy "NGC 3347A"
         Dec         -36.4125
         Distance   1.296e+08
         Radius      3.77e+04
-        absMag         -20.2
+        AbsMag         -20.2
         Axis    [  0.9296   0.2697  -0.2512]
         Angle    121.6518
 }
@@ -4540,7 +4540,7 @@ Galaxy "NGC 3347B"
         Dec         -36.9364
         Distance    1.38e+08
         Radius     6.424e+04
-        absMag        -20.13
+        AbsMag        -20.13
         Axis    [  0.4632   0.1532  -0.8729]
         Angle     52.9726
 }
@@ -4554,7 +4554,7 @@ Galaxy "NGC 3347C"
         Dec         -36.2886
         Distance   3.762e+07
         Radius          7661
-        absMag        -16.21
+        AbsMag        -16.21
         Axis    [  0.8647  -0.0490  -0.4999]
         Angle    124.8467
 }
@@ -4568,7 +4568,7 @@ Galaxy "M 95"
         Dec          11.7033
         Distance    5.06e+07
         Radius     5.446e+04
-        absMag        -21.15
+        AbsMag        -21.15
         Axis    [  0.9779  -0.1960  -0.0730]
         Angle     97.5473
 }
@@ -4582,7 +4582,7 @@ Galaxy "NGC 3359"
         Dec          63.2233
         Distance    5.83e+07
         Radius     6.105e+04
-        absMag        -20.96
+        AbsMag        -20.96
         Axis    [ -0.4644   0.8855   0.0141]
         Angle     85.7813
 }
@@ -4596,7 +4596,7 @@ Galaxy "NGC 3361"
         Dec         -11.2081
         Distance   1.133e+08
         Radius     3.462e+04
-        absMag         -19.9
+        AbsMag         -19.9
         Axis    [ -0.6958   0.2130  -0.6859]
         Angle     55.1838
 }
@@ -4610,7 +4610,7 @@ Galaxy "NGC 3365"
         Dec           1.8128
         Distance   7.746e+07
         Radius      5.07e+04
-        absMag        -19.38
+        AbsMag        -19.38
         Axis    [ -0.9224   0.2931  -0.2517]
         Angle     49.2717
 }
@@ -4624,7 +4624,7 @@ Galaxy "NGC 3366"
         Dec         -43.6936
         Distance   1.506e+08
         Radius     3.942e+04
-        absMag        -21.92
+        AbsMag        -21.92
         Axis    [  0.8162   0.1395  -0.5607]
         Angle    108.0561
 }
@@ -4638,7 +4638,7 @@ Galaxy "M 96"
         Dec          11.8200
         Distance   3.384e+07
         Radius     3.839e+04
-        absMag        -20.78
+        AbsMag        -20.78
         Axis    [ -0.6822   0.5169  -0.5171]
         Angle     80.3481
 }
@@ -4652,7 +4652,7 @@ Galaxy "NGC 3377"
         Dec          13.9858
         Distance    3.66e+07
         Radius     2.661e+04
-        absMag        -20.05
+        AbsMag        -20.05
         Axis    [  0.6778  -0.4576  -0.5756]
         Angle     97.8058
 }
@@ -4666,7 +4666,7 @@ Galaxy "M 105"
         Dec          12.5811
         Distance   3.447e+07
         Radius     2.657e+04
-        absMag        -20.62
+        AbsMag        -20.62
         Axis    [  0.5115  -0.1837  -0.8394]
         Angle     87.2819
 }
@@ -4680,7 +4680,7 @@ Galaxy "NGC 3384"
         Dec          12.6286
         Distance    3.78e+07
         Radius     2.968e+04
-        absMag        -20.42
+        AbsMag        -20.42
         Axis    [  0.9902   0.0684  -0.1221]
         Angle     60.4518
 }
@@ -4694,7 +4694,7 @@ Galaxy "NGC 3412"
         Dec          13.4128
         Distance   3.694e+07
         Radius     1.988e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.6091   0.5705  -0.5509]
         Angle     58.8637
 }
@@ -4708,7 +4708,7 @@ Galaxy "NGC 3414"
         Dec          27.9750
         Distance   8.231e+07
         Radius      4.19e+04
-        absMag        -21.11
+        AbsMag        -21.11
         Axis    [  0.9539  -0.2997  -0.0178]
         Angle     80.3852
 }
@@ -4722,7 +4722,7 @@ Galaxy "NGC 3423"
         Dec           5.8400
         Distance   6.156e+07
         Radius     3.492e+04
-        absMag        -20.48
+        AbsMag        -20.48
         Axis    [  0.9212  -0.3186  -0.2232]
         Angle    105.8912
 }
@@ -4736,7 +4736,7 @@ Galaxy "NGC 3430"
         Dec          32.9508
         Distance   9.577e+07
         Radius     5.711e+04
-        absMag        -20.84
+        AbsMag        -20.84
         Axis    [  0.9668  -0.1759   0.1854]
         Angle     75.5239
 }
@@ -4750,7 +4750,7 @@ Galaxy "NGC 3432"
         Dec          36.6189
         Distance   5.703e+07
         Radius     5.475e+04
-        absMag        -20.11
+        AbsMag        -20.11
         Axis    [  0.8569   0.0763   0.5097]
         Angle     77.9691
 }
@@ -4764,7 +4764,7 @@ Galaxy "NGC 3437"
         Dec          22.9350
         Distance   7.833e+07
         Radius     2.962e+04
-        absMag         -19.8
+        AbsMag         -19.8
         Axis    [ -0.2791   0.9486  -0.1488]
         Angle     28.2113
 }
@@ -4778,7 +4778,7 @@ Galaxy "NGC 3449"
         Dec         -32.9278
         Distance    1.73e+08
         Radius     8.301e+04
-        absMag        -21.92
+        AbsMag        -21.92
         Axis    [ -0.5029  -0.0850  -0.8601]
         Angle     59.7930
 }
@@ -4792,7 +4792,7 @@ Galaxy "NGC 3456"
         Dec         -16.0275
         Distance    1.63e+08
         Radius      4.03e+04
-        absMag        -20.89
+        AbsMag        -20.89
         Axis    [  0.2636   0.0783  -0.9615]
         Angle     66.1551
 }
@@ -4806,7 +4806,7 @@ Galaxy "NGC 3463"
         Dec         -26.1403
         Distance   1.942e+08
         Radius     4.236e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [  0.6556   0.1018  -0.7482]
         Angle     63.9994
 }
@@ -4820,7 +4820,7 @@ Galaxy "NGC 3486"
         Dec          28.9756
         Distance   3.369e+07
         Radius     3.479e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.9027   0.1689  -0.3957]
         Angle     36.7271
 }
@@ -4834,7 +4834,7 @@ Galaxy "NGC 3489"
         Dec          13.9008
         Distance   3.939e+07
         Radius     2.063e+04
-        absMag        -20.21
+        AbsMag        -20.21
         Axis    [  0.9248   0.0678  -0.3744]
         Angle     47.5581
 }
@@ -4848,7 +4848,7 @@ Galaxy "NGC 3495"
         Dec           3.6269
         Distance   6.682e+07
         Radius     4.762e+04
-        absMag        -19.56
+        AbsMag        -19.56
         Axis    [  0.9931   0.0979   0.0651]
         Angle     93.4487
 }
@@ -4862,7 +4862,7 @@ Galaxy "NGC 3501"
         Dec          17.9897
         Distance   8.775e+07
         Radius     4.977e+04
-        absMag        -19.15
+        AbsMag        -19.15
         Axis    [  0.9575   0.0921   0.2734]
         Angle     86.6453
 }
@@ -4876,7 +4876,7 @@ Galaxy "NGC 3504"
         Dec          27.9731
         Distance   8.322e+07
         Radius     3.268e+04
-        absMag        -21.13
+        AbsMag        -21.13
         Axis    [ -0.4810   0.7174  -0.5040]
         Angle     66.7787
 }
@@ -4890,7 +4890,7 @@ Galaxy "NGC 3510"
         Dec          28.8847
         Distance    6.36e+07
         Radius     3.793e+04
-        absMag        -18.85
+        AbsMag        -18.85
         Axis    [ -0.8432   0.5163   0.1498]
         Angle     61.4104
 }
@@ -4904,7 +4904,7 @@ Galaxy "NGC 3511"
         Dec         -23.0864
         Distance   6.569e+07
         Radius     5.732e+04
-        absMag        -20.72
+        AbsMag        -20.72
         Axis    [  0.7296   0.1313  -0.6712]
         Angle     56.5466
 }
@@ -4918,7 +4918,7 @@ Galaxy "NGC 3513"
         Dec         -23.2442
         Distance   6.963e+07
         Radius     2.937e+04
-        absMag        -20.55
+        AbsMag        -20.55
         Axis    [  0.5157  -0.0820  -0.8528]
         Angle     86.8566
 }
@@ -4932,7 +4932,7 @@ Galaxy "NGC 3521"
         Dec          -0.0369
         Distance   4.227e+07
         Radius     6.885e+04
-        absMag        -21.36
+        AbsMag        -21.36
         Axis    [ -0.7881   0.3175  -0.5274]
         Angle     59.7947
 }
@@ -4946,7 +4946,7 @@ Galaxy "NGC 3533"
         Dec         -37.1731
         Distance     1.4e+08
         Radius     5.701e+04
-        absMag        -20.16
+        AbsMag        -20.16
         Axis    [  0.7300   0.1236  -0.6722]
         Angle     71.9169
 }
@@ -4960,7 +4960,7 @@ Galaxy "NGC 3549"
         Dec          53.3881
         Distance   1.508e+08
         Radius     6.797e+04
-        absMag        -21.22
+        AbsMag        -21.22
         Axis    [  0.8059  -0.1350   0.5765]
         Angle     76.4878
 }
@@ -4974,7 +4974,7 @@ Galaxy "M 108"
         Dec          55.6728
         Distance   2.802e+07
         Radius     3.505e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.4682   0.2851   0.8363]
         Angle     54.9480
 }
@@ -4988,7 +4988,7 @@ Galaxy "NGC 3557"
         Dec         -37.5394
         Distance   1.491e+08
         Radius     8.674e+04
-        absMag         -22.7
+        AbsMag         -22.7
         Axis    [  0.6762  -0.3553  -0.6454]
         Angle    149.5880
 }
@@ -5002,7 +5002,7 @@ Galaxy "NGC 3568"
         Dec         -37.4489
         Distance   8.476e+07
         Radius     3.082e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.9254   0.1953  -0.3247]
         Angle    118.5521
 }
@@ -5016,7 +5016,7 @@ Galaxy "NGC 3573"
         Dec         -36.8756
         Distance   1.465e+08
         Radius     7.673e+04
-        absMag        -20.86
+        AbsMag        -20.86
         Axis    [  0.9299   0.2271  -0.2894]
         Angle    119.7371
 }
@@ -5030,7 +5030,7 @@ Galaxy "NGC 3574"
         Dec          27.6253
         Distance   1.512e+07
         Radius         879.4
-        absMag        -13.13
+        AbsMag        -13.13
         Axis    [  0.6648  -0.7080  -0.2381]
         Angle    109.8952
 }
@@ -5044,7 +5044,7 @@ Galaxy "NGC 3583"
         Dec          48.3183
         Distance   1.062e+08
         Radius     4.326e+04
-        absMag        -21.36
+        AbsMag        -21.36
         Axis    [ -0.1320   0.9888   0.0694]
         Angle     35.9681
 }
@@ -5058,7 +5058,7 @@ Galaxy "NGC 3585"
         Dec         -26.7550
         Distance   6.538e+07
         Radius     4.374e+04
-        absMag        -21.61
+        AbsMag        -21.61
         Axis    [  0.0747  -0.0529  -0.9958]
         Angle    119.2811
 }
@@ -5072,7 +5072,7 @@ Galaxy "NGC 3593"
         Dec          12.8183
         Distance   5.098e+07
         Radius     3.856e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.8717   0.4480  -0.1985]
         Angle     24.8380
 }
@@ -5086,7 +5086,7 @@ Galaxy "NGC 3596"
         Dec          14.7869
         Distance   6.922e+07
         Radius     4.027e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.1711   0.4422  -0.8804]
         Angle     69.4442
 }
@@ -5100,7 +5100,7 @@ Galaxy "NGC 3600"
         Dec          41.5911
         Distance     5.5e+07
         Radius     3.279e+04
-        absMag        -19.43
+        AbsMag        -19.43
         Axis    [  0.8987  -0.1367   0.4167]
         Angle    111.8256
 }
@@ -5114,7 +5114,7 @@ Galaxy "NGC 3607"
         Dec          18.0522
         Distance   7.438e+07
         Radius     4.976e+04
-        absMag        -21.89
+        AbsMag        -21.89
         Axis    [  0.0247   0.4051  -0.9139]
         Angle     49.1271
 }
@@ -5128,7 +5128,7 @@ Galaxy "NGC 3608"
         Dec          18.1481
         Distance   7.472e+07
         Radius     3.478e+04
-        absMag         -21.1
+        AbsMag         -21.1
         Axis    [  0.4547  -0.2263  -0.8614]
         Angle     80.0454
 }
@@ -5142,7 +5142,7 @@ Galaxy "NGC 3610"
         Dec          58.7867
         Distance   6.973e+07
         Radius     2.738e+04
-        absMag        -20.95
+        AbsMag        -20.95
         Axis    [  0.1178   0.7860  -0.6069]
         Angle     70.1702
 }
@@ -5156,7 +5156,7 @@ Galaxy "NGC 3613"
         Dec          58.0006
         Distance   9.494e+07
         Radius     5.385e+04
-        absMag        -21.52
+        AbsMag        -21.52
         Axis    [  0.4913   0.3311  -0.8056]
         Angle     44.9113
 }
@@ -5170,7 +5170,7 @@ Galaxy "NGC 3621"
         Dec         -32.8111
         Distance    2.22e+07
         Radius     3.971e+04
-        absMag        -19.76
+        AbsMag        -19.76
         Axis    [ -0.6085  -0.0768  -0.7898]
         Angle     75.2589
 }
@@ -5184,7 +5184,7 @@ Galaxy "M 65"
         Dec          13.0908
         Distance   5.219e+07
         Radius     7.438e+04
-        absMag        -21.82
+        AbsMag        -21.82
         Axis    [ -0.9254   0.3505  -0.1444]
         Angle     64.4707
 }
@@ -5198,7 +5198,7 @@ Galaxy "NGC 3624"
         Dec           7.5208
         Distance   4.847e+06
         Radius         634.4
-        absMag        -11.96
+        AbsMag        -11.96
         Axis    [ -0.6750   0.4455  -0.5882]
         Angle     63.9095
 }
@@ -5212,7 +5212,7 @@ Galaxy "M 66"
         Dec          12.9900
         Distance   3.171e+07
         Radius     4.197e+04
-        absMag        -21.04
+        AbsMag        -21.04
         Axis    [ -0.8522   0.4292  -0.2992]
         Angle     66.0214
 }
@@ -5226,7 +5226,7 @@ Galaxy "NGC 3628"
         Dec          13.5900
         Distance   4.684e+07
         Radius     8.925e+04
-        absMag        -21.19
+        AbsMag        -21.19
         Axis    [  0.4385   0.7346   0.5177]
         Angle     18.6847
 }
@@ -5240,7 +5240,7 @@ Galaxy "NGC 3631"
         Dec          53.1697
         Distance   6.084e+07
         Radius     4.424e+04
-        absMag        -21.25
+        AbsMag        -21.25
         Axis    [  0.2101   0.9747   0.0768]
         Angle     29.3358
 }
@@ -5254,7 +5254,7 @@ Galaxy "NGC 3632"
         Dec          18.3567
         Distance   6.538e+07
         Radius     2.567e+04
-        absMag        -20.61
+        AbsMag        -20.61
         Axis    [ -0.5962   0.5942  -0.5400]
         Angle     59.1875
 }
@@ -5268,7 +5268,7 @@ Galaxy "NGC 3640"
         Dec           3.2347
         Distance   8.819e+07
         Radius     5.131e+04
-        absMag        -21.86
+        AbsMag        -21.86
         Axis    [  0.2018  -0.0247  -0.9791]
         Angle     90.9131
 }
@@ -5282,7 +5282,7 @@ Galaxy "NGC 3642"
         Dec          59.0750
         Distance   7.887e+07
         Radius     6.309e+04
-        absMag        -21.12
+        AbsMag        -21.12
         Axis    [  0.5488   0.8348  -0.0431]
         Angle     26.6728
 }
@@ -5296,7 +5296,7 @@ Galaxy "NGC 3646"
         Dec          20.1692
         Distance   2.071e+08
         Radius     1.175e+05
-        absMag        -23.21
+        AbsMag        -23.21
         Axis    [  0.9909  -0.1283  -0.0412]
         Angle     60.9233
 }
@@ -5310,7 +5310,7 @@ Galaxy "NGC 3647"
         Dec           2.8914
         Distance   6.224e+07
         Radius          3621
-        absMag         -17.1
+        AbsMag         -17.1
         Axis    [  0.6972  -0.6091  -0.3782]
         Angle    128.4202
 }
@@ -5324,7 +5324,7 @@ Galaxy "NGC 3665"
         Dec          38.7631
         Distance    1.05e+08
         Radius     6.564e+04
-        absMag        -21.84
+        AbsMag        -21.84
         Axis    [  0.8728  -0.4827   0.0726]
         Angle     86.3290
 }
@@ -5338,7 +5338,7 @@ Galaxy "NGC 3666"
         Dec          11.3422
         Distance   5.812e+07
         Radius     3.719e+04
-        absMag        -19.55
+        AbsMag        -19.55
         Axis    [  0.7746   0.6323   0.0131]
         Angle     17.1456
 }
@@ -5352,7 +5352,7 @@ Galaxy "NGC 3675"
         Dec          43.5864
         Distance   6.868e+07
         Radius     5.893e+04
-        absMag        -21.62
+        AbsMag        -21.62
         Axis    [ -0.6814   0.7304  -0.0473]
         Angle     77.0086
 }
@@ -5366,7 +5366,7 @@ Galaxy "NGC 3676"
         Dec         -11.1392
         Distance    7.37e+06
         Radius         857.5
-        absMag        -13.07
+        AbsMag        -13.07
         Axis    [ -0.3146   0.1758  -0.9328]
         Angle     75.6068
 }
@@ -5380,7 +5380,7 @@ Galaxy "NGC 3686"
         Dec          17.2233
         Distance   6.736e+07
         Radius     3.037e+04
-        absMag        -20.37
+        AbsMag        -20.37
         Axis    [  0.9071  -0.3956  -0.1439]
         Angle     96.7885
 }
@@ -5394,7 +5394,7 @@ Galaxy "NGC 3690A"
         Dec          58.5611
         Distance   5.339e+07
         Radius     1.242e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.0970   0.9715  -0.2164]
         Angle     49.8866
 }
@@ -5408,7 +5408,7 @@ Galaxy "NGC 3690B"
         Dec          58.5644
         Distance    4.65e+07
         Radius     1.353e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.1226   0.9746   0.1872]
         Angle     41.2355
 }
@@ -5422,7 +5422,7 @@ Galaxy "NGC 3697"
         Dec          20.7950
         Distance   3.101e+08
         Radius     1.082e+05
-        absMag        -21.59
+        AbsMag        -21.59
         Axis    [  0.8516   0.4387   0.2869]
         Angle     23.3384
 }
@@ -5436,7 +5436,7 @@ Galaxy "NGC 3697B"
         Dec          20.7500
         Distance   4.202e+07
         Radius          4278
-        absMag        -16.15
+        AbsMag        -16.15
         Axis    [  0.7419   0.1012  -0.6628]
         Angle     33.0875
 }
@@ -5450,7 +5450,7 @@ Galaxy "NGC 3701"
         Dec          24.0936
         Distance   1.866e+08
         Radius     5.158e+04
-        absMag        -21.09
+        AbsMag        -21.09
         Axis    [ -0.6934   0.6893  -0.2101]
         Angle     39.8215
 }
@@ -5464,7 +5464,7 @@ Galaxy "NGC 3702"
         Dec          -8.8622
         Distance   4.183e+07
         Radius          7908
-        absMag        -17.44
+        AbsMag        -17.44
         Axis    [ -0.7269   0.1613  -0.6675]
         Angle     57.2150
 }
@@ -5478,7 +5478,7 @@ Galaxy "NGC 3705"
         Dec           9.2761
         Distance   6.283e+07
         Radius     4.478e+04
-        absMag        -20.42
+        AbsMag        -20.42
         Axis    [ -0.3607   0.6135  -0.7025]
         Angle     20.0488
 }
@@ -5492,7 +5492,7 @@ Galaxy "NGC 3715"
         Dec         -14.2311
         Distance   1.812e+08
         Radius      3.69e+04
-        absMag        -21.22
+        AbsMag        -21.22
         Axis    [ -0.4972   0.1130  -0.8602]
         Angle     62.2857
 }
@@ -5506,7 +5506,7 @@ Galaxy "NGC 3717"
         Dec         -30.3083
         Distance   5.975e+07
         Radius     5.388e+04
-        absMag        -19.91
+        AbsMag        -19.91
         Axis    [  0.9213   0.1927  -0.3376]
         Angle     87.0416
 }
@@ -5520,7 +5520,7 @@ Galaxy "NGC 3718"
         Dec          53.0672
         Distance   5.346e+07
         Radius     6.298e+04
-        absMag        -20.47
+        AbsMag        -20.47
         Axis    [  0.8359  -0.3844   0.3919]
         Angle     94.3445
 }
@@ -5534,7 +5534,7 @@ Galaxy "NGC 3726"
         Dec          47.0278
         Distance   7.416e+07
         Radius     6.471e+04
-        absMag        -21.58
+        AbsMag        -21.58
         Axis    [  0.8364  -0.5054   0.2121]
         Angle     94.6270
 }
@@ -5548,7 +5548,7 @@ Galaxy "NGC 3727"
         Dec         -13.8783
         Distance   1.287e+07
         Radius          1684
-        absMag        -13.88
+        AbsMag        -13.88
         Axis    [  0.5843  -0.1081  -0.8043]
         Angle     63.2231
 }
@@ -5562,7 +5562,7 @@ Galaxy "NGC 3729"
         Dec          53.1264
         Distance   7.235e+07
         Radius     3.051e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.5156   0.8566   0.0214]
         Angle     67.3333
 }
@@ -5576,7 +5576,7 @@ Galaxy "NGC 3730"
         Dec          -9.5761
         Distance   6.138e+07
         Radius          8928
-        absMag        -18.37
+        AbsMag        -18.37
         Axis    [  0.7012  -0.5613  -0.4396]
         Angle    138.3255
 }
@@ -5590,7 +5590,7 @@ Galaxy "NGC 3733"
         Dec          54.8503
         Distance    1.06e+08
         Radius     7.558e+04
-        absMag        -20.76
+        AbsMag        -20.76
         Axis    [ -0.6021   0.7817   0.1624]
         Angle     73.4620
 }
@@ -5604,7 +5604,7 @@ Galaxy "NGC 3734"
         Dec         -14.0811
         Distance   3.415e+07
         Radius          6458
-        absMag         -16.2
+        AbsMag         -16.2
         Axis    [  0.8734  -0.2406  -0.4235]
         Angle    109.2468
 }
@@ -5618,7 +5618,7 @@ Galaxy "NGC 3735"
         Dec          70.5356
         Distance   1.399e+08
         Radius     8.138e+04
-        absMag        -21.26
+        AbsMag        -21.26
         Axis    [ -0.2580   0.5742   0.7770]
         Angle     73.5177
 }
@@ -5632,7 +5632,7 @@ Galaxy "NGC 3736"
         Dec          73.4525
         Distance    1.47e+07
         Radius          2352
-        absMag        -13.37
+        AbsMag        -13.37
         Axis    [ -0.2893   0.9161   0.2776]
         Angle     69.2651
 }
@@ -5646,7 +5646,7 @@ Galaxy "NGC 3755"
         Dec          36.4103
         Distance   1.354e+08
         Radius     6.694e+04
-        absMag        -20.19
+        AbsMag        -20.19
         Axis    [ -0.4823   0.8443   0.2335]
         Angle     32.9534
 }
@@ -5660,7 +5660,7 @@ Galaxy "NGC 3756"
         Dec          54.2942
         Distance   8.471e+07
         Radius     5.175e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [ -0.6153   0.7831   0.0900]
         Angle     78.5873
 }
@@ -5674,7 +5674,7 @@ Galaxy "NGC 3769"
         Dec          47.8933
         Distance   5.531e+07
         Radius     2.333e+04
-        absMag        -19.65
+        AbsMag        -19.65
         Axis    [ -0.5844   0.7524   0.3038]
         Angle     55.5414
 }
@@ -5688,7 +5688,7 @@ Galaxy "NGC 3769A"
         Dec          47.8817
         Distance   7.871e+07
         Radius      1.03e+04
-        absMag        -17.71
+        AbsMag        -17.71
         Axis    [  0.0196   0.6246   0.7807]
         Angle     37.5323
 }
@@ -5702,7 +5702,7 @@ Galaxy "NGC 3782"
         Dec          46.5131
         Distance     5.4e+07
         Radius     1.257e+04
-        absMag        -18.69
+        AbsMag        -18.69
         Axis    [  0.8326  -0.5081   0.2204]
         Angle    106.0097
 }
@@ -5716,7 +5716,7 @@ Galaxy "NGC 3810"
         Dec          11.4703
         Distance   6.048e+07
         Radius     3.782e+04
-        absMag        -20.74
+        AbsMag        -20.74
         Axis    [  0.9247  -0.3454  -0.1604]
         Angle     98.9164
 }
@@ -5730,7 +5730,7 @@ Galaxy "NGC 3813"
         Dec          36.5467
         Distance    9.06e+07
         Radius     2.636e+04
-        absMag        -20.72
+        AbsMag        -20.72
         Axis    [  0.8906   0.1981   0.4094]
         Angle     28.5504
 }
@@ -5744,7 +5744,7 @@ Galaxy "NGC 3814"
         Dec          24.8056
         Distance   1.984e+07
         Radius          2596
-        absMag        -14.22
+        AbsMag        -14.22
         Axis    [ -0.8841   0.4673   0.0021]
         Angle     64.9294
 }
@@ -5758,7 +5758,7 @@ Galaxy "NGC 3877"
         Dec          47.4944
         Distance   5.373e+07
         Radius     4.142e+04
-        absMag        -19.88
+        AbsMag        -19.88
         Axis    [  0.8282  -0.1514   0.5396]
         Angle     86.1585
 }
@@ -5772,7 +5772,7 @@ Galaxy "NGC 3878"
         Dec          33.2050
         Distance   1.837e+07
         Radius          1336
-        absMag        -15.45
+        AbsMag        -15.45
         Axis    [  0.5646  -0.7906  -0.2369]
         Angle    112.3467
 }
@@ -5786,7 +5786,7 @@ Galaxy "NGC 3885"
         Dec         -27.9222
         Distance   9.676e+07
         Radius     3.378e+04
-        absMag        -21.26
+        AbsMag        -21.26
         Axis    [ -0.2196  -0.1906  -0.9568]
         Angle     47.0016
 }
@@ -5800,7 +5800,7 @@ Galaxy "NGC 3887"
         Dec         -16.8539
         Distance   7.067e+07
         Radius     3.597e+04
-        absMag        -21.08
+        AbsMag        -21.08
         Axis    [  0.8492  -0.2541  -0.4629]
         Angle    110.3162
 }
@@ -5814,7 +5814,7 @@ Galaxy "NGC 3893"
         Dec          48.7114
         Distance   6.782e+07
         Radius     4.439e+04
-        absMag        -21.39
+        AbsMag        -21.39
         Axis    [ -0.5641   0.8256   0.0118]
         Angle     62.7669
 }
@@ -5828,7 +5828,7 @@ Galaxy "NGC 3898"
         Dec          56.0847
         Distance   6.079e+07
         Radius     3.891e+04
-        absMag        -20.55
+        AbsMag        -20.55
         Axis    [  0.3367   0.6398   0.6909]
         Angle     29.8004
 }
@@ -5842,7 +5842,7 @@ Galaxy "NGC 3904"
         Dec         -29.2769
         Distance   9.235e+07
         Radius     3.627e+04
-        absMag        -21.46
+        AbsMag        -21.46
         Axis    [  0.6718  -0.4616  -0.5793]
         Angle    149.5050
 }
@@ -5856,7 +5856,7 @@ Galaxy "NGC 3917"
         Dec          51.8247
         Distance   6.655e+07
         Radius     4.839e+04
-        absMag        -19.75
+        AbsMag        -19.75
         Axis    [  0.5711   0.0934   0.8155]
         Angle     57.6123
 }
@@ -5870,7 +5870,7 @@ Galaxy "NGC 3923"
         Dec         -28.8058
         Distance   7.472e+07
         Radius     6.412e+04
-        absMag         -22.2
+        AbsMag         -22.2
         Axis    [  0.4400  -0.3554  -0.8247]
         Angle    131.7695
 }
@@ -5884,7 +5884,7 @@ Galaxy "NGC 3933"
         Dec          16.8100
         Distance   2.792e+08
         Radius     4.467e+04
-        absMag        -21.26
+        AbsMag        -21.26
         Axis    [  0.9581  -0.0757  -0.2764]
         Angle     31.3910
 }
@@ -5898,7 +5898,7 @@ Galaxy "NGC 3936"
         Dec         -26.9058
         Distance   8.693e+07
         Radius     4.931e+04
-        absMag        -20.23
+        AbsMag        -20.23
         Axis    [  0.8732   0.0491  -0.4848]
         Angle     57.1775
 }
@@ -5912,7 +5912,7 @@ Galaxy "NGC 3938"
         Dec          44.1214
         Distance   4.693e+07
         Radius     3.686e+04
-        absMag        -20.69
+        AbsMag        -20.69
         Axis    [  0.7081  -0.7059   0.0171]
         Angle    105.4207
 }
@@ -5926,7 +5926,7 @@ Galaxy "NGC 3941"
         Dec          36.9869
         Distance   3.976e+07
         Radius     2.024e+04
-        absMag        -20.13
+        AbsMag        -20.13
         Axis    [  0.8527  -0.5165   0.0776]
         Angle     98.2649
 }
@@ -5940,7 +5940,7 @@ Galaxy "NGC 3945"
         Dec          60.6753
         Distance   6.165e+07
         Radius     4.663e+04
-        absMag        -20.88
+        AbsMag        -20.88
         Axis    [ -0.3999   0.9088   0.1192]
         Angle     62.1663
 }
@@ -5954,7 +5954,7 @@ Galaxy "NGC 3949"
         Dec          47.8600
         Distance   7.053e+07
         Radius     2.975e+04
-        absMag        -21.07
+        AbsMag        -21.07
         Axis    [ -0.0223   0.8873   0.4606]
         Angle     26.3190
 }
@@ -5968,7 +5968,7 @@ Galaxy "NGC 3950"
         Dec          47.8850
         Distance   2.655e+07
         Radius          1158
-        absMag        -13.85
+        AbsMag        -13.85
         Axis    [  0.4863  -0.8622  -0.1418]
         Angle    105.8788
 }
@@ -5982,7 +5982,7 @@ Galaxy "NGC 3953"
         Dec          52.3250
         Distance   7.135e+07
         Radius      7.16e+04
-        absMag         -21.9
+        AbsMag         -21.9
         Axis    [  0.8291  -0.4371   0.3486]
         Angle     98.7042
 }
@@ -5996,7 +5996,7 @@ Galaxy "NGC 3956"
         Dec         -20.5667
         Distance   1.181e+08
         Radius     5.666e+04
-        absMag        -20.59
+        AbsMag        -20.59
         Axis    [  0.8779  -0.0251  -0.4781]
         Angle     63.2367
 }
@@ -6010,7 +6010,7 @@ Galaxy "NGC 3962"
         Dec         -13.9747
         Distance   1.152e+08
         Radius     4.356e+04
-        absMag        -22.04
+        AbsMag        -22.04
         Axis    [  0.6431  -0.5402  -0.5427]
         Angle    137.5388
 }
@@ -6024,7 +6024,7 @@ Galaxy "NGC 3972"
         Dec          55.3200
         Distance   7.303e+07
         Radius      3.93e+04
-        absMag        -19.65
+        AbsMag        -19.65
         Axis    [ -0.0957   0.5318   0.8414]
         Angle     48.7316
 }
@@ -6038,7 +6038,7 @@ Galaxy "NGC 3973"
         Dec          11.9972
         Distance   2.627e+07
         Radius          1528
-        absMag        -14.53
+        AbsMag        -14.53
         Axis    [  0.8883  -0.4181  -0.1898]
         Angle    103.3354
 }
@@ -6052,7 +6052,7 @@ Galaxy "NGC 3976"
         Dec           6.7483
         Distance   1.114e+08
         Radius     6.157e+04
-        absMag        -20.97
+        AbsMag        -20.97
         Axis    [  0.9939  -0.0963  -0.0539]
         Angle     60.3587
 }
@@ -6066,7 +6066,7 @@ Galaxy "NGC 3976A"
         Dec           6.6775
         Distance    1.45e+07
         Radius          1055
-        absMag        -13.34
+        AbsMag        -13.34
         Axis    [ -0.9010   0.2792  -0.3320]
         Angle     38.1919
 }
@@ -6080,7 +6080,7 @@ Galaxy "NGC 3981"
         Dec         -19.8972
         Distance   9.368e+07
         Radius     7.222e+04
-        absMag        -21.29
+        AbsMag        -21.29
         Axis    [  0.9349  -0.0836  -0.3450]
         Angle    106.3478
 }
@@ -6094,7 +6094,7 @@ Galaxy "NGC 3982"
         Dec          55.1250
         Distance   5.785e+07
         Radius     1.935e+04
-        absMag        -20.14
+        AbsMag        -20.14
         Axis    [  0.8002  -0.5917   0.0983]
         Angle     57.8050
 }
@@ -6108,7 +6108,7 @@ Galaxy "M 109"
         Dec          53.3736
         Distance    1.23e+08
         Radius     1.342e+05
-        absMag        -23.08
+        AbsMag        -23.08
         Axis    [  0.8428  -0.2264   0.4882]
         Angle     46.2931
 }
@@ -6122,7 +6122,7 @@ Galaxy "NGC 3998"
         Dec          55.4539
         Distance   4.607e+07
         Radius     1.809e+04
-        absMag        -20.15
+        AbsMag        -20.15
         Axis    [ -0.1500   0.9708  -0.1870]
         Angle     41.5433
 }
@@ -6136,7 +6136,7 @@ Galaxy "NGC 4010"
         Dec          47.2603
         Distance   6.655e+07
         Radius     4.065e+04
-        absMag        -19.25
+        AbsMag        -19.25
         Axis    [  0.6757   0.0015   0.7372]
         Angle     65.8795
 }
@@ -6150,7 +6150,7 @@ Galaxy "NGC 4011"
         Dec          25.0978
         Distance    2.33e+07
         Radius          1356
-        absMag        -14.57
+        AbsMag        -14.57
         Axis    [  0.9535  -0.2941   0.0662]
         Angle     72.7562
 }
@@ -6164,7 +6164,7 @@ Galaxy "NGC 4013"
         Dec          43.9472
         Distance   6.347e+07
         Radius       4.8e+04
-        absMag        -19.95
+        AbsMag        -19.95
         Axis    [  0.7050   0.0022   0.7092]
         Angle     63.6853
 }
@@ -6178,7 +6178,7 @@ Galaxy "NGC 4015-1"
         Dec          25.0367
         Distance    1.06e+07
         Radius          3084
-        absMag        -14.06
+        AbsMag        -14.06
         Axis    [ -0.3420   0.6047  -0.7193]
         Angle     31.8320
 }
@@ -6192,7 +6192,7 @@ Galaxy "NGC 4026"
         Dec          50.9619
         Distance   4.441e+07
         Radius     3.358e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [ -0.7329   0.6005   0.3198]
         Angle     78.5423
 }
@@ -6206,7 +6206,7 @@ Galaxy "NGC 4027"
         Dec         -19.2658
         Distance   9.115e+07
         Radius     4.375e+04
-        absMag        -21.23
+        AbsMag        -21.23
         Axis    [ -0.7371   0.0671  -0.6724]
         Angle     77.2661
 }
@@ -6220,7 +6220,7 @@ Galaxy "NGC 4030"
         Dec          -1.1006
         Distance   7.529e+07
         Radius     4.599e+04
-        absMag        -21.22
+        AbsMag        -21.22
         Axis    [  0.8666  -0.3341  -0.3706]
         Angle     94.9987
 }
@@ -6234,7 +6234,7 @@ Galaxy "NGC 4036"
         Dec          61.8961
         Distance   6.931e+07
         Radius     4.335e+04
-        absMag        -21.14
+        AbsMag        -21.14
         Axis    [  0.5045   0.1063   0.8568]
         Angle     52.1714
 }
@@ -6248,7 +6248,7 @@ Galaxy "NGC 4038"
         Dec         -18.8644
         Distance   8.929e+07
         Radius     4.415e+04
-        absMag        -21.89
+        AbsMag        -21.89
         Axis    [  0.3797  -0.1926  -0.9048]
         Angle     47.4502
 }
@@ -6262,7 +6262,7 @@ Galaxy "NGC 4039"
         Dec         -18.8856
         Distance   9.056e+07
         Radius     4.346e+04
-        absMag        -21.82
+        AbsMag        -21.82
         Axis    [  0.7900  -0.1608  -0.5916]
         Angle     73.2758
 }
@@ -6276,7 +6276,7 @@ Galaxy "NGC 4041"
         Dec          62.1369
         Distance   6.179e+07
         Radius     2.427e+04
-        absMag        -20.29
+        AbsMag        -20.29
         Axis    [  0.8418  -0.5197  -0.1459]
         Angle     36.0378
 }
@@ -6290,7 +6290,7 @@ Galaxy "NGC 4051"
         Dec          44.5319
         Distance   3.072e+07
         Radius     2.323e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.2888   0.9387  -0.1880]
         Angle     31.7708
 }
@@ -6304,7 +6304,7 @@ Galaxy "NGC 4062"
         Dec          31.8953
         Distance   6.261e+07
         Radius     3.642e+04
-        absMag        -20.22
+        AbsMag        -20.22
         Axis    [  0.7482   0.3003   0.5916]
         Angle     19.2828
 }
@@ -6318,7 +6318,7 @@ Galaxy "NGC 4064"
         Dec          18.4433
         Distance   5.599e+07
         Radius     3.746e+04
-        absMag        -20.47
+        AbsMag        -20.47
         Axis    [ -0.9010   0.4338  -0.0059]
         Angle     37.8111
 }
@@ -6332,7 +6332,7 @@ Galaxy "NGC 4088"
         Dec          50.5406
         Distance   6.383e+07
         Radius     5.199e+04
-        absMag        -21.16
+        AbsMag        -21.16
         Axis    [  0.8227  -0.2833   0.4929]
         Angle     75.8446
 }
@@ -6346,7 +6346,7 @@ Galaxy "NGC 4094"
         Dec         -14.5261
         Distance   6.985e+07
         Radius     4.166e+04
-        absMag        -19.65
+        AbsMag        -19.65
         Axis    [  0.8655  -0.1252  -0.4850]
         Angle     58.7627
 }
@@ -6360,7 +6360,7 @@ Galaxy "NGC 4096"
         Dec          47.4758
         Distance   5.595e+07
         Radius     5.289e+04
-        absMag        -20.37
+        AbsMag        -20.37
         Axis    [  0.8615  -0.2806   0.4233]
         Angle     99.4469
 }
@@ -6374,7 +6374,7 @@ Galaxy "NGC 4097"
         Dec          36.8639
         Distance   1.201e+07
         Radius          2096
-        absMag        -14.33
+        AbsMag        -14.33
         Axis    [  0.9301   0.2273   0.2884]
         Angle     18.1172
 }
@@ -6388,7 +6388,7 @@ Galaxy "NGC 4100"
         Dec          49.5828
         Distance   8.657e+07
         Radius     6.799e+04
-        absMag        -21.02
+        AbsMag        -21.02
         Axis    [ -0.6735   0.6551   0.3424]
         Angle     66.0323
 }
@@ -6402,7 +6402,7 @@ Galaxy "NGC 4102"
         Dec          52.7108
         Distance   9.894e+07
         Radius     4.461e+04
-        absMag        -21.11
+        AbsMag        -21.11
         Axis    [  0.8222  -0.4355   0.3665]
         Angle     74.9781
 }
@@ -6416,7 +6416,7 @@ Galaxy "NGC 4105"
         Dec         -29.7600
         Distance   8.658e+07
         Radius     3.526e+04
-        absMag        -21.62
+        AbsMag        -21.62
         Axis    [ -0.4114   0.1089  -0.9049]
         Angle    117.5621
 }
@@ -6430,7 +6430,7 @@ Galaxy "NGC 4111"
         Dec          43.0667
         Distance   4.891e+07
         Radius     3.273e+04
-        absMag        -20.08
+        AbsMag        -20.08
         Axis    [ -0.6183   0.5224   0.5871]
         Angle     54.3271
 }
@@ -6444,7 +6444,7 @@ Galaxy "NGC 4116"
         Dec           2.6911
         Distance   7.964e+07
         Radius     4.402e+04
-        absMag        -20.34
+        AbsMag        -20.34
         Axis    [ -0.8192   0.2338  -0.5236]
         Angle     49.1489
 }
@@ -6458,7 +6458,7 @@ Galaxy "NGC 4123"
         Dec           2.8783
         Distance   7.588e+07
         Radius     4.746e+04
-        absMag        -20.83
+        AbsMag        -20.83
         Axis    [ -0.4471   0.1789  -0.8764]
         Angle     45.5756
 }
@@ -6472,7 +6472,7 @@ Galaxy "NGC 4125"
         Dec          65.1744
         Distance   7.788e+07
         Radius      6.57e+04
-        absMag        -22.29
+        AbsMag        -22.29
         Axis    [  0.6681  -0.4303  -0.6070]
         Angle     36.6865
 }
@@ -6486,7 +6486,7 @@ Galaxy "NGC 4127"
         Dec          76.8044
         Distance    1.05e+08
         Radius     3.817e+04
-        absMag        -19.84
+        AbsMag        -19.84
         Axis    [ -0.1688   0.7516   0.6377]
         Angle     62.1270
 }
@@ -6500,7 +6500,7 @@ Galaxy "NGC 4136"
         Dec          29.9278
         Distance   4.869e+07
         Radius     2.762e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.5414  -0.2249  -0.8101]
         Angle     40.7348
 }
@@ -6514,7 +6514,7 @@ Galaxy "NGC 4143"
         Dec          42.5344
         Distance   5.193e+07
         Radius     1.737e+04
-        absMag        -20.21
+        AbsMag        -20.21
         Axis    [ -0.5268   0.8456   0.0868]
         Angle     37.3058
 }
@@ -6528,7 +6528,7 @@ Galaxy "NGC 4144"
         Dec          46.4572
         Distance   2.768e+07
         Radius     2.456e+04
-        absMag        -18.34
+        AbsMag        -18.34
         Axis    [  0.2226   0.2737   0.9357]
         Angle     45.5598
 }
@@ -6542,7 +6542,7 @@ Galaxy "NGC 4145"
         Dec          39.8828
         Distance   7.588e+07
         Radius     6.511e+04
-        absMag        -21.03
+        AbsMag        -21.03
         Axis    [  0.9594   0.2146  -0.1829]
         Angle     16.5103
 }
@@ -6556,7 +6556,7 @@ Galaxy "NGC 4145A1"
         Dec          39.7572
         Distance   1.776e+07
         Radius          4908
-        absMag        -14.18
+        AbsMag        -14.18
         Axis    [  0.7421  -0.0394   0.6692]
         Angle     50.5242
 }
@@ -6570,7 +6570,7 @@ Galaxy "NGC 4151"
         Dec          39.4067
         Distance   5.608e+07
         Radius     5.139e+04
-        absMag        -20.88
+        AbsMag        -20.88
         Axis    [ -0.5126   0.8360  -0.1958]
         Angle     38.6387
 }
@@ -6584,7 +6584,7 @@ Galaxy "NGC 4157"
         Dec          50.4847
         Distance   6.831e+07
         Radius     6.657e+04
-        absMag        -20.31
+        AbsMag        -20.31
         Axis    [  0.6582  -0.0422   0.7517]
         Angle     69.0820
 }
@@ -6598,7 +6598,7 @@ Galaxy "NGC 4178"
         Dec          10.8642
         Distance   7.076e+07
         Radius     5.146e+04
-        absMag        -20.38
+        AbsMag        -20.38
         Axis    [  0.9779  -0.2083  -0.0186]
         Angle     83.6228
 }
@@ -6612,7 +6612,7 @@ Galaxy "NGC 4179"
         Dec           1.2997
         Distance   7.262e+07
         Radius     4.436e+04
-        absMag        -20.84
+        AbsMag        -20.84
         Axis    [ -0.9674   0.0354  -0.2507]
         Angle     30.5619
 }
@@ -6626,7 +6626,7 @@ Galaxy "NGC 4183"
         Dec          43.6981
         Distance   6.532e+07
         Radius     5.036e+04
-        absMag        -19.41
+        AbsMag        -19.41
         Axis    [ -0.7323   0.4864   0.4765]
         Angle     66.4238
 }
@@ -6640,7 +6640,7 @@ Galaxy "M 98"
         Dec          14.8994
         Distance   6.351e+07
         Radius     9.053e+04
-        absMag        -21.35
+        AbsMag        -21.35
         Axis    [ -0.9563   0.2664   0.1203]
         Angle     41.8767
 }
@@ -6654,7 +6654,7 @@ Galaxy "NGC 4203"
         Dec          33.1975
         Distance   4.937e+07
         Radius     2.513e+04
-        absMag         -20.2
+        AbsMag         -20.2
         Axis    [  0.7199  -0.6816  -0.1308]
         Angle    102.8424
 }
@@ -6668,7 +6668,7 @@ Galaxy "NGC 4206"
         Dec          13.0228
         Distance   7.615e+07
         Radius     7.088e+04
-        absMag        -19.84
+        AbsMag        -19.84
         Axis    [  0.9901  -0.1069   0.0911]
         Angle    114.3961
 }
@@ -6682,7 +6682,7 @@ Galaxy "NGC 4207"
         Dec           9.5856
         Distance   2.215e+07
         Radius          5155
-        absMag        -16.26
+        AbsMag        -16.26
         Axis    [ -0.5455   0.1903  -0.8162]
         Angle     17.8186
 }
@@ -6696,7 +6696,7 @@ Galaxy "NGC 4208"
         Dec          13.9019
         Distance   4.869e+07
         Radius     2.266e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.8412  -0.3296  -0.4286]
         Angle     43.0396
 }
@@ -6710,7 +6710,7 @@ Galaxy "NGC 4214"
         Dec          36.3275
         Distance   3.802e+07
         Radius     4.424e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.4214   0.7645  -0.4879]
         Angle     39.3486
 }
@@ -6724,7 +6724,7 @@ Galaxy "NGC 4216"
         Dec          13.1478
         Distance   6.659e+07
         Radius     7.845e+04
-        absMag        -21.25
+        AbsMag        -21.25
         Axis    [  0.9867  -0.1239   0.1054]
         Angle     95.3991
 }
@@ -6738,7 +6738,7 @@ Galaxy "NGC 4217"
         Dec          47.0900
         Distance   7.447e+07
         Radius     5.633e+04
-        absMag        -20.49
+        AbsMag        -20.49
         Axis    [  0.8115  -0.2190   0.5418]
         Angle     73.2381
 }
@@ -6752,7 +6752,7 @@ Galaxy "NGC 4218"
         Dec          48.1317
         Distance   1.157e+07
         Radius          2020
-        absMag        -15.25
+        AbsMag        -15.25
         Axis    [ -0.4468   0.8479   0.2854]
         Angle     37.5464
 }
@@ -6766,7 +6766,7 @@ Galaxy "NGC 4236-1"
         Dec          69.4636
         Distance   4.787e+07
         Radius     1.525e+05
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.4523   0.7168   0.5306]
         Angle     74.3797
 }
@@ -6780,7 +6780,7 @@ Galaxy "NGC 4237"
         Dec          15.3233
         Distance   7.357e+07
         Radius     2.247e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.2733  -0.0255  -0.9616]
         Angle     22.4548
 }
@@ -6794,7 +6794,7 @@ Galaxy "NGC 4242"
         Dec          45.6192
         Distance   4.241e+07
         Radius     3.207e+04
-        absMag        -19.67
+        AbsMag        -19.67
         Axis    [  0.7867  -0.6095   0.0975]
         Angle     85.3888
 }
@@ -6808,7 +6808,7 @@ Galaxy "NGC 4244"
         Dec          37.8078
         Distance   2.197e+07
         Radius     5.305e+04
-        absMag        -19.14
+        AbsMag        -19.14
         Axis    [  0.8481  -0.1428   0.5102]
         Angle     75.8734
 }
@@ -6822,7 +6822,7 @@ Galaxy "NGC 4246"
         Dec           7.1856
         Distance   2.799e+08
         Radius     9.364e+04
-        absMag        -21.97
+        AbsMag        -21.97
         Axis    [  0.7992  -0.2943  -0.5240]
         Angle     36.3757
 }
@@ -6836,7 +6836,7 @@ Galaxy "NGC 4251"
         Dec          28.1753
         Distance   6.389e+07
         Radius     3.345e+04
-        absMag        -20.86
+        AbsMag        -20.86
         Axis    [  0.8344   0.0829   0.5449]
         Angle     17.4748
 }
@@ -6850,7 +6850,7 @@ Galaxy "M 99"
         Dec          14.4175
         Distance   1.238e+08
         Radius      9.54e+04
-        absMag         -23.2
+        AbsMag         -23.2
         Axis    [  0.7162  -0.4937  -0.4933]
         Angle     73.6487
 }
@@ -6864,7 +6864,7 @@ Galaxy "M 106"
         Dec          47.3069
         Distance   2.374e+07
         Radius     6.422e+04
-        absMag        -21.01
+        AbsMag        -21.01
         Axis    [ -0.5702   0.6724   0.4721]
         Angle     48.3827
 }
@@ -6878,7 +6878,7 @@ Galaxy "NGC 4261"
         Dec           5.8244
         Distance   1.031e+08
         Radius     6.151e+04
-        absMag         -22.1
+        AbsMag         -22.1
         Axis    [ -0.3781   0.3938  -0.8379]
         Angle     91.9362
 }
@@ -6892,7 +6892,7 @@ Galaxy "NGC 4267"
         Dec          12.7983
         Distance   6.016e+07
         Radius     2.625e+04
-        absMag        -20.53
+        AbsMag        -20.53
         Axis    [  0.6909  -0.5639  -0.4524]
         Angle     93.3765
 }
@@ -6906,7 +6906,7 @@ Galaxy "NGC 4274"
         Dec          29.6136
         Distance   5.486e+07
         Radius     5.426e+04
-        absMag        -20.63
+        AbsMag        -20.63
         Axis    [  0.6302   0.1376   0.7641]
         Angle     20.3142
 }
@@ -6920,7 +6920,7 @@ Galaxy "NGC 4278"
         Dec          29.2803
         Distance   5.241e+07
         Radius     2.897e+04
-        absMag        -20.93
+        AbsMag        -20.93
         Axis    [  0.5231  -0.8075  -0.2724]
         Angle    119.8260
 }
@@ -6934,7 +6934,7 @@ Galaxy "NGC 4293"
         Dec          18.3828
         Distance   5.699e+07
         Radius     4.642e+04
-        absMag        -20.91
+        AbsMag        -20.91
         Axis    [  0.9536  -0.2962  -0.0544]
         Angle     41.9970
 }
@@ -6948,7 +6948,7 @@ Galaxy "NGC 4294"
         Dec          11.5097
         Distance   6.637e+07
         Radius     3.089e+04
-        absMag        -19.74
+        AbsMag        -19.74
         Axis    [ -0.9664   0.2438  -0.0819]
         Angle     41.1435
 }
@@ -6962,7 +6962,7 @@ Galaxy "M 61"
         Dec           4.4728
         Distance   8.648e+07
         Radius     8.176e+04
-        absMag        -22.82
+        AbsMag        -22.82
         Axis    [ -0.6064   0.3553  -0.7114]
         Angle     71.1197
 }
@@ -6976,7 +6976,7 @@ Galaxy "NGC 4314"
         Dec          29.8958
         Distance    4.05e+07
         Radius     2.474e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.7164  -0.5094  -0.4768]
         Angle     51.0796
 }
@@ -6990,7 +6990,7 @@ Galaxy "M 100"
         Dec          15.8228
         Distance   8.634e+07
         Radius     9.419e+04
-        absMag        -22.81
+        AbsMag        -22.81
         Axis    [  0.8002  -0.5201  -0.2986]
         Angle     89.1020
 }
@@ -7004,7 +7004,7 @@ Galaxy "NGC 4348"
         Dec          -3.4425
         Distance   1.131e+08
         Radius     5.265e+04
-        absMag         -20.2
+        AbsMag         -20.2
         Axis    [  0.9742  -0.1484  -0.1701]
         Angle     76.6339
 }
@@ -7018,7 +7018,7 @@ Galaxy "NGC 4350"
         Dec          16.6933
         Distance   7.035e+07
         Radius     2.967e+04
-        absMag        -20.67
+        AbsMag        -20.67
         Axis    [  0.9203  -0.3805  -0.0909]
         Angle     86.5643
 }
@@ -7032,7 +7032,7 @@ Galaxy "NGC 4359"
         Dec          31.5214
         Distance   6.433e+07
         Radius     3.275e+04
-        absMag        -18.47
+        AbsMag        -18.47
         Axis    [  0.2359   0.1813   0.9547]
         Angle     30.0316
 }
@@ -7046,7 +7046,7 @@ Galaxy "NGC 4360"
         Dec           9.2931
         Distance   5.916e+07
         Radius     1.291e+04
-        absMag        -18.79
+        AbsMag        -18.79
         Axis    [ -0.2723   0.2938  -0.9163]
         Angle     83.4981
 }
@@ -7060,7 +7060,7 @@ Galaxy "NGC 4365"
         Dec           7.3175
         Distance   6.659e+07
         Radius     6.683e+04
-        absMag        -21.95
+        AbsMag        -21.95
         Axis    [  0.4697  -0.5870  -0.6594]
         Angle    106.4604
 }
@@ -7074,7 +7074,7 @@ Galaxy "NGC 4371"
         Dec          11.7042
         Distance   5.794e+07
         Radius     3.371e+04
-        absMag        -20.25
+        AbsMag        -20.25
         Axis    [  0.6788  -0.3113  -0.6651]
         Angle     25.8264
 }
@@ -7088,7 +7088,7 @@ Galaxy "NGC 4373"
         Dec         -39.7606
         Distance   9.411e+07
         Radius     4.927e+04
-        absMag         -21.4
+        AbsMag         -21.4
         Axis    [  0.6239  -0.2151  -0.7513]
         Angle    105.8549
 }
@@ -7102,7 +7102,7 @@ Galaxy "M 84"
         Dec          12.8869
         Distance    5.99e+07
         Radius     5.663e+04
-        absMag        -22.12
+        AbsMag        -22.12
         Axis    [ -0.1814   0.2221  -0.9580]
         Angle     78.0043
 }
@@ -7116,7 +7116,7 @@ Galaxy "NGC 4380"
         Dec          10.0167
         Distance   7.312e+07
         Radius     3.722e+04
-        absMag        -19.85
+        AbsMag        -19.85
         Axis    [ -0.8854   0.2811  -0.3703]
         Angle     41.9665
 }
@@ -7130,7 +7130,7 @@ Galaxy "M 85"
         Dec          18.1908
         Distance   6.018e+07
         Radius     6.214e+04
-        absMag        -22.23
+        AbsMag        -22.23
         Axis    [  0.8340  -0.5297  -0.1544]
         Angle    111.1588
 }
@@ -7144,7 +7144,7 @@ Galaxy "NGC 4388"
         Dec          12.6619
         Distance   6.514e+07
         Radius     5.306e+04
-        absMag         -20.5
+        AbsMag         -20.5
         Axis    [  0.8912  -0.1697   0.4206]
         Angle     24.5708
 }
@@ -7158,7 +7158,7 @@ Galaxy "NGC 4389"
         Dec          45.6850
         Distance   1.141e+07
         Radius          4316
-        absMag        -15.72
+        AbsMag        -15.72
         Axis    [  0.4892   0.2720   0.8286]
         Angle     24.6025
 }
@@ -7172,7 +7172,7 @@ Galaxy "NGC 4394"
         Dec          18.2142
         Distance    5.59e+07
         Radius     2.764e+04
-        absMag        -20.27
+        AbsMag        -20.27
         Axis    [ -0.3505   0.3650  -0.8625]
         Angle     54.5391
 }
@@ -7186,7 +7186,7 @@ Galaxy "NGC 4395"
         Dec          33.5467
         Distance   4.571e+07
         Radius     8.776e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.4861   0.7052  -0.5162]
         Angle     40.7288
 }
@@ -7200,7 +7200,7 @@ Galaxy "M 86"
         Dec          12.9464
         Distance    5.59e+07
         Radius     7.236e+04
-        absMag        -22.27
+        AbsMag        -22.27
         Axis    [ -0.1429   0.1678  -0.9754]
         Angle     76.8199
 }
@@ -7214,7 +7214,7 @@ Galaxy "NGC 4414"
         Dec          31.2236
         Distance   6.954e+07
         Radius      4.45e+04
-        absMag        -21.34
+        AbsMag        -21.34
         Axis    [ -0.7767   0.6297  -0.0171]
         Angle     42.0111
 }
@@ -7228,7 +7228,7 @@ Galaxy "NGC 4429"
         Dec          11.1075
         Distance   6.637e+07
         Radius     5.598e+04
-        absMag        -21.34
+        AbsMag        -21.34
         Axis    [  0.7412  -0.3430  -0.5771]
         Angle     18.8931
 }
@@ -7242,7 +7242,7 @@ Galaxy "NGC 4435"
         Dec          13.0797
         Distance    5.01e+07
         Radius     2.186e+04
-        absMag        -20.13
+        AbsMag        -20.13
         Axis    [  0.8535  -0.4792  -0.2045]
         Angle    104.4336
 }
@@ -7256,7 +7256,7 @@ Galaxy "NGC 4438"
         Dec          13.0086
         Distance   3.217e+07
         Radius     3.977e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.9658  -0.2592  -0.0055]
         Angle     87.3693
 }
@@ -7270,7 +7270,7 @@ Galaxy "NGC 4442"
         Dec           9.8039
         Distance    4.05e+07
         Radius     2.651e+04
-        absMag        -20.07
+        AbsMag        -20.07
         Axis    [  0.9165  -0.3294  -0.2270]
         Angle     28.1435
 }
@@ -7284,7 +7284,7 @@ Galaxy "NGC 4448"
         Dec          28.6214
         Distance   5.339e+07
         Radius     3.028e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.8016  -0.1011   0.5892]
         Angle     25.4950
 }
@@ -7298,7 +7298,7 @@ Galaxy "NGC 4449"
         Dec          44.0950
         Distance   3.468e+07
         Radius     3.127e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.8255  -0.5498   0.1276]
         Angle     67.8936
 }
@@ -7312,7 +7312,7 @@ Galaxy "NGC 4450"
         Dec          17.0842
         Distance   6.532e+07
         Radius     5.131e+04
-        absMag        -21.41
+        AbsMag        -21.41
         Axis    [ -0.7972   0.4888  -0.3544]
         Angle     65.2696
 }
@@ -7326,7 +7326,7 @@ Galaxy "NGC 4455"
         Dec          22.8211
         Distance   4.236e+07
         Radius     1.602e+04
-        absMag        -18.17
+        AbsMag        -18.17
         Axis    [  0.9563  -0.2612   0.1318]
         Angle     99.4698
 }
@@ -7340,7 +7340,7 @@ Galaxy "NGC 4457"
         Dec           3.5711
         Distance   5.513e+07
         Radius     2.085e+04
-        absMag        -20.34
+        AbsMag        -20.34
         Axis    [  0.5478  -0.4312  -0.7169]
         Angle     71.6377
 }
@@ -7354,7 +7354,7 @@ Galaxy "NGC 4459"
         Dec          13.9786
         Distance   5.266e+07
         Radius      2.68e+04
-        absMag        -20.64
+        AbsMag        -20.64
         Axis    [  0.1083  -0.1006  -0.9890]
         Angle     31.1767
 }
@@ -7368,7 +7368,7 @@ Galaxy "NGC 4461"
         Dec          13.1844
         Distance   1.015e+08
         Radius      5.02e+04
-        absMag        -21.37
+        AbsMag        -21.37
         Axis    [  0.9545  -0.2962  -0.0349]
         Angle    105.5335
 }
@@ -7382,7 +7382,7 @@ Galaxy "M 49"
         Dec           8.0000
         Distance   5.314e+07
         Radius     7.884e+04
-        absMag        -22.76
+        AbsMag        -22.76
         Axis    [ -0.3568   0.3613  -0.8615]
         Angle     86.8220
 }
@@ -7396,7 +7396,7 @@ Galaxy "NGC 4473"
         Dec          13.4297
         Distance   5.122e+07
         Radius     3.352e+04
-        absMag        -20.78
+        AbsMag        -20.78
         Axis    [  0.1582  -0.2374  -0.9584]
         Angle     77.3360
 }
@@ -7410,7 +7410,7 @@ Galaxy "NGC 4475"
         Dec          27.2433
         Distance   3.627e+08
         Radius     8.969e+04
-        absMag        -21.73
+        AbsMag        -21.73
         Axis    [  0.8900  -0.4552   0.0284]
         Angle    109.1659
 }
@@ -7424,7 +7424,7 @@ Galaxy "NGC 4477"
         Dec          13.6369
         Distance   7.565e+07
         Radius     4.071e+04
-        absMag        -21.43
+        AbsMag        -21.43
         Axis    [  0.7558  -0.5903  -0.2834]
         Angle    112.2158
 }
@@ -7438,7 +7438,7 @@ Galaxy "M 87"
         Dec          12.3906
         Distance   5.241e+07
         Radius     6.327e+04
-        absMag        -22.43
+        AbsMag        -22.43
         Axis    [ -0.4188   0.5047  -0.7549]
         Angle     90.4475
 }
@@ -7452,7 +7452,7 @@ Galaxy "NGC 4487"
         Dec          -8.0536
         Distance   6.247e+07
         Radius     3.634e+04
-        absMag        -20.41
+        AbsMag        -20.41
         Axis    [  0.5488  -0.3531  -0.7577]
         Angle     60.9906
 }
@@ -7466,7 +7466,7 @@ Galaxy "NGC 4490"
         Dec          41.6428
         Distance    2.33e+07
         Radius     2.169e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.2261   0.6876   0.6900]
         Angle     21.9809
 }
@@ -7480,7 +7480,7 @@ Galaxy "NGC 4494"
         Dec          25.7753
         Distance   5.565e+07
         Radius     3.885e+04
-        absMag        -21.46
+        AbsMag        -21.46
         Axis    [ -0.3372   0.6217  -0.7070]
         Angle     84.2620
 }
@@ -7494,7 +7494,7 @@ Galaxy "NGC 4496"
         Dec           3.9397
         Distance   9.373e+07
         Radius     5.317e+04
-        absMag        -21.09
+        AbsMag        -21.09
         Axis    [  0.6036  -0.4184  -0.6787]
         Angle     61.8309
 }
@@ -7508,7 +7508,7 @@ Galaxy "NGC 4498"
         Dec          16.8528
         Distance   5.645e+07
         Radius     2.381e+04
-        absMag        -19.29
+        AbsMag        -19.29
         Axis    [ -0.8341   0.3384  -0.4355]
         Angle     20.3917
 }
@@ -7522,7 +7522,7 @@ Galaxy "M 88"
         Dec          14.4197
         Distance   8.122e+07
         Radius     8.033e+04
-        absMag        -22.58
+        AbsMag        -22.58
         Axis    [ -0.8723   0.2979  -0.3877]
         Angle     27.5764
 }
@@ -7536,7 +7536,7 @@ Galaxy "NGC 4517"
         Dec           0.1156
         Distance   6.614e+07
         Radius      1.01e+05
-        absMag        -21.04
+        AbsMag        -21.04
         Axis    [  0.9648  -0.2597   0.0413]
         Angle     31.5042
 }
@@ -7550,7 +7550,7 @@ Galaxy "NGC 4517A"
         Dec           0.3903
         Distance   9.074e+07
         Radius     5.279e+04
-        absMag        -20.22
+        AbsMag        -20.22
         Axis    [  0.8513  -0.3856  -0.3558]
         Angle     91.1613
 }
@@ -7564,7 +7564,7 @@ Galaxy "NGC 4518"
         Dec           7.8522
         Distance   4.586e+07
         Radius          6670
-        absMag        -16.94
+        AbsMag        -16.94
         Axis    [ -0.9812   0.1818  -0.0643]
         Angle     62.8169
 }
@@ -7578,7 +7578,7 @@ Galaxy "NGC 4519"
         Dec           8.6550
         Distance   1.255e+08
         Radius      5.84e+04
-        absMag        -21.33
+        AbsMag        -21.33
         Axis    [ -0.6323   0.2500  -0.7333]
         Angle     45.9332
 }
@@ -7592,7 +7592,7 @@ Galaxy "NGC 4519A"
         Dec           8.6906
         Distance   2.907e+07
         Radius          2537
-        absMag        -14.55
+        AbsMag        -14.55
         Axis    [  0.9639  -0.2606  -0.0550]
         Angle     67.6589
 }
@@ -7606,7 +7606,7 @@ Galaxy "NGC 4522"
         Dec           9.1742
         Distance    6.22e+07
         Radius     3.257e+04
-        absMag         -19.3
+        AbsMag         -19.3
         Axis    [  0.9782  -0.2077   0.0078]
         Angle     81.5479
 }
@@ -7620,7 +7620,7 @@ Galaxy "NGC 4523"
         Dec          15.1683
         Distance   4.386e+07
         Radius     1.212e+04
-        absMag        -17.14
+        AbsMag        -17.14
         Axis    [  0.6134  -0.5854  -0.5301]
         Angle     84.8717
 }
@@ -7634,7 +7634,7 @@ Galaxy "NGC 4526"
         Dec           7.6989
         Distance   5.514e+07
         Radius     5.614e+04
-        absMag        -21.54
+        AbsMag        -21.54
         Axis    [  0.0616  -0.7586  -0.6486]
         Angle      6.4084
 }
@@ -7648,7 +7648,7 @@ Galaxy "NGC 4527"
         Dec           2.6533
         Distance   9.377e+07
         Radius     8.456e+04
-        absMag        -21.79
+        AbsMag        -21.79
         Axis    [  0.9357  -0.2907  -0.2001]
         Angle     48.3924
 }
@@ -7662,7 +7662,7 @@ Galaxy "NGC 4532"
         Dec           6.4672
         Distance   6.736e+07
         Radius     2.645e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.9869   0.1277  -0.0987]
         Angle     49.1111
 }
@@ -7676,7 +7676,7 @@ Galaxy "NGC 4535"
         Dec           8.1975
         Distance   7.158e+07
         Radius     7.391e+04
-        absMag        -21.91
+        AbsMag        -21.91
         Axis    [  0.8701  -0.4505  -0.2000]
         Angle    118.1717
 }
@@ -7690,7 +7690,7 @@ Galaxy "NGC 4535A"
         Dec           8.2736
         Distance   1.126e+07
         Radius         982.4
-        absMag        -12.49
+        AbsMag        -12.49
         Axis    [  0.7881  -0.5261  -0.3195]
         Angle    107.2613
 }
@@ -7704,7 +7704,7 @@ Galaxy "NGC 4536"
         Dec           2.1872
         Distance   5.228e+07
         Radius     5.779e+04
-        absMag        -20.72
+        AbsMag        -20.72
         Axis    [ -0.7873  -0.1520  -0.5975]
         Angle     21.8563
 }
@@ -7718,7 +7718,7 @@ Galaxy "NGC 4537"
         Dec          50.8056
         Distance   9.321e+06
         Radius          1356
-        absMag        -12.88
+        AbsMag        -12.88
         Axis    [  0.8137  -0.4776   0.3312]
         Angle     90.0588
 }
@@ -7732,7 +7732,7 @@ Galaxy "NGC 4545"
         Dec          63.5247
         Distance   1.523e+08
         Radius     5.536e+04
-        absMag        -21.05
+        AbsMag        -21.05
         Axis    [  0.7213  -0.6013   0.3436]
         Angle    109.1743
 }
@@ -7746,7 +7746,7 @@ Galaxy "NGC 4546"
         Dec          -3.7931
         Distance   4.586e+07
         Radius     2.201e+04
-        absMag        -20.44
+        AbsMag        -20.44
         Axis    [  0.7283  -0.3683  -0.5778]
         Angle     44.8507
 }
@@ -7760,7 +7760,7 @@ Galaxy "M 91"
         Dec          14.4964
         Distance   6.272e+07
         Radius     4.744e+04
-        absMag        -21.32
+        AbsMag        -21.32
         Axis    [ -0.6488   0.3752  -0.6621]
         Angle     47.5515
 }
@@ -7774,7 +7774,7 @@ Galaxy "M 89"
         Dec          12.5561
         Distance   5.005e+07
         Radius     2.548e+04
-        absMag        -21.03
+        AbsMag        -21.03
         Axis    [  0.5505  -0.7438  -0.3790]
         Angle    131.0898
 }
@@ -7788,7 +7788,7 @@ Galaxy "NGC 4559"
         Dec          27.9597
         Distance   2.872e+07
         Radius      4.47e+04
-        absMag        -20.12
+        AbsMag        -20.12
         Axis    [ -0.8447   0.4692   0.2575]
         Angle     36.6324
 }
@@ -7802,7 +7802,7 @@ Galaxy "NGC 4564"
         Dec          11.4397
         Distance   4.891e+07
         Radius      2.49e+04
-        absMag        -19.88
+        AbsMag        -19.88
         Axis    [  0.4205  -0.5956  -0.6844]
         Angle     99.9054
 }
@@ -7816,7 +7816,7 @@ Galaxy "NGC 4565"
         Dec          25.9878
         Distance   5.694e+07
         Radius     1.309e+05
-        absMag        -21.71
+        AbsMag        -21.71
         Axis    [ -0.5885   0.2191   0.7782]
         Angle     34.0986
 }
@@ -7830,7 +7830,7 @@ Galaxy "NGC 4568"
         Dec          11.2386
         Distance   1.168e+08
         Radius     7.817e+04
-        absMag        -21.87
+        AbsMag        -21.87
         Axis    [  0.9311  -0.3474  -0.1109]
         Angle     92.5334
 }
@@ -7844,7 +7844,7 @@ Galaxy "M 90"
         Dec          13.1639
         Distance    2.33e+07
         Radius      3.22e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.9340  -0.3481  -0.0807]
         Angle     92.3046
 }
@@ -7858,7 +7858,7 @@ Galaxy "NGC 4570"
         Dec           7.2469
         Distance   9.332e+07
         Radius     5.022e+04
-        absMag        -21.48
+        AbsMag        -21.48
         Axis    [ -0.9968   0.0792   0.0106]
         Angle     44.7472
 }
@@ -7872,7 +7872,7 @@ Galaxy "NGC 4571"
         Dec          14.2175
         Distance   1.136e+09
         Radius     5.946e+05
-        absMag        -26.51
+        AbsMag        -26.51
         Axis    [  0.9557  -0.2919   0.0366]
         Angle     60.0502
 }
@@ -7886,7 +7886,7 @@ Galaxy "NGC 4572"
         Dec          74.2461
         Distance   3.885e+07
         Radius          8477
-        absMag        -16.38
+        AbsMag        -16.38
         Axis    [ -0.4847   0.6273   0.6095]
         Angle     87.5081
 }
@@ -7900,7 +7900,7 @@ Galaxy "M 58"
         Dec          11.8183
         Distance   2.555e+07
         Radius      2.23e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.3739  -0.3430  -0.8617]
         Angle     40.5203
 }
@@ -7914,7 +7914,7 @@ Galaxy "NGC 4589"
         Dec          74.1919
         Distance   7.169e+07
         Radius     3.545e+04
-        absMag        -21.01
+        AbsMag        -21.01
         Axis    [  0.6309  -0.7213  -0.2857]
         Angle     37.5960
 }
@@ -7928,7 +7928,7 @@ Galaxy "NGC 4592"
         Dec          -0.5314
         Distance   3.973e+07
         Radius     3.351e+04
-        absMag        -18.83
+        AbsMag        -18.83
         Axis    [  0.8021  -0.5425  -0.2499]
         Angle     19.6164
 }
@@ -7942,7 +7942,7 @@ Galaxy "NGC 4593"
         Dec          -5.3439
         Distance   1.283e+08
         Radius      7.28e+04
-        absMag        -21.87
+        AbsMag        -21.87
         Axis    [ -0.1143  -0.2225  -0.9682]
         Angle     46.1857
 }
@@ -7956,7 +7956,7 @@ Galaxy "M 104"
         Dec         -11.6225
         Distance   3.187e+07
         Radius     3.987e+04
-        absMag        -21.65
+        AbsMag        -21.65
         Axis    [  0.4830  -0.3983  -0.7798]
         Angle     42.4703
 }
@@ -7970,7 +7970,7 @@ Galaxy "NGC 4596"
         Dec          10.1764
         Distance   9.957e+07
         Radius     5.793e+04
-        absMag        -21.92
+        AbsMag        -21.92
         Axis    [ -0.5519   0.1503  -0.8203]
         Angle     36.5533
 }
@@ -7984,7 +7984,7 @@ Galaxy "NGC 4602"
         Dec          -5.1325
         Distance   1.117e+08
         Radius     5.522e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [  0.5325  -0.5413  -0.6507]
         Angle     23.6140
 }
@@ -7998,7 +7998,7 @@ Galaxy "NGC 4603"
         Dec         -40.9761
         Distance    1.25e+08
         Radius     6.181e+04
-        absMag        -20.52
+        AbsMag        -20.52
         Axis    [  0.7247  -0.1785  -0.6656]
         Angle    111.6456
 }
@@ -8012,7 +8012,7 @@ Galaxy "NGC 4603A"
         Dec         -40.7397
         Distance   1.286e+08
         Radius     3.554e+04
-        absMag        -19.58
+        AbsMag        -19.58
         Axis    [  0.2832  -0.3440  -0.8953]
         Angle     58.9693
 }
@@ -8026,7 +8026,7 @@ Galaxy "NGC 4605"
         Dec          61.6083
         Distance   3.072e+07
         Radius     2.636e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.0314   0.4833   0.8749]
         Angle     45.7941
 }
@@ -8040,7 +8040,7 @@ Galaxy "NGC 4608"
         Dec          10.1556
         Distance   9.717e+07
         Radius     4.664e+04
-        absMag        -21.37
+        AbsMag        -21.37
         Axis    [ -0.1635  -0.0305  -0.9861]
         Angle     44.7246
 }
@@ -8054,7 +8054,7 @@ Galaxy "NGC 4618"
         Dec          41.1511
         Distance   6.026e+07
         Radius     3.681e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.7442  -0.6679  -0.0069]
         Angle     89.3566
 }
@@ -8068,7 +8068,7 @@ Galaxy "M 59"
         Dec          11.6472
         Distance   5.963e+07
         Radius     4.683e+04
-        absMag        -21.61
+        AbsMag        -21.61
         Axis    [ -0.4189   0.4541  -0.7863]
         Angle     86.3811
 }
@@ -8082,7 +8082,7 @@ Galaxy "NGC 4624"
         Dec           3.0553
         Distance   5.051e+07
         Radius     2.571e+04
-        absMag        -20.65
+        AbsMag        -20.65
         Axis    [  0.5795  -0.6935  -0.4281]
         Angle    136.2528
 }
@@ -8096,7 +8096,7 @@ Galaxy "NGC 4631"
         Dec          32.5417
         Distance   1.851e+07
         Radius     4.092e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.6522  -0.1029   0.7511]
         Angle     45.4031
 }
@@ -8110,7 +8110,7 @@ Galaxy "NGC 4632"
         Dec          -0.0806
         Distance   5.916e+07
         Radius     2.581e+04
-        absMag        -19.49
+        AbsMag        -19.49
         Axis    [  0.8768  -0.3502  -0.3296]
         Angle     54.7594
 }
@@ -8124,7 +8124,7 @@ Galaxy "NGC 4633"
         Dec          14.3569
         Distance   4.482e+07
         Radius     1.304e+04
-        absMag        -17.39
+        AbsMag        -17.39
         Axis    [  0.9280  -0.3657  -0.0713]
         Angle     82.6347
 }
@@ -8138,7 +8138,7 @@ Galaxy "NGC 4636"
         Dec           2.6872
         Distance    4.78e+07
         Radius     4.102e+04
-        absMag        -21.43
+        AbsMag        -21.43
         Axis    [ -0.3739   0.2629  -0.8894]
         Angle     87.0627
 }
@@ -8152,7 +8152,7 @@ Galaxy "NGC 4643"
         Dec           1.9781
         Distance   7.842e+07
         Radius     3.536e+04
-        absMag         -21.1
+        AbsMag         -21.1
         Axis    [  0.6894  -0.4832  -0.5396]
         Angle     81.1971
 }
@@ -8166,7 +8166,7 @@ Galaxy "M 60"
         Dec          11.5531
         Distance   5.488e+07
         Radius     6.067e+04
-        absMag        -22.33
+        AbsMag        -22.33
         Axis    [  0.0299  -0.1590  -0.9868]
         Angle     76.2155
 }
@@ -8180,7 +8180,7 @@ Galaxy "NGC 4651"
         Dec          16.3936
         Distance   1.033e+08
         Radius     6.009e+04
-        absMag         -21.9
+        AbsMag         -21.9
         Axis    [  0.7489  -0.4873  -0.4492]
         Angle     40.0971
 }
@@ -8194,7 +8194,7 @@ Galaxy "NGC 4652"
         Dec          58.9653
         Distance   1.105e+07
         Radius          1607
-        absMag        -12.85
+        AbsMag        -12.85
         Axis    [  0.7487  -0.2622   0.6088]
         Angle     97.0920
 }
@@ -8208,7 +8208,7 @@ Galaxy "NGC 4654"
         Dec          13.1264
         Distance    6.27e+07
         Radius     4.559e+04
-        absMag        -21.02
+        AbsMag        -21.02
         Axis    [ -0.7071   0.0439  -0.7057]
         Angle     18.9902
 }
@@ -8222,7 +8222,7 @@ Galaxy "NGC 4655"
         Dec          41.0192
         Distance   1.195e+07
         Radius          1738
-        absMag        -13.42
+        AbsMag        -13.42
         Axis    [  0.4626  -0.8674  -0.1835]
         Angle    117.5966
 }
@@ -8236,7 +8236,7 @@ Galaxy "NGC 4656"
         Dec          32.1697
         Distance   7.996e+07
         Radius     1.779e+05
-        absMag        -21.85
+        AbsMag        -21.85
         Axis    [  0.9099  -0.2393   0.3388]
         Angle     89.0122
 }
@@ -8250,7 +8250,7 @@ Galaxy "NGC 4664"
         Dec           3.0553
         Distance   5.051e+07
         Radius     2.571e+04
-        absMag        -20.65
+        AbsMag        -20.65
         Axis    [  0.5795  -0.6935  -0.4281]
         Angle    136.2528
 }
@@ -8264,7 +8264,7 @@ Galaxy "NGC 4666"
         Dec          -0.4628
         Distance   6.392e+07
         Radius     4.184e+04
-        absMag        -20.66
+        AbsMag        -20.66
         Axis    [  0.9414  -0.2716  -0.2000]
         Angle     73.8187
 }
@@ -8278,7 +8278,7 @@ Galaxy "NGC 4672"
         Dec         -41.7058
         Distance    2.06e+08
         Radius     6.591e+04
-        absMag         -20.9
+        AbsMag         -20.9
         Axis    [  0.6226  -0.2068  -0.7548]
         Angle     94.1824
 }
@@ -8292,7 +8292,7 @@ Galaxy "NGC 4679"
         Dec         -39.5711
         Distance   1.702e+08
         Radius     6.187e+04
-        absMag        -20.79
+        AbsMag        -20.79
         Axis    [  0.8703  -0.0298  -0.4915]
         Angle    118.7599
 }
@@ -8306,7 +8306,7 @@ Galaxy "NGC 4689"
         Dec          13.7622
         Distance   8.743e+07
         Radius     5.468e+04
-        absMag        -21.44
+        AbsMag        -21.44
         Axis    [ -0.7406   0.3893  -0.5477]
         Angle     53.8939
 }
@@ -8320,7 +8320,7 @@ Galaxy "NGC 4691"
         Dec          -3.3325
         Distance   1.607e+08
         Radius      6.31e+04
-        absMag        -22.36
+        AbsMag        -22.36
         Axis    [  0.2500  -0.3753  -0.8925]
         Angle     71.7861
 }
@@ -8334,7 +8334,7 @@ Galaxy "NGC 4696"
         Dec         -41.3117
         Distance   1.157e+08
         Radius     7.911e+04
-        absMag        -22.55
+        AbsMag        -22.55
         Axis    [ -0.1582  -0.1816  -0.9706]
         Angle    126.5222
 }
@@ -8348,7 +8348,7 @@ Galaxy "NGC 4697"
         Dec          -5.8000
         Distance   3.832e+07
         Radius     4.013e+04
-        absMag        -21.15
+        AbsMag        -21.15
         Axis    [  0.2303  -0.4235  -0.8761]
         Angle    103.2994
 }
@@ -8362,7 +8362,7 @@ Galaxy "NGC 4698"
         Dec           8.4883
         Distance   1.025e+08
         Radius     5.964e+04
-        absMag        -21.79
+        AbsMag        -21.79
         Axis    [ -0.9259   0.2631  -0.2710]
         Angle     57.5082
 }
@@ -8376,7 +8376,7 @@ Galaxy "NGC 4699"
         Dec          -8.6639
         Distance   7.973e+07
         Radius     4.407e+04
-        absMag        -22.34
+        AbsMag        -22.34
         Axis    [  0.7016  -0.4218  -0.5743]
         Angle     85.9938
 }
@@ -8390,7 +8390,7 @@ Galaxy "NGC 4705"
         Dec          -5.1953
         Distance   1.443e+08
         Radius     6.505e+04
-        absMag        -20.43
+        AbsMag        -20.43
         Axis    [ -0.6873  -0.6788  -0.2584]
         Angle     18.6124
 }
@@ -8404,7 +8404,7 @@ Galaxy "NGC 4710"
         Dec          15.1647
         Distance   6.464e+07
         Radius     4.607e+04
-        absMag        -20.49
+        AbsMag        -20.49
         Axis    [  0.9648  -0.2515   0.0774]
         Angle     89.2636
 }
@@ -8418,7 +8418,7 @@ Galaxy "NGC 4713"
         Dec           5.3111
         Distance   6.338e+07
         Radius     2.673e+04
-        absMag        -20.04
+        AbsMag        -20.04
         Axis    [  0.3304  -0.4575  -0.8255]
         Angle     31.1294
 }
@@ -8432,7 +8432,7 @@ Galaxy "NGC 4714"
         Dec         -13.3244
         Distance   2.627e+07
         Radius          6113
-        absMag        -16.83
+        AbsMag        -16.83
         Axis    [ -0.6977  -0.0473  -0.7148]
         Angle     61.6686
 }
@@ -8446,7 +8446,7 @@ Galaxy "NGC 4725"
         Dec          25.5000
         Distance    4.32e+07
         Radius     6.722e+04
-        absMag        -21.31
+        AbsMag        -21.31
         Axis    [  0.8120  -0.5682  -0.1332]
         Angle     82.3312
 }
@@ -8460,7 +8460,7 @@ Galaxy "M 94"
         Dec          41.1214
         Distance   1.696e+07
         Radius     3.552e+04
-        absMag        -20.48
+        AbsMag        -20.48
         Axis    [  0.3003   0.3984  -0.8667]
         Angle     12.8393
 }
@@ -8474,7 +8474,7 @@ Galaxy "NGC 4753"
         Dec          -1.2000
         Distance   7.681e+07
         Radius     6.703e+04
-        absMag        -21.96
+        AbsMag        -21.96
         Axis    [  0.7195  -0.4698  -0.5115]
         Angle     41.8373
 }
@@ -8488,7 +8488,7 @@ Galaxy "NGC 4754"
         Dec          11.3139
         Distance   5.488e+07
         Radius     3.512e+04
-        absMag        -20.63
+        AbsMag        -20.63
         Axis    [  0.8913  -0.4227  -0.1639]
         Angle     94.3715
 }
@@ -8502,7 +8502,7 @@ Galaxy "NGC 4758"
         Dec          15.8486
         Distance   5.504e+07
         Radius     2.402e+04
-        absMag        -17.84
+        AbsMag        -17.84
         Axis    [ -0.9298   0.0881   0.3572]
         Angle     47.3390
 }
@@ -8516,7 +8516,7 @@ Galaxy "NGC 4762"
         Dec          11.2306
         Distance   5.862e+07
         Radius     7.417e+04
-        absMag        -21.17
+        AbsMag        -21.17
         Axis    [  0.9759  -0.2029   0.0800]
         Angle     87.1387
 }
@@ -8530,7 +8530,7 @@ Galaxy "NGC 4772"
         Dec           2.1686
         Distance   6.188e+07
         Radius      3.06e+04
-        absMag        -20.69
+        AbsMag        -20.69
         Axis    [ -0.9278  -0.0429  -0.3705]
         Angle     37.0033
 }
@@ -8544,7 +8544,7 @@ Galaxy "NGC 4775"
         Dec          -6.6228
         Distance   8.594e+07
         Radius      2.75e+04
-        absMag           -21
+        AbsMag           -21
         Axis    [  0.2915  -0.4212  -0.8589]
         Angle     83.7832
 }
@@ -8558,7 +8558,7 @@ Galaxy "NGC 4781"
         Dec         -10.5361
         Distance   7.176e+07
         Radius     3.548e+04
-        absMag        -20.61
+        AbsMag        -20.61
         Axis    [ -0.3651  -0.5407  -0.7578]
         Angle     28.5849
 }
@@ -8572,7 +8572,7 @@ Galaxy "NGC 4808"
         Dec           4.3036
         Distance   7.081e+07
         Radius     2.884e+04
-        absMag        -20.08
+        AbsMag        -20.08
         Axis    [ -0.7921  -0.4203  -0.4426]
         Angle     18.1881
 }
@@ -8586,7 +8586,7 @@ Galaxy "M 64"
         Dec          21.6831
         Distance    2.44e+07
         Radius     3.549e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [  0.0363  -0.8633  -0.5033]
         Angle      4.6957
 }
@@ -8600,7 +8600,7 @@ Galaxy "NGC 4856"
         Dec         -15.0422
         Distance   7.583e+07
         Radius     4.743e+04
-        absMag        -21.23
+        AbsMag        -21.23
         Axis    [  0.9177  -0.2101  -0.3371]
         Angle     79.4666
 }
@@ -8614,7 +8614,7 @@ Galaxy "NGC 4866"
         Dec          14.1714
         Distance   1.038e+08
         Radius     9.665e+04
-        absMag        -21.41
+        AbsMag        -21.41
         Axis    [  0.8336  -0.3991   0.3819]
         Angle     32.9781
 }
@@ -8628,7 +8628,7 @@ Galaxy "NGC 4900"
         Dec           2.5011
         Distance   5.844e+07
         Radius      1.87e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.6741  -0.6290  -0.3873]
         Angle    131.0188
 }
@@ -8642,7 +8642,7 @@ Galaxy "NGC 4902"
         Dec         -14.5139
         Distance   1.335e+08
         Radius     5.631e+04
-        absMag        -22.16
+        AbsMag        -22.16
         Axis    [  0.3447  -0.4301  -0.8344]
         Angle     85.3504
 }
@@ -8656,7 +8656,7 @@ Galaxy "NGC 4936"
         Dec         -30.5267
         Distance   1.088e+08
         Radius     4.271e+04
-        absMag        -21.92
+        AbsMag        -21.92
         Axis    [ -0.6393   0.1547  -0.7533]
         Angle    113.8789
 }
@@ -8670,7 +8670,7 @@ Galaxy "NGC 4939"
         Dec         -10.3400
         Distance   1.414e+08
         Radius     1.131e+05
-        absMag        -21.89
+        AbsMag        -21.89
         Axis    [  0.8977  -0.2957  -0.3267]
         Angle    114.7758
 }
@@ -8684,7 +8684,7 @@ Galaxy "NGC 4941"
         Dec          -5.5514
         Distance   6.474e+07
         Radius     3.672e+04
-        absMag        -20.29
+        AbsMag        -20.29
         Axis    [  0.8147  -0.4294  -0.3897]
         Angle    109.4439
 }
@@ -8698,7 +8698,7 @@ Galaxy "NGC 4945"
         Dec         -49.4628
         Distance    1.54e+07
         Radius     4.434e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.7424  -0.0576  -0.6674]
         Angle     78.6135
 }
@@ -8712,7 +8712,7 @@ Galaxy "NGC 4945A"
         Dec         -49.6917
         Distance   7.253e+07
         Radius     2.637e+04
-        absMag        -19.34
+        AbsMag        -19.34
         Axis    [  0.4452  -0.2638  -0.8557]
         Angle     99.6219
 }
@@ -8726,7 +8726,7 @@ Galaxy "NGC 4951"
         Dec          -6.4942
         Distance   5.336e+07
         Radius     2.949e+04
-        absMag        -19.07
+        AbsMag        -19.07
         Axis    [  0.6049  -0.6056  -0.5170]
         Angle     33.1568
 }
@@ -8740,7 +8740,7 @@ Galaxy "NGC 4953-1"
         Dec         -37.5861
         Distance   1.744e+07
         Radius          3043
-        absMag        -15.44
+        AbsMag        -15.44
         Axis    [  0.5290  -0.3225  -0.7849]
         Angle    103.8303
 }
@@ -8754,7 +8754,7 @@ Galaxy "NGC 4958"
         Dec          -8.0200
         Distance    7.04e+07
         Radius     3.993e+04
-        absMag        -20.97
+        AbsMag        -20.97
         Axis    [  0.9374  -0.2357  -0.2564]
         Angle    107.5228
 }
@@ -8768,7 +8768,7 @@ Galaxy "NGC 4966"
         Dec          29.0628
         Distance    3.21e+08
         Radius     4.669e+04
-        absMag        -21.77
+        AbsMag        -21.77
         Axis    [ -0.8751   0.4153   0.2485]
         Angle     25.5265
 }
@@ -8782,7 +8782,7 @@ Galaxy "NGC 4967"
         Dec          53.5644
         Distance   8.204e+07
         Radius          5966
-        absMag         -17.8
+        AbsMag         -17.8
         Axis    [  0.0528   0.5535  -0.8312]
         Angle     44.0575
 }
@@ -8796,7 +8796,7 @@ Galaxy "NGC 4976"
         Dec         -49.5058
         Distance   3.471e+07
         Radius     2.827e+04
-        absMag        -20.03
+        AbsMag        -20.03
         Axis    [ -0.6400   0.0183  -0.7682]
         Angle    128.4682
 }
@@ -8810,7 +8810,7 @@ Galaxy "NGC 4995"
         Dec          -7.8331
         Distance    9.45e+07
         Radius     3.299e+04
-        absMag        -21.11
+        AbsMag        -21.11
         Axis    [  0.1904  -0.4773  -0.8579]
         Angle     50.7039
 }
@@ -8824,7 +8824,7 @@ Galaxy "NGC 5005"
         Dec          37.0586
         Distance   5.332e+07
         Radius     4.498e+04
-        absMag        -21.27
+        AbsMag        -21.27
         Axis    [  0.8198  -0.5076   0.2649]
         Angle     56.2554
 }
@@ -8838,7 +8838,7 @@ Galaxy "NGC 5018"
         Dec         -19.5194
         Distance    1.29e+08
         Radius      6.38e+04
-        absMag        -22.29
+        AbsMag        -22.29
         Axis    [ -0.2018  -0.1753  -0.9636]
         Angle    103.1110
 }
@@ -8852,7 +8852,7 @@ Galaxy "NGC 5022"
         Dec         -19.5475
         Distance   1.279e+08
         Radius     4.652e+04
-        absMag        -20.07
+        AbsMag        -20.07
         Axis    [  0.9479  -0.1112  -0.2987]
         Angle     92.3155
 }
@@ -8866,7 +8866,7 @@ Galaxy "NGC 5023"
         Dec          44.0372
         Distance   4.449e+07
         Radius     3.753e+04
-        absMag        -18.57
+        AbsMag        -18.57
         Axis    [  0.8580  -0.3351   0.3894]
         Angle    101.4890
 }
@@ -8880,7 +8880,7 @@ Galaxy "NGC 5033"
         Dec          36.5933
         Distance   5.957e+07
         Radius     9.271e+04
-        absMag        -21.31
+        AbsMag        -21.31
         Axis    [ -0.8085   0.5007   0.3092]
         Angle     53.3509
 }
@@ -8894,7 +8894,7 @@ Galaxy "NGC 5042"
         Dec         -23.9839
         Distance   5.957e+07
         Radius     3.639e+04
-        absMag        -19.51
+        AbsMag        -19.51
         Axis    [  0.8028  -0.2896  -0.5212]
         Angle    103.6200
 }
@@ -8908,7 +8908,7 @@ Galaxy "NGC 5044"
         Dec         -16.3844
         Distance   1.017e+08
         Radius     4.439e+04
-        absMag        -21.67
+        AbsMag        -21.67
         Axis    [  0.5437  -0.6288  -0.5558]
         Angle    151.4366
 }
@@ -8922,7 +8922,7 @@ Galaxy "NGC 5054"
         Dec         -16.6347
         Distance   9.282e+07
         Radius     6.885e+04
-        absMag        -21.37
+        AbsMag        -21.37
         Axis    [ -0.8940  -0.2198  -0.3905]
         Angle     60.2472
 }
@@ -8936,7 +8936,7 @@ Galaxy "M 63"
         Dec          42.0331
         Distance   3.452e+07
         Radius     6.326e+04
-        absMag        -21.62
+        AbsMag        -21.62
         Axis    [  0.6207  -0.3296   0.7114]
         Angle     21.2935
 }
@@ -8950,7 +8950,7 @@ Galaxy "NGC 5061"
         Dec         -26.8372
         Distance   8.915e+07
         Radius     4.538e+04
-        absMag        -21.88
+        AbsMag        -21.88
         Axis    [  0.5534  -0.5712  -0.6062]
         Angle    157.3895
 }
@@ -8964,7 +8964,7 @@ Galaxy "NGC 5068"
         Dec         -21.0381
         Distance   2.676e+07
         Radius     2.841e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.1818  -0.3231  -0.9287]
         Angle     73.9646
 }
@@ -8978,7 +8978,7 @@ Galaxy "NGC 5078"
         Dec         -27.4097
         Distance   1.113e+08
         Radius     6.478e+04
-        absMag        -21.57
+        AbsMag        -21.57
         Axis    [ -0.7557  -0.4244  -0.4987]
         Angle     59.1278
 }
@@ -8992,7 +8992,7 @@ Galaxy "NGC 5081"
         Dec          28.5064
         Distance   3.234e+08
         Radius     1.035e+05
-        absMag        -21.38
+        AbsMag        -21.38
         Axis    [  0.5136  -0.4164   0.7503]
         Angle     26.7628
 }
@@ -9006,7 +9006,7 @@ Galaxy "NGC 5084"
         Dec         -21.8275
         Distance   9.173e+07
         Radius     1.241e+05
-        absMag        -21.75
+        AbsMag        -21.75
         Axis    [  0.6979  -0.5426  -0.4674]
         Angle     41.3788
 }
@@ -9020,7 +9020,7 @@ Galaxy "NGC 5101"
         Dec         -27.4308
         Distance   9.731e+07
         Radius     7.642e+04
-        absMag        -21.87
+        AbsMag        -21.87
         Axis    [ -0.3697  -0.2865  -0.8839]
         Angle     76.3378
 }
@@ -9034,7 +9034,7 @@ Galaxy "NGC 5102"
         Dec         -36.6317
         Distance   1.304e+07
         Radius     1.632e+04
-        absMag        -18.51
+        AbsMag        -18.51
         Axis    [  0.7092  -0.2574  -0.6564]
         Angle     77.5727
 }
@@ -9048,7 +9048,7 @@ Galaxy "NGC 5121"
         Dec         -37.6825
         Distance   7.996e+07
         Radius      2.21e+04
-        absMag        -21.25
+        AbsMag        -21.25
         Axis    [  0.5453  -0.3547  -0.7595]
         Angle    112.9050
 }
@@ -9062,7 +9062,7 @@ Galaxy "NGC 5128"
         Dec         -43.0161
         Distance   1.372e+07
         Radius     5.129e+04
-        absMag        -21.52
+        AbsMag        -21.52
         Axis    [  0.5363  -0.3216  -0.7804]
         Angle    115.8250
 }
@@ -9076,7 +9076,7 @@ Galaxy "NGC 5156"
         Dec         -48.9167
         Distance   3.923e+08
         Radius     1.426e+05
-        absMag         -23.7
+        AbsMag         -23.7
         Axis    [ -0.2445  -0.3598  -0.9004]
         Angle     93.7457
 }
@@ -9090,7 +9090,7 @@ Galaxy "NGC 5161"
         Dec         -33.1744
         Distance   8.154e+07
         Radius     6.641e+04
-        absMag        -20.59
+        AbsMag        -20.59
         Axis    [  0.4104  -0.4800  -0.7754]
         Angle     60.9213
 }
@@ -9104,7 +9104,7 @@ Galaxy "NGC 5163"
         Dec          52.7542
         Distance   2.291e+07
         Radius          3665
-        absMag        -15.13
+        AbsMag        -15.13
         Axis    [  0.3288  -0.9326  -0.1487]
         Angle    112.7049
 }
@@ -9118,7 +9118,7 @@ Galaxy "NGC 5170"
         Dec         -17.9653
         Distance   1.417e+08
         Radius      1.69e+05
-        absMag        -21.79
+        AbsMag        -21.79
         Axis    [ -0.5069  -0.8529  -0.1247]
         Angle     33.1383
 }
@@ -9132,7 +9132,7 @@ Galaxy "NGC 5172"
         Dec          17.0517
         Distance   2.092e+08
         Radius     1.035e+05
-        absMag        -22.24
+        AbsMag        -22.24
         Axis    [  0.4207  -0.8641  -0.2765]
         Angle     21.5443
 }
@@ -9146,7 +9146,7 @@ Galaxy "NGC 5174"
         Dec          11.0078
         Distance   3.085e+08
         Radius     1.212e+05
-        absMag        -22.38
+        AbsMag        -22.38
         Axis    [ -0.9981   0.0297   0.0542]
         Angle     44.0352
 }
@@ -9160,7 +9160,7 @@ Galaxy "NGC 5176"
         Dec          11.7819
         Distance   5.059e+07
         Radius          3679
-        absMag        -16.55
+        AbsMag        -16.55
         Axis    [  0.4610  -0.7879  -0.4082]
         Angle    138.8286
 }
@@ -9174,7 +9174,7 @@ Galaxy "M 51"
         Dec          47.1956
         Distance   1.281e+07
         Radius     2.086e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.7458  -0.6548   0.1229]
         Angle    116.2348
 }
@@ -9188,7 +9188,7 @@ Galaxy "NGC 5195"
         Dec          47.2675
         Distance   2.497e+07
         Radius     2.143e+04
-        absMag        -19.82
+        AbsMag        -19.82
         Axis    [  0.6995  -0.7059   0.1111]
         Angle     43.2785
 }
@@ -9202,7 +9202,7 @@ Galaxy "NGC 5204"
         Dec          58.4183
         Distance    2.12e+07
         Radius     1.542e+04
-        absMag        -17.96
+        AbsMag        -17.96
         Axis    [  0.7043  -0.6740   0.2227]
         Angle    120.3266
 }
@@ -9216,7 +9216,7 @@ Galaxy "NGC 5205"
         Dec          62.5125
         Distance   9.323e+07
         Radius     4.339e+04
-        absMag        -19.88
+        AbsMag        -19.88
         Axis    [ -0.4292   0.7495   0.5040]
         Angle     54.6552
 }
@@ -9230,7 +9230,7 @@ Galaxy "NGC 5206"
         Dec         -48.1519
         Distance   2.591e+07
         Radius     1.432e+04
-        absMag         -18.9
+        AbsMag         -18.9
         Axis    [  0.4421  -0.3369  -0.8313]
         Angle    125.4827
 }
@@ -9244,7 +9244,7 @@ Galaxy "NGC 5207"
         Dec          13.8914
         Distance   3.719e+08
         Radius     9.195e+04
-        absMag        -21.68
+        AbsMag        -21.68
         Axis    [ -0.9768  -0.1602  -0.1419]
         Angle     25.5027
 }
@@ -9258,7 +9258,7 @@ Galaxy "NGC 5221"
         Dec          13.8325
         Distance   3.299e+08
         Radius     7.678e+04
-        absMag        -21.62
+        AbsMag        -21.62
         Axis    [  0.4328  -0.7676   0.4728]
         Angle     24.5624
 }
@@ -9272,7 +9272,7 @@ Galaxy "NGC 5222-1"
         Dec          13.7411
         Distance    7.08e+07
         Radius     1.648e+04
-        absMag        -18.58
+        AbsMag        -18.58
         Axis    [  0.3533  -0.7417  -0.5701]
         Angle    113.1348
 }
@@ -9286,7 +9286,7 @@ Galaxy "M 83"
         Dec         -29.8672
         Distance   9.278e+06
         Radius     1.741e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.4273  -0.4519  -0.7831]
         Angle    112.0494
 }
@@ -9300,7 +9300,7 @@ Galaxy "NGC 5247"
         Dec         -17.8847
         Distance   7.461e+07
         Radius      5.86e+04
-        absMag         -21.9
+        AbsMag         -21.9
         Axis    [  0.5868  -0.5252  -0.6162]
         Angle    123.2537
 }
@@ -9314,7 +9314,7 @@ Galaxy "NGC 5248"
         Dec           8.8861
         Distance    6.51e+07
         Radius      5.87e+04
-        absMag         -21.4
+        AbsMag         -21.4
         Axis    [ -0.4198  -0.4717  -0.7754]
         Angle     29.6066
 }
@@ -9328,7 +9328,7 @@ Galaxy "NGC 5253"
         Dec         -31.6417
         Distance   3.369e+07
         Radius      2.45e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.6959  -0.3394  -0.6329]
         Angle     81.1966
 }
@@ -9342,7 +9342,7 @@ Galaxy "NGC 5254"
         Dec         -11.4942
         Distance   1.159e+08
         Radius     5.393e+04
-        absMag        -20.35
+        AbsMag        -20.35
         Axis    [ -0.5235  -0.6971  -0.4899]
         Angle     35.1958
 }
@@ -9356,7 +9356,7 @@ Galaxy "NGC 5255"
         Dec          57.1097
         Distance   2.789e+07
         Radius          3245
-        absMag        -15.16
+        AbsMag        -15.16
         Axis    [  0.7919  -0.4526   0.4100]
         Angle    112.2709
 }
@@ -9370,7 +9370,7 @@ Galaxy "NGC 5266"
         Dec         -48.1692
         Distance   1.492e+08
         Radius     7.162e+04
-        absMag         -22.3
+        AbsMag         -22.3
         Axis    [ -0.1729  -0.4343  -0.8840]
         Angle     85.6608
 }
@@ -9384,7 +9384,7 @@ Galaxy "NGC 5289"
         Dec          41.5036
         Distance    1.35e+08
         Radius     3.732e+04
-        absMag        -20.19
+        AbsMag        -20.19
         Axis    [  0.4754  -0.3324   0.8146]
         Angle     43.2468
 }
@@ -9398,7 +9398,7 @@ Galaxy "NGC 5290"
         Dec          41.7131
         Distance   1.269e+08
         Radius     6.828e+04
-        absMag        -20.85
+        AbsMag        -20.85
         Axis    [  0.5074  -0.3000   0.8078]
         Angle     51.5360
 }
@@ -9412,7 +9412,7 @@ Galaxy "NGC 5291-1"
         Dec         -30.4053
         Distance   2.334e+07
         Radius          4073
-        absMag        -15.37
+        AbsMag        -15.37
         Axis    [ -0.7140   0.1257  -0.6887]
         Angle    109.2954
 }
@@ -9426,7 +9426,7 @@ Galaxy "NGC 5300"
         Dec           3.9506
         Distance   8.376e+07
         Radius     4.629e+04
-        absMag        -20.25
+        AbsMag        -20.25
         Axis    [ -0.9284  -0.1410  -0.3437]
         Angle     41.6497
 }
@@ -9440,7 +9440,7 @@ Galaxy "NGC 5320"
         Dec          41.3661
         Distance   1.186e+08
         Radius      6.21e+04
-        absMag         -20.6
+        AbsMag         -20.6
         Axis    [  0.7807  -0.6143   0.1143]
         Angle    108.4725
 }
@@ -9454,7 +9454,7 @@ Galaxy "NGC 5321"
         Dec          33.6331
         Distance   2.418e+07
         Radius          2813
-        absMag        -14.95
+        AbsMag        -14.95
         Axis    [  0.4510  -0.7965  -0.4027]
         Angle     43.3965
 }
@@ -9468,7 +9468,7 @@ Galaxy "NGC 5322"
         Dec          60.1903
         Distance   1.017e+08
         Radius     8.877e+04
-        absMag        -22.37
+        AbsMag        -22.37
         Axis    [  0.3515  -0.8116  -0.4666]
         Angle     48.0614
 }
@@ -9482,7 +9482,7 @@ Galaxy "NGC 5333"
         Dec         -48.5128
         Distance   1.341e+08
         Radius     3.707e+04
-        absMag        -22.17
+        AbsMag        -22.17
         Axis    [  0.4346  -0.3495  -0.8300]
         Angle     92.5571
 }
@@ -9496,7 +9496,7 @@ Galaxy "NGC 5348"
         Dec           5.2272
         Distance   6.179e+07
         Radius     3.145e+04
-        absMag        -17.99
+        AbsMag        -17.99
         Axis    [ -0.8944  -0.1863   0.4067]
         Angle     68.0287
 }
@@ -9510,7 +9510,7 @@ Galaxy "NGC 5363"
         Dec           5.2539
         Distance   6.383e+07
         Radius     3.806e+04
-        absMag        -20.96
+        AbsMag        -20.96
         Axis    [ -0.7880  -0.4474  -0.4230]
         Angle     31.8762
 }
@@ -9524,7 +9524,7 @@ Galaxy "NGC 5364"
         Dec           5.0156
         Distance    6.85e+07
         Radius     6.774e+04
-        absMag        -21.21
+        AbsMag        -21.21
         Axis    [  0.7291  -0.5910  -0.3450]
         Angle     96.1825
 }
@@ -9538,7 +9538,7 @@ Galaxy "NGC 5371"
         Dec          40.4622
         Distance   1.241e+08
         Radius     7.582e+04
-        absMag         -22.4
+        AbsMag         -22.4
         Axis    [  0.6353  -0.7706  -0.0507]
         Angle    118.4774
 }
@@ -9552,7 +9552,7 @@ Galaxy "NGC 5409"
         Dec           9.4906
         Distance   2.709e+08
         Radius     6.698e+04
-        absMag         -21.2
+        AbsMag         -21.2
         Axis    [  0.6794  -0.6625  -0.3156]
         Angle     76.8465
 }
@@ -9566,7 +9566,7 @@ Galaxy "NGC 5416"
         Dec           9.4400
         Distance   3.241e+08
         Radius     6.599e+04
-        absMag        -21.69
+        AbsMag        -21.69
         Axis    [ -0.1034  -0.7596  -0.6421]
         Angle     33.4144
 }
@@ -9580,7 +9580,7 @@ Galaxy "NGC 5419"
         Dec         -33.9783
         Distance   1.654e+08
         Radius     9.864e+04
-        absMag        -22.63
+        AbsMag        -22.63
         Axis    [ -0.0517  -0.3919  -0.9186]
         Angle    125.9457
 }
@@ -9594,7 +9594,7 @@ Galaxy "M 101"
         Dec          54.3494
         Distance   9.278e+06
         Radius     3.886e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.4753  -0.8797  -0.0156]
         Angle    101.9063
 }
@@ -9608,7 +9608,7 @@ Galaxy "NGC 5464"
         Dec         -30.0172
         Distance   1.265e+08
         Radius     2.391e+04
-        absMag        -20.24
+        AbsMag        -20.24
         Axis    [  0.1380  -0.6014  -0.7870]
         Angle     66.9916
 }
@@ -9622,7 +9622,7 @@ Galaxy "NGC 5474"
         Dec          53.6628
         Distance   3.868e+07
         Radius     2.644e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.2954  -0.9506  -0.0959]
         Angle    129.3601
 }
@@ -9636,7 +9636,7 @@ Galaxy "NGC 5483"
         Dec         -43.3250
         Distance    9.01e+07
         Radius     5.111e+04
-        absMag        -21.01
+        AbsMag        -21.01
         Axis    [  0.4349  -0.4217  -0.7956]
         Angle    135.3865
 }
@@ -9650,7 +9650,7 @@ Galaxy "NGC 5493"
         Dec          -5.0439
         Distance   4.015e+08
         Radius     9.926e+04
-        absMag        -24.05
+        AbsMag        -24.05
         Axis    [ -0.3996  -0.4275  -0.8109]
         Angle     57.0963
 }
@@ -9664,7 +9664,7 @@ Galaxy "NGC 5496"
         Dec          -1.1583
         Distance   8.272e+07
         Radius     5.655e+04
-        absMag        -19.82
+        AbsMag        -19.82
         Axis    [ -0.8571  -0.3258   0.3989]
         Angle     66.7512
 }
@@ -9678,7 +9678,7 @@ Galaxy "NGC 5497"
         Dec          38.8939
         Distance   3.217e+07
         Radius          5615
-        absMag        -15.87
+        AbsMag        -15.87
         Axis    [  0.6590  -0.7174   0.2262]
         Angle     55.7018
 }
@@ -9692,7 +9692,7 @@ Galaxy "NGC 5523"
         Dec          25.3183
         Distance   7.076e+07
         Radius     4.837e+04
-        absMag        -19.48
+        AbsMag        -19.48
         Axis    [  0.5547  -0.6377   0.5345]
         Angle     44.8192
 }
@@ -9706,7 +9706,7 @@ Galaxy "NGC 5529"
         Dec          36.2269
         Distance   1.981e+08
         Radius     1.729e+05
-        absMag        -21.82
+        AbsMag        -21.82
         Axis    [  0.1890  -0.3156   0.9299]
         Angle     48.8994
 }
@@ -9720,7 +9720,7 @@ Galaxy "NGC 5530"
         Dec         -43.3869
         Distance    6.36e+07
         Radius     3.885e+04
-        absMag        -20.45
+        AbsMag        -20.45
         Axis    [ -0.5015  -0.6638  -0.5549]
         Angle     68.4980
 }
@@ -9734,7 +9734,7 @@ Galaxy "NGC 5533"
         Dec          35.3439
         Distance   1.715e+08
         Radius     7.731e+04
-        absMag         -21.7
+        AbsMag         -21.7
         Axis    [  0.7236  -0.6900   0.0163]
         Angle     99.1107
 }
@@ -9748,7 +9748,7 @@ Galaxy "NGC 5557"
         Dec          36.4936
         Distance   1.342e+08
         Radius     4.686e+04
-        absMag        -22.17
+        AbsMag        -22.17
         Axis    [ -0.0141  -0.5317  -0.8468]
         Angle     51.7021
 }
@@ -9762,7 +9762,7 @@ Galaxy "NGC 5559"
         Dec          24.7989
         Distance   2.307e+08
         Radius     4.697e+04
-        absMag        -20.15
+        AbsMag        -20.15
         Axis    [  0.7517  -0.6054   0.2616]
         Angle     64.6976
 }
@@ -9776,7 +9776,7 @@ Galaxy "NGC 5566"
         Dec           3.9331
         Distance   7.941e+07
         Radius     7.623e+04
-        absMag        -21.23
+        AbsMag        -21.23
         Axis    [  0.8259  -0.5263  -0.2023]
         Angle     89.7110
 }
@@ -9790,7 +9790,7 @@ Galaxy "NGC 5576"
         Dec           3.2714
         Distance   8.307e+07
         Radius     4.591e+04
-        absMag        -21.23
+        AbsMag        -21.23
         Axis    [ -0.1311  -0.4673  -0.8743]
         Angle     85.3569
 }
@@ -9804,7 +9804,7 @@ Galaxy "NGC 5577"
         Dec           3.4364
         Distance   7.801e+07
         Radius     3.631e+04
-        absMag        -19.29
+        AbsMag        -19.29
         Axis    [  0.7810  -0.6118  -0.1255]
         Angle     68.2211
 }
@@ -9818,7 +9818,7 @@ Galaxy "NGC 5585"
         Dec          56.7289
         Distance   3.579e+07
         Radius     3.019e+04
-        absMag         -19.7
+        AbsMag         -19.7
         Axis    [  0.6479  -0.7318   0.2116]
         Angle    104.4431
 }
@@ -9832,7 +9832,7 @@ Galaxy "NGC 5595"
         Dec         -16.7225
         Distance   1.222e+08
         Radius     4.265e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [  0.5191  -0.5964  -0.6123]
         Angle     85.5672
 }
@@ -9846,7 +9846,7 @@ Galaxy "NGC 5596"
         Dec          37.1228
         Distance   3.158e+07
         Radius          5053
-        absMag        -16.33
+        AbsMag        -16.33
         Axis    [  0.4278  -0.8986   0.0976]
         Angle     32.4237
 }
@@ -9860,7 +9860,7 @@ Galaxy "NGC 5610"
         Dec          24.6144
         Distance   2.227e+08
         Radius     6.479e+04
-        absMag        -20.67
+        AbsMag        -20.67
         Axis    [  0.2785  -0.7446   0.6067]
         Angle     34.8923
 }
@@ -9874,7 +9874,7 @@ Galaxy "NGC 5630"
         Dec          41.2581
         Distance   1.122e+08
         Radius      3.59e+04
-        absMag        -19.68
+        AbsMag        -19.68
         Axis    [  0.4790  -0.4863   0.7308]
         Angle     52.3394
 }
@@ -9888,7 +9888,7 @@ Galaxy "NGC 5641"
         Dec          28.8217
         Distance   2.386e+08
         Radius      8.33e+04
-        absMag        -21.82
+        AbsMag        -21.82
         Axis    [ -0.8289   0.0384   0.5581]
         Angle     39.1975
 }
@@ -9902,7 +9902,7 @@ Galaxy "NGC 5643"
         Dec         -44.1744
         Distance   6.306e+07
         Radius     4.311e+04
-        absMag        -21.23
+        AbsMag        -21.23
         Axis    [ -0.7768  -0.2604  -0.5733]
         Angle     98.4871
 }
@@ -9916,7 +9916,7 @@ Galaxy "NGC 5657"
         Dec          29.1806
         Distance   1.865e+08
         Radius     4.881e+04
-        absMag        -20.39
+        AbsMag        -20.39
         Axis    [ -0.7488   0.0249   0.6623]
         Angle     49.1416
 }
@@ -9930,7 +9930,7 @@ Galaxy "NGC 5659"
         Dec          25.3550
         Distance   2.134e+08
         Radius     4.965e+04
-        absMag        -19.98
+        AbsMag        -19.98
         Axis    [  0.8020  -0.5888   0.1008]
         Angle     87.3648
 }
@@ -9944,7 +9944,7 @@ Galaxy "NGC 5673"
         Dec          49.9586
         Distance   1.492e+08
         Radius     5.209e+04
-        absMag         -20.4
+        AbsMag         -20.4
         Axis    [ -0.0761  -0.0277   0.9967]
         Angle     53.1628
 }
@@ -9958,7 +9958,7 @@ Galaxy "NGC 5676"
         Dec          49.4569
         Distance   1.252e+08
         Radius       7.1e+04
-        absMag        -21.82
+        AbsMag        -21.82
         Axis    [  0.6983  -0.6579   0.2822]
         Angle     91.4055
 }
@@ -9972,7 +9972,7 @@ Galaxy "NGC 5690"
         Dec           2.2906
         Distance   7.194e+07
         Radius     3.557e+04
-        absMag        -19.72
+        AbsMag        -19.72
         Axis    [ -0.6807  -0.6219   0.3873]
         Angle     43.8902
 }
@@ -9986,7 +9986,7 @@ Galaxy "NGC 5701"
         Dec           5.3636
         Distance   7.837e+07
         Radius     4.901e+04
-        absMag           -21
+        AbsMag           -21
         Axis    [ -0.0238  -0.6681  -0.7437]
         Angle     70.1340
 }
@@ -10000,7 +10000,7 @@ Galaxy "NGC 5705"
         Dec          -0.7183
         Distance   1.134e+08
         Radius     4.947e+04
-        absMag        -19.51
+        AbsMag        -19.51
         Axis    [  0.3990  -0.8071  -0.4352]
         Angle     61.3281
 }
@@ -10014,7 +10014,7 @@ Galaxy "NGC 5707-1"
         Dec          51.5622
         Distance    4.05e+07
         Radius     1.473e+04
-        absMag        -17.87
+        AbsMag        -17.87
         Axis    [  0.7868  -0.4885   0.3774]
         Angle    111.3084
 }
@@ -10028,7 +10028,7 @@ Galaxy "NGC 5713"
         Dec          -0.2900
         Distance   7.262e+07
         Radius     3.063e+04
-        absMag        -20.74
+        AbsMag        -20.74
         Axis    [  0.5842  -0.6706  -0.4572]
         Angle    126.9835
 }
@@ -10042,7 +10042,7 @@ Galaxy "NGC 5740"
         Dec           1.6800
         Distance   9.853e+07
         Radius     4.013e+04
-        absMag         -20.6
+        AbsMag         -20.6
         Axis    [ -0.9328  -0.3277   0.1503]
         Angle     51.8235
 }
@@ -10056,7 +10056,7 @@ Galaxy "NGC 5741"
         Dec         -11.9136
         Distance   2.819e+07
         Radius          4510
-        absMag        -16.08
+        AbsMag        -16.08
         Axis    [  0.3718  -0.7190  -0.5872]
         Angle    158.2505
 }
@@ -10070,7 +10070,7 @@ Galaxy "NGC 5746"
         Dec           1.9561
         Distance   1.058e+08
         Radius     1.139e+05
-        absMag        -22.06
+        AbsMag        -22.06
         Axis    [ -0.7792  -0.3656   0.5091]
         Angle     68.4206
 }
@@ -10084,7 +10084,7 @@ Galaxy "NGC 5747"
         Dec          12.1319
         Distance   6.878e+06
         Radius         800.3
-        absMag        -13.02
+        AbsMag        -13.02
         Axis    [  0.3548  -0.8325  -0.4255]
         Angle    148.2779
 }
@@ -10098,7 +10098,7 @@ Galaxy "NGC 5756"
         Dec         -14.8533
         Distance   9.826e+07
         Radius     4.001e+04
-        absMag        -20.09
+        AbsMag        -20.09
         Axis    [  0.5383  -0.7059  -0.4604]
         Angle     68.8524
 }
@@ -10112,7 +10112,7 @@ Galaxy "NGC 5786"
         Dec         -42.0144
         Distance   5.339e+07
         Radius     1.786e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.2359  -0.5807  -0.7792]
         Angle     84.7914
 }
@@ -10126,7 +10126,7 @@ Galaxy "NGC 5792"
         Dec          -1.0903
         Distance   8.276e+07
         Radius     8.186e+04
-        absMag        -20.72
+        AbsMag        -20.72
         Axis    [  0.4794  -0.8776   0.0056]
         Angle     52.4479
 }
@@ -10140,7 +10140,7 @@ Galaxy "NGC 5806"
         Dec           1.8908
         Distance   9.196e+07
         Radius      4.28e+04
-        absMag        -20.55
+        AbsMag        -20.55
         Axis    [ -0.9398  -0.2449   0.2384]
         Angle     60.2210
 }
@@ -10154,7 +10154,7 @@ Galaxy "NGC 5807"
         Dec          63.9039
         Distance   2.478e+07
         Radius          1802
-        absMag         -15.2
+        AbsMag         -15.2
         Axis    [  0.1753  -0.9843  -0.0228]
         Angle    138.3942
 }
@@ -10168,7 +10168,7 @@ Galaxy "NGC 5813"
         Dec           1.7019
         Distance   1.051e+08
         Radius     6.112e+04
-        absMag        -22.04
+        AbsMag        -22.04
         Axis    [ -0.6432  -0.0531  -0.7639]
         Angle     72.0677
 }
@@ -10182,7 +10182,7 @@ Galaxy "NGC 5838"
         Dec           2.0989
         Distance   7.053e+07
         Radius     4.309e+04
-        absMag        -20.77
+        AbsMag        -20.77
         Axis    [  0.7086  -0.6663  -0.2322]
         Angle     85.7933
 }
@@ -10196,7 +10196,7 @@ Galaxy "NGC 5846"
         Dec           1.6053
         Distance   8.118e+07
         Radius     4.723e+04
-        absMag        -21.88
+        AbsMag        -21.88
         Axis    [  0.1215  -0.7469  -0.6537]
         Angle    123.3766
 }
@@ -10210,7 +10210,7 @@ Galaxy "NGC 5850"
         Dec           1.5442
         Distance   1.242e+08
         Radius      8.13e+04
-        absMag         -22.1
+        AbsMag         -22.1
         Axis    [ -0.7716  -0.4157  -0.4814]
         Angle     50.3220
 }
@@ -10224,7 +10224,7 @@ Galaxy "NGC 5861"
         Dec         -11.3222
         Distance   1.155e+08
         Radius     5.038e+04
-        absMag        -21.15
+        AbsMag        -21.15
         Axis    [ -0.8673  -0.4977   0.0018]
         Angle     60.2409
 }
@@ -10238,7 +10238,7 @@ Galaxy "NGC 5862"
         Dec          55.5744
         Distance   2.993e+07
         Radius          2176
-        absMag        -14.91
+        AbsMag        -14.91
         Axis    [  0.1895  -0.9774  -0.0940]
         Angle    142.1634
 }
@@ -10252,7 +10252,7 @@ Galaxy "M 102"
         Dec          55.7636
         Distance   5.005e+07
         Radius     4.732e+04
-        absMag        -21.03
+        AbsMag        -21.03
         Axis    [  0.1619  -0.2476   0.9552]
         Angle     45.5616
 }
@@ -10266,7 +10266,7 @@ Galaxy "NGC 5878"
         Dec         -14.2703
         Distance   1.046e+08
         Radius     5.322e+04
-        absMag        -20.83
+        AbsMag        -20.83
         Axis    [  0.7901  -0.4245  -0.4422]
         Angle    120.7908
 }
@@ -10280,7 +10280,7 @@ Galaxy "NGC 5879"
         Dec          57.0006
         Distance   4.893e+07
         Radius     2.989e+04
-        absMag        -19.48
+        AbsMag        -19.48
         Axis    [  0.7475  -0.6409   0.1746]
         Angle    140.1899
 }
@@ -10294,7 +10294,7 @@ Galaxy "NGC 5880"
         Dec         -14.5783
         Distance   1.505e+07
         Radius          1532
-        absMag        -14.02
+        AbsMag        -14.02
         Axis    [ -0.7050  -0.4704  -0.5307]
         Angle     65.7102
 }
@@ -10308,7 +10308,7 @@ Galaxy "NGC 5894"
         Dec          59.8086
         Distance   1.594e+08
         Radius     6.956e+04
-        absMag        -20.75
+        AbsMag        -20.75
         Axis    [  0.7886  -0.5549   0.2650]
         Angle    138.8680
 }
@@ -10322,7 +10322,7 @@ Galaxy "NGC 5895"
         Dec          42.0078
         Distance   2.049e+07
         Radius          2682
-        absMag        -14.69
+        AbsMag        -14.69
         Axis    [  0.8069  -0.5681   0.1622]
         Angle    121.8098
 }
@@ -10336,7 +10336,7 @@ Galaxy "NGC 5907"
         Dec          56.3303
         Distance   6.714e+07
         Radius      1.23e+05
-        absMag        -21.17
+        AbsMag        -21.17
         Axis    [ -0.1775   0.0658   0.9819]
         Angle     69.9261
 }
@@ -10350,7 +10350,7 @@ Galaxy "NGC 5921"
         Dec           5.0703
         Distance   7.466e+07
         Radius     5.212e+04
-        absMag         -21.1
+        AbsMag         -21.1
         Axis    [ -0.6349  -0.6480  -0.4207]
         Angle     46.6354
 }
@@ -10364,7 +10364,7 @@ Galaxy "NGC 5938"
         Dec         -66.8592
         Distance   1.641e+08
         Radius     6.684e+04
-        absMag        -22.61
+        AbsMag        -22.61
         Axis    [ -0.9319  -0.2652  -0.2473]
         Angle    126.5730
 }
@@ -10378,7 +10378,7 @@ Galaxy "NGC 5949"
         Dec          64.7631
         Distance   4.988e+07
         Radius     1.596e+04
-        absMag        -18.82
+        AbsMag        -18.82
         Axis    [  0.0251   0.0602   0.9979]
         Angle     52.2550
 }
@@ -10392,7 +10392,7 @@ Galaxy "NGC 5951"
         Dec          15.0075
         Distance   9.577e+07
         Radius     5.014e+04
-        absMag        -19.44
+        AbsMag        -19.44
         Axis    [  0.8285  -0.5347  -0.1663]
         Angle    124.6517
 }
@@ -10406,7 +10406,7 @@ Galaxy "NGC 5952"
         Dec           4.9594
         Distance   3.384e+07
         Radius          1969
-        absMag        -15.88
+        AbsMag        -15.88
         Axis    [ -0.5427  -0.8019  -0.2500]
         Angle     46.3506
 }
@@ -10420,7 +10420,7 @@ Galaxy "NGC 5962"
         Dec          16.6078
         Distance   5.314e+08
         Radius     2.319e+05
-        absMag        -24.76
+        AbsMag        -24.76
         Axis    [ -0.1304  -0.9806  -0.1460]
         Angle     45.4221
 }
@@ -10434,7 +10434,7 @@ Galaxy "NGC 5963"
         Dec          56.5600
         Distance   3.939e+07
         Radius     1.891e+04
-        absMag        -18.11
+        AbsMag        -18.11
         Axis    [  0.4722  -0.8681   0.1528]
         Angle     93.1086
 }
@@ -10448,7 +10448,7 @@ Galaxy "NGC 5982"
         Dec          59.3561
         Distance   1.349e+08
         Radius       5.1e+04
-        absMag        -22.08
+        AbsMag        -22.08
         Axis    [  0.0843  -0.9071  -0.4125]
         Angle     41.8606
 }
@@ -10462,7 +10462,7 @@ Galaxy "NGC 5984"
         Dec          14.2322
         Distance   6.863e+07
         Radius     2.895e+04
-        absMag        -19.02
+        AbsMag        -19.02
         Axis    [ -0.4112  -0.6006   0.6857]
         Angle     55.9983
 }
@@ -10476,7 +10476,7 @@ Galaxy "NGC 5985"
         Dec          59.3319
         Distance   1.161e+08
         Radius     9.288e+04
-        absMag        -21.66
+        AbsMag        -21.66
         Axis    [  0.6228  -0.7703   0.1370]
         Angle    137.8013
 }
@@ -10490,7 +10490,7 @@ Galaxy "NGC 6015"
         Dec          62.3086
         Distance   6.084e+07
         Radius     4.778e+04
-        absMag        -20.35
+        AbsMag        -20.35
         Axis    [  0.6628  -0.7049   0.2526]
         Angle    130.2738
 }
@@ -10504,7 +10504,7 @@ Galaxy "NGC 6032"
         Dec          20.9558
         Distance   1.408e+08
         Radius     3.278e+04
-        absMag        -19.68
+        AbsMag        -19.68
         Axis    [  0.8141  -0.5581  -0.1608]
         Angle    134.5715
 }
@@ -10518,7 +10518,7 @@ Galaxy "NGC 6033"
         Dec          -2.1203
         Distance    4.65e+07
         Radius          7439
-        absMag        -16.17
+        AbsMag        -16.17
         Axis    [ -0.1806  -0.8068  -0.5625]
         Angle     79.3083
 }
@@ -10532,7 +10532,7 @@ Galaxy "NGC 6070"
         Dec           0.7100
         Distance   1.253e+08
         Radius     6.563e+04
-        absMag        -21.12
+        AbsMag        -21.12
         Axis    [  0.3658  -0.8850  -0.2881]
         Angle     83.7595
 }
@@ -10546,7 +10546,7 @@ Galaxy "NGC 6070A"
         Dec           0.7650
         Distance   1.554e+07
         Radius          1356
-        absMag        -13.79
+        AbsMag        -13.79
         Axis    [  0.0085  -0.9566  -0.2912]
         Angle     68.3044
 }
@@ -10560,7 +10560,7 @@ Galaxy "NGC 6106"
         Dec           7.4111
         Distance   8.331e+07
         Radius     2.908e+04
-        absMag        -19.84
+        AbsMag        -19.84
         Axis    [ -0.5591  -0.7616   0.3278]
         Angle     53.6715
 }
@@ -10574,7 +10574,7 @@ Galaxy "NGC 6118"
         Dec          -2.2836
         Distance   8.603e+07
         Radius     5.881e+04
-        absMag        -20.41
+        AbsMag        -20.41
         Axis    [  0.4156  -0.8690  -0.2686]
         Angle     86.4095
 }
@@ -10588,7 +10588,7 @@ Galaxy "NGC 6119"
         Dec          37.8067
         Distance   1.554e+07
         Radius          1582
-        absMag        -13.09
+        AbsMag        -13.09
         Axis    [  0.2938  -0.9470   0.1303]
         Angle     70.4953
 }
@@ -10602,7 +10602,7 @@ Galaxy "NGC 6140"
         Dec          65.3900
         Distance   5.098e+07
         Radius     4.672e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.4322  -0.7693   0.4705]
         Angle     71.8990
 }
@@ -10616,7 +10616,7 @@ Galaxy "NGC 6181"
         Dec          19.8256
         Distance   1.073e+08
         Radius     3.901e+04
-        absMag        -20.79
+        AbsMag        -20.79
         Axis    [ -0.6670  -0.2580   0.6990]
         Angle     66.7807
 }
@@ -10630,7 +10630,7 @@ Galaxy "NGC 6182"
         Dec          55.5178
         Distance   1.491e+07
         Radius          3036
-        absMag         -14.7
+        AbsMag         -14.7
         Axis    [  0.0553  -0.2350   0.9704]
         Angle     68.8506
 }
@@ -10644,7 +10644,7 @@ Galaxy "NGC 6215"
         Dec         -58.9931
         Distance   7.303e+07
         Radius     2.337e+04
-        absMag        -20.65
+        AbsMag        -20.65
         Axis    [ -0.3859  -0.5007  -0.7748]
         Angle    123.5872
 }
@@ -10658,7 +10658,7 @@ Galaxy "NGC 6217"
         Dec          78.1992
         Distance    6.07e+07
         Radius     2.649e+04
-        absMag        -20.35
+        AbsMag        -20.35
         Axis    [  0.3888  -0.0463   0.9201]
         Angle     36.3196
 }
@@ -10672,7 +10672,7 @@ Galaxy "NGC 6221"
         Dec         -59.2183
         Distance   6.922e+07
         Radius     3.524e+04
-        absMag        -21.53
+        AbsMag        -21.53
         Axis    [  0.3074  -0.3976  -0.8645]
         Angle    133.9693
 }
@@ -10686,7 +10686,7 @@ Galaxy "NGC 6255"
         Dec          36.5017
         Distance   1.087e+08
         Radius     5.693e+04
-        absMag        -19.81
+        AbsMag        -19.81
         Axis    [  0.4068  -0.8556   0.3202]
         Angle     84.8523
 }
@@ -10700,7 +10700,7 @@ Galaxy "NGC 6257"
         Dec          39.6461
         Distance   4.847e+07
         Radius          5639
-        absMag        -16.06
+        AbsMag        -16.06
         Axis    [  0.1988  -0.6162   0.7621]
         Angle     75.5709
 }
@@ -10714,7 +10714,7 @@ Galaxy "NGC 6300"
         Dec         -62.8203
         Distance   5.173e+07
         Radius     3.235e+04
-        absMag         -20.9
+        AbsMag         -20.9
         Axis    [ -0.6674  -0.6346  -0.3896]
         Angle    110.1196
 }
@@ -10728,7 +10728,7 @@ Galaxy "NGC 6339"
         Dec          40.8450
         Distance    1.21e+08
         Radius     5.104e+04
-        absMag        -20.15
+        AbsMag        -20.15
         Axis    [  0.5175  -0.8469  -0.1225]
         Angle    151.0964
 }
@@ -10742,7 +10742,7 @@ Galaxy "NGC 6340"
         Dec          72.3047
         Distance   5.327e+07
         Radius     2.325e+04
-        absMag        -20.07
+        AbsMag        -20.07
         Axis    [  0.3253  -0.8526   0.4090]
         Angle     53.8960
 }
@@ -10756,7 +10756,7 @@ Galaxy "NGC 6368"
         Dec          11.5431
         Distance   1.103e+08
         Radius     5.613e+04
-        absMag        -20.04
+        AbsMag        -20.04
         Axis    [  0.5524  -0.8253  -0.1172]
         Angle    110.8362
 }
@@ -10770,7 +10770,7 @@ Galaxy "NGC 6370"
         Dec          56.9750
         Distance   2.667e+07
         Radius          5431
-        absMag        -16.66
+        AbsMag        -16.66
         Axis    [  0.0378  -0.9958  -0.0835]
         Angle    171.9441
 }
@@ -10784,7 +10784,7 @@ Galaxy "NGC 6384"
         Dec           7.0608
         Distance   1.023e+08
         Radius     9.224e+04
-        absMag        -22.08
+        AbsMag        -22.08
         Axis    [  0.3320  -0.8708  -0.3626]
         Angle    126.3885
 }
@@ -10798,7 +10798,7 @@ Galaxy "NGC 6395"
         Dec          71.0972
         Distance   8.702e+07
         Radius     3.038e+04
-        absMag        -19.93
+        AbsMag        -19.93
         Axis    [  0.6530  -0.7414   0.1546]
         Angle    165.1053
 }
@@ -10812,7 +10812,7 @@ Galaxy "NGC 6398"
         Dec         -61.6939
         Distance   4.482e+07
         Radius     1.304e+04
-        absMag        -18.19
+        AbsMag        -18.19
         Axis    [  0.1297  -0.4373  -0.8899]
         Angle    145.3527
 }
@@ -10826,7 +10826,7 @@ Galaxy "NGC 6503"
         Dec          70.1436
         Distance   3.217e+07
         Radius     3.275e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.4262  -0.4792   0.7673]
         Angle     91.4301
 }
@@ -10840,7 +10840,7 @@ Galaxy "NGC 6570"
         Dec          14.0928
         Distance     9.4e+07
         Radius     2.598e+04
-        absMag         -19.6
+        AbsMag         -19.6
         Axis    [  0.3380  -0.8969  -0.2853]
         Angle    133.3826
 }
@@ -10854,7 +10854,7 @@ Galaxy "NGC 6571"
         Dec          21.2392
         Distance   2.615e+07
         Radius          1521
-        absMag        -15.12
+        AbsMag        -15.12
         Axis    [  0.0072  -0.9227  -0.3855]
         Angle    180.7189
 }
@@ -10868,7 +10868,7 @@ Galaxy "NGC 6643"
         Dec          74.5683
         Distance   7.828e+07
         Radius     4.213e+04
-        absMag         -20.9
+        AbsMag         -20.9
         Axis    [  0.5325  -0.8179   0.2179]
         Angle    156.5441
 }
@@ -10882,7 +10882,7 @@ Galaxy "NGC 6646"
         Dec          39.8650
         Distance   1.311e+07
         Radius          3050
-        absMag        -15.32
+        AbsMag        -15.32
         Axis    [  0.1665  -0.9860  -0.0107]
         Angle    120.5937
 }
@@ -10896,7 +10896,7 @@ Galaxy "NGC 6684"
         Dec         -65.1728
         Distance   4.544e+07
         Radius      3.04e+04
-        absMag        -20.42
+        AbsMag        -20.42
         Axis    [ -0.1740  -0.5956  -0.7842]
         Angle    120.7265
 }
@@ -10910,7 +10910,7 @@ Galaxy "NGC 6689"
         Dec          70.5242
         Distance   5.635e+07
         Radius     3.279e+04
-        absMag        -18.89
+        AbsMag        -18.89
         Axis    [  0.1791  -0.1455   0.9730]
         Angle     82.4475
 }
@@ -10924,7 +10924,7 @@ Galaxy "NGC 6744"
         Dec         -63.8567
         Distance   1.404e+07
         Radius     4.105e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.0550  -0.5446  -0.8369]
         Angle    127.3721
 }
@@ -10938,7 +10938,7 @@ Galaxy "NGC 6753"
         Dec         -57.0489
         Distance   1.395e+08
         Radius      4.87e+04
-        absMag        -22.06
+        AbsMag        -22.06
         Axis    [ -0.2457  -0.5730  -0.7819]
         Angle    141.5944
 }
@@ -10952,7 +10952,7 @@ Galaxy "NGC 6764"
         Dec          50.9331
         Distance   1.314e+08
         Radius     4.204e+04
-        absMag        -21.13
+        AbsMag        -21.13
         Axis    [  0.3672  -0.9188   0.1452]
         Angle    135.3348
 }
@@ -10966,7 +10966,7 @@ Galaxy "NGC 6768-1"
         Dec         -40.2086
         Distance   4.247e+07
         Radius          7412
-        absMag        -18.37
+        AbsMag        -18.37
         Axis    [ -0.4028  -0.5772  -0.7103]
         Angle    163.2423
 }
@@ -10980,7 +10980,7 @@ Galaxy "NGC 6782"
         Dec         -59.9222
         Distance   1.735e+08
         Radius     6.056e+04
-        absMag        -22.63
+        AbsMag        -22.63
         Axis    [ -0.3747  -0.5998  -0.7070]
         Angle    134.2548
 }
@@ -10994,7 +10994,7 @@ Galaxy "NGC 6822"
         Dec         -14.8064
         Distance   2.512e+07
         Radius     5.627e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.0572  -0.7777  -0.6260]
         Angle    171.1568
 }
@@ -11008,7 +11008,7 @@ Galaxy "NGC 6868"
         Dec         -48.3800
         Distance   8.739e+07
         Radius     4.576e+04
-        absMag        -21.54
+        AbsMag        -21.54
         Axis    [ -0.7958  -0.4303  -0.4261]
         Angle    142.6987
 }
@@ -11022,7 +11022,7 @@ Galaxy "NGC 6875A"
         Dec         -46.1431
         Distance    1.26e+08
         Radius     4.947e+04
-        absMag        -19.73
+        AbsMag        -19.73
         Axis    [ -0.2453  -0.9543  -0.1706]
         Angle    116.8942
 }
@@ -11036,7 +11036,7 @@ Galaxy "NGC 6876"
         Dec         -70.8583
         Distance   1.277e+08
         Radius     5.017e+04
-        absMag        -22.26
+        AbsMag        -22.26
         Axis    [ -0.8217  -0.2656  -0.5043]
         Angle    153.2428
 }
@@ -11050,7 +11050,7 @@ Galaxy "NGC 6902"
         Dec         -43.6531
         Distance   1.623e+08
         Radius     1.322e+05
-        absMag        -22.58
+        AbsMag        -22.58
         Axis    [ -0.7814  -0.5314   0.3271]
         Angle    128.1722
 }
@@ -11064,7 +11064,7 @@ Galaxy "NGC 6902A1"
         Dec         -44.2706
         Distance   3.733e+07
         Radius          7058
-        absMag        -16.49
+        AbsMag        -16.49
         Axis    [ -0.3866  -0.7565  -0.5275]
         Angle    136.0168
 }
@@ -11078,7 +11078,7 @@ Galaxy "NGC 6907"
         Dec         -24.8092
         Distance   2.075e+08
         Radius     1.026e+05
-        absMag        -22.92
+        AbsMag        -22.92
         Axis    [ -0.2641  -0.8574  -0.4417]
         Angle    140.4684
 }
@@ -11092,7 +11092,7 @@ Galaxy "NGC 6925"
         Dec         -31.9800
         Distance   1.195e+08
         Radius     7.651e+04
-        absMag        -21.52
+        AbsMag        -21.52
         Axis    [  0.1577  -0.7602  -0.6302]
         Angle    132.1819
 }
@@ -11106,7 +11106,7 @@ Galaxy "NGC 6943"
         Dec         -68.7481
         Distance   1.378e+08
         Radius     8.015e+04
-        absMag        -21.83
+        AbsMag        -21.83
         Axis    [ -0.7646  -0.6309   0.1316]
         Angle    144.5971
 }
@@ -11120,7 +11120,7 @@ Galaxy "NGC 6946"
         Dec          60.1533
         Distance   1.851e+07
         Radius     3.096e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [  0.1475  -0.9857   0.0820]
         Angle    160.1032
 }
@@ -11134,7 +11134,7 @@ Galaxy "NGC 6951"
         Dec          66.1058
         Distance   5.799e+07
         Radius     3.289e+04
-        absMag        -20.25
+        AbsMag        -20.25
         Axis    [  0.1973  -0.6428   0.7402]
         Angle     70.7463
 }
@@ -11148,7 +11148,7 @@ Galaxy "NGC 6970"
         Dec         -48.7781
         Distance   1.718e+08
         Radius     2.499e+04
-        absMag        -21.31
+        AbsMag        -21.31
         Axis    [ -0.6879  -0.7099   0.1512]
         Angle    134.0965
 }
@@ -11162,7 +11162,7 @@ Galaxy "NGC 7038"
         Dec         -47.2203
         Distance   2.208e+08
         Radius     9.953e+04
-        absMag        -22.15
+        AbsMag        -22.15
         Axis    [ -0.6263  -0.7378   0.2518]
         Angle    140.1473
 }
@@ -11176,7 +11176,7 @@ Galaxy "NGC 7038A"
         Dec         -47.6128
         Distance    2.52e+07
         Radius          4032
-        absMag        -14.84
+        AbsMag        -14.84
         Axis    [ -0.2454  -0.7722  -0.5861]
         Angle    136.2067
 }
@@ -11190,7 +11190,7 @@ Galaxy "NGC 7049"
         Dec         -48.5614
         Distance    9.76e+07
         Radius     6.388e+04
-        absMag        -21.78
+        AbsMag        -21.78
         Axis    [ -0.4857  -0.7898  -0.3745]
         Angle    137.0115
 }
@@ -11204,7 +11204,7 @@ Galaxy "NGC 7059"
         Dec         -60.0147
         Distance   1.381e+08
         Radius     6.627e+04
-        absMag        -21.33
+        AbsMag        -21.33
         Axis    [ -0.6296  -0.7769  -0.0070]
         Angle    139.0356
 }
@@ -11218,7 +11218,7 @@ Galaxy "NGC 7083"
         Dec         -63.9033
         Distance   9.703e+07
         Radius     5.504e+04
-        absMag        -21.27
+        AbsMag        -21.27
         Axis    [ -0.2689  -0.6093  -0.7460]
         Angle    134.7510
 }
@@ -11232,7 +11232,7 @@ Galaxy "NGC 7085"
         Dec           6.5817
         Distance    1.36e+07
         Radius          2373
-        absMag         -13.6
+        AbsMag         -13.6
         Axis    [ -0.2587  -0.7666   0.5877]
         Angle    123.4410
 }
@@ -11246,7 +11246,7 @@ Galaxy "NGC 7090"
         Dec         -54.5550
         Distance   3.194e+07
         Radius     3.391e+04
-        absMag        -19.25
+        AbsMag        -19.25
         Axis    [ -0.4770  -0.8219   0.3112]
         Angle    154.5312
 }
@@ -11260,7 +11260,7 @@ Galaxy "NGC 7144"
         Dec         -48.2547
         Distance   8.006e+07
         Radius     4.309e+04
-        absMag        -21.05
+        AbsMag        -21.05
         Axis    [ -0.4814  -0.4721  -0.7385]
         Angle    188.8704
 }
@@ -11274,7 +11274,7 @@ Galaxy "NGC 7171"
         Dec         -13.2697
         Distance   1.621e+08
         Radius     6.129e+04
-        absMag        -21.28
+        AbsMag        -21.28
         Axis    [ -0.3553  -0.8464   0.3967]
         Angle    140.2375
 }
@@ -11288,7 +11288,7 @@ Galaxy "NGC 7177"
         Dec          17.7372
         Distance   5.339e+07
         Radius     2.485e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.1122  -0.9770   0.1816]
         Angle    145.8939
 }
@@ -11302,7 +11302,7 @@ Galaxy "NGC 7184"
         Dec         -20.8125
         Distance   1.295e+08
         Radius     1.111e+05
-        absMag        -21.89
+        AbsMag        -21.89
         Axis    [ -0.0980  -0.9899  -0.1021]
         Angle    145.5659
 }
@@ -11316,7 +11316,7 @@ Galaxy "NGC 7205"
         Dec         -57.4425
         Distance   7.026e+07
         Radius     4.088e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [ -0.5691  -0.8084  -0.1502]
         Angle    140.5855
 }
@@ -11330,7 +11330,7 @@ Galaxy "NGC 7213"
         Dec         -47.1669
         Distance   7.189e+07
         Radius     3.241e+04
-        absMag        -21.62
+        AbsMag        -21.62
         Axis    [ -0.8164  -0.5357   0.2156]
         Angle    141.2469
 }
@@ -11344,7 +11344,7 @@ Galaxy "NGC 7217"
         Dec          31.3594
         Distance   3.369e+07
         Radius      1.96e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.1433  -0.9838   0.1077]
         Angle    153.4489
 }
@@ -11358,7 +11358,7 @@ Galaxy "NGC 7218"
         Dec         -16.6606
         Distance   1.013e+08
         Radius     3.832e+04
-        absMag        -20.46
+        AbsMag        -20.46
         Axis    [ -0.0985  -0.8970  -0.4309]
         Angle    157.8534
 }
@@ -11372,7 +11372,7 @@ Galaxy "NGC 7257"
         Dec          -4.1208
         Distance   2.472e+08
         Radius      6.83e+04
-        absMag         -21.5
+        AbsMag         -21.5
         Axis    [ -0.2020  -0.9205  -0.3344]
         Angle    170.9234
 }
@@ -11386,7 +11386,7 @@ Galaxy "NGC 7300"
         Dec         -14.0031
         Distance   2.263e+08
         Radius     6.911e+04
-        absMag        -21.31
+        AbsMag        -21.31
         Axis    [ -0.3111  -0.6628   0.6811]
         Angle    151.4152
 }
@@ -11400,7 +11400,7 @@ Galaxy "NGC 7307"
         Dec         -40.9347
         Distance   1.157e+08
         Radius     5.721e+04
-        absMag        -20.55
+        AbsMag        -20.55
         Axis    [ -0.1198  -0.8233  -0.5549]
         Angle    138.7354
 }
@@ -11414,7 +11414,7 @@ Galaxy "NGC 7308"
         Dec         -12.9336
         Distance    3.85e+07
         Radius          6719
-        absMag        -16.66
+        AbsMag        -16.66
         Axis    [ -0.4688  -0.7010   0.5375]
         Angle    137.3050
 }
@@ -11428,7 +11428,7 @@ Galaxy "NGC 7314"
         Dec         -26.0503
         Distance   7.121e+07
         Radius     4.764e+04
-        absMag         -20.9
+        AbsMag         -20.9
         Axis    [ -0.1325  -0.7945  -0.5927]
         Angle    159.6762
 }
@@ -11442,7 +11442,7 @@ Galaxy "NGC 7320"
         Dec          33.9483
         Distance   6.483e+07
         Radius     2.074e+04
-        absMag        -18.99
+        AbsMag        -18.99
         Axis    [  0.0833  -0.8497   0.5207]
         Angle    140.7041
 }
@@ -11456,7 +11456,7 @@ Galaxy "NGC 7320A"
         Dec          33.7961
         Distance   3.609e+07
         Radius          2100
-        absMag        -15.22
+        AbsMag        -15.22
         Axis    [  0.1248  -0.9852  -0.1177]
         Angle    185.0271
 }
@@ -11470,7 +11470,7 @@ Galaxy "NGC 7331"
         Dec          34.4203
         Distance    4.28e+07
         Radius     6.349e+04
-        absMag        -21.09
+        AbsMag        -21.09
         Axis    [  0.0923  -0.6084   0.7882]
         Angle    131.3490
 }
@@ -11484,7 +11484,7 @@ Galaxy "NGC 7332"
         Dec          23.7981
         Distance   7.507e+07
         Radius     4.476e+04
-        absMag        -20.81
+        AbsMag        -20.81
         Axis    [  0.0871  -0.6993   0.7095]
         Angle    147.3393
 }
@@ -11498,7 +11498,7 @@ Galaxy "NGC 7339"
         Dec          23.7864
         Distance   9.382e+07
         Radius     3.821e+04
-        absMag        -19.99
+        AbsMag        -19.99
         Axis    [  0.1687  -0.9537   0.2491]
         Angle    162.4035
 }
@@ -11512,7 +11512,7 @@ Galaxy "NGC 7361"
         Dec         -30.0575
         Distance   7.117e+07
         Radius     4.037e+04
-        absMag        -19.39
+        AbsMag        -19.39
         Axis    [ -0.0576  -0.8207  -0.5685]
         Angle    148.0882
 }
@@ -11526,7 +11526,7 @@ Galaxy "NGC 7362"
         Dec           8.7058
         Distance   5.177e+07
         Radius          8282
-        absMag         -18.2
+        AbsMag         -18.2
         Axis    [ -0.5764  -0.5368   0.6161]
         Angle     91.6891
 }
@@ -11540,7 +11540,7 @@ Galaxy "NGC 7368"
         Dec         -39.3419
         Distance   1.193e+08
         Radius     5.033e+04
-        absMag        -20.42
+        AbsMag        -20.42
         Axis    [ -0.3525  -0.8234   0.4446]
         Angle    168.1861
 }
@@ -11554,7 +11554,7 @@ Galaxy "NGC 7377"
         Dec         -22.3114
         Distance   1.364e+08
         Radius      5.95e+04
-        absMag        -22.11
+        AbsMag        -22.11
         Axis    [ -0.5918  -0.7901   0.1600]
         Angle    148.6633
 }
@@ -11568,7 +11568,7 @@ Galaxy "NGC 7410"
         Dec         -39.6622
         Distance   6.795e+07
         Radius     5.139e+04
-        absMag        -21.19
+        AbsMag        -21.19
         Axis    [ -0.2990  -0.9186  -0.2585]
         Angle    147.8807
 }
@@ -11582,7 +11582,7 @@ Galaxy "NGC 7412"
         Dec         -42.6414
         Distance   6.705e+07
         Radius     3.706e+04
-        absMag        -20.46
+        AbsMag        -20.46
         Axis    [ -0.6345  -0.7693  -0.0752]
         Angle    153.3277
 }
@@ -11596,7 +11596,7 @@ Galaxy "NGC 7418"
         Dec         -37.0289
         Distance   5.364e+07
         Radius      2.73e+04
-        absMag        -20.08
+        AbsMag        -20.08
         Axis    [ -0.6237  -0.6207   0.4751]
         Angle    151.2820
 }
@@ -11610,7 +11610,7 @@ Galaxy "NGC 7424"
         Dec         -41.0708
         Distance   3.217e+07
         Radius     4.445e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.7321  -0.6683   0.1318]
         Angle    150.8721
 }
@@ -11624,7 +11624,7 @@ Galaxy "NGC 7448"
         Dec          15.9800
         Distance   9.368e+07
         Radius     3.543e+04
-        absMag        -20.89
+        AbsMag        -20.89
         Axis    [ -0.0795  -0.6323   0.7706]
         Angle    139.0591
 }
@@ -11638,7 +11638,7 @@ Galaxy "NGC 7449"
         Dec          39.1458
         Distance   7.015e+07
         Radius      1.02e+04
-        absMag        -17.56
+        AbsMag        -17.56
         Axis    [ -0.3746  -0.8802   0.2914]
         Angle    120.7733
 }
@@ -11652,7 +11652,7 @@ Galaxy "NGC 7456"
         Dec         -39.5692
         Distance   5.962e+07
         Radius     4.769e+04
-        absMag        -19.61
+        AbsMag        -19.61
         Axis    [ -0.2345  -0.8718  -0.4302]
         Angle    146.5678
 }
@@ -11666,7 +11666,7 @@ Galaxy "NGC 7457"
         Dec          30.1447
         Distance    4.32e+07
         Radius     2.701e+04
-        absMag        -19.61
+        AbsMag        -19.61
         Axis    [  0.0434  -0.8655   0.4990]
         Angle    147.3210
 }
@@ -11680,7 +11680,7 @@ Galaxy "NGC 7462"
         Dec         -40.8356
         Distance   4.449e+07
         Radius     2.782e+04
-        absMag        -19.27
+        AbsMag        -19.27
         Axis    [ -0.2960  -0.9549   0.0257]
         Angle    154.0932
 }
@@ -11694,7 +11694,7 @@ Galaxy "NGC 7479"
         Dec          12.3222
         Distance   9.155e+07
         Radius     5.326e+04
-        absMag        -21.34
+        AbsMag        -21.34
         Axis    [ -0.2240  -0.9215  -0.3172]
         Angle    194.2720
 }
@@ -11708,7 +11708,7 @@ Galaxy "NGC 7496"
         Dec         -43.4275
         Distance   6.401e+07
         Radius     3.072e+04
-        absMag        -20.36
+        AbsMag        -20.36
         Axis    [ -0.5194  -0.5673  -0.6391]
         Angle    178.5433
 }
@@ -11722,7 +11722,7 @@ Galaxy "NGC 7497"
         Dec          18.1775
         Distance   7.117e+07
         Radius     4.554e+04
-        absMag        -19.39
+        AbsMag        -19.39
         Axis    [  0.1558  -0.9777  -0.1411]
         Angle    179.7521
 }
@@ -11736,7 +11736,7 @@ Galaxy "NGC 7498"
         Dec         -24.4244
         Distance   1.851e+07
         Radius          2423
-        absMag        -14.37
+        AbsMag        -14.37
         Axis    [ -0.3374  -0.5250   0.7813]
         Angle    165.9286
 }
@@ -11750,7 +11750,7 @@ Galaxy "NGC 7507"
         Dec         -28.5386
         Distance   8.155e+07
         Radius     3.321e+04
-        absMag        -21.59
+        AbsMag        -21.59
         Axis    [ -0.6081  -0.5358  -0.5858]
         Angle    203.6667
 }
@@ -11764,7 +11764,7 @@ Galaxy "NGC 7531"
         Dec         -43.5989
         Distance   6.664e+07
         Radius     4.361e+04
-        absMag        -20.25
+        AbsMag        -20.25
         Axis    [ -0.3061  -0.8101  -0.5000]
         Angle    148.7712
 }
@@ -11778,7 +11778,7 @@ Galaxy "NGC 7536"
         Dec          13.4267
         Distance   2.053e+08
         Radius     5.675e+04
-        absMag         -20.7
+        AbsMag         -20.7
         Axis    [ -0.0460  -0.9954  -0.0839]
         Angle    178.2998
 }
@@ -11792,7 +11792,7 @@ Galaxy "NGC 7537"
         Dec           4.4989
         Distance   1.434e+08
         Radius     4.379e+04
-        absMag        -20.22
+        AbsMag        -20.22
         Axis    [  0.0106  -0.9942   0.1071]
         Angle    169.7802
 }
@@ -11806,7 +11806,7 @@ Galaxy "NGC 7541"
         Dec           4.5344
         Distance   1.388e+08
         Radius     7.066e+04
-        absMag        -21.44
+        AbsMag        -21.44
         Axis    [ -0.0706  -0.9530   0.2947]
         Angle    164.8520
 }
@@ -11820,7 +11820,7 @@ Galaxy "NGC 7542"
         Dec          10.6433
         Distance   1.186e+08
         Radius      1.38e+04
-        absMag         -18.2
+        AbsMag         -18.2
         Axis    [ -0.0194  -0.9073   0.4200]
         Angle    162.4785
 }
@@ -11834,7 +11834,7 @@ Galaxy "NGC 7552"
         Dec         -42.5847
         Distance   6.125e+07
         Radius     3.029e+04
-        absMag        -20.77
+        AbsMag        -20.77
         Axis    [ -0.4315  -0.6443  -0.6314]
         Angle    168.5302
 }
@@ -11848,7 +11848,7 @@ Galaxy "NGC 7582"
         Dec         -42.3697
         Distance   6.043e+07
         Radius     4.395e+04
-        absMag        -20.84
+        AbsMag        -20.84
         Axis    [ -0.4893  -0.5965   0.6363]
         Angle    172.2705
 }
@@ -11862,7 +11862,7 @@ Galaxy "NGC 7591"
         Dec           6.5861
         Distance   2.448e+08
         Radius     6.765e+04
-        absMag        -21.38
+        AbsMag        -21.38
         Axis    [ -0.1628  -0.7767   0.6085]
         Angle    150.5690
 }
@@ -11876,7 +11876,7 @@ Galaxy "NGC 7606"
         Dec          -8.4864
         Distance   1.154e+08
         Radius     9.062e+04
-        absMag        -21.94
+        AbsMag        -21.94
         Axis    [ -0.2127  -0.7603   0.6138]
         Angle    161.7992
 }
@@ -11890,7 +11890,7 @@ Galaxy "NGC 7631"
         Dec           8.2175
         Distance   1.902e+08
         Radius     4.702e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.0590  -0.9929   0.1036]
         Angle    171.3289
 }
@@ -11904,7 +11904,7 @@ Galaxy "NGC 7640"
         Dec          40.8450
         Distance    3.13e+07
         Radius      4.78e+04
-        absMag        -18.81
+        AbsMag        -18.81
         Axis    [  0.2829  -0.5907   0.7557]
         Angle    153.9021
 }
@@ -11918,7 +11918,7 @@ Galaxy "NGC 7677"
         Dec          23.5314
         Distance   2.029e+08
         Radius     4.721e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [ -0.0885  -0.9713  -0.2206]
         Angle    196.9089
 }
@@ -11932,7 +11932,7 @@ Galaxy "NGC 7713"
         Dec         -37.9389
         Distance   4.441e+07
         Radius     2.906e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.4013  -0.5558   0.7280]
         Angle    179.2148
 }
@@ -11946,7 +11946,7 @@ Galaxy "NGC 7721"
         Dec          -6.5178
         Distance   8.322e+07
         Radius     3.389e+04
-        absMag        -20.43
+        AbsMag        -20.43
         Axis    [ -0.1442  -0.8852  -0.4422]
         Angle    179.6435
 }
@@ -11960,7 +11960,7 @@ Galaxy "NGC 7723"
         Dec         -12.9611
         Distance   9.636e+07
         Radius     4.905e+04
-        absMag        -21.15
+        AbsMag        -21.15
         Axis    [ -0.3929  -0.8836  -0.2547]
         Angle    178.0563
 }
@@ -11974,7 +11974,7 @@ Galaxy "NGC 7727"
         Dec         -12.2928
         Distance   6.695e+07
         Radius     4.577e+04
-        absMag        -20.96
+        AbsMag        -20.96
         Axis    [ -0.4160  -0.8712  -0.2609]
         Angle    179.8041
 }
@@ -11988,7 +11988,7 @@ Galaxy "NGC 7741"
         Dec          26.0753
         Distance   5.939e+07
         Radius     3.887e+04
-        absMag         -20.3
+        AbsMag         -20.3
         Axis    [ -0.0297  -0.6759   0.7364]
         Angle    134.6039
 }
@@ -12002,7 +12002,7 @@ Galaxy "NGC 7747"
         Dec          27.3606
         Distance   4.091e+08
         Radius     8.925e+04
-        absMag        -21.89
+        AbsMag        -21.89
         Axis    [  0.0717  -0.9701  -0.2319]
         Angle    198.1098
 }
@@ -12016,7 +12016,7 @@ Galaxy "NGC 7782"
         Dec           7.9706
         Distance   3.773e+08
         Radius     1.207e+05
-        absMag        -23.02
+        AbsMag        -23.02
         Axis    [ -0.1542  -0.8401  -0.5200]
         Angle    200.4408
 }
@@ -12030,7 +12030,7 @@ Galaxy "NGC 7793"
         Dec         -32.5917
         Distance   2.039e+07
         Radius     2.757e+04
-        absMag        -19.98
+        AbsMag        -19.98
         Axis    [ -0.5693  -0.7886   0.2325]
         Angle    165.6805
 }
@@ -12044,7 +12044,7 @@ Galaxy "NGC 7814"
         Dec          16.1453
         Distance     4.3e+07
         Radius      3.44e+04
-        absMag         -19.8
+        AbsMag         -19.8
         Axis    [ -0.0020   0.8361  -0.5485]
         Angle    192.7418
 }
@@ -12058,7 +12058,7 @@ Galaxy "NGC 7817"
         Dec          20.7506
         Distance    9.35e+07
         Radius      4.76e+04
-        absMag        -20.49
+        AbsMag        -20.49
         Axis    [ -0.0851   0.9800   0.1798]
         Angle    166.2734
 }
@@ -12072,7 +12072,7 @@ Galaxy "NGC 7818"
         Dec           7.3792
         Distance   1.457e+07
         Radius          2119
-        absMag        -14.15
+        AbsMag        -14.15
         Axis    [  0.6103   0.6875   0.3935]
         Angle    130.3460
 }
@@ -12086,7 +12086,7 @@ Galaxy "IC 10"
         Dec          59.2925
         Distance   7.944e+07
         Radius     7.395e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.1261   0.9024  -0.4121]
         Angle    209.5895
 }
@@ -12100,7 +12100,7 @@ Galaxy "IC 65"
         Dec          47.6817
         Distance   9.545e+07
         Radius     4.165e+04
-        absMag        -19.63
+        AbsMag        -19.63
         Axis    [ -0.3585   0.7225  -0.5911]
         Angle    189.1113
 }
@@ -12114,7 +12114,7 @@ Galaxy "IC 163"
         Dec          20.7106
         Distance   1.196e+08
         Radius     3.132e+04
-        absMag        -19.72
+        AbsMag        -19.72
         Axis    [  0.0519   0.9679  -0.2460]
         Angle    155.2425
 }
@@ -12128,7 +12128,7 @@ Galaxy "IC 164"
         Dec          -3.9044
         Distance   6.547e+07
         Radius     1.333e+04
-        absMag        -18.41
+        AbsMag        -18.41
         Axis    [  0.8141   0.4744   0.3350]
         Angle    127.2824
 }
@@ -12142,7 +12142,7 @@ Galaxy "IC 198"
         Dec           9.2961
         Distance   3.599e+08
         Radius     5.758e+04
-        absMag        -21.41
+        AbsMag        -21.41
         Axis    [  0.3363   0.9293   0.1528]
         Angle    143.7126
 }
@@ -12156,7 +12156,7 @@ Galaxy "IC 239"
         Dec          38.9689
         Distance   5.098e+07
         Radius     3.411e+04
-        absMag        -19.97
+        AbsMag        -19.97
         Axis    [  0.5754   0.7433   0.3412]
         Angle     96.4324
 }
@@ -12170,7 +12170,7 @@ Galaxy "IC 342"
         Dec          68.0956
         Distance   1.404e+07
         Radius     4.371e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.0904   0.9145  -0.3944]
         Angle    196.1656
 }
@@ -12184,7 +12184,7 @@ Galaxy "IC 356"
         Dec          69.8119
         Distance    4.05e+07
         Radius     3.475e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [ -0.2159   0.9699  -0.1129]
         Angle    126.7526
 }
@@ -12198,7 +12198,7 @@ Galaxy "IC 381"
         Dec          75.6397
         Distance   1.113e+08
         Radius     3.887e+04
-        absMag        -20.37
+        AbsMag        -20.37
         Axis    [ -0.4770   0.8077  -0.3465]
         Angle    175.2824
 }
@@ -12212,7 +12212,7 @@ Galaxy "IC 382"
         Dec          -9.5197
         Distance   1.768e+08
         Radius     5.913e+04
-        absMag        -20.87
+        AbsMag        -20.87
         Axis    [ -0.1001   0.5240  -0.8458]
         Angle    141.9413
 }
@@ -12226,7 +12226,7 @@ Galaxy "IC 383"
         Dec           9.8925
         Distance    6.31e+07
         Radius          3671
-        absMag        -16.63
+        AbsMag        -16.63
         Axis    [  0.9751   0.1952   0.1052]
         Angle    104.9469
 }
@@ -12240,7 +12240,7 @@ Galaxy "IC 387"
         Dec          -7.0864
         Distance   2.754e+08
         Radius     6.408e+04
-        absMag        -21.53
+        AbsMag        -21.53
         Axis    [  0.5610   0.7556  -0.3381]
         Angle    125.8809
 }
@@ -12254,7 +12254,7 @@ Galaxy "IC 388-1"
         Dec          -7.3042
         Distance   7.586e+07
         Radius          3310
-        absMag        -16.63
+        AbsMag        -16.63
         Axis    [  0.9810   0.1553   0.1167]
         Angle    121.6858
 }
@@ -12268,7 +12268,7 @@ Galaxy "IC 407"
         Dec         -15.5233
         Distance    1.61e+08
         Radius     5.153e+04
-        absMag        -19.27
+        AbsMag        -19.27
         Axis    [ -0.1964   0.5427  -0.8167]
         Angle    108.7667
 }
@@ -12282,7 +12282,7 @@ Galaxy "IC 421"
         Dec          -7.9178
         Distance   1.491e+08
         Radius     7.156e+04
-        absMag         -19.1
+        AbsMag         -19.1
         Axis    [  0.8148   0.5724  -0.0921]
         Angle    119.0993
 }
@@ -12296,7 +12296,7 @@ Galaxy "IC 422"
         Dec         -17.2239
         Distance   4.787e+07
         Radius          4873
-        absMag        -17.33
+        AbsMag        -17.33
         Axis    [  0.9978   0.0495   0.0444]
         Angle    130.7592
 }
@@ -12310,7 +12310,7 @@ Galaxy "IC 438"
         Dec         -17.8758
         Distance   1.332e+08
         Radius     5.426e+04
-        absMag        -21.06
+        AbsMag        -21.06
         Axis    [  0.7788   0.6140  -0.1287]
         Angle    121.8134
 }
@@ -12324,7 +12324,7 @@ Galaxy "IC 467"
         Dec          79.8725
         Distance   1.351e+08
         Radius     6.093e+04
-        absMag        -20.79
+        AbsMag        -20.79
         Axis    [ -0.1303   0.8021   0.5829]
         Angle     77.7798
 }
@@ -12338,7 +12338,7 @@ Galaxy "IC 529"
         Dec          73.7597
         Distance   1.369e+08
         Radius     6.571e+04
-        absMag        -21.81
+        AbsMag        -21.81
         Axis    [ -0.4058   0.8951   0.1846]
         Angle     90.5546
 }
@@ -12352,7 +12352,7 @@ Galaxy "IC 764"
         Dec         -29.7369
         Distance   1.067e+08
         Radius     7.448e+04
-        absMag        -20.37
+        AbsMag        -20.37
         Axis    [ -0.8897  -0.2696  -0.3683]
         Angle     74.0900
 }
@@ -12366,7 +12366,7 @@ Galaxy "IC 784"
         Dec          -4.6528
         Distance   1.853e+08
         Radius      5.12e+04
-        absMag        -20.67
+        AbsMag        -20.67
         Axis    [  0.2027  -0.4351  -0.8772]
         Angle     16.9235
 }
@@ -12380,7 +12380,7 @@ Galaxy "IC 900"
         Dec           9.3369
         Distance    3.54e+08
         Radius     8.239e+04
-        absMag        -22.28
+        AbsMag        -22.28
         Axis    [  0.7786  -0.5610  -0.2813]
         Angle     96.2729
 }
@@ -12394,7 +12394,7 @@ Galaxy "IC 901"
         Dec          13.3303
         Distance    4.05e+07
         Radius          4712
-        absMag        -15.87
+        AbsMag        -15.87
         Axis    [ -0.2449  -0.5295  -0.8122]
         Angle     27.3642
 }
@@ -12408,7 +12408,7 @@ Galaxy "IC 1029"
         Dec          49.9044
         Distance   1.443e+08
         Radius     5.456e+04
-        absMag        -20.33
+        AbsMag        -20.33
         Axis    [ -0.2943   0.1021   0.9502]
         Angle     62.6154
 }
@@ -12422,7 +12422,7 @@ Galaxy "IC 1031"
         Dec          48.0381
         Distance   1.784e+07
         Radius          2335
-        absMag        -13.89
+        AbsMag        -13.89
         Axis    [  0.6304  -0.7635   0.1402]
         Angle     90.0951
 }
@@ -12436,7 +12436,7 @@ Galaxy "IC 1048"
         Dec           4.8908
         Distance   1.023e+08
         Radius     3.273e+04
-        absMag        -19.58
+        AbsMag        -19.58
         Axis    [ -0.8446  -0.3414   0.4125]
         Angle     56.2597
 }
@@ -12450,7 +12450,7 @@ Galaxy "IC 1049"
         Dec          62.0031
         Distance   2.663e+07
         Radius          3486
-        absMag        -15.76
+        AbsMag        -15.76
         Axis    [  0.5500  -0.7825   0.2919]
         Angle     73.8563
 }
@@ -12464,7 +12464,7 @@ Galaxy "IC 1401"
         Dec           1.7114
         Distance   2.758e+08
         Radius      7.22e+04
-        absMag        -21.04
+        AbsMag        -21.04
         Axis    [ -0.2268  -0.5706   0.7893]
         Angle    137.6872
 }
@@ -12478,7 +12478,7 @@ Galaxy "IC 1403"
         Dec          -2.7156
         Distance    4.32e+07
         Radius          3141
-        absMag        -14.81
+        AbsMag        -14.81
         Axis    [ -0.3436  -0.6652   0.6629]
         Angle    129.0309
 }
@@ -12492,7 +12492,7 @@ Galaxy "IC 1459"
         Dec         -36.4625
         Distance   9.538e+07
         Radius     7.213e+04
-        absMag        -22.33
+        AbsMag        -22.33
         Axis    [ -0.7616  -0.5199  -0.3869]
         Angle    177.4400
 }
@@ -12506,7 +12506,7 @@ Galaxy "IC 1613"
         Dec           2.1186
         Distance   3.312e+07
         Radius     7.995e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.5516   0.8318   0.0616]
         Angle    158.7019
 }
@@ -12520,7 +12520,7 @@ Galaxy "IC 1727"
         Dec          27.3325
         Distance    8.71e+07
         Radius     7.221e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.1613   0.7805  -0.6040]
         Angle    175.1652
 }
@@ -12534,7 +12534,7 @@ Galaxy "IC 1898"
         Dec         -22.4039
         Distance   7.565e+07
         Radius     3.961e+04
-        absMag        -18.93
+        AbsMag        -18.93
         Axis    [  0.3193   0.9379  -0.1353]
         Angle    143.8932
 }
@@ -12548,7 +12548,7 @@ Galaxy "IC 1899"
         Dec         -25.3050
         Distance   3.002e+07
         Radius          4803
-        absMag        -16.42
+        AbsMag        -16.42
         Axis    [  0.0466   0.5577  -0.8287]
         Angle    133.7003
 }
@@ -12562,7 +12562,7 @@ Galaxy "IC 1954"
         Dec         -51.9042
         Distance   4.829e+07
         Radius     2.107e+04
-        absMag        -19.45
+        AbsMag        -19.45
         Axis    [  0.6862   0.6889  -0.2336]
         Angle    161.0807
 }
@@ -12576,7 +12576,7 @@ Galaxy "IC 1955"
         Dec         -57.2419
         Distance   1.903e+07
         Radius          1937
-        absMag        -13.83
+        AbsMag        -13.83
         Axis    [  0.8570   0.4251   0.2912]
         Angle    181.1848
 }
@@ -12590,7 +12590,7 @@ Galaxy "IC 2058"
         Dec         -55.9308
         Distance   7.407e+07
         Radius     3.124e+04
-        absMag        -18.58
+        AbsMag        -18.58
         Axis    [  0.6156   0.7841   0.0792]
         Angle    177.3069
 }
@@ -12604,7 +12604,7 @@ Galaxy "IC 2104"
         Dec         -15.7978
         Distance   3.061e+08
         Radius     1.113e+05
-        absMag        -21.86
+        AbsMag        -21.86
         Axis    [  0.3500   0.7748  -0.5265]
         Angle    119.7972
 }
@@ -12618,7 +12618,7 @@ Galaxy "IC 2469"
         Dec         -32.4497
         Distance   3.868e+07
         Radius     2.644e+04
-        absMag        -19.87
+        AbsMag        -19.87
         Axis    [  0.8415   0.4887  -0.2302]
         Angle     99.6594
 }
@@ -12632,7 +12632,7 @@ Galaxy "IC 2531"
         Dec         -29.6178
         Distance   1.546e+08
         Radius     1.552e+05
-        absMag        -20.98
+        AbsMag        -20.98
         Axis    [  0.7248   0.4537  -0.5185]
         Angle     61.3763
 }
@@ -12646,7 +12646,7 @@ Galaxy "IC 2556"
         Dec         -34.7283
         Distance     1.3e+08
         Radius     3.782e+04
-        absMag         -19.4
+        AbsMag         -19.4
         Axis    [  0.2315   0.1267  -0.9645]
         Angle     71.4614
 }
@@ -12660,7 +12660,7 @@ Galaxy "IC 2557"
         Dec          38.1083
         Distance   5.339e+07
         Radius          2329
-        absMag        -15.77
+        AbsMag        -15.77
         Axis    [  0.5912   0.7902  -0.1613]
         Angle     34.6721
 }
@@ -12674,7 +12674,7 @@ Galaxy "IC 2559"
         Dec         -34.0586
         Distance    1.38e+08
         Radius     3.413e+04
-        absMag        -19.53
+        AbsMag        -19.53
         Axis    [  0.9220   0.2349  -0.3079]
         Angle    114.1742
 }
@@ -12688,7 +12688,7 @@ Galaxy "IC 2560"
         Dec         -33.5633
         Distance   1.114e+08
         Radius     5.025e+04
-        absMag        -20.97
+        AbsMag        -20.97
         Axis    [  0.8450   0.2347  -0.4804]
         Angle     92.8712
 }
@@ -12702,7 +12702,7 @@ Galaxy "IC 2574"
         Dec          68.4167
         Distance   1.536e+07
         Radius     2.948e+04
-        absMag        -18.16
+        AbsMag        -18.16
         Axis    [  0.6525  -0.0399   0.7568]
         Angle     73.4170
 }
@@ -12716,7 +12716,7 @@ Galaxy "IC 2575"
         Dec         -32.6361
         Distance   2.226e+07
         Radius          2266
-        absMag        -14.07
+        AbsMag        -14.07
         Axis    [  0.0338   0.0731  -0.9967]
         Angle     80.6864
 }
@@ -12730,7 +12730,7 @@ Galaxy "IC 2974"
         Dec          -5.1683
         Distance   2.592e+08
         Radius     8.293e+04
-        absMag         -21.3
+        AbsMag         -21.3
         Axis    [  0.8441  -0.0237  -0.5356]
         Angle     10.0728
 }
@@ -12744,7 +12744,7 @@ Galaxy "IC 3370"
         Dec         -39.3378
         Distance   8.739e+07
         Radius     2.669e+04
-        absMag        -21.24
+        AbsMag        -21.24
         Axis    [  0.3869  -0.3762  -0.8419]
         Angle    143.0649
 }
@@ -12758,7 +12758,7 @@ Galaxy "IC 3881"
         Dec          19.1178
         Distance   7.987e+07
         Radius          2323
-        absMag        -16.94
+        AbsMag        -16.94
         Axis    [  0.4989  -0.7934  -0.3486]
         Angle    130.3435
 }
@@ -12772,7 +12772,7 @@ Galaxy "IC 3882"
         Dec          22.5750
         Distance   7.871e+07
         Radius          3434
-        absMag        -16.41
+        AbsMag        -16.41
         Axis    [ -0.3248   0.4479  -0.8330]
         Angle     72.6267
 }
@@ -12786,7 +12786,7 @@ Galaxy "IC 4182"
         Dec          37.6064
         Distance   7.586e+07
         Radius     5.296e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [  0.6537  -0.6214  -0.4319]
         Angle     31.5296
 }
@@ -12800,7 +12800,7 @@ Galaxy "IC 4237"
         Dec         -21.1369
         Distance   1.433e+08
         Radius     5.212e+04
-        absMag        -20.71
+        AbsMag        -20.71
         Axis    [ -0.6465  -0.2973  -0.7026]
         Angle     60.5104
 }
@@ -12814,7 +12814,7 @@ Galaxy "IC 4238"
         Dec          30.9325
         Distance   3.202e+07
         Radius          3726
-        absMag        -15.16
+        AbsMag        -15.16
         Axis    [  0.9010  -0.3860   0.1981]
         Angle     98.3570
 }
@@ -12828,7 +12828,7 @@ Galaxy "IC 4296"
         Dec         -33.9658
         Distance   1.504e+08
         Radius     6.126e+04
-        absMag        -22.72
+        AbsMag        -22.72
         Axis    [  0.5278  -0.5430  -0.6531]
         Angle    162.4548
 }
@@ -12842,7 +12842,7 @@ Galaxy "IC 4351"
         Dec         -29.3156
         Distance   1.158e+08
         Radius      9.94e+04
-        absMag        -20.95
+        AbsMag        -20.95
         Axis    [  0.8836  -0.1631  -0.4390]
         Angle     95.6514
 }
@@ -12856,7 +12856,7 @@ Galaxy "IC 4662"
         Dec         -64.6419
         Distance   7.586e+07
         Radius     3.531e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.5997  -0.6825  -0.4178]
         Angle    110.9366
 }
@@ -12870,7 +12870,7 @@ Galaxy "IC 4680"
         Dec         -64.4761
         Distance   1.965e+08
         Radius     4.859e+04
-        absMag         -20.8
+        AbsMag         -20.8
         Axis    [ -0.3531  -0.7637  -0.5405]
         Angle    104.2860
 }
@@ -12884,7 +12884,7 @@ Galaxy "IC 4696"
         Dec         -64.7328
         Distance   1.524e+08
         Radius     5.321e+04
-        absMag        -20.65
+        AbsMag        -20.65
         Axis    [ -0.3341  -0.8156  -0.4724]
         Angle    101.4699
 }
@@ -12898,7 +12898,7 @@ Galaxy "IC 4697"
         Dec          25.4272
         Distance    2.92e+07
         Radius          3823
-        absMag        -15.36
+        AbsMag        -15.36
         Axis    [  0.6497  -0.7088  -0.2748]
         Angle    153.6034
 }
@@ -12912,7 +12912,7 @@ Galaxy "IC 4790"
         Dec         -64.9283
         Distance   1.934e+08
         Radius     3.375e+04
-        absMag        -20.56
+        AbsMag        -20.56
         Axis    [ -0.3458  -0.6823  -0.6441]
         Angle    115.9146
 }
@@ -12926,7 +12926,7 @@ Galaxy "IC 4791"
         Dec          19.3317
         Distance   6.983e+07
         Radius          5078
-        absMag        -16.85
+        AbsMag        -16.85
         Axis    [ -0.0783  -0.9134  -0.3994]
         Angle    188.3404
 }
@@ -12940,7 +12940,7 @@ Galaxy "IC 4799"
         Dec         -63.9306
         Distance   5.436e+07
         Radius     1.186e+04
-        absMag        -17.91
+        AbsMag        -17.91
         Axis    [ -0.1445  -0.5975  -0.7887]
         Angle    121.9247
 }
@@ -12954,7 +12954,7 @@ Galaxy "IC 4827"
         Dec         -60.8594
         Distance   1.816e+08
         Radius     7.396e+04
-        absMag        -21.23
+        AbsMag        -21.23
         Axis    [ -0.6477  -0.6800   0.3438]
         Angle    146.8305
 }
@@ -12968,7 +12968,7 @@ Galaxy "IC 4831"
         Dec         -62.2719
         Distance   1.736e+08
         Radius     8.837e+04
-        absMag        -21.93
+        AbsMag        -21.93
         Axis    [ -0.5052  -0.8621  -0.0391]
         Angle    119.0801
 }
@@ -12982,7 +12982,7 @@ Galaxy "IC 5052"
         Dec         -69.2053
         Distance   3.678e+07
         Radius     3.157e+04
-        absMag        -19.66
+        AbsMag        -19.66
         Axis    [ -0.5975  -0.7459   0.2943]
         Angle    158.7600
 }
@@ -12996,7 +12996,7 @@ Galaxy "IC 5078"
         Dec         -16.8183
         Distance   8.571e+07
         Radius     5.111e+04
-        absMag         -19.2
+        AbsMag         -19.2
         Axis    [ -0.2133  -0.9766   0.0255]
         Angle    132.1783
 }
@@ -13010,7 +13010,7 @@ Galaxy "IC 5080"
         Dec          19.2142
         Distance   5.421e+07
         Radius          3942
-        absMag         -16.7
+        AbsMag         -16.7
         Axis    [ -0.4054  -0.8837  -0.2339]
         Angle    170.9139
 }
@@ -13024,7 +13024,7 @@ Galaxy "IC 5152"
         Dec         -51.2961
         Distance   5.755e+07
         Radius     4.185e+04
-        absMag        -20.73
+        AbsMag        -20.73
         Axis    [ -0.6661  -0.7436   0.0582]
         Angle    144.2493
 }
@@ -13038,7 +13038,7 @@ Galaxy "IC 5176"
         Dec         -66.8500
         Distance   1.029e+08
         Radius     6.584e+04
-        absMag        -19.79
+        AbsMag        -19.79
         Axis    [ -0.3072  -0.8400  -0.4473]
         Angle    119.5672
 }
@@ -13052,7 +13052,7 @@ Galaxy "IC 5201"
         Dec         -46.0347
         Distance   4.241e+07
         Radius     5.243e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.3387  -0.8355  -0.4327]
         Angle    142.0175
 }
@@ -13066,7 +13066,7 @@ Galaxy "IC 5267"
         Dec         -43.3958
         Distance    1.03e+08
         Radius     7.791e+04
-        absMag           -22
+        AbsMag           -22
         Axis    [ -0.6612  -0.5841   0.4707]
         Angle    153.8136
 }
@@ -13080,7 +13080,7 @@ Galaxy "IC 5269B"
         Dec         -36.2500
         Distance   9.137e+07
         Radius     5.316e+04
-        absMag        -19.54
+        AbsMag        -19.54
         Axis    [ -0.2892  -0.9360   0.2008]
         Angle    159.6993
 }
@@ -13094,7 +13094,7 @@ Galaxy "IC 5269C"
         Dec         -35.3697
         Distance    3.78e+07
         Radius     1.154e+04
-        absMag        -16.82
+        AbsMag        -16.82
         Axis    [ -0.3951  -0.9147  -0.0853]
         Angle    154.2816
 }
@@ -13108,7 +13108,7 @@ Galaxy "IC 5270"
         Dec         -35.8578
         Distance   6.315e+07
         Radius     2.939e+04
-        absMag        -19.13
+        AbsMag        -19.13
         Axis    [ -0.2957  -0.9197   0.2584]
         Angle    162.0864
 }
@@ -13122,7 +13122,7 @@ Galaxy "IC 5271"
         Dec         -33.7422
         Distance   6.618e+07
         Radius     2.503e+04
-        absMag        -20.74
+        AbsMag        -20.74
         Axis    [ -0.4044  -0.7562   0.5145]
         Angle    165.4149
 }
@@ -13136,7 +13136,7 @@ Galaxy "IC 5273"
         Dec         -37.7053
         Distance   6.709e+07
         Radius     2.537e+04
-        absMag        -20.37
+        AbsMag        -20.37
         Axis    [ -0.5161  -0.8304  -0.2102]
         Angle    155.8923
 }
@@ -13150,7 +13150,7 @@ Galaxy "IC 5274"
         Dec          18.9192
         Distance   2.125e+07
         Radius          2473
-        absMag        -15.17
+        AbsMag        -15.17
         Axis    [ -0.4653  -0.8074  -0.3626]
         Angle    227.5037
 }
@@ -13164,7 +13164,7 @@ Galaxy "IC 5309"
         Dec           8.1100
         Distance   1.936e+08
         Radius     3.942e+04
-        absMag        -20.17
+        AbsMag        -20.17
         Axis    [ -0.0903  -0.9295  -0.3577]
         Angle    187.5965
 }
@@ -13178,7 +13178,7 @@ Galaxy "IC 5310"
         Dec         -22.1489
         Distance   8.512e+07
         Radius          6190
-        absMag        -17.28
+        AbsMag        -17.28
         Axis    [ -0.6148  -0.5639  -0.5514]
         Angle    208.1778
 }
@@ -13192,7 +13192,7 @@ Galaxy "IC 5325"
         Dec         -41.3336
         Distance   5.703e+07
         Radius     2.323e+04
-        absMag        -20.21
+        AbsMag        -20.21
         Axis    [ -0.5404  -0.6159  -0.5733]
         Angle    175.5126
 }
@@ -13206,7 +13206,7 @@ Galaxy "IC 5332"
         Dec         -36.1014
         Distance   3.527e+07
         Radius     4.566e+04
-        absMag        -19.77
+        AbsMag        -19.77
         Axis    [ -0.6411  -0.4265   0.6380]
         Angle    145.7198
 }
