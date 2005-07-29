@@ -26,7 +26,7 @@
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius  300             # ~1% of system mass
+	Radius  150             # ~1% of system mass
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
 
