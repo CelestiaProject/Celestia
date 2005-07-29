@@ -1,5 +1,27 @@
 # The largest Edgeworth-Kuiper belt objects
 
+"2003 EL61" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius  1150             # estimate
+
+	EllipticalOrbit {
+		Period           285.312 
+		SemiMajorAxis     43.339       
+		Eccentricity       0.1888 
+		Inclination       28.195      
+		AscendingNode    121.895 
+		ArgOfPericenter  239.512      
+		MeanAnomaly      198.075 
+   	} 
+
+	Albedo 0.09               # estimate
+
+	RotationPeriod     48.0   # guess
+
+}
+
 # 90482 Orcus (2004 DW)
 "Orcus" "Sol" { 
 
