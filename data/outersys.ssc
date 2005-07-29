@@ -4,9 +4,12 @@
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius  1150             # estimate
+	Radius  750              # estimate
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
 
 	EllipticalOrbit {
+		Epoch        2453600.5    # 2005 Aug 18 00:00UT
 		Period           285.312 
 		SemiMajorAxis     43.339       
 		Eccentricity       0.1888 
@@ -16,10 +19,26 @@
 		MeanAnomaly      198.075 
    	} 
 
-	Albedo 0.09               # estimate
+	RotationPeriod     3.9
+}
 
-	RotationPeriod     48.0   # guess
+"2003 EL61 I" "Sol/2003 EL61" { 
 
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius  300             # ~1% of system mass
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
+
+	EllipticalOrbit {
+		Period            49.12 
+		SemiMajorAxis  49500       
+		Eccentricity       0.050
+		Inclination      234.8      
+		AscendingNode     26.1 
+		ArgOfPericenter  278.6      
+		MeanAnomaly       16.71 
+   	} 
 }
 
 # 90482 Orcus (2004 DW)
