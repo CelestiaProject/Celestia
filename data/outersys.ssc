@@ -1,5 +1,45 @@
 # The largest Edgeworth-Kuiper belt objects
 
+"2003 UB313" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius  1300              # estimate
+
+	EllipticalOrbit {
+		Epoch        2453600.5    # 2005 Aug 18 00:00UT
+		Period           557.148 
+		SemiMajorAxis     67.709       
+		Eccentricity       0.4416 
+		Inclination       44.177      
+		AscendingNode     35.875 
+		ArgOfPericenter  151.311      
+		MeanAnomaly      197.538 
+   	} 
+
+	RotationPeriod     48.0   # guess
+}
+
+"2005 FY9" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius  850              # estimate
+
+	EllipticalOrbit {
+		Epoch        2453600.5    # 2005 Aug 18 00:00UT
+		Period           308.329 
+		SemiMajorAxis     45.640       
+		Eccentricity       0.1519 
+		Inclination       28.998      
+		AscendingNode     79.416 
+		ArgOfPericenter  245.848      
+		MeanAnomaly      213.919 
+   	} 
+
+	RotationPeriod     48.0   # guess
+}
+
 "2003 EL61" "Sol" { 
 
 	Class "asteroid" 
