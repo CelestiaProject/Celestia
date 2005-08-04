@@ -59,7 +59,7 @@
 		MeanAnomaly      198.075 
    	} 
 
-	RotationPeriod     3.9
+	RotationPeriod     3.9152
 }
 
 "2003 EL61 I" "Sol/2003 EL61" { 
@@ -69,6 +69,7 @@
 	Radius  150             # ~1% of system mass
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
+#	Orbit from Brown ME et al: http://www.gps.caltech.edu/%7Embrown/papers/ps/EL61.pdf
 
 	EllipticalOrbit {
 		Period            49.12 
@@ -220,7 +221,9 @@
 
 
 # Inner Oort cloud
-"2003 VB12 (Sedna)" "Sol" { 
+
+# 90377 Sedna (2003 VB12)
+"Sedna" "Sol" { 
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -230,18 +233,18 @@
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/sedna/"
 
-	EllipticalOrbit { # Andrea Pelloni et al
-		Epoch        2452178.467091144 
-		Period         12941.01891 
-		SemiMajorAxis    551.2039416  
-		Eccentricity       0.8615909  
-		Inclination       11.92987 
-		AscendingNode    144.48101 
-		ArgOfPericenter  310.84807 
-		MeanAnomaly      357.94906 
+	EllipticalOrbit {
+		Epoch        2453200.5     # 2004 Jul 14 00:00UT 
+		Period         12258.809 
+		SemiMajorAxis    531.658  
+		Eccentricity       0.8574  
+		Inclination       11.930 
+		AscendingNode    144.493 
+		ArgOfPericenter  311.827 
+		MeanAnomaly      357.881 
 	} 
 
 	Albedo 0.05 
 
-	RotationPeriod 480 # 20 days (or longer)
+	RotationPeriod 10 # (much shorter than previously thought)
 } 
