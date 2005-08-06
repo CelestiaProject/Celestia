@@ -470,6 +470,8 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
         renderPathCombo->insertItem(i18n("ARBFP ARBVP"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NV30))
         renderPathCombo->insertItem(i18n("NV30"));
+    if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_GLSL))
+        renderPathCombo->insertItem(i18n("OpenGL 2.0"));
 
     connect(renderPathCombo, SIGNAL(activated(int)), SLOT(slotRenderPath(int)));
 
@@ -734,6 +736,9 @@ void KdePreferencesDialog::setRenderPathLabel() {
         break;
     case GLContext::GLPath_NV30:
         renderPathLabel->setText(i18n("<b>NV_fragment_program and ARB_vertex_program extensions</b>"));
+        break;
+    case GLContext::GLPath_GLSL:
+        renderPathLabel->setText(i18n("<b>OpenGL 2.0 Shading Language</b>"));
         break;
     }
 }

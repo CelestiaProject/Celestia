@@ -352,6 +352,9 @@ void KdeApp::resyncMenus() {
     case GLContext::GLPath_NV30:
         ((KToggleAction*)action("renderPathNV30"))->setChecked(true);
         break;
+    case GLContext::GLPath_GLSL:
+        ((KToggleAction*)action("renderPathGLSL"))->setChecked(true);
+        break;
     }
 }
 
@@ -655,6 +658,8 @@ void KdeApp::initActions()
     renderPath = new KToggleAction(i18n("ARBFP ARBVP"), 0, this, SLOT(slotSetRenderPathARBFPARBVP()), actionCollection(), "renderPathARBFPARBVP");
     renderPath->setExclusiveGroup("renderPath");
     renderPath = new KToggleAction(i18n("NV30"), 0, this, SLOT(slotSetRenderPathNV30()), actionCollection(), "renderPathNV30");
+    renderPath->setExclusiveGroup("renderPath");
+    renderPath = new KToggleAction(i18n("OpenGL 2.0"), 0, this, SLOT(slotSetRenderPathGLSL()), actionCollection(), "renderPathGLSL");
     renderPath->setExclusiveGroup("renderPath");
     new KAction(i18n("Cycle OpenGL Render Path"), "reload", CTRL + Key_V, this, SLOT(slotCycleRenderPath()), actionCollection(), "cycleRenderPath");
 
@@ -1296,6 +1301,10 @@ void KdeApp::slotSetRenderPathARBFPARBVP() {
 void KdeApp::slotSetRenderPathNV30() {
     if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_NV30)
         appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_NV30);
+}
+void KdeApp::slotSetRenderPathGLSL() {
+    if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_GLSL)
+        appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_GLSL);
 }
 
 void KdeApp::slotCycleRenderPath() {
