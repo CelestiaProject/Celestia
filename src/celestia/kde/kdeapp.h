@@ -179,6 +179,7 @@ public slots:
     void slotSetRenderPathNvCombinerARBVP();
     void slotSetRenderPathARBFPARBVP();
     void slotSetRenderPathNV30();
+    void slotSetRenderPathGLSL();
     void slotCycleRenderPath();
 
     void slotCelestialBrowser();
