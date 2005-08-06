@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="17">
+<kpartgui name="celestia" version="18">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -66,6 +66,7 @@
          <Action name="renderPathNvCombinerARBVP"/>
          <Action name="renderPathARBFPARBVP"/>
          <Action name="renderPathNV30"/>
+	 <Action name="renderPathGLSL"/>
      </Menu>
   </Menu>
   <Menu name="time" icon="kalarm"><text>Time</text>

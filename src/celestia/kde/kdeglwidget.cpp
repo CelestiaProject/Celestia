@@ -157,6 +157,8 @@ void KdeGlWidget::initializeGL()
         ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathARBFPARBVP")))->setEnabled(false);
     if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NV30))
         ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNV30")))->setEnabled(false);
+    if (!appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_GLSL))
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathGLSL")))->setEnabled(false);
 
     if (KGlobal::config()->hasKey("RenderPath")) {
        GLContext::GLRenderPath path = (GLContext::GLRenderPath)KGlobal::config()->readNumEntry("RenderPath");
@@ -189,6 +191,9 @@ void KdeGlWidget::initializeGL()
         break;
     case GLContext::GLPath_NV30:
         ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathNV30")))->setChecked(true);
+        break;
+    case GLContext::GLPath_GLSL:
+        ((KToggleAction*)(((KdeApp*)parentWidget())->action("renderPathGLSL")))->setChecked(true);
         break;
     }
 
