@@ -771,15 +771,6 @@ Barycenter "Wolf 424:Gliese 473"
 	AppMag 12.27
 }
 
-"Luyten 143-23:GJ 3618"
-{
-	RA 161.132500
-	Dec -61.193889
-	Distance 14.659
-	SpectralType "M5.5V"
-	AppMag 13.92
-}
-
 86162 # Gliese 687
 {
 	RA 264.107917
@@ -933,6 +924,15 @@ Barycenter "Lalande 21258:Gliese 412" # orbits of A & B unknown
 	Distance 15.942
 	SpectralType "M3.0V"
 	AppMag 9.32
+}
+
+"Luyten 143-23:GJ 3618"
+{
+	RA 161.132500
+	Dec -61.193889
+	Distance 15.945
+	SpectralType "M5.5V"
+	AppMag 13.92
 }
 
 106440 # Luyten 354-89
@@ -1235,15 +1235,6 @@ Barycenter "Stein 2051:Gliese 169.1" # orbit of A & B unknown
 	AppMag 18.27
 }
 
-"Luyten 347-14:Gliese 754"
-{
-	RA 290.200833
-	Dec -45.558889
-	Distance 18.617
-	SpectralType "M4.5V"
-	AppMag 12.23
-}
-
 25878 # Wolf 1453
 {
 	RA 82.864167
@@ -1337,15 +1328,6 @@ Barycenter "Ross 652:Wolf 1055:Gliese 752" # orbit of A & B unknown
 	Distance 19.144
 	SpectralType "M4.0V"
 	AppMag 11.51
-}
-
-"Luyten 674-15:Gliese 300"
-{
-	RA 123.170000
-	Dec -21.552778
-	Distance 19.197
-	SpectralType "M3.5V"
-	AppMag 12.07
 }
 
 Barycenter "33 Lib:Gliese 570"
@@ -1487,6 +1469,15 @@ Barycenter "Achird:ETA Cas:24 Cas:Gliese 34"
 	Distance 19.373
 	SpectralType "M3.0V"
 	AppMag 9.31
+}
+
+"Luyten 347-14:Gliese 754"
+{
+	RA 290.200833
+	Dec -45.558889
+	Distance 19.426
+	SpectralType "M4.5V"
+	AppMag 12.23
 }
 
 37766 # Ross 882 
@@ -1699,43 +1690,6 @@ Barycenter "Struve 1321:Gliese 338"
 		ArgOfPericenter 96
 		MeanAnomaly     264
 	}
-}
-
-# Delfosse, X. et al. (1999) "New Neighbours I: 13 new
-# companions to nearby M dwarfs" A&A, 344, 897
-# (http://aa.springer.de/papers/9344003/2300897/small.htm)
-Barycenter "GJ 2130" # orbit of A & B unknown
-{
-	RA 266.556484   # mass ratio 0.3:(0.19+0.15)
-	Dec -32.102873  #
-	Distance 20.162
-}
-
-86961 # GJ 2130 A
-{
-	RA 266.552500
-	Dec -32.103611
-	Distance 20.162
-	SpectralType "M2V"
-	AppMag 10.49
-}
-
-86963 "GJ 2130 Ba:CD-32 13298 A"
-{
-	RA 266.560000
-	Dec -32.102222
-	Distance 20.162
-	SpectralType "M5.5V" # from apparent magnitude
-	AppMag 11.75
-}
-
-"GJ 2130 Bb:CD-32 13298 B"        #true separation of Bab not known
-{
-	RA 266.5603
-	Dec -32.102222
-	Distance 20.162
-	SpectralType "M6.5V" # from apparent magnitude
-	AppMag 12.75
 }
 
 99701 # Gliese 784
@@ -2039,6 +1993,15 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	AppMag 5.56
 }
 
+"LHS 271:Luyten 100-115:GJ 1128"
+{
+	RA 145.693333
+	Dec -68.885000
+	Distance 21.311
+	SpectralType "M4.5V"
+	AppMag 12.78
+}
+
 "Luyten 1190-34:GL Vir:GJ 1156"
 {
 	RA 184.751250
@@ -2064,15 +2027,6 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	Distance 21.488
 	SpectralType "M1.5V"
 	AppMag 10.10
-}
-
-"LHS 271:Luyten 100-115:GJ 1128"
-{
-	RA 145.693333
-	Dec -68.885000
-	Distance 21.642
-	SpectralType "M4.5V"
-	AppMag 12.78
 }
 
 53767 # Ross 104
@@ -2678,4 +2632,43 @@ Barycenter "Alula Australis B"
 	Distance 27.294
 	SpectralType "M7V"  # from luminosity
 	AppMag 15
+}
+
+#======================================================
+# Delfosse, X. et al. (1999) "New Neighbours I: 13 new
+# companions to nearby M dwarfs" A&A, 344, 897
+# (http://aa.springer.de/papers/9344003/2300897/small.htm)
+# Newer RECONS parallax places system well beyond 25ly
+Barycenter "GJ 2130" # orbit of A & B unknown
+{
+	RA 266.556484   # mass ratio 0.3:(0.19+0.15)
+	Dec -32.102873  #
+	Distance 48.536
+}
+
+86961 # GJ 2130 A
+{
+	RA 266.552500
+	Dec -32.103611
+	Distance 48.536
+	SpectralType "M2V"
+	AppMag 10.49
+}
+
+86963 "GJ 2130 Ba:CD-32 13298 A"
+{
+	RA 266.560000
+	Dec -32.102222
+	Distance 48.536
+	SpectralType "M5.5V" # from apparent magnitude
+	AppMag 11.75
+}
+
+"GJ 2130 Bb:CD-32 13298 B"        #true separation of Bab not known
+{
+	RA 266.5603
+	Dec -32.102222
+	Distance 48.536
+	SpectralType "M6.5V" # from apparent magnitude
+	AppMag 12.75
 }
