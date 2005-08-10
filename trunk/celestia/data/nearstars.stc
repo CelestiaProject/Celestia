@@ -1815,6 +1815,15 @@ Barycenter "Gliese 896 B"
 	}
 }
 
+"LHS 337:Luyten 471-42:GJ 3737"
+{
+	RA 189.704583
+	Dec -38.381667
+	Distance 20.844
+	SpectralType "M4.0V"
+	AppMag 12.74
+}
+
 Barycenter "Gliese 661:BD+45 2505"
 {
 	RA 258.032917
@@ -2009,15 +2018,6 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	Distance 21.332
 	SpectralType "M5.0V"
 	AppMag 13.80
-}
-
-"LHS 337:Luyten 471-42:GJ 3737"
-{
-	RA 189.704583
-	Dec -38.381667
-	Distance 21.468
-	SpectralType "M4.0V"
-	AppMag 12.74
 }
 
 80459 # Gliese 625
