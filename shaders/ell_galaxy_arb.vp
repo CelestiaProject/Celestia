@@ -9,6 +9,7 @@ PARAM  const         = { 0, 0.5, 1, 2 };
 PARAM  eyePos        = program.env[1];
 PARAM  semiAxes      = program.env[21];
 PARAM  invSemiAxes   = program.env[22];
+PARAM  factor        = program.env[23];
 OUTPUT oPos          = result.position;
 OUTPUT oColor        = result.color;
 
@@ -24,7 +25,10 @@ TEMP  t;
 TEMP  dir;
 TEMP  pos;
 
-MUL   t, semiAxes, iPos;
+# input vertices currently pre-scaled, so this multiplication is unnecessary
+#MUL   t, semiAxes, iPos;
+
+MOV   t, iPos;
 SUB   dir, t, eyePos;
 MUL   pos, invSemiAxes, eyePos;
 MUL   dir, invSemiAxes, dir;
@@ -43,15 +47,19 @@ SUB   disc.x, disc.x, t.x;
 # Clamp negative values to zero
 MAX   disc.x, const.x, disc.x;
 # Take the square root
-#POW   disc.x, disc.x, const.y;
+POW   disc.x, disc.x, const.y;
 
 RCP   t.x, coeff.x;
 MUL   t.x, t.x, disc.x;
-#MUL   t.x, t.x, invSemiAxes.x;
-MUL   t.x, t.x, const.w;
+MUL   t.x, t.x, factor.x;
+#MUL   t.x, t.x, const.w;
+
+MUL   t.x, t.x, t.x;
+MUL   t.x, t.x, t.x;
+MUL   t.x, t.x, t.x;
 
 # Output the texture
 MOV   oColor, galaxyColor;
-MOV   oColor.x, t.x;
+MUL   oColor.w, galaxyColor.w, t.x;
 
 END
