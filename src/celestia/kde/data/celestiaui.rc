@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="18">
+<kpartgui name="celestia" version="19">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -23,25 +23,25 @@
   <Menu name="options"><text>Options</text>
      <Menu name="objects"><text>Objects</text>
          <Action name="showStars"/>
+	 <Action name="showAutoMag"/>
          <Action name="showPlanets"/>
          <Action name="showGalaxies"/>
-         <Action name="showPartialTrajectories"/>
          <Action name="showNebulae"/>
          <Action name="showOpenClusters"/>
-         <Action name="showDiagrams"/>
+	 <Action name="showAtmospheres"/>
          <Action name="showCloudMaps"/>
+	 <Action name="showNightMaps"/>
+	 <Action name="showEclipseShadows"/>
+	 <Action name="showCometTails"/>
+	 <Separator />
          <Action name="showOrbits"/>
+	 <Action name="showPartialTrajectories"/>
+	 <Action name="showSmoothLines"/>
          <Action name="showCelestialSphere"/>
-         <Action name="showNightMaps"/>
+	 <Action name="showDiagrams"/>
          <Action name="showMarkers"/>
-         <Action name="showAtmospheres"/>
-         <Action name="showSmoothLines"/>
-         <Action name="showEclipseShadows"/>
-         <Action name="showStarsAsPoints"/>
          <Action name="showRingShadows"/>
          <Action name="showBoundaries"/>
-         <Action name="showAutoMag"/>
-         <Action name="showCometTails"/>
      </Menu>
      <Menu name="labels"><text>Labels</text>
          <Action name="showStarLabels"/>

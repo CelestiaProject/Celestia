@@ -73,6 +73,10 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showStars")->connect(showStarsCheck, SIGNAL(clicked()), SLOT(activate()));
     showStarsCheck->setChecked(renderFlags & Renderer::ShowStars);
 
+    QCheckBox* showAutoMagCheck = new QCheckBox(i18n("Auto Magnitudes"), showGroup);
+    actionColl->action("showAutoMag")->connect(showAutoMagCheck, SIGNAL(clicked()), SLOT(activate()));
+    showAutoMagCheck->setChecked(renderFlags & Renderer::ShowAutoMag);
+
     QCheckBox* showPlanetsCheck = new QCheckBox(i18n("Planets"), showGroup);
     actionColl->action("showPlanets")->connect(showPlanetsCheck, SIGNAL(clicked()), SLOT(activate()));
     showPlanetsCheck->setChecked(renderFlags & Renderer::ShowPlanets);
@@ -80,10 +84,6 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QCheckBox* showGalaxiesCheck = new QCheckBox(i18n("Galaxies"), showGroup);
     actionColl->action("showGalaxies")->connect(showGalaxiesCheck, SIGNAL(clicked()), SLOT(activate()));
     showGalaxiesCheck->setChecked(renderFlags & Renderer::ShowGalaxies);
-
-    QCheckBox* showPartialTrajectoriesCheck = new QCheckBox(i18n("Partial Trajectories"), showGroup);
-    actionColl->action("showPartialTrajectories")->connect(showPartialTrajectoriesCheck, SIGNAL(clicked()), SLOT(activate()));
-    showPartialTrajectoriesCheck->setChecked(renderFlags & Renderer::ShowPartialTrajectories);
 
     QCheckBox* showNebulaeCheck = new QCheckBox(i18n("Nebulae"), showGroup);
     actionColl->action("showNebulae")->connect(showNebulaeCheck, SIGNAL(clicked()), SLOT(activate()));
@@ -93,41 +93,49 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showOpenClusters")->connect(showOpenClustersCheck, SIGNAL(clicked()), SLOT(activate()));
     showOpenClustersCheck->setChecked(renderFlags & Renderer::ShowOpenClusters);
 
-    QCheckBox* showDiagramsCheck = new QCheckBox(i18n("Constellations"), showGroup);
-    actionColl->action("showDiagrams")->connect(showDiagramsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showDiagramsCheck->setChecked(renderFlags & Renderer::ShowDiagrams);
+    QCheckBox* showAtmospheresCheck = new QCheckBox(i18n("Atmospheres"), showGroup);
+    actionColl->action("showAtmospheres")->connect(showAtmospheresCheck, SIGNAL(clicked()), SLOT(activate()));
+    showAtmospheresCheck->setChecked(renderFlags & Renderer::ShowAtmospheres);
 
     QCheckBox* showCloudMapsCheck = new QCheckBox(i18n("Clouds"), showGroup);
     actionColl->action("showCloudMaps")->connect(showCloudMapsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCloudMapsCheck->setChecked(renderFlags & Renderer::ShowCloudMaps);
 
-    QCheckBox* showOrbitsCheck = new QCheckBox(i18n("Orbits"), showGroup);
-    actionColl->action("showOrbits")->connect(showOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showOrbitsCheck->setChecked(renderFlags & Renderer::ShowOrbits);
-
-    QCheckBox* showCelestialSphereCheck = new QCheckBox(i18n("Celestial Grid"), showGroup);
-    actionColl->action("showCelestialSphere")->connect(showCelestialSphereCheck, SIGNAL(clicked()), SLOT(activate()));
-    showCelestialSphereCheck->setChecked(renderFlags & Renderer::ShowCelestialSphere);
-
     QCheckBox* showNightMapsCheck = new QCheckBox(i18n("Night Side Lights"), showGroup);
     actionColl->action("showNightMaps")->connect(showNightMapsCheck, SIGNAL(clicked()), SLOT(activate()));
     showNightMapsCheck->setChecked(renderFlags & Renderer::ShowNightMaps);
 
-    QCheckBox* showMarkersCheck = new QCheckBox(i18n("Markers"), showGroup);
-    actionColl->action("showMarkers")->connect(showMarkersCheck, SIGNAL(clicked()), SLOT(activate()));
-    showMarkersCheck->setChecked(renderFlags & Renderer::ShowMarkers);
+    QCheckBox* showEclipseShadowsCheck = new QCheckBox(i18n("Eclipse Shadows"), showGroup);
+    actionColl->action("showEclipseShadows")->connect(showEclipseShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showEclipseShadowsCheck->setChecked(renderFlags & Renderer::ShowEclipseShadows);
 
-    QCheckBox* showAtmospheresCheck = new QCheckBox(i18n("Atmospheres"), showGroup);
-    actionColl->action("showAtmospheres")->connect(showAtmospheresCheck, SIGNAL(clicked()), SLOT(activate()));
-    showAtmospheresCheck->setChecked(renderFlags & Renderer::ShowAtmospheres);
+    QCheckBox* showCometTailsCheck = new QCheckBox(i18n("Comet Tails"), showGroup);
+    actionColl->action("showCometTails")->connect(showCometTailsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showCometTailsCheck->setChecked(renderFlags & Renderer::ShowCometTails);
+
+    QCheckBox* showOrbitsCheck = new QCheckBox(i18n("Orbits"), showGroup);
+    actionColl->action("showOrbits")->connect(showOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showOrbitsCheck->setChecked(renderFlags & Renderer::ShowOrbits);
+
+    QCheckBox* showPartialTrajectoriesCheck = new QCheckBox(i18n("Partial Trajectories"), showGroup);
+    actionColl->action("showPartialTrajectories")->connect(showPartialTrajectoriesCheck, SIGNAL(clicked()), SLOT(activate()));
+    showPartialTrajectoriesCheck->setChecked(renderFlags & Renderer::ShowPartialTrajectories);
 
     QCheckBox* showSmoothLinesCheck = new QCheckBox(i18n("Smooth Orbit Lines"), showGroup);
     actionColl->action("showSmoothLines")->connect(showSmoothLinesCheck, SIGNAL(clicked()), SLOT(activate()));
     showSmoothLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
 
-    QCheckBox* showEclipseShadowsCheck = new QCheckBox(i18n("Eclipse Shadows"), showGroup);
-    actionColl->action("showEclipseShadows")->connect(showEclipseShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showEclipseShadowsCheck->setChecked(renderFlags & Renderer::ShowEclipseShadows);
+    QCheckBox* showCelestialSphereCheck = new QCheckBox(i18n("Celestial Grid"), showGroup);
+    actionColl->action("showCelestialSphere")->connect(showCelestialSphereCheck, SIGNAL(clicked()), SLOT(activate()));
+    showCelestialSphereCheck->setChecked(renderFlags & Renderer::ShowCelestialSphere);
+
+    QCheckBox* showDiagramsCheck = new QCheckBox(i18n("Constellations"), showGroup);
+    actionColl->action("showDiagrams")->connect(showDiagramsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showDiagramsCheck->setChecked(renderFlags & Renderer::ShowDiagrams);
+
+    QCheckBox* showMarkersCheck = new QCheckBox(i18n("Markers"), showGroup);
+    actionColl->action("showMarkers")->connect(showMarkersCheck, SIGNAL(clicked()), SLOT(activate()));
+    showMarkersCheck->setChecked(renderFlags & Renderer::ShowMarkers);
 
     QCheckBox* showRingShadowsCheck = new QCheckBox(i18n("Ring Shadows"), showGroup);
     actionColl->action("showRingShadows")->connect(showRingShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
@@ -136,14 +144,6 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QCheckBox* showBoundariesCheck = new QCheckBox(i18n("Constellation Boundaries"), showGroup);
     actionColl->action("showBoundaries")->connect(showBoundariesCheck, SIGNAL(clicked()), SLOT(activate()));
     showBoundariesCheck->setChecked(renderFlags & Renderer::ShowBoundaries);
-
-    QCheckBox* showAutoMagCheck = new QCheckBox(i18n("Auto Magnitudes"), showGroup);
-    actionColl->action("showAutoMag")->connect(showAutoMagCheck, SIGNAL(clicked()), SLOT(activate()));
-    showAutoMagCheck->setChecked(renderFlags & Renderer::ShowAutoMag);
-
-    QCheckBox* showCometTailsCheck = new QCheckBox(i18n("Comet Tails"), showGroup);
-    actionColl->action("showCometTails")->connect(showCometTailsCheck, SIGNAL(clicked()), SLOT(activate()));
-    showCometTailsCheck->setChecked(renderFlags & Renderer::ShowCometTails);
 
 
     QVBox* vbox1 = new QVBox(renderFrame);
