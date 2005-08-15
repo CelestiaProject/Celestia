@@ -13,6 +13,7 @@
 #define _UTIL_H_
 
 #include <string>
+#include <vector>
 #include <iostream>
 #include <functional>
 
@@ -20,6 +21,10 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
+#ifndef max
+#define max(a, b) ((a) < (b) ? (b) : (a))
+#endif
+				      
 #ifdef _WIN32
 #define _(s) s
 #else
