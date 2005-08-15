@@ -267,24 +267,30 @@ void Galaxy::renderGalaxyEllipsoid(const GLContext& context,
                                    float brightness,
                                    float pixelSize)
 {
-    unsigned int nRings = 20;
-    unsigned int nSlices = 20;
+    float discSizeInPixels = pixelSize * getRadius() / offset.length();
+    unsigned int nRings = (unsigned int) (discSizeInPixels / 4.0f);
+    unsigned int nSlices = (unsigned int) (discSizeInPixels / 4.0f);
+    nRings = max(nRings, 100);
+    nSlices = max(nSlices, 100);
 
     VertexProcessor* vproc = context.getVertexProcessor();
     if (vproc == NULL)
         return;
 
     int e = min(max((int) type - (int) E0, 0), 7);
-    Vec3f scale = Vec3f(1.0f, 0.2f, 1.0f) * getRadius();
-    Vec3f eyePos = -offset * (viewerOrientation).toMatrix3();
+    Vec3f scale = Vec3f(1.0f, 0.9f, 1.0f) * getRadius();
+    Vec3f eyePos_obj = -offset * (~getOrientation()).toMatrix3();
 
     vproc->enable();
     vproc->use(vp::ellipticalGalaxy);
 
-    vproc->parameter(vp::EyePosition, eyePos);
+    vproc->parameter(vp::EyePosition, eyePos_obj);
     vproc->parameter(vp::Scale, scale);
     vproc->parameter(vp::InverseScale,
                      Vec3f(1.0f / scale.x, 1.0f / scale.y, 1.0f / scale.z));
+    vproc->parameter((vp::Parameter) 23, eyePos_obj.length() / scale.x, 0.0f, 0.0f, 0.0f);
+
+    glRotate(getOrientation());
 
     glDisable(GL_TEXTURE_2D);
     glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
