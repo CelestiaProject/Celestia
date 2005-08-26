@@ -43,12 +43,6 @@ if (test "$ui_glut" != "yes" -a "$ui_gtk" != "yes" -a "$ui_gnome" != "yes" -a "$
                     --with-kde       Enhanced KDE GUI]);
 fi
 
-dnl Make certain ARTS is not conditionally defined
-if (test "$ui_kde" != "yes"); then
-	include_ARTS_TRUE=
-	include_ARTS_FALSE="#"
-fi
-
 dnl For KDE interface
 AC_CONFIG_AUX_DIR(admin)
 
@@ -283,6 +277,9 @@ AM_CONDITIONAL(ENABLE_GTK, test "$ui_gtk" = "yes")
 dnl
 dnl KDE
 dnl
+
+dnl Make certain ARTS is not conditionally defined, like GConf for Gnome
+AM_CONDITIONAL(include_ARTS, test "x" = "y")
 
 if (test "$ui_kde" != "no"); then
 	dnl KDE_SET_PREFIX
