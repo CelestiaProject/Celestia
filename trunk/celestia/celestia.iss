@@ -62,6 +62,7 @@ Source: "data\stars.dat";          DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\hdxindex.dat";       DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\saoxindex.dat";      DestDir: "{app}/data"; Flags: ignoreversion
 
+Source: "data\revised.stc";        DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\extrasolar.stc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\nearstars.stc";      DestDir: "{app}/data"; Flags: ignoreversion
 
@@ -112,11 +113,16 @@ Source: "textures\lores\epimetheus-lok.jpg";    DestDir: "{app}/textures/lores";
 Source: "textures\lores\eros.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\europa.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\europa-lok-mask.png";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\exo-class1.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\exo-class2.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\exo-class3.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\exo-class4.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\exo-class4night.jpg";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\exo-class5.jpg";        DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\exo-class5night.jpg";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\extrasolar-lok.jpg";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\ganymede.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\ganymede-lok-mask.png"; DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\gasgiant.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\gasgiantnight.jpg";     DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\gaspramosaic.jpg";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\hyperion.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\hyperion-lok.jpg";      DestDir: "{app}/textures/lores"; Flags: ignoreversion
@@ -126,7 +132,6 @@ Source: "textures\lores\io.jpg";                DestDir: "{app}/textures/lores";
 Source: "textures\lores\io-lok-mask.png";       DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\janus.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\jupiter.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\jupiterlike.jpg";       DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\mars.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\marsbump.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\mercury.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
@@ -190,9 +195,14 @@ Source: "textures\medres\epimetheus.jpg";      DestDir: "{app}/textures/medres";
 Source: "textures\medres\epimetheus-lok.jpg";  DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\eros.jpg";            DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\europa.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\exo-class1.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\exo-class2.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\exo-class3.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\exo-class4.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\exo-class4night.jpg"; DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\exo-class5.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\exo-class5night.jpg"; DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\ganymede.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\gasgiant.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\gasgiantnight.jpg";   DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\gaspramosaic.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\hyperion.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\hyperion-lok.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
@@ -205,7 +215,6 @@ Source: "textures\medres\iss-mc31.jpg";        DestDir: "{app}/textures/medres";
 Source: "textures\medres\iss-sol1.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\janus.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\jupiter.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\jupiterlike.jpg";     DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\mars.jpg";            DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\marsbump.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\mercury.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
