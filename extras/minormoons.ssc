@@ -490,7 +490,32 @@
 
 # Minor moons of Saturn
 
-"Pan" "Sol/Saturn"
+"Pan" "Sol/Saturn"   # Cassini-epoch data
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		12.8
+
+	EllipticalOrbit
+	{
+	Epoch		2453177.5 # 2004 Jun 21 00:00UT
+	Period		0.57505
+	SemiMajorAxis	133584
+	Eccentricity	0.00021
+	Inclination	0.007
+	AscendingNode	263.0
+	LongOfPericenter 209.0
+	MeanLongitude	106.645
+	}
+
+	RotationEpoch	    2453177.5 # 2004 Jun 21 00:00UT
+	Obliquity		  0.0
+	RotationOffset		287
+
+	Albedo 0.5
+}
+
+"Atlas" "Sol/Saturn"   # Cassini-epoch data
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -498,36 +523,19 @@
 
 	EllipticalOrbit
 	{
-	Period		0.5750
-	SemiMajorAxis	133583
-	Eccentricity	0.0000
-	Inclination	0.000
-	MeanLongitude	188.905 #J2000.0
+	Epoch		2453177.5 # 2004 Jun 21 00:00UT
+	Period		0.60169
+	SemiMajorAxis	137665
+	Eccentricity	0.0012
+	Inclination	0.009
+	AscendingNode	241.0
+	LongOfPericenter 42.3
+	MeanLongitude	331.432
 	}
 
+	RotationEpoch	    2453177.5 # 2004 Jun 21 00:00UT
 	Obliquity		  0.0
-	RotationOffset		  8.8
-
-	Albedo 0.5
-}
-
-"Atlas" "Sol/Saturn"
-{
-	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		16
-
-	EllipticalOrbit
-	{
-	Period		0.6019
-	SemiMajorAxis	137640
-	Eccentricity	0.0000
-	Inclination	0.000
-	MeanLongitude   282.107	#J2000.0
-	}
-
-	Obliquity		  0.0
-	RotationOffset		 97.9
+	RotationOffset		151
 
 	Albedo 0.4
 }
