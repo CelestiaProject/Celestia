@@ -474,15 +474,18 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	EllipticalOrbit
 	{
-	Period		0.612986
-	SemiMajorAxis	139350
+	Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	Period		0.6130
+	SemiMajorAxis	139380
 	Eccentricity	0.0023
-	Inclination	0.000
-	LongOfPericenter 32.879	# J2000.0 
-	MeanAnomaly     22.695	#
+	Inclination	0.0056
+	AscendingNode	226.1099
+	LongOfPericenter 23.3280 
+	MeanLongitude	266.2144
 	}
 
-	RotationOffset  	236
+	RotationEpoch		2453005.5   # 2004 Jan 1 00:00UT
+	RotationOffset  	86
 
 	Albedo 0.6
 }
@@ -496,15 +499,18 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	EllipticalOrbit
 	{
-	Period		0.628804
-	SemiMajorAxis	141700
-	Eccentricity	0.0044
-	Inclination	0.000
-	LongOfPericenter 234.458 # J2000.0
-	MeanAnomaly     62.483	 #
+	Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	Period		0.6285
+	SemiMajorAxis	141710
+	Eccentricity	0.0042
+	Inclination	0.0522
+	AscendingNode	290.0163
+	LongOfPericenter 10.4899
+	MeanLongitude	212.6961     
 	}
 
-	RotationOffset          117
+	RotationEpoch		2453005.5   # 2004 Jan 1 00:00UT
+	RotationOffset          33
 
 	Albedo 0.5
 }
@@ -518,16 +524,18 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	EllipticalOrbit
 	{
-	Period		0.694590
-	SemiMajorAxis	151422
-	Eccentricity	0.0205
-	Inclination	0.337	#
-	AscendingNode	149.880	#
-	ArgOfPericenter	86.905	# J2000.0
-	MeanAnomaly     192.354	#
+	Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	Period		0.6945      # 0.6943: period set to Janus/Epimetheus average
+	SemiMajorAxis	151410
+	Eccentricity	0.0098
+	Inclination	0.3541
+	AscendingNode	45.5973
+	LongOfPericenter 358.5774
+	MeanLongitude	306.0531
 	}
 
-	RotationOffset  	249
+	RotationEpoch		2453005.5   # 2004 Jan 1 00:00UT
+	RotationOffset  	126
 
 	Albedo 0.5
 }
@@ -546,16 +554,18 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 
 	EllipticalOrbit
 	{
-	Period		0.694590
-	SemiMajorAxis	151472
-	Eccentricity	0.0073
-	Inclination	0.168	#
-	AscendingNode	120.557	#
-	ArgOfPericenter	43.066	# J2000.0
-	MeanAnomaly     79.973	#
+	Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	Period		0.6945      # 0.6947: period set to Janus/Epimetheus average
+	SemiMajorAxis	151460
+	Eccentricity	0.0067
+	Inclination	0.1649
+	AscendingNode	8.1758
+	LongOfPericenter 248.2856
+	MeanLongitude	131.5137
 	}
 
-	RotationOffset  	64
+	RotationEpoch		2453005.5   # 2004 Jan 1 00:00UT
+	RotationOffset  	312
 
 	Albedo 0.6
 }
