@@ -1104,6 +1104,137 @@
 	Albedo 0.06
 }
 
+"Methone" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.5
+
+	EllipticalOrbit
+	{
+	Epoch		 2453177.5 # 2004 Jun 21 00:00UT
+	Period		 1.00971
+	SemiMajorAxis	 194251
+	Eccentricity	 0.001
+	Inclination	 0.018
+	AscendingNode	 311.0
+	LongOfPericenter 308.0
+	MeanLongitude    154.79
+	}
+
+	RotationEpoch	 2453177.5 # 2004 Jun 21 00:00UT
+	RotationOffset	 335
+}
+
+"Pallene" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2
+
+	EllipticalOrbit
+	{
+	Epoch		 2453177.5 # 2004 Jun 21 00:00UT
+	Period		 1.15374
+	SemiMajorAxis 	 212283
+	Eccentricity	 0.004
+	Inclination	 0.181
+	AscendingNode	 327.0
+	LongOfPericenter 38
+	MeanLongitude    85.51
+	}
+
+	RotationEpoch	 2453177.5 # 2004 Jun 21 00:00UT
+	RotationOffset   266
+}
+
+"2004S3" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		 2453177.5 # 2004 Jun 21 00:00UT
+	Period		 0.62423
+	SemiMajorAxis 	 141071
+	Eccentricity	 0.004
+	Inclination	 0.05
+	AscendingNode	 148.0
+	LongOfPericenter 114
+	MeanLongitude    349.93
+	}
+
+	RotationEpoch	 2453177.5 # 2004 Jun 21 00:00UT
+	RotationOffset   170
+}
+
+"2004S4" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		 2453177.5 # 2004 Jun 21 00:00UT
+	Period		 0.61825
+	SemiMajorAxis 	 140171
+	Eccentricity	 0.0
+	Inclination	 0.0
+	MeanLongitude    347.9
+	}
+
+	RotationEpoch	 2453177.5 # 2004 Jun 21 00:00UT
+	RotationOffset   168
+}
+
+"Polydeuces" "Sol/Saturn"
+# Trailing Lagrange point of Dione
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		1.75
+
+	EllipticalOrbit
+	{
+	Epoch		 2453006.5 # 2004 Jan 2 00:00UT
+	Period		 2.73690
+	SemiMajorAxis 	 377390
+	Eccentricity	 0.0182
+	Inclination	 0.1705
+	AscendingNode	 262
+	LongOfPericenter 103.22
+	MeanLongitude    67.61
+	}
+
+	RotationEpoch	 2453006.5 # 2004 Jan 2 00:00UT
+	RotationOffset   248
+}
+
+"2004S6" "Sol/Saturn"
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		 2453177.0 # 2004 Jun 20 12:00UT
+	Period		 0.62216
+	SemiMajorAxis 	 140760
+	Eccentricity	 0.0075
+	Inclination	 0.02
+	AscendingNode	 345.0
+	LongOfPericenter 200.0
+	MeanLongitude    347.0
+	}
+
+	RotationEpoch	 2453177.0 # 2004 Jun 20 12:00UT
+	RotationOffset   167
+}
+
 "2004S7" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
