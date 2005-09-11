@@ -143,13 +143,16 @@ Barycenter "UPS And:50 And"
 	AppMag 6.12
 }
 
+# Originally classified as a brown dwarf
+# Present data from Mugrauer & Neuhauser
+# http://de.arxiv.org/abs/astro-ph/0506311
 "Gliese 86 B"
 {
-	RA 32.599773
-	Dec -50.825732
+	RA 32.600829       # from measured separation 
+	Dec -50.825444     # position angle
 	Distance 35.596
-	SpectralType "T0" # "early T-dwarf"
-	AbsMag 25         # for approximate radius in Celestia
+	SpectralType "DC9" # "cool white dwarf, 5000±500K"
+	AbsMag 14.5        # typical for class
 }
 
 Barycenter "83 Leo"
