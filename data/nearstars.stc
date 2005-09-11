@@ -2532,7 +2532,7 @@ Barycenter "Alula Australis:XI UMa:53 UMa:Gliese 423"
 	Distance 27.294
 }
 
-Barycenter "Alula Australis A"
+Barycenter "Alula Australis A:XI UMa A:53 UMa A:Gliese 423 A"
 {
 	OrbitBarycenter "Alula Australis"
 
@@ -2547,7 +2547,7 @@ Barycenter "Alula Australis A"
 	}
 }
 
-Barycenter "Alula Australis B"
+Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B"
 {
 	OrbitBarycenter "Alula Australis"
 
