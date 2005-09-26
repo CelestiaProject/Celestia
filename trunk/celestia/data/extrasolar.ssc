@@ -1,4 +1,4 @@
-# Catalog of 167 known extrasolar planets.
+# Catalog of 176 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
@@ -15,8 +15,12 @@
 # a radius of 1.2 jupiters if they are more massive. At temperatures between 500K and 800K, these
 # same objects are assigned radii of 1.2 and 1 jupiters, respectively. Cold objects have a radius
 # of 1 jupiter unless M.sin(i)<0.7, at which point radius is reduced to 0.8 jupiters.
-# Planets with a mass less than 0.075 jupiter masses have been assigned radii which give them a
-# density comparable to Mercury or Earth.
+# Planets with a mass less than 0.075 jupiter masses (24 earth masses) have been assigned radii
+# which give them a density comparable to Mercury or Earth. Of this group, those with a mass
+# greater than 6 earth masses are textured as 'super-terrestrial' worlds with thick atmospheres;
+# those with masses less than 6 earth masses are given a cloudless cratered texture. The cut-offs
+# at 24 and 6 earth masses are made without any theoretical support, purely for the sake of
+# illustration and variety.
 #
 # Planetary rotation periods have been estimated from the tidal spin-down formulae in 'Solar
 # System Dynamics' by CD Murray & SF Dermott, Cambridge University Press 1999, ISBN 0521 57597 4.
@@ -168,8 +172,10 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 
 	EllipticalOrbit {
 		Period          0.0053
-		SemiMajorAxis   0.20806
-		MeanLongitude   45
+		SemiMajorAxis   0.020807
+		Eccentricity    0
+		ArgOfPericenter 69
+		MeanAnomaly     336
 	}
 
 	# likely to be in captured synchronous rotation
@@ -183,7 +189,7 @@ AltSurface "limit of knowledge" "Gliese 876/d"
 
 "c" "Gliese 876"   # IL Aqr
 {
-	Texture "jupiterlike.*"
+	Texture "gasgiant.*"
 
 	Mass       180     # M.sin(i) = 0.56 jupiters
 	Radius     56000
@@ -195,7 +201,7 @@ AltSurface "limit of knowledge" "Gliese 876/d"
 		SemiMajorAxis   0.13
 		Eccentricity    0.27
 		ArgOfPericenter 39
-		MeanAnomaly     103
+		MeanAnomaly     247
 	}
 
 	# likely to be in captured synchronous rotation
@@ -229,6 +235,31 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 }
 
 AltSurface "limit of knowledge" "Gliese 876/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 212301"
+{
+	Texture "venuslike.*"
+	NightTexture "venuslikenight.*"
+
+	Mass      14     # M.sin(i) = 14 earths
+	Radius     15400
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+212301&p2=b"
+
+	EllipticalOrbit {
+		Period          0.0067
+		SemiMajorAxis   0.036
+		Eccentricity    0
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 212301/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -287,7 +318,7 @@ AltSurface "limit of knowledge" "HIP 57087/b"
 }
 
 
-"e" "HD 75732"   # Rho1 Cnc
+"e" "HD 75732"   # Rho1 Cnc A
 {
 	Texture "venuslike.*"
 	NightTexture "venuslikenight.*"
@@ -314,7 +345,7 @@ AltSurface "limit of knowledge" "HD 75732/e"
 }
 
 
-"b" "HD 75732"   # Rho1 Cnc
+"b" "HD 75732"   # Rho1 Cnc A
 {
 	Texture "gasgiant.*"
 
@@ -340,9 +371,9 @@ AltSurface "limit of knowledge" "HD 75732/b"
 }
 
 
-"c" "HD 75732"   # Rho1 Cnc
+"c" "HD 75732"   # Rho1 Cnc A
 {
-	Texture "jupiterlike.*"
+	Texture "gasgiant.*"
 
 	Mass       70     # M.sin(i) = 0.217 jupiters
 	Radius     56000
@@ -366,7 +397,7 @@ AltSurface "limit of knowledge" "HD 75732/c"
 }
 
 
-"d" "HD 75732"   # Rho1 Cnc
+"d" "HD 75732"   # Rho1 Cnc A
 {
 	Texture "jupiterlike.*"
 
@@ -396,6 +427,7 @@ AltSurface "limit of knowledge" "HD 75732/d"
 "b" "HD 63454"
 {
 	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       120     # M.sin(i) = 0.38 jupiters
 	Radius     98000
@@ -415,6 +447,41 @@ AltSurface "limit of knowledge" "HD 75732/d"
 }
 
 AltSurface "limit of knowledge" "HD 63454/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 149026"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.3 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.73 jupiters.
+
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       110     # M.sin(i) = 0.36 jupiters
+	Radius     51100
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+149026"
+
+	EllipticalOrbit {
+		Period          0.0079
+		SemiMajorAxis   0.042
+		Inclination     102.8
+		AscendingNode   246.9
+		MeanLongitude   38
+	}
+
+	Obliquity             103 # guess, to match inclination
+	EquatorAscendingNode  247 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 149026/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -589,6 +656,7 @@ AltSurface "limit of knowledge" "HD 187123/b"
 	EllipticalOrbit {
 		Period          0.0085
 		SemiMajorAxis   0.04162
+		Eccentricity    0
 		Inclination     90.5
 		AscendingNode   264.5
 		MeanLongitude   315
@@ -633,9 +701,36 @@ AltSurface "limit of knowledge" "HD 120136/b"
 }
 
 
+"b" "HD 188753"   # HD 188753 A
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       360     # M.sin(i) = 1.14 jupiters
+	Radius     98000
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+188753A"
+
+	EllipticalOrbit {
+		Period          0.0092
+		SemiMajorAxis   0.0446
+		Eccentricity    0
+		MeanLongitude   255
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 188753/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 330075"
 {
 	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       240     # M.sin(i) = 0.76 jupiters
 	Radius     98000
@@ -672,10 +767,10 @@ AltSurface "limit of knowledge" "HD 330075/b"
 
 	EllipticalOrbit {
 		Period          0.0093
-		SemiMajorAxis   0.046
+		SemiMajorAxis   0.047
 		Eccentricity    0.11
 		ArgOfPericenter 100
-		MeanAnomaly     49
+		MeanAnomaly     182
 	}
 
 	# likely to be in captured synchronous rotation
@@ -690,6 +785,7 @@ AltSurface "limit of knowledge" "HD 88133/b"
 "b" "HD 2638"
 {
 	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     98000
@@ -728,9 +824,9 @@ AltSurface "limit of knowledge" "HD 2638/b"
 	EllipticalOrbit {
 		Period          0.0095
 		SemiMajorAxis   0.046
-		Eccentricity    0
-		ArgOfPericenter 288
-		MeanAnomaly     8
+		Eccentricity    0.07
+		ArgOfPericenter 291
+		MeanAnomaly     6
 	}
 
 	# likely to be in captured synchronous rotation
@@ -742,7 +838,7 @@ AltSurface "limit of knowledge" "TYC 5503-946-1/b"
 }
 
 
-"b" "HD 75289"
+"b" "HD 75289"   # HD 75289 A
 {
 	Texture "gasgiant.*"
 	NightTexture "gasgiantnight.*"
@@ -788,7 +884,7 @@ AltSurface "limit of knowledge" "HD 75289/b"
 	EllipticalOrbit {
 		Period          0.0097
 		SemiMajorAxis   0.045
-		Eccentricity    0
+		Eccentricity    0.07
 		Inclination     71.7
 		AscendingNode   325.1
 		ArgOfPericenter 205
@@ -802,41 +898,6 @@ AltSurface "limit of knowledge" "HD 75289/b"
 }
 
 AltSurface "limit of knowledge" "HD 209458/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 149026"
-
-# Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 85.3 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.73 jupiters.
-
-{
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
-
-	Mass       110     # M.sin(i) = 0.36 jupiters
-	Radius     51100
-
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+149026"
-
-	EllipticalOrbit {
-		Period          0.0106
-		SemiMajorAxis   0.042
-		Inclination     102.8
-		AscendingNode   246.9
-		MeanLongitude   63
-	}
-
-	Obliquity             103 # guess, to match inclination
-	EquatorAscendingNode  247 # guess, to match ascending node
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 149026/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -856,8 +917,9 @@ AltSurface "limit of knowledge" "HD 149026/b"
 	EllipticalOrbit {
 		Period          0.0109
 		SemiMajorAxis   0.049
-		Eccentricity    0
-		MeanLongitude   158
+		Eccentricity    0.13
+		ArgOfPericenter 315
+		MeanAnomaly     219
 	}
 
 	# likely to be in captured synchronous rotation
@@ -902,6 +964,33 @@ AltSurface "limit of knowledge" "HD 76700/b"
 }
 
 AltSurface "limit of knowledge" "OGLE-TR-111/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 149143"
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       420     # M.sin(i) = 1.33 jupiters
+	Radius     84000
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+149143"
+
+	EllipticalOrbit {
+		Period          0.0111
+		SemiMajorAxis   0.053
+		Eccentricity    0.016
+		ArgOfPericenter 336
+		MeanAnomaly     304
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 149143/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1020,7 +1109,7 @@ AltSurface "limit of knowledge" "HD 9826/d"
 	Texture "gasgiant.*"
 	NightTexture "gasgiantnight.*"
 
-	Mass       40     # M.sin(i) = 0.12 jupiters
+	Mass       40     # M.sin(i) = 0.11 jupiters
 	Radius     98000
 	Oblateness 0.01
 
@@ -1029,15 +1118,92 @@ AltSurface "limit of knowledge" "HD 9826/d"
 	EllipticalOrbit {
 		Period          0.0135
 		SemiMajorAxis   0.0568
-		Eccentricity    0
-		ArgOfPericenter 190
-		MeanAnomaly     97
+		Eccentricity    0.16
+		ArgOfPericenter 337
+		MeanAnomaly     112
 	}
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "HD 49674/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 109749"
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       90     # M.sin(i) = 0.28 jupiters
+	Radius     98000
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+109749"
+
+	EllipticalOrbit {
+		Period          0.0143
+		SemiMajorAxis   0.0635
+		Eccentricity    0.01
+		ArgOfPericenter 297
+		MeanAnomaly     155
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 109749/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "Gliese 581"   # HO Lib
+{
+	Texture "venuslike.*"
+
+	Mass      18     # M.sin(i) = 18 earths
+	Radius     16800
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=Gl+581&p2=b"
+
+	EllipticalOrbit {
+		Period          0.0147
+		SemiMajorAxis   0.041
+		Eccentricity    0
+		MeanLongitude   235
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Gliese 581/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 118203"
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       510     # M.sin(i) = 1.6 jupiters
+	Radius     84000
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+118203&p2=b"
+
+	EllipticalOrbit {
+		Period          0.0168
+		SemiMajorAxis   0.061
+		Eccentricity    0.3
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 118203/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1261,7 +1427,7 @@ AltSurface "limit of knowledge" "HD 160691/c"
 	Texture "gasgiant.*"
 
 	Mass       340     # M.sin(i) = 1.08 jupiters
-	Radius     84000
+	Radius     98000
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+130322"
 
@@ -1285,6 +1451,7 @@ AltSurface "limit of knowledge" "HD 130322/b"
 "b" "HD 108147"
 {
 	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
 
 	Mass       130     # M.sin(i) = 0.4 jupiters
 	Radius     98000
@@ -1364,9 +1531,33 @@ AltSurface "limit of knowledge" "HD 38529/c"
 }
 
 
+"b" "HD 4308"
+{
+	Texture "venuslike.*"
+
+	Mass      15     # M.sin(i) = 15 earths
+	Radius     15400
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+4308&p2=b"
+
+	EllipticalOrbit {
+		Period          0.0426
+		SemiMajorAxis   0.114
+		Eccentricity    0
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 4308/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 13445"   # Gliese 86 A
 {
-	Texture "jupiterlike.*"
+	Texture "gasgiant.*"
 
 	Mass       1280     # M.sin(i) = 4.01 jupiters
 	Radius     70000
@@ -1495,7 +1686,7 @@ AltSurface "limit of knowledge" "HD 27894/b"
 }
 
 
-"b" "HD 195019"
+"b" "HD 195019"   # HD 195019 A
 {
 	Texture "gasgiant.*"
 
@@ -1526,16 +1717,16 @@ AltSurface "limit of knowledge" "HD 195019/b"
 	Texture "gasgiant.*"
 
 	Mass       50     # M.sin(i) = 0.14 jupiters
-	Radius     84000
+	Radius     98000
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+102117"
 
 	EllipticalOrbit {
 		Period          0.0566
 		SemiMajorAxis   0.149
-		Eccentricity    0
-		ArgOfPericenter 104
-		MeanAnomaly     276
+		Eccentricity    0.06
+		ArgOfPericenter 235
+		MeanAnomaly     29
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1575,10 +1766,10 @@ AltSurface "limit of knowledge" "HD 6434/b"
 
 "b" "HD 192263"
 {
-	Texture "jupiterlike.*"
+	Texture "gasgiant.*"
 
 	Mass       230     # M.sin(i) = 0.72 jupiters
-	Radius     70000
+	Radius     84000
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+192263"
 
@@ -1864,7 +2055,7 @@ AltSurface "limit of knowledge" "HD 3651/b"
 
 "b" "HD 121504"
 {
-	Texture "gasgiant.*"
+	Texture "jupiterlike.*"
 
 	Mass       280     # M.sin(i) = 0.89 jupiters
 	Radius     84000
@@ -1943,9 +2134,9 @@ AltSurface "limit of knowledge" "HIP 94075/b"
 }
 
 
-"b" "HD 16141"   # 79 Cet
+"b" "HD 16141"   # 79 Cet A
 {
-	Texture "gasgiant.*"
+	Texture "jupiterlike.*"
 
 	Mass       70     # M.sin(i) = 0.23 jupiters
 	Radius     84000
@@ -1970,7 +2161,7 @@ AltSurface "limit of knowledge" "HD 16141/b"
 }
 
 
-"b" "HD 114762"
+"b" "HD 114762"   # HD 114762 A
 {
 	Texture "browndwarf.*"
 	Emissive true
@@ -1984,9 +2175,11 @@ AltSurface "limit of knowledge" "HD 16141/b"
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+114762"
 
 	EllipticalOrbit {
-		Period          0.2301
+		Period          0.2297
 		SemiMajorAxis   0.3
-		Eccentricity    0.334
+		Eccentricity    0.34
+		ArgOfPericenter 122
+		MeanAnomaly     265
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -1998,7 +2191,7 @@ AltSurface "limit of knowledge" "HD 114762/b"
 }
 
 
-"b" "HD 80606"
+"b" "HD 80606"   # HD 80606 A
 {
 	Texture "jupiterlike.*"
 
@@ -2128,6 +2321,33 @@ AltSurface "limit of knowledge" "HD 52265/b"
 }
 
 AltSurface "limit of knowledge" "HD 208487/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 208487"
+{
+	Texture "jupiterlike.*"
+
+	Mass       150     # M.sin(i) = 0.46 jupiters
+	Radius     56000
+	Oblateness 0.07
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+208487"
+
+	EllipticalOrbit {
+		Period          2.7324
+		SemiMajorAxis   1.92
+		Eccentricity    0.19
+		ArgOfPericenter 205
+		MeanAnomaly     36
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 208487/c"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2350,8 +2570,8 @@ AltSurface "limit of knowledge" "HD 73526/b"
 	Texture "jupiterlike.*"
 
 	Mass       2000     # M.sin(i) = 6.3 jupiters
-	Radius     70000
-	Oblateness 0.01
+	Radius     84000
+	Oblateness 0.02
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+104985"
 
@@ -2558,7 +2778,7 @@ AltSurface "limit of knowledge" "HD 202206/c"
 }
 
 
-"b" "HD 89744"
+"b" "HD 89744"   # HD 89744 A
 {
 	Texture "jupiterlike.*"
 
@@ -2693,7 +2913,7 @@ AltSurface "limit of knowledge" "HD 150706/b"
 }
 
 
-"b" "HD 40979"
+"b" "HD 40979"   # HD 40979 A
 {
 	Texture "jupiterlike.*"
 
@@ -2722,9 +2942,9 @@ AltSurface "limit of knowledge" "HD 40979/b"
 
 "b" "HD 59686"
 {
-	Texture "gasgiant.*"
+	Texture "jupiterlike.*"
 
-	Mass       2070     # M.sin(i) = 6.5 jupiters
+	Mass       1670     # M.sin(i) = 5.25 jupiters
 	Radius     84000
 	Oblateness 0.02
 
@@ -2732,7 +2952,7 @@ AltSurface "limit of knowledge" "HD 40979/b"
 
 	EllipticalOrbit {
 		Period          0.8296
-		SemiMajorAxis   0.8
+		SemiMajorAxis   0.911
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -2850,7 +3070,7 @@ AltSurface "limit of knowledge" "HD 28185/b"
 }
 
 
-"b" "HD 196885"
+"b" "HD 196885"   # HD 196885 A
 {
 	Texture "jupiterlike.*"
 
@@ -2897,6 +3117,33 @@ AltSurface "limit of knowledge" "HD 196885/b"
 }
 
 AltSurface "limit of knowledge" "HD 142415/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 33564"
+{
+	Texture "jupiterlike.*"
+
+	Mass       2890     # M.sin(i) = 9.1 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+33564&p2=b"
+
+	EllipticalOrbit {
+		Period          1.0623
+		SemiMajorAxis   1.1
+		Eccentricity    0.34
+		ArgOfPericenter 22
+		MeanAnomaly     98
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 33564/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -3091,7 +3338,7 @@ AltSurface "limit of knowledge" "HD 128311/c"
 }
 
 
-"b" "HD 27442"   # Eps Ret
+"b" "HD 27442"   # Eps Ret A
 {
 	Texture "jupiterlike.*"
 
@@ -3145,7 +3392,7 @@ AltSurface "limit of knowledge" "HD 210277/b"
 }
 
 
-"b" "HD 19994"   # 94 Cet
+"b" "HD 19994"   # 94 Cet A
 {
 	Texture "jupiterlike.*"
 
@@ -3467,7 +3714,7 @@ AltSurface "limit of knowledge" "HD 141937/b"
 }
 
 
-"b" "HD 41004"
+"b" "HD 41004"   # HD 41004 A
 {
 	Texture "jupiterlike.*"
 
@@ -3710,7 +3957,7 @@ AltSurface "limit of knowledge" "HD 222404/b"
 }
 
 
-"b" "HD 213240"
+"b" "HD 213240"   # HD 213240 A
 {
 	Texture "jupiterlike.*"
 
@@ -3872,7 +4119,7 @@ AltSurface "limit of knowledge" "HD 190228/b"
 }
 
 
-"b" "HD 114729"
+"b" "HD 114729"   # HD 114729 A
 {
 	Texture "jupiterlike.*"
 
@@ -4008,7 +4255,7 @@ AltSurface "limit of knowledge" "HD 50554/b"
 }
 
 
-"b" "HD 196050"
+"b" "HD 196050"   # HD 196050 A
 {
 	Texture "jupiterlike.*"
 
@@ -4169,7 +4416,7 @@ AltSurface "limit of knowledge" "HD 145675/b"
 }
 
 
-"b" "HD 142022"
+"b" "HD 142022"   # HD 142022 A
 {
 	Texture "jupiterlike.*"
 
@@ -4568,7 +4815,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 	Texture "asteroid.*"
 
 	Mass      0.0004     # M.sin(i) = 0.0004 earths
-	Radius     500
+	Radius     700
 	Oblateness 0.05
 
 	InfoURL "http://live.psu.edu/story/10180"
