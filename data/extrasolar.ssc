@@ -1,4 +1,4 @@
-# Catalog of 176 known extrasolar planets.
+# Catalog of 177 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
@@ -235,6 +235,41 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 }
 
 AltSurface "limit of knowledge" "Gliese 876/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 189733"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.3 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.26 jupiters.
+
+{
+	Texture "gasgiant.*"
+	NightTexture "gasgiantnight.*"
+
+	Mass       370     # M.sin(i) = 1.15 jupiters
+	Radius     88200
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+189733"
+
+	EllipticalOrbit {
+		Period          0.0061
+		SemiMajorAxis   0.0313
+		Eccentricity    0
+		Inclination     81.7
+		AscendingNode   294.6
+	}
+
+	Obliquity             82 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 189733/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2443,11 +2478,11 @@ AltSurface "limit of knowledge" "HD 93083/b"
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+37124"
 
 	EllipticalOrbit {
-		Period          0.4174
+		Period          0.4229
 		SemiMajorAxis   0.53
 		Eccentricity    0.055
 		ArgOfPericenter 315
-		MeanAnomaly     75
+		MeanAnomaly     94
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -2474,7 +2509,7 @@ AltSurface "limit of knowledge" "HD 37124/b"
 		SemiMajorAxis   1.64
 		Eccentricity    0.14
 		ArgOfPericenter 129
-		MeanAnomaly     297
+		MeanAnomaly     191
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -2501,7 +2536,7 @@ AltSurface "limit of knowledge" "HD 37124/c"
 		SemiMajorAxis   3.19
 		Eccentricity    0.2
 		ArgOfPericenter 81
-		MeanAnomaly     47
+		MeanAnomaly     304
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -3288,18 +3323,18 @@ AltSurface "limit of knowledge" "HD 108874/c"
 {
 	Texture "jupiterlike.*"
 
-	Mass       820     # M.sin(i) = 2.58 jupiters
+	Mass       690     # M.sin(i) = 2.18 jupiters
 	Radius     70000
-	Oblateness 0.02
+	Oblateness 0.03
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+128311"
 
 	EllipticalOrbit {
-		Period          1.1513
-		SemiMajorAxis   1.02
-		Eccentricity    0.3
-		ArgOfPericenter 166
-		MeanAnomaly     219
+		Period          1.2282
+		SemiMajorAxis   1.099
+		Eccentricity    0.25
+		ArgOfPericenter 54
+		MeanAnomaly     351
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -3326,7 +3361,7 @@ AltSurface "limit of knowledge" "HD 128311/b"
 		SemiMajorAxis   1.76
 		Eccentricity    0.17
 		ArgOfPericenter 139
-		MeanAnomaly     350
+		MeanAnomaly     240
 	}
 
 	RotationPeriod  10 # plausible guess
