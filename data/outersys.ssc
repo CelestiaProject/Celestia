@@ -20,6 +20,22 @@
 	RotationPeriod     48.0   # guess
 }
 
+"2003 UB313 1" "Sol/2003 UB313" { 
+
+	Class "asteroid" 
+	Mesh	"asteroid.cms"
+	Texture "asteroid.jpg" 
+	Radius  180             # ~2% of system brightness
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/planetlila/moon/"
+#	Orbit from Brown ME et al: http://www.gps.caltech.edu/%7Embrown/papers/ps/gab.pdf
+
+	EllipticalOrbit {
+		Period            14 
+		SemiMajorAxis  36000       
+   	} 
+}
+
 "2005 FY9" "Sol" { 
 
 	Class "asteroid" 
@@ -62,9 +78,10 @@
 	RotationPeriod     3.9152
 }
 
-"2003 EL61 I" "Sol/2003 EL61" { 
+"2003 EL61 1" "Sol/2003 EL61" { 
 
 	Class "asteroid" 
+	Mesh	"asteroid.cms"
 	Texture "asteroid.jpg" 
 	Radius  150             # ~1% of system mass
 
@@ -80,6 +97,9 @@
 		ArgOfPericenter  278.6      
 		MeanAnomaly       16.71 
    	} 
+
+	Obliquity		235  # to match orbit
+	EquatorAscendingNode	25   #
 }
 
 # 90482 Orcus (2004 DW)
