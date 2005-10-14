@@ -37,6 +37,11 @@
 # parameters are assumed to be similar to those of Jupiter (gas giants) or Earth (terrestrials).
 # An oblateness value is assigned only if the calculated value exceeds 0.01.
 #
+# Imaginary textures are assigned to giant planets based on their estimated temperatures,
+# according to the five categories set out by D Sudarsky, A Burrows & P Pinto in 'Albedo and
+# reflection spectra of extrasolar giant planets'(Astrophysical Journal 2000; 538: 885-903):
+#      http://www.journals.uchicago.edu/ApJ/journal/issues/ApJ/v538n2/50692/50692.web.pdf
+# Color values and albedos are based on the theoretical reflectance spectra given in that paper.
 # Planets with an estimated temperature greater than 1000K have been assigned a glowing nightside
 # texture.
 #
@@ -55,8 +60,11 @@
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
 
 	Mass       460     # M.sin(i) = 1.45 jupiters
 	Radius     86100
@@ -94,8 +102,11 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       430     # M.sin(i) = 1.35 jupiters
 	Radius     75600
@@ -132,8 +143,11 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
 
 	Mass       380     # M.sin(i) = 1.19 jupiters
 	Radius     79100
@@ -189,7 +203,10 @@ AltSurface "limit of knowledge" "Gliese 876/d"
 
 "c" "Gliese 876"   # IL Aqr
 {
-	Texture "gasgiant.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       180     # M.sin(i) = 0.56 jupiters
 	Radius     56000
@@ -215,7 +232,10 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 
 "b" "Gliese 876"   # IL Aqr
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       620     # M.sin(i) = 1.935 jupiters
 	Radius     70000
@@ -247,8 +267,11 @@ AltSurface "limit of knowledge" "Gliese 876/b"
 # From transit dimming, radius is estimated at 1.26 jupiters.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       370     # M.sin(i) = 1.15 jupiters
 	Radius     88200
@@ -302,8 +325,11 @@ AltSurface "limit of knowledge" "HD 212301/b"
 
 "b" "HD 73256"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       590     # M.sin(i) = 1.85 jupiters
 	Radius     84000
@@ -382,7 +408,10 @@ AltSurface "limit of knowledge" "HD 75732/e"
 
 "b" "HD 75732"   # Rho1 Cnc A
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       250     # M.sin(i) = 0.784 jupiters
 	Radius     84000
@@ -408,7 +437,10 @@ AltSurface "limit of knowledge" "HD 75732/b"
 
 "c" "HD 75732"   # Rho1 Cnc A
 {
-	Texture "gasgiant.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       70     # M.sin(i) = 0.217 jupiters
 	Radius     56000
@@ -434,7 +466,10 @@ AltSurface "limit of knowledge" "HD 75732/c"
 
 "d" "HD 75732"   # Rho1 Cnc A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       1250     # M.sin(i) = 3.92 jupiters
 	Radius     70000
@@ -461,8 +496,11 @@ AltSurface "limit of knowledge" "HD 75732/d"
 
 "b" "HD 63454"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       120     # M.sin(i) = 0.38 jupiters
 	Radius     98000
@@ -494,8 +532,11 @@ AltSurface "limit of knowledge" "HD 63454/b"
 # From transit dimming, radius is estimated at 0.73 jupiters.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
 
 	Mass       110     # M.sin(i) = 0.36 jupiters
 	Radius     51100
@@ -524,8 +565,11 @@ AltSurface "limit of knowledge" "HD 149026/b"
 
 "b" "HD 83443"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       130     # M.sin(i) = 0.41 jupiters
 	Radius     98000
@@ -552,8 +596,11 @@ AltSurface "limit of knowledge" "HD 83443/b"
 
 "b" "HD 46375"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       80     # M.sin(i) = 0.249 jupiters
 	Radius     98000
@@ -587,8 +634,11 @@ AltSurface "limit of knowledge" "HD 46375/b"
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       190     # M.sin(i) = 0.61 jupiters
 	Radius     75600
@@ -618,8 +668,11 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 
 "b" "HD 179949"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       310     # M.sin(i) = 0.98 jupiters
 	Radius     98000
@@ -645,8 +698,11 @@ AltSurface "limit of knowledge" "HD 179949/b"
 
 "b" "HD 187123"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       170     # M.sin(i) = 0.52 jupiters
 	Radius     98000
@@ -680,8 +736,11 @@ AltSurface "limit of knowledge" "HD 187123/b"
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       170     # M.sin(i) = 0.54 jupiters
 	Radius     81200
@@ -711,8 +770,11 @@ AltSurface "limit of knowledge" "OGLE-TR-10/b"
 
 "b" "HD 120136"   # Tau Boo A
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       1310     # M.sin(i) = 4.13 jupiters
 	Radius     84000
@@ -738,8 +800,11 @@ AltSurface "limit of knowledge" "HD 120136/b"
 
 "b" "HD 188753"   # HD 188753 A
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       360     # M.sin(i) = 1.14 jupiters
 	Radius     98000
@@ -764,8 +829,11 @@ AltSurface "limit of knowledge" "HD 188753/b"
 
 "b" "HD 330075"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       240     # M.sin(i) = 0.76 jupiters
 	Radius     98000
@@ -791,8 +859,11 @@ AltSurface "limit of knowledge" "HD 330075/b"
 
 "b" "HD 88133"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
 
 	Mass       90     # M.sin(i) = 0.29 jupiters
 	Radius     98000
@@ -819,8 +890,11 @@ AltSurface "limit of knowledge" "HD 88133/b"
 
 "b" "HD 2638"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     98000
@@ -848,8 +922,11 @@ AltSurface "limit of knowledge" "HD 2638/b"
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     98000
@@ -875,8 +952,11 @@ AltSurface "limit of knowledge" "TYC 5503-946-1/b"
 
 "b" "HD 75289"   # HD 75289 A
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       130     # M.sin(i) = 0.42 jupiters
 	Radius     98000
@@ -908,8 +988,11 @@ AltSurface "limit of knowledge" "HD 75289/b"
 # From transit dimming, radius is estimated at 1.32 jupiters.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       220     # M.sin(i) = 0.69 jupiters
 	Radius     92400
@@ -940,8 +1023,11 @@ AltSurface "limit of knowledge" "HD 209458/b"
 
 "b" "HD 76700"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       60     # M.sin(i) = 0.197 jupiters
 	Radius     98000
@@ -975,8 +1061,11 @@ AltSurface "limit of knowledge" "HD 76700/b"
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       170     # M.sin(i) = 0.53 jupiters
 	Radius     70000
@@ -1006,8 +1095,11 @@ AltSurface "limit of knowledge" "OGLE-TR-111/b"
 
 "b" "HD 149143"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       420     # M.sin(i) = 1.33 jupiters
 	Radius     84000
@@ -1033,8 +1125,11 @@ AltSurface "limit of knowledge" "HD 149143/b"
 
 "b" "HD 217014"   # 51 Peg
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       150     # M.sin(i) = 0.468 jupiters
 	Radius     98000
@@ -1060,8 +1155,11 @@ AltSurface "limit of knowledge" "HD 217014/b"
 
 "b" "HD 9826"   # Ups And A
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       220     # M.sin(i) = 0.69 jupiters
 	Radius     98000
@@ -1087,7 +1185,10 @@ AltSurface "limit of knowledge" "HD 9826/b"
 
 "c" "HD 9826"   # Ups And A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       600     # M.sin(i) = 1.89 jupiters
 	Radius     70000
@@ -1114,7 +1215,10 @@ AltSurface "limit of knowledge" "HD 9826/c"
 
 "d" "HD 9826"   # Ups And A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1190     # M.sin(i) = 3.75 jupiters
 	Radius     70000
@@ -1141,8 +1245,11 @@ AltSurface "limit of knowledge" "HD 9826/d"
 
 "b" "HD 49674"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       40     # M.sin(i) = 0.11 jupiters
 	Radius     98000
@@ -1169,8 +1276,11 @@ AltSurface "limit of knowledge" "HD 49674/b"
 
 "b" "HD 109749"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       90     # M.sin(i) = 0.28 jupiters
 	Radius     98000
@@ -1182,7 +1292,7 @@ AltSurface "limit of knowledge" "HD 49674/b"
 		SemiMajorAxis   0.0635
 		Eccentricity    0.01
 		ArgOfPericenter 297
-		MeanAnomaly     155
+		MeanAnomaly     267
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1221,18 +1331,23 @@ AltSurface "limit of knowledge" "Gliese 581/b"
 
 "b" "HD 118203"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
 
-	Mass       510     # M.sin(i) = 1.6 jupiters
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       680     # M.sin(i) = 2.13 jupiters
 	Radius     84000
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+118203&p2=b"
 
 	EllipticalOrbit {
 		Period          0.0168
-		SemiMajorAxis   0.061
-		Eccentricity    0.3
+		SemiMajorAxis   0.07
+		Eccentricity    0.309
+		ArgOfPericenter 55
+		MeanAnomaly     181
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1246,8 +1361,11 @@ AltSurface "limit of knowledge" "HD 118203/b"
 
 "b" "HD 68988"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       600     # M.sin(i) = 1.9 jupiters
 	Radius     84000
@@ -1271,8 +1389,11 @@ AltSurface "limit of knowledge" "HD 68988/b"
 
 "b" "HD 168746"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       70     # M.sin(i) = 0.23 jupiters
 	Radius     98000
@@ -1298,8 +1419,11 @@ AltSurface "limit of knowledge" "HD 168746/b"
 
 "b" "HD 217107"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       440     # M.sin(i) = 1.37 jupiters
 	Radius     84000
@@ -1325,7 +1449,10 @@ AltSurface "limit of knowledge" "HD 217107/b"
 
 "c" "HD 217107"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       670     # M.sin(i) = 2.1 jupiters
 	Radius     70000
@@ -1405,7 +1532,10 @@ AltSurface "limit of knowledge" "HD 160691/d"
 
 "b" "HD 160691"   # Mu Ara
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       530     # M.sin(i) = 1.67 jupiters
 	Radius     70000
@@ -1432,7 +1562,10 @@ AltSurface "limit of knowledge" "HD 160691/b"
 
 "c" "HD 160691"   # Mu Ara
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       990     # M.sin(i) = 3.1 jupiters
 	Radius     70000
@@ -1459,7 +1592,10 @@ AltSurface "limit of knowledge" "HD 160691/c"
 
 "b" "HD 130322"
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       340     # M.sin(i) = 1.08 jupiters
 	Radius     98000
@@ -1485,8 +1621,11 @@ AltSurface "limit of knowledge" "HD 130322/b"
 
 "b" "HD 108147"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       130     # M.sin(i) = 0.4 jupiters
 	Radius     98000
@@ -1512,8 +1651,11 @@ AltSurface "limit of knowledge" "HD 108147/b"
 
 "b" "HD 38529"
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       250     # M.sin(i) = 0.78 jupiters
 	Radius     98000
@@ -1592,7 +1734,10 @@ AltSurface "limit of knowledge" "HD 4308/b"
 
 "b" "HD 13445"   # Gliese 86 A
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       1280     # M.sin(i) = 4.01 jupiters
 	Radius     70000
@@ -1618,7 +1763,10 @@ AltSurface "limit of knowledge" "HD 13445/b"
 
 "b" "HD 99492"   # 83 Leo B
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       40     # M.sin(i) = 0.122 jupiters
 	Radius     84000
@@ -1670,7 +1818,10 @@ AltSurface "limit of knowledge" "HD 190360/c"
 
 "b" "HD 190360"   # Gliese 777 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       480     # M.sin(i) = 1.502 jupiters
 	Radius     70000
@@ -1697,7 +1848,10 @@ AltSurface "limit of knowledge" "HD 190360/b"
 
 "b" "HD 27894"
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       200     # M.sin(i) = 0.62 jupiters
 	Radius     84000
@@ -1723,7 +1877,10 @@ AltSurface "limit of knowledge" "HD 27894/b"
 
 "b" "HD 195019"   # HD 195019 A
 {
-	Texture "gasgiant.*"
+	Texture "exo-class4.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       1090     # M.sin(i) = 3.43 jupiters
 	Radius     84000
@@ -1749,7 +1906,10 @@ AltSurface "limit of knowledge" "HD 195019/b"
 
 "b" "HD 102117"
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       50     # M.sin(i) = 0.14 jupiters
 	Radius     98000
@@ -1775,7 +1935,10 @@ AltSurface "limit of knowledge" "HD 102117/b"
 
 "b" "HD 6434"
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     84000
@@ -1801,7 +1964,10 @@ AltSurface "limit of knowledge" "HD 6434/b"
 
 "b" "HD 192263"
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       230     # M.sin(i) = 0.72 jupiters
 	Radius     84000
@@ -1826,7 +1992,10 @@ AltSurface "limit of knowledge" "HD 192263/b"
 
 "b" "HD 11964"
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       40     # M.sin(i) = 0.11 jupiters
 	Radius     84000
@@ -1850,7 +2019,10 @@ AltSurface "limit of knowledge" "HD 11964/b"
 
 "c" "HD 11964"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       220     # M.sin(i) = 0.7 jupiters
 	Radius     70000
@@ -1875,7 +2047,10 @@ AltSurface "limit of knowledge" "HD 11964/c"
 
 "b" "HD 143761"   # Rho CrB
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       330     # M.sin(i) = 1.04 jupiters
 	Radius     84000
@@ -1883,11 +2058,11 @@ AltSurface "limit of knowledge" "HD 11964/c"
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=rho+CrB"
 
 	EllipticalOrbit {
-		Period          0.1094
+		Period          0.1091
 		SemiMajorAxis   0.22
 		Eccentricity    0.04
 		ArgOfPericenter 268
-		MeanAnomaly     190
+		MeanAnomaly     223
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1901,7 +2076,10 @@ AltSurface "limit of knowledge" "HD 143761/b"
 
 "b" "HD 74156"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       590     # M.sin(i) = 1.86 jupiters
 	Radius     70000
@@ -1928,7 +2106,10 @@ AltSurface "limit of knowledge" "HD 74156/b"
 
 "c" "HD 74156"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1960     # M.sin(i) = 6.17 jupiters
 	Radius     70000
@@ -1955,7 +2136,10 @@ AltSurface "limit of knowledge" "HD 74156/c"
 
 "b" "HD 117618"
 {
-	Texture "gasgiant.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       60     # M.sin(i) = 0.19 jupiters
 	Radius     84000
@@ -1981,7 +2165,10 @@ AltSurface "limit of knowledge" "HD 117618/b"
 
 "b" "HD 37605"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       730     # M.sin(i) = 2.3 jupiters
 	Radius     70000
@@ -2008,7 +2195,10 @@ AltSurface "limit of knowledge" "HD 37605/b"
 
 "b" "HD 168443"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       2290     # M.sin(i) = 7.2 jupiters
 	Radius     70000
@@ -2063,7 +2253,10 @@ AltSurface "limit of knowledge" "HD 168443/c"
 
 "b" "HD 3651"   # 54 Psc
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       60     # M.sin(i) = 0.2 jupiters
 	Radius     56000
@@ -2090,7 +2283,10 @@ AltSurface "limit of knowledge" "HD 3651/b"
 
 "b" "HD 121504"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       280     # M.sin(i) = 0.89 jupiters
 	Radius     84000
@@ -2117,7 +2313,10 @@ AltSurface "limit of knowledge" "HD 121504/b"
 
 "b" "HD 101930"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       100     # M.sin(i) = 0.3 jupiters
 	Radius     56000
@@ -2144,7 +2343,10 @@ AltSurface "limit of knowledge" "HD 101930/b"
 
 "b" "HIP 94075"   # HD 178911 B
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       2000     # M.sin(i) = 6.292 jupiters
 	Radius     70000
@@ -2171,7 +2373,10 @@ AltSurface "limit of knowledge" "HIP 94075/b"
 
 "b" "HD 16141"   # 79 Cet A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       70     # M.sin(i) = 0.23 jupiters
 	Radius     84000
@@ -2228,7 +2433,10 @@ AltSurface "limit of knowledge" "HD 114762/b"
 
 "b" "HD 80606"   # HD 80606 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1080     # M.sin(i) = 3.41 jupiters
 	Radius     70000
@@ -2255,7 +2463,10 @@ AltSurface "limit of knowledge" "HD 80606/b"
 
 "b" "HD 117176"   # 70 Vir
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       2370     # M.sin(i) = 7.44 jupiters
 	Radius     70000
@@ -2282,7 +2493,10 @@ AltSurface "limit of knowledge" "HD 117176/b"
 
 "b" "HD 216770"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       210     # M.sin(i) = 0.65 jupiters
 	Radius     56000
@@ -2309,7 +2523,10 @@ AltSurface "limit of knowledge" "HD 216770/b"
 
 "b" "HD 52265"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       360     # M.sin(i) = 1.13 jupiters
 	Radius     70000
@@ -2336,7 +2553,10 @@ AltSurface "limit of knowledge" "HD 52265/b"
 
 "b" "HD 208487"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       140     # M.sin(i) = 0.45 jupiters
 	Radius     56000
@@ -2363,7 +2583,10 @@ AltSurface "limit of knowledge" "HD 208487/b"
 
 "c" "HD 208487"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       150     # M.sin(i) = 0.46 jupiters
 	Radius     56000
@@ -2390,7 +2613,10 @@ AltSurface "limit of knowledge" "HD 208487/c"
 
 "b" "HD 34445"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       180     # M.sin(i) = 0.58 jupiters
 	Radius     56000
@@ -2415,7 +2641,10 @@ AltSurface "limit of knowledge" "HD 34445/b"
 
 "b" "HD 1237"   # GJ 3021
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1060     # M.sin(i) = 3.32 jupiters
 	Radius     70000
@@ -2442,7 +2671,10 @@ AltSurface "limit of knowledge" "HD 1237/b"
 
 "b" "HD 93083"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       120     # M.sin(i) = 0.37 jupiters
 	Radius     56000
@@ -2469,7 +2701,10 @@ AltSurface "limit of knowledge" "HD 93083/b"
 
 "b" "HD 37124"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       190     # M.sin(i) = 0.61 jupiters
 	Radius     56000
@@ -2496,7 +2731,10 @@ AltSurface "limit of knowledge" "HD 37124/b"
 
 "c" "HD 37124"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       190     # M.sin(i) = 0.6 jupiters
 	Radius     56000
@@ -2523,7 +2761,10 @@ AltSurface "limit of knowledge" "HD 37124/c"
 
 "d" "HD 37124"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       210     # M.sin(i) = 0.66 jupiters
 	Radius     56000
@@ -2550,8 +2791,11 @@ AltSurface "limit of knowledge" "HD 37124/d"
 
 "b" "HD 219449"   # Psi1 Aqr
 {
-	Texture "gasgiant.*"
-	NightTexture "gasgiantnight.*"
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
 
 	Mass       920     # M.sin(i) = 2.9 jupiters
 	Radius     84000
@@ -2575,7 +2819,10 @@ AltSurface "limit of knowledge" "HD 219449/b"
 
 "b" "HD 73526"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       950     # M.sin(i) = 3 jupiters
 	Radius     70000
@@ -2602,7 +2849,10 @@ AltSurface "limit of knowledge" "HD 73526/b"
 
 "b" "HD 104985"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       2000     # M.sin(i) = 6.3 jupiters
 	Radius     84000
@@ -2629,7 +2879,10 @@ AltSurface "limit of knowledge" "HD 104985/b"
 
 "b" "HD 82943"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       520     # M.sin(i) = 1.63 jupiters
 	Radius     70000
@@ -2656,7 +2909,10 @@ AltSurface "limit of knowledge" "HD 82943/b"
 
 "c" "HD 82943"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       280     # M.sin(i) = 0.88 jupiters
 	Radius     70000
@@ -2681,7 +2937,10 @@ AltSurface "limit of knowledge" "HD 82943/c"
 
 "b" "HD 169830"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       920     # M.sin(i) = 2.88 jupiters
 	Radius     70000
@@ -2708,7 +2967,10 @@ AltSurface "limit of knowledge" "HD 169830/b"
 
 "c" "HD 169830"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1280     # M.sin(i) = 4.04 jupiters
 	Radius     70000
@@ -2735,7 +2997,10 @@ AltSurface "limit of knowledge" "HD 169830/c"
 
 "b" "HD 8574"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       710     # M.sin(i) = 2.23 jupiters
 	Radius     70000
@@ -2788,7 +3053,10 @@ AltSurface "limit of knowledge" "HD 202206/b"
 
 "c" "HD 202206"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       760     # M.sin(i) = 2.4 jupiters
 	Radius     70000
@@ -2815,7 +3083,10 @@ AltSurface "limit of knowledge" "HD 202206/c"
 
 "b" "HD 89744"   # HD 89744 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       2290     # M.sin(i) = 7.2 jupiters
 	Radius     70000
@@ -2842,7 +3113,10 @@ AltSurface "limit of knowledge" "HD 89744/b"
 
 "b" "HD 134987"   # 23 Lib
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       500     # M.sin(i) = 1.58 jupiters
 	Radius     70000
@@ -2869,7 +3143,10 @@ AltSurface "limit of knowledge" "HD 134987/b"
 
 "b" "HD 12661"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       730     # M.sin(i) = 2.3 jupiters
 	Radius     70000
@@ -2896,7 +3173,10 @@ AltSurface "limit of knowledge" "HD 12661/b"
 
 "c" "HD 12661"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       500     # M.sin(i) = 1.57 jupiters
 	Radius     70000
@@ -2923,7 +3203,10 @@ AltSurface "limit of knowledge" "HD 12661/c"
 
 "b" "HD 150706"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       320     # M.sin(i) = 1 jupiters
 	Radius     70000
@@ -2950,7 +3233,10 @@ AltSurface "limit of knowledge" "HD 150706/b"
 
 "b" "HD 40979"   # HD 40979 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1060     # M.sin(i) = 3.32 jupiters
 	Radius     70000
@@ -2977,7 +3263,10 @@ AltSurface "limit of knowledge" "HD 40979/b"
 
 "b" "HD 59686"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       1670     # M.sin(i) = 5.25 jupiters
 	Radius     84000
@@ -3001,7 +3290,10 @@ AltSurface "limit of knowledge" "HD 59686/b"
 
 "b" "HD 17051"   # Iot Hor / HR 810
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       620     # M.sin(i) = 1.94 jupiters
 	Radius     70000
@@ -3028,7 +3320,10 @@ AltSurface "limit of knowledge" "HD 17051/b"
 
 "b" "HD 142"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       320     # M.sin(i) = 1 jupiters
 	Radius     70000
@@ -3053,7 +3348,10 @@ AltSurface "limit of knowledge" "HD 142/b"
 
 "b" "HD 92788"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1230     # M.sin(i) = 3.86 jupiters
 	Radius     70000
@@ -3080,7 +3378,10 @@ AltSurface "limit of knowledge" "HD 92788/b"
 
 "b" "HD 28185"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1810     # M.sin(i) = 5.7 jupiters
 	Radius     70000
@@ -3107,7 +3408,10 @@ AltSurface "limit of knowledge" "HD 28185/b"
 
 "b" "HD 196885"   # HD 196885 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       590     # M.sin(i) = 1.84 jupiters
 	Radius     70000
@@ -3132,7 +3436,10 @@ AltSurface "limit of knowledge" "HD 196885/b"
 
 "b" "HD 142415"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       520     # M.sin(i) = 1.62 jupiters
 	Radius     70000
@@ -3159,7 +3466,10 @@ AltSurface "limit of knowledge" "HD 142415/b"
 
 "b" "HD 33564"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       2890     # M.sin(i) = 9.1 jupiters
 	Radius     70000
@@ -3186,7 +3496,10 @@ AltSurface "limit of knowledge" "HD 33564/b"
 
 "b" "HD 177830"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       410     # M.sin(i) = 1.28 jupiters
 	Radius     70000
@@ -3213,7 +3526,10 @@ AltSurface "limit of knowledge" "HD 177830/b"
 
 "b" "HD 154857"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       570     # M.sin(i) = 1.8 jupiters
 	Radius     70000
@@ -3240,7 +3556,10 @@ AltSurface "limit of knowledge" "HD 154857/b"
 
 "b" "HD 4203"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       530     # M.sin(i) = 1.65 jupiters
 	Radius     70000
@@ -3267,7 +3586,10 @@ AltSurface "limit of knowledge" "HD 4203/b"
 
 "b" "HD 108874"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       430     # M.sin(i) = 1.36 jupiters
 	Radius     70000
@@ -3294,7 +3616,10 @@ AltSurface "limit of knowledge" "HD 108874/b"
 
 "c" "HD 108874"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       320     # M.sin(i) = 1.018 jupiters
 	Radius     70000
@@ -3321,7 +3646,10 @@ AltSurface "limit of knowledge" "HD 108874/c"
 
 "b" "HD 128311"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       690     # M.sin(i) = 2.18 jupiters
 	Radius     70000
@@ -3348,7 +3676,10 @@ AltSurface "limit of knowledge" "HD 128311/b"
 
 "c" "HD 128311"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       1020     # M.sin(i) = 3.21 jupiters
 	Radius     70000
@@ -3375,7 +3706,10 @@ AltSurface "limit of knowledge" "HD 128311/c"
 
 "b" "HD 27442"   # Eps Ret A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       410     # M.sin(i) = 1.28 jupiters
 	Radius     70000
@@ -3402,7 +3736,10 @@ AltSurface "limit of knowledge" "HD 27442/b"
 
 "b" "HD 210277"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       390     # M.sin(i) = 1.24 jupiters
 	Radius     70000
@@ -3429,7 +3766,10 @@ AltSurface "limit of knowledge" "HD 210277/b"
 
 "b" "HD 19994"   # 94 Cet A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       640     # M.sin(i) = 2 jupiters
 	Radius     70000
@@ -3456,7 +3796,10 @@ AltSurface "limit of knowledge" "HD 19994/b"
 
 "b" "HD 188015"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       400     # M.sin(i) = 1.26 jupiters
 	Radius     70000
@@ -3512,7 +3855,10 @@ AltSurface "limit of knowledge" "HD 13189/b"
 
 "b" "HD 20367"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       340     # M.sin(i) = 1.07 jupiters
 	Radius     70000
@@ -3539,7 +3885,10 @@ AltSurface "limit of knowledge" "HD 20367/b"
 
 "b" "HD 114783"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       320     # M.sin(i) = 0.99 jupiters
 	Radius     70000
@@ -3564,7 +3913,10 @@ AltSurface "limit of knowledge" "HD 114783/b"
 
 "b" "HD 147513"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       320     # M.sin(i) = 1 jupiters
 	Radius     70000
@@ -3591,7 +3943,10 @@ AltSurface "limit of knowledge" "HD 147513/b"
 
 "b" "HD 137759"   # Iot Dra
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       2750     # M.sin(i) = 8.64 jupiters
 	Radius     70000
@@ -3618,7 +3973,10 @@ AltSurface "limit of knowledge" "HD 137759/b"
 
 "b" "HD 222582"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1620     # M.sin(i) = 5.11 jupiters
 	Radius     70000
@@ -3645,7 +4003,10 @@ AltSurface "limit of knowledge" "HD 222582/b"
 
 "b" "HD 65216"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       390     # M.sin(i) = 1.21 jupiters
 	Radius     70000
@@ -3672,7 +4033,10 @@ AltSurface "limit of knowledge" "HD 65216/b"
 
 "b" "HD 183263"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1170     # M.sin(i) = 3.69 jupiters
 	Radius     70000
@@ -3724,7 +4088,10 @@ AltSurface "limit of knowledge" "HD 8673/b"
 
 "b" "HD 141937"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       3080     # M.sin(i) = 9.7 jupiters
 	Radius     70000
@@ -3751,7 +4118,10 @@ AltSurface "limit of knowledge" "HD 141937/b"
 
 "b" "HD 41004"   # HD 41004 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       730     # M.sin(i) = 2.3 jupiters
 	Radius     70000
@@ -3778,7 +4148,10 @@ AltSurface "limit of knowledge" "HD 41004/b"
 
 "b" "HD 11977"   # Eta2 Hyi
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       2080     # M.sin(i) = 6.54 jupiters
 	Radius     70000
@@ -3805,7 +4178,10 @@ AltSurface "limit of knowledge" "HD 11977/b"
 
 "b" "HD 47536"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
 
 	Mass       1580     # M.sin(i) = 4.96 jupiters
 	Radius     70000
@@ -3832,7 +4208,10 @@ AltSurface "limit of knowledge" "HD 47536/b"
 
 "b" "HD 23079"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       830     # M.sin(i) = 2.61 jupiters
 	Radius     70000
@@ -3859,7 +4238,10 @@ AltSurface "limit of knowledge" "HD 23079/b"
 
 "b" "HD 186427"   # 16 Cyg B
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       540     # M.sin(i) = 1.69 jupiters
 	Radius     70000
@@ -3886,7 +4268,10 @@ AltSurface "limit of knowledge" "HD 186427/b"
 
 "b" "HD 4208"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       250     # M.sin(i) = 0.8 jupiters
 	Radius     70000
@@ -3913,7 +4298,10 @@ AltSurface "limit of knowledge" "HD 4208/b"
 
 "b" "HD 114386"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       320     # M.sin(i) = 0.99 jupiters
 	Radius     70000
@@ -3940,7 +4328,10 @@ AltSurface "limit of knowledge" "HD 114386/b"
 
 "b" "HD 45350"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       310     # M.sin(i) = 0.98 jupiters
 	Radius     70000
@@ -3967,7 +4358,10 @@ AltSurface "limit of knowledge" "HD 45350/b"
 
 "b" "HD 222404"   # Gam Cep A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       510     # M.sin(i) = 1.59 jupiters
 	Radius     70000
@@ -3994,7 +4388,10 @@ AltSurface "limit of knowledge" "HD 222404/b"
 
 "b" "HD 213240"   # HD 213240 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1430     # M.sin(i) = 4.5 jupiters
 	Radius     70000
@@ -4021,7 +4418,10 @@ AltSurface "limit of knowledge" "HD 213240/b"
 
 "b" "HD 10647"   # q1 Eri
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       290     # M.sin(i) = 0.91 jupiters
 	Radius     70000
@@ -4048,7 +4448,10 @@ AltSurface "limit of knowledge" "HD 10647/b"
 
 "b" "HD 10697"   # 109 Psc
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1950     # M.sin(i) = 6.12 jupiters
 	Radius     70000
@@ -4075,7 +4478,10 @@ AltSurface "limit of knowledge" "HD 10697/b"
 
 "b" "HD 95128"   # 47 UMa
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       810     # M.sin(i) = 2.54 jupiters
 	Radius     70000
@@ -4102,7 +4508,10 @@ AltSurface "limit of knowledge" "HD 95128/b"
 
 "c" "HD 95128"   # 47 UMa
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       240     # M.sin(i) = 0.76 jupiters
 	Radius     70000
@@ -4129,7 +4538,10 @@ AltSurface "limit of knowledge" "HD 95128/c"
 
 "b" "HD 190228"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1590     # M.sin(i) = 4.99 jupiters
 	Radius     70000
@@ -4156,7 +4568,10 @@ AltSurface "limit of knowledge" "HD 190228/b"
 
 "b" "HD 114729"   # HD 114729 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       260     # M.sin(i) = 0.82 jupiters
 	Radius     70000
@@ -4183,7 +4598,10 @@ AltSurface "limit of knowledge" "HD 114729/b"
 
 "b" "HD 111232"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       2160     # M.sin(i) = 6.8 jupiters
 	Radius     70000
@@ -4210,7 +4628,10 @@ AltSurface "limit of knowledge" "HD 111232/b"
 
 "b" "HD 2039"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1540     # M.sin(i) = 4.85 jupiters
 	Radius     70000
@@ -4266,7 +4687,10 @@ AltSurface "limit of knowledge" "HD 136118/b"
 
 "b" "HD 50554"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       1560     # M.sin(i) = 4.9 jupiters
 	Radius     70000
@@ -4292,7 +4716,10 @@ AltSurface "limit of knowledge" "HD 50554/b"
 
 "b" "HD 196050"   # HD 196050 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       950     # M.sin(i) = 3 jupiters
 	Radius     70000
@@ -4319,7 +4746,10 @@ AltSurface "limit of knowledge" "HD 196050/b"
 
 "b" "HD 216437"   # Rho Ind
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       670     # M.sin(i) = 2.1 jupiters
 	Radius     70000
@@ -4346,7 +4776,10 @@ AltSurface "limit of knowledge" "HD 216437/b"
 
 "b" "HD 216435"   # Tau1 Gru
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       470     # M.sin(i) = 1.49 jupiters
 	Radius     70000
@@ -4373,7 +4806,10 @@ AltSurface "limit of knowledge" "HD 216435/b"
 
 "b" "HD 106252"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       2170     # M.sin(i) = 6.81 jupiters
 	Radius     70000
@@ -4399,7 +4835,10 @@ AltSurface "limit of knowledge" "HD 106252/b"
 
 "b" "HD 23596"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
 
 	Mass       2290     # M.sin(i) = 7.19 jupiters
 	Radius     70000
@@ -4426,7 +4865,10 @@ AltSurface "limit of knowledge" "HD 23596/b"
 
 "b" "HD 145675"   # 14 Her
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       1510     # M.sin(i) = 4.74 jupiters
 	Radius     70000
@@ -4453,7 +4895,10 @@ AltSurface "limit of knowledge" "HD 145675/b"
 
 "b" "HD 142022"   # HD 142022 A
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       1400     # M.sin(i) = 4.4 jupiters
 	Radius     70000
@@ -4480,7 +4925,10 @@ AltSurface "limit of knowledge" "HD 142022/b"
 
 "b" "HD 39091"   # Pi Men
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       3290     # M.sin(i) = 10.35 jupiters
 	Radius     70000
@@ -4507,7 +4955,10 @@ AltSurface "limit of knowledge" "HD 39091/b"
 
 "b" "HD 70642"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       640     # M.sin(i) = 2 jupiters
 	Radius     70000
@@ -4534,7 +4985,10 @@ AltSurface "limit of knowledge" "HD 70642/b"
 
 "b" "HD 33636"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       2950     # M.sin(i) = 9.28 jupiters
 	Radius     70000
@@ -4561,7 +5015,10 @@ AltSurface "limit of knowledge" "HD 33636/b"
 
 "b" "HD 22049"   # Eps Eri
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       270     # M.sin(i) = 0.86 jupiters
 	Radius     70000
@@ -4588,7 +5045,10 @@ AltSurface "limit of knowledge" "HD 22049/b"
 
 "c" "HD 22049"   # Eps Eri
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       30     # M.sin(i) = 0.1 jupiters
 	Radius     56000
@@ -4613,7 +5073,10 @@ AltSurface "limit of knowledge" "HD 22049/c"
 
 "b" "HD 50499"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       540     # M.sin(i) = 1.71 jupiters
 	Radius     70000
@@ -4640,7 +5103,10 @@ AltSurface "limit of knowledge" "HD 50499/b"
 
 "b" "HD 117207"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       660     # M.sin(i) = 2.06 jupiters
 	Radius     70000
@@ -4667,7 +5133,10 @@ AltSurface "limit of knowledge" "HD 117207/b"
 
 "b" "HD 30177"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       2920     # M.sin(i) = 9.17 jupiters
 	Radius     70000
@@ -4694,7 +5163,10 @@ AltSurface "limit of knowledge" "HD 30177/b"
 
 "b" "HD 89307"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       870     # M.sin(i) = 2.73 jupiters
 	Radius     70000
@@ -4719,7 +5191,10 @@ AltSurface "limit of knowledge" "HD 89307/b"
 
 "b" "HD 72659"
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       940     # M.sin(i) = 2.96 jupiters
 	Radius     70000
@@ -4878,7 +5353,10 @@ AltSurface "limit of knowledge" "PSR 1257+12/d"
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "jupiterlike.*"
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       800     # M.sin(i) = 2.5 jupiters
 	Radius     70000
