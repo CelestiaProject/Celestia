@@ -222,6 +222,15 @@ IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
 }
 
 
+static string
+RingShadowTexCoord(unsigned int index)
+{
+    char buf[64];
+    sprintf(buf, "ringShadowTexCoord.%c", "xyzw"[index]);
+    return string(buf);
+}
+
+
 void
 CelestiaGLProgram::initParameters(const ShaderProperties& props)
 {
@@ -470,7 +479,7 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
     if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
         source += "shadow *= (1.0 - texture2D(ringTex, vec2(" +
-            IndexedParameter("ringShadowTexCoord", light) + ", 0.0)).a);\n";
+            RingShadowTexCoord(light) + ", 0.0)).a);\n";
     }
 
     return source;
@@ -557,11 +566,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     {
         source += "uniform float ringWidth;\n";
         source += "uniform float ringRadius;\n";
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            source += "varying float " + 
-                IndexedParameter("ringShadowTexCoord", i) + ";\n";
-        }
+        source += "varying vec4 ringShadowTexCoord;\n";
     }
 
     source += "uniform float textureOffset;\n";
@@ -655,7 +660,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
                 LightProperty(j, "direction") +
                 " * max(0.0, gl_Vertex.y / -" +
                 LightProperty(j, "direction") + ".y);\n";
-            source += IndexedParameter("ringShadowTexCoord", j) +
+            source += RingShadowTexCoord(j) +
                 " = length(ringShadowProj) * ringWidth - ringRadius;\n";
         }
     }
@@ -767,11 +772,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
         source += "uniform sampler2D ringTex;\n";
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            source += "varying float " + 
-                IndexedParameter("ringShadowTexCoord", i) + ";\n";
-        }
+        source += "varying vec4 ringShadowTexCoord;\n";
     }
 
     if (props.shadowCounts != 0)
