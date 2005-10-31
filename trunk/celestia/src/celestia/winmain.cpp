@@ -3016,7 +3016,7 @@ static bool parseCommandLine(int argc, char* argv[])
             i++;
             startDirectory = string(argv[i]);
         }
-        else if (strcmp(argv[i], "--config") == 0)
+        else if (strcmp(argv[i], "--conf") == 0)
         {
             if (isLastArg)
             {
