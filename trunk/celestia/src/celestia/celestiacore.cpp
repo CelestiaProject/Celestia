@@ -2946,13 +2946,9 @@ void CelestiaCore::renderOverlay()
         currentLocale = std::locale(cLocale, "", std::locale::numeric);
         localeSet = true;
     }
-    
 
     if (font == NULL)
         return;
-
-    setlocale(LC_NUMERIC, "");
-    overlay->imbue(currentLocale);
 
     overlay->setFont(font);
 
@@ -3031,6 +3027,7 @@ void CelestiaCore::renderOverlay()
 	    lt = 0.0;
 	}
 
+        overlay->imbue(locale::classic());
 
 	if (timeZoneBias != 0 &&
             sim->getTime() < 2465442 &&
@@ -3072,6 +3069,9 @@ void CelestiaCore::renderOverlay()
             }
             *overlay << '\n';
 	}
+
+        setlocale(LC_NUMERIC, "");
+        overlay->imbue(currentLocale);
 
         if (paused)
         {
