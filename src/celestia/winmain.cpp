@@ -1362,9 +1362,6 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
                           UINT wParam,
                           LONG lParam)
 {
-    HWND timeItem = NULL;
-    HWND dateItem = NULL;
-
     switch (message)
     {
     case WM_INITDIALOG:
@@ -1389,6 +1386,7 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
 
             //Force Date/Time controls to show current system time
             UpdateSetTimeDlgDateTimeControls(hDlg, newTime);
+            return TRUE;
         }
         break;
 
@@ -1403,7 +1401,7 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
                 {
                     if (wParam == IDC_DATEPICKER)
                     {
-                        newTime.year = change->st.wYear;
+                        newTime.year = (int16) change->st.wYear;
                         newTime.month = change->st.wMonth;
                         newTime.day = change->st.wDay;
                     }
@@ -1414,6 +1412,7 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
                         newTime.seconds = change->st.wSecond + (double) change->st.wMilliseconds / 1000.0;
                     }
                 }
+                return TRUE;
             }
         }
     }
@@ -3268,6 +3267,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     icex.dwSize = sizeof(icex);
     icex.dwICC = ICC_DATE_CLASSES;
     InitCommonControlsEx(&icex);
+
+    extern void RegisterDatePicker();
+    RegisterDatePicker();
 
     if (!appCore->initRenderer())
     {
