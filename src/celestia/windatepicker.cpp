@@ -11,8 +11,30 @@
 
 #include <windows.h>
 #include <commctrl.h>
+#include "celutil/basictypes.h"
 #include "celengine/astro.h"
 
+
+// DatePicker is a Win32 control for setting the date. It replaces the
+// date picker from commctl, adding a number of features appropriate
+// for astronomical applications:
+//
+// - The standard Windows date picker does not permit setting years
+//   prior to 1752, the point that the US and UK switched to the 
+//   Gregorian calendar. Celestia's date picker allows setting any
+//   year from -9999 to 9999.
+//
+// - Astronomical year conventions are used for dates before the
+//   year 1. This means that the year 0 is not omitted, and the year
+//   2 BCE is entered as -1.
+//
+// - The first adoption of the Gregorian calendar was in 1582, when
+//   days 5-14 were skipped in the month of October. All dates are
+//   based on the initial 1582 reform, even though most countries
+//   didn't adopt the Gregorian calendar until many years later.
+//
+// - No invalid date is permitted, including the skipped days in
+//   October 1582.
 
 static char* Months[12] = 
 {
@@ -47,6 +69,7 @@ public:
     LRESULT resize(WORD flags, int width, int height);
 
     bool sendNotify(UINT code);
+    bool notifyDateChanged();
 
     LRESULT setSystemTime(DWORD flag, SYSTEMTIME* sysTime);
 
@@ -54,6 +77,8 @@ public:
 
 private:
     int getFieldWidth(DatePickerField field, HDC hdc);
+    void incrementField();
+    void decrementField();
 
 private:
     HWND hwnd;
@@ -63,8 +88,9 @@ private:
     char textBuffer[64];
     HFONT hFont;
     DWORD style;
-
+    
     bool haveFocus;
+    bool firstDigit;
 
     RECT fieldRects[NumFields];
     RECT clientRect;
@@ -76,7 +102,8 @@ DatePicker::DatePicker(HWND _hwnd, CREATESTRUCT& cs) :
     parent(cs.hwndParent),
     date(1970, 10, 25),
     selectedField(YearField),
-    haveFocus(false)
+    haveFocus(false),
+    firstDigit(true)
 {
     textBuffer[0] = '\0';
 
@@ -128,9 +155,9 @@ DatePicker::redraw(HDC hdc)
     char monthBuf[32];
     char yearBuf[32];
 
-    sprintf(dayBuf, "%02d ", date.day);
-    sprintf(monthBuf, "%s ", Months[date.month - 1]);
-    sprintf(yearBuf, "%5d ", date.year);
+    sprintf(dayBuf, "%02d", date.day);
+    sprintf(monthBuf, "%s", Months[date.month - 1]);
+    sprintf(yearBuf, "%5d", date.year);
 
     char* fieldText[NumFields];
     fieldText[DayField] = dayBuf;
@@ -152,23 +179,59 @@ DatePicker::redraw(HDC hdc)
 
         if (i == selectedField && haveFocus)
         {
-            HBRUSH hbrush = CreateSolidBrush(RGB(255, 255, 0));
-            FillRect(hdc, &fieldRects[i], hbrush);
+            RECT r = fieldRects[i];
+            r.top = (clientRect.bottom - size.cy) / 2;
+            r.bottom = r.top + size.cy + 1;
+
+            HBRUSH hbrush = CreateSolidBrush(GetSysColor(COLOR_HIGHLIGHT));
+            FillRect(hdc, &r, hbrush);
             DeleteObject(hbrush);
         }
 
         DrawText(hdc, fieldText[i], strlen(fieldText[i]), &fieldRects[i], DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
     }
+}
 
-#if 0
-    if (style & DTS_UPDOWN)
+
+static bool isLeapYear(unsigned int year)
+{
+    if (year > 1582)
     {
-        DrawFrameControl(hdc,
-                         0,
-                         0,
-                         (style & WS_DISABLED ? DFCS_INACTIVE : 0));
+        return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
     }
-#endif
+    else
+    {
+        return year % 4 == 0;
+    }
+}
+
+
+static unsigned int daysInMonth(unsigned int month, unsigned int year)
+{
+    static unsigned int daysPerMonth[12] =
+        { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+    if (month == 2)
+        return isLeapYear(year) ? 29 : 28;
+    else
+        return daysPerMonth[month - 1];
+}
+
+
+static void clampToValidDate(astro::Date& date)
+{
+    int days = (int) daysInMonth(date.month, date.year);
+    if (date.day > days)
+        date.day = days;
+
+    // 10 days skipped in Gregorian calendar reform
+    if (date.year == 1582 && date.month == 10 && date.day > 4 && date.day < 15)
+    {
+        if (date.day < 10)
+            date.day = 4;
+        else
+            date.day = 15;
+    }
 }
 
 
@@ -178,24 +241,111 @@ DatePicker::keyDown(DWORD vkcode, LPARAM flags)
     if (!haveFocus)
         return 0;
 
-    switch (vkcode)
+    if (vkcode >= '0' && vkcode <= '9')
     {
-    case VK_LEFT:
-        if ((int) selectedField == 0)
-            selectedField = DatePickerField((int) NumFields - 1);
-        else 
-            selectedField = DatePickerField((int) selectedField - 1);
-        break;
+        unsigned int digit = vkcode - '0';
 
-    case VK_RIGHT:
-        if ((int) selectedField == (int) NumFields - 1)
-            selectedField = DatePickerField(0);
+        if (firstDigit)
+        {
+            switch (selectedField)
+            {
+            case DayField:
+                if (digit != 0)
+                    date.day = digit;
+                break;
+            case MonthField:
+                if (digit != 0)
+                    date.month = digit;
+                break;
+            case YearField:
+                if (digit != 0)
+                    date.year = digit;
+                break;
+            }
+            firstDigit = false;
+        }
         else
-            selectedField = DatePickerField((int) selectedField + 1);
-        break;
+        {
+            switch (selectedField)
+            {
+            case DayField:
+                {
+                    unsigned int day = date.day * 10 + digit;
+                    if (day >= 10)
+                        firstDigit = true;
+                    if (day > daysInMonth(date.month, date.year))
+                        day = 1;
+                    date.day = day;
+                }
+                break;
+            
+            case MonthField:
+                {
+                    unsigned int month = date.month * 10 + digit;
+                    if (month > 1)
+                        firstDigit = true;
+                    if (month > 12)
+                        month = 1;
+                    date.month = month;
+                }
+                break;
+                
+            case YearField:
+                {
+                    unsigned int year = date.year * 10 + digit;
+                    if (year >= 1000)
+                        firstDigit = true;
+                    if (year <= 9999)
+                        date.year = year;
+                }
+                break;
+            }
+        }
+        clampToValidDate(date);
+        notifyDateChanged();
+    }
+    else if (vkcode == VK_SUBTRACT || vkcode == VK_OEM_MINUS)
+    {
+        if (selectedField == YearField)
+        {
+            date.year = -date.year;
+            clampToValidDate(date);
+            notifyDateChanged();
+        }
+    }
+    else
+    {
+        firstDigit = true;
 
-    default:
-        break;
+        switch (vkcode)
+        {
+        case VK_LEFT:
+            if ((int) selectedField == 0)
+                selectedField = DatePickerField((int) NumFields - 1);
+            else 
+                selectedField = DatePickerField((int) selectedField - 1);
+            break;
+
+        case VK_RIGHT:
+            if ((int) selectedField == (int) NumFields - 1)
+                selectedField = DatePickerField(0);
+            else
+                selectedField = DatePickerField((int) selectedField + 1);
+            break;
+            
+        case VK_UP:
+            incrementField();
+            notifyDateChanged();
+            break;
+
+        case VK_DOWN:
+            decrementField();
+            notifyDateChanged();
+            break;
+            
+        default:
+            break;
+        }
     }
 
     InvalidateRect(hwnd, NULL, TRUE);
@@ -207,6 +357,17 @@ DatePicker::keyDown(DWORD vkcode, LPARAM flags)
 LRESULT
 DatePicker::leftButtonDown(WORD key, int x, int y)
 {
+    POINT pt;
+    pt.x = x;
+    pt.y = y;
+
+    if (PtInRect(&fieldRects[DayField], pt))
+        selectedField = DayField;
+    else if (PtInRect(&fieldRects[MonthField], pt))
+        selectedField = MonthField;
+    else if (PtInRect(&fieldRects[YearField], pt))
+        selectedField = YearField;
+
     setFocus(hwnd);
 
     return 0;
@@ -221,6 +382,8 @@ DatePicker::setFocus(HWND lostFocus)
         sendNotify(NM_SETFOCUS);
         haveFocus = true;
     }
+
+    firstDigit = true;
 
     InvalidateRect(hwnd, NULL, TRUE);
     
@@ -285,6 +448,25 @@ DatePicker::sendNotify(UINT code)
 }
 
 
+bool
+DatePicker::notifyDateChanged()
+{
+    NMDATETIMECHANGE change;
+
+    ZeroMemory(&change, sizeof(change));
+    change.nmhdr.hwndFrom = hwnd;
+    change.nmhdr.idFrom   = GetWindowLongPtr(hwnd, GWLP_ID);
+    change.nmhdr.code     = DTN_DATETIMECHANGE;
+    change.st.wYear       = date.year;
+    change.st.wMonth      = date.month;
+    change.st.wDay        = date.day;
+
+    return SendMessage(parent, WM_NOTIFY,
+                       change.nmhdr.idFrom,
+                       reinterpret_cast<LPARAM>(&change)) ? true : false;
+}
+
+
 int
 DatePicker::getFieldWidth(DatePickerField field, HDC hdc)
 {
@@ -297,7 +479,7 @@ DatePicker::getFieldWidth(DatePickerField field, HDC hdc)
         break;
 
     case MonthField:
-        maxWidthText = "Oct ";
+        maxWidthText = " Oct ";
         break;
 
     case DayField:
@@ -309,6 +491,60 @@ DatePicker::getFieldWidth(DatePickerField field, HDC hdc)
     GetTextExtentPoint32(hdc, maxWidthText, strlen(maxWidthText), &size);
 
     return size.cx;
+}
+
+
+void
+DatePicker::incrementField()
+{
+    switch (selectedField)
+    {
+    case YearField:
+        date.year++;
+        clampToValidDate(date);
+        break;
+    case MonthField:
+        date.month++;
+        if (date.month > 12)
+            date.month = 1;
+        clampToValidDate(date);
+        break;
+    case DayField:
+        date.day++;
+        if (date.day > (int) daysInMonth(date.month, date.year))
+            date.day = 1;
+        // Skip 10 days deleted in Gregorian calendar reform
+        if (date.year == 1582 && date.month == 10 && date.day == 5)
+            date.day = 15;
+        break;
+    }
+}
+
+
+void
+DatePicker::decrementField()
+{
+    switch (selectedField)
+    {
+    case YearField:
+        date.year--;
+        clampToValidDate(date);
+        break;
+    case MonthField:
+        date.month--;
+        if (date.month < 1)
+            date.month = 12;
+        clampToValidDate(date);
+        break;
+    case DayField:
+        date.day--;
+        if (date.day < 1)
+            date.day = daysInMonth(date.month, date.year);
+        // Skip 10 days deleted in Gregorian calendar reform
+        if (date.year == 1582 && date.month == 10 && date.day == 14)
+            date.day = 4;
+        break;
+    }
 }
 
 
@@ -334,7 +570,7 @@ DatePicker::resize(WORD flags, int width, int height)
 LRESULT
 DatePicker::setSystemTime(DWORD flag, SYSTEMTIME* sysTime)
 {
-    date.year = sysTime->wYear;
+    date.year = (int16) sysTime->wYear;
     date.month = sysTime->wMonth;
     date.day = sysTime->wDay;
 
