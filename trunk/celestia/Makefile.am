@@ -31,11 +31,11 @@ dist-hook:
 	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
 
 install-data-hook:
-	if [ ! -z "$(kde_datadir)" -a -d $(kde_datadir)/@PACKAGE@ -a ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
+	if [ "$(kde_datadir)" -a -d $(kde_datadir)/@PACKAGE@ -a ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
 		mv -f -b $(kde_datadir)/@PACKAGE@/* $(datadir)/@PACKAGE@/ ; \
 		rmdir $(kde_datadir)/@PACKAGE@ ; \
 	fi
-	if [ ! -z "$(kde_datadir)" -a ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
+	if [ "$(kde_datadir)" -a ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
 		ln -s $(datadir)/@PACKAGE@ $(kde_datadir)/@PACKAGE@ ; \
 	fi
 
