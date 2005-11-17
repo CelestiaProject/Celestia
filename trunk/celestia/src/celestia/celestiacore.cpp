@@ -49,7 +49,7 @@ using namespace std;
 static const int DragThreshold = 3;
 
 // Perhaps you'll want to put this stuff in configuration file.
-static const float fIncrementFactor = 10.0f;
+static const double timeScaleFactor = 10.0f;
 static const double fMinSlewRate = 3.0;
 static const double fMaxKeyAccel = 20.0;
 static const float fAltitudeThreshold = 4.0f;
@@ -1430,15 +1430,16 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         {
             sim->setTimeScale(timeScale);
             scriptPaused = false;
+            paused = false;
         }
         else
         {
-            timeScale = sim->getTimeScale();
             sim->setTimeScale(0.0);
+            paused = true;
 
-            // If there's a script running then pause it.  This has the potentially
-            // confusing side effect of rendering nonfunctional goto, center, and
-            // other movement commands.
+            // If there's a script running then pause it.  This has the
+            // potentially confusing side effect of rendering nonfunctional
+            // goto, center, and other movement commands.
 #ifdef CELX
             if (runningScript != NULL || celxScript != NULL)
 #else
@@ -1449,15 +1450,17 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 scriptPaused = false;
         }
 
-        paused = !paused;
-
         if (paused)
+        {
             if (scriptPaused)
                 flash(_("Time and script are paused"));
             else
                 flash(_("Time is paused"));
+        }
         else
+        {
             flash(_("Resume"));
+        }
         break;
 
     case '!':
@@ -1693,8 +1696,10 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'J':
         addToHistory();
-        sim->setTimeScale(-sim->getTimeScale());
-        if (sim->getTimeScale() > 0)
+        timeScale = -timeScale;
+        if (!paused)
+            sim->setTimeScale(timeScale);
+        if (timeScale >= 0)
             flash(_("Time: Forward"));
         else
             flash(_("Time: Backward"));
@@ -1703,20 +1708,24 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case 'K':
         addToHistory();
         {
-            sim->setTimeScale(sim->getTimeScale() / fIncrementFactor);
+            timeScale /= timeScaleFactor;
+            if (!paused)
+                sim->setTimeScale(timeScale);
             char buf[128];
-            sprintf(buf, _("Time rate: %.1f"), sim->getTimeScale());
+            sprintf(buf, _("Time rate: %.1f"), timeScale);
             flash(buf);
         }
         break;
 
     case 'L':
         addToHistory();
-        if (sim->getTimeScale() < MaximumTimeRate)
+        if (timeScale < MaximumTimeRate)
         {
-            sim->setTimeScale(sim->getTimeScale() * fIncrementFactor);
+            timeScale *= timeScaleFactor;
+            if (!paused)
+                sim->setTimeScale(timeScale);
             char buf[128];
-            sprintf(buf, _("Time rate: %.1f"), sim->getTimeScale());
+            sprintf(buf, _("Time rate: %.1f"), timeScale);
             flash(buf);
         }
         break;
@@ -1841,7 +1850,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\\':
         addToHistory();
-        sim->setTimeScale(1.0);
+        timeScale = 1.0f;
+        if (!paused)
+            sim->setTimeScale(timeScale);
         break;
 
     case ']':
@@ -3073,15 +3084,7 @@ void CelestiaCore::renderOverlay()
         setlocale(LC_NUMERIC, "");
         overlay->imbue(currentLocale);
 
-        if (paused)
         {
-            glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-            *overlay << _("Paused");
-        }
-        else
-        {
-            double timeScale = sim->getTimeScale();
-
             *overlay << setprecision(0);
             if (abs(abs(timeScale) - 1) < 1e-6)
             {
@@ -3091,12 +3094,24 @@ void CelestiaCore::renderOverlay()
                     *overlay << _("-Real time");
             }
             else if (abs(timeScale) == 0.0f)
+            {
                 *overlay << _("Time stopped");
+            }
             else if (abs(timeScale) > 1.0)
+            {
                 *overlay << timeScale << UTF8_MULTIPLICATION_SIGN << _(" faster");
+            }
             else
+            {
                 *overlay << 1.0 / timeScale << UTF8_MULTIPLICATION_SIGN << _(" slower");
+            }
             *overlay << setprecision(3);
+
+            if (paused)
+            {
+                glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+                *overlay << _(" (Paused)");
+            }
         }
         overlay->endText();
         glPopMatrix();
@@ -4241,6 +4256,7 @@ void CelestiaCore::goToUrl(const std::string& urlStr)
 {
     Url url(urlStr, this);
     url.goTo();
+    timeScale = sim->getTimeScale();
     notifyWatchers(RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4272,6 +4288,7 @@ void CelestiaCore::back()
     }
     historyCurrent--;
     history[historyCurrent].goTo();
+    timeScale = sim->getTimeScale();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4281,6 +4298,7 @@ void CelestiaCore::forward()
     if (historyCurrent == history.size()-1) return;
     historyCurrent++;
     history[historyCurrent].goTo();
+    timeScale = sim->getTimeScale();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4305,5 +4323,3 @@ void CelestiaCore::setHistoryCurrent(std::vector<Url>::size_type curr)
     history[curr].goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
-
-
