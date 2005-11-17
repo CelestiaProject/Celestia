@@ -1,4 +1,4 @@
-# Catalog of 177 known extrasolar planets.
+# Catalog of 179 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
@@ -770,23 +770,22 @@ AltSurface "limit of knowledge" "OGLE-TR-10/b"
 
 "b" "HD 120136"   # Tau Boo A
 {
-	Texture "exo-class4.*"
-	NightTexture "exo-class4night.*"
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
 
-	Color  [0 0.36 1]
-	Albedo 0.05
+	Color  [0.49 0.89 1]
+	Albedo 0.5
 
-	Mass       1310     # M.sin(i) = 4.13 jupiters
+	Mass       1240     # M.sin(i) = 3.9 jupiters
 	Radius     84000
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Tau+Boo"
 
 	EllipticalOrbit {
 		Period          0.0091
-		SemiMajorAxis   0.05
-		Eccentricity    0.01
+		SemiMajorAxis   0.046
 		ArgOfPericenter 353
-		MeanAnomaly     110
+		MeanAnomaly     321
 	}
 
 	# likely to be in captured synchronous rotation
@@ -2320,7 +2319,7 @@ AltSurface "limit of knowledge" "HD 121504/b"
 
 	Mass       100     # M.sin(i) = 0.3 jupiters
 	Radius     56000
-	Oblateness 0.08
+	Oblateness 0.02
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+101930"
 
@@ -2332,7 +2331,7 @@ AltSurface "limit of knowledge" "HD 121504/b"
 		MeanAnomaly     105
 	}
 
-	RotationPeriod  11 # tidal slowing significant
+	RotationPeriod  21 # tidal slowing significant
 }
 
 AltSurface "limit of knowledge" "HD 101930/b"
@@ -2456,6 +2455,36 @@ AltSurface "limit of knowledge" "HD 114762/b"
 }
 
 AltSurface "limit of knowledge" "HD 80606/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 219542"   # HD 219542 B
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       100     # M.sin(i) = 0.3 jupiters
+	Radius     84000
+	Oblateness 0.09
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+219542+B"
+
+	EllipticalOrbit {
+		Period          0.3069
+		SemiMajorAxis   0.46
+		Eccentricity    0.32
+		ArgOfPericenter 130
+		MeanAnomaly     356
+	}
+
+	RotationPeriod  19 # tidal slowing significant
+}
+
+AltSurface "limit of knowledge" "HD 219542/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -4888,6 +4917,35 @@ AltSurface "limit of knowledge" "HD 23596/b"
 }
 
 AltSurface "limit of knowledge" "HD 145675/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 145675"   # 14 Her
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       660     # M.sin(i) = 2.086 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=14+Her"
+
+	EllipticalOrbit {
+		Period          14.6995
+		SemiMajorAxis   5.81
+		Eccentricity    0.004
+		ArgOfPericenter 150
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 145675/c"
 {
 	Texture "extrasolar-lok.*"
 }
