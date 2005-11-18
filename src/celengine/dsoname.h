@@ -1,5 +1,5 @@
 //
-// C++ Interface: starname
+// C++ Interface: dsoname
 //
 // Description:
 //
@@ -10,22 +10,20 @@
 //
 //
 
-#ifndef _STARNAME_H_
-#define _STARNAME_H_
+#ifndef _DSONAME_H_
+#define _DSONAME_H_
 
 #include <celengine/name.h>
-#include <celengine/star.h>
+#include <celengine/deepskyobj.h>
 
 
-class StarNameDatabase: public NameDatabase<Star>
+class DSONameDatabase: public NameDatabase<DeepSkyObject>
 {
  public:
-    StarNameDatabase() {};
+    DSONameDatabase() {};
 
 
     uint32 findCatalogNumberByName(const std::string&) const;
-
-    static StarNameDatabase* readNames(std::istream&);
 };
 
-#endif // _STARNAME_H_
+#endif  // _DSONAME_H_

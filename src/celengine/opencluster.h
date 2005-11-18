@@ -24,6 +24,9 @@ class OpenCluster : public DeepSkyObject
  public:
     OpenCluster();
 
+    virtual const char* getType() const;
+    virtual void setType(const std::string&);
+
     virtual bool load(AssociativeArray*, const std::string&);
     virtual void render(const GLContext& context,
                         const Vec3f& offset,
@@ -31,8 +34,15 @@ class OpenCluster : public DeepSkyObject
                         float brightness,
                         float pixelSize);
 
-    virtual unsigned int getRenderMask();
-    virtual unsigned int getLabelMask();
+    virtual unsigned int getRenderMask() const;
+    virtual unsigned int getLabelMask() const;
+
+ public:
+    enum ClusterType {
+        Open          = 0,
+        Globular      = 1,
+        NotDefined    = 2
+    };
 
  private:
     // TODO: It could be very useful to have a list of stars that are members

@@ -15,6 +15,7 @@
 #include <celmath/quaternion.h>
 #include <celengine/univcoord.h>
 #include <celengine/stardb.h>
+#include <celengine/dsodb.h>
 #include <celengine/solarsys.h>
 #include <celengine/deepskyobj.h>
 #include <celengine/asterism.h>
@@ -31,12 +32,16 @@ class Universe
 
     StarDatabase* getStarCatalog() const;
     void setStarCatalog(StarDatabase*);
+
     SolarSystemCatalog* getSolarSystemCatalog() const;
     void setSolarSystemCatalog(SolarSystemCatalog*);
-    DeepSkyCatalog* getDeepSkyCatalog() const;
-    void setDeepSkyCatalog(DeepSkyCatalog*);
+
+    DSODatabase* getDSOCatalog() const;
+    void setDSOCatalog(DSODatabase*);
+
     AsterismList* getAsterisms() const;
     void setAsterisms(AsterismList*);
+
     ConstellationBoundaries* getBoundaries() const;
     void setBoundaries(ConstellationBoundaries*);
 
@@ -45,13 +50,18 @@ class Universe
                    double when,
                    float faintestMag,
                    float tolerance = 0.0f);
-    Selection pickStar(const UniversalCoord&, const Vec3f&,
+
+    Selection pickStar(const UniversalCoord&,
+                       const Vec3f&,
                        double when,
                        float faintest,
                        float tolerance = 0.0f);
+
     Selection pickDeepSkyObject(const UniversalCoord&,
-                                const Vec3f&, float faintest,
+                                const Vec3f&,
+                                float faintest,
                                 float tolerance = 0.0f);
+
     Selection find(const std::string& s,
                    Selection* contexts = NULL,
                    int nContexts = 0,
@@ -106,8 +116,8 @@ class Universe
 
  private:
     StarDatabase* starCatalog;
+    DSODatabase*             dsoCatalog;
     SolarSystemCatalog* solarSystemCatalog;
-    DeepSkyCatalog* deepSkyCatalog;
     AsterismList* asterisms;
     ConstellationBoundaries* boundaries;
     MarkerList* markers;

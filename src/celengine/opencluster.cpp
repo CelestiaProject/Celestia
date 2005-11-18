@@ -28,6 +28,17 @@ OpenCluster::OpenCluster()
 }
 
 
+const char* OpenCluster::getType() const
+{
+    return "Cluster";
+}
+
+
+void OpenCluster::setType(const std::string& typeStr)
+{
+}
+
+
 bool OpenCluster::load(AssociativeArray* params, const string& resPath)
 {
     // No parameters specific to open cluster, though a list of member stars
@@ -49,13 +60,13 @@ void OpenCluster::render(const GLContext&,
 }
 
 
-unsigned int OpenCluster::getRenderMask()
+unsigned int OpenCluster::getRenderMask() const
 {
     return Renderer::ShowOpenClusters;
 }
 
 
-unsigned int OpenCluster::getLabelMask()
+unsigned int OpenCluster::getLabelMask() const
 {
     return Renderer::OpenClusterLabels;
 }

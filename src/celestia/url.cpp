@@ -194,7 +194,8 @@ Url::Url(const std::string& str, CelestiaCore *core)
     evalName();
 }
 
-Url::Url(CelestiaCore* core, UrlType type) {
+Url::Url(CelestiaCore* core, UrlType type)
+{
     appCore = core;
     Simulation *sim = appCore->getSimulation();
     Renderer *renderer = appCore->getRenderer();
@@ -380,8 +381,7 @@ std::string Url::getSelectionName(const Selection& selection) const
                 }
                 if (selection.body()->getSystem()->getStar() != NULL)
                 {
-                    name=universe->getStarCatalog()->getStarName(*(selection.body()->getSystem()->getStar()))
-                        + ":" + name;
+                    name = universe->getStarCatalog()->getStarName(*(selection.body()->getSystem()->getStar())) + ":" + name;
                 }
             }
             return name;
@@ -391,7 +391,7 @@ std::string Url::getSelectionName(const Selection& selection) const
         return universe->getStarCatalog()->getStarName(*selection.star());
 
     case Selection::Type_DeepSky:
-        return selection.deepsky()->getName();
+        return universe->getDSOCatalog()->getDSOName(selection.deepsky());
 
     case Selection::Type_Location:
         return "";

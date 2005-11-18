@@ -15,8 +15,11 @@
 #include <celengine/constellation.h>
 #include <celengine/starname.h>
 #include <celengine/star.h>
-#include <celengine/octree.h>
+#include <celengine/staroctree.h>
 #include <celengine/parser.h>
+
+
+static const unsigned int MAX_STAR_NAMES = 10;
 
 
 class StarDatabase
@@ -25,26 +28,28 @@ class StarDatabase
     StarDatabase();
     ~StarDatabase();
 
-    inline Star* getStar(uint32) const;
+
+    inline Star*  getStar(const uint32) const;
     inline uint32 size() const;
-    Star* find(uint32 catalogNumber) const;
+
+    Star* find(const uint32 catalogNumber) const;
     Star* find(const std::string&) const;
+
     std::vector<std::string> getCompletion(const std::string&) const;
 
     void findVisibleStars(StarHandler& starHandler,
-                          const Point3f& position,
-                          const Quatf& orientation,
+                          const Point3f& obsPosition,
+                          const Quatf&   obsOrientation,
                           float fovY,
                           float aspectRatio,
                           float limitingMag) const;
+
     void findCloseStars(StarHandler& starHandler,
-                        const Point3f& position,
+                        const Point3f& obsPosition,
                         float radius) const;
 
-    std::string getStarName(const Star&) const;
-    StarNameDatabase::NumberIndex::const_iterator 
-        getStarNames(uint32 catalogNumber) const;
-    StarNameDatabase::NumberIndex::const_iterator finalName() const;
+    std::string getStarName    (const Star&) const;
+    std::string getStarNameList(const Star&, const unsigned int maxNames = MAX_STAR_NAMES) const;
 
     StarNameDatabase* getNameDatabase() const;
     void setNameDatabase(StarNameDatabase*);
@@ -53,10 +58,10 @@ class StarDatabase
     bool loadBinary(std::istream&);
     bool loadOldFormatBinary(std::istream&);
 
-    Star* createStar(uint32 catalogNumber,
+    Star* createStar(const uint32 catalogNumber,
                      Hash* starData,
                      const std::string& path,
-                     bool isBarycenter);
+                     const bool isBarycenter);
 
     enum Catalog
     {
@@ -73,16 +78,17 @@ class StarDatabase
     };
 
     typedef std::vector<CrossIndexEntry> CrossIndex;
-    bool loadCrossIndex(Catalog, std::istream&);
-    Star* searchCrossIndex(Catalog catalog, uint32 number) const;
-    uint32 crossIndex(Catalog catalog, uint32 number) const;
+
+    bool   loadCrossIndex  (const Catalog, std::istream&);
+    Star*  searchCrossIndex(const Catalog, const uint32 number) const;
+    uint32 crossIndex      (const Catalog, const uint32 number) const;
 
     void finish();
 
     static StarDatabase* read(std::istream&);
 
-    static const char* FileHeader;
-    static const char* CrossIndexFileHeader;
+    static const char* FILE_HEADER;
+    static const char* CROSSINDEX_FILE_HEADER;
 
  private:
     void buildOctree();
@@ -91,13 +97,13 @@ class StarDatabase
     int nStars;
     int capacity;
     Star* stars;
-    StarNameDatabase* names;
+    StarNameDatabase* namesDB;
     Star** catalogNumberIndex;
     StarOctree* octreeRoot;
+    uint32            nextAutoCatalogNumber;
 
     std::vector<CrossIndex*> crossIndexes;
 
-    uint32 nextAutoCatalogNumber;
 
     struct BarycenterUsage
     {
@@ -108,7 +114,7 @@ class StarDatabase
 };
 
 
-Star* StarDatabase::getStar(uint32 n) const
+Star* StarDatabase::getStar(const uint32 n) const
 {
     return stars + n;
 }

@@ -22,12 +22,15 @@
 using namespace std;
 
 
+const float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
+
+
 DeepSkyObject::DeepSkyObject() :
-    name(""),
+    catalogNumber(InvalidCatalogNumber),
     position(0, 0, 0),
     orientation(1),
     radius(1),
-    absMag(30.0f),
+    absMag(DSO_DEFAULT_ABS_MAGNITUDE),
     infoURL(NULL)
 {
 }
@@ -36,7 +39,12 @@ DeepSkyObject::~DeepSkyObject()
 {
 }
 
+void DeepSkyObject::setCatalogNumber(uint32 n)
+{
+    catalogNumber = n;
+}
 
+/*
 string DeepSkyObject::getName() const
 {
     return name;
@@ -46,13 +54,14 @@ void DeepSkyObject::setName(const string& s)
 {
     name = s;
 }
+*/
 
 Point3d DeepSkyObject::getPosition() const
 {
     return position;
 }
 
-void DeepSkyObject::setPosition(Point3d p)
+void DeepSkyObject::setPosition(const Point3d& p)
 {
     position = p;
 }
@@ -62,7 +71,7 @@ Quatf DeepSkyObject::getOrientation() const
     return orientation;
 }
 
-void DeepSkyObject::setOrientation(Quatf q)
+void DeepSkyObject::setOrientation(const Quatf& q)
 {
     orientation = q;
 }
@@ -95,7 +104,7 @@ string DeepSkyObject::getInfoURL() const
         return *infoURL;
 }
 
-void DeepSkyObject::setInfoURL(const std::string& s)
+void DeepSkyObject::setInfoURL(const string& s)
 {
     if (infoURL == NULL)
         infoURL = new string(s);
@@ -103,7 +112,7 @@ void DeepSkyObject::setInfoURL(const std::string& s)
         *infoURL = s;
 }
 
-bool DeepSkyObject::load(AssociativeArray* params, const string&)
+bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
 {
     // Get position
     Vec3d position(0.0, 0.0, 0.0);
@@ -147,70 +156,3 @@ bool DeepSkyObject::load(AssociativeArray* params, const string&)
 
     return true;
 }
-
-
-int LoadDeepSkyObjects(DeepSkyCatalog& catalog, istream& in,
-                       const string& path)
-{
-    int count = 0;
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
-
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
-    {
-        string objType;
-        string objName;
-        
-        if (tokenizer.getTokenType() != Tokenizer::TokenName)
-        {
-            DPRINTF(0, "Error parsing deep sky catalog file.\n");
-            break;
-        }
-        objType = tokenizer.getNameValue();
-
-        if (tokenizer.nextToken() != Tokenizer::TokenString)
-        {
-            DPRINTF(0, "Error parsing deep sky catalog file: bad name.\n");
-            break;
-        }
-        objName = tokenizer.getStringValue();
-
-        Value* objParamsValue = parser.readValue();
-        if (objParamsValue == NULL ||
-            objParamsValue->getType() != Value::HashType)
-        {
-            DPRINTF(0, "Error parsing deep sky catalog entry %s\n",
-                    objName.c_str());
-            break;
-        }
-
-        Hash* objParams = objParamsValue->getHash();
-        assert(objParams != NULL);
-
-        DeepSkyObject* obj = NULL;
-        if (compareIgnoringCase(objType, "Galaxy") == 0)
-            obj = new Galaxy();
-        else if (compareIgnoringCase(objType, "Nebula") == 0)
-            obj = new Nebula();
-        else if (compareIgnoringCase(objType, "OpenCluster") == 0)
-            obj = new OpenCluster();
-
-        if (obj != NULL)
-        {
-            obj->setName(objName);
-            if (obj->load(objParams, path))
-            {
-                catalog.insert(catalog.end(), obj);
-                count++;
-            }
-            else
-            {
-                delete obj;
-            }
-            delete objParamsValue;
-        }
-    }
-
-    return count;
-}
-
