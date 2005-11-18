@@ -88,12 +88,18 @@ string Selection::getName() const
     switch (type)
     {
     case Type_Star:
-        char buf[20];
-        sprintf(buf, "#%d", star()->getCatalogNumber());
-        return string(buf);
+        {
+            char buf[20];
+            sprintf(buf, "#%d", star()->getCatalogNumber());
+            return string(buf);
+        }
 
     case Type_DeepSky:
-        return deepsky()->getName();
+        {
+            char buf[20];
+            sprintf(buf, "#%d", deepsky()->getCatalogNumber());
+            return string(buf);
+        }
         
     case Type_Body:
         {

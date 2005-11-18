@@ -35,30 +35,11 @@ struct GalacticForm
 class Galaxy : public DeepSkyObject
 {
  public:
-    enum GalaxyType {
-        S0   =  0,
-        Sa   =  1,
-        Sb   =  2,
-        Sc   =  3,
-        SBa  =  4,
-        SBb  =  5,
-        SBc  =  6,
-        E0   =  7,
-        E1   =  8,
-        E2   =  9,
-        E3   = 10,
-        E4   = 11, 
-        E5   = 12,
-        E6   = 13,
-        E7   = 14,
-        Irr  = 15,
-    };
-        
- public:
     Galaxy();
 
-    GalaxyType getType() const;
-    void setType(GalaxyType);
+    virtual const char* getType() const;
+    virtual void setType(const std::string&);
+
     float getDetail() const;
     void setDetail(float);
     //    float getBrightness() const;
@@ -86,18 +67,40 @@ class Galaxy : public DeepSkyObject
     static void  increaseLightGain();
     static void  decreaseLightGain();
     static float getLightGain();
+    static void hsv2rgb( float *r, float *g, float *b, float h, float s, float v );
 
-    virtual unsigned int getRenderMask();
-    virtual unsigned int getLabelMask();
-    
+    virtual unsigned int getRenderMask() const;
+    virtual unsigned int getLabelMask() const;
+
+ public:
+    enum GalaxyType {
+        S0   =  0,
+        Sa   =  1,
+        Sb   =  2,
+        Sc   =  3,
+        SBa  =  4,
+        SBb  =  5,
+        SBc  =  6,
+        E0   =  7,
+        E1   =  8,
+        E2   =  9,
+        E3   = 10,
+        E4   = 11, 
+        E5   = 12,
+        E6   = 13,
+        E7   = 14,
+        Irr  = 15
+    };
+        
  private:    
     float detail;
-    static float lightGain;
     //    float brightness;
     GalaxyType type;
     GalacticForm* form;
+
+    static float lightGain;
 };
 
-std::ostream& operator<<(std::ostream& s, const Galaxy::GalaxyType& sc);
+//std::ostream& operator<<(std::ostream& s, const Galaxy::GalaxyType& sc);
 
 #endif // _GALAXY_H_

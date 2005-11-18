@@ -31,6 +31,9 @@ OBJS=\
 	$(INTDIR)\dds.obj \
 	$(INTDIR)\deepskyobj.obj \
 	$(INTDIR)\dispmap.obj \
+	$(INTDIR)\dsodb.obj \
+	$(INTDIR)\dsoname.obj \
+	$(INTDIR)\dsooctree.obj \
 	$(INTDIR)\execution.obj \
 	$(INTDIR)\fragmentprog.obj \
 	$(INTDIR)\frame.obj \
@@ -50,7 +53,6 @@ OBJS=\
 	$(INTDIR)\multitexture.obj \
 	$(INTDIR)\nebula.obj \
 	$(INTDIR)\observer.obj \
-	$(INTDIR)\octree.obj \
 	$(INTDIR)\opencluster.obj \
 	$(INTDIR)\orbit.obj \
 	$(INTDIR)\overlay.obj \
@@ -69,6 +71,7 @@ OBJS=\
 	$(INTDIR)\starcolors.obj \
 	$(INTDIR)\stardb.obj \
 	$(INTDIR)\starname.obj \
+	$(INTDIR)\staroctree.obj \
 	$(INTDIR)\stellarclass.obj \
 	$(INTDIR)\texmanager.obj \
 	$(INTDIR)\texture.obj \

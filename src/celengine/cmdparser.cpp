@@ -668,6 +668,8 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowDiagrams;
             else if (compareIgnoringCase(name, "galaxies") == 0)
                 flags |= Renderer::ShowGalaxies;
+            else if (compareIgnoringCase(name, "nebulae") == 0)
+                flags |= Renderer::ShowNebulae;
             else if (compareIgnoringCase(name, "planets") == 0)
                 flags |= Renderer::ShowPlanets;
             else if (compareIgnoringCase(name, "stars") == 0)

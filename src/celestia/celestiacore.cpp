@@ -612,7 +612,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
     if (views.size() > 1 && button == LeftButton) // look if click is near a view border
     {
         View *v1 = 0, *v2 = 0;
-        for(std::vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+        for (vector<View*>::iterator i = views.begin(); i != views.end(); i++)
         {
             View* v = *i;
             float vx, vy, vxp, vyp;
@@ -752,7 +752,7 @@ void CelestiaCore::mouseMove(float x, float y)
         View* v1 = 0;
         View* v2 = 0;
 
-        for (std::vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+        for (vector<View*>::iterator i = views.begin(); i != views.end(); i++)
         {
             View* v = *i;
             float vx, vy, vxp, vyp;
@@ -924,7 +924,7 @@ void CelestiaCore::pickView(float x, float y)
     if (x+2 < views[activeView]->x * width || x-2 > (views[activeView]->x + views[activeView]->width) * width
         || (height - y)+2 < views[activeView]->y * height ||  (height - y)-2 > (views[activeView]->y + views[activeView]->height) * height)
     {
-        std::vector<View*>::iterator i = views.begin();
+        vector<View*>::iterator i = views.begin();
         int n = 0;
         while (i < views.end() && (x+2 < (*i)->x * width || x-2 > ((*i)->x + (*i)->width) * width
                                     || (height - y)+2 < (*i)->y * height ||  (height - y)-2 > ((*i)->y + (*i)->height) * height))
@@ -1113,14 +1113,14 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if ( wc && (iswalpha(wc) || iswdigit(wc) || iswpunct(c) || c == ' ') )
 #endif
         {
-            typedText += std::string(c_p);
+            typedText += string(c_p);
             typedTextCompletion = sim->getObjectCompletion(typedText, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
             typedTextCompletionIdx = -1;
 #ifdef AUTO_COMPLETION
             if (typedTextCompletion.size() == 1)
             {
-                std::string::size_type pos = typedText.rfind('/', typedText.length());
-                if (pos != std::string::npos)
+                string::size_type pos = typedText.rfind('/', typedText.length());
+                if (pos != string::npos)
                     typedText = typedText.substr(0, pos + 1) + typedTextCompletion[0];
                 else
                     typedText = typedTextCompletion[0];
@@ -1161,8 +1161,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             else if ((int) typedTextCompletion.size() > 0 && typedTextCompletionIdx + 1 == (int) typedTextCompletion.size())
                 typedTextCompletionIdx = 0;
             if (typedTextCompletionIdx >= 0) {
-                std::string::size_type pos = typedText.rfind('/', typedText.length());
-                if (pos != std::string::npos)
+                string::size_type pos = typedText.rfind('/', typedText.length());
+                if (pos != string::npos)
                     typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx];
                 else
                     typedText = typedTextCompletion[typedTextCompletionIdx];
@@ -1177,8 +1177,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             else if (typedTextCompletion.size() > 0)
                 typedTextCompletionIdx = typedTextCompletion.size() - 1;
             if (typedTextCompletionIdx >= 0) {
-                std::string::size_type pos = typedText.rfind('/', typedText.length());
-                if (pos != std::string::npos)
+                string::size_type pos = typedText.rfind('/', typedText.length());
+                if (pos != string::npos)
                     typedText = typedText.substr(0, pos + 1) + typedTextCompletion[typedTextCompletionIdx];
                 else
                     typedText = typedTextCompletion[typedTextCompletionIdx];
@@ -1898,11 +1898,21 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '(':
-        Galaxy::decreaseLightGain();
+        {
+            char buf[128];
+            Galaxy::decreaseLightGain();
+            sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            flash(buf);
+        }
         break;
 
     case ')':
-        Galaxy::increaseLightGain();
+        {
+            char buf[128];
+            Galaxy::increaseLightGain();
+            sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            flash(buf);
+        }
         break;
 
     case '~':
@@ -1957,7 +1967,7 @@ void CelestiaCore::start(double t)
         goToUrl(startURL);
 }
 
-void CelestiaCore::setStartURL(std::string url) 
+void CelestiaCore::setStartURL(string url) 
 {
     if (!url.substr(0,4).compare("cel:")) 
     {
@@ -2344,7 +2354,7 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
 
 void CelestiaCore::setFOVFromZoom()
 {
-    for (std::vector<View*>::iterator i = views.begin(); i < views.end(); i++)
+    for (vector<View*>::iterator i = views.begin(); i < views.end(); i++)
         if ((*i)->type == View::ViewWindow)
         {
             double fov = 2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) / (*i)->zoom;
@@ -2354,7 +2364,7 @@ void CelestiaCore::setFOVFromZoom()
 
 void CelestiaCore::setZoomFromFOV()
 {
-    for (std::vector<View*>::iterator i = views.begin(); i < views.end(); i++)
+    for (vector<View*>::iterator i = views.begin(); i < views.end(); i++)
         if ((*i)->type == View::ViewWindow)
         {
             (*i)->zoom = (float) (2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) /  (*i)->observer->getFOV());
@@ -2396,7 +2406,7 @@ void CelestiaCore::deleteView(View* v)
 
     if (v->parent == 0) return;
 
-    for(std::vector<View*>::iterator i = views.begin(); i < views.end() ; i++)
+    for(vector<View*>::iterator i = views.begin(); i < views.end() ; i++)
     {
         if (*i == v)
         {
@@ -2506,7 +2516,7 @@ static FormattedNumber SigDigitNum(double v, int digits)
 
 static void displayDistance(Overlay& overlay, double distance)
 {
-    char* units = "";
+    const char* units = "";
 
     if (abs(distance) >= astro::parsecsToLightYears(1e+6))
     {
@@ -2578,7 +2588,8 @@ static void displayAngle(Overlay& overlay, double angle)
 
 
 static void displayApparentDiameter(Overlay& overlay,
-                                double radius, double distance)
+                                    double radius,
+                                    double distance)
 {
     if (distance > radius)
     {
@@ -2595,13 +2606,29 @@ static void displayApparentDiameter(Overlay& overlay,
     }
 }
 
+static void displayApparentMagnitude(Overlay& overlay,
+                                     float absMag,
+                                     double distance)
+{
+    float appMag = absMag;
+    if (distance > 32.6167)
+    {
+        appMag = astro::absToAppMag(absMag, (float) distance);
+        overlay << _("Apparent magnitude: ");
+    }
+    else
+    {
+        overlay << _("Absolute magnitude: ");
+    }
+
+    overlay.printf("%.1f\n", appMag);
+}
 
 static void displayAcronym(Overlay& overlay, char* s)
 {
     if (strchr(s, ' ') != NULL)
     {
         int length = strlen(s);
-        int n = 0;
         char lastChar = ' ';
 
         for (int i = 0; i < length; i++)
@@ -2615,114 +2642,6 @@ static void displayAcronym(Overlay& overlay, char* s)
     {
         overlay << s;
     }
-}
-
-
-static void displayStarName(Overlay& overlay,
-                            Star& star,
-                            StarDatabase& starDB)
-{
-    StarNameDatabase::NumberIndex::const_iterator iter =
-        starDB.getStarNames(star.getCatalogNumber());
-
-    if (iter != starDB.finalName() &&
-        iter->first == star.getCatalogNumber())
-    {
-        overlay << ReplaceGreekLetterAbbr(iter->second.c_str());
-        return;
-    }
-
-    uint32 hip = star.getCatalogNumber();
-    if (hip != Star::InvalidCatalogNumber && hip != 0)
-    {
-        if (hip >= 1000000)
-        {
-            uint32 tyc3 = hip / 1000000000;
-            hip -= tyc3 * 1000000000;
-            uint32 tyc2 = hip / 10000;
-            hip -= tyc2 * 10000;
-            uint32 tyc1 = hip;
-            overlay << "TYC " << tyc1 << '-' << tyc2 << '-' << tyc3;
-        }
-        else
-        {
-            overlay << "HIP " << hip;
-        }
-    }
-}
-
-
-static string starNameList(Star& star,
-                           StarDatabase& starDB,
-                           int maxNames = 10)
-{
-    string starNames;
-    char numString[32];
-
-    StarNameDatabase::NumberIndex::const_iterator iter =
-        starDB.getStarNames(star.getCatalogNumber());
-
-    int count = 0;
-    while (iter != starDB.finalName() &&
-           iter->first == star.getCatalogNumber() &&
-           count < maxNames)
-    {
-        if (count != 0)
-            starNames += " / ";
-        
-        starNames += ReplaceGreekLetterAbbr(_(iter->second.c_str()));
-        iter++;
-        count++;
-    }
-
-    uint32 hip = star.getCatalogNumber();
-    if (hip != Star::InvalidCatalogNumber && hip != 0 && count < maxNames)
-    {
-        if (hip <= Star::MaxTychoCatalogNumber)
-        {
-            if (count != 0)
-                starNames += " / ";
-            if (hip >= 1000000)
-            {
-                uint32 h = hip;
-                uint32 tyc3 = h / 1000000000;
-                h -= tyc3 * 1000000000;
-                uint32 tyc2 = h / 10000;
-                h -= tyc2 * 10000;
-                uint32 tyc1 = h;
-                sprintf(numString, "TYC %u-%u-%u", tyc1, tyc2, tyc3);
-                starNames += numString;
-            }
-            else
-            {
-                sprintf(numString, "HIP %u", hip);
-                starNames += numString;
-            }
-
-            count++;
-        }
-    }
-
-    uint32 hd = starDB.crossIndex(StarDatabase::HenryDraper, hip);
-    if (count < maxNames && hd != Star::InvalidCatalogNumber)
-    {
-        if (count != 0)
-            starNames += " / ";
-        sprintf(numString, "HD %u", hd);
-        starNames += numString;
-    }
-
-    uint32 sao = starDB.crossIndex(StarDatabase::SAO, hip);
-    if (count < maxNames && sao != Star::InvalidCatalogNumber)
-    {
-        if (count != 0)
-            starNames += " / ";
-        sprintf(numString, "SAO %u", sao);
-        starNames += numString;
-    }
-
-
-    return starNames;
 }
 
 
@@ -2774,6 +2693,30 @@ static void displayStarInfo(Overlay& overlay,
         SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
             overlay << _("Planetary companions present\n");
+    }
+}
+
+
+static void displayDSOinfo(Overlay& overlay,
+                           int detail,
+                           const DeepSkyObject& dso,
+                           const Universe& universe,
+                           double distance)
+{
+    overlay << dso.getType() << '\n';
+    overlay << _("Distance: ");
+    displayDistance(overlay, distance);
+    overlay << '\n';
+    overlay << _("Radius: ");
+    displayDistance(overlay, dso.getRadius());
+    overlay << '\n';
+
+    displayApparentDiameter(overlay, dso.getRadius(), distance);
+    if (dso.getAbsoluteMagnitude() > DSO_DEFAULT_ABS_MAGNITUDE)
+    {
+        displayApparentMagnitude(overlay,
+                                 dso.getAbsoluteMagnitude(),
+                                 distance);
     }
 }
 
@@ -2833,18 +2776,6 @@ static void displayPlanetInfo(Overlay& overlay,
         }
     }
 }
-
-#if 0
-// TODO: Need to display some sort of information for galaxies and other
-// deep sky objects.
-static void displayGalaxyInfo(Overlay& overlay,
-                              Galaxy& galaxy,
-                              double distance)
-{
-    overlay << _("Type: ") << galaxy.getType() << '\n';
-    overlay << _("Radius: ") << galaxy.getRadius() << _(" ly\n");
-}
-#endif
 
 
 static void displayLocationInfo(Overlay& overlay,
@@ -2921,10 +2852,11 @@ static void displaySelectionName(Overlay& overlay,
         overlay << sel.body()->getName(true).c_str();
         break;
     case Selection::Type_DeepSky:
-        overlay << sel.deepsky()->getName().c_str();
+        overlay << univ.getDSOCatalog()->getDSOName(sel.deepsky());
         break;
     case Selection::Type_Star:
-        displayStarName(overlay, *(sel.star()), *univ.getStarCatalog());
+        //displayStarName(overlay, *(sel.star()), *univ.getStarCatalog());
+        overlay << univ.getStarCatalog()->getStarName(*sel.star());
         break;
     case Selection::Type_Location:
         overlay << sel.location()->getName(true).c_str();
@@ -2948,13 +2880,13 @@ static void showViewFrame(const View* v, int width, int height)
 
 void CelestiaCore::renderOverlay()
 {
-    static std::locale currentLocale;
-    static std::locale cLocale;
+    static locale currentLocale;
+    static locale cLocale;
     static bool localeSet = false;
 
     if (!localeSet) {
         cLocale = overlay->getloc();
-        currentLocale = std::locale(cLocale, "", std::locale::numeric);
+        currentLocale = locale(cLocale, "", std::locale::numeric);
         localeSet = true;
     }
 
@@ -2977,7 +2909,7 @@ void CelestiaCore::renderOverlay()
             glLineWidth(1.0f);
             glDisable(GL_TEXTURE_2D);
             glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
-            for(std::vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+            for(vector<View*>::iterator i = views.begin(); i != views.end(); i++)
             {
                 showViewFrame(*i, width, height);
             }
@@ -3239,12 +3171,11 @@ void CelestiaCore::renderOverlay()
                 if (sel != lastSelection)
                 {
                     lastSelection = sel;
-                    selectionNames = starNameList(*(sel.star()),
-                                                  *(sim->getUniverse()->getStarCatalog()));
+                    selectionNames = sim->getUniverse()->getStarCatalog()->getStarNameList(*sel.star());
                 }
 
                 overlay->setFont(titleFont);
-                *overlay << selectionNames.c_str();
+                *overlay << selectionNames;
                 overlay->setFont(font);
                 *overlay << '\n';
                 displayStarInfo(*overlay,
@@ -3252,6 +3183,27 @@ void CelestiaCore::renderOverlay()
                                 *(sel.star()),
                                 *(sim->getUniverse()),
                                 v.length() * 1e-6);
+            }
+            break;
+
+        case Selection::Type_DeepSky:
+            {
+                if (sel != lastSelection)
+                {
+                    lastSelection = sel;
+                    selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
+                }
+
+                overlay->setFont(titleFont);
+                //*overlay << sel.deepsky()->getName().c_str();
+                *overlay << selectionNames;
+                overlay->setFont(font);
+                *overlay << '\n';
+                displayDSOinfo(*overlay,
+                               hudDetail,
+                               *sel.deepsky(),
+                               *sim->getUniverse(),
+                               v.length() * 1e-6 - sel.deepsky()->getRadius());
             }
             break;
 
@@ -3267,24 +3219,6 @@ void CelestiaCore::renderOverlay()
                                   sim->getTime(),
                                   v.length() * 1e-6,
                                   v * astro::microLightYearsToKilometers(1.0));
-            }
-            break;
-
-        case Selection::Type_DeepSky:
-            {
-                overlay->setFont(titleFont);
-                *overlay << sel.deepsky()->getName().c_str();
-                overlay->setFont(font);
-                *overlay << '\n';
-                *overlay << _("Distance: ");
-                displayDistance(*overlay, v.length() * 1e-6);
-                *overlay << '\n';
-                displayApparentDiameter(*overlay, sel.deepsky()->getRadius(),
-                                        v.length() * 1e-6);
-#if 0
-                displayGalaxyInfo(*overlay, *sel.galaxy,
-                                  v.length() * 1e-6);
-#endif
             }
             break;
 
@@ -3326,7 +3260,7 @@ void CelestiaCore::renderOverlay()
             int nb_lines = 3;
             int start = 0;
             glTranslatef(3.0f, -font->getHeight() - 3.0f, 0.0f);
-            std::vector<std::string>::const_iterator iter = typedTextCompletion.begin();
+            vector<std::string>::const_iterator iter = typedTextCompletion.begin();
             if (typedTextCompletionIdx >= nb_cols * nb_lines)
             {
                start = (typedTextCompletionIdx / nb_lines + 1 - nb_cols) * nb_lines;
@@ -3548,58 +3482,46 @@ class SolarSystemLoader : public EnumFilesHandler
     };
 };
 
-class DeepSkyLoader : public EnumFilesHandler
+template <class OBJDB> class CatalogLoader : public EnumFilesHandler
 {
 public:
-    DeepSkyCatalog* catalog;
-    DeepSkyLoader(DeepSkyCatalog* c) : catalog(c) {};
+    OBJDB*      objDB;
+    string      typeDesc;
+    ContentType contentType;
+
+    CatalogLoader(OBJDB* db,
+                  const std::string& typeDesc,
+                  const ContentType& contentType) :
+        objDB      (db),
+        typeDesc   (typeDesc),
+        contentType(contentType)
+    {
+    }
 
     bool process(const string& filename)
     {
-        if (DetermineFileType(filename) == Content_CelestiaDeepSkyCatalog)
+        if (DetermineFileType(filename) == contentType)
         {
             string fullname = getPath() + '/' + filename;
-            clog << _("Loading deep sky catalog: ") << fullname << '\n';
-            ifstream deepSkyFile(fullname.c_str(), ios::in);
-            if (deepSkyFile.good())
+            clog << _("Loading ") << typeDesc << " catalog: " << fullname << '\n';
+            ifstream catalogFile(fullname.c_str(), ios::in);
+            if (catalogFile.good())
             {
-                LoadDeepSkyObjects(*catalog, deepSkyFile, getPath());
-            }
-            else
-            {
-                // Log the failure
-            }
-        }
-        return true;
-    };
-};
-
-class StarLoader : public EnumFilesHandler
-{
-public:
-    StarDatabase* starDB;
-    StarLoader(StarDatabase* s) : starDB(s) {};
-
-    bool process(const string& filename)
-    {
-        if (DetermineFileType(filename) == Content_CelestiaStarCatalog)
-        {
-            string fullname = getPath() + '/' + filename;
-            clog << _("Loading star catalog: ") << fullname << '\n';
-            ifstream starFile(fullname.c_str(), ios::in);
-            if (starFile.good())
-            {
-                bool success = starDB->load(starFile, getPath());
+                bool success = objDB->load(catalogFile, getPath());
                 if (!success)
                 {
                     DPRINTF(0, _("Error reading star file: %s\n"),
                             fullname.c_str());
                 }
+                    DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), fullname.c_str());
             }
         }
         return true;
-    };
+    }
 };
+
+typedef CatalogLoader<StarDatabase> StarLoader;
+typedef CatalogLoader<DSODatabase>  DeepSkyLoader;
 
 
 bool CelestiaCore::initSimulation(const string* configFileName,
@@ -3627,7 +3549,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     {
         config = ReadCelestiaConfig("celestia.cfg");
 
-        std::string localConfigFile = WordExp("~/.celestia.cfg");
+        string localConfigFile = WordExp("~/.celestia.cfg");
         if (localConfigFile != "")
             ReadCelestiaConfig(localConfigFile.c_str(), config);
     }
@@ -3726,19 +3648,36 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         }
     }
 
-    DeepSkyCatalog* deepSkyCatalog = new DeepSkyCatalog();
+    DSONameDatabase* dsoNameDB  = new DSONameDatabase;
+    DSODatabase*     dsoDB      = new DSODatabase;
+    dsoDB->setNameDatabase(dsoNameDB);
+
+    // We'll first read a very large DSO catalog from a bundled file:
     if (config->deepSkyCatalog != "")
     {
-        ifstream deepSkyFile(config->deepSkyCatalog.c_str(), ios::in);
-        if (!deepSkyFile.good())
+        ifstream dsoFile(config->deepSkyCatalog.c_str(), ios::in);
+#if 0 //TODO: define a binary file format for DSOs !!
+        if (!dsoDB->loadBinary(deepSkyFile))
         {
-            warning(_("Error opening deep sky file.\n"));
+            cerr << _("Error reading deep sky file\n");
+            delete dsoDB;
+            return false;
         }
-        else
+#endif
+        if (!dsoFile.good())
         {
-            LoadDeepSkyObjects(*deepSkyCatalog, deepSkyFile, "");
+            cerr << _("Error opening ") << config->deepSkyCatalog << '\n';
+            delete dsoDB;
+            return false;
+        }
+        else if (!dsoDB->load(dsoFile, ""))
+        {
+            cerr << "Cannot read Deep Sky Objects database." << config->deepSkyCatalog << '\n';
+            delete dsoDB;
+            return false;
         }
     }
+    // TODO:add support for additional catalogs declared in the config file.
 
     // Next, read all the deep sky files in the extras directories
     {
@@ -3749,7 +3688,9 @@ bool CelestiaCore::initSimulation(const string* configFileName,
             {
                 Directory* dir = OpenDirectory(*iter);
      
-                DeepSkyLoader loader(deepSkyCatalog);
+                DeepSkyLoader loader(dsoDB,
+                                     "deep sky object",
+                                     Content_CelestiaDeepSkyCatalog);
                 loader.pushDir(*iter);
                 dir->enumFiles(loader, true);
 
@@ -3758,8 +3699,10 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         }
     }
 
-    universe->setDeepSkyCatalog(deepSkyCatalog);
+    dsoDB->finish();
+    universe->setDSOCatalog(dsoDB);
 
+    // Load asterisms:
     if (config->asterismsFile != "")
     {
         ifstream asterismsFile(config->asterismsFile.c_str(), ios::in);
@@ -4021,7 +3964,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         {
             Directory* dir = OpenDirectory(*iter);
 
-            StarLoader loader(starDB);
+            StarLoader loader(starDB, "star", Content_CelestiaStarCatalog);
             loader.pushDir(*iter);
             dir->enumFiles(loader, true);
 
@@ -4215,7 +4158,7 @@ bool CelestiaCore::isRecording()
     return recording;
 }
 
-void CelestiaCore::flash(const std::string& s, double duration)
+void CelestiaCore::flash(const string& s, double duration)
 {
     if (hudDetail > 0)
         showText(s, -1, -1, 0, 5, duration);
@@ -4252,7 +4195,7 @@ void CelestiaCore::notifyWatchers(int property)
 }
 
 
-void CelestiaCore::goToUrl(const std::string& urlStr)
+void CelestiaCore::goToUrl(const string& urlStr)
 {
     Url url(urlStr, this);
     url.goTo();
@@ -4303,17 +4246,17 @@ void CelestiaCore::forward()
 }
 
 
-const std::vector<Url>& CelestiaCore::getHistory() const
+const vector<Url>& CelestiaCore::getHistory() const
 {
     return history;
 }
 
-std::vector<Url>::size_type CelestiaCore::getHistoryCurrent() const
+vector<Url>::size_type CelestiaCore::getHistoryCurrent() const
 {
     return historyCurrent;
 }
 
-void CelestiaCore::setHistoryCurrent(std::vector<Url>::size_type curr)
+void CelestiaCore::setHistoryCurrent(vector<Url>::size_type curr)
 {
     if (curr >= history.size()) return;
     if (historyCurrent == history.size()) {

@@ -50,6 +50,14 @@ using namespace std;
 #define GL_COLOR_SUM_EXT 0x8458
 #endif
 
+
+static const float  STAR_DISTANCE_LIMIT  = 1.0e6f;
+static const double DSO_DISTANCE_LIMIT   = 1.0e9;
+
+static const float  LABELLED_STAR_DISTANCE_LIMIT  = 5.0e4f;
+static const double LABELLED_DSO_DISTANCE_LIMIT   = 5.0e6;
+
+
 static const int StarVertexListSize = 1024;
 
 // Fractional pixel offset used when rendering text as texture mapped
@@ -129,7 +137,7 @@ Renderer::Renderer() :
     windowHeight(0),
     fov(FOV),
     corrFac(1.12f),
-    faintestAutoMag45deg(8.5f),
+    faintestAutoMag45deg(7.0f),
     renderMode(GL_FILL),
     labelMode(NoLabels),
     renderFlags(ShowStars | ShowPlanets),
@@ -662,7 +670,7 @@ Renderer::setStarColorTable(const ColorTemperatureTable* ct)
 
 void Renderer::addLabelledStar(Star* star, const string& label)
 {
-    labelledStars.insert(labelledStars.end(), StarLabel(star, label));
+    labelledStars.push_back(StarLabel(star, label));
 }
 
 
@@ -1417,8 +1425,8 @@ void Renderer::render(const Observer& observer,
         glEnable(GL_TEXTURE_2D);
     }
 
-    if (universe.getDeepSkyCatalog() != NULL)
-        renderDeepSkyObjects(*universe.getDeepSkyCatalog(), observer);
+    if (universe.getDSOCatalog() != NULL)
+        renderDeepSkyObjects(universe, observer, faintestMag);
 
     // Translate the camera before rendering the stars
     glPushMatrix();
@@ -1469,8 +1477,6 @@ void Renderer::render(const Observer& observer,
             disableSmoothLines();
     }
 
-    if (universe.getDeepSkyCatalog() != NULL)
-        labelDeepSkyObjects(*universe.getDeepSkyCatalog(), observer);
     if ((labelMode & StarLabels) != 0 && universe.getStarCatalog() != NULL)
         labelStars(labelledStars, *universe.getStarCatalog(), observer);
     if ((labelMode & ConstellationLabels) != 0 &&
@@ -1928,7 +1934,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
             discSize = min(discSize * (2.0f * a - 1.0f), maxDiscSize);
         a = clamp(a) * fade;
 
-        // We scale up the particle by a factor of 1.5 (at fov = 45deg) 
+        // We scale up the particle by a factor of 1.6 (at fov = 45deg) 
         // so that it's more
         // visible--the texture we use has fuzzy edges, and if we render it
         // in just one pixel, it's likely to disappear.  Also, the render
@@ -6190,54 +6196,88 @@ void Renderer::renderPlanetarySystem(const Star& sun,
 }
 
 
-class StarRenderer : public StarHandler
-{
-public:
-    StarRenderer();
-    ~StarRenderer() {};
-    
-    void process(const Star&, float, float);
 
-public:
+
+template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<OBJ, PREC>
+{
+ public:
+    ObjectRenderer(const PREC distanceLimit);
+
+    void process(const OBJ&, PREC, float) {};
+
+ public:
     const Observer* observer;
-    Point3f position;
+
+    GLContext* context;
+    Renderer*  renderer;
+
     Vec3f viewNormal;
 
-    vector<Renderer::Particle>* glareParticles;
-    vector<RenderListEntry>* renderList;
-    Renderer::StarVertexBuffer* starVertexBuffer;
-
-    float faintestMagNight;
     float fov;
     float size;
     float pixelSize;
     float faintestMag;
+    float faintestMagNight;
     float saturationMag;
     float brightnessScale;
     float brightnessBias;
     float distanceLimit;
 
+    // These are not fully used by this template's descendants
+    // but we place them here just in case a more sophisticated
+    // rendering scheme is implemented:
     int nRendered;
     int nClose;
     int nBright;
     int nProcessed;
+    int nLabelled;
 
-    bool useDiscs;
+    int renderFlags;
+    int labelMode;
+};
+
+
+template <class OBJ, class PREC>
+ObjectRenderer<OBJ, PREC>::ObjectRenderer(const PREC _distanceLimit) :
+    distanceLimit((float) _distanceLimit),
+    nRendered    (0),
+    nClose       (0),
+    nBright      (0),
+    nProcessed   (0),
+    nLabelled    (0)
+{
+}
+
+
+
+
+class StarRenderer : public ObjectRenderer<Star, float>
+{
+ public:
+    StarRenderer();
+
+    void process(const Star& star, float distance, float appMag);
+
+ public:
+    Point3f obsPos;
+
+    vector<Renderer::Particle>* glareParticles;
+    vector<RenderListEntry>*    renderList;
+    Renderer::StarVertexBuffer* starVertexBuffer;
+
+    bool  useDiscs;
     float maxDiscSize;
-    
+
     const ColorTemperatureTable* colorTemp;
 };
 
+
 StarRenderer::StarRenderer() :
+    ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT),
     starVertexBuffer(0),
-    distanceLimit(1.0e6f),
-    nRendered(0),
-    nClose(0),
-    nBright(0),
-    nProcessed(0),
-    useDiscs(false),
-    maxDiscSize(1.0f),
-    colorTemp(NULL)
+    useDiscs        (false),
+    maxDiscSize     (1.0f),
+    colorTemp       (NULL)
 {
 }
 
@@ -6247,9 +6287,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
     nProcessed++;
 
     Point3f starPos = star.getPosition();
-    Vec3f relPos = starPos - position;
-    float orbitalRadius = star.getOrbitalRadius();
-    bool hasOrbit = orbitalRadius > 0.0f;
+    Vec3f   relPos = starPos - obsPos;
+    float   orbitalRadius = star.getOrbitalRadius();
+    bool    hasOrbit = orbitalRadius > 0.0f;
 
     if (distance > distanceLimit)
         return;
@@ -6289,16 +6329,15 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             distance = relPos.length();
 
             // Recompute apparent magnitude using new distance computation
-            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(),
-                                        distance);
+            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
 
-            float f = RenderDistance / distance;
+            float f        = RenderDistance / distance;
             renderDistance = RenderDistance;
-            starPos = position + relPos * f;
+            starPos        = obsPos + relPos * f;
 
             float radius = star.getRadius();
             discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
-            nClose++;
+            ++nClose;
         }
 
         if (discSizeInPixels <= 1)
@@ -6329,7 +6368,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                                           renderDistance * size);
             }
 
-            nRendered++;
+            ++nRendered;
 
             // If the star is brighter than the saturation magnitude, add a
             // halo around it to make it appear more brilliant.  This is a
@@ -6349,7 +6388,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                     p.size = p.size * 3;
                 p.color = Color(starColor, alpha);
                 glareParticles->insert(glareParticles->end(), p);
-                nBright++;
+                ++nBright;
             }
         }
         else
@@ -6379,27 +6418,30 @@ void Renderer::renderStars(const StarDatabase& starDB,
                            const Observer& observer)
 {
     StarRenderer starRenderer;
-    Point3f observerPos = (Point3f) observer.getPosition();
-    observerPos.x *= 1e-6f;
-    observerPos.y *= 1e-6f;
-    observerPos.z *= 1e-6f;
+    Point3f obsPos = (Point3f) observer.getPosition();
+    obsPos.x *= 1e-6f;
+    obsPos.y *= 1e-6f;
+    obsPos.z *= 1e-6f;
 
-    starRenderer.observer = &observer;
-    starRenderer.position = observerPos;
-    starRenderer.viewNormal = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
-    starRenderer.glareParticles = &glareParticles;
-    starRenderer.renderList = &renderList;
+    starRenderer.context          = context;
+    starRenderer.observer         = &observer;
+    starRenderer.obsPos           = obsPos;
+    starRenderer.viewNormal       = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    starRenderer.glareParticles   = &glareParticles;
+    starRenderer.renderList       = &renderList;
     starRenderer.starVertexBuffer = starVertexBuffer;
-    starRenderer.faintestMagNight = faintestMagNight;
     starRenderer.fov              = fov;
+
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
-    starRenderer.size = pixelSize * 1.6f / corrFac;
-    starRenderer.pixelSize = pixelSize;
-    starRenderer.brightnessScale = brightnessScale * corrFac;
-    starRenderer.brightnessBias = brightnessBias;
-    starRenderer.faintestMag = faintestMag;
-    starRenderer.saturationMag = saturationMag;
-    starRenderer.distanceLimit = distanceLimit;
+    starRenderer.size             = pixelSize * 1.6f / corrFac;
+    starRenderer.pixelSize        = pixelSize;
+    starRenderer.brightnessScale  = brightnessScale * corrFac;
+    starRenderer.brightnessBias   = brightnessBias;
+    starRenderer.faintestMag      = faintestMag;
+    starRenderer.faintestMagNight = faintestMagNight;
+    starRenderer.saturationMag    = saturationMag;
+    starRenderer.distanceLimit    = distanceLimit;
+
     if (starStyle == ScaledDiscStars)
     {
         starRenderer.useDiscs = true;
@@ -6418,7 +6460,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starTex->bind();
     starRenderer.starVertexBuffer->start(starStyle == PointStars);
     starDB.findVisibleStars(starRenderer,
-                            observerPos,
+                            obsPos,
                             observer.getOrientation(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
@@ -6430,102 +6472,197 @@ void Renderer::renderStars(const StarDatabase& starDB,
 }
 
 
-void Renderer::renderDeepSkyObjects(const DeepSkyCatalog& catalog,
-                                    const Observer& observer)
+class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
 {
-    Point3d observerPos = (Point3d) observer.getPosition();
-    observerPos.x *= 1e-6;
-    observerPos.y *= 1e-6;
-    observerPos.z *= 1e-6;
+ public:
+    DSORenderer();
 
-    Frustum frustum(degToRad(fov),
-		    (float) windowWidth / (float) windowHeight,
-		    MinNearPlaneDistance);
+    void process(DeepSkyObject* const &, double, float);
 
-    Mat3f viewMat = observer.getOrientation().toMatrix3();
-    Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
-    Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
-    Vec3f v2 = Vec3f( 1,  1, 0) * viewMat;
-    Vec3f v3 = Vec3f(-1,  1, 0) * viewMat;
+ public:
+    Point3d      obsPos;
+    DSODatabase* dsoDB;
+    Frustum      frustum;
 
-    // Kludgy way to diminish brightness of galaxies based on faintest
-    // magnitude.  I need to rethink how galaxies are rendered.
-    float brightness = min((faintestMag - 2.0f) / 4.0f, 1.0f);
-    if (brightness < 0.0f)
+    Mat3f orientationMatrix;
+
+    int wWidth;
+    int wHeight;
+
+    double avgAbsMag;
+};
+
+
+DSORenderer::DSORenderer() :
+    ObjectRenderer<DeepSkyObject*, double>(DSO_DISTANCE_LIMIT),
+    frustum(degToRad(45.0f), 1.0f, 1.0f)
+{
+}
+
+
+void DSORenderer::process(DeepSkyObject* const & dso,
+                          double distanceToDSO,
+                          float  absMag)
+{
+    if (distanceToDSO > distanceLimit)
         return;
 
-    // Render any line primitives with smooth lines (mostly to make
-    // graticules look good.)
-    if ((renderFlags & ShowSmoothLines) != 0)
-        enableSmoothLines();
+    Point3d dsoPos = dso->getPosition();
+    Vec3f   relPos = Vec3f((float)(dsoPos.x - obsPos.x),
+                           (float)(dsoPos.y - obsPos.y),
+                           (float)(dsoPos.z - obsPos.z));
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+    Point3d center = Point3d(0.0f, 0.0f, 0.0f) + relPos * orientationMatrix;
 
-    for (DeepSkyCatalog::const_iterator iter = catalog.begin();
-         iter != catalog.end(); iter++)
+    // Test the object's bounding sphere against the view frustum. If we
+    // avoid this stage, overcrowded octree cells may hit performance badly:
+    // each object (even if it's not visible) would be sent to the OpenGL
+    // pipeline.
+
+    if (renderFlags & dso->getRenderMask())
     {
-        DeepSkyObject* obj = *iter;
-
-        if ((renderFlags & obj->getRenderMask()) == 0)
-            continue;
-
-        Point3d pos = obj->getPosition();
-        float radius = obj->getRadius();
-        Vec3f offset = Vec3f((float) (pos.x - observerPos.x),
-                             (float) (pos.y - observerPos.y),
-                             (float) (pos.z - observerPos.z));
-        Point3f center = Point3f(0.0f, 0.0f, 0.0f) + offset *
-            conjugate(observer.getOrientation()).toMatrix3(); 
-
-        // Test the object's bounding sphere against the view frustum
-	if (frustum.testSphere(center, radius) != Frustum::Outside)
+        double  dsoRadius  = dso->getRadius();
+        if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
         {
-            float distanceToObject = offset.length() - radius;
-            if (distanceToObject < 0)
-                distanceToObject = 0;
-            float minimumFeatureSize = pixelSize * 0.5f * distanceToObject;
+            if (distanceToDSO < 0)
+                distanceToDSO = 0;
 
-            if (radius < 10.0)
+            // display looks satisfactory for 0.2 < brightness < O(1.0)
+            // Ansatz: brightness = a - b*appMag(distanceToDSO), emulates
+            // eye sensitivity...
+            // determine a,b such that
+            // a-b*absMag = absMag/avgAbsMag ~ 1; a-b*faintestMag = 0.2
+            // the 2nd eqn guarantees that the faintest galaxies are still
+            // visible.
+            // the parameters in the 'close' correction are fixed by matching
+            // the gradients at 10 pc and requiring brightness = r + ri at distanceToDSO = 0
+
+            double ri   = 0.25, pc10 = 32.6167;
+            double r   = absMag/avgAbsMag;
+            double num = 5*(absMag - faintestMag);
+            double a   = r*(avgAbsMag - 5*faintestMag)/num;
+            double b   = (1.0 - 5*r)/num;
+            double c   = 0.4605170186*ri/b-1.0;
+            double close = ri*(pc10 - distanceToDSO)/(pc10 + distanceToDSO*c);
+            double brightness = (distanceToDSO  >= pc10) ?
+                a - b * astro::absToAppMag(absMag, (float) distanceToDSO): r + close;
+            brightness = 1.5*brightness*(faintestMag-3.0)/renderer->getFaintestAM45deg();
+            if (brightness < 0.0)
+                brightness = 0.0;
+
+            if (dsoRadius < 1000.0)
             {
                 // Small objects may be prone to clipping; give them special
                 // handling.  We don't want to always set the projection
                 // matrix, since that could be expensive with large galaxy
                 // catalogs.
-                float nearZ = distanceToObject;
-                float farZ = offset.length() + radius * 2;
-                if (nearZ < radius * 0.001f)
+                float nearZ = (float) distanceToDSO;
+                float farZ  = (float) (relPos.length() + dsoRadius * 2);
+                if (nearZ < dsoRadius * 0.001f)
                 {
-                    nearZ = radius * 0.001f;
-                    farZ = nearZ * 10000.0f;
+                    nearZ = (float) (dsoRadius * 0.001);
+                    farZ  = nearZ * 10000.0f;
                 }
 
                 glMatrixMode(GL_PROJECTION);
                 glPushMatrix();
                 glLoadIdentity();
                 gluPerspective(fov,
-                               (float) windowWidth / (float) windowHeight,
-                               nearZ, farZ);
+                               (float) wWidth / (float) wHeight,
+                               nearZ,
+                               farZ);
                 glMatrixMode(GL_MODELVIEW);
             }
 
             glPushMatrix();
-            glTranslate(offset);
-            obj->render(*context,
-                        offset,
-                        observer.getOrientation(),
-                        brightness,
+            glTranslate(relPos);
+
+            dso->render(*context,
+                        relPos,
+                        observer->getOrientation(),
+                        (float) brightness,
                         pixelSize);
             glPopMatrix();
 
-            if (radius < 10.0)
+#if 1
+            if (dsoRadius < 1000.0)
             {
                 glMatrixMode(GL_PROJECTION);
                 glPopMatrix();
                 glMatrixMode(GL_MODELVIEW);
             }
-        }
+#endif
+        } // frustum test
+    } // renderFlags check
+
+    // avoid label overlap by FOV/fov-weighted distance cut-off!
+    // only render those labels that are in front of the camera:
+    if ((dso->getLabelMask() & labelMode)           &&
+        distanceToDSO < LABELLED_DSO_DISTANCE_LIMIT * FOV/fov &&
+        dot(relPos, viewNormal) > 0)
+    {
+        renderer->addLabel(dsoDB->getDSOName(dso),
+                            Color(0.1f, 0.85f, 0.85f, 1.0f),
+                            Point3f(relPos.x, relPos.y, relPos.z));
     }
+}
+
+
+void Renderer::renderDeepSkyObjects(const Universe&  universe,
+                                    const Observer& observer,
+                                    const float     faintestMagNight)
+{
+    DSORenderer dsoRenderer;
+
+    Point3d obsPos    = (Point3d) observer.getPosition();
+    obsPos.x         *= 1e-6;
+    obsPos.y         *= 1e-6;
+    obsPos.z         *= 1e-6;
+
+    DSODatabase* dsoDB  = universe.getDSOCatalog();
+
+    dsoRenderer.context          = context;
+    dsoRenderer.renderer         = this;
+    dsoRenderer.dsoDB            = dsoDB;
+    dsoRenderer.orientationMatrix = conjugate(observer.getOrientation()).toMatrix3();
+
+    dsoRenderer.observer          = &observer;
+    dsoRenderer.obsPos            = obsPos;
+    dsoRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    dsoRenderer.fov              = fov;
+    // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
+    dsoRenderer.size             = pixelSize * 1.6f / corrFac;
+    dsoRenderer.pixelSize        = pixelSize;
+    dsoRenderer.brightnessScale  = brightnessScale * corrFac;
+    dsoRenderer.brightnessBias   = brightnessBias;
+
+    dsoRenderer.avgAbsMag        = dsoDB->getAverageAbsoluteMagnitude();
+    dsoRenderer.faintestMag      = faintestMag;
+    dsoRenderer.faintestMagNight = faintestMagNight;
+    dsoRenderer.saturationMag    = saturationMag;
+    dsoRenderer.renderFlags      = renderFlags;
+    dsoRenderer.labelMode        = labelMode;
+    //cout<<"dsoRenderer:   "<<faintestMag<<"   "<<saturationMag<<endl;
+    dsoRenderer.wWidth           = windowWidth;
+    dsoRenderer.wHeight          = windowHeight;
+
+    dsoRenderer.frustum = Frustum(degToRad(fov),
+                        (float) windowWidth / (float) windowHeight,
+                        MinNearPlaneDistance);
+
+    // Render any line primitives with smooth lines
+    // (mostly to make graticules look good.)
+    if ((renderFlags & ShowSmoothLines) != 0)
+        enableSmoothLines();
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    dsoDB->findVisibleDSOs(dsoRenderer,
+                           obsPos,
+                           observer.getOrientation(),
+                           degToRad(fov),
+                           (float) windowWidth / (float) windowHeight,
+                           2*faintestMagNight);
 
     if ((renderFlags & ShowSmoothLines) != 0)
         disableSmoothLines();
@@ -6578,44 +6715,18 @@ void Renderer::renderCelestialSphere(const Observer& observer)
 }
 
 
-void Renderer::labelDeepSkyObjects(const DeepSkyCatalog& catalog,
-                                   const Observer& observer)
-{
-    Point3f observerPos_ly = (Point3f) observer.getPosition() * ((float)1e-6);
-
-    for (DeepSkyCatalog::const_iterator iter = catalog.begin();
-         iter != catalog.end(); iter++)
-    {
-        DeepSkyObject* obj = *iter;
-
-        if ((obj->getLabelMask() & labelMode) != 0)
-        {
-            Point3d posd = obj->getPosition();
-            Point3f pos((float) posd.x, (float) posd.y, (float) posd.z);
-
-            Vec3f rpos = pos - observerPos_ly;
-            if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
-            {
-                addLabel(obj->getName(), Color(0.7f, 0.7f, 0.0f),
-                         Point3f(rpos.x, rpos.y, rpos.z));
-            }
-        }
-    }
-}
-
-
-void Renderer::labelStars(const vector<StarLabel>& stars,
+void Renderer::labelStars(const vector<StarLabel>& labelledStars,
                           const StarDatabase& starDB,
                           const Observer& observer)
 {
-    Point3f observerPos_ly = (Point3f) observer.getPosition() * ((float)1e-6);
+    Point3f observerPos_ly = (Point3f) observer.getPosition() * 1e-6f;
 
-    for (vector<StarLabel>::const_iterator iter = stars.begin(); iter != stars.end(); iter++)
+    for (vector<StarLabel>::const_iterator iter = labelledStars.begin(); iter != labelledStars.end(); ++iter)
     {
-        Star* star = iter->star;
-        Point3f pos = star->getPosition();
+        Star* star     = iter->obj;
+        Point3f pos    = star->getPosition();
         float distance = pos.distanceTo(observerPos_ly);
-        float appMag = (distance > 0.0f) ?
+        float appMag    = (distance > 0.0f) ?
             astro::absToAppMag(star->getAbsoluteMagnitude(), distance) : -100.0f;
         
         if (appMag < faintestMag && distance <= distanceLimit)
@@ -6669,7 +6780,8 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                 avg = avg / (float) chain.size();
                 avg = avg * 1e6f;
                 Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
-                if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0) {
+                if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
+                {
                     addLabel(ast->getName(labelMode & I18nConstellationLabels),
                              Color(0.5f, 0.0f, 1.0f, 1.0f),
                              Point3f(rpos.x, rpos.y, rpos.z));

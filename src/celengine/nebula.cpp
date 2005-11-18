@@ -30,6 +30,17 @@ Nebula::Nebula() :
 }
 
 
+const char* Nebula::getType() const
+{
+    return "Nebula";
+}
+
+
+void Nebula::setType(const string& typeStr)
+{
+}
+
+
 ResourceHandle Nebula::getModel() const
 {
     return model;
@@ -87,13 +98,13 @@ void Nebula::render(const GLContext&,
 }
 
 
-unsigned int Nebula::getRenderMask()
+unsigned int Nebula::getRenderMask() const
 {
     return Renderer::ShowNebulae;
 }
 
 
-unsigned int Nebula::getLabelMask()
+unsigned int Nebula::getLabelMask() const
 {
     return Renderer::NebulaLabels;
 }

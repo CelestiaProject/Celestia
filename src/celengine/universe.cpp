@@ -19,14 +19,15 @@
 #include "meshmanager.h"
 #include "universe.h"
 
+#define ANGULAR_RES 3.5e-6
+
 using namespace std;
 
-#define ANGULAR_RES 3.5e-6
 
 Universe::Universe() :
     starCatalog(NULL),
     solarSystemCatalog(NULL),
-    deepSkyCatalog(NULL),
+    dsoCatalog(NULL),
     asterisms(NULL),
     /*boundaries(NULL),*/
     markers(NULL)
@@ -63,14 +64,14 @@ void Universe::setSolarSystemCatalog(SolarSystemCatalog* catalog)
 }
 
 
-DeepSkyCatalog* Universe::getDeepSkyCatalog() const
+DSODatabase* Universe::getDSOCatalog() const
 {
-    return deepSkyCatalog;
+    return dsoCatalog;
 }
 
-void Universe::setDeepSkyCatalog(DeepSkyCatalog* catalog)
+void Universe::setDSOCatalog(DSODatabase* catalog)
 {
-    deepSkyCatalog = catalog;
+    dsoCatalog = catalog;
 }
 
 
@@ -319,7 +320,9 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     
     if ((pickInfo->atanTolerance > ANGULAR_RES ? pickInfo->atanTolerance: 
         ANGULAR_RES) > appOrbitRadius)
+    {
         return true;
+    }
 
     bodyDir.normalize();
     Vec3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
@@ -712,39 +715,172 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 }
 
 
+class DSOPicker : public DSOHandler
+{
+public:
+    DSOPicker(const Point3d&, const Vec3d&, float);
+    ~DSOPicker() {};
+
+    void process(DeepSkyObject* const &, double, float);
+
+public:
+    const DeepSkyObject* pickedDSO;
+    Point3d pickOrigin;
+    Vec3d   pickDir;
+    double  sinAngle2Closest;
+};
+
+
+DSOPicker::DSOPicker(const Point3d& pickOrigin,
+                     const Vec3d&   pickDir,
+                     float angle) :
+    pickedDSO       (NULL),
+    pickOrigin      (pickOrigin),
+    pickDir         (pickDir),
+    sinAngle2Closest(sin(angle/2.0) > ANGULAR_RES ? sin(angle/2.0) :
+                                                    ANGULAR_RES )
+{
+}
+
+
+void DSOPicker::process(DeepSkyObject* const & dso, double distance, float appMag)
+{
+    Vec3d relativeDSOPos = dso->getPosition() - pickOrigin;
+    Vec3d dsoDir = relativeDSOPos;
+    dsoDir.normalize();
+
+    double sinAngle2 = 0.0;
+
+    double distance2;
+    if (testIntersection(Ray3d(Point3d(0.0, 0.0, 0.0), pickDir),
+                         Sphered(Point3d(0.0, 0.0, 0.0) + relativeDSOPos, (double) dso->getRadius()), distance2))
+    {
+        Point3d dsoPos = dso->getPosition();
+        dsoDir         = Vec3d(dsoPos.x * 1.0e-6 - pickOrigin.x,
+                               dsoPos.y * 1.0e-6 - pickOrigin.y,
+                               dsoPos.z * 1.0e-6 - pickOrigin.z);
+        dsoDir.normalize();
+    }
+
+    Vec3d dsoMissd   = dsoDir - Vec3d(pickDir.x, pickDir.y, pickDir.z);
+    sinAngle2        = sqrt(dsoMissd * dsoMissd)/2.0;
+
+    if (sinAngle2 <= sinAngle2Closest)
+    {
+        sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 : ANGULAR_RES;
+        pickedDSO        = dso;
+    }
+}
+
+
+class CloseDSOPicker : public DSOHandler
+{
+public:
+    CloseDSOPicker(const Point3d& pos,
+                   const Vec3d& dir,
+                   double maxDistance,
+                   float angle);
+    ~CloseDSOPicker() {};
+
+    void process(DeepSkyObject* const & dso, double distance, float appMag);
+
+public:
+    Point3d              pickOrigin;
+    Vec3d                pickDir;
+    double maxDistance;
+    const DeepSkyObject* closestDSO;
+    double closestDistance;
+};
+
+
+CloseDSOPicker::CloseDSOPicker(const Point3d& pos,
+                               const Vec3d& dir,
+                               double                maxDistance,
+                               float angle) :
+    pickOrigin      (pos),
+    pickDir         (dir),
+    maxDistance     (maxDistance),
+    closestDSO      (NULL),
+    closestDistance(1.0e32)
+{
+}
+
+
+void CloseDSOPicker::process(DeepSkyObject* const & dso,
+                             double distance,
+                             float appMag)
+{
+
+    if (distance > maxDistance)
+        return;
+
+    double  distance2  = 0.0;
+    if (testIntersection(Ray3d(pickOrigin, pickDir),
+                         Sphered(dso->getPosition(), (double) dso->getRadius()),
+                         distance2))
+    {
+        // Don't select the object the observer is currently in:
+        if (pickOrigin.distanceTo(dso->getPosition()) > dso->getRadius() &&
+            distance2 < closestDistance)
+        {
+            closestDSO = dso;
+            closestDistance  = distance2;
+        }
+    }
+}
+
+
 Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
                                       const Vec3f& direction,
                                       float faintestMag,
                                       float tolerance)
 {
-    Selection sel;
-    Point3d p = (Point3d) origin;
-    Ray3d pickRay(Point3d(p.x * 1e-6, p.y * 1e-6, p.z * 1e-6),
-                  Vec3d(direction.x, direction.y, direction.z));
-    double closestDistance = 1.0e30;
+    Point3d orig = (Point3d) origin;
+    orig.x *= 1e-6;
+    orig.y *= 1e-6;
+    orig.z *= 1e-6;
 
-    if (deepSkyCatalog != NULL)
+    Vec3d dir   = Vec3d(direction.x, direction.y, direction.z);
+
+    CloseDSOPicker closePicker(orig, dir, 1e9, tolerance);
+
+    dsoCatalog->findCloseDSOs(closePicker, orig, 1e9);
+    if (closePicker.closestDSO != NULL)
     {
-        for (DeepSkyCatalog::const_iterator iter = deepSkyCatalog->begin();
-             iter != deepSkyCatalog->end(); iter++)
-        {
-            double distance = 0.0;
-            if (testIntersection(pickRay, 
-                                 Sphered((*iter)->getPosition(), (*iter)->getRadius()),
-                                 distance))
-            {
-                // Don't select an object that contains the origin
-                if (pickRay.origin.distanceTo((*iter)->getPosition()) > (*iter)->getRadius() &&
-                    distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    sel = Selection(*iter);
-                }
-            }
-        }
+        return Selection(const_cast<DeepSkyObject*>(closePicker.closestDSO));
     }
 
-    return sel;
+    Quatf rotation;
+    Vec3d n(0, 0, -1);
+    Vec3d Miss       = n - dir;
+    double sinAngle2 = sqrt(Miss * Miss)/2.0;
+
+    if (sinAngle2 <= ANGULAR_RES)
+    {
+        rotation.setAxisAngle(Vec3f(1, 0, 0), 0);
+    }
+    else if (sinAngle2 >= 1.0 - 0.5 * ANGULAR_RES * ANGULAR_RES)
+    {
+        rotation.setAxisAngle(Vec3f(1, 0, 0), (float) PI);
+    }
+    else
+    {
+        Vec3f axis = direction ^ Vec3f((float)n.x, (float)n.y, (float)n.z);
+        axis.normalize();
+        rotation.setAxisAngle(axis, (float) (2.0 * asin(sinAngle2)));
+    }
+
+    DSOPicker picker(orig, dir, tolerance);
+    dsoCatalog->findVisibleDSOs(picker,
+                                orig,
+                                rotation,
+                                tolerance,
+                                1.0f,
+                                faintestMag);
+    if (picker.pickedDSO != NULL)
+        return Selection(const_cast<DeepSkyObject*>(picker.pickedDSO));
+    else
+        return Selection();
 }
 
 
@@ -909,21 +1045,21 @@ Selection Universe::find(const string& s,
                          int nContexts,
                          bool i18n)
 {
-    if (deepSkyCatalog != NULL)
+    if (starCatalog != NULL)
     {
-        for (DeepSkyCatalog::const_iterator iter = deepSkyCatalog->begin();
-             iter != deepSkyCatalog->end(); iter++)
-        {
-            if (UTF8StringCompare((*iter)->getName(), s) == 0)
-                return Selection(*iter);
-        }
-    }
-
     Star* star = starCatalog->find(s);
     if (star != NULL)
         return Selection(star);
+    }
 
-    for (int i = 0; i < nContexts; i++)
+    if (dsoCatalog != NULL)
+    {
+        DeepSkyObject* dso = dsoCatalog->find(s);
+        if (dso != NULL)
+            return Selection(dso);
+    }
+
+    for (int i=0; i<nContexts; ++i)
     {
         Selection sel = findObjectInContext(contexts[i], s, i18n);
         if (!sel.empty())
@@ -975,19 +1111,19 @@ Selection Universe::findPath(const string& s,
 }
 
 
-std::vector<std::string> Universe::getCompletion(const string& s,
+vector<string> Universe::getCompletion(const string& s,
                                                  Selection* contexts,
                                                  int nContexts,
                                                  bool withLocations)
 {
-    std::vector<std::string> completion;
+    vector<string> completion;
 
-    // Solar bodies first
+    // Solar bodies first:
     for (int i = 0; i < nContexts; i++)
     {
         if (withLocations && contexts[i].getType() == Selection::Type_Body)
         {
-            std::vector<Location*>* locations = contexts[i].body()->getLocations();
+            vector<Location*>* locations = contexts[i].body()->getLocations();
             if (locations != NULL)
             {
                 for (vector<Location*>::const_iterator iter = locations->begin();
@@ -1005,38 +1141,38 @@ std::vector<std::string> Universe::getCompletion(const string& s,
             PlanetarySystem* planets = sys->getPlanets();
             if (planets != NULL)
             {
-                std::vector<std::string> bodies = planets->getCompletion(s);
+                vector<string> bodies = planets->getCompletion(s);
                 completion.insert(completion.end(),
                                   bodies.begin(), bodies.end());
             }
         }
     }
 
-    // Deep sky object
-    if (deepSkyCatalog != NULL)
-    {
-        for (DeepSkyCatalog::const_iterator iter = deepSkyCatalog->begin();
-             iter != deepSkyCatalog->end(); iter++)
+    // Deep sky objects:
+    if (dsoCatalog != NULL)
         {
-            if (UTF8StringCompare((*iter)->getName(), s, s.length()) == 0)
-                completion.push_back(Selection(*iter).getName());
-        }
+        vector<string> dsos  = dsoCatalog->getCompletion(s);
+        completion.insert(completion.end(), dsos.begin(), dsos.end());
     }
 
-    // finally stars;
-    std::vector<std::string> stars = starCatalog->getCompletion(s);
+    // and finally stars;
+    if (starCatalog != NULL)
+    {
+        vector<string> stars  = starCatalog->getCompletion(s);
     completion.insert(completion.end(), stars.begin(), stars.end());
+    }
 
     return completion;
 }
 
-std::vector<std::string> Universe::getCompletionPath(const string& s,
+
+vector<string> Universe::getCompletionPath(const string& s,
                                                      Selection* contexts,
                                                      int nContexts,
                                                      bool withLocations)
 {
-    std::vector<std::string> completion;
-    std::vector<std::string> locationCompletion;
+    vector<string> completion;
+    vector<string> locationCompletion;
     string::size_type pos = s.rfind('/', s.length());
 
     if (pos == string::npos)
@@ -1045,20 +1181,23 @@ std::vector<std::string> Universe::getCompletionPath(const string& s,
     string base(s, 0, pos);
     Selection sel = findPath(base, contexts, nContexts, true);
 
-    if (sel.empty()){ std::cerr << "nothing found" << std::endl;
+    if (sel.empty())
+    {
+        cerr << "nothing found" << endl;
         return completion;
-}
+    }
+
     if (sel.getType() == Selection::Type_DeepSky)
     {
-        completion.push_back(sel.deepsky()->getName());
+        completion.push_back(dsoCatalog->getDSOName(sel.deepsky()));
         return completion;
     }
 
     PlanetarySystem* worlds = NULL;
     if (sel.getType() == Selection::Type_Body)
-    {std::cerr << "body found" << std::endl;
+    {cerr << "body found" << endl;
         worlds = sel.body()->getSatellites();
-        std::vector<Location*>* locations = sel.body()->getLocations();
+        vector<Location*>* locations = sel.body()->getLocations();
         if (locations != NULL && withLocations)
         {
             string search = s.substr(pos + 1);
