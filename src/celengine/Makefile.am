@@ -22,6 +22,9 @@ libcelengine_a_SOURCES = \
 	dds.cpp \
 	deepskyobj.cpp \
 	dispmap.cpp \
+	dsodb.cpp \
+	dsoname.cpp \
+	dsooctree.cpp \
 	execution.cpp \
 	fragmentprog.cpp \
 	frame.cpp \
@@ -41,7 +44,6 @@ libcelengine_a_SOURCES = \
 	multitexture.cpp \
 	nebula.cpp \
 	observer.cpp \
-	octree.cpp \
 	opencluster.cpp \
 	orbit.cpp \
 	overlay.cpp \
@@ -61,6 +63,7 @@ libcelengine_a_SOURCES = \
 	starcolors.cpp \
 	stardb.cpp \
 	starname.cpp \
+	staroctree.cpp \
 	stellarclass.cpp \
 	texmanager.cpp \
 	texture.cpp \
