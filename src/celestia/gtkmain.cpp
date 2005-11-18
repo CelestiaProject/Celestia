@@ -324,14 +324,14 @@ static gint menuRenderer(GtkWidget* w, gpointer flag)
 {
 	bool state = getActiveState(w);
 
-    appRenderer->setRenderFlags((appRenderer->getRenderFlags() & ~(int)flag) |
-                             (state ? (int)flag : 0));
+    appRenderer->setRenderFlags((appRenderer->getRenderFlags() & ~(long)flag) |
+                             (state ? (long)flag : 0));
 
 	prefs->renderFlags = appRenderer->getRenderFlags();
 
 	#ifdef GNOME
 	// Update GConf
-	switch ((int)flag) {
+	switch ((long)flag) {
 		case Renderer::ShowStars: setFlag(0, "stars", state); break;
 		case Renderer::ShowPlanets: setFlag(0, "planets", state); break;
 		case Renderer::ShowGalaxies: setFlag(0, "galaxies", state); break;
@@ -361,12 +361,12 @@ static gint menuLabeler(GtkWidget* w, gpointer flag)
 {
 	bool state = getActiveState(w);
 
-    appRenderer->setLabelMode((appRenderer->getLabelMode() & ~(int)flag) |
-                           (state ? (int)flag : 0));
+    appRenderer->setLabelMode((appRenderer->getLabelMode() & ~(long)flag) |
+                           (state ? (long)flag : 0));
 
 	#ifdef GNOME
 	// Update GConf
-	switch ((int)flag) {
+	switch ((long)flag) {
 		case Renderer::StarLabels: setFlag(2, "star", state); break;
 		case Renderer::PlanetLabels: setFlag(2, "planet", state); break;
 		case Renderer::MoonLabels: setFlag(2, "moon", state); break;
@@ -388,12 +388,12 @@ static gint menuOrbiter(GtkWidget* w, gpointer flag)
 {
 	bool state = getActiveState(w);
 
-    appRenderer->setOrbitMask((appRenderer->getOrbitMask() & ~(int)flag) |
-                           (state ? (int)flag : 0));
+    appRenderer->setOrbitMask((appRenderer->getOrbitMask() & ~(long)flag) |
+                           (state ? (long)flag : 0));
 
 	#ifdef GNOME
 	// Update GConf
-	switch ((int)flag) {
+	switch ((long)flag) {
 		case Body::Planet: setFlag(1, "planet", state); break;
 		case Body::Moon: setFlag(1, "moon", state); break;
 		case Body::Asteroid: setFlag(1, "asteroid", state); break;
@@ -409,7 +409,7 @@ static gint menuOrbiter(GtkWidget* w, gpointer flag)
 static gint menuStarStyle(GtkWidget*, gpointer flag)
 {
 	// Set up the desired style
-	switch ((int)flag)
+	switch ((long)flag)
 	{
 		case Renderer::FuzzyPointStars:
 			prefs->starStyle = Renderer::FuzzyPointStars;
@@ -901,7 +901,7 @@ static gint changeDistanceLimit(GtkRange *slider, gpointer)
 	appCore->getRenderer()->setDistanceLimit(limit);
 
 	char labeltext[10] = "100000 ly";
-	sprintf(labeltext, "%d ly", (int)limit);
+	sprintf(labeltext, "%ld ly", (long)limit);
 	gtk_label_set_text(GTK_LABEL(maglabel), labeltext);
 
 	return TRUE;
@@ -3312,7 +3312,7 @@ void contextMenu(float, float, Selection sel) {
 
 		case Selection::Type_DeepSky:
 		{
-			AppendMenu(popup, menuCenter, sel.deepsky()->getName().c_str(), 0);
+			AppendMenu(popup, menuCenter, appSim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str(), 0);
 			AppendMenu(popup, NULL, NULL, 0);
 			AppendMenu(popup, menuGoto, "_Goto", 0);
 			AppendMenu(popup, menuFollow, "_Follow", 0);
