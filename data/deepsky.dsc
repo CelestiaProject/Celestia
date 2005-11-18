@@ -13218,31 +13218,33 @@ Galaxy "Milky Way"
         Dec -28.93
         Distance 28000
         Radius 50000
+	AbsMag -20.5
         Axis [ 0.866 0.491 0.091 ] 
         Angle 176 
 }
 
-# Large Magellanic Cloud  
-Galaxy "LMC"
+Galaxy "LMC:ESO 56-115"
 {
-        Type "Irr"
-        RA   5.328
-        Dec  -68.95
-        Distance 179000
-        Radius 15000
-        Detail 0.5
+        Type  "Irr"
+        InfoURL  "http://simbad.u-strasbg.fr/sim-id.pl?Ident=LMC"
+        RA            5.3930
+        Dec         -69.7561
+        Distance     1.7e+05  # method: CPN
+        Radius     1.596e+04
+        AbsMag        -17.68
+        Axis    [  0.1665   0.0257  -0.9857]
+        Angle    148.7330
 }
 
-# Small Magellanic Cloud / NGC 292
-Galaxy "SMC"
+Galaxy "SMC:NGC 292"
 {
-        Type "Irr"
-        RA   0.862
-        Dec  -73.23
-        Distance 210000
-        Radius 12000
-        Axis [ 1 0 0 ]
-        Angle 100
-        Detail 0.5
+        Type  "Irr"
+        InfoURL  "http://simbad.u-strasbg.fr/sim-id.pl?Ident=SMC"
+        RA            0.8773
+        Dec         -72.8003
+        Distance     2.1e+05  # method: CN
+        Radius          9659
+        AbsMag        -16.34
+        Axis    [  0.7544   0.6385   0.1526]
+        Angle    205.8079
 }
-
