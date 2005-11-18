@@ -13,11 +13,13 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <celutil/basictypes.h>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <celengine/glcontext.h>
 #include <celengine/parser.h>
 
+extern const float DSO_DEFAULT_ABS_MAGNITUDE;
 
 class Nebula;
 class Galaxy;
@@ -29,14 +31,20 @@ class DeepSkyObject
     DeepSkyObject();
     virtual ~DeepSkyObject();
 
-    std::string getName() const;
-    void setName(const std::string&);
+    inline uint32 getCatalogNumber() const
+    {
+        return catalogNumber;
+    }
+    void setCatalogNumber(uint32);
 
     Point3d getPosition() const;
-    void setPosition(Point3d);
+    void setPosition(const Point3d&);
+
+    virtual const char* getType() const = 0;
+    virtual void setType(const std::string&) = 0;
 
     Quatf getOrientation() const;
-    void setOrientation(Quatf);
+    void setOrientation(const Quatf&);
 
     float getRadius() const;
     void setRadius(float);
@@ -55,15 +63,20 @@ class DeepSkyObject
                         float brightness,
                         float pixelSize) = 0;
 
-    virtual unsigned int getRenderMask() { return 0; };
-    virtual unsigned int getLabelMask() { return 0; };
+    virtual unsigned int getRenderMask() const { return 0; }
+    virtual unsigned int getLabelMask() const { return 0; }
+
+    enum
+    {
+        InvalidCatalogNumber = 0xffffffff
+    };
 
  private:
-    std::string name;
-    Point3d position;
-    Quatf orientation;
-    float radius;
-    float absMag;
+    uint32       catalogNumber;
+    Point3d      position;
+    Quatf        orientation;
+    float        radius;
+    float        absMag;
     std::string* infoURL;
 };
 

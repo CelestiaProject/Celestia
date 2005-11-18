@@ -964,7 +964,7 @@ View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
 }
 
 // Fill list with all Observers
-void getObservers(CelestiaCore* appCore, std::vector<Observer*>& list)
+void getObservers(CelestiaCore* appCore, vector<Observer*>& list)
 {
     for (unsigned int i = 0; i < appCore->views.size(); i++)
     {
@@ -2121,7 +2121,8 @@ static int object_name(lua_State* l)
         lua_pushstring(l, sel->body()->getName().c_str());
         break;
     case Selection::Type_DeepSky:
-        lua_pushstring(l, sel->deepsky()->getName().c_str());
+        lua_pushstring(l, getAppCore(l, AllErrors)->getSimulation()->getUniverse()
+                         ->getDSOCatalog()->getDSOName(sel->deepsky()).c_str());
         break;
     case Selection::Type_Star:
         lua_pushstring(l, getAppCore(l, AllErrors)->getSimulation()->getUniverse()
@@ -2247,7 +2248,8 @@ static int object_getinfo(lua_State* l)
     {
         setTable(l, "type", "deepsky");
         DeepSkyObject* deepsky = sel->deepsky();
-        setTable(l, "name", deepsky->getName().c_str());
+        setTable(l, "name", getAppCore(l, AllErrors)->getSimulation()->getUniverse()
+                           ->getDSOCatalog()->getDSOName(sel->deepsky()).c_str());
         setTable(l, "radius", (lua_Number)deepsky->getRadius());
     }
     else if (sel->location() != NULL)
@@ -3833,7 +3835,7 @@ static int celestia_getobservers(lua_State* l)
     checkArgs(l, 1, 1, "No arguments expected for celestia:getobservers()");
     CelestiaCore* appCore = this_celestia(l);
 
-    std::vector<Observer*> observer_list;
+    vector<Observer*> observer_list;
     getObservers(appCore, observer_list);
     lua_newtable(l);
     for (unsigned int i = 0; i < observer_list.size(); i++)

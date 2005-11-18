@@ -1706,8 +1706,9 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
 
     case Selection::Type_DeepSky:
         {
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER,
-                       sel.deepsky()->getName().c_str());
+            Simulation* sim = appCore->getSimulation();
+            name = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
@@ -3020,7 +3021,7 @@ static bool parseCommandLine(int argc, char* argv[])
             if (isLastArg)
             {
                 MessageBox(NULL,
-                           "Configuration file name expected after --config",
+                           "Configuration file name expected after --conf",
                            "Celestia Command Line Error",
                            MB_OK | MB_ICONERROR);
                 return false;

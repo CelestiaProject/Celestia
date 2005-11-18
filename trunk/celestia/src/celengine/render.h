@@ -253,30 +253,45 @@ class Renderer
         float cosSkyCapAltitude;
     };
 
-    struct StarLabel
+    template <class OBJ> struct ObjectLabel
     {
-        Star* star;
-        string label;
+        OBJ*        obj;
+        std::string label;
 
-        StarLabel() : star(NULL), label("") {};
-        StarLabel(Star* _star, const std::string& _label) :
-            star(_star), label(_label) {};
-        StarLabel(const StarLabel& sl) : star(sl.star), label(sl.label) {};
-        StarLabel& operator=(const StarLabel& sl)
+        ObjectLabel() :
+            obj  (NULL),
+            label("")
+        {};
+
+        ObjectLabel(OBJ* _obj, const std::string& _label) :
+            obj  (_obj),
+            label(_label)
+        {};
+
+        ObjectLabel(const ObjectLabel& objLbl) :
+            obj  (objLbl.obj),
+            label(objLbl.label)
+        {};
+
+        ObjectLabel& operator = (const ObjectLabel& objLbl)
         {
-            star = sl.star;
-            label = sl.label;
+            obj   = objLbl.obj;
+            label = objLbl.label;
             return *this;
         };
     };
+
+    typedef ObjectLabel<Star>          StarLabel;
+    typedef ObjectLabel<DeepSkyObject> DSOLabel;    // currently not used
 
  private:
     void setFieldOfView(float);
     void renderStars(const StarDatabase& starDB,
                      float faintestVisible,
                      const Observer& observer);
-    void renderDeepSkyObjects(const DeepSkyCatalog& catalog,
-                              const Observer& observer);
+    void renderDeepSkyObjects(const Universe&,
+                              const Observer&,
+                              float faintestMagNight);
     void renderCelestialSphere(const Observer& observer);
     void renderPlanetarySystem(const Star& sun,
                                const PlanetarySystem& solSystem,
@@ -349,11 +364,9 @@ class Renderer
                      double now,
                      vector<EclipseShadow>& shadows);
 
-    void labelDeepSkyObjects(const DeepSkyCatalog& catalog,
-			     const Observer& observer);
-    void labelStars(const std::vector<StarLabel>& stars,
-                    const StarDatabase& starDB,
-                    const Observer& observer);
+    void labelStars(const std::vector<StarLabel>& labelledStars,
+                    const StarDatabase&,
+                    const Observer&);
     void labelConstellations(const AsterismList& asterisms,
                              const Observer& observer);
     void renderParticles(const std::vector<Particle>& particles,
@@ -417,6 +430,7 @@ class Renderer
     std::vector<LightSource> lightSourceLists[MaxSolarSystems];
 
     std::vector<StarLabel> labelledStars;
+    std::vector<DSOLabel>  labelledDSOs;
 
     double modelMatrix[16];
     double projMatrix[16];

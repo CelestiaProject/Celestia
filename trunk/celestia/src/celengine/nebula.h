@@ -24,6 +24,9 @@ class Nebula : public DeepSkyObject
  public:
     Nebula();
 
+    virtual const char* getType() const;
+    virtual void setType(const std::string&);
+
     virtual bool load(AssociativeArray*, const std::string&);
     virtual void render(const GLContext& context,
                         const Vec3f& offset,
@@ -31,11 +34,24 @@ class Nebula : public DeepSkyObject
                         float brightness,
                         float pixelSize);
 
-    virtual unsigned int getRenderMask();
-    virtual unsigned int getLabelMask();
+    virtual unsigned int getRenderMask() const;
+    virtual unsigned int getLabelMask() const;
 
     void setModel(ResourceHandle);
     ResourceHandle getModel() const;
+
+ public:
+    enum NebulaType
+    {
+        Emissive           = 0,
+        Reflective         = 1,
+        Dark               = 2,
+        Planetary          = 3,
+        Galactic           = 4,
+        SupernovaRemnant   = 5,
+        Bright_HII_Region  = 6,
+        NotDefined         = 7
+    };
 
  private:
     ResourceHandle model;
