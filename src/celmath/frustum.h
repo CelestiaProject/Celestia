@@ -16,8 +16,8 @@
 class Frustum
 {
  public:
-    Frustum(float fov, float aspectRatio, float n);
-    Frustum(float fov, float aspectRatio, float n, float f);
+    Frustum(float fov, float aspectRatio, float nearDist);
+    Frustum(float fov, float aspectRatio, float nearDist, float farDist);
 
     void transform(const Mat3f&);
     void transform(const Mat4f&);
@@ -41,6 +41,7 @@ class Frustum
 
     Aspect test(const Point3f&) const;
     Aspect testSphere(const Point3f& center, float radius) const;
+    Aspect testSphere(const Point3d& center, double radius) const;
 
  private:
     void init(float, float, float, float);

@@ -68,6 +68,28 @@ Frustum::Aspect Frustum::testSphere(const Point3f& center, float radius) const
     return (intersections == 0) ? Inside : Intersect;
 }
 
+
+Frustum::Aspect Frustum::testSphere(const Point3d& center, double radius) const
+{
+    int nPlanes = infinite ? 5 : 6;
+    int intersections = 0;
+
+    for (int i = 0; i < nPlanes; i++)
+    {
+        //TODO: Celestia should incorporate some casting operators overloading to accomodate all this kind of stuff:
+        Vec3f plNormal       = planes[i].normal;
+        Vec3d plNormalDbl(plNormal.x, plNormal.y, plNormal.z); 
+         
+        double distanceToPlane = plNormalDbl.x * center.x + plNormalDbl.y * center.y + plNormalDbl.z * center.z + planes[i].d;        
+        if (distanceToPlane < -radius)
+            return Outside;
+        else if (distanceToPlane <= radius)
+            intersections |= (1 << i);
+    }
+
+    return (intersections == 0) ? Inside : Intersect;
+}
+
 #if 0
 // See if the half space defined by the plane intersects the frustum.  For the
 // plane equation p(x, y, z) = ax + by + cz + d = 0, the halfspace is
