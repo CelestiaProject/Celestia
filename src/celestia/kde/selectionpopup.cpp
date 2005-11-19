@@ -107,7 +107,7 @@ void SelectionPopup::init()
     }
     else if (sel.deepsky() != NULL)
     {
-        insertTitle(QString::fromUtf8(sel.deepsky()->getName().c_str()), 0);
+        insertTitle(QString::fromUtf8(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str()), 0);
         insert(this, sel, MENUMAXSIZE);
     }
 
@@ -191,22 +191,27 @@ void SelectionPopup::process(int id)
     }
     if (actionId == 6) {
         QString url;
-        if (sel.body() != NULL) {
+        if (sel.body() != NULL)
+        {
             url = QString(sel.body()->getInfoURL().c_str());
-            if (url == "") {
+            if (url == "")
+            {
                 QString name = QString(sel.body()->getName().c_str()).lower();
                 url = QString("http://www.nineplanets.org/") + name + ".html";
             }
-        } else if (sel.star() != NULL) {
-            if (sel.star()->getCatalogNumber() != 0) {
+        }
+        else if (sel.star() != NULL)
+        {
+            if (sel.star()->getCatalogNumber() != 0)
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=HIP %1")
                       .arg(sel.star()->getCatalogNumber() & ~0xf0000000);
-            } else {
+            else
                 url = QString("http://www.nineplanets.org/sun.html");
-            }
-        } else if (sel.deepsky() != NULL) {
+        }
+        else if (sel.deepsky() != NULL)
+        {
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=%1")
-                      .arg(sel.deepsky()->getName().c_str());
+                      .arg(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str());
         }
         KRun::runURL(url, "text/html");
         return;
@@ -250,18 +255,11 @@ void SelectionPopup::process(int id)
 const char* SelectionPopup::getSelectionName(const Selection& sel) const
 {
     if (sel.body() != NULL)
-    {
         return sel.body()->getName(true).c_str();
-    }
     else if (sel.star() != NULL)
-    {
-        Simulation *sim = appCore->getSimulation();
-        return sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star())).c_str();
-    }
+        return appCore->getSimulation()->getUniverse()->getStarCatalog()->getStarName(*(sel.star())).c_str();
     else if (sel.deepsky() != NULL)
-    {
-        return sel.deepsky()->getName().c_str();
-    }
+        return appCore->getSimulation()->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str();
 
     return "";
 }
