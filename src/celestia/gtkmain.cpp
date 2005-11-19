@@ -523,8 +523,8 @@ static void menuAbout()
 	#ifdef GNOME
     about = gnome_about_new("Celestia",
 	                        VERSION,
-	                        "(c) 2001-2004 Chris Laurel",
-	                        "3D Space Simulation",
+	                        "(c) 2001-2005 Chris Laurel",
+	                        "OpenGL 3D Space Simulation",
 	                        authors,
 	                        NULL,
 	                        NULL,
@@ -532,7 +532,7 @@ static void menuAbout()
 	#else
 	// Join the author array into a single string.
 	int i = 0;
-	string auth = "Celestia, (c) 2001-2004 Chris Laurel\n\n";
+	string auth = "Celestia, (c) 2001-2005 Chris Laurel\n\n";
 	while (authors[i] != NULL) {
 		if (i != 0) auth += ",\n";
 		auth += authors[i];
