@@ -4,7 +4,7 @@
 *  A real-time space simulation that lets you experience our universe in  *
 *  three dimensions.                                                      *
 *                                                                         *
-*                    Copyright (c)2001-2004, Chris Laurel                 *
+*                    Copyright (c)2001-2005, Chris Laurel                 *
 *                           <claurel@shatters.net>                        *
 *                                                                         *
 *-------------------------------------------------------------------------*
@@ -63,6 +63,9 @@ The KDE3 version is built with...
   ./configure --with-kde
   make
   make install
+
+  Note: some systems may require configure to be executed with
+        --with-qt-includes=/usr/include/qt3
 
 The Gnome version is built with...
   ./configure --with-gnome
@@ -293,6 +296,12 @@ Celestia User Forums:
 Selden's List of Resources for Celestia :
   http://www.lepp.cornell.edu/~seb/celestia/
 
+Celestia Developer Center
+  http://celestia.teyssier.org/
+
+Celestia for Gnome
+  http://pat.suwalski.net/celestia/
+
 Celestia Source Code (SourceForge.net):
   http://sourceforge.net/projects/celestia/
 
@@ -306,7 +315,7 @@ Authors
 
 Contributors
 ------------
-  Deon Ramsey ........... UNIX installer, GTK interface
+  Deon Ramsey ........... UNIX installer, GTK1 interface
   Christopher ANDRE ..... Eclipse Finder
   Colin Walters ......... Endianness fixes
   Peter Chapman ......... Orbit path rendering changes
