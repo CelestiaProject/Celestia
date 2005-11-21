@@ -2703,7 +2703,10 @@ static void displayDSOinfo(Overlay& overlay,
                            const Universe& universe,
                            double distance)
 {
-    overlay << dso.getType() << '\n';
+    char descBuf[128];
+
+    dso.getDescription(descBuf, sizeof(descBuf));
+    overlay << descBuf << '\n';
     overlay << _("Distance: ");
     displayDistance(overlay, distance);
     overlay << '\n';
