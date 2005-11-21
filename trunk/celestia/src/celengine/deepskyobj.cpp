@@ -44,18 +44,6 @@ void DeepSkyObject::setCatalogNumber(uint32 n)
     catalogNumber = n;
 }
 
-/*
-string DeepSkyObject::getName() const
-{
-    return name;
-}
-
-void DeepSkyObject::setName(const string& s)
-{
-    name = s;
-}
-*/
-
 Point3d DeepSkyObject::getPosition() const
 {
     return position;
@@ -94,6 +82,13 @@ float DeepSkyObject::getAbsoluteMagnitude() const
 void DeepSkyObject::setAbsoluteMagnitude(float _absMag)
 {
     absMag = _absMag;
+}
+
+size_t DeepSkyObject::getDescription(char* buf, size_t bufLength) const
+{
+    if (bufLength > 0)
+        buf[0] = '\0';
+    return 0;
 }
 
 string DeepSkyObject::getInfoURL() const

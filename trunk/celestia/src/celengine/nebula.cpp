@@ -41,6 +41,13 @@ void Nebula::setType(const string& typeStr)
 }
 
 
+size_t Nebula::getDescription(char* buf, size_t bufLength) const
+{
+    // Should use snprintf, but it's not available on Windows
+    return sprintf(buf, _("%s"), getType());
+}
+
+
 ResourceHandle Nebula::getModel() const
 {
     return model;

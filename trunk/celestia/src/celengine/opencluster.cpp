@@ -39,6 +39,13 @@ void OpenCluster::setType(const std::string& typeStr)
 }
 
 
+size_t OpenCluster::getDescription(char* buf, size_t bufLength) const
+{
+    // Should use snprintf, but it's not available on Windows
+    return sprintf(buf, _("%s"), getType());
+}
+
+
 bool OpenCluster::load(AssociativeArray* params, const string& resPath)
 {
     // No parameters specific to open cluster, though a list of member stars

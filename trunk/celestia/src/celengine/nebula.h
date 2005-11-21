@@ -26,6 +26,7 @@ class Nebula : public DeepSkyObject
 
     virtual const char* getType() const;
     virtual void setType(const std::string&);
+    virtual size_t getDescription(char* buf, size_t bufLength) const;
 
     virtual bool load(AssociativeArray*, const std::string&);
     virtual void render(const GLContext& context,
