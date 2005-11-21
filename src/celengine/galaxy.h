@@ -39,6 +39,7 @@ class Galaxy : public DeepSkyObject
 
     virtual const char* getType() const;
     virtual void setType(const std::string&);
+    virtual size_t getDescription(char* buf, size_t bufLength) const;
 
     float getDetail() const;
     void setDetail(float);

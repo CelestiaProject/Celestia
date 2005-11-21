@@ -1,6 +1,6 @@
 // galaxy.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2005, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -9,7 +9,7 @@
 
 #include <fstream>
 #include <algorithm>
-#include <stdio.h>
+#include <cstdio>
 #include <cassert>
 #include "celestia.h"
 #include <celmath/mathlib.h>
@@ -108,7 +108,7 @@ const char* Galaxy::getType() const
     return GalaxyTypeNames[(int) type].name;
 }
 
-void Galaxy::setType(const std::string& typeStr)
+void Galaxy::setType(const string& typeStr)
 {
     type = Galaxy::Irr;
     for (int i = 0; i < (int) (sizeof(GalaxyTypeNames) / sizeof(GalaxyTypeNames[0])); ++i)
@@ -149,6 +149,14 @@ void Galaxy::setType(const std::string& typeStr)
         break;    
     }
 } 
+
+
+size_t Galaxy::getDescription(char* buf, size_t bufLength) const
+{
+    // Should use snprintf, but it's not available on Windows; the
+    // buffer *must* be large enough.
+    return sprintf(buf, _("Galaxy (Hubble type: %s)"), getType());
+}
 
 
 GalacticForm* Galaxy::getForm() const
@@ -484,8 +492,8 @@ void InitializeForms()
         float rr,gg,bb;
         float rho  = (float) i / 255.0f;
         // generic Hue profile as deduced from true-color imaging for spirals
-        float h = 30.0f*tanh(15.68f*(0.1086f-rho));
-        if ( rho > 0.1086f)
+        float h = 30.0f * (float) tanh(15.68 * (0.1086 - rho));
+        if (rho > 0.1086f)
             h += 260.0f;
         //convert Hue to RGB
         Galaxy::hsv2rgb( &rr, &gg, &bb, h , 0.15f, 1.0f);
