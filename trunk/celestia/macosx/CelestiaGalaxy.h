@@ -6,20 +6,19 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "CelestiaVector.h"
 
 @interface CelestiaGalaxy : NSObject {
     NSValue* _data;
 }
 -(NSString*)type;
--(void)setType:(NSString*)s;
+//-(void)setType:(NSString*)s;
 -(NSString *)name;
 -(CelestiaVector*)orientation;
 -(void)setOrientation:(CelestiaVector*)q;
 -(CelestiaVector*)position;
 -(void)setPosition:(CelestiaVector*)q;
--(void)setName:(NSString*)s;
+//-(void)setName:(NSString*)s;
 -(NSNumber *)radius;
 -(void)setRadius:(NSNumber*)r;
 -(NSNumber *)detail;
