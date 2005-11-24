@@ -5,9 +5,6 @@
 //  Created by Hank Ramsey on Fri Oct 29 2004.
 //  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
 //
-#define __AIFF__
-
-#import <Foundation/Foundation.h>
 
 @interface CelestiaSettings : NSObject {
     @private
@@ -33,6 +30,8 @@
 -(void) loadUserDefaults ;
 
 -(void) storeUserDefaults ;
+
+-(void) upgradeUserDefaults: (NSDictionary *)dict fromVersion: (NSString *)old ;
 
 // Time Settings
 
