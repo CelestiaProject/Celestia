@@ -6,7 +6,6 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "NSArray_Extensions.h"
 
 @interface MyVector : NSMutableArray /*<NSCoding>*/ {

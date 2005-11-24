@@ -9,3 +9,9 @@
 #ifndef gettext
 #define gettext(s)  s
 #endif
+
+#ifdef __OBJC__
+# define __AIFF__
+# import <Cocoa/Cocoa.h>
+# undef DPRINTF
+#endif
