@@ -193,6 +193,13 @@
 			);
 			hasScannedForEncodings = 0;
 			isa = PBXProject;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				fr,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA;
 			projectDirPath = "";
 			targets = (
@@ -261,6 +268,7 @@
 		29B97318FDCFA39411CA2CEA = {
 			children = (
 				29B97319FDCFA39411CA2CEA,
+				E5AACCF50935FFE700136FCD,
 			);
 			isa = PBXVariantGroup;
 			name = MainMenu.nib;
@@ -319,6 +327,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX DEBUG=1";
 				PREBINDING = NO;
 				ZERO_LINK = NO;
@@ -354,6 +363,7 @@
 		E54343100783C3F200053094 = {
 			children = (
 				E54343110783C3F200053094,
+				E5AACCF70935FFFE00136FCD,
 			);
 			isa = PBXVariantGroup;
 			name = BrowserWindow.nib;
@@ -624,6 +634,11 @@
 				0C76BFC1085215B100D31A90,
 				0C76BFD208537EDB00D31A90,
 				E57E35100892A42A008E2F7F,
+				E5AACCEA0935FEB100136FCD,
+				E5AACCEC0935FEB100136FCD,
+				E5AACCEE0935FEB100136FCD,
+				E5AACCEF0935FEB100136FCD,
+				E5AACCF10935FEB100136FCD,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1516,7 +1531,6 @@
 				E56430E007769C9000E2C4A3,
 				E56430E107769C9000E2C4A3,
 				E56430E207769C9000E2C4A3,
-				E56430E307769C9000E2C4A3,
 				E56430E407769C9000E2C4A3,
 				E56430E507769C9000E2C4A3,
 				E56430E607769C9000E2C4A3,
@@ -1602,6 +1616,10 @@
 				E56A3DB80848C19800A21D7E,
 				E56A5AED0848F92200A21D7E,
 				0C76BFD108537EDB00D31A90,
+				E5AACCE90935FEB100136FCD,
+				E5AACCEB0935FEB100136FCD,
+				E5AACCED0935FEB100136FCD,
+				E5AACCF00935FEB100136FCD,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1800,12 +1818,6 @@
 			settings = {
 			};
 		};
-		E56430E307769C9000E2C4A3 = {
-			fileRef = F51C6DC702959A17014901DC;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		E56430E407769C9000E2C4A3 = {
 			fileRef = F51C6DC902959A17014901DC;
 			isa = PBXBuildFile;
@@ -1870,12 +1882,14 @@
 			fileRef = F51C6DD502959A17014901DC;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-DDPRINTF=//";
 			};
 		};
 		E56430EF07769C9000E2C4A3 = {
 			fileRef = F51C6DD602959A17014901DC;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-DDPRINTF=//";
 			};
 		};
 		E56430F007769C9000E2C4A3 = {
@@ -2859,6 +2873,158 @@
 			settings = {
 			};
 		};
+		E5AACCE00935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = dsodb.cpp;
+			path = ../src/celengine/dsodb.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE10935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = dsodb.h;
+			path = ../src/celengine/dsodb.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE20935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = dsoname.cpp;
+			path = ../src/celengine/dsoname.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE30935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = dsoname.h;
+			path = ../src/celengine/dsoname.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE40935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = dsooctree.cpp;
+			path = ../src/celengine/dsooctree.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE50935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = dsooctree.h;
+			path = ../src/celengine/dsooctree.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE60935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = name.h;
+			path = ../src/celengine/name.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE70935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = staroctree.cpp;
+			path = ../src/celengine/staroctree.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE80935FEB100136FCD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = staroctree.h;
+			path = ../src/celengine/staroctree.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5AACCE90935FEB100136FCD = {
+			fileRef = E5AACCE00935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+				COMPILER_FLAGS = "-DDPRINTF=//";
+			};
+		};
+		E5AACCEA0935FEB100136FCD = {
+			fileRef = E5AACCE10935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5AACCEB0935FEB100136FCD = {
+			fileRef = E5AACCE20935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5AACCEC0935FEB100136FCD = {
+			fileRef = E5AACCE30935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5AACCED0935FEB100136FCD = {
+			fileRef = E5AACCE40935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5AACCEE0935FEB100136FCD = {
+			fileRef = E5AACCE50935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5AACCEF0935FEB100136FCD = {
+			fileRef = E5AACCE60935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5AACCF00935FEB100136FCD = {
+			fileRef = E5AACCE70935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5AACCF10935FEB100136FCD = {
+			fileRef = E5AACCE80935FEB100136FCD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5AACCF50935FFE700136FCD = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = fr;
+			path = fr.lproj/MainMenu.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5AACCF70935FFFE00136FCD = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = fr;
+			path = fr.lproj/BrowserWindow.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		E5B615060777307F001BB2BF = {
 			isa = PBXFileReference;
 			lastKnownFileType = image.icns;
@@ -3324,6 +3490,15 @@
 		};
 		F51C6D52029596B4014901DC = {
 			children = (
+				E5AACCE00935FEB100136FCD,
+				E5AACCE10935FEB100136FCD,
+				E5AACCE20935FEB100136FCD,
+				E5AACCE30935FEB100136FCD,
+				E5AACCE40935FEB100136FCD,
+				E5AACCE50935FEB100136FCD,
+				E5AACCE60935FEB100136FCD,
+				E5AACCE70935FEB100136FCD,
+				E5AACCE80935FEB100136FCD,
 				E589B6D9078AC511005B8DD9,
 				E589B6DA078AC511005B8DD9,
 				E589B6DB078AC511005B8DD9,
@@ -3361,7 +3536,6 @@
 				F51C6DC402959A17014901DC,
 				F51C6DC502959A17014901DC,
 				F51C6DC602959A17014901DC,
-				F51C6DC702959A17014901DC,
 				F51C6DC802959A17014901DC,
 				F51C6DC902959A17014901DC,
 				F51C6DCA02959A17014901DC,
@@ -3952,14 +4126,6 @@
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = observer.cpp;
 			path = ../src/celengine/observer.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F51C6DC702959A17014901DC = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = octree.cpp;
-			path = ../src/celengine/octree.cpp;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};

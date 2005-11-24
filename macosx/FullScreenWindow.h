@@ -6,8 +6,6 @@
 //  Copyright 2005 Da Woon Jung. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
 
 @interface FullScreenWindow : NSWindow
 

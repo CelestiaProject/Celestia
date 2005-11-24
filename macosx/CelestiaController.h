@@ -5,9 +5,7 @@
 //  Created by Bob Ippolito on Tue May 28 2002.
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
-#define __AIFF__
 
-#import <AppKit/AppKit.h>
 #import "CelestiaAppCore.h"
 #import "CelestiaSettings.h"
 #import "FavoritesDrawerController.h"
