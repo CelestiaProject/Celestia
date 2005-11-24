@@ -7,15 +7,8 @@
 //
 
 #import "CelestiaSettings.h"
- 
-// #import "NSString_ObjCPlusPlus.h"
-// #import "Astro.h"
- #import <AppKit/AppKit.h>
-
 #import "NSString_ObjCPlusPlus.h"
-
 #import "CelestiaController.h"
-//#include "celestiacore.h"
 #import "CelestiaAppCore.h"
 #include "celestiacore.h"
 #include "celestia.h"
@@ -51,8 +44,13 @@ class MacOSXWatcher : public CelestiaWatcher
 
         static CelestiaCore *appCore;
 
-#define CS_DefaultsName @"Celestia-1.3.2"
+#define CS_DefaultsName @"Celestia-1.4.0"
+#define CS_NUM_PREV_VERSIONS 1
 #define TAGDEF(tag,key) key, [NSNumber numberWithInt: tag], 
+
+static NSString *CS_PREV_VERSIONS[CS_NUM_PREV_VERSIONS] = {
+    @"Celestia-1.3.2"
+};
 
 CelestiaSettings* sharedInstance;
 
@@ -208,10 +206,22 @@ static NSMutableDictionary* tagMap;
 {
 	NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
 	NSDictionary* dict = [defs objectForKey: CS_DefaultsName ];
-        if (dict == nil )
+    if (dict == nil )
+    {
+        // Scan for older versions
+        int i = 0;
+        for (; i < CS_NUM_PREV_VERSIONS; ++i)
         {
+            if ((dict = [defs objectForKey:CS_PREV_VERSIONS[i]]))
+                break;
         }
-        return dict;
+
+        if (dict)
+        {
+            [self upgradeUserDefaults: dict fromVersion: CS_PREV_VERSIONS[i]];
+        }
+    }
+    return dict;
 }
 
 -(void) loadUserDefaults 
@@ -236,6 +246,13 @@ static NSMutableDictionary* tagMap;
 	NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
 	[ defs setObject: [self defaultsDictionary] forKey: CS_DefaultsName ];
 //        NSLog(@"stored user defaults");
+}
+
+-(void) upgradeUserDefaults: (NSDictionary *)dict fromVersion: (NSString *)old
+{
+    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    [defs setObject: dict forKey: CS_DefaultsName];
+    [defs removeObjectForKey: old];
 }
 
 -(id) valueForTag: (int) tag { 
