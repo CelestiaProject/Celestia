@@ -1,4 +1,4 @@
-# Catalog of 179 known extrasolar planets.
+# Catalog of 180 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
@@ -4440,6 +4440,36 @@ AltSurface "limit of knowledge" "HD 222404/b"
 }
 
 AltSurface "limit of knowledge" "HD 213240/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 81040"
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       2180     # M.sin(i) = 6.86 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+81040"
+
+	EllipticalOrbit {
+		Period          2.7425
+		SemiMajorAxis   1.94
+		Eccentricity    0.526
+		ArgOfPericenter 308
+		MeanAnomaly     15
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 81040/b"
 {
 	Texture "extrasolar-lok.*"
 }
