@@ -14,7 +14,7 @@
 #include "celestiacore.h"
 #include "celestia.h"
 #include "selection.h"
-#include "starBrowser.h"
+#include "starbrowser.h"
 
 @implementation BrowserWindowController
 
@@ -36,18 +36,29 @@ static CelestiaCore *appCore;
 
 - (NSDictionary*) deepSkyDict
 {
-    int objCount = 100;
-    NSMutableDictionary* newDict = [NSMutableDictionary dictionaryWithCapacity: objCount];
+    int objCount;
+    NSMutableDictionary* newDict;
     int i = 0;
-    DeepSkyCatalog* catalog = appCore->getSimulation()->getUniverse()->getDeepSkyCatalog();
-    for (DeepSkyCatalog::const_iterator iter = catalog->begin();
-         i<objCount && iter != catalog->end(); iter++)
+    DSODatabase* catalog = appCore->getSimulation()->getUniverse()->getDSOCatalog();
+    DeepSkyObject *obj;
+    NSString *name;
+
+    objCount = catalog->size();
+    if (objCount > 100)
+        objCount = 100;
+    newDict = [NSMutableDictionary dictionaryWithCapacity: objCount];
+
+    for (; i < objCount; ++i)
     {
-        DeepSkyObject* obj = *iter;
-	NSString* name = [NSString  stringWithStdString: obj->getName() ];
-        [newDict setObject: name forKey: name];
-        i++;
+        obj = catalog->getDSO(i);
+        if (obj)
+        {
+            name = [NSString stringWithStdString:
+                catalog->getDSOName(obj)];
+            [newDict setObject: name forKey: name];
+        }
     }
+
     [newDict setObject: [[newDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
     [newDict setObject: @"" forKey: @"_path" ];
     return newDict;       

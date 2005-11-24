@@ -10,8 +10,10 @@
 #import "CelestiaGalaxy_PrivateAPI.h"
 #import "CelestiaVector_PrivateAPI.h"
 #import "NSString_ObjCPlusPlus.h"
+#import "CelestiaAppCore.h"
+#include "celestiacore.h"
 
-NSDictionary* galaxyTypeDict;
+
 @implementation CelestiaGalaxy(PrivateAPI)
 -(CelestiaGalaxy*)initWithGalaxy:(Galaxy*)g
 {
@@ -30,10 +32,7 @@ NSDictionary* galaxyTypeDict;
 */
 
 @implementation CelestiaGalaxy
-+(void)initialize
-{
-    galaxyTypeDict = [[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:Galaxy::S0],@"S0",[NSNumber numberWithInt:Galaxy::Sa],@"Sa",[NSNumber numberWithInt:Galaxy::Sb],@"Sb",[NSNumber numberWithInt:Galaxy::Sc],@"Sc",[NSNumber numberWithInt:Galaxy::SBa],@"SBa",[NSNumber numberWithInt:Galaxy::SBb],@"SBb",[NSNumber numberWithInt:Galaxy::SBc],@"SBc",[NSNumber numberWithInt:Galaxy::E0],@"E0",[NSNumber numberWithInt:Galaxy::E1],@"E1",[NSNumber numberWithInt:Galaxy::E2],@"E2",[NSNumber numberWithInt:Galaxy::E2],@"E3",[NSNumber numberWithInt:Galaxy::E2],@"E4",[NSNumber numberWithInt:Galaxy::E2],@"E5",[NSNumber numberWithInt:Galaxy::E2],@"E6",[NSNumber numberWithInt:Galaxy::E2],@"E7",[NSNumber numberWithInt:Galaxy::Irr],@"Irr",nil,nil] retain];
-}
+
 -(void)dealloc
 {
     if (_data != nil) {
@@ -44,22 +43,17 @@ NSDictionary* galaxyTypeDict;
 }
 -(NSString*)type
 {
-    NSArray* keys = [galaxyTypeDict allKeys];
-    NSNumber* n = [NSNumber numberWithInt:[self galaxy]->getType()];
-    unsigned int i;
-    for (i=0;i<[keys count];i++) {
-        if ([[galaxyTypeDict objectForKey:[keys objectAtIndex:i]] isEqualToNumber:n])
-            return [keys objectAtIndex:i];
-    }
-    return @"Unknown";
+    return [NSString stringWithUTF8String:[self galaxy]->getType()];
 }
--(void)setType:(NSString*)s
-{
-    [self galaxy]->setType((Galaxy::GalaxyType)[[galaxyTypeDict objectForKey:s] intValue]);
-}
+
+//-(void)setType:(NSString*)s
+//{
+//    [self galaxy]->setType([s stdString]);
+//}
+
 -(NSString *)name
 {
-    return [NSString stringWithStdString:[self galaxy]->getName()];
+    return [NSString stringWithStdString:[[CelestiaAppCore sharedAppCore] appCore]->getSimulation()->getUniverse()->getDSOCatalog()->getDSOName([self galaxy])];
 }
 -(CelestiaVector*)orientation
 {
@@ -77,10 +71,10 @@ NSDictionary* galaxyTypeDict;
 {
     [self galaxy]->setPosition([q point3d]);
 }
--(void)setName:(NSString*)s
-{
-    [self galaxy]->setName([s stdString]);
-}
+//-(void)setName:(NSString*)s
+//{
+//    [self galaxy]->setName([s stdString]);
+//}
 -(NSNumber *)radius
 {
     return [NSNumber numberWithFloat:[self galaxy]->getRadius()];
