@@ -3,7 +3,8 @@
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius 467 
+	Radius 487.5        # 975x909km
+	Oblateness 0.068    # Thomas et al, Nature, 8 Sep 2005
 
 	EllipticalOrbit 
 	{ 
