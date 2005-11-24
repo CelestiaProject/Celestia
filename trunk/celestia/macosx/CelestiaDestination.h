@@ -6,8 +6,6 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 
 @interface CelestiaDestination : NSObject {
     NSValue* _data;

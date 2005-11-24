@@ -6,7 +6,6 @@
 //  2005-05 Modified substantially by Da Woon Jung
 //
 
-#import <Foundation/Foundation.h>
 
 @interface CGLInfo : NSObject {
 

@@ -6,10 +6,6 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
-#define __AIFF__
-#import <Foundation/Foundation.h>
-#import <AppKit/AppKit.h>
-
 #import "CelestiaDestination.h"
 #import "CelestiaFavorite.h"
 #import "CelestiaFavorites.h"

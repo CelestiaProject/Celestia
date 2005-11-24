@@ -6,7 +6,6 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 
 @interface RenderPanelController : NSWindowController
 {

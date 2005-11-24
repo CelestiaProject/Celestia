@@ -1,6 +1,5 @@
 /* FavoriteInfoWindowController */
 
-#import <Cocoa/Cocoa.h>
 #import "CelestiaFavorite.h"
 #import "CelestiaAppCore.h"
 #import "FavoritesDrawerController.h"

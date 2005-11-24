@@ -7,7 +7,6 @@
 //
 
 #include <unistd.h>
-#import <Cocoa/Cocoa.h>
 #import "CelestiaController.h"
 #import "FavoritesDrawerController.h"
 #import "CelestiaOpenGLView.h"
