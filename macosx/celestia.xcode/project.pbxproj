@@ -45,6 +45,7 @@
 		089C165CFE840E0CC02AAC07 = {
 			children = (
 				089C165DFE840E0CC02AAC07,
+				E5AAD31E09361B4100136FCD,
 			);
 			isa = PBXVariantGroup;
 			name = InfoPlist.strings;
@@ -3022,6 +3023,14 @@
 			lastKnownFileType = wrapper.nib;
 			name = fr;
 			path = fr.lproj/BrowserWindow.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5AAD31E09361B4100136FCD = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = fr;
+			path = fr.lproj/InfoPlist.strings;
 			refType = 4;
 			sourceTree = "<group>";
 		};
