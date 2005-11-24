@@ -17,7 +17,6 @@
 #import "CelestiaUniversalCoord_PrivateAPI.h"
 #import "CelestiaUniverse_PrivateAPI.h"
 #import "Astro.h"
-#import <AppKit/AppKit.h>
 
 #import "CelestiaController.h"
 #include "celestiacore.h"
@@ -284,9 +283,16 @@ static NSMutableDictionary* tagDict;
 -(BOOL)initSimulation
 {
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSString *confFileSetting;
+    std::string confFile;
     NSArray *extrasDirsSetting;
     std::vector<std::string> extrasDirs;
     NSString *extrasDir;
+
+    if ((confFileSetting = [prefs stringForKey:@"conf"]))
+    {
+        confFile = [confFileSetting stdString];
+    }
 
     if ((extrasDirsSetting = [prefs stringArrayForKey:@"extrasDirs"]))
     {
@@ -295,7 +301,8 @@ static NSMutableDictionary* tagDict;
             extrasDirs.push_back([extrasDir stdString]);
     }
 
-    return (BOOL)appCore->initSimulation(nil, extrasDirsSetting ? &extrasDirs : nil);
+    return (BOOL)appCore->initSimulation(confFileSetting ? &confFile : nil,
+                                         extrasDirsSetting ? &extrasDirs : nil);
 }
 
 -(BOOL)initRenderer
