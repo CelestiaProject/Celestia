@@ -2180,6 +2180,14 @@ static int object_getinfo(lua_State* l)
         setTable(l, "temperature", (lua_Number)star->getTemperature());
         setTable(l, "rotationPeriod", (lua_Number)star->getRotationElements().period);
         setTable(l, "bolometricMagnitude", (lua_Number)star->getBolometricMagnitude());
+
+        if (star->getOrbitBarycenter() != NULL)
+        {
+            Selection parent(star->getOrbitBarycenter());
+            lua_pushstring(l, "parent");
+            object_new(l, parent);
+            lua_settable(l, -3);
+        }
     }
     else if (sel->body() != NULL)
     {
