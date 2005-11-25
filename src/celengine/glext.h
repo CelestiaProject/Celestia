@@ -950,6 +950,13 @@ namespace glx
 };
 
 
+#ifndef GL_ARB_point_sprite
+#define GL_ARB_point_sprite 1
+#define GL_POINT_SPRITE_ARB               0x8861
+#define GL_COORD_REPLACE_ARB              0x8862
+#endif
+
+
 #ifndef GL_ARB_fragment_shader
 #define GL_ARB_fragment_shader 1
 #define GL_FRAGMENT_SHADER_ARB            0x8B30
