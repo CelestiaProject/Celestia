@@ -237,6 +237,32 @@ class Renderer
         float radius;
     };
 
+    
+    class PointStarVertexBuffer
+    {
+    public:
+        PointStarVertexBuffer(unsigned int _capacity);
+        ~PointStarVertexBuffer();
+        void start(const GLContext&);
+        void render();
+        void finish();
+        void addStar(const Point3f& f, const Color&, float);
+
+    private:
+        struct StarVertex
+        {
+            Point3f position;
+            float size;
+            unsigned char color[4];
+            float pad;
+        };
+
+        unsigned int capacity;
+        unsigned int nStars;
+        StarVertex* vertices;
+        const GLContext* context;
+    };
+
  private:
     struct SkyVertex
     {
@@ -438,7 +464,7 @@ class Renderer
     bool useCompressedTextures;
     bool useVertexPrograms;
     bool useRescaleNormal;
-    bool useMinMaxBlending;
+    bool usePointSprite;
     bool useClampToBorder;
     unsigned int textureResolution;
 
