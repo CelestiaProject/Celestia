@@ -75,10 +75,7 @@
 {
     return draggedNodes;
 }
--(void)close
-{
-    [drawer close];
-}
+
 -(IBAction)close:(id)sender
 {
     [self close];
@@ -90,7 +87,6 @@
         fav = [(NSMenuItem*)menuItem representedObject];
     [fav activate];
     [outlineView deselectAll:self];
-    [drawer close];
 }
 -(void)awakeFromNib
 {
@@ -111,8 +107,7 @@
     // kludge to fix name
     {
     CelestiaAppCore* appCore = [CelestiaAppCore sharedAppCore];
-    NSString* selName = [((CelestiaFavorite*)[node nodeValue]) selectionName];
-    NSString* newName  = [ [ [appCore simulation] findObjectFromPath: selName ] briefName]; 
+    NSString* newName  = [ [ [appCore simulation] selection ] briefName ];
     [((CelestiaFavorite*)[node nodeValue]) setName: newName];
     }
 

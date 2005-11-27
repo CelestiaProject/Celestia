@@ -60,7 +60,6 @@
             CLASS = FavoritesDrawerController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
-                drawer = NSDrawer; 
                 favoriteInfoWindowController = id; 
                 favoritesContextMenu = NSMenu; 
                 favoritesMenu = NSMenu; 
