@@ -8,7 +8,6 @@
 @interface FavoritesDrawerController : NSObject
 {
     NSArray *draggedNodes;
-    IBOutlet NSDrawer *drawer;
     IBOutlet ContextOutlineView *outlineView;
     IBOutlet NSMenu *favoritesMenu;
     IBOutlet NSMenu *favoritesContextMenu;
