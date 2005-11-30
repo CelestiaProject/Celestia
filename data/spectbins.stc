@@ -1,8 +1,8 @@
 # Celestia binary orbit elements for spectroscopic binaries:
-# generated with Perl extraction script: spectbins.pl Revision: 1.00 
+# generated with Perl extraction script: spectbins.pl Revision: 1.20 
 # from D. Poubaix, Astron. Astrophys. Suppl. Ser. 145, 2000, 215-222
 # http://www.edpsciences.org/journal/index.cfm?v_url=aas/full/2000/14/ds9259/ds9259.html
-# Processed 2005-7-10 17:35:25 UTC
+# Processed 2005-11-12 19:21:46 UTC
 # by Dr. Fridger Schrempp, fridger.schrempp@desy.de
 # ------------------------------------------------------ 
 
@@ -555,7 +555,7 @@ AppMag 5.0
 Barycenter "ALF Aur"
 {
 RA        79.172065
-Dec       45.999031
+Dec       45.999029
 Distance  43.488464
 }
 
@@ -846,48 +846,6 @@ AppMag 5.0
         }
 }
 
-Barycenter "ALF Cen"
-{
-RA       219.920400
-Dec      -60.835152
-Distance   4.425556
-}
-
-
-71683 "ALF Cen A" 
-{
-OrbitBarycenter "ALF Cen"
-SpectralType "G2V"
-AppMag -0.01
-
-        EllipticalOrbit {
-                Period              79.900
-                SemiMajorAxis       10.869 # mass ratio 1.16 : 0.97
-                Eccentricity         0.519
-                Inclination         82.982
-                AscendingNode       67.688
-                ArgOfPericenter      3.920
-                MeanAnomaly        200.095
-        }
-}
-
-71681 "ALF Cen B"
-{
-OrbitBarycenter "ALF Cen"
-SpectralType "K0V"
-AppMag 1.34
-
-        EllipticalOrbit {
-                Period              79.900
-                SemiMajorAxis       12.998 # mass ratio 1.16 : 0.97
-                Eccentricity         0.519
-                Inclination         82.982
-                AscendingNode       67.688
-                ArgOfPericenter    183.920
-                MeanAnomaly        200.095
-        }
-}
-
 Barycenter "ETA CrB A"
 {
 RA       230.800950
@@ -1011,48 +969,6 @@ AppMag 9.19
                 AscendingNode      254.745
                 ArgOfPericenter     90.016
                 MeanAnomaly        123.584
-        }
-}
-
-Barycenter "70 Oph"
-{
-RA       271.363360
-Dec        2.502439
-Distance  16.899662
-}
-
-
-88601 "70 Oph A" 
-{
-OrbitBarycenter "70 Oph"
-SpectralType "K0V"
-AppMag 4.2
-
-        EllipticalOrbit {
-                Period              88.380
-                SemiMajorAxis       10.955 # mass ratio 0.90 : 0.78
-                Eccentricity         0.499
-                Inclination        114.905
-                AscendingNode      330.850
-                ArgOfPericenter    341.589
-                MeanAnomaly         63.870
-        }
-}
-
-"70 Oph B"
-{
-OrbitBarycenter "70 Oph"
-SpectralType "K5V"
-AppMag 6.0
-
-        EllipticalOrbit {
-                Period              88.380
-                SemiMajorAxis       12.641 # mass ratio 0.90 : 0.78
-                Eccentricity         0.499
-                Inclination        114.905
-                AscendingNode      330.850
-                ArgOfPericenter    161.589
-                MeanAnomaly         63.870
         }
 }
 
