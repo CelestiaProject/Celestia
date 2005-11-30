@@ -20,7 +20,7 @@
 	RotationPeriod     48.0   # guess
 }
 
-"2003 UB313 1" "Sol/2003 UB313" { 
+"2005 (2003 UB313) 1" "Sol/2003 UB313" { 
 
 	Class "asteroid" 
 	Mesh	"asteroid.cms"
@@ -78,7 +78,7 @@
 	RotationPeriod     3.9152
 }
 
-"2003 EL61 1" "Sol/2003 EL61" { 
+"2005 (2003 EL61) 1" "Sol/2003 EL61" { 
 
 	Class "asteroid" 
 	Mesh	"asteroid.cms"
@@ -99,6 +99,26 @@
    	} 
 
 	Obliquity		235  # to match orbit
+	EquatorAscendingNode	25   #
+}
+
+"2005 (2003 EL61) 2" "Sol/2003 EL61" { 
+
+	Class "asteroid" 
+	Mesh	"asteroid.cms"
+	Texture "asteroid.jpg" 
+	Radius  90             # ~0.2% of system mass
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
+
+	EllipticalOrbit {
+		Period            34.1 
+		SemiMajorAxis  39300       
+		Inclination      275  # ~40 degrees to 2005 (2003 EL61) 1
+		AscendingNode     25  #
+   	} 
+
+	Obliquity		275  # to match orbit
 	EquatorAscendingNode	25   #
 }
 
