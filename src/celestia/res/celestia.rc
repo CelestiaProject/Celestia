@@ -370,18 +370,20 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,101,31,70,10
     CONTROL         "Galaxies",IDC_SHOWGALAXIES,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,101,44,43,10
+    CONTROL         "Nebulae",IDC_SHOWNEBULAE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,101,57,43,10
     CONTROL         "Night Side Lights",IDC_SHOWNIGHTSIDELIGHTS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,101,57,69,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,101,70,69,10
     CONTROL         "Orbits",IDC_SHOWORBITS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,101,70,34,10
+                    WS_TABSTOP,175,18,34,10
     CONTROL         "Planets",IDC_SHOWPLANETS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,175,18,39,10
+                    WS_TABSTOP,175,31,39,10
     CONTROL         "Ring Shadows",IDC_SHOWRINGSHADOWS,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,175,31,63,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,175,44,63,10
     CONTROL         "Stars",IDC_SHOWSTARS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,175,44,32,10
+                    WS_TABSTOP,175,57,32,10
     CONTROL         "Markers",IDC_SHOWMARKERS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,175,57,63,10
+                    WS_TABSTOP,175,70,63,10
     CONTROL         "Asteroids",IDC_LABELASTEROIDS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,33,111,45,10
     CONTROL         "Constellations",IDC_LABELCONSTELLATIONS,"Button",
