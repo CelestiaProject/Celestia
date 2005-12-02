@@ -121,7 +121,11 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 ShaderManager::ShaderManager()
 {
     if (g_shaderLogFile == NULL)
+#ifdef _WIN32
         g_shaderLogFile = new ofstream("shaders.log");
+#else
+        g_shaderLogFile = new ofstream("/tmp/celestia-shaders.log");
+#endif
 }
 
 
