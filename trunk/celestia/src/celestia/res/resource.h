@@ -103,6 +103,7 @@
 #define IDC_ORGANIZE_BOOKMARKS_RENAME   1060
 #define IDC_ORGANIZE_BOOKMARKS_DELETE   1061
 #define IDC_NEWBOOKMARK                 1062
+#define IDC_SHOWNEBULAE                 1063
 #define IDC_LABELASTEROIDS              1064
 #define IDC_LABELSPACECRAFT             1065
 #define IDC_SHOWMARKERS                 1066

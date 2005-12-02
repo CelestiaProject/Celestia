@@ -77,6 +77,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWGALAXIES:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowGalaxies);
             break;
+		case IDC_SHOWNEBULAE:
+			renderer->setRenderFlags(renderFlags ^ Renderer::ShowNebulae);
+			break;
         case IDC_SHOWNIGHTSIDELIGHTS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowNightMaps);
             break;
