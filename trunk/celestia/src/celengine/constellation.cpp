@@ -31,7 +31,7 @@ static struct Constellation_s constellationInfo[] = {
     { "Libra", "Librae", "Lib" },
     { "Scorpius", "Scorpii", "Sco" },
     { "Sagittarius", "Sagittarii", "Sgr" },
-    { "Capricornus", "Capricornii", "Cap" },
+    { "Capricornus", "Capricorni", "Cap" },
     { "Aquarius", "Aquarii", "Aqr" },
     { "Pisces", "Piscium", "Psc" },
     { "Ursa Major", "Ursae Majoris", "UMa" },
