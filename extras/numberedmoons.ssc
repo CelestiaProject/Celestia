@@ -1,4 +1,5 @@
 # Additional moons of the giant planets.
+# Version 1.23 (2005 Dec 1)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -1535,7 +1536,7 @@
 	Albedo 0.07
 }
 
-"2001U2" "Sol/Uranus"
+"Ferdinand" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1558,7 +1559,7 @@
 }
 
 
-"2001U3" "Sol/Uranus"
+"Francisco" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1580,7 +1581,7 @@
 	Albedo 0.07
 }
 
-"2003U3" "Sol/Uranus"
+"Margaret" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1693,7 +1694,7 @@
 	Albedo 0.155
 }
 
-"2003N1" "Sol/Neptune"
+"Psamathe" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1714,7 +1715,3 @@
 
 	Albedo 0.155
 }
-
-
-
-
