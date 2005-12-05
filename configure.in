@@ -254,12 +254,12 @@ AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, test "x" = "y")
 if (test "$ui_gtk" != "no"); then
 	dnl GNOME is an extension to the GTK options
 	if (test "$ui_gnome" = "yes"); then
-		PKG_CHECK_MODULES(GTK, libgnomeui-2.0 gtk+-2.0 gtkglext-1.0)
+		PKG_CHECK_MODULES(GTK, libgnomeui-2.0 gtk+-2.0 >= 2.6 gtkglext-1.0)
 		AM_GCONF_SOURCE_2
 		AC_DEFINE(GNOME, 1, [Use Gnome Flag])
 	else
 		dnl Otherwise, vanilla GTK
-		PKG_CHECK_MODULES(GTK, gtk+-2.0 gtkglext-1.0)
+		PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.6 gtkglext-1.0)
 	fi
 	
 	AC_SUBST(GTK_CFLAGS)
@@ -272,6 +272,7 @@ fi
 
 dnl If all the GTK tests succeeded, safe to enable GTK
 AM_CONDITIONAL(ENABLE_GTK, test "$ui_gtk" = "yes")
+AM_CONDITIONAL(ENABLE_GNOME, test "$ui_gnome" = "yes")
 
 
 dnl
@@ -323,8 +324,6 @@ AC_SUBST(PKGDATADIR)
 
 AC_DEFINE_UNQUOTED(CONFIG_DATA_DIR, "$PKGDATADIR",
                    [The directory where our data will be installed])
-AC_DEFINE_UNQUOTED(G_LOG_DOMAIN, "Celestia",
-                   [Log Domain for Gnome])
 AC_DEFINE_UNQUOTED(GNOMELOCALEDIR, "$PKGDATADIR/locale",
                    [Locale Directory for Gnome (Currently unused])
 
