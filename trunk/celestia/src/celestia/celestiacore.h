@@ -160,14 +160,15 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     enum
     {
-        LabelFlagsChanged     = 1,
-        RenderFlagsChanged    = 2,
-        VerbosityLevelChanged = 4,
-        TimeZoneChanged       = 8,
-        AmbientLightChanged   = 16,
-        FaintestChanged       = 32,
-        HistoryChanged        = 64,
-        TextEnterModeChanged  = 128,
+        LabelFlagsChanged       = 1,
+        RenderFlagsChanged      = 2,
+        VerbosityLevelChanged   = 4,
+        TimeZoneChanged         = 8,
+        AmbientLightChanged     = 16,
+        FaintestChanged         = 32,
+        HistoryChanged          = 64,
+        TextEnterModeChanged    = 128,
+        GalaxyLightGainChanged  = 256,
     };
 
     enum
