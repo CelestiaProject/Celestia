@@ -1898,19 +1898,23 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '(':
-        char buf[128];
-        Galaxy::decreaseLightGain();
-        sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
-        flash(buf);
-        notifyWatchers(GalaxyLightGainChanged);
+        {
+            char buf[128];
+            Galaxy::decreaseLightGain();
+            sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            flash(buf);
+            notifyWatchers(GalaxyLightGainChanged);
+        }
         break;
 
     case ')':
-        char buf[128];
-        Galaxy::increaseLightGain();
-        sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
-        flash(buf);
-        notifyWatchers(GalaxyLightGainChanged);
+        {
+            char buf[128];
+            Galaxy::increaseLightGain();
+            sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            flash(buf);
+            notifyWatchers(GalaxyLightGainChanged);
+        }
         break;
 
     case '~':
