@@ -379,7 +379,7 @@ void Galaxy::increaseLightGain()
     lightGain  += 0.05f;
     if (lightGain > 1.0f)
         lightGain  = 1.0f;
-}  
+} 
 
 
 void Galaxy::decreaseLightGain()
@@ -387,13 +387,24 @@ void Galaxy::decreaseLightGain()
     lightGain  -= 0.05f;
     if (lightGain < 0.0f)
         lightGain  = 0.0f;  
-}  
+} 
 
 
 float Galaxy::getLightGain()
 {
     return lightGain;
-}  
+} 
+
+
+void Galaxy::setLightGain(float lg)
+{
+    if (lg < 0.0f)
+        lightGain = 0.0f;
+    else if (lg > 1.0f)
+        lightGain = 1.0f;
+    else
+        lightGain = lg;
+}
 
 
 void Galaxy::hsv2rgb( float *r, float *g, float *b, float h, float s, float v )
