@@ -1,0 +1,122 @@
+<ui>
+  <menubar name='MainMenu'>
+    <menu action='FileMenu'>
+      <menuitem action='CopyURL'/>
+      <menuitem action='OpenURL'/>
+      <separator/>
+      <menuitem action='OpenScript'/>
+      <menuitem action='CaptureImage'/>
+      <separator/>
+      <menuitem action='Quit'/>
+    </menu>
+    <menu action='NavigationMenu'>
+      <menuitem action='SelectSol'/>
+      <menuitem action='TourGuide'/>
+      <menuitem action='SearchObject'/>
+      <menuitem action='GotoObject'/>
+      <separator/>
+      <menuitem action='CenterSelection'/>
+      <menuitem action='GotoSelection'/>
+      <menuitem action='FollowSelection'/>
+      <menuitem action='SyncSelection'/>
+      <menuitem action='TrackSelection'/>
+      <separator/>
+      <menuitem action='SystemBrowser'/>
+      <menuitem action='StarBrowser'/>
+      <menuitem action='EclipseFinder'/>
+    </menu>
+    <menu action='TimeMenu'>
+      <menuitem action='TimeFaster'/>
+      <menuitem action='TimeSlower'/>
+      <menuitem action='TimeFreeze'/>
+      <menuitem action='TimeReal'/>
+      <menuitem action='TimeReverse'/>
+      <separator/>
+      <menuitem action='TimeSet'/>
+      <menuitem action='TimeLocal'/>
+    </menu>
+    <menu action='OptionsMenu'>
+      <menuitem action='ViewOptions'/>
+      <separator/>
+      <menu action='ShowObjectsMenu'>
+        <menuitem action='RenderAtmospheres'/>
+        <menuitem action='RenderCelestialGrid'/>
+        <menuitem action='RenderClouds'/>
+        <menuitem action='RenderCometTails'/>
+        <menuitem action='RenderConstellationBoundaries'/>
+        <menuitem action='RenderConstellations'/>
+        <menuitem action='RenderEclipseShadows'/>
+        <menuitem action='RenderGalaxies'/>
+        <menuitem action='RenderNebulae'/>
+        <menuitem action='RenderNightLights'/>
+        <menuitem action='RenderOpenClusters'/>
+        <menuitem action='RenderPlanets'/>
+        <menuitem action='RenderRingShadows'/>
+        <menuitem action='RenderStars'/>
+      </menu>
+      <menu action='ShowLabelsMenu'>
+        <menuitem action='LabelAsteroids'/>
+        <menuitem action='LabelComets'/>
+        <menuitem action='LabelConstellations'/>
+        <menuitem action='LabelGalaxies'/>
+        <menuitem action='LabelLocations'/>
+        <menuitem action='LabelMoons'/>
+        <menuitem action='LabelNebulae'/>
+        <menuitem action='LabelOpenClusters'/>
+        <menuitem action='LabelPlanets'/>
+        <menuitem action='LabelSpacecraft'/>
+        <menuitem action='LabelStars'/>
+      </menu>
+      <menu action='ShowOrbitsMenu'>
+        <menuitem action='RenderOrbits'/>
+        <separator/>
+        <menuitem action='OrbitAsteroids'/>
+        <menuitem action='OrbitComets'/>
+        <menuitem action='OrbitMoons'/>
+        <menuitem action='OrbitPlanets'/>
+        <menuitem action='OrbitSpacecraft'/>
+      </menu>
+      <separator/>
+      <menu action='InfoTextMenu'>
+        <menuitem action='HudNone'/>
+        <menuitem action='HudTerse'/>
+        <menuitem action='HudVerbose'/>
+      </menu>
+      <menu action='StarStyleMenu'>
+        <menuitem action='StarsFuzzy'/>
+        <menuitem action='StarsPoints'/>
+        <menuitem action='StarsDiscs'/>
+      </menu>
+      <menu action='AmbientLightMenu'>
+        <menuitem action='AmbientNone'/>
+        <menuitem action='AmbientLow'/>
+        <menuitem action='AmbientMedium'/>
+      </menu>
+	  <separator/>
+      <menuitem action='StarsMore'/>
+      <menuitem action='StarsFewer'/>
+    </menu>
+    <menu action='WindowMenu'>
+      <menuitem action='ViewerSize'/>
+      <menuitem action='FullScreen'/>
+      <separator/>
+      <menuitem action='MultiSplitH'/>
+      <menuitem action='MultiSplitV'/>
+      <menuitem action='MultiCycle'/>
+      <menuitem action='MultiDelete'/>
+      <menuitem action='MultiSingle'/>
+      <separator/>
+      <menuitem action='MultiShowFrames'/>
+      <menuitem action='MultiShowActive'/>
+      <menuitem action='MultiSyncTime'/>
+    </menu>
+    <menu action='HelpMenu'>
+      <menuitem action='RunDemo'/>
+      <separator/>
+      <menuitem action='HelpControls'/>
+      <menuitem action='HelpOpenGL'/>
+      <separator/>
+      <menuitem action='HelpAbout'/>
+    </menu>
+  </menubar>
+</ui>
