@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: settings-file.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: settings-file.cpp,v 1.2 2005-12-06 04:15:07 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -118,7 +118,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	/* All settings that need sanity checks get them */
 	setSaneAmbientLight(app, ambientLight);
 	setSaneVisualMagnitude(app, visualMagnitude);
-	setSaneGalaxyLightGain(app, GalaxyLightGain);
+	setSaneGalaxyLightGain(galaxyLightGain);
 	setSaneVerbosity(app, verbosity);
 	setSaneStarStyle(app, (Renderer::StarStyle)starStyle);
 	setSaneAltSurface(app, g_key_file_get_string(file, "Main", "altSurfaceName", NULL));
@@ -202,7 +202,7 @@ void saveSettingsFile(AppData* app)
 	g_key_file_set_comment(file, "Main", "ambientLight", "ambientLight = (int)(1000 * AmbientLightLevel)", NULL);
 	g_key_file_set_integer(file, "Main", "visualMagnitude", (int)(1000 * app->simulation->getFaintestVisible()));
 	g_key_file_set_comment(file, "Main", "visualMagnitude", "visualMagnitude = (int)(1000 * FaintestVisible)", NULL);
-	g_key_file_set_integer(file, "Main", "galaxyLightGain", (int)(1000 * Galaxy::getLightGain());
+	g_key_file_set_integer(file, "Main", "galaxyLightGain", (int)(1000 * Galaxy::getLightGain()));
 	g_key_file_set_comment(file, "Main", "galaxyLightGain", "galaxyLightGain = (int)(1000 * GalaxyLightGain)", NULL);
 	g_key_file_set_boolean(file, "Main", "localTime", app->showLocalTime);
 	g_key_file_set_integer(file, "Main", "verbosity", app->core->getHudDetail());
