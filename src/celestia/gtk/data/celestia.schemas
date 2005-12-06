@@ -69,7 +69,7 @@
       <applyto>/apps/celestia/galaxyLightGain</applyto>
       <owner>celestia</owner>
       <type>float</type>
-      <default>0.5</default>
+      <default>0.0</default>
       <locale name="C">
         <short>Brightness control for galaxies.</short>
       </locale>
