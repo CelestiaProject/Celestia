@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: common.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: common.cpp,v 1.2 2005-12-06 04:36:37 suwalski Exp $
  */
 
 #include <fstream>
@@ -179,7 +179,7 @@ void setSaneVisualMagnitude(AppData* app, float value)
 void setSaneGalaxyLightGain(float value)
 {
 	if (value < 0.0 || value > 1.0)
-		value = 0.5f; /* Default */
+		value = 0.0f; /* Default */
 	
 	Galaxy::setLightGain(value);
 }
