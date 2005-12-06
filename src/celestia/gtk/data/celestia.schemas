@@ -65,6 +65,16 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/celestia/galaxyLightGain</key>
+      <applyto>/apps/celestia/galaxyLightGain</applyto>
+      <owner>celestia</owner>
+      <type>float</type>
+      <default>0.5</default>
+      <locale name="C">
+        <short>Brightness control for galaxies.</short>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/celestia/showLocalTime</key>
       <applyto>/apps/celestia/showLocalTime</applyto>
       <owner>celestia</owner>
@@ -75,8 +85,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/celestia/hudDetail</key>
-      <applyto>/apps/celestia/hudDetail</applyto>
+      <key>/schemas/apps/celestia/verbosity</key>
+      <applyto>/apps/celestia/verbosity</applyto>
       <owner>celestia</owner>
       <type>int</type>
       <default>1</default>
@@ -143,7 +153,7 @@
       <applyto>/apps/celestia/render/galaxies</applyto>
       <owner>celestia</owner>
       <type>bool</type>
-      <default>false</default>
+      <default>true</default>
       <locale name="C">
         <short>Render galaxies.</short>
       </locale>
@@ -193,7 +203,7 @@
       <applyto>/apps/celestia/render/nightMaps</applyto>
       <owner>celestia</owner>
       <type>bool</type>
-      <default>false</default>
+      <default>true</default>
       <locale name="C">
         <short>Render night-side textures on planets.</short>
       </locale>
@@ -223,19 +233,9 @@
       <applyto>/apps/celestia/render/eclipseShadows</applyto>
       <owner>celestia</owner>
       <type>bool</type>
-      <default>false</default>
+      <default>true</default>
       <locale name="C">
         <short>Render shadows of bodies on other bodies.</short>
-      </locale>
-    </schema>
-    <schema>
-      <key>/schemas/apps/celestia/render/starsAsPoints</key>
-      <applyto>/apps/celestia/render/starsAsPoints</applyto>
-      <owner>celestia</owner>
-      <type>bool</type>
-      <default>false</default>
-      <locale name="C">
-        <short>Render stars as single-pixel points.</short>
       </locale>
     </schema>
     <schema>
@@ -263,7 +263,7 @@
       <applyto>/apps/celestia/render/autoMag</applyto>
       <owner>celestia</owner>
       <type>bool</type>
-      <default>false</default>
+      <default>true</default>
       <locale name="C">
         <short>Render body brightness with auto-magnitude.</short>
       </locale>
@@ -286,6 +286,36 @@
       <default>false</default>
       <locale name="C">
         <short>Render coloured markers.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/partialTrajectories</key>
+      <applyto>/apps/celestia/render/partialTrajectories</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render partial trajectories.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/nebulae</key>
+      <applyto>/apps/celestia/render/nebulae</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Render nebulae.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/openClusters</key>
+      <applyto>/apps/celestia/render/openClusters</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render open clusters.</short>
       </locale>
     </schema>
 
@@ -381,6 +411,36 @@
         <short>Label comet objects.</short>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/nebula</key>
+      <applyto>/apps/celestia/labels/nebula</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label nebula objects.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/openCluster</key>
+      <applyto>/apps/celestia/labels/openCluster</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Label open cluster objects.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/labels/i18n</key>
+      <applyto>/apps/celestia/labels/i18n</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Constellations are shown with latin names.</short>
+      </locale>
+    </schema>
 
 
     <!-- ORBIT VIEW OPTIONS -->
@@ -452,6 +512,39 @@
       <default>false</default>
       <locale name="C">
         <short>Show orbits of unclassified objects.</short>
+      </locale>
+    </schema>
+
+
+    <!-- URL HANDLER OPTIONS -->
+    <schema>
+      <key>/schemas/desktop/gnome/url-handlers/cel/command</key>
+      <applyto>/desktop/gnome/url-handlers/cel/command</applyto>
+      <owner>celestia</owner>
+      <type>string</type>
+      <default>celestia "%s"</default>
+      <locale name="C">
+        <short>Command to use to run cel:// URLs.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/desktop/gnome/url-handlers/cel/enabled</key>
+      <applyto>/desktop/gnome/url-handlers/cel/enabled</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Whether or not the URL handler is enabled.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/desktop/gnome/url-handlers/cel/needs_terminal</key>
+      <applyto>/desktop/gnome/url-handlers/cel/needs_terminal</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Whether or not the application starts in a terminal.</short>
       </locale>
     </schema>
   </schemalist>

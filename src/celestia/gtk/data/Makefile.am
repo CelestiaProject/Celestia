@@ -1,8 +1,18 @@
+if GCONF_SCHEMAS_INSTALL
 schemasdir = $(GCONF_SCHEMA_FILE_DIR)
 schemas_DATA = celestia.schemas
+endif
 
-EXTRA_DIST = $(schemas_DATA) celestia.png celestia.desktop
-pkgdata_DATA = celestia.png
+EXTRA_DIST = \
+	$(schemas_DATA) \
+	celestia.png \
+	celestia-logo.png \
+	celestia.desktop \
+	celestiaui.xml
+	
+pkgdata_DATA = \
+	celestia-logo.png \
+	celestiaui.xml
 
 if ENABLE_GTK
 Applicationsdir = $(datadir)/applications
