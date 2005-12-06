@@ -40,7 +40,7 @@ class StarDetails
     inline float getOrbitalRadius() const;
     inline const char* getSpectralType() const;
     inline float getBolometricCorrection() const;
-    inline const Star* getOrbitBarycenter() const;
+    inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
     inline const RotationElements& getRotationElements() const;
     inline Vec3f getEllipsoidSemiAxes() const;
@@ -173,7 +173,7 @@ StarDetails::getBolometricCorrection() const
     return bolometricCorrection;
 }
 
-const Star*
+Star*
 StarDetails::getOrbitBarycenter() const
 {
     return barycenter;
@@ -234,7 +234,7 @@ public:
     ResourceHandle getModel() const;
     inline Orbit* getOrbit() const;
     inline float getOrbitalRadius() const;
-    inline const Star* getOrbitBarycenter() const;
+    inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
     inline uint32 getKnowledge() const;
     inline const RotationElements& getRotationElements() const;
@@ -314,7 +314,7 @@ Star::getOrbitalRadius() const
     return details->getOrbitalRadius();
 }
 
-const Star*
+Star*
 Star::getOrbitBarycenter() const
 {
     return details->getOrbitBarycenter();
