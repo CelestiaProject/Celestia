@@ -817,4 +817,19 @@ Code:
   orbit and  galaxy data from published professional catalogs.
 * Added --extrasdir command line option for specifying additional directories
   to search for add-ons
-
+* GTK+ front-end overhaul
+   - source split into multiple files
+   - performance work to minimize number of preference resyncs
+   - redesigned interface to use GtkActions and GtkUIManager (XML)
+   - added preference saving to file
+   - commented heavily
+   - new about dialog
+   - made non-modal: GoTo, View Options, Tour Guide, Browsers, EclipseFinder
+   - changes to allow for compilation on Windows
+   - greek letters in Star Browser names
+   - added tab-completion support in overlay entry
+   - replaced deprecated widgets in several dialogs
+   - new GTK save/open dialog
+   - added "copy" and "open" url functions
+   - updated GConf schema with new options
+   - fixed automake bug where GConf schema would always install
