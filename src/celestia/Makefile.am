@@ -1,4 +1,4 @@
-SUBDIRS = res kde gtk
+SUBDIRS = res gtk
 
 bin_PROGRAMS = celestia
 INCLUDES = -I..
@@ -10,6 +10,10 @@ if ENABLE_KDE
 celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) \
                   $(LIBSOCKET) kde/libkdegui.a
 celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+endif
+
+if ENABLE_GTK
+celestiaGTKLIBS = gtk/libgtkgui.a
 endif
 
 
@@ -48,7 +52,9 @@ celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES)
 EXTRA_celestia_SOURCES = glutmain.cpp $(WINSOURCES)
 EXTRA_DIST =  Celestia.dsp celestia.mak
 
-celestia_LDADD = $(celestiaKDELIBS)\
+celestia_LDADD = \
+	$(celestiaKDELIBS) \
+	$(celestiaGTKLIBS) \
 	../celengine/libcelengine.a \
 	../celtxf/libceltxf.a \
 	../cel3ds/libcel3ds.a \
