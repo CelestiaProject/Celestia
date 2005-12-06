@@ -39,17 +39,13 @@ if ENABLE_CELX
 CELXSOURCES = celx.cpp
 endif
 
-if ENABLE_GTK
-GTKSOURCES = gtkmain.cpp
-endif
-
 if ENABLE_GLUT
 GLUTSOURCES = glutmain.cpp
 endif
 
-celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GTKSOURCES) $(GLUTSOURCES)
+celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES)
 
-EXTRA_celestia_SOURCES = gtkmain.cpp glutmain.cpp $(WINSOURCES)
+EXTRA_celestia_SOURCES = glutmain.cpp $(WINSOURCES)
 EXTRA_DIST =  Celestia.dsp celestia.mak
 
 celestia_LDADD = $(celestiaKDELIBS)\
