@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: menu-context.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: menu-context.cpp,v 1.2 2005-12-06 04:14:47 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -112,7 +112,7 @@ void menuContext(float, float, Selection sel)
 
 		case Selection::Type_DeepSky:
 		{
-			AppendMenu(popup, NULL, sel.deepsky()->getName().c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
+			AppendMenu(popup, NULL, app->simulation->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str(), gtk_action_group_get_action(app->agMain, "CenterSelection"));
 			AppendMenu(popup, NULL, NULL, 0);
 			AppendMenu(popup, NULL, "_Goto", gtk_action_group_get_action(app->agMain, "GotoSelection"));
 			AppendMenu(popup, NULL, "_Follow", gtk_action_group_get_action(app->agMain, "FollowSelection"));
