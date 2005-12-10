@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-eclipse.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: dialog-eclipse.cpp,v 1.2 2005-12-10 06:34:21 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -43,6 +43,7 @@ void dialogEclipseFinder(AppData* app)
 	selDate* d2 = g_new0(selDate, 1);
 	ed->d1 = d1;
 	ed->d2 = d2;
+	ed->app = app;
 	ed->eclipseList = NULL;
 	ed->eclipseListStore = NULL;
 	ed->bSolar = TRUE;
