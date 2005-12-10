@@ -18,9 +18,9 @@
 #include <map>
 #include <vector>
 #include <celutil/basictypes.h>
+#include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celutil/utf8.h>
-
 
 // TODO: this can be "detemplatized" by creating e.g. a global-scope enum InvalidCatalogNumber since there
 // lies the one and only need for type genericity.
