@@ -1,4 +1,4 @@
-SUBDIRS = res gtk
+SUBDIRS = res
 
 bin_PROGRAMS = celestia
 INCLUDES = -I..
@@ -7,12 +7,14 @@ localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 if ENABLE_KDE
+SUBDIRS += kde
 celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) \
                   $(LIBSOCKET) kde/libkdegui.a
 celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 endif
 
 if ENABLE_GTK
+SUBDIRS += gtk
 celestiaGTKLIBS = gtk/libgtkgui.a
 endif
 
