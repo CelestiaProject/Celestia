@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.2 2005-12-11 21:25:53 suwalski Exp $
+ *  $Id: actions.cpp,v 1.3 2005-12-11 22:13:54 suwalski Exp $
  */
 
 #include <config.h>
@@ -153,6 +153,18 @@ void actionCaptureImage(GtkAction*, AppData* app)
 	}
 
 	gtk_widget_destroy(fs);
+}
+
+
+void actionQuit(GtkAction*, AppData* app)
+{
+	#ifdef GNOME
+	saveSettingsGConf(app);
+	#else
+	saveSettingsFile(app);
+	#endif /* GNOME */
+
+	gtk_main_quit();
 }
 
 

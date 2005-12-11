@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: main.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: main.cpp,v 1.2 2005-12-11 22:13:54 suwalski Exp $
  */
 
 #include <iostream>
@@ -365,8 +365,8 @@ int main(int argc, char* argv[])
 	GtkWidget* mainBox = GTK_WIDGET(gtk_vbox_new(FALSE, 0));
 	gtk_container_set_border_width(GTK_CONTAINER(mainBox), 0);
 
-	g_signal_connect(GTK_OBJECT(app->mainWindow), "delete_event",
-	                 G_CALLBACK(gtk_main_quit), NULL);
+	g_signal_connect(GTK_OBJECT(app->mainWindow), "destroy",
+	                 G_CALLBACK(actionQuit), app);
 
 	/* Initialize the OpenGL widget */
 	gtk_gl_init (&argc, &argv);
@@ -477,12 +477,6 @@ int main(int argc, char* argv[])
 	/* Call Main GTK Loop */
 	gtk_main();
     
-	#ifdef GNOME
-	saveSettingsGConf(app);
-	#else
-	saveSettingsFile(app);
-	#endif /* GNOME */
-	
 	g_free(app);
 
     return 0;

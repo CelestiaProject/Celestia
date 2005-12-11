@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.h,v 1.2 2005-12-11 21:25:53 suwalski Exp $
+ *  $Id: actions.h,v 1.3 2005-12-11 22:13:54 suwalski Exp $
  */
 
 #ifndef GTK_ACTIONS_H
@@ -20,9 +20,10 @@
 
 /* Main Actions */
 void actionCopyURL(GtkAction*, AppData*);
-void actionOpenURL(GtkAction*, AppData* app);
+void actionOpenURL(GtkAction*, AppData*);
 void actionOpenScript(GtkAction*, AppData*);
 void actionCaptureImage(GtkAction*, AppData*);
+void actionQuit(GtkAction*, AppData*);
 void actionSelectSol(GtkAction*, AppData*);
 void actionTourGuide(GtkAction*, AppData*);
 void actionSearchObject(GtkAction*, AppData*);
