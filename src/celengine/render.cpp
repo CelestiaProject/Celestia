@@ -50,13 +50,11 @@ using namespace std;
 #define GL_COLOR_SUM_EXT 0x8458
 #endif
 
-
 static const float  STAR_DISTANCE_LIMIT  = 1.0e6f;
 static const double DSO_DISTANCE_LIMIT   = 1.0e9;
+static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
-static const float  LABELLED_STAR_DISTANCE_LIMIT  = 5.0e4f;
-static const double LABELLED_DSO_DISTANCE_LIMIT   = 5.0e6;
-
+static const float  X0_SOL = astro::AUtoKilometers(5.0f);
 
 static const int StarVertexListSize = 1024;
 
@@ -136,6 +134,7 @@ Renderer::Renderer() :
     windowWidth(0),
     windowHeight(0),
     fov(FOV),
+    screenDpi(96),
     corrFac(1.12f),
     faintestAutoMag45deg(7.0f),
     renderMode(GL_FILL),
@@ -155,9 +154,9 @@ Renderer::Renderer() :
     usePointSprite(false),
     textureResolution(medres),
     minOrbitSize(MinOrbitSizeForLabel),
+    distanceLimit(1.0e6f),
     minFeatureSize(MinFeatureSizeForLabel),
     locationFilter(~0),
-    distanceLimit(1.0e6f),
     colorTemp(NULL)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
@@ -586,6 +585,16 @@ void Renderer::setFieldOfView(float _fov)
     corrFac = (0.12f * fov/FOV * fov/FOV + 1.0f);
 }
 
+int Renderer::getScreenDpi() const
+{
+    return screenDpi;
+}
+
+void Renderer::setScreenDpi(int _dpi)
+{
+    screenDpi = _dpi;
+}
+
 void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
 {
     faintestAutoMag45deg = _faintestAutoMag45deg;
@@ -709,7 +718,6 @@ float Renderer::getMinimumOrbitSize() const
 {
     return minOrbitSize;
 }
-
 
 // Orbits and labels are only rendered when the orbit of the object
 // occupies some minimum number of pixels on screen.
@@ -1248,7 +1256,6 @@ void Renderer::render(const Observer& observer,
     // Compute the size of a pixel
     setFieldOfView(radToDeg(observer.getFOV()));
     pixelSize = calcPixelSize(fov, (float) windowHeight);
-
     // Set up the projection we'll use for rendering stars.
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -1787,6 +1794,7 @@ void Renderer::render(const Observer& observer,
                                     renderList[i].appMag,
                                     now,
                                     observer.getOrientation(),
+                                    lightSourceLists[renderList[i].solarSysIndex],
                                     nearPlaneDistance, farPlaneDistance);
                 }
                 else
@@ -5781,10 +5789,15 @@ struct CometTailVertex
 static CometTailVertex cometTailVertices[CometTailSlices * MaxCometTailPoints];
 
 static void ProcessCometTailVertex(const CometTailVertex& v,
-                                   const Vec3f& viewDir)
+                                   const Vec3f& viewDir,
+                                   float fadeDistFromSun)
 {
-    float shade = abs(viewDir * v.normal * v.brightness);
-    glColor4f(0.0f, 0.5f, 1.0f, shade);
+    // If fadeDistFromSun = x/x0 >= 1.0, comet tail starts fading,
+    // i.e. fadeFactor quickly transits from 1 to 0.
+    
+    float fadeFactor = 0.5f - 0.5f * tanh(fadeDistFromSun - 1.0f / fadeDistFromSun);
+    float shade = abs(viewDir * v.normal * v.brightness * fadeFactor);
+    glColor4f(0.5f, 0.5f, 0.75f, shade);
     glVertex(v.point);
 }
 
@@ -5853,6 +5866,7 @@ void Renderer::renderCometTail(const Body& body,
                                float appMag,
                                double now,
                                Quatf orientation,
+                               const vector<LightSource>& lightSources,
                                float nearPlaneDistance,
                                float farPlaneDistance)
 {
@@ -5864,8 +5878,34 @@ void Renderer::renderCometTail(const Body& body,
     float f = 1.0e15f;
     int nSteps = MaxCometTailPoints;
     float dt = 10000000.0f / (nSteps * (float) vd.length() * 100.0f);
-    // float dt = 0.1f;
+    float distanceFromSun, irradiance_max = 0.0f;
+    unsigned int li_eff;
 
+    // Find the sun with the largest irrradiance of light onto the comet
+    // as function of the comet's position;
+    // irradiance = sun's luminosity / square(distanceFromSun);
+    
+    for (unsigned int li = 0; li < lightSources.size(); li++)
+    {
+        distanceFromSun = (body.getHeliocentricPosition(now) -
+                           lightSources[li].position).length();
+        float irradiance = lightSources[li].luminosity / square(distanceFromSun);
+        if (irradiance > irradiance_max )
+        {
+            li_eff = li;
+            irradiance_max = irradiance;
+        }
+    }
+    float fadeDistance = 1.0f / (X0_SOL * sqrt(irradiance_max));
+    
+    // direction to sun with dominant light irradiance:
+    
+    Vec3d sd = body.getHeliocentricPosition(now) - lightSources[li_eff].position;
+    Vec3f sunDir = Vec3f((float) sd.x, (float) sd.y, (float) sd.z);
+    sunDir.normalize();
+    
+    // cout<<astro::kilometersToAU(X0_SOL*sqrt(lightSources[li_eff].luminosity))<<"   "<<fadeDistance<<"   "<<astro::kilometersToAU(sd.length())<<endl;
+    
     int i;
 #if 0
     for (i = 0; i < MaxCometTailPoints; i++)
@@ -5886,30 +5926,18 @@ void Renderer::renderCometTail(const Body& body,
     }
 #endif
     // Compute a rough estimate of the visible length of the dust tail
+    
     float dustTailLength = (1.0e8f / (float) pos0.distanceFromOrigin()) *
         (body.getRadius() / 5.0f) * 1.0e7f;
     float dustTailRadius = dustTailLength * 0.1f;
     float comaRadius = dustTailRadius * 0.5f;
 
     Point3f origin(0, 0, 0);
-    {
-        Point3d pd = body.getOrbit()->positionAtTime(t);
-        Point3f p = Point3f((float) pd.x, (float) pd.y, (float) pd.z);
-        Vec3f sunDir = p - Point3f(0, 0, 0);
-        sunDir.normalize();
-        origin -= sunDir * (body.getRadius() * 100);
-    }
-
+    origin -= sunDir * (body.getRadius() * 100);
     for (i = 0; i < MaxCometTailPoints; i++)
     {
         float alpha = (float) i / (float) MaxCometTailPoints;
         alpha = alpha * alpha;
-        
-        Point3d pd = body.getOrbit()->positionAtTime(t);
-        Point3f p = Point3f((float) pd.x, (float) pd.y, (float) pd.z);
-        Vec3f sunDir = p - Point3f(0, 0, 0);
-        sunDir.normalize();
-        
         cometPoints[i] = origin + sunDir * (dustTailLength * alpha);
     }
 
@@ -6018,13 +6046,13 @@ void Renderer::renderCometTail(const Body& body,
         int n = i * CometTailSlices;
         for (int j = 0; j < CometTailSlices; j++)
         {
-            ProcessCometTailVertex(cometTailVertices[n + j], viewDir);
+            ProcessCometTailVertex(cometTailVertices[n + j], viewDir, fadeDistance);
             ProcessCometTailVertex(cometTailVertices[n + j + CometTailSlices],
-                                   viewDir);
+                                   viewDir, fadeDistance);
         }
-        ProcessCometTailVertex(cometTailVertices[n], viewDir);
+        ProcessCometTailVertex(cometTailVertices[n], viewDir, fadeDistance);
         ProcessCometTailVertex(cometTailVertices[n + CometTailSlices],
-                               viewDir);
+                               viewDir, fadeDistance);
         glEnd();
     }
     glEnable(GL_CULL_FACE);
@@ -6538,16 +6566,16 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             // the parameters in the 'close' correction are fixed by matching
             // the gradients at 10 pc and requiring brightness = r + ri at distanceToDSO = 0
 
-            double ri   = 0.25, pc10 = 32.6167;
-            double r   = absMag/avgAbsMag;
-            double num = 5*(absMag - faintestMag);
-            double a   = r*(avgAbsMag - 5*faintestMag)/num;
-            double b   = (1.0 - 5*r)/num;
-            double c   = 0.4605170186*ri/b-1.0;
-            double close = ri*(pc10 - distanceToDSO)/(pc10 + distanceToDSO*c);
-            double brightness = (distanceToDSO  >= pc10) ?
+            double ri  = -0.1, pc10 = 32.6167;
+            double r   = absMag / avgAbsMag;
+            double num = 5 * (absMag - faintestMag);
+            double a   = r * (avgAbsMag - 5 * faintestMag) / num;
+            double b   = (1.0 - 5 * r) / num;
+            double c   = 0.4605170186 * ri / b - 1.0;
+            double close = ri * (pc10 - distanceToDSO) / (pc10 + distanceToDSO * c);
+            double brightness = (distanceToDSO  >= pc10)?
                 a - b * astro::absToAppMag(absMag, (float) distanceToDSO): r + close;
-            brightness = 1.5*brightness*(faintestMag-3.0)/renderer->getFaintestAM45deg();
+            brightness = 1.5 * brightness * (faintestMag - 3.0)/renderer->getFaintestAM45deg();
             if (brightness < 0.0)
                 brightness = 0.0;
 
@@ -6557,9 +6585,9 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                 // handling.  We don't want to always set the projection
                 // matrix, since that could be expensive with large galaxy
                 // catalogs.
-                float nearZ = (float) distanceToDSO;
-                float farZ  = (float) (relPos.length() + dsoRadius * 2);
-                if (nearZ < dsoRadius * 0.001f)
+                float nearZ = (float) (distanceToDSO/2);
+                float farZ  = (float) (distanceToDSO + dsoRadius * 2);
+                if (nearZ < dsoRadius * 0.001)
                 {
                     nearZ = (float) (dsoRadius * 0.001);
                     farZ  = nearZ * 10000.0f;
@@ -6596,11 +6624,14 @@ void DSORenderer::process(DeepSkyObject* const & dso,
         } // frustum test
     } // renderFlags check
 
-    // avoid label overlap by FOV/fov-weighted distance cut-off!
-    // only render those labels that are in front of the camera:
+    // avoid label overlap by pixelSize-controlled apparent magnitude cut-off!
+    // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
+    // Label appearance is sorted according to apparent galaxy brightness!
+    // Only render those labels that are in front of the camera:
+
+    float relDistanceToScreen = REF_DISTANCE_TO_SCREEN * pixelSize * renderer->getScreenDpi() / 25.4f; // = 1.0 initially, after startup
     if ((dso->getLabelMask() & labelMode)           &&
-        distanceToDSO < LABELLED_DSO_DISTANCE_LIMIT * FOV/fov &&
-        dot(relPos, viewNormal) > 0)
+    astro::absToAppMag(absMag, (float) distanceToDSO) < faintestMag * log10(5.0f/relDistanceToScreen) && dot(relPos, viewNormal) > 0)
     {
         renderer->addLabel(dsoDB->getDSOName(dso),
                             Color(0.1f, 0.85f, 0.85f, 1.0f),
@@ -6626,7 +6657,6 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     dsoRenderer.renderer         = this;
     dsoRenderer.dsoDB            = dsoDB;
     dsoRenderer.orientationMatrix = conjugate(observer.getOrientation()).toMatrix3();
-
     dsoRenderer.observer          = &observer;
     dsoRenderer.obsPos            = obsPos;
     dsoRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
@@ -6636,14 +6666,12 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     dsoRenderer.pixelSize        = pixelSize;
     dsoRenderer.brightnessScale  = brightnessScale * corrFac;
     dsoRenderer.brightnessBias   = brightnessBias;
-
     dsoRenderer.avgAbsMag        = dsoDB->getAverageAbsoluteMagnitude();
     dsoRenderer.faintestMag      = faintestMag;
     dsoRenderer.faintestMagNight = faintestMagNight;
     dsoRenderer.saturationMag    = saturationMag;
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
-    //cout<<"dsoRenderer:   "<<faintestMag<<"   "<<saturationMag<<endl;
     dsoRenderer.wWidth           = windowWidth;
     dsoRenderer.wHeight          = windowHeight;
 

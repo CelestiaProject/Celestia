@@ -136,6 +136,8 @@ class Renderer
     void setDistanceLimit(float);
     int getOrbitMask() const;
     void setOrbitMask(int);
+    int getScreenDpi() const;
+    void setScreenDpi(int);
     const ColorTemperatureTable* getStarColorTable() const;
     void setStarColorTable(const ColorTemperatureTable*);
 
@@ -358,6 +360,7 @@ class Renderer
                          float appMag,
                          double now,
                          Quatf orientation,
+                         const vector<LightSource>& lightSources,
                          float, float);
 
     void renderBodyAsParticle(Point3f center,
@@ -421,6 +424,7 @@ class Renderer
     int windowWidth;
     int windowHeight;
     float fov;
+    int screenDpi;
     float corrFac;
     float pixelSize;
     float faintestAutoMag45deg;
