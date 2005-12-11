@@ -833,3 +833,4 @@ Code:
    - added "copy" and "open" url functions
    - updated GConf schema with new options
    - fixed automake bug where GConf schema would always install
+   - removed linking against glut for no reason
