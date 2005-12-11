@@ -92,13 +92,14 @@
         <menuitem action='AmbientLow'/>
         <menuitem action='AmbientMedium'/>
       </menu>
-	  <separator/>
+      <separator/>
       <menuitem action='StarsMore'/>
       <menuitem action='StarsFewer'/>
     </menu>
     <menu action='WindowMenu'>
       <menuitem action='ViewerSize'/>
       <menuitem action='FullScreen'/>
+      <menuitem action='MenuBarVisible'/>
       <separator/>
       <menuitem action='MultiSplitH'/>
       <menuitem action='MultiSplitV'/>
