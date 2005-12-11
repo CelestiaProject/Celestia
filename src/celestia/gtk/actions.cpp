@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: actions.cpp,v 1.2 2005-12-11 21:25:53 suwalski Exp $
  */
 
 #include <config.h>
@@ -431,6 +431,12 @@ void actionStarsFewer(GtkAction*, AppData* app)
 	#ifdef GNOME
 	gconf_client_set_float(app->client, "/apps/celestia/visualMagnitude", app->simulation->getFaintestVisible(), NULL);
 	#endif
+}
+
+
+void actionMenuBarVisible(GtkToggleAction* action, AppData* app)
+{
+	g_object_set(G_OBJECT(app->mainMenu), "visible", gtk_toggle_action_get_active(action), NULL);
 }
 
 

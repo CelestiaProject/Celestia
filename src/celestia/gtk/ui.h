@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: ui.h,v 1.1 2005-12-06 03:19:36 suwalski Exp $
+ *  $Id: ui.h,v 1.2 2005-12-11 21:25:53 suwalski Exp $
  */
 
 #ifndef GTK_UI_H
@@ -88,7 +88,8 @@ static const GtkActionEntry actionsPlain[] = {
 /* Regular Checkbox Actions */
 static const GtkToggleActionEntry actionsToggle[] = {
 	{ "TimeLocal", NULL, "Show _Local Time", NULL, NULL, G_CALLBACK(actionTimeLocal), FALSE },
-	{ "FullScreen", GTK_STOCK_FULLSCREEN, "Full Screen", "<alt>Return",  NULL, G_CALLBACK(actionFullScreen), FALSE },
+	{ "FullScreen", GTK_STOCK_FULLSCREEN, "_Full Screen", "<alt>Return",  NULL, G_CALLBACK(actionFullScreen), FALSE },
+	{ "MenuBarVisible", NULL, "_Menu Bar", "<control>M", NULL, G_CALLBACK(actionMenuBarVisible), TRUE },
 	{ "MultiShowFrames", NULL, "Show _Frames", NULL, NULL, G_CALLBACK(actionMultiShowFrames), FALSE },
 	{ "MultiShowActive", NULL, "Active Frame Highlighted", NULL, NULL, G_CALLBACK(actionMultiShowActive), FALSE },
 	{ "MultiSyncTime", NULL, "Synchronize _Time", NULL, NULL, G_CALLBACK(actionMultiSyncTime), FALSE },

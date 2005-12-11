@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.h,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: actions.h,v 1.2 2005-12-11 21:25:53 suwalski Exp $
  */
 
 #ifndef GTK_ACTIONS_H
@@ -47,6 +47,7 @@ void actionFullScreen(GtkAction*, AppData*);
 void actionViewOptions(GtkAction*, AppData*);
 void actionStarsMore(GtkAction*, AppData*);
 void actionStarsFewer(GtkAction*, AppData*);
+void actionMenuBarVisible(GtkToggleAction*, AppData*);
 void actionMultiSplitH(GtkAction*, AppData*);
 void actionMultiSplitV(GtkAction*, AppData*);
 void actionMultiCycle(GtkAction*, AppData*);
