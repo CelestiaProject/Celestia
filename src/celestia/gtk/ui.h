@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: ui.h,v 1.2 2005-12-11 21:25:53 suwalski Exp $
+ *  $Id: ui.h,v 1.3 2005-12-11 22:13:54 suwalski Exp $
  */
 
 #ifndef GTK_UI_H
@@ -27,7 +27,7 @@ static const GtkActionEntry actionsPlain[] = {
 	{ "OpenURL", NULL, "Open UR_L", NULL, NULL, G_CALLBACK(actionOpenURL) },
 	{ "OpenScript", GTK_STOCK_OPEN, "_Open Script...", NULL, NULL, G_CALLBACK(actionOpenScript) },
 	{ "CaptureImage", GTK_STOCK_SAVE_AS, "_Capture Image...", NULL, NULL, G_CALLBACK(actionCaptureImage) },
-	{ "Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", NULL, gtk_main_quit },
+	{ "Quit", GTK_STOCK_QUIT, "_Quit", "<control>Q", NULL, G_CALLBACK(actionQuit) },
 	
 	{ "NavigationMenu", NULL, "_Navigation", NULL, NULL, NULL },
 	{ "SelectSol", GTK_STOCK_HOME, "Select _Sol", "H", NULL, G_CALLBACK(actionSelectSol) },
