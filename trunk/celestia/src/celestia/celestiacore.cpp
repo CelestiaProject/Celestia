@@ -2699,11 +2699,7 @@ static void displayStarInfo(Overlay& overlay,
 }
 
 
-static void displayDSOinfo(Overlay& overlay,
-                           int detail,
-                           const DeepSkyObject& dso,
-                           const Universe& universe,
-                           double distance)
+static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double distance)
 {
     char descBuf[128];
 
@@ -3200,14 +3196,10 @@ void CelestiaCore::renderOverlay()
                 }
 
                 overlay->setFont(titleFont);
-                //*overlay << sel.deepsky()->getName().c_str();
                 *overlay << selectionNames;
                 overlay->setFont(font);
                 *overlay << '\n';
-                displayDSOinfo(*overlay,
-                               hudDetail,
-                               *sel.deepsky(),
-                               *sim->getUniverse(),
+                displayDSOinfo(*overlay, *sel.deepsky(),
                                v.length() * 1e-6 - sel.deepsky()->getRadius());
             }
             break;
@@ -4076,6 +4068,7 @@ void CelestiaCore::setScreenDpi(int dpi)
 {
     screenDpi = dpi;
     setFOVFromZoom();
+    renderer->setScreenDpi(dpi);
 }
 
 int CelestiaCore::getScreenDpi() const
