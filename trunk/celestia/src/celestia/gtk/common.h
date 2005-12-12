@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: common.h,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: common.h,v 1.2 2005-12-12 06:08:11 suwalski Exp $
  */
 
 #ifndef GTK_COMMON_H
@@ -72,6 +72,7 @@ struct _AppData {
 
 
 /* Helper functions used throughout */
+gint tzOffsetAtDate(astro::Date date);
 void updateTimeZone(AppData* app, gboolean local);
 gint buttonMake(GtkWidget *hbox, const char *txt, GtkSignalFunc func, gpointer data);
 void makeRadioItems(const char* const *labels, GtkWidget *box, GtkSignalFunc sigFunc, GtkToggleButton **gads, gpointer data);

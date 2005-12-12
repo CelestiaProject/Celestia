@@ -7,38 +7,39 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: common.cpp,v 1.2 2005-12-06 04:36:37 suwalski Exp $
+ *  $Id: common.cpp,v 1.3 2005-12-12 06:08:11 suwalski Exp $
  */
 
 #include <fstream>
 #include <gtk/gtk.h>
+#include <time.h>
 
 #include <celengine/astro.h>
 #include <celengine/galaxy.h>
 #include <celengine/render.h>
 #include <celestia/celestiacore.h>
-#include <celutil/debug.h>
 
 #include "common.h"
+
+
+/* Returns the offset of the timezone at date */
+gint tzOffsetAtDate(astro::Date date)
+{
+	time_t time = (time_t)astro::julianDateToSeconds(date - astro::Date(1970, 1, 1));
+	struct tm *d = localtime(&time);
+	
+	return (gint)d->tm_gmtoff;
+}
 
 
 /* Updates the time zone in the core based on valid timezone data */
 void updateTimeZone(AppData* app, gboolean local)
 {
 	if (local)
-	{
 		/* Always base current time zone on simulation date */
-		time_t curtime = (time_t)astro::julianDateToSeconds(app->simulation->getTime() - astro::Date(1970, 1, 1));
-		struct tm *temptime = localtime(&curtime);
-
-		app->core->setTimeZoneBias(temptime->tm_gmtoff);
-		app->core->setTimeZoneName(temptime->tm_zone);
-	}
+		app->core->setTimeZoneBias(tzOffsetAtDate(app->simulation->getTime()));
 	else
-	{
 		app->core->setTimeZoneBias(0);
-		app->core->setTimeZoneName("UTC");
-	}
 }
 
 
