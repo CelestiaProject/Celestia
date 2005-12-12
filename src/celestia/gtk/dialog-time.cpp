@@ -7,14 +7,14 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-time.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: dialog-time.cpp,v 1.2 2005-12-12 06:08:11 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
+#include <time.h>
 
 #include <celengine/astro.h>
 #include <celengine/simulation.h>
-#include <celutil/debug.h>
 
 #include "dialog-time.h"
 #include "common.h"
@@ -36,8 +36,6 @@ static void intSpin(GtkWidget *hbox, const char *str, int min, int max,
 void dialogSetTime(AppData* app)
 {
 	int timezone = 1;
-	int month;
-	int seconds;
 	
 	GtkWidget *stimedialog = gtk_dialog_new_with_buttons("Set Time",
 	                                                     GTK_WINDOW(app->mainWindow),
@@ -50,18 +48,16 @@ void dialogSetTime(AppData* app)
 	                                                     GTK_RESPONSE_CANCEL,
 	                                                     NULL);
 
-	const char* timeOptions[] = { "UTC", app->core->getTimeZoneName().c_str(), NULL };
-
 	if (app->showLocalTime)
 		timezone = 2;
 	
 	GtkWidget *hbox = gtk_hbox_new(FALSE, 6);
 	GtkWidget *frame = gtk_frame_new("Time");
-	GtkWidget *align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
+	GtkWidget *align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
 
 	astro::Date date(app->simulation->getTime() +
 	                 astro::secondsToJulianDate(app->core->getTimeZoneBias()));
-	month = date.month;
+
 	gtk_widget_show(align);
 	gtk_widget_show(frame);
 	gtk_container_add(GTK_CONTAINER(align),GTK_WIDGET(hbox));
@@ -69,7 +65,7 @@ void dialogSetTime(AppData* app)
 	gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(stimedialog)->vbox), frame, FALSE, FALSE, 0);
     
-	seconds = (int)date.seconds;
+	int seconds = (int)date.seconds;
 	intSpin(hbox, "Hour", 0, 23, &date.hour, ":");
 	intSpin(hbox, "Minute", 0, 59, &date.minute, ":");
 	intSpin(hbox, "Second", 0, 59, &seconds, "  ");
@@ -85,12 +81,6 @@ void dialogSetTime(AppData* app)
 	frame = gtk_frame_new("Date");
 	align=gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
 	gtk_container_set_border_width (GTK_CONTAINER (frame), 7);
-
-	if ((hbox == NULL) || (frame == NULL) || (align == NULL))
-	{
-		DPRINTF(0, (char*)"Unable to get GTK Elements.\n");
-		return;
-	}
 
 	chooseOption(hbox,
 	             "Month",
@@ -113,18 +103,11 @@ void dialogSetTime(AppData* app)
 	gint button = gtk_dialog_run(GTK_DIALOG(stimedialog));
 
 	if (button == GTK_RESPONSE_ACCEPT)
-	{
 		/* Set current time and exit. */
-		time_t curtime = time(NULL);
-		app->simulation->setTime((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
-		app->simulation->update(0.0);
-	}
+		app->simulation->setTime((double)time(NULL) / 86400.0 + (double)astro::Date(1970, 1, 1));
 	else if (button == GTK_RESPONSE_OK)
-	{
 		/* Set entered time and exit */
-		app->simulation->setTime((double) date - ((timezone==1) ? 0 : astro::secondsToJulianDate(app->core->getTimeZoneBias())));
-		app->simulation->update(0.0);
-	}
+		app->simulation->setTime((double)date - ((timezone == 1) ? 0 : astro::secondsToJulianDate(tzOffsetAtDate(date))));
 
 	gtk_widget_destroy(stimedialog);
 }
@@ -145,7 +128,7 @@ static gboolean intAdjChanged(GtkAdjustment* adj, int *val)
 /* CALLBACK: time zone selected from drop-down */
 static gboolean zoneChosen(GtkComboBox *menu, gboolean* timezone)
 {
-	*timezone = gtk_combo_box_get_active(menu);
+	*timezone = gtk_combo_box_get_active(menu) + 1;
 	return TRUE;
 }
 

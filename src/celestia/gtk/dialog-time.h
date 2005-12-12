@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-time.h,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: dialog-time.h,v 1.2 2005-12-12 06:08:11 suwalski Exp $
  */
 
 #ifndef GTK_DIALOG_TIME_H
@@ -20,5 +20,9 @@
 
 /* Entry Function */
 void dialogSetTime(AppData* app);
+
+
+/* Labels for TimeZone dropdown */
+static const char* timeOptions[] = { "UTC", "Local", NULL };
 
 #endif /* GTK_DIALOG_TIME_H */
