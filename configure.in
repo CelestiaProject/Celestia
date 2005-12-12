@@ -252,6 +252,8 @@ dnl (this is a silly trick to make configure behave)
 AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, test "x" = "y")
 
 if (test "$ui_gtk" != "no"); then
+	PKG_PROG_PKG_CONFIG
+
 	dnl GNOME is an extension to the GTK options
 	if (test "$ui_gnome" = "yes"); then
 		PKG_CHECK_MODULES(GTK, libgnomeui-2.0 gtk+-2.0 >= 2.6 gtkglext-1.0)
@@ -262,9 +264,6 @@ if (test "$ui_gtk" != "no"); then
 		PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.6 gtkglext-1.0)
 	fi
 	
-	AC_SUBST(GTK_CFLAGS)
-	AC_SUBST(GTK_LIBS)
-
 	CFLAGS="$CFLAGS $GTK_CFLAGS"
 	CXXFLAGS="$CXXFLAGS $GTK_CFLAGS"
 	LIBS="$LIBS $GTK_LIBS"
