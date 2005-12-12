@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.3 2005-12-11 22:13:54 suwalski Exp $
+ *  $Id: actions.cpp,v 1.4 2005-12-12 18:26:37 suwalski Exp $
  */
 
 #include <config.h>
@@ -42,6 +42,8 @@
 
 #ifdef GNOME
 #include "settings-gconf.h"
+#else
+#include "settings-file.h"
 #endif /* GNOME */
 
 
