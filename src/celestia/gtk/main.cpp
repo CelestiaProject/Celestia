@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: main.cpp,v 1.2 2005-12-11 22:13:54 suwalski Exp $
+ *  $Id: main.cpp,v 1.3 2005-12-12 06:08:11 suwalski Exp $
  */
 
 #include <iostream>
@@ -237,8 +237,7 @@ static void initRealize(GtkWidget* widget, AppData* app)
 		app->core->setStartURL(app->startURL);
 	
 	/* Set simulation time */
-	time_t curtime = time(NULL);
-	app->core->start((double)curtime / 86400.0 + (double)astro::Date(1970, 1, 1));
+	app->core->start((double)time(NULL) / 86400.0 + (double)astro::Date(1970, 1, 1));
 	updateTimeZone(app, app->showLocalTime);
 
 	/* Set the cursor to a crosshair */
