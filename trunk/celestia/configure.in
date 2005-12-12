@@ -236,7 +236,7 @@ if (test "x$ac_cv_lib_GLU_gluLookAt" = "xno"); then
 fi
 
 
-if ("$ui_glut" = "yes"); then
+if (test "$ui_glut" = "yes"); then
 	dnl Check for GLUT headers first.
 	AC_CHECK_HEADERS(GL/glut.h, ,
 	                 [AC_MSG_ERROR([No glut.h found. See INSTALL file for help.])])
