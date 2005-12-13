@@ -7,10 +7,13 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.4 2005-12-12 18:26:37 suwalski Exp $
+ *  $Id: actions.cpp,v 1.5 2005-12-13 06:19:57 suwalski Exp $
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #include <cstring>
 #include <fstream>
 #include <gtk/gtk.h>
@@ -325,7 +328,7 @@ void actionViewerSize(GtkAction*, AppData* app)
 {
 	GtkWidget* dialog;
 	int newX, currentX, currentY, winX, winY, screenX, i = 1, position = -1;
-	char res[15];
+	char res[32];
 	
 	screenX = gdk_screen_get_width(gdk_screen_get_default());
 	currentX = app->glArea->allocation.width;

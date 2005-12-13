@@ -7,8 +7,12 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: main.cpp,v 1.3 2005-12-12 06:08:11 suwalski Exp $
+ *  $Id: main.cpp,v 1.4 2005-12-13 06:19:57 suwalski Exp $
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
 
 #include <iostream>
 #include <fstream>
@@ -16,12 +20,16 @@
 #include <cctype>
 #include <cstring>
 #include <time.h>
+
+#ifdef WIN32
+#include <direct.h>
+#else
 #include <unistd.h>
+#endif /* WIN32 */
 
 #include <gtk/gtk.h>
 #include <gtk/gtkgl.h>
 
-#include <config.h>
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
 #include <celengine/gl.h>
@@ -302,15 +310,17 @@ int main(int argc, char* argv[])
 	gtk_init(&argc, &argv);
 	#endif
 	
-    SetDebugVerbosity(0);
+	SetDebugVerbosity(0);
 
 	/* Force number displays into C locale. */
 	setlocale(LC_NUMERIC, "C");
-
 	setlocale(LC_ALL, "");
+
+	#ifndef WIN32
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	textdomain(PACKAGE);
+	#endif /* WIN32 */
 
 	app->core = new CelestiaCore();
 	if (app->core == NULL)
@@ -480,3 +490,14 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+
+
+#ifdef WIN32
+int APIENTRY WinMain(HINSTANCE hInstance,
+                     HINSTANCE hPrevInstance,
+                     LPSTR lpCmdLine,
+                     int nCmdShow)
+{
+	return main(__argc, __argv);
+}
+#endif /* WIN32 */

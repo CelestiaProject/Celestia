@@ -7,13 +7,16 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: common.h,v 1.2 2005-12-12 06:08:11 suwalski Exp $
+ *  $Id: common.h,v 1.3 2005-12-13 06:19:57 suwalski Exp $
  */
 
 #ifndef GTK_COMMON_H
 #define GTK_COMMON_H
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 #include <gtk/gtk.h>
 
 #ifdef GNOME
