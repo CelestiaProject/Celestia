@@ -7,9 +7,10 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: menu-context.cpp,v 1.2 2005-12-06 04:14:47 suwalski Exp $
+ *  $Id: menu-context.cpp,v 1.3 2005-12-13 06:19:57 suwalski Exp $
  */
 
+#include <algorithm>
 #include <gtk/gtk.h>
 
 #include <celengine/simulation.h>

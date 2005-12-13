@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: common.cpp,v 1.3 2005-12-12 06:08:11 suwalski Exp $
+ *  $Id: common.cpp,v 1.4 2005-12-13 06:19:57 suwalski Exp $
  */
 
 #include <fstream>
@@ -25,10 +25,16 @@
 /* Returns the offset of the timezone at date */
 gint tzOffsetAtDate(astro::Date date)
 {
+	#ifdef WIN32
+	/* This does not correctly handle DST. Unfortunately, no way to find
+	 * out what UTC offset is at specified date in Windows */
+	return -timezone;
+	#else
 	time_t time = (time_t)astro::julianDateToSeconds(date - astro::Date(1970, 1, 1));
 	struct tm *d = localtime(&time);
 	
 	return (gint)d->tm_gmtoff;
+	#endif
 }
 
 

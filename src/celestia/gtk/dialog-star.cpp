@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-star.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: dialog-star.cpp,v 1.2 2005-12-13 06:19:57 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -221,7 +221,7 @@ static void listStarEntryChange(GtkEntry *entry, GdkEventFocus *event, sbData* s
 	}
 
 	/* Update value of this box */
-	char stars[3];
+	char stars[4];
 	sprintf(stars, "%d", sb->numListStars);
 	gtk_entry_set_text(entry, stars);
 }
