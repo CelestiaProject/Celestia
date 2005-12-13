@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-options.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: dialog-options.cpp,v 1.2 2005-12-13 06:19:57 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -146,7 +146,7 @@ static gint changeDistanceLimit(GtkRange *slider, AppData* app)
 	float limit = makeDistanceLimit(gtk_range_get_value(slider));
 	app->renderer->setDistanceLimit(limit);
 
-	char labeltext[10] = "100000 ly";
+	char labeltext[16] = "100000 ly";
 	sprintf(labeltext, "%ld ly", (long)limit);
 	gtk_label_set_text(GTK_LABEL(magLabel), labeltext);
 

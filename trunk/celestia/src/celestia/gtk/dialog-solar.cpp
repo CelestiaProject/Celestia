@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-solar.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: dialog-solar.cpp,v 1.2 2005-12-13 06:19:57 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -143,7 +143,7 @@ static void addPlanetarySystemToTree(const PlanetarySystem* sys, GtkTreeStore* s
 	for (int i = 0; i < sys->getSystemSize(); i++)
 	{
 		world = sys->getBody(i);
-		name = world->getName().c_str();
+		name = g_strdup(world->getName().c_str());
 		
 		switch(world->getClassification())
 		{
@@ -207,7 +207,7 @@ static void loadNearestStarSystem(AppData* app, GtkWidget* solarTree, GtkTreeSto
 	{
 		nearestStar = solarSys->getStar();
 
-		name = stardb->getStarName(*nearestStar).c_str();
+		name = g_strdup(stardb->getStarName(*nearestStar).c_str());
 
 		sprintf(type, "%s Star", nearestStar->getSpectralType());
 	
