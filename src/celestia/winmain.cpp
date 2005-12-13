@@ -648,6 +648,12 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
                     maxTextureSize);
             s += buf;
 
+            GLfloat pointSizeRange[2];
+            glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
+            sprintf(buf, "Point size range: %f - %f\r\r\n",
+                    pointSizeRange[0], pointSizeRange[1]);
+            s += buf;
+
             s += "\r\r\nSupported Extensions:\r\r\n";
             if (ext != NULL)
             {
@@ -1375,7 +1381,10 @@ BOOL APIENTRY SetTimeProc(HWND hDlg,
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
             if (LOWORD(wParam) == IDOK)
+			{
+				appCore->tick();
                 appCore->getSimulation()->setTime((double) newTime);
+			}
             EndDialog(hDlg, 0);
             return TRUE;
         }
@@ -2031,7 +2040,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     deviceContext = GetDC(hwnd);
     if (!SetDCPixelFormat(deviceContext))
     {
-    MessageBox(NULL,
+        MessageBox(NULL,
                    "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
     return NULL;
