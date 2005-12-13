@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-time.cpp,v 1.2 2005-12-12 06:08:11 suwalski Exp $
+ *  $Id: dialog-time.cpp,v 1.3 2005-12-13 03:54:40 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -101,6 +101,9 @@ void dialogSetTime(AppData* app)
 
 	gtk_dialog_set_default_response(GTK_DIALOG(stimedialog), GTK_RESPONSE_OK);
 	gint button = gtk_dialog_run(GTK_DIALOG(stimedialog));
+
+	/* Set the selected seconds value back to the Date struct */
+	date.seconds = seconds;
 
 	if (button == GTK_RESPONSE_ACCEPT)
 		/* Set current time and exit. */
