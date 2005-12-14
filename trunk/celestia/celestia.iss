@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.4.0pre7
+AppVerName=Celestia 1.4.0pre8
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -65,6 +65,8 @@ Source: "data\saoxindex.dat";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\revised.stc";        DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\extrasolar.stc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\nearstars.stc";      DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\visualbins.stc";     DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\spectbins.stc";      DestDir: "{app}/data"; Flags: ignoreversion
 
 Source: "data\deepsky.dsc";        DestDir: "{app}/data"; Flags: ignoreversion
 
@@ -80,12 +82,6 @@ Source: "data\world-capitals.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\cassini.xyz";        DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\galileo.xyz";        DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\huygens.xyz";        DestDir: "{app}/data"; Flags: ignoreversion
-
-Source: "data\Sa.pts";             DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\Sb.pts";             DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\Sc.pts";             DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\SBa.pts";            DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\SBc.pts";            DestDir: "{app}/data"; Flags: ignoreversion
 
 ; Textures (General)
 Source: "textures\flare.jpg";      DestDir: "{app}/textures"; Flags: ignoreversion
@@ -298,6 +294,14 @@ Source: "shaders\texphong_alpha_nv.fp";  DestDir: "{app}/shaders"; Flags: ignore
 
 
 ; Models
+Source: "models\S0.pts";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\Sa.pts";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\Sb.pts";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\Sc.pts";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\SBa.pts";         DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\SBb.pts";         DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\SBc.pts";         DestDir: "{app}/models"; Flags: ignoreversion
+
 Source: "models\amalthea.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\asteroid.cms";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\bacchus.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
