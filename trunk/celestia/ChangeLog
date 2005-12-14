@@ -796,6 +796,8 @@ Code:
 * Bound % key to toggle between star color tables
 * Fixed black holes: infinite radius bug gone, rendered just as a plain black
   sphere
+* Added comprehensive catalog of all knows stars within 25 light years of the
+  Sun, including orbits for multiple star systems
 * Created new command line tools for building binary star databases
 * Removed limitation that two or more solar systems couldn't be shown
   simultaneously
@@ -817,6 +819,12 @@ Code:
   orbit and  galaxy data from published professional catalogs.
 * Added --extrasdir command line option for specifying additional directories
   to search for add-ons
+* Allowed time scale to be modified while simulation is paused
+* Replaced Windows date picker with a custom one that can be used to set dates
+  prior to 1752.
+* Fixed a bug in the Windows time picker that was causing the set time to be
+  off by however many seconds the dialog was active.
+* Added parent field for stars in celx scripting's getinfo command
 * GTK+ front-end overhaul
    - source split into multiple files
    - performance work to minimize number of preference resyncs
@@ -842,7 +850,7 @@ Code:
    - absolute magnitudes and 
    - correct sizes & orientations in space, as calculated from catalog
      parameters. 
-  Included well commented Perl script (deepsky.pl) as documentation. The used distance determination method is indicated in catalog for each galaxy.
+* Included well commented Perl script (deepsky.pl) as documentation. The used distance determination method is indicated in catalog for each galaxy.
 * Updated binary star data base (visualbins.stc, spectbins.dsc) and respective
   PERL catalog extraction scripts (visualbins.pl, spectbins.pl), such as to eliminate double occurences wrto nearstars.stc (, which remained unaffected).
 * Added much improved galaxy templates.
@@ -881,7 +889,7 @@ Code:
    - To save space and to improve display: generate neat spherical E0
      template from S0 disk template via rescaling by (1.0f, 3.8f, 1.0f);
    - fixed wrong x,y alignment of elliptical rescaling.
-* Added code to ease compilation with newer Xcode versions (MacIntosh).
+* Added code to ease compilation with newer Xcode versions (Macintosh).
 * Updated src/celengine/Makefile.am for Linux building. 
 * Introduced a new cel function => renderflags {set "nebulae"}.
 * Reduced the default value of 'faintestAutoMag45deg' from 8.5 to 7.0.
@@ -898,4 +906,3 @@ Code:
   fading (between 4 and 6 AU for Sol). Systems with several suns and luminosities different from the solar one are accounted for. 
 * Implemented a new, simple scheme avoiding overcrowded galaxy labels.  
   Their "importance"  is sorted according to apparent magnitude! Thus the labels of the brightest galaxies pop up first upon zooming in... 
-
