@@ -86,8 +86,7 @@ Orbit* Body::getOrbit() const
 
 void Body::setOrbit(Orbit* _orbit)
 {
-    if (orbit == NULL)
-        delete orbit;
+    delete orbit;
     orbit = _orbit;
 }
 
