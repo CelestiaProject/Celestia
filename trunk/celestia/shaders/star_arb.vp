@@ -18,8 +18,7 @@ DP4   oPos.y, mvp[1], iPos;
 DP4   oPos.z, mvp[2], iPos;
 DP4   oPos.w, mvp[3], iPos;
 
-MOV   oColor, iColor
+MOV   oColor, iColor;
 MOV   oSize.x, iSize;
 
 END
-
