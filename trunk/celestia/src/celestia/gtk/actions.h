@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.h,v 1.3 2005-12-11 22:13:54 suwalski Exp $
+ *  $Id: actions.h,v 1.4 2005-12-15 06:42:44 suwalski Exp $
  */
 
 #ifndef GTK_ACTIONS_H
@@ -116,5 +116,14 @@ void resyncTimeZoneAction(AppData* app);
 void resyncAmbientActions(AppData* app);
 void resyncStarStyleActions(AppData* app);
 void resyncGalaxyGainActions(AppData* app);
+
+
+/* Information for the about box */
+#ifdef GNOME
+#define FRONTEND "GNOME"
+#else
+#define FRONTEND "GTK+"
+#endif
+
 
 #endif /* GTK_ACTIONS_H */
