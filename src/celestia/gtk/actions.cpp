@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.5 2005-12-13 06:19:57 suwalski Exp $
+ *  $Id: actions.cpp,v 1.6 2005-12-15 06:42:44 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -576,12 +576,23 @@ void actionHelpOpenGL(GtkAction*, AppData* app)
 void actionHelpAbout(GtkAction*, AppData* app)
 {
 	const gchar* authors[] = {
-        "Chris Laurel <claurel@shatters.net>",
-        "Deon Ramsey <dramsey@sourceforge.net>",
-        "Clint Weisbrod <cweisbrod@cogeco.ca>",
-		"Fridger Schrempp <fridger.schrempp@desy.de>",
-		"Pat Suwalski <pat@suwalski.net>",
-        NULL
+		"Active Developers ***\n",
+		"Da-Woon Jung <dirkpitt2050@gmail.com>\n"
+			"\tMacOSX Front-End\n",
+    	"Chris Laurel <claurel@shatters.net>\n"
+			"\tOpenGL Engine, Windows Front-End\n",
+		"Fridger Schrempp <fridger.schrempp@desy.de>\n"
+			"\tResearch, Engine, GTK+ 1 Front-End\n",
+		"Pat Suwalski <pat@suwalski.net>\n"
+			"\tGTK+ 2 Front-End\n",
+		"Christophe Teyssier <chris@teyssier.org>\n"
+			"\tKDE Front-End, Browser Integration\n",
+		"\nPast Developers ***\n",
+		"Grant Hutchison <grantcelestia@xemaps.com>",
+		"Bob Ippolito <bob@redivi.com>",
+		"Deon Ramsey <dramsey@sourceforge.net>",
+		"Clint Weisbrod <cweisbrod@cogeco.ca>",
+		NULL
     };
 
 	GdkPixbuf *logo = gdk_pixbuf_new_from_file ("celestia-logo.png", NULL);
@@ -590,7 +601,7 @@ void actionHelpAbout(GtkAction*, AppData* app)
 	                     "name", "Celestia",
 	                     "version", VERSION,
 	                     "copyright", "Copyright \xc2\xa9 2001-2005 Chris Laurel",
-	                     "comments", "OpenGL 3D Space Simulation",
+	                     "comments", FRONTEND " Front-End",
 	                     "website", "http://celestia.sf.net",
 	                     "authors", authors,
 	                     "license", readFromFile("COPYING"),
