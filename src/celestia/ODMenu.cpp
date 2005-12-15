@@ -572,32 +572,20 @@ COLORREF ODMenu::DarkenColor(COLORREF col, double factor)
 	return col;
 }
 
-COLORREF ODMenu::AverageColor(COLORREF col1, COLORREF col2, double weight1)
+COLORREF ODMenu::AverageColor(COLORREF col1, COLORREF col2, double weight)
 {
-    BYTE red1, green1, blue1, red2, green2, blue2;
     BYTE avgRed, avgGreen, avgBlue;
-    COLORREF col;
-    double weight2;
 
-    if(weight1 < 0.0 || weight1 > 1.0)
+    if (weight <= 0.0)
         return col1;
+	else if (weight > 1.0)
+		return col2;
 
-    weight2 = 1.0 - weight1;
+    avgRed   = (BYTE) (GetRValue(col1) * weight + GetRValue(col2) * (1.0 - weight));
+    avgGreen = (BYTE) (GetGValue(col1) * weight + GetGValue(col2) * (1.0 - weight));
+    avgBlue  = (BYTE) (GetBValue(col1) * weight + GetBValue(col2) * (1.0 - weight));
 
-    red1 = GetRValue(col1);
-    green1 = GetGValue(col1);
-	blue1 = GetBValue(col1);
-    red2 = GetRValue(col2);
-    green2 = GetGValue(col2);
-	blue2 = GetBValue(col2);
-
-    avgRed = weight1 * red1 + weight2 * red2;
-    avgGreen = weight1 * green1 + weight2 * green2;
-    avgBlue = weight1 * blue1 + weight2 * blue2;
-
-    col = RGB(avgRed, avgGreen, avgBlue);
-
-    return col;
+    return RGB(avgRed, avgGreen, avgBlue);
 }
 
 double ODMenu::GetColorIntensity(COLORREF col)
