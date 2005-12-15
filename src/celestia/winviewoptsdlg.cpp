@@ -77,9 +77,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWGALAXIES:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowGalaxies);
             break;
-		case IDC_SHOWNEBULAE:
-			renderer->setRenderFlags(renderFlags ^ Renderer::ShowNebulae);
-			break;
+        case IDC_SHOWNEBULAE:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowNebulae);
+            break;
         case IDC_SHOWNIGHTSIDELIGHTS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowNightMaps);
             break;
@@ -263,6 +263,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowEclipseShadows)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWGALAXIES, BM_SETCHECK,
         (renderFlags & Renderer::ShowGalaxies)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWNEBULAE, BM_SETCHECK,
+        (renderFlags & Renderer::ShowNebulae)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNIGHTSIDELIGHTS, BM_SETCHECK,
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     dlgCheck(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
