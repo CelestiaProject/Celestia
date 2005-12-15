@@ -368,7 +368,7 @@ DatePicker::leftButtonDown(WORD key, int x, int y)
     else if (PtInRect(&fieldRects[YearField], pt))
         selectedField = YearField;
 
-    setFocus(hwnd);
+    ::SetFocus(hwnd); // note that this is the Win32 API function, not the class method
 
     return 0;
 }
