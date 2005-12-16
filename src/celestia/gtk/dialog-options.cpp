@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-options.cpp,v 1.2 2005-12-13 06:19:57 suwalski Exp $
+ *  $Id: dialog-options.cpp,v 1.3 2005-12-16 00:57:05 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -159,7 +159,10 @@ static void checkButtonsFromAG(const GtkToggleActionEntry actions[], int size, G
 {
 	for (int i = 0; i < size; i++) {
 		GtkAction* action = gtk_action_group_get_action(ag, actions[i].name);
-		GtkWidget* w = gtk_check_button_new();
+		
+		/* Mnemonic work-around for bug in GTK 2.6 > 2.6.2, where the label
+		 * is not set with action proxy. */
+		GtkWidget* w = gtk_check_button_new_with_mnemonic(actions[i].label);
 
 		gtk_action_connect_proxy(action, w);
 		gtk_box_pack_start(GTK_BOX(box), w, TRUE, TRUE, 0);
@@ -173,7 +176,10 @@ static void toggleButtonsFromAG(const GtkRadioActionEntry actions[], int size, G
 {
 	for (int i = 0; i < size; i++) {
 		GtkAction* action = gtk_action_group_get_action(ag, actions[i].name);
-		GtkWidget* w = gtk_toggle_button_new();
+
+		/* Mnemonic work-around for bug in GTK 2.6 > 2.6.2, where the label
+		 * is not set with action proxy. */
+		GtkWidget* w = gtk_toggle_button_new_with_mnemonic(actions[i].label);
 
 		gtk_action_connect_proxy(action, w);
 		gtk_box_pack_start(GTK_BOX(box), w, TRUE, TRUE, 0);
