@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: ui.h,v 1.3 2005-12-11 22:13:54 suwalski Exp $
+ *  $Id: ui.h,v 1.4 2005-12-16 00:57:05 suwalski Exp $
  */
 
 #ifndef GTK_UI_H
@@ -80,7 +80,11 @@ static const GtkActionEntry actionsPlain[] = {
 	{ "HelpMenu", NULL, "_Help", NULL, NULL, NULL },
 	{ "RunDemo", GTK_STOCK_EXECUTE, "Run _Demo", "D", NULL, G_CALLBACK(actionRunDemo) },
 	{ "HelpControls", GTK_STOCK_HELP, "_Controls", NULL, NULL, G_CALLBACK(actionHelpControls) },
+	#if GTK_CHECK_VERSION(2, 7, 0)
 	{ "HelpOpenGL", GTK_STOCK_INFO, "OpenGL _Info", NULL, NULL, G_CALLBACK(actionHelpOpenGL) },
+	#else
+	{ "HelpOpenGL", NULL, "OpenGL _Info", NULL, NULL, G_CALLBACK(actionHelpOpenGL) },
+	#endif
 	{ "HelpAbout", GTK_STOCK_ABOUT, "_About", NULL, NULL, G_CALLBACK(actionHelpAbout) },
 };
 
@@ -88,7 +92,11 @@ static const GtkActionEntry actionsPlain[] = {
 /* Regular Checkbox Actions */
 static const GtkToggleActionEntry actionsToggle[] = {
 	{ "TimeLocal", NULL, "Show _Local Time", NULL, NULL, G_CALLBACK(actionTimeLocal), FALSE },
+	#if GTK_CHECK_VERSION(2, 7, 0)
 	{ "FullScreen", GTK_STOCK_FULLSCREEN, "_Full Screen", "<alt>Return",  NULL, G_CALLBACK(actionFullScreen), FALSE },
+	#else
+	{ "FullScreen", NULL, "_Full Screen", "<alt>Return",  NULL, G_CALLBACK(actionFullScreen), FALSE },
+	#endif /* GTK_CHECK_VERSION */
 	{ "MenuBarVisible", NULL, "_Menu Bar", "<control>M", NULL, G_CALLBACK(actionMenuBarVisible), TRUE },
 	{ "MultiShowFrames", NULL, "Show _Frames", NULL, NULL, G_CALLBACK(actionMultiShowFrames), FALSE },
 	{ "MultiShowActive", NULL, "Active Frame Highlighted", NULL, NULL, G_CALLBACK(actionMultiShowActive), FALSE },
