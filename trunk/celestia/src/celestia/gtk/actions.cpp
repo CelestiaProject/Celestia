@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.6 2005-12-15 06:42:44 suwalski Exp $
+ *  $Id: actions.cpp,v 1.7 2005-12-16 00:57:05 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -105,7 +105,10 @@ void actionOpenScript(GtkAction*, AppData* app)
 	                                            GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 	                                            NULL);
 
+	#if GTK_CHECK_VERSION(2, 7, 0)
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(fs), TRUE);
+	#endif /* GTK_CHECK_VERSION */
+
 	gtk_dialog_set_default_response(GTK_DIALOG(fs), GTK_RESPONSE_ACCEPT);
 	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(fs), g_get_home_dir());
 
@@ -146,7 +149,10 @@ void actionCaptureImage(GtkAction*, AppData* app)
 	gtk_file_filter_add_pattern(filter, "*.jpeg *.jpg *.png");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(fs), filter);
 
+	#if GTK_CHECK_VERSION(2, 7, 0)
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(fs), TRUE);
+	#endif /* GTK_CHECK_VERSION */
+	
 	gtk_dialog_set_default_response(GTK_DIALOG(fs), GTK_RESPONSE_ACCEPT);
 	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(fs), g_get_home_dir());
 
