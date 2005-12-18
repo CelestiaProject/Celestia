@@ -633,8 +633,10 @@ FEATUREMETHODS(Other)
     id item2 = [ tagMap objectForKey: [NSNumber numberWithInt: ([item tag]-index) ]];
     if ([item2 isKindOfClass: [NSPopUpButton class]])
     {
-        [item2 selectItem: item];
-    };
+        int popUpIndex = [item2 indexOfItemWithTag: [item tag]];
+        if (popUpIndex >= 0)
+            [item2 selectItemAtIndex: popUpIndex];
+    }
 }
 
 - (void) actionForItem: (id) item
