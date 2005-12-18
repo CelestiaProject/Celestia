@@ -1,5 +1,5 @@
  
-Celestia's Keyboard-Mouse-Joystick Assignments (as of Feb 21, 2004)
+Celestia's Keyboard-Mouse-Joystick Assignments (as of Dec 18, 2005)
 ===================================================================
 
 This list of Celestia keystrokes, mouse and joystick control
@@ -138,12 +138,12 @@ SPECIAL CHARACTERS
 @  Edit Mode
 #  
 $  
-%  
-^  
+%  Toggle star color tables
+^  Toggle nebula rendering
 &  Toggle location labels
 *  Look back
-(  
-)  
+(  Decrease galaxy brightness independent of star brightness
+)  Increase galaxy brightness independent of star brightness
 -  (hyphen) Subtract light-travel delay from current simulation time
 _  (underscore) 
 =  Toggle constellation labels
