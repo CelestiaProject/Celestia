@@ -62,6 +62,8 @@ I  : Toggle cloud textures
 U  : Toggle galaxy rendering
 O  : Toggle planet orbits
 /  : Toggle constellation diagrams
+^  : Toggle nebula rendering
+%  : Toggle star color tables
 ;  : Show an earth-based equatorial coordinate sphere
 [  : If autoMag OFF: Decrease limiting magnitude (fewer stars visible)
      If autoMag ON : Decrease limiting magnitude at 45 deg field of view 
@@ -69,6 +71,8 @@ O  : Toggle planet orbits
      If autoMag ON : Increase limiting magnitude at 45 deg field of view 
 {  : Decrease ambient illumination
 }  : Increase ambient illumination
+(  : Decrease galaxy brightness independently of star brightness
+)  : Increase galaxy brightness independently of star brightness
 ,  : Narrow field of view
 .  : Widen field of view
 Backspace: Cancel current selection
