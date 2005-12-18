@@ -84,6 +84,18 @@ static NSString *queryGLExtension(const char *extName)
     ENDL;
 
     [result appendString: NSLocalizedString(@"Extensions:","")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_vertex_buffer_object")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_texture_compression")]; ENDL;
+    [result appendString: queryGLExtension("GL_EXT_texture_compression_s3tc")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_texture_border_clamp")]; ENDL;
+    [result appendString: queryGLExtension("GL_EXT_texture_edge_clamp")]; ENDL;
+    [result appendString: queryGLExtension("GL_EXT_texture_cube_map")]; ENDL;
+    [result appendString: queryGLExtension("GL_SGIS_generate_mipmap")]; ENDL;
+    [result appendString: queryGLExtension("GL_EXT_rescale_normal")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_point_sprite")]; ENDL;
+
+    ENDL;
+
     [result appendString: queryGLExtension("GL_ARB_vertex_program")]; ENDL;
     [result appendString: queryGLExtension("GL_NV_vertex_program")]; ENDL;
     [result appendString: queryGLExtension("GL_NV_fragment_program")]; ENDL;
