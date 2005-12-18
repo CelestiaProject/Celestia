@@ -4,8 +4,8 @@ Celestia Mouse, Keyboard and Joystick Controls
 The controls listed here are sorted by Mouse, Keyboard, and Joystick. Within
 each section and sub-section, the controls are sorted by description.
 
-This list of controls was current as of Celestia version 1.3.2 pre-2 (Feb,
-2004). If you notice that a command is missing or incorrect, please write a
+This list of controls was current as of Celestia version 1.4.0 (December,
+2005). If you notice that a command is missing or incorrect, please write a
 message in the Celestia Bugs forum, located at ...
 (http://ennui.shatters.net/forum/viewforum.php?f=3). Thank you.
 
@@ -141,6 +141,7 @@ Ctrl+B ........... Constellation boundaries
 Ctrl+E ........... Eclipse shadows
 U ................ Galaxies (gray "space-clouds")
 Ctrl+K ........... Markers (placed on objects)
+^ ................ Nebulae
 Ctrl+L ........... Night side planet lights (light pollution)
 O ................ Orbits (display ALL selected orbits--see Render/View Options)
 
@@ -156,6 +157,8 @@ Ctrl+Y ........... Auto Magnitude (toggle) Auto adaptation of star visibility to
 Alt+Enter......... Display mode toggle (Full-Screen / Windowed)
 , ................ Field Of View [FOV] (Narrow, also Shift+Left Drag)
 . ................ Field Of View [FOV] (Widen,  also Shift+Left Drag)
+( ................ Galaxy Brightness (Decrease) - independent star brightness
+) ................ Galaxy Brightness (Increase) - independent star brightness
 [ ................ Magnitude Limit (decrease):
                    - If AutoMag OFF: Decrease limiting magnitude (fewer stars)
                    - If AutoMag ON : Decrease limiting magnitude at 45 deg FOV
@@ -170,6 +173,7 @@ R (Shift+R)....... Object file resolution (increase)--use texture images in next
 Ctrl+V ........... OpenGl Render Paths--Cycle through the paths supported on
                      your graphics card
 + ................ Planet Texture Type toggle (Artistic / Limit of Knowledge)
+% ................ Star color table toggle
 Ctrl+S ........... Star Styles -- Cycle fuzzy discs, points, and scaled discs
 V ................ Informational text verbosity control (None / Terse / Verbose)
 Ctrl+W ........... Wireframe mode toggle
