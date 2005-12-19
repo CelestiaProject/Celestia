@@ -51,7 +51,7 @@ using namespace std;
 #endif
 
 static const float  STAR_DISTANCE_LIMIT  = 1.0e6f;
-static const double DSO_DISTANCE_LIMIT   = 1.0e9;
+static const double DSO_DISTANCE_LIMIT   = 1.8e9;
 static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
 static const float  X0_SOL = astro::AUtoKilometers(5.0f);
@@ -5887,7 +5887,7 @@ void Renderer::renderCometTail(const Body& body,
     
     for (unsigned int li = 0; li < lightSources.size(); li++)
     {
-        distanceFromSun = (body.getHeliocentricPosition(now) -
+        distanceFromSun = (float)(body.getHeliocentricPosition(now) -
                            lightSources[li].position).length();
         float irradiance = lightSources[li].luminosity / square(distanceFromSun);
         if (irradiance > irradiance_max )
@@ -6412,7 +6412,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                 alpha = 0.4f * clamp((appMag - saturationMag) * -0.8f);
                 s = renderDistance * 0.001f * (3 - (appMag - saturationMag)) * 2;
                 if (s > p.size * 3 )
-		    p.size = s * 2.0f/(1.0f +FOV/fov);
+		        	p.size = s * 2.0f/(1.0f + FOV/fov);	
                 else
                     p.size = p.size * 3;
                 p.color = Color(starColor, alpha);
@@ -6629,9 +6629,11 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     // Label appearance is sorted according to apparent galaxy brightness!
     // Only render those labels that are in front of the camera:
 
-    float relDistanceToScreen = REF_DISTANCE_TO_SCREEN * pixelSize * renderer->getScreenDpi() / 25.4f; // = 1.0 initially, after startup
-    if ((dso->getLabelMask() & labelMode)           &&
-    astro::absToAppMag(absMag, (float) distanceToDSO) < faintestMag * log10(5.0f/relDistanceToScreen) && dot(relPos, viewNormal) > 0)
+    float relDistanceToScreen = REF_DISTANCE_TO_SCREEN * pixelSize * renderer->getScreenDpi() / 25.4f; 
+    // = 1.0 initially, after startup
+    if ((dso->getLabelMask() & labelMode)
+    && astro::absToAppMag(absMag, (float) distanceToDSO) < faintestMag * (1.0f - 0.5f * log10(relDistanceToScreen)) 
+    && dot(relPos, viewNormal) > 0)
     {
         renderer->addLabel(dsoDB->getDSOName(dso),
                             Color(0.1f, 0.85f, 0.85f, 1.0f),
