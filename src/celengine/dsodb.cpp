@@ -36,7 +36,7 @@
 using namespace std;
 
 
-static const float DSO_OCTREE_ROOT_SIZE   = 4.0e8f;
+static const float DSO_OCTREE_ROOT_SIZE   = 1.8e9f;
 static const float DSO_OCTREE_MAGNITUDE   = 12.0f;
 static const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
                                                    // (useful as a complement of binary loaded DSOs)
