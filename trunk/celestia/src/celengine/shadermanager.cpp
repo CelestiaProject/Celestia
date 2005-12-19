@@ -347,6 +347,8 @@ DumpShaderSource(ostream& out, const std::string& source)
         if (source[i] == '\n')
             newline = true;
     }
+
+    out.flush();
 }
 
 
