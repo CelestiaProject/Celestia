@@ -605,6 +605,16 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     {
         source += "diff = vec4(ambientColor, 1.0);\n";
     }
+	
+    if (props.lightModel == ShaderProperties::SpecularModel && !props.usesShadows())
+    {
+        source += "spec = vec4(0.0, 0.0, 0.0, 0.0);\n";
+    }
+
+    if (props.texUsage & ShaderProperties::NightTexture)
+    {
+        source += "totalLight = 0.0;\n";
+	}	
 
     for (unsigned int i = 0; i < props.nLights; i++)
     {
