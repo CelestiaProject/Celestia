@@ -903,6 +903,9 @@ Code:
   specification of an absolute magnitude (absMag) input value.
 * Deleted various source code files that became superfluous.
 * Improved comet display. Introduced a neat scheme implementing comet tail
-  fading (between 4 and 6 AU for Sol). Systems with several suns and luminosities different from the solar one are accounted for. 
+  fading (between 4 and 6 AU for Sol). Systems with several suns and
+  luminosities different from the solar one are accounted for. 
 * Implemented a new, simple scheme avoiding overcrowded galaxy labels.  
-  Their "importance"  is sorted according to apparent magnitude! Thus the labels of the brightest galaxies pop up first upon zooming in... 
+  Their "importance"  is sorted according to apparent magnitude! Thus the
+  labels of the brightest galaxies pop up first upon zooming in... 
+* Fixes/workarounds for OpenGL 2.0 render paths on both nVidia and ATI cards.
