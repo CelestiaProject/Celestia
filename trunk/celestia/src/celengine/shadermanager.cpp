@@ -876,7 +876,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
         if (props.texUsage & ShaderProperties::SpecularInDiffuseAlpha)
-            source += "gl_FragColor = color * diff + color.a * spec;\n";
+            source += "gl_FragColor = color * diff + float(color.a) * spec;\n";
         else if (props.texUsage & ShaderProperties::SpecularTexture)
             source += "gl_FragColor = color * diff + texture2D(specTex, specTexCoord.st) * spec;\n";
         else
