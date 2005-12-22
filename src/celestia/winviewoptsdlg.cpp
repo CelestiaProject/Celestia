@@ -128,6 +128,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
 		case IDC_LABELNEBULAE:
 			renderer->setLabelMode(labelMode ^ Renderer::NebulaLabels);
 			break;
+		case IDC_LABELOPENCLUSTERS:
+			renderer->setLabelMode(labelMode ^ Renderer::OpenClusterLabels);
+			break;
         case IDC_LABELPLANETS:
             renderer->setLabelMode(labelMode ^ Renderer::PlanetLabels);
             break;
@@ -292,6 +295,7 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     dlgCheck(hDlg, IDC_LABELCONSTELLATIONS, labelMode, Renderer::ConstellationLabels);
     dlgCheck(hDlg, IDC_LABELGALAXIES,   labelMode, Renderer::GalaxyLabels);
 	dlgCheck(hDlg, IDC_LABELNEBULAE,    labelMode, Renderer::NebulaLabels);
+	dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
     dlgCheck(hDlg, IDC_LABELSTARS,      labelMode, Renderer::StarLabels);
     dlgCheck(hDlg, IDC_LABELPLANETS,    labelMode, Renderer::PlanetLabels);
     dlgCheck(hDlg, IDC_LABELMOONS,      labelMode, Renderer::MoonLabels);
