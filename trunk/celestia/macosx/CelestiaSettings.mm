@@ -169,6 +169,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(900,@"ambientLightLevel")
         TAGDEF(901,@"brightnessBias")
         TAGDEF(902,@"faintestVisible")
+        TAGDEF(904,@"galaxyBrightness")
 //        TAGDEF(999,@"saturationMagnitude")
 
         nil ] retain];
@@ -412,6 +413,9 @@ FEATUREMETHODS(Other)
 
 -(float) ambientLightLevel { return appCore->getRenderer()->getAmbientLightLevel(); };
 -(void)  setAmbientLightLevel: (float) value { appCore->getRenderer()->setAmbientLightLevel(value); };
+
+-(float) galaxyBrightness { return Galaxy::getLightGain(); };
+-(void)  setGalaxyBrightness: (float) value { Galaxy::setLightGain(value); };
 
 // Star Settings
 
