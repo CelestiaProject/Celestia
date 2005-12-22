@@ -114,6 +114,7 @@
 #define IDC_ECLIPSES_LIST               1071
 #define IDC_LABELCOMETS                 1072
 #define IDC_COMETORBITS                 1073
+#define IDC_LABELNEBULAE                1074
 #define IDCOMPUTE                       1078
 #define IDC_DATEFROM                    1079
 #define IDC_ECLIPSEFROM                 1079
