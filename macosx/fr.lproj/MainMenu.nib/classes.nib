@@ -26,9 +26,8 @@
                 glInfo = NSTextView; 
                 glInfoPanel = NSPanel; 
                 glView = NSOpenGLView; 
-                gotoWindow = NSWindow; 
-                loadingIndicator = NSProgressIndicator; 
-                loadingPanel = NSPanel; 
+                loadingIndicator = NSTextField; 
+                loadingPanel = SplashWindow; 
                 mainWindow = NSWindow; 
                 renderPanelController = RenderPanelController; 
             }; 
@@ -93,7 +92,9 @@
             LANGUAGE = ObjC; 
             OUTLETS = {dateField = NSTextField; timeField = NSTextField; }; 
             SUPERCLASS = NSWindowController; 
-        }
+        }, 
+        {CLASS = SplashImageView; LANGUAGE = ObjC; SUPERCLASS = NSImageView; }, 
+        {CLASS = SplashWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }
     ); 
     IBVersion = 1; 
 }
