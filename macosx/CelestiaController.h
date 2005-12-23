@@ -12,6 +12,8 @@
 #import "RenderPanelController.h"
 #import "BrowserWindowController.h"
 
+@class SplashWindow;
+
 @interface CelestiaController : NSWindowController 
 {
     CelestiaSettings* settings;
@@ -19,13 +21,12 @@
     BOOL ready;
     BOOL isDirty;
     BOOL isFullScreen;
-    IBOutlet NSPanel *loadingPanel;
-    IBOutlet NSProgressIndicator *loadingIndicator;
+    IBOutlet SplashWindow *loadingPanel;
+    IBOutlet NSTextField *loadingIndicator;
     IBOutlet NSTextView *glInfo;
     IBOutlet NSPanel *glInfoPanel;
     IBOutlet NSOpenGLView *glView;
     IBOutlet NSWindow *mainWindow;
-    IBOutlet NSWindow *gotoWindow;
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     IBOutlet RenderPanelController *renderPanelController;
     BrowserWindowController* browserWindowController;
