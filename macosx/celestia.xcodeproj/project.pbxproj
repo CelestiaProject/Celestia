@@ -155,7 +155,6 @@
 		E5D4467607772B6C00A1577D /* CelestiaSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5D4467407772B6C00A1577D /* CelestiaSettings.mm */; };
 		E5D4467807772BA000A1577D /* CGLInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F505BFFA02CA9DAE0100020A /* CGLInfo.m */; };
 		E5D471270778E33C007731C3 /* libpng.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D471260778E33C007731C3 /* libpng.dylib */; };
-		E5E365AC095C11B500B14224 /* SplashScreen.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5E365AA095C11B500B14224 /* SplashScreen.h */; };
 		E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = E5E365AB095C11B500B14224 /* SplashScreen.m */; };
 		E5E365AF095C123E00B14224 /* splash.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E5E365AE095C123E00B14224 /* splash.tiff */; };
 		E5F8C9690795232900D1DAF2 /* libpng.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D471260778E33C007731C3 /* libpng.dylib */; };
@@ -245,7 +244,6 @@
 				E5F8C9E70795239600D1DAF2 /* liblua.dylib in CopyFiles */,
 				E5F8C9E80795239600D1DAF2 /* liblualib.dylib in CopyFiles */,
 				E5F8C9E90795239600D1DAF2 /* libpng.dylib in CopyFiles */,
-				E5E365AC095C11B500B14224 /* SplashScreen.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
