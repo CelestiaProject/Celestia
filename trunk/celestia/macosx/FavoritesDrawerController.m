@@ -75,11 +75,6 @@
 {
     return draggedNodes;
 }
-
--(IBAction)close:(id)sender
-{
-    [self close];
-}
 -(void)activateFavorite:(CelestiaFavorite*)fav
 {
     id menuItem = fav;
