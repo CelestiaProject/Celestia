@@ -11,6 +11,7 @@
 #import "FavoritesDrawerController.h"
 #import "CelestiaOpenGLView.h"
 #import "FullScreenWindow.h"
+#import "SplashScreen.h"
 #import <Carbon/Carbon.h>
 #import "CGLInfo.h"
 
@@ -138,8 +139,8 @@ NSString* fatalErrorMessage;
 #ifndef USE_THREADEDLOAD
     [loadingPanel makeKeyAndOrderFront: nil];
     [loadingPanel displayIfNeeded];
-    [loadingIndicator setUsesThreadedAnimation: YES];
-    [loadingIndicator startAnimation: nil];
+//    [loadingIndicator setUsesThreadedAnimation: YES];
+//    [loadingIndicator startAnimation: nil];
 #endif
     // initialize simulator in separate thread to allow loading indicator window while waiting
 #ifdef DEBUG
@@ -150,7 +151,7 @@ NSString* fatalErrorMessage;
         [startupCondition lock];
         [startupCondition unlockWithCondition: 99];
 #ifndef USE_THREADEDLOAD
-        [loadingPanel orderOut: nil];
+        [loadingPanel close];
 #endif
 #ifdef DEBUG
         [pool release];
@@ -167,7 +168,7 @@ NSString* fatalErrorMessage;
     [startupCondition lock];
     [startupCondition unlockWithCondition: 1];
 #ifndef USE_THREADEDLOAD
-    [loadingPanel orderOut: nil];
+    [loadingPanel close];
     // complete startup
     [self fatalError: nil];
     [self finishInitialization];
@@ -185,7 +186,7 @@ NSString* fatalErrorMessage;
     if ( msg == nil )
     {
         if (fatalErrorMessage == nil) return;
-        [loadingPanel orderOut: nil ];
+        [loadingPanel close];
         NSRunAlertPanel(@"Fatal Error", fatalErrorMessage, nil, nil, nil);
         [NSApp terminate:self];
         return;
@@ -203,7 +204,7 @@ NSString* fatalErrorMessage;
     {
         if ( session != nil )
             return;
-        [loadingIndicator startAnimation: nil];
+//        [loadingIndicator startAnimation: nil];
         // begin modal session for loading panel
         session = [NSApp beginModalSessionForWindow:loadingPanel];
         // modal session runloop
@@ -222,7 +223,7 @@ NSString* fatalErrorMessage;
     // check for fatal error in loading thread
     [self fatalError: nil];
     // complete startup
-    [loadingPanel orderOut: nil ];
+    [loadingPanel close];
     [self finishInitialization];
 }
 
