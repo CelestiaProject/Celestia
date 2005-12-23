@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: main.cpp,v 1.4 2005-12-13 06:19:57 suwalski Exp $
+ *  $Id: main.cpp,v 1.5 2005-12-23 00:46:40 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -247,6 +247,10 @@ static void initRealize(GtkWidget* widget, AppData* app)
 	/* Set simulation time */
 	app->core->start((double)time(NULL) / 86400.0 + (double)astro::Date(1970, 1, 1));
 	updateTimeZone(app, app->showLocalTime);
+	
+	/* Setting time zone name not very useful, but makes space for "LT" status in
+	 * the top-right corner. Set to some default. */
+	app->core->setTimeZoneName("UTC");
 
 	/* Set the cursor to a crosshair */
 	gdk_window_set_cursor(widget->window, gdk_cursor_new(GDK_CROSSHAIR));
