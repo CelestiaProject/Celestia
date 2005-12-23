@@ -16,8 +16,6 @@
 -(NSArray*)selectedNodes;
 -(NSArray*)draggedNodes;
 -(void)activateFavorite:(CelestiaFavorite*)fav;
--(void)close;
--(IBAction)close:(id)sender;
 -(NSMenu *)outlineView:(NSOutlineView *)outlineView 
 contextMenuForItem:(id)item;
 -(IBAction)addNewFavorite:(id)sender;
