@@ -126,6 +126,8 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Radius   1737.53
 	# Oblateness 0.002
 
+	InfoURL "http://www.nineplanets.org/luna.html"
+
 	CustomOrbit "moon"
 	EllipticalOrbit {
 		Period           27.321661
