@@ -889,7 +889,7 @@ QString KdeApp::getOpenGLInfo() {
 
     char buf[100];
     GLint simTextures = 1;
-    if (ExtensionSupported(const_cast<char*>("GL_ARB_multitexture")))
+    if (ExtensionSupported("GL_ARB_multitexture"))
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
     sprintf(buf, "Max simultaneous textures: %d\n", simTextures);
     s += buf;
@@ -904,7 +904,7 @@ QString KdeApp::getOpenGLInfo() {
     {
         QString extString(ext);
         unsigned int pos = extString.find(' ', 0);
-        while (pos != string::npos)
+        while (pos != (unsigned int)string::npos)
         {
             extString.replace(pos, 1, "\n    ");
             pos = extString.find(' ', pos+5);
