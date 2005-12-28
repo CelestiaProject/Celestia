@@ -72,6 +72,7 @@ public:
     bool notifyDateChanged();
 
     LRESULT setSystemTime(DWORD flag, SYSTEMTIME* sysTime);
+    LRESULT getSystemTime(SYSTEMTIME* sysTime);
 
     LRESULT destroy();
 
@@ -588,6 +589,20 @@ DatePicker::setSystemTime(DWORD flag, SYSTEMTIME* sysTime)
 }
 
 
+LRESULT
+DatePicker::getSystemTime(SYSTEMTIME* sysTime)
+{
+    if (sysTime != NULL)
+    {
+        sysTime->wYear = date.year;
+        sysTime->wMonth = date.month;
+        sysTime->wDay = date.day;
+    }
+    
+    return GDT_VALID;
+}
+
+
 static LRESULT
 DatePickerNCCreate(HWND hwnd, CREATESTRUCT& cs)
 {
@@ -626,6 +641,10 @@ DatePickerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case DTM_SETSYSTEMTIME:
         return dp->setSystemTime(wParam, reinterpret_cast<SYSTEMTIME*>(lParam));
+        break;
+        
+    case DTM_GETSYSTEMTIME:
+        return dp->getSystemTime(reinterpret_cast<SYSTEMTIME*>(lParam));
         break;
 
     case WM_NOTIFY:

@@ -50,6 +50,7 @@
 #include "winbookmarks.h"
 #include "wineclipses.h"
 #include "winhyperlinks.h"
+#include "wintime.h"
 #include "odmenu.h"
 
 #include "res/resource.h"
@@ -365,22 +366,6 @@ CelestiaCore::CursorShape WinCursorHandler::getCursorShape() const
 
 // end WinCursorHandler methods
 
-
-static void acronymify(char* words, int length)
-{
-    int n = 0;
-    char lastChar = ' ';
-
-    for (int i = 0; i < length; i++)
-    {
-        if (lastChar == ' ')
-            words[n++] = words[i];
-        lastChar = words[i];
-    }
-    words[n] = '\0';
-}
-
-
 static void ShowUniversalTime(CelestiaCore* appCore)
 {
     appCore->setTimeZoneBias(0);
@@ -408,24 +393,8 @@ static void ShowLocalTime(CelestiaCore* appCore)
             tzName = tzi.DaylightName;
         }
 
-        // Convert from wide chars to a normal C string
-        char timeZoneName[64];
-        WideCharToMultiByte(CP_ACP, 0,
-                            tzName, -1,
-                            timeZoneName, 64,
-                            NULL, NULL);
-
-        // Not sure what GetTimeZoneInformation can return for the
-        // time zone name.  On my XP system, it returns the string
-        // "Pacific Standard Time", when we want PST . . .  So, we
-        // call acronymify to do the conversion.  If the time zone
-        // name doesn't contain any spaces, we assume that it's
-        // already in acronym form.
-        if (strchr(timeZoneName, ' ') != NULL)
-            acronymify(timeZoneName, strlen(timeZoneName));
-
+        appCore->setTimeZoneName("   ");
         appCore->setTimeZoneBias((tzi.Bias + dstBias) * -60);
-        appCore->setTimeZoneName(timeZoneName);
     }
 }
 
@@ -1333,102 +1302,6 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
     return FALSE;
 }
 
-void UpdateSetTimeDlgDateTimeControls(HWND hDlg, astro::Date& newTime)
-{
-    HWND timeItem = NULL;
-    HWND dateItem = NULL;
-    SYSTEMTIME sysTime;
-
-    sysTime.wYear = newTime.year;
-    sysTime.wMonth = newTime.month;
-    sysTime.wDay = newTime.day;
-    sysTime.wDayOfWeek = ((int) ((double) newTime + 0.5) + 1) % 7;
-    sysTime.wHour = newTime.hour;
-    sysTime.wMinute = newTime.minute;
-    sysTime.wSecond = (int) newTime.seconds;
-    sysTime.wMilliseconds = 0;
-
-    dateItem = GetDlgItem(hDlg, IDC_DATEPICKER);
-    if (dateItem != NULL)
-    {
-        DateTime_SetFormat(dateItem, "dd' 'MMM' 'yyy");
-        DateTime_SetSystemtime(dateItem, GDT_VALID, &sysTime);
-    }
-    timeItem = GetDlgItem(hDlg, IDC_TIMEPICKER);
-    if (timeItem != NULL)
-    {
-        DateTime_SetFormat(timeItem, "HH':'mm':'ss' UT'");
-        DateTime_SetSystemtime(timeItem, GDT_VALID, &sysTime);
-    }
-}
-
-
-BOOL APIENTRY SetTimeProc(HWND hDlg,
-                          UINT message,
-                          UINT wParam,
-                          LONG lParam)
-{
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        {
-            newTime = astro::Date(appCore->getSimulation()->getTime());
-            UpdateSetTimeDlgDateTimeControls(hDlg, newTime);
-        }
-        return(TRUE);
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            if (LOWORD(wParam) == IDOK)
-			{
-				appCore->tick();
-                appCore->getSimulation()->setTime((double) newTime);
-			}
-            EndDialog(hDlg, 0);
-            return TRUE;
-        }
-        if (LOWORD(wParam) == IDC_SETCURRENTTIME)
-        {
-            //Set newTime = current system time;
-            newTime = astro::Date((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
-
-            //Force Date/Time controls to show current system time
-            UpdateSetTimeDlgDateTimeControls(hDlg, newTime);
-            return TRUE;
-        }
-        break;
-
-    case WM_NOTIFY:
-        {
-            LPNMHDR hdr = (LPNMHDR) lParam;
-
-            if (hdr->code == DTN_DATETIMECHANGE)
-            {
-                LPNMDATETIMECHANGE change = (LPNMDATETIMECHANGE) lParam;
-                if (change->dwFlags == GDT_VALID)
-                {
-                    if (wParam == IDC_DATEPICKER)
-                    {
-                        newTime.year = (int16) change->st.wYear;
-                        newTime.month = change->st.wMonth;
-                        newTime.day = change->st.wDay;
-                    }
-                    else if (wParam == IDC_TIMEPICKER)
-                    {
-                        newTime.hour = change->st.wHour;
-                        newTime.minute = change->st.wMinute;
-                        newTime.seconds = change->st.wSecond + (double) change->st.wMilliseconds / 1000.0;
-                    }
-                }
-                return TRUE;
-            }
-        }
-    }
-
-    return FALSE;
-}
-
 
 int selectedScreenMode = 0;
 BOOL APIENTRY SelectDisplayModeProc(HWND hDlg,
@@ -2251,7 +2124,7 @@ static void syncMenusWithRendererState()
     menuInfo.fMask = MIIM_STATE;
     if (GetMenuItemInfo(menuBar, ID_TIME_SHOWLOCAL, FALSE, &menuInfo))
     {
-        if(appCore->getTimeZoneBias() == 0)
+        if (appCore->getTimeZoneBias() == 0)
             CheckMenuItem(menuBar, ID_TIME_SHOWLOCAL, MF_UNCHECKED);
         else
             CheckMenuItem(menuBar, ID_TIME_SHOWLOCAL, MF_CHECKED);
@@ -3935,7 +3808,14 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('J');
             break;
         case ID_TIME_SETTIME:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_SETTIME), hWnd, SetTimeProc);
+            ShowSetTimeDialog(appInstance, hWnd, appCore);
+            
+            // Update the local time menu item--since the set time dialog handles setting the time zone,
+            // should we just get rid of the menu item?
+            if (appCore->getTimeZoneBias() == 0)
+                CheckMenuItem(menuBar, ID_TIME_SHOWLOCAL, MF_UNCHECKED);
+            else
+                CheckMenuItem(menuBar, ID_TIME_SHOWLOCAL, MF_CHECKED);
             break;
         case ID_TIME_SHOWLOCAL:
             if (ToggleMenuItem(menuBar, ID_TIME_SHOWLOCAL))

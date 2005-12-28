@@ -41,6 +41,7 @@ OBJS=\
 	$(INTDIR)\winmain.obj \
 	$(INTDIR)\winssbrowser.obj \
 	$(INTDIR)\winstarbrowser.obj \
+    $(INTDIR)\wintime.obj \
 	$(INTDIR)\wintourguide.obj \
 	$(INTDIR)\winviewoptsdlg.obj
 
