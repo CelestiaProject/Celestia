@@ -245,7 +245,8 @@ static NSMutableDictionary* tagMap;
 {
 //        NSLog(@"storing user defaults");
 	NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
-	[ defs setObject: [self defaultsDictionary] forKey: CS_DefaultsName ];
+	[defs setObject: [self defaultsDictionary] forKey: CS_DefaultsName];
+	[defs synchronize];
 //        NSLog(@"stored user defaults");
 }
 
@@ -254,6 +255,7 @@ static NSMutableDictionary* tagMap;
     NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
     [defs setObject: dict forKey: CS_DefaultsName];
     [defs removeObjectForKey: old];
+    [defs synchronize];
 }
 
 -(id) valueForTag: (int) tag { 
