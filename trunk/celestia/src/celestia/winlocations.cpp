@@ -15,7 +15,7 @@
 
 using namespace std;
 
-static const int FeatureSizeSliderRange = 1000;
+static const int FeatureSizeSliderRange = 100;
 static const float MinFeatureSize = 1.0f;
 static const float MaxFeatureSize = 100.0f;
 
@@ -131,24 +131,21 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
     case WM_HSCROLL:
         {
             WORD sbValue = LOWORD(wParam);
-            switch (sbValue)
-            {
-            case SB_THUMBTRACK:
-                {
-                    char val[16];
-                    HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FEATURE_SIZE);
-                    float featureSize = (float) HIWORD(wParam) /
-                        (float) FeatureSizeSliderRange;
-                    featureSize = MinFeatureSize + (MaxFeatureSize - MinFeatureSize) * featureSize;
-                    sprintf(val, "%d", (int) featureSize);
-                    SetWindowText(hwnd, val);
-                    dlg->appCore->getRenderer()->setMinimumFeatureSize(featureSize);
-                    break;
-                }
-
-            default:
-                break;
-            }
+            LRESULT sliderPos;
+            
+            if (sbValue == SB_THUMBTRACK)
+                sliderPos = HIWORD(wParam);
+            else                            
+                sliderPos = SendMessage(GetDlgItem(hDlg, IDC_SLIDER_FEATURE_SIZE), TBM_GETPOS, 0, 0);
+                
+            char val[16];
+            HWND hwnd = GetDlgItem(hDlg, IDC_EDIT_FEATURE_SIZE);
+            float featureSize = (float) sliderPos / (float) FeatureSizeSliderRange;
+            featureSize = MinFeatureSize + (MaxFeatureSize - MinFeatureSize) * featureSize;
+            sprintf(val, "%d", (int) featureSize);
+            SetWindowText(hwnd, val);
+            
+            dlg->appCore->getRenderer()->setMinimumFeatureSize(featureSize);					
         }
     }
 
