@@ -677,7 +677,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
                 " * max(0.0, gl_Vertex.y / -" +
                 LightProperty(j, "direction") + ".y);\n";
             source += RingShadowTexCoord(j) +
-                " = length(ringShadowProj) * ringWidth - ringRadius;\n";
+                " = (length(ringShadowProj) - ringRadius) * ringWidth;\n";
         }
     }
 
