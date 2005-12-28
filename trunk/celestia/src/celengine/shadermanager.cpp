@@ -80,7 +80,7 @@ ShaderProperties::setShadowCountForLight(unsigned int light, unsigned int n)
 {
     assert(n < MaxShaderShadows);
     assert(light < MaxShaderLights);
-    if (n < MaxShaderShadows && light < MaxShaderLights)
+    if (n <= MaxShaderShadows && light < MaxShaderLights)
     {
         shadowCounts &= ~(3 << light * 2);
         shadowCounts |= n << light * 2;
