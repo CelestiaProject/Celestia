@@ -42,8 +42,8 @@ RSQ   s.x, s.x;
 RCP   s.x, s.x;
 
 # Scale and bias by ring width and radius
-MUL   s.x, s.x, ringSize.y;
 ADD   s.x, s.x, -ringSize.x;
+MUL   s.x, s.x, ringSize.y;
 
 # Now we have our s coordinate . . .
 MOV   oTex0.x, s.x;

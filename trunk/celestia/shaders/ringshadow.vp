@@ -37,8 +37,8 @@ RSQ   R0.x, R0.x;
 RCP   R0.x, R0.x;
 
 # Scale and bias by ring width and radius
-MUL   R0.x, R0.x, c[41].y;
 ADD   R0.x, R0.x, -c[41].x;
+MUL   R0.x, R0.x, c[41].y;
 # Now we have our s coordinate . . .
 MOV   o[TEX0].x, R0.x;
 # The t coordinate is always 0.5
