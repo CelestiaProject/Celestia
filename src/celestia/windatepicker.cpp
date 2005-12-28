@@ -186,7 +186,13 @@ DatePicker::redraw(HDC hdc)
             HBRUSH hbrush = CreateSolidBrush(GetSysColor(COLOR_HIGHLIGHT));
             FillRect(hdc, &r, hbrush);
             DeleteObject(hbrush);
+			
+			SetTextColor(hdc, GetSysColor(COLOR_HIGHLIGHTTEXT));
         }
+		else
+		{
+			SetTextColor(hdc, GetSysColor(COLOR_WINDOWTEXT));
+		}
 
         DrawText(hdc, fieldText[i], strlen(fieldText[i]), &fieldRects[i], DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
     }
