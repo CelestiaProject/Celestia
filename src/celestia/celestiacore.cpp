@@ -1548,24 +1548,24 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             (sim->getTargetSpeed() < 0.99 *
             astro::kilometersToMicroLightYears(astro::speedOfLight)))
         {
-	    Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
+            Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
                       sim->getObserver().getPosition();
-	    lightTravelFlag = !lightTravelFlag;
-	    if (lightTravelFlag)
-	    {
-	        flash(_("Light travel delay included"),2.0);
+            lightTravelFlag = !lightTravelFlag;
+            if (lightTravelFlag)
+            {
+                flash(_("Light travel delay included"),2.0);
                 setLightTravelDelay(v.length());
-	    }
-                else
-	    {
+            }
+            else
+            {
                 flash(_("Light travel delay switched off"),2.0);
                 setLightTravelDelay(-v.length());
-	    }
-	}
+            }
+        }
         else
-	{
+        {
             flash(_("Light travel delay ignored"));
-	}
+        }
         break;
 
     case ',':
@@ -2949,31 +2949,29 @@ void CelestiaCore::renderOverlay()
                      0.0f);
         overlay->beginText();
 
-	bool time_displayed = false;
+        bool time_displayed = false;
         double lt = 0.0;
 
         if (sim->getSelection().getType() == Selection::Type_Body &&
             (sim->getTargetSpeed() < 0.99 *
              astro::kilometersToMicroLightYears(astro::speedOfLight)))
-	{                   
-	    if (lightTravelFlag) 
-	    {
-	        Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
-                          sim->getObserver().getPosition();
-	        // light travel time in days
-		lt = astro::microLightYearsToKilometers(v.length())/
-	             (86400.0 * astro::speedOfLight);
-	    } 
-            
-	}
+        {                   
+    	    if (lightTravelFlag) 
+    	    {
+    	        Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
+                              sim->getObserver().getPosition();
+    	        // light travel time in days
+                lt = astro::microLightYearsToKilometers(v.length()) / (86400.0 * astro::speedOfLight);
+    	    }            
+    	}
         else
-	{
-	    lt = 0.0;
-	}
+    	{
+    	    lt = 0.0;
+    	}
 
         overlay->imbue(locale::classic());
 
-	if (timeZoneBias != 0 &&
+        if (timeZoneBias != 0 &&
             sim->getTime() < 2465442 &&
             sim->getTime() > 2415733) 
         {
@@ -2987,7 +2985,7 @@ void CelestiaCore::renderOverlay()
                 d.day = localt->tm_mday;
                 d.hour = localt->tm_hour;
                 d.minute = localt->tm_min;
-                d.seconds = (int)localt->tm_sec;
+                d.seconds = (int) localt->tm_sec;
                 *overlay << d << " ";
                 displayAcronym(*overlay, tzname[localt->tm_isdst > 0 ? 1 : 0]);
                 time_displayed = true;
@@ -2999,9 +2997,9 @@ void CelestiaCore::renderOverlay()
                 }
                 *overlay << '\n';
             }
-	} 
+        } 
 	
-	if (!time_displayed)
+        if (!time_displayed)
         {
             *overlay << astro::Date(sim->getTime() + lt);
             *overlay << _(" UTC");
@@ -3012,7 +3010,7 @@ void CelestiaCore::renderOverlay()
                 glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
             }
             *overlay << '\n';
-	}
+        }
 
         setlocale(LC_NUMERIC, "");
         overlay->imbue(currentLocale);
@@ -3046,6 +3044,7 @@ void CelestiaCore::renderOverlay()
                 *overlay << _(" (Paused)");
             }
         }
+    
         overlay->endText();
         glPopMatrix();
 
