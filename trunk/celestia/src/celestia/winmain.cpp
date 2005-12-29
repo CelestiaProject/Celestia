@@ -3015,6 +3015,11 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         }
     }
 
+    // If a start directory was given on the command line, switch to it
+    // now.
+    if (startDirectory != "")
+        SetCurrentDirectory(startDirectory.c_str());
+
     SplashWindow splash("splash.png");
     splash.setMessage("Loading data files...");
     splash.showSplash();
@@ -3093,11 +3098,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     appCore->setAlerter(new WinAlerter());
-
-    // If a start directory was given on the command line, switch to it
-    // now.
-    if (startDirectory != "")
-        SetCurrentDirectory(startDirectory.c_str());
 
     WinSplashProgressNotifier progressNotifier(&splash);        
     string* altConfig = useAlternateConfigFile ? &configFileName : NULL;
@@ -3972,7 +3972,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             {
                 const FavoritesList* favorites = appCore->getFavorites();
                 if (favorites != NULL &&
-                    LOWORD(wParam) - ID_BOOKMARKS_FIRSTBOOKMARK < favorites->size())
+                    LOWORD(wParam) - ID_BOOKMARKS_FIRSTBOOKMARK < (int) favorites->size())
                 {
                     int whichFavorite = LOWORD(wParam) - ID_BOOKMARKS_FIRSTBOOKMARK;
                     appCore->activateFavorite(*(*favorites)[whichFavorite]);
@@ -4019,7 +4019,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                         if (surfNames != NULL)
                         {
                             string surfName;
-                            if (index >= 0 && index < surfNames->size())
+                            if (index >= 0 && index < (int) surfNames->size())
                                 surfName = surfNames->at(index);
                             appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(surfName);
                             delete surfNames;
