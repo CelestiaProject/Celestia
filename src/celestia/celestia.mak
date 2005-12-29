@@ -39,6 +39,7 @@ OBJS=\
 	$(INTDIR)\winhyperlinks.obj \
 	$(INTDIR)\winlocations.obj \
 	$(INTDIR)\winmain.obj \
+    $(INTDIR)\winsplash.obj \
 	$(INTDIR)\winssbrowser.obj \
 	$(INTDIR)\winstarbrowser.obj \
     $(INTDIR)\wintime.obj \

@@ -51,6 +51,7 @@
 #include "wineclipses.h"
 #include "winhyperlinks.h"
 #include "wintime.h"
+#include "winsplash.h"
 #include "odmenu.h"
 
 #include "res/resource.h"
@@ -2954,6 +2955,22 @@ static bool parseCommandLine(int argc, char* argv[])
 }
 
 
+class WinSplashProgressNotifier : public ProgressNotifier
+{
+public:
+    WinSplashProgressNotifier(SplashWindow* _splash) : splash(_splash) {};
+    virtual ~WinSplashProgressNotifier() {};
+    
+    virtual void update(const string& filename)
+    {
+        splash->setMessage(string("Loading: ") + filename);
+    }
+    
+private:
+    SplashWindow* splash;
+};
+
+
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR     lpCmdLine,
@@ -2998,6 +3015,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         }
     }
 
+    SplashWindow splash("splash.png");
+    splash.setMessage("Loading data files...");
+    splash.showSplash();
+    
     OleInitialize(NULL);
     dropTarget = new CelestiaDropTarget();
     if (dropTarget)
@@ -3078,11 +3099,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (startDirectory != "")
         SetCurrentDirectory(startDirectory.c_str());
 
+    WinSplashProgressNotifier progressNotifier(&splash);        
     string* altConfig = useAlternateConfigFile ? &configFileName : NULL;
-    if (!appCore->initSimulation(altConfig, &extrasDirectories))
+    if (!appCore->initSimulation(altConfig, &extrasDirectories, &progressNotifier))
     {
         return 1;
     }
+
+    // Close the splash screen after all data has been loaded
+    splash.close();
 
     if (startURL != "")
         appCore->setStartURL(startURL);
