@@ -7,3 +7,16 @@ EXTRA_DIST = $(noinst_DATA)
 
 noinst_PROGRAMS = buildstardb
 
+# Non-automake directories
+NONAUTO = tools
+
+dist-hook:
+	( \
+	  cd $(srcdir) && \
+	  ( \
+	    for dir in $(NONAUTO) ; do \
+	      find $$dir -depth -print | egrep -v '(~$$)|(/CVS)|(/\.#)|(/\.deps)' \
+	        | cpio -pdum $(distdir) 2>/dev/null ; \
+	    done \
+	  ) \
+	)
