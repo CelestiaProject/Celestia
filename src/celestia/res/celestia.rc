@@ -161,20 +161,19 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Celestia"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,131,175,50,14
-    CTEXT           "Celestia 1.4.0",IDC_STATIC,6,7,297,9
-    CTEXT           "Copyright (C) 2001-2004, Chris Laurel",IDC_STATIC,6,16,
-                    297,9
-    CTEXT           "http://www.shatters.net/celestia",IDC_CELESTIALINK,6,33,
-                    297,9
-    CTEXT           "Celestia is free software and comes with absolutely no warranty.",
-                    IDC_STATIC,6,56,297,9
-    CTEXT           "Authors",IDC_STATIC,6,85,297,9
-    CTEXT           "Chris Laurel",IDC_STATIC,6,97,297,9
-    CTEXT           "Clint Weisbrod",IDC_STATIC,6,108,297,9
-    CTEXT           "Fridger Schrempp",IDC_STATIC,6,119,297,9
-    CTEXT           "Christophe Teyssier",IDC_STATIC,6,130,297,9
-	CTEXT           "Grant Hutchison", IDC_STATIC,6,141,297,9
+    DEFPUSHBUTTON  "OK",IDOK,131,175,50,14
+    LTEXT           "Celestia",IDC_STATIC,56,17,30,9
+    LTEXT           VERSION_STRING,IDC_STATIC,90,17,40,9
+    LTEXT           "Copyright (C) 2001-2006, Chris Laurel",IDC_STATIC,56,26,150,9
+    LTEXT           "http://www.shatters.net/celestia",IDC_CELESTIALINK,56,43,150,9
+    LTEXT           "Celestia is free software and comes with absolutely no warranty.",IDC_STATIC,56,66,200,9
+    LTEXT           "Authors",IDC_STATIC,56,90,100,9
+    LTEXT           "Chris Laurel",IDC_STATIC,56,102,100,9
+    LTEXT           "Clint Weisbrod",IDC_STATIC,56,112,100,9
+    LTEXT           "Fridger Schrempp",IDC_STATIC,56,122,100,9
+    LTEXT           "Christophe Teyssier",IDC_STATIC,56,132,100,9
+	LTEXT           "Grant Hutchison", IDC_STATIC,56,142,100,9
+    LTEXT           "Pat Suwalski",IDC_STATIC,56,152,100,9
 END
 
 IDD_FINDOBJECT DIALOG DISCARDABLE  100, 50, 140, 54
