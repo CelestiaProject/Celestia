@@ -137,8 +137,9 @@ SplashWindow::paint(HDC hDC)
         
     HFONT hFont = reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
     SelectObject(hDC, hFont);
-        
-    DrawText(hDC, message.c_str(), message.length(), &r, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    
+    string text = string("Version " VERSION_STRING "\n") + message;
+    DrawText(hDC, text.c_str(), text.length(), &r, DT_LEFT | DT_VCENTER);
 }
 
 
