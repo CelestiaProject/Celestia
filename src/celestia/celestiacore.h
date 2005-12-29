@@ -37,6 +37,15 @@ class CelestiaCore;
 
 typedef Watcher<CelestiaCore> CelestiaWatcher;
 
+class ProgressNotifier
+{
+public:
+    ProgressNotifier() {};
+    virtual ~ProgressNotifier() {};
+    
+    virtual void update(const std::string&) = 0;
+};
+
 class View
 {
  public:
@@ -185,7 +194,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     ~CelestiaCore();
 
     bool initSimulation(const std::string* = NULL,
-                        const std::vector<std::string>* extrasDirs = NULL);
+                        const std::vector<std::string>* extrasDirs = NULL,
+                        ProgressNotifier* progressNotifier = NULL);
     bool initRenderer();
     void start(double t);
     void getLightTravelDelay(double distance, int&, int&, float&);
@@ -261,6 +271,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     void addWatcher(CelestiaWatcher*);
     void removeWatcher(CelestiaWatcher*);
+    
     void setFaintest(float);
     void setFaintestAutoMag();
 
@@ -309,7 +320,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     CursorHandler* getCursorHandler() const;
     
  private:
-    bool readStars(const CelestiaConfig&);
+    bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
     void fatalError(const std::string&);
 
