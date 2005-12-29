@@ -3457,7 +3457,8 @@ class SolarSystemLoader : public EnumFilesHandler
 {
  public:
     Universe* universe;
-    SolarSystemLoader(Universe* u) : universe(u) {};
+    ProgressNotifier* notifier;
+    SolarSystemLoader(Universe* u, ProgressNotifier* pn) : universe(u), notifier(pn) {};
 
     bool process(const string& filename)
     {
@@ -3465,6 +3466,9 @@ class SolarSystemLoader : public EnumFilesHandler
         {
             string fullname = getPath() + '/' + filename;
             clog << _("Loading solar system catalog: ") << fullname << '\n';
+            if (notifier)
+                notifier->update(filename);
+                
             ifstream solarSysFile(fullname.c_str(), ios::in);
             if (solarSysFile.good())
             {
@@ -3484,13 +3488,16 @@ public:
     OBJDB*      objDB;
     string      typeDesc;
     ContentType contentType;
+    ProgressNotifier* notifier;
 
     CatalogLoader(OBJDB* db,
                   const std::string& typeDesc,
-                  const ContentType& contentType) :
+                  const ContentType& contentType,
+                  ProgressNotifier* pn) :
         objDB      (db),
         typeDesc   (typeDesc),
-        contentType(contentType)
+        contentType(contentType),
+        notifier(pn)
     {
     }
 
@@ -3500,6 +3507,9 @@ public:
         {
             string fullname = getPath() + '/' + filename;
             clog << _("Loading ") << typeDesc << " catalog: " << fullname << '\n';
+            if (notifier)
+                notifier->update(filename);
+                
             ifstream catalogFile(fullname.c_str(), ios::in);
             if (catalogFile.good())
             {
@@ -3521,7 +3531,8 @@ typedef CatalogLoader<DSODatabase>  DeepSkyLoader;
 
 
 bool CelestiaCore::initSimulation(const string* configFileName,
-                                  const vector<string>* extrasDirs)
+                                  const vector<string>* extrasDirs,
+                                  ProgressNotifier* progressNotifier)
 {
     // Say we're not ready to render yet.
     // bReady = false;
@@ -3589,7 +3600,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
 
     universe = new Universe();
 
-    if (!readStars(*config))
+    if (!readStars(*config, progressNotifier))
     {
         fatalError(_("Cannot read star database."));
         return false;
@@ -3604,6 +3615,9 @@ bool CelestiaCore::initSimulation(const string* configFileName,
              iter != config->solarSystemFiles.end();
              iter++)
         {
+            if (progressNotifier)
+                progressNotifier->update(*iter);
+            
             ifstream solarSysFile(iter->c_str(), ios::in);
             if (!solarSysFile.good())
             {
@@ -3635,7 +3649,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
             {
                 Directory* dir = OpenDirectory(*iter);
 
-                SolarSystemLoader loader(universe);
+                SolarSystemLoader loader(universe, progressNotifier);
                 loader.pushDir(*iter);
                 dir->enumFiles(loader, true);
 
@@ -3652,6 +3666,10 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     if (config->deepSkyCatalog != "")
     {
         ifstream dsoFile(config->deepSkyCatalog.c_str(), ios::in);
+        
+        if (progressNotifier)
+            progressNotifier->update(config->deepSkyCatalog);
+            
 #if 0 //TODO: define a binary file format for DSOs !!
         if (!dsoDB->loadBinary(deepSkyFile))
         {
@@ -3673,6 +3691,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
             return false;
         }
     }
+    
     // TODO:add support for additional catalogs declared in the config file.
 
     // Next, read all the deep sky files in the extras directories
@@ -3686,7 +3705,8 @@ bool CelestiaCore::initSimulation(const string* configFileName,
      
                 DeepSkyLoader loader(dsoDB,
                                      "deep sky object",
-                                     Content_CelestiaDeepSkyCatalog);
+                                     Content_CelestiaDeepSkyCatalog,
+                                     progressNotifier);
                 loader.pushDir(*iter);
                 dir->enumFiles(loader, true);
 
@@ -3885,10 +3905,12 @@ static void loadCrossIndex(StarDatabase* starDB,
 }
 
 
-bool CelestiaCore::readStars(const CelestiaConfig& cfg)
+bool CelestiaCore::readStars(const CelestiaConfig& cfg,
+                             ProgressNotifier* progressNotifier)
 {
     StarDetails::InitializeStarTextures();
 
+        
     ifstream starNamesFile(cfg.starNamesFile.c_str(), ios::in);
     if (!starNamesFile.good())
     {
@@ -3908,6 +3930,9 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
     StarDatabase* starDB = new StarDatabase();
     if (!cfg.starDatabaseFile.empty())
     {
+        if (progressNotifier)
+            progressNotifier->update(cfg.starDatabaseFile);
+            
         ifstream starFile(cfg.starDatabaseFile.c_str(), ios::in | ios::binary);
         if (!starFile.good())
         {
@@ -3960,7 +3985,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg)
         {
             Directory* dir = OpenDirectory(*iter);
 
-            StarLoader loader(starDB, "star", Content_CelestiaStarCatalog);
+            StarLoader loader(starDB, "star", Content_CelestiaStarCatalog, progressNotifier);
             loader.pushDir(*iter);
             dir->enumFiles(loader, true);
 
