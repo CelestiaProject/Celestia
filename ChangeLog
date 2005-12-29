@@ -909,3 +909,19 @@ Code:
   Their "importance"  is sorted according to apparent magnitude! Thus the
   labels of the brightest galaxies pop up first upon zooming in... 
 * Fixes/workarounds for OpenGL 2.0 render paths on both nVidia and ATI cards.
+
+
+1.4.1
+* Windows: Added time zone selection to set time dialog
+* Windows: Fixed hard to read text in set time dialog (bug was only present for
+  certain Windows shell appearance settings.)
+* Changed maximum number of eclipse shadows in OpenGL 2.0 path from two to three;
+  if max is exceeded, clamp to three rather than not rendering the shadows at all.
+* Corrected a bad calculation in ring shadow shaders that caused ring shadows to
+  be drawn in the wrong place.
+* Windows: Fixed the minimum feature size slider in the locations dialog so it
+  updates in response to all the standard controls.
+* Added a correct InfoURL for the Moon
+* Windows: added splash screen with a progress indicator
+* KDE: fixed some AMD64 bugs
+
