@@ -3972,6 +3972,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             {
                 const FavoritesList* favorites = appCore->getFavorites();
                 if (favorites != NULL &&
+                    LOWORD(wParam) >= ID_BOOKMARKS_FIRSTBOOKMARK &&
                     LOWORD(wParam) - ID_BOOKMARKS_FIRSTBOOKMARK < (int) favorites->size())
                 {
                     int whichFavorite = LOWORD(wParam) - ID_BOOKMARKS_FIRSTBOOKMARK;
