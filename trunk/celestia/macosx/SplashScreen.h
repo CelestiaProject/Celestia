@@ -12,6 +12,5 @@
 
 @interface SplashWindow : NSWindow
 {
-//    SplashContentView *splashContentView;
 }
 @end
