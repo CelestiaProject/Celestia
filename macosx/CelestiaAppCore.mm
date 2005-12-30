@@ -486,17 +486,6 @@ static NSMutableDictionary* tagDict;
 -(void)runScript:(NSString *)fileName
 {
     appCore->runScript([fileName cString]);
-/*
-    ifstream scriptfile([fileName cString]);
-    CommandParser parser(scriptfile);
-    CommandSequence* script = parser.parse();
-    if (script == NULL)
-    {
-       NSRunAlertPanel(@"Invalid Script File",@"Please verify that you selected a valid script file.",nil,nil,nil);
-       return;
-    }
-    appCore->runScript(script);
-*/
 }
 
 - (void) showInfoURL
@@ -541,12 +530,23 @@ static NSMutableDictionary* tagDict;
     }
 
 
-    if ( url != NULL )
+    if (!url.empty())
     {
-        NSURL* theURL = [NSURL URLWithString: [NSString stringWithStdString: url ]];
-        if ( theURL != NULL)
+        NSString *unescUrl = [NSString stringWithStdString: url];
+        NSString *escUrl =
+            (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)unescUrl, NULL, NULL, kCFStringEncodingUTF8);
+
+        if (escUrl)
         {
-            [[NSWorkspace sharedWorkspace] openURL: theURL];
+            if ([escUrl length] > 0)
+            {
+                NSURL *theURL = [NSURL URLWithString: escUrl];
+
+                if (theURL != nil)
+                    [[NSWorkspace sharedWorkspace] openURL: theURL];
+            }
+
+            [escUrl release];
         }
     }
 }
