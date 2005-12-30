@@ -21,20 +21,6 @@
 #import "CelestiaController.h"
 #include "celestiacore.h"
 #include "qtcapture.h"
-/*
-
-void initMovieCapture(MovieCapture *)
-void recordBegin()
-void recordPause()
-void recordEnd()
-bool isCaptureActive();
-bool isRecording();
-
-runScript(CommandSequence *);
-CommandParser
-CommandSequence
-
-*/
 
 class MacOSXAlerter : public CelestiaCore::Alerter
 {
@@ -52,24 +38,6 @@ public:
     }
 };
 
-/*
-class MacOSXWatcher : public CelestiaWatcher
-{
-    private:
-        CelestiaAppCore *celAppCore;
-
-    public:
-        MacOSXWatcher(CelestiaCore* _appCore, CelestiaAppCore* _celAppCore) : CelestiaWatcher(*_appCore), celAppCore(_celAppCore)
-{};
-            
-    public:
-
-    void notifyChange(CelestiaCore* core, int i)
-    {
-        [celAppCore validateItems];
-    };
-};
-*/
 
 CelestiaAppCore *_sharedCelestiaAppCore;
 CelestiaCore *appCore;
@@ -249,8 +217,6 @@ static NSMutableDictionary* tagDict;
     self = [super init];
     appCore = new CelestiaCore();
     appCore->setAlerter(new MacOSXAlerter());
-//    MacOSXWatcher* theWatcher = new MacOSXWatcher(appCore,self);
-//    appCore->setWatcher(theWatcher);
     contextMenuCallbackInvocation = NULL;
     _destinations = nil;
     return self;
@@ -404,7 +370,6 @@ static NSMutableDictionary* tagDict;
 
 -(void)activateFavorite:(id)fav
 {
-    //NSLog(@"[CelestiaAppCore activateFavorite:%@]",fav);
     if ([fav isKindOfClass:[NSMenuItem class]])
         fav = [(NSMenuItem*)fav representedObject];
     appCore->activateFavorite(*[(CelestiaFavorite*)fav favorite]);
@@ -533,119 +498,6 @@ static NSMutableDictionary* tagDict;
     appCore->runScript(script);
 */
 }
-
-// Alternate Surface Menu
-
-/* moved to CelstiaSettings
-- (void) disableSurfaceMenu: (NSMenu*) contextMenu
-{
-        NSMenuItem* surfaceItem = [ contextMenu itemWithTitle: @"Show Alternate Surface"];
-//        [ surfaceItem setSubmenu: NULL ];
-//        [ surfaceItem setAction: NULL ];
-//        [ contextMenu setAutoenablesItems: NO ];
-        [ surfaceItem setEnabled: NO ];
-        NSLog(@"disabling surface menu\n");
-}
-
-- (void) addSurfaceMenu: (NSMenu*) contextMenu
-{
-    Selection sel = appCore->getSimulation()->getSelection();
-    if (sel.body() == NULL)
-    {
-        [self disableSurfaceMenu: contextMenu ];
-        return;
-    }
-    else
-    {
-        NSMenuItem* firstItem = [ contextMenu itemAtIndex: 0];
-        NSMenuItem* surfaceItem = [ contextMenu itemWithTitle: @"Show Alternate Surface"];
-        NSMenu* surfaceMenu = [[NSMenu alloc ] initWithTitle: @"altsurf" ];
-        vector<string>* surfaces = sel.body()->getAlternateSurfaceNames();
-        if ( surfaces->size() == 0 ) 
-        {
-            [self disableSurfaceMenu: contextMenu];
-            return;
-        }
-            [ surfaceItem setEnabled: YES ];
-            [ contextMenu setAutoenablesItems: YES ];
-            [ surfaceMenu setAutoenablesItems: YES ];
-            NSMenuItem* newItem = [ [NSMenuItem alloc] init ]; 
-            [newItem setTitle: @"default" ];
-            [newItem setTag:  600 ];
-            [newItem setTarget:  [firstItem target] ];
-            [newItem setAction:  [firstItem action] ];
-            [ surfaceMenu addItem: newItem ];
-        for (int i = 0; i < (int)surfaces->size(); i++)
-        {
-            NSMenuItem* newItem = [ [NSMenuItem alloc] init ]; 
-            [newItem setTitle: [ NSString stringWithStdString: (*surfaces)[i] ] ];
-            [newItem setTag:  601+i ];
-            [newItem setEnabled:  YES ];
-            [newItem setTarget:  [firstItem target] ];
-            [newItem setAction:  [firstItem action] ];
-            [ surfaceMenu addItem: newItem ];
-        }
-        [ surfaceItem setSubmenu: surfaceMenu ];
-        [ surfaceItem setEnabled: YES ];
-        [ surfaceMenu update ];
-        delete surfaces;
-        return;
-    }
-}
-
-- (BOOL) validateAltSurface: (int) index
-{
-    if (index == 0) 
-    {
-        string displayedSurfName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
-        return displayedSurfName == string("");
-    }
-    index--;
-    // Validate items for the alternate surface submenu
-    Selection sel = appCore->getSimulation()->getSelection();
-    if (sel.body() != NULL)
-    {
-        vector<string>* surfNames = sel.body()->getAlternateSurfaceNames();
-        if (surfNames != NULL)
-        {
-            string surfName, displayedSurfName;
-            if (index >= 0 && index < (int)surfNames->size())
-                surfName = surfNames->at(index);
-            displayedSurfName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
-            if (surfName  == displayedSurfName )
-            { 
-                delete surfNames;
-                return YES;
-            }
-        }
-    }
-    return NO;
-}
-
-- (void) setAltSurface: (int) index
-{
-    // Handle the alternate surface submenu
-    Selection sel = appCore->getSimulation()->getSelection();
-    if (sel.body() != NULL)
-    {
-        if ( index == 0 )
-        {
-            appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(string(""));
-            return;
-        }
-        vector<string>* surfNames = sel.body()->getAlternateSurfaceNames();
-        if (surfNames != NULL)
-        {
-            string surfName;
-            index--;
-            if (index >= 0 && index < (int)surfNames->size())
-                surfName = surfNames->at(index);
-            appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(surfName);
-            delete surfNames;
-        }
-    }
-}
-*/
 
 - (void) showInfoURL
 {
