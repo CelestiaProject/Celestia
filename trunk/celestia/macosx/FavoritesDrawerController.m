@@ -122,7 +122,12 @@
 {
     //NSLog(@"[FavoritesDrawerController doubleClick:%@]",sender);
     if ([outlineView numberOfSelectedRows]==1)
-        [self activateFavorite:[[outlineView itemAtRow:[outlineView selectedRow]] nodeValue]];
+    {
+        // Make sure item is not a folder
+        id theItem = [outlineView itemAtRow:[outlineView selectedRow]];
+        if (![outlineView isExpandable: theItem])
+            [self activateFavorite:[theItem nodeValue]];
+    }
 }
 -(void)synchronizeFavoritesMenu
 {
