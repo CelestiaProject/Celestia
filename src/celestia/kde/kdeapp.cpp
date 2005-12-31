@@ -104,7 +104,7 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
     for(QStringList::iterator i = splashDirs.begin(); i != splashDirs.end(); ++i) {
         QDir d(*i);
         d.setFilter(QDir::Files);
-        QStringList splashImages = d.entryList().grep(QRegExp("\\.jpg$", FALSE));
+        QStringList splashImages = d.entryList().grep(QRegExp("\\.(jpg|png)$", FALSE));
         for(QStringList::iterator j = splashImages.begin(); j != splashImages.end(); ++j) {
             images.append(*i + *j);
         }
@@ -117,6 +117,7 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
         splash = new KSplashScreen(splash_pixmap);
         
         if (splash != NULL) {
+            if (splash_pixmap.mask()) splash->setMask(*(splash_pixmap.mask()));
             splash->show();
             splash->message( i18n("Loading..."), Qt::AlignBottom | Qt::AlignAuto, QColor(255,255,255) );
         }
