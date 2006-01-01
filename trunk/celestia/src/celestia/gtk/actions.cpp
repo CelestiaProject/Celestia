@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.7 2005-12-16 00:57:05 suwalski Exp $
+ *  $Id: actions.cpp,v 1.8 2006-01-01 23:55:25 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -583,9 +583,11 @@ void actionHelpAbout(GtkAction*, AppData* app)
 {
 	const gchar* authors[] = {
 		"Active Developers ***\n",
+		"Grant Hutchison <grantcelestia@xemaps.com>\n"
+			"\tAstronomical Research\n",
 		"Da-Woon Jung <dirkpitt2050@gmail.com>\n"
 			"\tMacOSX Front-End\n",
-    	"Chris Laurel <claurel@shatters.net>\n"
+		"Chris Laurel <claurel@shatters.net>\n"
 			"\tOpenGL Engine, Windows Front-End\n",
 		"Fridger Schrempp <fridger.schrempp@desy.de>\n"
 			"\tResearch, Engine, GTK+ 1 Front-End\n",
@@ -594,7 +596,6 @@ void actionHelpAbout(GtkAction*, AppData* app)
 		"Christophe Teyssier <chris@teyssier.org>\n"
 			"\tKDE Front-End, Browser Integration\n",
 		"\nPast Developers ***\n",
-		"Grant Hutchison <grantcelestia@xemaps.com>",
 		"Bob Ippolito <bob@redivi.com>",
 		"Deon Ramsey <dramsey@sourceforge.net>",
 		"Clint Weisbrod <cweisbrod@cogeco.ca>",
