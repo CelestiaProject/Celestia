@@ -3,7 +3,7 @@ noinst_DATA = devguide.txt $(dosstuff)
 pkgdata_DATA = celestia.cfg $(wildcard *.cel) controls.txt COPYING
 pkgdatadir = @datadir@/@PACKAGE@
 
-EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA) admin
+EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA) admin splash.png
 
 SUBDIRS = src data extras textures models shaders fonts manual po
 
