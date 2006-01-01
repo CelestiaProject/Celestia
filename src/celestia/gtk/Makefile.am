@@ -17,7 +17,8 @@ GTK_SOURCES = \
 	dialog-tour.cpp \
 	glwidget.cpp \
 	main.cpp \
-	menu-context.cpp
+	menu-context.cpp \
+	splash.cpp
 
 if ENABLE_GNOME
 EXTRA_SOURCES = settings-gconf.cpp

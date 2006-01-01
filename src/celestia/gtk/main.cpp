@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: main.cpp,v 1.5 2005-12-23 00:46:40 suwalski Exp $
+ *  $Id: main.cpp,v 1.6 2006-01-01 23:43:51 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -50,6 +50,7 @@
 #include "common.h"
 #include "glwidget.h"
 #include "menu-context.h"
+#include "splash.h"
 #include "ui.h"
 
 /* Includes for the settings interface */
@@ -62,6 +63,7 @@
 #ifndef DEBUG
 #define G_DISABLE_ASSERT
 #endif /* DEBUG */
+
 
 using namespace std;
 
@@ -76,6 +78,7 @@ static gchar* configFile = NULL;
 static gchar* installDir = NULL;
 static gchar** extrasDir = NULL;
 static gboolean fullScreen = FALSE;
+static gboolean noSplash = FALSE;
 
 /* Command-Line Options specification */
 static GOptionEntry optionEntries[] =
@@ -84,6 +87,7 @@ static GOptionEntry optionEntries[] =
 	{ "dir", 'd', 0, G_OPTION_ARG_FILENAME, &installDir, "Alternate installation directory", "directory" },
 	{ "extrasdir", 'e', 0, G_OPTION_ARG_FILENAME_ARRAY, &extrasDir, "Additional \"extras\" directory", "directory" },
 	{ "fullscreen", 'f', 0, G_OPTION_ARG_NONE, &fullScreen, "Start full-screen", NULL },
+	{ "nosplash", 's', 0, G_OPTION_ARG_NONE, &noSplash, "Disable splash screen", NULL },
 	{ NULL },
 };
 
@@ -313,7 +317,11 @@ int main(int argc, char* argv[])
 	/* GTK-Only Initialization */
 	gtk_init(&argc, &argv);
 	#endif
-	
+
+	/* Turn on the splash screen */
+	SplashData* ss = splashStart(app, !noSplash);
+	splashSetText(ss, "Initializing...");
+
 	SetDebugVerbosity(0);
 
 	/* Force number displays into C locale. */
@@ -356,8 +364,8 @@ int main(int argc, char* argv[])
 	}
 
 	/* Initialize the simulation */	
-	if (!app->core->initSimulation(altConfig, &configDirs))
-        return 1;
+	if (!app->core->initSimulation(altConfig, &configDirs, ss->notifier))
+		return 1;
 	
 	app->simulation = app->core->getSimulation();
 	g_assert(app->simulation);
@@ -475,6 +483,9 @@ int main(int argc, char* argv[])
 	/* Initialize the Watcher */
 	gtkWatcher = new GtkWatcher(app->core, app);
 
+	/* Unload the splash screen */
+	splashEnd(ss);
+
 	gtk_widget_show_all(app->mainWindow);
 
 	/* HACK: Now that window is drawn, set minimum window size */
@@ -492,7 +503,7 @@ int main(int argc, char* argv[])
     
 	g_free(app);
 
-    return 0;
+	return 0;
 }
 
 
