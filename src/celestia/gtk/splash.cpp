@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: splash.cpp,v 1.1 2006-01-01 23:43:52 suwalski Exp $
+ *  $Id: splash.cpp,v 1.2 2006-01-02 01:20:02 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -50,6 +50,9 @@ SplashData* splashStart(AppData* app, gboolean showSplash)
 	ss->hasARGB = FALSE;
 	ss->redraw = TRUE;
 
+	/* Continue the "wait" cursor until the splash is done */
+	gtk_window_set_auto_startup_notification(FALSE);
+	
 	/* Don't do anything else if the splash is not to be shown */
 	if (showSplash == FALSE) return ss;
 
@@ -105,6 +108,9 @@ void splashEnd(SplashData* ss)
 {
 	if (ss->splash)
 		gtk_widget_destroy(ss->splash);
+
+	/* Return the cursor from wait to normal */
+	gdk_notify_startup_complete();
 
 	delete ss->notifier;
 	g_free(ss);
