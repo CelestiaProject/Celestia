@@ -924,4 +924,5 @@ Code:
 * Added a correct InfoURL for the Moon
 * Windows: added splash screen with a progress indicator
 * KDE: fixed some AMD64 bugs
-
+* GTK: added splash screen with a progress indicator
+* GTK: Added configure options to enable or disable Cairo support for splash
