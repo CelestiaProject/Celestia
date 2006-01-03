@@ -2867,6 +2867,7 @@ static string startScript;
 static vector<string> extrasDirectories;
 static string configFileName;
 static bool useAlternateConfigFile = false;
+static bool skipSplashScreen = false;
 
 static bool parseCommandLine(int argc, char* argv[])
 {
@@ -2936,6 +2937,10 @@ static bool parseCommandLine(int argc, char* argv[])
             }
             i++;
             startURL = string(argv[i]);
+        }
+        else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--nosplash") == 0)
+        {
+            skipSplashScreen = true;
         }
         else
         {
@@ -3022,7 +3027,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     SplashWindow splash("splash.png");
     splash.setMessage("Loading data files...");
-    splash.showSplash();
+    if (!skipSplashScreen)
+        splash.showSplash();
     
     OleInitialize(NULL);
     dropTarget = new CelestiaDropTarget();
@@ -3099,12 +3105,18 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     appCore->setAlerter(new WinAlerter());
 
-    WinSplashProgressNotifier progressNotifier(&splash);        
+    WinSplashProgressNotifier* progressNotifier = NULL;
+    if (!skipSplashScreen)
+        progressNotifier = new WinSplashProgressNotifier(&splash);
+        
     string* altConfig = useAlternateConfigFile ? &configFileName : NULL;
-    if (!appCore->initSimulation(altConfig, &extrasDirectories, &progressNotifier))
+    if (!appCore->initSimulation(altConfig, &extrasDirectories, progressNotifier))
     {
+        delete progressNotifier;
         return 1;
     }
+    
+    delete progressNotifier;
 
     // Close the splash screen after all data has been loaded
     splash.close();
