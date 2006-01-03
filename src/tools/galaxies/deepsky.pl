@@ -11,7 +11,7 @@ open(DSC, ">deepsky.dsc") || die "Can not create deepsky.dsc\n";
 # Boiler plate
 #-------------
 #
-($ver = "Revision: 1.10 ") =~ s/\$//g;
+($ver = "Revision: 1.20 ") =~ s/\$//g;
 ($me = $0) =~ s/.*\///;
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime;
 $year += 1900;
@@ -404,7 +404,7 @@ while (<NGCIC>) {
     $HType =~ s/(\w+)\d\-(\w)/$1$2/;
     $HType =~ s/^E\-?\/?S0/S0/;
     $HType =~ s/^S(B?)[abc]([abc])/S$1$2/;
-    $HType =~ s/SB\?/SBa/;
+    $HType =~ s/SBR?\??$/SBa/;
     $HType =~ s/SB0/S0/;
     $HType =~ s/^E\??\ ?B?R?$/E0/;
     $HType =~ s/^S\??$/S0/;
@@ -417,14 +417,30 @@ while (<NGCIC>) {
     $HType =~ s/^P\??/Irr/;
     $HType =~ s/GxyP/Irr/;
     $HType =~ s/^Ring.*[AB]?$/S0/;
-    $HType =~ s/^SBcm/Irr/;
+    $HType =~ s/^SB?cm/Irr/;
     $HType =~ s/S\+S/Sa/;
     $HType =~ s/E\+E\??/E0/;
     $HType =~ s/^[cd]?D\ ?R?/E0/;
     $HType =~ s/E\+\*?C?\??S?/E0/;
     $HType =~ s/^R\w\d$/Irr/;
     $HType =~ s/^R/S0/;
-    #   print STDOUT "$Type $HType\n";
+    # new for celestia-1.4.1
+    $HType =~ s/S0\+S0$/S0/;
+    $HType =~ s/S[0c]\?$/S0/;
+    $HType =~ s/Spec$/Irr/;
+    $HType =~ s/c?E0\w+$/E0/;
+    $HType =~ s/[34]S$/Sc/;
+    $HType =~ s/5C$/Irr/;
+    $HType =~ s/E0\+\*3/E0/;
+    $HType =~ s/SB\+C\?/SBa/;
+
+# uncomment as a check on "punch-through" NON-simple Hubble types    
+#   next if ($HType =~ /^S[0a-c]$/);
+#	next if ($HType =~ /^SB[a-c]$/);
+#	next if ($HType =~ /^E[0-7]$/);
+#	next if ($HType =~ /^Irr$/);
+
+#   print STDOUT "$name     $Type    $HType\n";
   }
   #
   # Alternative galaxy names
@@ -623,7 +639,7 @@ while (<NGCIC>) {
   $c_tf++     if ($dist_flag == 2);
   $c_hubble++ if ($dist_flag == 3);
   $c_B200++   if ($dist_flag == 4);
-
+#
 
 #print  DSC "# $name $altname1 $altname2 $altname3\n";
   print  DSC "Galaxy \"$name$altname1$altname2$altname3\"\n";
@@ -645,6 +661,8 @@ while (<NGCIC>) {
 
   $count++;
 }
+
+if (1){
 #
 # add Milky Way
 #
@@ -697,7 +715,7 @@ foreach $name (@local) {
   $c_B200++;
 }
 print STDOUT "$count   $c_sbf $c_tf $c_hubble $c_B200\n";
-
+}
 # like substr($_,first,last), but one-based.
 sub ss {
   substr ($_, $_[0]-1, $_[1]-$_[0]+1);
