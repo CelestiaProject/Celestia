@@ -6550,32 +6550,31 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 
     if (renderFlags & dso->getRenderMask())
     {
-        double  dsoRadius  = dso->getRadius();
+    	double  dsoRadius = dso->getRadius();
         if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
         {
-            if (distanceToDSO < 0)
-                distanceToDSO = 0;
-
-            // display looks satisfactory for 0.2 < brightness < O(1.0)
-            // Ansatz: brightness = a - b*appMag(distanceToDSO), emulates
-            // eye sensitivity...
+        	// display looks satisfactory for 0.2 < brightness < O(1.0)
+            // Ansatz: brightness = a - b*appMag(distanceToDSO), emulates eye sensitivity...
             // determine a,b such that
             // a-b*absMag = absMag/avgAbsMag ~ 1; a-b*faintestMag = 0.2
-            // the 2nd eqn guarantees that the faintest galaxies are still
-            // visible.
-            // the parameters in the 'close' correction are fixed by matching
-            // the gradients at 10 pc and requiring brightness = r + ri at distanceToDSO = 0
+            // the 2nd eqn guarantees that the faintest galaxies are still visible.
+            // the parameters in the 'close' correction function are fixed by matching
+            // the gradients at 10 pc and by: close (10 pc) = 0. 
+            // ri adjusts the Milky Way brightness as viewed from "inside" (e.g. from Earth).
 
             double ri  = -0.1, pc10 = 32.6167;
             double r   = absMag / avgAbsMag;
             double num = 5 * (absMag - faintestMag);
             double a   = r * (avgAbsMag - 5 * faintestMag) / num;
-            double b   = (1.0 - 5 * r) / num;
-            double c   = 0.4605170186 * ri / b - 1.0;
-            double close = ri * (pc10 - distanceToDSO) / (pc10 + distanceToDSO * c);
+            double b   = (1.0 - 5 * r) / num; 
+            double close = (distanceToDSO > -10.0)?
+            	-4.3429448 * b * log((pc10 + distanceToDSO)/(2 * pc10)): ri; 
+            // note: 10.0 / log(10.0) = 4.3429448
+            if (distanceToDSO < 0)
+            	distanceToDSO = 0;
             double brightness = (distanceToDSO  >= pc10)?
-                a - b * astro::absToAppMag(absMag, (float) distanceToDSO): r + close;
-            brightness = 1.5 * brightness * (faintestMag - 3.0)/renderer->getFaintestAM45deg();
+                a - b * astro::absToAppMag(absMag, (float) distanceToDSO): r + close;    
+            brightness = 2.3 * brightness * (faintestMag - 4.75)/renderer->getFaintestAM45deg();
             if (brightness < 0.0)
                 brightness = 0.0;
 
@@ -6585,7 +6584,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                 // handling.  We don't want to always set the projection
                 // matrix, since that could be expensive with large galaxy
                 // catalogs.
-                float nearZ = (float) (distanceToDSO/2);
+                float nearZ = (float) (distanceToDSO / 2);
                 float farZ  = (float) (distanceToDSO + dsoRadius * 2);
                 if (nearZ < dsoRadius * 0.001)
                 {
