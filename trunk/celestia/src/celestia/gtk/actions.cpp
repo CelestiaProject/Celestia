@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.8 2006-01-01 23:55:25 suwalski Exp $
+ *  $Id: actions.cpp,v 1.9 2006-01-03 06:07:19 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -230,7 +230,6 @@ void actionSearchObject(GtkAction*, AppData* app)
 
 void actionGotoObject(GtkAction*, AppData* app)
 {
-	cout << app << endl;
 	dialogGotoObject(app);
 }
 
