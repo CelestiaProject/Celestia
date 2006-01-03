@@ -2705,8 +2705,16 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
 
     dso.getDescription(descBuf, sizeof(descBuf));
     overlay << descBuf << '\n';
-    overlay << _("Distance: ");
-    displayDistance(overlay, distance);
+    if (distance >= 0)
+    {
+    	overlay << _("Distance: ");
+    	displayDistance(overlay, distance);
+    }
+    else
+    {
+        overlay << _("Distance from center: ");
+        displayDistance(overlay, distance + dso.getRadius());
+     }   	
     overlay << '\n';
     overlay << _("Radius: ");
     displayDistance(overlay, dso.getRadius());
