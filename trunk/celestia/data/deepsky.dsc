@@ -25,8 +25,8 @@
 # V = rad. velocity in CMB frame & Hubble law 
 # C=Cepheids, P=photometric, N(G)=planetary nebula (globular cluster) luminosity function
 #
-# Adapted for Celestia with Perl script: deepsky.pl Revision: 1.10 
-# Processed 2005-11-12 6 315 0 18:35:49 UTC
+# Adapted for Celestia with Perl script: deepsky.pl Revision: 1.20 
+# Processed 2006-1-3 2 2 0 21:19:26 UTC
 #
 # by Dr. Fridger Schrempp, fridger.schrempp@desy.de
 # ------------------------------------------------------ 
@@ -19482,7 +19482,7 @@ Galaxy "NGC 1740:MCG 1-13-46:NPM 1"
 
 Galaxy "NGC 1741A:MCG 1-13-45:MK 1089:ARP 259"
 {
-        Type  "Scm"
+        Type  "Irr"
         RA            5.0272
         Dec          -4.2589
         Distance   1.825e+08  # method: V
@@ -23850,7 +23850,7 @@ Galaxy "NGC 2604B:MCG 5-20-23:ZWG 149.49:KUG 0830+296"
 
 Galaxy "NGC 2605"
 {
-        Type  "S0?"
+        Type  "S0"
         RA            8.5814
         Dec          52.8044
         Distance    4.05e+08  # distance uncertain!
@@ -25813,7 +25813,7 @@ Galaxy "NGC 2779:MCG 6-20-44:ZWG 180.55"
 
 Galaxy "NGC 2780:UGC 4843:MCG 6-20-47:ZWG 180.57"
 {
-        Type  "SB"
+        Type  "SBa"
         RA            9.2122
         Dec          34.9256
         Distance   1.001e+08  # method: V
@@ -30363,7 +30363,7 @@ Galaxy "NGC 3164:UGC 5527:MCG 10-15-36:ZWG 290.18"
 
 Galaxy "NGC 3165:UGC 5512:MCG 1-26-23:ZWG 36.63"
 {
-        Type  "Scm"
+        Type  "Irr"
         RA           10.2253
         Dec           3.3750
         Distance   7.579e+07  # method: V
@@ -32443,7 +32443,7 @@ Galaxy "NGC 3321:NGC 3322:MCG 2-27-10:UGCA 214"
 
 Galaxy "NGC 3323:UGC 5800:MCG 4-25-36:ZWG 124.49"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           10.6608
         Dec          25.3225
         Distance   2.477e+08  # method: V
@@ -33132,7 +33132,7 @@ Galaxy "NGC 3380:UGC 5906:MCG 5-26-12:ZWG 155.15"
 
 Galaxy "NGC 3381:UGC 5909:MCG 6-24-15:ZWG 184.16"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           10.8067
         Dec          34.7114
         Distance    8.58e+07  # method: V
@@ -36850,7 +36850,7 @@ Galaxy "NGC 3690B:UGC 6472:MCG 10-17-3:KCPG 288B"
 
 Galaxy "NGC 3691:UGC 6464:MCG 3-29-53:ZWG 96.50"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           11.4692
         Dec          16.9200
         Distance   6.419e+07  # method: V
@@ -63890,7 +63890,7 @@ Galaxy "NGC 5859:UGC 9728:MCG 3-39-5:ZWG 106.7"
 
 Galaxy "NGC 5860:UGC 9717:MCG 7-31-33:MK 480"
 {
-        Type  "S0+S0"
+        Type  "S0"
         RA           15.1092
         Dec          42.6419
         Distance   2.499e+08  # method: V
@@ -68609,7 +68609,7 @@ Galaxy "NGC 6270"
 
 Galaxy "NGC 6271:MCG 5-40-16:ZWG 169.21"
 {
-        Type  "S0?"
+        Type  "S0"
         RA           16.9806
         Dec          27.9647
         Distance   4.796e+08  # method: V
@@ -79841,7 +79841,7 @@ Galaxy "NGC 7468:UGC 12329:MK 314:ZWG 453.52"
 
 Galaxy "NGC 7468A:UGC 12342:MCG 3-58-30:ZWG 453.61"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           23.0814
         Dec          16.6789
         Distance   3.767e+08  # method: V
@@ -86172,7 +86172,7 @@ Galaxy "IC 185:MCG 0-6-19"
 
 Galaxy "IC 186-1:IC 186A:MCG 0-6-20:ZWG 387.23"
 {
-        Type  "S0?"
+        Type  "S0"
         RA            2.0064
         Dec          -1.5533
         Distance    2.44e+08  # distance uncertain!
@@ -86185,7 +86185,7 @@ Galaxy "IC 186-1:IC 186A:MCG 0-6-20:ZWG 387.23"
 
 Galaxy "IC 186-2:IC 186B:MCG 0-6-21:ZWG 387.23"
 {
-        Type  "S0?"
+        Type  "S0"
         RA            2.0069
         Dec          -1.5506
         Distance   2.555e+08  # distance uncertain!
@@ -90774,7 +90774,7 @@ Galaxy "IC 624:MCG 1-27-26"
 
 Galaxy "IC 625:MCG 4-26-1:ESO 501-80"
 {
-        Type  "Sc?"
+        Type  "S0"
         RA           10.7103
         Dec         -23.9350
         Distance   4.911e+07  # method: T-F
@@ -91138,7 +91138,7 @@ Galaxy "IC 655:ZWG 10.42"
 
 Galaxy "IC 656"
 {
-        Type  "E0+*3"
+        Type  "E0"
         RA           10.9189
         Dec          17.6117
         Distance   5.496e+08  # distance uncertain!
@@ -93205,7 +93205,7 @@ Galaxy "IC 837:MCG 5-31-28:ZWG 160.41:IRAS 12551+2646"
 
 Galaxy "IC 838:NGC 4849A:MCG 5-31-43:DFOT 198"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           12.9703
         Dec          26.4261
         Distance   3.217e+08  # distance uncertain!
@@ -95168,7 +95168,7 @@ Galaxy "IC 1002:ZWG 47.15"
 
 Galaxy "IC 1003:UGC 9190:ZWG 47.24:MK 1381"
 {
-        Type  "cE0pec"
+        Type  "E0"
         RA           14.3581
         Dec           5.0731
         Distance   3.791e+08  # method: V
@@ -97612,7 +97612,7 @@ Galaxy "IC 1214:UGC 10323:MCG 11-20-9:ZWG 320.19"
 
 Galaxy "IC 1215:UGC 10315:MCG 11-20-9A:ZWG 338.49"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           16.2597
         Dec          68.3972
         Distance   3.287e+08  # method: V
@@ -97703,7 +97703,7 @@ Galaxy "IC 1222:UGC 10461:MCG 8-30-32:ZWG 251.31"
 
 Galaxy "IC 1223:MCG 8-30-33:ZWG 251.32:NPM 1"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           16.5950
         Dec          49.2211
         Distance    2.33e+08  # distance uncertain!
@@ -97768,7 +97768,7 @@ Galaxy "IC 1228:UGC 10524:MCG 11-20-26:ZWG 320.38"
 
 Galaxy "IC 1229:MCG 9-27-72"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           16.7494
         Dec          51.3081
         Distance   4.241e+08  # distance uncertain!
@@ -98093,7 +98093,7 @@ Galaxy "IC 1262:UGC 10900:MCG 7-36-20:ZWG 226.25"
 
 Galaxy "IC 1263:UGC 10902:MCG 7-36-21:ZWG 226.26"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           17.5519
         Dec          43.8217
         Distance   1.768e+08  # distance uncertain!
@@ -98392,7 +98392,7 @@ Galaxy "IC 1321:ESO 596-43:MCG 3-52-11"
 
 Galaxy "IC 1322:NPM 1:IRAS 20273-1523"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           20.5022
         Dec         -15.2278
         Distance    2.03e+08  # distance uncertain!
@@ -98535,7 +98535,7 @@ Galaxy "IC 1337:MCG 3-53-12:IRAS 20540-1646"
 
 Galaxy "IC 1338:NPM 1:IRAS 20541-1641"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           20.9492
         Dec         -16.4922
         Distance   2.934e+08  # distance uncertain!
@@ -98899,12 +98899,12 @@ Galaxy "IC 1368:UGC 11703:MCG 0-54-8:ZWG 375.18"
 
 Galaxy "IC 1370:ZWG 375.21:ZW 111"
 {
-        Type  "5C"
+        Type  "Irr"
         RA           21.2539
         Dec           2.1922
-        Distance   1.938e+08  # distance uncertain!
-        Radius     4.511e+04
-        AbsMag        -19.07
+        Distance   3.163e+08  # distance uncertain!
+        Radius      7.36e+04
+        AbsMag        -20.13
         Axis    [ -0.1228  -0.8512   0.5103]
         Angle    133.1135
         InfoURL "http://simbad.u-strasbg.fr/sim-id.pl?Ident=IC 1370"
@@ -99016,7 +99016,7 @@ Galaxy "IC 1380:ZWG 375.35:NPM 1"
 
 Galaxy "IC 1381:MCG 0-54-16:ZWG 375.36:NPM 1"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           21.4592
         Dec          -1.1881
         Distance   2.555e+08  # distance uncertain!
@@ -99471,7 +99471,7 @@ Galaxy "IC 1419:NPM 1"
 
 Galaxy "IC 1420:UGC 11880:MCG 3-56-5:ZWG 451.4"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           22.0419
         Dec          19.7500
         Distance   5.894e+07  # method: V
@@ -102370,7 +102370,7 @@ Galaxy "IC 1711:UGC 1082:MCG 3-4-52:ZWG 459.73"
 
 Galaxy "IC 1714"
 {
-        Type  "SB"
+        Type  "SBa"
         RA            1.5481
         Dec         -13.0247
         Distance   3.369e+08  # distance uncertain!
@@ -104255,7 +104255,7 @@ Galaxy "IC 1891"
 
 Galaxy "IC 1892:ESO 480-36:MCG 4-8-30:UGCA 55"
 {
-        Type  "SB"
+        Type  "SBa"
         RA            3.1408
         Dec         -23.0556
         Distance   1.236e+08  # method: V
@@ -108324,7 +108324,7 @@ Galaxy "IC 2430:UGC 4755:MCG 5-22-5:ZWG 151.8"
 
 Galaxy "IC 2431:UGC 4756:MCG 3-23-30:MK 1224"
 {
-        Type  "4S"
+        Type  "Sc"
         RA            9.0761
         Dec          14.5953
         Distance     6.9e+08  # method: V
@@ -108363,7 +108363,7 @@ Galaxy "IC 2433:MCG 4-22-10:ZWG 121.16"
 
 Galaxy "IC 2434:UGC 4785:MCG 6-20-25:ZWG 180.35"
 {
-        Type  "SB"
+        Type  "SBa"
         RA            9.1208
         Dec          37.2156
         Distance   3.341e+08  # method: V
@@ -111795,7 +111795,7 @@ Galaxy "IC 2785:NPM 1"
 
 Galaxy "IC 2786:MCG 2-29-24:ZWG 67.69"
 {
-        Type  "S0?"
+        Type  "S0"
         RA           11.3881
         Dec          13.3928
         Distance    2.33e+08  # distance uncertain!
@@ -111977,7 +111977,7 @@ Galaxy "IC 2798:FGC 1242"
 
 Galaxy "IC 2799:NPM 1"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           11.4072
         Dec          13.8494
         Distance   6.419e+08  # distance uncertain!
@@ -112809,7 +112809,7 @@ Galaxy "IC 2889:MCG 2-29-38"
 
 Galaxy "IC 2891"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           11.5133
         Dec          12.6775
         Distance   4.241e+08  # distance uncertain!
@@ -115240,7 +115240,7 @@ Galaxy "IC 3157:ZWG 70.12:VCC 374"
 
 Galaxy "IC 3159"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           12.3314
         Dec          11.6744
         Distance    4.65e+08  # distance uncertain!
@@ -116306,7 +116306,7 @@ Galaxy "IC 3269"
 
 Galaxy "IC 3270"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           12.4014
         Dec          27.5775
         Distance   3.369e+08  # distance uncertain!
@@ -116436,7 +116436,7 @@ Galaxy "IC 3283"
 
 Galaxy "IC 3284:ZWG 70.55:VCC 736"
 {
-        Type  "SBR"
+        Type  "SBa"
         RA           12.4103
         Dec          10.8386
         Distance    2.44e+08  # distance uncertain!
@@ -119998,7 +119998,7 @@ Galaxy "IC 3642"
 
 Galaxy "IC 3643"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           12.6778
         Dec          12.4067
         Distance   3.694e+08  # distance uncertain!
@@ -122832,7 +122832,7 @@ Galaxy "IC 3960:MCG 5-31-55:ZWG 160.219:DRCG 27-109"
 
 Galaxy "IC 3960A:MCG 5-31-56"
 {
-        Type  "S0?"
+        Type  "S0"
         RA           12.9858
         Dec          27.8669
         Distance   5.339e+08  # distance uncertain!
@@ -123729,7 +123729,7 @@ Galaxy "IC 4061-2"
 
 Galaxy "IC 4062:MCG 7-27-14"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           13.0161
         Dec          39.8586
         Distance   2.125e+08  # distance uncertain!
@@ -126810,7 +126810,7 @@ Galaxy "IC 4343:MCG 4-33-24:ZWG 132.44"
 
 Galaxy "IC 4344:MCG 4-33-26:ZWG 132.45"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           13.9200
         Dec          25.0214
         Distance   2.555e+08  # distance uncertain!
@@ -126992,7 +126992,7 @@ Galaxy "IC 4359:ESO 271-15:IRAS 14022-4501"
 
 Galaxy "IC 4360"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           14.0725
         Dec         -11.4244
         Distance   3.369e+08  # distance uncertain!
@@ -127031,7 +127031,7 @@ Galaxy "IC 4362:ESO 325-50:MCG 7-29-7:IRAS 14022-4134"
 
 Galaxy "IC 4363"
 {
-        Type  "SBR"
+        Type  "SBa"
         RA           14.0700
         Dec          -9.6414
         Distance   3.369e+08  # distance uncertain!
@@ -128214,7 +128214,7 @@ Galaxy "IC 4473-2:MCG 3-37-27:ZWG 104.52:VV 732"
 
 Galaxy "IC 4474"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           14.6394
         Dec          23.4289
         Distance   3.369e+08  # distance uncertain!
@@ -131997,7 +131997,7 @@ Galaxy "IC 4837A:ESO 184-47:FAIR 859:AM 1911-541"
 
 Galaxy "IC 4838:ESO 141-45:AM 1912-614:IRAS 19122-6142"
 {
-        Type  "Spec"
+        Type  "Irr"
         RA           19.2794
         Dec         -61.6139
         Distance   1.938e+08  # method: V
@@ -132907,7 +132907,7 @@ Galaxy "IC 4917-2:AM 1955-522"
 
 Galaxy "IC 4918:ESO 233-16"
 {
-        Type  "S0?"
+        Type  "S0"
         RA           19.9869
         Dec         -52.2750
         Distance   3.527e+08  # distance uncertain!
@@ -133960,12 +133960,12 @@ Galaxy "IC 5020:ESO 400-34:MCG 6-45-6:AM 2027-333"
 
 Galaxy "IC 5021:ESO 186-61:AM 2029-544"
 {
-        Type  "Spec"
+        Type  "Irr"
         RA           20.5594
         Dec         -54.5214
-        Distance   2.125e+08  # distance uncertain!
-        Radius     2.473e+04
-        AbsMag        -19.07
+        Distance   3.468e+08  # distance uncertain!
+        Radius     4.035e+04
+        AbsMag        -20.13
         Axis    [ -0.1412  -0.5861  -0.7978]
         Angle    146.1461
         InfoURL "http://simbad.u-strasbg.fr/sim-id.pl?Ident=IC 5021"
@@ -133973,7 +133973,7 @@ Galaxy "IC 5021:ESO 186-61:AM 2029-544"
 
 Galaxy "IC 5022:ESO 47-5"
 {
-        Type  "SBR"
+        Type  "SBa"
         RA           20.6850
         Dec         -76.4497
         Distance   2.676e+08  # distance uncertain!
@@ -134935,7 +134935,7 @@ Galaxy "IC 5109:ESO 48-1"
 
 Galaxy "IC 5110:ESO 145-7:AM 2126-601"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           21.5119
         Dec         -60.0019
         Distance   3.925e+08  # method: V
@@ -135208,7 +135208,7 @@ Galaxy "IC 5142:ESO 108-6"
 
 Galaxy "IC 5144:MCG 2-55-27:ZWG 427.39:NPM 1"
 {
-        Type  "SB"
+        Type  "SBa"
         RA           21.9025
         Dec          15.0372
         Distance    2.44e+08  # distance uncertain!
@@ -135533,7 +135533,7 @@ Galaxy "IC 5177:UGC 11939:MCG 2-56-15:ZWG 428.42"
 
 Galaxy "IC 5178:ESO 532-31:MCG 4-52-22"
 {
-        Type  "SB+C?"
+        Type  "SBa"
         RA           22.2092
         Dec         -22.9544
         Distance   2.272e+08  # method: V
@@ -136014,7 +136014,7 @@ Galaxy "IC 5222:ESO 109-6:FAIR 193:AM 2226-655"
 
 Galaxy "IC 5223:UGC 12055:ZWG 404.19:NPM 1"
 {
-        Type  "3S"
+        Type  "Sc"
         RA           22.4956
         Dec           7.9892
         Distance   2.555e+08  # distance uncertain!
