@@ -926,3 +926,9 @@ Code:
 * KDE: fixed some AMD64 bugs
 * GTK: added splash screen with a progress indicator
 * GTK: Added configure options to enable or disable Cairo support for splash
+* Corrected a local flashing of the Milky Way brightness.
+* Now the distance to the galaxy center is displayed, if the observer is located inside
+  the galaxy (Milky Way...).
+* Eliminated various incorrect Hubble type acronyms in deepsky.dsc that had penetrated
+  the PERL filter.
+* Add the corrected PERL script deepsky.pl.     
