@@ -30,6 +30,7 @@
                                   backing: NSBackingStoreBuffered
                                     defer:YES])
     {
+        [self setReleasedWhenClosed: YES];
         [self setBackgroundColor: [NSColor clearColor]];
         [self setAlphaValue: 1.0f];
         [self setOpaque: NO];
@@ -46,10 +47,5 @@
     }
 
     return self;
-}
-    
-- (BOOL)canBecomeKeyWindow
-{
-    return YES;
 }
 @end
