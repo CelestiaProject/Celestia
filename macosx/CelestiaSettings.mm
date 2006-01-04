@@ -46,6 +46,7 @@ class MacOSXWatcher : public CelestiaWatcher
 
 #define CS_DefaultsName @"Celestia-1.4.0"
 #define CS_NUM_PREV_VERSIONS 1
+#define CS_AppDefaults @"defaults"
 #define TAGDEF(tag,key) key, [NSNumber numberWithInt: tag], 
 
 static NSString *CS_PREV_VERSIONS[CS_NUM_PREV_VERSIONS] = {
@@ -206,6 +207,7 @@ static NSMutableDictionary* tagMap;
 -(NSDictionary*) findUserDefaults
 {
 	NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    NSDictionary *appDefaults = [self findAppDefaults];
 	NSDictionary* dict = [defs objectForKey: CS_DefaultsName ];
     if (dict == nil )
     {
@@ -221,8 +223,29 @@ static NSMutableDictionary* tagMap;
         {
             [self upgradeUserDefaults: dict fromVersion: CS_PREV_VERSIONS[i]];
         }
+        else
+        {
+            dict = appDefaults;
+        }
     }
+
+    if (appDefaults)
+        [defs registerDefaults: [NSDictionary dictionaryWithObject: appDefaults forKey: CS_DefaultsName]];
+
     return dict;
+}
+
+-(NSDictionary *) findAppDefaults
+{
+    NSDictionary *appDefaults = nil;
+    NSString *appDefaultsFile = [[NSBundle mainBundle] pathForResource:CS_AppDefaults ofType:@"plist"];
+
+    if (appDefaultsFile)
+    {
+        appDefaults = [NSDictionary dictionaryWithContentsOfFile: appDefaultsFile];
+    }
+
+    return appDefaults ? [appDefaults objectForKey: CS_DefaultsName] : nil;
 }
 
 -(void) loadUserDefaults 
@@ -239,6 +262,22 @@ static NSMutableDictionary* tagMap;
 //                NSLog([NSString stringWithFormat: @"loaded default dict entry %@ %@", key, [self valueForKey: key] ]);
 	}
 //        NSLog(@"loaded user defaults");
+}
+
+-(void) loadAppDefaults
+{
+    NSUserDefaults *userDefaults = nil;
+    NSDictionary *appDefaults = [self findAppDefaults];
+
+    if (appDefaults)
+    {
+        // Replace previous settings with defaults, but
+        // preserves favorites
+        userDefaults = [NSUserDefaults standardUserDefaults];
+        [userDefaults setObject: appDefaults forKey: CS_DefaultsName];
+        [userDefaults synchronize];
+        [self loadUserDefaults];
+    }
 }
 
 -(void) storeUserDefaults 
