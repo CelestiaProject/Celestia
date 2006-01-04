@@ -12,6 +12,7 @@
 #import "CelestiaOpenGLView.h"
 #import "FullScreenWindow.h"
 #import "SplashScreen.h"
+#import "SplashWindowController.h"
 #import <Carbon/Carbon.h>
 #import "CGLInfo.h"
 
@@ -121,8 +122,8 @@ NSString* fatalErrorMessage;
         {
             if (![fileManager fileExistsAtPath: path = [[ mainBundle resourcePath ] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder] || !isFolder)
             {
-                NSRunAlertPanel(@"Missing Resource Directory",@"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again.",nil,nil,nil);
-                path = [mainBundle resourcePath];
+                [self fatalError: @"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again."];
+                [self fatalError: nil];
             }
         }
 
@@ -137,10 +138,7 @@ NSString* fatalErrorMessage;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #endif
 #ifndef USE_THREADEDLOAD
-    [loadingPanel makeKeyAndOrderFront: nil];
-    [loadingPanel displayIfNeeded];
-//    [loadingIndicator setUsesThreadedAnimation: YES];
-//    [loadingIndicator startAnimation: nil];
+    [splashWindowController showWindow];
 #endif
     // initialize simulator in separate thread to allow loading indicator window while waiting
 #ifdef DEBUG
@@ -150,15 +148,15 @@ NSString* fatalErrorMessage;
     {
         [startupCondition lock];
         [startupCondition unlockWithCondition: 99];
-#ifndef USE_THREADEDLOAD
-        [loadingPanel close];
-#endif
 #ifdef DEBUG
         [pool release];
 #endif
         [self fatalError: @"Error loading data files. Celestia will now quit."];
+#ifndef USE_THREADEDLOAD
         [self fatalError: nil];
+#else
         [NSThread exit];
+#endif
         return;
     }
 
@@ -168,7 +166,7 @@ NSString* fatalErrorMessage;
     [startupCondition lock];
     [startupCondition unlockWithCondition: 1];
 #ifndef USE_THREADEDLOAD
-    [loadingPanel close];
+    [splashWindowController close];
     // complete startup
     [self fatalError: nil];
     [self finishInitialization];
@@ -186,7 +184,7 @@ NSString* fatalErrorMessage;
     if ( msg == nil )
     {
         if (fatalErrorMessage == nil) return;
-        [loadingPanel close];
+        [splashWindowController close];
         NSRunAlertPanel(@"Fatal Error", fatalErrorMessage, nil, nil, nil);
         [NSApp terminate:self];
         return;
@@ -206,7 +204,7 @@ NSString* fatalErrorMessage;
             return;
 //        [loadingIndicator startAnimation: nil];
         // begin modal session for loading panel
-        session = [NSApp beginModalSessionForWindow:loadingPanel];
+        session = [NSApp beginModalSessionForWindow: [splashWindowController window]];
         // modal session runloop
         for (;;) 
         {
@@ -223,7 +221,7 @@ NSString* fatalErrorMessage;
     // check for fatal error in loading thread
     [self fatalError: nil];
     // complete startup
-    [loadingPanel close];
+    [splashWindowController close];
     [self finishInitialization];
 }
 
@@ -402,6 +400,7 @@ NSString* fatalErrorMessage;
 {
     [settings storeUserDefaults];
 
+    [lastScript release];
     [browserWindowController release];
     if (appCore != nil) {
         [appCore release];
@@ -633,10 +632,10 @@ NSString* fatalErrorMessage;
 
 - (void) runScript: (NSString*) path
 {
-        NSString* oldScript = lastScript;
-        lastScript = [path retain];
-        [oldScript autorelease];
-        [appCore runScript: lastScript];       
+    NSString* oldScript = lastScript;
+    lastScript = [path retain];
+    [oldScript release];
+    [appCore runScript: lastScript];       
 }
 
 - (void) openPanelDidEnd:(NSOpenPanel*)openPanel returnCode: (int) rc contextInfo: (void *) ci
@@ -651,22 +650,23 @@ NSString* fatalErrorMessage;
 
 - (IBAction) openScript: (id) sender
 {
-    NSOpenPanel* panel = [[NSOpenPanel alloc] init]; //[NSOpenPanel openPanel];
-    if (!lastScript) lastScript = [[NSHomeDirectory() stringByAppendingString: @"/"]  retain];
+    NSOpenPanel* panel = [NSOpenPanel openPanel];
+    NSDocumentController *dc = [NSDocumentController sharedDocumentController];
+//    if (!lastScript) lastScript = [[NSHomeDirectory() stringByAppendingString: @"/"]  retain];
 
-    [ panel beginSheetForDirectory:  [lastScript stringByDeletingLastPathComponent]
-        file: [lastScript lastPathComponent]
-        types: [NSArray arrayWithObjects: @"cel", @"celx", nil ]
-        modalForWindow: [glView window]
-        modalDelegate: self
-        didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
-        contextInfo: nil
+    [ panel beginSheetForDirectory: nil //[lastScript stringByDeletingLastPathComponent]
+                              file: nil//[lastScript lastPathComponent]
+                             types: [dc fileExtensionsFromType:@"Celestia Script"]//[NSArray arrayWithObjects: @"cel", @"celx", nil ]
+                    modalForWindow: [glView window]
+                     modalDelegate: self
+                    didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
+                       contextInfo: nil
     ];
 }
 
 - (IBAction) rerunScript: (id) sender
 {
-        if (lastScript) [appCore runScript: lastScript];       
+    if (lastScript) [appCore runScript: lastScript];       
 }
 
 - (IBAction) back:(id)sender
@@ -714,18 +714,18 @@ NSString* fatalErrorMessage;
 //  Remove following line to enable movie capture...
 	NSRunAlertPanel(@"No Movie Capture",@"Movie capture is not available in this version of Celestia.",nil,nil,nil); return;
 
-    NSSavePanel* panel = [[NSSavePanel alloc] init];
+    NSSavePanel* panel = [NSSavePanel savePanel];
 	NSString* lastMovie = nil; // temporary; should be saved in defaults
 
 	[panel setRequiredFileType: @"mov"];
 	[panel setTitle: @"Capture Movie"];
 	[panel setMessage: @"Capture Movie"];
     [ panel beginSheetForDirectory:  [lastMovie stringByDeletingLastPathComponent]
-        file: [lastMovie lastPathComponent]
-        modalForWindow: [glView window]
-        modalDelegate: self
-        didEndSelector: @selector(moviePanelDidEnd:returnCode:contextInfo:)
-        contextInfo: nil
+                              file: [lastMovie lastPathComponent]
+                    modalForWindow: [glView window]
+                     modalDelegate: self
+                    didEndSelector: @selector(moviePanelDidEnd:returnCode:contextInfo:)
+                       contextInfo: nil
     ];
 }
 
