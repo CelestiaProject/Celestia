@@ -2337,7 +2337,6 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
         prefs.renderFlags |= Renderer::ShowCometTails;
         prefs.renderFlags |= Renderer::ShowRingShadows;
     }
-    prefs.lastVersion = 0x01030100;
     prefs.renderFlags &= ~Renderer::ShowAutoMag;
 
     RegCloseKey(key);
@@ -2408,7 +2407,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
     prefs.hudDetail = appCore->getHudDetail();
     prefs.fullScreenMode = lastFullScreenMode;
-    prefs.lastVersion = 0x01020500;
+    prefs.lastVersion = 0x01040100;
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
     prefs.starStyle = appCore->getRenderer()->getStarStyle();
     prefs.textureResolution = appCore->getRenderer()->getResolution();
@@ -3042,7 +3041,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         }
     }
 
-    // Specify some default values in case registry keys are not found.
+    // Specify some default values in case registry keys are not found. Ideally, these
+    // defaults should never be used--they should be overridden by settings in
+    // celestia.cfg.
     AppPreferences prefs;
     prefs.winWidth = 800;
     prefs.winHeight = 600;
@@ -3054,7 +3055,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars |
                         Renderer::ShowPlanets | Renderer::ShowSmoothLines |
                         Renderer::ShowCometTails | Renderer::ShowRingShadows;
-    prefs.visualMagnitude = 5.0f;   //Default specified in Simulation::Simulation()
+    prefs.visualMagnitude = 6.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
     prefs.hudDetail = 1;
     prefs.fullScreenMode = -1;
@@ -3197,20 +3198,23 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
 
     // Set values saved in registry: renderFlags, visualMagnitude, labelMode and timezone bias.
-    appCore->getSimulation()->setFaintestVisible(prefs.visualMagnitude);
-    appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
-    appCore->getRenderer()->setLabelMode(prefs.labelMode);
-    appCore->getRenderer()->setOrbitMask(prefs.orbitMask);
-    appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
-    appCore->getRenderer()->setStarStyle(prefs.starStyle);
-    appCore->setHudDetail(prefs.hudDetail);
-    if (prefs.showLocalTime == 1)
-        ShowLocalTime(appCore);
-    else
-        ShowUniversalTime(appCore);
-    appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
-    appCore->getRenderer()->setResolution(prefs.textureResolution);
-
+    if (prefs.lastVersion != 0)
+    {
+        appCore->getSimulation()->setFaintestVisible(prefs.visualMagnitude);
+        appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
+        appCore->getRenderer()->setLabelMode(prefs.labelMode);
+        appCore->getRenderer()->setOrbitMask(prefs.orbitMask);
+        appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
+        appCore->getRenderer()->setStarStyle(prefs.starStyle);
+        appCore->setHudDetail(prefs.hudDetail);
+        if (prefs.showLocalTime == 1)
+            ShowLocalTime(appCore);
+        else
+            ShowUniversalTime(appCore);
+        appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
+        appCore->getRenderer()->setResolution(prefs.textureResolution);
+    }
+    
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     syncMenusWithRendererState();
 
