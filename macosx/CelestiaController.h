@@ -13,6 +13,7 @@
 #import "BrowserWindowController.h"
 
 @class SplashWindow;
+@class SplashWindowController;
 
 @interface CelestiaController : NSWindowController 
 {
@@ -21,8 +22,7 @@
     BOOL ready;
     BOOL isDirty;
     BOOL isFullScreen;
-    IBOutlet SplashWindow *loadingPanel;
-    IBOutlet NSTextField *loadingIndicator;
+    IBOutlet SplashWindowController *splashWindowController;
     IBOutlet NSTextView *glInfo;
     IBOutlet NSPanel *glInfoPanel;
     IBOutlet NSOpenGLView *glView;
