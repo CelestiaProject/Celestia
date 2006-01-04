@@ -26,8 +26,10 @@
 - (NSDictionary *) defaultsDictionary ;
 
 -(NSDictionary*) findUserDefaults ;
+-(NSDictionary*) findAppDefaults ;
 
 -(void) loadUserDefaults ;
+-(void) loadAppDefaults ;
 
 -(void) storeUserDefaults ;
 
