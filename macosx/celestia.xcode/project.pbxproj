@@ -22,6 +22,7 @@
 				F565A8B202EB418701000006,
 				F5EDC6BA0456666601000002,
 				E5E5ED5C095BC4A5003DC829,
+				E5E8FFA40965975B00A0A304,
 				F5040B0E02A484DA014901DC,
 				F5231C7202C2997601000006,
 				F5274ED202AE88260100020A,
@@ -36,6 +37,7 @@
 				F565A8B102EB418701000006,
 				F5EDC6B90456666601000002,
 				E5E5ED5B095BC4A5003DC829,
+				E5E8FFA30965975B00A0A304,
 				F578B79D02B3E2AD0100020A,
 				F55A246702B2D4FF0100020A,
 			);
@@ -250,6 +252,7 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				E50BD53D096543EB00D0A357,
 				E5C9B46B084909B90071B1EE,
 				E53C2FBE079433D300C76766,
 				E57283AD0793FC7300C1F239,
@@ -352,6 +355,20 @@
 //E52
 //E53
 //E54
+		E50BD53D096543EB00D0A357 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			path = defaults.plist;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E50BD53E096543EB00D0A357 = {
+			fileRef = E50BD53D096543EB00D0A357;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E53C2FBE079433D300C76766 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -648,6 +665,7 @@
 				E5AACCEF0935FEB100136FCD,
 				E5AACCF10935FEB100136FCD,
 				E5E5ED5D095BC4A5003DC829,
+				E5E8FFA50965975B00A0A304,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1490,6 +1508,7 @@
 				E53C2FBF079433D300C76766,
 				E56A5AD10848F24D00A21D7E,
 				E5E5ED64095BC602003DC829,
+				E50BD53E096543EB00D0A357,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1631,6 +1650,7 @@
 				E5AACCED0935FEB100136FCD,
 				E5AACCF00935FEB100136FCD,
 				E5E5ED5E095BC4A5003DC829,
+				E5E8FFA60965975B00A0A304,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2589,7 +2609,7 @@
 		};
 		E572837307939E0200C1F239 = {
 			buildActionMask = 8;
-			comments = "1. Removes extraneous Makefiles from CelestiaResources\n2. Creates writable disk image containing Celestia.app, CelestiaResources, and readme files.";
+			comments = "1. Removes extraneous files from CelestiaResources\n2. Creates writable disk image containing Celestia.app, CelestiaResources, and readme files.";
 			files = (
 			);
 			inputPaths = (
@@ -2601,7 +2621,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "find $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
+			shellScript = "find $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nrm -f $BUILT_PRODUCTS_DIR/Celestia/CelestiaResources/data/stars.txt\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
 		};
 		E572837407939F2500C1F239 = {
 			buildActionMask = 8;
@@ -3240,10 +3260,11 @@
 		};
 		E5E5ED63095BC602003DC829 = {
 			isa = PBXFileReference;
-			lastKnownFileType = image.tiff;
-			path = splash.tiff;
-			refType = 4;
-			sourceTree = "<group>";
+			lastKnownFileType = image.png;
+			name = splash.png;
+			path = /Users/dwj/src/Cocoa/celestia/splash.png;
+			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		E5E5ED64095BC602003DC829 = {
 			fileRef = E5E5ED63095BC602003DC829;
@@ -3274,6 +3295,34 @@
 			path = es.lproj/InfoPlist.strings;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		E5E8FFA30965975B00A0A304 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = SplashWindowController.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5E8FFA40965975B00A0A304 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = SplashWindowController.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5E8FFA50965975B00A0A304 = {
+			fileRef = E5E8FFA30965975B00A0A304;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5E8FFA60965975B00A0A304 = {
+			fileRef = E5E8FFA40965975B00A0A304;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		E5F8C9690795232900D1DAF2 = {
 			fileRef = E5D471260778E33C007731C3;
