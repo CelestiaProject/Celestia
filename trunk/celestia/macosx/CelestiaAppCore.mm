@@ -38,6 +38,20 @@ public:
     }
 };
 
+class MacOSXSplashProgressNotifier : public ProgressNotifier
+{
+public:
+    MacOSXSplashProgressNotifier() {};
+    virtual ~MacOSXSplashProgressNotifier() {};
+
+    virtual void update(const string& msg)
+    {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        [[[CelestiaController shared] valueForKey: @"splashWindowController"] performSelector: @selector(setStatusText:) withObject: [NSString stringWithStdString: msg]];
+        [pool release];
+    };
+};
+
 
 CelestiaAppCore *_sharedCelestiaAppCore;
 CelestiaCore *appCore;
@@ -254,6 +268,7 @@ static NSMutableDictionary* tagDict;
     NSArray *extrasDirsSetting;
     std::vector<std::string> extrasDirs;
     NSString *extrasDir;
+    MacOSXSplashProgressNotifier progressNotifier;
 
     if ((confFileSetting = [prefs stringForKey:@"conf"]))
     {
@@ -268,7 +283,8 @@ static NSMutableDictionary* tagDict;
     }
 
     return (BOOL)appCore->initSimulation(confFileSetting ? &confFile : nil,
-                                         extrasDirsSetting ? &extrasDirs : nil);
+                                         extrasDirsSetting ? &extrasDirs : nil,
+                                         &progressNotifier);
 }
 
 -(BOOL)initRenderer
