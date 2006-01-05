@@ -18,6 +18,8 @@
 
 using namespace std;
 
+// GLSL on Mac OS X appears to have a bug that precludes us from using structs
+// #define USE_GLSL_STRUCTS
 
 ShaderManager g_ShaderManager;
 
@@ -194,7 +196,12 @@ static string
 LightProperty(unsigned int i, char* property)
 {
     char buf[64];
+
+#ifndef USE_GLSL_STRUCTS
+    sprintf(buf, "light%d_%s", i, property);
+#else
     sprintf(buf, "lights[%d].%s", i, property);
+#endif
     return string(buf);
 }
 
@@ -359,6 +366,23 @@ DeclareLights(const ShaderProperties& props)
         return string("");
 
     char lightSourceBuf[128];
+
+#ifndef USE_GLSL_STRUCTS
+    string lightSourceDecl;
+    
+    for (unsigned int i = 0; i < props.nLights; i++)
+    {
+        sprintf(lightSourceBuf,
+                "uniform vec3 light%d_direction;\n"
+                "uniform vec3 light%d_diffuse;\n"
+                "uniform vec3 light%d_specular;\n"
+                "uniform vec3 light%d_halfVector;\n",
+                i, i, i, i);
+        lightSourceDecl += string(lightSourceBuf);
+    }
+    
+    return lightSourceDecl;
+#else    
     sprintf(lightSourceBuf,
             "uniform struct {\n"
             "   vec3 direction;\n"
@@ -369,6 +393,7 @@ DeclareLights(const ShaderProperties& props)
             props.nLights);
 
     return string(lightSourceBuf);
+#endif
 }
 
 
