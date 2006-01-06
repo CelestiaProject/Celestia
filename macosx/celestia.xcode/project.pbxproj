@@ -252,6 +252,7 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				E5BF7F47096DA07B00DB7C65,
 				E50BD53D096543EB00D0A357,
 				E5C9B46B084909B90071B1EE,
 				E53C2FBE079433D300C76766,
@@ -1509,6 +1510,7 @@
 				E56A5AD10848F24D00A21D7E,
 				E5E5ED64095BC602003DC829,
 				E50BD53E096543EB00D0A357,
+				E5BF7F48096DA07B00DB7C65,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3129,6 +3131,20 @@
 		};
 		E5B61B33077737A6001BB2BF = {
 			fileRef = E5B61B2F077737A6001BB2BF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5BF7F47096DA07B00DB7C65 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = vp_patch.sh;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5BF7F48096DA07B00DB7C65 = {
+			fileRef = E5BF7F47096DA07B00DB7C65;
 			isa = PBXBuildFile;
 			settings = {
 			};
