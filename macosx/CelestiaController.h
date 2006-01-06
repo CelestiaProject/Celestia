@@ -12,6 +12,8 @@
 #import "RenderPanelController.h"
 #import "BrowserWindowController.h"
 
+#define CELESTIA_RESOURCES_FOLDER @"CelestiaResources"
+
 @class SplashWindow;
 @class SplashWindowController;
 
