@@ -152,6 +152,7 @@
 		E5B615070777307F001BB2BF /* celestia.icns in Resources */ = {isa = PBXBuildFile; fileRef = E5B615060777307F001BB2BF /* celestia.icns */; };
 		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
 		E5C9B478084909E40071B1EE /* README for Mac OS X.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */; };
+		E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */ = {isa = PBXBuildFile; fileRef = E5D3196A096C91A6007FA87F /* vp_patch.sh */; };
 		E5D446660777291700A1577D /* utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D446640777291700A1577D /* utf8.cpp */; };
 		E5D4467607772B6C00A1577D /* CelestiaSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5D4467407772B6C00A1577D /* CelestiaSettings.mm */; };
 		E5D4467807772BA000A1577D /* CGLInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F505BFFA02CA9DAE0100020A /* CGLInfo.m */; };
@@ -355,6 +356,7 @@
 		E5B61B2E077737A6001BB2BF /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
 		E5B61B2F077737A6001BB2BF /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
 		E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "README for Mac OS X.rtf"; sourceTree = "<group>"; };
+		E5D3196A096C91A6007FA87F /* vp_patch.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = vp_patch.sh; sourceTree = "<group>"; };
 		E5D446640777291700A1577D /* utf8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utf8.cpp; path = ../src/celutil/utf8.cpp; sourceTree = SOURCE_ROOT; };
 		E5D446650777291700A1577D /* utf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utf8.h; path = ../src/celutil/utf8.h; sourceTree = SOURCE_ROOT; };
 		E5D4467307772B6C00A1577D /* CelestiaSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaSettings.h; sourceTree = "<group>"; };
@@ -743,6 +745,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E5D3196A096C91A6007FA87F /* vp_patch.sh */,
 				E54742CF09631D3600E89E09 /* defaults.plist */,
 				E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */,
 				E53C2FBE079433D300C76766 /* KbdMouseJoyControls.txt */,
@@ -1232,6 +1235,7 @@
 				E56A5AD10848F24D00A21D7E /* caution.tiff in Resources */,
 				E5E365AF095C123E00B14224 /* splash.png in Resources */,
 				E54742D009631D3600E89E09 /* defaults.plist in Resources */,
+				E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

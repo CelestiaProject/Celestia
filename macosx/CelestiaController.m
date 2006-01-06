@@ -18,8 +18,6 @@
 
 #include <float.h>
 
-#define CELESTIA_RESOURCES_FOLDER @"CelestiaResources"
-
 
 @implementation CelestiaController
 
@@ -186,6 +184,7 @@ NSString* fatalErrorMessage;
         if (fatalErrorMessage == nil) return;
         [splashWindowController close];
         NSRunAlertPanel(@"Fatal Error", fatalErrorMessage, nil, nil, nil);
+        fatalErrorMessage = nil;    // user could cancel the terminate
         [NSApp terminate:self];
         return;
     }

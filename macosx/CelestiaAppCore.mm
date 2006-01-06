@@ -275,6 +275,79 @@ static NSMutableDictionary* tagDict;
         confFile = [confFileSetting stdString];
     }
 
+#ifndef NO_VP_WORKAROUND
+
+    std::string VP_PROBLEM_EXT      = "GL_ARB_vertex_program";
+    NSString    *VP_PATCH_SCRIPT    = @"vp_patch.sh";
+    NSString    *VP_PATCH_SHELL     = @"/bin/zsh";
+    NSString    *CELESTIA_CFG       = @"celestia.cfg";
+
+    const char *VP_PROBLEM_RENDERERS[] = { "ATI Radeon 9200" };
+    const char *glRenderer = (const char *) glGetString(GL_RENDERER);
+    BOOL shouldWorkaround = NO;
+    size_t i = 0;
+
+    if (glRenderer)
+    {
+        for (; i < (sizeof VP_PROBLEM_RENDERERS)/sizeof(char *); ++i)
+        {
+            if (strstr(glRenderer, VP_PROBLEM_RENDERERS[i]))
+            {
+                shouldWorkaround = YES;
+                break;
+            }
+        }
+    }
+
+    if (shouldWorkaround)
+    {
+        // Check if workaround is already installed
+        CelestiaConfig *cfg = ReadCelestiaConfig([CELESTIA_CFG stdString]);
+
+        if (cfg && std::find(cfg->ignoreGLExtensions.begin(), cfg->ignoreGLExtensions.end(), VP_PROBLEM_EXT) == cfg->ignoreGLExtensions.end())
+        {
+            delete cfg;
+            if (NSRunAlertPanel([NSString stringWithFormat: NSLocalizedString(@"It appears you are running Celestia on %s hardware. Do you wish to install a workaround?",nil), VP_PROBLEM_RENDERERS[i]],
+                                [NSString stringWithFormat: NSLocalizedString(@"A shell script will be run to modify your %@, adding an IgnoreGLExtensions directive. This can prevent freezing issues.",nil), CELESTIA_CFG],
+                                NSLocalizedString(@"Yes",nil),
+                                NSLocalizedString(@"No",nil),
+                                nil) == NSAlertDefaultReturn)
+            {
+                // Install it
+                NSFileManager *fm = [NSFileManager defaultManager];
+                NSString *cfgPath = [[fm currentDirectoryPath] stringByAppendingPathComponent: CELESTIA_CFG];
+                NSString *toolPath = [[NSBundle mainBundle] pathForResource: VP_PATCH_SCRIPT ofType: @""];
+                BOOL patchInstalled = NO;
+
+                if ([fm isWritableFileAtPath: cfgPath] && toolPath)
+                {
+                    NSArray *taskArgs = [NSArray arrayWithObjects:
+                        toolPath, cfgPath, nil];
+                    NSTask *theTask = [NSTask launchedTaskWithLaunchPath: VP_PATCH_SHELL
+                                                               arguments: taskArgs];
+                    if (theTask)
+                    {
+                        [theTask waitUntilExit];
+                        patchInstalled = ([theTask terminationStatus] == 0);
+                    }
+                }
+
+                if (patchInstalled)
+                {
+                    NSRunAlertPanel(NSLocalizedString(@"Workaround successfully installed.",nil),
+                                    [NSString stringWithFormat: NSLocalizedString(@"Your original %@ has been backed up.",nil), CELESTIA_CFG],
+                                    nil, nil, nil);
+                }
+                else
+                {
+                    [[CelestiaController shared] fatalError: NSLocalizedString(@"There was a problem installing the workaround. You may be running from a disk image, which is write-protected. Please try copying the CelestiaResources folder to your home directory as described in the README. You can also attempt to perform the workaround manually by following the instructions in the README.",nil)];
+                    [[CelestiaController shared] fatalError: nil];
+                }
+            }
+        }
+    }
+#endif NO_VP_WORKAROUND
+
     if ((extrasDirsSetting = [prefs stringArrayForKey:@"extrasDirs"]))
     {
         NSEnumerator *iter = [extrasDirsSetting objectEnumerator];
@@ -282,7 +355,7 @@ static NSMutableDictionary* tagDict;
             extrasDirs.push_back([extrasDir stdString]);
     }
 
-    return (BOOL)appCore->initSimulation(confFileSetting ? &confFile : nil,
+    return (BOOL)appCore->initSimulation(!confFile.empty() ? &confFile : nil,
                                          extrasDirsSetting ? &extrasDirs : nil,
                                          &progressNotifier);
 }
