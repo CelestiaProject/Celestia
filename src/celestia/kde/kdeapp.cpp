@@ -32,7 +32,7 @@
 #include <qpalette.h>
 #include <qfont.h>
 #include <qlineedit.h>
-#include <qvalidator.h> 
+#include <qvalidator.h>
 
 #include <qmenubar.h>
 #include <qpopupmenu.h>
@@ -77,10 +77,12 @@
 #include "celestialbrowser.h"
 #include "eclipsefinderdlg.h"
 #include "selectionpopup.h"
+#include "celsplashscreen.h"
 
 #include "celengine/glext.h"
 
 #define MENUMAXSIZE 100
+
 
 KdeApp* KdeApp::app=0;
 
@@ -95,34 +97,29 @@ static uint32 FilterOtherLocations = ~(Location::City |
                     Location::Vallis |
                     Location::Mare);
 
-KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> extrasDirs, bool fullscreen) : KMainWindow(0, 0)
+KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> extrasDirs, bool fullscreen, bool disableSplash) : KMainWindow(0, 0)
 {
 #if KDE_VERSION >= 0x030200
-    QStringList splashDirs = KGlobal::dirs()->findDirs("appdata", "splash");
-    QStringList images;
-    srandom(time(NULL));
-    for(QStringList::iterator i = splashDirs.begin(); i != splashDirs.end(); ++i) {
-        QDir d(*i);
-        d.setFilter(QDir::Files);
-        QStringList splashImages = d.entryList().grep(QRegExp("\\.(jpg|png)$", FALSE));
-        for(QStringList::iterator j = splashImages.begin(); j != splashImages.end(); ++j) {
-            images.append(*i + *j);
+    CelSplashScreen *splash = NULL;
+    if (!disableSplash) {
+        QStringList splashDirs = KGlobal::dirs()->findDirs("appdata", "splash");
+        QStringList images;
+        srandom(time(NULL));
+        for(QStringList::iterator i = splashDirs.begin(); i != splashDirs.end(); ++i) {
+            QDir d(*i);
+            d.setFilter(QDir::Files);
+            QStringList splashImages = d.entryList().grep(QRegExp("\\.(jpg|png)$", FALSE));
+            for(QStringList::iterator j = splashImages.begin(); j != splashImages.end(); ++j) {
+                images.append(*i + *j);
+            }
         }
-    }
-    
-    KSplashScreen *splash = NULL;
-    if (images.size() > 0) {
-        int index = (int)(random()*1./RAND_MAX*images.size());   
-        QPixmap splash_pixmap(images[index]);
-        splash = new KSplashScreen(splash_pixmap);
         
-        if (splash != NULL) {
-            if (splash_pixmap.mask()) splash->setMask(*(splash_pixmap.mask()));
-            splash->show();
-            splash->message( i18n("Loading..."), Qt::AlignBottom | Qt::AlignAuto, QColor(255,255,255) );
+        if (images.size() > 0) {
+            int index = (int)(random()*1./RAND_MAX*images.size());
+            splash = new CelSplashScreen(images[index], this);
+        } else {
+            KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \nStart-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."));
         }
-    } else {
-        KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \nStart-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."));
     }
 #endif
     
@@ -145,8 +142,22 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
     setAcceptDrops(true);
 
     // Create our OpenGL widget
-    glWidget = new KdeGlWidget( this, "kdeglwidget", appCore, config, dir, extrasDirs);
-    
+    if ( (dir.length() > 1 ? chdir(dir.c_str()):chdir(CONFIG_DATA_DIR)) == -1)
+    {
+        ::std::cout << "Cannot chdir to '" << CONFIG_DATA_DIR << "', probably due to improper installation" << ::std::endl;
+	exit(1);
+    }
+    glWidget = new KdeGlWidget( this, "kdeglwidget", appCore);
+    string* altConfig = config.length() > 0 ? &config : NULL;
+#if KDE_VERSION >= 0x030200
+    if (!appCore->initSimulation(altConfig, &extrasDirs, splash))
+#else
+    if (!appCore->initSimulation(altConfig, &extrasDirs))
+#endif
+    {
+        exit(1);
+    }
+
     setCentralWidget(glWidget);
     initActions();
 

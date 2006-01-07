@@ -65,7 +65,7 @@ KdeUniqueCelestia::KdeUniqueCelestia() {
 
     if (args->isSet("fullscreen")) fullscreen = true;
 
-    app = new KdeApp(config, dir, validDirs, fullscreen);
+    app = new KdeApp(config, dir, validDirs, fullscreen, !args->isSet("s"));
 
     if (args->count() != 0) {
         app->setStartURL(args->url(0));
