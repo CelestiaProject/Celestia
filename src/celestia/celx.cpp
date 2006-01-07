@@ -2183,7 +2183,7 @@ static int object_getinfo(lua_State* l)
 
         if (star->getOrbitBarycenter() != NULL)
         {
-            Selection parent(star->getOrbitBarycenter());
+            Selection parent((Star*)(star->getOrbitBarycenter()));
             lua_pushstring(l, "parent");
             object_new(l, parent);
             lua_settable(l, -3);
