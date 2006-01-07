@@ -3278,9 +3278,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = image.png;
 			name = splash.png;
-			path = /Users/dwj/src/Cocoa/celestia/splash.png;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../splash.png;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		E5E5ED64095BC602003DC829 = {
 			fileRef = E5E5ED63095BC602003DC829;
