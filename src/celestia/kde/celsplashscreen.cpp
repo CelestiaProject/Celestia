@@ -130,9 +130,11 @@ void CelSplashScreen::setPixmap( const QString &filename )
 TextItem::TextItem():
     disable(false),
     color(QColor("white")),
-    font(QFont("Arial", 8)),
+    font(QFont("Arial")),
     showBox(false)
- {}
+ {
+    font.setPixelSize(11);
+}
 
 void TextItem::draw(QPainter *painter) const {
     if (disable) return;
