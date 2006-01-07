@@ -5,8 +5,10 @@ pkgdatadir = @datadir@/@PACKAGE@
 
 EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA) admin splash.png
 
-SUBDIRS = src data extras textures models shaders fonts manual po
+splashdir=$(pkgdatadir)/splash
+splash_DATA=splash.png
 
+SUBDIRS = src data extras textures models shaders fonts manual po
 
 # From KDE app template
 
