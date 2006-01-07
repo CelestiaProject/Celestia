@@ -53,9 +53,6 @@ void CelSplashScreen::drawContents()
 
 void CelSplashScreen::drawContents(QPainter *painter) {
     status.draw(painter);
-    version.draw(painter);
-    for(std::vector<TextItem>::const_iterator i = extraText.begin(); i != extraText.end();  ++i)
-        (*i).draw(painter);
 }
 
 void CelSplashScreen::update(const string& _message) {
@@ -108,7 +105,6 @@ void CelSplashScreen::setPixmap( const QString &filename )
             sprintf(extraName, "extra%02d", i);
         }
     }
-    QRect r = status.getRect();
 
     QRect desk = KGlobalSettings::splashScreenDesktopGeometry();
     setGeometry( ( desk.width() / 2 ) - ( width() / 2 ) + desk.left(),
@@ -122,6 +118,12 @@ void CelSplashScreen::setPixmap( const QString &filename )
     } else {
         pixmap = _pixmap;
     }
+    
+    QPainter painter( &pixmap, this );
+    version.draw(&painter);
+    for(std::vector<TextItem>::const_iterator i = extraText.begin(); i != extraText.end();  ++i)
+        (*i).draw(&painter);
+
     repaint();
 }
 
