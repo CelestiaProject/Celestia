@@ -188,7 +188,7 @@ void TextItem::set(const QString& prefix, const KFileMetaInfoGroup& comments) {
     sVal = comments.value(prefix + "_font_family").toString();
     if (sVal != "") font.setFamily(sVal);
     intVal = comments.value(prefix + "_font_size").toInt(&ok);
-    if (ok) font.setPointSize(intVal);
+    if (ok) font.setPixelSize(intVal);
     intVal = comments.value(prefix + "_font_is_bold").toInt(&ok);
     if (ok) font.setBold(intVal);
     sVal = comments.value(prefix + "_color").toString();
