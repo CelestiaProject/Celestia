@@ -1,5 +1,6 @@
 
 KDE_SOURCES = \
+                 celsplashscreen.cpp \
                  eclipsefinderdlg.cpp \
                  celestialbrowser.cpp \
                  kdemain.cpp \
@@ -24,6 +25,7 @@ noinst_HEADERS = $(wildcard *.h)
 INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
 
 libkdegui_a_SOURCES = \
+                 celsplashscreen.moc.cpp \
                  kdeapp.moc.cpp \
                  eclipsefinderdlgbase.uic.h \
                  eclipsefinderdlgbase.uic.cpp \
