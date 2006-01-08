@@ -932,3 +932,14 @@ Code:
 * Eliminated various incorrect Hubble type acronyms in deepsky.dsc that had penetrated
   the PERL filter.
 * Add the corrected PERL script deepsky.pl.     
+* Mac: OpenGL 2.0 render path should now work on many configurations
+  (requires OS X 10.4.3 or later)
+* Mac: Offer option to disable vertex programs automatically when ATI Radeon
+  9200 renderer is detected (avoids hard crash)
+* Mac: Progress message and version number displayed on splash screen
+* Mac: Fixed French translation for Set Time panel
+* Mac: Changed wording of "Subtract Light Travel Delay" menu item to
+  "Add/Subtract Light Travel Delay" to more accurately reflect its function
+* Mac: More sensible default values for preferences
+* Mac: Bug fixes to favorites, InfoURL handling
+* Mac: Cleaned up README in general
