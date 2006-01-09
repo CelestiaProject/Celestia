@@ -11,7 +11,6 @@ EXTRA_DIST = \
 	celestiaui.xml
 	
 pkgdata_DATA = \
-	$(top_builddir)/splash.png \
 	celestia-logo.png \
 	celestiaui.xml
 

@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.9 2006-01-03 06:07:19 suwalski Exp $
+ *  $Id: actions.cpp,v 1.10 2006-01-09 19:02:54 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -115,10 +115,11 @@ void actionOpenScript(GtkAction*, AppData* app)
 	GtkFileFilter* filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, "Celestia Scripts");
 	
-	#ifdef CELX
-	gtk_file_filter_add_pattern(filter, "*.cel *.celx");
-	#else
 	gtk_file_filter_add_pattern(filter, "*.cel");
+
+	#ifdef CELX
+	gtk_file_filter_add_pattern(filter, "*.celx");
+	gtk_file_filter_add_pattern(filter, "*.clx");
 	#endif /* CELX */
 	
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(fs), filter);
@@ -146,7 +147,9 @@ void actionCaptureImage(GtkAction*, AppData* app)
 
 	GtkFileFilter* filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, "PNG and JPEG Images");
-	gtk_file_filter_add_pattern(filter, "*.jpeg *.jpg *.png");
+	gtk_file_filter_add_pattern(filter, "*.jpeg");
+	gtk_file_filter_add_pattern(filter, "*.jpg");
+	gtk_file_filter_add_pattern(filter, "*.png");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(fs), filter);
 
 	#if GTK_CHECK_VERSION(2, 7, 0)
