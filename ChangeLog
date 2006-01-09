@@ -943,3 +943,6 @@ Code:
 * Mac: More sensible default values for preferences
 * Mac: Bug fixes to favorites, InfoURL handling
 * Mac: Cleaned up README in general
+* Added Phoebe textures in medres and lores directories from recent published 
+  Cyclops cylindrical maps
+* Updated  Titan and Iapetus textures in lores directory
