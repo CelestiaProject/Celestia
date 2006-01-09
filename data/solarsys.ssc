@@ -790,7 +790,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 "Phoebe" "Sol/Saturn"
 {
 	Mesh "roughsphere.cms"
-	Texture "asteroid.jpg"
+	Texture "phoebe.jpg"
 	Radius     110
 
 	EllipticalOrbit
@@ -804,11 +804,11 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	ArgOfPericenter 281.103195      # at epoch
 	MeanAnomaly      31.776215      # at epoch
 	}
-
-	RotationPeriod		  9.282
-	Obliquity		 17.4
-	EquatorAscendingNode	259.9
-	RotationOffset		320.3
+    
+    RotationPeriod          9.2735 # Bauer et al, Astrophysical Journal 2004; 610(2): L57-L60 
+    Obliquity               8.7    # Porco et al, Science 2005; 307: 1237-42 
+    EquatorAscendingNode  245.3    # Porco et al, Science 2005; 307: 1237-42 
+    RotationOffset        135.0    # approximate, from encounter images 
 
 	Albedo         0.05
 }
