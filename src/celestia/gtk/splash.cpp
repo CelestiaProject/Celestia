@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: splash.cpp,v 1.2 2006-01-02 01:20:02 suwalski Exp $
+ *  $Id: splash.cpp,v 1.3 2006-01-09 19:02:54 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -74,7 +74,7 @@ SplashData* splashStart(AppData* app, gboolean showSplash)
 	GtkWidget* gf = gtk_fixed_new();
 	gtk_container_add(GTK_CONTAINER(ss->splash), gf);
 
-	GtkWidget* i = gtk_image_new_from_file("splash.png");
+	GtkWidget* i = gtk_image_new_from_file("splash/splash.png");
 	gtk_fixed_put(GTK_FIXED(gf), i, 0, 0);
 
 	/* The information label is right-aligned and biased to the lower-right
