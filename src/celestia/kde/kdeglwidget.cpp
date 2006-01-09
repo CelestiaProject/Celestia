@@ -257,11 +257,11 @@ void KdeGlWidget::wheelEvent( QWheelEvent* w )
 {
     if (w->delta() > 0 )
     {
-        appCore->mouseWheel(1.0f, 0);
+        appCore->mouseWheel(-1.0f, 0);
     }
     else if (w->delta() < 0)
     {
-        appCore->mouseWheel(-1.0f, 0);
+        appCore->mouseWheel(1.0f, 0);
     }
 }
 
