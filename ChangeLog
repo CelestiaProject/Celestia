@@ -946,3 +946,6 @@ Code:
 * Added Phoebe textures in medres and lores directories from recent published 
   Cyclops cylindrical maps
 * Updated  Titan and Iapetus textures in lores directory
+* Windows: save and restore the last used GL render path
+* Removed the GeForce FX render path; GLSL path is preferred
+
