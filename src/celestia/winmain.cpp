@@ -156,6 +156,8 @@ struct AppPreferences
     string altSurfaceName;
     uint32 textureResolution;
     Renderer::StarStyle starStyle;
+	GLContext::GLRenderPath renderPath;
+	bool renderPathSet;
 };
 
 void ChangeDisplayMode()
@@ -2323,6 +2325,8 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
 
     prefs.starStyle = Renderer::FuzzyPointStars;
     GetRegistryValue(key, "StarStyle", &prefs.starStyle, sizeof(prefs.starStyle));
+	prefs.renderPath = GLContext::GLPath_Basic;
+	prefs.renderPathSet = GetRegistryValue(key, "RenderPath", &prefs.renderPath, sizeof(prefs.renderPath));
 
     GetRegistryValue(key, "LastVersion", &prefs.lastVersion, sizeof(prefs.lastVersion));
     GetRegistryValue(key, "TextureResolution", &prefs.textureResolution, sizeof(prefs.textureResolution));
@@ -2377,6 +2381,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
     SetRegistryInt(key, "StarStyle", prefs.starStyle);
+	SetRegistryInt(key, "RenderPath", prefs.renderPath);
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
     SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
 
@@ -2410,6 +2415,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.lastVersion = 0x01040100;
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
     prefs.starStyle = appCore->getRenderer()->getStarStyle();
+	prefs.renderPath = appCore->getRenderer()->getGLContext()->getRenderPath();
     prefs.textureResolution = appCore->getRenderer()->getResolution();
 
     return true;
@@ -3213,6 +3219,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             ShowUniversalTime(appCore);
         appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
         appCore->getRenderer()->setResolution(prefs.textureResolution);
+		if (prefs.renderPathSet)
+		{
+			GLContext* glContext = appCore->getRenderer()->getGLContext();
+			if (glContext->renderPathSupported(prefs.renderPath))
+				glContext->setRenderPath(prefs.renderPath);
+		}
     }
     
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
