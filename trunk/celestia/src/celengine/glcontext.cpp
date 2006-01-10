@@ -192,8 +192,12 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
         */
 
     case GLPath_NV30:
+		/* This render path is deprecated; GLSL is now preferred */
+		return false;
+		/*
         return (extensionSupported("GL_ARB_vertex_program") &&
                 extensionSupported("GL_NV_fragment_program"));
+		*/
 
     case GLPath_GLSL:
         return (extensionSupported("GL_ARB_shader_objects") &&
