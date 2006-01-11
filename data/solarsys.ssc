@@ -763,12 +763,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 "Iapetus" "Sol/Saturn"
 {
 	Texture "iapetus.*"
-        BumpMap "iapetusbump.*" 
-        BumpHeight 4.0
-        SpecularTexture "iapetusspec.*"
-        SpecularColor [ 0.32 0.32 0.32 ]
-        SpecularPower 9.5	
-        Radius     718
+    Radius     718
 
 	CustomOrbit "iapetus"
 	EllipticalOrbit
