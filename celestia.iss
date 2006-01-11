@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.4.0
+AppVerName=Celestia 1.4.1
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -51,6 +51,7 @@ Source: "AUTHORS";      DestDir: "{app}"; Flags: ignoreversion;            DestN
 Source: "TRANSLATORS";  DestDir: "{app}"; Flags: ignoreversion;            DestName: "TRANSLATORS.txt"
 Source: "ChangeLog";    DestDir: "{app}"; Flags: ignoreversion;            DestName: "ChangeLog.txt"
 Source: "KbdMouseJoyControls.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "splash.png";   DestDir: "{app}"; Flags: ignoreversion
 
 
 ; Data
@@ -149,6 +150,7 @@ Source: "textures\lores\neptune-rings.png";     DestDir: "{app}/textures/lores";
 Source: "textures\lores\oberon.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\oberon-lok-mask.png";   DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\phobos.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
+Source: "textures\lores\phoebe.jpg";            DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\pluto-lok.jpg";         DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\pluto-lok-spec.jpg";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\proteus.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
@@ -227,6 +229,7 @@ Source: "textures\medres\moonbump.jpg";        DestDir: "{app}/textures/medres";
 Source: "textures\medres\neptune.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\oberon.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\phobos.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
+Source: "textures\medres\phoebe.jpg";          DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\pluto-lok.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\pluto-lok-spec.jpg";  DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\prometheus.jpg";      DestDir: "{app}/textures/medres"; Flags: ignoreversion
