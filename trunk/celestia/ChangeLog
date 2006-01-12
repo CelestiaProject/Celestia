@@ -948,4 +948,5 @@ Code:
 * Updated  Titan and Iapetus textures in lores directory
 * Windows: save and restore the last used GL render path
 * Removed the GeForce FX render path; GLSL path is preferred
-
+* Added lunar elevation map, using Clementine laser altimeter data, merged in the
+  polar regions, with topographic data  from Clementine 750 nm oblique and nadir images.
