@@ -122,7 +122,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 {
 	Texture "moon.*"
 	BumpMap "moonbump.*"
-	BumpHeight 0.3
+	BumpHeight 3.5
 	Radius   1737.53
 	# Oblateness 0.002
 
