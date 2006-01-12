@@ -440,10 +440,11 @@ V1.0.html
 The 3D model of Eros was prepared from the NEAR laser rangefinder shape model
 at: http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape
 
-The Phoebe texture was created by Fridger Schrempp from a cylindrical map recently 
-published by the Cassini imaging team,
-
+The Phoebe texture was created by Fridger Schrempp from a cylindrical map recently published by the Cassini imaging team,
 http://photojournal.jpl.nasa.gov/catalog/PIA07775
+
+Fridger Schrempp created the Lunar topography map, using Clementine laser altimeter data, merged in the polar regions, with topographic data  from Clementine 750 nm oblique and nadir images,
+ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/
 
 Grant Hutchison supplied the correct orientations for the major planets, their
 moons, and a number of asteroids.
