@@ -1,7 +1,3 @@
-Allow more than one star system to be visible simultaneously.
-
-
-
 Celestia To Do List
 -------------------
 
@@ -17,21 +13,15 @@ USER INTERFACE
 
 VISUALS
 * Non-Lambertian illumination functions for planets
-* Add haloes around bright planets similar to the ones around stars
 * Comets with dust and ion tails
-* Add some deep sky objects--planetary nebula, supernova remnants, etc.
-* Procedural textures for extrasolar planets
 * Bump mapped cloud layers
-* Render galaxies with colors--bluish spiral arms, yellowish center
 * Render dark dust bands in galaxies
 * Add textures to Mir model
 * Cloud shadows
 
 POLISH
 * Tutorial mode
-* Add a flashy intro screen
 * Preload some textures to avoid loading delay
-* Use Greek letters in Bayer designations
 * Make the demo loop
 * Add a demo mode that visits random targets
 * Compute accurate altitude above oblate planets/stars using point-to-ellipsoid
@@ -41,16 +31,13 @@ POLISH
 SIMULATION ACCURACY
 * Fix apparent magnitude calculation for planets
 * Figure out a way to estimate gas giant's radius given its mass
-* Make some attempt at calculating stellar rotation rates
 * Model the chaotic rotation of Hyperion
-* Double star systems: make the stars actually orbit each other
 * Account for the finite speed of light
-* Expand the galaxy database
 * Use more intuitive/standard fields in galaxies file--instead of axis/angle
   orientations, use 'angle from face on' etc.
+* Fix moon orbit bug: http://shatters.net/forum/posting.php?mode=reply&t=4966
 
 BUGS
-* Fix wobbling of planet shadow on rings when time is accelerated
 * Investigate possible visual anomalies with ring shadows on ATI Rage cards
 * Fix slowdowns with ring shadows and night textures on ATI Rage cards
 
