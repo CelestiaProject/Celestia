@@ -1,4 +1,4 @@
-# Catalog of 180 known extrasolar planets.
+# Catalog of 182 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
@@ -1117,6 +1117,36 @@ AltSurface "limit of knowledge" "OGLE-TR-111/b"
 }
 
 AltSurface "limit of knowledge" "HD 149143/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 102195"
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       150     # M.sin(i) = 0.48 jupiters
+	Radius     98000
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+102195"
+
+	EllipticalOrbit {
+		Period          0.0113
+		SemiMajorAxis   0.049
+		Eccentricity    0.06
+		ArgOfPericenter 16
+		MeanAnomaly     217
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 102195/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2913,18 +2943,18 @@ AltSurface "limit of knowledge" "HD 104985/b"
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       520     # M.sin(i) = 1.63 jupiters
+	Mass       560     # M.sin(i) = 1.75 jupiters
 	Radius     70000
-	Oblateness 0.04
+	Oblateness 0.03
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+82943"
 
 	EllipticalOrbit {
-		Period          1.2172
-		SemiMajorAxis   1.16
-		Eccentricity    0.41
-		ArgOfPericenter 358
-		MeanAnomaly     294
+		Period          1.2079
+		SemiMajorAxis   1.1
+		Eccentricity    0.219
+		ArgOfPericenter 164
+		MeanAnomaly     293
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -2943,16 +2973,17 @@ AltSurface "limit of knowledge" "HD 82943/b"
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       280     # M.sin(i) = 0.88 jupiters
+	Mass       640     # M.sin(i) = 2.01 jupiters
 	Radius     70000
-	Oblateness 0.07
+	Oblateness 0.03
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+82943"
 
 	EllipticalOrbit {
-		Period          0.6067
+		Period          0.5996
 		SemiMajorAxis   0.73
-		Eccentricity    0.54
+		Eccentricity    0.359
+		ArgOfPericenter 7
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -3995,6 +4026,34 @@ AltSurface "limit of knowledge" "HD 147513/b"
 }
 
 AltSurface "limit of knowledge" "HD 137759/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 62509"   # Bet Gem
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       920     # M.sin(i) = 2.9 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+62509"
+
+	EllipticalOrbit {
+		Period          1.5168
+		SemiMajorAxis   1.9
+		Eccentricity    0.124
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 62509/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -5307,7 +5366,7 @@ AltSurface "limit of knowledge" "HD 72659/b"
 }
 
 
-"a" "PSR 1257+12"   # PSR J1300+1240
+"A" "PSR 1257+12"   # PSR J1300+1240
 # Star not present in Celestia's default stars.dat file.
 
 {
@@ -5322,7 +5381,7 @@ AltSurface "limit of knowledge" "HD 72659/b"
 		Period          0.0692
 		SemiMajorAxis   0.19
 		Eccentricity    0
-		Inclination     119.2 # approx. plane of other planets
+		Inclination     119.2
 		AscendingNode   152.2
 		ArgOfPericenter 89
 		MeanAnomaly     158
@@ -5334,13 +5393,13 @@ AltSurface "limit of knowledge" "HD 72659/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "PSR 1257+12/a"
+AltSurface "limit of knowledge" "PSR 1257+12/A"
 {
 	Texture "extrasolar-lok.*"
 }
 
 
-"b" "PSR 1257+12"   # PSR J1300+1240
+"B" "PSR 1257+12"   # PSR J1300+1240
 # Star not present in Celestia's default stars.dat file.
 
 {
@@ -5367,13 +5426,13 @@ AltSurface "limit of knowledge" "PSR 1257+12/a"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "PSR 1257+12/b"
+AltSurface "limit of knowledge" "PSR 1257+12/B"
 {
 	Texture "extrasolar-lok.*"
 }
 
 
-"c" "PSR 1257+12"   # PSR J1300+1240
+"C" "PSR 1257+12"   # PSR J1300+1240
 # Star not present in Celestia's default stars.dat file.
 
 {
@@ -5400,13 +5459,13 @@ AltSurface "limit of knowledge" "PSR 1257+12/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "PSR 1257+12/c"
+AltSurface "limit of knowledge" "PSR 1257+12/C"
 {
 	Texture "extrasolar-lok.*"
 }
 
 
-"d" "PSR 1257+12"   # PSR J1300+1240
+"D" "PSR 1257+12"   # PSR J1300+1240
 # Star not present in Celestia's default stars.dat file.
 
 {
@@ -5421,7 +5480,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 	EllipticalOrbit {
 		Period          3.95
 		SemiMajorAxis   2.8
-		Inclination     119.2 # approx. plane of other planets
+		Inclination     119.2
 		AscendingNode   152.2
 	}
 
@@ -5431,7 +5490,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/c"
 	RotationPeriod  5 # plausible guess
 }
 
-AltSurface "limit of knowledge" "PSR 1257+12/d"
+AltSurface "limit of knowledge" "PSR 1257+12/D"
 {
 	Texture "extrasolar-lok.*"
 }
