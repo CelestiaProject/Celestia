@@ -3,8 +3,6 @@
 "Mercury" "Sol"
 {
 	Texture "mercury.*"
-	BumpMap "mercurybump.*"
-	BumpHeight 2.5
 	Radius 2440
 
 	CustomOrbit "vsop87-mercury"
@@ -30,8 +28,6 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 {
 	Texture "mercury.*"
 	OverlayTexture "mercury-lok-mask.png"
-	BumpMap "mercurybump.*"
-	BumpHeight 2.5
 }
 
 "Venus" "Sol"
@@ -1149,9 +1145,9 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 "Pluto" "Sol"
 {
 	Texture "pluto-lok.*"
-        SpecularTexture "pluto-lok-spec.*"
-        SpecularColor            [ 0.135 0.12 0.08 ]
-        SpecularPower             9.5
+	SpecularTexture "pluto-lok-spec.*"
+    SpecularColor            [ 0.135 0.12 0.08 ]
+    SpecularPower             9.5
 
 	Radius 1151
 
@@ -1164,7 +1160,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	Inclination       17.14175
 	AscendingNode    110.30347
 	LongOfPericenter 224.06776
-        MeanLongitude    238.92881
+    MeanLongitude    238.92881
 	}
 
 	RotationPeriod		153.293904
@@ -1178,17 +1174,17 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 AltSurface "limit of knowledge" "Sol/Pluto"
 {
 	Texture "pluto-lok.*"
-        SpecularTexture "pluto-lok-spec.*"
-        SpecularColor            [ 0.135 0.12 0.08 ]
-        SpecularPower             9.5
+    SpecularTexture "pluto-lok-spec.*"
+    SpecularColor            [ 0.135 0.12 0.08 ]
+    SpecularPower             9.5
 }
 
 "Charon" "Sol/Pluto"
 {
 	Texture "charon-lok.*"
-        SpecularTexture "charon-lok-spec.*"
-        SpecularColor            [ 0.135 0.12 0.08 ]
-        SpecularPower             9.5
+    SpecularTexture "charon-lok-spec.*"
+    SpecularColor            [ 0.135 0.12 0.08 ]
+    SpecularPower             9.5
 	Radius   593
 
 	InfoURL "http://www.nineplanets.org/pluto.html#Charon"
