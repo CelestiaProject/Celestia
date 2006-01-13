@@ -4,7 +4,7 @@
 *  A real-time space simulation that lets you experience our universe in  *
 *  three dimensions.                                                      *
 *                                                                         *
-*                    Copyright (c)2001-2005, Chris Laurel                 *
+*                    Copyright (c)2001-2006, Chris Laurel                 *
 *                           <claurel@shatters.net>                        *
 *                                                                         *
 *-------------------------------------------------------------------------*
@@ -315,7 +315,7 @@ Authors
 
 Contributors
 ------------
-  Deon Ramsey ........... UNIX installer, GTK1 interface
+  Deon Ramsey ........... original GTK1 interface
   Christopher ANDRE ..... Eclipse Finder
   Colin Walters ......... Endianness fixes
   Peter Chapman ......... Orbit path rendering changes
@@ -454,6 +454,8 @@ moons, and a number of asteroids.
 
 Selden Ball deserves a special mention for suffering more prerelease versions
 finding more bugs, and giving more feedback than anyone else.
+
+Christophe Campos aka ElChristou created the splash screen for Celestia.
 
 The MacOS X icon was designed by Chris Alford: http://www.chrisalford.com/
 
