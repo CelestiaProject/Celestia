@@ -932,6 +932,7 @@ Code:
 * Eliminated various incorrect Hubble type acronyms in deepsky.dsc that had penetrated
   the PERL filter.
 * Add the corrected PERL script deepsky.pl.     
+* Mac: Universal binary - runs natively on Intel and PPC
 * Mac: OpenGL 2.0 render path should now work on many configurations
   (requires OS X 10.4.3 or later)
 * Mac: Offer option to disable vertex programs automatically when ATI Radeon
