@@ -33,7 +33,7 @@ static unsigned int bswap_32(unsigned int val) {
 
 #define SWAP_FLOAT(x, y) do { *(unsigned int *)&x = bswap_32( *(unsigned int *)&y ); } while (0)
 
-#ifdef WORDS_BIGENDIAN
+#if defined(WORDS_BIGENDIAN) || defined(__BIG_ENDIAN__)
 
 #define LE_TO_CPU_INT16(ret, val) (ret = bswap_16(val))
 

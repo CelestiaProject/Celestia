@@ -168,25 +168,6 @@
 		E5F8C9E90795239600D1DAF2 /* libpng.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D471260778E33C007731C3 /* libpng.dylib */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildRule section */
-		E532F5D00933618300D7D5B3 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		E532F5D10933618900D7D5B3 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-/* End PBXBuildRule section */
-
 /* Begin PBXBuildStyle section */
 		4A9504CCFFE6A4B311CA0CBA /* Development */ = {
 			isa = PBXBuildStyle;
@@ -1162,8 +1143,6 @@
 				E572837307939E0200C1F239 /* ShellScript */,
 			);
 			buildRules = (
-				E532F5D10933618900D7D5B3 /* PBXBuildRule */,
-				E532F5D00933618300D7D5B3 /* PBXBuildRule */,
 			);
 			buildSettings = {
 				GCC_PREFIX_HEADER = Util.h;
@@ -1427,6 +1406,63 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		E50E8707097436A4006687D3 /* Universal_Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PREFIX_HEADER = Util.h;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					"MACOSX=1",
+					"MACOSX_PB=1",
+					PNG_SUPPORT,
+					CELX,
+				);
+				GCC_USE_GCC3_PFE_SUPPORT = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../src;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = Frameworks;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fpermissive",
+				);
+				PREBINDING = YES;
+				PRODUCT_NAME = Celestia;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Universal_Release;
+		};
+		E50E8708097436A4006687D3 /* Universal_Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+			};
+			name = Universal_Release;
+		};
 		E532F41A0933316100D7D5B3 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1437,7 +1473,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Util.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"WORDS_BIGENDIAN=1",
 					"MACOSX=1",
 					"MACOSX_PB=1",
 					PNG_SUPPORT,
@@ -1480,7 +1515,6 @@
 				GCC_PREFIX_HEADER = Util.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
-					"WORDS_BIGENDIAN=1",
 					"MACOSX=1",
 					"MACOSX_PB=1",
 					PNG_SUPPORT,
@@ -1553,6 +1587,64 @@
 			};
 			name = Default;
 		};
+		E53A3D1C0976B17800B314A6 /* Universal_Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_POSTPROCESSING = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = Util.h;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					"MACOSX=1",
+					"MACOSX_PB=1",
+					PNG_SUPPORT,
+					CELX,
+				);
+				GCC_USE_GCC3_PFE_SUPPORT = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../src;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = Frameworks;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fpermissive",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Celestia;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Universal_Debug;
+		};
+		E53A3D1D0976B17800B314A6 /* Universal_Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+			};
+			name = Universal_Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1561,6 +1653,8 @@
 			buildConfigurations = (
 				E532F41A0933316100D7D5B3 /* Development */,
 				E532F41B0933316100D7D5B3 /* Deployment */,
+				E50E8707097436A4006687D3 /* Universal_Release */,
+				E53A3D1C0976B17800B314A6 /* Universal_Debug */,
 				E532F41C0933316100D7D5B3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1571,6 +1665,8 @@
 			buildConfigurations = (
 				E532F41E0933316100D7D5B3 /* Development */,
 				E532F41F0933316100D7D5B3 /* Deployment */,
+				E50E8708097436A4006687D3 /* Universal_Release */,
+				E53A3D1D0976B17800B314A6 /* Universal_Debug */,
 				E532F4200933316100D7D5B3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
