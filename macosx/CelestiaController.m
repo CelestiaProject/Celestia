@@ -718,7 +718,6 @@ NSString* fatalErrorMessage;
 
 	[panel setRequiredFileType: @"mov"];
 	[panel setTitle: @"Capture Movie"];
-	[panel setMessage: @"Capture Movie"];
     [ panel beginSheetForDirectory:  [lastMovie stringByDeletingLastPathComponent]
                               file: [lastMovie lastPathComponent]
                     modalForWindow: [glView window]
