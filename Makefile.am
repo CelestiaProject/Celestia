@@ -1,12 +1,32 @@
-dosstuff = celestia.mak $(wildcard *.bat)
-noinst_DATA = devguide.txt $(dosstuff)
-pkgdata_DATA = celestia.cfg $(wildcard *.cel) controls.txt COPYING
 pkgdatadir = @datadir@/@PACKAGE@
 
-EXTRA_DIST = $(pkgdata_DATA) $(noinst_DATA) admin splash.png
+dosstuff = \
+	celestia.mak \
+	celestia.iss \
+	$(wildcard *.bat)
 
-splashdir=$(pkgdatadir)/splash
-splash_DATA=splash.png
+noinst_DATA = \
+	CelestiaKeyAssignments.txt \
+	coding-standards.html \
+	devguide.txt \
+	KbdMouseJoyControls.txt \
+	$(dosstuff)
+
+pkgdata_DATA = \
+	celestia.cfg \
+	controls.txt \
+	COPYING \
+	$(wildcard *.cel)
+
+EXTRA_DIST = \
+	$(pkgdata_DATA) \
+	$(noinst_DATA) \
+	admin \
+	splash.png \
+	TRANSLATORS
+
+splashdir = $(pkgdatadir)/splash
+splash_DATA = splash.png
 
 SUBDIRS = src data extras textures models shaders fonts manual po
 

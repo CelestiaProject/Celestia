@@ -1,3 +1,4 @@
+EXTRA_DIST = index.docbook $(wildcard *.jpg)
 
 # the SUBDIRS is filled automatically by am_edit. If files are 
 # in this directory they are installed into the english dir
