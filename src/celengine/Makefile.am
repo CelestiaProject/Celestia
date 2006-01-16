@@ -3,8 +3,11 @@ noinst_HEADERS = $(wildcard *.h)
 dosstuff = celengine.dsp engine.mak
 noinst_DATA = $(dosstuff)
 
-EXTRA_DIST = $(noinst_DATA)
-
+EXTRA_DIST = \
+	$(noinst_DATA) \
+	3dsmesh.cpp \
+	octree.cpp \
+	solarsysxml.cpp
 
 INCLUDES = -I..
 

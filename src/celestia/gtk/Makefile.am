@@ -30,3 +30,5 @@ libgtkgui_a_SOURCES = $(GTK_SOURCES) $(EXTRA_SOURCES)
 
 noinst_LIBRARIES = libgtkgui.a
 noinst_HEADERS = $(wildcard *.h)
+
+EXTRA_DIST = Celestia.prj
