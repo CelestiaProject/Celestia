@@ -4,10 +4,11 @@ schemas_DATA = celestia.schemas
 endif
 
 EXTRA_DIST = \
-	$(schemas_DATA) \
 	celestia.png \
 	celestia-logo.png \
 	celestia.desktop \
+	celestia.schemas \
+	celestia.svg \
 	celestiaui.xml
 	
 pkgdata_DATA = \

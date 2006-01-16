@@ -18,7 +18,6 @@ SUBDIRS += gtk
 celestiaGTKLIBS = gtk/libgtkgui.a
 endif
 
-
 COMMONSOURCES = \
 	celestiacore.cpp \
 	configfile.cpp \
@@ -29,17 +28,22 @@ COMMONSOURCES = \
 	url.cpp
 
 WINSOURCES = \
-	wingotodlg.cpp \
-	winlocations.cpp \
-	winmain.cpp \
-	winssbrowser.cpp \
-	winstarbrowser.cpp \
-	wintourguide.cpp \
-	winviewoptsdlg.cpp \
 	avicapture.cpp \
 	ODMenu.cpp \
-	wineclipses.cpp
-
+	wglext.cpp \
+	winbookmarks.cpp \
+	windatepicker.cpp \
+	wineclipses.cpp \
+	wingotodlg.cpp \
+	winhyperlinks.cpp \
+	winlocations.cpp \
+	winmain.cpp \
+	winsplash.cpp \
+	winssbrowser.cpp \
+	winstarbrowser.cpp \
+	wintime.cpp \
+	wintourguide.cpp \
+	winviewoptsdlg.cpp
 
 if ENABLE_CELX
 CELXSOURCES = celx.cpp
@@ -51,8 +55,10 @@ endif
 
 celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES)
 
-EXTRA_celestia_SOURCES = glutmain.cpp $(WINSOURCES)
-EXTRA_DIST =  Celestia.dsp celestia.mak
+EXTRA_DIST = \
+	Celestia.dsp \
+	celestia.mak \
+	$(WINSOURCES)
 
 celestia_LDADD = \
 	$(celestiaKDELIBS) \
@@ -63,12 +69,9 @@ celestia_LDADD = \
 	../celmath/libcelmath.a \
 	../celutil/libcelutil.a
 
-noinst_HEADERS =$(wildcard *.h)
-noinst_DATA= ../../celestia
-CLEANFILES= ../../celestia
+noinst_HEADERS = $(wildcard *.h)
+noinst_DATA = ../../celestia
+CLEANFILES = ../../celestia
 
 ../../celestia: celestia
 	(cd ../..; ln -s src/celestia/celestia)
-
-
-
