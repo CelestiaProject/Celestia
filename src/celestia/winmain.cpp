@@ -296,9 +296,8 @@ CelestiaDropTarget::Drop(IDataObject* pDataObject,
                 if (medium.tymed == TYMED_HGLOBAL && medium.hGlobal != 0)
                 {
                     char* s = (char*) GlobalLock(medium.hGlobal);
-                    Url url(s, appCore);
+					appCore->goToUrl(s);
                     GlobalUnlock(medium.hGlobal);
-                    url.goTo();
                     break;
                 }
             }
@@ -3627,8 +3626,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     if (!urlString.substr(0,4).compare("cel:"))
                     {
                         appCore->flash("Loading URL");
-                        Url url(string(urlString), appCore);
-                        url.goTo();
+						appCore->goToUrl(urlString);
                     }
                     else if (DetermineFileType(urlString) == Content_CelestiaScript)
                     {
@@ -3968,8 +3966,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 if (urlString != NULL)
                 {
                     appCore->flash(string("URL: ") + string(urlString));
-                    Url url(string(urlString), appCore);
-                    url.goTo();
+					appCore->goToUrl(urlString);
                 }
             }
             break;
