@@ -149,6 +149,7 @@
 		E57283AE0793FC7E00C1F239 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = E57283AD0793FC7300C1F239 /* README */; };
 		E589B6DD078AC511005B8DD9 /* glshader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6D9078AC511005B8DD9 /* glshader.cpp */; };
 		E589B6DF078AC511005B8DD9 /* shadermanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6DB078AC511005B8DD9 /* shadermanager.cpp */; };
+		E599A78E097CAB390079C254 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E599A78C097CAB390079C254 /* Credits.rtf */; };
 		E5B615070777307F001BB2BF /* celestia.icns in Resources */ = {isa = PBXBuildFile; fileRef = E5B615060777307F001BB2BF /* celestia.icns */; };
 		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
 		E5C9B478084909E40071B1EE /* README for Mac OS X.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */; };
@@ -328,6 +329,7 @@
 		E589B6DA078AC511005B8DD9 /* glshader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glshader.h; path = ../src/celengine/glshader.h; sourceTree = SOURCE_ROOT; };
 		E589B6DB078AC511005B8DD9 /* shadermanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shadermanager.cpp; path = ../src/celengine/shadermanager.cpp; sourceTree = SOURCE_ROOT; };
 		E589B6DC078AC511005B8DD9 /* shadermanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shadermanager.h; path = ../src/celengine/shadermanager.h; sourceTree = SOURCE_ROOT; };
+		E599A78D097CAB390079C254 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		E59FE8FD0934DC66000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		E59FE8FE0934DC7C000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E59FE90E0934E27B000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -728,6 +730,7 @@
 			children = (
 				E5D3196A096C91A6007FA87F /* vp_patch.sh */,
 				E54742CF09631D3600E89E09 /* defaults.plist */,
+				E599A78C097CAB390079C254 /* Credits.rtf */,
 				E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */,
 				E53C2FBE079433D300C76766 /* KbdMouseJoyControls.txt */,
 				E57283AD0793FC7300C1F239 /* README */,
@@ -1215,6 +1218,7 @@
 				E5E365AF095C123E00B14224 /* splash.png in Resources */,
 				E54742D009631D3600E89E09 /* defaults.plist in Resources */,
 				E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */,
+				E599A78E097CAB390079C254 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1401,6 +1405,14 @@
 				E5E365B1095C12C900B14224 /* es */,
 			);
 			name = BrowserWindow.nib;
+			sourceTree = "<group>";
+		};
+		E599A78C097CAB390079C254 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E599A78D097CAB390079C254 /* English */,
+			);
+			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

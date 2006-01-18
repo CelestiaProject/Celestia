@@ -254,6 +254,7 @@
 			children = (
 				E5BF7F47096DA07B00DB7C65,
 				E50BD53D096543EB00D0A357,
+				E5C3C421097DBA1D0048AF44,
 				E5C9B46B084909B90071B1EE,
 				E53C2FBE079433D300C76766,
 				E57283AD0793FC7300C1F239,
@@ -1511,6 +1512,7 @@
 				E5E5ED64095BC602003DC829,
 				E50BD53E096543EB00D0A357,
 				E5BF7F48096DA07B00DB7C65,
+				E5C3C423097DBA1D0048AF44,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3145,6 +3147,30 @@
 		};
 		E5BF7F48096DA07B00DB7C65 = {
 			fileRef = E5BF7F47096DA07B00DB7C65;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C3C421097DBA1D0048AF44 = {
+			children = (
+				E5C3C422097DBA1D0048AF44,
+			);
+			isa = PBXVariantGroup;
+			name = Credits.rtf;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C3C422097DBA1D0048AF44 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			name = English;
+			path = English.lproj/Credits.rtf;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C3C423097DBA1D0048AF44 = {
+			fileRef = E5C3C421097DBA1D0048AF44;
 			isa = PBXBuildFile;
 			settings = {
 			};
