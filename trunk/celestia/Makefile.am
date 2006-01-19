@@ -30,6 +30,9 @@ splash_DATA = splash.png
 
 SUBDIRS = src data extras textures models shaders fonts manual po
 
+# Non-automake directories
+NONAUTO = macosx
+
 # From KDE app template
 
 # We already have a configure.in file, we don't build it from configure.in.in 
@@ -51,6 +54,16 @@ package-messages:
 dist-hook:
 	cd $(top_distdir) && perl admin/am_edit -padmin
 	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
+
+	( \
+	  cd $(srcdir) && \
+	  ( \
+	    for dir in $(NONAUTO) ; do \
+	      find $$dir -depth -print | egrep -v '(~$$)|(/CVS)|(/\.#)|(/\.deps)' \
+	      | cpio -pdum $(distdir) 2>/dev/null ; \
+	    done \
+	  ) \
+	)
 
 install-data-hook:
 	if [ "$(kde_datadir)" -a -d $(kde_datadir)/@PACKAGE@ -a ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
