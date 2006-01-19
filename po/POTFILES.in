@@ -31,7 +31,6 @@ src/celengine/modelfile.cpp
 src/celengine/multitexture.cpp
 src/celengine/nebula.cpp
 src/celengine/observer.cpp
-src/celengine/octree.cpp
 src/celengine/opencluster.cpp
 src/celengine/orbit.cpp
 src/celengine/overlay.cpp
