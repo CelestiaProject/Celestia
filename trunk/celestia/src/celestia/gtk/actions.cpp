@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.10 2006-01-09 19:02:54 suwalski Exp $
+ *  $Id: actions.cpp,v 1.11 2006-01-21 04:05:27 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -584,23 +584,26 @@ void actionHelpOpenGL(GtkAction*, AppData* app)
 void actionHelpAbout(GtkAction*, AppData* app)
 {
 	const gchar* authors[] = {
-		"Active Developers ***\n",
-		"Grant Hutchison <grantcelestia@xemaps.com>\n"
-			"\tAstronomical Research\n",
-		"Da-Woon Jung <dirkpitt2050@gmail.com>\n"
-			"\tMacOSX Front-End\n",
 		"Chris Laurel <claurel@shatters.net>\n"
 			"\tOpenGL Engine, Windows Front-End\n",
+		"Clint Weisbrod <cweisbrod@cogeco.ca>\n"
+			"\tWindows Front-End\n",
 		"Fridger Schrempp <fridger.schrempp@desy.de>\n"
 			"\tResearch, Engine, GTK+ 1 Front-End\n",
-		"Pat Suwalski <pat@suwalski.net>\n"
-			"\tGTK+ 2 Front-End\n",
+		"Bob Ippolito <bob@redivi.com>\n"
+			"\tMacOSX Front-End\n",
 		"Christophe Teyssier <chris@teyssier.org>\n"
 			"\tKDE Front-End, Browser Integration\n",
-		"\nPast Developers ***\n",
-		"Bob Ippolito <bob@redivi.com>",
-		"Deon Ramsey <dramsey@sourceforge.net>",
-		"Clint Weisbrod <cweisbrod@cogeco.ca>",
+		"Hank Ramsey <hramsey@users.sourceforce.net>\n"
+			"\tMacOSX Front-End\n",
+		"Grant Hutchison <grantcelestia@xemaps.com>\n"
+			"\tAstronomical Research\n",
+		"Pat Suwalski <pat@suwalski.net>\n"
+			"\tGTK+ 2 Front-End\n",
+		"Toti\n"
+			"\tOpenGL Engine, Research\n",
+		"Da-Woon Jung <dirkpitt2050@users.sf.net>\n"
+			"\tMacOSX Front-End\n",
 		NULL
     };
 
