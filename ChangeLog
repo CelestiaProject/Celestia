@@ -938,11 +938,14 @@ Code:
 * Mac: Offer option to disable vertex programs automatically when ATI Radeon
   9200 renderer is detected (avoids hard crash)
 * Mac: Progress message and version number displayed on splash screen
-* Mac: Fixed French translation for Set Time panel
+* Mac: Couple of French translation fixes
 * Mac: Changed wording of "Subtract Light Travel Delay" menu item to
   "Add/Subtract Light Travel Delay" to more accurately reflect its function
 * Mac: More sensible default values for preferences
 * Mac: Bug fixes to favorites, InfoURL handling
+* Mac: Full screen mode pauses when various panels are shown
+* Mac: Fixed crash when LANG or LC environment variables are set
+* Mac: Added bona fide English and French help menu
 * Mac: Cleaned up README in general
 * Added Phoebe textures in medres and lores directories from recent published 
   Cyclops cylindrical maps
