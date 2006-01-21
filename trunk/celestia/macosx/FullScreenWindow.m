@@ -27,6 +27,11 @@
     return YES;
 }
 
+- (BOOL)canBecomeMainWindow
+{
+    return YES;
+}
+
 - (void)makeKeyAndOrderFront: (id) sender
 {
     CGDirectDisplayID displayID = (CGDirectDisplayID)[[[[self screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
