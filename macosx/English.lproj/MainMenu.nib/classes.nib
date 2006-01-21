@@ -26,7 +26,6 @@
                 glInfo = NSTextView; 
                 glInfoPanel = NSPanel; 
                 glView = NSOpenGLView; 
-                mainWindow = NSWindow; 
                 renderPanelController = RenderPanelController; 
                 splashWindowController = SplashWindowController; 
             }; 

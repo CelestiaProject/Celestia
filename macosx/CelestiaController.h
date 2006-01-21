@@ -28,10 +28,11 @@
     IBOutlet NSTextView *glInfo;
     IBOutlet NSPanel *glInfoPanel;
     IBOutlet NSOpenGLView *glView;
-    IBOutlet NSWindow *mainWindow;
+    NSWindow *origWindow;
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     IBOutlet RenderPanelController *renderPanelController;
-    BrowserWindowController* browserWindowController;
+    BrowserWindowController *browserWindowController;
+    NSWindowController *helpWindowController;
     NSTimer* timer;
     volatile NSThread *computeThread;
     volatile BOOL computeThreadShouldTerminate;
@@ -65,13 +66,15 @@
 -(void)keyPress:(int)code hold:(int)time;
 -(void)setupResourceDirectory;
 +(CelestiaController*) shared;
-- (void) fatalError: (NSString *) msg;
+-(void) fatalError: (NSString *) msg;
 
 -(IBAction) showPanel: (id) sender;
 
-- (IBAction) captureMovie: (id) sender;
+-(IBAction) captureMovie: (id) sender;
 
 -(void)addSurfaceMenu:(NSMenu*)contextMenu;
 -(BOOL)validateMenuItem:(id)item;
 -(IBAction)activateMenuItem:(id)item;
+
+-(void)showHelp:(id)sender;
 @end
