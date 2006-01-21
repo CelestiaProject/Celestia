@@ -6,7 +6,6 @@ noinst_DATA = $(dosstuff)
 EXTRA_DIST = \
 	$(noinst_DATA) \
 	3dsmesh.cpp \
-	octree.cpp \
 	solarsysxml.cpp
 
 INCLUDES = -I..
