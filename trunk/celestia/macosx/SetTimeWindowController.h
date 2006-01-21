@@ -12,5 +12,4 @@
     IBOutlet NSTextField *timeField;
 }
 - (IBAction)setTime:(id)sender;
-- (IBAction)showWindow:(id)sender;
 @end
