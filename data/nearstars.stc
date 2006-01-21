@@ -575,6 +575,43 @@ Barycenter "EPS Ind B:Gliese 845 B"
 	AppMag 15.40
 }
 
+
+# Biller B.A. et al.(2006) "Discovery of the Closest Brown Dwarf to
+# the Sun? A Methane Rich Brown Dwarf Around the Nearby M8.5 Star
+# SCR 1845"
+# (http://xxx.uni-augsburg.de/PS_cache/astro-ph/pdf/0601/0601441.pdf)
+Barycenter "SCR 1845-6357"
+{
+	RA 281.260833
+	Dec -63.964444
+	Distance 12.571
+}
+
+"SCR 1845-6357 A"
+{
+	OrbitBarycenter "SCR 1845-6357"
+	SpectralType "M8.5V"
+	AppMag 17.39
+
+	EllipticalOrbit {
+		Period 		23.5 # estimate
+		SemiMajorAxis	1.6  # estimated mass ratio 0.07:0.045
+		ArgOfPericenter 180
+	}
+}
+
+"SCR 1845-6357 B"
+{
+	OrbitBarycenter "SCR 1845-6357"
+	SpectralType "T6V"
+	AbsMag 33.5 # for approximate radius in Celestia
+
+	EllipticalOrbit {
+		Period 		23.5 # estimate
+		SemiMajorAxis	2.4  # estimated mass ratio 0.07:0.045
+	}
+}
+
 24186 # Kapteyn's Star
 {
 	RA 77.919167
@@ -582,15 +619,6 @@ Barycenter "EPS Ind B:Gliese 845 B"
 	Distance 12.777
 	SpectralType "M1.5VI"
 	AppMag 8.84
-}
-
-"SCR 1845-6357"
-{
-	RA 281.260833
-	Dec -63.964444
-	Distance 12.844
-	SpectralType "M8.5V"
-	AppMag 17.39
 }
 
 105090 # Lacaille 8760
@@ -908,6 +936,15 @@ Barycenter "Lalande 21258:Gliese 412" # orbits of A & B unknown
 	AppMag 14.48
 }
 
+"Luyten 143-23:GJ 3618"
+{
+	RA 161.132500
+	Dec -61.193889
+	Distance 15.841
+	SpectralType "M5.5V"
+	AppMag 13.92
+}
+
 49908 # Groombridge 1618
 {
 	RA 152.842083
@@ -924,15 +961,6 @@ Barycenter "Lalande 21258:Gliese 412" # orbits of A & B unknown
 	Distance 15.942
 	SpectralType "M3.0V"
 	AppMag 9.32
-}
-
-"Luyten 143-23:GJ 3618"
-{
-	RA 161.132500
-	Dec -61.193889
-	Distance 15.945
-	SpectralType "M5.5V"
-	AppMag 13.92
 }
 
 106440 # Luyten 354-89
@@ -2610,7 +2638,7 @@ Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B"
 	}
 }
 
-"Alula Australis Bb::XI UMa Bb:53 UMa Bb:Gliese 423 Bb"
+"Alula Australis Bb:XI UMa Bb:53 UMa Bb:Gliese 423 Bb"
 {
 	OrbitBarycenter "Alula Australis B"
 	SpectralType "L"  # brown dwarf
