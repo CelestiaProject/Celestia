@@ -780,8 +780,8 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 
 "Phoebe" "Sol/Saturn"
 {
-	Mesh "roughsphere.cms"
-	Texture "phoebe.jpg"
+	Mesh "phoebe.cmod"
+	Texture "phoebe.*"
 	Radius     110
 
 	EllipticalOrbit
