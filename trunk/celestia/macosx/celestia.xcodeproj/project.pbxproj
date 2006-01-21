@@ -12,7 +12,6 @@
 		E532F4F30933331800D7D5B3 /* dsoname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EA0933331800D7D5B3 /* dsoname.cpp */; };
 		E532F4F50933331800D7D5B3 /* dsooctree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EC0933331800D7D5B3 /* dsooctree.cpp */; };
 		E532F4F80933331800D7D5B3 /* staroctree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EF0933331800D7D5B3 /* staroctree.cpp */; };
-		E53C2FBF079433D300C76766 /* KbdMouseJoyControls.txt in Resources */ = {isa = PBXBuildFile; fileRef = E53C2FBE079433D300C76766 /* KbdMouseJoyControls.txt */; };
 		E54343120783C3F200053094 /* BrowserWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = E54343100783C3F200053094 /* BrowserWindow.nib */; };
 		E54343170783C42500053094 /* BrowserWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E54343150783C42500053094 /* BrowserWindowController.mm */; };
 		E54742D009631D3600E89E09 /* defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = E54742CF09631D3600E89E09 /* defaults.plist */; };
@@ -137,11 +136,8 @@
 		E572837E0793A03800C1F239 /* extras in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5874AB607771D8E009630D8 /* extras */; };
 		E572837F0793A03800C1F239 /* fonts in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5626A0402A49B8B014901DC /* fonts */; };
 		E57283800793A03800C1F239 /* guide.cel in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5626A0502A49B8B014901DC /* guide.cel */; };
-		E57283810793A03800C1F239 /* models in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5874AB707771D8E009630D8 /* models */; };
-		E57283820793A03800C1F239 /* scripts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5818E43077902950064934D /* scripts */; };
 		E57283830793A03800C1F239 /* shaders in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5626A0702A49B8B014901DC /* shaders */; };
 		E57283840793A03800C1F239 /* start.cel in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5626A0802A49B8B014901DC /* start.cel */; };
-		E57283850793A03800C1F239 /* textures in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5874AB807771D8E009630D8 /* textures */; };
 		E572838D0793DBB500C1F239 /* Celestia.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = E564312E07769C9000E2C4A3 /* Celestia.app */; };
 		E572839B0793F84000C1F239 /* AUTHORS in CopyFiles */ = {isa = PBXBuildFile; fileRef = E57283980793F82A00C1F239 /* AUTHORS */; };
 		E572839C0793F84000C1F239 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = E57283990793F82A00C1F239 /* ChangeLog */; };
@@ -158,6 +154,56 @@
 		E5D4467607772B6C00A1577D /* CelestiaSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5D4467407772B6C00A1577D /* CelestiaSettings.mm */; };
 		E5D4467807772BA000A1577D /* CGLInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F505BFFA02CA9DAE0100020A /* CGLInfo.m */; };
 		E5D471270778E33C007731C3 /* libpng.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D471260778E33C007731C3 /* libpng.dylib */; };
+		E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = E5D7660E0982B1860099DBBD /* HelpWindow.nib */; };
+		E5D766700982B4660099DBBD /* amalthea.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766270982B3300099DBBD /* amalthea.cmod */; };
+		E5D766710982B4660099DBBD /* apollo.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766280982B3300099DBBD /* apollo.3ds */; };
+		E5D766720982B4660099DBBD /* asteroid.cms in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766290982B3300099DBBD /* asteroid.cms */; };
+		E5D766730982B4660099DBBD /* bacchus.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7662B0982B3300099DBBD /* bacchus.cmod */; };
+		E5D766740982B4660099DBBD /* borrelly.cms in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7662C0982B3300099DBBD /* borrelly.cms */; };
+		E5D766750982B4660099DBBD /* cassini.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7662D0982B3300099DBBD /* cassini.3ds */; };
+		E5D766760982B4660099DBBD /* castalia.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7662F0982B3300099DBBD /* castalia.cmod */; };
+		E5D766770982B4660099DBBD /* deimos.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766310982B3300099DBBD /* deimos.cmod */; };
+		E5D766780982B4660099DBBD /* epimetheus.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766330982B3300099DBBD /* epimetheus.cmod */; };
+		E5D766790982B4660099DBBD /* eros.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766350982B3300099DBBD /* eros.cmod */; };
+		E5D7667A0982B4660099DBBD /* galileo.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766370982B3300099DBBD /* galileo.3ds */; };
+		E5D7667B0982B4660099DBBD /* gaspra.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766390982B3300099DBBD /* gaspra.cmod */; };
+		E5D7667C0982B4660099DBBD /* gemini.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7663A0982B3300099DBBD /* gemini.3ds */; };
+		E5D7667D0982B4660099DBBD /* geographos.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7663C0982B3300099DBBD /* geographos.cmod */; };
+		E5D7667E0982B4660099DBBD /* golevka.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7663E0982B3300099DBBD /* golevka.cmod */; };
+		E5D7667F0982B4660099DBBD /* halley.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766400982B3300099DBBD /* halley.cmod */; };
+		E5D766800982B4660099DBBD /* hubble.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766410982B3300099DBBD /* hubble.3ds */; };
+		E5D766810982B4660099DBBD /* huygens.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766420982B3300099DBBD /* huygens.3ds */; };
+		E5D766820982B4660099DBBD /* hyperion.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766440982B3300099DBBD /* hyperion.cmod */; };
+		E5D766830982B4660099DBBD /* ida.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766470982B3300099DBBD /* ida.cmod */; };
+		E5D766840982B4660099DBBD /* iss.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766480982B3300099DBBD /* iss.3ds */; };
+		E5D766850982B4660099DBBD /* janus.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7664A0982B3300099DBBD /* janus.cmod */; };
+		E5D766860982B4660099DBBD /* kleopatra.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7664C0982B3300099DBBD /* kleopatra.cmod */; };
+		E5D766870982B4660099DBBD /* ky26.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7664E0982B3300099DBBD /* ky26.cmod */; };
+		E5D766880982B4660099DBBD /* larissa.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766500982B3300099DBBD /* larissa.cmod */; };
+		E5D766890982B4660099DBBD /* marsglobalsurvr.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766520982B3300099DBBD /* marsglobalsurvr.3ds */; };
+		E5D7668A0982B4660099DBBD /* marsodyssey.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766530982B3300099DBBD /* marsodyssey.3ds */; };
+		E5D7668B0982B4660099DBBD /* mercury7.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766540982B3300099DBBD /* mercury7.3ds */; };
+		E5D7668C0982B4660099DBBD /* mir.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766550982B3300099DBBD /* mir.3ds */; };
+		E5D7668D0982B4660099DBBD /* pandora.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766570982B3300099DBBD /* pandora.cmod */; };
+		E5D7668E0982B4660099DBBD /* phobos.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766590982B3300099DBBD /* phobos.cmod */; };
+		E5D7668F0982B4660099DBBD /* phoebe.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7665B0982B3300099DBBD /* phoebe.cmod */; };
+		E5D766900982B4660099DBBD /* prometheus.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7665D0982B3300099DBBD /* prometheus.cmod */; };
+		E5D766910982B4660099DBBD /* proteus.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7665F0982B3300099DBBD /* proteus.cmod */; };
+		E5D766920982B4660099DBBD /* roughsphere.cms in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766610982B3300099DBBD /* roughsphere.cms */; };
+		E5D766930982B4660099DBBD /* S0.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766620982B3300099DBBD /* S0.pts */; };
+		E5D766940982B4660099DBBD /* Sa.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766630982B3300099DBBD /* Sa.pts */; };
+		E5D766950982B4660099DBBD /* Sb.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766640982B3300099DBBD /* Sb.pts */; };
+		E5D766960982B4660099DBBD /* SBa.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766650982B3300099DBBD /* SBa.pts */; };
+		E5D766970982B4660099DBBD /* SBb.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766660982B3300099DBBD /* SBb.pts */; };
+		E5D766980982B4660099DBBD /* SBc.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766670982B3300099DBBD /* SBc.pts */; };
+		E5D766990982B4660099DBBD /* Sc.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766680982B3300099DBBD /* Sc.pts */; };
+		E5D7669A0982B4660099DBBD /* skylab.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766690982B3300099DBBD /* skylab.3ds */; };
+		E5D7669B0982B4660099DBBD /* toutatis.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7666B0982B3300099DBBD /* toutatis.cmod */; };
+		E5D7669C0982B4660099DBBD /* vesta.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7666D0982B3310099DBBD /* vesta.cmod */; };
+		E5D767FD0982B7930099DBBD /* flare.jpg in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766A40982B6DF0099DBBD /* flare.jpg */; };
+		E5D767FE0982B7930099DBBD /* logo.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766AD0982B6DF0099DBBD /* logo.png */; };
+		E5D767FF0982B7930099DBBD /* lores in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D767530982B71D0099DBBD /* lores */; };
+		E5D768000982B7930099DBBD /* medres in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D767540982B71D0099DBBD /* medres */; };
 		E5D956E00966520700CB02B2 /* SplashWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E5D956DF096651DF00CB02B2 /* SplashWindowController.m */; };
 		E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = E5E365AB095C11B500B14224 /* SplashScreen.m */; };
 		E5E365AF095C123E00B14224 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = E5E365AE095C123E00B14224 /* splash.png */; };
@@ -242,11 +288,8 @@
 				E572837E0793A03800C1F239 /* extras in CopyFiles */,
 				E572837F0793A03800C1F239 /* fonts in CopyFiles */,
 				E57283800793A03800C1F239 /* guide.cel in CopyFiles */,
-				E57283810793A03800C1F239 /* models in CopyFiles */,
-				E57283820793A03800C1F239 /* scripts in CopyFiles */,
 				E57283830793A03800C1F239 /* shaders in CopyFiles */,
 				E57283840793A03800C1F239 /* start.cel in CopyFiles */,
-				E57283850793A03800C1F239 /* textures in CopyFiles */,
 				E572837C0793A02800C1F239 /* celestia.cfg in CopyFiles */,
 				E572837B0793A01B00C1F239 /* data in CopyFiles */,
 			);
@@ -264,6 +307,73 @@
 				E572839C0793F84000C1F239 /* ChangeLog in CopyFiles */,
 				E572839D0793F84000C1F239 /* COPYING in CopyFiles */,
 				E5C9B478084909E40071B1EE /* README for Mac OS X.rtf in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E5D7666E0982B4480099DBBD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = Celestia/CelestiaResources/models;
+			dstSubfolderSpec = 16;
+			files = (
+				E5D766700982B4660099DBBD /* amalthea.cmod in CopyFiles */,
+				E5D766710982B4660099DBBD /* apollo.3ds in CopyFiles */,
+				E5D766720982B4660099DBBD /* asteroid.cms in CopyFiles */,
+				E5D766730982B4660099DBBD /* bacchus.cmod in CopyFiles */,
+				E5D766740982B4660099DBBD /* borrelly.cms in CopyFiles */,
+				E5D766750982B4660099DBBD /* cassini.3ds in CopyFiles */,
+				E5D766760982B4660099DBBD /* castalia.cmod in CopyFiles */,
+				E5D766770982B4660099DBBD /* deimos.cmod in CopyFiles */,
+				E5D766780982B4660099DBBD /* epimetheus.cmod in CopyFiles */,
+				E5D766790982B4660099DBBD /* eros.cmod in CopyFiles */,
+				E5D7667A0982B4660099DBBD /* galileo.3ds in CopyFiles */,
+				E5D7667B0982B4660099DBBD /* gaspra.cmod in CopyFiles */,
+				E5D7667C0982B4660099DBBD /* gemini.3ds in CopyFiles */,
+				E5D7667D0982B4660099DBBD /* geographos.cmod in CopyFiles */,
+				E5D7667E0982B4660099DBBD /* golevka.cmod in CopyFiles */,
+				E5D7667F0982B4660099DBBD /* halley.cmod in CopyFiles */,
+				E5D766800982B4660099DBBD /* hubble.3ds in CopyFiles */,
+				E5D766810982B4660099DBBD /* huygens.3ds in CopyFiles */,
+				E5D766820982B4660099DBBD /* hyperion.cmod in CopyFiles */,
+				E5D766830982B4660099DBBD /* ida.cmod in CopyFiles */,
+				E5D766840982B4660099DBBD /* iss.3ds in CopyFiles */,
+				E5D766850982B4660099DBBD /* janus.cmod in CopyFiles */,
+				E5D766860982B4660099DBBD /* kleopatra.cmod in CopyFiles */,
+				E5D766870982B4660099DBBD /* ky26.cmod in CopyFiles */,
+				E5D766880982B4660099DBBD /* larissa.cmod in CopyFiles */,
+				E5D766890982B4660099DBBD /* marsglobalsurvr.3ds in CopyFiles */,
+				E5D7668A0982B4660099DBBD /* marsodyssey.3ds in CopyFiles */,
+				E5D7668B0982B4660099DBBD /* mercury7.3ds in CopyFiles */,
+				E5D7668C0982B4660099DBBD /* mir.3ds in CopyFiles */,
+				E5D7668D0982B4660099DBBD /* pandora.cmod in CopyFiles */,
+				E5D7668E0982B4660099DBBD /* phobos.cmod in CopyFiles */,
+				E5D7668F0982B4660099DBBD /* phoebe.cmod in CopyFiles */,
+				E5D766900982B4660099DBBD /* prometheus.cmod in CopyFiles */,
+				E5D766910982B4660099DBBD /* proteus.cmod in CopyFiles */,
+				E5D766920982B4660099DBBD /* roughsphere.cms in CopyFiles */,
+				E5D766930982B4660099DBBD /* S0.pts in CopyFiles */,
+				E5D766940982B4660099DBBD /* Sa.pts in CopyFiles */,
+				E5D766950982B4660099DBBD /* Sb.pts in CopyFiles */,
+				E5D766960982B4660099DBBD /* SBa.pts in CopyFiles */,
+				E5D766970982B4660099DBBD /* SBb.pts in CopyFiles */,
+				E5D766980982B4660099DBBD /* SBc.pts in CopyFiles */,
+				E5D766990982B4660099DBBD /* Sc.pts in CopyFiles */,
+				E5D7669A0982B4660099DBBD /* skylab.3ds in CopyFiles */,
+				E5D7669B0982B4660099DBBD /* toutatis.cmod in CopyFiles */,
+				E5D7669C0982B4660099DBBD /* vesta.cmod in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E5D767FB0982B75B0099DBBD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = Celestia/CelestiaResources/textures;
+			dstSubfolderSpec = 16;
+			files = (
+				E5D767FD0982B7930099DBBD /* flare.jpg in CopyFiles */,
+				E5D767FE0982B7930099DBBD /* logo.png in CopyFiles */,
+				E5D767FF0982B7930099DBBD /* lores in CopyFiles */,
+				E5D768000982B7930099DBBD /* medres in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -288,7 +398,6 @@
 		E532F4EE0933331800D7D5B3 /* name.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = name.h; path = ../src/celengine/name.h; sourceTree = SOURCE_ROOT; };
 		E532F4EF0933331800D7D5B3 /* staroctree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = staroctree.cpp; path = ../src/celengine/staroctree.cpp; sourceTree = SOURCE_ROOT; };
 		E532F4F00933331800D7D5B3 /* staroctree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = staroctree.h; path = ../src/celengine/staroctree.h; sourceTree = SOURCE_ROOT; };
-		E53C2FBE079433D300C76766 /* KbdMouseJoyControls.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = KbdMouseJoyControls.txt; path = ../KbdMouseJoyControls.txt; sourceTree = SOURCE_ROOT; };
 		E54343110783C3F200053094 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E54343140783C42500053094 /* BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserWindowController.h; sourceTree = "<group>"; };
 		E54343150783C42500053094 /* BrowserWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserWindowController.mm; sourceTree = "<group>"; };
@@ -320,11 +429,8 @@
 		E572839A0793F82A00C1F239 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = SOURCE_ROOT; };
 		E57283AD0793FC7300C1F239 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../README; sourceTree = SOURCE_ROOT; };
 		E57E350E0892A42A008E2F7F /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
-		E5818E43077902950064934D /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ../scripts; sourceTree = SOURCE_ROOT; };
 		E5874AB507771D8E009630D8 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = SOURCE_ROOT; };
 		E5874AB607771D8E009630D8 /* extras */ = {isa = PBXFileReference; lastKnownFileType = folder; name = extras; path = ../extras; sourceTree = SOURCE_ROOT; };
-		E5874AB707771D8E009630D8 /* models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = models; path = ../models; sourceTree = SOURCE_ROOT; };
-		E5874AB807771D8E009630D8 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = ../textures; sourceTree = SOURCE_ROOT; };
 		E589B6D9078AC511005B8DD9 /* glshader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glshader.cpp; path = ../src/celengine/glshader.cpp; sourceTree = SOURCE_ROOT; };
 		E589B6DA078AC511005B8DD9 /* glshader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glshader.h; path = ../src/celengine/glshader.h; sourceTree = SOURCE_ROOT; };
 		E589B6DB078AC511005B8DD9 /* shadermanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shadermanager.cpp; path = ../src/celengine/shadermanager.cpp; sourceTree = SOURCE_ROOT; };
@@ -345,6 +451,59 @@
 		E5D4467307772B6C00A1577D /* CelestiaSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaSettings.h; sourceTree = "<group>"; };
 		E5D4467407772B6C00A1577D /* CelestiaSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaSettings.mm; sourceTree = "<group>"; };
 		E5D471260778E33C007731C3 /* libpng.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng.dylib; path = Frameworks/libpng.dylib; sourceTree = "<group>"; };
+		E5D7660B0982B15C0099DBBD /* es */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = es; path = es.lproj/Credits.rtf; sourceTree = "<group>"; };
+		E5D7660C0982B1630099DBBD /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = fr; path = fr.lproj/Credits.rtf; sourceTree = "<group>"; };
+		E5D7660F0982B1860099DBBD /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/HelpWindow.nib; sourceTree = "<group>"; };
+		E5D766150982B19F0099DBBD /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/HelpWindow.nib; sourceTree = "<group>"; };
+		E5D766270982B3300099DBBD /* amalthea.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = amalthea.cmod; sourceTree = "<group>"; };
+		E5D766280982B3300099DBBD /* apollo.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = apollo.3ds; sourceTree = "<group>"; };
+		E5D766290982B3300099DBBD /* asteroid.cms */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = asteroid.cms; sourceTree = "<group>"; };
+		E5D7662B0982B3300099DBBD /* bacchus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = bacchus.cmod; sourceTree = "<group>"; };
+		E5D7662C0982B3300099DBBD /* borrelly.cms */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = borrelly.cms; sourceTree = "<group>"; };
+		E5D7662D0982B3300099DBBD /* cassini.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = cassini.3ds; sourceTree = "<group>"; };
+		E5D7662F0982B3300099DBBD /* castalia.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = castalia.cmod; sourceTree = "<group>"; };
+		E5D766310982B3300099DBBD /* deimos.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = deimos.cmod; sourceTree = "<group>"; };
+		E5D766330982B3300099DBBD /* epimetheus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = epimetheus.cmod; sourceTree = "<group>"; };
+		E5D766350982B3300099DBBD /* eros.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = eros.cmod; sourceTree = "<group>"; };
+		E5D766370982B3300099DBBD /* galileo.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = galileo.3ds; sourceTree = "<group>"; };
+		E5D766390982B3300099DBBD /* gaspra.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = gaspra.cmod; sourceTree = "<group>"; };
+		E5D7663A0982B3300099DBBD /* gemini.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = gemini.3ds; sourceTree = "<group>"; };
+		E5D7663C0982B3300099DBBD /* geographos.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = geographos.cmod; sourceTree = "<group>"; };
+		E5D7663E0982B3300099DBBD /* golevka.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = golevka.cmod; sourceTree = "<group>"; };
+		E5D766400982B3300099DBBD /* halley.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = halley.cmod; sourceTree = "<group>"; };
+		E5D766410982B3300099DBBD /* hubble.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = hubble.3ds; sourceTree = "<group>"; };
+		E5D766420982B3300099DBBD /* huygens.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = huygens.3ds; sourceTree = "<group>"; };
+		E5D766440982B3300099DBBD /* hyperion.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = hyperion.cmod; sourceTree = "<group>"; };
+		E5D766470982B3300099DBBD /* ida.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = ida.cmod; sourceTree = "<group>"; };
+		E5D766480982B3300099DBBD /* iss.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = iss.3ds; sourceTree = "<group>"; };
+		E5D7664A0982B3300099DBBD /* janus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = janus.cmod; sourceTree = "<group>"; };
+		E5D7664C0982B3300099DBBD /* kleopatra.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = kleopatra.cmod; sourceTree = "<group>"; };
+		E5D7664E0982B3300099DBBD /* ky26.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = ky26.cmod; sourceTree = "<group>"; };
+		E5D766500982B3300099DBBD /* larissa.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = larissa.cmod; sourceTree = "<group>"; };
+		E5D766520982B3300099DBBD /* marsglobalsurvr.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = marsglobalsurvr.3ds; sourceTree = "<group>"; };
+		E5D766530982B3300099DBBD /* marsodyssey.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = marsodyssey.3ds; sourceTree = "<group>"; };
+		E5D766540982B3300099DBBD /* mercury7.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = mercury7.3ds; sourceTree = "<group>"; };
+		E5D766550982B3300099DBBD /* mir.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = mir.3ds; sourceTree = "<group>"; };
+		E5D766570982B3300099DBBD /* pandora.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = pandora.cmod; sourceTree = "<group>"; };
+		E5D766590982B3300099DBBD /* phobos.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = phobos.cmod; sourceTree = "<group>"; };
+		E5D7665B0982B3300099DBBD /* phoebe.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = phoebe.cmod; sourceTree = "<group>"; };
+		E5D7665D0982B3300099DBBD /* prometheus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = prometheus.cmod; sourceTree = "<group>"; };
+		E5D7665F0982B3300099DBBD /* proteus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = proteus.cmod; sourceTree = "<group>"; };
+		E5D766610982B3300099DBBD /* roughsphere.cms */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = roughsphere.cms; sourceTree = "<group>"; };
+		E5D766620982B3300099DBBD /* S0.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = S0.pts; sourceTree = "<group>"; };
+		E5D766630982B3300099DBBD /* Sa.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sa.pts; sourceTree = "<group>"; };
+		E5D766640982B3300099DBBD /* Sb.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sb.pts; sourceTree = "<group>"; };
+		E5D766650982B3300099DBBD /* SBa.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SBa.pts; sourceTree = "<group>"; };
+		E5D766660982B3300099DBBD /* SBb.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SBb.pts; sourceTree = "<group>"; };
+		E5D766670982B3300099DBBD /* SBc.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SBc.pts; sourceTree = "<group>"; };
+		E5D766680982B3300099DBBD /* Sc.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sc.pts; sourceTree = "<group>"; };
+		E5D766690982B3300099DBBD /* skylab.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = skylab.3ds; sourceTree = "<group>"; };
+		E5D7666B0982B3300099DBBD /* toutatis.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = toutatis.cmod; sourceTree = "<group>"; };
+		E5D7666D0982B3310099DBBD /* vesta.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = vesta.cmod; sourceTree = "<group>"; };
+		E5D766A40982B6DF0099DBBD /* flare.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = flare.jpg; sourceTree = "<group>"; };
+		E5D766AD0982B6DF0099DBBD /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
+		E5D767530982B71D0099DBBD /* lores */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lores; sourceTree = "<group>"; };
+		E5D767540982B71D0099DBBD /* medres */ = {isa = PBXFileReference; lastKnownFileType = folder; path = medres; sourceTree = "<group>"; };
 		E5D956DE096651DF00CB02B2 /* SplashWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashWindowController.h; sourceTree = "<group>"; };
 		E5D956DF096651DF00CB02B2 /* SplashWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashWindowController.m; sourceTree = "<group>"; };
 		E5E365AA095C11B500B14224 /* SplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashScreen.h; sourceTree = "<group>"; };
@@ -732,7 +891,6 @@
 				E54742CF09631D3600E89E09 /* defaults.plist */,
 				E599A78C097CAB390079C254 /* Credits.rtf */,
 				E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */,
-				E53C2FBE079433D300C76766 /* KbdMouseJoyControls.txt */,
 				E57283AD0793FC7300C1F239 /* README */,
 				E57283980793F82A00C1F239 /* AUTHORS */,
 				E57283990793F82A00C1F239 /* ChangeLog */,
@@ -743,6 +901,7 @@
 				F578B7AE02B3E35F0100020A /* Celestia Data */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				E54343100783C3F200053094 /* BrowserWindow.nib */,
+				E5D7660E0982B1860099DBBD /* HelpWindow.nib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 			);
 			includeInIndex = 0;
@@ -757,6 +916,71 @@
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
+		};
+		E5D766250982B3300099DBBD /* models */ = {
+			isa = PBXGroup;
+			children = (
+				E5D766270982B3300099DBBD /* amalthea.cmod */,
+				E5D766280982B3300099DBBD /* apollo.3ds */,
+				E5D766290982B3300099DBBD /* asteroid.cms */,
+				E5D7662B0982B3300099DBBD /* bacchus.cmod */,
+				E5D7662C0982B3300099DBBD /* borrelly.cms */,
+				E5D7662D0982B3300099DBBD /* cassini.3ds */,
+				E5D7662F0982B3300099DBBD /* castalia.cmod */,
+				E5D766310982B3300099DBBD /* deimos.cmod */,
+				E5D766330982B3300099DBBD /* epimetheus.cmod */,
+				E5D766350982B3300099DBBD /* eros.cmod */,
+				E5D766370982B3300099DBBD /* galileo.3ds */,
+				E5D766390982B3300099DBBD /* gaspra.cmod */,
+				E5D7663A0982B3300099DBBD /* gemini.3ds */,
+				E5D7663C0982B3300099DBBD /* geographos.cmod */,
+				E5D7663E0982B3300099DBBD /* golevka.cmod */,
+				E5D766400982B3300099DBBD /* halley.cmod */,
+				E5D766410982B3300099DBBD /* hubble.3ds */,
+				E5D766420982B3300099DBBD /* huygens.3ds */,
+				E5D766440982B3300099DBBD /* hyperion.cmod */,
+				E5D766470982B3300099DBBD /* ida.cmod */,
+				E5D766480982B3300099DBBD /* iss.3ds */,
+				E5D7664A0982B3300099DBBD /* janus.cmod */,
+				E5D7664C0982B3300099DBBD /* kleopatra.cmod */,
+				E5D7664E0982B3300099DBBD /* ky26.cmod */,
+				E5D766500982B3300099DBBD /* larissa.cmod */,
+				E5D766520982B3300099DBBD /* marsglobalsurvr.3ds */,
+				E5D766530982B3300099DBBD /* marsodyssey.3ds */,
+				E5D766540982B3300099DBBD /* mercury7.3ds */,
+				E5D766550982B3300099DBBD /* mir.3ds */,
+				E5D766570982B3300099DBBD /* pandora.cmod */,
+				E5D766590982B3300099DBBD /* phobos.cmod */,
+				E5D7665B0982B3300099DBBD /* phoebe.cmod */,
+				E5D7665D0982B3300099DBBD /* prometheus.cmod */,
+				E5D7665F0982B3300099DBBD /* proteus.cmod */,
+				E5D766610982B3300099DBBD /* roughsphere.cms */,
+				E5D766620982B3300099DBBD /* S0.pts */,
+				E5D766630982B3300099DBBD /* Sa.pts */,
+				E5D766640982B3300099DBBD /* Sb.pts */,
+				E5D766650982B3300099DBBD /* SBa.pts */,
+				E5D766660982B3300099DBBD /* SBb.pts */,
+				E5D766670982B3300099DBBD /* SBc.pts */,
+				E5D766680982B3300099DBBD /* Sc.pts */,
+				E5D766690982B3300099DBBD /* skylab.3ds */,
+				E5D7666B0982B3300099DBBD /* toutatis.cmod */,
+				E5D7666D0982B3310099DBBD /* vesta.cmod */,
+			);
+			name = models;
+			path = ../models;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5D766A30982B6DF0099DBBD /* textures */ = {
+			isa = PBXGroup;
+			children = (
+				E5D766A40982B6DF0099DBBD /* flare.jpg */,
+				E5D766AD0982B6DF0099DBBD /* logo.png */,
+				E5D767530982B71D0099DBBD /* lores */,
+				E5D767540982B71D0099DBBD /* medres */,
+			);
+			name = textures;
+			path = ../textures;
+			sourceTree = SOURCE_ROOT;
 		};
 		F51C6D38029595BA014901DC /* Celestia Main */ = {
 			isa = PBXGroup;
@@ -1103,10 +1327,9 @@
 				E5874AB507771D8E009630D8 /* data */,
 				F5626A0402A49B8B014901DC /* fonts */,
 				E5874AB607771D8E009630D8 /* extras */,
-				E5874AB707771D8E009630D8 /* models */,
-				E5818E43077902950064934D /* scripts */,
+				E5D766250982B3300099DBBD /* models */,
 				F5626A0702A49B8B014901DC /* shaders */,
-				E5874AB807771D8E009630D8 /* textures */,
+				E5D766A30982B6DF0099DBBD /* textures */,
 				F5626A0002A49B8B014901DC /* celestia.cfg */,
 				F5626A0202A49B8B014901DC /* demo.cel */,
 				F5626A0502A49B8B014901DC /* guide.cel */,
@@ -1143,6 +1366,8 @@
 				E56917DA0778217300F0F0AF /* CopyFiles */,
 				E57283A00793F93500C1F239 /* CopyFiles */,
 				E572837407939F2500C1F239 /* CopyFiles */,
+				E5D7666E0982B4480099DBBD /* CopyFiles */,
+				E5D767FB0982B75B0099DBBD /* CopyFiles */,
 				E572837307939E0200C1F239 /* ShellScript */,
 			);
 			buildRules = (
@@ -1213,12 +1438,12 @@
 				E56430BC07769C9000E2C4A3 /* InfoPlist.strings in Resources */,
 				E5B615070777307F001BB2BF /* celestia.icns in Resources */,
 				E54343120783C3F200053094 /* BrowserWindow.nib in Resources */,
-				E53C2FBF079433D300C76766 /* KbdMouseJoyControls.txt in Resources */,
 				E56A5AD10848F24D00A21D7E /* caution.tiff in Resources */,
 				E5E365AF095C123E00B14224 /* splash.png in Resources */,
 				E54742D009631D3600E89E09 /* defaults.plist in Resources */,
 				E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */,
 				E599A78E097CAB390079C254 /* Credits.rtf in Resources */,
+				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1411,8 +1636,19 @@
 			isa = PBXVariantGroup;
 			children = (
 				E599A78D097CAB390079C254 /* English */,
+				E5D7660B0982B15C0099DBBD /* es */,
+				E5D7660C0982B1630099DBBD /* fr */,
 			);
 			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		E5D7660E0982B1860099DBBD /* HelpWindow.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E5D7660F0982B1860099DBBD /* English */,
+				E5D766150982B19F0099DBBD /* fr */,
+			);
+			name = HelpWindow.nib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1472,6 +1708,7 @@
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Universal_Release;
 		};
@@ -1584,18 +1821,21 @@
 		E532F41E0933316100D7D5B3 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Development;
 		};
 		E532F41F0933316100D7D5B3 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Deployment;
 		};
 		E532F4200933316100D7D5B3 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Default;
 		};
@@ -1654,6 +1894,7 @@
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Universal_Debug;
 		};

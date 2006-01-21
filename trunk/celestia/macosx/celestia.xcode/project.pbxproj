@@ -256,7 +256,6 @@
 				E50BD53D096543EB00D0A357,
 				E5C3C421097DBA1D0048AF44,
 				E5C9B46B084909B90071B1EE,
-				E53C2FBE079433D300C76766,
 				E57283AD0793FC7300C1F239,
 				E57283980793F82A00C1F239,
 				E57283990793F82A00C1F239,
@@ -267,6 +266,7 @@
 				F578B7AE02B3E35F0100020A,
 				29B97318FDCFA39411CA2CEA,
 				E54343100783C3F200053094,
+				E5C29C920982A8EC00ED06B8,
 				089C165CFE840E0CC02AAC07,
 			);
 			includeInIndex = 0;
@@ -371,21 +371,6 @@
 			settings = {
 			};
 		};
-		E53C2FBE079433D300C76766 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			name = KbdMouseJoyControls.txt;
-			path = ../KbdMouseJoyControls.txt;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		E53C2FBF079433D300C76766 = {
-			fileRef = E53C2FBE079433D300C76766;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		E54343100783C3F200053094 = {
 			children = (
 				E54343110783C3F200053094,
@@ -469,6 +454,8 @@
 				E56917DA0778217300F0F0AF,
 				E57283A00793F93500C1F239,
 				E572837407939F2500C1F239,
+				E5C29C980982AA8000ED06B8,
+				E59272F20982BEDC009DFB36,
 				E572837307939E0200C1F239,
 			);
 			buildRules = (
@@ -1507,12 +1494,12 @@
 				E56430BC07769C9000E2C4A3,
 				E5B615070777307F001BB2BF,
 				E54343120783C3F200053094,
-				E53C2FBF079433D300C76766,
 				E56A5AD10848F24D00A21D7E,
 				E5E5ED64095BC602003DC829,
 				E50BD53E096543EB00D0A357,
 				E5BF7F48096DA07B00DB7C65,
 				E5C3C423097DBA1D0048AF44,
+				E5C29C940982A8EC00ED06B8,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2636,11 +2623,8 @@
 				E572837E0793A03800C1F239,
 				E572837F0793A03800C1F239,
 				E57283800793A03800C1F239,
-				E57283810793A03800C1F239,
-				E57283820793A03800C1F239,
 				E57283830793A03800C1F239,
 				E57283840793A03800C1F239,
-				E57283850793A03800C1F239,
 				E572837C0793A02800C1F239,
 				E572837B0793A01B00C1F239,
 			);
@@ -2683,18 +2667,6 @@
 			settings = {
 			};
 		};
-		E57283810793A03800C1F239 = {
-			fileRef = E5874AB707771D8E009630D8;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		E57283820793A03800C1F239 = {
-			fileRef = E5818E43077902950064934D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		E57283830793A03800C1F239 = {
 			fileRef = F5626A0702A49B8B014901DC;
 			isa = PBXBuildFile;
@@ -2703,12 +2675,6 @@
 		};
 		E57283840793A03800C1F239 = {
 			fileRef = F5626A0802A49B8B014901DC;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		E57283850793A03800C1F239 = {
-			fileRef = E5874AB807771D8E009630D8;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2808,14 +2774,6 @@
 			settings = {
 			};
 		};
-		E5818E43077902950064934D = {
-			isa = PBXFileReference;
-			lastKnownFileType = folder;
-			name = scripts;
-			path = ../scripts;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		E5874AB507771D8E009630D8 = {
 			isa = PBXFileReference;
 			lastKnownFileType = folder;
@@ -2829,22 +2787,6 @@
 			lastKnownFileType = folder;
 			name = extras;
 			path = ../extras;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		E5874AB707771D8E009630D8 = {
-			isa = PBXFileReference;
-			lastKnownFileType = folder;
-			name = models;
-			path = ../models;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		E5874AB807771D8E009630D8 = {
-			isa = PBXFileReference;
-			lastKnownFileType = folder;
-			name = textures;
-			path = ../textures;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -2904,6 +2846,84 @@
 		};
 		E589B6E0078AC511005B8DD9 = {
 			fileRef = E589B6DC078AC511005B8DD9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E59271940982BE79009DFB36 = {
+			children = (
+				E59271950982BE79009DFB36,
+				E592719E0982BE79009DFB36,
+				E59272440982BEA6009DFB36,
+				E59272450982BEA6009DFB36,
+			);
+			isa = PBXGroup;
+			name = textures;
+			path = ../textures;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E59271950982BE79009DFB36 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.jpeg;
+			path = flare.jpg;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E592719E0982BE79009DFB36 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			path = logo.png;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E59272440982BEA6009DFB36 = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			path = lores;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E59272450982BEA6009DFB36 = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			path = medres;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E59272F20982BEDC009DFB36 = {
+			buildActionMask = 8;
+			dstPath = Celestia/CelestiaResources/textures;
+			dstSubfolderSpec = 16;
+			files = (
+				E59272F30982BF08009DFB36,
+				E59272F40982BF08009DFB36,
+				E59272F50982BF08009DFB36,
+				E59272F60982BF08009DFB36,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E59272F30982BF08009DFB36 = {
+			fileRef = E59271950982BE79009DFB36;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E59272F40982BF08009DFB36 = {
+			fileRef = E592719E0982BE79009DFB36;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E59272F50982BF08009DFB36 = {
+			fileRef = E59272440982BEA6009DFB36;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E59272F60982BF08009DFB36 = {
+			fileRef = E59272450982BEA6009DFB36;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3151,9 +3171,764 @@
 			settings = {
 			};
 		};
+		E5C29BFD0982A6E200ED06B8 = {
+			children = (
+				E5C29BFF0982A6E200ED06B8,
+				E5C29C000982A6E200ED06B8,
+				E5C29C010982A6E200ED06B8,
+				E5C29C030982A6E200ED06B8,
+				E5C29C040982A6E200ED06B8,
+				E5C29C050982A6E200ED06B8,
+				E5C29C070982A6E200ED06B8,
+				E5C29C090982A6E200ED06B8,
+				E5C29C0B0982A6E200ED06B8,
+				E5C29C0D0982A6E200ED06B8,
+				E5C29C0F0982A6E200ED06B8,
+				E5C29C110982A6E300ED06B8,
+				E5C29C120982A6E300ED06B8,
+				E5C29C140982A6E300ED06B8,
+				E5C29C160982A6E300ED06B8,
+				E5C29C180982A6E300ED06B8,
+				E5C29C190982A6E300ED06B8,
+				E5C29C1A0982A6E300ED06B8,
+				E5C29C1C0982A6E300ED06B8,
+				E5C29C1F0982A6E300ED06B8,
+				E5C29C200982A6E300ED06B8,
+				E5C29C220982A6E300ED06B8,
+				E5C29C240982A6E300ED06B8,
+				E5C29C260982A6E300ED06B8,
+				E5C29C280982A6E300ED06B8,
+				E5C29C2A0982A6E300ED06B8,
+				E5C29C2B0982A6E300ED06B8,
+				E5C29C2C0982A6E300ED06B8,
+				E5C29C2D0982A6E300ED06B8,
+				E5C29C2F0982A6E300ED06B8,
+				E5C29C310982A6E300ED06B8,
+				E5C29C330982A6E300ED06B8,
+				E5C29C350982A6E300ED06B8,
+				E5C29C370982A6E300ED06B8,
+				E5C29C390982A6E300ED06B8,
+				E5C29C3A0982A6E300ED06B8,
+				E5C29C3B0982A6E300ED06B8,
+				E5C29C3C0982A6E300ED06B8,
+				E5C29C3D0982A6E300ED06B8,
+				E5C29C3E0982A6E300ED06B8,
+				E5C29C3F0982A6E300ED06B8,
+				E5C29C400982A6E300ED06B8,
+				E5C29C410982A6E300ED06B8,
+				E5C29C430982A6E300ED06B8,
+				E5C29C450982A6E300ED06B8,
+			);
+			isa = PBXGroup;
+			name = models;
+			path = ../models;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5C29BFF0982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = amalthea.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C000982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = apollo.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C010982A6E200ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = asteroid.cms;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C030982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = bacchus.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C040982A6E200ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = borrelly.cms;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C050982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = cassini.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C070982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = castalia.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C090982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = deimos.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C0B0982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = epimetheus.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C0D0982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = eros.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C0F0982A6E200ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = galileo.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C110982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = gaspra.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C120982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = gemini.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C140982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = geographos.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C160982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = golevka.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C180982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = halley.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C190982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = hubble.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C1A0982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = huygens.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C1C0982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = hyperion.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C1F0982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = ida.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C200982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = iss.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C220982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = janus.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C240982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = kleopatra.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C260982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = ky26.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C280982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = larissa.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C2A0982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = marsglobalsurvr.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C2B0982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = marsodyssey.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C2C0982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = mercury7.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C2D0982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = mir.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C2F0982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = pandora.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C310982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = phobos.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C330982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = phoebe.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C350982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = prometheus.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C370982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = proteus.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C390982A6E300ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = roughsphere.cms;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C3A0982A6E300ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = S0.pts;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C3B0982A6E300ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = Sa.pts;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C3C0982A6E300ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = Sb.pts;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C3D0982A6E300ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SBa.pts;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C3E0982A6E300ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SBb.pts;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C3F0982A6E300ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SBc.pts;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C400982A6E300ED06B8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = Sc.pts;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C410982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = skylab.3ds;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C430982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = toutatis.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C450982A6E300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = vesta.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C900982A8C300ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			name = es;
+			path = es.lproj/Credits.rtf;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C910982A8D100ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			name = fr;
+			path = fr.lproj/Credits.rtf;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C920982A8EC00ED06B8 = {
+			children = (
+				E5C29C930982A8EC00ED06B8,
+				E5C29C950982A8FC00ED06B8,
+			);
+			isa = PBXVariantGroup;
+			name = HelpWindow.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C930982A8EC00ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = English.lproj/HelpWindow.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C940982A8EC00ED06B8 = {
+			fileRef = E5C29C920982A8EC00ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29C950982A8FC00ED06B8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = fr;
+			path = fr.lproj/HelpWindow.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C29C980982AA8000ED06B8 = {
+			buildActionMask = 8;
+			comments = "This kludge seems to be the easiest way to copy only some models.";
+			dstPath = Celestia/CelestiaResources/models;
+			dstSubfolderSpec = 16;
+			files = (
+				E5C29C990982AABA00ED06B8,
+				E5C29C9A0982AABA00ED06B8,
+				E5C29C9B0982AABA00ED06B8,
+				E5C29C9C0982AABA00ED06B8,
+				E5C29C9D0982AABA00ED06B8,
+				E5C29C9E0982AABA00ED06B8,
+				E5C29C9F0982AABA00ED06B8,
+				E5C29CA00982AABA00ED06B8,
+				E5C29CA10982AABA00ED06B8,
+				E5C29CA20982AABA00ED06B8,
+				E5C29CA30982AABA00ED06B8,
+				E5C29CA40982AABA00ED06B8,
+				E5C29CA50982AABA00ED06B8,
+				E5C29CA60982AABA00ED06B8,
+				E5C29CA70982AABA00ED06B8,
+				E5C29CA80982AABA00ED06B8,
+				E5C29CA90982AABA00ED06B8,
+				E5C29CAA0982AABA00ED06B8,
+				E5C29CAB0982AABA00ED06B8,
+				E5C29CAC0982AABA00ED06B8,
+				E5C29CAD0982AABA00ED06B8,
+				E5C29CAE0982AABA00ED06B8,
+				E5C29CAF0982AABA00ED06B8,
+				E5C29CB00982AABA00ED06B8,
+				E5C29CB10982AABA00ED06B8,
+				E5C29CB20982AABA00ED06B8,
+				E5C29CB30982AABA00ED06B8,
+				E5C29CB40982AABA00ED06B8,
+				E5C29CB50982AABA00ED06B8,
+				E5C29CB60982AABA00ED06B8,
+				E5C29CB70982AABA00ED06B8,
+				E5C29CB80982AABA00ED06B8,
+				E5C29CB90982AABA00ED06B8,
+				E5C29CBA0982AABA00ED06B8,
+				E5C29CBB0982AABA00ED06B8,
+				E5C29CBC0982AABA00ED06B8,
+				E5C29CBD0982AABA00ED06B8,
+				E5C29CBE0982AABA00ED06B8,
+				E5C29CBF0982AABA00ED06B8,
+				E5C29CC00982AABA00ED06B8,
+				E5C29CC10982AABA00ED06B8,
+				E5C29CC20982AABA00ED06B8,
+				E5C29CC30982AABA00ED06B8,
+				E5C29CC40982AABA00ED06B8,
+				E5C29CC50982AABA00ED06B8,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E5C29C990982AABA00ED06B8 = {
+			fileRef = E5C29BFF0982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29C9A0982AABA00ED06B8 = {
+			fileRef = E5C29C000982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29C9B0982AABA00ED06B8 = {
+			fileRef = E5C29C010982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29C9C0982AABA00ED06B8 = {
+			fileRef = E5C29C030982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29C9D0982AABA00ED06B8 = {
+			fileRef = E5C29C040982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29C9E0982AABA00ED06B8 = {
+			fileRef = E5C29C050982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29C9F0982AABA00ED06B8 = {
+			fileRef = E5C29C070982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA00982AABA00ED06B8 = {
+			fileRef = E5C29C090982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA10982AABA00ED06B8 = {
+			fileRef = E5C29C0B0982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA20982AABA00ED06B8 = {
+			fileRef = E5C29C0D0982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA30982AABA00ED06B8 = {
+			fileRef = E5C29C0F0982A6E200ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA40982AABA00ED06B8 = {
+			fileRef = E5C29C110982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA50982AABA00ED06B8 = {
+			fileRef = E5C29C120982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA60982AABA00ED06B8 = {
+			fileRef = E5C29C140982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA70982AABA00ED06B8 = {
+			fileRef = E5C29C160982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA80982AABA00ED06B8 = {
+			fileRef = E5C29C180982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CA90982AABA00ED06B8 = {
+			fileRef = E5C29C190982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CAA0982AABA00ED06B8 = {
+			fileRef = E5C29C1A0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CAB0982AABA00ED06B8 = {
+			fileRef = E5C29C1C0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CAC0982AABA00ED06B8 = {
+			fileRef = E5C29C1F0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CAD0982AABA00ED06B8 = {
+			fileRef = E5C29C200982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CAE0982AABA00ED06B8 = {
+			fileRef = E5C29C220982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CAF0982AABA00ED06B8 = {
+			fileRef = E5C29C240982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB00982AABA00ED06B8 = {
+			fileRef = E5C29C260982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB10982AABA00ED06B8 = {
+			fileRef = E5C29C280982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB20982AABA00ED06B8 = {
+			fileRef = E5C29C2A0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB30982AABA00ED06B8 = {
+			fileRef = E5C29C2B0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB40982AABA00ED06B8 = {
+			fileRef = E5C29C2C0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB50982AABA00ED06B8 = {
+			fileRef = E5C29C2D0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB60982AABA00ED06B8 = {
+			fileRef = E5C29C2F0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB70982AABA00ED06B8 = {
+			fileRef = E5C29C310982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB80982AABA00ED06B8 = {
+			fileRef = E5C29C330982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CB90982AABA00ED06B8 = {
+			fileRef = E5C29C350982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CBA0982AABA00ED06B8 = {
+			fileRef = E5C29C370982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CBB0982AABA00ED06B8 = {
+			fileRef = E5C29C390982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CBC0982AABA00ED06B8 = {
+			fileRef = E5C29C3A0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CBD0982AABA00ED06B8 = {
+			fileRef = E5C29C3B0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CBE0982AABA00ED06B8 = {
+			fileRef = E5C29C3C0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CBF0982AABA00ED06B8 = {
+			fileRef = E5C29C3D0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CC00982AABA00ED06B8 = {
+			fileRef = E5C29C3E0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CC10982AABA00ED06B8 = {
+			fileRef = E5C29C3F0982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CC20982AABA00ED06B8 = {
+			fileRef = E5C29C400982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CC30982AABA00ED06B8 = {
+			fileRef = E5C29C410982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CC40982AABA00ED06B8 = {
+			fileRef = E5C29C430982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C29CC50982AABA00ED06B8 = {
+			fileRef = E5C29C450982A6E300ED06B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E5C3C421097DBA1D0048AF44 = {
 			children = (
 				E5C3C422097DBA1D0048AF44,
+				E5C29C900982A8C300ED06B8,
+				E5C29C910982A8D100ED06B8,
 			);
 			isa = PBXVariantGroup;
 			name = Credits.rtf;
@@ -5543,10 +6318,9 @@
 				E5874AB507771D8E009630D8,
 				F5626A0402A49B8B014901DC,
 				E5874AB607771D8E009630D8,
-				E5874AB707771D8E009630D8,
-				E5818E43077902950064934D,
+				E5C29BFD0982A6E200ED06B8,
 				F5626A0702A49B8B014901DC,
-				E5874AB807771D8E009630D8,
+				E59271940982BE79009DFB36,
 				F5626A0002A49B8B014901DC,
 				F5626A0202A49B8B014901DC,
 				F5626A0502A49B8B014901DC,
