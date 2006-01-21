@@ -330,18 +330,18 @@ NSString* fatalErrorMessage;
     else
         pendingUrl = [[[event descriptorAtIndex:1] stringValue] retain];
 }
-
+/*
 - (void) applicationDidBecomeActive:(NSNotification *) aNotification
 {
-    if (isFullScreen && aNotification && ([aNotification object] == NSApp))
+    if (aNotification && ([aNotification object] == NSApp))
     {
         [self unpauseFullScreen];
     }
 }
-
+*/
 - (void) applicationWillHide:(NSNotification *) aNotification
 {
-    if (isFullScreen && aNotification && ([aNotification object] == NSApp))
+    if (aNotification && ([aNotification object] == NSApp))
     {
         [self pauseFullScreen];
     }
@@ -376,14 +376,12 @@ NSString* fatalErrorMessage;
 
 -(BOOL)applicationShouldTerminate:(id)sender
 {
-    if (isFullScreen)
-        [self pauseFullScreen];   // allow dialog to show
+    [self pauseFullScreen];   // allow dialog to show
 
    if (  NSRunAlertPanel(@"Quit Celestia?",@"Are you sure you want to quit Celestia?",@"Quit",@"Cancel",nil) != NSAlertDefaultReturn ) 
    {
-        if (isFullScreen)
-            [self unpauseFullScreen];
-   return NO;
+       [self unpauseFullScreen];
+       return NO;
    }
     
     if (timer != nil) {
@@ -401,6 +399,8 @@ NSString* fatalErrorMessage;
 
     [lastScript release];
     [browserWindowController release];
+    [helpWindowController release];
+
     if (appCore != nil) {
         [appCore release];
         appCore = nil;
@@ -409,6 +409,27 @@ NSString* fatalErrorMessage;
 
 
 // Window Event Handler Methods ----------------------------------------------------------
+
+- (void)windowDidBecomeKey:(NSNotification *)aNotification
+{
+    [self unpauseFullScreen];
+}
+
+- (void)windowDidResignKey:(NSNotification *)aNotification
+{
+    NSNumber *mainScreenNumber =
+    [[[[self window] screen] deviceDescription] objectForKey:@"NSScreenNumber"];
+    NSScreen *otherScreen = [[NSApp keyWindow] screen];
+    NSNumber *otherScreenNumber = otherScreen ? 
+        [[otherScreen deviceDescription] objectForKey:@"NSScreenNumber"] :
+        nil;
+    
+    if (mainScreenNumber && otherScreenNumber &&
+        [mainScreenNumber isEqualTo:otherScreenNumber])
+    {
+        [self pauseFullScreen];
+    }
+}
 
 -(BOOL)windowShouldClose:(id)sender
 {
@@ -522,7 +543,7 @@ NSString* fatalErrorMessage;
     {
         CelestiaOpenGLView *windowedView = nil;
         Class viewClass = [CelestiaOpenGLView class];
-        NSArray *mainSubViews = [[mainWindow contentView] subviews];
+        NSArray *mainSubViews = [[origWindow contentView] subviews];
 
         if (mainSubViews && [mainSubViews count]>0)
         {
@@ -538,10 +559,10 @@ NSString* fatalErrorMessage;
                 }
             }
         }
-        else if ([[mainWindow contentView] isKindOfClass: viewClass])
-            windowedView = [mainWindow contentView];
+        else if ([[origWindow contentView] isKindOfClass: viewClass])
+            windowedView = [origWindow contentView];
 
-        [mainWindow makeKeyAndOrderFront: self];
+        [origWindow makeKeyAndOrderFront: self];
 
         if (windowedView == nil)
         {
@@ -559,9 +580,10 @@ NSString* fatalErrorMessage;
 
         [[self window] close];  // full screen window releases on close
         ShowMenuBar();
-        [self setWindow: mainWindow];
+        [self setWindow: origWindow];
         glView = windowedView;
         [self setDirty];
+        [origWindow makeMainWindow];
         isFullScreen = NO;
         return;
     }
@@ -578,7 +600,8 @@ NSString* fatalErrorMessage;
     [fullScreenWindow setBackgroundColor: [NSColor blackColor]];
     [fullScreenWindow setReleasedWhenClosed: YES];
     [fullScreenWindow setLevel: NSStatusWindowLevel];
-    [self setWindow: fullScreenWindow];
+    [self setWindow: fullScreenWindow]; // retains it
+    [fullScreenWindow release];
     [fullScreenWindow setDelegate: self];
     // Hide the menu bar only if it's on the same screen
     [self hideMenuBarOnActiveScreen];
@@ -590,9 +613,9 @@ NSString* fatalErrorMessage;
     [[glView openGLContext] setView: fullScreenView];
 
     // Remember the original (bordered) window
-    mainWindow = [glView window];
+    origWindow = [glView window];
     // Close the original window (does not release it)
-    [mainWindow close];
+    [origWindow close];
     glView = fullScreenView;
     [glView takeValue: self forKey: @"controller"];
     [fullScreenWindow makeFirstResponder: glView];
@@ -601,21 +624,28 @@ NSString* fatalErrorMessage;
     [glView display];
 
     CGDisplayRestoreColorSyncSettings();
+    [fullScreenWindow makeMainWindow];
     isFullScreen = YES;
 }
 
 /* Lowers the level of a full-screen window (to allow Cmd-Tabbing, etc) */
 - (void) pauseFullScreen
 {
-    [[self window] setLevel: NSNormalWindowLevel];
-    ShowMenuBar();
+    if (isFullScreen)
+    {
+        [[self window] setLevel: NSNormalWindowLevel];
+        ShowMenuBar();
+    }
 }
 
 /* Resumes full screen after a pauseFullScreen */
 - (void) unpauseFullScreen
 {
-    [self hideMenuBarOnActiveScreen];
-    [[self window] setLevel: NSStatusWindowLevel];
+    if (isFullScreen)
+    {
+        [self hideMenuBarOnActiveScreen];
+        [[self window] setLevel: NSStatusWindowLevel];
+    }
 }
 
 - (BOOL) hideMenuBarOnActiveScreen
@@ -780,11 +810,10 @@ NSString* fatalErrorMessage;
 
 - (void) showHelp: (id) sender
 {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"KbdMouseJoyControls"
-                                                     ofType:@"txt"];
-    
-    if (path)
-        [[NSWorkspace sharedWorkspace] openFile:path];
+    if (helpWindowController == nil)
+        helpWindowController = [[NSWindowController alloc] initWithWindowNibName: @"HelpWindow"];
+
+    [helpWindowController showWindow: self];
 }
 
 @end
