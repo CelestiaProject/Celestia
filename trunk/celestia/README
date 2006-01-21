@@ -356,7 +356,7 @@ from photometric data gathered during six years of mutual occultations of
 Pluto and Charon.
 
 Venus's clouds and the textures for Ganymede, Callisto and Saturn are from
-Björn Jónsson. His site at http://www.mmedia.is/~bjj/ is an excellent
+Bjï¿½n Jï¿½sson. His site at http://www.mmedia.is/~bjj/ is an excellent
 resource for solar system rendering.
 
 The Io and Europa maps are by Steve Albers. His planetary maps are at:
@@ -440,13 +440,20 @@ V1.0.html
 The 3D model of Eros was prepared from the NEAR laser rangefinder shape model
 at: http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape
 
-The Phoebe texture was created by Fridger Schrempp from a cylindrical map 
-recently published by the Cassini imaging team,
+The Phoebe texture was created by Fridger Schrempp from 
+the cylindrical map recently published by the Cassini imaging team, 
 http://photojournal.jpl.nasa.gov/catalog/PIA07775
 
+The Phoebe texture was created by Fridger Schrempp, based on
+recent Cassini imaging, 
+http://photojournal.jpl.nasa.gov/catalog/PIA07781
+merged with reprojected images from earlier Voyager missions, and
+color-mapped by computer, using the natural color template, 
+http://photojournal.jpl.nasa.gov/catalog/PIA06140
+  
 Fridger Schrempp created the Lunar topography map, using Clementine laser altimeter
 data, merged in the polar regions with topographic data  from Clementine 750 nm 
-oblique and nadir images,
+oblique and nadir images, 
 ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/
 
 Grant Hutchison supplied the correct orientations for the major planets, their
