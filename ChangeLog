@@ -958,4 +958,5 @@ Code:
 * KDE: New configurable splash screen (http://celestia.teyssier.org/splash_spec.html)
 * Updated/added Tethys textures in lores, medres and hires directories. 
 * Added locations on Phoebe in satmoons2.ssc, as extracted from USGS/IAU official data.
-* Added Mesh for Phoebe texture      
+* Added Mesh for Phoebe texture.      
+* Updated Iapetus texture.
