@@ -2557,13 +2557,13 @@ static void displayDistance(Overlay& overlay, double distance)
 static void displayDuration(Overlay& overlay, double days)
 {
     if (days > 1.0)
-        overlay << days << _(" days");
+        overlay << FormattedNumber(days, 3, FormattedNumber::GroupThousands) << _(" days");
     else if (days > 1.0 / 24.0)
-        overlay << days * 24.0 << _(" hours");
+        overlay << FormattedNumber(days * 24.0, 3, FormattedNumber::GroupThousands) << _(" hours");
     else if (days > 1.0 / (24.0 * 60.0))
-        overlay << days * 24.0 * 60.0 << _(" minutes");
+        overlay << FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands) << _(" minutes");
     else
-        overlay << days * 24.0 * 60.0 * 60.0 << " seconds";
+        overlay << FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands) << " seconds";
 }
 
 
@@ -2889,15 +2889,6 @@ static void showViewFrame(const View* v, int width, int height)
 
 void CelestiaCore::renderOverlay()
 {
-    static locale currentLocale;
-    static locale cLocale;
-    static bool localeSet = false;
-
-    if (!localeSet) {
-        cLocale = overlay->getloc();
-        currentLocale = locale(cLocale, "", std::locale::numeric);
-        localeSet = true;
-    }
 
     if (font == NULL)
         return;
@@ -2977,8 +2968,6 @@ void CelestiaCore::renderOverlay()
     	    lt = 0.0;
     	}
 
-        overlay->imbue(locale::classic());
-
         if (timeZoneBias != 0 &&
             sim->getTime() < 2465442 &&
             sim->getTime() > 2415733) 
@@ -3020,11 +3009,9 @@ void CelestiaCore::renderOverlay()
             *overlay << '\n';
         }
 
-        setlocale(LC_NUMERIC, "");
-        overlay->imbue(currentLocale);
+         setlocale(LC_NUMERIC, "");
 
         {
-            *overlay << setprecision(0);
             if (abs(abs(timeScale) - 1) < 1e-6)
             {
                 if (sign(timeScale) == 1)
@@ -3038,13 +3025,12 @@ void CelestiaCore::renderOverlay()
             }
             else if (abs(timeScale) > 1.0)
             {
-                *overlay << timeScale << UTF8_MULTIPLICATION_SIGN << _(" faster");
+                *overlay << SigDigitNum(timeScale, 1) << UTF8_MULTIPLICATION_SIGN << _(" faster");
             }
             else
             {
-                *overlay << 1.0 / timeScale << UTF8_MULTIPLICATION_SIGN << _(" slower");
+                *overlay << SigDigitNum(1.0 / timeScale, 1) << UTF8_MULTIPLICATION_SIGN << _(" slower");
             }
-            *overlay << setprecision(3);
 
             if (paused)
             {
@@ -3064,22 +3050,21 @@ void CelestiaCore::renderOverlay()
         overlay->beginText();
         *overlay << '\n';
         if (showFPSCounter)
-            *overlay << _("FPS: ") << fps;
+            *overlay << _("FPS: ") << SigDigitNum(fps, 3);
         overlay->setf(ios::fixed);
-        *overlay << _("\nSpeed: ") << setprecision(3);
+        *overlay << _("\nSpeed: ");
 
         double speed = sim->getObserver().getVelocity().length();
         if (speed < astro::kilometersToMicroLightYears(1.0f))
-            *overlay << astro::microLightYearsToKilometers(speed) * 1000.0f << " m/s";
+            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) * 1000.0f, 3) << " m/s";
         else if (speed < astro::kilometersToMicroLightYears(10000.0f))
-            *overlay << astro::microLightYearsToKilometers(speed) << " km/s";
+            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed), 3) << " km/s";
         else if (speed < astro::kilometersToMicroLightYears((float) astro::speedOfLight * 100.0f))
-            *overlay << astro::microLightYearsToKilometers(speed) / astro::speedOfLight << 'c';
+            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) / astro::speedOfLight, 3) << 'c';
         else if (speed < astro::AUtoMicroLightYears(1000.0f))
-            *overlay << astro::microLightYearsToAU(speed) << " AU/s";
+            *overlay << SigDigitNum(astro::microLightYearsToAU(speed), 3) << " AU/s";
         else
-            *overlay << speed * 1e-6 << " ly/s";
-        *overlay << setprecision(3);
+            *overlay << SigDigitNum(speed * 1e-6, 3) << " ly/s";
 
         overlay->endText();
         glPopMatrix();
@@ -3096,7 +3081,7 @@ void CelestiaCore::renderOverlay()
             *overlay << _("Travelling ");
             double timeLeft = sim->getArrivalTime() - sim->getRealTime();
             if (timeLeft >= 1)
-                *overlay << '(' << (int) timeLeft << ')';
+                *overlay << '(' << FormattedNumber(timeLeft, 0, FormattedNumber::GroupThousands) << ')';
             *overlay << '\n';
         }
         else
@@ -3456,8 +3441,6 @@ void CelestiaCore::renderOverlay()
 
     overlay->end();
     setlocale(LC_NUMERIC, "C");
-    overlay->imbue(currentLocale);
-
 }
 
 
