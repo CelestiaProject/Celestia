@@ -37,19 +37,19 @@
 
 // Time Settings
 
--(double) time ;
--(void) setTime: (double) value ;
+-(NSNumber *) time ;
+-(void) setTime: (NSNumber *) value ;
 
--(double) timeScale ;
--(void) setTimeScale: (double) value ;
+-(NSNumber *) timeScale ;
+-(void) setTimeScale: (NSNumber *) value ;
 
 -(BOOL) synchTime;
 -(void) setSynchTime: (BOOL) value ;
 
 // Gaze Settings
 
--(float) fieldOfView ;
--(void)  setFieldOfView: (float) value ;
+-(NSNumber *) fieldOfView ;
+-(void)  setFieldOfView: (NSNumber *) value ;
 
 // situation
 
@@ -166,36 +166,36 @@
 -(BOOL) showSpacecraftOrbits ; 
 -(void) setShowSpacecraftOrbits: (BOOL) value    ; 
 
--(float) minimumOrbitSize ;
--(void)  setMinimumOrbitSize: (float) value ; 
+-(NSNumber *) minimumOrbitSize ;
+-(void)  setMinimumOrbitSize: (NSNumber *) value ; 
 
 // Location Visibility Settings
 
 // Feature Settings
 
--(float) minimumFeatureSize ;
--(void)  setMinimumFeatureSize: (float) value ; 
+-(NSNumber *) minimumFeatureSize ;
+-(void)  setMinimumFeatureSize: (NSNumber *) value ; 
 
 // Lighting Settings
 
--(float) ambientLightLevel ;
--(void)  setAmbientLightLevel: (float) value ; 
+-(NSNumber *) ambientLightLevel ;
+-(void)  setAmbientLightLevel: (NSNumber *) value ; 
 
 // Star Settings
 
--(float) distanceLimit ;
--(void)  setDistanceLimit: (float) value ; 
+-(NSNumber *) distanceLimit ;
+-(void)  setDistanceLimit: (NSNumber *) value ; 
 
--(float) faintestVisible ;
--(void)  setFaintestVisible: (float) value ; 
+-(NSNumber *) faintestVisible ;
+-(void)  setFaintestVisible: (NSNumber *) value ; 
 
 // Brightness Settings
 
--(float) saturationMagnitude ;
--(void)  setSaturationMagnitude: (float) value ; 
+-(NSNumber *) saturationMagnitude ;
+-(void)  setSaturationMagnitude: (NSNumber *) value ; 
 
--(float) brightnessBias ;
--(void)  setBrightnessBias: (float) value ;
+-(NSNumber *) brightnessBias ;
+-(void)  setBrightnessBias: (NSNumber *) value ;
 
 -(int)  starStyle ;
 -(void) setStarStyle: (int) value ;

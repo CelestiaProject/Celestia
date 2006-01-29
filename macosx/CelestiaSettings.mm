@@ -327,19 +327,19 @@ static NSMutableDictionary* tagMap;
 
 // Time Settings
 
--(double) time { return appCore->getSimulation()->getTime(); };
--(void) setTime: (double) value { appCore->getSimulation()->setTime(value); };
+-(NSNumber *) time { return [NSNumber numberWithDouble: appCore->getSimulation()->getTime()]; }
+-(void) setTime: (NSNumber *) value { appCore->getSimulation()->setTime(value ? [value doubleValue] : 0.0); }
 
--(double) timeScale { return appCore->getSimulation()->getTimeScale(); };
--(void) setTimeScale: (double) value { appCore->getSimulation()->setTimeScale(value); };
+-(NSNumber *) timeScale { return [NSNumber numberWithDouble: appCore->getSimulation()->getTimeScale()]; }
+-(void) setTimeScale: (NSNumber *) value { appCore->getSimulation()->setTimeScale(value ? [value doubleValue] : 0.0); }
 
 -(BOOL) synchTime { return appCore->getSimulation()->getSyncTime(); };
 -(void) setSynchTime: (BOOL) value { appCore->getSimulation()->setSyncTime(value); };
 
 // Gaze Settings
 
--(float) fieldOfView { return appCore->getSimulation()->getObserver().getFOV(); };
--(void)  setFieldOfView: (float) value { appCore->getSimulation()->getObserver().setFOV(value); };
+-(NSNumber *) fieldOfView { return [NSNumber numberWithFloat: appCore->getSimulation()->getObserver().getFOV()]; }
+-(void)  setFieldOfView: (NSNumber *) value { appCore->getSimulation()->getObserver().setFOV(value ? [value floatValue] : 0.0f); }
 
 // Observer Settings
 
@@ -410,8 +410,8 @@ ORBITMETHODS(Spacecraft)
 ORBITMETHODS(Comet)
 
 
--(float) minimumOrbitSize { return appCore->getRenderer()->getMinimumOrbitSize(); };
--(void)  setMinimumOrbitSize: (float) value { appCore->getRenderer()->setMinimumOrbitSize(value); };
+-(NSNumber *) minimumOrbitSize { return [NSNumber numberWithFloat: appCore->getRenderer()->getMinimumOrbitSize()]; }
+-(void)  setMinimumOrbitSize: (NSNumber *) value { appCore->getRenderer()->setMinimumOrbitSize(value ? [value floatValue] : 0.0f); }
 
 // Feature Settings
 
@@ -447,56 +447,57 @@ FEATUREMETHODS(Fluctus)
 FEATUREMETHODS(Farrum)
 FEATUREMETHODS(Other)
 
--(float) minimumFeatureSize { return appCore->getRenderer()->getMinimumFeatureSize(); };
--(void)  setMinimumFeatureSize: (float) value { appCore->getRenderer()->setMinimumFeatureSize(value); };
+-(NSNumber *) minimumFeatureSize { return [NSNumber numberWithFloat: appCore->getRenderer()->getMinimumFeatureSize()]; }
+-(void)  setMinimumFeatureSize: (NSNumber *) value { appCore->getRenderer()->setMinimumFeatureSize(value ? [value floatValue] : 0.0f); }
 
 // Lighting Settings
 
--(float) ambientLightLevel { return appCore->getRenderer()->getAmbientLightLevel(); };
--(void)  setAmbientLightLevel: (float) value { appCore->getRenderer()->setAmbientLightLevel(value); };
+-(NSNumber *) ambientLightLevel { return [NSNumber numberWithFloat: appCore->getRenderer()->getAmbientLightLevel()]; }
+-(void)  setAmbientLightLevel: (NSNumber *) value { appCore->getRenderer()->setAmbientLightLevel(value ? [value floatValue] : 0.0f); }
 
--(float) galaxyBrightness { return Galaxy::getLightGain(); };
--(void)  setGalaxyBrightness: (float) value { Galaxy::setLightGain(value); };
+-(NSNumber *) galaxyBrightness { return [NSNumber numberWithFloat: Galaxy::getLightGain()]; }
+-(void)  setGalaxyBrightness: (NSNumber *) value { Galaxy::setLightGain(value ? [value floatValue] : 0.0f); }
 
 // Star Settings
 
--(float) distanceLimit { return appCore->getRenderer()->getDistanceLimit(); };
--(void)  setDistanceLimit: (float) value { appCore->getRenderer()->setDistanceLimit(value); };
+-(NSNumber *) distanceLimit { return [NSNumber numberWithFloat: appCore->getRenderer()->getDistanceLimit()]; }
+-(void)  setDistanceLimit: (NSNumber *) value { appCore->getRenderer()->setDistanceLimit(value ? [value floatValue] : 0.0f); }
 
--(float) faintestVisible 
+-(NSNumber *) faintestVisible 
 { 
 //    return appCore->getSimulation()->getFaintestVisible(); 
     if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
-        return appCore->getSimulation()->getFaintestVisible();
+        return [NSNumber numberWithFloat: appCore->getSimulation()->getFaintestVisible()];
     }
     else
     {
-        return appCore->getRenderer()->getFaintestAM45deg();
+        return [NSNumber numberWithFloat: appCore->getRenderer()->getFaintestAM45deg()];
     }                
-};
+}
 
--(void)  setFaintestVisible: (float) value 
-{ 
-//    appCore->getSimulation()->setFaintestVisible(value); 
+-(void)  setFaintestVisible: (NSNumber *) value 
+{
+    float theValue = value ? [value floatValue] : 0.0f;
+
     if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
-        appCore->setFaintest(value);
+        appCore->setFaintest(theValue);
     }
     else
     {
-        appCore->getRenderer()->setFaintestAM45deg(value);
+        appCore->getRenderer()->setFaintestAM45deg(theValue);
         appCore->setFaintestAutoMag();
     }                
-};
+}
 
 // Brightness Settings
 
--(float) saturationMagnitude { return appCore->getRenderer()->getSaturationMagnitude(); } ;
--(void)  setSaturationMagnitude: (float) value { appCore->getRenderer()->setSaturationMagnitude(value); };
+-(NSNumber *) saturationMagnitude { return [NSNumber numberWithFloat: appCore->getRenderer()->getSaturationMagnitude()]; }
+-(void)  setSaturationMagnitude: (NSNumber *) value { appCore->getRenderer()->setSaturationMagnitude(value ? [value floatValue] : 0.0f); }
 
--(float) brightnessBias { return appCore->getRenderer()->getBrightnessBias(); } ;
--(void)  setBrightnessBias: (float) value { appCore->getRenderer()->setBrightnessBias(value); };
+-(NSNumber *) brightnessBias { return [NSNumber numberWithFloat: appCore->getRenderer()->getBrightnessBias()]; }
+-(void)  setBrightnessBias: (NSNumber *) value { appCore->getRenderer()->setBrightnessBias(value ? [value floatValue] : 0.0f); }
 
 -(int)  starStyle { return appCore->getRenderer()->getStarStyle(); }  ;
 -(void) setStarStyle: (int) value { appCore->getRenderer()->setStarStyle((Renderer::StarStyle)value); };
