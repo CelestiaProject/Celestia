@@ -1,0 +1,174 @@
+Location "Afon" "Sol/Ida"
+{
+    LongLat [ 0 6.5 0 ]
+    Size 25.0
+    Type "AA"
+}
+
+Location "Atea" "Sol/Ida"
+{
+    LongLat [ -18.9 5.7 0 ]
+    Size 2.0
+    Type "AA"
+}
+
+Location "Azzurra" "Sol/Ida"
+{
+    LongLat [ -217.2 -30.5 0 ]
+    Size 9.6
+    Type "AA"
+}
+
+Location "Bilemot" "Sol/Ida"
+{
+    LongLat [ -29.2 27.8 0 ]
+    Size 1.8
+    Type "AA"
+}
+
+Location "Castellana" "Sol/Ida"
+{
+    LongLat [ -335.2 13.4 0 ]
+    Size 5.2
+    Type "AA"
+}
+
+Location "Choukoutien" "Sol/Ida"
+{
+    LongLat [ -23.6 -12.8 0 ]
+    Size 1.1
+    Type "AA"
+}
+
+Location "Fingal" "Sol/Ida"
+{
+    LongLat [ -39.9 13.2 0 ]
+    Size 1.5
+    Type "AA"
+}
+
+Location "Kartchner" "Sol/Ida"
+{
+    LongLat [ -179.0 7.0 0 ]
+    Size 0.9
+    Type "AA"
+}
+
+Location "Kazumura" "Sol/Ida"
+{
+    LongLat [ -41.1 32.0 0 ]
+    Size 2.1
+    Type "AA"
+}
+
+Location "Lascaux" "Sol/Ida"
+{
+    LongLat [ -161.2 -0.8 0 ]
+    Size 11.8
+    Type "AA"
+}
+
+Location "Lechuguilla" "Sol/Ida"
+{
+    LongLat [ -357.1 -7.9 0 ]
+    Size 1.5
+    Type "AA"
+}
+
+Location "Mammoth" "Sol/Ida"
+{
+    LongLat [ -180.3 18.3 0 ]
+    Size 10.2
+    Type "AA"
+}
+
+Location "Manjang" "Sol/Ida"
+{
+    LongLat [ -90.5 28.3 0 ]
+    Size 1.0
+    Type "AA"
+}
+
+Location "Orgnac" "Sol/Ida"
+{
+    LongLat [ -202.7 6.3 0 ]
+    Size 10.6
+    Type "AA"
+}
+
+Location "Padirac" "Sol/Ida"
+{
+    LongLat [ -5.2 4.3 0 ]
+    Size 1.9
+    Type "AA"
+}
+
+Location "Peacock" "Sol/Ida"
+{
+    LongLat [ -52.0 2.0 0 ]
+    Size 0.2
+    Type "AA"
+}
+
+Location "Postojna" "Sol/Ida"
+{
+    LongLat [ -359.9 42.9 0 ]
+    Size 6.0
+    Type "AA"
+}
+
+Location "Sterkfontein" "Sol/Ida"
+{
+    LongLat [ -54.1 4.1 0 ]
+    Size 4.7
+    Type "AA"
+}
+
+Location "Stiffe" "Sol/Ida"
+{
+    LongLat [ -126.5 27.9 0 ]
+    Size 1.5
+    Type "AA"
+}
+
+Location "Undara" "Sol/Ida"
+{
+    LongLat [ -113.8 -2.0 0 ]
+    Size 8.5
+    Type "AA"
+}
+
+Location "Viento" "Sol/Ida"
+{
+    LongLat [ -343.9 -12.2 0 ]
+    Size 1.6
+    Type "AA"
+}
+
+Location "PALISA REGIO" "Sol/Ida"
+{
+    LongLat [ -34 23 0 ]
+    Size 23
+    Type "RE"
+}
+
+Location "POLA REGIO" "Sol/Ida"
+{
+    LongLat [ -184 11 0 ]
+    Size 8
+    Type "RE"
+}
+
+Location "VIENNA REGIO" "Sol/Ida"
+{
+    LongLat [ -2 -8 0 ]
+    Size 13
+    Type "RE"
+}
+
+Location "Townsend Dorsum" "Sol/Ida"
+{
+    LongLat [ -30 -25 0 ]
+    Size 40
+    Type "DO"
+}
