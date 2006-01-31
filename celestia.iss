@@ -87,7 +87,7 @@ Source: "data\jupitermoons_locs.ssc"; DestDir: "{app}/data"; Flags: ignoreversio
 Source: "data\saturnmoons_locs.ssc";  DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\uranusmoons_locs.ssc";  DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\neptunemoons_locs.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\ringlocs.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\ring_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\eros_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\gaspra_locs.ssc";    DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\ida_locs.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
