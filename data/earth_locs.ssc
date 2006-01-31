@@ -1,0 +1,84 @@
+Location "NORTH AMERICA" "Sol/Earth"
+{
+    LongLat [ -105 40 0 ]
+    Size 5000
+    Type "TA"
+}
+
+Location "SOUTH AMERICA" "Sol/Earth"
+{
+    LongLat [ -60 -10 0 ]
+    Size 4200
+    Type "TA"
+}
+
+
+Location "EURASIA" "Sol/Earth"
+{
+    LongLat [ 60 50 0 ]
+    Size 7300
+    Type "TA"
+}
+
+Location "AFRICA" "Sol/Earth"
+{
+    LongLat [ 20 5 0 ]
+    Size 5500
+    Type "TA"
+}
+
+Location "AUSTRALIA" "Sol/Earth"
+{
+    LongLat [ 135 -25 0 ]
+    Size 2800
+    Type "TA"
+}
+
+Location "ANTARCTICA" "Sol/Earth"
+{
+    LongLat [ 0 -90 0 ]
+    Size 3600
+    Type "TA"
+}
+
+Location "NORTH ATLANTIC OCEAN" "Sol/Earth"
+{
+    LongLat [ -45 40 0 ]
+    Size 6400
+    Type "ME"
+}
+
+Location "SOUTH ATLANTIC OCEAN" "Sol/Earth"
+{
+    LongLat [ -15 -15 0 ]
+    Size 6400
+    Type "ME"
+}
+
+Location "NORTH PACIFIC OCEAN" "Sol/Earth"
+{
+    LongLat [ 180 30 0 ]
+    Size 9000
+    Type "ME"
+}
+
+Location "SOUTH PACIFIC OCEAN" "Sol/Earth"
+{
+    LongLat [ -160 -10 0 ]
+    Size 9000
+    Type "ME"
+}
+
+Location "INDIAN OCEAN" "Sol/Earth"
+{
+    LongLat [ 75 -15 0 ]
+    Size 8500
+    Type "ME"
+}
+
+Location "ARCTIC OCEAN" "Sol/Earth"
+{
+    LongLat [ 0 90 0 ]
+    Size 3700
+    Type "ME"
+}
