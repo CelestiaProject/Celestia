@@ -1,0 +1,434 @@
+Location "Abatos Planum" "Sol/Neptune/Triton"
+{
+    LongLat [ -58 21.5 0 ]
+    Size 400
+    Type "PM"
+}
+
+Location "Akupara Maculae" "Sol/Neptune/Triton"
+{
+    LongLat [ -63 27.5 0 ]
+    Size 100
+    Type "MA"
+}
+
+Location "Amarum" "Sol/Neptune/Triton"
+{
+    LongLat [ -24.5 -26 0 ]
+    Size 25
+    Type "AA"
+}
+
+Location "Andvari" "Sol/Neptune/Triton"
+{
+    LongLat [ -34 -20.5 0 ]
+    Size 25
+    Type "AA"
+}
+
+Location "Apep Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -301.5 -20 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Awib Dorsa" "Sol/Neptune/Triton"
+{
+    LongLat [ -80 7 0 ]
+    Size 100
+    Type "DO"
+}
+
+Location "Bheki Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -308 -16 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Bia Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -3 38 0 ]
+    Size 200
+    Type "SU"
+}
+
+Location "Boynne Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -350 13 0 ]
+    Size 500
+    Type "SU"
+}
+
+Location "BUBEMBE REGIO" "Sol/Neptune/Triton"
+{
+    LongLat [ -335 -18 0 ]
+    Size 700
+    Type "RE"
+}
+
+Location "Cay" "Sol/Neptune/Triton"
+{
+    LongLat [ -44 12 0 ]
+    Size 25
+    Type "AA"
+}
+
+Location "Cipango Planum" "Sol/Neptune/Triton"
+{
+    LongLat [ -34 -11.5 0 ]
+    Size 300
+    Type "PM"
+}
+
+Location "Dagon Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -345 -29 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Dilolo Patera" "Sol/Neptune/Triton"
+{
+    LongLat [ -24.3 -26.2 0 ]
+    Size 25
+    Type "PE"
+}
+
+Location "Doro Macula" "Sol/Neptune/Triton"
+{
+    LongLat [ -31.7 27.5 0 ]
+    Size 100
+    Type "MA"
+}
+
+Location "Gandvik Patera" "Sol/Neptune/Triton"
+{
+    LongLat [ -5.5 -28 0 ]
+    Size 25
+    Type "PE"
+}
+
+Location "Hekt Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -342 -26 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Hili" "Sol/Neptune/Triton"
+{
+    LongLat [ -35 57 0 ]
+    Size 25
+    Type "PU"
+}
+
+Location "Hirugo Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -345 -14.5 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Ho Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -305 -2 0 ]
+    Size 300
+    Type "SU"
+}
+
+Location "Ilomba" "Sol/Neptune/Triton"
+{
+    LongLat [ -57 14.5 0 ]
+    Size 25
+    Type "AA"
+}
+
+Location "Jumna Fossae" "Sol/Neptune/Triton"
+{
+    LongLat [ -44 13.5 0 ]
+    Size 300
+    Type "FO"
+}
+
+Location "Kasu Patera" "Sol/Neptune/Triton"
+{
+    LongLat [ -14 -39 0 ]
+    Size 25
+    Type "PE"
+}
+
+Location "Kasyapa Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -358 -7.5 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Kibu Patera" "Sol/Neptune/Triton"
+{
+    LongLat [ -43 -10.5 0 ]
+    Size 25
+    Type "PE"
+}
+
+Location "Kikimora Maculae" "Sol/Neptune/Triton"
+{
+    LongLat [ -78 31 0 ]
+    Size 100
+    Type "MA"
+}
+
+Location "Kormet Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -335.5 -23 0 ]
+    Size 300
+    Type "SU"
+}
+
+Location "Kraken Catena" "Sol/Neptune/Triton"
+{
+    LongLat [ -35.5 -14 0 ]
+    Size 150
+    Type "CA"
+}
+
+Location "Kulilu Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -4 -41 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Kurma" "Sol/Neptune/Triton"
+{
+    LongLat [ -61 16.5 0 ]
+    Size 25
+    Type "AA"
+}
+
+Location "Leipter Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -9 -7 0 ]
+    Size 200
+    Type "SU"
+}
+
+Location "Leviathan Patera" "Sol/Neptune/Triton"
+{
+    LongLat [ -28.5 -17 0 ]
+    Size 100
+    Type "PE"
+}
+
+Location "Lo Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -321 -3.8 0 ]
+    Size 150
+    Type "SU"
+}
+
+Location "Mah Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -6 -38 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Mahilani" "Sol/Neptune/Triton"
+{
+    LongLat [ -359.5 50.5 0 ]
+    Size 25
+    Type "PU"
+}
+
+Location "Mangwe Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -343 7 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Mazomba" "Sol/Neptune/Triton"
+{
+    LongLat [ -63.5 18.5 0 ]
+    Size 25
+    Type "AA"
+}
+
+Location "Medamothi Planum" "Sol/Neptune/Triton"
+{
+    LongLat [ -69 -3.5 0 ]
+    Size 300
+    Type "PM"
+}
+
+Location "MONAD REGIO" "Sol/Neptune/Triton"
+{
+    LongLat [ -37 -20 0 ]
+    Size 1000
+    Type "RE"
+}
+
+Location "Namazu Macula" "Sol/Neptune/Triton"
+{
+    LongLat [ -14 25.5 0 ]
+    Size 100
+    Type "MA"
+}
+
+Location "Ob Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -328 6 0 ]
+    Size 300
+    Type "SU"
+}
+
+Location "Ormet Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -337 -17 0 ]
+    Size 300
+    Type "SU"
+}
+
+Location "Ravgga" "Sol/Neptune/Triton"
+{
+    LongLat [ -71.5 3 0 ]
+    Size 25
+    Type "AA"
+}
+
+Location "Raz Fossae" "Sol/Neptune/Triton"
+{
+    LongLat [ -21.5 -8 0 ]
+    Size 300
+    Type "FO"
+}
+
+Location "Rem Maculae" "Sol/Neptune/Triton"
+{
+    LongLat [ -349.5 -13 0 ]
+    Size 150
+    Type "MA"
+}
+
+Location "Ruach Planitia" "Sol/Neptune/Triton"
+{
+    LongLat [ -24 -28 0 ]
+    Size 200
+    Type "PL"
+}
+
+Location "Ryugu Planitia" "Sol/Neptune/Triton"
+{
+    LongLat [ -27 5 0 ]
+    Size 100
+    Type "PL"
+}
+
+Location "Set Catena" "Sol/Neptune/Triton"
+{
+    LongLat [ -33.5 -22 0 ]
+    Size 200
+    Type "CA"
+}
+
+Location "Sipapu Planitia" "Sol/Neptune/Triton"
+{
+    LongLat [ -36 4 0 ]
+    Size 100
+    Type "PL"
+}
+
+Location "Slidr Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -350 -23.5 0 ]
+    Size 200
+    Type "SU"
+}
+
+Location "Tangaroa" "Sol/Neptune/Triton"
+{
+    LongLat [ -65.5 25 0 ]
+    Size 100
+    Type "AA"
+}
+
+Location "Tano Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -337 -33.5 0 ]
+    Size 300
+    Type "SU"
+}
+
+Location "Tuonela Planitia" "Sol/Neptune/Triton"
+{
+    LongLat [ -14.5 -34 0 ]
+    Size 300
+    Type "PL"
+}
+
+Location "UHLANGA REGIO" "Sol/Neptune/Triton"
+{
+    LongLat [ -357 37 0 ]
+    Size 1000
+    Type "RE"
+}
+
+Location "Ukupanio Cavus" "Sol/Neptune/Triton"
+{
+    LongLat [ -23 -35 0 ]
+    Size 25
+    Type "CB"
+}
+
+Location "Vimur Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -59 11 0 ]
+    Size 400
+    Type "SU"
+}
+
+Location "Viviane Macula" "Sol/Neptune/Triton"
+{
+    LongLat [ -36.5 31 0 ]
+    Size 100
+    Type "MA"
+}
+
+Location "Vodyanoy" "Sol/Neptune/Triton"
+{
+    LongLat [ -28.5 17 0 ]
+    Size 100
+    Type "AA"
+}
+
+Location "Yasu Sulci" "Sol/Neptune/Triton"
+{
+    LongLat [ -347 -2 0 ]
+    Size 300
+    Type "SU"
+}
+
+Location "Yenisey Fossa" "Sol/Neptune/Triton"
+{
+    LongLat [ -56.2 -3 0 ]
+    Size 300
+    Type "FO"
+}
+
+Location "Zin Maculae" "Sol/Neptune/Triton"
+{
+    LongLat [ -68 24.5 0 ]
+    Size 300
+    Type "MA"
+}
+
+Location "Pharos" "Sol/Neptune/Proteus"
+{
+    LongLat [ -5 -20 0 ]
+    Size 255
+    Type "AA"
+}
+
