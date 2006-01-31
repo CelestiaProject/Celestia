@@ -960,3 +960,7 @@ Code:
 * Added locations on Phoebe in satmoons2.ssc, as extracted from USGS/IAU official data.
 * Added Mesh for Phoebe texture.      
 * Updated Iapetus texture.
+* Moved locations files from extras into data directory for inclusion in
+  standard package.
+* Fixed bug where displayed time scale differed from actual time scale after
+  clicking a cel URL.
