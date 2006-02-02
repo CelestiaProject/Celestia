@@ -39,13 +39,12 @@ SelectionPopup::SelectionPopup(QWidget* parent, CelestiaCore* _appCore, Selectio
 
 void SelectionPopup::init()
 {
-    QLabel *lab = new QLabel("", this);
-    QPalette pal( lab->palette() );
+    QPalette pal( palette() );
     pal.setColor( QPalette::Normal, QColorGroup::Background, QColor( "White" ) );
     pal.setColor( QPalette::Normal, QColorGroup::Foreground, QColor( "Black" ) );
     pal.setColor( QPalette::Inactive, QColorGroup::Foreground, QColor( "Black" ) );
 
-    QFont rsFont = lab->font();
+    QFont rsFont = font();
     rsFont.setPointSize( rsFont.pointSize() - 2 );
 
     Simulation *sim = appCore->getSimulation();
