@@ -4,7 +4,9 @@
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius  1300              # estimate
+	Radius  1500
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/planetlila/index.html"
 
 	EllipticalOrbit {
 		Epoch        2453600.5    # 2005 Aug 18 00:00UT
@@ -16,6 +18,8 @@
 		ArgOfPericenter  151.311      
 		MeanAnomaly      197.538 
    	} 
+
+	Albedo 0.6
 
 	RotationPeriod     48.0   # guess
 }
