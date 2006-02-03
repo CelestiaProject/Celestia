@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hu\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-01-27 15:50+0100\n"
+"POT-Creation-Date: 2006-02-03 15:27+0100\n"
 "PO-Revision-Date: 2005-02-27 15:44+0100\n"
 "Last-Translator: Aron Novak <aaron@szentimre.hu>\n"
 "Language-Team: Hungarian\n"
@@ -496,7 +496,7 @@ msgstr "Önműködő fényesség"
 
 #: src/celestia/celestiacore.cpp:2656 src/celestia/celestiacore.cpp:2710
 #: src/celestia/celestiacore.cpp:2742 src/celestia/celestiacore.cpp:2794
-#: src/celestia/kde/selectionpopup.cpp:77
+#: src/celestia/kde/selectionpopup.cpp:76
 msgid "Distance: "
 msgstr "Távolság: "
 
@@ -513,7 +513,7 @@ msgstr "Absz. (app) fény:"
 msgid "Luminosity: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2673 src/celestia/kde/selectionpopup.cpp:87
+#: src/celestia/celestiacore.cpp:2673 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
 msgstr "Osztály:"
 
@@ -549,7 +549,7 @@ msgid "Distance from center: "
 msgstr "Távolság: "
 
 #: src/celestia/celestiacore.cpp:2719 src/celestia/celestiacore.cpp:2747
-#: src/celestia/kde/selectionpopup.cpp:95
+#: src/celestia/kde/selectionpopup.cpp:94
 msgid "Radius: "
 msgstr "Sugár: "
 
@@ -801,7 +801,7 @@ msgid "Eclipse Finder"
 msgstr "Fogyatkozáskereső"
 
 #: src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:311
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Goto"
 msgstr "&Ugrás"
 
@@ -1299,6 +1299,16 @@ msgstr ""
 msgid "Start and go to url"
 msgstr "Indít és URL-re lép"
 
+#: src/celestia/kde/kdemain.cpp:71
+#, fuzzy
+msgid "_: NAME OF TRANSLATORS\\nYour names"
+msgstr "Novák Áron"
+
+#: src/celestia/kde/kdemain.cpp:71
+#, fuzzy
+msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+msgstr "aaron@szentimre.hu"
+
 #: src/celestia/kde/kdepreferencesdialog.cpp:56
 msgid "Celestia Preferences"
 msgstr "Celestia beállítások"
@@ -1318,7 +1328,7 @@ msgstr "Csillagok"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:80
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/kde/selectionpopup.cpp:386
+#: src/celestia/kde/selectionpopup.cpp:385
 msgid "Planets"
 msgstr "Bolygók"
 
@@ -1622,79 +1632,79 @@ msgstr ""
 msgid "Extras directory %1 does not exist"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:79
+#: src/celestia/kde/selectionpopup.cpp:78
 msgid "Abs (app) mag: "
 msgstr "Absz. (app) fény:"
 
-#: src/celestia/kde/selectionpopup.cpp:91
+#: src/celestia/kde/selectionpopup.cpp:90
 msgid "Surface Temp: "
 msgstr "Felszíni hőm.:"
 
-#: src/celestia/kde/selectionpopup.cpp:128
+#: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"
 msgstr "Megjelölt objektumok"
 
-#: src/celestia/kde/selectionpopup.cpp:309
+#: src/celestia/kde/selectionpopup.cpp:308
 msgid "&Select"
 msgstr "&Kiválaszt"
 
-#: src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/kde/selectionpopup.cpp:309
 msgid "&Center"
 msgstr "Kö&zépre"
 
-#: src/celestia/kde/selectionpopup.cpp:312
+#: src/celestia/kde/selectionpopup.cpp:311
 msgid "&Follow"
 msgstr "Köve&t"
 
-#: src/celestia/kde/selectionpopup.cpp:313
+#: src/celestia/kde/selectionpopup.cpp:312
 msgid "S&ynch Orbit"
 msgstr "Pálya &szink."
 
-#: src/celestia/kde/selectionpopup.cpp:314
+#: src/celestia/kde/selectionpopup.cpp:313
 msgid "&Info"
 msgstr "&Adatok"
 
-#: src/celestia/kde/selectionpopup.cpp:315
+#: src/celestia/kde/selectionpopup.cpp:314
 msgid "Unmark &All"
 msgstr "&Megjelölések megszűntetése"
 
-#: src/celestia/kde/selectionpopup.cpp:318
+#: src/celestia/kde/selectionpopup.cpp:317
 msgid "&Unmark"
 msgstr "Jelölés &törlése"
 
-#: src/celestia/kde/selectionpopup.cpp:323
+#: src/celestia/kde/selectionpopup.cpp:322
 msgid "Diamond"
 msgstr "Gyémánt"
 
-#: src/celestia/kde/selectionpopup.cpp:324
+#: src/celestia/kde/selectionpopup.cpp:323
 msgid "Triangle"
 msgstr "Háromszög"
 
-#: src/celestia/kde/selectionpopup.cpp:325
+#: src/celestia/kde/selectionpopup.cpp:324
 msgid "Square"
 msgstr "Négyzet"
 
-#: src/celestia/kde/selectionpopup.cpp:326
+#: src/celestia/kde/selectionpopup.cpp:325
 msgid "Plus"
 msgstr "Plusz"
 
-#: src/celestia/kde/selectionpopup.cpp:327
+#: src/celestia/kde/selectionpopup.cpp:326
 msgid "X"
 msgstr "X"
 
-#: src/celestia/kde/selectionpopup.cpp:328
+#: src/celestia/kde/selectionpopup.cpp:327
 msgid "&Mark"
 msgstr "&Jelöl"
 
-#: src/celestia/kde/selectionpopup.cpp:339
+#: src/celestia/kde/selectionpopup.cpp:338
 msgid "Normal"
 msgstr "Alap"
 
-#: src/celestia/kde/selectionpopup.cpp:346
+#: src/celestia/kde/selectionpopup.cpp:345
 msgid "&Alternate Surfaces"
 msgstr "&Felületek"
 
-#: src/celestia/kde/selectionpopup.cpp:364
+#: src/celestia/kde/selectionpopup.cpp:363
 msgid "Satellites"
 msgstr "Mellékbolygók"
 
@@ -2803,16 +2813,6 @@ msgstr ""
 
 #~ msgid "buttonGroup1"
 #~ msgstr "gombCsoport1"
-
-#~ msgid ""
-#~ "_: NAME OF TRANSLATORS\n"
-#~ "Your names"
-#~ msgstr "Novák Áron"
-
-#~ msgid ""
-#~ "_: EMAIL OF TRANSLATORS\n"
-#~ "Your emails"
-#~ msgstr "aaron@szentimre.hu"
 
 #~ msgid "EclipseFinderDlgBase"
 #~ msgstr "FogyatkozásKeresőPárbeszédAblak"

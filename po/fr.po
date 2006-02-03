@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-01-27 15:50+0100\n"
-"PO-Revision-Date: 2006-01-27 16:30+0100\n"
+"POT-Creation-Date: 2006-02-03 15:27+0100\n"
+"PO-Revision-Date: 2006-02-03 15:38+0100\n"
 "Last-Translator: Christophe Teyssier <chris@teyssier.org>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -481,7 +481,7 @@ msgstr "Magnitude absolue : "
 
 #: src/celestia/celestiacore.cpp:2656 src/celestia/celestiacore.cpp:2710
 #: src/celestia/celestiacore.cpp:2742 src/celestia/celestiacore.cpp:2794
-#: src/celestia/kde/selectionpopup.cpp:77
+#: src/celestia/kde/selectionpopup.cpp:76
 msgid "Distance: "
 msgstr "Distance : "
 
@@ -498,7 +498,7 @@ msgstr "Mag.abs (app) : %.2f (%.2f)\n"
 msgid "Luminosity: "
 msgstr "Luminosité : "
 
-#: src/celestia/celestiacore.cpp:2673 src/celestia/kde/selectionpopup.cpp:87
+#: src/celestia/celestiacore.cpp:2673 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
 msgstr "Classe : "
 
@@ -532,7 +532,7 @@ msgid "Distance from center: "
 msgstr "Distance du centre : "
 
 #: src/celestia/celestiacore.cpp:2719 src/celestia/celestiacore.cpp:2747
-#: src/celestia/kde/selectionpopup.cpp:95
+#: src/celestia/kde/selectionpopup.cpp:94
 msgid "Radius: "
 msgstr "Rayon : "
 
@@ -774,7 +774,7 @@ msgid "Eclipse Finder"
 msgstr "Découvreur d'éclipses"
 
 #: src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:311
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Goto"
 msgstr "&Aller à"
 
@@ -1269,6 +1269,14 @@ msgstr "Désactiver l'écran de démarrage"
 msgid "Start and go to url"
 msgstr "Démarre et va à l'URL"
 
+#: src/celestia/kde/kdemain.cpp:71
+msgid "_: NAME OF TRANSLATORS\\nYour names"
+msgstr "Christophe Teyssier avec l'aide de ElChristou"
+
+#: src/celestia/kde/kdemain.cpp:71
+msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+msgstr "i18n@teyssier.org"
+
 #: src/celestia/kde/kdepreferencesdialog.cpp:56
 msgid "Celestia Preferences"
 msgstr "Préférences de Celestia"
@@ -1288,7 +1296,7 @@ msgstr "Étoiles"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:80
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/kde/selectionpopup.cpp:386
+#: src/celestia/kde/selectionpopup.cpp:385
 msgid "Planets"
 msgstr "Planètes"
 
@@ -1594,79 +1602,79 @@ msgstr "Le répertoire %1 n'existe pas, utilisation du répertoire par défaut %
 msgid "Extras directory %1 does not exist"
 msgstr "Le répertoire \"extras\" %1 n'existe pas"
 
-#: src/celestia/kde/selectionpopup.cpp:79
+#: src/celestia/kde/selectionpopup.cpp:78
 msgid "Abs (app) mag: "
 msgstr "Mag.abs (app): "
 
-#: src/celestia/kde/selectionpopup.cpp:91
+#: src/celestia/kde/selectionpopup.cpp:90
 msgid "Surface Temp: "
 msgstr "Temp. de surface: "
 
-#: src/celestia/kde/selectionpopup.cpp:128
+#: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"
 msgstr "Objets marqués"
 
-#: src/celestia/kde/selectionpopup.cpp:309
+#: src/celestia/kde/selectionpopup.cpp:308
 msgid "&Select"
 msgstr "&Sélectionner"
 
-#: src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/kde/selectionpopup.cpp:309
 msgid "&Center"
 msgstr "&Centrer"
 
-#: src/celestia/kde/selectionpopup.cpp:312
+#: src/celestia/kde/selectionpopup.cpp:311
 msgid "&Follow"
 msgstr "&Suivre"
 
-#: src/celestia/kde/selectionpopup.cpp:313
+#: src/celestia/kde/selectionpopup.cpp:312
 msgid "S&ynch Orbit"
 msgstr "S&ynch. Orbite"
 
-#: src/celestia/kde/selectionpopup.cpp:314
+#: src/celestia/kde/selectionpopup.cpp:313
 msgid "&Info"
 msgstr "&Info"
 
-#: src/celestia/kde/selectionpopup.cpp:315
+#: src/celestia/kde/selectionpopup.cpp:314
 msgid "Unmark &All"
 msgstr "Démarquer &tous"
 
-#: src/celestia/kde/selectionpopup.cpp:318
+#: src/celestia/kde/selectionpopup.cpp:317
 msgid "&Unmark"
 msgstr "&Démarquer"
 
-#: src/celestia/kde/selectionpopup.cpp:323
+#: src/celestia/kde/selectionpopup.cpp:322
 msgid "Diamond"
 msgstr "Losange"
 
-#: src/celestia/kde/selectionpopup.cpp:324
+#: src/celestia/kde/selectionpopup.cpp:323
 msgid "Triangle"
 msgstr "Triangle"
 
-#: src/celestia/kde/selectionpopup.cpp:325
+#: src/celestia/kde/selectionpopup.cpp:324
 msgid "Square"
 msgstr "Carré"
 
-#: src/celestia/kde/selectionpopup.cpp:326
+#: src/celestia/kde/selectionpopup.cpp:325
 msgid "Plus"
 msgstr "Plus"
 
-#: src/celestia/kde/selectionpopup.cpp:327
+#: src/celestia/kde/selectionpopup.cpp:326
 msgid "X"
 msgstr "X"
 
-#: src/celestia/kde/selectionpopup.cpp:328
+#: src/celestia/kde/selectionpopup.cpp:327
 msgid "&Mark"
 msgstr "&Marquer"
 
-#: src/celestia/kde/selectionpopup.cpp:339
+#: src/celestia/kde/selectionpopup.cpp:338
 msgid "Normal"
 msgstr "Normale"
 
-#: src/celestia/kde/selectionpopup.cpp:346
+#: src/celestia/kde/selectionpopup.cpp:345
 msgid "&Alternate Surfaces"
 msgstr "Surfaces &alternatives"
 
-#: src/celestia/kde/selectionpopup.cpp:364
+#: src/celestia/kde/selectionpopup.cpp:363
 msgid "Satellites"
 msgstr "Satellites"
 

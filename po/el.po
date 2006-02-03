@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia-kde\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-01-27 15:50+0100\n"
+"POT-Creation-Date: 2006-02-03 15:27+0100\n"
 "PO-Revision-Date: 2003-06-19 14:08+0300\n"
 "Last-Translator: ironhell3 <ironhell3@hotmail.com>\n"
 "Language-Team: Hellenic <el@li.org>\n"
@@ -488,7 +488,7 @@ msgstr "Αυτόματα Μεγέθη"
 
 #: src/celestia/celestiacore.cpp:2656 src/celestia/celestiacore.cpp:2710
 #: src/celestia/celestiacore.cpp:2742 src/celestia/celestiacore.cpp:2794
-#: src/celestia/kde/selectionpopup.cpp:77
+#: src/celestia/kde/selectionpopup.cpp:76
 msgid "Distance: "
 msgstr "Απόσταση: "
 
@@ -505,7 +505,7 @@ msgstr "Απόλυτο(φαινόμενο)μέγεθος: %.2f (%.2f)\n"
 msgid "Luminosity: "
 msgstr "Φωτεινότητα: "
 
-#: src/celestia/celestiacore.cpp:2673 src/celestia/kde/selectionpopup.cpp:87
+#: src/celestia/celestiacore.cpp:2673 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
 msgstr "Τάξη: "
 
@@ -541,7 +541,7 @@ msgid "Distance from center: "
 msgstr "Απόσταση: "
 
 #: src/celestia/celestiacore.cpp:2719 src/celestia/celestiacore.cpp:2747
-#: src/celestia/kde/selectionpopup.cpp:95
+#: src/celestia/kde/selectionpopup.cpp:94
 msgid "Radius: "
 msgstr "Ακτίνα: "
 
@@ -790,7 +790,7 @@ msgid "Eclipse Finder"
 msgstr "Εύρεση έκλειψης "
 
 #: src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:311
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Goto"
 msgstr "&Πήγαινε"
 
@@ -1306,6 +1306,16 @@ msgstr ""
 msgid "Start and go to url"
 msgstr "Ξεκίνα και πήγαινε στο url "
 
+#: src/celestia/kde/kdemain.cpp:71
+#, fuzzy
+msgid "_: NAME OF TRANSLATORS\\nYour names"
+msgstr "georgiouk"
+
+#: src/celestia/kde/kdemain.cpp:71
+#, fuzzy
+msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+msgstr "koula@upatras.gr"
+
 #: src/celestia/kde/kdepreferencesdialog.cpp:56
 msgid "Celestia Preferences"
 msgstr "Προτιμήσεις Celestia "
@@ -1325,7 +1335,7 @@ msgstr "Άστρα"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:80
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/kde/selectionpopup.cpp:386
+#: src/celestia/kde/selectionpopup.cpp:385
 msgid "Planets"
 msgstr "Πλάνητες"
 
@@ -1636,80 +1646,80 @@ msgstr ""
 msgid "Extras directory %1 does not exist"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:79
+#: src/celestia/kde/selectionpopup.cpp:78
 msgid "Abs (app) mag: "
 msgstr "Απόλυτο (φαινόμενο)μέγεθος: "
 
-#: src/celestia/kde/selectionpopup.cpp:91
+#: src/celestia/kde/selectionpopup.cpp:90
 msgid "Surface Temp: "
 msgstr "Θερμοκρασία επιφάνειας: "
 
-#: src/celestia/kde/selectionpopup.cpp:128
+#: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"
 msgstr "Σημειωμένα αντικείμενα"
 
-#: src/celestia/kde/selectionpopup.cpp:309
+#: src/celestia/kde/selectionpopup.cpp:308
 msgid "&Select"
 msgstr "&Επιλογή"
 
-#: src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/kde/selectionpopup.cpp:309
 msgid "&Center"
 msgstr "&Κέντρο"
 
-#: src/celestia/kde/selectionpopup.cpp:312
+#: src/celestia/kde/selectionpopup.cpp:311
 msgid "&Follow"
 msgstr "&Ακολούθησε"
 
-#: src/celestia/kde/selectionpopup.cpp:313
+#: src/celestia/kde/selectionpopup.cpp:312
 #, fuzzy
 msgid "S&ynch Orbit"
 msgstr "&Συγχρονισμός τροχίας"
 
-#: src/celestia/kde/selectionpopup.cpp:314
+#: src/celestia/kde/selectionpopup.cpp:313
 msgid "&Info"
 msgstr "&Πληροφορία"
 
-#: src/celestia/kde/selectionpopup.cpp:315
+#: src/celestia/kde/selectionpopup.cpp:314
 msgid "Unmark &All"
 msgstr "Αποσημείωσε &Όλα"
 
-#: src/celestia/kde/selectionpopup.cpp:318
+#: src/celestia/kde/selectionpopup.cpp:317
 msgid "&Unmark"
 msgstr "&Αποσημείωσε"
 
-#: src/celestia/kde/selectionpopup.cpp:323
+#: src/celestia/kde/selectionpopup.cpp:322
 msgid "Diamond"
 msgstr "Ρόμβος"
 
-#: src/celestia/kde/selectionpopup.cpp:324
+#: src/celestia/kde/selectionpopup.cpp:323
 msgid "Triangle"
 msgstr "Τρίγωνο"
 
-#: src/celestia/kde/selectionpopup.cpp:325
+#: src/celestia/kde/selectionpopup.cpp:324
 msgid "Square"
 msgstr "Τετράγωνο"
 
-#: src/celestia/kde/selectionpopup.cpp:326
+#: src/celestia/kde/selectionpopup.cpp:325
 msgid "Plus"
 msgstr "Πλεον"
 
-#: src/celestia/kde/selectionpopup.cpp:327
+#: src/celestia/kde/selectionpopup.cpp:326
 msgid "X"
 msgstr "X"
 
-#: src/celestia/kde/selectionpopup.cpp:328
+#: src/celestia/kde/selectionpopup.cpp:327
 msgid "&Mark"
 msgstr "&Σημείωσε"
 
-#: src/celestia/kde/selectionpopup.cpp:339
+#: src/celestia/kde/selectionpopup.cpp:338
 msgid "Normal"
 msgstr "Κανονικό"
 
-#: src/celestia/kde/selectionpopup.cpp:346
+#: src/celestia/kde/selectionpopup.cpp:345
 msgid "&Alternate Surfaces"
 msgstr "&Εναλλακτική επιφάνεια"
 
-#: src/celestia/kde/selectionpopup.cpp:364
+#: src/celestia/kde/selectionpopup.cpp:363
 msgid "Satellites"
 msgstr "Δορυφόροι"
 
@@ -2819,16 +2829,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Vol"
 #~ msgstr "Vol"
-
-#~ msgid ""
-#~ "_: NAME OF TRANSLATORS\n"
-#~ "Your names"
-#~ msgstr "georgiouk"
-
-#~ msgid ""
-#~ "_: EMAIL OF TRANSLATORS\n"
-#~ "Your emails"
-#~ msgstr "koula@upatras.gr"
 
 #~ msgid "Show Stars as Points"
 #~ msgstr "Εμφάνιση αστεριών ως σημεία"
