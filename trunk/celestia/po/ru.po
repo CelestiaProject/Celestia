@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia 1.3.3\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-01-27 15:50+0100\n"
+"POT-Creation-Date: 2006-02-03 15:27+0100\n"
 "PO-Revision-Date: 2004-10-19 19:49+0300\n"
 "Last-Translator:  <eugine@aroks.kiev.ua>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -480,7 +480,7 @@ msgstr "Автоувеличение запрещено"
 
 #: src/celestia/celestiacore.cpp:2656 src/celestia/celestiacore.cpp:2710
 #: src/celestia/celestiacore.cpp:2742 src/celestia/celestiacore.cpp:2794
-#: src/celestia/kde/selectionpopup.cpp:77
+#: src/celestia/kde/selectionpopup.cpp:76
 msgid "Distance: "
 msgstr "Расстояние: "
 
@@ -497,7 +497,7 @@ msgstr " Абс. (отн.) величина: %.2f (%.2f)\n"
 msgid "Luminosity: "
 msgstr "Светимость: "
 
-#: src/celestia/celestiacore.cpp:2673 src/celestia/kde/selectionpopup.cpp:87
+#: src/celestia/celestiacore.cpp:2673 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
 msgstr "Класс: "
 
@@ -532,7 +532,7 @@ msgid "Distance from center: "
 msgstr "Расстояние: "
 
 #: src/celestia/celestiacore.cpp:2719 src/celestia/celestiacore.cpp:2747
-#: src/celestia/kde/selectionpopup.cpp:95
+#: src/celestia/kde/selectionpopup.cpp:94
 msgid "Radius: "
 msgstr "Радиус: "
 
@@ -774,7 +774,7 @@ msgid "Eclipse Finder"
 msgstr ""
 
 #: src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:311
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Goto"
 msgstr ""
 
@@ -1280,6 +1280,14 @@ msgstr ""
 msgid "Start and go to url"
 msgstr ""
 
+#: src/celestia/kde/kdemain.cpp:71
+msgid "_: NAME OF TRANSLATORS\\nYour names"
+msgstr ""
+
+#: src/celestia/kde/kdemain.cpp:71
+msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+msgstr ""
+
 #: src/celestia/kde/kdepreferencesdialog.cpp:56
 msgid "Celestia Preferences"
 msgstr ""
@@ -1301,7 +1309,7 @@ msgstr "Марс"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:80
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/kde/selectionpopup.cpp:386
+#: src/celestia/kde/selectionpopup.cpp:385
 #, fuzzy
 msgid "Planets"
 msgstr "Летучей рыбы"
@@ -1619,91 +1627,91 @@ msgstr ""
 msgid "Extras directory %1 does not exist"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:79
+#: src/celestia/kde/selectionpopup.cpp:78
 #, fuzzy
 msgid "Abs (app) mag: "
 msgstr " Абс. (отн.) величина: %.2f (%.2f)\n"
 
-#: src/celestia/kde/selectionpopup.cpp:91
+#: src/celestia/kde/selectionpopup.cpp:90
 #, fuzzy
 msgid "Surface Temp: "
 msgstr "Темп. поверхности:"
 
-#: src/celestia/kde/selectionpopup.cpp:128
+#: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:309
+#: src/celestia/kde/selectionpopup.cpp:308
 #, fuzzy
 msgid "&Select"
 msgstr "Щит"
 
-#: src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/kde/selectionpopup.cpp:309
 #, fuzzy
 msgid "&Center"
 msgstr "Центавра"
 
-#: src/celestia/kde/selectionpopup.cpp:312
+#: src/celestia/kde/selectionpopup.cpp:311
 #, fuzzy
 msgid "&Follow"
 msgstr "Слежение"
 
-#: src/celestia/kde/selectionpopup.cpp:313
+#: src/celestia/kde/selectionpopup.cpp:312
 #, fuzzy
 msgid "S&ynch Orbit"
 msgstr "Синхронная орбита"
 
-#: src/celestia/kde/selectionpopup.cpp:314
+#: src/celestia/kde/selectionpopup.cpp:313
 msgid "&Info"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:315
+#: src/celestia/kde/selectionpopup.cpp:314
 msgid "Unmark &All"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:318
+#: src/celestia/kde/selectionpopup.cpp:317
 msgid "&Unmark"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:323
+#: src/celestia/kde/selectionpopup.cpp:322
 #, fuzzy
 msgid "Diamond"
 msgstr "Диона"
 
-#: src/celestia/kde/selectionpopup.cpp:324
+#: src/celestia/kde/selectionpopup.cpp:323
 #, fuzzy
 msgid "Triangle"
 msgstr "Треугольника"
 
-#: src/celestia/kde/selectionpopup.cpp:325
+#: src/celestia/kde/selectionpopup.cpp:324
 #, fuzzy
 msgid "Square"
 msgstr "Водолея"
 
-#: src/celestia/kde/selectionpopup.cpp:326
+#: src/celestia/kde/selectionpopup.cpp:325
 #, fuzzy
 msgid "Plus"
 msgstr "Плутон"
 
-#: src/celestia/kde/selectionpopup.cpp:327
+#: src/celestia/kde/selectionpopup.cpp:326
 msgid "X"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:328
+#: src/celestia/kde/selectionpopup.cpp:327
 #, fuzzy
 msgid "&Mark"
 msgstr "Марс"
 
-#: src/celestia/kde/selectionpopup.cpp:339
+#: src/celestia/kde/selectionpopup.cpp:338
 #, fuzzy
 msgid "Normal"
 msgstr "Наугольник"
 
-#: src/celestia/kde/selectionpopup.cpp:346
+#: src/celestia/kde/selectionpopup.cpp:345
 msgid "&Alternate Surfaces"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:364
+#: src/celestia/kde/selectionpopup.cpp:363
 msgid "Satellites"
 msgstr ""
 
