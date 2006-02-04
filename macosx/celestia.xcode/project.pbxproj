@@ -371,6 +371,727 @@
 			settings = {
 			};
 		};
+		E52E1021099199DB00621C3D = {
+			children = (
+				E52E1022099199DB00621C3D,
+				E52E1023099199DB00621C3D,
+				E52E1024099199DB00621C3D,
+				E52E1025099199DB00621C3D,
+				E52E1026099199DB00621C3D,
+				E52E1027099199DB00621C3D,
+				E52E1028099199DB00621C3D,
+				E52E1029099199DB00621C3D,
+				E52E102A099199DB00621C3D,
+				E52E102B099199DB00621C3D,
+				E52E102C099199DB00621C3D,
+				E52E102D099199DB00621C3D,
+				E52E102E099199DB00621C3D,
+				E52E102F099199DB00621C3D,
+				E52E1030099199DB00621C3D,
+				E52E1031099199DB00621C3D,
+				E52E1033099199DB00621C3D,
+				E52E1034099199DB00621C3D,
+				E52E1035099199DB00621C3D,
+				E52E1036099199DB00621C3D,
+				E52E1037099199DB00621C3D,
+				E52E1038099199DB00621C3D,
+				E52E1039099199DB00621C3D,
+				E52E103A099199DB00621C3D,
+				E52E103B099199DB00621C3D,
+				E52E103C099199DB00621C3D,
+				E52E103D099199DB00621C3D,
+				E52E103E099199DB00621C3D,
+				E52E1040099199DB00621C3D,
+				E52E1041099199DB00621C3D,
+				E52E1042099199DB00621C3D,
+				E52E1043099199DB00621C3D,
+				E52E1045099199DB00621C3D,
+				E52E1046099199DB00621C3D,
+				E52E1047099199DB00621C3D,
+				E52E1048099199DB00621C3D,
+			);
+			isa = PBXGroup;
+			name = data;
+			path = ../data;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E52E1022099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = asterisms.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1023099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = asteroids.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1024099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = boundaries.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1025099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = cassini.xyz;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1026099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = comets.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1027099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = deepsky.dsc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1028099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = earth_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1029099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = eros_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E102A099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = extrasolar.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E102B099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = extrasolar.stc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E102C099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = galileo.xyz;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E102D099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = gaspra_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E102E099199DB00621C3D = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = hdxindex.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E102F099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = huygens.xyz;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1030099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = ida_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1031099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = jupitermoons_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1033099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = mars_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1034099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = marsmoons_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1035099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = merc_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1036099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = moon_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1037099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = nearstars.stc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1038099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = neptunemoons_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1039099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = outersys.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E103A099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = revised.stc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E103B099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = ring_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E103C099199DB00621C3D = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = saoxindex.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E103D099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = saturnmoons_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E103E099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = solarsys.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1040099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = spacecraft.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1041099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = spectbins.stc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1042099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = starnames.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1043099199DB00621C3D = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = stars.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1045099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = uranusmoons_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1046099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = venus_locs.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1047099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = visualbins.stc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1048099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = "world-capitals.ssc";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1049099199DB00621C3D = {
+			children = (
+				E52E104A099199DB00621C3D,
+				E52E104B099199DB00621C3D,
+				E52E1054099199DC00621C3D,
+				E52E1057099199DC00621C3D,
+				E52E105A099199DC00621C3D,
+				E52E105B099199DC00621C3D,
+				E52E105C099199DC00621C3D,
+			);
+			isa = PBXGroup;
+			name = extras;
+			path = ../extras;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E52E104A099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = apollo.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E104B099199DB00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = comets.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1054099199DC00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = minormoons.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E1057099199DC00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = numberedmoons.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E105A099199DC00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = shroxclassic.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E105B099199DC00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = shroxmars.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E105C099199DC00621C3D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = skylab.ssc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E52E106209919AA000621C3D = {
+			buildActionMask = 8;
+			dstPath = Celestia/CelestiaResources/data;
+			dstSubfolderSpec = 16;
+			files = (
+				E52E106509919B5100621C3D,
+				E52E106609919B5100621C3D,
+				E52E106709919B5100621C3D,
+				E52E106809919B5100621C3D,
+				E52E106909919B5100621C3D,
+				E52E106A09919B5100621C3D,
+				E52E106B09919B5100621C3D,
+				E52E106C09919B5100621C3D,
+				E52E106D09919B5100621C3D,
+				E52E106E09919B5100621C3D,
+				E52E106F09919B5100621C3D,
+				E52E107009919B5100621C3D,
+				E52E107109919B5100621C3D,
+				E52E107209919B5100621C3D,
+				E52E107309919B5100621C3D,
+				E52E107409919B5100621C3D,
+				E52E107509919B5100621C3D,
+				E52E107609919B5100621C3D,
+				E52E107709919B5100621C3D,
+				E52E107809919B5100621C3D,
+				E52E107909919B5100621C3D,
+				E52E107A09919B5100621C3D,
+				E52E107B09919B5100621C3D,
+				E52E107C09919B5100621C3D,
+				E52E107D09919B5100621C3D,
+				E52E107E09919B5100621C3D,
+				E52E107F09919B5100621C3D,
+				E52E108009919B5100621C3D,
+				E52E108209919B5100621C3D,
+				E52E108309919B5100621C3D,
+				E52E108409919B5100621C3D,
+				E52E108509919B5100621C3D,
+				E52E108609919B5100621C3D,
+				E52E108709919B5100621C3D,
+				E52E108809919B5100621C3D,
+				E52E108909919B5100621C3D,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E52E106309919AE400621C3D = {
+			buildActionMask = 8;
+			dstPath = Celestia/CelestiaResources/extras;
+			dstSubfolderSpec = 16;
+			files = (
+				E52E108A09919B7E00621C3D,
+				E52E108B09919B7E00621C3D,
+				E52E108C09919B7E00621C3D,
+				E52E108D09919B7E00621C3D,
+				E52E108E09919B7E00621C3D,
+				E52E108F09919B7E00621C3D,
+				E52E109009919B7E00621C3D,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E52E106509919B5100621C3D = {
+			fileRef = E52E1022099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106609919B5100621C3D = {
+			fileRef = E52E1023099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106709919B5100621C3D = {
+			fileRef = E52E1024099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106809919B5100621C3D = {
+			fileRef = E52E1025099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106909919B5100621C3D = {
+			fileRef = E52E1026099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106A09919B5100621C3D = {
+			fileRef = E52E1027099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106B09919B5100621C3D = {
+			fileRef = E52E1028099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106C09919B5100621C3D = {
+			fileRef = E52E1029099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106D09919B5100621C3D = {
+			fileRef = E52E102A099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106E09919B5100621C3D = {
+			fileRef = E52E102B099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E106F09919B5100621C3D = {
+			fileRef = E52E102C099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107009919B5100621C3D = {
+			fileRef = E52E102D099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107109919B5100621C3D = {
+			fileRef = E52E102E099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107209919B5100621C3D = {
+			fileRef = E52E102F099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107309919B5100621C3D = {
+			fileRef = E52E1030099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107409919B5100621C3D = {
+			fileRef = E52E1031099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107509919B5100621C3D = {
+			fileRef = E52E1033099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107609919B5100621C3D = {
+			fileRef = E52E1034099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107709919B5100621C3D = {
+			fileRef = E52E1035099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107809919B5100621C3D = {
+			fileRef = E52E1036099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107909919B5100621C3D = {
+			fileRef = E52E1037099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107A09919B5100621C3D = {
+			fileRef = E52E1038099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107B09919B5100621C3D = {
+			fileRef = E52E1039099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107C09919B5100621C3D = {
+			fileRef = E52E103A099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107D09919B5100621C3D = {
+			fileRef = E52E103B099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107E09919B5100621C3D = {
+			fileRef = E52E103C099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E107F09919B5100621C3D = {
+			fileRef = E52E103D099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108009919B5100621C3D = {
+			fileRef = E52E103E099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108209919B5100621C3D = {
+			fileRef = E52E1040099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108309919B5100621C3D = {
+			fileRef = E52E1041099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108409919B5100621C3D = {
+			fileRef = E52E1042099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108509919B5100621C3D = {
+			fileRef = E52E1043099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108609919B5100621C3D = {
+			fileRef = E52E1045099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108709919B5100621C3D = {
+			fileRef = E52E1046099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108809919B5100621C3D = {
+			fileRef = E52E1047099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108909919B5100621C3D = {
+			fileRef = E52E1048099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108A09919B7E00621C3D = {
+			fileRef = E52E104A099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108B09919B7E00621C3D = {
+			fileRef = E52E104B099199DB00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108C09919B7E00621C3D = {
+			fileRef = E52E1054099199DC00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108D09919B7E00621C3D = {
+			fileRef = E52E1057099199DC00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108E09919B7E00621C3D = {
+			fileRef = E52E105A099199DC00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E108F09919B7E00621C3D = {
+			fileRef = E52E105B099199DC00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E52E109009919B7E00621C3D = {
+			fileRef = E52E105C099199DC00621C3D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E54343100783C3F200053094 = {
 			children = (
 				E54343110783C3F200053094,
@@ -454,6 +1175,8 @@
 				E56917DA0778217300F0F0AF,
 				E57283A00793F93500C1F239,
 				E572837407939F2500C1F239,
+				E52E106209919AA000621C3D,
+				E52E106309919AE400621C3D,
 				E5C29C980982AA8000ED06B8,
 				E59272F20982BEDC009DFB36,
 				E572837307939E0200C1F239,
@@ -2612,7 +3335,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "find $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nrm -f $BUILT_PRODUCTS_DIR/Celestia/CelestiaResources/data/stars.txt\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
+			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/Celestia/CelestiaResources/textures/hires\nfind $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
 		};
 		E572837407939F2500C1F239 = {
 			buildActionMask = 8;
@@ -2620,22 +3343,14 @@
 			dstSubfolderSpec = 16;
 			files = (
 				E572837D0793A03800C1F239,
-				E572837E0793A03800C1F239,
 				E572837F0793A03800C1F239,
 				E57283800793A03800C1F239,
 				E57283830793A03800C1F239,
 				E57283840793A03800C1F239,
 				E572837C0793A02800C1F239,
-				E572837B0793A01B00C1F239,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 1;
-		};
-		E572837B0793A01B00C1F239 = {
-			fileRef = E5874AB507771D8E009630D8;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		E572837C0793A02800C1F239 = {
 			fileRef = F5626A0002A49B8B014901DC;
@@ -2645,12 +3360,6 @@
 		};
 		E572837D0793A03800C1F239 = {
 			fileRef = F5626A0202A49B8B014901DC;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		E572837E0793A03800C1F239 = {
-			fileRef = E5874AB607771D8E009630D8;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2773,22 +3482,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		E5874AB507771D8E009630D8 = {
-			isa = PBXFileReference;
-			lastKnownFileType = folder;
-			name = data;
-			path = ../data;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		E5874AB607771D8E009630D8 = {
-			isa = PBXFileReference;
-			lastKnownFileType = folder;
-			name = extras;
-			path = ../extras;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
 		};
 		E589B6D9078AC511005B8DD9 = {
 			fileEncoding = 4;
@@ -6315,9 +7008,9 @@
 		};
 		F578B7AE02B3E35F0100020A = {
 			children = (
-				E5874AB507771D8E009630D8,
+				E52E1021099199DB00621C3D,
+				E52E1049099199DB00621C3D,
 				F5626A0402A49B8B014901DC,
-				E5874AB607771D8E009630D8,
 				E5C29BFD0982A6E200ED06B8,
 				F5626A0702A49B8B014901DC,
 				E59271940982BE79009DFB36,
