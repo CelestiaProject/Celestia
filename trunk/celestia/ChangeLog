@@ -915,10 +915,11 @@ Code:
 * Windows: Added time zone selection to set time dialog
 * Windows: Fixed hard to read text in set time dialog (bug was only present for
   certain Windows shell appearance settings.)
-* Changed maximum number of eclipse shadows in OpenGL 2.0 path from two to three;
-  if max is exceeded, clamp to three rather than not rendering the shadows at all.
-* Corrected a bad calculation in ring shadow shaders that caused ring shadows to
-  be drawn in the wrong place.
+* Changed maximum number of eclipse shadows in OpenGL 2.0 path from two to
+  three; if max is exceeded, clamp to three rather than not rendering the
+  shadows at all.
+* Corrected a bad calculation in ring shadow shaders that caused ring shadows
+  to be drawn in the wrong place.
 * Windows: Fixed the minimum feature size slider in the locations dialog so it
   updates in response to all the standard controls.
 * Added a correct InfoURL for the Moon
@@ -927,10 +928,10 @@ Code:
 * GTK: added splash screen with a progress indicator
 * GTK: Added configure options to enable or disable Cairo support for splash
 * Corrected a local flashing of the Milky Way brightness.
-* Now the distance to the galaxy center is displayed, if the observer is located inside
-  the galaxy (Milky Way...).
-* Eliminated various incorrect Hubble type acronyms in deepsky.dsc that had penetrated
-  the PERL filter.
+* Now the distance to the galaxy center is displayed, if the observer is
+  located inside the galaxy (Milky Way...).
+* Eliminated various incorrect Hubble type acronyms in deepsky.dsc that had
+  penetrated the PERL filter.
 * Add the corrected PERL script deepsky.pl.     
 * Mac: Universal binary - runs natively on Intel and PPC
 * Mac: OpenGL 2.0 render path should now work on many configurations
@@ -952,15 +953,20 @@ Code:
 * Updated  Titan and Iapetus textures in lores directory
 * Windows: save and restore the last used GL render path
 * Removed the GeForce FX render path; GLSL path is preferred
-* Added lunar elevation map, using Clementine laser altimeter data, merged in the
-  polar regions, with topographic data  from Clementine 750 nm oblique and nadir images.
+* Added lunar elevation map, using Clementine laser altimeter data, merged
+  in the polar regions, with topographic data  from Clementine 750 nm
+  oblique and nadir images.
 * KDE: Reverted mouse wheel action to be compatible with the other interfaces.
-* KDE: New configurable splash screen (http://celestia.teyssier.org/splash_spec.html)
+* KDE: New configurable splash screen
+    (http://celestia.teyssier.org/splash_spec.html)
 * Updated/added Tethys textures in lores, medres and hires directories. 
-* Added locations on Phoebe in satmoons2.ssc, as extracted from USGS/IAU official data.
+* Added locations on Phoebe in satmoons2.ssc, as extracted from USGS/IAU
+  official data.
 * Added Mesh for Phoebe texture.      
 * Updated Iapetus texture.
 * Moved locations files from extras into data directory for inclusion in
   standard package.
 * Fixed bug where displayed time scale differed from actual time scale after
   clicking a cel URL.
+* Removed several files from installation on Linux and MacOS, saving ~5M
+  compressed.
