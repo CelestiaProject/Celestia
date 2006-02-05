@@ -342,6 +342,7 @@ Source: "models\larissa.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\mir.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\pandora.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\phobos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\phoebe.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\prometheus.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\proteus.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\roughsphere.cms";  DestDir: "{app}/models"; Flags: ignoreversion
