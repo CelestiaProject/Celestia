@@ -89,6 +89,7 @@ static GotoObjectDialog* gotoObjectDlg = NULL;
 static ViewOptionsDialog* viewOptionsDlg = NULL;
 static EclipseFinderDialog* eclipseFinder = NULL;
 static LocationsDialog* locationsDlg = NULL;
+static SplashWindow* s_splash = NULL;
 
 static HMENU menuBar = 0;
 ODMenu odAppMenu;
@@ -2150,10 +2151,13 @@ public:
 
     void fatalError(const std::string& msg)
     {
+		if (s_splash != NULL)
+			s_splash->close();
+			
         MessageBox(NULL,
                    msg.c_str(),
                    "Fatal Error",
-                   MB_OK | MB_ICONERROR);
+                   MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
     }
 };
 
@@ -3029,10 +3033,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     if (startDirectory != "")
         SetCurrentDirectory(startDirectory.c_str());
 
-    SplashWindow splash("splash.png");
-    splash.setMessage("Loading data files...");
+	s_splash = new SplashWindow("splash.png");
+    s_splash->setMessage("Loading data files...");
     if (!skipSplashScreen)
-        splash.showSplash();
+        s_splash->showSplash();
     
     OleInitialize(NULL);
     dropTarget = new CelestiaDropTarget();
@@ -3103,9 +3107,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore = new CelestiaCore();
     if (appCore == NULL)
     {
+		if (s_splash != NULL)
+		{
+			s_splash->close();
+			delete s_splash;
+		}
+		
         MessageBox(NULL,
                    "Out of memory.", "Fatal Error",
-                   MB_OK | MB_ICONERROR);
+                   MB_OK | MB_ICONERROR | MB_TOPMOST);		   
         return false;
     }
 
@@ -3113,19 +3123,23 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     WinSplashProgressNotifier* progressNotifier = NULL;
     if (!skipSplashScreen)
-        progressNotifier = new WinSplashProgressNotifier(&splash);
+        progressNotifier = new WinSplashProgressNotifier(s_splash);
         
     string* altConfig = useAlternateConfigFile ? &configFileName : NULL;
-    if (!appCore->initSimulation(altConfig, &extrasDirectories, progressNotifier))
-    {
-        delete progressNotifier;
-        return 1;
-    }
+    bool initSucceeded = appCore->initSimulation(altConfig, &extrasDirectories, progressNotifier);
     
     delete progressNotifier;
 
     // Close the splash screen after all data has been loaded
-    splash.close();
+	if (s_splash != NULL)
+	{
+		s_splash->close();
+		delete s_splash;
+	}
+	
+	// Give up now if we failed initialization
+	if (!initSucceeded)
+		return 1;
 
     if (startURL != "")
         appCore->setStartURL(startURL);
