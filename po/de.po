@@ -1,18 +1,21 @@
 # translation of de.po to 
 # translation of de.po to
+# translation of de.po to
+# translation of de.po to
+# translation of de.po to
 # translation of de.new.po to
 # translation of de.po to deutsch
 # translation of celestia-kde.po to deutsch
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
-# Steffen Schreiber <SchreiberSte@web.de>, 2003, 2004, 2005.
+# Steffen Schreiber <SchreiberSte@web.de>, 2003, 2004, 2005, 2006.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-03 15:27+0100\n"
-"PO-Revision-Date: 2005-07-25 21:17+0200\n"
+"PO-Revision-Date: 2006-02-07 21:38+0100\n"
 "Last-Translator: Steffen Schreiber <SchreiberSte@web.de>\n"
 "Language-Team:  <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +50,7 @@ msgstr "Initialisiere ARB Fragment Programme . . .\n"
 #: src/celengine/galaxy.cpp:158
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
-msgstr ""
+msgstr "Galaxie (Hubble-Typ: %s)"
 
 #: src/celengine/image.cpp:357
 msgid "Loading image from file "
@@ -84,7 +87,7 @@ msgstr "Fehler beim Laden des Modells '"
 #: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:45
 #, c-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #: src/celengine/solarsys.cpp:80
 msgid "Error in .ssc file (line "
@@ -441,7 +444,7 @@ msgstr "Auto-Magnitude Grenzwert bei 45 Grad:  %.2f"
 
 #: src/celestia/celestiacore.cpp:1904 src/celestia/celestiacore.cpp:1914
 msgid "Light gain"
-msgstr ""
+msgstr "Lichtverstärkung"
 
 #: src/celestia/celestiacore.cpp:2250
 msgid "GL error: "
@@ -472,14 +475,12 @@ msgid "Apparent diameter: "
 msgstr "Scheinbarer Durchmesser: "
 
 #: src/celestia/celestiacore.cpp:2619
-#, fuzzy
 msgid "Apparent magnitude: "
-msgstr "Scheinbarer Durchmesser: "
+msgstr "Scheinbare Magnitude: "
 
 #: src/celestia/celestiacore.cpp:2623
-#, fuzzy
 msgid "Absolute magnitude: "
-msgstr "Auto Magnitude"
+msgstr "Absolute Magnitude: "
 
 #: src/celestia/celestiacore.cpp:2656 src/celestia/celestiacore.cpp:2710
 #: src/celestia/celestiacore.cpp:2742 src/celestia/celestiacore.cpp:2794
@@ -530,9 +531,8 @@ msgid "Planetary companions present\n"
 msgstr "Planetare Begleiter vorhanden\n"
 
 #: src/celestia/celestiacore.cpp:2715
-#, fuzzy
 msgid "Distance from center: "
-msgstr "Entfernung: "
+msgstr "Entfernung vom Zentum: "
 
 #: src/celestia/celestiacore.cpp:2719 src/celestia/celestiacore.cpp:2747
 #: src/celestia/kde/selectionpopup.cpp:94
@@ -581,9 +581,8 @@ msgid " slower"
 msgstr " langsamer"
 
 #: src/celestia/celestiacore.cpp:3038
-#, fuzzy
 msgid " (Paused)"
-msgstr "  Angehalten"
+msgstr " (Angehalten)"
 
 #: src/celestia/celestiacore.cpp:3053
 msgid "FPS: "
@@ -607,7 +606,7 @@ msgstr "Zentriert halten "
 
 #: src/celestia/celestiacore.cpp:3106
 msgid "Follow "
-msgstr "Folgen "
+msgstr "Folge "
 
 #: src/celestia/celestiacore.cpp:3111
 msgid "Sync Orbit "
@@ -659,9 +658,8 @@ msgid "Loading solar system catalog: "
 msgstr "Lade Sonnensystem-Katalog: "
 
 #: src/celestia/celestiacore.cpp:3500
-#, fuzzy
 msgid "Loading "
-msgstr "Lade..."
+msgstr "Lade "
 
 #: src/celestia/celestiacore.cpp:3510
 #, c-format
@@ -689,9 +687,8 @@ msgid "Error opening test.xml\n"
 msgstr "Fehler beim Öffnen von test.xml\n"
 
 #: src/celestia/celestiacore.cpp:3667
-#, fuzzy
 msgid "Error reading deep sky file\n"
-msgstr "Fehler beim Öffnen der Deep-Sky Datei.\n"
+msgstr "Fehler beim Lesen der Deep-Sky Datei\n"
 
 #: src/celestia/celestiacore.cpp:3674 src/celestia/celestiacore.cpp:3908
 #: src/celestia/celestiacore.cpp:3930
@@ -1172,9 +1169,8 @@ msgstr "NV30"
 
 #: src/celestia/kde/kdeapp.cpp:719
 #: src/celestia/kde/kdepreferencesdialog.cpp:474
-#, fuzzy
 msgid "OpenGL 2.0"
-msgstr "OpenGL"
+msgstr "OpenGL 2.0"
 
 #: src/celestia/kde/kdeapp.cpp:721
 msgid "Cycle OpenGL Render Path"
@@ -1268,7 +1264,7 @@ msgstr "Starte im Vollbild"
 
 #: src/celestia/kde/kdemain.cpp:36
 msgid "Disable splash screen"
-msgstr ""
+msgstr "Splash-Screen abschalten"
 
 #: src/celestia/kde/kdemain.cpp:37
 msgid "Start and go to url"
@@ -1276,15 +1272,15 @@ msgstr "Starte und gehe zu URL"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid "_: NAME OF TRANSLATORS\\nYour names"
-msgstr ""
+msgstr "Steffen Schreiber"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
-msgstr ""
+msgstr "schreiberste@web.de"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:56
 msgid "Celestia Preferences"
-msgstr "Celestia einrichten..."
+msgstr "Celestia einrichten"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:62
 msgid "Rendering"
@@ -1589,11 +1585,10 @@ msgstr "<b>NV_fragment_program und ARB_vertex_program Erweiterungen</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:741
 msgid "<b>OpenGL 2.0 Shading Language</b>"
-msgstr ""
+msgstr "<b>OpenGL 2.0 Shading Language</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:40
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
 msgstr ""
 "Datei %1 existiert nicht, verwende voreingestellte Konfigurationsdatei %2/"
 "celestia.cfg"
@@ -2398,17 +2393,3 @@ msgstr "INDISCHER OZEAN"
 msgid "ARCTIC OCEAN"
 msgstr "ARKTISCHER OZEAN"
 
-#~ msgid "Type: "
-#~ msgstr "Typ: "
-
-#~ msgid " ly\n"
-#~ msgstr " ly\n"
-
-#~ msgid "Paused"
-#~ msgstr "Zeit angehalten"
-
-#~ msgid "Loading deep sky catalog: "
-#~ msgstr "Lade Deep-Sky Katalog: "
-
-#~ msgid "Loading star catalog: "
-#~ msgstr "Lade Sternenkatalog: "
