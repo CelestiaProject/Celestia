@@ -12,6 +12,10 @@
 #include <string>
 #include "formatnum.h"
 
+// HACK: MS Visual C++ has _snprintf declared in stdio.h but not snprintf
+#ifdef WIN32
+#define snprintf _snprintf
+#endif
 
 FormattedNumber::FormattedNumber(double v,
                                  unsigned int _precision,
@@ -66,6 +70,7 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
     {
         if (value == 0.0)
         {
+            snprintf(fmt, sizeof(fmt)/sizeof(char), "%%.%df", 5);
             snprintf(fmt, sizeof(fmt)/sizeof(char), "%%.%df", 5);
         }
         else
