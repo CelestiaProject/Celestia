@@ -775,7 +775,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         if (props.usesShadows())
         {
             source += "varying vec4 specFactors;\n";
-            source += "vec4 spec;\n";
+            source += "vec4 spec = vec4(0.0);\n";
         }
         else
         {
