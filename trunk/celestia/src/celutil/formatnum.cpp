@@ -66,22 +66,22 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
     {
         if (value == 0.0)
         {
-            sprintf(fmt, "%%.%df", 5);
+            snprintf(fmt, sizeof(fmt)/sizeof(char), "%%.%df", 5);
         }
         else
         {
             int fmtPrecision = (int) log10(fabs(value)) - num.precision + 1;
             if (fabs(value) < 1.0)
                 fmtPrecision--;
-            sprintf(fmt, "%%.%df", fmtPrecision > 0 ? 0 : -fmtPrecision);
+            snprintf(fmt, sizeof(fmt)/sizeof(char), "%%.%df", fmtPrecision > 0 ? 0 : -fmtPrecision);
         }
     }
     else
     {
-        sprintf(fmt, "%%.%df", num.precision);
+        snprintf(fmt, sizeof(fmt)/sizeof(char), "%%.%df", num.precision);
     }
 
-    sprintf(buf, fmt, value);
+    snprintf(buf, sizeof(buf)/sizeof(char), fmt, value);
 
     if (num.flags & FormattedNumber::GroupThousands)
     {

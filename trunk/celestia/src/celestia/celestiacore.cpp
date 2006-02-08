@@ -56,6 +56,7 @@ static const float fAltitudeThreshold = 4.0f;
 static const float RotationBraking = 10.0f;
 static const float RotationDecay = 2.0f;
 static const double MaximumTimeRate = 1.0e15;
+static const double MinimumTimeRate = 1.0e-15;
 static const float stdFOV = degToRad(45.0f);
 static const float MaximumFOV = degToRad(120.0f);
 static const float MinimumFOV = degToRad(0.001f);
@@ -1707,6 +1708,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'K':
         addToHistory();
+        if (abs(timeScale) > MinimumTimeRate)
         {
             timeScale /= timeScaleFactor;
             if (!paused)
@@ -1719,7 +1721,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'L':
         addToHistory();
-        if (timeScale < MaximumTimeRate)
+        if (abs(timeScale) < MaximumTimeRate)
         {
             timeScale *= timeScaleFactor;
             if (!paused)
@@ -3019,7 +3021,7 @@ void CelestiaCore::renderOverlay()
                 else
                     *overlay << _("-Real time");
             }
-            else if (abs(timeScale) == 0.0f)
+            else if (abs(timeScale) < MinimumTimeRate)
             {
                 *overlay << _("Time stopped");
             }
