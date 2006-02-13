@@ -71,7 +71,6 @@ std::ostream& operator<<(std::ostream& out, const FormattedNumber& num)
         if (value == 0.0)
         {
             snprintf(fmt, sizeof(fmt)/sizeof(char), "%%.%df", 5);
-            snprintf(fmt, sizeof(fmt)/sizeof(char), "%%.%df", 5);
         }
         else
         {
