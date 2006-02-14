@@ -24,7 +24,7 @@ using namespace std;
 //#define SHOW_FRUSTUM
 
 static bool trigArraysInitialized = false;
-static int maxDivisions = 4096;
+static int maxDivisions = 16384;
 static int thetaDivisions = maxDivisions;
 static int phiDivisions = maxDivisions / 2;
 static int minStep = 128;
