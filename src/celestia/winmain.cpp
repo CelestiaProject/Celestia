@@ -3062,8 +3062,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.labelMode = 0;
     prefs.orbitMask = Body::Planet | Body::Moon;
     prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars |
-                        Renderer::ShowPlanets | Renderer::ShowSmoothLines |
-                        Renderer::ShowCometTails | Renderer::ShowRingShadows;
+                        Renderer::ShowPlanets     | Renderer::ShowSmoothLines |
+                        Renderer::ShowCometTails  | Renderer::ShowRingShadows |
+						Renderer::ShowCloudMaps   | Renderer::ShowEclipseShadows |
+						Renderer::ShowNebulae     | Renderer::ShowGalaxies;
     prefs.visualMagnitude = 6.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
     prefs.hudDetail = 1;
@@ -3071,6 +3073,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.lastVersion = 0x00000000;
     prefs.textureResolution = 1;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
+	printf("prefs: %08x\n", prefs.renderFlags);
 
     // Adjust window dimensions for screen dimensions
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -3239,6 +3242,20 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 				glContext->setRenderPath(prefs.renderPath);
 		}
     }
+	else
+	{
+		// Set default render flags for a new installation
+		appCore->getRenderer()->setRenderFlags(Renderer::ShowStars   |
+		                                        Renderer::ShowPlanets |
+												Renderer::ShowGalaxies |
+												Renderer::ShowCloudMaps |
+												Renderer::ShowAtmospheres |
+												Renderer::ShowEclipseShadows |
+												Renderer::ShowRingShadows |
+												Renderer::ShowCometTails |
+												Renderer::ShowNebulae |
+												Renderer::ShowOpenClusters);
+	}
     
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     syncMenusWithRendererState();
