@@ -1,0 +1,6 @@
+# Additional Makefile rule to extract object names from windows resource files
+
+celestia.pot-update: ../src/celestia/res/resource_strings.cpp
+
+../src/celestia/res/resource_strings.cpp:
+	./extract_resource_strings.pl < ../src/celestia/res/celestia.rc > ../src/celestia/res/resource_strings.cpp
