@@ -63,7 +63,7 @@ class Overlay : public std::ostream
     void print(wchar_t);
     void print(char);
     void print(char*);
-    void printf(const char*, ...);
+    void oprintf(const char*, ...);
     
 
  private:

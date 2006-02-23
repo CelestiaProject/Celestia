@@ -173,7 +173,7 @@ void Overlay::print(char* s)
 }
 
 
-void Overlay::printf(const char* format, ...)
+void Overlay::oprintf(const char* format, ...)
 {
     va_list args;
     va_start(args, format);

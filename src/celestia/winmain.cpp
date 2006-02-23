@@ -57,6 +57,8 @@
 #include "res/resource.h"
 #include "wglext.h"
 
+#include <locale.h>
+
 using namespace std;
 
 typedef pair<int,string> IntStrPair;
@@ -2989,6 +2991,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      LPSTR     lpCmdLine,
                      int       nCmdShow)
 {
+        
     // Say we're not ready to render yet.
     bReady = false;
 
@@ -3121,6 +3124,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                    MB_OK | MB_ICONERROR | MB_TOPMOST);		   
         return false;
     }
+
+    // Gettext integration
+    setlocale(LC_ALL, ""); 
+    setlocale(LC_NUMERIC, "C"); 
+    bindtextdomain("celestia","locale");
+    bind_textdomain_codeset("celestia", "UTF-8"); 
+    bindtextdomain("celestia_constellations","locale");
+    bind_textdomain_codeset("celestia_constellations", "UTF-8"); 
+    textdomain("celestia");
 
     appCore->setAlerter(new WinAlerter());
 
