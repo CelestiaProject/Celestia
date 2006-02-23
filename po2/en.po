@@ -1,0 +1,373 @@
+# translation of en_US.po to Français
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR Chris Laurel.
+# Christophe Teyssier <chris@teyssier.org>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: en\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-18 16:09+0100\n"
+"PO-Revision-Date: 2005-08-06 12:13+0200\n"
+"Last-Translator: Christophe Teyssier <chris@teyssier.org>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.10\n"
+
+#: data/constellations.cpp:1
+msgid "Andromeda"
+msgstr "Andromeda"
+
+#: data/constellations.cpp:2
+msgid "Antlia"
+msgstr "The Air Pump"
+
+#: data/constellations.cpp:3
+msgid "Apus"
+msgstr "Bird of Paradise"
+
+#: data/constellations.cpp:4
+msgid "Aquarius"
+msgstr "Water Carrier"
+
+#: data/constellations.cpp:5
+msgid "Aquila"
+msgstr "The Eagle"
+
+#: data/constellations.cpp:6
+msgid "Ara"
+msgstr "The Altar"
+
+#: data/constellations.cpp:7
+msgid "Aries"
+msgstr "The Ram"
+
+#: data/constellations.cpp:8
+msgid "Auriga"
+msgstr "The Charioteer"
+
+#: data/constellations.cpp:9
+msgid "Boötes"
+msgstr "The Herdsman"
+
+#: data/constellations.cpp:10
+msgid "Caelum"
+msgstr "The Chisel"
+
+#: data/constellations.cpp:11
+msgid "Camelopardalis"
+msgstr "The Giraffe"
+
+#: data/constellations.cpp:12
+msgid "Cancer"
+msgstr "The Crab"
+
+#: data/constellations.cpp:13
+msgid "Canes Venatici"
+msgstr "Hunting Dogs"
+
+#: data/constellations.cpp:14
+msgid "Canis Major"
+msgstr "The Greater Dog"
+
+#: data/constellations.cpp:15
+msgid "Canis Minor"
+msgstr "The Lesser Dog"
+
+#: data/constellations.cpp:16
+msgid "Capricornus"
+msgstr "The Goat-Fish"
+
+#: data/constellations.cpp:17
+msgid "Carina"
+msgstr "The Keel"
+
+#: data/constellations.cpp:18
+msgid "Cassiopeia"
+msgstr "Cassiopeia"
+
+#: data/constellations.cpp:19
+msgid "Centaurus"
+msgstr "The Centaur"
+
+#: data/constellations.cpp:20
+msgid "Cepheus"
+msgstr "Cepheus"
+
+#: data/constellations.cpp:21
+msgid "Cetus"
+msgstr "The Whale"
+
+#: data/constellations.cpp:22
+msgid "Chamaeleon"
+msgstr "Chamaeleon"
+
+#: data/constellations.cpp:23
+msgid "Circinus"
+msgstr "The Drafting Compass"
+
+#: data/constellations.cpp:24
+msgid "Columba"
+msgstr "The Dove"
+
+#: data/constellations.cpp:25
+msgid "Coma Berenices"
+msgstr "Berenice's Hair"
+
+#: data/constellations.cpp:26
+msgid "Corona Australis"
+msgstr "Southern Crown"
+
+#: data/constellations.cpp:27
+msgid "Corona Borealis"
+msgstr "Northern Crown"
+
+#: data/constellations.cpp:28
+msgid "Corvus"
+msgstr "The Crow"
+
+#: data/constellations.cpp:29
+msgid "Crater"
+msgstr "The Goblet"
+
+#: data/constellations.cpp:30
+msgid "Crux"
+msgstr "Southern Cross"
+
+#: data/constellations.cpp:31
+msgid "Cygnus"
+msgstr "The Swan"
+
+#: data/constellations.cpp:32
+msgid "Delphinus"
+msgstr "The Dolphin"
+
+#: data/constellations.cpp:33
+msgid "Dorado"
+msgstr "The Goldfish"
+
+#: data/constellations.cpp:34
+msgid "Draco"
+msgstr "The Dragon"
+
+#: data/constellations.cpp:35
+msgid "Equuleus"
+msgstr "The Little Horse"
+
+#: data/constellations.cpp:36
+msgid "Eridanus"
+msgstr "The River"
+
+#: data/constellations.cpp:37
+msgid "Fornax"
+msgstr "The Furnace"
+
+#: data/constellations.cpp:38
+msgid "Gemini"
+msgstr "The Twins"
+
+#: data/constellations.cpp:39
+msgid "Grus"
+msgstr "The Crane"
+
+#: data/constellations.cpp:40
+msgid "Hercules"
+msgstr "Hercules"
+
+#: data/constellations.cpp:41
+msgid "Horologium"
+msgstr "The Pendulum Clock"
+
+#: data/constellations.cpp:42
+msgid "Hydra"
+msgstr "The Water Serpent"
+
+#: data/constellations.cpp:43
+msgid "Hydrus"
+msgstr "The Lesser Water Snake"
+
+#: data/constellations.cpp:44
+msgid "Indus"
+msgstr "The Indian"
+
+#: data/constellations.cpp:45
+msgid "Lacerta"
+msgstr "The Lizard"
+
+#: data/constellations.cpp:46
+msgid "Leo"
+msgstr "The Lion"
+
+#: data/constellations.cpp:47
+msgid "Leo Minor"
+msgstr "The Lesser Lion"
+
+#: data/constellations.cpp:48
+msgid "Lepus"
+msgstr "The Hare"
+
+#: data/constellations.cpp:49
+msgid "Libra"
+msgstr "The Scales"
+
+#: data/constellations.cpp:50
+msgid "Lupus"
+msgstr "The Wolf"
+
+#: data/constellations.cpp:51
+msgid "Lynx"
+msgstr "Lynx"
+
+#: data/constellations.cpp:52
+msgid "Lyra"
+msgstr "The Lyre"
+
+#: data/constellations.cpp:53
+msgid "Mensa"
+msgstr "The Table Mountain"
+
+#: data/constellations.cpp:54
+msgid "Microscopium"
+msgstr "The Microscope"
+
+#: data/constellations.cpp:55
+msgid "Monoceros"
+msgstr "The Unicorn"
+
+#: data/constellations.cpp:56
+msgid "Musca"
+msgstr "The Fly"
+
+#: data/constellations.cpp:57
+msgid "Norma"
+msgstr "The Level"
+
+#: data/constellations.cpp:58
+msgid "Octans"
+msgstr "The Octant"
+
+#: data/constellations.cpp:59
+msgid "Ophiuchus"
+msgstr "Serpent Holder"
+
+#: data/constellations.cpp:60
+msgid "Orion"
+msgstr "The Hunter"
+
+#: data/constellations.cpp:61
+msgid "Pavo"
+msgstr "The Peacock"
+
+#: data/constellations.cpp:62
+msgid "Pegasus"
+msgstr "The Winged Horse"
+
+#: data/constellations.cpp:63
+msgid "Perseus"
+msgstr "Perseus"
+
+#: data/constellations.cpp:64
+msgid "Phoenix"
+msgstr "The Phoenix"
+
+#: data/constellations.cpp:65
+msgid "Pictor"
+msgstr "The Painter's Easel"
+
+#: data/constellations.cpp:66
+msgid "Pisces"
+msgstr "The Fish"
+
+#: data/constellations.cpp:67
+msgid "Piscis Austrinus"
+msgstr "The Southern Fish"
+
+#: data/constellations.cpp:68
+msgid "Puppis"
+msgstr "The Stern"
+
+#: data/constellations.cpp:69
+msgid "Pyxis"
+msgstr "The Compass"
+
+#: data/constellations.cpp:70
+msgid "Reticulum"
+msgstr "The Reticle"
+
+#: data/constellations.cpp:71
+msgid "Sagitta"
+msgstr "The Arrow"
+
+#: data/constellations.cpp:72
+msgid "Sagittarius"
+msgstr "The Archer"
+
+#: data/constellations.cpp:73
+msgid "Scorpius"
+msgstr "The Scorpion"
+
+#: data/constellations.cpp:74
+msgid "Sculptor"
+msgstr "The Sculptor"
+
+#: data/constellations.cpp:75
+msgid "Scutum"
+msgstr "The Shield"
+
+#: data/constellations.cpp:76
+msgid "Serpens Caput"
+msgstr "The Serpent's head"
+
+#: data/constellations.cpp:77
+msgid "Serpens Cauda"
+msgstr "The Serpent's tail"
+
+#: data/constellations.cpp:78
+msgid "Sextans"
+msgstr "The Sextant"
+
+#: data/constellations.cpp:79
+msgid "Taurus"
+msgstr "The Bull"
+
+#: data/constellations.cpp:80
+msgid "Telescopium"
+msgstr "The Telescope"
+
+#: data/constellations.cpp:81
+msgid "Triangulum"
+msgstr "The Triangle"
+
+#: data/constellations.cpp:82
+msgid "Triangulum Australe"
+msgstr "Southern Triangle"
+
+#: data/constellations.cpp:83
+msgid "Tucana"
+msgstr "The Toucan"
+
+#: data/constellations.cpp:84
+msgid "Ursa Major"
+msgstr "The Great Bear"
+
+#: data/constellations.cpp:85
+msgid "Ursa Minor"
+msgstr "The Lesser Bear"
+
+#: data/constellations.cpp:86
+msgid "Vela"
+msgstr "The Sails"
+
+#: data/constellations.cpp:87
+msgid "Virgo"
+msgstr "The Virgin"
+
+#: data/constellations.cpp:88
+msgid "Volans"
+msgstr "The Flying Fish"
+
+#: data/constellations.cpp:89
+msgid "Vulpecula"
+msgstr "The Fox "

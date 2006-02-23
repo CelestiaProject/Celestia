@@ -4,5 +4,4 @@ celestia.pot-update: ../data/data.cpp
 
 ../data/data.cpp:
 	egrep ^\" ../data/solarsys.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' > ../data/data.cpp
-	egrep ^\" ../data/asterisms.dat | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
-	grep \"Sol/Earth\" ../data/solsys_locs.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	grep \"Sol/Earth\" ../data/earth_locs.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp

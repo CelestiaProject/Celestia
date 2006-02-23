@@ -429,6 +429,7 @@ AC_CONFIG_FILES([ src/celestia/kde/doc/celestia/Makefile ])
 AC_CONFIG_FILES([ src/celestia/gtk/Makefile ])
 AC_CONFIG_FILES([ src/celestia/gtk/data/Makefile ])
 AC_CONFIG_FILES([ po/Makefile.in ])
+AC_CONFIG_FILES([ po2/Makefile.in ])
 AC_OUTPUT()
 
 AC_MSG_RESULT()

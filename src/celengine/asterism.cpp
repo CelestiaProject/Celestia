@@ -25,7 +25,7 @@ using namespace std;
 
 Asterism::Asterism(string _name) : name(_name)
 {
-    i18nName = _(_name.c_str());
+    i18nName = dgettext("celestia_constellations", _name.c_str());
 }
 
 Asterism::~Asterism()

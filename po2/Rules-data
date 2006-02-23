@@ -1,0 +1,6 @@
+# Additional Makefile rule to extract object names from data files
+
+celestia_constellations.pot-update: ../data/constellations.cpp
+
+../data/constellations.cpp:
+	egrep ^\" ../data/asterisms.dat | awk -F\" '{ print "_(\"" $$2 "\");" }' > ../data/constellations.cpp

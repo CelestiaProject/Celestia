@@ -102,3 +102,5 @@ src/celestia/kde/selectionpopup.h
 src/celestia/kde/rc.cpp
 
 data/data.cpp
+
+src/celestia/res/resource_strings.cpp
