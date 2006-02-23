@@ -25,52 +25,52 @@ all: $(LIBS) $(APPS)
 
 clean:
 	cd celutil
-	nmake /nologo /f util.mak clean CFG=$(CFG)
+	nmake /nologo /f util.mak MFLAGS=-MD clean CFG=$(CFG)
 	cd ..
 	cd celmath
-	nmake /nologo /f math.mak clean CFG=$(CFG)
+	nmake /nologo /f math.mak MFLAGS=-MD clean CFG=$(CFG)
 	cd ..
 	cd cel3ds
-	nmake /nologo /f 3ds.mak clean CFG=$(CFG)
+	nmake /nologo /f 3ds.mak MFLAGS=-MD clean CFG=$(CFG)
 	cd ..
 	cd celtxf
-	nmake /nologo /f txf.mak clean CFG=$(CFG)
+	nmake /nologo /f txf.mak MFLAGS=-MD clean CFG=$(CFG)
 	cd ..
 	cd celengine
-	nmake /nologo /f engine.mak clean CFG=$(CFG)
+	nmake /nologo /f engine.mak MFLAGS=-MD clean CFG=$(CFG)
 	cd ..
 	cd celestia
-	nmake /nologo /f celestia.mak clean CFG=$(CFG)
+	nmake /nologo /f celestia.mak MFLAGS=-MD clean CFG=$(CFG)
 	cd ..
 
 always:
 
 $(LIBUTIL): always
 	cd celutil
-	nmake /NOLOGO util.mak CFG=$(CFG)
+	nmake /NOLOGO util.mak MFLAGS=-MD CFG=$(CFG)
 	cd ..
 
 $(LIBMATH): always
 	cd celmath
-	nmake /NOLOGO math.mak CFG=$(CFG)
+	nmake /NOLOGO math.mak MFLAGS=-MD CFG=$(CFG)
 	cd ..
 
 $(LIB3DS): always
 	cd cel3ds
-	nmake /NOLOGO 3ds.mak CFG=$(CFG)
+	nmake /NOLOGO 3ds.mak MFLAGS=-MD CFG=$(CFG)
 	cd ..
 
 $(LIBTXF): always
 	cd celtxf
-	nmake /NOLOGO txf.mak CFG=$(CFG)
+	nmake /NOLOGO txf.mak MFLAGS=-MD CFG=$(CFG)
 	cd ..
 
 $(LIBCEL): always
 	cd celengine
-	nmake /NOLOGO engine.mak CFG=$(CFG)
+	nmake /NOLOGO engine.mak MFLAGS=-MD CFG=$(CFG)
 	cd ..
 
 $(APPCELESTIA): $(LIBS)
 	cd celestia
-	nmake /NOLOGO celestia.mak CFG=$(CFG)
+	nmake /NOLOGO celestia.mak MFLAGS=-MD CFG=$(CFG)
 	cd ..
