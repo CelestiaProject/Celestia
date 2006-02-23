@@ -1,0 +1,373 @@
+# Swedish translation of celestia.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the celestia package.
+# Daniel Nylander <po@danielnylander.se>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: celestia 1.4.1\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-18 16:09+0100\n"
+"PO-Revision-Date: 2006-02-21 20:58+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/constellations.cpp:1
+msgid "Andromeda"
+msgstr "Andromeda"
+
+#: data/constellations.cpp:2
+msgid "Antlia"
+msgstr "Luftpumpen"
+
+#: data/constellations.cpp:3
+msgid "Apus"
+msgstr "Paradisfågeln"
+
+#: data/constellations.cpp:4
+msgid "Aquarius"
+msgstr "Vattumannen"
+
+#: data/constellations.cpp:5
+msgid "Aquila"
+msgstr "Örnen"
+
+#: data/constellations.cpp:6
+msgid "Ara"
+msgstr "Altaret"
+
+#: data/constellations.cpp:7
+msgid "Aries"
+msgstr "Väduren"
+
+#: data/constellations.cpp:8
+msgid "Auriga"
+msgstr "Kusken"
+
+#: data/constellations.cpp:9
+msgid "Boötes"
+msgstr "Björnvaktaren"
+
+#: data/constellations.cpp:10
+msgid "Caelum"
+msgstr "Gravstickeln"
+
+#: data/constellations.cpp:11
+msgid "Camelopardalis"
+msgstr "Giraffen"
+
+#: data/constellations.cpp:12
+msgid "Cancer"
+msgstr "Kräftan"
+
+#: data/constellations.cpp:13
+msgid "Canes Venatici"
+msgstr "Jakthundarna"
+
+#: data/constellations.cpp:14
+msgid "Canis Major"
+msgstr "Stora hunden"
+
+#: data/constellations.cpp:15
+msgid "Canis Minor"
+msgstr "Lilla hunden"
+
+#: data/constellations.cpp:16
+msgid "Capricornus"
+msgstr "Stenbocken"
+
+#: data/constellations.cpp:17
+msgid "Carina"
+msgstr "Kölen"
+
+#: data/constellations.cpp:18
+msgid "Cassiopeia"
+msgstr "Cassiopeja"
+
+#: data/constellations.cpp:19
+msgid "Centaurus"
+msgstr "Kentauren"
+
+#: data/constellations.cpp:20
+msgid "Cepheus"
+msgstr "Cepheus"
+
+#: data/constellations.cpp:21
+msgid "Cetus"
+msgstr "Valfisken"
+
+#: data/constellations.cpp:22
+msgid "Chamaeleon"
+msgstr "Kameleonten"
+
+#: data/constellations.cpp:23
+msgid "Circinus"
+msgstr "Cirkelpassaren"
+
+#: data/constellations.cpp:24
+msgid "Columba"
+msgstr "Duvan"
+
+#: data/constellations.cpp:25
+msgid "Coma Berenices"
+msgstr "Berenikes hår"
+
+#: data/constellations.cpp:26
+msgid "Corona Australis"
+msgstr "Södra kronan"
+
+#: data/constellations.cpp:27
+msgid "Corona Borealis"
+msgstr "Norra kronan"
+
+#: data/constellations.cpp:28
+msgid "Corvus"
+msgstr "Korpen"
+
+#: data/constellations.cpp:29
+msgid "Crater"
+msgstr "Bägaren"
+
+#: data/constellations.cpp:30
+msgid "Crux"
+msgstr "Södra korset"
+
+#: data/constellations.cpp:31
+msgid "Cygnus"
+msgstr "Svanen"
+
+#: data/constellations.cpp:32
+msgid "Delphinus"
+msgstr "Delfinen"
+
+#: data/constellations.cpp:33
+msgid "Dorado"
+msgstr "Svärdfisken"
+
+#: data/constellations.cpp:34
+msgid "Draco"
+msgstr "Draken"
+
+#: data/constellations.cpp:35
+msgid "Equuleus"
+msgstr "Lilla hästen"
+
+#: data/constellations.cpp:36
+msgid "Eridanus"
+msgstr "Floden Eridanus"
+
+#: data/constellations.cpp:37
+msgid "Fornax"
+msgstr "Ugnen"
+
+#: data/constellations.cpp:38
+msgid "Gemini"
+msgstr "Tvillingarna"
+
+#: data/constellations.cpp:39
+msgid "Grus"
+msgstr "Tranan"
+
+#: data/constellations.cpp:40
+msgid "Hercules"
+msgstr "Herkules"
+
+#: data/constellations.cpp:41
+msgid "Horologium"
+msgstr "Pendeluret"
+
+#: data/constellations.cpp:42
+msgid "Hydra"
+msgstr "Vattenormen"
+
+#: data/constellations.cpp:43
+msgid "Hydrus"
+msgstr "Lilla vattenormen"
+
+#: data/constellations.cpp:44
+msgid "Indus"
+msgstr "Indianen"
+
+#: data/constellations.cpp:45
+msgid "Lacerta"
+msgstr "Ödlan"
+
+#: data/constellations.cpp:46
+msgid "Leo"
+msgstr "Lejonet"
+
+#: data/constellations.cpp:47
+msgid "Leo Minor"
+msgstr "Lilla lejonet"
+
+#: data/constellations.cpp:48
+msgid "Lepus"
+msgstr "Haren"
+
+#: data/constellations.cpp:49
+msgid "Libra"
+msgstr "Vågen"
+
+#: data/constellations.cpp:50
+msgid "Lupus"
+msgstr "Vargen"
+
+#: data/constellations.cpp:51
+msgid "Lynx"
+msgstr "Lodjuret"
+
+#: data/constellations.cpp:52
+msgid "Lyra"
+msgstr "Lyran"
+
+#: data/constellations.cpp:53
+msgid "Mensa"
+msgstr "Taffelberget"
+
+#: data/constellations.cpp:54
+msgid "Microscopium"
+msgstr "Mikroskopet"
+
+#: data/constellations.cpp:55
+msgid "Monoceros"
+msgstr "Enhörningen"
+
+#: data/constellations.cpp:56
+msgid "Musca"
+msgstr "Flugan"
+
+#: data/constellations.cpp:57
+msgid "Norma"
+msgstr "Vinkelhaken"
+
+#: data/constellations.cpp:58
+msgid "Octans"
+msgstr "Oktanten"
+
+#: data/constellations.cpp:59
+msgid "Ophiuchus"
+msgstr "Ormbäraren"
+
+#: data/constellations.cpp:60
+msgid "Orion"
+msgstr "Orion"
+
+#: data/constellations.cpp:61
+msgid "Pavo"
+msgstr "Påfågeln"
+
+#: data/constellations.cpp:62
+msgid "Pegasus"
+msgstr "Pegasus"
+
+#: data/constellations.cpp:63
+msgid "Perseus"
+msgstr "Perseus"
+
+#: data/constellations.cpp:64
+msgid "Phoenix"
+msgstr "Fenix"
+
+#: data/constellations.cpp:65
+msgid "Pictor"
+msgstr "Målaren"
+
+#: data/constellations.cpp:66
+msgid "Pisces"
+msgstr "Fiskarna"
+
+#: data/constellations.cpp:67
+msgid "Piscis Austrinus"
+msgstr "Södra fisken"
+
+#: data/constellations.cpp:68
+msgid "Puppis"
+msgstr "Akterskeppet"
+
+#: data/constellations.cpp:69
+msgid "Pyxis"
+msgstr "Kompassen"
+
+#: data/constellations.cpp:70
+msgid "Reticulum"
+msgstr "Rombiska nätet"
+
+#: data/constellations.cpp:71
+msgid "Sagitta"
+msgstr "Pilen"
+
+#: data/constellations.cpp:72
+msgid "Sagittarius"
+msgstr "Skytten"
+
+#: data/constellations.cpp:73
+msgid "Scorpius"
+msgstr "Skorpionen"
+
+#: data/constellations.cpp:74
+msgid "Sculptor"
+msgstr "Bildhuggaren"
+
+#: data/constellations.cpp:75
+msgid "Scutum"
+msgstr "Skölden"
+
+#: data/constellations.cpp:76
+msgid "Serpens Caput"
+msgstr "Ormens svans"
+
+#: data/constellations.cpp:77
+msgid "Serpens Cauda"
+msgstr "Ormens huvud"
+
+#: data/constellations.cpp:78
+msgid "Sextans"
+msgstr "Sextanten"
+
+#: data/constellations.cpp:79
+msgid "Taurus"
+msgstr "Oxen"
+
+#: data/constellations.cpp:80
+msgid "Telescopium"
+msgstr "Kikaren"
+
+#: data/constellations.cpp:81
+msgid "Triangulum"
+msgstr "Triangeln"
+
+#: data/constellations.cpp:82
+msgid "Triangulum Australe"
+msgstr "Södra triangeln"
+
+#: data/constellations.cpp:83
+msgid "Tucana"
+msgstr "Tukanen"
+
+#: data/constellations.cpp:84
+msgid "Ursa Major"
+msgstr "Stora björnen"
+
+#: data/constellations.cpp:85
+msgid "Ursa Minor"
+msgstr "Lilla björnen"
+
+#: data/constellations.cpp:86
+msgid "Vela"
+msgstr "Seglet"
+
+#: data/constellations.cpp:87
+msgid "Virgo"
+msgstr "Jungfrun"
+
+#: data/constellations.cpp:88
+msgid "Volans"
+msgstr "Flygfisken"
+
+#: data/constellations.cpp:89
+msgid "Vulpecula"
+msgstr "Räven"
+

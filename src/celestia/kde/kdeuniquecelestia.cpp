@@ -26,6 +26,8 @@ KdeUniqueCelestia::KdeUniqueCelestia() {
 
     bindtextdomain(PACKAGE, LOCALEDIR);
     bind_textdomain_codeset(PACKAGE, "UTF-8");
+    bindtextdomain("celestia_constellations", LOCALEDIR);
+    bind_textdomain_codeset("celestia_constellations", "UTF-8");
     textdomain(PACKAGE);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
