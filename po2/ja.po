@@ -8,9 +8,9 @@ msgstr ""
 "Project-Id-Version: Celestia-Japanese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-03 15:27+0100\n"
-"PO-Revision-Date: 2006-02-21 21:38+0900\n"
+"PO-Revision-Date: 2006-02-24 18:54+0900\n"
 "Last-Translator: Sui Ota <aqua@aqsp.net>\n"
-"Language-Team: Sui Ota <aqua@aqsp.net>\n"
+"Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -89,7 +89,7 @@ msgstr "りゅうこつ"
 
 #: data/data.cpp:58
 msgid "Cassiopeia"
-msgstr "カシオペア"
+msgstr "カシオペヤ"
 
 #: data/data.cpp:59
 msgid "Centaurus"
