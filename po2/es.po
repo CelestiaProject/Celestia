@@ -18,323 +18,323 @@ msgstr ""
 
 #: data/constellations.cpp:1
 msgid "Andromeda"
-msgstr ""
+msgstr "Andrómeda"
 
 #: data/constellations.cpp:2
 msgid "Antlia"
-msgstr ""
+msgstr "Máquina Neumática"
 
 #: data/constellations.cpp:3
 msgid "Apus"
-msgstr ""
+msgstr "Ave del Paraíso"
 
 #: data/constellations.cpp:4
 msgid "Aquarius"
-msgstr ""
+msgstr "Acuario"
 
 #: data/constellations.cpp:5
 msgid "Aquila"
-msgstr ""
+msgstr "Águila"
 
 #: data/constellations.cpp:6
 msgid "Ara"
-msgstr ""
+msgstr "Altar"
 
 #: data/constellations.cpp:7
 msgid "Aries"
-msgstr ""
+msgstr "Carnero"
 
 #: data/constellations.cpp:8
 msgid "Auriga"
-msgstr ""
+msgstr "Cochero"
 
 #: data/constellations.cpp:9
 msgid "Boötes"
-msgstr ""
+msgstr "Boyero"
 
 #: data/constellations.cpp:10
 msgid "Caelum"
-msgstr ""
+msgstr "Cincel"
 
 #: data/constellations.cpp:11
 msgid "Camelopardalis"
-msgstr ""
+msgstr "Jirafa"
 
 #: data/constellations.cpp:12
 msgid "Cancer"
-msgstr ""
+msgstr "Cangrejo"
 
 #: data/constellations.cpp:13
 msgid "Canes Venatici"
-msgstr ""
+msgstr "Los Perros de Caza"
 
 #: data/constellations.cpp:14
 msgid "Canis Major"
-msgstr ""
+msgstr "Can Mayor"
 
 #: data/constellations.cpp:15
 msgid "Canis Minor"
-msgstr ""
+msgstr "Can Menor"
 
 #: data/constellations.cpp:16
 msgid "Capricornus"
-msgstr ""
+msgstr "Capricornio"
 
 #: data/constellations.cpp:17
 msgid "Carina"
-msgstr ""
+msgstr "Quilla"
 
 #: data/constellations.cpp:18
 msgid "Cassiopeia"
-msgstr ""
+msgstr "Casiopea"
 
 #: data/constellations.cpp:19
 msgid "Centaurus"
-msgstr ""
+msgstr "Centauro"
 
 #: data/constellations.cpp:20
 msgid "Cepheus"
-msgstr ""
+msgstr "Cefeo"
 
 #: data/constellations.cpp:21
 msgid "Cetus"
-msgstr ""
+msgstr "Ballena"
 
 #: data/constellations.cpp:22
 msgid "Chamaeleon"
-msgstr ""
+msgstr "Camaleón"
 
 #: data/constellations.cpp:23
 msgid "Circinus"
-msgstr ""
+msgstr "Compás"
 
 #: data/constellations.cpp:24
 msgid "Columba"
-msgstr ""
+msgstr "Paloma"
 
 #: data/constellations.cpp:25
 msgid "Coma Berenices"
-msgstr ""
+msgstr "Cabellera de Berenices"
 
 #: data/constellations.cpp:26
 msgid "Corona Australis"
-msgstr ""
+msgstr "Corona Austral"
 
 #: data/constellations.cpp:27
 msgid "Corona Borealis"
-msgstr ""
+msgstr "Corona Boreal"
 
 #: data/constellations.cpp:28
 msgid "Corvus"
-msgstr ""
+msgstr "Cuervo"
 
 #: data/constellations.cpp:29
 msgid "Crater"
-msgstr ""
+msgstr "Copa"
 
 #: data/constellations.cpp:30
 msgid "Crux"
-msgstr ""
+msgstr "Cruz del Sur"
 
 #: data/constellations.cpp:31
 msgid "Cygnus"
-msgstr ""
+msgstr "Cisne"
 
 #: data/constellations.cpp:32
 msgid "Delphinus"
-msgstr ""
+msgstr "Delfín"
 
 #: data/constellations.cpp:33
 msgid "Dorado"
-msgstr ""
+msgstr "Pez Dorado"
 
 #: data/constellations.cpp:34
 msgid "Draco"
-msgstr ""
+msgstr "Dragón"
 
 #: data/constellations.cpp:35
 msgid "Equuleus"
-msgstr ""
+msgstr "Pequeño Caballo"
 
 #: data/constellations.cpp:36
 msgid "Eridanus"
-msgstr ""
+msgstr "Erídano"
 
 #: data/constellations.cpp:37
 msgid "Fornax"
-msgstr ""
+msgstr "Horno"
 
 #: data/constellations.cpp:38
 msgid "Gemini"
-msgstr ""
+msgstr "Géminis"
 
 #: data/constellations.cpp:39
 msgid "Grus"
-msgstr ""
+msgstr "Grulla"
 
 #: data/constellations.cpp:40
 msgid "Hercules"
-msgstr ""
+msgstr "Hércules"
 
 #: data/constellations.cpp:41
 msgid "Horologium"
-msgstr ""
+msgstr "Reloj"
 
 #: data/constellations.cpp:42
 msgid "Hydra"
-msgstr ""
+msgstr "Hidra"
 
 #: data/constellations.cpp:43
 msgid "Hydrus"
-msgstr ""
+msgstr "Hidra macho"
 
 #: data/constellations.cpp:44
 msgid "Indus"
-msgstr ""
+msgstr "Indio"
 
 #: data/constellations.cpp:45
 msgid "Lacerta"
-msgstr ""
+msgstr "Lagartija"
 
 #: data/constellations.cpp:46
 msgid "Leo"
-msgstr ""
+msgstr "Leo"
 
 #: data/constellations.cpp:47
 msgid "Leo Minor"
-msgstr ""
+msgstr "León Menor"
 
 #: data/constellations.cpp:48
 msgid "Lepus"
-msgstr ""
+msgstr "Liebre"
 
 #: data/constellations.cpp:49
 msgid "Libra"
-msgstr ""
+msgstr "Libra"
 
 #: data/constellations.cpp:50
 msgid "Lupus"
-msgstr ""
+msgstr "Lobo"
 
 #: data/constellations.cpp:51
 msgid "Lynx"
-msgstr ""
+msgstr "Lince"
 
 #: data/constellations.cpp:52
 msgid "Lyra"
-msgstr ""
+msgstr "Lira"
 
 #: data/constellations.cpp:53
 msgid "Mensa"
-msgstr ""
+msgstr "Mesa"
 
 #: data/constellations.cpp:54
 msgid "Microscopium"
-msgstr ""
+msgstr "Microscopio"
 
 #: data/constellations.cpp:55
 msgid "Monoceros"
-msgstr ""
+msgstr "Unicornio"
 
 #: data/constellations.cpp:56
 msgid "Musca"
-msgstr ""
+msgstr "Mosca"
 
 #: data/constellations.cpp:57
 msgid "Norma"
-msgstr ""
+msgstr "Regla"
 
 #: data/constellations.cpp:58
 msgid "Octans"
-msgstr ""
+msgstr "Octante"
 
 #: data/constellations.cpp:59
 msgid "Ophiuchus"
-msgstr ""
+msgstr "Ofiuco"
 
 #: data/constellations.cpp:60
 msgid "Orion"
-msgstr ""
+msgstr "Orión"
 
 #: data/constellations.cpp:61
 msgid "Pavo"
-msgstr ""
+msgstr "Pavo"
 
 #: data/constellations.cpp:62
 msgid "Pegasus"
-msgstr ""
+msgstr "Pegaso"
 
 #: data/constellations.cpp:63
 msgid "Perseus"
-msgstr ""
+msgstr "Perseo"
 
 #: data/constellations.cpp:64
 msgid "Phoenix"
-msgstr ""
+msgstr "Fénix"
 
 #: data/constellations.cpp:65
 msgid "Pictor"
-msgstr ""
+msgstr "Paleta del Pintor"
 
 #: data/constellations.cpp:66
 msgid "Pisces"
-msgstr ""
+msgstr "Piscis"
 
 #: data/constellations.cpp:67
 msgid "Piscis Austrinus"
-msgstr ""
+msgstr "Pez Austral"
 
 #: data/constellations.cpp:68
 msgid "Puppis"
-msgstr ""
+msgstr "Popa"
 
 #: data/constellations.cpp:69
 msgid "Pyxis"
-msgstr ""
+msgstr "Brújula"
 
 #: data/constellations.cpp:70
 msgid "Reticulum"
-msgstr ""
+msgstr "Retícula"
 
 #: data/constellations.cpp:71
 msgid "Sagitta"
-msgstr ""
+msgstr "Flecha"
 
 #: data/constellations.cpp:72
 msgid "Sagittarius"
-msgstr ""
+msgstr "Sagitario"
 
 #: data/constellations.cpp:73
 msgid "Scorpius"
-msgstr ""
+msgstr "Escorpio"
 
 #: data/constellations.cpp:74
 msgid "Sculptor"
-msgstr ""
+msgstr "Escultor"
 
 #: data/constellations.cpp:75
 msgid "Scutum"
-msgstr ""
+msgstr "Escudo"
 
 #: data/constellations.cpp:76
 msgid "Serpens Caput"
-msgstr ""
+msgstr "La cabeza de la Serpiente"
 
 #: data/constellations.cpp:77
 msgid "Serpens Cauda"
-msgstr ""
+msgstr "La cola de la Serpiente"
 
 #: data/constellations.cpp:78
 msgid "Sextans"
-msgstr ""
+msgstr "Sextante"
 
 #: data/constellations.cpp:79
 msgid "Taurus"
-msgstr ""
+msgstr "Tauro"
 
 #: data/constellations.cpp:80
 msgid "Telescopium"
-msgstr ""
+msgstr "Telescopio"
 
 #: data/constellations.cpp:81
 msgid "Triangulum"
@@ -346,28 +346,28 @@ msgstr "Triángulo Austral"
 
 #: data/constellations.cpp:83
 msgid "Tucana"
-msgstr ""
+msgstr "Tucán"
 
 #: data/constellations.cpp:84
 msgid "Ursa Major"
-msgstr ""
+msgstr "Osa Mayor"
 
 #: data/constellations.cpp:85
 msgid "Ursa Minor"
-msgstr ""
+msgstr "Osa Menor"
 
 #: data/constellations.cpp:86
 msgid "Vela"
-msgstr ""
+msgstr "Vela"
 
 #: data/constellations.cpp:87
 msgid "Virgo"
-msgstr ""
+msgstr "Virgo"
 
 #: data/constellations.cpp:88
 msgid "Volans"
-msgstr ""
+msgstr "Pez Volador"
 
 #: data/constellations.cpp:89
 msgid "Vulpecula"
-msgstr ""
+msgstr "Zorra"
