@@ -34,7 +34,7 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
 #endif
     tvi.mask = TVIF_TEXT | TVIF_PARAM;
  
-#warning FIX ME !!!
+#pragma message("Fix i18n for Solar System browser")
     // Set the text of the item. 
     int length = lstrlen(lpszItem);
     LPWSTR wout = (wchar_t*)malloc(sizeof(wchar_t*)*(length+1));
