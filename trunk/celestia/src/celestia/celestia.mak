@@ -67,14 +67,14 @@ LIBS=\
 
 TARGET = celestia.exe
 
-INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc/lua
+INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc/lua /I ../../inc/libintl
 
 LIBDIRS=/LIBPATH:..\..\lib
 
 !IF "$(CFG)" == "Release"
 
 LINK32=link.exe
-LINK32_FLAGS=libintl.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib ijgjpeg.lib zlib.lib libpng1.lib $(LUALIBS) $(LIBS) /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\celestia.pdb" /machine:I386 $(LIBDIRS)
+LINK32_FLAGS=intl.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib ijgjpeg.lib zlib.lib libpng1.lib $(LUALIBS) $(LIBS) /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\celestia.pdb" /machine:I386 $(LIBDIRS)
 
 CPP=cl.exe
 CPPFLAGS=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D WINVER=0x0400 /D _WIN32_WINNT=0x0400 /Fp"$(INTDIR)\celestia.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c $(EXTRADEFS) $(INCLUDEDIRS)
@@ -88,7 +88,7 @@ CPP=cl.exe
 CPPFLAGS=/nologo /MLd /W3 /Gm /GX /ZI /Od /D /MD "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D WINVER=0x0400 /D _WIN32_WINNT=0x0400 /Fp"$(INTDIR)\celestia.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c $(EXTRADEFS) $(INCLUDEDIRS)
 
 LINK32=link.exe
-LINK32_FLAGS=libintl.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib ijgjpeg.lib zlibd.lib libpng1d.lib $(LUALIBS) $(LIBS) /nologo /subsystem:windows /incremental:yes /pdb:"$(OUTDIR)\celestia.pdb" /debug /machine:I386 /pdbtype:sept $(LIBDIRS)
+LINK32_FLAGS=intl.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib ijgjpeg.lib zlibd.lib libpng1d.lib $(LUALIBS) $(LIBS) /nologo /subsystem:windows /incremental:yes /pdb:"$(OUTDIR)\celestia.pdb" /debug /machine:I386 /pdbtype:sept $(LIBDIRS)
 
 RSC=rc.exe
 RSC_FLAGS=/l 0x409 /d "_DEBUG" 
