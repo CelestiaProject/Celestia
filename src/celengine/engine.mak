@@ -86,7 +86,7 @@ OBJS=\
 
 TARGETLIB = cel_engine.lib
 
-INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc
+INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc /I ../../inc/libintl
 
 !IF "$(CFG)" == "Release"
 CPP=cl.exe

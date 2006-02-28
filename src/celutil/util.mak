@@ -32,7 +32,7 @@ OBJS=\
 
 TARGETLIB = cel_utils.lib
 
-INCLUDEDIRS=/I ..
+INCLUDEDIRS=/I .. /I ../../inc/libintl
 
 !IF "$(CFG)" == "Release"
 CPP=cl.exe
