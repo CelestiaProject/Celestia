@@ -1,4 +1,4 @@
-# Catalog of 182 known extrasolar planets.
+# Catalog of 183 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
@@ -331,7 +331,7 @@ AltSurface "limit of knowledge" "HD 212301/b"
 	Color  [0 0.36 1]
 	Albedo 0.05
 
-	Mass       590     # M.sin(i) = 1.85 jupiters
+	Mass       590     # M.sin(i) = 1.87 jupiters
 	Radius     84000
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+73256"
@@ -339,9 +339,9 @@ AltSurface "limit of knowledge" "HD 212301/b"
 	EllipticalOrbit {
 		Period          0.007
 		SemiMajorAxis   0.037
-		Eccentricity    0.038
+		Eccentricity    0.03
 		ArgOfPericenter 207
-		MeanAnomaly     83
+		MeanAnomaly     80
 	}
 
 	# likely to be in captured synchronous rotation
@@ -546,9 +546,11 @@ AltSurface "limit of knowledge" "HD 63454/b"
 	EllipticalOrbit {
 		Period          0.0079
 		SemiMajorAxis   0.042
+		Eccentricity    0
 		Inclination     102.8
 		AscendingNode   246.9
-		MeanLongitude   38
+		ArgOfPericenter 150
+		MeanAnomaly     248
 	}
 
 	Obliquity             103 # guess, to match inclination
@@ -2883,24 +2885,54 @@ AltSurface "limit of knowledge" "HD 219449/b"
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       950     # M.sin(i) = 3 jupiters
+	Mass       920     # M.sin(i) = 2.9 jupiters
 	Radius     70000
 	Oblateness 0.02
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+73526"
 
 	EllipticalOrbit {
-		Period          0.5216
+		Period          0.5155
 		SemiMajorAxis   0.66
-		Eccentricity    0.34
-		ArgOfPericenter 87
-		MeanAnomaly     43
+		Eccentricity    0.19
+		ArgOfPericenter 83
+		MeanAnomaly     2
 	}
 
 	RotationPeriod  10 # plausible guess
 }
 
 AltSurface "limit of knowledge" "HD 73526/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 73526"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       800     # M.sin(i) = 2.5 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+73526"
+
+	EllipticalOrbit {
+		Period          1.0344
+		SemiMajorAxis   1.05
+		Eccentricity    0.14
+		ArgOfPericenter 253
+		MeanAnomaly     39
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 73526/c"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -4421,18 +4453,18 @@ AltSurface "limit of knowledge" "HD 114386/b"
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       310     # M.sin(i) = 0.98 jupiters
+	Mass       570     # M.sin(i) = 1.79 jupiters
 	Radius     70000
-	Oblateness 0.06
+	Oblateness 0.03
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+45350"
 
 	EllipticalOrbit {
 		Period          2.4388
-		SemiMajorAxis   1.77
-		Eccentricity    0.78
-		ArgOfPericenter 150
-		MeanAnomaly     238
+		SemiMajorAxis   1.92
+		Eccentricity    0.778
+		ArgOfPericenter 169
+		MeanAnomaly     247
 	}
 
 	RotationPeriod  10 # plausible guess
