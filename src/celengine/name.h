@@ -153,9 +153,11 @@ template <class OBJ>
 std::vector<std::string> NameDatabase<OBJ>::getCompletion(const std::string& name) const
 {
     std::vector<std::string> completion;
+    int name_length = UTF8Length(name);
+
     for (NameIndex::const_iterator iter = nameIndex.begin(); iter != nameIndex.end(); ++iter)
     {
-        if (!UTF8StringCompare(iter->first, name, name.length()))
+        if (!UTF8StringCompare(iter->first, name, name_length))
         {
             completion.push_back(iter->first);
         }

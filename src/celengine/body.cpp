@@ -700,11 +700,12 @@ bool PlanetarySystem::traverse(TraversalFunc func, void* info) const
 std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name, bool rec) const
 {
     std::vector<std::string> completion;
-      
+    int _name_length = UTF8Length(_name);
+
     for (vector<Body*>::const_iterator iter = satellites.begin();
          iter != satellites.end(); iter++)
     {
-        if (UTF8StringCompare((*iter)->getName(true), _name, _name.length()) == 0)
+        if (UTF8StringCompare((*iter)->getName(true), _name, _name_length) == 0)
         {
             completion.push_back((*iter)->getName(true));
         }
