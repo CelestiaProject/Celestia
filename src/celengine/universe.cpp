@@ -1117,6 +1117,7 @@ vector<string> Universe::getCompletion(const string& s,
                                                  bool withLocations)
 {
     vector<string> completion;
+    int s_length = UTF8Length(s);
 
     // Solar bodies first:
     for (int i = 0; i < nContexts; i++)
@@ -1129,7 +1130,7 @@ vector<string> Universe::getCompletion(const string& s,
                 for (vector<Location*>::const_iterator iter = locations->begin();
                      iter != locations->end(); iter++)
                 {
-                    if (!UTF8StringCompare(s, (*iter)->getName(true), s.length()))
+                    if (!UTF8StringCompare(s, (*iter)->getName(true), s_length))
                         completion.push_back((*iter)->getName(true));
                 }
             }
