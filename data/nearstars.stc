@@ -2549,6 +2549,9 @@ Barycenter "MU Cas:30 Cas:Gliese 53"
 	SpectralType "A0V"
 	AppMag 0.03
 
+	RotationPeriod 12.4
+	SemiAxes [ 1 0.81 1 ] # equatorial radius 23% greater than polar
+
 	Obliquity            28 # rotation pole points
 	EquatorAscendingNode 15 # towards solar system
 }
