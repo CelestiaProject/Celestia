@@ -76,6 +76,7 @@ namespace vp
     extern unsigned int specular_2light;
     extern unsigned int nightLights_2light;
     extern unsigned int ellipticalGalaxy;
+    extern unsigned int starDisc;
 };
 
 

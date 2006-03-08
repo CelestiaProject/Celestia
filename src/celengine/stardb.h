@@ -49,6 +49,7 @@ class StarDatabase
                         float radius) const;
 
     std::string getStarName    (const Star&) const;
+    void getStarName(const Star& star, char* nameBuffer, unsigned int bufferSize) const;
     std::string getStarNameList(const Star&, const unsigned int maxNames = MAX_STAR_NAMES) const;
 
     StarNameDatabase* getNameDatabase() const;

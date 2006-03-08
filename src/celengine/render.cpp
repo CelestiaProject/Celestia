@@ -54,7 +54,8 @@ static const float  STAR_DISTANCE_LIMIT  = 1.0e6f;
 static const double DSO_DISTANCE_LIMIT   = 1.8e9;
 static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
-static const float  X0_SOL = astro::AUtoKilometers(5.0f);
+// Distance from the Sun at which comet tails will start to fade out
+static const float COMET_TAIL_ATTEN_DIST_SOL = astro::AUtoKilometers(5.0f);
 
 static const int StarVertexListSize = 1024;
 
@@ -93,6 +94,8 @@ static Texture* normalizationTex = NULL;
 static Texture* starTex = NULL;
 static Texture* glareTex = NULL;
 static Texture* shadowTex = NULL;
+static Texture* gaussianDiscTex = NULL;
+static Texture* gaussianGlareTex = NULL;
 
 // Shadow textures are scaled down slightly to leave some extra blank pixels
 // near the border.  This keeps axis aligned streaks from appearing on hardware
@@ -128,6 +131,39 @@ static const int MaxSkyRings = 32;
 static const int MaxSkySlices = 180;
 static const int MinSkySlices = 30;
 
+struct DisplayDevice
+{
+    float faintestVisibleLevel;
+};
+
+struct Detector
+{
+    float saturationLevel;    
+};
+
+
+DisplayDevice displayDevice =
+{
+    0.1f,
+};
+
+Detector detector =
+{
+    1.0f,
+};
+
+
+// Some useful unit conversions
+inline float mmToInches(float mm)
+{
+    return mm * (1.0f / 25.4f);
+}
+
+inline float inchesToMm(float in)
+{
+    return in * 25.4f;
+}
+
 
 Renderer::Renderer() :
     context(0),
@@ -149,10 +185,13 @@ Renderer::Renderer() :
     saturationMag(1.0f),
     starStyle(FuzzyPointStars),
     starVertexBuffer(NULL),
+    pointStarVertexBuffer(NULL),
+	glareVertexBuffer(NULL),
     useVertexPrograms(false),
     useRescaleNormal(false),
     usePointSprite(false),
     textureResolution(medres),
+    useNewStarRendering(false),
     minOrbitSize(MinOrbitSizeForLabel),
     distanceLimit(1.0e6f),
     minFeatureSize(MinFeatureSizeForLabel),
@@ -160,10 +199,17 @@ Renderer::Renderer() :
     colorTemp(NULL)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
+    pointStarVertexBuffer = new PointStarVertexBuffer(2048);
+	glareVertexBuffer = new PointStarVertexBuffer(2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
     skyIndices = new uint32[(MaxSkySlices + 1) * 2 * MaxSkyRings];
     skyContour = new SkyContourPoint[MaxSkySlices + 1];
     colorTemp = GetStarColorTable(ColorTable_Enhanced);
+    
+    for (int i = 0; i < (int) FontCount; i++)
+    {
+        font[i] = NULL;
+    }
 }
 
 
@@ -171,6 +217,8 @@ Renderer::~Renderer()
 {
     if (starVertexBuffer != NULL)
         delete starVertexBuffer;
+    if (pointStarVertexBuffer != NULL)
+        delete pointStarVertexBuffer;
     delete[] skyVertices;
     delete[] skyIndices;
     delete[] skyContour;
@@ -332,6 +380,82 @@ static void IllumMapEval(float x, float y, float z,
     pixel[2] = 128 + (int) (127 * u.z);
 }
 
+#if 1
+static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
+							          unsigned int log2size,
+							          float fwhm,
+							          float power)
+{
+	unsigned int size = 1 << log2size;
+	float sigma = fwhm / 2.3548f;
+	float isig2 = 1.0f / (2.0f * sigma * sigma);
+	float s = 1.0f / (sigma * (float) sqrt(2.0 * PI));
+
+	for (unsigned int i = 0; i < size; i++)
+	{
+		float y = (float) i - size / 2;
+		for (unsigned int j = 0; j < size; j++)
+		{
+			float x = (float) j - size / 2;
+			float r2 = x * x + y * y;
+			float f = s * (float) exp(-r2 * isig2) * power;
+			
+			mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
+		}
+	}
+}
+
+static Texture* BuildGaussianDiscTexture(unsigned int log2size)
+{
+	unsigned int size = 1 << log2size;
+	Image* img = new Image(GL_LUMINANCE, size, size, log2size + 1);
+	
+	for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
+	{
+		float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
+		BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
+						          log2size - mipLevel,
+						          fwhm, 
+						          (float) pow(2.0f, (float) (log2size - mipLevel)));
+	}
+	
+	ImageTexture* texture = new ImageTexture(*img,
+											 Texture::BorderClamp,
+											 Texture::DefaultMipMaps);
+	texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
+	
+	delete img;
+	
+	return texture;
+}
+
+
+static Texture* BuildGaussianGlareTexture(unsigned int log2size)
+{
+	unsigned int size = 1 << log2size;
+	Image* img = new Image(GL_LUMINANCE, size, size, log2size + 1);
+	
+	for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
+	{
+		float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
+		BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
+						          log2size - mipLevel,
+						          fwhm, 
+						          (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.25f);
+	}
+	
+	ImageTexture* texture = new ImageTexture(*img,
+											 Texture::BorderClamp,
+											 Texture::DefaultMipMaps);
+	texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
+	
+	delete img;
+	
+	return texture;
+}
+
+#endif
+
 bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 {
     // This comparison functions tries to determine which of two objects is
@@ -416,6 +540,11 @@ bool Renderer::init(GLContext* _context,
                                             ShadowTextureEval,
                                             shadowTexAddress, shadowTexMip);
         shadowTex->setBorderColor(Color::White);
+		
+		if (gaussianDiscTex == NULL)
+			gaussianDiscTex = BuildGaussianDiscTexture(8);
+		if (gaussianGlareTex == NULL)
+			gaussianGlareTex = BuildGaussianGlareTexture(9);
 
         // Create the eclipse shadow textures
         {
@@ -618,14 +747,14 @@ void Renderer::setResolution(unsigned int resolution)
 }
 
 
-TextureFont* Renderer::getFont() const
+TextureFont* Renderer::getFont(FontStyle fs) const
 {
-    return font;
+    return font[(int) fs];
 }
 
-void Renderer::setFont(TextureFont* txf)
+void Renderer::setFont(FontStyle fs, TextureFont* txf)
 {
-    font = txf;
+    font[(int) fs] = txf;
 }
 
 void Renderer::setRenderMode(int _renderMode)
@@ -675,18 +804,6 @@ void
 Renderer::setStarColorTable(const ColorTemperatureTable* ct)
 {
     colorTemp = ct;
-}
-
-
-void Renderer::addLabelledStar(Star* star, const string& label)
-{
-    labelledStars.push_back(StarLabel(star, label));
-}
-
-
-void Renderer::clearLabelledStars()
-{
-    labelledStars.clear();
 }
 
 
@@ -770,10 +887,10 @@ bool Renderer::vertexShaderSupported() const
 }
 
 
-void Renderer::addLabel(string text,
-                        Color color,
-                        const Point3f& pos,
-                        float depth)
+void Renderer::addLabel(const char* text,
+                         Color color,
+                         const Point3f& pos,
+                         float depth)
 {
     double winX, winY, winZ;
     int view[4] = { 0, 0, 0, 0 };
@@ -791,7 +908,10 @@ void Renderer::addLabel(string text,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Label l;
-        l.text = ReplaceGreekLetterAbbr(text.c_str());
+        ReplaceGreekLetterAbbr(l.text, MaxLabelLength, text, strlen(text));
+        // Might be nice to use abbreviations instead of Greek letters
+        // strncpy(l.text, text, MaxLabelLength);
+        l.text[MaxLabelLength - 1] = '\0';
         l.color = color;
         l.position = Point3f((float) winX, (float) winY, -depth);
         labels.insert(labels.end(), l);
@@ -799,7 +919,16 @@ void Renderer::addLabel(string text,
 }
 
 
-void Renderer::addSortedLabel(string text, Color color, const Point3f& pos)
+void Renderer::addLabel(const string& text,
+                        Color color,
+                        const Point3f& pos,
+                        float depth)
+{
+    addLabel(text.c_str(), color, pos, depth);
+}
+
+
+void Renderer::addSortedLabel(const string& text, Color color, const Point3f& pos)
 {
     double winX, winY, winZ;
     int view[4] = { 0, 0, 0, 0 };
@@ -817,7 +946,9 @@ void Renderer::addSortedLabel(string text, Color color, const Point3f& pos)
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Label l;
-        l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
+        //l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
+        strncpy(l.text, text.c_str(), MaxLabelLength);
+        l.text[MaxLabelLength - 1] = '\0';
         l.color = color;
         l.position = Point3f((float) winX, (float) winY, -depth);
         depthSortedLabels.insert(depthSortedLabels.end(), l);
@@ -828,6 +959,11 @@ void Renderer::addSortedLabel(string text, Color color, const Point3f& pos)
 void Renderer::clearLabels()
 {
     labels.clear();
+}
+
+
+void Renderer::clearSortedLabels()
+{
     depthSortedLabels.clear();
 }
 
@@ -1271,6 +1407,17 @@ void Renderer::render(const Observer& observer,
 
     locationFilter = observer.getLocationFilter();
 
+    if ((renderFlags & ShowNewStars) != 0 &&
+         usePointSprite &&
+         getGLContext()->getVertexProcessor() != NULL)
+    {
+        useNewStarRendering = true;
+    }
+    else
+    {
+        useNewStarRendering = false;
+    }
+    
     // Set up the camera
     Point3f observerPos = (Point3f) observer.getPosition();
     observerPos.x *= 1e-6f;
@@ -1285,6 +1432,7 @@ void Renderer::render(const Observer& observer,
     glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
     
     clearLabels();
+	clearSortedLabels();
 
     // Put all solar system bodies into the render list.  Stars close and
     // large enough to have discernible surface detail are also placed in
@@ -1302,10 +1450,6 @@ void Renderer::render(const Observer& observer,
         saturationMag = saturationMagNight;
     }
 
-    // Automatic FOV-based adjustment of limiting magnitude for solar system
-    // objects.  Now that we have the automag feature, this hack should no
-    // longer be required.
-    // faintestPlanetMag = faintestMag + (2.5f * (float) log10((double) square(45.0f / fov)));
     faintestPlanetMag = faintestMag;
 
     if (renderFlags & ShowPlanets)
@@ -1396,13 +1540,13 @@ void Renderer::render(const Observer& observer,
     // brightness will be proportional to the apparent magnitude, i.e.
     // a logarithmic function of the stars apparent brightness.  This mimics
     // the response of the human eye.  We sort of fudge things here and
-    // maintain a minimum range of four magnitudes between faintest visible
+    // maintain a minimum range of six magnitudes between faintest visible
     // and saturation; this keeps stars from popping in or out as the sun
     // sets or rises.
-    if (faintestMag - saturationMag >= 4.0f)
+    if (faintestMag - saturationMag >= 6.0f)
         brightnessScale = 1.0f / (faintestMag -  saturationMag);
     else
-        brightnessScale = 0.25f;
+        brightnessScale = 0.1667f;
 
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
 
@@ -1442,7 +1586,12 @@ void Renderer::render(const Observer& observer,
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != NULL)
-        renderStars(*universe.getStarCatalog(), faintestMag, observer);
+	{
+		if (useNewStarRendering)
+			renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
+		else
+			renderStars(*universe.getStarCatalog(), faintestMag, observer);
+	}
 
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != NULL)
@@ -1485,11 +1634,15 @@ void Renderer::render(const Observer& observer,
             disableSmoothLines();
     }
 
-    if ((labelMode & StarLabels) != 0 && universe.getStarCatalog() != NULL)
-        labelStars(labelledStars, *universe.getStarCatalog(), observer);
-    if ((labelMode & ConstellationLabels) != 0 &&
-        universe.getAsterisms() != NULL)
+    renderLabels(FontNormal);
+    clearLabels();
+    
+    if ((labelMode & ConstellationLabels) != 0 && universe.getAsterisms() != NULL)
+    {
         labelConstellations(*universe.getAsterisms(), observer);
+        renderLabels(FontLarge);
+        clearLabels();
+    }
 
     glPopMatrix();
 
@@ -1539,7 +1692,7 @@ void Renderer::render(const Observer& observer,
         }
     }
 
-    renderLabels();
+    renderLabels(FontNormal);
 
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
     glPolygonMode(GL_BACK, (GLenum) renderMode);
@@ -1763,7 +1916,7 @@ void Renderer::render(const Observer& observer,
         // Render all the bodies in the render list.
         for (i = nEntries - 1; i >= 0; i--)
         {
-            label = renderSortedLabels(label, -renderList[i].farZ);
+            label = renderSortedLabels(label, -renderList[i].farZ, FontNormal);
 
             if (renderList[i].discSizeInPixels > 1)
             {
@@ -1837,7 +1990,7 @@ void Renderer::render(const Observer& observer,
             }
         }
 
-        renderSortedLabels(label, 0.0f);
+        renderSortedLabels(label, 0.0f, FontNormal);
 
         // reset the depth range
         glDepthRange(0, 1);
@@ -1969,13 +2122,13 @@ void Renderer::renderBodyAsParticle(Point3f position,
         starTex->bind();
         glColor(color, a);
         glBegin(GL_QUADS);
-        glTexCoord2f(0, 0);
-        glVertex(center + (v0 * size));
-        glTexCoord2f(1, 0);
-        glVertex(center + (v1 * size));
-        glTexCoord2f(1, 1);
-        glVertex(center + (v2 * size));
         glTexCoord2f(0, 1);
+        glVertex(center + (v0 * size));
+        glTexCoord2f(1, 1);
+        glVertex(center + (v1 * size));
+        glTexCoord2f(1, 0);
+        glVertex(center + (v2 * size));
+        glTexCoord2f(0, 0);
         glVertex(center + (v3 * size));
         glEnd();
 
@@ -1999,16 +2152,140 @@ void Renderer::renderBodyAsParticle(Point3f position,
             glareTex->bind();
             glColor(color, a);
             glBegin(GL_QUADS);
-            glTexCoord2f(0, 0);
-            glVertex(center + (v0 * size));
-            glTexCoord2f(1, 0);
-            glVertex(center + (v1 * size));
-            glTexCoord2f(1, 1);
-            glVertex(center + (v2 * size));
             glTexCoord2f(0, 1);
+            glVertex(center + (v0 * size));
+            glTexCoord2f(1, 1);
+            glVertex(center + (v1 * size));
+            glTexCoord2f(1, 0);
+            glVertex(center + (v2 * size));
+            glTexCoord2f(0, 0);
             glVertex(center + (v3 * size));
             glEnd();
         }
+    }
+}
+
+
+// If the an object occupies a pixel or less of screen space, we don't
+// render its mesh at all and just display a starlike point instead.
+// Switching between the particle and mesh renderings of an object is
+// jarring, however . . . so we'll blend in the particle view of the
+// object to smooth things out, making it dimmer as the disc size exceeds the
+// max disc size.
+void Renderer::renderObjectAsPoint(Point3f position,
+                                   float appMag,
+                                   float _faintestMag,
+                                   float discSizeInPixels,
+                                   Color color,
+                                   const Quatf& orientation,
+                                   float renderZ,
+                                   bool useHaloes)
+{
+    float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
+    float maxBlendDiscSize = maxDiscSize + 3.0f;
+    float discSize = 1.0f;
+	bool useScaledDiscs = starStyle == ScaledDiscStars;
+
+    if (discSizeInPixels < maxBlendDiscSize || useHaloes)
+    {
+        float alpha = 1.0f;
+        float fade = 1.0f;
+		float size = 4.0f;
+		float satPoint = _faintestMag - (1.0f - brightnessBias) / (brightnessScale * 2); // TODO: precompute this value
+
+
+        if (discSizeInPixels > maxDiscSize)
+        {
+            fade = (maxBlendDiscSize - discSizeInPixels) /
+                (maxBlendDiscSize - maxDiscSize - 1.0f);
+            if (fade > 1)
+                fade = 1;
+        }
+
+        alpha = (_faintestMag - appMag) * brightnessScale * 2.0f + brightnessBias;
+
+        // The render
+        // distance is scaled by a factor of 0.1 so that we're rendering in
+        // front of any mesh that happens to be sharing this depth bucket.
+        // What we really want is to render the particle with the frontmost
+        // z value in this depth bucket, and scaling the render distance is
+        // just hack to accomplish this.  There are cases where it will fail
+        // and a more robust method should be implemented.
+
+		float pointSize = size;
+		float glareSize = 0.0f;
+		float glareAlpha = 0.0f;
+		if (useScaledDiscs)
+		{
+			if (alpha < 0.0f)
+			{
+				alpha = 0.0f;
+			}
+			else if (alpha > 1.0f)
+			{
+				float discScale = min(256.0f, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
+				pointSize *= discScale;
+				
+				glareAlpha = min(0.5f, discScale / 4.0f);
+				glareSize = pointSize * 3.0f;
+
+				alpha = 1.0f;
+			}
+		}
+		else
+		{
+			if (alpha < 0.0f)
+			{
+				alpha = 0.0f;
+			}
+			else if (alpha > 1.0f)
+			{
+				float discScale = min(100.0f, satPoint - appMag + 2.0f);
+				glareAlpha = min(0.3f, (discScale - 2.0f) / 4.0f);
+				glareSize = pointSize * discScale * 2.0f;
+			}
+		}
+
+		alpha *= fade;
+		
+        float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
+
+        Point3f center(position.x * posScale,
+                       position.y * posScale,
+                       position.z * posScale);
+
+		glEnable(GL_POINT_SPRITE_ARB);
+		glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+		
+        gaussianDiscTex->bind();
+        glColor(color, alpha);
+		glPointSize(pointSize);
+        glBegin(GL_POINTS);
+        glVertex(center);
+        glEnd();
+
+        // If the object is brighter than magnitude 1, add a halo around it to
+        // make it appear more brilliant.  This is a hack to compensate for the
+        // limited dynamic range of monitors.
+        //
+        // TODO: Currently, this is extremely broken.  Stars look fine,
+        // but planets look ridiculous with bright haloes.
+        if (/*useHaloes*/1 && glareAlpha > 0.0f)
+        {
+#if 0		
+            float realSize = discSizeInPixels * pixelSize * renderZ;
+            if (pointSize < realSize * 10)
+                pointSize = realSize * 10;
+#endif
+            gaussianGlareTex->bind();
+            glColor(color, glareAlpha);
+			glPointSize(glareSize);
+            glBegin(GL_POINTS);
+            glVertex(center);
+            glEnd();
+        }
+		
+		glDisable(GL_POINT_SPRITE_ARB);
     }
 }
 
@@ -3840,7 +4117,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
     {
         float ringWidth = rings->outerRadius - rings->innerRadius;
         prog->ringRadius = rings->innerRadius / radius;
-        prog->ringWidth = 1.0f / (ringWidth / radius);
+        prog->ringWidth = radius / ringWidth;
     }
 
     if (shadprop.shadowCounts != 0)    
@@ -4732,7 +5009,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
                                const Quatf& orientation,
                                float scale)
 {
-    if (font == NULL)
+    if (font[FontNormal] == NULL)
         return;
 
     double winX, winY, winZ;
@@ -4753,7 +5030,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-    font->bind();
+    font[FontNormal]->bind();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_LIGHTING);
@@ -4829,7 +5106,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
                         glTranslatef((int) winX + PixelOffset,
                                      (int) winY + PixelOffset,
                                      0.0f);
-                        font->render((*iter)->getName(true));
+                        font[FontNormal]->render((*iter)->getName(true));
                         glPopMatrix();
                     }
                 }
@@ -5672,7 +5949,11 @@ void Renderer::renderPlanet(Body& body,
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#if 0	
     renderBodyAsParticle(pos,
+#else
+	renderObjectAsPoint(pos,
+#endif
                          appMag,
                          faintestPlanetMag,
                          discSizeInPixels,
@@ -5680,6 +5961,7 @@ void Renderer::renderPlanet(Body& body,
                          orientation,
                          (nearPlaneDistance + farPlaneDistance) / 2.0f,
                          false);
+						 
 }
 
 
@@ -5765,7 +6047,11 @@ void Renderer::renderStar(const Star& star,
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#if 0	
     renderBodyAsParticle(pos,
+#else
+	renderObjectAsPoint(pos,
+#endif
                          appMag,
                          faintestMag,
                          discSizeInPixels,
@@ -5795,7 +6081,7 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
     // If fadeDistFromSun = x/x0 >= 1.0, comet tail starts fading,
     // i.e. fadeFactor quickly transits from 1 to 0.
     
-    float fadeFactor = 0.5f - 0.5f * tanh(fadeDistFromSun - 1.0f / fadeDistFromSun);
+    float fadeFactor = 0.5f - 0.5f * (float) tanh(fadeDistFromSun - 1.0f / fadeDistFromSun);
     float shade = abs(viewDir * v.normal * v.brightness * fadeFactor);
     glColor4f(0.5f, 0.5f, 0.75f, shade);
     glVertex(v.point);
@@ -5887,7 +6173,7 @@ void Renderer::renderCometTail(const Body& body,
     
     for (unsigned int li = 0; li < lightSources.size(); li++)
     {
-        distanceFromSun = (float)(body.getHeliocentricPosition(now) -
+        distanceFromSun = (float) (body.getHeliocentricPosition(now) -
                            lightSources[li].position).length();
         float irradiance = lightSources[li].luminosity / square(distanceFromSun);
         if (irradiance > irradiance_max )
@@ -5896,15 +6182,13 @@ void Renderer::renderCometTail(const Body& body,
             irradiance_max = irradiance;
         }
     }
-    float fadeDistance = 1.0f / (X0_SOL * sqrt(irradiance_max));
+    float fadeDistance = 1.0f / (float) (COMET_TAIL_ATTEN_DIST_SOL * sqrt(irradiance_max));
     
     // direction to sun with dominant light irradiance:
     
     Vec3d sd = body.getHeliocentricPosition(now) - lightSources[li_eff].position;
     Vec3f sunDir = Vec3f((float) sd.x, (float) sd.y, (float) sd.z);
     sunDir.normalize();
-    
-    // cout<<astro::kilometersToAU(X0_SOL*sqrt(lightSources[li_eff].luminosity))<<"   "<<fadeDistance<<"   "<<astro::kilometersToAU(sd.length())<<endl;
     
     int i;
 #if 0
@@ -6251,6 +6535,9 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     float brightnessScale;
     float brightnessBias;
     float distanceLimit;
+    
+    // Objects brighter than labelThresholdMag will be labeled
+    float labelThresholdMag;
 
     // These are not fully used by this template's descendants
     // but we place them here just in case a more sophisticated
@@ -6278,8 +6565,6 @@ ObjectRenderer<OBJ, PREC>::ObjectRenderer(const PREC _distanceLimit) :
 }
 
 
-
-
 class StarRenderer : public ObjectRenderer<Star, float>
 {
  public:
@@ -6290,12 +6575,14 @@ class StarRenderer : public ObjectRenderer<Star, float>
  public:
     Point3f obsPos;
 
-    vector<Renderer::Particle>* glareParticles;
-    vector<RenderListEntry>*    renderList;
-    Renderer::StarVertexBuffer* starVertexBuffer;
+    vector<Renderer::Particle>*      glareParticles;
+    vector<RenderListEntry>*         renderList;
+    Renderer::StarVertexBuffer*      starVertexBuffer;
+    Renderer::PointStarVertexBuffer* pointStarVertexBuffer;
 
-    bool  useDiscs;
-    float maxDiscSize;
+    bool   useScaledDiscs;
+    GLenum starPrimitive;
+    float  maxDiscSize;
 
     const ColorTemperatureTable* colorTemp;
 };
@@ -6303,10 +6590,11 @@ class StarRenderer : public ObjectRenderer<Star, float>
 
 StarRenderer::StarRenderer() :
     ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT),
-    starVertexBuffer(0),
-    useDiscs        (false),
-    maxDiscSize     (1.0f),
-    colorTemp       (NULL)
+    starVertexBuffer     (NULL),
+    pointStarVertexBuffer(NULL),
+    useScaledDiscs       (false),
+    maxDiscSize          (1.0f),
+    colorTemp            (NULL)
 {
 }
 
@@ -6372,8 +6660,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         if (discSizeInPixels <= 1)
         {
             float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
+            float pointSize;
 
-            if (useDiscs)
+            if (useScaledDiscs)
             {
                 float discSize = size;
                 if (alpha < 0.0f)
@@ -6385,16 +6674,25 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                     discSize = min(discSize * (2.0f * alpha - 1.0f), maxDiscSize);
                     alpha = 1.0f;
                 }
-                starVertexBuffer->addStar(starPos,
-                                          Color(starColor, alpha),
-                                          renderDistance * discSize);
+                pointSize = discSize;
             }
             else
             {
                 alpha = clamp(alpha);
+                pointSize = size;
+            }
+
+            if (starPrimitive == GL_POINTS)
+            {
+                pointStarVertexBuffer->addStar(starPos,
+                                               Color(starColor, alpha),
+                                               pointSize);
+            }
+            else
+            {
                 starVertexBuffer->addStar(starPos,
                                           Color(starColor, alpha),
-                                          renderDistance * size);
+                                          pointSize * renderDistance);
             }
 
             ++nRendered;
@@ -6406,15 +6704,36 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             {
                 Renderer::Particle p;
                 p.center = starPos;
-                p.size = renderDistance * size;
+                p.size = size;
                 p.color = Color(starColor, alpha);
 
                 alpha = 0.4f * clamp((appMag - saturationMag) * -0.8f);
+#if 0
+                s = (3 - (appMag - saturationMag)) * 2;
+
+                if (1 || starPrimitive != GL_POINTS)
+                {
+                    s *= 0.001f;
+                    if (s > p.size * 3 )
+                        p.size = s * 2.0f/(1.0f +FOV/fov);
+                    else
+                        p.size = p.size * 3;
+                    p.size *= renderDistance;
+                }
+#else
                 s = renderDistance * 0.001f * (3 - (appMag - saturationMag)) * 2;
                 if (s > p.size * 3 )
 		        	p.size = s * 2.0f/(1.0f + FOV/fov);	
+#endif
                 else
-                    p.size = p.size * 3;
+                {
+                    if (s > p.size * 3)
+                        p.size = s * 2.0f; //2.0f/(1.0f +FOV/fov);
+                    else
+                        p.size = p.size * 3;
+                    p.size *= 1.6f;
+                }
+
                 p.color = Color(starColor, alpha);
                 glareParticles->insert(glareParticles->end(), p);
                 ++nBright;
@@ -6442,15 +6761,199 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 }
 
 
+class PointStarRenderer : public ObjectRenderer<Star, float>
+{
+ public:
+    PointStarRenderer();
+
+    void process(const Star& star, float distance, float appMag);
+
+ public:
+    Point3f obsPos;
+
+    vector<RenderListEntry>*         renderList;
+    Renderer::PointStarVertexBuffer* starVertexBuffer;
+	Renderer::PointStarVertexBuffer* glareVertexBuffer;
+
+    const StarDatabase* starDB;
+    
+    bool   useScaledDiscs;
+    GLenum starPrimitive;
+    float  maxDiscSize;
+
+    float cosFOV;
+
+    const ColorTemperatureTable* colorTemp;    
+};
+
+
+PointStarRenderer::PointStarRenderer() :
+    ObjectRenderer<Star, float>(STAR_DISTANCE_LIMIT),
+    starVertexBuffer     (NULL),
+    useScaledDiscs       (false),
+    maxDiscSize          (1.0f),
+    cosFOV               (1.0f),
+    colorTemp            (NULL)
+{
+}
+
+
+void PointStarRenderer::process(const Star& star, float distance, float appMag)
+{
+    nProcessed++;
+
+    Point3f starPos = star.getPosition();
+    Vec3f   relPos = starPos - obsPos;
+    float   orbitalRadius = star.getOrbitalRadius();
+    bool    hasOrbit = orbitalRadius > 0.0f;
+
+    if (distance > distanceLimit)
+        return;
+
+    
+    // A very rough check to see if the star may be visible: is the star in
+    // front of the viewer? If the star might be close (relPos.x^2 < 0.1) or
+    // is moving in an orbit, we'll always regard it as potentially visible.
+    // TODO: consider normalizing relPos and comparing relPos*viewNormal against
+    // cosFOV--this will cull many more stars than relPos*viewNormal, at the
+    // cost of a normalize per star.
+    if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f || hasOrbit)
+    {
+        Color starColor = colorTemp->lookupColor(star.getTemperature());
+        float renderDistance = distance;
+        float s = renderDistance * size;
+        float discSizeInPixels = 0.0f;
+        float orbitSizeInPixels = 0.0f;
+
+        if (hasOrbit)
+            orbitSizeInPixels = orbitalRadius / (distance * pixelSize);
+
+        // Special handling for stars less than one light year away . . .
+        // We can't just go ahead and render a nearby star in the usual way
+        // for two reasons:
+        //   * It may be clipped by the near plane
+        //   * It may be large enough that we should render it as a mesh
+        //     instead of a particle
+        // It's possible that the second condition might apply for stars
+        // further than one light year away if the star is huge, the fov is
+        // very small and the resolution is high.  We'll ignore this for now
+        // and use the most inexpensive test possible . . .
+        if (distance < 1.0f || orbitSizeInPixels > 1.0f)
+        {
+            // Compute the position of the observer relative to the star.
+            // This is a much more accurate (and expensive) distance
+            // calculation than the previous one which used the observer's
+            // position rounded off to floats.
+            Point3d hPos = astrocentricPosition(observer->getPosition(),
+                                                star,
+                                                observer->getTime());
+            relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) *
+                -astro::kilometersToLightYears(1.0f),
+            distance = relPos.length();
+
+            // Recompute apparent magnitude using new distance computation
+            appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
+
+            float f        = RenderDistance / distance;
+            renderDistance = RenderDistance;
+            starPos        = obsPos + relPos * f;
+
+            float radius = star.getRadius();
+            discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
+            ++nClose;
+        }
+
+        // Place labels for stars brighter than the specified label threshold brightness
+        if ((labelMode & Renderer::StarLabels) && appMag < labelThresholdMag)
+        {
+            Vec3f starDir = relPos;
+            starDir.normalize();
+            if (dot(starDir, viewNormal) > cosFOV)
+            {
+                char nameBuffer[Renderer::MaxLabelLength];
+                starDB->getStarName(star, nameBuffer, sizeof(nameBuffer));
+                renderer->addLabel(nameBuffer,
+                                   Color(0.5f, 0.5f, 1.0f, 1.0f),
+                                   Point3f(relPos.x, relPos.y, relPos.z));
+                nLabelled++;
+            }
+        }
+        
+        if (discSizeInPixels <= 1)
+        {
+			float satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale; // TODO: precompute this value
+            float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
+
+            if (useScaledDiscs)
+            {
+                float discSize = size;
+                if (alpha < 0.0f)
+                {
+                    alpha = 0.0f;
+                }
+                else if (alpha > 1.0f)
+                {
+					float discScale = min(256.0f, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
+					discSize *= discScale;
+					
+					float glareAlpha = min(0.5f, discScale / 4.0f); 
+					glareVertexBuffer->addStar(starPos, Color(starColor, glareAlpha), discSize * 3.0f);
+
+					alpha = 1.0f;
+                }
+				starVertexBuffer->addStar(starPos, Color(starColor, alpha), discSize);
+            }
+            else
+            {
+				if (alpha < 0.0f)
+                {
+                    alpha = 0.0f;
+                }
+                else if (alpha > 1.0f)
+                {
+                    float discScale = min(100.0f, satPoint - appMag + 2.0f);
+                    float glareAlpha = min(0.3f, (discScale - 2.0f) / 4.0f);
+					glareVertexBuffer->addStar(starPos, Color(starColor, glareAlpha), 2.0f * discScale * size);                    
+                }
+				starVertexBuffer->addStar(starPos, Color(starColor, alpha), size);
+            }
+
+            ++nRendered;
+        }
+        else
+        {
+            RenderListEntry rle;
+            rle.star = &star;
+            rle.body = NULL;
+            rle.isCometTail = false;
+            
+            // Objects in the render list are always rendered relative to
+            // a viewer at the origin--this is different than for distant
+            // stars.
+            float scale = astro::lightYearsToKilometers(1.0f);
+            rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
+            rle.distance = rle.position.distanceFromOrigin();
+            rle.radius = star.getRadius();
+            rle.discSizeInPixels = discSizeInPixels;
+            rle.appMag = appMag;
+            renderList->insert(renderList->end(), rle);
+        }
+    }
+}
+
+
+static Point3f microLYToLY(const Point3f& p)
+{
+	return Point3f(p.x * 1e-6f, p.y * 1e-6f, p.z * 1e-6f);
+}
+
+
 void Renderer::renderStars(const StarDatabase& starDB,
                            float faintestMagNight,
                            const Observer& observer)
 {
     StarRenderer starRenderer;
-    Point3f obsPos = (Point3f) observer.getPosition();
-    obsPos.x *= 1e-6f;
-    obsPos.y *= 1e-6f;
-    obsPos.z *= 1e-6f;
+    Point3f obsPos = microLYToLY((Point3f) observer.getPosition());
 
     starRenderer.context          = context;
     starRenderer.observer         = &observer;
@@ -6459,6 +6962,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.glareParticles   = &glareParticles;
     starRenderer.renderList       = &renderList;
     starRenderer.starVertexBuffer = starVertexBuffer;
+    starRenderer.pointStarVertexBuffer = pointStarVertexBuffer;
     starRenderer.fov              = fov;
 
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
@@ -6471,9 +6975,19 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.saturationMag    = saturationMag;
     starRenderer.distanceLimit    = distanceLimit;
 
+    if (starStyle == PointStars || useNewStarRendering)
+    {
+        starRenderer.starPrimitive = GL_POINTS;
+        //starRenderer.size          = 3.2f;
+    }
+    else
+    {
+        starRenderer.starPrimitive = GL_QUADS;
+    }
+
     if (starStyle == ScaledDiscStars)
     {
-        starRenderer.useDiscs = true;
+        starRenderer.useScaledDiscs = true;
         starRenderer.brightnessScale *= 2.0f;
         starRenderer.maxDiscSize = starRenderer.size * MaxScaledDiscStarSize;
     }
@@ -6486,18 +7000,118 @@ void Renderer::renderStars(const StarDatabase& starDB,
 
     glEnable(GL_TEXTURE_2D);
 
-    starTex->bind();
-    starRenderer.starVertexBuffer->start(starStyle == PointStars);
+    if (useNewStarRendering)
+        gaussianDiscTex->bind();
+    else
+        starTex->bind();
+    if (starRenderer.starPrimitive == GL_POINTS)
+    {
+        // Point primitives (either real points or point sprites)
+        if (starStyle == PointStars)
+            starRenderer.pointStarVertexBuffer->startPoints(*context);
+        else
+            starRenderer.pointStarVertexBuffer->startSprites(*context);
+    }
+    else
+    {
+        // Use quad primitives
+        starRenderer.starVertexBuffer->start();
+    }
     starDB.findVisibleStars(starRenderer,
                             obsPos,
                             observer.getOrientation(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             faintestMagNight);
-    starRenderer.starVertexBuffer->finish();
+
+    if (starRenderer.starPrimitive == GL_POINTS)
+        starRenderer.pointStarVertexBuffer->finish();
+    else
+        starRenderer.starVertexBuffer->finish();
 
     glareTex->bind();
     renderParticles(glareParticles, observer.getOrientation());
+}
+
+
+// Calculate the maximum field of view (from top left corner to bottom right) of
+// a frustum with the specified aspect ratio (width/height) and vertical field of
+// view. We follow the convention used elsewhere and use units of degrees for
+// the field of view angle.
+static double calcMaxFOV(double fovY_degrees, double aspectRatio)
+{
+    double l = 1.0 / tan(degToRad(fovY_degrees / 2.0));
+    return radToDeg(atan(sqrt(aspectRatio * aspectRatio + 1.0) / l)) * 2.0;
+}
+
+void Renderer::renderPointStars(const StarDatabase& starDB,
+                                float faintestMagNight,
+                                const Observer& observer)
+{
+    Point3f obsPos = microLYToLY((Point3f) observer.getPosition());
+
+    PointStarRenderer starRenderer;
+    starRenderer.context           = context;
+    starRenderer.renderer          = this;
+    starRenderer.starDB            = &starDB;
+    starRenderer.observer          = &observer;
+    starRenderer.obsPos            = obsPos;
+    starRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    starRenderer.renderList        = &renderList;
+    starRenderer.starVertexBuffer  = pointStarVertexBuffer;
+    starRenderer.glareVertexBuffer = glareVertexBuffer;
+    starRenderer.fov               = fov; 
+    starRenderer.cosFOV            = (float) cos(degToRad(calcMaxFOV(fov, (float) windowWidth / (float) windowHeight)) / 2.0f);
+ 
+    starRenderer.pixelSize         = pixelSize;
+    starRenderer.brightnessScale   = brightnessScale * corrFac;
+    starRenderer.brightnessBias    = brightnessBias;
+    starRenderer.faintestMag       = faintestMag;
+    starRenderer.faintestMagNight  = faintestMagNight;
+    starRenderer.saturationMag     = saturationMag;
+    starRenderer.distanceLimit     = distanceLimit;
+    starRenderer.labelMode         = labelMode;
+ 
+    // = 1.0 at startup 
+    float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
+    starRenderer.labelThresholdMag = max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
+    
+    starRenderer.size          = 4.0f;
+    if (starStyle == ScaledDiscStars)
+    {
+        starRenderer.useScaledDiscs = true;
+        starRenderer.brightnessScale *= 2.0f;
+        starRenderer.maxDiscSize = starRenderer.size * MaxScaledDiscStarSize;
+    }
+    else if (starStyle == FuzzyPointStars)
+    {
+        starRenderer.brightnessScale *= 2.0f;
+    }
+
+    starRenderer.colorTemp = colorTemp;
+
+    glEnable(GL_TEXTURE_2D);
+	gaussianDiscTex->bind();
+	starRenderer.starVertexBuffer->setTexture(gaussianDiscTex);
+	starRenderer.glareVertexBuffer->setTexture(gaussianGlareTex);
+		
+	starRenderer.glareVertexBuffer->startSprites(*context);
+    if (starStyle == PointStars)
+        starRenderer.starVertexBuffer->startPoints(*context);
+    else
+        starRenderer.starVertexBuffer->startSprites(*context);
+		
+    starDB.findVisibleStars(starRenderer,
+                            obsPos,
+                            observer.getOrientation(),
+                            degToRad(fov),
+                            (float) windowWidth / (float) windowHeight,
+                            faintestMagNight);
+
+	starRenderer.starVertexBuffer->render();
+	starRenderer.glareVertexBuffer->render();
+    starRenderer.starVertexBuffer->finish();
+	starRenderer.glareVertexBuffer->finish();
 }
 
 
@@ -6631,8 +7245,8 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     float relDistanceToScreen = REF_DISTANCE_TO_SCREEN * pixelSize * renderer->getScreenDpi() / 25.4f; 
     // = 1.0 initially, after startup
     if ((dso->getLabelMask() & labelMode)
-    && astro::absToAppMag(absMag, (float) distanceToDSO) < faintestMag * (1.0f - 0.5f * log10(relDistanceToScreen)) 
-    && dot(relPos, viewNormal) > 0)
+        && astro::absToAppMag(absMag, (float) distanceToDSO) < faintestMag * (1.0f - 0.5f * log10(relDistanceToScreen)) 
+        && dot(relPos, viewNormal) > 0)
     {
         renderer->addLabel(dsoDB->getDSOName(dso),
                             Color(0.1f, 0.85f, 0.85f, 1.0f),
@@ -6745,45 +7359,6 @@ void Renderer::renderCelestialSphere(const Observer& observer)
 }
 
 
-void Renderer::labelStars(const vector<StarLabel>& labelledStars,
-                          const StarDatabase& starDB,
-                          const Observer& observer)
-{
-    Point3f observerPos_ly = (Point3f) observer.getPosition() * 1e-6f;
-
-    for (vector<StarLabel>::const_iterator iter = labelledStars.begin(); iter != labelledStars.end(); ++iter)
-    {
-        Star* star     = iter->obj;
-        Point3f pos    = star->getPosition();
-        float distance = pos.distanceTo(observerPos_ly);
-        float appMag    = (distance > 0.0f) ?
-            astro::absToAppMag(star->getAbsoluteMagnitude(), distance) : -100.0f;
-        
-        if (appMag < faintestMag && distance <= distanceLimit)
-        {
-            Vec3f rpos = pos - observerPos_ly;
-
-            // Use a more accurate and expensive calculation if the
-            // distance to the star is less than a light year.  Single
-            // precision arithmetic isn't good enough when we're very close
-            // to the star.
-            if (distance < 1.0f)
-            {
-                Point3d hpos = astro::heliocentricPosition(observer.getPosition(), pos);
-                rpos = Vec3f((float) -hpos.x, (float) -hpos.y, (float) -hpos.z);
-            }
-
-            if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
-            {
-                addLabel(iter->label,
-                         Color(0.3f, 0.3f, 1.0f),
-                         Point3f(rpos.x, rpos.y, rpos.z));
-            }
-        }
-    }
-}
-
-
 void Renderer::labelConstellations(const AsterismList& asterisms,
                                    const Observer& observer)
 {
@@ -6812,7 +7387,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                 Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
                 if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
                 {
-                    addLabel(ast->getName(labelMode & I18nConstellationLabels),
+                    addLabel(ast->getName((labelMode & I18nConstellationLabels) != 0),
                              Color(0.5f, 0.0f, 1.0f, 1.0f),
                              Point3f(rpos.x, rpos.y, rpos.z));
                 }
@@ -6827,40 +7402,42 @@ void Renderer::renderParticles(const vector<Particle>& particles,
 {
     int nParticles = particles.size();
 
-    Mat3f m = orientation.toMatrix3();
-    Vec3f v0 = Vec3f(-1, -1, 0) * m;
-    Vec3f v1 = Vec3f( 1, -1, 0) * m;
-    Vec3f v2 = Vec3f( 1,  1, 0) * m;
-    Vec3f v3 = Vec3f(-1,  1, 0) * m;
-
-    glBegin(GL_QUADS);
-    for (int i = 0; i < nParticles; i++)
     {
-        Point3f center = particles[i].center;
-        float size = particles[i].size;
+        Mat3f m = orientation.toMatrix3();
+        Vec3f v0 = Vec3f(-1, -1, 0) * m;
+        Vec3f v1 = Vec3f( 1, -1, 0) * m;
+        Vec3f v2 = Vec3f( 1,  1, 0) * m;
+        Vec3f v3 = Vec3f(-1,  1, 0) * m;
 
-        glColor(particles[i].color);
-        glTexCoord2f(0, 0);
-        glVertex(center + (v0 * size));
-        glTexCoord2f(1, 0);
-        glVertex(center + (v1 * size));
-        glTexCoord2f(1, 1);
-        glVertex(center + (v2 * size));
-        glTexCoord2f(0, 1);
-        glVertex(center + (v3 * size));
+        glBegin(GL_QUADS);
+        for (int i = 0; i < nParticles; i++)
+        {
+            Point3f center = particles[i].center;
+            float size = particles[i].size;
+
+            glColor(particles[i].color);
+            glTexCoord2f(0, 1);
+            glVertex(center + (v0 * size));
+            glTexCoord2f(1, 1);
+            glVertex(center + (v1 * size));
+            glTexCoord2f(1, 0);
+            glVertex(center + (v2 * size));
+            glTexCoord2f(0, 0);
+            glVertex(center + (v3 * size));
+        }
+        glEnd();
     }
-    glEnd();
 }
 
 
-void Renderer::renderLabels()
+void Renderer::renderLabels(FontStyle fs)
 {
-    if (font == NULL)
+    if (font[fs] == NULL)
         return;
 
     //glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-    font->bind();
+    font[fs]->bind();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -6881,8 +7458,8 @@ void Renderer::renderLabels()
         glTranslatef((int) labels[i].position.x + PixelOffset + 2.0f,
                      (int) labels[i].position.y + PixelOffset,
                      0.0f);
-		  // EK TODO: Check where to replace (see '_(' above)
-		  font->render(labels[i].text.c_str());
+		// EK TODO: Check where to replace (see '_(' above)
+		font[fs]->render(labels[i].text);
         glPopMatrix();
     }
 
@@ -6895,14 +7472,14 @@ void Renderer::renderLabels()
 
 
 vector<Renderer::Label>::iterator
-Renderer::renderSortedLabels(vector<Label>::iterator iter, float depth)
+Renderer::renderSortedLabels(vector<Label>::iterator iter, float depth, FontStyle fs)
 {
-    if (font == NULL)
+    if (font[fs] == NULL)
         return iter;
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-    font->bind();
+    font[fs]->bind();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -6923,7 +7500,7 @@ Renderer::renderSortedLabels(vector<Label>::iterator iter, float depth)
         glTranslatef((int) iter->position.x + PixelOffset + 2.0f,
                      (int) iter->position.y + PixelOffset,
                      0.0f);
-        font->render(iter->text);
+        font[fs]->render(iter->text);
         glPopMatrix();
     }
 
@@ -7008,30 +7585,6 @@ void Renderer::renderMarkers(const MarkerList& markers,
 }
 
 
-float Renderer::getSaturationMagnitude() const
-{
-    return saturationMag;
-}
-
-
-void Renderer::setSaturationMagnitude(float mag)
-{
-    saturationMag = mag;
-}
-
-
-float Renderer::getBrightnessBias() const
-{
-    return brightnessBias;
-}
-
-
-void Renderer::setBrightnessBias(float bias)
-{
-    brightnessBias = bias;
-}
-
-
 void Renderer::setStarStyle(StarStyle style)
 {
     starStyle = style;
@@ -7046,145 +7599,6 @@ Renderer::StarStyle Renderer::getStarStyle() const
 
 #if 1
 Renderer::StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
-    capacity(_capacity),
-    vertices(NULL),
-    texCoords(NULL),
-    colors(NULL),
-    usePoints(false)
-{
-    nStars = 0;
-    vertices = new float[capacity * 12];
-    texCoords = new float[capacity * 8];
-    colors = new unsigned char[capacity * 16];
-
-    // Fill the texture coordinate array now, since it will always have
-    // the same contents.
-    for (unsigned int i = 0; i < capacity; i++)
-    {
-        unsigned int n = i * 8;
-        texCoords[n    ] = 0; texCoords[n + 1] = 0;
-        texCoords[n + 2] = 1; texCoords[n + 3] = 0;
-        texCoords[n + 4] = 1; texCoords[n + 5] = 1;
-        texCoords[n + 6] = 0; texCoords[n + 7] = 1;
-    }
-}
-
-Renderer::StarVertexBuffer::~StarVertexBuffer()
-{
-    if (vertices != NULL)
-        delete vertices;
-    if (colors != NULL)
-        delete colors;
-    if (texCoords != NULL)
-        delete texCoords;
-}
-
-void Renderer::StarVertexBuffer::start(bool _usePoints)
-{
-    usePoints = _usePoints;
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
-    if (!usePoints)
-    {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-    }
-    else
-    {
-        // An option to control the size of the stars would be helpful.
-        // Which size looks best depends a lot on the resolution and the
-        // type of display device.
-        // glPointSize(2.0f);
-        // glEnable(GL_POINT_SMOOTH);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        glDisable(GL_TEXTURE_2D);
-    }
-    glDisableClientState(GL_NORMAL_ARRAY);
-}
-
-void Renderer::StarVertexBuffer::render()
-{
-    if (nStars != 0)
-    {
-        if (usePoints)
-            glDrawArrays(GL_POINTS, 0, nStars);
-        else
-            glDrawArrays(GL_QUADS, 0, nStars * 4);
-        nStars = 0;
-    }
-}
-
-void Renderer::StarVertexBuffer::finish()
-{
-    render();
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    if (usePoints)
-        glEnable(GL_TEXTURE_2D);
-}
-
-void Renderer::StarVertexBuffer::addStar(const Point3f& pos,
-                                         const Color& color,
-                                         float size)
-{
-    if (nStars < capacity)
-    {
-        if (usePoints)
-        {
-            int n = nStars * 3;
-            vertices[n + 0] = pos.x;
-            vertices[n + 1] = pos.y;
-            vertices[n + 2] = pos.z;
-            color.get(colors + nStars * 4);
-        }
-        else
-        {
-            int n = nStars * 12;
-            vertices[n + 0]  = pos.x + v0.x * size;
-            vertices[n + 1]  = pos.y + v0.y * size;
-            vertices[n + 2]  = pos.z + v0.z * size;
-            vertices[n + 3]  = pos.x + v1.x * size;
-            vertices[n + 4]  = pos.y + v1.y * size;
-            vertices[n + 5]  = pos.z + v1.z * size;
-            vertices[n + 6]  = pos.x + v2.x * size;
-            vertices[n + 7]  = pos.y + v2.y * size;
-            vertices[n + 8]  = pos.z + v2.z * size;
-            vertices[n + 9]  = pos.x + v3.x * size;
-            vertices[n + 10] = pos.y + v3.y * size;
-            vertices[n + 11] = pos.z + v3.z * size;
-            n = nStars * 16;
-            color.get(colors + n);
-            color.get(colors + n + 4);
-            color.get(colors + n + 8);
-            color.get(colors + n + 12);
-        }
-        nStars++;
-    }
-
-    if (nStars == capacity)
-    {
-        render();
-        nStars = 0;
-    }
-}
-
-void Renderer::StarVertexBuffer::setBillboardOrientation(const Quatf& q)
-{
-    Mat3f m = q.toMatrix3();
-    v0 = Vec3f(-1, -1, 0) * m;
-    v1 = Vec3f( 1, -1, 0) * m;
-    v2 = Vec3f( 1,  1, 0) * m;
-    v3 = Vec3f(-1,  1, 0) * m;
-}
-#endif
-                               
-
-#if 0
-Renderer::QuadStarVertexBuffer::QuadStarVertexBuffer(unsigned int _capacity) :
     capacity(_capacity),
     vertices(NULL),
     texCoords(NULL),
@@ -7207,17 +7621,17 @@ Renderer::QuadStarVertexBuffer::QuadStarVertexBuffer(unsigned int _capacity) :
     }
 }
 
-Renderer::QuadStarVertexBuffer::~QuadStarVertexBuffer()
+Renderer::StarVertexBuffer::~StarVertexBuffer()
 {
     if (vertices != NULL)
-        delete vertices;
+        delete[] vertices;
     if (colors != NULL)
-        delete colors;
+        delete[] colors;
     if (texCoords != NULL)
-        delete texCoords;
+        delete[] texCoords;
 }
 
-void Renderer::QuadStarVertexBuffer::start()
+void Renderer::StarVertexBuffer::start()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, vertices);
@@ -7228,7 +7642,7 @@ void Renderer::QuadStarVertexBuffer::start()
     glDisableClientState(GL_NORMAL_ARRAY);
 }
 
-void Renderer::QuadStarVertexBuffer::render()
+void Renderer::StarVertexBuffer::render()
 {
     if (nStars != 0)
     {
@@ -7237,7 +7651,7 @@ void Renderer::QuadStarVertexBuffer::render()
     }
 }
 
-void Renderer::QuadStarVertexBuffer::finish()
+void Renderer::StarVertexBuffer::finish()
 {
     render();
     glDisableClientState(GL_COLOR_ARRAY);
@@ -7245,9 +7659,9 @@ void Renderer::QuadStarVertexBuffer::finish()
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Renderer::QuadStarVertexBuffer::addStar(const Point3f& pos,
-                                             const Color& color,
-                                             float size)
+void Renderer::StarVertexBuffer::addStar(const Point3f& pos,
+                                         const Color& color,
+                                         float size)
 {
     if (nStars < capacity)
     {
@@ -7269,6 +7683,7 @@ void Renderer::QuadStarVertexBuffer::addStar(const Point3f& pos,
         color.get(colors + n + 4);
         color.get(colors + n + 8);
         color.get(colors + n + 12);
+
         nStars++;
     }
 
@@ -7279,7 +7694,7 @@ void Renderer::QuadStarVertexBuffer::addStar(const Point3f& pos,
     }
 }
 
-void Renderer::QuadStarVertexBuffer::setBillboardOrientation(const Quatf& q)
+void Renderer::StarVertexBuffer::setBillboardOrientation(const Quatf& q)
 {
     Mat3f m = q.toMatrix3();
     v0 = Vec3f(-1, -1, 0) * m;
@@ -7287,13 +7702,17 @@ void Renderer::QuadStarVertexBuffer::setBillboardOrientation(const Quatf& q)
     v2 = Vec3f( 1,  1, 0) * m;
     v3 = Vec3f(-1,  1, 0) * m;
 }
+#endif
+                               
 
-
+#if 1
 Renderer::PointStarVertexBuffer::PointStarVertexBuffer(unsigned int _capacity) :
     capacity(_capacity),
     nStars(0),
     vertices(NULL),
-    context(NULL)
+    context(NULL),
+    useSprites(false),
+	texture(NULL)
 {
     vertices = new StarVertex[capacity];
 }
@@ -7304,8 +7723,7 @@ Renderer::PointStarVertexBuffer::~PointStarVertexBuffer()
         delete[] vertices;
 }
 
-void Renderer::PointStarVertexBuffer::start(const GLContext& _context,
-                                            bool useSprites)
+void Renderer::PointStarVertexBuffer::startSprites(const GLContext& _context)
 {
     context = &_context;
 
@@ -7314,9 +7732,31 @@ void Renderer::PointStarVertexBuffer::start(const GLContext& _context,
     glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
     glEnableClientState(GL_COLOR_ARRAY);
     glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
-    context->getVertexProcessor()->attribArray(6, 1, GL_FLOAT,
-                                               stride,
-                                               &vertices[0].size);
+
+    VertexProcessor* vproc = context->getVertexProcessor();
+    vproc->enable();
+    vproc->use(vp::starDisc);
+    vproc->enableAttribArray(6);
+    vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
+
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+    glEnable(GL_POINT_SPRITE_ARB);
+    glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+
+    useSprites = true;
+}
+
+void Renderer::PointStarVertexBuffer::startPoints(const GLContext& _context)
+{
+    context = &_context;
+
+    unsigned int stride = sizeof(StarVertex);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
 
     // An option to control the size of the stars would be helpful.
     // Which size looks best depends a lot on the resolution and the
@@ -7328,18 +7768,32 @@ void Renderer::PointStarVertexBuffer::start(const GLContext& _context,
 
     glDisableClientState(GL_NORMAL_ARRAY);
 
-    if (useSprites)
-    {
-        glEnable(GL_POINT_SPRITE_ARB);
-        glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
-    }
+    useSprites = false;
 }
-#endif
 
 void Renderer::PointStarVertexBuffer::render()
 {
     if (nStars != 0)
     {
+        unsigned int stride = sizeof(StarVertex);
+        if (useSprites)
+        {
+            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glEnable(GL_TEXTURE_2D);
+        }
+        else
+        {
+            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glDisable(GL_TEXTURE_2D);
+        }
+        glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
+        glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
+
+        VertexProcessor* vproc = context->getVertexProcessor();
+        vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
+
+        if (texture != NULL)
+            texture->bind();
         glDrawArrays(GL_POINTS, 0, nStars);
         nStars = 0;
     }
@@ -7351,8 +7805,19 @@ void Renderer::PointStarVertexBuffer::finish()
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    context->getVertexProcessor()->disableAttribArray(6);
-    //glEnable(GL_TEXTURE_2D);
+
+    if (useSprites)
+    {
+        VertexProcessor* vproc = context->getVertexProcessor();
+        vproc->disableAttribArray(6);
+        vproc->disable();
+
+        glDisable(GL_POINT_SPRITE_ARB);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+    }
 }
 
 void Renderer::PointStarVertexBuffer::addStar(const Point3f& pos,
@@ -7373,6 +7838,12 @@ void Renderer::PointStarVertexBuffer::addStar(const Point3f& pos,
         nStars = 0;
     }
 }
+
+void Renderer::PointStarVertexBuffer::setTexture(Texture* _texture)
+{
+	texture = _texture;
+}
+#endif
 
 
 void Renderer::loadTextures(Body* body)

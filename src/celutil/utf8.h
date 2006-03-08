@@ -62,7 +62,8 @@ inline int UTF8EncodedSizeFromFirstByte(unsigned int ch)
     return charlen;
 }
 
-std::string ReplaceGreekLetterAbbr(std::string);
+std::string ReplaceGreekLetterAbbr(const std::string&);
+unsigned int ReplaceGreekLetterAbbr(char* dst, unsigned int dstSize, const char* src, unsigned int srcLength);
 
 class Greek
 {
