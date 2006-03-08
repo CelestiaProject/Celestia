@@ -311,6 +311,30 @@ vector<string> StarDatabase::getCompletion(const string& name) const
 }
 
 
+static void catalogNumberToString(uint32 catalogNumber, char* buf, unsigned int bufSize)
+{
+    // Just return an empty string if there's any chance that the buffer is too small
+    if (bufSize < 20 && bufSize > 0)
+    {
+        buf[0] = '\0';
+    }
+    
+    if (catalogNumber < 1000000)
+    {
+        sprintf(buf, "HIP %d", catalogNumber);
+    }
+    else
+    {
+        uint32 tyc3 = catalogNumber / 1000000000;
+        catalogNumber -= tyc3 * 1000000000;
+        uint32 tyc2 = catalogNumber / 10000;
+        catalogNumber -= tyc2 * 10000;
+        uint32 tyc1 = catalogNumber;
+        sprintf(buf, "TYC %d-%d-%d", tyc1, tyc2, tyc3);
+    }
+}
+
+
 // Return the name for the star with specified catalog number.  The returned
 // string will be:
 //      the common name if it exists, otherwise
@@ -344,22 +368,32 @@ string StarDatabase::getStarName(const Star& star) const
       sprintf(buf, "HD %d", star.getCatalogNumber(Star::HDCatalog));
       else
     */
+    catalogNumberToString(catalogNumber, buf, sizeof(buf));
+    
+    return string(buf);
+}
+
+// A less convenient version of getStarName that writes to a char
+// array instead of a string. The advantage is that no memory allocation
+// will every occur.
+void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int bufferSize) const
+{
+    assert(bufferSize != 0);
+    
+    uint32 catalogNumber = star.getCatalogNumber();
+
+    if (namesDB != NULL)
     {
-        if (catalogNumber < 1000000)
+        StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
+        if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            sprintf(buf, "HIP %d", catalogNumber);
-        }
-        else
-        {
-            uint32 tyc3 = catalogNumber / 1000000000;
-            catalogNumber -= tyc3 * 1000000000;
-            uint32 tyc2 = catalogNumber / 10000;
-            catalogNumber -= tyc2 * 10000;
-            uint32 tyc1 = catalogNumber;
-            sprintf(buf, "TYC %d-%d-%d", tyc1, tyc2, tyc3);
+            strncpy(nameBuffer, iter->second.c_str(), bufferSize);
+            nameBuffer[bufferSize - 1] = '\0';
+            return;
         }
     }
-    return string(buf);
+
+    catalogNumberToString(catalogNumber, nameBuffer, bufferSize);
 }
 
 

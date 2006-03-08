@@ -1397,12 +1397,14 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '\031':  // Ctrl+Y
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAutoMag);
         if (renderer->getRenderFlags() & Renderer::ShowAutoMag)
-	{
+        {
             flash(_("Auto-magnitude enabled"));
-	    setFaintestAutoMag();
-	}
+            setFaintestAutoMag();
+        }
         else
+        {
             flash(_("Auto-magnitude disabled"));
+        }
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1924,7 +1926,10 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '@':
-        editMode = !editMode;
+        // Obsolete?
+        //editMode = !editMode;
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNewStars);
+        notifyWatchers(RenderFlagsChanged);        
         break;
     }
 }
@@ -3811,25 +3816,10 @@ bool CelestiaCore::initRenderer()
         return false;
     }
 
-    // Set up the star labels
-    for (vector<string>::const_iterator iter = config->labelledStars.begin();
-         iter != config->labelledStars.end();
-         iter++)
+    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
     {
-        Star* star = universe->getStarCatalog()->find(*iter);
-        if (star != NULL)
-            renderer->addLabelledStar(star, *iter);
-    }
-
-    if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
-    {
-	renderer->setFaintestAM45deg(renderer->getFaintestAM45deg());
+        renderer->setFaintestAM45deg(renderer->getFaintestAM45deg());
         setFaintestAutoMag();
-    }
-    else
-    {
-    renderer->setBrightnessBias(0.1f);
-    renderer->setSaturationMagnitude(1.0f);
     }
 
     if (config->mainFont == "")
@@ -3855,21 +3845,23 @@ bool CelestiaCore::initRenderer()
 
     if (config->labelFont == "")
     {
-        renderer->setFont(font);
+        renderer->setFont(Renderer::FontNormal, font);
     }
     else
     {
         TextureFont* labelFont = LoadTextureFont(string("fonts") + "/" + config->labelFont);
         if (labelFont == NULL)
         {
-            renderer->setFont(font);
+            renderer->setFont(Renderer::FontNormal, font);
         }
         else
         {
             labelFont->buildTexture();
-            renderer->setFont(labelFont);
+            renderer->setFont(Renderer::FontNormal, labelFont);
         }
     }
+    
+    renderer->setFont(Renderer::FontLarge, titleFont);
 
     if (config->logoTextureFile != "")
     {
@@ -3998,8 +3990,6 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 /// brightness parameters appropriately.
 void CelestiaCore::setFaintest(float magnitude)
 {
-    renderer->setBrightnessBias(0.1f);
-    renderer->setSaturationMagnitude(1.0f);
     sim->setFaintestVisible(magnitude);
 }
 
@@ -4009,7 +3999,6 @@ void CelestiaCore::setFaintest(float magnitude)
 void CelestiaCore::setFaintestAutoMag()
 {
     float faintestMag;
-    renderer->setBrightnessBias(0.1f);
     renderer->autoMag(faintestMag);
     sim->setFaintestVisible(faintestMag);
 }
@@ -4215,7 +4204,8 @@ void CelestiaCore::goToUrl(const string& urlStr)
     Url url(urlStr, this);
     url.goTo();
     timeScale = sim->getTimeScale();
-    notifyWatchers(RenderFlagsChanged|LabelFlagsChanged);
+	clog << "goToUrl: " << timeScale << endl;
+    notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
 }
 
 
