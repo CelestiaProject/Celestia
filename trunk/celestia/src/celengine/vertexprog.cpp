@@ -40,6 +40,7 @@ unsigned int vp::diffuseTexOffset_2light = 0;
 unsigned int vp::specular_2light = 0;
 unsigned int vp::nightLights_2light = 0;
 unsigned int vp::ellipticalGalaxy = 0;
+unsigned int vp::starDisc = 0;
 
 
 class VertexProcessorNV : public VertexProcessor
@@ -275,6 +276,8 @@ VertexProcessor* vp::initARB()
     if (!LoadARBVertexProgram("shaders/specular2_arb.vp", specular_2light))
         return NULL;
     if (!LoadARBVertexProgram("shaders/night2_arb.vp", nightLights_2light))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/star_arb.vp", starDisc))
         return NULL;
 
     // Load vertex programs that are only required with fragment programs

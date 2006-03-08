@@ -762,7 +762,7 @@ const std::string& Greek::canonicalAbbreviation(const std::string& letter)
 //! of a string by the UTF-8 representation of that letter.
 //! Also, replace digits following Greek letters with UTF-8
 //! superscripts.
-std::string ReplaceGreekLetterAbbr(std::string str) 
+std::string ReplaceGreekLetterAbbr(const std::string& str) 
 {
     std::string ret = str;
     
@@ -803,3 +803,102 @@ std::string ReplaceGreekLetterAbbr(std::string str)
     
     return ret;
 }
+
+//! Replaces the Greek letter abbreviation at the beginning
+//! of a string by the UTF-8 representation of that letter.
+//! Also, replace digits following Greek letters with UTF-8
+//! superscripts. Operates on char* instead of strings--less
+//! convenient, but more efficient. Return the number of
+//! characters copied to the destination string, not
+//! including the zero terminator.
+unsigned int
+ReplaceGreekLetterAbbr(char *dst, unsigned int dstSize, const char* src, unsigned int srcLength) 
+{
+    if (src[0] >= 'A' && src[0] <= 'Z' &&
+        src[1] >= 'A' && src[1] <= 'Z')
+    {
+        // Linear search through all letter abbreviations
+        for (unsigned int i = 0; i < (unsigned int) Greek::instance->nLetters; i++)
+        {
+            const char* abbr = canonicalAbbrevs[i];
+            unsigned int j = 0;
+            while (abbr[j] == src[j] && abbr[j] != '\0' && src[j] != '\0')
+                j++;
+            
+            // It's a match if we reached the end of the abbreviation string
+            if (abbr[j] == '\0')
+            {
+                unsigned int abbrevLength = j;
+                unsigned int srcIndex = j;
+                char* superscript = NULL;
+                if (src[abbrevLength] == '1')
+                    superscript = UTF8_SUPERSCRIPT_1;
+                else if (src[abbrevLength] == '2')
+                    superscript = UTF8_SUPERSCRIPT_2;
+                else if (src[abbrevLength] == '3')
+                    superscript = UTF8_SUPERSCRIPT_3;
+
+                const char* utfGreek = greekAlphabetUTF8[i];
+                unsigned int utfGreekLength = strlen(utfGreek);
+
+                unsigned int requiredLength = (int) srcLength;
+                if (utfGreekLength > abbrevLength)
+                    requiredLength += utfGreekLength - abbrevLength;
+                if (superscript != NULL)
+                {
+                    requiredLength += strlen(superscript) - 1;
+                    srcIndex++; 
+                }
+                    
+                // If there's not enough room, give up translating and just copy as much as possible
+                if (requiredLength + 1 > dstSize)
+                    break;
+                
+                unsigned int dstIndex = 0;
+                j = 0;
+                while (utfGreek[j])
+                {
+                    dst[dstIndex++] = utfGreek[j];
+                    j++;
+                }
+                
+                if (superscript != NULL)
+                {
+                    j = 0;
+                    while (superscript[j])
+                    {
+                        dst[dstIndex++] = superscript[j];
+                        j++;
+                    }
+                }
+                
+                while (src[srcIndex])
+                {
+                    dst[dstIndex++] = src[srcIndex++];
+                }
+                dst[dstIndex] = '\0';
+                
+                return dstIndex;
+            }
+        }
+    }
+
+    strncpy(dst, src, dstSize);
+    if (dstSize > srcLength)
+    {
+        return srcLength;
+    }
+    else
+    {
+        if (dstSize > 0)
+        {
+            dst[dstSize - 1] = '\0';
+            return dstSize - 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+}
+

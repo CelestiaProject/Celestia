@@ -82,8 +82,8 @@ class Renderer
         SpacecraftLabels    = 0x040,
         LocationLabels      = 0x080,
         CometLabels         = 0x100,
-	NebulaLabels        = 0x200,
-	OpenClusterLabels   = 0x400,
+		NebulaLabels        = 0x200,
+		OpenClusterLabels   = 0x400,
         I18nConstellationLabels = 0x800,
         BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
@@ -108,8 +108,9 @@ class Renderer
         ShowCometTails      = 0x8000,
         ShowMarkers         = 0x10000,
         ShowPartialTrajectories = 0x20000,
-	ShowNebulae         = 0x40000,
-	ShowOpenClusters    = 0x80000,
+	    ShowNebulae         = 0x40000,
+		ShowOpenClusters    = 0x80000,
+		ShowNewStars        = 0x100000,
     };
 
     enum StarStyle 
@@ -124,8 +125,6 @@ class Renderer
     void setRenderFlags(int);
     int getLabelMode() const;
     void setLabelMode(int);
-    void addLabelledStar(Star*, const std::string&);
-    void clearLabelledStars();
     float getAmbientLightLevel() const;
     void setAmbientLightLevel(float);
     float getMinimumOrbitSize() const;
@@ -150,10 +149,6 @@ class Renderer
 
     GLContext* getGLContext() { return context; }
 
-    float getSaturationMagnitude() const;
-    void setSaturationMagnitude(float);
-    float getBrightnessBias() const;
-    void setBrightnessBias(float);
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
     void setResolution(unsigned int resolution);
@@ -161,18 +156,28 @@ class Renderer
 
     void loadTextures(Body*);
 
+    static const int MaxLabelLength = 32;
     typedef struct {
-        std::string text;
+        char text[MaxLabelLength];
         Color color;
         Point3f position;
     } Label;
 
-    void addLabel(std::string, Color, const Point3f&, float depth = -1);
-    void addSortedLabel(std::string, Color, const Point3f&);
+    void addLabel(const char* text, Color, const Point3f&, float depth = -1);
+    void addLabel(const std::string&, Color, const Point3f&, float depth = -1);
+    void addSortedLabel(const std::string&, Color, const Point3f&);
     void clearLabels();
+	void clearSortedLabels();
 
-    void setFont(TextureFont*);
-    TextureFont* getFont() const;
+    enum FontStyle
+    {
+        FontNormal = 0,
+        FontLarge  = 1,
+        FontCount  = 2,
+    };
+    
+    void setFont(FontStyle, TextureFont*);
+    TextureFont* getFont(FontStyle) const;
 
  public:
     // Internal types
@@ -215,7 +220,7 @@ class Renderer
     public:
         StarVertexBuffer(unsigned int _capacity);
         ~StarVertexBuffer();
-        void start(bool _usePoints);
+        void start();
         void render();
         void finish();
         void addStar(const Point3f&, const Color&, float);
@@ -228,7 +233,6 @@ class Renderer
         float* texCoords;
         unsigned char* colors;
         Vec3f v0, v1, v2, v3;
-        bool usePoints;
     };
 
     struct LightSource
@@ -245,10 +249,12 @@ class Renderer
     public:
         PointStarVertexBuffer(unsigned int _capacity);
         ~PointStarVertexBuffer();
-        void start(const GLContext&);
+        void startPoints(const GLContext&);
+        void startSprites(const GLContext&);
         void render();
         void finish();
         void addStar(const Point3f& f, const Color&, float);
+		void setTexture(Texture*);
 
     private:
         struct StarVertex
@@ -263,6 +269,8 @@ class Renderer
         unsigned int nStars;
         StarVertex* vertices;
         const GLContext* context;
+        bool useSprites;
+		Texture* texture;
     };
 
  private:
@@ -317,6 +325,9 @@ class Renderer
     void renderStars(const StarDatabase& starDB,
                      float faintestVisible,
                      const Observer& observer);
+    void renderPointStars(const StarDatabase& starDB,
+                          float faintestVisible,
+                          const Observer& observer);
     void renderDeepSkyObjects(const Universe&,
                               const Observer&,
                               float faintestMagNight);
@@ -371,6 +382,14 @@ class Renderer
                               const Quatf& orientation,
                               float renderDistance,
                               bool useHaloes);
+    void renderObjectAsPoint(Point3f center,
+                             float appMag,
+                             float _faintestMag,
+                             float discSizeInPixels,
+                             Color color,
+                             const Quatf& orientation,
+                             float renderDistance,
+                             bool useHaloes);
 
     void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                                    Point3f center,
@@ -393,16 +412,14 @@ class Renderer
                      double now,
                      vector<EclipseShadow>& shadows);
 
-    void labelStars(const std::vector<StarLabel>& labelledStars,
-                    const StarDatabase&,
-                    const Observer&);
     void labelConstellations(const AsterismList& asterisms,
                              const Observer& observer);
     void renderParticles(const std::vector<Particle>& particles,
                          Quatf orientation);
-    void renderLabels();
+    void renderLabels(FontStyle fs);
     std::vector<Label>::iterator renderSortedLabels(std::vector<Label>::iterator,
-                                                    float depth);
+                                                     float depth,
+                                                     FontStyle fs);
     void renderMarkers(const MarkerList&,
                        const UniversalCoord& position,
                        const Quatf& orientation,
@@ -428,7 +445,7 @@ class Renderer
     float corrFac;
     float pixelSize;
     float faintestAutoMag45deg;
-    TextureFont* font;
+    TextureFont* font[FontCount];
 
     int renderMode;
     int labelMode;
@@ -450,6 +467,8 @@ class Renderer
     std::string displayedSurface;
 
     StarVertexBuffer* starVertexBuffer;
+    PointStarVertexBuffer* pointStarVertexBuffer;
+	PointStarVertexBuffer* glareVertexBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<Particle> glareParticles;
     std::vector<Label> labels;
@@ -458,9 +477,6 @@ class Renderer
     std::vector<const Star*> nearStars;
 
     std::vector<LightSource> lightSourceLists[MaxSolarSystems];
-
-    std::vector<StarLabel> labelledStars;
-    std::vector<DSOLabel>  labelledDSOs;
 
     double modelMatrix[16];
     double projMatrix[16];
@@ -473,6 +489,8 @@ class Renderer
     unsigned int textureResolution;
 
     DetailOptions detailOptions;
+    
+    bool useNewStarRendering;
 
  public:
     struct OrbitSample 
