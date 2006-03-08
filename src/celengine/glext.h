@@ -1214,6 +1214,66 @@ namespace glx
 };
 
 
+/* GL_ARB_pixel_buffer_object */
+#ifndef GL_ARB_pixel_buffer_object
+#define GL_ARB_pixel_buffer_object        1
+#define GL_PIXEL_PACK_BUFFER_ARB          0x88EB
+#define GL_PIXEL_UNPACK_BUFFER_ARB        0x88EC
+#define GL_PIXEL_PACK_BUFFER_BINDING_ARB  0x88ED
+#define GL_PIXEL_UNPACK_BUFFER_BINDING_ARB 0x88EF
+#endif
+
+
+/* GL_ARB_color_buffer_float */
+#ifndef GL_ARB_color_buffer_float
+#define GL_ARB_color_buffer_float         1
+#define GL_RGBA_FLOAT_MODE_ARB            0x8820
+#define GL_CLAMP_VERTEX_COLOR_ARB         0x891A
+#define GL_CLAMP_FRAGMENT_COLOR_ARB       0x891B
+#define GL_CLAMP_READ_COLOR_ARB           0x891C
+#define GL_FIXED_ONLY_ARB                 0x891D
+#endif
+
+namespace glx
+{
+    typedef void (APIENTRY* PFNGLCLAMPCOLORARBPROC) (GLenum target, GLenum clamp);
+    extern PFNGLCLAMPCOLORARBPROC glClampColorARB;
+};
+
+
+/* GL_ARB_texture_float */
+#ifndef GL_ARB_texture_float
+#define GL_ARB_texture_float              1
+#define GL_TEXTURE_RED_TYPE_ARB           0x8C10
+#define GL_TEXTURE_GREEN_TYPE_ARB         0x8C11
+#define GL_TEXTURE_BLUE_TYPE_ARB          0x8C12
+#define GL_TEXTURE_ALPHA_TYPE_ARB         0x8C13
+#define GL_TEXTURE_LUMINANCE_TYPE_ARB     0x8C14
+#define GL_TEXTURE_INTENSITY_TYPE_ARB     0x8C15
+#define GL_TEXTURE_DEPTH_TYPE_ARB         0x8C16
+#define GL_UNSIGNED_NORMALIZED_ARB        0x8C17
+#define GL_RGBA32F_ARB                    0x8814
+#define GL_RGB32F_ARB                     0x8815
+#define GL_ALPHA32F_ARB                   0x8816
+#define GL_INTENSITY32F_ARB               0x8817
+#define GL_LUMINANCE32F_ARB               0x8818
+#define GL_LUMINANCE_ALPHA32F_ARB         0x8819
+#define GL_RGBA16F_ARB                    0x881A
+#define GL_RGB16F_ARB                     0x881B
+#define GL_ALPHA16F_ARB                   0x881C
+#define GL_INTENSITY16F_ARB               0x881D
+#define GL_LUMINANCE16F_ARB               0x881E
+#define GL_LUMINANCE_ALPHA16F_ARB         0x881F
+#endif
+
+
+/* WGL_ARB_pixel_format_float */
+#ifndef WGL_ARB_pixel_format_float
+#define WGL_ARB_pixel_format_float        1
+#define WGL_TYPE_RGBA_FLOAT_ARB           0x21A0
+#endif
+
+
 extern void InitExtension(const char* ext);
 extern bool ExtensionSupported(const char *ext);
 
