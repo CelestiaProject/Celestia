@@ -7597,7 +7597,6 @@ Renderer::StarStyle Renderer::getStarStyle() const
 }
 
 
-#if 1
 Renderer::StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
     capacity(_capacity),
     vertices(NULL),
@@ -7702,10 +7701,8 @@ void Renderer::StarVertexBuffer::setBillboardOrientation(const Quatf& q)
     v2 = Vec3f( 1,  1, 0) * m;
     v3 = Vec3f(-1,  1, 0) * m;
 }
-#endif
                                
 
-#if 1
 Renderer::PointStarVertexBuffer::PointStarVertexBuffer(unsigned int _capacity) :
     capacity(_capacity),
     nStars(0),
@@ -7785,6 +7782,7 @@ void Renderer::PointStarVertexBuffer::render()
         {
             glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
             glDisable(GL_TEXTURE_2D);
+            glPointSize(1.0f);
         }
         glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
         glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
@@ -7843,7 +7841,6 @@ void Renderer::PointStarVertexBuffer::setTexture(Texture* _texture)
 {
 	texture = _texture;
 }
-#endif
 
 
 void Renderer::loadTextures(Body* body)
