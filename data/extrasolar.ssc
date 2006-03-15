@@ -1,4 +1,4 @@
-# Catalog of 183 known extrasolar planets.
+# Catalog of 185 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at:
 #                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
@@ -263,7 +263,7 @@ AltSurface "limit of knowledge" "Gliese 876/b"
 "b" "HD 189733"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 85.3 degrees, so mass can be determined.
+# duration, inclination is fixed at 85.79 degrees, so mass can be determined.
 # From transit dimming, radius is estimated at 1.26 jupiters.
 
 {
@@ -273,7 +273,7 @@ AltSurface "limit of knowledge" "Gliese 876/b"
 	Color  [0 0.36 1]
 	Albedo 0.05
 
-	Mass       370     # M.sin(i) = 1.15 jupiters
+	Mass       370     # M.sin(i) = 1.154 jupiters
 	Radius     88200
 
 	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+189733"
@@ -282,11 +282,12 @@ AltSurface "limit of knowledge" "Gliese 876/b"
 		Period          0.0061
 		SemiMajorAxis   0.0313
 		Eccentricity    0
-		Inclination     81.7
-		AscendingNode   294.6
+		Inclination     81.4
+		AscendingNode   295
+		MeanLongitude   307
 	}
 
-	Obliquity             82 # guess, to match inclination
+	Obliquity             81 # guess, to match inclination
 	EquatorAscendingNode  295 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
@@ -4121,6 +4122,36 @@ AltSurface "limit of knowledge" "HD 222582/b"
 }
 
 
+"b" "HD 20782"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       570     # M.sin(i) = 1.8 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+20782"
+
+	EllipticalOrbit {
+		Period          1.604
+		SemiMajorAxis   1.36
+		Eccentricity    0.92
+		ArgOfPericenter 274
+		MeanAnomaly     273
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 20782/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 65216"
 {
 	Texture "exo-class2.*"
@@ -4531,6 +4562,36 @@ AltSurface "limit of knowledge" "HD 222404/b"
 }
 
 AltSurface "limit of knowledge" "HD 213240/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 187085"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       240     # M.sin(i) = 0.75 jupiters
+	Radius     70000
+	Oblateness 0.08
+
+	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+187085"
+
+	EllipticalOrbit {
+		Period          2.6995
+		SemiMajorAxis   2.05
+		Eccentricity    0.47
+		ArgOfPericenter 116
+		MeanAnomaly     231
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 187085/b"
 {
 	Texture "extrasolar-lok.*"
 }
