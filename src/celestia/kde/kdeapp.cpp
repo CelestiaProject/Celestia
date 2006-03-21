@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+
 #include <fstream>
 #include <sstream>
 
@@ -122,7 +123,7 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
         }
     }
 #endif
-    
+
     appCore=new CelestiaCore();
     if (appCore == NULL)
     {
@@ -572,8 +573,8 @@ void KdeApp::initActions()
     KToggleAction* showBoundaries = new KToggleAction(i18n("Show Boundaries"), CTRL + Key_B, this, SLOT(slotShowBoundaries()), actionCollection(), "showBoundaries");
     showBoundaries->setChecked(rFlags & Renderer::ShowBoundaries);
 
-    new KToggleAction(i18n("Auto Magnitudes"), CTRL + Key_Y, this, SLOT(slotShowAutoMag()), actionCollection(), "showAutoMag");
-    showBoundaries->setChecked(rFlags & Renderer::ShowAutoMag);
+    KToggleAction* showAutoMag = new KToggleAction(i18n("Auto Magnitudes"), CTRL + Key_Y, this, SLOT(slotShowAutoMag()), actionCollection(), "showAutoMag");
+    showAutoMag->setChecked(rFlags & Renderer::ShowAutoMag);
 
     KToggleAction* showCometTails = new KToggleAction(i18n("Show Comet Tails"), CTRL + Key_T, this, SLOT(slotShowCometTails()), actionCollection(), "showCometTails");
     showCometTails->setChecked(rFlags & Renderer::ShowCometTails);
@@ -1093,8 +1094,7 @@ void KdeApp::slotShowBoundaries() {
 }
 
 void KdeApp::slotShowAutoMag() {
-     appCore->getRenderer()->setRenderFlags(
-            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowAutoMag);
+     appCore->charEntered('\031');
 }
 
 void KdeApp::slotShowCometTails() {
