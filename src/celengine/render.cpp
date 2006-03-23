@@ -5949,19 +5949,29 @@ void Renderer::renderPlanet(Body& body,
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-#if 0	
-    renderBodyAsParticle(pos,
-#else
-	renderObjectAsPoint(pos,
-#endif
-                         appMag,
-                         faintestPlanetMag,
-                         discSizeInPixels,
-                         body.getSurface().color,
-                         orientation,
-                         (nearPlaneDistance + farPlaneDistance) / 2.0f,
-                         false);
-						 
+
+    if (useNewStarRendering)
+    {
+    	renderObjectAsPoint(pos,
+                             appMag,
+                             faintestPlanetMag,
+                             discSizeInPixels,
+                             body.getSurface().color,
+                             orientation,
+                             (nearPlaneDistance + farPlaneDistance) / 2.0f,
+                             false);
+    }
+    else
+    {
+        renderBodyAsParticle(pos,
+                             appMag,
+                             faintestPlanetMag,
+                             discSizeInPixels,
+                             body.getSurface().color,
+                             orientation,
+                             (nearPlaneDistance + farPlaneDistance) / 2.0f,
+                             false);    
+    }
 }
 
 
