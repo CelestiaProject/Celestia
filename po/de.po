@@ -1,11 +1,5 @@
-# translation of de.po to 
-# translation of de.po to
-# translation of de.po to
-# translation of de.po to
-# translation of de.po to
-# translation of de.new.po to
-# translation of de.po to deutsch
-# translation of celestia-kde.po to deutsch
+# translation of de.po to Deutsch
+# translation of celestia-kde.po to Deutsch
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Steffen Schreiber <SchreiberSte@web.de>, 2003, 2004, 2005, 2006.
@@ -15,13 +9,14 @@ msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-22 10:03+0100\n"
-"PO-Revision-Date: 2006-02-07 21:38+0100\n"
+"PO-Revision-Date: 2006-02-26 16:08+0100\n"
 "Last-Translator: Steffen Schreiber <SchreiberSte@web.de>\n"
-"Language-Team:  <de@li.org>\n"
+"Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.9.1\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #: src/celengine/fragmentprog.cpp:91
 msgid "Loading NV fragment program: "
@@ -1632,8 +1627,7 @@ msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr "<b>OpenGL 2.0 Shading Language</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:42
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
 msgstr ""
 "Datei %1 existiert nicht, verwende voreingestellte Konfigurationsdatei %2/"
 "celestia.cfg"
@@ -2086,277 +2080,239 @@ msgstr "ARKTISCHER OZEAN"
 
 #: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
-msgstr ""
+msgstr "&Datei"
 
 #: src/celestia/res/resource_strings.cpp:2
 msgid "&Open Script..."
-msgstr ""
+msgstr "&Skript laden..."
 
 #: src/celestia/res/resource_strings.cpp:3
 msgid "Capture &Image...\tF10"
-msgstr ""
+msgstr "&Bild aufzeichnen...\tF10"
 
 #: src/celestia/res/resource_strings.cpp:4
 msgid "Capture &Movie...\tShift+F10"
-msgstr ""
+msgstr "&Video aufzeichnen...\tShift+F10"
 
 #: src/celestia/res/resource_strings.cpp:5
 msgid "E&xit"
-msgstr ""
+msgstr "B&eenden"
 
 #: src/celestia/res/resource_strings.cpp:7
-#, fuzzy
 msgid "Select &Sol\tH"
-msgstr "&Auswählen"
+msgstr "&Sonne auswählen\tH"
 
 #: src/celestia/res/resource_strings.cpp:8
 msgid "Tour G&uide..."
-msgstr ""
+msgstr "Tour G&uide..."
 
 #: src/celestia/res/resource_strings.cpp:9
 msgid "Select &Object..."
-msgstr ""
+msgstr "&Objekt auswählen..."
 
 #: src/celestia/res/resource_strings.cpp:10
 msgid "Goto Object..."
-msgstr ""
+msgstr "Gehe zu..."
 
 #: src/celestia/res/resource_strings.cpp:11
 msgid "&Center Selection\tC"
-msgstr ""
+msgstr "Auswahl &zentrieren\tC"
 
 #: src/celestia/res/resource_strings.cpp:12
-#, fuzzy
 msgid "&Go to Selection\tG"
-msgstr ""
-"\n"
-"Auswahl: "
+msgstr "&Gehe zur Auswahl\tG"
 
 #: src/celestia/res/resource_strings.cpp:13
 msgid "&Follow Selection\tF"
-msgstr ""
+msgstr "&Folge Auswahl\tF"
 
 #: src/celestia/res/resource_strings.cpp:14
-#, fuzzy
 msgid "S&ync Orbit Selection\tY"
-msgstr "Synchr. Orbit "
+msgstr "S&ynchr. Orbit um Auswahl\tY"
 
 #: src/celestia/res/resource_strings.cpp:15
-#, fuzzy
 msgid "&Track Selection\tT"
-msgstr ""
-"\n"
-"Auswahl: "
+msgstr "Auswahl zentriert hal&ten\tT"
 
 #: src/celestia/res/resource_strings.cpp:16
 msgid "Solar System &Browser..."
-msgstr ""
+msgstr "Sonnensystem-&Browser..."
 
 #: src/celestia/res/resource_strings.cpp:17
-#, fuzzy
 msgid "Star B&rowser..."
-msgstr "Celestia-Katalog"
+msgstr "Stern&katalog..."
 
 #: src/celestia/res/resource_strings.cpp:18
-#, fuzzy
 msgid "&Eclipse Finder"
-msgstr "Eklipse-Suche"
+msgstr "&Eklipse-Suche"
 
 #: src/celestia/res/resource_strings.cpp:19
-#, fuzzy
 msgid "&Time"
-msgstr "Zeit"
+msgstr "&Zeit"
 
 #: src/celestia/res/resource_strings.cpp:20
-#, fuzzy
 msgid "10x &Faster\tL"
-msgstr " schneller"
+msgstr "10x Schne&ller\tL"
 
 #: src/celestia/res/resource_strings.cpp:21
-#, fuzzy
 msgid "10x &Slower\tK"
-msgstr " langsamer"
+msgstr "10x L&angsamer\tk"
 
 #: src/celestia/res/resource_strings.cpp:22
 msgid "Free&ze\tSpace"
-msgstr ""
+msgstr "An&halten\tSpace"
 
 #: src/celestia/res/resource_strings.cpp:23
-#, fuzzy
 msgid "&Real Time\t\\"
-msgstr "Echtzeit"
+msgstr "&Echtzeit\t\\"
 
 #: src/celestia/res/resource_strings.cpp:24
-#, fuzzy
 msgid "Re&verse Time\tJ"
-msgstr "Zeit rückwärts laufen lassen"
+msgstr "Zeit &rückwärts laufen lassen\tJ"
 
 #: src/celestia/res/resource_strings.cpp:25
-#, fuzzy
 msgid "Set &Time..."
-msgstr "Zeit einstellen..."
+msgstr "Zeit &einstellen..."
 
 #: src/celestia/res/resource_strings.cpp:26
-#, fuzzy
 msgid "Show Local Time"
-msgstr "Lokalzeit"
+msgstr "Lokalzeit anzeigen"
 
 #: src/celestia/res/resource_strings.cpp:27
-#, fuzzy
 msgid "&Render"
 msgstr "Darstellung"
 
 #: src/celestia/res/resource_strings.cpp:28
 msgid "Select Display Mode..."
-msgstr ""
+msgstr "Anzeigemodus wählen..."
 
 #: src/celestia/res/resource_strings.cpp:29
 msgid "Toggle Full Screen\tAlt+Enter"
-msgstr ""
+msgstr "Vollbild ein/aus\tAlt+Enter"
 
 #: src/celestia/res/resource_strings.cpp:30
-#, fuzzy
 msgid "View Options..."
-msgstr "Optionen"
+msgstr "Anzeigeoptionen..."
 
 #: src/celestia/res/resource_strings.cpp:31
-#, fuzzy
 msgid "Locations..."
-msgstr "Orte"
+msgstr "Orte..."
 
 #: src/celestia/res/resource_strings.cpp:32
-#, fuzzy
 msgid "More Stars Visible\t]"
-msgstr "Rahmen sichtbar"
+msgstr "Mehr Sterne sichtbar\t]"
 
 #: src/celestia/res/resource_strings.cpp:33
-#, fuzzy
 msgid "Fewer Stars Visible\t["
-msgstr "Rahmen sichtbar"
+msgstr "Weniger Sterne sichtbar\t["
 
 #: src/celestia/res/resource_strings.cpp:34
-#, fuzzy
 msgid "Auto Magnitude\tCtrl+Y"
-msgstr "Auto Magnitude"
+msgstr "Auto Magnitude\tCtrl+Y"
 
 #: src/celestia/res/resource_strings.cpp:35
-#, fuzzy
 msgid "Star St&yle"
-msgstr "Start"
+msgstr "&Sterndarstellung"
 
 #: src/celestia/res/resource_strings.cpp:36
 msgid "&Fuzzy Points"
-msgstr ""
+msgstr "&Unscharfe Punkte"
 
 #: src/celestia/res/resource_strings.cpp:37
 msgid "&Points"
-msgstr ""
+msgstr "&Punkte"
 
 #: src/celestia/res/resource_strings.cpp:38
 msgid "Scaled &Discs"
-msgstr ""
+msgstr "&Scheiben"
 
 #: src/celestia/res/resource_strings.cpp:39
-#, fuzzy
 msgid "&Ambient Light"
-msgstr "Umgebungslicht"
+msgstr "&Umgebungslicht"
 
 #: src/celestia/res/resource_strings.cpp:40
-#, fuzzy
 msgid "&None"
-msgstr "Keiner"
+msgstr "&Keines"
 
 #: src/celestia/res/resource_strings.cpp:41
 msgid "&Low"
-msgstr ""
+msgstr "&Gering"
 
 #: src/celestia/res/resource_strings.cpp:42
 msgid "&Medium"
-msgstr ""
+msgstr "&Mittel"
 
 #: src/celestia/res/resource_strings.cpp:43
 msgid "Antialiasing\tCtrl+X"
-msgstr ""
+msgstr "Kantenglättung\tCtrl+X"
 
 #: src/celestia/res/resource_strings.cpp:44
 msgid "&View"
-msgstr ""
+msgstr "&Ansicht"
 
 #: src/celestia/res/resource_strings.cpp:45
-#, fuzzy
 msgid "Split &Horizontally\tCtrl+R"
-msgstr "Ansicht horizontal aufteilen"
+msgstr "Ansicht &horizontal aufteilen\tCtrl+R"
 
 #: src/celestia/res/resource_strings.cpp:46
-#, fuzzy
 msgid "Split &Vertically\tCtrl+U"
-msgstr "Ansicht vertikal aufteilen"
+msgstr "Ansicht &vertikal aufteilen\tCtrl+U"
 
 #: src/celestia/res/resource_strings.cpp:47
-#, fuzzy
 msgid "&Delete Active View\tDEL"
-msgstr "Ansicht entfernen"
+msgstr "Ansicht e&ntfernen\tDEL"
 
 #: src/celestia/res/resource_strings.cpp:48
-#, fuzzy
 msgid "&Single View\tCtrl+D"
-msgstr "Einzelansicht"
+msgstr "&Einzelansicht\tCtrl+D"
 
 #: src/celestia/res/resource_strings.cpp:49
-#, fuzzy
 msgid "Show &Frames"
-msgstr "Markierungen anzeigen"
+msgstr "&Rahmen anzeigen"
 
 #: src/celestia/res/resource_strings.cpp:50
-#, fuzzy
 msgid "Synchronize &Time"
-msgstr "Zeit synchronisieren"
+msgstr "Zeit s&ynchronisieren"
 
 #: src/celestia/res/resource_strings.cpp:51
-#, fuzzy
 msgid "&Bookmarks"
-msgstr "Lesezeichen"
+msgstr "&Lesezeichen"
 
 #: src/celestia/res/resource_strings.cpp:52
-#, fuzzy
 msgid "&Add Bookmarks..."
 msgstr "Lesezeichen hin&zufügen"
 
 #: src/celestia/res/resource_strings.cpp:53
 msgid "&Organize Bookmarks..."
-msgstr ""
+msgstr "Lesezeichen &organisieren..."
 
 #: src/celestia/res/resource_strings.cpp:54
 msgid "&Help"
-msgstr ""
+msgstr "&Hilfe"
 
 #: src/celestia/res/resource_strings.cpp:55
 msgid "Run &Demo"
-msgstr ""
+msgstr "&Demo starten"
 
 #: src/celestia/res/resource_strings.cpp:56
-#, fuzzy
 msgid "&Controls"
-msgstr "&Zentrieren"
+msgstr "&Steuerung"
 
 #: src/celestia/res/resource_strings.cpp:57
-#, fuzzy
 msgid "&OpenGL Info"
-msgstr "OpenGL Informationen"
+msgstr "&OpenGL Informationen"
 
 #: src/celestia/res/resource_strings.cpp:58
 msgid "&License"
-msgstr ""
+msgstr "&Lizenz"
 
 #: src/celestia/res/resource_strings.cpp:59
-#, fuzzy
 msgid "&About Celestia"
-msgstr "Celestia"
+msgstr "Über &Celestia"
 
 #: src/celestia/res/resource_strings.cpp:60
-#, fuzzy
 msgid "About Celestia"
-msgstr "Celestia"
+msgstr "Über Celestia"
 
 #: src/celestia/res/resource_strings.cpp:61
 #: src/celestia/res/resource_strings.cpp:78
@@ -2375,353 +2331,314 @@ msgstr "Celestia"
 #: src/celestia/res/resource_strings.cpp:193
 #: src/celestia/res/resource_strings.cpp:199
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/celestia/res/resource_strings.cpp:63
 msgid "Copyright (C) 2001-2006, Chris Laurel"
-msgstr ""
+msgstr "Copyright (C) 2001-2006, Chris Laurel"
 
 #: src/celestia/res/resource_strings.cpp:64
 msgid "http://www.shatters.net/celestia"
-msgstr ""
+msgstr "http://www.shatters.net/celestia"
 
 #: src/celestia/res/resource_strings.cpp:65
 msgid "Celestia is free software and comes with absolutely no warranty."
-msgstr ""
+msgstr "Celestia ist freie Software und es wird keinerlei Garantie übernommen."
 
 #: src/celestia/res/resource_strings.cpp:66
-#, fuzzy
 msgid "Authors"
-msgstr " Stunden"
+msgstr "Autoren"
 
 #: src/celestia/res/resource_strings.cpp:67
 msgid "Chris Laurel"
-msgstr ""
+msgstr "Chris Laurel"
 
 #: src/celestia/res/resource_strings.cpp:68
 msgid "Clint Weisbrod"
-msgstr ""
+msgstr "Clint Weisbrod"
 
 #: src/celestia/res/resource_strings.cpp:69
 msgid "Fridger Schrempp"
-msgstr ""
+msgstr "Fridger Schrempp"
 
 #: src/celestia/res/resource_strings.cpp:70
 msgid "Christophe Teyssier"
-msgstr ""
+msgstr "Christophe Teyssier"
 
 #: src/celestia/res/resource_strings.cpp:71
 msgid "Grant Hutchison"
-msgstr ""
+msgstr "Grant Hutchison"
 
 #: src/celestia/res/resource_strings.cpp:72
 msgid "Pat Suwalski"
-msgstr ""
+msgstr "Pat Suwalski"
 
 #: src/celestia/res/resource_strings.cpp:73
 msgid "Toti"
-msgstr ""
+msgstr "Toti"
 
 #: src/celestia/res/resource_strings.cpp:74
 msgid "Da Woon Jung"
-msgstr ""
+msgstr "Da Woon Jung"
 
 #: src/celestia/res/resource_strings.cpp:75
 msgid "Hank Ramsey"
-msgstr ""
+msgstr "Hank Ramsey"
 
 #: src/celestia/res/resource_strings.cpp:76
 msgid "Bob Ippolito"
-msgstr ""
+msgstr "Bob Ippolito"
 
 #: src/celestia/res/resource_strings.cpp:77
-#, fuzzy
 msgid "Select Object"
-msgstr "Objekte"
+msgstr "Objekt auswählen"
 
 #: src/celestia/res/resource_strings.cpp:80
-#, fuzzy
 msgid "Object Name"
-msgstr "Objekt: "
+msgstr "Objektname"
 
 #: src/celestia/res/resource_strings.cpp:81
-#, fuzzy
 msgid "License"
-msgstr "Fische"
+msgstr "Lizenz"
 
 #: src/celestia/res/resource_strings.cpp:83
-#, fuzzy
 msgid "Celestia Controls"
-msgstr "Celestia-Katalog"
+msgstr "Celestia-Steuerung"
 
 #: src/celestia/res/resource_strings.cpp:85
-#, fuzzy
 msgid "OpenGL Driver Info"
-msgstr "OpenGL Informationen"
+msgstr "OpenGL-Treiberinformationen"
 
 #: src/celestia/res/resource_strings.cpp:87
 msgid "Set Simulation Time"
-msgstr ""
+msgstr "Setze Simulationszeit"
 
 #: src/celestia/res/resource_strings.cpp:88
-#, fuzzy
 msgid "Time Zone: "
 msgstr "Zeitzone: "
 
 #: src/celestia/res/resource_strings.cpp:89
 msgid "Set To Current Time"
-msgstr ""
+msgstr "Setze auf aktuelle Zeit"
 
 #: src/celestia/res/resource_strings.cpp:92
-#, fuzzy
 msgid "Add Bookmark"
-msgstr "Lesezeichen hin&zufügen"
+msgstr "Lesezeichen hinzufügen"
 
 #: src/celestia/res/resource_strings.cpp:96
 msgid "Create in >>"
-msgstr ""
+msgstr "Erzeuge in >>"
 
 #: src/celestia/res/resource_strings.cpp:97
 #: src/celestia/res/resource_strings.cpp:195
-#, fuzzy
 msgid "New Folder..."
-msgstr "&Neuer Ordner..."
+msgstr "Neuer Ordner..."
 
 #: src/celestia/res/resource_strings.cpp:98
-#, fuzzy
 msgid "Solar System Browser"
-msgstr "Baryzentrum des Sternsystems\n"
+msgstr "Sonnensystem-Browser"
 
 #: src/celestia/res/resource_strings.cpp:100
-#, fuzzy
 msgid "Solar System"
-msgstr "Sonnenfinsternisse"
+msgstr "Sonnensystem"
 
 #: src/celestia/res/resource_strings.cpp:102
 #: src/celestia/res/resource_strings.cpp:109
-#, fuzzy
 msgid "&Go To"
 msgstr "&Gehe zu"
 
 #: src/celestia/res/resource_strings.cpp:103
-#, fuzzy
 msgid "Solar System Objects"
-msgstr "Baryzentrum des Sternsystems\n"
+msgstr "Objekte im Sonnensystem"
 
 #: src/celestia/res/resource_strings.cpp:104
-#, fuzzy
 msgid "Star Browser"
-msgstr "Celestia-Katalog"
+msgstr "Sternkatalog"
 
 #: src/celestia/res/resource_strings.cpp:106
-#, fuzzy
 msgid "Brightest"
-msgstr "Hellste (App.)"
+msgstr "Hellste"
 
 #: src/celestia/res/resource_strings.cpp:107
-#, fuzzy
 msgid "With planets"
 msgstr "Mit Planeten"
 
 #: src/celestia/res/resource_strings.cpp:110
-#, fuzzy
 msgid "&Refresh"
-msgstr "Aktualisieren"
+msgstr "&Aktualisieren"
 
 #: src/celestia/res/resource_strings.cpp:112
 msgid "Star Search Criteria"
-msgstr ""
+msgstr "Suchkriterien für Sterne"
 
 #: src/celestia/res/resource_strings.cpp:113
 msgid "Maximum Stars Displayed in List"
-msgstr ""
+msgstr "Maximalzahl Sterne in der Liste"
 
 #: src/celestia/res/resource_strings.cpp:114
 msgid "Tour Guide"
-msgstr ""
+msgstr "Tour Guide"
 
 #: src/celestia/res/resource_strings.cpp:116
 #: src/celestia/res/resource_strings.cpp:122
-#, fuzzy
 msgid "Go To"
-msgstr "&Gehe zu"
+msgstr "Gehe zu"
 
 #: src/celestia/res/resource_strings.cpp:117
 msgid "Select your destination:"
-msgstr ""
+msgstr "Ziel auswählen:"
 
 #: src/celestia/res/resource_strings.cpp:118
-#, fuzzy
 msgid "Go to Object"
-msgstr "Objekte"
+msgstr "Gehe zu"
 
 #: src/celestia/res/resource_strings.cpp:120
 msgid "radii"
-msgstr ""
+msgstr "radii"
 
 #: src/celestia/res/resource_strings.cpp:121
 msgid "au"
-msgstr ""
+msgstr "au"
 
 #: src/celestia/res/resource_strings.cpp:124
-#, fuzzy
 msgid "Object"
-msgstr "Objekte"
+msgstr "Objekt"
 
 #: src/celestia/res/resource_strings.cpp:125
-#, fuzzy
 msgid "Long."
-msgstr "Lade "
+msgstr "Long."
 
 #: src/celestia/res/resource_strings.cpp:126
 msgid "Lat."
-msgstr ""
+msgstr "Lat."
 
 #: src/celestia/res/resource_strings.cpp:127
 #: src/celestia/res/resource_strings.cpp:164
-#, fuzzy
 msgid "Distance"
-msgstr "Entfernung: "
+msgstr "Entfernung"
 
 #: src/celestia/res/resource_strings.cpp:128
 msgid "Size:"
-msgstr ""
+msgstr "Größe:"
 
 #: src/celestia/res/resource_strings.cpp:129
-#, fuzzy
 msgid "Frame rate:"
-msgstr "Zeitrate: %.1f"
+msgstr "Bildrate:"
 
 #: src/celestia/res/resource_strings.cpp:130
 msgid "Select Display Mode"
-msgstr ""
+msgstr "Anzeigemodus auswählen"
 
 #: src/celestia/res/resource_strings.cpp:131
 msgid "Resolution"
-msgstr ""
+msgstr "Auflösung"
 
 #: src/celestia/res/resource_strings.cpp:134
-#, fuzzy
 msgid "View Options"
-msgstr "Optionen"
+msgstr "Anzeigeoptionen"
 
 #: src/celestia/res/resource_strings.cpp:139
-#, fuzzy
 msgid "Constellation Borders"
 msgstr "Sternbildgrenzen"
 
 #: src/celestia/res/resource_strings.cpp:167
-#, fuzzy
 msgid "Information Text"
 msgstr "Infotext"
 
 #: src/celestia/res/resource_strings.cpp:168
 msgid "Filter Stars"
-msgstr ""
+msgstr "Sterne ausfiltern"
 
 #: src/celestia/res/resource_strings.cpp:169
 #: src/celestia/res/resource_strings.cpp:170
-#, fuzzy
 msgid "Orbit / Label"
 msgstr "Orbits / Namen"
 
 #: src/celestia/res/resource_strings.cpp:176
 msgid "Montes (Mountains)"
-msgstr ""
+msgstr "Montes (Berge)"
 
 #: src/celestia/res/resource_strings.cpp:177
 msgid "Maria (Seas)"
-msgstr ""
+msgstr "Maria (Meere)"
 
 #: src/celestia/res/resource_strings.cpp:179
 msgid "Valles (Valleys)"
-msgstr ""
+msgstr "Valles (Täler)"
 
 #: src/celestia/res/resource_strings.cpp:180
 msgid "Terrae (Land masses)"
-msgstr ""
+msgstr "Terrae (Landmassen)"
 
 #: src/celestia/res/resource_strings.cpp:181
 msgid "Other features"
-msgstr ""
+msgstr "Andere Kennzeichen"
 
 #: src/celestia/res/resource_strings.cpp:182
-#, fuzzy
 msgid "Label Features"
 msgstr "Namen"
 
 #: src/celestia/res/resource_strings.cpp:183
-#, fuzzy
 msgid "Mark Features"
 msgstr "Markierungen"
 
 #: src/celestia/res/resource_strings.cpp:186
-#, fuzzy
 msgid "Show Features"
 msgstr "Markierungen anzeigen"
 
 #: src/celestia/res/resource_strings.cpp:187
-#, fuzzy
 msgid "Minimum Labeled Feature Size"
-msgstr "Minimale Größe"
+msgstr "Minimale Größe benannter Orte"
 
 #: src/celestia/res/resource_strings.cpp:188
-#, fuzzy
 msgid "Add New Bookmark Folder"
-msgstr "Lesezeichen hin&zufügen"
+msgstr "Neuer Lesezeichenordner"
 
 #: src/celestia/res/resource_strings.cpp:191
 msgid "Folder Name"
-msgstr ""
+msgstr "Ordnername"
 
 #: src/celestia/res/resource_strings.cpp:192
-#, fuzzy
 msgid "Organize Bookmarks"
-msgstr "Lesezeichen"
+msgstr "Lesezeichen verwalten"
 
 #: src/celestia/res/resource_strings.cpp:196
-#, fuzzy
 msgid "Rename..."
-msgstr "Zeit einstellen..."
+msgstr "Umbenennen..."
 
 #: src/celestia/res/resource_strings.cpp:197
-#, fuzzy
 msgid "Delete"
-msgstr "Ansicht entfernen"
+msgstr "Entfernen"
 
 #: src/celestia/res/resource_strings.cpp:198
-#, fuzzy
 msgid "Rename Bookmark or Folder"
-msgstr "Lesezeichen-Leiste anzeigen"
+msgstr "Lesezeichen oder Ordner umbenennen"
 
 #: src/celestia/res/resource_strings.cpp:201
-#, fuzzy
 msgid "New Name"
-msgstr "Name"
+msgstr "Neuer Name"
 
 #: src/celestia/res/resource_strings.cpp:203
-#, fuzzy
 msgid "Compute"
-msgstr "Komet"
+msgstr "Berechne"
 
 #: src/celestia/res/resource_strings.cpp:204
-#, fuzzy
 msgid "Set Date and Go to Planet"
-msgstr "Starte und gehe zu URL"
+msgstr "Zeit setzen und zum Planeten gehen"
 
 #: src/celestia/res/resource_strings.cpp:206
 msgid "Find"
-msgstr ""
+msgstr "Finde"
 
 #: src/celestia/res/resource_strings.cpp:207
 msgid "From"
-msgstr ""
+msgstr "Von"
 
 #: src/celestia/res/resource_strings.cpp:208
 msgid "to"
-msgstr ""
+msgstr "bis"
 
 #: src/celestia/res/resource_strings.cpp:209
-#, fuzzy
 msgid "eclipse on"
-msgstr "Eklipse-Suche"
+msgstr "Finsternis auf"
+
