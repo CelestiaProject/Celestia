@@ -1,10 +1,14 @@
 # The largest Edgeworth-Kuiper belt objects
 
 "2003 UB313" "Sol" { 
+# Higher albedo and lower radius than first reported. 
+# Data from HST results by Brown et al. ApJ 2006:
+# http://www.gps.caltech.edu/~mbrown/papers/ps/xsize.pdf
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius  1500
+	Radius  1200
+	# no evidence of reddening
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/planetlila/index.html"
 
@@ -19,7 +23,7 @@
 		MeanAnomaly      197.538 
    	} 
 
-	Albedo 0.6
+	Albedo 0.86
 
 	RotationPeriod     48.0   # guess
 }
