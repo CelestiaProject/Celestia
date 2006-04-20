@@ -7733,7 +7733,8 @@ Renderer::PointStarVertexBuffer::~PointStarVertexBuffer()
 void Renderer::PointStarVertexBuffer::startSprites(const GLContext& _context)
 {
     context = &_context;
-
+    assert(context->getVertexProcessor() != NULL || !useSprites); // vertex shaders required for new star rendering
+    
     unsigned int stride = sizeof(StarVertex);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
@@ -7797,8 +7798,11 @@ void Renderer::PointStarVertexBuffer::render()
         glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
         glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
 
-        VertexProcessor* vproc = context->getVertexProcessor();
-        vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
+        if (useSprites)
+        {
+            VertexProcessor* vproc = context->getVertexProcessor();
+            vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
+        }
 
         if (texture != NULL)
             texture->bind();
