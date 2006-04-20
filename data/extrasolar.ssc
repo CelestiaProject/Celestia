@@ -1,7 +1,6 @@
-# Catalog of 185 known extrasolar planets.
+# Catalog of 188 known extrasolar planets.
 #
-# Data compiled from the Extrasolar Planets Catalog at:
-#                    http://vo.obspm.fr/exoplanetes/encyclo/catalog.php
+# Data compiled from the Extrasolar Planets Catalog at: http://exoplanet.eu/catalog.php
 #
 # M.sin(i) has been used as an estimate of mass. Where this is greater than 11 jupiters, the
 # body is rendered as a brown dwarf, since its true mass is likely to exceed the brown dwarf
@@ -70,7 +69,7 @@
 	Radius     86100
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=OGLE-TR-56"
+	InfoURL "http://exoplanet.eu/star.php?st=OGLE-TR-56"
 
 	EllipticalOrbit {
 		Period          0.0033
@@ -96,7 +95,7 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 "b" "OGLE-TR-113"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at ~90 degrees, so mass can be determined.
+# duration, inclination is fixed at 88.2 degrees, so mass can be determined.
 # From transit dimming, radius is estimated at 1.08 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
@@ -111,19 +110,19 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 	Mass       430     # M.sin(i) = 1.35 jupiters
 	Radius     75600
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=OGLE-TR-113"
+	InfoURL "http://exoplanet.eu/star.php?st=OGLE-TR-113"
 
 	EllipticalOrbit {
 		Period          0.0039
 		SemiMajorAxis   0.0228
 		Eccentricity    0
-		Inclination     112.4
-		AscendingNode   161.7
-		MeanLongitude   357
+		Inclination     110.7
+		AscendingNode   161
+		MeanLongitude   356
 	}
 
-	Obliquity             112 # guess, to match inclination
-	EquatorAscendingNode  162 # guess, to match ascending node
+	Obliquity             111 # guess, to match inclination
+	EquatorAscendingNode  161 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -152,7 +151,7 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 	Mass       380     # M.sin(i) = 1.19 jupiters
 	Radius     79100
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=OGLE-TR-132"
+	InfoURL "http://exoplanet.eu/star.php?st=OGLE-TR-132"
 
 	EllipticalOrbit {
 		Period          0.0046
@@ -182,7 +181,7 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 	Mass      7     # M.sin(i) = 7 earths
 	Radius     12600
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Gliese+876"
+	InfoURL "http://exoplanet.eu/star.php?st=Gliese+876"
 
 	EllipticalOrbit {
 		Period          0.0053
@@ -211,7 +210,7 @@ AltSurface "limit of knowledge" "Gliese 876/d"
 	Mass       180     # M.sin(i) = 0.56 jupiters
 	Radius     56000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Gliese+876"
+	InfoURL "http://exoplanet.eu/star.php?st=Gliese+876"
 
 	EllipticalOrbit {
 		Period          0.0824
@@ -241,7 +240,7 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Gliese+876"
+	InfoURL "http://exoplanet.eu/star.php?st=Gliese+876"
 
 	EllipticalOrbit {
 		Period          0.1668
@@ -255,6 +254,36 @@ AltSurface "limit of knowledge" "Gliese 876/c"
 }
 
 AltSurface "limit of knowledge" "Gliese 876/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 86081"
+{
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
+
+	Mass       480     # M.sin(i) = 1.5 jupiters
+	Radius     84000
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+86081"
+
+	EllipticalOrbit {
+		Period          0.0059
+		SemiMajorAxis   0.039
+		Eccentricity    0.008
+		ArgOfPericenter 134
+		MeanAnomaly     88
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 86081/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -276,7 +305,7 @@ AltSurface "limit of knowledge" "Gliese 876/b"
 	Mass       370     # M.sin(i) = 1.154 jupiters
 	Radius     88200
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+189733"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+189733"
 
 	EllipticalOrbit {
 		Period          0.0061
@@ -307,7 +336,7 @@ AltSurface "limit of knowledge" "HD 189733/b"
 	Mass      14     # M.sin(i) = 14 earths
 	Radius     15400
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+212301&p2=b"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+212301"
 
 	EllipticalOrbit {
 		Period          0.0067
@@ -335,7 +364,7 @@ AltSurface "limit of knowledge" "HD 212301/b"
 	Mass       590     # M.sin(i) = 1.87 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+73256"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+73256"
 
 	EllipticalOrbit {
 		Period          0.007
@@ -361,7 +390,7 @@ AltSurface "limit of knowledge" "HD 73256/b"
 	Mass      21     # M.sin(i) = 21 earths
 	Radius     17500
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=GJ+436"
+	InfoURL "http://exoplanet.eu/star.php?st=GJ+436"
 
 	EllipticalOrbit {
 		Period          0.0072
@@ -388,7 +417,7 @@ AltSurface "limit of knowledge" "HIP 57087/b"
 	Mass      14     # M.sin(i) = 14 earths
 	Radius     15400
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=55+Cnc"
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
 	EllipticalOrbit {
 		Period          0.0077
@@ -417,7 +446,7 @@ AltSurface "limit of knowledge" "HD 75732/e"
 	Mass       250     # M.sin(i) = 0.784 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=55+Cnc"
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
 	EllipticalOrbit {
 		Period          0.0402
@@ -446,7 +475,7 @@ AltSurface "limit of knowledge" "HD 75732/b"
 	Mass       70     # M.sin(i) = 0.217 jupiters
 	Radius     56000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=55+Cnc"
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
 	EllipticalOrbit {
 		Period          0.1203
@@ -476,7 +505,7 @@ AltSurface "limit of knowledge" "HD 75732/c"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=55+Cnc"
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
 	EllipticalOrbit {
 		Period          12.368
@@ -507,7 +536,7 @@ AltSurface "limit of knowledge" "HD 75732/d"
 	Radius     98000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+63454"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+63454"
 
 	EllipticalOrbit {
 		Period          0.0077
@@ -542,7 +571,7 @@ AltSurface "limit of knowledge" "HD 63454/b"
 	Mass       110     # M.sin(i) = 0.36 jupiters
 	Radius     51100
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+149026"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+149026"
 
 	EllipticalOrbit {
 		Period          0.0079
@@ -578,7 +607,7 @@ AltSurface "limit of knowledge" "HD 149026/b"
 	Radius     98000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+83443"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+83443"
 
 	EllipticalOrbit {
 		Period          0.0082
@@ -609,7 +638,7 @@ AltSurface "limit of knowledge" "HD 83443/b"
 	Radius     98000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+46375"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+46375"
 
 	EllipticalOrbit {
 		Period          0.0083
@@ -646,7 +675,7 @@ AltSurface "limit of knowledge" "HD 46375/b"
 	Mass       190     # M.sin(i) = 0.61 jupiters
 	Radius     75600
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=TrES-1"
+	InfoURL "http://exoplanet.eu/star.php?st=TrES-1"
 
 	EllipticalOrbit {
 		Period          0.0083
@@ -680,7 +709,7 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 	Mass       310     # M.sin(i) = 0.98 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+179949"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+179949"
 
 	EllipticalOrbit {
 		Period          0.0085
@@ -711,7 +740,7 @@ AltSurface "limit of knowledge" "HD 179949/b"
 	Radius     98000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+187123"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+187123"
 
 	EllipticalOrbit {
 		Period          0.0085
@@ -748,7 +777,7 @@ AltSurface "limit of knowledge" "HD 187123/b"
 	Mass       170     # M.sin(i) = 0.54 jupiters
 	Radius     81200
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=OGLE-TR-10"
+	InfoURL "http://exoplanet.eu/star.php?st=OGLE-TR-10"
 
 	EllipticalOrbit {
 		Period          0.0085
@@ -782,7 +811,7 @@ AltSurface "limit of knowledge" "OGLE-TR-10/b"
 	Mass       1240     # M.sin(i) = 3.9 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Tau+Boo"
+	InfoURL "http://exoplanet.eu/star.php?st=Tau+Boo"
 
 	EllipticalOrbit {
 		Period          0.0091
@@ -811,7 +840,7 @@ AltSurface "limit of knowledge" "HD 120136/b"
 	Mass       360     # M.sin(i) = 1.14 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+188753A"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+188753A"
 
 	EllipticalOrbit {
 		Period          0.0092
@@ -840,7 +869,7 @@ AltSurface "limit of knowledge" "HD 188753/b"
 	Mass       240     # M.sin(i) = 0.76 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+330075"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+330075"
 
 	EllipticalOrbit {
 		Period          0.0092
@@ -871,7 +900,7 @@ AltSurface "limit of knowledge" "HD 330075/b"
 	Radius     98000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+88133"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+88133"
 
 	EllipticalOrbit {
 		Period          0.0093
@@ -901,7 +930,7 @@ AltSurface "limit of knowledge" "HD 88133/b"
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+2638"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+2638"
 
 	EllipticalOrbit {
 		Period          0.0094
@@ -933,7 +962,7 @@ AltSurface "limit of knowledge" "HD 2638/b"
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=BD-10+3166"
+	InfoURL "http://exoplanet.eu/star.php?st=BD-10+3166"
 
 	EllipticalOrbit {
 		Period          0.0095
@@ -964,7 +993,7 @@ AltSurface "limit of knowledge" "TYC 5503-946-1/b"
 	Radius     98000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+75289"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+75289"
 
 	EllipticalOrbit {
 		Period          0.0096
@@ -986,7 +1015,7 @@ AltSurface "limit of knowledge" "HD 75289/b"
 "b" "HD 209458"   # V376 Peg
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 86.1 degrees, so mass can be determined.
+# duration, inclination is fixed at 86.929 degrees, so mass can be determined.
 # From transit dimming, radius is estimated at 1.32 jupiters.
 
 {
@@ -999,20 +1028,20 @@ AltSurface "limit of knowledge" "HD 75289/b"
 	Mass       220     # M.sin(i) = 0.69 jupiters
 	Radius     92400
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+209458"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+209458"
 
 	EllipticalOrbit {
 		Period          0.0097
 		SemiMajorAxis   0.045
 		Eccentricity    0.07
-		Inclination     71.7
-		AscendingNode   325.1
+		Inclination     71.3
+		AscendingNode   325.9
 		ArgOfPericenter 205
 		MeanAnomaly     141
 	}
 
-	Obliquity             72 # guess, to match inclination
-	EquatorAscendingNode  325 # guess, to match ascending node
+	Obliquity             71 # guess, to match inclination
+	EquatorAscendingNode  326 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -1035,7 +1064,7 @@ AltSurface "limit of knowledge" "HD 209458/b"
 	Radius     98000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+76700"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+76700"
 
 	EllipticalOrbit {
 		Period          0.0109
@@ -1072,7 +1101,7 @@ AltSurface "limit of knowledge" "HD 76700/b"
 	Mass       170     # M.sin(i) = 0.53 jupiters
 	Radius     70000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=OGLE-TR-111"
+	InfoURL "http://exoplanet.eu/star.php?st=OGLE-TR-111"
 
 	EllipticalOrbit {
 		Period          0.011
@@ -1106,7 +1135,7 @@ AltSurface "limit of knowledge" "OGLE-TR-111/b"
 	Mass       420     # M.sin(i) = 1.33 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+149143"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+149143"
 
 	EllipticalOrbit {
 		Period          0.0111
@@ -1136,7 +1165,7 @@ AltSurface "limit of knowledge" "HD 149143/b"
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+102195"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+102195"
 
 	EllipticalOrbit {
 		Period          0.0113
@@ -1166,7 +1195,7 @@ AltSurface "limit of knowledge" "HD 102195/b"
 	Mass       150     # M.sin(i) = 0.468 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=51+Peg"
+	InfoURL "http://exoplanet.eu/star.php?st=51+Peg"
 
 	EllipticalOrbit {
 		Period          0.0116
@@ -1196,7 +1225,7 @@ AltSurface "limit of knowledge" "HD 217014/b"
 	Mass       220     # M.sin(i) = 0.69 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Ups+And"
+	InfoURL "http://exoplanet.eu/star.php?st=Ups+And"
 
 	EllipticalOrbit {
 		Period          0.0126
@@ -1226,7 +1255,7 @@ AltSurface "limit of knowledge" "HD 9826/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Ups+And"
+	InfoURL "http://exoplanet.eu/star.php?st=Ups+And"
 
 	EllipticalOrbit {
 		Period          0.6612
@@ -1256,7 +1285,7 @@ AltSurface "limit of knowledge" "HD 9826/c"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Ups+And"
+	InfoURL "http://exoplanet.eu/star.php?st=Ups+And"
 
 	EllipticalOrbit {
 		Period          3.5154
@@ -1287,7 +1316,7 @@ AltSurface "limit of knowledge" "HD 9826/d"
 	Radius     98000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+49674"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+49674"
 
 	EllipticalOrbit {
 		Period          0.0135
@@ -1317,7 +1346,7 @@ AltSurface "limit of knowledge" "HD 49674/b"
 	Mass       90     # M.sin(i) = 0.28 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+109749"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+109749"
 
 	EllipticalOrbit {
 		Period          0.0143
@@ -1343,7 +1372,7 @@ AltSurface "limit of knowledge" "HD 109749/b"
 	Mass      18     # M.sin(i) = 18 earths
 	Radius     16800
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=Gl+581&p2=b"
+	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
 	EllipticalOrbit {
 		Period          0.0147
@@ -1372,7 +1401,7 @@ AltSurface "limit of knowledge" "Gliese 581/b"
 	Mass       680     # M.sin(i) = 2.13 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+118203&p2=b"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+118203"
 
 	EllipticalOrbit {
 		Period          0.0168
@@ -1402,7 +1431,7 @@ AltSurface "limit of knowledge" "HD 118203/b"
 	Mass       600     # M.sin(i) = 1.9 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+68988"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+68988"
 
 	EllipticalOrbit {
 		Period          0.0172
@@ -1430,7 +1459,7 @@ AltSurface "limit of knowledge" "HD 68988/b"
 	Mass       70     # M.sin(i) = 0.23 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+168746"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+168746"
 
 	EllipticalOrbit {
 		Period          0.0175
@@ -1460,7 +1489,7 @@ AltSurface "limit of knowledge" "HD 168746/b"
 	Mass       440     # M.sin(i) = 1.37 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+217107"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+217107"
 
 	EllipticalOrbit {
 		Period          0.0195
@@ -1490,7 +1519,7 @@ AltSurface "limit of knowledge" "HD 217107/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+217107"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+217107"
 
 	EllipticalOrbit {
 		Period          8.6242
@@ -1518,7 +1547,7 @@ AltSurface "limit of knowledge" "HD 217107/c"
 	Mass       4370     # M.sin(i) = 13.75 jupiters
 	Radius     70000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+162020"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+162020"
 
 	EllipticalOrbit {
 		Period          0.0231
@@ -1544,7 +1573,7 @@ AltSurface "limit of knowledge" "HD 162020/b"
 	Mass      14     # M.sin(i) = 14 earths
 	Radius     15400
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+160691"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+160691"
 
 	EllipticalOrbit {
 		Period          0.0261
@@ -1573,7 +1602,7 @@ AltSurface "limit of knowledge" "HD 160691/d"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+160691"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+160691"
 
 	EllipticalOrbit {
 		Period          1.7919
@@ -1603,7 +1632,7 @@ AltSurface "limit of knowledge" "HD 160691/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+160691"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+160691"
 
 	EllipticalOrbit {
 		Period          8.1752
@@ -1632,7 +1661,7 @@ AltSurface "limit of knowledge" "HD 160691/c"
 	Mass       340     # M.sin(i) = 1.08 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+130322"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+130322"
 
 	EllipticalOrbit {
 		Period          0.0294
@@ -1662,7 +1691,7 @@ AltSurface "limit of knowledge" "HD 130322/b"
 	Mass       130     # M.sin(i) = 0.4 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+108147"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+108147"
 
 	EllipticalOrbit {
 		Period          0.0298
@@ -1692,7 +1721,7 @@ AltSurface "limit of knowledge" "HD 108147/b"
 	Mass       250     # M.sin(i) = 0.78 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+38529"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+38529"
 
 	EllipticalOrbit {
 		Period          0.0392
@@ -1721,7 +1750,7 @@ AltSurface "limit of knowledge" "HD 38529/b"
 	Mass       4040     # M.sin(i) = 12.7 jupiters
 	Radius     70000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+38529"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+38529"
 
 	EllipticalOrbit {
 		Period          5.9529
@@ -1747,7 +1776,7 @@ AltSurface "limit of knowledge" "HD 38529/c"
 	Mass      15     # M.sin(i) = 15 earths
 	Radius     15400
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+4308&p2=b"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+4308"
 
 	EllipticalOrbit {
 		Period          0.0426
@@ -1774,7 +1803,7 @@ AltSurface "limit of knowledge" "HD 4308/b"
 	Mass       1280     # M.sin(i) = 4.01 jupiters
 	Radius     70000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Gl+86"
+	InfoURL "http://exoplanet.eu/star.php?st=Gl+86"
 
 	EllipticalOrbit {
 		Period          0.0432
@@ -1803,7 +1832,7 @@ AltSurface "limit of knowledge" "HD 13445/b"
 	Mass       40     # M.sin(i) = 0.122 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+99492"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+99492"
 
 	EllipticalOrbit {
 		Period          0.0466
@@ -1829,7 +1858,7 @@ AltSurface "limit of knowledge" "HD 99492/b"
 	Mass      18     # M.sin(i) = 18 earths
 	Radius     16800
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Gl+777A"
+	InfoURL "http://exoplanet.eu/star.php?st=Gl+777A"
 
 	EllipticalOrbit {
 		Period          0.0468
@@ -1859,7 +1888,7 @@ AltSurface "limit of knowledge" "HD 190360/c"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Gl+777A"
+	InfoURL "http://exoplanet.eu/star.php?st=Gl+777A"
 
 	EllipticalOrbit {
 		Period          7.9151
@@ -1888,7 +1917,7 @@ AltSurface "limit of knowledge" "HD 190360/b"
 	Mass       200     # M.sin(i) = 0.62 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+27894"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+27894"
 
 	EllipticalOrbit {
 		Period          0.0493
@@ -1907,6 +1936,35 @@ AltSurface "limit of knowledge" "HD 27894/b"
 }
 
 
+"b" "HD 33283"
+{
+	Texture "exo-class4.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       110     # M.sin(i) = 0.33 jupiters
+	Radius     98000
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+33283"
+
+	EllipticalOrbit {
+		Period          0.0498
+		SemiMajorAxis   0.168
+		Eccentricity    0.48
+		ArgOfPericenter 318
+		MeanAnomaly     358
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 33283/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 195019"   # HD 195019 A
 {
 	Texture "exo-class4.*"
@@ -1917,7 +1975,7 @@ AltSurface "limit of knowledge" "HD 27894/b"
 	Mass       1090     # M.sin(i) = 3.43 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+195019"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+195019"
 
 	EllipticalOrbit {
 		Period          0.0501
@@ -1946,7 +2004,7 @@ AltSurface "limit of knowledge" "HD 195019/b"
 	Mass       50     # M.sin(i) = 0.14 jupiters
 	Radius     98000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+102117"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+102117"
 
 	EllipticalOrbit {
 		Period          0.0566
@@ -1975,7 +2033,7 @@ AltSurface "limit of knowledge" "HD 102117/b"
 	Mass       150     # M.sin(i) = 0.48 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+6434"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+6434"
 
 	EllipticalOrbit {
 		Period          0.0605
@@ -2004,7 +2062,7 @@ AltSurface "limit of knowledge" "HD 6434/b"
 	Mass       230     # M.sin(i) = 0.72 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+192263"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+192263"
 
 	EllipticalOrbit {
 		Period          0.0667
@@ -2022,6 +2080,35 @@ AltSurface "limit of knowledge" "HD 192263/b"
 }
 
 
+"b" "HD 224693"
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       230     # M.sin(i) = 0.71 jupiters
+	Radius     98000
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+224693"
+
+	EllipticalOrbit {
+		Period          0.0732
+		SemiMajorAxis   0.233
+		Eccentricity    0.05
+		ArgOfPericenter 87
+		MeanAnomaly     113
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 224693/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 11964"
 {
 	Texture "exo-class3.*"
@@ -2032,7 +2119,7 @@ AltSurface "limit of knowledge" "HD 192263/b"
 	Mass       40     # M.sin(i) = 0.11 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+11964"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+11964"
 
 	EllipticalOrbit {
 		Period          0.1035
@@ -2060,7 +2147,7 @@ AltSurface "limit of knowledge" "HD 11964/b"
 	Radius     70000
 	Oblateness 0.08
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+11964"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+11964"
 
 	EllipticalOrbit {
 		Period          5.3114
@@ -2087,7 +2174,7 @@ AltSurface "limit of knowledge" "HD 11964/c"
 	Mass       330     # M.sin(i) = 1.04 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=rho+CrB"
+	InfoURL "http://exoplanet.eu/star.php?st=rho+CrB"
 
 	EllipticalOrbit {
 		Period          0.1091
@@ -2117,7 +2204,7 @@ AltSurface "limit of knowledge" "HD 143761/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+74156"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+74156"
 
 	EllipticalOrbit {
 		Period          0.1414
@@ -2147,7 +2234,7 @@ AltSurface "limit of knowledge" "HD 74156/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+74156"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+74156"
 
 	EllipticalOrbit {
 		Period          5.5441
@@ -2176,7 +2263,7 @@ AltSurface "limit of knowledge" "HD 74156/c"
 	Mass       60     # M.sin(i) = 0.19 jupiters
 	Radius     84000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+117618"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+117618"
 
 	EllipticalOrbit {
 		Period          0.1429
@@ -2206,7 +2293,7 @@ AltSurface "limit of knowledge" "HD 117618/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+37605"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+37605"
 
 	EllipticalOrbit {
 		Period          0.1506
@@ -2236,7 +2323,7 @@ AltSurface "limit of knowledge" "HD 37605/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+168443"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+168443"
 
 	EllipticalOrbit {
 		Period          0.1591
@@ -2264,7 +2351,7 @@ AltSurface "limit of knowledge" "HD 168443/b"
 	Mass       5440     # M.sin(i) = 17.1 jupiters
 	Radius     70000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+168443"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+168443"
 
 	EllipticalOrbit {
 		Period          4.7625
@@ -2294,7 +2381,7 @@ AltSurface "limit of knowledge" "HD 168443/c"
 	Radius     56000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+3651"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+3651"
 
 	EllipticalOrbit {
 		Period          0.1704
@@ -2324,7 +2411,7 @@ AltSurface "limit of knowledge" "HD 3651/b"
 	Radius     84000
 	Oblateness 0.08
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+121504"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+121504"
 
 	EllipticalOrbit {
 		Period          0.1769
@@ -2354,7 +2441,7 @@ AltSurface "limit of knowledge" "HD 121504/b"
 	Radius     56000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+101930"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+101930"
 
 	EllipticalOrbit {
 		Period          0.1929
@@ -2384,7 +2471,7 @@ AltSurface "limit of knowledge" "HD 101930/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+178911+B"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+178911+B"
 
 	EllipticalOrbit {
 		Period          0.1957
@@ -2414,7 +2501,7 @@ AltSurface "limit of knowledge" "HIP 94075/b"
 	Radius     84000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+16141"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+16141"
 
 	EllipticalOrbit {
 		Period          0.2069
@@ -2444,7 +2531,7 @@ AltSurface "limit of knowledge" "HD 16141/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+114762"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+114762"
 
 	EllipticalOrbit {
 		Period          0.2297
@@ -2474,7 +2561,7 @@ AltSurface "limit of knowledge" "HD 114762/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+80606"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+80606"
 
 	EllipticalOrbit {
 		Period          0.306
@@ -2504,7 +2591,7 @@ AltSurface "limit of knowledge" "HD 80606/b"
 	Radius     84000
 	Oblateness 0.09
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+219542+B"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+219542+B"
 
 	EllipticalOrbit {
 		Period          0.3069
@@ -2534,7 +2621,7 @@ AltSurface "limit of knowledge" "HD 219542/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=70+Vir"
+	InfoURL "http://exoplanet.eu/star.php?st=70+Vir"
 
 	EllipticalOrbit {
 		Period          0.3195
@@ -2564,7 +2651,7 @@ AltSurface "limit of knowledge" "HD 117176/b"
 	Radius     56000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+216770"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+216770"
 
 	EllipticalOrbit {
 		Period          0.3243
@@ -2594,7 +2681,7 @@ AltSurface "limit of knowledge" "HD 216770/b"
 	Radius     70000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+52265"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+52265"
 
 	EllipticalOrbit {
 		Period          0.3257
@@ -2624,7 +2711,7 @@ AltSurface "limit of knowledge" "HD 52265/b"
 	Radius     56000
 	Oblateness 0.07
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+208487"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+208487"
 
 	EllipticalOrbit {
 		Period          0.3368
@@ -2654,7 +2741,7 @@ AltSurface "limit of knowledge" "HD 208487/b"
 	Radius     56000
 	Oblateness 0.07
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+208487"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+208487"
 
 	EllipticalOrbit {
 		Period          2.7324
@@ -2684,7 +2771,7 @@ AltSurface "limit of knowledge" "HD 208487/c"
 	Radius     56000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+34445"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+34445"
 
 	EllipticalOrbit {
 		Period          0.345
@@ -2712,7 +2799,7 @@ AltSurface "limit of knowledge" "HD 34445/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=GJ+3021"
+	InfoURL "http://exoplanet.eu/star.php?st=GJ+3021"
 
 	EllipticalOrbit {
 		Period          0.3664
@@ -2742,7 +2829,7 @@ AltSurface "limit of knowledge" "HD 1237/b"
 	Radius     56000
 	Oblateness 0.08
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+93083"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+93083"
 
 	EllipticalOrbit {
 		Period          0.3931
@@ -2772,7 +2859,7 @@ AltSurface "limit of knowledge" "HD 93083/b"
 	Radius     56000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+37124"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+37124"
 
 	EllipticalOrbit {
 		Period          0.4229
@@ -2802,7 +2889,7 @@ AltSurface "limit of knowledge" "HD 37124/b"
 	Radius     56000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+37124"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+37124"
 
 	EllipticalOrbit {
 		Period          2.3097
@@ -2832,7 +2919,7 @@ AltSurface "limit of knowledge" "HD 37124/c"
 	Radius     56000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+37124"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+37124"
 
 	EllipticalOrbit {
 		Period          6.2834
@@ -2863,7 +2950,7 @@ AltSurface "limit of knowledge" "HD 37124/d"
 	Radius     84000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+219449"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+219449"
 
 	EllipticalOrbit {
 		Period          0.4983
@@ -2890,7 +2977,7 @@ AltSurface "limit of knowledge" "HD 219449/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+73526"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+73526"
 
 	EllipticalOrbit {
 		Period          0.5155
@@ -2920,7 +3007,7 @@ AltSurface "limit of knowledge" "HD 73526/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+73526"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+73526"
 
 	EllipticalOrbit {
 		Period          1.0344
@@ -2950,7 +3037,7 @@ AltSurface "limit of knowledge" "HD 73526/c"
 	Radius     84000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+104985"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+104985"
 
 	EllipticalOrbit {
 		Period          0.5426
@@ -2980,7 +3067,7 @@ AltSurface "limit of knowledge" "HD 104985/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+82943"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+82943"
 
 	EllipticalOrbit {
 		Period          1.2079
@@ -3010,7 +3097,7 @@ AltSurface "limit of knowledge" "HD 82943/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+82943"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+82943"
 
 	EllipticalOrbit {
 		Period          0.5996
@@ -3039,7 +3126,7 @@ AltSurface "limit of knowledge" "HD 82943/c"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+169830"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+169830"
 
 	EllipticalOrbit {
 		Period          0.6177
@@ -3069,7 +3156,7 @@ AltSurface "limit of knowledge" "HD 169830/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+169830"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+169830"
 
 	EllipticalOrbit {
 		Period          5.755
@@ -3099,7 +3186,7 @@ AltSurface "limit of knowledge" "HD 169830/c"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+8574"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+8574"
 
 	EllipticalOrbit {
 		Period          0.6264
@@ -3125,7 +3212,7 @@ AltSurface "limit of knowledge" "HD 8574/b"
 	Mass       5530     # M.sin(i) = 17.4 jupiters
 	Radius     70000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+202206"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+202206"
 
 	EllipticalOrbit {
 		Period          0.7005
@@ -3155,7 +3242,7 @@ AltSurface "limit of knowledge" "HD 202206/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+202206"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+202206"
 
 	EllipticalOrbit {
 		Period          3.7875
@@ -3185,7 +3272,7 @@ AltSurface "limit of knowledge" "HD 202206/c"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+89744"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+89744"
 
 	EllipticalOrbit {
 		Period          0.7009
@@ -3215,7 +3302,7 @@ AltSurface "limit of knowledge" "HD 89744/b"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+134987"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+134987"
 
 	EllipticalOrbit {
 		Period          0.7118
@@ -3245,7 +3332,7 @@ AltSurface "limit of knowledge" "HD 134987/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+12661"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+12661"
 
 	EllipticalOrbit {
 		Period          0.7217
@@ -3275,7 +3362,7 @@ AltSurface "limit of knowledge" "HD 12661/b"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+12661"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+12661"
 
 	EllipticalOrbit {
 		Period          3.9548
@@ -3305,7 +3392,7 @@ AltSurface "limit of knowledge" "HD 12661/c"
 	Radius     70000
 	Oblateness 0.06
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+150706"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+150706"
 
 	EllipticalOrbit {
 		Period          0.7253
@@ -3335,7 +3422,7 @@ AltSurface "limit of knowledge" "HD 150706/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+40979"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+40979"
 
 	EllipticalOrbit {
 		Period          0.7316
@@ -3365,7 +3452,7 @@ AltSurface "limit of knowledge" "HD 40979/b"
 	Radius     84000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+59686"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+59686"
 
 	EllipticalOrbit {
 		Period          0.8296
@@ -3392,7 +3479,7 @@ AltSurface "limit of knowledge" "HD 59686/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HR+810"
+	InfoURL "http://exoplanet.eu/star.php?st=HR+810"
 
 	EllipticalOrbit {
 		Period          0.8523
@@ -3422,7 +3509,7 @@ AltSurface "limit of knowledge" "HD 17051/b"
 	Radius     70000
 	Oblateness 0.06
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+142"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+142"
 
 	EllipticalOrbit {
 		Period          0.923
@@ -3450,7 +3537,7 @@ AltSurface "limit of knowledge" "HD 142/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+92788"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+92788"
 
 	EllipticalOrbit {
 		Period          1.0341
@@ -3480,7 +3567,7 @@ AltSurface "limit of knowledge" "HD 92788/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+28185"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+28185"
 
 	EllipticalOrbit {
 		Period          1.0486
@@ -3510,7 +3597,7 @@ AltSurface "limit of knowledge" "HD 28185/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+196885"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+196885"
 
 	EllipticalOrbit {
 		Period          1.0568
@@ -3538,7 +3625,7 @@ AltSurface "limit of knowledge" "HD 196885/b"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+142415"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+142415"
 
 	EllipticalOrbit {
 		Period          1.0576
@@ -3568,7 +3655,7 @@ AltSurface "limit of knowledge" "HD 142415/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/planet.php?p1=HD+33564&p2=b"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+33564"
 
 	EllipticalOrbit {
 		Period          1.0623
@@ -3598,7 +3685,7 @@ AltSurface "limit of knowledge" "HD 33564/b"
 	Radius     70000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+177830"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+177830"
 
 	EllipticalOrbit {
 		Period          1.0705
@@ -3628,7 +3715,7 @@ AltSurface "limit of knowledge" "HD 177830/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+154857"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+154857"
 
 	EllipticalOrbit {
 		Period          1.091
@@ -3658,7 +3745,7 @@ AltSurface "limit of knowledge" "HD 154857/b"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+4203"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+4203"
 
 	EllipticalOrbit {
 		Period          1.0977
@@ -3688,7 +3775,7 @@ AltSurface "limit of knowledge" "HD 4203/b"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+108874"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+108874"
 
 	EllipticalOrbit {
 		Period          1.0825
@@ -3718,7 +3805,7 @@ AltSurface "limit of knowledge" "HD 108874/b"
 	Radius     70000
 	Oblateness 0.06
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+108874"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+108874"
 
 	EllipticalOrbit {
 		Period          4.3964
@@ -3748,7 +3835,7 @@ AltSurface "limit of knowledge" "HD 108874/c"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+128311"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+128311"
 
 	EllipticalOrbit {
 		Period          1.2282
@@ -3778,7 +3865,7 @@ AltSurface "limit of knowledge" "HD 128311/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+128311"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+128311"
 
 	EllipticalOrbit {
 		Period          2.5161
@@ -3808,7 +3895,7 @@ AltSurface "limit of knowledge" "HD 128311/c"
 	Radius     70000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+27442"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+27442"
 
 	EllipticalOrbit {
 		Period          1.1604
@@ -3838,7 +3925,7 @@ AltSurface "limit of knowledge" "HD 27442/b"
 	Radius     70000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+210277"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+210277"
 
 	EllipticalOrbit {
 		Period          1.1926
@@ -3868,7 +3955,7 @@ AltSurface "limit of knowledge" "HD 210277/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+19994"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+19994"
 
 	EllipticalOrbit {
 		Period          1.243
@@ -3898,7 +3985,7 @@ AltSurface "limit of knowledge" "HD 19994/b"
 	Radius     70000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+188015"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+188015"
 
 	EllipticalOrbit {
 		Period          1.2497
@@ -3927,7 +4014,7 @@ AltSurface "limit of knowledge" "HD 188015/b"
 	Radius     84000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+13189"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+13189"
 
 	EllipticalOrbit {
 		Period          1.2912
@@ -3957,7 +4044,7 @@ AltSurface "limit of knowledge" "HD 13189/b"
 	Radius     70000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+20367"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+20367"
 
 	EllipticalOrbit {
 		Period          1.3689
@@ -3987,7 +4074,7 @@ AltSurface "limit of knowledge" "HD 20367/b"
 	Radius     70000
 	Oblateness 0.06
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+114783"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+114783"
 
 	EllipticalOrbit {
 		Period          1.3717
@@ -4015,7 +4102,7 @@ AltSurface "limit of knowledge" "HD 114783/b"
 	Radius     70000
 	Oblateness 0.06
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+147513"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+147513"
 
 	EllipticalOrbit {
 		Period          1.4795
@@ -4045,7 +4132,7 @@ AltSurface "limit of knowledge" "HD 147513/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HIP+75458"
+	InfoURL "http://exoplanet.eu/star.php?st=HIP+75458"
 
 	EllipticalOrbit {
 		Period          1.5076
@@ -4075,7 +4162,7 @@ AltSurface "limit of knowledge" "HD 137759/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+62509"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+62509"
 
 	EllipticalOrbit {
 		Period          1.5168
@@ -4103,7 +4190,7 @@ AltSurface "limit of knowledge" "HD 62509/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+222582"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+222582"
 
 	EllipticalOrbit {
 		Period          1.5661
@@ -4133,7 +4220,7 @@ AltSurface "limit of knowledge" "HD 222582/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+20782"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+20782"
 
 	EllipticalOrbit {
 		Period          1.604
@@ -4163,7 +4250,7 @@ AltSurface "limit of knowledge" "HD 20782/b"
 	Radius     70000
 	Oblateness 0.05
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+65216"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+65216"
 
 	EllipticalOrbit {
 		Period          1.6786
@@ -4193,7 +4280,7 @@ AltSurface "limit of knowledge" "HD 65216/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+183263"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+183263"
 
 	EllipticalOrbit {
 		Period          1.7364
@@ -4221,7 +4308,7 @@ AltSurface "limit of knowledge" "HD 183263/b"
 	Mass       4450     # M.sin(i) = 14 jupiters
 	Radius     70000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+8673"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+8673"
 
 	EllipticalOrbit {
 		Period          1.7495
@@ -4248,7 +4335,7 @@ AltSurface "limit of knowledge" "HD 8673/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+141937"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+141937"
 
 	EllipticalOrbit {
 		Period          1.7884
@@ -4278,7 +4365,7 @@ AltSurface "limit of knowledge" "HD 141937/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+41004+A"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+41004+A"
 
 	EllipticalOrbit {
 		Period          1.7933
@@ -4308,7 +4395,7 @@ AltSurface "limit of knowledge" "HD 41004/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+11977"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+11977"
 
 	EllipticalOrbit {
 		Period          1.9466
@@ -4338,7 +4425,7 @@ AltSurface "limit of knowledge" "HD 11977/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+47536"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+47536"
 
 	EllipticalOrbit {
 		Period          1.9497
@@ -4368,7 +4455,7 @@ AltSurface "limit of knowledge" "HD 47536/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+23079"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+23079"
 
 	EllipticalOrbit {
 		Period          2.0218
@@ -4398,7 +4485,7 @@ AltSurface "limit of knowledge" "HD 23079/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=16+Cyg+B"
+	InfoURL "http://exoplanet.eu/star.php?st=16+Cyg+B"
 
 	EllipticalOrbit {
 		Period          2.1874
@@ -4428,7 +4515,7 @@ AltSurface "limit of knowledge" "HD 186427/b"
 	Radius     70000
 	Oblateness 0.07
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+4208"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+4208"
 
 	EllipticalOrbit {
 		Period          2.2237
@@ -4458,7 +4545,7 @@ AltSurface "limit of knowledge" "HD 4208/b"
 	Radius     70000
 	Oblateness 0.06
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+114386"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+114386"
 
 	EllipticalOrbit {
 		Period          2.3874
@@ -4488,7 +4575,7 @@ AltSurface "limit of knowledge" "HD 114386/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+45350"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+45350"
 
 	EllipticalOrbit {
 		Period          2.4388
@@ -4518,7 +4605,7 @@ AltSurface "limit of knowledge" "HD 45350/b"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Gamma+Cephei"
+	InfoURL "http://exoplanet.eu/star.php?st=Gamma+Cephei"
 
 	EllipticalOrbit {
 		Period          2.4703
@@ -4548,7 +4635,7 @@ AltSurface "limit of knowledge" "HD 222404/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+213240"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+213240"
 
 	EllipticalOrbit {
 		Period          2.6037
@@ -4578,7 +4665,7 @@ AltSurface "limit of knowledge" "HD 213240/b"
 	Radius     70000
 	Oblateness 0.08
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+187085"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+187085"
 
 	EllipticalOrbit {
 		Period          2.6995
@@ -4608,7 +4695,7 @@ AltSurface "limit of knowledge" "HD 187085/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+81040"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+81040"
 
 	EllipticalOrbit {
 		Period          2.7425
@@ -4638,7 +4725,7 @@ AltSurface "limit of knowledge" "HD 81040/b"
 	Radius     70000
 	Oblateness 0.06
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+10647"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+10647"
 
 	EllipticalOrbit {
 		Period          2.8474
@@ -4668,7 +4755,7 @@ AltSurface "limit of knowledge" "HD 10647/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+10697"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+10697"
 
 	EllipticalOrbit {
 		Period          2.9511
@@ -4698,7 +4785,7 @@ AltSurface "limit of knowledge" "HD 10697/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=47+Uma"
+	InfoURL "http://exoplanet.eu/star.php?st=47+Uma"
 
 	EllipticalOrbit {
 		Period          2.9815
@@ -4728,7 +4815,7 @@ AltSurface "limit of knowledge" "HD 95128/b"
 	Radius     70000
 	Oblateness 0.08
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=47+Uma"
+	InfoURL "http://exoplanet.eu/star.php?st=47+Uma"
 
 	EllipticalOrbit {
 		Period          7.102
@@ -4758,7 +4845,7 @@ AltSurface "limit of knowledge" "HD 95128/c"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+190228"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+190228"
 
 	EllipticalOrbit {
 		Period          3.0856
@@ -4788,7 +4875,7 @@ AltSurface "limit of knowledge" "HD 190228/b"
 	Radius     70000
 	Oblateness 0.07
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+114729"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+114729"
 
 	EllipticalOrbit {
 		Period          3.0978
@@ -4818,7 +4905,7 @@ AltSurface "limit of knowledge" "HD 114729/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+111232"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+111232"
 
 	EllipticalOrbit {
 		Period          3.1294
@@ -4848,7 +4935,7 @@ AltSurface "limit of knowledge" "HD 111232/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+2039"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+2039"
 
 	EllipticalOrbit {
 		Period          3.2651
@@ -4877,7 +4964,7 @@ AltSurface "limit of knowledge" "HD 2039/b"
 	Mass       3780     # M.sin(i) = 11.9 jupiters
 	Radius     70000
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+136118"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+136118"
 
 	EllipticalOrbit {
 		Period          3.3117
@@ -4907,7 +4994,7 @@ AltSurface "limit of knowledge" "HD 136118/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+50554"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+50554"
 
 	EllipticalOrbit {
 		Period          3.5017
@@ -4936,7 +5023,7 @@ AltSurface "limit of knowledge" "HD 50554/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+196050"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+196050"
 
 	EllipticalOrbit {
 		Period          3.5291
@@ -4966,7 +5053,7 @@ AltSurface "limit of knowledge" "HD 196050/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+216437"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+216437"
 
 	EllipticalOrbit {
 		Period          3.5428
@@ -4996,7 +5083,7 @@ AltSurface "limit of knowledge" "HD 216437/b"
 	Radius     70000
 	Oblateness 0.04
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+216435"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+216435"
 
 	EllipticalOrbit {
 		Period          3.9505
@@ -5026,7 +5113,7 @@ AltSurface "limit of knowledge" "HD 216435/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+106252"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+106252"
 
 	EllipticalOrbit {
 		Period          4.1068
@@ -5055,7 +5142,7 @@ AltSurface "limit of knowledge" "HD 106252/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+23596"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+23596"
 
 	EllipticalOrbit {
 		Period          4.2656
@@ -5085,7 +5172,7 @@ AltSurface "limit of knowledge" "HD 23596/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=14+Her"
+	InfoURL "http://exoplanet.eu/star.php?st=14+Her"
 
 	EllipticalOrbit {
 		Period          4.9183
@@ -5115,7 +5202,7 @@ AltSurface "limit of knowledge" "HD 145675/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=14+Her"
+	InfoURL "http://exoplanet.eu/star.php?st=14+Her"
 
 	EllipticalOrbit {
 		Period          14.6995
@@ -5144,7 +5231,7 @@ AltSurface "limit of knowledge" "HD 145675/c"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+142022+A"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+142022+A"
 
 	EllipticalOrbit {
 		Period          5.2649
@@ -5174,7 +5261,7 @@ AltSurface "limit of knowledge" "HD 142022/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+39091"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+39091"
 
 	EllipticalOrbit {
 		Period          5.6504
@@ -5204,7 +5291,7 @@ AltSurface "limit of knowledge" "HD 39091/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+70642"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+70642"
 
 	EllipticalOrbit {
 		Period          6.1081
@@ -5234,7 +5321,7 @@ AltSurface "limit of knowledge" "HD 70642/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+33636"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+33636"
 
 	EllipticalOrbit {
 		Period          6.7003
@@ -5264,7 +5351,7 @@ AltSurface "limit of knowledge" "HD 33636/b"
 	Radius     70000
 	Oblateness 0.07
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Epsilon+Eridani"
+	InfoURL "http://exoplanet.eu/star.php?st=Epsilon+Eridani"
 
 	EllipticalOrbit {
 		Period          6.8504
@@ -5294,7 +5381,7 @@ AltSurface "limit of knowledge" "HD 22049/b"
 	Radius     56000
 	Oblateness 0.10
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=Epsilon+Eridani"
+	InfoURL "http://exoplanet.eu/star.php?st=Epsilon+Eridani"
 
 	EllipticalOrbit {
 		Period          280
@@ -5322,7 +5409,7 @@ AltSurface "limit of knowledge" "HD 22049/c"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+50499"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+50499"
 
 	EllipticalOrbit {
 		Period          7.071
@@ -5352,7 +5439,7 @@ AltSurface "limit of knowledge" "HD 50499/b"
 	Radius     70000
 	Oblateness 0.03
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+117207"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+117207"
 
 	EllipticalOrbit {
 		Period          7.1926
@@ -5382,7 +5469,7 @@ AltSurface "limit of knowledge" "HD 117207/b"
 	Radius     70000
 	Oblateness 0.01
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+30177"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+30177"
 
 	EllipticalOrbit {
 		Period          7.7198
@@ -5412,7 +5499,7 @@ AltSurface "limit of knowledge" "HD 30177/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+89307"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+89307"
 
 	EllipticalOrbit {
 		Period          8.46
@@ -5440,7 +5527,7 @@ AltSurface "limit of knowledge" "HD 89307/b"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=HD+72659"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+72659"
 
 	EllipticalOrbit {
 		Period          8.6992
@@ -5468,7 +5555,7 @@ AltSurface "limit of knowledge" "HD 72659/b"
 	Mass      0.02     # M.sin(i) = 0.02 earths
 	Radius     1400
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=PSR+1257%2B12"
+	InfoURL "http://exoplanet.eu/star.php?st=PSR+1257%2B12"
 
 	EllipticalOrbit {
 		Period          0.0692
@@ -5501,7 +5588,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/A"
 	Mass      4.3     # M.sin(i) = 4.3 earths
 	Radius     10500
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=PSR+1257%2B12"
+	InfoURL "http://exoplanet.eu/star.php?st=PSR+1257%2B12"
 
 	EllipticalOrbit {
 		Period          0.1822
@@ -5534,7 +5621,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/B"
 	Mass      3.9     # M.sin(i) = 3.9 earths
 	Radius     9800
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=PSR+1257%2B12"
+	InfoURL "http://exoplanet.eu/star.php?st=PSR+1257%2B12"
 
 	EllipticalOrbit {
 		Period          0.2689
@@ -5602,7 +5689,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/D"
 	Radius     70000
 	Oblateness 0.02
 
-	InfoURL "http://vo.obspm.fr/exoplanetes/encyclo/star.php?st=PSR+B1620-26"
+	InfoURL "http://exoplanet.eu/star.php?st=PSR+B1620-26"
 
 	EllipticalOrbit {
 		Period          100
