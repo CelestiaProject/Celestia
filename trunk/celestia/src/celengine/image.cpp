@@ -85,6 +85,13 @@ using namespace std;
 #endif // PNG_SUPPORT
 
 
+// All rows are padded to a size that's a multiple of 4 bytes
+static int pad(int n)
+{
+    return (n + 3) & ~0x3;
+}
+
+
 static int formatComponents(int fmt)
 {
     switch (fmt)
@@ -131,7 +138,7 @@ static int calcMipLevelSize(int fmt, int w, int h, int mip)
         // 4x4 blocks, 16 bytes per block
         return ((w + 3) / 4) * ((h + 3) / 4) * 16;
     default:
-        return h * w * formatComponents(fmt);
+        return h * pad(w * formatComponents(fmt));
     }
 }
 
@@ -146,6 +153,8 @@ Image::Image(int fmt, int w, int h, int mips) :
     components = formatComponents(fmt);
     assert(components != 0);
 
+    pitch = pad(w * components);
+    
     size = 0;
     for (int i = 0; i < mipLevels; i++)
         size += calcMipLevelSize(fmt, w, h, i);
@@ -169,6 +178,12 @@ int Image::getWidth() const
 int Image::getHeight() const
 {
     return height;
+}
+
+
+int Image::getPitch() const
+{
+    return pitch;
 }
 
 
@@ -213,7 +228,7 @@ unsigned char* Image::getPixelRow(int mip, int row)
     if (isCompressed())
         return NULL;
 
-    return getMipLevel(mip) + row * w * components;
+    return getMipLevel(mip) + row * pitch;
 }
 
 
@@ -292,6 +307,7 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
         return NULL;
 
     unsigned char* nmPixels = normalMap->getPixels();
+    int nmPitch = normalMap->getPitch();
 
     // Compute normals using differences between adjacent texels.
     for (int i = 0; i < height; i++)
@@ -327,9 +343,9 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
                 }
             }
 
-            int h00 = (int) pixels[(i0 * width + j0) * components];
-            int h10 = (int) pixels[(i0 * width + j1) * components];
-            int h01 = (int) pixels[(i1 * width + j0) * components];
+            int h00 = (int) pixels[i0 * pitch + j0 * components];
+            int h10 = (int) pixels[i0 * pitch + j1 * components];
+            int h01 = (int) pixels[i1 * pitch + j0 * components];
             
             float dx = (float) (h10 - h00) * (1.0f / 255.0f) * scale;
             float dy = (float) (h01 - h00) * (1.0f / 255.0f) * scale;
@@ -337,7 +353,7 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
             float mag = (float) sqrt(dx * dx + dy * dy + 1.0f);
             float rmag = 1.0f / mag;
 
-            int n = (i * width + j) * 4;
+            int n = i * nmPitch + j * 4;
             nmPixels[n]     = (unsigned char) (128 + 127 * dx * rmag);
             nmPixels[n + 1] = (unsigned char) (128 + 127 * dy * rmag);
             nmPixels[n + 2] = (unsigned char) (128 + 127 * rmag);
