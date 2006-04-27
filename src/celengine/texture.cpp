@@ -101,6 +101,7 @@ struct TextureCaps
     bool autoMipMapSupported;
     bool maxLevelSupported;
     GLint maxTextureSize;
+    bool nonPow2Supported;
 };
 
 static TextureCaps texCaps;
@@ -147,6 +148,7 @@ static const TextureCaps& GetTextureCaps()
         texCaps.autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
         texCaps.maxLevelSupported = testMaxLevel();
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texCaps.maxTextureSize);
+        texCaps.nonPow2Supported = ExtensionSupported("GL_ARB_texture_non_power_of_two");
     }
 
     return texCaps;
@@ -404,7 +406,7 @@ ImageTexture::ImageTexture(Image& img,
     Texture(img.getWidth(), img.getHeight()),
     glName(0)
 {
-    glGenTextures(1, (GLuint*)&glName);
+    glGenTextures(1, (GLuint*) &glName);
     glBindTexture(GL_TEXTURE_2D, glName);
 
     bool mipmap = mipMapMode == DefaultMipMaps;
@@ -417,7 +419,7 @@ ImageTexture::ImageTexture(Image& img,
         precomputedMipMaps = true;
 
     // We can't automatically generate mipmaps for compressed textures.
-    // If a precomputed mipmap set isn't provided, turn of mipmapping entirely.
+    // If a precomputed mipmap set isn't provided, turn off mipmapping entirely.
     if (!precomputedMipMaps && img.isCompressed())
         mipmap = false;
 
@@ -426,7 +428,7 @@ ImageTexture::ImageTexture(Image& img,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texAddress);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+                    mipMapMode == NoMipMaps ? GL_LINEAR : GL_LINEAR_MIPMAP_LINEAR);
             
     if (mipMapMode == AutoMipMaps)
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
@@ -445,6 +447,7 @@ ImageTexture::ImageTexture(Image& img,
         }
         else
         {
+            clog << "gluBuild2DMipmaps\n";
             gluBuild2DMipmaps(GL_TEXTURE_2D,
                               internalFormat,
                               getWidth(), getHeight(),
@@ -513,7 +516,7 @@ TiledTexture::TiledTexture(Image& img,
 
     alpha = img.hasAlpha();
 
-    bool mipmap = mipMapMode == DefaultMipMaps;
+    bool mipmap = mipMapMode != NoMipMaps;
     bool precomputedMipMaps = false;
 
     // Require a complete set of mipmaps
@@ -745,8 +748,9 @@ CubeMap::CubeMap(Image* faces[]) :
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+//                    mipMapMode == NoMipMaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     int internalFormat = getInternalFormat(format);
 
@@ -955,6 +959,7 @@ static Texture* CreateTextureFromImage(Image& img,
                                        Texture::AddressMode addressMode,
                                        Texture::MipMapMode mipMode)
 {
+#if 0
     // Require texture dimensions to be powers of two.  Even though the
     // OpenGL driver will automatically rescale textures with non-power of
     // two sizes, some quality loss may result.  The power of two requirement
@@ -966,23 +971,34 @@ static Texture* CreateTextureFromImage(Image& img,
         clog << "Texture has non-power of two dimensions.\n";
         return NULL;
     }
+#endif
+
+    // If non power of two textures are supported switch mipmap generation to
+    // automatic. gluBuildMipMaps may rescale the texture to a power of two
+    // on some drivers even when the hardware supports non power of two textures,
+    // whereas auto mipmap generation will properly deal with the dimensions.
+    if (GetTextureCaps().nonPow2Supported)
+    {
+        if (mipMode == Texture::DefaultMipMaps)
+            mipMode = Texture::AutoMipMaps;
+    }
 
     bool splittingAllowed = true;
     Texture* tex = NULL;
 
     int maxDim = GetTextureCaps().maxTextureSize;
-    //int maxDim = 256;
     if ((img.getWidth() > maxDim || img.getHeight() > maxDim) &&
         splittingAllowed)
     {
         // The texture is too large; we need to split it.
         int uSplit = max(1, img.getWidth() / maxDim);
         int vSplit = max(1, img.getHeight() / maxDim);
-        
+        clog << "Creating tiled texture. Width=" << img.getWidth() << ", max=" << maxDim << "\n";
         tex = new TiledTexture(img, uSplit, vSplit, mipMode);
     }
     else
     {
+        clog << "Creating ordinary texture: " << img.getWidth() << "x" << img.getHeight() << "\n";
         // The image is small enough to fit in a single texture; or, splitting
         // was disallowed so we'll scale the large image down to fit in
         // an ordinary texture.
