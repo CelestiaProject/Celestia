@@ -27,6 +27,7 @@ class Image
 
     int getWidth() const;
     int getHeight() const;
+    int getPitch() const;
     int getMipLevelCount() const;
     int getFormat() const;
     int getComponents() const;
@@ -50,6 +51,7 @@ class Image
  private:
     int width;
     int height;
+    int pitch;
     int mipLevels;
     int components;
     int format;
