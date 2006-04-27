@@ -12,13 +12,13 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-22 10:03+0100\n"
-"PO-Revision-Date: 2006-02-18 18:07+0100\n"
+"PO-Revision-Date: 2006-04-27 19:14+0200\n"
 "Last-Translator: Christophe Teyssier <chris@teyssier.org>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11\n"
+"X-Generator: KBabel 1.11.2\n"
 
 #: src/celengine/fragmentprog.cpp:91
 msgid "Loading NV fragment program: "
@@ -408,7 +408,7 @@ msgstr "Suivre"
 
 #: src/celestia/celestiacore.cpp:1704
 msgid "Time: Forward"
-msgstr "Temps : avancer"
+msgstr "Temps : Avancer"
 
 #: src/celestia/celestiacore.cpp:1706
 msgid "Time: Backward"
@@ -1633,8 +1633,7 @@ msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr "<b>Langage d'ombrage OpenGL 2.0<b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:42
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
 msgstr ""
 "Le fichier %1 n'existe pas, utilisation du fichier de configuration par "
 "défaut %2/celestia.cfg"
@@ -2672,3 +2671,4 @@ msgstr "éclipse sur"
 
 #~ msgid "Sol"
 #~ msgstr "Soleil"
+
