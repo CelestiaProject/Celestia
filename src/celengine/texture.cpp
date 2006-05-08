@@ -409,26 +409,30 @@ ImageTexture::ImageTexture(Image& img,
     glGenTextures(1, (GLuint*) &glName);
     glBindTexture(GL_TEXTURE_2D, glName);
 
-    bool mipmap = mipMapMode == DefaultMipMaps;
+    
+    bool mipmap = mipMapMode != NoMipMaps;
     bool precomputedMipMaps = false;
 
-    // Require a complete set of mipmaps
+    // Use precomputed mipmaps only if a complete set is supplied
     int mipLevelCount = img.getMipLevelCount();
-    if (mipmap &&
-        mipLevelCount == CalcMipLevelCount(img.getWidth(), img.getHeight()))
+    if (mipmap && mipLevelCount == CalcMipLevelCount(img.getWidth(), img.getHeight()))
+    {    
         precomputedMipMaps = true;
+    }    
 
     // We can't automatically generate mipmaps for compressed textures.
     // If a precomputed mipmap set isn't provided, turn off mipmapping entirely.
     if (!precomputedMipMaps && img.isCompressed())
+    {
         mipmap = false;
+    }    
 
     GLenum texAddress = GetGLTexAddressMode(addressMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texAddress);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texAddress);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    mipMapMode == NoMipMaps ? GL_LINEAR : GL_LINEAR_MIPMAP_LINEAR);
+                    mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
             
     if (mipMapMode == AutoMipMaps)
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
@@ -437,23 +441,23 @@ ImageTexture::ImageTexture(Image& img,
 
     if (mipmap)
     {
-#if 0
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL,
-                        maxMipMapLevel);
-#endif
         if (precomputedMipMaps)
         {
             LoadMipmapSet(img, GL_TEXTURE_2D);
         }
-        else
+        else if (mipMapMode == DefaultMipMaps)
         {
-            clog << "gluBuild2DMipmaps\n";
             gluBuild2DMipmaps(GL_TEXTURE_2D,
                               internalFormat,
                               getWidth(), getHeight(),
                               (GLenum) img.getFormat(),
                               GL_UNSIGNED_BYTE,
                               img.getPixels());
+        }
+        else
+        {
+            assert(mipMapMode == AutoMipMaps);
+            LoadMiplessTexture(img, GL_TEXTURE_2D);
         }
     }
     else
