@@ -56,13 +56,17 @@
     //NSLog(@"[objectField stringValue] = '%@'",[objectField stringValue]);
     if (![[objectField stringValue] length])
     {
-	NSRunAlertPanel(@"No Object Name Entered", @"Please enter an object name.",nil,nil,nil);
+	NSRunAlertPanel(NSLocalizedString(@"No Object Name Entered",@""),
+                    NSLocalizedString(@"Please enter an object name.",@""),
+                    nil,nil,nil);
         return;
     }
     csel = [sim findObjectFromPath:[objectField stringValue]];
     if ((csel == nil) || [csel isEmpty])
     {
-       NSRunAlertPanel(@"Object Not Found",@"Please check that the object name is correct.",nil,nil,nil);
+       NSRunAlertPanel(NSLocalizedString(@"Object Not Found",@""),
+                       NSLocalizedString(@"Please check that the object name is correct.",@""),
+                       nil,nil,nil);
         return;
     }
     [sim setSelection:csel];

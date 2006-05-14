@@ -35,11 +35,12 @@
 -(NSNumber*)vertexShaderEnabled;
 -(void)setVertexShaderEnabled:(NSNumber*)enable;
 -(BOOL)isVertexShaderSupported;
-
+/*
 -(NSNumber*)saturationMagnitude;
 -(void)setSaturationMagnitude:(NSNumber*)mag;
 -(NSNumber*)brightnessBias;
 -(void)setBrightnessBias:(NSNumber*)bias;
+*/
 -(NSNumber*)resolution;
 -(void)setResolution:(NSNumber*)res;
 - (int) getOrbitmask;

@@ -40,6 +40,7 @@
 				E5E8FFA30965975B00A0A304,
 				F578B79D02B3E2AD0100020A,
 				F55A246702B2D4FF0100020A,
+				E587027609CD833B00AE4536,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -174,6 +175,7 @@
 		19C28FACFE9D520D11CA2CBB = {
 			children = (
 				E564312E07769C9000E2C4A3,
+				E587026F09CD827600AE4536,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -211,6 +213,7 @@
 			projectDirPath = "";
 			targets = (
 				E564302B07769C9000E2C4A3,
+				E587026E09CD827600AE4536,
 			);
 		};
 		29B97314FDCFA39411CA2CEA = {
@@ -268,6 +271,7 @@
 				E54343100783C3F200053094,
 				E5C29C920982A8EC00ED06B8,
 				089C165CFE840E0CC02AAC07,
+				E5C5B24C0A0FF75C0078C6ED,
 			);
 			includeInIndex = 0;
 			isa = PBXGroup;
@@ -340,7 +344,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX DEBUG=1";
+				GCC_PREPROCESSOR_DEFINITIONS = "WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX DEBUG=1 TARGET_CELESTIA";
 				PREBINDING = NO;
 				ZERO_LINK = NO;
 			};
@@ -1156,7 +1160,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX";
+				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX TARGET_CELESTIA";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				PREBINDING = YES;
@@ -1173,6 +1177,7 @@
 				E56430C007769C9000E2C4A3,
 				E564312907769C9000E2C4A3,
 				E56917DA0778217300F0F0AF,
+				E587027F09CD844700AE4536,
 				E57283A00793F93500C1F239,
 				E572837407939F2500C1F239,
 				E52E106209919AA000621C3D,
@@ -1201,6 +1206,7 @@
 				WRAPPER_EXTENSION = app;
 			};
 			dependencies = (
+				E587027209CD82CF00AE4536,
 			);
 			isa = PBXNativeTarget;
 			name = Celestia;
@@ -1378,6 +1384,7 @@
 				E5AACCF10935FEB100136FCD,
 				E5E5ED5D095BC4A5003DC829,
 				E5E8FFA50965975B00A0A304,
+				E587027C09CD83B200AE4536,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2223,6 +2230,7 @@
 				E5BF7F48096DA07B00DB7C65,
 				E5C3C423097DBA1D0048AF44,
 				E5C29C940982A8EC00ED06B8,
+				E5C5B24E0A0FF75C0078C6ED,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2365,6 +2373,7 @@
 				E5AACCF00935FEB100136FCD,
 				E5E5ED5E095BC4A5003DC829,
 				E5E8FFA60965975B00A0A304,
+				E587027B09CD83AA00AE4536,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3482,6 +3491,129 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		E587026C09CD827600AE4536 = {
+			buildActionMask = 2147483647;
+			files = (
+				E587027D09CD83B600AE4536,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E587026D09CD827600AE4536 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E587026E09CD827600AE4536 = {
+			buildPhases = (
+				E587026C09CD827600AE4536,
+				E587026D09CD827600AE4536,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation";
+				PRODUCT_NAME = POConverter;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = POConverter;
+			productName = POConverter;
+			productReference = E587026F09CD827600AE4536;
+			productType = "com.apple.product-type.tool";
+		};
+		E587026F09CD827600AE4536 = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = POConverter;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E587027109CD82CF00AE4536 = {
+			containerPortal = 29B97313FDCFA39411CA2CEA;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = E587026E09CD827600AE4536;
+			remoteInfo = POConverter;
+		};
+		E587027209CD82CF00AE4536 = {
+			isa = PBXTargetDependency;
+			target = E587026E09CD827600AE4536;
+			targetProxy = E587027109CD82CF00AE4536;
+		};
+		E587027609CD833B00AE4536 = {
+			children = (
+				E587027709CD839700AE4536,
+				E587027809CD839700AE4536,
+				E587027909CD839700AE4536,
+			);
+			isa = PBXGroup;
+			name = POConverter;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E587027709CD839700AE4536 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = POConverter.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E587027809CD839700AE4536 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = POSupport.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E587027909CD839700AE4536 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = POSupport.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E587027B09CD83AA00AE4536 = {
+			fileRef = E587027909CD839700AE4536;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E587027C09CD83B200AE4536 = {
+			fileRef = E587027809CD839700AE4536;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E587027D09CD83B600AE4536 = {
+			fileRef = E587027709CD839700AE4536;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E587027F09CD844700AE4536 = {
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "for po in $SRCROOT/../po/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj\n    cp -R $SRCROOT/$s.lproj $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/celestia_constellations.strings\n    cp -R $SRCROOT/$s.lproj $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\ndone";
 		};
 		E589B6D9078AC511005B8DD9 = {
 			fileEncoding = 4;
@@ -4642,6 +4774,49 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		E5C5B24C0A0FF75C0078C6ED = {
+			children = (
+				E5C5B24D0A0FF75C0078C6ED,
+				E5C5B24F0A0FF7830078C6ED,
+				E5C5B2500A0FF7950078C6ED,
+			);
+			isa = PBXVariantGroup;
+			name = Localizable.strings;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C5B24D0A0FF75C0078C6ED = {
+			fileEncoding = 10;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = English;
+			path = English.lproj/Localizable.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C5B24E0A0FF75C0078C6ED = {
+			fileRef = E5C5B24C0A0FF75C0078C6ED;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5C5B24F0A0FF7830078C6ED = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = fr;
+			path = fr.lproj/Localizable.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5C5B2500A0FF7950078C6ED = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = es;
+			path = es.lproj/Localizable.strings;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		E5C9ADE10848FFEF0071B1EE = {
 			fileRef = F5040B0602A47B91014901DC;

@@ -97,12 +97,12 @@ static CelestiaCore *appCore;
     NSMutableDictionary* newDict;
     newDict = [NSMutableDictionary dictionaryWithCapacity: rootSize];
     
-    [newDict setObject: @"Sol" forKey: @"Home (Sol)"];
+    [newDict setObject: @"Sol" forKey: NSLocalizedString(@"Home (Sol)",@"")];
 
-    [newDict setObject: [self starDict: StarBrowser::NearestStars ] forKey: @"Nearest Stars"];
-    [newDict setObject: [self starDict: StarBrowser::BrighterStars ] forKey: @"Brightest Stars"];
-    [newDict setObject: [self starDict: StarBrowser::StarsWithPlanets ] forKey: @"Stars With Planets"];
-    [newDict setObject: [self deepSkyDict ] forKey: @"Deep Sky Objects"];
+    [newDict setObject: [self starDict: StarBrowser::NearestStars ] forKey: NSLocalizedString(@"Nearest Stars",@"")];
+    [newDict setObject: [self starDict: StarBrowser::BrighterStars ] forKey: NSLocalizedString(@"Brightest Stars",@"")];
+    [newDict setObject: [self starDict: StarBrowser::StarsWithPlanets ] forKey: NSLocalizedString(@"Stars With Planets",@"")];
+    [newDict setObject: [self deepSkyDict ] forKey: NSLocalizedString(@"Deep Sky Objects",@"")];
 
     [newDict setObject: [[newDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
     [newDict setObject: @"" forKey: @"_path" ];
@@ -114,7 +114,7 @@ static CelestiaCore *appCore;
 {   // creates browser dictionary for star or planet
     NSMutableDictionary* newDict = NULL;
     PlanetarySystem* sys = nil;
-    Selection sel = appCore->getSimulation()->findObjectFromPath([objPath stdString]);
+    Selection sel = appCore->getSimulation()->findObjectFromPath([objPath stdString], true);
     if ( sel.getType() == Selection::Type_Body )
     {
         sys = sel.body()->getSatellites();
@@ -137,7 +137,7 @@ static CelestiaCore *appCore;
     for ( i=0; i<sysSize; i++)
     {
         Body* body = sys->getBody(i);
-        NSString* bodName = [NSString stringWithStdString: sys->getBody(i)->getName()];
+        NSString* bodName = [NSString stringWithStdString: body->getName(true)];
         NSString* bodPath = [[objPath stringByAppendingString: @"/"] stringByAppendingString: bodName];
         subDict = newDict;
         int bodyClass  = body->getClassification();
@@ -181,20 +181,20 @@ static CelestiaCore *appCore;
         {
             [minorMoonDict setObject: [[minorMoonDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
             [minorMoonDict setObject: @"" forKey: @"_path" ];
-            [newDict setObject: minorMoonDict forKey: @"Minor Moons"];
+            [newDict setObject: minorMoonDict forKey: NSLocalizedString(@"Minor Moons",@"")];
         }
     }
     if (asteroidDict)
     {
         [asteroidDict setObject: [[asteroidDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
         [asteroidDict setObject: @"" forKey: @"_path" ];
-        [newDict setObject: asteroidDict forKey: @"Asteroids"];
+        [newDict setObject: asteroidDict forKey: NSLocalizedString(@"Asteroids",@"")];
     }
     if (cometDict)
     {
         [cometDict setObject: [[cometDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
         [cometDict setObject: @"" forKey: @"_path" ];
-        [newDict setObject: cometDict forKey: @"Comets"];
+        [newDict setObject: cometDict forKey: NSLocalizedString(@"Comets",@"")];
     }
     if (spacecraftDict)
     {
@@ -204,7 +204,7 @@ static CelestiaCore *appCore;
         {
             [spacecraftDict setObject: [[spacecraftDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
             [spacecraftDict setObject: @"" forKey: @"_path" ];
-            [newDict setObject: spacecraftDict forKey: @"Spacecraft"];
+            [newDict setObject: spacecraftDict forKey: NSLocalizedString(@"Spacecrafts",@"")];
         }
     }
     }
@@ -219,7 +219,7 @@ static CelestiaCore *appCore;
             for (vector<Location*>::const_iterator iter = locations->begin();
                 iter != locations->end(); iter++)
             {
-                NSString* locName = [NSString stringWithStdString: (*iter)->getName()];
+                NSString* locName = [NSString stringWithStdString: (*iter)->getName(true)];
                 NSString* locPath = [[objPath stringByAppendingString: @"/"] stringByAppendingString: locName];
                 [locationDict setObject: locPath forKey: locName];
             }
@@ -229,7 +229,7 @@ static CelestiaCore *appCore;
             {
                 [locationDict setObject: [[locationDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
                 [locationDict setObject: @"" forKey: @"_path" ];
-                [newDict setObject: locationDict forKey: @"Locations"];
+                [newDict setObject: locationDict forKey: NSLocalizedString(@"Locations",@"")];
             }
         }
     }
@@ -243,7 +243,7 @@ static CelestiaCore *appCore;
 - (NSDictionary*) dictForPathArray: (NSArray*) pathNames
 {	//returns dictionary for path array
     NSMutableDictionary* lastDict = [self rootDict];
-    NSMutableDictionary* nextDict = lastDict;
+    id nextDict = lastDict;
     NSString* lastKey = nil;
     unsigned i;
     for (i=1;i<[pathNames count];i++)
@@ -290,7 +290,7 @@ static CelestiaCore *appCore;
         objPath = (NSString*)obj;
     }
     
-    Selection sel = appCore->getSimulation()->findObjectFromPath(objPath ? [objPath stdString] : std::string());
+    Selection sel = appCore->getSimulation()->findObjectFromPath(objPath ? [objPath stdString] : std::string(), true);
 
 //    if (sel == nil) NSLog([NSString stringWithFormat: @"obj %@ not found", objPath]);
     return sel;
@@ -320,7 +320,7 @@ static CelestiaCore *appCore;
     if ([obj isKindOfClass: [NSDictionary class]]) return NO;
     if ([obj isKindOfClass: [NSString class]])
     {
-        Selection sel = appCore->getSimulation()->findObjectFromPath([obj stdString]);
+        Selection sel = appCore->getSimulation()->findObjectFromPath([obj stdString], true);
         if ( sel.getType() == Selection::Type_Body )
         {
             if ( sel.body()->getSatellites() || sel.body()->getLocations()) return NO;
