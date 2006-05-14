@@ -14,6 +14,7 @@
 
 #define CELESTIA_RESOURCES_FOLDER @"CelestiaResources"
 
+@class CelestiaOpenGLView;
 @class SplashWindow;
 @class SplashWindowController;
 
@@ -27,7 +28,7 @@
     IBOutlet SplashWindowController *splashWindowController;
     IBOutlet NSTextView *glInfo;
     IBOutlet NSPanel *glInfoPanel;
-    IBOutlet NSOpenGLView *glView;
+    IBOutlet CelestiaOpenGLView *glView;
     NSWindow *origWindow;
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     IBOutlet RenderPanelController *renderPanelController;

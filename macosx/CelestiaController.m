@@ -252,6 +252,7 @@ NSString* fatalErrorMessage;
 
 - (void)finishInitialization
 {
+    [glView setAASamples: [appCore aaSamples]];
     [appCore initRenderer];
 
     [self setupFavorites];
