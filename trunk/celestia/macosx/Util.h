@@ -7,7 +7,9 @@
 //
 
 #ifndef gettext
-#define gettext(s)  s
+#include "POSupport.h"
+#define gettext(s)      localizedUTF8String(s)
+#define dgettext(d,s)   localizedUTF8StringWithDomain(d,s)
 #endif
 
 #ifdef __OBJC__

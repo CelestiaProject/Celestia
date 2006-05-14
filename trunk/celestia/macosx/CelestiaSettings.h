@@ -37,19 +37,19 @@
 
 // Time Settings
 
--(NSNumber *) time ;
--(void) setTime: (NSNumber *) value ;
+-(double) time ;
+-(void) setTime: (double) value ;
 
--(NSNumber *) timeScale ;
--(void) setTimeScale: (NSNumber *) value ;
+-(double) timeScale ;
+-(void) setTimeScale: (double) value ;
 
 -(BOOL) synchTime;
 -(void) setSynchTime: (BOOL) value ;
 
 // Gaze Settings
 
--(NSNumber *) fieldOfView ;
--(void)  setFieldOfView: (NSNumber *) value ;
+-(float) fieldOfView ;
+-(void)  setFieldOfView: (float) value ;
 
 // situation
 
@@ -92,9 +92,6 @@
 
 -(BOOL) showEclipseShadows ;
 -(void) setShowEclipseShadows: (BOOL) value ; 
-
--(BOOL) showStarsAsPoints ;
--(void) setShowStarsAsPoints: (BOOL) value ; 
 
 -(BOOL) showRingShadows ;
 -(void) setShowRingShadows: (BOOL) value ; 
@@ -166,36 +163,28 @@
 -(BOOL) showSpacecraftOrbits ; 
 -(void) setShowSpacecraftOrbits: (BOOL) value    ; 
 
--(NSNumber *) minimumOrbitSize ;
--(void)  setMinimumOrbitSize: (NSNumber *) value ; 
+-(float) minimumOrbitSize ;
+-(void)  setMinimumOrbitSize: (float) value ; 
 
 // Location Visibility Settings
 
 // Feature Settings
 
--(NSNumber *) minimumFeatureSize ;
--(void)  setMinimumFeatureSize: (NSNumber *) value ; 
+-(float) minimumFeatureSize ;
+-(void)  setMinimumFeatureSize: (float) value ; 
 
 // Lighting Settings
 
--(NSNumber *) ambientLightLevel ;
--(void)  setAmbientLightLevel: (NSNumber *) value ; 
+-(float) ambientLightLevel ;
+-(void)  setAmbientLightLevel: (float) value ; 
 
 // Star Settings
 
--(NSNumber *) distanceLimit ;
--(void)  setDistanceLimit: (NSNumber *) value ; 
+-(float) distanceLimit ;
+-(void)  setDistanceLimit: (float) value ; 
 
--(NSNumber *) faintestVisible ;
--(void)  setFaintestVisible: (NSNumber *) value ; 
-
-// Brightness Settings
-
--(NSNumber *) saturationMagnitude ;
--(void)  setSaturationMagnitude: (NSNumber *) value ; 
-
--(NSNumber *) brightnessBias ;
--(void)  setBrightnessBias: (NSNumber *) value ;
+-(float) faintestVisible ;
+-(void)  setFaintestVisible: (float) value ; 
 
 -(int)  starStyle ;
 -(void) setStarStyle: (int) value ;

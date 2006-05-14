@@ -141,7 +141,7 @@ FrameOfReference getFrame() const;
 
 -(CelestiaSelection*)findObjectFromPath:(NSString*)s
 {
-    return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->findObjectFromPath([s stdString])] autorelease];
+    return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->findObjectFromPath([s stdString], true)] autorelease];
 }
 
 -(void)gotoSelection:(NSNumber*)gotoTime up:(CelestiaVector*)up coordinateSystem:(NSString*)csysName
