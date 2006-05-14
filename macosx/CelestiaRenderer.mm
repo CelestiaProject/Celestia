@@ -172,7 +172,7 @@ numberWithInt:Renderer::ShowPlanets],@"Planets",[NSNumber numberWithInt:Renderer
 {
     return (BOOL)[self renderer]->vertexShaderSupported();
 }
-
+/*
 -(NSNumber*)saturationMagnitude
 {
     return [NSNumber numberWithFloat:[self renderer]->getSaturationMagnitude()];
@@ -192,7 +192,7 @@ numberWithInt:Renderer::ShowPlanets],@"Planets",[NSNumber numberWithInt:Renderer
 {
     [self renderer]->setBrightnessBias([bias floatValue]);
 }
-
+*/
 -(NSNumber*)resolution
 {
     return [NSNumber numberWithUnsignedInt:[self renderer]->getResolution()];
@@ -243,7 +243,7 @@ numberWithInt:Renderer::ShowPlanets],@"Planets",[NSNumber numberWithInt:Renderer
 
 -(void)archive
 {
-    [[NSUserDefaults standardUserDefaults] setObject:[NSDictionary dictionaryWithObjectsAndKeys:[self labelFlags],@"labelFlags",[self renderFlags],@"renderFlags",[self brightnessBias],@"brightnessBias",[self resolution],@"resolution",[self saturationMagnitude],@"saturationMagnitude",[self vertexShaderEnabled],@"vertexShaderEnabled",[self fragmentShaderEnabled],@"fragmentShaderEnabled",
+    [[NSUserDefaults standardUserDefaults] setObject:[NSDictionary dictionaryWithObjectsAndKeys:[self labelFlags],@"labelFlags",[self renderFlags],@"renderFlags",[self resolution],@"resolution",[self vertexShaderEnabled],@"vertexShaderEnabled",[self fragmentShaderEnabled],@"fragmentShaderEnabled",
     [NSNumber numberWithInt: [self getOrbitmask]], @"orbitMask",
     
     nil,nil] forKey:@"renderPreferences"];

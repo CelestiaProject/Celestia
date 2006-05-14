@@ -103,7 +103,7 @@
     FavoritesEntry* fav = new FavoritesEntry();
     NSString *parentFolder = (folder == nil) ? @"" : [folder name];
     if (name == nil || [name isEqualToString:@""])
-        name = @"untitled folder";
+        name = NSLocalizedString(@"untitled folder",@"");
     fav->name = [name stdString];
     fav->isFolder = true;
     fav->parentFolder = [parentFolder stdString];

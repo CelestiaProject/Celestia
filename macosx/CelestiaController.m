@@ -120,7 +120,7 @@ NSString* fatalErrorMessage;
         {
             if (![fileManager fileExistsAtPath: path = [[ mainBundle resourcePath ] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder] || !isFolder)
             {
-                [self fatalError: @"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again."];
+                [self fatalError: NSLocalizedString(@"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again.",@"")];
                 [self fatalError: nil];
             }
         }
@@ -149,7 +149,7 @@ NSString* fatalErrorMessage;
 #ifdef DEBUG
         [pool release];
 #endif
-        [self fatalError: @"Error loading data files. Celestia will now quit."];
+        [self fatalError: NSLocalizedString(@"Error loading data files. Celestia will now quit.",@"")];
 #ifndef USE_THREADEDLOAD
         [self fatalError: nil];
 #else
@@ -183,7 +183,7 @@ NSString* fatalErrorMessage;
     {
         if (fatalErrorMessage == nil) return;
         [splashWindowController close];
-        NSRunAlertPanel(@"Fatal Error", fatalErrorMessage, nil, nil, nil);
+        NSRunAlertPanel(NSLocalizedString(@"Fatal Error",@""), fatalErrorMessage, nil, nil, nil);
         fatalErrorMessage = nil;    // user could cancel the terminate
         [NSApp terminate:self];
         return;
@@ -234,19 +234,7 @@ NSString* fatalErrorMessage;
     [[CelestiaFavorites sharedFavorites] setSynchronize:menuCallback];
     [[CelestiaFavorites sharedFavorites] synchronize];
 }
-/*
--(void) setupRenderPanel
-{
-//    [[renderPanelController window] setAlphaValue: 0.8f];
-//    [[renderPanelController window] setLevel: NSFloatingWindowLevel];
-//    [[glView window] addChildWindow: [renderPanelController window] ordered: NSWindowAbove];
-    [[renderPanelController window] setMovableByWindowBackground: YES];
-    [[renderPanelController window] setHidesOnDeactivate: YES];
-    [[renderPanelController window] setReleasedWhenClosed: NO];
-    [[renderPanelController window] setOneShot: NO];
-//    [renderPanelController finishSetup];
-}
-*/
+
 -(void) startGLView
 {
     [[glView window] setAutodisplay:YES];
@@ -271,7 +259,6 @@ NSString* fatalErrorMessage;
     settings = [CelestiaSettings shared];
     [settings setControl: self];
     [settings scanForKeys: [renderPanelController window]];
-//    [self setupRenderPanel];
     [settings validateItems];
 
     // load settings
@@ -378,7 +365,11 @@ NSString* fatalErrorMessage;
 {
     [self pauseFullScreen];   // allow dialog to show
 
-   if (  NSRunAlertPanel(@"Quit Celestia?",@"Are you sure you want to quit Celestia?",@"Quit",@"Cancel",nil) != NSAlertDefaultReturn ) 
+   if (  NSRunAlertPanel(NSLocalizedString(@"Quit Celestia?",@""),
+                         NSLocalizedString(@"Are you sure you want to quit Celestia?",@""),
+                         NSLocalizedString(@"Quit",@""),
+                         NSLocalizedString(@"Cancel",@""),
+                         nil) != NSAlertDefaultReturn ) 
    {
        [self unpauseFullScreen];
        return NO;
@@ -570,7 +561,7 @@ NSString* fatalErrorMessage;
             // so user can still quit the program
             [[self window] orderOut: self];
             ShowMenuBar();
-            [self fatalError: @"Unable to properly exit full screen mode. Celestia will now quit."];
+            [self fatalError: NSLocalizedString(@"Unable to properly exit full screen mode. Celestia will now quit.",@"")];
             [self performSelector:@selector(fatalError:) withObject:nil afterDelay:0.1];
             return;
         }
@@ -741,13 +732,13 @@ NSString* fatalErrorMessage;
 - (IBAction) captureMovie: (id) sender
 {
 //  Remove following line to enable movie capture...
-	NSRunAlertPanel(@"No Movie Capture",@"Movie capture is not available in this version of Celestia.",nil,nil,nil); return;
+	NSRunAlertPanel(NSLocalizedString(@"No Movie Capture",@""), NSLocalizedString(@"Movie capture is not available in this version of Celestia.",@""),nil,nil,nil); return;
 
     NSSavePanel* panel = [NSSavePanel savePanel];
 	NSString* lastMovie = nil; // temporary; should be saved in defaults
 
 	[panel setRequiredFileType: @"mov"];
-	[panel setTitle: @"Capture Movie"];
+	[panel setTitle: NSLocalizedString(@"Capture Movie",@"")];
     [ panel beginSheetForDirectory:  [lastMovie stringByDeletingLastPathComponent]
                               file: [lastMovie lastPathComponent]
                     modalForWindow: [glView window]

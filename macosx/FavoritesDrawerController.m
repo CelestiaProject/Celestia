@@ -114,7 +114,7 @@
     CelestiaFavorites* favs = [CelestiaFavorites sharedFavorites];
     MyTree* node = nil;
     //NSLog(@"[FavoritesDrawerController addNewFavorite:%@]",sender);
-    node = [favs addNewFolder:@"untitled folder"];
+    node = [favs addNewFolder:NSLocalizedString(@"untitled folder",@"")];
     [[CelestiaFavorites sharedFavorites] synchronize];
     [self outlineView:outlineView editItem:node];
 }

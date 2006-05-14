@@ -190,6 +190,9 @@
 		E5B615070777307F001BB2BF /* celestia.icns in Resources */ = {isa = PBXBuildFile; fileRef = E5B615060777307F001BB2BF /* celestia.icns */; };
 		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
 		E5C9B478084909E40071B1EE /* README for Mac OS X.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */; };
+		E5CC203609AA836700CFFF2C /* POSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203409AA834B00CFFF2C /* POSupport.m */; };
+		E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203209AA834B00CFFF2C /* POConverter.m */; };
+		E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E5CC204509AA843300CFFF2C /* Localizable.strings */; };
 		E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */ = {isa = PBXBuildFile; fileRef = E5D3196A096C91A6007FA87F /* vp_patch.sh */; };
 		E5D446660777291700A1577D /* utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5D446640777291700A1577D /* utf8.cpp */; };
 		E5D4467607772B6C00A1577D /* CelestiaSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5D4467407772B6C00A1577D /* CelestiaSettings.mm */; };
@@ -305,6 +308,16 @@
 			name = Deployment;
 		};
 /* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		E5CC205909AA8C7100CFFF2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E5CC202809AA823400CFFF2C;
+			remoteInfo = POConverter;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		E567F018099110C000D05031 /* CopyFiles */ = {
@@ -586,6 +599,12 @@
 		E5B61B2E077737A6001BB2BF /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
 		E5B61B2F077737A6001BB2BF /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
 		E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "README for Mac OS X.rtf"; sourceTree = "<group>"; };
+		E5CC202909AA823400CFFF2C /* POConverter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POConverter; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5CC203209AA834B00CFFF2C /* POConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POConverter.m; sourceTree = "<group>"; };
+		E5CC203309AA834B00CFFF2C /* POSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POSupport.h; sourceTree = "<group>"; };
+		E5CC203409AA834B00CFFF2C /* POSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POSupport.m; sourceTree = "<group>"; };
+		E5CC204609AA843300CFFF2C /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E5CC204809AA846600CFFF2C /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E5D3196A096C91A6007FA87F /* vp_patch.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = vp_patch.sh; sourceTree = "<group>"; };
 		E5D446640777291700A1577D /* utf8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utf8.cpp; path = ../src/celutil/utf8.cpp; sourceTree = SOURCE_ROOT; };
 		E5D446650777291700A1577D /* utf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utf8.h; path = ../src/celutil/utf8.h; sourceTree = SOURCE_ROOT; };
@@ -655,6 +674,7 @@
 		E5E365B2095C12D200B14224 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E5F8C9E30795235E00D1DAF2 /* liblua.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblua.dylib; path = Frameworks/liblua.dylib; sourceTree = "<group>"; };
 		E5F8C9E40795235E00D1DAF2 /* liblualib.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblualib.dylib; path = Frameworks/liblualib.dylib; sourceTree = "<group>"; };
+		E5FB63B20A0F80FA00A60759 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F5040AF602A46404014901DC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		F5040AFE02A46BDB014901DC /* CGBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CGBuffer.h; path = ../src/celengine/CGBuffer.h; sourceTree = SOURCE_ROOT; };
 		F5040B0602A47B91014901DC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -965,6 +985,7 @@
 				E5D956DE096651DF00CB02B2 /* SplashWindowController.h */,
 				F578B79D02B3E2AD0100020A /* Cocoa Extensions */,
 				F55A246702B2D4FF0100020A /* Wrappers */,
+				E5CC203109AA832000CFFF2C /* POConverter */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -995,6 +1016,7 @@
 			isa = PBXGroup;
 			children = (
 				E564312E07769C9000E2C4A3 /* Celestia.app */,
+				E5CC202909AA823400CFFF2C /* POConverter */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1044,6 +1066,7 @@
 				E54343100783C3F200053094 /* BrowserWindow.nib */,
 				E5D7660E0982B1860099DBBD /* HelpWindow.nib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				E5CC204509AA843300CFFF2C /* Localizable.strings */,
 			);
 			includeInIndex = 0;
 			name = Resources;
@@ -1116,6 +1139,16 @@
 			name = extras;
 			path = ../extras;
 			sourceTree = SOURCE_ROOT;
+		};
+		E5CC203109AA832000CFFF2C /* POConverter */ = {
+			isa = PBXGroup;
+			children = (
+				E5CC203209AA834B00CFFF2C /* POConverter.m */,
+				E5CC203309AA834B00CFFF2C /* POSupport.h */,
+				E5CC203409AA834B00CFFF2C /* POSupport.m */,
+			);
+			name = POConverter;
+			sourceTree = "<group>";
 		};
 		E5D766250982B3300099DBBD /* models */ = {
 			isa = PBXGroup;
@@ -1564,6 +1597,7 @@
 				E56430C007769C9000E2C4A3 /* Sources */,
 				E564312907769C9000E2C4A3 /* Frameworks */,
 				E56917DA0778217300F0F0AF /* CopyFiles */,
+				E5CC203B09AA83A900CFFF2C /* Convert PO */,
 				E57283A00793F93500C1F239 /* CopyFiles */,
 				E572837407939F2500C1F239 /* CopyFiles */,
 				E567F018099110C000D05031 /* CopyFiles */,
@@ -1595,12 +1629,44 @@
 				WRAPPER_EXTENSION = app;
 			};
 			dependencies = (
+				E5CC205A09AA8C7100CFFF2C /* PBXTargetDependency */,
 			);
 			name = Celestia;
 			productInstallPath = "$(HOME)/Applications";
 			productName = celestia;
 			productReference = E564312E07769C9000E2C4A3 /* Celestia.app */;
 			productType = "com.apple.product-type.application";
+		};
+		E5CC202809AA823400CFFF2C /* POConverter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E5CC202B09AA829B00CFFF2C /* Build configuration list for PBXNativeTarget "POConverter" */;
+			buildPhases = (
+				E5CC202609AA823400CFFF2C /* Sources */,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = POConverter;
+				ZERO_LINK = YES;
+			};
+			dependencies = (
+			);
+			name = POConverter;
+			productName = POConverter;
+			productReference = E5CC202909AA823400CFFF2C /* POConverter */;
+			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
@@ -1627,6 +1693,7 @@
 			projectDirPath = "";
 			targets = (
 				E564302B07769C9000E2C4A3 /* Celestia */,
+				E5CC202809AA823400CFFF2C /* POConverter */,
 			);
 		};
 /* End PBXProject section */
@@ -1646,6 +1713,7 @@
 				E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */,
 				E599A78E097CAB390079C254 /* Credits.rtf in Resources */,
 				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
+				E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1667,6 +1735,20 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/Celestia/CelestiaResources/textures/hires\nfind $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
+		};
+		E5CC203B09AA83A900CFFF2C /* Convert PO */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Convert PO";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "for po in $SRCROOT/../po/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj\n    cp -R $SRCROOT/$s.lproj $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/celestia_constellations.strings\n    cp -R $SRCROOT/$s.lproj $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\ndone";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1798,10 +1880,27 @@
 				E532F4F80933331800D7D5B3 /* staroctree.cpp in Sources */,
 				E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */,
 				E5D956E00966520700CB02B2 /* SplashWindowController.m in Sources */,
+				E5CC203609AA836700CFFF2C /* POSupport.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E5CC202609AA823400CFFF2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E5CC205A09AA8C7100CFFF2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E5CC202809AA823400CFFF2C /* POConverter */;
+			targetProxy = E5CC205909AA8C7100CFFF2C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
@@ -1842,6 +1941,16 @@
 				E5D7660C0982B1630099DBBD /* fr */,
 			);
 			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		E5CC204509AA843300CFFF2C /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E5CC204609AA843300CFFF2C /* English */,
+				E5CC204809AA846600CFFF2C /* fr */,
+				E5FB63B20A0F80FA00A60759 /* es */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 		E5D7660E0982B1860099DBBD /* HelpWindow.nib */ = {
@@ -2100,6 +2209,101 @@
 			};
 			name = Universal_Debug;
 		};
+		E5CC202C09AA829B00CFFF2C /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(GCC_PREPROCESSOR_DEFINITIONS)",
+					TARGET_CELESTIA,
+				);
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = POConverter;
+				ZERO_LINK = NO;
+			};
+			name = Development;
+		};
+		E5CC202D09AA829B00CFFF2C /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(GCC_PREPROCESSOR_DEFINITIONS)",
+					TARGET_CELESTIA,
+				);
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = POConverter;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		E5CC202E09AA829B00CFFF2C /* Universal_Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(GCC_PREPROCESSOR_DEFINITIONS)",
+					TARGET_CELESTIA,
+				);
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = POConverter;
+				ZERO_LINK = NO;
+			};
+			name = Universal_Release;
+		};
+		E5CC202F09AA829B00CFFF2C /* Universal_Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(GCC_PREPROCESSOR_DEFINITIONS)",
+					TARGET_CELESTIA,
+				);
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = POConverter;
+				ZERO_LINK = NO;
+			};
+			name = Universal_Debug;
+		};
+		E5CC203009AA829B00CFFF2C /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(GCC_PREPROCESSOR_DEFINITIONS)",
+					TARGET_CELESTIA,
+				);
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = POConverter;
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2123,6 +2327,18 @@
 				E50E8708097436A4006687D3 /* Universal_Release */,
 				E53A3D1D0976B17800B314A6 /* Universal_Debug */,
 				E532F4200933316100D7D5B3 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		E5CC202B09AA829B00CFFF2C /* Build configuration list for PBXNativeTarget "POConverter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E5CC202C09AA829B00CFFF2C /* Development */,
+				E5CC202D09AA829B00CFFF2C /* Deployment */,
+				E5CC202E09AA829B00CFFF2C /* Universal_Release */,
+				E5CC202F09AA829B00CFFF2C /* Universal_Debug */,
+				E5CC203009AA829B00CFFF2C /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;

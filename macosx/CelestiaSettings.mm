@@ -106,7 +106,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(409,@"showSmoothLines")
         TAGDEF(410,@"showEclipseShadows")
         TAGDEF(412,@"showRingShadows")
-        TAGDEF(411,@"showStarsAsPoints")
+//        TAGDEF(411,@"showStarsAsPoints")
         TAGDEF(414,@"showAutoMag")
         TAGDEF(406,@"showCelestialSphere")
         // object labels
@@ -121,6 +121,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(508,@"showCometLabels")
         TAGDEF(509,@"showNebulaLabels")
         TAGDEF(510,@"showOpenClusterLabels")
+        TAGDEF(511,@"showLatinConstellationLabels")
         // popups
         TAGDEF(600,@"altSurface")
         TAGDEF(610,@"hudDetail")
@@ -168,7 +169,7 @@ static NSMutableDictionary* tagMap;
         // stars
 //        TAGDEF(999,@"distanceLimit")
         TAGDEF(900,@"ambientLightLevel")
-        TAGDEF(901,@"brightnessBias")
+//        TAGDEF(901,@"brightnessBias")
         TAGDEF(902,@"faintestVisible")
         TAGDEF(904,@"galaxyBrightness")
 //        TAGDEF(999,@"saturationMagnitude")
@@ -258,7 +259,11 @@ static NSMutableDictionary* tagMap;
 	while ( nil != (key = [keys nextObject]) )
 	{
 //                NSLog([NSString stringWithFormat: @"loading default dict entry %@ %@", key, [defaultsDictionary objectForKey: key] ]);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
+		[self setValue: [defaultsDictionary objectForKey: key] forKey: key];
+#else
 		[self takeValue: [defaultsDictionary objectForKey: key] forKey: key];
+#endif
 //                NSLog([NSString stringWithFormat: @"loaded default dict entry %@ %@", key, [self valueForKey: key] ]);
 	}
 //        NSLog(@"loaded user defaults");
@@ -299,47 +304,86 @@ static NSMutableDictionary* tagMap;
 
 -(id) valueForTag: (int) tag { 
     return [self valueForKey: [tagDict objectForKey: [NSNumber numberWithInt: tag] ] ];
-    };
+    }
 
 -(void) takeValue: (id) value forTag: (int) tag 
 {
 //      NSLog([NSString stringWithFormat: @"take value for tag %@ %d", value, tag]);
       id key = [tagDict objectForKey: [NSNumber numberWithInt: tag] ];
 //      NSLog([NSString stringWithFormat: @"take value for key %@ %@", value, key]);
-     if (key!= nil) [self takeValue: value forKey: key ];
-};
+     if (key!= nil)
+     {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
+         [self setValue: value forKey: key ];
+#else
+         [self takeValue: value forKey: key ];
+#endif
+     }
+}
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
+- (id)valueForUndefinedKey: (NSString *) key
+{
+#ifdef DEBUG
+    if ( key ) NSLog(@"unbound value for %@", key);
+#endif
+    return nil;
+}
+
+- (void)setValue: (id) value forUndefinedKey: (NSString *) key
+{
+#ifdef DEBUG
+    NSLog(@"unbound key set for %@", key);
+#endif
+}
+
+- (void)setNilValueForKey: (NSString *) key
+{
+#ifdef DEBUG
+    NSLog(@"nil value for %@", key);
+#endif
+}
+
+#else
 
 -(id)handleQueryWithUnboundKey: (NSString*) key
 {
-    if ( key != NULL) NSLog([NSString stringWithFormat: @"unbound key query for %@",key]);
+#ifdef DEBUG
+    if ( key ) NSLog(@"unbound key query for %@", key);
+#endif
     return nil;
-};
+}
 
 -(void)handleTakeValue: (id) value forUnboundKey: (NSString*) key
 {
-    NSLog([NSString stringWithFormat: @"unbound key set for %@",key]);
-};
+#ifdef DEBUG
+    NSLog(@"unbound key set for %@", key);
+#endif
+}
 
 -(void)unableToSetNilForKey: (NSString*) key
 {
-    NSLog([NSString stringWithFormat: @"nl key for %@",key]);
-};
+#ifdef DEBUG
+    NSLog(@"nil key for %@", key);
+#endif
+}
+#endif
 
 // Time Settings
 
--(NSNumber *) time { return [NSNumber numberWithDouble: appCore->getSimulation()->getTime()]; }
--(void) setTime: (NSNumber *) value { appCore->getSimulation()->setTime(value ? [value doubleValue] : 0.0); }
+-(double) time { return appCore->getSimulation()->getTime(); }
+-(void) setTime: (double) value { appCore->getSimulation()->setTime(value); }
 
--(NSNumber *) timeScale { return [NSNumber numberWithDouble: appCore->getSimulation()->getTimeScale()]; }
--(void) setTimeScale: (NSNumber *) value { appCore->getSimulation()->setTimeScale(value ? [value doubleValue] : 0.0); }
+-(double) timeScale { return appCore->getSimulation()->getTimeScale(); }
+-(void) setTimeScale: (double) value { appCore->getSimulation()->setTimeScale(value); }
 
--(BOOL) synchTime { return appCore->getSimulation()->getSyncTime(); };
--(void) setSynchTime: (BOOL) value { appCore->getSimulation()->setSyncTime(value); };
+-(BOOL) synchTime { return appCore->getSimulation()->getSyncTime(); }
+-(void) setSynchTime: (BOOL) value { appCore->getSimulation()->setSyncTime(value); }
 
 // Gaze Settings
 
--(NSNumber *) fieldOfView { return [NSNumber numberWithFloat: appCore->getSimulation()->getObserver().getFOV()]; }
--(void)  setFieldOfView: (NSNumber *) value { appCore->getSimulation()->getObserver().setFOV(value ? [value floatValue] : 0.0f); }
+-(float) fieldOfView { return appCore->getSimulation()->getObserver().getFOV(); }
+-(void)  setFieldOfView: (float) value { appCore->getSimulation()->getObserver().setFOV(value); }
 
 // Observer Settings
 
@@ -356,7 +400,7 @@ static NSMutableDictionary* tagMap;
 //    NSLog([NSString stringWithFormat: @"setValue %d forBit: %d inSet: %d = %d",value,bit,set,result]);
 //    NSLog([NSString stringWithFormat: @"bit was: %d bit is: %d ",(set&bit),(result&bit)]);
     return result;
-};
+}
 
 // Visibility Settings
 
@@ -377,7 +421,6 @@ RENDERMETHODS(PartialTrajectories)
 RENDERMETHODS(SmoothLines)
 RENDERMETHODS(EclipseShadows)
 RENDERMETHODS(RingShadows)
-RENDERMETHODS(StarsAsPoints)
 RENDERMETHODS(AutoMag)
 RENDERMETHODS(CelestialSphere)
 RENDERMETHODS(Nebulae)
@@ -399,6 +442,13 @@ LABELMETHODS(Comet)
 LABELMETHODS(Nebula)
 LABELMETHODS(OpenCluster)
 
+-(BOOL) showLatinConstellationLabels {
+    return (appCore->getRenderer()->getLabelMode() & Renderer::I18nConstellationLabels) == 0;
+}
+-(void) setShowLatinConstellationLabels : (BOOL) value {
+    appCore->getRenderer()->setLabelMode( [self setValue: (!value) forBit:  Renderer::I18nConstellationLabels inSet: appCore->getRenderer()->getLabelMode()] );
+}
+
 // Orbit Settings
 
 #define ORBITMETHODS(flag)  -(BOOL) show##flag##Orbits { return (appCore->getRenderer()->getOrbitMask()&Body::flag) != 0; } -(void) setShow##flag##Orbits: (BOOL) value  { appCore->getRenderer()->setOrbitMask([self setValue: value forBit: Body::flag inSet: appCore->getRenderer()->getOrbitMask()]); } 
@@ -410,8 +460,8 @@ ORBITMETHODS(Spacecraft)
 ORBITMETHODS(Comet)
 
 
--(NSNumber *) minimumOrbitSize { return [NSNumber numberWithFloat: appCore->getRenderer()->getMinimumOrbitSize()]; }
--(void)  setMinimumOrbitSize: (NSNumber *) value { appCore->getRenderer()->setMinimumOrbitSize(value ? [value floatValue] : 0.0f); }
+-(float) minimumOrbitSize { return appCore->getRenderer()->getMinimumOrbitSize(); }
+-(void)  setMinimumOrbitSize: (float) value { appCore->getRenderer()->setMinimumOrbitSize(value); }
 
 // Feature Settings
 
@@ -447,78 +497,75 @@ FEATUREMETHODS(Fluctus)
 FEATUREMETHODS(Farrum)
 FEATUREMETHODS(Other)
 
--(NSNumber *) minimumFeatureSize { return [NSNumber numberWithFloat: appCore->getRenderer()->getMinimumFeatureSize()]; }
--(void)  setMinimumFeatureSize: (NSNumber *) value { appCore->getRenderer()->setMinimumFeatureSize(value ? [value floatValue] : 0.0f); }
+-(float) minimumFeatureSize { return appCore->getRenderer()->getMinimumFeatureSize(); }
+-(void)  setMinimumFeatureSize: (float) value { appCore->getRenderer()->setMinimumFeatureSize(value); }
 
 // Lighting Settings
 
--(NSNumber *) ambientLightLevel { return [NSNumber numberWithFloat: appCore->getRenderer()->getAmbientLightLevel()]; }
--(void)  setAmbientLightLevel: (NSNumber *) value { appCore->getRenderer()->setAmbientLightLevel(value ? [value floatValue] : 0.0f); }
+-(float) ambientLightLevel { return appCore->getRenderer()->getAmbientLightLevel(); }
+-(void)  setAmbientLightLevel: (float) value { appCore->getRenderer()->setAmbientLightLevel(value); }
 
--(NSNumber *) galaxyBrightness { return [NSNumber numberWithFloat: Galaxy::getLightGain()]; }
--(void)  setGalaxyBrightness: (NSNumber *) value { Galaxy::setLightGain(value ? [value floatValue] : 0.0f); }
+-(float) galaxyBrightness { return Galaxy::getLightGain(); }
+-(void)  setGalaxyBrightness: (float) value { Galaxy::setLightGain(value); }
 
 // Star Settings
 
--(NSNumber *) distanceLimit { return [NSNumber numberWithFloat: appCore->getRenderer()->getDistanceLimit()]; }
--(void)  setDistanceLimit: (NSNumber *) value { appCore->getRenderer()->setDistanceLimit(value ? [value floatValue] : 0.0f); }
+-(float) distanceLimit { return appCore->getRenderer()->getDistanceLimit(); }
+-(void)  setDistanceLimit: (float) value { appCore->getRenderer()->setDistanceLimit(value); }
 
--(NSNumber *) faintestVisible 
+-(float) faintestVisible 
 { 
 //    return appCore->getSimulation()->getFaintestVisible(); 
     if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
-        return [NSNumber numberWithFloat: appCore->getSimulation()->getFaintestVisible()];
+        return appCore->getSimulation()->getFaintestVisible();
     }
     else
     {
-        return [NSNumber numberWithFloat: appCore->getRenderer()->getFaintestAM45deg()];
+        return appCore->getRenderer()->getFaintestAM45deg();
     }                
 }
 
--(void)  setFaintestVisible: (NSNumber *) value 
+-(void)  setFaintestVisible: (float) value 
 {
-    float theValue = value ? [value floatValue] : 0.0f;
-
     if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
-        appCore->setFaintest(theValue);
+        appCore->setFaintest(value);
     }
     else
     {
-        appCore->getRenderer()->setFaintestAM45deg(theValue);
+        appCore->getRenderer()->setFaintestAM45deg(value);
         appCore->setFaintestAutoMag();
     }                
 }
 
-// Brightness Settings
-
--(NSNumber *) saturationMagnitude { return [NSNumber numberWithFloat: appCore->getRenderer()->getSaturationMagnitude()]; }
--(void)  setSaturationMagnitude: (NSNumber *) value { appCore->getRenderer()->setSaturationMagnitude(value ? [value floatValue] : 0.0f); }
-
--(NSNumber *) brightnessBias { return [NSNumber numberWithFloat: appCore->getRenderer()->getBrightnessBias()]; }
--(void)  setBrightnessBias: (NSNumber *) value { appCore->getRenderer()->setBrightnessBias(value ? [value floatValue] : 0.0f); }
-
--(int)  starStyle { return appCore->getRenderer()->getStarStyle(); }  ;
--(void) setStarStyle: (int) value { appCore->getRenderer()->setStarStyle((Renderer::StarStyle)value); };
+-(int)  starStyle { return appCore->getRenderer()->getStarStyle(); }
+-(void) setStarStyle: (int) value { appCore->getRenderer()->setStarStyle((Renderer::StarStyle)value); }
 
 // Texture Settings
 
--(int)  resolution { return appCore->getRenderer()->getResolution(); }  ;
--(void) setResolution: (int) value { appCore->getRenderer()->setResolution(value); };
+-(int)  resolution { return appCore->getRenderer()->getResolution(); }
+-(void) setResolution: (int) value { appCore->getRenderer()->setResolution(value); }
 
 // Overlay Settings
 
--(int)  hudDetail { return appCore->getHudDetail(); }  ;
--(void) setHudDetail: (int) value { appCore->setHudDetail(value); };
+-(int)  hudDetail { return appCore->getHudDetail(); }
+-(void) setHudDetail: (int) value { appCore->setHudDetail(value); }
 
 // Other Settings
 
--(int)  renderPath { return appCore->getRenderer()->getGLContext()->getRenderPath(); }  ;
--(void) setRenderPath: (int) value { appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)value); };
+-(int)  renderPath { return appCore->getRenderer()->getGLContext()->getRenderPath(); }
+-(void) setRenderPath: (int) value { appCore->getRenderer()->getGLContext()->setRenderPath((GLContext::GLRenderPath)value); }
 
 -(int)  fullScreenMode { return [[control valueForKey: @"isFullScreen"] intValue]; }
--(void) setFullScreenMode: (int) value { [control takeValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"]; }
+-(void) setFullScreenMode: (int) value
+{
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
+    [control setValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"];
+#else
+    [control takeValue: [NSNumber numberWithBool: (value != 0)] forKey: @"isFullScreen"];
+#endif
+}
 
 // Alt Surface Setting
 
@@ -602,14 +649,19 @@ FEATUREMETHODS(Other)
     }
 }
 
+- (NSMenuItem *) getSurfaceMenuItem: (NSMenu*) contextMenu
+{
+    NSMenuItem *surfaceItem = [contextMenu itemWithTitle: NSLocalizedString(@"Show Alternate Surface",@"")];
+    if (surfaceItem == nil)
+        surfaceItem = [contextMenu itemWithTitle: @"Show Alternate Surface"];
+    return surfaceItem;
+}
+
 - (void) disableSurfaceMenu: (NSMenu*) contextMenu
 {
-        NSMenuItem* surfaceItem = [ contextMenu itemWithTitle: @"Show Alternate Surface"];
-//        [ surfaceItem setSubmenu: NULL ];
-//        [ surfaceItem setAction: NULL ];
-//        [ contextMenu setAutoenablesItems: NO ];
-        [ surfaceItem setEnabled: NO ];
-        NSLog(@"disabling surface menu\n");
+    NSMenuItem *surfaceItem = [self getSurfaceMenuItem: contextMenu];
+    [ surfaceItem setEnabled: NO ];
+//        NSLog(@"disabling surface menu\n");
 }
 
 - (void) addSurfaceMenu: (NSMenu*) contextMenu
@@ -622,8 +674,9 @@ FEATUREMETHODS(Other)
     }
     else
     {
-        NSMenuItem* firstItem = [ contextMenu itemAtIndex: 0];
-        NSMenuItem* surfaceItem = [ contextMenu itemWithTitle: @"Show Alternate Surface"];
+        NSMenuItem* firstItem = [contextMenu itemAtIndex: 0];
+        NSMenuItem *surfaceItem = [self getSurfaceMenuItem: contextMenu];
+        [surfaceItem setTitle: NSLocalizedString(@"Show Alternate Surface",@"")];
         NSMenu* surfaceMenu = [[NSMenu alloc ] initWithTitle: @"altsurf" ];
         vector<string>* surfaces = sel.body()->getAlternateSurfaceNames();
         if ( surfaces->size() == 0 ) 
@@ -635,7 +688,7 @@ FEATUREMETHODS(Other)
             [ contextMenu setAutoenablesItems: YES ];
             [ surfaceMenu setAutoenablesItems: YES ];
             NSMenuItem* newItem = [ [NSMenuItem alloc] init ]; 
-            [newItem setTitle: @"default" ];
+            [newItem setTitle: NSLocalizedString(@"default",@"") ];
             [newItem setTag:  600 ];
             [newItem setTarget:  [firstItem target] ];
             [newItem setAction:  [firstItem action] ];
@@ -691,7 +744,7 @@ FEATUREMETHODS(Other)
     id value;
 
     if ( tag <= 128 ) tag = [self tagForKey: tag ]; // handle menu item for setting; obsolete?
-    if ( tag <= 128 ) { appCore->charEntered(tag); return; };
+    if ( tag <= 128 ) { appCore->charEntered(tag); return; }
     switch ( tag/100)
     {
         case 4: case 5: case 7: case 8: // 400, 500, 700, 800
@@ -817,7 +870,7 @@ FEATUREMETHODS(Other)
             case  25: tag = 414; break;  // AutoMag
             case  20: tag = 415; break;  // CometTails
             case  11: tag = 416; break;  // Markers
-            case  19: tag = 411; break;  // StarsAsPoints
+//            case  19: tag = 411; break;  // StarsAsPoints
             case  24: tag = 409; break;  // SmoothLines
             default : tag = key; break; // Special or not a setting
     }
@@ -956,7 +1009,7 @@ FEATUREMETHODS(Other)
 //        NSLog(@"subviews items = %@\n", [item subviews]);
         item = [ [item subviews] objectEnumerator ];
 //        NSLog(@"view items = %@\n", item);
-    };
+    }
 
     if ( [item isKindOfClass: [NSEnumerator class] ] )
     {

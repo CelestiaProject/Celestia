@@ -26,7 +26,9 @@
     sim = [[CelestiaAppCore sharedAppCore] simulation];
     if ( [dateString isEqualToString: @""] && [timeString isEqualToString: @""])
     {
-       NSRunAlertPanel(@"No Date or Time Entered",@"Please enter a date and/or time.",nil,nil,nil);
+       NSRunAlertPanel(NSLocalizedString(@"No Date or Time Entered",@""),
+                       NSLocalizedString(@"Please enter a date and/or time.",@""),
+                       nil,nil,nil);
        return;
     }
     
@@ -53,7 +55,9 @@
     if ( cdate == NULL )
        {
 //       NSLog(@"bad date");
-       NSRunAlertPanel(@"Improper Date or Time Format",@"Please enter the date as \"mm/dd/yyyy\" and the time as \"hh:mm:ss\".",nil,nil,nil);
+       NSRunAlertPanel(NSLocalizedString(@"Improper Date or Time Format",@""),
+                       NSLocalizedString(@"Please enter the date as \"mm/dd/yyyy\" and the time as \"hh:mm:ss\".",@""),
+                       nil,nil,nil);
        return;
        }
 //    NSLog( [cdate description] );

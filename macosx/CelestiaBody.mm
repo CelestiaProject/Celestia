@@ -39,28 +39,28 @@
     switch ([self body]->getClassification())
     {
         case (Body::Planet):
-            return @"Planet";
+            return NSLocalizedString(@"Planet",@"");
             break;
         case (Body::Moon):
-            return @"Moon";
+            return NSLocalizedString(@"Moon",@"");
             break;
         case (Body::Asteroid):
-            return @"Asteroid";
+            return NSLocalizedString(@"Asteroid",@"");
             break;
         case (Body::Comet):
-            return @"Comet";
+            return NSLocalizedString(@"Comet",@"");
             break;
         case (Body::Spacecraft):
-            return @"Spacecraft";
+            return NSLocalizedString(@"Spacecraft",@"");
             break;
         default:
             break;
     }
-    return @"Unknown";
+    return NSLocalizedString(@"Unknown",@"");
 }
 -(NSString *)name
 {
-    return [NSString stringWithStdString:[self body]->getName()];
+    return [NSString stringWithStdString:[self body]->getName(true)];
 }
 -(NSNumber *)radius
 {
