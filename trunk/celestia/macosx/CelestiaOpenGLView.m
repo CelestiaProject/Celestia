@@ -8,6 +8,11 @@
 #import "CelestiaOpenGLView.h"
 #import "CelestiaAppCore.h"
 #import <OpenGL/gl.h>
+#import <OpenGL/glext.h>
+
+#ifndef ATI_FSAA_LEVEL
+#define ATI_FSAA_LEVEL  510
+#endif
 
 #define CEL_LEFT_BUTTON 1
 #define CEL_MIDDLE_BUTTON 2
@@ -19,12 +24,10 @@
 @implementation CelestiaOpenGLView
 
 - (id) initWithCoder: (NSCoder *) coder
-{   
+{
     NSOpenGLPixelFormatAttribute attrs[] = 
     {
         NSOpenGLPFADoubleBuffer,
-//        NSOpenGLPFANoRecovery,
-//        NSOpenGLPFAAccelerated,
         NSOpenGLPFADepthSize,
         (NSOpenGLPixelFormatAttribute)24,
         nil
@@ -36,7 +39,7 @@
     self = [super initWithCoder: coder] ;
     if (self)
     {
-        pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: attrs] ;
+        pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: attrs];
 
         if (pixFmt)
         {
@@ -49,9 +52,73 @@
                 setValues: &swapInterval
                 forParameter: NSOpenGLCPSwapInterval ] ;
         }
+        else
+        {
+            [self release];
+            return nil;
+        }
     }
-        
+
     return self;
+}
+
+- (void)setAASamples: (unsigned int)aaSamples
+{
+    if (aaSamples > 1)
+    {
+        const char *glRenderer = (const char *) glGetString(GL_RENDERER);
+
+        if (strstr(glRenderer, "ATI"))
+        {
+            [[self openGLContext] setValues: (const long *)&aaSamples
+                               forParameter: ATI_FSAA_LEVEL];
+        }
+        else
+        {
+            NSOpenGLPixelFormat *pixFmt;
+            NSOpenGLContext *context;
+
+            NSOpenGLPixelFormatAttribute fsaaAttrs[] =
+            {
+                NSOpenGLPFADoubleBuffer,
+                NSOpenGLPFADepthSize,
+                (NSOpenGLPixelFormatAttribute)24,
+                NSOpenGLPFASampleBuffers,
+                (NSOpenGLPixelFormatAttribute)1,
+                NSOpenGLPFASamples,
+                (NSOpenGLPixelFormatAttribute)1,
+                nil
+            };
+
+            fsaaAttrs[6] = aaSamples;
+
+            pixFmt =
+                [[NSOpenGLPixelFormat alloc] initWithAttributes: fsaaAttrs];
+
+            if (pixFmt)
+            {
+                context = [[NSOpenGLContext alloc] initWithFormat: pixFmt
+                                                     shareContext: nil];
+                [pixFmt release];
+
+                if (context)
+                {
+                    long swapInterval = 1;
+                    [context setValues: &swapInterval
+                          forParameter: NSOpenGLCPSwapInterval];
+                    [self setOpenGLContext: context];
+                    [context setView: self];
+                    [context makeCurrentContext];
+                    [context release];
+
+                    glEnable(GL_MULTISAMPLE_ARB);
+                    // GL_NICEST enables Quincunx on supported NVIDIA cards,
+                    // but smears text.
+//                    glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+                }
+            }
+        }
+    }
 }
 
 

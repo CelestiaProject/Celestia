@@ -11,4 +11,5 @@
 {
     IBOutlet CelestiaController *controller;
 }
+- (void)setAASamples: (unsigned int)aaSamples;
 @end

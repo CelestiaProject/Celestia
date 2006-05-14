@@ -640,6 +640,11 @@ static NSMutableDictionary* tagDict;
     }
 }
 
+-(unsigned int)aaSamples
+{
+    return appCore->getConfig()->aaSamples;
+}
+
 - (BOOL) captureMovie: (NSString*) filename width: (int) width height: (int) height
                               frameRate: (float) framerate
 {
