@@ -3117,6 +3117,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		{
 			s_splash->close();
 			delete s_splash;
+            s_splash = NULL;
 		}
 		
         MessageBox(NULL,
@@ -3150,6 +3151,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	{
 		s_splash->close();
 		delete s_splash;
+        s_splash = NULL;
 	}
 	
 	// Give up now if we failed initialization
