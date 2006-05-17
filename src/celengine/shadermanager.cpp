@@ -332,6 +332,13 @@ CelestiaGLProgram::initSamplers(const ShaderProperties& props)
         if (slot != -1)
             glx::glUniform1iARB(slot, nSamplers++);
     }
+    
+    if (props.texUsage & ShaderProperties::OverlayTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "overlayTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
 }
 
 
@@ -599,6 +606,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += "uniform float ringRadius;\n";
         source += "varying vec4 ringShadowTexCoord;\n";
     }
+    
+    if (props.texUsage & ShaderProperties::OverlayTexture)
+        source += "varying vec2 overlayTexCoord;\n";
 
     source += "uniform float textureOffset;\n";
 
@@ -704,6 +714,12 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += RingShadowTexCoord(j) +
                 " = (length(ringShadowProj) - ringRadius) * ringWidth;\n";
         }
+    }
+
+    if (props.texUsage & ShaderProperties::OverlayTexture)
+    {
+        source += "overlayTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+        nTexCoords++;
     }
 
     if (props.shadowCounts != 0)
@@ -816,6 +832,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "varying vec4 ringShadowTexCoord;\n";
     }
 
+    if (props.texUsage & ShaderProperties::OverlayTexture)
+    {
+        source += "varying vec2 overlayTexCoord;\n";
+        source += "uniform sampler2D overlayTex;\n";
+    }
+
     if (props.shadowCounts != 0)
     {
         for (unsigned int i = 0; i < props.nLights; i++)
@@ -897,6 +919,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "color = texture2D(diffTex, diffTexCoord.st);\n";
     else
         source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
+        
+    if (props.texUsage & ShaderProperties::OverlayTexture)
+    {
+        source += "vec4 overlayColor = texture2D(overlayTex, overlayTexCoord.st);\n";
+        source += "color.rgb = mix(color.rgb, overlayColor.rgb, overlayColor.a);\n";
+    }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
