@@ -32,6 +32,7 @@ class ShaderProperties
      NightTexture           = 0x08,
      SpecularInDiffuseAlpha = 0x10,
      RingShadowTexture      = 0x20,
+     OverlayTexture         = 0x40,
  };
 
  enum
