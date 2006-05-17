@@ -4060,6 +4060,12 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         shadprop.texUsage |= ShaderProperties::NightTexture;
         textures[nTextures++] = ri.nightTex;
     }
+
+    if (ri.overlayTex != NULL)
+    {
+        shadprop.texUsage |= ShaderProperties::OverlayTexture;
+        textures[nTextures++] = ri.overlayTex;
+    }
     
     if (rings != NULL)
 #if 0
