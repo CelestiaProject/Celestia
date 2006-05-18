@@ -209,6 +209,8 @@ void SelectionPopup::process(int id)
         }
         else if (sel.deepsky() != NULL)
         {
+            url = QString(sel.deepsky()->getInfoURL().c_str());
+            if (url == "") 
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=%1")
                       .arg(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str());
         }
