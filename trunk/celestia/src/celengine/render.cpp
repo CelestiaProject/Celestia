@@ -6506,7 +6506,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
 
                 if (showLabel)
                 {
-                    addSortedLabel(body->getName(), labelColor,
+                    addSortedLabel(body->getName(true), labelColor,
                                    Point3f(pos.x, pos.y, pos.z));
                 }
             }
