@@ -71,6 +71,10 @@ static const double MaxTimeslice = 5.0;
 static const char* KbdCallback = "celestia_keyboard_callback";
 static const char* CleanupCallback = "celestia_cleanup_callback";
 
+static const char* EventHandlers = "celestia_event_handlers";
+
+static const char* DefaultKeyHandler = "key";
+
 typedef map<string, uint32> FlagMap; 
 
 static FlagMap RenderFlagMap;
@@ -178,6 +182,19 @@ static void initMaps()
         initLocationFlagMap();
     }
     mapsInitialized = true;
+}
+
+
+static void getField(lua_State* l, int index, const char* key)
+{
+    // When we move to Lua 5.1, this will be replaced by:
+    // lua_getfield(l, index, key);
+    lua_pushstring(l, key);
+   
+    if (index != LUA_GLOBALSINDEX && index != LUA_REGISTRYINDEX)
+        lua_gettable(l, index - 1);
+    else
+        lua_gettable(l, index);
 }
 
 
@@ -653,6 +670,57 @@ bool LuaState::charEntered(const char* c_p)
     // cleanup stack - is this necessary?
     lua_settop(costate, stack_top);
     return result;
+}
+
+
+// Returns true if a handler is registered for the key
+bool LuaState::handleKeyEvent(const char* key)
+{   
+    CelestiaCore* appCore = getAppCore(costate, NoErrors);
+    if (appCore == NULL)
+    {
+        return false;
+    }
+
+    // get the key event table
+    getField(costate, LUA_REGISTRYINDEX, EventHandlers);
+    if (!lua_istable(costate, -1))
+    {
+        cerr << "Missing event handler table";
+        lua_pop(costate, 1);
+        return false;
+    }
+    
+    bool handled = false;
+    
+    getField(costate, -1, key);         // get the handler from the event handler table
+    if (lua_isfunction(costate, -1))
+    {
+        lua_remove(costate, -2);        // remove the key event table from the stack
+        lua_call(costate, 0, 0);
+        handled = true;
+    }
+    else
+    {
+        // no event handler registered for this key, so try the default key handler
+        lua_pop(costate, 1);
+        getField(costate, -1, DefaultKeyHandler);
+        if (lua_isfunction(costate, -1))
+        {
+            lua_remove(costate, -2);        // remove the key event table from the stack
+            lua_pushstring(costate, key);   // the default key handler accepts the key name as an argument
+            lua_call(costate, 1, 1);
+            handled = lua_toboolean(costate, -1) == 1 ? true : false;
+            lua_pop(costate, 1);             // pop the return value
+        }
+        else
+        {
+            // no default handler registered
+            lua_pop(costate, 2);
+        }
+    }    
+    
+    return handled;
 }
 
 
@@ -4404,6 +4472,63 @@ static int celestia_requestkeyboard(lua_State* l)
     return 0;
 }
 
+static int celestia_registereventhandler(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Two arguments required for celestia:registereventhandler");
+    CelestiaCore* appCore = this_celestia(l);
+    
+    if (!lua_isstring(l, 2))
+    {
+        doError(l, "First argument for celestia:registereventhandler must be a string");
+    }
+    
+    if (!lua_isfunction(l, 3) && !lua_isnil(l, 3))
+    {
+        doError(l, "Second argument for celestia:registereventhandler must be a function or nil");
+    }
+    
+    lua_pushstring(l, EventHandlers);
+    lua_gettable(l, LUA_REGISTRYINDEX);
+    if (lua_isnil(l, -1))
+    {
+        // This should never happen--the table should be created when a new Celestia Lua
+        // state is initialized.
+        doError(l, "Event handler table not created");
+    }
+    
+    lua_pushvalue(l, 2);
+    lua_pushvalue(l, 3);
+    
+    lua_settable(l, -3);
+    
+    return 0;
+}
+
+static int celestia_geteventhandler(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for celestia:registereventhandler");
+    CelestiaCore* appCore = this_celestia(l);
+    
+    if (!lua_isstring(l, 2))
+    {
+        doError(l, "Argument to celestia:geteventhandler must be a string");
+    }
+    
+    lua_pushstring(l, EventHandlers);
+    lua_gettable(l, LUA_REGISTRYINDEX);
+    if (lua_isnil(l, -1))
+    {
+        // This should never happen--the table should be created when a new Celestia Lua
+        // state is initialized.
+        doError(l, "Event handler table not created");
+    }
+    
+    lua_pushvalue(l, 2);
+    lua_gettable(l, -2);
+        
+    return 1;
+}
+
 static int celestia_takescreenshot(lua_State* l)
 {
     checkArgs(l, 1, 3, "Need 0 to 2 arguments for celestia:takescreenshot");
@@ -4567,6 +4692,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "createcelscript", celestia_createcelscript);
     RegisterMethod(l, "requestsystemaccess", celestia_requestsystemaccess);
     RegisterMethod(l, "getscriptpath", celestia_getscriptpath);
+    RegisterMethod(l, "registereventhandler", celestia_registereventhandler);
+    RegisterMethod(l, "geteventhandler", celestia_geteventhandler);
 
     lua_pop(l, 1);
 }
@@ -4615,6 +4742,10 @@ bool LuaState::init(CelestiaCore* appCore)
     // add a reference to the LuaState-object in the registry
     lua_pushstring(state, "celestia-luastate");
     lua_pushlightuserdata(state, static_cast<void*>(this));
+    lua_settable(state, LUA_REGISTRYINDEX);
+    
+    lua_pushstring(state, EventHandlers);
+    lua_newtable(state);
     lua_settable(state, LUA_REGISTRYINDEX);
 
 #if 0

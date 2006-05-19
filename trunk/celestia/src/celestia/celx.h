@@ -50,6 +50,8 @@ public:
     int screenshotCount;
     double timeout;
     
+    bool handleKeyEvent(const char* key);
+    
     enum IOMode {
         NoIO = 1,
         Asking = 2,
