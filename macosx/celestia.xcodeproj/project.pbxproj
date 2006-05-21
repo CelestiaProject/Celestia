@@ -584,6 +584,7 @@
 		E57283990793F82A00C1F239 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../ChangeLog; sourceTree = SOURCE_ROOT; };
 		E572839A0793F82A00C1F239 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = SOURCE_ROOT; };
 		E57283AD0793FC7300C1F239 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../README; sourceTree = SOURCE_ROOT; };
+		E579D3130A1A1949008F3BC8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = ja; path = ja.lproj/Credits.rtf; sourceTree = "<group>"; };
 		E57E350E0892A42A008E2F7F /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		E589B6D9078AC511005B8DD9 /* glshader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glshader.cpp; path = ../src/celengine/glshader.cpp; sourceTree = SOURCE_ROOT; };
 		E589B6DA078AC511005B8DD9 /* glshader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glshader.h; path = ../src/celengine/glshader.h; sourceTree = SOURCE_ROOT; };
@@ -672,6 +673,11 @@
 		E5E365B0095C12BD00B14224 /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		E5E365B1095C12C900B14224 /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E5E365B2095C12D200B14224 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E5EAAE530A1A0B3000848446 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		E5EAAE540A1A0B3F00848446 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
+		E5EAAE550A1A0B4600848446 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/HelpWindow.nib; sourceTree = "<group>"; };
+		E5EAAE650A1A0E9700848446 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E5EAAE660A1A0E9B00848446 /* ja */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E5F8C9E30795235E00D1DAF2 /* liblua.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblua.dylib; path = Frameworks/liblua.dylib; sourceTree = "<group>"; };
 		E5F8C9E40795235E00D1DAF2 /* liblualib.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblualib.dylib; path = Frameworks/liblualib.dylib; sourceTree = "<group>"; };
 		E5FB63B20A0F80FA00A60759 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1688,6 +1694,7 @@
 				German,
 				fr,
 				es,
+				ja,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* celestia */;
 			projectDirPath = "";
@@ -1909,6 +1916,7 @@
 				089C165DFE840E0CC02AAC07 /* English */,
 				E59FE90E0934E27B000F7BDA /* fr */,
 				E5E365B2095C12D200B14224 /* es */,
+				E5EAAE650A1A0E9700848446 /* ja */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1919,6 +1927,7 @@
 				29B97319FDCFA39411CA2CEA /* English */,
 				E59FE8FD0934DC66000F7BDA /* fr */,
 				E5E365B0095C12BD00B14224 /* es */,
+				E5EAAE530A1A0B3000848446 /* ja */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -1929,6 +1938,7 @@
 				E54343110783C3F200053094 /* English */,
 				E59FE8FE0934DC7C000F7BDA /* fr */,
 				E5E365B1095C12C900B14224 /* es */,
+				E5EAAE540A1A0B3F00848446 /* ja */,
 			);
 			name = BrowserWindow.nib;
 			sourceTree = "<group>";
@@ -1939,6 +1949,7 @@
 				E599A78D097CAB390079C254 /* English */,
 				E5D7660B0982B15C0099DBBD /* es */,
 				E5D7660C0982B1630099DBBD /* fr */,
+				E579D3130A1A1949008F3BC8 /* ja */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";
@@ -1949,6 +1960,7 @@
 				E5CC204609AA843300CFFF2C /* English */,
 				E5CC204809AA846600CFFF2C /* fr */,
 				E5FB63B20A0F80FA00A60759 /* es */,
+				E5EAAE660A1A0E9B00848446 /* ja */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1958,6 +1970,7 @@
 			children = (
 				E5D7660F0982B1860099DBBD /* English */,
 				E5D766150982B19F0099DBBD /* fr */,
+				E5EAAE550A1A0B4600848446 /* ja */,
 			);
 			name = HelpWindow.nib;
 			sourceTree = "<group>";
