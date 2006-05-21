@@ -50,6 +50,15 @@
 	AppMag 14.93
 }
 
+1016572041 "XO-1:GSC 02041-01657"
+{
+	RA 240.549167
+	Dec 28.169722
+	Distance 650
+	SpectralType "G1V"
+	AppMag 11.3
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
@@ -308,7 +317,7 @@ Barycenter "Gliese 777"
 {
 	RA 195.0125
 	Dec 12.6825
-	Distance 2000
+	Distance 1000
 	SpectralType "Q"
 	AbsMag 27         # for approximate radius in Celestia
 
