@@ -318,32 +318,6 @@ NSString* fatalErrorMessage;
     else
         pendingUrl = [[[event descriptorAtIndex:1] stringValue] retain];
 }
-/*
-- (void) applicationDidBecomeActive:(NSNotification *) aNotification
-{
-    if (aNotification && ([aNotification object] == NSApp))
-    {
-        [self unpauseFullScreen];
-    }
-}
-*/
-- (void) applicationWillHide:(NSNotification *) aNotification
-{
-    if (aNotification && ([aNotification object] == NSApp))
-    {
-        [self pauseFullScreen];
-    }
-}
-
-- (void) applicationWillResignActive:(NSNotification *) aNotification
-{
-    if (isFullScreen && aNotification && ([aNotification object] == NSApp) && ![[aNotification object] isHidden])
-    {
-        // Hiding also causes deactivation - handle hiding separately
-        [self pauseFullScreen];
-        [[self window] orderBack: self];
-    }
-}
 
 /* On a multi-screen setup, user is able to change the resolution of the screen running Celestia from a different screen, or the menu bar position so handle that */
 - (void)applicationDidChangeScreenParameters:(NSNotification *) aNotification
@@ -352,7 +326,7 @@ NSString* fatalErrorMessage;
     {
         // If menu bar not on same screen, don't hide it anymore
         if (![self hideMenuBarOnActiveScreen])
-            ShowMenuBar();
+            SetSystemUIMode(kUIModeNormal, 0);
 
         NSScreen *screen = [[self window] screen];
         NSRect screenRect = [screen frame];
@@ -364,15 +338,12 @@ NSString* fatalErrorMessage;
 
 -(BOOL)applicationShouldTerminate:(id)sender
 {
-    [self pauseFullScreen];   // allow dialog to show
-
    if (  NSRunAlertPanel(NSLocalizedString(@"Quit Celestia?",@""),
                          NSLocalizedString(@"Are you sure you want to quit Celestia?",@""),
                          NSLocalizedString(@"Quit",@""),
                          NSLocalizedString(@"Cancel",@""),
                          nil) != NSAlertDefaultReturn ) 
    {
-       [self unpauseFullScreen];
        return NO;
    }
     
@@ -401,27 +372,6 @@ NSString* fatalErrorMessage;
 
 
 // Window Event Handler Methods ----------------------------------------------------------
-
-- (void)windowDidBecomeKey:(NSNotification *)aNotification
-{
-    [self unpauseFullScreen];
-}
-
-- (void)windowDidResignKey:(NSNotification *)aNotification
-{
-    NSNumber *mainScreenNumber =
-    [[[[self window] screen] deviceDescription] objectForKey:@"NSScreenNumber"];
-    NSScreen *otherScreen = [[NSApp keyWindow] screen];
-    NSNumber *otherScreenNumber = otherScreen ? 
-        [[otherScreen deviceDescription] objectForKey:@"NSScreenNumber"] :
-        nil;
-    
-    if (mainScreenNumber && otherScreenNumber &&
-        [mainScreenNumber isEqualTo:otherScreenNumber])
-    {
-        [self pauseFullScreen];
-    }
-}
 
 -(BOOL)windowShouldClose:(id)sender
 {
@@ -561,7 +511,7 @@ NSString* fatalErrorMessage;
             // Can't switch back to windowed mode, but hide full screen window
             // so user can still quit the program
             [[self window] orderOut: self];
-            ShowMenuBar();
+            SetSystemUIMode(kUIModeNormal, 0);
             [self fatalError: NSLocalizedString(@"Unable to properly exit full screen mode. Celestia will now quit.",@"")];
             [self performSelector:@selector(fatalError:) withObject:nil afterDelay:0.1];
             return;
@@ -571,7 +521,7 @@ NSString* fatalErrorMessage;
         [[glView openGLContext] setView: windowedView];
 
         [[self window] close];  // full screen window releases on close
-        ShowMenuBar();
+        SetSystemUIMode(kUIModeNormal, 0);
         [self setWindow: origWindow];
         glView = windowedView;
         [self setDirty];
@@ -591,7 +541,6 @@ NSString* fatalErrorMessage;
 
     [fullScreenWindow setBackgroundColor: [NSColor blackColor]];
     [fullScreenWindow setReleasedWhenClosed: YES];
-    [fullScreenWindow setLevel: NSStatusWindowLevel];
     [self setWindow: fullScreenWindow]; // retains it
     [fullScreenWindow release];
     [fullScreenWindow setDelegate: self];
@@ -620,26 +569,6 @@ NSString* fatalErrorMessage;
     isFullScreen = YES;
 }
 
-/* Lowers the level of a full-screen window (to allow Cmd-Tabbing, etc) */
-- (void) pauseFullScreen
-{
-    if (isFullScreen)
-    {
-        [[self window] setLevel: NSNormalWindowLevel];
-        ShowMenuBar();
-    }
-}
-
-/* Resumes full screen after a pauseFullScreen */
-- (void) unpauseFullScreen
-{
-    if (isFullScreen)
-    {
-        [self hideMenuBarOnActiveScreen];
-        [[self window] setLevel: NSStatusWindowLevel];
-    }
-}
-
 - (BOOL) hideMenuBarOnActiveScreen
 {
     NSScreen *screen = [[self window] screen];
@@ -647,7 +576,7 @@ NSString* fatalErrorMessage;
     if (allScreens && [allScreens objectAtIndex: 0]!=screen)
         return NO;
 
-    HideMenuBar();
+    SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
     return YES;
 }
 
