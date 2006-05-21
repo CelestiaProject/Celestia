@@ -1,0 +1,12 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {go = id; }; 
+            CLASS = BrowserWindowController; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
