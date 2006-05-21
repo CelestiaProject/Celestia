@@ -52,6 +52,7 @@
 				089C165DFE840E0CC02AAC07,
 				E5AAD31E09361B4100136FCD,
 				E5E5ED68095BCA6B003DC829,
+				E5AC1B620A1A1EC200B33FF0,
 			);
 			isa = PBXVariantGroup;
 			name = InfoPlist.strings;
@@ -208,6 +209,7 @@
 				German,
 				fr,
 				es,
+				ja,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA;
 			projectDirPath = "";
@@ -285,6 +287,7 @@
 				29B97319FDCFA39411CA2CEA,
 				E5AACCF50935FFE700136FCD,
 				E5E5ED66095BCA4B003DC829,
+				E5AC1B5F0A1A1EB500B33FF0,
 			);
 			isa = PBXVariantGroup;
 			name = MainMenu.nib;
@@ -1101,6 +1104,7 @@
 				E54343110783C3F200053094,
 				E5AACCF70935FFFE00136FCD,
 				E5E5ED67095BCA61003DC829,
+				E5AC1B600A1A1EC200B33FF0,
 			);
 			isa = PBXVariantGroup;
 			name = BrowserWindow.nib;
@@ -3913,6 +3917,54 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		E5AC1A7F0A1A1EA600B33FF0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			name = ja;
+			path = ja.lproj/Credits.rtf;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5AC1B5F0A1A1EB500B33FF0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = ja;
+			path = ja.lproj/MainMenu.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5AC1B600A1A1EC200B33FF0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = ja;
+			path = ja.lproj/BrowserWindow.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5AC1B610A1A1EC200B33FF0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = ja;
+			path = ja.lproj/HelpWindow.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5AC1B620A1A1EC200B33FF0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = ja;
+			path = ja.lproj/InfoPlist.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5AC1B630A1A1EC200B33FF0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = ja;
+			path = ja.lproj/Localizable.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		E5B615060777307F001BB2BF = {
 			isa = PBXFileReference;
 			lastKnownFileType = image.icns;
@@ -4395,6 +4447,7 @@
 			children = (
 				E5C29C930982A8EC00ED06B8,
 				E5C29C950982A8FC00ED06B8,
+				E5AC1B610A1A1EC200B33FF0,
 			);
 			isa = PBXVariantGroup;
 			name = HelpWindow.nib;
@@ -4754,6 +4807,7 @@
 				E5C3C422097DBA1D0048AF44,
 				E5C29C900982A8C300ED06B8,
 				E5C29C910982A8D100ED06B8,
+				E5AC1A7F0A1A1EA600B33FF0,
 			);
 			isa = PBXVariantGroup;
 			name = Credits.rtf;
@@ -4780,6 +4834,7 @@
 				E5C5B24D0A0FF75C0078C6ED,
 				E5C5B24F0A0FF7830078C6ED,
 				E5C5B2500A0FF7950078C6ED,
+				E5AC1B630A1A1EC200B33FF0,
 			);
 			isa = PBXVariantGroup;
 			name = Localizable.strings;
