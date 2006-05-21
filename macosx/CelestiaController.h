@@ -54,8 +54,6 @@
 -(IBAction)openScript:(id)sender;
 -(IBAction)rerunScript: (id) sender;
 -(IBAction)toggleFullScreen:(id)sender;
--(void)pauseFullScreen;
--(void)unpauseFullScreen;
 -(BOOL)hideMenuBarOnActiveScreen;
 -(void)setDirty;
 -(void)forceDisplay;
