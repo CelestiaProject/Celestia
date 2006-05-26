@@ -1079,7 +1079,7 @@ static int32 readUint(istream& in)
 
 static float readFloat(istream& in)
 {
-    int i = readUint(in);
+    uint32 i = readUint(in);
     return *((float*) &i);
 }
 
