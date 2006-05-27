@@ -1,16 +1,16 @@
 # Russian translations for celestia package
-# Copyright (C) 2004 Free Software Foundation, Inc.
+# Copyright (C) 2006 The SIMOfOR, Inc.
 # This file is distributed under the same license as the celestia package.
-#  <eugine@aroks.kiev.ua>, 2004.
+# Sergey Leonov <leserg@ua.fm>, 2006.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Celestia 1.4.1\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-18 16:09+0100\n"
-"PO-Revision-Date: 2006-05-06 22:46+0200\n"
+"PO-Revision-Date: 2006-05-27 01:34+0200\n"
 "Last-Translator: Sergey Leonov <leserg@ua.fm>\n"
-"Language-Team: The SIMOfOR <leserg@ua.fm>\n"
+"Language-Team: Russian <leserg@ua.fm>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -319,13 +319,12 @@ msgid "Scutum"
 msgstr "Щит"
 
 #: data/constellations.cpp:76
-#, fuzzy
 msgid "Serpens Caput"
-msgstr "Змея"
+msgstr "Голова змеи"
 
 #: data/constellations.cpp:77
 msgid "Serpens Cauda"
-msgstr "Змея"
+msgstr "Хвост змеи"
 
 #: data/constellations.cpp:78
 msgid "Sextans"
@@ -361,7 +360,7 @@ msgstr "Малая медведица"
 
 #: data/constellations.cpp:86
 msgid "Vela"
-msgstr "Парус"
+msgstr "Паруса"
 
 #: data/constellations.cpp:87
 msgid "Virgo"
