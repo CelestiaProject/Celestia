@@ -51,6 +51,8 @@ public:
     double timeout;
     
     bool handleKeyEvent(const char* key);
+    bool handleMouseButtonEvent(float x, float y, int button, bool down);
+    bool handleTickEvent(double dt);
     
     enum IOMode {
         NoIO = 1,
