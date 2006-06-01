@@ -367,7 +367,15 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
 #ifdef CELX
     LuaState* celxScript;
-#endif // CELX    
+#endif // CELX
+
+    enum ScriptState
+    {
+        ScriptCompleted,
+        ScriptRunning,
+        ScriptPaused,
+    };
+    ScriptState scriptState;
 
     int timeZoneBias;              // Diff in secs between local time and GMT
     std:: string timeZoneName;	   // Name of the current time zone
@@ -389,7 +397,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     double currentTime;
     double timeScale;
     bool paused;
-    bool scriptPaused;
 
     Vec3f joystickRotation;
     bool joyButtonsPressed[JoyButtonCount];

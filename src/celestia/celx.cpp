@@ -73,7 +73,10 @@ static const char* CleanupCallback = "celestia_cleanup_callback";
 
 static const char* EventHandlers = "celestia_event_handlers";
 
-static const char* DefaultKeyHandler = "key";
+static const char* KeyHandler        = "key";
+static const char* TickHandler       = "tick";
+static const char* MouseDownHandler  = "mousedown";
+static const char* MouseUpHandler    = "mouseup";
 
 typedef map<string, uint32> FlagMap; 
 
@@ -681,8 +684,8 @@ bool LuaState::handleKeyEvent(const char* key)
     {
         return false;
     }
-
-    // get the key event table
+    
+    // get the registered event table
     getField(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
     {
@@ -691,34 +694,136 @@ bool LuaState::handleKeyEvent(const char* key)
         return false;
     }
     
-    bool handled = false;
-    
-    getField(costate, -1, key);         // get the handler from the event handler table
+    bool handled = false;    
+    getField(costate, -1, KeyHandler);
     if (lua_isfunction(costate, -1))
     {
         lua_remove(costate, -2);        // remove the key event table from the stack
-        lua_call(costate, 0, 0);
-        handled = true;
-    }
-    else
-    {
-        // no event handler registered for this key, so try the default key handler
-        lua_pop(costate, 1);
-        getField(costate, -1, DefaultKeyHandler);
-        if (lua_isfunction(costate, -1))
+        
+        lua_newtable(costate);
+        lua_pushstring(costate, "char");
+        lua_pushstring(costate, key);   // the default key handler accepts the key name as an argument
+        lua_settable(costate, -3);
+        
+        timeout = getTime() + 1.0;
+        if (lua_pcall(costate, 1, 1, 0) != 0)
         {
-            lua_remove(costate, -2);        // remove the key event table from the stack
-            lua_pushstring(costate, key);   // the default key handler accepts the key name as an argument
-            lua_call(costate, 1, 1);
-            handled = lua_toboolean(costate, -1) == 1 ? true : false;
-            lua_pop(costate, 1);             // pop the return value
+            cerr << "Error while executing keyboard callback: " << lua_tostring(costate, -1) << "\n";
         }
         else
         {
-            // no default handler registered
-            lua_pop(costate, 2);
+           handled = lua_toboolean(costate, -1) == 1 ? true : false;
         }
-    }    
+        lua_pop(costate, 1);             // pop the return value
+    }
+    else
+    {
+        lua_pop(costate, 2);
+    }
+    
+    return handled;
+}
+
+
+// Returns true if a handler is registered for the button event
+bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
+{   
+    CelestiaCore* appCore = getAppCore(costate, NoErrors);
+    if (appCore == NULL)
+    {
+        return false;
+    }
+    
+    // get the registered event table
+    getField(costate, LUA_REGISTRYINDEX, EventHandlers);
+    if (!lua_istable(costate, -1))
+    {
+        cerr << "Missing event handler table";
+        lua_pop(costate, 1);
+        return false;
+    }
+    
+    bool handled = false;    
+    getField(costate, -1, down ? MouseDownHandler : MouseUpHandler);
+    if (lua_isfunction(costate, -1))
+    {
+        lua_remove(costate, -2);        // remove the key event table from the stack
+        
+        lua_newtable(costate);
+        lua_pushstring(costate, "button");
+        lua_pushnumber(costate, button);
+        lua_settable(costate, -3);
+        lua_pushstring(costate, "x");
+        lua_pushnumber(costate, x);
+        lua_settable(costate, -3);
+        lua_pushstring(costate, "y");
+        lua_pushnumber(costate, y);
+        lua_settable(costate, -3);
+        
+        timeout = getTime() + 1.0;
+        if (lua_pcall(costate, 1, 1, 0) != 0)
+        {
+            cerr << "Error while executing keyboard callback: " << lua_tostring(costate, -1) << "\n";
+        }
+        else
+        {
+           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+        }
+        lua_pop(costate, 1);             // pop the return value
+    }
+    else
+    {
+        lua_pop(costate, 2);
+    }
+    
+    return handled;
+}
+
+
+// Returns true if a handler is registered for the tick event
+bool LuaState::handleTickEvent(double dt)
+{   
+    CelestiaCore* appCore = getAppCore(costate, NoErrors);
+    if (appCore == NULL)
+    {
+        return false;
+    }
+    
+    // get the registered event table
+    getField(costate, LUA_REGISTRYINDEX, EventHandlers);
+    if (!lua_istable(costate, -1))
+    {
+        cerr << "Missing event handler table";
+        lua_pop(costate, 1);
+        return false;
+    }
+    
+    bool handled = false;    
+    getField(costate, -1, TickHandler);
+    if (lua_isfunction(costate, -1))
+    {
+        lua_remove(costate, -2);        // remove the key event table from the stack
+        
+        lua_newtable(costate);
+        lua_pushstring(costate, "dt");
+        lua_pushnumber(costate, dt);   // the default key handler accepts the key name as an argument
+        lua_settable(costate, -3);
+        
+        timeout = getTime() + 1.0;
+        if (lua_pcall(costate, 1, 1, 0) != 0)
+        {
+            cerr << "Error while executing tick callback: " << lua_tostring(costate, -1) << "\n";
+        }
+        else
+        {
+           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+        }
+        lua_pop(costate, 1);             // pop the return value
+    }
+    else
+    {
+        lua_pop(costate, 2);
+    }
     
     return handled;
 }
@@ -840,7 +945,7 @@ bool LuaState::tick(double dt)
     // getErrorMessage()
     if (!isAlive())
         return false;
-    
+        
     if (ioMode == Asking)
     {
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
