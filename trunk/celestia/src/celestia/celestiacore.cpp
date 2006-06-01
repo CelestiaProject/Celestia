@@ -311,6 +311,7 @@ CelestiaCore::CelestiaCore() :
 #ifdef CELX
     celxScript(NULL),
 #endif // CELX
+    scriptState(ScriptCompleted),
     timeZoneBias(0),
     showFPSCounter(false),
     nFrames(0),
@@ -326,7 +327,6 @@ CelestiaCore::CelestiaCore() :
     currentTime(0.0),
     timeScale(1.0),
     paused(false),
-    scriptPaused(false),
     joystickRotation(0.0f, 0.0f, 0.0f),
     KeyAccel(1.0),
     movieCapture(NULL),
@@ -478,7 +478,7 @@ void CelestiaCore::cancelScript()
     if (runningScript != NULL)
     {
         delete runningScript;
-        scriptPaused = false;
+        scriptState = ScriptCompleted;
         runningScript = NULL;
     }
 #ifdef CELX
@@ -487,9 +487,9 @@ void CelestiaCore::cancelScript()
         celxScript->cleanup();
         if (textEnterMode & KbPassToScript)
             setTextEnterMode(textEnterMode & ~KbPassToScript);
-        delete celxScript;
-        celxScript = NULL;
-        scriptPaused = false;
+        //delete celxScript;
+        //celxScript = NULL;
+        scriptState = ScriptCompleted;
     }
 #endif
 }
@@ -498,8 +498,11 @@ void CelestiaCore::cancelScript()
 void CelestiaCore::runScript(CommandSequence* script)
 {
     cancelScript();
-    if (runningScript == NULL && script != NULL)
+    if (runningScript == NULL && script != NULL && scriptState == ScriptCompleted)
+    {
+        scriptState = ScriptRunning;
         runningScript = new Execution(*script, *execEnv);
+    }
 }
 
 
@@ -536,6 +539,7 @@ void CelestiaCore::runScript(const string& filename)
             else
             {
                 runningScript = new Execution(*script, *execEnv);
+                scriptState = ScriptRunning;
             }
         }
     }
@@ -553,8 +557,12 @@ void CelestiaCore::runScript(const string& filename)
                 flash(errMsg);
         }
 
-        celxScript = new LuaState();
-        celxScript->init(this);
+        if (celxScript == NULL)
+        {
+            celxScript = new LuaState();
+            celxScript->init(this);
+        }
+        
         int status = celxScript->loadScript(scriptfile, filename);
         if (status != 0)
         {
@@ -566,8 +574,8 @@ void CelestiaCore::runScript(const string& filename)
             else
                 flash(errMsg);
 
-            delete celxScript;
-            celxScript = NULL;
+            //delete celxScript;
+            //celxScript = NULL;
         }
         else
         {
@@ -580,8 +588,12 @@ void CelestiaCore::runScript(const string& filename)
                     alerter->fatalError(errMsg);
                 else
                     flash(errMsg);
-                delete celxScript;
-                celxScript = NULL;
+                //delete celxScript;
+                //celxScript = NULL;
+            }
+            else
+            {
+                scriptState = ScriptRunning;
             }
         }
     }
@@ -605,7 +617,16 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
     mouseMotion = 0.0f;
 
-    if (views.size() > 1) {
+#ifdef CELX    
+    if (celxScript != NULL)
+    {
+        if (celxScript->handleMouseButtonEvent(x, y, button, true))
+            return;
+    }
+#endif    
+
+    if (views.size() > 1)
+    {
         // To select the clicked into view before a drag.
         pickView(x, y);
     }
@@ -664,6 +685,14 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         resizeSplit = 0;
         return;
     }
+    
+#ifdef CELX    
+    if (celxScript != NULL)
+    {
+        if (celxScript->handleMouseButtonEvent(x, y, button, false))
+            return;
+    }
+#endif    
 
     // If the mouse hasn't moved much since it was pressed, treat this
     // as a selection or context menu event.  Otherwise, assume that the
@@ -1079,6 +1108,27 @@ void CelestiaCore::keyUp(int key, int)
     shiftKeysPressed[key] = false;
 }
 
+static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
+{
+    unsigned int length = strlen(c);
+    
+    // Translate control characters
+    if (length == 1 && c[0] >= '\001' && c[0] <= '\032')
+    {
+        if (keyNameLength < 4)
+            return false;
+        sprintf(keyName, "C-%c", '\140' + c[0]);
+    }
+    else
+    {
+        if (keyNameLength < length + 1)
+            return false;
+        strcpy(keyName, c);
+    }
+    
+    return true;
+}
+
 void CelestiaCore::charEntered(char c, int modifiers)
 {
     char C[2];
@@ -1206,6 +1256,19 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         return;
     }
 
+#ifdef CELX
+    if (celxScript != NULL)
+    {
+        if (c != '\033')
+        {
+            char keyName[8];
+            getKeyName(c_p, keyName, sizeof(keyName));            
+            if (celxScript->handleKeyEvent(keyName))
+                return;
+        }
+    }
+#endif
+    
     char C = toupper(c);
     switch (C)
     {
@@ -1432,7 +1495,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if (paused)
         {
             sim->setTimeScale(timeScale);
-            scriptPaused = false;
+            if (scriptState == ScriptPaused)
+                scriptState = ScriptRunning;
             paused = false;
         }
         else
@@ -1448,14 +1512,20 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 #else
             if (runningScript != NULL)
 #endif
-                scriptPaused = true;
+            {
+                if (scriptState == ScriptRunning)
+                    scriptState = ScriptPaused;
+            }        
             else
-                scriptPaused = false;
+            {
+                if (scriptState == ScriptPaused)
+                    scriptState = ScriptRunning;
+            }
         }
 
         if (paused)
         {
-            if (scriptPaused)
+            if (scriptState == ScriptPaused)
                 flash(_("Time and script are paused"));
             else
                 flash(_("Time is paused"));
@@ -2008,7 +2078,7 @@ void CelestiaCore::tick()
     }
 
     // Pause script execution
-    if (scriptPaused)
+    if (scriptState == ScriptPaused)
         dt = 0.0;
 
     currentTime += dt;
@@ -2177,9 +2247,13 @@ void CelestiaCore::tick()
 #ifdef CELX
     if (celxScript != NULL)
     {
-        bool finished = celxScript->tick(dt);
-        if (finished)
-            cancelScript();
+        celxScript->handleTickEvent(dt);
+        if (scriptState == ScriptRunning)
+        {
+            bool finished = celxScript->tick(dt);
+            if (finished)
+                cancelScript();
+        }
     }
 #endif // CELX
 
@@ -3370,36 +3444,22 @@ void CelestiaCore::renderOverlay()
     }
 
 #if 0
-    // Experimental code for overlaying images
     {
-        glPushMatrix();
-        glLoadIdentity();
-        glTranslatef(0.375f, 0.375f, 0);
-
-        glEnable(GL_TEXTURE_2D);
-        for (vector<OverlayImage>::iterator iter = overlayImages.begin();
-             iter != overlayImages.end(); iter++)
+        UIElement::RenderContext rc;
+        rc.windowWidth = (float) width;
+        rc.windowHeight = (float) height;
+        
+        for (vector<UIElement*>::iterator iter = uiElements.begin();
+              iter != uiElements.end(); iter++)
         {
-            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-            if (iter->texture != NULL)
+            if (*iter != NULL)
             {
-                iter->texture->bind();
-                glBegin(GL_QUADS);
-                glTexCoord2f(0, 1);
-                glVertex2f(iter->left, iter->bottom);
-                glTexCoord2f(1, 1);
-                glVertex2f(iter->left + iter->xSize, iter->bottom);
-                glTexCoord2f(1, 0);
-                glVertex2f(iter->left + iter->xSize, iter->bottom + iter->ySize);
-                glTexCoord2f(0, 0);
-                glVertex2f(iter->left, iter->bottom + iter->ySize);
-                glEnd();
+                (*iter)->render(rc);
+                clog << "ui elem " << (*iter)->getRect().x << '\n';
             }
         }
-
-        glPopMatrix();
     }
-#endif
+#endif    
 
     // Show logo at start
     if (logoTexture != NULL)
@@ -3867,7 +3927,7 @@ bool CelestiaCore::initRenderer()
     {
         logoTexture = LoadTextureFromFile(string("textures") + "/" + config->logoTextureFile);
     }
-
+    
     return true;
 }
 
