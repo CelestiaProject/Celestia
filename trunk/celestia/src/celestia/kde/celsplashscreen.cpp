@@ -56,7 +56,7 @@ void CelSplashScreen::drawContents(QPainter *painter) {
 }
 
 void CelSplashScreen::update(const string& _message) {
-    status.setContent(_message);
+    status.setContent(_message.c_str());
     repaint();
 }
 
