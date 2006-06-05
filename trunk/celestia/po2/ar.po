@@ -1,0 +1,373 @@
+# Arabic Translation.
+# Copyright (C) 2006 Chris Laurel
+# This file is distributed under the same license as the PACKAGE package.
+# 1.Ali Ibrahim Al-Khudair, 2006.
+# 2.Hussain Al-Ghamdi, 2006 
+# 3.Abdullah Al-Ghamdi,2006
+msgid ""
+msgstr ""
+"Project-Id-Version: ar \n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-22 10:03+0100\n"
+"PO-Revision-Date: 2006-06-05 22:00+0100\n"
+"Last-Translator: Ali Al-Khudair <saudilink@lycos.com>\n"
+"Language-Team: Arabic <ar@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/constellations.cpp:1
+msgid "Andromeda"
+msgstr "أندروميدا"
+
+#: data/constellations.cpp:2
+msgid "Antlia"
+msgstr "أنتليا"
+
+#: data/constellations.cpp:3
+msgid "Apus"
+msgstr "أبس"
+
+#: data/constellations.cpp:4
+msgid "Aquarius"
+msgstr "برج الدلو"
+
+#: data/constellations.cpp:5
+msgid "Aquila"
+msgstr "أكويلا"
+
+#: data/constellations.cpp:6
+msgid "Ara"
+msgstr "ايرا"
+
+#: data/constellations.cpp:7
+msgid "Aries"
+msgstr "برج الحمل"
+
+#: data/constellations.cpp:8
+msgid "Auriga"
+msgstr "أورجا"
+
+#: data/constellations.cpp:9
+msgid "Boötes"
+msgstr "بيوتس"
+
+#: data/constellations.cpp:10
+msgid "Caelum"
+msgstr "كيوم"
+
+#: data/constellations.cpp:11
+msgid "Camelopardalis"
+msgstr "كاملوبارداليس"
+
+#: data/constellations.cpp:12
+msgid "Cancer"
+msgstr "سرطان"
+
+#: data/constellations.cpp:13
+msgid "Canes Venatici"
+msgstr "كانز فيناتيشي"
+
+#: data/constellations.cpp:14
+msgid "Canis Major"
+msgstr "كانيس كبير"
+
+#: data/constellations.cpp:15
+msgid "Canis Minor"
+msgstr "كانيس صغير"
+
+#: data/constellations.cpp:16
+msgid "Capricornus"
+msgstr "كابريكورنس"
+
+#: data/constellations.cpp:17
+msgid "Carina"
+msgstr "كاراينا"
+
+#: data/constellations.cpp:18
+msgid "Cassiopeia"
+msgstr "كاسيوبيا"
+
+#: data/constellations.cpp:19
+msgid "Centaurus"
+msgstr "سنتوراس"
+
+#: data/constellations.cpp:20
+msgid "Cepheus"
+msgstr "سيفيوس"
+
+#: data/constellations.cpp:21
+msgid "Cetus"
+msgstr "سيتس"
+
+#: data/constellations.cpp:22
+msgid "Chamaeleon"
+msgstr "شاميليون"
+
+#: data/constellations.cpp:23
+msgid "Circinus"
+msgstr "سيريسنس"
+
+#: data/constellations.cpp:24
+msgid "Columba"
+msgstr "كولومبا"
+
+#: data/constellations.cpp:25
+msgid "Coma Berenices"
+msgstr "كوما برانيسيز"
+
+#: data/constellations.cpp:26
+msgid "Corona Australis"
+msgstr "كورونا أوسترالس"
+
+#: data/constellations.cpp:27
+msgid "Corona Borealis"
+msgstr "كورونا بوريلس"
+
+#: data/constellations.cpp:28
+msgid "Corvus"
+msgstr "كورفس"
+
+#: data/constellations.cpp:29
+msgid "Crater"
+msgstr "فوهة بركان"
+
+#: data/constellations.cpp:30
+msgid "Crux"
+msgstr "جوهره"
+
+#: data/constellations.cpp:31
+msgid "Cygnus"
+msgstr "سيقنس"
+
+#: data/constellations.cpp:32
+msgid "Delphinus"
+msgstr "ديلفينس"
+
+#: data/constellations.cpp:33
+msgid "Dorado"
+msgstr "دورادو"
+
+#: data/constellations.cpp:34
+msgid "Draco"
+msgstr "دريكو"
+
+#: data/constellations.cpp:35
+msgid "Equuleus"
+msgstr "اكيولياس"
+
+#: data/constellations.cpp:36
+msgid "Eridanus"
+msgstr "اريدنس"
+
+#: data/constellations.cpp:37
+msgid "Fornax"
+msgstr "فورناكس"
+
+#: data/constellations.cpp:38
+msgid "Gemini"
+msgstr "الجوزاء"
+
+#: data/constellations.cpp:39
+msgid "Grus"
+msgstr "قرس"
+
+#: data/constellations.cpp:40
+msgid "Hercules"
+msgstr "هركليز"
+
+#: data/constellations.cpp:41
+msgid "Horologium"
+msgstr "هورولوجم"
+
+#: data/constellations.cpp:42
+msgid "Hydra"
+msgstr ""
+
+#: data/constellations.cpp:43
+msgid "Hydrus"
+msgstr "هايدرس"
+
+#: data/constellations.cpp:44
+msgid "Indus"
+msgstr "اندس"
+
+#: data/constellations.cpp:45
+msgid "Lacerta"
+msgstr "لاسيرتا"
+
+#: data/constellations.cpp:46
+msgid "Leo"
+msgstr "برج الأسد"
+
+#: data/constellations.cpp:47
+msgid "Leo Minor"
+msgstr "برج الأسد الصغير"
+
+#: data/constellations.cpp:48
+msgid "Lepus"
+msgstr "ليبس"
+
+#: data/constellations.cpp:49
+msgid "Libra"
+msgstr "برج الميزان"
+
+#: data/constellations.cpp:50
+msgid "Lupus"
+msgstr "داء الذئبة"
+
+#: data/constellations.cpp:51
+msgid "Lynx"
+msgstr "الوشق"
+
+#: data/constellations.cpp:52
+msgid "Lyra"
+msgstr "لايرا"
+
+#: data/constellations.cpp:53
+msgid "Mensa"
+msgstr "منسا"
+
+#: data/constellations.cpp:54
+msgid "Microscopium"
+msgstr "ميكروسكوبيوم"
+
+#: data/constellations.cpp:55
+msgid "Monoceros"
+msgstr "مونوسيروس"
+
+#: data/constellations.cpp:56
+msgid "Musca"
+msgstr "موكا"
+
+#: data/constellations.cpp:57
+msgid "Norma"
+msgstr "نورما"
+
+#: data/constellations.cpp:58
+msgid "Octans"
+msgstr "أوكتنز"
+
+#: data/constellations.cpp:59
+msgid "Ophiuchus"
+msgstr "أوفيتشيس"
+
+#: data/constellations.cpp:60
+msgid "Orion"
+msgstr "أوراين"
+
+#: data/constellations.cpp:61
+msgid "Pavo"
+msgstr "بافو"
+
+#: data/constellations.cpp:62
+msgid "Pegasus"
+msgstr "بيقاسوس"
+
+#: data/constellations.cpp:63
+msgid "Perseus"
+msgstr "برسيوس"
+
+#: data/constellations.cpp:64
+msgid "Phoenix"
+msgstr "العنقاء"
+
+#: data/constellations.cpp:65
+msgid "Pictor"
+msgstr "بكتور"
+
+#: data/constellations.cpp:66
+msgid "Pisces"
+msgstr "برج الحوت"
+
+#: data/constellations.cpp:67
+msgid "Piscis Austrinus"
+msgstr "بيسس أوسترينوس"
+
+#: data/constellations.cpp:68
+msgid "Puppis"
+msgstr "بوبيس"
+
+#: data/constellations.cpp:69
+msgid "Pyxis"
+msgstr "بايكسوس"
+
+#: data/constellations.cpp:70
+msgid "Reticulum"
+msgstr "ريتيكيولم"
+
+#: data/constellations.cpp:71
+msgid "Sagitta"
+msgstr "ساجيتا"
+
+#: data/constellations.cpp:72
+msgid "Sagittarius"
+msgstr "برج القوس"
+
+#: data/constellations.cpp:73
+msgid "Scorpius"
+msgstr "برج العقرب"
+
+#: data/constellations.cpp:74
+msgid "Sculptor"
+msgstr "النحات"
+
+#: data/constellations.cpp:75
+msgid "Scutum"
+msgstr "سكيوتم"
+
+#: data/constellations.cpp:76
+msgid "Serpens Caput"
+msgstr "سيربنس كابوت"
+
+#: data/constellations.cpp:77
+msgid "Serpens Cauda"
+msgstr "سيربنس كودا"
+
+#: data/constellations.cpp:78
+msgid "Sextans"
+msgstr "سيكستانس"
+
+#: data/constellations.cpp:79
+msgid "Taurus"
+msgstr "برج الثور"
+
+#: data/constellations.cpp:80
+msgid "Telescopium"
+msgstr "تيليسكوبيام"
+
+#: data/constellations.cpp:81
+msgid "Triangulum"
+msgstr "ترايانقيولم"
+
+#: data/constellations.cpp:82
+msgid "Triangulum Australe"
+msgstr "ترايانقيولم أوستريل"
+
+#: data/constellations.cpp:83
+msgid "Tucana"
+msgstr "توكانا"
+
+#: data/constellations.cpp:84
+msgid "Ursa Major"
+msgstr "الدب الأكبر"
+
+#: data/constellations.cpp:85
+msgid "Ursa Minor"
+msgstr "الدب الأصغر"
+
+#: data/constellations.cpp:86
+msgid "Vela"
+msgstr "فيلا"
+
+#: data/constellations.cpp:87
+msgid "Virgo"
+msgstr "برج العذراء"
+
+#: data/constellations.cpp:88
+msgid "Volans"
+msgstr "فولانز"
+
+#: data/constellations.cpp:89
+msgid "Vulpecula"
+msgstr "فيباكيولا"
