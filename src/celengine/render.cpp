@@ -1388,7 +1388,7 @@ void Renderer::render(const Observer& observer,
 {
     // Get the observer's time
     double now = observer.getTime();
-
+    
     // Compute the size of a pixel
     setFieldOfView(radToDeg(observer.getFOV()));
     pixelSize = calcPixelSize(fov, (float) windowHeight);
@@ -1758,8 +1758,8 @@ void Renderer::render(const Observer& observer,
                 if (!convex)
                 {
                     iter->farZ = center.z - radius;
-                    if (iter->farZ / iter->nearZ > MaxFarNearRatio)
-                        iter->nearZ = iter->farZ / MaxFarNearRatio;
+                    if (iter->farZ / iter->nearZ > MaxFarNearRatio * 0.5f)
+                        iter->nearZ = iter->farZ / (MaxFarNearRatio * 0.5f);
                 }
                 else
                 {
@@ -1811,7 +1811,7 @@ void Renderer::render(const Observer& observer,
         sort(depthSortedLabels.begin(), depthSortedLabels.end());
 
         int nEntries = renderList.size();
-
+#define DEBUG_COALESCE 0
         // Determine how to split up the depth buffer.  Typically, each body 
         // with an apparent size greater than one pixel is allocated its own
         // depth buffer range.  However, this will not correctly handle
@@ -1850,7 +1850,9 @@ void Renderer::render(const Observer& observer,
                         // one.
                         float farthest = min(lastFar, renderList[i].farZ);
                         float nearest = max(lastNear, renderList[i].nearZ);
-                        static int blah = 0;
+#if DEBUG_COALESCE                        
+                        static int dbgCoalesceCount = 0;
+#endif                        
 
                         // Need just a bit of slack in the farthest/nearest
                         // ratio test.
@@ -1867,7 +1869,7 @@ void Renderer::render(const Observer& observer,
 #if DEBUG_COALESCE
                             clog << "Coalesce #" << i << ": " <<
                                 renderList[i].body->getName()  << ", " <<
-                                nearest << ", " << farthest << " -- " << blah++ << '\n';
+                                nearest << ", " << farthest << " -- " << dbgCoalesceCount++ << '\n';
 #endif
                             lastNear = nearest;
                             lastFar = farthest;
@@ -1883,7 +1885,7 @@ void Renderer::render(const Observer& observer,
 #if DEBUG_COALESCE
                             clog << "Coalesce #" << i << ": " <<
                                 renderList[i].body->getName() << " failed! " <<
-                                nearest << ", " << farthest << " -- " << blah++ << '\n';
+                                nearest << ", " << farthest << " -- " << dbgCoalesceCount++ << '\n';
 #endif
                         }
                     }
