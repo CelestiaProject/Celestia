@@ -124,6 +124,11 @@
 
 - (BOOL) isFlipped {return YES;}
 
+- (void) viewDidMoveToWindow
+{
+    [[self window] setAcceptsMouseMovedEvents: YES];
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     CelestiaSelection* selection;
@@ -189,30 +194,12 @@
 //    NSLog(@"keyUp: %@",theEvent);
 }
 
-/*
-- (void) _updateModifierFlags: (NSEvent*)theEvent
-{
-    register unsigned int	eventFlags = [theEvent modifierFlags];
-
-    _modifierFlags = 0;
-
-    if(eventFlags & NSControlKeyMask)
-        _modifierFlags |= GLUT_ACTIVE_CTRL;
-
-    if(eventFlags & NSShiftKeyMask)
-        _modifierFlags |= GLUT_ACTIVE_SHIFT;
-
-    if(eventFlags & NSAlternateKeyMask)
-        _modifierFlags |= GLUT_ACTIVE_ALT;
-}
-*/
 - (void) mouseDown: (NSEvent*)theEvent
 {
     [ [self window] makeFirstResponder: self ];
 
      NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-//    NSLog(@"mouseDown: %@",theEvent);
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
 }
 
@@ -220,9 +207,9 @@
 {
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-//    NSLog(@"mouseUp: %@", theEvent);
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
 }
+
 - (void) mouseDragged: (NSEvent*) theEvent
 {
     if ( [theEvent modifierFlags] & NSAlternateKeyMask )
@@ -230,26 +217,29 @@
         [self rightMouseDragged: theEvent];
         return;
     }
-    {
-//    NSSize delta = [self convertSize:NSMakeSize([theEvent deltaX], [theEvent deltaY]) fromView: nil];
+
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-//    NSLog(@"mouseDragged: %@",theEvent);
     [appCore mouseMove:NSMakePoint([theEvent deltaX], [theEvent deltaY]) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
-//    [appCore mouseMove:NSMakePoint(delta.width, delta.height) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
-    }
 }
+
+- (void) mouseMoved: (NSEvent*)theEvent
+{
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+    [appCore mouseMove: location];
+}
+
 - (void) rightMouseDown: (NSEvent*)theEvent
 {
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-//    NSLog(@"rightMouseDown: %@",theEvent);
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
 }
+
 - (void) rightMouseUp: (NSEvent*)theEvent
 {
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-//    NSLog(@"rightMouseUp: %@", theEvent);
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
     if([theEvent clickCount] > 0)
         [super rightMouseDown:theEvent];    //...Force context menu to appear only on clicks (not drags)
@@ -257,12 +247,8 @@
 
 - (void) rightMouseDragged: (NSEvent*) theEvent
 {
-    //NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
-    //NSSize delta = [self convertSize:NSMakeSize([theEvent deltaX], [theEvent deltaY]) fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-//    NSLog(@"rightMouseDragged: %@",theEvent);
     [appCore mouseMove:NSMakePoint([theEvent deltaX], [theEvent deltaY]) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
-//    [appCore mouseMove:NSMakePoint(delta.width, delta.height) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
 }
 
 - (void) scrollWheel: (NSEvent*)theEvent

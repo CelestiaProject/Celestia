@@ -36,6 +36,7 @@ class CelestiaCore;
 -(void)mouseWheel:(float)motion modifiers:(int)modifiers;
 -(void)mouseButtonDown:(NSPoint)coord modifiers:(int)modifiers;
 -(void)mouseButtonUp:(NSPoint)coord modifiers:(int)modifiers;
+-(void)mouseMove:(NSPoint)coord;
 -(void)mouseMove:(NSPoint)delta modifiers:(int)modifiers;
 -(void)joystickAxis:(int)axis value:(float)value;
 -(void)joystickButton:(int)button state:(BOOL)state;
