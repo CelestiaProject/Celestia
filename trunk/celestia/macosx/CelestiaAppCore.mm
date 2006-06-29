@@ -21,14 +21,15 @@
 #import "CelestiaController.h"
 #include "celestiacore.h"
 #include "qtcapture.h"
+#import <Carbon/Carbon.h>
 
 class MacOSXAlerter : public CelestiaCore::Alerter
 {
 public:
     MacOSXAlerter() {};
-    ~MacOSXAlerter() {};
+    virtual ~MacOSXAlerter() {};
 
-    void fatalError(const std::string& msg)
+    virtual void fatalError(const std::string& msg)
     {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         NSLog(@"alerter fatalError!");
@@ -50,6 +51,59 @@ public:
         [[[CelestiaController shared] valueForKey: @"splashWindowController"] performSelector: @selector(setStatusText:) withObject: [NSString stringWithStdString: msg]];
         [pool release];
     };
+};
+
+class MacOSXCursorHandler : public CelestiaCore::CursorHandler
+{
+public:
+    MacOSXCursorHandler() : cursor(kThemeArrowCursor),
+        shape(CelestiaCore::ArrowCursor) {};
+    virtual ~MacOSXCursorHandler() {};
+    virtual void setCursorShape(CelestiaCore::CursorShape aShape)
+    {
+        ThemeCursor changedCursor;
+
+        switch (aShape)
+        {
+        case CelestiaCore::SizeVerCursor:
+            changedCursor =
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
+            kThemeResizeUpDownCursor
+#else
+            kThemeClosedHandCursor
+#endif
+            ;
+            break;
+        case CelestiaCore::SizeHorCursor:
+            changedCursor =
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
+            kThemeResizeLeftRightCursor
+#else
+            kThemeClosedHandCursor
+#endif
+            ;
+            break;
+        default:
+            changedCursor = kThemeArrowCursor;
+            break;                
+        }
+
+        if (changedCursor != cursor)
+        {
+            SetThemeCursor(changedCursor);
+            cursor = changedCursor;
+            shape = aShape;
+        }
+    };
+
+    virtual CelestiaCore::CursorShape getCursorShape() const
+    {
+        return shape;
+    };
+    
+private:
+    ThemeCursor cursor;
+    CelestiaCore::CursorShape shape;
 };
 
 
@@ -231,6 +285,8 @@ static NSMutableDictionary* tagDict;
     self = [super init];
     appCore = new CelestiaCore();
     appCore->setAlerter(new MacOSXAlerter());
+    appCore->setCursorHandler(new MacOSXCursorHandler());
+    
     contextMenuCallbackInvocation = NULL;
     _destinations = nil;
     return self;
@@ -253,6 +309,13 @@ static NSMutableDictionary* tagDict;
         contextMenuCallbackInvocation = nil;
     }
     if (appCore != NULL) {
+        // appCore doesn't own the custom alerter and cursor
+        // handler for some reason so we assume responsibility
+        // for cleanup
+        if (appCore->getAlerter())
+            delete appCore->getAlerter();
+        if (appCore->getCursorHandler())
+            delete appCore->getCursorHandler();
         delete appCore;
         appCore = NULL;
     }
@@ -410,6 +473,11 @@ static NSMutableDictionary* tagDict;
 -(void)mouseButtonUp:(NSPoint)coord modifiers:(int)modifiers
 {
     appCore->mouseButtonUp(coord.x,coord.y,modifiers);
+}
+
+-(void)mouseMove:(NSPoint)coord
+{
+    appCore->mouseMove(coord.x,coord.y);
 }
 
 -(void)mouseMove:(NSPoint)delta modifiers:(int)modifiers
