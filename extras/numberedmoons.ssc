@@ -1,5 +1,5 @@
 # Additional moons of the planets.
-# Version 1.24 (2006 Feb 18)
+# Version 1.25 (2006 June 29)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -1512,6 +1512,213 @@
 	Albedo 0.06
 }
 
+"2004S19" "Sol/Saturn" # MPEC 2006-M44
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		4
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		914.29
+	SemiMajorAxis	18168300
+	Eccentricity	0.3604062
+	Inclination	151.827
+	AscendingNode	248.953
+	ArgOfPericenter 268.525     
+	MeanAnomaly      89.589              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006S1" "Sol/Saturn" # MPEC 2006-M45
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		972.41
+	SemiMajorAxis	18930200
+	Eccentricity	0.1302807
+	Inclination	159.579
+	AscendingNode	178.730
+	ArgOfPericenter 138.788     
+	MeanAnomaly     241.766              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006S2" "Sol/Saturn" # MPEC 2006-M48
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3.5
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1245.06
+	SemiMajorAxis	22321200
+	Eccentricity	0.3399560
+	Inclination	154.373
+	AscendingNode	115.635
+	ArgOfPericenter 181.696     
+	MeanAnomaly     209.511              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006S3" "Sol/Saturn" # MPEC 2006-M45
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1142.37
+	SemiMajorAxis	21076300
+	Eccentricity	0.4709957
+	Inclination	150.165
+	AscendingNode	 38.575
+	ArgOfPericenter 190.856     
+	MeanAnomaly     100.635              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006S4" "Sol/Saturn" # MPEC 2006-M45
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		906.56
+	SemiMajorAxis	18065700
+	Eccentricity	0.3735237
+	Inclination	175.914
+	AscendingNode	235.009
+	ArgOfPericenter 141.501     
+	MeanAnomaly     105.502              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006S5" "Sol/Saturn" # MPEC 2006-M48
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1300.95
+	SemiMajorAxis	22984300
+	Eccentricity	0.1423235
+	Inclination	171.183
+	AscendingNode	197.088
+	ArgOfPericenter  46.810     
+	MeanAnomaly     218.554              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006S6" "Sol/Saturn" # MPEC 2006-M45
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		943.78
+	SemiMajorAxis	18556900
+	Eccentricity	0.1917531
+	Inclination	163.871
+	AscendingNode	231.969
+	ArgOfPericenter 249.876     
+	MeanAnomaly     269.166              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006S7" "Sol/Saturn" # MPEC 2006-M45
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		1238.57
+	SemiMajorAxis	22243600
+	Eccentricity	0.3679795
+	Inclination	169.476
+	AscendingNode	 58.175
+	ArgOfPericenter 329.067     
+	MeanAnomaly      50.799              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2006S8" "Sol/Saturn" # MPEC 2006-M48
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2453800.5	# 2006 Mar 6
+	Period		862.37
+	SemiMajorAxis	17473800
+	Eccentricity	0.4221689
+	Inclination	161.837
+	AscendingNode	121.645
+	ArgOfPericenter 206.421     
+	MeanAnomaly     229.323              
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
 # Additional moons of Uranus
 
 "Trinculo" "Sol/Uranus"
@@ -1720,7 +1927,7 @@
 # "Orbits and photometry of Pluto's satellites: Charon, S/2005 P1
 # and S/2005 P2" Buie et al. http://arxiv.org/abs/astro-ph/0512491
 
-"2005P1" "Sol/Pluto"
+"Hydra" "Sol/Pluto"
 {
 	Texture	 	"asteroid.jpg" # "spectrally neutral"
 	Mesh		"asteroid.cms"
@@ -1743,10 +1950,11 @@
 	Albedo 0.35 # estimate, based on Charon
 }
 
-"2005P2" "Sol/Pluto"
+"Nix" "Sol/Pluto"
 {
 	Texture	 	"asteroid.jpg"
-	Color   [ 0.65 0.45 0.35 ] # "slightly more red than Pluto"
+#	Color   [ 0.65 0.45 0.35 ] 	# reddish shade initially reported, 
+					# but not subsequently detected
 	BlendTexture true
 	Mesh		"asteroid.cms"
 	Radius		22 # for 35% albedo
@@ -1767,3 +1975,4 @@
 
 	Albedo 0.35 # estimate, based on Charon
 }
+
