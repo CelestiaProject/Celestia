@@ -2083,6 +2083,10 @@ void CelestiaCore::tick()
 
     currentTime += dt;
 
+    // synchronize timeScale if it was changed by a script:
+    if (!paused && (timeScale != sim->getTimeScale()))
+        timeScale = sim->getTimeScale();
+
     // Mouse wheel zoom
     if (zoomMotion != 0.0f)
     {
