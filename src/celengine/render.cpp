@@ -3330,6 +3330,8 @@ static void setLightParameters_GLSL(CelestiaGLProgram& prog,
             halfAngle_obj.normalize();
         prog.lights[i].halfVector = halfAngle_obj;
     }
+    
+    prog.ambientColor = ls.ambientColor;
 }
 
 
@@ -3379,15 +3381,6 @@ static void renderModelDefault(Model* model,
     glMaterialfv(GL_FRONT, GL_EMISSION, black);
     glMaterialfv(GL_FRONT, GL_SPECULAR, black);
     glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
-}
-
-
-static void renderModel_GLSL(Model* Model,
-			     const LightingState& ls,
-			     float radius,
-			     const Mat4f& planetMat)
-{
-    glDisable(GL_LIGHTING);
 }
 
 
@@ -4021,10 +4014,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
 {
     Texture* textures[4] = { NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
-    //VertexProcessor* vproc = context.getVertexProcessor();
-    //assert(vproc != NULL);
 
-    //vproc->disable();
     glDisable(GL_LIGHTING);
 
     ShaderProperties shadprop;
@@ -4116,10 +4106,14 @@ static void renderSphere_GLSL(const RenderInfo& ri,
 
     setLightParameters_GLSL(*prog, shadprop, ls,
                             ri.color, ri.specularColor);
-
+    
+    prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
-    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue());
+
+    if (ri.nightTex != NULL)
+    {
+        prog->nightTexMin = 0.0f;
+    }
     
     if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
     {
@@ -4142,6 +4136,34 @@ static void renderSphere_GLSL(const RenderInfo& ri,
                       textures[0], textures[1], textures[2], textures[3]);
 
     glx::glUseProgramObjectARB(0);
+}
+
+
+static void renderModel_GLSL(Model* model,
+                             const RenderInfo& ri,
+                             ResourceHandle texOverride,
+                             const LightingState& ls,
+                             float radius,
+                             const Mat4f& planetMat)
+{
+    glDisable(GL_LIGHTING);
+    
+    GLSL_RenderContext rc(ls, radius, planetMat);
+    
+    // Handle material override; a texture specified in an ssc file will override
+    // all materials specified in the model file.
+    if (texOverride != InvalidResource)
+    {
+        Mesh::Material m;
+        m.diffuse = ri.color;
+        m.maps[Mesh::DiffuseMap] = texOverride;
+        rc.makeCurrent(m);
+        rc.lock();
+    }
+
+    model->render(rc);
+
+    glx::glUseProgramObjectARB(0);    
 }
 
 
@@ -5215,6 +5237,8 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
     ls.eyeDir_obj = (Point3f(0.0f, 0.0f, 0.0f) - objPosition_eye) * m;
     ls.eyeDir_obj.normalize();
 
+    ls.ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
+    
 #if 0
     // Old code: linear scaling approach
 
@@ -5439,8 +5463,34 @@ void Renderer::renderObject(Point3f pos,
     {
         // This is a model loaded from a file
         model = GetModelManager()->find(obj.model);
+#if 1
         if (model != NULL)
-            renderModelDefault(model, ri, lit);
+        {
+            switch(context->getRenderPath())
+            {
+            case GLContext::GLPath_GLSL:
+                {
+                    ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
+                    renderModel_GLSL(model, ri, texOverride, ls, obj.radius, planetMat);
+                    {
+                        for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
+                        {
+                            glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+                            glDisable(GL_TEXTURE_2D);
+                        }
+                        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+                        glEnable(GL_TEXTURE_2D);
+                        glx::glUseProgramObjectARB(0);    
+                    }
+                }
+                break;
+                
+            default:
+                renderModelDefault(model, ri, lit);
+                break;
+            }
+        }
+#endif
     }
 
     if (obj.rings != NULL && distance <= obj.rings->innerRadius)
@@ -5863,6 +5913,10 @@ void Renderer::renderPlanet(Body& body,
                             lights);
         assert(lights.nLights < MaxLights);
 
+        lights.ambientColor = Vec3f(ambientColor.red(),
+                                    ambientColor.green(),
+                                    ambientColor.blue());
+                                    
         {
             // Clear out the list of eclipse shadows
             for (unsigned int li = 0; li < lights.nLights; li++)
