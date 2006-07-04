@@ -7,11 +7,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <vector>
 #include "rendcontext.h"
 #include "texmanager.h"
 #include "gl.h"
 #include "glext.h"
 #include "vecgl.h"
+
+using namespace std;
 
 
 static Mesh::Material defaultMaterial;
@@ -179,11 +182,14 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glDepthMask(GL_FALSE);
+                //glEnable(GL_ALPHA_TEST);
+                //glAlphaFunc(GL_GEQUAL, 0.01f);
             }
             else
             {
                 glDisable(GL_BLEND);
                 glDepthMask(GL_TRUE);
+                //glDisable(GL_ALPHA_TEST);
             }
         }
 
@@ -353,30 +359,160 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 }
 
 
-GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls) :
-    lightingState(ls)
+GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform) :
+    lightingState(ls),
+    blendOn(false),
+    objRadius(_objRadius),
+    xform(_xform)
 {
+    initLightingEnvironment();
 }
 
 
-GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls,
-				       const Mesh::Material* material) :
-    lightingState(ls)
+void
+GLSL_RenderContext::initLightingEnvironment()
 {
+    // Set the light and shadow environment, which is constant for the entire model.
+    // The material properties will be set per mesh.
+    shaderProps.nLights = min(lightingState.nLights, MaxShaderLights);
+
+    // Set the shadow information.
+    // Track the total number of shadows; if there are too many, we'll have
+    // to fall back to multipass.
+    unsigned int totalShadows = 0;
+    for (unsigned int li = 0; li < lightingState.nLights; li++)
+    {
+        if (lightingState.shadows[li] && !lightingState.shadows[li]->empty())
+        {
+            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, lightingState.shadows[li]->size());
+            shaderProps.setShadowCountForLight(li, nShadows);
+            totalShadows += nShadows;
+        }
+    }
+    
+    clog << "totalShadows: " << totalShadows << '\n';
 }
   
+
+void
+GLSL_RenderContext::setLightingParameters(CelestiaGLProgram& prog, Color materialDiffuse, Color materialSpecular)
+{
+    unsigned int nLights = min(MaxShaderLights, lightingState.nLights);
+
+    Vec3f diffuseColor(materialDiffuse.red(),
+                       materialDiffuse.green(),
+                       materialDiffuse.blue());
+    Vec3f specularColor(materialSpecular.red(),
+                        materialSpecular.green(),
+                        materialSpecular.blue());
+    
+    for (unsigned int i = 0; i < nLights; i++)
+    {
+        const DirectionalLight& light = lightingState.lights[i];
+
+        Vec3f lightColor = Vec3f(light.color.red(),
+                                 light.color.green(),
+                                 light.color.blue()) * light.irradiance;
+        prog.lights[i].direction = light.direction_obj;
+
+        if (shaderProps.usesShadows() ||
+            shaderProps.usesFragmentLighting() ||
+            shaderProps.lightModel == ShaderProperties::RingIllumModel)
+        {
+            prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
+                                           lightColor.y * diffuseColor.y,
+                                           lightColor.z * diffuseColor.z);
+            if (shaderProps.lightModel == ShaderProperties::SpecularModel)
+            {
+                prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
+                                                   lightColor.y * specularColor.y,
+                                                   lightColor.z * specularColor.z);
+            }
+        }
+        else
+        {
+            prog.lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
+                                            lightColor.y * diffuseColor.y,
+                                            lightColor.z * diffuseColor.z);
+        }
+        
+        prog.lights[i].specular = Vec3f(lightColor.x * specularColor.x,
+                                         lightColor.y * specularColor.y,
+                                         lightColor.z * specularColor.z);
+
+        Vec3f halfAngle_obj = lightingState.eyeDir_obj + light.direction_obj;
+        if (halfAngle_obj.length() != 0.0f)
+            halfAngle_obj.normalize();
+        prog.lights[i].halfVector = halfAngle_obj;
+    }
+    
+    prog.eyePosition = lightingState.eyePos_obj;
+    prog.ambientColor = lightingState.ambientColor;
+}
+
+
+void
+GLSL_RenderContext::setShadowParameters(CelestiaGLProgram& prog)
+{
+    // TODO: this code is largely a copy of some code in render.cpp; we should
+    // have just a single instance of the code.
+    for (unsigned int li = 0;
+         li < min(lightingState.nLights, MaxShaderLights);
+         li++)
+    {
+        vector<EclipseShadow>* shadows = lightingState.shadows[li];
+
+        if (shadows != NULL)
+        {
+            unsigned int nShadows = min((size_t) MaxShaderShadows, 
+                                        shadows->size());
+
+            for (unsigned int i = 0; i < nShadows; i++)
+            {
+                EclipseShadow& shadow = shadows->at(i);
+                CelestiaGLProgramShadow& shadowParams = prog.shadows[li][i];
+
+                float R2 = 0.25f;
+                float umbra = shadow.umbraRadius / shadow.penumbraRadius;
+                umbra = umbra * umbra;
+                if (umbra < 0.0001f)
+                    umbra = 0.0001f;
+                else if (umbra > 0.99f)
+                    umbra = 0.99f;
+
+                float umbraRadius = R2 * umbra;
+                float penumbraRadius = R2;
+                float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
+                shadowParams.bias = shadowBias;
+                shadowParams.scale = -shadowBias / umbraRadius;
+
+                // Compute the transformation to use for generating texture
+                // coordinates from the object vertices.
+                Point3f origin = shadow.origin * xform;
+                Vec3f dir = shadow.direction * xform;
+                float scale = objRadius / shadow.penumbraRadius;
+                Vec3f axis = Vec3f(0, 1, 0) ^ dir;
+                float angle = (float) acos(Vec3f(0, 1, 0) * dir);
+                axis.normalize();
+                Mat4f mat = Mat4f::rotation(axis, -angle);
+                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+                float sw = (Point3f(0, 0, 0) - origin) * sAxis / objRadius + 0.5f;
+                float tw = (Point3f(0, 0, 0) - origin) * tAxis / objRadius + 0.5f;
+                shadowParams.texGenS = Vec4f(sAxis.x, sAxis.y, sAxis.z, sw);
+                shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
+            }
+        }
+    }
+}
 
 
 void
 GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 {
-#if 0
-    ShaderProperties shadprop;
-
     Texture* textures[4] = { NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
-
-    shadprop.nLights = min(ls.nLights, MaxShaderLights);
 
     // Set up the textures used by this object
     Texture* baseTex = NULL;
@@ -384,37 +520,40 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     Texture* specTex = NULL;
     Texture* emissiveTex = NULL;
 
+    shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
+    shaderProps.lightModel = ShaderProperties::DiffuseModel;
+    
     if (m.maps[Mesh::DiffuseMap] != InvalidResource)
     {
         baseTex = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
         if (baseTex != NULL)
         {
-            shadprop.texUsage = ShaderProperties::DiffuseTexture;
+            shaderProps.texUsage |= ShaderProperties::DiffuseTexture;
             textures[nTextures++] = baseTex;
         }
     }
 
     if (m.maps[Mesh::NormalMap] != InvalidResource)
     {
-        bumpTex = GetTextureManger()->find(m.maps[Mesh::NormalMap]);
+        bumpTex = GetTextureManager()->find(m.maps[Mesh::NormalMap]);
         if (bumpTex != NULL)
         {
-            shadprop.texUsage |= ShaderProperties::NormalTexture;
+            shaderProps.texUsage |= ShaderProperties::NormalTexture;
             textures[nTextures++] = bumpTex;
         }
     }
 
     if (m.specular != Color::Black)
     {
-        shadprop.lightModel = ShaderProperties::SpecularModel;
+        shaderProps.lightModel = ShaderProperties::SpecularModel;
         specTex = GetTextureManager()->find(m.maps[Mesh::SpecularMap]);
         if (specTex == NULL)
         {
-            shadprop.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
+            shaderProps.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
         }
         else
         {
-            shadprop.texUsage |= ShaderProperties::SpecularTexture;
+            shaderProps.texUsage |= ShaderProperties::SpecularTexture;
             textures[nTextures++] = specTex;
         }
     }
@@ -424,85 +563,40 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         emissiveTex = GetTextureManager()->find(m.maps[Mesh::EmissiveMap]);
         if (emissiveTex != NULL)
         {
-            shadprop.texUsage |= ShaderProperties::NightTexture;
+            shaderProps.texUsage |= ShaderProperties::NightTexture;
             textures[nTextures++] = emissiveTex;
         }
     }
 
-#if 0    
-    // Set the shadow information.
-    // Track the total number of shadows; if there are too many, we'll have
-    // to fall back to multipass.
-    unsigned int totalShadows = 0;
-    for (unsigned int li = 0; li < ls.nLights; li++)
-    {
-        if (ls.shadows[li] && !ls.shadows[li]->empty())
-        {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, ls.shadows[li]->size());
-            shadprop.setShadowCountForLight(li, nShadows);
-            totalShadows += nShadows;
-        }
-    }
-#endif
-
     // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
     if (prog == NULL)
         return;
 
     prog->use();
 
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
+    for (unsigned int i = 0; i < nTextures; i++)
+    {
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glEnable(GL_TEXTURE_2D);
+        textures[i]->bind();
+    }
+    
+    setLightingParameters(*prog, m.diffuse, m.specular);
+    if (shaderProps.shadowCounts != 0)    
+        setShadowParameters(*prog);
 
     prog->shininess = m.specularPower;
-    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue());
+    //prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(), ri.ambientColor.blue());
+    // TODO: handle emissive color
     
-    if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
+    if (emissiveTex != NULL)
     {
-        float ringWidth = rings->outerRadius - rings->innerRadius;
-        prog->ringRadius = rings->innerRadius / radius;
-        prog->ringWidth = 1.0f / (ringWidth / radius);
+        prog->nightTexMin = 1.0f;
     }
-
-    if (shadprop.shadowCounts != 0)    
-        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
-
-    glColor(ri.color);
-
-    unsigned int attributes = LODSphereMesh::Normals;
-    if (ri.bumpTex != NULL)
-        attributes |= LODSphereMesh::Tangents;
-    lodSphere->render(context,
-                      attributes,
-                      frustum, ri.pixWidth,
-                      textures[0], textures[1], textures[2], textures[3]);
-
-    glx::glUseProgramObjectARB(0);
-
-#if 0
-    Texture* t = NULL;
-    if (m.maps[Mesh::DiffuseMap] != InvalidResource)
-        t = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
-
-    if (t == NULL)
-    {
-        glDisable(GL_TEXTURE_2D);
-    }
-    else
-    {
-        glEnable(GL_TEXTURE_2D);
-        t->bind();
-    }
-
-    glColor4f(m.diffuse.red(),
-              m.diffuse.green(),
-              m.diffuse.blue(),
-              m.opacity);
-
+        
     bool blendOnNow = false;
-    if (m.opacity != 1.0f || (t != NULL && t->hasAlpha()))
+    if (m.opacity != 1.0f || (baseTex != NULL && baseTex->hasAlpha()))
         blendOnNow = true;
 
     if (blendOnNow != blendOn)
@@ -520,40 +614,13 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
             glDepthMask(GL_TRUE);
         }
     }
-
-    if (m.specular == Color::Black)
-    {
-        float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-        float zero = 0.0f;
-        glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
-        glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
-        specularOn = false;
-    }
-    else
-    {
-        float matSpecular[4] = { m.specular.red(),
-                                 m.specular.green(),
-                                 m.specular.blue(),
-                                 0.0f };
-        glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
-        glMaterialfv(GL_FRONT, GL_SHININESS, &m.specularPower);
-        specularOn = true;
-    }
-
-    {
-        float matEmissive[4] = { m.emissive.red(),
-                                 m.emissive.green(),
-                                 m.emissive.blue(),
-                                 0.0f };
-        glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
-    }
-#endif
-#endif
 }
 
 
 void
 GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
-				    void* vertexData)
+                                     void* vertexData)
 {
+    setStandardVertexArrays(desc, vertexData);
+    setExtendedVertexArrays(desc, vertexData);
 }

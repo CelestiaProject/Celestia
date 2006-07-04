@@ -11,6 +11,7 @@
 #define _CELENGINE_RENDCONTEXT_H_
 
 #include "mesh.h"
+#include "shadermanager.h"
 
 
 static const unsigned int MaxLights = 8;
@@ -49,6 +50,8 @@ struct LightingState
 
     Vec3f eyeDir_obj;
     Point3f eyePos_obj;
+    
+    Vec3f ambientColor;
 };
 
 
@@ -127,16 +130,24 @@ class VP_Combiner_RenderContext : public RenderContext
 class GLSL_RenderContext : public RenderContext
 {
  public:
-    GLSL_RenderContext(const LightingState& ls);
-    GLSL_RenderContext(const LightingState& ls,
-		       const Mesh::Material*);
+    GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform);
     
     virtual void makeCurrent(const Mesh::Material&);
     virtual void setVertexArrays(const Mesh::VertexDescription& desc,
 				 void* vertexData);
 
  private:
+     void initLightingEnvironment();
+     void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
+     void setShadowParameters(CelestiaGLProgram& prog);
+     
+ private:
     const LightingState& lightingState;
+    bool blendOn;
+    float objRadius;
+    Mat4f xform;
+    
+    ShaderProperties shaderProps;
 };
 
 #endif // _CELENGINE_RENDCONTEXT_H_
