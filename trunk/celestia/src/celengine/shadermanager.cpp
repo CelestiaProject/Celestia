@@ -99,6 +99,15 @@ ShaderProperties::hasShadowsForLight(unsigned int light) const
 }
 
 
+// Returns true if diffuse, specular, bump, and night textures all use the
+// same texture coordinate set.
+bool
+ShaderProperties::hasSharedTextureCoords() const
+{
+    return (texUsage & SharedTextureCoords) != 0;
+}
+
+
 bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 {
     if (p0.texUsage < p1.texUsage)
@@ -273,10 +282,9 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
         shininess            = floatParam("shininess");
     }
 
-    if (props.lightModel == ShaderProperties::RingIllumModel)
+    if (props.lightModel == ShaderProperties::RingIllumModel ||
+        props.lightModel == ShaderProperties::SpecularModel)
     {
-        // TODO: Eye position also required for specular lighting with
-        // local viewer.
         eyePosition          = vec3Param("eyePosition");
     }
 
@@ -289,6 +297,11 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
     }
 
     textureOffset = floatParam("textureOffset");
+    
+    if ((props.texUsage & ShaderProperties::NightTexture) != 0)
+    {
+        nightTexMin          = floatParam("nightTexMin");
+    }
 }
 
 
@@ -454,8 +467,12 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
         LightProperty(i, "direction") + "));\n";
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
-        source += "nDotHV = max(0.0, dot(gl_Normal, " +
-            LightProperty(i, "halfVector") + "));\n";
+        source += "hv = normalize(" + LightProperty(i, "direction") + " + eyeDir);\n";
+        source += "nDotHV = max(0.0, dot(gl_Normal, hv));\n";
+  
+        // The calculation below uses the infinite viewer approximation. It's slightly faster,
+        // but results in less accurate rendering.
+        // source += "nDotHV = max(0.0, dot(gl_Normal, " + LightProperty(i, "halfVector") + "));\n";
     }
 
     if (props.usesFragmentLighting())
@@ -563,6 +580,8 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.lightModel == ShaderProperties::SpecularModel)
         source += "uniform float shininess;\n";
 
+    source += "uniform vec3 eyePosition;\n";
+
     if (!props.usesFragmentLighting())
     {
         if (!props.usesShadows())
@@ -582,22 +601,32 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += "varying vec4 spec;\n";
         else
             source += "varying vec4 specFactors;\n";
+            
+        // Get the normalized direction from the eye to the vertex
+        source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";            
     }
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "varying vec2 diffTexCoord;\n";
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        source += "varying vec2 normTexCoord;\n";
+        if (!props.hasSharedTextureCoords())
+            source += "varying vec2 normTexCoord;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
             source += "varying vec3 " + LightDir(i) + ";\n";
     }
-    if (props.texUsage & ShaderProperties::SpecularTexture)
+    if (props.texUsage & ShaderProperties::SpecularTexture &&
+        !props.hasSharedTextureCoords())
+    {
         source += "varying vec2 specTexCoord;\n";
+    }
+    
     if (props.texUsage & ShaderProperties::NightTexture)
     {
-        source += "varying vec2 nightTexCoord;\n";
+        if (!props.hasSharedTextureCoords())
+            source += "varying vec2 nightTexCoord;\n";
         source += "varying float totalLight;\n";
+        source += "uniform float nightTexMin;\n";
     }
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
@@ -636,6 +665,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
         source += "float nDotHV;\n";
+        source += "vec3 hv;\n";
     }
 
     if (!props.usesShadows() && !props.usesFragmentLighting())
@@ -663,6 +693,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         // Output the blend factor for night lights textures
         source += "totalLight = 1.0 - totalLight;\n";
         source += "totalLight = totalLight * totalLight * totalLight * totalLight;\n";
+        source += "totalLight = max(totalLight, nightTexMin);\n";
     }
 
     if (props.texUsage & ShaderProperties::NormalTexture)
@@ -684,22 +715,25 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         nTexCoords++;
     }
 
-    if (props.texUsage & ShaderProperties::NormalTexture)
+    if (!props.hasSharedTextureCoords())
     {
-        source += "normTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
-        nTexCoords++;
-    }
+        if (props.texUsage & ShaderProperties::NormalTexture)
+        {
+            source += "normTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+            nTexCoords++;
+        }
 
-    if (props.texUsage & ShaderProperties::SpecularTexture)
-    {
-        source += "specTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
-        nTexCoords++;
-    }
+        if (props.texUsage & ShaderProperties::SpecularTexture)
+        {
+            source += "specTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+            nTexCoords++;
+        }
 
-    if (props.texUsage & ShaderProperties::NightTexture)
-    {
-        source += "nightTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
-        nTexCoords++;
+        if (props.texUsage & ShaderProperties::NightTexture)
+        {
+            source += "nightTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+            nTexCoords++;
+        }
     }
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
@@ -799,6 +833,17 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         }
     }
 
+    string diffTexCoord("diffTexCoord");
+    string specTexCoord("specTexCoord");
+    string nightTexCoord("nightTexCoord");
+    string normTexCoord("normTexCoord");
+    if (props.hasSharedTextureCoords())
+    {
+        specTexCoord  = diffTexCoord;
+        nightTexCoord = diffTexCoord;
+        normTexCoord  = diffTexCoord;
+    }
+
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
         source += "varying vec2 diffTexCoord;\n";
@@ -807,7 +852,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        source += "varying vec2 normTexCoord;\n";
+        if (!props.hasSharedTextureCoords())
+            source += "varying vec2 normTexCoord;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
             source += "varying vec3 " + LightDir(i) + ";\n";
         source += "uniform sampler2D normTex;\n";
@@ -815,13 +861,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::SpecularTexture)
     {
-        source += "varying vec2 specTexCoord;\n";
+        if (!props.hasSharedTextureCoords())
+            source += "varying vec2 specTexCoord;\n";
         source += "uniform sampler2D specTex;\n";
     }
 
     if (props.texUsage & ShaderProperties::NightTexture)
     {
-        source += "varying vec2 nightTexCoord;\n";
+        if (!props.hasSharedTextureCoords())
+            source += "varying vec2 nightTexCoord;\n";
         source += "uniform sampler2D nightTex;\n";
         source += "varying float totalLight;\n";
     }
@@ -870,7 +918,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        source += "vec3 n = texture2D(normTex, normTexCoord.st).xyz * vec3(2.0, 2.0, 2.0) - vec3(1.0, 1.0, 1.0);\n";
+        source += "vec3 n = texture2D(normTex, " + normTexCoord + ".st).xyz * vec3(2.0, 2.0, 2.0) - vec3(1.0, 1.0, 1.0);\n";
         source += "float l;\n";
         for (unsigned i = 0; i < props.nLights; i++)
         {
@@ -916,7 +964,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
-        source += "color = texture2D(diffTex, diffTexCoord.st);\n";
+        source += "color = texture2D(diffTex, " + diffTexCoord + ".st);\n";
     else
         source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
         
@@ -931,7 +979,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         if (props.texUsage & ShaderProperties::SpecularInDiffuseAlpha)
             source += "gl_FragColor = color * diff + float(color.a) * spec;\n";
         else if (props.texUsage & ShaderProperties::SpecularTexture)
-            source += "gl_FragColor = color * diff + texture2D(specTex, specTexCoord.st) * spec;\n";
+            source += "gl_FragColor = color * diff + texture2D(specTex, " + specTexCoord + ".st) * spec;\n";
         else
             source += "gl_FragColor = color * diff + spec;\n";
     }
@@ -942,7 +990,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::NightTexture)
     {
-        source += "gl_FragColor += texture2D(nightTex, nightTexCoord.st) * totalLight;\n";
+        source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight;\n";
     }
 
     source += "}\n";

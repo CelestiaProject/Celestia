@@ -23,7 +23,7 @@ class ShaderProperties
     unsigned int getShadowCountForLight(unsigned int) const;
     void setShadowCountForLight(unsigned int, unsigned int);
     bool hasShadowsForLight(unsigned int) const;
-
+    bool hasSharedTextureCoords() const;
  enum
  {
      DiffuseTexture         = 0x01,
@@ -33,6 +33,7 @@ class ShaderProperties
      SpecularInDiffuseAlpha = 0x10,
      RingShadowTexture      = 0x20,
      OverlayTexture         = 0x40,
+     SharedTextureCoords    = 0x8000,
  };
 
  enum
@@ -89,7 +90,12 @@ class CelestiaGLProgram
     FloatShaderParameter ringWidth;
     FloatShaderParameter ringRadius;
 
+    // Diffuse texture coordinate offset
     FloatShaderParameter textureOffset;
+    
+    // Control the night texture effect--set to 1 for a purely additive effect,
+    // and 0 to show the night texture only in otherwise unilluminated regions.
+    FloatShaderParameter nightTexMin;
 
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderShadows];
     
