@@ -757,6 +757,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
 void CelestiaCore::mouseWheel(float motion, int modifiers)
 {
+    if (config->reverseMouseWheel) motion = -motion;
     if (motion != 0.0)
     {
         if ((modifiers & ShiftKey) != 0)
