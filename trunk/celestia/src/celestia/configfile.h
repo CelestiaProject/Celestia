@@ -37,6 +37,7 @@ struct CelestiaConfig
     std::vector<std::string> ignoreGLExtensions;
     float rotateAcceleration;
     float mouseRotationSensitivity;
+    bool  reverseMouseWheel;
     std::string scriptScreenshotDirectory;
     std::string scriptSystemAccessPolicy;
 
