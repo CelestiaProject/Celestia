@@ -20,10 +20,14 @@ class ShaderProperties
     ShaderProperties();
     bool usesShadows() const;
     bool usesFragmentLighting() const;
+    bool usesTangentSpaceLighting() const;
     unsigned int getShadowCountForLight(unsigned int) const;
     void setShadowCountForLight(unsigned int, unsigned int);
     bool hasShadowsForLight(unsigned int) const;
     bool hasSharedTextureCoords() const;
+    bool hasSpecular() const;
+    bool isViewDependent() const;
+
  enum
  {
      DiffuseTexture         = 0x01,
@@ -41,8 +45,9 @@ class ShaderProperties
      DiffuseModel     = 0,
      SpecularModel    = 1,
      RingIllumModel   = 2,
+     PerPixelSpecularModel = 3,
  };
-
+ 
  public:
     unsigned short nLights;
     unsigned short texUsage;

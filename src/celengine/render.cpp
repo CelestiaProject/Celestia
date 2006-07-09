@@ -638,6 +638,11 @@ bool Renderer::init(GLContext* _context,
         DPRINTF(1, "Renderer: point sprites supported.\n");
         usePointSprite = true;
     }
+    
+    if (context->extensionSupported("GL_EXT_separate_specular_color"))
+    {
+        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
+    }
 
     // Ugly renderer-specific bug workarounds follow . . .
     char* glRenderer = (char*) glGetString(GL_RENDERER);
@@ -3308,7 +3313,7 @@ static void setLightParameters_GLSL(CelestiaGLProgram& prog,
             prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
                                            lightColor.y * diffuseColor.y,
                                            lightColor.z * diffuseColor.z);
-            if (shadprop.lightModel == ShaderProperties::SpecularModel)
+            if (shadprop.hasSpecular())
             {
                 prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
                                                    lightColor.y * specularColor.y,
@@ -4035,7 +4040,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
 
     if (ri.specularColor != Color::Black)
     {
-        shadprop.lightModel = ShaderProperties::SpecularModel;
+        shadprop.lightModel = ShaderProperties::PerPixelSpecularModel;
         if (ri.glossTex == NULL)
         {
             shadprop.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
@@ -5908,7 +5913,7 @@ void Renderer::renderPlanet(Body& body,
         setupObjectLighting(lightSources,
                             body.getHeliocentricPosition(now),
                             rp.orientation,
-                            rp.semiAxes,
+                            rp.semiAxes * rp.radius,
                             pos,
                             lights);
         assert(lights.nLights < MaxLights);

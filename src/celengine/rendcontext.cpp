@@ -390,7 +390,6 @@ GLSL_RenderContext::initLightingEnvironment()
         }
     }
     
-    clog << "totalShadows: " << totalShadows << '\n';
 }
   
 
@@ -422,7 +421,7 @@ GLSL_RenderContext::setLightingParameters(CelestiaGLProgram& prog, Color materia
             prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
                                            lightColor.y * diffuseColor.y,
                                            lightColor.z * diffuseColor.z);
-            if (shaderProps.lightModel == ShaderProperties::SpecularModel)
+            if (shaderProps.hasSpecular())
             {
                 prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
                                                    lightColor.y * specularColor.y,
@@ -545,7 +544,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
     if (m.specular != Color::Black)
     {
-        shaderProps.lightModel = ShaderProperties::SpecularModel;
+        shaderProps.lightModel = ShaderProperties::PerPixelSpecularModel;
         specTex = GetTextureManager()->find(m.maps[Mesh::SpecularMap]);
         if (specTex == NULL)
         {
