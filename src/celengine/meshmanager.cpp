@@ -362,12 +362,14 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
                     vl->setSpecularColor(Color(specular.red, specular.green, specular.blue));
                     float shininess = material->getShininess();
                     
-                    // Map the shininess from the 3DS file into the 0-128
-                    // range that OpenGL uses for the specular exponent.
-                    shininess = (float) pow(2.0, 10.0 * shininess);
+                    // Map the 3DS file's shininess from percentage (0-100) to
+                    // range that OpenGL uses for the specular exponent. The
+                    // current equation is just a guess at the mapping that
+                    // 3DS actually uses.
+                    shininess = (float) pow(2.0, 1.0 + 0.1 * shininess);
                     if (shininess > 128.0f)
                         shininess = 128.0f;
-                    vl->setShininess(128.0f);
+                    vl->setShininess(shininess);
 
                     if (material->getTextureMap() != "")
                     {
