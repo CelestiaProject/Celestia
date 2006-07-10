@@ -94,10 +94,10 @@ class CommandGoto : public InstantaneousCommand
 class CommandGotoLongLat : public InstantaneousCommand
 {
  public:
-    CommandGotoLongLat::CommandGotoLongLat(double t,
-                                           double dist,
-                                           float _longitude, float _latitude,
-                                           Vec3f _up);
+    CommandGotoLongLat(double t,
+                       double dist,
+                       float _longitude, float _latitude,
+                       Vec3f _up);
     ~CommandGotoLongLat();
     void process(ExecutionEnvironment&);
 
