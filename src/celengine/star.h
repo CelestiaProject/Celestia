@@ -30,7 +30,7 @@ class StarDetails
     // orbits and StarDetails objects.  Currently, it's assumed that they
     // have lifetimes that continue until program termination.
  public:
-    StarDetails::StarDetails();
+    StarDetails();
 
     inline float getRadius() const;
     inline float getTemperature() const;
