@@ -37,6 +37,7 @@ class ShaderProperties
      SpecularInDiffuseAlpha = 0x10,
      RingShadowTexture      = 0x20,
      OverlayTexture         = 0x40,
+     CloudShadowTexture     = 0x80,
      SharedTextureCoords    = 0x8000,
  };
 
@@ -97,6 +98,11 @@ class CelestiaGLProgram
 
     // Diffuse texture coordinate offset
     FloatShaderParameter textureOffset;
+
+    // Cloud shadow parameters
+    // Height of cloud layer above planet, in units of object radius
+    FloatShaderParameter cloudHeight;
+    FloatShaderParameter shadowTextureOffset;
     
     // Control the night texture effect--set to 1 for a purely additive effect,
     // and 0 to show the night texture only in otherwise unilluminated regions.
