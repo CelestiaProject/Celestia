@@ -4012,7 +4012,10 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
 static void renderSphere_GLSL(const RenderInfo& ri,
                               const LightingState& ls,
                               RingSystem* rings,
+                              Atmosphere* atmosphere,
+                              float cloudTexOffset,
                               float radius,
+                              unsigned int textureRes,
                               const Mat4f& planetMat,
                               const Frustum& frustum,
                               const GLContext& context)
@@ -4069,7 +4072,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         (renderFlags & ShowRingShadows) != 0)
 #endif
     {
-        Texture* ringsTex = rings->texture.find(medres);
+        Texture* ringsTex = rings->texture.find(textureRes);
         if (ringsTex != NULL)
         {
             glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
@@ -4085,6 +4088,23 @@ static void renderSphere_GLSL(const RenderInfo& ri,
             glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
+        }
+    }
+    
+    if (atmosphere != NULL)
+    {    
+        Texture* cloudTex = NULL;
+        if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
+            cloudTex = atmosphere->cloudTexture.find(textureRes);
+        if (cloudTex != NULL)
+        {
+            shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
+            textures[nTextures++] = cloudTex;
+#if 1            
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            cloudTex->bind();
+            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+#endif            
         }
     }
 
@@ -4125,6 +4145,12 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         float ringWidth = rings->outerRadius - rings->innerRadius;
         prog->ringRadius = rings->innerRadius / radius;
         prog->ringWidth = radius / ringWidth;
+    }
+    
+    if (shadprop.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        prog->shadowTextureOffset = cloudTexOffset;
+        prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
     }
 
     if (shadprop.shadowCounts != 0)    
@@ -4178,6 +4204,7 @@ static void renderClouds_GLSL(const RenderInfo& ri,
                               float texOffset,
                               RingSystem* rings,
                               float radius,
+                              unsigned int textureRes,
                               const Mat4f& planetMat,
                               const Frustum& frustum,
                               const GLContext& context)
@@ -4199,7 +4226,7 @@ static void renderClouds_GLSL(const RenderInfo& ri,
     if (rings != NULL)
         //(renderFlags & ShowRingShadows) != 0)
     {
-        Texture* ringsTex = rings->texture.find(medres);
+        Texture* ringsTex = rings->texture.find(textureRes);
         if (ringsTex != NULL)
         {
             glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
@@ -5418,11 +5445,27 @@ void Renderer::renderObject(Point3f pos,
                         nearPlaneDistance, farPlaneDistance);
     viewFrustum.transform(invMV);
 
-    // Temporary hack until we fix culling for ringed planets
+    // Temporary hack until we fix culling for ringed planets; prevents
+    // over-tesselation of ringed planet surfaces. The amount of tesselation
+    // should be based on the screen width of the planet sphere, not including
+    // the rings.
     if (obj.rings != NULL)
     {
         if (ri.pixWidth > 5000)
             ri.pixWidth = 5000;
+    }
+    
+    // Get cloud layer parameters
+    Texture* cloudTex = NULL;
+    float cloudTexOffset = 0.0f;
+    if (obj.atmosphere != NULL)
+    {
+        Atmosphere* atmosphere = const_cast<Atmosphere*>(obj.atmosphere); // Ugly cast required because MultiResTexture::find() is non-const
+        if ((renderFlags & ShowCloudMaps) != 0 &&
+            atmosphere->cloudTexture.tex[textureResolution] != InvalidResource)
+            cloudTex = atmosphere->cloudTexture.find(textureResolution);
+        if (atmosphere->cloudSpeed != 0.0f)
+            cloudTexOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0));
     }
 
     Model* model = NULL;
@@ -5434,7 +5477,10 @@ void Renderer::renderObject(Point3f pos,
             switch (context->getRenderPath())
             {
             case GLContext::GLPath_GLSL:
-                renderSphere_GLSL(ri, ls, obj.rings, obj.radius,
+                renderSphere_GLSL(ri, ls, obj.rings,                
+                                  const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
+                                  obj.radius,
+                                  textureResolution,
                                   planetMat, viewFrustum, *context);
                 break;
 
@@ -5573,11 +5619,6 @@ void Renderer::renderObject(Point3f pos,
         }
 
         // If there's a cloud layer, we'll render it now.
-        Texture* cloudTex = NULL;
-        if ((renderFlags & ShowCloudMaps) != 0 &&
-            atmosphere->cloudTexture.tex[textureResolution] != InvalidResource)
-            cloudTex = atmosphere->cloudTexture.find(textureResolution);
-
         if (cloudTex != NULL)
         {
             glPushMatrix();
@@ -5590,7 +5631,6 @@ void Renderer::renderObject(Point3f pos,
             if (distance - radius < atmosphere->cloudHeight)
                 glFrontFace(GL_CW);
 
-            float texOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0));
             if (atmosphere->cloudSpeed != 0.0f)
             {
                 // Make the clouds appear to rotate above the surface of
@@ -5599,7 +5639,7 @@ void Renderer::renderObject(Point3f pos,
                 // texture matrix doesn't require us to compute a second
                 // set of model space rendering parameters.
                 glMatrixMode(GL_TEXTURE);
-                glTranslatef(texOffset, 0.0f, 0.0f);
+                glTranslatef(cloudTexOffset, 0.0f, 0.0f);
                 glMatrixMode(GL_MODELVIEW);
             }
 
@@ -5616,9 +5656,10 @@ void Renderer::renderObject(Point3f pos,
                 {
                     renderClouds_GLSL(ri, ls,
                                       cloudTex,
-                                      texOffset,
+                                      cloudTexOffset,
                                       obj.rings,
                                       radius * cloudScale,
+                                      textureResolution,
                                       planetMat,
                                       viewFrustum,
                                       *context);
@@ -5631,7 +5672,7 @@ void Renderer::renderObject(Point3f pos,
                         vproc->enable();
                         vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
                         vproc->parameter(vp::TextureTranslation,
-                                         texOffset, 0.0f, 0.0f, 0.0f);
+                                         cloudTexOffset, 0.0f, 0.0f, 0.0f);
                         if (ls.nLights > 1)
                             vproc->use(vp::diffuseTexOffset_2light);
                         else
