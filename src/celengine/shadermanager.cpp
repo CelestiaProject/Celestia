@@ -53,10 +53,9 @@ ShaderProperties::ShaderProperties() :
 bool
 ShaderProperties::usesShadows() const
 {
-    if ((texUsage & RingShadowTexture) != 0 || shadowCounts != 0)
-        return true;
-    else
-        return false;
+    return  (texUsage & RingShadowTexture) != 0 ||
+             (texUsage & CloudShadowTexture) != 0 ||
+             shadowCounts != 0;
 }
 
 
@@ -94,8 +93,8 @@ bool
 ShaderProperties::hasShadowsForLight(unsigned int light) const
 {
     assert(light < MaxShaderLights);
-    return ((getShadowCountForLight(light) != 0) ||
-            (texUsage & RingShadowTexture));
+    return getShadowCountForLight(light) != 0 ||
+            (texUsage & (RingShadowTexture | CloudShadowTexture)) != 0;
 }
 
 
@@ -287,6 +286,15 @@ RingShadowTexCoord(unsigned int index)
 }
 
 
+static string
+CloudShadowTexCoord(unsigned int index)
+{
+    char buf[64];
+    sprintf(buf, "cloudShadowTexCoord%d", index);
+    return string(buf);
+}
+
+
 void
 CelestiaGLProgram::initParameters(const ShaderProperties& props)
 {
@@ -332,6 +340,12 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
     }
 
     textureOffset = floatParam("textureOffset");
+    
+    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        cloudHeight         = floatParam("cloudHeight");
+        shadowTextureOffset = floatParam("cloudShadowTexOffset");
+    }
     
     if ((props.texUsage & ShaderProperties::NightTexture) != 0)
     {
@@ -384,6 +398,13 @@ CelestiaGLProgram::initSamplers(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::OverlayTexture)
     {
         int slot = glx::glGetUniformLocationARB(program->getID(), "overlayTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+    
+    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "cloudShadowTex");
         if (slot != -1)
             glx::glUniform1iARB(slot, nSamplers++);
     }
@@ -471,6 +492,16 @@ SeparateSpecular(unsigned int i)
     // Used for packing multiple specular factors into the specular color.
     char buf[32];
     sprintf(buf, "specFactors.%c", "xyzw"[i & 3]);
+    return string(buf);
+}
+
+
+// Used by rings shader
+static string
+ShadowDepth(unsigned int i)
+{
+    char buf[32];
+    sprintf(buf, "shadowDepths.%c", "xyzw"[i & 3]);
     return string(buf);
 }
 
@@ -595,6 +626,12 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
         source += "shadow *= (1.0 - texture2D(ringTex, vec2(" +
             RingShadowTexCoord(light) + ", 0.0)).a);\n";
     }
+    
+    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        source += "shadow *= (1.0 - texture2D(cloudShadowTex, " +
+            CloudShadowTexCoord(light) + ").a * 0.75);\n";
+    }
 
     return source;
 }
@@ -605,9 +642,10 @@ Shadow(unsigned int light, unsigned int shadow)
 {
     string source;
 
-    source += "shadowCenter = " +
-        IndexedParameter("shadowTexCoord", light, shadow) +
-        ".st - vec2(0.5, 0.5);\n";
+    source += "shadowCenter.s = dot(vec4(position_obj, 1.0), " +
+        IndexedParameter("shadowTexGenS", light, shadow) + ") - 0.5;\n";
+    source += "shadowCenter.t = dot(vec4(position_obj, 1.0), " +
+        IndexedParameter("shadowTexGenT", light, shadow) + ") - 0.5;\n";   
     source += "shadowR = clamp(dot(shadowCenter, shadowCenter) * " +
         IndexedParameter("shadowScale", light, shadow) + " + " +
         IndexedParameter("shadowBias", light, shadow) + ", 0.0, 1.0);\n";
@@ -659,7 +697,7 @@ TextureSamplerDeclarations(const ShaderProperties& props)
     {
         source += "uniform sampler2D overlayTex;\n";
     }
-
+    
     return source;
 }
 
@@ -768,18 +806,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     // Shadow parameters
     if (props.shadowCounts != 0)
     {
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
-            {
-                source += "varying vec2 " +
-                    IndexedParameter("shadowTexCoord", i, j) + ";\n";
-                source += "uniform vec4 " +
-                    IndexedParameter("shadowTexGenS", i, j) + ";\n";
-                source += "uniform vec4 " +
-                    IndexedParameter("shadowTexGenT", i, j) + ";\n";
-            }
-        }
+        source += "varying vec3 position_obj;\n";
     }
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
@@ -789,6 +816,13 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += "varying vec4 ringShadowTexCoord;\n";
     }
     
+    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        source += "uniform float cloudShadowTexOffset;\n";
+        source += "uniform float cloudHeight;\n";
+        for (unsigned int i = 0; i < props.nLights; i++)
+            source += "varying vec2 " + CloudShadowTexCoord(i) + ";\n";
+    }
     
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
@@ -881,6 +915,33 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
                 " = (length(ringShadowProj) - ringRadius) * ringWidth;\n";
         }
     }
+    
+    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        for (unsigned int j = 0; j < props.nLights; j++)
+        {
+            source += "{\n";
+            
+            // A cheap way to calculate cloud shadow texture coordinates that doesn't correctly account
+            // for sun angle.
+            //source += "    " + CloudShadowTexCoord(j) + " = vec2(diffTexCoord.x + cloudShadowTexOffset, diffTexCoord.y);\n";
+
+            // Compute the intersection of the sun direction and the cloud layer (currently assumed to be a sphere)
+            source += "    float s = 1.0 / (cloudHeight * cloudHeight);\n";
+            source += "    float invPi = 1.0f / 3.1415927;\n";
+            source += "    vec3 coeff;\n";
+            source += "    coeff.x = dot(" + LightProperty(j, "direction") + ", " + LightProperty(j, "direction") + ") * s;\n";
+            source += "    coeff.y = dot(" + LightProperty(j, "direction") + ", gl_Vertex.xyz) * s;\n";
+            source += "    coeff.z = dot(gl_Vertex.xyz, gl_Vertex.xyz) * s - 1.0;\n";
+            source += "    float disc = sqrt(coeff.y * coeff.y - coeff.x * coeff.z);\n";
+            source += "    vec3 cloudSpherePos = normalize(gl_Vertex.xyz + ((-coeff.y + disc) / coeff.x) * " + LightProperty(j, "direction") + ");\n";
+            
+            // Find the texture coordinates at this point on the sphere by converting from rectangular to spherical; this is an
+            // expensive calculation to perform per vertex.
+            source += "    " + CloudShadowTexCoord(j) + " = vec2(cloudShadowTexOffset + fract(atan(cloudSpherePos.x, cloudSpherePos.z) * (invPi * 0.5) + 0.75), 0.5 - asin(cloudSpherePos.y) * invPi);\n";
+            source += "}\n";
+        }
+    }
 
     if (props.texUsage & ShaderProperties::OverlayTexture)
     {
@@ -890,18 +951,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.shadowCounts != 0)
     {
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
-            {
-                source += IndexedParameter("shadowTexCoord", i, j) +
-                    ".s = dot(gl_Vertex, " +
-                    IndexedParameter("shadowTexGenS", i, j) + ");\n";
-                source += IndexedParameter("shadowTexCoord", i, j) +
-                    ".t = dot(gl_Vertex, " +
-                    IndexedParameter("shadowTexGenT", i, j) + ");\n";
-            }
-        }
+        source += "position_obj = gl_Vertex.xyz;\n";
     }
 
     source += "gl_Position = ftransform();\n";
@@ -1019,12 +1069,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     // Declare shadow parameters
     if (props.shadowCounts != 0)
     {
+        source += "varying vec3 position_obj;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
             {
-                source += "varying vec2 " +
-                    IndexedParameter("shadowTexCoord", i, j) + ";\n";
+                source += "uniform vec4 " +
+                    IndexedParameter("shadowTexGenS", i, j) + ";\n";
+                source += "uniform vec4 " +
+                    IndexedParameter("shadowTexGenT", i, j) + ";\n";
                 source += "uniform float " +
                     IndexedParameter("shadowScale", i, j) + ";\n";
                 source += "uniform float " +
@@ -1038,7 +1091,14 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "uniform sampler2D ringTex;\n";
         source += "varying vec4 ringShadowTexCoord;\n";
     }
-        
+
+    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        source += "uniform sampler2D cloudShadowTex;\n";
+        for (unsigned int i = 0; i < props.nLights; i++)
+            source += "varying vec2 " + CloudShadowTexCoord(i) + ";\n";
+    }
+    
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
 
@@ -1053,7 +1113,6 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         }
     }
     
-    
     // Sum the illumination from each light source, computing a total diffuse and specular
     // contributions from all sources.
     if (props.usesTangentSpaceLighting())
@@ -1065,6 +1124,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         // an option for this.
         if (props.texUsage & ShaderProperties::NormalTexture)
         {
+            //source += "vec3 n = normalize(texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0, 1.0, 1.0));\n";
             source += "vec3 n = texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0, 1.0, 1.0);\n";
         }
         else
@@ -1221,15 +1281,8 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 
     if (props.shadowCounts != 0)
     {
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            source += "uniform vec4 " +
-                IndexedParameter("shadowTexGenS", i, 0) + ";\n";
-            source += "uniform vec4 " +
-                IndexedParameter("shadowTexGenT", i, 0) + ";\n";
-            source += "varying vec3 " +
-                IndexedParameter("shadowTexCoord", i, 0) + ";\n";
-        }
+        source += "varying vec3 position_obj;\n";
+        source += "varying vec4 shadowDepths;\n";
     }
 
     source += "\nvoid main(void)\n{\n";
@@ -1249,17 +1302,11 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 
     if (props.shadowCounts != 0)
     {
+        source += "position_obj = gl_Vertex.xyz;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += IndexedParameter("shadowTexCoord", i, 0) +
-                ".x = dot(gl_Vertex, " +
-                IndexedParameter("shadowTexGenS", i, 0) + ");\n";
-            source += IndexedParameter("shadowTexCoord", i, 0) +
-                ".y = dot(gl_Vertex, " +
-                IndexedParameter("shadowTexGenT", i, 0) + ");\n";
-            source += IndexedParameter("shadowTexCoord", i, 0) +
-                ".z = dot(gl_Vertex.xyz, " +
-                LightProperty(i, "direction") + ");\n";
+            source += ShadowDepth(i) + " = dot(gl_Vertex.xyz, " +
+                       LightProperty(i, "direction") + ");\n";
         }
     }
 
@@ -1300,16 +1347,25 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
         source += "uniform sampler2D diffTex;\n";
     }
 
+    
     if (props.shadowCounts != 0)
     {
+        source += "varying vec3 position_obj;\n";
+        source += "varying vec4 shadowDepths;\n";
+        
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "varying vec3 " +
-                IndexedParameter("shadowTexCoord", i, 0) + ";\n";
-            source += "uniform float " +
-                IndexedParameter("shadowScale", i, 0) + ";\n";
-            source += "uniform float " +
-                IndexedParameter("shadowBias", i, 0) + ";\n";
+            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            {
+                source += "uniform vec4 " +
+                    IndexedParameter("shadowTexGenS", i, j) + ";\n";
+                source += "uniform vec4 " +
+                    IndexedParameter("shadowTexGenT", i, j) + ";\n";
+                source += "uniform float " +
+                    IndexedParameter("shadowScale", i, j) + ";\n";
+                source += "uniform float " +
+                    IndexedParameter("shadowBias", i, j) + ";\n";
+            }
         }
     }
 
@@ -1331,8 +1387,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
         {
             source += "shadow = 1.0;\n";
             source += Shadow(i, 0);
-            source += "shadow = min(1.0, shadow + step(0.0, " +
-                IndexedParameter("shadowTexCoord", i, 0) + ".z));\n";
+            source += "shadow = min(1.0, shadow + step(0.0, " + ShadowDepth(i) + "));\n";
             source += "diff.rgb += (shadow * " + SeparateDiffuse(i) + ") * " +
                 FragLightProperty(i, "color") + ";\n";
         }
