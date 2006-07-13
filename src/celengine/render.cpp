@@ -4016,6 +4016,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
                               float cloudTexOffset,
                               float radius,
                               unsigned int textureRes,
+                              int renderFlags,
                               const Mat4f& planetMat,
                               const Frustum& frustum,
                               const GLContext& context)
@@ -4090,21 +4091,24 @@ static void renderSphere_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
     }
-    
+
     if (atmosphere != NULL)
-    {    
-        Texture* cloudTex = NULL;
-        if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
-            cloudTex = atmosphere->cloudTexture.find(textureRes);
-        if (cloudTex != NULL)
-        {
-            shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
-            textures[nTextures++] = cloudTex;
+    {
+        if ((renderFlags & Renderer::ShowCloudMaps) != 0 /* && (renderFlags & ShowCloudShadows) != 0 */)
+        {    
+            Texture* cloudTex = NULL;
+            if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
+                cloudTex = atmosphere->cloudTexture.find(textureRes);
+            if (cloudTex != NULL)
+            {
+                shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
+                textures[nTextures++] = cloudTex;
 #if 1            
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
-            cloudTex->bind();
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+                glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+                cloudTex->bind();
+                glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 #endif            
+            }
         }
     }
 
@@ -5481,6 +5485,7 @@ void Renderer::renderObject(Point3f pos,
                                   const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
                                   obj.radius,
                                   textureResolution,
+                                  renderFlags,
                                   planetMat, viewFrustum, *context);
                 break;
 
