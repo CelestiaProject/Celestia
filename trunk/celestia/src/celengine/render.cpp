@@ -5519,34 +5519,27 @@ void Renderer::renderObject(Point3f pos,
     {
         // This is a model loaded from a file
         model = GetModelManager()->find(obj.model);
-#if 1
+        
         if (model != NULL)
         {
-            switch(context->getRenderPath())
+            if (context->getRenderPath() == GLContext::GLPath_GLSL && lit)
             {
-            case GLContext::GLPath_GLSL:
+                ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
+                renderModel_GLSL(model, ri, texOverride, ls, obj.radius, planetMat);
+                for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
                 {
-                    ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
-                    renderModel_GLSL(model, ri, texOverride, ls, obj.radius, planetMat);
-                    {
-                        for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
-                        {
-                            glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
-                            glDisable(GL_TEXTURE_2D);
-                        }
-                        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-                        glEnable(GL_TEXTURE_2D);
-                        glx::glUseProgramObjectARB(0);    
-                    }
+                    glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+                    glDisable(GL_TEXTURE_2D);
                 }
-                break;
-                
-            default:
+                glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+                glEnable(GL_TEXTURE_2D);
+                glx::glUseProgramObjectARB(0);    
+            }
+            else
+            {
                 renderModelDefault(model, ri, lit);
-                break;
             }
         }
-#endif
     }
 
     if (obj.rings != NULL && distance <= obj.rings->innerRadius)
