@@ -31,4 +31,4 @@ while (<>) {
         }
     }
 }
-
+print qq{_("WinLangID");\n};

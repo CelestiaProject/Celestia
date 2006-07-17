@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia-Japanese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-02-22 10:03+0100\n"
+"POT-Creation-Date: 2006-07-17 21:50+0200\n"
 "PO-Revision-Date: 2006-02-26 02:18+0900\n"
 "Last-Translator: Sui Ota <aqua@aqsp.net>\n"
 "Language-Team: Japanese\n"
@@ -48,27 +48,27 @@ msgstr "ARB fragment programを初期化しています…\n"
 msgid "Galaxy (Hubble type: %s)"
 msgstr "銀河 (ハッブル型: %s)"
 
-#: src/celengine/image.cpp:357
+#: src/celengine/image.cpp:373
 msgid "Loading image from file "
 msgstr "次の画像ファイルを読み込んでいます: "
 
-#: src/celengine/image.cpp:374
+#: src/celengine/image.cpp:390
 msgid ": unrecognized or unsupported image file type.\n"
 msgstr " は認識できないか、サポートされていない画像ファイルです。\n"
 
-#: src/celengine/image.cpp:637
+#: src/celengine/image.cpp:653
 msgid "Error opening image file "
 msgstr "次の画像ファイルの読み込みでエラーが発生しました: "
 
-#: src/celengine/image.cpp:644
+#: src/celengine/image.cpp:660
 msgid "Error: "
 msgstr "エラー: "
 
-#: src/celengine/image.cpp:644
+#: src/celengine/image.cpp:660
 msgid " is not a PNG file.\n"
 msgstr " はPNGファイルではありません。\n"
 
-#: src/celengine/image.cpp:671
+#: src/celengine/image.cpp:687
 msgid "Error reading PNG image file "
 msgstr "次のPNGファイルの読み込みでエラーが発生しました: "
 
@@ -80,8 +80,7 @@ msgstr "次の3Dモデルファイルを読み込んでいます: "
 msgid "Error loading model '"
 msgstr "次の3Dモデルファイルの読み込みに失敗しました: '"
 
-#: src/celengine/nebula.cpp:47
-#: src/celengine/opencluster.cpp:45
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:45
 #, c-format
 msgid "%s"
 msgstr "%s"
@@ -90,139 +89,135 @@ msgstr "%s"
 msgid "Error in .ssc file (line "
 msgstr ".sscファイルにエラーがあります。(行 "
 
-#: src/celengine/solarsys.cpp:548
-#: src/celengine/solarsys.cpp:606
+#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
 msgid "parent body '"
 msgstr "母天体 '"
 
-#: src/celengine/solarsys.cpp:548
-#: src/celengine/solarsys.cpp:606
+#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
 msgid "' of '"
 msgstr "'('"
 
-#: src/celengine/solarsys.cpp:548
-#: src/celengine/solarsys.cpp:606
+#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
 msgid "' not found.\n"
 msgstr "' が参照)が見つかりません。\n"
 
-#: src/celengine/solarsys.cpp:557
+#: src/celengine/solarsys.cpp:569
 msgid "warning duplicate definition of "
 msgstr "重複して定義されています: "
 
-#: src/celengine/solarsys.cpp:586
+#: src/celengine/solarsys.cpp:598
 msgid "bad alternate surface"
 msgstr "正しくないAltSurfaceです。"
 
-#: src/celengine/solarsys.cpp:600
+#: src/celengine/solarsys.cpp:612
 msgid "bad location"
 msgstr "正しくない地名です。"
 
-#: src/celengine/stardb.cpp:508
+#: src/celengine/stardb.cpp:542
 msgid "Bad header for cross index\n"
 msgstr "クロスインデックスのヘッダが正しくありません。\n"
 
-#: src/celengine/stardb.cpp:521
+#: src/celengine/stardb.cpp:555
 msgid "Bad version for cross index\n"
 msgstr "クロスインデックスのバージョンが正しくありません。\n"
 
-#: src/celengine/stardb.cpp:543
+#: src/celengine/stardb.cpp:577
 msgid "Loading cross index failed at record "
 msgstr "次のレコードでクロスインデックスの読み込みに失敗しました:レコード "
 
-#: src/celengine/stardb.cpp:644
+#: src/celengine/stardb.cpp:678
 msgid "Bad spectral type in star database, star #\n"
 msgstr "次の恒星のスペクトル型が正しくありません。 #\n"
 
-#: src/celengine/stardb.cpp:757
+#: src/celengine/stardb.cpp:791
 msgid "Bad spectral type in star database, star #"
 msgstr "次の恒星のスペクトル型が正しくありません。 #"
 
-#: src/celengine/stardb.cpp:771
+#: src/celengine/stardb.cpp:805
 msgid " stars in binary database\n"
 msgstr " 個の恒星がバイナリから読み込まれました。\n"
 
-#: src/celengine/stardb.cpp:787
+#: src/celengine/stardb.cpp:821
 msgid "Total star count: "
 msgstr "恒星総数: "
 
-#: src/celengine/stardb.cpp:789
+#: src/celengine/stardb.cpp:823
 msgid " star(s) with duplicate catalog numbers deleted.)\n"
 msgstr "個の恒星が重複として削除されました。)\n"
 
-#: src/celengine/stardb.cpp:816
+#: src/celengine/stardb.cpp:850
 msgid "Error in .stc file (line "
 msgstr ".stcファイルにエラーがあります。(行 "
 
-#: src/celengine/stardb.cpp:846
+#: src/celengine/stardb.cpp:880
 msgid "Invalid star: missing spectral type.\n"
 msgstr "無効な恒星です: スペクトル型がありません。\n"
 
-#: src/celengine/stardb.cpp:853
+#: src/celengine/stardb.cpp:887
 msgid "Invalid star: bad spectral type.\n"
 msgstr "無効な恒星です: スペクトル型が正しくありません。\n"
 
-#: src/celengine/stardb.cpp:962
+#: src/celengine/stardb.cpp:996
 msgid "Barycenter "
 msgstr "重心"
 
-#: src/celengine/stardb.cpp:962
+#: src/celengine/stardb.cpp:996
 msgid " does not exist.\n"
 msgstr " は存在しません。\n"
 
-#: src/celengine/stardb.cpp:989
+#: src/celengine/stardb.cpp:1023
 msgid "Invalid star: missing right ascension\n"
 msgstr "無効な恒星です: 赤経がありません。\n"
 
-#: src/celengine/stardb.cpp:996
+#: src/celengine/stardb.cpp:1030
 msgid "Invalid star: missing declination.\n"
 msgstr "無効な恒星です: 赤緯がありません。\n"
 
-#: src/celengine/stardb.cpp:1003
+#: src/celengine/stardb.cpp:1037
 msgid "Invalid star: missing distance.\n"
 msgstr "無効な恒星です: 距離がありません。\n"
 
-#: src/celengine/stardb.cpp:1029
+#: src/celengine/stardb.cpp:1063
 msgid "Invalid star: missing magnitude.\n"
 msgstr "無効な恒星です: 等級がありません。\n"
 
-#: src/celengine/vertexprog.cpp:107
+#: src/celengine/vertexprog.cpp:108
 msgid "Loading NV vertex program: "
 msgstr "次のNV vertex programを読み込んでいます: "
 
-#: src/celengine/vertexprog.cpp:112
+#: src/celengine/vertexprog.cpp:113
 msgid "Error loading NV vertex program: "
 msgstr "次のNV vertex programの読み込みでエラーが発生しました: "
 
-#: src/celengine/vertexprog.cpp:129
-#: src/celengine/vertexprog.cpp:188
+#: src/celengine/vertexprog.cpp:130 src/celengine/vertexprog.cpp:189
 msgid "Error in vertex program "
 msgstr "次のvertex programにエラーがあります: "
 
-#: src/celengine/vertexprog.cpp:156
+#: src/celengine/vertexprog.cpp:157
 msgid "Loading ARB vertex program: "
 msgstr "次のARB vertex programを読み込んでいます: "
 
-#: src/celengine/vertexprog.cpp:161
+#: src/celengine/vertexprog.cpp:162
 msgid "Error loading ARB vertex program: "
 msgstr "次のARB vertex programの読み込みでエラーが発生しました: "
 
-#: src/celengine/vertexprog.cpp:189
+#: src/celengine/vertexprog.cpp:190
 msgid ", line "
 msgstr "、 行 "
 
-#: src/celengine/vertexprog.cpp:201
+#: src/celengine/vertexprog.cpp:202
 msgid "Initializing NV vertex programs . . .\n"
 msgstr "NV vertex programを初期化しています…\n"
 
-#: src/celengine/vertexprog.cpp:233
+#: src/celengine/vertexprog.cpp:234
 msgid "All NV vertex programs loaded successfully.\n"
 msgstr "すべてのNV vertex programsを読み込みました。\n"
 
-#: src/celengine/vertexprog.cpp:246
+#: src/celengine/vertexprog.cpp:247
 msgid "Initializing ARB vertex programs . . .\n"
 msgstr "ARB vertex programを初期化しています…\n"
 
-#: src/celengine/vertexprog.cpp:295
+#: src/celengine/vertexprog.cpp:298
 msgid "All ARB vertex programs loaded successfully.\n"
 msgstr "すべてのARB vertex programを読み込みました。\n"
 
@@ -234,121 +229,116 @@ msgstr "お気に入りファイルの読み込みでエラーが発生しまし
 msgid "Orientation: "
 msgstr "方向: "
 
-#: src/celestia/celestiacore.cpp:517
-#: src/celestia/celestiacore.cpp:519
+#: src/celestia/celestiacore.cpp:520 src/celestia/celestiacore.cpp:522
 msgid "Error opening script file."
 msgstr "スクリプトファイルのオープンでエラーが発生しました。"
 
-#: src/celestia/celestiacore.cpp:549
+#: src/celestia/celestiacore.cpp:553
 #, c-format
 msgid "Error opening script '%s'"
 msgstr "スクリプトファイル'%s'のオープンでエラーが発生しました。"
 
-#: src/celestia/celestiacore.cpp:563
+#: src/celestia/celestiacore.cpp:571
 msgid "Unknown error opening script"
 msgstr "スクリプトのオープンで不明なエラーが発生しました。"
 
-#: src/celestia/celestiacore.cpp:578
+#: src/celestia/celestiacore.cpp:586
 #, fuzzy
 msgid "Script coroutine initialization failed"
 msgstr "スクリプトcoroutineの初期化に失敗しました。"
 
-#: src/celestia/celestiacore.cpp:592
-#: src/celestia/celestiacore.cpp:594
+#: src/celestia/celestiacore.cpp:604 src/celestia/celestiacore.cpp:606
 msgid "Invalid filetype"
 msgstr "無効なファイルタイプです。"
 
-#: src/celestia/celestiacore.cpp:891
-#: src/celestia/celestiacore.cpp:1582
-#: src/celestia/celestiacore.cpp:1598
-#: src/celestia/celestiacore.cpp:1839
-#: src/celestia/celestiacore.cpp:1868
+#: src/celestia/celestiacore.cpp:921 src/celestia/celestiacore.cpp:1655
+#: src/celestia/celestiacore.cpp:1671 src/celestia/celestiacore.cpp:1912
+#: src/celestia/celestiacore.cpp:1941
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "限界等級: %.2f"
 
-#: src/celestia/celestiacore.cpp:1240
+#: src/celestia/celestiacore.cpp:1304
 msgid "Markers enabled"
 msgstr "マーカー: ON"
 
-#: src/celestia/celestiacore.cpp:1243
+#: src/celestia/celestiacore.cpp:1307
 msgid "Markers disabled"
 msgstr "マーカー: OFF"
 
-#: src/celestia/celestiacore.cpp:1253
+#: src/celestia/celestiacore.cpp:1317
 msgid "Goto surface"
 msgstr "天体表面へ移動"
 
-#: src/celestia/celestiacore.cpp:1262
+#: src/celestia/celestiacore.cpp:1326
 msgid "Alt-azimuth mode"
 msgstr "高度角・方位角モード"
 
-#: src/celestia/celestiacore.cpp:1317
+#: src/celestia/celestiacore.cpp:1381
 msgid "Star style: fuzzy points"
 msgstr "恒星表示: ぼやけた点"
 
-#: src/celestia/celestiacore.cpp:1320
+#: src/celestia/celestiacore.cpp:1384
 msgid "Star style: points"
 msgstr "恒星表示: 点"
 
-#: src/celestia/celestiacore.cpp:1323
+#: src/celestia/celestiacore.cpp:1387
 msgid "Star style: scaled discs"
 msgstr "恒星表示: 等級に応じた円"
 
-#: src/celestia/celestiacore.cpp:1336
+#: src/celestia/celestiacore.cpp:1400
 msgid "Comet tails enabled"
 msgstr "彗星の尾: ON"
 
-#: src/celestia/celestiacore.cpp:1339
+#: src/celestia/celestiacore.cpp:1403
 msgid "Comet tails disabled"
 msgstr "彗星の尾: OFF"
 
-#: src/celestia/celestiacore.cpp:1354
+#: src/celestia/celestiacore.cpp:1418
 msgid "Render path: Basic"
 msgstr "レンダリングパス :Basic"
 
-#: src/celestia/celestiacore.cpp:1357
+#: src/celestia/celestiacore.cpp:1421
 msgid "Render path: Multitexture"
 msgstr "レンダリングパス: Multitexture"
 
-#: src/celestia/celestiacore.cpp:1360
+#: src/celestia/celestiacore.cpp:1424
 msgid "Render path: NVIDIA combiners"
 msgstr "レンダリングパス: NVIDIA combiners"
 
-#: src/celestia/celestiacore.cpp:1363
+#: src/celestia/celestiacore.cpp:1427
 msgid "Render path: OpenGL vertex program"
 msgstr "レンダリングパス: OpenGL vertex program"
 
-#: src/celestia/celestiacore.cpp:1366
+#: src/celestia/celestiacore.cpp:1430
 msgid "Render path: NVIDIA vertex program and combiners"
 msgstr "レンダリングパス: NVIDIA vertex program and combiners"
 
-#: src/celestia/celestiacore.cpp:1369
+#: src/celestia/celestiacore.cpp:1433
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
 msgstr "レンダリングパス: OpenGL vertex program/NVIDIA combiners"
 
-#: src/celestia/celestiacore.cpp:1372
+#: src/celestia/celestiacore.cpp:1436
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
 msgstr "レンダリングパス: OpenGL 1.5 vertex/fragment program"
 
-#: src/celestia/celestiacore.cpp:1375
+#: src/celestia/celestiacore.cpp:1439
 msgid "Render path: NVIDIA GeForce FX"
 msgstr "レンダリングパス: NVIDIA GeForce FX"
 
-#: src/celestia/celestiacore.cpp:1378
+#: src/celestia/celestiacore.cpp:1442
 msgid "Render path: OpenGL 2.0"
 msgstr "レンダリングパス: OpenGL 2.0"
 
-#: src/celestia/celestiacore.cpp:1401
+#: src/celestia/celestiacore.cpp:1465
 msgid "Auto-magnitude enabled"
 msgstr "自動限界等級調整: ON"
 
-#: src/celestia/celestiacore.cpp:1405
+#: src/celestia/celestiacore.cpp:1470
 msgid "Auto-magnitude disabled"
 msgstr "自動限界等級調整: OFF"
 
-#: src/celestia/celestiacore.cpp:1426
-#: src/celestia/res/resource_strings.cpp:79
+#: src/celestia/celestiacore.cpp:1492 src/celestia/res/resource_strings.cpp:79
 #: src/celestia/res/resource_strings.cpp:91
 #: src/celestia/res/resource_strings.cpp:95
 #: src/celestia/res/resource_strings.cpp:123
@@ -361,258 +351,250 @@ msgstr "自動限界等級調整: OFF"
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/celestia/celestiacore.cpp:1457
+#: src/celestia/celestiacore.cpp:1530
 msgid "Time and script are paused"
 msgstr "時間・スクリプト: 停止"
 
-#: src/celestia/celestiacore.cpp:1459
+#: src/celestia/celestiacore.cpp:1532
 msgid "Time is paused"
 msgstr "時間: 停止"
 
-#: src/celestia/celestiacore.cpp:1463
+#: src/celestia/celestiacore.cpp:1536
 msgid "Resume"
 msgstr "再開"
 
-#: src/celestia/celestiacore.cpp:1526
+#: src/celestia/celestiacore.cpp:1599
 #, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "光速到達時間: %.4f 年"
 
-#: src/celestia/celestiacore.cpp:1535
+#: src/celestia/celestiacore.cpp:1608
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "光速到達時間: %d 分  %.1f 秒"
 
-#: src/celestia/celestiacore.cpp:1538
+#: src/celestia/celestiacore.cpp:1611
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "光速到達時間: %d 時間  %d 分  %.1f 秒"
 
-#: src/celestia/celestiacore.cpp:1557
+#: src/celestia/celestiacore.cpp:1630
 msgid "Light travel delay included"
 msgstr "光速考慮: ON"
 
-#: src/celestia/celestiacore.cpp:1562
+#: src/celestia/celestiacore.cpp:1635
 msgid "Light travel delay switched off"
 msgstr "光速考慮: OFF"
 
-#: src/celestia/celestiacore.cpp:1568
+#: src/celestia/celestiacore.cpp:1641
 msgid "Light travel delay ignored"
 msgstr "光速考慮は無視されます。"
 
-#: src/celestia/celestiacore.cpp:1609
+#: src/celestia/celestiacore.cpp:1682
 msgid "Using normal surface textures."
 msgstr "通常テクスチャを使用"
 
-#: src/celestia/celestiacore.cpp:1613
+#: src/celestia/celestiacore.cpp:1686
 msgid "limit of knowledge"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1614
+#: src/celestia/celestiacore.cpp:1687
 msgid "Using limit of knowledge surface textures."
 msgstr "limit of knowledgeテクスチャを使用"
 
-#: src/celestia/celestiacore.cpp:1677
+#: src/celestia/celestiacore.cpp:1750
 msgid "Follow"
 msgstr "春分点同期"
 
-#: src/celestia/celestiacore.cpp:1704
+#: src/celestia/celestiacore.cpp:1777
 msgid "Time: Forward"
 msgstr "時間の流れ: 順方向"
 
-#: src/celestia/celestiacore.cpp:1706
+#: src/celestia/celestiacore.cpp:1779
 msgid "Time: Backward"
 msgstr "時間の流れ: 逆方向"
 
-#: src/celestia/celestiacore.cpp:1717
-#: src/celestia/celestiacore.cpp:1730
+#: src/celestia/celestiacore.cpp:1790 src/celestia/celestiacore.cpp:1803
 #, c-format
 msgid "Time rate: %.1f"
 msgstr "時間の速さ: %.1f 倍"
 
-#: src/celestia/celestiacore.cpp:1767
+#: src/celestia/celestiacore.cpp:1840
 msgid "Low res textures"
 msgstr "テクスチャ解像度: 低"
 
-#: src/celestia/celestiacore.cpp:1770
+#: src/celestia/celestiacore.cpp:1843
 msgid "Medium res textures"
 msgstr "テクスチャ解像度: 中"
 
-#: src/celestia/celestiacore.cpp:1773
+#: src/celestia/celestiacore.cpp:1846
 msgid "High res textures"
 msgstr "テクスチャ解像度: 高"
 
-#: src/celestia/celestiacore.cpp:1812
+#: src/celestia/celestiacore.cpp:1885
 msgid "Sync Orbit"
 msgstr "自転同期"
 
-#: src/celestia/celestiacore.cpp:1818
+#: src/celestia/celestiacore.cpp:1891
 msgid "Lock"
 msgstr "2天体参照同期"
 
-#: src/celestia/celestiacore.cpp:1824
+#: src/celestia/celestiacore.cpp:1897
 msgid "Chase"
 msgstr "公転同期"
 
-#: src/celestia/celestiacore.cpp:1848
-#: src/celestia/celestiacore.cpp:1877
+#: src/celestia/celestiacore.cpp:1921 src/celestia/celestiacore.cpp:1950
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "視野45°での限界等級: %.2f"
 
-#: src/celestia/celestiacore.cpp:1906
-#: src/celestia/celestiacore.cpp:1916
+#: src/celestia/celestiacore.cpp:1979 src/celestia/celestiacore.cpp:1989
 msgid "Light gain"
 msgstr "光度利得"
 
-#: src/celestia/celestiacore.cpp:2252
+#: src/celestia/celestiacore.cpp:2336
 msgid "GL error: "
 msgstr "GLエラー: "
 
-#: src/celestia/celestiacore.cpp:2299
+#: src/celestia/celestiacore.cpp:2383
 msgid "View too small to be split"
 msgstr "画面が小さすぎます。"
 
-#: src/celestia/celestiacore.cpp:2302
+#: src/celestia/celestiacore.cpp:2386
 msgid "Added view"
 msgstr "画面を分割"
 
-#: src/celestia/celestiacore.cpp:2562
+#: src/celestia/celestiacore.cpp:2646
 msgid " days"
 msgstr " 日"
 
-#: src/celestia/celestiacore.cpp:2564
+#: src/celestia/celestiacore.cpp:2648
 msgid " hours"
 msgstr " 時間"
 
-#: src/celestia/celestiacore.cpp:2566
+#: src/celestia/celestiacore.cpp:2650
 msgid " minutes"
 msgstr " 分"
 
-#: src/celestia/celestiacore.cpp:2606
+#: src/celestia/celestiacore.cpp:2690
 msgid "Apparent diameter: "
 msgstr "視直径: "
 
-#: src/celestia/celestiacore.cpp:2621
+#: src/celestia/celestiacore.cpp:2705
 msgid "Apparent magnitude: "
 msgstr "視等級: "
 
-#: src/celestia/celestiacore.cpp:2625
+#: src/celestia/celestiacore.cpp:2709
 msgid "Absolute magnitude: "
 msgstr "絶対等級: "
 
-#: src/celestia/celestiacore.cpp:2658
-#: src/celestia/celestiacore.cpp:2712
-#: src/celestia/celestiacore.cpp:2744
-#: src/celestia/celestiacore.cpp:2796
+#: src/celestia/celestiacore.cpp:2742 src/celestia/celestiacore.cpp:2796
+#: src/celestia/celestiacore.cpp:2828 src/celestia/celestiacore.cpp:2880
 #: src/celestia/kde/selectionpopup.cpp:76
 msgid "Distance: "
 msgstr "距離: "
 
-#: src/celestia/celestiacore.cpp:2664
+#: src/celestia/celestiacore.cpp:2748
 msgid "Star system barycenter\n"
 msgstr "重心\n"
 
-#: src/celestia/celestiacore.cpp:2668
+#: src/celestia/celestiacore.cpp:2752
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "絶対等級: %.2f 視等級: %.2f\n"
 
-#: src/celestia/celestiacore.cpp:2674
+#: src/celestia/celestiacore.cpp:2758
 msgid "Luminosity: "
 msgstr "光度: "
 
-#: src/celestia/celestiacore.cpp:2675
-#: src/celestia/kde/selectionpopup.cpp:86
+#: src/celestia/celestiacore.cpp:2759 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
 msgstr "スペクトル型: "
 
-#: src/celestia/celestiacore.cpp:2677
+#: src/celestia/celestiacore.cpp:2761
 msgid "Neutron star"
 msgstr "中性子星"
 
-#: src/celestia/celestiacore.cpp:2679
+#: src/celestia/celestiacore.cpp:2763
 msgid "Black hole"
 msgstr "ブラックホール"
 
-#: src/celestia/celestiacore.cpp:2689
+#: src/celestia/celestiacore.cpp:2773
 msgid "Surface temp: "
 msgstr "表面温度: "
 
-#: src/celestia/celestiacore.cpp:2690
+#: src/celestia/celestiacore.cpp:2774
 #, c-format
 msgid "Radius: %.2f Rsun\n"
 msgstr "直径: 太陽の %.2f倍\n"
 
-#: src/celestia/celestiacore.cpp:2692
+#: src/celestia/celestiacore.cpp:2776
 msgid "Rotation period: "
 msgstr "自転周期: "
 
-#: src/celestia/celestiacore.cpp:2699
+#: src/celestia/celestiacore.cpp:2783
 msgid "Planetary companions present\n"
 msgstr "惑星が存在\n"
 
-#: src/celestia/celestiacore.cpp:2717
+#: src/celestia/celestiacore.cpp:2801
 msgid "Distance from center: "
 msgstr "中心からの距離: "
 
-#: src/celestia/celestiacore.cpp:2721
-#: src/celestia/celestiacore.cpp:2749
+#: src/celestia/celestiacore.cpp:2805 src/celestia/celestiacore.cpp:2833
 #: src/celestia/kde/selectionpopup.cpp:94
 msgid "Radius: "
 msgstr "半径: "
 
-#: src/celestia/celestiacore.cpp:2758
+#: src/celestia/celestiacore.cpp:2842
 msgid "Day length: "
 msgstr "一日の長さ: "
 
-#: src/celestia/celestiacore.cpp:2773
+#: src/celestia/celestiacore.cpp:2857
 msgid "Temperature: "
 msgstr "温度: "
 
-#: src/celestia/celestiacore.cpp:2785
+#: src/celestia/celestiacore.cpp:2869
 #, c-format
 msgid "Apparent mag: %.2f\n"
 msgstr "視等級: %.2f\n"
 
-#: src/celestia/celestiacore.cpp:2994
-#: src/celestia/celestiacore.cpp:3008
+#: src/celestia/celestiacore.cpp:3078 src/celestia/celestiacore.cpp:3092
 msgid "  LT"
 msgstr "光速"
 
-#: src/celestia/celestiacore.cpp:3004
+#: src/celestia/celestiacore.cpp:3088
 msgid " UTC"
 msgstr "世界時"
 
-#: src/celestia/celestiacore.cpp:3020
+#: src/celestia/celestiacore.cpp:3104
 msgid "Real time"
 msgstr "1× 倍速"
 
-#: src/celestia/celestiacore.cpp:3022
+#: src/celestia/celestiacore.cpp:3106
 msgid "-Real time"
 msgstr "-1× 倍速"
 
-#: src/celestia/celestiacore.cpp:3026
+#: src/celestia/celestiacore.cpp:3110
 msgid "Time stopped"
 msgstr "停止中"
 
-#: src/celestia/celestiacore.cpp:3030
+#: src/celestia/celestiacore.cpp:3114
 msgid " faster"
 msgstr " 倍速"
 
-#: src/celestia/celestiacore.cpp:3034
+#: src/celestia/celestiacore.cpp:3118
 msgid " slower"
 msgstr " 分の1倍速"
 
-#: src/celestia/celestiacore.cpp:3040
+#: src/celestia/celestiacore.cpp:3124
 msgid " (Paused)"
 msgstr "(停止中)"
 
-#: src/celestia/celestiacore.cpp:3055
+#: src/celestia/celestiacore.cpp:3139
 msgid "FPS: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3057
+#: src/celestia/celestiacore.cpp:3141
 msgid ""
 "\n"
 "Speed: "
@@ -620,162 +602,156 @@ msgstr ""
 "\n"
 "速度: "
 
-#: src/celestia/celestiacore.cpp:3083
+#: src/celestia/celestiacore.cpp:3167
 msgid "Travelling "
 msgstr "移動中"
 
-#: src/celestia/celestiacore.cpp:3096
+#: src/celestia/celestiacore.cpp:3180
 msgid "Track "
 msgstr "画面中央に保持: "
 
-#: src/celestia/celestiacore.cpp:3108
+#: src/celestia/celestiacore.cpp:3192
 msgid "Follow "
 msgstr "春分点同期: "
 
-#: src/celestia/celestiacore.cpp:3113
+#: src/celestia/celestiacore.cpp:3197
 msgid "Sync Orbit "
 msgstr "自転同期: "
 
-#: src/celestia/celestiacore.cpp:3118
+#: src/celestia/celestiacore.cpp:3202
 msgid "Lock "
 msgstr "2天体参照同期: "
 
-#: src/celestia/celestiacore.cpp:3127
+#: src/celestia/celestiacore.cpp:3211
 msgid "Chase "
 msgstr "公転同期: "
 
-#: src/celestia/celestiacore.cpp:3143
-#, c-format
+#: src/celestia/celestiacore.cpp:3227
 msgid "FOV: "
 msgstr "視野: "
 
-#: src/celestia/celestiacore.cpp:3245
+#: src/celestia/celestiacore.cpp:3329
 msgid "Target name: "
 msgstr "天体名を入力してください: "
 
-#: src/celestia/celestiacore.cpp:3327
+#: src/celestia/celestiacore.cpp:3411
 msgid " at "
 msgstr " "
 
-#: src/celestia/celestiacore.cpp:3328
+#: src/celestia/celestiacore.cpp:3412
 msgid " fps"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3330
+#: src/celestia/celestiacore.cpp:3414
 msgid "  Recording"
 msgstr " 録画中"
 
-#: src/celestia/celestiacore.cpp:3332
+#: src/celestia/celestiacore.cpp:3416
 msgid "  Paused"
 msgstr " 停止中"
 
-#: src/celestia/celestiacore.cpp:3351
+#: src/celestia/celestiacore.cpp:3435
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 録画開始/一時停止    F12 停止"
 
-#: src/celestia/celestiacore.cpp:3360
-#: src/celestia/celestiacore.cpp:3363
+#: src/celestia/celestiacore.cpp:3444 src/celestia/celestiacore.cpp:3447
 msgid "Edit Mode"
 msgstr "編集モード"
 
-#: src/celestia/celestiacore.cpp:3461
+#: src/celestia/celestiacore.cpp:3531
 msgid "Loading solar system catalog: "
 msgstr "次の恒星系カタログを読み込んでいます: "
 
-#: src/celestia/celestiacore.cpp:3502
+#: src/celestia/celestiacore.cpp:3572
 msgid "Loading "
 msgstr "次を読み込んでいます: "
 
-#: src/celestia/celestiacore.cpp:3512
+#: src/celestia/celestiacore.cpp:3582
 #, c-format
 msgid "Error reading star file: %s\n"
 msgstr "次の恒星ファイルの読み込みに失敗しました: %s\n"
 
-#: src/celestia/celestiacore.cpp:3538
+#: src/celestia/celestiacore.cpp:3608
 msgid "License file 'License.txt' is missing!"
 msgstr "ライセンスファイル'License.txt'がありません!"
 
-#: src/celestia/celestiacore.cpp:3559
+#: src/celestia/celestiacore.cpp:3629
 msgid "Error reading configuration file."
 msgstr "設定ファイルの読み込みでエラーが発生しました。"
 
-#: src/celestia/celestiacore.cpp:3598
+#: src/celestia/celestiacore.cpp:3668
 msgid "Cannot read star database."
 msgstr "恒星データベースが読み込めません。"
 
-#: src/celestia/celestiacore.cpp:3617
+#: src/celestia/celestiacore.cpp:3687
 msgid "Error opening solar system catalog.\n"
 msgstr "恒星系カタログのオープンでエラーが発生しました。.\n"
 
-#: src/celestia/celestiacore.cpp:3632
+#: src/celestia/celestiacore.cpp:3702
 msgid "Error opening test.xml\n"
 msgstr "test.xmlのオープンでエラーが発生しました。\n"
 
-#: src/celestia/celestiacore.cpp:3669
+#: src/celestia/celestiacore.cpp:3739
 msgid "Error reading deep sky file\n"
 msgstr "深宇宙天体ファイルの読み込みでエラーが発生しました。\n"
 
-#: src/celestia/celestiacore.cpp:3676
-#: src/celestia/celestiacore.cpp:3910
-#: src/celestia/celestiacore.cpp:3932
+#: src/celestia/celestiacore.cpp:3746 src/celestia/celestiacore.cpp:3967
+#: src/celestia/celestiacore.cpp:3989
 msgid "Error opening "
 msgstr "次のオープンでエラーが発生しました: "
 
-#: src/celestia/celestiacore.cpp:3720
+#: src/celestia/celestiacore.cpp:3790
 msgid "Error opening asterisms file."
 msgstr "星座線ファイルのオープンでエラーが発生しました。"
 
-#: src/celestia/celestiacore.cpp:3735
+#: src/celestia/celestiacore.cpp:3805
 msgid "Error opening constellation boundaries files."
 msgstr "星座境界線ファイルのオープンでエラーが発生しました。"
 
-#: src/celestia/celestiacore.cpp:3799
+#: src/celestia/celestiacore.cpp:3869
 msgid "render path: "
 msgstr "レンダリングパス: "
 
-#: src/celestia/celestiacore.cpp:3810
+#: src/celestia/celestiacore.cpp:3880
 msgid "Failed to initialize renderer"
 msgstr "レンダラーの初期化に失敗しました。"
 
-#: src/celestia/celestiacore.cpp:3841
+#: src/celestia/celestiacore.cpp:3896
 msgid "Error loading font; text will not be visible.\n"
 msgstr "フォントの読み込みでエラーが発生しました。テキストが表示されません。\n"
 
-#: src/celestia/celestiacore.cpp:3893
+#: src/celestia/celestiacore.cpp:3950
 msgid "Error reading cross index "
 msgstr "次のクロスインデックスファイルの読み込みでエラーが発生しました: "
 
-#: src/celestia/celestiacore.cpp:3895
+#: src/celestia/celestiacore.cpp:3952
 msgid "Loaded cross index "
 msgstr "次のクロスインデックスファイルを読み込みました: "
 
-#: src/celestia/celestiacore.cpp:3917
+#: src/celestia/celestiacore.cpp:3974
 msgid "Error reading star names file\n"
 msgstr "恒星名ファイルの読み込みでエラーが発生しました。\n"
 
-#: src/celestia/celestiacore.cpp:3940
+#: src/celestia/celestiacore.cpp:3997
 msgid "Error reading stars file\n"
 msgstr "恒星ファイルの読み込みでエラーが発生しました。\n"
 
-#: src/celestia/celestiacore.cpp:3967
+#: src/celestia/celestiacore.cpp:4024
 msgid "Error opening star catalog "
 msgstr "次の恒星カタログのオープンでエラーが発生しました: "
 
-#: src/celestia/kde/celestialbrowser.cpp:28
-#: src/celestia/kde/kdeapp.cpp:526
+#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:482
 #: src/celestia/kde/rc.cpp:30
 #, no-c-format
 msgid "Celestial Browser"
 msgstr "天体ブラウザ"
 
-#: src/celestia/kde/celestialbrowser.cpp:177
-#: src/celestia/kde/rc.cpp:73
+#: src/celestia/kde/celestialbrowser.cpp:177 src/celestia/kde/rc.cpp:73
 #, no-c-format
 msgid "Planet"
 msgstr "惑星"
 
-#: src/celestia/kde/celestialbrowser.cpp:180
-#: src/celestia/kde/rc.cpp:76
+#: src/celestia/kde/celestialbrowser.cpp:180 src/celestia/kde/rc.cpp:76
 #: data/data.cpp:4
 #, no-c-format
 msgid "Moon"
@@ -798,16 +774,14 @@ msgstr "人工衛星・探査機"
 msgid "-"
 msgstr ""
 
-#: src/celestia/kde/eclipsefinderdlg.cpp:20
-#: src/celestia/kde/kdeapp.cpp:527
-#: src/celestia/kde/rc.cpp:70
-#: src/celestia/res/resource_strings.cpp:202
+#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:483
+#: src/celestia/kde/rc.cpp:70 src/celestia/res/resource_strings.cpp:202
 #, no-c-format
 msgid "Eclipse Finder"
 msgstr "食を探す"
 
 #: src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/kde/selectionpopup.cpp:312
 msgid "&Goto"
 msgstr "移動(&G)"
 
@@ -853,425 +827,427 @@ msgstr "このメニューに新規フォルダを追加"
 msgid "Can't add bookmark with empty URL"
 msgstr "空のURLはブックマークに追加できません。"
 
-#: src/celestia/kde/kdeapp.cpp:134
+#: src/celestia/kde/kdeapp.cpp:122
 msgid ""
-"Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \n"
-"Start-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."
+"Something seems to be wrong with your installation of Celestia. The splash "
+"screen directory couldn't be found. \n"
+"Start-up will continue, but Celestia will probably be missing some data "
+"files and may not work correctly, please check your installation."
 msgstr ""
-"正しくインストールされていない可能性があります。スプラッシュスクリーンディレクトリが見つかりません。\n"
-"正しくないデータ、あるいは存在しないデータが参照されています。インストールが正しいか確認してください。スタートアップを続けます。"
+"正しくインストールされていない可能性があります。スプラッシュスクリーンディレ"
+"クトリが見つかりません。\n"
+"正しくないデータ、あるいは存在しないデータが参照されています。インストールが"
+"正しいか確認してください。スタートアップを続けます。"
 
-#: src/celestia/kde/kdeapp.cpp:435
+#: src/celestia/kde/kdeapp.cpp:391
 msgid "Go to &URL..."
 msgstr "URLに移動(&U)..."
 
-#: src/celestia/kde/kdeapp.cpp:436
+#: src/celestia/kde/kdeapp.cpp:392
 msgid "Go to &Long/Lat..."
 msgstr "指定した経緯度に移動(&L)..."
 
-#: src/celestia/kde/kdeapp.cpp:438
+#: src/celestia/kde/kdeapp.cpp:394
 msgid "&Back"
 msgstr "後退(&B)"
 
-#: src/celestia/kde/kdeapp.cpp:441
+#: src/celestia/kde/kdeapp.cpp:397
 msgid "&Forward"
 msgstr "前進(&F)"
 
-#: src/celestia/kde/kdeapp.cpp:448
+#: src/celestia/kde/kdeapp.cpp:404
 msgid "Home"
 msgstr "太陽へ移動"
 
-#: src/celestia/kde/kdeapp.cpp:455
+#: src/celestia/kde/kdeapp.cpp:411
 msgid "Bookmarks"
 msgstr "ブックマーク"
 
-#: src/celestia/kde/kdeapp.cpp:467
+#: src/celestia/kde/kdeapp.cpp:423
 msgid "Full Screen"
 msgstr "全画面表示"
 
-#: src/celestia/kde/kdeapp.cpp:471
+#: src/celestia/kde/kdeapp.cpp:427
 msgid "Copy URL"
 msgstr "URLをコピー"
 
-#: src/celestia/kde/kdeapp.cpp:474
+#: src/celestia/kde/kdeapp.cpp:430
 msgid "Set Time..."
 msgstr "時刻を設定..."
 
-#: src/celestia/kde/kdeapp.cpp:475
+#: src/celestia/kde/kdeapp.cpp:431
 msgid "Set Time to Now"
 msgstr "現在時刻に設定"
 
-#: src/celestia/kde/kdeapp.cpp:476
+#: src/celestia/kde/kdeapp.cpp:432
 msgid "Accelerate Time"
 msgstr "時間を速く"
 
-#: src/celestia/kde/kdeapp.cpp:477
+#: src/celestia/kde/kdeapp.cpp:433
 msgid "Decelerate Time"
 msgstr "時間を遅く"
 
-#: src/celestia/kde/kdeapp.cpp:478
+#: src/celestia/kde/kdeapp.cpp:434
 msgid "Pause Time"
 msgstr "時間を停止"
 
-#: src/celestia/kde/kdeapp.cpp:479
+#: src/celestia/kde/kdeapp.cpp:435
 msgid "Reverse Time"
 msgstr "時間を逆転"
 
-#: src/celestia/kde/kdeapp.cpp:481
+#: src/celestia/kde/kdeapp.cpp:437
 msgid "Split View Vertically"
 msgstr "画面を左右に分割"
 
-#: src/celestia/kde/kdeapp.cpp:482
+#: src/celestia/kde/kdeapp.cpp:438
 msgid "Split View Horizontally"
 msgstr "画面を上下に分割"
 
-#: src/celestia/kde/kdeapp.cpp:483
+#: src/celestia/kde/kdeapp.cpp:439
 msgid "Cycle View"
 msgstr "画面を切替"
 
-#: src/celestia/kde/kdeapp.cpp:484
+#: src/celestia/kde/kdeapp.cpp:440
 msgid "Single View"
 msgstr "アクティブな画面以外を削除"
 
-#: src/celestia/kde/kdeapp.cpp:485
+#: src/celestia/kde/kdeapp.cpp:441
 msgid "Delete View"
 msgstr "アクティブな画面を削除"
 
-#: src/celestia/kde/kdeapp.cpp:486
+#: src/celestia/kde/kdeapp.cpp:442
 msgid "Frames Visible"
 msgstr "フレームを表示"
 
-#: src/celestia/kde/kdeapp.cpp:499
+#: src/celestia/kde/kdeapp.cpp:455
 msgid "Active Frame Visible"
 msgstr "アクティブなフレームを表示"
 
-#: src/celestia/kde/kdeapp.cpp:511
+#: src/celestia/kde/kdeapp.cpp:467
 msgid "Synchronize Time"
 msgstr "各画面で時刻を同期"
 
-#: src/celestia/kde/kdeapp.cpp:523
+#: src/celestia/kde/kdeapp.cpp:479
 msgid "Alt-Azimuth Mode"
 msgstr "高度角・方位角モード"
 
-#: src/celestia/kde/kdeapp.cpp:524
+#: src/celestia/kde/kdeapp.cpp:480
 msgid "Go To Surface"
 msgstr "天体表面へ移動"
 
-#: src/celestia/kde/kdeapp.cpp:552
+#: src/celestia/kde/kdeapp.cpp:508
 msgid "Show Stars"
 msgstr "恒星を表示"
 
-#: src/celestia/kde/kdeapp.cpp:555
+#: src/celestia/kde/kdeapp.cpp:511
 msgid "Show Planets"
 msgstr "惑星を表示"
 
-#: src/celestia/kde/kdeapp.cpp:558
+#: src/celestia/kde/kdeapp.cpp:514
 msgid "Show Galaxies"
 msgstr "銀河を表示"
 
-#: src/celestia/kde/kdeapp.cpp:561
+#: src/celestia/kde/kdeapp.cpp:517
 msgid "Show Partial Trajectories"
 msgstr "カスタム軌道を表示"
 
-#: src/celestia/kde/kdeapp.cpp:564
+#: src/celestia/kde/kdeapp.cpp:520
 msgid "Show Nebulae"
 msgstr "星雲を表示"
 
-#: src/celestia/kde/kdeapp.cpp:567
+#: src/celestia/kde/kdeapp.cpp:523
 msgid "Show Open Clusters"
 msgstr "散開星団を表示"
 
-#: src/celestia/kde/kdeapp.cpp:570
+#: src/celestia/kde/kdeapp.cpp:526
 msgid "Show Constellations"
 msgstr "星座線を表示"
 
-#: src/celestia/kde/kdeapp.cpp:573
+#: src/celestia/kde/kdeapp.cpp:529
 msgid "Show CloudMaps"
 msgstr "雲テクスチャを表示"
 
-#: src/celestia/kde/kdeapp.cpp:576
+#: src/celestia/kde/kdeapp.cpp:532
 msgid "Show Orbits"
 msgstr "軌道を表示"
 
-#: src/celestia/kde/kdeapp.cpp:579
+#: src/celestia/kde/kdeapp.cpp:535
 msgid "Show Asteroid Orbits"
 msgstr "小惑星の軌道を表示"
 
-#: src/celestia/kde/kdeapp.cpp:582
+#: src/celestia/kde/kdeapp.cpp:538
 msgid "Show Comet Orbits"
 msgstr "彗星の軌道を表示"
 
-#: src/celestia/kde/kdeapp.cpp:585
+#: src/celestia/kde/kdeapp.cpp:541
 msgid "Show Moon Orbits"
 msgstr "衛星の軌道を表示"
 
-#: src/celestia/kde/kdeapp.cpp:588
+#: src/celestia/kde/kdeapp.cpp:544
 msgid "Show Planet Orbits"
 msgstr "惑星の軌道を表示"
 
-#: src/celestia/kde/kdeapp.cpp:591
+#: src/celestia/kde/kdeapp.cpp:547
 msgid "Show Spacecraft Orbits"
 msgstr "人工衛星・探査機の軌道を表示"
 
-#: src/celestia/kde/kdeapp.cpp:594
+#: src/celestia/kde/kdeapp.cpp:550
 msgid "Show Celestial Grid"
 msgstr "天球座標を表示"
 
-#: src/celestia/kde/kdeapp.cpp:597
+#: src/celestia/kde/kdeapp.cpp:553
 msgid "Show Night Side Lights"
 msgstr "夜側テクスチャを表示"
 
-#: src/celestia/kde/kdeapp.cpp:600
+#: src/celestia/kde/kdeapp.cpp:556
 msgid "Show Markers"
 msgstr "マーカーを表示"
 
-#: src/celestia/kde/kdeapp.cpp:603
+#: src/celestia/kde/kdeapp.cpp:559
 msgid "Show Atmospheres"
 msgstr "大気を表示"
 
-#: src/celestia/kde/kdeapp.cpp:606
+#: src/celestia/kde/kdeapp.cpp:562
 msgid "Show Smooth Orbit Lines"
 msgstr "線を滑らかに"
 
-#: src/celestia/kde/kdeapp.cpp:609
+#: src/celestia/kde/kdeapp.cpp:565
 msgid "Show Eclipse Shadows"
 msgstr "食の影を表示"
 
-#: src/celestia/kde/kdeapp.cpp:612
+#: src/celestia/kde/kdeapp.cpp:568
 msgid "Cycle Star Mode"
 msgstr "恒星表示方法を切替"
 
-#: src/celestia/kde/kdeapp.cpp:614
+#: src/celestia/kde/kdeapp.cpp:570
 msgid "Show Ring Shadows"
 msgstr "輪の影を表示"
 
-#: src/celestia/kde/kdeapp.cpp:617
+#: src/celestia/kde/kdeapp.cpp:573
 msgid "Show Boundaries"
 msgstr "星座境界線を表示"
 
-#: src/celestia/kde/kdeapp.cpp:620
+#: src/celestia/kde/kdeapp.cpp:576
 #: src/celestia/kde/kdepreferencesdialog.cpp:76
 msgid "Auto Magnitudes"
 msgstr "自動限界等級調整"
 
-#: src/celestia/kde/kdeapp.cpp:623
+#: src/celestia/kde/kdeapp.cpp:579
 msgid "Show Comet Tails"
 msgstr "彗星の尾を表示"
 
-#: src/celestia/kde/kdeapp.cpp:626
+#: src/celestia/kde/kdeapp.cpp:582
 msgid "Show Star Labels"
 msgstr "恒星名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:631
+#: src/celestia/kde/kdeapp.cpp:587
 msgid "Show Planet Labels"
 msgstr "惑星名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:634
+#: src/celestia/kde/kdeapp.cpp:590
 msgid "Show Moon Labels"
 msgstr "衛星名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:637
+#: src/celestia/kde/kdeapp.cpp:593
 msgid "Show Comet Labels"
 msgstr "彗星名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:640
+#: src/celestia/kde/kdeapp.cpp:596
 msgid "Show Constellation Labels"
 msgstr "星座名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:643
+#: src/celestia/kde/kdeapp.cpp:599
 msgid "Constellation Labels in Latin"
 msgstr "星座名をラテン語で表示"
 
-#: src/celestia/kde/kdeapp.cpp:646
+#: src/celestia/kde/kdeapp.cpp:602
 msgid "Show Galaxy Labels"
 msgstr "銀河名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:649
+#: src/celestia/kde/kdeapp.cpp:605
 msgid "Show Nebula Labels"
 msgstr "星雲名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:652
+#: src/celestia/kde/kdeapp.cpp:608
 msgid "Show Open Cluster Labels"
 msgstr "散開星団名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:655
+#: src/celestia/kde/kdeapp.cpp:611
 msgid "Show Asteroid Labels"
 msgstr "小惑星名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:658
+#: src/celestia/kde/kdeapp.cpp:614
 msgid "Show Spacecraft Labels"
 msgstr "人工衛星・探査機名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:661
+#: src/celestia/kde/kdeapp.cpp:617
 msgid "Show Location Labels"
 msgstr "地名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:664
+#: src/celestia/kde/kdeapp.cpp:620
 msgid "Display Local Time"
 msgstr "ローカル時を表示"
 
-#: src/celestia/kde/kdeapp.cpp:669
+#: src/celestia/kde/kdeapp.cpp:625
 msgid "Show City Locations"
 msgstr "都市名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:672
+#: src/celestia/kde/kdeapp.cpp:628
 msgid "Show Observatory Locations"
 msgstr "天文台名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:675
+#: src/celestia/kde/kdeapp.cpp:631
 msgid "Show Landing Sites Locations"
 msgstr "着陸地点名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:678
+#: src/celestia/kde/kdeapp.cpp:634
 msgid "Show Crater Locations"
 msgstr "クレーター名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:681
+#: src/celestia/kde/kdeapp.cpp:637
 msgid "Show Mons Locations"
 msgstr "山地名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:684
+#: src/celestia/kde/kdeapp.cpp:640
 msgid "Show Terra Locations"
 msgstr "陸地名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:687
+#: src/celestia/kde/kdeapp.cpp:643
 msgid "Show Vallis Locations"
 msgstr "峡谷名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:690
+#: src/celestia/kde/kdeapp.cpp:646
 msgid "Show Mare Locations"
 msgstr "海洋名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:693
+#: src/celestia/kde/kdeapp.cpp:649
 msgid "Show Other Locations"
 msgstr "その他の地名を表示"
 
-#: src/celestia/kde/kdeapp.cpp:697
+#: src/celestia/kde/kdeapp.cpp:653
 msgid "Wireframe Mode"
 msgstr "ワイヤフレームモード"
 
-#: src/celestia/kde/kdeapp.cpp:699
+#: src/celestia/kde/kdeapp.cpp:655
 msgid "Center on Orbit"
 msgstr "軌道の中心へ"
 
-#: src/celestia/kde/kdeapp.cpp:703
+#: src/celestia/kde/kdeapp.cpp:659
 #: src/celestia/kde/kdepreferencesdialog.cpp:458
 msgid "Basic"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:705
+#: src/celestia/kde/kdeapp.cpp:661
 #: src/celestia/kde/kdepreferencesdialog.cpp:460
 msgid "Multitexture"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:707
+#: src/celestia/kde/kdeapp.cpp:663
 #: src/celestia/kde/kdepreferencesdialog.cpp:462
 msgid "NvCombiners"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:709
+#: src/celestia/kde/kdeapp.cpp:665
 #: src/celestia/kde/kdepreferencesdialog.cpp:464
 msgid "DOT3 ARBVP"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:711
+#: src/celestia/kde/kdeapp.cpp:667
 #: src/celestia/kde/kdepreferencesdialog.cpp:466
 msgid "NvCombiner NvVP"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:713
+#: src/celestia/kde/kdeapp.cpp:669
 #: src/celestia/kde/kdepreferencesdialog.cpp:468
 msgid "NvCombiner ARBVP"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:715
+#: src/celestia/kde/kdeapp.cpp:671
 #: src/celestia/kde/kdepreferencesdialog.cpp:470
 msgid "ARBFP ARBVP"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:717
+#: src/celestia/kde/kdeapp.cpp:673
 #: src/celestia/kde/kdepreferencesdialog.cpp:472
 msgid "NV30"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:719
+#: src/celestia/kde/kdeapp.cpp:675
 #: src/celestia/kde/kdepreferencesdialog.cpp:474
 msgid "OpenGL 2.0"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:721
+#: src/celestia/kde/kdeapp.cpp:677
 msgid "Cycle OpenGL Render Path"
 msgstr "レンダリングパスを切替"
 
-#: src/celestia/kde/kdeapp.cpp:723
+#: src/celestia/kde/kdeapp.cpp:679
 msgid "Grab Image"
 msgstr "画面を保存"
 
-#: src/celestia/kde/kdeapp.cpp:725
+#: src/celestia/kde/kdeapp.cpp:681
 msgid "OpenGL info"
 msgstr "OpenGL情報"
 
-#: src/celestia/kde/kdeapp.cpp:731
+#: src/celestia/kde/kdeapp.cpp:687
 msgid "Show Bookmark Toolbar"
 msgstr "ブックマークツールバーを表示"
 
-#: src/celestia/kde/kdeapp.cpp:976
+#: src/celestia/kde/kdeapp.cpp:932
 msgid "OpenGL Info"
 msgstr "OpenGL情報"
 
-#: src/celestia/kde/kdeapp.cpp:1311
+#: src/celestia/kde/kdeapp.cpp:1266
 #: src/celestia/kde/kdepreferencesdialog.cpp:355
 #: src/celestia/kde/kdepreferencesdialog.cpp:366
 msgid "UTC"
 msgstr "世界時"
 
-#: src/celestia/kde/kdeapp.cpp:1400
+#: src/celestia/kde/kdeapp.cpp:1355
 msgid "Enter URL"
 msgstr "URLを入力してください"
 
-#: src/celestia/kde/kdeapp.cpp:1492
+#: src/celestia/kde/kdeapp.cpp:1447
 msgid "Object: "
 msgstr "天体名: "
 
-#: src/celestia/kde/kdeapp.cpp:1497
+#: src/celestia/kde/kdeapp.cpp:1452
 msgid "Longitude: "
 msgstr "緯度: "
 
-#: src/celestia/kde/kdeapp.cpp:1503
+#: src/celestia/kde/kdeapp.cpp:1458
 msgid "East"
 msgstr "東経"
 
-#: src/celestia/kde/kdeapp.cpp:1504
+#: src/celestia/kde/kdeapp.cpp:1459
 msgid "West"
 msgstr "西経"
 
-#: src/celestia/kde/kdeapp.cpp:1506
+#: src/celestia/kde/kdeapp.cpp:1461
 msgid "Latitude: "
 msgstr "緯度: "
 
-#: src/celestia/kde/kdeapp.cpp:1512
+#: src/celestia/kde/kdeapp.cpp:1467
 msgid "North"
 msgstr "北緯"
 
-#: src/celestia/kde/kdeapp.cpp:1513
+#: src/celestia/kde/kdeapp.cpp:1468
 msgid "South"
 msgstr "南緯"
 
-#: src/celestia/kde/kdeapp.cpp:1515
+#: src/celestia/kde/kdeapp.cpp:1470
 msgid "Altitude: "
 msgstr "高度: "
 
-#: src/celestia/kde/kdeapp.cpp:1520
-#: src/celestia/res/resource_strings.cpp:119
+#: src/celestia/kde/kdeapp.cpp:1475 src/celestia/res/resource_strings.cpp:119
 msgid "km"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1590
+#: src/celestia/kde/kdeapp.cpp:1545
 msgid "Celestia encountered an error while processing your script"
 msgstr "スクリプト実行中にエラーが発生しました。"
 
-#: src/celestia/kde/kdemain.cpp:25
-#: src/celestia/kde/kdemain.cpp:43
+#: src/celestia/kde/kdemain.cpp:25 src/celestia/kde/kdemain.cpp:43
 #: src/celestia/res/resource_strings.cpp:62
 msgid "Celestia"
 msgstr ""
@@ -1301,15 +1277,11 @@ msgid "Start and go to url"
 msgstr "指定したURLへ移動"
 
 #: src/celestia/kde/kdemain.cpp:71
-msgid ""
-"_: NAME OF TRANSLATORS\\n"
-"Your names"
+msgid "_: NAME OF TRANSLATORS\\nYour names"
 msgstr "Sui Ota(太田 翠)"
 
 #: src/celestia/kde/kdemain.cpp:71
-msgid ""
-"_: EMAIL OF TRANSLATORS\\n"
-"Your emails"
+msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
 msgstr "aqua@aqsp.net"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:56
@@ -1334,7 +1306,7 @@ msgstr "恒星"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:80
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/kde/selectionpopup.cpp:385
+#: src/celestia/kde/selectionpopup.cpp:387
 #: src/celestia/res/resource_strings.cpp:146
 #: src/celestia/res/resource_strings.cpp:155
 msgid "Planets"
@@ -1430,8 +1402,7 @@ msgstr "星座境界線"
 msgid "Orbits / Labels"
 msgstr "軌道 / 天体名"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:161
-#: src/celestia/kde/rc.cpp:12
+#: src/celestia/kde/kdepreferencesdialog.cpp:161 src/celestia/kde/rc.cpp:12
 #, no-c-format
 msgid "Labels"
 msgstr "名称"
@@ -1578,8 +1549,7 @@ msgstr "設定"
 msgid "Local Time is only supported for dates between 1902 and 2037.\n"
 msgstr "ローカル時は1902年から2037年の間でのみサポートされています。\n"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:415
-#: src/celestia/kde/rc.cpp:27
+#: src/celestia/kde/kdepreferencesdialog.cpp:415 src/celestia/kde/rc.cpp:27
 #, no-c-format
 msgid "Now"
 msgstr "現在"
@@ -1625,16 +1595,27 @@ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
 msgstr ""
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:725
-msgid "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon graphics card, though NvCombiner ARBVP is a slightly better option for Geforce users"
-msgstr "<b>NVIDIA Combiners</b>と<b>NV_vertex_program extension</b><br>はGeforce、Radeon両プラットフォームにおいてバンプマッピング、輪の影、スピキュラーハイライトを可能にしますが、 NvCombiner ARBVPはGeforceユーザ向けのオプションです。 "
+msgid ""
+"<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
+"mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon "
+"graphics card, though NvCombiner ARBVP is a slightly better option for "
+"Geforce users"
+msgstr ""
+"<b>NVIDIA Combiners</b>と<b>NV_vertex_program extension</b><br>はGeforce、"
+"Radeon両プラットフォームにおいてバンプマッピング、輪の影、スピキュラーハイラ"
+"イトを可能にしますが、 NvCombiner ARBVPはGeforceユーザ向けのオプションです。 "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:731
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
 msgstr ""
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:734
-msgid "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide advanced effects on Geforce FX and Radeon 9700 cards"
-msgstr "<b>ARB_fragment_program</b>と<b>ARB_vertex_program extensions</b><br>はGeforce FXとRadeon 9700においてより高性能なエフェクトを出します。"
+msgid ""
+"<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
+"advanced effects on Geforce FX and Radeon 9700 cards"
+msgstr ""
+"<b>ARB_fragment_program</b>と<b>ARB_vertex_program extensions</b><br>は"
+"Geforce FXとRadeon 9700においてより高性能なエフェクトを出します。"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:738
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
@@ -1644,15 +1625,17 @@ msgstr "<b>NV_fragment_program</b>と<b>ARB_vertex_program extensions</b>"
 msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr ""
 
-#: src/celestia/kde/kdeuniquecelestia.cpp:42
-msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
-msgstr "ファイル%1 が存在しません。デフォルトの設定%2/celestia.cfg を使用します。"
+#: src/celestia/kde/kdeuniquecelestia.cpp:43
+msgid ""
+"File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgstr ""
+"ファイル%1 が存在しません。デフォルトの設定%2/celestia.cfg を使用します。"
 
-#: src/celestia/kde/kdeuniquecelestia.cpp:52
+#: src/celestia/kde/kdeuniquecelestia.cpp:53
 msgid "Directory %1 does not exist, using default %2"
 msgstr "ディレクトリ%1 が存在しません。デフォルトの%2 を使用します。"
 
-#: src/celestia/kde/kdeuniquecelestia.cpp:64
+#: src/celestia/kde/kdeuniquecelestia.cpp:65
 msgid "Extras directory %1 does not exist"
 msgstr "拡張ディレクトリ%1 は存在しません。"
 
@@ -1668,74 +1651,73 @@ msgstr "表面温度: "
 msgid "Marked objects"
 msgstr "マーカー付"
 
-#: src/celestia/kde/selectionpopup.cpp:308
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Select"
 msgstr "天体を選択(&S)"
 
-#: src/celestia/kde/selectionpopup.cpp:309
+#: src/celestia/kde/selectionpopup.cpp:311
 #: src/celestia/res/resource_strings.cpp:101
 #: src/celestia/res/resource_strings.cpp:108
 msgid "&Center"
 msgstr "天体を画面中心に(&C)"
 
-#: src/celestia/kde/selectionpopup.cpp:311
+#: src/celestia/kde/selectionpopup.cpp:313
 msgid "&Follow"
 msgstr "春分点同期(&F)"
 
-#: src/celestia/kde/selectionpopup.cpp:312
+#: src/celestia/kde/selectionpopup.cpp:314
 msgid "S&ynch Orbit"
 msgstr "自転同期(&Y)"
 
-#: src/celestia/kde/selectionpopup.cpp:313
+#: src/celestia/kde/selectionpopup.cpp:315
 msgid "&Info"
 msgstr "天体情報(&I)"
 
-#: src/celestia/kde/selectionpopup.cpp:314
+#: src/celestia/kde/selectionpopup.cpp:316
 msgid "Unmark &All"
 msgstr "マーカーをすべて解除(&A)"
 
-#: src/celestia/kde/selectionpopup.cpp:317
+#: src/celestia/kde/selectionpopup.cpp:319
 msgid "&Unmark"
 msgstr "マーカーを解除(&U)"
 
-#: src/celestia/kde/selectionpopup.cpp:322
+#: src/celestia/kde/selectionpopup.cpp:324
 msgid "Diamond"
 msgstr "菱形"
 
-#: src/celestia/kde/selectionpopup.cpp:323
+#: src/celestia/kde/selectionpopup.cpp:325
 msgid "Triangle"
 msgstr "三角形"
 
-#: src/celestia/kde/selectionpopup.cpp:324
+#: src/celestia/kde/selectionpopup.cpp:326
 msgid "Square"
 msgstr "正方形"
 
-#: src/celestia/kde/selectionpopup.cpp:325
+#: src/celestia/kde/selectionpopup.cpp:327
 msgid "Plus"
 msgstr "十字"
 
-#: src/celestia/kde/selectionpopup.cpp:326
+#: src/celestia/kde/selectionpopup.cpp:328
 msgid "X"
 msgstr "×字"
 
-#: src/celestia/kde/selectionpopup.cpp:327
+#: src/celestia/kde/selectionpopup.cpp:329
 msgid "&Mark"
 msgstr "マーカー(&M)"
 
-#: src/celestia/kde/selectionpopup.cpp:338
+#: src/celestia/kde/selectionpopup.cpp:340
 msgid "Normal"
 msgstr "通常"
 
-#: src/celestia/kde/selectionpopup.cpp:345
+#: src/celestia/kde/selectionpopup.cpp:347
 msgid "&Alternate Surfaces"
 msgstr "AltSurface(&A)"
 
-#: src/celestia/kde/selectionpopup.cpp:363
+#: src/celestia/kde/selectionpopup.cpp:365
 msgid "Satellites"
 msgstr "衛星"
 
-#: src/celestia/kde/rc.cpp:3
-#: src/celestia/res/resource_strings.cpp:6
+#: src/celestia/kde/rc.cpp:3 src/celestia/res/resource_strings.cpp:6
 #, no-c-format
 msgid "&Navigation"
 msgstr "ナビゲーション(&N)"
@@ -1770,8 +1752,7 @@ msgstr "マルチビュー"
 msgid "Main Toolbar"
 msgstr "メインツールバー"
 
-#: src/celestia/kde/rc.cpp:34
-#: src/celestia/res/resource_strings.cpp:93
+#: src/celestia/kde/rc.cpp:34 src/celestia/res/resource_strings.cpp:93
 #, no-c-format
 msgid "Name"
 msgstr "天体名"
@@ -1811,8 +1792,7 @@ msgstr "明るさ順(絶対等級)"
 msgid "Brightest (App.)"
 msgstr "明るさ順(視等級)"
 
-#: src/celestia/kde/rc.cpp:58
-#: src/celestia/res/resource_strings.cpp:105
+#: src/celestia/kde/rc.cpp:58 src/celestia/res/resource_strings.cpp:105
 #, no-c-format
 msgid "Nearest"
 msgstr "近い順"
@@ -1862,38 +1842,32 @@ msgstr "日食"
 msgid "<p align=\"right\">On:</p>"
 msgstr "<p align=\"right\">対象天体:</p>"
 
-#: src/celestia/kde/rc.cpp:97
-#: data/data.cpp:3
+#: src/celestia/kde/rc.cpp:97 data/data.cpp:3
 #, no-c-format
 msgid "Earth"
 msgstr "地球"
 
-#: src/celestia/kde/rc.cpp:100
-#: data/data.cpp:8
+#: src/celestia/kde/rc.cpp:100 data/data.cpp:8
 #, no-c-format
 msgid "Jupiter"
 msgstr "木星"
 
-#: src/celestia/kde/rc.cpp:103
-#: data/data.cpp:14
+#: src/celestia/kde/rc.cpp:103 data/data.cpp:14
 #, no-c-format
 msgid "Saturn"
 msgstr "土星"
 
-#: src/celestia/kde/rc.cpp:106
-#: data/data.cpp:28
+#: src/celestia/kde/rc.cpp:106 data/data.cpp:28
 #, no-c-format
 msgid "Uranus"
 msgstr "天王星"
 
-#: src/celestia/kde/rc.cpp:109
-#: data/data.cpp:34
+#: src/celestia/kde/rc.cpp:109 data/data.cpp:34
 #, no-c-format
 msgid "Neptune"
 msgstr "海王星"
 
-#: src/celestia/kde/rc.cpp:112
-#: data/data.cpp:39
+#: src/celestia/kde/rc.cpp:112 data/data.cpp:39
 #, no-c-format
 msgid "Pluto"
 msgstr "冥王星"
@@ -1918,8 +1892,7 @@ msgstr "<p align=\"right\">至:</p>"
 msgid "<p align=\"right\">From:</p>"
 msgstr "<p align=\"right\">自:</p>"
 
-#: src/celestia/kde/rc.cpp:127
-#: src/celestia/res/resource_strings.cpp:205
+#: src/celestia/kde/rc.cpp:127 src/celestia/res/resource_strings.cpp:205
 #, no-c-format
 msgid "Close"
 msgstr "閉じる"
@@ -2668,3 +2641,6 @@ msgstr "～"
 msgid "eclipse on"
 msgstr "発生天体:"
 
+#: src/celestia/res/resource_strings.cpp:210
+msgid "WinLangID"
+msgstr "411"

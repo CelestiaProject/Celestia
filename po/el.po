@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia-kde\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-02-22 10:03+0100\n"
+"POT-Creation-Date: 2006-07-17 21:50+0200\n"
 "PO-Revision-Date: 2003-06-19 14:08+0300\n"
 "Last-Translator: ironhell3 <ironhell3@hotmail.com>\n"
 "Language-Team: Hellenic <el@li.org>\n"
@@ -45,27 +45,27 @@ msgstr "Αρχικοποιήση ARB fragment προγραμμάτων . . .\n"
 msgid "Galaxy (Hubble type: %s)"
 msgstr ""
 
-#: src/celengine/image.cpp:357
+#: src/celengine/image.cpp:373
 msgid "Loading image from file "
 msgstr "Φόρτωση εικόνας από αρχείο"
 
-#: src/celengine/image.cpp:374
+#: src/celengine/image.cpp:390
 msgid ": unrecognized or unsupported image file type.\n"
 msgstr ": μη αναγνωρίσιμο ή ανυποστήρικτο αρχείο εικόνας type.\n"
 
-#: src/celengine/image.cpp:637
+#: src/celengine/image.cpp:653
 msgid "Error opening image file "
 msgstr "Λάθος κατά το άνοιγμα των αρχείων εικόνων "
 
-#: src/celengine/image.cpp:644
+#: src/celengine/image.cpp:660
 msgid "Error: "
 msgstr "Λάθος: "
 
-#: src/celengine/image.cpp:644
+#: src/celengine/image.cpp:660
 msgid " is not a PNG file.\n"
 msgstr " δεν είναι PNG αρχείο.\n"
 
-#: src/celengine/image.cpp:671
+#: src/celengine/image.cpp:687
 msgid "Error reading PNG image file "
 msgstr "Λάθος κατά την ανάγνωση των αρχείων εικόνων PNG "
 
@@ -86,136 +86,136 @@ msgstr ""
 msgid "Error in .ssc file (line "
 msgstr "Λάθος στο .ssc αρχείο (γραμμή "
 
-#: src/celengine/solarsys.cpp:548 src/celengine/solarsys.cpp:606
+#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
 msgid "parent body '"
 msgstr "πατρικό σώμα'"
 
-#: src/celengine/solarsys.cpp:548 src/celengine/solarsys.cpp:606
+#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
 msgid "' of '"
 msgstr "'από'"
 
-#: src/celengine/solarsys.cpp:548 src/celengine/solarsys.cpp:606
+#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
 msgid "' not found.\n"
 msgstr "δεν έχει βρεθεί.\n"
 
-#: src/celengine/solarsys.cpp:557
+#: src/celengine/solarsys.cpp:569
 msgid "warning duplicate definition of "
 msgstr "προειδοποιήση ανατύπωση ορισμού από "
 
-#: src/celengine/solarsys.cpp:586
+#: src/celengine/solarsys.cpp:598
 msgid "bad alternate surface"
 msgstr "κακή εναλλασσόμενη επιφάνεια"
 
-#: src/celengine/solarsys.cpp:600
+#: src/celengine/solarsys.cpp:612
 #, fuzzy
 msgid "bad location"
 msgstr "κακή τοποθεσία"
 
-#: src/celengine/stardb.cpp:508
+#: src/celengine/stardb.cpp:542
 msgid "Bad header for cross index\n"
 msgstr "Κακή κεφαλίδα για διασταυρωτό ευρετήριο\n"
 
-#: src/celengine/stardb.cpp:521
+#: src/celengine/stardb.cpp:555
 msgid "Bad version for cross index\n"
 msgstr "Κακή έκδοση για διασταυρωτό ευρετήριο\n"
 
-#: src/celengine/stardb.cpp:543
+#: src/celengine/stardb.cpp:577
 msgid "Loading cross index failed at record "
 msgstr "Φόρτωση διασταυρωτό ευρετήριο απέτυχε κατά την εγγραφή "
 
-#: src/celengine/stardb.cpp:644
+#: src/celengine/stardb.cpp:678
 msgid "Bad spectral type in star database, star #\n"
 msgstr "Κακό φασματοσκοπικό είδος στη βάση δεδομένων των αστεριών, αστέρι #\n"
 
-#: src/celengine/stardb.cpp:757
+#: src/celengine/stardb.cpp:791
 msgid "Bad spectral type in star database, star #"
 msgstr "Κακό φασματοσκοπικό είδος στη βάση δεδομένων των αστεριών, αστέρι #"
 
-#: src/celengine/stardb.cpp:771
+#: src/celengine/stardb.cpp:805
 msgid " stars in binary database\n"
 msgstr " αστέρια σε δυαδική βάση δεδομένων\n"
 
-#: src/celengine/stardb.cpp:787
+#: src/celengine/stardb.cpp:821
 msgid "Total star count: "
 msgstr "Συνολικό πλήθος αστεριών: "
 
-#: src/celengine/stardb.cpp:789
+#: src/celengine/stardb.cpp:823
 msgid " star(s) with duplicate catalog numbers deleted.)\n"
 msgstr " αστέρι(α) με ανατυπωμένους αριθμούς καταλόγου έχουν διαγραφεί.)\n"
 
-#: src/celengine/stardb.cpp:816
+#: src/celengine/stardb.cpp:850
 msgid "Error in .stc file (line "
 msgstr "Λάθος στο .stc αρχείο (γραμμή"
 
-#: src/celengine/stardb.cpp:846
+#: src/celengine/stardb.cpp:880
 msgid "Invalid star: missing spectral type.\n"
 msgstr "Άκυρο αστέρι: λείπει φασματικός τύπος.\n"
 
-#: src/celengine/stardb.cpp:853
+#: src/celengine/stardb.cpp:887
 msgid "Invalid star: bad spectral type.\n"
 msgstr "Άκυρο αστέρι: κακός φασματικός τύπος.\n"
 
-#: src/celengine/stardb.cpp:962
+#: src/celengine/stardb.cpp:996
 msgid "Barycenter "
 msgstr "Βαρύκεντρο"
 
-#: src/celengine/stardb.cpp:962
+#: src/celengine/stardb.cpp:996
 msgid " does not exist.\n"
 msgstr " δεν υπάρχει.\n"
 
-#: src/celengine/stardb.cpp:989
+#: src/celengine/stardb.cpp:1023
 msgid "Invalid star: missing right ascension\n"
 msgstr "Άκυρο αστέρι:λείπει ορθή αναφορά\n"
 
-#: src/celengine/stardb.cpp:996
+#: src/celengine/stardb.cpp:1030
 msgid "Invalid star: missing declination.\n"
 msgstr "Άκυρο αστέρι:λείπει η κλίση.\n"
 
-#: src/celengine/stardb.cpp:1003
+#: src/celengine/stardb.cpp:1037
 msgid "Invalid star: missing distance.\n"
 msgstr "Άκυρο αστέρι:λείπει η απόσταση.\n"
 
-#: src/celengine/stardb.cpp:1029
+#: src/celengine/stardb.cpp:1063
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Άκυρο αστέρι:λείπει το μέγεθος.\n"
 
-#: src/celengine/vertexprog.cpp:107
+#: src/celengine/vertexprog.cpp:108
 msgid "Loading NV vertex program: "
 msgstr "Φόρτωση του  NV vertex προγράμματος: "
 
-#: src/celengine/vertexprog.cpp:112
+#: src/celengine/vertexprog.cpp:113
 msgid "Error loading NV vertex program: "
 msgstr "Λάθος κατά την φόρτωση του NV vertex προγράμματος: "
 
-#: src/celengine/vertexprog.cpp:129 src/celengine/vertexprog.cpp:188
+#: src/celengine/vertexprog.cpp:130 src/celengine/vertexprog.cpp:189
 msgid "Error in vertex program "
 msgstr "Λάθος στο vertex πρόγραμμα "
 
-#: src/celengine/vertexprog.cpp:156
+#: src/celengine/vertexprog.cpp:157
 msgid "Loading ARB vertex program: "
 msgstr "Φόρτωση ARB vertex προγράμματος: "
 
-#: src/celengine/vertexprog.cpp:161
+#: src/celengine/vertexprog.cpp:162
 msgid "Error loading ARB vertex program: "
 msgstr "Λάθος κατά την φόρτωση του ARB vertex προγράμματος; "
 
-#: src/celengine/vertexprog.cpp:189
+#: src/celengine/vertexprog.cpp:190
 msgid ", line "
 msgstr ", γραμμή"
 
-#: src/celengine/vertexprog.cpp:201
+#: src/celengine/vertexprog.cpp:202
 msgid "Initializing NV vertex programs . . .\n"
 msgstr "Αρχικοποιήση NV vertex προγραμμάτων . . .\n"
 
-#: src/celengine/vertexprog.cpp:233
+#: src/celengine/vertexprog.cpp:234
 msgid "All NV vertex programs loaded successfully.\n"
 msgstr "Φόρτωση όλων των NV vertex προγραμμάτων επιτυχής.\n"
 
-#: src/celengine/vertexprog.cpp:246
+#: src/celengine/vertexprog.cpp:247
 msgid "Initializing ARB vertex programs . . .\n"
 msgstr "Αρχικοποιήση ARB vertex προγραμμάτων . . .\n"
 
-#: src/celengine/vertexprog.cpp:295
+#: src/celengine/vertexprog.cpp:298
 msgid "All ARB vertex programs loaded successfully.\n"
 msgstr "Φόρτωση όλων των ARB vertex προγραμμάτων επιτυχής.\n"
 
@@ -227,119 +227,119 @@ msgstr "Λάθος κατά την ανάγνωση του αρχείου favour
 msgid "Orientation: "
 msgstr "Προσανατολισμός: "
 
-#: src/celestia/celestiacore.cpp:517 src/celestia/celestiacore.cpp:519
+#: src/celestia/celestiacore.cpp:520 src/celestia/celestiacore.cpp:522
 msgid "Error opening script file."
 msgstr "Λάθος κατά το άνοιγμα του αρχείου κειμένου."
 
-#: src/celestia/celestiacore.cpp:549
+#: src/celestia/celestiacore.cpp:553
 #, c-format
 msgid "Error opening script '%s'"
 msgstr "Λάθος κατά το άνοιγμα κειμένου '%s'"
 
-#: src/celestia/celestiacore.cpp:563
+#: src/celestia/celestiacore.cpp:571
 msgid "Unknown error opening script"
 msgstr "Άγνωστο λάθος κατά το άνοιγμα κειμένου"
 
-#: src/celestia/celestiacore.cpp:578
+#: src/celestia/celestiacore.cpp:586
 msgid "Script coroutine initialization failed"
 msgstr "Αποτυχία αρχικοποιήσης κειμένου "
 
-#: src/celestia/celestiacore.cpp:592 src/celestia/celestiacore.cpp:594
+#: src/celestia/celestiacore.cpp:604 src/celestia/celestiacore.cpp:606
 msgid "Invalid filetype"
 msgstr "Μη αποδεκτό είδος αρχείου"
 
-#: src/celestia/celestiacore.cpp:891 src/celestia/celestiacore.cpp:1582
-#: src/celestia/celestiacore.cpp:1598 src/celestia/celestiacore.cpp:1839
-#: src/celestia/celestiacore.cpp:1868
+#: src/celestia/celestiacore.cpp:921 src/celestia/celestiacore.cpp:1655
+#: src/celestia/celestiacore.cpp:1671 src/celestia/celestiacore.cpp:1912
+#: src/celestia/celestiacore.cpp:1941
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "Όριο μεγέθους: %.2f "
 
-#: src/celestia/celestiacore.cpp:1240
+#: src/celestia/celestiacore.cpp:1304
 msgid "Markers enabled"
 msgstr "Δείκτες ενεργοποιημένοι"
 
-#: src/celestia/celestiacore.cpp:1243
+#: src/celestia/celestiacore.cpp:1307
 msgid "Markers disabled"
 msgstr "Δείκτες απενεργοποιημένοι"
 
-#: src/celestia/celestiacore.cpp:1253
+#: src/celestia/celestiacore.cpp:1317
 msgid "Goto surface"
 msgstr "Πήγαινε στην επιφάνεια"
 
-#: src/celestia/celestiacore.cpp:1262
+#: src/celestia/celestiacore.cpp:1326
 msgid "Alt-azimuth mode"
 msgstr "Ρύθμιση πολικών συντεταγμένων"
 
-#: src/celestia/celestiacore.cpp:1317
+#: src/celestia/celestiacore.cpp:1381
 #, fuzzy
 msgid "Star style: fuzzy points"
 msgstr "Είδος άστρου: ασαφή σημεία"
 
-#: src/celestia/celestiacore.cpp:1320
+#: src/celestia/celestiacore.cpp:1384
 #, fuzzy
 msgid "Star style: points"
 msgstr "Είδος άστρου: σημεία"
 
-#: src/celestia/celestiacore.cpp:1323
+#: src/celestia/celestiacore.cpp:1387
 msgid "Star style: scaled discs"
 msgstr "Είδος άστρου:δίσκοι υπό κλίμακα"
 
-#: src/celestia/celestiacore.cpp:1336
+#: src/celestia/celestiacore.cpp:1400
 #, fuzzy
 msgid "Comet tails enabled"
 msgstr "Εμφάνιση ουράς κομήτων ενεργοποιημένη"
 
-#: src/celestia/celestiacore.cpp:1339
+#: src/celestia/celestiacore.cpp:1403
 #, fuzzy
 msgid "Comet tails disabled"
 msgstr "Εμφάνιση ουράς κομητών απενεργοποιημένη"
 
-#: src/celestia/celestiacore.cpp:1354
+#: src/celestia/celestiacore.cpp:1418
 msgid "Render path: Basic"
 msgstr "Render path: Βασικό"
 
-#: src/celestia/celestiacore.cpp:1357
+#: src/celestia/celestiacore.cpp:1421
 msgid "Render path: Multitexture"
 msgstr "Render path: Multitexture"
 
-#: src/celestia/celestiacore.cpp:1360
+#: src/celestia/celestiacore.cpp:1424
 msgid "Render path: NVIDIA combiners"
 msgstr "Render path: NVIDIA combiners "
 
-#: src/celestia/celestiacore.cpp:1363
+#: src/celestia/celestiacore.cpp:1427
 msgid "Render path: OpenGL vertex program"
 msgstr "Render path: OpenGL vertex program "
 
-#: src/celestia/celestiacore.cpp:1366
+#: src/celestia/celestiacore.cpp:1430
 msgid "Render path: NVIDIA vertex program and combiners"
 msgstr "Render path: NVIDIA vertex program and combiners "
 
-#: src/celestia/celestiacore.cpp:1369
+#: src/celestia/celestiacore.cpp:1433
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
 msgstr "Render path: OpenGL vertex program/NVIDIA combiners "
 
-#: src/celestia/celestiacore.cpp:1372
+#: src/celestia/celestiacore.cpp:1436
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
 msgstr "Render path: OpenGL 1.5 vertex/fragment program "
 
-#: src/celestia/celestiacore.cpp:1375
+#: src/celestia/celestiacore.cpp:1439
 msgid "Render path: NVIDIA GeForce FX"
 msgstr "Render path: NVIDIA GeForce FX "
 
-#: src/celestia/celestiacore.cpp:1378
+#: src/celestia/celestiacore.cpp:1442
 msgid "Render path: OpenGL 2.0"
 msgstr "Render path: OpenGL 2.0 "
 
-#: src/celestia/celestiacore.cpp:1401
+#: src/celestia/celestiacore.cpp:1465
 msgid "Auto-magnitude enabled"
 msgstr "Αυτόματο μέγεθος ενεργοποιημένο"
 
-#: src/celestia/celestiacore.cpp:1405
+#: src/celestia/celestiacore.cpp:1470
 msgid "Auto-magnitude disabled"
 msgstr "Αυτόματο μέγεθος απενεργοποιημένο "
 
-#: src/celestia/celestiacore.cpp:1426 src/celestia/res/resource_strings.cpp:79
+#: src/celestia/celestiacore.cpp:1492 src/celestia/res/resource_strings.cpp:79
 #: src/celestia/res/resource_strings.cpp:91
 #: src/celestia/res/resource_strings.cpp:95
 #: src/celestia/res/resource_strings.cpp:123
@@ -352,262 +352,262 @@ msgstr "Αυτόματο μέγεθος απενεργοποιημένο "
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: src/celestia/celestiacore.cpp:1457
+#: src/celestia/celestiacore.cpp:1530
 msgid "Time and script are paused"
 msgstr "Χρόνος και κείμενο έχουν σταματήσει"
 
-#: src/celestia/celestiacore.cpp:1459
+#: src/celestia/celestiacore.cpp:1532
 msgid "Time is paused"
 msgstr "Ο χρόνος έχει σταματήσει"
 
-#: src/celestia/celestiacore.cpp:1463
+#: src/celestia/celestiacore.cpp:1536
 msgid "Resume"
 msgstr "Επανάληψη"
 
-#: src/celestia/celestiacore.cpp:1526
+#: src/celestia/celestiacore.cpp:1599
 #, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "Χρόνος διάνυσης απόστασης από το φως: %.4f yr "
 
-#: src/celestia/celestiacore.cpp:1535
+#: src/celestia/celestiacore.cpp:1608
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "Χρόνος διάνυσης απόστασης από το φως:%d min  %.1f s "
 
-#: src/celestia/celestiacore.cpp:1538
+#: src/celestia/celestiacore.cpp:1611
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Χρόνος διάνυσης απόστασης από το φως:%d h  %d min  %.1f s "
 
-#: src/celestia/celestiacore.cpp:1557
+#: src/celestia/celestiacore.cpp:1630
 msgid "Light travel delay included"
 msgstr ""
 "Καθυστέρηση του χρόνου διάνυσης απόστασις από το φως: έχει συμπεριληφθεί"
 
-#: src/celestia/celestiacore.cpp:1562
+#: src/celestia/celestiacore.cpp:1635
 msgid "Light travel delay switched off"
 msgstr ""
 "Καθυστέρηση του χρόνου διάνυσης απόστασης από το φως:είναι απενεργοποιημένη"
 
-#: src/celestia/celestiacore.cpp:1568
+#: src/celestia/celestiacore.cpp:1641
 msgid "Light travel delay ignored"
 msgstr "Καθυστέρηση του χρόνου διάνυσης απόστασης από το φως:έχει αγνοηθεί"
 
-#: src/celestia/celestiacore.cpp:1609
+#: src/celestia/celestiacore.cpp:1682
 msgid "Using normal surface textures."
 msgstr "Χρήση κανονικής σύστασης επιφάνειας."
 
-#: src/celestia/celestiacore.cpp:1613
+#: src/celestia/celestiacore.cpp:1686
 msgid "limit of knowledge"
 msgstr "περιορισμός στη γνώση"
 
-#: src/celestia/celestiacore.cpp:1614
+#: src/celestia/celestiacore.cpp:1687
 msgid "Using limit of knowledge surface textures."
 msgstr "Χρήση περιορισμένης γνώσης για τη σύσταση επιφάνειας. "
 
-#: src/celestia/celestiacore.cpp:1677
+#: src/celestia/celestiacore.cpp:1750
 msgid "Follow"
 msgstr "Ακολούθησε"
 
-#: src/celestia/celestiacore.cpp:1704
+#: src/celestia/celestiacore.cpp:1777
 #, fuzzy
 msgid "Time: Forward"
 msgstr "Χρόνος: Εμπρός"
 
-#: src/celestia/celestiacore.cpp:1706
+#: src/celestia/celestiacore.cpp:1779
 msgid "Time: Backward"
 msgstr "Χρόνος: Πίσω"
 
-#: src/celestia/celestiacore.cpp:1717 src/celestia/celestiacore.cpp:1730
+#: src/celestia/celestiacore.cpp:1790 src/celestia/celestiacore.cpp:1803
 #, c-format
 msgid "Time rate: %.1f"
 msgstr "Ρυθμός χρόνου: %.1f"
 
-#: src/celestia/celestiacore.cpp:1767
+#: src/celestia/celestiacore.cpp:1840
 msgid "Low res textures"
 msgstr "Χαμηλή ανάλυση σύστασης"
 
-#: src/celestia/celestiacore.cpp:1770
+#: src/celestia/celestiacore.cpp:1843
 msgid "Medium res textures"
 msgstr "Μέτρια ανάλυση σύστασης"
 
-#: src/celestia/celestiacore.cpp:1773
+#: src/celestia/celestiacore.cpp:1846
 msgid "High res textures"
 msgstr "Υψηλή ανάλυση σύστασης"
 
-#: src/celestia/celestiacore.cpp:1812
+#: src/celestia/celestiacore.cpp:1885
 #, fuzzy
 msgid "Sync Orbit"
 msgstr "Συγχρονισμός τροχιάς"
 
-#: src/celestia/celestiacore.cpp:1818
+#: src/celestia/celestiacore.cpp:1891
 msgid "Lock"
 msgstr "Κλείδωσε"
 
-#: src/celestia/celestiacore.cpp:1824
+#: src/celestia/celestiacore.cpp:1897
 msgid "Chase"
 msgstr "Κυνήγησε"
 
-#: src/celestia/celestiacore.cpp:1848 src/celestia/celestiacore.cpp:1877
+#: src/celestia/celestiacore.cpp:1921 src/celestia/celestiacore.cpp:1950
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "Αυτόματο όριο μέγέθους στις 45 μοίρες: %.2f"
 
-#: src/celestia/celestiacore.cpp:1906 src/celestia/celestiacore.cpp:1916
+#: src/celestia/celestiacore.cpp:1979 src/celestia/celestiacore.cpp:1989
 msgid "Light gain"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2252
+#: src/celestia/celestiacore.cpp:2336
 msgid "GL error: "
 msgstr "GL λάθος"
 
-#: src/celestia/celestiacore.cpp:2299
+#: src/celestia/celestiacore.cpp:2383
 msgid "View too small to be split"
 msgstr "Οπτικη εικόνα πολύ μικρή για να διαιρεθεί"
 
-#: src/celestia/celestiacore.cpp:2302
+#: src/celestia/celestiacore.cpp:2386
 msgid "Added view"
 msgstr "Προσθήκη οπτικής εικόνας"
 
-#: src/celestia/celestiacore.cpp:2562
+#: src/celestia/celestiacore.cpp:2646
 msgid " days"
 msgstr " μέρες"
 
-#: src/celestia/celestiacore.cpp:2564
+#: src/celestia/celestiacore.cpp:2648
 msgid " hours"
 msgstr " ώρες"
 
-#: src/celestia/celestiacore.cpp:2566
+#: src/celestia/celestiacore.cpp:2650
 msgid " minutes"
 msgstr " λεπτά"
 
-#: src/celestia/celestiacore.cpp:2606
+#: src/celestia/celestiacore.cpp:2690
 msgid "Apparent diameter: "
 msgstr "Φαινόμενη διάμετρος: "
 
-#: src/celestia/celestiacore.cpp:2621
+#: src/celestia/celestiacore.cpp:2705
 #, fuzzy
 msgid "Apparent magnitude: "
 msgstr "Φαινόμενη διάμετρος: "
 
-#: src/celestia/celestiacore.cpp:2625
+#: src/celestia/celestiacore.cpp:2709
 #, fuzzy
 msgid "Absolute magnitude: "
 msgstr "Αυτόματα Μεγέθη"
 
-#: src/celestia/celestiacore.cpp:2658 src/celestia/celestiacore.cpp:2712
-#: src/celestia/celestiacore.cpp:2744 src/celestia/celestiacore.cpp:2796
+#: src/celestia/celestiacore.cpp:2742 src/celestia/celestiacore.cpp:2796
+#: src/celestia/celestiacore.cpp:2828 src/celestia/celestiacore.cpp:2880
 #: src/celestia/kde/selectionpopup.cpp:76
 msgid "Distance: "
 msgstr "Απόσταση: "
 
-#: src/celestia/celestiacore.cpp:2664
+#: src/celestia/celestiacore.cpp:2748
 msgid "Star system barycenter\n"
 msgstr "Βαρύκεντρο συστήματος αστεριών\n"
 
-#: src/celestia/celestiacore.cpp:2668
+#: src/celestia/celestiacore.cpp:2752
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Απόλυτο(φαινόμενο)μέγεθος: %.2f (%.2f)\n"
 
-#: src/celestia/celestiacore.cpp:2674
+#: src/celestia/celestiacore.cpp:2758
 msgid "Luminosity: "
 msgstr "Φωτεινότητα: "
 
-#: src/celestia/celestiacore.cpp:2675 src/celestia/kde/selectionpopup.cpp:86
+#: src/celestia/celestiacore.cpp:2759 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
 msgstr "Τάξη: "
 
-#: src/celestia/celestiacore.cpp:2677
+#: src/celestia/celestiacore.cpp:2761
 msgid "Neutron star"
 msgstr "Αστέρας νετρονίων"
 
-#: src/celestia/celestiacore.cpp:2679
+#: src/celestia/celestiacore.cpp:2763
 msgid "Black hole"
 msgstr "Μαύρη τρύπα"
 
-#: src/celestia/celestiacore.cpp:2689
+#: src/celestia/celestiacore.cpp:2773
 #, fuzzy
 msgid "Surface temp: "
 msgstr "Θερμοκρασία επιφάνειας: "
 
-#: src/celestia/celestiacore.cpp:2690
+#: src/celestia/celestiacore.cpp:2774
 #, fuzzy, c-format
 msgid "Radius: %.2f Rsun\n"
 msgstr "Ακτίνα: %.2f R ήλιου\n"
 
-#: src/celestia/celestiacore.cpp:2692
+#: src/celestia/celestiacore.cpp:2776
 msgid "Rotation period: "
 msgstr "Περίοδος περιστροφής: "
 
-#: src/celestia/celestiacore.cpp:2699
+#: src/celestia/celestiacore.cpp:2783
 msgid "Planetary companions present\n"
 msgstr "Οι συντελεστές του Celestia παρουσιάζουν\n"
 
-#: src/celestia/celestiacore.cpp:2717
+#: src/celestia/celestiacore.cpp:2801
 #, fuzzy
 msgid "Distance from center: "
 msgstr "Απόσταση: "
 
-#: src/celestia/celestiacore.cpp:2721 src/celestia/celestiacore.cpp:2749
+#: src/celestia/celestiacore.cpp:2805 src/celestia/celestiacore.cpp:2833
 #: src/celestia/kde/selectionpopup.cpp:94
 msgid "Radius: "
 msgstr "Ακτίνα: "
 
-#: src/celestia/celestiacore.cpp:2758
+#: src/celestia/celestiacore.cpp:2842
 msgid "Day length: "
 msgstr "Μήκος μέρας: "
 
-#: src/celestia/celestiacore.cpp:2773
+#: src/celestia/celestiacore.cpp:2857
 msgid "Temperature: "
 msgstr "Θερμοκρασία: "
 
-#: src/celestia/celestiacore.cpp:2785
+#: src/celestia/celestiacore.cpp:2869
 #, c-format
 msgid "Apparent mag: %.2f\n"
 msgstr "Φαινόμενο μέγεθος: %.2f\n"
 
-#: src/celestia/celestiacore.cpp:2994 src/celestia/celestiacore.cpp:3008
+#: src/celestia/celestiacore.cpp:3078 src/celestia/celestiacore.cpp:3092
 msgid "  LT"
 msgstr "  LT"
 
-#: src/celestia/celestiacore.cpp:3004
+#: src/celestia/celestiacore.cpp:3088
 #, fuzzy
 msgid " UTC"
 msgstr " UTC"
 
-#: src/celestia/celestiacore.cpp:3020
+#: src/celestia/celestiacore.cpp:3104
 #, fuzzy
 msgid "Real time"
 msgstr "Πραγματικός χρόνος"
 
-#: src/celestia/celestiacore.cpp:3022
+#: src/celestia/celestiacore.cpp:3106
 #, fuzzy
 msgid "-Real time"
 msgstr "-Πραγματικός χρόνο "
 
-#: src/celestia/celestiacore.cpp:3026
+#: src/celestia/celestiacore.cpp:3110
 msgid "Time stopped"
 msgstr "Ο χρόνος έχει σταματήσει"
 
-#: src/celestia/celestiacore.cpp:3030
+#: src/celestia/celestiacore.cpp:3114
 msgid " faster"
 msgstr " πιο γρήγορα"
 
-#: src/celestia/celestiacore.cpp:3034
+#: src/celestia/celestiacore.cpp:3118
 msgid " slower"
 msgstr " πιο αργά"
 
-#: src/celestia/celestiacore.cpp:3040
+#: src/celestia/celestiacore.cpp:3124
 #, fuzzy
 msgid " (Paused)"
 msgstr "  Σταματημένο"
 
-#: src/celestia/celestiacore.cpp:3055
+#: src/celestia/celestiacore.cpp:3139
 msgid "FPS: "
 msgstr "FPS: "
 
-#: src/celestia/celestiacore.cpp:3057
+#: src/celestia/celestiacore.cpp:3141
 #, fuzzy
 msgid ""
 "\n"
@@ -616,150 +616,149 @@ msgstr ""
 "\n"
 "Ταχύτητα: "
 
-#: src/celestia/celestiacore.cpp:3083
+#: src/celestia/celestiacore.cpp:3167
 msgid "Travelling "
 msgstr "Ταξιδεύοντας"
 
-#: src/celestia/celestiacore.cpp:3096
+#: src/celestia/celestiacore.cpp:3180
 msgid "Track "
 msgstr "Τροχιά"
 
-#: src/celestia/celestiacore.cpp:3108
+#: src/celestia/celestiacore.cpp:3192
 msgid "Follow "
 msgstr "Ακολούθησε"
 
-#: src/celestia/celestiacore.cpp:3113
+#: src/celestia/celestiacore.cpp:3197
 #, fuzzy
 msgid "Sync Orbit "
 msgstr "Συγχρονισμός Τροχιάς  "
 
-#: src/celestia/celestiacore.cpp:3118
+#: src/celestia/celestiacore.cpp:3202
 msgid "Lock "
 msgstr "Κλείδωσε"
 
-#: src/celestia/celestiacore.cpp:3127
+#: src/celestia/celestiacore.cpp:3211
 #, fuzzy
 msgid "Chase "
 msgstr "Κυνήγησε "
 
-#: src/celestia/celestiacore.cpp:3143
-#, c-format
+#: src/celestia/celestiacore.cpp:3227
 msgid "FOV: "
 msgstr "Οπτικό πεδίο: "
 
-#: src/celestia/celestiacore.cpp:3245
+#: src/celestia/celestiacore.cpp:3329
 msgid "Target name: "
 msgstr "Όνομα στόχου"
 
-#: src/celestia/celestiacore.cpp:3327
+#: src/celestia/celestiacore.cpp:3411
 msgid " at "
 msgstr " στο"
 
-#: src/celestia/celestiacore.cpp:3328
+#: src/celestia/celestiacore.cpp:3412
 msgid " fps"
 msgstr " fps "
 
-#: src/celestia/celestiacore.cpp:3330
+#: src/celestia/celestiacore.cpp:3414
 msgid "  Recording"
 msgstr "  Εγγραφή"
 
-#: src/celestia/celestiacore.cpp:3332
+#: src/celestia/celestiacore.cpp:3416
 msgid "  Paused"
 msgstr "  Σταματημένο"
 
-#: src/celestia/celestiacore.cpp:3351
+#: src/celestia/celestiacore.cpp:3435
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Εκκίνηση/Παύση    F12 Σταμάτημα "
 
-#: src/celestia/celestiacore.cpp:3360 src/celestia/celestiacore.cpp:3363
+#: src/celestia/celestiacore.cpp:3444 src/celestia/celestiacore.cpp:3447
 msgid "Edit Mode"
 msgstr "Ρύθμιση επεξεργασίας δεδομένων "
 
-#: src/celestia/celestiacore.cpp:3461
+#: src/celestia/celestiacore.cpp:3531
 msgid "Loading solar system catalog: "
 msgstr "Φόρτωση του καταλόγου του ηλιακού συστήματος: "
 
-#: src/celestia/celestiacore.cpp:3502
+#: src/celestia/celestiacore.cpp:3572
 #, fuzzy
 msgid "Loading "
 msgstr "Φόρτωση..."
 
-#: src/celestia/celestiacore.cpp:3512
+#: src/celestia/celestiacore.cpp:3582
 #, c-format
 msgid "Error reading star file: %s\n"
 msgstr "Λάθος κατά την ανάγνωση του αρχείου αστεριών: %s\n"
 
-#: src/celestia/celestiacore.cpp:3538
+#: src/celestia/celestiacore.cpp:3608
 msgid "License file 'License.txt' is missing!"
 msgstr "Το αρχείο άδειας 'License.txt' λείπει!"
 
-#: src/celestia/celestiacore.cpp:3559
+#: src/celestia/celestiacore.cpp:3629
 msgid "Error reading configuration file."
 msgstr "Λάθος κατά την ανάγνωση του αρχείου διάταξης."
 
-#: src/celestia/celestiacore.cpp:3598
+#: src/celestia/celestiacore.cpp:3668
 msgid "Cannot read star database."
 msgstr "Αδύνατη η ανάγνωση της βάσης δεδομένων των αστεριών."
 
-#: src/celestia/celestiacore.cpp:3617
+#: src/celestia/celestiacore.cpp:3687
 msgid "Error opening solar system catalog.\n"
 msgstr "Λάθος κατά το άνοιγμα του καταλόγου του πλανητικού συστήματος .\n"
 
-#: src/celestia/celestiacore.cpp:3632
+#: src/celestia/celestiacore.cpp:3702
 msgid "Error opening test.xml\n"
 msgstr "Λάθος κατά το άνοιγμα του test.xml\n"
 
-#: src/celestia/celestiacore.cpp:3669
+#: src/celestia/celestiacore.cpp:3739
 #, fuzzy
 msgid "Error reading deep sky file\n"
 msgstr "Λάθος κατά το άνοιγμα του αρχείου.\n"
 
-#: src/celestia/celestiacore.cpp:3676 src/celestia/celestiacore.cpp:3910
-#: src/celestia/celestiacore.cpp:3932
+#: src/celestia/celestiacore.cpp:3746 src/celestia/celestiacore.cpp:3967
+#: src/celestia/celestiacore.cpp:3989
 msgid "Error opening "
 msgstr "Λάθος κατά το άνοιγμα"
 
-#: src/celestia/celestiacore.cpp:3720
+#: src/celestia/celestiacore.cpp:3790
 msgid "Error opening asterisms file."
 msgstr "Λάθος κατά το άνοιγμα του αρχείου αστερισμών."
 
-#: src/celestia/celestiacore.cpp:3735
+#: src/celestia/celestiacore.cpp:3805
 msgid "Error opening constellation boundaries files."
 msgstr "Λάθος κατά το άνοιγμα των αρχείων των συνόρων των αστερισμών."
 
-#: src/celestia/celestiacore.cpp:3799
+#: src/celestia/celestiacore.cpp:3869
 msgid "render path: "
 msgstr "προσφερόμενο μονοπάτι: "
 
-#: src/celestia/celestiacore.cpp:3810
+#: src/celestia/celestiacore.cpp:3880
 msgid "Failed to initialize renderer"
 msgstr "Αποτυχία κατά την αρχικοποιήση  "
 
-#: src/celestia/celestiacore.cpp:3841
+#: src/celestia/celestiacore.cpp:3896
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Λάθος κατά την φόρτωση του φόντου, το κείμενο δεν θα είναι ορατό.\n"
 
-#: src/celestia/celestiacore.cpp:3893
+#: src/celestia/celestiacore.cpp:3950
 msgid "Error reading cross index "
 msgstr "Λάθος κατά την ανάγνωση του ευρετηρίου "
 
-#: src/celestia/celestiacore.cpp:3895
+#: src/celestia/celestiacore.cpp:3952
 msgid "Loaded cross index "
 msgstr "Φορτώθηκε το ευρετήριο"
 
-#: src/celestia/celestiacore.cpp:3917
+#: src/celestia/celestiacore.cpp:3974
 msgid "Error reading star names file\n"
 msgstr "Λάθος κατά την ανάγνωση του αρχείου με τα ονόματα των αστεριών\n"
 
-#: src/celestia/celestiacore.cpp:3940
+#: src/celestia/celestiacore.cpp:3997
 msgid "Error reading stars file\n"
 msgstr "Λάθος κατά την ανάγνωση του αρχείου αστεριών\n"
 
-#: src/celestia/celestiacore.cpp:3967
+#: src/celestia/celestiacore.cpp:4024
 msgid "Error opening star catalog "
 msgstr "Λάθος κατά το άνοιγμα του καταλόγου αστεριών "
 
-#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:526
+#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:482
 #: src/celestia/kde/rc.cpp:30
 #, no-c-format
 msgid "Celestial Browser"
@@ -793,14 +792,14 @@ msgstr "Διαστημόπλοιο"
 msgid "-"
 msgstr "-"
 
-#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:527
+#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:483
 #: src/celestia/kde/rc.cpp:70 src/celestia/res/resource_strings.cpp:202
 #, no-c-format
 msgid "Eclipse Finder"
 msgstr "Εύρεση έκλειψης "
 
 #: src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/kde/selectionpopup.cpp:312
 msgid "&Goto"
 msgstr "&Πήγαινε"
 
@@ -848,7 +847,7 @@ msgstr "Δημιουργία νέου φακέλου σελιδοδείκτη σ
 msgid "Can't add bookmark with empty URL"
 msgstr "Αδύνατη η προσθήκη σελιδοδείκτη με άδειο URL "
 
-#: src/celestia/kde/kdeapp.cpp:134
+#: src/celestia/kde/kdeapp.cpp:122
 msgid ""
 "Something seems to be wrong with your installation of Celestia. The splash "
 "screen directory couldn't be found. \n"
@@ -856,433 +855,433 @@ msgid ""
 "files and may not work correctly, please check your installation."
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:435
+#: src/celestia/kde/kdeapp.cpp:391
 msgid "Go to &URL..."
 msgstr "Πήγαινε στο & URL..."
 
-#: src/celestia/kde/kdeapp.cpp:436
+#: src/celestia/kde/kdeapp.cpp:392
 msgid "Go to &Long/Lat..."
 msgstr "Πήγαινε στο &Γεωγραφικό Μήκος/Πλάτος "
 
-#: src/celestia/kde/kdeapp.cpp:438
+#: src/celestia/kde/kdeapp.cpp:394
 msgid "&Back"
 msgstr "&Πίσω"
 
-#: src/celestia/kde/kdeapp.cpp:441
+#: src/celestia/kde/kdeapp.cpp:397
 msgid "&Forward"
 msgstr "&Εμπρός "
 
-#: src/celestia/kde/kdeapp.cpp:448
+#: src/celestia/kde/kdeapp.cpp:404
 #, fuzzy
 msgid "Home"
 msgstr "Αρχική σελίδα"
 
-#: src/celestia/kde/kdeapp.cpp:455
+#: src/celestia/kde/kdeapp.cpp:411
 msgid "Bookmarks"
 msgstr "Σελιδοδείκτες "
 
-#: src/celestia/kde/kdeapp.cpp:467
+#: src/celestia/kde/kdeapp.cpp:423
 msgid "Full Screen"
 msgstr "Πλήρης Οθόνη"
 
-#: src/celestia/kde/kdeapp.cpp:471
+#: src/celestia/kde/kdeapp.cpp:427
 msgid "Copy URL"
 msgstr "Αντιγραφή URL"
 
-#: src/celestia/kde/kdeapp.cpp:474
+#: src/celestia/kde/kdeapp.cpp:430
 msgid "Set Time..."
 msgstr "Καθορισμός Χρόνου..."
 
-#: src/celestia/kde/kdeapp.cpp:475
+#: src/celestia/kde/kdeapp.cpp:431
 msgid "Set Time to Now"
 msgstr "Καθόρισε Χρόνο στο Παρόν"
 
-#: src/celestia/kde/kdeapp.cpp:476
+#: src/celestia/kde/kdeapp.cpp:432
 msgid "Accelerate Time"
 msgstr "Επιτάχυνε Χρόνο"
 
-#: src/celestia/kde/kdeapp.cpp:477
+#: src/celestia/kde/kdeapp.cpp:433
 msgid "Decelerate Time"
 msgstr "Επιβράδυνε Χρόνο"
 
-#: src/celestia/kde/kdeapp.cpp:478
+#: src/celestia/kde/kdeapp.cpp:434
 msgid "Pause Time"
 msgstr "Παύση Χρόνου"
 
-#: src/celestia/kde/kdeapp.cpp:479
+#: src/celestia/kde/kdeapp.cpp:435
 msgid "Reverse Time"
 msgstr "Αντιστροφή χρόνου"
 
-#: src/celestia/kde/kdeapp.cpp:481
+#: src/celestia/kde/kdeapp.cpp:437
 msgid "Split View Vertically"
 msgstr "Διαχώρισε Οπτικη εικόνα κάθετα"
 
-#: src/celestia/kde/kdeapp.cpp:482
+#: src/celestia/kde/kdeapp.cpp:438
 msgid "Split View Horizontally"
 msgstr "Διαχώρισε Οπτική εικόνα οριζόντια"
 
-#: src/celestia/kde/kdeapp.cpp:483
+#: src/celestia/kde/kdeapp.cpp:439
 msgid "Cycle View"
 msgstr "Κυκλική διάταξη της Οπτικής εικόνας"
 
-#: src/celestia/kde/kdeapp.cpp:484
+#: src/celestia/kde/kdeapp.cpp:440
 msgid "Single View"
 msgstr "Μοναδική Οπτική εικόνα"
 
-#: src/celestia/kde/kdeapp.cpp:485
+#: src/celestia/kde/kdeapp.cpp:441
 msgid "Delete View"
 msgstr "Διαγραφή Οπτικής εικόνας "
 
-#: src/celestia/kde/kdeapp.cpp:486
+#: src/celestia/kde/kdeapp.cpp:442
 msgid "Frames Visible"
 msgstr "Εμφάνιση Πλαισίων"
 
-#: src/celestia/kde/kdeapp.cpp:499
+#: src/celestia/kde/kdeapp.cpp:455
 msgid "Active Frame Visible"
 msgstr "Εμφάνιση Πλαισίων Ενεργή"
 
-#: src/celestia/kde/kdeapp.cpp:511
+#: src/celestia/kde/kdeapp.cpp:467
 msgid "Synchronize Time"
 msgstr "Συγχρονισμός Χρόνου"
 
-#: src/celestia/kde/kdeapp.cpp:523
+#: src/celestia/kde/kdeapp.cpp:479
 msgid "Alt-Azimuth Mode"
 msgstr "Ρύθμιση Πολικών Συντεταγμένων"
 
-#: src/celestia/kde/kdeapp.cpp:524
+#: src/celestia/kde/kdeapp.cpp:480
 msgid "Go To Surface"
 msgstr "Πήγαινε στην επιφάνεια"
 
-#: src/celestia/kde/kdeapp.cpp:552
+#: src/celestia/kde/kdeapp.cpp:508
 msgid "Show Stars"
 msgstr "Εμφάνιση Αστέρων"
 
-#: src/celestia/kde/kdeapp.cpp:555
+#: src/celestia/kde/kdeapp.cpp:511
 msgid "Show Planets"
 msgstr "Εμφάνιση Πλανητών"
 
-#: src/celestia/kde/kdeapp.cpp:558
+#: src/celestia/kde/kdeapp.cpp:514
 msgid "Show Galaxies"
 msgstr "Εμφάνιση Γαλαξιών"
 
-#: src/celestia/kde/kdeapp.cpp:561
+#: src/celestia/kde/kdeapp.cpp:517
 #, fuzzy
 msgid "Show Partial Trajectories"
 msgstr "Εμφάνιση Ατελών Τροχιών"
 
-#: src/celestia/kde/kdeapp.cpp:564
+#: src/celestia/kde/kdeapp.cpp:520
 #, fuzzy
 msgid "Show Nebulae"
 msgstr "Εμφάνιση Νεφελώματος"
 
-#: src/celestia/kde/kdeapp.cpp:567
+#: src/celestia/kde/kdeapp.cpp:523
 msgid "Show Open Clusters"
 msgstr "Εμφάνιση Ανοιβτού Σμήνους"
 
-#: src/celestia/kde/kdeapp.cpp:570
+#: src/celestia/kde/kdeapp.cpp:526
 msgid "Show Constellations"
 msgstr "Εμφάνιση Αστερισμών"
 
-#: src/celestia/kde/kdeapp.cpp:573
+#: src/celestia/kde/kdeapp.cpp:529
 msgid "Show CloudMaps"
 msgstr "Εμφάνιση Χάτη Νεφώσεων"
 
-#: src/celestia/kde/kdeapp.cpp:576
+#: src/celestia/kde/kdeapp.cpp:532
 msgid "Show Orbits"
 msgstr "Εμφάνιση Τροχιών"
 
-#: src/celestia/kde/kdeapp.cpp:579
+#: src/celestia/kde/kdeapp.cpp:535
 #, fuzzy
 msgid "Show Asteroid Orbits"
 msgstr "Εμφάνιση Τροχιών των Αστεροειδών"
 
-#: src/celestia/kde/kdeapp.cpp:582
+#: src/celestia/kde/kdeapp.cpp:538
 #, fuzzy
 msgid "Show Comet Orbits"
 msgstr "Εμφάνιση Τροχιών των Κομητών"
 
-#: src/celestia/kde/kdeapp.cpp:585
+#: src/celestia/kde/kdeapp.cpp:541
 #, fuzzy
 msgid "Show Moon Orbits"
 msgstr "Εμφάνιση τροχιών των Δορυφόρων"
 
-#: src/celestia/kde/kdeapp.cpp:588
+#: src/celestia/kde/kdeapp.cpp:544
 #, fuzzy
 msgid "Show Planet Orbits"
 msgstr "Εμφάνιση Τροχιών των Πλανητών"
 
-#: src/celestia/kde/kdeapp.cpp:591
+#: src/celestia/kde/kdeapp.cpp:547
 #, fuzzy
 msgid "Show Spacecraft Orbits"
 msgstr "Εμφάνιση Τροχιών του Διαστημόπλοιου"
 
-#: src/celestia/kde/kdeapp.cpp:594
+#: src/celestia/kde/kdeapp.cpp:550
 msgid "Show Celestial Grid"
 msgstr "Εμφάνιση Ουράνιου Πλέγματος "
 
-#: src/celestia/kde/kdeapp.cpp:597
+#: src/celestia/kde/kdeapp.cpp:553
 msgid "Show Night Side Lights"
 msgstr "Εμφάνιση Νυχτερινού Φωτισμού"
 
-#: src/celestia/kde/kdeapp.cpp:600
+#: src/celestia/kde/kdeapp.cpp:556
 msgid "Show Markers"
 msgstr "Εμφάνιση Σημείων Επισήμανσης Τόπου"
 
-#: src/celestia/kde/kdeapp.cpp:603
+#: src/celestia/kde/kdeapp.cpp:559
 msgid "Show Atmospheres"
 msgstr "Εμφάνιση Ατμόσφαιρας"
 
-#: src/celestia/kde/kdeapp.cpp:606
+#: src/celestia/kde/kdeapp.cpp:562
 msgid "Show Smooth Orbit Lines"
 msgstr "Εμφάνιση Ομαλών Γραμμών Τροχιών"
 
-#: src/celestia/kde/kdeapp.cpp:609
+#: src/celestia/kde/kdeapp.cpp:565
 msgid "Show Eclipse Shadows"
 msgstr "Εμφάνιση Σσκιών Έκλειψης "
 
-#: src/celestia/kde/kdeapp.cpp:612
+#: src/celestia/kde/kdeapp.cpp:568
 msgid "Cycle Star Mode"
 msgstr "Περιοδική ρύθμιση αστεριών"
 
-#: src/celestia/kde/kdeapp.cpp:614
+#: src/celestia/kde/kdeapp.cpp:570
 msgid "Show Ring Shadows"
 msgstr "Εμφάνιση Σκιών Δακτυλίων"
 
-#: src/celestia/kde/kdeapp.cpp:617
+#: src/celestia/kde/kdeapp.cpp:573
 msgid "Show Boundaries"
 msgstr "Εμφάνιση Συνόρων"
 
-#: src/celestia/kde/kdeapp.cpp:620
+#: src/celestia/kde/kdeapp.cpp:576
 #: src/celestia/kde/kdepreferencesdialog.cpp:76
 msgid "Auto Magnitudes"
 msgstr "Αυτόματα Μεγέθη"
 
-#: src/celestia/kde/kdeapp.cpp:623
+#: src/celestia/kde/kdeapp.cpp:579
 msgid "Show Comet Tails"
 msgstr "Εμφάνιση Ουρών Κομήτων"
 
-#: src/celestia/kde/kdeapp.cpp:626
+#: src/celestia/kde/kdeapp.cpp:582
 msgid "Show Star Labels"
 msgstr "Εμφάνιση Ετικετών των Αστέρων"
 
-#: src/celestia/kde/kdeapp.cpp:631
+#: src/celestia/kde/kdeapp.cpp:587
 msgid "Show Planet Labels"
 msgstr "Εμφάνιση Ετικετών των Πλανητών "
 
-#: src/celestia/kde/kdeapp.cpp:634
+#: src/celestia/kde/kdeapp.cpp:590
 msgid "Show Moon Labels"
 msgstr "Εμφάνιση Ετικετών των Δορυφόρων"
 
-#: src/celestia/kde/kdeapp.cpp:637
+#: src/celestia/kde/kdeapp.cpp:593
 #, fuzzy
 msgid "Show Comet Labels"
 msgstr "Εμφάνιση Ετικετών των Κομητών "
 
-#: src/celestia/kde/kdeapp.cpp:640
+#: src/celestia/kde/kdeapp.cpp:596
 msgid "Show Constellation Labels"
 msgstr "Εμφάνιση Ετικετών των Αστερισμών "
 
-#: src/celestia/kde/kdeapp.cpp:643
+#: src/celestia/kde/kdeapp.cpp:599
 #, fuzzy
 msgid "Constellation Labels in Latin"
 msgstr "Εμφάνιση Ετικετών των Αστερισμών "
 
-#: src/celestia/kde/kdeapp.cpp:646
+#: src/celestia/kde/kdeapp.cpp:602
 msgid "Show Galaxy Labels"
 msgstr "Εμφάνιση Ετικετών του Γαλαξία"
 
-#: src/celestia/kde/kdeapp.cpp:649
+#: src/celestia/kde/kdeapp.cpp:605
 #, fuzzy
 msgid "Show Nebula Labels"
 msgstr "Εμφάνιση Ετικετών Νεφελώματος"
 
-#: src/celestia/kde/kdeapp.cpp:652
+#: src/celestia/kde/kdeapp.cpp:608
 #, fuzzy
 msgid "Show Open Cluster Labels"
 msgstr "Εμφάνιση Ετικετών του Ανοιχτού Σμήνους"
 
-#: src/celestia/kde/kdeapp.cpp:655
+#: src/celestia/kde/kdeapp.cpp:611
 msgid "Show Asteroid Labels"
 msgstr "Εμφάνιση Ετικετών των Αστεροειδών"
 
-#: src/celestia/kde/kdeapp.cpp:658
+#: src/celestia/kde/kdeapp.cpp:614
 msgid "Show Spacecraft Labels"
 msgstr "Εμφάνιση Ετικετών Διατημόπλοιου"
 
-#: src/celestia/kde/kdeapp.cpp:661
+#: src/celestia/kde/kdeapp.cpp:617
 #, fuzzy
 msgid "Show Location Labels"
 msgstr "Εμφάνιση Ετικετών Τοποθεσιών"
 
-#: src/celestia/kde/kdeapp.cpp:664
+#: src/celestia/kde/kdeapp.cpp:620
 msgid "Display Local Time"
 msgstr "Εμφάνιση Τοπικής Ώρας "
 
-#: src/celestia/kde/kdeapp.cpp:669
+#: src/celestia/kde/kdeapp.cpp:625
 #, fuzzy
 msgid "Show City Locations"
 msgstr "Εμφάνιση Τοποοθεσιών Πόλεων"
 
-#: src/celestia/kde/kdeapp.cpp:672
+#: src/celestia/kde/kdeapp.cpp:628
 #, fuzzy
 msgid "Show Observatory Locations"
 msgstr "Εμφάνιση Τοποθεσιών Αστεροσκοπείων"
 
-#: src/celestia/kde/kdeapp.cpp:675
+#: src/celestia/kde/kdeapp.cpp:631
 msgid "Show Landing Sites Locations"
 msgstr "Εμφάνιση Τοποθεσιών Τόπων Προσγειώσης"
 
-#: src/celestia/kde/kdeapp.cpp:678
+#: src/celestia/kde/kdeapp.cpp:634
 #, fuzzy
 msgid "Show Crater Locations"
 msgstr "Εμφάνιση Τοποθεσιών Κράτηρων"
 
-#: src/celestia/kde/kdeapp.cpp:681
+#: src/celestia/kde/kdeapp.cpp:637
 #, fuzzy
 msgid "Show Mons Locations"
 msgstr "Εμφάνιση Τοποθεσιών Ορών"
 
-#: src/celestia/kde/kdeapp.cpp:684
+#: src/celestia/kde/kdeapp.cpp:640
 #, fuzzy
 msgid "Show Terra Locations"
 msgstr "Εμφάνιση Τοποθεσιών Γης"
 
-#: src/celestia/kde/kdeapp.cpp:687
+#: src/celestia/kde/kdeapp.cpp:643
 #, fuzzy
 msgid "Show Vallis Locations"
 msgstr "Εμφάνιση Τοποθεσιών Κοιλάδας"
 
-#: src/celestia/kde/kdeapp.cpp:690
+#: src/celestia/kde/kdeapp.cpp:646
 #, fuzzy
 msgid "Show Mare Locations"
 msgstr "Εμφάνιση Τοποθεσιών Θάλασσας"
 
-#: src/celestia/kde/kdeapp.cpp:693
+#: src/celestia/kde/kdeapp.cpp:649
 #, fuzzy
 msgid "Show Other Locations"
 msgstr "Εμφάνιση Άλλων Τοποθεσιών"
 
-#: src/celestia/kde/kdeapp.cpp:697
+#: src/celestia/kde/kdeapp.cpp:653
 msgid "Wireframe Mode"
 msgstr "Γραμμική Τρισδιάστατη Ρύθμιση"
 
-#: src/celestia/kde/kdeapp.cpp:699
+#: src/celestia/kde/kdeapp.cpp:655
 msgid "Center on Orbit"
 msgstr "Κέντρο στην Τροχιά"
 
-#: src/celestia/kde/kdeapp.cpp:703
+#: src/celestia/kde/kdeapp.cpp:659
 #: src/celestia/kde/kdepreferencesdialog.cpp:458
 msgid "Basic"
 msgstr "Βασικό"
 
-#: src/celestia/kde/kdeapp.cpp:705
+#: src/celestia/kde/kdeapp.cpp:661
 #: src/celestia/kde/kdepreferencesdialog.cpp:460
 msgid "Multitexture"
 msgstr "Επιλογή πολλών συστάσεων"
 
-#: src/celestia/kde/kdeapp.cpp:707
+#: src/celestia/kde/kdeapp.cpp:663
 #: src/celestia/kde/kdepreferencesdialog.cpp:462
 msgid "NvCombiners"
 msgstr "NvCombiners"
 
-#: src/celestia/kde/kdeapp.cpp:709
+#: src/celestia/kde/kdeapp.cpp:665
 #: src/celestia/kde/kdepreferencesdialog.cpp:464
 msgid "DOT3 ARBVP"
 msgstr "DOT3 ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:711
+#: src/celestia/kde/kdeapp.cpp:667
 #: src/celestia/kde/kdepreferencesdialog.cpp:466
 msgid "NvCombiner NvVP"
 msgstr "NvCombiner NvVP"
 
-#: src/celestia/kde/kdeapp.cpp:713
+#: src/celestia/kde/kdeapp.cpp:669
 #: src/celestia/kde/kdepreferencesdialog.cpp:468
 msgid "NvCombiner ARBVP"
 msgstr "NvCombiner ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:715
+#: src/celestia/kde/kdeapp.cpp:671
 #: src/celestia/kde/kdepreferencesdialog.cpp:470
 msgid "ARBFP ARBVP"
 msgstr "ARBFP ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:717
+#: src/celestia/kde/kdeapp.cpp:673
 #: src/celestia/kde/kdepreferencesdialog.cpp:472
 msgid "NV30"
 msgstr "NV30"
 
-#: src/celestia/kde/kdeapp.cpp:719
+#: src/celestia/kde/kdeapp.cpp:675
 #: src/celestia/kde/kdepreferencesdialog.cpp:474
 #, fuzzy
 msgid "OpenGL 2.0"
 msgstr "OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:721
+#: src/celestia/kde/kdeapp.cpp:677
 msgid "Cycle OpenGL Render Path"
 msgstr "Περιοδικό Προσφερόμενο Μονοπάτι OpenGL "
 
-#: src/celestia/kde/kdeapp.cpp:723
+#: src/celestia/kde/kdeapp.cpp:679
 msgid "Grab Image"
 msgstr "Πιάσε Εικόνα"
 
-#: src/celestia/kde/kdeapp.cpp:725
+#: src/celestia/kde/kdeapp.cpp:681
 msgid "OpenGL info"
 msgstr "OpenGL πληροφορία"
 
-#: src/celestia/kde/kdeapp.cpp:731
+#: src/celestia/kde/kdeapp.cpp:687
 msgid "Show Bookmark Toolbar"
 msgstr "Εμφάνιση Γραμμής Εργαλείων Σελιδοδείκτη"
 
-#: src/celestia/kde/kdeapp.cpp:976
+#: src/celestia/kde/kdeapp.cpp:932
 msgid "OpenGL Info"
 msgstr "OpenGL Πληροφορία "
 
-#: src/celestia/kde/kdeapp.cpp:1311
+#: src/celestia/kde/kdeapp.cpp:1266
 #: src/celestia/kde/kdepreferencesdialog.cpp:355
 #: src/celestia/kde/kdepreferencesdialog.cpp:366
 msgid "UTC"
 msgstr "UTC"
 
-#: src/celestia/kde/kdeapp.cpp:1400
+#: src/celestia/kde/kdeapp.cpp:1355
 msgid "Enter URL"
 msgstr "Εισαγωγή URL"
 
-#: src/celestia/kde/kdeapp.cpp:1492
+#: src/celestia/kde/kdeapp.cpp:1447
 msgid "Object: "
 msgstr "Αντικείμενο: "
 
-#: src/celestia/kde/kdeapp.cpp:1497
+#: src/celestia/kde/kdeapp.cpp:1452
 msgid "Longitude: "
 msgstr "Γεωγραφικό μήκος "
 
-#: src/celestia/kde/kdeapp.cpp:1503
+#: src/celestia/kde/kdeapp.cpp:1458
 msgid "East"
 msgstr "Ανατολικά"
 
-#: src/celestia/kde/kdeapp.cpp:1504
+#: src/celestia/kde/kdeapp.cpp:1459
 msgid "West"
 msgstr "Δυτικά"
 
-#: src/celestia/kde/kdeapp.cpp:1506
+#: src/celestia/kde/kdeapp.cpp:1461
 msgid "Latitude: "
 msgstr "Γεωγραφικό πλάτος: "
 
-#: src/celestia/kde/kdeapp.cpp:1512
+#: src/celestia/kde/kdeapp.cpp:1467
 msgid "North"
 msgstr "Νότια"
 
-#: src/celestia/kde/kdeapp.cpp:1513
+#: src/celestia/kde/kdeapp.cpp:1468
 msgid "South"
 msgstr "Βόρεια"
 
-#: src/celestia/kde/kdeapp.cpp:1515
+#: src/celestia/kde/kdeapp.cpp:1470
 msgid "Altitude: "
 msgstr "Ύψος: "
 
-#: src/celestia/kde/kdeapp.cpp:1520 src/celestia/res/resource_strings.cpp:119
+#: src/celestia/kde/kdeapp.cpp:1475 src/celestia/res/resource_strings.cpp:119
 msgid "km"
 msgstr "χμ"
 
-#: src/celestia/kde/kdeapp.cpp:1590
+#: src/celestia/kde/kdeapp.cpp:1545
 msgid "Celestia encountered an error while processing your script"
 msgstr "Το Celestia  συνάντησε λάθος ενώ διεργαζόταν το κείμενο σας"
 
@@ -1349,7 +1348,7 @@ msgstr "Άστρα"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:80
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/kde/selectionpopup.cpp:385
+#: src/celestia/kde/selectionpopup.cpp:387
 #: src/celestia/res/resource_strings.cpp:146
 #: src/celestia/res/resource_strings.cpp:155
 msgid "Planets"
@@ -1677,16 +1676,16 @@ msgstr "<b>NV_fragment_πρόγραμμα και ARB_vertex_πρόγραμμα �
 msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr ""
 
-#: src/celestia/kde/kdeuniquecelestia.cpp:42
+#: src/celestia/kde/kdeuniquecelestia.cpp:43
 msgid ""
 "File %1 does not exist, using default configuration file %2/celestia.cfg"
 msgstr ""
 
-#: src/celestia/kde/kdeuniquecelestia.cpp:52
+#: src/celestia/kde/kdeuniquecelestia.cpp:53
 msgid "Directory %1 does not exist, using default %2"
 msgstr ""
 
-#: src/celestia/kde/kdeuniquecelestia.cpp:64
+#: src/celestia/kde/kdeuniquecelestia.cpp:65
 msgid "Extras directory %1 does not exist"
 msgstr ""
 
@@ -1702,70 +1701,70 @@ msgstr "Θερμοκρασία επιφάνειας: "
 msgid "Marked objects"
 msgstr "Σημειωμένα αντικείμενα"
 
-#: src/celestia/kde/selectionpopup.cpp:308
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Select"
 msgstr "&Επιλογή"
 
-#: src/celestia/kde/selectionpopup.cpp:309
+#: src/celestia/kde/selectionpopup.cpp:311
 #: src/celestia/res/resource_strings.cpp:101
 #: src/celestia/res/resource_strings.cpp:108
 msgid "&Center"
 msgstr "&Κέντρο"
 
-#: src/celestia/kde/selectionpopup.cpp:311
+#: src/celestia/kde/selectionpopup.cpp:313
 msgid "&Follow"
 msgstr "&Ακολούθησε"
 
-#: src/celestia/kde/selectionpopup.cpp:312
+#: src/celestia/kde/selectionpopup.cpp:314
 #, fuzzy
 msgid "S&ynch Orbit"
 msgstr "&Συγχρονισμός τροχίας"
 
-#: src/celestia/kde/selectionpopup.cpp:313
+#: src/celestia/kde/selectionpopup.cpp:315
 msgid "&Info"
 msgstr "&Πληροφορία"
 
-#: src/celestia/kde/selectionpopup.cpp:314
+#: src/celestia/kde/selectionpopup.cpp:316
 msgid "Unmark &All"
 msgstr "Αποσημείωσε &Όλα"
 
-#: src/celestia/kde/selectionpopup.cpp:317
+#: src/celestia/kde/selectionpopup.cpp:319
 msgid "&Unmark"
 msgstr "&Αποσημείωσε"
 
-#: src/celestia/kde/selectionpopup.cpp:322
+#: src/celestia/kde/selectionpopup.cpp:324
 msgid "Diamond"
 msgstr "Ρόμβος"
 
-#: src/celestia/kde/selectionpopup.cpp:323
+#: src/celestia/kde/selectionpopup.cpp:325
 msgid "Triangle"
 msgstr "Τρίγωνο"
 
-#: src/celestia/kde/selectionpopup.cpp:324
+#: src/celestia/kde/selectionpopup.cpp:326
 msgid "Square"
 msgstr "Τετράγωνο"
 
-#: src/celestia/kde/selectionpopup.cpp:325
+#: src/celestia/kde/selectionpopup.cpp:327
 msgid "Plus"
 msgstr "Πλεον"
 
-#: src/celestia/kde/selectionpopup.cpp:326
+#: src/celestia/kde/selectionpopup.cpp:328
 msgid "X"
 msgstr "X"
 
-#: src/celestia/kde/selectionpopup.cpp:327
+#: src/celestia/kde/selectionpopup.cpp:329
 msgid "&Mark"
 msgstr "&Σημείωσε"
 
-#: src/celestia/kde/selectionpopup.cpp:338
+#: src/celestia/kde/selectionpopup.cpp:340
 msgid "Normal"
 msgstr "Κανονικό"
 
-#: src/celestia/kde/selectionpopup.cpp:345
+#: src/celestia/kde/selectionpopup.cpp:347
 msgid "&Alternate Surfaces"
 msgstr "&Εναλλακτική επιφάνεια"
 
-#: src/celestia/kde/selectionpopup.cpp:363
+#: src/celestia/kde/selectionpopup.cpp:365
 msgid "Satellites"
 msgstr "Δορυφόροι"
 
@@ -2788,6 +2787,10 @@ msgstr ""
 #, fuzzy
 msgid "eclipse on"
 msgstr "Εύρεση έκλειψης "
+
+#: src/celestia/res/resource_strings.cpp:210
+msgid "WinLangID"
+msgstr "408"
 
 #, fuzzy
 #~ msgid "Type: "
