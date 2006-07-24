@@ -30,6 +30,7 @@
 #include <qvaluestack.h>
 #include <kurl.h>
 #include <kdialogbase.h>
+#include <qdir.h>
 
 #include <kbookmarkmanager.h>
 #include <kbookmarkbar.h>
@@ -41,6 +42,7 @@
 #include "url.h"
 
 class KdeApp;
+class QResizeEvent;
 
 class KdeAlerter : public CelestiaCore::Alerter
 {
@@ -83,6 +85,12 @@ public:
     Url currentUrl(Url::UrlType type = Url::Absolute) const ;
     QString currentIcon() const;
     const KActionCollection* getActionCollection() { return actionCollection(); }
+
+    int getGlWidth() const { return glWidget->width(); };
+    int getGlHeight() const { return glWidget->height(); };
+
+signals:
+    void resized(int w, int h);
 
 public slots:
     void celestia_tick() { appCore->tick(); glWidget->updateGL(); }
@@ -188,6 +196,7 @@ public slots:
     void slotDisplayLocalTime();
     void slotWireframeMode();
     void slotGrabImage();
+    void slotCaptureVideo();
     void slotFullScreen();
 
     void slotBack();
@@ -209,6 +218,7 @@ public slots:
 
     static void popupMenu(float x, float y, Selection sel);
 
+
 protected:
     CelestiaCore* appCore;
     Renderer*   renderer;
@@ -217,6 +227,7 @@ protected:
     void initActions();
     KRecentFilesAction *openRecent;
     KBookmarkBar *bookmarkBar;
+    QString startDir;
 
     bool queryExit();
     bool queryClose();
@@ -236,6 +247,7 @@ protected:
     static KdeApp* app;
 
     KActionCollection* bookmarkBarActionCollection;
+    void resizeEvent(QResizeEvent* e);
 };
 
 class LongLatDialog : public KDialogBase {

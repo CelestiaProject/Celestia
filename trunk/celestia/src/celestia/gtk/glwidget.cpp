@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: glwidget.cpp,v 1.1 2005-12-06 03:19:35 suwalski Exp $
+ *  $Id: glwidget.cpp,v 1.2 2006-07-24 17:31:24 christey Exp $
  */
 
 #include <gdk/gdkkeysyms.h>
@@ -308,6 +308,12 @@ static bool handleSpecialKey(int key, int state, bool down, AppData* app)
 			break;
 		case GDK_F10:
 			if (down) actionCaptureImage(NULL, app);
+			break;
+		case GDK_F11:
+			k = CelestiaCore::Key_F11;
+			break;
+		case GDK_F12:
+			k = CelestiaCore::Key_F12;
 			break;
 		case GDK_KP_Insert:
 		case GDK_KP_0:

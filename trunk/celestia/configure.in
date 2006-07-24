@@ -48,6 +48,12 @@ AC_ARG_ENABLE([cairo],
                              [use cairo for GTK splash screen]),
               enable_cairo="$enableval", enable_cairo="auto")
 
+AC_ARG_ENABLE([theora],
+              AC_HELP_STRING([--enable-theora],
+                             [create Ogg/Theora video]),
+              enable_theora="$enableval", enable_theora="auto")
+
+
 dnl For KDE interface
 AC_CONFIG_AUX_DIR(admin)
 
@@ -280,6 +286,8 @@ if (test "$ui_gtk" != "no"); then
 		                  fi)
 	fi
 
+        check_theora="yes"
+
 	if (test "x$enable_cairo" = "xyes"); then
 		AC_DEFINE(CAIRO, 1, [Use Cairo for Splash])
 	fi
@@ -311,11 +319,32 @@ if (test "$ui_kde" != "no"); then
 
 	dnl KDE_USE_QT(3)
 	AC_PATH_KDE
+
+        check_theora="yes"
 fi
 AM_CONDITIONAL(ENABLE_KDE, test "$ui_kde" = "yes")
 
+if (test "$check_theora" = "yes"); then
+	dnl Check for theora. Default to trying yes. Want this structure to not
+	dnl fail when not found if not explicitly enabled.
+	if (test "x$enable_theora" != "xno"); then
+                PKG_PROG_PKG_CONFIG
+		PKG_CHECK_MODULES(THEORA, theora, enable_theora="yes",
+		                  if (test "x$enable_theora" = "xauto"); then
+		                      enable_theora="no"
+		                  else
+		                      AC_ERROR([Theora not found (explicitly enabled)!])
+		                  fi)
+	fi
 
-
+	if (test "x$enable_theora" = "xyes"); then
+		AC_DEFINE(THEORA, 1, [Use OGG Theora for video])
+		CFLAGS="$CFLAGS $THEORA_CFLAGS"
+		CXXFLAGS="$CXXFLAGS $THEORA_CFLAGS"
+		LIBS="$LIBS $THEORA_LIBS"
+	fi
+fi
+AM_CONDITIONAL(ENABLE_THEORA, test "$enable_theora" = "yes")
 
 dnl Check for JPEG library.
 AC_CHECK_LIB(jpeg, jpeg_start_decompress, ,

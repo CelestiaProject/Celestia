@@ -34,6 +34,8 @@
 #include <qfont.h>
 #include <qlineedit.h>
 #include <qvalidator.h>
+#include <qurl.h>
+#include <qevent.h>
 
 #include <qmenubar.h>
 #include <qpopupmenu.h>
@@ -79,6 +81,7 @@
 #include "eclipsefinderdlg.h"
 #include "selectionpopup.h"
 #include "celsplashscreen.h"
+#include "videocapturedlg.h"
 
 #include "celengine/glext.h"
 
@@ -143,6 +146,7 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
     setAcceptDrops(true);
 
     // Create our OpenGL widget
+    startDir = QDir::current().path();
     if ( (dir.length() > 1 ? chdir(dir.c_str()):chdir(CONFIG_DATA_DIR)) == -1)
     {
         ::std::cout << "Cannot chdir to '" << CONFIG_DATA_DIR << "', probably due to improper installation" << ::std::endl;
@@ -677,6 +681,7 @@ void KdeApp::initActions()
     new KAction(i18n("Cycle OpenGL Render Path"), "reload", CTRL + Key_V, this, SLOT(slotCycleRenderPath()), actionCollection(), "cycleRenderPath");
 
     new KAction(i18n("Grab Image"), "filesave", Key_F10, this, SLOT(slotGrabImage()), actionCollection(), "grabImage");
+    new KAction(i18n("Capture Video"), "filesave", Key_F11, this, SLOT(slotCaptureVideo()), actionCollection(), "captureVideo");
 
     new KAction(i18n("OpenGL info"), 0, this, SLOT(slotOpenGLInfo()),
                       actionCollection(), "opengl_info");
@@ -1324,11 +1329,42 @@ void KdeApp::slotCycleRenderPath() {
 }
 
 void KdeApp::slotGrabImage() {
-    QString saveAsName = KFileDialog::getSaveFileName(0, "*.png");
+    QString dir;
+    KGlobal::config()->setGroup("Preferences");
+    if (KGlobal::config()->hasKey("GrabImageDir")) {
+        dir = KGlobal::config()->readEntry("GrabImageDir");
+    } else {
+        dir = startDir;
+    }
+    QString saveAsName = KFileDialog::getSaveFileName(dir, "*.png");
     if (saveAsName != "") {
         QImage grabedImage = glWidget->grabFrameBuffer();
         grabedImage.save(saveAsName, "PNG");
+        QUrl file(saveAsName);
+        KGlobal::config()->writeEntry("GrabImageDir", file.dirPath());
     }
+}
+
+void KdeApp::slotCaptureVideo() {
+#ifdef THEORA
+    QString dir;
+    KGlobal::config()->setGroup("Preferences");
+    if (KGlobal::config()->hasKey("CaptureVideoDir")) {
+        dir = KGlobal::config()->readEntry("CaptureVideoDir");
+    } else {
+        dir = startDir;
+    }
+    VideoCaptureDlg *dialog = new VideoCaptureDlg(this, dir);
+    if (dialog->exec() == QDialog::Accepted) {
+        appCore->initMovieCapture(dialog);
+        action("captureVideo")->setEnabled(false);
+        KGlobal::config()->writeEntry("CaptureVideoDir", dialog->getDir());
+    } else {
+        delete dialog;
+    }
+#else
+    KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18n("Movie support was not included. To use re-build with --enable-theora."));
+#endif
 }
 
 void KdeApp::slotShowBookmarkBar() {
@@ -1436,6 +1472,10 @@ void KdeApp::popupMenu(float x, float y, Selection sel) {
     popup.init();
     int id = popup.exec(app->glWidget->mapToGlobal(QPoint(int(x),int(y))));
     popup.process(id);
+}
+
+void KdeApp::resizeEvent(QResizeEvent* e) {
+    emit resized(e->size().width(), e->size().height());
 }
 
 LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
