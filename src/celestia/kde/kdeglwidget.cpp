@@ -189,15 +189,10 @@ void KdeGlWidget::initializeGL()
 
     QPaintDeviceMetrics pdm(this);
     appCore->setScreenDpi(pdm.logicalDpiY());
-
 }
 
 void KdeGlWidget::resizeGL( int w, int h )
 {
-/*    QPaintDeviceMetrics pdm(this);
-    double fov = 2 * atan(h / (pdm.logicalDpiY() / 25.4) / 2. / 400.);
-    appCore->getSimulation()->getActiveObserver()->setFOV(fov);
-*/
     appCore->resize(w, h);
 }
 
@@ -309,6 +304,12 @@ bool KdeGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
         break;
     case Key_F7:
         k = CelestiaCore::Key_F7;
+        break;
+    case Key_F11:
+        k = CelestiaCore::Key_F11;
+        break;
+    case Key_F12:
+        k = CelestiaCore::Key_F12;
         break;
     case Key_PageDown:
         k = CelestiaCore::Key_PageDown;

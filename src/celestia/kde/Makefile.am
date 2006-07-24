@@ -1,4 +1,12 @@
 
+if ENABLE_THEORA
+THEORASOURCES = videocapturedlg.cpp
+UITHEORASOURCES = videocapturedlgbase.uic.h \
+                  videocapturedlgbase.uic.cpp \
+                  videocapturedlgbase.uic.moc.cpp \
+                  videocapturedlg.moc.cpp
+endif
+
 KDE_SOURCES = \
                  celsplashscreen.cpp \
                  eclipsefinderdlg.cpp \
@@ -10,9 +18,10 @@ KDE_SOURCES = \
                  kdeuniquecelestia.cpp \
                  kcelbookmarkmenu.cpp \
                  kcelbookmarkmanager.cpp \
-                 selectionpopup.cpp
+                 selectionpopup.cpp \
+                 $(THEORASOURCES)
 
-EXTRA_DIST = celestialbrowserbase.ui eclipsefinderdlgbase.ui $(KDE_SOURCES)
+EXTRA_DIST = celestialbrowserbase.ui eclipsefinderdlgbase.ui videocapturedlgbase.ui $(KDE_SOURCES)
 
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
@@ -41,6 +50,7 @@ libkdegui_a_SOURCES = \
                  kcelbookmarkmenu.moc.cpp \
                  kcelbookmarkmanager.moc.cpp \
                  selectionpopup.moc.cpp \
+                 $(UITHEORASOURCES) \
                  $(KDE_SOURCES)
                           
 SUBDIRS = data doc

@@ -1,0 +1,340 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>VideoCaptureDlgBase</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>VideoCaptureDlgBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>443</width>
+            <height>390</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Video Capture</string>
+    </property>
+    <property name="sizeGripEnabled">
+        <bool>true</bool>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Settings</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout12</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>fileLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Save As:</string>
+                            </property>
+                        </widget>
+                        <widget class="KURLRequester">
+                            <property name="name">
+                                <cstring>fileUrl</cstring>
+                            </property>
+                            <property name="showLocalProtocol">
+                                <bool>false</bool>
+                            </property>
+                            <property name="filter">
+                                <string>*.ogg</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout2</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>aspectRatioLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Aspect Ratio:</string>
+                            </property>
+                        </widget>
+                        <widget class="KComboBox">
+                            <item>
+                                <property name="text">
+                                    <string>Current</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>11:9</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>4:3</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>16:9</string>
+                                </property>
+                            </item>
+                            <property name="name">
+                                <cstring>aspectRatio</cstring>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout7</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>imageSizeLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Image Size:</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox">
+                            <property name="name">
+                                <cstring>imageSize</cstring>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>specifyAspectRatio</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Specify aspect ratio (do not check for playing on desktop players)</string>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout3</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>frameRateLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Frame Rate:</string>
+                            </property>
+                        </widget>
+                        <widget class="QSpinBox">
+                            <property name="name">
+                                <cstring>frameRate</cstring>
+                            </property>
+                            <property name="maxValue">
+                                <number>30</number>
+                            </property>
+                            <property name="minValue">
+                                <number>5</number>
+                            </property>
+                            <property name="value">
+                                <number>12</number>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout4</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>textLabel3</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Video Quality:</string>
+                            </property>
+                        </widget>
+                        <widget class="QSpinBox">
+                            <property name="name">
+                                <cstring>videoQuality</cstring>
+                            </property>
+                            <property name="maxValue">
+                                <number>10</number>
+                            </property>
+                            <property name="value">
+                                <number>10</number>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>playVideo</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Play Video when capture is done</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QGroupBox">
+            <property name="name">
+                <cstring>groupBox2</cstring>
+            </property>
+            <property name="title">
+                <string>Usage</string>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&lt;p&gt;Press &lt;b&gt;F11&lt;/b&gt; to start/pause recording&lt;br&gt;
+Press &lt;b&gt;F12&lt;/b&gt; to stop&lt;/p&gt;
+
+&lt;p&gt;Note that resizing the main window will not be possible until the end of the capture&lt;/p&gt;</string>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout1</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>Horizontal Spacing2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonOk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>buttonOk</sender>
+        <signal>clicked()</signal>
+        <receiver>VideoCaptureDlgBase</receiver>
+        <slot>okSlot()</slot>
+    </connection>
+    <connection>
+        <sender>buttonCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>VideoCaptureDlgBase</receiver>
+        <slot>cancelSlot()</slot>
+    </connection>
+    <connection>
+        <sender>aspectRatio</sender>
+        <signal>activated(int)</signal>
+        <receiver>VideoCaptureDlgBase</receiver>
+        <slot>newAspectRatioSlot(int)</slot>
+    </connection>
+    <connection>
+        <sender>fileUrl</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>VideoCaptureDlgBase</receiver>
+        <slot>filenameSlot(const QString&amp;)</slot>
+    </connection>
+</connections>
+<slots>
+    <slot>newAspectRatioSlot(int )</slot>
+    <slot>okSlot()</slot>
+    <slot>cancelSlot()</slot>
+    <slot>newMainWindowSizeSlot(int, int)</slot>
+    <slot>filenameSlot(const QString&amp;)</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kcombobox.h</includehint>
+</includehints>
+</UI>

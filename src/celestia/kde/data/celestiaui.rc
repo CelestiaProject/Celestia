@@ -1,8 +1,9 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="19">
+<kpartgui name="celestia" version="21">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
+    <Action name="captureVideo"/>
     <Action name="copyUrl"/>
   </Menu>
   <Menu name="view" noMerge="0">
