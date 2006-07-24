@@ -293,8 +293,20 @@ static Body* CreatePlanet(PlanetarySystem* system,
     body->setLifespan(beginning, ending);
 
     string infoURL;
-    if (planetData->getString("InfoURL", infoURL))
+    if (planetData->getString("InfoURL", infoURL)) 
+    {
+        if (infoURL.find(':') == string::npos) 
+        {
+            // Relative URL, the base directory is the current one,
+            // not the main installation directory
+            if (path[1] == ':')
+                // Absolute Windows path, file:/// is required
+                infoURL = "file:///" + path + "/" + infoURL;
+            else
+                infoURL = path + "/" + infoURL;
+        }
         body->setInfoURL(infoURL);
+    }
     
     double albedo = 0.5;
     if (planetData->getNumber("Albedo", albedo))
