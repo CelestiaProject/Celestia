@@ -400,12 +400,11 @@ bool OggTheoraCapture::captureFrame()
 }
 void OggTheoraCapture::cleanup()
 {
-    static bool done = false;
     capturing = false;
     /* clear out state */
-    if(!done && outfile)
+
+    if(outfile)
     {
-        done = true;
         printf(_("OggTheoraCapture::cleanup() - wrote %d frames\n"), video_frame_count);
         if (video_frame_count > 0)
         {
