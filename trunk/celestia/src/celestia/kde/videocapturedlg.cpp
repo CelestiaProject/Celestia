@@ -53,9 +53,6 @@ VideoCaptureDlg::VideoCaptureDlg(QWidget* p, const QString &dir):
     statusBar->show();
     kapp->processEvents();
 
-    mainWindowInitialWidth = parent->width();
-    mainWindowInitialHeight = parent->height();
-
     currentWidth = parent->getGlWidth();
     currentHeight = parent->getGlHeight();
     newAspectRatioSlot(0);
@@ -236,12 +233,16 @@ void VideoCaptureDlg::okSlot() {
         KMessageBox::queuedMessageBox(this, KMessageBox::Error, i18n("You must specify a file name."));
         return;
     }
+    mainWindowInitialWidth = parent->width();
+    mainWindowInitialHeight = parent->height();
 
-
-    KdeApp* app = static_cast<KdeApp*>(parent);
-
-    parent->setFixedSize(getWidth() + mainWindowInitialWidth - app->getGlWidth(), getHeight() + mainWindowInitialHeight - app->getGlHeight());
+    parent->setFixedSize(getWidth() + parent->width() - parent->getGlWidth(), getHeight() + parent->height() - parent->getGlHeight());
     parent->layout()->setResizeMode(QLayout::FreeResize);
+    kapp->processEvents();
+
+    parent->setFixedSize(getWidth() + parent->width() - parent->getGlWidth(), getHeight() + parent->height() - parent->getGlHeight());
+    parent->layout()->setResizeMode(QLayout::FreeResize);
+    kapp->processEvents();
 
     KGlobal::config()->setGroup("Preferences");
     KGlobal::config()->writeEntry("CaptureVideoFrameRate", frameRate->value());
@@ -289,10 +290,6 @@ void VideoCaptureDlg::filenameSlot(const QString& name) {
 
 void VideoCaptureDlg::newMainWindowSizeSlot(int w, int h) {
     if (accepted) return;
-    kapp->processEvents();
-
-    mainWindowInitialWidth = w;
-    mainWindowInitialHeight = h;
 
     currentWidth = parent->getGlWidth();
     currentHeight = parent->getGlHeight();
